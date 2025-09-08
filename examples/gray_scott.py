@@ -68,7 +68,7 @@ start = time.time()
 for i in trange(steps):
     solver.run(1)
     if i % (steps//100)==0:
-        traj.append(solver.model.fields['u'])
+        traj.append(solver.fields['u'])
 end = time.time()
 print(f"Elapsed time: {end - start:.6f} seconds")
 traj = torch.stack(traj).permute(1,0,2,3) # shape (Batch, Time, *shape)
