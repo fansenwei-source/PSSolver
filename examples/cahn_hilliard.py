@@ -18,8 +18,8 @@ class CH_NLmodel(torch.nn.Module):
 N = 256
 L = 256
 dt = 0.1
-steps = 10000
-batchsize = 8
+steps = 100000
+batchsize = 9
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(f"Using device: {device}")

@@ -1,4 +1,5 @@
 from pssolver import SpectralSolver
+from pssolver.utils import fft
 import torch
 import time
 from tqdm import trange
@@ -9,17 +10,17 @@ class CH_NLmodel(torch.nn.Module):
         u = fields['u']  
         q2 = fields.q2
 
-        output = - q2 * b * torch.fft.fftn(u**3, dim=[-1,-2,-3])
+        output = - q2 * b * fft(u**3, dim=3)
         return output.unsqueeze(0)
 
 
 N = 256
 L = 128
 dt = 0.1
-steps = 100000
+steps = 100
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(f"Using device: {device}")
-solver = SpectralSolver(shape=(N,N,N), L=L, dt=dt, device=device, record_every_n_steps = steps//100)
+solver = SpectralSolver(shape=(N,N,N), L=L, dt=dt, device=device)
 
 # # --- Parameters ---
 a = -2
@@ -37,17 +38,12 @@ solver.model.set_nonlinear_model(CH_NLmodel())
 solver.build()
 
 traj = []
-start = time.time()
 
-for i in trange(steps//solver.record_every_n_steps, desc="Solving"):
-    solver.run(solver.record_every_n_steps)
-    traj.append(solver.model.fields['u'])
-end = time.time()
-print(f"Elapsed time: {end - start:.6f} seconds")
+for i in trange(steps, desc="Solving"):
+    solver.run(1)
+    if i % (steps//10) == 0:
+        traj.append(solver.fields['u'].cpu())
 
-traj = torch.stack(traj)
+traj = torch.stack(traj).permute(1,0,2,3,4)  # permutation: (num_snapshots, batch_size, N, N, N) --> (batch_size, num_snapshots, N, N, N)
 
-
-# solver.visualize_pygame(data = traj)
-# solver.visualize3d(data = traj)
-
+print(traj.shape)

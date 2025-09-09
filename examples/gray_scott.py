@@ -1,4 +1,5 @@
 from pssolver import SpectralSolver
+from pssolver.utils import fft, visualize2D
 import torch
 import time
 from tqdm import trange
@@ -29,16 +30,17 @@ class NonlinearModel(torch.nn.Module):
         out0 = -u * vsq + F * (1 - u)
         out1 = u * vsq - (F + k) * v
 
-        return torch.fft.fft2(torch.stack([out0, out1]))  
+        return fft(torch.stack([out0, out1]), dim=2)  
 
 
 N = 128
 L = 128
 dt = 0.1
 steps = 100000
+batchsize = 2
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-solver = SpectralSolver(shape = (N,N), L=L, dt=dt, device=device, batch_size = 2)
+solver = SpectralSolver(shape = (N,N), L=L, dt=dt, device=device, batchsize = batchsize)
 
 # # --- Parameters ---
 du = 0.16
@@ -63,16 +65,14 @@ solver.model.add_dynamic_field(
 solver.model.set_nonlinear_model(NonlinearModel())
 solver.build()
 
-traj = []
-start = time.time()
+traj_u = []
 for i in trange(steps):
     solver.run(1)
     if i % (steps//100)==0:
-        traj.append(solver.fields['u'])
-end = time.time()
-print(f"Elapsed time: {end - start:.6f} seconds")
-traj = torch.stack(traj).permute(1,0,2,3) # shape (Batch, Time, *shape)
+        traj_u.append(solver.fields['u'])
+
+traj = torch.stack(traj_u).permute(1,0,2,3) # shape (Batch, Time, *shape)
 print("traj shape:", traj.shape)
 
-solver.visualize_pygame(data = traj[0])
+visualize2D(data = traj.cpu().numpy())
 

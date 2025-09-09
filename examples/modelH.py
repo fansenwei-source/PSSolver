@@ -1,6 +1,7 @@
 import time
 import torch
 from pssolver import SpectralSolver
+from pssolver.utils import fft, visualize2D
 
 class NonlinearModel(torch.nn.Module):
     def forward(self, fields, params): 
@@ -12,9 +13,9 @@ class NonlinearModel(torch.nn.Module):
         gxphi = fields['gradx_phi']
         gyphi = fields['grady_phi']
        
-        out0  =  - b* q2* torch.fft.fft2(phi**3) + torch.fft.fft2(- ux*gxphi - uy*gyphi)
+        out0  =  - b* q2* fft(phi**3, dim=2) + fft(- ux*gxphi - uy*gyphi, dim=2)
         
-        return out0.unsqueeze(0)  
+        return out0.unsqueeze(0)
 
 class Static_compute_fn(torch.nn.Module):
     def forward(self, fields, params): 
@@ -30,29 +31,37 @@ class Static_compute_fn(torch.nn.Module):
             self.iqx = iqx
             self.iqy = iqy
 
+            batchsize = solver.batchsize
+
             # Stokes flow projection operator (in Fourier space)
             # Projects a vector field onto its divergence-free component
-            P = torch.zeros((2, 2, *q2.shape), dtype=torch.cfloat, device=q2.device)
+            P = torch.zeros((2, 2, batchsize, *q2.shape), dtype=torch.cfloat, device=q2.device)
             P[0, 0] = 1 - (qx * qx) / q2
             P[0, 1] = - (qx * qy) / q2
             P[1, 0] = - (qy * qx) / q2
             P[1, 1] = 1 - (qy * qy) / q2
             self.P = P * 1/(eta*q2)
 
+            sig_to_f = torch.zeros((2, batchsize, *q2.shape), dtype=torch.cfloat, device=q2.device)
+            sig_to_f[0] = self.iqx
+            sig_to_f[1] = self.iqy
+            self.sig_to_f = sig_to_f
+
+
 
         sigxx =  -k/2 * (fields['gradx_phi']**2 - fields['grady_phi']**2)  
         sigxy =  -k * (fields['gradx_phi'] * fields['grady_phi'])  
         sigxx_hat, sigxy_hat = torch.fft.fft2(torch.stack([sigxx,sigxy]))
 
-        # Create sig tensor with shape (2, N, N)
+        # Create sig tensor with shape (2,2, B,N,N)
         sig_hat = torch.zeros((2,2, *sigxx.shape), dtype=sigxy_hat.dtype, device = sigxy_hat.device)
         sig_hat[0,0] = sigxx_hat
         sig_hat[0,1] = sigxy_hat
         sig_hat[1,0] = sigxy_hat
         sig_hat[1,1] = -sigxx_hat
-         
-        f_hat = torch.einsum('jxy,ijxy->ixy', torch.stack([self.iqx,self.iqy]), sig_hat)  
-        u_hat = torch.einsum('abij,bij->aij', self.P, f_hat) 
+
+        f_hat = torch.einsum('jBxy,ijBxy->iBxy', self.sig_to_f, sig_hat)  
+        u_hat = torch.einsum('ijBxy,jBxy->iBxy', self.P, f_hat) 
 
         ux_hat = u_hat[0]
         uy_hat = u_hat[1]
@@ -77,9 +86,10 @@ N = 128
 L = 256
 dt = 0.1
 steps = 20000
+batchsize = 2
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-solver = SpectralSolver(shape = (N,N), L=L, dt=dt, device=device)
+solver = SpectralSolver(shape = (N,N), L=L, dt=dt, device=device, batchsize=batchsize)
 
 # # --- Parameters ---
 a = -1
@@ -90,7 +100,7 @@ eta = 1
 # --- Add active fields ---
 solver.model.add_dynamic_field(
     "phi",
-    init =  0.1 * torch.randn((N, N)),
+    init =  0.1 * torch.randn((batchsize, N, N)),
     L_hat = - solver.q2*(a + k*solver.q2)
 )
 
@@ -105,19 +115,16 @@ solver.model.set_nonlinear_model(NonlinearModel())
 solver.model.set_static_compute_model(Static_compute_fn())
 
 solver.build()
-print(solver.model.fields.dyn_count)
-print(solver.model.fields.name_to_idx)
+print(solver.fields.dyn_count)
+print(solver.fields.name_to_idx)
 
 traj = []
-start = time.time()
 for i in range(steps):
     if i % (steps//100)== 0:
-        snapshot = torch.stack([solver.model.fields[name].clone().detach().cpu() for name in solver.model.fields.name_to_idx])
+        snapshot = solver.fields['phi'] 
         traj.append(snapshot)
-
     solver.run(1)
-end = time.time()
-print(f"Elapsed time: {end - start:.6f} seconds")
-traj = torch.stack(traj).permute(1,0,2,3)
 
-solver.visualize(data = traj[0])
+traj = torch.stack(traj).permute(1,0,2,3) # permutation: (num_snapshots, batch_size, N, N) --> (batch_size, num_snapshots, N, N)
+
+visualize2D(data = traj.cpu().numpy())

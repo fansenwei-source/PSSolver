@@ -29,7 +29,7 @@ class Parameters:
     
     def __setitem__(self, key, value):
         """Set the value for the given key in internal parameters"""
-        self.update_param(self, key, value)
+        self.update_param(key, value)
         
     def keys(self):
         return list(self._params.keys())

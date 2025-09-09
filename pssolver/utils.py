@@ -87,49 +87,4 @@ def visualize1D(data, filename="output.png", cmap="viridis"):
     plt.savefig(filename)
     plt.show()
     plt.close(fig)
-        
 
-# def visualize_pygame(self, data, scale=2, cmap="viridis"):
-#     import pygame
-#     import matplotlib.pyplot as plt
-#     import numpy as np
-
-#     pygame.init()
-#     n_frames, N, _ = data.shape
-#     width, height = N * scale, N * scale
-
-#     # Prepare colormap
-#     cmap_func = plt.get_cmap(cmap)
-#     norm = lambda arr: (arr - arr.min()) / (arr.max() - arr.min() + 1e-8)
-
-#     screen = pygame.display.set_mode((width, height))
-#     pygame.display.set_caption("PDE Visualization (Interactive)")
-
-#     running = True
-#     frame = 0
-#     clock = pygame.time.Clock()
-
-#     while running:
-#         keys = pygame.key.get_pressed()
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 running = False
-#             elif event.type == pygame.KEYDOWN:
-#                 if event.key == pygame.K_ESCAPE:
-#                     running = False
-
-#         # Move frames while holding arrow keys
-#         if keys[pygame.K_RIGHT]:
-#             frame = min(frame + 1, n_frames - 1)
-#         if keys[pygame.K_LEFT]:
-#             frame = max(frame - 1, 0)
-
-#         arr = data[frame].cpu().numpy()
-#         arr_norm = norm(arr)
-#         arr_rgb = (cmap_func(arr_norm)[..., :3] * 255).astype(np.uint8)
-#         surf = pygame.surfarray.make_surface(np.transpose(np.kron(arr_rgb, np.ones((scale, scale, 1))), (1, 0, 2)))
-#         screen.blit(surf, (0, 0))
-#         pygame.display.flip()
-#         clock.tick(30)
-
-#     pygame.quit()
