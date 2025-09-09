@@ -1,7 +1,6 @@
 from pssolver import SpectralSolver
 from pssolver.utils import fft
 import torch
-import time
 from tqdm import trange
 
 

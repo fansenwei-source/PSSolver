@@ -1,4 +1,3 @@
-import time
 import torch
 from pssolver import SpectralSolver
 from pssolver.utils import fft, visualize2D
