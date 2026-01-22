@@ -1,15 +1,16 @@
 import torch
 from .Field import Fields, Parameters
+from .boundary import BoundaryCondition, normalize_bcs
 import inspect
 
 
 class PDEModel:
-    def __init__(self, shape, device, batchsize):
+    def __init__(self, shape, device, batchsize, bcs=None):
         self.shape = shape
         self.device = device
         self.batchsize = batchsize
 
-        self.fields = Fields(shape = shape, device = device, batchsize = self.batchsize)
+        self.fields = Fields(shape = shape, device = device, batchsize = self.batchsize, bcs=bcs)
         self.parameters = Parameters()#batchsize = self.batchsize)
         self.num_fields = 0
         self.dyn_fields = []
@@ -30,13 +31,18 @@ class PDEModel:
         else:
             raise ValueError(f"Initial value for field '{name}' must have shape {self.shape} or {(self.batchsize, *self.shape)}, got {init.shape}")
         
-        # Accepts L_hat with or without batch dimension
-        if L_hat.shape == self.shape:
-            L_hat = L_hat.unsqueeze(0).repeat(self.batchsize, *[1]*len(self.shape))
-        elif L_hat.shape == (self.batchsize, *self.shape):
-            pass
+        # Accept L_hat with or without batch dimension; detailed shape validation happens in build.
+        if L_hat.dim() == len(self.shape):
+            L_hat = L_hat.unsqueeze(0).repeat(self.batchsize, *[1] * len(self.shape))
+        elif L_hat.dim() == len(self.shape) + 1:
+            if L_hat.shape[0] != self.batchsize:
+                raise ValueError(
+                    f"L_hat for field '{name}' must have batch dimension {self.batchsize}, got {L_hat.shape[0]}"
+                )
         else:
-            raise ValueError(f"L_hat for field '{name}' must have shape {self.shape} or {(self.batchsize, *self.shape)}, got {L_hat.shape}")
+            raise ValueError(
+                f"L_hat for field '{name}' must have {len(self.shape)} or {len(self.shape)+1} dims, got {L_hat.dim()}"
+            )
 
         self.dyn_fields.append([name, init, L_hat])
 
@@ -63,25 +69,29 @@ class PDEModel:
             raise ValueError("Duplicate field names detected")
 
         count = 0
-        inits = []
-        L_hats = []
+        inits = {}
+        L_hats = {}
         for entry in self.dyn_fields:
             self.fields.name_to_idx[entry[0]] = count 
             count += 1
-            inits.append(entry[1])
-            L_hats.append(entry[2])
+            inits[entry[0]] = entry[1]
+            L_hats[entry[0]] = entry[2]
         
         self.fields.dyn_count = count
  
         for entry in self.stat_fields:
             self.fields.name_to_idx[entry[0]] = count 
             count += 1
-            inits.append(torch.zeros(self.batchsize, *self.shape))
+            inits[entry[0]] = torch.zeros(self.batchsize, *self.shape)
         self.fields.stat_count = count - self.fields.dyn_count
+        self.fields.finalize_field_bcs(all_names)
+        self.fields.dyn_names = [entry[0] for entry in self.dyn_fields]
+        self.fields.stat_names = [entry[0] for entry in self.stat_fields]
 
-        self.fields.spatial = torch.stack(inits).to(self.device)#.permute(1, 0, *range(2, 2 + len(self.shape)))
+        self.fields.spatial = {name: tensor.to(self.device) for name, tensor in inits.items()}
         self.fields.spectral = self.fields.fftn()
-        self.fields.L_hat = torch.stack(L_hats).to(self.device)#.permute(1, 0, *range(2, 2 + len(self.shape)))
+        self.fields.L_hat = {name: tensor.to(self.device) for name, tensor in L_hats.items()}
+        self._validate_L_hat_shapes()
 
         if self.nlmodel is None:
             self.nlmodel = ZeroModel()
@@ -92,9 +102,7 @@ class PDEModel:
                 if len(sig.parameters) != 2:  # fields, parameters
                     raise TypeError("Nonlinear model's forward method must accept two input parameters: fields and parameters")
                 test_output = self.nlmodel(self.fields, self.parameters)
-                expected_shape = (self.fields.dyn_count, self.batchsize, *self.shape)
-                if test_output.shape != expected_shape:
-                    raise ValueError(f"Nonlinear model output shape {test_output.shape} doesn't match expected {expected_shape}")
+                self._validate_model_output(test_output, self.fields.dyn_names, "Nonlinear")
             except Exception as e:
                 raise RuntimeError("Error occurred during nonlinear model validation.") from e
 
@@ -108,9 +116,7 @@ class PDEModel:
                 if len(sig.parameters) != 2:  # fields, parameters
                     raise TypeError("Static model's forward method must accept two input parameters: fields and parameters")
                 test_output = self.static_model(self.fields, self.parameters)
-                expected_shape = (self.fields.stat_count, self.batchsize, *self.shape)
-                if test_output.shape != expected_shape:
-                    raise ValueError(f"Static model output shape {test_output.shape} doesn't match expected {expected_shape}")
+                self._validate_model_output(test_output, self.fields.stat_names, "Static")
             except Exception as e:
                 raise RuntimeError("Error occurred during static model validation.") from e
         
@@ -127,7 +133,45 @@ class PDEModel:
     def compute_nonlinear(self):
         return self.nlmodel(self.fields, self.parameters)
 
+    def _validate_L_hat_shapes(self):
+        field_bcs = self.fields.field_bcs or {}
+        for name, L_hat in self.fields.L_hat.items():
+            bcs = field_bcs.get(name, normalize_bcs(None, len(self.shape)))
+            expected_shape = (self.batchsize, *self._effective_spectral_shape(bcs))
+            if L_hat.shape != expected_shape:
+                raise ValueError(
+                    f"L_hat for field '{name}' must have shape {expected_shape}, got {L_hat.shape}"
+                )
+
+    def _effective_spectral_shape(self, bcs):
+        shape = []
+        for N, bc in zip(self.shape, bcs):
+            if bc == BoundaryCondition.DIRICHLET:
+                shape.append(max(N - 2, 0))
+            else:
+                shape.append(N)
+        return tuple(shape)
+
+    def _validate_model_output(self, output, field_names, label):
+        if not field_names:
+            return
+        if not isinstance(output, dict):
+            raise TypeError(f"{label} model output must be dict, got {type(output)}")
+
+        missing = [name for name in field_names if name not in output]
+        if missing:
+            raise ValueError(f"{label} model output missing fields: {missing}")
+        for name in field_names:
+            expected_shape = self.fields.spectral[name].shape
+            if output[name].shape != expected_shape:
+                raise ValueError(
+                    f"{label} model output for '{name}' has shape {output[name].shape}, "
+                    f"expected {expected_shape}"
+                )
+
 
 class ZeroModel(torch.nn.Module):
     def forward(self, fields, params):
+        if isinstance(fields.spectral, dict):
+            return {name: torch.zeros_like(fields.spectral[name]) for name in fields.name_to_idx.keys()}
         return 0
