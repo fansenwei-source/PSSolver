@@ -109,10 +109,10 @@ def diff_1d(F, h, dim, bc):
 # Q initialization (BC-aware smoothing)
 # ============================================================
 
-def Q_init(shape, seed=42, noise=0.01, sigma_xy=1.0, sigma_z=1.0, bcs_Q=None):
+def Q_init(shape, seed=42, noise=0.05*2*math.pi, sigma_xy=1.0, sigma_z=1.0, bcs_Q=None):
     """
     Q init:
-    - Each z-layer has a +1/2 and -1/2 in-plane defect pair.
+    - Uniform in-plane alignment (no defect pair).
     - Add smooth 3D angle noise (theta, phi) with BC-aware gaussian smoothing.
     - Enforce periodic only on periodic axes; leave Neumann/Dirichlet to projection.
     """
@@ -132,20 +132,8 @@ def Q_init(shape, seed=42, noise=0.01, sigma_xy=1.0, sigma_z=1.0, bcs_Q=None):
     mode_y = mode_from_bc(bcs_Q.get("y", BC_PERIODIC))
     mode_z = mode_from_bc(bcs_Q.get("z", BC_NEUMANN))
 
-    # defect angle field in xy
-    X, Y = np.meshgrid(np.arange(Nx), np.arange(Ny), indexing="ij")
     S0 = 1.0
-
-    defect1_x = 5 * Nx // 8
-    defect1_y = Ny // 2
-    defect2_x = 3 * Nx // 8
-    defect2_y = Ny // 2
-
-    theta1 = np.arctan2(Y - defect1_y, X - defect1_x)
-    theta2 = np.arctan2(Y - defect2_y, X - defect2_x)
-
-    angle_phi_plane_xy = 0.5 * theta1 - 0.5 * (theta2 + math.pi)
-    angle_phi_plane = np.repeat(angle_phi_plane_xy[:, :, None], Nz, axis=2)
+    angle_phi_plane = np.zeros((Nx, Ny, Nz), dtype=np.float32)
 
     angle_theta_0 = math.pi / 2.0  # in-plane
 
@@ -194,7 +182,6 @@ def Q_init(shape, seed=42, noise=0.01, sigma_xy=1.0, sigma_z=1.0, bcs_Q=None):
     Qyz_t = torch.from_numpy(Qyz.astype(np.float32))
 
     return Qxx_t, Qxy_t, Qxz_t, Qyy_t, Qyz_t
-
 
 # ============================================================
 # Static compute model: BC-aware Q operators + Stokes (yz Dirichlet)
@@ -1386,14 +1373,16 @@ if __name__ == "__main__":
     # -------------------------
     # Run parameters
     # -------------------------
+    # Run parameters
+    # -------------------------
     seed = 24
-    dt = 5e-3
-    steps = 2000
+    dt = 1e-2
+    steps = 1000
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     batchsize = 1
 
-    Nx, Ny, Nz = 128, 40, 40
-    Lx, Ly, Lz = 32.0, 10.0, 10.0
+    Nx, Ny, Nz = 512, 40, 40
+    Lx, Ly, Lz = 128.0, 10.0, 10.0
 
     # -------------------------
     # BC configuration
@@ -1520,7 +1509,7 @@ if __name__ == "__main__":
         solver.model.static_model._u_cache = None
 
     # If you want diagnostics during run:
-    solver.model.static_model.enable_diag = True
+    solver.model.static_model.enable_diag = False
     solver.model.static_model.heavy_diag_every = 0
     solver.model.static_model.enable_diag_detail = False
     solver.model.nlmodel.enable_diag = False
@@ -1529,13 +1518,13 @@ if __name__ == "__main__":
     # -------------------------
     # Main loop
     # -------------------------
-    os.makedirs("../../PSSolver/data_dt=1e-3_fric=0.1", exist_ok=True)
+    os.makedirs("data_H=10", exist_ok=True)
     start = time.time()
 
     for i in trange(steps):
         if i == diag_steps:
             solver.model.static_model.enable_diag = False
-        if i % 100 == 0:
+        if i % 10 == 0:
             Q_stack = torch.stack(
                 [
                     solver.model.fields["Qxx"],
@@ -1547,7 +1536,7 @@ if __name__ == "__main__":
                 dim=-1,
             )
             Q_field = Q_stack.detach().cpu().numpy()
-            np.save(f"../../PSSolver/data_dt=1e-3_fric=0.1/Q_{i}.npy", Q_field)
+            np.save(f"data_H=10/Q_{i}.npy", Q_field)
         if i % 100 == 0 and solver.model.static_model.enable_diag:
             # print(
             #     solver.model.static_model._pressure_schur_resid,

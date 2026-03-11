@@ -25,6 +25,7 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
 
     def step(self):
         N_hats = self.model.compute_nonlinear() 
+        S_hats = self.model.compute_static()
 
         # Use in-place operations to reduce memory allocations and improve speed
         if isinstance(self.model.fields.spectral, dict):
@@ -39,7 +40,7 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
             dyn_fields.div_(self.denom)
         
         if self.model.fields.stat_count != 0:
-            stat_out = self.model.compute_static()
+            stat_out = S_hats
             if isinstance(self.model.fields.spectral, dict):
                 if not isinstance(stat_out, dict):
                     raise TypeError("Static model must return dict in dict-field mode")
