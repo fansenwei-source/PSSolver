@@ -18,7 +18,7 @@ class PDEModel:
         self.static_model = None
 
 
-    def add_dynamic_field(self, name, init, L_hat):
+    def add_dynamic_field(self, name, init, L_hat, boundary_conditions=None):
         if not isinstance(init, torch.Tensor):
             raise TypeError(f"Initial value for field '{name}' must be a torch.Tensor, got {type(init)}")
         
@@ -38,10 +38,12 @@ class PDEModel:
         else:
             raise ValueError(f"L_hat for field '{name}' must have shape {self.shape} or {(self.batchsize, *self.shape)}, got {L_hat.shape}")
 
-        self.dyn_fields.append([name, init, L_hat])
+        boundary_conditions = self.fields._normalize_boundary_conditions(boundary_conditions)
+        self.dyn_fields.append([name, init, L_hat, boundary_conditions])
 
-    def add_static_field(self, name):
-        self.stat_fields.append([name])  
+    def add_static_field(self, name, boundary_conditions=None):
+        boundary_conditions = self.fields._normalize_boundary_conditions(boundary_conditions)
+        self.stat_fields.append([name, boundary_conditions])  
 
     def set_nonlinear_model(self, model):
         if not isinstance(model, torch.nn.Module):
@@ -62,14 +64,17 @@ class PDEModel:
         if len(all_names) != len(set(all_names)):
             raise ValueError("Duplicate field names detected")
 
+        self.fields.name_to_idx = {}
         count = 0
         inits = []
         L_hats = []
+        boundary_conditions = []
         for entry in self.dyn_fields:
             self.fields.name_to_idx[entry[0]] = count 
             count += 1
             inits.append(entry[1])
             L_hats.append(entry[2])
+            boundary_conditions.append(entry[3])
         
         self.fields.dyn_count = count
  
@@ -77,7 +82,10 @@ class PDEModel:
             self.fields.name_to_idx[entry[0]] = count 
             count += 1
             inits.append(torch.zeros(self.batchsize, *self.shape))
+            boundary_conditions.append(entry[1])
         self.fields.stat_count = count - self.fields.dyn_count
+        self.fields.boundary_conditions = list(boundary_conditions)
+        self.fields._refresh_metadata()
 
         self.fields.spatial = torch.stack(inits).to(self.device)#.permute(1, 0, *range(2, 2 + len(self.shape)))
         self.fields.spectral = self.fields.fftn()

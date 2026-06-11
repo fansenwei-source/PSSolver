@@ -1,2 +1,7 @@
 __pycache__/
 scratch/
+data/
+data01/
+data03/
+*.npy
+*.npz

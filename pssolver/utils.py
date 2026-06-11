@@ -2,7 +2,10 @@ import torch
 
 def fft(field: torch.Tensor, dim: int) -> torch.Tensor:
     """
-    Computes the batched N-dimensional Fast Fourier Transform (FFT) of the input tensor along the last `dim` dimensions.
+    Computes the batched periodic N-dimensional FFT along the last `dim` dimensions.
+
+    For mixed boundary conditions, prefer `fields.transform_tensor(...)` or
+    `solver.transform_tensor(...)` so each axis can choose FFT/DST/DCT as needed.
 
     Args:
         field (torch.Tensor): Input tensor containing the data to transform.
@@ -16,7 +19,11 @@ def fft(field: torch.Tensor, dim: int) -> torch.Tensor:
 
 def ifft(field: torch.Tensor, dim: int) -> torch.Tensor:
     """
-    Computes the batched N-dimensional Inverse Fast Fourier Transform (IFFT) of the input tensor along the last `dim` dimensions and returns the real part.
+    Computes the batched periodic N-dimensional inverse FFT along the last
+    `dim` dimensions and returns the real part.
+
+    For mixed boundary conditions, prefer `fields.inverse_transform_tensor(...)`
+    or `solver.inverse_transform_tensor(...)`.
 
     Args:
         field (torch.Tensor): Input tensor containing the data to inverse transform.
@@ -87,4 +94,3 @@ def visualize1D(data, filename="output.png", cmap="viridis"):
     plt.savefig(filename)
     plt.show()
     plt.close(fig)
-

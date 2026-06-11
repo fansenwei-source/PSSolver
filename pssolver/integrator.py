@@ -1,4 +1,7 @@
 
+import torch
+
+
 class TimeIntegrator:
     def __init__(self, dt, qx, qy, q2):
         self.dt = dt
@@ -21,23 +24,33 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
         self.step_count = 0
 
     def step(self):
-        N_hats = self.model.compute_nonlinear() 
+        # 1. static(Q^n): u^n, E^n, Omega^n, gradQ^n
+        if self.stat_count != 0:
+            S_hats = self.model.compute_static()
+            for offset in range(self.stat_count):
+                field_idx = self.dyn_count + offset
+                self.model.fields.spectral[field_idx] = S_hats[offset]
+                self.model.fields.spatial[field_idx] = self.model.fields.inverse_transform(
+                    field_idx,
+                    spectral=S_hats[offset],
+                )
 
-        # Use in-place operations to reduce memory allocations and improve speed
+        # 2. N(Q^n, u^n, E^n, Omega^n)
+        N_hats = self.model.compute_nonlinear()
+
+        # 3. IMEX 更新 Q 到 Q^{n+1}
         dyn_fields = self.model.fields.spectral[:self.dyn_count]
         dyn_fields.add_(self.dt * N_hats)
         dyn_fields.div_(self.denom)
-        
-        if self.stat_count != 0:
-            self.model.fields.spectral[self.dyn_count:] = self.model.compute_static() 
-        
-        # self.model.fields.spectral *= self.model.fields.dealiasing_mask
 
-        self.model.fields.spatial = self.model.fields.ifftn() # calculate spatial from spectral
+        # 4. 只更新 dynamic fields 的实空间 Q^{n+1}
+        for field_idx in range(self.dyn_count):
+            self.model.fields.spatial[field_idx] = self.model.fields.inverse_transform(field_idx)
 
         self.step_count += 1
 
-        # spectral cleanup. Taking fft after ifft is critical for stability. 
+        # Periodically rebuild dynamic spectra from real fields to limit accumulated roundoff drift.
         if self.step_count % 20 == 0:
-            self.model.fields.spectral = self.model.fields.fftn() 
+            for field_idx in range(self.dyn_count):
+                self.model.fields.spectral[field_idx] = self.model.fields.forward_transform(field_idx)
             self.step_count = 0
