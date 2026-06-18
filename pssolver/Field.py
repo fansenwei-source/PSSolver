@@ -239,12 +239,45 @@ class Fields:
         boundary_conditions = self._normalize_boundary_conditions(boundary_conditions)
         return backend.inverse(spectral, boundary_conditions)
 
+    def _normalize_field_indices(self, keys):
+        try:
+            indices = [self._normalize_field_key(key) for key in keys]
+        except TypeError as exc:
+            raise TypeError("Field indices must be an iterable of names or indices.") from exc
+        if len(indices) == 0:
+            raise ValueError("At least one field index is required.")
+        for index in indices:
+            if index < 0 or index >= len(self.boundary_conditions):
+                raise IndexError(f"Field index {index} is out of range.")
+        return indices
+
+    def _common_boundary_conditions(self, indices):
+        boundary_conditions = self.get_boundary_conditions(indices[0])
+        for index in indices[1:]:
+            if self.get_boundary_conditions(index) != boundary_conditions:
+                raise ValueError("All fields in a transform group must have matching boundary conditions.")
+        return boundary_conditions
+
+    def group_indices_by_boundary_conditions(self, keys):
+        groups = {}
+        for index in self._normalize_field_indices(keys):
+            groups.setdefault(self.get_boundary_conditions(index), []).append(index)
+        return list(groups.values())
+
     def forward_transform(self, key, tensor=None):
         backend = self._require_transform_backend()
         key = self._normalize_field_key(key)
         boundary_conditions = self.get_boundary_conditions(key)
         if tensor is None:
             tensor = self.spatial[key]
+        return backend.forward(tensor, boundary_conditions)
+
+    def forward_transform_group(self, keys, tensor=None):
+        backend = self._require_transform_backend()
+        indices = self._normalize_field_indices(keys)
+        boundary_conditions = self._common_boundary_conditions(indices)
+        if tensor is None:
+            tensor = self.spatial[indices]
         return backend.forward(tensor, boundary_conditions)
 
     def inverse_transform(self, key, spectral=None, boundary_conditions=None):
@@ -256,6 +289,17 @@ class Fields:
             boundary_conditions = self._normalize_boundary_conditions(boundary_conditions)
         if spectral is None:
             spectral = self.spectral[key]
+        return backend.inverse(spectral, boundary_conditions)
+
+    def inverse_transform_group(self, keys, spectral=None, boundary_conditions=None):
+        backend = self._require_transform_backend()
+        indices = self._normalize_field_indices(keys)
+        if boundary_conditions is None:
+            boundary_conditions = self._common_boundary_conditions(indices)
+        else:
+            boundary_conditions = self._normalize_boundary_conditions(boundary_conditions)
+        if spectral is None:
+            spectral = self.spectral[indices]
         return backend.inverse(spectral, boundary_conditions)
 
     def laplacian_hat(self, key, spectral=None):

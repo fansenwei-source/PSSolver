@@ -167,12 +167,12 @@ from scipy.ndimage import gaussian_filter1d
 #         torch.from_numpy(Qyz.astype(np.float32)),
 #     )
 
-def Q_init(shape, seed=42, noise=0.01, sigma_xy=1.0, sigma_z=1.0):
+def Q_init(shape, seed=42, noise=0.01, sigma_x=1.0, sigma_y=1.0, sigma_z=1.0):
     """
     Mixed-BC 版本初始化：
     - 全场 director 初始沿 +x 方向
-    - 在 theta, phi 上叠加 3D 平滑噪声（x/y 用 sigma_xy，z 用 sigma_z）
-    - x/y 用 periodic 平滑，z 用 reflect 平滑，近似匹配 Q 的 Neumann 边界
+    - 在 theta, phi 上叠加 3D 平滑噪声
+    - x 用 periodic 平滑，y/z 用 reflect 平滑，近似匹配 Q 的 Neumann 边界
     """
     Nx, Ny, Nz = shape
     rng = np.random.default_rng(seed)
@@ -186,8 +186,8 @@ def Q_init(shape, seed=42, noise=0.01, sigma_xy=1.0, sigma_z=1.0):
     delta_phi = rng.uniform(-1.0, 1.0, size=(Nx, Ny, Nz)).astype(np.float32)
 
     for arr in (delta_theta, delta_phi):
-        arr[:] = gaussian_filter1d(arr, sigma=sigma_xy, axis=0, mode="wrap")
-        arr[:] = gaussian_filter1d(arr, sigma=sigma_xy, axis=1, mode="wrap")
+        arr[:] = gaussian_filter1d(arr, sigma=sigma_x, axis=0, mode="wrap")
+        arr[:] = gaussian_filter1d(arr, sigma=sigma_y, axis=1, mode="reflect")
         arr[:] = gaussian_filter1d(arr, sigma=sigma_z, axis=2, mode="reflect")
 
     def rescale_to_amp(arr, amp):
@@ -227,9 +227,12 @@ def Q_init(shape, seed=42, noise=0.01, sigma_xy=1.0, sigma_z=1.0):
     )
 
 
-Q_BC = ("periodic", "periodic", "neumann")
-U_BC = ("periodic", "periodic", "dirichlet")
-P_BC = ("periodic", "periodic", "neumann")
+Q_BC = ("periodic", "neumann", "neumann")
+U_BC = ("periodic", "dirichlet", "dirichlet")
+# Pressure is used as a modal Lagrange multiplier for incompressibility, not as
+# an independently prescribed wall boundary condition. The DCT space supplies the
+# pressure gauge/null mode and pairs with div(u) for the Schur complement.
+PRESSURE_MODAL_BC = ("periodic", "neumann", "neumann")
 ENABLE_DIAGNOSTICS = True
 DIAGNOSTIC_INTERVAL = 10
 SAVE_INTERVAL = 10
@@ -263,6 +266,36 @@ def divergence_stats(fields):
     div_rel = div_rms / max(grad_u_rms, 1e-30)
     return div_max, div_rms, div_rel
 
+
+def wall_normal_momentum_stats(fields, params):
+    """Check normal momentum balance at the y and z walls for the modal pressure."""
+    alpha = params['alpha']
+    force_prefactor = beta * alpha
+
+    gxQxy = fields.gradient('Qxy', axis=0)
+    gyQyy = fields.gradient('Qyy', axis=1)
+    gzQyz = fields.gradient('Qyz', axis=2)
+    gxQxz = fields.gradient('Qxz', axis=0)
+    gyQyz = fields.gradient('Qyz', axis=1)
+    gzQxx = fields.gradient('Qxx', axis=2)
+    gzQyy = fields.gradient('Qyy', axis=2)
+
+    fy = force_prefactor * (gxQxy + gyQyy + gzQyz)
+    fz = force_prefactor * (gxQxz + gyQyz - gzQxx - gzQyy)
+
+    lap_uy = fields.laplacian('uy')
+    lap_uz = fields.laplacian('uz')
+    dyp = fields.gradient('p', axis=1)
+    dzp = fields.gradient('p', axis=2)
+    residual_y = dyp - (fy + eta * lap_uy - fric * fields['uy'])
+    residual_z = dzp - (fz + eta * lap_uz - fric * fields['uz'])
+
+    y_wall_residual = torch.stack([residual_y[:, :, 0, :], residual_y[:, :, -1, :]], dim=-1)
+    z_wall_residual = torch.stack([residual_z[..., 0], residual_z[..., -1]], dim=-1)
+    wall_residual = torch.cat([y_wall_residual.reshape(-1), z_wall_residual.reshape(-1)])
+    wall_abs = wall_residual.abs()
+    return wall_abs.max().item(), torch.sqrt(torch.mean(wall_abs.square())).item()
+
 class NonlinearModel(torch.nn.Module):
     def __init__(self, solver):
         super().__init__()
@@ -288,7 +321,6 @@ class NonlinearModel(torch.nn.Module):
         gzuy = fields.gradient('uy', axis=2)
         gxuz = fields.gradient('uz', axis=0)
         gyuz = fields.gradient('uz', axis=1)
-        # gzuz = fields.gradient('uz', axis=2)
 
         wxy = -0.5 * (gxuy - gyux)
         wxz = -0.5 * (gxuz - gzux)
@@ -357,7 +389,20 @@ class NonlinearModel(torch.nn.Module):
 
         return fields.transform_tensor(torch.stack([out0, out1, out2, out3, out4]), Q_BC)  
 
-class Static_compute_fn(torch.nn.Module):
+class ModalSaddleStokesCompute(torch.nn.Module):
+    """
+    Matrix-free Schur complement for the modal saddle-point Stokes/Brinkman solve:
+
+        A_D u + G p = f
+        D u       = 0
+
+    u is represented in the Dirichlet/DST velocity space in y and z. p is
+    represented in a DCT multiplier space on the same wall-normal axes so that
+    D u and pressure test functions live in the same modal space. This should be
+    interpreted as the pressure space of the saddle-point discretization, not as
+    a physical homogeneous Neumann pressure wall condition.
+    """
+
     def __init__(self, solver, pressure_rel_tol=1e-6, pressure_max_iter=80):
         super().__init__()
         backend = solver.transform_backend
@@ -366,83 +411,86 @@ class Static_compute_fn(torch.nn.Module):
         device = solver.qx.device
 
         velocity_metadata = backend.get_metadata(U_BC)
-        pressure_metadata = backend.get_metadata(P_BC)
+        pressure_metadata = backend.get_metadata(PRESSURE_MODAL_BC)
 
-        qx_xy, qy_xy = torch.meshgrid(
-            velocity_metadata.axis_modes[0],
-            velocity_metadata.axis_modes[1],
-            indexing="ij",
-        )
+        qx = velocity_metadata.axis_modes[0]
+        ky_dirichlet = velocity_metadata.axis_modes[1]
         kz_dirichlet = velocity_metadata.axis_modes[2]
+        ky_neumann = pressure_metadata.axis_modes[1]
         kz_neumann = pressure_metadata.axis_modes[2]
+        nx = qx.numel()
+        ny = ky_dirichlet.numel()
         nz = kz_dirichlet.numel()
 
-        dirichlet_matrix = backend._get_matrix("dst", nz).to(device=device, dtype=real_dtype)
-        neumann_matrix = backend._get_matrix("dct", nz).to(device=device, dtype=real_dtype)
+        wall_ops = {}
+        for axis, n, k_dirichlet in (
+            (1, ny, ky_dirichlet),
+            (2, nz, kz_dirichlet),
+        ):
+            dirichlet_matrix = backend._get_matrix("dst", n).to(device=device, dtype=real_dtype)
+            neumann_matrix = backend._get_matrix("dct", n).to(device=device, dtype=real_dtype)
 
-        basis_neumann_to_dirichlet = neumann_matrix @ dirichlet_matrix.transpose(0, 1)
-        basis_dirichlet_to_neumann = dirichlet_matrix @ neumann_matrix.transpose(0, 1)
+            basis_neumann_to_dirichlet = neumann_matrix @ dirichlet_matrix.transpose(0, 1)
+            basis_dirichlet_to_neumann = dirichlet_matrix @ neumann_matrix.transpose(0, 1)
 
-        dz_dirichlet_to_neumann = torch.zeros((nz, nz), device=device, dtype=real_dtype)
-        if nz > 1:
-            idx = torch.arange(nz - 1, device=device)
-            dz_dirichlet_to_neumann[idx, idx + 1] = kz_dirichlet[:-1]
-        dz_neumann_to_dirichlet = -dz_dirichlet_to_neumann.transpose(0, 1)
+            d_dirichlet_to_neumann = torch.zeros((n, n), device=device, dtype=real_dtype)
+            if n > 1:
+                idx = torch.arange(n - 1, device=device)
+                d_dirichlet_to_neumann[idx, idx + 1] = k_dirichlet[:-1]
+            d_neumann_to_dirichlet = -d_dirichlet_to_neumann.transpose(0, 1)
+
+            wall_ops[axis] = {
+                "basis_neumann_to_dirichlet": basis_neumann_to_dirichlet.to(dtype=spectral_dtype),
+                "basis_dirichlet_to_neumann": basis_dirichlet_to_neumann.to(dtype=spectral_dtype),
+                "d_neumann_to_dirichlet": d_neumann_to_dirichlet.to(dtype=spectral_dtype),
+                "d_dirichlet_to_neumann": d_dirichlet_to_neumann.to(dtype=spectral_dtype),
+            }
 
         a_diag = fric + eta * (
-            (qx_xy.square() + qy_xy.square()).unsqueeze(-1)
-            + kz_dirichlet.square().view(1, 1, -1)
+            qx.square().view(nx, 1, 1)
+            + ky_dirichlet.square().view(1, ny, 1)
+            + kz_dirichlet.square().view(1, 1, nz)
         )
         a_inv = 1.0 / a_diag
 
-        xy_diag_base = torch.einsum(
-            'ij,...j->...i',
-            basis_neumann_to_dirichlet.square(),
-            a_inv,
+        pressure_q2 = (
+            qx.square().view(nx, 1, 1)
+            + ky_neumann.square().view(1, ny, 1)
+            + kz_neumann.square().view(1, 1, nz)
         )
-        z_diag_base = torch.einsum(
-            'ij,...j->...i',
-            dz_neumann_to_dirichlet.square(),
-            a_inv,
-        )
-        schur_diag = (qx_xy.square() + qy_xy.square()).unsqueeze(-1) * xy_diag_base + z_diag_base
+        schur_diag = pressure_q2 / (fric + eta * pressure_q2.clamp_min(torch.finfo(real_dtype).eps))
 
-        pressure_null_mask = torch.zeros((1, *qx_xy.shape, nz), device=device, dtype=torch.bool)
+        pressure_null_mask = torch.zeros((1, nx, ny, nz), device=device, dtype=torch.bool)
         pressure_null_mask[:, 0, 0, 0] = True
         schur_diag_safe = schur_diag.unsqueeze(0).clone()
         schur_diag_safe[pressure_null_mask] = 1.0
 
-        self.register_buffer("ikx", (1j * qx_xy).view(1, *qx_xy.shape, 1).to(dtype=spectral_dtype))
-        self.register_buffer("iky", (1j * qy_xy).view(1, *qy_xy.shape, 1).to(dtype=spectral_dtype))
+        self.register_buffer("ikx", (1j * qx).view(1, nx, 1, 1).to(dtype=spectral_dtype))
         self.register_buffer("a_inv", a_inv.unsqueeze(0).to(dtype=real_dtype))
-        self.register_buffer(
-            "basis_neumann_to_dirichlet",
-            basis_neumann_to_dirichlet.to(dtype=spectral_dtype),
-        )
-        self.register_buffer(
-            "basis_dirichlet_to_neumann",
-            basis_dirichlet_to_neumann.to(dtype=spectral_dtype),
-        )
-        self.register_buffer(
-            "dz_neumann_to_dirichlet",
-            dz_neumann_to_dirichlet.to(dtype=spectral_dtype),
-        )
-        self.register_buffer(
-            "dz_dirichlet_to_neumann",
-            dz_dirichlet_to_neumann.to(dtype=spectral_dtype),
-        )
+        self.register_buffer("basis_neumann_to_dirichlet_y", wall_ops[1]["basis_neumann_to_dirichlet"])
+        self.register_buffer("basis_dirichlet_to_neumann_y", wall_ops[1]["basis_dirichlet_to_neumann"])
+        self.register_buffer("d_neumann_to_dirichlet_y", wall_ops[1]["d_neumann_to_dirichlet"])
+        self.register_buffer("d_dirichlet_to_neumann_y", wall_ops[1]["d_dirichlet_to_neumann"])
+        self.register_buffer("basis_neumann_to_dirichlet_z", wall_ops[2]["basis_neumann_to_dirichlet"])
+        self.register_buffer("basis_dirichlet_to_neumann_z", wall_ops[2]["basis_dirichlet_to_neumann"])
+        self.register_buffer("d_neumann_to_dirichlet_z", wall_ops[2]["d_neumann_to_dirichlet"])
+        self.register_buffer("d_dirichlet_to_neumann_z", wall_ops[2]["d_dirichlet_to_neumann"])
         self.register_buffer("schur_diag_safe", schur_diag_safe.to(dtype=real_dtype))
         self.register_buffer("pressure_null_mask", pressure_null_mask)
 
         self.pressure_rel_tol = pressure_rel_tol
         self.pressure_max_iter = pressure_max_iter
         self.pressure_guess = None
+        self.last_pressure_hat = None
         self.last_pressure_iterations = 0
         self.last_pressure_residual = 0.0
         self.last_pressure_relative_residual = 0.0
 
-    def _matmul_lastdim(self, tensor, matrix):
-        return torch.matmul(tensor, matrix)
+    def _apply_axis_matrix(self, tensor, matrix, axis):
+        spectral_axis = tensor.ndim - 3 + axis
+        moved = tensor.movedim(spectral_axis, -1)
+        transformed = torch.matmul(moved, matrix)
+        return transformed.movedim(-1, spectral_axis)
 
     def _project_pressure_gauge(self, p_hat):
         return p_hat.masked_fill(self.pressure_null_mask, 0)
@@ -450,30 +498,47 @@ class Static_compute_fn(torch.nn.Module):
     def _dirichlet_helmholtz_inverse(self, rhs_hat):
         return rhs_hat * self.a_inv
 
-    def _pressure_to_dirichlet(self, p_hat):
-        return self._matmul_lastdim(p_hat, self.basis_neumann_to_dirichlet)
+    def _pressure_to_velocity(self, p_hat):
+        spectral = self._apply_axis_matrix(p_hat, self.basis_neumann_to_dirichlet_y, axis=1)
+        return self._apply_axis_matrix(spectral, self.basis_neumann_to_dirichlet_z, axis=2)
 
-    def _dirichlet_to_pressure(self, spectral):
-        return self._matmul_lastdim(spectral, self.basis_dirichlet_to_neumann)
+    def _velocity_to_pressure(self, spectral):
+        out = self._apply_axis_matrix(spectral, self.basis_dirichlet_to_neumann_y, axis=1)
+        return self._apply_axis_matrix(out, self.basis_dirichlet_to_neumann_z, axis=2)
 
-    def _pressure_grad_z(self, p_hat):
-        return self._matmul_lastdim(p_hat, self.dz_neumann_to_dirichlet)
+    def _pressure_gradient(self, p_hat, axis):
+        if axis == 0:
+            return self.ikx * self._pressure_to_velocity(p_hat)
+        if axis == 1:
+            out = self._apply_axis_matrix(p_hat, self.d_neumann_to_dirichlet_y, axis=1)
+            return self._apply_axis_matrix(out, self.basis_neumann_to_dirichlet_z, axis=2)
+        if axis == 2:
+            out = self._apply_axis_matrix(p_hat, self.basis_neumann_to_dirichlet_y, axis=1)
+            return self._apply_axis_matrix(out, self.d_neumann_to_dirichlet_z, axis=2)
+        raise IndexError(f"Unsupported pressure-gradient axis {axis}.")
 
-    def _velocity_div_z(self, velocity_hat):
-        return self._matmul_lastdim(velocity_hat, self.dz_dirichlet_to_neumann)
+    def _velocity_divergence_component(self, velocity_hat, axis):
+        if axis == 0:
+            return self._velocity_to_pressure(self.ikx * velocity_hat)
+        if axis == 1:
+            out = self._apply_axis_matrix(velocity_hat, self.d_dirichlet_to_neumann_y, axis=1)
+            return self._apply_axis_matrix(out, self.basis_dirichlet_to_neumann_z, axis=2)
+        if axis == 2:
+            out = self._apply_axis_matrix(velocity_hat, self.basis_dirichlet_to_neumann_y, axis=1)
+            return self._apply_axis_matrix(out, self.d_dirichlet_to_neumann_z, axis=2)
+        raise IndexError(f"Unsupported velocity-divergence axis {axis}.")
 
     def _pressure_operator(self, p_hat):
         p_hat = self._project_pressure_gauge(p_hat)
-        p_hat_dirichlet = self._pressure_to_dirichlet(p_hat)
 
-        ux_hat = self._dirichlet_helmholtz_inverse(self.ikx * p_hat_dirichlet)
-        uy_hat = self._dirichlet_helmholtz_inverse(self.iky * p_hat_dirichlet)
-        uz_hat = self._dirichlet_helmholtz_inverse(self._pressure_grad_z(p_hat))
+        ux_hat = self._dirichlet_helmholtz_inverse(self._pressure_gradient(p_hat, axis=0))
+        uy_hat = self._dirichlet_helmholtz_inverse(self._pressure_gradient(p_hat, axis=1))
+        uz_hat = self._dirichlet_helmholtz_inverse(self._pressure_gradient(p_hat, axis=2))
 
         divergence_hat = (
-            self._dirichlet_to_pressure(self.ikx * ux_hat)
-            + self._dirichlet_to_pressure(self.iky * uy_hat)
-            + self._velocity_div_z(uz_hat)
+            self._velocity_divergence_component(ux_hat, axis=0)
+            + self._velocity_divergence_component(uy_hat, axis=1)
+            + self._velocity_divergence_component(uz_hat, axis=2)
         )
         return self._project_pressure_gauge(-divergence_hat)
 
@@ -562,19 +627,19 @@ class Static_compute_fn(torch.nn.Module):
         uz_hat_free = self._dirichlet_helmholtz_inverse(fz_hat)
 
         provisional_divergence = (
-            self._dirichlet_to_pressure(self.ikx * ux_hat_free)
-            + self._dirichlet_to_pressure(self.iky * uy_hat_free)
-            + self._velocity_div_z(uz_hat_free)
+            self._velocity_divergence_component(ux_hat_free, axis=0)
+            + self._velocity_divergence_component(uy_hat_free, axis=1)
+            + self._velocity_divergence_component(uz_hat_free, axis=2)
         )
         pressure_rhs = self._project_pressure_gauge(-provisional_divergence)
         pressure_hat = self._solve_pressure(pressure_rhs)
-        pressure_hat_dirichlet = self._pressure_to_dirichlet(pressure_hat)
+        self.last_pressure_hat = pressure_hat.detach()
 
-        ux_hat = ux_hat_free - self._dirichlet_helmholtz_inverse(self.ikx * pressure_hat_dirichlet)
-        uy_hat = uy_hat_free - self._dirichlet_helmholtz_inverse(self.iky * pressure_hat_dirichlet)
-        uz_hat = uz_hat_free - self._dirichlet_helmholtz_inverse(self._pressure_grad_z(pressure_hat))
+        ux_hat = ux_hat_free - self._dirichlet_helmholtz_inverse(self._pressure_gradient(pressure_hat, axis=0))
+        uy_hat = uy_hat_free - self._dirichlet_helmholtz_inverse(self._pressure_gradient(pressure_hat, axis=1))
+        uz_hat = uz_hat_free - self._dirichlet_helmholtz_inverse(self._pressure_gradient(pressure_hat, axis=2))
 
-        return torch.stack([ux_hat, uy_hat, uz_hat])
+        return torch.stack([ux_hat, uy_hat, uz_hat, pressure_hat])
 
 # seed = 24
 # N = 64
@@ -597,26 +662,27 @@ class Static_compute_fn(torch.nn.Module):
 # beta = -1
 
 seed = 24
-dt = 1e-3
-steps = 100
+dt = 1e-2
+steps = 10000
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 batchsize = 1
 
-Nx, Ny, Nz = 256, 256, 120
-Lx, Ly, Lz = 64.0, 64.0, 30.0
+Nx, Ny, Nz = 512, 40, 40
+Lx, Ly, Lz = 128.0, 10.0, 10.0
 
 solver = SpectralSolver(shape=(Nx,Ny,Nz), L=(Lx,Ly,Lz), dt=dt, device=device, batchsize=batchsize)
 Qxx_0, Qxy_0, Qxz_0, Qyy_0, Qyz_0 = Q_init((Nx,Ny,Nz), seed)
 
 # Nematic 参数
-aQ = -1.0
-bQ = -6.0
-cQ = 6.0
+rho = 6
+aQ = 1 - rho/3
+bQ = -rho 
+cQ = rho
 KQ = 1.0
 
 # 流体/应力参数
 beta = -1.0
-fric = 0.1
+fric = 0.0
 eta  = 1.0
 
 q2_Q = solver.get_q2(Q_BC)
@@ -656,20 +722,21 @@ solver.model.add_dynamic_field(
 )
 
 # --- Add static fields ---
-# Static_compute_fn now solves a mixed spectral Stokes projection using
-# periodic FFTs in x/y and a z-collocation Schur solve consistent with U_BC.
+# ModalSaddleStokesCompute solves the pure FFT/DST/DCT modal saddle-point
+# discretization through its pressure Schur complement.
 solver.model.add_static_field("ux", boundary_conditions=U_BC)
 solver.model.add_static_field("uy", boundary_conditions=U_BC)
 solver.model.add_static_field("uz", boundary_conditions=U_BC)
+solver.model.add_static_field("p", boundary_conditions=PRESSURE_MODAL_BC)
 
 
 
 # compiled_nl_model = torch.compile(NonlinearModel(solver),  mode="max-autotune")
-# compiled_static_model = torch.compile(Static_compute_fn(solver), mode="max-autotune")
+# compiled_static_model = torch.compile(ModalSaddleStokesCompute(solver), mode="max-autotune")
 # solver.model.set_nonlinear_model(compiled_nl_model)
 # solver.model.set_static_compute_model(compiled_static_model)
 solver.model.set_nonlinear_model(NonlinearModel(solver))
-solver.model.set_static_compute_model(Static_compute_fn(solver))
+solver.model.set_static_compute_model(ModalSaddleStokesCompute(solver))
 
 alpha = torch.tensor(5.0, device=device)
 solver.model.parameters.new_param('alpha', alpha)
@@ -678,42 +745,63 @@ solver.build()
 # print(solver.model.fields.dyn_count)
 # print(solver.model.fields.name_to_idx)
 
-div_history = []
-output_dir = "test"
+diagnostic_history = []
+output_dir = "data"
 os.makedirs(output_dir, exist_ok=True)
 start = time.time()
 pbar = trange(steps)
-for i in pbar:
-    if i % 1 == 0:
-        solver.refresh_static_fields()
-        if ENABLE_DIAGNOSTICS and i % DIAGNOSTIC_INTERVAL == 0:
-            div_max, div_rms, div_rel = divergence_stats(solver.model.fields)
-            div_history.append((i, div_max, div_rms, div_rel))
-            static_model = solver.model.static_model
-            pbar.set_postfix(
-                div_max=f"{div_max:.2e}",
-                div_rms=f"{div_rms:.2e}",
-                div_rel=f"{div_rel:.2e}",
-                p_it=static_model.last_pressure_iterations,
-                p_res_rel=f"{static_model.last_pressure_relative_residual:.2e}",
-            )
-        if i % SAVE_INTERVAL == 0:
-            snapshot = torch.stack([
-                solver.model.fields[name].detach().cpu()
-                for name in ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"]
-            ])  # shape -> (5, batch, N, N, N)
-            snapshot = snapshot.permute(1, 2, 3, 4, 0)  # shape -> (batch, N, N, N, 5)
-            np.save(f"{output_dir}/Q_{i}.npy", snapshot[0].numpy())
 
-            u_snapshot = torch.stack([
-                solver.model.fields[name].detach().cpu()
-                for name in ["ux", "uy", "uz"]
-            ])  # shape -> (3, batch, N, N, N)
-            u_snapshot = u_snapshot.permute(1, 2, 3, 4, 0)  # shape -> (batch, N, N, N, 3)
-            np.save(f"{output_dir}/u_{i}.npy", u_snapshot[0].numpy())
+
+def record_step_state(i):
+    if ENABLE_DIAGNOSTICS and i % DIAGNOSTIC_INTERVAL == 0:
+        div_max, div_rms, div_rel = divergence_stats(solver.model.fields)
+        wall_mom_max, wall_mom_rms = wall_normal_momentum_stats(
+            solver.model.fields,
+            solver.model.parameters,
+        )
+        static_model = solver.model.static_model
+        diagnostic_history.append((
+            i,
+            div_max,
+            div_rms,
+            div_rel,
+            static_model.last_pressure_iterations,
+            static_model.last_pressure_residual,
+            static_model.last_pressure_relative_residual,
+            wall_mom_max,
+            wall_mom_rms,
+        ))
+        pbar.set_postfix(
+            div_max=f"{div_max:.2e}",
+            div_rms=f"{div_rms:.2e}",
+            div_rel=f"{div_rel:.2e}",
+            schur_it=static_model.last_pressure_iterations,
+            schur_rel=f"{static_model.last_pressure_relative_residual:.2e}",
+            wall_n_rms=f"{wall_mom_rms:.2e}",
+        )
+    if i % SAVE_INTERVAL == 0:
+        snapshot = torch.stack([
+            solver.model.fields[name].detach().cpu()
+            for name in ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"]
+        ])  # shape -> (5, batch, N, N, N)
+        snapshot = snapshot.permute(1, 2, 3, 4, 0)  # shape -> (batch, N, N, N, 5)
+        np.save(f"{output_dir}/Q_{i}.npy", snapshot[0].numpy())
+
+        u_snapshot = torch.stack([
+            solver.model.fields[name].detach().cpu()
+            for name in ["ux", "uy", "uz"]
+        ])  # shape -> (3, batch, N, N, N)
+        u_snapshot = u_snapshot.permute(1, 2, 3, 4, 0)  # shape -> (batch, N, N, N, 3)
+        np.save(f"{output_dir}/u_{i}.npy", u_snapshot[0].numpy())
+
+        p_snapshot = solver.model.fields["p"].detach().cpu()
+        np.save(f"{output_dir}/p_{i}.npy", p_snapshot[0].numpy())
+
+
+for i in pbar:
     # if i==steps//2:
     #     alpha.fill_(0)
-    solver.run(1)
+    solver.run(1, pre_update_callback=lambda _solver, _step, i=i: record_step_state(i))
 
 	    
 end = time.time()
@@ -721,7 +809,44 @@ print(f"Elapsed time: {end - start:.6f} seconds")
 if ENABLE_DIAGNOSTICS:
     solver.refresh_static_fields()
     final_div_max, final_div_rms, final_div_rel = divergence_stats(solver.model.fields)
+    final_wall_mom_max, final_wall_mom_rms = wall_normal_momentum_stats(
+        solver.model.fields,
+        solver.model.parameters,
+    )
     static_model = solver.model.static_model
+    diagnostic_history.append((
+        steps,
+        final_div_max,
+        final_div_rms,
+        final_div_rel,
+        static_model.last_pressure_iterations,
+        static_model.last_pressure_residual,
+        static_model.last_pressure_relative_residual,
+        final_wall_mom_max,
+        final_wall_mom_rms,
+    ))
+    diagnostic_array = np.array(
+        diagnostic_history,
+        dtype=[
+            ("step", np.int64),
+            ("div_max", np.float64),
+            ("div_rms", np.float64),
+            ("div_rel", np.float64),
+            ("schur_iterations", np.float64),
+            ("schur_abs_residual", np.float64),
+            ("schur_rel_residual", np.float64),
+            ("wall_normal_momentum_max", np.float64),
+            ("wall_normal_momentum_rms", np.float64),
+        ],
+    )
+    np.save(f"{output_dir}/diagnostics.npy", diagnostic_array)
+    np.savetxt(
+        f"{output_dir}/diagnostics.csv",
+        diagnostic_array,
+        delimiter=",",
+        header="step,div_max,div_rms,div_rel,schur_iterations,schur_abs_residual,schur_rel_residual,wall_normal_momentum_max,wall_normal_momentum_rms",
+        comments="",
+    )
     print(
         "Final div(u) diagnostic: "
         f"max={final_div_max:.6e}, "
@@ -729,8 +854,13 @@ if ENABLE_DIAGNOSTICS:
         f"relative={final_div_rel:.6e}"
     )
     print(
-        "Final pressure solve diagnostic: "
+        "Final Schur saddle solve diagnostic: "
         f"iterations={static_model.last_pressure_iterations}, "
         f"abs_residual={static_model.last_pressure_residual:.6e}, "
         f"rel_residual={static_model.last_pressure_relative_residual:.6e}"
+    )
+    print(
+        "Final wall normal momentum diagnostic: "
+        f"max={final_wall_mom_max:.6e}, "
+        f"rms={final_wall_mom_rms:.6e}"
     )

@@ -9,7 +9,7 @@ class TimeIntegrator:
         self.qy = qy
         self.q2 = q2
 
-    def step(self):
+    def step(self, pre_update_callback=None):
         raise NotImplementedError("Implement in subclass")
 
 
@@ -20,20 +20,25 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
         self.denom = 1 - model.fields.L_hat *self.dt # cache for denominator in the update step = (1 - L_hat*dt)
         self.dyn_count = self.model.fields.dyn_count
         self.stat_count = self.model.fields.stat_count
+        self.dynamic_transform_groups = self.model.fields.group_indices_by_boundary_conditions(
+            range(self.dyn_count)
+        )
+        self.static_transform_groups = self.model.fields.group_indices_by_boundary_conditions(
+            range(self.dyn_count, self.dyn_count + self.stat_count)
+        ) if self.stat_count != 0 else []
 
         self.step_count = 0
 
-    def step(self):
+    def step(self, pre_update_callback=None):
         # 1. static(Q^n): u^n, E^n, Omega^n, gradQ^n
         if self.stat_count != 0:
             S_hats = self.model.compute_static()
-            for offset in range(self.stat_count):
-                field_idx = self.dyn_count + offset
-                self.model.fields.spectral[field_idx] = S_hats[offset]
-                self.model.fields.spatial[field_idx] = self.model.fields.inverse_transform(
-                    field_idx,
-                    spectral=S_hats[offset],
-                )
+            self.model.fields.spectral[self.dyn_count:self.dyn_count + self.stat_count] = S_hats
+            for group in self.static_transform_groups:
+                self.model.fields.spatial[group] = self.model.fields.inverse_transform_group(group)
+
+        if pre_update_callback is not None:
+            pre_update_callback()
 
         # 2. N(Q^n, u^n, E^n, Omega^n)
         N_hats = self.model.compute_nonlinear()
@@ -44,13 +49,13 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
         dyn_fields.div_(self.denom)
 
         # 4. 只更新 dynamic fields 的实空间 Q^{n+1}
-        for field_idx in range(self.dyn_count):
-            self.model.fields.spatial[field_idx] = self.model.fields.inverse_transform(field_idx)
+        for group in self.dynamic_transform_groups:
+            self.model.fields.spatial[group] = self.model.fields.inverse_transform_group(group)
 
         self.step_count += 1
 
         # Periodically rebuild dynamic spectra from real fields to limit accumulated roundoff drift.
         if self.step_count % 20 == 0:
-            for field_idx in range(self.dyn_count):
-                self.model.fields.spectral[field_idx] = self.model.fields.forward_transform(field_idx)
+            for group in self.dynamic_transform_groups:
+                self.model.fields.spectral[group] = self.model.fields.forward_transform_group(group)
             self.step_count = 0

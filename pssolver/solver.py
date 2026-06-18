@@ -82,15 +82,20 @@ class SpectralSolver:
             return None
 
         S_hats = self.model.compute_static()
-        for offset in range(fields.stat_count):
-            field_idx = fields.dyn_count + offset
-            fields.spectral[field_idx] = S_hats[offset]
-            fields.spatial[field_idx] = fields.inverse_transform(field_idx, spectral=S_hats[offset])
+        fields.spectral[fields.dyn_count:fields.dyn_count + fields.stat_count] = S_hats
+        static_indices = range(fields.dyn_count, fields.dyn_count + fields.stat_count)
+        for group in fields.group_indices_by_boundary_conditions(static_indices):
+            fields.spatial[group] = fields.inverse_transform_group(group)
         return S_hats
 
-    def run(self, steps, callback = None):
+    def run(self, steps, callback = None, pre_update_callback=None):
         for step in range(steps):
-            self.integrator.step()
+            if pre_update_callback is None:
+                self.integrator.step()
+            else:
+                self.integrator.step(
+                    pre_update_callback=lambda step=step: pre_update_callback(self, step)
+                )
             
             if callback is not None:
                 callback(self, step)

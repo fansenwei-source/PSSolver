@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
-VIS_SCRIPT="${REPO_ROOT}/visualize_nematics3d_snapshot.py"
+VIS_SCRIPT="${REPO_ROOT}/visualize_nematics3d_snapshot_plane.py"
 
 DATA_DIR="${DATA_DIR:-${REPO_ROOT}/data}"
 OUTPUT_ROOT="${OUTPUT_ROOT:-${DATA_DIR}/nematics3d_movie}"
@@ -29,7 +29,7 @@ CONCAT_LIST="${OUTPUT_ROOT}/frames.txt"
 
 usage() {
   cat <<'USAGE'
-Render every saved PSSolver/data snapshot with visualize_nematics3d_snapshot.py.
+Render every saved PSSolver/data snapshot with visualize_nematics3d_snapshot_plane.py.
 For each frame, this script rewrites SNAPSHOT_INDEX in that Python file, runs it,
 combines the defect-line and velocity-field images, then encodes a video.
 
@@ -48,9 +48,9 @@ Environment variables:
   STEP_MOD      Optional modulus filter, useful for quick previews.
 
 Examples:
-  bash scripts/render_nematics3d_movie.sh
-  START_INDEX=0 END_INDEX=500 STEP_MOD=50 FPS=8 bash scripts/render_nematics3d_movie.sh
-  PYTHON_BIN=python OUTPUT_ROOT=data/movie_test OVERWRITE=1 bash scripts/render_nematics3d_movie.sh
+  bash scripts_plane/render_nematics3d_movie.sh
+  START_INDEX=0 END_INDEX=500 STEP_MOD=50 FPS=8 bash scripts_plane/render_nematics3d_movie.sh
+  PYTHON_BIN=python OUTPUT_ROOT=data/movie_test OVERWRITE=1 bash scripts_plane/render_nematics3d_movie.sh
 USAGE
 }
 
@@ -134,7 +134,7 @@ if [[ "${DRY_RUN}" == "1" ]]; then
   exit 0
 fi
 
-VIS_BACKUP="$(mktemp "${OUTPUT_ROOT}/visualize_nematics3d_snapshot.py.backup.XXXXXX")"
+VIS_BACKUP="$(mktemp "${OUTPUT_ROOT}/visualize_nematics3d_snapshot_plane.py.backup.XXXXXX")"
 cp "${VIS_SCRIPT}" "${VIS_BACKUP}"
 cleanup() {
   if [[ -n "${VIS_BACKUP}" && -f "${VIS_BACKUP}" ]]; then

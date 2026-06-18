@@ -311,7 +311,6 @@ class NonlinearModel(torch.nn.Module):
         gzuy = fields.gradient('uy', axis=2)
         gxuz = fields.gradient('uz', axis=0)
         gyuz = fields.gradient('uz', axis=1)
-        # gzuz = fields.gradient('uz', axis=2)
 
         wxy = -0.5 * (gxuy - gyux)
         wxz = -0.5 * (gxuz - gzux)
@@ -636,12 +635,12 @@ class ModalSaddleStokesCompute(torch.nn.Module):
 
 seed = 24
 dt = 1e-2
-steps = 3000
+steps = 10000
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 batchsize = 1
 
-Nx, Ny, Nz = 256, 256, 60
-Lx, Ly, Lz = 64.0, 64.0, 15.0
+Nx, Ny, Nz = 512, 512, 20
+Lx, Ly, Lz = 128.0, 128.0, 5.0
 
 solver = SpectralSolver(shape=(Nx,Ny,Nz), L=(Lx,Ly,Lz), dt=dt, device=device, batchsize=batchsize)
 Qxx_0, Qxy_0, Qxz_0, Qyy_0, Qyz_0 = Q_init((Nx,Ny,Nz), seed)
@@ -719,59 +718,62 @@ solver.build()
 # print(solver.model.fields.name_to_idx)
 
 diagnostic_history = []
-output_dir = "data02"
+output_dir = "data_plane"
 os.makedirs(output_dir, exist_ok=True)
 start = time.time()
 pbar = trange(steps)
+
+
+def record_step_state(i):
+    if ENABLE_DIAGNOSTICS and i % DIAGNOSTIC_INTERVAL == 0:
+        div_max, div_rms, div_rel = divergence_stats(solver.model.fields)
+        wall_mom_max, wall_mom_rms = wall_normal_momentum_stats(
+            solver.model.fields,
+            solver.model.parameters,
+        )
+        static_model = solver.model.static_model
+        diagnostic_history.append((
+            i,
+            div_max,
+            div_rms,
+            div_rel,
+            static_model.last_pressure_iterations,
+            static_model.last_pressure_residual,
+            static_model.last_pressure_relative_residual,
+            wall_mom_max,
+            wall_mom_rms,
+        ))
+        pbar.set_postfix(
+            div_max=f"{div_max:.2e}",
+            div_rms=f"{div_rms:.2e}",
+            div_rel=f"{div_rel:.2e}",
+            schur_it=static_model.last_pressure_iterations,
+            schur_rel=f"{static_model.last_pressure_relative_residual:.2e}",
+            wall_n_rms=f"{wall_mom_rms:.2e}",
+        )
+    if i % SAVE_INTERVAL == 0:
+        snapshot = torch.stack([
+            solver.model.fields[name].detach().cpu()
+            for name in ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"]
+        ])  # shape -> (5, batch, N, N, N)
+        snapshot = snapshot.permute(1, 2, 3, 4, 0)  # shape -> (batch, N, N, N, 5)
+        np.save(f"{output_dir}/Q_{i}.npy", snapshot[0].numpy())
+
+        u_snapshot = torch.stack([
+            solver.model.fields[name].detach().cpu()
+            for name in ["ux", "uy", "uz"]
+        ])  # shape -> (3, batch, N, N, N)
+        u_snapshot = u_snapshot.permute(1, 2, 3, 4, 0)  # shape -> (batch, N, N, N, 3)
+        np.save(f"{output_dir}/u_{i}.npy", u_snapshot[0].numpy())
+
+        p_snapshot = solver.model.fields["p"].detach().cpu()
+        np.save(f"{output_dir}/p_{i}.npy", p_snapshot[0].numpy())
+
+
 for i in pbar:
-    if i % 1 == 0:
-        solver.refresh_static_fields()
-        if ENABLE_DIAGNOSTICS and i % DIAGNOSTIC_INTERVAL == 0:
-            div_max, div_rms, div_rel = divergence_stats(solver.model.fields)
-            wall_mom_max, wall_mom_rms = wall_normal_momentum_stats(
-                solver.model.fields,
-                solver.model.parameters,
-            )
-            static_model = solver.model.static_model
-            diagnostic_history.append((
-                i,
-                div_max,
-                div_rms,
-                div_rel,
-                static_model.last_pressure_iterations,
-                static_model.last_pressure_residual,
-                static_model.last_pressure_relative_residual,
-                wall_mom_max,
-                wall_mom_rms,
-            ))
-            pbar.set_postfix(
-                div_max=f"{div_max:.2e}",
-                div_rms=f"{div_rms:.2e}",
-                div_rel=f"{div_rel:.2e}",
-                schur_it=static_model.last_pressure_iterations,
-                schur_rel=f"{static_model.last_pressure_relative_residual:.2e}",
-                wall_n_rms=f"{wall_mom_rms:.2e}",
-            )
-        if i % SAVE_INTERVAL == 0:
-            snapshot = torch.stack([
-                solver.model.fields[name].detach().cpu()
-                for name in ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"]
-            ])  # shape -> (5, batch, N, N, N)
-            snapshot = snapshot.permute(1, 2, 3, 4, 0)  # shape -> (batch, N, N, N, 5)
-            np.save(f"{output_dir}/Q_{i}.npy", snapshot[0].numpy())
-
-            u_snapshot = torch.stack([
-                solver.model.fields[name].detach().cpu()
-                for name in ["ux", "uy", "uz"]
-            ])  # shape -> (3, batch, N, N, N)
-            u_snapshot = u_snapshot.permute(1, 2, 3, 4, 0)  # shape -> (batch, N, N, N, 3)
-            np.save(f"{output_dir}/u_{i}.npy", u_snapshot[0].numpy())
-
-            p_snapshot = solver.model.fields["p"].detach().cpu()
-            np.save(f"{output_dir}/p_{i}.npy", p_snapshot[0].numpy())
     # if i==steps//2:
     #     alpha.fill_(0)
-    solver.run(1)
+    solver.run(1, pre_update_callback=lambda _solver, _step, i=i: record_step_state(i))
 
 	    
 end = time.time()
