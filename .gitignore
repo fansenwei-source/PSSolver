@@ -1,7 +1,12 @@
 __pycache__/
+.ipynb_checkpoints/
 scratch/
 data/
 data01/
+data02/
 data03/
+data_control*/
+data_plane*/
 *.npy
 *.npz
+*.mp4

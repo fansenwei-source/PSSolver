@@ -1,230 +1,9 @@
-# import sys
-# import os
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import time
 import torch
-from pssolver import SpectralSolver
+from pssolver import SpectralSolver, create_q_initial_condition
 from tqdm import trange
 import numpy as np
-import math
 import os
-from scipy.ndimage import gaussian_filter1d
-
-# def Q_init(shape, seed=42):
-#     # For nematics aligned along x in 3D, director n = (1,0,0)
-#     Nx, Ny, Nz = shape
-#     generator = torch.Generator().manual_seed(seed)
-#     # n = (1,0,0)
-#     Qxx = 0.5 + 0.01 * (2 * torch.rand((Nx, Ny, Nz), generator=generator) - 1)
-#     Qxy = 0.01 * (2 * torch.rand((Nx, Ny, Nz), generator=generator) - 1)
-#     Qxz = 0.01 * (2 * torch.rand((Nx, Ny, Nz), generator=generator) - 1)
-#     Qyy = -0.5 + 0.01 * (2 * torch.rand((Nx, Ny, Nz), generator=generator) - 1)
-#     Qyz = 0.01 * (2 * torch.rand((Nx, Ny, Nz), generator=generator) - 1)
-#     return Qxx, Qxy, Qxz, Qyy, Qyz
-
-# def Q_init(shape, seed=42):
-#     Nx, Ny, Nz = shape
-#     rng = np.random.default_rng(seed)
-#     noise_amplitude = 0.01
-#     noise_precision = 1e-5
-
-#     def filtered_noise(size):
-#         vals = rng.uniform(-noise_amplitude, noise_amplitude, size=size)
-#         mask = (np.abs(vals) < noise_precision)
-#         while np.any(mask):
-#             vals[mask] = rng.uniform(-noise_amplitude, noise_amplitude, size=np.sum(mask))
-#             mask = (np.abs(vals) < noise_precision)
-#         return vals
-
-#     S = 1.0
-#     angle_theta_0 = np.arccos(0.0)  # = π/2，in-plane director
-#     angle_phi_0 = 0.0               # 这里只是基准，用不到也没关系
-
-#     # 两个缺陷在平面中的位置（对所有 z 层都相同）
-#     defect1_x = 5 * Nx // 8
-#     defect1_y = Ny // 2
-#     defect2_x = 3 * Nx // 8
-#     defect2_y = Ny // 2
-
-#     Qxx = np.zeros((Nx, Ny, Nz), dtype=np.float32)
-#     Qxy = np.zeros((Nx, Ny, Nz), dtype=np.float32)
-#     Qxz = np.zeros((Nx, Ny, Nz), dtype=np.float32)
-#     Qyy = np.zeros((Nx, Ny, Nz), dtype=np.float32)
-#     Qyz = np.zeros((Nx, Ny, Nz), dtype=np.float32)
-
-#     for k in range(Nz):
-#         for j in range(Ny):
-#             for i in range(Nx):
-#                 # 每个点自己的小噪声
-#                 angle_theta_noise = filtered_noise(1)[0]
-#                 angle_phi_noise   = filtered_noise(1)[0]
-
-#                 # 对应这两个缺陷的角度场（对所有 z 相同）
-#                 theta1 = math.atan2(j - defect1_y, i - defect1_x)
-#                 theta2 = math.atan2(j - defect2_y, i - defect2_x)
-#                 angle_phi_plane = 0.5 * theta1 - 0.5 * (theta2 + math.pi)
-
-#                 # 真正用于 director 的 polar angles
-#                 angle_theta = angle_theta_0 + angle_theta_noise
-#                 angle_phi   = angle_phi_plane + angle_phi_noise
-
-#                 nx = math.sin(angle_theta) * math.cos(angle_phi)
-#                 ny = math.sin(angle_theta) * math.sin(angle_phi)
-#                 nz = math.cos(angle_theta)
-
-#                 Qxx[i, j, k] = S * (nx * nx - 1.0 / 3.0)
-#                 Qyy[i, j, k] = S * (ny * ny - 1.0 / 3.0)
-#                 Qxy[i, j, k] = S * (nx * ny)
-#                 Qxz[i, j, k] = S * (nx * nz)
-#                 Qyz[i, j, k] = S * (ny * nz)
-
-#     return (
-#         torch.from_numpy(Qxx),
-#         torch.from_numpy(Qxy),
-#         torch.from_numpy(Qxz),
-#         torch.from_numpy(Qyy),
-#         torch.from_numpy(Qyz)
-#     )
-
-# def Q_init(shape, seed=42, noise=0.01, sigma_xy=1.0, sigma_z=1.0):
-#     """
-#     新版匹配的初始化（周期边界条件版本）：
-#     - 每层 z 放一对 +1/2/-1/2 缺陷（平面角场 φ 相同并沿 z 复制）
-#     - 在 θ, φ 上叠加 3D 平滑噪声（x/y 用 sigma_xy，z 用 sigma_z）
-#     - 周期边界条件：用 mode='wrap' 做平滑，并显式 enforce 周期性
-#     """
-#     Nx, Ny, Nz = shape
-#     rng = np.random.default_rng(seed)
-
-#     # 两个平面缺陷位置（对所有 z 相同）
-#     defect1_x = 5 * Nx // 8
-#     defect1_y = Ny // 2
-#     defect2_x = 3 * Nx // 8
-#     defect2_y = Ny // 2
-
-#     # 角场 φ_plane（二维→三维复制）
-#     X, Y = np.meshgrid(np.arange(Nx), np.arange(Ny), indexing="ij")
-#     theta1 = np.arctan2(Y - defect1_y, X - defect1_x)
-#     theta2 = np.arctan2(Y - defect2_y, X - defect2_x)
-#     angle_phi_plane_xy = 0.5 * theta1 - 0.5 * (theta2 + math.pi)
-#     angle_phi_plane = np.repeat(angle_phi_plane_xy[:, :, None], Nz, axis=2)  # (Nx,Ny,Nz)
-
-#     # 极角 θ0 = π/2（平面取向）
-#     angle_theta_0 = math.acos(0.0)  # = π/2
-
-#     # 平滑噪声 δθ, δφ（周期包裹）
-#     delta_theta = rng.uniform(-1.0, 1.0, size=(Nx, Ny, Nz)).astype(np.float32)
-#     delta_phi   = rng.uniform(-1.0, 1.0, size=(Nx, Ny, Nz)).astype(np.float32)
-
-#     for arr in (delta_theta, delta_phi):
-#         arr[:] = gaussian_filter1d(arr, sigma=sigma_xy, axis=0, mode="wrap")
-#         arr[:] = gaussian_filter1d(arr, sigma=sigma_xy, axis=1, mode="wrap")
-#         arr[:] = gaussian_filter1d(arr, sigma=sigma_z,  axis=2, mode="wrap")
-
-#     def rescale_to_amp(arr, amp):
-#         std = arr.std()
-#         return (arr / std * amp) if std > 1e-12 else (arr * 0.0)
-
-#     delta_theta = rescale_to_amp(delta_theta, noise)
-#     delta_phi   = rescale_to_amp(delta_phi,   noise)
-
-#     # 最终角度场
-#     angle_theta = angle_theta_0 + delta_theta
-#     angle_phi   = angle_phi_plane + delta_phi
-
-#     # 计算 director 与 Q（S0=1）
-#     S0 = 1.0
-#     sin_theta = np.sin(angle_theta); cos_theta = np.cos(angle_theta)
-#     cos_phi   = np.cos(angle_phi);   sin_phi   = np.sin(angle_phi)
-
-#     nx = sin_theta * cos_phi
-#     ny = sin_theta * sin_phi
-#     nz = cos_theta
-
-#     Qxx = S0 * (nx * nx - 1.0 / 3.0)
-#     Qyy = S0 * (ny * ny - 1.0 / 3.0)
-#     Qxy = S0 * (nx * ny)
-#     Qxz = S0 * (nx * nz)
-#     Qyz = S0 * (ny * nz)
-
-#     # 显式周期 enforce：首尾一致
-#     def enforce_periodic_all(arr):
-#         arr[0, :, :]  = arr[-1, :, :]
-#         arr[:, 0, :]  = arr[:, -1, :]
-#         arr[:, :, 0]  = arr[:, :, -1]
-#         return arr
-
-#     for A in (Qxx, Qxy, Qxz, Qyy, Qyz):
-#         enforce_periodic_all(A)
-
-#     # 转 torch
-#     return (
-#         torch.from_numpy(Qxx.astype(np.float32)),
-#         torch.from_numpy(Qxy.astype(np.float32)),
-#         torch.from_numpy(Qxz.astype(np.float32)),
-#         torch.from_numpy(Qyy.astype(np.float32)),
-#         torch.from_numpy(Qyz.astype(np.float32)),
-#     )
-
-def Q_init(shape, seed=42, noise=0.01, sigma_xy=1.0, sigma_z=1.0):
-    """
-    Mixed-BC 版本初始化：
-    - 全场 director 初始沿 +x 方向
-    - 在 theta, phi 上叠加 3D 平滑噪声（x/y 用 sigma_xy，z 用 sigma_z）
-    - x/y 用 periodic 平滑，z 用 reflect 平滑，近似匹配 Q 的 Neumann 边界
-    """
-    Nx, Ny, Nz = shape
-    rng = np.random.default_rng(seed)
-
-    # 基准方向：nx=1, ny=nz=0 <=> theta=pi/2, phi=0
-    angle_theta_0 = math.pi / 2.0
-    angle_phi_0 = 0.0
-
-    # 平滑噪声 dtheta, dphi（周期包裹）
-    delta_theta = rng.uniform(-1.0, 1.0, size=(Nx, Ny, Nz)).astype(np.float32)
-    delta_phi = rng.uniform(-1.0, 1.0, size=(Nx, Ny, Nz)).astype(np.float32)
-
-    for arr in (delta_theta, delta_phi):
-        arr[:] = gaussian_filter1d(arr, sigma=sigma_xy, axis=0, mode="wrap")
-        arr[:] = gaussian_filter1d(arr, sigma=sigma_xy, axis=1, mode="wrap")
-        arr[:] = gaussian_filter1d(arr, sigma=sigma_z, axis=2, mode="reflect")
-
-    def rescale_to_amp(arr, amp):
-        std = arr.std()
-        return (arr / std * amp) if std > 1e-12 else (arr * 0.0)
-
-    delta_theta = rescale_to_amp(delta_theta, noise)
-    delta_phi = rescale_to_amp(delta_phi, noise)
-
-    # 最终角度场
-    angle_theta = angle_theta_0 + delta_theta
-    angle_phi = angle_phi_0 + delta_phi
-
-    # 计算 director 与 Q（S0=1）
-    S0 = 1.0
-    sin_theta = np.sin(angle_theta)
-    cos_theta = np.cos(angle_theta)
-    cos_phi = np.cos(angle_phi)
-    sin_phi = np.sin(angle_phi)
-
-    nx = sin_theta * cos_phi
-    ny = sin_theta * sin_phi
-    nz = cos_theta
-
-    Qxx = S0 * (nx * nx - 1.0 / 3.0)
-    Qyy = S0 * (ny * ny - 1.0 / 3.0)
-    Qxy = S0 * (nx * ny)
-    Qxz = S0 * (nx * nz)
-    Qyz = S0 * (ny * nz)
-
-    return (
-        torch.from_numpy(Qxx.astype(np.float32)),
-        torch.from_numpy(Qxy.astype(np.float32)),
-        torch.from_numpy(Qxz.astype(np.float32)),
-        torch.from_numpy(Qyy.astype(np.float32)),
-        torch.from_numpy(Qyz.astype(np.float32)),
-    )
 
 
 Q_BC = ("periodic", "periodic", "neumann")
@@ -613,37 +392,32 @@ class ModalSaddleStokesCompute(torch.nn.Module):
 
         return torch.stack([ux_hat, uy_hat, uz_hat, pressure_hat])
 
-# seed = 24
-# N = 64
-# L = 64
-# dt = 0.001
-# steps = 20000
-# device = 'cuda' if torch.cuda.is_available() else 'cpu'
-# batch = 1
-
-# solver = SpectralSolver(shape = (N,N,N), L=L, dt=dt, device=device, batch_size = batch)
-
-# Qxx_0, Qxy_0, Qxz_0, Qyy_0, Qyz_0 = Q_init(shape = (N,N,N), seed = seed)
-
-# # # --- Parameters ---
-# aQ = -5
-# bQ = 6
-# cQ = 6
-# KQ = 6
-
-# beta = -1
-
 seed = 24
 dt = 1e-2
-steps = 10000
+steps = 2000
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 batchsize = 1
 
-Nx, Ny, Nz = 512, 512, 20
-Lx, Ly, Lz = 128.0, 128.0, 5.0
+Nx, Ny, Nz = 256, 256, 120
+Lx, Ly, Lz = 64.0, 64.0, 30.0
 
 solver = SpectralSolver(shape=(Nx,Ny,Nz), L=(Lx,Ly,Lz), dt=dt, device=device, batchsize=batchsize)
-Qxx_0, Qxy_0, Qxz_0, Qyy_0, Qyz_0 = Q_init((Nx,Ny,Nz), seed)
+q_initial_condition = create_q_initial_condition(
+    "aligned_x_smooth_noise",
+    shape=(Nx, Ny, Nz),
+    boundary_conditions=Q_BC,
+    seed=seed,
+    noise_theta=0.01,
+    noise_phi=0.01,
+    sigma_x=1.0,
+    sigma_y=1.0,
+    sigma_z=1.0,
+)
+Qxx_0 = q_initial_condition["Qxx"]
+Qxy_0 = q_initial_condition["Qxy"]
+Qxz_0 = q_initial_condition["Qxz"]
+Qyy_0 = q_initial_condition["Qyy"]
+Qyz_0 = q_initial_condition["Qyz"]
 
 # Nematic 参数
 rho = 2.65
@@ -658,8 +432,6 @@ fric = 0.0
 eta  = 1.0
 
 q2_Q = solver.get_q2(Q_BC)
-
-# print("Max value of -(aQ + q2_Q * KQ):", torch.max(-(aQ + q2_Q * KQ)).item())
 
 # --- Add active fields ---
 solver.model.add_dynamic_field(
@@ -703,10 +475,6 @@ solver.model.add_static_field("p", boundary_conditions=PRESSURE_MODAL_BC)
 
 
 
-# compiled_nl_model = torch.compile(NonlinearModel(solver),  mode="max-autotune")
-# compiled_static_model = torch.compile(ModalSaddleStokesCompute(solver), mode="max-autotune")
-# solver.model.set_nonlinear_model(compiled_nl_model)
-# solver.model.set_static_compute_model(compiled_static_model)
 solver.model.set_nonlinear_model(NonlinearModel(solver))
 solver.model.set_static_compute_model(ModalSaddleStokesCompute(solver))
 
@@ -714,11 +482,9 @@ alpha = torch.tensor(5.0, device=device)
 solver.model.parameters.new_param('alpha', alpha)
 
 solver.build()
-# print(solver.model.fields.dyn_count)
-# print(solver.model.fields.name_to_idx)
 
 diagnostic_history = []
-output_dir = "data_plane"
+output_dir = "data02"
 os.makedirs(output_dir, exist_ok=True)
 start = time.time()
 pbar = trange(steps)
@@ -771,8 +537,6 @@ def record_step_state(i):
 
 
 for i in pbar:
-    # if i==steps//2:
-    #     alpha.fill_(0)
     solver.run(1, pre_update_callback=lambda _solver, _step, i=i: record_step_state(i))
 
 	    

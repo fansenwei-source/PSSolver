@@ -1,5 +1,4 @@
 import torch
-import torch.fft
 from .integrator import SemiImplicitEulerIntegrator
 from .PDEmodel import PDEModel
 from .transforms import TensorProductTransformBackend
@@ -69,7 +68,9 @@ class SpectralSolver:
         self.model.build()
         self.integrator = self.integrator_cl(self.model, self.dt, self.qx, self.qy, self.q2)
 
-    def reset(self, inits={}):
+    def reset(self, inits=None):
+        if inits is None:
+            inits = {}
         self.model.build()
         for name, val in inits.items():
             self.model.fields[name] = val
@@ -77,16 +78,7 @@ class SpectralSolver:
 
     def refresh_static_fields(self):
         """Recompute static fields from the current dynamic field state."""
-        fields = self.model.fields
-        if fields.stat_count == 0:
-            return None
-
-        S_hats = self.model.compute_static()
-        fields.spectral[fields.dyn_count:fields.dyn_count + fields.stat_count] = S_hats
-        static_indices = range(fields.dyn_count, fields.dyn_count + fields.stat_count)
-        for group in fields.group_indices_by_boundary_conditions(static_indices):
-            fields.spatial[group] = fields.inverse_transform_group(group)
-        return S_hats
+        return self.model.update_static_fields()
 
     def run(self, steps, callback = None, pre_update_callback=None):
         for step in range(steps):

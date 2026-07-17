@@ -22,13 +22,13 @@ for local_nematics_src in LOCAL_NEMATICS_SRC_CANDIDATES:
         break
 
 # ---------------- User-editable visualization configuration ----------------
-# Edit values in this block when tuning figures. The script intentionally uses
-# the solver's fixed data-folder snapshot format so repeated runs use one clear
-# parameter set.
+# Edit values in this block when tuning channel figures. The script is fixed to
+# the solver's channel snapshot layout: x is the streamwise periodic direction,
+# while y and z are wall-bounded transverse directions.
 
-DATA_DIR = Path(__file__).resolve().parent / "data"  # Directory containing Q_<index>.npy and u_<index>.npy.
+DATA_DIR = Path(__file__).resolve().parent / "data_control_box_Nx256_Lx64"  # Directory containing Q_<index>.npy and u_<index>.npy.
 SNAPSHOT_INDEX = 4000  # Reads DATA_DIR / f"Q_{SNAPSHOT_INDEX}.npy" and DATA_DIR / f"u_{SNAPSHOT_INDEX}.npy".
-OUTPUT_DIR = Path(__file__).resolve().parent / "data" / "nematics3d_channel_figures"  # Directory where output PNG files are written.
+OUTPUT_DIR = DATA_DIR / "nematics3d_channel_figures"  # Directory where channel PNG files are written.
 DEFECTS_PNG = None  # Defect-line PNG path; None uses OUTPUT_DIR / "<snapshot>_defects_lines.png".
 VELOCITY_PNG = None  # Velocity-vector PNG path; None uses OUTPUT_DIR / "<snapshot>_velocity_vectors.png".
 PLOT_DEFECTS = True  # If True, generate the defect/disclination-line figure when defects are present.
@@ -36,23 +36,34 @@ PLOT_VELOCITY = True  # If True, generate the velocity-vector figure.
 SKIP_EMPTY_DEFECT_FIGURE = True  # If True, do not save a blank defect figure when no defects are detected.
 
 DEFECT_THRESHOLD = 0.0  # Threshold passed to nematics3d.defect_detect.
-PERIODIC_BOUNDARY = (True, False, False)  # Channel.py uses periodic x and wall-normal y/z boundaries.
+PERIODIC_BOUNDARY = (True, False, False)  # Channel boundary flags: x periodic, y/z wall-bounded.
 DETECTION_PLANES = (True, True, True)  # Which local planes nematics3d checks for defects: xy, xz, yz.
+REQUIRE_CHANNEL_GRID = True  # If True, reject non-channel domains such as square plane snapshots.
+PLOT_ACTIVITY_BOX = True  # Draw the local activity box used by Channel_control_box.py.
+ACTIVITY_BOX_BOUNDS = ((118, 138), (4, 36), (4, 36))  # Half-open x, y, z grid bounds.
+ACTIVITY_BOX_RADIUS = 0.22
+ACTIVITY_BOX_COLOR = (0.85, 0.10, 0.10)
+ACTIVITY_BOX_OPACITY = 0.85
+PLOT_OBSERVATION_BOX = True  # Draw the larger box used for local defect counting.
+OBSERVATION_BOX_BOUNDS = ((114, 142), (0, 40), (0, 40))
+OBSERVATION_BOX_RADIUS = 0.13
+OBSERVATION_BOX_COLOR = (0.95, 0.55, 0.05)
+OBSERVATION_BOX_OPACITY = 0.60
 
 # ---------------- Defect-line figure configuration ----------------
-DEFECT_FIGURE_SIZE = (2400, 900)  # Defect figure size in pixels.
+DEFECT_FIGURE_SIZE = (2600, 600)  # Defect figure size in pixels.
 DEFECT_SAVE_SCALE = 3  # Defect screenshot scale factor.
 DEFECT_BACKGROUND_COLOR = (1.0, 1.0, 1.0)  # Defect figure background RGB color, values in [0, 1].
-DEFECT_CAMERA = "isometric"  # Defect figure camera view: "isometric", "xy", "xz", or "yz".
-DEFECT_FOCAL_POINT_OFFSET = (-28.0, 0.0, 0.0)  # Defect figure camera target offset from the box center in x, y, z.
-DEFECT_CAMERA_DISTANCE = 560  # Defect figure camera distance; None keeps Nematics3D's default camera distance.
-DEFECT_AZIMUTH = None  # Defect figure camera azimuth in degrees; None keeps the selected camera view value.
+DEFECT_CAMERA = "xy"  # Defect figure camera view: "isometric", "xy", "xz", or "yz".
+DEFECT_FOCAL_POINT_OFFSET = (0.0, 0.0, 0.0)  # Defect figure camera target offset from the box center in x, y, z.
+DEFECT_CAMERA_DISTANCE = 280  # Defect figure camera distance; None keeps Nematics3D's default camera distance.
+DEFECT_AZIMUTH = 90  # Defect figure camera azimuth in degrees; None keeps the selected camera view value.
 DEFECT_ELEVATION = None  # Defect figure camera elevation in degrees; None keeps the selected camera view value.
 DEFECT_ROLL = None  # Defect figure camera roll in degrees; None keeps the selected camera view value.
 DEFECT_DRAW_BOX = True  # If True, draw the simulation-domain bounding box in the defect figure.
-DEFECT_BOX_RADIUS = 0.08  # Tube radius for the defect-figure bounding box.
-DEFECT_BOX_COLOR = (0.20, 0.20, 0.20)  # RGB color of the defect-figure bounding box.
-DEFECT_BOX_OPACITY = 0.28  # Opacity of the defect-figure bounding box.
+DEFECT_BOX_RADIUS = 0.16  # Tube radius for the defect-figure bounding box.
+DEFECT_BOX_COLOR = (0.12, 0.12, 0.12)  # RGB color of the defect-figure bounding box.
+DEFECT_BOX_OPACITY = 0.45  # Opacity of the defect-figure bounding box.
 DEFECT_BOX_SIDES = 12  # Number of sides in the defect-figure box tubes.
 
 HIDE_DEFECT_POINTS = True  # If True, hide raw defect points and show only classified lines.
@@ -68,35 +79,35 @@ WRAP_LINES_FOR_DISPLAY = True  # If True, wrap periodic disclination lines into 
 CLIP_LINES_TO_BOX = True  # If True, use Nematics3D Bounds clipping so plotted lines do not extend outside the box.
 LINE_CLIP_MARGIN = 1.5  # Inward display-only clipping margin in grid units; helps hide tube-radius protrusion at box faces.
 LINE_CLIP_MODE = "mesh"  # Nematics3D tube clipping mode: "mesh" clips tube surfaces; "center" clips centerline points.
-LINE_RADIUS = 0.26  # Tube radius for plotted disclination lines.
+LINE_RADIUS = 0.24  # Tube radius for plotted disclination lines.
 LINE_COLOR = (0.0, 0.0, 0.0)  # RGB color for plotted disclination lines.
 LINE_OPACITY = 1.0  # Opacity of plotted disclination lines.
 LINE_SIDES = 24  # Number of sides in disclination-line tubes; larger values make rounder tubes.
 
 # ---------------- Velocity-vector figure configuration ----------------
-VELOCITY_FIGURE_SIZE = (1200, 200)  # Velocity figure size in pixels.
+VELOCITY_FIGURE_SIZE = (2600, 600)  # Velocity figure size in pixels.
 VELOCITY_SAVE_SCALE = 3  # Velocity screenshot scale factor.
 VELOCITY_BACKGROUND_COLOR = (1.0, 1.0, 1.0)  # Velocity figure background RGB color, values in [0, 1].
-VELOCITY_CAMERA = "xy"  # Velocity figure camera view: "isometric", "xy", "xz", or "yz".
+VELOCITY_CAMERA = "xy"  # Streamwise-wall-normal channel slice view: "isometric", "xy", "xz", or "yz".
 VELOCITY_FOCAL_POINT_OFFSET = (0.0, 0.0, 0.0)  # Velocity figure camera target offset from the box center in x, y, z.
-VELOCITY_CAMERA_DISTANCE = 260  # Velocity figure camera distance; None keeps Nematics3D's default camera distance.
+VELOCITY_CAMERA_DISTANCE = 280  # Velocity figure camera distance; None keeps Nematics3D's default camera distance.
 VELOCITY_AZIMUTH = None  # Velocity figure camera azimuth in degrees; None keeps the selected camera view value.
 VELOCITY_ELEVATION = None  # Velocity figure camera elevation in degrees; None keeps the selected camera view value.
-VELOCITY_ROLL = None  # Velocity figure camera roll in degrees; None keeps the selected camera view value.
+VELOCITY_ROLL = 90  # Rotate the xy velocity view so streamwise x is horizontal in the saved figure.
 VELOCITY_DRAW_BOX = True  # If True, draw the simulation-domain bounding box in the velocity figure.
 VELOCITY_BOX_RADIUS = 0.07  # Tube radius for the velocity-figure bounding box.
 VELOCITY_BOX_COLOR = (0.18, 0.18, 0.18)  # RGB color of the velocity-figure bounding box.
-VELOCITY_BOX_OPACITY = 0.22  # Opacity of the velocity-figure bounding box.
+VELOCITY_BOX_OPACITY = 0.32  # Opacity of the velocity-figure bounding box.
 VELOCITY_BOX_SIDES = 10  # Number of sides in the velocity-figure box tubes.
 
-VELOCITY_Z_INDEX = None  # Z slice used for velocity vectors; set to None to use the middle slice.
+VELOCITY_Z_INDEX = None  # Z slice used for streamwise xy velocity vectors; None uses the channel midplane.
 VELOCITY_STRIDE = 8  # Grid spacing between sampled velocity vectors in x and y.
 VELOCITY_LENGTH_MODE = "normalized"  # Arrow length mode: "normalized", "constant", or "raw_scaled".
 VELOCITY_CONSTANT_LENGTH = 6.0  # Nematics3D PlotVector length when VELOCITY_LENGTH_MODE == "constant".
 VELOCITY_RAW_LENGTH_SCALE = 700.0  # Multiplier for raw |u| when VELOCITY_LENGTH_MODE == "raw_scaled".
 VELOCITY_MIN_LENGTH = 3.0  # Display length for the smallest nonzero velocity vector.
-VELOCITY_MAX_LENGTH = 10.0  # Display length for the largest velocity vector in the plotted slice.
-VELOCITY_RADIUS = 0.18  # Shaft radius/thickness for velocity arrows.
+VELOCITY_MAX_LENGTH = 13.5  # Display length for the largest velocity vector in the plotted slice.
+VELOCITY_RADIUS = 0.30  # Shaft radius/thickness for velocity arrows.
 VELOCITY_TIP_LENGTH_FRACTION = 0.36  # Fraction of each velocity arrow used by the arrow head.
 VELOCITY_TIP_RADIUS_RATIO = 2.7  # Arrow-head radius divided by shaft radius.
 VELOCITY_VECTOR_SIDES = 16  # Number of sides in velocity-arrow shafts and tips.
@@ -104,29 +115,32 @@ VELOCITY_CMAP = "viridis"  # Colormap used to color velocity arrows by speed mag
 VELOCITY_SCALAR_BAR_TITLE = "|u|"  # Title shown on the velocity-magnitude colorbar.
 VELOCITY_SHOW_SCALAR_BAR = True  # If True, draw Nematics3D's in-figure scalar bar.
 VELOCITY_SCALAR_BAR_N_LABELS = 5  # Number of labels shown on the velocity colorbar.
-VELOCITY_SCALAR_BAR_POSITION = (0.90, 0.28)  # Colorbar lower-left corner in normalized figure coordinates.
-VELOCITY_SCALAR_BAR_SIZE = (0.014, 0.54)  # Colorbar width and height in normalized figure coordinates.
+VELOCITY_SCALAR_BAR_POSITION = (0.940, 0.28)  # Colorbar lower-left corner in normalized figure coordinates.
+VELOCITY_SCALAR_BAR_SIZE = (0.035, 0.48)  # Colorbar width and height in normalized figure coordinates.
 VELOCITY_SCALAR_BAR_FONT_SIZE = 30  # Label font size for the velocity colorbar.
-VELOCITY_SHOW_PLANE_LABEL = False  # If True, add a concise plane label to the velocity figure.
-VELOCITY_PLANE_LABEL_POSITION = (0.035, 0.86)  # Viewport coordinates for the velocity plane label.
-VELOCITY_PLANE_LABEL_FONT_SIZE = 15  # Font size for the velocity plane label.
+VELOCITY_SHOW_PLANE_LABEL = True  # If True, add a concise plane label to the velocity figure.
+VELOCITY_PLANE_LABEL_POSITION = (0.035, 0.90)  # Viewport coordinates for the velocity plane label.
+VELOCITY_PLANE_LABEL_FONT_SIZE = 20  # Font size for the velocity plane label.
 
-PLOT_VORTICITY_BACKGROUND = True  # If True, draw omega_z = d uy/dx - d ux/dy behind velocity arrows.
+PLOT_VORTICITY_BACKGROUND = True  # If True, draw channel midplane omega_z = d uy/dx - d ux/dy behind arrows.
 VORTICITY_SURFACE_STRIDE = 2  # Grid spacing used for the vorticity PlotSurface background.
 VORTICITY_SURFACE_Z_OFFSET = -0.15  # Small display offset so arrows sit above the scalar surface.
 VORTICITY_SURFACE_OPACITY = 0.58  # Opacity of the omega_z scalar background.
 VORTICITY_CMAP = "RdBu_r"  # Diverging colormap used for signed omega_z.
 VORTICITY_CLIM_PERCENTILE = 99.0  # Symmetric color limit percentile for robust omega_z contrast.
 VORTICITY_SCALAR_BAR_TITLE = ""  # Native VTK scalar-bar title; Unicode omega is added with a text overlay.
-VORTICITY_SCALAR_BAR_LABEL = "omega_z"  # Display label shown above the vorticity colorbar.
+VORTICITY_SCALAR_BAR_LABEL = "ω_z"  # Display label shown above the vorticity colorbar.
 VORTICITY_SCALAR_BAR_N_LABELS = 5  # Number of labels shown on the vorticity colorbar.
-VORTICITY_SCALAR_BAR_POSITION = (0.055, 0.28)  # Vorticity colorbar lower-left corner in normalized coordinates.
-VORTICITY_SCALAR_BAR_SIZE = (0.014, 0.54)  # Vorticity colorbar width and height in normalized coordinates.
+VORTICITY_SCALAR_BAR_POSITION = (0.015, 0.28)  # Vorticity colorbar lower-left corner in normalized coordinates.
+VORTICITY_SCALAR_BAR_SIZE = (0.035, 0.48)  # Vorticity colorbar width and height in normalized coordinates.
 VORTICITY_SCALAR_BAR_FONT_SIZE = 28  # Label font size for the vorticity colorbar.
-VORTICITY_SCALAR_BAR_LABEL_POSITION = (0.064, 0.775)  # Viewport coordinates for the vorticity colorbar label.
+VORTICITY_SCALAR_BAR_LABEL_POSITION = (0.024, 0.81)  # Viewport coordinates for the vorticity colorbar label.
 VORTICITY_SCALAR_BAR_LABEL_FONT_SIZE = 18  # Font size for the vorticity colorbar label.
 VORTICITY_SCALAR_BAR_LABEL_FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"  # Font file for Unicode omega.
 # ---------------------------------------------------------------------------
+
+CHANNEL_PERIODIC_BOUNDARY = (True, False, False)
+CHANNEL_LONG_AXIS = 0
 
 if VENV_SITE.exists():
     sys.path.append(str(VENV_SITE))
@@ -140,7 +154,7 @@ except ImportError as exc:  # pragma: no cover - depends on local environment
     raise SystemExit(
         "nematics3d with PlotVector/VectorPlane support is required. Run with:\n"
         "  /home/fansenwei/anaconda3/envs/Nematics3D/bin/python "
-        "PSSolver/visualize_nematics3d_snapshot.py\n"
+        "PSSolver/visualize_nematics3d_snapshot_channel.py\n"
         "and keep /home/fansenwei/Desktop/Develop/Nematics3D/src available."
     ) from exc
 
@@ -156,19 +170,19 @@ def require_component_last(
         return np.asarray(array, dtype=np.float64)
     raise ValueError(
         f"{path} has unexpected {name} shape {array.shape}; expected "
-        f"(Nx, Ny, Nz, {components}) from the PSSolver/data snapshot format"
+        f"(Nx, Ny, Nz, {components}) from the PSSolver channel snapshot format"
     )
 
 
 def snapshot_paths(index: int) -> tuple[Path, Path]:
-    """Return the fixed PSSolver/data snapshot pair for an integer index."""
+    """Return the fixed PSSolver channel snapshot pair for an integer index."""
     if not isinstance(index, int):
         raise TypeError("SNAPSHOT_INDEX must be an integer")
     return DATA_DIR / f"Q_{index}.npy", DATA_DIR / f"u_{index}.npy"
 
 
 def read_data_snapshot(index: int) -> tuple[np.ndarray, np.ndarray, str]:
-    """Read one Q/u snapshot from PSSolver/data's fixed file layout."""
+    """Read one Q/u snapshot from the channel data folder's fixed file layout."""
     q_path, u_path = snapshot_paths(index)
     if not q_path.exists():
         raise FileNotFoundError(f"Q snapshot does not exist: {q_path}")
@@ -183,6 +197,21 @@ def read_data_snapshot(index: int) -> tuple[np.ndarray, np.ndarray, str]:
             f"{u_path} has {velocity.shape[:3]}"
         )
     return q5, velocity, q_path.stem
+
+
+def validate_channel_snapshot(shape: tuple[int, int, int]) -> None:
+    """Reject obvious non-channel grids before producing misleading figures."""
+    nx, ny, nz = shape
+    if tuple(bool(v) for v in PERIODIC_BOUNDARY) != CHANNEL_PERIODIC_BOUNDARY:
+        raise ValueError(
+            "visualize_nematics3d_snapshot_channel.py is channel-only: "
+            f"PERIODIC_BOUNDARY must be {CHANNEL_PERIODIC_BOUNDARY} for x-periodic, y/z-wall geometry"
+        )
+    if REQUIRE_CHANNEL_GRID and nx <= max(ny, nz):
+        raise ValueError(
+            "visualize_nematics3d_snapshot_channel.py expects a streamwise channel grid "
+            f"with Nx larger than the transverse dimensions; got shape {shape}"
+        )
 
 
 def detect_lines(
@@ -272,6 +301,47 @@ def make_figure(
                 is_reset_camera=False,
             ),
         )
+    for enabled, bounds, radius, color, opacity, label in (
+        (
+            PLOT_OBSERVATION_BOX,
+            OBSERVATION_BOX_BOUNDS,
+            OBSERVATION_BOX_RADIUS,
+            OBSERVATION_BOX_COLOR,
+            OBSERVATION_BOX_OPACITY,
+            "observation box",
+        ),
+        (
+            PLOT_ACTIVITY_BOX,
+            ACTIVITY_BOX_BOUNDS,
+            ACTIVITY_BOX_RADIUS,
+            ACTIVITY_BOX_COLOR,
+            ACTIVITY_BOX_OPACITY,
+            "activity box",
+        ),
+    ):
+        if enabled:
+            corners = n3d.get_box_corners(
+                bounds[0][1] - bounds[0][0],
+                bounds[1][1] - bounds[1][0],
+                bounds[2][1] - bounds[2][0],
+            )
+            corners += np.array(
+                [bounds[0][0], bounds[1][0], bounds[2][0]],
+                dtype=float,
+            )
+            n3d.PlotExtent(
+                corners,
+                figure=fig,
+                name=label,
+                opts=n3d.OptsTube(
+                    radius=radius,
+                    color=color,
+                    opacity=opacity,
+                    sides=12,
+                    is_scalar_bar=False,
+                    is_reset_camera=False,
+                ),
+            )
     return fig
 
 
@@ -434,6 +504,9 @@ def plot_vorticity_background(
     z_index: int,
 ) -> None:
     """Draw an omega_z scalar surface behind the velocity arrows."""
+    if float(np.max(np.abs(omega_z))) <= 1e-12:
+        return
+
     nx, ny = omega_z.shape
     stride = int(VORTICITY_SURFACE_STRIDE)
     x = np.arange(0, nx, stride, dtype=float)
@@ -488,6 +561,7 @@ def plot_velocity_vectors(
     velocity: np.ndarray,
 ) -> None:
     nx, ny, nz, _ = velocity.shape
+    speed_max = float(np.max(np.linalg.norm(velocity, axis=-1)))
     z_index = nz // 2 if VELOCITY_Z_INDEX is None else VELOCITY_Z_INDEX
     if not 0 <= z_index < nz:
         raise ValueError(f"VELOCITY_Z_INDEX={z_index} outside valid range [0, {nz - 1}]")
@@ -530,42 +604,51 @@ def plot_velocity_vectors(
     if PLOT_VORTICITY_BACKGROUND:
         plot_vorticity_background(fig, vorticity_z(velocity)[:, :, z_index], z_index)
 
-    vector_visual = plane.act_visualize_vector(
-        figure=fig,
-        resolver_source="orient_length",
-        paint_by="scalars",
-        scalars=lambda speed: speed,
-        scalars_cmap=VELOCITY_CMAP,
-        scalar_bar_title=VELOCITY_SCALAR_BAR_TITLE,
-        length=velocity_length_setting(),
-        radius=VELOCITY_RADIUS,
-        tip_length_fraction=VELOCITY_TIP_LENGTH_FRACTION,
-        tip_radius_ratio=VELOCITY_TIP_RADIUS_RATIO,
-        anchor="center",
-        sides=VELOCITY_VECTOR_SIDES,
-        is_scalar_bar=False,
-        is_reset_camera=False,
-    )
-    if VELOCITY_SHOW_SCALAR_BAR:
-        fig.pl.add_scalar_bar(
-            title=VELOCITY_SCALAR_BAR_TITLE,
-            mapper=vector_visual.entity_actor.mapper,
-            n_labels=VELOCITY_SCALAR_BAR_N_LABELS,
-            position_x=VELOCITY_SCALAR_BAR_POSITION[0],
-            position_y=VELOCITY_SCALAR_BAR_POSITION[1],
-            width=VELOCITY_SCALAR_BAR_SIZE[0],
-            height=VELOCITY_SCALAR_BAR_SIZE[1],
-            vertical=True,
-            title_font_size=VELOCITY_SCALAR_BAR_FONT_SIZE,
-            label_font_size=VELOCITY_SCALAR_BAR_FONT_SIZE,
+    if speed_max > 1e-12:
+        vector_visual = plane.act_visualize_vector(
+            figure=fig,
+            resolver_source="orient_length",
+            paint_by="scalars",
+            scalars=lambda speed: speed,
+            scalars_cmap=VELOCITY_CMAP,
+            scalar_bar_title=VELOCITY_SCALAR_BAR_TITLE,
+            length=velocity_length_setting(),
+            radius=VELOCITY_RADIUS,
+            tip_length_fraction=VELOCITY_TIP_LENGTH_FRACTION,
+            tip_radius_ratio=VELOCITY_TIP_RADIUS_RATIO,
+            anchor="center",
+            sides=VELOCITY_VECTOR_SIDES,
+            is_scalar_bar=False,
+            is_reset_camera=False,
+        )
+        if VELOCITY_SHOW_SCALAR_BAR:
+            fig.pl.add_scalar_bar(
+                title=VELOCITY_SCALAR_BAR_TITLE,
+                mapper=vector_visual.entity_actor.mapper,
+                n_labels=VELOCITY_SCALAR_BAR_N_LABELS,
+                position_x=VELOCITY_SCALAR_BAR_POSITION[0],
+                position_y=VELOCITY_SCALAR_BAR_POSITION[1],
+                width=VELOCITY_SCALAR_BAR_SIZE[0],
+                height=VELOCITY_SCALAR_BAR_SIZE[1],
+                vertical=True,
+                title_font_size=VELOCITY_SCALAR_BAR_FONT_SIZE,
+                label_font_size=VELOCITY_SCALAR_BAR_FONT_SIZE,
+                color="black",
+                fmt="%.2g",
+                outline=False,
+                render=False,
+            )
+    else:
+        fig.pl.add_text(
+            "velocity field is zero (alpha = 0)",
+            position=(0.035, 0.82),
+            font_size=VELOCITY_PLANE_LABEL_FONT_SIZE,
             color="black",
-            fmt="%.2g",
-            outline=False,
-            render=False,
+            viewport=True,
         )
     if VELOCITY_SHOW_PLANE_LABEL:
         fig.pl.add_text(
-            f"xy plane, z = {z_index}",
+            f"channel xy midplane, z = {z_index}",
             position=VELOCITY_PLANE_LABEL_POSITION,
             font_size=VELOCITY_PLANE_LABEL_FONT_SIZE,
             color="black",
@@ -721,6 +804,7 @@ def main() -> None:
 
     q_path, u_path = snapshot_paths(SNAPSHOT_INDEX)
     q5, velocity, input_label = read_data_snapshot(SNAPSHOT_INDEX)
+    validate_channel_snapshot(q5.shape[:3])
     defects_png = DEFECTS_PNG or output_dir / f"{input_label}_defects_lines.png"
     velocity_png = VELOCITY_PNG or output_dir / f"{input_label}_velocity_vectors.png"
     if CLIP_LINES_TO_BOX and 2.0 * LINE_CLIP_MARGIN >= min(q5.shape[:3]):
@@ -736,6 +820,8 @@ def main() -> None:
     print(f"snapshot_index={SNAPSHOT_INDEX}")
     print(f"q_path={q_path}")
     print(f"u_path={u_path}")
+    print("geometry=channel")
+    print(f"periodic_boundary={PERIODIC_BOUNDARY}")
     print(f"grid_shape={q5.shape[:3]}")
     print(f"defect_points={len(defects)}")
     print(f"disclination_lines={len(lines)}")

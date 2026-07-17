@@ -21,6 +21,9 @@ except ImportError as exc:  # pragma: no cover - depends on local environment
 
 ROOT = Path(__file__).resolve().parents[1]
 U_PATTERN = re.compile(r"^u_(\d+)\.npy$")
+DEFAULT_DATA_DIR = ROOT / "data_plane_H=10"
+DEFAULT_NX, DEFAULT_NY, DEFAULT_NZ = 512, 512, 40
+DEFAULT_COMPONENT_AXIS = -1
 
 
 def parse_args() -> argparse.Namespace:
@@ -30,7 +33,7 @@ def parse_args() -> argparse.Namespace:
             "velocity magnitude, and plot those quantities versus step."
         ),
     )
-    parser.add_argument("--data-dir", type=Path, default=ROOT / "data")
+    parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
     parser.add_argument(
         "--out",
         type=Path,
@@ -54,7 +57,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--component-axis",
         type=int,
-        default=-1,
+        default=DEFAULT_COMPONENT_AXIS,
         help=(
             "Axis containing velocity components. Default -1 matches "
             "PSSolver/data/u_<step>.npy shape (Nx, Ny, Nz, 3)."
@@ -74,6 +77,12 @@ def velocity_steps(data_dir: Path) -> list[int]:
 
 def velocity_magnitude(path: Path, component_axis: int) -> np.ndarray:
     velocity = np.load(path, mmap_mode="r")
+    expected_shape = (DEFAULT_NX, DEFAULT_NY, DEFAULT_NZ)
+    if velocity.shape[:3] != expected_shape:
+        raise ValueError(
+            f"{path} grid shape {velocity.shape[:3]} does not match "
+            f"Plane.py shape {expected_shape}"
+        )
     axis = component_axis if component_axis >= 0 else velocity.ndim + component_axis
     if axis < 0 or axis >= velocity.ndim:
         raise ValueError(

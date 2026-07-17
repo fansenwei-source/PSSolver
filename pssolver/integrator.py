@@ -1,7 +1,3 @@
-
-import torch
-
-
 class TimeIntegrator:
     def __init__(self, dt, qx, qy, q2):
         self.dt = dt
@@ -23,19 +19,12 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
         self.dynamic_transform_groups = self.model.fields.group_indices_by_boundary_conditions(
             range(self.dyn_count)
         )
-        self.static_transform_groups = self.model.fields.group_indices_by_boundary_conditions(
-            range(self.dyn_count, self.dyn_count + self.stat_count)
-        ) if self.stat_count != 0 else []
 
         self.step_count = 0
 
     def step(self, pre_update_callback=None):
         # 1. static(Q^n): u^n, E^n, Omega^n, gradQ^n
-        if self.stat_count != 0:
-            S_hats = self.model.compute_static()
-            self.model.fields.spectral[self.dyn_count:self.dyn_count + self.stat_count] = S_hats
-            for group in self.static_transform_groups:
-                self.model.fields.spatial[group] = self.model.fields.inverse_transform_group(group)
+        self.model.update_static_fields()
 
         if pre_update_callback is not None:
             pre_update_callback()

@@ -5,16 +5,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 VIS_SCRIPT="${REPO_ROOT}/visualize_nematics3d_snapshot_channel.py"
 
-DATA_DIR="${DATA_DIR:-${REPO_ROOT}/data}"
+DATA_DIR="${DATA_DIR:-${REPO_ROOT}/data_control_box_Nx256_Lx64}"
 OUTPUT_ROOT="${OUTPUT_ROOT:-${DATA_DIR}/nematics3d_channel_movie}"
 PYTHON_BIN="${PYTHON_BIN:-/home/fansenwei/anaconda3/envs/Nematics3D/bin/python}"
 FPS="${FPS:-12}"
 VIDEO_NAME="${VIDEO_NAME:-nematics3d_channel_defects_velocity.mp4}"
+CONTROL_HISTORY="${CONTROL_HISTORY:-${DATA_DIR}/control_history.csv}"
+FONT_FILE="${FONT_FILE:-/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf}"
+USE_XVFB="${USE_XVFB:-1}"
 OVERWRITE="${OVERWRITE:-0}"
 DRY_RUN="${DRY_RUN:-0}"
 START_INDEX="${START_INDEX:-}"
 END_INDEX="${END_INDEX:-}"
-STEP_MOD="${STEP_MOD:-}"
+STEP_MOD="${STEP_MOD:-10}"
 
 DATA_DIR="$(realpath -m "${DATA_DIR}")"
 OUTPUT_ROOT="$(realpath -m "${OUTPUT_ROOT}")"
@@ -41,11 +44,16 @@ Environment variables:
                 Default: /home/fansenwei/anaconda3/envs/Nematics3D/bin/python
   FPS           Output video frame rate. Default: 12
   VIDEO_NAME    Output mp4 filename. Default: nematics3d_channel_defects_velocity.mp4
+  CONTROL_HISTORY
+                Optional control-history CSV used to label step, defects, alpha,
+                and control state. Default: DATA_DIR/control_history.csv
+  USE_XVFB      1 to render through xvfb-run for headless VTK/PyVista. Default: 1
   OVERWRITE     1 to delete old PNG frames before rendering. Default: 0
   DRY_RUN       1 to only scan snapshots and print the planned output path.
   START_INDEX   Optional first snapshot index to render.
   END_INDEX     Optional last snapshot index to render.
-  STEP_MOD      Optional modulus filter, useful for quick previews.
+  STEP_MOD      Snapshot-index modulus filter. Default: 10, matching the current
+                data cadence and rendering all 1000 saved snapshots.
 
 Examples:
   bash scripts_channel/render_nematics3d_movie.sh
@@ -80,6 +88,7 @@ fi
 [[ "${FPS}" =~ ^[0-9]+([.][0-9]+)?$ ]] || die "FPS must be numeric"
 [[ "${OVERWRITE}" == "0" || "${OVERWRITE}" == "1" ]] || die "OVERWRITE must be 0 or 1"
 [[ "${DRY_RUN}" == "0" || "${DRY_RUN}" == "1" ]] || die "DRY_RUN must be 0 or 1"
+[[ "${USE_XVFB}" == "0" || "${USE_XVFB}" == "1" ]] || die "USE_XVFB must be 0 or 1"
 numeric_or_empty "${START_INDEX}" "START_INDEX"
 numeric_or_empty "${END_INDEX}" "END_INDEX"
 numeric_or_empty "${STEP_MOD}" "STEP_MOD"
@@ -96,6 +105,9 @@ require_command sort
 require_command sed
 require_command ffmpeg
 require_command mktemp
+if [[ "${USE_XVFB}" == "1" ]]; then
+  require_command xvfb-run
+fi
 
 mkdir -p "${SNAPSHOT_DIR}" "${FRAME_DIR}" "${LOG_DIR}"
 if [[ "${OVERWRITE}" == "1" ]]; then
@@ -164,7 +176,11 @@ while IFS= read -r -u 3 index; do
   if [[ ! -s "${defects_png}" || ! -s "${velocity_png}" ]]; then
     sed -i -E "s#^SNAPSHOT_INDEX = .*#SNAPSHOT_INDEX = ${index}#" "${VIS_SCRIPT}"
     printf '[%s/%s] rendering snapshot %s\n' "${frame_number}" "${snapshot_count}" "${index}"
-    "${PYTHON_BIN}" "${VIS_SCRIPT}" >"${log_file}" 2>&1 </dev/null
+    if [[ "${USE_XVFB}" == "1" ]]; then
+      xvfb-run -a "${PYTHON_BIN}" "${VIS_SCRIPT}" >"${log_file}" 2>&1 </dev/null
+    else
+      "${PYTHON_BIN}" "${VIS_SCRIPT}" >"${log_file}" 2>&1 </dev/null
+    fi
   else
     printf '[%s/%s] reusing snapshot %s\n' "${frame_number}" "${snapshot_count}" "${index}"
   fi
@@ -173,10 +189,39 @@ while IFS= read -r -u 3 index; do
   [[ -s "${velocity_png}" ]] || die "missing velocity image after rendering snapshot ${index}; see ${log_file}"
 
   if [[ ! -s "${frame_png}" || "${OVERWRITE}" == "1" ]]; then
+    control_label="step=${index}"
+    if [[ -f "${CONTROL_HISTORY}" ]]; then
+      control_row="$(
+        awk -F, -v idx="${index}" '
+          NR == 1 {
+            is_box = ($2 == "global_defect_points")
+            next
+          }
+          NR > 1 && ($1 + 0) == idx {
+            if (is_box) {
+              printf "%s|%s|%s|%s", $2, $3, $5, $6
+            } else {
+              printf "%s|%s|%s", $2, $4, $5
+            }
+            exit
+          }
+        ' "${CONTROL_HISTORY}"
+      )"
+      if [[ -n "${control_row}" ]]; then
+        pipe_count="${control_row//[^|]/}"
+        if [[ "${#pipe_count}" -eq 3 ]]; then
+          IFS='|' read -r global_defects box_defects alpha_value control_state <<< "${control_row}"
+          control_label="step=${index}  global=${global_defects}  box=${box_defects}  alpha_box=${alpha_value}  state=${control_state}"
+        else
+          IFS='|' read -r defect_points alpha_value control_state <<< "${control_row}"
+          control_label="step=${index}  defects=${defect_points}  alpha=${alpha_value}  state=${control_state}"
+        fi
+      fi
+    fi
     ffmpeg -hide_banner -loglevel error -y \
       -i "${defects_png}" \
       -i "${velocity_png}" \
-      -filter_complex "[0:v]scale=-2:1080[left];[1:v]scale=-2:1080[right];[left][right]hstack=inputs=2,format=rgb24" \
+      -filter_complex "[0:v]scale=1920:-2[top];[1:v]scale=1920:-2[bottom];[top][bottom]vstack=inputs=2,drawtext=fontfile=${FONT_FILE}:text='${control_label}':x=35:y=30:fontsize=34:fontcolor=black:box=1:boxcolor=white@0.82:boxborderw=12,format=rgb24" \
       "${frame_png}" </dev/null
   fi
 done 3< "${INDEX_LIST}"

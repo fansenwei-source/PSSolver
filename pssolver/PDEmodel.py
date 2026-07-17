@@ -10,10 +10,10 @@ class PDEModel:
         self.batchsize = batchsize
 
         self.fields = Fields(shape = shape, device = device, batchsize = self.batchsize)
-        self.parameters = Parameters()#batchsize = self.batchsize)
-        self.num_fields = 0
+        self.parameters = Parameters()
         self.dyn_fields = []
         self.stat_fields = []
+        self.static_transform_groups = []
         self.nlmodel = None
         self.static_model = None
 
@@ -86,10 +86,16 @@ class PDEModel:
         self.fields.stat_count = count - self.fields.dyn_count
         self.fields.boundary_conditions = list(boundary_conditions)
         self.fields._refresh_metadata()
+        static_indices = range(self.fields.dyn_count, count)
+        self.static_transform_groups = (
+            self.fields.group_indices_by_boundary_conditions(static_indices)
+            if self.fields.stat_count != 0
+            else []
+        )
 
-        self.fields.spatial = torch.stack(inits).to(self.device)#.permute(1, 0, *range(2, 2 + len(self.shape)))
+        self.fields.spatial = torch.stack(inits).to(self.device)
         self.fields.spectral = self.fields.fftn()
-        self.fields.L_hat = torch.stack(L_hats).to(self.device)#.permute(1, 0, *range(2, 2 + len(self.shape)))
+        self.fields.L_hat = torch.stack(L_hats).to(self.device)
 
         if self.nlmodel is None:
             self.nlmodel = ZeroModel()
@@ -131,6 +137,19 @@ class PDEModel:
 
     def compute_static(self):
         return self.static_model(self.fields, self.parameters)
+
+    def update_static_fields(self):
+        """Recompute static fields and synchronize their spectral and spatial states."""
+        if self.fields.stat_count == 0:
+            return None
+
+        static_hats = self.compute_static()
+        start = self.fields.dyn_count
+        stop = start + self.fields.stat_count
+        self.fields.spectral[start:stop] = static_hats
+        for group in self.static_transform_groups:
+            self.fields.spatial[group] = self.fields.inverse_transform_group(group)
+        return static_hats
 
     def compute_nonlinear(self):
         return self.nlmodel(self.fields, self.parameters)

@@ -1,9 +1,12 @@
+import csv
+import os
 import time
+
+import nematics3d as n3d
+import numpy as np
 import torch
 from pssolver import SpectralSolver, create_q_initial_condition
 from tqdm import trange
-import numpy as np
-import os
 
 Q_BC = ("periodic", "neumann", "neumann")
 U_BC = ("periodic", "dirichlet", "dirichlet")
@@ -14,6 +17,16 @@ PRESSURE_MODAL_BC = ("periodic", "neumann", "neumann")
 ENABLE_DIAGNOSTICS = True
 DIAGNOSTIC_INTERVAL = 10
 SAVE_INTERVAL = 10
+CONTROL_INTERVAL = 10
+DEFECT_DETECTION_THRESHOLD = 0.0
+DEFECT_OFF_THRESHOLD = 300
+OFF_CONFIRMATIONS = 2
+ZERO_CONFIRMATIONS = 3
+MIN_OFF_CHECKS = 3
+ALPHA_ON = 5.0
+ALPHA_OFF = 0.0
+CHANNEL_PERIODIC_BOUNDARY = (True, False, False)
+DEFECT_DETECTION_PLANES = (True, True, True)
 
 
 def divergence_stats(fields):
@@ -77,14 +90,14 @@ def wall_normal_momentum_stats(fields, params):
 class NonlinearModel(torch.nn.Module):
     def __init__(self, solver):
         super().__init__()
-        
-    def forward(self, fields, params): 
-        Qxx = fields['Qxx']  
+
+    def forward(self, fields, params):
+        Qxx = fields['Qxx']
         Qxy = fields['Qxy']
         Qxz = fields['Qxz']
         Qyy = fields['Qyy']
         Qyz = fields['Qyz']
-        
+
         Qsq = Qxx ** 2 + 2 * Qxy ** 2 + 2 * Qxz ** 2 + (Qxx + Qyy) ** 2 + Qyy ** 2 + 2 * Qyz ** 2
 
         ux = fields['ux']
@@ -165,7 +178,7 @@ class NonlinearModel(torch.nn.Module):
             - wyz*(Qxx + 2*Qyy) - wxz*Qxy - wxy*Qxz
         )
 
-        return fields.transform_tensor(torch.stack([out0, out1, out2, out3, out4]), Q_BC)  
+        return fields.transform_tensor(torch.stack([out0, out1, out2, out3, out4]), Q_BC)
 
 class ModalSaddleStokesCompute(torch.nn.Module):
     """
@@ -420,13 +433,13 @@ class ModalSaddleStokesCompute(torch.nn.Module):
         return torch.stack([ux_hat, uy_hat, uz_hat, pressure_hat])
 
 seed = 24
-dt = 1e-2
-steps = 1000
+dt = 1e-3
+steps = 10000
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 batchsize = 1
 
-Nx, Ny, Nz = 512, 40, 40
-Lx, Ly, Lz = 128.0, 10.0, 10.0
+Nx, Ny, Nz = 96, 128, 128
+Lx, Ly, Lz = 6.0, 8.0, 8.0
 
 solver = SpectralSolver(shape=(Nx,Ny,Nz), L=(Lx,Ly,Lz), dt=dt, device=device, batchsize=batchsize)
 q_initial_condition = create_q_initial_condition(
@@ -449,7 +462,7 @@ Qyz_0 = q_initial_condition["Qyz"]
 # Nematic 参数
 rho = 6
 aQ = 1 - rho/3
-bQ = -rho 
+bQ = -rho
 cQ = rho
 KQ = 1.0
 
@@ -503,16 +516,123 @@ solver.model.add_static_field("p", boundary_conditions=PRESSURE_MODAL_BC)
 solver.model.set_nonlinear_model(NonlinearModel(solver))
 solver.model.set_static_compute_model(ModalSaddleStokesCompute(solver))
 
-alpha = torch.tensor(5.0, device=device)
+alpha = torch.tensor(ALPHA_ON, device=device)
 solver.model.parameters.new_param('alpha', alpha)
 
 solver.build()
 
 diagnostic_history = []
-output_dir = "data01"
+output_dir = "data_control"
 os.makedirs(output_dir, exist_ok=True)
+control_history_path = os.path.join(output_dir, "control_history.csv")
+control_history_fields = (
+    "step",
+    "defect_points",
+    "defect_density",
+    "alpha",
+    "control_state",
+    "above_threshold_count",
+    "zero_count",
+    "off_checks",
+    "transition",
+)
+with open(control_history_path, "w", newline="") as control_history_file:
+    csv.DictWriter(control_history_file, fieldnames=control_history_fields).writeheader()
+
+control_state = {
+    "active": True,
+    "above_threshold_count": 0,
+    "zero_count": 0,
+    "off_checks": 0,
+    "last_defect_points": 0,
+}
+q_snapshot_cache = {
+    "step": None,
+    "value": None,
+}
 start = time.time()
 pbar = trange(steps)
+
+
+def q_snapshot_numpy(step):
+    if q_snapshot_cache["step"] != step:
+        snapshot = torch.stack([
+            solver.model.fields[name].detach().cpu()
+            for name in ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"]
+        ])
+        snapshot = snapshot.permute(1, 2, 3, 4, 0)
+        q_snapshot_cache["step"] = step
+        q_snapshot_cache["value"] = snapshot[0].numpy()
+    return q_snapshot_cache["value"]
+
+
+def update_defect_control(step):
+    q_snapshot = q_snapshot_numpy(step)
+    _, director = n3d.Q_diagonalize(q_snapshot)
+    defects = n3d.defect_detect(
+        director,
+        threshold=DEFECT_DETECTION_THRESHOLD,
+        is_boundary_periodic=CHANNEL_PERIODIC_BOUNDARY,
+        planes=DEFECT_DETECTION_PLANES,
+    )
+    defect_points = len(defects)
+    defect_density = defect_points / (Nx * Ny * Nz)
+    control_state["last_defect_points"] = defect_points
+    transition = ""
+
+    if control_state["active"]:
+        control_state["zero_count"] = 0
+        control_state["off_checks"] = 0
+        if defect_points >= DEFECT_OFF_THRESHOLD:
+            control_state["above_threshold_count"] += 1
+        else:
+            control_state["above_threshold_count"] = 0
+
+        if control_state["above_threshold_count"] >= OFF_CONFIRMATIONS:
+            alpha.fill_(ALPHA_OFF)
+            control_state["active"] = False
+            control_state["above_threshold_count"] = 0
+            control_state["zero_count"] = 0
+            control_state["off_checks"] = 0
+            transition = "alpha_off"
+    else:
+        control_state["above_threshold_count"] = 0
+        control_state["off_checks"] += 1
+        if defect_points == 0:
+            control_state["zero_count"] += 1
+        else:
+            control_state["zero_count"] = 0
+
+        if (
+            control_state["off_checks"] >= MIN_OFF_CHECKS
+            and control_state["zero_count"] >= ZERO_CONFIRMATIONS
+        ):
+            alpha.fill_(ALPHA_ON)
+            control_state["active"] = True
+            control_state["zero_count"] = 0
+            control_state["off_checks"] = 0
+            transition = "alpha_restored"
+
+    row = {
+        "step": step,
+        "defect_points": defect_points,
+        "defect_density": defect_density,
+        "alpha": alpha.item(),
+        "control_state": "on" if control_state["active"] else "off",
+        "above_threshold_count": control_state["above_threshold_count"],
+        "zero_count": control_state["zero_count"],
+        "off_checks": control_state["off_checks"],
+        "transition": transition,
+    }
+    with open(control_history_path, "a", newline="") as control_history_file:
+        writer = csv.DictWriter(control_history_file, fieldnames=control_history_fields)
+        writer.writerow(row)
+
+    if transition:
+        pbar.write(
+            f"step={step}: {transition}, defect_points={defect_points}, "
+            f"alpha={alpha.item():.1f}"
+        )
 
 
 def record_step_state(i):
@@ -535,6 +655,8 @@ def record_step_state(i):
             wall_mom_rms,
         ))
         pbar.set_postfix(
+            defects=control_state["last_defect_points"],
+            alpha=f"{alpha.item():.1f}",
             div_max=f"{div_max:.2e}",
             div_rms=f"{div_rms:.2e}",
             div_rel=f"{div_rel:.2e}",
@@ -543,12 +665,7 @@ def record_step_state(i):
             wall_n_rms=f"{wall_mom_rms:.2e}",
         )
     if i % SAVE_INTERVAL == 0:
-        snapshot = torch.stack([
-            solver.model.fields[name].detach().cpu()
-            for name in ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"]
-        ])  # shape -> (5, batch, N, N, N)
-        snapshot = snapshot.permute(1, 2, 3, 4, 0)  # shape -> (batch, N, N, N, 5)
-        np.save(f"{output_dir}/Q_{i}.npy", snapshot[0].numpy())
+        np.save(f"{output_dir}/Q_{i}.npy", q_snapshot_numpy(i))
 
         u_snapshot = torch.stack([
             solver.model.fields[name].detach().cpu()
@@ -562,9 +679,11 @@ def record_step_state(i):
 
 
 for i in pbar:
+    if i % CONTROL_INTERVAL == 0:
+        update_defect_control(i)
     solver.run(1, pre_update_callback=lambda _solver, _step, i=i: record_step_state(i))
 
-	    
+
 end = time.time()
 print(f"Elapsed time: {end - start:.6f} seconds")
 if ENABLE_DIAGNOSTICS:

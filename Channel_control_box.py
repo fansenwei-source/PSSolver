@@ -1,9 +1,12 @@
+import csv
+import os
 import time
+
+import nematics3d as n3d
+import numpy as np
 import torch
 from pssolver import SpectralSolver, create_q_initial_condition
 from tqdm import trange
-import numpy as np
-import os
 
 Q_BC = ("periodic", "neumann", "neumann")
 U_BC = ("periodic", "dirichlet", "dirichlet")
@@ -14,6 +17,20 @@ PRESSURE_MODAL_BC = ("periodic", "neumann", "neumann")
 ENABLE_DIAGNOSTICS = True
 DIAGNOSTIC_INTERVAL = 10
 SAVE_INTERVAL = 10
+CONTROL_INTERVAL = 10
+DEFECT_DETECTION_THRESHOLD = 0.0
+BOX_DEFECT_OFF_THRESHOLD = 60
+OFF_CONFIRMATIONS = 2
+ZERO_CONFIRMATIONS = 3
+MIN_OFF_CHECKS = 3
+ALPHA_ON = 5.0
+ALPHA_OFF = 0.0
+ALPHA_BOX_CENTER = (128.0, 20.0, 20.0)
+ALPHA_BOX_GRID_POINTS = (20, 32, 32)
+ALPHA_BOX_TRANSITION_WIDTH = 3.0
+OBSERVATION_BOX_MARGIN = 4
+CHANNEL_PERIODIC_BOUNDARY = (True, False, False)
+DEFECT_DETECTION_PLANES = (True, True, True)
 
 
 def divergence_stats(fields):
@@ -45,21 +62,36 @@ def divergence_stats(fields):
     return div_max, div_rms, div_rel
 
 
+def active_force(fields, alpha_field):
+    """Return div(beta * alpha * Q) for a spatially varying activity field."""
+    Qxx = fields['Qxx']
+    Qxy = fields['Qxy']
+    Qxz = fields['Qxz']
+    Qyy = fields['Qyy']
+    Qyz = fields['Qyz']
+    Qzz = -Qxx - Qyy
+
+    fx = beta * (
+        fields.gradient('Qxx', axis=0, tensor=alpha_field * Qxx)
+        + fields.gradient('Qxy', axis=1, tensor=alpha_field * Qxy)
+        + fields.gradient('Qxz', axis=2, tensor=alpha_field * Qxz)
+    )
+    fy = beta * (
+        fields.gradient('Qxy', axis=0, tensor=alpha_field * Qxy)
+        + fields.gradient('Qyy', axis=1, tensor=alpha_field * Qyy)
+        + fields.gradient('Qyz', axis=2, tensor=alpha_field * Qyz)
+    )
+    fz = beta * (
+        fields.gradient('Qxz', axis=0, tensor=alpha_field * Qxz)
+        + fields.gradient('Qyz', axis=1, tensor=alpha_field * Qyz)
+        + fields.gradient('Qxx', axis=2, tensor=alpha_field * Qzz)
+    )
+    return torch.stack([fx, fy, fz])
+
+
 def wall_normal_momentum_stats(fields, params):
     """Check normal momentum balance at the y and z walls for the modal pressure."""
-    alpha = params['alpha']
-    force_prefactor = beta * alpha
-
-    gxQxy = fields.gradient('Qxy', axis=0)
-    gyQyy = fields.gradient('Qyy', axis=1)
-    gzQyz = fields.gradient('Qyz', axis=2)
-    gxQxz = fields.gradient('Qxz', axis=0)
-    gyQyz = fields.gradient('Qyz', axis=1)
-    gzQxx = fields.gradient('Qxx', axis=2)
-    gzQyy = fields.gradient('Qyy', axis=2)
-
-    fy = force_prefactor * (gxQxy + gyQyy + gzQyz)
-    fz = force_prefactor * (gxQxz + gyQyz - gzQxx - gzQyy)
+    _, fy, fz = active_force(fields, params['alpha'])
 
     lap_uy = fields.laplacian('uy')
     lap_uz = fields.laplacian('uz')
@@ -77,14 +109,14 @@ def wall_normal_momentum_stats(fields, params):
 class NonlinearModel(torch.nn.Module):
     def __init__(self, solver):
         super().__init__()
-        
-    def forward(self, fields, params): 
-        Qxx = fields['Qxx']  
+
+    def forward(self, fields, params):
+        Qxx = fields['Qxx']
         Qxy = fields['Qxy']
         Qxz = fields['Qxz']
         Qyy = fields['Qyy']
         Qyz = fields['Qyz']
-        
+
         Qsq = Qxx ** 2 + 2 * Qxy ** 2 + 2 * Qxz ** 2 + (Qxx + Qyy) ** 2 + Qyy ** 2 + 2 * Qyz ** 2
 
         ux = fields['ux']
@@ -165,7 +197,7 @@ class NonlinearModel(torch.nn.Module):
             - wyz*(Qxx + 2*Qyy) - wxz*Qxy - wxy*Qxz
         )
 
-        return fields.transform_tensor(torch.stack([out0, out1, out2, out3, out4]), Q_BC)  
+        return fields.transform_tensor(torch.stack([out0, out1, out2, out3, out4]), Q_BC)
 
 class ModalSaddleStokesCompute(torch.nn.Module):
     """
@@ -376,27 +408,7 @@ class ModalSaddleStokesCompute(torch.nn.Module):
         return x_hat
 
     def forward(self, fields, params):
-        alpha = params['alpha']
-        force_prefactor = beta * alpha
-
-        gxQxx = fields.gradient('Qxx', axis=0)
-        gyQxy = fields.gradient('Qxy', axis=1)
-        gzQxz = fields.gradient('Qxz', axis=2)
-
-        gxQxy = fields.gradient('Qxy', axis=0)
-        gyQyy = fields.gradient('Qyy', axis=1)
-        gzQyz = fields.gradient('Qyz', axis=2)
-
-        gxQxz = fields.gradient('Qxz', axis=0)
-        gyQyz = fields.gradient('Qyz', axis=1)
-        gzQxx = fields.gradient('Qxx', axis=2)
-        gzQyy = fields.gradient('Qyy', axis=2)
-
-        force = force_prefactor * torch.stack([
-            gxQxx + gyQxy + gzQxz,
-            gxQxy + gyQyy + gzQyz,
-            gxQxz + gyQyz - gzQxx - gzQyy,
-        ])
+        force = active_force(fields, params['alpha'])
         force_hat = fields.transform_tensor(force, U_BC)
         fx_hat, fy_hat, fz_hat = force_hat[0], force_hat[1], force_hat[2]
 
@@ -420,13 +432,13 @@ class ModalSaddleStokesCompute(torch.nn.Module):
         return torch.stack([ux_hat, uy_hat, uz_hat, pressure_hat])
 
 seed = 24
-dt = 1e-2
-steps = 1000
+dt = 1e-3
+steps = 10000
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 batchsize = 1
 
-Nx, Ny, Nz = 512, 40, 40
-Lx, Ly, Lz = 128.0, 10.0, 10.0
+Nx, Ny, Nz = 256, 40, 40
+Lx, Ly, Lz = 64.0, 10.0, 10.0
 
 solver = SpectralSolver(shape=(Nx,Ny,Nz), L=(Lx,Ly,Lz), dt=dt, device=device, batchsize=batchsize)
 q_initial_condition = create_q_initial_condition(
@@ -449,7 +461,7 @@ Qyz_0 = q_initial_condition["Qyz"]
 # Nematic 参数
 rho = 6
 aQ = 1 - rho/3
-bQ = -rho 
+bQ = -rho
 cQ = rho
 KQ = 1.0
 
@@ -503,16 +515,263 @@ solver.model.add_static_field("p", boundary_conditions=PRESSURE_MODAL_BC)
 solver.model.set_nonlinear_model(NonlinearModel(solver))
 solver.model.set_static_compute_model(ModalSaddleStokesCompute(solver))
 
-alpha = torch.tensor(5.0, device=device)
+
+def validate_box_bounds(name, bounds, size):
+    lower, upper = bounds
+    if not (0 <= lower < upper <= size):
+        raise ValueError(
+            f"{name} must satisfy 0 <= lower < upper <= {size}, got {bounds}"
+        )
+
+
+def box_bounds_from_center_grid_points(center, grid_points, shape):
+    if len(center) != 3 or len(grid_points) != 3:
+        raise ValueError(
+            "ALPHA_BOX_CENTER and ALPHA_BOX_GRID_POINTS must each contain x, y, z"
+        )
+
+    bounds = []
+    for axis, (axis_center, axis_count, axis_size) in enumerate(
+        zip(center, grid_points, shape)
+    ):
+        if not isinstance(axis_count, int) or isinstance(axis_count, bool):
+            raise ValueError(
+                f"ALPHA_BOX_GRID_POINTS[{axis}] must be an integer, got {axis_count}"
+            )
+        if axis_count <= 0:
+            raise ValueError(
+                f"ALPHA_BOX_GRID_POINTS[{axis}] must be positive, got {axis_count}"
+            )
+        lower_float = axis_center - 0.5 * axis_count
+        upper_float = axis_center + 0.5 * axis_count
+        lower = round(lower_float)
+        upper = round(upper_float)
+        if (
+            abs(lower_float - lower) > 1e-9
+            or abs(upper_float - upper) > 1e-9
+        ):
+            raise ValueError(
+                "Each center +/- half the grid-point count must fall on an integer grid "
+                f"boundary; axis {axis} gives ({lower_float}, {upper_float})"
+            )
+        axis_bounds = (int(lower), int(upper))
+        validate_box_bounds(f"alpha box axis {axis}", axis_bounds, axis_size)
+        bounds.append(axis_bounds)
+    return tuple(bounds)
+
+
+def smooth_box_axis(size, bounds, width, device):
+    lower, upper = bounds
+    coordinate = torch.arange(size, device=device, dtype=torch.float32)
+    inside = (coordinate >= lower) & (coordinate < upper)
+    left = ((coordinate - (lower - 1)) / width).clamp(0.0, 1.0)
+    right = ((upper - coordinate) / width).clamp(0.0, 1.0)
+    ramp = torch.minimum(left, right)
+    smooth = ramp.square() * (3.0 - 2.0 * ramp)
+    return torch.where(inside, smooth, torch.zeros_like(smooth))
+
+
+def make_alpha_box_mask(shape, bounds, device):
+    if ALPHA_BOX_TRANSITION_WIDTH <= 0:
+        raise ValueError("ALPHA_BOX_TRANSITION_WIDTH must be positive")
+
+    mask_x = smooth_box_axis(
+        shape[0], bounds[0], ALPHA_BOX_TRANSITION_WIDTH, device
+    ).view(1, shape[0], 1, 1)
+    mask_y = smooth_box_axis(
+        shape[1], bounds[1], ALPHA_BOX_TRANSITION_WIDTH, device
+    ).view(1, 1, shape[1], 1)
+    mask_z = smooth_box_axis(
+        shape[2], bounds[2], ALPHA_BOX_TRANSITION_WIDTH, device
+    ).view(1, 1, 1, shape[2])
+    return mask_x * mask_y * mask_z
+
+
+def expanded_observation_bounds(bounds, margin, size):
+    return max(0, bounds[0] - margin), min(size, bounds[1] + margin)
+
+
+if OBSERVATION_BOX_MARGIN < 0:
+    raise ValueError("OBSERVATION_BOX_MARGIN must be non-negative")
+
+alpha_box_bounds = box_bounds_from_center_grid_points(
+    ALPHA_BOX_CENTER,
+    ALPHA_BOX_GRID_POINTS,
+    (Nx, Ny, Nz),
+)
+alpha_box_x, alpha_box_y, alpha_box_z = alpha_box_bounds
+alpha_box_mask = make_alpha_box_mask(
+    (Nx, Ny, Nz),
+    alpha_box_bounds,
+    device,
+)
+alpha = ALPHA_ON * alpha_box_mask.repeat(batchsize, 1, 1, 1)
+observation_box_x = expanded_observation_bounds(
+    alpha_box_x, OBSERVATION_BOX_MARGIN, Nx
+)
+observation_box_y = expanded_observation_bounds(
+    alpha_box_y, OBSERVATION_BOX_MARGIN, Ny
+)
+observation_box_z = expanded_observation_bounds(
+    alpha_box_z, OBSERVATION_BOX_MARGIN, Nz
+)
 solver.model.parameters.new_param('alpha', alpha)
 
 solver.build()
 
 diagnostic_history = []
-output_dir = "data01"
+output_dir = "data_control_box_Nx256_Lx64"
 os.makedirs(output_dir, exist_ok=True)
+np.save(
+    os.path.join(output_dir, "alpha_box_mask.npy"),
+    alpha_box_mask[0].detach().cpu().numpy(),
+)
+print(
+    "[control] alpha_box "
+    f"center={ALPHA_BOX_CENTER} grid_points={ALPHA_BOX_GRID_POINTS} "
+    f"x={alpha_box_x} y={alpha_box_y} z={alpha_box_z} "
+    f"observation_x={observation_box_x} "
+    f"observation_y={observation_box_y} "
+    f"observation_z={observation_box_z} "
+    f"alpha_on={ALPHA_ON} transition_width={ALPHA_BOX_TRANSITION_WIDTH}",
+    flush=True,
+)
+control_history_path = os.path.join(output_dir, "control_history.csv")
+control_history_fields = (
+    "step",
+    "global_defect_points",
+    "box_defect_points",
+    "box_defect_density",
+    "alpha_box_amplitude",
+    "control_state",
+    "above_threshold_count",
+    "zero_count",
+    "off_checks",
+    "transition",
+)
+with open(control_history_path, "w", newline="") as control_history_file:
+    csv.DictWriter(control_history_file, fieldnames=control_history_fields).writeheader()
+
+control_state = {
+    "active": True,
+    "above_threshold_count": 0,
+    "zero_count": 0,
+    "off_checks": 0,
+    "last_global_defect_points": 0,
+    "last_box_defect_points": 0,
+}
+q_snapshot_cache = {
+    "step": None,
+    "value": None,
+}
 start = time.time()
 pbar = trange(steps)
+
+
+def q_snapshot_numpy(step):
+    if q_snapshot_cache["step"] != step:
+        snapshot = torch.stack([
+            solver.model.fields[name].detach().cpu()
+            for name in ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"]
+        ])
+        snapshot = snapshot.permute(1, 2, 3, 4, 0)
+        q_snapshot_cache["step"] = step
+        q_snapshot_cache["value"] = snapshot[0].numpy()
+    return q_snapshot_cache["value"]
+
+
+def defects_inside_observation_box(defects):
+    if len(defects) == 0:
+        return defects
+    inside = (
+        (defects[:, 0] >= observation_box_x[0])
+        & (defects[:, 0] < observation_box_x[1])
+        & (defects[:, 1] >= observation_box_y[0])
+        & (defects[:, 1] < observation_box_y[1])
+        & (defects[:, 2] >= observation_box_z[0])
+        & (defects[:, 2] < observation_box_z[1])
+    )
+    return defects[inside]
+
+
+def update_defect_control(step):
+    q_snapshot = q_snapshot_numpy(step)
+    _, director = n3d.Q_diagonalize(q_snapshot)
+    defects = n3d.defect_detect(
+        director,
+        threshold=DEFECT_DETECTION_THRESHOLD,
+        is_boundary_periodic=CHANNEL_PERIODIC_BOUNDARY,
+        planes=DEFECT_DETECTION_PLANES,
+    )
+    box_defects = defects_inside_observation_box(defects)
+    global_defect_points = len(defects)
+    box_defect_points = len(box_defects)
+    observation_volume = (
+        (observation_box_x[1] - observation_box_x[0])
+        * (observation_box_y[1] - observation_box_y[0])
+        * (observation_box_z[1] - observation_box_z[0])
+    )
+    box_defect_density = box_defect_points / observation_volume
+    control_state["last_global_defect_points"] = global_defect_points
+    control_state["last_box_defect_points"] = box_defect_points
+    transition = ""
+
+    if control_state["active"]:
+        control_state["zero_count"] = 0
+        control_state["off_checks"] = 0
+        if box_defect_points >= BOX_DEFECT_OFF_THRESHOLD:
+            control_state["above_threshold_count"] += 1
+        else:
+            control_state["above_threshold_count"] = 0
+
+        if control_state["above_threshold_count"] >= OFF_CONFIRMATIONS:
+            alpha.zero_()
+            control_state["active"] = False
+            control_state["above_threshold_count"] = 0
+            control_state["zero_count"] = 0
+            control_state["off_checks"] = 0
+            transition = "alpha_off"
+    else:
+        control_state["above_threshold_count"] = 0
+        control_state["off_checks"] += 1
+        if box_defect_points == 0:
+            control_state["zero_count"] += 1
+        else:
+            control_state["zero_count"] = 0
+
+        if (
+            control_state["off_checks"] >= MIN_OFF_CHECKS
+            and control_state["zero_count"] >= ZERO_CONFIRMATIONS
+        ):
+            alpha.copy_(ALPHA_ON * alpha_box_mask)
+            control_state["active"] = True
+            control_state["zero_count"] = 0
+            control_state["off_checks"] = 0
+            transition = "alpha_restored"
+
+    row = {
+        "step": step,
+        "global_defect_points": global_defect_points,
+        "box_defect_points": box_defect_points,
+        "box_defect_density": box_defect_density,
+        "alpha_box_amplitude": ALPHA_ON if control_state["active"] else ALPHA_OFF,
+        "control_state": "on" if control_state["active"] else "off",
+        "above_threshold_count": control_state["above_threshold_count"],
+        "zero_count": control_state["zero_count"],
+        "off_checks": control_state["off_checks"],
+        "transition": transition,
+    }
+    with open(control_history_path, "a", newline="") as control_history_file:
+        writer = csv.DictWriter(control_history_file, fieldnames=control_history_fields)
+        writer.writerow(row)
+
+    if transition:
+        pbar.write(
+            f"step={step}: {transition}, "
+            f"box_defects={box_defect_points}, "
+            f"global_defects={global_defect_points}, "
+            f"alpha_box={ALPHA_ON if control_state['active'] else ALPHA_OFF:.1f}"
+        )
 
 
 def record_step_state(i):
@@ -535,6 +794,9 @@ def record_step_state(i):
             wall_mom_rms,
         ))
         pbar.set_postfix(
+            box_defects=control_state["last_box_defect_points"],
+            global_defects=control_state["last_global_defect_points"],
+            alpha_box=f"{ALPHA_ON if control_state['active'] else ALPHA_OFF:.1f}",
             div_max=f"{div_max:.2e}",
             div_rms=f"{div_rms:.2e}",
             div_rel=f"{div_rel:.2e}",
@@ -543,12 +805,7 @@ def record_step_state(i):
             wall_n_rms=f"{wall_mom_rms:.2e}",
         )
     if i % SAVE_INTERVAL == 0:
-        snapshot = torch.stack([
-            solver.model.fields[name].detach().cpu()
-            for name in ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"]
-        ])  # shape -> (5, batch, N, N, N)
-        snapshot = snapshot.permute(1, 2, 3, 4, 0)  # shape -> (batch, N, N, N, 5)
-        np.save(f"{output_dir}/Q_{i}.npy", snapshot[0].numpy())
+        np.save(f"{output_dir}/Q_{i}.npy", q_snapshot_numpy(i))
 
         u_snapshot = torch.stack([
             solver.model.fields[name].detach().cpu()
@@ -562,9 +819,11 @@ def record_step_state(i):
 
 
 for i in pbar:
+    if i % CONTROL_INTERVAL == 0:
+        update_defect_control(i)
     solver.run(1, pre_update_callback=lambda _solver, _step, i=i: record_step_state(i))
 
-	    
+
 end = time.time()
 print(f"Elapsed time: {end - start:.6f} seconds")
 if ENABLE_DIAGNOSTICS:

@@ -22,9 +22,9 @@ except ImportError as exc:  # pragma: no cover - depends on local environment
 
 ROOT = Path(__file__).resolve().parents[1]
 U_PATTERN = re.compile(r"^u_(\d+)\.npy$")
-DEFAULT_DATA_DIR = ROOT / "data_plane"
-DEFAULT_NX, DEFAULT_NY, DEFAULT_NZ = 512, 512, 20
-DEFAULT_LX, DEFAULT_LY, DEFAULT_LZ = 128.0, 128.0, 5.0
+DEFAULT_DATA_DIR = ROOT / "data_plane_H=10"
+DEFAULT_NX, DEFAULT_NY, DEFAULT_NZ = 512, 512, 40
+DEFAULT_LX, DEFAULT_LY, DEFAULT_LZ = 128.0, 128.0, 10.0
 DEFAULT_DX = DEFAULT_LX / DEFAULT_NX
 DEFAULT_DY = DEFAULT_LY / DEFAULT_NY
 DEFAULT_DZ = DEFAULT_LZ / DEFAULT_NZ
