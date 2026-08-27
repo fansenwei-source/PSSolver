@@ -8,9 +8,11 @@ from pathlib import Path
 
 import numpy as np
 
+from pssolver.models.active_nematics.nematics3d_adapter import director_from_Q
+from pssolver.snapshots import load_q_snapshot
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-VENV_SITE = REPO_ROOT / ".venv" / "lib" / "python3.12" / "site-packages"
 LOCAL_NEMATICS_SRC_CANDIDATES = [
     REPO_ROOT / "Nematics3D" / "src",
     REPO_ROOT.parent / "Develop" / "Nematics3D" / "src",
@@ -142,9 +144,6 @@ VORTICITY_SCALAR_BAR_LABEL_FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.t
 CHANNEL_PERIODIC_BOUNDARY = (True, False, False)
 CHANNEL_LONG_AXIS = 0
 
-if VENV_SITE.exists():
-    sys.path.append(str(VENV_SITE))
-
 try:
     import nematics3d as n3d
     from nematics3d.classes.grid_field import GridFieldDataset, InputGridField
@@ -189,7 +188,12 @@ def read_data_snapshot(index: int) -> tuple[np.ndarray, np.ndarray, str]:
     if not u_path.exists():
         raise FileNotFoundError(f"velocity snapshot does not exist: {u_path}")
 
-    q5 = require_component_last(np.load(q_path), 5, "Q", q_path)
+    q5 = require_component_last(
+        load_q_snapshot(q_path, require_S_initial=True).values,
+        5,
+        "Q",
+        q_path,
+    )
     velocity = require_component_last(np.load(u_path), 3, "velocity", u_path)
     if q5.shape[:3] != velocity.shape[:3]:
         raise ValueError(
@@ -220,7 +224,7 @@ def detect_lines(
     periodic: tuple[bool, bool, bool],
     planes: tuple[bool, bool, bool],
 ) -> tuple[np.ndarray, list]:
-    _, director = n3d.Q_diagonalize(q5)
+    director = director_from_Q(q5)
     defect_indices = n3d.defect_detect(
         director,
         threshold=threshold,

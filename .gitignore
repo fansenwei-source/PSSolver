@@ -1,5 +1,10 @@
 __pycache__/
 .ipynb_checkpoints/
+.venv/
+.vscode/
+*.orig
+*.log
+*.csv
 scratch/
 data/
 data01/
@@ -7,6 +12,11 @@ data02/
 data03/
 data_control*/
 data_plane*/
+/data*/
+/analysis_*/
+/archive/
+/free_slip_reference/
+/Untitled.ipynb
 *.npy
 *.npz
 *.mp4

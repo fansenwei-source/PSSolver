@@ -5,7 +5,13 @@ import time
 import nematics3d as n3d
 import numpy as np
 import torch
-from pssolver import SpectralSolver, create_q_initial_condition
+from pssolver import SpectralSolver, prepare_new_run_directory, write_run_metadata
+from pssolver.models.active_nematics import (
+    Q_convention_metadata,
+    create_initial_condition,
+    positive_equilibrium_S,
+)
+from pssolver.models.active_nematics.nematics3d_adapter import director_from_Q
 from tqdm import trange
 
 Q_BC = ("periodic", "neumann", "neumann")
@@ -442,11 +448,12 @@ Nx, Ny, Nz = 96, 128, 128
 Lx, Ly, Lz = 6.0, 8.0, 8.0
 
 solver = SpectralSolver(shape=(Nx,Ny,Nz), L=(Lx,Ly,Lz), dt=dt, device=device, batchsize=batchsize)
-q_initial_condition = create_q_initial_condition(
+q_initial_condition = create_initial_condition(
     "aligned_x_smooth_noise",
     shape=(Nx, Ny, Nz),
     boundary_conditions=Q_BC,
     seed=seed,
+    S_initial=2.0 / 3.0,
     noise_theta=0.01,
     noise_phi=0.01,
     sigma_x=1.0,
@@ -465,6 +472,7 @@ aQ = 1 - rho/3
 bQ = -rho
 cQ = rho
 KQ = 1.0
+S_bulk = positive_equilibrium_S(aQ, bQ, cQ)
 
 # 流体/应力参数
 beta = -1.0
@@ -522,8 +530,55 @@ solver.model.parameters.new_param('alpha', alpha)
 solver.build()
 
 diagnostic_history = []
-output_dir = "data_control"
-os.makedirs(output_dir, exist_ok=True)
+output_dir = prepare_new_run_directory("data_channel_control")
+run_metadata = {
+    "schema_version": 1,
+    "script": "Channel_control.py",
+    "solver": {
+        "shape": [Nx, Ny, Nz],
+        "lengths": [Lx, Ly, Lz],
+        "dt": dt,
+        "steps": steps,
+        "save_interval": SAVE_INTERVAL,
+    },
+    "model": {
+        "name": "active_nematics",
+        "Q_convention": Q_convention_metadata(),
+        "parameters": {
+            "aQ": aQ,
+            "bQ": bQ,
+            "cQ": cQ,
+            "KQ": KQ,
+            "S_initial": 2.0 / 3.0,
+            "S_bulk": S_bulk,
+            "alpha": {
+                "initial": ALPHA_ON,
+                "off": ALPHA_OFF,
+                "control_interval": CONTROL_INTERVAL,
+                "defect_off_threshold": DEFECT_OFF_THRESHOLD,
+            },
+            "beta": beta,
+            "fric": fric,
+            "eta": eta,
+        },
+    },
+    "boundary_conditions": {
+        "Q": Q_BC,
+        "velocity": U_BC,
+        "pressure": PRESSURE_MODAL_BC,
+    },
+    "numerics": {
+        "dealiasing": "none",
+        "velocity_zero_mode": "wall_constrained",
+        "pressure_solver": "modal_schur_complement",
+    },
+    "initial_condition": {
+        "name": "aligned_x_smooth_noise",
+        "seed": seed,
+        "S_initial": 2.0 / 3.0,
+    },
+}
+write_run_metadata(output_dir, run_metadata, status="running")
 control_history_path = os.path.join(output_dir, "control_history.csv")
 control_history_fields = (
     "step",
@@ -568,7 +623,7 @@ def q_snapshot_numpy(step):
 
 def update_defect_control(step):
     q_snapshot = q_snapshot_numpy(step)
-    _, director = n3d.Q_diagonalize(q_snapshot)
+    director = director_from_Q(q_snapshot)
     defects = n3d.defect_detect(
         director,
         threshold=DEFECT_DETECTION_THRESHOLD,
@@ -744,3 +799,5 @@ if ENABLE_DIAGNOSTICS:
         f"max={final_wall_mom_max:.6e}, "
         f"rms={final_wall_mom_rms:.6e}"
     )
+
+write_run_metadata(output_dir, run_metadata, status="complete")

@@ -1,9 +1,18 @@
 import time
 import torch
-from pssolver import SpectralSolver, create_q_initial_condition
+from pssolver import (
+    SpectralSolver,
+    apply_snapshot_to_solver,
+    load_snapshot,
+    prepare_new_run_directory,
+    representative_ordered_S,
+    REPRESENTATIVE_ORDERED_S_DEFINITION,
+    require_distinct_output_directory,
+    write_run_metadata,
+)
 from tqdm import trange
+from pssolver.models.active_nematics import Q_convention_metadata, create_initial_condition
 import numpy as np
-import os
 
 
 Q_BC = ("periodic", "periodic", "neumann")
@@ -15,6 +24,14 @@ PRESSURE_MODAL_BC = ("periodic", "periodic", "neumann")
 ENABLE_DIAGNOSTICS = False
 DIAGNOSTIC_INTERVAL = 10
 SAVE_INTERVAL = 10
+INITIALIZATION_MODE = "generated"  # "generated" or "snapshot"
+SNAPSHOT_MODE = "resume"  # "resume" or "branch"
+SNAPSHOT_DIRECTORY = "data02"
+SNAPSHOT_STEP = 1000
+GENERATED_OUTPUT_DIR = "data02"
+SNAPSHOT_OUTPUT_DIR = "data02_snapshot"
+S_INITIAL = 2.0 / 3.0
+S_BULK = None
 
 
 def divergence_stats(fields):
@@ -398,20 +415,45 @@ steps = 2000
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 batchsize = 1
 
-Nx, Ny, Nz = 256, 256, 120
-Lx, Ly, Lz = 64.0, 64.0, 30.0
+Nx, Ny, Nz = 256, 256, 60
+Lx, Ly, Lz = 64.0, 64.0, 15.0
 
 solver = SpectralSolver(shape=(Nx,Ny,Nz), L=(Lx,Ly,Lz), dt=dt, device=device, batchsize=batchsize)
-q_initial_condition = create_q_initial_condition(
-    "aligned_x_smooth_noise",
-    shape=(Nx, Ny, Nz),
-    boundary_conditions=Q_BC,
-    seed=seed,
-    noise_theta=0.01,
-    noise_phi=0.01,
-    sigma_x=1.0,
-    sigma_y=1.0,
-    sigma_z=1.0,
+snapshot = None
+if INITIALIZATION_MODE == "generated":
+    q_initial_condition = create_initial_condition(
+        "aligned_x_smooth_noise",
+        shape=(Nx, Ny, Nz),
+        boundary_conditions=Q_BC,
+        seed=seed,
+        S_initial=S_INITIAL,
+        noise_theta=0.01,
+        noise_phi=0.01,
+        sigma_x=1.0,
+        sigma_y=1.0,
+        sigma_z=1.0,
+    )
+elif INITIALIZATION_MODE == "snapshot":
+    if SNAPSHOT_MODE not in ("resume", "branch"):
+        raise ValueError("SNAPSHOT_MODE must be 'resume' or 'branch'")
+    snapshot_load_options = {
+        "expected_shape": (Nx, Ny, Nz),
+        "require_S_initial": True,
+    }
+    if SNAPSHOT_MODE == "resume":
+        snapshot_load_options["expected_S_bulk"] = S_BULK
+    snapshot = load_snapshot(
+        SNAPSHOT_DIRECTORY,
+        SNAPSHOT_STEP,
+        **snapshot_load_options,
+    )
+    q_initial_condition = snapshot.q_fields
+else:
+    raise ValueError("INITIALIZATION_MODE must be 'generated' or 'snapshot'")
+snapshot_ordered_S = (
+    None
+    if snapshot is None
+    else representative_ordered_S(snapshot.q_fields)
 )
 Qxx_0 = q_initial_condition["Qxx"]
 Qxy_0 = q_initial_condition["Qxy"]
@@ -483,9 +525,97 @@ solver.model.parameters.new_param('alpha', alpha)
 
 solver.build()
 
+start_step = 0
+if snapshot is None:
+    output_dir = GENERATED_OUTPUT_DIR
+else:
+    output_dir = require_distinct_output_directory(
+        snapshot,
+        SNAPSHOT_OUTPUT_DIR,
+    )
+
 diagnostic_history = []
-output_dir = "data02"
-os.makedirs(output_dir, exist_ok=True)
+output_dir = prepare_new_run_directory(output_dir)
+initial_condition_metadata = (
+    {
+        "name": "aligned_x_smooth_noise",
+        "seed": seed,
+        "S_initial": S_INITIAL,
+    }
+    if snapshot is None
+    else {
+        "name": "snapshot",
+        "source_directory": str(snapshot.directory),
+        "source_step": snapshot.step,
+        "mode": SNAPSHOT_MODE,
+        "source_metadata": str(snapshot.source_metadata.path),
+        "source_S_initial": snapshot.source_metadata.S_initial,
+        "source_S_bulk": snapshot.source_metadata.S_bulk,
+        "snapshot_ordered_S": snapshot_ordered_S,
+        "snapshot_ordered_S_definition": (
+            REPRESENTATIVE_ORDERED_S_DEFINITION
+        ),
+    }
+)
+run_metadata = {
+    "schema_version": 1,
+    "script": "Plane.py",
+    "solver": {
+        "shape": [Nx, Ny, Nz],
+        "lengths": [Lx, Ly, Lz],
+        "dt": dt,
+        "steps": steps,
+        "save_interval": SAVE_INTERVAL,
+    },
+    "model": {
+        "name": "active_nematics",
+        "Q_convention": Q_convention_metadata(),
+        "parameters": {
+            "aQ": aQ,
+            "bQ": bQ,
+            "cQ": cQ,
+            "KQ": KQ,
+            "alpha": float(alpha.item()),
+            "beta": beta,
+            "S_initial": (
+                S_INITIAL
+                if snapshot is None
+                else (
+                    snapshot.source_metadata.S_initial
+                    if SNAPSHOT_MODE == "resume"
+                    else snapshot_ordered_S
+                )
+            ),
+            "S_bulk": S_BULK,
+            "fric": fric,
+            "eta": eta,
+        },
+    },
+    "boundary_conditions": {
+        "Q": Q_BC,
+        "velocity": U_BC,
+        "pressure": PRESSURE_MODAL_BC,
+    },
+    "numerics": {
+        "dealiasing": "none",
+        "velocity_zero_mode": "wall_constrained",
+        "pressure_solver": "modal_schur_complement",
+    },
+    "initial_condition": initial_condition_metadata,
+}
+if snapshot is not None:
+    start_step = apply_snapshot_to_solver(
+        solver,
+        snapshot,
+        mode=SNAPSHOT_MODE,
+        current_run_metadata=run_metadata,
+    )
+    print(
+        f"Loaded {SNAPSHOT_MODE} snapshot at step {snapshot.step} "
+        f"from {snapshot.directory}"
+    )
+
+write_run_metadata(output_dir, run_metadata, status="running")
 start = time.time()
 pbar = trange(steps)
 
@@ -536,7 +666,8 @@ def record_step_state(i):
         np.save(f"{output_dir}/p_{i}.npy", p_snapshot[0].numpy())
 
 
-for i in pbar:
+for local_step in pbar:
+    i = start_step + local_step
     solver.run(1, pre_update_callback=lambda _solver, _step, i=i: record_step_state(i))
 
 	    
@@ -551,7 +682,7 @@ if ENABLE_DIAGNOSTICS:
     )
     static_model = solver.model.static_model
     diagnostic_history.append((
-        steps,
+        start_step + steps,
         final_div_max,
         final_div_rms,
         final_div_rel,
@@ -600,3 +731,5 @@ if ENABLE_DIAGNOSTICS:
         f"max={final_wall_mom_max:.6e}, "
         f"rms={final_wall_mom_rms:.6e}"
     )
+
+write_run_metadata(output_dir, run_metadata, status="complete")

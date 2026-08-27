@@ -13,6 +13,8 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 LOCAL_NEMATICS_SRC_CANDIDATES = (
     ROOT / "Nematics3D" / "src",
     ROOT.parent / "Nematics3D" / "src",
@@ -32,6 +34,9 @@ except ImportError as exc:  # pragma: no cover - depends on local environment
 
 N3D = None
 
+from pssolver.models.active_nematics.nematics3d_adapter import director_from_Q
+from pssolver.snapshots import load_q_snapshot
+
 
 Q_PATTERN = re.compile(r"^Q_(\d+)\.npy$")
 
@@ -49,7 +54,7 @@ def parse_args() -> argparse.Namespace:
             "and save per-step diagnostics plus step-count figures."
         ),
     )
-    parser.add_argument("--data-dir", type=Path, default=ROOT / "data")
+    parser.add_argument("--data-dir", type=Path, default=ROOT / "data_channel")
     parser.add_argument(
         "--out",
         type=Path,
@@ -61,7 +66,7 @@ def parse_args() -> argparse.Namespace:
         "--periodic",
         type=int,
         nargs=3,
-        default=(1, 1, 0),
+        default=(1, 0, 0),
         metavar=("PX", "PY", "PZ"),
         help="Periodic boundary flags for x y z, as 0/1 integers.",
     )
@@ -91,9 +96,7 @@ def q_steps(data_dir: Path) -> list[int]:
 
 
 def require_q5(path: Path) -> np.ndarray:
-    q = np.load(path)
-    if q.ndim != 4 or q.shape[-1] != 5:
-        raise ValueError(f"{path} must have shape (Nx, Ny, Nz, 5), got {q.shape}")
+    q = load_q_snapshot(path, require_S_initial=True).values
     return np.asarray(q, dtype=np.float64)
 
 
@@ -105,7 +108,7 @@ def detect_snapshot(
 ) -> tuple[np.ndarray, list]:
     if N3D is None:
         raise RuntimeError("nematics3d has not been imported")
-    _, director = N3D.Q_diagonalize(q)
+    director = director_from_Q(q)
     defects = N3D.defect_detect(
         director,
         threshold=threshold,

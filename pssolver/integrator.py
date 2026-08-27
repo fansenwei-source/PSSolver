@@ -10,6 +10,8 @@ class TimeIntegrator:
 
 
 class SemiImplicitEulerIntegrator(TimeIntegrator):
+    spectral_refresh_interval = 20
+
     def __init__(self, model, dt, qx, qy, q2):
         super().__init__(dt, qx, qy, q2)
         self.model = model
@@ -21,10 +23,23 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
         )
 
         self.step_count = 0
+        self._static_fields_are_current = False
+
+    def restore_progress(self, completed_steps, *, static_fields_are_current=False):
+        """Restore counters and optionally reuse restored static fields once."""
+        if not isinstance(completed_steps, int) or isinstance(completed_steps, bool):
+            raise TypeError("completed_steps must be an integer")
+        if completed_steps < 0:
+            raise ValueError("completed_steps must be non-negative")
+        self.step_count = completed_steps % self.spectral_refresh_interval
+        self._static_fields_are_current = bool(static_fields_are_current)
 
     def step(self, pre_update_callback=None):
         # 1. static(Q^n): u^n, E^n, Omega^n, gradQ^n
-        self.model.update_static_fields()
+        if self._static_fields_are_current:
+            self._static_fields_are_current = False
+        else:
+            self.model.update_static_fields()
 
         if pre_update_callback is not None:
             pre_update_callback()
@@ -44,7 +59,7 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
         self.step_count += 1
 
         # Periodically rebuild dynamic spectra from real fields to limit accumulated roundoff drift.
-        if self.step_count % 20 == 0:
+        if self.step_count % self.spectral_refresh_interval == 0:
             for group in self.dynamic_transform_groups:
                 self.model.fields.spectral[group] = self.model.fields.forward_transform_group(group)
             self.step_count = 0

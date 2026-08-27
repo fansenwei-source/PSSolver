@@ -81,7 +81,7 @@ class PDEModel:
         for entry in self.stat_fields:
             self.fields.name_to_idx[entry[0]] = count 
             count += 1
-            inits.append(torch.zeros(self.batchsize, *self.shape))
+            inits.append(torch.zeros(self.batchsize, *self.shape, device=self.device))
             boundary_conditions.append(entry[1])
         self.fields.stat_count = count - self.fields.dyn_count
         self.fields.boundary_conditions = list(boundary_conditions)
@@ -93,9 +93,13 @@ class PDEModel:
             else []
         )
 
-        self.fields.spatial = torch.stack(inits).to(self.device)
+        self.fields.spatial = torch.stack(
+            [initial.to(self.device) for initial in inits]
+        )
         self.fields.spectral = self.fields.fftn()
-        self.fields.L_hat = torch.stack(L_hats).to(self.device)
+        self.fields.L_hat = torch.stack(
+            [operator.to(self.device) for operator in L_hats]
+        )
 
         if self.nlmodel is None:
             self.nlmodel = ZeroModel()
