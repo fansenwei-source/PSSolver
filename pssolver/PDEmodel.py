@@ -4,12 +4,23 @@ import inspect
 
 
 class PDEModel:
-    def __init__(self, shape, device, batchsize):
+    def __init__(self, shape, device, batchsize, dtype=torch.float32):
+        if dtype not in (torch.float32, torch.float64):
+            raise ValueError(
+                "dtype must be torch.float32 or torch.float64, "
+                f"got {dtype}"
+            )
         self.shape = shape
         self.device = device
+        self.dtype = dtype
         self.batchsize = batchsize
 
-        self.fields = Fields(shape = shape, device = device, batchsize = self.batchsize)
+        self.fields = Fields(
+            shape=shape,
+            device=device,
+            dtype=dtype,
+            batchsize=self.batchsize,
+        )
         self.parameters = Parameters()
         self.dyn_fields = []
         self.stat_fields = []
@@ -81,7 +92,14 @@ class PDEModel:
         for entry in self.stat_fields:
             self.fields.name_to_idx[entry[0]] = count 
             count += 1
-            inits.append(torch.zeros(self.batchsize, *self.shape, device=self.device))
+            inits.append(
+                torch.zeros(
+                    self.batchsize,
+                    *self.shape,
+                    device=self.device,
+                    dtype=self.dtype,
+                )
+            )
             boundary_conditions.append(entry[1])
         self.fields.stat_count = count - self.fields.dyn_count
         self.fields.boundary_conditions = list(boundary_conditions)
@@ -94,11 +112,17 @@ class PDEModel:
         )
 
         self.fields.spatial = torch.stack(
-            [initial.to(self.device) for initial in inits]
+            [
+                initial.to(device=self.device, dtype=self.dtype)
+                for initial in inits
+            ]
         )
         self.fields.spectral = self.fields.fftn()
         self.fields.L_hat = torch.stack(
-            [operator.to(self.device) for operator in L_hats]
+            [
+                operator.to(device=self.device, dtype=self.dtype)
+                for operator in L_hats
+            ]
         )
 
         if self.nlmodel is None:

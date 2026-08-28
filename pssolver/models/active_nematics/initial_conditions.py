@@ -15,6 +15,19 @@ from .q_tensor import Q_components, uniaxial_Q
 InitialCondition = Callable[..., dict[str, torch.Tensor]]
 
 
+def _validate_dtype(dtype: torch.dtype) -> torch.dtype:
+    if dtype not in (torch.float32, torch.float64):
+        raise ValueError(
+            "dtype must be torch.float32 or torch.float64, "
+            f"got {dtype}"
+        )
+    return dtype
+
+
+def _numpy_dtype(dtype: torch.dtype) -> type[np.floating]:
+    return np.float64 if _validate_dtype(dtype) == torch.float64 else np.float32
+
+
 def _validate_shape(shape: tuple[int, int, int]) -> tuple[int, int, int]:
     if len(shape) != 3 or any(int(size) != size or size <= 0 for size in shape):
         raise ValueError(f"shape must contain three positive integer sizes, got {shape!r}")
@@ -24,8 +37,11 @@ def _validate_shape(shape: tuple[int, int, int]) -> tuple[int, int, int]:
 def _as_Q_2d_components(
     Q_2d: Mapping[str, np.ndarray | torch.Tensor] | np.ndarray | torch.Tensor,
     expected_shape: tuple[int, int],
+    *,
+    dtype: torch.dtype = torch.float32,
 ) -> dict[str, torch.Tensor]:
-    """Normalize supported 2D Q layouts to five float32 CPU tensors."""
+    """Normalize supported 2D Q layouts to five real CPU tensors."""
+    dtype = _validate_dtype(dtype)
     if isinstance(Q_2d, Mapping):
         input_names = set(Q_2d)
         missing = set(Q_COMPONENTS) - input_names
@@ -37,7 +53,7 @@ def _as_Q_2d_components(
             )
         components = {}
         for name in Q_COMPONENTS:
-            values = torch.as_tensor(Q_2d[name], dtype=torch.float32, device="cpu")
+            values = torch.as_tensor(Q_2d[name], dtype=dtype, device="cpu")
             if values.shape == (*expected_shape, 1):
                 values = values[..., 0]
             if values.shape != expected_shape:
@@ -48,7 +64,7 @@ def _as_Q_2d_components(
             components[name] = values
         return components
 
-    values = torch.as_tensor(Q_2d, dtype=torch.float32, device="cpu")
+    values = torch.as_tensor(Q_2d, dtype=dtype, device="cpu")
     if values.shape == (*expected_shape, 1, len(Q_COMPONENTS)):
         values = values[..., 0, :]
     expected_array_shape = (*expected_shape, len(Q_COMPONENTS))
@@ -286,6 +302,7 @@ def analytic_periodic_defect_gas_2d(
     seed: int = 42,
     background_angle: float = 0.0,
     max_placement_attempts: int = 100_000,
+    dtype: torch.dtype = torch.float32,
 ) -> dict[str, torch.Tensor]:
     """Construct a seamless periodic gas of nematic ``+/-1/2`` defects.
 
@@ -293,6 +310,8 @@ def analytic_periodic_defect_gas_2d(
     ``tanh(distance/core_radius)`` profiles. Returned tensors use the sole
     active-nematic Q convention and have shape ``(Nx, Ny)``.
     """
+    dtype = _validate_dtype(dtype)
+    numpy_dtype = _numpy_dtype(dtype)
     nx, ny, lx, ly = _validate_2d_geometry(shape, lengths)
     if not np.isfinite(core_radius) or core_radius <= 0:
         raise ValueError(
@@ -341,7 +360,7 @@ def analytic_periodic_defect_gas_2d(
     full_Q = uniaxial_Q(director, S_field)
     components = Q_components(full_Q)
     return {
-        name: torch.from_numpy(np.asarray(values, dtype=np.float32))
+        name: torch.from_numpy(np.asarray(values, dtype=numpy_dtype))
         for name, values in components.items()
     }
 
@@ -352,8 +371,10 @@ def neumann_twist_profile(
     amplitude: float = 0.01,
     modes: Sequence[int] = (1, 2, 3),
     seed: int = 42,
+    dtype: torch.dtype = torch.float32,
 ) -> torch.Tensor:
     """Create a wall-normal twist angle from Neumann cosine modes."""
+    dtype = _validate_dtype(dtype)
     if int(nz) != nz or nz <= 1:
         raise ValueError(f"nz must be an integer greater than one, got {nz}")
     nz = int(nz)
@@ -372,15 +393,19 @@ def neumann_twist_profile(
             f"twist modes must satisfy 1 <= mode < nz={nz}; got {invalid}"
         )
 
-    cell_center = (torch.arange(nz, dtype=torch.float64) + 0.5) / nz
+    # Keep the historical float32 initializer reproducible: coefficients and
+    # the profile were generated in float64 and only then rounded to float32.
+    # The float64 path uses that same high-precision profile without a downcast.
+    working_dtype = torch.float64
+    cell_center = (torch.arange(nz, dtype=working_dtype) + 0.5) / nz
     generator = torch.Generator(device="cpu")
     generator.manual_seed(seed)
     coefficients = torch.randn(
         len(modes),
         generator=generator,
-        dtype=torch.float64,
+        dtype=working_dtype,
     )
-    profile = torch.zeros(nz, dtype=torch.float64)
+    profile = torch.zeros(nz, dtype=working_dtype)
     for coefficient, mode in zip(coefficients, modes):
         profile += coefficient * torch.cos(math.pi * mode * cell_center)
 
@@ -391,7 +416,7 @@ def neumann_twist_profile(
         raise RuntimeError("generated a degenerate twist profile")
     else:
         profile *= amplitude / rms
-    return profile.to(dtype=torch.float32)
+    return profile.to(dtype=dtype)
 
 
 def extruded_2d_twist(
@@ -402,6 +427,7 @@ def extruded_2d_twist(
     twist_amplitude: float = 0.01,
     twist_modes: Sequence[int] = (1, 2, 3),
     seed: int = 42,
+    dtype: torch.dtype = torch.float32,
 ) -> dict[str, torch.Tensor]:
     """Extrude a canonical 2D Q field and rotate each wall-normal plane.
 
@@ -410,6 +436,7 @@ def extruded_2d_twist(
     as ``Q(x,y,z) = Rz(psi(z)) Q_2d(x,y) Rz(psi(z))^T``. Rotation preserves
     pointwise eigenvalues and core locations.
     """
+    dtype = _validate_dtype(dtype)
     nx, ny, nz = _validate_shape(shape)
     boundary_conditions = tuple(boundary_conditions)
     if len(boundary_conditions) != 3:
@@ -423,12 +450,13 @@ def extruded_2d_twist(
             f"profile, got z boundary condition {boundary_conditions[2]!r}"
         )
 
-    source = _as_Q_2d_components(Q_2d, (nx, ny))
+    source = _as_Q_2d_components(Q_2d, (nx, ny), dtype=dtype)
     psi = neumann_twist_profile(
         nz,
         amplitude=twist_amplitude,
         modes=twist_modes,
         seed=seed,
+        dtype=dtype,
     ).reshape(1, 1, nz)
     cosine = torch.cos(psi)
     sine = torch.sin(psi)
@@ -463,8 +491,11 @@ def aligned_x_smooth_noise(
     sigma_x: float = 1.0,
     sigma_y: float = 1.0,
     sigma_z: float = 1.0,
+    dtype: torch.dtype = torch.float32,
 ) -> dict[str, torch.Tensor]:
     """Create a ``+x``-aligned canonical uniaxial Q field with smooth noise."""
+    dtype = _validate_dtype(dtype)
+    numpy_dtype = _numpy_dtype(dtype)
     nx_size, ny_size, nz_size = _validate_shape(shape)
     boundary_conditions = tuple(boundary_conditions)
     if len(boundary_conditions) != 3:
@@ -510,12 +541,12 @@ def aligned_x_smooth_noise(
         -1.0,
         1.0,
         size=(nx_size, ny_size, nz_size),
-    ).astype(np.float32)
+    ).astype(numpy_dtype)
     delta_phi = rng.uniform(
         -1.0,
         1.0,
         size=(nx_size, ny_size, nz_size),
-    ).astype(np.float32)
+    ).astype(numpy_dtype)
 
     def smooth_axis(
         values: np.ndarray,
@@ -572,7 +603,7 @@ def aligned_x_smooth_noise(
     full_Q = uniaxial_Q(director, S_initial)
     components = Q_components(full_Q)
     return {
-        name: torch.from_numpy(np.asarray(values, dtype=np.float32))
+        name: torch.from_numpy(np.asarray(values, dtype=numpy_dtype))
         for name, values in components.items()
     }
 

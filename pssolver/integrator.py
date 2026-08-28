@@ -10,7 +10,7 @@ class TimeIntegrator:
 
 
 class SemiImplicitEulerIntegrator(TimeIntegrator):
-    spectral_refresh_interval = 20
+    DEFAULT_SPECTRAL_REFRESH_INTERVAL = 20
 
     def __init__(self, model, dt, qx, qy, q2):
         super().__init__(dt, qx, qy, q2)
@@ -22,8 +22,30 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
             range(self.dyn_count)
         )
 
+        self._spectral_refresh_interval = self.DEFAULT_SPECTRAL_REFRESH_INTERVAL
         self.step_count = 0
+        self.refresh_count = 0
         self._static_fields_are_current = False
+
+    @property
+    def spectral_refresh_interval(self):
+        """Number of steps between spectral rebuilds, or ``None`` to disable them."""
+        return self._spectral_refresh_interval
+
+    @spectral_refresh_interval.setter
+    def spectral_refresh_interval(self, interval):
+        if interval is None:
+            self._spectral_refresh_interval = None
+            return
+        if not isinstance(interval, int) or isinstance(interval, bool):
+            raise TypeError("spectral_refresh_interval must be a positive integer or None")
+        if interval <= 0:
+            raise ValueError("spectral_refresh_interval must be positive")
+        self._spectral_refresh_interval = interval
+
+    def set_spectral_refresh_interval(self, interval):
+        """Configure periodic spectral refreshes using a step interval or ``None``."""
+        self.spectral_refresh_interval = interval
 
     def restore_progress(self, completed_steps, *, static_fields_are_current=False):
         """Restore counters and optionally reuse restored static fields once."""
@@ -31,8 +53,38 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
             raise TypeError("completed_steps must be an integer")
         if completed_steps < 0:
             raise ValueError("completed_steps must be non-negative")
-        self.step_count = completed_steps % self.spectral_refresh_interval
+        if self.spectral_refresh_interval is None:
+            self.step_count = completed_steps
+            self.refresh_count = 0
+        else:
+            self.refresh_count, self.step_count = divmod(
+                completed_steps,
+                self.spectral_refresh_interval,
+            )
         self._static_fields_are_current = bool(static_fields_are_current)
+
+    def _refresh_dynamic_spectra(self):
+        """Rebuild dynamic spectra from spatial fields.
+
+        Subclasses may override this hook when a refresh also needs to enforce a
+        constraint, for example a spectral projection.
+        """
+        for group in self.dynamic_transform_groups:
+            self.model.fields.spectral[group] = (
+                self.model.fields.forward_transform_group(group)
+            )
+
+    def _advance_spectral_refresh_clock(self):
+        """Advance the refresh phase and perform a scheduled refresh if needed."""
+        self.step_count += 1
+        interval = self.spectral_refresh_interval
+        if interval is None or self.step_count < interval:
+            return False
+
+        self._refresh_dynamic_spectra()
+        self.step_count = 0
+        self.refresh_count += 1
+        return True
 
     def step(self, pre_update_callback=None):
         # 1. static(Q^n): u^n, E^n, Omega^n, gradQ^n
@@ -56,10 +108,5 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
         for group in self.dynamic_transform_groups:
             self.model.fields.spatial[group] = self.model.fields.inverse_transform_group(group)
 
-        self.step_count += 1
-
         # Periodically rebuild dynamic spectra from real fields to limit accumulated roundoff drift.
-        if self.step_count % self.spectral_refresh_interval == 0:
-            for group in self.dynamic_transform_groups:
-                self.model.fields.spectral[group] = self.model.fields.forward_transform_group(group)
-            self.step_count = 0
+        self._advance_spectral_refresh_clock()

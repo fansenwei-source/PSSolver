@@ -4,7 +4,21 @@ from .PDEmodel import PDEModel
 from .transforms import TensorProductTransformBackend
 
 class SpectralSolver:
-    def __init__(self, shape, L=2 * torch.pi, dt=0.01, batchsize = 1, device='cuda'):
+    def __init__(
+        self,
+        shape,
+        L=2 * torch.pi,
+        dt=0.01,
+        batchsize=1,
+        device="cuda",
+        dtype=torch.float32,
+    ):
+
+        if dtype not in (torch.float32, torch.float64):
+            raise ValueError(
+                "dtype must be torch.float32 or torch.float64, "
+                f"got {dtype}"
+            )
 
         self.shape = shape
         if not isinstance(L, tuple):
@@ -14,16 +28,23 @@ class SpectralSolver:
         self.L = L
         self.dt = dt
         self.device = device
+        self.dtype = dtype
         self.batchsize = batchsize
 
         self.transform_backend = TensorProductTransformBackend(
             shape=self.shape,
             lengths=self.L,
             device=self.device,
+            dtype=self.dtype,
         )
         self._init_periodic_metadata()
 
-        self.model = PDEModel(shape, device, batchsize=batchsize)
+        self.model = PDEModel(
+            shape,
+            device,
+            batchsize=batchsize,
+            dtype=self.dtype,
+        )
         self.parameters = self.model.parameters
         self.fields = self.model.fields
         self.fields.set_transform_backend(self.transform_backend)

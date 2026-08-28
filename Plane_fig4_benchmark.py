@@ -18,7 +18,9 @@ Use ``scripts_plane/run_fig4_scan.sh`` to launch a sweep.
 """
 
 import argparse
+import hashlib
 import json
+import math
 from pathlib import Path
 import time
 import torch
@@ -54,6 +56,7 @@ PRESSURE_MODAL_BC = ("periodic", "periodic", "neumann")
 DEFAULT_ZERO_MODE_POLICY = "zero_mean"
 DEFAULT_FRICTION_MODE_FRIC = 0.1
 DEFAULT_DEALIAS_RULE = "cubic_half"
+DEFAULT_SPECTRAL_REFRESH_TIME = 0.2
 DEALIAS_RULE_FRACTIONS = {
     "none": None,
     "two_thirds": 2.0 / 3.0,
@@ -157,6 +160,43 @@ def parse_args():
         ),
     )
     parser.add_argument("--device", default="auto")
+    parser.add_argument(
+        "--dtype",
+        choices=("float32", "float64"),
+        default="float32",
+        help="Real arithmetic precision used by fields and transforms.",
+    )
+    parser.add_argument(
+        "--tf32",
+        choices=("off", "on"),
+        default="off",
+        help=(
+            "Explicit CUDA TF32 policy. It is effective only for float32 "
+            "CUDA runs and is recorded in the run metadata."
+        ),
+    )
+    refresh_group = parser.add_mutually_exclusive_group()
+    refresh_group.add_argument(
+        "--spectral-refresh-time",
+        type=float,
+        default=None,
+        help=(
+            "Physical-time interval between dynamic real-to-spectral rebuilds. "
+            f"The default is {DEFAULT_SPECTRAL_REFRESH_TIME:g}. The interval "
+            "must be an integer multiple of dt."
+        ),
+    )
+    refresh_group.add_argument(
+        "--spectral-refresh-steps",
+        type=int,
+        default=None,
+        help="Legacy step-count interval between dynamic spectral rebuilds.",
+    )
+    refresh_group.add_argument(
+        "--disable-spectral-refresh",
+        action="store_true",
+        help="Disable only the periodic dynamic real-to-spectral rebuild.",
+    )
     parser.add_argument("--diagnostics", action="store_true")
     parser.add_argument("--save-hydrodynamics", action="store_true")
     parser.add_argument(
@@ -205,7 +245,61 @@ def parse_args():
         parser.error("--coefficient-min must be smaller than --coefficient-max")
     if args.save_start_step < 0 or args.save_start_step > args.steps:
         parser.error("--save-start-step must lie between 0 and --steps")
+
+    if args.spectral_refresh_steps is not None:
+        if args.spectral_refresh_steps <= 0:
+            parser.error("--spectral-refresh-steps must be positive")
+        args.spectral_refresh_mode = "steps"
+        args.spectral_refresh_interval_steps = args.spectral_refresh_steps
+        args.spectral_refresh_requested_time = None
+        args.spectral_refresh_requested_steps = args.spectral_refresh_steps
+    elif args.disable_spectral_refresh:
+        args.spectral_refresh_mode = "disabled"
+        args.spectral_refresh_interval_steps = None
+        args.spectral_refresh_requested_time = None
+        args.spectral_refresh_requested_steps = None
+    else:
+        requested_time = (
+            DEFAULT_SPECTRAL_REFRESH_TIME
+            if args.spectral_refresh_time is None
+            else args.spectral_refresh_time
+        )
+        if not math.isfinite(requested_time) or requested_time <= 0:
+            parser.error("--spectral-refresh-time must be positive and finite")
+        interval_ratio = requested_time / args.dt
+        interval_steps = int(round(interval_ratio))
+        if interval_steps <= 0 or not math.isclose(
+            interval_ratio,
+            interval_steps,
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        ):
+            parser.error(
+                "--spectral-refresh-time must be an integer multiple of --dt; "
+                f"got time/dt={interval_ratio:.17g}"
+            )
+        args.spectral_refresh_mode = "physical_time"
+        args.spectral_refresh_interval_steps = interval_steps
+        args.spectral_refresh_requested_time = requested_time
+        args.spectral_refresh_requested_steps = None
+
+    args.spectral_refresh_effective_time = (
+        None
+        if args.spectral_refresh_interval_steps is None
+        else args.spectral_refresh_interval_steps * args.dt
+    )
     return args
+
+
+def tensor_sha256(tensors):
+    """Hash an ordered collection of contiguous CPU tensor byte strings."""
+    digest = hashlib.sha256()
+    for tensor in tensors:
+        array = tensor.detach().cpu().contiguous().numpy()
+        digest.update(str(array.dtype).encode("ascii"))
+        digest.update(np.asarray(array.shape, dtype=np.int64).tobytes())
+        digest.update(array.tobytes())
+    return digest.hexdigest()
 
 
 class BasisAwareSpectralProjector:
@@ -356,6 +450,13 @@ class DealiasedSemiImplicitEulerIntegrator(SemiImplicitEulerIntegrator):
         super().__init__(model, dt, qx, qy, q2)
         self.spectral_projector = model.spectral_projector
 
+    def _refresh_dynamic_spectra(self):
+        super()._refresh_dynamic_spectra()
+        self.spectral_projector.project_dynamic_fields(
+            self.model.fields,
+            sync_spatial=True,
+        )
+
     def step(self, pre_update_callback=None):
         if self._static_fields_are_current:
             self._static_fields_are_current = False
@@ -379,17 +480,7 @@ class DealiasedSemiImplicitEulerIntegrator(SemiImplicitEulerIntegrator):
                 self.model.fields.inverse_transform_group(group)
             )
 
-        self.step_count += 1
-        if self.step_count % self.spectral_refresh_interval == 0:
-            for group in self.dynamic_transform_groups:
-                self.model.fields.spectral[group] = (
-                    self.model.fields.forward_transform_group(group)
-                )
-            self.spectral_projector.project_dynamic_fields(
-                self.model.fields,
-                sync_spatial=True,
-            )
-            self.step_count = 0
+        self._advance_spectral_refresh_clock()
 
 
 def divergence_stats(fields):
@@ -873,6 +964,20 @@ device = (
     else "cpu" if args.device == "auto"
     else args.device
 )
+real_dtype = {
+    "float32": torch.float32,
+    "float64": torch.float64,
+}[args.dtype]
+spectral_dtype_name = "complex64" if real_dtype == torch.float32 else "complex128"
+tf32_requested = args.tf32 == "on"
+tf32_effective = (
+    tf32_requested
+    and real_dtype == torch.float32
+    and torch.device(device).type == "cuda"
+)
+torch.set_float32_matmul_precision("high" if tf32_effective else "highest")
+torch.backends.cuda.matmul.allow_tf32 = tf32_effective
+torch.backends.cudnn.allow_tf32 = tf32_effective
 batchsize = 1
 
 Nx, Ny, Nz = args.nx, args.ny, args.nz
@@ -940,6 +1045,8 @@ metadata = {
         "dt": dt,
         "steps": steps,
         "save_interval": SAVE_INTERVAL,
+        "real_dtype": args.dtype,
+        "spectral_dtype": spectral_dtype_name,
     },
     "model": {
         "name": "active_nematics",
@@ -971,6 +1078,25 @@ metadata = {
         },
         "velocity_zero_mode": zero_mode_policy,
         "pressure_solver": "free_slip_modal_schur_complement",
+        "precision": {
+            "real_dtype": args.dtype,
+            "spectral_dtype": spectral_dtype_name,
+            "tf32_requested": args.tf32,
+            "tf32_effective": tf32_effective,
+            "float32_matmul_precision": torch.get_float32_matmul_precision(),
+            "cuda_matmul_allow_tf32": bool(
+                torch.backends.cuda.matmul.allow_tf32
+            ),
+            "cudnn_allow_tf32": bool(torch.backends.cudnn.allow_tf32),
+        },
+        "spectral_refresh": {
+            "mode": args.spectral_refresh_mode,
+            "requested_interval_time": args.spectral_refresh_requested_time,
+            "requested_interval_steps": args.spectral_refresh_requested_steps,
+            "effective_interval_steps": args.spectral_refresh_interval_steps,
+            "effective_interval_time": args.spectral_refresh_effective_time,
+            "phase_origin_step": 0,
+        },
     },
     "benchmark": "Shendruk et al. PRE 98, 010601(R) (2018), Fig. 4",
     "scan_variable": "activity_number",
@@ -990,6 +1116,8 @@ metadata = {
     "diagnostic_interval": DIAGNOSTIC_INTERVAL,
     "seed": seed,
     "device": device,
+    "dtype": args.dtype,
+    "tf32": args.tf32,
     "q_boundary_conditions": Q_BC,
     "tangential_velocity_boundary_conditions": U_TANGENTIAL_BC,
     "normal_velocity_boundary_conditions": U_NORMAL_BC,
@@ -1051,6 +1179,7 @@ q_2d = create_initial_condition(
     seed=seed,
     S_initial=args.S_initial,
     background_angle=args.background_angle,
+    dtype=real_dtype,
 )
 defect_positions, defect_charges = sample_periodic_neutral_defects_2d(
     lengths=(Lx, Ly),
@@ -1079,6 +1208,7 @@ solver = SpectralSolver(
     dt=dt,
     device=device,
     batchsize=batchsize,
+    dtype=real_dtype,
 )
 spectral_projector = BasisAwareSpectralProjector(
     solver,
@@ -1094,12 +1224,16 @@ q_initial_condition = create_initial_condition(
     seed=seed,
     twist_amplitude=args.twist_amplitude,
     twist_modes=tuple(args.twist_modes),
+    dtype=real_dtype,
 )
 Qxx_0 = q_initial_condition["Qxx"]
 Qxy_0 = q_initial_condition["Qxy"]
 Qxz_0 = q_initial_condition["Qxz"]
 Qyy_0 = q_initial_condition["Qyy"]
 Qyz_0 = q_initial_condition["Qyz"]
+metadata["initial_condition"]["raw_q_sha256"] = tensor_sha256(
+    (Qxx_0, Qxy_0, Qxz_0, Qyy_0, Qyz_0)
+)
 
 q2_Q = solver.get_q2(Q_BC)
 
@@ -1155,10 +1289,13 @@ solver.model.set_static_compute_model(
     )
 )
 
-alpha = torch.tensor(alpha_value, device=device)
+alpha = torch.tensor(alpha_value, device=device, dtype=real_dtype)
 solver.model.parameters.new_param('alpha', alpha)
 
 solver.build()
+solver.integrator.set_spectral_refresh_interval(
+    args.spectral_refresh_interval_steps
+)
 
 # Band-limit the generated Q field before it participates in pointwise products.
 spectral_projector.project_dynamic_fields(
@@ -1167,6 +1304,12 @@ spectral_projector.project_dynamic_fields(
 )
 if spectral_projector.enabled:
     solver.integrator._static_fields_are_current = False
+metadata["initial_condition"]["projected_q_sha256"] = tensor_sha256(
+    tuple(
+        solver.model.fields[name]
+        for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")
+    )
+)
 metadata["retained_q_modes"] = spectral_projector.retained_axis_counts(Q_BC)
 metadata["retained_normal_velocity_modes"] = spectral_projector.retained_axis_counts(
     U_NORMAL_BC
@@ -1303,5 +1446,8 @@ if ENABLE_DIAGNOSTICS:
 
 metadata["completed_steps"] = final_step
 metadata["elapsed_seconds"] = end - start
+metadata["numerics"]["spectral_refresh"]["actual_count"] = (
+    solver.integrator.refresh_count
+)
 (output_dir / "COMPLETE").write_text("complete\n")
 write_run_metadata(output_dir, metadata, status="complete")

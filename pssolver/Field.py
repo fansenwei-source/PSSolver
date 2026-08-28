@@ -47,6 +47,11 @@ class Fields:
         field_names: list of str, e.g., ['u', 'v']
         shape: spatial grid shape of length 1, 2, or 3, e.g. (Nx,), (Nx, Ny), or (Nx, Ny, Nz).
         """
+        if dtype not in (torch.float32, torch.float64):
+            raise ValueError(
+                "dtype must be torch.float32 or torch.float64, "
+                f"got {dtype}"
+            )
         self.shape = shape
         self.device = device
         self.dtype = dtype
@@ -78,6 +83,11 @@ class Fields:
         self.spectral = None  # shape: (number_of_fields, batch, *shape)
 
     def set_transform_backend(self, backend):
+        if backend.real_dtype != self.dtype:
+            raise ValueError(
+                "Transform backend real dtype must match Fields dtype; "
+                f"got backend={backend.real_dtype}, fields={self.dtype}"
+            )
         self.transform_backend = backend
         self.spatial_grids = backend.spatial_grids
         self._refresh_metadata()
