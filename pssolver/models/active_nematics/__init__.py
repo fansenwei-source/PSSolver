@@ -1,5 +1,18 @@
 """Public building blocks for the active-nematic PDE model."""
 
+from .beris_edwards import (
+    BerisEdwardsQNonlinearModel,
+    STRESS_COMPONENTS,
+    beris_edwards_active_stress_components,
+    beris_edwards_algebraic_stress_components,
+    beris_edwards_distortion_stress_components,
+    beris_edwards_flow_alignment_components,
+    beris_edwards_linear_operator,
+    beris_edwards_molecular_field_components,
+    beris_edwards_q_nonlinear_components,
+    beris_edwards_reactive_stress_components,
+    q_tensor_contraction,
+)
 from .fields import Q_COMPONENTS
 from .initial_conditions import (
     aligned_x_smooth_noise,
@@ -26,7 +39,9 @@ from .q_tensor import (
 )
 
 __all__ = [
+    "BerisEdwardsQNonlinearModel",
     "Q_COMPONENTS",
+    "STRESS_COMPONENTS",
     "Q_components",
     "Q_convention_metadata",
     "Q_magnitude",
@@ -38,10 +53,19 @@ __all__ = [
     "aligned_x_smooth_noise",
     "analytic_periodic_defect_gas_2d",
     "available_initial_conditions",
+    "beris_edwards_active_stress_components",
+    "beris_edwards_algebraic_stress_components",
+    "beris_edwards_distortion_stress_components",
+    "beris_edwards_flow_alignment_components",
+    "beris_edwards_linear_operator",
+    "beris_edwards_molecular_field_components",
+    "beris_edwards_q_nonlinear_components",
+    "beris_edwards_reactive_stress_components",
     "create_initial_condition",
     "extruded_2d_twist",
     "neumann_twist_profile",
     "positive_equilibrium_S",
+    "q_tensor_contraction",
     "sample_periodic_neutral_defects_2d",
     "uniaxial_Q",
 ]

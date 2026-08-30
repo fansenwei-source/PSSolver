@@ -7,12 +7,13 @@ import unittest
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 BENCHMARK_SCRIPT = REPOSITORY_ROOT / "Plane_fig4_benchmark.py"
+BERIS_EDWARDS_SCRIPT = REPOSITORY_ROOT / "Plane_beris_edwards_stokes.py"
 
 
-def run_dry_run(*extra_arguments):
+def run_dry_run(*extra_arguments, script=BENCHMARK_SCRIPT):
     command = [
         sys.executable,
-        str(BENCHMARK_SCRIPT),
+        str(script),
         "--activity-number",
         "18",
         "--output-dir",
@@ -77,6 +78,108 @@ class Fig4NumericsCliTests(unittest.TestCase):
         result = run_dry_run("--dt", "0.03")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("integer multiple", result.stderr)
+
+
+    def test_beris_edwards_identity_parameters_and_hashes_are_recorded(self):
+        result = run_dry_run(
+            "--dtype",
+            "float64",
+            "--disable-spectral-refresh",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        metadata = json.loads(result.stdout)
+        model = metadata["model"]
+        parameters = model["parameters"]
+        self.assertEqual(metadata["script"], "Plane_beris_edwards_stokes.py")
+        runtime = metadata["runtime_environment"]
+        self.assertEqual(runtime["device_type"], "cpu")
+        self.assertEqual(runtime["resolved_device"], "cpu")
+        self.assertIsNone(runtime["cuda_device_name"])
+        self.assertIsInstance(runtime["python_version"], str)
+        self.assertIsInstance(runtime["torch_version"], str)
+        self.assertEqual(
+            model["variant"],
+            "beris_edwards_complete_nematic_stress_stokes",
+        )
+        self.assertEqual(
+            model["q_dynamics"]["implementation"],
+            "pssolver.models.active_nematics.BerisEdwardsQNonlinearModel",
+        )
+        self.assertIn("complete_one_constant", model["flow_dynamics"]["nematic_stress"])
+        self.assertAlmostEqual(parameters["activity_number"], 18.0)
+        self.assertAlmostEqual(parameters["zeta"], 0.01)
+        self.assertAlmostEqual(parameters["frank_K"], 0.012345679012345678)
+        self.assertAlmostEqual(parameters["ldg_L1"], 0.024691358024691357)
+        self.assertAlmostEqual(parameters["rotational_viscosity_gamma"], 2.94)
+        self.assertAlmostEqual(parameters["flow_alignment_lambda"], 0.3)
+        self.assertEqual(parameters["fric"], 0.0)
+        self.assertEqual(metadata["numerics"]["spectral_refresh"]["mode"], "disabled")
+        self.assertEqual(metadata["numerics"]["precision"]["real_dtype"], "float64")
+        self.assertIsNone(metadata["validation_config_sha256"])
+
+        files = metadata["implementation_provenance"]["files"]
+        self.assertEqual(
+            set(files),
+            {
+                "Plane_beris_edwards_stokes.py",
+                "pssolver/solver.py",
+                "pssolver/Field.py",
+                "pssolver/PDEmodel.py",
+                "pssolver/integrator.py",
+                "pssolver/transforms.py",
+                "pssolver/__init__.py",
+                "pssolver/models/active_nematics/__init__.py",
+                "pssolver/models/active_nematics/fields.py",
+                "pssolver/models/active_nematics/q_tensor.py",
+                "pssolver/models/active_nematics/beris_edwards.py",
+                "pssolver/models/active_nematics/initial_conditions.py",
+            },
+        )
+        self.assertTrue(
+            all(
+                len(value) == 64
+                and all(character in "0123456789abcdef" for character in value)
+                for value in files.values()
+            )
+        )
+
+    def test_beris_edwards_validation_config_sha_is_recorded_and_validated(self):
+        digest = "a" * 64
+        valid = run_dry_run(
+            "--validation-config-sha256",
+            digest,
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        invalid = run_dry_run(
+            "--validation-config-sha256",
+            "A" * 64,
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+
+        self.assertEqual(valid.returncode, 0, valid.stderr)
+        self.assertEqual(
+            json.loads(valid.stdout)["validation_config_sha256"],
+            digest,
+        )
+        self.assertNotEqual(invalid.returncode, 0)
+        self.assertIn("64 lowercase hexadecimal", invalid.stderr)
+
+    def test_beris_edwards_friction_mode_records_positive_drag(self):
+        result = run_dry_run(
+            "--zero-mode-policy",
+            "friction",
+            "--friction-mode-fric",
+            "0.125",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        metadata = json.loads(result.stdout)
+        self.assertEqual(metadata["model"]["parameters"]["fric"], 0.125)
+        self.assertEqual(metadata["numerics"]["velocity_zero_mode"], "friction")
+
 
 
 if __name__ == "__main__":
