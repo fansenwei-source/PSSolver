@@ -2250,6 +2250,16 @@ def relative_change(coarse: float, fine: float) -> float:
     return 0.0 if coarse == fine else math.nan
 
 
+def _trapezoid_integral(values: Any, coordinates: Any) -> Any:
+    """Integrate on NumPy versions before and after the trapz rename/removal."""
+    integrate = getattr(np, "trapezoid", None)
+    if integrate is None:
+        integrate = getattr(np, "trapz", None)
+    if integrate is None:
+        raise RuntimeError("NumPy provides neither trapezoid nor trapz")
+    return integrate(values, coordinates)
+
+
 def weighted_profile_difference(
     coarse_member: Mapping[str, Any],
     fine_member: Mapping[str, Any],
@@ -2281,13 +2291,18 @@ def weighted_profile_difference(
         }
     difference = coarse_profile[valid] - fine_profile[valid]
     numerator = max(
-        float(np.trapezoid(difference * difference * radii, radii)), 0.0
+        float(_trapezoid_integral(difference * difference * radii, radii)), 0.0
     )
     fine_norm_squared = max(
-        float(np.trapezoid(fine_profile[valid] * fine_profile[valid] * radii, radii)),
+        float(
+            _trapezoid_integral(
+                fine_profile[valid] * fine_profile[valid] * radii,
+                radii,
+            )
+        ),
         0.0,
     )
-    area_weight = float(np.trapezoid(radii, radii))
+    area_weight = float(_trapezoid_integral(radii, radii))
     if area_weight <= 0.0:
         return {
             "weighted_difference_rms": math.nan,

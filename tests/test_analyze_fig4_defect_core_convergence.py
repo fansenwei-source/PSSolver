@@ -1333,6 +1333,19 @@ def test_near_zero_space_difference_makes_time_gate_indeterminate(
     assert result["all_available_scalar_gates_pass"] is False
 
 
+def test_trapezoid_integral_falls_back_to_legacy_numpy_trapz(monkeypatch):
+    calls = []
+
+    def legacy_trapz(values, coordinates):
+        calls.append((values, coordinates))
+        return 1.25
+
+    monkeypatch.setattr(core, "np", SimpleNamespace(trapz=legacy_trapz))
+
+    assert core._trapezoid_integral([1.0, 2.0], [0.0, 1.0]) == 1.25
+    assert calls == [([1.0, 2.0], [0.0, 1.0])]
+
+
 def test_beris_task_contract_accepts_space_matrix(monkeypatch, tmp_path):
     shapes = ((256, 256, 64), (320, 320, 80), (512, 512, 128))
     runs = tuple(
