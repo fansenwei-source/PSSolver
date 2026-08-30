@@ -1,0 +1,577 @@
+\documentclass[UTF8,11pt,a4paper]{ctexart}
+
+\usepackage[a4paper,margin=24mm]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs,longtable,array}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.25em}
+\setlist[enumerate]{leftmargin=2.2em,itemsep=0.35em,topsep=0.25em}
+
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\ST}{\operatorname{ST}}
+\newcommand{\dd}{\,\mathrm d}
+\newcommand{\pinem}{\bm{\Pi}^{\mathrm{nem}}}
+\newcommand{\pireac}{\bm{\Pi}^{R}}
+\newcommand{\pidist}{\bm{\Pi}^{d}}
+\newcommand{\piact}{\bm{\Pi}^{a}}
+
+\title{Beris--Edwards 主动向列相应力与 Stokes 方程\\
+推导、代码核验及当前模型问题}
+\author{针对 \texttt{Plane\_beris\_edwards\_stokes.py} 及共享模型实现的整理}
+\date{2026 年 8 月 29 日}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本文整理 Shendruk 模型中序参量张量、共转项、分子场、被动反应应力、
+形变应力、主动应力以及不可压缩 Stokes 方程的完整定义和验号过程，
+并核对当前代码实现。结论是：在本文明确的指标与旋转约定下，当前
+one-constant Beris--Edwards 应力公式及其代码实现是正确的；现阶段主要
+问题不在张量代数，而在准静态近似、切向零模处理、边界条件含义以及
+相对于 Shendruk 原论文的模型差异。
+\end{abstract}
+
+\tableofcontents
+
+\section{文献背景与结论}
+
+本项目所用的 2018 年 Shendruk 论文在正文中写出
+\begin{equation}
+  D_t\bm u=\frac{1}{\rho}\bm\nabla\!\cdot\bm\Pi,
+\end{equation}
+并说明广义应力包含黏性、弹性和主动部分，主动应力为
+\begin{equation}
+  \piact=-\zeta\bm Q.
+\end{equation}
+该论文没有在正文逐项展开完整的被动 Beris--Edwards 应力，而是引用文献
+32（Marenduzzo 等，2007）和文献 33（Beris 与 Edwards 的专著）。完整
+公式也可在 Shendruk 等 2017 年的工作中直接找到。
+
+本文核验得到的最终 one-constant 非黏性向列相应力为
+\begin{equation}
+\boxed{
+\begin{aligned}
+\Pi^{\mathrm{nem}}_{ij}={}&
+2\lambda M_{ij}(Q:H)
+-\lambda\bigl(H_{ik}M_{kj}+M_{ik}H_{kj}\bigr)\\
+&+(Q_{ik}H_{kj}-H_{ik}Q_{kj})
+-L_1(\partial_iQ_{kl})(\partial_jQ_{kl})
+-\zeta Q_{ij},
+\end{aligned}}
+\label{eq:final-stress}
+\end{equation}
+其中
+\begin{equation}
+  M=Q+\frac{I}{3}.
+\end{equation}
+当前代码写成 $+\beta\alpha Q_{ij}$；它与标准主动应力等价的条件是
+\begin{equation}
+\boxed{\beta\alpha=-\zeta.}
+\end{equation}
+因此当前的 $\beta=-1$、$\alpha=\zeta$ 是正确的。
+
+\section{张量约定以及 $Q$、$\mathcal S$、$H$ 的定义}
+
+\subsection{序参量约定}
+
+Shendruk 论文使用
+\begin{equation}
+  Q_{ij}=\frac{3S}{2}\left(n_i n_j-\frac{\delta_{ij}}{3}\right)
+  =q\left(n_i n_j-\frac{\delta_{ij}}{3}\right),
+  \qquad q=\frac{3S}{2}.
+\end{equation}
+$Q$ 是对称无迹张量。论文有序区的平衡标量序参量为
+$S_{\mathrm{eq}}=1/3$，所以 $q_{\mathrm{eq}}=1/2$。
+
+本文采用以下速度梯度约定：
+\begin{equation}
+  W_{ij}=\partial_j u_i,
+  \qquad
+  E=\frac{W+W^T}{2},
+  \qquad
+  \Omega=\frac{W-W^T}{2}.
+\end{equation}
+同时规定
+\begin{equation}
+  (\bm\nabla\!\cdot\bm\Pi)_i=\partial_j\Pi_{ij}.
+  \label{eq:stress-divergence-convention}
+\end{equation}
+若把 $W$、$\Omega$ 或应力散度定义成转置约定，交换子项的表面符号会随之
+改变；所有公式必须成套使用。
+
+\subsection{Beris--Edwards 共转项}
+
+令
+\begin{equation}
+  M=Q+\frac{I}{3}.
+\end{equation}
+不可压缩条件 $\Tr E=\bm\nabla\!\cdot\bm u=0$ 下，共转和流动取向项为
+\begin{equation}
+\boxed{
+  \mathcal S(W,Q)
+  =(\lambda E+\Omega)M
+  +M(\lambda E-\Omega)
+  -2\lambda M(Q:E).
+}
+\label{eq:alignment}
+\end{equation}
+这里的 $\mathcal S$ 是二阶张量，不应与标量序参量 $S$ 混淆。由于 $Q$
+对称，有 $Q:W=Q:E$。
+
+\subsection{自由能和分子场}
+
+one-constant Landau--de Gennes 自由能为
+\begin{equation}
+\begin{aligned}
+F[Q]=\int_V \bigg[&
+\frac{A}{2}Q_{ij}Q_{ji}
++\frac{B}{3}Q_{ij}Q_{jk}Q_{ki}
++\frac{C}{4}(Q_{ij}Q_{ji})^2\\
+&+\frac{L_1}{2}(\partial_kQ_{ij})(\partial_kQ_{ij})
+\bigg]\dd V.
+\end{aligned}
+\label{eq:free-energy}
+\end{equation}
+分子场是自由能变分的对称无迹负梯度：
+\begin{equation}
+  H=-\left[\frac{\delta F}{\delta Q}\right]^{\ST}.
+\end{equation}
+逐分量写为
+\begin{equation}
+\boxed{
+H_{ij}=-AQ_{ij}
+-B\left(Q_{ik}Q_{kj}-\frac{\delta_{ij}}{3}Q_{kl}Q_{lk}\right)
+-C(Q:Q)Q_{ij}
++L_1\nabla^2Q_{ij}.
+}
+\label{eq:molecular-field}
+\end{equation}
+Q 方程是
+\begin{equation}
+  (\partial_t+\bm u\!\cdot\!\bm\nabla)Q-\mathcal S
+  =\frac{H}{\gamma}.
+  \label{eq:q-equation}
+\end{equation}
+必须注意：式~\eqref{eq:q-equation} 中的弛豫项使用 $H/\gamma$，但应力
+式~\eqref{eq:final-stress} 必须使用原始热力学分子场 $H$，不能再次除以
+$\gamma$。
+
+\section{反应应力的推导与符号验证}
+
+把式~\eqref{eq:alignment} 改写为
+\begin{equation}
+  \mathcal S
+  =\lambda(EM+ME)-2\lambda M(Q:E)+\Omega M-M\Omega.
+\end{equation}
+利用 $Q,H,M,E$ 对称、$Q,H$ 无迹、$\Omega$ 反对称以及迹的循环不变性，
+可以得到
+\begin{equation}
+\begin{aligned}
+H:\mathcal S={}&
+\lambda(HM+MH):E
+-2\lambda(Q:H)M:E\\
+&-(QH-HQ):\Omega.
+\end{aligned}
+\label{eq:h-s}
+\end{equation}
+定义反应应力
+\begin{equation}
+\boxed{
+  \pireac
+  =2\lambda M(Q:H)-\lambda(HM+MH)+QH-HQ.
+}
+\label{eq:reactive-stress}
+\end{equation}
+因为式~\eqref{eq:reactive-stress} 的前两项是对称的，而 $QH-HQ$ 是
+反对称的，所以
+\begin{equation}
+\begin{aligned}
+\pireac:W={}&
+\bigl[2\lambda M(Q:H)-\lambda(HM+MH)\bigr]:E\\
+&+(QH-HQ):\Omega.
+\end{aligned}
+\end{equation}
+与式~\eqref{eq:h-s} 比较即得局部能量交换恒等式
+\begin{equation}
+\boxed{H:\mathcal S+\pireac:W=0.}
+\label{eq:local-energy-pairing}
+\end{equation}
+这个恒等式同时验证了两个 $-\lambda$ 项以及 $+(QH-HQ)$ 的符号。若
+遗漏交换子、翻转其符号，或者把总应力强制对称化，取向自由能和流动之间
+的可逆能量交换就不再闭合。
+
+\section{形变应力的变分推导}
+
+一般的 Ericksen/形变应力为
+\begin{equation}
+  \Pi^d_{ij}
+  =-\partial_iQ_{kl}
+  \frac{\partial f}{\partial(\partial_jQ_{kl})}.
+  \label{eq:general-distortion}
+\end{equation}
+one-constant 弹性能密度是
+\begin{equation}
+  f_{\mathrm{el}}
+  =\frac{L_1}{2}(\partial_mQ_{kl})(\partial_mQ_{kl}).
+\end{equation}
+因此
+\begin{equation}
+  \frac{\partial f_{\mathrm{el}}}
+       {\partial(\partial_jQ_{kl})}
+  =L_1\partial_jQ_{kl},
+\end{equation}
+代入式~\eqref{eq:general-distortion} 得
+\begin{equation}
+\boxed{
+  \Pi^d_{ij}=-L_1(\partial_iQ_{kl})(\partial_jQ_{kl}).
+}
+\label{eq:distortion-stress}
+\end{equation}
+这里没有遗漏 $1/2$，也没有额外因子 2。不同文献有时保留一个
+$f\delta_{ij}$；在不可压缩流中它的散度只是某个标量的梯度，可以通过
+$p_{\mathrm{eff}}=p-\phi$ 吸收到压力中。因而“省略各向同性应力”不是
+忽略物理力，而是压力规范的选择。
+
+\section{主动应力、黏性应力和最终 Stokes 方程}
+
+标准最低阶主动应力为
+\begin{equation}
+  \piact=-\zeta Q.
+\end{equation}
+在 Shendruk/Marenduzzo 的约定中，$\zeta>0$ 表示 extensile，
+$\zeta<0$ 表示 contractile。若代码写为 $\beta\alpha Q$，唯一需要满足的
+是 $\beta\alpha=-\zeta$；当 $\alpha$ 本身已经允许正负时，不应额外重复
+翻号。
+
+总应力可写作
+\begin{equation}
+  \bm\Pi^{\mathrm{tot}}
+  =-pI+2\eta E+\pireac+\pidist+\piact.
+\end{equation}
+若 $\eta$ 为常数且流动不可压缩，则
+\begin{equation}
+\begin{aligned}
+\partial_j(2\eta E_{ij})
+&=\eta\partial_j(\partial_j u_i+\partial_i u_j)\\
+&=\eta\nabla^2u_i.
+\end{aligned}
+\end{equation}
+因此在准静态 Stokes--Brinkman 近似下，
+\begin{equation}
+\boxed{
+0=-\bm\nabla p+\eta\nabla^2\bm u
+-\mathrm{fric}\,\bm u
++\bm\nabla\!\cdot\pinem,
+\qquad \bm\nabla\!\cdot\bm u=0.
+}
+\label{eq:stokes}
+\end{equation}
+若黏度随空间变化，必须保留 $\bm\nabla\!\cdot(2\eta E)$，不能使用简单的
+$\eta\nabla^2\bm u$。
+
+\section{总能量平衡作为整体检查}
+
+在周期边界、无边界功或其他使相应边界通量消失的条件下，被动系统满足
+\begin{equation}
+\begin{aligned}
+\frac{\dd}{\dd t}
+\left[
+\int_V\frac{\rho|\bm u|^2}{2}\dd V+F[Q]
+\right]
+=-\int_V\bigg[
+2\eta E:E+\mathrm{fric}|\bm u|^2
++\frac{1}{\gamma}H:H
+\bigg]\dd V.
+\end{aligned}
+\label{eq:passive-energy-law}
+\end{equation}
+主动应力再贡献
+\begin{equation}
+  \mathcal P_{\mathrm{active}}
+  =\int_V\zeta Q:E\dd V,
+\end{equation}
+它没有固定符号，正是主动组分向流体注入能量的通道。式
+\eqref{eq:local-energy-pairing} 和式~\eqref{eq:passive-energy-law} 是比逐项
+“看起来相似”更强的验号方法。
+
+\section{五分量代码表示与当前实现核验}
+
+代码仅存储
+\begin{equation}
+  (Q_{xx},Q_{xy},Q_{xz},Q_{yy},Q_{yz}),
+  \qquad Q_{zz}=-Q_{xx}-Q_{yy}.
+\end{equation}
+完整双缩并必须写成
+\begin{equation}
+\begin{aligned}
+Q:H={}&Q_{xx}H_{xx}+Q_{yy}H_{yy}+Q_{zz}H_{zz}\\
+&+2(Q_{xy}H_{xy}+Q_{xz}H_{xz}+Q_{yz}H_{yz}).
+\end{aligned}
+\end{equation}
+梯度缩并 $\partial_iQ_{kl}\partial_jQ_{kl}$ 也必须使用同样的非对角
+权重。当前 helper 已正确处理这些系数。
+
+代码先计算 $MH=M\cdot H$，然后返回
+\begin{equation}
+\begin{aligned}
+&2\lambda M(Q:H)+(1-\lambda)MH-(1+\lambda)HM\\
+&\quad=2\lambda M(Q:H)-\lambda(MH+HM)+(MH-HM)\\
+&\quad=2\lambda M(Q:H)-\lambda(MH+HM)+(QH-HQ),
+\end{aligned}
+\end{equation}
+因为 $M=Q+I/3$，而 $I/3$ 与 $H$ 对易。因此当前紧凑实现与标准式
+严格等价。
+
+应力分量按 row-major 顺序保存为
+\begin{equation}
+ [xx,xy,xz,yx,yy,yz,zx,zy,zz].
+\end{equation}
+代码对 $[xx,yx,zx]$ 取 $x$ 导数，对 $[xy,yy,zy]$ 取 $y$ 导数，
+对 $[xz,yz,zz]$ 取 $z$ 导数，所得正是
+\begin{equation}
+\begin{aligned}
+f_x&=\partial_x\Pi_{xx}+\partial_y\Pi_{xy}+\partial_z\Pi_{xz},\\
+f_y&=\partial_x\Pi_{yx}+\partial_y\Pi_{yy}+\partial_z\Pi_{yz},\\
+f_z&=\partial_x\Pi_{zx}+\partial_y\Pi_{zy}+\partial_z\Pi_{zz}.
+\end{aligned}
+\end{equation}
+所以没有错误地计算成 $\partial_j\Pi_{ji}$。这个检查对反对称交换子尤其
+重要，因为转置散度会使其贡献翻号。
+
+当前实现还满足以下几点：
+\begin{itemize}
+  \item 应力使用 raw $H$；只有 Q 演化方程的系数除以 $\gamma$；
+  \item active stress 只加入总应力一次，另算的 active tangential force
+        仅用于诊断，不会重复进入总力；
+  \item distortion stress 根据 DCT/DST 的 $z$ 奇偶性分开求散度；
+  \item Stokes 算子使用 $A=\mathrm{fric}+\eta k^2$，对应
+        $(\mathrm{fric}-\eta\nabla^2)u+\nabla p=f$，符号正确；
+  \item 现有分子场、应力、能量配对、Q 非线性 RHS、adapter 接线和线性
+        算子共 8 项测试均已通过：\texttt{8 passed}；
+  \item 另以 20 组随机不可压缩张量直接比较了 Plane 中实际运行的旧展开式
+        与共享 adapter，二者在双精度容差内完全一致。
+\end{itemize}
+
+Frank 常数与当前 Q 约定的映射也正确。若
+$Q=q(nn-I/3)$ 且 $q$ 在有序区近似常数，则
+\begin{equation}
+  K=2L_1q_{\mathrm{eq}}^2,
+  \qquad
+  L_1=\frac{K}{2q_{\mathrm{eq}}^2}.
+\end{equation}
+对 $S_{\mathrm{eq}}=1/3$，有 $q_{\mathrm{eq}}=1/2$，因此
+\begin{equation}
+  \boxed{L_1=2K.}
+\end{equation}
+论文的无量纲活性数应写为
+\begin{equation}
+  \mathcal A=H_{\mathrm{ch}}\sqrt{\frac{\zeta}{K}},
+\end{equation}
+这里用 $H_{\mathrm{ch}}$ 表示通道高度，以免与分子场 $H$ 混淆。
+
+\section{当前最新模型存在的问题}
+\label{sec:problems}
+
+\subsection{结论：不是应力公式错误，而是模型闭合与复现范围问题}
+
+截至本文核验，未发现式~\eqref{eq:final-stress} 或对应五分量张量代数中的
+错误。当前问题按重要性列在下面。
+
+\subsection{问题 1：准静态 Stokes 不是 Shendruk 的惯性动量方程}
+
+Shendruk 2018 使用
+\begin{equation}
+  \rho(\partial_t+\bm u\!\cdot\!\bm\nabla)\bm u
+  =\bm\nabla\!\cdot\bm\Pi,
+\end{equation}
+当前代码则令左端为零。即使预期 Reynolds 数很小，这也是一个需要数值
+验证的近似，而不是严格等价变换。它会直接删除速度的惯性瞬态和平均动量
+演化，因此当前脚本不能称为严格的 Fig.~4 reproduction。
+
+\subsection{问题 2：\texttt{fric=0 + zero\_mean} 改变了平均动量方程}
+
+在周期 $x,y$、运动学 free-slip 墙面以及 $\mathrm{fric}=0$ 下，常数
+$u_x,u_y$ 是 Stokes 算子的零模。对切向方程作体积平均，稳态可解性要求
+\begin{equation}
+  \langle f_x\rangle=\langle f_y\rangle=0.
+\end{equation}
+但 nematic force 是应力散度，所以例如
+\begin{equation}
+\begin{aligned}
+\langle f_x\rangle
+&=\frac{1}{V}\int_{\partial V}\Pi^{\mathrm{nem}}_{xj}n_j\dd A\\
+&=\frac{1}{H_{\mathrm{ch}}}
+\left[
+\langle\Pi^{\mathrm{nem}}_{xz}\rangle_{xy}
+\right]_{z=0}^{z=H_{\mathrm{ch}}},
+\end{aligned}
+\end{equation}
+它并不因 $\partial_zQ=0$ 自动为零；reactive 和 active 的
+$\Pi_{xz}$ 仍可能在两面墙上不同。
+
+当前 zero-mean 伪逆把两个切向常数速度模固定为零，等价于把右端的相应
+平均合力投影掉或加入均匀反力。因此当 $\langle f_{x,y}\rangle\ne0$ 时，
+代码解的是“投影后的 Stokes 方程”，而不是原来写出的式
+\eqref{eq:stokes}。这不是压力 gauge，因为周期压力不能消除均匀切向力。
+
+若切换到正摩擦模式，平均速度满足近似关系
+\begin{equation}
+  \mathrm{fric}\,\langle u_{x,y}\rangle
+  =\langle f_{x,y}\rangle,
+\end{equation}
+零模会变得可解，但这又引入了 Shendruk bulk 模型中不存在的 Brinkman
+拖曳。严格复现时更自然的做法是保留惯性并显式演化两个切向平均动量。
+
+\subsection{问题 3：当前 free-slip 是运动学条件，不是总牵引条件}
+
+代码施加
+\begin{equation}
+  u_z=0,
+  \qquad
+  \partial_z u_x=\partial_z u_y=0.
+\end{equation}
+这使黏性切向牵引为零，但总切向牵引是
+\begin{equation}
+  t_x=(2\eta E_{xz}+\Pi^{\mathrm{nem}}_{xz}),
+  \qquad
+  t_y=(2\eta E_{yz}+\Pi^{\mathrm{nem}}_{yz}),
+\end{equation}
+其中 nematic 部分一般不为零。因此当前边界应准确称为 homogeneous
+kinematic free-slip，不能解释为 $n_j\Pi^{\mathrm{tot}}_{ij}=0$ 的完整
+traction-free 边界。若目标物理问题要求总牵引为零，速度边界与 nematic
+应力必须耦合处理。
+
+\subsection{问题 4：当前 anchoring 只对应 Fig.~4 的一个分支}
+
+当前所有 Q 分量在 $z$ 墙面使用 Neumann 条件，即 free anchoring。
+Shendruk 论文的默认设置是 strong planar anchoring；Fig.~4 另外比较了
+free-slip--free-anchoring 情况。故当前边界组合可对应 Fig.~4 的
+free-slip/free-anchoring 分支，但不能同时代表默认 strong-anchoring
+曲线。若要重现实验图中的三组数据，需要分别实现并验证各组边界条件。
+
+\subsection{问题 5：只实现了 one-constant 弹性}
+
+当前代码假定 $L_2=L_3=0$。论文讨论 twist、bend、splay 不等时使用
+\begin{equation}
+\begin{aligned}
+f_{\mathrm{el}}={}&
+\frac{L_1}{2}\partial_kQ_{ij}\partial_kQ_{ij}
++\frac{L_2}{2}(\partial_kQ_{kj})(\partial_iQ_{ij})\\
+&+\frac{L_3}{2}Q_{ki}(\partial_kQ_{jl})(\partial_iQ_{jl}).
+\end{aligned}
+\end{equation}
+此时不仅 $H$ 要增加 $L_2,L_3$ 的变分项，形变应力也必须恢复一般形式
+\begin{equation}
+  \Pi^d_{ij}
+  =-\partial_iQ_{kl}
+  \frac{\partial f_{\mathrm{el}}}
+       {\partial(\partial_jQ_{kl})}.
+\end{equation}
+只给现有式~\eqref{eq:distortion-stress} 换一个“有效 $L_1$”并不能描述
+各向异性 Frank 弹性。
+
+\subsection{问题 6：数值方法和初始化不是论文等价实现}
+
+论文采用 hybrid lattice-Boltzmann/finite-difference 方法；当前模型采用
+FFT/DCT/DST 伪谱离散和半隐式时间推进。初始化、去混叠、墙面离散和速度
+压力耦合均不完全相同。不同方法本身不是错误，但临界活性数、缺陷统计和
+跨通道结构必须做网格、时间步及初始条件收敛测试，不能仅凭参数相同就称为
+严格复现。
+
+\subsection{问题 7：测试覆盖仍有缺口}
+
+当前 8 项测试覆盖了分子场、应力代数、能量配对、Q 非线性 RHS、adapter
+接线和线性算子，但没有专门的
+manufactured-solution 集成测试同时覆盖：
+\begin{itemize}
+  \item 混合 DCT/DST 下完整 $\partial_j\Pi_{ij}$；
+  \item 墙面奇偶基函数转换；
+  \item 压力 Schur 补与不可压缩约束；
+  \item 非零平均切向 nematic force 的零模行为；
+  \item 被动极限下离散总能量耗散。
+\end{itemize}
+此外，代码中的最高 DST 模在求导时会映射到未解析的 DCT 模。默认
+\texttt{cubic\_half} 去混叠会事先去掉这一模式，因此默认设置安全；若使用
+\texttt{--dealias-rule none}，这一边缘模式需要单独测试或禁用。
+
+\subsection{问题 8：共享 helper 已接入当前实际运行路径}
+
+当前支持的 \texttt{Plane\_beris\_edwards\_stokes.py} 已直接使用共享模块中的
+\texttt{BerisEdwardsQNonlinearModel}，并复用 molecular-field、flow-alignment、
+reactive、distortion 与 active stress helper。\texttt{Plane\_shendruk\_stokes.py}
+保留为迁移过程中的中间参考脚本；它仍包含局部
+\texttt{ShendrukQNonlinearModel}，且验证分析器不会把它当作当前受支持的
+benchmark 身份。迁移前用 20 组随机不可压缩张量验证了旧展开与共享 Q 实现
+数值一致；当前实际运行路径另有 adapter、应力代数、CLI metadata 和 provenance
+回归测试。因此问题 8 对当前支持脚本已经解决。后续修改应继续以共享模块为
+单一公式来源，并保留实现文件 SHA-256 与回归测试，防止版本漂移。
+
+\subsection{问题 9：输出压力是有效压力}
+
+由于所有各向同性自由能/应力都被吸收到 $p$，代码保存的是
+$p_{\mathrm{eff}}$。它足以决定不可压缩速度，但不能直接与论文或
+lattice-Boltzmann 中另一定义的热力学压力逐点比较，除非先统一压力规范。
+
+\subsection{建议优先级}
+
+若目标是严格复现 Shendruk Fig.~4，建议顺序为：
+\begin{enumerate}
+  \item 首先决定保留完整惯性动量方程，还是至少显式演化两个切向平均
+        动量；不要把 zero-mean 当成压力规范。
+  \item 明确目标数据系列，并实现相应的 strong/free anchoring 以及
+        no-slip/free-slip 边界。
+  \item 增加完整应力散度和 saddle Stokes 求解器的 manufactured tests，
+        同时记录每一项的功率/能量预算。
+  \item 保持 \texttt{Plane\_beris\_edwards\_stokes.py} 直接使用共享
+        adapter/helper，并以回归测试和实现 provenance 防止版本漂移。
+  \item 完成 one-constant 结果后，再为论文的弹性各向异性部分推导并实现
+        $L_2,L_3$ 对 $H$ 和 $\Pi^d$ 的贡献。
+\end{enumerate}
+若目标只是构建一个自洽的 one-constant、低 Reynolds 数主动向列相谱模型，
+当前应力闭合可以保留；应在论文或元数据中将它准确描述为
+``quasistatic incompressible Stokes--Brinkman model with kinematic
+free-slip and a chosen plug-mode convention''。
+
+\section{代码位置与文献}
+
+本次核验对应以下文件：
+\begin{itemize}
+  \item \path{/home/fansenwei/Desktop/Develop/PSSolver/Plane_beris_edwards_stokes.py}
+  \item \path{/home/fansenwei/Desktop/Develop/PSSolver/Plane_shendruk_stokes.py}
+        （迁移过程中的中间参考脚本）
+  \item \path{/home/fansenwei/Desktop/Develop/PSSolver/pssolver/models/active_nematics/beris_edwards.py}
+  \item \path{/home/fansenwei/Desktop/Develop/PSSolver/tests/test_beris_edwards_stress.py}
+  \item \path{/home/fansenwei/Desktop/Develop/PSSolver/scripts_plane/run_beris_edwards_validation.py}
+\end{itemize}
+
+主要参考资料：
+\begin{enumerate}
+  \item T. N. Shendruk, K. Thijssen, J. M. Yeomans, and A. Doostmohammadi,
+  ``Twist-induced crossover from two-dimensional to three-dimensional
+  turbulence in active nematics,'' \emph{Phys. Rev. E} \textbf{98},
+  010601 (2018).\\
+  \url{https://doi.org/10.1103/PhysRevE.98.010601}
+
+  \item D. Marenduzzo, E. Orlandini, M. E. Cates, and J. M. Yeomans,
+  ``Steady-state hydrodynamic instabilities of active liquid crystals:
+  Hybrid lattice Boltzmann simulations,'' \emph{Phys. Rev. E} \textbf{76},
+  031921 (2007).\\
+  \url{https://doi.org/10.1103/PhysRevE.76.031921}
+
+  \item A. N. Beris and B. J. Edwards,
+  \emph{Thermodynamics of Flowing Systems: With Internal Microstructure},
+  Oxford University Press (1994).
+
+  \item T. N. Shendruk et al., ``Dancing disclinations in confined active
+  nematics,'' \emph{Soft Matter} \textbf{13}, 3853--3862 (2017).\\
+  \url{https://doi.org/10.1039/C6SM02310J}
+\end{enumerate}
+
+\end{document}
