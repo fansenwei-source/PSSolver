@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Compare completed single-point Fig. 4 convergence runs.
+"""Compare completed single-point Fig. 4 numerical-validation runs.
 
 Time-step studies compare final fields on one common grid.  Spatial studies
 compare resolution-independent scalar statistics only: this script deliberately
 does not call a collocation-grid difference a pointwise error without a
-basis-aware FFT/DCT/DST transfer.
+basis-aware FFT/DCT/DST transfer.  Dealiasing studies compare final fields on
+the same grid against ``cubic_half`` and report sensitivity, not convergence.
 """
 
 from __future__ import annotations
@@ -14,6 +15,7 @@ from collections.abc import Mapping, Sequence
 import copy
 import csv
 from dataclasses import dataclass
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -45,6 +47,7 @@ DIAGNOSTIC_FIELDS = (
 )
 NONCOMPARABLE_METADATA_KEYS = {
     "status",
+    "validation_config_sha256",
     "completed_steps",
     "elapsed_seconds",
     "device",
@@ -54,6 +57,17 @@ NONCOMPARABLE_METADATA_KEYS = {
     "save_hydrodynamics",
     "retained_q_modes",
     "retained_normal_velocity_modes",
+}
+SUPPORTED_RUN_IDENTITIES = {
+    "Plane_fig4_benchmark.py": None,
+    "Plane_beris_edwards_stokes.py": (
+        "beris_edwards_complete_nematic_stress_stokes"
+    ),
+}
+DEALIAS_RULE_FRACTIONS = {
+    "none": None,
+    "two_thirds": 2.0 / 3.0,
+    "cubic_half": 0.5,
 }
 
 
@@ -85,15 +99,20 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Analyze final Q/u/p fields and solver diagnostics from completed "
-            "Plane_fig4_benchmark.py convergence runs."
+            "supported Fig. 4 numerical-validation runs."
         )
     )
-    parser.add_argument("--mode", choices=("time", "space"), required=True)
+    parser.add_argument(
+        "--mode", choices=("time", "space", "dealias"), required=True
+    )
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument(
         "--output-prefix",
         default=None,
-        help="Output basename. Default: fig4_<mode>_convergence.",
+        help=(
+            "Output basename. Defaults to fig4_<mode>_convergence, except "
+            "dealias mode uses fig4_dealias_sensitivity."
+        ),
     )
     parser.add_argument(
         "--chunk-size",
@@ -128,6 +147,95 @@ def parse_args() -> argparse.Namespace:
     if args.order_dt is not None and args.mode != "time":
         parser.error("--order-dt is valid only with --mode time")
     return args
+
+
+def validate_run_identity(
+    metadata: Mapping[str, Any],
+    *,
+    path: Path,
+) -> dict[str, Any]:
+    """Validate one explicit script/model identity and return report metadata.
+
+    The allowlist is intentionally narrow. In particular, the intermediate
+    ``Plane_shendruk_stokes.py`` implementation is not accepted, and the
+    legacy and complete-stress models remain non-comparable because ``script``
+    and ``model.variant`` stay in the strict comparison signature.
+    """
+    script = metadata.get("script")
+    if script not in SUPPORTED_RUN_IDENTITIES:
+        supported = ", ".join(sorted(SUPPORTED_RUN_IDENTITIES))
+        raise ValueError(
+            f"{path} declares unsupported benchmark script {script!r}; "
+            f"supported scripts: {supported}"
+        )
+
+    model = metadata.get("model")
+    if not isinstance(model, Mapping) or model.get("name") != "active_nematics":
+        raise ValueError(f"{path} must declare model.name='active_nematics'")
+    expected_variant = SUPPORTED_RUN_IDENTITIES[script]
+    actual_variant = model.get("variant")
+    if actual_variant != expected_variant:
+        raise ValueError(
+            f"{path} has model.variant={actual_variant!r} for {script}; "
+            f"expected {expected_variant!r}"
+        )
+
+    implementation = metadata.get("implementation_provenance")
+    if script == "Plane_beris_edwards_stokes.py":
+        if not isinstance(implementation, Mapping) or not implementation:
+            raise ValueError(
+                f"{path} requires non-empty implementation_provenance"
+            )
+        files = implementation.get("files")
+        if not isinstance(files, Mapping) or not files:
+            raise ValueError(
+                f"{path} implementation_provenance.files must be a "
+                "non-empty mapping"
+            )
+        for source_path, digest in files.items():
+            if not isinstance(source_path, str) or not source_path:
+                raise ValueError(
+                    f"{path} implementation provenance file names must be "
+                    "non-empty strings"
+                )
+            if (
+                not isinstance(digest, str)
+                or len(digest) != 64
+                or any(
+                    character not in "0123456789abcdef"
+                    for character in digest
+                )
+            ):
+                raise ValueError(
+                    f"{path} implementation hash for {source_path!r} must be "
+                    "a canonical 64-character lowercase SHA-256 hex digest"
+                )
+    elif implementation is not None and not isinstance(implementation, Mapping):
+        raise ValueError(f"{path} implementation_provenance must be a mapping")
+
+    validation_config_sha256 = metadata.get("validation_config_sha256")
+    if script == "Plane_beris_edwards_stokes.py" and (
+        not isinstance(validation_config_sha256, str)
+        or len(validation_config_sha256) != 64
+        or any(
+            character not in "0123456789abcdef"
+            for character in validation_config_sha256
+        )
+    ):
+        raise ValueError(
+            f"{path} requires validation_config_sha256 to be a canonical "
+            "64-character lowercase SHA-256 hex digest"
+        )
+    return {
+        "script": script,
+        "model_name": model["name"],
+        "model_variant": actual_variant,
+        "model_stage": model.get("stage"),
+        "implementation_provenance": (
+            None if implementation is None else copy.deepcopy(dict(implementation))
+        ),
+        "validation_config_sha256": validation_config_sha256,
+    }
 
 
 def _positive_float(value: Any, *, name: str, path: Path) -> float:
@@ -179,10 +287,7 @@ def load_run(directory: str | Path) -> RunArtifact:
         raise ValueError(f"{metadata_path} must contain schema_version=1 metadata")
     if metadata.get("status") != "complete":
         raise ValueError(f"{metadata_path} must declare status='complete'")
-    if metadata.get("script") != "Plane_fig4_benchmark.py":
-        raise ValueError(
-            f"{metadata_path} is not a Plane_fig4_benchmark.py run"
-        )
+    validate_run_identity(metadata, path=metadata_path)
     validate_active_nematic_q_source(directory, require_S_initial=True)
 
     solver = metadata.get("solver")
@@ -255,7 +360,10 @@ def load_run(directory: str | Path) -> RunArtifact:
 
 
 def _comparison_signature(metadata: Mapping[str, Any], mode: str) -> dict[str, Any]:
-    """Return metadata that must agree within one convergence study."""
+    """Return metadata that must agree within one numerical-validation study."""
+    if mode == "dealias":
+        _dealias_configuration(metadata)
+
     signature = copy.deepcopy(dict(metadata))
     for key in NONCOMPARABLE_METADATA_KEYS:
         signature.pop(key, None)
@@ -280,9 +388,128 @@ def _comparison_signature(metadata: Mapping[str, Any], mode: str) -> dict[str, A
             # the strict comparison signature.
             initial_condition.pop("raw_q_sha256", None)
             initial_condition.pop("projected_q_sha256", None)
+    elif mode == "dealias":
+        signature.pop("dealias_rule")
+        signature.pop("dealias_fraction")
+
+        numerics = signature["numerics"]
+        dealiasing = numerics["dealiasing"]
+        dealiasing.pop("rule")
+        dealiasing.pop("fraction")
+
+        initial_condition = signature["initial_condition"]
+        # Projection changes the discrete starting array by construction. The
+        # raw hash remains strict and therefore certifies a common unprojected
+        # initial condition.
+        initial_condition.pop("projected_q_sha256")
     else:  # pragma: no cover - protected by argparse and caller validation
-        raise ValueError(f"unknown convergence mode {mode!r}")
+        raise ValueError(f"unknown validation mode {mode!r}")
     return signature
+
+
+def _sha256_string(value: Any, *, name: str) -> str:
+    if (
+        not isinstance(value, str)
+        or len(value) != 64
+        or any(character not in "0123456789abcdef" for character in value)
+    ):
+        raise ValueError(f"metadata has invalid {name}={value!r}")
+    return value
+
+
+def _retained_mode_counts(value: Any, *, name: str) -> tuple[int, int, int]:
+    if (
+        not isinstance(value, (list, tuple))
+        or len(value) != 3
+        or any(type(count) is not int or count <= 0 for count in value)
+    ):
+        raise ValueError(
+            f"metadata {name} must contain three positive integer mode counts"
+        )
+    return tuple(value)
+
+
+def _dealias_configuration(metadata: Mapping[str, Any]) -> dict[str, Any]:
+    """Validate duplicated dealias provenance and return its configuration."""
+    if "dealias_rule" not in metadata or "dealias_fraction" not in metadata:
+        raise ValueError(
+            "dealias sensitivity requires top-level dealias_rule and "
+            "dealias_fraction metadata"
+        )
+    top_rule = metadata["dealias_rule"]
+    if top_rule not in DEALIAS_RULE_FRACTIONS:
+        raise ValueError(f"metadata has unsupported dealias_rule={top_rule!r}")
+    top_fraction = metadata["dealias_fraction"]
+
+    numerics = metadata.get("numerics")
+    if not isinstance(numerics, Mapping):
+        raise ValueError("dealias sensitivity requires numerics metadata")
+    dealiasing = numerics.get("dealiasing")
+    if not isinstance(dealiasing, Mapping):
+        raise ValueError(
+            "dealias sensitivity requires numerics.dealiasing metadata"
+        )
+    if "rule" not in dealiasing or "fraction" not in dealiasing:
+        raise ValueError(
+            "numerics.dealiasing must declare both rule and fraction"
+        )
+    nested_rule = dealiasing["rule"]
+    nested_fraction = dealiasing["fraction"]
+    if nested_rule != top_rule or nested_fraction != top_fraction:
+        raise ValueError(
+            "top-level and numerics.dealiasing rule/fraction metadata disagree"
+        )
+
+    expected_fraction = DEALIAS_RULE_FRACTIONS[top_rule]
+    if expected_fraction is None:
+        fraction_matches = top_fraction is None
+    else:
+        fraction_matches = (
+            not isinstance(top_fraction, bool)
+            and isinstance(top_fraction, (int, float))
+            and math.isfinite(top_fraction)
+            and math.isclose(
+                float(top_fraction),
+                expected_fraction,
+                rel_tol=1.0e-15,
+                abs_tol=0.0,
+            )
+        )
+    if not fraction_matches:
+        raise ValueError(
+            f"dealias rule {top_rule!r} requires fraction={expected_fraction!r}, "
+            f"got {top_fraction!r}"
+        )
+
+    initial_condition = metadata.get("initial_condition")
+    if not isinstance(initial_condition, Mapping):
+        raise ValueError(
+            "dealias sensitivity requires initial_condition metadata"
+        )
+    raw_hash = _sha256_string(
+        initial_condition.get("raw_q_sha256"),
+        name="initial_condition.raw_q_sha256",
+    )
+    projected_hash = _sha256_string(
+        initial_condition.get("projected_q_sha256"),
+        name="initial_condition.projected_q_sha256",
+    )
+    retained_q_modes = _retained_mode_counts(
+        metadata.get("retained_q_modes"),
+        name="retained_q_modes",
+    )
+    retained_normal_velocity_modes = _retained_mode_counts(
+        metadata.get("retained_normal_velocity_modes"),
+        name="retained_normal_velocity_modes",
+    )
+    return {
+        "rule": top_rule,
+        "fraction": top_fraction,
+        "raw_q_sha256": raw_hash,
+        "projected_q_sha256": projected_hash,
+        "retained_q_modes": retained_q_modes,
+        "retained_normal_velocity_modes": retained_normal_velocity_modes,
+    }
 
 
 def _normalize_time_spectral_refresh_signature(
@@ -402,26 +629,59 @@ def _positive_int_value(value: Any, *, name: str) -> int:
 
 
 def validate_comparability(runs: Sequence[RunArtifact], mode: str) -> None:
-    if mode not in {"time", "space"}:
-        raise ValueError(f"unknown convergence mode {mode!r}")
+    if mode not in {"time", "space", "dealias"}:
+        raise ValueError(f"unknown validation mode {mode!r}")
+    if len(runs) < 2:
+        raise ValueError("at least two runs are required")
     labels = [run.label for run in runs]
     if len(set(labels)) != len(labels):
         raise ValueError(f"run directory basenames must be unique, got {labels}")
 
     reference = runs[0]
+    if mode == "dealias":
+        if any(run.shape != reference.shape for run in runs[1:]):
+            raise ValueError(
+                "dealias sensitivity requires one common grid shape"
+            )
+        if any(run.dt != reference.dt for run in runs[1:]):
+            raise ValueError("dealias sensitivity requires one common dt")
+        time_scale = max(reference.final_time, 1.0)
+        for run in runs[1:]:
+            if not math.isclose(
+                run.final_time,
+                reference.final_time,
+                rel_tol=1e-12,
+                abs_tol=1e-12 * time_scale,
+            ):
+                raise ValueError(
+                    "all comparison runs must end at one physical time; got "
+                    f"{reference.label}: {reference.final_time} and "
+                    f"{run.label}: {run.final_time}"
+                )
+
     reference_signature = _comparison_signature(reference.metadata, mode)
     for run in runs[1:]:
         if _comparison_signature(run.metadata, mode) != reference_signature:
+            study = (
+                "dealias-sensitivity"
+                if mode == "dealias"
+                else f"{mode}-convergence"
+            )
             raise ValueError(
                 f"{run.directory} differs from {reference.directory} in metadata "
-                f"outside the fields allowed for a {mode}-convergence study"
+                f"outside the fields allowed for a {study} study"
             )
 
     time_scale = max(reference.final_time, 1.0)
     for run in runs[1:]:
-        if not math.isclose(run.final_time, reference.final_time, rel_tol=1e-12, abs_tol=1e-12 * time_scale):
+        if not math.isclose(
+            run.final_time,
+            reference.final_time,
+            rel_tol=1e-12,
+            abs_tol=1e-12 * time_scale,
+        ):
             raise ValueError(
-                "all convergence runs must end at one physical time; got "
+                "all comparison runs must end at one physical time; got "
                 f"{reference.label}: {reference.final_time} and "
                 f"{run.label}: {run.final_time}"
             )
@@ -431,9 +691,22 @@ def validate_comparability(runs: Sequence[RunArtifact], mode: str) -> None:
             raise ValueError("time-step convergence requires one common grid shape")
         if len({run.dt for run in runs}) != len(runs):
             raise ValueError("time-step convergence requires distinct dt values")
-    else:
+    elif mode == "space":
         if len({run.shape for run in runs}) != len(runs):
             raise ValueError("spatial convergence requires distinct grid shapes")
+    else:
+        configurations = [
+            _dealias_configuration(run.metadata) for run in runs
+        ]
+        rules = [configuration["rule"] for configuration in configurations]
+        if len(set(rules)) != len(rules):
+            raise ValueError(
+                "dealias sensitivity requires distinct dealias rules"
+            )
+        if rules.count("cubic_half") != 1:
+            raise ValueError(
+                "dealias sensitivity requires exactly one cubic_half reference"
+            )
 
 
 def compact_q_frobenius_squared(q: np.ndarray) -> np.ndarray:
@@ -1096,6 +1369,113 @@ def analyze_space(
     }
 
 
+def analyze_dealias(
+    runs: Sequence[RunArtifact],
+    scalar_rows: list[dict[str, Any]],
+    chunk_size: int,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Compare equal-grid dealias rules against the cubic-half reference."""
+    configurations = {
+        run.label: _dealias_configuration(run.metadata) for run in runs
+    }
+    reference = next(
+        run
+        for run in runs
+        if configurations[run.label]["rule"] == "cubic_half"
+    )
+    errors_to_reference = {
+        reference.label: {
+            "q_rel_l2": 0.0,
+            "q_rel_linf": 0.0,
+            "u_rel_l2": 0.0,
+            "p_demeaned_rel_l2": 0.0,
+        }
+    }
+    errors_to_reference.update(
+        {
+            run.label: field_error_row(run, reference, chunk_size)
+            for run in runs
+            if run.label != reference.label
+        }
+    )
+
+    for row in scalar_rows:
+        configuration = configurations[row["label"]]
+        errors = errors_to_reference[row["label"]]
+        row.update(
+            dealias_rule=configuration["rule"],
+            dealias_fraction=configuration["fraction"],
+            retained_q_modes="x".join(
+                str(value) for value in configuration["retained_q_modes"]
+            ),
+            retained_normal_velocity_modes="x".join(
+                str(value)
+                for value in configuration[
+                    "retained_normal_velocity_modes"
+                ]
+            ),
+            raw_q_sha256=configuration["raw_q_sha256"],
+            projected_q_sha256=configuration["projected_q_sha256"],
+            reference_label=reference.label,
+            is_cubic_half_reference=(row["label"] == reference.label),
+            q_rel_l2_to_reference=errors["q_rel_l2"],
+            q_rel_linf_to_reference=errors["q_rel_linf"],
+            u_rel_l2_to_reference=errors["u_rel_l2"],
+            p_demeaned_rel_l2_to_reference=errors["p_demeaned_rel_l2"],
+        )
+
+    pair_rows = []
+    candidates = sorted(
+        (run for run in runs if run.label != reference.label),
+        key=lambda run: configurations[run.label]["rule"],
+    )
+    for candidate in candidates:
+        row = errors_to_reference[candidate.label]
+        row.update(
+            candidate_dealias_rule=configurations[candidate.label]["rule"],
+            candidate_dealias_fraction=configurations[candidate.label][
+                "fraction"
+            ],
+            reference_dealias_rule="cubic_half",
+            reference_dealias_fraction=configurations[reference.label][
+                "fraction"
+            ],
+        )
+        pair_rows.append(row)
+
+    return pair_rows, {
+        "analysis_kind": "dealias_sensitivity",
+        "reference_run": reference.label,
+        "reference_rule": "cubic_half",
+        "pointwise_field_errors_computed": True,
+        "automatic_convergence_claim": False,
+        "interpretation": (
+            "These equal-grid differences measure sensitivity to the spectral "
+            "dealiasing rule. They are not a convergence estimate and do not "
+            "establish that either rule is physically correct."
+        ),
+        "comparison": (
+            "final Q, velocity, and pressure fields plus final-state global "
+            "scalar statistics"
+        ),
+        "allowed_metadata_differences": [
+            "dealias_rule and dealias_fraction",
+            "numerics.dealiasing.rule and numerics.dealiasing.fraction",
+            "initial_condition.projected_q_sha256",
+            "retained_q_modes",
+            "retained_normal_velocity_modes",
+        ],
+        "pointwise_error_definition": {
+            "Q": (
+                "relative L2 and Linf of the full symmetric traceless tensor; "
+                "Qzz=-(Qxx+Qyy) and off-diagonal terms have multiplicity two"
+            ),
+            "u": "componentwise vector relative L2",
+            "p": "relative L2 after independently removing each pressure mean",
+        },
+    }
+
+
 def reserve_output_paths(output_dir: Path, prefix: str) -> tuple[Path, Path, Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
     run_csv = output_dir / f"{prefix}_runs.csv"
@@ -1104,7 +1484,7 @@ def reserve_output_paths(output_dir: Path, prefix: str) -> tuple[Path, Path, Pat
     existing = [path for path in (run_csv, pair_csv, json_path) if path.exists()]
     if existing:
         raise FileExistsError(
-            "Refusing to overwrite existing convergence outputs: "
+            "Refusing to overwrite existing validation outputs: "
             + ", ".join(str(path) for path in existing)
         )
     return run_csv, pair_csv, json_path
@@ -1114,7 +1494,12 @@ def main() -> int:
     args = parse_args()
     runs = [load_run(path) for path in args.run_dirs]
     validate_comparability(runs, args.mode)
-    print(f"Validated {len(runs)} completed {args.mode}-convergence runs.")
+    study_label = (
+        "dealias-sensitivity"
+        if args.mode == "dealias"
+        else f"{args.mode}-convergence"
+    )
+    print(f"Validated {len(runs)} completed {study_label} runs.")
 
     scalar_rows = []
     for index, run in enumerate(runs, start=1):
@@ -1129,23 +1514,55 @@ def main() -> int:
             order_dt=args.order_dt,
         )
         scalar_rows.sort(key=lambda row: float(row["dt"]), reverse=True)
-    else:
+    elif args.mode == "space":
         pair_rows, method = analyze_space(runs, scalar_rows)
         scalar_rows.sort(key=lambda row: float(row["resolution_h"]), reverse=True)
+    else:
+        pair_rows, method = analyze_dealias(
+            runs, scalar_rows, args.chunk_size
+        )
+        scalar_rows.sort(key=lambda row: str(row["dealias_rule"]))
 
-    prefix = args.output_prefix or f"fig4_{args.mode}_convergence"
+    default_prefix = (
+        "fig4_dealias_sensitivity"
+        if args.mode == "dealias"
+        else f"fig4_{args.mode}_convergence"
+    )
+    prefix = args.output_prefix or default_prefix
     run_csv, pair_csv, json_path = reserve_output_paths(
         args.output_dir.expanduser().resolve(), prefix
     )
     write_csv(run_csv, scalar_rows)
     write_csv(pair_csv, pair_rows)
+    run_identity = validate_run_identity(
+        runs[0].metadata,
+        path=runs[0].directory / "metadata.json",
+    )
+    signature_json = json.dumps(
+        _json_safe(_comparison_signature(runs[0].metadata, args.mode)),
+        sort_keys=True,
+        separators=(",", ":"),
+        allow_nan=False,
+    )
     report = {
         "schema_version": 1,
-        "analysis": "fig4_convergence",
+        "analysis": (
+            "fig4_dealias_sensitivity"
+            if args.mode == "dealias"
+            else "fig4_convergence"
+        ),
         "mode": args.mode,
+        "run_identity": run_identity,
+        "comparison_signature_sha256": hashlib.sha256(
+            signature_json.encode("utf-8")
+        ).hexdigest(),
         "final_time": runs[0].final_time,
         "runs": scalar_rows,
-        "adjacent_pairs": pair_rows,
+        (
+            "sensitivity_pairs"
+            if args.mode == "dealias"
+            else "adjacent_pairs"
+        ): pair_rows,
         "method": method,
     }
     json_path.write_text(
