@@ -49,6 +49,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from pssolver.models.active_nematics import Q_convention_metadata, S_from_Q
 from scripts_plane.analyze_fig4_convergence import (
+    DEALIAS_RULE_FRACTIONS,
     RunArtifact,
     load_run,
     validate_comparability,
@@ -107,6 +108,9 @@ NEAR_ZERO_METRICS = frozenset(
         "biaxiality_mean_cutoff_hi",
     }
 )
+DEALIAS_NEAR_ZERO_METRICS = NEAR_ZERO_METRICS | {
+    "r50_contour_anisotropy",
+}
 TIME_GATE_ABSOLUTE_TOLERANCES = {
     "S_min": 1.0e-6,
     "center_displacement": 1.0e-4,
@@ -206,7 +210,9 @@ def parse_args() -> argparse.Namespace:
             "Plane_fig4_benchmark.py resolution runs."
         )
     )
-    parser.add_argument("--mode", choices=("space", "time"), default="space")
+    parser.add_argument(
+        "--mode", choices=("space", "time", "dealias"), default="space"
+    )
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--z-fractions", type=float, nargs="+", default=DEFAULT_Z_FRACTIONS)
     parser.add_argument("--r-max", type=float, default=DEFAULT_RADIAL_MAX)
@@ -400,6 +406,99 @@ def validate_core_runs(runs: Sequence[CoreRun], mode: str) -> None:
             if float(parameters.get("fric", math.nan)) != 0.0:
                 raise ValueError("zero_mean model parameters must have fric=0.0")
 
+    if mode == "dealias":
+        reference_initial = reference.metadata.get("initial_condition", {})
+        reference_raw_hash = reference_initial.get("raw_q_sha256")
+        reference_q2d_hash = _file_sha256(reference.q2d_path)
+        reference_defect_hash = _file_sha256(reference.defects_path)
+        for run in runs[1:]:
+            initial = run.metadata.get("initial_condition", {})
+            if initial.get("raw_q_sha256") != reference_raw_hash:
+                raise ValueError(
+                    "dealias inputs must have identical raw_q_sha256 metadata"
+                )
+            if _file_sha256(run.q2d_path) != reference_q2d_hash:
+                raise ValueError(
+                    "dealias inputs must contain byte-identical Q2D_initial.npy files"
+                )
+            if _file_sha256(run.defects_path) != reference_defect_hash:
+                raise ValueError(
+                    "dealias inputs must contain byte-identical Q2D_defects.csv files"
+                )
+
+
+def ordered_comparison_runs(
+    runs: Sequence[CoreRun], mode: str
+) -> list[CoreRun]:
+    """Return deterministic scientific comparison roles for every mode."""
+    if mode == "space":
+        return sorted(
+            runs, key=lambda run: run.artifact.resolution_h, reverse=True
+        )
+    if mode == "time":
+        return sorted(runs, key=lambda run: run.artifact.dt, reverse=True)
+    if mode == "dealias":
+        by_rule: dict[str, CoreRun] = {}
+        for run in runs:
+            rule = run.metadata.get("dealias_rule")
+            if not isinstance(rule, str):
+                raise ValueError("dealias input is missing a string dealias_rule")
+            if rule in by_rule:
+                raise ValueError(f"duplicate dealias input for rule {rule!r}")
+            by_rule[rule] = run
+        expected = {"cubic_half", "two_thirds"}
+        if set(by_rule) != expected:
+            raise ValueError(
+                "defect-core dealias comparison requires exactly "
+                "cubic_half and two_thirds"
+            )
+        return [by_rule["cubic_half"], by_rule["two_thirds"]]
+    raise ValueError(f"unsupported defect-core validation mode {mode!r}")
+
+
+def _metric_is_near_zero(metric: str, mode: str) -> bool:
+    metrics = (
+        DEALIAS_NEAR_ZERO_METRICS if mode == "dealias" else NEAR_ZERO_METRICS
+    )
+    return metric in metrics
+
+
+def _comparison_role_fields(
+    mode: str,
+    reference: CoreRun,
+    candidate: CoreRun,
+) -> dict[str, Any]:
+    if mode != "dealias":
+        return {}
+    return {
+        "reference": reference.label,
+        "candidate": candidate.label,
+        "reference_dealias_rule": "cubic_half",
+        "candidate_dealias_rule": "two_thirds",
+        "comparison_semantics": "candidate_minus_reference",
+    }
+
+
+def _expected_retained_modes(
+    shape: Sequence[int],
+    boundary_conditions: Sequence[str],
+    fraction: float,
+) -> list[int]:
+    counts: list[int] = []
+    for count, boundary_condition in zip(shape, boundary_conditions):
+        if boundary_condition == "periodic":
+            retained = 2 * math.ceil(fraction * count / 2.0) - 1
+        elif boundary_condition == "neumann":
+            retained = math.ceil(fraction * count)
+        elif boundary_condition == "dirichlet":
+            retained = math.ceil(fraction * count) - 1
+        else:  # pragma: no cover - fixed task contract
+            raise ValueError(
+                f"unsupported retained-mode boundary {boundary_condition!r}"
+            )
+        counts.append(int(retained))
+    return counts
+
 
 def _metadata_close(value: Any, expected: float) -> bool:
     try:
@@ -465,7 +564,7 @@ def _check_scalar_mapping(
 
 def validate_task_contract(runs: Sequence[CoreRun], mode: str) -> None:
     """Reject complete-but-wrong inputs before labeling this fixed A=18 study."""
-    if mode not in {"space", "time"}:
+    if mode not in {"space", "time", "dealias"}:
         raise ValueError(f"unsupported defect-core validation mode {mode!r}")
     expected_space_shapes = {(256, 256, 64), (320, 320, 80), (512, 512, 128)}
     observed_shapes = {run.shape for run in runs}
@@ -478,6 +577,24 @@ def validate_task_contract(runs: Sequence[CoreRun], mode: str) -> None:
         errors.append("time-control inputs must all use shape (512,512,128)")
     if mode == "time" and sorted(run.artifact.dt for run in runs) != [0.0025, 0.005]:
         errors.append("time control must contain exactly dt=0.005 and dt=0.0025")
+    if mode == "dealias":
+        if len(runs) != 2 or len(observed_shapes) != 1:
+            errors.append("dealias inputs must be exactly two same-grid runs")
+        elif next(iter(observed_shapes)) not in {
+            (320, 320, 80),
+            (512, 512, 128),
+        }:
+            errors.append("dealias grid must be R320 or R512")
+        observed_rules = {run.metadata.get("dealias_rule") for run in runs}
+        if observed_rules != {"cubic_half", "two_thirds"}:
+            errors.append(
+                "dealias rules must be exactly cubic_half and two_thirds"
+            )
+        requested_devices = {run.metadata.get("device") for run in runs}
+        if len(requested_devices) != 1:
+            errors.append(
+                "dealias inputs must declare the same requested device"
+            )
 
     expected_scalar_fields = {
         "activity_number": 18.0,
@@ -550,18 +667,36 @@ def validate_task_contract(runs: Sequence[CoreRun], mode: str) -> None:
             errors.append(f"{prefix}: physical box must be 100x100x20")
         if not math.isclose(run.artifact.final_time, 1.0, rel_tol=0.0, abs_tol=2.0e-14):
             errors.append(f"{prefix}: final time must be T=1")
-        if mode == "space" and not (
+        if mode in {"space", "dealias"} and not (
             _metadata_close(run.artifact.dt, 0.005) and run.artifact.steps == 200
         ):
-            errors.append(f"{prefix}: spatial run must use dt=0.005 and steps=200")
+            errors.append(
+                f"{prefix}: {mode} run must use dt=0.005 and steps=200"
+            )
         if metadata.get("parameterization") != "paper-window":
             errors.append(f"{prefix}: parameterization must be paper-window")
         if metadata.get("zero_mode_policy") != "zero_mean":
             errors.append(f"{prefix}: zero_mode_policy must be zero_mean")
-        if metadata.get("dealias_rule") != "cubic_half":
-            errors.append(f"{prefix}: dealias_rule must be cubic_half")
-        if not _metadata_close(metadata.get("dealias_fraction"), 0.5):
-            errors.append(f"{prefix}: dealias_fraction must be 0.5")
+        dealias_rule = metadata.get("dealias_rule")
+        if mode == "dealias":
+            if script != BERIS_EDWARDS_BENCHMARK_SCRIPT:
+                errors.append(
+                    f"{prefix}: dealias core sensitivity requires the "
+                    "Beris--Edwards benchmark script"
+                )
+            expected_fraction = DEALIAS_RULE_FRACTIONS.get(dealias_rule)
+            if expected_fraction is None or not _metadata_close(
+                metadata.get("dealias_fraction"), expected_fraction
+            ):
+                errors.append(
+                    f"{prefix}: dealias fraction does not match rule "
+                    f"{dealias_rule!r}"
+                )
+        else:
+            if dealias_rule != "cubic_half":
+                errors.append(f"{prefix}: dealias_rule must be cubic_half")
+            if not _metadata_close(metadata.get("dealias_fraction"), 0.5):
+                errors.append(f"{prefix}: dealias_fraction must be 0.5")
         requested_device = metadata.get("device")
         if script == BERIS_EDWARDS_BENCHMARK_SCRIPT:
             if not isinstance(requested_device, str) or not requested_device.startswith("cuda"):
@@ -764,9 +899,17 @@ def validate_task_contract(runs: Sequence[CoreRun], mode: str) -> None:
         ) != [1, 2, 3]:
             errors.append(f"{prefix}: twist must be amplitude 0.01 with modes [1,2,3]")
 
-        nx, ny, nz = run.shape
-        expected_q_modes = [nx // 2 - 1, ny // 2 - 1, nz // 2]
-        expected_normal_modes = [nx // 2 - 1, ny // 2 - 1, nz // 2 - 1]
+        fraction = DEALIAS_RULE_FRACTIONS.get(dealias_rule)
+        if fraction is None:
+            expected_q_modes = []
+            expected_normal_modes = []
+        else:
+            expected_q_modes = _expected_retained_modes(
+                run.shape, ("periodic", "periodic", "neumann"), fraction
+            )
+            expected_normal_modes = _expected_retained_modes(
+                run.shape, ("periodic", "periodic", "dirichlet"), fraction
+            )
         if metadata.get("retained_q_modes") != expected_q_modes:
             errors.append(f"{prefix}: retained_q_modes must be {expected_q_modes}")
         if metadata.get("retained_normal_velocity_modes") != expected_normal_modes:
@@ -2577,10 +2720,7 @@ def pairwise_metric_changes(
     *,
     mode: str,
 ) -> list[dict[str, Any]]:
-    if mode == "space":
-        ordered = sorted(runs, key=lambda run: run.artifact.resolution_h, reverse=True)
-    else:
-        ordered = sorted(runs, key=lambda run: run.artifact.dt, reverse=True)
+    ordered = ordered_comparison_runs(runs, mode)
     lookup = {
         (
             row["state"], row["resolution"], row["step"], row["z_fraction"], row["charge"]
@@ -2607,9 +2747,12 @@ def pairwise_metric_changes(
                         fine_value = float(fine_row[f"{metric}_median"])
                         signed_difference = fine_value - coarse_value
                         absolute_difference = abs(signed_difference)
-                        relative_is_stable = metric not in NEAR_ZERO_METRICS
+                        relative_is_stable = not _metric_is_near_zero(metric, mode)
                         change = (
-                            relative_change(coarse_value, fine_value)
+                            relative_change(
+                                fine_value if mode == "dealias" else coarse_value,
+                                coarse_value if mode == "dealias" else fine_value,
+                            )
                             if relative_is_stable
                             else math.nan
                         )
@@ -2631,9 +2774,31 @@ def pairwise_metric_changes(
                                 if relative_is_stable
                                 else "not_reported_for_near_zero_metric"
                             ),
-                            "within_5_percent": bool(math.isfinite(change) and change <= 0.05),
-                            "within_10_percent": bool(math.isfinite(change) and change <= 0.10),
+                            "within_5_percent": (
+                                bool(change <= 0.05)
+                                if math.isfinite(change)
+                                else None if mode == "dealias" else False
+                            ),
+                            "within_10_percent": (
+                                bool(change <= 0.10)
+                                if math.isfinite(change)
+                                else None if mode == "dealias" else False
+                            ),
                         }
+                        if mode == "dealias":
+                            row.update(
+                                _comparison_role_fields(mode, coarse, fine),
+                                reference_value=coarse_value,
+                                candidate_value=fine_value,
+                                signed_difference_candidate_minus_reference=signed_difference,
+                                working_tolerance_status=(
+                                    "within_5_percent"
+                                    if math.isfinite(change) and change <= 0.05
+                                    else "above_5_percent"
+                                    if math.isfinite(change)
+                                    else "indeterminate_near_zero_metric"
+                                ),
+                            )
                         if mode == "time":
                             ratio = coarse.artifact.dt / fine.artifact.dt
                             valid_time_ratio = math.isclose(
@@ -2674,10 +2839,7 @@ def paired_individual_metric_changes(
     mode: str,
 ) -> list[dict[str, Any]]:
     """Compare only the same reliably matched defect across adjacent runs."""
-    if mode == "space":
-        ordered = sorted(runs, key=lambda run: run.artifact.resolution_h, reverse=True)
-    else:
-        ordered = sorted(runs, key=lambda run: run.artifact.dt, reverse=True)
+    ordered = ordered_comparison_runs(runs, mode)
     run_labels = {run.label for run in runs}
     lookup: dict[tuple[Any, ...], Mapping[str, Any]] = {}
     for row in rows:
@@ -2729,7 +2891,7 @@ def paired_individual_metric_changes(
                     continue
                 signed_difference = fine_value - coarse_value
                 absolute_difference = abs(signed_difference)
-                relative_is_stable = metric not in NEAR_ZERO_METRICS
+                relative_is_stable = not _metric_is_near_zero(metric, mode)
                 branch_consistent = True
                 branch_reason = "not_a_crossing_metric"
                 if metric in RADIUS_METRICS:
@@ -2746,6 +2908,7 @@ def paired_individual_metric_changes(
                         if branch_consistent
                         else "crossing_status_or_branch_changed"
                     )
+                comparison_valid = mode != "dealias" or branch_consistent
                 richardson_valid = valid_time_ratio and branch_consistent
                 comparison = {
                     "mode": mode,
@@ -2762,25 +2925,53 @@ def paired_individual_metric_changes(
                     "signed_difference_fine_minus_coarse": signed_difference,
                     "absolute_difference": absolute_difference,
                     "relative_change": (
-                        relative_change(coarse_value, fine_value)
-                        if relative_is_stable
+                        relative_change(
+                            fine_value if mode == "dealias" else coarse_value,
+                            coarse_value if mode == "dealias" else fine_value,
+                        )
+                        if relative_is_stable and comparison_valid
                         else math.nan
                     ),
                     "relative_change_reason": (
-                        "ok"
-                        if relative_is_stable
-                        else "not_reported_for_near_zero_metric"
+                        "ok" if relative_is_stable and comparison_valid else (
+                            "not_reported_for_near_zero_metric"
+                            if not relative_is_stable
+                            else "crossing_status_or_branch_changed"
+                        )
                     ),
                     "crossing_branch_consistent": branch_consistent,
                     "crossing_branch_reason": branch_reason,
                 }
+                if mode == "dealias":
+                    comparison.update(
+                        _comparison_role_fields(mode, coarse, fine),
+                        reference_value=coarse_value,
+                        candidate_value=fine_value,
+                        signed_difference_candidate_minus_reference=signed_difference,
+                        comparison_valid=comparison_valid,
+                    )
                 change = float(comparison["relative_change"])
-                comparison["within_5_percent"] = bool(
-                    math.isfinite(change) and change <= 0.05
+                comparison["within_5_percent"] = (
+                    bool(change <= 0.05)
+                    if math.isfinite(change)
+                    else None if mode == "dealias" else False
                 )
-                comparison["within_10_percent"] = bool(
-                    math.isfinite(change) and change <= 0.10
+                comparison["within_10_percent"] = (
+                    bool(change <= 0.10)
+                    if math.isfinite(change)
+                    else None if mode == "dealias" else False
                 )
+                if mode == "dealias":
+                    comparison["individual_within_10_percent"] = comparison[
+                        "within_10_percent"
+                    ]
+                    comparison["working_tolerance_status"] = (
+                        "within_10_percent"
+                        if math.isfinite(change) and change <= 0.10
+                        else "above_10_percent"
+                        if math.isfinite(change)
+                        else "indeterminate"
+                    )
                 if mode == "time":
                     comparison.update(
                         time_step_ratio=time_ratio,
@@ -2837,10 +3028,40 @@ def paired_individual_metric_changes(
             "individual_count": len(members),
             "defect_ids": [int(member["defect_id"]) for member in members],
         }
-        for field in ("absolute_difference", "relative_change"):
+        if mode == "dealias":
+            reference_run, candidate_run = ordered
+            summary.update(
+                _comparison_role_fields(
+                    mode, reference_run, candidate_run
+                )
+            )
+            distribution_members = [
+                member
+                for member in members
+                if member.get("comparison_valid") is True
+            ]
+            summary["comparison_valid_count"] = len(distribution_members)
+            summary["comparison_invalid_count"] = (
+                len(members) - len(distribution_members)
+            )
+            summary["comparison_invalid_defect_ids"] = [
+                int(member["defect_id"])
+                for member in members
+                if member.get("comparison_valid") is not True
+            ]
+        else:
+            distribution_members = members
+        distribution_fields = ["absolute_difference", "relative_change"]
+        if mode == "dealias":
+            distribution_fields = [
+                "reference_value",
+                "candidate_value",
+                *distribution_fields,
+            ]
+        for field in distribution_fields:
             finite_pairs = [
                 (int(member["defect_id"]), float(member[field]))
-                for member in members
+                for member in distribution_members
                 if math.isfinite(float(member[field]))
             ]
             values = np.asarray([value for _, value in finite_pairs], dtype=np.float64)
@@ -2852,6 +3073,7 @@ def paired_individual_metric_changes(
             summary[f"{field}_std"] = float(np.std(values)) if values.size else math.nan
             summary[f"{field}_median"] = median
             summary[f"{field}_mad"] = mad
+            summary[f"{field}_min"] = float(np.min(values)) if values.size else math.nan
             summary[f"{field}_p90"] = float(np.quantile(values, 0.9)) if values.size else math.nan
             summary[f"{field}_max"] = float(np.max(values)) if values.size else math.nan
             threshold = (
@@ -2869,8 +3091,25 @@ def paired_individual_metric_changes(
                 else []
             )
         change = float(summary["relative_change"])
-        summary["within_5_percent"] = bool(math.isfinite(change) and change <= 0.05)
-        summary["within_10_percent"] = bool(math.isfinite(change) and change <= 0.10)
+        summary["within_5_percent"] = (
+            bool(change <= 0.05)
+            if math.isfinite(change)
+            else None if mode == "dealias" else False
+        )
+        summary["within_10_percent"] = (
+            bool(change <= 0.10)
+            if math.isfinite(change)
+            else None if mode == "dealias" else False
+        )
+        if mode == "dealias":
+            summary["median_within_5_percent"] = summary["within_5_percent"]
+            summary["working_tolerance_status"] = (
+                "within_5_percent"
+                if math.isfinite(change) and change <= 0.05
+                else "above_5_percent"
+                if math.isfinite(change)
+                else "indeterminate"
+            )
         if mode == "time":
             valid_members = [
                 member for member in members if bool(member.get("richardson_model_valid"))
@@ -3585,10 +3824,7 @@ def profile_pairwise_changes(
         if key in lookup:
             raise ValueError(f"duplicate radial profile for {key}")
         lookup[key] = profile
-    if mode == "space":
-        ordered = sorted(runs, key=lambda run: run.artifact.resolution_h, reverse=True)
-    else:
-        ordered = sorted(runs, key=lambda run: run.artifact.dt, reverse=True)
+    ordered = ordered_comparison_runs(runs, mode)
     individual: list[dict[str, Any]] = []
     for coarse, fine in zip(ordered, ordered[1:]):
         coarse_keys = sorted(
@@ -3607,7 +3843,9 @@ def profile_pairwise_changes(
             if coarse_charge != fine_charge:
                 continue
             metrics = weighted_profile_difference(
-                coarse_member, fine_member, S_scale=S_scale
+                fine_member if mode == "dealias" else coarse_member,
+                coarse_member if mode == "dealias" else fine_member,
+                S_scale=S_scale,
             )
             relative_l2 = float(metrics["weighted_relative_l2"])
             row = {
@@ -3627,6 +3865,20 @@ def profile_pairwise_changes(
                     math.isfinite(relative_l2) and relative_l2 <= 0.10
                 ),
             }
+            if mode == "dealias":
+                row.update(
+                    _comparison_role_fields(mode, coarse, fine),
+                    individual_within_10_percent=bool(
+                        math.isfinite(relative_l2) and relative_l2 <= 0.10
+                    ),
+                    working_tolerance_status=(
+                        "within_10_percent"
+                        if math.isfinite(relative_l2) and relative_l2 <= 0.10
+                        else "above_10_percent"
+                        if math.isfinite(relative_l2)
+                        else "indeterminate"
+                    ),
+                )
             if mode == "time":
                 time_ratio = coarse.artifact.dt / fine.artifact.dt
                 valid_time_ratio = math.isclose(
@@ -3704,6 +3956,13 @@ def profile_pairwise_changes(
             "individual_count": len(members),
             "defect_ids": [int(member["defect_id"]) for member in members],
         }
+        if mode == "dealias":
+            reference_run, candidate_run = ordered
+            summary.update(
+                _comparison_role_fields(
+                    mode, reference_run, candidate_run
+                )
+            )
         for metric in distribution_metrics:
             finite_pairs = [
                 (int(member["defect_id"]), float(member[metric]))
@@ -3723,6 +3982,9 @@ def profile_pairwise_changes(
             summary[f"{metric}_std"] = float(np.std(values)) if values.size else math.nan
             summary[f"{metric}_median"] = median
             summary[f"{metric}_mad"] = mad
+            summary[f"{metric}_min"] = (
+                float(np.min(values)) if values.size else math.nan
+            )
             summary[f"{metric}_p90"] = (
                 float(np.quantile(values, 0.9)) if values.size else math.nan
             )
@@ -3752,6 +4014,15 @@ def profile_pairwise_changes(
         summary["within_10_percent"] = bool(
             math.isfinite(relative_l2) and relative_l2 <= 0.10
         )
+        if mode == "dealias":
+            summary["median_within_5_percent"] = summary["within_5_percent"]
+            summary["working_tolerance_status"] = (
+                "within_5_percent"
+                if math.isfinite(relative_l2) and relative_l2 <= 0.05
+                else "above_5_percent"
+                if math.isfinite(relative_l2)
+                else "indeterminate"
+            )
         if mode == "time":
             valid_members = [
                 member for member in members if member.get("richardson_model_valid") is True
@@ -3900,15 +4171,16 @@ def _canonical_json_sha256(value: Any) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
-def input_run_manifest(runs: Sequence[CoreRun]) -> list[dict[str, Any]]:
+def input_run_manifest(
+    runs: Sequence[CoreRun], *, mode: str | None = None
+) -> list[dict[str, Any]]:
     manifest: list[dict[str, Any]] = []
     for run in runs:
         metadata = run.metadata
         identity = validate_run_identity(
             metadata, path=run.artifact.directory / "metadata.json"
         )
-        manifest.append(
-            {
+        row = {
                 "resolution": run.label,
                 "directory": str(run.artifact.directory),
                 "shape": run.shape,
@@ -3933,8 +4205,20 @@ def input_run_manifest(runs: Sequence[CoreRun]) -> list[dict[str, Any]]:
                 ],
                 "q2d_initial_sha256": _file_sha256(run.q2d_path),
                 "defect_table_sha256": _file_sha256(run.defects_path),
+                "dealias_rule": metadata.get("dealias_rule"),
+                "dealias_fraction": metadata.get("dealias_fraction"),
+                "retained_q_modes": metadata.get("retained_q_modes"),
+                "retained_normal_velocity_modes": metadata.get(
+                    "retained_normal_velocity_modes"
+                ),
             }
-        )
+        if mode == "dealias":
+            row["comparison_role"] = (
+                "reference"
+                if metadata.get("dealias_rule") == "cubic_half"
+                else "candidate"
+            )
+        manifest.append(row)
     return manifest
 
 
@@ -4049,14 +4333,20 @@ def reserve_outputs(output_dir: Path) -> dict[str, Path]:
     return paths
 
 
-def _plot_initial_r50(path: Path, rows: Sequence[Mapping[str, Any]], runs: Sequence[CoreRun]) -> None:
+def _plot_initial_r50(
+    path: Path,
+    rows: Sequence[Mapping[str, Any]],
+    runs: Sequence[CoreRun],
+    *,
+    mode: str = "space",
+) -> None:
     import matplotlib
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
     fig, axis = plt.subplots(figsize=(7.2, 4.5))
-    ordered = sorted(runs, key=lambda run: run.artifact.resolution_h, reverse=True)
+    ordered = ordered_comparison_runs(runs, mode)
     labels = [run.label for run in ordered]
     for charge, color in ((0.5, "tab:red"), (-0.5, "tab:blue")):
         medians = []
@@ -4093,7 +4383,11 @@ def _plot_initial_r50(path: Path, rows: Sequence[Mapping[str, Any]], runs: Seque
         label="isolated-core sanity",
     )
     axis.set_ylabel("absolute r50 (physical length)")
-    axis.set_xlabel("raw Q2D resolution")
+    axis.set_xlabel(
+        "dealias rule (raw Q2D must overlap)"
+        if mode == "dealias"
+        else "raw Q2D resolution"
+    )
     axis.legend()
     fig.tight_layout()
     fig.savefig(path, dpi=180)
@@ -4163,7 +4457,12 @@ def _plot_projected_initial_profiles(
     plt.close(fig)
 
 
-def _plot_changes(path: Path, changes: Sequence[Mapping[str, Any]]) -> None:
+def _plot_changes(
+    path: Path,
+    changes: Sequence[Mapping[str, Any]],
+    *,
+    mode: str = "space",
+) -> None:
     import matplotlib
 
     matplotlib.use("Agg")
@@ -4171,13 +4470,20 @@ def _plot_changes(path: Path, changes: Sequence[Mapping[str, Any]]) -> None:
 
     selected = [
         row for row in changes
-        if row["state"] == "final"
+        if row["state"] in (
+            (PROJECTED_STATE, FINAL_STATE) if mode == "dealias" else (FINAL_STATE,)
+        )
         and row["metric"] in ("r50_absolute", "r50_local", "core_deficit_local", "low_s_area_local")
         and row["z_fraction"] == 0.5
+        and math.isfinite(float(row["relative_change"]))
     ]
     fig, axis = plt.subplots(figsize=(max(8.0, 0.35 * len(selected)), 4.8))
     labels = [
-        f"{row['coarse']}→{row['fine']}\n{row['metric']}\nq="
+        (
+            f"cubic_half→two_thirds\n{row['state']}\n{row['metric']}\nq="
+            if mode == "dealias"
+            else f"{row['coarse']}→{row['fine']}\n{row['metric']}\nq="
+        )
         + (
             str(row["charge"])
             if isinstance(row["charge"], str)
@@ -4380,16 +4686,89 @@ def write_readme(
             "establish a temporal convergence order or long-time Fig. 4 "
             "dynamics and statistics."
         )
+    elif mode == "dealias":
+        report_title = "Defect-core dealiasing sensitivity precheck"
+        study_description = (
+            "Shendruk-inspired A=18 same-grid defect-core sensitivity to "
+            "cubic-half versus two-thirds projection at T=1 under the current "
+            "PSSolver model"
+        )
+        scope_text = (
+            "Cubic-half is the fixed reference and two-thirds is the candidate. "
+            "This is a sensitivity check, not a convergence order, a proof "
+            "that either rule is physically correct, or a long-time benchmark "
+            "claim."
+        )
     else:
         raise ValueError(f"unsupported README mode {mode!r}")
+    projection_description = (
+        "the rule-specific projected state"
+        if mode == "dealias"
+        else "the cubic-half projected state"
+    )
+    comparison_interpretation = (
+        "The raw Q2D generator and defect table are byte-identical by contract. "
+        "Projected-initial and final sensitivities are reported separately. "
+        "Because each rule constructs its own Q_0, a final-state difference "
+        "contains both that initial representation difference and subsequent "
+        "evolution; it cannot be attributed to evolution alone. The 5% "
+        "paired-median and 10% individual thresholds are working tolerances "
+        "only."
+        if mode == "dealias"
+        else (
+            "All adjacent pairwise changes and 5%/10% practical thresholds are "
+            "reported. There is no hard requirement that the 320->512 raw "
+            "change be smaller than the 256->320 change because the refinement "
+            "ratios differ. Any unequal-grid three-level fit is auxiliary only."
+        )
+    )
+    if mode == "time":
+        mode_specific_method_text = (
+            "The first-order Richardson estimate is twice the difference "
+            "between dt=0.005 and dt=0.0025 metrics. A 20% gate is applied "
+            "only after R512 input identity, topology, matching, and crossing "
+            "branch checks. When the spatial difference is below its physical "
+            "tolerance, the gate is indeterminate and reports the absolute "
+            "comparison separately."
+        )
+    elif mode == "space":
+        mode_specific_method_text = (
+            "For a finite, monotone, same-sign three-level scalar sequence, "
+            "the auxiliary fit is M(h)=M_inf+C*h^p. Candidate order, residual, "
+            "conditioning, sensitivity, and rejection reasons are saved. "
+            "Because three points determine three parameters, the residual is "
+            "not an independent goodness-of-fit test and the fit is never a "
+            "convergence proof."
+        )
+    else:
+        mode_specific_method_text = (
+            "No Richardson estimate, spatial-order fit, or time-vs-space gate "
+            "is calculated in dealias mode."
+        )
+    profile_formula_text = (
+        "E = sqrt(integral |P_candidate-P_reference|^2 r dr) / "
+        "max(sqrt(integral |P_reference|^2 r dr), "
+        "S_scale*sqrt(integral r dr))"
+        if mode == "dealias"
+        else (
+            "E = sqrt(integral |P_c-P_f|^2 r dr) / "
+            "max(sqrt(integral |P_f|^2 r dr), "
+            "S_scale*sqrt(integral r dr))"
+        )
+    )
     if identity["script"] == BERIS_EDWARDS_BENCHMARK_SCRIPT:
+        spectral_discretization_text = (
+            "the compared spectral projection rules"
+            if mode == "dealias"
+            else "the spectral `cubic_half` discretization"
+        )
         model_difference_text = (
             "This model retains the complete one-constant Beris--Edwards "
             "reactive, distortion, and active nematic stresses up to an "
             "isotropic contribution absorbed into pressure.  It still differs "
             "from the cited paper through quasistatic Stokes momentum, the "
             "selected `zero_mean` free-slip plug-mode convention, and the "
-            "spectral `cubic_half` discretization."
+            f"{spectral_discretization_text}."
         )
     else:
         model_difference_text = (
@@ -4417,7 +4796,7 @@ analytic initialization.
 ## Data provenance
 
 `Q2D_initial.npy` is used only to calibrate the unprojected analytic generator
-and periodic xy interpolation.  `Q_0.npy` is the cubic-half projected state that
+and periodic xy interpolation.  `Q_0.npy` is {projection_description} that
 actually entered the evolution and is the reported projected-initial state.
 Its five component streams are re-hashed in bounded x chunks and must reproduce
 metadata `initial_condition.projected_q_sha256` before analysis continues.
@@ -4453,7 +4832,7 @@ Outputs (all inside the newly created analysis directory):
 `xi_S=sqrt(L1/mu_S)={scales['xi_S']:.12g}` and
 `ell_a=sqrt(K/zeta)={scales['active_length']:.12g}`.  The last two columns are
 validated directly against each completed run's metadata; raw collocation
-points alone are not treated as proof that the cubic-half projected core is
+points alone are not treated as proof that the rule-specific projected core is
 resolved.
 
 | grid | dx | dz | xi_S/dx | xi_S/dz | ell_a/dx | ell_a/dz | 2 r50 isolated/dx | retained Q modes | retained normal-u modes |
@@ -4551,37 +4930,22 @@ coordinates.  CSV reports centre-fit status, absolute error/displacement,
 error over h, and error over the continuous-reference r50.  Radial profile
 differences are computed for the same defect ID and reliable charge with
 
-`E = sqrt(integral |P_c-P_f|^2 r dr) / max(sqrt(integral |P_f|^2 r dr), S_scale*sqrt(integral r dr))`.
+`{profile_formula_text}`.
 
 The JSON contains each defect's value, charge-conditioned/all-defect paired
 distributions, MAD-based outlier IDs, and valid/missing/ambiguous/extra-candidate
 counts.  Relative percentages are suppressed for near-zero S_min,
-displacement, and biaxiality metrics; their absolute changes remain available.
+displacement, and biaxiality metrics, and in dealias mode for contour
+anisotropy; their absolute changes remain available.
 
-All adjacent pairwise changes and 5%/10% practical thresholds are reported.
-There is no hard requirement that the 320->512 raw change be smaller than the
-256->320 change because the refinement ratios differ.  Any unequal-grid
-three-level fit is auxiliary only.  In time mode the first-order Richardson
-estimate is twice the difference between dt=0.005 and dt=0.0025 metrics; a 20%
-gate is applied to that scaled estimate only after R512 input identity,
-topology, matching, and crossing branch checks.  When the spatial difference is
-below its predefined physical tolerance, the gate is marked indeterminate and
-reports the absolute-tolerance comparison separately; that tolerance never
-silently replaces the 20% criterion.
+{comparison_interpretation}
 
-For a finite, monotone, same-sign three-level scalar sequence, the auxiliary
-fit is `M(h)=M_inf+C*h^p`, with p obtained from the unequal-grid difference
-ratio.  It is accepted only for positive p with a well-conditioned scaled
-Jacobian and stable six-way input perturbation.  Candidate p, algebraic
-residual, condition number, sensitivity, and every rejection reason are saved.
-Because three points determine three parameters, the residual is not an
-independent goodness-of-fit test and this fit is never itself a convergence
-proof.
+{mode_specific_method_text}
 
 The practical 5% median and 10% individual thresholds are working tolerances,
 not mathematical pass/fail theorems.  Raw sampling, projected Q0, and T=1
 dynamic results must be interpreted separately.  Even a successful result is
-only a T=1 short-time core-resolution gate; long-time dynamics, statistics,
+only a T=1 short-time core-resolution/sensitivity gate; long-time dynamics, statistics,
 and ensemble variability remain untested.
 """
     path.write_text(text, encoding="utf-8")
@@ -4592,6 +4956,7 @@ def main() -> int:
     runs = [load_core_run(path) for path in args.run_dirs]
     validate_core_runs(runs, args.mode)
     validate_task_contract(runs, args.mode)
+    runs = ordered_comparison_runs(runs, args.mode)
     output_paths = reserve_outputs(args.output_dir.expanduser().resolve())
 
     reference = runs[0]
@@ -4852,10 +5217,12 @@ def main() -> int:
             "reason": (
                 "space mode"
                 if args.mode == "space"
+                else "not applicable in dealias mode"
+                if args.mode == "dealias"
                 else "provide --space-core-summary to apply the time-vs-space gate"
             ),
         }
-    run_manifest = input_run_manifest(runs)
+    run_manifest = input_run_manifest(runs, mode=args.mode)
     write_csv(output_paths["csv"], all_rows)
     save_profiles(output_paths["initial_npz"], initial_profiles)
     projected_initial_profiles = [
@@ -4866,13 +5233,31 @@ def main() -> int:
     save_profiles(output_paths["projected_initial_npz"], projected_initial_profiles)
     save_profiles(output_paths["final_npz"], final_profiles)
 
-    report = {
-        "schema_version": 2,
-        "analysis": "fig4_defect_core_convergence",
-        "scope": (
+    report_analysis = (
+        "fig4_defect_core_dealias_sensitivity"
+        if args.mode == "dealias"
+        else "fig4_defect_core_convergence"
+    )
+    if args.mode == "dealias":
+        report_scope = (
+            "current PSSolver model, A=18, seed=24, T=1 same-grid "
+            "defect-core dealiasing sensitivity"
+        )
+    elif args.mode == "time":
+        report_scope = (
+            "current PSSolver model, A=18, seed=24, T=1 R512 "
+            "defect-core time-step sensitivity precheck"
+        )
+    else:
+        report_scope = (
             "current PSSolver model, T=1 Shendruk-inspired A=18 "
             "defect-core spatial-resolution precheck"
-        ),
+        )
+    report = {
+        "schema_version": 2,
+        "analysis": report_analysis,
+        "analysis_kind": report_analysis,
+        "scope": report_scope,
         "automatic_long_time_convergence_claim": False,
         "mode": args.mode,
         "run_directories": [str(run.artifact.directory) for run in runs],
@@ -4938,24 +5323,76 @@ def main() -> int:
         "raw_to_projected_representation_changes": representation_changes,
         "raw_to_projected_profile_changes_by_defect": representation_profile_changes,
         "z_fraction_variations": z_variations,
-        "unequal_grid_three_level_fits": spatial_fits,
         "practical_thresholds": {"median_preferred": 0.05, "individual_outlier": 0.10},
-        "time_error_rule": (
-            "first-order Richardson estimate is 2*abs(metric_dt005-metric_dt0025)"
-        ),
-        "time_vs_space_error_gate": time_space_gate,
-        "time_gate_absolute_tolerances": TIME_GATE_ABSOLUTE_TOLERANCES,
     }
+    if args.mode == "dealias":
+        reference_manifest, candidate_manifest = run_manifest
+        report["comparison_roles"] = {
+            "reference": "cubic_half",
+            "candidate": "two_thirds",
+            "relative_change_denominator": "cubic_half reference",
+        }
+        report["raw_q2d_identity"] = {
+            "verified": True,
+            "raw_q_sha256": reference_manifest["raw_q_sha256"],
+            "q2d_initial_sha256": reference_manifest["q2d_initial_sha256"],
+            "defect_table_sha256": reference_manifest["defect_table_sha256"],
+            "candidate_values_equal_reference": {
+                "raw_q_sha256": candidate_manifest["raw_q_sha256"]
+                == reference_manifest["raw_q_sha256"],
+                "q2d_initial_sha256": candidate_manifest["q2d_initial_sha256"]
+                == reference_manifest["q2d_initial_sha256"],
+                "defect_table_sha256": candidate_manifest["defect_table_sha256"]
+                == reference_manifest["defect_table_sha256"],
+            },
+        }
+        report["projected_initial_sensitivity"] = {
+            "group_median_changes": [
+                row for row in changes if row["state"] == PROJECTED_STATE
+            ],
+            "paired_metric_changes_and_distributions": [
+                row for row in paired_changes if row["state"] == PROJECTED_STATE
+            ],
+            "profile_changes_and_distributions": [
+                row for row in profile_changes if row["state"] == PROJECTED_STATE
+            ],
+        }
+        report["final_sensitivity"] = {
+            "group_median_changes": [
+                row for row in changes if row["state"] == FINAL_STATE
+            ],
+            "paired_metric_changes_and_distributions": [
+                row for row in paired_changes if row["state"] == FINAL_STATE
+            ],
+            "profile_changes_and_distributions": [
+                row for row in profile_changes if row["state"] == FINAL_STATE
+            ],
+        }
+        report["interpretation_limits"] = [
+            "Sensitivity is not a convergence order or proof of physical correctness.",
+            "Final differences include rule-specific projected-Q0 differences and cannot be attributed to evolution alone.",
+            "The study is limited to A=18, seed=24, T=1 and the current PSSolver model.",
+            "The 5% paired-median and 10% individual thresholds are working tolerances.",
+        ]
+    else:
+        report["unequal_grid_three_level_fits"] = spatial_fits
+        report["time_error_rule"] = (
+            "first-order Richardson estimate is 2*abs(metric_dt005-metric_dt0025)"
+        )
+        report["time_vs_space_error_gate"] = time_space_gate
+        report["time_gate_absolute_tolerances"] = TIME_GATE_ABSOLUTE_TOLERANCES
     output_paths["json"].write_text(
         json.dumps(json_safe(report), indent=2, allow_nan=False) + "\n",
         encoding="utf-8",
     )
-    _plot_initial_r50(output_paths["initial_plot"], all_rows, runs)
+    _plot_initial_r50(
+        output_paths["initial_plot"], all_rows, runs, mode=args.mode
+    )
     _plot_projected_initial_profiles(
         output_paths["projected_initial_plot"], projected_initial_profiles
     )
     _plot_final_profiles(output_paths["final_plot"], final_profiles)
-    _plot_changes(output_paths["change_plot"], changes)
+    _plot_changes(output_paths["change_plot"], changes, mode=args.mode)
     positive_id = common_reliably_matched_defect_id(
         all_rows, runs, charge=0.5, z_fraction=0.5
     )

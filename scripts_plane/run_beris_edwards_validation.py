@@ -70,7 +70,8 @@ GRID_SHAPES = {
     512: (512, 512, 128),
 }
 NUMERICAL_STAGES = ("preflight", "time", "space", "dealias")
-ALL_STAGES = (*NUMERICAL_STAGES, "long_seed")
+ANALYSIS_ONLY_STAGES = ("core_dealias",)
+ALL_STAGES = (*NUMERICAL_STAGES, "long_seed", *ANALYSIS_ONLY_STAGES)
 
 
 @dataclass(frozen=True)
@@ -278,6 +279,16 @@ def build_runs(
     unknown = set(requested) - set(ALL_STAGES)
     if unknown:
         raise ValueError(f"unknown validation stages: {sorted(unknown)}")
+    if "core_dealias" in requested:
+        if requested != ("core_dealias",):
+            raise ValueError(
+                "core_dealias is an analysis-only stage and cannot be mixed "
+                "with simulation stages"
+            )
+        if include_r512_time_control:
+            raise ValueError(
+                "core_dealias cannot be combined with R512 time controls"
+            )
     runs: list[RunSpec] = []
 
     if "preflight" in requested or set(requested).intersection(
@@ -306,6 +317,18 @@ def build_runs(
                 runs.append(
                     _make_run(
                         "dealias",
+                        resolution=resolution,
+                        dt=0.005,
+                        final_time=1.0,
+                        dealias_rule=dealias_rule,
+                    )
+                )
+    if "core_dealias" in requested:
+        for resolution in (320, 512):
+            for dealias_rule in ("cubic_half", "two_thirds"):
+                runs.append(
+                    _make_run(
+                        "core_dealias",
                         resolution=resolution,
                         dt=0.005,
                         final_time=1.0,
@@ -631,6 +654,61 @@ def analysis_commands(
                 "limitation": "Sensitivity comparison, not a convergence order.",
             }
         )
+
+    core_dealias_runs = _runs_with_purpose(runs, "core_dealias")
+    if core_dealias_runs:
+        by_key: dict[tuple[int, str], RunSpec] = {}
+        for run in core_dealias_runs:
+            key = (run.nx, run.dealias_rule)
+            if key in by_key:
+                raise ValueError(f"duplicate core_dealias run {key}")
+            by_key[key] = run
+        expected_keys = {
+            (resolution, rule)
+            for resolution in (320, 512)
+            for rule in ("cubic_half", "two_thirds")
+        }
+        if set(by_key) != expected_keys:
+            raise ValueError(
+                "core_dealias requires exactly R320/R512 crossed with "
+                "cubic_half/two_thirds"
+            )
+        for resolution in (320, 512):
+            comparison_runs = [
+                by_key[(resolution, "cubic_half")],
+                by_key[(resolution, "two_thirds")],
+            ]
+            output_dir = (
+                output_root / f"analysis_defect_core_dealias_R{resolution}"
+            )
+            commands.append(
+                {
+                    "name": f"core_dealias_sensitivity_R{resolution}",
+                    "analyzer": str(DEFECT_CORE_ANALYZER),
+                    "input_run_ids": [
+                        run.run_id for run in comparison_runs
+                    ],
+                    "dependency_files": [],
+                    "required_outputs": list(DEFECT_CORE_OUTPUTS),
+                    "command": [
+                        python_bin,
+                        str(DEFECT_CORE_ANALYZER),
+                        "--mode",
+                        "dealias",
+                        "--output-dir",
+                        str(output_dir),
+                        *[
+                            str(output_root / run.run_id)
+                            for run in comparison_runs
+                        ],
+                    ],
+                    "limitation": (
+                        "A=18, seed=24, T=1 same-grid defect-core "
+                        "sensitivity; no convergence order or physical-"
+                        "correctness claim."
+                    ),
+                }
+            )
     return commands
 
 
@@ -663,6 +741,16 @@ def build_plan(
     device: str,
     expected_gpu_name: str | None = None,
 ) -> dict[str, Any]:
+    has_core_dealias = any(
+        "core_dealias" in run.purposes for run in runs
+    )
+    analysis_only = bool(runs) and all(
+        run.purposes == ("core_dealias",) for run in runs
+    )
+    if has_core_dealias and not analysis_only:
+        raise ValueError(
+            "core_dealias runs must form an exclusive analysis-only plan"
+        )
     implementation_files = {
         str(path.relative_to(PROJECT_ROOT)): _sha256_file(path)
         for path in IMPLEMENTATION_SOURCE_FILES
@@ -681,25 +769,41 @@ def build_plan(
         config["device"] = device
         config["expected_gpu_name"] = expected_gpu_name
         config_sha256 = _canonical_sha256(config)
-        command = command_for_run(
-            run,
-            python_bin=python_bin,
-            output_root=output_root,
-            device=device,
-            validation_config_sha256=config_sha256,
-        )
-        run_rows.append(
-            {
+        command = None
+        if not analysis_only:
+            command = command_for_run(
+                run,
+                python_bin=python_bin,
+                output_root=output_root,
+                device=device,
+                validation_config_sha256=config_sha256,
+            )
+        storage_estimate = run.storage_estimate()
+        row = {
                 "run_id": run.run_id,
                 "purposes": list(run.purposes),
                 "config": config,
                 "config_sha256": config_sha256,
                 "output_dir": str(output_root / run.run_id),
                 "command": command,
-                "shell_command": shlex.join(command),
-                "storage_estimate": run.storage_estimate(),
+                "shell_command": None if command is None else shlex.join(command),
+                "storage_estimate": (
+                    {
+                        **storage_estimate,
+                        "saved_frames": 0,
+                        "bytes_per_frame": 0,
+                        "primary_snapshot_bytes": 0,
+                        "primary_snapshot_gib": 0.0,
+                        "includes": "no new simulation snapshots; existing inputs only",
+                    }
+                    if analysis_only
+                    else storage_estimate
+                ),
             }
-        )
+        if analysis_only:
+            row["existing_only"] = True
+            row["existing_input_storage_estimate"] = storage_estimate
+        run_rows.append(row)
     total_primary_snapshot_bytes = sum(
         row["storage_estimate"]["primary_snapshot_bytes"] for row in run_rows
     )
@@ -736,15 +840,29 @@ def build_plan(
             "scope": "Q/u/p arrays only; filesystem overhead and sidecars excluded",
         },
         "execution_safety": {
-            "execution_model": "synchronous_on_current_node_not_a_scheduler",
+            "execution_model": (
+                "analysis_only_existing_runs"
+                if analysis_only
+                else "synchronous_on_current_node_not_a_scheduler"
+            ),
             "requires_confirm_direct_execution": True,
             "large_output_threshold_gib": 50.0,
             "long_seed_requires_allow_large_output": True,
+            "simulation_launch_permitted": not analysis_only,
+            "missing_input_policy": (
+                "hard_fail_before_any_analyzer"
+                if analysis_only
+                else "launch_requested_simulation"
+            ),
+            "simulation_command_count": 0 if analysis_only else len(run_rows),
         },
         "issue_6_component_status": {
             "time_step": "implemented analysis; scientific runs pending",
             "space_global": "implemented analysis; scientific runs pending",
-            "dealias": "implemented sensitivity analysis; scientific runs pending",
+            "dealias": (
+                "implemented global and defect-core sensitivity analyses; "
+                "scientific interpretation pending"
+            ),
             "defect_core": (
                 "implemented space analysis and optional R512 time sensitivity; "
                 "scientific runs pending"
@@ -833,6 +951,17 @@ def parse_args() -> argparse.Namespace:
             "--execute runs synchronously on the current node and requires "
             "--confirm-direct-execution"
         )
+    if args.stages and "core_dealias" in args.stages:
+        if set(args.stages) != {"core_dealias"}:
+            parser.error(
+                "--stage core_dealias is analysis-only and must be used alone"
+            )
+        if args.include_r512_time_control:
+            parser.error(
+                "--stage core_dealias cannot use --include-r512-time-control"
+            )
+        if args.skip_analysis:
+            parser.error("--stage core_dealias cannot use --skip-analysis")
     if args.expected_gpu_name is not None:
         args.expected_gpu_name = args.expected_gpu_name.strip()
         if not args.expected_gpu_name:
@@ -842,12 +971,14 @@ def parse_args() -> argparse.Namespace:
         and args.device.split(":", 1)[0] in {"cuda", "auto"}
         and bool(
             set(args.stages or ()).intersection(
-                {"preflight", "space", "dealias", "long_seed"}
+                {"preflight", "space", "dealias", "long_seed", "core_dealias"}
             )
         )
     )
     if cuda_preflight_requested and args.expected_gpu_name is None:
-        parser.error("CUDA preflight execution requires --expected-gpu-name")
+        parser.error(
+            "CUDA-backed run validation requires --expected-gpu-name"
+        )
     if not args.stages:
         args.stages = list(NUMERICAL_STAGES)
     return args
@@ -1114,20 +1245,29 @@ def _analysis_input_manifest(
         final_step = int(run_row["config"]["steps"])
         filenames = [
             "metadata.json",
+            "COMPLETE",
             f"Q_{final_step}.npy",
             f"u_{final_step}.npy",
             f"p_{final_step}.npy",
             "diagnostics.npy",
+            "diagnostics.csv",
         ]
         if is_core_analysis:
             filenames.extend(
                 ("Q_0.npy", "Q2D_initial.npy", "Q2D_defects.csv")
             )
+        metadata = _read_json(directory / "metadata.json")
         inputs[run_id] = {
             "config_sha256": run_row["config_sha256"],
             "files": {
                 name: _file_identity(directory / name) for name in filenames
             },
+            "simulation_code_provenance": metadata.get(
+                "implementation_provenance"
+            ),
+            "simulation_runtime_environment": metadata.get(
+                "runtime_environment"
+            ),
         }
     return inputs
 
@@ -1155,6 +1295,14 @@ def _analysis_manifest_base(
         raise RuntimeError(
             f"analysis tool changed after plan creation: {analyzer_relative}"
         )
+    driver = Path(__file__).resolve()
+    driver_relative = str(driver.relative_to(PROJECT_ROOT.resolve()))
+    planned_driver_hash = plan["validation_tools_sha256"].get(driver_relative)
+    actual_driver_hash = _sha256_file(driver)
+    if planned_driver_hash is None or actual_driver_hash != planned_driver_hash:
+        raise RuntimeError(
+            f"validation runner changed after plan creation: {driver_relative}"
+        )
     dependency_files = {
         str(Path(value).resolve()): _file_identity(Path(value))
         for value in analysis.get("dependency_files", ())
@@ -1163,11 +1311,23 @@ def _analysis_manifest_base(
         "schema_version": 2,
         "status": "complete",
         "name": analysis["name"],
+        "command": command,
         "command_sha256": _canonical_sha256(command),
         "analyzer": analyzer_relative,
         "analyzer_sha256": actual_hash,
         "validation_tools_sha256": plan["validation_tools_sha256"],
         "implementation_sha256": plan["implementation_sha256"],
+        "analysis_code_provenance": {
+            "git": plan.get("git"),
+            "runner": driver_relative,
+            "runner_sha256": actual_driver_hash,
+            "analyzer": analyzer_relative,
+            "analyzer_sha256": actual_hash,
+            "note": (
+                "analysis-time provenance is distinct from simulation-time "
+                "provenance recorded per input"
+            ),
+        },
         "inputs": _analysis_input_manifest(analysis, run_by_id),
         "dependencies": dependency_files,
     }
@@ -1179,6 +1339,15 @@ def execute_plan(
     output_root: Path,
     skip_analysis: bool = False,
 ) -> None:
+    simulation_launch_permitted = bool(
+        plan.get("execution_safety", {}).get(
+            "simulation_launch_permitted", True
+        )
+    )
+    if not simulation_launch_permitted and skip_analysis:
+        raise ValueError(
+            "analysis-only plans cannot skip their only permitted work"
+        )
     output_root.mkdir(parents=True, exist_ok=True)
     plan_path = output_root / (
         f"validation_plan_{plan['plan_sha256'][:12]}.json"
@@ -1195,7 +1364,17 @@ def execute_plan(
             print(f"{run_label}: reuse validated COMPLETE run", flush=True)
             continue
 
+        if not simulation_launch_permitted:
+            raise RuntimeError(
+                "analysis-only plan requires every input run to exist and "
+                f"validate before any analyzer starts; missing {run['run_id']}"
+            )
+
         command = run["command"]
+        if command is None:
+            raise RuntimeError(
+                f"simulation command is absent for non-reusable run {run['run_id']}"
+            )
         log_path = output_root / f"{run['run_id']}.log"
         if log_path.exists():
             raise FileExistsError(
@@ -1226,6 +1405,61 @@ def execute_plan(
         return
 
     run_by_id = {row["run_id"]: row for row in plan["runs"]}
+    prepared_analyses: dict[str, tuple[dict[str, Any], bool]] = {}
+    if not simulation_launch_permitted:
+        # Validate all sidecars, manifests, output destinations, and logs before
+        # launching the first analyzer. This prevents a half-completed R320
+        # result when an R512 input or destination is invalid.
+        for analysis in plan["analysis_commands"]:
+            command = analysis["command"]
+            try:
+                output_index = command.index("--output-dir") + 1
+            except ValueError as error:
+                raise RuntimeError(
+                    f"analysis {analysis['name']} has no --output-dir"
+                ) from error
+            analysis_dir = Path(command[output_index])
+            manifest_path = analysis_dir / "validation_analysis_manifest.json"
+            log_path = output_root / f"analysis_{analysis['name']}.log"
+            manifest_base = _analysis_manifest_base(
+                plan, analysis, run_by_id
+            )
+            reusable = False
+            if analysis_dir.exists():
+                if not analysis_dir.is_dir():
+                    raise FileExistsError(
+                        f"analysis output path is not a directory: {analysis_dir}"
+                    )
+                if manifest_path.is_file():
+                    completed_manifest = {
+                        **manifest_base,
+                        "outputs": _analysis_output_manifest(
+                            analysis_dir, analysis["required_outputs"]
+                        ),
+                        "log": _file_identity(log_path),
+                    }
+                    if _read_json(manifest_path) == completed_manifest:
+                        reusable = True
+                    else:
+                        raise FileExistsError(
+                            "refusing to mix or replace an existing analysis "
+                            "directory without a matching manifest and file "
+                            f"hashes: {analysis_dir}"
+                        )
+                else:
+                    raise FileExistsError(
+                        "refusing to mix or replace an existing analysis "
+                        f"directory without a matching manifest: {analysis_dir}"
+                    )
+            elif log_path.exists():
+                raise FileExistsError(
+                    f"refusing to replace an existing analysis log: {log_path}"
+                )
+            prepared_analyses[analysis["name"]] = (
+                manifest_base,
+                reusable,
+            )
+
     for analysis in plan["analysis_commands"]:
         command = analysis["command"]
         try:
@@ -1237,7 +1471,18 @@ def execute_plan(
         analysis_dir = Path(command[output_index])
         manifest_path = analysis_dir / "validation_analysis_manifest.json"
         log_path = output_root / f"analysis_{analysis['name']}.log"
-        manifest_base = _analysis_manifest_base(plan, analysis, run_by_id)
+        if analysis["name"] in prepared_analyses:
+            manifest_base, reusable = prepared_analyses[analysis["name"]]
+            if reusable:
+                print(
+                    f"analysis {analysis['name']}: reuse validated output",
+                    flush=True,
+                )
+                continue
+        else:
+            manifest_base = _analysis_manifest_base(
+                plan, analysis, run_by_id
+            )
 
         if analysis_dir.exists():
             if not analysis_dir.is_dir():

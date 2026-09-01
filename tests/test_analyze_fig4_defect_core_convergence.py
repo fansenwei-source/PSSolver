@@ -126,11 +126,21 @@ def beris_contract_metadata(
     steps=200,
     config_character="a",
     initial_character="b",
+    raw_character=None,
+    projected_character=None,
+    dealias_rule="cubic_half",
 ):
     ldg_l1 = 0.024691358024691357
     gamma = 2.94
     nx, ny, nz = shape
-    return {
+    raw_character = initial_character if raw_character is None else raw_character
+    projected_character = (
+        initial_character
+        if projected_character is None
+        else projected_character
+    )
+    dealias_fraction = core.DEALIAS_RULE_FRACTIONS[dealias_rule]
+    metadata = {
         "schema_version": 1,
         "script": core.BERIS_EDWARDS_BENCHMARK_SCRIPT,
         "validation_config_sha256": config_character * 64,
@@ -217,6 +227,11 @@ def beris_contract_metadata(
             ),
         },
         "numerics": {
+            "dealiasing": {
+                "rule": dealias_rule,
+                "fraction": dealias_fraction,
+                "force_evaluation": "same_for_every_rule",
+            },
             "precision": {
                 "real_dtype": "float64",
                 "spectral_dtype": "complex128",
@@ -259,8 +274,8 @@ def beris_contract_metadata(
         "dtype": "float64",
         "tf32": "off",
         "zero_mode_policy": "zero_mean",
-        "dealias_rule": "cubic_half",
-        "dealias_fraction": 0.5,
+        "dealias_rule": dealias_rule,
+        "dealias_fraction": dealias_fraction,
         "save_start_step": 0,
         "save_interval": steps,
         "diagnostic_interval": min(100, steps),
@@ -272,8 +287,8 @@ def beris_contract_metadata(
             "S_initial": 1.0 / 3.0,
             "twist_amplitude": 0.01,
             "twist_modes": [1, 2, 3],
-            "raw_q_sha256": initial_character * 64,
-            "projected_q_sha256": initial_character * 64,
+            "raw_q_sha256": raw_character * 64,
+            "projected_q_sha256": projected_character * 64,
         },
         "initial_defect_gas": {
             "num_pairs": 6,
@@ -286,13 +301,18 @@ def beris_contract_metadata(
             "rms_amplitude_radians": 0.01,
             "dct_modes": [1, 2, 3],
         },
-        "retained_q_modes": [nx / 2 - 1, ny / 2 - 1, nz / 2],
-        "retained_normal_velocity_modes": [
-            nx / 2 - 1,
-            ny / 2 - 1,
-            nz / 2 - 1,
-        ],
+        "retained_q_modes": core._expected_retained_modes(
+            shape,
+            ("periodic", "periodic", "neumann"),
+            dealias_fraction,
+        ),
+        "retained_normal_velocity_modes": core._expected_retained_modes(
+            shape,
+            ("periodic", "periodic", "dirichlet"),
+            dealias_fraction,
+        ),
     }
+    return metadata
 
 
 def materialize_contract_core_run(tmp_path, label, metadata):
@@ -1481,9 +1501,150 @@ def test_core_validation_rejects_implementation_provenance_change(tmp_path):
         core.validate_core_runs((first, second), "space")
 
 
-def test_defect_core_api_explicitly_rejects_dealias_mode():
-    with pytest.raises(ValueError, match="unsupported defect-core validation mode"):
-        core.validate_task_contract((), "dealias")
+def _contract_dealias_pair(tmp_path, *, shape=(320, 320, 80)):
+    cubic = materialize_contract_core_run(
+        tmp_path,
+        "cubic",
+        beris_contract_metadata(
+            shape,
+            config_character="a",
+            raw_character="a",
+            projected_character="b",
+            dealias_rule="cubic_half",
+        ),
+    )
+    two_thirds = materialize_contract_core_run(
+        tmp_path,
+        "two_thirds",
+        beris_contract_metadata(
+            shape,
+            config_character="c",
+            raw_character="a",
+            projected_character="d",
+            dealias_rule="two_thirds",
+        ),
+    )
+    return cubic, two_thirds
+
+
+@pytest.mark.parametrize("shape", ((320, 320, 80), (512, 512, 128)))
+def test_beris_task_contract_accepts_dealias_pair(
+    monkeypatch, tmp_path, shape
+):
+    runs = _contract_dealias_pair(tmp_path, shape=shape)
+    monkeypatch.setattr(core, "_mmap_float_array", lambda *args, **kwargs: None)
+
+    core.validate_core_runs(runs, "dealias")
+    core.validate_task_contract(runs, "dealias")
+
+    ordered = core.ordered_comparison_runs(tuple(reversed(runs)), "dealias")
+    assert [run.metadata["dealias_rule"] for run in ordered] == [
+        "cubic_half",
+        "two_thirds",
+    ]
+
+
+def test_dealias_validation_rejects_nonidentical_q2d_file(tmp_path):
+    cubic, two_thirds = _contract_dealias_pair(tmp_path)
+    two_thirds.q2d_path.write_bytes(b"different")
+
+    with pytest.raises(ValueError, match="byte-identical Q2D_initial"):
+        core.validate_core_runs((cubic, two_thirds), "dealias")
+
+
+def test_dealias_metric_and_profile_changes_use_reference_denominator(tmp_path):
+    cubic, two_thirds = _contract_dealias_pair(tmp_path)
+    summaries = []
+    for run, value, anisotropy in (
+        (cubic, 2.0, 0.0),
+        (two_thirds, 3.0, 0.02),
+    ):
+        row = {
+            "state": core.PROJECTED_STATE,
+            "resolution": run.label,
+            "step": 0,
+            "z_fraction": 0.5,
+            "charge": "all",
+        }
+        row.update({f"{metric}_median": value for metric in core.CORE_METRICS})
+        row["r50_contour_anisotropy_median"] = anisotropy
+        summaries.append(row)
+
+    changes = core.pairwise_metric_changes(
+        summaries, (two_thirds, cubic), mode="dealias"
+    )
+    radius = next(row for row in changes if row["metric"] == "r50_absolute")
+    anisotropy = next(
+        row for row in changes if row["metric"] == "r50_contour_anisotropy"
+    )
+    assert radius["reference_dealias_rule"] == "cubic_half"
+    assert radius["candidate_dealias_rule"] == "two_thirds"
+    assert radius["relative_change"] == pytest.approx(0.5)
+    assert math.isnan(anisotropy["relative_change"])
+    assert anisotropy["within_5_percent"] is None
+
+    profiles = [
+        {
+            "state": core.PROJECTED_STATE,
+            "resolution": run.label,
+            "z_fraction": 0.5,
+            "defect_id": 0,
+            "charge": 0.5,
+            "radii": np.asarray((0.0, 1.0)),
+            "median": np.asarray((value, value)),
+            "valid_fraction": np.ones(2),
+        }
+        for run, value in ((cubic, 2.0), (two_thirds, 3.0))
+    ]
+    profile_changes = core.profile_pairwise_changes(
+        profiles, (two_thirds, cubic), mode="dealias", S_scale=1.0
+    )
+    individual = next(
+        row for row in profile_changes if row["aggregation"] == "individual"
+    )
+    assert individual["weighted_relative_l2"] == pytest.approx(0.5)
+    assert individual["reference"] == cubic.label
+
+
+def test_dealias_near_zero_distribution_reports_absolute_statistics(tmp_path):
+    cubic, two_thirds = _contract_dealias_pair(tmp_path)
+    rows = []
+    for run, anisotropies in (
+        (cubic, (0.0, 0.01)),
+        (two_thirds, (0.02, 0.04)),
+    ):
+        for defect_id, anisotropy in enumerate(anisotropies):
+            row = {
+                "state": core.PROJECTED_STATE,
+                "resolution": run.label,
+                "z_fraction": 0.5,
+                "defect_id": defect_id,
+                "match_status": "matched",
+                "initial_charge": 0.5,
+                "detected_charge": 0.5,
+            }
+            row.update({metric: 2.0 for metric in core.CORE_METRICS})
+            row["r50_contour_anisotropy"] = anisotropy
+            for metric in core.RADIUS_METRICS:
+                row[f"{metric}_reason"] = "ok"
+                row[f"{metric}_crossing_count"] = 1
+            rows.append(row)
+
+    changes = core.paired_individual_metric_changes(
+        rows, (two_thirds, cubic), mode="dealias"
+    )
+    summary = next(
+        row
+        for row in changes
+        if row["aggregation"] == "paired_distribution"
+        and row["metric"] == "r50_contour_anisotropy"
+        and row["charge"] == "all"
+    )
+    assert summary["reference_value_min"] == pytest.approx(0.0)
+    assert summary["candidate_value_max"] == pytest.approx(0.04)
+    assert summary["absolute_difference_p90"] > 0.0
+    assert math.isnan(summary["relative_change"])
+    assert summary["median_within_5_percent"] is None
 
 
 def test_beris_input_manifest_and_readme_record_correct_model(tmp_path):
@@ -1563,3 +1724,45 @@ def test_beris_input_manifest_and_readme_record_correct_model(tmp_path):
     time_text = time_readme.read_text(encoding="utf-8")
     assert "Defect-core R512 time-step sensitivity precheck" in time_text
     assert "does not establish a temporal convergence order" in time_text
+
+
+def test_dealias_readme_states_reference_and_interpretation_limits(tmp_path):
+    runs = _contract_dealias_pair(tmp_path)
+    readme = tmp_path / "README-dealias.md"
+    args = SimpleNamespace(
+        mode="dealias",
+        z_fractions=(0.1, 0.5, 0.9),
+        r_max=4.0,
+        dr=0.05,
+        angular_samples=128,
+        match_radius=4.0,
+        chunk_size=8,
+        interpolation_order=5,
+    )
+    core.write_readme(
+        readme,
+        args=args,
+        runs=runs,
+        output_paths={"json": tmp_path / "summary-dealias.json"},
+        provenance={
+            "analysis_runtime": {
+                "package_versions": {},
+                "command": "python analyzer.py",
+                "executable": "python",
+                "prefix": "test",
+                "loaded_modules": "",
+            },
+            "simulation_provenance": {
+                "provenance_directory": "test-provenance",
+                "jobs_directory": "test-jobs",
+            },
+        },
+        scales=core.physical_scale_summary(runs),
+        continuous_reference_dr=0.005,
+        continuous_reference_angular_samples=512,
+    )
+    text = readme.read_text(encoding="utf-8")
+    assert "Cubic-half is the fixed reference" in text
+    assert "Projected-initial and final sensitivities are reported separately" in text
+    assert "cannot be attributed to evolution alone" in text
+    assert "No Richardson estimate, spatial-order fit" in text

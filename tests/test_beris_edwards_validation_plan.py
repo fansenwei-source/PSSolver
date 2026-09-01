@@ -224,6 +224,216 @@ def test_standalone_dealias_stage_builds_paired_comparisons(tmp_path):
     }
 
 
+def test_core_dealias_stage_reuses_exact_existing_identities_and_is_analysis_only(
+    tmp_path,
+):
+    runs = build_runs(("core_dealias",))
+    expected_ids = {
+        "A18_R320_dt0p005_cubic_half_seed24_0e49e595d6de",
+        "A18_R320_dt0p005_two_thirds_seed24_7270fddf85b2",
+        "A18_R512_dt0p005_cubic_half_seed24_18cece2feb21",
+        "A18_R512_dt0p005_two_thirds_seed24_e8982189fde0",
+    }
+    assert {run.run_id for run in runs} == expected_ids
+    assert all(run.purposes == ("core_dealias",) for run in runs)
+    assert not any("preflight" in run.purposes for run in runs)
+
+    plan = build_plan(
+        runs,
+        python_bin="python",
+        output_root=tmp_path,
+        device="cuda",
+        expected_gpu_name="NVIDIA H100 PCIe",
+    )
+    expected_config_hashes = {
+        "A18_R320_dt0p005_cubic_half_seed24_0e49e595d6de": (
+            "a19ad496d1b0c3026b03aa28090d5e9d3aaa4c827edcdab32ed3a73bc80b5186"
+        ),
+        "A18_R320_dt0p005_two_thirds_seed24_7270fddf85b2": (
+            "2cd7416e264fb54692f0a98c6f458af3e9ae9025168025c7d52984186931e58e"
+        ),
+        "A18_R512_dt0p005_cubic_half_seed24_18cece2feb21": (
+            "3fcbd766a0568490a5e733b86f920ee66134e2b056e75febc39cca51b3f0ac17"
+        ),
+        "A18_R512_dt0p005_two_thirds_seed24_e8982189fde0": (
+            "8d673430e52c609cb05a19815e8b9c4074f03f69c43d3b15d42d737cdaddb455"
+        ),
+    }
+    assert {
+        row["run_id"]: row["config_sha256"] for row in plan["runs"]
+    } == expected_config_hashes
+    assert plan["execution_safety"]["simulation_launch_permitted"] is False
+    assert plan["execution_safety"]["simulation_command_count"] == 0
+    assert plan["storage_estimate"]["primary_snapshot_bytes"] == 0
+    assert all(row["command"] is None for row in plan["runs"])
+    assert {item["name"] for item in plan["analysis_commands"]} == {
+        "core_dealias_sensitivity_R320",
+        "core_dealias_sensitivity_R512",
+    }
+    for analysis in plan["analysis_commands"]:
+        assert analysis["analyzer"] == str(DEFECT_CORE_ANALYZER)
+        assert analysis["command"][analysis["command"].index("--mode") + 1] == "dealias"
+        assert "analysis_dealias_R" not in " ".join(analysis["command"])
+        input_rows = [
+            next(row for row in plan["runs"] if row["run_id"] == run_id)
+            for run_id in analysis["input_run_ids"]
+        ]
+        assert [row["config"]["dealias_rule"] for row in input_rows] == [
+            "cubic_half",
+            "two_thirds",
+        ]
+
+
+def test_core_dealias_stage_is_exclusive():
+    with pytest.raises(ValueError, match="analysis-only"):
+        build_runs(("core_dealias", "space"))
+    with pytest.raises(ValueError, match="R512 time controls"):
+        build_runs(("core_dealias",), include_r512_time_control=True)
+
+
+def _core_dealias_plan(tmp_path):
+    return build_plan(
+        build_runs(("core_dealias",)),
+        python_bin="python",
+        output_root=tmp_path,
+        device="cuda",
+        expected_gpu_name="NVIDIA H100 PCIe",
+    )
+
+
+def test_core_dealias_missing_run_never_launches_subprocess(tmp_path, monkeypatch):
+    import scripts_plane.run_beris_edwards_validation as validation_runner
+
+    plan = _core_dealias_plan(tmp_path)
+
+    def forbidden_run(*_args, **_kwargs):
+        raise AssertionError("analysis-only failure must not launch subprocess")
+
+    monkeypatch.setattr(validation_runner.subprocess, "run", forbidden_run)
+    with pytest.raises(RuntimeError, match="analysis-only plan requires"):
+        execute_plan(plan, output_root=tmp_path)
+
+
+def test_core_dealias_missing_sidecar_never_starts_first_analyzer(
+    tmp_path, monkeypatch
+):
+    import scripts_plane.run_beris_edwards_validation as validation_runner
+
+    plan = _core_dealias_plan(tmp_path)
+    for run_row in plan["runs"]:
+        _materialize_completed_run(run_row, plan["implementation_sha256"])
+    r512_two_thirds = next(
+        row
+        for row in plan["runs"]
+        if row["config"]["shape"][0] == 512
+        and row["config"]["dealias_rule"] == "two_thirds"
+    )
+    (Path(r512_two_thirds["output_dir"]) / "Q_0.npy").unlink()
+    calls = []
+
+    def forbidden_run(command, **_kwargs):
+        calls.append(command)
+        raise AssertionError("analyzer started before all sidecars were checked")
+
+    monkeypatch.setattr(validation_runner.subprocess, "run", forbidden_run)
+    with pytest.raises(RuntimeError, match="Q_0.npy"):
+        execute_plan(plan, output_root=tmp_path)
+    assert calls == []
+
+
+def test_core_dealias_cannot_skip_analysis(tmp_path):
+    plan = _core_dealias_plan(tmp_path)
+    with pytest.raises(ValueError, match="cannot skip"):
+        execute_plan(plan, output_root=tmp_path, skip_analysis=True)
+
+
+def test_core_dealias_preflights_all_inputs_and_destinations_before_first_analyzer(
+    tmp_path, monkeypatch
+):
+    import scripts_plane.run_beris_edwards_validation as validation_runner
+
+    plan = _core_dealias_plan(tmp_path)
+    for run_row in plan["runs"]:
+        _materialize_completed_run(run_row, plan["implementation_sha256"])
+    conflict = tmp_path / "analysis_defect_core_dealias_R512"
+    conflict.mkdir()
+    (conflict / "sentinel").write_text("do not replace\n", encoding="utf-8")
+    calls = []
+
+    def forbidden_run(command, **_kwargs):
+        calls.append(command)
+        raise AssertionError("R320 analyzer started before R512 conflict check")
+
+    monkeypatch.setattr(validation_runner.subprocess, "run", forbidden_run)
+    with pytest.raises(FileExistsError, match="matching manifest"):
+        execute_plan(plan, output_root=tmp_path)
+    assert calls == []
+    assert (conflict / "sentinel").read_text(encoding="utf-8") == "do not replace\n"
+
+
+def test_core_dealias_executes_only_two_analyzers_and_reuses_manifests(
+    tmp_path, monkeypatch
+):
+    import scripts_plane.run_beris_edwards_validation as validation_runner
+
+    plan = _core_dealias_plan(tmp_path)
+    for run_row in plan["runs"]:
+        _materialize_completed_run(run_row, plan["implementation_sha256"])
+    old_global_dir = tmp_path / "analysis_dealias_R320"
+    old_global_dir.mkdir()
+    old_sentinel = old_global_dir / "sentinel"
+    old_sentinel.write_text("old global analysis\n", encoding="utf-8")
+    analyses_by_dir = _analysis_by_output_dir(plan)
+    calls = []
+
+    def fake_run(command, **_kwargs):
+        calls.append(command)
+        assert Path(command[1]).resolve() == DEFECT_CORE_ANALYZER.resolve()
+        assert str(validation_runner.MODEL_SCRIPT) not in command
+        analysis_dir = Path(command[command.index("--output-dir") + 1])
+        analysis = analyses_by_dir[analysis_dir]
+        analysis_dir.mkdir(parents=True)
+        for name in analysis["required_outputs"]:
+            (analysis_dir / name).write_text("complete\n", encoding="utf-8")
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(validation_runner.subprocess, "run", fake_run)
+    execute_plan(plan, output_root=tmp_path)
+    assert len(calls) == 2
+    assert old_sentinel.read_text(encoding="utf-8") == "old global analysis\n"
+
+    for analysis in plan["analysis_commands"]:
+        analysis_dir = Path(
+            analysis["command"][analysis["command"].index("--output-dir") + 1]
+        )
+        manifest = json.loads(
+            (analysis_dir / "validation_analysis_manifest.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert manifest["command"] == analysis["command"]
+        assert manifest["analysis_code_provenance"]["runner_sha256"] == plan[
+            "validation_tools_sha256"
+        ]["scripts_plane/run_beris_edwards_validation.py"]
+        first_files = next(iter(manifest["inputs"].values()))["files"]
+        assert {
+            "metadata.json",
+            "COMPLETE",
+            "Q_0.npy",
+            "Q2D_initial.npy",
+            "Q2D_defects.csv",
+            "diagnostics.npy",
+            "diagnostics.csv",
+        }.issubset(first_files)
+        first_input = next(iter(manifest["inputs"].values()))
+        assert first_input["simulation_code_provenance"]["schema_version"] == 1
+        assert first_input["simulation_runtime_environment"]["device_type"] == "cuda"
+
+    calls.clear()
+    execute_plan(plan, output_root=tmp_path)
+    assert calls == []
+
+
 def test_long_seed_plan_exposes_large_primary_snapshot_estimate(tmp_path):
     runs = build_runs(("long_seed",), long_final_time=100.0)
     long_runs = [run for run in runs if "long_seed" in run.purposes]
@@ -272,6 +482,7 @@ def _materialize_completed_run(run_row, implementation_sha256):
         f"u_{final_step}.npy",
         f"p_{final_step}.npy",
         "diagnostics.npy",
+        "diagnostics.csv",
         "Q_0.npy",
         "Q2D_initial.npy",
         "Q2D_defects.csv",
