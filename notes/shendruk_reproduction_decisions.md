@@ -1,6 +1,6 @@
 # Shendruk reproduction decisions
 
-Last updated: 2026-09-01
+Last updated: 2026-09-02
 
 This note records modeling and validation decisions for the current
 Shendruk-reproduction branch. It does not assert that the reproduction has
@@ -30,7 +30,11 @@ already been validated.
   power, and the semidiscrete energy budget; see
   `notes/issue7_equation_level_validation_zh.md`. This does not validate
   `dealias=none`, which retains the terminal DST derivative-null mode, and it
-  is not a claim that the full physical benchmark has been reproduced.
+  is not a claim that the full physical benchmark has been reproduced. The
+  single R512 H100 production run and validation runner also passed, but the
+  original Slurm job remained `FAILED/1:0` because a post-model control-script
+  CSV parser failed. Therefore the equation-level result is closed with an
+  infrastructure caveat while the end-to-end Slurm wrapper gate remains open.
 - Issue 8 (shared Beris--Edwards implementation): resolved for the current
   script.
 - Issue 9 (isotropic stress/effective pressure): explanation only; no repair is

@@ -236,7 +236,7 @@ solver-consistent 离散边界双线性型本身则达到机器精度闭合。
 5. 惯性项、strict Shendruk momentum model、长期统计、初始化敏感性和 activity scan 仍是
    另外的物理复现任务，不属于问题 7 的软件方程门禁。
 
-## 8. 结论
+## 8. CPU 方程级结论
 
 问题 7 对正式 `cubic_half` Beris--Edwards--Stokes 路径可以关闭。今后若修改以下任一部分：
 
@@ -248,3 +248,97 @@ solver-consistent 离散边界双线性型本身则达到机器精度闭合。
 - free-energy coefficients或墙面条件；
 
 都应把这 20 项独立测试作为强制 CPU regression gate，而不能只依赖长模拟“看起来正常”。
+
+
+## 9. HPCC R512 GPU integration preflight
+
+2026-09-01 至 2026-09-02，HPCC 在 detached worktree
+`ff084fb8a861d384e6cc2e6aca6ef68c51eaa098` 上完成了问题 7 的生产集成预检。
+这一附录记录部署证据，不改写前述 CPU 方程级结论。
+
+### 9.1 CPU 门禁
+
+- 完整 HPCC CPU suite：310 passed，1 skipped，8 subtests passed in 74.21 s；
+- 唯一 skip 是既有可选依赖 `nematics3d` 缺失；
+- 无其他 failure 或 skip。
+
+### 9.2 唯一一次 R512 H100 模型执行
+
+实际 run 为 `A18_R512_dt0p005_cubic_half_seed24_ec03fd61d53c`，配置为：
+
+- shape = `(512, 512, 128)`，domain = `(100, 100, 20)`；
+- A18，seed 24，Δt = 0.005，1 step；
+- float64 / complex128，TF32 off；
+- `cubic_half`，spectral refresh disabled；
+- `zero_mean`；
+- NVIDIA H100 PCIe。
+
+模型和 validation runner 本身完成，runner return code = 0，且其
+`_validate_completed_run` 验收通过。`COMPLETE`、`metadata.json`、`Q_1.npy`、
+`u_1.npy`、`p_1.npy`、`diagnostics.npy` 和 `diagnostics.csv` 均存在。Q、u、p
+全部为 float64，shape 正确，且逐块检查无 NaN/Inf。13 个 implementation
+provenance 文件的 SHA-256 与目标 worktree 一致。
+
+最终 step 1 的主要诊断为：
+
+- `div_max = 3.3631443170731995e-18`；
+- `div_rms = 6.215103487946210e-19`；
+- `div_rel = 2.304254122349574e-16`；
+- `schur_abs_residual = 1.0729904031905977e-12`；
+- `schur_rel_residual = 1.580187876179205e-16`；
+- `wall_normal_momentum_max = 2.117582368135751e-22`；
+- `wall_normal_momentum_rms = 2.9883367192027164e-23`。
+
+相对 divergence 和 Schur 残差都远低于 `1e-10` 验收门限。这里的
+`wall_normal_momentum` 不是墙面功率，不能替代第 4.4 节的 CPU 能量预算验证。
+
+峰值 GPU 已用显存为 64,405 MiB（约 62.90 GiB），约为 PyTorch 可见显存的
+79.5%，余量约 16--17 GiB。模型 metadata elapsed time 为 28.5301 s，Slurm elapsed
+为 68 s；这个单步数字不应直接线性外推为长模拟总时间。
+
+### 9.3 Slurm 状态的基础设施 caveat
+
+Slurm job 10767815 的官方 accounting 为 `FAILED / ExitCode 1:0`，因此预定的
+`COMPLETED/0` 外层门禁没有通过，不能把原作业追溯性地称为 Slurm PASS。
+
+失败发生在模型和 runner 成功结束之后：HPCC 控制目录的附加 post-validator 将
+`diagnostics.csv` 中的 `1.000000000000000000e+00` 直接传给 `int()`，从而触发
+`ValueError`。该解析器不属于 PSSolver 仓库中的模型或 runner，也未改变已经完成的模拟
+输出。修正后的只读 postcheck 已对同一组文件完全通过，且没有重跑模型。因此，这是模型
+结束后的 workflow false negative，不是 CUDA、PDE、Schur solve、数值残差或数据完整性
+失败；但修正后的 postcheck 也不能改变原始 Slurm accounting。
+
+### 9.4 关键 provenance
+
+- plan file SHA-256：`b5b496976863d93da8084002dfcd6bfff951dcc0e9ae193469b67b28658596b4`；
+- canonical plan SHA-256：`8f1f701925b87d15bde10dbdda86359cdd5dc141c0c825b499fceb2ccdcd6ff5`；
+- validation config SHA-256：`d221a62520b467ebd03a82f104e47f9249cd411d165ec943632c26d3f2c80eb5`；
+- metadata SHA-256：`bb2944eb920e6512dac75c4b57004cc68440899e8b411021f14e8229923e0438`；
+- Q/u/p SHA-256：`26161b1e...a7314af`、`80cdda72...cd9003`、`f08f6086...e46e89`；
+- diagnostics NPY/CSV SHA-256：`11b2b83b...61ddd`、`3d5e5649...54538`。
+
+输出根为 `/home/fansenwei/data_beris_issue7_ff084fb_preflight_20260901`，控制证据目录为
+`/home/fansenwei/beris_issue7_ff084fb_preflight_20260901_control`。后者保留原始 stdout、
+stderr、runner log、命令、GPU trace 和修正后只读 postcheck 报告。
+
+Plan 顶层的 `beris_edwards_stokes_issue6` 是历史 schema 标签，不表示本次执行了问题 6 的
+其他 stage。
+
+## 10. 最终关闭状态
+
+问题 7 的状态必须按层次记录：
+
+- CPU 独立方程级门禁：**PASS / CLOSED**；
+- 指定配置下的 R512 H100 单步模型执行与 runner 验证：**PASS**；
+- 数据、provenance 和数值残差：**PASS**；
+- 端到端 Slurm wrapper 门禁：**FAIL / NOT CLOSED**，原因为模型结束后的 CSV 整数解析错误；
+- 问题 7 的科学与软件方程级结论：**closed with an infrastructure caveat**。
+
+因此，这次包装脚本错误不重新打开问题 7 的方程实现结论，但也不能声称完整调度工作流
+已经通过。若未来需要严格的 `COMPLETED/0` 审计记录，应先把修正后的 post-validator
+版本化，再经用户明确授权进行 workflow-only 复核；不得把它误写成第二次物理模拟。
+
+上述 GPU preflight 只是一个时间步的生产集成、精度路径和显存 smoke test。它不验证
+float32、GPU friction、`dealias=none`、其他边界条件、时间/空间收敛、长期稳定性、多 seed
+统计、defect core、activity scan 或严格 Shendruk benchmark agreement。有限数组和很小的
+残差证明离散约束求解正常，不证明物理解已经收敛。
