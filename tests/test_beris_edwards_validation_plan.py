@@ -1,14 +1,18 @@
 import json
 from pathlib import Path
+import sys
 from types import SimpleNamespace
 
 import pytest
+
+import scripts_plane.run_beris_edwards_validation as validation_runner
 
 from scripts_plane.run_beris_edwards_validation import (
     CONVERGENCE_ANALYZER,
     DEFECT_CORE_ANALYZER,
     DEFECT_CORE_OUTPUTS,
     NUMERICAL_STAGES,
+    OUTPUT_VALIDATOR,
     _expected_metadata_fields,
     _validate_completed_run,
     analysis_commands,
@@ -65,7 +69,7 @@ def test_validation_commands_pin_precision_refresh_zero_mode_and_outputs(tmp_pat
     assert output_dir == tmp_path / run.run_id
 
 
-def test_long_seed_pilot_spans_three_activities_and_three_seeds():
+def test_long_seed_matrix_spans_three_activities_and_three_seeds():
     runs = build_runs(("long_seed",), long_final_time=100.0)
     long_runs = [run for run in runs if "long_seed" in run.purposes]
 
@@ -77,6 +81,124 @@ def test_long_seed_pilot_spans_three_activities_and_three_seeds():
     assert all(run.save_start_step == run.steps // 2 for run in long_runs)
     assert all(run.save_interval == 500 for run in long_runs)
     assert len([run for run in runs if "preflight" in run.purposes]) == 1
+
+
+def test_long_pilot_is_one_a18_seed24_run_without_duplicate_preflight(tmp_path):
+    runs = build_runs(("long_pilot",), long_final_time=100.0)
+
+    assert len(runs) == 1
+    run = runs[0]
+    assert run.purposes == ("long_pilot",)
+    assert (run.nx, run.ny, run.nz) == (320, 320, 80)
+    assert run.activity_number == pytest.approx(18.0)
+    assert run.seed == 24
+    assert run.dt == pytest.approx(0.005)
+    assert run.steps == 20_000
+    assert run.final_time == pytest.approx(100.0)
+    assert run.save_start_step == 10_000
+    assert run.save_interval == 500
+    assert run.diagnostic_interval == 100
+    assert run.saved_frame_count == 21
+    assert "preflight" not in run.purposes
+
+    plan = build_plan(
+        runs,
+        python_bin="python",
+        output_root=tmp_path,
+        device="cuda",
+        expected_gpu_name="H100",
+    )
+    assert plan["execution_safety"]["simulation_command_count"] == 1
+    assert plan["execution_safety"]["long_run_requires_allow_large_output"]
+    prerequisite = plan["execution_safety"][
+        "long_pilot_external_preflight_prerequisite"
+    ]
+    assert "does not inspect or certify" in prerequisite
+    assert 11.0 < plan["storage_estimate"]["primary_snapshot_gib"] < 12.0
+    assert plan["analysis_commands"] == []
+    command = plan["runs"][0]["command"]
+    assert command[command.index("--dealias-rule") + 1] == "cubic_half"
+    assert command[command.index("--save-start-step") + 1] == "10000"
+    assert command[command.index("--save-interval") + 1] == "500"
+    assert command[command.index("--diagnostic-interval") + 1] == "100"
+
+
+def test_long_pilot_api_rejects_noncanonical_final_time():
+    with pytest.raises(ValueError, match="fixed at T=100"):
+        build_runs(("long_pilot",), long_final_time=200.0)
+
+
+def _long_pilot_cli(tmp_path, *extra):
+    return [
+        "run_beris_edwards_validation.py",
+        "--output-root",
+        str(tmp_path / "pilot"),
+        "--stage",
+        "long_pilot",
+        "--long-final-time",
+        "100",
+        "--device",
+        "cuda",
+        "--expected-gpu-name",
+        "H100",
+        "--execute",
+        "--confirm-direct-execution",
+        *extra,
+    ]
+
+
+def test_long_pilot_without_large_output_confirmation_never_executes(
+    tmp_path, monkeypatch, capsys
+):
+    def unexpected_execute(*_args, **_kwargs):
+        pytest.fail("execute_plan must not run without --allow-large-output")
+
+    monkeypatch.setattr(validation_runner, "execute_plan", unexpected_execute)
+    monkeypatch.setattr(sys, "argv", _long_pilot_cli(tmp_path))
+    with pytest.raises(SystemExit, match="--allow-large-output"):
+        validation_runner.main()
+    capsys.readouterr()
+
+
+def test_long_pilot_with_confirmation_executes_exactly_one_run(
+    tmp_path, monkeypatch, capsys
+):
+    calls = []
+
+    def capture_execute(plan, *, output_root, skip_analysis):
+        calls.append((plan, output_root, skip_analysis))
+
+    monkeypatch.setattr(validation_runner, "execute_plan", capture_execute)
+    monkeypatch.setattr(
+        sys, "argv", _long_pilot_cli(tmp_path, "--allow-large-output")
+    )
+    assert validation_runner.main() == 0
+    capsys.readouterr()
+    assert len(calls) == 1
+    plan, output_root, skip_analysis = calls[0]
+    assert output_root == (tmp_path / "pilot").resolve()
+    assert skip_analysis is False
+    assert len(plan["runs"]) == 1
+    assert plan["runs"][0]["purposes"] == ["long_pilot"]
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [
+        ("--stage", "long_seed"),
+        ("--include-r512-time-control",),
+        ("--long-final-time", "200"),
+    ],
+)
+def test_long_pilot_rejects_invalid_execution_scope(tmp_path, monkeypatch, extra):
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        _long_pilot_cli(tmp_path, "--allow-large-output", *extra),
+    )
+    with pytest.raises(SystemExit) as error:
+        validation_runner.parse_args()
+    assert error.value.code == 2
 
 
 def test_optional_r512_time_control_has_baseline_and_analysis(tmp_path):
@@ -152,7 +274,10 @@ def test_plan_records_deferrals_hashes_limits_and_analysis_commands(tmp_path):
         "zero_mode_policy": "zero_mean",
     }
     assert len(plan["implementation_sha256"]) == 13
-    assert len(plan["validation_tools_sha256"]) == 3
+    assert len(plan["validation_tools_sha256"]) == 4
+    validator_relative = str(OUTPUT_VALIDATOR.relative_to(OUTPUT_VALIDATOR.parents[1]))
+    assert OUTPUT_VALIDATOR.is_file()
+    assert validator_relative in plan["validation_tools_sha256"]
     assert all(len(value) == 64 for value in plan["implementation_sha256"].values())
     assert all(len(row["config_sha256"]) == 64 for row in plan["runs"])
     for row in plan["runs"]:

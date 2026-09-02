@@ -3,8 +3,8 @@
 
 The default action is read-only: a machine-readable plan is printed to stdout.
 Runs are started only with ``--execute``.  The short numerical matrix isolates
-time step, grid, and dealiasing effects; the long pilot samples activity and
-initial-condition seeds before any full Fig. 4 scan is attempted.
+time step, grid, and dealiasing effects.  A dedicated long pilot runs only
+A=18, seed 24 before the separate activity/seed matrix is attempted.
 
 Execution is deliberately conservative: it is synchronous on the current
 node, requires an explicit confirmation flag, reuses only completed runs whose
@@ -31,6 +31,9 @@ MODEL_SCRIPT = PROJECT_ROOT / "Plane_beris_edwards_stokes.py"
 CONVERGENCE_ANALYZER = PROJECT_ROOT / "scripts_plane" / "analyze_fig4_convergence.py"
 DEFECT_CORE_ANALYZER = (
     PROJECT_ROOT / "scripts_plane" / "analyze_fig4_defect_core_convergence.py"
+)
+OUTPUT_VALIDATOR = (
+    PROJECT_ROOT / "scripts_plane" / "validate_beris_edwards_outputs.py"
 )
 DEFECT_CORE_OUTPUTS = (
     "defect_core_metrics.csv",
@@ -71,8 +74,9 @@ GRID_SHAPES = {
     512: (512, 512, 128),
 }
 NUMERICAL_STAGES = ("preflight", "time", "space", "dealias")
+LONG_STAGES = ("long_pilot", "long_seed")
 ANALYSIS_ONLY_STAGES = ("core_dealias",)
-ALL_STAGES = (*NUMERICAL_STAGES, "long_seed", *ANALYSIS_ONLY_STAGES)
+ALL_STAGES = (*NUMERICAL_STAGES, *LONG_STAGES, *ANALYSIS_ONLY_STAGES)
 
 
 @dataclass(frozen=True)
@@ -213,13 +217,14 @@ def _make_run(
     steps = 1 if preflight else _steps_for_time(final_time, dt)
     # A one-step memory/smoke preflight needs only the mandatory final snapshot.
     # Starting at ``steps`` prevents a redundant full R512 step-0 snapshot.
+    is_long_run = purpose in LONG_STAGES
     if preflight:
         save_start_step = steps
-    elif purpose.startswith("long_seed"):
+    elif is_long_run:
         save_start_step = steps // 2
     else:
         save_start_step = 0
-    save_interval = steps if not purpose.startswith("long_seed") else 500
+    save_interval = 500 if is_long_run else steps
     diagnostic_interval = 1 if preflight else min(100, steps)
     config = {
         "activity_number": activity_number,
@@ -290,6 +295,13 @@ def build_runs(
             raise ValueError(
                 "core_dealias cannot be combined with R512 time controls"
             )
+    if "long_pilot" in requested:
+        if requested != ("long_pilot",):
+            raise ValueError("long_pilot must be requested alone")
+        if include_r512_time_control:
+            raise ValueError("long_pilot cannot include R512 time controls")
+        if long_final_time != 100.0:
+            raise ValueError("long_pilot is fixed at T=100")
     runs: list[RunSpec] = []
 
     if "preflight" in requested or set(requested).intersection(
@@ -351,6 +363,17 @@ def build_runs(
                 resolution=512,
                 dt=0.0025,
                 final_time=1.0,
+            )
+        )
+    if "long_pilot" in requested:
+        runs.append(
+            _make_run(
+                "long_pilot",
+                resolution=320,
+                dt=0.005,
+                final_time=100.0,
+                activity_number=18.0,
+                seed=24,
             )
         )
     if "long_seed" in requested:
@@ -762,6 +785,7 @@ def build_plan(
             Path(__file__).resolve(),
             CONVERGENCE_ANALYZER,
             DEFECT_CORE_ANALYZER,
+            OUTPUT_VALIDATOR,
         )
     }
     run_rows = []
@@ -848,7 +872,12 @@ def build_plan(
             ),
             "requires_confirm_direct_execution": True,
             "large_output_threshold_gib": 50.0,
+            "long_run_requires_allow_large_output": True,
             "long_seed_requires_allow_large_output": True,
+            "long_pilot_external_preflight_prerequisite": (
+                "required before execution; the runner records this external "
+                "prerequisite but does not inspect or certify the evidence"
+            ),
             "simulation_launch_permitted": not analysis_only,
             "missing_input_policy": (
                 "hard_fail_before_any_analyzer"
@@ -868,7 +897,10 @@ def build_plan(
                 "implemented space analysis and optional R512 time sensitivity; "
                 "scientific runs pending"
             ),
-            "seed_activity_pilot": "plan only; not initial-condition convergence",
+            "seed_activity_pilot": (
+                "long_pilot is one A18/seed24 run; long_seed is the separate "
+                "three-activity/three-seed matrix"
+            ),
         },
         "known_scope": {
             "issue_1": (
@@ -945,7 +977,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--allow-large-output",
         action="store_true",
-        help="Required for a plan whose primary snapshot estimate exceeds 50 GiB.",
+        help=(
+            "Required for every long_pilot/long_seed execution and for any plan "
+            "whose primary snapshot estimate exceeds 50 GiB."
+        ),
     )
     parser.add_argument("--skip-analysis", action="store_true")
     args = parser.parse_args()
@@ -969,6 +1004,15 @@ def parse_args() -> argparse.Namespace:
             )
         if args.skip_analysis:
             parser.error("--stage core_dealias cannot use --skip-analysis")
+    if args.stages and "long_pilot" in args.stages:
+        if set(args.stages) != {"long_pilot"}:
+            parser.error("--stage long_pilot must be used alone")
+        if args.long_final_time != 100.0:
+            parser.error("--stage long_pilot is fixed at --long-final-time 100")
+        if args.include_r512_time_control:
+            parser.error(
+                "--stage long_pilot cannot use --include-r512-time-control"
+            )
     if args.expected_gpu_name is not None:
         args.expected_gpu_name = args.expected_gpu_name.strip()
         if not args.expected_gpu_name:
@@ -978,7 +1022,14 @@ def parse_args() -> argparse.Namespace:
         and args.device.split(":", 1)[0] in {"cuda", "auto"}
         and bool(
             set(args.stages or ()).intersection(
-                {"preflight", "space", "dealias", "long_seed", "core_dealias"}
+                {
+                    "preflight",
+                    "space",
+                    "dealias",
+                    "long_pilot",
+                    "long_seed",
+                    "core_dealias",
+                }
             )
         )
     )
@@ -1565,7 +1616,8 @@ def main() -> int:
     if args.execute:
         estimated_gib = plan["storage_estimate"]["primary_snapshot_gib"]
         requires_large_output_confirmation = (
-            "long_seed" in args.stages or estimated_gib > 50.0
+            bool(set(args.stages).intersection(LONG_STAGES))
+            or estimated_gib > 50.0
         )
         if requires_large_output_confirmation and not args.allow_large_output:
             raise SystemExit(
