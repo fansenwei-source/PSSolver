@@ -747,6 +747,65 @@ def _bind_source_tree(package_root: Path) -> dict[str, Any]:
     }
 
 
+def _bind_callable_artifacts(
+    name: str,
+    function: Callable[..., Any],
+    *,
+    package_root: Path,
+) -> list[dict[str, Any]]:
+    """Bind both a decorated callable and its unwrapped implementation."""
+    try:
+        implementation = inspect.unwrap(function)
+    except ValueError as error:
+        raise RuntimeError(
+            f"cannot unwrap nematics3d callable {name}: {error}"
+        ) from error
+    decorated = implementation is not function
+
+    def bind(source: Callable[..., Any], *, role: str, layer: str):
+        source_name = inspect.getsourcefile(source) or inspect.getfile(source)
+        unresolved_path = Path(source_name)
+        source_path = unresolved_path.resolve()
+        if unresolved_path.is_symlink() or not source_path.is_file():
+            raise RuntimeError(
+                f"cannot bind nematics3d {layer} for {name}: {source_path}"
+            )
+        try:
+            source_path.relative_to(package_root.resolve())
+        except ValueError as error:
+            raise RuntimeError(
+                f"nematics3d {layer} for {name} is outside the package tree: "
+                f"{source_path}"
+            ) from error
+        return {
+            "role": role,
+            "layer": layer,
+            "decorated": decorated,
+            "module": getattr(source, "__module__", None),
+            "qualname": getattr(source, "__qualname__", role),
+            "path": str(source_path),
+            "sha256": _sha256_file(source_path),
+        }
+
+    artifacts = []
+    if decorated:
+        artifacts.append(
+            bind(
+                function,
+                role=f"{name}_runtime_wrapper",
+                layer="runtime_wrapper",
+            )
+        )
+    artifacts.append(
+        bind(
+            implementation,
+            role=name,
+            layer="unwrapped_implementation" if decorated else "implementation",
+        )
+    )
+    return artifacts
+
+
 def _load_defect_measurement() -> tuple[
     Callable[..., tuple[dict[str, Any], list[dict[str, Any]]]], dict[str, Any]
 ]:
@@ -778,20 +837,10 @@ def _load_defect_measurement() -> tuple[
         function = getattr(module, name, None)
         if not callable(function):
             raise RuntimeError(f"nematics3d is missing callable {name}")
-        source_name = inspect.getsourcefile(function) or inspect.getfile(function)
-        source_path = Path(source_name).resolve()
-        if source_path.is_symlink() or not source_path.is_file():
-            raise RuntimeError(
-                f"cannot bind nematics3d implementation for {name}: {source_path}"
+        artifacts.extend(
+            _bind_callable_artifacts(
+                name, function, package_root=package_path.parent
             )
-        artifacts.append(
-            {
-                "role": name,
-                "module": getattr(function, "__module__", None),
-                "qualname": getattr(function, "__qualname__", name),
-                "path": str(source_path),
-                "sha256": _sha256_file(source_path),
-            }
         )
 
     adapter_path = (

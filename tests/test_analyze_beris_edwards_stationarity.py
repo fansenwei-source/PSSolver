@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import functools
 import hashlib
 import json
 import os
@@ -803,6 +804,125 @@ def test_nematics3d_source_tree_binding_hashes_all_regular_sources(tmp_path):
     assert len(result["tree_sha256"]) == 64
     for artifact in result["artifacts"]:
         assert artifact["sha256"] == _sha256_file(Path(artifact["path"]))
+
+
+def _synthetic_function(path, *, module, name):
+    path.write_text(
+        f"def {name}():\n    return 'implementation'\n",
+        encoding="utf-8",
+    )
+    namespace = {"__name__": module}
+    exec(
+        compile(path.read_text(encoding="utf-8"), str(path), "exec"),
+        namespace,
+    )
+    return namespace[name]
+
+
+def test_callable_provenance_binds_wrapper_and_unwrapped_implementation(
+    tmp_path,
+):
+    implementation_path = tmp_path / "implementation.py"
+    implementation = _synthetic_function(
+        implementation_path,
+        module="synthetic_nematics3d.disclination",
+        name="defect_detect",
+    )
+    decorator_path = tmp_path / "decorator.py"
+    decorator_path.write_text(
+        "def decorate(function):\n"
+        "    @functools.wraps(function)\n"
+        "    def wrapper():\n"
+        "        return function()\n"
+        "    return wrapper\n",
+        encoding="utf-8",
+    )
+    namespace = {
+        "__name__": "synthetic_nematics3d.decorator",
+        "functools": functools,
+    }
+    exec(
+        compile(
+            decorator_path.read_text(encoding="utf-8"),
+            str(decorator_path),
+            "exec",
+        ),
+        namespace,
+    )
+    decorated = namespace["decorate"](implementation)
+
+    artifacts = stationarity._bind_callable_artifacts(
+        "defect_detect", decorated, package_root=tmp_path
+    )
+
+    assert [artifact["role"] for artifact in artifacts] == [
+        "defect_detect_runtime_wrapper",
+        "defect_detect",
+    ]
+    assert [artifact["layer"] for artifact in artifacts] == [
+        "runtime_wrapper",
+        "unwrapped_implementation",
+    ]
+    assert all(artifact["decorated"] is True for artifact in artifacts)
+    assert [Path(artifact["path"]) for artifact in artifacts] == [
+        decorator_path.resolve(),
+        implementation_path.resolve(),
+    ]
+    assert [artifact["sha256"] for artifact in artifacts] == [
+        _sha256_file(decorator_path),
+        _sha256_file(implementation_path),
+    ]
+    assert decorated() == "implementation"
+
+
+def test_callable_provenance_plain_function_has_one_layer(tmp_path):
+    implementation_path = tmp_path / "implementation.py"
+    implementation = _synthetic_function(
+        implementation_path,
+        module="synthetic_nematics3d.disclination",
+        name="defect_detect",
+    )
+
+    artifacts = stationarity._bind_callable_artifacts(
+        "defect_detect", implementation, package_root=tmp_path
+    )
+
+    assert len(artifacts) == 1
+    assert artifacts[0]["role"] == "defect_detect"
+    assert artifacts[0]["layer"] == "implementation"
+    assert artifacts[0]["decorated"] is False
+    assert Path(artifacts[0]["path"]) == implementation_path.resolve()
+
+
+def test_callable_provenance_rejects_wrapper_cycle(tmp_path):
+    implementation_path = tmp_path / "implementation.py"
+    implementation = _synthetic_function(
+        implementation_path,
+        module="synthetic_nematics3d.disclination",
+        name="defect_detect",
+    )
+    implementation.__wrapped__ = implementation
+
+    with pytest.raises(RuntimeError, match="cannot unwrap nematics3d callable"):
+        stationarity._bind_callable_artifacts(
+            "defect_detect", implementation, package_root=tmp_path
+        )
+
+
+def test_callable_provenance_rejects_source_outside_package(tmp_path):
+    package_root = tmp_path / "nematics3d"
+    package_root.mkdir()
+    implementation_path = tmp_path / "outside.py"
+    implementation = _synthetic_function(
+        implementation_path,
+        module="outside",
+        name="defect_detect",
+    )
+
+    with pytest.raises(RuntimeError, match="outside the package tree"):
+        stationarity._bind_callable_artifacts(
+            "defect_detect", implementation, package_root=package_root
+        )
 
 
 def test_final_rehash_detects_tamper_with_restored_file_identity(
