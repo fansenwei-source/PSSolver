@@ -230,6 +230,8 @@ def _analysis_kwargs(tmp_path: Path):
         "run_id": run_id,
         "validation_report_path": validation,
         "checksum_manifest_path": checksum,
+        "expected_validation_report_sha256": _sha256_file(validation),
+        "expected_checksum_manifest_sha256": _sha256_file(checksum),
         "output_dir": tmp_path / "analysis",
         "include_defects": False,
         "energy_device": "cpu",
@@ -601,6 +603,7 @@ def test_mismatched_formal_validation_report_is_rejected(tmp_path):
     payload = json.loads(validation.read_text())
     payload["runner_plan_binding"] = "mismatch"
     validation.write_text(json.dumps(payload), encoding="utf-8")
+    kwargs["expected_validation_report_sha256"] = _sha256_file(validation)
 
     with pytest.raises(ValueError, match="formal validation report mismatch"):
         analyze(**kwargs)
@@ -760,6 +763,9 @@ def test_manifest_missing_critical_record_is_rejected(tmp_path):
     manifest_path.write_text(
         json.dumps(manifest, allow_nan=False), encoding="utf-8"
     )
+    kwargs["expected_checksum_manifest_sha256"] = _sha256_file(
+        manifest_path
+    )
 
     with pytest.raises(ValueError, match="missing critical inputs"):
         analyze(**kwargs)
@@ -824,6 +830,16 @@ def test_final_rehash_detects_tamper_with_restored_file_identity(
         return payload
 
     monkeypatch.setattr(stationarity, "_plot_png", mutate_after_analysis)
+    with pytest.raises(ValueError, match="checksum manifest SHA-256 mismatch"):
+        analyze(**kwargs)
+    assert not kwargs["output_dir"].exists()
+
+
+
+def test_wrong_expected_checksum_manifest_hash_is_rejected(tmp_path):
+    kwargs = _analysis_kwargs(tmp_path)
+    kwargs["expected_checksum_manifest_sha256"] = "0" * 64
+
     with pytest.raises(ValueError, match="checksum manifest SHA-256 mismatch"):
         analyze(**kwargs)
     assert not kwargs["output_dir"].exists()

@@ -100,6 +100,15 @@ def _canonical_sha256(value: Any) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def _validated_sha256(value: str, *, label: str) -> str:
+    if (
+        len(value) != 64
+        or any(character not in "0123456789abcdef" for character in value)
+    ):
+        raise ValueError(f"{label} must be a lowercase SHA-256 digest")
+    return value
+
+
 def _jsonable(value: Any) -> Any:
     if isinstance(value, np.generic):
         value = value.item()
@@ -1122,6 +1131,8 @@ def analyze(
     run_id: str,
     validation_report_path: Path,
     checksum_manifest_path: Path,
+    expected_validation_report_sha256: str,
+    expected_checksum_manifest_sha256: str,
     output_dir: Path,
     include_defects: bool,
     energy_device: str,
@@ -1141,6 +1152,14 @@ def analyze(
     report_input = validation_report_path
     manifest_input = checksum_manifest_path
     output_input = output_dir
+    expected_validation_report_sha256 = _validated_sha256(
+        expected_validation_report_sha256,
+        label="expected validation report SHA-256",
+    )
+    expected_checksum_manifest_sha256 = _validated_sha256(
+        expected_checksum_manifest_sha256,
+        label="expected checksum manifest SHA-256",
+    )
     if any(
         path.is_symlink()
         for path in (
@@ -1232,6 +1251,16 @@ def analyze(
     plan_file_sha = _sha256_file(plan_path)
     validation_report_sha = _sha256_file(validation_report_path)
     checksum_manifest_sha = _sha256_file(checksum_manifest_path)
+    if validation_report_sha != expected_validation_report_sha256:
+        raise ValueError(
+            "validation report SHA-256 mismatch: "
+            f"{validation_report_sha} != {expected_validation_report_sha256}"
+        )
+    if checksum_manifest_sha != expected_checksum_manifest_sha256:
+        raise ValueError(
+            "checksum manifest SHA-256 mismatch: "
+            f"{checksum_manifest_sha} != {expected_checksum_manifest_sha256}"
+        )
     external_report = _read_json_object(validation_report_path)
     _validate_external_report(
         external_report,
@@ -1522,8 +1551,16 @@ def analyze(
             "simulation_git": plan.get("git"),
             "validation_report_path": str(validation_report_path),
             "validation_report_sha256": validation_report_sha,
+            "expected_validation_report_sha256": (
+                expected_validation_report_sha256
+            ),
+            "validation_report_expected_sha256_matched": True,
             "checksum_manifest_path": str(checksum_manifest_path),
             "checksum_manifest_sha256": checksum_manifest_sha,
+            "expected_checksum_manifest_sha256": (
+                expected_checksum_manifest_sha256
+            ),
+            "checksum_manifest_expected_sha256_matched": True,
             "checksum_manifest_verification": manifest_verification,
             "fresh_validation_passed": True,
             "critical_input_file_count": len(paths),
@@ -1652,7 +1689,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--plan", type=Path, required=True)
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--validation-report", type=Path, required=True)
+    parser.add_argument(
+        "--expected-validation-report-sha256", required=True
+    )
     parser.add_argument("--checksum-manifest", type=Path, required=True)
+    parser.add_argument(
+        "--expected-checksum-manifest-sha256", required=True
+    )
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--include-defects", action="store_true")
     parser.add_argument("--energy-device", default="cpu")
@@ -1689,6 +1732,12 @@ def main(argv: list[str] | None = None) -> int:
             run_id=args.run_id,
             validation_report_path=args.validation_report,
             checksum_manifest_path=args.checksum_manifest,
+            expected_validation_report_sha256=(
+                args.expected_validation_report_sha256
+            ),
+            expected_checksum_manifest_sha256=(
+                args.expected_checksum_manifest_sha256
+            ),
             output_dir=args.output_dir,
             include_defects=args.include_defects,
             energy_device=args.energy_device,
