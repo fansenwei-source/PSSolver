@@ -18,7 +18,15 @@ from .snapshots import (
     representative_ordered_S,
     require_distinct_output_directory,
 )
-from .transforms import TensorProductTransformBackend
+from .transforms import (
+    BasisAwareSpectralProjector,
+    DEALIAS_RULE_FRACTIONS,
+    DEFAULT_DEALIAS_RULE,
+    FreeSlipModalStokesSolver,
+    TensorProductTransformBackend,
+    projected_common_basis_stress_divergence,
+    projected_distortion_stress_divergence,
+)
 
 __all__ = [
     'SpectralSolver',
@@ -31,7 +39,13 @@ __all__ = [
     'classify_ideal_loop',
     'convention_metadata',
     'ideal_loop_axis_angles',
+    'BasisAwareSpectralProjector',
+    'DEALIAS_RULE_FRACTIONS',
+    'DEFAULT_DEALIAS_RULE',
+    'FreeSlipModalStokesSolver',
     'TensorProductTransformBackend',
+    'projected_common_basis_stress_divergence',
+    'projected_distortion_stress_divergence',
     'prepare_new_run_directory',
     'write_run_metadata',
     'SimulationSnapshot',

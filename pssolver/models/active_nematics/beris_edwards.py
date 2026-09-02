@@ -94,6 +94,60 @@ def q_tensor_contraction(left, right):
     )
 
 
+def beris_edwards_free_energy_density(
+    q_components,
+    q_gradients,
+    *,
+    ldg_a,
+    ldg_b,
+    ldg_c,
+    ldg_l1,
+):
+    """Return the one-constant Landau--de Gennes free-energy density.
+
+    The convention is
+
+    ``A/2 tr(Q^2) + B/3 tr(Q^3) + C/4 tr(Q^2)^2``
+    ``+ L1/2 partial_k Q:partial_k Q``.
+
+    The five compact components are expanded with their full symmetric,
+    traceless contraction weights.  Keeping this helper geometry-independent
+    lets equation-level tests compare its variational derivative with the
+    production molecular field on any supported transform grid.
+    """
+    coefficients = (ldg_a, ldg_b, ldg_c, ldg_l1)
+    if not all(math.isfinite(float(value)) for value in coefficients):
+        raise ValueError("Landau--de Gennes coefficients must be finite.")
+    if ldg_l1 < 0:
+        raise ValueError("ldg_l1 must be non-negative.")
+
+    qxx, qxy, qxz, qyy, qyz = _five_components(
+        q_components,
+        "q_components",
+    )
+    gradients = _three_q_gradients(q_gradients, "q_gradients")
+    qzz = -qxx - qyy
+    tr_q2, q2 = _q_square_components(q_components)
+    q2_xx, q2_xy, q2_xz, q2_yy, q2_yz = q2
+    q2_zz = qxz.square() + qyz.square() + qzz.square()
+    tr_q3 = (
+        qxx * q2_xx
+        + qyy * q2_yy
+        + qzz * q2_zz
+        + 2.0 * (qxy * q2_xy + qxz * q2_xz + qyz * q2_yz)
+    )
+    gradient_sq = sum(
+        q_tensor_contraction(gradient, gradient)
+        for gradient in gradients
+    )
+    return (
+        0.5 * ldg_a * tr_q2
+        + (ldg_b / 3.0) * tr_q3
+        + 0.25 * ldg_c * tr_q2.square()
+        + 0.5 * ldg_l1 * gradient_sq
+    )
+
+
 def beris_edwards_linear_operator(
     wavenumber_squared,
     *,
@@ -588,6 +642,7 @@ __all__ = [
     "beris_edwards_algebraic_stress_components",
     "beris_edwards_distortion_stress_components",
     "beris_edwards_flow_alignment_components",
+    "beris_edwards_free_energy_density",
     "beris_edwards_linear_operator",
     "beris_edwards_molecular_field_components",
     "beris_edwards_q_nonlinear_components",

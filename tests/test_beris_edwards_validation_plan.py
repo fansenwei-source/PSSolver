@@ -144,14 +144,14 @@ def test_plan_records_deferrals_hashes_limits_and_analysis_commands(tmp_path):
 
     assert plan["validation"] == "beris_edwards_stokes_issue6"
     assert "deferred" in plan["known_scope"]["issue_1"]
-    assert "remain open" in plan["known_scope"]["issue_7"]
+    assert "implemented" in plan["known_scope"]["issue_7"]
     assert plan["fixed_numerics"] == {
         "dtype": "float64",
         "tf32": "off",
         "spectral_refresh": "disabled",
         "zero_mode_policy": "zero_mean",
     }
-    assert len(plan["implementation_sha256"]) == 12
+    assert len(plan["implementation_sha256"]) == 13
     assert len(plan["validation_tools_sha256"]) == 3
     assert all(len(value) == 64 for value in plan["implementation_sha256"].values())
     assert all(len(row["config_sha256"]) == 64 for row in plan["runs"])

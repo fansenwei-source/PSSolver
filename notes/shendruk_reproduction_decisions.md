@@ -23,8 +23,14 @@ already been validated.
   runs without permission to launch simulations. The HPCC core-dealias analysis
   and its scientific interpretation are still pending; implementation alone
   does not close issue 6.
-- Issue 7 (remaining equation-level tests): still open and independent of
-  issue 6; completing convergence studies does not close it.
+- Issue 7 (independent equation-level tests): complete for the formal
+  float64, mixed FFT/DCT/DST, `cubic_half` Beris--Edwards--Stokes path. The
+  manufactured and variational tests cover the complete stress divergence,
+  parity transforms, Schur solve, pressure and tangential zero modes, wall
+  power, and the semidiscrete energy budget; see
+  `notes/issue7_equation_level_validation_zh.md`. This does not validate
+  `dealias=none`, which retains the terminal DST derivative-null mode, and it
+  is not a claim that the full physical benchmark has been reproduced.
 - Issue 8 (shared Beris--Edwards implementation): resolved for the current
   script.
 - Issue 9 (isotropic stress/effective pressure): explanation only; no repair is

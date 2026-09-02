@@ -134,6 +134,7 @@ class Fig4NumericsCliTests(unittest.TestCase):
                 "pssolver/models/active_nematics/fields.py",
                 "pssolver/models/active_nematics/q_tensor.py",
                 "pssolver/models/active_nematics/beris_edwards.py",
+                "pssolver/models/active_nematics/stokes.py",
                 "pssolver/models/active_nematics/initial_conditions.py",
             },
         )

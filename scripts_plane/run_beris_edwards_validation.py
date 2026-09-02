@@ -60,6 +60,7 @@ IMPLEMENTATION_SOURCE_FILES = tuple(
         "pssolver/models/active_nematics/fields.py",
         "pssolver/models/active_nematics/q_tensor.py",
         "pssolver/models/active_nematics/beris_edwards.py",
+        "pssolver/models/active_nematics/stokes.py",
         "pssolver/models/active_nematics/initial_conditions.py",
     )
 )
@@ -879,7 +880,9 @@ def build_plan(
                 "time, grid, dealiasing, and seed studies"
             ),
             "issue_7": (
-                "independent manufactured-solution and energy tests remain open"
+                "implemented as independent float64 manufactured-solution, "
+                "mixed-basis Schur, zero-mode, variational free-energy, "
+                "wall-power, and discrete power-budget CPU tests"
             ),
         },
         "interpretation_limits": [
@@ -890,7 +893,11 @@ def build_plan(
                 "Varying seed alone is not initial-condition convergence; core radius, "
                 "twist, and initializer-family sensitivity remain separate."
             ),
-            "dealias-rule=none is excluded until its highest-DST-mode test exists.",
+            (
+                "dealias-rule=none remains non-formal because it retains the "
+                "terminal DST derivative-null mode; benchmark results use "
+                "cubic_half, which removes it."
+            ),
             "No automatic convergence claim is made by this plan.",
         ],
         "advisory_gates": {
