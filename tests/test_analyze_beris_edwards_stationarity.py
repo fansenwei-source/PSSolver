@@ -249,6 +249,120 @@ def _analysis_kwargs(tmp_path: Path):
     }
 
 
+def _write_external_checksum_payload(kwargs):
+    """Replace the synthetic canonical manifest with the HPCC final format."""
+
+    manifest_path = kwargs["checksum_manifest_path"]
+    original_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    stable_fields = {
+        "schema_version": 1,
+        "actual_validation_plan": str(kwargs["plan_path"].resolve()),
+        "git_head": "a" * 40,
+        "job_id": "synthetic-job",
+        "output_root": str(kwargs["run_dir"].parent.resolve()),
+        "run_id": kwargs["run_id"],
+        "scratch_policy": {"mode": "synthetic-read-only-test"},
+    }
+    payload_document = {
+        **stable_fields,
+        "created_utc": "2026-09-02T08:01:59+00:00",
+        "phase": "stable_payload_before_slurm_log_close",
+        "entries": original_manifest["entries"],
+        "entry_count": len(original_manifest["entries"]),
+    }
+    payload_dir = manifest_path.parent / "provenance"
+    payload_dir.mkdir()
+    payload_path = payload_dir / "checksum_payload_synthetic.json"
+    payload_bytes = (
+        json.dumps(
+            payload_document,
+            indent=2,
+            sort_keys=True,
+            allow_nan=False,
+        )
+        + "\n"
+    ).encode("utf-8")
+    payload_path.write_bytes(payload_bytes)
+    payload_digest = hashlib.sha256(payload_bytes).hexdigest()
+    assert payload_digest != _canonical_sha256(payload_document)
+    payload_stat = payload_path.stat()
+    payload_record = {
+        "path": str(payload_path.resolve()),
+        "scope": "home_control_payload",
+        "sha256": payload_digest,
+        "size_bytes": payload_stat.st_size,
+        "mtime_ns": payload_stat.st_mtime_ns,
+    }
+    final_manifest = {
+        **stable_fields,
+        "created_utc": "2026-09-02T08:03:07+00:00",
+        "phase": "final_after_slurm_log_close",
+        "entries": [*payload_document["entries"], payload_record],
+        "entry_count": len(payload_document["entries"]) + 1,
+        "payload_sha256": payload_digest,
+        "slurm_accounting_main_job": {"State": "COMPLETED"},
+    }
+    manifest_path.write_text(
+        json.dumps(final_manifest, indent=2, sort_keys=True, allow_nan=False)
+        + "\n",
+        encoding="utf-8",
+    )
+    kwargs["expected_checksum_manifest_sha256"] = _sha256_file(manifest_path)
+    return payload_path, payload_document
+
+
+def _external_payload_record(manifest):
+    records = [
+        record
+        for record in manifest["entries"]
+        if record.get("scope") == "home_control_payload"
+    ]
+    assert len(records) == 1
+    return records[0]
+
+
+def _rewrite_external_payload_and_manifest(
+    kwargs, payload_path: Path, payload_document
+):
+    """Rebind a deliberately changed payload so semantic gates are reached."""
+
+    payload_bytes = (
+        json.dumps(
+            payload_document,
+            indent=2,
+            sort_keys=True,
+            allow_nan=False,
+        )
+        + "\n"
+    ).encode("utf-8")
+    return _rebind_external_payload_bytes(kwargs, payload_path, payload_bytes)
+
+
+def _rebind_external_payload_bytes(kwargs, payload_path: Path, payload_bytes):
+    """Update only the raw-payload record and signed final manifest."""
+
+    payload_path.write_bytes(payload_bytes)
+    payload_digest = hashlib.sha256(payload_bytes).hexdigest()
+    payload_stat = payload_path.stat()
+    manifest_path = kwargs["checksum_manifest_path"]
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    record = _external_payload_record(manifest)
+    record.update(
+        {
+            "sha256": payload_digest,
+            "size_bytes": payload_stat.st_size,
+            "mtime_ns": payload_stat.st_mtime_ns,
+        }
+    )
+    manifest["payload_sha256"] = payload_digest
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
+    kwargs["expected_checksum_manifest_sha256"] = _sha256_file(manifest_path)
+    return payload_digest
+
+
 def test_canonical_q_convention_invariants_and_bulk_energy(tmp_path):
     shape = (2, 2, 2)
     scalar_order = 0.4
@@ -769,6 +883,241 @@ def test_manifest_missing_critical_record_is_rejected(tmp_path):
     )
 
     with pytest.raises(ValueError, match="missing critical inputs"):
+        analyze(**kwargs)
+    assert not kwargs["output_dir"].exists()
+
+
+def test_external_checksum_payload_production_convention_is_verified_and_anchored(
+    tmp_path,
+):
+    kwargs = _analysis_kwargs(tmp_path)
+    payload_path, payload_document = _write_external_checksum_payload(kwargs)
+    payload_stat = payload_path.stat()
+    payload_sha256 = _sha256_file(payload_path)
+
+    report = analyze(**kwargs)
+
+    manifest_gate = report["input_provenance"][
+        "checksum_manifest_verification"
+    ]
+    assert manifest_gate["critical_record_count_verified"] == 70
+    payload_gate = manifest_gate["payload_hash"]
+    assert payload_gate == {
+        "status": "verified",
+        "declared_sha256": payload_sha256,
+        "convention": "external_raw_bytes_payload",
+        "external_payload_path": str(payload_path.resolve()),
+        "external_payload_sha256": payload_sha256,
+        "external_payload_record_scope": "home_control_payload",
+        "external_payload_record_size_bytes": payload_stat.st_size,
+        "external_payload_record_mtime_ns": payload_stat.st_mtime_ns,
+        "payload_phase": "stable_payload_before_slurm_log_close",
+        "manifest_phase": "final_after_slurm_log_close",
+        "payload_entry_count": len(payload_document["entries"]),
+        "manifest_entry_count": len(payload_document["entries"]) + 1,
+        "payload_entries_exact_subset": True,
+        "checksum_manifest_path": str(
+            kwargs["checksum_manifest_path"].resolve()
+        ),
+    }
+    assert report["input_provenance"]["critical_input_file_count"] == 71
+    analysis_manifest = json.loads(
+        (kwargs["output_dir"] / "analysis_manifest.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert (
+        analysis_manifest["input_provenance"][
+            "checksum_manifest_verification"
+        ]["payload_hash"]
+        == payload_gate
+    )
+
+
+def test_external_checksum_payload_raw_byte_tamper_is_rejected(tmp_path):
+    kwargs = _analysis_kwargs(tmp_path)
+    payload_path, _ = _write_external_checksum_payload(kwargs)
+    original_stat = payload_path.stat()
+    payload = bytearray(payload_path.read_bytes())
+    payload[payload.index(b"\n")] = ord(" ")
+    payload_path.write_bytes(payload)
+    os.utime(
+        payload_path,
+        ns=(original_stat.st_atime_ns, original_stat.st_mtime_ns),
+    )
+
+    with pytest.raises(ValueError, match="SHA-256 mismatch"):
+        analyze(**kwargs)
+    assert not kwargs["output_dir"].exists()
+
+
+def test_external_checksum_payload_outside_control_root_is_rejected(tmp_path):
+    kwargs = _analysis_kwargs(tmp_path)
+    payload_path, _ = _write_external_checksum_payload(kwargs)
+    outside = tmp_path / "outside_payload.json"
+    outside.write_bytes(payload_path.read_bytes())
+    outside_stat = outside.stat()
+    manifest_path = kwargs["checksum_manifest_path"]
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    record = _external_payload_record(manifest)
+    record.update(
+        {
+            "path": str(outside.resolve()),
+            "size_bytes": outside_stat.st_size,
+            "mtime_ns": outside_stat.st_mtime_ns,
+        }
+    )
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
+    kwargs["expected_checksum_manifest_sha256"] = _sha256_file(manifest_path)
+
+    with pytest.raises(
+        ValueError, match="outside checksum manifest control directory"
+    ):
+        analyze(**kwargs)
+    assert not kwargs["output_dir"].exists()
+
+
+def test_external_checksum_payload_symlink_is_rejected(tmp_path):
+    kwargs = _analysis_kwargs(tmp_path)
+    payload_path, _ = _write_external_checksum_payload(kwargs)
+    target = payload_path.with_name("payload_target.json")
+    payload_path.replace(target)
+    payload_path.symlink_to(target.name)
+
+    with pytest.raises(ValueError, match="must not contain symlinks"):
+        analyze(**kwargs)
+    assert not kwargs["output_dir"].exists()
+
+
+def test_external_checksum_payload_stable_field_mismatch_is_rejected(tmp_path):
+    kwargs = _analysis_kwargs(tmp_path)
+    payload_path, payload_document = _write_external_checksum_payload(kwargs)
+    payload_document["run_id"] = "different-run"
+    _rewrite_external_payload_and_manifest(
+        kwargs, payload_path, payload_document
+    )
+
+    with pytest.raises(ValueError, match="stable field mismatch: run_id"):
+        analyze(**kwargs)
+    assert not kwargs["output_dir"].exists()
+
+
+def test_external_checksum_payload_requires_exact_entry_subset(tmp_path):
+    kwargs = _analysis_kwargs(tmp_path)
+    payload_path, payload_document = _write_external_checksum_payload(kwargs)
+    payload_document["entries"][0]["payload_only_field"] = True
+    _rewrite_external_payload_and_manifest(
+        kwargs, payload_path, payload_document
+    )
+
+    with pytest.raises(ValueError, match="not an exact subset"):
+        analyze(**kwargs)
+    assert not kwargs["output_dir"].exists()
+
+
+def test_duplicate_external_checksum_payload_record_is_rejected(tmp_path):
+    kwargs = _analysis_kwargs(tmp_path)
+    _write_external_checksum_payload(kwargs)
+    manifest_path = kwargs["checksum_manifest_path"]
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["entries"].append(dict(_external_payload_record(manifest)))
+    manifest["entry_count"] = len(manifest["entries"])
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
+    kwargs["expected_checksum_manifest_sha256"] = _sha256_file(manifest_path)
+
+    with pytest.raises(ValueError, match="exactly one external checksum payload"):
+        analyze(**kwargs)
+    assert not kwargs["output_dir"].exists()
+
+
+def test_external_checksum_payload_duplicate_json_key_is_rejected(tmp_path):
+    kwargs = _analysis_kwargs(tmp_path)
+    payload_path, _ = _write_external_checksum_payload(kwargs)
+    payload = payload_path.read_bytes()
+    assert payload.startswith(b"{\n")
+    payload = b'{\n  "phase": "untrusted-duplicate",\n' + payload[2:]
+    _rebind_external_payload_bytes(kwargs, payload_path, payload)
+
+    with pytest.raises(ValueError, match="duplicate JSON key 'phase'"):
+        analyze(**kwargs)
+    assert not kwargs["output_dir"].exists()
+
+
+def test_external_checksum_payload_identity_change_during_analysis_is_fatal(
+    tmp_path, monkeypatch
+):
+    kwargs = _analysis_kwargs(tmp_path)
+    payload_path, _ = _write_external_checksum_payload(kwargs)
+    original = stationarity.SpectralElasticEnergy.evaluate
+    calls = 0
+
+    def mutate_once(self, q_path):
+        nonlocal calls
+        result = original(self, q_path)
+        calls += 1
+        if calls == 1:
+            payload_path.touch()
+        return result
+
+    monkeypatch.setattr(
+        stationarity.SpectralElasticEnergy, "evaluate", mutate_once
+    )
+    with pytest.raises(RuntimeError, match="critical inputs changed"):
+        analyze(**kwargs)
+    assert not kwargs["output_dir"].exists()
+
+
+def test_external_checksum_payload_final_rehash_detects_restored_identity_tamper(
+    tmp_path, monkeypatch
+):
+    kwargs = _analysis_kwargs(tmp_path)
+    payload_path, _ = _write_external_checksum_payload(kwargs)
+    original_stat = payload_path.stat()
+    original_plot = stationarity._plot_png
+
+    def mutate_after_analysis(rows, *, include_defects):
+        png = original_plot(rows, include_defects=include_defects)
+        payload = bytearray(payload_path.read_bytes())
+        payload[payload.index(b"\n")] = ord(" ")
+        payload_path.write_bytes(payload)
+        os.utime(
+            payload_path,
+            ns=(original_stat.st_atime_ns, original_stat.st_mtime_ns),
+        )
+        restored = payload_path.stat()
+        assert restored.st_ino == original_stat.st_ino
+        assert restored.st_size == original_stat.st_size
+        assert restored.st_mtime_ns == original_stat.st_mtime_ns
+        return png
+
+    monkeypatch.setattr(stationarity, "_plot_png", mutate_after_analysis)
+    with pytest.raises(ValueError, match="checksum manifest SHA-256 mismatch"):
+        analyze(**kwargs)
+    assert not kwargs["output_dir"].exists()
+
+
+def test_wrong_expected_manifest_hash_is_rejected_before_external_path_is_used(
+    tmp_path, monkeypatch
+):
+    kwargs = _analysis_kwargs(tmp_path)
+    _write_external_checksum_payload(kwargs)
+    kwargs["expected_checksum_manifest_sha256"] = "0" * 64
+
+    def unexpected_external_path_use(*unused_args, **unused_kwargs):
+        raise AssertionError("external payload path was used before manifest gate")
+
+    monkeypatch.setattr(
+        stationarity,
+        "_external_payload_record_and_path",
+        unexpected_external_path_use,
+    )
+    with pytest.raises(ValueError, match="checksum manifest SHA-256 mismatch"):
         analyze(**kwargs)
     assert not kwargs["output_dir"].exists()
 

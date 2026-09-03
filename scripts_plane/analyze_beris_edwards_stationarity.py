@@ -100,6 +100,55 @@ def _canonical_sha256(value: Any) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+def _read_stable_bytes(path: Path, *, label: str) -> bytes:
+    identities_before = _collect_identities((path,))
+    payload = path.read_bytes()
+    identities_after = _collect_identities((path,))
+    if identities_after != identities_before:
+        raise RuntimeError(f"{label} changed while being read")
+    return payload
+
+
+def _strict_json_object_from_bytes(
+    payload: bytes, *, path: Path
+) -> dict[str, Any]:
+    def reject_constant(token: str) -> None:
+        raise ValueError(f"non-standard JSON constant {token!r} in {path}")
+
+    def reject_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError(f"duplicate JSON key {key!r} in {path}")
+            result[key] = value
+        return result
+
+    try:
+        text = payload.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise ValueError(f"{path} is not valid UTF-8 JSON") from error
+    document = json.loads(
+        text,
+        parse_constant=reject_constant,
+        object_pairs_hook=reject_pairs,
+    )
+    if not isinstance(document, dict):
+        raise ValueError(f"{path} must contain a JSON object")
+    return document
+
+
+def _read_expected_json_object(
+    path: Path, *, expected_sha256: str, label: str
+) -> tuple[dict[str, Any], str]:
+    payload = _read_stable_bytes(path, label=label)
+    digest = hashlib.sha256(payload).hexdigest()
+    if digest != expected_sha256:
+        raise ValueError(
+            f"{label} SHA-256 mismatch: {digest} != {expected_sha256}"
+        )
+    return _strict_json_object_from_bytes(payload, path=path), digest
+
+
 def _validated_sha256(value: str, *, label: str) -> str:
     if (
         len(value) != 64
@@ -251,6 +300,8 @@ def _input_paths(
     validation_report: Path,
     checksum_manifest: Path,
     steps: Iterable[int],
+    *,
+    additional_paths: tuple[Path, ...] = (),
 ) -> tuple[Path, ...]:
     return (
         plan_path,
@@ -265,6 +316,7 @@ def _input_paths(
             for step in steps
             for field in ("Q", "u", "p")
         ),
+        *additional_paths,
     )
 
 _MANIFEST_PATH_KEYS = (
@@ -352,20 +404,30 @@ def _match_manifest_path(
     return matches[0] if matches else None
 
 
-def _verify_manifest_payload_hash(manifest: dict[str, Any]) -> dict[str, Any]:
+_EXTERNAL_PAYLOAD_SCOPE = "home_control_payload"
+_EXTERNAL_PAYLOAD_PHASE = "stable_payload_before_slurm_log_close"
+_FINAL_MANIFEST_PHASE = "final_after_slurm_log_close"
+_EXTERNAL_PAYLOAD_STABLE_FIELDS = (
+    "schema_version",
+    "actual_validation_plan",
+    "git_head",
+    "job_id",
+    "output_root",
+    "run_id",
+    "scratch_policy",
+)
+
+
+def _manifest_payload_declaration(
+    manifest: dict[str, Any],
+) -> tuple[str, str] | None:
     declared_items = [
         (key, value)
         for key, value in manifest.items()
         if key in ("payload_sha256", "manifest_payload_sha256")
     ]
     if not declared_items:
-        return {
-            "status": "not_declared",
-            "note": (
-                "The external manifest did not expose a recognized top-level "
-                "payload hash; its own file SHA-256 is still bound separately."
-            ),
-        }
+        return None
     if len(declared_items) != 1:
         raise ValueError("checksum manifest has ambiguous payload hash fields")
     key, declared = declared_items[0]
@@ -375,6 +437,245 @@ def _verify_manifest_payload_hash(manifest: dict[str, Any]) -> dict[str, Any]:
         or any(character not in "0123456789abcdef" for character in declared)
     ):
         raise ValueError("checksum manifest payload SHA-256 is malformed")
+    return key, declared
+
+
+def _external_payload_records(manifest: dict[str, Any]) -> list[dict[str, Any]]:
+    entries = manifest.get("entries")
+    if not isinstance(entries, list):
+        return []
+    return [
+        record
+        for record in entries
+        if isinstance(record, dict)
+        and record.get("scope") == _EXTERNAL_PAYLOAD_SCOPE
+    ]
+
+
+def _external_payload_record_and_path(
+    manifest: dict[str, Any],
+    *,
+    checksum_manifest_path: Path,
+) -> tuple[dict[str, Any], Path] | None:
+    records = _external_payload_records(manifest)
+    if not records:
+        return None
+    if len(records) != 1:
+        raise ValueError(
+            "checksum manifest must contain exactly one external checksum "
+            f"payload record with scope {_EXTERNAL_PAYLOAD_SCOPE!r}"
+        )
+    declaration = _manifest_payload_declaration(manifest)
+    if declaration is None:
+        raise ValueError(
+            "external checksum payload record requires a top-level payload "
+            "SHA-256 declaration"
+        )
+    _, declared = declaration
+    record = records[0]
+    raw_path = record.get("path")
+    if not isinstance(raw_path, str) or not raw_path:
+        raise ValueError("external checksum payload path is missing")
+    candidate = Path(raw_path)
+    if not candidate.is_absolute():
+        raise ValueError("external checksum payload path must be absolute")
+    if ".." in candidate.parts:
+        raise ValueError("external checksum payload path must not contain '..'")
+
+    control_root = checksum_manifest_path.resolve().parent
+    manifest_resolved = checksum_manifest_path.resolve()
+    if candidate == manifest_resolved:
+        raise ValueError(
+            "external checksum payload must not be the checksum manifest itself"
+        )
+    try:
+        relative = candidate.relative_to(control_root)
+    except ValueError as error:
+        raise ValueError(
+            "external checksum payload is outside checksum manifest control "
+            "directory"
+        ) from error
+    if not relative.parts:
+        raise ValueError("external checksum payload path must name a file")
+
+    component = control_root
+    for part in relative.parts:
+        component = component / part
+        if component.is_symlink():
+            raise ValueError(
+                "external checksum payload path must not contain symlinks"
+            )
+    try:
+        resolved = candidate.resolve(strict=True)
+    except FileNotFoundError as error:
+        raise ValueError("external checksum payload file is missing") from error
+    if resolved == control_root or not resolved.is_relative_to(control_root):
+        raise ValueError(
+            "external checksum payload is outside checksum manifest control "
+            "directory"
+        )
+    if not resolved.is_file():
+        raise ValueError("external checksum payload must be a regular file")
+
+    digest = record.get("sha256")
+    if digest != declared:
+        raise ValueError(
+            "external checksum payload record SHA-256 does not match the "
+            "top-level declaration"
+        )
+    size = record.get("size_bytes")
+    mtime_ns = record.get("mtime_ns")
+    if isinstance(size, bool) or not isinstance(size, int) or size < 0:
+        raise ValueError("external checksum payload record size_bytes is invalid")
+    if (
+        isinstance(mtime_ns, bool)
+        or not isinstance(mtime_ns, int)
+        or mtime_ns < 0
+    ):
+        raise ValueError("external checksum payload record mtime_ns is invalid")
+    return record, resolved
+
+
+def _strict_external_entries(
+    document: dict[str, Any], *, label: str
+) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
+    entries = document.get("entries")
+    if not isinstance(entries, list):
+        raise ValueError(f"{label} entries must be a list")
+    entry_count = document.get("entry_count")
+    if (
+        isinstance(entry_count, bool)
+        or not isinstance(entry_count, int)
+        or entry_count != len(entries)
+    ):
+        raise ValueError(f"{label} entry_count does not match entries")
+    by_path: dict[str, dict[str, Any]] = {}
+    for index, record in enumerate(entries):
+        if not isinstance(record, dict):
+            raise ValueError(f"{label} entry {index} must be an object")
+        raw_path = record.get("path")
+        if not isinstance(raw_path, str) or not raw_path:
+            raise ValueError(f"{label} entry {index} has no path")
+        if raw_path in by_path:
+            raise ValueError(f"{label} contains duplicate path {raw_path!r}")
+        by_path[raw_path] = record
+    return entries, by_path
+
+
+def _verify_external_manifest_payload(
+    manifest: dict[str, Any],
+    *,
+    checksum_manifest_path: Path,
+    declaration: tuple[str, str],
+    record: dict[str, Any],
+    payload_path: Path,
+) -> dict[str, Any]:
+    _, declared = declaration
+    stat = payload_path.stat()
+    if stat.st_size != record["size_bytes"]:
+        raise ValueError("external checksum payload size mismatch")
+    if stat.st_mtime_ns != record["mtime_ns"]:
+        raise ValueError("external checksum payload mtime_ns mismatch")
+    payload_bytes = _read_stable_bytes(
+        payload_path, label="external checksum payload"
+    )
+    actual_digest = hashlib.sha256(payload_bytes).hexdigest()
+    if actual_digest != declared:
+        raise ValueError("external checksum payload SHA-256 mismatch")
+    payload = _strict_json_object_from_bytes(payload_bytes, path=payload_path)
+
+    if manifest.get("phase") != _FINAL_MANIFEST_PHASE:
+        raise ValueError(
+            "external checksum payload convention requires final manifest "
+            f"phase {_FINAL_MANIFEST_PHASE!r}"
+        )
+    if payload.get("phase") != _EXTERNAL_PAYLOAD_PHASE:
+        raise ValueError(
+            "external checksum payload phase must be "
+            f"{_EXTERNAL_PAYLOAD_PHASE!r}"
+        )
+    for field in _EXTERNAL_PAYLOAD_STABLE_FIELDS:
+        if field not in manifest or field not in payload:
+            raise ValueError(
+                f"external checksum payload stable field {field!r} is missing"
+            )
+        if payload[field] != manifest[field]:
+            raise ValueError(
+                f"external checksum payload stable field mismatch: {field}"
+            )
+
+    final_entries, final_by_path = _strict_external_entries(
+        manifest, label="final checksum manifest"
+    )
+    payload_entries, payload_by_path = _strict_external_entries(
+        payload, label="external checksum payload"
+    )
+    payload_path_text = str(payload_path)
+    control_root = checksum_manifest_path.resolve().parent
+    for raw_path in payload_by_path:
+        candidate = Path(raw_path)
+        if not candidate.is_absolute():
+            candidate = control_root / candidate
+        if candidate.resolve(strict=False) == payload_path:
+            raise ValueError(
+                "external checksum payload must not contain its own file record"
+            )
+    for raw_path, payload_entry in payload_by_path.items():
+        final_entry = final_by_path.get(raw_path)
+        if final_entry != payload_entry:
+            raise ValueError(
+                "external checksum payload entries are not an exact subset "
+                f"of the final checksum manifest: {raw_path}"
+            )
+
+    return {
+        "status": "verified",
+        "declared_sha256": declared,
+        "convention": "external_raw_bytes_payload",
+        "external_payload_path": payload_path_text,
+        "external_payload_sha256": actual_digest,
+        "external_payload_record_scope": record["scope"],
+        "external_payload_record_size_bytes": stat.st_size,
+        "external_payload_record_mtime_ns": stat.st_mtime_ns,
+        "payload_phase": payload["phase"],
+        "manifest_phase": manifest["phase"],
+        "payload_entry_count": len(payload_entries),
+        "manifest_entry_count": len(final_entries),
+        "payload_entries_exact_subset": True,
+        "checksum_manifest_path": str(checksum_manifest_path),
+    }
+
+
+def _verify_manifest_payload_hash(
+    manifest: dict[str, Any], *, checksum_manifest_path: Path
+) -> dict[str, Any]:
+    declaration = _manifest_payload_declaration(manifest)
+    # The explicit production scope is the convention discriminator.  Never
+    # accept a coincidental canonical hash match in place of verifying the
+    # external file that the signed final manifest says it created.
+    external = _external_payload_record_and_path(
+        manifest, checksum_manifest_path=checksum_manifest_path
+    )
+    if external is not None:
+        if declaration is None:  # Defensive; the resolver rejects this first.
+            raise ValueError("external checksum payload declaration is missing")
+        record, payload_path = external
+        return _verify_external_manifest_payload(
+            manifest,
+            checksum_manifest_path=checksum_manifest_path,
+            declaration=declaration,
+            record=record,
+            payload_path=payload_path,
+        )
+    if declaration is None:
+        return {
+            "status": "not_declared",
+            "note": (
+                "The external manifest did not expose a recognized top-level "
+                "payload hash; its own file SHA-256 is still bound separately."
+            ),
+        }
+    key, declared = declaration
     candidates: dict[str, Any] = {
         "top_level_without_declared_hash": {
             name: value for name, value in manifest.items() if name != key
@@ -478,7 +779,9 @@ def _verify_checksum_manifest(
         "status": "verified",
         "manifest_record_count_discovered": len(records),
         "critical_record_count_verified": len(targets),
-        "payload_hash": _verify_manifest_payload_hash(manifest),
+        "payload_hash": _verify_manifest_payload_hash(
+            manifest, checksum_manifest_path=checksum_manifest_path
+        ),
     }
 
 
@@ -1243,6 +1546,28 @@ def analyze(
     if output_dir == PROJECT_ROOT or output_dir.is_relative_to(PROJECT_ROOT):
         raise ValueError("analysis output directory must be outside the Git worktree")
 
+    # Bind the manifest itself before trusting any path it names.  In
+    # particular, an external payload reference is not inspected unless these
+    # exact manifest bytes match the caller-supplied SHA-256.
+    checksum_manifest_probe, checksum_manifest_sha = (
+        _read_expected_json_object(
+            checksum_manifest_path,
+            expected_sha256=expected_checksum_manifest_sha256,
+            label="checksum manifest",
+        )
+    )
+    if not checksum_manifest_probe:
+        raise ValueError("checksum manifest must be a nonempty JSON object")
+    external_payload_probe = _external_payload_record_and_path(
+        checksum_manifest_probe,
+        checksum_manifest_path=checksum_manifest_path,
+    )
+    additional_paths = (
+        (external_payload_probe[1],)
+        if external_payload_probe is not None
+        else ()
+    )
+
     # These first reads only enumerate the immutable input set.  All values used
     # below are reread after the identity anchor is established.
     plan_probe = _read_json_object(plan_path)
@@ -1267,6 +1592,7 @@ def analyze(
         validation_report_path,
         checksum_manifest_path,
         probe_steps,
+        additional_paths=additional_paths,
     )
     identities_before = _collect_identities(paths)
 
@@ -1321,6 +1647,10 @@ def analyze(
     checksum_manifest = _read_json_object(checksum_manifest_path)
     if not checksum_manifest:
         raise ValueError("checksum manifest must be a nonempty JSON object")
+    if checksum_manifest != checksum_manifest_probe:
+        raise RuntimeError("checksum manifest changed while anchoring inputs")
+    if _sha256_file(checksum_manifest_path) != checksum_manifest_sha:
+        raise RuntimeError("checksum manifest changed while being parsed")
     manifest_verification = _verify_checksum_manifest(
         checksum_manifest,
         critical_paths=paths,
