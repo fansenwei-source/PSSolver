@@ -300,8 +300,11 @@ def build_runs(
             raise ValueError("long_pilot must be requested alone")
         if include_r512_time_control:
             raise ValueError("long_pilot cannot include R512 time controls")
-        if long_final_time != 100.0:
-            raise ValueError("long_pilot is fixed at T=100")
+        if not math.isfinite(long_final_time) or long_final_time < 100.0:
+            raise ValueError(
+                "long_pilot final time must be finite and at least 100"
+            )
+        _steps_for_time(long_final_time, 0.005)
     runs: list[RunSpec] = []
 
     if "preflight" in requested or set(requested).intersection(
@@ -371,7 +374,7 @@ def build_runs(
                 "long_pilot",
                 resolution=320,
                 dt=0.005,
-                final_time=100.0,
+                final_time=long_final_time,
                 activity_number=18.0,
                 seed=24,
             )
@@ -1007,8 +1010,14 @@ def parse_args() -> argparse.Namespace:
     if args.stages and "long_pilot" in args.stages:
         if set(args.stages) != {"long_pilot"}:
             parser.error("--stage long_pilot must be used alone")
-        if args.long_final_time != 100.0:
-            parser.error("--stage long_pilot is fixed at --long-final-time 100")
+        if args.long_final_time < 100.0:
+            parser.error(
+                "--stage long_pilot requires --long-final-time of at least 100"
+            )
+        try:
+            _steps_for_time(args.long_final_time, 0.005)
+        except ValueError as error:
+            parser.error(str(error))
         if args.include_r512_time_control:
             parser.error(
                 "--stage long_pilot cannot use --include-r512-time-control"
