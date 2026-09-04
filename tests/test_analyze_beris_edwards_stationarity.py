@@ -575,7 +575,25 @@ def test_full_analysis_is_read_only_and_writes_external_complete_bundle(
         ]
         == "not_applicable_post_hoc"
     )
+    assert report["schema_version"] == 2
     assert len(report["frame_observables"]) == 21
+    assert report["run"]["steps"] == list(range(21))
+    assert report["run"]["available_steps"] == list(range(21))
+    assert report["run"]["analysis_window"] == {
+        "mode": "full_available_range",
+        "bounds_inclusive": True,
+        "endpoint_policy": "requested bounds must coincide with saved-frame times",
+        "requested_start_time": None,
+        "requested_end_time": None,
+        "effective_start_time": 0.0,
+        "effective_end_time": 10.0,
+        "effective_start_step": 0,
+        "effective_end_step": 20,
+        "selected_frame_count": 21,
+        "available_start_time": 0.0,
+        "available_end_time": 10.0,
+        "available_frame_count": 21,
+    }
     assert (output / "COMPLETE").read_text().strip() == "complete"
     assert {
         "frame_observables.csv",
@@ -588,6 +606,88 @@ def test_full_analysis_is_read_only_and_writes_external_complete_bundle(
     } == {path.name for path in output.iterdir()}
     serialized = (output / "stationarity_report.json").read_text()
     assert "NaN" not in serialized and "Infinity" not in serialized
+
+
+def test_explicit_analysis_window_selects_inclusive_saved_frames(tmp_path):
+    kwargs = _analysis_kwargs(tmp_path)
+    kwargs.update({"analysis_start_time": 2.5, "analysis_end_time": 7.5})
+
+    report = analyze(**kwargs)
+
+    assert report["run"]["steps"] == list(range(5, 16))
+    assert report["run"]["times"] == [step * 0.5 for step in range(5, 16)]
+    assert report["run"]["available_steps"] == list(range(21))
+    assert [row["step"] for row in report["frame_observables"]] == list(
+        range(5, 16)
+    )
+    assert report["run"]["analysis_window"] == {
+        "mode": "explicit_saved_frame_bounds",
+        "bounds_inclusive": True,
+        "endpoint_policy": "requested bounds must coincide with saved-frame times",
+        "requested_start_time": 2.5,
+        "requested_end_time": 7.5,
+        "effective_start_time": 2.5,
+        "effective_end_time": 7.5,
+        "effective_start_step": 5,
+        "effective_end_step": 15,
+        "selected_frame_count": 11,
+        "available_start_time": 0.0,
+        "available_end_time": 10.0,
+        "available_frame_count": 21,
+    }
+    assert report["claim_scope"] == (
+        "tests for detectable drift on the saved t=2.5..7.5 sampling window"
+    )
+    assert report["input_provenance"]["critical_input_file_count"] == 70
+    assert (kwargs["output_dir"] / "COMPLETE").read_text().strip() == "complete"
+
+
+@pytest.mark.parametrize(
+    ("start", "end", "message"),
+    [
+        (2.6, 7.5, "not an available saved-frame time"),
+        (8.0, 2.5, "must not exceed"),
+        (2.5, 3.0, "at least 3 saved frames"),
+        (float("nan"), 7.5, "must be finite"),
+    ],
+)
+def test_invalid_analysis_windows_are_rejected_before_output(
+    tmp_path, start, end, message
+):
+    kwargs = _analysis_kwargs(tmp_path)
+    kwargs.update({"analysis_start_time": start, "analysis_end_time": end})
+
+    with pytest.raises(ValueError, match=message):
+        analyze(**kwargs)
+
+    assert not kwargs["output_dir"].exists()
+
+
+def test_cli_accepts_finite_window_and_rejects_reversed_or_nonfinite_bounds():
+    required = [
+        "--run-dir", "run",
+        "--plan", "plan.json",
+        "--run-id", "run-id",
+        "--validation-report", "validation.json",
+        "--expected-validation-report-sha256", "a" * 64,
+        "--checksum-manifest", "manifest.json",
+        "--expected-checksum-manifest-sha256", "b" * 64,
+        "--output-dir", "analysis",
+    ]
+    args = stationarity.parse_args(
+        [*required, "--analysis-start-time", "125", "--analysis-end-time", "200"]
+    )
+    assert args.analysis_start_time == 125.0
+    assert args.analysis_end_time == 200.0
+
+    with pytest.raises(SystemExit):
+        stationarity.parse_args(
+            [*required, "--analysis-start-time", "200", "--analysis-end-time", "125"]
+        )
+    with pytest.raises(SystemExit):
+        stationarity.parse_args(
+            [*required, "--analysis-start-time", "nan"]
+        )
 
 
 def test_mocked_defect_metrics_can_complete_all_three_layers(

@@ -48,7 +48,7 @@ from scripts_plane.validate_beris_edwards_outputs import (  # noqa: E402
 
 
 Q_BC = ("periodic", "periodic", "neumann")
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 CLASS_PROVISIONAL = "provisionally_stationary"
 CLASS_NONSTATIONARY = "non_stationary"
 CLASS_INCONCLUSIVE = "inconclusive"
@@ -91,6 +91,91 @@ def _unit_interval(value: str) -> float:
     if number < 0.0 or number > 1.0:
         raise argparse.ArgumentTypeError("must lie in [0, 1]")
     return number
+
+
+def _finite_cli_float(value: str) -> float:
+    try:
+        return _finite_float(value, label="value")
+    except (TypeError, ValueError) as error:
+        raise argparse.ArgumentTypeError("must be finite") from error
+
+
+def _select_analysis_window(
+    steps: tuple[int, ...],
+    *,
+    dt: float,
+    requested_start_time: float | None,
+    requested_end_time: float | None,
+) -> tuple[tuple[int, ...], dict[str, Any]]:
+    """Select an inclusive window whose requested bounds are saved frames."""
+
+    if not steps:
+        raise ValueError("cannot select an analysis window from zero saved frames")
+    available_times = tuple(float(step * dt) for step in steps)
+    start = (
+        None
+        if requested_start_time is None
+        else _finite_float(requested_start_time, label="analysis start time")
+    )
+    end = (
+        None
+        if requested_end_time is None
+        else _finite_float(requested_end_time, label="analysis end time")
+    )
+    if start is not None and end is not None and start > end:
+        raise ValueError("analysis start time must not exceed analysis end time")
+
+    def match_bound(value: float | None, *, default_index: int, label: str) -> int:
+        if value is None:
+            return default_index
+        nearest_index = min(
+            range(len(available_times)),
+            key=lambda index: abs(available_times[index] - value),
+        )
+        nearest = available_times[nearest_index]
+        tolerance = max(
+            1.0e-12,
+            32.0
+            * np.finfo(float).eps
+            * max(1.0, abs(value), abs(nearest)),
+        )
+        if not math.isclose(value, nearest, rel_tol=0.0, abs_tol=tolerance):
+            raise ValueError(
+                f"{label} {value:.17g} is not an available saved-frame time; "
+                f"nearest is {nearest:.17g}"
+            )
+        return nearest_index
+
+    start_index = match_bound(start, default_index=0, label="analysis start time")
+    end_index = match_bound(
+        end, default_index=len(steps) - 1, label="analysis end time"
+    )
+    if start_index > end_index:
+        raise ValueError("analysis time window contains no saved frames")
+    selected = steps[start_index : end_index + 1]
+    if len(selected) < 3:
+        raise ValueError("analysis time window must contain at least 3 saved frames")
+
+    selection = {
+        "mode": (
+            "full_available_range"
+            if start is None and end is None
+            else "explicit_saved_frame_bounds"
+        ),
+        "bounds_inclusive": True,
+        "endpoint_policy": "requested bounds must coincide with saved-frame times",
+        "requested_start_time": start,
+        "requested_end_time": end,
+        "effective_start_time": available_times[start_index],
+        "effective_end_time": available_times[end_index],
+        "effective_start_step": selected[0],
+        "effective_end_step": selected[-1],
+        "selected_frame_count": len(selected),
+        "available_start_time": available_times[0],
+        "available_end_time": available_times[-1],
+        "available_frame_count": len(steps),
+    }
+    return selected, selection
 
 
 def _canonical_sha256(value: Any) -> str:
@@ -1498,6 +1583,8 @@ def analyze(
     wall_tolerance_index: float,
     require_clean_git: bool,
     expected_analysis_git_head: str | None,
+    analysis_start_time: float | None = None,
+    analysis_end_time: float | None = None,
 ) -> dict[str, Any]:
     run_input = run_dir
     plan_input = plan_path
@@ -1622,6 +1709,13 @@ def analyze(
     )
     if steps != probe_steps:
         raise RuntimeError("critical metadata changed while anchoring inputs")
+    dt = _positive_metadata_value(metadata["solver"]["dt"], "solver.dt")
+    analysis_steps, analysis_window = _select_analysis_window(
+        steps,
+        dt=dt,
+        requested_start_time=analysis_start_time,
+        requested_end_time=analysis_end_time,
+    )
 
     plan_file_sha = _sha256_file(plan_path)
     validation_report_sha = _sha256_file(validation_report_path)
@@ -1673,7 +1767,6 @@ def analyze(
         expected_head=expected_analysis_git_head,
     )
     lengths = tuple(float(value) for value in metadata["solver"]["lengths"])
-    dt = _positive_metadata_value(metadata["solver"]["dt"], "solver.dt")
     parameters = metadata["model"]["parameters"]
     s_bulk = _positive_metadata_value(parameters["S_bulk"], "S_bulk")
     coefficients = metadata.get("ldg_coefficients", {})
@@ -1712,7 +1805,7 @@ def analyze(
     frame_rows: list[dict[str, Any]] = []
     line_rows: list[dict[str, Any]] = []
     volume = math.prod(lengths)
-    for index, step in enumerate(steps, start=1):
+    for index, step in enumerate(analysis_steps, start=1):
         q_path = run_dir / f"Q_{step}.npy"
         u_path = run_dir / f"u_{step}.npy"
         q_stats = _compact_q_statistics(
@@ -1768,7 +1861,10 @@ def analyze(
             )
             line_rows.extend(_jsonable(measured_lines))
         frame_rows.append(row)
-        print(f"[{index}/{len(steps)}] step={step} time={step * dt:.8g}", flush=True)
+        print(
+            f"[{index}/{len(analysis_steps)}] step={step} time={step * dt:.8g}",
+            flush=True,
+        )
 
     identities_after = _collect_identities(paths)
     if identities_after != identities_before:
@@ -1878,7 +1974,10 @@ def analyze(
             f"t={times[0]:.8g}..{times[-1]:.8g} sampling window"
         ),
         "limitations": [
-            "A finite 21-frame window cannot prove strict stationarity.",
+            (
+                f"A finite {len(frame_rows)}-frame window cannot prove strict "
+                "stationarity."
+            ),
             (
                 f"Frame spacing {times[1] - times[0]:.8g} cannot resolve "
                 "faster temporal correlations."
@@ -1903,8 +2002,10 @@ def analyze(
         "run": {
             "run_dir": str(run_dir),
             "run_id": run_id,
-            "steps": list(steps),
+            "steps": list(analysis_steps),
             "times": times,
+            "available_steps": list(steps),
+            "analysis_window": analysis_window,
             "shape": list(shape),
             "lengths": list(lengths),
             "dt": dt,
@@ -2076,6 +2177,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--expected-checksum-manifest-sha256", required=True
     )
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument(
+        "--analysis-start-time",
+        type=_finite_cli_float,
+        help="inclusive first saved-frame time to analyze (default: first available)",
+    )
+    parser.add_argument(
+        "--analysis-end-time",
+        type=_finite_cli_float,
+        help="inclusive last saved-frame time to analyze (default: last available)",
+    )
     parser.add_argument("--include-defects", action="store_true")
     parser.add_argument("--energy-device", default="cpu")
     parser.add_argument("--chunk-x", type=int, default=16)
@@ -2099,6 +2210,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("--fail-relative-drift must exceed --pass-relative-drift")
     if not math.isfinite(args.defect_threshold):
         parser.error("--defect-threshold must be finite")
+    if (
+        args.analysis_start_time is not None
+        and args.analysis_end_time is not None
+        and args.analysis_start_time > args.analysis_end_time
+    ):
+        parser.error("--analysis-start-time must not exceed --analysis-end-time")
     return args
 
 
@@ -2130,6 +2247,8 @@ def main(argv: list[str] | None = None) -> int:
             wall_tolerance_index=args.wall_tolerance_index,
             require_clean_git=args.require_clean_git,
             expected_analysis_git_head=args.expected_analysis_git_head,
+            analysis_start_time=args.analysis_start_time,
+            analysis_end_time=args.analysis_end_time,
         )
     except Exception as error:
         print(
