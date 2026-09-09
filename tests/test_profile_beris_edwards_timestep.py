@@ -31,7 +31,7 @@ def _small_config(**overrides):
 
 def test_profiler_defaults_to_production_numerics_and_accepts_legacy_control():
     assert ProfileConfig().transform_execution_order == "real_first"
-    assert ProfileConfig().molecular_field_linear_space == "physical"
+    assert ProfileConfig().molecular_field_linear_space == "spectral"
     legacy = _small_config(transform_execution_order="legacy")
     assert legacy.transform_execution_order == "legacy"
 

@@ -335,8 +335,8 @@ projection. Linearity permits the local A/B/C bulk contribution to remain in
 physical space while adding the `L1 laplacian(Q)` contribution directly to its
 spectral transform. The candidate removes five inverse transforms per
 timestep without changing the equation, basis, normalization, modal indexing,
-projector, or dealiasing rule. The existing physical path remains the default
-pending H100 qualification.
+projector, or dealiasing rule. The physical path remains available as an
+explicit compatibility and diagnostic option.
 
 Three alternating 128x128x32 float64 CUDA pairs on the RTX 3060 Ti measured:
 
@@ -355,6 +355,15 @@ timesteps found relative L2 differences of `3.92e-17` for Q, `2.15e-16` for
 velocity, and `3.45e-16` for pressure. The candidate branch's default physical
 path remained byte-identical to commit `57cf8b7`. The final candidate suite completed with 477 passed tests and eight passed
 subtests.
+
+H100 qualification at 320x320x80 measured mean timesteps of 175.854 ms for
+the physical path and 171.130 ms for the spectral path, a `1.0276x` speedup.
+All three paired trials favored spectral staging, inverse-transform calls fell
+from 42 to 37 per step, and peak allocated and reserved memory were unchanged.
+A separate 100-step production-driver comparison kept relative L2 differences
+below `3.5e-16` for Q, velocity, and pressure. The qualification classified
+the candidate as `A_recommended`, so spectral staging is now the production
+default; physical staging remains an explicit rollback control.
 
 ## Snapshot I/O profile
 

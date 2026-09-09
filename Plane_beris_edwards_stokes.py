@@ -52,6 +52,7 @@ from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
     BerisEdwardsQGradientCache,
     BerisEdwardsQNonlinearModel,
+    DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
     Q_convention_metadata,
     beris_edwards_linear_operator,
     create_initial_condition,
@@ -228,11 +229,11 @@ def parse_args():
     parser.add_argument(
         "--molecular-field-linear-space",
         choices=("physical", "spectral"),
-        default="physical",
+        default=DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
         help=(
             "Evaluation space for the linear L1 laplacian in the raw "
-            "molecular field. physical retains the validated production "
-            "path; spectral is a default-off performance candidate."
+            "molecular field. spectral is the H100-qualified production "
+            "default; physical retains the validated compatibility path."
         ),
     )
     parser.add_argument(

@@ -35,6 +35,7 @@ from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
     BerisEdwardsQGradientCache,
     BerisEdwardsQNonlinearModel,
+    DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
     Q_COMPONENTS,
     beris_edwards_linear_operator,
 )
@@ -61,7 +62,7 @@ class ProfileConfig:
     spectral_refresh_interval: int | None = None
     pressure_diagnostics: bool = False
     reuse_q_gradients: bool = True
-    molecular_field_linear_space: str = "physical"
+    molecular_field_linear_space: str = DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE
     transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
     snapshot_interval: int | None = None
     snapshot_directory: str | None = None
@@ -594,11 +595,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--molecular-field-linear-space",
         choices=("physical", "spectral"),
-        default="physical",
+        default=DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
         help=(
             "A/B control for the raw molecular-field linear terms. "
-            "physical retains the production path; spectral keeps the "
-            "L1 laplacian in modal space and avoids five inverse transforms."
+            "spectral is the production default and keeps the L1 laplacian "
+            "in modal space; physical retains the compatibility path."
         ),
     )
     parser.add_argument(

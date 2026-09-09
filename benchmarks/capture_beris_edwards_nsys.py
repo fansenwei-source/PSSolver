@@ -22,6 +22,9 @@ from typing import Iterator
 import torch
 
 from pssolver import DEFAULT_TRANSFORM_EXECUTION_ORDER
+from pssolver.models.active_nematics import (
+    DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
+)
 
 from benchmarks.profile_beris_edwards_timestep import (
     ProfileConfig,
@@ -48,7 +51,7 @@ class NsysCaptureConfig:
     spectral_refresh_interval: int | None = None
     pressure_diagnostics: bool = False
     reuse_q_gradients: bool = True
-    molecular_field_linear_space: str = "physical"
+    molecular_field_linear_space: str = DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE
     transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
     seed: int = 20260908
 
@@ -178,7 +181,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--molecular-field-linear-space",
         choices=("physical", "spectral"),
-        default="physical",
+        default=DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
     )
     parser.add_argument(
         "--transform-execution-order",

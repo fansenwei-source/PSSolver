@@ -37,6 +37,7 @@ PLANE_DISTORTION_ODD_BOUNDARY_CONDITIONS = (
     "periodic",
     "dirichlet",
 )
+DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE = "spectral"
 
 
 class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
@@ -68,7 +69,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         ldg_c=0.3,
         ldg_l1=0.02,
         flow_alignment=0.3,
-        molecular_field_linear_space="physical",
+        molecular_field_linear_space=DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
         cache_force_diagnostics=False,
         cache_pressure_diagnostics=True,
         q_gradient_cache=None,
