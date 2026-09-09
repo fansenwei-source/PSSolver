@@ -133,6 +133,28 @@ claim. The current complete regression result is:
 436 passed, 8 subtests passed in 13.51s
 ```
 
+## Rejected experiment: same-basis derivative batching
+
+A follow-up candidate grouped Q Laplacians, Q gradients, and the two
+tangential-velocity gradients that share one input basis and derivative axis.
+It changed no transform definitions and reduced inverse-transform calls from
+42 to 23 per timestep. Batched and separate paths produced identical final
+state hashes, and peak allocated memory was identical at every tested shape.
+
+Each entry below is the median of three alternating batched/separate runs with
+five warmup and 30 measured timesteps:
+
+| Shape | Separate timestep | Batched timestep | Separate/batched |
+|---:|---:|---:|---:|
+| 32x32x16 | 6.541 ms | 5.616 ms | 1.165x |
+| 64x64x32 | 30.109 ms | 29.973 ms | 1.005x |
+| 128x128x32 | 120.459 ms | 121.465 ms | 0.992x |
+
+The small-grid kernel-launch benefit disappeared as transform size increased;
+the largest case was approximately 0.8% slower. The candidate therefore failed
+the requirement for stable benefit on the medium and large local grids. All
+production, benchmark, CLI, and test changes from this experiment were removed.
+
 ## Snapshot I/O profile
 
 A separate 64x64x32 run saved Q, velocity, and pressure after every profiled
@@ -153,3 +175,8 @@ Raw JSON results were written outside the repository:
 - `/tmp/pssolver_qgrad_uncached_64_20260908.json`
 - `/tmp/pssolver_qgrad_cached_128_20260908.json`
 - `/tmp/pssolver_qgrad_uncached_128_20260908.json`
+- `/tmp/pssolver_batched_derivatives_batched_<shape>_trial{1,2,3}_20260908.json`
+- `/tmp/pssolver_batched_derivatives_separate_<shape>_trial{1,2,3}_20260908.json`
+
+For the derivative-batching files, `<shape>` is one of `32x32x16`,
+`64x64x32`, or `128x128x32`.
