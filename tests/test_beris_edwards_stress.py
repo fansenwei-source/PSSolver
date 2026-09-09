@@ -5,6 +5,7 @@ from pssolver.models.active_nematics import (
     Q_COMPONENTS,
     beris_edwards_active_stress_components,
     beris_edwards_algebraic_stress_components,
+    beris_edwards_bulk_molecular_field_components,
     beris_edwards_distortion_stress_components,
     beris_edwards_flow_alignment_components,
     beris_edwards_linear_operator,
@@ -91,6 +92,34 @@ def test_molecular_field_matches_full_matrix_oracle():
         atol=1e-14,
     )
 
+
+def test_bulk_molecular_field_plus_laplacian_matches_complete_helper():
+    generator = torch.Generator().manual_seed(310)
+    q = _compact(_random_traceless_symmetric(generator))
+    lap_q = _compact(_random_traceless_symmetric(generator))
+    coefficients = dict(ldg_a=-0.07, ldg_b=-0.3, ldg_c=0.41)
+    ldg_l1 = 0.019
+
+    bulk = beris_edwards_bulk_molecular_field_components(
+        q,
+        **coefficients,
+    )
+    complete = beris_edwards_molecular_field_components(
+        q,
+        lap_q,
+        **coefficients,
+        ldg_l1=ldg_l1,
+    )
+
+    torch.testing.assert_close(
+        torch.stack(tuple(
+            bulk_component + ldg_l1 * laplacian_component
+            for bulk_component, laplacian_component in zip(bulk, lap_q)
+        )),
+        torch.stack(complete),
+        rtol=1.0e-13,
+        atol=1.0e-13,
+    )
 
 def test_reactive_and_distortion_stresses_match_matrix_oracles():
     generator = torch.Generator().manual_seed(47)

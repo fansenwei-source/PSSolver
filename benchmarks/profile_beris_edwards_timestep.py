@@ -61,6 +61,7 @@ class ProfileConfig:
     spectral_refresh_interval: int | None = None
     pressure_diagnostics: bool = False
     reuse_q_gradients: bool = True
+    molecular_field_linear_space: str = "physical"
     transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
     snapshot_interval: int | None = None
     snapshot_directory: str | None = None
@@ -209,6 +210,10 @@ def _validate_config(config: ProfileConfig) -> None:
         raise ValueError(
             "transform_execution_order must be 'legacy' or 'real_first'"
         )
+    if config.molecular_field_linear_space not in {"physical", "spectral"}:
+        raise ValueError(
+            "molecular_field_linear_space must be 'physical' or 'spectral'"
+        )
     if not math.isfinite(config.dt) or config.dt <= 0.0:
         raise ValueError("dt must be positive and finite")
     if config.warmup_steps < 0:
@@ -325,6 +330,9 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
             ldg_c=0.3,
             ldg_l1=ldg_l1,
             flow_alignment=0.3,
+            molecular_field_linear_space=(
+                config.molecular_field_linear_space
+            ),
             cache_force_diagnostics=False,
             cache_pressure_diagnostics=config.pressure_diagnostics,
             q_gradient_cache=q_gradient_cache,
@@ -499,6 +507,9 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
             "eta": 2.0 / 3.0,
             "zero_mode_policy": "zero_mean",
             "reuse_q_gradients": config.reuse_q_gradients,
+            "molecular_field_linear_space": (
+                config.molecular_field_linear_space
+            ),
             "initial_condition": "deterministic synthetic aligned Q plus noise",
         },
         "environment": {
@@ -581,6 +592,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--pressure-diagnostics", action="store_true")
     parser.add_argument("--disable-q-gradient-reuse", action="store_true")
     parser.add_argument(
+        "--molecular-field-linear-space",
+        choices=("physical", "spectral"),
+        default="physical",
+        help=(
+            "A/B control for the raw molecular-field linear terms. "
+            "physical retains the production path; spectral keeps the "
+            "L1 laplacian in modal space and avoids five inverse transforms."
+        ),
+    )
+    parser.add_argument(
         "--transform-execution-order",
         choices=("legacy", "real_first"),
         default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
@@ -617,6 +638,9 @@ def main() -> None:
             spectral_refresh_interval=args.spectral_refresh_interval,
             pressure_diagnostics=args.pressure_diagnostics,
             reuse_q_gradients=not args.disable_q_gradient_reuse,
+            molecular_field_linear_space=(
+                args.molecular_field_linear_space
+            ),
             transform_execution_order=args.transform_execution_order,
             snapshot_interval=args.snapshot_interval,
             snapshot_directory=args.snapshot_directory,

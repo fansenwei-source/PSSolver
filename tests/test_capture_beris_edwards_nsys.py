@@ -17,6 +17,7 @@ def test_capture_config_maps_to_complete_timestep_profile():
         warmup_steps=4,
         capture_steps=2,
         reuse_q_gradients=False,
+        molecular_field_linear_space="spectral",
         transform_execution_order="real_first",
     )
 
@@ -27,6 +28,7 @@ def test_capture_config_maps_to_complete_timestep_profile():
     assert profile.warmup_steps == 4
     assert profile.profile_steps == 2
     assert profile.reuse_q_gradients is False
+    assert profile.molecular_field_linear_space == "spectral"
     assert profile.transform_execution_order == "real_first"
     assert profile.snapshot_interval is None
     assert profile.snapshot_directory is None
@@ -36,7 +38,9 @@ def test_capture_defaults_to_real_first_transform_execution():
     config = NsysCaptureConfig()
 
     assert config.transform_execution_order == "real_first"
+    assert config.molecular_field_linear_space == "physical"
     assert config.profile_config().transform_execution_order == "real_first"
+    assert config.profile_config().molecular_field_linear_space == "physical"
 
 
 def test_capture_config_rejects_nonpositive_capture_steps():

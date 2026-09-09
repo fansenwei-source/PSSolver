@@ -226,6 +226,16 @@ def parse_args():
         help="Real arithmetic precision used by fields and transforms.",
     )
     parser.add_argument(
+        "--molecular-field-linear-space",
+        choices=("physical", "spectral"),
+        default="physical",
+        help=(
+            "Evaluation space for the linear L1 laplacian in the raw "
+            "molecular field. physical retains the validated production "
+            "path; spectral is a default-off performance candidate."
+        ),
+    )
+    parser.add_argument(
         "--transform-execution-order",
         choices=("legacy", "real_first"),
         default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
@@ -684,6 +694,9 @@ metadata = {
             ),
             "active_stress": "beta*alpha*Q; beta=-1 gives -zeta*Q",
             "molecular_field_in_stress": "raw_H_not_H_over_gamma",
+            "molecular_field_linear_space": (
+                args.molecular_field_linear_space
+            ),
             "isotropic_stress": "absorbed_into_incompressible_pressure",
             "viscous_stress": "handled_by_eta_laplacian_in_stokes_operator",
         },
@@ -733,6 +746,7 @@ metadata = {
         "zero_mode_force": "total_nematic_tangential_force",
         "pressure_solver": "free_slip_modal_schur_complement",
         "pressure_residual_diagnostics": ENABLE_DIAGNOSTICS,
+        "molecular_field_linear_space": args.molecular_field_linear_space,
         "q_gradient_reuse": {
             "enabled": not args.disable_q_gradient_reuse,
             "scope": "single_static_to_nonlinear_evaluation",
@@ -786,6 +800,7 @@ metadata = {
     "device": device,
     "dtype": args.dtype,
     "transform_execution_order": args.transform_execution_order,
+    "molecular_field_linear_space": args.molecular_field_linear_space,
     "tf32": args.tf32,
     "q_boundary_conditions": Q_BC,
     "tangential_velocity_boundary_conditions": U_TANGENTIAL_BC,
@@ -996,6 +1011,7 @@ solver.model.set_static_compute_model(
         ldg_c=args.ldg_c,
         ldg_l1=ldg_l1,
         flow_alignment=ALIGNMENT_PARAMETER,
+        molecular_field_linear_space=args.molecular_field_linear_space,
         cache_force_diagnostics=ENABLE_DIAGNOSTICS,
         cache_pressure_diagnostics=ENABLE_DIAGNOSTICS,
         q_gradient_cache=q_gradient_cache,

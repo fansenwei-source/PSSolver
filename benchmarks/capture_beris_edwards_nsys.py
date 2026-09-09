@@ -48,6 +48,7 @@ class NsysCaptureConfig:
     spectral_refresh_interval: int | None = None
     pressure_diagnostics: bool = False
     reuse_q_gradients: bool = True
+    molecular_field_linear_space: str = "physical"
     transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
     seed: int = 20260908
 
@@ -65,6 +66,9 @@ class NsysCaptureConfig:
             spectral_refresh_interval=self.spectral_refresh_interval,
             pressure_diagnostics=self.pressure_diagnostics,
             reuse_q_gradients=self.reuse_q_gradients,
+            molecular_field_linear_space=(
+                self.molecular_field_linear_space
+            ),
             transform_execution_order=self.transform_execution_order,
             seed=self.seed,
         )
@@ -172,6 +176,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--pressure-diagnostics", action="store_true")
     parser.add_argument("--disable-q-gradient-reuse", action="store_true")
     parser.add_argument(
+        "--molecular-field-linear-space",
+        choices=("physical", "spectral"),
+        default="physical",
+    )
+    parser.add_argument(
         "--transform-execution-order",
         choices=("legacy", "real_first"),
         default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
@@ -199,6 +208,9 @@ def main() -> None:
             spectral_refresh_interval=args.spectral_refresh_interval,
             pressure_diagnostics=args.pressure_diagnostics,
             reuse_q_gradients=not args.disable_q_gradient_reuse,
+            molecular_field_linear_space=(
+                args.molecular_field_linear_space
+            ),
             transform_execution_order=args.transform_execution_order,
             seed=args.seed,
         )

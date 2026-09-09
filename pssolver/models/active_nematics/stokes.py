@@ -13,6 +13,7 @@ from pssolver.transforms import (
 from .beris_edwards import (
     BerisEdwardsQGradientCache,
     beris_edwards_algebraic_stress_components,
+    beris_edwards_bulk_molecular_field_components,
     beris_edwards_distortion_stress_components,
     beris_edwards_molecular_field_components,
 )
@@ -67,6 +68,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         ldg_c=0.3,
         ldg_l1=0.02,
         flow_alignment=0.3,
+        molecular_field_linear_space="physical",
         cache_force_diagnostics=False,
         cache_pressure_diagnostics=True,
         q_gradient_cache=None,
@@ -97,6 +99,10 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
             raise ValueError("Stokes and nematic coefficients must be finite.")
         if ldg_l1 <= 0:
             raise ValueError("The one-constant L1 coefficient must be positive.")
+        if molecular_field_linear_space not in {"physical", "spectral"}:
+            raise ValueError(
+                "molecular_field_linear_space must be 'physical' or 'spectral'."
+            )
 
         q_bcs = tuple(q_boundary_conditions)
         tangential_bcs = tuple(tangential_velocity_boundary_conditions)
@@ -130,6 +136,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         self.ldg_c = float(ldg_c)
         self.ldg_l1 = float(ldg_l1)
         self.flow_alignment = float(flow_alignment)
+        self.molecular_field_linear_space = molecular_field_linear_space
         self.cache_force_diagnostics = bool(cache_force_diagnostics)
         if q_gradient_cache is not None and not isinstance(
             q_gradient_cache,
@@ -165,26 +172,56 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         if self.q_gradient_cache is not None:
             self.q_gradient_cache.clear()
         q_components = tuple(fields[name] for name in Q_COMPONENTS)
-        laplacian_components = tuple(
-            fields.laplacian(name) for name in Q_COMPONENTS
-        )
 
-        # Stress uses raw H, not H/gamma.  Project H as one resolved field,
+        # Stress uses raw H, not H/gamma. Project H as one resolved field,
         # then project the complete reactive stress rather than Q:H alone; this
-        # preserves the discrete reactive/alignment energy exchange.
-        raw_h_components = beris_edwards_molecular_field_components(
-            q_components,
-            laplacian_components,
-            ldg_a=self.ldg_a,
-            ldg_b=self.ldg_b,
-            ldg_c=self.ldg_c,
-            ldg_l1=self.ldg_l1,
-        )
-        h_tensor = self._project_physical_tensor(
-            fields,
-            torch.stack(raw_h_components),
-            self.q_boundary_conditions,
-        )
+        # preserves the discrete reactive/alignment energy exchange. The
+        # candidate spectral path leaves the linear L1 laplacian in modal
+        # space and removes five inverse transforms without changing the basis
+        # or projection.
+        if self.molecular_field_linear_space == "physical":
+            laplacian_components = tuple(
+                fields.laplacian(name) for name in Q_COMPONENTS
+            )
+            raw_h_components = beris_edwards_molecular_field_components(
+                q_components,
+                laplacian_components,
+                ldg_a=self.ldg_a,
+                ldg_b=self.ldg_b,
+                ldg_c=self.ldg_c,
+                ldg_l1=self.ldg_l1,
+            )
+            h_tensor = self._project_physical_tensor(
+                fields,
+                torch.stack(raw_h_components),
+                self.q_boundary_conditions,
+            )
+            del laplacian_components, raw_h_components
+        else:
+            bulk_h_components = beris_edwards_bulk_molecular_field_components(
+                q_components,
+                ldg_a=self.ldg_a,
+                ldg_b=self.ldg_b,
+                ldg_c=self.ldg_c,
+            )
+            h_hat = fields.transform_tensor(
+                torch.stack(bulk_h_components),
+                self.q_boundary_conditions,
+            )
+            for index, name in enumerate(Q_COMPONENTS):
+                h_hat[index].add_(
+                    fields.laplacian_hat(name),
+                    alpha=self.ldg_l1,
+                )
+            h_hat = self.spectral_projector.project(
+                h_hat,
+                self.q_boundary_conditions,
+            )
+            h_tensor = fields.inverse_transform_tensor(
+                h_hat,
+                self.q_boundary_conditions,
+            )
+            del bulk_h_components, h_hat
         h_components = tuple(h_tensor[index] for index in range(5))
         active_prefactor = self.beta * alpha
         algebraic_stress = beris_edwards_algebraic_stress_components(
@@ -203,8 +240,6 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
             algebraic_stress,
             h_components,
             h_tensor,
-            laplacian_components,
-            raw_h_components,
         )
 
         q_gradients = tuple(

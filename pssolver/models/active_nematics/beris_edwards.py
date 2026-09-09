@@ -404,6 +404,44 @@ def beris_edwards_molecular_field_components(
     return hxx, hxy, hxz, hyy, hyz
 
 
+def beris_edwards_bulk_molecular_field_components(
+    q_components,
+    *,
+    ldg_a,
+    ldg_b,
+    ldg_c,
+):
+    """Return the local bulk contribution to the raw molecular field."""
+    qxx, qxy, qxz, qyy, qyz = _five_components(
+        q_components,
+        "q_components",
+    )
+    qzz = -qxx - qyy
+    tr_q2 = (
+        qxx.square()
+        + qyy.square()
+        + qzz.square()
+        + 2.0 * (qxy.square() + qxz.square() + qyz.square())
+    )
+    q2_xx = qxx.square() + qxy.square() + qxz.square()
+    q2_xy = qxy * (qxx + qyy) + qxz * qyz
+    q2_xz = qxy * qyz - qxz * qyy
+    q2_yy = qxy.square() + qyy.square() + qyz.square()
+    q2_yz = qxy * qxz - qyz * qxx
+    isotropic_q2 = tr_q2 / 3.0
+    return (
+        -ldg_a * qxx
+        - ldg_b * (q2_xx - isotropic_q2)
+        - ldg_c * tr_q2 * qxx,
+        -ldg_a * qxy - ldg_b * q2_xy - ldg_c * tr_q2 * qxy,
+        -ldg_a * qxz - ldg_b * q2_xz - ldg_c * tr_q2 * qxz,
+        -ldg_a * qyy
+        - ldg_b * (q2_yy - isotropic_q2)
+        - ldg_c * tr_q2 * qyy,
+        -ldg_a * qyz - ldg_b * q2_yz - ldg_c * tr_q2 * qyz,
+    )
+
+
 def beris_edwards_reactive_stress_components(
     q_components,
     h_components,
@@ -727,6 +765,7 @@ __all__ = [
     "beris_edwards_algebraic_stress_components",
     "beris_edwards_distortion_stress_components",
     "beris_edwards_flow_alignment_components",
+    "beris_edwards_bulk_molecular_field_components",
     "beris_edwards_free_energy_density",
     "beris_edwards_linear_operator",
     "beris_edwards_molecular_field_components",

@@ -119,6 +119,10 @@ class Fig4NumericsCliTests(unittest.TestCase):
         self.assertEqual(metadata["numerics"]["precision"]["real_dtype"], "float64")
         self.assertTrue(metadata["numerics"]["q_gradient_reuse"]["enabled"])
         self.assertEqual(
+            metadata["numerics"]["molecular_field_linear_space"],
+            "physical",
+        )
+        self.assertEqual(
             metadata["numerics"]["transforms"]["execution_order"],
             "real_first",
         )
@@ -211,6 +215,30 @@ class Fig4NumericsCliTests(unittest.TestCase):
         self.assertEqual(transforms["spectral_storage"], "full_complex")
         self.assertFalse(transforms["basis_and_normalization_changed"])
         self.assertEqual(metadata["transform_execution_order"], "real_first")
+
+    def test_beris_edwards_spectral_linear_molecular_field_is_recorded(self):
+        result = run_dry_run(
+            "--molecular-field-linear-space",
+            "spectral",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        metadata = json.loads(result.stdout)
+        self.assertEqual(
+            metadata["numerics"]["molecular_field_linear_space"],
+            "spectral",
+        )
+        self.assertEqual(
+            metadata["model"]["flow_dynamics"][
+                "molecular_field_linear_space"
+            ],
+            "spectral",
+        )
+        self.assertEqual(
+            metadata["molecular_field_linear_space"],
+            "spectral",
+        )
 
     def test_beris_edwards_legacy_transform_order_remains_available(self):
         result = run_dry_run(

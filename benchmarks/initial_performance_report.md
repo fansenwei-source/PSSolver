@@ -326,6 +326,36 @@ with 472 passed tests and eight passed subtests. Three matched 32x32x16,
 differences from `legacy` were `3.04e-16`, `4.35e-16`, and `4.38e-16`,
 respectively, with finite values throughout.
 
+### Candidate: spectral-linear molecular-field staging
+
+The complete-stress path previously inverse-transformed each of the five
+`L1 laplacian(Q)` components, assembled the raw molecular field in physical
+space, and immediately transformed that field back to spectral space for
+projection. Linearity permits the local A/B/C bulk contribution to remain in
+physical space while adding the `L1 laplacian(Q)` contribution directly to its
+spectral transform. The candidate removes five inverse transforms per
+timestep without changing the equation, basis, normalization, modal indexing,
+projector, or dealiasing rule. The existing physical path remains the default
+pending H100 qualification.
+
+Three alternating 128x128x32 float64 CUDA pairs on the RTX 3060 Ti measured:
+
+| Path | Mean timestep | Nematic force | Inverse calls/step | Peak allocated |
+|---|---:|---:|---:|---:|
+| Physical linear term | 79.499 ms | 51.615 ms | 42 | 585,824,768 B |
+| Spectral linear term | 76.688 ms | 48.749 ms | 37 | 585,824,768 B |
+
+The mean and median speedups were `1.0367x` and `1.0373x`; all three paired
+runs favored the candidate. Shortening the lifetime of physical Laplacian
+temporaries also reduced peak allocated memory from the pre-candidate baseline
+of 610,990,592 bytes to 585,824,768 bytes for both paths.
+
+A matched 32x32x16 production-driver comparison through 100 float64 CUDA
+timesteps found relative L2 differences of `3.92e-17` for Q, `2.15e-16` for
+velocity, and `3.45e-16` for pressure. The candidate branch's default physical
+path remained byte-identical to commit `57cf8b7`. The final candidate suite completed with 477 passed tests and eight passed
+subtests.
+
 ## Snapshot I/O profile
 
 A separate 64x64x32 run saved Q, velocity, and pressure after every profiled

@@ -29,8 +29,9 @@ def _small_config(**overrides):
     return ProfileConfig(**values)
 
 
-def test_profiler_defaults_to_real_first_and_accepts_legacy_control():
+def test_profiler_defaults_to_production_numerics_and_accepts_legacy_control():
     assert ProfileConfig().transform_execution_order == "real_first"
+    assert ProfileConfig().molecular_field_linear_space == "physical"
     legacy = _small_config(transform_execution_order="legacy")
     assert legacy.transform_execution_order == "legacy"
 
@@ -104,6 +105,57 @@ def test_callback_q_mutation_invalidates_cache_and_matches_uncached_path():
     )
 
 
+def test_static_model_rejects_unknown_molecular_field_linear_space():
+    config = _small_config(molecular_field_linear_space="unknown")
+    with pytest.raises(ValueError, match="molecular_field_linear_space"):
+        _build_solver(config, RegionTimer(torch.device("cpu")))
+
+
+def test_spectral_linear_molecular_field_matches_physical_and_saves_inverses():
+    physical_config = _small_config(
+        warmup_steps=0,
+        profile_steps=1,
+        molecular_field_linear_space="physical",
+    )
+    spectral_config = _small_config(
+        warmup_steps=0,
+        profile_steps=1,
+        molecular_field_linear_space="spectral",
+    )
+    physical_solver = _build_solver(
+        physical_config,
+        RegionTimer(torch.device("cpu")),
+    )
+    spectral_solver = _build_solver(
+        spectral_config,
+        RegionTimer(torch.device("cpu")),
+    )
+
+    physical_solver.integrator.step()
+    spectral_solver.integrator.step()
+
+    torch.testing.assert_close(
+        spectral_solver.model.fields.spatial,
+        physical_solver.model.fields.spatial,
+        rtol=5.0e-12,
+        atol=5.0e-12,
+    )
+    torch.testing.assert_close(
+        spectral_solver.model.fields.spectral,
+        physical_solver.model.fields.spectral,
+        rtol=5.0e-12,
+        atol=5.0e-12,
+    )
+
+    physical_profile = run_profile(physical_config)
+    spectral_profile = run_profile(spectral_config)
+    assert (
+        physical_profile["timings"]["transform_inverse"]["calls"]
+        - spectral_profile["timings"]["transform_inverse"]["calls"]
+        == 5
+    )
+
+
 def test_snapshot_profile_writes_requested_fields(tmp_path):
     snapshot_directory = tmp_path / "snapshots"
     result = run_profile(
@@ -130,6 +182,7 @@ def test_snapshot_profile_writes_requested_fields(tmp_path):
         ({"dt": 0.0}, "dt"),
         ({"profile_steps": 0}, "profile_steps"),
         ({"transform_execution_order": "unknown"}, "execution_order"),
+        ({"molecular_field_linear_space": "unknown"}, "linear_space"),
         ({"snapshot_interval": 2}, "enabled together"),
         ({"snapshot_directory": "/tmp/unused"}, "enabled together"),
     ),
