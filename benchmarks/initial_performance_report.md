@@ -165,8 +165,8 @@ ranges and brackets only the measured steps with the CUDA profiler API.
 
 | Shape | Mean timestep | GPU ops/step | Inverse transforms | Forward transforms | Nematic force | Q nonlinear | Stokes solve |
 |---:|---:|---:|---:|---:|---:|---:|---:|
-| 64x64x32 | 30.760 ms | 1076 | 49.7% | 23.0% | 67.9% | 17.3% | 2.3% |
-| 128x128x32 | 121.231 ms | 1076 | 50.1% | 23.1% | 67.6% | 17.6% | 2.4% |
+| 64x64x32 | 30.487 ms | 1076 | 49.8% | 23.0% | 67.6% | 17.4% | 2.3% |
+| 128x128x32 | 120.974 ms | 1076 | 49.5% | 23.7% | 67.4% | 17.8% | 2.3% |
 
 The transform percentages are GPU time projected into non-overlapping forward
 and inverse NVTX ranges. Nematic force and Q nonlinear are higher-level nested
@@ -174,8 +174,8 @@ ranges and therefore must not be added to the transform percentages.
 
 | Shape | CUTLASS complex GEMM | FFT kernels | Explicit GPU memops | Kernel-launch API time / GPU range |
 |---:|---:|---:|---:|---:|
-| 64x64x32 | 49.5% | 16.1% | 0.32% | 5.9% |
-| 128x128x32 | 45.4% | 18.5% | 0.38% | 1.4% |
+| 64x64x32 | 50.1% | 15.7% | 0.33% | 5.8% |
+| 128x128x32 | 45.6% | 18.3% | 0.39% | 1.5% |
 
 The CUTLASS kernels come from the dense matrix multiplication used for the
 cell-centered DCT/DST axis in `TensorProductTransformBackend`. FFT kernels
@@ -226,11 +226,14 @@ Raw JSON results were written outside the repository:
 For the derivative-batching files, `<shape>` is one of `32x32x16`,
 `64x64x32`, or `128x128x32`.
 
-Final Nsight artifacts and CSV summaries:
+Final Nsight artifacts and CSV summaries were generated from clean commit
+`05275fad0d927d553fa3d95d0e2b6e82927559f9`:
 
-- `/tmp/pssolver_nsys_be_64x64x32_d9c7cc3_final_20260908.nsys-rep`;
-- `/tmp/pssolver_nsys_be_64x64x32_d9c7cc3_final_20260908.json`;
-- `/tmp/pssolver_nsys_be_64x64x32_d9c7cc3_final_20260908_stats_*.csv`;
-- `/tmp/pssolver_nsys_be_128x128x32_d9c7cc3_final_20260908.nsys-rep`;
-- `/tmp/pssolver_nsys_be_128x128x32_d9c7cc3_final_20260908.json`;
-- `/tmp/pssolver_nsys_be_128x128x32_d9c7cc3_final_20260908_stats_*.csv`.
+- `/tmp/pssolver_nsys_be_64x64x32_05275fa_clean_20260908.nsys-rep`;
+- `/tmp/pssolver_nsys_be_64x64x32_05275fa_clean_20260908.json`;
+- `/tmp/pssolver_nsys_be_64x64x32_05275fa_clean_20260908_stats_*.csv`;
+- `/tmp/pssolver_nsys_be_64x64x32_05275fa_clean_direct_20260908.json`;
+- `/tmp/pssolver_nsys_be_128x128x32_05275fa_clean_20260908.nsys-rep`;
+- `/tmp/pssolver_nsys_be_128x128x32_05275fa_clean_20260908.json`;
+- `/tmp/pssolver_nsys_be_128x128x32_05275fa_clean_20260908_stats_*.csv`;
+- `/tmp/pssolver_nsys_be_128x128x32_05275fa_clean_direct_20260908.json`.
