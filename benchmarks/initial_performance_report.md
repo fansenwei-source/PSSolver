@@ -244,6 +244,60 @@ rule out a native vendor DCT/DST implementation or a custom fused kernel, and
 it is not an H100 ranking; it rejects these two PyTorch composition strategies
 for the present solver.
 
+## Accepted candidate: real-first tensor-product execution
+
+The transform algorithm and full-complex spectral layout can remain unchanged
+while avoiding most complex DCT/DST matrix products. Transforms on independent
+axes commute, so the candidate executes all DCT/DST axes before periodic FFT
+axes in the forward transform. The inverse applies periodic inverse FFTs first,
+takes the real part that the public inverse already returns, and then applies
+the real-basis inverse matrices. The legacy order remains the default, while
+`real_first` is an explicit solver, profiler, Nsight, and production-driver
+option recorded in metadata.
+
+The final candidate passed 467 tests and eight subtests. Coverage included
+float32/float64 forward and inverse
+equivalence, arbitrary complex inverse coefficients, periodic/Neumann/
+Dirichlet axis permutations, mixed-basis derivatives, full manufactured
+free-slip Stokes recovery, force, pressure, and energy-budget tests. A
+32x32x16 float64 CUDA comparison through 100 complete timesteps found no error
+growth. At step 100, the complete spatial-state relative L2 difference was
+`3.32e-16`; Q-component differences were below `3.9e-16`, velocity-component
+differences below `5.6e-15`, and pressure `8.3e-15`.
+
+Each profiler entry below is the mean of three alternating legacy/real-first
+runs with five warmup and 30 measured timesteps:
+
+| Shape | Legacy timestep | Real-first timestep | Speedup | Legacy/real-first peak allocated |
+|---:|---:|---:|---:|---:|
+| 64x64x32 | 30.440 ms | 19.084 ms | 1.595x | 170.8 / 152.8 MiB |
+| 128x128x32 | 121.256 ms | 79.693 ms | 1.522x | 646.7 / 582.7 MiB |
+
+Forward-transform time fell from 6.928 to 3.358 ms at 64x64x32 and from
+28.354 to 13.948 ms at 128x128x32. Inverse-transform time fell from 15.376 to
+8.332 ms and from 60.457 to 36.067 ms, respectively. Peak allocated memory
+fell by 10.5% and 9.9%. Peak reserved memory was 220/236 MiB at the smaller
+shape and 948/868 MiB at the larger shape; allocator reservation is therefore
+not used as the acceptance metric.
+
+A matched production-driver run at 32x32x16 for 100 float64 CUDA timesteps
+completed in 0.5732 s with the legacy order and 0.4973 s with real-first, a
+1.153x end-to-end speedup. Final Q, velocity, and pressure relative L2
+differences were `3.09e-16`, `4.25e-16`, and `4.72e-16`.
+
+A bounded five-step 128x128x32 Nsight capture confirmed the intended kernel
+change. Legacy complex CUTLASS GEMMs accounted for approximately 45.6% of GPU
+time. With real-first, the dominant real double-precision CUTLASS GEMMs
+accounted for approximately 17.7%, while the remaining complex GEMMs were
+approximately 1.4%. Mean captured timestep time was 79.575 ms, inverse
+transform time was about 36.0 ms, and forward transform time about 13.8 ms.
+
+This is a strong local candidate because it changes only execution order, not
+the basis, normalization, modal indexing, spectral shape, derivative maps,
+dealiasing masks, Stokes equations, or Beris--Edwards model. It remains
+default-off pending a clean H100 comparison before any production-default or
+validation-plan change.
+
 ## Snapshot I/O profile
 
 A separate 64x64x32 run saved Q, velocity, and pressure after every profiled
@@ -286,3 +340,11 @@ The rejected FFT DCT/DST experiment wrote its repeated local-GPU profiles to:
 
 - `/tmp/pssolver_fft_ab.mb4XU3/` for the length-`2N` complex-FFT variant;
 - `/tmp/pssolver_fft_half_ab.uPwKAc/` for the batched half-spectrum variant.
+
+The accepted real-first experiment wrote local artifacts to:
+
+- `/tmp/pssolver_real_first_ab.ztJanq/` for repeated profiler A/B results;
+- `/tmp/pssolver_real_first_driver.HCgtZd/` for matched production-driver runs;
+- `/tmp/pssolver_nsys_be_128x128x32_real_first_20260909.nsys-rep`;
+- `/tmp/pssolver_nsys_be_128x128x32_real_first_20260909.json`;
+- `/tmp/pssolver_nsys_be_128x128x32_real_first_20260909_stats_*.csv`.

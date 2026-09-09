@@ -57,6 +57,7 @@ class ProfileConfig:
     spectral_refresh_interval: int | None = None
     pressure_diagnostics: bool = False
     reuse_q_gradients: bool = True
+    transform_execution_order: str = "legacy"
     snapshot_interval: int | None = None
     snapshot_directory: str | None = None
     save_hydrodynamics: bool = False
@@ -200,6 +201,10 @@ def _validate_config(config: ProfileConfig) -> None:
         raise ValueError("lengths must contain three positive finite numbers")
     if config.dtype not in {"float32", "float64"}:
         raise ValueError("dtype must be 'float32' or 'float64'")
+    if config.transform_execution_order not in {"legacy", "real_first"}:
+        raise ValueError(
+            "transform_execution_order must be 'legacy' or 'real_first'"
+        )
     if not math.isfinite(config.dt) or config.dt <= 0.0:
         raise ValueError("dt must be positive and finite")
     if config.warmup_steps < 0:
@@ -264,6 +269,7 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
         device=config.device,
         batchsize=1,
         dtype=dtype,
+        transform_execution_order=config.transform_execution_order,
     )
     projector = BasisAwareSpectralProjector(solver, rule=config.dealias_rule)
     solver.model.spectral_projector = projector
@@ -570,6 +576,15 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--pressure-diagnostics", action="store_true")
     parser.add_argument("--disable-q-gradient-reuse", action="store_true")
+    parser.add_argument(
+        "--transform-execution-order",
+        choices=("legacy", "real_first"),
+        default="legacy",
+        help=(
+            "Experimental tensor-product execution plan. real_first applies "
+            "DCT/DST axes while data are real."
+        ),
+    )
     parser.add_argument("--snapshot-interval", type=int)
     parser.add_argument("--snapshot-directory")
     parser.add_argument("--save-hydrodynamics", action="store_true")
@@ -597,6 +612,7 @@ def main() -> None:
             spectral_refresh_interval=args.spectral_refresh_interval,
             pressure_diagnostics=args.pressure_diagnostics,
             reuse_q_gradients=not args.disable_q_gradient_reuse,
+            transform_execution_order=args.transform_execution_order,
             snapshot_interval=args.snapshot_interval,
             snapshot_directory=args.snapshot_directory,
             save_hydrodynamics=args.save_hydrodynamics,

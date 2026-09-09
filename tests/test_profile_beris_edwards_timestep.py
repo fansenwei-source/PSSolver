@@ -123,6 +123,7 @@ def test_snapshot_profile_writes_requested_fields(tmp_path):
         ({"shape": (4, 4, 0)}, "shape"),
         ({"dt": 0.0}, "dt"),
         ({"profile_steps": 0}, "profile_steps"),
+        ({"transform_execution_order": "unknown"}, "execution_order"),
         ({"snapshot_interval": 2}, "enabled together"),
         ({"snapshot_directory": "/tmp/unused"}, "enabled together"),
     ),

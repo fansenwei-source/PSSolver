@@ -66,6 +66,15 @@ def test_solver_rejects_unsupported_dtype(invalid_dtype):
         SpectralSolver((4,), device="cpu", dtype=invalid_dtype)
 
 
+def test_solver_rejects_unknown_transform_execution_order():
+    with pytest.raises(ValueError, match="execution_order"):
+        SpectralSolver(
+            (4,),
+            device="cpu",
+            transform_execution_order="unknown",
+        )
+
+
 @pytest.mark.parametrize("dtype", (torch.float32, torch.float64))
 def test_active_nematic_initial_conditions_preserve_requested_dtype(dtype):
     defect_fields = analytic_periodic_defect_gas_2d(

@@ -37,6 +37,8 @@ class TransformMetadata:
 class TensorProductTransformBackend:
     """Tensor-product spectral transforms on a shared cell-centered grid."""
 
+    _execution_orders = ("legacy", "real_first")
+
     _transform_kind_map = {
         "periodic": "fft",
         "dirichlet": "dst",
@@ -49,13 +51,26 @@ class TensorProductTransformBackend:
         "neumann": "dirichlet",
     }
 
-    def __init__(self, shape, lengths, device="cuda", dtype=torch.float32):
+    def __init__(
+        self,
+        shape,
+        lengths,
+        device="cuda",
+        dtype=torch.float32,
+        execution_order="legacy",
+    ):
+        if execution_order not in self._execution_orders:
+            raise ValueError(
+                f"execution_order must be one of {self._execution_orders}, "
+                f"got {execution_order!r}"
+            )
         self.shape = tuple(shape)
         self.lengths = tuple(self._normalize_length(length) for length in lengths)
         self.device = device
         self.dtype = dtype
         self.real_dtype = _real_dtype(dtype)
         self.spectral_dtype = _complex_dtype(dtype)
+        self.execution_order = execution_order
         self.dim = len(self.shape)
 
         self._matrix_cache = {}
@@ -121,6 +136,19 @@ class TensorProductTransformBackend:
 
     def _transform_kinds(self, boundary_conditions):
         return tuple(self._transform_kind_map[bc] for bc in boundary_conditions)
+
+    def _ordered_axis_transforms(self, transform_kinds, inverse):
+        indexed = list(enumerate(transform_kinds))
+        if self.execution_order == "legacy":
+            return list(reversed(indexed)) if inverse else indexed
+
+        real_transforms = [item for item in indexed if item[1] != "fft"]
+        periodic_transforms = [item for item in indexed if item[1] == "fft"]
+        if inverse:
+            return list(reversed(periodic_transforms)) + list(
+                reversed(real_transforms)
+            )
+        return real_transforms + periodic_transforms
 
     def get_metadata(self, boundary_conditions):
         boundary_conditions = tuple(boundary_conditions)
@@ -192,7 +220,10 @@ class TensorProductTransformBackend:
     def forward(self, tensor, boundary_conditions):
         output = tensor
         metadata = self.get_metadata(boundary_conditions)
-        for local_axis, kind in enumerate(metadata.transform_kinds):
+        for local_axis, kind in self._ordered_axis_transforms(
+            metadata.transform_kinds,
+            inverse=False,
+        ):
             axis = output.ndim - self.dim + local_axis
             output = self._apply_axis_transform(output, kind, axis, inverse=False)
         return output.to(self.spectral_dtype)
@@ -200,7 +231,20 @@ class TensorProductTransformBackend:
     def inverse(self, spectral, boundary_conditions):
         output = spectral
         metadata = self.get_metadata(boundary_conditions)
-        for local_axis, kind in reversed(list(enumerate(metadata.transform_kinds))):
+        for local_axis, kind in self._ordered_axis_transforms(
+            metadata.transform_kinds,
+            inverse=True,
+        ):
+            if (
+                self.execution_order == "real_first"
+                and kind != "fft"
+                and output.is_complex()
+            ):
+                # Real basis matrices commute with taking the real part. For
+                # physical Hermitian spectra the imaginary component is only
+                # roundoff; for arbitrary spectra inverse() has always
+                # discarded the same component after the real transforms.
+                output = output.real
             axis = output.ndim - self.dim + local_axis
             output = self._apply_axis_transform(output, kind, axis, inverse=True)
         return output.real

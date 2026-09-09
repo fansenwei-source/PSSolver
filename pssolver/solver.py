@@ -12,6 +12,7 @@ class SpectralSolver:
         batchsize=1,
         device="cuda",
         dtype=torch.float32,
+        transform_execution_order="legacy",
     ):
 
         if dtype not in (torch.float32, torch.float64):
@@ -36,6 +37,7 @@ class SpectralSolver:
             lengths=self.L,
             device=self.device,
             dtype=self.dtype,
+            execution_order=transform_execution_order,
         )
         self._init_periodic_metadata()
 

@@ -225,6 +225,16 @@ def parse_args():
         help="Real arithmetic precision used by fields and transforms.",
     )
     parser.add_argument(
+        "--transform-execution-order",
+        choices=("legacy", "real_first"),
+        default="legacy",
+        help=(
+            "Tensor-product transform execution plan. real_first applies "
+            "DCT/DST axes before periodic FFTs so their matrix products use "
+            "real arithmetic."
+        ),
+    )
+    parser.add_argument(
         "--tf32",
         choices=("off", "on"),
         default="off",
@@ -612,6 +622,7 @@ metadata = {
         "save_interval": SAVE_INTERVAL,
         "real_dtype": args.dtype,
         "spectral_dtype": spectral_dtype_name,
+        "transform_execution_order": args.transform_execution_order,
     },
     "model": {
         "name": "active_nematics",
@@ -726,6 +737,11 @@ metadata = {
             "scope": "single_static_to_nonlinear_evaluation",
             "mutation_guard": "spatial_and_spectral_tensor_versions",
         },
+        "transforms": {
+            "execution_order": args.transform_execution_order,
+            "spectral_storage": "full_complex",
+            "basis_and_normalization_changed": False,
+        },
         "precision": {
             "real_dtype": args.dtype,
             "spectral_dtype": spectral_dtype_name,
@@ -768,6 +784,7 @@ metadata = {
     "seed": seed,
     "device": device,
     "dtype": args.dtype,
+    "transform_execution_order": args.transform_execution_order,
     "tf32": args.tf32,
     "q_boundary_conditions": Q_BC,
     "tangential_velocity_boundary_conditions": U_TANGENTIAL_BC,
@@ -875,6 +892,7 @@ solver = SpectralSolver(
     device=device,
     batchsize=batchsize,
     dtype=real_dtype,
+    transform_execution_order=args.transform_execution_order,
 )
 spectral_projector = BasisAwareSpectralProjector(
     solver,

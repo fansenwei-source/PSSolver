@@ -46,6 +46,7 @@ class NsysCaptureConfig:
     spectral_refresh_interval: int | None = None
     pressure_diagnostics: bool = False
     reuse_q_gradients: bool = True
+    transform_execution_order: str = "legacy"
     seed: int = 20260908
 
     def profile_config(self) -> ProfileConfig:
@@ -62,6 +63,7 @@ class NsysCaptureConfig:
             spectral_refresh_interval=self.spectral_refresh_interval,
             pressure_diagnostics=self.pressure_diagnostics,
             reuse_q_gradients=self.reuse_q_gradients,
+            transform_execution_order=self.transform_execution_order,
             seed=self.seed,
         )
 
@@ -167,6 +169,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--spectral-refresh-interval", type=int)
     parser.add_argument("--pressure-diagnostics", action="store_true")
     parser.add_argument("--disable-q-gradient-reuse", action="store_true")
+    parser.add_argument(
+        "--transform-execution-order",
+        choices=("legacy", "real_first"),
+        default="legacy",
+    )
     parser.add_argument("--seed", type=int, default=20260908)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--overwrite", action="store_true")
@@ -190,6 +197,7 @@ def main() -> None:
             spectral_refresh_interval=args.spectral_refresh_interval,
             pressure_diagnostics=args.pressure_diagnostics,
             reuse_q_gradients=not args.disable_q_gradient_reuse,
+            transform_execution_order=args.transform_execution_order,
             seed=args.seed,
         )
     )
