@@ -49,6 +49,9 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
     modes and fixes the plug-flow reference frame.  ``friction`` with positive
     drag retains and determines those modes.  This distinction is a modeling
     choice, not a pressure gauge.
+
+    Disabling pressure diagnostics skips only residual measurements and their
+    host synchronizations. The computed pressure and velocity are unchanged.
     """
 
     def __init__(
@@ -64,6 +67,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         ldg_l1=0.02,
         flow_alignment=0.3,
         cache_force_diagnostics=False,
+        cache_pressure_diagnostics=True,
         zero_mode_policy="zero_mean",
         q_boundary_conditions=PLANE_Q_BOUNDARY_CONDITIONS,
         tangential_velocity_boundary_conditions=(
@@ -116,6 +120,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
             friction=friction,
             viscosity=viscosity,
             zero_mode_policy=zero_mode_policy,
+            pressure_diagnostics=cache_pressure_diagnostics,
         )
         self.beta = float(beta_value)
         self.ldg_a = float(ldg_a)

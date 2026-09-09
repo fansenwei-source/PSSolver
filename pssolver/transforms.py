@@ -484,7 +484,13 @@ def projected_distortion_stress_divergence(
 
 
 class FreeSlipModalStokesSolver(torch.nn.Module):
-    """Mixed DCT/DST Stokes--Brinkman saddle solver for z-normal walls."""
+    """Mixed DCT/DST Stokes--Brinkman saddle solver for z-normal walls.
+
+    Pressure residual diagnostics are enabled by default for backward
+    compatibility. Production callers may disable them to avoid an additional
+    residual operator and GPU-to-host scalar synchronizations; this does not
+    change the pressure or velocity solution.
+    """
 
     def __init__(
         self,
@@ -496,6 +502,7 @@ class FreeSlipModalStokesSolver(torch.nn.Module):
         friction=0.0,
         viscosity=1.0,
         zero_mode_policy="zero_mean",
+        pressure_diagnostics=True,
     ):
         super().__init__()
         if backend.dim != 3:
@@ -508,6 +515,8 @@ class FreeSlipModalStokesSolver(torch.nn.Module):
             raise ValueError(
                 "zero_mode_policy must be 'zero_mean' or 'friction'."
             )
+        if not isinstance(pressure_diagnostics, bool):
+            raise TypeError("pressure_diagnostics must be a bool.")
         if zero_mode_policy == "zero_mean" and friction != 0:
             raise ValueError("zero_mean mode requires friction == 0.")
         if zero_mode_policy == "friction" and friction <= 0:
@@ -538,6 +547,7 @@ class FreeSlipModalStokesSolver(torch.nn.Module):
         self.friction = float(friction)
         self.viscosity = float(viscosity)
         self.zero_mode_policy = zero_mode_policy
+        self.pressure_diagnostics = pressure_diagnostics
 
         tangential_metadata = backend.get_metadata(tangential_bcs)
         normal_metadata = backend.get_metadata(normal_bcs)
@@ -690,21 +700,28 @@ class FreeSlipModalStokesSolver(torch.nn.Module):
 
     def _solve_pressure(self, rhs_hat):
         rhs_hat = self._project_pressure_gauge(rhs_hat)
-        rhs_norm = torch.linalg.vector_norm(rhs_hat.reshape(-1)).item()
-        if rhs_norm == 0.0:
-            self.last_pressure_iterations = 0
-            self.last_pressure_residual = 0.0
-            self.last_pressure_relative_residual = 0.0
-            return torch.zeros_like(rhs_hat)
+        if self.pressure_diagnostics:
+            rhs_norm = torch.linalg.vector_norm(rhs_hat.reshape(-1)).item()
+            if rhs_norm == 0.0:
+                self.last_pressure_iterations = 0
+                self.last_pressure_residual = 0.0
+                self.last_pressure_relative_residual = 0.0
+                return torch.zeros_like(rhs_hat)
 
         pressure_hat = self._project_pressure_gauge(
             rhs_hat / self.schur_diag_safe
         )
-        residual = rhs_hat - self._pressure_operator(pressure_hat)
-        residual_norm = torch.linalg.vector_norm(residual.reshape(-1)).item()
         self.last_pressure_iterations = 1
-        self.last_pressure_residual = residual_norm
-        self.last_pressure_relative_residual = residual_norm / rhs_norm
+        if self.pressure_diagnostics:
+            residual = rhs_hat - self._pressure_operator(pressure_hat)
+            residual_norm = torch.linalg.vector_norm(residual.reshape(-1)).item()
+            self.last_pressure_residual = residual_norm
+            self.last_pressure_relative_residual = residual_norm / rhs_norm
+        else:
+            # The diagonal Schur solve itself is unchanged. Only host-synchronizing
+            # residual measurements are omitted from the production hot path.
+            self.last_pressure_residual = math.nan
+            self.last_pressure_relative_residual = math.nan
         return pressure_hat
 
     def solve_force_hats(self, fx_hat, fy_hat, fz_hat):

@@ -711,6 +711,7 @@ metadata = {
         "velocity_zero_mode": zero_mode_policy,
         "zero_mode_force": "total_nematic_tangential_force",
         "pressure_solver": "free_slip_modal_schur_complement",
+        "pressure_residual_diagnostics": ENABLE_DIAGNOSTICS,
         "precision": {
             "real_dtype": args.dtype,
             "spectral_dtype": spectral_dtype_name,
@@ -957,6 +958,7 @@ solver.model.set_static_compute_model(
         ldg_l1=ldg_l1,
         flow_alignment=ALIGNMENT_PARAMETER,
         cache_force_diagnostics=ENABLE_DIAGNOSTICS,
+        cache_pressure_diagnostics=ENABLE_DIAGNOSTICS,
         zero_mode_policy=zero_mode_policy,
     )
 )
