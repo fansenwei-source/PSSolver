@@ -7,7 +7,7 @@ solution tests.
 Run the tensor-product transform benchmark from the repository root:
 
 ```bash
-python benchmarks/benchmark_transform_backend.py \
+python -m benchmarks.benchmark_transform_backend \
   --device cuda \
   --dtype float64 \
   --shape 320,320,80 \
@@ -35,3 +35,27 @@ not change the computed velocity or pressure before reporting the speedup.
 For comparisons between commits, use the same Python, PyTorch, hardware,
 warm-up count, repeat count, shape, dtype, and boundary conditions. Record the
 full JSON output together with the Git commit and machine identity.
+
+Profile the complete Beris--Edwards--Stokes timestep with:
+
+```bash
+python -m benchmarks.profile_beris_edwards_timestep \
+  --device cuda \
+  --dtype float64 \
+  --shape 128,128,32 \
+  --lengths 100,100,20 \
+  --dealias-rule cubic_half \
+  --warmup-steps 3 \
+  --profile-steps 10 \
+  --output /tmp/pssolver_profile_128.json
+```
+
+The additive regions partition the numerical timestep. The nematic-force,
+Stokes-solve, and transform regions are nested cross-cutting measurements and
+must not be added to the partition. CUDA events are recorded asynchronously;
+the benchmark synchronizes only after all profiled steps.
+
+Snapshot transfer and I/O are disabled by default. To measure them separately,
+provide both `--snapshot-interval` and a new or empty `--snapshot-directory`.
+Add `--save-hydrodynamics` to include velocity and pressure files. Never use an
+active scientific run directory as a benchmark snapshot destination.
