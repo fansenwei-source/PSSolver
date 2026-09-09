@@ -36,6 +36,7 @@ from pssolver.models.active_nematics import (
     BerisEdwardsQGradientCache,
     BerisEdwardsQNonlinearModel,
     DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
+    DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
     Q_COMPONENTS,
     beris_edwards_linear_operator,
 )
@@ -63,6 +64,7 @@ class ProfileConfig:
     pressure_diagnostics: bool = False
     reuse_q_gradients: bool = True
     molecular_field_linear_space: str = DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE
+    stress_divergence_sum_space: str = DEFAULT_STRESS_DIVERGENCE_SUM_SPACE
     transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
     snapshot_interval: int | None = None
     snapshot_directory: str | None = None
@@ -215,6 +217,10 @@ def _validate_config(config: ProfileConfig) -> None:
         raise ValueError(
             "molecular_field_linear_space must be 'physical' or 'spectral'"
         )
+    if config.stress_divergence_sum_space not in {"physical", "spectral"}:
+        raise ValueError(
+            "stress_divergence_sum_space must be 'physical' or 'spectral'"
+        )
     if not math.isfinite(config.dt) or config.dt <= 0.0:
         raise ValueError("dt must be positive and finite")
     if config.warmup_steps < 0:
@@ -333,6 +339,9 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
             flow_alignment=0.3,
             molecular_field_linear_space=(
                 config.molecular_field_linear_space
+            ),
+            stress_divergence_sum_space=(
+                config.stress_divergence_sum_space
             ),
             cache_force_diagnostics=False,
             cache_pressure_diagnostics=config.pressure_diagnostics,
@@ -511,6 +520,9 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
             "molecular_field_linear_space": (
                 config.molecular_field_linear_space
             ),
+            "stress_divergence_sum_space": (
+                config.stress_divergence_sum_space
+            ),
             "initial_condition": "deterministic synthetic aligned Q plus noise",
         },
         "environment": {
@@ -603,6 +615,16 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--stress-divergence-sum-space",
+        choices=("physical", "spectral"),
+        default=DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
+        help=(
+            "A/B control for divergence assembly. spectral adds compatible "
+            "derivative coefficients before inverse transforms; physical "
+            "retains the production path."
+        ),
+    )
+    parser.add_argument(
         "--transform-execution-order",
         choices=("legacy", "real_first"),
         default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
@@ -641,6 +663,9 @@ def main() -> None:
             reuse_q_gradients=not args.disable_q_gradient_reuse,
             molecular_field_linear_space=(
                 args.molecular_field_linear_space
+            ),
+            stress_divergence_sum_space=(
+                args.stress_divergence_sum_space
             ),
             transform_execution_order=args.transform_execution_order,
             snapshot_interval=args.snapshot_interval,

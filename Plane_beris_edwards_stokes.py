@@ -53,6 +53,7 @@ from pssolver.models.active_nematics import (
     BerisEdwardsQGradientCache,
     BerisEdwardsQNonlinearModel,
     DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
+    DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
     Q_convention_metadata,
     beris_edwards_linear_operator,
     create_initial_condition,
@@ -234,6 +235,16 @@ def parse_args():
             "Evaluation space for the linear L1 laplacian in the raw "
             "molecular field. spectral is the H100-qualified production "
             "default; physical retains the validated compatibility path."
+        ),
+    )
+    parser.add_argument(
+        "--stress-divergence-sum-space",
+        choices=("physical", "spectral"),
+        default=DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
+        help=(
+            "Assembly space for compatible stress-divergence derivatives. "
+            "physical retains the production path; spectral is a default-off "
+            "candidate that reduces inverse transforms."
         ),
     )
     parser.add_argument(
@@ -698,6 +709,9 @@ metadata = {
             "molecular_field_linear_space": (
                 args.molecular_field_linear_space
             ),
+            "stress_divergence_sum_space": (
+                args.stress_divergence_sum_space
+            ),
             "isotropic_stress": "absorbed_into_incompressible_pressure",
             "viscous_stress": "handled_by_eta_laplacian_in_stokes_operator",
         },
@@ -748,6 +762,7 @@ metadata = {
         "pressure_solver": "free_slip_modal_schur_complement",
         "pressure_residual_diagnostics": ENABLE_DIAGNOSTICS,
         "molecular_field_linear_space": args.molecular_field_linear_space,
+        "stress_divergence_sum_space": args.stress_divergence_sum_space,
         "q_gradient_reuse": {
             "enabled": not args.disable_q_gradient_reuse,
             "scope": "single_static_to_nonlinear_evaluation",
@@ -802,6 +817,7 @@ metadata = {
     "dtype": args.dtype,
     "transform_execution_order": args.transform_execution_order,
     "molecular_field_linear_space": args.molecular_field_linear_space,
+    "stress_divergence_sum_space": args.stress_divergence_sum_space,
     "tf32": args.tf32,
     "q_boundary_conditions": Q_BC,
     "tangential_velocity_boundary_conditions": U_TANGENTIAL_BC,
@@ -1013,6 +1029,7 @@ solver.model.set_static_compute_model(
         ldg_l1=ldg_l1,
         flow_alignment=ALIGNMENT_PARAMETER,
         molecular_field_linear_space=args.molecular_field_linear_space,
+        stress_divergence_sum_space=args.stress_divergence_sum_space,
         cache_force_diagnostics=ENABLE_DIAGNOSTICS,
         cache_pressure_diagnostics=ENABLE_DIAGNOSTICS,
         q_gradient_cache=q_gradient_cache,

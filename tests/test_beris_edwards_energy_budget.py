@@ -1,5 +1,6 @@
 import math
 
+import pytest
 import torch
 
 from pssolver import (
@@ -497,7 +498,10 @@ def test_active_power_sign_and_zero_mean_constraint_power():
     )
 
 
-def test_coupled_passive_semidiscrete_energy_budget_closes_without_wall_power():
+@pytest.mark.parametrize("sum_space", ("physical", "spectral"))
+def test_coupled_passive_semidiscrete_energy_budget_closes_without_wall_power(
+    sum_space,
+):
     shape = (16, 16, 6)
     lengths = (2.0 * math.pi, 2.0 * math.pi, 1.5)
     solver = SpectralSolver(
@@ -544,6 +548,7 @@ def test_coupled_passive_semidiscrete_energy_budget_closes_without_wall_power():
         friction=friction,
         viscosity=viscosity,
         flow_alignment=flow_alignment,
+        stress_divergence_sum_space=sum_space,
         zero_mode_policy="friction",
         **coefficients,
     )

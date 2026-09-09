@@ -18,6 +18,7 @@ def test_capture_config_maps_to_complete_timestep_profile():
         capture_steps=2,
         reuse_q_gradients=False,
         molecular_field_linear_space="spectral",
+        stress_divergence_sum_space="spectral",
         transform_execution_order="real_first",
     )
 
@@ -29,6 +30,7 @@ def test_capture_config_maps_to_complete_timestep_profile():
     assert profile.profile_steps == 2
     assert profile.reuse_q_gradients is False
     assert profile.molecular_field_linear_space == "spectral"
+    assert profile.stress_divergence_sum_space == "spectral"
     assert profile.transform_execution_order == "real_first"
     assert profile.snapshot_interval is None
     assert profile.snapshot_directory is None
@@ -39,13 +41,22 @@ def test_capture_defaults_to_real_first_transform_execution():
 
     assert config.transform_execution_order == "real_first"
     assert config.molecular_field_linear_space == "spectral"
+    assert config.stress_divergence_sum_space == "physical"
     assert config.profile_config().transform_execution_order == "real_first"
     assert config.profile_config().molecular_field_linear_space == "spectral"
+    assert config.profile_config().stress_divergence_sum_space == "physical"
 
 
 def test_capture_config_rejects_nonpositive_capture_steps():
     with pytest.raises(ValueError, match="capture_steps must be positive"):
         _validate_capture_config(NsysCaptureConfig(capture_steps=0))
+
+
+def test_capture_config_rejects_unknown_stress_divergence_sum_space():
+    with pytest.raises(ValueError, match="stress_divergence_sum_space"):
+        _validate_capture_config(
+            NsysCaptureConfig(stress_divergence_sum_space="unknown")
+        )
 
 
 def test_disabled_nvtx_timer_does_not_touch_cuda(monkeypatch):

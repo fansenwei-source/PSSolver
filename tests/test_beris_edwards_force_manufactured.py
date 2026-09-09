@@ -1,5 +1,6 @@
 import math
 
+import pytest
 import torch
 
 from pssolver import (
@@ -78,7 +79,8 @@ def _common_basis_mode(index, x, y, z):
     return field, gradients
 
 
-def test_nine_distinct_row_major_stresses_have_row_wise_divergence():
+@pytest.mark.parametrize("sum_space", ("physical", "spectral"))
+def test_nine_distinct_row_major_stresses_have_row_wise_divergence(sum_space):
     solver, projector = _solver_and_projector(
         (20, 18, 16),
         (2.0 * math.pi, 2.0 * math.pi, math.pi),
@@ -93,6 +95,7 @@ def test_nine_distinct_row_major_stresses_have_row_wise_divergence():
         stress,
         Q_BC,
         projector=projector,
+        sum_space=sum_space,
     )
     expected = torch.stack(
         tuple(
@@ -145,7 +148,8 @@ def _parity_split_mode(index, x, y, z):
     return field, gradients
 
 
-def test_distortion_parity_split_differentiates_all_nine_components():
+@pytest.mark.parametrize("sum_space", ("physical", "spectral"))
+def test_distortion_parity_split_differentiates_all_nine_components(sum_space):
     solver, projector = _solver_and_projector(
         (20, 18, 16),
         (2.0 * math.pi, 2.0 * math.pi, math.pi),
@@ -161,6 +165,7 @@ def test_distortion_parity_split_differentiates_all_nine_components():
         Q_BC,
         DISTORTION_ODD_Z_BC,
         projector=projector,
+        sum_space=sum_space,
     )
     expected = torch.stack(
         tuple(
@@ -172,6 +177,29 @@ def test_distortion_parity_split_differentiates_all_nine_components():
     )
 
     torch.testing.assert_close(observed, expected, rtol=2e-12, atol=2e-12)
+
+
+def test_stress_divergence_helpers_reject_unknown_sum_space():
+    solver, projector = _solver_and_projector((6, 6, 5), (3.0, 3.0, 2.0))
+    zeros = tuple(torch.zeros((6, 6, 5), dtype=torch.float64) for _ in range(9))
+
+    with pytest.raises(ValueError, match="sum_space"):
+        projected_common_basis_stress_divergence(
+            solver.transform_backend,
+            zeros,
+            Q_BC,
+            projector=projector,
+            sum_space="unknown",
+        )
+    with pytest.raises(ValueError, match="sum_space"):
+        projected_distortion_stress_divergence(
+            solver.transform_backend,
+            zeros,
+            Q_BC,
+            DISTORTION_ODD_Z_BC,
+            projector=projector,
+            sum_space="unknown",
+        )
 
 
 def test_neumann_qxz_active_stress_has_nonzero_mean_tangential_force():

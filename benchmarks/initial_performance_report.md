@@ -365,6 +365,61 @@ below `3.5e-16` for Q, velocity, and pressure. The qualification classified
 the candidate as `A_recommended`, so spectral staging is now the production
 default; physical staging remains an explicit rollback control.
 
+### Candidate: spectral stress-divergence summation
+
+An operator-level CUDA profile of the current production path at 128x128x32
+found that inverse transforms still occupied 43.3% of a timestep.  The
+algebraic- and distortion-stress divergence helpers each occupied about 14.9%.
+Both helpers previously inverse-transformed every directional derivative and
+then added the results in physical space, even when several derivative terms
+already shared their final spectral basis.
+
+The candidate adds compatible derivative coefficients before inversion.  In
+the common-basis algebraic stress, the x and y derivatives share a basis.  In
+the parity-split distortion stress, all terms contributing to each tangential
+force component share the Neumann basis, while all terms contributing to the
+normal force share the Dirichlet basis.  This linear reordering reduces inverse
+transform calls from 37 to 32 per timestep without changing bases, derivative
+maps, dealiasing cutoffs, or the represented divergence.  The historical
+inverse-then-sum order remains available through
+`--stress-divergence-sum-space physical`; the default-off candidate is
+`spectral`.
+
+The same branch also avoids materializing a full complex-valued copy of each
+Boolean dealiasing mask.  Multiplication now promotes the Boolean 0/1 mask
+inside the output kernel.  This projector change is out-of-place, does not
+mutate its input, and retained the production final-state SHA-256 exactly.
+
+Three alternating, independent-process float64 CUDA pairs used five warmup and
+30 measured timesteps.  The table compares the branch's physical-sum control
+with the spectral-sum candidate; both include the Boolean-mask improvement.
+
+| Shape | Physical sum | Spectral sum | Speedup |
+|---:|---:|---:|---:|
+| 32x32x16 | 5.673 ms | 5.341 ms | 1.062x |
+| 64x64x32 | 18.129 ms | 16.944 ms | 1.070x |
+| 128x128x32 | 75.492 ms | 70.574 ms | 1.070x |
+
+At 128x128x32, inverse-transform time fell from 33.131 to 28.009 ms per
+timestep and nematic-force time fell from 47.973 to 43.013 ms.  Peak reserved
+memory was unchanged at 910,163,968 bytes.  Peak allocated memory changed from
+585,824,768 to 590,019,072 bytes, an increase of 4 MiB or about 0.72%.
+
+A separate three-process production baseline at commit `7763ba1` measured
+76.707 ms per timestep.  The Boolean-mask change alone reduced that to 75.492
+ms (`1.016x`), while the combined spectral-sum candidate measured 70.574 ms
+(`1.087x` versus production).
+
+A matched 32x32x16 production-driver comparison through 100 timesteps verified
+that the candidate's physical fallback remained byte-identical to `7763ba1`.
+Relative L2 differences between the spectral-sum candidate and production were
+`2.52e-17` for Q, `1.93e-16` for velocity, and `2.83e-16` for pressure, with
+finite values throughout.  A matching float32 run with TF32 disabled found
+relative differences of `1.41e-8`, `1.10e-7`, and `1.73e-7`, respectively,
+consistent with float32 roundoff.  The complete local suite passed 487 tests
+and eight subtests.  H100 qualification is still required before any default
+change.
+
 ## Snapshot I/O profile
 
 A separate 64x64x32 run saved Q, velocity, and pressure after every profiled

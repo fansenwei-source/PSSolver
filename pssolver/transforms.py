@@ -379,7 +379,11 @@ class BasisAwareSpectralProjector:
                 f"{tuple(spectral.shape[-len(self.shape):])}."
             )
         mask = self.mask(boundary_conditions)
-        return spectral * mask.to(dtype=spectral.dtype)
+        # Let PyTorch promote the Boolean mask inside the multiplication
+        # kernel.  Materializing a full complex-valued copy of the mask adds
+        # one allocation and one device copy at every projection while giving
+        # exactly the same finite 0/1 multiplication.
+        return spectral * mask
 
     def project_dynamic_fields(self, fields, *, sync_spatial):
         """Project dynamic transform groups and optionally sync real fields."""
@@ -426,20 +430,40 @@ def _inverse_spectral_gradient(
     return backend.inverse(gradient_hat, gradient_bcs)
 
 
+def _validate_divergence_sum_space(sum_space):
+    if sum_space not in {"physical", "spectral"}:
+        raise ValueError(
+            "sum_space must be 'physical' or 'spectral'."
+        )
+
+
+def _spectral_gradient(backend, spectral, boundary_conditions, axis):
+    return backend.gradient_hat(
+        spectral,
+        boundary_conditions,
+        axis,
+    )
+
+
 def projected_common_basis_stress_divergence(
     backend,
     stress_components,
     boundary_conditions,
     *,
     projector=None,
+    sum_space="physical",
 ):
     """Return row-wise ``partial_j stress_ij`` for one shared basis.
 
     Components are the nine row-major entries
     ``(xx, xy, xz, yx, yy, yz, zx, zy, zz)``.
+    ``sum_space='spectral'`` combines the x/y derivative coefficients, which
+    share a basis, before inversion.  The z derivative retains its parity-
+    changed basis and is combined in physical space.
     """
     if len(stress_components) != 9:
         raise ValueError("A three-dimensional stress requires nine components.")
+    _validate_divergence_sum_space(sum_space)
     boundary_conditions = tuple(boundary_conditions)
     stress_hat = backend.forward(
         torch.stack(tuple(stress_components)),
@@ -450,17 +474,46 @@ def projected_common_basis_stress_divergence(
         stress_hat,
         boundary_conditions,
     )
-    derivative_x = _inverse_spectral_gradient(
+    if sum_space == "physical":
+        derivative_x = _inverse_spectral_gradient(
+            backend,
+            stress_hat[[0, 3, 6]],
+            boundary_conditions,
+            axis=0,
+        )
+        derivative_y = _inverse_spectral_gradient(
+            backend,
+            stress_hat[[1, 4, 7]],
+            boundary_conditions,
+            axis=1,
+        )
+        derivative_z = _inverse_spectral_gradient(
+            backend,
+            stress_hat[[2, 5, 8]],
+            boundary_conditions,
+            axis=2,
+        )
+        return derivative_x + derivative_y + derivative_z
+
+    derivative_x_hat, derivative_x_bcs = _spectral_gradient(
         backend,
         stress_hat[[0, 3, 6]],
         boundary_conditions,
         axis=0,
     )
-    derivative_y = _inverse_spectral_gradient(
+    derivative_y_hat, derivative_y_bcs = _spectral_gradient(
         backend,
         stress_hat[[1, 4, 7]],
         boundary_conditions,
         axis=1,
+    )
+    if derivative_x_bcs != derivative_y_bcs:
+        raise RuntimeError(
+            "The x/y stress derivatives must share one spectral basis."
+        )
+    derivative_xy = backend.inverse(
+        derivative_x_hat + derivative_y_hat,
+        derivative_x_bcs,
     )
     derivative_z = _inverse_spectral_gradient(
         backend,
@@ -468,7 +521,7 @@ def projected_common_basis_stress_divergence(
         boundary_conditions,
         axis=2,
     )
-    return derivative_x + derivative_y + derivative_z
+    return derivative_xy + derivative_z
 
 
 def projected_distortion_stress_divergence(
@@ -478,10 +531,17 @@ def projected_distortion_stress_divergence(
     odd_boundary_conditions,
     *,
     projector=None,
+    sum_space="physical",
 ):
-    """Differentiate row-major distortion stress with its z parity split."""
+    """Differentiate row-major distortion stress with its z parity split.
+
+    ``sum_space='spectral'`` assembles the two tangential components in their
+    common Neumann basis and the normal component in its Dirichlet basis before
+    inversion.  This is the same linear divergence with fewer transforms.
+    """
     if len(stress_components) != 9:
         raise ValueError("A three-dimensional stress requires nine components.")
+    _validate_divergence_sum_space(sum_space)
     even_boundary_conditions = tuple(even_boundary_conditions)
     odd_boundary_conditions = tuple(odd_boundary_conditions)
     even_components = torch.stack(
@@ -501,31 +561,69 @@ def projected_distortion_stress_divergence(
         odd_boundary_conditions,
     )
 
-    even_x = _inverse_spectral_gradient(
+    if sum_space == "physical":
+        even_x = _inverse_spectral_gradient(
+            backend, even_hat[[0, 2]], even_boundary_conditions, axis=0
+        )
+        even_y = _inverse_spectral_gradient(
+            backend, even_hat[[1, 3]], even_boundary_conditions, axis=1
+        )
+        even_z = _inverse_spectral_gradient(
+            backend, even_hat[4], even_boundary_conditions, axis=2
+        )
+        odd_x = _inverse_spectral_gradient(
+            backend, odd_hat[2], odd_boundary_conditions, axis=0
+        )
+        odd_y = _inverse_spectral_gradient(
+            backend, odd_hat[3], odd_boundary_conditions, axis=1
+        )
+        odd_z = _inverse_spectral_gradient(
+            backend, odd_hat[[0, 1]], odd_boundary_conditions, axis=2
+        )
+        return torch.stack(
+            (
+                even_x[0] + even_y[0] + odd_z[0],
+                even_x[1] + even_y[1] + odd_z[1],
+                odd_x + odd_y + even_z,
+            )
+        )
+
+    even_x_hat, even_x_bcs = _spectral_gradient(
         backend, even_hat[[0, 2]], even_boundary_conditions, axis=0
     )
-    even_y = _inverse_spectral_gradient(
+    even_y_hat, even_y_bcs = _spectral_gradient(
         backend, even_hat[[1, 3]], even_boundary_conditions, axis=1
     )
-    even_z = _inverse_spectral_gradient(
-        backend, even_hat[4], even_boundary_conditions, axis=2
-    )
-    odd_x = _inverse_spectral_gradient(
-        backend, odd_hat[2], odd_boundary_conditions, axis=0
-    )
-    odd_y = _inverse_spectral_gradient(
-        backend, odd_hat[3], odd_boundary_conditions, axis=1
-    )
-    odd_z = _inverse_spectral_gradient(
+    odd_z_hat, odd_z_bcs = _spectral_gradient(
         backend, odd_hat[[0, 1]], odd_boundary_conditions, axis=2
     )
-    return torch.stack(
-        (
-            even_x[0] + even_y[0] + odd_z[0],
-            even_x[1] + even_y[1] + odd_z[1],
-            odd_x + odd_y + even_z,
+    if not (even_x_bcs == even_y_bcs == odd_z_bcs):
+        raise RuntimeError(
+            "Tangential distortion-force terms must share one spectral basis."
         )
+    tangential = backend.inverse(
+        even_x_hat + even_y_hat + odd_z_hat,
+        even_x_bcs,
     )
+
+    odd_x_hat, odd_x_bcs = _spectral_gradient(
+        backend, odd_hat[2], odd_boundary_conditions, axis=0
+    )
+    odd_y_hat, odd_y_bcs = _spectral_gradient(
+        backend, odd_hat[3], odd_boundary_conditions, axis=1
+    )
+    even_z_hat, even_z_bcs = _spectral_gradient(
+        backend, even_hat[4], even_boundary_conditions, axis=2
+    )
+    if not (odd_x_bcs == odd_y_bcs == even_z_bcs):
+        raise RuntimeError(
+            "Normal distortion-force terms must share one spectral basis."
+        )
+    normal = backend.inverse(
+        odd_x_hat + odd_y_hat + even_z_hat,
+        odd_x_bcs,
+    )
+    return torch.stack((tangential[0], tangential[1], normal))
 
 
 class FreeSlipModalStokesSolver(torch.nn.Module):

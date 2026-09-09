@@ -43,6 +43,7 @@ from .q_tensor import (
 from .stokes import (
     BerisEdwardsFreeSlipStokes,
     DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
+    DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
     PLANE_DISTORTION_ODD_BOUNDARY_CONDITIONS,
     PLANE_NORMAL_VELOCITY_BOUNDARY_CONDITIONS,
     PLANE_PRESSURE_BOUNDARY_CONDITIONS,
@@ -55,6 +56,7 @@ __all__ = [
     "BerisEdwardsQNonlinearModel",
     "BerisEdwardsFreeSlipStokes",
     "DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE",
+    "DEFAULT_STRESS_DIVERGENCE_SUM_SPACE",
     "Q_COMPONENTS",
     "STRESS_COMPONENTS",
     "Q_components",

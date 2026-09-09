@@ -165,6 +165,29 @@ def test_terminal_dst_mode_has_zero_derivative_and_is_filtered():
     )
 
 
+@pytest.mark.parametrize("real_dtype", (torch.float32, torch.float64))
+def test_projector_bool_mask_matches_typed_mask_without_mutating_input(
+    real_dtype,
+):
+    shape = (8, 10, 9)
+    backend = _backend(shape=shape)
+    solver_adapter = SimpleNamespace(shape=shape, transform_backend=backend)
+    projector = BasisAwareSpectralProjector(solver_adapter, rule="cubic_half")
+    generator = torch.Generator().manual_seed(1701)
+    spectral = torch.complex(
+        torch.randn((3, *shape), generator=generator, dtype=real_dtype),
+        torch.randn((3, *shape), generator=generator, dtype=real_dtype),
+    )
+    original = spectral.clone()
+    mask = projector.mask(TANGENTIAL_BC)
+    expected = spectral * mask.to(dtype=spectral.dtype)
+
+    observed = projector.project(spectral, TANGENTIAL_BC)
+
+    torch.testing.assert_close(observed, expected, rtol=0, atol=0)
+    torch.testing.assert_close(spectral, original, rtol=0, atol=0)
+
+
 @pytest.mark.parametrize("execution_order", ("legacy", "real_first"))
 def test_float64_manufactured_free_slip_solution_recovers_u_p_and_gauge(
     execution_order,

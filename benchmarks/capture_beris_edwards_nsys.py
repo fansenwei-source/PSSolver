@@ -24,6 +24,7 @@ import torch
 from pssolver import DEFAULT_TRANSFORM_EXECUTION_ORDER
 from pssolver.models.active_nematics import (
     DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
+    DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
 )
 
 from benchmarks.profile_beris_edwards_timestep import (
@@ -52,6 +53,7 @@ class NsysCaptureConfig:
     pressure_diagnostics: bool = False
     reuse_q_gradients: bool = True
     molecular_field_linear_space: str = DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE
+    stress_divergence_sum_space: str = DEFAULT_STRESS_DIVERGENCE_SUM_SPACE
     transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
     seed: int = 20260908
 
@@ -71,6 +73,9 @@ class NsysCaptureConfig:
             reuse_q_gradients=self.reuse_q_gradients,
             molecular_field_linear_space=(
                 self.molecular_field_linear_space
+            ),
+            stress_divergence_sum_space=(
+                self.stress_divergence_sum_space
             ),
             transform_execution_order=self.transform_execution_order,
             seed=self.seed,
@@ -184,6 +189,11 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
     )
     parser.add_argument(
+        "--stress-divergence-sum-space",
+        choices=("physical", "spectral"),
+        default=DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
+    )
+    parser.add_argument(
         "--transform-execution-order",
         choices=("legacy", "real_first"),
         default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
@@ -213,6 +223,9 @@ def main() -> None:
             reuse_q_gradients=not args.disable_q_gradient_reuse,
             molecular_field_linear_space=(
                 args.molecular_field_linear_space
+            ),
+            stress_divergence_sum_space=(
+                args.stress_divergence_sum_space
             ),
             transform_execution_order=args.transform_execution_order,
             seed=args.seed,

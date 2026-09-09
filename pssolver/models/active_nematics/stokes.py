@@ -38,6 +38,7 @@ PLANE_DISTORTION_ODD_BOUNDARY_CONDITIONS = (
     "dirichlet",
 )
 DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE = "spectral"
+DEFAULT_STRESS_DIVERGENCE_SUM_SPACE = "physical"
 
 
 class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
@@ -55,6 +56,10 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
 
     Disabling pressure diagnostics skips only residual measurements and their
     host synchronizations. The computed pressure and velocity are unchanged.
+
+    ``stress_divergence_sum_space='spectral'`` combines derivative terms that
+    already share their final velocity basis before inverse transformation.
+    ``physical`` retains the historical inverse-then-sum order.
     """
 
     def __init__(
@@ -70,6 +75,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         ldg_l1=0.02,
         flow_alignment=0.3,
         molecular_field_linear_space=DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
+        stress_divergence_sum_space=DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
         cache_force_diagnostics=False,
         cache_pressure_diagnostics=True,
         q_gradient_cache=None,
@@ -103,6 +109,10 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         if molecular_field_linear_space not in {"physical", "spectral"}:
             raise ValueError(
                 "molecular_field_linear_space must be 'physical' or 'spectral'."
+            )
+        if stress_divergence_sum_space not in {"physical", "spectral"}:
+            raise ValueError(
+                "stress_divergence_sum_space must be 'physical' or 'spectral'."
             )
 
         q_bcs = tuple(q_boundary_conditions)
@@ -138,6 +148,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         self.ldg_l1 = float(ldg_l1)
         self.flow_alignment = float(flow_alignment)
         self.molecular_field_linear_space = molecular_field_linear_space
+        self.stress_divergence_sum_space = stress_divergence_sum_space
         self.cache_force_diagnostics = bool(cache_force_diagnostics)
         if q_gradient_cache is not None and not isinstance(
             q_gradient_cache,
@@ -236,6 +247,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
             algebraic_stress,
             self.q_boundary_conditions,
             projector=self.spectral_projector,
+            sum_space=self.stress_divergence_sum_space,
         )
         del (
             algebraic_stress,
@@ -259,6 +271,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
             self.q_boundary_conditions,
             self.distortion_odd_boundary_conditions,
             projector=self.spectral_projector,
+            sum_space=self.stress_divergence_sum_space,
         )
         total_force = algebraic_force + distortion_force
         del distortion_stress
