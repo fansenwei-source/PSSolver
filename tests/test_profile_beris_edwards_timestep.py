@@ -5,8 +5,14 @@ from __future__ import annotations
 import json
 
 import pytest
+import torch
 
-from benchmarks.profile_beris_edwards_timestep import ProfileConfig, run_profile
+from benchmarks.profile_beris_edwards_timestep import (
+    ProfileConfig,
+    RegionTimer,
+    _build_solver,
+    run_profile,
+)
 
 
 def _small_config(**overrides):
@@ -53,10 +59,43 @@ def test_complete_timestep_profile_has_expected_regions_and_provenance():
     json.dumps(result)
 
 
-def test_profile_is_state_deterministic_for_fixed_seed():
-    first = run_profile(_small_config(profile_steps=1))
-    second = run_profile(_small_config(profile_steps=1))
-    assert first["final_state_sha256"] == second["final_state_sha256"]
+def test_q_gradient_reuse_preserves_state_and_removes_repeated_transforms():
+    cached = run_profile(_small_config(profile_steps=1, reuse_q_gradients=True))
+    uncached = run_profile(_small_config(profile_steps=1, reuse_q_gradients=False))
+
+    assert cached["final_state_sha256"] == uncached["final_state_sha256"]
+    assert (
+        uncached["timings"]["transform_inverse"]["calls"]
+        - cached["timings"]["transform_inverse"]["calls"]
+        == 15
+    )
+
+
+def test_callback_q_mutation_invalidates_cache_and_matches_uncached_path():
+    cached_config = _small_config(reuse_q_gradients=True)
+    uncached_config = _small_config(reuse_q_gradients=False)
+    cached = _build_solver(cached_config, RegionTimer(torch.device("cpu")))
+    uncached = _build_solver(uncached_config, RegionTimer(torch.device("cpu")))
+
+    def mutate_q(solver):
+        fields = solver.model.fields
+        fields["Qxx"] = fields["Qxx"] + 1.0e-4
+
+    cached.integrator.step(pre_update_callback=lambda: mutate_q(cached))
+    uncached.integrator.step(pre_update_callback=lambda: mutate_q(uncached))
+
+    torch.testing.assert_close(
+        cached.model.fields.spatial,
+        uncached.model.fields.spatial,
+        rtol=0.0,
+        atol=0.0,
+    )
+    torch.testing.assert_close(
+        cached.model.fields.spectral,
+        uncached.model.fields.spectral,
+        rtol=0.0,
+        atol=0.0,
+    )
 
 
 def test_snapshot_profile_writes_requested_fields(tmp_path):

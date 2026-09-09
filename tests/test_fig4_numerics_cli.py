@@ -117,6 +117,7 @@ class Fig4NumericsCliTests(unittest.TestCase):
         self.assertEqual(parameters["fric"], 0.0)
         self.assertEqual(metadata["numerics"]["spectral_refresh"]["mode"], "disabled")
         self.assertEqual(metadata["numerics"]["precision"]["real_dtype"], "float64")
+        self.assertTrue(metadata["numerics"]["q_gradient_reuse"]["enabled"])
         self.assertIsNone(metadata["validation_config_sha256"])
 
         files = metadata["implementation_provenance"]["files"]
@@ -180,6 +181,17 @@ class Fig4NumericsCliTests(unittest.TestCase):
         metadata = json.loads(result.stdout)
         self.assertEqual(metadata["model"]["parameters"]["fric"], 0.125)
         self.assertEqual(metadata["numerics"]["velocity_zero_mode"], "friction")
+
+    def test_beris_edwards_q_gradient_reuse_can_be_disabled(self):
+        result = run_dry_run(
+            "--disable-q-gradient-reuse",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        reuse = json.loads(result.stdout)["numerics"]["q_gradient_reuse"]
+        self.assertFalse(reuse["enabled"])
+        self.assertEqual(reuse["scope"], "single_static_to_nonlinear_evaluation")
 
 
 

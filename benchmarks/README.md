@@ -59,3 +59,7 @@ Snapshot transfer and I/O are disabled by default. To measure them separately,
 provide both `--snapshot-interval` and a new or empty `--snapshot-directory`.
 Add `--save-hydrodynamics` to include velocity and pressure files. Never use an
 active scientific run directory as a benchmark snapshot destination.
+
+The complete-timestep profiler enables single-step Q-gradient reuse by
+default. Pass `--disable-q-gradient-reuse` to measure the otherwise identical
+uncached path with the same initial condition and numerical parameters.

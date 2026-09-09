@@ -29,6 +29,7 @@ from pssolver import BasisAwareSpectralProjector, SpectralSolver
 from pssolver.integrator import SemiImplicitEulerIntegrator
 from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
+    BerisEdwardsQGradientCache,
     BerisEdwardsQNonlinearModel,
     Q_COMPONENTS,
     beris_edwards_linear_operator,
@@ -55,6 +56,7 @@ class ProfileConfig:
     profile_steps: int = 10
     spectral_refresh_interval: int | None = None
     pressure_diagnostics: bool = False
+    reuse_q_gradients: bool = True
     snapshot_interval: int | None = None
     snapshot_directory: str | None = None
     save_hydrodynamics: bool = False
@@ -266,6 +268,9 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
     projector = BasisAwareSpectralProjector(solver, rule=config.dealias_rule)
     solver.model.spectral_projector = projector
     initial_q = _synthetic_initial_q(config.shape, dtype=dtype, seed=config.seed)
+    q_gradient_cache = (
+        BerisEdwardsQGradientCache() if config.reuse_q_gradients else None
+    )
 
     frank_k = 1.0 / 81.0
     ldg_l1 = 2.0 * frank_k
@@ -295,6 +300,7 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
             ldg_c=0.3,
             rotational_viscosity=gamma,
             flow_alignment=0.3,
+            q_gradient_cache=q_gradient_cache,
         )
     )
     solver.model.set_static_compute_model(
@@ -311,6 +317,7 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
             flow_alignment=0.3,
             cache_force_diagnostics=False,
             cache_pressure_diagnostics=config.pressure_diagnostics,
+            q_gradient_cache=q_gradient_cache,
             zero_mode_policy="zero_mean",
             profile_timer=timer,
         )
@@ -481,6 +488,7 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
             "flow_alignment": 0.3,
             "eta": 2.0 / 3.0,
             "zero_mode_policy": "zero_mean",
+            "reuse_q_gradients": config.reuse_q_gradients,
             "initial_condition": "deterministic synthetic aligned Q plus noise",
         },
         "environment": {
@@ -561,6 +569,7 @@ def parse_args() -> argparse.Namespace:
         help="Positive step interval; omit to disable refresh during timing.",
     )
     parser.add_argument("--pressure-diagnostics", action="store_true")
+    parser.add_argument("--disable-q-gradient-reuse", action="store_true")
     parser.add_argument("--snapshot-interval", type=int)
     parser.add_argument("--snapshot-directory")
     parser.add_argument("--save-hydrodynamics", action="store_true")
@@ -587,6 +596,7 @@ def main() -> None:
             profile_steps=args.profile_steps,
             spectral_refresh_interval=args.spectral_refresh_interval,
             pressure_diagnostics=args.pressure_diagnostics,
+            reuse_q_gradients=not args.disable_q_gradient_reuse,
             snapshot_interval=args.snapshot_interval,
             snapshot_directory=args.snapshot_directory,
             save_hydrodynamics=args.save_hydrodynamics,

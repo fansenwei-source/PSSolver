@@ -50,6 +50,7 @@ import torch
 from pssolver import SpectralSolver, write_run_metadata
 from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
+    BerisEdwardsQGradientCache,
     BerisEdwardsQNonlinearModel,
     Q_convention_metadata,
     beris_edwards_linear_operator,
@@ -255,6 +256,14 @@ def parse_args():
         help="Disable only the periodic dynamic real-to-spectral rebuild.",
     )
     parser.add_argument("--diagnostics", action="store_true")
+    parser.add_argument(
+        "--disable-q-gradient-reuse",
+        action="store_true",
+        help=(
+            "Recompute Q gradients independently in the static and nonlinear "
+            "models instead of using the guarded single-step cache."
+        ),
+    )
     parser.add_argument("--save-hydrodynamics", action="store_true")
     parser.add_argument(
         "--validation-config-sha256",
@@ -712,6 +721,11 @@ metadata = {
         "zero_mode_force": "total_nematic_tangential_force",
         "pressure_solver": "free_slip_modal_schur_complement",
         "pressure_residual_diagnostics": ENABLE_DIAGNOSTICS,
+        "q_gradient_reuse": {
+            "enabled": not args.disable_q_gradient_reuse,
+            "scope": "single_static_to_nonlinear_evaluation",
+            "mutation_guard": "spatial_and_spectral_tensor_versions",
+        },
         "precision": {
             "real_dtype": args.dtype,
             "spectral_dtype": spectral_dtype_name,
@@ -935,6 +949,11 @@ solver.model.add_static_field("uy", boundary_conditions=U_TANGENTIAL_BC)
 solver.model.add_static_field("uz", boundary_conditions=U_NORMAL_BC)
 solver.model.add_static_field("p", boundary_conditions=PRESSURE_MODAL_BC)
 
+q_gradient_cache = (
+    None
+    if args.disable_q_gradient_reuse
+    else BerisEdwardsQGradientCache()
+)
 solver.model.set_nonlinear_model(
     BerisEdwardsQNonlinearModel(
         spectral_projector,
@@ -943,6 +962,7 @@ solver.model.set_nonlinear_model(
         ldg_c=args.ldg_c,
         rotational_viscosity=rotational_viscosity,
         flow_alignment=ALIGNMENT_PARAMETER,
+        q_gradient_cache=q_gradient_cache,
     )
 )
 solver.model.set_static_compute_model(
@@ -959,6 +979,7 @@ solver.model.set_static_compute_model(
         flow_alignment=ALIGNMENT_PARAMETER,
         cache_force_diagnostics=ENABLE_DIAGNOSTICS,
         cache_pressure_diagnostics=ENABLE_DIAGNOSTICS,
+        q_gradient_cache=q_gradient_cache,
         zero_mode_policy=zero_mode_policy,
     )
 )

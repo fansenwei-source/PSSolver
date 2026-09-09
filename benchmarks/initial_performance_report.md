@@ -98,6 +98,41 @@ static and nonlinear paths. The next optimization study should therefore
 target repeated derivative/inverse-transform work in force construction and
 Q dynamics, rather than further pressure-solver tuning.
 
+## Accepted candidate: single-step Q-gradient reuse
+
+The complete nematic force and Q nonlinear model previously evaluated the same
+15 Q-component gradients independently within one timestep. The candidate
+stages the gradients computed by the static model and permits one guarded read
+by the immediately following nonlinear evaluation. It checks both spatial and
+spectral tensor version counters; an intervening field mutation invalidates the
+entry and preserves the original recomputation semantics. A driver switch,
+`--disable-q-gradient-reuse`, provides an otherwise identical uncached control.
+
+| Shape | Uncached timestep | Cached timestep | Speedup | Inverse calls/step | Final state |
+|---:|---:|---:|---:|---:|---:|
+| 32x32x16 | 7.284 ms | 6.587 ms | 1.106x | 57 to 42 | exact |
+| 64x64x32 | 34.590 ms | 30.434 ms | 1.137x | 57 to 42 | exact |
+| 128x128x32 | 136.450 ms | 120.548 ms | 1.132x | 57 to 42 | exact |
+
+The cached and uncached peak allocated memory was identical at 128x128x32
+(678,099,456 bytes). At 64x64x32 the cached path differed by only 128 KiB.
+
+A separate production-driver control compared commit `f86a6ec` with this
+candidate for 100 CUDA timesteps at 32x32x16. Elapsed time changed from
+0.677329 s to 0.573871 s, a 1.180x single-run speedup. Final Q, velocity, and
+pressure arrays were byte-identical, with SHA-256 values:
+
+- Q: `5e1cca8c1a4a4f8f518cdda626aefd2aa1c2e0ba68e51543f450ace9d0c2e92b`;
+- velocity: `eb2da6a2abf3a6497de06e2cf3a2aa0d7577d42007d450a327f353398094b213`;
+- pressure: `7b43829476181594c573240baee794a695a32b64149ce3f4e8fbca548c8afb8d`.
+
+These local figures establish a useful candidate, not an H100 production
+claim. The current complete regression result is:
+
+```text
+436 passed, 8 subtests passed in 13.51s
+```
+
 ## Snapshot I/O profile
 
 A separate 64x64x32 run saved Q, velocity, and pressure after every profiled
@@ -112,3 +147,9 @@ Raw JSON results were written outside the repository:
 - `/tmp/pssolver_profile_be_64_20260908.json`
 - `/tmp/pssolver_profile_be_128_20260908.json`
 - `/tmp/pssolver_profile_be_io_64_20260908.json`
+- `/tmp/pssolver_qgrad_cached_32_20260908.json`
+- `/tmp/pssolver_qgrad_uncached_32_20260908.json`
+- `/tmp/pssolver_qgrad_cached_64_20260908.json`
+- `/tmp/pssolver_qgrad_uncached_64_20260908.json`
+- `/tmp/pssolver_qgrad_cached_128_20260908.json`
+- `/tmp/pssolver_qgrad_uncached_128_20260908.json`
