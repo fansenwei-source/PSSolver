@@ -200,6 +200,50 @@ values at each shape:
 - 128x128x32:
   `7d479d97cac48de41e3d8ce9e58215e8fda9d2035007d4f8f3db1523921e140b`.
 
+## Rejected experiment: FFT-based cell-centered DCT/DST
+
+Two default-off alternatives to the dense orthonormal cell-centered DCT-II,
+DCT-III, DST-II, and DST-III transforms were implemented and evaluated. The
+first used a length-`2N` complex FFT of an even or odd extension. The second
+split complex inputs into real and imaginary parts and used batched
+`rfft`/`irfft` half-spectra. Both preserved the existing modal indexing,
+normalization, mixed-boundary derivative maps, and terminal DST behavior.
+
+The complex-FFT implementation passed 501 tests and eight subtests, including
+new real/complex transform comparisons in float32 and float64, sizes from one
+through 32, mixed three-dimensional bases, analytic derivatives, and the full
+manufactured free-slip Stokes solution. A 32x32x16 float64 CUDA trajectory
+comparison through 100 timesteps found no growing discrepancy. At step 100,
+the complete spatial-state relative L2 difference was `4.76e-16`; Q-component
+relative differences were below `9.0e-16`, velocity-component differences were
+below `5.4e-15`, and the pressure difference was `1.45e-14`.
+
+Each timing entry below is the mean of three runs with five warmup and 30
+measured timesteps. The matrix control was rebuilt for every comparison.
+
+| Shape | Matrix timestep | Complex-FFT timestep | Matrix/FFT | Matrix/FFT peak allocated |
+|---:|---:|---:|---:|---:|
+| 64x64x32 | 30.330 ms | 29.663 ms | 1.023x | 170.8 / 235.8 MiB |
+| 128x128x32 | 121.255 ms | 118.480 ms | 1.023x | 646.7 / 910.7 MiB |
+
+Although the complex-FFT form was consistently about 2.3% faster on the local
+RTX 3060 Ti, peak allocated memory increased by approximately 38% and 41% at
+the two sizes. The half-spectrum implementation did not fix this tradeoff:
+
+| Shape | Matrix timestep | Half-spectrum timestep | Matrix/FFT | Matrix/FFT peak allocated |
+|---:|---:|---:|---:|---:|
+| 64x64x32 | 30.269 ms | 34.672 ms | 0.873x | 170.8 / 271.8 MiB |
+| 128x128x32 | 120.734 ms | 140.351 ms | 0.860x | 646.7 / 1059.2 MiB |
+
+The half-spectrum version was 14.5--16.2% slower and used still more memory,
+because separating complex data created large temporary real batches. The
+best variant therefore offered too little local speedup for its memory cost,
+especially for the planned large three-dimensional grids. All solver,
+profiler, CLI, and test changes from both variants were removed. This does not
+rule out a native vendor DCT/DST implementation or a custom fused kernel, and
+it is not an H100 ranking; it rejects these two PyTorch composition strategies
+for the present solver.
+
 ## Snapshot I/O profile
 
 A separate 64x64x32 run saved Q, velocity, and pressure after every profiled
@@ -237,3 +281,8 @@ Final Nsight artifacts and CSV summaries were generated from clean commit
 - `/tmp/pssolver_nsys_be_128x128x32_05275fa_clean_20260908.json`;
 - `/tmp/pssolver_nsys_be_128x128x32_05275fa_clean_20260908_stats_*.csv`;
 - `/tmp/pssolver_nsys_be_128x128x32_05275fa_clean_direct_20260908.json`.
+
+The rejected FFT DCT/DST experiment wrote its repeated local-GPU profiles to:
+
+- `/tmp/pssolver_fft_ab.mb4XU3/` for the length-`2N` complex-FFT variant;
+- `/tmp/pssolver_fft_half_ab.uPwKAc/` for the batched half-spectrum variant.
