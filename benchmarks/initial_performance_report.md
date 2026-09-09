@@ -155,6 +155,51 @@ the largest case was approximately 0.8% slower. The candidate therefore failed
 the requirement for stable benefit on the medium and large local grids. All
 production, benchmark, CLI, and test changes from this experiment were removed.
 
+## Nsight Systems CUDA-kernel profile
+
+Nsight Systems 2025.1.3 captured five timesteps after five warmup steps, with
+CUDA event completion tracing disabled. The workload used float64/complex128,
+`cubic_half`, Q-gradient reuse, no spectral refresh, and no snapshots. The
+capture runner exposes the complete-timestep profiler regions as nested NVTX
+ranges and brackets only the measured steps with the CUDA profiler API.
+
+| Shape | Mean timestep | GPU ops/step | Inverse transforms | Forward transforms | Nematic force | Q nonlinear | Stokes solve |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 64x64x32 | 30.760 ms | 1076 | 49.7% | 23.0% | 67.9% | 17.3% | 2.3% |
+| 128x128x32 | 121.231 ms | 1076 | 50.1% | 23.1% | 67.6% | 17.6% | 2.4% |
+
+The transform percentages are GPU time projected into non-overlapping forward
+and inverse NVTX ranges. Nematic force and Q nonlinear are higher-level nested
+ranges and therefore must not be added to the transform percentages.
+
+| Shape | CUTLASS complex GEMM | FFT kernels | Explicit GPU memops | Kernel-launch API time / GPU range |
+|---:|---:|---:|---:|---:|
+| 64x64x32 | 49.5% | 16.1% | 0.32% | 5.9% |
+| 128x128x32 | 45.4% | 18.5% | 0.38% | 1.4% |
+
+The CUTLASS kernels come from the dense matrix multiplication used for the
+cell-centered DCT/DST axis in `TensorProductTransformBackend`. FFT kernels
+implement the periodic axes. The result explains why reducing launch count by
+same-basis batching helped only the smallest grid: launch overhead becomes
+minor at 128x128x32, while transform arithmetic remains dominant.
+
+The next local optimization study should therefore evaluate an FFT-based
+orthonormal DCT-II/DCT-III and matching DST implementation, while preserving
+the current cell-centered bases, modal indexing, normalization, derivative
+parity, and terminal-mode behavior. This is a transform-algorithm change and
+requires manufactured transform/derivative tests plus complete trajectory
+comparison; it must not be inferred safe from timing alone. The RTX 3060 Ti
+ranking is also not an H100 performance claim because their float64 GEMM
+throughput differs substantially.
+
+The Nsight and direct-control runs produced identical final-state SHA-256
+values at each shape:
+
+- 64x64x32:
+  `c975374a3729249e410ce91ec982487bb9fb2234ee55255a9df6760ead39e4ef`;
+- 128x128x32:
+  `7d479d97cac48de41e3d8ce9e58215e8fda9d2035007d4f8f3db1523921e140b`.
+
 ## Snapshot I/O profile
 
 A separate 64x64x32 run saved Q, velocity, and pressure after every profiled
@@ -180,3 +225,12 @@ Raw JSON results were written outside the repository:
 
 For the derivative-batching files, `<shape>` is one of `32x32x16`,
 `64x64x32`, or `128x128x32`.
+
+Final Nsight artifacts and CSV summaries:
+
+- `/tmp/pssolver_nsys_be_64x64x32_d9c7cc3_final_20260908.nsys-rep`;
+- `/tmp/pssolver_nsys_be_64x64x32_d9c7cc3_final_20260908.json`;
+- `/tmp/pssolver_nsys_be_64x64x32_d9c7cc3_final_20260908_stats_*.csv`;
+- `/tmp/pssolver_nsys_be_128x128x32_d9c7cc3_final_20260908.nsys-rep`;
+- `/tmp/pssolver_nsys_be_128x128x32_d9c7cc3_final_20260908.json`;
+- `/tmp/pssolver_nsys_be_128x128x32_d9c7cc3_final_20260908_stats_*.csv`.

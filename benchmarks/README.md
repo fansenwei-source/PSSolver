@@ -63,3 +63,21 @@ active scientific run directory as a benchmark snapshot destination.
 The complete-timestep profiler enables single-step Q-gradient reuse by
 default. Pass `--disable-q-gradient-reuse` to measure the otherwise identical
 uncached path with the same initial condition and numerical parameters.
+
+## Nsight Systems capture
+
+`capture_beris_edwards_nsys.py` reuses the same complete-timestep workload,
+adds nested NVTX ranges, and brackets only the requested timesteps with the
+CUDA profiler API. Run it through Nsight Systems, for example:
+
+```bash
+nsys profile --trace=cuda,nvtx,osrt \
+  --capture-range=cudaProfilerApi --capture-range-end=stop \
+  --force-overwrite=true --output=/tmp/pssolver_nsys_64 \
+  python -m benchmarks.capture_beris_edwards_nsys \
+  --shape 64,64,32 --warmup-steps 5 --capture-steps 3 \
+  --output /tmp/pssolver_nsys_64.json
+```
+
+Keep the `.nsys-rep` and any exported tables outside scientific run
+directories. The capture runner does not save Q, velocity, or pressure arrays.
