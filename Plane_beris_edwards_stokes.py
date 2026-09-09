@@ -243,8 +243,9 @@ def parse_args():
         default=DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
         help=(
             "Assembly space for compatible stress-divergence derivatives. "
-            "physical retains the production path; spectral is a default-off "
-            "candidate that reduces inverse transforms."
+            "spectral is the H100-qualified production default and reduces "
+            "inverse transforms; physical retains the validated compatibility "
+            "path."
         ),
     )
     parser.add_argument(

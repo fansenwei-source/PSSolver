@@ -124,7 +124,7 @@ class Fig4NumericsCliTests(unittest.TestCase):
         )
         self.assertEqual(
             metadata["numerics"]["stress_divergence_sum_space"],
-            "physical",
+            "spectral",
         )
         self.assertEqual(
             metadata["numerics"]["transforms"]["execution_order"],
@@ -244,10 +244,10 @@ class Fig4NumericsCliTests(unittest.TestCase):
             "physical",
         )
 
-    def test_beris_edwards_spectral_stress_divergence_sum_is_recorded(self):
+    def test_beris_edwards_physical_stress_divergence_sum_is_recorded(self):
         result = run_dry_run(
             "--stress-divergence-sum-space",
-            "spectral",
+            "physical",
             script=BERIS_EDWARDS_SCRIPT,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -255,17 +255,17 @@ class Fig4NumericsCliTests(unittest.TestCase):
         metadata = json.loads(result.stdout)
         self.assertEqual(
             metadata["numerics"]["stress_divergence_sum_space"],
-            "spectral",
+            "physical",
         )
         self.assertEqual(
             metadata["model"]["flow_dynamics"][
                 "stress_divergence_sum_space"
             ],
-            "spectral",
+            "physical",
         )
         self.assertEqual(
             metadata["stress_divergence_sum_space"],
-            "spectral",
+            "physical",
         )
 
     def test_beris_edwards_legacy_transform_order_remains_available(self):

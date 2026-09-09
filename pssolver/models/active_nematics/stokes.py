@@ -38,7 +38,7 @@ PLANE_DISTORTION_ODD_BOUNDARY_CONDITIONS = (
     "dirichlet",
 )
 DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE = "spectral"
-DEFAULT_STRESS_DIVERGENCE_SUM_SPACE = "physical"
+DEFAULT_STRESS_DIVERGENCE_SUM_SPACE = "spectral"
 
 
 class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):

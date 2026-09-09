@@ -382,8 +382,7 @@ normal force share the Dirichlet basis.  This linear reordering reduces inverse
 transform calls from 37 to 32 per timestep without changing bases, derivative
 maps, dealiasing cutoffs, or the represented divergence.  The historical
 inverse-then-sum order remains available through
-`--stress-divergence-sum-space physical`; the default-off candidate is
-`spectral`.
+`--stress-divergence-sum-space physical`.
 
 The same branch also avoids materializing a full complex-valued copy of each
 Boolean dealiasing mask.  Multiplication now promotes the Boolean 0/1 mask
@@ -417,8 +416,18 @@ Relative L2 differences between the spectral-sum candidate and production were
 finite values throughout.  A matching float32 run with TF32 disabled found
 relative differences of `1.41e-8`, `1.10e-7`, and `1.73e-7`, respectively,
 consistent with float32 roundoff.  The complete local suite passed 487 tests
-and eight subtests.  H100 qualification is still required before any default
-change.
+and eight subtests.
+
+The subsequent H100 qualification at 320x320x80 measured 171.175 ms per step
+for production, 167.123 ms for the candidate's physical-sum control, and
+159.071 ms for spectral summation.  The combined speedup was `1.0761x`, all
+three spectral trials were faster than both controls, inverse transforms fell
+from 37 to 32 per step, peak reserved memory was unchanged, and peak allocated
+memory increased by only 0.79%.  A matched 100-step production run kept
+relative L2 differences below `2.9e-16` for Q, velocity, and pressure.  The
+qualification classified the candidate as `A_recommended`, so spectral stress
+summation is now the production default; physical summation remains an
+explicit rollback control.
 
 ## Snapshot I/O profile
 
