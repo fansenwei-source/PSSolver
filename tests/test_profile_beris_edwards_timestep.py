@@ -29,6 +29,12 @@ def _small_config(**overrides):
     return ProfileConfig(**values)
 
 
+def test_profiler_defaults_to_real_first_and_accepts_legacy_control():
+    assert ProfileConfig().transform_execution_order == "real_first"
+    legacy = _small_config(transform_execution_order="legacy")
+    assert legacy.transform_execution_order == "legacy"
+
+
 def test_complete_timestep_profile_has_expected_regions_and_provenance():
     result = run_profile(_small_config())
 

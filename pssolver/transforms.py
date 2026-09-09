@@ -5,6 +5,7 @@ import torch
 
 
 DEFAULT_DEALIAS_RULE = "cubic_half"
+DEFAULT_TRANSFORM_EXECUTION_ORDER = "real_first"
 DEALIAS_RULE_FRACTIONS = {
     "none": None,
     "two_thirds": 2.0 / 3.0,
@@ -57,7 +58,7 @@ class TensorProductTransformBackend:
         lengths,
         device="cuda",
         dtype=torch.float32,
-        execution_order="legacy",
+        execution_order=DEFAULT_TRANSFORM_EXECUTION_ORDER,
     ):
         if execution_order not in self._execution_orders:
             raise ValueError(

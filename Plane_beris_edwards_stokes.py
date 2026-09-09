@@ -63,6 +63,7 @@ from pssolver.transforms import (
     BasisAwareSpectralProjector,
     DEALIAS_RULE_FRACTIONS,
     DEFAULT_DEALIAS_RULE,
+    DEFAULT_TRANSFORM_EXECUTION_ORDER,
 )
 from tqdm import trange
 import numpy as np
@@ -227,11 +228,11 @@ def parse_args():
     parser.add_argument(
         "--transform-execution-order",
         choices=("legacy", "real_first"),
-        default="legacy",
+        default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
         help=(
-            "Tensor-product transform execution plan. real_first applies "
-            "DCT/DST axes before periodic FFTs so their matrix products use "
-            "real arithmetic."
+            "Tensor-product transform execution plan (default: real_first). "
+            "real_first applies DCT/DST axes before periodic FFTs so their matrix products use "
+            "real arithmetic; legacy retains the historical axis order."
         ),
     )
     parser.add_argument(

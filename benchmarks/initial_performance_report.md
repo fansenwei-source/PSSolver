@@ -251,9 +251,9 @@ while avoiding most complex DCT/DST matrix products. Transforms on independent
 axes commute, so the candidate executes all DCT/DST axes before periodic FFT
 axes in the forward transform. The inverse applies periodic inverse FFTs first,
 takes the real part that the public inverse already returns, and then applies
-the real-basis inverse matrices. The legacy order remains the default, while
-`real_first` is an explicit solver, profiler, Nsight, and production-driver
-option recorded in metadata.
+the real-basis inverse matrices. The legacy order remains available explicitly, while `real_first` is
+exposed through the solver, profiler, Nsight runner, and production driver and is
+recorded in metadata.
 
 The final candidate passed 467 tests and eight subtests. Coverage included
 float32/float64 forward and inverse
@@ -292,11 +292,39 @@ accounted for approximately 17.7%, while the remaining complex GEMMs were
 approximately 1.4%. Mean captured timestep time was 79.575 ms, inverse
 transform time was about 36.0 ms, and forward transform time about 13.8 ms.
 
-This is a strong local candidate because it changes only execution order, not
+This is a strong candidate because it changes only execution order, not
 the basis, normalization, modal indexing, spectral shape, derivative maps,
-dealiasing masks, Stokes equations, or Beris--Edwards model. It remains
-default-off pending a clean H100 comparison before any production-default or
-validation-plan change.
+dealiasing masks, Stokes equations, or Beris--Edwards model. The historical
+order remains available as an explicit `legacy` fallback.
+
+### H100 qualification and default decision
+
+A clean H100 PCIe comparison at commit `4bbcb219` used three alternating
+legacy/real-first trials per shape, five warmup steps, and 30 measured complete
+timesteps. The 320x320x80 production grid met every predeclared acceptance
+criterion:
+
+| Shape | Legacy timestep | Real-first timestep | Speedup | Allocated-memory ratio |
+|---:|---:|---:|---:|---:|
+| 128x128x32 | 14.457 ms | 13.439 ms | 1.076x | 0.905 |
+| 320x320x80 | 204.772 ms | 176.129 ms | 1.163x | 0.899 |
+
+All three 320x320x80 real-first trials were faster than their paired legacy
+controls. Peak allocated memory fell by 10.12% and peak reserved memory fell
+by 7.21%; no OOM, NaN, Inf, or configuration mismatch occurred. The full CPU
+suite completed with 466 passed tests, one optional-dependency skip, and eight
+passed subtests. Together with the transform, manufactured-solution, and
+100-step CUDA trajectory comparisons above, this qualifies `real_first` as
+the production default. `legacy` remains an explicit compatibility and
+diagnostic option.
+
+The post-promotion local gate completed 68 targeted tests and the full suite
+with 472 passed tests and eight passed subtests. Three matched 32x32x16,
+100-step, float64 CUDA driver runs compared the new implicit default, explicit
+`real_first`, and explicit `legacy`. The implicit default and explicit
+`real_first` Q, velocity, and pressure files were byte-identical. Relative L2
+differences from `legacy` were `3.04e-16`, `4.35e-16`, and `4.38e-16`,
+respectively, with finite values throughout.
 
 ## Snapshot I/O profile
 

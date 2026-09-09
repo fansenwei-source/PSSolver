@@ -1,7 +1,10 @@
 import pytest
 import torch
 
-from pssolver.transforms import TensorProductTransformBackend
+from pssolver.transforms import (
+    DEFAULT_TRANSFORM_EXECUTION_ORDER,
+    TensorProductTransformBackend,
+)
 
 
 SHAPE = (7, 6, 5)
@@ -22,6 +25,20 @@ def _tolerances(dtype):
     if dtype == torch.float64:
         return {"rtol": 4.0e-12, "atol": 4.0e-12}
     return {"rtol": 3.0e-5, "atol": 3.0e-5}
+
+
+def test_transform_backend_defaults_to_real_first_and_keeps_legacy_opt_in():
+    default_backend = TensorProductTransformBackend(
+        SHAPE,
+        LENGTHS,
+        device="cpu",
+        dtype=torch.float64,
+    )
+    legacy_backend = _backend(torch.float64, "legacy")
+
+    assert DEFAULT_TRANSFORM_EXECUTION_ORDER == "real_first"
+    assert default_backend.execution_order == "real_first"
+    assert legacy_backend.execution_order == "legacy"
 
 
 @pytest.mark.parametrize("dtype", (torch.float32, torch.float64))

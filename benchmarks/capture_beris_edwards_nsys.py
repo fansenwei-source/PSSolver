@@ -21,6 +21,8 @@ from typing import Iterator
 
 import torch
 
+from pssolver import DEFAULT_TRANSFORM_EXECUTION_ORDER
+
 from benchmarks.profile_beris_edwards_timestep import (
     ProfileConfig,
     _build_solver,
@@ -46,7 +48,7 @@ class NsysCaptureConfig:
     spectral_refresh_interval: int | None = None
     pressure_diagnostics: bool = False
     reuse_q_gradients: bool = True
-    transform_execution_order: str = "legacy"
+    transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
     seed: int = 20260908
 
     def profile_config(self) -> ProfileConfig:
@@ -172,7 +174,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--transform-execution-order",
         choices=("legacy", "real_first"),
-        default="legacy",
+        default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
     )
     parser.add_argument("--seed", type=int, default=20260908)
     parser.add_argument("--output", type=Path)

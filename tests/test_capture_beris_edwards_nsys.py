@@ -32,6 +32,13 @@ def test_capture_config_maps_to_complete_timestep_profile():
     assert profile.snapshot_directory is None
 
 
+def test_capture_defaults_to_real_first_transform_execution():
+    config = NsysCaptureConfig()
+
+    assert config.transform_execution_order == "real_first"
+    assert config.profile_config().transform_execution_order == "real_first"
+
+
 def test_capture_config_rejects_nonpositive_capture_steps():
     with pytest.raises(ValueError, match="capture_steps must be positive"):
         _validate_capture_config(NsysCaptureConfig(capture_steps=0))

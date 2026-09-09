@@ -25,7 +25,11 @@ from typing import Iterator
 import numpy as np
 import torch
 
-from pssolver import BasisAwareSpectralProjector, SpectralSolver
+from pssolver import (
+    BasisAwareSpectralProjector,
+    DEFAULT_TRANSFORM_EXECUTION_ORDER,
+    SpectralSolver,
+)
 from pssolver.integrator import SemiImplicitEulerIntegrator
 from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
@@ -57,7 +61,7 @@ class ProfileConfig:
     spectral_refresh_interval: int | None = None
     pressure_diagnostics: bool = False
     reuse_q_gradients: bool = True
-    transform_execution_order: str = "legacy"
+    transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
     snapshot_interval: int | None = None
     snapshot_directory: str | None = None
     save_hydrodynamics: bool = False
@@ -579,10 +583,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--transform-execution-order",
         choices=("legacy", "real_first"),
-        default="legacy",
+        default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
         help=(
-            "Experimental tensor-product execution plan. real_first applies "
-            "DCT/DST axes while data are real."
+            "Tensor-product execution plan (default: real_first). "
+            "real_first applies DCT/DST axes while data are real; legacy "
+            "retains the historical axis order."
         ),
     )
     parser.add_argument("--snapshot-interval", type=int)
