@@ -12,9 +12,7 @@ from pssolver.transforms import (
 
 from .beris_edwards import (
     BerisEdwardsQGradientCache,
-    beris_edwards_algebraic_stress_components,
-    beris_edwards_bulk_molecular_field_components,
-    beris_edwards_distortion_stress_components,
+    BerisEdwardsPointwiseKernels,
     beris_edwards_molecular_field_components,
 )
 from .fields import Q_COMPONENTS
@@ -79,6 +77,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         cache_force_diagnostics=False,
         cache_pressure_diagnostics=True,
         q_gradient_cache=None,
+        pointwise_kernels=None,
         zero_mode_policy="zero_mean",
         q_boundary_conditions=PLANE_Q_BOUNDARY_CONDITIONS,
         tangential_velocity_boundary_conditions=(
@@ -150,6 +149,14 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         self.molecular_field_linear_space = molecular_field_linear_space
         self.stress_divergence_sum_space = stress_divergence_sum_space
         self.cache_force_diagnostics = bool(cache_force_diagnostics)
+        if pointwise_kernels is None:
+            pointwise_kernels = BerisEdwardsPointwiseKernels()
+        if not isinstance(pointwise_kernels, BerisEdwardsPointwiseKernels):
+            raise TypeError(
+                "pointwise_kernels must be a "
+                "BerisEdwardsPointwiseKernels or None."
+            )
+        self.pointwise_kernels = pointwise_kernels
         if q_gradient_cache is not None and not isinstance(
             q_gradient_cache,
             BerisEdwardsQGradientCache,
@@ -210,7 +217,8 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
             )
             del laplacian_components, raw_h_components
         else:
-            bulk_h_components = beris_edwards_bulk_molecular_field_components(
+            bulk_kernel = self.pointwise_kernels.bulk_molecular_field_components
+            bulk_h_components = bulk_kernel(
                 q_components,
                 ldg_a=self.ldg_a,
                 ldg_b=self.ldg_b,
@@ -236,7 +244,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
             del bulk_h_components, h_hat
         h_components = tuple(h_tensor[index] for index in range(5))
         active_prefactor = self.beta * alpha
-        algebraic_stress = beris_edwards_algebraic_stress_components(
+        algebraic_stress = self.pointwise_kernels.algebraic_stress_components(
             q_components,
             h_components,
             flow_alignment=self.flow_alignment,
@@ -261,7 +269,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
             )
             for axis in range(3)
         )
-        distortion_stress = beris_edwards_distortion_stress_components(
+        distortion_stress = self.pointwise_kernels.distortion_stress_components(
             q_gradients,
             ldg_l1=self.ldg_l1,
         )

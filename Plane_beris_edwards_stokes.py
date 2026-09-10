@@ -52,8 +52,11 @@ from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
     BerisEdwardsQGradientCache,
     BerisEdwardsQNonlinearModel,
+    BerisEdwardsPointwiseKernels,
     DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
+    DEFAULT_POINTWISE_EXECUTION,
     DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
+    POINTWISE_EXECUTION_MODES,
     Q_convention_metadata,
     beris_edwards_linear_operator,
     create_initial_condition,
@@ -246,6 +249,17 @@ def parse_args():
             "spectral is the H100-qualified production default and reduces "
             "inverse transforms; physical retains the validated compatibility "
             "path."
+        ),
+    )
+    parser.add_argument(
+        "--pointwise-execution",
+        choices=POINTWISE_EXECUTION_MODES,
+        default=DEFAULT_POINTWISE_EXECUTION,
+        help=(
+            "Execution policy for the four pure Beris--Edwards pointwise "
+            "kernels. eager is the production default; compile uses a "
+            "fixed-shape, full-graph TorchInductor candidate with no silent "
+            "fallback."
         ),
     )
     parser.add_argument(
@@ -560,6 +574,8 @@ runtime_environment = {
     "cuda_device_name": cuda_device_name,
     "cuda_total_memory_bytes": cuda_total_memory_bytes,
 }
+pointwise_kernels = BerisEdwardsPointwiseKernels(args.pointwise_execution)
+pointwise_execution_metadata = pointwise_kernels.metadata()
 batchsize = 1
 
 Nx, Ny, Nz = args.nx, args.ny, args.nz
@@ -661,6 +677,7 @@ metadata = {
             "equation": "(partial_t+u.grad)Q-S(E,Omega,Q)=H/gamma",
             "flow_alignment_form": "full_beris_edwards",
             "molecular_field": "one_constant_landau_de_gennes",
+            "pointwise_execution": args.pointwise_execution,
             "raw_coefficients": {
                 "A": args.ldg_a,
                 "B": args.ldg_b,
@@ -713,6 +730,7 @@ metadata = {
             "stress_divergence_sum_space": (
                 args.stress_divergence_sum_space
             ),
+            "pointwise_execution": args.pointwise_execution,
             "isotropic_stress": "absorbed_into_incompressible_pressure",
             "viscous_stress": "handled_by_eta_laplacian_in_stokes_operator",
         },
@@ -764,6 +782,7 @@ metadata = {
         "pressure_residual_diagnostics": ENABLE_DIAGNOSTICS,
         "molecular_field_linear_space": args.molecular_field_linear_space,
         "stress_divergence_sum_space": args.stress_divergence_sum_space,
+        "pointwise_kernels": pointwise_execution_metadata,
         "q_gradient_reuse": {
             "enabled": not args.disable_q_gradient_reuse,
             "scope": "single_static_to_nonlinear_evaluation",
@@ -819,6 +838,7 @@ metadata = {
     "transform_execution_order": args.transform_execution_order,
     "molecular_field_linear_space": args.molecular_field_linear_space,
     "stress_divergence_sum_space": args.stress_divergence_sum_space,
+    "pointwise_execution": args.pointwise_execution,
     "tf32": args.tf32,
     "q_boundary_conditions": Q_BC,
     "tangential_velocity_boundary_conditions": U_TANGENTIAL_BC,
@@ -1015,6 +1035,7 @@ solver.model.set_nonlinear_model(
         rotational_viscosity=rotational_viscosity,
         flow_alignment=ALIGNMENT_PARAMETER,
         q_gradient_cache=q_gradient_cache,
+        pointwise_kernels=pointwise_kernels,
     )
 )
 solver.model.set_static_compute_model(
@@ -1034,6 +1055,7 @@ solver.model.set_static_compute_model(
         cache_force_diagnostics=ENABLE_DIAGNOSTICS,
         cache_pressure_diagnostics=ENABLE_DIAGNOSTICS,
         q_gradient_cache=q_gradient_cache,
+        pointwise_kernels=pointwise_kernels,
         zero_mode_policy=zero_mode_policy,
     )
 )

@@ -24,7 +24,9 @@ import torch
 from pssolver import DEFAULT_TRANSFORM_EXECUTION_ORDER
 from pssolver.models.active_nematics import (
     DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
+    DEFAULT_POINTWISE_EXECUTION,
     DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
+    POINTWISE_EXECUTION_MODES,
 )
 
 from benchmarks.profile_beris_edwards_timestep import (
@@ -54,6 +56,7 @@ class NsysCaptureConfig:
     reuse_q_gradients: bool = True
     molecular_field_linear_space: str = DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE
     stress_divergence_sum_space: str = DEFAULT_STRESS_DIVERGENCE_SUM_SPACE
+    pointwise_execution: str = DEFAULT_POINTWISE_EXECUTION
     transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
     seed: int = 20260908
 
@@ -77,6 +80,7 @@ class NsysCaptureConfig:
             stress_divergence_sum_space=(
                 self.stress_divergence_sum_space
             ),
+            pointwise_execution=self.pointwise_execution,
             transform_execution_order=self.transform_execution_order,
             seed=self.seed,
         )
@@ -153,6 +157,7 @@ def run_capture(config: NsysCaptureConfig) -> dict[str, object]:
             "device_name": torch.cuda.get_device_name(device),
             "device_capability": list(torch.cuda.get_device_capability(device)),
         },
+        "pointwise_kernels": solver.pointwise_kernels.metadata(),
         "elapsed_seconds": elapsed_seconds,
         "mean_timestep_seconds": elapsed_seconds / config.capture_steps,
         "memory": {
@@ -194,6 +199,11 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
     )
     parser.add_argument(
+        "--pointwise-execution",
+        choices=POINTWISE_EXECUTION_MODES,
+        default=DEFAULT_POINTWISE_EXECUTION,
+    )
+    parser.add_argument(
         "--transform-execution-order",
         choices=("legacy", "real_first"),
         default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
@@ -227,6 +237,7 @@ def main() -> None:
             stress_divergence_sum_space=(
                 args.stress_divergence_sum_space
             ),
+            pointwise_execution=args.pointwise_execution,
             transform_execution_order=args.transform_execution_order,
             seed=args.seed,
         )

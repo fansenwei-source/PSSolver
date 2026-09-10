@@ -429,6 +429,45 @@ qualification classified the candidate as `A_recommended`, so spectral stress
 summation is now the production default; physical summation remains an
 explicit rollback control.
 
+### Candidate: compiled Beris--Edwards pointwise algebra
+
+The next candidate starts from the fully qualified `b410f96` production
+baseline and introduces one shared `BerisEdwardsPointwiseKernels` policy for
+the Q and Stokes adapters.  The default `eager` policy calls the historical
+constitutive helpers unchanged.  The opt-in `compile` policy wraps exactly four
+transform-free kernels---bulk molecular field, algebraic stress, distortion
+stress, and Q nonlinearity---with fixed-shape, `fullgraph=True`,
+`dynamic=False` TorchInductor compilation.  Compilation failures are fatal;
+there is no silent eager fallback.  The production CLI, profiler, and Nsight
+capture record the requested and effective policy plus compiler provenance.
+
+Three independent-process float64 CUDA trials on an RTX 3060 Ti used five
+warmup and 30 measured timesteps at 128x128x32.  `A` is the unmodified
+`b410f96` control, `B` is the candidate's eager compatibility path, and `C` is
+the compiled path.
+
+| Path | Mean timestep | Median timestep | Peak allocated | Peak reserved |
+|---|---:|---:|---:|---:|
+| A: `b410f96` eager | 70.137 ms | 70.180 ms | 590,150,144 B | 933,232,640 B |
+| B: candidate eager | 70.135 ms | 70.127 ms | 590,150,144 B | 933,232,640 B |
+| C: candidate compile | 56.572 ms | 56.548 ms | 590,150,144 B | 905,969,664 B |
+
+The paired `A/B` ratio was `1.0000x`, showing no measurable executor overhead.
+The paired `B/C` speedup was `1.2397x`; all three compiled trials were faster.
+Peak allocated memory was unchanged and peak reserved memory decreased in
+these runs.  A fresh-cache audit measured 4.77 s of one-time model-build and
+compilation work, produced exactly four full graphs during build, and produced
+zero new graphs or graph breaks during warmup and formal profiling.
+
+A matched 32x32x16 production-driver comparison through 100 float64 CUDA
+timesteps kept the candidate eager path byte-identical to `b410f96`.  Compiled
+relative L2 differences were `4.17e-17` for Q, `1.75e-16` for velocity, and
+`3.07e-16` for pressure.  A float32 run with TF32 disabled measured
+`1.97e-8`, `1.47e-7`, and `1.58e-7`, respectively, with finite fields
+throughout.  The local eager regression suite passed 500 tests and eight
+subtests.  H100 qualification in the fixed production environment remains
+mandatory before this candidate can become a default.
+
 ## Snapshot I/O profile
 
 A separate 64x64x32 run saved Q, velocity, and pressure after every profiled

@@ -7,6 +7,7 @@ collects spatial derivatives and applies the caller's basis-aware projector.
 """
 
 import math
+from importlib import metadata as importlib_metadata
 
 import torch
 
@@ -23,6 +24,11 @@ STRESS_COMPONENTS = (
     "zy",
     "zz",
 )
+
+DEFAULT_POINTWISE_EXECUTION = "eager"
+POINTWISE_EXECUTION_MODES = ("eager", "compile")
+POINTWISE_COMPILE_BACKEND = "inductor"
+POINTWISE_COMPILE_MODE = "default"
 
 
 def _five_components(values, name):
@@ -592,6 +598,105 @@ def beris_edwards_distortion_stress_components(
     )
 
 
+def _optional_distribution_version(name):
+    try:
+        return importlib_metadata.version(name)
+    except importlib_metadata.PackageNotFoundError:
+        return None
+
+
+class BerisEdwardsPointwiseKernels:
+    """Select eager or fully compiled Beris--Edwards pointwise algebra.
+
+    The four callables in this object contain no transforms, I/O, or host
+    synchronization.  ``compile`` uses a fixed-shape, full-graph Inductor
+    configuration and deliberately has no silent eager fallback: a toolchain
+    or graph-capture failure must remain visible to the caller.  One instance
+    can be shared by the Q and Stokes adapters so each production process owns
+    one coherent execution policy.
+    """
+
+    _EAGER_KERNELS = {
+        "bulk_molecular_field": beris_edwards_bulk_molecular_field_components,
+        "algebraic_stress": beris_edwards_algebraic_stress_components,
+        "distortion_stress": beris_edwards_distortion_stress_components,
+        "q_nonlinear": beris_edwards_q_nonlinear_components,
+    }
+
+    def __init__(
+        self,
+        execution=DEFAULT_POINTWISE_EXECUTION,
+        *,
+        compile_backend=POINTWISE_COMPILE_BACKEND,
+        compile_mode=POINTWISE_COMPILE_MODE,
+    ):
+        if execution not in POINTWISE_EXECUTION_MODES:
+            raise ValueError(
+                "execution must be 'eager' or 'compile'."
+            )
+        if not isinstance(compile_backend, str) or not compile_backend:
+            raise ValueError("compile_backend must be a nonempty string.")
+        if not isinstance(compile_mode, str) or not compile_mode:
+            raise ValueError("compile_mode must be a nonempty string.")
+        if execution == "compile" and not callable(
+            getattr(torch, "compile", None)
+        ):
+            raise RuntimeError(
+                "pointwise execution 'compile' requires torch.compile."
+            )
+
+        self.requested_execution = execution
+        self.effective_execution = execution
+        self.compile_backend = compile_backend
+        self.compile_mode = compile_mode
+        self.dynamic = False
+        self.fullgraph = True
+        self.fallback_allowed = False
+        self._kernels = dict(self._EAGER_KERNELS)
+        if execution == "compile":
+            self._kernels = {
+                name: torch.compile(
+                    function,
+                    backend=compile_backend,
+                    mode=compile_mode,
+                    dynamic=self.dynamic,
+                    fullgraph=self.fullgraph,
+                )
+                for name, function in self._EAGER_KERNELS.items()
+            }
+
+    def metadata(self):
+        """Return JSON-compatible execution and compiler provenance."""
+        compile_enabled = self.effective_execution == "compile"
+        return {
+            "requested": self.requested_execution,
+            "effective": self.effective_execution,
+            "fallback_allowed": self.fallback_allowed,
+            "fallback_reason": None,
+            "compile": {
+                "enabled": compile_enabled,
+                "backend": self.compile_backend if compile_enabled else None,
+                "mode": self.compile_mode if compile_enabled else None,
+                "dynamic": self.dynamic if compile_enabled else None,
+                "fullgraph": self.fullgraph if compile_enabled else None,
+                "torch_version": str(torch.__version__),
+                "triton_version": _optional_distribution_version("triton"),
+            },
+        }
+
+    def bulk_molecular_field_components(self, *args, **kwargs):
+        return self._kernels["bulk_molecular_field"](*args, **kwargs)
+
+    def algebraic_stress_components(self, *args, **kwargs):
+        return self._kernels["algebraic_stress"](*args, **kwargs)
+
+    def distortion_stress_components(self, *args, **kwargs):
+        return self._kernels["distortion_stress"](*args, **kwargs)
+
+    def q_nonlinear_components(self, *args, **kwargs):
+        return self._kernels["q_nonlinear"](*args, **kwargs)
+
+
 class BerisEdwardsQGradientCache:
     """Single-use Q-gradient cache shared by one static/nonlinear evaluation.
 
@@ -680,6 +785,7 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
         rotational_viscosity,
         flow_alignment,
         q_gradient_cache=None,
+        pointwise_kernels=None,
     ):
         super().__init__()
         coefficients = (
@@ -702,6 +808,14 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
         self.ldg_b_over_gamma = float(ldg_b) / float(rotational_viscosity)
         self.ldg_c_over_gamma = float(ldg_c) / float(rotational_viscosity)
         self.flow_alignment = float(flow_alignment)
+        if pointwise_kernels is None:
+            pointwise_kernels = BerisEdwardsPointwiseKernels()
+        if not isinstance(pointwise_kernels, BerisEdwardsPointwiseKernels):
+            raise TypeError(
+                "pointwise_kernels must be a "
+                "BerisEdwardsPointwiseKernels or None."
+            )
+        self.pointwise_kernels = pointwise_kernels
         if q_gradient_cache is not None and not isinstance(
             q_gradient_cache,
             BerisEdwardsQGradientCache,
@@ -738,7 +852,7 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
             )
             for axis in range(3)
         )
-        nonlinear_components = beris_edwards_q_nonlinear_components(
+        nonlinear_components = self.pointwise_kernels.q_nonlinear_components(
             q_components,
             velocity_components,
             q_gradients,
@@ -760,6 +874,11 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
 __all__ = [
     "BerisEdwardsQGradientCache",
     "BerisEdwardsQNonlinearModel",
+    "BerisEdwardsPointwiseKernels",
+    "DEFAULT_POINTWISE_EXECUTION",
+    "POINTWISE_COMPILE_BACKEND",
+    "POINTWISE_COMPILE_MODE",
+    "POINTWISE_EXECUTION_MODES",
     "STRESS_COMPONENTS",
     "beris_edwards_active_stress_components",
     "beris_edwards_algebraic_stress_components",

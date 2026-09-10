@@ -35,8 +35,11 @@ from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
     BerisEdwardsQGradientCache,
     BerisEdwardsQNonlinearModel,
+    BerisEdwardsPointwiseKernels,
     DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
+    DEFAULT_POINTWISE_EXECUTION,
     DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
+    POINTWISE_EXECUTION_MODES,
     Q_COMPONENTS,
     beris_edwards_linear_operator,
 )
@@ -65,6 +68,7 @@ class ProfileConfig:
     reuse_q_gradients: bool = True
     molecular_field_linear_space: str = DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE
     stress_divergence_sum_space: str = DEFAULT_STRESS_DIVERGENCE_SUM_SPACE
+    pointwise_execution: str = DEFAULT_POINTWISE_EXECUTION
     transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
     snapshot_interval: int | None = None
     snapshot_directory: str | None = None
@@ -221,10 +225,18 @@ def _validate_config(config: ProfileConfig) -> None:
         raise ValueError(
             "stress_divergence_sum_space must be 'physical' or 'spectral'"
         )
+    if config.pointwise_execution not in POINTWISE_EXECUTION_MODES:
+        raise ValueError(
+            "pointwise_execution must be 'eager' or 'compile'"
+        )
     if not math.isfinite(config.dt) or config.dt <= 0.0:
         raise ValueError("dt must be positive and finite")
     if config.warmup_steps < 0:
         raise ValueError("warmup_steps must be non-negative")
+    if config.pointwise_execution == "compile" and config.warmup_steps < 1:
+        raise ValueError(
+            "compiled pointwise execution requires at least one warmup step"
+        )
     if config.profile_steps <= 0:
         raise ValueError("profile_steps must be positive")
     if (
@@ -293,6 +305,10 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
     q_gradient_cache = (
         BerisEdwardsQGradientCache() if config.reuse_q_gradients else None
     )
+    pointwise_kernels = BerisEdwardsPointwiseKernels(
+        config.pointwise_execution
+    )
+    solver.pointwise_kernels = pointwise_kernels
 
     frank_k = 1.0 / 81.0
     ldg_l1 = 2.0 * frank_k
@@ -323,6 +339,7 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
             rotational_viscosity=gamma,
             flow_alignment=0.3,
             q_gradient_cache=q_gradient_cache,
+            pointwise_kernels=pointwise_kernels,
         )
     )
     solver.model.set_static_compute_model(
@@ -346,6 +363,7 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
             cache_force_diagnostics=False,
             cache_pressure_diagnostics=config.pressure_diagnostics,
             q_gradient_cache=q_gradient_cache,
+            pointwise_kernels=pointwise_kernels,
             zero_mode_policy="zero_mean",
             profile_timer=timer,
         )
@@ -447,6 +465,35 @@ def _git_provenance() -> dict[str, object]:
     }
 
 
+def _dynamo_counter_snapshot() -> dict[str, int | None]:
+    """Return bounded TorchDynamo counters without making them a dependency."""
+    try:
+        from torch._dynamo.utils import counters
+    except (AttributeError, ImportError):
+        return {
+            "unique_graphs": None,
+            "calls_captured": None,
+            "graph_breaks": None,
+        }
+
+    return {
+        "unique_graphs": int(counters["stats"]["unique_graphs"]),
+        "calls_captured": int(counters["stats"]["calls_captured"]),
+        "graph_breaks": int(sum(counters["graph_break"].values())),
+    }
+
+
+def _counter_delta(after, before):
+    return {
+        name: (
+            None
+            if before[name] is None or after[name] is None
+            else after[name] - before[name]
+        )
+        for name in before
+    }
+
+
 def run_profile(config: ProfileConfig) -> dict[str, object]:
     """Run one profile and return an auditable JSON-compatible result."""
     _validate_config(config)
@@ -459,13 +506,23 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
     torch.manual_seed(config.seed)
     if device.type == "cuda":
         torch.cuda.manual_seed_all(config.seed)
+    counters_before = _dynamo_counter_snapshot()
     with torch.no_grad():
+        build_wall_start = time.perf_counter()
         solver = _build_solver(config, timer)
+        if device.type == "cuda":
+            torch.cuda.synchronize(device)
+        build_wall_seconds = time.perf_counter() - build_wall_start
+        counters_after_build = _dynamo_counter_snapshot()
+
+        warmup_wall_start = time.perf_counter()
         for _ in range(config.warmup_steps):
             solver.integrator.step()
         if device.type == "cuda":
             torch.cuda.synchronize(device)
             torch.cuda.reset_peak_memory_stats(device)
+        warmup_wall_seconds = time.perf_counter() - warmup_wall_start
+        counters_after_warmup = _dynamo_counter_snapshot()
 
         timer.reset()
         profile_wall_start = time.perf_counter()
@@ -487,6 +544,7 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
         profile_wall_seconds = time.perf_counter() - profile_wall_start
         timings = timer.summarize()
         state_sha256 = _state_sha256(solver)
+        counters_after_profile = _dynamo_counter_snapshot()
 
     whole_timestep_seconds = timings["whole_timestep"]["total_seconds"]
     memory: dict[str, int | None] = {
@@ -523,6 +581,7 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
             "stress_divergence_sum_space": (
                 config.stress_divergence_sum_space
             ),
+            "pointwise_execution": config.pointwise_execution,
             "initial_condition": "deterministic synthetic aligned Q plus noise",
         },
         "environment": {
@@ -556,6 +615,27 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
             ],
             "snapshot_regions_are_outside_whole_timestep": True,
             "cuda_synchronization_inside_timestep": False,
+        },
+        "pointwise_kernels": {
+            **solver.pointwise_kernels.metadata(),
+            "build_wall_seconds": build_wall_seconds,
+            "warmup_steps": config.warmup_steps,
+            "warmup_wall_seconds": warmup_wall_seconds,
+            "preprofile_wall_seconds": (
+                build_wall_seconds + warmup_wall_seconds
+            ),
+            "dynamo_during_build": _counter_delta(
+                counters_after_build,
+                counters_before,
+            ),
+            "dynamo_during_warmup": _counter_delta(
+                counters_after_warmup,
+                counters_after_build,
+            ),
+            "dynamo_during_profile": _counter_delta(
+                counters_after_profile,
+                counters_after_warmup,
+            ),
         },
         "timings": timings,
         "throughput": {
@@ -625,6 +705,16 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--pointwise-execution",
+        choices=POINTWISE_EXECUTION_MODES,
+        default=DEFAULT_POINTWISE_EXECUTION,
+        help=(
+            "A/B control for Beris--Edwards pointwise algebra. eager is the "
+            "production default; compile uses fixed-shape full-graph "
+            "TorchInductor with no silent fallback."
+        ),
+    )
+    parser.add_argument(
         "--transform-execution-order",
         choices=("legacy", "real_first"),
         default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
@@ -667,6 +757,7 @@ def main() -> None:
             stress_divergence_sum_space=(
                 args.stress_divergence_sum_space
             ),
+            pointwise_execution=args.pointwise_execution,
             transform_execution_order=args.transform_execution_order,
             snapshot_interval=args.snapshot_interval,
             snapshot_directory=args.snapshot_directory,

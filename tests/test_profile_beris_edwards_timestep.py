@@ -33,6 +33,7 @@ def test_profiler_defaults_to_production_numerics_and_accepts_legacy_control():
     assert ProfileConfig().transform_execution_order == "real_first"
     assert ProfileConfig().molecular_field_linear_space == "spectral"
     assert ProfileConfig().stress_divergence_sum_space == "spectral"
+    assert ProfileConfig().pointwise_execution == "eager"
     legacy = _small_config(transform_execution_order="legacy")
     assert legacy.transform_execution_order == "legacy"
 
@@ -48,6 +49,14 @@ def test_complete_timestep_profile_has_expected_regions_and_provenance():
         "peak_allocated_bytes": None,
         "peak_reserved_bytes": None,
     }
+    assert result["pointwise_kernels"]["requested"] == "eager"
+    assert result["pointwise_kernels"]["effective"] == "eager"
+    assert result["pointwise_kernels"]["compile"]["enabled"] is False
+    assert result["pointwise_kernels"]["build_wall_seconds"] >= 0.0
+    assert result["pointwise_kernels"]["warmup_steps"] == 1
+    assert result["pointwise_kernels"]["warmup_wall_seconds"] >= 0.0
+    assert result["pointwise_kernels"]["preprofile_wall_seconds"] >= 0.0
+    assert "dynamo_during_build" in result["pointwise_kernels"]
 
     for name in (
         "whole_timestep",
@@ -103,6 +112,19 @@ def test_callback_q_mutation_invalidates_cache_and_matches_uncached_path():
         uncached.model.fields.spectral,
         rtol=0.0,
         atol=0.0,
+    )
+
+
+def test_q_and_stokes_models_share_one_pointwise_execution_policy():
+    solver = _build_solver(
+        _small_config(),
+        RegionTimer(torch.device("cpu")),
+    )
+
+    assert solver.model.nlmodel.pointwise_kernels is solver.pointwise_kernels
+    assert (
+        solver.model.static_model.pointwise_kernels
+        is solver.pointwise_kernels
     )
 
 
@@ -230,6 +252,11 @@ def test_snapshot_profile_writes_requested_fields(tmp_path):
         ({"transform_execution_order": "unknown"}, "execution_order"),
         ({"molecular_field_linear_space": "unknown"}, "linear_space"),
         ({"stress_divergence_sum_space": "unknown"}, "sum_space"),
+        ({"pointwise_execution": "unknown"}, "pointwise_execution"),
+        (
+            {"pointwise_execution": "compile", "warmup_steps": 0},
+            "at least one warmup",
+        ),
         ({"snapshot_interval": 2}, "enabled together"),
         ({"snapshot_directory": "/tmp/unused"}, "enabled together"),
     ),

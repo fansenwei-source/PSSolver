@@ -126,6 +126,20 @@ class Fig4NumericsCliTests(unittest.TestCase):
             metadata["numerics"]["stress_divergence_sum_space"],
             "spectral",
         )
+        self.assertEqual(metadata["pointwise_execution"], "eager")
+        self.assertEqual(
+            metadata["model"]["q_dynamics"]["pointwise_execution"],
+            "eager",
+        )
+        self.assertEqual(
+            metadata["model"]["flow_dynamics"]["pointwise_execution"],
+            "eager",
+        )
+        pointwise = metadata["numerics"]["pointwise_kernels"]
+        self.assertEqual(pointwise["requested"], "eager")
+        self.assertEqual(pointwise["effective"], "eager")
+        self.assertFalse(pointwise["fallback_allowed"])
+        self.assertFalse(pointwise["compile"]["enabled"])
         self.assertEqual(
             metadata["numerics"]["transforms"]["execution_order"],
             "real_first",
@@ -267,6 +281,34 @@ class Fig4NumericsCliTests(unittest.TestCase):
             metadata["stress_divergence_sum_space"],
             "physical",
         )
+
+    def test_beris_edwards_compiled_pointwise_execution_is_recorded(self):
+        result = run_dry_run(
+            "--pointwise-execution",
+            "compile",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        metadata = json.loads(result.stdout)
+        self.assertEqual(metadata["pointwise_execution"], "compile")
+        self.assertEqual(
+            metadata["model"]["q_dynamics"]["pointwise_execution"],
+            "compile",
+        )
+        self.assertEqual(
+            metadata["model"]["flow_dynamics"]["pointwise_execution"],
+            "compile",
+        )
+        pointwise = metadata["numerics"]["pointwise_kernels"]
+        self.assertEqual(pointwise["requested"], "compile")
+        self.assertEqual(pointwise["effective"], "compile")
+        self.assertFalse(pointwise["fallback_allowed"])
+        self.assertTrue(pointwise["compile"]["enabled"])
+        self.assertEqual(pointwise["compile"]["backend"], "inductor")
+        self.assertEqual(pointwise["compile"]["mode"], "default")
+        self.assertFalse(pointwise["compile"]["dynamic"])
+        self.assertTrue(pointwise["compile"]["fullgraph"])
 
     def test_beris_edwards_legacy_transform_order_remains_available(self):
         result = run_dry_run(
