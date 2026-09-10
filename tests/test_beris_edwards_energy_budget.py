@@ -11,6 +11,7 @@ from pssolver import (
 )
 from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
+    BerisEdwardsPointwiseKernels,
     Q_COMPONENTS,
     beris_edwards_active_stress_components,
     beris_edwards_flow_alignment_components,
@@ -549,6 +550,7 @@ def test_coupled_passive_semidiscrete_energy_budget_closes_without_wall_power(
         viscosity=viscosity,
         flow_alignment=flow_alignment,
         stress_divergence_sum_space=sum_space,
+        pointwise_kernels=BerisEdwardsPointwiseKernels("eager"),
         zero_mode_policy="friction",
         **coefficients,
     )

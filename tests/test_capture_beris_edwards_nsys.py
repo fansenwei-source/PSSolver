@@ -85,11 +85,11 @@ def test_capture_defaults_to_real_first_transform_execution():
     assert config.transform_execution_order == "real_first"
     assert config.molecular_field_linear_space == "spectral"
     assert config.stress_divergence_sum_space == "spectral"
-    assert config.pointwise_execution == "eager"
+    assert config.pointwise_execution == "compile"
     assert config.profile_config().transform_execution_order == "real_first"
     assert config.profile_config().molecular_field_linear_space == "spectral"
     assert config.profile_config().stress_divergence_sum_space == "spectral"
-    assert config.profile_config().pointwise_execution == "eager"
+    assert config.profile_config().pointwise_execution == "compile"
 
 
 def test_capture_config_rejects_nonpositive_capture_steps():

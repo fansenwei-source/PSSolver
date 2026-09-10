@@ -39,11 +39,10 @@ def _assert_componentwise_identical(observed, expected):
         torch.testing.assert_close(actual, reference, rtol=0.0, atol=0.0)
 
 
-def test_eager_is_default_and_matches_public_constitutive_helpers_exactly():
+def test_explicit_eager_matches_public_constitutive_helpers_exactly():
     q, h, q_gradients, velocity, velocity_gradients = _inputs()
-    kernels = BerisEdwardsPointwiseKernels()
+    kernels = BerisEdwardsPointwiseKernels("eager")
 
-    assert DEFAULT_POINTWISE_EXECUTION == "eager"
     _assert_componentwise_identical(
         kernels.bulk_molecular_field_components(
             q,
@@ -109,8 +108,9 @@ def test_compile_policy_wraps_exactly_four_fullgraph_static_kernels(monkeypatch)
         return function
 
     monkeypatch.setattr(torch, "compile", fake_compile)
-    kernels = BerisEdwardsPointwiseKernels("compile")
+    kernels = BerisEdwardsPointwiseKernels()
 
+    assert DEFAULT_POINTWISE_EXECUTION == "compile"
     assert len(calls) == 4
     assert all(
         options

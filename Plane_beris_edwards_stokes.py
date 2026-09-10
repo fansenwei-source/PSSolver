@@ -257,9 +257,9 @@ def parse_args():
         default=DEFAULT_POINTWISE_EXECUTION,
         help=(
             "Execution policy for the four pure Beris--Edwards pointwise "
-            "kernels. eager is the production default; compile uses a "
-            "fixed-shape, full-graph TorchInductor candidate with no silent "
-            "fallback."
+            "kernels. compile is the H100-qualified production default and "
+            "uses fixed-shape, full-graph TorchInductor with no silent "
+            "fallback; eager retains the validated compatibility path."
         ),
     )
     parser.add_argument(

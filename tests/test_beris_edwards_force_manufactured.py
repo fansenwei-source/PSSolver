@@ -11,6 +11,7 @@ from pssolver import (
 )
 from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
+    BerisEdwardsPointwiseKernels,
     Q_COMPONENTS,
     beris_edwards_active_stress_components,
     beris_edwards_algebraic_stress_components,
@@ -292,6 +293,7 @@ def test_production_stokes_compute_force_preserves_qxz_active_mean():
         ldg_c=0.0,
         ldg_l1=0.17,
         flow_alignment=0.0,
+        pointwise_kernels=BerisEdwardsPointwiseKernels("eager"),
         zero_mode_policy="zero_mean",
     )
     total_force, active_tangential_force = (

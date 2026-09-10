@@ -433,8 +433,8 @@ explicit rollback control.
 
 The next candidate starts from the fully qualified `b410f96` production
 baseline and introduces one shared `BerisEdwardsPointwiseKernels` policy for
-the Q and Stokes adapters.  The default `eager` policy calls the historical
-constitutive helpers unchanged.  The opt-in `compile` policy wraps exactly four
+the Q and Stokes adapters.  The `eager` policy calls the historical
+constitutive helpers unchanged.  The `compile` policy wraps exactly four
 transform-free kernels---bulk molecular field, algebraic stress, distortion
 stress, and Q nonlinearity---with fixed-shape, `fullgraph=True`,
 `dynamic=False` TorchInductor compilation.  Compilation failures are fatal;
@@ -465,8 +465,19 @@ relative L2 differences were `4.17e-17` for Q, `1.75e-16` for velocity, and
 `3.07e-16` for pressure.  A float32 run with TF32 disabled measured
 `1.97e-8`, `1.47e-7`, and `1.58e-7`, respectively, with finite fields
 throughout.  The local eager regression suite passed 500 tests and eight
-subtests.  H100 qualification in the fixed production environment remains
-mandatory before this candidate can become a default.
+subtests.
+
+The fixed-environment H100 qualification then classified the candidate as
+`A_recommended`.  At 320x320x80 the compiled path reduced the mean timestep
+from 158.93 ms to 113.64 ms, a `1.3986x` speedup, while peak allocated memory
+was unchanged and peak reserved memory decreased from 14.22 GiB to 14.03 GiB.
+All three compiled trials were faster, exactly four graphs were built, and no
+new graph or graph break appeared during warmup or measurement.  A matched
+100-step production trajectory kept float64 relative L2 differences below
+`4.5e-16` for Q, velocity, and pressure.  The one-time 21.4 s compilation cost
+is amortized after roughly 472 R320 timesteps.  Consequently `compile` is now
+the production default on this performance branch; `eager` remains an
+explicit, fully validated rollback control.
 
 ## Snapshot I/O profile
 

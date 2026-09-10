@@ -23,6 +23,7 @@ def _small_config(**overrides):
         "dtype": "float64",
         "warmup_steps": 1,
         "profile_steps": 2,
+        "pointwise_execution": "eager",
         "seed": 17,
     }
     values.update(overrides)
@@ -33,7 +34,7 @@ def test_profiler_defaults_to_production_numerics_and_accepts_legacy_control():
     assert ProfileConfig().transform_execution_order == "real_first"
     assert ProfileConfig().molecular_field_linear_space == "spectral"
     assert ProfileConfig().stress_divergence_sum_space == "spectral"
-    assert ProfileConfig().pointwise_execution == "eager"
+    assert ProfileConfig().pointwise_execution == "compile"
     legacy = _small_config(transform_execution_order="legacy")
     assert legacy.transform_execution_order == "legacy"
 

@@ -1,6 +1,7 @@
 import torch
 
 from pssolver.models.active_nematics import (
+    BerisEdwardsPointwiseKernels,
     BerisEdwardsQNonlinearModel,
     Q_COMPONENTS,
     beris_edwards_active_stress_components,
@@ -566,6 +567,7 @@ def test_q_nonlinear_model_adapter_wires_fields_transform_and_projection():
         ldg_c=0.3,
         rotational_viscosity=2.94,
         flow_alignment=0.31,
+        pointwise_kernels=BerisEdwardsPointwiseKernels("eager"),
     )
     observed = model(fields, params={})
     expected_spatial = torch.stack(

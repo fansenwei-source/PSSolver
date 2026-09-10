@@ -709,9 +709,10 @@ def parse_args() -> argparse.Namespace:
         choices=POINTWISE_EXECUTION_MODES,
         default=DEFAULT_POINTWISE_EXECUTION,
         help=(
-            "A/B control for Beris--Edwards pointwise algebra. eager is the "
-            "production default; compile uses fixed-shape full-graph "
-            "TorchInductor with no silent fallback."
+            "A/B control for Beris--Edwards pointwise algebra. compile is "
+            "the H100-qualified production default and uses fixed-shape "
+            "full-graph TorchInductor with no silent fallback; eager retains "
+            "the validated compatibility path."
         ),
     )
     parser.add_argument(
