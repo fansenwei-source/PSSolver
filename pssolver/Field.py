@@ -77,10 +77,11 @@ class Fields:
         self.field_laplacian_eigs = []
 
         self.transform_backend = None
+        self.spectral_shape = tuple(shape)
 
         self.spatial  = None  # shape: (number_of_fields, batch, *shape)
-        self.L_hat    = None  # shape: (number_of_dynamic_fields, batch, *shape)
-        self.spectral = None  # shape: (number_of_fields, batch, *shape)
+        self.L_hat    = None  # shape: (dynamic fields, batch, *spectral_shape)
+        self.spectral = None  # shape: (all fields, batch, *spectral_shape)
 
     def set_transform_backend(self, backend):
         if backend.real_dtype != self.dtype:
@@ -89,6 +90,7 @@ class Fields:
                 f"got backend={backend.real_dtype}, fields={self.dtype}"
             )
         self.transform_backend = backend
+        self.spectral_shape = backend.spectral_shape
         self.spatial_grids = backend.spatial_grids
         self._refresh_metadata()
 

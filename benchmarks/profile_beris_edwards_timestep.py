@@ -27,7 +27,9 @@ import torch
 
 from pssolver import (
     BasisAwareSpectralProjector,
+    DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
+    SPECTRAL_STORAGE_MODES,
     SpectralSolver,
 )
 from pssolver.integrator import SemiImplicitEulerIntegrator
@@ -70,6 +72,7 @@ class ProfileConfig:
     stress_divergence_sum_space: str = DEFAULT_STRESS_DIVERGENCE_SUM_SPACE
     pointwise_execution: str = DEFAULT_POINTWISE_EXECUTION
     transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
+    spectral_storage: str = DEFAULT_SPECTRAL_STORAGE
     snapshot_interval: int | None = None
     snapshot_directory: str | None = None
     save_hydrodynamics: bool = False
@@ -217,6 +220,17 @@ def _validate_config(config: ProfileConfig) -> None:
         raise ValueError(
             "transform_execution_order must be 'legacy' or 'real_first'"
         )
+    if config.spectral_storage not in SPECTRAL_STORAGE_MODES:
+        raise ValueError(
+            f"spectral_storage must be one of {SPECTRAL_STORAGE_MODES}"
+        )
+    if (
+        config.spectral_storage == "hermitian_half"
+        and config.transform_execution_order != "real_first"
+    ):
+        raise ValueError(
+            "hermitian_half spectral storage requires real_first execution"
+        )
     if config.molecular_field_linear_space not in {"physical", "spectral"}:
         raise ValueError(
             "molecular_field_linear_space must be 'physical' or 'spectral'"
@@ -298,6 +312,8 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
         batchsize=1,
         dtype=dtype,
         transform_execution_order=config.transform_execution_order,
+        spectral_storage=config.spectral_storage,
+        hermitian_axis=1,
     )
     projector = BasisAwareSpectralProjector(solver, rule=config.dealias_rule)
     solver.model.spectral_projector = projector
@@ -616,6 +632,19 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
             "snapshot_regions_are_outside_whole_timestep": True,
             "cuda_synchronization_inside_timestep": False,
         },
+        "transforms": {
+            "execution_order": solver.transform_backend.execution_order,
+            "spectral_storage": solver.transform_backend.spectral_storage,
+            "physical_shape": list(solver.shape),
+            "spectral_shape": list(solver.spectral_shape),
+            "hermitian_axis": (
+                solver.transform_backend.hermitian_axis
+                if solver.transform_backend.spectral_storage
+                == "hermitian_half"
+                else None
+            ),
+            "basis_and_normalization_changed": False,
+        },
         "pointwise_kernels": {
             **solver.pointwise_kernels.metadata(),
             "build_wall_seconds": build_wall_seconds,
@@ -725,6 +754,15 @@ def parse_args() -> argparse.Namespace:
             "retains the historical axis order."
         ),
     )
+    parser.add_argument(
+        "--spectral-storage",
+        choices=SPECTRAL_STORAGE_MODES,
+        default=DEFAULT_SPECTRAL_STORAGE,
+        help=(
+            "full_complex keeps the production representation; "
+            "hermitian_half packs the positive-y spectrum."
+        ),
+    )
     parser.add_argument("--snapshot-interval", type=int)
     parser.add_argument("--snapshot-directory")
     parser.add_argument("--save-hydrodynamics", action="store_true")
@@ -760,6 +798,7 @@ def main() -> None:
             ),
             pointwise_execution=args.pointwise_execution,
             transform_execution_order=args.transform_execution_order,
+            spectral_storage=args.spectral_storage,
             snapshot_interval=args.snapshot_interval,
             snapshot_directory=args.snapshot_directory,
             save_hydrodynamics=args.save_hydrodynamics,

@@ -6,6 +6,8 @@ import torch
 
 DEFAULT_DEALIAS_RULE = "cubic_half"
 DEFAULT_TRANSFORM_EXECUTION_ORDER = "real_first"
+DEFAULT_SPECTRAL_STORAGE = "full_complex"
+SPECTRAL_STORAGE_MODES = ("full_complex", "hermitian_half")
 DEALIAS_RULE_FRACTIONS = {
     "none": None,
     "two_thirds": 2.0 / 3.0,
@@ -59,12 +61,33 @@ class TensorProductTransformBackend:
         device="cuda",
         dtype=torch.float32,
         execution_order=DEFAULT_TRANSFORM_EXECUTION_ORDER,
+        spectral_storage=DEFAULT_SPECTRAL_STORAGE,
+        hermitian_axis=None,
     ):
         if execution_order not in self._execution_orders:
             raise ValueError(
                 f"execution_order must be one of {self._execution_orders}, "
                 f"got {execution_order!r}"
             )
+        if spectral_storage not in SPECTRAL_STORAGE_MODES:
+            raise ValueError(
+                f"spectral_storage must be one of {SPECTRAL_STORAGE_MODES}, "
+                f"got {spectral_storage!r}"
+            )
+        if spectral_storage == "hermitian_half":
+            if not isinstance(hermitian_axis, int) or isinstance(
+                hermitian_axis,
+                bool,
+            ):
+                raise TypeError("hermitian_axis must be an integer")
+            if hermitian_axis < 0 or hermitian_axis >= len(shape):
+                raise ValueError(
+                    "hermitian_axis is outside the transform dimension"
+                )
+            if execution_order != "real_first":
+                raise ValueError(
+                    "hermitian_half storage requires real_first execution"
+                )
         self.shape = tuple(shape)
         self.lengths = tuple(self._normalize_length(length) for length in lengths)
         self.device = device
@@ -72,7 +95,15 @@ class TensorProductTransformBackend:
         self.real_dtype = _real_dtype(dtype)
         self.spectral_dtype = _complex_dtype(dtype)
         self.execution_order = execution_order
+        self.spectral_storage = spectral_storage
+        self.hermitian_axis = hermitian_axis
         self.dim = len(self.shape)
+        spectral_shape = list(self.shape)
+        if self.spectral_storage == "hermitian_half":
+            spectral_shape[self.hermitian_axis] = (
+                self.shape[self.hermitian_axis] // 2 + 1
+            )
+        self.spectral_shape = tuple(spectral_shape)
 
         self._matrix_cache = {}
         self._metadata_cache = {}
@@ -153,6 +184,8 @@ class TensorProductTransformBackend:
 
     def get_metadata(self, boundary_conditions):
         boundary_conditions = tuple(boundary_conditions)
+        if self.spectral_storage == "hermitian_half":
+            self._validate_hermitian_boundary_conditions(boundary_conditions)
         if boundary_conditions in self._metadata_cache:
             return self._metadata_cache[boundary_conditions]
 
@@ -163,7 +196,13 @@ class TensorProductTransformBackend:
             length = self.lengths[axis]
 
             if bc == "periodic":
-                modes = torch.fft.fftfreq(
+                frequency = (
+                    torch.fft.rfftfreq
+                    if self.spectral_storage == "hermitian_half"
+                    and axis == self.hermitian_axis
+                    else torch.fft.fftfreq
+                )
+                modes = frequency(
                     n,
                     d=length / n,
                     device=self.device,
@@ -219,6 +258,8 @@ class TensorProductTransformBackend:
         return tuple(derivative_bcs)
 
     def forward(self, tensor, boundary_conditions):
+        if self.spectral_storage == "hermitian_half":
+            return self._forward_hermitian(tensor, boundary_conditions)
         output = tensor
         metadata = self.get_metadata(boundary_conditions)
         for local_axis, kind in self._ordered_axis_transforms(
@@ -230,6 +271,8 @@ class TensorProductTransformBackend:
         return output.to(self.spectral_dtype)
 
     def inverse(self, spectral, boundary_conditions):
+        if self.spectral_storage == "hermitian_half":
+            return self._inverse_hermitian(spectral, boundary_conditions)
         output = spectral
         metadata = self.get_metadata(boundary_conditions)
         for local_axis, kind in self._ordered_axis_transforms(
@@ -250,6 +293,90 @@ class TensorProductTransformBackend:
             output = self._apply_axis_transform(output, kind, axis, inverse=True)
         return output.real
 
+    def _validate_hermitian_boundary_conditions(self, boundary_conditions):
+        boundary_conditions = tuple(boundary_conditions)
+        if len(boundary_conditions) != self.dim:
+            raise ValueError(
+                "Boundary-condition count must match the transform dimension."
+            )
+        if boundary_conditions[self.hermitian_axis] != "periodic":
+            raise ValueError(
+                "hermitian_half storage requires a periodic boundary "
+                f"condition on axis {self.hermitian_axis}"
+            )
+        return boundary_conditions
+
+    def _hermitian_periodic_axes(self, transform_kinds, tensor_ndim):
+        periodic_axes = [
+            axis for axis, kind in enumerate(transform_kinds) if kind == "fft"
+        ]
+        periodic_axes.remove(self.hermitian_axis)
+        periodic_axes.append(self.hermitian_axis)
+        return tuple(tensor_ndim - self.dim + axis for axis in periodic_axes)
+
+    def _forward_hermitian(self, tensor, boundary_conditions):
+        boundary_conditions = self._validate_hermitian_boundary_conditions(
+            boundary_conditions
+        )
+        metadata = self.get_metadata(boundary_conditions)
+        output = tensor
+        for local_axis, kind in enumerate(metadata.transform_kinds):
+            if kind == "fft":
+                continue
+            axis = output.ndim - self.dim + local_axis
+            output = self._apply_axis_transform(
+                output,
+                kind,
+                axis,
+                inverse=False,
+            )
+        periodic_axes = self._hermitian_periodic_axes(
+            metadata.transform_kinds,
+            output.ndim,
+        )
+        output = torch.fft.rfftn(output, dim=periodic_axes)
+        return output.to(self.spectral_dtype)
+
+    def _inverse_hermitian(self, spectral, boundary_conditions):
+        boundary_conditions = self._validate_hermitian_boundary_conditions(
+            boundary_conditions
+        )
+        trailing_shape = tuple(spectral.shape[-self.dim :])
+        if trailing_shape != self.spectral_shape:
+            raise ValueError(
+                f"Expected trailing spectral shape {self.spectral_shape}, "
+                f"got {trailing_shape}."
+            )
+        metadata = self.get_metadata(boundary_conditions)
+        periodic_axes = self._hermitian_periodic_axes(
+            metadata.transform_kinds,
+            spectral.ndim,
+        )
+        local_periodic_axes = tuple(
+            axis - (spectral.ndim - self.dim) for axis in periodic_axes
+        )
+        physical_sizes = tuple(
+            self.shape[axis] for axis in local_periodic_axes
+        )
+        output = torch.fft.irfftn(
+            spectral,
+            s=physical_sizes,
+            dim=periodic_axes,
+        )
+        for local_axis, kind in reversed(
+            tuple(enumerate(metadata.transform_kinds))
+        ):
+            if kind == "fft":
+                continue
+            axis = output.ndim - self.dim + local_axis
+            output = self._apply_axis_transform(
+                output,
+                kind,
+                axis,
+                inverse=True,
+            )
+        return output.real
+
     def laplacian_hat(self, spectral, boundary_conditions):
         laplacian_eigs = self.get_laplacian_eigs(boundary_conditions)
         return spectral * laplacian_eigs.to(device=spectral.device)
@@ -262,6 +389,17 @@ class TensorProductTransformBackend:
         spectral_axis = spectral.ndim - self.dim + axis
 
         if bc == "periodic":
+            if (
+                self.spectral_storage == "hermitian_half"
+                and self.shape[axis] % 2 == 0
+            ):
+                # A first derivative of an even-grid Nyquist mode has no
+                # real-valued collocation-grid representation. The legacy
+                # full-complex path implicitly discards that anti-Hermitian
+                # component when inverse() takes the real part; irfftn needs
+                # the equivalent convention to be enforced explicitly.
+                modes = modes.clone()
+                modes[self.shape[axis] // 2] = 0
             factors = self._broadcast_axis_values(1j * modes, axis).to(dtype=spectral.dtype)
             return spectral * factors, boundary_conditions
 
@@ -299,9 +437,11 @@ class BasisAwareSpectralProjector:
             )
         self.rule = rule
         self.fraction = DEALIAS_RULE_FRACTIONS[rule]
-        self.shape = tuple(solver.shape)
-        self.device = solver.transform_backend.device
-        self.real_dtype = solver.transform_backend.real_dtype
+        self.physical_shape = tuple(solver.shape)
+        self.transform_backend = solver.transform_backend
+        self.shape = self.transform_backend.spectral_shape
+        self.device = self.transform_backend.device
+        self.real_dtype = self.transform_backend.real_dtype
         self._mask_cache = {}
         self._axis_mask_cache = {}
 
@@ -314,9 +454,15 @@ class BasisAwareSpectralProjector:
         if key in self._axis_mask_cache:
             return self._axis_mask_cache[key]
 
-        n = self.shape[axis]
+        n = self.physical_shape[axis]
         if boundary_condition == "periodic":
-            mode_numbers = torch.fft.fftfreq(
+            frequency = (
+                torch.fft.rfftfreq
+                if self.transform_backend.spectral_storage == "hermitian_half"
+                and axis == self.transform_backend.hermitian_axis
+                else torch.fft.fftfreq
+            )
+            mode_numbers = frequency(
                 n,
                 d=1.0 / n,
                 device=self.device,
@@ -363,7 +509,7 @@ class BasisAwareSpectralProjector:
         for axis, boundary_condition in enumerate(boundary_conditions):
             axis_keep = self._axis_mode_numbers(axis, boundary_condition)
             view_shape = [1] * len(self.shape)
-            view_shape[axis] = self.shape[axis]
+            view_shape[axis] = axis_keep.shape[0]
             mask &= axis_keep.reshape(view_shape)
 
         self._mask_cache[boundary_conditions] = mask

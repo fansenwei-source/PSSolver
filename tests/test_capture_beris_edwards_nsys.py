@@ -62,6 +62,7 @@ def test_capture_config_maps_to_complete_timestep_profile():
         stress_divergence_sum_space="spectral",
         pointwise_execution="compile",
         transform_execution_order="real_first",
+        spectral_storage="hermitian_half",
     )
 
     profile = config.profile_config()
@@ -75,6 +76,7 @@ def test_capture_config_maps_to_complete_timestep_profile():
     assert profile.stress_divergence_sum_space == "spectral"
     assert profile.pointwise_execution == "compile"
     assert profile.transform_execution_order == "real_first"
+    assert profile.spectral_storage == "hermitian_half"
     assert profile.snapshot_interval is None
     assert profile.snapshot_directory is None
 
@@ -83,10 +85,12 @@ def test_capture_defaults_to_real_first_transform_execution():
     config = NsysCaptureConfig()
 
     assert config.transform_execution_order == "real_first"
+    assert config.spectral_storage == "full_complex"
     assert config.molecular_field_linear_space == "spectral"
     assert config.stress_divergence_sum_space == "spectral"
     assert config.pointwise_execution == "compile"
     assert config.profile_config().transform_execution_order == "real_first"
+    assert config.profile_config().spectral_storage == "full_complex"
     assert config.profile_config().molecular_field_linear_space == "spectral"
     assert config.profile_config().stress_divergence_sum_space == "spectral"
     assert config.profile_config().pointwise_execution == "compile"

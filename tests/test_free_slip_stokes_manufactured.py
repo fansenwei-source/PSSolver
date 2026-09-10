@@ -21,6 +21,7 @@ def _backend(
     lengths=(2.0 * math.pi, 3.0 * math.pi, 2.5),
     *,
     execution_order="legacy",
+    spectral_storage="full_complex",
 ):
     return TensorProductTransformBackend(
         shape,
@@ -28,6 +29,8 @@ def _backend(
         device="cpu",
         dtype=torch.float64,
         execution_order=execution_order,
+        spectral_storage=spectral_storage,
+        hermitian_axis=1,
     )
 
 
@@ -188,9 +191,17 @@ def test_projector_bool_mask_matches_typed_mask_without_mutating_input(
     torch.testing.assert_close(spectral, original, rtol=0, atol=0)
 
 
-@pytest.mark.parametrize("execution_order", ("legacy", "real_first"))
+@pytest.mark.parametrize(
+    ("execution_order", "spectral_storage"),
+    (
+        ("legacy", "full_complex"),
+        ("real_first", "full_complex"),
+        ("real_first", "hermitian_half"),
+    ),
+)
 def test_float64_manufactured_free_slip_solution_recovers_u_p_and_gauge(
     execution_order,
+    spectral_storage,
 ):
     shape = (10, 12, 9)
     lengths = (2.0 * math.pi, 3.0 * math.pi, 2.5)
@@ -198,6 +209,7 @@ def test_float64_manufactured_free_slip_solution_recovers_u_p_and_gauge(
         shape=shape,
         lengths=lengths,
         execution_order=execution_order,
+        spectral_storage=spectral_storage,
     )
     friction = 0.17
     viscosity = 0.73
