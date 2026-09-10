@@ -82,6 +82,32 @@ def test_solver_defaults_to_real_first_transform_execution():
     assert solver.transform_backend.execution_order == "real_first"
 
 
+def test_solver_build_supports_hermitian_half_spectral_shape():
+    shape = (6, 8, 5)
+    solver = SpectralSolver(
+        shape,
+        L=(3.0, 4.0, 2.0),
+        device="cpu",
+        dtype=torch.float64,
+        spectral_storage="hermitian_half",
+        hermitian_axis=1,
+    )
+    boundary_conditions = ("periodic", "periodic", "neumann")
+    solver.model.add_dynamic_field(
+        "q",
+        init=torch.ones(shape, dtype=torch.float64),
+        L_hat=-solver.get_q2(boundary_conditions),
+        boundary_conditions=boundary_conditions,
+    )
+    solver.build()
+
+    assert solver.spectral_shape == (6, 5, 5)
+    assert solver.fields.spectral_shape == (6, 5, 5)
+    assert solver.fields.spatial.shape[-3:] == shape
+    assert solver.fields.spectral.shape[-3:] == solver.spectral_shape
+    assert solver.fields.L_hat.shape[-3:] == solver.spectral_shape
+
+
 @pytest.mark.parametrize("dtype", (torch.float32, torch.float64))
 def test_active_nematic_initial_conditions_preserve_requested_dtype(dtype):
     defect_fields = analytic_periodic_defect_gas_2d(

@@ -2,6 +2,7 @@ import torch
 from .integrator import SemiImplicitEulerIntegrator
 from .PDEmodel import PDEModel
 from .transforms import (
+    DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     TensorProductTransformBackend,
 )
@@ -16,6 +17,8 @@ class SpectralSolver:
         device="cuda",
         dtype=torch.float32,
         transform_execution_order=DEFAULT_TRANSFORM_EXECUTION_ORDER,
+        spectral_storage=DEFAULT_SPECTRAL_STORAGE,
+        hermitian_axis=None,
     ):
 
         if dtype not in (torch.float32, torch.float64):
@@ -41,7 +44,10 @@ class SpectralSolver:
             device=self.device,
             dtype=self.dtype,
             execution_order=transform_execution_order,
+            spectral_storage=spectral_storage,
+            hermitian_axis=hermitian_axis,
         )
+        self.spectral_shape = self.transform_backend.spectral_shape
         self._init_periodic_metadata()
 
         self.model = PDEModel(

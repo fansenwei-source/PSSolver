@@ -42,13 +42,22 @@ class PDEModel:
         else:
             raise ValueError(f"Initial value for field '{name}' must have shape {self.shape} or {(self.batchsize, *self.shape)}, got {init.shape}")
         
-        # Accepts L_hat with or without batch dimension
-        if L_hat.shape == self.shape:
-            L_hat = L_hat.unsqueeze(0).repeat(self.batchsize, *[1]*len(self.shape))
-        elif L_hat.shape == (self.batchsize, *self.shape):
+        spectral_shape = self.fields._require_transform_backend().spectral_shape
+
+        # Accepts L_hat with or without batch dimension. Its trailing shape is
+        # the backend's native spectral storage, which may be Hermitian-packed.
+        if L_hat.shape == spectral_shape:
+            L_hat = L_hat.unsqueeze(0).repeat(
+                self.batchsize,
+                *[1] * len(spectral_shape),
+            )
+        elif L_hat.shape == (self.batchsize, *spectral_shape):
             pass
         else:
-            raise ValueError(f"L_hat for field '{name}' must have shape {self.shape} or {(self.batchsize, *self.shape)}, got {L_hat.shape}")
+            raise ValueError(
+                f"L_hat for field '{name}' must have shape {spectral_shape} "
+                f"or {(self.batchsize, *spectral_shape)}, got {L_hat.shape}"
+            )
 
         boundary_conditions = self.fields._normalize_boundary_conditions(boundary_conditions)
         self.dyn_fields.append([name, init, L_hat, boundary_conditions])
@@ -141,7 +150,11 @@ class PDEModel:
                 if len(sig.parameters) != 2:  # fields, parameters
                     raise TypeError("Nonlinear model's forward method must accept two input parameters: fields and parameters")
                 test_output = self.nlmodel(self.fields, self.parameters)
-                expected_shape = (self.fields.dyn_count, self.batchsize, *self.shape)
+                expected_shape = (
+                    self.fields.dyn_count,
+                    self.batchsize,
+                    *self.fields.spectral_shape,
+                )
                 if test_output.shape != expected_shape:
                     raise ValueError(f"Nonlinear model output shape {test_output.shape} doesn't match expected {expected_shape}")
             except Exception as e:
@@ -157,7 +170,11 @@ class PDEModel:
                 if len(sig.parameters) != 2:  # fields, parameters
                     raise TypeError("Static model's forward method must accept two input parameters: fields and parameters")
                 test_output = self.static_model(self.fields, self.parameters)
-                expected_shape = (self.fields.stat_count, self.batchsize, *self.shape)
+                expected_shape = (
+                    self.fields.stat_count,
+                    self.batchsize,
+                    *self.fields.spectral_shape,
+                )
                 if test_output.shape != expected_shape:
                     raise ValueError(f"Static model output shape {test_output.shape} doesn't match expected {expected_shape}")
             except Exception as e:

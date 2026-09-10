@@ -242,6 +242,42 @@ class Fig4NumericsCliTests(unittest.TestCase):
         self.assertFalse(transforms["basis_and_normalization_changed"])
         self.assertEqual(metadata["transform_execution_order"], "real_first")
 
+    def test_beris_edwards_hermitian_half_storage_is_explicit_and_recorded(self):
+        result = run_dry_run(
+            "--nx",
+            "12",
+            "--ny",
+            "10",
+            "--nz",
+            "8",
+            "--spectral-storage",
+            "hermitian_half",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        metadata = json.loads(result.stdout)
+        transforms = metadata["numerics"]["transforms"]
+        self.assertEqual(transforms["spectral_storage"], "hermitian_half")
+        self.assertEqual(transforms["physical_shape"], [12, 10, 8])
+        self.assertEqual(transforms["spectral_shape"], [12, 6, 8])
+        self.assertEqual(transforms["hermitian_axis"], 1)
+        self.assertFalse(transforms["basis_and_normalization_changed"])
+        self.assertEqual(metadata["solver"]["spectral_shape"], [12, 6, 8])
+        self.assertEqual(metadata["spectral_storage"], "hermitian_half")
+
+    def test_beris_edwards_hermitian_half_rejects_legacy_order(self):
+        result = run_dry_run(
+            "--spectral-storage",
+            "hermitian_half",
+            "--transform-execution-order",
+            "legacy",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("requires", result.stderr)
+
     def test_beris_edwards_physical_linear_molecular_field_fallback_is_recorded(self):
         result = run_dry_run(
             "--molecular-field-linear-space",

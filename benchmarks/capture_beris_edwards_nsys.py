@@ -24,8 +24,10 @@ import torch
 from pssolver import (
     DEALIAS_RULE_FRACTIONS,
     DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
+    DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     PROJECTED_TRANSFORM_EXECUTION_MODES,
+    SPECTRAL_STORAGE_MODES,
 )
 from pssolver.models.active_nematics import (
     DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
@@ -64,6 +66,7 @@ class NsysCaptureConfig:
     stress_divergence_sum_space: str = DEFAULT_STRESS_DIVERGENCE_SUM_SPACE
     pointwise_execution: str = DEFAULT_POINTWISE_EXECUTION
     transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
+    spectral_storage: str = DEFAULT_SPECTRAL_STORAGE
     seed: int = 20260908
 
     def profile_config(self) -> ProfileConfig:
@@ -89,6 +92,7 @@ class NsysCaptureConfig:
             ),
             pointwise_execution=self.pointwise_execution,
             transform_execution_order=self.transform_execution_order,
+            spectral_storage=self.spectral_storage,
             seed=self.seed,
         )
 
@@ -223,6 +227,11 @@ def parse_args() -> argparse.Namespace:
         choices=("legacy", "real_first"),
         default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
     )
+    parser.add_argument(
+        "--spectral-storage",
+        choices=SPECTRAL_STORAGE_MODES,
+        default=DEFAULT_SPECTRAL_STORAGE,
+    )
     parser.add_argument("--seed", type=int, default=20260908)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--overwrite", action="store_true")
@@ -257,6 +266,7 @@ def main() -> None:
             ),
             pointwise_execution=args.pointwise_execution,
             transform_execution_order=args.transform_execution_order,
+            spectral_storage=args.spectral_storage,
             seed=args.seed,
         )
     )

@@ -69,8 +69,10 @@ from pssolver.transforms import (
     DEALIAS_RULE_FRACTIONS,
     DEFAULT_DEALIAS_RULE,
     DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
+    DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     PROJECTED_TRANSFORM_EXECUTION_MODES,
+    SPECTRAL_STORAGE_MODES,
 )
 from tqdm import trange
 import numpy as np
@@ -286,6 +288,16 @@ def parse_args():
         ),
     )
     parser.add_argument(
+        "--spectral-storage",
+        choices=SPECTRAL_STORAGE_MODES,
+        default=DEFAULT_SPECTRAL_STORAGE,
+        help=(
+            "Native modal storage. full_complex is the unchanged production "
+            "default; hermitian_half explicitly packs the positive-y half "
+            "spectrum for real Plane fields and requires real_first."
+        ),
+    )
+    parser.add_argument(
         "--tf32",
         choices=("off", "on"),
         default="off",
@@ -399,6 +411,14 @@ def parse_args():
         parser.error(
             "--validation-config-sha256 must be exactly 64 lowercase "
             "hexadecimal characters"
+        )
+    if (
+        args.spectral_storage == "hermitian_half"
+        and args.transform_execution_order != "real_first"
+    ):
+        parser.error(
+            "--spectral-storage hermitian_half requires "
+            "--transform-execution-order real_first"
         )
 
     if args.spectral_refresh_steps is not None:
@@ -624,6 +644,11 @@ projected_transform_execution_metadata = {
     ),
     "full_spectral_storage_preserved": True,
 }
+spectral_shape = [
+    Nx,
+    Ny // 2 + 1 if args.spectral_storage == "hermitian_half" else Ny,
+    Nz,
+]
 
 # Resolve the one-variable A scan into physical K and zeta values.  In
 # paper-window mode one coefficient is held at the lower edge of the paper's
@@ -692,6 +717,7 @@ metadata = {
     "runtime_environment": runtime_environment,
     "solver": {
         "shape": [Nx, Ny, Nz],
+        "spectral_shape": spectral_shape,
         "lengths": [Lx, Ly, Lz],
         "dt": dt,
         "steps": steps,
@@ -699,6 +725,7 @@ metadata = {
         "real_dtype": args.dtype,
         "spectral_dtype": spectral_dtype_name,
         "transform_execution_order": args.transform_execution_order,
+        "spectral_storage": args.spectral_storage,
     },
     "model": {
         "name": "active_nematics",
@@ -829,7 +856,12 @@ metadata = {
         },
         "transforms": {
             "execution_order": args.transform_execution_order,
-            "spectral_storage": "full_complex",
+            "spectral_storage": args.spectral_storage,
+            "physical_shape": [Nx, Ny, Nz],
+            "spectral_shape": spectral_shape,
+            "hermitian_axis": (
+                1 if args.spectral_storage == "hermitian_half" else None
+            ),
             "basis_and_normalization_changed": False,
             "projected_transform_execution": (
                 args.projected_transform_execution
@@ -878,6 +910,7 @@ metadata = {
     "device": device,
     "dtype": args.dtype,
     "transform_execution_order": args.transform_execution_order,
+    "spectral_storage": args.spectral_storage,
     "molecular_field_linear_space": args.molecular_field_linear_space,
     "stress_divergence_sum_space": args.stress_divergence_sum_space,
     "pointwise_execution": args.pointwise_execution,
@@ -990,6 +1023,8 @@ solver = SpectralSolver(
     batchsize=batchsize,
     dtype=real_dtype,
     transform_execution_order=args.transform_execution_order,
+    spectral_storage=args.spectral_storage,
+    hermitian_axis=1,
 )
 spectral_projector = BasisAwareSpectralProjector(
     solver,

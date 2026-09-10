@@ -34,6 +34,7 @@ def _small_config(**overrides):
 
 def test_profiler_defaults_to_production_numerics_and_accepts_legacy_control():
     assert ProfileConfig().transform_execution_order == "real_first"
+    assert ProfileConfig().spectral_storage == "full_complex"
     assert ProfileConfig().molecular_field_linear_space == "spectral"
     assert ProfileConfig().stress_divergence_sum_space == "spectral"
     assert ProfileConfig().pointwise_execution == "compile"
@@ -82,6 +83,14 @@ def test_complete_timestep_profile_has_expected_regions_and_provenance():
     assert result["pointwise_kernels"]["warmup_wall_seconds"] >= 0.0
     assert result["pointwise_kernels"]["preprofile_wall_seconds"] >= 0.0
     assert "dynamo_during_build" in result["pointwise_kernels"]
+    assert result["transforms"] == {
+        "execution_order": "real_first",
+        "spectral_storage": "full_complex",
+        "physical_shape": [6, 6, 5],
+        "spectral_shape": [6, 6, 5],
+        "hermitian_axis": None,
+        "basis_and_normalization_changed": False,
+    }
 
     for name in (
         "whole_timestep",
@@ -145,7 +154,6 @@ def test_q_and_stokes_models_share_one_pointwise_execution_policy():
         _small_config(),
         RegionTimer(torch.device("cpu")),
     )
-
     assert solver.model.nlmodel.pointwise_kernels is solver.pointwise_kernels
     assert (
         solver.model.static_model.pointwise_kernels
@@ -189,6 +197,36 @@ def test_truncated_projected_transforms_preserve_complete_cpu_timestep(
     assert truncated.model.spectral_projector.computed_axis_sizes(
         ("periodic", "periodic", "neumann")
     ) == (6, 6, 3 if dealias_rule == "cubic_half" else 4)
+
+
+def test_hermitian_half_timestep_matches_full_complex_physical_state():
+    full = _build_solver(
+        _small_config(spectral_storage="full_complex"),
+        RegionTimer(torch.device("cpu")),
+    )
+    half = _build_solver(
+        _small_config(spectral_storage="hermitian_half"),
+        RegionTimer(torch.device("cpu")),
+    )
+
+    for _ in range(3):
+        full.integrator.step()
+        half.integrator.step()
+
+    torch.testing.assert_close(
+        half.model.fields.spatial,
+        full.model.fields.spatial,
+        rtol=2.0e-11,
+        atol=2.0e-11,
+    )
+    torch.testing.assert_close(
+        half.model.fields.spectral,
+        full.model.fields.spectral[..., :4, :],
+        rtol=2.0e-11,
+        atol=2.0e-11,
+    )
+    assert half.model.fields.spectral.shape[-3:] == (6, 4, 5)
+    assert half.model.fields.L_hat.shape[-3:] == (6, 4, 5)
 
 
 def test_static_model_rejects_unknown_molecular_field_linear_space():
@@ -313,6 +351,14 @@ def test_snapshot_profile_writes_requested_fields(tmp_path):
         ({"dt": 0.0}, "dt"),
         ({"profile_steps": 0}, "profile_steps"),
         ({"transform_execution_order": "unknown"}, "execution_order"),
+        ({"spectral_storage": "unknown"}, "spectral_storage"),
+        (
+            {
+                "spectral_storage": "hermitian_half",
+                "transform_execution_order": "legacy",
+            },
+            "requires real_first",
+        ),
         ({"molecular_field_linear_space": "unknown"}, "linear_space"),
         ({"stress_divergence_sum_space": "unknown"}, "sum_space"),
         ({"pointwise_execution": "unknown"}, "pointwise_execution"),
