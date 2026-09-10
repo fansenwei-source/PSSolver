@@ -47,9 +47,23 @@ class _FakePointwiseKernels:
         }
 
 
+class _FakeSpectralProjector:
+    def execution_metadata(self):
+        return {
+            "requested": "full",
+            "effective": "full",
+            "fallback_allowed": False,
+        }
+
+
+class _FakeModel:
+    spectral_projector = _FakeSpectralProjector()
+
+
 class _FakeSolver:
     integrator = _FakeIntegrator()
     pointwise_kernels = _FakePointwiseKernels()
+    model = _FakeModel()
 
 
 def test_capture_config_maps_to_complete_timestep_profile():
@@ -61,6 +75,7 @@ def test_capture_config_maps_to_complete_timestep_profile():
         molecular_field_linear_space="spectral",
         stress_divergence_sum_space="spectral",
         pointwise_execution="compile",
+        projected_transform_execution="truncated",
         transform_execution_order="real_first",
     )
 
@@ -74,6 +89,7 @@ def test_capture_config_maps_to_complete_timestep_profile():
     assert profile.molecular_field_linear_space == "spectral"
     assert profile.stress_divergence_sum_space == "spectral"
     assert profile.pointwise_execution == "compile"
+    assert profile.projected_transform_execution == "truncated"
     assert profile.transform_execution_order == "real_first"
     assert profile.snapshot_interval is None
     assert profile.snapshot_directory is None
@@ -86,10 +102,12 @@ def test_capture_defaults_to_real_first_transform_execution():
     assert config.molecular_field_linear_space == "spectral"
     assert config.stress_divergence_sum_space == "spectral"
     assert config.pointwise_execution == "compile"
+    assert config.projected_transform_execution == "full"
     assert config.profile_config().transform_execution_order == "real_first"
     assert config.profile_config().molecular_field_linear_space == "spectral"
     assert config.profile_config().stress_divergence_sum_space == "spectral"
     assert config.profile_config().pointwise_execution == "compile"
+    assert config.profile_config().projected_transform_execution == "full"
 
 
 def test_capture_config_rejects_nonpositive_capture_steps():
@@ -146,6 +164,7 @@ def test_capture_result_records_effective_pointwise_execution(monkeypatch):
     assert result["pointwise_kernels"]["requested"] == "eager"
     assert result["pointwise_kernels"]["effective"] == "eager"
     assert result["pointwise_kernels"]["fallback_allowed"] is False
+    assert result["projected_transforms"]["requested"] == "full"
 
 
 def test_disabled_nvtx_timer_does_not_touch_cuda(monkeypatch):

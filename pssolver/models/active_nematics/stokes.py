@@ -176,12 +176,11 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         self.last_projected_normal_force = None
 
     def _project_physical_tensor(self, fields, tensor, boundary_conditions):
-        spectral = fields.transform_tensor(tensor, boundary_conditions)
-        spectral = self.spectral_projector.project(
-            spectral,
+        spectral = self.spectral_projector.forward_transform(
+            tensor,
             boundary_conditions,
         )
-        return fields.inverse_transform_tensor(
+        return self.spectral_projector.inverse_transform(
             spectral,
             boundary_conditions,
         )
@@ -200,7 +199,11 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         # or projection.
         if self.molecular_field_linear_space == "physical":
             laplacian_components = tuple(
-                fields.laplacian(name) for name in Q_COMPONENTS
+                fields.laplacian(
+                    name,
+                    projector=self.spectral_projector,
+                )
+                for name in Q_COMPONENTS
             )
             raw_h_components = beris_edwards_molecular_field_components(
                 q_components,
@@ -224,7 +227,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
                 ldg_b=self.ldg_b,
                 ldg_c=self.ldg_c,
             )
-            h_hat = fields.transform_tensor(
+            h_hat = self.spectral_projector.forward_transform(
                 torch.stack(bulk_h_components),
                 self.q_boundary_conditions,
             )
@@ -233,11 +236,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
                     fields.laplacian_hat(name),
                     alpha=self.ldg_l1,
                 )
-            h_hat = self.spectral_projector.project(
-                h_hat,
-                self.q_boundary_conditions,
-            )
-            h_tensor = fields.inverse_transform_tensor(
+            h_tensor = self.spectral_projector.inverse_transform(
                 h_hat,
                 self.q_boundary_conditions,
             )
@@ -265,7 +264,12 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
 
         q_gradients = tuple(
             tuple(
-                fields.gradient(name, axis=axis) for name in Q_COMPONENTS
+                fields.gradient(
+                    name,
+                    axis=axis,
+                    projector=self.spectral_projector,
+                )
+                for name in Q_COMPONENTS
             )
             for axis in range(3)
         )
@@ -326,23 +330,17 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         )
 
         # Project the complete force before the coupled saddle solve.
-        force_tangential_hat = self.spectral_projector.project(
-            fields.transform_tensor(
-                force[:2],
-                self.tangential_boundary_conditions,
-            ),
+        force_tangential_hat = self.spectral_projector.forward_transform(
+            force[:2],
             self.tangential_boundary_conditions,
         )
-        force_normal_hat = self.spectral_projector.project(
-            fields.transform_tensor(
-                force[2],
-                self.normal_boundary_conditions,
-            ),
+        force_normal_hat = self.spectral_projector.forward_transform(
+            force[2],
             self.normal_boundary_conditions,
         )
         if self.cache_force_diagnostics:
             self.last_projected_normal_force = (
-                fields.inverse_transform_tensor(
+                self.spectral_projector.inverse_transform(
                     force_normal_hat,
                     self.normal_boundary_conditions,
                 ).detach()

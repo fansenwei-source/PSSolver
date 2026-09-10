@@ -475,6 +475,9 @@ class _RecordingProjector:
         self.boundary_conditions = tuple(boundary_conditions)
         return spectral - 0.125
 
+    def forward_transform(self, tensor, boundary_conditions):
+        return self.project(1.75 * tensor, boundary_conditions)
+
 
 class _AdapterFields:
     def __init__(self, values, gradients):
@@ -486,7 +489,8 @@ class _AdapterFields:
     def __getitem__(self, name):
         return self.values[name]
 
-    def gradient(self, name, axis):
+    def gradient(self, name, axis, projector=None):
+        assert projector is not None
         self.gradient_calls.append((name, axis))
         return self.gradients[name, axis]
 
@@ -589,7 +593,7 @@ def test_q_nonlinear_model_adapter_wires_fields_transform_and_projection():
     )
     assert observed.shape == (5, sample_count)
     assert observed.dtype == torch.float64
-    assert fields.transformed_boundary_conditions == q_boundary_conditions
+    assert fields.transformed_boundary_conditions is None
     assert projector.boundary_conditions == q_boundary_conditions
     assert fields.gradient_calls == [
         *(

@@ -140,6 +140,14 @@ class Fig4NumericsCliTests(unittest.TestCase):
         self.assertEqual(pointwise["effective"], "compile")
         self.assertFalse(pointwise["fallback_allowed"])
         self.assertTrue(pointwise["compile"]["enabled"])
+        projected = metadata["numerics"]["dealiasing"][
+            "projected_transform_execution"
+        ]
+        self.assertEqual(projected["requested"], "full")
+        self.assertEqual(projected["effective"], "full")
+        self.assertFalse(projected["fallback_allowed"])
+        self.assertFalse(projected["truncated_real_basis_axes"])
+        self.assertTrue(projected["full_spectral_storage_preserved"])
         self.assertEqual(
             metadata["numerics"]["transforms"]["execution_order"],
             "real_first",
@@ -309,6 +317,39 @@ class Fig4NumericsCliTests(unittest.TestCase):
         self.assertIsNone(pointwise["compile"]["mode"])
         self.assertIsNone(pointwise["compile"]["dynamic"])
         self.assertIsNone(pointwise["compile"]["fullgraph"])
+
+    def test_beris_edwards_truncated_projected_transforms_are_recorded(self):
+        result = run_dry_run(
+            "--projected-transform-execution",
+            "truncated",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        metadata = json.loads(result.stdout)
+        projected = metadata["numerics"]["dealiasing"][
+            "projected_transform_execution"
+        ]
+        self.assertEqual(projected["requested"], "truncated")
+        self.assertEqual(projected["effective"], "truncated")
+        self.assertFalse(projected["fallback_allowed"])
+        self.assertTrue(projected["truncated_real_basis_axes"])
+        self.assertTrue(projected["full_spectral_storage_preserved"])
+        self.assertEqual(
+            metadata["projected_transform_execution"],
+            "truncated",
+        )
+
+    def test_truncated_projected_transforms_reject_disabled_dealiasing(self):
+        result = run_dry_run(
+            "--dealias-rule",
+            "none",
+            "--projected-transform-execution",
+            "truncated",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("requires enabled dealiasing", result.stderr)
 
     def test_beris_edwards_legacy_transform_order_remains_available(self):
         result = run_dry_run(

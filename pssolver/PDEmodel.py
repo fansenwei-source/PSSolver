@@ -27,6 +27,7 @@ class PDEModel:
         self.static_transform_groups = []
         self.nlmodel = None
         self.static_model = None
+        self.static_inverse_transform = None
 
 
     def add_dynamic_field(self, name, init, L_hat, boundary_conditions=None):
@@ -65,6 +66,12 @@ class PDEModel:
         if not isinstance(model, torch.nn.Module):
             raise TypeError("Static compute model must be a torch.nn.Module")
         self.static_model = model
+
+    def set_static_inverse_transform(self, inverse_transform):
+        """Set an optional inverse used for already-projected static fields."""
+        if inverse_transform is not None and not callable(inverse_transform):
+            raise TypeError("Static inverse transform must be callable or None")
+        self.static_inverse_transform = inverse_transform
 
     def build(self):
         if not self.dyn_fields:
@@ -176,7 +183,17 @@ class PDEModel:
         stop = start + self.fields.stat_count
         self.fields.spectral[start:stop] = static_hats
         for group in self.static_transform_groups:
-            self.fields.spatial[group] = self.fields.inverse_transform_group(group)
+            if self.static_inverse_transform is None:
+                spatial = self.fields.inverse_transform_group(group)
+            else:
+                boundary_conditions = self.fields.get_boundary_conditions(
+                    group[0]
+                )
+                spatial = self.static_inverse_transform(
+                    self.fields.spectral[group],
+                    boundary_conditions,
+                )
+            self.fields.spatial[group] = spatial
         after_update = getattr(
             self.static_model,
             "after_static_fields_updated",

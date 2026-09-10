@@ -840,14 +840,22 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
         if q_gradients is None:
             q_gradients = tuple(
                 tuple(
-                    fields.gradient(name, axis=axis)
+                    fields.gradient(
+                        name,
+                        axis=axis,
+                        projector=self.spectral_projector,
+                    )
                     for name in Q_COMPONENTS
                 )
                 for axis in range(3)
             )
         velocity_gradients = tuple(
             tuple(
-                fields.gradient(name, axis=axis)
+                fields.gradient(
+                    name,
+                    axis=axis,
+                    projector=self.spectral_projector,
+                )
                 for name in ("ux", "uy", "uz")
             )
             for axis in range(3)
@@ -861,12 +869,8 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
             ldg_c_over_gamma=self.ldg_c_over_gamma,
             flow_alignment=self.flow_alignment,
         )
-        nonlinear_hat = fields.transform_tensor(
+        return self.spectral_projector.forward_transform(
             torch.stack(nonlinear_components),
-            self.q_boundary_conditions,
-        )
-        return self.spectral_projector.project(
-            nonlinear_hat,
             self.q_boundary_conditions,
         )
 

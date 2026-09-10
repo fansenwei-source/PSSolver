@@ -35,6 +35,7 @@ def test_profiler_defaults_to_production_numerics_and_accepts_legacy_control():
     assert ProfileConfig().molecular_field_linear_space == "spectral"
     assert ProfileConfig().stress_divergence_sum_space == "spectral"
     assert ProfileConfig().pointwise_execution == "compile"
+    assert ProfileConfig().projected_transform_execution == "full"
     legacy = _small_config(transform_execution_order="legacy")
     assert legacy.transform_execution_order == "legacy"
 
@@ -53,6 +54,17 @@ def test_complete_timestep_profile_has_expected_regions_and_provenance():
     assert result["pointwise_kernels"]["requested"] == "eager"
     assert result["pointwise_kernels"]["effective"] == "eager"
     assert result["pointwise_kernels"]["compile"]["enabled"] is False
+    assert result["projected_transforms"]["requested"] == "full"
+    assert result["projected_transforms"]["effective"] == "full"
+    assert result["projected_transforms"]["fallback_allowed"] is False
+    assert result["projected_transforms"]["retained_axis_counts"] == {
+        "q": [3, 3, 3],
+        "normal_velocity": [3, 3, 2],
+    }
+    assert result["projected_transforms"]["computed_axis_sizes"] == {
+        "q": [6, 6, 5],
+        "normal_velocity": [6, 6, 5],
+    }
     assert result["pointwise_kernels"]["build_wall_seconds"] >= 0.0
     assert result["pointwise_kernels"]["warmup_steps"] == 1
     assert result["pointwise_kernels"]["warmup_wall_seconds"] >= 0.0
@@ -127,6 +139,44 @@ def test_q_and_stokes_models_share_one_pointwise_execution_policy():
         solver.model.static_model.pointwise_kernels
         is solver.pointwise_kernels
     )
+
+
+@pytest.mark.parametrize("dealias_rule", ("two_thirds", "cubic_half"))
+def test_truncated_projected_transforms_preserve_complete_cpu_timestep(
+    dealias_rule,
+):
+    full = _build_solver(
+        _small_config(
+            dealias_rule=dealias_rule,
+            projected_transform_execution="full",
+        ),
+        RegionTimer(torch.device("cpu")),
+    )
+    truncated = _build_solver(
+        _small_config(
+            dealias_rule=dealias_rule,
+            projected_transform_execution="truncated",
+        ),
+        RegionTimer(torch.device("cpu")),
+    )
+    for _ in range(2):
+        full.integrator.step()
+        truncated.integrator.step()
+
+    assert torch.equal(
+        truncated.model.fields.spatial,
+        full.model.fields.spatial,
+    )
+    assert torch.equal(
+        truncated.model.fields.spectral,
+        full.model.fields.spectral,
+    )
+    metadata = truncated.model.spectral_projector.execution_metadata()
+    assert metadata["effective"] == "truncated"
+    assert metadata["truncated_real_basis_axes"]
+    assert truncated.model.spectral_projector.computed_axis_sizes(
+        ("periodic", "periodic", "neumann")
+    ) == (6, 6, 3 if dealias_rule == "cubic_half" else 4)
 
 
 def test_static_model_rejects_unknown_molecular_field_linear_space():
@@ -254,6 +304,17 @@ def test_snapshot_profile_writes_requested_fields(tmp_path):
         ({"molecular_field_linear_space": "unknown"}, "linear_space"),
         ({"stress_divergence_sum_space": "unknown"}, "sum_space"),
         ({"pointwise_execution": "unknown"}, "pointwise_execution"),
+        (
+            {"projected_transform_execution": "unknown"},
+            "projected_transform_execution",
+        ),
+        (
+            {
+                "projected_transform_execution": "truncated",
+                "dealias_rule": "none",
+            },
+            "enabled dealiasing",
+        ),
         (
             {"pointwise_execution": "compile", "warmup_steps": 0},
             "at least one warmup",

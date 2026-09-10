@@ -21,7 +21,11 @@ from typing import Iterator
 
 import torch
 
-from pssolver import DEFAULT_TRANSFORM_EXECUTION_ORDER
+from pssolver import (
+    DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
+    DEFAULT_TRANSFORM_EXECUTION_ORDER,
+    PROJECTED_TRANSFORM_EXECUTION_MODES,
+)
 from pssolver.models.active_nematics import (
     DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
     DEFAULT_POINTWISE_EXECUTION,
@@ -49,6 +53,7 @@ class NsysCaptureConfig:
     dtype: str = "float64"
     dt: float = 0.005
     dealias_rule: str = "cubic_half"
+    projected_transform_execution: str = DEFAULT_PROJECTED_TRANSFORM_EXECUTION
     warmup_steps: int = 5
     capture_steps: int = 3
     spectral_refresh_interval: int | None = None
@@ -69,6 +74,7 @@ class NsysCaptureConfig:
             dtype=self.dtype,
             dt=self.dt,
             dealias_rule=self.dealias_rule,
+            projected_transform_execution=self.projected_transform_execution,
             warmup_steps=self.warmup_steps,
             profile_steps=self.capture_steps,
             spectral_refresh_interval=self.spectral_refresh_interval,
@@ -158,6 +164,9 @@ def run_capture(config: NsysCaptureConfig) -> dict[str, object]:
             "device_capability": list(torch.cuda.get_device_capability(device)),
         },
         "pointwise_kernels": solver.pointwise_kernels.metadata(),
+        "projected_transforms": (
+            solver.model.spectral_projector.execution_metadata()
+        ),
         "elapsed_seconds": elapsed_seconds,
         "mean_timestep_seconds": elapsed_seconds / config.capture_steps,
         "memory": {
@@ -182,6 +191,11 @@ def parse_args() -> argparse.Namespace:
         "--dealias-rule",
         choices=("none", "quadratic_two_thirds", "cubic_half"),
         default="cubic_half",
+    )
+    parser.add_argument(
+        "--projected-transform-execution",
+        choices=PROJECTED_TRANSFORM_EXECUTION_MODES,
+        default=DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
     )
     parser.add_argument("--warmup-steps", type=int, default=5)
     parser.add_argument("--capture-steps", type=int, default=3)
@@ -226,6 +240,9 @@ def main() -> None:
             dtype=args.dtype,
             dt=args.dt,
             dealias_rule=args.dealias_rule,
+            projected_transform_execution=(
+                args.projected_transform_execution
+            ),
             warmup_steps=args.warmup_steps,
             capture_steps=args.capture_steps,
             spectral_refresh_interval=args.spectral_refresh_interval,

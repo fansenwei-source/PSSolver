@@ -2,10 +2,13 @@ import math
 from dataclasses import dataclass
 
 import torch
+import torch.nn.functional as functional
 
 
 DEFAULT_DEALIAS_RULE = "cubic_half"
 DEFAULT_TRANSFORM_EXECUTION_ORDER = "real_first"
+DEFAULT_PROJECTED_TRANSFORM_EXECUTION = "full"
+PROJECTED_TRANSFORM_EXECUTION_MODES = ("full", "truncated")
 DEALIAS_RULE_FRACTIONS = {
     "none": None,
     "two_thirds": 2.0 / 3.0,
@@ -218,20 +221,129 @@ class TensorProductTransformBackend:
         derivative_bcs[axis] = self._gradient_bc_map[boundary_conditions[axis]]
         return tuple(derivative_bcs)
 
-    def forward(self, tensor, boundary_conditions):
+    def _normalize_retained_axis_counts(
+        self,
+        retained_axis_counts,
+        transform_kinds,
+    ):
+        try:
+            counts = tuple(retained_axis_counts)
+        except TypeError as exc:
+            raise TypeError(
+                "retained_axis_counts must be an iterable of integers."
+            ) from exc
+        if len(counts) != self.dim:
+            raise ValueError(
+                "retained_axis_counts must match the transform dimension."
+            )
+        for axis, (count, kind, size) in enumerate(
+            zip(counts, transform_kinds, self.shape)
+        ):
+            if not isinstance(count, int) or isinstance(count, bool):
+                raise TypeError(
+                    "retained_axis_counts must contain integers."
+                )
+            if count < 0 or count > size:
+                raise ValueError(
+                    f"Retained count {count} is invalid for axis {axis} "
+                    f"with size {size}."
+                )
+            if kind == "fft" and count != size:
+                raise ValueError(
+                    "Periodic FFT axes cannot use contiguous retained-mode "
+                    "truncation."
+                )
+        return counts
+
+    def _apply_retained_real_axis_transform(
+        self,
+        tensor,
+        kind,
+        local_axis,
+        retained_count,
+        *,
+        inverse,
+    ):
+        axis = tensor.ndim - self.dim + local_axis
+        matrix = self._get_matrix(kind, self.shape[local_axis])
+        matrix = matrix[:retained_count]
+        moved = tensor.movedim(axis, -1)
+        matrix = matrix.to(device=moved.device, dtype=moved.dtype)
+        if inverse:
+            transformed = moved @ matrix
+        else:
+            transformed = moved @ matrix.transpose(-1, -2)
+        return transformed.movedim(-1, axis)
+
+    def forward(
+        self,
+        tensor,
+        boundary_conditions,
+        *,
+        retained_axis_counts=None,
+    ):
         output = tensor
         metadata = self.get_metadata(boundary_conditions)
+        counts = (
+            None
+            if retained_axis_counts is None
+            else self._normalize_retained_axis_counts(
+                retained_axis_counts,
+                metadata.transform_kinds,
+            )
+        )
         for local_axis, kind in self._ordered_axis_transforms(
             metadata.transform_kinds,
             inverse=False,
         ):
             axis = output.ndim - self.dim + local_axis
-            output = self._apply_axis_transform(output, kind, axis, inverse=False)
+            if counts is None or kind == "fft":
+                output = self._apply_axis_transform(
+                    output,
+                    kind,
+                    axis,
+                    inverse=False,
+                )
+            else:
+                output = self._apply_retained_real_axis_transform(
+                    output,
+                    kind,
+                    local_axis,
+                    counts[local_axis],
+                    inverse=False,
+                )
         return output.to(self.spectral_dtype)
 
-    def inverse(self, spectral, boundary_conditions):
+    def inverse(
+        self,
+        spectral,
+        boundary_conditions,
+        *,
+        retained_axis_counts=None,
+    ):
         output = spectral
         metadata = self.get_metadata(boundary_conditions)
+        counts = (
+            None
+            if retained_axis_counts is None
+            else self._normalize_retained_axis_counts(
+                retained_axis_counts,
+                metadata.transform_kinds,
+            )
+        )
+        if counts is not None:
+            trailing_shape = tuple(spectral.shape[-self.dim :])
+            if trailing_shape != self.shape:
+                raise ValueError(
+                    f"Expected trailing spectral shape {self.shape}, got "
+                    f"{trailing_shape}."
+                )
+            slices = [slice(None)] * spectral.ndim
+            for local_axis, kind in enumerate(metadata.transform_kinds):
+                if kind != "fft":
+                    axis = spectral.ndim - self.dim + local_axis
+                    slices[axis] = slice(0, counts[local_axis])
+            output = spectral[tuple(slices)]
         for local_axis, kind in self._ordered_axis_transforms(
             metadata.transform_kinds,
             inverse=True,
@@ -247,7 +359,21 @@ class TensorProductTransformBackend:
                 # discarded the same component after the real transforms.
                 output = output.real
             axis = output.ndim - self.dim + local_axis
-            output = self._apply_axis_transform(output, kind, axis, inverse=True)
+            if counts is None or kind == "fft":
+                output = self._apply_axis_transform(
+                    output,
+                    kind,
+                    axis,
+                    inverse=True,
+                )
+            else:
+                output = self._apply_retained_real_axis_transform(
+                    output,
+                    kind,
+                    local_axis,
+                    counts[local_axis],
+                    inverse=True,
+                )
         return output.real
 
     def laplacian_hat(self, spectral, boundary_conditions):
@@ -291,19 +417,36 @@ class BasisAwareSpectralProjector:
     derivative would require the unavailable DCT mode ``m=N``.
     """
 
-    def __init__(self, solver, rule=DEFAULT_DEALIAS_RULE):
+    def __init__(
+        self,
+        solver,
+        rule=DEFAULT_DEALIAS_RULE,
+        transform_execution=DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
+    ):
         if rule not in DEALIAS_RULE_FRACTIONS:
             raise ValueError(
                 f"Unknown dealias rule {rule!r}; expected one of "
                 f"{tuple(DEALIAS_RULE_FRACTIONS)}."
             )
+        if transform_execution not in PROJECTED_TRANSFORM_EXECUTION_MODES:
+            raise ValueError(
+                "transform_execution must be 'full' or 'truncated'."
+            )
+        if transform_execution == "truncated" and rule == "none":
+            raise ValueError(
+                "truncated projected transforms require enabled dealiasing."
+            )
         self.rule = rule
         self.fraction = DEALIAS_RULE_FRACTIONS[rule]
+        self.transform_execution = transform_execution
         self.shape = tuple(solver.shape)
-        self.device = solver.transform_backend.device
-        self.real_dtype = solver.transform_backend.real_dtype
+        self.transform_backend = solver.transform_backend
+        self.device = self.transform_backend.device
+        self.real_dtype = self.transform_backend.real_dtype
         self._mask_cache = {}
         self._axis_mask_cache = {}
+        self._retained_counts_cache = {}
+        self._reduced_periodic_mask_cache = {}
 
     @property
     def enabled(self):
@@ -385,6 +528,103 @@ class BasisAwareSpectralProjector:
         # exactly the same finite 0/1 multiplication.
         return spectral * mask
 
+    def _retained_counts(self, boundary_conditions):
+        boundary_conditions = tuple(boundary_conditions)
+        if boundary_conditions not in self._retained_counts_cache:
+            self._retained_counts_cache[boundary_conditions] = tuple(
+                (
+                    self.shape[axis]
+                    if bc == "periodic"
+                    else int(self._axis_mode_numbers(axis, bc).sum().item())
+                )
+                for axis, bc in enumerate(boundary_conditions)
+            )
+        return self._retained_counts_cache[boundary_conditions]
+
+    def _reduced_periodic_mask(self, boundary_conditions):
+        boundary_conditions = tuple(boundary_conditions)
+        if boundary_conditions in self._reduced_periodic_mask_cache:
+            return self._reduced_periodic_mask_cache[boundary_conditions]
+        counts = self._retained_counts(boundary_conditions)
+        mask = torch.ones(counts, device=self.device, dtype=torch.bool)
+        for axis, bc in enumerate(boundary_conditions):
+            if bc != "periodic":
+                continue
+            axis_keep = self._axis_mode_numbers(axis, bc)
+            view_shape = [1] * len(self.shape)
+            view_shape[axis] = self.shape[axis]
+            mask &= axis_keep.reshape(view_shape)
+        self._reduced_periodic_mask_cache[boundary_conditions] = mask
+        return mask
+
+    def forward_transform(self, tensor, boundary_conditions):
+        """Transform and project, optionally avoiding discarded real modes."""
+        boundary_conditions = tuple(boundary_conditions)
+        if self.transform_execution == "full":
+            return self.project(
+                self.transform_backend.forward(tensor, boundary_conditions),
+                boundary_conditions,
+            )
+
+        counts = self._retained_counts(boundary_conditions)
+        if any(count == 0 for count in counts):
+            return torch.zeros(
+                (*tensor.shape[: -len(self.shape)], *self.shape),
+                device=tensor.device,
+                dtype=self.transform_backend.spectral_dtype,
+            )
+        reduced = self.transform_backend.forward(
+            tensor,
+            boundary_conditions,
+            retained_axis_counts=counts,
+        )
+        reduced.mul_(self._reduced_periodic_mask(boundary_conditions))
+        padding = []
+        for full_size, retained_count in reversed(
+            tuple(zip(self.shape, counts))
+        ):
+            padding.extend((0, full_size - retained_count))
+        return functional.pad(reduced, tuple(padding))
+
+    def inverse_transform(self, spectral, boundary_conditions):
+        """Invert coefficients whose high modes have already been projected."""
+        boundary_conditions = tuple(boundary_conditions)
+        if self.transform_execution == "full":
+            return self.transform_backend.inverse(
+                spectral,
+                boundary_conditions,
+            )
+        counts = self._retained_counts(boundary_conditions)
+        if any(count == 0 for count in counts):
+            return torch.zeros(
+                (*spectral.shape[: -len(self.shape)], *self.shape),
+                device=spectral.device,
+                dtype=self.real_dtype,
+            )
+        return self.transform_backend.inverse(
+            spectral,
+            boundary_conditions,
+            retained_axis_counts=counts,
+        )
+
+    def execution_metadata(self):
+        """Return JSON-compatible provenance for projected transforms."""
+        enabled = self.transform_execution == "truncated"
+        return {
+            "requested": self.transform_execution,
+            "effective": self.transform_execution,
+            "fallback_allowed": False,
+            "fallback_reason": None,
+            "truncated_real_basis_axes": enabled,
+            "full_spectral_storage_preserved": True,
+        }
+
+    def computed_axis_sizes(self, boundary_conditions):
+        """Return transform extents actually evaluated along each axis."""
+        if self.transform_execution == "full":
+            return self.shape
+        return self._retained_counts(boundary_conditions)
+
     def project_dynamic_fields(self, fields, *, sync_spatial):
         """Project dynamic transform groups and optionally sync real fields."""
         if not self.enabled:
@@ -399,7 +639,27 @@ class BasisAwareSpectralProjector:
                 boundary_conditions,
             )
             if sync_spatial:
-                fields.spatial[group] = fields.inverse_transform_group(group)
+                fields.spatial[group] = self.inverse_transform(
+                    fields.spectral[group],
+                    boundary_conditions,
+                )
+
+    def refresh_dynamic_fields(self, fields, *, sync_spatial):
+        """Rebuild projected dynamic spectra directly from spatial fields."""
+        groups = fields.group_indices_by_boundary_conditions(
+            range(fields.dyn_count)
+        )
+        for group in groups:
+            boundary_conditions = fields.get_boundary_conditions(group[0])
+            fields.spectral[group] = self.forward_transform(
+                fields.spatial[group],
+                boundary_conditions,
+            )
+            if sync_spatial:
+                fields.spatial[group] = self.inverse_transform(
+                    fields.spectral[group],
+                    boundary_conditions,
+                )
 
     def retained_axis_counts(self, boundary_conditions):
         if not self.enabled:
@@ -410,10 +670,26 @@ class BasisAwareSpectralProjector:
         )
 
 
-def _project_if_enabled(projector, spectral, boundary_conditions):
+def _forward_projected(
+    backend,
+    projector,
+    tensor,
+    boundary_conditions,
+):
     if projector is None:
-        return spectral
-    return projector.project(spectral, boundary_conditions)
+        return backend.forward(tensor, boundary_conditions)
+    return projector.forward_transform(tensor, boundary_conditions)
+
+
+def _inverse_projected(
+    backend,
+    projector,
+    spectral,
+    boundary_conditions,
+):
+    if projector is None:
+        return backend.inverse(spectral, boundary_conditions)
+    return projector.inverse_transform(spectral, boundary_conditions)
 
 
 def _inverse_spectral_gradient(
@@ -421,13 +697,20 @@ def _inverse_spectral_gradient(
     spectral,
     boundary_conditions,
     axis,
+    *,
+    projector=None,
 ):
     gradient_hat, gradient_bcs = backend.gradient_hat(
         spectral,
         boundary_conditions,
         axis,
     )
-    return backend.inverse(gradient_hat, gradient_bcs)
+    return _inverse_projected(
+        backend,
+        projector,
+        gradient_hat,
+        gradient_bcs,
+    )
 
 
 def _validate_divergence_sum_space(sum_space):
@@ -465,13 +748,10 @@ def projected_common_basis_stress_divergence(
         raise ValueError("A three-dimensional stress requires nine components.")
     _validate_divergence_sum_space(sum_space)
     boundary_conditions = tuple(boundary_conditions)
-    stress_hat = backend.forward(
-        torch.stack(tuple(stress_components)),
-        boundary_conditions,
-    )
-    stress_hat = _project_if_enabled(
+    stress_hat = _forward_projected(
+        backend,
         projector,
-        stress_hat,
+        torch.stack(tuple(stress_components)),
         boundary_conditions,
     )
     if sum_space == "physical":
@@ -480,18 +760,21 @@ def projected_common_basis_stress_divergence(
             stress_hat[[0, 3, 6]],
             boundary_conditions,
             axis=0,
+            projector=projector,
         )
         derivative_y = _inverse_spectral_gradient(
             backend,
             stress_hat[[1, 4, 7]],
             boundary_conditions,
             axis=1,
+            projector=projector,
         )
         derivative_z = _inverse_spectral_gradient(
             backend,
             stress_hat[[2, 5, 8]],
             boundary_conditions,
             axis=2,
+            projector=projector,
         )
         return derivative_x + derivative_y + derivative_z
 
@@ -511,7 +794,9 @@ def projected_common_basis_stress_divergence(
         raise RuntimeError(
             "The x/y stress derivatives must share one spectral basis."
         )
-    derivative_xy = backend.inverse(
+    derivative_xy = _inverse_projected(
+        backend,
+        projector,
         derivative_x_hat + derivative_y_hat,
         derivative_x_bcs,
     )
@@ -520,6 +805,7 @@ def projected_common_basis_stress_divergence(
         stress_hat[[2, 5, 8]],
         boundary_conditions,
         axis=2,
+        projector=projector,
     )
     return derivative_xy + derivative_z
 
@@ -550,35 +836,61 @@ def projected_distortion_stress_divergence(
     odd_components = torch.stack(
         tuple(stress_components[index] for index in (2, 5, 6, 7))
     )
-    even_hat = _project_if_enabled(
+    even_hat = _forward_projected(
+        backend,
         projector,
-        backend.forward(even_components, even_boundary_conditions),
+        even_components,
         even_boundary_conditions,
     )
-    odd_hat = _project_if_enabled(
+    odd_hat = _forward_projected(
+        backend,
         projector,
-        backend.forward(odd_components, odd_boundary_conditions),
+        odd_components,
         odd_boundary_conditions,
     )
 
     if sum_space == "physical":
         even_x = _inverse_spectral_gradient(
-            backend, even_hat[[0, 2]], even_boundary_conditions, axis=0
+            backend,
+            even_hat[[0, 2]],
+            even_boundary_conditions,
+            axis=0,
+            projector=projector,
         )
         even_y = _inverse_spectral_gradient(
-            backend, even_hat[[1, 3]], even_boundary_conditions, axis=1
+            backend,
+            even_hat[[1, 3]],
+            even_boundary_conditions,
+            axis=1,
+            projector=projector,
         )
         even_z = _inverse_spectral_gradient(
-            backend, even_hat[4], even_boundary_conditions, axis=2
+            backend,
+            even_hat[4],
+            even_boundary_conditions,
+            axis=2,
+            projector=projector,
         )
         odd_x = _inverse_spectral_gradient(
-            backend, odd_hat[2], odd_boundary_conditions, axis=0
+            backend,
+            odd_hat[2],
+            odd_boundary_conditions,
+            axis=0,
+            projector=projector,
         )
         odd_y = _inverse_spectral_gradient(
-            backend, odd_hat[3], odd_boundary_conditions, axis=1
+            backend,
+            odd_hat[3],
+            odd_boundary_conditions,
+            axis=1,
+            projector=projector,
         )
         odd_z = _inverse_spectral_gradient(
-            backend, odd_hat[[0, 1]], odd_boundary_conditions, axis=2
+            backend,
+            odd_hat[[0, 1]],
+            odd_boundary_conditions,
+            axis=2,
+            projector=projector,
         )
         return torch.stack(
             (
@@ -601,7 +913,9 @@ def projected_distortion_stress_divergence(
         raise RuntimeError(
             "Tangential distortion-force terms must share one spectral basis."
         )
-    tangential = backend.inverse(
+    tangential = _inverse_projected(
+        backend,
+        projector,
         even_x_hat + even_y_hat + odd_z_hat,
         even_x_bcs,
     )
@@ -619,7 +933,9 @@ def projected_distortion_stress_divergence(
         raise RuntimeError(
             "Normal distortion-force terms must share one spectral basis."
         )
-    normal = backend.inverse(
+    normal = _inverse_projected(
+        backend,
+        projector,
         odd_x_hat + odd_y_hat + even_z_hat,
         odd_x_bcs,
     )

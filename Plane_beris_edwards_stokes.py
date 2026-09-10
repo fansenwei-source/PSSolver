@@ -68,7 +68,9 @@ from pssolver.transforms import (
     BasisAwareSpectralProjector,
     DEALIAS_RULE_FRACTIONS,
     DEFAULT_DEALIAS_RULE,
+    DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
+    PROJECTED_TRANSFORM_EXECUTION_MODES,
 )
 from tqdm import trange
 import numpy as np
@@ -210,6 +212,17 @@ def parse_args():
             "cubic_half is used with projected H and complete stress/force "
             "stages; two_thirds protects compatible quadratic products; "
             "none disables projection."
+        ),
+    )
+    parser.add_argument(
+        "--projected-transform-execution",
+        choices=PROJECTED_TRANSFORM_EXECUTION_MODES,
+        default=DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
+        help=(
+            "A/B control for transforms directly coupled to spectral "
+            "projection. full retains the qualified path; truncated skips "
+            "discarded DCT/DST modes while preserving full-shape spectral "
+            "storage."
         ),
     )
     parser.add_argument("--beta", type=float, default=-1.0)
@@ -366,6 +379,14 @@ def parse_args():
         parser.error("--friction-mode-fric must be positive in friction mode")
     if args.coefficient_min >= args.coefficient_max:
         parser.error("--coefficient-min must be smaller than --coefficient-max")
+    if (
+        args.projected_transform_execution == "truncated"
+        and args.dealias_rule == "none"
+    ):
+        parser.error(
+            "--projected-transform-execution truncated requires enabled "
+            "dealiasing"
+        )
     if args.save_start_step < 0 or args.save_start_step > args.steps:
         parser.error("--save-start-step must lie between 0 and --steps")
     if args.validation_config_sha256 is not None and (
@@ -449,8 +470,7 @@ class DealiasedSemiImplicitEulerIntegrator(SemiImplicitEulerIntegrator):
         self.spectral_projector = model.spectral_projector
 
     def _refresh_dynamic_spectra(self):
-        super()._refresh_dynamic_spectra()
-        self.spectral_projector.project_dynamic_fields(
+        self.spectral_projector.refresh_dynamic_fields(
             self.model.fields,
             sync_spatial=True,
         )
@@ -474,8 +494,14 @@ class DealiasedSemiImplicitEulerIntegrator(SemiImplicitEulerIntegrator):
         )
 
         for group in self.dynamic_transform_groups:
+            boundary_conditions = self.model.fields.get_boundary_conditions(
+                group[0]
+            )
             self.model.fields.spatial[group] = (
-                self.model.fields.inverse_transform_group(group)
+                self.spectral_projector.inverse_transform(
+                    self.model.fields.spectral[group],
+                    boundary_conditions,
+                )
             )
 
         self._advance_spectral_refresh_clock()
@@ -588,6 +614,16 @@ SAVE_HYDRODYNAMICS = args.save_hydrodynamics
 ALIGNMENT_PARAMETER = args.flow_alignment
 zero_mode_policy = args.zero_mode_policy
 dealias_rule = args.dealias_rule
+projected_transform_execution_metadata = {
+    "requested": args.projected_transform_execution,
+    "effective": args.projected_transform_execution,
+    "fallback_allowed": False,
+    "fallback_reason": None,
+    "truncated_real_basis_axes": (
+        args.projected_transform_execution == "truncated"
+    ),
+    "full_spectral_storage_preserved": True,
+}
 
 # Resolve the one-variable A scan into physical K and zeta values.  In
 # paper-window mode one coefficient is held at the lower edge of the paper's
@@ -765,6 +801,9 @@ metadata = {
         "dealiasing": {
             "rule": dealias_rule,
             "fraction": DEALIAS_RULE_FRACTIONS[dealias_rule],
+            "projected_transform_execution": (
+                projected_transform_execution_metadata
+            ),
             "nematic_force_evaluation": (
                 "project_H_then_algebraic_and_distortion_stresses_then_force"
             ),
@@ -792,6 +831,9 @@ metadata = {
             "execution_order": args.transform_execution_order,
             "spectral_storage": "full_complex",
             "basis_and_normalization_changed": False,
+            "projected_transform_execution": (
+                args.projected_transform_execution
+            ),
         },
         "precision": {
             "real_dtype": args.dtype,
@@ -848,6 +890,7 @@ metadata = {
     "zero_mode_policy": zero_mode_policy,
     "dealias_rule": dealias_rule,
     "dealias_fraction": DEALIAS_RULE_FRACTIONS[dealias_rule],
+    "projected_transform_execution": args.projected_transform_execution,
     "ldg_coefficients": {"A": args.ldg_a, "B": args.ldg_b, "C": args.ldg_c},
     "gamma": args.gamma,
     "flow_alignment": ALIGNMENT_PARAMETER,
@@ -951,8 +994,12 @@ solver = SpectralSolver(
 spectral_projector = BasisAwareSpectralProjector(
     solver,
     rule=dealias_rule,
+    transform_execution=args.projected_transform_execution,
 )
 solver.model.spectral_projector = spectral_projector
+solver.model.set_static_inverse_transform(
+    spectral_projector.inverse_transform
+)
 solver.integrator_cl = DealiasedSemiImplicitEulerIntegrator
 q_initial_condition = create_initial_condition(
     "extruded_2d_twist",

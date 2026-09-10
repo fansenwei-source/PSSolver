@@ -319,8 +319,14 @@ class Fields:
             spectral = self.spectral[key]
         return backend.laplacian_hat(spectral, self.get_boundary_conditions(key))
 
-    def laplacian(self, key, spectral=None):
+    def laplacian(self, key, spectral=None, projector=None):
         lap_hat = self.laplacian_hat(key, spectral=spectral)
+        if projector is not None:
+            boundary_conditions = self.get_boundary_conditions(key)
+            return projector.inverse_transform(
+                lap_hat,
+                boundary_conditions,
+            )
         return self.inverse_transform(key, spectral=lap_hat)
 
     def gradient_hat(self, key, axis, spectral=None, tensor=None):
@@ -336,9 +342,27 @@ class Fields:
 
         return backend.gradient_hat(spectral, boundary_conditions, axis)
 
-    def gradient(self, key, axis, spectral=None, tensor=None):
-        grad_hat, grad_bcs = self.gradient_hat(key, axis, spectral=spectral, tensor=tensor)
-        return self.inverse_transform(key, spectral=grad_hat, boundary_conditions=grad_bcs)
+    def gradient(
+        self,
+        key,
+        axis,
+        spectral=None,
+        tensor=None,
+        projector=None,
+    ):
+        grad_hat, grad_bcs = self.gradient_hat(
+            key,
+            axis,
+            spectral=spectral,
+            tensor=tensor,
+        )
+        if projector is not None:
+            return projector.inverse_transform(grad_hat, grad_bcs)
+        return self.inverse_transform(
+            key,
+            spectral=grad_hat,
+            boundary_conditions=grad_bcs,
+        )
 
     def __getitem__(self, key):
         """Access a field by name (optionally with '.hat' or '.bc')."""

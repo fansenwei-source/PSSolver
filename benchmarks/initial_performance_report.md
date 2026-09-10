@@ -479,6 +479,60 @@ is amortized after roughly 472 R320 timesteps.  Consequently `compile` is now
 the production default on this performance branch; `eager` remains an
 explicit, fully validated rollback control.
 
+### Candidate: truncated projected DCT/DST execution
+
+The `cubic_half` and `two_thirds` projectors discard a known high-mode block
+after each projected transform.  The qualified full path nevertheless formed
+every DCT/DST coefficient, padded all real-basis modes through the periodic
+FFT batches, and later inverted coefficients that were already known to be
+zero.  The stage-2 candidate adds a default-off `truncated` execution policy
+for transforms whose output is immediately projected or whose input is
+already projected.
+
+For a DCT or DST axis, the forward path multiplies by only the retained rows
+of the existing orthonormal transform matrix.  The inverse path slices the
+already-projected spectral array before applying the periodic inverse FFTs and
+then multiplies by the matching retained matrix.  Periodic FFT axes retain
+their full storage extent because their signed low modes are not a contiguous
+prefix.  The candidate pads forward results back to the historical full
+spectral shape, so field storage, public array shapes, modal indexing,
+normalization, derivative parity, IMEX operators, and saved data formats do
+not change.  `full` remains the default and explicit rollback path, and the
+truncated policy is rejected when dealiasing is disabled.
+
+Three independent-process float64 CUDA trials on the RTX 3060 Ti used five
+warmup and 30 measured timesteps at 128x128x32.  `A` is the unmodified
+`9a67155` production control, `B` is the candidate branch with explicit
+`full`, and `C` is the candidate branch with explicit `truncated` execution.
+
+| Path | Mean timestep | Forward transforms | Inverse transforms | Peak allocated |
+|---|---:|---:|---:|---:|
+| A: `9a67155` full | 55.998 ms | 13.683 ms | 27.667 ms | 590,150,144 B |
+| B: candidate full | 56.005 ms | 13.683 ms | 27.670 ms | 590,150,144 B |
+| C: candidate truncated | 38.916 ms | 9.146 ms | 14.595 ms | 575,453,696 B |
+
+The paired `A/B` timings and final-state hashes matched, showing that the new
+dispatch layer does not perturb the compatibility path.  Relative to `B`,
+the local candidate speedup was approximately `1.439x`; forward-transform
+time fell by about `1.496x`, inverse-transform time by about `1.896x`, and
+peak allocated memory fell by about 2.5%.  Peak reserved memory was unchanged
+at 905,969,664 bytes.
+
+Independent 100-step in-memory comparisons at 64x64x32 found bitwise-identical
+complete spatial and spectral states in both float64 and float32.  A matched
+32x32x16 production-driver comparison also produced byte-identical
+`Q_100.npy`, `u_100.npy`, and `p_100.npy` files for the baseline, candidate
+`full`, and candidate `truncated` paths, with finite values throughout.  The
+local regression suite completed with 561 passed tests and eight passed
+subtests.
+
+These results qualify the implementation for an H100 A/B/C test, not for a
+default change.  The H100 gate must repeat the production-control, explicit
+full, and explicit truncated paths at 128x128x32 and 320x320x80, verify
+metadata and 100-step trajectories, and show a stable primary-grid speedup
+without increased peak memory.  Until that gate passes, `full` remains the
+production default.
+
 ## Snapshot I/O profile
 
 A separate 64x64x32 run saved Q, velocity, and pressure after every profiled

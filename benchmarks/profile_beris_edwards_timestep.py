@@ -27,7 +27,9 @@ import torch
 
 from pssolver import (
     BasisAwareSpectralProjector,
+    DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
+    PROJECTED_TRANSFORM_EXECUTION_MODES,
     SpectralSolver,
 )
 from pssolver.integrator import SemiImplicitEulerIntegrator
@@ -61,6 +63,7 @@ class ProfileConfig:
     dtype: str = "float64"
     dt: float = 0.005
     dealias_rule: str = "cubic_half"
+    projected_transform_execution: str = DEFAULT_PROJECTED_TRANSFORM_EXECUTION
     warmup_steps: int = 3
     profile_steps: int = 10
     spectral_refresh_interval: int | None = None
@@ -165,8 +168,7 @@ class ProfiledDealiasedIntegrator(SemiImplicitEulerIntegrator):
         self.profile_timer = profile_timer
 
     def _refresh_dynamic_spectra(self):
-        super()._refresh_dynamic_spectra()
-        self.spectral_projector.project_dynamic_fields(
+        self.spectral_projector.refresh_dynamic_fields(
             self.model.fields,
             sync_spatial=True,
         )
@@ -196,8 +198,14 @@ class ProfiledDealiasedIntegrator(SemiImplicitEulerIntegrator):
 
             with self.profile_timer.region("dynamic_inverse"):
                 for group in self.dynamic_transform_groups:
+                    boundary_conditions = (
+                        self.model.fields.get_boundary_conditions(group[0])
+                    )
                     self.model.fields.spatial[group] = (
-                        self.model.fields.inverse_transform_group(group)
+                        self.spectral_projector.inverse_transform(
+                            self.model.fields.spectral[group],
+                            boundary_conditions,
+                        )
                     )
 
             with self.profile_timer.region("spectral_refresh"):
@@ -216,6 +224,20 @@ def _validate_config(config: ProfileConfig) -> None:
     if config.transform_execution_order not in {"legacy", "real_first"}:
         raise ValueError(
             "transform_execution_order must be 'legacy' or 'real_first'"
+        )
+    if (
+        config.projected_transform_execution
+        not in PROJECTED_TRANSFORM_EXECUTION_MODES
+    ):
+        raise ValueError(
+            "projected_transform_execution must be 'full' or 'truncated'"
+        )
+    if (
+        config.projected_transform_execution == "truncated"
+        and config.dealias_rule == "none"
+    ):
+        raise ValueError(
+            "truncated projected transforms require enabled dealiasing"
         )
     if config.molecular_field_linear_space not in {"physical", "spectral"}:
         raise ValueError(
@@ -261,13 +283,13 @@ def _install_transform_timers(solver, timer: RegionTimer) -> None:
     original_forward = backend.forward
     original_inverse = backend.inverse
 
-    def timed_forward(tensor, boundary_conditions):
+    def timed_forward(tensor, boundary_conditions, **kwargs):
         with timer.region("transform_forward"):
-            return original_forward(tensor, boundary_conditions)
+            return original_forward(tensor, boundary_conditions, **kwargs)
 
-    def timed_inverse(spectral, boundary_conditions):
+    def timed_inverse(spectral, boundary_conditions, **kwargs):
         with timer.region("transform_inverse"):
-            return original_inverse(spectral, boundary_conditions)
+            return original_inverse(spectral, boundary_conditions, **kwargs)
 
     backend.forward = timed_forward
     backend.inverse = timed_inverse
@@ -299,8 +321,13 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
         dtype=dtype,
         transform_execution_order=config.transform_execution_order,
     )
-    projector = BasisAwareSpectralProjector(solver, rule=config.dealias_rule)
+    projector = BasisAwareSpectralProjector(
+        solver,
+        rule=config.dealias_rule,
+        transform_execution=config.projected_transform_execution,
+    )
     solver.model.spectral_projector = projector
+    solver.model.set_static_inverse_transform(projector.inverse_transform)
     initial_q = _synthetic_initial_q(config.shape, dtype=dtype, seed=config.seed)
     q_gradient_cache = (
         BerisEdwardsQGradientCache() if config.reuse_q_gradients else None
@@ -582,6 +609,9 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
                 config.stress_divergence_sum_space
             ),
             "pointwise_execution": config.pointwise_execution,
+            "projected_transform_execution": (
+                config.projected_transform_execution
+            ),
             "initial_condition": "deterministic synthetic aligned Q plus noise",
         },
         "environment": {
@@ -637,6 +667,33 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
                 counters_after_warmup,
             ),
         },
+        "projected_transforms": {
+            **solver.model.spectral_projector.execution_metadata(),
+            "retained_axis_counts": {
+                "q": list(
+                    solver.model.spectral_projector.retained_axis_counts(
+                        Q_BCS
+                    )
+                ),
+                "normal_velocity": list(
+                    solver.model.spectral_projector.retained_axis_counts(
+                        NORMAL_BCS
+                    )
+                ),
+            },
+            "computed_axis_sizes": {
+                "q": list(
+                    solver.model.spectral_projector.computed_axis_sizes(
+                        Q_BCS
+                    )
+                ),
+                "normal_velocity": list(
+                    solver.model.spectral_projector.computed_axis_sizes(
+                        NORMAL_BCS
+                    )
+                ),
+            },
+        },
         "timings": timings,
         "throughput": {
             "profile_wall_seconds": profile_wall_seconds,
@@ -674,6 +731,17 @@ def parse_args() -> argparse.Namespace:
         "--dealias-rule",
         choices=("none", "quadratic_two_thirds", "cubic_half"),
         default="cubic_half",
+    )
+    parser.add_argument(
+        "--projected-transform-execution",
+        choices=PROJECTED_TRANSFORM_EXECUTION_MODES,
+        default=DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
+        help=(
+            "A/B control for transforms whose output is immediately "
+            "projected or whose input is already projected. full retains "
+            "the qualified path; truncated skips discarded DCT/DST modes "
+            "while preserving full-shape spectral storage."
+        ),
     )
     parser.add_argument("--warmup-steps", type=int, default=3)
     parser.add_argument("--profile-steps", type=int, default=10)
@@ -747,6 +815,9 @@ def main() -> None:
             dtype=args.dtype,
             dt=args.dt,
             dealias_rule=args.dealias_rule,
+            projected_transform_execution=(
+                args.projected_transform_execution
+            ),
             warmup_steps=args.warmup_steps,
             profile_steps=args.profile_steps,
             spectral_refresh_interval=args.spectral_refresh_interval,
