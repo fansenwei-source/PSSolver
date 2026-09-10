@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import sys
 
 import pytest
 import torch
@@ -11,6 +12,7 @@ from benchmarks.profile_beris_edwards_timestep import (
     ProfileConfig,
     RegionTimer,
     _build_solver,
+    parse_args,
     run_profile,
 )
 
@@ -38,6 +40,16 @@ def test_profiler_defaults_to_production_numerics_and_accepts_legacy_control():
     assert ProfileConfig().projected_transform_execution == "full"
     legacy = _small_config(transform_execution_order="legacy")
     assert legacy.transform_execution_order == "legacy"
+
+
+def test_profiler_cli_accepts_two_thirds_rule(monkeypatch):
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["profile_beris_edwards_timestep.py", "--dealias-rule", "two_thirds"],
+    )
+
+    assert parse_args().dealias_rule == "two_thirds"
 
 
 def test_complete_timestep_profile_has_expected_regions_and_provenance():

@@ -27,6 +27,7 @@ import torch
 
 from pssolver import (
     BasisAwareSpectralProjector,
+    DEALIAS_RULE_FRACTIONS,
     DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     PROJECTED_TRANSFORM_EXECUTION_MODES,
@@ -729,7 +730,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dt", type=float, default=0.005)
     parser.add_argument(
         "--dealias-rule",
-        choices=("none", "quadratic_two_thirds", "cubic_half"),
+        choices=tuple(DEALIAS_RULE_FRACTIONS),
         default="cubic_half",
     )
     parser.add_argument(

@@ -523,7 +523,7 @@ complete spatial and spectral states in both float64 and float32.  A matched
 32x32x16 production-driver comparison also produced byte-identical
 `Q_100.npy`, `u_100.npy`, and `p_100.npy` files for the baseline, candidate
 `full`, and candidate `truncated` paths, with finite values throughout.  The
-local regression suite completed with 561 passed tests and eight passed
+local regression suite completed with 563 passed tests and eight passed
 subtests.
 
 These results qualify the implementation for an H100 A/B/C test, not for a

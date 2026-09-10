@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import sys
+
 import pytest
 import torch
 
@@ -9,6 +11,7 @@ from benchmarks.capture_beris_edwards_nsys import (
     NsysCaptureConfig,
     NvtxRegionTimer,
     _validate_capture_config,
+    parse_args,
     run_capture,
 )
 
@@ -108,6 +111,16 @@ def test_capture_defaults_to_real_first_transform_execution():
     assert config.profile_config().stress_divergence_sum_space == "spectral"
     assert config.profile_config().pointwise_execution == "compile"
     assert config.profile_config().projected_transform_execution == "full"
+
+
+def test_capture_cli_accepts_two_thirds_rule(monkeypatch):
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["capture_beris_edwards_nsys.py", "--dealias-rule", "two_thirds"],
+    )
+
+    assert parse_args().dealias_rule == "two_thirds"
 
 
 def test_capture_config_rejects_nonpositive_capture_steps():
