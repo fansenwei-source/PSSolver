@@ -53,20 +53,46 @@ def _tolerances(dtype):
     return {"rtol": 3.0e-5, "atol": 3.0e-5}
 
 
-def test_projected_transform_execution_defaults_to_full():
+def test_projected_transform_execution_defaults_to_truncated():
     solver = _solver()
     projector = BasisAwareSpectralProjector(solver, rule="cubic_half")
 
-    assert DEFAULT_PROJECTED_TRANSFORM_EXECUTION == "full"
-    assert projector.transform_execution == "full"
+    assert DEFAULT_PROJECTED_TRANSFORM_EXECUTION == "truncated"
+    assert projector.transform_execution == "truncated"
     assert projector.execution_metadata() == {
-        "requested": "full",
-        "effective": "full",
+        "requested": "truncated",
+        "effective": "truncated",
         "fallback_allowed": False,
         "fallback_reason": None,
-        "truncated_real_basis_axes": False,
+        "truncated_real_basis_axes": True,
         "full_spectral_storage_preserved": True,
     }
+
+
+def test_disabled_projector_defaults_to_compatible_full_execution():
+    projector = BasisAwareSpectralProjector(_solver(), rule="none")
+
+    assert projector.transform_execution == "full"
+    assert projector.execution_metadata()["effective"] == "full"
+
+
+def test_default_projector_matches_explicit_truncated_execution():
+    solver = _solver()
+    default = BasisAwareSpectralProjector(solver, rule="cubic_half")
+    explicit = BasisAwareSpectralProjector(
+        solver,
+        rule="cubic_half",
+        transform_execution="truncated",
+    )
+    values = torch.randn(2, *SHAPE, dtype=torch.float64)
+    boundary_conditions = ("periodic", "periodic", "neumann")
+
+    torch.testing.assert_close(
+        default.forward_transform(values, boundary_conditions),
+        explicit.forward_transform(values, boundary_conditions),
+        rtol=0,
+        atol=0,
+    )
 
 
 @pytest.mark.parametrize("dtype", (torch.float32, torch.float64))

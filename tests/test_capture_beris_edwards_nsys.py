@@ -53,8 +53,8 @@ class _FakePointwiseKernels:
 class _FakeSpectralProjector:
     def execution_metadata(self):
         return {
-            "requested": "full",
-            "effective": "full",
+            "requested": "truncated",
+            "effective": "truncated",
             "fallback_allowed": False,
         }
 
@@ -105,12 +105,12 @@ def test_capture_defaults_to_real_first_transform_execution():
     assert config.molecular_field_linear_space == "spectral"
     assert config.stress_divergence_sum_space == "spectral"
     assert config.pointwise_execution == "compile"
-    assert config.projected_transform_execution == "full"
+    assert config.projected_transform_execution == "truncated"
     assert config.profile_config().transform_execution_order == "real_first"
     assert config.profile_config().molecular_field_linear_space == "spectral"
     assert config.profile_config().stress_divergence_sum_space == "spectral"
     assert config.profile_config().pointwise_execution == "compile"
-    assert config.profile_config().projected_transform_execution == "full"
+    assert config.profile_config().projected_transform_execution == "truncated"
 
 
 def test_capture_cli_accepts_two_thirds_rule(monkeypatch):
@@ -177,7 +177,7 @@ def test_capture_result_records_effective_pointwise_execution(monkeypatch):
     assert result["pointwise_kernels"]["requested"] == "eager"
     assert result["pointwise_kernels"]["effective"] == "eager"
     assert result["pointwise_kernels"]["fallback_allowed"] is False
-    assert result["projected_transforms"]["requested"] == "full"
+    assert result["projected_transforms"]["requested"] == "truncated"
 
 
 def test_disabled_nvtx_timer_does_not_touch_cuda(monkeypatch):

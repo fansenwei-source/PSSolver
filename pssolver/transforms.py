@@ -7,7 +7,7 @@ import torch.nn.functional as functional
 
 DEFAULT_DEALIAS_RULE = "cubic_half"
 DEFAULT_TRANSFORM_EXECUTION_ORDER = "real_first"
-DEFAULT_PROJECTED_TRANSFORM_EXECUTION = "full"
+DEFAULT_PROJECTED_TRANSFORM_EXECUTION = "truncated"
 PROJECTED_TRANSFORM_EXECUTION_MODES = ("full", "truncated")
 DEALIAS_RULE_FRACTIONS = {
     "none": None,
@@ -421,12 +421,21 @@ class BasisAwareSpectralProjector:
         self,
         solver,
         rule=DEFAULT_DEALIAS_RULE,
-        transform_execution=DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
+        transform_execution=None,
     ):
         if rule not in DEALIAS_RULE_FRACTIONS:
             raise ValueError(
                 f"Unknown dealias rule {rule!r}; expected one of "
                 f"{tuple(DEALIAS_RULE_FRACTIONS)}."
+            )
+        if transform_execution is None:
+            # With projection disabled there are no discarded modes to skip;
+            # preserve the historical full transform automatically. An
+            # explicit truncated+none request remains an error below.
+            transform_execution = (
+                "full"
+                if rule == "none"
+                else DEFAULT_PROJECTED_TRANSFORM_EXECUTION
             )
         if transform_execution not in PROJECTED_TRANSFORM_EXECUTION_MODES:
             raise ValueError(

@@ -220,9 +220,9 @@ def parse_args():
         default=DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
         help=(
             "A/B control for transforms directly coupled to spectral "
-            "projection. full retains the qualified path; truncated skips "
-            "discarded DCT/DST modes while preserving full-shape spectral "
-            "storage."
+            "projection. truncated is the H100-qualified production default "
+            "and skips discarded DCT/DST modes while preserving full-shape "
+            "spectral storage; full is the validated rollback path."
         ),
     )
     parser.add_argument("--beta", type=float, default=-1.0)

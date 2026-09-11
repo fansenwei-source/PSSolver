@@ -37,7 +37,7 @@ def test_profiler_defaults_to_production_numerics_and_accepts_legacy_control():
     assert ProfileConfig().molecular_field_linear_space == "spectral"
     assert ProfileConfig().stress_divergence_sum_space == "spectral"
     assert ProfileConfig().pointwise_execution == "compile"
-    assert ProfileConfig().projected_transform_execution == "full"
+    assert ProfileConfig().projected_transform_execution == "truncated"
     legacy = _small_config(transform_execution_order="legacy")
     assert legacy.transform_execution_order == "legacy"
 
@@ -66,16 +66,16 @@ def test_complete_timestep_profile_has_expected_regions_and_provenance():
     assert result["pointwise_kernels"]["requested"] == "eager"
     assert result["pointwise_kernels"]["effective"] == "eager"
     assert result["pointwise_kernels"]["compile"]["enabled"] is False
-    assert result["projected_transforms"]["requested"] == "full"
-    assert result["projected_transforms"]["effective"] == "full"
+    assert result["projected_transforms"]["requested"] == "truncated"
+    assert result["projected_transforms"]["effective"] == "truncated"
     assert result["projected_transforms"]["fallback_allowed"] is False
     assert result["projected_transforms"]["retained_axis_counts"] == {
         "q": [3, 3, 3],
         "normal_velocity": [3, 3, 2],
     }
     assert result["projected_transforms"]["computed_axis_sizes"] == {
-        "q": [6, 6, 5],
-        "normal_velocity": [6, 6, 5],
+        "q": [6, 6, 3],
+        "normal_velocity": [6, 6, 2],
     }
     assert result["pointwise_kernels"]["build_wall_seconds"] >= 0.0
     assert result["pointwise_kernels"]["warmup_steps"] == 1

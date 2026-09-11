@@ -739,9 +739,9 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
         help=(
             "A/B control for transforms whose output is immediately "
-            "projected or whose input is already projected. full retains "
-            "the qualified path; truncated skips discarded DCT/DST modes "
-            "while preserving full-shape spectral storage."
+            "projected or whose input is already projected. truncated is "
+            "the H100-qualified production default; full is the validated "
+            "rollback path. Both preserve full-shape spectral storage."
         ),
     )
     parser.add_argument("--warmup-steps", type=int, default=3)

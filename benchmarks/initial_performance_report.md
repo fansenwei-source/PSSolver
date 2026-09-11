@@ -526,12 +526,31 @@ complete spatial and spectral states in both float64 and float32.  A matched
 local regression suite completed with 563 passed tests and eight passed
 subtests.
 
-These results qualify the implementation for an H100 A/B/C test, not for a
-default change.  The H100 gate must repeat the production-control, explicit
-full, and explicit truncated paths at 128x128x32 and 320x320x80, verify
-metadata and 100-step trajectories, and show a stable primary-grid speedup
-without increased peak memory.  Until that gate passes, `full` remains the
-production default.
+The subsequent H100 A/B/C gate completed in Job `10817259` with classification
+`A_recommended`. At 320x320x80, explicit `truncated` reduced the mean timestep
+from 113.872 ms to 85.598 ms relative to the candidate's explicit `full`
+control, a `1.3303x` speedup. Forward and inverse transform times improved by
+`1.8949x` and `1.8155x`; peak allocated and reserved memory ratios were
+`0.9741` and `0.9084`. All three paired R320 trials were faster.
+
+The 100-step float64 production comparison remained numerically equivalent:
+relative L2 differences were `3.97e-16` for Q, `2.61e-16` for velocity, and
+`2.34e-15` for pressure. The candidate's explicit `full` path remained
+byte-for-byte identical to the historical `9a67155` baseline. No OOM, nonfinite
+value, CUDA error, graph break, or compile fallback occurred.
+
+Consequently `truncated` is now the default for projected Beris--Edwards
+production transforms on this promotion branch, while explicit `full` remains
+the rollback control. At the low-level projector API, disabling projection
+with `rule='none'` resolves to the compatible full execution path because
+there are no discarded modes to truncate; an explicitly requested
+`truncated` plus `none` combination remains an error.
+
+A post-promotion 32x32x16 desktop-CUDA smoke test ran the implicit default and
+explicit `truncated` production drivers for 100 float64 timesteps. Both runs
+completed with finite Q/u/p output, recorded `truncated` metadata, and produced
+byte-for-byte identical `Q_100.npy`, `u_100.npy`, and `p_100.npy` files. The
+promotion worktree then passed 566 tests and eight subtests.
 
 ## Snapshot I/O profile
 

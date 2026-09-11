@@ -143,10 +143,10 @@ class Fig4NumericsCliTests(unittest.TestCase):
         projected = metadata["numerics"]["dealiasing"][
             "projected_transform_execution"
         ]
-        self.assertEqual(projected["requested"], "full")
-        self.assertEqual(projected["effective"], "full")
+        self.assertEqual(projected["requested"], "truncated")
+        self.assertEqual(projected["effective"], "truncated")
         self.assertFalse(projected["fallback_allowed"])
-        self.assertFalse(projected["truncated_real_basis_axes"])
+        self.assertTrue(projected["truncated_real_basis_axes"])
         self.assertTrue(projected["full_spectral_storage_preserved"])
         self.assertEqual(
             metadata["numerics"]["transforms"]["execution_order"],
@@ -339,6 +339,24 @@ class Fig4NumericsCliTests(unittest.TestCase):
             metadata["projected_transform_execution"],
             "truncated",
         )
+
+    def test_beris_edwards_full_projected_transform_rollback_is_recorded(self):
+        result = run_dry_run(
+            "--projected-transform-execution",
+            "full",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        metadata = json.loads(result.stdout)
+        projected = metadata["numerics"]["dealiasing"][
+            "projected_transform_execution"
+        ]
+        self.assertEqual(projected["requested"], "full")
+        self.assertEqual(projected["effective"], "full")
+        self.assertFalse(projected["fallback_allowed"])
+        self.assertFalse(projected["truncated_real_basis_axes"])
+        self.assertEqual(metadata["projected_transform_execution"], "full")
 
     def test_truncated_projected_transforms_reject_disabled_dealiasing(self):
         result = run_dry_run(
