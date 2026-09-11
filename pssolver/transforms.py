@@ -814,13 +814,18 @@ class BasisAwareSpectralProjector:
     def execution_metadata(self):
         """Return JSON-compatible provenance for projected transforms."""
         enabled = self.transform_execution == "truncated"
+        spectral_storage = self.transform_backend.spectral_storage
         return {
             "requested": self.transform_execution,
             "effective": self.transform_execution,
             "fallback_allowed": False,
             "fallback_reason": None,
             "truncated_real_basis_axes": enabled,
-            "full_spectral_storage_preserved": True,
+            "spectral_storage": spectral_storage,
+            "backend_storage_shape_preserved": True,
+            "full_spectral_storage_preserved": (
+                spectral_storage == "full_complex"
+            ),
         }
 
     def computed_axis_sizes(self, boundary_conditions):

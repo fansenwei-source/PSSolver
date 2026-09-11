@@ -223,8 +223,9 @@ def parse_args():
         help=(
             "A/B control for transforms directly coupled to spectral "
             "projection. truncated is the H100-qualified production default "
-            "and skips discarded DCT/DST modes while preserving full-shape "
-            "spectral storage; full is the validated rollback path."
+            "and skips discarded DCT/DST modes while preserving the selected "
+            "backend's native storage shape; full is the validated rollback "
+            "path."
         ),
     )
     parser.add_argument("--beta", type=float, default=-1.0)
@@ -642,7 +643,11 @@ projected_transform_execution_metadata = {
     "truncated_real_basis_axes": (
         args.projected_transform_execution == "truncated"
     ),
-    "full_spectral_storage_preserved": True,
+    "spectral_storage": args.spectral_storage,
+    "backend_storage_shape_preserved": True,
+    "full_spectral_storage_preserved": (
+        args.spectral_storage == "full_complex"
+    ),
 }
 spectral_shape = [
     Nx,

@@ -770,7 +770,8 @@ def parse_args() -> argparse.Namespace:
             "A/B control for transforms whose output is immediately "
             "projected or whose input is already projected. truncated is "
             "the H100-qualified production default; full is the validated "
-            "rollback path. Both preserve full-shape spectral storage."
+            "rollback path. Both preserve the selected backend's native "
+            "storage shape."
         ),
     )
     parser.add_argument("--warmup-steps", type=int, default=3)

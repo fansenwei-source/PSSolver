@@ -208,6 +208,55 @@ def test_hermitian_projector_is_positive_y_half_of_full_mask(rule):
     )
 
 
+@pytest.mark.parametrize("rule", ("two_thirds", "cubic_half"))
+def test_truncated_projected_transform_combines_with_hermitian_storage(rule):
+    shape = (8, 10, 7)
+    boundary_conditions = ("periodic", "periodic", "neumann")
+    generator = torch.Generator().manual_seed(20260912)
+    values = torch.randn(3, *shape, generator=generator, dtype=torch.float64)
+    backend = _backend(shape, storage="hermitian_half")
+    solver = SimpleNamespace(shape=shape, transform_backend=backend)
+    full = BasisAwareSpectralProjector(
+        solver,
+        rule=rule,
+        transform_execution="full",
+    )
+    truncated = BasisAwareSpectralProjector(
+        solver,
+        rule=rule,
+        transform_execution="truncated",
+    )
+
+    full_spectral = full.forward_transform(values, boundary_conditions)
+    truncated_spectral = truncated.forward_transform(
+        values,
+        boundary_conditions,
+    )
+
+    assert full_spectral.shape[-3:] == backend.spectral_shape
+    assert truncated_spectral.shape[-3:] == backend.spectral_shape
+    torch.testing.assert_close(
+        truncated_spectral,
+        full_spectral,
+        rtol=8.0e-13,
+        atol=8.0e-13,
+    )
+    torch.testing.assert_close(
+        truncated.inverse_transform(
+            truncated_spectral,
+            boundary_conditions,
+        ),
+        full.inverse_transform(full_spectral, boundary_conditions),
+        rtol=8.0e-13,
+        atol=8.0e-13,
+    )
+    assert truncated.computed_axis_sizes(boundary_conditions) == (
+        shape[0],
+        shape[1] // 2 + 1,
+        5 if rule == "two_thirds" else 4,
+    )
+
+
 def test_hermitian_storage_requires_real_first_and_periodic_packed_axis():
     with pytest.raises(TypeError, match="hermitian_axis"):
         TensorProductTransformBackend(

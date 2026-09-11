@@ -199,13 +199,25 @@ def test_truncated_projected_transforms_preserve_complete_cpu_timestep(
     ) == (6, 6, 3 if dealias_rule == "cubic_half" else 4)
 
 
-def test_hermitian_half_timestep_matches_full_complex_physical_state():
+@pytest.mark.parametrize(
+    "projected_transform_execution",
+    ("full", "truncated"),
+)
+def test_hermitian_half_timestep_matches_full_complex_physical_state(
+    projected_transform_execution,
+):
     full = _build_solver(
-        _small_config(spectral_storage="full_complex"),
+        _small_config(
+            spectral_storage="full_complex",
+            projected_transform_execution=projected_transform_execution,
+        ),
         RegionTimer(torch.device("cpu")),
     )
     half = _build_solver(
-        _small_config(spectral_storage="hermitian_half"),
+        _small_config(
+            spectral_storage="hermitian_half",
+            projected_transform_execution=projected_transform_execution,
+        ),
         RegionTimer(torch.device("cpu")),
     )
 
@@ -227,6 +239,43 @@ def test_hermitian_half_timestep_matches_full_complex_physical_state():
     )
     assert half.model.fields.spectral.shape[-3:] == (6, 4, 5)
     assert half.model.fields.L_hat.shape[-3:] == (6, 4, 5)
+
+
+@pytest.mark.parametrize("spectral_storage", ("full_complex", "hermitian_half"))
+def test_full_and_truncated_projected_execution_agree_for_each_storage(
+    spectral_storage,
+):
+    full = _build_solver(
+        _small_config(
+            spectral_storage=spectral_storage,
+            projected_transform_execution="full",
+        ),
+        RegionTimer(torch.device("cpu")),
+    )
+    truncated = _build_solver(
+        _small_config(
+            spectral_storage=spectral_storage,
+            projected_transform_execution="truncated",
+        ),
+        RegionTimer(torch.device("cpu")),
+    )
+
+    for _ in range(2):
+        full.integrator.step()
+        truncated.integrator.step()
+
+    torch.testing.assert_close(
+        truncated.model.fields.spatial,
+        full.model.fields.spatial,
+        rtol=2.0e-12,
+        atol=2.0e-12,
+    )
+    torch.testing.assert_close(
+        truncated.model.fields.spectral,
+        full.model.fields.spectral,
+        rtol=2.0e-12,
+        atol=2.0e-12,
+    )
 
 
 def test_static_model_rejects_unknown_molecular_field_linear_space():

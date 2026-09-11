@@ -265,6 +265,12 @@ class Fig4NumericsCliTests(unittest.TestCase):
         self.assertFalse(transforms["basis_and_normalization_changed"])
         self.assertEqual(metadata["solver"]["spectral_shape"], [12, 6, 8])
         self.assertEqual(metadata["spectral_storage"], "hermitian_half")
+        projected = metadata["numerics"]["dealiasing"][
+            "projected_transform_execution"
+        ]
+        self.assertEqual(projected["spectral_storage"], "hermitian_half")
+        self.assertTrue(projected["backend_storage_shape_preserved"])
+        self.assertFalse(projected["full_spectral_storage_preserved"])
 
     def test_beris_edwards_hermitian_half_rejects_legacy_order(self):
         result = run_dry_run(

@@ -65,6 +65,8 @@ def test_projected_transform_execution_defaults_to_truncated():
         "fallback_allowed": False,
         "fallback_reason": None,
         "truncated_real_basis_axes": True,
+        "spectral_storage": "full_complex",
+        "backend_storage_shape_preserved": True,
         "full_spectral_storage_preserved": True,
     }
 
