@@ -82,6 +82,13 @@ def build_channel_problem(num_steps=3, num_masks=1):
     return solver, stepper, control, dal, initial_q
 
 
+def test_channel_keeps_generic_full_complex_spectral_storage():
+    solver, _, _, _, _ = build_channel_problem()
+
+    assert solver.transform_backend.spectral_storage == "full_complex"
+    assert solver.transform_backend.hermitian_axis is None
+
+
 def test_channel_functional_step_matches_integrator():
     solver, stepper, control, _, initial_q = build_channel_problem()
     alpha = control.field_for_step(0).detach()

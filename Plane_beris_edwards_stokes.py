@@ -64,12 +64,15 @@ from pssolver.models.active_nematics import (
     sample_periodic_neutral_defects_2d,
 )
 from pssolver.integrator import SemiImplicitEulerIntegrator
+from pssolver.plane import (
+    DEFAULT_PLANE_SPECTRAL_STORAGE,
+    PLANE_HERMITIAN_AXIS,
+)
 from pssolver.transforms import (
     BasisAwareSpectralProjector,
     DEALIAS_RULE_FRACTIONS,
     DEFAULT_DEALIAS_RULE,
     DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
-    DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     PROJECTED_TRANSFORM_EXECUTION_MODES,
     SPECTRAL_STORAGE_MODES,
@@ -115,6 +118,7 @@ IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/Field.py",
     "pssolver/PDEmodel.py",
     "pssolver/integrator.py",
+    "pssolver/plane.py",
     "pssolver/transforms.py",
     "pssolver/__init__.py",
     "pssolver/models/active_nematics/__init__.py",
@@ -291,11 +295,11 @@ def parse_args():
     parser.add_argument(
         "--spectral-storage",
         choices=SPECTRAL_STORAGE_MODES,
-        default=DEFAULT_SPECTRAL_STORAGE,
+        default=DEFAULT_PLANE_SPECTRAL_STORAGE,
         help=(
-            "Native modal storage. full_complex is the unchanged production "
-            "default; hermitian_half explicitly packs the positive-y half "
-            "spectrum for real Plane fields and requires real_first."
+            "Native modal storage. hermitian_half is the H100-qualified "
+            "Plane default and packs the positive-y spectrum; full_complex "
+            "is the validated rollback."
         ),
     )
     parser.add_argument(
@@ -1029,7 +1033,7 @@ solver = SpectralSolver(
     dtype=real_dtype,
     transform_execution_order=args.transform_execution_order,
     spectral_storage=args.spectral_storage,
-    hermitian_axis=1,
+    hermitian_axis=PLANE_HERMITIAN_AXIS,
 )
 spectral_projector = BasisAwareSpectralProjector(
     solver,

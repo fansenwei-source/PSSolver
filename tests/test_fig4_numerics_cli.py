@@ -147,7 +147,7 @@ class Fig4NumericsCliTests(unittest.TestCase):
         self.assertEqual(projected["effective"], "truncated")
         self.assertFalse(projected["fallback_allowed"])
         self.assertTrue(projected["truncated_real_basis_axes"])
-        self.assertTrue(projected["full_spectral_storage_preserved"])
+        self.assertFalse(projected["full_spectral_storage_preserved"])
         self.assertEqual(
             metadata["numerics"]["transforms"]["execution_order"],
             "real_first",
@@ -164,6 +164,7 @@ class Fig4NumericsCliTests(unittest.TestCase):
                 "pssolver/PDEmodel.py",
                 "pssolver/integrator.py",
                 "pssolver/transforms.py",
+                "pssolver/plane.py",
                 "pssolver/__init__.py",
                 "pssolver/models/active_nematics/__init__.py",
                 "pssolver/models/active_nematics/fields.py",
@@ -238,7 +239,8 @@ class Fig4NumericsCliTests(unittest.TestCase):
         metadata = json.loads(result.stdout)
         transforms = metadata["numerics"]["transforms"]
         self.assertEqual(transforms["execution_order"], "real_first")
-        self.assertEqual(transforms["spectral_storage"], "full_complex")
+        self.assertEqual(transforms["spectral_storage"], "hermitian_half")
+        self.assertEqual(transforms["hermitian_axis"], 1)
         self.assertFalse(transforms["basis_and_normalization_changed"])
         self.assertEqual(metadata["transform_execution_order"], "real_first")
 
@@ -376,7 +378,7 @@ class Fig4NumericsCliTests(unittest.TestCase):
         self.assertEqual(projected["effective"], "truncated")
         self.assertFalse(projected["fallback_allowed"])
         self.assertTrue(projected["truncated_real_basis_axes"])
-        self.assertTrue(projected["full_spectral_storage_preserved"])
+        self.assertFalse(projected["full_spectral_storage_preserved"])
         self.assertEqual(
             metadata["projected_transform_execution"],
             "truncated",
@@ -415,6 +417,8 @@ class Fig4NumericsCliTests(unittest.TestCase):
         result = run_dry_run(
             "--transform-execution-order",
             "legacy",
+            "--spectral-storage",
+            "full_complex",
             script=BERIS_EDWARDS_SCRIPT,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -422,7 +426,23 @@ class Fig4NumericsCliTests(unittest.TestCase):
         metadata = json.loads(result.stdout)
         transforms = metadata["numerics"]["transforms"]
         self.assertEqual(transforms["execution_order"], "legacy")
+        self.assertEqual(transforms["spectral_storage"], "full_complex")
         self.assertEqual(metadata["transform_execution_order"], "legacy")
+
+    def test_beris_edwards_full_complex_storage_rollback_is_recorded(self):
+        result = run_dry_run(
+            "--spectral-storage",
+            "full_complex",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        metadata = json.loads(result.stdout)
+        transforms = metadata["numerics"]["transforms"]
+        self.assertEqual(transforms["spectral_storage"], "full_complex")
+        self.assertEqual(transforms["spectral_shape"], transforms["physical_shape"])
+        self.assertIsNone(transforms["hermitian_axis"])
+        self.assertEqual(metadata["spectral_storage"], "full_complex")
 
 
 if __name__ == "__main__":

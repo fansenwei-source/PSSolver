@@ -104,13 +104,13 @@ def test_capture_defaults_to_real_first_transform_execution():
     config = NsysCaptureConfig()
 
     assert config.transform_execution_order == "real_first"
-    assert config.spectral_storage == "full_complex"
+    assert config.spectral_storage == "hermitian_half"
     assert config.molecular_field_linear_space == "spectral"
     assert config.stress_divergence_sum_space == "spectral"
     assert config.pointwise_execution == "compile"
     assert config.projected_transform_execution == "truncated"
     assert config.profile_config().transform_execution_order == "real_first"
-    assert config.profile_config().spectral_storage == "full_complex"
+    assert config.profile_config().spectral_storage == "hermitian_half"
     assert config.profile_config().molecular_field_linear_space == "spectral"
     assert config.profile_config().stress_divergence_sum_space == "spectral"
     assert config.profile_config().pointwise_execution == "compile"

@@ -25,11 +25,14 @@ from typing import Iterator
 import numpy as np
 import torch
 
+from pssolver.plane import (
+    DEFAULT_PLANE_SPECTRAL_STORAGE,
+    PLANE_HERMITIAN_AXIS,
+)
 from pssolver import (
     BasisAwareSpectralProjector,
     DEALIAS_RULE_FRACTIONS,
     DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
-    DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     PROJECTED_TRANSFORM_EXECUTION_MODES,
     SPECTRAL_STORAGE_MODES,
@@ -76,7 +79,7 @@ class ProfileConfig:
     stress_divergence_sum_space: str = DEFAULT_STRESS_DIVERGENCE_SUM_SPACE
     pointwise_execution: str = DEFAULT_POINTWISE_EXECUTION
     transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
-    spectral_storage: str = DEFAULT_SPECTRAL_STORAGE
+    spectral_storage: str = DEFAULT_PLANE_SPECTRAL_STORAGE
     snapshot_interval: int | None = None
     snapshot_directory: str | None = None
     save_hydrodynamics: bool = False
@@ -336,7 +339,7 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
         dtype=dtype,
         transform_execution_order=config.transform_execution_order,
         spectral_storage=config.spectral_storage,
-        hermitian_axis=1,
+        hermitian_axis=PLANE_HERMITIAN_AXIS,
     )
     projector = BasisAwareSpectralProjector(
         solver,
@@ -827,10 +830,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--spectral-storage",
         choices=SPECTRAL_STORAGE_MODES,
-        default=DEFAULT_SPECTRAL_STORAGE,
+        default=DEFAULT_PLANE_SPECTRAL_STORAGE,
         help=(
-            "full_complex keeps the production representation; "
-            "hermitian_half packs the positive-y spectrum."
+            "hermitian_half is the H100-qualified Plane default; "
+            "full_complex is the validated rollback."
         ),
     )
     parser.add_argument("--snapshot-interval", type=int)

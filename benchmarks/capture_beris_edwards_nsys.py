@@ -21,10 +21,10 @@ from typing import Iterator
 
 import torch
 
+from pssolver.plane import DEFAULT_PLANE_SPECTRAL_STORAGE
 from pssolver import (
     DEALIAS_RULE_FRACTIONS,
     DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
-    DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     PROJECTED_TRANSFORM_EXECUTION_MODES,
     SPECTRAL_STORAGE_MODES,
@@ -66,7 +66,7 @@ class NsysCaptureConfig:
     stress_divergence_sum_space: str = DEFAULT_STRESS_DIVERGENCE_SUM_SPACE
     pointwise_execution: str = DEFAULT_POINTWISE_EXECUTION
     transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER
-    spectral_storage: str = DEFAULT_SPECTRAL_STORAGE
+    spectral_storage: str = DEFAULT_PLANE_SPECTRAL_STORAGE
     seed: int = 20260908
 
     def profile_config(self) -> ProfileConfig:
@@ -230,7 +230,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--spectral-storage",
         choices=SPECTRAL_STORAGE_MODES,
-        default=DEFAULT_SPECTRAL_STORAGE,
+        default=DEFAULT_PLANE_SPECTRAL_STORAGE,
     )
     parser.add_argument("--seed", type=int, default=20260908)
     parser.add_argument("--output", type=Path)
