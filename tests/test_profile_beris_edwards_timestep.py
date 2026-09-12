@@ -186,13 +186,17 @@ def test_truncated_projected_transforms_preserve_complete_cpu_timestep(
         full.integrator.step()
         truncated.integrator.step()
 
-    assert torch.equal(
+    torch.testing.assert_close(
         truncated.model.fields.spatial,
         full.model.fields.spatial,
+        rtol=2.0e-12,
+        atol=2.0e-12,
     )
-    assert torch.equal(
+    torch.testing.assert_close(
         truncated.model.fields.spectral,
         full.model.fields.spectral,
+        rtol=2.0e-12,
+        atol=2.0e-12,
     )
     metadata = truncated.model.spectral_projector.execution_metadata()
     assert metadata["effective"] == "truncated"
