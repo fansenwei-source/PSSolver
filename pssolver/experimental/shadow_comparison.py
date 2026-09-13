@@ -172,7 +172,7 @@ def _compare_array(
 
 @dataclass(frozen=True, slots=True)
 class PlaneShadowTrajectoryComparison:
-    """Complete Stage L side-by-side CPU trajectory result."""
+    """Complete side-by-side production and Plane shadow trajectory result."""
 
     production_directory: Path
     shadow_directory: Path
@@ -224,7 +224,7 @@ def compare_plane_shadow_trajectories(
     *,
     relative_l2_tolerance: float = 1.0e-10,
 ) -> PlaneShadowTrajectoryComparison:
-    """Compare complete saved CPU trajectories without modifying either run."""
+    """Compare complete saved trajectories without modifying either run."""
 
     if (
         not isinstance(relative_l2_tolerance, (int, float))
@@ -348,8 +348,7 @@ def write_plane_shadow_comparison(
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Compare completed production and Stage L Plane shadow CPU "
-            "trajectories."
+            "Compare completed production and Plane shadow trajectories."
         )
     )
     parser.add_argument("--production-dir", type=Path, required=True)

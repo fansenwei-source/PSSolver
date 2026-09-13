@@ -86,10 +86,10 @@ def _boundary_set(values: object, description: str) -> BoundarySet:
         raise ValueError(f"{description} contains an unsupported boundary") from exc
 
 
-def _require_stage_l_production_metadata(
+def _require_common_shadow_production_metadata(
     metadata: Mapping[str, object],
 ) -> None:
-    """Restrict the first shadow gate to completed CPU/float64 references."""
+    """Validate the production contract shared by shadow qualifications."""
 
     try:
         if metadata["script"] != _PRODUCTION_SCRIPT:
@@ -101,21 +101,62 @@ def _require_stage_l_production_metadata(
             _PRODUCTION_MODEL
         ):
             raise ValueError("production model identity is incompatible")
-        if metadata["runtime_environment"]["device_type"] != "cpu":
-            raise ValueError("Stage L requires a CPU production reference")
         if metadata["solver"]["real_dtype"] != "float64":
-            raise ValueError("Stage L requires a float64 production reference")
+            raise ValueError("shadow qualification requires float64")
         if metadata["save_start_step"] != 0:
-            raise ValueError("Stage L requires production save_start_step=0")
+            raise ValueError("shadow qualification requires save_start_step=0")
         if metadata["save_hydrodynamics"] is not True:
-            raise ValueError("Stage L requires saved production u and p")
+            raise ValueError("shadow qualification requires saved u and p")
         if metadata["numerics"]["q_gradient_reuse"]["enabled"] is not True:
-            raise ValueError("Stage L requires production Q-gradient reuse")
+            raise ValueError("shadow qualification requires Q-gradient reuse")
         if metadata["numerics"]["precision"]["tf32_effective"] is not False:
-            raise ValueError("Stage L requires TF32 to be ineffective")
+            raise ValueError("shadow qualification requires TF32 to be ineffective")
     except (KeyError, TypeError) as exc:
         raise ValueError(
-            "production metadata lacks the Stage L reference contract"
+            "production metadata lacks the shadow reference contract"
+        ) from exc
+
+
+def _require_stage_l_production_metadata(
+    metadata: Mapping[str, object],
+) -> None:
+    """Restrict the first shadow gate to completed CPU/float64 references."""
+
+    _require_common_shadow_production_metadata(metadata)
+    try:
+        if metadata["runtime_environment"]["device_type"] != "cpu":
+            raise ValueError("Stage L requires a CPU production reference")
+    except (KeyError, TypeError) as exc:
+        raise ValueError(
+            "production metadata lacks the Stage L device contract"
+        ) from exc
+
+
+def _require_stage_m_h100_production_metadata(
+    metadata: Mapping[str, object],
+    *,
+    expected_gpu_name: str,
+) -> None:
+    """Restrict Stage M to an explicit completed H100/float64 reference."""
+
+    if not isinstance(expected_gpu_name, str) or not expected_gpu_name.strip():
+        raise ValueError("expected_gpu_name must not be empty")
+    _require_common_shadow_production_metadata(metadata)
+    try:
+        runtime = metadata["runtime_environment"]
+        if runtime["device_type"] != "cuda":
+            raise ValueError("Stage M requires a CUDA production reference")
+        reference_name = runtime["cuda_device_name"]
+        if (
+            not isinstance(reference_name, str)
+            or expected_gpu_name.lower() not in reference_name.lower()
+        ):
+            raise ValueError(
+                "Stage M production GPU does not match expected_gpu_name"
+            )
+    except (KeyError, TypeError) as exc:
+        raise ValueError(
+            "production metadata lacks the Stage M H100 device contract"
         ) from exc
 
 
@@ -131,10 +172,12 @@ class ProductionPlaneReference:
     initial_values: Mapping[str, torch.Tensor]
 
 
-def load_production_plane_reference(
+def _load_production_plane_reference(
     directory: str | Path,
+    *,
+    metadata_validator,
 ) -> ProductionPlaneReference:
-    """Load a completed CPU/float64 production reference without mutation."""
+    """Load one validated production reference without mutating it."""
 
     directory = Path(directory).expanduser().resolve()
     if not directory.is_dir():
@@ -151,7 +194,7 @@ def load_production_plane_reference(
     metadata = _load_json_mapping(metadata_path, "production metadata")
     if file_sha256(metadata_path) != metadata_sha256:
         raise RuntimeError("production metadata changed while it was read")
-    _require_stage_l_production_metadata(metadata)
+    metadata_validator(metadata)
 
     signature = plane_beris_edwards_production_signature(metadata)
     shape = tuple(signature["solver"]["shape"])
@@ -203,17 +246,43 @@ def load_production_plane_reference(
     )
 
 
-def build_plane_shadow_runtime_from_production_metadata(
+def load_production_plane_reference(
+    directory: str | Path,
+) -> ProductionPlaneReference:
+    """Load a completed Stage L CPU/float64 production reference."""
+
+    return _load_production_plane_reference(
+        directory,
+        metadata_validator=_require_stage_l_production_metadata,
+    )
+
+
+def load_h100_production_plane_reference(
+    directory: str | Path,
+    *,
+    expected_gpu_name: str = "H100",
+) -> ProductionPlaneReference:
+    """Load a completed Stage M H100/float64 production reference."""
+
+    return _load_production_plane_reference(
+        directory,
+        metadata_validator=lambda metadata: (
+            _require_stage_m_h100_production_metadata(
+                metadata,
+                expected_gpu_name=expected_gpu_name,
+            )
+        ),
+    )
+
+
+def _build_plane_shadow_runtime_from_production_metadata(
     metadata: Mapping[str, object],
     *,
-    device: str | torch.device = "cpu",
+    device: str | torch.device,
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
-    """Construct and parity-check the migrated runtime from production data."""
+    """Construct and parity-check a migrated runtime after contract checks."""
 
-    _require_stage_l_production_metadata(metadata)
     device = torch.device(device)
-    if device.type != "cpu":
-        raise ValueError("Stage L shadow qualification is CPU-only")
     signature = plane_beris_edwards_production_signature(metadata)
     solver = signature["solver"]
     parameters = signature["model"]["parameters"]
@@ -312,6 +381,54 @@ def build_plane_shadow_runtime_from_production_metadata(
     comparison = compare_shadow_to_production_metadata(runtime, metadata)
     comparison.require_compatible()
     return runtime, comparison
+
+
+def build_plane_shadow_runtime_from_production_metadata(
+    metadata: Mapping[str, object],
+    *,
+    device: str | torch.device = "cpu",
+) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
+    """Construct the Stage L CPU shadow runtime from production metadata."""
+
+    _require_stage_l_production_metadata(metadata)
+    device = torch.device(device)
+    if device.type != "cpu":
+        raise ValueError("Stage L shadow qualification is CPU-only")
+    return _build_plane_shadow_runtime_from_production_metadata(
+        metadata,
+        device=device,
+    )
+
+
+def build_h100_plane_shadow_runtime_from_production_metadata(
+    metadata: Mapping[str, object],
+    *,
+    expected_gpu_name: str = "H100",
+    device: str | torch.device = "cuda",
+) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
+    """Construct the opt-in Stage M runtime on the expected H100 device."""
+
+    _require_stage_m_h100_production_metadata(
+        metadata,
+        expected_gpu_name=expected_gpu_name,
+    )
+    device = torch.device(device)
+    if device.type != "cuda":
+        raise ValueError("Stage M shadow qualification requires a CUDA device")
+    if not torch.cuda.is_available():
+        raise RuntimeError(
+            "Stage M requested CUDA but torch.cuda.is_available() is false"
+        )
+    actual_name = torch.cuda.get_device_name(device)
+    if expected_gpu_name.lower() not in actual_name.lower():
+        raise RuntimeError(
+            "Stage M execution GPU does not match expected_gpu_name: "
+            f"{actual_name!r}"
+        )
+    return _build_plane_shadow_runtime_from_production_metadata(
+        metadata,
+        device=device,
+    )
 
 
 def run_plane_shadow_from_production_reference(
@@ -418,7 +535,9 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 __all__ = [
     "ProductionPlaneReference",
+    "build_h100_plane_shadow_runtime_from_production_metadata",
     "build_plane_shadow_runtime_from_production_metadata",
+    "load_h100_production_plane_reference",
     "load_production_plane_reference",
     "main",
     "run_plane_shadow_from_production_reference",

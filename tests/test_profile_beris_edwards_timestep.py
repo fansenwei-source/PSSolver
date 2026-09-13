@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import sys
 
+import numpy as np
 import pytest
 import torch
 
@@ -54,6 +55,27 @@ def test_profiler_cli_accepts_two_thirds_rule(monkeypatch):
     )
 
     assert parse_args().dealias_rule == "two_thirds"
+
+
+def test_profiler_accepts_production_layout_initial_q(tmp_path):
+    path = tmp_path / "Q_0.npy"
+    values = np.zeros((6, 6, 5, 5), dtype=np.float64)
+    values[..., 0] = 0.2
+    values[..., 3] = -0.1
+    np.save(path, values, allow_pickle=False)
+
+    result = run_profile(_small_config(initial_q_path=str(path)))
+
+    assert result["config"]["initial_q_path"] == str(path)
+    assert result["model"]["initial_condition"] == "production-layout Q_0.npy"
+
+
+def test_profiler_rejects_incompatible_initial_q(tmp_path):
+    path = tmp_path / "Q_0.npy"
+    np.save(path, np.zeros((6, 6, 5, 4), dtype=np.float64))
+
+    with pytest.raises(ValueError, match="initial Q shape"):
+        run_profile(_small_config(initial_q_path=str(path)))
 
 
 def test_complete_timestep_profile_has_expected_regions_and_provenance():

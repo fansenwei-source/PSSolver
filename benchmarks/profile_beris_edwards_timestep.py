@@ -84,6 +84,7 @@ class ProfileConfig:
     snapshot_directory: str | None = None
     save_hydrodynamics: bool = False
     seed: int = 20260908
+    initial_q_path: str | None = None
 
 
 class RegionTimer:
@@ -290,6 +291,10 @@ def _validate_config(config: ProfileConfig) -> None:
         raise ValueError(
             "snapshot_interval and snapshot_directory must be enabled together"
         )
+    if config.initial_q_path is not None:
+        path = Path(config.initial_q_path).expanduser()
+        if not path.is_file():
+            raise FileNotFoundError(f"initial Q file is missing: {path}")
 
 
 def _torch_dtype(name: str) -> torch.dtype:
@@ -328,6 +333,36 @@ def _synthetic_initial_q(
     return {name: noise[index] for index, name in enumerate(Q_COMPONENTS)}
 
 
+def _initial_q(
+    config: ProfileConfig,
+    dtype: torch.dtype,
+) -> dict[str, torch.Tensor]:
+    if config.initial_q_path is None:
+        return _synthetic_initial_q(
+            config.shape,
+            dtype=dtype,
+            seed=config.seed,
+        )
+    path = Path(config.initial_q_path).expanduser().resolve()
+    values = np.load(path, allow_pickle=False)
+    expected_shape = (*config.shape, len(Q_COMPONENTS))
+    expected_dtype = np.dtype(config.dtype)
+    if values.shape != expected_shape:
+        raise ValueError(
+            f"initial Q shape must be {expected_shape!r}, got {values.shape!r}"
+        )
+    if values.dtype != expected_dtype:
+        raise ValueError(
+            f"initial Q dtype must be {expected_dtype}, got {values.dtype}"
+        )
+    if not np.isfinite(values).all():
+        raise ValueError("initial Q contains NaN or Inf")
+    return {
+        name: torch.from_numpy(np.array(values[..., index], copy=True))
+        for index, name in enumerate(Q_COMPONENTS)
+    }
+
+
 def _build_solver(config: ProfileConfig, timer: RegionTimer):
     dtype = _torch_dtype(config.dtype)
     solver = SpectralSolver(
@@ -348,7 +383,7 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
     )
     solver.model.spectral_projector = projector
     solver.model.set_static_inverse_transform(projector.inverse_transform)
-    initial_q = _synthetic_initial_q(config.shape, dtype=dtype, seed=config.seed)
+    initial_q = _initial_q(config, dtype)
     q_gradient_cache = (
         BerisEdwardsQGradientCache() if config.reuse_q_gradients else None
     )
@@ -449,6 +484,14 @@ def _state_sha256(solver) -> str:
     return digest.hexdigest()
 
 
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def _prepare_snapshot_directory(config: ProfileConfig) -> Path | None:
     if config.snapshot_directory is None:
         return None
@@ -544,6 +587,14 @@ def _counter_delta(after, before):
 def run_profile(config: ProfileConfig) -> dict[str, object]:
     """Run one profile and return an auditable JSON-compatible result."""
     _validate_config(config)
+    initial_q_path = (
+        None
+        if config.initial_q_path is None
+        else Path(config.initial_q_path).expanduser().resolve()
+    )
+    initial_q_sha256 = (
+        None if initial_q_path is None else _file_sha256(initial_q_path)
+    )
     device = torch.device(config.device)
     if device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA was requested but torch.cuda.is_available() is false")
@@ -592,6 +643,10 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
         timings = timer.summarize()
         state_sha256 = _state_sha256(solver)
         counters_after_profile = _dynamo_counter_snapshot()
+    if initial_q_path is not None:
+        final_initial_q_sha256 = _file_sha256(initial_q_path)
+        if final_initial_q_sha256 != initial_q_sha256:
+            raise RuntimeError("initial Q file changed while profiling")
 
     whole_timestep_seconds = timings["whole_timestep"]["total_seconds"]
     memory: dict[str, int | None] = {
@@ -632,7 +687,12 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
             "projected_transform_execution": (
                 config.projected_transform_execution
             ),
-            "initial_condition": "deterministic synthetic aligned Q plus noise",
+            "initial_condition": (
+                "production-layout Q_0.npy"
+                if config.initial_q_path is not None
+                else "deterministic synthetic aligned Q plus noise"
+            ),
+            "initial_q_path": config.initial_q_path,
         },
         "environment": {
             "git": _git_provenance(),
@@ -735,6 +795,12 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
             "timesteps_per_second": config.profile_steps / whole_timestep_seconds,
         },
         "memory": memory,
+        "profile_input": {
+            "initial_q_path": (
+                None if initial_q_path is None else str(initial_q_path)
+            ),
+            "initial_q_sha256": initial_q_sha256,
+        },
         "final_state_sha256": state_sha256,
     }
 
@@ -840,6 +906,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--snapshot-directory")
     parser.add_argument("--save-hydrodynamics", action="store_true")
     parser.add_argument("--seed", type=int, default=20260908)
+    parser.add_argument(
+        "--initial-q-path",
+        help=(
+            "Optional production-layout Q_0.npy. When provided it replaces "
+            "the synthetic profiler initial condition without changing the "
+            "production solver implementation."
+        ),
+    )
     parser.add_argument("--output", type=Path)
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
@@ -879,6 +953,7 @@ def main() -> None:
             snapshot_directory=args.snapshot_directory,
             save_hydrodynamics=args.save_hydrodynamics,
             seed=args.seed,
+            initial_q_path=args.initial_q_path,
         )
     )
     serialized = json.dumps(result, indent=2, sort_keys=True) + "\n"

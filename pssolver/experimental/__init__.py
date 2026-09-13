@@ -67,6 +67,12 @@ from .shadow_run import (
     capture_shadow_observation,
     write_shadow_observation,
 )
+from .h100_shadow_qualification import (
+    analyze_stage_m_h100_qualification,
+    profile_h100_plane_shadow_from_production_reference,
+    run_h100_plane_shadow_from_production_reference,
+)
+from .stage_m_plan import build_stage_m_h100_plan
 from .stokes import (
     ChannelStokesSolverOptions,
     PlaneStokesSolverOptions,
@@ -99,6 +105,7 @@ __all__ = [
     "ShadowRunCheckpoint",
     "ShadowArrayComparison",
     "build_experimental_model_runtime",
+    "build_stage_m_h100_plan",
     "build_plane_shadow_runtime_from_production_metadata",
     "capture_shadow_checkpoint",
     "capture_shadow_observation",
@@ -122,5 +129,8 @@ __all__ = [
     "shadow_runtime_identity_sha256",
     "write_shadow_checkpoint",
     "write_shadow_observation",
+    "analyze_stage_m_h100_qualification",
+    "profile_h100_plane_shadow_from_production_reference",
+    "run_h100_plane_shadow_from_production_reference",
     "write_plane_shadow_comparison",
 ]
