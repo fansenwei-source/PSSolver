@@ -286,7 +286,7 @@ def test_model_context_does_not_expose_legacy_runtime_objects():
     ) == ((8,),)
     with pytest.raises(TypeError):
         runtime.context._laplacians["extra"] = torch.zeros(8)
-    with pytest.raises(KeyError, match="unknown evolved"):
+    with pytest.raises(KeyError, match="unknown planned"):
         runtime.context.laplacian_eigenvalues("missing")
 
 
@@ -299,11 +299,14 @@ class _AlgebraicCanary(ScalarDiffusionModel):
         )
 
 
-def test_stage_e_rejects_algebraic_execution_instead_of_guessing_semantics():
+def test_algebraic_execution_requires_the_extended_protocol():
     boundaries = BoundarySet((PeriodicBC(),))
     model = _AlgebraicCanary(boundaries, diffusivity=0.2)
 
-    with pytest.raises(NotImplementedError, match="evolved components only"):
+    with pytest.raises(
+        TypeError,
+        match="AlgebraicExecutableModelProtocol",
+    ):
         build_experimental_model_runtime(
             model,
             PeriodicBox(DomainSpec((8,), (4.0,))),

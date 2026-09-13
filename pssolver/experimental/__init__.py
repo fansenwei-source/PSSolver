@@ -3,6 +3,7 @@
 Nothing in this package is imported by the production solver entry points.
 """
 
+from .canary_algebraic import create_canary_geometry_solver_registry
 from .legacy_assembly import (
     LegacyAssemblySpec,
     LegacyBackendSpec,
@@ -15,20 +16,27 @@ from .legacy_assembly import (
 )
 from .model_execution import (
     ExperimentalModelRuntime,
+    LegacyAlgebraicFieldsAdapter,
+    LegacyAlgebraicSolverContext,
     LegacyExplicitRHSAdapter,
     LegacyModelExecutionContext,
+    ResolvedAlgebraicSystem,
     build_experimental_model_runtime,
 )
 
 __all__ = [
+    "ExperimentalModelRuntime",
+    "LegacyAlgebraicFieldsAdapter",
+    "LegacyAlgebraicSolverContext",
     "LegacyAssemblySpec",
     "LegacyBackendSpec",
     "LegacyExplicitRHSAdapter",
     "LegacyFieldDeclaration",
     "LegacyModelExecutionContext",
     "LegacyProjectorSpec",
-    "ExperimentalModelRuntime",
+    "ResolvedAlgebraicSystem",
     "build_experimental_model_runtime",
+    "create_canary_geometry_solver_registry",
     "create_legacy_projector",
     "create_legacy_solver",
     "declare_legacy_fields",

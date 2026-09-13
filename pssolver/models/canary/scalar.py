@@ -20,7 +20,7 @@ from pssolver.core import (
     FieldRole,
     FieldSpec,
 )
-from pssolver.execution import ModelExecutionContext
+from pssolver.execution import AlgebraicSystemSpec, ModelExecutionContext
 
 
 def _finite_real(value: object, description: str, *, positive: bool) -> float:
@@ -259,3 +259,115 @@ class AllenCahnModel:
             "phi": self.linear_reaction * phi
             - self.cubic_reaction * phi.pow(3)
         }
+
+
+@dataclass(frozen=True, slots=True)
+class DiffusionHelmholtzCouplingModel:
+    """Diffusion coupled to an instantaneous screened response.
+
+    The equations are
+
+    ``d_t phi = diffusivity * Laplacian(phi) + coupling * response``
+
+    and
+
+    ``(helmholtz_shift - helmholtz_length_sq * Laplacian) response = phi``.
+    """
+
+    boundaries: BoundarySet
+    diffusivity: float
+    coupling: float
+    helmholtz_shift: float
+    helmholtz_length_sq: float
+    initial_amplitude: float = 0.1
+    initial_modes: tuple[int, ...] = (1,)
+    name: str = "diffusion_helmholtz_coupling"
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.boundaries, BoundarySet):
+            raise TypeError("boundaries must be a BoundarySet")
+        for attribute in (
+            "diffusivity",
+            "helmholtz_shift",
+            "helmholtz_length_sq",
+        ):
+            object.__setattr__(
+                self,
+                attribute,
+                _finite_real(getattr(self, attribute), attribute, positive=True),
+            )
+        for attribute in ("coupling", "initial_amplitude"):
+            object.__setattr__(
+                self,
+                attribute,
+                _finite_real(getattr(self, attribute), attribute, positive=False),
+            )
+        object.__setattr__(
+            self,
+            "initial_modes",
+            _normalize_modes(self.initial_modes, self.boundaries),
+        )
+        if not isinstance(self.name, str) or not self.name:
+            raise ValueError("name must be a non-empty string")
+
+    def field_specs(self) -> tuple[FieldSpec, ...]:
+        return (
+            FieldSpec.scalar("phi", FieldRole.EVOLVED, self.boundaries),
+            FieldSpec.scalar(
+                "response",
+                FieldRole.ALGEBRAIC,
+                self.boundaries,
+            ),
+        )
+
+    def parameter_metadata(self) -> Mapping[str, object]:
+        return {
+            "coupling": self.coupling,
+            "diffusivity": self.diffusivity,
+            "helmholtz_length_sq": self.helmholtz_length_sq,
+            "helmholtz_shift": self.helmholtz_shift,
+            "initial_amplitude": self.initial_amplitude,
+            "initial_modes": list(self.initial_modes),
+        }
+
+    def algebraic_system_specs(self) -> tuple[AlgebraicSystemSpec, ...]:
+        return (
+            AlgebraicSystemSpec(
+                name="screened_response",
+                capability="scalar_helmholtz",
+                output_components=("response",),
+                dependencies=("phi",),
+                parameters={
+                    "helmholtz_length_sq": self.helmholtz_length_sq,
+                    "helmholtz_shift": self.helmholtz_shift,
+                },
+            ),
+        )
+
+    def initial_values(
+        self,
+        context: ModelExecutionContext,
+    ) -> Mapping[str, torch.Tensor]:
+        return {
+            "phi": _initial_eigenmode(
+                context,
+                self.boundaries,
+                self.initial_modes,
+                self.initial_amplitude,
+            )
+        }
+
+    def linear_operators(
+        self,
+        context: ModelExecutionContext,
+    ) -> Mapping[str, torch.Tensor]:
+        return {
+            "phi": self.diffusivity
+            * context.laplacian_eigenvalues("phi")
+        }
+
+    def explicit_rhs(
+        self,
+        state: Mapping[str, torch.Tensor],
+    ) -> Mapping[str, torch.Tensor]:
+        return {"phi": self.coupling * state["response"]}
