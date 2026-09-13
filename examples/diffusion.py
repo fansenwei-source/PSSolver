@@ -1,49 +1,70 @@
-from numpy import uint
-from pssolver import SpectralSolver
-from pssolver.utils import fft, visualize1D
+"""Stage E scalar-diffusion canary using the opt-in architecture path."""
+
+from __future__ import annotations
 
 import torch
 from tqdm import trange
 
-
-N = 256
-L = 256
-dt = 0.04
-steps = 10000
-batchsize = 6
-
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-print(f"Using device: {device}")
-solver = SpectralSolver(shape=(N,), L=L, dt=dt, device=device, batchsize= batchsize )
-
-# # --- Parameters (Constants) ---
-k = 1
-
-# # --- Add active fields ---
-u_init = torch.zeros(batchsize, N)
-centers = torch.randint(0, N, (batchsize,))
-width = N // 20  # Adjust the width of the Gaussian
-
-x = torch.arange(N)
-for i in range(batchsize):
-    u_init[i] = 100 * torch.exp(-0.5 * ((x - centers[i]) / width) ** 2)
-
-solver.model.add_dynamic_field(
-    "u",
-    init = u_init,
-    L_hat = -k*solver.q2
+from pssolver.core import (
+    BoundarySet,
+    DealiasRule,
+    DomainSpec,
+    NumericsConfig,
+    PeriodicBC,
+    Precision,
+    ProjectedTransformExecution,
+    SpectralStorage,
+    TransformExecutionOrder,
 )
+from pssolver.experimental import build_experimental_model_runtime
+from pssolver.geometries import PeriodicBox
+from pssolver.models.canary import ScalarDiffusionModel
+from pssolver.utils import visualize1D
 
-solver.build()
 
-traj = []
-for i in trange(steps):
-    solver.run(1)
-    if i % (steps//100) == 0:
-        traj.append(solver.fields['u'])
+def main() -> None:
+    size = 256
+    length = 256.0
+    timestep = 0.04
+    steps = 10_000
+    device = "cuda" if torch.cuda.is_available() else "cpu"
 
-traj = torch.stack(traj).permute(1,0,2)  # permutation: (num_snapshots, batch_size, N) --> (batch_size, num_snapshots, N)
+    boundaries = BoundarySet((PeriodicBC(),))
+    model = ScalarDiffusionModel(
+        boundaries=boundaries,
+        diffusivity=1.0,
+        initial_amplitude=100.0,
+        initial_modes=(1,),
+    )
+    geometry = PeriodicBox(DomainSpec((size,), (length,)))
+    numerics = NumericsConfig(
+        precision=Precision.FLOAT32,
+        dealias_rule=DealiasRule.NONE,
+        transform_execution_order=TransformExecutionOrder.REAL_FIRST,
+        projected_transform_execution=ProjectedTransformExecution.FULL,
+        spectral_storage=SpectralStorage.FULL_COMPLEX,
+    )
+    runtime = build_experimental_model_runtime(
+        model,
+        geometry,
+        numerics,
+        dt=timestep,
+        device=device,
+    )
 
-print(f"Simulation finished. Data has shape: {traj.shape}")
-visualize1D(data = traj.cpu().numpy(), filename="diffusion1D.png")
+    snapshots = []
+    for step in trange(steps):
+        runtime.solver.run(1)
+        if step % (steps // 100) == 0:
+            snapshots.append(runtime.solver.fields["phi"].detach().clone())
 
+    trajectory = torch.stack(snapshots).permute(1, 0, 2)
+    print(f"Simulation finished. Data has shape: {trajectory.shape}")
+    visualize1D(
+        data=trajectory.cpu().numpy(),
+        filename="diffusion1D.png",
+    )
+
+
+if __name__ == "__main__":
+    main()

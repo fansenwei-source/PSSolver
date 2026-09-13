@@ -1,8 +1,9 @@
 """Declarative physical-model protocol.
 
-The execution-facing model protocol is intentionally deferred until the
-spectral-plan facade exists.  Stage A freezes only the model identity, field
-declarations, and auditable parameter metadata.
+This core protocol remains tensor- and runtime-free.  The opt-in execution
+contract introduced after spectral planning lives in :mod:`pssolver.execution`
+and extends these declarations without coupling core specifications to the
+current solver implementation.
 """
 
 from __future__ import annotations
