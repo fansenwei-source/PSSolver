@@ -93,3 +93,19 @@ trajectory report already carries per-array source hashes.
 
 Nothing in `pssolver.experimental` is imported by the production Plane or
 Channel entry points.
+
+## First H100 construction finding
+
+The first scientific H100 attempt completed the six-step production reference
+but stopped while constructing the shadow runtime.  An unindexed `"cuda"`
+request was retained as the execution-context identity, whereas PyTorch
+reported the newly allocated coordinate tensors on the concrete `cuda:0`
+device.  Strict equality correctly rejected those two different device
+objects before any shadow timestep ran.
+
+The recovery keeps that strict check and fixes the experimental legacy-
+assembly boundary instead: an unindexed CUDA request is resolved once through
+`torch.cuda.current_device()` before the solver, transforms, projector, and
+model context are built.  Explicit devices such as `cuda:2` and non-CUDA
+devices pass through unchanged.  This changes no production solver path and
+does not treat device inconsistency as acceptable.

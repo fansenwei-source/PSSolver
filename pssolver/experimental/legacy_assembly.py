@@ -399,6 +399,34 @@ def _validate_positive_real(value: object, description: str) -> float:
     return float(value)
 
 
+def _canonical_runtime_device(
+    device: object,
+    *,
+    current_cuda_device: int | None = None,
+) -> torch.device:
+    """Resolve an unindexed CUDA request to the device that owns tensors.
+
+    PyTorch reports tensors allocated through ``device='cuda'`` on an indexed
+    device such as ``cuda:0``.  Keeping the unindexed request in runtime
+    metadata makes strict device comparisons fail even though both names refer
+    to the same accelerator.  Resolve the index once at the experimental
+    assembly boundary so every downstream tensor and context shares one
+    canonical device identity.
+    """
+
+    resolved = torch.device(device)
+    if resolved.type != "cuda" or resolved.index is not None:
+        return resolved
+    index = (
+        torch.cuda.current_device()
+        if current_cuda_device is None
+        else current_cuda_device
+    )
+    if not isinstance(index, int) or isinstance(index, bool) or index < 0:
+        raise ValueError("current CUDA device index must be non-negative")
+    return torch.device("cuda", index)
+
+
 def create_legacy_solver(
     assembly: LegacyAssemblySpec,
     *,
@@ -421,12 +449,13 @@ def create_legacy_solver(
         Precision.FLOAT32: torch.float32,
         Precision.FLOAT64: torch.float64,
     }[assembly.backend.precision]
+    runtime_device = _canonical_runtime_device(device)
     solver = SpectralSolver(
         shape=assembly.backend.shape,
         L=assembly.backend.lengths,
         dt=dt,
         batchsize=batchsize,
-        device=device,
+        device=runtime_device,
         dtype=dtype,
         transform_execution_order=(
             assembly.backend.transform_execution_order.value

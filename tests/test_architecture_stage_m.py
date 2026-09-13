@@ -6,10 +6,12 @@ import copy
 import json
 
 import pytest
+import torch
 
 from pssolver.experimental.h100_shadow_qualification import (
     analyze_stage_m_h100_qualification,
 )
+from pssolver.experimental.legacy_assembly import _canonical_runtime_device
 from pssolver.experimental.plane_shadow_driver import (
     _require_stage_m_h100_production_metadata,
     build_h100_plane_shadow_runtime_from_production_metadata,
@@ -69,6 +71,18 @@ def test_stage_m_builder_cannot_fall_back_to_cpu():
             _h100_metadata(),
             device="cpu",
         )
+
+
+def test_unindexed_cuda_request_is_canonicalized_before_runtime_assembly():
+    assert _canonical_runtime_device(
+        "cuda",
+        current_cuda_device=3,
+    ) == torch.device("cuda:3")
+    assert _canonical_runtime_device("cuda:2") == torch.device("cuda:2")
+    assert _canonical_runtime_device("cpu") == torch.device("cpu")
+
+    with pytest.raises(ValueError, match="non-negative"):
+        _canonical_runtime_device("cuda", current_cuda_device=-1)
 
 
 def _profile_config():
