@@ -36,12 +36,6 @@ class BoundaryCondition:
                 "Stage A supports homogeneous boundary contracts only"
             )
 
-    @property
-    def legacy_label(self) -> str:
-        """Return the current string label for a compatibility adapter."""
-
-        return self.kind.value
-
     def to_metadata(self) -> dict[str, object]:
         """Return a JSON-compatible description of the condition."""
 
@@ -97,12 +91,6 @@ class BoundarySet:
         """Number of coordinate axes described by this set."""
 
         return len(self.axes)
-
-    @property
-    def legacy_labels(self) -> tuple[str, ...]:
-        """Return labels understood by the current transform backend."""
-
-        return tuple(condition.legacy_label for condition in self.axes)
 
     def to_metadata(self) -> list[dict[str, object]]:
         """Return JSON-compatible per-axis boundary metadata."""

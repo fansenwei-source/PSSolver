@@ -120,7 +120,7 @@ def _example_plane_model():
     )
 
 
-def test_boundary_contracts_preserve_physics_and_legacy_labels():
+def test_boundary_contracts_preserve_physical_semantics():
     conditions = (
         PeriodicBC(),
         HomogeneousDirichletBC(),
@@ -133,11 +133,11 @@ def test_boundary_contracts_preserve_physics_and_legacy_labels():
         BoundaryKind.DIRICHLET,
         BoundaryKind.NEUMANN,
     )
-    assert BoundarySet(conditions).legacy_labels == (
-        "periodic",
-        "dirichlet",
-        "neumann",
-    )
+    assert BoundarySet(conditions).to_metadata() == [
+        {"kind": "periodic", "is_homogeneous": True},
+        {"kind": "dirichlet", "is_homogeneous": True},
+        {"kind": "neumann", "is_homogeneous": True},
+    ]
     assert all(condition.is_homogeneous for condition in conditions)
 
 
@@ -195,8 +195,8 @@ def test_field_specs_keep_component_boundaries_and_roles_separate():
     assert q_field.role is FieldRole.EVOLVED
     assert q_field.component_names == ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")
     assert velocity_field.role is FieldRole.ALGEBRAIC
-    assert velocity_field.components[0].boundaries.legacy_labels[-1] == "neumann"
-    assert velocity_field.components[2].boundaries.legacy_labels[-1] == "dirichlet"
+    assert velocity_field.components[0].boundaries.axes[-1].kind is BoundaryKind.NEUMANN
+    assert velocity_field.components[2].boundaries.axes[-1].kind is BoundaryKind.DIRICHLET
     assert pressure_field.component_names == ("p",)
 
 

@@ -53,9 +53,10 @@ three homogeneous conditions already implemented by the current solver:
 - `HomogeneousDirichletBC`;
 - `HomogeneousNeumannBC`.
 
-`BoundarySet` stores one condition per coordinate axis.  Its legacy string
-labels exist only for a future compatibility adapter.  No contract claims that
-a physical boundary condition is intrinsically an FFT, DCT, or DST.
+`BoundarySet` stores one condition per coordinate axis.  Conversion to legacy
+string labels is deliberately outside the core contracts and is supplied by
+the Stage B compatibility adapter.  No contract claims that a physical
+boundary condition is intrinsically an FFT, DCT, or DST.
 
 ### Domain and geometry
 
