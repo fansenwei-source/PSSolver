@@ -41,10 +41,24 @@ from .model_execution import (
     ResolvedAlgebraicSystem,
     build_experimental_model_runtime,
 )
+from .plane_shadow_driver import (
+    ProductionPlaneReference,
+    build_plane_shadow_runtime_from_production_metadata,
+    load_production_plane_reference,
+    run_plane_shadow_from_production_reference,
+)
+from .shadow_comparison import (
+    PlaneShadowTrajectoryComparison,
+    ShadowArrayComparison,
+    compare_plane_shadow_trajectories,
+    write_plane_shadow_comparison,
+)
 from .shadow_metadata import (
     ShadowMetadataComparison,
+    compare_saved_shadow_to_production_metadata,
     compare_shadow_to_production_metadata,
     plane_beris_edwards_production_signature,
+    plane_beris_edwards_saved_shadow_signature,
     plane_beris_edwards_shadow_signature,
 )
 from .shadow_run import (
@@ -73,6 +87,8 @@ __all__ = [
     "LegacyProjectorSpec",
     "PlaneStokesSolverOptions",
     "PlaneBerisEdwardsSolverOptions",
+    "PlaneShadowTrajectoryComparison",
+    "ProductionPlaneReference",
     "ProjectedSemiImplicitEulerIntegrator",
     "ResolvedAlgebraicSystem",
     "SHADOW_CHECKPOINT_FORMAT_VERSION",
@@ -81,9 +97,13 @@ __all__ = [
     "ShadowMetadataComparison",
     "ShadowObservation",
     "ShadowRunCheckpoint",
+    "ShadowArrayComparison",
     "build_experimental_model_runtime",
+    "build_plane_shadow_runtime_from_production_metadata",
     "capture_shadow_checkpoint",
     "capture_shadow_observation",
+    "compare_plane_shadow_trajectories",
+    "compare_saved_shadow_to_production_metadata",
     "compare_shadow_to_production_metadata",
     "create_canary_geometry_solver_registry",
     "create_beris_edwards_plane_geometry_solver_registry",
@@ -93,10 +113,14 @@ __all__ = [
     "declare_legacy_fields",
     "materialize_legacy_assembly",
     "load_shadow_checkpoint",
+    "load_production_plane_reference",
     "plane_beris_edwards_production_signature",
+    "plane_beris_edwards_saved_shadow_signature",
     "plane_beris_edwards_shadow_signature",
     "restore_shadow_checkpoint",
+    "run_plane_shadow_from_production_reference",
     "shadow_runtime_identity_sha256",
     "write_shadow_checkpoint",
     "write_shadow_observation",
+    "write_plane_shadow_comparison",
 ]

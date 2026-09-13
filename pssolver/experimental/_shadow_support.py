@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 import hashlib
 import json
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -28,6 +29,19 @@ def canonical_json_sha256(value: Mapping[str, object]) -> str:
         separators=(",", ":"),
     ).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
+
+
+def file_sha256(path: str | Path) -> str:
+    """Return the SHA-256 of one regular file."""
+
+    path = Path(path)
+    if not path.is_file():
+        raise FileNotFoundError(f"file is missing: {path}")
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def ordered_tensor_sha256(values: Mapping[str, torch.Tensor]) -> str:
@@ -113,6 +127,7 @@ __all__ = [
     "SHADOW_SCRIPT_ID",
     "completed_steps",
     "evolved_names",
+    "file_sha256",
     "ordered_tensor_sha256",
     "require_nonnegative_integer",
     "require_plane_beris_edwards_runtime",

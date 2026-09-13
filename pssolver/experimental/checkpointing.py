@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -24,20 +23,13 @@ from ._shadow_support import (
     SHADOW_CHECKPOINT_FORMAT_VERSION,
     completed_steps,
     evolved_names,
+    file_sha256,
     ordered_tensor_sha256,
     require_nonnegative_integer,
     require_sha256,
     shadow_runtime_identity_sha256,
 )
 from .model_execution import ExperimentalModelRuntime
-
-
-def _file_sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def _clone_tensor_mapping(
@@ -286,7 +278,7 @@ def _write_npy(path: Path, value: torch.Tensor) -> dict[str, object]:
         "file": path.name,
         "shape": list(array.shape),
         "dtype": str(array.dtype),
-        "sha256": _file_sha256(path),
+        "sha256": file_sha256(path),
     }
 
 
@@ -365,7 +357,7 @@ def _load_tensor_record(
     if not path.is_file():
         raise FileNotFoundError(f"checkpoint tensor is missing: {path}")
     expected_sha = require_sha256(record.get("sha256"), "tensor sha256")
-    if _file_sha256(path) != expected_sha:
+    if file_sha256(path) != expected_sha:
         raise ValueError(f"checkpoint tensor checksum mismatch: {path}")
     values = np.load(path, allow_pickle=False)
     if list(values.shape) != record.get("shape"):

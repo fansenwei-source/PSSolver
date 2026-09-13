@@ -205,6 +205,85 @@ def plane_beris_edwards_production_signature(
         ) from exc
 
 
+def plane_beris_edwards_saved_shadow_signature(
+    metadata: Mapping[str, Any],
+) -> dict[str, object]:
+    """Recover the canonical signature from one saved shadow-run record."""
+
+    if not isinstance(metadata, Mapping):
+        raise TypeError("shadow metadata must be a mapping")
+    try:
+        if metadata["schema_version"] != SHADOW_RUN_SCHEMA_VERSION:
+            raise ValueError("shadow schema version is incompatible")
+        if metadata["script"] != SHADOW_SCRIPT_ID:
+            raise ValueError("shadow script identity is incompatible")
+        solver = metadata["solver"]
+        model = metadata["model"]
+        if model["name"] != "active_nematics" or model["variant"] != (
+            "beris_edwards_complete_nematic_stress_stokes"
+        ):
+            raise ValueError("shadow model identity is incompatible")
+        parameters = model["parameters"]
+        boundaries = metadata["boundary_conditions"]
+        numerics = metadata["numerics"]
+        return {
+            "solver": {
+                "shape": list(solver["shape"]),
+                "spectral_shape": list(solver["spectral_shape"]),
+                "lengths": list(solver["lengths"]),
+                "dt": float(solver["dt"]),
+                "real_dtype": solver["real_dtype"],
+                "spectral_dtype": solver["spectral_dtype"],
+                "transform_execution_order": solver[
+                    "transform_execution_order"
+                ],
+                "spectral_storage": solver["spectral_storage"],
+            },
+            "model": {
+                "Q_convention": model["Q_convention"],
+                "parameters": {
+                    name: parameters[name]
+                    for name in (
+                        "active_stress_prefactor",
+                        "eta",
+                        "flow_alignment_lambda",
+                        "fric",
+                        "ldg_A",
+                        "ldg_B",
+                        "ldg_C",
+                        "ldg_L1",
+                        "rotational_viscosity_gamma",
+                    )
+                },
+            },
+            "boundary_conditions": {
+                "Q": list(boundaries["Q"]),
+                "velocity_tangential": list(
+                    boundaries["velocity_tangential"]
+                ),
+                "velocity_normal": list(boundaries["velocity_normal"]),
+                "pressure": list(boundaries["pressure"]),
+            },
+            "numerics": {
+                name: numerics[name]
+                for name in (
+                    "dealias_rule",
+                    "hermitian_axis",
+                    "molecular_field_linear_space",
+                    "pointwise_execution",
+                    "projected_transform_execution",
+                    "spectral_refresh_interval_steps",
+                    "stress_divergence_sum_space",
+                    "velocity_zero_mode",
+                )
+            },
+        }
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ValueError(
+            "shadow metadata lacks the Stage L comparison contract"
+        ) from exc
+
+
 def _different_paths(
     left: object,
     right: object,
@@ -259,6 +338,23 @@ def compare_shadow_to_production_metadata(
     """Compare all currently migrated trajectory-defining Plane settings."""
 
     shadow = plane_beris_edwards_shadow_signature(runtime)
+    production = plane_beris_edwards_production_signature(
+        production_metadata
+    )
+    return ShadowMetadataComparison(
+        shadow_signature=MappingProxyType(shadow),
+        production_signature=MappingProxyType(production),
+        differing_paths=_different_paths(shadow, production),
+    )
+
+
+def compare_saved_shadow_to_production_metadata(
+    shadow_metadata: Mapping[str, Any],
+    production_metadata: Mapping[str, Any],
+) -> ShadowMetadataComparison:
+    """Compare saved shadow and production scientific configurations."""
+
+    shadow = plane_beris_edwards_saved_shadow_signature(shadow_metadata)
     production = plane_beris_edwards_production_signature(
         production_metadata
     )
@@ -328,7 +424,9 @@ def build_shadow_run_metadata(
 __all__ = [
     "ShadowMetadataComparison",
     "build_shadow_run_metadata",
+    "compare_saved_shadow_to_production_metadata",
     "compare_shadow_to_production_metadata",
     "plane_beris_edwards_production_signature",
+    "plane_beris_edwards_saved_shadow_signature",
     "plane_beris_edwards_shadow_signature",
 ]
