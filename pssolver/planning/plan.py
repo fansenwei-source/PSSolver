@@ -145,9 +145,12 @@ class ComponentTransformPlan:
                 raise ValueError(
                     f"{description} must be non-negative integers"
                 )
-        if self.role is FieldRole.DIAGNOSTIC:
+        if self.role in (FieldRole.TRANSIENT, FieldRole.DIAGNOSTIC):
             if self.storage_index is not None:
-                raise ValueError("diagnostic components cannot have storage indices")
+                raise ValueError(
+                    "transient and diagnostic components cannot have "
+                    "storage indices"
+                )
         elif (
             not isinstance(self.storage_index, int)
             or isinstance(self.storage_index, bool)
@@ -335,6 +338,26 @@ class SpectralPlan:
         )
 
     @property
+    def transient_components(self) -> tuple[ComponentTransformPlan, ...]:
+        """Derived components cached only for one algebraic evaluation."""
+
+        return tuple(
+            component
+            for component in self.components
+            if component.role is FieldRole.TRANSIENT
+        )
+
+    @property
+    def execution_components(self) -> tuple[ComponentTransformPlan, ...]:
+        """Components whose transform spaces participate in execution."""
+
+        return tuple(
+            component
+            for component in self.components
+            if component.role is not FieldRole.DIAGNOSTIC
+        )
+
+    @property
     def evolved_component_count(self) -> int:
         return sum(
             component.role is FieldRole.EVOLVED
@@ -347,6 +370,10 @@ class SpectralPlan:
             component.role is FieldRole.ALGEBRAIC
             for component in self.stored_components
         )
+
+    @property
+    def transient_component_count(self) -> int:
+        return len(self.transient_components)
 
     def to_metadata(self) -> dict[str, object]:
         return {
@@ -370,5 +397,13 @@ class SpectralPlan:
                 ],
                 "evolved_component_count": self.evolved_component_count,
                 "algebraic_component_count": self.algebraic_component_count,
+            },
+            "transient": {
+                "component_names": [
+                    component.component_name
+                    for component in self.transient_components
+                ],
+                "component_count": self.transient_component_count,
+                "persistent_storage": False,
             },
         }

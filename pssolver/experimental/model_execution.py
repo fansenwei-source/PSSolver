@@ -16,9 +16,13 @@ from types import MappingProxyType
 
 import torch
 
-from pssolver.adapters import compare_spectral_plan_to_runtime
-from pssolver.core import GeometrySpec, NumericsConfig, ProblemSpec
+from pssolver.adapters import (
+    boundary_set_to_legacy,
+    compare_spectral_plan_to_runtime,
+)
+from pssolver.core import FieldRole, GeometrySpec, NumericsConfig, ProblemSpec
 from pssolver.execution import (
+    AlgebraicExecutionPlan,
     AlgebraicExecutableModelProtocol,
     AlgebraicRuntimeRestartState,
     AlgebraicSolverContext,
@@ -31,6 +35,7 @@ from pssolver.execution import (
     GeometrySolverRegistry,
     InspectableAlgebraicSolverProtocol,
     ModelExecutionContext,
+    build_algebraic_execution_plan,
 )
 from pssolver.planning import SpectralPlan, assemble_spectral_plan
 from pssolver.solver import SpectralSolver
@@ -57,6 +62,9 @@ class LegacyModelExecutionContext:
     device: torch.device
     batch_size: int
     _laplacians: Mapping[str, torch.Tensor]
+    _boundary_conditions: Mapping[str, tuple[str, ...]]
+    _projector: BasisAwareSpectralProjector
+    _spectral_dtype: torch.dtype
 
     def __post_init__(self) -> None:
         physical_shape = tuple(self.physical_shape)
@@ -120,6 +128,38 @@ class LegacyModelExecutionContext:
                 raise ValueError("Laplacian eigenvalue dtype is inconsistent")
             if laplacian.device != self.device:
                 raise ValueError("Laplacian eigenvalue device is inconsistent")
+        if not isinstance(self._boundary_conditions, Mapping):
+            raise TypeError("_boundary_conditions must be a mapping")
+        boundaries = dict(self._boundary_conditions)
+        if set(boundaries) != set(laplacians):
+            raise ValueError(
+                "model operator boundaries must match planned components"
+            )
+        if not all(
+            isinstance(name, str)
+            and name.isidentifier()
+            and isinstance(value, tuple)
+            and len(value) == len(physical_shape)
+            and all(
+                condition in ("periodic", "dirichlet", "neumann")
+                for condition in value
+            )
+            for name, value in boundaries.items()
+        ):
+            raise ValueError("model operator boundaries are invalid")
+        if not isinstance(self._projector, BasisAwareSpectralProjector):
+            raise TypeError("_projector must be a BasisAwareSpectralProjector")
+        if (
+            tuple(self._projector.physical_shape) != physical_shape
+            or tuple(self._projector.shape) != spectral_shape
+            or self._projector.real_dtype != self.real_dtype
+            or torch.device(self._projector.device) != self.device
+        ):
+            raise ValueError("model operator projector is inconsistent")
+        if not isinstance(self._spectral_dtype, torch.dtype):
+            raise TypeError("_spectral_dtype must be a torch.dtype")
+        if self._spectral_dtype not in (torch.complex64, torch.complex128):
+            raise ValueError("_spectral_dtype must be a complex tensor dtype")
         object.__setattr__(self, "physical_shape", physical_shape)
         object.__setattr__(self, "spectral_shape", spectral_shape)
         object.__setattr__(
@@ -133,6 +173,11 @@ class LegacyModelExecutionContext:
             "_laplacians",
             MappingProxyType(laplacians),
         )
+        object.__setattr__(
+            self,
+            "_boundary_conditions",
+            MappingProxyType(boundaries),
+        )
 
     def laplacian_eigenvalues(self, component_name: str) -> torch.Tensor:
         if not isinstance(component_name, str):
@@ -144,6 +189,142 @@ class LegacyModelExecutionContext:
                 f"unknown planned component {component_name!r}"
             ) from exc
 
+    def _boundaries(self, component_name: str) -> tuple[str, ...]:
+        try:
+            return self._boundary_conditions[component_name]
+        except KeyError as exc:
+            raise KeyError(
+                f"unknown planned component {component_name!r}"
+            ) from exc
+
+    def _forward_projected(
+        self,
+        component_name: str,
+        value: torch.Tensor,
+    ) -> torch.Tensor:
+        boundaries = self._boundaries(component_name)
+        if not isinstance(value, torch.Tensor):
+            raise TypeError("operator input must be a tensor")
+        expected_shape = (self.batch_size, *self.physical_shape)
+        if value.shape != expected_shape:
+            raise ValueError(
+                f"physical value shape must be {expected_shape!r}, "
+                f"got {tuple(value.shape)!r}"
+            )
+        if value.dtype != self.real_dtype or value.device != self.device:
+            raise ValueError(
+                "physical value dtype and device must match the model context"
+            )
+        return self._projector.forward_transform(value, boundaries)
+
+    def _inverse_projected(
+        self,
+        component_name: str,
+        value: torch.Tensor,
+    ) -> torch.Tensor:
+        boundaries = self._boundaries(component_name)
+        if not isinstance(value, torch.Tensor):
+            raise TypeError("operator spectral value must be a tensor")
+        expected_shape = (self.batch_size, *self.spectral_shape)
+        if value.shape != expected_shape:
+            raise ValueError(
+                f"spectral value shape must be {expected_shape!r}, "
+                f"got {tuple(value.shape)!r}"
+            )
+        if value.dtype != self._spectral_dtype or value.device != self.device:
+            raise ValueError(
+                "spectral value dtype and device must match the model context"
+            )
+        return self._projector.inverse_transform(value, boundaries)
+
+    def gradient(
+        self,
+        source_component: str,
+        output_component: str,
+        value: torch.Tensor,
+        axis: int,
+    ) -> torch.Tensor:
+        if (
+            not isinstance(axis, int)
+            or isinstance(axis, bool)
+            or axis < 0
+            or axis >= len(self.physical_shape)
+        ):
+            raise ValueError("gradient axis is out of range")
+        source_boundaries = self._boundaries(source_component)
+        output_boundaries = self._boundaries(output_component)
+        source_hat = self._forward_projected(source_component, value)
+        derivative_hat, derivative_boundaries = (
+            self._projector.transform_backend.gradient_hat(
+                source_hat,
+                source_boundaries,
+                axis,
+            )
+        )
+        if tuple(derivative_boundaries) != output_boundaries:
+            raise ValueError(
+                "gradient output boundary space does not match the declared "
+                f"component {output_component!r}"
+            )
+        return self._inverse_projected(output_component, derivative_hat)
+
+    def laplacian(
+        self,
+        component_name: str,
+        value: torch.Tensor,
+    ) -> torch.Tensor:
+        boundaries = self._boundaries(component_name)
+        value_hat = self._forward_projected(component_name, value)
+        laplacian_hat = self._projector.transform_backend.laplacian_hat(
+            value_hat,
+            boundaries,
+        )
+        return self._inverse_projected(component_name, laplacian_hat)
+
+    def divergence(
+        self,
+        source_components: tuple[str, ...],
+        output_component: str,
+        values: tuple[torch.Tensor, ...],
+    ) -> torch.Tensor:
+        try:
+            source_components = tuple(source_components)
+            values = tuple(values)
+        except TypeError as exc:
+            raise TypeError(
+                "divergence sources and values must be iterable"
+            ) from exc
+        ndim = len(self.physical_shape)
+        if len(source_components) != ndim or len(values) != ndim:
+            raise ValueError(
+                "divergence requires one source component and value per axis"
+            )
+        output_boundaries = self._boundaries(output_component)
+        divergence_hat = None
+        for axis, (source_component, value) in enumerate(
+            zip(source_components, values, strict=True)
+        ):
+            source_boundaries = self._boundaries(source_component)
+            source_hat = self._forward_projected(source_component, value)
+            derivative_hat, derivative_boundaries = (
+                self._projector.transform_backend.gradient_hat(
+                    source_hat,
+                    source_boundaries,
+                    axis,
+                )
+            )
+            if tuple(derivative_boundaries) != output_boundaries:
+                raise ValueError(
+                    "divergence term boundary space does not match the "
+                    f"declared component {output_component!r}"
+                )
+            divergence_hat = (
+                derivative_hat
+                if divergence_hat is None
+                else divergence_hat + derivative_hat
+            )
+        return self._inverse_projected(output_component, divergence_hat)
+
 
 @dataclass(frozen=True, slots=True)
 class LegacyAlgebraicSolverContext:
@@ -152,8 +333,6 @@ class LegacyAlgebraicSolverContext:
     geometry_name: str
     model_context: LegacyModelExecutionContext
     spectral_dtype: torch.dtype
-    _boundary_conditions: Mapping[str, tuple[str, ...]]
-    _projector: BasisAwareSpectralProjector
 
     def __post_init__(self) -> None:
         if not isinstance(self.geometry_name, str) or not self.geometry_name:
@@ -164,21 +343,8 @@ class LegacyAlgebraicSolverContext:
             )
         if not isinstance(self.spectral_dtype, torch.dtype):
             raise TypeError("spectral_dtype must be a torch.dtype")
-        if not isinstance(self._boundary_conditions, Mapping):
-            raise TypeError("_boundary_conditions must be a mapping")
-        boundaries = dict(self._boundary_conditions)
-        expected = set(self.model_context._laplacians)
-        if set(boundaries) != expected:
-            raise ValueError(
-                "algebraic solver boundaries must match planned components"
-            )
-        object.__setattr__(
-            self,
-            "_boundary_conditions",
-            MappingProxyType(boundaries),
-        )
-        if not isinstance(self._projector, BasisAwareSpectralProjector):
-            raise TypeError("_projector must be a BasisAwareSpectralProjector")
+        if self.spectral_dtype != self.model_context._spectral_dtype:
+            raise ValueError("algebraic and model spectral dtypes must match")
 
     @property
     def physical_shape(self) -> tuple[int, ...]:
@@ -212,7 +378,7 @@ class LegacyAlgebraicSolverContext:
     def legacy_transform_backend(self):
         """Current backend exposed only to opt-in legacy solver adapters."""
 
-        return self._projector.transform_backend
+        return self.model_context._projector.transform_backend
 
     def laplacian_eigenvalues(self, component_name: str) -> torch.Tensor:
         return self.model_context.laplacian_eigenvalues(component_name)
@@ -222,36 +388,50 @@ class LegacyAlgebraicSolverContext:
         component_name: str,
         value: torch.Tensor,
     ) -> torch.Tensor:
-        try:
-            boundary_conditions = self._boundary_conditions[component_name]
-        except KeyError as exc:
-            raise KeyError(
-                f"unknown planned component {component_name!r}"
-            ) from exc
-        if not isinstance(value, torch.Tensor):
-            raise TypeError("forward_projected value must be a tensor")
-        expected_shape = (self.batch_size, *self.physical_shape)
-        if value.shape != expected_shape:
-            raise ValueError(
-                f"physical value shape must be {expected_shape!r}, "
-                f"got {tuple(value.shape)!r}"
-            )
-        if value.dtype != self.real_dtype or value.device != self.device:
-            raise ValueError(
-                "physical value dtype and device must match the solver context"
-            )
-        return self._projector.forward_transform(
+        return self.model_context._forward_projected(component_name, value)
+
+    def inverse_projected(
+        self,
+        component_name: str,
+        value: torch.Tensor,
+    ) -> torch.Tensor:
+        return self.model_context._inverse_projected(component_name, value)
+
+    def gradient(
+        self,
+        source_component: str,
+        output_component: str,
+        value: torch.Tensor,
+        axis: int,
+    ) -> torch.Tensor:
+        return self.model_context.gradient(
+            source_component,
+            output_component,
             value,
-            boundary_conditions,
+            axis,
+        )
+
+    def laplacian(
+        self,
+        component_name: str,
+        value: torch.Tensor,
+    ) -> torch.Tensor:
+        return self.model_context.laplacian(component_name, value)
+
+    def divergence(
+        self,
+        source_components: tuple[str, ...],
+        output_component: str,
+        values: tuple[torch.Tensor, ...],
+    ) -> torch.Tensor:
+        return self.model_context.divergence(
+            source_components,
+            output_component,
+            values,
         )
 
     def boundary_conditions(self, component_name: str) -> tuple[str, ...]:
-        try:
-            return self._boundary_conditions[component_name]
-        except KeyError as exc:
-            raise KeyError(
-                f"unknown planned component {component_name!r}"
-            ) from exc
+        return self.model_context._boundaries(component_name)
 
 
 @dataclass(frozen=True, slots=True)
@@ -316,18 +496,32 @@ class ResolvedAlgebraicSystem:
 
 
 class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
-    """Evaluate resolved algebraic systems in native spectral storage."""
+    """Evaluate a frozen algebraic DAG and publish its transient cache."""
 
     def __init__(
         self,
         assembly: LegacyAssemblySpec,
+        execution_plan: AlgebraicExecutionPlan,
         resolved_systems: tuple[ResolvedAlgebraicSystem, ...],
+        context: LegacyAlgebraicSolverContext,
         *,
         spectral_dtype: torch.dtype,
         device: torch.device,
         batch_size: int,
     ) -> None:
         super().__init__()
+        if not isinstance(execution_plan, AlgebraicExecutionPlan):
+            raise TypeError("execution_plan must be an AlgebraicExecutionPlan")
+        if not isinstance(context, LegacyAlgebraicSolverContext):
+            raise TypeError("context must be a LegacyAlgebraicSolverContext")
+        if tuple(
+            resolved.system.name for resolved in resolved_systems
+        ) != execution_plan.execution_order:
+            raise ValueError(
+                "resolved algebraic systems must follow the frozen execution "
+                "order"
+            )
+        self._execution_plan = execution_plan
         self._resolved_systems = tuple(resolved_systems)
         self._component_names = tuple(
             field.name for field in assembly.algebraic_fields
@@ -336,14 +530,52 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
         self._spectral_dtype = spectral_dtype
         self._device = device
         self._batch_size = batch_size
+        self._context = context
+        self._transient_names = execution_plan.transient_components
+        produced_dependencies = {
+            dependency
+            for system in execution_plan.declared_systems
+            for dependency in system.dependencies
+            if dependency in execution_plan.output_components
+        }
+        self._physical_cache_names = frozenset(
+            produced_dependencies | set(self._transient_names)
+        )
+        self._transient_cache: Mapping[str, torch.Tensor] | None = None
+        self._cache_generation = 0
+
+    @property
+    def cache_generation(self) -> int:
+        return self._cache_generation
+
+    def clear_cached_outputs(self) -> None:
+        """Invalidate non-stored outputs without touching physical state."""
+
+        self._transient_cache = None
+
+    def transient_state(self) -> Mapping[str, torch.Tensor]:
+        """Return the current read-only transient cache."""
+
+        if not self._transient_names:
+            return MappingProxyType({})
+        if self._transient_cache is None:
+            raise RuntimeError(
+                "transient algebraic outputs are not synchronized"
+            )
+        return self._transient_cache
 
     def forward(self, fields, parameters):
         del parameters
         outputs: dict[str, torch.Tensor] = {}
+        physical_state = {
+            name: fields[name]
+            for name in self._execution_plan.initial_components
+        }
+        transient_cache: dict[str, torch.Tensor] = {}
         for resolved in self._resolved_systems:
             dependencies = MappingProxyType(
                 {
-                    name: fields[name]
+                    name: physical_state[name]
                     for name in resolved.system.dependencies
                 }
             )
@@ -384,6 +616,15 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
                         f"{value.device}; expected {self._device}"
                     )
                 outputs[name] = value
+                if name in self._physical_cache_names:
+                    physical = self._context.inverse_projected(name, value)
+                    physical_state[name] = physical
+                    if name in self._transient_names:
+                        transient_cache[name] = physical
+        if set(transient_cache) != set(self._transient_names):
+            raise RuntimeError("transient algebraic cache is incomplete")
+        self._transient_cache = MappingProxyType(transient_cache)
+        self._cache_generation += 1
         return torch.stack([outputs[name] for name in self._component_names])
 
 
@@ -395,6 +636,8 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
         model: ExecutableModelProtocol,
         assembly: LegacyAssemblySpec,
         projector: BasisAwareSpectralProjector,
+        context: ModelExecutionContext,
+        algebraic_fields_adapter: LegacyAlgebraicFieldsAdapter | None = None,
     ) -> None:
         super().__init__()
         self._model = model
@@ -406,13 +649,24 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
             field.boundary_conditions for field in assembly.evolved_fields
         )
         self._projector = projector
+        self._context = context
+        self._algebraic_fields_adapter = algebraic_fields_adapter
+        self._transient_names = assembly.omitted_transient_components
+        if self._transient_names and algebraic_fields_adapter is None:
+            raise ValueError(
+                "transient fields require an algebraic cache provider"
+            )
 
     def forward(self, fields, parameters):
         del parameters
-        state = MappingProxyType(
-            {name: fields[name] for name in self._state_names}
-        )
-        explicit = self._model.explicit_rhs(state)
+        state_values = {name: fields[name] for name in self._state_names}
+        if self._algebraic_fields_adapter is not None:
+            transient = self._algebraic_fields_adapter.transient_state()
+            if set(transient) != set(self._transient_names):
+                raise RuntimeError("transient algebraic state is incomplete")
+            state_values.update(transient)
+        state = MappingProxyType(state_values)
+        explicit = self._model.explicit_rhs(state, self._context)
         if not isinstance(explicit, Mapping):
             raise TypeError("model explicit_rhs() must return a mapping")
         explicit = dict(explicit)
@@ -463,7 +717,7 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
 
 @dataclass(frozen=True, slots=True)
 class ExperimentalModelRuntime:
-    """Objects created by one explicit Stage E/F model assembly."""
+    """Objects created by one opt-in executable-model assembly."""
 
     problem: ProblemSpec
     plan: SpectralPlan
@@ -473,6 +727,7 @@ class ExperimentalModelRuntime:
     projector: BasisAwareSpectralProjector
     explicit_rhs_adapter: LegacyExplicitRHSAdapter
     algebraic_fields_adapter: LegacyAlgebraicFieldsAdapter | None
+    algebraic_execution_plan: AlgebraicExecutionPlan | None
     resolved_algebraic_systems: tuple[ResolvedAlgebraicSystem, ...]
 
     def to_metadata(self) -> dict[str, object]:
@@ -497,6 +752,22 @@ class ExperimentalModelRuntime:
                     resolved.to_metadata()
                     for resolved in self.resolved_algebraic_systems
                 ],
+                "execution_plan": (
+                    self.algebraic_execution_plan.to_metadata()
+                    if self.algebraic_execution_plan is not None
+                    else None
+                ),
+                "stored_components": [
+                    field.name for field in self.assembly.algebraic_fields
+                ],
+                "transient_components": list(
+                    self.assembly.omitted_transient_components
+                ),
+                "transient_cache": {
+                    "lifetime": "one_synchronized_pre_rhs_state",
+                    "stored_in_legacy_fields": False,
+                    "checkpointed": False,
+                },
             },
         }
 
@@ -509,6 +780,13 @@ class ExperimentalModelRuntime:
 
         if self.algebraic_fields_adapter is not None:
             self.solver.refresh_static_fields()
+
+    def transient_algebraic_state(self) -> Mapping[str, torch.Tensor]:
+        """Return synchronized transient outputs without promoting storage."""
+
+        if self.algebraic_fields_adapter is None:
+            return MappingProxyType({})
+        return self.algebraic_fields_adapter.transient_state()
 
     def algebraic_diagnostics(self) -> dict[str, object]:
         """Return solver diagnostics without adding diagnostic state fields."""
@@ -665,6 +943,8 @@ class ExperimentalModelRuntime:
                     )
         self.solver.model.nlmodel = None
         self.solver.model.static_model = None
+        if self.algebraic_fields_adapter is not None:
+            self.algebraic_fields_adapter.clear_cached_outputs()
         self.solver.reset(initial_values)
         if self.algebraic_fields_adapter is not None:
             for resolved in self.resolved_algebraic_systems:
@@ -692,10 +972,18 @@ class ExperimentalModelRuntime:
 def _create_execution_context(
     solver: SpectralSolver,
     assembly: LegacyAssemblySpec,
+    projector: BasisAwareSpectralProjector,
 ) -> LegacyModelExecutionContext:
+    boundaries = {
+        component.component_name: boundary_set_to_legacy(
+            component.boundaries
+        )
+        for component in assembly.source_plan.components
+        if component.role is not FieldRole.DIAGNOSTIC
+    }
     laplacians = {
-        field.name: solver.get_laplacian_eigs(field.boundary_conditions)
-        for field in assembly.fields
+        name: solver.get_laplacian_eigs(component_boundaries)
+        for name, component_boundaries in boundaries.items()
     }
     return LegacyModelExecutionContext(
         physical_shape=assembly.backend.shape,
@@ -706,16 +994,24 @@ def _create_execution_context(
         device=torch.device(solver.device),
         batch_size=solver.batchsize,
         _laplacians=laplacians,
+        _boundary_conditions=boundaries,
+        _projector=projector,
+        _spectral_dtype=solver.transform_backend.spectral_dtype,
     )
 
 
 def _validate_algebraic_system_specs(
     model: ExecutableModelProtocol,
+    plan: SpectralPlan,
     assembly: LegacyAssemblySpec,
-) -> tuple[AlgebraicSystemSpec, ...]:
-    algebraic_names = tuple(
+) -> AlgebraicExecutionPlan | None:
+    stored_algebraic_names = tuple(
         field.name for field in assembly.algebraic_fields
     )
+    transient_names = tuple(
+        component.component_name for component in plan.transient_components
+    )
+    algebraic_names = (*stored_algebraic_names, *transient_names)
     if not algebraic_names:
         if isinstance(model, AlgebraicExecutableModelProtocol):
             systems = tuple(model.algebraic_system_specs())
@@ -723,7 +1019,12 @@ def _validate_algebraic_system_specs(
                 raise ValueError(
                     "model declares algebraic systems without algebraic fields"
                 )
-        return ()
+        return None
+    if transient_names and not stored_algebraic_names:
+        raise ValueError(
+            "the legacy execution adapter requires at least one stored "
+            "algebraic output to drive transient pre-RHS evaluation"
+        )
     if not isinstance(model, AlgebraicExecutableModelProtocol):
         raise TypeError(
             "models with algebraic fields must implement "
@@ -741,54 +1042,34 @@ def _validate_algebraic_system_specs(
         raise TypeError(
             "algebraic_system_specs must contain AlgebraicSystemSpec objects"
         )
-    names = tuple(system.name for system in systems)
-    if len(set(names)) != len(names):
-        raise ValueError("algebraic system names must be unique")
-    output_names = tuple(
-        output
-        for system in systems
-        for output in system.output_components
-    )
-    if len(set(output_names)) != len(output_names):
-        raise ValueError("each algebraic component must have one owner")
-    if set(output_names) != set(algebraic_names):
-        missing = tuple(sorted(set(algebraic_names) - set(output_names)))
-        unexpected = tuple(sorted(set(output_names) - set(algebraic_names)))
-        raise ValueError(
-            "algebraic system outputs do not match algebraic fields; "
-            f"missing={missing!r}, unexpected={unexpected!r}"
-        )
-    evolved_names = {
+    evolved_names = tuple(
         field.name for field in assembly.evolved_fields
-    }
+    )
     for system in systems:
         if system.update_phase is not AlgebraicUpdatePhase.PRE_EXPLICIT_RHS:
-            raise ValueError("Stage F supports pre-RHS algebraic updates only")
-        invalid_dependencies = tuple(
-            sorted(set(system.dependencies) - evolved_names)
-        )
-        if invalid_dependencies:
-            raise ValueError(
-                "Stage F algebraic dependencies must be evolved components; "
-                f"invalid={invalid_dependencies!r}"
-            )
-    return systems
+            raise ValueError("the current adapter supports pre-RHS updates only")
+    return build_algebraic_execution_plan(
+        systems,
+        initial_components=evolved_names,
+        output_components=algebraic_names,
+        transient_components=transient_names,
+    )
 
 
 def _resolve_algebraic_systems(
-    systems: tuple[AlgebraicSystemSpec, ...],
+    execution_plan: AlgebraicExecutionPlan | None,
     geometry: GeometrySpec,
     registry: GeometrySolverRegistry | None,
     context: LegacyAlgebraicSolverContext,
 ) -> tuple[ResolvedAlgebraicSystem, ...]:
-    if not systems:
+    if execution_plan is None:
         return ()
     if not isinstance(registry, GeometrySolverRegistry):
         raise TypeError(
             "algebraic execution requires an explicit GeometrySolverRegistry"
         )
     resolved = []
-    for system in systems:
+    for system in execution_plan.ordered_systems:
         registration = registry.resolve(geometry, system)
         solver = registration.factory(context, system)
         resolved.append(
@@ -827,7 +1108,7 @@ def build_experimental_model_runtime(
     allow_unstored_diagnostics: bool = False,
     geometry_solver_registry: GeometrySolverRegistry | None = None,
 ) -> ExperimentalModelRuntime:
-    """Build a Stage E/F canary through the frozen plan and legacy adapter."""
+    """Build a canary through the frozen plan and legacy runtime adapter."""
 
     if not isinstance(model, ExecutableModelProtocol):
         raise TypeError("model must implement ExecutableModelProtocol")
@@ -837,7 +1118,11 @@ def build_experimental_model_runtime(
         plan,
         allow_unstored_diagnostics=allow_unstored_diagnostics,
     )
-    algebraic_systems = _validate_algebraic_system_specs(model, assembly)
+    algebraic_execution_plan = _validate_algebraic_system_specs(
+        model,
+        plan,
+        assembly,
+    )
 
     solver = create_legacy_solver(
         assembly,
@@ -846,19 +1131,14 @@ def build_experimental_model_runtime(
         batchsize=batch_size,
     )
     projector = create_legacy_projector(solver, assembly)
-    context = _create_execution_context(solver, assembly)
+    context = _create_execution_context(solver, assembly, projector)
     algebraic_context = LegacyAlgebraicSolverContext(
         geometry_name=geometry.name,
         model_context=context,
         spectral_dtype=solver.transform_backend.spectral_dtype,
-        _boundary_conditions={
-            field.name: field.boundary_conditions
-            for field in assembly.fields
-        },
-        _projector=projector,
     )
     resolved_algebraic_systems = _resolve_algebraic_systems(
-        algebraic_systems,
+        algebraic_execution_plan,
         geometry,
         geometry_solver_registry,
         algebraic_context,
@@ -871,17 +1151,14 @@ def build_experimental_model_runtime(
         initial_values=initial_values,
         linear_operators=linear_operators,
     )
-    explicit_rhs_adapter = LegacyExplicitRHSAdapter(
-        model,
-        assembly,
-        projector,
-    )
     algebraic_fields_adapter = None
     if resolved_algebraic_systems:
         solver.build()
         algebraic_fields_adapter = LegacyAlgebraicFieldsAdapter(
             assembly,
+            algebraic_execution_plan,
             resolved_algebraic_systems,
+            algebraic_context,
             spectral_dtype=solver.transform_backend.spectral_dtype,
             device=torch.device(solver.device),
             batch_size=solver.batchsize,
@@ -891,6 +1168,13 @@ def build_experimental_model_runtime(
             projector.inverse_transform
         )
         solver.refresh_static_fields()
+        explicit_rhs_adapter = LegacyExplicitRHSAdapter(
+            model,
+            assembly,
+            projector,
+            context,
+            algebraic_fields_adapter,
+        )
         explicit_output = explicit_rhs_adapter(
             solver.fields,
             solver.parameters,
@@ -906,6 +1190,12 @@ def build_experimental_model_runtime(
             static_fields_are_current=True,
         )
     else:
+        explicit_rhs_adapter = LegacyExplicitRHSAdapter(
+            model,
+            assembly,
+            projector,
+            context,
+        )
         solver.model.set_nonlinear_model(explicit_rhs_adapter)
         solver.build()
     compare_spectral_plan_to_runtime(
@@ -923,5 +1213,6 @@ def build_experimental_model_runtime(
         projector=projector,
         explicit_rhs_adapter=explicit_rhs_adapter,
         algebraic_fields_adapter=algebraic_fields_adapter,
+        algebraic_execution_plan=algebraic_execution_plan,
         resolved_algebraic_systems=resolved_algebraic_systems,
     )

@@ -204,7 +204,7 @@ def compare_spectral_plan_to_runtime(
             tuple(projector.shape),
         )
 
-    for component in plan.stored_components:
+    for component in plan.execution_components:
         prefix = f"components.{component.component_name}"
         boundary_conditions = boundary_set_to_legacy(component.boundaries)
         try:
@@ -320,7 +320,7 @@ def compare_spectral_plan_to_runtime(
 
     return ShadowComparison(
         mismatches=tuple(mismatches),
-        checked_components=len(plan.stored_components),
+        checked_components=len(plan.execution_components),
         checked_fields=fields is not None,
         checked_projector=projector is not None,
     )

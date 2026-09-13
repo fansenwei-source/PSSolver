@@ -19,6 +19,8 @@ from pssolver.core import (
     BoundarySet,
     FieldRole,
     FieldSpec,
+    HomogeneousDirichletBC,
+    HomogeneousNeumannBC,
 )
 from pssolver.execution import AlgebraicSystemSpec, ModelExecutionContext
 
@@ -172,7 +174,9 @@ class ScalarDiffusionModel:
     def explicit_rhs(
         self,
         state: Mapping[str, torch.Tensor],
+        context: ModelExecutionContext,
     ) -> Mapping[str, torch.Tensor]:
+        del context
         return {"phi": torch.zeros_like(state["phi"])}
 
 
@@ -253,7 +257,9 @@ class AllenCahnModel:
     def explicit_rhs(
         self,
         state: Mapping[str, torch.Tensor],
+        context: ModelExecutionContext,
     ) -> Mapping[str, torch.Tensor]:
+        del context
         phi = state["phi"]
         return {
             "phi": self.linear_reaction * phi
@@ -369,5 +375,160 @@ class DiffusionHelmholtzCouplingModel:
     def explicit_rhs(
         self,
         state: Mapping[str, torch.Tensor],
+        context: ModelExecutionContext,
     ) -> Mapping[str, torch.Tensor]:
+        del context
         return {"phi": self.coupling * state["response"]}
+
+
+@dataclass(frozen=True, slots=True)
+class DifferentialAlgebraicChainModel:
+    """Canary for an evolved -> transient -> stored algebraic DAG.
+
+    A physical derivative is cached transiently, a Helmholtz system consumes
+    it, and the explicit RHS consumes both products.  The declarations are
+    intentionally reverse-topological so construction must freeze a real DAG
+    rather than rely on tuple order.
+    """
+
+    boundaries: BoundarySet
+    gradient_boundaries: BoundarySet
+    gradient_axis: int
+    diffusivity: float
+    coupling: float
+    helmholtz_shift: float
+    helmholtz_length_sq: float
+    initial_amplitude: float = 0.1
+    initial_modes: tuple[int, ...] = (1,)
+    name: str = "differential_algebraic_chain"
+
+    def __post_init__(self) -> None:
+        for value, description in (
+            (self.boundaries, "boundaries"),
+            (self.gradient_boundaries, "gradient_boundaries"),
+        ):
+            if not isinstance(value, BoundarySet):
+                raise TypeError(f"{description} must be a BoundarySet")
+        if self.boundaries.ndim != self.gradient_boundaries.ndim:
+            raise ValueError("boundary dimensions must match")
+        if (
+            not isinstance(self.gradient_axis, int)
+            or isinstance(self.gradient_axis, bool)
+            or self.gradient_axis < 0
+            or self.gradient_axis >= self.boundaries.ndim
+        ):
+            raise ValueError("gradient_axis is out of range")
+        expected = list(self.boundaries.axes)
+        source_kind = expected[self.gradient_axis].kind
+        if source_kind is BoundaryKind.NEUMANN:
+            expected[self.gradient_axis] = HomogeneousDirichletBC()
+        elif source_kind is BoundaryKind.DIRICHLET:
+            expected[self.gradient_axis] = HomogeneousNeumannBC()
+        if tuple(expected) != self.gradient_boundaries.axes:
+            raise ValueError(
+                "gradient_boundaries do not match the mathematical derivative"
+            )
+        for attribute in (
+            "diffusivity",
+            "helmholtz_shift",
+            "helmholtz_length_sq",
+        ):
+            object.__setattr__(
+                self,
+                attribute,
+                _finite_real(getattr(self, attribute), attribute, positive=True),
+            )
+        for attribute in ("coupling", "initial_amplitude"):
+            object.__setattr__(
+                self,
+                attribute,
+                _finite_real(getattr(self, attribute), attribute, positive=False),
+            )
+        object.__setattr__(
+            self,
+            "initial_modes",
+            _normalize_modes(self.initial_modes, self.boundaries),
+        )
+        if not isinstance(self.name, str) or not self.name:
+            raise ValueError("name must be a non-empty string")
+
+    def field_specs(self) -> tuple[FieldSpec, ...]:
+        return (
+            FieldSpec.scalar("phi", FieldRole.EVOLVED, self.boundaries),
+            FieldSpec.scalar(
+                "gradient_phi",
+                FieldRole.TRANSIENT,
+                self.gradient_boundaries,
+            ),
+            FieldSpec.scalar(
+                "response",
+                FieldRole.ALGEBRAIC,
+                self.gradient_boundaries,
+            ),
+        )
+
+    def parameter_metadata(self) -> Mapping[str, object]:
+        return {
+            "coupling": self.coupling,
+            "diffusivity": self.diffusivity,
+            "gradient_axis": self.gradient_axis,
+            "helmholtz_length_sq": self.helmholtz_length_sq,
+            "helmholtz_shift": self.helmholtz_shift,
+            "initial_amplitude": self.initial_amplitude,
+            "initial_modes": list(self.initial_modes),
+        }
+
+    def algebraic_system_specs(self) -> tuple[AlgebraicSystemSpec, ...]:
+        return (
+            AlgebraicSystemSpec(
+                name="screened_gradient",
+                capability="scalar_helmholtz",
+                output_components=("response",),
+                dependencies=("gradient_phi",),
+                parameters={
+                    "helmholtz_length_sq": self.helmholtz_length_sq,
+                    "helmholtz_shift": self.helmholtz_shift,
+                },
+            ),
+            AlgebraicSystemSpec(
+                name="wall_normal_gradient",
+                capability="component_gradient",
+                output_components=("gradient_phi",),
+                dependencies=("phi",),
+                parameters={"axis": self.gradient_axis},
+            ),
+        )
+
+    def initial_values(
+        self,
+        context: ModelExecutionContext,
+    ) -> Mapping[str, torch.Tensor]:
+        return {
+            "phi": _initial_eigenmode(
+                context,
+                self.boundaries,
+                self.initial_modes,
+                self.initial_amplitude,
+            )
+        }
+
+    def linear_operators(
+        self,
+        context: ModelExecutionContext,
+    ) -> Mapping[str, torch.Tensor]:
+        return {
+            "phi": self.diffusivity
+            * context.laplacian_eigenvalues("phi")
+        }
+
+    def explicit_rhs(
+        self,
+        state: Mapping[str, torch.Tensor],
+        context: ModelExecutionContext,
+    ) -> Mapping[str, torch.Tensor]:
+        del context
+        return {
+            "phi": self.coupling
+            * state["gradient_phi"]
+            * state["response"]
+        }

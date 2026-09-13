@@ -192,6 +192,7 @@ class LegacyAssemblySpec:
     projector: LegacyProjectorSpec
     fields: tuple[LegacyFieldDeclaration, ...]
     omitted_diagnostic_components: tuple[str, ...]
+    omitted_transient_components: tuple[str, ...]
 
     def __post_init__(self) -> None:
         if not isinstance(self.source_plan, SpectralPlan):
@@ -244,6 +245,13 @@ class LegacyAssemblySpec:
         )
         if diagnostics != expected_diagnostics:
             raise ValueError("omitted diagnostics do not match source plan")
+        transients = tuple(self.omitted_transient_components)
+        expected_transients = tuple(
+            component.component_name
+            for component in self.source_plan.transient_components
+        )
+        if transients != expected_transients:
+            raise ValueError("omitted transients do not match source plan")
         numerics = self.source_plan.numerics
         expected_backend = (
             self.source_plan.physical_shape,
@@ -277,6 +285,11 @@ class LegacyAssemblySpec:
             "omitted_diagnostic_components",
             diagnostics,
         )
+        object.__setattr__(
+            self,
+            "omitted_transient_components",
+            transients,
+        )
 
     @property
     def evolved_fields(self) -> tuple[LegacyFieldDeclaration, ...]:
@@ -301,6 +314,9 @@ class LegacyAssemblySpec:
             "omitted_diagnostic_components": list(
                 self.omitted_diagnostic_components
             ),
+            "omitted_transient_components": list(
+                self.omitted_transient_components
+            ),
         }
 
 
@@ -319,6 +335,10 @@ def materialize_legacy_assembly(
         component.component_name
         for component in plan.components
         if component.role is FieldRole.DIAGNOSTIC
+    )
+    transients = tuple(
+        component.component_name
+        for component in plan.transient_components
     )
     if diagnostics and not allow_unstored_diagnostics:
         raise ValueError(
@@ -364,6 +384,7 @@ def materialize_legacy_assembly(
         projector=projector,
         fields=fields,
         omitted_diagnostic_components=diagnostics,
+        omitted_transient_components=transients,
     )
 
 

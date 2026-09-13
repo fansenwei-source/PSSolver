@@ -76,7 +76,7 @@ class ProblemSpec:
             for component in spec.components
         )
         if len(set(component_names)) != len(component_names):
-            raise ValueError("stored component names must be globally unique")
+            raise ValueError("component names must be globally unique")
 
         for spec in field_specs:
             if spec.ndim != self.geometry.domain.ndim:

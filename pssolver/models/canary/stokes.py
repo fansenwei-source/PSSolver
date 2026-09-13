@@ -242,7 +242,9 @@ class BodyForceStokesCanaryModel:
     def explicit_rhs(
         self,
         state: Mapping[str, torch.Tensor],
+        context: ModelExecutionContext,
     ) -> Mapping[str, torch.Tensor]:
+        del context
         return {
             name: torch.zeros_like(state[name])
             for name in self.stokes_system.force_components

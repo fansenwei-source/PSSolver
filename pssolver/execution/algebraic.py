@@ -1,8 +1,9 @@
-"""Algebraic-field lifecycle and solver contracts.
+"""Algebraic-field lifecycle, dependency-plan, and solver contracts.
 
-Algebraic fields are instantaneous constraints of the current evolved state.
-Stage F supports one explicit lifecycle: solve every algebraic system after the
-evolved state is available and immediately before evaluating the explicit RHS.
+Algebraic outputs are instantaneous functions of the current evolved state and
+of earlier outputs in a frozen acyclic graph.  They are synchronized
+immediately before evaluating the explicit RHS; individual field declarations
+decide whether an output is stored or transient.
 """
 
 from __future__ import annotations
@@ -17,7 +18,10 @@ from typing import Protocol, runtime_checkable
 
 import torch
 
-from .contracts import ExecutableModelProtocol, ModelExecutionContext
+from .contracts import (
+    ExecutableModelProtocol,
+    ModelExecutionContext,
+)
 
 
 class AlgebraicUpdatePhase(str, Enum):
@@ -81,7 +85,7 @@ class AlgebraicSystemSpec:
         overlap = tuple(sorted(set(outputs) & set(dependencies)))
         if overlap:
             raise ValueError(
-                "algebraic outputs cannot depend on themselves in Stage F; "
+                "algebraic outputs cannot depend on themselves; "
                 f"overlap={overlap!r}"
             )
         if not isinstance(self.update_phase, AlgebraicUpdatePhase):
@@ -127,6 +131,279 @@ class AlgebraicSystemSpec:
         }
 
 
+@dataclass(frozen=True, slots=True)
+class AlgebraicDependencyEdge:
+    """One component-labelled dependency between algebraic systems."""
+
+    producer: str
+    consumer: str
+    component: str
+
+    def __post_init__(self) -> None:
+        for value, description in (
+            (self.producer, "producer"),
+            (self.consumer, "consumer"),
+            (self.component, "component"),
+        ):
+            if not isinstance(value, str) or not value.isidentifier():
+                raise ValueError(f"{description} must be a Python identifier")
+        if self.producer == self.consumer:
+            raise ValueError("an algebraic dependency edge cannot be a self-edge")
+
+    def to_metadata(self) -> dict[str, str]:
+        return {
+            "producer": self.producer,
+            "consumer": self.consumer,
+            "component": self.component,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class AlgebraicExecutionPlan:
+    """Frozen deterministic DAG for one pre-RHS algebraic evaluation."""
+
+    declared_systems: tuple[AlgebraicSystemSpec, ...]
+    execution_order: tuple[str, ...]
+    dependency_edges: tuple[AlgebraicDependencyEdge, ...]
+    initial_components: tuple[str, ...]
+    output_components: tuple[str, ...]
+    transient_components: tuple[str, ...]
+
+    def __post_init__(self) -> None:
+        if any(
+            isinstance(value, str)
+            for value in (
+                self.declared_systems,
+                self.execution_order,
+                self.dependency_edges,
+                self.initial_components,
+                self.output_components,
+                self.transient_components,
+            )
+        ):
+            raise TypeError("algebraic execution-plan collections cannot be strings")
+        systems = tuple(self.declared_systems)
+        order = tuple(self.execution_order)
+        edges = tuple(self.dependency_edges)
+        initial = tuple(self.initial_components)
+        outputs = tuple(self.output_components)
+        transients = tuple(self.transient_components)
+        if not systems or not all(
+            isinstance(system, AlgebraicSystemSpec) for system in systems
+        ):
+            raise TypeError(
+                "declared_systems must contain AlgebraicSystemSpec objects"
+            )
+        names = tuple(system.name for system in systems)
+        if len(set(names)) != len(names):
+            raise ValueError("algebraic system names must be unique")
+        if set(order) != set(names) or len(order) != len(names):
+            raise ValueError("execution_order must contain every system once")
+        if not all(isinstance(edge, AlgebraicDependencyEdge) for edge in edges):
+            raise TypeError("dependency_edges have an invalid type")
+        for values, description in (
+            (initial, "initial_components"),
+            (outputs, "output_components"),
+            (transients, "transient_components"),
+        ):
+            if len(set(values)) != len(values) or any(
+                not isinstance(name, str) or not name.isidentifier()
+                for name in values
+            ):
+                raise ValueError(f"{description} must contain unique identifiers")
+        if set(initial) & set(outputs):
+            raise ValueError("initial and algebraic output components must differ")
+        if not set(transients) <= set(outputs):
+            raise ValueError("transient components must be algebraic outputs")
+        owners: dict[str, str] = {}
+        for system in systems:
+            for component in system.output_components:
+                if component in owners:
+                    raise ValueError(
+                        f"algebraic component {component!r} has multiple owners"
+                    )
+                owners[component] = system.name
+        if set(owners) != set(outputs):
+            raise ValueError(
+                "execution-plan outputs do not match system ownership"
+            )
+        expected_edges = {
+            (owners[component], system.name, component)
+            for system in systems
+            for component in system.dependencies
+            if component in owners
+        }
+        if any(
+            component not in set(initial) | set(owners)
+            for system in systems
+            for component in system.dependencies
+        ):
+            raise ValueError("execution-plan dependency has no source")
+        actual_edges = {
+            (edge.producer, edge.consumer, edge.component) for edge in edges
+        }
+        if actual_edges != expected_edges or len(edges) != len(expected_edges):
+            raise ValueError("dependency_edges do not match system dependencies")
+        position = {name: index for index, name in enumerate(order)}
+        if any(
+            position[producer] >= position[consumer]
+            for producer, consumer, _ in expected_edges
+        ):
+            raise ValueError("execution_order is not topological")
+        object.__setattr__(self, "declared_systems", systems)
+        object.__setattr__(self, "execution_order", order)
+        object.__setattr__(self, "dependency_edges", edges)
+        object.__setattr__(self, "initial_components", initial)
+        object.__setattr__(self, "output_components", outputs)
+        object.__setattr__(self, "transient_components", transients)
+
+    @property
+    def ordered_systems(self) -> tuple[AlgebraicSystemSpec, ...]:
+        by_name = {system.name: system for system in self.declared_systems}
+        return tuple(by_name[name] for name in self.execution_order)
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "declaration_order": [
+                system.name for system in self.declared_systems
+            ],
+            "execution_order": list(self.execution_order),
+            "dependency_edges": [
+                edge.to_metadata() for edge in self.dependency_edges
+            ],
+            "initial_components": list(self.initial_components),
+            "output_components": list(self.output_components),
+            "transient_components": list(self.transient_components),
+        }
+
+
+def build_algebraic_execution_plan(
+    systems: tuple[AlgebraicSystemSpec, ...],
+    *,
+    initial_components: tuple[str, ...],
+    output_components: tuple[str, ...],
+    transient_components: tuple[str, ...] = (),
+) -> AlgebraicExecutionPlan:
+    """Validate and topologically freeze an algebraic dependency graph."""
+
+    if any(
+        isinstance(value, str)
+        for value in (
+            systems,
+            initial_components,
+            output_components,
+            transient_components,
+        )
+    ):
+        raise TypeError("algebraic plan inputs cannot be strings")
+    try:
+        systems = tuple(systems)
+        initial_components = tuple(initial_components)
+        output_components = tuple(output_components)
+        transient_components = tuple(transient_components)
+    except TypeError as exc:
+        raise TypeError("algebraic plan inputs must be iterable") from exc
+    if not systems or not all(
+        isinstance(system, AlgebraicSystemSpec) for system in systems
+    ):
+        raise TypeError("systems must contain AlgebraicSystemSpec objects")
+    names = tuple(system.name for system in systems)
+    if len(set(names)) != len(names):
+        raise ValueError("algebraic system names must be unique")
+    for values, description in (
+        (initial_components, "initial_components"),
+        (output_components, "output_components"),
+        (transient_components, "transient_components"),
+    ):
+        if len(set(values)) != len(values) or any(
+            not isinstance(name, str) or not name.isidentifier()
+            for name in values
+        ):
+            raise ValueError(f"{description} must contain unique identifiers")
+    if set(initial_components) & set(output_components):
+        raise ValueError("initial and algebraic output components must differ")
+    if not set(transient_components) <= set(output_components):
+        raise ValueError("transient components must be algebraic outputs")
+
+    owners: dict[str, str] = {}
+    for system in systems:
+        for component in system.output_components:
+            if component in owners:
+                raise ValueError(
+                    f"algebraic component {component!r} has multiple owners"
+                )
+            owners[component] = system.name
+    if set(owners) != set(output_components):
+        missing = tuple(sorted(set(output_components) - set(owners)))
+        unexpected = tuple(sorted(set(owners) - set(output_components)))
+        raise ValueError(
+            "algebraic system outputs do not match declared algebraic and "
+            f"transient fields; missing={missing!r}, unexpected={unexpected!r}"
+        )
+
+    index = {name: position for position, name in enumerate(names)}
+    prerequisites = {name: set() for name in names}
+    consumers = {name: set() for name in names}
+    edges = []
+    available_initial = set(initial_components)
+    for system in systems:
+        for component in system.dependencies:
+            if component in available_initial:
+                continue
+            try:
+                producer = owners[component]
+            except KeyError as exc:
+                raise ValueError(
+                    "algebraic dependencies must be evolved or algebraic "
+                    f"outputs; {component!r} required by {system.name!r} "
+                    "has no producer"
+                ) from exc
+            if producer == system.name:
+                raise ValueError(
+                    f"algebraic system {system.name!r} depends on its own "
+                    f"output {component!r}"
+                )
+            prerequisites[system.name].add(producer)
+            consumers[producer].add(system.name)
+            edges.append(
+                AlgebraicDependencyEdge(producer, system.name, component)
+            )
+
+    ready = [name for name in names if not prerequisites[name]]
+    order = []
+    while ready:
+        ready.sort(key=index.__getitem__)
+        current = ready.pop(0)
+        order.append(current)
+        for consumer in sorted(consumers[current], key=index.__getitem__):
+            prerequisites[consumer].remove(current)
+            if not prerequisites[consumer]:
+                ready.append(consumer)
+    if len(order) != len(names):
+        cyclic = tuple(
+            name for name in names if prerequisites[name]
+        )
+        raise ValueError(
+            "algebraic dependency graph contains a cycle; "
+            f"systems={cyclic!r}"
+        )
+    edges.sort(
+        key=lambda edge: (
+            index[edge.consumer],
+            index[edge.producer],
+            edge.component,
+        )
+    )
+    return AlgebraicExecutionPlan(
+        declared_systems=systems,
+        execution_order=tuple(order),
+        dependency_edges=tuple(edges),
+        initial_components=initial_components,
+        output_components=output_components,
+        transient_components=transient_components,
+    )
+
+
 @runtime_checkable
 class AlgebraicExecutableModelProtocol(ExecutableModelProtocol, Protocol):
     """Executable model that declares instantaneous algebraic systems."""
@@ -162,6 +439,15 @@ class AlgebraicSolverContext(ModelExecutionContext, Protocol):
         value: torch.Tensor,
     ) -> torch.Tensor:
         """Transform and project a physical tensor for one component."""
+
+        ...
+
+    def inverse_projected(
+        self,
+        component_name: str,
+        value: torch.Tensor,
+    ) -> torch.Tensor:
+        """Invert native spectral coefficients for one component."""
 
         ...
 

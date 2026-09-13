@@ -254,7 +254,7 @@ def test_canaries_satisfy_the_execution_protocol_and_equations():
         30,
         dtype=torch.float64,
     ).reshape(1, 6, 5)
-    rhs = model.explicit_rhs({"phi": phi})["phi"]
+    rhs = model.explicit_rhs({"phi": phi}, runtime.context)["phi"]
     assert torch.equal(rhs, 0.8 * phi - 1.2 * phi.pow(3))
     assert json.loads(runtime.plan.model_parameters_json) == {
         "cubic_reaction": 1.2,
@@ -323,8 +323,9 @@ class _MissingRHSCanary(ScalarDiffusionModel):
     def explicit_rhs(
         self,
         state: Mapping[str, torch.Tensor],
+        context: ModelExecutionContext,
     ) -> Mapping[str, torch.Tensor]:
-        del state
+        del state, context
         return {}
 
 

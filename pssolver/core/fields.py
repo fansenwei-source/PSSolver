@@ -13,6 +13,7 @@ class FieldRole(str, Enum):
 
     EVOLVED = "evolved"
     ALGEBRAIC = "algebraic"
+    TRANSIENT = "transient"
     DIAGNOSTIC = "diagnostic"
 
 
@@ -23,7 +24,7 @@ def _validate_name(name: str, description: str) -> None:
 
 @dataclass(frozen=True, slots=True)
 class FieldComponentSpec:
-    """One stored scalar component and its physical boundary conditions."""
+    """One scalar component and its physical boundary conditions."""
 
     name: str
     boundaries: BoundarySet
@@ -87,7 +88,7 @@ class FieldSpec:
 
     @property
     def component_names(self) -> tuple[str, ...]:
-        """Stored component names in deterministic layout order."""
+        """Component names in deterministic declaration order."""
 
         return tuple(component.name for component in self.components)
 

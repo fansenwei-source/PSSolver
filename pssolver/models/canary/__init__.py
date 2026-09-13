@@ -2,6 +2,7 @@
 
 from .scalar import (
     AllenCahnModel,
+    DifferentialAlgebraicChainModel,
     DiffusionHelmholtzCouplingModel,
     ScalarDiffusionModel,
 )
@@ -10,6 +11,7 @@ from .stokes import BodyForceStokesCanaryModel
 __all__ = [
     "AllenCahnModel",
     "BodyForceStokesCanaryModel",
+    "DifferentialAlgebraicChainModel",
     "DiffusionHelmholtzCouplingModel",
     "ScalarDiffusionModel",
 ]
