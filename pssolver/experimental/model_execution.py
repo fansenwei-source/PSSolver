@@ -48,6 +48,7 @@ from .legacy_assembly import (
     declare_legacy_fields,
     materialize_legacy_assembly,
 )
+from .integrators import ProjectedSemiImplicitEulerIntegrator
 
 
 @dataclass(frozen=True, slots=True)
@@ -743,6 +744,11 @@ class ExperimentalModelRuntime:
             "spectral_plan": self.plan.to_metadata(),
             "legacy_assembly": self.assembly.to_metadata(),
             "execution_adapter": "legacy_explicit_rhs",
+            "time_integration": {
+                "scheme": "semi_implicit_euler",
+                "dynamic_spectral_projection": self.projector.enabled,
+                "integrator": type(self.solver.integrator).__name__,
+            },
             "algebraic_lifecycle": {
                 "update_phase": AlgebraicUpdatePhase.PRE_EXPLICIT_RHS.value,
                 "has_algebraic_fields": has_algebraic_fields,
@@ -952,6 +958,11 @@ class ExperimentalModelRuntime:
         if self.algebraic_fields_adapter is not None:
             self.algebraic_fields_adapter.clear_cached_outputs()
         self.solver.reset(initial_values)
+        if self.projector.enabled:
+            self.projector.project_dynamic_fields(
+                self.solver.fields,
+                sync_spatial=True,
+            )
         if self.algebraic_fields_adapter is not None:
             for resolved in self.resolved_algebraic_systems:
                 if isinstance(
@@ -1137,6 +1148,9 @@ def build_experimental_model_runtime(
         batchsize=batch_size,
     )
     projector = create_legacy_projector(solver, assembly)
+    solver.model.spectral_projector = projector
+    if projector.enabled:
+        solver.integrator_cl = ProjectedSemiImplicitEulerIntegrator
     context = _create_execution_context(solver, assembly, projector)
     algebraic_context = LegacyAlgebraicSolverContext(
         geometry_name=geometry.name,
@@ -1160,6 +1174,11 @@ def build_experimental_model_runtime(
     algebraic_fields_adapter = None
     if resolved_algebraic_systems:
         solver.build()
+        if projector.enabled:
+            projector.project_dynamic_fields(
+                solver.fields,
+                sync_spatial=True,
+            )
         algebraic_fields_adapter = LegacyAlgebraicFieldsAdapter(
             assembly,
             algebraic_execution_plan,
@@ -1204,6 +1223,11 @@ def build_experimental_model_runtime(
         )
         solver.model.set_nonlinear_model(explicit_rhs_adapter)
         solver.build()
+        if projector.enabled:
+            projector.project_dynamic_fields(
+                solver.fields,
+                sync_spatial=True,
+            )
     compare_spectral_plan_to_runtime(
         plan,
         solver.transform_backend,

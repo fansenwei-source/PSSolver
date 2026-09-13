@@ -18,6 +18,7 @@ from .legacy_assembly import (
     declare_legacy_fields,
     materialize_legacy_assembly,
 )
+from .integrators import ProjectedSemiImplicitEulerIntegrator
 from .model_execution import (
     ExperimentalModelRuntime,
     LegacyAlgebraicFieldsAdapter,
@@ -46,6 +47,7 @@ __all__ = [
     "LegacyProjectorSpec",
     "PlaneStokesSolverOptions",
     "PlaneBerisEdwardsSolverOptions",
+    "ProjectedSemiImplicitEulerIntegrator",
     "ResolvedAlgebraicSystem",
     "build_experimental_model_runtime",
     "create_canary_geometry_solver_registry",

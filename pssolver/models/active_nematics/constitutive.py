@@ -36,7 +36,11 @@ from pssolver.execution import (
     ModelExecutionContext,
 )
 
-from .beris_edwards import STRESS_COMPONENTS
+from .beris_edwards import (
+    STRESS_COMPONENTS,
+    beris_edwards_linear_operator,
+    beris_edwards_q_nonlinear_components,
+)
 from .fields import Q_COMPONENTS
 
 
@@ -46,6 +50,9 @@ BERIS_EDWARDS_MOLECULAR_FIELD_CAPABILITY = (
 BERIS_EDWARDS_Q_GRADIENT_CAPABILITY = "beris_edwards_q_gradient"
 BERIS_EDWARDS_STRESS_CAPABILITY = "beris_edwards_stress"
 BERIS_EDWARDS_FORCE_CAPABILITY = "beris_edwards_force"
+BERIS_EDWARDS_VELOCITY_GRADIENT_CAPABILITY = (
+    "beris_edwards_velocity_gradient"
+)
 
 H_COMPONENTS = ("Hxx", "Hxy", "Hxz", "Hyy", "Hyz")
 CARTESIAN_AXES = ("x", "y", "z")
@@ -62,6 +69,11 @@ DISTORTION_STRESS_COMPONENTS = tuple(
 )
 NEMATIC_FORCE_COMPONENTS = ("force_x", "force_y", "force_z")
 VELOCITY_COMPONENTS = ("ux", "uy", "uz")
+VELOCITY_GRADIENT_COMPONENTS = tuple(
+    f"d{component}_d{axis}"
+    for axis in CARTESIAN_AXES
+    for component in VELOCITY_COMPONENTS
+)
 
 
 def _finite(value: object, description: str, *, positive: bool = False) -> float:
@@ -425,18 +437,177 @@ class BerisEdwardsConstitutiveStokesCanaryModel:
         }
 
 
+@dataclass(frozen=True, slots=True)
+class BerisEdwardsPlaneCoupledModel:
+    """Complete opt-in Plane Beris--Edwards Q/Stokes evolution.
+
+    The Stage I constitutive declaration supplies Q, H, Q gradients, stress,
+    force, velocity, pressure, and their algebraic dependency graph.  Stage J
+    adds velocity gradients and the complete Q evolution while retaining the
+    production IMEX split: ``-A Q + L1 Laplacian(Q)`` is diagonal and implicit;
+    B/C bulk relaxation, advection, alignment, and co-rotation are explicit.
+    """
+
+    constitutive_model: BerisEdwardsConstitutiveStokesCanaryModel
+    rotational_viscosity: float
+    name: str = "beris_edwards_plane_coupled"
+
+    def __post_init__(self) -> None:
+        if not isinstance(
+            self.constitutive_model,
+            BerisEdwardsConstitutiveStokesCanaryModel,
+        ):
+            raise TypeError(
+                "constitutive_model must be a "
+                "BerisEdwardsConstitutiveStokesCanaryModel"
+            )
+        object.__setattr__(
+            self,
+            "rotational_viscosity",
+            _finite(
+                self.rotational_viscosity,
+                "rotational_viscosity",
+                positive=True,
+            ),
+        )
+        if not isinstance(self.name, str) or not self.name.isidentifier():
+            raise ValueError("name must be a Python identifier")
+
+    @property
+    def velocity_gradient_boundaries(self) -> tuple[BoundarySet, ...]:
+        velocity_boundaries = (
+            self.constitutive_model.tangential_boundaries,
+            self.constitutive_model.tangential_boundaries,
+            self.constitutive_model.normal_boundaries,
+        )
+        return tuple(
+            _derivative_boundaries(boundaries, axis)
+            for axis in range(3)
+            for boundaries in velocity_boundaries
+        )
+
+    def field_specs(self) -> tuple[FieldSpec, ...]:
+        base = self.constitutive_model.field_specs()
+        velocity_gradient = FieldSpec(
+            "velocity_gradient",
+            FieldRole.TRANSIENT,
+            tuple(
+                FieldComponentSpec(name, boundaries)
+                for name, boundaries in zip(
+                    VELOCITY_GRADIENT_COMPONENTS,
+                    self.velocity_gradient_boundaries,
+                    strict=True,
+                )
+            ),
+        )
+        return (*base[:-2], velocity_gradient, *base[-2:])
+
+    def parameter_metadata(self) -> Mapping[str, object]:
+        metadata = dict(self.constitutive_model.parameter_metadata())
+        metadata["qualification_scope"] = "complete_coupled_q_stokes"
+        metadata["rotational_viscosity"] = self.rotational_viscosity
+        metadata["q_imex_split"] = {
+            "explicit": [
+                "bulk_B_C",
+                "material_advection",
+                "flow_alignment",
+                "co_rotation",
+            ],
+            "implicit": ["bulk_A", "one_constant_L1_laplacian"],
+        }
+        return metadata
+
+    def algebraic_system_specs(self) -> tuple[AlgebraicSystemSpec, ...]:
+        return (
+            *self.constitutive_model.algebraic_system_specs(),
+            AlgebraicSystemSpec(
+                name="velocity_gradient",
+                capability=BERIS_EDWARDS_VELOCITY_GRADIENT_CAPABILITY,
+                output_components=VELOCITY_GRADIENT_COMPONENTS,
+                dependencies=VELOCITY_COMPONENTS,
+            ),
+        )
+
+    def initial_values(
+        self,
+        context: ModelExecutionContext,
+    ) -> Mapping[str, torch.Tensor]:
+        return self.constitutive_model.initial_values(context)
+
+    def linear_operators(
+        self,
+        context: ModelExecutionContext,
+    ) -> Mapping[str, torch.Tensor]:
+        parameters = self.constitutive_model.parameters
+        return {
+            component: beris_edwards_linear_operator(
+                -context.laplacian_eigenvalues(component),
+                ldg_a=parameters.ldg_a,
+                ldg_l1=parameters.ldg_l1,
+                rotational_viscosity=self.rotational_viscosity,
+            )
+            for component in Q_COMPONENTS
+        }
+
+    def explicit_rhs(
+        self,
+        state: Mapping[str, torch.Tensor],
+        context: ModelExecutionContext,
+    ) -> Mapping[str, torch.Tensor]:
+        del context
+        parameters = self.constitutive_model.parameters
+        q_components = tuple(state[name] for name in Q_COMPONENTS)
+        velocity = tuple(state[name] for name in VELOCITY_COMPONENTS)
+        q_gradient_values = tuple(
+            state[name] for name in Q_GRADIENT_COMPONENTS
+        )
+        q_gradients = tuple(
+            q_gradient_values[
+                axis * len(Q_COMPONENTS) : (axis + 1) * len(Q_COMPONENTS)
+            ]
+            for axis in range(3)
+        )
+        velocity_gradient_values = tuple(
+            state[name] for name in VELOCITY_GRADIENT_COMPONENTS
+        )
+        velocity_gradients = []
+        for axis in range(3):
+            start = axis * len(VELOCITY_COMPONENTS)
+            stop = (axis + 1) * len(VELOCITY_COMPONENTS)
+            velocity_gradients.append(
+                velocity_gradient_values[start:stop]
+            )
+        nonlinear = beris_edwards_q_nonlinear_components(
+            q_components,
+            velocity,
+            q_gradients,
+            tuple(velocity_gradients),
+            ldg_b_over_gamma=(
+                parameters.ldg_b / self.rotational_viscosity
+            ),
+            ldg_c_over_gamma=(
+                parameters.ldg_c / self.rotational_viscosity
+            ),
+            flow_alignment=parameters.flow_alignment,
+        )
+        return dict(zip(Q_COMPONENTS, nonlinear, strict=True))
+
+
 __all__ = [
     "ALGEBRAIC_STRESS_COMPONENTS",
     "BERIS_EDWARDS_FORCE_CAPABILITY",
     "BERIS_EDWARDS_MOLECULAR_FIELD_CAPABILITY",
     "BERIS_EDWARDS_Q_GRADIENT_CAPABILITY",
     "BERIS_EDWARDS_STRESS_CAPABILITY",
+    "BERIS_EDWARDS_VELOCITY_GRADIENT_CAPABILITY",
     "BerisEdwardsConstitutiveParameters",
     "BerisEdwardsConstitutiveStokesCanaryModel",
+    "BerisEdwardsPlaneCoupledModel",
     "CARTESIAN_AXES",
     "DISTORTION_STRESS_COMPONENTS",
     "H_COMPONENTS",
     "NEMATIC_FORCE_COMPONENTS",
     "Q_GRADIENT_COMPONENTS",
     "VELOCITY_COMPONENTS",
+    "VELOCITY_GRADIENT_COMPONENTS",
 ]

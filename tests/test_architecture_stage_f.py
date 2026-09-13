@@ -33,6 +33,7 @@ from pssolver.execution import (
     GeometrySolverRegistry,
 )
 from pssolver.experimental import (
+    ProjectedSemiImplicitEulerIntegrator,
     build_experimental_model_runtime,
     create_canary_geometry_solver_registry,
 )
@@ -186,6 +187,9 @@ def _manual_runtime(model, geometry, numerics, *, dt, batch_size):
         rule=numerics.dealias_rule.value,
         transform_execution=numerics.projected_transform_execution.value,
     )
+    solver.model.spectral_projector = projector
+    if projector.enabled:
+        solver.integrator_cl = ProjectedSemiImplicitEulerIntegrator
     solver.model.add_dynamic_field(
         "phi",
         _manual_initial(solver, model),
@@ -197,6 +201,8 @@ def _manual_runtime(model, geometry, numerics, *, dt, batch_size):
         boundary_conditions=boundaries,
     )
     solver.build()
+    if projector.enabled:
+        projector.project_dynamic_fields(solver.fields, sync_spatial=True)
     solver.model.set_static_compute_model(
         _ManualHelmholtzStatic(model, solver, projector, boundaries)
     )

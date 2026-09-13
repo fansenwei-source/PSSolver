@@ -32,10 +32,13 @@ from pssolver.models.active_nematics.constitutive import (
     BERIS_EDWARDS_MOLECULAR_FIELD_CAPABILITY,
     BERIS_EDWARDS_Q_GRADIENT_CAPABILITY,
     BERIS_EDWARDS_STRESS_CAPABILITY,
+    BERIS_EDWARDS_VELOCITY_GRADIENT_CAPABILITY,
     DISTORTION_STRESS_COMPONENTS,
     H_COMPONENTS,
     NEMATIC_FORCE_COMPONENTS,
     Q_GRADIENT_COMPONENTS,
+    VELOCITY_COMPONENTS,
+    VELOCITY_GRADIENT_COMPONENTS,
 )
 from pssolver.models.active_nematics.fields import Q_COMPONENTS
 from pssolver.transforms import (
@@ -188,7 +191,7 @@ class _MolecularFieldSolver(_StatelessConstitutiveSolver):
 
 
 @dataclass(slots=True)
-class _QGradientSolver(_StatelessConstitutiveSolver):
+class _TensorGradientSolver(_StatelessConstitutiveSolver):
     capability: str
     implementation_name: str
     output_components: tuple[str, ...]
@@ -201,17 +204,20 @@ class _QGradientSolver(_StatelessConstitutiveSolver):
         state: Mapping[str, torch.Tensor],
     ) -> Mapping[str, torch.Tensor]:
         if set(state) != set(self.dependencies):
-            raise ValueError("Q-gradient state has the wrong components")
+            raise ValueError("tensor-gradient state has the wrong components")
         result = {}
         output_index = 0
         for axis in range(3):
-            for q_name in self.dependencies:
+            for source_name in self.dependencies:
                 output = self.output_components[output_index]
-                q_hat = self.context.forward_projected(q_name, state[q_name])
+                source_hat = self.context.forward_projected(
+                    source_name,
+                    state[source_name],
+                )
                 gradient_hat, gradient_boundaries = (
                     self.context.legacy_transform_backend.gradient_hat(
-                        q_hat,
-                        self.context.boundary_conditions(q_name),
+                        source_hat,
+                        self.context.boundary_conditions(source_name),
                         axis,
                     )
                 )
@@ -219,7 +225,8 @@ class _QGradientSolver(_StatelessConstitutiveSolver):
                     output
                 ):
                     raise ValueError(
-                        f"Q-gradient output {output!r} has the wrong boundary space"
+                        "tensor-gradient output "
+                        f"{output!r} has the wrong boundary space"
                     )
                 result[output] = gradient_hat
                 output_index += 1
@@ -381,26 +388,71 @@ def _molecular_field_factory(
     )
 
 
-def _q_gradient_factory(
+def _tensor_gradient_solver(
     context: AlgebraicSolverContext,
     system: AlgebraicSystemSpec,
-) -> _QGradientSolver:
-    context = _legacy_plane_context(context)
-    if system.capability != BERIS_EDWARDS_Q_GRADIENT_CAPABILITY:
-        raise ValueError("wrong Q-gradient capability")
-    if system.dependencies != Q_COMPONENTS:
-        raise ValueError("Q-gradient dependencies must use canonical ordering")
-    if system.output_components != Q_GRADIENT_COMPONENTS:
-        raise ValueError("Q-gradient outputs must use canonical ordering")
+    *,
+    dependencies: tuple[str, ...],
+    outputs: tuple[str, ...],
+    implementation_name: str,
+) -> _TensorGradientSolver:
+    if system.dependencies != dependencies:
+        raise ValueError("gradient dependencies must use canonical ordering")
+    if system.output_components != outputs:
+        raise ValueError("gradient outputs must use canonical ordering")
     if system.parameters:
-        raise ValueError("Q-gradient system has no physical parameters")
-    return _QGradientSolver(
+        raise ValueError("gradient systems have no physical parameters")
+    for axis in range(3):
+        for index, source in enumerate(dependencies):
+            output = outputs[axis * len(dependencies) + index]
+            expected = list(context.boundary_conditions(source))
+            if expected[axis] == "neumann":
+                expected[axis] = "dirichlet"
+            elif expected[axis] == "dirichlet":
+                expected[axis] = "neumann"
+            if tuple(expected) != context.boundary_conditions(output):
+                raise ValueError(
+                    f"gradient output {output!r} has the wrong boundary space"
+                )
+    return _TensorGradientSolver(
         capability=system.capability,
-        implementation_name="plane_native_projected_q_gradient",
+        implementation_name=implementation_name,
         output_components=system.output_components,
         dependencies=system.dependencies,
         context=context,
         numerical_policy={"evaluation_space": "native_spectral"},
+    )
+
+
+def _q_gradient_factory(
+    context: AlgebraicSolverContext,
+    system: AlgebraicSystemSpec,
+) -> _TensorGradientSolver:
+    context = _legacy_plane_context(context)
+    if system.capability != BERIS_EDWARDS_Q_GRADIENT_CAPABILITY:
+        raise ValueError("wrong Q-gradient capability")
+    return _tensor_gradient_solver(
+        context,
+        system,
+        dependencies=Q_COMPONENTS,
+        outputs=Q_GRADIENT_COMPONENTS,
+        implementation_name="plane_native_projected_q_gradient",
+    )
+
+
+def _velocity_gradient_factory(
+    context: AlgebraicSolverContext,
+    system: AlgebraicSystemSpec,
+) -> _TensorGradientSolver:
+    context = _legacy_plane_context(context)
+    if system.capability != BERIS_EDWARDS_VELOCITY_GRADIENT_CAPABILITY:
+        raise ValueError("wrong velocity-gradient capability")
+    return _tensor_gradient_solver(
+        context,
+        system,
+        dependencies=VELOCITY_COMPONENTS,
+        outputs=VELOCITY_GRADIENT_COMPONENTS,
+        implementation_name="plane_native_projected_velocity_gradient",
     )
 
 
@@ -523,6 +575,13 @@ def create_beris_edwards_plane_geometry_solver_registry(
         capability=BERIS_EDWARDS_Q_GRADIENT_CAPABILITY,
         implementation_name="plane_native_projected_q_gradient",
         factory=_q_gradient_factory,
+    )
+    registry.register(
+        geometry_type=PlaneSlab,
+        geometry_name="plane_slab",
+        capability=BERIS_EDWARDS_VELOCITY_GRADIENT_CAPABILITY,
+        implementation_name="plane_native_projected_velocity_gradient",
+        factory=_velocity_gradient_factory,
     )
     registry.register(
         geometry_type=PlaneSlab,

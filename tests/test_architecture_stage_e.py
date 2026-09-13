@@ -27,7 +27,10 @@ from pssolver.core import (
     TransformExecutionOrder,
 )
 from pssolver.execution import ExecutableModelProtocol, ModelExecutionContext
-from pssolver.experimental import build_experimental_model_runtime
+from pssolver.experimental import (
+    ProjectedSemiImplicitEulerIntegrator,
+    build_experimental_model_runtime,
+)
 from pssolver.geometries import PeriodicBox, PlaneSlab
 from pssolver.models.canary import AllenCahnModel, ScalarDiffusionModel
 from pssolver.transforms import BasisAwareSpectralProjector
@@ -122,6 +125,9 @@ def _manual_runtime(model, geometry, numerics, *, dt, batch_size):
         rule=numerics.dealias_rule.value,
         transform_execution=numerics.projected_transform_execution.value,
     )
+    solver.model.spectral_projector = projector
+    if projector.enabled:
+        solver.integrator_cl = ProjectedSemiImplicitEulerIntegrator
     initial = _manual_initial(
         solver,
         model.boundaries,
@@ -139,6 +145,8 @@ def _manual_runtime(model, geometry, numerics, *, dt, batch_size):
         _ManualScalarRHS(model, projector, boundaries)
     )
     solver.build()
+    if projector.enabled:
+        projector.project_dynamic_fields(solver.fields, sync_spatial=True)
     return solver
 
 
