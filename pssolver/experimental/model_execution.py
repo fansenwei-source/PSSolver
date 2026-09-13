@@ -380,6 +380,12 @@ class LegacyAlgebraicSolverContext:
 
         return self.model_context._projector.transform_backend
 
+    @property
+    def legacy_projector(self):
+        """Current projector exposed only to opt-in legacy solver adapters."""
+
+        return self.model_context._projector
+
     def laplacian_eigenvalues(self, component_name: str) -> torch.Tensor:
         return self.model_context.laplacian_eigenvalues(component_name)
 

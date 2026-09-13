@@ -21,6 +21,20 @@ from .beris_edwards import (
     beris_edwards_reactive_stress_components,
     q_tensor_contraction,
 )
+from .constitutive import (
+    ALGEBRAIC_STRESS_COMPONENTS,
+    BERIS_EDWARDS_FORCE_CAPABILITY,
+    BERIS_EDWARDS_MOLECULAR_FIELD_CAPABILITY,
+    BERIS_EDWARDS_Q_GRADIENT_CAPABILITY,
+    BERIS_EDWARDS_STRESS_CAPABILITY,
+    DISTORTION_STRESS_COMPONENTS,
+    H_COMPONENTS,
+    NEMATIC_FORCE_COMPONENTS,
+    Q_GRADIENT_COMPONENTS,
+    VELOCITY_COMPONENTS,
+    BerisEdwardsConstitutiveParameters,
+    BerisEdwardsConstitutiveStokesCanaryModel,
+)
 from .fields import Q_COMPONENTS
 from .initial_conditions import (
     aligned_x_smooth_noise,
@@ -57,10 +71,17 @@ from .stokes import (
 )
 
 __all__ = [
+    "ALGEBRAIC_STRESS_COMPONENTS",
+    "BERIS_EDWARDS_FORCE_CAPABILITY",
+    "BERIS_EDWARDS_MOLECULAR_FIELD_CAPABILITY",
+    "BERIS_EDWARDS_Q_GRADIENT_CAPABILITY",
+    "BERIS_EDWARDS_STRESS_CAPABILITY",
     "BerisEdwardsQGradientCache",
     "BerisEdwardsQNonlinearModel",
     "BerisEdwardsPointwiseKernels",
     "BerisEdwardsFreeSlipStokes",
+    "BerisEdwardsConstitutiveParameters",
+    "BerisEdwardsConstitutiveStokesCanaryModel",
     "DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE",
     "DEFAULT_POINTWISE_EXECUTION",
     "DEFAULT_STRESS_DIVERGENCE_SUM_SPACE",
@@ -68,7 +89,12 @@ __all__ = [
     "POINTWISE_COMPILE_MODE",
     "POINTWISE_EXECUTION_MODES",
     "Q_COMPONENTS",
+    "Q_GRADIENT_COMPONENTS",
     "STRESS_COMPONENTS",
+    "DISTORTION_STRESS_COMPONENTS",
+    "H_COMPONENTS",
+    "NEMATIC_FORCE_COMPONENTS",
+    "VELOCITY_COMPONENTS",
     "Q_components",
     "Q_convention_metadata",
     "Q_magnitude",

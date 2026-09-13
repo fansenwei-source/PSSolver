@@ -4,6 +4,10 @@ Nothing in this package is imported by the production solver entry points.
 """
 
 from .canary_algebraic import create_canary_geometry_solver_registry
+from .beris_edwards import (
+    PlaneBerisEdwardsSolverOptions,
+    create_beris_edwards_plane_geometry_solver_registry,
+)
 from .legacy_assembly import (
     LegacyAssemblySpec,
     LegacyBackendSpec,
@@ -41,9 +45,11 @@ __all__ = [
     "LegacyModelExecutionContext",
     "LegacyProjectorSpec",
     "PlaneStokesSolverOptions",
+    "PlaneBerisEdwardsSolverOptions",
     "ResolvedAlgebraicSystem",
     "build_experimental_model_runtime",
     "create_canary_geometry_solver_registry",
+    "create_beris_edwards_plane_geometry_solver_registry",
     "create_legacy_projector",
     "create_legacy_solver",
     "create_stokes_geometry_solver_registry",
