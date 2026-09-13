@@ -241,16 +241,29 @@ class ModalSaddleStokesCompute(torch.nn.Module):
             return self._apply_axis_matrix(out, self.dd_to_dn_z, axis=2)
         raise IndexError(f"Unsupported velocity-divergence axis {axis}.")
 
+    def pressure_gradient_hats(self, pressure_hat):
+        """Return pressure-gradient coefficients in the three velocity bases."""
+
+        return tuple(
+            self._pressure_gradient(pressure_hat, axis)
+            for axis in range(3)
+        )
+
+    def divergence_hat(self, ux_hat, uy_hat, uz_hat):
+        """Return velocity divergence in the native pressure basis."""
+
+        return sum(
+            self._velocity_divergence_component(velocity_hat, axis)
+            for axis, velocity_hat in enumerate((ux_hat, uy_hat, uz_hat))
+        )
+
     def _pressure_operator(self, pressure_hat):
         pressure_hat = self._project_pressure_gauge(pressure_hat)
         velocity_hats = [
             self._helmholtz_inverse(self._pressure_gradient(pressure_hat, axis))
             for axis in range(3)
         ]
-        divergence_hat = sum(
-            self._velocity_divergence_component(velocity_hats[axis], axis)
-            for axis in range(3)
-        )
+        divergence_hat = self.divergence_hat(*velocity_hats)
         return self._project_pressure_gauge(-divergence_hat)
 
     def _solve_pressure(self, rhs_hat):
@@ -305,23 +318,31 @@ class ModalSaddleStokesCompute(torch.nn.Module):
         self.last_pressure_relative_residual = residual_norm / rhs_norm
         return pressure_hat
 
-    def forward(self, fields, params):
-        force = active_force_divergence(fields, params["alpha"], self.beta)
-        force_hat = fields.transform_tensor(force, U_BC)
-        free_velocity = [self._helmholtz_inverse(force_hat[index]) for index in range(3)]
-        provisional_divergence = sum(
-            self._velocity_divergence_component(free_velocity[axis], axis)
-            for axis in range(3)
-        )
+    def solve_force_hats(self, fx_hat, fy_hat, fz_hat):
+        """Solve the channel saddle system for native force spectra."""
+
+        force_hats = (fx_hat, fy_hat, fz_hat)
+        free_velocity = [
+            self._helmholtz_inverse(force_hat)
+            for force_hat in force_hats
+        ]
+        provisional_divergence = self.divergence_hat(*free_velocity)
         pressure_hat = self._solve_pressure(
             self._project_pressure_gauge(-provisional_divergence)
         )
         velocity_hat = [
             free_velocity[axis]
-            - self._helmholtz_inverse(self._pressure_gradient(pressure_hat, axis))
+            - self._helmholtz_inverse(
+                self._pressure_gradient(pressure_hat, axis)
+            )
             for axis in range(3)
         ]
-        return torch.stack((*velocity_hat, pressure_hat))
+        return (*velocity_hat, pressure_hat)
+
+    def forward(self, fields, params):
+        force = active_force_divergence(fields, params["alpha"], self.beta)
+        force_hat = fields.transform_tensor(force, U_BC)
+        return torch.stack(self.solve_force_hats(*force_hat))
 
 
 def build_active_nematic_channel(

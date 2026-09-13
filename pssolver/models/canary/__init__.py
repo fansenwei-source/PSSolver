@@ -5,9 +5,11 @@ from .scalar import (
     DiffusionHelmholtzCouplingModel,
     ScalarDiffusionModel,
 )
+from .stokes import BodyForceStokesCanaryModel
 
 __all__ = [
     "AllenCahnModel",
+    "BodyForceStokesCanaryModel",
     "DiffusionHelmholtzCouplingModel",
     "ScalarDiffusionModel",
 ]

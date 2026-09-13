@@ -2,10 +2,13 @@
 
 from .algebraic import (
     AlgebraicExecutableModelProtocol,
+    AlgebraicRuntimeRestartState,
     AlgebraicSolverContext,
     AlgebraicSolverProtocol,
+    AlgebraicSystemRestartState,
     AlgebraicSystemSpec,
     AlgebraicUpdatePhase,
+    InspectableAlgebraicSolverProtocol,
 )
 from .contracts import ExecutableModelProtocol, ModelExecutionContext
 from .dispatch import (
@@ -13,16 +16,29 @@ from .dispatch import (
     AlgebraicSolverRegistration,
     GeometrySolverRegistry,
 )
+from .stokes import (
+    INCOMPRESSIBLE_STOKES_CAPABILITY,
+    IncompressibleStokesSystemSpec,
+    PressureGauge,
+    TangentialZeroModePolicy,
+)
 
 __all__ = [
     "AlgebraicExecutableModelProtocol",
+    "AlgebraicRuntimeRestartState",
     "AlgebraicSolverContext",
     "AlgebraicSolverFactory",
     "AlgebraicSolverProtocol",
     "AlgebraicSolverRegistration",
+    "AlgebraicSystemRestartState",
     "AlgebraicSystemSpec",
     "AlgebraicUpdatePhase",
     "ExecutableModelProtocol",
     "GeometrySolverRegistry",
+    "INCOMPRESSIBLE_STOKES_CAPABILITY",
+    "IncompressibleStokesSystemSpec",
+    "InspectableAlgebraicSolverProtocol",
     "ModelExecutionContext",
+    "PressureGauge",
+    "TangentialZeroModePolicy",
 ]

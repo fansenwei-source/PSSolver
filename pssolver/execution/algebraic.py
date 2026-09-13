@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import Enum
+import hashlib
 import json
 from types import MappingProxyType
 from typing import Protocol, runtime_checkable
@@ -193,3 +194,134 @@ class AlgebraicSolverProtocol(Protocol):
         """Return native spectral values for all requested outputs."""
 
         ...
+
+
+@runtime_checkable
+class InspectableAlgebraicSolverProtocol(Protocol):
+    """Optional diagnostics and warm-start state for algebraic solvers.
+
+    Diagnostics are observations of a solve, not stored PDE fields.  Restart
+    state is likewise implementation state and must never be confused with
+    the evolved or algebraic physical state declared by a model.
+    """
+
+    def observability_metadata(self) -> Mapping[str, object]:
+        """Return static, JSON-compatible observability capabilities."""
+
+        ...
+
+    def diagnostic_snapshot(self) -> Mapping[str, object]:
+        """Return diagnostics from the most recent algebraic solve."""
+
+        ...
+
+    def capture_restart_state(self) -> Mapping[str, torch.Tensor]:
+        """Return detached implementation state needed for a warm restart."""
+
+        ...
+
+    def restore_restart_state(
+        self,
+        state: Mapping[str, torch.Tensor],
+    ) -> None:
+        """Restore a previously captured warm-start state."""
+
+        ...
+
+
+def _tensor_sha256(value: torch.Tensor) -> str:
+    contiguous = value.detach().to(device="cpu").contiguous()
+    return hashlib.sha256(contiguous.numpy().tobytes()).hexdigest()
+
+
+@dataclass(frozen=True, slots=True)
+class AlgebraicSystemRestartState:
+    """One solver's restart state bound to its dispatch identity."""
+
+    system_name: str
+    capability: str
+    implementation_name: str
+    provenance_sha256: str
+    tensors: Mapping[str, torch.Tensor]
+
+    def __post_init__(self) -> None:
+        for value, description in (
+            (self.system_name, "system_name"),
+            (self.capability, "capability"),
+            (self.implementation_name, "implementation_name"),
+        ):
+            if not isinstance(value, str) or not value.isidentifier():
+                raise ValueError(f"{description} must be a Python identifier")
+        if (
+            not isinstance(self.provenance_sha256, str)
+            or len(self.provenance_sha256) != 64
+            or any(
+                character not in "0123456789abcdef"
+                for character in self.provenance_sha256
+            )
+        ):
+            raise ValueError("provenance_sha256 must be a lowercase SHA-256")
+        if not isinstance(self.tensors, Mapping):
+            raise TypeError("restart tensors must be a mapping")
+        tensors: dict[str, torch.Tensor] = {}
+        for name, value in self.tensors.items():
+            if not isinstance(name, str) or not name.isidentifier():
+                raise ValueError(
+                    "restart tensor names must be Python identifiers"
+                )
+            if not isinstance(value, torch.Tensor):
+                raise TypeError("restart state values must be tensors")
+            if not bool(torch.isfinite(value).all().item()):
+                raise ValueError("restart state tensors must be finite")
+            tensors[name] = value.detach().clone()
+        object.__setattr__(self, "tensors", MappingProxyType(tensors))
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "system_name": self.system_name,
+            "capability": self.capability,
+            "implementation_name": self.implementation_name,
+            "provenance_sha256": self.provenance_sha256,
+            "tensors": {
+                name: {
+                    "shape": list(value.shape),
+                    "dtype": str(value.dtype),
+                    "device_at_capture": str(value.device),
+                    "sha256": _tensor_sha256(value),
+                }
+                for name, value in sorted(self.tensors.items())
+            },
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class AlgebraicRuntimeRestartState:
+    """Auditable warm-start state for all resolved algebraic systems."""
+
+    format_version: int
+    systems: tuple[AlgebraicSystemRestartState, ...]
+
+    def __post_init__(self) -> None:
+        if self.format_version != 1:
+            raise ValueError("unsupported algebraic restart format version")
+        try:
+            systems = tuple(self.systems)
+        except TypeError as exc:
+            raise TypeError("restart systems must be iterable") from exc
+        if not all(
+            isinstance(system, AlgebraicSystemRestartState)
+            for system in systems
+        ):
+            raise TypeError(
+                "restart systems must contain AlgebraicSystemRestartState"
+            )
+        names = tuple(system.system_name for system in systems)
+        if len(set(names)) != len(names):
+            raise ValueError("restart system names must be unique")
+        object.__setattr__(self, "systems", systems)
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "format_version": self.format_version,
+            "systems": [system.to_metadata() for system in self.systems],
+        }

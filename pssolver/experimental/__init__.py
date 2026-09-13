@@ -23,9 +23,15 @@ from .model_execution import (
     ResolvedAlgebraicSystem,
     build_experimental_model_runtime,
 )
+from .stokes import (
+    ChannelStokesSolverOptions,
+    PlaneStokesSolverOptions,
+    create_stokes_geometry_solver_registry,
+)
 
 __all__ = [
     "ExperimentalModelRuntime",
+    "ChannelStokesSolverOptions",
     "LegacyAlgebraicFieldsAdapter",
     "LegacyAlgebraicSolverContext",
     "LegacyAssemblySpec",
@@ -34,11 +40,13 @@ __all__ = [
     "LegacyFieldDeclaration",
     "LegacyModelExecutionContext",
     "LegacyProjectorSpec",
+    "PlaneStokesSolverOptions",
     "ResolvedAlgebraicSystem",
     "build_experimental_model_runtime",
     "create_canary_geometry_solver_registry",
     "create_legacy_projector",
     "create_legacy_solver",
+    "create_stokes_geometry_solver_registry",
     "declare_legacy_fields",
     "materialize_legacy_assembly",
 ]

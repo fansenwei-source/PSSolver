@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
+import hashlib
+import json
 import math
 from types import MappingProxyType
 
@@ -18,13 +20,16 @@ from pssolver.adapters import compare_spectral_plan_to_runtime
 from pssolver.core import GeometrySpec, NumericsConfig, ProblemSpec
 from pssolver.execution import (
     AlgebraicExecutableModelProtocol,
+    AlgebraicRuntimeRestartState,
     AlgebraicSolverContext,
     AlgebraicSolverProtocol,
     AlgebraicSolverRegistration,
+    AlgebraicSystemRestartState,
     AlgebraicSystemSpec,
     AlgebraicUpdatePhase,
     ExecutableModelProtocol,
     GeometrySolverRegistry,
+    InspectableAlgebraicSolverProtocol,
     ModelExecutionContext,
 )
 from pssolver.planning import SpectralPlan, assemble_spectral_plan
@@ -203,6 +208,12 @@ class LegacyAlgebraicSolverContext:
     def batch_size(self) -> int:
         return self.model_context.batch_size
 
+    @property
+    def legacy_transform_backend(self):
+        """Current backend exposed only to opt-in legacy solver adapters."""
+
+        return self._projector.transform_backend
+
     def laplacian_eigenvalues(self, component_name: str) -> torch.Tensor:
         return self.model_context.laplacian_eigenvalues(component_name)
 
@@ -278,9 +289,29 @@ class ResolvedAlgebraicSystem:
             raise ValueError("resolved solver outputs do not match request")
 
     def to_metadata(self) -> dict[str, object]:
+        solver_observability = {
+            "diagnostics": "unavailable",
+            "restart": "stateless",
+        }
+        if isinstance(self.solver, InspectableAlgebraicSolverProtocol):
+            solver_observability = dict(
+                self.solver.observability_metadata()
+            )
+            try:
+                json.dumps(
+                    solver_observability,
+                    allow_nan=False,
+                    sort_keys=True,
+                )
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    "algebraic observability metadata must be finite and "
+                    "JSON-compatible"
+                ) from exc
         return {
             "system": self.system.to_metadata(),
             "dispatch": self.registration.to_metadata(),
+            "observability": solver_observability,
         }
 
 
@@ -479,6 +510,121 @@ class ExperimentalModelRuntime:
         if self.algebraic_fields_adapter is not None:
             self.solver.refresh_static_fields()
 
+    def algebraic_diagnostics(self) -> dict[str, object]:
+        """Return solver diagnostics without adding diagnostic state fields."""
+
+        diagnostics: dict[str, object] = {}
+        for resolved in self.resolved_algebraic_systems:
+            if not isinstance(
+                resolved.solver,
+                InspectableAlgebraicSolverProtocol,
+            ):
+                continue
+            value = dict(resolved.solver.diagnostic_snapshot())
+            try:
+                json.dumps(value, allow_nan=False, sort_keys=True)
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    "algebraic diagnostics must be finite and JSON-compatible"
+                ) from exc
+            diagnostics[resolved.system.name] = value
+        return diagnostics
+
+    def capture_algebraic_restart_state(
+        self,
+    ) -> AlgebraicRuntimeRestartState:
+        """Capture implementation warm-start state with dispatch identity."""
+
+        systems = []
+        for resolved in self.resolved_algebraic_systems:
+            tensors: Mapping[str, torch.Tensor] = {}
+            if isinstance(
+                resolved.solver,
+                InspectableAlgebraicSolverProtocol,
+            ):
+                tensors = resolved.solver.capture_restart_state()
+            systems.append(
+                AlgebraicSystemRestartState(
+                    system_name=resolved.system.name,
+                    capability=resolved.system.capability,
+                    implementation_name=(
+                        resolved.registration.implementation_name
+                    ),
+                    provenance_sha256=self._algebraic_restart_identity(
+                        resolved
+                    ),
+                    tensors=tensors,
+                )
+            )
+        return AlgebraicRuntimeRestartState(1, tuple(systems))
+
+    def _algebraic_restart_identity(
+        self,
+        resolved: ResolvedAlgebraicSystem,
+    ) -> str:
+        payload = {
+            "dispatch": resolved.registration.to_metadata(),
+            "geometry": self.problem.geometry.to_metadata(),
+            "numerics": self.problem.numerics.to_metadata(),
+            "real_dtype": str(self.context.real_dtype),
+            "spectral_dtype": str(
+                self.solver.transform_backend.spectral_dtype
+            ),
+            "system": resolved.system.to_metadata(),
+        }
+        canonical = json.dumps(
+            payload,
+            allow_nan=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        return hashlib.sha256(canonical).hexdigest()
+
+    def restore_algebraic_restart_state(
+        self,
+        restart: AlgebraicRuntimeRestartState,
+    ) -> None:
+        """Restore warm-start state only after exact identity validation."""
+
+        if not isinstance(restart, AlgebraicRuntimeRestartState):
+            raise TypeError(
+                "restart must be an AlgebraicRuntimeRestartState"
+            )
+        expected = {
+            resolved.system.name: resolved
+            for resolved in self.resolved_algebraic_systems
+        }
+        actual = {system.system_name: system for system in restart.systems}
+        if set(actual) != set(expected):
+            raise ValueError(
+                "algebraic restart systems do not match this runtime"
+            )
+        for name, resolved in expected.items():
+            saved = actual[name]
+            identity = (
+                resolved.system.capability,
+                resolved.registration.implementation_name,
+            )
+            if (saved.capability, saved.implementation_name) != identity:
+                raise ValueError(
+                    f"algebraic restart dispatch mismatch for {name!r}"
+                )
+            if saved.provenance_sha256 != self._algebraic_restart_identity(
+                resolved
+            ):
+                raise ValueError(
+                    f"algebraic restart provenance mismatch for {name!r}"
+                )
+            if isinstance(
+                resolved.solver,
+                InspectableAlgebraicSolverProtocol,
+            ):
+                resolved.solver.restore_restart_state(saved.tensors)
+            elif saved.tensors:
+                raise ValueError(
+                    f"stateless algebraic solver {name!r} received state"
+                )
+
     def reset(
         self,
         initial_values: Mapping[str, torch.Tensor] | None = None,
@@ -521,6 +667,12 @@ class ExperimentalModelRuntime:
         self.solver.model.static_model = None
         self.solver.reset(initial_values)
         if self.algebraic_fields_adapter is not None:
+            for resolved in self.resolved_algebraic_systems:
+                if isinstance(
+                    resolved.solver,
+                    InspectableAlgebraicSolverProtocol,
+                ):
+                    resolved.solver.restore_restart_state({})
             self.solver.model.set_static_compute_model(
                 self.algebraic_fields_adapter
             )
