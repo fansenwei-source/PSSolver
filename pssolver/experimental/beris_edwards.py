@@ -138,6 +138,10 @@ class _MolecularFieldSolver(_StatelessConstitutiveSolver):
     kernels: BerisEdwardsPointwiseKernels
     numerical_policy: Mapping[str, object]
 
+    @property
+    def physical_dependencies(self) -> tuple[str, ...]:
+        return self.dependencies
+
     def solve_spectral(
         self,
         state: Mapping[str, torch.Tensor],
@@ -173,14 +177,17 @@ class _MolecularFieldSolver(_StatelessConstitutiveSolver):
             ldg_b=self.ldg_b,
             ldg_c=self.ldg_c,
         )
+        bulk_hats = self.context.forward_projected_many(
+            self.output_components,
+            tuple(bulk),
+        )
         result = {}
-        for q_name, h_name, bulk_value in zip(
+        for q_name, h_name, bulk_hat in zip(
             self.dependencies,
             self.output_components,
-            bulk,
+            (bulk_hats[name] for name in self.output_components),
             strict=True,
         ):
-            bulk_hat = self.context.forward_projected(h_name, bulk_value)
             q_hat = self.context.spectral_dependency(state, q_name)
             result[h_name] = bulk_hat + (
                 self.ldg_l1
@@ -198,6 +205,10 @@ class _TensorGradientSolver(_StatelessConstitutiveSolver):
     dependencies: tuple[str, ...]
     context: LegacyAlgebraicSolverContext
     numerical_policy: Mapping[str, object]
+
+    @property
+    def physical_dependencies(self) -> tuple[str, ...]:
+        return ()
 
     def solve_spectral(
         self,
@@ -246,6 +257,10 @@ class _StressSolver(_StatelessConstitutiveSolver):
     kernels: BerisEdwardsPointwiseKernels
     numerical_policy: Mapping[str, object]
 
+    @property
+    def physical_dependencies(self) -> tuple[str, ...]:
+        return self.dependencies
+
     def solve_spectral(
         self,
         state: Mapping[str, torch.Tensor],
@@ -270,14 +285,10 @@ class _StressSolver(_StatelessConstitutiveSolver):
             ldg_l1=self.ldg_l1,
         )
         values = (*algebraic, *distortion)
-        return {
-            output: self.context.forward_projected(output, value)
-            for output, value in zip(
-                self.output_components,
-                values,
-                strict=True,
-            )
-        }
+        return self.context.forward_projected_many(
+            self.output_components,
+            values,
+        )
 
 
 def _inverse_gradient_from_spectral(
@@ -482,6 +493,12 @@ class _ForceSolver(_StatelessConstitutiveSolver):
     sum_space: str
     numerical_policy: Mapping[str, object]
 
+    @property
+    def physical_dependencies(self) -> tuple[str, ...]:
+        if self.context.lazy_physical_materialization:
+            return ()
+        return self.dependencies
+
     def solve_spectral(
         self,
         state: Mapping[str, torch.Tensor],
@@ -506,10 +523,13 @@ class _ForceSolver(_StatelessConstitutiveSolver):
                 distortion_hats,
                 sum_space=self.sum_space,
             )
-            return {
-                output: self.context.forward_projected(output, force[index])
-                for index, output in enumerate(self.output_components)
-            }
+            return self.context.forward_projected_many(
+                self.output_components,
+                tuple(
+                    force[index]
+                    for index in range(len(self.output_components))
+                ),
+            )
         algebraic = tuple(state[name] for name in ALGEBRAIC_STRESS_COMPONENTS)
         distortion = tuple(state[name] for name in DISTORTION_STRESS_COMPONENTS)
         backend = self.context.legacy_transform_backend
@@ -533,10 +553,12 @@ class _ForceSolver(_StatelessConstitutiveSolver):
         # The raw row divergence combines wall-even and wall-odd terms.  The
         # force field is defined as its projection into the corresponding
         # velocity space, exactly as in the qualified production Plane path.
-        return {
-            output: self.context.forward_projected(output, force[index])
-            for index, output in enumerate(self.output_components)
-        }
+        return self.context.forward_projected_many(
+            self.output_components,
+            tuple(
+                force[index] for index in range(len(self.output_components))
+            ),
+        )
 
 
 @dataclass(frozen=True, slots=True)

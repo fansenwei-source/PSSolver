@@ -486,6 +486,17 @@ class BerisEdwardsPlaneCoupledModel:
             for boundaries in velocity_boundaries
         )
 
+    @property
+    def explicit_rhs_physical_dependencies(self) -> tuple[str, ...]:
+        """Physical state consumed by the complete pointwise Q RHS."""
+
+        return (
+            *Q_COMPONENTS,
+            *VELOCITY_COMPONENTS,
+            *Q_GRADIENT_COMPONENTS,
+            *VELOCITY_GRADIENT_COMPONENTS,
+        )
+
     def field_specs(self) -> tuple[FieldSpec, ...]:
         base = self.constitutive_model.field_specs()
         velocity_gradient = FieldSpec(

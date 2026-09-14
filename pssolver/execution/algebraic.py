@@ -483,6 +483,23 @@ class AlgebraicSolverProtocol(Protocol):
 
 
 @runtime_checkable
+class AlgebraicPhysicalDependenciesProtocol(Protocol):
+    """Optional physical-input declaration for a spectral algebraic solve.
+
+    A representation-aware solver may consume some dependencies directly in
+    spectral space.  Declaring the remaining physical inputs lets an adapter
+    form a bounded physical computation island without exposing transform
+    choices to the model specification.
+    """
+
+    @property
+    def physical_dependencies(self) -> tuple[str, ...]:
+        """Return the solver dependencies that must exist in physical space."""
+
+        ...
+
+
+@runtime_checkable
 class InspectableAlgebraicSolverProtocol(Protocol):
     """Optional diagnostics and warm-start state for algebraic solvers.
 

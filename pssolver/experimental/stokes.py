@@ -153,6 +153,12 @@ class _LegacyStokesAlgebraicSolver:
         self._solve_count = 0
         self._last_warm_start_used = False
 
+    @property
+    def physical_dependencies(self) -> tuple[str, ...]:
+        if self.context.lazy_physical_materialization:
+            return ()
+        return self.spec.force_components
+
     def solve_spectral(
         self,
         state: Mapping[str, torch.Tensor],

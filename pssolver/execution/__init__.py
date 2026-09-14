@@ -6,6 +6,7 @@ from .algebraic import (
     AlgebraicExecutableModelProtocol,
     AlgebraicRuntimeRestartState,
     AlgebraicSolverContext,
+    AlgebraicPhysicalDependenciesProtocol,
     AlgebraicSolverProtocol,
     AlgebraicSystemRestartState,
     AlgebraicSystemSpec,
@@ -14,6 +15,7 @@ from .algebraic import (
     InspectableAlgebraicSolverProtocol,
 )
 from .contracts import (
+    ExplicitRHSPhysicalDependenciesProtocol,
     ExecutableModelProtocol,
     MathematicalOperatorContext,
     ModelExecutionContext,
@@ -36,6 +38,7 @@ __all__ = [
     "AlgebraicExecutionPlan",
     "AlgebraicRuntimeRestartState",
     "AlgebraicSolverContext",
+    "AlgebraicPhysicalDependenciesProtocol",
     "AlgebraicSolverFactory",
     "AlgebraicSolverProtocol",
     "AlgebraicSolverRegistration",
@@ -44,6 +47,7 @@ __all__ = [
     "AlgebraicUpdatePhase",
     "build_algebraic_execution_plan",
     "ExecutableModelProtocol",
+    "ExplicitRHSPhysicalDependenciesProtocol",
     "GeometrySolverRegistry",
     "INCOMPRESSIBLE_STOKES_CAPABILITY",
     "IncompressibleStokesSystemSpec",

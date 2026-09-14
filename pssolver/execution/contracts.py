@@ -143,3 +143,19 @@ class ExecutableModelProtocol(ModelProtocol, Protocol):
         """
 
         ...
+
+
+@runtime_checkable
+class ExplicitRHSPhysicalDependenciesProtocol(Protocol):
+    """Optional declaration of fields read by a physical-space RHS.
+
+    The declaration is an execution hint for adapters that can materialize
+    transient algebraic fields in batches.  It does not change the model's
+    mathematical dependencies or permit an adapter to omit undeclared state.
+    """
+
+    @property
+    def explicit_rhs_physical_dependencies(self) -> tuple[str, ...]:
+        """Return component names whose physical values the RHS consumes."""
+
+        ...
