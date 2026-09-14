@@ -25,8 +25,15 @@ import subprocess
 import sys
 from typing import Any, Iterable
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from pssolver.configuration import (  # noqa: E402
+    PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
+)
+
+
 MODEL_SCRIPT = PROJECT_ROOT / "Plane_beris_edwards_stokes.py"
 CONVERGENCE_ANALYZER = PROJECT_ROOT / "scripts_plane" / "analyze_fig4_convergence.py"
 DEFECT_CORE_ANALYZER = (
@@ -51,21 +58,7 @@ DEFECT_CORE_OUTPUTS = (
 )
 IMPLEMENTATION_SOURCE_FILES = tuple(
     PROJECT_ROOT / relative_path
-    for relative_path in (
-        "Plane_beris_edwards_stokes.py",
-        "pssolver/solver.py",
-        "pssolver/Field.py",
-        "pssolver/PDEmodel.py",
-        "pssolver/integrator.py",
-        "pssolver/transforms.py",
-        "pssolver/__init__.py",
-        "pssolver/models/active_nematics/__init__.py",
-        "pssolver/models/active_nematics/fields.py",
-        "pssolver/models/active_nematics/q_tensor.py",
-        "pssolver/models/active_nematics/beris_edwards.py",
-        "pssolver/models/active_nematics/stokes.py",
-        "pssolver/models/active_nematics/initial_conditions.py",
-    )
+    for relative_path in PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
 )
 
 GRID_SHAPES = {

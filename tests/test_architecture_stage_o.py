@@ -9,6 +9,9 @@ from pathlib import Path
 import pytest
 
 import pssolver
+from pssolver.configuration import (
+    PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
+)
 from pssolver.experimental import (
     MigrationDisposition,
     PlaneRuntimePath,
@@ -191,9 +194,7 @@ def test_stage_o_design_is_immutable_json_and_records_input_hashes(tmp_path):
     metadata = design.to_metadata()
     json.dumps(metadata, allow_nan=False, sort_keys=True)
     assert set(metadata["implementation_file_sha256"]) == {
-        "Plane_beris_edwards_stokes.py",
-        "pssolver/solver.py",
-        "pssolver/plane.py",
+        *PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
         "pssolver/channel.py",
         "pssolver/execution/policy.py",
         "pssolver/experimental/model_execution.py",

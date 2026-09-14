@@ -16,6 +16,10 @@ import json
 import math
 from pathlib import Path
 
+from pssolver.configuration import (
+    PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
+)
+
 from ._shadow_support import file_sha256, require_sha256
 
 
@@ -614,15 +618,13 @@ def build_stage_o_migration_design(
         raise FileNotFoundError(f"project root is missing: {project}")
     _require_git_sha(architecture_source_commit, "architecture source commit")
     _require_git_sha(production_baseline_commit, "production baseline commit")
-    required_files = (
-        "Plane_beris_edwards_stokes.py",
-        "pssolver/solver.py",
-        "pssolver/plane.py",
+    required_files = tuple(dict.fromkeys((
+        *PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
         "pssolver/channel.py",
         "pssolver/execution/policy.py",
         "pssolver/experimental/model_execution.py",
         "pssolver/experimental/projected_scheduler.py",
-    )
+    )))
     identities = []
     for relative in required_files:
         path = project / relative

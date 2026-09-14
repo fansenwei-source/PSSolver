@@ -435,7 +435,9 @@ def test_plan_records_deferrals_hashes_limits_and_analysis_commands(tmp_path):
         "spectral_refresh": "disabled",
         "zero_mode_policy": "zero_mean",
     }
-    assert len(plan["implementation_sha256"]) == 13
+    assert len(plan["implementation_sha256"]) == len(
+        validation_runner.IMPLEMENTATION_SOURCE_FILES
+    )
     assert len(plan["validation_tools_sha256"]) == 4
     validator_relative = str(OUTPUT_VALIDATOR.relative_to(OUTPUT_VALIDATOR.parents[1]))
     assert OUTPUT_VALIDATOR.is_file()

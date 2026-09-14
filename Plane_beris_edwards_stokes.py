@@ -39,56 +39,48 @@ replaces the paper's inertial momentum dynamics, and the initialization and
 spectral discretization are not paper-identical.
 """
 
-import argparse
 import hashlib
 import json
-import math
 import platform
 from pathlib import Path
 import time
 import torch
 from pssolver import SpectralSolver, write_run_metadata
+from pssolver.configuration import (
+    PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
+    PLANE_FREE_SLIP_BOUNDARIES,
+    parse_plane_beris_edwards_run_spec,
+)
 from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
     BerisEdwardsQGradientCache,
     BerisEdwardsQNonlinearModel,
     BerisEdwardsPointwiseKernels,
-    DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
-    DEFAULT_POINTWISE_EXECUTION,
-    DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
-    POINTWISE_EXECUTION_MODES,
     Q_convention_metadata,
     beris_edwards_linear_operator,
     create_initial_condition,
-    positive_equilibrium_S,
     sample_periodic_neutral_defects_2d,
 )
 from pssolver.integrator import SemiImplicitEulerIntegrator
-from pssolver.plane import (
-    DEFAULT_PLANE_SPECTRAL_STORAGE,
-    PLANE_HERMITIAN_AXIS,
-)
+from pssolver.plane import PLANE_HERMITIAN_AXIS
 from pssolver.transforms import (
     BasisAwareSpectralProjector,
     DEALIAS_RULE_FRACTIONS,
-    DEFAULT_DEALIAS_RULE,
-    DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
-    DEFAULT_TRANSFORM_EXECUTION_ORDER,
-    PROJECTED_TRANSFORM_EXECUTION_MODES,
-    SPECTRAL_STORAGE_MODES,
 )
 from tqdm import trange
 import numpy as np
 
 
-# Free Q anchoring and free-slip velocity at walls normal to z.
-Q_BC = ("periodic", "periodic", "neumann")
-U_TANGENTIAL_BC = ("periodic", "periodic", "neumann")
-U_NORMAL_BC = ("periodic", "periodic", "dirichlet")
-DISTORTION_ODD_Z_BC = ("periodic", "periodic", "dirichlet")
+# Physical boundary conditions are declared once as immutable core contracts;
+# legacy strings exist only at the current runtime adapter edge.
+_LEGACY_BOUNDARIES = PLANE_FREE_SLIP_BOUNDARIES.to_legacy()
+Q_BC = _LEGACY_BOUNDARIES["q"]
+U_TANGENTIAL_BC = _LEGACY_BOUNDARIES["tangential_velocity"]
+U_NORMAL_BC = _LEGACY_BOUNDARIES["normal_velocity"]
+DISTORTION_ODD_Z_BC = _LEGACY_BOUNDARIES["distortion_odd_z"]
 # div(u) lives in the DCT space, so pressure uses the same DCT modal multiplier
 # space rather than an independently prescribed physical wall value.
-PRESSURE_MODAL_BC = ("periodic", "periodic", "neumann")
+PRESSURE_MODAL_BC = _LEGACY_BOUNDARIES["pressure_modal"]
 # Tangential plug-flow handling. The recommended pilot default uses the
 # fric=0 Stokes pseudoinverse and explicitly fixes <ux>=<uy>=0. This is a
 # reference-frame/modeling choice, not a pressure gauge: free Q anchoring does
@@ -100,9 +92,6 @@ PRESSURE_MODAL_BC = ("periodic", "periodic", "neumann")
 # A strict reproduction of the paper's inertial mean-momentum dynamics would
 # require evolving the two tangential mean modes separately. Positive friction
 # is retained as an optional sensitivity model but is not the default.
-DEFAULT_ZERO_MODE_POLICY = "zero_mean"
-DEFAULT_FRICTION_MODE_FRIC = 0.1
-DEFAULT_SPECTRAL_REFRESH_TIME = 0.2
 ENABLE_DIAGNOSTICS = False
 DIAGNOSTIC_INTERVAL = 100
 SAVE_INTERVAL = 500
@@ -112,22 +101,7 @@ ALIGNMENT_PARAMETER = 0.3
 # Local source files whose contents determine the discrete Q/Stokes dynamics.
 # Keep repository-relative names in metadata so runs made in different checkout
 # locations remain directly comparable.
-IMPLEMENTATION_SOURCE_FILES = (
-    "Plane_beris_edwards_stokes.py",
-    "pssolver/solver.py",
-    "pssolver/Field.py",
-    "pssolver/PDEmodel.py",
-    "pssolver/integrator.py",
-    "pssolver/plane.py",
-    "pssolver/transforms.py",
-    "pssolver/__init__.py",
-    "pssolver/models/active_nematics/__init__.py",
-    "pssolver/models/active_nematics/fields.py",
-    "pssolver/models/active_nematics/q_tensor.py",
-    "pssolver/models/active_nematics/beris_edwards.py",
-    "pssolver/models/active_nematics/stokes.py",
-    "pssolver/models/active_nematics/initial_conditions.py",
-)
+IMPLEMENTATION_SOURCE_FILES = PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
 
 
 def file_sha256(path):
@@ -140,335 +114,9 @@ def file_sha256(path):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description=(
-            "Run the reusable Beris--Edwards Q model with PSSolver's "
-            "complete one-constant nematic-stress quasistatic free-slip "
-            "Stokes solver using the Shendruk benchmark parameterization."
-        )
-    )
-    parser.add_argument("--activity-number", type=float, required=True)
-    parser.add_argument("--output-dir", type=Path, required=True)
-    parser.add_argument("--height", type=float, default=20.0)
-    parser.add_argument(
-        "--parameterization",
-        choices=("paper-window", "fixed-k"),
-        default="paper-window",
-        help=(
-            "paper-window keeps K and zeta inside the paper's coefficient "
-            "window; fixed-k uses --frank-k for every A."
-        ),
-    )
-    parser.add_argument("--frank-k", type=float, default=0.01)
-    parser.add_argument("--coefficient-min", type=float, default=0.01)
-    parser.add_argument("--coefficient-max", type=float, default=0.05)
-    parser.add_argument("--lx", type=float, default=100.0)
-    parser.add_argument("--ly", type=float, default=100.0)
-    parser.add_argument("--nx", type=int, default=256)
-    parser.add_argument("--ny", type=int, default=256)
-    parser.add_argument("--nz", type=int, default=64)
-    parser.add_argument("--dt", type=float, default=1e-2)
-    parser.add_argument("--steps", type=int, default=10_000)
-    parser.add_argument("--save-start-step", type=int, default=5_000)
-    parser.add_argument("--save-interval", type=int, default=500)
-    parser.add_argument("--diagnostic-interval", type=int, default=100)
-    parser.add_argument("--seed", type=int, default=24)
-    parser.add_argument("--num-defect-pairs", type=int, default=6)
-    parser.add_argument("--defect-min-separation", type=float, default=10.0)
-    parser.add_argument("--defect-core-radius", type=float, default=1.5)
-    parser.add_argument("--background-angle", type=float, default=0.0)
-    parser.add_argument(
-        "--twist-amplitude",
-        type=float,
-        default=0.01,
-        help="RMS Neumann-compatible layer-rotation angle in radians.",
-    )
-    parser.add_argument(
-        "--twist-modes",
-        type=int,
-        nargs="+",
-        default=(1, 2, 3),
-        help="Positive DCT mode indices used for the wall-normal twist.",
-    )
-    parser.add_argument("--ldg-a", type=float, default=0.0)
-    parser.add_argument("--ldg-b", type=float, default=-0.3)
-    parser.add_argument("--ldg-c", type=float, default=0.3)
-    parser.add_argument("--gamma", type=float, default=2.94)
-    parser.add_argument("--flow-alignment", type=float, default=0.3)
-    parser.add_argument("--eta", type=float, default=2.0 / 3.0)
-    parser.add_argument(
-        "--zero-mode-policy",
-        choices=("zero_mean", "friction"),
-        default=DEFAULT_ZERO_MODE_POLICY,
-        help=(
-            "Tangential plug-flow convention. zero_mean uses fric=0 and fixes "
-            "<ux>=<uy>=0; friction retains plug modes with positive drag."
-        ),
-    )
-    parser.add_argument(
-        "--friction-mode-fric",
-        type=float,
-        default=DEFAULT_FRICTION_MODE_FRIC,
-    )
-    parser.add_argument(
-        "--dealias-rule",
-        choices=tuple(DEALIAS_RULE_FRACTIONS),
-        default=DEFAULT_DEALIAS_RULE,
-        help=(
-            "cubic_half is used with projected H and complete stress/force "
-            "stages; two_thirds protects compatible quadratic products; "
-            "none disables projection."
-        ),
-    )
-    parser.add_argument(
-        "--projected-transform-execution",
-        choices=PROJECTED_TRANSFORM_EXECUTION_MODES,
-        default=DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
-        help=(
-            "A/B control for transforms directly coupled to spectral "
-            "projection. truncated is the H100-qualified production default "
-            "and skips discarded DCT/DST modes while preserving the selected "
-            "backend's native storage shape; full is the validated rollback "
-            "path."
-        ),
-    )
-    parser.add_argument("--beta", type=float, default=-1.0)
-    parser.add_argument(
-        "--initial-s",
-        dest="S_initial",
-        type=float,
-        default=1.0 / 3.0,
-        help=(
-            "Initial S in Q=(3S/2)(nn-I/3); default 1/3, equal to the "
-            "Shendruk bulk equilibrium."
-        ),
-    )
-    parser.add_argument("--device", default="auto")
-    parser.add_argument(
-        "--dtype",
-        choices=("float32", "float64"),
-        default="float32",
-        help="Real arithmetic precision used by fields and transforms.",
-    )
-    parser.add_argument(
-        "--molecular-field-linear-space",
-        choices=("physical", "spectral"),
-        default=DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
-        help=(
-            "Evaluation space for the linear L1 laplacian in the raw "
-            "molecular field. spectral is the H100-qualified production "
-            "default; physical retains the validated compatibility path."
-        ),
-    )
-    parser.add_argument(
-        "--stress-divergence-sum-space",
-        choices=("physical", "spectral"),
-        default=DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
-        help=(
-            "Assembly space for compatible stress-divergence derivatives. "
-            "spectral is the H100-qualified production default and reduces "
-            "inverse transforms; physical retains the validated compatibility "
-            "path."
-        ),
-    )
-    parser.add_argument(
-        "--pointwise-execution",
-        choices=POINTWISE_EXECUTION_MODES,
-        default=DEFAULT_POINTWISE_EXECUTION,
-        help=(
-            "Execution policy for the four pure Beris--Edwards pointwise "
-            "kernels. compile is the H100-qualified production default and "
-            "uses fixed-shape, full-graph TorchInductor with no silent "
-            "fallback; eager retains the validated compatibility path."
-        ),
-    )
-    parser.add_argument(
-        "--transform-execution-order",
-        choices=("legacy", "real_first"),
-        default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
-        help=(
-            "Tensor-product transform execution plan (default: real_first). "
-            "real_first applies DCT/DST axes before periodic FFTs so their matrix products use "
-            "real arithmetic; legacy retains the historical axis order."
-        ),
-    )
-    parser.add_argument(
-        "--spectral-storage",
-        choices=SPECTRAL_STORAGE_MODES,
-        default=DEFAULT_PLANE_SPECTRAL_STORAGE,
-        help=(
-            "Native modal storage. hermitian_half is the H100-qualified "
-            "Plane default and packs the positive-y spectrum; full_complex "
-            "is the validated rollback."
-        ),
-    )
-    parser.add_argument(
-        "--tf32",
-        choices=("off", "on"),
-        default="off",
-        help=(
-            "Explicit CUDA TF32 policy. It is effective only for float32 "
-            "CUDA runs and is recorded in the run metadata."
-        ),
-    )
-    refresh_group = parser.add_mutually_exclusive_group()
-    refresh_group.add_argument(
-        "--spectral-refresh-time",
-        type=float,
-        default=None,
-        help=(
-            "Physical-time interval between dynamic real-to-spectral rebuilds. "
-            f"The default is {DEFAULT_SPECTRAL_REFRESH_TIME:g}. The interval "
-            "must be an integer multiple of dt."
-        ),
-    )
-    refresh_group.add_argument(
-        "--spectral-refresh-steps",
-        type=int,
-        default=None,
-        help="Legacy step-count interval between dynamic spectral rebuilds.",
-    )
-    refresh_group.add_argument(
-        "--disable-spectral-refresh",
-        action="store_true",
-        help="Disable only the periodic dynamic real-to-spectral rebuild.",
-    )
-    parser.add_argument("--diagnostics", action="store_true")
-    parser.add_argument(
-        "--disable-q-gradient-reuse",
-        action="store_true",
-        help=(
-            "Recompute Q gradients independently in the static and nonlinear "
-            "models instead of using the guarded single-step cache."
-        ),
-    )
-    parser.add_argument("--save-hydrodynamics", action="store_true")
-    parser.add_argument(
-        "--validation-config-sha256",
-        default=None,
-        help=(
-            "Optional canonical SHA-256 of the complete validation-run "
-            "configuration. It is recorded verbatim in metadata so a "
-            "validation runner can reject accidental result reuse."
-        ),
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Print the resolved parameters without allocating the solver.",
-    )
-    args = parser.parse_args()
-    positive_values = {
-        "activity_number": args.activity_number,
-        "height": args.height,
-        "frank_k": args.frank_k,
-        "coefficient_min": args.coefficient_min,
-        "coefficient_max": args.coefficient_max,
-        "lx": args.lx,
-        "ly": args.ly,
-        "nx": args.nx,
-        "ny": args.ny,
-        "nz": args.nz,
-        "dt": args.dt,
-        "steps": args.steps,
-        "save_interval": args.save_interval,
-        "diagnostic_interval": args.diagnostic_interval,
-        "gamma": args.gamma,
-    }
-    invalid = {name: value for name, value in positive_values.items() if value <= 0}
-    if invalid:
-        parser.error(f"these values must be positive: {invalid}")
-    if args.S_initial <= 0:
-        parser.error("--initial-s must be positive")
-    if args.num_defect_pairs <= 0:
-        parser.error("--num-defect-pairs must be positive")
-    if args.defect_min_separation <= 0:
-        parser.error("--defect-min-separation must be positive")
-    if args.defect_core_radius <= 0:
-        parser.error("--defect-core-radius must be positive")
-    if args.twist_amplitude < 0:
-        parser.error("--twist-amplitude must be non-negative")
-    if len(set(args.twist_modes)) != len(args.twist_modes):
-        parser.error("--twist-modes must be unique")
-    if any(mode <= 0 or mode >= args.nz for mode in args.twist_modes):
-        parser.error("--twist-modes must satisfy 1 <= mode < nz")
-    if args.zero_mode_policy == "friction" and args.friction_mode_fric <= 0:
-        parser.error("--friction-mode-fric must be positive in friction mode")
-    if args.coefficient_min >= args.coefficient_max:
-        parser.error("--coefficient-min must be smaller than --coefficient-max")
-    if (
-        args.projected_transform_execution == "truncated"
-        and args.dealias_rule == "none"
-    ):
-        parser.error(
-            "--projected-transform-execution truncated requires enabled "
-            "dealiasing"
-        )
-    if args.save_start_step < 0 or args.save_start_step > args.steps:
-        parser.error("--save-start-step must lie between 0 and --steps")
-    if args.validation_config_sha256 is not None and (
-        len(args.validation_config_sha256) != 64
-        or any(
-            character not in "0123456789abcdef"
-            for character in args.validation_config_sha256
-        )
-    ):
-        parser.error(
-            "--validation-config-sha256 must be exactly 64 lowercase "
-            "hexadecimal characters"
-        )
-    if (
-        args.spectral_storage == "hermitian_half"
-        and args.transform_execution_order != "real_first"
-    ):
-        parser.error(
-            "--spectral-storage hermitian_half requires "
-            "--transform-execution-order real_first"
-        )
+    """Delegate the production CLI to its immutable run specification."""
 
-    if args.spectral_refresh_steps is not None:
-        if args.spectral_refresh_steps <= 0:
-            parser.error("--spectral-refresh-steps must be positive")
-        args.spectral_refresh_mode = "steps"
-        args.spectral_refresh_interval_steps = args.spectral_refresh_steps
-        args.spectral_refresh_requested_time = None
-        args.spectral_refresh_requested_steps = args.spectral_refresh_steps
-    elif args.disable_spectral_refresh:
-        args.spectral_refresh_mode = "disabled"
-        args.spectral_refresh_interval_steps = None
-        args.spectral_refresh_requested_time = None
-        args.spectral_refresh_requested_steps = None
-    else:
-        requested_time = (
-            DEFAULT_SPECTRAL_REFRESH_TIME
-            if args.spectral_refresh_time is None
-            else args.spectral_refresh_time
-        )
-        if not math.isfinite(requested_time) or requested_time <= 0:
-            parser.error("--spectral-refresh-time must be positive and finite")
-        interval_ratio = requested_time / args.dt
-        interval_steps = int(round(interval_ratio))
-        if interval_steps <= 0 or not math.isclose(
-            interval_ratio,
-            interval_steps,
-            rel_tol=1e-12,
-            abs_tol=1e-12,
-        ):
-            parser.error(
-                "--spectral-refresh-time must be an integer multiple of --dt; "
-                f"got time/dt={interval_ratio:.17g}"
-            )
-        args.spectral_refresh_mode = "physical_time"
-        args.spectral_refresh_interval_steps = interval_steps
-        args.spectral_refresh_requested_time = requested_time
-        args.spectral_refresh_requested_steps = None
-
-    args.spectral_refresh_effective_time = (
-        None
-        if args.spectral_refresh_interval_steps is None
-        else args.spectral_refresh_interval_steps * args.dt
-    )
-    return args
+    return parse_plane_beris_edwards_run_spec()
 
 
 def tensor_sha256(tensors):
@@ -659,43 +307,22 @@ spectral_shape = [
     Nz,
 ]
 
-# Resolve the one-variable A scan into physical K and zeta values.  In
-# paper-window mode one coefficient is held at the lower edge of the paper's
-# [0.01, 0.05] interval while the other supplies zeta/K=(A/H)^2.
-activity_ratio = (args.activity_number / args.height) ** 2
-if args.parameterization == "paper-window":
-    ratio_min = args.coefficient_min / args.coefficient_max
-    ratio_max = args.coefficient_max / args.coefficient_min
-    if not ratio_min <= activity_ratio <= ratio_max:
-        activity_min = args.height * ratio_min**0.5
-        activity_max = args.height * ratio_max**0.5
-        raise ValueError(
-            f"A={args.activity_number} is outside the paper-window interval "
-            f"[{activity_min:.6g}, {activity_max:.6g}] for H={args.height}"
-        )
-    if activity_ratio <= 1.0:
-        zeta = args.coefficient_min
-        frank_k = zeta / activity_ratio
-    else:
-        frank_k = args.coefficient_min
-        zeta = frank_k * activity_ratio
-else:
-    frank_k = args.frank_k
-    zeta = frank_k * activity_ratio
-
 # Write Q = q (nn-I/3), where q = 3 S/2 in the declared convention.
 # Equating (L1/2) |grad Q|^2 with (K/2) |grad n|^2 gives
 # K = 2 L1 q_eq^2 and therefore L1 = K/(2 q_eq^2).  At the Shendruk
 # bulk equilibrium S_eq=1/3, q_eq=1/2 and L1=2K.  Using q_eq explicitly
 # avoids the scalar-amplitude ambiguity in the paper's printed mapping.
-S_bulk = positive_equilibrium_S(args.ldg_a, args.ldg_b, args.ldg_c)
-q_equilibrium_amplitude = 1.5 * S_bulk
-ldg_l1 = frank_k / (2.0 * q_equilibrium_amplitude**2)
-rotational_viscosity = args.gamma
-ldg_a_over_gamma = args.ldg_a / rotational_viscosity
-ldg_b_over_gamma = args.ldg_b / rotational_viscosity
-ldg_c_over_gamma = args.ldg_c / rotational_viscosity
-ldg_l1_over_gamma = ldg_l1 / rotational_viscosity
+resolved_preset = args.shendruk_preset
+zeta = resolved_preset.zeta
+frank_k = resolved_preset.frank_k
+S_bulk = resolved_preset.equilibrium_s
+q_equilibrium_amplitude = resolved_preset.equilibrium_q_amplitude
+ldg_l1 = resolved_preset.ldg_l1
+rotational_viscosity = resolved_preset.rotational_viscosity
+ldg_a_over_gamma = resolved_preset.ldg_a_over_gamma
+ldg_b_over_gamma = resolved_preset.ldg_b_over_gamma
+ldg_c_over_gamma = resolved_preset.ldg_c_over_gamma
+ldg_l1_over_gamma = resolved_preset.ldg_l1_over_gamma
 
 # The active stress in this code is beta * alpha * Q.  beta=-1 therefore
 # matches the paper's -zeta Q convention when alpha=zeta.
@@ -721,6 +348,7 @@ implementation_provenance = {
 metadata = {
     "schema_version": 1,
     "script": "Plane_beris_edwards_stokes.py",
+    "configuration": args.identity_metadata(),
     "validation_config_sha256": args.validation_config_sha256,
     "implementation_provenance": implementation_provenance,
     "runtime_environment": runtime_environment,

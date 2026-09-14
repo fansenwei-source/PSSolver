@@ -47,6 +47,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from pssolver.configuration import (  # noqa: E402
+    PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
+)
 from pssolver.models.active_nematics import Q_convention_metadata, S_from_Q
 from scripts_plane.analyze_fig4_convergence import (
     DEALIAS_RULE_FRACTIONS,
@@ -135,20 +138,7 @@ LEGACY_BENCHMARK_SCRIPT = "Plane_fig4_benchmark.py"
 BERIS_EDWARDS_BENCHMARK_SCRIPT = "Plane_beris_edwards_stokes.py"
 BERIS_EDWARDS_MODEL_VARIANT = "beris_edwards_complete_nematic_stress_stokes"
 REQUIRED_BERIS_EDWARDS_IMPLEMENTATION_FILES = frozenset(
-    {
-        "Plane_beris_edwards_stokes.py",
-        "pssolver/solver.py",
-        "pssolver/Field.py",
-        "pssolver/PDEmodel.py",
-        "pssolver/integrator.py",
-        "pssolver/transforms.py",
-        "pssolver/__init__.py",
-        "pssolver/models/active_nematics/__init__.py",
-        "pssolver/models/active_nematics/fields.py",
-        "pssolver/models/active_nematics/q_tensor.py",
-        "pssolver/models/active_nematics/beris_edwards.py",
-        "pssolver/models/active_nematics/initial_conditions.py",
-    }
+    PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
 )
 
 
@@ -846,7 +836,8 @@ def validate_task_contract(runs: Sequence[CoreRun], mode: str) -> None:
                 REQUIRED_BERIS_EDWARDS_IMPLEMENTATION_FILES
             ):
                 errors.append(
-                    f"{prefix}: implementation provenance must contain the fixed 12-file set"
+                    f"{prefix}: implementation provenance must contain the "
+                    "fixed Plane implementation file set"
                 )
         precision = metadata.get("numerics", {}).get("precision", {})
         expected_precision = {
