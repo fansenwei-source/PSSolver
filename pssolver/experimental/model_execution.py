@@ -56,6 +56,7 @@ from .performance import (
     RuntimePerformanceRecorder,
     instrument_transform_backend,
 )
+from .representations import AlgebraicRepresentationCache
 
 
 @dataclass(frozen=True, slots=True)
@@ -361,6 +362,7 @@ class LegacyAlgebraicSolverContext:
     geometry_name: str
     model_context: LegacyModelExecutionContext
     spectral_dtype: torch.dtype
+    representation_cache: AlgebraicRepresentationCache | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.geometry_name, str) or not self.geometry_name:
@@ -373,6 +375,14 @@ class LegacyAlgebraicSolverContext:
             raise TypeError("spectral_dtype must be a torch.dtype")
         if self.spectral_dtype != self.model_context._spectral_dtype:
             raise ValueError("algebraic and model spectral dtypes must match")
+        if self.representation_cache is not None and not isinstance(
+            self.representation_cache,
+            AlgebraicRepresentationCache,
+        ):
+            raise TypeError(
+                "representation_cache must be an AlgebraicRepresentationCache "
+                "or None"
+            )
 
     @property
     def physical_shape(self) -> tuple[int, ...]:
@@ -422,6 +432,13 @@ class LegacyAlgebraicSolverContext:
         component_name: str,
         value: torch.Tensor,
     ) -> torch.Tensor:
+        if self.representation_cache is not None:
+            cached = self.representation_cache.spectral_for(
+                component_name,
+                value,
+            )
+            if cached is not None:
+                return cached
         return self.model_context._forward_projected(component_name, value)
 
     def inverse_projected(
@@ -429,7 +446,50 @@ class LegacyAlgebraicSolverContext:
         component_name: str,
         value: torch.Tensor,
     ) -> torch.Tensor:
+        if self.representation_cache is not None:
+            cached = self.representation_cache.physical_for(
+                component_name,
+                value,
+            )
+            if cached is not None:
+                return cached
         return self.model_context._inverse_projected(component_name, value)
+
+    def begin_representation_generation(
+        self,
+        generation: int,
+        physical: dict[str, torch.Tensor],
+        spectral: dict[str, torch.Tensor],
+    ) -> None:
+        if self.representation_cache is not None:
+            self.representation_cache.begin(generation, physical, spectral)
+
+    def register_representation_pair(
+        self,
+        component_name: str,
+        physical: torch.Tensor,
+        spectral: torch.Tensor,
+    ) -> None:
+        if self.representation_cache is not None:
+            self.representation_cache.register(
+                component_name,
+                physical,
+                spectral,
+            )
+
+    def end_representation_generation(self) -> Mapping[str, object] | None:
+        if self.representation_cache is None:
+            return None
+        return self.representation_cache.end()
+
+    def abort_representation_generation(self) -> None:
+        if self.representation_cache is not None:
+            self.representation_cache.abort()
+
+    def representation_reuse_snapshot(self) -> Mapping[str, object] | None:
+        if self.representation_cache is None:
+            return None
+        return self.representation_cache.last_snapshot()
 
     def gradient(
         self,
@@ -438,19 +498,42 @@ class LegacyAlgebraicSolverContext:
         value: torch.Tensor,
         axis: int,
     ) -> torch.Tensor:
-        return self.model_context.gradient(
-            source_component,
-            output_component,
-            value,
-            axis,
+        if (
+            not isinstance(axis, int)
+            or isinstance(axis, bool)
+            or axis < 0
+            or axis >= len(self.physical_shape)
+        ):
+            raise ValueError("gradient axis is out of range")
+        source_boundaries = self.boundary_conditions(source_component)
+        output_boundaries = self.boundary_conditions(output_component)
+        source_hat = self.forward_projected(source_component, value)
+        derivative_hat, derivative_boundaries = (
+            self.legacy_transform_backend.gradient_hat(
+                source_hat,
+                source_boundaries,
+                axis,
+            )
         )
+        if tuple(derivative_boundaries) != output_boundaries:
+            raise ValueError(
+                "gradient output boundary space does not match the declared "
+                f"component {output_component!r}"
+            )
+        return self.inverse_projected(output_component, derivative_hat)
 
     def laplacian(
         self,
         component_name: str,
         value: torch.Tensor,
     ) -> torch.Tensor:
-        return self.model_context.laplacian(component_name, value)
+        boundaries = self.boundary_conditions(component_name)
+        value_hat = self.forward_projected(component_name, value)
+        laplacian_hat = self.legacy_transform_backend.laplacian_hat(
+            value_hat,
+            boundaries,
+        )
+        return self.inverse_projected(component_name, laplacian_hat)
 
     def divergence(
         self,
@@ -458,11 +541,43 @@ class LegacyAlgebraicSolverContext:
         output_component: str,
         values: tuple[torch.Tensor, ...],
     ) -> torch.Tensor:
-        return self.model_context.divergence(
-            source_components,
-            output_component,
-            values,
-        )
+        try:
+            source_components = tuple(source_components)
+            values = tuple(values)
+        except TypeError as exc:
+            raise TypeError(
+                "divergence sources and values must be iterable"
+            ) from exc
+        ndim = len(self.physical_shape)
+        if len(source_components) != ndim or len(values) != ndim:
+            raise ValueError(
+                "divergence requires one source component and value per axis"
+            )
+        output_boundaries = self.boundary_conditions(output_component)
+        divergence_hat = None
+        for axis, (source_component, value) in enumerate(
+            zip(source_components, values, strict=True)
+        ):
+            source_boundaries = self.boundary_conditions(source_component)
+            source_hat = self.forward_projected(source_component, value)
+            derivative_hat, derivative_boundaries = (
+                self.legacy_transform_backend.gradient_hat(
+                    source_hat,
+                    source_boundaries,
+                    axis,
+                )
+            )
+            if tuple(derivative_boundaries) != output_boundaries:
+                raise ValueError(
+                    "divergence term boundary space does not match the "
+                    f"declared component {output_component!r}"
+                )
+            divergence_hat = (
+                derivative_hat
+                if divergence_hat is None
+                else divergence_hat + derivative_hat
+            )
+        return self.inverse_projected(output_component, divergence_hat)
 
     def boundary_conditions(self, component_name: str) -> tuple[str, ...]:
         return self.model_context._boundaries(component_name)
@@ -579,15 +694,27 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
         )
         self._transient_cache: Mapping[str, torch.Tensor] | None = None
         self._cache_generation = 0
+        self._last_representation_reuse: Mapping[str, object] | None = None
 
     @property
     def cache_generation(self) -> int:
         return self._cache_generation
 
+    @property
+    def representation_reuse_enabled(self) -> bool:
+        return self._context.representation_cache is not None
+
     def clear_cached_outputs(self) -> None:
         """Invalidate non-stored outputs without touching physical state."""
 
         self._transient_cache = None
+        self._last_representation_reuse = None
+        self._context.abort_representation_generation()
+
+    def representation_reuse_snapshot(self) -> Mapping[str, object] | None:
+        """Return counters from the most recent completed DAG generation."""
+
+        return self._last_representation_reuse
 
     def transient_state(self) -> Mapping[str, torch.Tensor]:
         """Return the current read-only transient cache."""
@@ -607,71 +734,94 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
             name: fields[name]
             for name in self._execution_plan.initial_components
         }
+        spectral_state = {
+            name: fields[f"{name}.hat"]
+            for name in self._execution_plan.initial_components
+        }
         transient_cache: dict[str, torch.Tensor] = {}
-        for resolved in self._resolved_systems:
-            dependencies = MappingProxyType(
-                {
-                    name: physical_state[name]
-                    for name in resolved.system.dependencies
-                }
-            )
-            if self._performance_recorder is None:
-                solution = resolved.solver.solve_spectral(dependencies)
-            else:
-                with self._performance_recorder.region(
-                    f"algebraic.{resolved.system.name}.solve"
-                ):
+        generation = self._cache_generation + 1
+        self._last_representation_reuse = None
+        self._context.begin_representation_generation(
+            generation,
+            physical_state,
+            spectral_state,
+        )
+        try:
+            for resolved in self._resolved_systems:
+                dependencies = MappingProxyType(
+                    {
+                        name: physical_state[name]
+                        for name in resolved.system.dependencies
+                    }
+                )
+                if self._performance_recorder is None:
                     solution = resolved.solver.solve_spectral(dependencies)
-            if not isinstance(solution, Mapping):
-                raise TypeError("algebraic solve must return a mapping")
-            solution = dict(solution)
-            if any(not isinstance(name, str) for name in solution):
-                raise TypeError("algebraic solution keys must be strings")
-            if set(solution) != set(resolved.system.output_components):
-                raise ValueError(
-                    f"algebraic solution keys do not match system "
-                    f"{resolved.system.name!r}"
-                )
-            for name in resolved.system.output_components:
-                value = solution[name]
-                expected_shape = (
-                    self._batch_size,
-                    *self._spectral_shape,
-                )
-                if not isinstance(value, torch.Tensor):
-                    raise TypeError(
-                        f"algebraic solution for {name!r} must be a tensor"
-                    )
-                if value.shape != expected_shape:
+                else:
+                    with self._performance_recorder.region(
+                        f"algebraic.{resolved.system.name}.solve"
+                    ):
+                        solution = resolved.solver.solve_spectral(dependencies)
+                if not isinstance(solution, Mapping):
+                    raise TypeError("algebraic solve must return a mapping")
+                solution = dict(solution)
+                if any(not isinstance(name, str) for name in solution):
+                    raise TypeError("algebraic solution keys must be strings")
+                if set(solution) != set(resolved.system.output_components):
                     raise ValueError(
-                        f"algebraic solution for {name!r} has shape "
-                        f"{tuple(value.shape)!r}; expected {expected_shape!r}"
+                        f"algebraic solution keys do not match system "
+                        f"{resolved.system.name!r}"
                     )
-                if value.dtype != self._spectral_dtype:
-                    raise ValueError(
-                        f"algebraic solution for {name!r} has dtype "
-                        f"{value.dtype}; expected {self._spectral_dtype}"
+                for name in resolved.system.output_components:
+                    value = solution[name]
+                    expected_shape = (
+                        self._batch_size,
+                        *self._spectral_shape,
                     )
-                if value.device != self._device:
-                    raise ValueError(
-                        f"algebraic solution for {name!r} is on "
-                        f"{value.device}; expected {self._device}"
-                    )
-                outputs[name] = value
-                if name in self._physical_cache_names:
-                    if self._performance_recorder is None:
-                        physical = self._context.inverse_projected(name, value)
-                    else:
-                        with self._performance_recorder.region(
-                            "algebraic.materialize_physical"
-                        ):
-                            physical = self._context.inverse_projected(
-                                name,
-                                value,
-                            )
-                    physical_state[name] = physical
-                    if name in self._transient_names:
-                        transient_cache[name] = physical
+                    if not isinstance(value, torch.Tensor):
+                        raise TypeError(
+                            f"algebraic solution for {name!r} must be a tensor"
+                        )
+                    if value.shape != expected_shape:
+                        raise ValueError(
+                            f"algebraic solution for {name!r} has shape "
+                            f"{tuple(value.shape)!r}; expected {expected_shape!r}"
+                        )
+                    if value.dtype != self._spectral_dtype:
+                        raise ValueError(
+                            f"algebraic solution for {name!r} has dtype "
+                            f"{value.dtype}; expected {self._spectral_dtype}"
+                        )
+                    if value.device != self._device:
+                        raise ValueError(
+                            f"algebraic solution for {name!r} is on "
+                            f"{value.device}; expected {self._device}"
+                        )
+                    outputs[name] = value
+                    if name in self._physical_cache_names:
+                        if self._performance_recorder is None:
+                            physical = self._context.inverse_projected(name, value)
+                        else:
+                            with self._performance_recorder.region(
+                                "algebraic.materialize_physical"
+                            ):
+                                physical = self._context.inverse_projected(
+                                    name,
+                                    value,
+                                )
+                        physical_state[name] = physical
+                        self._context.register_representation_pair(
+                            name,
+                            physical,
+                            value,
+                        )
+                        if name in self._transient_names:
+                            transient_cache[name] = physical
+        except BaseException:
+            self._context.abort_representation_generation()
+            raise
+        self._last_representation_reuse = (
+            self._context.end_representation_generation()
+        )
         if set(transient_cache) != set(self._transient_names):
             raise RuntimeError("transient algebraic cache is incomplete")
         self._transient_cache = MappingProxyType(transient_cache)
@@ -851,8 +1001,27 @@ class ExperimentalModelRuntime:
                     "stored_in_legacy_fields": False,
                     "checkpointed": False,
                 },
+                "representation_reuse": {
+                    "enabled": (
+                        self.algebraic_fields_adapter is not None
+                        and self.algebraic_fields_adapter.representation_reuse_enabled
+                    ),
+                    "scope": "one_pre_explicit_rhs_generation",
+                    "identity_guard": "tensor_object_and_in_place_version",
+                    "cross_generation_reuse": False,
+                    "checkpointed": False,
+                },
             },
         }
+
+    def algebraic_representation_reuse_diagnostics(
+        self,
+    ) -> Mapping[str, object] | None:
+        """Return last-generation reuse counters without retaining tensors."""
+
+        if self.algebraic_fields_adapter is None:
+            return None
+        return self.algebraic_fields_adapter.representation_reuse_snapshot()
 
     def synchronize_algebraic_for_observation(self) -> None:
         """Refresh algebraic fields against the current evolved state.
@@ -1198,6 +1367,7 @@ def build_experimental_model_runtime(
     allow_unstored_diagnostics: bool = False,
     geometry_solver_registry: GeometrySolverRegistry | None = None,
     enable_performance_instrumentation: bool = False,
+    enable_algebraic_representation_reuse: bool = False,
 ) -> ExperimentalModelRuntime:
     """Build a canary through the frozen plan and legacy runtime adapter."""
 
@@ -1205,6 +1375,8 @@ def build_experimental_model_runtime(
         raise TypeError("model must implement ExecutableModelProtocol")
     if not isinstance(enable_performance_instrumentation, bool):
         raise TypeError("enable_performance_instrumentation must be a bool")
+    if not isinstance(enable_algebraic_representation_reuse, bool):
+        raise TypeError("enable_algebraic_representation_reuse must be a bool")
     problem = ProblemSpec(model, geometry, numerics)
     plan = assemble_spectral_plan(problem)
     assembly = materialize_legacy_assembly(
@@ -1255,6 +1427,11 @@ def build_experimental_model_runtime(
         geometry_name=geometry.name,
         model_context=context,
         spectral_dtype=solver.transform_backend.spectral_dtype,
+        representation_cache=(
+            AlgebraicRepresentationCache()
+            if enable_algebraic_representation_reuse
+            else None
+        ),
     )
     resolved_algebraic_systems = _resolve_algebraic_systems(
         algebraic_execution_plan,
