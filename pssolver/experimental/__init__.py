@@ -42,7 +42,11 @@ from .model_execution import (
     build_experimental_model_runtime,
 )
 from .performance import RuntimePerformanceRecorder
-from .representations import AlgebraicRepresentationCache
+from .representations import (
+    AlgebraicGenerationState,
+    AlgebraicPhysicalStateView,
+    AlgebraicRepresentationCache,
+)
 from .plane_shadow_driver import (
     ProductionPlaneReference,
     build_plane_shadow_runtime_from_production_metadata,
@@ -86,6 +90,12 @@ from .stage_n1_qualification import (
     profile_stage_n1_h100_shadow,
     run_stage_n1_h100_candidate_trajectory,
 )
+from .stage_n2_plan import build_stage_n2_h100_plan
+from .stage_n2_qualification import (
+    analyze_stage_n2_qualification,
+    profile_stage_n2_h100_shadow,
+    run_stage_n2_h100_candidate_trajectory,
+)
 from .stokes import (
     ChannelStokesSolverOptions,
     PlaneStokesSolverOptions,
@@ -110,6 +120,8 @@ __all__ = [
     "ProductionPlaneReference",
     "ProjectedSemiImplicitEulerIntegrator",
     "RuntimePerformanceRecorder",
+    "AlgebraicGenerationState",
+    "AlgebraicPhysicalStateView",
     "AlgebraicRepresentationCache",
     "ResolvedAlgebraicSystem",
     "SHADOW_CHECKPOINT_FORMAT_VERSION",
@@ -123,6 +135,7 @@ __all__ = [
     "build_stage_m_h100_plan",
     "build_stage_n_h100_plan",
     "build_stage_n1_h100_plan",
+    "build_stage_n2_h100_plan",
     "build_plane_shadow_runtime_from_production_metadata",
     "capture_shadow_checkpoint",
     "capture_shadow_observation",
@@ -149,10 +162,13 @@ __all__ = [
     "analyze_stage_m_h100_qualification",
     "analyze_stage_n_diagnostics",
     "analyze_stage_n1_qualification",
+    "analyze_stage_n2_qualification",
     "profile_h100_plane_shadow_from_production_reference",
     "profile_stage_n_h100_shadow",
     "profile_stage_n1_h100_shadow",
+    "profile_stage_n2_h100_shadow",
     "run_h100_plane_shadow_from_production_reference",
     "run_stage_n1_h100_candidate_trajectory",
+    "run_stage_n2_h100_candidate_trajectory",
     "write_plane_shadow_comparison",
 ]

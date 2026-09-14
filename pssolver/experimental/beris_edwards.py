@@ -181,7 +181,7 @@ class _MolecularFieldSolver(_StatelessConstitutiveSolver):
             strict=True,
         ):
             bulk_hat = self.context.forward_projected(h_name, bulk_value)
-            q_hat = self.context.forward_projected(q_name, state[q_name])
+            q_hat = self.context.spectral_dependency(state, q_name)
             result[h_name] = bulk_hat + (
                 self.ldg_l1
                 * self.context.laplacian_eigenvalues(q_name)
@@ -210,9 +210,9 @@ class _TensorGradientSolver(_StatelessConstitutiveSolver):
         for axis in range(3):
             for source_name in self.dependencies:
                 output = self.output_components[output_index]
-                source_hat = self.context.forward_projected(
+                source_hat = self.context.spectral_dependency(
+                    state,
                     source_name,
-                    state[source_name],
                 )
                 gradient_hat, gradient_boundaries = (
                     self.context.legacy_transform_backend.gradient_hat(
@@ -280,6 +280,198 @@ class _StressSolver(_StatelessConstitutiveSolver):
         }
 
 
+def _inverse_gradient_from_spectral(
+    context: LegacyAlgebraicSolverContext,
+    spectral: torch.Tensor,
+    boundaries: tuple[str, ...],
+    axis: int,
+) -> tuple[torch.Tensor, tuple[str, ...]]:
+    derivative_hat, derivative_boundaries = (
+        context.legacy_transform_backend.gradient_hat(
+            spectral,
+            boundaries,
+            axis,
+        )
+    )
+    physical = context.legacy_projector.inverse_transform(
+        derivative_hat,
+        derivative_boundaries,
+    )
+    return physical, tuple(derivative_boundaries)
+
+
+def _common_stress_divergence_from_spectral(
+    context: LegacyAlgebraicSolverContext,
+    stress_hats: tuple[torch.Tensor, ...],
+    *,
+    sum_space: str,
+) -> torch.Tensor:
+    """Match the qualified mixed-parity divergence without re-forwarding."""
+
+    if len(stress_hats) != 9:
+        raise ValueError("a three-dimensional stress requires nine spectra")
+    packed = torch.stack(stress_hats)
+    if sum_space == "spectral":
+        derivative_x_hat, x_boundaries = (
+            context.legacy_transform_backend.gradient_hat(
+                packed[[0, 3, 6]],
+                _PLANE_EVEN_BOUNDARIES,
+                0,
+            )
+        )
+        derivative_y_hat, y_boundaries = (
+            context.legacy_transform_backend.gradient_hat(
+                packed[[1, 4, 7]],
+                _PLANE_EVEN_BOUNDARIES,
+                1,
+            )
+        )
+        if tuple(x_boundaries) != tuple(y_boundaries):
+            raise RuntimeError("x/y stress derivatives must share one basis")
+        derivative_xy = context.legacy_projector.inverse_transform(
+            derivative_x_hat + derivative_y_hat,
+            x_boundaries,
+        )
+        derivative_z, _ = _inverse_gradient_from_spectral(
+            context,
+            packed[[2, 5, 8]],
+            _PLANE_EVEN_BOUNDARIES,
+            2,
+        )
+        return derivative_xy + derivative_z
+    if sum_space != "physical":
+        raise ValueError("sum_space must be 'physical' or 'spectral'")
+    derivative_x, x_boundaries = _inverse_gradient_from_spectral(
+        context,
+        packed[[0, 3, 6]],
+        _PLANE_EVEN_BOUNDARIES,
+        0,
+    )
+    derivative_y, y_boundaries = _inverse_gradient_from_spectral(
+        context,
+        packed[[1, 4, 7]],
+        _PLANE_EVEN_BOUNDARIES,
+        1,
+    )
+    derivative_z, _ = _inverse_gradient_from_spectral(
+        context,
+        packed[[2, 5, 8]],
+        _PLANE_EVEN_BOUNDARIES,
+        2,
+    )
+    if x_boundaries != y_boundaries:
+        raise RuntimeError("x/y stress derivatives must share one basis")
+    return derivative_x + derivative_y + derivative_z
+
+
+def _distortion_stress_divergence_from_spectral(
+    context: LegacyAlgebraicSolverContext,
+    stress_hats: tuple[torch.Tensor, ...],
+    *,
+    sum_space: str,
+) -> torch.Tensor:
+    """Differentiate the even/odd distortion spectra without round trips."""
+
+    if len(stress_hats) != 9:
+        raise ValueError("a three-dimensional stress requires nine spectra")
+    even_hat = torch.stack(
+        tuple(stress_hats[index] for index in (0, 1, 3, 4, 8))
+    )
+    odd_hat = torch.stack(
+        tuple(stress_hats[index] for index in (2, 5, 6, 7))
+    )
+    if sum_space == "spectral":
+        backend = context.legacy_transform_backend
+        even_x_hat, even_x_boundaries = backend.gradient_hat(
+            even_hat[[0, 2]], _PLANE_EVEN_BOUNDARIES, 0
+        )
+        even_y_hat, even_y_boundaries = backend.gradient_hat(
+            even_hat[[1, 3]], _PLANE_EVEN_BOUNDARIES, 1
+        )
+        odd_z_hat, odd_z_boundaries = backend.gradient_hat(
+            odd_hat[[0, 1]], _PLANE_ODD_BOUNDARIES, 2
+        )
+        if not (
+            tuple(even_x_boundaries)
+            == tuple(even_y_boundaries)
+            == tuple(odd_z_boundaries)
+        ):
+            raise RuntimeError(
+                "tangential distortion-force terms must share one basis"
+            )
+        tangential = context.legacy_projector.inverse_transform(
+            even_x_hat + even_y_hat + odd_z_hat,
+            even_x_boundaries,
+        )
+        odd_x_hat, odd_x_boundaries = backend.gradient_hat(
+            odd_hat[2], _PLANE_ODD_BOUNDARIES, 0
+        )
+        odd_y_hat, odd_y_boundaries = backend.gradient_hat(
+            odd_hat[3], _PLANE_ODD_BOUNDARIES, 1
+        )
+        even_z_hat, even_z_boundaries = backend.gradient_hat(
+            even_hat[4], _PLANE_EVEN_BOUNDARIES, 2
+        )
+        if not (
+            tuple(odd_x_boundaries)
+            == tuple(odd_y_boundaries)
+            == tuple(even_z_boundaries)
+        ):
+            raise RuntimeError(
+                "normal distortion-force terms must share one basis"
+            )
+        normal = context.legacy_projector.inverse_transform(
+            odd_x_hat + odd_y_hat + even_z_hat,
+            odd_x_boundaries,
+        )
+        return torch.stack((tangential[0], tangential[1], normal))
+    if sum_space != "physical":
+        raise ValueError("sum_space must be 'physical' or 'spectral'")
+    even_x, _ = _inverse_gradient_from_spectral(
+        context,
+        even_hat[[0, 2]],
+        _PLANE_EVEN_BOUNDARIES,
+        0,
+    )
+    even_y, _ = _inverse_gradient_from_spectral(
+        context,
+        even_hat[[1, 3]],
+        _PLANE_EVEN_BOUNDARIES,
+        1,
+    )
+    even_z, _ = _inverse_gradient_from_spectral(
+        context,
+        even_hat[4],
+        _PLANE_EVEN_BOUNDARIES,
+        2,
+    )
+    odd_x, _ = _inverse_gradient_from_spectral(
+        context,
+        odd_hat[2],
+        _PLANE_ODD_BOUNDARIES,
+        0,
+    )
+    odd_y, _ = _inverse_gradient_from_spectral(
+        context,
+        odd_hat[3],
+        _PLANE_ODD_BOUNDARIES,
+        1,
+    )
+    odd_z, _ = _inverse_gradient_from_spectral(
+        context,
+        odd_hat[[0, 1]],
+        _PLANE_ODD_BOUNDARIES,
+        2,
+    )
+    return torch.stack(
+        (
+            even_x[0] + even_y[0] + odd_z[0],
+            even_x[1] + even_y[1] + odd_z[1],
+            odd_x + odd_y + even_z,
+        )
+    )
+
+
 @dataclass(slots=True)
 class _ForceSolver(_StatelessConstitutiveSolver):
     capability: str
@@ -296,6 +488,28 @@ class _ForceSolver(_StatelessConstitutiveSolver):
     ) -> Mapping[str, torch.Tensor]:
         if set(state) != set(self.dependencies):
             raise ValueError("nematic-force state has the wrong components")
+        if self.context.lazy_physical_materialization:
+            algebraic_hats = tuple(
+                self.context.spectral_dependency(state, name)
+                for name in ALGEBRAIC_STRESS_COMPONENTS
+            )
+            distortion_hats = tuple(
+                self.context.spectral_dependency(state, name)
+                for name in DISTORTION_STRESS_COMPONENTS
+            )
+            force = _common_stress_divergence_from_spectral(
+                self.context,
+                algebraic_hats,
+                sum_space=self.sum_space,
+            ) + _distortion_stress_divergence_from_spectral(
+                self.context,
+                distortion_hats,
+                sum_space=self.sum_space,
+            )
+            return {
+                output: self.context.forward_projected(output, force[index])
+                for index, output in enumerate(self.output_components)
+            }
         algebraic = tuple(state[name] for name in ALGEBRAIC_STRESS_COMPONENTS)
         distortion = tuple(state[name] for name in DISTORTION_STRESS_COMPONENTS)
         backend = self.context.legacy_transform_backend

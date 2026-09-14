@@ -160,7 +160,7 @@ class _LegacyStokesAlgebraicSolver:
         if set(state) != set(self.spec.force_components):
             raise ValueError("Stokes state must contain exactly three forces")
         force_hats = tuple(
-            self.context.forward_projected(name, state[name])
+            self.context.spectral_dependency(state, name)
             for name in self.spec.force_components
         )
         self._last_warm_start_used = bool(

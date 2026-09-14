@@ -1,14 +1,19 @@
-"""Generation-local physical/spectral reuse for the experimental runtime.
+"""Generation-local physical/spectral state for the experimental runtime.
 
-The cache is deliberately narrower than a field store.  It retains aliases
-only while one frozen algebraic DAG is being evaluated, requires exact tensor
-object and in-place-version identity, and drops every tensor reference when
-that generation ends.  It therefore cannot make data current across a
+The Stage N.1 cache is deliberately narrower than a field store.  It retains
+aliases only while one frozen algebraic DAG is being evaluated, requires exact
+tensor object and in-place-version identity, and drops every tensor reference
+when that generation ends.  It therefore cannot make data current across a
 timestep or turn an algebraic value into checkpointed state.
+
+Stage N.2 adds a lazy physical view for the same synchronized pre-RHS state.
+It survives only long enough for the explicit RHS to consume declared
+transients and is invalidated before the next algebraic generation.
 """
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterator, Mapping
 from dataclasses import dataclass
 from types import MappingProxyType
 
@@ -188,4 +193,193 @@ class AlgebraicRepresentationCache:
         return self._last_snapshot
 
 
-__all__ = ["AlgebraicRepresentationCache"]
+class AlgebraicGenerationState:
+    """Own one synchronized algebraic generation with lazy physical values.
+
+    Every algebraic solver still receives a read-only mapping of physical
+    tensors.  The difference is that ``__getitem__`` materializes a physical
+    tensor only when a solver actually asks for it.  Representation-aware
+    solvers may instead request the already available native spectrum.
+
+    The state is deliberately short lived.  It is invalidated before the next
+    algebraic generation and is never serialized or used as evolved state.
+    """
+
+    def __init__(
+        self,
+        generation: int,
+        physical: Mapping[str, torch.Tensor],
+        spectral: Mapping[str, torch.Tensor],
+        *,
+        materialize: Callable[[str, torch.Tensor], torch.Tensor],
+    ) -> None:
+        if (
+            not isinstance(generation, int)
+            or isinstance(generation, bool)
+            or generation <= 0
+        ):
+            raise ValueError("generation must be a positive integer")
+        if not isinstance(physical, Mapping) or not isinstance(spectral, Mapping):
+            raise TypeError("generation representations must be mappings")
+        if set(physical) != set(spectral):
+            raise ValueError("initial physical and spectral names must match")
+        if not callable(materialize):
+            raise TypeError("materialize must be callable")
+        self._generation = generation
+        self._physical = dict(physical)
+        self._spectral = dict(spectral)
+        self._published: set[str] = set()
+        self._materialize = materialize
+        self._active = True
+        self._counters = {
+            "physical_cache_hits": 0,
+            "physical_materializations": 0,
+            "spectral_dependency_hits": 0,
+            "published_components": 0,
+        }
+
+    @property
+    def generation(self) -> int:
+        return self._generation
+
+    @property
+    def active(self) -> bool:
+        return self._active
+
+    def _require_active(self) -> None:
+        if not self._active:
+            raise RuntimeError("algebraic generation state is no longer current")
+
+    def publish_spectral(self, name: str, value: torch.Tensor) -> None:
+        """Publish one algebraic output without forcing physical storage."""
+
+        self._require_active()
+        if not isinstance(name, str) or not name.isidentifier():
+            raise ValueError("representation name must be a Python identifier")
+        if not isinstance(value, torch.Tensor):
+            raise TypeError("spectral representation must be a tensor")
+        self._spectral[name] = value
+        self._physical.pop(name, None)
+        if name not in self._published:
+            self._published.add(name)
+            self._counters["published_components"] += 1
+
+    def replace_spectral(self, name: str, value: torch.Tensor) -> None:
+        """Rebind one spectrum to an equivalent packed output view."""
+
+        self._require_active()
+        if name not in self._spectral:
+            raise KeyError(f"unknown spectral component {name!r}")
+        if not isinstance(value, torch.Tensor):
+            raise TypeError("spectral representation must be a tensor")
+        self._spectral[name] = value
+
+    def physical(self, name: str) -> torch.Tensor:
+        self._require_active()
+        try:
+            value = self._physical[name]
+        except KeyError:
+            try:
+                spectral = self._spectral[name]
+            except KeyError as exc:
+                raise KeyError(f"unknown algebraic component {name!r}") from exc
+            value = self._materialize(name, spectral)
+            if not isinstance(value, torch.Tensor):
+                raise TypeError("materialization must return a tensor")
+            self._physical[name] = value
+            self._counters["physical_materializations"] += 1
+        else:
+            self._counters["physical_cache_hits"] += 1
+        return value
+
+    def spectral(self, name: str) -> torch.Tensor:
+        self._require_active()
+        try:
+            value = self._spectral[name]
+        except KeyError as exc:
+            raise KeyError(f"unknown algebraic component {name!r}") from exc
+        self._counters["spectral_dependency_hits"] += 1
+        return value
+
+    def view(self, names: tuple[str, ...]) -> "AlgebraicPhysicalStateView":
+        self._require_active()
+        return AlgebraicPhysicalStateView(self, names)
+
+    def snapshot(self) -> MappingProxyType[str, object]:
+        unmaterialized = self._published.difference(self._physical)
+        return MappingProxyType(
+            {
+                "schema_version": 1,
+                "generation": self._generation,
+                **self._counters,
+                "unmaterialized_published_components": len(unmaterialized),
+                "retained_physical_components": len(self._physical),
+                "retained_spectral_components": len(self._spectral),
+                "active": self._active,
+            }
+        )
+
+    def invalidate(self) -> MappingProxyType[str, object]:
+        """Release all tensor references at the next lifecycle boundary."""
+
+        snapshot = dict(self.snapshot())
+        self._active = False
+        self._physical.clear()
+        self._spectral.clear()
+        self._published.clear()
+        snapshot.update(
+            {
+                "active": False,
+                "retained_physical_components": 0,
+                "retained_spectral_components": 0,
+            }
+        )
+        return MappingProxyType(snapshot)
+
+
+class AlgebraicPhysicalStateView(Mapping[str, torch.Tensor]):
+    """Read-only component subset backed by an algebraic generation state."""
+
+    def __init__(
+        self,
+        generation_state: AlgebraicGenerationState,
+        names: tuple[str, ...],
+    ) -> None:
+        if not isinstance(generation_state, AlgebraicGenerationState):
+            raise TypeError("generation_state must be AlgebraicGenerationState")
+        if isinstance(names, str):
+            raise TypeError("component names must be an iterable, not a string")
+        names = tuple(names)
+        if len(set(names)) != len(names) or any(
+            not isinstance(name, str) or not name.isidentifier()
+            for name in names
+        ):
+            raise ValueError("component names must be unique identifiers")
+        self._generation_state = generation_state
+        self._names = names
+        self._name_set = frozenset(names)
+
+    def __getitem__(self, name: str) -> torch.Tensor:
+        if name not in self._name_set:
+            raise KeyError(name)
+        return self._generation_state.physical(name)
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._names)
+
+    def __len__(self) -> int:
+        return len(self._names)
+
+    def spectral(self, name: str) -> torch.Tensor:
+        """Return a native spectrum without materializing physical space."""
+
+        if name not in self._name_set:
+            raise KeyError(name)
+        return self._generation_state.spectral(name)
+
+
+__all__ = [
+    "AlgebraicGenerationState",
+    "AlgebraicPhysicalStateView",
+    "AlgebraicRepresentationCache",
+]

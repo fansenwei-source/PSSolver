@@ -56,7 +56,11 @@ from .performance import (
     RuntimePerformanceRecorder,
     instrument_transform_backend,
 )
-from .representations import AlgebraicRepresentationCache
+from .representations import (
+    AlgebraicGenerationState,
+    AlgebraicPhysicalStateView,
+    AlgebraicRepresentationCache,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -363,6 +367,7 @@ class LegacyAlgebraicSolverContext:
     model_context: LegacyModelExecutionContext
     spectral_dtype: torch.dtype
     representation_cache: AlgebraicRepresentationCache | None = None
+    lazy_physical_materialization: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.geometry_name, str) or not self.geometry_name:
@@ -382,6 +387,15 @@ class LegacyAlgebraicSolverContext:
             raise TypeError(
                 "representation_cache must be an AlgebraicRepresentationCache "
                 "or None"
+            )
+        if not isinstance(self.lazy_physical_materialization, bool):
+            raise TypeError("lazy_physical_materialization must be a bool")
+        if (
+            self.lazy_physical_materialization
+            and self.representation_cache is None
+        ):
+            raise ValueError(
+                "lazy physical materialization requires representation reuse"
             )
 
     @property
@@ -454,6 +468,40 @@ class LegacyAlgebraicSolverContext:
             if cached is not None:
                 return cached
         return self.model_context._inverse_projected(component_name, value)
+
+    def spectral_dependency(
+        self,
+        state: Mapping[str, torch.Tensor],
+        component_name: str,
+    ) -> torch.Tensor:
+        """Read a dependency in native spectral form when it is available."""
+
+        if not isinstance(state, Mapping):
+            raise TypeError("algebraic state must be a mapping")
+        if isinstance(state, AlgebraicPhysicalStateView):
+            return state.spectral(component_name)
+        if component_name not in state:
+            raise KeyError(component_name)
+        return self.forward_projected(component_name, state[component_name])
+
+    def materialize_dependency(
+        self,
+        component_name: str,
+        value: torch.Tensor,
+    ) -> torch.Tensor:
+        """Invert one spectrum and register its exact generation-local pair."""
+
+        physical = self.inverse_projected(component_name, value)
+        if (
+            self.representation_cache is not None
+            and self.representation_cache.active
+        ):
+            self.register_representation_pair(
+                component_name,
+                physical,
+                value,
+            )
+        return physical
 
     def begin_representation_generation(
         self,
@@ -682,6 +730,9 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
         self._batch_size = batch_size
         self._context = context
         self._performance_recorder = performance_recorder
+        self._lazy_physical_materialization = (
+            context.lazy_physical_materialization
+        )
         self._transient_names = execution_plan.transient_components
         produced_dependencies = {
             dependency
@@ -693,6 +744,8 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
             produced_dependencies | set(self._transient_names)
         )
         self._transient_cache: Mapping[str, torch.Tensor] | None = None
+        self._generation_state: AlgebraicGenerationState | None = None
+        self._last_invalidated_materialization: Mapping[str, object] | None = None
         self._cache_generation = 0
         self._last_representation_reuse: Mapping[str, object] | None = None
 
@@ -704,9 +757,18 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
     def representation_reuse_enabled(self) -> bool:
         return self._context.representation_cache is not None
 
+    @property
+    def lazy_physical_materialization_enabled(self) -> bool:
+        return self._lazy_physical_materialization
+
     def clear_cached_outputs(self) -> None:
         """Invalidate non-stored outputs without touching physical state."""
 
+        if self._generation_state is not None:
+            self._last_invalidated_materialization = (
+                self._generation_state.invalidate()
+            )
+            self._generation_state = None
         self._transient_cache = None
         self._last_representation_reuse = None
         self._context.abort_representation_generation()
@@ -715,6 +777,17 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
         """Return counters from the most recent completed DAG generation."""
 
         return self._last_representation_reuse
+
+    def physical_materialization_snapshot(
+        self,
+    ) -> Mapping[str, object] | None:
+        """Return current lazy-state counters without exposing its tensors."""
+
+        if not self._lazy_physical_materialization:
+            return None
+        if self._generation_state is not None:
+            return self._generation_state.snapshot()
+        return self._last_invalidated_materialization
 
     def transient_state(self) -> Mapping[str, torch.Tensor]:
         """Return the current read-only transient cache."""
@@ -729,6 +802,12 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
 
     def forward(self, fields, parameters):
         del parameters
+        if self._generation_state is not None:
+            self._last_invalidated_materialization = (
+                self._generation_state.invalidate()
+            )
+            self._generation_state = None
+            self._transient_cache = None
         outputs: dict[str, torch.Tensor] = {}
         physical_state = {
             name: fields[name]
@@ -746,14 +825,27 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
             physical_state,
             spectral_state,
         )
+        generation_state = None
+        if self._lazy_physical_materialization:
+            generation_state = AlgebraicGenerationState(
+                generation,
+                physical_state,
+                spectral_state,
+                materialize=self._context.materialize_dependency,
+            )
         try:
             for resolved in self._resolved_systems:
-                dependencies = MappingProxyType(
-                    {
-                        name: physical_state[name]
-                        for name in resolved.system.dependencies
-                    }
-                )
+                if generation_state is None:
+                    dependencies = MappingProxyType(
+                        {
+                            name: physical_state[name]
+                            for name in resolved.system.dependencies
+                        }
+                    )
+                else:
+                    dependencies = generation_state.view(
+                        resolved.system.dependencies
+                    )
                 if self._performance_recorder is None:
                     solution = resolved.solver.solve_spectral(dependencies)
                 else:
@@ -797,7 +889,10 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
                             f"{value.device}; expected {self._device}"
                         )
                     outputs[name] = value
-                    if name in self._physical_cache_names:
+                    spectral_state[name] = value
+                    if generation_state is not None:
+                        generation_state.publish_spectral(name, value)
+                    elif name in self._physical_cache_names:
                         if self._performance_recorder is None:
                             physical = self._context.inverse_projected(name, value)
                         else:
@@ -817,20 +912,66 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
                         if name in self._transient_names:
                             transient_cache[name] = physical
         except BaseException:
+            if generation_state is not None:
+                generation_state.invalidate()
             self._context.abort_representation_generation()
             raise
+        values = [outputs[name] for name in self._component_names]
+        if self._performance_recorder is None:
+            packed = torch.stack(values)
+        else:
+            with self._performance_recorder.region(
+                "algebraic.publish_spectral"
+            ):
+                packed = torch.stack(values)
+        if generation_state is not None:
+            for index, name in enumerate(self._component_names):
+                generation_state.replace_spectral(name, packed[index])
+            transient_mapping: Mapping[str, torch.Tensor] = (
+                generation_state.view(self._transient_names)
+            )
+        else:
+            transient_mapping = MappingProxyType(transient_cache)
         self._last_representation_reuse = (
             self._context.end_representation_generation()
         )
-        if set(transient_cache) != set(self._transient_names):
+        if set(transient_mapping) != set(self._transient_names):
             raise RuntimeError("transient algebraic cache is incomplete")
-        self._transient_cache = MappingProxyType(transient_cache)
+        self._generation_state = generation_state
+        self._transient_cache = transient_mapping
         self._cache_generation += 1
-        values = [outputs[name] for name in self._component_names]
-        if self._performance_recorder is None:
-            return torch.stack(values)
-        with self._performance_recorder.region("algebraic.publish_spectral"):
-            return torch.stack(values)
+        return packed
+
+
+class _CombinedPhysicalState(Mapping[str, torch.Tensor]):
+    """Read evolved/static fields plus lazily materialized transients."""
+
+    def __init__(
+        self,
+        primary: Mapping[str, torch.Tensor],
+        transient: Mapping[str, torch.Tensor],
+    ) -> None:
+        if not isinstance(primary, Mapping) or not isinstance(transient, Mapping):
+            raise TypeError("combined physical state inputs must be mappings")
+        overlap = set(primary) & set(transient)
+        if overlap:
+            raise ValueError(
+                "primary and transient physical states must be disjoint"
+            )
+        self._primary = primary
+        self._transient = transient
+        self._names = (*tuple(primary), *tuple(transient))
+
+    def __getitem__(self, name: str) -> torch.Tensor:
+        if name in self._primary:
+            return self._primary[name]
+        return self._transient[name]
+
+    def __iter__(self):
+        return iter(self._names)
+
+    def __len__(self) -> int:
+        return len(self._names)
 
 
 class LegacyExplicitRHSAdapter(torch.nn.Module):
@@ -867,12 +1008,17 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
     def forward(self, fields, parameters):
         del parameters
         state_values = {name: fields[name] for name in self._state_names}
+        state: Mapping[str, torch.Tensor]
         if self._algebraic_fields_adapter is not None:
             transient = self._algebraic_fields_adapter.transient_state()
             if set(transient) != set(self._transient_names):
                 raise RuntimeError("transient algebraic state is incomplete")
-            state_values.update(transient)
-        state = MappingProxyType(state_values)
+            state = _CombinedPhysicalState(
+                MappingProxyType(state_values),
+                transient,
+            )
+        else:
+            state = MappingProxyType(state_values)
         if self._performance_recorder is None:
             explicit = self._model.explicit_rhs(state, self._context)
         else:
@@ -1011,6 +1157,23 @@ class ExperimentalModelRuntime:
                     "cross_generation_reuse": False,
                     "checkpointed": False,
                 },
+                "physical_materialization": {
+                    "mode": (
+                        "lazy_generation_local"
+                        if (
+                            self.algebraic_fields_adapter is not None
+                            and self.algebraic_fields_adapter.lazy_physical_materialization_enabled
+                        )
+                        else "eager"
+                    ),
+                    "spectral_dependencies_may_bypass_physical": bool(
+                        self.algebraic_fields_adapter is not None
+                        and self.algebraic_fields_adapter.lazy_physical_materialization_enabled
+                    ),
+                    "lifetime": "one_synchronized_pre_rhs_state",
+                    "cross_timestep_reuse": False,
+                    "checkpointed": False,
+                },
             },
         }
 
@@ -1022,6 +1185,15 @@ class ExperimentalModelRuntime:
         if self.algebraic_fields_adapter is None:
             return None
         return self.algebraic_fields_adapter.representation_reuse_snapshot()
+
+    def algebraic_physical_materialization_diagnostics(
+        self,
+    ) -> Mapping[str, object] | None:
+        """Return Stage N.2 lazy-materialization counters, if enabled."""
+
+        if self.algebraic_fields_adapter is None:
+            return None
+        return self.algebraic_fields_adapter.physical_materialization_snapshot()
 
     def synchronize_algebraic_for_observation(self) -> None:
         """Refresh algebraic fields against the current evolved state.
@@ -1368,6 +1540,7 @@ def build_experimental_model_runtime(
     geometry_solver_registry: GeometrySolverRegistry | None = None,
     enable_performance_instrumentation: bool = False,
     enable_algebraic_representation_reuse: bool = False,
+    enable_lazy_algebraic_materialization: bool = False,
 ) -> ExperimentalModelRuntime:
     """Build a canary through the frozen plan and legacy runtime adapter."""
 
@@ -1377,6 +1550,15 @@ def build_experimental_model_runtime(
         raise TypeError("enable_performance_instrumentation must be a bool")
     if not isinstance(enable_algebraic_representation_reuse, bool):
         raise TypeError("enable_algebraic_representation_reuse must be a bool")
+    if not isinstance(enable_lazy_algebraic_materialization, bool):
+        raise TypeError("enable_lazy_algebraic_materialization must be a bool")
+    if (
+        enable_lazy_algebraic_materialization
+        and not enable_algebraic_representation_reuse
+    ):
+        raise ValueError(
+            "lazy algebraic materialization requires representation reuse"
+        )
     problem = ProblemSpec(model, geometry, numerics)
     plan = assemble_spectral_plan(problem)
     assembly = materialize_legacy_assembly(
@@ -1431,6 +1613,9 @@ def build_experimental_model_runtime(
             AlgebraicRepresentationCache()
             if enable_algebraic_representation_reuse
             else None
+        ),
+        lazy_physical_materialization=(
+            enable_lazy_algebraic_materialization
         ),
     )
     resolved_algebraic_systems = _resolve_algebraic_systems(
