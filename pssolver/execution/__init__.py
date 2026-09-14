@@ -25,6 +25,11 @@ from .dispatch import (
     AlgebraicSolverRegistration,
     GeometrySolverRegistry,
 )
+from .policy import (
+    AlgebraicExecutionMode,
+    AlgebraicExecutionPolicy,
+    resolve_algebraic_execution_policy,
+)
 from .stokes import (
     INCOMPRESSIBLE_STOKES_CAPABILITY,
     IncompressibleStokesSystemSpec,
@@ -34,6 +39,8 @@ from .stokes import (
 
 __all__ = [
     "AlgebraicExecutableModelProtocol",
+    "AlgebraicExecutionMode",
+    "AlgebraicExecutionPolicy",
     "AlgebraicDependencyEdge",
     "AlgebraicExecutionPlan",
     "AlgebraicRuntimeRestartState",
@@ -55,5 +62,6 @@ __all__ = [
     "ModelExecutionContext",
     "MathematicalOperatorContext",
     "PressureGauge",
+    "resolve_algebraic_execution_policy",
     "TangentialZeroModePolicy",
 ]

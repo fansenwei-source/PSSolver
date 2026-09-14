@@ -25,6 +25,7 @@ from pssolver.core import (
     TransformExecutionOrder,
 )
 from pssolver.execution import (
+    AlgebraicExecutionPolicy,
     IncompressibleStokesSystemSpec,
     TangentialZeroModePolicy,
 )
@@ -280,9 +281,10 @@ def _build_plane_shadow_runtime_from_production_metadata(
     *,
     device: str | torch.device,
     enable_performance_instrumentation: bool = False,
-    enable_algebraic_representation_reuse: bool = False,
-    enable_lazy_algebraic_materialization: bool = False,
-    enable_batched_physical_islands: bool = False,
+    algebraic_execution_policy: AlgebraicExecutionPolicy | None = None,
+    enable_algebraic_representation_reuse: bool | None = None,
+    enable_lazy_algebraic_materialization: bool | None = None,
+    enable_batched_physical_islands: bool | None = None,
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Construct and parity-check a migrated runtime after contract checks."""
 
@@ -381,6 +383,7 @@ def _build_plane_shadow_runtime_from_production_metadata(
         enable_performance_instrumentation=(
             enable_performance_instrumentation
         ),
+        algebraic_execution_policy=algebraic_execution_policy,
         enable_algebraic_representation_reuse=(
             enable_algebraic_representation_reuse
         ),
@@ -401,9 +404,10 @@ def build_plane_shadow_runtime_from_production_metadata(
     metadata: Mapping[str, object],
     *,
     device: str | torch.device = "cpu",
-    enable_algebraic_representation_reuse: bool = False,
-    enable_lazy_algebraic_materialization: bool = False,
-    enable_batched_physical_islands: bool = False,
+    algebraic_execution_policy: AlgebraicExecutionPolicy | None = None,
+    enable_algebraic_representation_reuse: bool | None = None,
+    enable_lazy_algebraic_materialization: bool | None = None,
+    enable_batched_physical_islands: bool | None = None,
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Construct the Stage L CPU shadow runtime from production metadata."""
 
@@ -414,6 +418,7 @@ def build_plane_shadow_runtime_from_production_metadata(
     return _build_plane_shadow_runtime_from_production_metadata(
         metadata,
         device=device,
+        algebraic_execution_policy=algebraic_execution_policy,
         enable_algebraic_representation_reuse=(
             enable_algebraic_representation_reuse
         ),
@@ -430,9 +435,10 @@ def build_h100_plane_shadow_runtime_from_production_metadata(
     expected_gpu_name: str = "H100",
     device: str | torch.device = "cuda",
     enable_performance_instrumentation: bool = False,
-    enable_algebraic_representation_reuse: bool = False,
-    enable_lazy_algebraic_materialization: bool = False,
-    enable_batched_physical_islands: bool = False,
+    algebraic_execution_policy: AlgebraicExecutionPolicy | None = None,
+    enable_algebraic_representation_reuse: bool | None = None,
+    enable_lazy_algebraic_materialization: bool | None = None,
+    enable_batched_physical_islands: bool | None = None,
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Construct the opt-in Stage M runtime on the expected H100 device."""
 
@@ -459,6 +465,7 @@ def build_h100_plane_shadow_runtime_from_production_metadata(
         enable_performance_instrumentation=(
             enable_performance_instrumentation
         ),
+        algebraic_execution_policy=algebraic_execution_policy,
         enable_algebraic_representation_reuse=(
             enable_algebraic_representation_reuse
         ),

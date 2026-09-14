@@ -23,6 +23,7 @@ from pssolver.adapters import (
 from pssolver.core import FieldRole, GeometrySpec, NumericsConfig, ProblemSpec
 from pssolver.execution import (
     AlgebraicPhysicalDependenciesProtocol,
+    AlgebraicExecutionPolicy,
     AlgebraicExecutionPlan,
     AlgebraicExecutableModelProtocol,
     AlgebraicRuntimeRestartState,
@@ -38,6 +39,7 @@ from pssolver.execution import (
     InspectableAlgebraicSolverProtocol,
     ModelExecutionContext,
     build_algebraic_execution_plan,
+    resolve_algebraic_execution_policy,
 )
 from pssolver.planning import SpectralPlan, assemble_spectral_plan
 from pssolver.solver import SpectralSolver
@@ -62,7 +64,11 @@ from .representations import (
     AlgebraicGenerationState,
     AlgebraicPhysicalStateView,
     AlgebraicRepresentationCache,
-    BatchedPhysicalMaterialization,
+)
+from .projected_scheduler import (
+    AlgebraicPhysicalIslandScheduler,
+    BoundarySignatureTransformScheduler,
+    ProjectedTransformDirection,
 )
 
 
@@ -273,97 +279,54 @@ class LegacyModelExecutionContext:
         with self._performance_recorder.region("operators.inverse_projected"):
             return self._projector.inverse_transform(value, boundaries)
 
-    def _projected_many(
+    def _transform_projected_packed(
         self,
-        component_names: tuple[str, ...],
-        values: tuple[torch.Tensor, ...],
+        boundary_conditions: tuple[str, ...],
+        value: torch.Tensor,
         *,
-        inverse: bool,
-    ) -> tuple[torch.Tensor, ...]:
-        """Apply one projected transform per shared boundary signature."""
+        direction: ProjectedTransformDirection,
+    ) -> torch.Tensor:
+        """Transform a scheduler-owned, boundary-compatible packed batch."""
 
-        if isinstance(component_names, str):
-            raise TypeError("component_names must be an iterable")
-        component_names = tuple(component_names)
-        values = tuple(values)
-        if not component_names or len(component_names) != len(values):
-            raise ValueError("batched projected inputs must be nonempty and align")
-        if len(set(component_names)) != len(component_names):
-            raise ValueError("batched projected component names must be unique")
-        groups: dict[tuple[str, ...], list[int]] = {}
-        for index, name in enumerate(component_names):
-            groups.setdefault(self._boundaries(name), []).append(index)
-        result: list[torch.Tensor | None] = [None] * len(values)
-        for boundaries, indices in groups.items():
-            if len(indices) == 1:
-                index = indices[0]
-                result[index] = (
-                    self._inverse_projected(component_names[index], values[index])
-                    if inverse
-                    else self._forward_projected(
-                        component_names[index], values[index]
-                    )
-                )
-                continue
-            expected_tail = (
-                self.spectral_shape if inverse else self.physical_shape
-            )
-            expected_dtype = self._spectral_dtype if inverse else self.real_dtype
-            for index in indices:
-                value = values[index]
-                expected_shape = (self.batch_size, *expected_tail)
-                if not isinstance(value, torch.Tensor):
-                    raise TypeError("batched projected values must be tensors")
-                if value.shape != expected_shape:
-                    raise ValueError(
-                        "batched projected value has shape "
-                        f"{tuple(value.shape)!r}; expected {expected_shape!r}"
-                    )
-                if value.dtype != expected_dtype or value.device != self.device:
-                    raise ValueError(
-                        "batched projected value dtype and device must match"
-                    )
-            packed = torch.cat(tuple(values[index] for index in indices), dim=0)
-            region = (
-                "operators.inverse_projected"
+        boundaries = tuple(boundary_conditions)
+        if len(boundaries) != len(self.physical_shape) or any(
+            condition not in ("periodic", "dirichlet", "neumann")
+            for condition in boundaries
+        ):
+            raise ValueError("packed transform boundaries are invalid")
+        if not isinstance(direction, ProjectedTransformDirection):
+            raise TypeError("direction must be a ProjectedTransformDirection")
+        if not isinstance(value, torch.Tensor):
+            raise TypeError("packed projected value must be a tensor")
+        inverse = direction is ProjectedTransformDirection.INVERSE
+        expected_tail = self.spectral_shape if inverse else self.physical_shape
+        expected_dtype = self._spectral_dtype if inverse else self.real_dtype
+        if (
+            value.ndim != len(expected_tail) + 1
+            or tuple(value.shape[1:]) != tuple(expected_tail)
+            or value.shape[0] <= 0
+            or value.shape[0] % self.batch_size != 0
+        ):
+            raise ValueError("packed projected value shape is incompatible")
+        if value.dtype != expected_dtype or value.device != self.device:
+            raise ValueError("packed projected value dtype and device must match")
+        region = (
+            "operators.inverse_projected"
+            if inverse
+            else "operators.forward_projected"
+        )
+
+        def transform():
+            return (
+                self._projector.inverse_transform(value, boundaries)
                 if inverse
-                else "operators.forward_projected"
+                else self._projector.forward_transform(value, boundaries)
             )
-            if self._performance_recorder is None:
-                transformed = (
-                    self._projector.inverse_transform(packed, boundaries)
-                    if inverse
-                    else self._projector.forward_transform(packed, boundaries)
-                )
-            else:
-                with self._performance_recorder.region(region):
-                    transformed = (
-                        self._projector.inverse_transform(packed, boundaries)
-                        if inverse
-                        else self._projector.forward_transform(packed, boundaries)
-                    )
-            pieces = transformed.split(self.batch_size, dim=0)
-            if len(pieces) != len(indices):
-                raise RuntimeError("batched projected transform split is invalid")
-            for index, piece in zip(indices, pieces, strict=True):
-                result[index] = piece
-        if any(value is None for value in result):
-            raise RuntimeError("batched projected transform is incomplete")
-        return tuple(value for value in result if value is not None)
 
-    def _forward_projected_many(
-        self,
-        component_names: tuple[str, ...],
-        values: tuple[torch.Tensor, ...],
-    ) -> tuple[torch.Tensor, ...]:
-        return self._projected_many(component_names, values, inverse=False)
-
-    def _inverse_projected_many(
-        self,
-        component_names: tuple[str, ...],
-        values: tuple[torch.Tensor, ...],
-    ) -> tuple[torch.Tensor, ...]:
-        return self._projected_many(component_names, values, inverse=True)
+        if self._performance_recorder is None:
+            return transform()
+        with self._performance_recorder.region(region):
+            return transform()
 
     def gradient(
         self,
@@ -461,9 +424,8 @@ class LegacyAlgebraicSolverContext:
     geometry_name: str
     model_context: LegacyModelExecutionContext
     spectral_dtype: torch.dtype
+    execution_policy: AlgebraicExecutionPolicy
     representation_cache: AlgebraicRepresentationCache | None = None
-    lazy_physical_materialization: bool = False
-    batched_physical_islands: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.geometry_name, str) or not self.geometry_name:
@@ -476,6 +438,10 @@ class LegacyAlgebraicSolverContext:
             raise TypeError("spectral_dtype must be a torch.dtype")
         if self.spectral_dtype != self.model_context._spectral_dtype:
             raise ValueError("algebraic and model spectral dtypes must match")
+        if not isinstance(self.execution_policy, AlgebraicExecutionPolicy):
+            raise TypeError(
+                "execution_policy must be an AlgebraicExecutionPolicy"
+            )
         if self.representation_cache is not None and not isinstance(
             self.representation_cache,
             AlgebraicRepresentationCache,
@@ -484,25 +450,24 @@ class LegacyAlgebraicSolverContext:
                 "representation_cache must be an AlgebraicRepresentationCache "
                 "or None"
             )
-        if not isinstance(self.lazy_physical_materialization, bool):
-            raise TypeError("lazy_physical_materialization must be a bool")
-        if (
-            self.lazy_physical_materialization
-            and self.representation_cache is None
+        if self.execution_policy.representation_reuse != (
+            self.representation_cache is not None
         ):
             raise ValueError(
-                "lazy physical materialization requires representation reuse"
+                "representation cache does not match the execution policy"
             )
-        if not isinstance(self.batched_physical_islands, bool):
-            raise TypeError("batched_physical_islands must be a bool")
-        if self.batched_physical_islands and not (
-            self.lazy_physical_materialization
-            and self.representation_cache is not None
-        ):
-            raise ValueError(
-                "batched physical islands require lazy materialization and "
-                "representation reuse"
-            )
+
+    @property
+    def lazy_physical_materialization(self) -> bool:
+        """Compatibility view derived from the unified policy."""
+
+        return self.execution_policy.lazy_physical_materialization
+
+    @property
+    def batched_physical_islands(self) -> bool:
+        """Compatibility view derived from the unified policy."""
+
+        return self.execution_policy.batched_physical_islands
 
     @property
     def physical_shape(self) -> tuple[int, ...]:
@@ -566,20 +531,20 @@ class LegacyAlgebraicSolverContext:
         component_names: tuple[str, ...],
         values: tuple[torch.Tensor, ...],
     ) -> Mapping[str, torch.Tensor]:
-        """Project pointwise island outputs in boundary-compatible batches."""
+        """Compatibility facade over the centralized transform scheduler."""
 
         component_names = tuple(component_names)
         values = tuple(values)
-        if not self.batched_physical_islands:
+        if not self.execution_policy.batched_physical_islands:
             return {
                 name: self.forward_projected(name, value)
                 for name, value in zip(component_names, values, strict=True)
             }
-        transformed = self.model_context._forward_projected_many(
+        scheduled = BoundarySignatureTransformScheduler(self).forward_many(
             component_names,
             values,
         )
-        return dict(zip(component_names, transformed, strict=True))
+        return dict(zip(component_names, scheduled.values, strict=True))
 
     def inverse_projected(
         self,
@@ -594,6 +559,19 @@ class LegacyAlgebraicSolverContext:
             if cached is not None:
                 return cached
         return self.model_context._inverse_projected(component_name, value)
+
+    def transform_projected_packed(
+        self,
+        boundary_conditions: tuple[str, ...],
+        value: torch.Tensor,
+        *,
+        direction: ProjectedTransformDirection,
+    ) -> torch.Tensor:
+        return self.model_context._transform_projected_packed(
+            boundary_conditions,
+            value,
+            direction=direction,
+        )
 
     def spectral_dependency(
         self,
@@ -628,59 +606,6 @@ class LegacyAlgebraicSolverContext:
                 value,
             )
         return physical
-
-    def materialize_dependencies(
-        self,
-        component_names: tuple[str, ...],
-        values: tuple[torch.Tensor, ...],
-    ) -> BatchedPhysicalMaterialization:
-        """Materialize spectra with one inverse per boundary-signature group."""
-
-        component_names = tuple(component_names)
-        values = tuple(values)
-        if not component_names or len(component_names) != len(values):
-            raise ValueError("materialization inputs must be nonempty and align")
-        if len(set(component_names)) != len(component_names):
-            raise ValueError("materialization component names must be unique")
-        physical: dict[str, torch.Tensor] = {}
-        misses: list[tuple[str, torch.Tensor]] = []
-        for name, value in zip(component_names, values, strict=True):
-            cached = (
-                self.representation_cache.physical_for(name, value)
-                if self.representation_cache is not None
-                else None
-            )
-            if cached is None:
-                misses.append((name, value))
-            else:
-                physical[name] = cached
-        batch_sizes: list[int] = []
-        if misses:
-            miss_names = tuple(name for name, _ in misses)
-            miss_values = tuple(value for _, value in misses)
-            grouped: dict[tuple[str, ...], int] = {}
-            for name in miss_names:
-                boundaries = self.boundary_conditions(name)
-                grouped[boundaries] = grouped.get(boundaries, 0) + 1
-            transformed = self.model_context._inverse_projected_many(
-                miss_names,
-                miss_values,
-            )
-            batch_sizes.extend(grouped.values())
-            for name, spectral, value in zip(
-                miss_names,
-                miss_values,
-                transformed,
-                strict=True,
-            ):
-                physical[name] = value
-                if (
-                    self.representation_cache is not None
-                    and self.representation_cache.active
-                ):
-                    self.register_representation_pair(name, value, spectral)
-        ordered = {name: physical[name] for name in component_names}
-        return BatchedPhysicalMaterialization(ordered, tuple(batch_sizes))
 
     def begin_representation_generation(
         self,
@@ -884,6 +809,9 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
         spectral_dtype: torch.dtype,
         device: torch.device,
         batch_size: int,
+        physical_island_scheduler: (
+            AlgebraicPhysicalIslandScheduler | None
+        ) = None,
         performance_recorder: RuntimePerformanceRecorder | None = None,
     ) -> None:
         super().__init__()
@@ -908,6 +836,21 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
         self._device = device
         self._batch_size = batch_size
         self._context = context
+        if physical_island_scheduler is not None and not isinstance(
+            physical_island_scheduler,
+            AlgebraicPhysicalIslandScheduler,
+        ):
+            raise TypeError(
+                "physical_island_scheduler must be an "
+                "AlgebraicPhysicalIslandScheduler or None"
+            )
+        if context.batched_physical_islands != (
+            physical_island_scheduler is not None
+        ):
+            raise ValueError(
+                "physical-island scheduler does not match execution policy"
+            )
+        self._physical_island_scheduler = physical_island_scheduler
         self._performance_recorder = performance_recorder
         self._lazy_physical_materialization = (
             context.lazy_physical_materialization
@@ -1034,8 +977,8 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
                 spectral_state,
                 materialize=self._context.materialize_dependency,
                 materialize_many=(
-                    self._context.materialize_dependencies
-                    if self._batched_physical_islands
+                    self._physical_island_scheduler.materialize_dependencies
+                    if self._physical_island_scheduler is not None
                     else None
                 ),
             )
@@ -1208,6 +1151,9 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
         projector: BasisAwareSpectralProjector,
         context: ModelExecutionContext,
         algebraic_fields_adapter: LegacyAlgebraicFieldsAdapter | None = None,
+        physical_island_scheduler: (
+            AlgebraicPhysicalIslandScheduler | None
+        ) = None,
         performance_recorder: RuntimePerformanceRecorder | None = None,
     ) -> None:
         super().__init__()
@@ -1222,12 +1168,27 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
         self._projector = projector
         self._context = context
         self._algebraic_fields_adapter = algebraic_fields_adapter
+        if physical_island_scheduler is not None and not isinstance(
+            physical_island_scheduler,
+            AlgebraicPhysicalIslandScheduler,
+        ):
+            raise TypeError(
+                "physical_island_scheduler must be an "
+                "AlgebraicPhysicalIslandScheduler or None"
+            )
+        self._physical_island_scheduler = physical_island_scheduler
         self._performance_recorder = performance_recorder
         self._transient_names = assembly.omitted_transient_components
         self._batched_physical_islands = bool(
             algebraic_fields_adapter is not None
             and algebraic_fields_adapter.batched_physical_islands_enabled
         )
+        if self._batched_physical_islands != (
+            physical_island_scheduler is not None
+        ):
+            raise ValueError(
+                "explicit-RHS scheduler does not match execution policy"
+            )
         self._explicit_physical_dependencies = (
             tuple(model.explicit_rhs_physical_dependencies)
             if isinstance(model, ExplicitRHSPhysicalDependenciesProtocol)
@@ -1322,12 +1283,11 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
                 )
             values.append(value)
         if self._batched_physical_islands:
-            spectral = list(
-                self._context._forward_projected_many(
-                    self._component_names,
-                    tuple(values),
-                )
+            projected = self._physical_island_scheduler.project_outputs(
+                self._component_names,
+                tuple(values),
             )
+            spectral = [projected[name] for name in self._component_names]
         else:
             spectral = []
             for value, boundary_conditions in zip(
@@ -1368,6 +1328,7 @@ class ExperimentalModelRuntime:
     plan: SpectralPlan
     assembly: LegacyAssemblySpec
     context: ModelExecutionContext
+    algebraic_execution_policy: AlgebraicExecutionPolicy
     solver: SpectralSolver
     projector: BasisAwareSpectralProjector
     explicit_rhs_adapter: LegacyExplicitRHSAdapter
@@ -1383,6 +1344,9 @@ class ExperimentalModelRuntime:
             "spectral_plan": self.plan.to_metadata(),
             "legacy_assembly": self.assembly.to_metadata(),
             "execution_adapter": "legacy_explicit_rhs",
+            "algebraic_execution_policy": (
+                self.algebraic_execution_policy.to_metadata()
+            ),
             "time_integration": {
                 "scheme": "semi_implicit_euler",
                 "dynamic_spectral_projection": self.projector.enabled,
@@ -1471,6 +1435,26 @@ class ExperimentalModelRuntime:
                     "grouping_key": "boundary_signature",
                     "cross_timestep_reuse": False,
                     "checkpointed": False,
+                },
+                "materialization_scheduler": {
+                    "implementation": (
+                        "boundary_signature_transform_scheduler"
+                        if self.algebraic_execution_policy
+                        .batched_physical_islands
+                        else "componentwise_adapter"
+                    ),
+                    "grouping_key_fields": [
+                        "boundary_signature",
+                        "direction",
+                        "physical_shape",
+                        "spectral_shape",
+                        "batch_size",
+                        "real_dtype",
+                        "spectral_dtype",
+                        "device",
+                    ],
+                    "call_scope": "one_physical_computation_island",
+                    "lifecycle_owner": "algebraic_generation_state",
                 },
             },
         }
@@ -1837,9 +1821,10 @@ def build_experimental_model_runtime(
     allow_unstored_diagnostics: bool = False,
     geometry_solver_registry: GeometrySolverRegistry | None = None,
     enable_performance_instrumentation: bool = False,
-    enable_algebraic_representation_reuse: bool = False,
-    enable_lazy_algebraic_materialization: bool = False,
-    enable_batched_physical_islands: bool = False,
+    algebraic_execution_policy: AlgebraicExecutionPolicy | None = None,
+    enable_algebraic_representation_reuse: bool | None = None,
+    enable_lazy_algebraic_materialization: bool | None = None,
+    enable_batched_physical_islands: bool | None = None,
 ) -> ExperimentalModelRuntime:
     """Build a canary through the frozen plan and legacy runtime adapter."""
 
@@ -1847,28 +1832,17 @@ def build_experimental_model_runtime(
         raise TypeError("model must implement ExecutableModelProtocol")
     if not isinstance(enable_performance_instrumentation, bool):
         raise TypeError("enable_performance_instrumentation must be a bool")
-    if not isinstance(enable_algebraic_representation_reuse, bool):
-        raise TypeError("enable_algebraic_representation_reuse must be a bool")
-    if not isinstance(enable_lazy_algebraic_materialization, bool):
-        raise TypeError("enable_lazy_algebraic_materialization must be a bool")
-    if not isinstance(enable_batched_physical_islands, bool):
-        raise TypeError("enable_batched_physical_islands must be a bool")
-    if (
-        enable_lazy_algebraic_materialization
-        and not enable_algebraic_representation_reuse
-    ):
-        raise ValueError(
-            "lazy algebraic materialization requires representation reuse"
-        )
-    if enable_batched_physical_islands and not (
-        enable_algebraic_representation_reuse
-        and enable_lazy_algebraic_materialization
-    ):
-        raise ValueError(
-            "batched physical islands require representation reuse and lazy "
-            "algebraic materialization"
-        )
-    if enable_batched_physical_islands and not isinstance(
+    execution_policy = resolve_algebraic_execution_policy(
+        algebraic_execution_policy,
+        enable_algebraic_representation_reuse=(
+            enable_algebraic_representation_reuse
+        ),
+        enable_lazy_algebraic_materialization=(
+            enable_lazy_algebraic_materialization
+        ),
+        enable_batched_physical_islands=enable_batched_physical_islands,
+    )
+    if execution_policy.batched_physical_islands and not isinstance(
         model,
         ExplicitRHSPhysicalDependenciesProtocol,
     ):
@@ -1886,6 +1860,11 @@ def build_experimental_model_runtime(
         plan,
         assembly,
     )
+    if (
+        execution_policy.batched_physical_islands
+        and algebraic_execution_plan is None
+    ):
+        raise ValueError("batched physical islands require algebraic systems")
 
     solver = create_legacy_solver(
         assembly,
@@ -1921,20 +1900,26 @@ def build_experimental_model_runtime(
         projector,
         performance_recorder,
     )
+    representation_cache = (
+        AlgebraicRepresentationCache()
+        if execution_policy.representation_reuse
+        else None
+    )
     algebraic_context = LegacyAlgebraicSolverContext(
         geometry_name=geometry.name,
         model_context=context,
         spectral_dtype=solver.transform_backend.spectral_dtype,
-        representation_cache=(
-            AlgebraicRepresentationCache()
-            if enable_algebraic_representation_reuse
-            else None
-        ),
-        lazy_physical_materialization=(
-            enable_lazy_algebraic_materialization
-        ),
-        batched_physical_islands=enable_batched_physical_islands,
+        execution_policy=execution_policy,
+        representation_cache=representation_cache,
     )
+    physical_island_scheduler = None
+    if execution_policy.batched_physical_islands:
+        if representation_cache is None:
+            raise RuntimeError("batched policy lacks a representation cache")
+        physical_island_scheduler = AlgebraicPhysicalIslandScheduler(
+            BoundarySignatureTransformScheduler(algebraic_context),
+            representation_cache,
+        )
     resolved_algebraic_systems = _resolve_algebraic_systems(
         algebraic_execution_plan,
         geometry,
@@ -1965,6 +1950,7 @@ def build_experimental_model_runtime(
             spectral_dtype=solver.transform_backend.spectral_dtype,
             device=torch.device(solver.device),
             batch_size=solver.batchsize,
+            physical_island_scheduler=physical_island_scheduler,
             performance_recorder=performance_recorder,
         )
         solver.model.set_static_compute_model(algebraic_fields_adapter)
@@ -1978,6 +1964,7 @@ def build_experimental_model_runtime(
             projector,
             context,
             algebraic_fields_adapter,
+            physical_island_scheduler,
             performance_recorder,
         )
         explicit_output = explicit_rhs_adapter(
@@ -2022,6 +2009,7 @@ def build_experimental_model_runtime(
         plan=plan,
         assembly=assembly,
         context=context,
+        algebraic_execution_policy=execution_policy,
         solver=solver,
         projector=projector,
         explicit_rhs_adapter=explicit_rhs_adapter,
