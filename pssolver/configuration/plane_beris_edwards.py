@@ -71,6 +71,10 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/configuration/plane_beris_edwards.py",
     "pssolver/runtime/__init__.py",
     "pssolver/runtime/plane_beris_edwards.py",
+    "pssolver/workflows/__init__.py",
+    "pssolver/workflows/plane_checkpoint.py",
+    "pssolver/workflows/plane_observation.py",
+    "pssolver/workflows/plane_beris_edwards.py",
     "pssolver/core/boundary.py",
     "pssolver/core/domain.py",
     "pssolver/core/geometry.py",
@@ -238,11 +242,15 @@ class PlaneBerisEdwardsRunSpec:
     save_hydrodynamics: bool
     validation_config_sha256: str | None
     dry_run: bool
+    checkpoint_interval: int | None = None
+    restart_from: Path | None = None
     runtime_path: PlaneRuntimePath = PlaneRuntimePath.LEGACY_PRODUCTION
     boundaries: PlaneFreeSlipBoundaryConditions = PLANE_FREE_SLIP_BOUNDARIES
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "output_dir", Path(self.output_dir))
+        if self.restart_from is not None:
+            object.__setattr__(self, "restart_from", Path(self.restart_from))
         object.__setattr__(self, "twist_modes", tuple(self.twist_modes))
         if not isinstance(self.spectral_refresh, SpectralRefreshSpec):
             raise TypeError("spectral_refresh must be a SpectralRefreshSpec")
@@ -365,6 +373,12 @@ class PlaneBerisEdwardsRunSpec:
                 "diagnostic_interval": self.diagnostic_interval,
                 "diagnostics": self.diagnostics,
                 "save_hydrodynamics": self.save_hydrodynamics,
+                "checkpoint_interval": self.checkpoint_interval,
+                "restart_from": (
+                    str(self.restart_from)
+                    if self.restart_from is not None
+                    else None
+                ),
                 "spectral_refresh": self.spectral_refresh.to_metadata(),
             },
             "initial_condition": {
@@ -394,6 +408,43 @@ class PlaneBerisEdwardsRunSpec:
     def canonical_sha256(self) -> str:
         encoded = json.dumps(
             self.to_metadata(),
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+        return hashlib.sha256(encoded).hexdigest()
+
+    def runtime_identity_metadata(self) -> dict[str, object]:
+        """Return the numerical identity required for same-backend restart."""
+
+        metadata = self.to_metadata()
+        model = dict(metadata["model"])
+        # The checkpoint supplies the evolved Q state, so the fresh-run
+        # initializer amplitude is provenance rather than restart identity.
+        model.pop("initial_s")
+        return {
+            "schema_version": PLANE_RUN_SPEC_SCHEMA_VERSION,
+            "runtime_path": self.runtime_path.value,
+            "geometry": metadata["geometry"],
+            "boundaries": metadata["boundaries"],
+            "numerics": metadata["numerics"],
+            "model": model,
+            "preset": metadata["preset"],
+            "dt": self.dt,
+            "spectral_refresh": self.spectral_refresh.to_metadata(),
+            "zero_mode": metadata["zero_mode"],
+            "runtime_controls": {
+                "device": self.device,
+                "tf32": self.tf32,
+                "disable_q_gradient_reuse": (
+                    self.disable_q_gradient_reuse
+                ),
+            },
+        }
+
+    def runtime_identity_sha256(self) -> str:
+        encoded = json.dumps(
+            self.runtime_identity_metadata(),
             allow_nan=False,
             separators=(",", ":"),
             sort_keys=True,
@@ -537,6 +588,8 @@ def create_plane_beris_edwards_run_spec(
     save_hydrodynamics: bool = False,
     validation_config_sha256: str | None = None,
     dry_run: bool = False,
+    checkpoint_interval: int | None = None,
+    restart_from: str | Path | None = None,
     runtime_path: str | PlaneRuntimePath = DEFAULT_PLANE_RUNTIME_PATH,
 ) -> PlaneBerisEdwardsRunSpec:
     """Create and validate the canonical programmatic run specification."""
@@ -594,18 +647,17 @@ def create_plane_beris_edwards_run_spec(
         raise ValueError(f"invalid runtime path: {runtime_path!r}") from exc
     if (
         resolved_runtime_path is PlaneRuntimePath.SEPARATED_CANARY
-        and diagnostics
-    ):
-        raise ValueError(
-            "separated_canary diagnostics require the Stage O.3 workflow"
-        )
-    if (
-        resolved_runtime_path is PlaneRuntimePath.SEPARATED_CANARY
         and disable_q_gradient_reuse
     ):
         raise ValueError(
             "separated_canary does not accept legacy Q-gradient cache flags"
         )
+    if checkpoint_interval is not None and (
+        not isinstance(checkpoint_interval, int)
+        or isinstance(checkpoint_interval, bool)
+        or checkpoint_interval <= 0
+    ):
+        raise ValueError("--checkpoint-interval must be positive")
     supported_choices = (
         (parameterization, {"paper-window", "fixed-k"}, "parameterization"),
         (dealias_rule, set(DEALIAS_RULE_FRACTIONS), "dealias rule"),
@@ -729,6 +781,8 @@ def create_plane_beris_edwards_run_spec(
         save_hydrodynamics=save_hydrodynamics,
         validation_config_sha256=validation_config_sha256,
         dry_run=dry_run,
+        checkpoint_interval=checkpoint_interval,
+        restart_from=(Path(restart_from) if restart_from is not None else None),
         runtime_path=resolved_runtime_path,
     )
     # Force all declarative contracts to validate before runtime construction.
@@ -949,6 +1003,25 @@ def _parser() -> argparse.ArgumentParser:
             "Optional canonical SHA-256 of the complete validation-run "
             "configuration. It is recorded verbatim in metadata so a "
             "validation runner can reject accidental result reuse."
+        ),
+    )
+    parser.add_argument(
+        "--checkpoint-interval",
+        type=int,
+        default=None,
+        help=(
+            "Write an exact same-backend workflow checkpoint after each "
+            "positive multiple of this many completed steps."
+        ),
+    )
+    parser.add_argument(
+        "--restart-from",
+        type=Path,
+        default=None,
+        help=(
+            "Start a new output directory from a complete Stage O.3 "
+            "same-backend checkpoint; --steps is the number of additional "
+            "steps."
         ),
     )
     parser.add_argument(

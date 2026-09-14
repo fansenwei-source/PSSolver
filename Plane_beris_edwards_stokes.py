@@ -43,9 +43,8 @@ import hashlib
 import json
 import platform
 from pathlib import Path
-import time
 import torch
-from pssolver import SpectralSolver, write_run_metadata
+from pssolver import SpectralSolver
 from pssolver.configuration import (
     PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
     PLANE_FREE_SLIP_BOUNDARIES,
@@ -54,6 +53,10 @@ from pssolver.configuration import (
 from pssolver.runtime import (
     PlaneRuntimeBuildRequest,
     build_plane_beris_edwards_runtime,
+)
+from pssolver.workflows import (
+    PlaneBerisEdwardsWorkflow,
+    read_plane_checkpoint_header,
 )
 from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
@@ -182,56 +185,6 @@ class DealiasedSemiImplicitEulerIntegrator(SemiImplicitEulerIntegrator):
             )
 
         self._advance_spectral_refresh_clock()
-
-
-def divergence_stats(fields):
-    div_u = (
-        fields.gradient('ux', axis=0)
-        + fields.gradient('uy', axis=1)
-        + fields.gradient('uz', axis=2)
-    )
-    div_abs = div_u.abs()
-    div_max = div_abs.max().item()
-    div_rms = torch.sqrt(torch.mean(div_abs.square())).item()
-
-    gxux = fields.gradient('ux', axis=0)
-    gyux = fields.gradient('ux', axis=1)
-    gzux = fields.gradient('ux', axis=2)
-    gxuy = fields.gradient('uy', axis=0)
-    gyuy = fields.gradient('uy', axis=1)
-    gzuy = fields.gradient('uy', axis=2)
-    gxuz = fields.gradient('uz', axis=0)
-    gyuz = fields.gradient('uz', axis=1)
-    gzuz = fields.gradient('uz', axis=2)
-    grad_u_sq = (
-        gxux.abs().square() + gyux.abs().square() + gzux.abs().square()
-        + gxuy.abs().square() + gyuy.abs().square() + gzuy.abs().square()
-        + gxuz.abs().square() + gyuz.abs().square() + gzuz.abs().square()
-    )
-    grad_u_rms = torch.sqrt(torch.mean(grad_u_sq)).item()
-    div_rel = div_rms / max(grad_u_rms, 1e-30)
-    return div_max, div_rms, div_rel
-
-
-def wall_normal_momentum_stats(fields, static_model):
-    """Check normal momentum on the first and last cell-center planes."""
-    fz = static_model.last_projected_normal_force
-    if fz is None:
-        raise RuntimeError(
-            "Normal-force diagnostics were not enabled in the static model."
-        )
-
-    lap_uz = fields.laplacian('uz')
-    dzp = fields.gradient('p', axis=2)
-    residual = dzp - (
-        fz
-        + static_model.viscosity * lap_uz
-        - static_model.friction * fields['uz']
-    )
-
-    wall_residual = torch.stack([residual[..., 0], residual[..., -1]], dim=-1)
-    wall_abs = wall_residual.abs()
-    return wall_abs.max().item(), torch.sqrt(torch.mean(wall_abs.square())).item()
 
 
 def build_legacy_plane_runtime(
@@ -399,7 +352,6 @@ runtime_environment = {
 }
 pointwise_kernels = BerisEdwardsPointwiseKernels(args.pointwise_execution)
 pointwise_execution_metadata = pointwise_kernels.metadata()
-batchsize = 1
 
 Nx, Ny, Nz = args.nx, args.ny, args.nz
 Lx, Ly, Lz = args.lx, args.ly, args.height
@@ -739,6 +691,17 @@ print(json.dumps(metadata, indent=2))
 if args.dry_run:
     raise SystemExit(0)
 
+# Reject unsupported cross-runtime or numerically incompatible restart before
+# creating an output directory, generating Q, or constructing either solver.
+if args.restart_from is not None:
+    restart_header = read_plane_checkpoint_header(args.restart_from)
+    if restart_header.runtime_path is not args.runtime_path:
+        raise ValueError(
+            "cross-runtime Plane checkpoint restart is unsupported"
+        )
+    if restart_header.runtime_identity_sha256 != args.runtime_identity_sha256():
+        raise ValueError("checkpoint runtime identity does not match target")
+
 output_dir = args.output_dir.resolve()
 if output_dir.exists() and any(output_dir.iterdir()):
     raise FileExistsError(f"Refusing to mix pilot outputs in nonempty {output_dir}")
@@ -823,7 +786,6 @@ runtime_adapter = build_plane_beris_edwards_runtime(
         pointwise_kernels=pointwise_kernels,
     ),
 )
-solver = runtime_adapter.solver
 spectral_projector = runtime_adapter.projector
 metadata["runtime_selection"] = {
     **args.runtime_selection_metadata(),
@@ -839,145 +801,31 @@ metadata["retained_q_modes"] = spectral_projector.retained_axis_counts(Q_BC)
 metadata["retained_normal_velocity_modes"] = spectral_projector.retained_axis_counts(
     U_NORMAL_BC
 )
-write_run_metadata(output_dir, metadata, status="running")
-
-start_step = 0
-
-diagnostic_history = []
-start = time.time()
 pbar = trange(steps)
-
-
-def save_snapshot(i):
-    q_snapshot = torch.stack([
-        runtime_adapter.fields[name].detach().cpu()
-        for name in ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"]
-    ])  # shape -> (5, batch, Nx, Ny, Nz)
-    q_snapshot = q_snapshot.permute(1, 2, 3, 4, 0)
-    np.save(output_dir / f"Q_{i}.npy", q_snapshot[0].numpy())
-
-    if SAVE_HYDRODYNAMICS:
-        u_snapshot = torch.stack([
-            runtime_adapter.fields[name].detach().cpu()
-            for name in ["ux", "uy", "uz"]
-        ])  # shape -> (3, batch, Nx, Ny, Nz)
-        u_snapshot = u_snapshot.permute(1, 2, 3, 4, 0)
-        np.save(output_dir / f"u_{i}.npy", u_snapshot[0].numpy())
-
-        p_snapshot = runtime_adapter.fields["p"].detach().cpu()
-        np.save(output_dir / f"p_{i}.npy", p_snapshot[0].numpy())
-
-
-def record_step_state(i):
-    if ENABLE_DIAGNOSTICS and i % DIAGNOSTIC_INTERVAL == 0:
-        div_max, div_rms, div_rel = divergence_stats(runtime_adapter.fields)
-        static_model = solver.model.static_model
-        wall_mom_max, wall_mom_rms = wall_normal_momentum_stats(
-            runtime_adapter.fields,
-            static_model,
-        )
-        diagnostic_history.append((
-            i,
-            div_max,
-            div_rms,
-            div_rel,
-            static_model.last_pressure_iterations,
-            static_model.last_pressure_residual,
-            static_model.last_pressure_relative_residual,
-            wall_mom_max,
-            wall_mom_rms,
-        ))
-        pbar.set_postfix(
-            div_max=f"{div_max:.2e}",
-            div_rms=f"{div_rms:.2e}",
-            div_rel=f"{div_rel:.2e}",
-            schur_it=static_model.last_pressure_iterations,
-            schur_rel=f"{static_model.last_pressure_relative_residual:.2e}",
-            wall_n_rms=f"{wall_mom_rms:.2e}",
-        )
-    if i >= SAVE_START_STEP and i % SAVE_INTERVAL == 0:
-        save_snapshot(i)
-
-
-for local_step in pbar:
-    i = start_step + local_step
-    runtime_adapter.advance(
-        1,
-        pre_update_callback=(
-            lambda _solver, _step, i=i: record_step_state(i)
-        ),
-    )
-
-final_step = start_step + steps
-runtime_adapter.synchronize_for_observation()
-save_snapshot(final_step)
-
-end = time.time()
-print(f"Elapsed time: {end - start:.6f} seconds")
-if ENABLE_DIAGNOSTICS:
-    final_div_max, final_div_rms, final_div_rel = divergence_stats(
-        runtime_adapter.fields
-    )
-    static_model = solver.model.static_model
-    final_wall_mom_max, final_wall_mom_rms = wall_normal_momentum_stats(
-        runtime_adapter.fields,
-        static_model,
-    )
-    diagnostic_history.append((
-        start_step + steps,
-        final_div_max,
-        final_div_rms,
-        final_div_rel,
-        static_model.last_pressure_iterations,
-        static_model.last_pressure_residual,
-        static_model.last_pressure_relative_residual,
-        final_wall_mom_max,
-        final_wall_mom_rms,
-    ))
-    diagnostic_array = np.array(
-        diagnostic_history,
-        dtype=[
-            ("step", np.int64),
-            ("div_max", np.float64),
-            ("div_rms", np.float64),
-            ("div_rel", np.float64),
-            ("schur_iterations", np.float64),
-            ("schur_abs_residual", np.float64),
-            ("schur_rel_residual", np.float64),
-            ("wall_normal_momentum_max", np.float64),
-            ("wall_normal_momentum_rms", np.float64),
-        ],
-    )
-    np.save(output_dir / "diagnostics.npy", diagnostic_array)
-    np.savetxt(
-        output_dir / "diagnostics.csv",
-        diagnostic_array,
-        delimiter=",",
-        header="step,div_max,div_rms,div_rel,schur_iterations,schur_abs_residual,schur_rel_residual,wall_normal_momentum_max,wall_normal_momentum_rms",
-        comments="",
-    )
+workflow = PlaneBerisEdwardsWorkflow(
+    runtime_adapter,
+    args,
+    output_dir,
+    metadata,
+)
+workflow_result = workflow.run(progress=pbar)
+print(f"Elapsed time: {workflow_result.elapsed_seconds:.6f} seconds")
+if workflow_result.diagnostics:
+    final_diagnostic = workflow_result.diagnostics[-1]
     print(
         "Final div(u) diagnostic: "
-        f"max={final_div_max:.6e}, "
-        f"rms={final_div_rms:.6e}, "
-        f"relative={final_div_rel:.6e}"
+        f"max={final_diagnostic.div_max:.6e}, "
+        f"rms={final_diagnostic.div_rms:.6e}, "
+        f"relative={final_diagnostic.div_rel:.6e}"
     )
     print(
         "Final Schur saddle solve diagnostic: "
-        f"iterations={static_model.last_pressure_iterations}, "
-        f"abs_residual={static_model.last_pressure_residual:.6e}, "
-        f"rel_residual={static_model.last_pressure_relative_residual:.6e}"
+        f"iterations={int(final_diagnostic.schur_iterations)}, "
+        f"abs_residual={final_diagnostic.schur_abs_residual:.6e}, "
+        f"rel_residual={final_diagnostic.schur_rel_residual:.6e}"
     )
     print(
         "Final wall normal momentum diagnostic: "
-        f"max={final_wall_mom_max:.6e}, "
-        f"rms={final_wall_mom_rms:.6e}"
+        f"max={final_diagnostic.wall_normal_momentum_max:.6e}, "
+        f"rms={final_diagnostic.wall_normal_momentum_rms:.6e}"
     )
-
-metadata["completed_steps"] = final_step
-metadata["elapsed_seconds"] = end - start
-metadata["numerics"]["spectral_refresh"]["actual_count"] = (
-    solver.integrator.refresh_count
-)
-(output_dir / "COMPLETE").write_text("complete\n")
-write_run_metadata(output_dir, metadata, status="complete")

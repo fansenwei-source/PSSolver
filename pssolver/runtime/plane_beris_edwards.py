@@ -87,6 +87,9 @@ class PlaneRuntimeAdapterProtocol(Protocol):
     @property
     def fields(self) -> object: ...
 
+    @property
+    def completed_steps(self) -> int: ...
+
     def advance(
         self,
         steps: int,
@@ -95,6 +98,21 @@ class PlaneRuntimeAdapterProtocol(Protocol):
     ) -> None: ...
 
     def synchronize_for_observation(self) -> None: ...
+
+    def projected_normal_force(self) -> object: ...
+
+    def flow_diagnostics(self) -> Mapping[str, object]: ...
+
+    def backend_restart_metadata(self) -> dict[str, object]: ...
+
+    def restore_progress(
+        self,
+        *,
+        completed_steps: int,
+        spectral_refresh_interval: int | None,
+        integrator_step_count: int,
+        integrator_refresh_count: int,
+    ) -> None: ...
 
     def to_metadata(self) -> dict[str, object]: ...
 
@@ -125,6 +143,14 @@ class LegacyPlaneRuntimeAdapter:
     def fields(self) -> object:
         return self._solver.fields
 
+    @property
+    def completed_steps(self) -> int:
+        integrator = self._solver.integrator
+        interval = integrator.spectral_refresh_interval
+        if interval is None:
+            return int(integrator.step_count)
+        return int(integrator.refresh_count * interval + integrator.step_count)
+
     def advance(
         self,
         steps: int,
@@ -138,6 +164,41 @@ class LegacyPlaneRuntimeAdapter:
 
     def synchronize_for_observation(self) -> None:
         self._solver.refresh_static_fields()
+
+    def projected_normal_force(self) -> object:
+        value = self._solver.model.static_model.last_projected_normal_force
+        if value is None:
+            raise RuntimeError("legacy normal-force diagnostics are unavailable")
+        return value
+
+    def flow_diagnostics(self) -> Mapping[str, object]:
+        model = self._solver.model.static_model
+        return {
+            "last_pressure_iterations": int(model.last_pressure_iterations),
+            "last_pressure_residual": float(model.last_pressure_residual),
+            "last_pressure_relative_residual": float(
+                model.last_pressure_relative_residual
+            ),
+        }
+
+    def backend_restart_metadata(self) -> dict[str, object]:
+        return {"kind": "legacy_plane_stateless", "state_keys": []}
+
+    def restore_progress(
+        self,
+        *,
+        completed_steps: int,
+        spectral_refresh_interval: int | None,
+        integrator_step_count: int,
+        integrator_refresh_count: int,
+    ) -> None:
+        _restore_integrator_progress(
+            self._solver.integrator,
+            completed_steps=completed_steps,
+            spectral_refresh_interval=spectral_refresh_interval,
+            integrator_step_count=integrator_step_count,
+            integrator_refresh_count=integrator_refresh_count,
+        )
 
     def to_metadata(self) -> dict[str, object]:
         return {
@@ -180,6 +241,14 @@ class SeparatedCanaryPlaneRuntimeAdapter:
     def fields(self) -> object:
         return self._runtime.solver.fields
 
+    @property
+    def completed_steps(self) -> int:
+        integrator = self._runtime.solver.integrator
+        interval = integrator.spectral_refresh_interval
+        if interval is None:
+            return int(integrator.step_count)
+        return int(integrator.refresh_count * interval + integrator.step_count)
+
     def advance(
         self,
         steps: int,
@@ -194,6 +263,53 @@ class SeparatedCanaryPlaneRuntimeAdapter:
     def synchronize_for_observation(self) -> None:
         self._runtime.synchronize_algebraic_for_observation()
 
+    def projected_normal_force(self) -> object:
+        transient = self._runtime.transient_algebraic_state()
+        try:
+            return transient["force_z"]
+        except KeyError as exc:
+            raise RuntimeError(
+                "separated normal-force diagnostics are unavailable"
+            ) from exc
+
+    def flow_diagnostics(self) -> Mapping[str, object]:
+        diagnostics = self._runtime.algebraic_diagnostics()
+        try:
+            return diagnostics["flow"]
+        except KeyError as exc:
+            raise RuntimeError(
+                "separated flow diagnostics are unavailable"
+            ) from exc
+
+    def backend_restart_metadata(self) -> dict[str, object]:
+        restart = self._runtime.capture_algebraic_restart_state()
+        if any(system.tensors for system in restart.systems):
+            raise RuntimeError(
+                "Plane separated runtime unexpectedly has persistent "
+                "algebraic restart tensors"
+            )
+        return {
+            "kind": "separated_plane_stateless_algebraic",
+            "state_keys": [],
+            "algebraic_restart": restart.to_metadata(),
+        }
+
+    def restore_progress(
+        self,
+        *,
+        completed_steps: int,
+        spectral_refresh_interval: int | None,
+        integrator_step_count: int,
+        integrator_refresh_count: int,
+    ) -> None:
+        _restore_integrator_progress(
+            self._runtime.solver.integrator,
+            completed_steps=completed_steps,
+            spectral_refresh_interval=spectral_refresh_interval,
+            integrator_step_count=integrator_step_count,
+            integrator_refresh_count=integrator_refresh_count,
+        )
+
     def to_metadata(self) -> dict[str, object]:
         return {
             "requested": self.runtime_path.value,
@@ -205,6 +321,26 @@ class SeparatedCanaryPlaneRuntimeAdapter:
 
 
 LegacyRuntimeBuilder = Callable[[], tuple[object, object]]
+
+
+def _restore_integrator_progress(
+    integrator: object,
+    *,
+    completed_steps: int,
+    spectral_refresh_interval: int | None,
+    integrator_step_count: int,
+    integrator_refresh_count: int,
+) -> None:
+    integrator.set_spectral_refresh_interval(spectral_refresh_interval)
+    integrator.restore_progress(
+        completed_steps,
+        static_fields_are_current=True,
+    )
+    if (
+        int(integrator.step_count) != integrator_step_count
+        or int(integrator.refresh_count) != integrator_refresh_count
+    ):
+        raise RuntimeError("restored spectral-refresh counters are inconsistent")
 
 
 def build_plane_beris_edwards_runtime(
@@ -222,12 +358,6 @@ def build_plane_beris_edwards_runtime(
         solver, projector = legacy_builder()
         return LegacyPlaneRuntimeAdapter(solver, projector)
 
-    # Stage O.3 owns diagnostics/workflow compatibility.  Reject unsupported
-    # combinations before importing or constructing the canary solver.
-    if request.run_spec.diagnostics:
-        raise ValueError(
-            "separated_canary diagnostics require the Stage O.3 workflow"
-        )
     if request.run_spec.disable_q_gradient_reuse:
         raise ValueError(
             "separated_canary does not accept legacy Q-gradient cache flags"

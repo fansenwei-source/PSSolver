@@ -186,23 +186,16 @@ def test_mixed_configuration_authorities_fail_before_builder(tmp_path):
         _request(spec, metadata=metadata)
 
 
-@pytest.mark.parametrize(
-    ("option", "message"),
-    (
-        ({"diagnostics": True}, "Stage O.3 workflow"),
-        (
-            {"disable_q_gradient_reuse": True},
-            "does not accept legacy Q-gradient cache flags",
-        ),
-    ),
-)
-def test_canary_rejects_o3_owned_options_at_configuration_boundary(
-    tmp_path,
-    option,
-    message,
-):
-    with pytest.raises(ValueError, match=message):
-        _spec(tmp_path, runtime_path="separated_canary", **option)
+def test_canary_rejects_legacy_q_gradient_cache_flag(tmp_path):
+    with pytest.raises(
+        ValueError,
+        match="does not accept legacy Q-gradient cache flags",
+    ):
+        _spec(
+            tmp_path,
+            runtime_path="separated_canary",
+            disable_q_gradient_reuse=True,
+        )
 
 
 def test_default_runtime_module_does_not_import_experimental_architecture():
