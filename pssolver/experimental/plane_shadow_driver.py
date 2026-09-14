@@ -279,6 +279,7 @@ def _build_plane_shadow_runtime_from_production_metadata(
     metadata: Mapping[str, object],
     *,
     device: str | torch.device,
+    enable_performance_instrumentation: bool = False,
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Construct and parity-check a migrated runtime after contract checks."""
 
@@ -374,6 +375,9 @@ def _build_plane_shadow_runtime_from_production_metadata(
                 ),
             )
         ),
+        enable_performance_instrumentation=(
+            enable_performance_instrumentation
+        ),
     )
     runtime.solver.integrator.set_spectral_refresh_interval(
         numerical["spectral_refresh_interval_steps"]
@@ -405,6 +409,7 @@ def build_h100_plane_shadow_runtime_from_production_metadata(
     *,
     expected_gpu_name: str = "H100",
     device: str | torch.device = "cuda",
+    enable_performance_instrumentation: bool = False,
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Construct the opt-in Stage M runtime on the expected H100 device."""
 
@@ -428,6 +433,9 @@ def build_h100_plane_shadow_runtime_from_production_metadata(
     return _build_plane_shadow_runtime_from_production_metadata(
         metadata,
         device=device,
+        enable_performance_instrumentation=(
+            enable_performance_instrumentation
+        ),
     )
 
 

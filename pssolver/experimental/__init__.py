@@ -41,6 +41,7 @@ from .model_execution import (
     ResolvedAlgebraicSystem,
     build_experimental_model_runtime,
 )
+from .performance import RuntimePerformanceRecorder
 from .plane_shadow_driver import (
     ProductionPlaneReference,
     build_plane_shadow_runtime_from_production_metadata,
@@ -73,6 +74,11 @@ from .h100_shadow_qualification import (
     run_h100_plane_shadow_from_production_reference,
 )
 from .stage_m_plan import build_stage_m_h100_plan
+from .stage_n_diagnostics import (
+    analyze_stage_n_diagnostics,
+    profile_stage_n_h100_shadow,
+)
+from .stage_n_plan import build_stage_n_h100_plan
 from .stokes import (
     ChannelStokesSolverOptions,
     PlaneStokesSolverOptions,
@@ -96,6 +102,7 @@ __all__ = [
     "PlaneShadowTrajectoryComparison",
     "ProductionPlaneReference",
     "ProjectedSemiImplicitEulerIntegrator",
+    "RuntimePerformanceRecorder",
     "ResolvedAlgebraicSystem",
     "SHADOW_CHECKPOINT_FORMAT_VERSION",
     "SHADOW_RUN_SCHEMA_VERSION",
@@ -106,6 +113,7 @@ __all__ = [
     "ShadowArrayComparison",
     "build_experimental_model_runtime",
     "build_stage_m_h100_plan",
+    "build_stage_n_h100_plan",
     "build_plane_shadow_runtime_from_production_metadata",
     "capture_shadow_checkpoint",
     "capture_shadow_observation",
@@ -130,7 +138,9 @@ __all__ = [
     "write_shadow_checkpoint",
     "write_shadow_observation",
     "analyze_stage_m_h100_qualification",
+    "analyze_stage_n_diagnostics",
     "profile_h100_plane_shadow_from_production_reference",
+    "profile_stage_n_h100_shadow",
     "run_h100_plane_shadow_from_production_reference",
     "write_plane_shadow_comparison",
 ]

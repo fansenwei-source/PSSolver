@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pssolver.integrator import SemiImplicitEulerIntegrator
 
+from .performance import RuntimePerformanceRecorder, performance_region
+
 
 class ProjectedSemiImplicitEulerIntegrator(SemiImplicitEulerIntegrator):
     """Semi-implicit Euler with a projected evolved spectrum.
@@ -60,4 +62,77 @@ class ProjectedSemiImplicitEulerIntegrator(SemiImplicitEulerIntegrator):
         self._advance_spectral_refresh_clock()
 
 
-__all__ = ["ProjectedSemiImplicitEulerIntegrator"]
+class InstrumentedProjectedSemiImplicitEulerIntegrator(
+    ProjectedSemiImplicitEulerIntegrator
+):
+    """Stage N diagnostic variant, never selected by the default path."""
+
+    def __init__(self, model, dt, qx, qy, q2):
+        super().__init__(model, dt, qx, qy, q2)
+        self.performance_recorder = None
+
+    def step(self, pre_update_callback=None):
+        recorder = self.performance_recorder
+        if not isinstance(recorder, RuntimePerformanceRecorder):
+            raise RuntimeError(
+                "instrumented integrator requires a performance recorder"
+            )
+        with performance_region(recorder, "timestep.total"):
+            with performance_region(recorder, "timestep.algebraic_update"):
+                if self._static_fields_are_current:
+                    self._static_fields_are_current = False
+                else:
+                    self.model.update_static_fields()
+
+            if pre_update_callback is not None:
+                with performance_region(
+                    recorder,
+                    "timestep.pre_update_callback",
+                ):
+                    pre_update_callback()
+
+            with performance_region(recorder, "timestep.explicit_rhs"):
+                nonlinear_hats = self.model.compute_nonlinear()
+            with performance_region(recorder, "timestep.spectral_update"):
+                dynamic_fields = self.model.fields.spectral[: self.dyn_count]
+                dynamic_fields.add_(self.dt * nonlinear_hats)
+                dynamic_fields.div_(self.denom)
+            with performance_region(
+                recorder,
+                "timestep.dynamic_projection",
+            ):
+                self.spectral_projector.project_dynamic_fields(
+                    self.model.fields,
+                    sync_spatial=False,
+                )
+
+            with performance_region(recorder, "timestep.dynamic_inverse"):
+                for group in self.dynamic_transform_groups:
+                    boundary_conditions = (
+                        self.model.fields.get_boundary_conditions(group[0])
+                    )
+                    self.model.fields.spatial[group] = (
+                        self.spectral_projector.inverse_transform(
+                            self.model.fields.spectral[group],
+                            boundary_conditions,
+                        )
+                    )
+
+            interval = self.spectral_refresh_interval
+            refresh_due = (
+                interval is not None and self.step_count + 1 >= interval
+            )
+            if refresh_due:
+                with performance_region(
+                    recorder,
+                    "timestep.spectral_refresh",
+                ):
+                    self._advance_spectral_refresh_clock()
+            else:
+                self._advance_spectral_refresh_clock()
+
+
+__all__ = [
+    "InstrumentedProjectedSemiImplicitEulerIntegrator",
+    "ProjectedSemiImplicitEulerIntegrator",
+]

@@ -48,7 +48,14 @@ from .legacy_assembly import (
     declare_legacy_fields,
     materialize_legacy_assembly,
 )
-from .integrators import ProjectedSemiImplicitEulerIntegrator
+from .integrators import (
+    InstrumentedProjectedSemiImplicitEulerIntegrator,
+    ProjectedSemiImplicitEulerIntegrator,
+)
+from .performance import (
+    RuntimePerformanceRecorder,
+    instrument_transform_backend,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -66,6 +73,7 @@ class LegacyModelExecutionContext:
     _boundary_conditions: Mapping[str, tuple[str, ...]]
     _projector: BasisAwareSpectralProjector
     _spectral_dtype: torch.dtype
+    _performance_recorder: RuntimePerformanceRecorder | None = None
 
     def __post_init__(self) -> None:
         physical_shape = tuple(self.physical_shape)
@@ -161,6 +169,19 @@ class LegacyModelExecutionContext:
             raise TypeError("_spectral_dtype must be a torch.dtype")
         if self._spectral_dtype not in (torch.complex64, torch.complex128):
             raise ValueError("_spectral_dtype must be a complex tensor dtype")
+        if self._performance_recorder is not None and not isinstance(
+            self._performance_recorder,
+            RuntimePerformanceRecorder,
+        ):
+            raise TypeError(
+                "_performance_recorder must be a RuntimePerformanceRecorder "
+                "or None"
+            )
+        if (
+            self._performance_recorder is not None
+            and self._performance_recorder.device != self.device
+        ):
+            raise ValueError("performance-recorder device is inconsistent")
         object.__setattr__(self, "physical_shape", physical_shape)
         object.__setattr__(self, "spectral_shape", spectral_shape)
         object.__setattr__(
@@ -216,7 +237,10 @@ class LegacyModelExecutionContext:
             raise ValueError(
                 "physical value dtype and device must match the model context"
             )
-        return self._projector.forward_transform(value, boundaries)
+        if self._performance_recorder is None:
+            return self._projector.forward_transform(value, boundaries)
+        with self._performance_recorder.region("operators.forward_projected"):
+            return self._projector.forward_transform(value, boundaries)
 
     def _inverse_projected(
         self,
@@ -236,7 +260,10 @@ class LegacyModelExecutionContext:
             raise ValueError(
                 "spectral value dtype and device must match the model context"
             )
-        return self._projector.inverse_transform(value, boundaries)
+        if self._performance_recorder is None:
+            return self._projector.inverse_transform(value, boundaries)
+        with self._performance_recorder.region("operators.inverse_projected"):
+            return self._projector.inverse_transform(value, boundaries)
 
     def gradient(
         self,
@@ -515,6 +542,7 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
         spectral_dtype: torch.dtype,
         device: torch.device,
         batch_size: int,
+        performance_recorder: RuntimePerformanceRecorder | None = None,
     ) -> None:
         super().__init__()
         if not isinstance(execution_plan, AlgebraicExecutionPlan):
@@ -538,6 +566,7 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
         self._device = device
         self._batch_size = batch_size
         self._context = context
+        self._performance_recorder = performance_recorder
         self._transient_names = execution_plan.transient_components
         produced_dependencies = {
             dependency
@@ -586,7 +615,13 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
                     for name in resolved.system.dependencies
                 }
             )
-            solution = resolved.solver.solve_spectral(dependencies)
+            if self._performance_recorder is None:
+                solution = resolved.solver.solve_spectral(dependencies)
+            else:
+                with self._performance_recorder.region(
+                    f"algebraic.{resolved.system.name}.solve"
+                ):
+                    solution = resolved.solver.solve_spectral(dependencies)
             if not isinstance(solution, Mapping):
                 raise TypeError("algebraic solve must return a mapping")
             solution = dict(solution)
@@ -624,7 +659,16 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
                     )
                 outputs[name] = value
                 if name in self._physical_cache_names:
-                    physical = self._context.inverse_projected(name, value)
+                    if self._performance_recorder is None:
+                        physical = self._context.inverse_projected(name, value)
+                    else:
+                        with self._performance_recorder.region(
+                            "algebraic.materialize_physical"
+                        ):
+                            physical = self._context.inverse_projected(
+                                name,
+                                value,
+                            )
                     physical_state[name] = physical
                     if name in self._transient_names:
                         transient_cache[name] = physical
@@ -632,7 +676,11 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
             raise RuntimeError("transient algebraic cache is incomplete")
         self._transient_cache = MappingProxyType(transient_cache)
         self._cache_generation += 1
-        return torch.stack([outputs[name] for name in self._component_names])
+        values = [outputs[name] for name in self._component_names]
+        if self._performance_recorder is None:
+            return torch.stack(values)
+        with self._performance_recorder.region("algebraic.publish_spectral"):
+            return torch.stack(values)
 
 
 class LegacyExplicitRHSAdapter(torch.nn.Module):
@@ -645,6 +693,7 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
         projector: BasisAwareSpectralProjector,
         context: ModelExecutionContext,
         algebraic_fields_adapter: LegacyAlgebraicFieldsAdapter | None = None,
+        performance_recorder: RuntimePerformanceRecorder | None = None,
     ) -> None:
         super().__init__()
         self._model = model
@@ -658,6 +707,7 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
         self._projector = projector
         self._context = context
         self._algebraic_fields_adapter = algebraic_fields_adapter
+        self._performance_recorder = performance_recorder
         self._transient_names = assembly.omitted_transient_components
         if self._transient_names and algebraic_fields_adapter is None:
             raise ValueError(
@@ -673,7 +723,11 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
                 raise RuntimeError("transient algebraic state is incomplete")
             state_values.update(transient)
         state = MappingProxyType(state_values)
-        explicit = self._model.explicit_rhs(state, self._context)
+        if self._performance_recorder is None:
+            explicit = self._model.explicit_rhs(state, self._context)
+        else:
+            with self._performance_recorder.region("explicit_rhs.model"):
+                explicit = self._model.explicit_rhs(state, self._context)
         if not isinstance(explicit, Mapping):
             raise TypeError("model explicit_rhs() must return a mapping")
         explicit = dict(explicit)
@@ -713,13 +767,29 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
                     f"explicit RHS for {name!r} is on {value.device}; "
                     f"expected {reference.device}"
                 )
-            spectral.append(
-                self._projector.forward_transform(
-                    value,
-                    boundary_conditions,
+            if self._performance_recorder is None:
+                spectral.append(
+                    self._projector.forward_transform(
+                        value,
+                        boundary_conditions,
+                    )
                 )
-            )
-        return torch.stack(spectral)
+            else:
+                with self._performance_recorder.region(
+                    "explicit_rhs.forward_projected"
+                ):
+                    spectral.append(
+                        self._projector.forward_transform(
+                            value,
+                            boundary_conditions,
+                        )
+                    )
+        if self._performance_recorder is None:
+            return torch.stack(spectral)
+        with self._performance_recorder.region(
+            "explicit_rhs.publish_spectral"
+        ):
+            return torch.stack(spectral)
 
 
 @dataclass(frozen=True, slots=True)
@@ -736,6 +806,7 @@ class ExperimentalModelRuntime:
     algebraic_fields_adapter: LegacyAlgebraicFieldsAdapter | None
     algebraic_execution_plan: AlgebraicExecutionPlan | None
     resolved_algebraic_systems: tuple[ResolvedAlgebraicSystem, ...]
+    performance_recorder: RuntimePerformanceRecorder | None = None
 
     def to_metadata(self) -> dict[str, object]:
         has_algebraic_fields = bool(self.resolved_algebraic_systems)
@@ -990,6 +1061,7 @@ def _create_execution_context(
     solver: SpectralSolver,
     assembly: LegacyAssemblySpec,
     projector: BasisAwareSpectralProjector,
+    performance_recorder: RuntimePerformanceRecorder | None,
 ) -> LegacyModelExecutionContext:
     boundaries = {
         component.component_name: boundary_set_to_legacy(
@@ -1014,6 +1086,7 @@ def _create_execution_context(
         _boundary_conditions=boundaries,
         _projector=projector,
         _spectral_dtype=solver.transform_backend.spectral_dtype,
+        _performance_recorder=performance_recorder,
     )
 
 
@@ -1124,11 +1197,14 @@ def build_experimental_model_runtime(
     batch_size: int = 1,
     allow_unstored_diagnostics: bool = False,
     geometry_solver_registry: GeometrySolverRegistry | None = None,
+    enable_performance_instrumentation: bool = False,
 ) -> ExperimentalModelRuntime:
     """Build a canary through the frozen plan and legacy runtime adapter."""
 
     if not isinstance(model, ExecutableModelProtocol):
         raise TypeError("model must implement ExecutableModelProtocol")
+    if not isinstance(enable_performance_instrumentation, bool):
+        raise TypeError("enable_performance_instrumentation must be a bool")
     problem = ProblemSpec(model, geometry, numerics)
     plan = assemble_spectral_plan(problem)
     assembly = materialize_legacy_assembly(
@@ -1147,11 +1223,34 @@ def build_experimental_model_runtime(
         device=device,
         batchsize=batch_size,
     )
+    performance_recorder = (
+        RuntimePerformanceRecorder(torch.device(solver.device))
+        if enable_performance_instrumentation
+        else None
+    )
+    if performance_recorder is not None:
+        instrument_transform_backend(
+            solver.transform_backend,
+            performance_recorder,
+        )
     projector = create_legacy_projector(solver, assembly)
     solver.model.spectral_projector = projector
     if projector.enabled:
-        solver.integrator_cl = ProjectedSemiImplicitEulerIntegrator
-    context = _create_execution_context(solver, assembly, projector)
+        solver.integrator_cl = (
+            InstrumentedProjectedSemiImplicitEulerIntegrator
+            if performance_recorder is not None
+            else ProjectedSemiImplicitEulerIntegrator
+        )
+    elif performance_recorder is not None:
+        raise ValueError(
+            "performance instrumentation requires projected integration"
+        )
+    context = _create_execution_context(
+        solver,
+        assembly,
+        projector,
+        performance_recorder,
+    )
     algebraic_context = LegacyAlgebraicSolverContext(
         geometry_name=geometry.name,
         model_context=context,
@@ -1187,6 +1286,7 @@ def build_experimental_model_runtime(
             spectral_dtype=solver.transform_backend.spectral_dtype,
             device=torch.device(solver.device),
             batch_size=solver.batchsize,
+            performance_recorder=performance_recorder,
         )
         solver.model.set_static_compute_model(algebraic_fields_adapter)
         solver.model.set_static_inverse_transform(
@@ -1199,6 +1299,7 @@ def build_experimental_model_runtime(
             projector,
             context,
             algebraic_fields_adapter,
+            performance_recorder,
         )
         explicit_output = explicit_rhs_adapter(
             solver.fields,
@@ -1220,6 +1321,7 @@ def build_experimental_model_runtime(
             assembly,
             projector,
             context,
+            performance_recorder=performance_recorder,
         )
         solver.model.set_nonlinear_model(explicit_rhs_adapter)
         solver.build()
@@ -1234,6 +1336,8 @@ def build_experimental_model_runtime(
         fields=solver.fields,
         projector=projector,
     ).require_match()
+    if performance_recorder is not None:
+        solver.integrator.performance_recorder = performance_recorder
     return ExperimentalModelRuntime(
         problem=problem,
         plan=plan,
@@ -1245,4 +1349,5 @@ def build_experimental_model_runtime(
         algebraic_fields_adapter=algebraic_fields_adapter,
         algebraic_execution_plan=algebraic_execution_plan,
         resolved_algebraic_systems=resolved_algebraic_systems,
+        performance_recorder=performance_recorder,
     )
