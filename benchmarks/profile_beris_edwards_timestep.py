@@ -25,6 +25,7 @@ from typing import Iterator
 import numpy as np
 import torch
 
+from pssolver.diagnostics import cuda_memory_snapshot, cuda_memory_window
 from pssolver.plane import (
     DEFAULT_PLANE_SPECTRAL_STORAGE,
     PLANE_HERMITIAN_AXIS,
@@ -632,11 +633,13 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
         torch.cuda.manual_seed_all(config.seed)
     counters_before = _dynamo_counter_snapshot()
     with torch.no_grad():
+        memory_phases = {"before_build": cuda_memory_snapshot(device)}
         build_wall_start = time.perf_counter()
         solver = _build_solver(config, timer)
         if device.type == "cuda":
             torch.cuda.synchronize(device)
         build_wall_seconds = time.perf_counter() - build_wall_start
+        memory_phases["after_build"] = cuda_memory_snapshot(device)
         counters_after_build = _dynamo_counter_snapshot()
 
         warmup_wall_start = time.perf_counter()
@@ -644,8 +647,10 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
             solver.integrator.step()
         if device.type == "cuda":
             torch.cuda.synchronize(device)
-            torch.cuda.reset_peak_memory_stats(device)
         warmup_wall_seconds = time.perf_counter() - warmup_wall_start
+        memory_phases["after_warmup"] = cuda_memory_snapshot(device)
+        if device.type == "cuda":
+            torch.cuda.reset_peak_memory_stats(device)
         counters_after_warmup = _dynamo_counter_snapshot()
 
         timer.reset()
@@ -666,8 +671,16 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
         if device.type == "cuda":
             torch.cuda.synchronize(device)
         profile_wall_seconds = time.perf_counter() - profile_wall_start
+        memory_phases["after_timestep_window"] = cuda_memory_snapshot(device)
+        timestep_peak = cuda_memory_snapshot(device)
+        if device.type == "cuda":
+            torch.cuda.reset_peak_memory_stats(device)
         timings = timer.summarize()
         state_sha256 = _state_sha256(solver)
+        if device.type == "cuda":
+            torch.cuda.synchronize(device)
+        memory_phases["after_observation"] = cuda_memory_snapshot(device)
+        observation_peak = cuda_memory_snapshot(device)
         counters_after_profile = _dynamo_counter_snapshot()
     if initial_q_path is not None:
         final_initial_q_sha256 = _file_sha256(initial_q_path)
@@ -675,15 +688,42 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
             raise RuntimeError("initial Q file changed while profiling")
 
     whole_timestep_seconds = timings["whole_timestep"]["total_seconds"]
+    timestep_window = cuda_memory_window(
+        memory_phases["after_warmup"],
+        memory_phases["after_timestep_window"],
+        timestep_peak,
+    )
+    observation_window = cuda_memory_window(
+        memory_phases["after_timestep_window"],
+        memory_phases["after_observation"],
+        observation_peak,
+    )
     memory: dict[str, int | None] = {
         "peak_allocated_bytes": None,
         "peak_reserved_bytes": None,
     }
     if device.type == "cuda":
         memory = {
-            "peak_allocated_bytes": torch.cuda.max_memory_allocated(device),
-            "peak_reserved_bytes": torch.cuda.max_memory_reserved(device),
+            "peak_allocated_bytes": max(
+                int(timestep_window["peak_allocated_bytes"]),
+                int(observation_window["peak_allocated_bytes"]),
+            ),
+            "peak_reserved_bytes": max(
+                int(timestep_window["peak_reserved_bytes"]),
+                int(observation_window["peak_reserved_bytes"]),
+            ),
         }
+    memory_attribution = {
+        "schema_version": 1,
+        "allocator_scope": "current_process_cuda_allocator",
+        "peak_reset_after_warmup": True,
+        "observation_peak_reset_after_timestep_window": True,
+        "phases": memory_phases,
+        "windows": {
+            "timestep": timestep_window,
+            "observation": observation_window,
+        },
+    }
 
     return {
         "schema_version": 1,
@@ -822,6 +862,7 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
             "timesteps_per_second": config.profile_steps / whole_timestep_seconds,
         },
         "memory": memory,
+        "memory_attribution": memory_attribution,
         "profile_input": {
             "initial_q_path": (
                 None if initial_q_path is None else str(initial_q_path)

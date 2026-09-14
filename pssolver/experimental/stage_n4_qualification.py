@@ -17,6 +17,7 @@ import statistics
 
 import torch
 
+from pssolver.diagnostics import cuda_memory_snapshot, cuda_memory_window
 from pssolver.execution import AlgebraicExecutionPolicy
 
 from ._shadow_support import file_sha256, ordered_tensor_sha256
@@ -251,20 +252,47 @@ def profile_stage_n4_h100_shadow(
         expected_gpu_name=expected_gpu_name,
         device=device,
     )
+    memory_phases = {"before_build": cuda_memory_snapshot(device)}
     runtime, comparison = _build_runtime(
         reference,
         mode=mode,
         expected_gpu_name=expected_gpu_name,
         device=device,
     )
+    torch.cuda.synchronize(device)
+    memory_phases["after_build"] = cuda_memory_snapshot(device)
     runtime.reset(_initial_values(reference, device))
+    torch.cuda.synchronize(device)
+    memory_phases["after_reset"] = cuda_memory_snapshot(device)
     _cuda_step_samples(runtime, warmup_steps)
+    memory_phases["after_warmup"] = cuda_memory_snapshot(device)
     torch.cuda.reset_peak_memory_stats(device)
     samples = _cuda_step_samples(runtime, profile_steps)
+    memory_phases["after_timestep_window"] = cuda_memory_snapshot(device)
+    timestep_peak = cuda_memory_snapshot(device)
+    torch.cuda.reset_peak_memory_stats(device)
     runtime.synchronize_algebraic_for_observation()
     torch.cuda.synchronize(device)
-    peak_allocated = int(torch.cuda.max_memory_allocated(device))
-    peak_reserved = int(torch.cuda.max_memory_reserved(device))
+    memory_phases["after_observation"] = cuda_memory_snapshot(device)
+    observation_peak = cuda_memory_snapshot(device)
+    timestep_window = cuda_memory_window(
+        memory_phases["after_warmup"],
+        memory_phases["after_timestep_window"],
+        timestep_peak,
+    )
+    observation_window = cuda_memory_window(
+        memory_phases["after_timestep_window"],
+        memory_phases["after_observation"],
+        observation_peak,
+    )
+    peak_allocated = max(
+        int(timestep_window["peak_allocated_bytes"]),
+        int(observation_window["peak_allocated_bytes"]),
+    )
+    peak_reserved = max(
+        int(timestep_window["peak_reserved_bytes"]),
+        int(observation_window["peak_reserved_bytes"]),
+    )
     fields = runtime.solver.fields
     finite = bool(torch.isfinite(fields.spatial).all().item()) and bool(
         torch.isfinite(fields.spectral).all().item()
@@ -314,6 +342,17 @@ def profile_stage_n4_h100_shadow(
         "memory": {
             "peak_allocated_bytes": peak_allocated,
             "peak_reserved_bytes": peak_reserved,
+        },
+        "memory_attribution": {
+            "schema_version": 1,
+            "allocator_scope": "current_process_cuda_allocator",
+            "peak_reset_after_warmup": True,
+            "observation_peak_reset_after_timestep_window": True,
+            "phases": memory_phases,
+            "windows": {
+                "timestep": timestep_window,
+                "observation": observation_window,
+            },
         },
         "transform_call_audit": _transform_call_audit(
             reference,

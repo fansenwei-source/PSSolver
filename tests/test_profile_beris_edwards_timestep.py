@@ -101,6 +101,12 @@ def test_complete_timestep_profile_has_expected_regions_and_provenance():
         "peak_allocated_bytes": None,
         "peak_reserved_bytes": None,
     }
+    assert result["memory_attribution"]["schema_version"] == 1
+    assert all(
+        value is None
+        for window in result["memory_attribution"]["windows"].values()
+        for value in window.values()
+    )
     assert result["pointwise_kernels"]["requested"] == "eager"
     assert result["pointwise_kernels"]["effective"] == "eager"
     assert result["pointwise_kernels"]["compile"]["enabled"] is False

@@ -132,6 +132,8 @@ from .stage_o4_qualification import (
     analyze_stage_o4_qualification,
     compare_plane_stage_o4_workflows,
 )
+from .stage_o41_plan import build_stage_o41_h100_plan
+from .stage_o41_qualification import analyze_stage_o41_qualification
 from .stokes import (
     ChannelStokesSolverOptions,
     PlaneStokesSolverOptions,
@@ -212,6 +214,7 @@ __all__ = [
     "analyze_stage_n3_qualification",
     "analyze_stage_n4_qualification",
     "analyze_stage_o4_qualification",
+    "analyze_stage_o41_qualification",
     "profile_h100_plane_shadow_from_production_reference",
     "profile_stage_n_h100_shadow",
     "profile_stage_n1_h100_shadow",
@@ -224,6 +227,7 @@ __all__ = [
     "run_stage_n3_h100_candidate_trajectory",
     "run_stage_n4_h100_candidate_trajectory",
     "build_stage_o4_h100_plan",
+    "build_stage_o41_h100_plan",
     "compare_plane_stage_o4_workflows",
     "MigrationDisposition",
     "MigrationPhase",
