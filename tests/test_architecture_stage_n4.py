@@ -30,6 +30,7 @@ from pssolver.execution import (
 )
 from pssolver.experimental import (
     BoundarySignatureTransformScheduler,
+    CompiledProjectedTransformPlan,
     PlaneBerisEdwardsSolverOptions,
     ProjectedTransformDirection,
     build_experimental_model_runtime,
@@ -172,8 +173,10 @@ class _RecordingTransformContext:
 
     def __init__(self):
         self.packed_calls = []
+        self.boundary_queries = []
 
     def boundary_conditions(self, name):
+        self.boundary_queries.append(name)
         return ("periodic", "periodic") if name != "c" else (
             "periodic",
             "neumann",
@@ -222,6 +225,60 @@ def test_scheduler_groups_only_complete_execution_keys_and_preserves_order():
     ]
 
 
+def test_scheduler_compiles_each_stable_signature_once_and_reuses_its_plan():
+    context = _RecordingTransformContext()
+    scheduler = BoundarySignatureTransformScheduler(context)
+    names = ("a", "b", "c")
+    first_values = tuple(
+        torch.full((1, 2, 2), float(index), dtype=torch.float64)
+        for index in (1, 2, 3)
+    )
+    second_values = tuple(value + 4.0 for value in first_values)
+
+    first_plan = scheduler.compile_plan(
+        names,
+        direction=ProjectedTransformDirection.FORWARD,
+    )
+    assert isinstance(first_plan, CompiledProjectedTransformPlan)
+    assert first_plan.batch_sizes == (2, 1)
+    assert context.boundary_queries == ["a", "b", "c"]
+
+    second_plan = scheduler.compile_plan(
+        names,
+        direction=ProjectedTransformDirection.FORWARD,
+    )
+    assert second_plan is first_plan
+    transformed = scheduler.forward_values_many(names, second_values)
+    assert scheduler.compiled_plan_count == 1
+    assert context.boundary_queries == ["a", "b", "c"]
+    for actual, expected in zip(transformed, second_values, strict=True):
+        assert torch.equal(actual.real, expected)
+
+    inverse_values = tuple(
+        torch.complex(value, torch.zeros_like(value)) for value in second_values
+    )
+    inverse = scheduler.inverse_values_many(names, inverse_values)
+    assert scheduler.compiled_plan_count == 2
+    assert context.boundary_queries == ["a", "b", "c"] * 2
+    for actual, expected in zip(inverse, second_values, strict=True):
+        assert torch.equal(actual, expected)
+
+
+def test_compiled_plan_cannot_cross_scheduler_contexts():
+    first = BoundarySignatureTransformScheduler(_RecordingTransformContext())
+    second = BoundarySignatureTransformScheduler(_RecordingTransformContext())
+    plan = first.compile_plan(
+        ("a", "b"),
+        direction=ProjectedTransformDirection.FORWARD,
+    )
+    values = (
+        torch.ones((1, 2, 2), dtype=torch.float64),
+        torch.ones((1, 2, 2), dtype=torch.float64),
+    )
+    with pytest.raises(ValueError, match="another scheduler"):
+        second.execute_plan(plan, values)
+
+
 def test_unified_policy_is_identical_to_the_frozen_stage_n3_adapter():
     control = _runtime(unified_policy=False)
     candidate = _runtime(unified_policy=True)
@@ -257,6 +314,12 @@ def test_unified_policy_is_identical_to_the_frozen_stage_n3_adapter():
     scheduler = metadata["algebraic_lifecycle"]["materialization_scheduler"]
     assert scheduler["lifecycle_owner"] == "algebraic_generation_state"
     assert "boundary_signature" in scheduler["grouping_key_fields"]
+    assert scheduler["plan_compilation"] == "runtime_local_cached"
+    assert scheduler["plan_cache_key"] == [
+        "direction",
+        "ordered_component_names",
+    ]
+    assert scheduler["compiled_plans_retain_tensors"] is False
 
 
 def test_unified_policy_preserves_the_runtime_batch_dimension():
@@ -272,6 +335,23 @@ def test_unified_policy_preserves_the_runtime_batch_dimension():
         candidate.solver.fields.spectral,
         control.solver.fields.spectral,
     )
+
+
+def test_runtime_reuses_one_compiled_scheduler_across_generations():
+    runtime = _runtime(unified_policy=True)
+    algebraic = runtime.algebraic_fields_adapter
+    assert algebraic is not None
+    scheduler = algebraic._context.transform_scheduler
+    assert algebraic._physical_island_scheduler._transforms is scheduler
+    assert runtime.explicit_rhs_adapter._physical_island_scheduler._transforms is (
+        scheduler
+    )
+
+    runtime.solver.run(1)
+    compiled_after_first_step = scheduler.compiled_plan_count
+    assert compiled_after_first_step > 0
+    runtime.solver.run(2)
+    assert scheduler.compiled_plan_count == compiled_after_first_step
 
 
 def test_stage_n4_remains_outside_production_and_generic_solver_paths():

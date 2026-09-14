@@ -45,6 +45,7 @@ from .performance import RuntimePerformanceRecorder
 from .projected_scheduler import (
     AlgebraicPhysicalIslandScheduler,
     BoundarySignatureTransformScheduler,
+    CompiledProjectedTransformPlan,
     ProjectedTransformBatchKey,
     ProjectedTransformDirection,
     ScheduledProjectedTransforms,
@@ -142,6 +143,7 @@ __all__ = [
     "RuntimePerformanceRecorder",
     "AlgebraicPhysicalIslandScheduler",
     "BoundarySignatureTransformScheduler",
+    "CompiledProjectedTransformPlan",
     "ProjectedTransformBatchKey",
     "ProjectedTransformDirection",
     "ScheduledProjectedTransforms",

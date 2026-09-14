@@ -8,7 +8,7 @@ only :class:`pssolver.execution.ModelExecutionContext`; every dependency on
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import hashlib
 import json
 import math
@@ -316,17 +316,18 @@ class LegacyModelExecutionContext:
             else "operators.forward_projected"
         )
 
-        def transform():
+        if self._performance_recorder is None:
             return (
                 self._projector.inverse_transform(value, boundaries)
                 if inverse
                 else self._projector.forward_transform(value, boundaries)
             )
-
-        if self._performance_recorder is None:
-            return transform()
         with self._performance_recorder.region(region):
-            return transform()
+            return (
+                self._projector.inverse_transform(value, boundaries)
+                if inverse
+                else self._projector.forward_transform(value, boundaries)
+            )
 
     def gradient(
         self,
@@ -426,6 +427,11 @@ class LegacyAlgebraicSolverContext:
     spectral_dtype: torch.dtype
     execution_policy: AlgebraicExecutionPolicy
     representation_cache: AlgebraicRepresentationCache | None = None
+    _transform_scheduler: BoundarySignatureTransformScheduler = field(
+        init=False,
+        repr=False,
+        compare=False,
+    )
 
     def __post_init__(self) -> None:
         if not isinstance(self.geometry_name, str) or not self.geometry_name:
@@ -456,6 +462,11 @@ class LegacyAlgebraicSolverContext:
             raise ValueError(
                 "representation cache does not match the execution policy"
             )
+        object.__setattr__(
+            self,
+            "_transform_scheduler",
+            BoundarySignatureTransformScheduler(self),
+        )
 
     @property
     def lazy_physical_materialization(self) -> bool:
@@ -468,6 +479,12 @@ class LegacyAlgebraicSolverContext:
         """Compatibility view derived from the unified policy."""
 
         return self.execution_policy.batched_physical_islands
+
+    @property
+    def transform_scheduler(self) -> BoundarySignatureTransformScheduler:
+        """Runtime-local scheduler reused by every algebraic generation."""
+
+        return self._transform_scheduler
 
     @property
     def physical_shape(self) -> tuple[int, ...]:
@@ -540,11 +557,11 @@ class LegacyAlgebraicSolverContext:
                 name: self.forward_projected(name, value)
                 for name, value in zip(component_names, values, strict=True)
             }
-        scheduled = BoundarySignatureTransformScheduler(self).forward_many(
+        transformed = self._transform_scheduler.forward_values_many(
             component_names,
             values,
         )
-        return dict(zip(component_names, scheduled.values, strict=True))
+        return dict(zip(component_names, transformed, strict=True))
 
     def inverse_projected(
         self,
@@ -1283,11 +1300,12 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
                 )
             values.append(value)
         if self._batched_physical_islands:
-            projected = self._physical_island_scheduler.project_outputs(
-                self._component_names,
-                tuple(values),
+            spectral = list(
+                self._physical_island_scheduler.project_output_values(
+                    self._component_names,
+                    tuple(values),
+                )
             )
-            spectral = [projected[name] for name in self._component_names]
         else:
             spectral = []
             for value, boundary_conditions in zip(
@@ -1455,6 +1473,12 @@ class ExperimentalModelRuntime:
                     ],
                     "call_scope": "one_physical_computation_island",
                     "lifecycle_owner": "algebraic_generation_state",
+                    "plan_compilation": "runtime_local_cached",
+                    "plan_cache_key": [
+                        "direction",
+                        "ordered_component_names",
+                    ],
+                    "compiled_plans_retain_tensors": False,
                 },
             },
         }
@@ -1917,7 +1941,7 @@ def build_experimental_model_runtime(
         if representation_cache is None:
             raise RuntimeError("batched policy lacks a representation cache")
         physical_island_scheduler = AlgebraicPhysicalIslandScheduler(
-            BoundarySignatureTransformScheduler(algebraic_context),
+            algebraic_context.transform_scheduler,
             representation_cache,
         )
     resolved_algebraic_systems = _resolve_algebraic_systems(
