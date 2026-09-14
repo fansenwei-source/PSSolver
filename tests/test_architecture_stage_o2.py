@@ -33,10 +33,16 @@ class _DummyProjector:
         return (1, 1, 1)
 
 
+class _DummyIntegrator:
+    spectral_refresh_interval = None
+    step_count = 0
+    refresh_count = 0
+
+
 class _DummySolver:
     def __init__(self):
         self.fields = {}
-        self.integrator = object()
+        self.integrator = _DummyIntegrator()
         self.advance_calls = []
         self.synchronizations = 0
 
@@ -163,6 +169,7 @@ def test_legacy_adapter_implements_narrow_protocol_and_delegates(tmp_path):
     assert isinstance(adapter, LegacyPlaneRuntimeAdapter)
     assert isinstance(adapter, PlaneRuntimeAdapterProtocol)
     assert adapter.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION
+    assert adapter.completed_steps == 0
     assert builder_calls == 1
 
     callback = lambda _solver, _step: None
