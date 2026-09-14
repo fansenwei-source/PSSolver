@@ -117,6 +117,16 @@ from .stage_n4_qualification import (
     profile_stage_n4_h100_shadow,
     run_stage_n4_h100_candidate_trajectory,
 )
+from .stage_o_migration import (
+    MigrationDisposition,
+    MigrationPhase,
+    MigrationResponsibility,
+    PlaneRuntimePath,
+    STAGE_O_SCHEMA_VERSION,
+    StageOMigrationDesign,
+    StageOQualificationEvidence,
+    build_stage_o_migration_design,
+)
 from .stokes import (
     ChannelStokesSolverOptions,
     PlaneStokesSolverOptions,
@@ -166,6 +176,7 @@ __all__ = [
     "build_stage_n2_h100_plan",
     "build_stage_n3_h100_plan",
     "build_stage_n4_h100_plan",
+    "build_stage_o_migration_design",
     "build_plane_shadow_runtime_from_production_metadata",
     "capture_shadow_checkpoint",
     "capture_shadow_observation",
@@ -206,5 +217,12 @@ __all__ = [
     "run_stage_n2_h100_candidate_trajectory",
     "run_stage_n3_h100_candidate_trajectory",
     "run_stage_n4_h100_candidate_trajectory",
+    "MigrationDisposition",
+    "MigrationPhase",
+    "MigrationResponsibility",
+    "PlaneRuntimePath",
+    "STAGE_O_SCHEMA_VERSION",
+    "StageOMigrationDesign",
+    "StageOQualificationEvidence",
     "write_plane_shadow_comparison",
 ]
