@@ -1,0 +1,259 @@
+"""Explicit dual-path runtime edge for the Plane Beris--Edwards model.
+
+The legacy adapter remains the default and receives an already-authorized
+builder from the production driver.  The separated implementation is imported
+only after the immutable run specification explicitly selects its canary path.
+This module owns selection; equations, geometry objects, and the generic
+spectral solver do not reinterpret the choice.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Callable, Mapping
+from dataclasses import dataclass
+from typing import Protocol, runtime_checkable
+
+from pssolver.configuration import (
+    PlaneBerisEdwardsRunSpec,
+    PlaneRuntimePath,
+)
+
+
+def _require_runtime_surface(solver: object, projector: object) -> None:
+    required_solver = ("fields", "integrator", "run", "refresh_static_fields")
+    missing = tuple(name for name in required_solver if not hasattr(solver, name))
+    if missing:
+        raise TypeError(f"Plane runtime solver is missing {missing!r}")
+    if not hasattr(projector, "retained_axis_counts"):
+        raise TypeError("Plane runtime projector lacks retained-axis metadata")
+
+
+@dataclass(frozen=True, slots=True)
+class PlaneRuntimeBuildRequest:
+    """One fully resolved, single-authority Plane runtime request."""
+
+    run_spec: PlaneBerisEdwardsRunSpec
+    production_metadata: Mapping[str, object]
+    initial_values: Mapping[str, object]
+    device: object
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.run_spec, PlaneBerisEdwardsRunSpec):
+            raise TypeError("run_spec must be a PlaneBerisEdwardsRunSpec")
+        if not isinstance(self.production_metadata, Mapping):
+            raise TypeError("production_metadata must be a mapping")
+        if not isinstance(self.initial_values, Mapping):
+            raise TypeError("initial_values must be a mapping")
+        metadata = dict(self.production_metadata)
+        configuration = metadata.get("configuration")
+        if not isinstance(configuration, Mapping):
+            raise ValueError("production metadata lacks configuration identity")
+        expected = self.run_spec.identity_metadata()
+        actual = dict(configuration)
+        identity_keys = (
+            "schema_version",
+            "authority",
+            "runtime_path",
+            "canonical_sha256",
+        )
+        if any(actual.get(key) != expected[key] for key in identity_keys):
+            raise ValueError(
+                "mixed Plane runtime configuration authorities are forbidden"
+            )
+        runtime_selection = metadata.get("runtime_selection")
+        expected_selection = self.run_spec.runtime_selection_metadata()
+        if (
+            not isinstance(runtime_selection, Mapping)
+            or dict(runtime_selection) != expected_selection
+        ):
+            raise ValueError(
+                "runtime selection metadata must come from the resolved run spec"
+            )
+
+
+@runtime_checkable
+class PlaneRuntimeAdapterProtocol(Protocol):
+    """Narrow surface needed before the shared Stage O.3 workflow exists."""
+
+    @property
+    def runtime_path(self) -> PlaneRuntimePath: ...
+
+    @property
+    def solver(self) -> object: ...
+
+    @property
+    def projector(self) -> object: ...
+
+    @property
+    def fields(self) -> object: ...
+
+    def advance(
+        self,
+        steps: int,
+        *,
+        pre_update_callback: Callable[[object, int], None] | None = None,
+    ) -> None: ...
+
+    def synchronize_for_observation(self) -> None: ...
+
+    def to_metadata(self) -> dict[str, object]: ...
+
+
+@dataclass(frozen=True, slots=True)
+class LegacyPlaneRuntimeAdapter:
+    """Adapter around the unchanged Plane production solver assembly."""
+
+    _solver: object
+    _projector: object
+
+    def __post_init__(self) -> None:
+        _require_runtime_surface(self._solver, self._projector)
+
+    @property
+    def runtime_path(self) -> PlaneRuntimePath:
+        return PlaneRuntimePath.LEGACY_PRODUCTION
+
+    @property
+    def solver(self) -> object:
+        return self._solver
+
+    @property
+    def projector(self) -> object:
+        return self._projector
+
+    @property
+    def fields(self) -> object:
+        return self._solver.fields
+
+    def advance(
+        self,
+        steps: int,
+        *,
+        pre_update_callback: Callable[[object, int], None] | None = None,
+    ) -> None:
+        self._solver.run(
+            steps,
+            pre_update_callback=pre_update_callback,
+        )
+
+    def synchronize_for_observation(self) -> None:
+        self._solver.refresh_static_fields()
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "requested": self.runtime_path.value,
+            "effective": self.runtime_path.value,
+            "adapter": type(self).__name__,
+            "fallback_used": False,
+            "separated_architecture": None,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class SeparatedCanaryPlaneRuntimeAdapter:
+    """Adapter around the opt-in N.4.1 separated Plane runtime."""
+
+    _runtime: object
+
+    def __post_init__(self) -> None:
+        solver = getattr(self._runtime, "solver", None)
+        projector = getattr(self._runtime, "projector", None)
+        _require_runtime_surface(solver, projector)
+        if not hasattr(self._runtime, "synchronize_algebraic_for_observation"):
+            raise TypeError("separated Plane runtime lacks synchronization")
+        if not hasattr(self._runtime, "to_metadata"):
+            raise TypeError("separated Plane runtime lacks metadata")
+
+    @property
+    def runtime_path(self) -> PlaneRuntimePath:
+        return PlaneRuntimePath.SEPARATED_CANARY
+
+    @property
+    def solver(self) -> object:
+        return self._runtime.solver
+
+    @property
+    def projector(self) -> object:
+        return self._runtime.projector
+
+    @property
+    def fields(self) -> object:
+        return self._runtime.solver.fields
+
+    def advance(
+        self,
+        steps: int,
+        *,
+        pre_update_callback: Callable[[object, int], None] | None = None,
+    ) -> None:
+        self._runtime.solver.run(
+            steps,
+            pre_update_callback=pre_update_callback,
+        )
+
+    def synchronize_for_observation(self) -> None:
+        self._runtime.synchronize_algebraic_for_observation()
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "requested": self.runtime_path.value,
+            "effective": self.runtime_path.value,
+            "adapter": type(self).__name__,
+            "fallback_used": False,
+            "separated_architecture": self._runtime.to_metadata(),
+        }
+
+
+LegacyRuntimeBuilder = Callable[[], tuple[object, object]]
+
+
+def build_plane_beris_edwards_runtime(
+    request: PlaneRuntimeBuildRequest,
+    *,
+    legacy_builder: LegacyRuntimeBuilder,
+) -> PlaneRuntimeAdapterProtocol:
+    """Build exactly the runtime selected by the immutable run specification."""
+
+    if not isinstance(request, PlaneRuntimeBuildRequest):
+        raise TypeError("request must be a PlaneRuntimeBuildRequest")
+    if not callable(legacy_builder):
+        raise TypeError("legacy_builder must be callable")
+    if request.run_spec.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION:
+        solver, projector = legacy_builder()
+        return LegacyPlaneRuntimeAdapter(solver, projector)
+
+    # Stage O.3 owns diagnostics/workflow compatibility.  Reject unsupported
+    # combinations before importing or constructing the canary solver.
+    if request.run_spec.diagnostics:
+        raise ValueError(
+            "separated_canary diagnostics require the Stage O.3 workflow"
+        )
+    if request.run_spec.disable_q_gradient_reuse:
+        raise ValueError(
+            "separated_canary does not accept legacy Q-gradient cache flags"
+        )
+
+    # Deliberately lazy: omitted/default selection never imports experimental
+    # architecture modules into the production process.
+    from pssolver.experimental.plane_shadow_driver import (
+        build_plane_separated_canary_runtime_from_production_metadata,
+    )
+
+    runtime, comparison = (
+        build_plane_separated_canary_runtime_from_production_metadata(
+            request.production_metadata,
+            device=request.device,
+        )
+    )
+    comparison.require_compatible()
+    runtime.reset(request.initial_values)
+    return SeparatedCanaryPlaneRuntimeAdapter(runtime)
+
+
+__all__ = [
+    "LegacyPlaneRuntimeAdapter",
+    "PlaneRuntimeAdapterProtocol",
+    "PlaneRuntimeBuildRequest",
+    "SeparatedCanaryPlaneRuntimeAdapter",
+    "build_plane_beris_edwards_runtime",
+]

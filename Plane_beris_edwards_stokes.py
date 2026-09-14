@@ -51,6 +51,10 @@ from pssolver.configuration import (
     PLANE_FREE_SLIP_BOUNDARIES,
     parse_plane_beris_edwards_run_spec,
 )
+from pssolver.runtime import (
+    PlaneRuntimeBuildRequest,
+    build_plane_beris_edwards_runtime,
+)
 from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
     BerisEdwardsQGradientCache,
@@ -229,6 +233,126 @@ def wall_normal_momentum_stats(fields, static_model):
     wall_abs = wall_residual.abs()
     return wall_abs.max().item(), torch.sqrt(torch.mean(wall_abs.square())).item()
 
+
+def build_legacy_plane_runtime(
+    run_spec,
+    *,
+    device,
+    real_dtype,
+    initial_values,
+    ldg_l1,
+    rotational_viscosity,
+    beta,
+    friction,
+    viscosity,
+    pointwise_kernels,
+):
+    """Construct the unchanged legacy Plane runtime behind its O.2 adapter."""
+
+    solver = SpectralSolver(
+        shape=(run_spec.nx, run_spec.ny, run_spec.nz),
+        L=(run_spec.lx, run_spec.ly, run_spec.height),
+        dt=run_spec.dt,
+        device=device,
+        batchsize=1,
+        dtype=real_dtype,
+        transform_execution_order=run_spec.transform_execution_order,
+        spectral_storage=run_spec.spectral_storage,
+        hermitian_axis=PLANE_HERMITIAN_AXIS,
+    )
+    spectral_projector = BasisAwareSpectralProjector(
+        solver,
+        rule=run_spec.dealias_rule,
+        transform_execution=run_spec.projected_transform_execution,
+    )
+    solver.model.spectral_projector = spectral_projector
+    solver.model.set_static_inverse_transform(
+        spectral_projector.inverse_transform
+    )
+    solver.integrator_cl = DealiasedSemiImplicitEulerIntegrator
+    q2_q = solver.get_q2(Q_BC)
+    q_linear_operator = beris_edwards_linear_operator(
+        q2_q,
+        ldg_a=run_spec.ldg_a,
+        ldg_l1=ldg_l1,
+        rotational_viscosity=rotational_viscosity,
+    )
+    for name, initial_value in initial_values.items():
+        solver.model.add_dynamic_field(
+            name,
+            init=initial_value,
+            L_hat=q_linear_operator,
+            boundary_conditions=Q_BC,
+        )
+    solver.model.add_static_field(
+        "ux", boundary_conditions=U_TANGENTIAL_BC
+    )
+    solver.model.add_static_field(
+        "uy", boundary_conditions=U_TANGENTIAL_BC
+    )
+    solver.model.add_static_field("uz", boundary_conditions=U_NORMAL_BC)
+    solver.model.add_static_field("p", boundary_conditions=PRESSURE_MODAL_BC)
+
+    q_gradient_cache = (
+        None
+        if run_spec.disable_q_gradient_reuse
+        else BerisEdwardsQGradientCache()
+    )
+    solver.model.set_nonlinear_model(
+        BerisEdwardsQNonlinearModel(
+            spectral_projector,
+            Q_BC,
+            ldg_b=run_spec.ldg_b,
+            ldg_c=run_spec.ldg_c,
+            rotational_viscosity=rotational_viscosity,
+            flow_alignment=run_spec.flow_alignment,
+            q_gradient_cache=q_gradient_cache,
+            pointwise_kernels=pointwise_kernels,
+        )
+    )
+    solver.model.set_static_compute_model(
+        BerisEdwardsFreeSlipStokes(
+            solver,
+            spectral_projector=spectral_projector,
+            beta_value=beta,
+            friction=friction,
+            viscosity=viscosity,
+            ldg_a=run_spec.ldg_a,
+            ldg_b=run_spec.ldg_b,
+            ldg_c=run_spec.ldg_c,
+            ldg_l1=ldg_l1,
+            flow_alignment=run_spec.flow_alignment,
+            molecular_field_linear_space=(
+                run_spec.molecular_field_linear_space
+            ),
+            stress_divergence_sum_space=(
+                run_spec.stress_divergence_sum_space
+            ),
+            cache_force_diagnostics=run_spec.diagnostics,
+            cache_pressure_diagnostics=run_spec.diagnostics,
+            q_gradient_cache=q_gradient_cache,
+            pointwise_kernels=pointwise_kernels,
+            zero_mode_policy=run_spec.zero_mode_policy,
+        )
+    )
+    alpha = torch.tensor(
+        run_spec.shendruk_preset.zeta,
+        device=device,
+        dtype=real_dtype,
+    )
+    solver.model.parameters.new_param("alpha", alpha)
+    solver.build()
+    solver.integrator.set_spectral_refresh_interval(
+        run_spec.spectral_refresh_interval_steps
+    )
+    spectral_projector.project_dynamic_fields(
+        solver.model.fields,
+        sync_spatial=True,
+    )
+    if spectral_projector.enabled:
+        solver.integrator._static_fields_are_current = False
+    return solver, spectral_projector
+
 args = parse_args()
 
 seed = args.seed
@@ -349,6 +473,7 @@ metadata = {
     "schema_version": 1,
     "script": "Plane_beris_edwards_stokes.py",
     "configuration": args.identity_metadata(),
+    "runtime_selection": args.runtime_selection_metadata(),
     "validation_config_sha256": args.validation_config_sha256,
     "implementation_provenance": implementation_provenance,
     "runtime_environment": runtime_environment,
@@ -652,27 +777,6 @@ np.savetxt(
     comments="",
 )
 
-solver = SpectralSolver(
-    shape=(Nx, Ny, Nz),
-    L=(Lx, Ly, Lz),
-    dt=dt,
-    device=device,
-    batchsize=batchsize,
-    dtype=real_dtype,
-    transform_execution_order=args.transform_execution_order,
-    spectral_storage=args.spectral_storage,
-    hermitian_axis=PLANE_HERMITIAN_AXIS,
-)
-spectral_projector = BasisAwareSpectralProjector(
-    solver,
-    rule=dealias_rule,
-    transform_execution=args.projected_transform_execution,
-)
-solver.model.spectral_projector = spectral_projector
-solver.model.set_static_inverse_transform(
-    spectral_projector.inverse_transform
-)
-solver.integrator_cl = DealiasedSemiImplicitEulerIntegrator
 q_initial_condition = create_initial_condition(
     "extruded_2d_twist",
     shape=(Nx, Ny, Nz),
@@ -691,112 +795,43 @@ Qyz_0 = q_initial_condition["Qyz"]
 metadata["initial_condition"]["raw_q_sha256"] = tensor_sha256(
     (Qxx_0, Qxy_0, Qxz_0, Qyy_0, Qyz_0)
 )
-
-q2_Q = solver.get_q2(Q_BC)
-q_linear_operator = beris_edwards_linear_operator(
-    q2_Q,
-    ldg_a=args.ldg_a,
-    ldg_l1=ldg_l1,
-    rotational_viscosity=rotational_viscosity,
+initial_values = {
+    "Qxx": Qxx_0,
+    "Qxy": Qxy_0,
+    "Qxz": Qxz_0,
+    "Qyy": Qyy_0,
+    "Qyz": Qyz_0,
+}
+runtime_request = PlaneRuntimeBuildRequest(
+    run_spec=args,
+    production_metadata=metadata,
+    initial_values=initial_values,
+    device=device,
 )
-
-# --- Add active fields ---
-solver.model.add_dynamic_field(
-    "Qxx",
-    init = Qxx_0,
-    L_hat = q_linear_operator,
-    boundary_conditions = Q_BC,
-)
-solver.model.add_dynamic_field(
-    "Qxy",
-    init =  Qxy_0,
-    L_hat = q_linear_operator,
-    boundary_conditions = Q_BC,
-)
-solver.model.add_dynamic_field(
-    "Qxz",
-    init = Qxz_0,
-    L_hat = q_linear_operator,
-    boundary_conditions = Q_BC,
-)
-solver.model.add_dynamic_field(
-    "Qyy",
-    init =  Qyy_0,
-    L_hat = q_linear_operator,
-    boundary_conditions = Q_BC,
-)
-solver.model.add_dynamic_field(
-    "Qyz",
-    init =  Qyz_0,
-    L_hat = q_linear_operator,
-    boundary_conditions = Q_BC,
-)
-
-# --- Add static fields ---
-# Free-slip mixed modal spaces: tangential velocity uses DCT in z, normal
-# velocity uses DST in z, and pressure is the DCT incompressibility multiplier.
-solver.model.add_static_field("ux", boundary_conditions=U_TANGENTIAL_BC)
-solver.model.add_static_field("uy", boundary_conditions=U_TANGENTIAL_BC)
-solver.model.add_static_field("uz", boundary_conditions=U_NORMAL_BC)
-solver.model.add_static_field("p", boundary_conditions=PRESSURE_MODAL_BC)
-
-q_gradient_cache = (
-    None
-    if args.disable_q_gradient_reuse
-    else BerisEdwardsQGradientCache()
-)
-solver.model.set_nonlinear_model(
-    BerisEdwardsQNonlinearModel(
-        spectral_projector,
-        Q_BC,
-        ldg_b=args.ldg_b,
-        ldg_c=args.ldg_c,
+runtime_adapter = build_plane_beris_edwards_runtime(
+    runtime_request,
+    legacy_builder=lambda: build_legacy_plane_runtime(
+        args,
+        device=device,
+        real_dtype=real_dtype,
+        initial_values=initial_values,
+        ldg_l1=ldg_l1,
         rotational_viscosity=rotational_viscosity,
-        flow_alignment=ALIGNMENT_PARAMETER,
-        q_gradient_cache=q_gradient_cache,
-        pointwise_kernels=pointwise_kernels,
-    )
-)
-solver.model.set_static_compute_model(
-    BerisEdwardsFreeSlipStokes(
-        solver,
-        spectral_projector=spectral_projector,
-        beta_value=beta,
+        beta=beta,
         friction=fric,
         viscosity=eta,
-        ldg_a=args.ldg_a,
-        ldg_b=args.ldg_b,
-        ldg_c=args.ldg_c,
-        ldg_l1=ldg_l1,
-        flow_alignment=ALIGNMENT_PARAMETER,
-        molecular_field_linear_space=args.molecular_field_linear_space,
-        stress_divergence_sum_space=args.stress_divergence_sum_space,
-        cache_force_diagnostics=ENABLE_DIAGNOSTICS,
-        cache_pressure_diagnostics=ENABLE_DIAGNOSTICS,
-        q_gradient_cache=q_gradient_cache,
         pointwise_kernels=pointwise_kernels,
-        zero_mode_policy=zero_mode_policy,
-    )
+    ),
 )
-
-alpha = torch.tensor(alpha_value, device=device, dtype=real_dtype)
-solver.model.parameters.new_param('alpha', alpha)
-
-solver.build()
-solver.integrator.set_spectral_refresh_interval(
-    args.spectral_refresh_interval_steps
-)
-
-# Band-limit the generated Q field before it participates in pointwise products.
-spectral_projector.project_dynamic_fields(
-    solver.model.fields,
-    sync_spatial=True,
-)
-if spectral_projector.enabled:
-    solver.integrator._static_fields_are_current = False
+solver = runtime_adapter.solver
+spectral_projector = runtime_adapter.projector
+metadata["runtime_selection"] = {
+    **args.runtime_selection_metadata(),
+    **runtime_adapter.to_metadata(),
+}
 metadata["initial_condition"]["projected_q_sha256"] = tensor_sha256(
     tuple(
-        solver.model.fields[name]
+        runtime_adapter.fields[name]
         for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")
     )
 )
@@ -815,7 +850,7 @@ pbar = trange(steps)
 
 def save_snapshot(i):
     q_snapshot = torch.stack([
-        solver.model.fields[name].detach().cpu()
+        runtime_adapter.fields[name].detach().cpu()
         for name in ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"]
     ])  # shape -> (5, batch, Nx, Ny, Nz)
     q_snapshot = q_snapshot.permute(1, 2, 3, 4, 0)
@@ -823,22 +858,22 @@ def save_snapshot(i):
 
     if SAVE_HYDRODYNAMICS:
         u_snapshot = torch.stack([
-            solver.model.fields[name].detach().cpu()
+            runtime_adapter.fields[name].detach().cpu()
             for name in ["ux", "uy", "uz"]
         ])  # shape -> (3, batch, Nx, Ny, Nz)
         u_snapshot = u_snapshot.permute(1, 2, 3, 4, 0)
         np.save(output_dir / f"u_{i}.npy", u_snapshot[0].numpy())
 
-        p_snapshot = solver.model.fields["p"].detach().cpu()
+        p_snapshot = runtime_adapter.fields["p"].detach().cpu()
         np.save(output_dir / f"p_{i}.npy", p_snapshot[0].numpy())
 
 
 def record_step_state(i):
     if ENABLE_DIAGNOSTICS and i % DIAGNOSTIC_INTERVAL == 0:
-        div_max, div_rms, div_rel = divergence_stats(solver.model.fields)
+        div_max, div_rms, div_rel = divergence_stats(runtime_adapter.fields)
         static_model = solver.model.static_model
         wall_mom_max, wall_mom_rms = wall_normal_momentum_stats(
-            solver.model.fields,
+            runtime_adapter.fields,
             static_model,
         )
         diagnostic_history.append((
@@ -866,19 +901,26 @@ def record_step_state(i):
 
 for local_step in pbar:
     i = start_step + local_step
-    solver.run(1, pre_update_callback=lambda _solver, _step, i=i: record_step_state(i))
+    runtime_adapter.advance(
+        1,
+        pre_update_callback=(
+            lambda _solver, _step, i=i: record_step_state(i)
+        ),
+    )
 
 final_step = start_step + steps
-solver.refresh_static_fields()
+runtime_adapter.synchronize_for_observation()
 save_snapshot(final_step)
 
 end = time.time()
 print(f"Elapsed time: {end - start:.6f} seconds")
 if ENABLE_DIAGNOSTICS:
-    final_div_max, final_div_rms, final_div_rel = divergence_stats(solver.model.fields)
+    final_div_max, final_div_rms, final_div_rel = divergence_stats(
+        runtime_adapter.fields
+    )
     static_model = solver.model.static_model
     final_wall_mom_max, final_wall_mom_rms = wall_normal_momentum_stats(
-        solver.model.fields,
+        runtime_adapter.fields,
         static_model,
     )
     diagnostic_history.append((

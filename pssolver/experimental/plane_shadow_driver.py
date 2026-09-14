@@ -429,6 +429,26 @@ def build_plane_shadow_runtime_from_production_metadata(
     )
 
 
+def build_plane_separated_canary_runtime_from_production_metadata(
+    metadata: Mapping[str, object],
+    *,
+    device: str | torch.device,
+) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
+    """Build the explicit Stage O.2 canary from resolved production metadata.
+
+    Unlike the Stage L/M replay helpers, this construction edge accepts the
+    metadata of a new, not-yet-run production request.  It deliberately fixes
+    the algebraic lifecycle to the H100-qualified Stage N.4.1 policy; callers
+    cannot mix individual legacy compatibility flags with this adapter.
+    """
+
+    return _build_plane_shadow_runtime_from_production_metadata(
+        metadata,
+        device=device,
+        algebraic_execution_policy=AlgebraicExecutionPolicy.batched(),
+    )
+
+
 def build_h100_plane_shadow_runtime_from_production_metadata(
     metadata: Mapping[str, object],
     *,
@@ -581,6 +601,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 __all__ = [
     "ProductionPlaneReference",
     "build_h100_plane_shadow_runtime_from_production_metadata",
+    "build_plane_separated_canary_runtime_from_production_metadata",
     "build_plane_shadow_runtime_from_production_metadata",
     "load_h100_production_plane_reference",
     "load_production_plane_reference",

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass, field
+from enum import Enum
 import hashlib
 import json
 import math
@@ -52,6 +53,7 @@ from pssolver.transforms import (
 
 
 PLANE_RUN_SPEC_SCHEMA_VERSION = 1
+DEFAULT_PLANE_RUNTIME_PATH = "legacy_production"
 DEFAULT_ZERO_MODE_POLICY = "zero_mean"
 DEFAULT_FRICTION_MODE_FRIC = 0.1
 DEFAULT_SPECTRAL_REFRESH_TIME = 0.2
@@ -67,6 +69,8 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/adapters/legacy_boundaries.py",
     "pssolver/configuration/__init__.py",
     "pssolver/configuration/plane_beris_edwards.py",
+    "pssolver/runtime/__init__.py",
+    "pssolver/runtime/plane_beris_edwards.py",
     "pssolver/core/boundary.py",
     "pssolver/core/domain.py",
     "pssolver/core/geometry.py",
@@ -81,6 +85,13 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/presets/__init__.py",
     "pssolver/presets/shendruk.py",
 )
+
+
+class PlaneRuntimePath(str, Enum):
+    """Mutually exclusive Plane Beris--Edwards runtime implementations."""
+
+    LEGACY_PRODUCTION = "legacy_production"
+    SEPARATED_CANARY = "separated_canary"
 
 
 def _periodic_periodic(condition: BoundaryCondition) -> BoundarySet:
@@ -227,6 +238,7 @@ class PlaneBerisEdwardsRunSpec:
     save_hydrodynamics: bool
     validation_config_sha256: str | None
     dry_run: bool
+    runtime_path: PlaneRuntimePath = PlaneRuntimePath.LEGACY_PRODUCTION
     boundaries: PlaneFreeSlipBoundaryConditions = PLANE_FREE_SLIP_BOUNDARIES
 
     def __post_init__(self) -> None:
@@ -238,6 +250,8 @@ class PlaneBerisEdwardsRunSpec:
             raise TypeError(
                 "boundaries must be PlaneFreeSlipBoundaryConditions"
             )
+        if not isinstance(self.runtime_path, PlaneRuntimePath):
+            raise TypeError("runtime_path must be a PlaneRuntimePath")
 
     @property
     def S_initial(self) -> float:
@@ -318,7 +332,7 @@ class PlaneBerisEdwardsRunSpec:
             "authority": (
                 "pssolver.configuration.PlaneBerisEdwardsRunSpec"
             ),
-            "runtime_path": "legacy_production",
+            "runtime_path": self.runtime_path.value,
             "activity_number": self.activity_number,
             "output_dir": str(self.output_dir),
             "parameterization": self.parameterization,
@@ -392,8 +406,21 @@ class PlaneBerisEdwardsRunSpec:
             "authority": (
                 "pssolver.configuration.PlaneBerisEdwardsRunSpec"
             ),
-            "runtime_path": "legacy_production",
+            "runtime_path": self.runtime_path.value,
             "canonical_sha256": self.canonical_sha256(),
+        }
+
+    def runtime_selection_metadata(self) -> dict[str, object]:
+        """Return additive requested/effective runtime-path metadata."""
+
+        return {
+            "authority": (
+                "pssolver.configuration.PlaneBerisEdwardsRunSpec.runtime_path"
+            ),
+            "requested": self.runtime_path.value,
+            "effective": self.runtime_path.value,
+            "default": DEFAULT_PLANE_RUNTIME_PATH,
+            "fallback_allowed": False,
         }
 
 
@@ -510,6 +537,7 @@ def create_plane_beris_edwards_run_spec(
     save_hydrodynamics: bool = False,
     validation_config_sha256: str | None = None,
     dry_run: bool = False,
+    runtime_path: str | PlaneRuntimePath = DEFAULT_PLANE_RUNTIME_PATH,
 ) -> PlaneBerisEdwardsRunSpec:
     """Create and validate the canonical programmatic run specification."""
 
@@ -559,6 +587,24 @@ def create_plane_beris_edwards_run_spec(
     if coefficient_min >= coefficient_max:
         raise ValueError(
             "--coefficient-min must be smaller than --coefficient-max"
+        )
+    try:
+        resolved_runtime_path = PlaneRuntimePath(runtime_path)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"invalid runtime path: {runtime_path!r}") from exc
+    if (
+        resolved_runtime_path is PlaneRuntimePath.SEPARATED_CANARY
+        and diagnostics
+    ):
+        raise ValueError(
+            "separated_canary diagnostics require the Stage O.3 workflow"
+        )
+    if (
+        resolved_runtime_path is PlaneRuntimePath.SEPARATED_CANARY
+        and disable_q_gradient_reuse
+    ):
+        raise ValueError(
+            "separated_canary does not accept legacy Q-gradient cache flags"
         )
     supported_choices = (
         (parameterization, {"paper-window", "fixed-k"}, "parameterization"),
@@ -683,6 +729,7 @@ def create_plane_beris_edwards_run_spec(
         save_hydrodynamics=save_hydrodynamics,
         validation_config_sha256=validation_config_sha256,
         dry_run=dry_run,
+        runtime_path=resolved_runtime_path,
     )
     # Force all declarative contracts to validate before runtime construction.
     spec.numerics
@@ -905,6 +952,16 @@ def _parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--runtime-path",
+        choices=tuple(path.value for path in PlaneRuntimePath),
+        default=DEFAULT_PLANE_RUNTIME_PATH,
+        help=(
+            "Plane runtime implementation. legacy_production remains the "
+            "default and rollback oracle; separated_canary is an explicit "
+            "Stage O opt-in with no fallback."
+        ),
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Print the resolved parameters without allocating the solver.",
@@ -928,6 +985,7 @@ def parse_plane_beris_edwards_run_spec(
 
 __all__ = [
     "DEFAULT_FRICTION_MODE_FRIC",
+    "DEFAULT_PLANE_RUNTIME_PATH",
     "DEFAULT_SPECTRAL_REFRESH_TIME",
     "DEFAULT_ZERO_MODE_POLICY",
     "PLANE_FREE_SLIP_BOUNDARIES",
@@ -935,6 +993,7 @@ __all__ = [
     "PLANE_RUN_SPEC_SCHEMA_VERSION",
     "PlaneBerisEdwardsRunSpec",
     "PlaneFreeSlipBoundaryConditions",
+    "PlaneRuntimePath",
     "SpectralRefreshSpec",
     "create_plane_beris_edwards_run_spec",
     "parse_plane_beris_edwards_run_spec",

@@ -18,6 +18,7 @@ from pathlib import Path
 
 from pssolver.configuration import (
     PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
+    PlaneRuntimePath,
 )
 
 from ._shadow_support import file_sha256, require_sha256
@@ -34,13 +35,6 @@ def _require_git_sha(value: object, description: str) -> str:
     ):
         raise ValueError(f"{description} must be a full lowercase Git SHA")
     return value
-
-
-class PlaneRuntimePath(str, Enum):
-    """Mutually exclusive Plane production migration paths."""
-
-    LEGACY_PRODUCTION = "legacy_production"
-    SEPARATED_CANARY = "separated_canary"
 
 
 class MigrationDisposition(str, Enum):

@@ -182,6 +182,8 @@ class Fig4NumericsCliTests(unittest.TestCase):
                 "pssolver/models/active_nematics/initial_conditions.py",
                 "pssolver/presets/__init__.py",
                 "pssolver/presets/shendruk.py",
+                "pssolver/runtime/__init__.py",
+                "pssolver/runtime/plane_beris_edwards.py",
             },
         )
         self.assertTrue(

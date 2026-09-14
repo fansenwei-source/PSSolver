@@ -2,6 +2,7 @@
 
 from .plane_beris_edwards import (
     DEFAULT_FRICTION_MODE_FRIC,
+    DEFAULT_PLANE_RUNTIME_PATH,
     DEFAULT_SPECTRAL_REFRESH_TIME,
     DEFAULT_ZERO_MODE_POLICY,
     PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
@@ -9,6 +10,7 @@ from .plane_beris_edwards import (
     PLANE_RUN_SPEC_SCHEMA_VERSION,
     PlaneBerisEdwardsRunSpec,
     PlaneFreeSlipBoundaryConditions,
+    PlaneRuntimePath,
     SpectralRefreshSpec,
     create_plane_beris_edwards_run_spec,
     parse_plane_beris_edwards_run_spec,
@@ -16,6 +18,7 @@ from .plane_beris_edwards import (
 
 __all__ = [
     "DEFAULT_FRICTION_MODE_FRIC",
+    "DEFAULT_PLANE_RUNTIME_PATH",
     "DEFAULT_SPECTRAL_REFRESH_TIME",
     "DEFAULT_ZERO_MODE_POLICY",
     "PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES",
@@ -23,6 +26,7 @@ __all__ = [
     "PLANE_RUN_SPEC_SCHEMA_VERSION",
     "PlaneBerisEdwardsRunSpec",
     "PlaneFreeSlipBoundaryConditions",
+    "PlaneRuntimePath",
     "SpectralRefreshSpec",
     "create_plane_beris_edwards_run_spec",
     "parse_plane_beris_edwards_run_spec",
