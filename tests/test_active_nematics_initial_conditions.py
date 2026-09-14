@@ -10,10 +10,12 @@ from pssolver.models.active_nematics import (
     Q_components,
     Q_magnitude,
     S_from_Q,
+    aligned_x_band_limited_noise_2d,
     aligned_x_smooth_noise,
     analytic_periodic_defect_gas_2d,
     available_initial_conditions,
     create_initial_condition,
+    extruded_2d_unbiased_rotation,
     extruded_2d_twist,
     neumann_twist_profile,
     sample_periodic_neutral_defects_2d,
@@ -141,6 +143,81 @@ def test_zero_twist_is_exact_extrusion_and_Q_2d_is_the_only_input_name():
         torch.testing.assert_close(fields[name], expected, rtol=0, atol=0)
 
 
+def test_v3_2d_seed_is_periodic_band_limited_reproducible_and_has_fixed_S():
+    kwargs = dict(
+        shape=(24, 20),
+        S_initial=1.0 / 3.0,
+        seed=31,
+        angle_rms=0.012,
+        max_mode_x=3,
+        max_mode_y=2,
+        dtype=torch.float64,
+    )
+    fields = aligned_x_band_limited_noise_2d(**kwargs)
+    repeated = aligned_x_band_limited_noise_2d(**kwargs)
+
+    assert tuple(fields) == Q_COMPONENTS
+    for name in Q_COMPONENTS:
+        assert fields[name].shape == (24, 20)
+        assert fields[name].dtype == torch.float64
+        torch.testing.assert_close(fields[name], repeated[name], rtol=0, atol=0)
+    torch.testing.assert_close(
+        S_from_Q(fields),
+        torch.full((24, 20), 1.0 / 3.0, dtype=torch.float64),
+        rtol=2e-13,
+        atol=2e-14,
+    )
+    assert torch.count_nonzero(fields["Qxz"]) == 0
+    assert torch.count_nonzero(fields["Qyz"]) == 0
+    assert float(fields["Qxy"].std()) > 0.0
+
+
+def test_v3_zero_rotation_is_exact_extrusion():
+    source = _sample_Q_2d()
+    fields = extruded_2d_unbiased_rotation(
+        (9, 7, 8),
+        Q_2d=source,
+        boundary_conditions=("periodic", "periodic", "neumann"),
+        rotation_rms=0.0,
+        z_modes=(1, 2, 3),
+        dtype=torch.float64,
+    )
+
+    for name in Q_COMPONENTS:
+        expected = source[name].to(torch.float64).unsqueeze(-1).expand(-1, -1, 8)
+        torch.testing.assert_close(fields[name], expected, rtol=0, atol=0)
+
+
+def test_v3_unbiased_rotation_preserves_S_and_is_spatially_local():
+    source = _sample_Q_2d(12, 10)
+    fields = extruded_2d_unbiased_rotation(
+        (12, 10, 9),
+        Q_2d=source,
+        boundary_conditions=("periodic", "periodic", "neumann"),
+        rotation_rms=1.0e-3,
+        max_mode_x=2,
+        max_mode_y=2,
+        z_modes=(1, 2, 3),
+        seed=47,
+        dtype=torch.float64,
+    )
+
+    source_float64 = {name: values.to(torch.float64) for name, values in source.items()}
+    expected_S = S_from_Q(source_float64).unsqueeze(-1).expand(-1, -1, 9)
+    torch.testing.assert_close(
+        S_from_Q(fields),
+        expected_S,
+        rtol=5e-13,
+        atol=5e-14,
+    )
+    assert float(fields["Qxz"].std()) > 0.0
+    assert float(fields["Qyz"].std()) > 0.0
+    # A local perturbation must vary within an xy plane, unlike V1's coherent
+    # layer rotation, and positive z modes must vary across the channel.
+    assert float(fields["Qxz"][..., 0].std()) > 0.0
+    assert not torch.allclose(fields["Qxz"][..., 0], fields["Qxz"][..., -1])
+
+
 def test_twist_preserves_pointwise_Q_magnitude():
     source = _sample_Q_2d()
     fields = extruded_2d_twist(
@@ -159,8 +236,10 @@ def test_twist_preserves_pointwise_Q_magnitude():
 
 def test_registry_exposes_only_model_initializers_and_accepts_stacked_Q_2d():
     assert available_initial_conditions() == (
+        "aligned_x_band_limited_noise_2d",
         "analytic_periodic_defect_gas_2d",
         "aligned_x_smooth_noise",
+        "extruded_2d_unbiased_rotation",
         "extruded_2d_twist",
     )
     source = _sample_Q_2d(6, 5)

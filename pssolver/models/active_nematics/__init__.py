@@ -16,10 +16,12 @@ from .beris_edwards import (
 )
 from .fields import Q_COMPONENTS
 from .initial_conditions import (
+    aligned_x_band_limited_noise_2d,
     aligned_x_smooth_noise,
     analytic_periodic_defect_gas_2d,
     available_initial_conditions,
     create_initial_condition,
+    extruded_2d_unbiased_rotation,
     extruded_2d_twist,
     neumann_twist_profile,
     sample_periodic_neutral_defects_2d,
@@ -66,6 +68,7 @@ __all__ = [
     "eigenframe_from_Q",
     "q_field_object_from_Q",
     "aligned_x_smooth_noise",
+    "aligned_x_band_limited_noise_2d",
     "analytic_periodic_defect_gas_2d",
     "available_initial_conditions",
     "beris_edwards_active_stress_components",
@@ -78,6 +81,7 @@ __all__ = [
     "beris_edwards_q_nonlinear_components",
     "beris_edwards_reactive_stress_components",
     "create_initial_condition",
+    "extruded_2d_unbiased_rotation",
     "extruded_2d_twist",
     "neumann_twist_profile",
     "positive_equilibrium_S",

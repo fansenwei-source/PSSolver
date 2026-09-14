@@ -480,6 +480,265 @@ def extruded_2d_twist(
     return {name: values.contiguous() for name, values in fields.items()}
 
 
+def aligned_x_band_limited_noise_2d(
+    shape: tuple[int, int],
+    *,
+    S_initial: float,
+    seed: int = 42,
+    angle_rms: float = 0.01,
+    max_mode_x: int = 4,
+    max_mode_y: int = 4,
+    dtype: torch.dtype = torch.float32,
+) -> dict[str, torch.Tensor]:
+    """Create an in-plane ordered Q field with smooth periodic angle noise.
+
+    This is the V3 two-dimensional mother-state seed.  The director angle is
+    a finite random Fourier series with no zero mode and is normalized to the
+    requested RMS amplitude.  Consequently the initializer is periodic,
+    reproducible, band limited, and does not insert artificial low-S cores.
+    """
+    dtype = _validate_dtype(dtype)
+    numpy_dtype = _numpy_dtype(dtype)
+    nx, ny, _, _ = _validate_2d_geometry(shape, (1.0, 1.0))
+    if not np.isfinite(S_initial) or S_initial <= 0:
+        raise ValueError(
+            f"S_initial must be positive and finite, got {S_initial!r}"
+        )
+    if not math.isfinite(angle_rms) or angle_rms < 0:
+        raise ValueError(
+            f"angle_rms must be non-negative and finite, got {angle_rms!r}"
+        )
+    for name, value, size in (
+        ("max_mode_x", max_mode_x, nx),
+        ("max_mode_y", max_mode_y, ny),
+    ):
+        if int(value) != value or value < 0:
+            raise ValueError(f"{name} must be a non-negative integer, got {value!r}")
+        if value > size // 2:
+            raise ValueError(
+                f"{name}={value} exceeds the resolved periodic limit {size // 2}"
+            )
+    max_mode_x = int(max_mode_x)
+    max_mode_y = int(max_mode_y)
+    if angle_rms > 0 and max_mode_x == 0 and max_mode_y == 0:
+        raise ValueError("positive angle_rms requires at least one nonzero mode")
+
+    rng = np.random.default_rng(seed)
+    x = np.arange(nx, dtype=np.float64).reshape(nx, 1) / nx
+    y = np.arange(ny, dtype=np.float64).reshape(1, ny) / ny
+    angle = np.zeros((nx, ny), dtype=np.float64)
+    modes = [
+        (mode_x, mode_y)
+        for mode_x in range(-max_mode_x, max_mode_x + 1)
+        for mode_y in range(-max_mode_y, max_mode_y + 1)
+        # One representative of each +/- wave-vector pair. Including both
+        # signs of mode_y removes a diagonal-orientation bias.
+        if mode_x > 0 or (mode_x == 0 and mode_y > 0)
+    ]
+    for mode_x, mode_y in modes:
+        phase = rng.uniform(0.0, 2.0 * math.pi)
+        coefficient = rng.normal()
+        angle += coefficient * np.cos(
+            2.0 * math.pi * (mode_x * x + mode_y * y) + phase
+        )
+    angle -= float(angle.mean())
+    raw_rms = float(np.sqrt(np.mean(angle * angle)))
+    if angle_rms == 0:
+        angle.fill(0.0)
+    elif raw_rms <= np.finfo(np.float64).tiny:
+        raise RuntimeError("band-limited angle realization has zero RMS")
+    else:
+        angle *= angle_rms / raw_rms
+
+    director = np.stack(
+        (
+            np.cos(angle),
+            np.sin(angle),
+            np.zeros_like(angle),
+        ),
+        axis=-1,
+    )
+    components = Q_components(uniaxial_Q(director, S_initial))
+    return {
+        name: torch.from_numpy(np.asarray(values, dtype=numpy_dtype))
+        for name, values in components.items()
+    }
+
+
+def _v3_rotation_vector_field(
+    shape: tuple[int, int, int],
+    *,
+    rotation_rms: float,
+    max_mode_x: int,
+    max_mode_y: int,
+    z_modes: Sequence[int],
+    seed: int,
+    dtype: torch.dtype,
+) -> torch.Tensor:
+    """Return a periodic/DCT rotation vector with no wall-normal zero mode."""
+    dtype = _validate_dtype(dtype)
+    nx, ny, nz = _validate_shape(shape)
+    if not math.isfinite(rotation_rms) or rotation_rms < 0:
+        raise ValueError(
+            "rotation_rms must be non-negative and finite, got "
+            f"{rotation_rms!r}"
+        )
+    for name, value, size in (
+        ("max_mode_x", max_mode_x, nx),
+        ("max_mode_y", max_mode_y, ny),
+    ):
+        if int(value) != value or value < 0:
+            raise ValueError(f"{name} must be a non-negative integer, got {value!r}")
+        if value > size // 2:
+            raise ValueError(
+                f"{name}={value} exceeds the resolved periodic limit {size // 2}"
+            )
+    max_mode_x = int(max_mode_x)
+    max_mode_y = int(max_mode_y)
+    modes = tuple(int(mode) for mode in z_modes)
+    if not modes or len(set(modes)) != len(modes):
+        raise ValueError("z_modes must contain unique positive DCT modes")
+    if any(mode <= 0 or mode >= nz for mode in modes):
+        raise ValueError(f"z_modes must satisfy 1 <= mode < {nz}, got {modes!r}")
+    if rotation_rms > 0 and max_mode_x == 0 and max_mode_y == 0:
+        raise ValueError(
+            "positive rotation_rms requires a nonzero in-plane mode so the "
+            "perturbation is local rather than a coherent layer rotation"
+        )
+
+    numpy_dtype = _numpy_dtype(dtype)
+    if rotation_rms == 0:
+        return torch.zeros((*shape, 3), dtype=dtype)
+
+    rng = np.random.default_rng(seed)
+    x = np.arange(nx, dtype=np.float64).reshape(nx, 1, 1) / nx
+    y = np.arange(ny, dtype=np.float64).reshape(1, ny, 1) / ny
+    # Cell-centered DCT-II coordinates. Positive cosine modes have zero
+    # discrete mean and their even extension has zero normal derivative.
+    z = (np.arange(nz, dtype=np.float64) + 0.5).reshape(1, 1, nz) / nz
+    omega = np.zeros((nx, ny, nz, 3), dtype=np.float64)
+    in_plane_modes = [
+        (mode_x, mode_y)
+        for mode_x in range(-max_mode_x, max_mode_x + 1)
+        for mode_y in range(-max_mode_y, max_mode_y + 1)
+        if mode_x > 0 or (mode_x == 0 and mode_y > 0)
+    ]
+    for component in range(3):
+        for mode_z in modes:
+            z_profile = np.cos(math.pi * mode_z * z)
+            for mode_x, mode_y in in_plane_modes:
+                phase = rng.uniform(0.0, 2.0 * math.pi)
+                coefficient = rng.normal()
+                xy_profile = np.cos(
+                    2.0 * math.pi * (mode_x * x + mode_y * y) + phase
+                )
+                omega[..., component] += coefficient * xy_profile * z_profile
+
+    # Normalize each rotation axis equally so all three generators are
+    # represented, then normalize the vector magnitude to the requested RMS.
+    target_component_rms = rotation_rms / math.sqrt(3.0)
+    for component in range(3):
+        component_rms = float(np.sqrt(np.mean(omega[..., component] ** 2)))
+        if component_rms <= np.finfo(np.float64).tiny:
+            raise RuntimeError("V3 rotation realization has a zero component")
+        omega[..., component] *= target_component_rms / component_rms
+    vector_rms = float(np.sqrt(np.mean(np.sum(omega * omega, axis=-1))))
+    omega *= rotation_rms / vector_rms
+    return torch.from_numpy(np.asarray(omega, dtype=numpy_dtype))
+
+
+def extruded_2d_unbiased_rotation(
+    shape: tuple[int, int, int],
+    *,
+    Q_2d: Mapping[str, np.ndarray | torch.Tensor] | np.ndarray | torch.Tensor,
+    boundary_conditions: tuple[str, str, str],
+    rotation_rms: float = 1.0e-3,
+    max_mode_x: int = 3,
+    max_mode_y: int = 3,
+    z_modes: Sequence[int] = (1, 2, 3),
+    seed: int = 42,
+    dtype: torch.dtype = torch.float32,
+) -> dict[str, torch.Tensor]:
+    """Extrude Q2D and apply the V3 local, unbiased 3D rotation field.
+
+    The perturbation contains periodic in-plane modes and strictly positive
+    Neumann-compatible wall-normal DCT modes.  Pointwise rotations preserve
+    Q eigenvalues, including the naturally evolved defect-core structure.
+    """
+    dtype = _validate_dtype(dtype)
+    nx, ny, nz = _validate_shape(shape)
+    boundary_conditions = tuple(boundary_conditions)
+    if boundary_conditions != ("periodic", "periodic", "neumann"):
+        raise ValueError(
+            "V3 rotation requires periodic/periodic/neumann Q boundaries, got "
+            f"{boundary_conditions!r}"
+        )
+    source = _as_Q_2d_components(Q_2d, (nx, ny), dtype=dtype)
+    omega = _v3_rotation_vector_field(
+        shape,
+        rotation_rms=rotation_rms,
+        max_mode_x=max_mode_x,
+        max_mode_y=max_mode_y,
+        z_modes=z_modes,
+        seed=seed,
+        dtype=dtype,
+    )
+    wx, wy, wz = omega.unbind(dim=-1)
+    angle_squared = wx.square() + wy.square() + wz.square()
+    angle = torch.sqrt(angle_squared)
+    small = angle_squared < 1.0e-12
+    sinc = torch.where(
+        small,
+        1.0 - angle_squared / 6.0 + angle_squared.square() / 120.0,
+        torch.sin(angle) / angle,
+    )
+    one_minus_cos_over_square = torch.where(
+        small,
+        0.5 - angle_squared / 24.0 + angle_squared.square() / 720.0,
+        (1.0 - torch.cos(angle)) / angle_squared,
+    )
+    a = sinc
+    b = one_minus_cos_over_square
+    rotation = torch.stack(
+        (
+            1.0 - b * (wy.square() + wz.square()),
+            b * wx * wy - a * wz,
+            b * wx * wz + a * wy,
+            b * wx * wy + a * wz,
+            1.0 - b * (wx.square() + wz.square()),
+            b * wy * wz - a * wx,
+            b * wx * wz - a * wy,
+            b * wy * wz + a * wx,
+            1.0 - b * (wx.square() + wy.square()),
+        ),
+        dim=-1,
+    ).reshape(nx, ny, nz, 3, 3)
+
+    Qxx = source["Qxx"].unsqueeze(-1).expand(nx, ny, nz)
+    Qxy = source["Qxy"].unsqueeze(-1).expand(nx, ny, nz)
+    Qxz = source["Qxz"].unsqueeze(-1).expand(nx, ny, nz)
+    Qyy = source["Qyy"].unsqueeze(-1).expand(nx, ny, nz)
+    Qyz = source["Qyz"].unsqueeze(-1).expand(nx, ny, nz)
+    Qzz = -(Qxx + Qyy)
+    full_Q = torch.stack(
+        (
+            Qxx, Qxy, Qxz,
+            Qxy, Qyy, Qyz,
+            Qxz, Qyz, Qzz,
+        ),
+        dim=-1,
+    ).reshape(nx, ny, nz, 3, 3)
+    rotated_Q = rotation @ full_Q @ rotation.transpose(-2, -1)
+    fields = {
+        "Qxx": rotated_Q[..., 0, 0],
+        "Qxy": rotated_Q[..., 0, 1],
+        "Qxz": rotated_Q[..., 0, 2],
+        "Qyy": rotated_Q[..., 1, 1],
+        "Qyz": rotated_Q[..., 1, 2],
+    }
+    return {name: values.contiguous() for name, values in fields.items()}
+
+
 def aligned_x_smooth_noise(
     shape: tuple[int, int, int],
     *,
@@ -609,8 +868,10 @@ def aligned_x_smooth_noise(
 
 
 _INITIAL_CONDITIONS: dict[str, InitialCondition] = {
+    "aligned_x_band_limited_noise_2d": aligned_x_band_limited_noise_2d,
     "analytic_periodic_defect_gas_2d": analytic_periodic_defect_gas_2d,
     "aligned_x_smooth_noise": aligned_x_smooth_noise,
+    "extruded_2d_unbiased_rotation": extruded_2d_unbiased_rotation,
     "extruded_2d_twist": extruded_2d_twist,
 }
 
@@ -647,10 +908,12 @@ def create_initial_condition(
 
 
 __all__ = [
+    "aligned_x_band_limited_noise_2d",
     "aligned_x_smooth_noise",
     "analytic_periodic_defect_gas_2d",
     "available_initial_conditions",
     "create_initial_condition",
+    "extruded_2d_unbiased_rotation",
     "extruded_2d_twist",
     "neumann_twist_profile",
     "sample_periodic_neutral_defects_2d",
