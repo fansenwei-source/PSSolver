@@ -57,6 +57,18 @@ def test_profiler_cli_accepts_two_thirds_rule(monkeypatch):
     assert parse_args().dealias_rule == "two_thirds"
 
 
+def test_whole_timestep_scope_counts_nested_regions_without_timing_them():
+    result = run_profile(
+        _small_config(profile_steps=1, timing_scope="whole_timestep")
+    )
+
+    assert result["timing_notes"]["timing_scope"] == "whole_timestep"
+    assert result["timings"]["whole_timestep"]["timed"] is True
+    assert result["timings"]["transform_forward"]["calls"] > 0
+    assert result["timings"]["transform_forward"]["timed"] is False
+    assert result["timings"]["transform_forward"]["total_seconds"] == 0.0
+
+
 def test_profiler_accepts_production_layout_initial_q(tmp_path):
     path = tmp_path / "Q_0.npy"
     values = np.zeros((6, 6, 5, 5), dtype=np.float64)

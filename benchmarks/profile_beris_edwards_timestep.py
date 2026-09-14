@@ -85,24 +85,36 @@ class ProfileConfig:
     save_hydrodynamics: bool = False
     seed: int = 20260908
     initial_q_path: str | None = None
+    timing_scope: str = "all_regions"
 
 
 class RegionTimer:
     """Collect nested CPU wall-clock or asynchronous CUDA-event timings."""
 
-    def __init__(self, device: torch.device):
+    def __init__(
+        self,
+        device: torch.device,
+        *,
+        timed_regions: frozenset[str] | None = None,
+    ):
         self.device = device
+        self.timed_regions = timed_regions
         self.enabled = False
         self._cpu_seconds: dict[str, list[float]] = defaultdict(list)
         self._cuda_events: dict[
             str,
             list[tuple[torch.cuda.Event, torch.cuda.Event]],
         ] = defaultdict(list)
+        self._call_counts: dict[str, int] = defaultdict(int)
 
     @contextmanager
     def region(self, name: str, *, host: bool = False) -> Iterator[None]:
         """Time a region without synchronizing inside the profiled timestep."""
         if not self.enabled:
+            yield
+            return
+        self._call_counts[name] += 1
+        if self.timed_regions is not None and name not in self.timed_regions:
             yield
             return
 
@@ -127,6 +139,7 @@ class RegionTimer:
         """Discard warm-up measurements and enable profiling."""
         self._cpu_seconds.clear()
         self._cuda_events.clear()
+        self._call_counts.clear()
         self.enabled = True
 
     def summarize(self) -> dict[str, dict[str, float | int]]:
@@ -134,7 +147,9 @@ class RegionTimer:
         if self.device.type == "cuda":
             torch.cuda.synchronize(self.device)
 
-        names = sorted(set(self._cpu_seconds) | set(self._cuda_events))
+        names = sorted(
+            set(self._cpu_seconds) | set(self._cuda_events) | set(self._call_counts)
+        )
         summary: dict[str, dict[str, float | int]] = {}
         for name in names:
             samples = list(self._cpu_seconds[name])
@@ -143,10 +158,12 @@ class RegionTimer:
                 for start, stop in self._cuda_events[name]
             )
             total = math.fsum(samples)
+            calls = self._call_counts[name]
             summary[name] = {
-                "calls": len(samples),
+                "calls": calls,
                 "total_seconds": total,
-                "mean_seconds": total / len(samples),
+                "mean_seconds": total / len(samples) if samples else 0.0,
+                "timed": bool(samples),
             }
         return summary
 
@@ -295,6 +312,8 @@ def _validate_config(config: ProfileConfig) -> None:
         path = Path(config.initial_q_path).expanduser()
         if not path.is_file():
             raise FileNotFoundError(f"initial Q file is missing: {path}")
+    if config.timing_scope not in {"all_regions", "whole_timestep"}:
+        raise ValueError("timing_scope must be 'all_regions' or 'whole_timestep'")
 
 
 def _torch_dtype(name: str) -> torch.dtype:
@@ -599,7 +618,14 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
     if device.type == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA was requested but torch.cuda.is_available() is false")
     snapshot_directory = _prepare_snapshot_directory(config)
-    timer = RegionTimer(device)
+    timer = RegionTimer(
+        device,
+        timed_regions=(
+            frozenset(("whole_timestep",))
+            if config.timing_scope == "whole_timestep"
+            else None
+        ),
+    )
 
     torch.manual_seed(config.seed)
     if device.type == "cuda":
@@ -710,6 +736,7 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
             "cuda_matmul_allow_tf32": bool(torch.backends.cuda.matmul.allow_tf32),
         },
         "timing_notes": {
+            "timing_scope": config.timing_scope,
             "additive_regions": [
                 "static_fields",
                 "q_nonlinear",
@@ -914,6 +941,15 @@ def parse_args() -> argparse.Namespace:
             "production solver implementation."
         ),
     )
+    parser.add_argument(
+        "--timing-scope",
+        choices=("all_regions", "whole_timestep"),
+        default="all_regions",
+        help=(
+            "all_regions records nested region timings; whole_timestep times "
+            "only the outer step while still counting nested transform calls."
+        ),
+    )
     parser.add_argument("--output", type=Path)
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
@@ -954,6 +990,7 @@ def main() -> None:
             save_hydrodynamics=args.save_hydrodynamics,
             seed=args.seed,
             initial_q_path=args.initial_q_path,
+            timing_scope=args.timing_scope,
         )
     )
     serialized = json.dumps(result, indent=2, sort_keys=True) + "\n"
