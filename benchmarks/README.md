@@ -138,3 +138,12 @@ Generate the diagnostic-only R320 command contract with
 O.4.3.3 report, runs three twenty-step attribution profiles, and ranks the
 remaining copy/cat sources. Its result can guide target review only; it cannot
 authorize another layout, Stage O.4.4, or a production default change.
+
+## Stage O closure
+
+`scripts_plane/close_plane_stage_o.py` emits the final read-only Stage O
+architecture decision. It binds the authoritative O.4 through O.4.3.4 report
+identities and records that legacy Plane production remains the default, the
+separated runtime remains an experimental numerical oracle, and the projected
+materialization optimization line is closed. The command constructs no solver
+and authorizes only a local Stage P operator/kernel diagnostic design.

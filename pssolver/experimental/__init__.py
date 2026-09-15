@@ -147,6 +147,13 @@ from .stage_o434_diagnostics import (
     summarize_projected_batch_source_attribution,
 )
 from .stage_o434_plan import build_stage_o434_h100_plan
+from .stage_o_closure import (
+    STAGE_O_CLOSURE_SCHEMA_VERSION,
+    StageOClosureDecision,
+    StageOClosureEvidence,
+    StageOPathDisposition,
+    build_stage_o_closure_decision,
+)
 from .stage_o43_qualification import (
     analyze_stage_o431_qualification,
     analyze_stage_o433_qualification,
@@ -278,7 +285,12 @@ __all__ = [
     "MigrationResponsibility",
     "PlaneRuntimePath",
     "STAGE_O_SCHEMA_VERSION",
+    "STAGE_O_CLOSURE_SCHEMA_VERSION",
     "StageOMigrationDesign",
+    "StageOClosureDecision",
+    "StageOClosureEvidence",
     "StageOQualificationEvidence",
+    "StageOPathDisposition",
+    "build_stage_o_closure_decision",
     "write_plane_shadow_comparison",
 ]
