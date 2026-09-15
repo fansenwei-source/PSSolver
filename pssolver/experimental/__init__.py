@@ -42,6 +42,7 @@ from .model_execution import (
     build_experimental_model_runtime,
 )
 from .performance import RuntimePerformanceRecorder
+from .producer_packing import ProducerPackedComponentValues
 from .projected_scheduler import (
     AlgebraicPhysicalIslandScheduler,
     BoundarySignatureTransformScheduler,
@@ -169,6 +170,7 @@ __all__ = [
     "PlaneBerisEdwardsSolverOptions",
     "PlaneShadowTrajectoryComparison",
     "ProductionPlaneReference",
+    "ProducerPackedComponentValues",
     "ProjectedSemiImplicitEulerIntegrator",
     "RuntimePerformanceRecorder",
     "AlgebraicPhysicalIslandScheduler",
