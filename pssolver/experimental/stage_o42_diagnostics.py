@@ -51,11 +51,16 @@ def _validated_profile(path: str | Path, role: str) -> tuple[Path, dict[str, obj
     for name in ("after_warmup", "after_timestep", "after_observation"):
         try:
             inventory = phases[name]["inventory"]
+            gap = int(phases[name]["allocator_minus_inventory_bytes"])
+            exceeds = int(phases[name]["inventory_exceeds_allocator_bytes"])
+            consistent = phases[name]["storage_accounting_consistent"]
             valid = (
                 inventory["schema_version"] == 1
                 and inventory["truncated"] is False
                 and inventory["all_storages_reported"] is True
-                and int(phases[name]["allocator_minus_inventory_bytes"]) >= 0
+                and isinstance(consistent, bool)
+                and exceeds == max(0, -gap)
+                and consistent is (gap >= 0)
             )
         except (KeyError, TypeError, ValueError):
             valid = False
@@ -121,6 +126,18 @@ def _phase_comparison(
             "canary_inventory_unique_storage_bytes": c_unique,
             "inventory_delta_bytes": c_unique - l_unique,
             "inventory_ratio_canary_over_legacy": c_unique / l_unique,
+            "legacy_storage_accounting_consistent": l_phase[
+                "storage_accounting_consistent"
+            ],
+            "canary_storage_accounting_consistent": c_phase[
+                "storage_accounting_consistent"
+            ],
+            "legacy_inventory_exceeds_allocator_bytes": l_phase[
+                "inventory_exceeds_allocator_bytes"
+            ],
+            "canary_inventory_exceeds_allocator_bytes": c_phase[
+                "inventory_exceeds_allocator_bytes"
+            ],
             "category_referenced_storage_delta_bytes": category_deltas,
             "ranked_positive_category_deltas": [
                 category
@@ -224,6 +241,11 @@ def analyze_stage_o42_diagnostics(
     if len(identities) != 1:
         raise ValueError("Stage O.4.2 diagnostic identities differ")
     phase_comparison = _phase_comparison(legacy, canary)
+    storage_accounting_consistent = all(
+        phase["legacy_storage_accounting_consistent"] is True
+        and phase["canary_storage_accounting_consistent"] is True
+        for phase in phase_comparison.values()
+    )
     operator_comparison = _operator_comparison(legacy, canary)
     category_totals: dict[str, int] = {}
     for phase in phase_comparison.values():
@@ -270,11 +292,16 @@ def analyze_stage_o42_diagnostics(
         "schema_version": 1,
         "qualification_stage": "O.4.2",
         "classification": "DIAGNOSTIC_COMPLETE",
-        "architecture_decision": "identify_owner_before_optimization",
-        "eligible_for_stage_o43_optimization_design": True,
+        "architecture_decision": (
+            "identify_owner_before_optimization"
+            if storage_accounting_consistent
+            else "refine_storage_accounting_before_optimization"
+        ),
+        "eligible_for_stage_o43_optimization_design": (storage_accounting_consistent),
         "eligible_for_production_promotion": False,
         "production_default_changed": False,
         "stage_o41_original_classification_unchanged": True,
+        "storage_accounting_consistent": storage_accounting_consistent,
         "phase_comparison": phase_comparison,
         "operator_comparison": operator_comparison,
         "ranked_positive_residency_categories": ranked_categories,

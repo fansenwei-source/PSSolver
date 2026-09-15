@@ -11,7 +11,10 @@ dtype, view status, owner path, and category, while counting shared backing
 storage once. It does not use the global garbage collector and does not retain
 tensor objects in its JSON result. CUDA allocator counters are captured beside
 the inventory so the report distinguishes runtime-owned storage from allocator
-bytes that the bounded traversal cannot attribute.
+bytes that the bounded traversal cannot attribute. Overlapping device-address
+ranges are coalesced before unique bytes are reported. Any remaining
+inventory/allocator inconsistency is persisted as diagnostic evidence; it is
+not allowed to suppress the profile JSON.
 
 Selected `cat`, `stack`, `clone`, `contiguous`, `copy`, allocation, and device
 conversion operators are profiled in a separate window. Their memory fields

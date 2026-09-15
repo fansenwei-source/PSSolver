@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import torch
 
 from pssolver.diagnostics import build_tensor_inventory
+from pssolver.diagnostics.tensor_inventory import _coalesce_storage_ranges
 
 
 @dataclass
@@ -66,3 +67,35 @@ def test_inventory_filters_tensors_by_device():
 
     assert report["tensor_reference_count"] == 0
     assert report["unique_storage_bytes"] == 0
+
+
+def test_overlapping_device_address_ranges_are_counted_once():
+    records = [
+        {
+            "device": "cuda:0",
+            "data_ptr": 1000,
+            "storage_bytes": 100,
+            "reported_storage_sizes": {100},
+            "paths": ["runtime.parent"],
+            "categories": {"model"},
+            "dtypes": {"torch.float64"},
+            "tensor_references": 1,
+        },
+        {
+            "device": "cuda:0",
+            "data_ptr": 1050,
+            "storage_bytes": 100,
+            "reported_storage_sizes": {100},
+            "paths": ["runtime.alias"],
+            "categories": {"algebraic_representations"},
+            "dtypes": {"torch.float64"},
+            "tensor_references": 1,
+        },
+    ]
+
+    merged = _coalesce_storage_ranges(records)
+
+    assert len(merged) == 1
+    assert merged[0]["data_ptr"] == 1000
+    assert merged[0]["storage_bytes"] == 150
+    assert merged[0]["paths"] == {"runtime.parent", "runtime.alias"}

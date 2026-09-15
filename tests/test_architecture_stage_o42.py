@@ -38,6 +38,8 @@ def _inventory(*, unique: int, allocated: int, categories: dict[str, int]):
             "exclusive_storage_bytes_by_category": categories,
         },
         "allocator_minus_inventory_bytes": allocated - unique,
+        "inventory_exceeds_allocator_bytes": max(0, unique - allocated),
+        "storage_accounting_consistent": unique <= allocated,
     }
 
 
@@ -155,6 +157,33 @@ def test_stage_o42_analysis_rejects_truncated_inventory(tmp_path):
             stage_o41_report=o41,
             expected_stage_o41_sha256=_sha256(o41),
         )
+
+
+def test_stage_o42_analysis_persists_accounting_ambiguity_without_promotion(
+    tmp_path,
+):
+    legacy = _write_json(tmp_path / "legacy.json", _profile("legacy", scale=1))
+    canary_report = _profile("canary", scale=2)
+    phase = canary_report["residency_phases"]["after_warmup"]
+    phase["allocator_minus_inventory_bytes"] = -25
+    phase["inventory_exceeds_allocator_bytes"] = 25
+    phase["storage_accounting_consistent"] = False
+    canary = _write_json(tmp_path / "canary.json", canary_report)
+    o41 = _write_json(tmp_path / "o41.json", _o41())
+
+    report = analyze_stage_o42_diagnostics(
+        legacy,
+        canary,
+        stage_o41_report=o41,
+        expected_stage_o41_sha256=_sha256(o41),
+    )
+
+    assert report["classification"] == "DIAGNOSTIC_COMPLETE"
+    assert report["storage_accounting_consistent"] is False
+    assert report["eligible_for_stage_o43_optimization_design"] is False
+    assert report["architecture_decision"] == (
+        "refine_storage_accounting_before_optimization"
+    )
 
 
 def test_stage_o42_plan_is_bounded_read_only_and_non_promoting(tmp_path):
