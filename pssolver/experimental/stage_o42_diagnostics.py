@@ -49,6 +49,12 @@ def _validated_profile(path: str | Path, role: str) -> tuple[Path, dict[str, obj
                 ]
                 is True
             )
+            and report["diagnostic_contract"]["storage_identity_priming_pass"]
+            is True
+            and report["diagnostic_contract"][
+                "repeated_inventory_identity_checked"
+            ]
+            is True
         )
         audit_valid = int(report["operator_audit"]["steps"]) > 0 and isinstance(
             report["operator_audit"]["operators"], Mapping
@@ -64,6 +70,7 @@ def _validated_profile(path: str | Path, role: str) -> tuple[Path, dict[str, obj
         try:
             inventory = phases[name]["inventory"]
             reconciliation = phases[name]["allocator_block_reconciliation"]
+            priming = phases[name]["storage_identity_priming"]
             gap = int(phases[name]["allocator_minus_inventory_bytes"])
             exceeds = int(phases[name]["inventory_exceeds_allocator_bytes"])
             consistent = phases[name]["storage_accounting_consistent"]
@@ -85,6 +92,14 @@ def _validated_profile(path: str | Path, role: str) -> tuple[Path, dict[str, obj
                 )
                 and reconciliation["all_unmatched_storages_reported"] is True
                 and isinstance(phases[name]["allocator_counters_stable"], bool)
+                and priming["truncated"] is False
+                and priming["all_storages_reported"] is True
+                and priming["identical_to_measured_inventory"] is True
+                and isinstance(priming["allocated_delta_bytes"], int)
+                and not isinstance(priming["allocated_delta_bytes"], bool)
+                and isinstance(priming["reserved_delta_bytes"], int)
+                and not isinstance(priming["reserved_delta_bytes"], bool)
+                and phases[name]["storage_identity_inventory_stable"] is True
             )
         except (KeyError, TypeError, ValueError):
             valid = False
@@ -167,6 +182,18 @@ def _phase_comparison(
             ],
             "canary_allocator_counters_stable": c_phase[
                 "allocator_counters_stable"
+            ],
+            "legacy_storage_identity_priming": l_phase[
+                "storage_identity_priming"
+            ],
+            "canary_storage_identity_priming": c_phase[
+                "storage_identity_priming"
+            ],
+            "legacy_storage_identity_inventory_stable": l_phase[
+                "storage_identity_inventory_stable"
+            ],
+            "canary_storage_identity_inventory_stable": c_phase[
+                "storage_identity_inventory_stable"
             ],
             "legacy_allocator_block_reconciliation": l_phase[
                 "allocator_block_reconciliation"
@@ -295,9 +322,15 @@ def analyze_stage_o42_diagnostics(
         and phase["canary_allocator_counters_stable"] is True
         for phase in phase_comparison.values()
     )
+    storage_identity_priming_stable = all(
+        phase["legacy_storage_identity_inventory_stable"] is True
+        and phase["canary_storage_identity_inventory_stable"] is True
+        for phase in phase_comparison.values()
+    )
     accounting_ready_for_optimization = (
         storage_accounting_consistent
         and allocator_block_accounting_reconciled
+        and storage_identity_priming_stable
     )
     operator_comparison = _operator_comparison(legacy, canary)
     category_totals: dict[str, int] = {}
@@ -361,6 +394,7 @@ def analyze_stage_o42_diagnostics(
         "allocator_block_accounting_reconciled": (
             allocator_block_accounting_reconciled
         ),
+        "storage_identity_priming_stable": storage_identity_priming_stable,
         "accounting_ready_for_optimization": accounting_ready_for_optimization,
         "phase_comparison": phase_comparison,
         "operator_comparison": operator_comparison,

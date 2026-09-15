@@ -114,6 +114,8 @@ def build_stage_o42_h100_plan(
             "overlapping_storage_address_ranges_coalesced": True,
             "allocator_block_reconciliation": True,
             "allocator_counter_stability_checked": True,
+            "storage_identity_priming_pass": True,
+            "repeated_inventory_identity_checked": True,
             "storage_accounting_consistency_is_diagnostic": True,
             "production_default_may_change": False,
             "eligible_result": "stage_o43_optimization_design_only",

@@ -34,6 +34,13 @@ measurement window cannot be mistaken for an ownership discrepancy. This is
 an accounting diagnostic only; unmatched or unstable evidence cannot
 authorize an optimization.
 
+The storage-identity query itself may materialize allocator bookkeeping for
+already reachable transient tensors. Each phase therefore performs one
+discarded, unmeasured priming inventory before its formal baseline. The second
+inventory must be identical to the priming inventory, while all post-priming
+allocator samples must remain stable. Priming deltas are preserved as evidence
+instead of being folded into runtime-residency comparisons.
+
 The H100 plan runs exactly one R320 diagnostic for each runtime and one
 read-only comparison. A successful result may authorize a narrowly targeted
 Stage O.4.3 optimization design. It cannot change the runtime default, promote

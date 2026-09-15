@@ -43,6 +43,17 @@ def _inventory(*, unique: int, allocated: int, categories: dict[str, int]):
         "inventory_exceeds_allocator_bytes": max(0, unique - allocated),
         "storage_accounting_consistent": unique <= allocated,
         "allocator_counters_stable": True,
+        "storage_identity_priming": {
+            "tensor_reference_count": 4,
+            "unique_storage_count": 2,
+            "unique_storage_bytes": unique,
+            "truncated": False,
+            "all_storages_reported": True,
+            "identical_to_measured_inventory": True,
+            "allocated_delta_bytes": 0,
+            "reserved_delta_bytes": 0,
+        },
+        "storage_identity_inventory_stable": True,
         "allocator_block_reconciliation": {
             "schema_version": 1,
             "classification": "fully_reconciled_with_active_allocator_blocks",
@@ -103,6 +114,8 @@ def _profile(role: str, *, scale: int):
             "runtime_roots_only": True,
             "allocator_block_reconciliation": True,
             "allocator_counter_stability_checked": True,
+            "storage_identity_priming_pass": True,
+            "repeated_inventory_identity_checked": True,
         },
         "residency_phases": {
             "after_warmup": copy.deepcopy(phase),
@@ -180,6 +193,7 @@ def test_stage_o42_analysis_ranks_measured_owner_and_operator_deltas(tmp_path):
     assert report["classification"] == "DIAGNOSTIC_COMPLETE"
     assert report["allocator_block_reconciliation_complete"] is True
     assert report["allocator_block_accounting_reconciled"] is True
+    assert report["storage_identity_priming_stable"] is True
     assert report["accounting_ready_for_optimization"] is True
     assert report["eligible_for_stage_o43_optimization_design"] is True
     assert report["eligible_for_production_promotion"] is False
@@ -200,6 +214,26 @@ def test_stage_o42_analysis_rejects_truncated_inventory(tmp_path):
     o41 = _write_json(tmp_path / "o41.json", _o41())
 
     with pytest.raises(ValueError, match="after_timestep"):
+        analyze_stage_o42_diagnostics(
+            legacy,
+            canary,
+            stage_o41_report=o41,
+            expected_stage_o41_sha256=_sha256(o41),
+        )
+
+
+def test_stage_o42_analysis_rejects_unstable_repeated_inventory(tmp_path):
+    legacy_report = _profile("legacy", scale=1)
+    phase = legacy_report["residency_phases"]["after_warmup"]
+    phase["storage_identity_priming"][
+        "identical_to_measured_inventory"
+    ] = False
+    phase["storage_identity_inventory_stable"] = False
+    legacy = _write_json(tmp_path / "legacy.json", legacy_report)
+    canary = _write_json(tmp_path / "canary.json", _profile("canary", scale=2))
+    o41 = _write_json(tmp_path / "o41.json", _o41())
+
+    with pytest.raises(ValueError, match="after_warmup"):
         analyze_stage_o42_diagnostics(
             legacy,
             canary,
@@ -260,6 +294,8 @@ def test_stage_o42_plan_is_bounded_read_only_and_non_promoting(tmp_path):
     assert plan["diagnostic_contract"]["runtime_roots_only"] is True
     assert plan["diagnostic_contract"]["allocator_block_reconciliation"] is True
     assert plan["diagnostic_contract"]["allocator_counter_stability_checked"] is True
+    assert plan["diagnostic_contract"]["storage_identity_priming_pass"] is True
+    assert plan["diagnostic_contract"]["repeated_inventory_identity_checked"] is True
     assert plan["diagnostic_contract"]["global_gc_traversal"] is False
     assert plan["diagnostic_contract"]["production_default_may_change"] is False
     assert [item["role"] for item in plan["commands"]["profiles"]] == [

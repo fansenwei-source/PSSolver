@@ -71,6 +71,10 @@ def _inventory_phase(
     device: torch.device,
 ) -> dict[str, object]:
     torch.cuda.synchronize(device)
+    allocator_before_priming = cuda_memory_snapshot(device)
+    priming_inventory = build_tensor_inventory(roots, device=device)
+    torch.cuda.synchronize(device)
+    allocator_after_priming = cuda_memory_snapshot(device)
     allocator_before_inventory = cuda_memory_snapshot(device)
     inventory = build_tensor_inventory(roots, device=device)
     torch.cuda.synchronize(device)
@@ -94,10 +98,32 @@ def _inventory_phase(
     allocated = int(allocator["allocated_bytes"])
     unique = int(inventory["unique_storage_bytes"])
     gap = allocated - unique
+    priming_summary = {
+        "tensor_reference_count": priming_inventory["tensor_reference_count"],
+        "unique_storage_count": priming_inventory["unique_storage_count"],
+        "unique_storage_bytes": priming_inventory["unique_storage_bytes"],
+        "truncated": priming_inventory["truncated"],
+        "all_storages_reported": priming_inventory["all_storages_reported"],
+        "identical_to_measured_inventory": priming_inventory == inventory,
+        "allocated_delta_bytes": (
+            int(allocator_after_priming["allocated_bytes"])
+            - int(allocator_before_priming["allocated_bytes"])
+        ),
+        "reserved_delta_bytes": (
+            int(allocator_after_priming["reserved_bytes"])
+            - int(allocator_before_priming["reserved_bytes"])
+        ),
+    }
     return {
         "allocator": allocator,
+        "allocator_before_storage_identity_priming": allocator_before_priming,
+        "allocator_after_storage_identity_priming": allocator_after_priming,
         "allocator_before_inventory": allocator_before_inventory,
         "allocator_after_block_snapshot": allocator_after_block_snapshot,
+        "storage_identity_priming": priming_summary,
+        "storage_identity_inventory_stable": (
+            priming_summary["identical_to_measured_inventory"] is True
+        ),
         "allocator_counters_stable": (
             allocator_before_inventory == allocator
             and allocator == allocator_after_block_snapshot
@@ -372,6 +398,8 @@ def profile_stage_o42_runtime(
             "overlapping_storage_address_ranges_coalesced": True,
             "allocator_block_reconciliation": True,
             "allocator_counter_stability_checked": True,
+            "storage_identity_priming_pass": True,
+            "repeated_inventory_identity_checked": True,
             "storage_accounting_consistency_is_diagnostic": True,
             "operator_memory_is_allocator_effect_not_total_traffic": True,
         },
