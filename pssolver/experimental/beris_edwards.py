@@ -24,6 +24,11 @@ from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics.beris_edwards import (
     BerisEdwardsPointwiseKernels,
     POINTWISE_EXECUTION_MODES,
+    POINTWISE_COMPILE_BACKEND,
+    POINTWISE_COMPILE_MODE,
+    beris_edwards_algebraic_stress_components,
+    beris_edwards_bulk_molecular_field_components,
+    beris_edwards_distortion_stress_components,
     beris_edwards_molecular_field_components,
 )
 from pssolver.models.active_nematics.constitutive import (
@@ -47,6 +52,8 @@ from pssolver.transforms import (
 )
 
 from .model_execution import LegacyAlgebraicSolverContext
+from .producer_packing import ProducerPackedComponentValues
+from .projected_scheduler import ProjectedTransformDirection
 from .stokes import (
     ChannelStokesSolverOptions,
     PlaneStokesSolverOptions,
@@ -58,6 +65,111 @@ _PLANE_EVEN_BOUNDARIES = ("periodic", "periodic", "neumann")
 _PLANE_ODD_BOUNDARIES = ("periodic", "periodic", "dirichlet")
 _MOLECULAR_FIELD_SPACES = ("physical", "spectral")
 _STRESS_DIVERGENCE_SUM_SPACES = ("physical", "spectral")
+_PRODUCER_OUTPUT_LAYOUTS = ("component_mapping", "boundary_packed")
+_DISTORTION_EVEN_INDICES = (0, 1, 3, 4, 8)
+_DISTORTION_ODD_INDICES = (2, 5, 6, 7)
+_STRESS_BOUNDARY_STORAGE_ORDER = (
+    *ALGEBRAIC_STRESS_COMPONENTS,
+    *(DISTORTION_STRESS_COMPONENTS[index] for index in _DISTORTION_EVEN_INDICES),
+    *(DISTORTION_STRESS_COMPONENTS[index] for index in _DISTORTION_ODD_INDICES),
+)
+
+
+def _plane_packed_bulk_molecular_field(
+    q_components,
+    *,
+    ldg_a,
+    ldg_b,
+    ldg_c,
+):
+    """Produce H bulk components in one component-major output tensor."""
+
+    return torch.stack(
+        beris_edwards_bulk_molecular_field_components(
+            q_components,
+            ldg_a=ldg_a,
+            ldg_b=ldg_b,
+            ldg_c=ldg_c,
+        )
+    )
+
+
+def _plane_boundary_packed_stress(
+    q_components,
+    h_components,
+    q_gradients,
+    *,
+    flow_alignment,
+    active_prefactor,
+    ldg_l1,
+):
+    """Produce stress in Plane boundary-compatible component storage order."""
+
+    algebraic = beris_edwards_algebraic_stress_components(
+        q_components,
+        h_components,
+        flow_alignment=flow_alignment,
+        active_prefactor=active_prefactor,
+    )
+    distortion = beris_edwards_distortion_stress_components(
+        q_gradients,
+        ldg_l1=ldg_l1,
+    )
+    return torch.stack(
+        (
+            *algebraic,
+            *(distortion[index] for index in _DISTORTION_EVEN_INDICES),
+            *(distortion[index] for index in _DISTORTION_ODD_INDICES),
+        )
+    )
+
+
+class _PlaneProducerPackedPointwiseKernels:
+    """Experimental producers whose packed allocation lives inside the graph."""
+
+    def __init__(self, execution: str) -> None:
+        if execution not in POINTWISE_EXECUTION_MODES:
+            raise ValueError("execution must be 'eager' or 'compile'")
+        kernels = {
+            "bulk_molecular_field": _plane_packed_bulk_molecular_field,
+            "stress": _plane_boundary_packed_stress,
+        }
+        if execution == "compile":
+            kernels = {
+                name: torch.compile(
+                    function,
+                    backend=POINTWISE_COMPILE_BACKEND,
+                    mode=POINTWISE_COMPILE_MODE,
+                    dynamic=False,
+                    fullgraph=True,
+                )
+                for name, function in kernels.items()
+            }
+        self.execution = execution
+        self._kernels = kernels
+
+    def bulk_molecular_field(self, *args, **kwargs) -> torch.Tensor:
+        return self._kernels["bulk_molecular_field"](*args, **kwargs)
+
+    def stress(self, *args, **kwargs) -> torch.Tensor:
+        return self._kernels["stress"](*args, **kwargs)
+
+    def metadata(self) -> dict[str, object]:
+        return {
+            "layout": "component_batch_grid_contiguous",
+            "ownership": "producer",
+            "packing_site": "inside_pointwise_kernel",
+            "post_kernel_stack": False,
+            "post_kernel_cat": False,
+            "pointwise_execution": self.execution,
+            "compile_backend": (
+                POINTWISE_COMPILE_BACKEND if self.execution == "compile" else None
+            ),
+            "compile_mode": (
+                POINTWISE_COMPILE_MODE if self.execution == "compile" else None
+            ),
+            "cross_generation_reuse": False,
+        }
 
 
 def _finite_parameter(
@@ -136,6 +248,7 @@ class _MolecularFieldSolver(_StatelessConstitutiveSolver):
     ldg_l1: float
     linear_space: str
     kernels: BerisEdwardsPointwiseKernels
+    packed_kernels: _PlaneProducerPackedPointwiseKernels | None
     numerical_policy: Mapping[str, object]
 
     @property
@@ -171,12 +284,27 @@ class _MolecularFieldSolver(_StatelessConstitutiveSolver):
                 )
             }
 
-        bulk = self.kernels.bulk_molecular_field_components(
-            q_components,
-            ldg_a=self.ldg_a,
-            ldg_b=self.ldg_b,
-            ldg_c=self.ldg_c,
-        )
+        if self.packed_kernels is None:
+            bulk = self.kernels.bulk_molecular_field_components(
+                q_components,
+                ldg_a=self.ldg_a,
+                ldg_b=self.ldg_b,
+                ldg_c=self.ldg_c,
+            )
+        else:
+            packed = self.packed_kernels.bulk_molecular_field(
+                q_components,
+                ldg_a=self.ldg_a,
+                ldg_b=self.ldg_b,
+                ldg_c=self.ldg_c,
+            )
+            packed_values = ProducerPackedComponentValues(
+                self.output_components,
+                packed,
+            )
+            bulk = tuple(
+                packed_values[name] for name in self.output_components
+            )
         bulk_hats = self.context.forward_projected_many(
             self.output_components,
             tuple(bulk),
@@ -255,6 +383,8 @@ class _StressSolver(_StatelessConstitutiveSolver):
     active_prefactor: float
     ldg_l1: float
     kernels: BerisEdwardsPointwiseKernels
+    packed_kernels: _PlaneProducerPackedPointwiseKernels | None
+    packed_storage_order: tuple[str, ...]
     numerical_policy: Mapping[str, object]
 
     @property
@@ -274,17 +404,34 @@ class _StressSolver(_StatelessConstitutiveSolver):
             flat_gradients[axis * len(Q_COMPONENTS) : (axis + 1) * len(Q_COMPONENTS)]
             for axis in range(3)
         )
-        algebraic = self.kernels.algebraic_stress_components(
-            q_components,
-            h_components,
-            flow_alignment=self.flow_alignment,
-            active_prefactor=self.active_prefactor,
-        )
-        distortion = self.kernels.distortion_stress_components(
-            q_gradients,
-            ldg_l1=self.ldg_l1,
-        )
-        values = (*algebraic, *distortion)
+        if self.packed_kernels is None:
+            algebraic = self.kernels.algebraic_stress_components(
+                q_components,
+                h_components,
+                flow_alignment=self.flow_alignment,
+                active_prefactor=self.active_prefactor,
+            )
+            distortion = self.kernels.distortion_stress_components(
+                q_gradients,
+                ldg_l1=self.ldg_l1,
+            )
+            values = (*algebraic, *distortion)
+        else:
+            packed = self.packed_kernels.stress(
+                q_components,
+                h_components,
+                q_gradients,
+                flow_alignment=self.flow_alignment,
+                active_prefactor=self.active_prefactor,
+                ldg_l1=self.ldg_l1,
+            )
+            packed_values = ProducerPackedComponentValues(
+                self.packed_storage_order,
+                packed,
+            )
+            values = tuple(
+                packed_values[name] for name in self.output_components
+            )
         return self.context.forward_projected_many(
             self.output_components,
             values,
@@ -568,6 +715,7 @@ class PlaneBerisEdwardsSolverOptions:
     molecular_field_linear_space: str = "spectral"
     stress_divergence_sum_space: str = "spectral"
     pointwise_execution: str = "eager"
+    producer_output_layout: str = "component_mapping"
 
     def __post_init__(self) -> None:
         if self.molecular_field_linear_space not in _MOLECULAR_FIELD_SPACES:
@@ -582,6 +730,18 @@ class PlaneBerisEdwardsSolverOptions:
             )
         if self.pointwise_execution not in POINTWISE_EXECUTION_MODES:
             raise ValueError("pointwise_execution must be 'eager' or 'compile'")
+        if self.producer_output_layout not in _PRODUCER_OUTPUT_LAYOUTS:
+            raise ValueError(
+                "producer_output_layout must be 'component_mapping' or "
+                "'boundary_packed'"
+            )
+        if (
+            self.producer_output_layout == "boundary_packed"
+            and self.molecular_field_linear_space != "spectral"
+        ):
+            raise ValueError(
+                "boundary_packed requires spectral molecular-field assembly"
+            )
 
 
 def _molecular_field_factory(
@@ -590,6 +750,7 @@ def _molecular_field_factory(
     *,
     options: PlaneBerisEdwardsSolverOptions,
     kernels: BerisEdwardsPointwiseKernels,
+    packed_kernels: _PlaneProducerPackedPointwiseKernels | None,
 ) -> _MolecularFieldSolver:
     context = _legacy_plane_context(context)
     expected_parameters = {"ldg_a", "ldg_b", "ldg_c", "ldg_l1"}
@@ -604,6 +765,20 @@ def _molecular_field_factory(
             raise ValueError("Stage I Q components require Plane Neumann parity")
         if context.boundary_conditions(h_name) != _PLANE_EVEN_BOUNDARIES:
             raise ValueError("Stage I H components require Q's boundary space")
+    numerical_policy = {
+        "linear_space": options.molecular_field_linear_space,
+        "pointwise_execution": options.pointwise_execution,
+        "projection": "complete_molecular_field",
+    }
+    if packed_kernels is not None:
+        numerical_policy.update(
+            producer_output_layout=options.producer_output_layout,
+            producer_packing=(
+                packed_kernels.metadata()
+                if options.molecular_field_linear_space == "spectral"
+                else None
+            ),
+        )
     return _MolecularFieldSolver(
         capability=system.capability,
         implementation_name="plane_projected_beris_edwards_molecular_field",
@@ -616,11 +791,12 @@ def _molecular_field_factory(
         ldg_l1=_finite_parameter(system, "ldg_l1", positive=True),
         linear_space=options.molecular_field_linear_space,
         kernels=kernels,
-        numerical_policy={
-            "linear_space": options.molecular_field_linear_space,
-            "pointwise_execution": options.pointwise_execution,
-            "projection": "complete_molecular_field",
-        },
+        packed_kernels=(
+            packed_kernels
+            if options.molecular_field_linear_space == "spectral"
+            else None
+        ),
+        numerical_policy=numerical_policy,
     )
 
 
@@ -698,6 +874,7 @@ def _stress_factory(
     *,
     options: PlaneBerisEdwardsSolverOptions,
     kernels: BerisEdwardsPointwiseKernels,
+    packed_kernels: _PlaneProducerPackedPointwiseKernels | None,
 ) -> _StressSolver:
     context = _legacy_plane_context(context)
     expected_outputs = (*ALGEBRAIC_STRESS_COMPONENTS, *DISTORTION_STRESS_COMPONENTS)
@@ -710,6 +887,24 @@ def _stress_factory(
         raise ValueError("stress dependencies must use canonical ordering")
     if set(system.parameters) != {"active_prefactor", "flow_alignment", "ldg_l1"}:
         raise ValueError("stress parameters are incomplete")
+    storage_order = context.transform_scheduler.storage_compatible_order(
+        system.output_components,
+        direction=ProjectedTransformDirection.FORWARD,
+    )
+    if storage_order != _STRESS_BOUNDARY_STORAGE_ORDER:
+        raise RuntimeError(
+            "Plane stress producer storage order differs from the scheduler"
+        )
+    numerical_policy = {
+        "pointwise_execution": options.pointwise_execution,
+        "projection": "complete_stress_components",
+    }
+    if packed_kernels is not None:
+        numerical_policy.update(
+            producer_output_layout=options.producer_output_layout,
+            producer_storage_order=list(storage_order),
+            producer_packing=packed_kernels.metadata(),
+        )
     return _StressSolver(
         capability=system.capability,
         implementation_name="plane_projected_complete_beris_edwards_stress",
@@ -720,10 +915,9 @@ def _stress_factory(
         active_prefactor=_finite_parameter(system, "active_prefactor"),
         ldg_l1=_finite_parameter(system, "ldg_l1", positive=True),
         kernels=kernels,
-        numerical_policy={
-            "pointwise_execution": options.pointwise_execution,
-            "projection": "complete_stress_components",
-        },
+        packed_kernels=packed_kernels,
+        packed_storage_order=storage_order,
+        numerical_policy=numerical_policy,
     )
 
 
@@ -789,6 +983,13 @@ def create_beris_edwards_plane_geometry_solver_registry(
     kernels = BerisEdwardsPointwiseKernels(
         constitutive_options.pointwise_execution
     )
+    packed_kernels = (
+        _PlaneProducerPackedPointwiseKernels(
+            constitutive_options.pointwise_execution
+        )
+        if constitutive_options.producer_output_layout == "boundary_packed"
+        else None
+    )
     registry = create_stokes_geometry_solver_registry(
         plane_options=plane_stokes_options,
         channel_options=channel_stokes_options,
@@ -803,6 +1004,7 @@ def create_beris_edwards_plane_geometry_solver_registry(
             system,
             options=constitutive_options,
             kernels=kernels,
+            packed_kernels=packed_kernels,
         ),
     )
     registry.register(
@@ -829,6 +1031,7 @@ def create_beris_edwards_plane_geometry_solver_registry(
             system,
             options=constitutive_options,
             kernels=kernels,
+            packed_kernels=packed_kernels,
         ),
     )
     registry.register(

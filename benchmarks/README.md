@@ -109,3 +109,18 @@ Generate the bounded H100 contract with
 the closed Stage O.4.2 accounting report and the Stage O.4.3 rejection report,
 then repeats the 100-step numerical gate and balanced R128/R320 profiles. No
 result from this stage changes a production default.
+
+## Stage O.4.3.3 producer-owned H/stress packing
+
+Stage O.4.3.3 keeps the O.4.3.1 safe-view scheduler on both sides and changes
+only the candidate molecular-field and stress producers.  The candidate emits
+component-major tensors in Plane boundary-compatible storage order from inside
+the pointwise kernel; the scheduler consumes those tensors through zero-copy
+views.  Q RHS and gradient producers are deliberately outside this stage.
+
+Generate the bounded H100 contract with
+`scripts_plane/plan_plane_stage_o433_qualification.py`.  The plan binds the
+Stage O.4.2 accounting result, the rejected O.4.3 scheduler-republication
+result, and the performance-neutral O.4.3.1 natural-view result.  It runs one
+100-step numerical comparison plus three balanced R128/R320 profile trials per
+role.  No result changes a production default.

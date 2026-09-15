@@ -56,28 +56,64 @@ class _StageO43Variant:
     """Internal contract for one storage-layout qualification variant."""
 
     qualification_stage: str
+    baseline_output_policy: AlgebraicOutputPublicationPolicy
+    baseline_batch_policy: ProjectedBatchAssemblyPolicy
+    baseline_producer_output_layout: str
     candidate_output_policy: AlgebraicOutputPublicationPolicy
-    candidate_output_mode: str
+    candidate_batch_policy: ProjectedBatchAssemblyPolicy
+    candidate_producer_output_layout: str
     architecture_decision: str
     metrics_filename: str
+    structural_contract: str
 
 
 _PACKED_PUBLICATION_VARIANT = _StageO43Variant(
     qualification_stage="O.4.3",
+    baseline_output_policy=AlgebraicOutputPublicationPolicy.deferred_stack(),
+    baseline_batch_policy=ProjectedBatchAssemblyPolicy.copy_cat(),
+    baseline_producer_output_layout="component_mapping",
     candidate_output_policy=AlgebraicOutputPublicationPolicy.preallocated(),
-    candidate_output_mode="preallocated_packed",
+    candidate_batch_policy=(
+        ProjectedBatchAssemblyPolicy.contiguous_storage_view()
+    ),
+    candidate_producer_output_layout="component_mapping",
     architecture_decision="packed_generation_storage_with_safe_views",
     metrics_filename="stage_o43_metrics.json",
+    structural_contract="scheduler_view_adoption",
 )
 
 _OPPORTUNISTIC_VIEW_VARIANT = _StageO43Variant(
     qualification_stage="O.4.3.1",
+    baseline_output_policy=AlgebraicOutputPublicationPolicy.deferred_stack(),
+    baseline_batch_policy=ProjectedBatchAssemblyPolicy.copy_cat(),
+    baseline_producer_output_layout="component_mapping",
     candidate_output_policy=AlgebraicOutputPublicationPolicy.deferred_stack(),
-    candidate_output_mode="deferred_stack",
+    candidate_batch_policy=(
+        ProjectedBatchAssemblyPolicy.contiguous_storage_view()
+    ),
+    candidate_producer_output_layout="component_mapping",
     architecture_decision=(
         "opportunistic_natural_storage_views_without_republication"
     ),
     metrics_filename="stage_o431_metrics.json",
+    structural_contract="scheduler_view_adoption",
+)
+
+_PRODUCER_PACKED_VARIANT = _StageO43Variant(
+    qualification_stage="O.4.3.3",
+    baseline_output_policy=AlgebraicOutputPublicationPolicy.deferred_stack(),
+    baseline_batch_policy=(
+        ProjectedBatchAssemblyPolicy.contiguous_storage_view()
+    ),
+    baseline_producer_output_layout="component_mapping",
+    candidate_output_policy=AlgebraicOutputPublicationPolicy.deferred_stack(),
+    candidate_batch_policy=(
+        ProjectedBatchAssemblyPolicy.contiguous_storage_view()
+    ),
+    candidate_producer_output_layout="boundary_packed",
+    architecture_decision="producer_owned_boundary_packed_h_and_stress",
+    metrics_filename="stage_o433_metrics.json",
+    structural_contract="producer_owned_packing",
 )
 
 
@@ -94,12 +130,14 @@ def _policies(
     role = _require_role(role)
     if role == "baseline":
         return (
-            AlgebraicOutputPublicationPolicy.deferred_stack(),
-            ProjectedBatchAssemblyPolicy.copy_cat(),
+            variant.baseline_output_policy,
+            variant.baseline_batch_policy,
+            variant.baseline_producer_output_layout,
         )
     return (
         variant.candidate_output_policy,
-        ProjectedBatchAssemblyPolicy.contiguous_storage_view(),
+        variant.candidate_batch_policy,
+        variant.candidate_producer_output_layout,
     )
 
 
@@ -112,7 +150,10 @@ def _build_runtime(
     instrument: bool,
     variant: _StageO43Variant = _PACKED_PUBLICATION_VARIANT,
 ):
-    output_policy, batch_policy = _policies(role, variant)
+    output_policy, batch_policy, producer_output_layout = _policies(
+        role,
+        variant,
+    )
     return build_h100_plane_shadow_runtime_from_production_metadata(
         reference.metadata,
         expected_gpu_name=expected_gpu_name,
@@ -121,7 +162,33 @@ def _build_runtime(
         algebraic_execution_policy=AlgebraicExecutionPolicy.batched(),
         algebraic_output_publication_policy=output_policy,
         projected_batch_assembly_policy=batch_policy,
+        producer_output_layout=producer_output_layout,
     )
+
+
+def _producer_output_snapshot(runtime) -> dict[str, object]:
+    """Return tensor-free H/stress producer layout provenance."""
+
+    policies = {}
+    for resolved in runtime.resolved_algebraic_systems:
+        name = resolved.system.name
+        if name not in ("molecular_field", "nematic_stress"):
+            continue
+        observability = resolved.to_metadata()["observability"]
+        numerical = dict(observability["numerical_policy"])
+        policies[name] = {
+            "producer_output_layout": numerical.get(
+                "producer_output_layout",
+                "component_mapping",
+            ),
+            "producer_storage_order": numerical.get(
+                "producer_storage_order"
+            ),
+            "producer_packing": numerical.get("producer_packing"),
+        }
+    if set(policies) != {"molecular_field", "nematic_stress"}:
+        raise RuntimeError("Stage O.4.3 producer provenance is incomplete")
+    return policies
 
 
 def _profile_stage_o43_variant_h100_runtime(
@@ -212,6 +279,7 @@ def _profile_stage_o43_variant_h100_runtime(
         "projected_batch_assembly_policy": (
             runtime.projected_batch_assembly_policy.to_metadata()
         ),
+        "producer_outputs": _producer_output_snapshot(runtime),
         "batch_assembly_diagnostics": assembly,
         "throughput": _timing_summary(samples),
         "memory": memory,
@@ -258,6 +326,26 @@ def profile_stage_o431_h100_runtime(
         profile_steps=profile_steps,
         expected_gpu_name=expected_gpu_name,
         variant=_OPPORTUNISTIC_VIEW_VARIANT,
+    )
+
+
+def profile_stage_o433_h100_runtime(
+    production_directory: str | Path,
+    *,
+    role: str,
+    warmup_steps: int = 10,
+    profile_steps: int = 20,
+    expected_gpu_name: str = "H100",
+) -> dict[str, object]:
+    """Profile producer-owned boundary-packed H and stress outputs."""
+
+    return _profile_stage_o43_variant_h100_runtime(
+        production_directory,
+        role=role,
+        warmup_steps=warmup_steps,
+        profile_steps=profile_steps,
+        expected_gpu_name=expected_gpu_name,
+        variant=_PRODUCER_PACKED_VARIANT,
     )
 
 
@@ -334,6 +422,7 @@ def _run_stage_o43_variant_h100_trajectory(
         "projected_batch_assembly_policy": (
             runtime.projected_batch_assembly_policy.to_metadata()
         ),
+        "producer_outputs": _producer_output_snapshot(runtime),
         "environment": environment,
     }
     _write_new_json(run.output_directory / variant.metrics_filename, result)
@@ -377,6 +466,26 @@ def run_stage_o431_h100_trajectory(
         confirmed_steps=confirmed_steps,
         expected_gpu_name=expected_gpu_name,
         variant=_OPPORTUNISTIC_VIEW_VARIANT,
+    )
+
+
+def run_stage_o433_h100_trajectory(
+    production_directory: str | Path,
+    output_directory: str | Path,
+    *,
+    role: str,
+    confirmed_steps: int = STAGE_O43_TRAJECTORY_STEPS,
+    expected_gpu_name: str = "H100",
+) -> dict[str, object]:
+    """Run the producer-owned packing Stage O.4.3.3 trajectory."""
+
+    return _run_stage_o43_variant_h100_trajectory(
+        production_directory,
+        output_directory,
+        role=role,
+        confirmed_steps=confirmed_steps,
+        expected_gpu_name=expected_gpu_name,
+        variant=_PRODUCER_PACKED_VARIANT,
     )
 
 
@@ -530,16 +639,22 @@ def _analyze_stage_o43_variant_qualification(
         loaded = [_load_json(path, f"{scale} {role} profile") for path in paths]
         for profile in loaded:
             try:
-                expected_output_mode = (
-                    "deferred_stack"
+                selected_output_policy = (
+                    variant.baseline_output_policy
                     if role == "baseline"
-                    else variant.candidate_output_mode
+                    else variant.candidate_output_policy
                 )
-                expected_batch_mode = (
-                    "copy_cat"
+                selected_batch_policy = (
+                    variant.baseline_batch_policy
                     if role == "baseline"
-                    else "contiguous_storage_view"
+                    else variant.candidate_batch_policy
                 )
+                selected_producer_layout = (
+                    variant.baseline_producer_output_layout
+                    if role == "baseline"
+                    else variant.candidate_producer_output_layout
+                )
+                producer_outputs = profile["producer_outputs"]
                 valid = (
                     profile["qualification_stage"]
                     == variant.qualification_stage
@@ -556,10 +671,28 @@ def _analyze_stage_o43_variant_qualification(
                     and profile["environment"]["cuda_matmul_allow_tf32"]
                     is False
                     and profile["algebraic_output_publication_policy"]["mode"]
-                    == expected_output_mode
+                    == selected_output_policy.mode.value
                     and profile["projected_batch_assembly_policy"]["mode"]
-                    == expected_batch_mode
+                    == selected_batch_policy.mode.value
+                    and isinstance(producer_outputs, Mapping)
+                    and set(producer_outputs)
+                    == {"molecular_field", "nematic_stress"}
+                    and all(
+                        value["producer_output_layout"]
+                        == selected_producer_layout
+                        for value in producer_outputs.values()
+                    )
                 )
+                if (
+                    valid
+                    and role == "candidate"
+                    and variant.structural_contract
+                    == "producer_owned_packing"
+                ):
+                    valid = all(
+                        isinstance(value.get("producer_packing"), Mapping)
+                        for value in producer_outputs.values()
+                    )
             except (KeyError, TypeError):
                 valid = False
             if not valid:
@@ -631,24 +764,66 @@ def _analyze_stage_o43_variant_qualification(
             ),
         }
 
-    baseline_assembly = profiles[("r320", "baseline")][0][
-        "batch_assembly_diagnostics"
+    baseline_assemblies = [
+        value["batch_assembly_diagnostics"]
+        for value in profiles[("r320", "baseline")]
     ]
     candidate_assemblies = [
         value["batch_assembly_diagnostics"]
         for value in profiles[("r320", "candidate")]
     ]
-    structural_gate = bool(
-        baseline_assembly["policy"]["mode"] == "copy_cat"
-        and baseline_assembly["contiguous_view_batches"] == 0
-        and all(
-            value["policy"]["mode"] == "contiguous_storage_view"
-            and value["contiguous_view_batches"] > 0
-            and value["copy_cat_batches"] < baseline_assembly["copy_cat_batches"]
-            and value["retained_tensor_references"] == 0
-            for value in candidate_assemblies
+    if variant.structural_contract == "scheduler_view_adoption":
+        baseline_assembly = baseline_assemblies[0]
+        structural_gate = bool(
+            baseline_assembly["policy"]["mode"] == "copy_cat"
+            and baseline_assembly["contiguous_view_batches"] == 0
+            and all(
+                value["policy"]["mode"] == "contiguous_storage_view"
+                and value["contiguous_view_batches"] > 0
+                and value["copy_cat_batches"]
+                < baseline_assembly["copy_cat_batches"]
+                and value["retained_tensor_references"] == 0
+                for value in candidate_assemblies
+            )
         )
-    )
+    elif variant.structural_contract == "producer_owned_packing":
+        producer_contract = all(
+            all(
+                output["producer_output_layout"] == "boundary_packed"
+                and output["producer_packing"]["ownership"] == "producer"
+                and output["producer_packing"]["packing_site"]
+                == "inside_pointwise_kernel"
+                and output["producer_packing"]["pointwise_execution"]
+                == "compile"
+                and output["producer_packing"]["post_kernel_stack"] is False
+                and output["producer_packing"]["post_kernel_cat"] is False
+                and output["producer_packing"]["cross_generation_reuse"]
+                is False
+                for output in profile["producer_outputs"].values()
+            )
+            for profile in profiles[("r320", "candidate")]
+        )
+        structural_gate = bool(
+            producer_contract
+            and all(
+                value["policy"]["mode"] == "contiguous_storage_view"
+                and value["retained_tensor_references"] == 0
+                for value in (*baseline_assemblies, *candidate_assemblies)
+            )
+            and all(
+                candidate["contiguous_view_batches"]
+                > baseline["contiguous_view_batches"]
+                and candidate["copy_cat_batches"]
+                < baseline["copy_cat_batches"]
+                for baseline, candidate in zip(
+                    baseline_assemblies,
+                    candidate_assemblies,
+                    strict=True,
+                )
+            )
+        )
+    else:
+        raise RuntimeError("unknown Stage O.4.3 structural contract")
     numerical_gate = bool(
         q0_identical
         and numerical_maximum <= STAGE_O43_RELATIVE_L2_TOLERANCE
@@ -813,6 +988,89 @@ def analyze_stage_o431_qualification(
     return report
 
 
+def _require_neutral_stage_o431_evidence(
+    stage_o431_report: str | Path,
+    expected_stage_o431_sha256: str,
+) -> tuple[Path, dict[str, object]]:
+    evidence_path = Path(stage_o431_report).expanduser().resolve()
+    if _sha256(evidence_path) != expected_stage_o431_sha256:
+        raise ValueError("Stage O.4.3.1 evidence SHA-256 differs")
+    evidence = _load_json(evidence_path, "Stage O.4.3.1 evidence")
+    try:
+        valid = bool(
+            evidence["qualification_stage"] == "O.4.3.1"
+            and evidence["classification"] == "B_neutral"
+            and evidence["architecture_decision"]
+            == "opportunistic_natural_storage_views_without_republication"
+            and evidence["eligible_for_stage_o44_decision"] is False
+            and evidence["eligible_for_production_promotion"] is False
+            and evidence["production_default_changed"] is False
+            and evidence["gates"]["numerical_equivalence"] is True
+            and evidence["gates"]["zero_copy_batch_assembly_exercised"]
+            is True
+            and evidence["gates"]["r320_performance_improvement"] is False
+            and evidence["gates"]["candidate_safety_non_regression"] is True
+        )
+    except (KeyError, TypeError):
+        valid = False
+    if not valid:
+        raise ValueError("Stage O.4.3.1 neutral evidence contract differs")
+    return evidence_path, evidence
+
+
+def analyze_stage_o433_qualification(
+    baseline_trajectory: str | Path,
+    candidate_trajectory: str | Path,
+    baseline_r128_profiles: Sequence[str | Path],
+    candidate_r128_profiles: Sequence[str | Path],
+    baseline_r320_profiles: Sequence[str | Path],
+    candidate_r320_profiles: Sequence[str | Path],
+    *,
+    stage_o42_report: str | Path,
+    expected_stage_o42_sha256: str,
+    stage_o43_report: str | Path,
+    expected_stage_o43_sha256: str,
+    stage_o431_report: str | Path,
+    expected_stage_o431_sha256: str,
+    expected_gpu_name: str = "H100",
+) -> dict[str, object]:
+    """Analyze producer-owned H/stress packing against the safe-view parent."""
+
+    rejected_path, _ = _require_rejected_stage_o43_evidence(
+        stage_o43_report,
+        expected_stage_o43_sha256,
+    )
+    neutral_path, _ = _require_neutral_stage_o431_evidence(
+        stage_o431_report,
+        expected_stage_o431_sha256,
+    )
+    report = _analyze_stage_o43_variant_qualification(
+        baseline_trajectory,
+        candidate_trajectory,
+        baseline_r128_profiles,
+        candidate_r128_profiles,
+        baseline_r320_profiles,
+        candidate_r320_profiles,
+        stage_o42_report=stage_o42_report,
+        expected_stage_o42_sha256=expected_stage_o42_sha256,
+        expected_gpu_name=expected_gpu_name,
+        variant=_PRODUCER_PACKED_VARIANT,
+    )
+    report["prior_storage_evidence"] = {
+        "stage_o43": {
+            "path": str(rejected_path),
+            "sha256": expected_stage_o43_sha256,
+            "scheduler_republication_remains_rejected": True,
+        },
+        "stage_o431": {
+            "path": str(neutral_path),
+            "sha256": expected_stage_o431_sha256,
+            "natural_view_route_closed_as_performance_neutral": True,
+        },
+    }
+    return report
+
+
 def profile_main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Profile Stage O.4.3 on H100")
     parser.add_argument("--production-reference-dir", type=Path, required=True)
@@ -963,6 +1221,87 @@ def analysis_o431_main(argv: Sequence[str] | None = None) -> int:
     return 0 if report["classification"] == "A_recommended" else 1
 
 
+def profile_o433_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Profile Stage O.4.3.3 on H100")
+    parser.add_argument("--production-reference-dir", type=Path, required=True)
+    parser.add_argument("--role", choices=_ROLES, required=True)
+    parser.add_argument("--warmup-steps", type=int, default=10)
+    parser.add_argument("--profile-steps", type=int, default=20)
+    parser.add_argument("--expected-gpu-name", default="H100")
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args(argv)
+    report = profile_stage_o433_h100_runtime(
+        args.production_reference_dir,
+        role=args.role,
+        warmup_steps=args.warmup_steps,
+        profile_steps=args.profile_steps,
+        expected_gpu_name=args.expected_gpu_name,
+    )
+    _write_new_json(args.output, report)
+    print(json.dumps(report, allow_nan=False, indent=2, sort_keys=True))
+    return 0
+
+
+def trajectory_o433_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Run Stage O.4.3.3 trajectory")
+    parser.add_argument("--production-reference-dir", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--role", choices=_ROLES, required=True)
+    parser.add_argument("--confirm-steps", type=int, default=100)
+    parser.add_argument("--expected-gpu-name", default="H100")
+    args = parser.parse_args(argv)
+    report = run_stage_o433_h100_trajectory(
+        args.production_reference_dir,
+        args.output_dir,
+        role=args.role,
+        confirmed_steps=args.confirm_steps,
+        expected_gpu_name=args.expected_gpu_name,
+    )
+    print(json.dumps(report, allow_nan=False, indent=2, sort_keys=True))
+    return 0
+
+
+def analysis_o433_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Analyze Stage O.4.3.3")
+    parser.add_argument("--baseline-trajectory", type=Path, required=True)
+    parser.add_argument("--candidate-trajectory", type=Path, required=True)
+    for scale in ("r128", "r320"):
+        for role in _ROLES:
+            parser.add_argument(
+                f"--{role}-{scale}-profile",
+                type=Path,
+                action="append",
+                required=True,
+            )
+    parser.add_argument("--stage-o42-report", type=Path, required=True)
+    parser.add_argument("--expected-stage-o42-sha256", required=True)
+    parser.add_argument("--stage-o43-report", type=Path, required=True)
+    parser.add_argument("--expected-stage-o43-sha256", required=True)
+    parser.add_argument("--stage-o431-report", type=Path, required=True)
+    parser.add_argument("--expected-stage-o431-sha256", required=True)
+    parser.add_argument("--expected-gpu-name", default="H100")
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args(argv)
+    report = analyze_stage_o433_qualification(
+        args.baseline_trajectory,
+        args.candidate_trajectory,
+        args.baseline_r128_profile,
+        args.candidate_r128_profile,
+        args.baseline_r320_profile,
+        args.candidate_r320_profile,
+        stage_o42_report=args.stage_o42_report,
+        expected_stage_o42_sha256=args.expected_stage_o42_sha256,
+        stage_o43_report=args.stage_o43_report,
+        expected_stage_o43_sha256=args.expected_stage_o43_sha256,
+        stage_o431_report=args.stage_o431_report,
+        expected_stage_o431_sha256=args.expected_stage_o431_sha256,
+        expected_gpu_name=args.expected_gpu_name,
+    )
+    _write_new_json(args.output, report)
+    print(json.dumps(report, allow_nan=False, indent=2, sort_keys=True))
+    return 0 if report["classification"] == "A_recommended" else 1
+
+
 __all__ = [
     "STAGE_O43_DECISION_SHAPE",
     "STAGE_O43_DIAGNOSTIC_SHAPE",
@@ -971,14 +1310,20 @@ __all__ = [
     "STAGE_O43_TRAJECTORY_STEPS",
     "analyze_stage_o43_qualification",
     "analyze_stage_o431_qualification",
+    "analyze_stage_o433_qualification",
     "analysis_main",
     "analysis_o431_main",
+    "analysis_o433_main",
     "profile_main",
     "profile_o431_main",
+    "profile_o433_main",
     "profile_stage_o43_h100_runtime",
     "profile_stage_o431_h100_runtime",
+    "profile_stage_o433_h100_runtime",
     "run_stage_o43_h100_trajectory",
     "run_stage_o431_h100_trajectory",
+    "run_stage_o433_h100_trajectory",
     "trajectory_main",
     "trajectory_o431_main",
+    "trajectory_o433_main",
 ]

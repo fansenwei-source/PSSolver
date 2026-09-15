@@ -291,6 +291,7 @@ def _build_plane_shadow_runtime_from_production_metadata(
     algebraic_output_publication_policy: (
         AlgebraicOutputPublicationPolicy | None
     ) = None,
+    producer_output_layout: str = "component_mapping",
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Construct and parity-check a migrated runtime after contract checks."""
 
@@ -380,6 +381,7 @@ def _build_plane_shadow_runtime_from_production_metadata(
                         "stress_divergence_sum_space"
                     ],
                     pointwise_execution=numerical["pointwise_execution"],
+                    producer_output_layout=producer_output_layout,
                 ),
                 plane_stokes_options=PlaneStokesSolverOptions(
                     pressure_diagnostics=pressure_diagnostics
@@ -422,6 +424,7 @@ def build_plane_shadow_runtime_from_production_metadata(
     algebraic_output_publication_policy: (
         AlgebraicOutputPublicationPolicy | None
     ) = None,
+    producer_output_layout: str = "component_mapping",
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Construct the Stage L CPU shadow runtime from production metadata."""
 
@@ -444,6 +447,7 @@ def build_plane_shadow_runtime_from_production_metadata(
         algebraic_output_publication_policy=(
             algebraic_output_publication_policy
         ),
+        producer_output_layout=producer_output_layout,
     )
 
 
@@ -455,6 +459,7 @@ def build_plane_separated_canary_runtime_from_production_metadata(
     algebraic_output_publication_policy: (
         AlgebraicOutputPublicationPolicy | None
     ) = None,
+    producer_output_layout: str = "component_mapping",
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Build the explicit Stage O.2 canary from resolved production metadata.
 
@@ -472,6 +477,7 @@ def build_plane_separated_canary_runtime_from_production_metadata(
         algebraic_output_publication_policy=(
             algebraic_output_publication_policy
         ),
+        producer_output_layout=producer_output_layout,
     )
 
 
@@ -489,6 +495,7 @@ def build_h100_plane_shadow_runtime_from_production_metadata(
     algebraic_output_publication_policy: (
         AlgebraicOutputPublicationPolicy | None
     ) = None,
+    producer_output_layout: str = "component_mapping",
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Construct the opt-in Stage M runtime on the expected H100 device."""
 
@@ -527,6 +534,7 @@ def build_h100_plane_shadow_runtime_from_production_metadata(
         algebraic_output_publication_policy=(
             algebraic_output_publication_policy
         ),
+        producer_output_layout=producer_output_layout,
     )
 
 

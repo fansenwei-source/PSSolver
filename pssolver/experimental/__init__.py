@@ -140,12 +140,16 @@ from .stage_o41_qualification import analyze_stage_o41_qualification
 from .stage_o42_plan import build_stage_o42_h100_plan
 from .stage_o43_plan import build_stage_o43_h100_plan
 from .stage_o431_plan import build_stage_o431_h100_plan
+from .stage_o433_plan import build_stage_o433_h100_plan
 from .stage_o43_qualification import (
     analyze_stage_o431_qualification,
+    analyze_stage_o433_qualification,
     analyze_stage_o43_qualification,
     profile_stage_o431_h100_runtime,
+    profile_stage_o433_h100_runtime,
     profile_stage_o43_h100_runtime,
     run_stage_o431_h100_trajectory,
+    run_stage_o433_h100_trajectory,
     run_stage_o43_h100_trajectory,
 )
 from .stokes import (
@@ -202,6 +206,7 @@ __all__ = [
     "build_stage_n4_h100_plan",
     "build_stage_o_migration_design",
     "build_stage_o431_h100_plan",
+    "build_stage_o433_h100_plan",
     "build_plane_shadow_runtime_from_production_metadata",
     "capture_shadow_checkpoint",
     "capture_shadow_observation",
@@ -250,10 +255,13 @@ __all__ = [
     "build_stage_o43_h100_plan",
     "compare_plane_stage_o4_workflows",
     "analyze_stage_o431_qualification",
+    "analyze_stage_o433_qualification",
     "analyze_stage_o43_qualification",
     "profile_stage_o431_h100_runtime",
+    "profile_stage_o433_h100_runtime",
     "profile_stage_o43_h100_runtime",
     "run_stage_o431_h100_trajectory",
+    "run_stage_o433_h100_trajectory",
     "run_stage_o43_h100_trajectory",
     "MigrationDisposition",
     "MigrationPhase",
