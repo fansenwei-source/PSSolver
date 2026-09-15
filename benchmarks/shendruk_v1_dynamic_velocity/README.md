@@ -32,6 +32,7 @@ The default benchmark choices are:
 - density `rho=1`;
 - no physical friction;
 - dynamically evolved uniform tangential momentum;
+- explicit `real_first` mixed-transform execution;
 - `cubic_half` dealiasing;
 - periodic x/y, Neumann Q and tangential velocity in z, and Dirichlet normal
   velocity in z.
@@ -65,7 +66,8 @@ time-step/spatial convergence checks for the inertial formulation.
 
 Every run uses `Nx=Ny=320`, `Lx=Ly=100`, `dt=0.005`, `T=200`, seed 24,
 float64 arithmetic, disabled TF32 and spectral refresh, `cubic_half`
-dealiasing, and the archived V1 initial condition. Q snapshots are retained
+dealiasing, explicit `real_first` transform execution, and the archived V1
+initial condition. Q snapshots are retained
 at `T=100,105,...,200`. Formal runs remain Q-only; the one-step preflight also
 saves u and p so the inertial saddle solve can be checked.
 
@@ -102,3 +104,7 @@ It does not upgrade that design into a strict or statistically converged
 reproduction of the published paper. The intentional physics differences
 from the archived quasistatic run are inertial dynamic velocity and an evolved
 uniform tangential momentum mode (`rho=1`, `fric=0`, `mean_flow_policy=evolve`).
+The transform order is bound separately as
+`transform_execution_order=real_first`; this changes the order of commuting
+mixed-basis transforms for performance without changing their basis or
+normalization.

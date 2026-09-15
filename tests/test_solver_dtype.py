@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from pssolver import SpectralSolver
+from pssolver import DEFAULT_TRANSFORM_EXECUTION_ORDER, SpectralSolver
 from pssolver.Field import Fields
 from pssolver.models.active_nematics import (
     Q_COMPONENTS,
@@ -64,6 +64,22 @@ def test_fields_reject_transform_backend_with_mismatched_dtype():
 def test_solver_rejects_unsupported_dtype(invalid_dtype):
     with pytest.raises(ValueError, match="torch.float32 or torch.float64"):
         SpectralSolver((4,), device="cpu", dtype=invalid_dtype)
+
+
+def test_solver_rejects_unknown_transform_execution_order():
+    with pytest.raises(ValueError, match="execution_order"):
+        SpectralSolver(
+            (4,),
+            device="cpu",
+            transform_execution_order="unknown",
+        )
+
+
+def test_solver_defaults_to_real_first_transform_execution():
+    solver = SpectralSolver((4,), device="cpu")
+
+    assert DEFAULT_TRANSFORM_EXECUTION_ORDER == "real_first"
+    assert solver.transform_backend.execution_order == "real_first"
 
 
 @pytest.mark.parametrize("dtype", (torch.float32, torch.float64))

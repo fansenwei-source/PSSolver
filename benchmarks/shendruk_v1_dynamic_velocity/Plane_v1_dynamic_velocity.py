@@ -84,6 +84,7 @@ from pssolver.transforms import (
     BasisAwareSpectralProjector,
     DEALIAS_RULE_FRACTIONS,
     DEFAULT_DEALIAS_RULE,
+    DEFAULT_TRANSFORM_EXECUTION_ORDER,
 )
 from tqdm import trange
 import numpy as np
@@ -324,6 +325,16 @@ def parse_args():
         choices=("float32", "float64"),
         default="float32",
         help="Real arithmetic precision used by fields and transforms.",
+    )
+    parser.add_argument(
+        "--transform-execution-order",
+        choices=("legacy", "real_first"),
+        default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
+        help=(
+            "Tensor-product transform execution plan. real_first applies "
+            "DCT/DST axes before periodic FFTs so real transforms execute "
+            "before the data become complex."
+        ),
     )
     parser.add_argument(
         "--tf32",
@@ -1194,6 +1205,7 @@ metadata = {
         "save_layout": args.save_layout,
         "real_dtype": args.dtype,
         "spectral_dtype": spectral_dtype_name,
+        "transform_execution_order": args.transform_execution_order,
     },
     "model": {
         "name": "active_nematics",
@@ -1317,6 +1329,11 @@ metadata = {
         "time_integrator": "first_order_coupled_IMEX_Euler",
         "implicit_momentum_helmholtz": "rho/dt+fric+eta*k^2",
         "explicit_terms": ["nematic_force", "u_dot_grad_u"],
+        "transforms": {
+            "execution_order": args.transform_execution_order,
+            "spectral_storage": "full_complex",
+            "basis_and_normalization_changed": False,
+        },
         "precision": {
             "real_dtype": args.dtype,
             "spectral_dtype": spectral_dtype_name,
@@ -1360,6 +1377,7 @@ metadata = {
     "initialization_protocol": args.initialization_protocol,
     "device": device,
     "dtype": args.dtype,
+    "transform_execution_order": args.transform_execution_order,
     "tf32": args.tf32,
     "q_boundary_conditions": Q_BC,
     "tangential_velocity_boundary_conditions": U_TANGENTIAL_BC,
@@ -1549,6 +1567,7 @@ solver = SpectralSolver(
     device=device,
     batchsize=batchsize,
     dtype=real_dtype,
+    transform_execution_order=args.transform_execution_order,
 )
 spectral_projector = BasisAwareSpectralProjector(
     solver,

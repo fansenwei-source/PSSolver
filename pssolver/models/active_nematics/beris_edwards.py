@@ -554,6 +554,75 @@ def beris_edwards_distortion_stress_components(
     )
 
 
+class BerisEdwardsQGradientCache:
+    """Single-use Q-gradient cache shared by one static/nonlinear evaluation.
+
+    Gradients are staged by the static Beris--Edwards model and published only
+    after the PDE model has finished updating all static fields. The spatial
+    and spectral tensor version counters are then checked when the nonlinear
+    model consumes the cache. Any intervening in-place field mutation makes
+    the cache miss and preserves the uncached callback semantics.
+    """
+
+    def __init__(self):
+        self.clear()
+
+    @staticmethod
+    def _tensor_version(tensor):
+        try:
+            return tensor._version
+        except (AttributeError, RuntimeError):
+            return None
+
+    def clear(self):
+        """Discard staged and published gradients."""
+        self._pending_owner = None
+        self._pending_gradients = None
+        self._owner = None
+        self._gradients = None
+        self._spatial_version = None
+        self._spectral_version = None
+
+    def stage(self, fields, q_gradients):
+        """Stage gradients until static field synchronization is complete."""
+        gradients = _three_q_gradients(q_gradients, "q_gradients")
+        self.clear()
+        self._pending_owner = fields
+        self._pending_gradients = gradients
+
+    def publish(self, fields):
+        """Make staged gradients available for one mutation-checked read."""
+        if self._pending_owner is not fields or self._pending_gradients is None:
+            self.clear()
+            return False
+
+        spatial_version = self._tensor_version(fields.spatial)
+        spectral_version = self._tensor_version(fields.spectral)
+        if spatial_version is None or spectral_version is None:
+            self.clear()
+            return False
+
+        self._owner = fields
+        self._gradients = self._pending_gradients
+        self._spatial_version = spatial_version
+        self._spectral_version = spectral_version
+        self._pending_owner = None
+        self._pending_gradients = None
+        return True
+
+    def take(self, fields):
+        """Return valid gradients once, otherwise clear state and return None."""
+        valid = (
+            self._owner is fields
+            and self._gradients is not None
+            and self._spatial_version == self._tensor_version(fields.spatial)
+            and self._spectral_version == self._tensor_version(fields.spectral)
+        )
+        gradients = self._gradients if valid else None
+        self.clear()
+        return gradients
+
+
 class BerisEdwardsQNonlinearModel(torch.nn.Module):
     """PSSolver adapter for the nonlinear part of the full Q equation.
 
@@ -572,6 +641,7 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
         ldg_c,
         rotational_viscosity,
         flow_alignment,
+        q_gradient_cache=None,
     ):
         super().__init__()
         coefficients = (
@@ -594,6 +664,14 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
         self.ldg_b_over_gamma = float(ldg_b) / float(rotational_viscosity)
         self.ldg_c_over_gamma = float(ldg_c) / float(rotational_viscosity)
         self.flow_alignment = float(flow_alignment)
+        if q_gradient_cache is not None and not isinstance(
+            q_gradient_cache,
+            BerisEdwardsQGradientCache,
+        ):
+            raise TypeError(
+                "q_gradient_cache must be a BerisEdwardsQGradientCache or None."
+            )
+        self.q_gradient_cache = q_gradient_cache
 
     def forward(self, fields, params):
         del params
@@ -602,13 +680,19 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
             fields[name]
             for name in ("ux", "uy", "uz")
         )
-        q_gradients = tuple(
-            tuple(
-                fields.gradient(name, axis=axis)
-                for name in Q_COMPONENTS
-            )
-            for axis in range(3)
+        q_gradients = (
+            None
+            if self.q_gradient_cache is None
+            else self.q_gradient_cache.take(fields)
         )
+        if q_gradients is None:
+            q_gradients = tuple(
+                tuple(
+                    fields.gradient(name, axis=axis)
+                    for name in Q_COMPONENTS
+                )
+                for axis in range(3)
+            )
         velocity_gradients = tuple(
             tuple(
                 fields.gradient(name, axis=axis)
@@ -636,6 +720,7 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
 
 
 __all__ = [
+    "BerisEdwardsQGradientCache",
     "BerisEdwardsQNonlinearModel",
     "STRESS_COMPONENTS",
     "beris_edwards_active_stress_components",

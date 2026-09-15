@@ -117,6 +117,11 @@ class Fig4NumericsCliTests(unittest.TestCase):
         self.assertEqual(parameters["fric"], 0.0)
         self.assertEqual(metadata["numerics"]["spectral_refresh"]["mode"], "disabled")
         self.assertEqual(metadata["numerics"]["precision"]["real_dtype"], "float64")
+        self.assertTrue(metadata["numerics"]["q_gradient_reuse"]["enabled"])
+        self.assertEqual(
+            metadata["numerics"]["transforms"]["execution_order"],
+            "real_first",
+        )
         self.assertIsNone(metadata["validation_config_sha256"])
 
         files = metadata["implementation_provenance"]["files"]
@@ -181,6 +186,44 @@ class Fig4NumericsCliTests(unittest.TestCase):
         self.assertEqual(metadata["model"]["parameters"]["fric"], 0.125)
         self.assertEqual(metadata["numerics"]["velocity_zero_mode"], "friction")
 
+    def test_beris_edwards_q_gradient_reuse_can_be_disabled(self):
+        result = run_dry_run(
+            "--disable-q-gradient-reuse",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        reuse = json.loads(result.stdout)["numerics"]["q_gradient_reuse"]
+        self.assertFalse(reuse["enabled"])
+        self.assertEqual(reuse["scope"], "single_static_to_nonlinear_evaluation")
+
+    def test_beris_edwards_real_first_transform_order_is_recorded(self):
+        result = run_dry_run(
+            "--transform-execution-order",
+            "real_first",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        metadata = json.loads(result.stdout)
+        transforms = metadata["numerics"]["transforms"]
+        self.assertEqual(transforms["execution_order"], "real_first")
+        self.assertEqual(transforms["spectral_storage"], "full_complex")
+        self.assertFalse(transforms["basis_and_normalization_changed"])
+        self.assertEqual(metadata["transform_execution_order"], "real_first")
+
+    def test_beris_edwards_legacy_transform_order_remains_available(self):
+        result = run_dry_run(
+            "--transform-execution-order",
+            "legacy",
+            script=BERIS_EDWARDS_SCRIPT,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+        metadata = json.loads(result.stdout)
+        transforms = metadata["numerics"]["transforms"]
+        self.assertEqual(transforms["execution_order"], "legacy")
+        self.assertEqual(metadata["transform_execution_order"], "legacy")
 
 
 if __name__ == "__main__":

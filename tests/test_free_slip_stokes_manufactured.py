@@ -16,12 +16,18 @@ NORMAL_BC = ("periodic", "periodic", "dirichlet")
 PRESSURE_BC = ("periodic", "periodic", "neumann")
 
 
-def _backend(shape=(9, 8, 7), lengths=(2.0 * math.pi, 3.0 * math.pi, 2.5)):
+def _backend(
+    shape=(9, 8, 7),
+    lengths=(2.0 * math.pi, 3.0 * math.pi, 2.5),
+    *,
+    execution_order="legacy",
+):
     return TensorProductTransformBackend(
         shape,
         lengths,
         device="cpu",
         dtype=torch.float64,
+        execution_order=execution_order,
     )
 
 
@@ -159,10 +165,17 @@ def test_terminal_dst_mode_has_zero_derivative_and_is_filtered():
     )
 
 
-def test_float64_manufactured_free_slip_solution_recovers_u_p_and_gauge():
+@pytest.mark.parametrize("execution_order", ("legacy", "real_first"))
+def test_float64_manufactured_free_slip_solution_recovers_u_p_and_gauge(
+    execution_order,
+):
     shape = (10, 12, 9)
     lengths = (2.0 * math.pi, 3.0 * math.pi, 2.5)
-    backend = _backend(shape=shape, lengths=lengths)
+    backend = _backend(
+        shape=shape,
+        lengths=lengths,
+        execution_order=execution_order,
+    )
     friction = 0.17
     viscosity = 0.73
     stokes = _stokes(

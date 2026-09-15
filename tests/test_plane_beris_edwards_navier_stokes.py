@@ -61,6 +61,13 @@ def test_dry_run_records_inertial_equation_and_paper_defaults(tmp_path):
     assert metadata["density"] == 1.0
     assert metadata["friction"] == 0.0
     assert metadata["mean_flow_policy"] == "evolve"
+    assert metadata["transform_execution_order"] == "real_first"
+    assert metadata["solver"]["transform_execution_order"] == "real_first"
+    assert metadata["numerics"]["transforms"] == {
+        "execution_order": "real_first",
+        "spectral_storage": "full_complex",
+        "basis_and_normalization_changed": False,
+    }
     flow = metadata["model"]["flow_dynamics"]
     assert flow["regime"] == "incompressible_navier_stokes_beris_edwards"
     assert "partial_t*u+u.grad(u)" in flow["momentum_equation"]
@@ -71,6 +78,19 @@ def test_dry_run_records_inertial_equation_and_paper_defaults(tmp_path):
         "nematic_force",
         "u_dot_grad_u",
     ]
+
+
+def test_legacy_transform_order_remains_an_explicit_opt_in(tmp_path):
+    result = _run(
+        *_base_arguments(tmp_path / "unused_legacy"),
+        "--transform-execution-order", "legacy",
+        "--dry-run",
+    )
+    assert result.returncode == 0, result.stderr
+    metadata = json.loads(result.stdout)
+    assert metadata["transform_execution_order"] == "legacy"
+    assert metadata["solver"]["transform_execution_order"] == "legacy"
+    assert metadata["numerics"]["transforms"]["execution_order"] == "legacy"
 
 
 def test_invalid_density_and_friction_are_rejected(tmp_path):

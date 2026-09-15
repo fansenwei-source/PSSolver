@@ -153,6 +153,7 @@ def scientific_config(
         "dealias_rule": "cubic_half",
         "dtype": "float64",
         "spectral_dtype": "complex128",
+        "transform_execution_order": "real_first",
         "tf32": "off",
         "spectral_refresh": "disabled",
         "device": "cuda",
@@ -201,6 +202,7 @@ def build_plan() -> dict[str, Any]:
             "velocity components are dynamic fields with their own L_hat",
             "uniform tangential mean momentum evolves instead of zero_mean removal",
             "initial velocity is zero",
+            "mixed DCT/DST/FFT transforms explicitly use real_first execution",
         ],
         "git": git,
         "model_script": str(MODEL_SCRIPT.relative_to(PROJECT_ROOT)),
@@ -321,6 +323,7 @@ def command_for_config(
         "--initial-s", format(config["initial_s"], ".17g"),
         "--device", config["device"],
         "--dtype", config["dtype"],
+        "--transform-execution-order", config["transform_execution_order"],
         "--tf32", config["tf32"],
         "--disable-spectral-refresh",
         "--validation-config-sha256", config_sha256,
@@ -388,6 +391,14 @@ def validate_run(
         raise ValueError("dealiasing mismatch")
     if metadata.get("dtype") != "float64" or metadata.get("tf32") != "off":
         raise ValueError("precision mismatch")
+    if metadata.get("transform_execution_order") != "real_first":
+        raise ValueError("top-level transform execution order mismatch")
+    if metadata.get("solver", {}).get("transform_execution_order") != "real_first":
+        raise ValueError("solver transform execution order mismatch")
+    if metadata.get("numerics", {}).get("transforms", {}).get(
+        "execution_order"
+    ) != "real_first":
+        raise ValueError("numerics transform execution order mismatch")
     if metadata["numerics"]["spectral_refresh"]["mode"] != "disabled":
         raise ValueError("spectral refresh must be disabled")
 

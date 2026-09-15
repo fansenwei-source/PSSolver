@@ -177,6 +177,13 @@ class PDEModel:
         self.fields.spectral[start:stop] = static_hats
         for group in self.static_transform_groups:
             self.fields.spatial[group] = self.fields.inverse_transform_group(group)
+        after_update = getattr(
+            self.static_model,
+            "after_static_fields_updated",
+            None,
+        )
+        if after_update is not None:
+            after_update(self.fields)
         return static_hats
 
     def compute_nonlinear(self):

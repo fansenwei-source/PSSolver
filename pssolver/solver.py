@@ -1,7 +1,10 @@
 import torch
 from .integrator import SemiImplicitEulerIntegrator
 from .PDEmodel import PDEModel
-from .transforms import TensorProductTransformBackend
+from .transforms import (
+    DEFAULT_TRANSFORM_EXECUTION_ORDER,
+    TensorProductTransformBackend,
+)
 
 class SpectralSolver:
     def __init__(
@@ -12,6 +15,7 @@ class SpectralSolver:
         batchsize=1,
         device="cuda",
         dtype=torch.float32,
+        transform_execution_order=DEFAULT_TRANSFORM_EXECUTION_ORDER,
     ):
 
         if dtype not in (torch.float32, torch.float64):
@@ -36,6 +40,7 @@ class SpectralSolver:
             lengths=self.L,
             device=self.device,
             dtype=self.dtype,
+            execution_order=transform_execution_order,
         )
         self._init_periodic_metadata()
 

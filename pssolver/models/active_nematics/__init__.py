@@ -1,6 +1,7 @@
 """Public building blocks for the active-nematic PDE model."""
 
 from .beris_edwards import (
+    BerisEdwardsQGradientCache,
     BerisEdwardsQNonlinearModel,
     STRESS_COMPONENTS,
     beris_edwards_active_stress_components,
@@ -50,6 +51,7 @@ from .stokes import (
 )
 
 __all__ = [
+    "BerisEdwardsQGradientCache",
     "BerisEdwardsQNonlinearModel",
     "BerisEdwardsFreeSlipStokes",
     "Q_COMPONENTS",

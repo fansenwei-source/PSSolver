@@ -11,6 +11,7 @@ from pssolver.transforms import (
 )
 
 from .beris_edwards import (
+    BerisEdwardsQGradientCache,
     beris_edwards_algebraic_stress_components,
     beris_edwards_distortion_stress_components,
     beris_edwards_molecular_field_components,
@@ -49,6 +50,9 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
     modes and fixes the plug-flow reference frame.  ``friction`` with positive
     drag retains and determines those modes.  This distinction is a modeling
     choice, not a pressure gauge.
+
+    Disabling pressure diagnostics skips only residual measurements and their
+    host synchronizations. The computed pressure and velocity are unchanged.
     """
 
     def __init__(
@@ -64,6 +68,8 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         ldg_l1=0.02,
         flow_alignment=0.3,
         cache_force_diagnostics=False,
+        cache_pressure_diagnostics=True,
+        q_gradient_cache=None,
         zero_mode_policy="zero_mean",
         q_boundary_conditions=PLANE_Q_BOUNDARY_CONDITIONS,
         tangential_velocity_boundary_conditions=(
@@ -116,6 +122,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
             friction=friction,
             viscosity=viscosity,
             zero_mode_policy=zero_mode_policy,
+            pressure_diagnostics=cache_pressure_diagnostics,
         )
         self.beta = float(beta_value)
         self.ldg_a = float(ldg_a)
@@ -124,6 +131,14 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         self.ldg_l1 = float(ldg_l1)
         self.flow_alignment = float(flow_alignment)
         self.cache_force_diagnostics = bool(cache_force_diagnostics)
+        if q_gradient_cache is not None and not isinstance(
+            q_gradient_cache,
+            BerisEdwardsQGradientCache,
+        ):
+            raise TypeError(
+                "q_gradient_cache must be a BerisEdwardsQGradientCache or None."
+            )
+        self.q_gradient_cache = q_gradient_cache
         self.spectral_projector = spectral_projector
         self.q_boundary_conditions = q_bcs
         self.distortion_odd_boundary_conditions = distortion_odd_bcs
@@ -147,6 +162,8 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
 
     def compute_nematic_force(self, fields, alpha):
         """Return the projected complete force and active tangential part."""
+        if self.q_gradient_cache is not None:
+            self.q_gradient_cache.clear()
         q_components = tuple(fields[name] for name in Q_COMPONENTS)
         laplacian_components = tuple(
             fields.laplacian(name) for name in Q_COMPONENTS
@@ -217,7 +234,14 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
                 gradient_x[1] + gradient_y[3] + gradient_z[4],
             )
         )
+        if self.q_gradient_cache is not None:
+            self.q_gradient_cache.stage(fields, q_gradients)
         return total_force, active_tangential_force
+
+    def after_static_fields_updated(self, fields):
+        """Publish staged Q gradients after static field synchronization."""
+        if self.q_gradient_cache is not None:
+            self.q_gradient_cache.publish(fields)
 
     # Preserve the private name used by older callers of the benchmark class.
     def _compute_nematic_force(self, fields, alpha):

@@ -50,6 +50,7 @@ import torch
 from pssolver import SpectralSolver, write_run_metadata
 from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
+    BerisEdwardsQGradientCache,
     BerisEdwardsQNonlinearModel,
     Q_COMPONENTS,
     Q_convention_metadata,
@@ -67,6 +68,7 @@ from pssolver.transforms import (
     BasisAwareSpectralProjector,
     DEALIAS_RULE_FRACTIONS,
     DEFAULT_DEALIAS_RULE,
+    DEFAULT_TRANSFORM_EXECUTION_ORDER,
 )
 from tqdm import trange
 import numpy as np
@@ -299,6 +301,16 @@ def parse_args():
         help="Real arithmetic precision used by fields and transforms.",
     )
     parser.add_argument(
+        "--transform-execution-order",
+        choices=("legacy", "real_first"),
+        default=DEFAULT_TRANSFORM_EXECUTION_ORDER,
+        help=(
+            "Tensor-product transform execution plan (default: real_first). "
+            "real_first applies DCT/DST axes before periodic FFTs so their matrix products use "
+            "real arithmetic; legacy retains the historical axis order."
+        ),
+    )
+    parser.add_argument(
         "--tf32",
         choices=("off", "on"),
         default="off",
@@ -330,6 +342,14 @@ def parse_args():
         help="Disable only the periodic dynamic real-to-spectral rebuild.",
     )
     parser.add_argument("--diagnostics", action="store_true")
+    parser.add_argument(
+        "--disable-q-gradient-reuse",
+        action="store_true",
+        help=(
+            "Recompute Q gradients independently in the static and nonlinear "
+            "models instead of using the guarded single-step cache."
+        ),
+    )
     parser.add_argument("--save-hydrodynamics", action="store_true")
     parser.add_argument(
         "--validation-config-sha256",
@@ -873,6 +893,7 @@ metadata = {
         "save_layout": args.save_layout,
         "real_dtype": args.dtype,
         "spectral_dtype": spectral_dtype_name,
+        "transform_execution_order": args.transform_execution_order,
     },
     "model": {
         "name": "active_nematics",
@@ -981,6 +1002,17 @@ metadata = {
         "velocity_zero_mode": zero_mode_policy,
         "zero_mode_force": "total_nematic_tangential_force",
         "pressure_solver": "free_slip_modal_schur_complement",
+        "pressure_residual_diagnostics": ENABLE_DIAGNOSTICS,
+        "q_gradient_reuse": {
+            "enabled": not args.disable_q_gradient_reuse,
+            "scope": "single_static_to_nonlinear_evaluation",
+            "mutation_guard": "spatial_and_spectral_tensor_versions",
+        },
+        "transforms": {
+            "execution_order": args.transform_execution_order,
+            "spectral_storage": "full_complex",
+            "basis_and_normalization_changed": False,
+        },
         "precision": {
             "real_dtype": args.dtype,
             "spectral_dtype": spectral_dtype_name,
@@ -1024,6 +1056,7 @@ metadata = {
     "initialization_protocol": args.initialization_protocol,
     "device": device,
     "dtype": args.dtype,
+    "transform_execution_order": args.transform_execution_order,
     "tf32": args.tf32,
     "q_boundary_conditions": Q_BC,
     "tangential_velocity_boundary_conditions": U_TANGENTIAL_BC,
@@ -1216,6 +1249,7 @@ solver = SpectralSolver(
     device=device,
     batchsize=batchsize,
     dtype=real_dtype,
+    transform_execution_order=args.transform_execution_order,
 )
 spectral_projector = BasisAwareSpectralProjector(
     solver,
@@ -1313,6 +1347,11 @@ solver.model.add_static_field("uy", boundary_conditions=U_TANGENTIAL_BC)
 solver.model.add_static_field("uz", boundary_conditions=U_NORMAL_BC)
 solver.model.add_static_field("p", boundary_conditions=PRESSURE_MODAL_BC)
 
+q_gradient_cache = (
+    None
+    if args.disable_q_gradient_reuse
+    else BerisEdwardsQGradientCache()
+)
 solver.model.set_nonlinear_model(
     BerisEdwardsQNonlinearModel(
         spectral_projector,
@@ -1321,6 +1360,7 @@ solver.model.set_nonlinear_model(
         ldg_c=args.ldg_c,
         rotational_viscosity=rotational_viscosity,
         flow_alignment=ALIGNMENT_PARAMETER,
+        q_gradient_cache=q_gradient_cache,
     )
 )
 solver.model.set_static_compute_model(
@@ -1336,6 +1376,8 @@ solver.model.set_static_compute_model(
         ldg_l1=ldg_l1,
         flow_alignment=ALIGNMENT_PARAMETER,
         cache_force_diagnostics=ENABLE_DIAGNOSTICS,
+        cache_pressure_diagnostics=ENABLE_DIAGNOSTICS,
+        q_gradient_cache=q_gradient_cache,
         zero_mode_policy=zero_mode_policy,
     )
 )

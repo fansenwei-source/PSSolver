@@ -40,6 +40,7 @@ def test_canonical_matrix_matches_archived_v1_preview():
         assert config["dealias_rule"] == "cubic_half"
         assert config["dtype"] == "float64"
         assert config["spectral_dtype"] == "complex128"
+        assert config["transform_execution_order"] == "real_first"
         assert config["tf32"] == "off"
         assert config["spectral_refresh"] == "disabled"
         assert config["density"] == 1.0
@@ -76,6 +77,10 @@ def test_preflight_command_changes_only_execution_extent_and_outputs(tmp_path):
     assert "--fric" in command
     assert command[command.index("--fric") + 1] == "0"
     assert "--disable-spectral-refresh" in command
+    assert "--transform-execution-order" in command
+    assert command[command.index("--transform-execution-order") + 1] == (
+        "real_first"
+    )
     assert "--save-hydrodynamics" in command
     assert command[command.index("--validation-config-sha256") + 1] == (
         config_sha256
@@ -120,13 +125,18 @@ def test_synthetic_preflight_output_passes_validation(tmp_path):
         "dealias_rule": "cubic_half",
         "dtype": "float64",
         "tf32": "off",
+        "transform_execution_order": "real_first",
+        "solver": {"transform_execution_order": "real_first"},
         "model": {
             "variant": "beris_edwards_complete_nematic_stress_navier_stokes",
             "flow_dynamics": {
                 "regime": "incompressible_navier_stokes_beris_edwards"
             },
         },
-        "numerics": {"spectral_refresh": {"mode": "disabled"}},
+        "numerics": {
+            "spectral_refresh": {"mode": "disabled"},
+            "transforms": {"execution_order": "real_first"},
+        },
     }
     (run_dir / "metadata.json").write_text(
         json.dumps(metadata), encoding="utf-8"
