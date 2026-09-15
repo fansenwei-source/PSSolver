@@ -134,6 +134,7 @@ from .stage_o4_qualification import (
 )
 from .stage_o41_plan import build_stage_o41_h100_plan
 from .stage_o41_qualification import analyze_stage_o41_qualification
+from .stage_o42_plan import build_stage_o42_h100_plan
 from .stokes import (
     ChannelStokesSolverOptions,
     PlaneStokesSolverOptions,
@@ -228,6 +229,7 @@ __all__ = [
     "run_stage_n4_h100_candidate_trajectory",
     "build_stage_o4_h100_plan",
     "build_stage_o41_h100_plan",
+    "build_stage_o42_h100_plan",
     "compare_plane_stage_o4_workflows",
     "MigrationDisposition",
     "MigrationPhase",
