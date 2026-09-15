@@ -153,7 +153,13 @@ from .stage_o_closure import (
     StageOClosureEvidence,
     StageOPathDisposition,
     build_stage_o_closure_decision,
+    stage_o_closure_identity_sha256,
 )
+from .stage_p_diagnostics import (
+    analyze_stage_p_diagnostics,
+    summarize_operator_kernel_events,
+)
+from .stage_p_plan import build_stage_p_h100_plan
 from .stage_o43_qualification import (
     analyze_stage_o431_qualification,
     analyze_stage_o433_qualification,
@@ -292,5 +298,9 @@ __all__ = [
     "StageOQualificationEvidence",
     "StageOPathDisposition",
     "build_stage_o_closure_decision",
+    "stage_o_closure_identity_sha256",
+    "analyze_stage_p_diagnostics",
+    "summarize_operator_kernel_events",
+    "build_stage_p_h100_plan",
     "write_plane_shadow_comparison",
 ]

@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass
 from enum import Enum
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -366,6 +367,22 @@ def build_stage_o_closure_decision(
     )
 
 
+def stage_o_closure_identity_sha256(
+    decision: StageOClosureDecision,
+) -> str:
+    """Hash the portable closure metadata with deterministic JSON encoding."""
+
+    if not isinstance(decision, StageOClosureDecision):
+        raise TypeError("decision must be a StageOClosureDecision")
+    payload = json.dumps(
+        decision.to_metadata(),
+        allow_nan=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Print the read-only Plane Stage O closure decision."
@@ -383,5 +400,6 @@ __all__ = [
     "StageOClosureEvidence",
     "StageOPathDisposition",
     "build_stage_o_closure_decision",
+    "stage_o_closure_identity_sha256",
     "main",
 ]

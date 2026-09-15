@@ -147,3 +147,17 @@ identities and records that legacy Plane production remains the default, the
 separated runtime remains an experimental numerical oracle, and the projected
 materialization optimization line is closed. The command constructs no solver
 and authorizes only a local Stage P operator/kernel diagnostic design.
+
+## Stage P operator/kernel gap diagnostic
+
+`profile_plane_stage_p.py` compares the retained Plane production runtime with
+the separated numerical oracle at R320 without changing either implementation.
+It deliberately isolates non-instrumented throughput, bounded PyTorch
+operator/kernel aggregation, and nested semantic timing in three fresh-runtime
+windows. It never exports or retains a raw profiler trace.
+
+Generate the balanced three-trial-per-runtime contract with
+`scripts_plane/plan_plane_stage_p.py`, then aggregate it with
+`scripts_plane/analyze_plane_stage_p.py`. A complete result permits only Stage
+Q target review. It does not select an optimization, reopen projected
+materialization work, or authorize a production/default change.

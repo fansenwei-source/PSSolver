@@ -13,6 +13,7 @@ from pssolver.experimental import (
     StageOClosureDecision,
     StageOPathDisposition,
     build_stage_o_closure_decision,
+    stage_o_closure_identity_sha256,
 )
 from pssolver.experimental.stage_o_closure import main
 
@@ -139,6 +140,7 @@ def test_closure_is_immutable_json_and_hashes_its_architecture_boundary():
         len(digest) == 64
         for digest in metadata["implementation_file_sha256"].values()
     )
+    assert len(stage_o_closure_identity_sha256(decision)) == 64
     with pytest.raises(FrozenInstanceError):
         decision.project_root = "/tmp/changed"
 
