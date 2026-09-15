@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 
 import torch
 
 from pssolver.diagnostics import build_tensor_inventory, compare_tensor_inventories
 from pssolver.diagnostics.tensor_inventory import _coalesce_storage_ranges
+from pssolver.experimental.representations import AlgebraicGenerationState
 
 
 @dataclass
@@ -22,6 +24,25 @@ class _Fields:
 
 _Runtime.__module__ = "pssolver.testing"
 _Fields.__module__ = "pssolver.testing"
+
+
+class _LazyMapping(Mapping[str, torch.Tensor]):
+    def __init__(self, value: torch.Tensor) -> None:
+        self._stored = {"value": value}
+        self.getitem_calls = 0
+
+    def __getitem__(self, key: str) -> torch.Tensor:
+        self.getitem_calls += 1
+        return self._stored[key]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._stored)
+
+    def __len__(self) -> int:
+        return len(self._stored)
+
+
+_LazyMapping.__module__ = "pssolver.testing"
 
 
 def test_inventory_deduplicates_views_and_keeps_explicit_scope():
@@ -67,6 +88,50 @@ def test_inventory_filters_tensors_by_device():
 
     assert report["tensor_reference_count"] == 0
     assert report["unique_storage_bytes"] == 0
+
+
+def test_inventory_never_calls_application_mapping_getitem():
+    lazy = _LazyMapping(torch.ones(3, dtype=torch.float64))
+
+    report = build_tensor_inventory(
+        {"runtime": {"lazy": lazy}},
+        device="cpu",
+    )
+
+    assert lazy.getitem_calls == 0
+    assert report["tensor_reference_count"] == 1
+    assert report["tensor_references"][0]["path"] == (
+        "runtime['lazy']._stored['value']"
+    )
+
+
+def test_inventory_does_not_materialize_algebraic_physical_state_view():
+    physical = torch.ones(3, dtype=torch.float64)
+    spectral = torch.complex(physical, torch.zeros_like(physical))
+    materialized = []
+
+    def materialize(name, value):
+        materialized.append((name, value))
+        return physical
+
+    generation = AlgebraicGenerationState(
+        1,
+        {"force_x": physical},
+        {"force_x": spectral},
+        materialize=materialize,
+    )
+    generation.publish_spectral("force_x", spectral)
+    view = generation.view(("force_x",))
+
+    before = generation.snapshot()
+    report = build_tensor_inventory({"runtime": view}, device="cpu")
+    after = generation.snapshot()
+
+    assert materialized == []
+    assert before == after
+    assert after["physical_materializations"] == 0
+    assert after["retained_physical_components"] == 0
+    assert report["tensor_reference_count"] == 1
 
 
 def test_overlapping_device_address_ranges_are_counted_once():

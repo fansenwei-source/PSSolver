@@ -194,6 +194,7 @@ def _profile(role: str, *, scale: int):
             "canonical_inventory_hashes_preserved": True,
             "path_level_inventory_diff_preserved": True,
             "post_priming_inventory_verification": True,
+            "custom_mapping_getitem_forbidden": True,
         },
         "residency_phases": {
             "after_warmup": copy.deepcopy(phase),
@@ -319,7 +320,7 @@ def test_stage_o42_analysis_rejects_unstable_repeated_inventory(tmp_path):
         )
 
 
-def test_stage_o42_analysis_accepts_transient_cache_reference_expansion(tmp_path):
+def test_stage_o42_analysis_reports_reference_expansion_without_eligibility(tmp_path):
     canary_report = _profile("canary", scale=2)
     phase = canary_report["residency_phases"]["after_warmup"]
     priming = phase["storage_identity_priming_inventory"]
@@ -356,7 +357,7 @@ def test_stage_o42_analysis_accepts_transient_cache_reference_expansion(tmp_path
     phase["storage_identity_inventory_stable"] = False
     phase["storage_identity_set_stable"] = True
     phase["storage_identity_post_priming_stable"] = True
-    phase["storage_identity_observer_effect_explained"] = True
+    phase["storage_identity_observer_effect_explained"] = False
 
     legacy = _write_json(tmp_path / "legacy.json", _profile("legacy", scale=1))
     canary = _write_json(tmp_path / "canary.json", canary_report)
@@ -371,8 +372,9 @@ def test_stage_o42_analysis_accepts_transient_cache_reference_expansion(tmp_path
     assert report["storage_identity_priming_stable"] is False
     assert report["storage_identity_set_stable"] is True
     assert report["storage_identity_reference_graph_stable"] is False
-    assert report["storage_identity_observer_effect_explained"] is True
-    assert report["accounting_ready_for_optimization"] is True
+    assert report["storage_identity_observer_effect_explained"] is False
+    assert report["accounting_ready_for_optimization"] is False
+    assert report["eligible_for_stage_o43_optimization_design"] is False
     comparison = report["phase_comparison"]["after_warmup"][
         "canary_storage_identity_inventory_comparison"
     ]
@@ -493,6 +495,7 @@ def test_stage_o42_plan_is_bounded_read_only_and_non_promoting(tmp_path):
     assert plan["diagnostic_contract"][
         "post_priming_inventory_verification"
     ] is True
+    assert plan["diagnostic_contract"]["custom_mapping_getitem_forbidden"] is True
     assert plan["diagnostic_contract"]["global_gc_traversal"] is False
     assert plan["diagnostic_contract"]["production_default_may_change"] is False
     assert [item["role"] for item in plan["commands"]["profiles"]] == [

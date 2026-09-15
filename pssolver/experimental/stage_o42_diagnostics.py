@@ -71,6 +71,8 @@ def _validated_profile(path: str | Path, role: str) -> tuple[Path, dict[str, obj
                 "post_priming_inventory_verification"
             ]
             is True
+            and report["diagnostic_contract"]["custom_mapping_getitem_forbidden"]
+            is True
         )
         audit_valid = int(report["operator_audit"]["steps"]) > 0 and isinstance(
             report["operator_audit"]["operators"], Mapping
@@ -186,13 +188,7 @@ def _validated_profile(path: str | Path, role: str) -> tuple[Path, dict[str, obj
                 is repeated_comparison["full_inventory_identical"]
                 and phases[name]["storage_identity_observer_effect_explained"]
                 is (
-                    (
-                        identity_comparison["full_inventory_identical"] is True
-                        or identity_comparison[
-                            "transient_cache_reference_expansion_only"
-                        ]
-                        is True
-                    )
+                    identity_comparison["full_inventory_identical"] is True
                     and repeated_comparison["full_inventory_identical"] is True
                 )
                 and all(
@@ -594,9 +590,8 @@ def analyze_stage_o42_diagnostics(
             "strict_inventory_identity_is_reported_separately_from_storage_identity": (
                 True
             ),
-            "only_identical_or_transient_cache_reference_expansion_is_accepted": (
-                True
-            ),
+            "reference_graph_mutation_is_not_accepted": True,
+            "custom_mapping_getitem_is_not_used_by_inventory": True,
             "no_optimization_or_promotion_is_authorized": True,
         },
         "inputs": {

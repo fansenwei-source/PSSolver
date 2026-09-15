@@ -164,13 +164,7 @@ def _inventory_phase(
             "full_inventory_identical"
         ],
         "storage_identity_observer_effect_explained": (
-            (
-                inventory_comparison["full_inventory_identical"] is True
-                or inventory_comparison[
-                    "transient_cache_reference_expansion_only"
-                ]
-                is True
-            )
+            inventory_comparison["full_inventory_identical"] is True
             and repeated_comparison["full_inventory_identical"] is True
         ),
         "allocator_counters_stable": (
@@ -454,6 +448,7 @@ def profile_stage_o42_runtime(
             "canonical_inventory_hashes_preserved": True,
             "path_level_inventory_diff_preserved": True,
             "post_priming_inventory_verification": True,
+            "custom_mapping_getitem_forbidden": True,
             "storage_accounting_consistency_is_diagnostic": True,
             "operator_memory_is_allocator_effect_not_total_traffic": True,
         },

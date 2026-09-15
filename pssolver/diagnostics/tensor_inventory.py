@@ -87,6 +87,12 @@ def _storage_identity(tensor: torch.Tensor) -> tuple[str, int, int]:
     return str(tensor.device), int(storage.data_ptr()), int(storage.nbytes())
 
 
+def _is_passive_mapping(value: object) -> bool:
+    """Return whether key lookup is guaranteed not to run application code."""
+
+    return type(value) in (dict, types.MappingProxyType)
+
+
 def _coalesce_storage_ranges(
     records: list[dict[str, object]],
 ) -> list[dict[str, object]]:
@@ -230,7 +236,7 @@ def build_tensor_inventory(
             return
         visited.add(identity)
         object_count += 1
-        if isinstance(value, Mapping):
+        if _is_passive_mapping(value):
             for key in sorted(value, key=lambda item: str(item)):
                 visit(value[key], f"{path}[{key!r}]", depth + 1)
             return

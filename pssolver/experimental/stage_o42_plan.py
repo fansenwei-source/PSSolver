@@ -120,6 +120,7 @@ def build_stage_o42_h100_plan(
             "canonical_inventory_hashes_preserved": True,
             "path_level_inventory_diff_preserved": True,
             "post_priming_inventory_verification": True,
+            "custom_mapping_getitem_forbidden": True,
             "storage_accounting_consistency_is_diagnostic": True,
             "production_default_may_change": False,
             "eligible_result": "stage_o43_optimization_design_only",

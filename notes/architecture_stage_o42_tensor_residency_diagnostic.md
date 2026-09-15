@@ -45,12 +45,14 @@ canonical hashes, aggregate-field differences, and bounded path-level
 additions/removals are preserved. Exact equality remains a reported fact, but
 it is not conflated with storage identity: a reference-only expansion can be
 classified separately from a newly allocated or removed storage. Only exact
-equality or an addition-only expansion whose every new path is under the
-runtime's transient cache can explain the first-pass observer effect; any
-other reference-graph change or any second-to-third-pass change keeps the
-accounting gate closed. All post-priming allocator samples must also remain
-stable. Priming deltas are preserved as evidence instead of being folded into
-runtime-residency comparisons.
+equality can close the accounting gate; any reference-graph change or any
+second-to-third-pass change keeps it closed. In particular, only built-in
+dictionaries and read-only mapping proxies are traversed through key lookup.
+Custom `Mapping` implementations are inspected through their stored attributes
+so a supposedly read-only inventory cannot trigger a lazy `__getitem__` and
+materialize application state. All post-priming allocator samples must also
+remain stable. Priming deltas are preserved as evidence instead of being
+folded into runtime-residency comparisons.
 
 The H100 plan runs exactly one R320 diagnostic for each runtime and one
 read-only comparison. A successful result may authorize a narrowly targeted
