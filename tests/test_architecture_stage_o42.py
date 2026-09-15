@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 from pathlib import Path
-import copy
+from types import MappingProxyType
 
 import pytest
 
+from benchmarks.stage_o42_runtime import _plain_diagnostic_snapshot
 from pssolver.experimental.stage_o42_diagnostics import (
     analyze_stage_o42_diagnostics,
 )
@@ -116,6 +118,38 @@ def _o41():
             "r320_performance_non_regression",
             "r320_phase_aware_memory_non_regression",
         ],
+    }
+
+
+def test_stage_o42_read_only_runtime_snapshots_cross_json_boundary():
+    reuse = MappingProxyType(
+        {
+            "schema_version": 1,
+            "generation": 4,
+            "retained_pairs_after_generation": 0,
+        }
+    )
+    materialization = MappingProxyType(
+        {
+            "schema_version": 1,
+            "generation": 4,
+            "physical_materializations": 29,
+            "physical_materialization_batches": 4,
+        }
+    )
+
+    report_fragment = {
+        "algebraic_representation_reuse": _plain_diagnostic_snapshot(reuse),
+        "algebraic_physical_materialization": _plain_diagnostic_snapshot(
+            materialization
+        ),
+        "disabled_snapshot": _plain_diagnostic_snapshot(None),
+    }
+
+    assert json.loads(json.dumps(report_fragment, allow_nan=False)) == {
+        "algebraic_representation_reuse": dict(reuse),
+        "algebraic_physical_materialization": dict(materialization),
+        "disabled_snapshot": None,
     }
 
 

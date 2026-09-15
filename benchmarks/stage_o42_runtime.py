@@ -47,6 +47,14 @@ from pssolver.experimental.stage_o42_diagnostics import STAGE_O42_SHAPE
 _ROLES = ("legacy", "canary")
 
 
+def _plain_diagnostic_snapshot(
+    snapshot: Mapping[str, object] | None,
+) -> dict[str, object] | None:
+    """Copy a read-only runtime snapshot across the JSON report boundary."""
+
+    return dict(snapshot) if snapshot is not None else None
+
+
 def _require_role(role: str) -> str:
     if role not in _ROLES:
         raise ValueError("role must be 'legacy' or 'canary'")
@@ -253,10 +261,10 @@ def _canary_diagnostic(
         "semantic_regions": semantic_regions,
         "residency_phases": phases,
         "operator_audit": operator_audit,
-        "algebraic_representation_reuse": (
+        "algebraic_representation_reuse": _plain_diagnostic_snapshot(
             runtime.algebraic_representation_reuse_diagnostics()
         ),
-        "algebraic_physical_materialization": (
+        "algebraic_physical_materialization": _plain_diagnostic_snapshot(
             runtime.algebraic_physical_materialization_diagnostics()
         ),
         "finite": finite,
