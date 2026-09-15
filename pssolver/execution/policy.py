@@ -21,6 +21,60 @@ class AlgebraicExecutionMode(str, Enum):
     BATCHED_PHYSICAL_ISLANDS = "batched_physical_islands"
 
 
+class AlgebraicOutputPublicationMode(str, Enum):
+    """Storage layout used while publishing one algebraic generation."""
+
+    DEFERRED_STACK = "deferred_stack"
+    PREALLOCATED_PACKED = "preallocated_packed"
+
+
+@dataclass(frozen=True, slots=True)
+class AlgebraicOutputPublicationPolicy:
+    """Orthogonal output-storage policy for one algebraic generation.
+
+    It changes only where equivalent spectral outputs are copied before they
+    are published.  It does not alter the algebraic execution order, tensor
+    shapes, transforms, or cross-generation lifetime.
+    """
+
+    mode: AlgebraicOutputPublicationMode = (
+        AlgebraicOutputPublicationMode.DEFERRED_STACK
+    )
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.mode, AlgebraicOutputPublicationMode):
+            raise TypeError("mode must be an AlgebraicOutputPublicationMode")
+
+    @property
+    def preallocated_packed(self) -> bool:
+        return self.mode is AlgebraicOutputPublicationMode.PREALLOCATED_PACKED
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "schema_version": 1,
+            "mode": self.mode.value,
+            "preallocated_packed": self.preallocated_packed,
+            "stored_layout": "declaration_order",
+            "transient_layout": (
+                "boundary_signature_then_declaration"
+                if self.preallocated_packed
+                else "independent_solver_outputs"
+            ),
+            "lifetime": "one_pre_explicit_rhs_generation",
+            "changes_execution_order": False,
+            "cross_generation_reuse": False,
+            "checkpointed": False,
+        }
+
+    @classmethod
+    def deferred_stack(cls) -> "AlgebraicOutputPublicationPolicy":
+        return cls(AlgebraicOutputPublicationMode.DEFERRED_STACK)
+
+    @classmethod
+    def preallocated(cls) -> "AlgebraicOutputPublicationPolicy":
+        return cls(AlgebraicOutputPublicationMode.PREALLOCATED_PACKED)
+
+
 @dataclass(frozen=True, slots=True)
 class AlgebraicExecutionPolicy:
     """One coherent representation, lifetime, and scheduling policy."""
@@ -153,5 +207,7 @@ def resolve_algebraic_execution_policy(
 __all__ = [
     "AlgebraicExecutionMode",
     "AlgebraicExecutionPolicy",
+    "AlgebraicOutputPublicationMode",
+    "AlgebraicOutputPublicationPolicy",
     "resolve_algebraic_execution_policy",
 ]

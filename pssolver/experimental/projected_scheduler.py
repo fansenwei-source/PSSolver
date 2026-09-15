@@ -27,6 +27,55 @@ class ProjectedTransformDirection(str, Enum):
     INVERSE = "inverse"
 
 
+class ProjectedBatchAssemblyMode(str, Enum):
+    """How compatible projected-transform inputs form one leading batch."""
+
+    COPY_CAT = "copy_cat"
+    CONTIGUOUS_STORAGE_VIEW = "contiguous_storage_view"
+
+
+@dataclass(frozen=True, slots=True)
+class ProjectedBatchAssemblyPolicy:
+    """Immutable, scheduler-local policy for assembling transform batches.
+
+    The view mode is deliberately conservative.  It is allowed only when all
+    selected tensors are consecutive contiguous views into one storage;
+    otherwise the scheduler falls back to the historical ``torch.cat`` path.
+    The policy never changes grouping, transform order, boundary signatures,
+    or the lifetime of the tensors that it receives.
+    """
+
+    mode: ProjectedBatchAssemblyMode = ProjectedBatchAssemblyMode.COPY_CAT
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.mode, ProjectedBatchAssemblyMode):
+            raise TypeError("mode must be a ProjectedBatchAssemblyMode")
+
+    @property
+    def allow_contiguous_storage_view(self) -> bool:
+        return self.mode is ProjectedBatchAssemblyMode.CONTIGUOUS_STORAGE_VIEW
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "schema_version": 1,
+            "mode": self.mode.value,
+            "allow_contiguous_storage_view": (
+                self.allow_contiguous_storage_view
+            ),
+            "fallback": "copy_cat",
+            "changes_transform_order": False,
+            "retains_tensor_references": False,
+        }
+
+    @classmethod
+    def copy_cat(cls) -> "ProjectedBatchAssemblyPolicy":
+        return cls(ProjectedBatchAssemblyMode.COPY_CAT)
+
+    @classmethod
+    def contiguous_storage_view(cls) -> "ProjectedBatchAssemblyPolicy":
+        return cls(ProjectedBatchAssemblyMode.CONTIGUOUS_STORAGE_VIEW)
+
+
 class ProjectedTransformContext(Protocol):
     """Adapter operations required by the batching scheduler."""
 
@@ -171,15 +220,168 @@ class CompiledProjectedTransformPlan:
         return self._batch_sizes
 
 
+def _contiguous_storage_batch_view(
+    values: tuple[torch.Tensor, ...],
+) -> tuple[torch.Tensor | None, str | None]:
+    """Return a zero-copy leading-dimension view when it is provably safe."""
+
+    if len(values) < 2:
+        return None, "fewer_than_two_components"
+    first = values[0]
+    if first.layout is not torch.strided:
+        return None, "non_strided_layout"
+    if first.ndim == 0 or first.numel() == 0:
+        return None, "empty_or_scalar"
+    if torch.is_grad_enabled() and any(value.requires_grad for value in values):
+        return None, "autograd_enabled"
+    shape = tuple(first.shape)
+    stride = tuple(first.stride())
+    if not first.is_contiguous():
+        return None, "non_contiguous"
+    if first.is_conj() or first.is_neg():
+        return None, "conjugate_or_negative_view"
+    storage = first.untyped_storage()
+    storage_pointer = storage.data_ptr()
+    storage_nbytes = storage.nbytes()
+    component_elements = first.numel()
+    for position, value in enumerate(values):
+        if value.layout is not torch.strided:
+            return None, "non_strided_layout"
+        if value.dtype != first.dtype or value.device != first.device:
+            return None, "dtype_or_device_mismatch"
+        if tuple(value.shape) != shape:
+            return None, "shape_mismatch"
+        if tuple(value.stride()) != stride or not value.is_contiguous():
+            return None, "stride_or_contiguity_mismatch"
+        if value.is_conj() or value.is_neg():
+            return None, "conjugate_or_negative_view"
+        value_storage = value.untyped_storage()
+        if (
+            value_storage.data_ptr() != storage_pointer
+            or value_storage.nbytes() != storage_nbytes
+        ):
+            return None, "distinct_storage"
+        expected_offset = first.storage_offset() + position * component_elements
+        if value.storage_offset() != expected_offset:
+            return None, "non_adjacent_storage"
+    merged_shape = (len(values) * shape[0], *shape[1:])
+    return (
+        first.as_strided(
+            merged_shape,
+            stride,
+            storage_offset=first.storage_offset(),
+        ),
+        None,
+    )
+
+
 class BoundarySignatureTransformScheduler:
     """Group only transforms with an identical resolved execution key."""
 
-    def __init__(self, context: ProjectedTransformContext) -> None:
+    def __init__(
+        self,
+        context: ProjectedTransformContext,
+        *,
+        batch_assembly_policy: ProjectedBatchAssemblyPolicy | None = None,
+        enable_batch_assembly_diagnostics: bool = False,
+    ) -> None:
+        if batch_assembly_policy is None:
+            batch_assembly_policy = ProjectedBatchAssemblyPolicy.copy_cat()
+        if not isinstance(
+            batch_assembly_policy,
+            ProjectedBatchAssemblyPolicy,
+        ):
+            raise TypeError(
+                "batch_assembly_policy must be a "
+                "ProjectedBatchAssemblyPolicy or None"
+            )
+        if not isinstance(enable_batch_assembly_diagnostics, bool):
+            raise TypeError("enable_batch_assembly_diagnostics must be a bool")
         self._context = context
+        self._batch_assembly_policy = batch_assembly_policy
+        self._enable_batch_assembly_diagnostics = (
+            enable_batch_assembly_diagnostics
+        )
         self._plan_cache: dict[
             tuple[ProjectedTransformDirection, tuple[str, ...]],
             CompiledProjectedTransformPlan,
         ] = {}
+        self.reset_batch_assembly_diagnostics()
+
+    @property
+    def batch_assembly_policy(self) -> ProjectedBatchAssemblyPolicy:
+        return self._batch_assembly_policy
+
+    def reset_batch_assembly_diagnostics(self) -> None:
+        """Reset integer-only counters without retaining timestep tensors."""
+
+        self._batch_assembly_counters: dict[str, int] = {
+            "singleton_batches": 0,
+            "copy_cat_batches": 0,
+            "copy_cat_components": 0,
+            "copy_cat_logical_input_bytes": 0,
+            "contiguous_view_batches": 0,
+            "contiguous_view_components": 0,
+            "contiguous_view_logical_input_bytes": 0,
+        }
+        self._batch_assembly_fallback_reasons: dict[str, int] = {}
+
+    def batch_assembly_diagnostics(self) -> Mapping[str, object]:
+        """Return JSON-safe counters; the snapshot contains no tensors."""
+
+        return MappingProxyType(
+            {
+                "schema_version": 1,
+                "enabled": self._enable_batch_assembly_diagnostics,
+                "policy": self._batch_assembly_policy.to_metadata(),
+                **self._batch_assembly_counters,
+                "fallback_reasons": dict(
+                    self._batch_assembly_fallback_reasons
+                ),
+                "retained_tensor_references": 0,
+            }
+        )
+
+    def _record_batch_assembly(
+        self,
+        *,
+        mode: str,
+        values: tuple[torch.Tensor, ...],
+        fallback_reason: str | None = None,
+    ) -> None:
+        if not self._enable_batch_assembly_diagnostics:
+            return
+        logical_bytes = sum(
+            value.numel() * value.element_size() for value in values
+        )
+        self._batch_assembly_counters[f"{mode}_batches"] += 1
+        self._batch_assembly_counters[f"{mode}_components"] += len(values)
+        self._batch_assembly_counters[
+            f"{mode}_logical_input_bytes"
+        ] += logical_bytes
+        if fallback_reason is not None:
+            reasons = self._batch_assembly_fallback_reasons
+            reasons[fallback_reason] = reasons.get(fallback_reason, 0) + 1
+
+    def _assemble_batch(
+        self,
+        values: tuple[torch.Tensor, ...],
+    ) -> torch.Tensor:
+        fallback_reason = "policy_copy_cat"
+        if self._batch_assembly_policy.allow_contiguous_storage_view:
+            packed, fallback_reason = _contiguous_storage_batch_view(values)
+            if packed is not None:
+                self._record_batch_assembly(
+                    mode="contiguous_view",
+                    values=values,
+                )
+                return packed
+        self._record_batch_assembly(
+            mode="copy_cat",
+            values=values,
+            fallback_reason=fallback_reason,
+        )
+        return torch.cat(values, dim=0)
 
     def _key(
         self,
@@ -263,6 +465,21 @@ class BoundarySignatureTransformScheduler:
             )
         return self._execute_cached_plan(plan, values)
 
+    def storage_compatible_order(
+        self,
+        component_names: tuple[str, ...],
+        *,
+        direction: ProjectedTransformDirection,
+    ) -> tuple[str, ...]:
+        """Order storage by scheduler compatibility without retaining tensors."""
+
+        plan = self.compile_plan(component_names, direction=direction)
+        return tuple(
+            plan.component_names[index]
+            for indices in plan.batch_indices
+            for index in indices
+        )
+
     def _execute_cached_plan(
         self,
         plan: CompiledProjectedTransformPlan,
@@ -278,6 +495,8 @@ class BoundarySignatureTransformScheduler:
         ):
             if len(indices) == 1:
                 index = indices[0]
+                if self._enable_batch_assembly_diagnostics:
+                    self._batch_assembly_counters["singleton_batches"] += 1
                 result[index] = (
                     self._context.forward_projected(
                         plan.component_names[index], values[index]
@@ -288,7 +507,9 @@ class BoundarySignatureTransformScheduler:
                     )
                 )
                 continue
-            packed = torch.cat(tuple(values[index] for index in indices), dim=0)
+            packed = self._assemble_batch(
+                tuple(values[index] for index in indices)
+            )
             transformed = self._context.transform_projected_packed(
                 key.boundary_signature,
                 packed,
@@ -472,6 +693,8 @@ __all__ = [
     "AlgebraicPhysicalIslandScheduler",
     "BoundarySignatureTransformScheduler",
     "CompiledProjectedTransformPlan",
+    "ProjectedBatchAssemblyMode",
+    "ProjectedBatchAssemblyPolicy",
     "ProjectedTransformBatchKey",
     "ProjectedTransformDirection",
     "ScheduledProjectedTransforms",

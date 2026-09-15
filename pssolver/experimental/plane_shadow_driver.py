@@ -26,6 +26,7 @@ from pssolver.core import (
 )
 from pssolver.execution import (
     AlgebraicExecutionPolicy,
+    AlgebraicOutputPublicationPolicy,
     IncompressibleStokesSystemSpec,
     TangentialZeroModePolicy,
 )
@@ -48,6 +49,7 @@ from .model_execution import (
     ExperimentalModelRuntime,
     build_experimental_model_runtime,
 )
+from .projected_scheduler import ProjectedBatchAssemblyPolicy
 from .shadow_metadata import (
     ShadowMetadataComparison,
     compare_shadow_to_production_metadata,
@@ -285,6 +287,10 @@ def _build_plane_shadow_runtime_from_production_metadata(
     enable_algebraic_representation_reuse: bool | None = None,
     enable_lazy_algebraic_materialization: bool | None = None,
     enable_batched_physical_islands: bool | None = None,
+    projected_batch_assembly_policy: ProjectedBatchAssemblyPolicy | None = None,
+    algebraic_output_publication_policy: (
+        AlgebraicOutputPublicationPolicy | None
+    ) = None,
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Construct and parity-check a migrated runtime after contract checks."""
 
@@ -391,6 +397,10 @@ def _build_plane_shadow_runtime_from_production_metadata(
             enable_lazy_algebraic_materialization
         ),
         enable_batched_physical_islands=enable_batched_physical_islands,
+        projected_batch_assembly_policy=projected_batch_assembly_policy,
+        algebraic_output_publication_policy=(
+            algebraic_output_publication_policy
+        ),
     )
     runtime.solver.integrator.set_spectral_refresh_interval(
         numerical["spectral_refresh_interval_steps"]
@@ -408,6 +418,10 @@ def build_plane_shadow_runtime_from_production_metadata(
     enable_algebraic_representation_reuse: bool | None = None,
     enable_lazy_algebraic_materialization: bool | None = None,
     enable_batched_physical_islands: bool | None = None,
+    projected_batch_assembly_policy: ProjectedBatchAssemblyPolicy | None = None,
+    algebraic_output_publication_policy: (
+        AlgebraicOutputPublicationPolicy | None
+    ) = None,
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Construct the Stage L CPU shadow runtime from production metadata."""
 
@@ -426,6 +440,10 @@ def build_plane_shadow_runtime_from_production_metadata(
             enable_lazy_algebraic_materialization
         ),
         enable_batched_physical_islands=enable_batched_physical_islands,
+        projected_batch_assembly_policy=projected_batch_assembly_policy,
+        algebraic_output_publication_policy=(
+            algebraic_output_publication_policy
+        ),
     )
 
 
@@ -433,6 +451,10 @@ def build_plane_separated_canary_runtime_from_production_metadata(
     metadata: Mapping[str, object],
     *,
     device: str | torch.device,
+    projected_batch_assembly_policy: ProjectedBatchAssemblyPolicy | None = None,
+    algebraic_output_publication_policy: (
+        AlgebraicOutputPublicationPolicy | None
+    ) = None,
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Build the explicit Stage O.2 canary from resolved production metadata.
 
@@ -446,6 +468,10 @@ def build_plane_separated_canary_runtime_from_production_metadata(
         metadata,
         device=device,
         algebraic_execution_policy=AlgebraicExecutionPolicy.batched(),
+        projected_batch_assembly_policy=projected_batch_assembly_policy,
+        algebraic_output_publication_policy=(
+            algebraic_output_publication_policy
+        ),
     )
 
 
@@ -459,6 +485,10 @@ def build_h100_plane_shadow_runtime_from_production_metadata(
     enable_algebraic_representation_reuse: bool | None = None,
     enable_lazy_algebraic_materialization: bool | None = None,
     enable_batched_physical_islands: bool | None = None,
+    projected_batch_assembly_policy: ProjectedBatchAssemblyPolicy | None = None,
+    algebraic_output_publication_policy: (
+        AlgebraicOutputPublicationPolicy | None
+    ) = None,
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Construct the opt-in Stage M runtime on the expected H100 device."""
 
@@ -493,6 +523,10 @@ def build_h100_plane_shadow_runtime_from_production_metadata(
             enable_lazy_algebraic_materialization
         ),
         enable_batched_physical_islands=enable_batched_physical_islands,
+        projected_batch_assembly_policy=projected_batch_assembly_policy,
+        algebraic_output_publication_policy=(
+            algebraic_output_publication_policy
+        ),
     )
 
 

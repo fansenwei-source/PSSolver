@@ -26,6 +26,7 @@ from pssolver.execution import (
     AlgebraicExecutionPolicy,
     AlgebraicExecutionPlan,
     AlgebraicExecutableModelProtocol,
+    AlgebraicOutputPublicationPolicy,
     AlgebraicRuntimeRestartState,
     AlgebraicSolverContext,
     AlgebraicSolverProtocol,
@@ -68,6 +69,7 @@ from .representations import (
 from .projected_scheduler import (
     AlgebraicPhysicalIslandScheduler,
     BoundarySignatureTransformScheduler,
+    ProjectedBatchAssemblyPolicy,
     ProjectedTransformDirection,
 )
 
@@ -426,6 +428,8 @@ class LegacyAlgebraicSolverContext:
     model_context: LegacyModelExecutionContext
     spectral_dtype: torch.dtype
     execution_policy: AlgebraicExecutionPolicy
+    batch_assembly_policy: ProjectedBatchAssemblyPolicy
+    enable_batch_assembly_diagnostics: bool = False
     representation_cache: AlgebraicRepresentationCache | None = None
     _transform_scheduler: BoundarySignatureTransformScheduler = field(
         init=False,
@@ -448,6 +452,18 @@ class LegacyAlgebraicSolverContext:
             raise TypeError(
                 "execution_policy must be an AlgebraicExecutionPolicy"
             )
+        if not isinstance(
+            self.batch_assembly_policy,
+            ProjectedBatchAssemblyPolicy,
+        ):
+            raise TypeError(
+                "batch_assembly_policy must be a "
+                "ProjectedBatchAssemblyPolicy"
+            )
+        if not isinstance(self.enable_batch_assembly_diagnostics, bool):
+            raise TypeError(
+                "enable_batch_assembly_diagnostics must be a bool"
+            )
         if self.representation_cache is not None and not isinstance(
             self.representation_cache,
             AlgebraicRepresentationCache,
@@ -465,7 +481,13 @@ class LegacyAlgebraicSolverContext:
         object.__setattr__(
             self,
             "_transform_scheduler",
-            BoundarySignatureTransformScheduler(self),
+            BoundarySignatureTransformScheduler(
+                self,
+                batch_assembly_policy=self.batch_assembly_policy,
+                enable_batch_assembly_diagnostics=(
+                    self.enable_batch_assembly_diagnostics
+                ),
+            ),
         )
 
     @property
@@ -826,6 +848,7 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
         spectral_dtype: torch.dtype,
         device: torch.device,
         batch_size: int,
+        output_publication_policy: AlgebraicOutputPublicationPolicy,
         physical_island_scheduler: (
             AlgebraicPhysicalIslandScheduler | None
         ) = None,
@@ -852,6 +875,33 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
         self._spectral_dtype = spectral_dtype
         self._device = device
         self._batch_size = batch_size
+        if not isinstance(
+            output_publication_policy,
+            AlgebraicOutputPublicationPolicy,
+        ):
+            raise TypeError(
+                "output_publication_policy must be an "
+                "AlgebraicOutputPublicationPolicy"
+            )
+        self._output_publication_policy = output_publication_policy
+        self._component_indices = {
+            name: index for index, name in enumerate(self._component_names)
+        }
+        self._transient_storage_names = (
+            context.transform_scheduler.storage_compatible_order(
+                execution_plan.transient_components,
+                direction=ProjectedTransformDirection.INVERSE,
+            )
+            if (
+                output_publication_policy.preallocated_packed
+                and execution_plan.transient_components
+            )
+            else execution_plan.transient_components
+        )
+        self._transient_storage_indices = {
+            name: index
+            for index, name in enumerate(self._transient_storage_names)
+        }
         self._context = context
         if physical_island_scheduler is not None and not isinstance(
             physical_island_scheduler,
@@ -970,6 +1020,27 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
             self._generation_state = None
             self._transient_cache = None
         outputs: dict[str, torch.Tensor] = {}
+        packed_output = None
+        packed_transient = None
+        if self._output_publication_policy.preallocated_packed:
+            packed_output = torch.empty(
+                (
+                    len(self._component_names),
+                    self._batch_size,
+                    *self._spectral_shape,
+                ),
+                dtype=self._spectral_dtype,
+                device=self._device,
+            )
+            packed_transient = torch.empty(
+                (
+                    len(self._transient_storage_names),
+                    self._batch_size,
+                    *self._spectral_shape,
+                ),
+                dtype=self._spectral_dtype,
+                device=self._device,
+            )
         physical_state = {
             name: fields[name]
             for name in self._execution_plan.initial_components
@@ -1072,6 +1143,21 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
                             f"algebraic solution for {name!r} is on "
                             f"{value.device}; expected {self._device}"
                         )
+                    if packed_output is not None:
+                        if name in self._component_indices:
+                            packed_value = packed_output[
+                                self._component_indices[name]
+                            ]
+                        else:
+                            if packed_transient is None:
+                                raise RuntimeError(
+                                    "packed transient storage is unavailable"
+                                )
+                            packed_value = packed_transient[
+                                self._transient_storage_indices[name]
+                            ]
+                        packed_value.copy_(value)
+                        value = packed_value
                     outputs[name] = value
                     spectral_state[name] = value
                     if generation_state is not None:
@@ -1101,7 +1187,9 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
             self._context.abort_representation_generation()
             raise
         values = [outputs[name] for name in self._component_names]
-        if self._performance_recorder is None:
+        if packed_output is not None:
+            packed = packed_output
+        elif self._performance_recorder is None:
             packed = torch.stack(values)
         else:
             with self._performance_recorder.region(
@@ -1347,6 +1435,8 @@ class ExperimentalModelRuntime:
     assembly: LegacyAssemblySpec
     context: ModelExecutionContext
     algebraic_execution_policy: AlgebraicExecutionPolicy
+    algebraic_output_publication_policy: AlgebraicOutputPublicationPolicy
+    projected_batch_assembly_policy: ProjectedBatchAssemblyPolicy
     solver: SpectralSolver
     projector: BasisAwareSpectralProjector
     explicit_rhs_adapter: LegacyExplicitRHSAdapter
@@ -1364,6 +1454,12 @@ class ExperimentalModelRuntime:
             "execution_adapter": "legacy_explicit_rhs",
             "algebraic_execution_policy": (
                 self.algebraic_execution_policy.to_metadata()
+            ),
+            "algebraic_output_publication_policy": (
+                self.algebraic_output_publication_policy.to_metadata()
+            ),
+            "projected_batch_assembly_policy": (
+                self.projected_batch_assembly_policy.to_metadata()
             ),
             "time_integration": {
                 "scheme": "semi_implicit_euler",
@@ -1401,6 +1497,9 @@ class ExperimentalModelRuntime:
                     "stored_in_legacy_fields": False,
                     "checkpointed": False,
                 },
+                "output_publication": (
+                    self.algebraic_output_publication_policy.to_metadata()
+                ),
                 "representation_reuse": {
                     "enabled": (
                         self.algebraic_fields_adapter is not None
@@ -1479,6 +1578,9 @@ class ExperimentalModelRuntime:
                         "ordered_component_names",
                     ],
                     "compiled_plans_retain_tensors": False,
+                    "batch_assembly": (
+                        self.projected_batch_assembly_policy.to_metadata()
+                    ),
                 },
             },
         }
@@ -1500,6 +1602,30 @@ class ExperimentalModelRuntime:
         if self.algebraic_fields_adapter is None:
             return None
         return self.algebraic_fields_adapter.physical_materialization_snapshot()
+
+    def projected_batch_assembly_diagnostics(self) -> Mapping[str, object]:
+        """Return scheduler assembly counters without exposing tensors."""
+
+        if self.algebraic_fields_adapter is None:
+            return MappingProxyType(
+                {
+                    "schema_version": 1,
+                    "enabled": False,
+                    "policy": self.projected_batch_assembly_policy.to_metadata(),
+                    "retained_tensor_references": 0,
+                }
+            )
+        return (
+            self.algebraic_fields_adapter._context.transform_scheduler
+            .batch_assembly_diagnostics()
+        )
+
+    def reset_projected_batch_assembly_diagnostics(self) -> None:
+        """Reset scheduler counters used only by bounded qualifications."""
+
+        if self.algebraic_fields_adapter is not None:
+            self.algebraic_fields_adapter._context.transform_scheduler\
+                .reset_batch_assembly_diagnostics()
 
     def synchronize_algebraic_for_observation(self) -> None:
         """Refresh algebraic fields against the current evolved state.
@@ -1849,6 +1975,10 @@ def build_experimental_model_runtime(
     enable_algebraic_representation_reuse: bool | None = None,
     enable_lazy_algebraic_materialization: bool | None = None,
     enable_batched_physical_islands: bool | None = None,
+    projected_batch_assembly_policy: ProjectedBatchAssemblyPolicy | None = None,
+    algebraic_output_publication_policy: (
+        AlgebraicOutputPublicationPolicy | None
+    ) = None,
 ) -> ExperimentalModelRuntime:
     """Build a canary through the frozen plan and legacy runtime adapter."""
 
@@ -1866,6 +1996,37 @@ def build_experimental_model_runtime(
         ),
         enable_batched_physical_islands=enable_batched_physical_islands,
     )
+    if projected_batch_assembly_policy is None:
+        projected_batch_assembly_policy = (
+            ProjectedBatchAssemblyPolicy.copy_cat()
+        )
+    if not isinstance(
+        projected_batch_assembly_policy,
+        ProjectedBatchAssemblyPolicy,
+    ):
+        raise TypeError(
+            "projected_batch_assembly_policy must be a "
+            "ProjectedBatchAssemblyPolicy or None"
+        )
+    if (
+        projected_batch_assembly_policy.allow_contiguous_storage_view
+        and not execution_policy.batched_physical_islands
+    ):
+        raise ValueError(
+            "contiguous-view batch assembly requires batched physical islands"
+        )
+    if algebraic_output_publication_policy is None:
+        algebraic_output_publication_policy = (
+            AlgebraicOutputPublicationPolicy.deferred_stack()
+        )
+    if not isinstance(
+        algebraic_output_publication_policy,
+        AlgebraicOutputPublicationPolicy,
+    ):
+        raise TypeError(
+            "algebraic_output_publication_policy must be an "
+            "AlgebraicOutputPublicationPolicy or None"
+        )
     if execution_policy.batched_physical_islands and not isinstance(
         model,
         ExplicitRHSPhysicalDependenciesProtocol,
@@ -1934,6 +2095,10 @@ def build_experimental_model_runtime(
         model_context=context,
         spectral_dtype=solver.transform_backend.spectral_dtype,
         execution_policy=execution_policy,
+        batch_assembly_policy=projected_batch_assembly_policy,
+        enable_batch_assembly_diagnostics=(
+            enable_performance_instrumentation
+        ),
         representation_cache=representation_cache,
     )
     physical_island_scheduler = None
@@ -1974,6 +2139,7 @@ def build_experimental_model_runtime(
             spectral_dtype=solver.transform_backend.spectral_dtype,
             device=torch.device(solver.device),
             batch_size=solver.batchsize,
+            output_publication_policy=algebraic_output_publication_policy,
             physical_island_scheduler=physical_island_scheduler,
             performance_recorder=performance_recorder,
         )
@@ -2034,6 +2200,10 @@ def build_experimental_model_runtime(
         assembly=assembly,
         context=context,
         algebraic_execution_policy=execution_policy,
+        algebraic_output_publication_policy=(
+            algebraic_output_publication_policy
+        ),
+        projected_batch_assembly_policy=projected_batch_assembly_policy,
         solver=solver,
         projector=projector,
         explicit_rhs_adapter=explicit_rhs_adapter,

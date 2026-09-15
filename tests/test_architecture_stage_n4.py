@@ -24,6 +24,7 @@ from pssolver.core import (
 from pssolver.execution import (
     AlgebraicExecutionMode,
     AlgebraicExecutionPolicy,
+    AlgebraicOutputPublicationPolicy,
     IncompressibleStokesSystemSpec,
     TangentialZeroModePolicy,
     resolve_algebraic_execution_policy,
@@ -32,6 +33,7 @@ from pssolver.experimental import (
     BoundarySignatureTransformScheduler,
     CompiledProjectedTransformPlan,
     PlaneBerisEdwardsSolverOptions,
+    ProjectedBatchAssemblyPolicy,
     ProjectedTransformDirection,
     build_experimental_model_runtime,
     create_beris_edwards_plane_geometry_solver_registry,
@@ -51,7 +53,13 @@ N = HomogeneousNeumannBC()
 PROJECT_ROOT = Path(__file__).parents[1]
 
 
-def _runtime(*, unified_policy: bool, batch_size: int = 1):
+def _runtime(
+    *,
+    unified_policy: bool,
+    batch_size: int = 1,
+    batch_assembly_policy: ProjectedBatchAssemblyPolicy | None = None,
+    output_publication_policy: AlgebraicOutputPublicationPolicy | None = None,
+):
     even = BoundarySet((P, P, N))
     odd = BoundarySet((P, P, HomogeneousDirichletBC()))
     constitutive = BerisEdwardsConstitutiveStokesCanaryModel(
@@ -110,6 +118,10 @@ def _runtime(*, unified_policy: bool, batch_size: int = 1):
     if unified_policy:
         options["algebraic_execution_policy"] = (
             AlgebraicExecutionPolicy.batched()
+        )
+        options["projected_batch_assembly_policy"] = batch_assembly_policy
+        options["algebraic_output_publication_policy"] = (
+            output_publication_policy
         )
     else:
         options.update(
@@ -311,6 +323,10 @@ def test_unified_policy_is_identical_to_the_frozen_stage_n3_adapter():
     assert metadata["algebraic_execution_policy"]["mode"] == (
         "batched_physical_islands"
     )
+    assert metadata["algebraic_output_publication_policy"]["mode"] == (
+        "deferred_stack"
+    )
+    assert metadata["projected_batch_assembly_policy"]["mode"] == "copy_cat"
     scheduler = metadata["algebraic_lifecycle"]["materialization_scheduler"]
     assert scheduler["lifecycle_owner"] == "algebraic_generation_state"
     assert "boundary_signature" in scheduler["grouping_key_fields"]
@@ -352,6 +368,51 @@ def test_runtime_reuses_one_compiled_scheduler_across_generations():
     assert compiled_after_first_step > 0
     runtime.solver.run(2)
     assert scheduler.compiled_plan_count == compiled_after_first_step
+
+
+def test_contiguous_view_batch_assembly_preserves_complete_cpu_timestep():
+    control = _runtime(unified_policy=True)
+    candidate = _runtime(
+        unified_policy=True,
+        batch_assembly_policy=(
+            ProjectedBatchAssemblyPolicy.contiguous_storage_view()
+        ),
+        output_publication_policy=(
+            AlgebraicOutputPublicationPolicy.preallocated()
+        ),
+    )
+    control.solver.run(3)
+    candidate.solver.run(3)
+    assert torch.equal(
+        candidate.solver.fields.spatial,
+        control.solver.fields.spatial,
+    )
+    assert torch.equal(
+        candidate.solver.fields.spectral,
+        control.solver.fields.spectral,
+    )
+    metadata = candidate.to_metadata()
+    assert metadata["projected_batch_assembly_policy"]["mode"] == (
+        "contiguous_storage_view"
+    )
+    diagnostics = candidate.projected_batch_assembly_diagnostics()
+    assert diagnostics["retained_tensor_references"] == 0
+    assert diagnostics["contiguous_view_batches"] > 0
+    generation = candidate.algebraic_fields_adapter._generation_state
+    assert generation is not None
+    stored = generation._spectral["ux"]
+    transient = generation._spectral["Hxx"]
+    assert stored.untyped_storage().data_ptr() != (
+        transient.untyped_storage().data_ptr()
+    )
+    assert stored.untyped_storage().nbytes() == (
+        4 * stored.numel() * stored.element_size()
+    )
+    assert transient.untyped_storage().nbytes() == (
+        len(candidate.assembly.omitted_transient_components)
+        * transient.numel()
+        * transient.element_size()
+    )
 
 
 def test_stage_n4_remains_outside_production_and_generic_solver_paths():

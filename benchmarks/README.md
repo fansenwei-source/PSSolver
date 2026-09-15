@@ -81,3 +81,17 @@ nsys profile --trace=cuda,nvtx,osrt \
 
 Keep the `.nsys-rep` and any exported tables outside scientific run
 directories. The capture runner does not save Q, velocity, or pressure arrays.
+
+## Stage O.4.3 packed-publication qualification
+
+`profile_plane_stage_o43.py` compares the frozen separated-canary storage path
+with an opt-in preallocated algebraic-publication layout. The candidate lets
+the boundary scheduler replace only provably contiguous `torch.cat` batches
+with zero-copy views; every other batch uses the historical copy fallback.
+
+Generate the exact bounded H100 command contract with
+`scripts_plane/plan_plane_stage_o43_qualification.py`. The plan requires the
+closed Stage O.4.2 accounting report, immutable R128/R320 production
+references, a 100-step numerical comparison, and three balanced profile trials
+per role and resolution. An `A_recommended` result authorizes only a later
+architecture decision and never changes a production default.

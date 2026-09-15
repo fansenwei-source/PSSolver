@@ -28,6 +28,8 @@ from .dispatch import (
 from .policy import (
     AlgebraicExecutionMode,
     AlgebraicExecutionPolicy,
+    AlgebraicOutputPublicationMode,
+    AlgebraicOutputPublicationPolicy,
     resolve_algebraic_execution_policy,
 )
 from .stokes import (
@@ -41,6 +43,8 @@ __all__ = [
     "AlgebraicExecutableModelProtocol",
     "AlgebraicExecutionMode",
     "AlgebraicExecutionPolicy",
+    "AlgebraicOutputPublicationMode",
+    "AlgebraicOutputPublicationPolicy",
     "AlgebraicDependencyEdge",
     "AlgebraicExecutionPlan",
     "AlgebraicRuntimeRestartState",

@@ -1,0 +1,681 @@
+"""Stage O.4.3 packed-publication and zero-copy assembly qualification."""
+
+from __future__ import annotations
+
+import argparse
+from collections.abc import Mapping, Sequence
+import hashlib
+import json
+import math
+from pathlib import Path
+import statistics
+
+import numpy as np
+import torch
+
+from pssolver.diagnostics import cuda_memory_snapshot, cuda_memory_window
+from pssolver.execution import (
+    AlgebraicExecutionPolicy,
+    AlgebraicOutputPublicationPolicy,
+)
+
+from .h100_shadow_qualification import (
+    _cuda_identity,
+    _cuda_step_samples,
+    _require_positive_integer,
+    _timing_summary,
+    _write_new_json,
+)
+from .plane_shadow_driver import (
+    build_h100_plane_shadow_runtime_from_production_metadata,
+    load_h100_production_plane_reference,
+)
+from .projected_scheduler import ProjectedBatchAssemblyPolicy
+from .shadow_run import ExperimentalPlaneShadowRun
+from .stage_n1_qualification import _load_json
+from .stage_n4_qualification import _initial_values
+from .stage_o4_qualification import _sha256
+
+
+STAGE_O43_PROFILE_TRIALS = 3
+STAGE_O43_DIAGNOSTIC_SHAPE = (128, 128, 32)
+STAGE_O43_DECISION_SHAPE = (320, 320, 80)
+STAGE_O43_TRAJECTORY_STEPS = 100
+STAGE_O43_RELATIVE_L2_TOLERANCE = 1.0e-10
+STAGE_O43_MAXIMUM_MEAN_TIMESTEP_RATIO = 0.98
+STAGE_O43_MAXIMUM_PAIRED_TIMESTEP_RATIO = 1.02
+STAGE_O43_MAXIMUM_MEMORY_RATIO = 1.03
+
+_ROLES = ("baseline", "candidate")
+_FIELDS = ("Q", "u", "p")
+
+
+def _require_role(role: str) -> str:
+    if role not in _ROLES:
+        raise ValueError("role must be 'baseline' or 'candidate'")
+    return role
+
+
+def _policies(role: str):
+    role = _require_role(role)
+    if role == "baseline":
+        return (
+            AlgebraicOutputPublicationPolicy.deferred_stack(),
+            ProjectedBatchAssemblyPolicy.copy_cat(),
+        )
+    return (
+        AlgebraicOutputPublicationPolicy.preallocated(),
+        ProjectedBatchAssemblyPolicy.contiguous_storage_view(),
+    )
+
+
+def _build_runtime(
+    reference,
+    *,
+    role: str,
+    expected_gpu_name: str,
+    device: torch.device,
+    instrument: bool,
+):
+    output_policy, batch_policy = _policies(role)
+    return build_h100_plane_shadow_runtime_from_production_metadata(
+        reference.metadata,
+        expected_gpu_name=expected_gpu_name,
+        device=device,
+        enable_performance_instrumentation=instrument,
+        algebraic_execution_policy=AlgebraicExecutionPolicy.batched(),
+        algebraic_output_publication_policy=output_policy,
+        projected_batch_assembly_policy=batch_policy,
+    )
+
+
+def profile_stage_o43_h100_runtime(
+    production_directory: str | Path,
+    *,
+    role: str,
+    warmup_steps: int = 10,
+    profile_steps: int = 20,
+    expected_gpu_name: str = "H100",
+) -> dict[str, object]:
+    """Profile one policy while retaining only scalar diagnostics."""
+
+    role = _require_role(role)
+    _require_positive_integer(warmup_steps, "warmup_steps")
+    _require_positive_integer(profile_steps, "profile_steps")
+    reference = load_h100_production_plane_reference(
+        production_directory,
+        expected_gpu_name=expected_gpu_name,
+    )
+    device = torch.device("cuda")
+    environment = _cuda_identity(
+        expected_gpu_name=expected_gpu_name,
+        device=device,
+    )
+    runtime, comparison = _build_runtime(
+        reference,
+        role=role,
+        expected_gpu_name=expected_gpu_name,
+        device=device,
+        instrument=True,
+    )
+    runtime.reset(_initial_values(reference, device))
+    _cuda_step_samples(runtime, warmup_steps)
+    torch.cuda.synchronize(device)
+    start_memory = cuda_memory_snapshot(device)
+    torch.cuda.reset_peak_memory_stats(device)
+    recorder = runtime.performance_recorder
+    if recorder is None:
+        raise RuntimeError("Stage O.4.3 profile lacks instrumentation")
+    recorder.reset()
+    runtime.reset_projected_batch_assembly_diagnostics()
+    samples = _cuda_step_samples(runtime, profile_steps)
+    end_memory = cuda_memory_snapshot(device)
+    peak_memory = cuda_memory_snapshot(device)
+    memory = cuda_memory_window(start_memory, end_memory, peak_memory)
+    regions = recorder.snapshot()["regions"]
+    assembly = dict(runtime.projected_batch_assembly_diagnostics())
+    fields = runtime.solver.fields
+    finite = bool(torch.isfinite(fields.spatial).all().item()) and bool(
+        torch.isfinite(fields.spectral).all().item()
+    )
+    if not finite:
+        raise RuntimeError("Stage O.4.3 profile ended with non-finite fields")
+    signature = comparison.production_signature
+    return {
+        "schema_version": 1,
+        "qualification_stage": "O.4.3",
+        "classification": "PROFILE_COMPLETE",
+        "measurement_role": role,
+        "production_default_changed": False,
+        "production_metadata_sha256": reference.metadata_sha256,
+        "production_initial_q_sha256": reference.initial_q_file_sha256,
+        "configuration": {
+            "shape": signature["solver"]["shape"],
+            "lengths": signature["solver"]["lengths"],
+            "dtype": signature["solver"]["real_dtype"],
+            "dt": signature["solver"]["dt"],
+            "dealias_rule": signature["numerics"]["dealias_rule"],
+            "projected_transform_execution": signature["numerics"][
+                "projected_transform_execution"
+            ],
+            "spectral_storage": signature["solver"]["spectral_storage"],
+            "spectral_refresh_interval": signature["numerics"][
+                "spectral_refresh_interval_steps"
+            ],
+            "warmup_steps": warmup_steps,
+            "profile_steps": profile_steps,
+        },
+        "configuration_comparison": comparison.to_metadata(),
+        "algebraic_execution_policy": (
+            runtime.algebraic_execution_policy.to_metadata()
+        ),
+        "algebraic_output_publication_policy": (
+            runtime.algebraic_output_publication_policy.to_metadata()
+        ),
+        "projected_batch_assembly_policy": (
+            runtime.projected_batch_assembly_policy.to_metadata()
+        ),
+        "batch_assembly_diagnostics": assembly,
+        "throughput": _timing_summary(samples),
+        "memory": memory,
+        "semantic_regions": regions,
+        "environment": environment,
+        "finite": True,
+    }
+
+
+def run_stage_o43_h100_trajectory(
+    production_directory: str | Path,
+    output_directory: str | Path,
+    *,
+    role: str,
+    confirmed_steps: int = STAGE_O43_TRAJECTORY_STEPS,
+    expected_gpu_name: str = "H100",
+) -> dict[str, object]:
+    """Run one bounded trajectory from an immutable production Q0."""
+
+    role = _require_role(role)
+    _require_positive_integer(confirmed_steps, "confirmed_steps")
+    if confirmed_steps != STAGE_O43_TRAJECTORY_STEPS:
+        raise ValueError("Stage O.4.3 trajectory must contain exactly 100 steps")
+    reference = load_h100_production_plane_reference(
+        production_directory,
+        expected_gpu_name=expected_gpu_name,
+    )
+    device = torch.device("cuda")
+    environment = _cuda_identity(
+        expected_gpu_name=expected_gpu_name,
+        device=device,
+    )
+    runtime, comparison = _build_runtime(
+        reference,
+        role=role,
+        expected_gpu_name=expected_gpu_name,
+        device=device,
+        instrument=False,
+    )
+    run = ExperimentalPlaneShadowRun(
+        runtime,
+        output_directory,
+        initial_values=_initial_values(reference, device),
+        initial_condition_metadata={
+            "name": "production_projected_q_snapshot",
+            "source_run_directory": str(reference.directory),
+            "source_step": 0,
+            "source_metadata_sha256": reference.metadata_sha256,
+            "source_q_file": reference.initial_q_path.name,
+            "source_q_file_sha256": reference.initial_q_file_sha256,
+            "source_projected_q_sha256": reference.metadata[
+                "initial_condition"
+            ]["projected_q_sha256"],
+            "configuration_comparison": comparison.to_metadata(),
+            "qualification_stage": "O.4.3",
+            "measurement_role": role,
+        },
+    )
+    saved_steps = [run.save_observation().step]
+    run.advance(confirmed_steps)
+    saved_steps.append(run.save_observation().step)
+    final = run.complete()
+    result = {
+        "schema_version": 1,
+        "qualification_stage": "O.4.3",
+        "classification": "TRAJECTORY_COMPLETE",
+        "measurement_role": role,
+        "production_default_changed": False,
+        "production_directory": str(reference.directory),
+        "trajectory_directory": str(run.output_directory),
+        "production_metadata_sha256": reference.metadata_sha256,
+        "production_initial_q_sha256": reference.initial_q_file_sha256,
+        "completed_steps": final.step,
+        "saved_steps": saved_steps,
+        "algebraic_output_publication_policy": (
+            runtime.algebraic_output_publication_policy.to_metadata()
+        ),
+        "projected_batch_assembly_policy": (
+            runtime.projected_batch_assembly_policy.to_metadata()
+        ),
+        "environment": environment,
+    }
+    _write_new_json(run.output_directory / "stage_o43_metrics.json", result)
+    return result
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _array_comparison(
+    baseline: Path,
+    candidate: Path,
+    *,
+    field: str,
+    step: int,
+) -> dict[str, object]:
+    baseline_array = np.load(baseline, allow_pickle=False)
+    candidate_array = np.load(candidate, allow_pickle=False)
+    if (
+        baseline_array.shape != candidate_array.shape
+        or baseline_array.dtype != candidate_array.dtype
+    ):
+        raise ValueError("Stage O.4.3 trajectory array identity differs")
+    if not np.isfinite(baseline_array).all() or not np.isfinite(
+        candidate_array
+    ).all():
+        raise ValueError("Stage O.4.3 trajectory contains NaN or Inf")
+    difference = candidate_array - baseline_array
+    if field == "p":
+        axes = tuple(range(baseline_array.ndim))
+        baseline_gate = baseline_array - baseline_array.mean(axis=axes)
+        candidate_gate = candidate_array - candidate_array.mean(axis=axes)
+        difference_gate = candidate_gate - baseline_gate
+    else:
+        baseline_gate = baseline_array
+        difference_gate = difference
+    denominator = float(np.linalg.norm(baseline_gate.ravel()))
+    numerator = float(np.linalg.norm(difference_gate.ravel()))
+    relative_l2 = numerator / denominator if denominator else numerator
+    return {
+        "field": field,
+        "step": step,
+        "shape": list(baseline_array.shape),
+        "dtype": str(baseline_array.dtype),
+        "baseline_sha256": _file_sha256(baseline),
+        "candidate_sha256": _file_sha256(candidate),
+        "byte_identical": _file_sha256(baseline) == _file_sha256(candidate),
+        "relative_l2": relative_l2,
+        "linf": float(np.max(np.abs(difference_gate))),
+        "pressure_demeaned": field == "p",
+    }
+
+
+def _mean(values: Sequence[float]) -> float:
+    return math.fsum(values) / len(values)
+
+
+def analyze_stage_o43_qualification(
+    baseline_trajectory: str | Path,
+    candidate_trajectory: str | Path,
+    baseline_r128_profiles: Sequence[str | Path],
+    candidate_r128_profiles: Sequence[str | Path],
+    baseline_r320_profiles: Sequence[str | Path],
+    candidate_r320_profiles: Sequence[str | Path],
+    *,
+    stage_o42_report: str | Path,
+    expected_stage_o42_sha256: str,
+    expected_gpu_name: str = "H100",
+) -> dict[str, object]:
+    """Apply numerical, structural, timing, and memory gates."""
+
+    evidence_path = Path(stage_o42_report).expanduser().resolve()
+    if _sha256(evidence_path) != expected_stage_o42_sha256:
+        raise ValueError("Stage O.4.2 evidence SHA-256 differs")
+    evidence = _load_json(evidence_path, "Stage O.4.2 evidence")
+    if not (
+        evidence.get("qualification_stage") == "O.4.2"
+        and evidence.get("classification") == "DIAGNOSTIC_COMPLETE"
+        and evidence.get("accounting_ready_for_optimization") is True
+        and evidence.get("eligible_for_stage_o43_optimization_design") is True
+        and evidence.get("production_default_changed") is False
+    ):
+        raise ValueError("Stage O.4.2 accounting gate is not closed")
+
+    trajectory_dirs = {
+        "baseline": Path(baseline_trajectory).expanduser().resolve(),
+        "candidate": Path(candidate_trajectory).expanduser().resolve(),
+    }
+    metrics = {}
+    for role, directory in trajectory_dirs.items():
+        if not directory.is_dir() or not (directory / "COMPLETE").is_file():
+            raise ValueError(f"{role} trajectory is incomplete")
+        metric = _load_json(
+            directory / "stage_o43_metrics.json",
+            f"{role} trajectory metrics",
+        )
+        if not (
+            metric.get("qualification_stage") == "O.4.3"
+            and metric.get("classification") == "TRAJECTORY_COMPLETE"
+            and metric.get("measurement_role") == role
+            and metric.get("completed_steps") == STAGE_O43_TRAJECTORY_STEPS
+            and metric.get("saved_steps") == [0, STAGE_O43_TRAJECTORY_STEPS]
+            and metric.get("production_default_changed") is False
+        ):
+            raise ValueError(f"{role} trajectory contract differs")
+        metrics[role] = metric
+    input_identities = {
+        (
+            value["production_metadata_sha256"],
+            value["production_initial_q_sha256"],
+        )
+        for value in metrics.values()
+    }
+    if len(input_identities) != 1:
+        raise ValueError("Stage O.4.3 trajectory inputs differ")
+    arrays = [
+        _array_comparison(
+            trajectory_dirs["baseline"] / f"{field}_{step}.npy",
+            trajectory_dirs["candidate"] / f"{field}_{step}.npy",
+            field=field,
+            step=step,
+        )
+        for step in (0, STAGE_O43_TRAJECTORY_STEPS)
+        for field in _FIELDS
+    ]
+    numerical_maximum = max(float(value["relative_l2"]) for value in arrays)
+    q0_identical = next(
+        value["byte_identical"]
+        for value in arrays
+        if value["field"] == "Q" and value["step"] == 0
+    )
+
+    profile_groups = {
+        ("r128", "baseline"): baseline_r128_profiles,
+        ("r128", "candidate"): candidate_r128_profiles,
+        ("r320", "baseline"): baseline_r320_profiles,
+        ("r320", "candidate"): candidate_r320_profiles,
+    }
+    profiles: dict[tuple[str, str], list[dict[str, object]]] = {}
+    expected_shapes = {
+        "r128": STAGE_O43_DIAGNOSTIC_SHAPE,
+        "r320": STAGE_O43_DECISION_SHAPE,
+    }
+    for (scale, role), raw_paths in profile_groups.items():
+        paths = tuple(Path(path).expanduser().resolve() for path in raw_paths)
+        if len(paths) != STAGE_O43_PROFILE_TRIALS:
+            raise ValueError("Stage O.4.3 requires three profiles per role/scale")
+        loaded = [_load_json(path, f"{scale} {role} profile") for path in paths]
+        for profile in loaded:
+            try:
+                expected_output_mode = (
+                    "deferred_stack"
+                    if role == "baseline"
+                    else "preallocated_packed"
+                )
+                expected_batch_mode = (
+                    "copy_cat"
+                    if role == "baseline"
+                    else "contiguous_storage_view"
+                )
+                valid = (
+                    profile["qualification_stage"] == "O.4.3"
+                    and profile["classification"] == "PROFILE_COMPLETE"
+                    and profile["measurement_role"] == role
+                    and tuple(profile["configuration"]["shape"])
+                    == expected_shapes[scale]
+                    and profile["configuration"]["warmup_steps"] == 10
+                    and profile["configuration"]["profile_steps"] == 20
+                    and profile["finite"] is True
+                    and profile["production_default_changed"] is False
+                    and expected_gpu_name.lower()
+                    in profile["environment"]["device_name"].lower()
+                    and profile["environment"]["cuda_matmul_allow_tf32"]
+                    is False
+                    and profile["algebraic_output_publication_policy"]["mode"]
+                    == expected_output_mode
+                    and profile["projected_batch_assembly_policy"]["mode"]
+                    == expected_batch_mode
+                )
+            except (KeyError, TypeError):
+                valid = False
+            if not valid:
+                raise ValueError(f"{scale} {role} profile contract differs")
+        profiles[(scale, role)] = loaded
+
+    profile_inputs = {
+        (
+            profile["production_metadata_sha256"],
+            profile["production_initial_q_sha256"],
+        )
+        for loaded in profiles.values()
+        for profile in loaded
+    }
+    if len(profile_inputs) != 2:
+        raise ValueError("Stage O.4.3 requires one input per resolution")
+    trajectory_identity = next(iter(input_identities))
+    r128_profile_identities = {
+        (
+            profile["production_metadata_sha256"],
+            profile["production_initial_q_sha256"],
+        )
+        for role in _ROLES
+        for profile in profiles[("r128", role)]
+    }
+    if r128_profile_identities != {trajectory_identity}:
+        raise ValueError("trajectory and R128 profile inputs differ")
+
+    scales = {}
+    for scale in expected_shapes:
+        baseline = profiles[(scale, "baseline")]
+        candidate = profiles[(scale, "candidate")]
+        baseline_times = [
+            float(value["throughput"]["mean_timestep_seconds"])
+            for value in baseline
+        ]
+        candidate_times = [
+            float(value["throughput"]["mean_timestep_seconds"])
+            for value in candidate
+        ]
+        paired = [
+            candidate_value / baseline_value
+            for baseline_value, candidate_value in zip(
+                baseline_times,
+                candidate_times,
+                strict=True,
+            )
+        ]
+        baseline_peak = max(
+            int(value["memory"]["peak_allocated_bytes"])
+            for value in baseline
+        )
+        candidate_peak = max(
+            int(value["memory"]["peak_allocated_bytes"])
+            for value in candidate
+        )
+        scales[scale] = {
+            "baseline_mean_timestep_seconds": _mean(baseline_times),
+            "candidate_mean_timestep_seconds": _mean(candidate_times),
+            "mean_timestep_ratio_candidate_over_baseline": (
+                _mean(candidate_times) / _mean(baseline_times)
+            ),
+            "paired_timestep_ratios": paired,
+            "paired_candidate_faster_count": sum(value < 1.0 for value in paired),
+            "baseline_peak_allocated_bytes": baseline_peak,
+            "candidate_peak_allocated_bytes": candidate_peak,
+            "peak_allocated_ratio_candidate_over_baseline": (
+                candidate_peak / baseline_peak
+            ),
+        }
+
+    baseline_assembly = profiles[("r320", "baseline")][0][
+        "batch_assembly_diagnostics"
+    ]
+    candidate_assemblies = [
+        value["batch_assembly_diagnostics"]
+        for value in profiles[("r320", "candidate")]
+    ]
+    structural_gate = bool(
+        baseline_assembly["policy"]["mode"] == "copy_cat"
+        and baseline_assembly["contiguous_view_batches"] == 0
+        and all(
+            value["policy"]["mode"] == "contiguous_storage_view"
+            and value["contiguous_view_batches"] > 0
+            and value["copy_cat_batches"] < baseline_assembly["copy_cat_batches"]
+            and value["retained_tensor_references"] == 0
+            for value in candidate_assemblies
+        )
+    )
+    numerical_gate = bool(
+        q0_identical
+        and numerical_maximum <= STAGE_O43_RELATIVE_L2_TOLERANCE
+    )
+    decision = scales["r320"]
+    performance_gate = bool(
+        decision["mean_timestep_ratio_candidate_over_baseline"]
+        <= STAGE_O43_MAXIMUM_MEAN_TIMESTEP_RATIO
+        and max(decision["paired_timestep_ratios"])
+        <= STAGE_O43_MAXIMUM_PAIRED_TIMESTEP_RATIO
+        and decision["paired_candidate_faster_count"] >= 2
+    )
+    memory_gate = bool(
+        decision["peak_allocated_ratio_candidate_over_baseline"]
+        <= STAGE_O43_MAXIMUM_MEMORY_RATIO
+    )
+    safety_gate = bool(
+        decision["mean_timestep_ratio_candidate_over_baseline"] <= 1.03
+        and decision["peak_allocated_ratio_candidate_over_baseline"] <= 1.10
+    )
+    if not (numerical_gate and structural_gate and safety_gate):
+        classification = "C_rejected"
+    elif performance_gate and memory_gate:
+        classification = "A_recommended"
+    else:
+        classification = "B_neutral"
+    return {
+        "schema_version": 1,
+        "qualification_stage": "O.4.3",
+        "classification": classification,
+        "architecture_decision": "packed_generation_storage_with_safe_views",
+        "eligible_for_stage_o44_decision": classification == "A_recommended",
+        "eligible_for_production_promotion": False,
+        "production_default_changed": False,
+        "stage_o42_evidence": {
+            "path": str(evidence_path),
+            "sha256": expected_stage_o42_sha256,
+        },
+        "trajectory": {
+            "steps": STAGE_O43_TRAJECTORY_STEPS,
+            "relative_l2_tolerance": STAGE_O43_RELATIVE_L2_TOLERANCE,
+            "maximum_relative_l2": numerical_maximum,
+            "q0_byte_identical": q0_identical,
+            "arrays": arrays,
+        },
+        "scales": scales,
+        "gates": {
+            "numerical_equivalence": numerical_gate,
+            "zero_copy_batch_assembly_exercised": structural_gate,
+            "r320_performance_improvement": performance_gate,
+            "r320_memory_non_regression": memory_gate,
+            "candidate_safety_non_regression": safety_gate,
+        },
+        "thresholds": {
+            "maximum_mean_timestep_ratio": (
+                STAGE_O43_MAXIMUM_MEAN_TIMESTEP_RATIO
+            ),
+            "maximum_paired_timestep_ratio": (
+                STAGE_O43_MAXIMUM_PAIRED_TIMESTEP_RATIO
+            ),
+            "maximum_memory_ratio": STAGE_O43_MAXIMUM_MEMORY_RATIO,
+        },
+    }
+
+
+def profile_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Profile Stage O.4.3 on H100")
+    parser.add_argument("--production-reference-dir", type=Path, required=True)
+    parser.add_argument("--role", choices=_ROLES, required=True)
+    parser.add_argument("--warmup-steps", type=int, default=10)
+    parser.add_argument("--profile-steps", type=int, default=20)
+    parser.add_argument("--expected-gpu-name", default="H100")
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args(argv)
+    report = profile_stage_o43_h100_runtime(
+        args.production_reference_dir,
+        role=args.role,
+        warmup_steps=args.warmup_steps,
+        profile_steps=args.profile_steps,
+        expected_gpu_name=args.expected_gpu_name,
+    )
+    _write_new_json(args.output, report)
+    print(json.dumps(report, allow_nan=False, indent=2, sort_keys=True))
+    return 0
+
+
+def trajectory_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Run Stage O.4.3 trajectory")
+    parser.add_argument("--production-reference-dir", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--role", choices=_ROLES, required=True)
+    parser.add_argument("--confirm-steps", type=int, default=100)
+    parser.add_argument("--expected-gpu-name", default="H100")
+    args = parser.parse_args(argv)
+    report = run_stage_o43_h100_trajectory(
+        args.production_reference_dir,
+        args.output_dir,
+        role=args.role,
+        confirmed_steps=args.confirm_steps,
+        expected_gpu_name=args.expected_gpu_name,
+    )
+    print(json.dumps(report, allow_nan=False, indent=2, sort_keys=True))
+    return 0
+
+
+def analysis_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Analyze Stage O.4.3")
+    parser.add_argument("--baseline-trajectory", type=Path, required=True)
+    parser.add_argument("--candidate-trajectory", type=Path, required=True)
+    for scale in ("r128", "r320"):
+        for role in _ROLES:
+            parser.add_argument(
+                f"--{role}-{scale}-profile",
+                type=Path,
+                action="append",
+                required=True,
+            )
+    parser.add_argument("--stage-o42-report", type=Path, required=True)
+    parser.add_argument("--expected-stage-o42-sha256", required=True)
+    parser.add_argument("--expected-gpu-name", default="H100")
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args(argv)
+    report = analyze_stage_o43_qualification(
+        args.baseline_trajectory,
+        args.candidate_trajectory,
+        args.baseline_r128_profile,
+        args.candidate_r128_profile,
+        args.baseline_r320_profile,
+        args.candidate_r320_profile,
+        stage_o42_report=args.stage_o42_report,
+        expected_stage_o42_sha256=args.expected_stage_o42_sha256,
+        expected_gpu_name=args.expected_gpu_name,
+    )
+    _write_new_json(args.output, report)
+    print(json.dumps(report, allow_nan=False, indent=2, sort_keys=True))
+    return 0 if report["classification"] == "A_recommended" else 1
+
+
+__all__ = [
+    "STAGE_O43_DECISION_SHAPE",
+    "STAGE_O43_DIAGNOSTIC_SHAPE",
+    "STAGE_O43_PROFILE_TRIALS",
+    "STAGE_O43_RELATIVE_L2_TOLERANCE",
+    "STAGE_O43_TRAJECTORY_STEPS",
+    "analyze_stage_o43_qualification",
+    "analysis_main",
+    "profile_main",
+    "profile_stage_o43_h100_runtime",
+    "run_stage_o43_h100_trajectory",
+    "trajectory_main",
+]
