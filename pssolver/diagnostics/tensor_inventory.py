@@ -8,9 +8,11 @@ their backing storage is counted once.
 
 from __future__ import annotations
 
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Mapping
 from dataclasses import fields, is_dataclass
+import hashlib
+import json
 import types
 from typing import Any
 
@@ -330,4 +332,262 @@ def build_tensor_inventory(
     }
 
 
-__all__ = ["build_tensor_inventory"]
+def _canonical_sha256(value: object) -> str:
+    payload = json.dumps(
+        value,
+        allow_nan=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _storage_identity_records(
+    inventory: Mapping[str, object],
+) -> list[dict[str, object]]:
+    return sorted(
+        (
+            {
+                "device": storage["device"],
+                "data_ptr": storage["data_ptr"],
+                "storage_bytes": storage["storage_bytes"],
+                "source_storage_ranges": storage["source_storage_ranges"],
+            }
+            for storage in inventory["storages"]
+        ),
+        key=lambda item: (
+            str(item["device"]),
+            int(item["data_ptr"]),
+            int(item["storage_bytes"]),
+        ),
+    )
+
+
+def _storage_owner_records(
+    inventory: Mapping[str, object],
+) -> list[dict[str, object]]:
+    records = []
+    for storage in inventory["storages"]:
+        identity = {
+            "device": storage["device"],
+            "data_ptr": storage["data_ptr"],
+            "storage_bytes": storage["storage_bytes"],
+        }
+        records.extend(
+            {**identity, "path": path}
+            for path in storage["paths"]
+        )
+    return sorted(
+        records,
+        key=lambda item: (
+            str(item["device"]),
+            int(item["data_ptr"]),
+            int(item["storage_bytes"]),
+            str(item["path"]),
+        ),
+    )
+
+
+def _storage_multiplicity_records(
+    inventory: Mapping[str, object],
+) -> list[dict[str, object]]:
+    return sorted(
+        (
+            {
+                "device": storage["device"],
+                "data_ptr": storage["data_ptr"],
+                "storage_bytes": storage["storage_bytes"],
+                "tensor_references": storage["tensor_references"],
+            }
+            for storage in inventory["storages"]
+        ),
+        key=lambda item: (
+            str(item["device"]),
+            int(item["data_ptr"]),
+            int(item["storage_bytes"]),
+        ),
+    )
+
+
+def _counter_diff(
+    before: list[dict[str, object]],
+    after: list[dict[str, object]],
+) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
+    before_by_json = Counter(
+        json.dumps(item, allow_nan=False, separators=(",", ":"), sort_keys=True)
+        for item in before
+    )
+    after_by_json = Counter(
+        json.dumps(item, allow_nan=False, separators=(",", ":"), sort_keys=True)
+        for item in after
+    )
+
+    def expand(counter: Counter[str]) -> list[dict[str, object]]:
+        return [
+            json.loads(serialized)
+            for serialized in sorted(counter)
+            for _ in range(counter[serialized])
+        ]
+
+    return expand(after_by_json - before_by_json), expand(
+        before_by_json - after_by_json
+    )
+
+
+def compare_tensor_inventories(
+    before: Mapping[str, object],
+    after: Mapping[str, object],
+    *,
+    maximum_reported_differences: int = 1024,
+) -> dict[str, object]:
+    """Compare two bounded inventories without conflating storage and aliases.
+
+    CUDA storage addresses are meaningful only inside the process that produced
+    the two inventories.  The returned hashes are therefore evidence for a
+    repeated observation in one diagnostic phase, not portable object IDs.
+    """
+
+    if maximum_reported_differences <= 0:
+        raise ValueError("maximum_reported_differences must be positive")
+    for label, inventory in (("before", before), ("after", after)):
+        if inventory.get("schema_version") != 1:
+            raise ValueError(f"{label} inventory schema is unsupported")
+        if inventory.get("truncated") is not False:
+            raise ValueError(f"{label} inventory is truncated")
+        if inventory.get("all_storages_reported") is not True:
+            raise ValueError(f"{label} inventory omits storage records")
+
+    before_storage = _storage_identity_records(before)
+    after_storage = _storage_identity_records(after)
+    before_owners = _storage_owner_records(before)
+    after_owners = _storage_owner_records(after)
+    before_multiplicity = _storage_multiplicity_records(before)
+    after_multiplicity = _storage_multiplicity_records(after)
+    before_references = list(before["tensor_references"])
+    after_references = list(after["tensor_references"])
+
+    added_storage, removed_storage = _counter_diff(before_storage, after_storage)
+    added_owners, removed_owners = _counter_diff(before_owners, after_owners)
+    changed_multiplicity_after, changed_multiplicity_before = _counter_diff(
+        before_multiplicity,
+        after_multiplicity,
+    )
+    added_references, removed_references = _counter_diff(
+        before_references,
+        after_references,
+    )
+    full_identical = before == after
+    storage_identity_equal = not added_storage and not removed_storage
+    owner_paths_equal = not added_owners and not removed_owners
+    tensor_references_equal = not added_references and not removed_references
+    transient_cache_only = (
+        not full_identical
+        and storage_identity_equal
+        and not removed_owners
+        and not removed_references
+        and bool(added_references)
+        and all(
+            "transient_cache" in str(item["path"]).lower()
+            for item in added_references
+        )
+        and all(
+            "transient_cache" in str(item["path"]).lower()
+            for item in added_owners
+        )
+    )
+    if full_identical:
+        classification = "identical"
+    elif not storage_identity_equal:
+        classification = "storage_identity_changed"
+    elif transient_cache_only:
+        classification = "transient_cache_reference_expansion"
+    else:
+        classification = "reference_graph_changed_without_storage_change"
+
+    aggregate_fields = (
+        "scope",
+        "device_filter",
+        "visited_object_count",
+        "tensor_reference_count",
+        "unique_storage_count",
+        "logical_tensor_bytes",
+        "unique_storage_bytes",
+        "raw_storage_range_count",
+        "raw_storage_bytes_before_overlap_coalescing",
+        "overlap_collapsed_bytes",
+        "aliased_tensor_reference_count",
+        "exclusive_storage_bytes_by_category",
+        "shared_storage_bytes_by_category",
+        "unique_storage_bytes_by_dtype",
+        "reported_storage_count",
+    )
+    field_differences = {
+        field: {"before": before.get(field), "after": after.get(field)}
+        for field in aggregate_fields
+        if before.get(field) != after.get(field)
+    }
+
+    def bounded(values: list[dict[str, object]]) -> list[dict[str, object]]:
+        return values[:maximum_reported_differences]
+
+    difference_groups = (
+        added_storage,
+        removed_storage,
+        added_owners,
+        removed_owners,
+        changed_multiplicity_after,
+        changed_multiplicity_before,
+        added_references,
+        removed_references,
+    )
+    return {
+        "schema_version": 1,
+        "classification": classification,
+        "full_inventory_identical": full_identical,
+        "unique_storage_identity_equal": storage_identity_equal,
+        "storage_owner_paths_equal": owner_paths_equal,
+        "tensor_references_equal": tensor_references_equal,
+        "transient_cache_reference_expansion_only": transient_cache_only,
+        "before_hashes": {
+            "full_inventory_sha256": _canonical_sha256(before),
+            "unique_storage_identity_sha256": _canonical_sha256(before_storage),
+            "storage_owner_paths_sha256": _canonical_sha256(before_owners),
+            "storage_reference_multiplicity_sha256": _canonical_sha256(
+                before_multiplicity
+            ),
+            "tensor_references_sha256": _canonical_sha256(before_references),
+        },
+        "after_hashes": {
+            "full_inventory_sha256": _canonical_sha256(after),
+            "unique_storage_identity_sha256": _canonical_sha256(after_storage),
+            "storage_owner_paths_sha256": _canonical_sha256(after_owners),
+            "storage_reference_multiplicity_sha256": _canonical_sha256(
+                after_multiplicity
+            ),
+            "tensor_references_sha256": _canonical_sha256(after_references),
+        },
+        "field_differences": field_differences,
+        "added_storage_identity_count": len(added_storage),
+        "removed_storage_identity_count": len(removed_storage),
+        "added_storage_owner_path_count": len(added_owners),
+        "removed_storage_owner_path_count": len(removed_owners),
+        "changed_storage_multiplicity_count": len(changed_multiplicity_after),
+        "added_tensor_reference_count": len(added_references),
+        "removed_tensor_reference_count": len(removed_references),
+        "added_storage_identities": bounded(added_storage),
+        "removed_storage_identities": bounded(removed_storage),
+        "added_storage_owner_paths": bounded(added_owners),
+        "removed_storage_owner_paths": bounded(removed_owners),
+        "storage_multiplicity_before": bounded(changed_multiplicity_before),
+        "storage_multiplicity_after": bounded(changed_multiplicity_after),
+        "added_tensor_references": bounded(added_references),
+        "removed_tensor_references": bounded(removed_references),
+        "all_differences_reported": all(
+            len(values) <= maximum_reported_differences
+            for values in difference_groups
+        ),
+        "maximum_reported_differences": maximum_reported_differences,
+    }
+
+
+__all__ = ["build_tensor_inventory", "compare_tensor_inventories"]

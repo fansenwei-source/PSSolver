@@ -37,9 +37,20 @@ authorize an optimization.
 The storage-identity query itself may materialize allocator bookkeeping for
 already reachable transient tensors. Each phase therefore performs one
 discarded, unmeasured priming inventory before its formal baseline. The second
-inventory must be identical to the priming inventory, while all post-priming
-allocator samples must remain stable. Priming deltas are preserved as evidence
-instead of being folded into runtime-residency comparisons.
+inventory is compared with the priming inventory at three separate levels:
+unique storage identity, storage-to-owner paths, and complete tensor-reference
+records. A third inventory must then be exactly identical to the second one,
+which independently verifies the post-priming state. All three inventories,
+canonical hashes, aggregate-field differences, and bounded path-level
+additions/removals are preserved. Exact equality remains a reported fact, but
+it is not conflated with storage identity: a reference-only expansion can be
+classified separately from a newly allocated or removed storage. Only exact
+equality or an addition-only expansion whose every new path is under the
+runtime's transient cache can explain the first-pass observer effect; any
+other reference-graph change or any second-to-third-pass change keeps the
+accounting gate closed. All post-priming allocator samples must also remain
+stable. Priming deltas are preserved as evidence instead of being folded into
+runtime-residency comparisons.
 
 The H100 plan runs exactly one R320 diagnostic for each runtime and one
 read-only comparison. A successful result may authorize a narrowly targeted

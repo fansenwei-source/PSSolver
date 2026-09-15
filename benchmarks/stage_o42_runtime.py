@@ -25,6 +25,7 @@ except ImportError:  # Direct execution through the adjacent CLI wrapper.
     )
 from pssolver.diagnostics import (
     build_tensor_inventory,
+    compare_tensor_inventories,
     cuda_memory_snapshot,
     reconcile_tensor_inventory_with_cuda_allocator,
 )
@@ -76,7 +77,10 @@ def _inventory_phase(
     torch.cuda.synchronize(device)
     allocator_after_priming = cuda_memory_snapshot(device)
     allocator_before_inventory = cuda_memory_snapshot(device)
-    inventory = build_tensor_inventory(roots, device=device)
+    measured_inventory = build_tensor_inventory(roots, device=device)
+    torch.cuda.synchronize(device)
+    allocator_after_inventory = cuda_memory_snapshot(device)
+    verification_inventory = build_tensor_inventory(roots, device=device)
     torch.cuda.synchronize(device)
     allocator = cuda_memory_snapshot(device)
     allocator_segments = torch.cuda.memory_snapshot()
@@ -86,17 +90,17 @@ def _inventory_phase(
         device.index if device.index is not None else torch.cuda.current_device()
     )
     reconciliation = reconcile_tensor_inventory_with_cuda_allocator(
-        inventory,
+        verification_inventory,
         allocator_segments,
         allocator_allocated_bytes=int(allocator["allocated_bytes"]),
         device_index=device_index,
         visible_device_count=torch.cuda.device_count(),
         maximum_reported_unmatched_storages=max(
-            1, int(inventory["unique_storage_count"])
+            1, int(verification_inventory["unique_storage_count"])
         ),
     )
     allocated = int(allocator["allocated_bytes"])
-    unique = int(inventory["unique_storage_bytes"])
+    unique = int(verification_inventory["unique_storage_bytes"])
     gap = allocated - unique
     priming_summary = {
         "tensor_reference_count": priming_inventory["tensor_reference_count"],
@@ -104,7 +108,9 @@ def _inventory_phase(
         "unique_storage_bytes": priming_inventory["unique_storage_bytes"],
         "truncated": priming_inventory["truncated"],
         "all_storages_reported": priming_inventory["all_storages_reported"],
-        "identical_to_measured_inventory": priming_inventory == inventory,
+        "identical_to_measured_inventory": (
+            priming_inventory == measured_inventory
+        ),
         "allocated_delta_bytes": (
             int(allocator_after_priming["allocated_bytes"])
             - int(allocator_before_priming["allocated_bytes"])
@@ -114,22 +120,66 @@ def _inventory_phase(
             - int(allocator_before_priming["reserved_bytes"])
         ),
     }
+    inventory_comparison = compare_tensor_inventories(
+        priming_inventory,
+        measured_inventory,
+        maximum_reported_differences=max(
+            1,
+            int(priming_inventory["tensor_reference_count"])
+            + int(measured_inventory["tensor_reference_count"]),
+        ),
+    )
+    repeated_comparison = compare_tensor_inventories(
+        measured_inventory,
+        verification_inventory,
+        maximum_reported_differences=max(
+            1,
+            int(measured_inventory["tensor_reference_count"])
+            + int(verification_inventory["tensor_reference_count"]),
+        ),
+    )
     return {
         "allocator": allocator,
         "allocator_before_storage_identity_priming": allocator_before_priming,
         "allocator_after_storage_identity_priming": allocator_after_priming,
         "allocator_before_inventory": allocator_before_inventory,
+        "allocator_after_measured_inventory": allocator_after_inventory,
+        "allocator_after_inventory_verification": allocator,
         "allocator_after_block_snapshot": allocator_after_block_snapshot,
         "storage_identity_priming": priming_summary,
+        "storage_identity_priming_inventory": priming_inventory,
+        "storage_identity_measured_inventory": measured_inventory,
+        "storage_identity_verification_inventory": verification_inventory,
+        "storage_identity_inventory_comparison": inventory_comparison,
+        "storage_identity_repeated_measurement_comparison": repeated_comparison,
         "storage_identity_inventory_stable": (
             priming_summary["identical_to_measured_inventory"] is True
         ),
+        "storage_identity_set_stable": inventory_comparison[
+            "unique_storage_identity_equal"
+        ]
+        is True
+        and repeated_comparison["unique_storage_identity_equal"] is True,
+        "storage_identity_post_priming_stable": repeated_comparison[
+            "full_inventory_identical"
+        ],
+        "storage_identity_observer_effect_explained": (
+            (
+                inventory_comparison["full_inventory_identical"] is True
+                or inventory_comparison[
+                    "transient_cache_reference_expansion_only"
+                ]
+                is True
+            )
+            and repeated_comparison["full_inventory_identical"] is True
+        ),
         "allocator_counters_stable": (
-            allocator_before_inventory == allocator
+            allocator_before_inventory == allocator_after_inventory
+            and allocator_after_inventory == allocator
             and allocator == allocator_after_block_snapshot
         ),
         "allocator_block_reconciliation": reconciliation,
-        "inventory": inventory,
+        "inventory": verification_inventory,
         "allocator_minus_inventory_bytes": gap,
         "inventory_exceeds_allocator_bytes": max(0, -gap),
         "storage_accounting_consistent": gap >= 0,
@@ -400,6 +450,10 @@ def profile_stage_o42_runtime(
             "allocator_counter_stability_checked": True,
             "storage_identity_priming_pass": True,
             "repeated_inventory_identity_checked": True,
+            "priming_inventory_preserved": True,
+            "canonical_inventory_hashes_preserved": True,
+            "path_level_inventory_diff_preserved": True,
+            "post_priming_inventory_verification": True,
             "storage_accounting_consistency_is_diagnostic": True,
             "operator_memory_is_allocator_effect_not_total_traffic": True,
         },

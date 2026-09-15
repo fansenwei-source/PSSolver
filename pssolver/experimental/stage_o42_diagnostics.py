@@ -13,6 +13,8 @@ import json
 import math
 from pathlib import Path
 
+from pssolver.diagnostics import compare_tensor_inventories
+
 from .h100_shadow_qualification import _write_new_json
 from .stage_o4_qualification import _load_json, _sha256
 
@@ -55,6 +57,20 @@ def _validated_profile(path: str | Path, role: str) -> tuple[Path, dict[str, obj
                 "repeated_inventory_identity_checked"
             ]
             is True
+            and report["diagnostic_contract"]["priming_inventory_preserved"]
+            is True
+            and report["diagnostic_contract"][
+                "canonical_inventory_hashes_preserved"
+            ]
+            is True
+            and report["diagnostic_contract"][
+                "path_level_inventory_diff_preserved"
+            ]
+            is True
+            and report["diagnostic_contract"][
+                "post_priming_inventory_verification"
+            ]
+            is True
         )
         audit_valid = int(report["operator_audit"]["steps"]) > 0 and isinstance(
             report["operator_audit"]["operators"], Mapping
@@ -71,6 +87,39 @@ def _validated_profile(path: str | Path, role: str) -> tuple[Path, dict[str, obj
             inventory = phases[name]["inventory"]
             reconciliation = phases[name]["allocator_block_reconciliation"]
             priming = phases[name]["storage_identity_priming"]
+            priming_inventory = phases[name][
+                "storage_identity_priming_inventory"
+            ]
+            measured_inventory = phases[name][
+                "storage_identity_measured_inventory"
+            ]
+            verification_inventory = phases[name][
+                "storage_identity_verification_inventory"
+            ]
+            identity_comparison = phases[name][
+                "storage_identity_inventory_comparison"
+            ]
+            repeated_comparison = phases[name][
+                "storage_identity_repeated_measurement_comparison"
+            ]
+            expected_identity_comparison = compare_tensor_inventories(
+                priming_inventory,
+                measured_inventory,
+                maximum_reported_differences=max(
+                    1,
+                    int(priming_inventory["tensor_reference_count"])
+                    + int(measured_inventory["tensor_reference_count"]),
+                ),
+            )
+            expected_repeated_comparison = compare_tensor_inventories(
+                measured_inventory,
+                verification_inventory,
+                maximum_reported_differences=max(
+                    1,
+                    int(measured_inventory["tensor_reference_count"])
+                    + int(verification_inventory["tensor_reference_count"]),
+                ),
+            )
             gap = int(phases[name]["allocator_minus_inventory_bytes"])
             exceeds = int(phases[name]["inventory_exceeds_allocator_bytes"])
             consistent = phases[name]["storage_accounting_consistent"]
@@ -94,12 +143,66 @@ def _validated_profile(path: str | Path, role: str) -> tuple[Path, dict[str, obj
                 and isinstance(phases[name]["allocator_counters_stable"], bool)
                 and priming["truncated"] is False
                 and priming["all_storages_reported"] is True
-                and priming["identical_to_measured_inventory"] is True
+                and isinstance(priming["identical_to_measured_inventory"], bool)
                 and isinstance(priming["allocated_delta_bytes"], int)
                 and not isinstance(priming["allocated_delta_bytes"], bool)
                 and isinstance(priming["reserved_delta_bytes"], int)
                 and not isinstance(priming["reserved_delta_bytes"], bool)
-                and phases[name]["storage_identity_inventory_stable"] is True
+                and priming_inventory["schema_version"] == 1
+                and priming_inventory["truncated"] is False
+                and priming_inventory["all_storages_reported"] is True
+                and measured_inventory["schema_version"] == 1
+                and measured_inventory["truncated"] is False
+                and measured_inventory["all_storages_reported"] is True
+                and verification_inventory["schema_version"] == 1
+                and verification_inventory["truncated"] is False
+                and verification_inventory["all_storages_reported"] is True
+                and inventory == verification_inventory
+                and identity_comparison == expected_identity_comparison
+                and repeated_comparison == expected_repeated_comparison
+                and identity_comparison["schema_version"] == 1
+                and identity_comparison["all_differences_reported"] is True
+                and isinstance(
+                    identity_comparison["unique_storage_identity_equal"], bool
+                )
+                and isinstance(identity_comparison["storage_owner_paths_equal"], bool)
+                and isinstance(identity_comparison["tensor_references_equal"], bool)
+                and isinstance(
+                    identity_comparison[
+                        "transient_cache_reference_expansion_only"
+                    ],
+                    bool,
+                )
+                and identity_comparison["full_inventory_identical"]
+                is priming["identical_to_measured_inventory"]
+                and phases[name]["storage_identity_inventory_stable"]
+                is identity_comparison["full_inventory_identical"]
+                and phases[name]["storage_identity_set_stable"]
+                is (
+                    identity_comparison["unique_storage_identity_equal"] is True
+                    and repeated_comparison["unique_storage_identity_equal"] is True
+                )
+                and phases[name]["storage_identity_post_priming_stable"]
+                is repeated_comparison["full_inventory_identical"]
+                and phases[name]["storage_identity_observer_effect_explained"]
+                is (
+                    (
+                        identity_comparison["full_inventory_identical"] is True
+                        or identity_comparison[
+                            "transient_cache_reference_expansion_only"
+                        ]
+                        is True
+                    )
+                    and repeated_comparison["full_inventory_identical"] is True
+                )
+                and all(
+                    isinstance(value, str) and len(value) == 64
+                    for hashes in (
+                        identity_comparison["before_hashes"],
+                        identity_comparison["after_hashes"],
+                    )
+                    for value in hashes.values()
+                )
             )
         except (KeyError, TypeError, ValueError):
             valid = False
@@ -194,6 +297,36 @@ def _phase_comparison(
             ],
             "canary_storage_identity_inventory_stable": c_phase[
                 "storage_identity_inventory_stable"
+            ],
+            "legacy_storage_identity_set_stable": l_phase[
+                "storage_identity_set_stable"
+            ],
+            "canary_storage_identity_set_stable": c_phase[
+                "storage_identity_set_stable"
+            ],
+            "legacy_storage_identity_post_priming_stable": l_phase[
+                "storage_identity_post_priming_stable"
+            ],
+            "canary_storage_identity_post_priming_stable": c_phase[
+                "storage_identity_post_priming_stable"
+            ],
+            "legacy_storage_identity_observer_effect_explained": l_phase[
+                "storage_identity_observer_effect_explained"
+            ],
+            "canary_storage_identity_observer_effect_explained": c_phase[
+                "storage_identity_observer_effect_explained"
+            ],
+            "legacy_storage_identity_inventory_comparison": l_phase[
+                "storage_identity_inventory_comparison"
+            ],
+            "canary_storage_identity_inventory_comparison": c_phase[
+                "storage_identity_inventory_comparison"
+            ],
+            "legacy_storage_identity_repeated_measurement_comparison": l_phase[
+                "storage_identity_repeated_measurement_comparison"
+            ],
+            "canary_storage_identity_repeated_measurement_comparison": c_phase[
+                "storage_identity_repeated_measurement_comparison"
             ],
             "legacy_allocator_block_reconciliation": l_phase[
                 "allocator_block_reconciliation"
@@ -327,10 +460,46 @@ def analyze_stage_o42_diagnostics(
         and phase["canary_storage_identity_inventory_stable"] is True
         for phase in phase_comparison.values()
     )
+    storage_identity_set_stable = all(
+        phase["legacy_storage_identity_set_stable"] is True
+        and phase["canary_storage_identity_set_stable"] is True
+        for phase in phase_comparison.values()
+    )
+    storage_identity_reference_graph_stable = all(
+        phase["legacy_storage_identity_inventory_comparison"][
+            "storage_owner_paths_equal"
+        ]
+        is True
+        and phase["legacy_storage_identity_inventory_comparison"][
+            "tensor_references_equal"
+        ]
+        is True
+        and phase["canary_storage_identity_inventory_comparison"][
+            "storage_owner_paths_equal"
+        ]
+        is True
+        and phase["canary_storage_identity_inventory_comparison"][
+            "tensor_references_equal"
+        ]
+        is True
+        for phase in phase_comparison.values()
+    )
+    storage_identity_post_priming_stable = all(
+        phase["legacy_storage_identity_post_priming_stable"] is True
+        and phase["canary_storage_identity_post_priming_stable"] is True
+        for phase in phase_comparison.values()
+    )
+    storage_identity_observer_effect_explained = all(
+        phase["legacy_storage_identity_observer_effect_explained"] is True
+        and phase["canary_storage_identity_observer_effect_explained"] is True
+        for phase in phase_comparison.values()
+    )
     accounting_ready_for_optimization = (
         storage_accounting_consistent
         and allocator_block_accounting_reconciled
-        and storage_identity_priming_stable
+        and storage_identity_set_stable
+        and storage_identity_post_priming_stable
+        and storage_identity_observer_effect_explained
     )
     operator_comparison = _operator_comparison(legacy, canary)
     category_totals: dict[str, int] = {}
@@ -395,6 +564,16 @@ def analyze_stage_o42_diagnostics(
             allocator_block_accounting_reconciled
         ),
         "storage_identity_priming_stable": storage_identity_priming_stable,
+        "storage_identity_set_stable": storage_identity_set_stable,
+        "storage_identity_post_priming_stable": (
+            storage_identity_post_priming_stable
+        ),
+        "storage_identity_reference_graph_stable": (
+            storage_identity_reference_graph_stable
+        ),
+        "storage_identity_observer_effect_explained": (
+            storage_identity_observer_effect_explained
+        ),
         "accounting_ready_for_optimization": accounting_ready_for_optimization,
         "phase_comparison": phase_comparison,
         "operator_comparison": operator_comparison,
@@ -412,6 +591,12 @@ def analyze_stage_o42_diagnostics(
             "operator_memory_is_allocator_effect_not_total_traffic": True,
             "inventory_covers_explicit_runtime_roots_only": True,
             "shared_storages_are_not_assigned_to_one_owner": True,
+            "strict_inventory_identity_is_reported_separately_from_storage_identity": (
+                True
+            ),
+            "only_identical_or_transient_cache_reference_expansion_is_accepted": (
+                True
+            ),
             "no_optimization_or_promotion_is_authorized": True,
         },
         "inputs": {

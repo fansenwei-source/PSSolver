@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import torch
 
-from pssolver.diagnostics import build_tensor_inventory
+from pssolver.diagnostics import build_tensor_inventory, compare_tensor_inventories
 from pssolver.diagnostics.tensor_inventory import _coalesce_storage_ranges
 
 
@@ -99,3 +99,75 @@ def test_overlapping_device_address_ranges_are_counted_once():
     assert merged[0]["data_ptr"] == 1000
     assert merged[0]["storage_bytes"] == 150
     assert merged[0]["paths"] == {"runtime.parent", "runtime.alias"}
+
+
+def test_inventory_comparison_separates_storage_identity_from_owner_aliases():
+    storage = torch.arange(8, dtype=torch.float64)
+    before = build_tensor_inventory(
+        {"runtime": {"value": storage}},
+        device="cpu",
+    )
+    after = build_tensor_inventory(
+        {
+            "runtime": {
+                "value": storage,
+                "transient_cache": {"alias": storage},
+            }
+        },
+        device="cpu",
+    )
+
+    comparison = compare_tensor_inventories(before, after)
+
+    assert comparison["classification"] == "transient_cache_reference_expansion"
+    assert comparison["full_inventory_identical"] is False
+    assert comparison["unique_storage_identity_equal"] is True
+    assert comparison["storage_owner_paths_equal"] is False
+    assert comparison["tensor_references_equal"] is False
+    assert comparison["transient_cache_reference_expansion_only"] is True
+    assert comparison["added_storage_identity_count"] == 0
+    assert comparison["removed_storage_identity_count"] == 0
+    assert comparison["added_storage_owner_path_count"] == 1
+    assert comparison["added_tensor_reference_count"] == 1
+    assert comparison["changed_storage_multiplicity_count"] == 1
+    assert comparison["all_differences_reported"] is True
+    assert comparison["before_hashes"]["unique_storage_identity_sha256"] == (
+        comparison["after_hashes"]["unique_storage_identity_sha256"]
+    )
+    assert comparison["before_hashes"]["storage_owner_paths_sha256"] != (
+        comparison["after_hashes"]["storage_owner_paths_sha256"]
+    )
+
+
+def test_inventory_comparison_reports_new_storage_identity():
+    before = build_tensor_inventory(
+        {"runtime": {"value": torch.ones(2)}},
+        device="cpu",
+    )
+    after = build_tensor_inventory(
+        {"runtime": {"value": torch.ones(3)}},
+        device="cpu",
+    )
+
+    comparison = compare_tensor_inventories(before, after)
+
+    assert comparison["classification"] == "storage_identity_changed"
+    assert comparison["unique_storage_identity_equal"] is False
+    assert comparison["added_storage_identity_count"] == 1
+    assert comparison["removed_storage_identity_count"] == 1
+
+
+def test_inventory_comparison_rejects_incomplete_evidence():
+    report = build_tensor_inventory(
+        {"runtime": {"value": torch.ones(2)}},
+        device="cpu",
+    )
+    incomplete = dict(report)
+    incomplete["all_storages_reported"] = False
+
+    try:
+        compare_tensor_inventories(report, incomplete)
+    except ValueError as error:
+        assert "omits storage records" in str(error)
+    else:
+        raise AssertionError("incomplete inventory should be rejected")
