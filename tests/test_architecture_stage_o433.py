@@ -226,6 +226,23 @@ def test_boundary_packed_runtime_is_equivalent_and_removes_three_copy_batches():
         baseline_diagnostics["copy_cat_batches"] - 3
     )
     assert candidate_diagnostics["retained_tensor_references"] == 0
+    sources = candidate_diagnostics["source_attribution"]
+    assert set(sources) == {
+        "algebraic.molecular_field.outputs",
+        "algebraic.nematic_force.outputs",
+        "algebraic.nematic_stress.dependencies",
+        "algebraic.nematic_stress.outputs",
+        "explicit_rhs.dependencies",
+        "explicit_rhs.outputs",
+    }
+    assert all(
+        value["retained_tensor_references"] == 0
+        for value in sources.values()
+    )
+    assert sources["algebraic.nematic_stress.outputs"][
+        "copy_cat_batches"
+    ] == 0
+    assert sources["explicit_rhs.outputs"]["copy_cat_batches"] > 0
 
     systems = {
         item["system"]["name"]: item

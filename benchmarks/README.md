@@ -124,3 +124,17 @@ Stage O.4.2 accounting result, the rejected O.4.3 scheduler-republication
 result, and the performance-neutral O.4.3.1 natural-view result.  It runs one
 100-step numerical comparison plus three balanced R128/R320 profile trials per
 role.  No result changes a production default.
+
+## Stage O.4.3.4 materialization attribution
+
+Stage O.4.3.4 keeps the neutral O.4.3.3 candidate unchanged and attributes
+every projected-transform batch assembly to its algebraic or explicit-RHS
+caller. `profile_plane_stage_o434.py` records per-source batch counts, logical
+bytes, exact copy/cat output bytes, contiguous views, fallback reasons, and
+deferred-event timing without retaining tensors.
+
+Generate the diagnostic-only R320 command contract with
+`scripts_plane/plan_plane_stage_o434_diagnostic.py`. The plan binds the frozen
+O.4.3.3 report, runs three twenty-step attribution profiles, and ranks the
+remaining copy/cat sources. Its result can guide target review only; it cannot
+authorize another layout, Stage O.4.4, or a production default change.

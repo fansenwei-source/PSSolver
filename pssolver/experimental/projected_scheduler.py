@@ -9,13 +9,15 @@ one method call is bounded to one algebraic generation or explicit-RHS island.
 from __future__ import annotations
 
 from collections.abc import Mapping
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from enum import Enum
 from types import MappingProxyType
-from typing import Protocol
+from typing import Iterator, Protocol
 
 import torch
 
+from .performance import RuntimePerformanceRecorder, performance_region
 from .representations import (
     AlgebraicRepresentationCache,
     BatchedPhysicalMaterialization,
@@ -284,6 +286,7 @@ class BoundarySignatureTransformScheduler:
         *,
         batch_assembly_policy: ProjectedBatchAssemblyPolicy | None = None,
         enable_batch_assembly_diagnostics: bool = False,
+        performance_recorder: RuntimePerformanceRecorder | None = None,
     ) -> None:
         if batch_assembly_policy is None:
             batch_assembly_policy = ProjectedBatchAssemblyPolicy.copy_cat()
@@ -297,11 +300,21 @@ class BoundarySignatureTransformScheduler:
             )
         if not isinstance(enable_batch_assembly_diagnostics, bool):
             raise TypeError("enable_batch_assembly_diagnostics must be a bool")
+        if performance_recorder is not None and not isinstance(
+            performance_recorder,
+            RuntimePerformanceRecorder,
+        ):
+            raise TypeError(
+                "performance_recorder must be a RuntimePerformanceRecorder "
+                "or None"
+            )
         self._context = context
         self._batch_assembly_policy = batch_assembly_policy
         self._enable_batch_assembly_diagnostics = (
             enable_batch_assembly_diagnostics
         )
+        self._performance_recorder = performance_recorder
+        self._attribution_stack: list[str] = []
         self._plan_cache: dict[
             tuple[ProjectedTransformDirection, tuple[str, ...]],
             CompiledProjectedTransformPlan,
@@ -317,27 +330,117 @@ class BoundarySignatureTransformScheduler:
 
         self._batch_assembly_counters: dict[str, int] = {
             "singleton_batches": 0,
+            "singleton_components": 0,
+            "singleton_logical_input_bytes": 0,
             "copy_cat_batches": 0,
             "copy_cat_components": 0,
             "copy_cat_logical_input_bytes": 0,
+            "copy_cat_materialized_output_bytes": 0,
             "contiguous_view_batches": 0,
             "contiguous_view_components": 0,
             "contiguous_view_logical_input_bytes": 0,
+            "contiguous_view_materialized_output_bytes": 0,
         }
         self._batch_assembly_fallback_reasons: dict[str, int] = {}
+        self._batch_assembly_sources: dict[str, dict[str, object]] = {}
+
+    @staticmethod
+    def _validate_attribution_source(source: str) -> str:
+        if (
+            not isinstance(source, str)
+            or not source
+            or source.strip() != source
+            or any(
+                not (character.isalnum() or character in "._-")
+                for character in source
+            )
+        ):
+            raise ValueError(
+                "batch-assembly attribution source must contain only letters, "
+                "digits, '.', '_' or '-'"
+            )
+        return source
+
+    @contextmanager
+    def attribution_scope(self, source: str) -> Iterator[None]:
+        """Assign a semantic caller to nested diagnostic-only assemblies."""
+
+        source = self._validate_attribution_source(source)
+        if (
+            not self._enable_batch_assembly_diagnostics
+            and self._performance_recorder is None
+        ):
+            yield
+            return
+        self._attribution_stack.append(source)
+        try:
+            yield
+        finally:
+            popped = self._attribution_stack.pop()
+            if popped != source:
+                raise RuntimeError("batch-assembly attribution stack is corrupt")
+
+    def _resolved_attribution_source(
+        self,
+        source: str | None,
+    ) -> str:
+        if source is not None:
+            return self._validate_attribution_source(source)
+        if self._attribution_stack:
+            return self._attribution_stack[-1]
+        return "unattributed"
+
+    @staticmethod
+    def _empty_source_counters() -> dict[str, object]:
+        return {
+            "singleton_batches": 0,
+            "singleton_components": 0,
+            "singleton_logical_input_bytes": 0,
+            "copy_cat_batches": 0,
+            "copy_cat_components": 0,
+            "copy_cat_logical_input_bytes": 0,
+            "copy_cat_materialized_output_bytes": 0,
+            "contiguous_view_batches": 0,
+            "contiguous_view_components": 0,
+            "contiguous_view_logical_input_bytes": 0,
+            "contiguous_view_materialized_output_bytes": 0,
+            "fallback_reasons": {},
+            "retained_tensor_references": 0,
+        }
+
+    def _source_counters(self, source: str) -> dict[str, object]:
+        counters = self._batch_assembly_sources.get(source)
+        if counters is None:
+            counters = self._empty_source_counters()
+            counters["timing_region"] = (
+                f"projected_batch_assembly.source.{source}"
+            )
+            self._batch_assembly_sources[source] = counters
+        return counters
 
     def batch_assembly_diagnostics(self) -> Mapping[str, object]:
         """Return JSON-safe counters; the snapshot contains no tensors."""
 
         return MappingProxyType(
             {
-                "schema_version": 1,
+                "schema_version": 2,
                 "enabled": self._enable_batch_assembly_diagnostics,
                 "policy": self._batch_assembly_policy.to_metadata(),
                 **self._batch_assembly_counters,
                 "fallback_reasons": dict(
                     self._batch_assembly_fallback_reasons
                 ),
+                "source_attribution": {
+                    source: {
+                        **counters,
+                        "fallback_reasons": dict(
+                            counters["fallback_reasons"]
+                        ),
+                    }
+                    for source, counters in sorted(
+                        self._batch_assembly_sources.items()
+                    )
+                },
                 "retained_tensor_references": 0,
             }
         )
@@ -347,6 +450,7 @@ class BoundarySignatureTransformScheduler:
         *,
         mode: str,
         values: tuple[torch.Tensor, ...],
+        source: str,
         fallback_reason: str | None = None,
     ) -> None:
         if not self._enable_batch_assembly_diagnostics:
@@ -359,29 +463,72 @@ class BoundarySignatureTransformScheduler:
         self._batch_assembly_counters[
             f"{mode}_logical_input_bytes"
         ] += logical_bytes
+        materialized_bytes = logical_bytes if mode == "copy_cat" else 0
+        self._batch_assembly_counters[
+            f"{mode}_materialized_output_bytes"
+        ] += materialized_bytes
+        source_counters = self._source_counters(source)
+        source_counters[f"{mode}_batches"] += 1
+        source_counters[f"{mode}_components"] += len(values)
+        source_counters[f"{mode}_logical_input_bytes"] += logical_bytes
+        source_counters[
+            f"{mode}_materialized_output_bytes"
+        ] += materialized_bytes
         if fallback_reason is not None:
             reasons = self._batch_assembly_fallback_reasons
             reasons[fallback_reason] = reasons.get(fallback_reason, 0) + 1
+            source_reasons = source_counters["fallback_reasons"]
+            if not isinstance(source_reasons, dict):
+                raise RuntimeError("source fallback counters are invalid")
+            source_reasons[fallback_reason] = (
+                source_reasons.get(fallback_reason, 0) + 1
+            )
+
+    def _record_singleton_batch(
+        self,
+        *,
+        value: torch.Tensor,
+        source: str,
+    ) -> None:
+        if not self._enable_batch_assembly_diagnostics:
+            return
+        logical_bytes = value.numel() * value.element_size()
+        self._batch_assembly_counters["singleton_batches"] += 1
+        self._batch_assembly_counters["singleton_components"] += 1
+        self._batch_assembly_counters[
+            "singleton_logical_input_bytes"
+        ] += logical_bytes
+        source_counters = self._source_counters(source)
+        source_counters["singleton_batches"] += 1
+        source_counters["singleton_components"] += 1
+        source_counters["singleton_logical_input_bytes"] += logical_bytes
 
     def _assemble_batch(
         self,
         values: tuple[torch.Tensor, ...],
+        *,
+        source: str,
     ) -> torch.Tensor:
-        fallback_reason = "policy_copy_cat"
-        if self._batch_assembly_policy.allow_contiguous_storage_view:
-            packed, fallback_reason = _contiguous_storage_batch_view(values)
-            if packed is not None:
-                self._record_batch_assembly(
-                    mode="contiguous_view",
-                    values=values,
-                )
-                return packed
-        self._record_batch_assembly(
-            mode="copy_cat",
-            values=values,
-            fallback_reason=fallback_reason,
-        )
-        return torch.cat(values, dim=0)
+        timing_region = f"projected_batch_assembly.source.{source}"
+        with performance_region(self._performance_recorder, timing_region):
+            fallback_reason = "policy_copy_cat"
+            if self._batch_assembly_policy.allow_contiguous_storage_view:
+                packed, fallback_reason = _contiguous_storage_batch_view(values)
+                if packed is not None:
+                    self._record_batch_assembly(
+                        mode="contiguous_view",
+                        values=values,
+                        source=source,
+                    )
+                    return packed
+            packed = torch.cat(values, dim=0)
+            self._record_batch_assembly(
+                mode="copy_cat",
+                values=values,
+                source=source,
+                fallback_reason=fallback_reason,
+            )
+            return packed
 
     def _key(
         self,
@@ -448,6 +595,8 @@ class BoundarySignatureTransformScheduler:
         self,
         plan: CompiledProjectedTransformPlan,
         values: tuple[torch.Tensor, ...],
+        *,
+        attribution_source: str | None = None,
     ) -> tuple[torch.Tensor, ...]:
         """Execute an already compiled plan with timestep-local tensors."""
 
@@ -463,7 +612,11 @@ class BoundarySignatureTransformScheduler:
             raise ValueError(
                 "scheduled projected inputs must be nonempty and align"
             )
-        return self._execute_cached_plan(plan, values)
+        return self._execute_cached_plan(
+            plan,
+            values,
+            attribution_source=attribution_source,
+        )
 
     def storage_compatible_order(
         self,
@@ -484,9 +637,12 @@ class BoundarySignatureTransformScheduler:
         self,
         plan: CompiledProjectedTransformPlan,
         values: tuple[torch.Tensor, ...],
+        *,
+        attribution_source: str | None = None,
     ) -> tuple[torch.Tensor, ...]:
         """Execute a scheduler-owned plan without repeating cold-path checks."""
 
+        source = self._resolved_attribution_source(attribution_source)
         result: list[torch.Tensor | None] = [None] * len(values)
         for key, indices in zip(
             plan.batch_keys,
@@ -495,8 +651,10 @@ class BoundarySignatureTransformScheduler:
         ):
             if len(indices) == 1:
                 index = indices[0]
-                if self._enable_batch_assembly_diagnostics:
-                    self._batch_assembly_counters["singleton_batches"] += 1
+                self._record_singleton_batch(
+                    value=values[index],
+                    source=source,
+                )
                 result[index] = (
                     self._context.forward_projected(
                         plan.component_names[index], values[index]
@@ -508,7 +666,8 @@ class BoundarySignatureTransformScheduler:
                 )
                 continue
             packed = self._assemble_batch(
-                tuple(values[index] for index in indices)
+                tuple(values[index] for index in indices),
+                source=source,
             )
             transformed = self._context.transform_projected_packed(
                 key.boundary_signature,
@@ -530,6 +689,7 @@ class BoundarySignatureTransformScheduler:
         values: tuple[torch.Tensor, ...],
         *,
         direction: ProjectedTransformDirection,
+        attribution_source: str | None = None,
     ) -> tuple[torch.Tensor, ...]:
         """Transform values through a cached invariant grouping plan."""
 
@@ -540,7 +700,11 @@ class BoundarySignatureTransformScheduler:
                 "scheduled projected inputs must be nonempty and align"
             )
         plan = self.compile_plan(component_names, direction=direction)
-        return self._execute_cached_plan(plan, values)
+        return self._execute_cached_plan(
+            plan,
+            values,
+            attribution_source=attribution_source,
+        )
 
     def transform_many(
         self,
@@ -548,6 +712,7 @@ class BoundarySignatureTransformScheduler:
         values: tuple[torch.Tensor, ...],
         *,
         direction: ProjectedTransformDirection,
+        attribution_source: str | None = None,
     ) -> ScheduledProjectedTransforms:
         component_names = tuple(component_names)
         values = tuple(values)
@@ -556,7 +721,11 @@ class BoundarySignatureTransformScheduler:
                 "scheduled projected inputs must be nonempty and align"
             )
         plan = self.compile_plan(component_names, direction=direction)
-        result = self._execute_cached_plan(plan, values)
+        result = self._execute_cached_plan(
+            plan,
+            values,
+            attribution_source=attribution_source,
+        )
         return ScheduledProjectedTransforms(
             result,
             plan.batch_sizes,
@@ -567,44 +736,56 @@ class BoundarySignatureTransformScheduler:
         self,
         component_names: tuple[str, ...],
         values: tuple[torch.Tensor, ...],
+        *,
+        attribution_source: str | None = None,
     ) -> tuple[torch.Tensor, ...]:
         return self.transform_values_many(
             component_names,
             values,
             direction=ProjectedTransformDirection.FORWARD,
+            attribution_source=attribution_source,
         )
 
     def inverse_values_many(
         self,
         component_names: tuple[str, ...],
         values: tuple[torch.Tensor, ...],
+        *,
+        attribution_source: str | None = None,
     ) -> tuple[torch.Tensor, ...]:
         return self.transform_values_many(
             component_names,
             values,
             direction=ProjectedTransformDirection.INVERSE,
+            attribution_source=attribution_source,
         )
 
     def forward_many(
         self,
         component_names: tuple[str, ...],
         values: tuple[torch.Tensor, ...],
+        *,
+        attribution_source: str | None = None,
     ) -> ScheduledProjectedTransforms:
         return self.transform_many(
             component_names,
             values,
             direction=ProjectedTransformDirection.FORWARD,
+            attribution_source=attribution_source,
         )
 
     def inverse_many(
         self,
         component_names: tuple[str, ...],
         values: tuple[torch.Tensor, ...],
+        *,
+        attribution_source: str | None = None,
     ) -> ScheduledProjectedTransforms:
         return self.transform_many(
             component_names,
             values,
             direction=ProjectedTransformDirection.INVERSE,
+            attribution_source=attribution_source,
         )
 
 
@@ -673,8 +854,14 @@ class AlgebraicPhysicalIslandScheduler:
         self,
         component_names: tuple[str, ...],
         values: tuple[torch.Tensor, ...],
+        *,
+        attribution_source: str | None = None,
     ) -> Mapping[str, torch.Tensor]:
-        transformed = self.project_output_values(component_names, values)
+        transformed = self.project_output_values(
+            component_names,
+            values,
+            attribution_source=attribution_source,
+        )
         return MappingProxyType(
             dict(zip(component_names, transformed, strict=True))
         )
@@ -683,10 +870,16 @@ class AlgebraicPhysicalIslandScheduler:
         self,
         component_names: tuple[str, ...],
         values: tuple[torch.Tensor, ...],
+        *,
+        attribution_source: str | None = None,
     ) -> tuple[torch.Tensor, ...]:
         """Return ordered outputs without constructing a mapping on hot paths."""
 
-        return self._transforms.forward_values_many(component_names, values)
+        return self._transforms.forward_values_many(
+            component_names,
+            values,
+            attribution_source=attribution_source,
+        )
 
 
 __all__ = [

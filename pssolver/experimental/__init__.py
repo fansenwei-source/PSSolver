@@ -141,6 +141,12 @@ from .stage_o42_plan import build_stage_o42_h100_plan
 from .stage_o43_plan import build_stage_o43_h100_plan
 from .stage_o431_plan import build_stage_o431_h100_plan
 from .stage_o433_plan import build_stage_o433_h100_plan
+from .stage_o434_diagnostics import (
+    analyze_stage_o434_diagnostics,
+    profile_stage_o434_h100_runtime,
+    summarize_projected_batch_source_attribution,
+)
+from .stage_o434_plan import build_stage_o434_h100_plan
 from .stage_o43_qualification import (
     analyze_stage_o431_qualification,
     analyze_stage_o433_qualification,
@@ -207,6 +213,7 @@ __all__ = [
     "build_stage_o_migration_design",
     "build_stage_o431_h100_plan",
     "build_stage_o433_h100_plan",
+    "build_stage_o434_h100_plan",
     "build_plane_shadow_runtime_from_production_metadata",
     "capture_shadow_checkpoint",
     "capture_shadow_observation",
@@ -256,9 +263,12 @@ __all__ = [
     "compare_plane_stage_o4_workflows",
     "analyze_stage_o431_qualification",
     "analyze_stage_o433_qualification",
+    "analyze_stage_o434_diagnostics",
     "analyze_stage_o43_qualification",
     "profile_stage_o431_h100_runtime",
     "profile_stage_o433_h100_runtime",
+    "profile_stage_o434_h100_runtime",
+    "summarize_projected_batch_source_attribution",
     "profile_stage_o43_h100_runtime",
     "run_stage_o431_h100_trajectory",
     "run_stage_o433_h100_trajectory",

@@ -487,6 +487,9 @@ class LegacyAlgebraicSolverContext:
                 enable_batch_assembly_diagnostics=(
                     self.enable_batch_assembly_diagnostics
                 ),
+                performance_recorder=(
+                    self.model_context._performance_recorder
+                ),
             ),
         )
 
@@ -997,6 +1000,8 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
     def prefetch_physical_components(
         self,
         component_names: tuple[str, ...],
+        *,
+        attribution_source: str = "explicit_rhs.dependencies",
     ) -> None:
         """Prepare one explicit-RHS physical island without extending lifetime."""
 
@@ -1009,7 +1014,10 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
             )
         if self._generation_state is None:
             raise RuntimeError("algebraic outputs are not synchronized")
-        self._generation_state.prefetch_physical(component_names)
+        with self._context.transform_scheduler.attribution_scope(
+            attribution_source
+        ):
+            self._generation_state.prefetch_physical(component_names)
 
     def forward(self, fields, parameters):
         del parameters
@@ -1100,14 +1108,24 @@ class LegacyAlgebraicFieldsAdapter(torch.nn.Module):
                                 "solver physical dependencies exceed its "
                                 "declared algebraic dependencies"
                             )
-                        dependencies.prefetch_physical(physical_dependencies)
-                if self._performance_recorder is None:
-                    solution = resolved.solver.solve_spectral(dependencies)
-                else:
-                    with self._performance_recorder.region(
-                        f"algebraic.{resolved.system.name}.solve"
-                    ):
+                        with self._context.transform_scheduler.attribution_scope(
+                            f"algebraic.{resolved.system.name}.dependencies"
+                        ):
+                            dependencies.prefetch_physical(
+                                physical_dependencies
+                            )
+                with self._context.transform_scheduler.attribution_scope(
+                    f"algebraic.{resolved.system.name}.outputs"
+                ):
+                    if self._performance_recorder is None:
                         solution = resolved.solver.solve_spectral(dependencies)
+                    else:
+                        with self._performance_recorder.region(
+                            f"algebraic.{resolved.system.name}.solve"
+                        ):
+                            solution = resolved.solver.solve_spectral(
+                                dependencies
+                            )
                 if not isinstance(solution, Mapping):
                     raise TypeError("algebraic solve must return a mapping")
                 solution = dict(solution)
@@ -1392,6 +1410,7 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
                 self._physical_island_scheduler.project_output_values(
                     self._component_names,
                     tuple(values),
+                    attribution_source="explicit_rhs.outputs",
                 )
             )
         else:
