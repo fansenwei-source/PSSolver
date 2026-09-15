@@ -241,6 +241,7 @@ def test_stage_o42_plan_is_bounded_read_only_and_non_promoting(tmp_path):
 
     assert plan["planning_only"] is True
     assert plan["diagnostic_contract"]["profile_count"] == 2
+    assert plan["diagnostic_contract"]["runtime_roots_only"] is True
     assert plan["diagnostic_contract"]["global_gc_traversal"] is False
     assert plan["diagnostic_contract"]["production_default_may_change"] is False
     assert [item["role"] for item in plan["commands"]["profiles"]] == [

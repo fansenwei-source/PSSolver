@@ -109,6 +109,7 @@ def build_stage_o42_h100_plan(
             "operator_audit_steps": 2,
             "operator_audit_settling_steps": 2,
             "runtime_object_graph_inventory": True,
+            "runtime_roots_only": True,
             "global_gc_traversal": False,
             "overlapping_storage_address_ranges_coalesced": True,
             "storage_accounting_consistency_is_diagnostic": True,
