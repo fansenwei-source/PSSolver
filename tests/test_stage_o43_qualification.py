@@ -10,7 +10,9 @@ import sys
 import numpy as np
 
 from pssolver.experimental.stage_o43_plan import build_stage_o43_h100_plan
+from pssolver.experimental.stage_o431_plan import build_stage_o431_h100_plan
 from pssolver.experimental.stage_o43_qualification import (
+    analyze_stage_o431_qualification,
     analyze_stage_o43_qualification,
 )
 
@@ -44,16 +46,40 @@ def _evidence(path: Path) -> Path:
     )
 
 
+def _rejected_o43_evidence(path: Path) -> Path:
+    return _write_json(
+        path,
+        {
+            "qualification_stage": "O.4.3",
+            "classification": "C_rejected",
+            "architecture_decision": (
+                "packed_generation_storage_with_safe_views"
+            ),
+            "eligible_for_stage_o44_decision": False,
+            "eligible_for_production_promotion": False,
+            "production_default_changed": False,
+            "gates": {
+                "numerical_equivalence": True,
+                "zero_copy_batch_assembly_exercised": True,
+                "r320_performance_improvement": False,
+                "r320_memory_non_regression": False,
+                "candidate_safety_non_regression": False,
+            },
+        },
+    )
+
+
 def _trajectory(
     root: Path,
     *,
     role: str,
     perturbation: float = 0.0,
+    qualification_stage: str = "O.4.3",
 ) -> Path:
     root.mkdir()
     (root / "COMPLETE").write_text("complete\n", encoding="utf-8")
     metadata = {
-        "qualification_stage": "O.4.3",
+        "qualification_stage": qualification_stage,
         "classification": "TRAJECTORY_COMPLETE",
         "measurement_role": role,
         "completed_steps": 100,
@@ -62,7 +88,12 @@ def _trajectory(
         "production_metadata_sha256": "1" * 64,
         "production_initial_q_sha256": "2" * 64,
     }
-    _write_json(root / "stage_o43_metrics.json", metadata)
+    metrics_name = (
+        "stage_o431_metrics.json"
+        if qualification_stage == "O.4.3.1"
+        else "stage_o43_metrics.json"
+    )
+    _write_json(root / metrics_name, metadata)
     shapes = {"Q": (2, 2, 2, 5), "u": (2, 2, 2, 3), "p": (2, 2, 2)}
     for step in (0, 100):
         for field, shape in shapes.items():
@@ -82,6 +113,8 @@ def _profile(
     input_digit: str,
     timestep: float,
     peak: int,
+    qualification_stage: str = "O.4.3",
+    candidate_output_mode: str = "preallocated_packed",
 ) -> Path:
     candidate = role == "candidate"
     assembly = {
@@ -97,7 +130,7 @@ def _profile(
     return _write_json(
         path,
         {
-            "qualification_stage": "O.4.3",
+            "qualification_stage": qualification_stage,
             "classification": "PROFILE_COMPLETE",
             "measurement_role": role,
             "production_default_changed": False,
@@ -114,7 +147,7 @@ def _profile(
             },
             "algebraic_output_publication_policy": {
                 "mode": (
-                    "preallocated_packed" if candidate else "deferred_stack"
+                    candidate_output_mode if candidate else "deferred_stack"
                 )
             },
             "projected_batch_assembly_policy": {
@@ -130,13 +163,20 @@ def _profile(
     )
 
 
-def _qualification_inputs(tmp_path: Path, *, perturbation: float = 1.0e-13):
+def _qualification_inputs(
+    tmp_path: Path,
+    *,
+    perturbation: float = 1.0e-13,
+    qualification_stage: str = "O.4.3",
+    candidate_output_mode: str = "preallocated_packed",
+):
     evidence = _evidence(tmp_path / "o42.json")
     trajectories = {
         role: _trajectory(
             tmp_path / f"trajectory_{role}",
             role=role,
             perturbation=perturbation,
+            qualification_stage=qualification_stage,
         )
         for role in ("baseline", "candidate")
     }
@@ -154,6 +194,8 @@ def _qualification_inputs(tmp_path: Path, *, perturbation: float = 1.0e-13):
                     input_digit=digit,
                     timestep=0.1 if role == "baseline" else 0.09,
                     peak=1000 if role == "baseline" else 900,
+                    qualification_stage=qualification_stage,
+                    candidate_output_mode=candidate_output_mode,
                 )
                 for trial in range(3)
             ]
@@ -230,3 +272,67 @@ def test_stage_o43_plan_is_bounded_balanced_and_non_promoting(tmp_path):
     assert plan["qualification_contract"]["eligible_result"] == (
         "stage_o44_decision_only"
     )
+
+
+def test_stage_o431_analysis_uses_natural_storage_without_republication(tmp_path):
+    evidence, trajectories, profiles = _qualification_inputs(
+        tmp_path,
+        qualification_stage="O.4.3.1",
+        candidate_output_mode="deferred_stack",
+    )
+    rejected = _rejected_o43_evidence(tmp_path / "o43.json")
+    report = analyze_stage_o431_qualification(
+        trajectories["baseline"],
+        trajectories["candidate"],
+        profiles[("r128", "baseline")],
+        profiles[("r128", "candidate")],
+        profiles[("r320", "baseline")],
+        profiles[("r320", "candidate")],
+        stage_o42_report=evidence,
+        expected_stage_o42_sha256=_sha256(evidence),
+        stage_o43_report=rejected,
+        expected_stage_o43_sha256=_sha256(rejected),
+    )
+
+    assert report["classification"] == "A_recommended"
+    assert report["qualification_stage"] == "O.4.3.1"
+    assert report["architecture_decision"] == (
+        "opportunistic_natural_storage_views_without_republication"
+    )
+    assert report["stage_o43_rejection_evidence"][
+        "packed_publication_must_remain_rejected"
+    ] is True
+
+
+def test_stage_o431_plan_changes_only_batch_assembly(tmp_path):
+    reference_r128 = tmp_path / "r128"
+    reference_r320 = tmp_path / "r320"
+    reference_r128.mkdir()
+    reference_r320.mkdir()
+    evidence = _evidence(tmp_path / "o42.json")
+    rejected = _rejected_o43_evidence(tmp_path / "o43.json")
+    plan = build_stage_o431_h100_plan(
+        project_root=PROJECT_ROOT,
+        control_root=tmp_path / "control",
+        scratch_root=tmp_path / "scratch",
+        python=sys.executable,
+        r128_production_reference_dir=reference_r128,
+        r320_production_reference_dir=reference_r320,
+        expected_commit="b" * 40,
+        stage_o42_report=evidence,
+        expected_stage_o42_sha256=_sha256(evidence),
+        stage_o43_report=rejected,
+        expected_stage_o43_sha256=_sha256(rejected),
+    )
+
+    assert plan["qualification_stage"] == "O.4.3.1"
+    assert plan["candidate_contract"]["candidate_output_publication"] == (
+        "deferred_stack"
+    )
+    assert plan["candidate_contract"][
+        "candidate_republishes_algebraic_outputs"
+    ] is False
+    assert plan["candidate_contract"][
+        "candidate_adds_persistent_tensor_storage"
+    ] is False
+    assert len(plan["commands"]["profiles_balanced"]) == 12

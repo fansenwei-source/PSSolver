@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 import hashlib
 import json
 import math
@@ -50,13 +51,46 @@ _ROLES = ("baseline", "candidate")
 _FIELDS = ("Q", "u", "p")
 
 
+@dataclass(frozen=True, slots=True)
+class _StageO43Variant:
+    """Internal contract for one storage-layout qualification variant."""
+
+    qualification_stage: str
+    candidate_output_policy: AlgebraicOutputPublicationPolicy
+    candidate_output_mode: str
+    architecture_decision: str
+    metrics_filename: str
+
+
+_PACKED_PUBLICATION_VARIANT = _StageO43Variant(
+    qualification_stage="O.4.3",
+    candidate_output_policy=AlgebraicOutputPublicationPolicy.preallocated(),
+    candidate_output_mode="preallocated_packed",
+    architecture_decision="packed_generation_storage_with_safe_views",
+    metrics_filename="stage_o43_metrics.json",
+)
+
+_OPPORTUNISTIC_VIEW_VARIANT = _StageO43Variant(
+    qualification_stage="O.4.3.1",
+    candidate_output_policy=AlgebraicOutputPublicationPolicy.deferred_stack(),
+    candidate_output_mode="deferred_stack",
+    architecture_decision=(
+        "opportunistic_natural_storage_views_without_republication"
+    ),
+    metrics_filename="stage_o431_metrics.json",
+)
+
+
 def _require_role(role: str) -> str:
     if role not in _ROLES:
         raise ValueError("role must be 'baseline' or 'candidate'")
     return role
 
 
-def _policies(role: str):
+def _policies(
+    role: str,
+    variant: _StageO43Variant = _PACKED_PUBLICATION_VARIANT,
+):
     role = _require_role(role)
     if role == "baseline":
         return (
@@ -64,7 +98,7 @@ def _policies(role: str):
             ProjectedBatchAssemblyPolicy.copy_cat(),
         )
     return (
-        AlgebraicOutputPublicationPolicy.preallocated(),
+        variant.candidate_output_policy,
         ProjectedBatchAssemblyPolicy.contiguous_storage_view(),
     )
 
@@ -76,8 +110,9 @@ def _build_runtime(
     expected_gpu_name: str,
     device: torch.device,
     instrument: bool,
+    variant: _StageO43Variant = _PACKED_PUBLICATION_VARIANT,
 ):
-    output_policy, batch_policy = _policies(role)
+    output_policy, batch_policy = _policies(role, variant)
     return build_h100_plane_shadow_runtime_from_production_metadata(
         reference.metadata,
         expected_gpu_name=expected_gpu_name,
@@ -89,13 +124,14 @@ def _build_runtime(
     )
 
 
-def profile_stage_o43_h100_runtime(
+def _profile_stage_o43_variant_h100_runtime(
     production_directory: str | Path,
     *,
     role: str,
     warmup_steps: int = 10,
     profile_steps: int = 20,
     expected_gpu_name: str = "H100",
+    variant: _StageO43Variant,
 ) -> dict[str, object]:
     """Profile one policy while retaining only scalar diagnostics."""
 
@@ -117,6 +153,7 @@ def profile_stage_o43_h100_runtime(
         expected_gpu_name=expected_gpu_name,
         device=device,
         instrument=True,
+        variant=variant,
     )
     runtime.reset(_initial_values(reference, device))
     _cuda_step_samples(runtime, warmup_steps)
@@ -143,7 +180,7 @@ def profile_stage_o43_h100_runtime(
     signature = comparison.production_signature
     return {
         "schema_version": 1,
-        "qualification_stage": "O.4.3",
+        "qualification_stage": variant.qualification_stage,
         "classification": "PROFILE_COMPLETE",
         "measurement_role": role,
         "production_default_changed": False,
@@ -184,13 +221,54 @@ def profile_stage_o43_h100_runtime(
     }
 
 
-def run_stage_o43_h100_trajectory(
+def profile_stage_o43_h100_runtime(
+    production_directory: str | Path,
+    *,
+    role: str,
+    warmup_steps: int = 10,
+    profile_steps: int = 20,
+    expected_gpu_name: str = "H100",
+) -> dict[str, object]:
+    """Profile the original packed-publication Stage O.4.3 variant."""
+
+    return _profile_stage_o43_variant_h100_runtime(
+        production_directory,
+        role=role,
+        warmup_steps=warmup_steps,
+        profile_steps=profile_steps,
+        expected_gpu_name=expected_gpu_name,
+        variant=_PACKED_PUBLICATION_VARIANT,
+    )
+
+
+def profile_stage_o431_h100_runtime(
+    production_directory: str | Path,
+    *,
+    role: str,
+    warmup_steps: int = 10,
+    profile_steps: int = 20,
+    expected_gpu_name: str = "H100",
+) -> dict[str, object]:
+    """Profile safe natural-storage views without republishing outputs."""
+
+    return _profile_stage_o43_variant_h100_runtime(
+        production_directory,
+        role=role,
+        warmup_steps=warmup_steps,
+        profile_steps=profile_steps,
+        expected_gpu_name=expected_gpu_name,
+        variant=_OPPORTUNISTIC_VIEW_VARIANT,
+    )
+
+
+def _run_stage_o43_variant_h100_trajectory(
     production_directory: str | Path,
     output_directory: str | Path,
     *,
     role: str,
     confirmed_steps: int = STAGE_O43_TRAJECTORY_STEPS,
     expected_gpu_name: str = "H100",
+    variant: _StageO43Variant,
 ) -> dict[str, object]:
     """Run one bounded trajectory from an immutable production Q0."""
 
@@ -213,6 +291,7 @@ def run_stage_o43_h100_trajectory(
         expected_gpu_name=expected_gpu_name,
         device=device,
         instrument=False,
+        variant=variant,
     )
     run = ExperimentalPlaneShadowRun(
         runtime,
@@ -229,7 +308,7 @@ def run_stage_o43_h100_trajectory(
                 "initial_condition"
             ]["projected_q_sha256"],
             "configuration_comparison": comparison.to_metadata(),
-            "qualification_stage": "O.4.3",
+            "qualification_stage": variant.qualification_stage,
             "measurement_role": role,
         },
     )
@@ -239,7 +318,7 @@ def run_stage_o43_h100_trajectory(
     final = run.complete()
     result = {
         "schema_version": 1,
-        "qualification_stage": "O.4.3",
+        "qualification_stage": variant.qualification_stage,
         "classification": "TRAJECTORY_COMPLETE",
         "measurement_role": role,
         "production_default_changed": False,
@@ -257,8 +336,48 @@ def run_stage_o43_h100_trajectory(
         ),
         "environment": environment,
     }
-    _write_new_json(run.output_directory / "stage_o43_metrics.json", result)
+    _write_new_json(run.output_directory / variant.metrics_filename, result)
     return result
+
+
+def run_stage_o43_h100_trajectory(
+    production_directory: str | Path,
+    output_directory: str | Path,
+    *,
+    role: str,
+    confirmed_steps: int = STAGE_O43_TRAJECTORY_STEPS,
+    expected_gpu_name: str = "H100",
+) -> dict[str, object]:
+    """Run the original packed-publication Stage O.4.3 trajectory."""
+
+    return _run_stage_o43_variant_h100_trajectory(
+        production_directory,
+        output_directory,
+        role=role,
+        confirmed_steps=confirmed_steps,
+        expected_gpu_name=expected_gpu_name,
+        variant=_PACKED_PUBLICATION_VARIANT,
+    )
+
+
+def run_stage_o431_h100_trajectory(
+    production_directory: str | Path,
+    output_directory: str | Path,
+    *,
+    role: str,
+    confirmed_steps: int = STAGE_O43_TRAJECTORY_STEPS,
+    expected_gpu_name: str = "H100",
+) -> dict[str, object]:
+    """Run the natural-storage-view Stage O.4.3.1 trajectory."""
+
+    return _run_stage_o43_variant_h100_trajectory(
+        production_directory,
+        output_directory,
+        role=role,
+        confirmed_steps=confirmed_steps,
+        expected_gpu_name=expected_gpu_name,
+        variant=_OPPORTUNISTIC_VIEW_VARIANT,
+    )
 
 
 def _file_sha256(path: Path) -> str:
@@ -317,7 +436,7 @@ def _mean(values: Sequence[float]) -> float:
     return math.fsum(values) / len(values)
 
 
-def analyze_stage_o43_qualification(
+def _analyze_stage_o43_variant_qualification(
     baseline_trajectory: str | Path,
     candidate_trajectory: str | Path,
     baseline_r128_profiles: Sequence[str | Path],
@@ -328,6 +447,7 @@ def analyze_stage_o43_qualification(
     stage_o42_report: str | Path,
     expected_stage_o42_sha256: str,
     expected_gpu_name: str = "H100",
+    variant: _StageO43Variant,
 ) -> dict[str, object]:
     """Apply numerical, structural, timing, and memory gates."""
 
@@ -353,11 +473,11 @@ def analyze_stage_o43_qualification(
         if not directory.is_dir() or not (directory / "COMPLETE").is_file():
             raise ValueError(f"{role} trajectory is incomplete")
         metric = _load_json(
-            directory / "stage_o43_metrics.json",
+            directory / variant.metrics_filename,
             f"{role} trajectory metrics",
         )
         if not (
-            metric.get("qualification_stage") == "O.4.3"
+            metric.get("qualification_stage") == variant.qualification_stage
             and metric.get("classification") == "TRAJECTORY_COMPLETE"
             and metric.get("measurement_role") == role
             and metric.get("completed_steps") == STAGE_O43_TRAJECTORY_STEPS
@@ -413,7 +533,7 @@ def analyze_stage_o43_qualification(
                 expected_output_mode = (
                     "deferred_stack"
                     if role == "baseline"
-                    else "preallocated_packed"
+                    else variant.candidate_output_mode
                 )
                 expected_batch_mode = (
                     "copy_cat"
@@ -421,7 +541,8 @@ def analyze_stage_o43_qualification(
                     else "contiguous_storage_view"
                 )
                 valid = (
-                    profile["qualification_stage"] == "O.4.3"
+                    profile["qualification_stage"]
+                    == variant.qualification_stage
                     and profile["classification"] == "PROFILE_COMPLETE"
                     and profile["measurement_role"] == role
                     and tuple(profile["configuration"]["shape"])
@@ -556,9 +677,9 @@ def analyze_stage_o43_qualification(
         classification = "B_neutral"
     return {
         "schema_version": 1,
-        "qualification_stage": "O.4.3",
+        "qualification_stage": variant.qualification_stage,
         "classification": classification,
-        "architecture_decision": "packed_generation_storage_with_safe_views",
+        "architecture_decision": variant.architecture_decision,
         "eligible_for_stage_o44_decision": classification == "A_recommended",
         "eligible_for_production_promotion": False,
         "production_default_changed": False,
@@ -591,6 +712,105 @@ def analyze_stage_o43_qualification(
             "maximum_memory_ratio": STAGE_O43_MAXIMUM_MEMORY_RATIO,
         },
     }
+
+
+def analyze_stage_o43_qualification(
+    baseline_trajectory: str | Path,
+    candidate_trajectory: str | Path,
+    baseline_r128_profiles: Sequence[str | Path],
+    candidate_r128_profiles: Sequence[str | Path],
+    baseline_r320_profiles: Sequence[str | Path],
+    candidate_r320_profiles: Sequence[str | Path],
+    *,
+    stage_o42_report: str | Path,
+    expected_stage_o42_sha256: str,
+    expected_gpu_name: str = "H100",
+) -> dict[str, object]:
+    """Analyze the original packed-publication Stage O.4.3 candidate."""
+
+    return _analyze_stage_o43_variant_qualification(
+        baseline_trajectory,
+        candidate_trajectory,
+        baseline_r128_profiles,
+        candidate_r128_profiles,
+        baseline_r320_profiles,
+        candidate_r320_profiles,
+        stage_o42_report=stage_o42_report,
+        expected_stage_o42_sha256=expected_stage_o42_sha256,
+        expected_gpu_name=expected_gpu_name,
+        variant=_PACKED_PUBLICATION_VARIANT,
+    )
+
+
+def _require_rejected_stage_o43_evidence(
+    stage_o43_report: str | Path,
+    expected_stage_o43_sha256: str,
+) -> tuple[Path, dict[str, object]]:
+    evidence_path = Path(stage_o43_report).expanduser().resolve()
+    if _sha256(evidence_path) != expected_stage_o43_sha256:
+        raise ValueError("Stage O.4.3 evidence SHA-256 differs")
+    evidence = _load_json(evidence_path, "Stage O.4.3 evidence")
+    try:
+        valid = bool(
+            evidence["qualification_stage"] == "O.4.3"
+            and evidence["classification"] == "C_rejected"
+            and evidence["architecture_decision"]
+            == "packed_generation_storage_with_safe_views"
+            and evidence["eligible_for_stage_o44_decision"] is False
+            and evidence["eligible_for_production_promotion"] is False
+            and evidence["production_default_changed"] is False
+            and evidence["gates"]["numerical_equivalence"] is True
+            and evidence["gates"]["zero_copy_batch_assembly_exercised"]
+            is True
+            and evidence["gates"]["r320_performance_improvement"] is False
+            and evidence["gates"]["r320_memory_non_regression"] is False
+            and evidence["gates"]["candidate_safety_non_regression"] is False
+        )
+    except (KeyError, TypeError):
+        valid = False
+    if not valid:
+        raise ValueError("Stage O.4.3 rejection evidence contract differs")
+    return evidence_path, evidence
+
+
+def analyze_stage_o431_qualification(
+    baseline_trajectory: str | Path,
+    candidate_trajectory: str | Path,
+    baseline_r128_profiles: Sequence[str | Path],
+    candidate_r128_profiles: Sequence[str | Path],
+    baseline_r320_profiles: Sequence[str | Path],
+    candidate_r320_profiles: Sequence[str | Path],
+    *,
+    stage_o42_report: str | Path,
+    expected_stage_o42_sha256: str,
+    stage_o43_report: str | Path,
+    expected_stage_o43_sha256: str,
+    expected_gpu_name: str = "H100",
+) -> dict[str, object]:
+    """Analyze safe views over naturally shared storage without repacking."""
+
+    rejected_path, _ = _require_rejected_stage_o43_evidence(
+        stage_o43_report,
+        expected_stage_o43_sha256,
+    )
+    report = _analyze_stage_o43_variant_qualification(
+        baseline_trajectory,
+        candidate_trajectory,
+        baseline_r128_profiles,
+        candidate_r128_profiles,
+        baseline_r320_profiles,
+        candidate_r320_profiles,
+        stage_o42_report=stage_o42_report,
+        expected_stage_o42_sha256=expected_stage_o42_sha256,
+        expected_gpu_name=expected_gpu_name,
+        variant=_OPPORTUNISTIC_VIEW_VARIANT,
+    )
+    report["stage_o43_rejection_evidence"] = {
+        "path": str(rejected_path),
+        "sha256": expected_stage_o43_sha256,
+        "packed_publication_must_remain_rejected": True,
+    }
+    return report
 
 
 def profile_main(argv: Sequence[str] | None = None) -> int:
@@ -666,6 +886,83 @@ def analysis_main(argv: Sequence[str] | None = None) -> int:
     return 0 if report["classification"] == "A_recommended" else 1
 
 
+def profile_o431_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Profile Stage O.4.3.1 on H100")
+    parser.add_argument("--production-reference-dir", type=Path, required=True)
+    parser.add_argument("--role", choices=_ROLES, required=True)
+    parser.add_argument("--warmup-steps", type=int, default=10)
+    parser.add_argument("--profile-steps", type=int, default=20)
+    parser.add_argument("--expected-gpu-name", default="H100")
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args(argv)
+    report = profile_stage_o431_h100_runtime(
+        args.production_reference_dir,
+        role=args.role,
+        warmup_steps=args.warmup_steps,
+        profile_steps=args.profile_steps,
+        expected_gpu_name=args.expected_gpu_name,
+    )
+    _write_new_json(args.output, report)
+    print(json.dumps(report, allow_nan=False, indent=2, sort_keys=True))
+    return 0
+
+
+def trajectory_o431_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Run Stage O.4.3.1 trajectory")
+    parser.add_argument("--production-reference-dir", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--role", choices=_ROLES, required=True)
+    parser.add_argument("--confirm-steps", type=int, default=100)
+    parser.add_argument("--expected-gpu-name", default="H100")
+    args = parser.parse_args(argv)
+    report = run_stage_o431_h100_trajectory(
+        args.production_reference_dir,
+        args.output_dir,
+        role=args.role,
+        confirmed_steps=args.confirm_steps,
+        expected_gpu_name=args.expected_gpu_name,
+    )
+    print(json.dumps(report, allow_nan=False, indent=2, sort_keys=True))
+    return 0
+
+
+def analysis_o431_main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Analyze Stage O.4.3.1")
+    parser.add_argument("--baseline-trajectory", type=Path, required=True)
+    parser.add_argument("--candidate-trajectory", type=Path, required=True)
+    for scale in ("r128", "r320"):
+        for role in _ROLES:
+            parser.add_argument(
+                f"--{role}-{scale}-profile",
+                type=Path,
+                action="append",
+                required=True,
+            )
+    parser.add_argument("--stage-o42-report", type=Path, required=True)
+    parser.add_argument("--expected-stage-o42-sha256", required=True)
+    parser.add_argument("--stage-o43-report", type=Path, required=True)
+    parser.add_argument("--expected-stage-o43-sha256", required=True)
+    parser.add_argument("--expected-gpu-name", default="H100")
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args(argv)
+    report = analyze_stage_o431_qualification(
+        args.baseline_trajectory,
+        args.candidate_trajectory,
+        args.baseline_r128_profile,
+        args.candidate_r128_profile,
+        args.baseline_r320_profile,
+        args.candidate_r320_profile,
+        stage_o42_report=args.stage_o42_report,
+        expected_stage_o42_sha256=args.expected_stage_o42_sha256,
+        stage_o43_report=args.stage_o43_report,
+        expected_stage_o43_sha256=args.expected_stage_o43_sha256,
+        expected_gpu_name=args.expected_gpu_name,
+    )
+    _write_new_json(args.output, report)
+    print(json.dumps(report, allow_nan=False, indent=2, sort_keys=True))
+    return 0 if report["classification"] == "A_recommended" else 1
+
+
 __all__ = [
     "STAGE_O43_DECISION_SHAPE",
     "STAGE_O43_DIAGNOSTIC_SHAPE",
@@ -673,9 +970,15 @@ __all__ = [
     "STAGE_O43_RELATIVE_L2_TOLERANCE",
     "STAGE_O43_TRAJECTORY_STEPS",
     "analyze_stage_o43_qualification",
+    "analyze_stage_o431_qualification",
     "analysis_main",
+    "analysis_o431_main",
     "profile_main",
+    "profile_o431_main",
     "profile_stage_o43_h100_runtime",
+    "profile_stage_o431_h100_runtime",
     "run_stage_o43_h100_trajectory",
+    "run_stage_o431_h100_trajectory",
     "trajectory_main",
+    "trajectory_o431_main",
 ]

@@ -415,6 +415,42 @@ def test_contiguous_view_batch_assembly_preserves_complete_cpu_timestep():
     )
 
 
+def test_natural_storage_views_do_not_require_packed_republication():
+    control = _runtime(unified_policy=True)
+    candidate = _runtime(
+        unified_policy=True,
+        batch_assembly_policy=(
+            ProjectedBatchAssemblyPolicy.contiguous_storage_view()
+        ),
+        output_publication_policy=(
+            AlgebraicOutputPublicationPolicy.deferred_stack()
+        ),
+    )
+    control.reset_projected_batch_assembly_diagnostics()
+    candidate.reset_projected_batch_assembly_diagnostics()
+    control.solver.run(3)
+    candidate.solver.run(3)
+
+    assert torch.equal(
+        candidate.solver.fields.spatial,
+        control.solver.fields.spatial,
+    )
+    assert torch.equal(
+        candidate.solver.fields.spectral,
+        control.solver.fields.spectral,
+    )
+    diagnostics = candidate.projected_batch_assembly_diagnostics()
+    control_diagnostics = control.projected_batch_assembly_diagnostics()
+    assert diagnostics["contiguous_view_batches"] > 0
+    assert diagnostics["copy_cat_batches"] < (
+        control_diagnostics["copy_cat_batches"]
+    )
+    assert diagnostics["retained_tensor_references"] == 0
+    assert candidate.algebraic_output_publication_policy.to_metadata()[
+        "mode"
+    ] == "deferred_stack"
+
+
 def test_stage_n4_remains_outside_production_and_generic_solver_paths():
     assert not hasattr(pssolver, "AlgebraicExecutionPolicy")
     for relative in (

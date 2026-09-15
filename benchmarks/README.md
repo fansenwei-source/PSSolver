@@ -95,3 +95,17 @@ closed Stage O.4.2 accounting report, immutable R128/R320 production
 references, a 100-step numerical comparison, and three balanced profile trials
 per role and resolution. An `A_recommended` result authorizes only a later
 architecture decision and never changes a production default.
+
+## Stage O.4.3.1 natural-storage-view qualification
+
+Stage O.4.3.1 keeps the historical `deferred_stack` publication policy on both
+sides of the comparison. Only the candidate enables conservative contiguous
+storage views for transform batches, so it can reuse adjacency already created
+by an upstream producer without allocating or copying into the rejected
+generation-wide packed store.
+
+Generate the bounded H100 contract with
+`scripts_plane/plan_plane_stage_o431_qualification.py`. The plan binds both
+the closed Stage O.4.2 accounting report and the Stage O.4.3 rejection report,
+then repeats the 100-step numerical gate and balanced R128/R320 profiles. No
+result from this stage changes a production default.
