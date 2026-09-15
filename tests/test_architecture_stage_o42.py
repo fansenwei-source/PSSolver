@@ -42,6 +42,16 @@ def _inventory(*, unique: int, allocated: int, categories: dict[str, int]):
         "allocator_minus_inventory_bytes": allocated - unique,
         "inventory_exceeds_allocator_bytes": max(0, unique - allocated),
         "storage_accounting_consistent": unique <= allocated,
+        "allocator_counters_stable": True,
+        "allocator_block_reconciliation": {
+            "schema_version": 1,
+            "classification": "fully_reconciled_with_active_allocator_blocks",
+            "accounting_reconciled": True,
+            "allocator_counter_matches_active_block_bytes": True,
+            "all_unmatched_storages_reported": True,
+            "inventory_bytes_outside_active_allocator_blocks": 0,
+            "unmatched_storages": [],
+        },
     }
 
 
@@ -91,6 +101,8 @@ def _profile(role: str, *, scale: int):
             "diagnostic_steps": 2,
             "global_gc_traversal": False,
             "runtime_roots_only": True,
+            "allocator_block_reconciliation": True,
+            "allocator_counter_stability_checked": True,
         },
         "residency_phases": {
             "after_warmup": copy.deepcopy(phase),
@@ -166,6 +178,9 @@ def test_stage_o42_analysis_ranks_measured_owner_and_operator_deltas(tmp_path):
     )
 
     assert report["classification"] == "DIAGNOSTIC_COMPLETE"
+    assert report["allocator_block_reconciliation_complete"] is True
+    assert report["allocator_block_accounting_reconciled"] is True
+    assert report["accounting_ready_for_optimization"] is True
     assert report["eligible_for_stage_o43_optimization_design"] is True
     assert report["eligible_for_production_promotion"] is False
     phase = report["phase_comparison"]["after_warmup"]
@@ -214,6 +229,7 @@ def test_stage_o42_analysis_persists_accounting_ambiguity_without_promotion(
 
     assert report["classification"] == "DIAGNOSTIC_COMPLETE"
     assert report["storage_accounting_consistent"] is False
+    assert report["accounting_ready_for_optimization"] is False
     assert report["eligible_for_stage_o43_optimization_design"] is False
     assert report["architecture_decision"] == (
         "refine_storage_accounting_before_optimization"
@@ -242,6 +258,8 @@ def test_stage_o42_plan_is_bounded_read_only_and_non_promoting(tmp_path):
     assert plan["planning_only"] is True
     assert plan["diagnostic_contract"]["profile_count"] == 2
     assert plan["diagnostic_contract"]["runtime_roots_only"] is True
+    assert plan["diagnostic_contract"]["allocator_block_reconciliation"] is True
+    assert plan["diagnostic_contract"]["allocator_counter_stability_checked"] is True
     assert plan["diagnostic_contract"]["global_gc_traversal"] is False
     assert plan["diagnostic_contract"]["production_default_may_change"] is False
     assert [item["role"] for item in plan["commands"]["profiles"]] == [

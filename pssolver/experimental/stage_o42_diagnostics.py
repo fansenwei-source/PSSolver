@@ -37,6 +37,18 @@ def _validated_profile(path: str | Path, role: str) -> tuple[Path, dict[str, obj
             tuple(report["diagnostic_contract"]["shape"]) == STAGE_O42_SHAPE
             and report["diagnostic_contract"]["global_gc_traversal"] is False
             and report["diagnostic_contract"]["runtime_roots_only"] is True
+            and (
+                report["diagnostic_contract"][
+                    "allocator_block_reconciliation"
+                ]
+                is True
+            )
+            and (
+                report["diagnostic_contract"][
+                    "allocator_counter_stability_checked"
+                ]
+                is True
+            )
         )
         audit_valid = int(report["operator_audit"]["steps"]) > 0 and isinstance(
             report["operator_audit"]["operators"], Mapping
@@ -51,6 +63,7 @@ def _validated_profile(path: str | Path, role: str) -> tuple[Path, dict[str, obj
     for name in ("after_warmup", "after_timestep", "after_observation"):
         try:
             inventory = phases[name]["inventory"]
+            reconciliation = phases[name]["allocator_block_reconciliation"]
             gap = int(phases[name]["allocator_minus_inventory_bytes"])
             exceeds = int(phases[name]["inventory_exceeds_allocator_bytes"])
             consistent = phases[name]["storage_accounting_consistent"]
@@ -61,6 +74,17 @@ def _validated_profile(path: str | Path, role: str) -> tuple[Path, dict[str, obj
                 and isinstance(consistent, bool)
                 and exceeds == max(0, -gap)
                 and consistent is (gap >= 0)
+                and reconciliation["schema_version"] == 1
+                and isinstance(reconciliation["classification"], str)
+                and isinstance(reconciliation["accounting_reconciled"], bool)
+                and isinstance(
+                    reconciliation[
+                        "allocator_counter_matches_active_block_bytes"
+                    ],
+                    bool,
+                )
+                and reconciliation["all_unmatched_storages_reported"] is True
+                and isinstance(phases[name]["allocator_counters_stable"], bool)
             )
         except (KeyError, TypeError, ValueError):
             valid = False
@@ -137,6 +161,18 @@ def _phase_comparison(
             ],
             "canary_inventory_exceeds_allocator_bytes": c_phase[
                 "inventory_exceeds_allocator_bytes"
+            ],
+            "legacy_allocator_counters_stable": l_phase[
+                "allocator_counters_stable"
+            ],
+            "canary_allocator_counters_stable": c_phase[
+                "allocator_counters_stable"
+            ],
+            "legacy_allocator_block_reconciliation": l_phase[
+                "allocator_block_reconciliation"
+            ],
+            "canary_allocator_block_reconciliation": c_phase[
+                "allocator_block_reconciliation"
             ],
             "category_referenced_storage_delta_bytes": category_deltas,
             "ranked_positive_category_deltas": [
@@ -246,6 +282,23 @@ def analyze_stage_o42_diagnostics(
         and phase["canary_storage_accounting_consistent"] is True
         for phase in phase_comparison.values()
     )
+    allocator_block_accounting_reconciled = all(
+        phase["legacy_allocator_block_reconciliation"][
+            "accounting_reconciled"
+        ]
+        is True
+        and phase["canary_allocator_block_reconciliation"][
+            "accounting_reconciled"
+        ]
+        is True
+        and phase["legacy_allocator_counters_stable"] is True
+        and phase["canary_allocator_counters_stable"] is True
+        for phase in phase_comparison.values()
+    )
+    accounting_ready_for_optimization = (
+        storage_accounting_consistent
+        and allocator_block_accounting_reconciled
+    )
     operator_comparison = _operator_comparison(legacy, canary)
     category_totals: dict[str, int] = {}
     for phase in phase_comparison.values():
@@ -294,14 +347,21 @@ def analyze_stage_o42_diagnostics(
         "classification": "DIAGNOSTIC_COMPLETE",
         "architecture_decision": (
             "identify_owner_before_optimization"
-            if storage_accounting_consistent
+            if accounting_ready_for_optimization
             else "refine_storage_accounting_before_optimization"
         ),
-        "eligible_for_stage_o43_optimization_design": (storage_accounting_consistent),
+        "eligible_for_stage_o43_optimization_design": (
+            accounting_ready_for_optimization
+        ),
         "eligible_for_production_promotion": False,
         "production_default_changed": False,
         "stage_o41_original_classification_unchanged": True,
         "storage_accounting_consistent": storage_accounting_consistent,
+        "allocator_block_reconciliation_complete": True,
+        "allocator_block_accounting_reconciled": (
+            allocator_block_accounting_reconciled
+        ),
+        "accounting_ready_for_optimization": accounting_ready_for_optimization,
         "phase_comparison": phase_comparison,
         "operator_comparison": operator_comparison,
         "ranked_positive_residency_categories": ranked_categories,

@@ -24,6 +24,16 @@ performance evidence. Two unmeasured settling steps separate observation from
 the operator audit so observation-specific integrator state is not counted as
 a normal timestep.
 
+When a runtime-root inventory and `torch.cuda.memory_allocated()` disagree,
+each reported storage address range is also reconciled against the active,
+awaiting-free, and inactive blocks in `torch.cuda.memory_snapshot()`. The
+report records exact unmatched owner paths without retaining tensors or the
+allocator snapshot. Allocator counters are sampled before the inventory,
+immediately before the block snapshot, and after that snapshot so a changing
+measurement window cannot be mistaken for an ownership discrepancy. This is
+an accounting diagnostic only; unmatched or unstable evidence cannot
+authorize an optimization.
+
 The H100 plan runs exactly one R320 diagnostic for each runtime and one
 read-only comparison. A successful result may authorize a narrowly targeted
 Stage O.4.3 optimization design. It cannot change the runtime default, promote

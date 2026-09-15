@@ -1,5 +1,8 @@
 """Read-only diagnostics shared by benchmark and qualification tooling."""
 
+from .allocator_reconciliation import (
+    reconcile_tensor_inventory_with_cuda_allocator,
+)
 from .cuda_memory import (
     cuda_memory_snapshot,
     cuda_memory_window,
@@ -10,4 +13,5 @@ __all__ = [
     "build_tensor_inventory",
     "cuda_memory_snapshot",
     "cuda_memory_window",
+    "reconcile_tensor_inventory_with_cuda_allocator",
 ]

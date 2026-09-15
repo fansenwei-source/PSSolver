@@ -23,7 +23,11 @@ except ImportError:  # Direct execution through the adjacent CLI wrapper.
         RegionTimer,
         _build_solver,
     )
-from pssolver.diagnostics import build_tensor_inventory, cuda_memory_snapshot
+from pssolver.diagnostics import (
+    build_tensor_inventory,
+    cuda_memory_snapshot,
+    reconcile_tensor_inventory_with_cuda_allocator,
+)
 from pssolver.experimental.h100_shadow_qualification import (
     _cuda_identity,
     _require_positive_integer,
@@ -67,13 +71,38 @@ def _inventory_phase(
     device: torch.device,
 ) -> dict[str, object]:
     torch.cuda.synchronize(device)
-    allocator = cuda_memory_snapshot(device)
+    allocator_before_inventory = cuda_memory_snapshot(device)
     inventory = build_tensor_inventory(roots, device=device)
+    torch.cuda.synchronize(device)
+    allocator = cuda_memory_snapshot(device)
+    allocator_segments = torch.cuda.memory_snapshot()
+    torch.cuda.synchronize(device)
+    allocator_after_block_snapshot = cuda_memory_snapshot(device)
+    device_index = (
+        device.index if device.index is not None else torch.cuda.current_device()
+    )
+    reconciliation = reconcile_tensor_inventory_with_cuda_allocator(
+        inventory,
+        allocator_segments,
+        allocator_allocated_bytes=int(allocator["allocated_bytes"]),
+        device_index=device_index,
+        visible_device_count=torch.cuda.device_count(),
+        maximum_reported_unmatched_storages=max(
+            1, int(inventory["unique_storage_count"])
+        ),
+    )
     allocated = int(allocator["allocated_bytes"])
     unique = int(inventory["unique_storage_bytes"])
     gap = allocated - unique
     return {
         "allocator": allocator,
+        "allocator_before_inventory": allocator_before_inventory,
+        "allocator_after_block_snapshot": allocator_after_block_snapshot,
+        "allocator_counters_stable": (
+            allocator_before_inventory == allocator
+            and allocator == allocator_after_block_snapshot
+        ),
+        "allocator_block_reconciliation": reconciliation,
         "inventory": inventory,
         "allocator_minus_inventory_bytes": gap,
         "inventory_exceeds_allocator_bytes": max(0, -gap),
@@ -341,6 +370,8 @@ def profile_stage_o42_runtime(
             "global_gc_traversal": False,
             "runtime_roots_only": True,
             "overlapping_storage_address_ranges_coalesced": True,
+            "allocator_block_reconciliation": True,
+            "allocator_counter_stability_checked": True,
             "storage_accounting_consistency_is_diagnostic": True,
             "operator_memory_is_allocator_effect_not_total_traffic": True,
         },
