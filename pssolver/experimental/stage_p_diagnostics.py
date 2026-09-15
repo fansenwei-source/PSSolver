@@ -27,6 +27,7 @@ STAGE_P_OPERATOR_AUDIT_STEPS = 3
 STAGE_P_SEMANTIC_STEPS = 3
 STAGE_P_MAXIMUM_DISTINCT_EVENTS = 2048
 STAGE_P_RUNTIME_ROLES = ("legacy_production", "separated_canary")
+STAGE_P_TRANSFORM_MILLISECONDS_KEY = "transform_milliseconds_per_step"
 
 
 def _finite(value: object, description: str) -> float:
@@ -516,12 +517,12 @@ def analyze_stage_p_diagnostics(
     production_transform_ms = _mean_profile_value(
         production,
         "matched_semantic_regions",
-        "transform_total_milliseconds_per_step",
+        STAGE_P_TRANSFORM_MILLISECONDS_KEY,
     )
     canary_transform_ms = _mean_profile_value(
         canary,
         "matched_semantic_regions",
-        "transform_total_milliseconds_per_step",
+        STAGE_P_TRANSFORM_MILLISECONDS_KEY,
     )
     production_runtime_calls = _mean_profile_value(
         production,
@@ -660,6 +661,7 @@ __all__ = [
     "STAGE_P_SEMANTIC_STEPS",
     "STAGE_P_SHAPE",
     "STAGE_P_THROUGHPUT_STEPS",
+    "STAGE_P_TRANSFORM_MILLISECONDS_KEY",
     "STAGE_P_WARMUP_STEPS",
     "analysis_main",
     "analyze_stage_p_diagnostics",

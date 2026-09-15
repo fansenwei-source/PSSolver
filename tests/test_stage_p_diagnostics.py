@@ -9,9 +9,12 @@ from pathlib import Path
 import pytest
 
 from pssolver.experimental.stage_p_diagnostics import (
+    STAGE_P_SEMANTIC_STEPS,
+    STAGE_P_TRANSFORM_MILLISECONDS_KEY,
     analyze_stage_p_diagnostics,
     summarize_operator_kernel_events,
 )
+from benchmarks.profile_plane_stage_p import _matched_semantic_regions
 
 
 CLOSURE_SHA256 = "c" * 64
@@ -146,7 +149,7 @@ def _profile(role: str, *, trial: int) -> dict[str, object]:
         },
         "dynamo_delta": {"graph_breaks": 0},
         "matched_semantic_regions": {
-            "transform_total_milliseconds_per_step": transform_ms,
+            STAGE_P_TRANSFORM_MILLISECONDS_KEY: transform_ms,
         },
         "measurement_contract": {
             "throughput_operator_and_semantic_windows_are_separate": True,
@@ -234,3 +237,46 @@ def test_analysis_rejects_graph_breaks_and_nonfinite_metrics(tmp_path):
             canary,
             expected_stage_o_closure_sha256=CLOSURE_SHA256,
         )
+
+
+@pytest.mark.parametrize(
+    ("role", "regions"),
+    (
+        (
+            "legacy_production",
+            {
+                "whole_timestep": {},
+                "transform_forward": {},
+                "transform_inverse": {},
+                "static_fields": {},
+                "q_nonlinear": {},
+                "imex_and_dealias": {},
+                "dynamic_inverse": {},
+                "spectral_refresh": {},
+            },
+        ),
+        (
+            "separated_canary",
+            {
+                "timestep.total": {},
+                "transform.forward": {},
+                "transform.inverse": {},
+                "timestep.algebraic_update": {},
+                "timestep.explicit_rhs": {},
+                "timestep.spectral_update": {},
+                "timestep.dynamic_projection": {},
+                "timestep.dynamic_inverse": {},
+                "timestep.spectral_refresh": {},
+            },
+        ),
+    ),
+)
+def test_profiler_semantic_schema_matches_analyzer_contract(role, regions):
+    populated = {
+        name: {"total_seconds": 0.003, "calls": STAGE_P_SEMANTIC_STEPS}
+        for name in regions
+    }
+    raw = populated if role == "legacy_production" else {"regions": populated}
+    report = _matched_semantic_regions(role, raw)
+    assert report[STAGE_P_TRANSFORM_MILLISECONDS_KEY] > 0.0
+    assert "transform_total_milliseconds_per_step" not in report

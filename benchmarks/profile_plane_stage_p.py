@@ -47,6 +47,7 @@ from pssolver.experimental.stage_p_diagnostics import (
     STAGE_P_SEMANTIC_STEPS,
     STAGE_P_SHAPE,
     STAGE_P_THROUGHPUT_STEPS,
+    STAGE_P_TRANSFORM_MILLISECONDS_KEY,
     STAGE_P_WARMUP_STEPS,
     summarize_operator_kernel_events,
 )
@@ -319,7 +320,12 @@ def _matched_semantic_regions(
     }
     for label, region_names in names.items():
         seconds, calls = _region_total(regions, region_names)
-        result[f"{label}_milliseconds_per_step"] = (
+        milliseconds_key = (
+            STAGE_P_TRANSFORM_MILLISECONDS_KEY
+            if label == "transform"
+            else f"{label}_milliseconds_per_step"
+        )
+        result[milliseconds_key] = (
             1000.0 * seconds / STAGE_P_SEMANTIC_STEPS
         )
         result[f"{label}_calls_per_step"] = calls / STAGE_P_SEMANTIC_STEPS
