@@ -169,6 +169,7 @@ from .stage_q4_qualification import (
     run_stage_q4_h100_trajectory,
 )
 from .stage_q4_plan import build_stage_q4_h100_plan
+from .stage_r0_diagnostics import analyze_stage_r0_post_q4_retargeting
 from .stage_o43_qualification import (
     analyze_stage_o431_qualification,
     analyze_stage_o433_qualification,
@@ -269,6 +270,7 @@ __all__ = [
     "analyze_stage_q2_residual_gap",
     "analyze_stage_q3_algebraic_target",
     "analyze_stage_q4_qualification",
+    "analyze_stage_r0_post_q4_retargeting",
     "analyze_stage_o4_qualification",
     "analyze_stage_o41_qualification",
     "profile_h100_plane_shadow_from_production_reference",
