@@ -35,7 +35,6 @@ class ProjectedBatchAssemblyMode(str, Enum):
     COPY_CAT = "copy_cat"
     CONTIGUOUS_STORAGE_VIEW = "contiguous_storage_view"
     PREALLOCATED_WORKSPACE = "preallocated_workspace"
-    NATIVE_SEGMENTS = "native_segments"
 
 
 @dataclass(frozen=True, slots=True)
@@ -51,7 +50,6 @@ class ProjectedBatchAssemblyPolicy:
 
     mode: ProjectedBatchAssemblyMode = ProjectedBatchAssemblyMode.COPY_CAT
     workspace_source_prefixes: tuple[str, ...] = ()
-    native_segment_sources: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.mode, ProjectedBatchAssemblyMode):
@@ -74,26 +72,7 @@ class ProjectedBatchAssemblyPolicy:
             raise ValueError(
                 "workspace source prefixes require preallocated workspace mode"
             )
-        sources = tuple(self.native_segment_sources)
-        if any(
-            not isinstance(source, str)
-            or not source
-            or source.strip() != source
-            for source in sources
-        ):
-            raise ValueError("native-segment sources must be nonempty strings")
-        if len(set(sources)) != len(sources):
-            raise ValueError("native-segment sources must be unique")
-        if self.use_native_segments and not sources:
-            raise ValueError(
-                "native-segment assembly requires at least one exact source"
-            )
-        if not self.use_native_segments and sources:
-            raise ValueError(
-                "native-segment sources require native-segment mode"
-            )
         object.__setattr__(self, "workspace_source_prefixes", prefixes)
-        object.__setattr__(self, "native_segment_sources", sources)
 
     @property
     def allow_contiguous_storage_view(self) -> bool:
@@ -103,17 +82,10 @@ class ProjectedBatchAssemblyPolicy:
     def use_preallocated_workspace(self) -> bool:
         return self.mode is ProjectedBatchAssemblyMode.PREALLOCATED_WORKSPACE
 
-    @property
-    def use_native_segments(self) -> bool:
-        return self.mode is ProjectedBatchAssemblyMode.NATIVE_SEGMENTS
-
     def uses_workspace_for_source(self, source: str) -> bool:
         return self.use_preallocated_workspace and source.startswith(
             self.workspace_source_prefixes
         )
-
-    def uses_native_segments_for_source(self, source: str) -> bool:
-        return self.use_native_segments and source in self.native_segment_sources
 
     def to_metadata(self) -> dict[str, object]:
         return {
@@ -126,14 +98,8 @@ class ProjectedBatchAssemblyPolicy:
             "workspace_source_prefixes": list(
                 self.workspace_source_prefixes
             ),
-            "native_segment_sources": list(self.native_segment_sources),
-            "fallback": (
-                "fail_closed_for_designated_sources"
-                if self.use_native_segments
-                else "copy_cat"
-            ),
+            "fallback": "copy_cat",
             "changes_transform_order": False,
-            "changes_transform_partition": self.use_native_segments,
             "retains_tensor_references": False,
             "owns_runtime_workspace": self.use_preallocated_workspace,
             "workspace_retains_timestep_inputs": False,
@@ -161,17 +127,6 @@ class ProjectedBatchAssemblyPolicy:
         return cls(
             ProjectedBatchAssemblyMode.PREALLOCATED_WORKSPACE,
             source_prefixes,
-        )
-
-    @classmethod
-    def native_segments(
-        cls,
-        *,
-        source_names: tuple[str, ...],
-    ) -> "ProjectedBatchAssemblyPolicy":
-        return cls(
-            mode=ProjectedBatchAssemblyMode.NATIVE_SEGMENTS,
-            native_segment_sources=source_names,
         )
 
 
@@ -319,46 +274,6 @@ class CompiledProjectedTransformPlan:
         return self._batch_sizes
 
 
-@dataclass(frozen=True, slots=True)
-class BoundarySignatureNativeSegment:
-    """One call-local, producer-owned zero-copy transform input segment."""
-
-    producer_id: str
-    generation_token: object = field(repr=False, compare=False)
-    representation_space: str
-    projected_boundary_signature: tuple[str, ...]
-    component_names: tuple[str, ...]
-    component_indices: tuple[int, ...]
-    component_to_segment_index: Mapping[str, int]
-    packed_value: torch.Tensor = field(repr=False, compare=False)
-
-    def __post_init__(self) -> None:
-        names = tuple(self.component_names)
-        indices = tuple(self.component_indices)
-        mapping = dict(self.component_to_segment_index)
-        if not self.producer_id or self.producer_id.strip() != self.producer_id:
-            raise ValueError("native-segment producer_id must be nonempty")
-        if self.representation_space not in {"physical", "spectral"}:
-            raise ValueError("native-segment representation space is invalid")
-        if not names or len(names) != len(indices):
-            raise ValueError("native-segment components must align")
-        if mapping != {name: position for position, name in enumerate(names)}:
-            raise ValueError("native-segment component mapping is invalid")
-        if self.packed_value.layout is not torch.strided:
-            raise ValueError("native-segment tensor must use strided storage")
-        if not self.packed_value.is_contiguous():
-            raise ValueError("native-segment tensor must be contiguous")
-        if self.packed_value.is_conj() or self.packed_value.is_neg():
-            raise ValueError("native-segment tensor cannot be conjugated or negated")
-        object.__setattr__(self, "component_names", names)
-        object.__setattr__(self, "component_indices", indices)
-        object.__setattr__(
-            self,
-            "component_to_segment_index",
-            MappingProxyType(mapping),
-        )
-
-
 def _contiguous_storage_batch_view(
     values: tuple[torch.Tensor, ...],
 ) -> tuple[torch.Tensor | None, str | None]:
@@ -412,66 +327,6 @@ def _contiguous_storage_batch_view(
         ),
         None,
     )
-
-
-def _native_storage_segments(
-    values: tuple[torch.Tensor, ...],
-    *,
-    component_names: tuple[str, ...],
-    source: str,
-    boundary_signature: tuple[str, ...],
-    direction: ProjectedTransformDirection,
-) -> tuple[BoundarySignatureNativeSegment, ...]:
-    """Partition inputs into maximal zero-copy contiguous storage segments.
-
-    The function never concatenates, allocates a workspace, or changes
-    component order.  A value that cannot be joined to either neighbour is a
-    valid singleton native segment.  Multi-component segments are accepted
-    only when :func:`_contiguous_storage_batch_view` proves that one leading
-    view is safe.
-    """
-
-    if not values:
-        raise ValueError("native-segment inputs must be nonempty")
-    if len(component_names) != len(values):
-        raise ValueError("native-segment values and names must align")
-    generation_token = object()
-    representation_space = (
-        "physical"
-        if direction is ProjectedTransformDirection.FORWARD
-        else "spectral"
-    )
-    segments: list[BoundarySignatureNativeSegment] = []
-    start = 0
-    while start < len(values):
-        stop = start + 1
-        packed = values[start]
-        while stop < len(values):
-            candidate, _ = _contiguous_storage_batch_view(
-                values[start : stop + 1]
-            )
-            if candidate is None:
-                break
-            packed = candidate
-            stop += 1
-        indices = tuple(range(start, stop))
-        names = tuple(component_names[index] for index in indices)
-        segments.append(
-            BoundarySignatureNativeSegment(
-                producer_id=source,
-                generation_token=generation_token,
-                representation_space=representation_space,
-                projected_boundary_signature=boundary_signature,
-                component_names=names,
-                component_indices=indices,
-                component_to_segment_index={
-                    name: position for position, name in enumerate(names)
-                },
-                packed_value=packed,
-            )
-        )
-        start = stop
-    return tuple(segments)
 
 
 class BoundarySignatureTransformScheduler:
@@ -556,13 +411,6 @@ class BoundarySignatureTransformScheduler:
             "preallocated_workspace_components": 0,
             "preallocated_workspace_logical_input_bytes": 0,
             "preallocated_workspace_materialized_output_bytes": 0,
-            "native_segment_groups": 0,
-            "native_segment_batches": 0,
-            "native_segment_components": 0,
-            "native_segment_logical_input_bytes": 0,
-            "native_segment_materialized_output_bytes": 0,
-            "native_segment_singleton_batches": 0,
-            "native_segment_extra_transform_batches": 0,
         }
         self._batch_assembly_fallback_reasons: dict[str, int] = {}
         self._batch_assembly_sources: dict[str, dict[str, object]] = {}
@@ -631,13 +479,6 @@ class BoundarySignatureTransformScheduler:
             "preallocated_workspace_components": 0,
             "preallocated_workspace_logical_input_bytes": 0,
             "preallocated_workspace_materialized_output_bytes": 0,
-            "native_segment_groups": 0,
-            "native_segment_batches": 0,
-            "native_segment_components": 0,
-            "native_segment_logical_input_bytes": 0,
-            "native_segment_materialized_output_bytes": 0,
-            "native_segment_singleton_batches": 0,
-            "native_segment_extra_transform_batches": 0,
             "fallback_reasons": {},
             "retained_tensor_references": 0,
         }
@@ -747,37 +588,6 @@ class BoundarySignatureTransformScheduler:
         source_counters["singleton_batches"] += 1
         source_counters["singleton_components"] += 1
         source_counters["singleton_logical_input_bytes"] += logical_bytes
-
-    def _record_native_segments(
-        self,
-        *,
-        values: tuple[torch.Tensor, ...],
-        segments: tuple[BoundarySignatureNativeSegment, ...],
-        source: str,
-    ) -> None:
-        if not self._enable_batch_assembly_diagnostics:
-            return
-        logical_bytes = sum(
-            value.numel() * value.element_size() for value in values
-        )
-        singleton_batches = sum(
-            len(segment.component_indices) == 1 for segment in segments
-        )
-        updates = {
-            "native_segment_groups": 1,
-            "native_segment_batches": len(segments),
-            "native_segment_components": len(values),
-            "native_segment_logical_input_bytes": logical_bytes,
-            "native_segment_materialized_output_bytes": 0,
-            "native_segment_singleton_batches": singleton_batches,
-            "native_segment_extra_transform_batches": max(
-                0, len(segments) - 1
-            ),
-        }
-        source_counters = self._source_counters(source)
-        for name, increment in updates.items():
-            self._batch_assembly_counters[name] += increment
-            source_counters[name] += increment
 
     def _assemble_batch(
         self,
@@ -1022,53 +832,6 @@ class BoundarySignatureTransformScheduler:
                 strict=True,
             )
         ):
-            if self._batch_assembly_policy.uses_native_segments_for_source(
-                source
-            ):
-                selected = tuple(values[index] for index in indices)
-                timing_region = (
-                    f"projected_batch_assembly.source.{source}"
-                )
-                with performance_region(
-                    self._performance_recorder,
-                    timing_region,
-                ):
-                    segments = _native_storage_segments(
-                        selected,
-                        component_names=tuple(
-                            plan.component_names[index] for index in indices
-                        ),
-                        source=source,
-                        boundary_signature=key.boundary_signature,
-                        direction=plan.direction,
-                    )
-                    self._record_native_segments(
-                        values=selected,
-                        segments=segments,
-                        source=source,
-                    )
-                for segment in segments:
-                    transformed = self._context.transform_projected_packed(
-                        key.boundary_signature,
-                        segment.packed_value,
-                        direction=plan.direction,
-                    )
-                    pieces = transformed.split(
-                        self._context.batch_size,
-                        dim=0,
-                    )
-                    if len(pieces) != len(segment.component_indices):
-                        raise RuntimeError(
-                            "native-segment projected transform split is "
-                            "invalid"
-                        )
-                    for local_index, piece in zip(
-                        segment.component_indices,
-                        pieces,
-                        strict=True,
-                    ):
-                        result[indices[local_index]] = piece
-                continue
             if len(indices) == 1:
                 index = indices[0]
                 self._record_singleton_batch(
@@ -1325,7 +1088,6 @@ class AlgebraicPhysicalIslandScheduler:
 
 
 __all__ = [
-    "BoundarySignatureNativeSegment",
     "AlgebraicPhysicalIslandScheduler",
     "BoundarySignatureTransformScheduler",
     "CompiledProjectedTransformPlan",

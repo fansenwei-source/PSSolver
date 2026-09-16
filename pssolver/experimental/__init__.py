@@ -46,7 +46,6 @@ from .performance import RuntimePerformanceRecorder
 from .producer_packing import ProducerPackedComponentValues
 from .projected_scheduler import (
     AlgebraicPhysicalIslandScheduler,
-    BoundarySignatureNativeSegment,
     BoundarySignatureTransformScheduler,
     CompiledProjectedTransformPlan,
     ProjectedBatchAssemblyMode,
@@ -173,12 +172,6 @@ from .stage_q4_plan import build_stage_q4_h100_plan
 from .stage_q5_diagnostics import analyze_stage_q5_post_q4_retargeting
 from .stage_q6_diagnostics import analyze_stage_q6_data_movement_map
 from .stage_q61_design import analyze_stage_q61_native_handoff_design
-from .stage_q62_plan import build_stage_q62_h100_plan
-from .stage_q62_qualification import (
-    analyze_stage_q62_qualification,
-    profile_stage_q62_h100_runtime,
-    run_stage_q62_h100_trajectory,
-)
 from .stage_o43_qualification import (
     analyze_stage_o431_qualification,
     analyze_stage_o433_qualification,
@@ -218,7 +211,6 @@ __all__ = [
     "RuntimePerformanceRecorder",
     "AlgebraicPhysicalIslandScheduler",
     "BoundarySignatureTransformScheduler",
-    "BoundarySignatureNativeSegment",
     "CompiledProjectedTransformPlan",
     "ProjectedBatchAssemblyMode",
     "ProjectedBatchAssemblyPolicy",
@@ -283,7 +275,6 @@ __all__ = [
     "analyze_stage_q5_post_q4_retargeting",
     "analyze_stage_q6_data_movement_map",
     "analyze_stage_q61_native_handoff_design",
-    "analyze_stage_q62_qualification",
     "analyze_stage_o4_qualification",
     "analyze_stage_o41_qualification",
     "profile_h100_plane_shadow_from_production_reference",
@@ -293,14 +284,12 @@ __all__ = [
     "profile_stage_n3_h100_shadow",
     "profile_stage_n4_h100_shadow",
     "profile_stage_q4_h100_runtime",
-    "profile_stage_q62_h100_runtime",
     "run_h100_plane_shadow_from_production_reference",
     "run_stage_n1_h100_candidate_trajectory",
     "run_stage_n2_h100_candidate_trajectory",
     "run_stage_n3_h100_candidate_trajectory",
     "run_stage_n4_h100_candidate_trajectory",
     "run_stage_q4_h100_trajectory",
-    "run_stage_q62_h100_trajectory",
     "build_stage_o4_h100_plan",
     "build_stage_o41_h100_plan",
     "build_stage_o42_h100_plan",
@@ -335,6 +324,5 @@ __all__ = [
     "summarize_operator_kernel_events",
     "build_stage_p_h100_plan",
     "build_stage_q4_h100_plan",
-    "build_stage_q62_h100_plan",
     "write_plane_shadow_comparison",
 ]

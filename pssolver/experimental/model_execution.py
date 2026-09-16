@@ -2075,7 +2075,6 @@ def build_experimental_model_runtime(
         (
             projected_batch_assembly_policy.allow_contiguous_storage_view
             or projected_batch_assembly_policy.use_preallocated_workspace
-            or projected_batch_assembly_policy.use_native_segments
         )
         and not execution_policy.batched_physical_islands
     ):
