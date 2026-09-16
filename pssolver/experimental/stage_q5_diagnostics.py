@@ -229,17 +229,36 @@ def _q2_nested_delta(
 
 
 def _positive_event(
-    report: Mapping[str, object], section: str, name: str
+    report: Mapping[str, object],
+    section: str,
+    name: str,
+    *,
+    contains: bool = False,
 ) -> float:
     try:
         rows = report["operator_kernel_evidence"][section]
-        row = next(value for value in rows if value["name"] == name)
-        return _nonnegative(
-            row["device_microseconds_delta_per_step"] / 1000.0,
-            f"Stage Q.2 {name} delta",
-        )
-    except (KeyError, TypeError, StopIteration) as exc:
+    except (KeyError, TypeError) as exc:
         raise ValueError(f"Stage Q.2 lacks {name!r} evidence") from exc
+    if not isinstance(rows, Sequence) or isinstance(rows, (str, bytes)):
+        raise ValueError(f"Stage Q.2 evidence section {section!r} is invalid")
+    matches = []
+    for row in rows:
+        if not isinstance(row, Mapping):
+            continue
+        event_name = str(row.get("name", ""))
+        matched = name in event_name if contains else name == event_name
+        if not matched:
+            continue
+        try:
+            delta = row["device_microseconds_delta_per_step"]
+        except KeyError as exc:
+            raise ValueError(f"Stage Q.2 {name!r} evidence is invalid") from exc
+        matches.append(
+            _nonnegative(delta, f"Stage Q.2 {name} delta") / 1000.0
+        )
+    if not matches:
+        raise ValueError(f"Stage Q.2 lacks {name!r} evidence")
+    return max(matches)
 
 
 def _workspace_summary(report: Mapping[str, object]) -> dict[str, object]:
@@ -484,7 +503,8 @@ def analyze_stage_q5_post_q4_retargeting(
             "cat_kernel_delta_milliseconds_per_step": _positive_event(
                 q2,
                 "largest_positive_kernel_deltas",
-                "CatArrayBatchedCopy_contig",
+                "CatArrayBatchedCopy",
+                contains=True,
             ),
             "durations_overlap_and_are_not_additive": True,
         },

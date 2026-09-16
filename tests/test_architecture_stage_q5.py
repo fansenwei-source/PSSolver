@@ -10,6 +10,7 @@ import pytest
 from pssolver.experimental._shadow_support import file_sha256
 from pssolver.experimental.stage_q5_diagnostics import (
     STAGE_Q5_PRIMARY_TARGET,
+    _positive_event,
     analysis_main,
     analyze_stage_q5_post_q4_retargeting,
 )
@@ -51,8 +52,18 @@ def _reports(tmp_path: Path) -> dict[str, tuple[Path, str]]:
             ],
             "largest_positive_kernel_deltas": [
                 {
-                    "name": "CatArrayBatchedCopy_contig",
+                    "name": (
+                        "void at::native::CatArrayBatchedCopy_contig<double, "
+                        "unsigned int>(double*, const double**, unsigned int)"
+                    ),
                     "device_microseconds_delta_per_step": 3800.0,
+                },
+                {
+                    "name": (
+                        "void at::native::CatArrayBatchedCopy_contig<float, "
+                        "unsigned int>(float*, const float**, unsigned int)"
+                    ),
+                    "device_microseconds_delta_per_step": 1200.0,
                 }
             ],
         },
@@ -232,6 +243,9 @@ def test_stage_q5_closes_workspace_and_selects_diagnostic_only(tmp_path):
         "workspace_bytes_over_peak_allocated_increase"
     ] == pytest.approx(1.0)
     assert report["ranked_diagnostic_targets"][0]["rank"] == 1
+    assert report["ranked_diagnostic_targets"][2][
+        "cat_kernel_delta_milliseconds_per_step"
+    ] == pytest.approx(3.8)
     assert report["eligible_for_stage_q6_diagnostic_design"] is True
     assert report["eligible_for_stage_q6_candidate_implementation"] is False
     assert report["stage_q6_scope"]["may_execute_solver"] is False
@@ -257,6 +271,25 @@ def test_stage_q5_rejects_q4_without_memory_regression(tmp_path):
 
     with pytest.raises(ValueError, match="Q.4 evidence contract differs"):
         _analyze(inputs)
+
+
+def test_stage_q5_rejects_missing_demangled_kernel_evidence(tmp_path):
+    inputs = _reports(tmp_path)
+    q2 = json.loads(inputs["q2"][0].read_text(encoding="utf-8"))
+    q2["operator_kernel_evidence"]["largest_positive_kernel_deltas"] = [
+        {
+            "name": "unrelated_kernel",
+            "device_microseconds_delta_per_step": 10.0,
+        }
+    ]
+
+    with pytest.raises(ValueError, match="CatArrayBatchedCopy"):
+        _positive_event(
+            q2,
+            "largest_positive_kernel_deltas",
+            "CatArrayBatchedCopy",
+            contains=True,
+        )
 
 
 def test_stage_q5_cli_writes_once(tmp_path):
