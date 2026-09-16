@@ -2072,11 +2072,14 @@ def build_experimental_model_runtime(
             "ProjectedBatchAssemblyPolicy or None"
         )
     if (
-        projected_batch_assembly_policy.allow_contiguous_storage_view
+        (
+            projected_batch_assembly_policy.allow_contiguous_storage_view
+            or projected_batch_assembly_policy.use_preallocated_workspace
+        )
         and not execution_policy.batched_physical_islands
     ):
         raise ValueError(
-            "contiguous-view batch assembly requires batched physical islands"
+            "optimized batch assembly requires batched physical islands"
         )
     if algebraic_output_publication_policy is None:
         algebraic_output_publication_policy = (

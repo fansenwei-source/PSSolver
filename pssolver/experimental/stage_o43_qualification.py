@@ -279,6 +279,9 @@ def _profile_stage_o43_variant_h100_runtime(
         "projected_batch_assembly_policy": (
             runtime.projected_batch_assembly_policy.to_metadata()
         ),
+        "explicit_rhs_execution": runtime.to_metadata()[
+            "explicit_rhs_execution"
+        ],
         "producer_outputs": _producer_output_snapshot(runtime),
         "batch_assembly_diagnostics": assembly,
         "throughput": _timing_summary(samples),

@@ -34,6 +34,7 @@ class ProjectedBatchAssemblyMode(str, Enum):
 
     COPY_CAT = "copy_cat"
     CONTIGUOUS_STORAGE_VIEW = "contiguous_storage_view"
+    PREALLOCATED_WORKSPACE = "preallocated_workspace"
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,14 +49,43 @@ class ProjectedBatchAssemblyPolicy:
     """
 
     mode: ProjectedBatchAssemblyMode = ProjectedBatchAssemblyMode.COPY_CAT
+    workspace_source_prefixes: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.mode, ProjectedBatchAssemblyMode):
             raise TypeError("mode must be a ProjectedBatchAssemblyMode")
+        prefixes = tuple(self.workspace_source_prefixes)
+        if any(
+            not isinstance(prefix, str)
+            or not prefix
+            or prefix.strip() != prefix
+            for prefix in prefixes
+        ):
+            raise ValueError("workspace source prefixes must be nonempty strings")
+        if len(set(prefixes)) != len(prefixes):
+            raise ValueError("workspace source prefixes must be unique")
+        if self.use_preallocated_workspace and not prefixes:
+            raise ValueError(
+                "preallocated workspaces require at least one source prefix"
+            )
+        if not self.use_preallocated_workspace and prefixes:
+            raise ValueError(
+                "workspace source prefixes require preallocated workspace mode"
+            )
+        object.__setattr__(self, "workspace_source_prefixes", prefixes)
 
     @property
     def allow_contiguous_storage_view(self) -> bool:
         return self.mode is ProjectedBatchAssemblyMode.CONTIGUOUS_STORAGE_VIEW
+
+    @property
+    def use_preallocated_workspace(self) -> bool:
+        return self.mode is ProjectedBatchAssemblyMode.PREALLOCATED_WORKSPACE
+
+    def uses_workspace_for_source(self, source: str) -> bool:
+        return self.use_preallocated_workspace and source.startswith(
+            self.workspace_source_prefixes
+        )
 
     def to_metadata(self) -> dict[str, object]:
         return {
@@ -64,9 +94,20 @@ class ProjectedBatchAssemblyPolicy:
             "allow_contiguous_storage_view": (
                 self.allow_contiguous_storage_view
             ),
+            "use_preallocated_workspace": self.use_preallocated_workspace,
+            "workspace_source_prefixes": list(
+                self.workspace_source_prefixes
+            ),
             "fallback": "copy_cat",
             "changes_transform_order": False,
             "retains_tensor_references": False,
+            "owns_runtime_workspace": self.use_preallocated_workspace,
+            "workspace_retains_timestep_inputs": False,
+            "workspace_lifetime": (
+                "runtime"
+                if self.use_preallocated_workspace
+                else "not_applicable"
+            ),
         }
 
     @classmethod
@@ -76,6 +117,17 @@ class ProjectedBatchAssemblyPolicy:
     @classmethod
     def contiguous_storage_view(cls) -> "ProjectedBatchAssemblyPolicy":
         return cls(ProjectedBatchAssemblyMode.CONTIGUOUS_STORAGE_VIEW)
+
+    @classmethod
+    def preallocated_workspace(
+        cls,
+        *,
+        source_prefixes: tuple[str, ...] = ("algebraic.",),
+    ) -> "ProjectedBatchAssemblyPolicy":
+        return cls(
+            ProjectedBatchAssemblyMode.PREALLOCATED_WORKSPACE,
+            source_prefixes,
+        )
 
 
 class ProjectedTransformContext(Protocol):
@@ -319,6 +371,21 @@ class BoundarySignatureTransformScheduler:
             tuple[ProjectedTransformDirection, tuple[str, ...]],
             CompiledProjectedTransformPlan,
         ] = {}
+        self._workspace_cache: dict[
+            tuple[
+                ProjectedTransformDirection,
+                tuple[str, ...],
+                int,
+            ],
+            torch.Tensor,
+        ] = {}
+        self._active_workspaces: set[
+            tuple[
+                ProjectedTransformDirection,
+                tuple[str, ...],
+                int,
+            ]
+        ] = set()
         self.reset_batch_assembly_diagnostics()
 
     @property
@@ -340,6 +407,10 @@ class BoundarySignatureTransformScheduler:
             "contiguous_view_components": 0,
             "contiguous_view_logical_input_bytes": 0,
             "contiguous_view_materialized_output_bytes": 0,
+            "preallocated_workspace_batches": 0,
+            "preallocated_workspace_components": 0,
+            "preallocated_workspace_logical_input_bytes": 0,
+            "preallocated_workspace_materialized_output_bytes": 0,
         }
         self._batch_assembly_fallback_reasons: dict[str, int] = {}
         self._batch_assembly_sources: dict[str, dict[str, object]] = {}
@@ -404,6 +475,10 @@ class BoundarySignatureTransformScheduler:
             "contiguous_view_components": 0,
             "contiguous_view_logical_input_bytes": 0,
             "contiguous_view_materialized_output_bytes": 0,
+            "preallocated_workspace_batches": 0,
+            "preallocated_workspace_components": 0,
+            "preallocated_workspace_logical_input_bytes": 0,
+            "preallocated_workspace_materialized_output_bytes": 0,
             "fallback_reasons": {},
             "retained_tensor_references": 0,
         }
@@ -442,6 +517,13 @@ class BoundarySignatureTransformScheduler:
                     )
                 },
                 "retained_tensor_references": 0,
+                "workspace_count": len(self._workspace_cache),
+                "workspace_allocated_bytes": sum(
+                    workspace.numel() * workspace.element_size()
+                    for workspace in self._workspace_cache.values()
+                ),
+                "workspace_active_count": len(self._active_workspaces),
+                "workspace_retains_timestep_inputs": False,
             }
         )
 
@@ -463,7 +545,11 @@ class BoundarySignatureTransformScheduler:
         self._batch_assembly_counters[
             f"{mode}_logical_input_bytes"
         ] += logical_bytes
-        materialized_bytes = logical_bytes if mode == "copy_cat" else 0
+        materialized_bytes = (
+            logical_bytes
+            if mode in {"copy_cat", "preallocated_workspace"}
+            else 0
+        )
         self._batch_assembly_counters[
             f"{mode}_materialized_output_bytes"
         ] += materialized_bytes
@@ -508,10 +594,15 @@ class BoundarySignatureTransformScheduler:
         values: tuple[torch.Tensor, ...],
         *,
         source: str,
+        workspace: torch.Tensor | None = None,
     ) -> torch.Tensor:
         timing_region = f"projected_batch_assembly.source.{source}"
         with performance_region(self._performance_recorder, timing_region):
-            fallback_reason = "policy_copy_cat"
+            fallback_reason = (
+                "source_out_of_scope"
+                if self._batch_assembly_policy.use_preallocated_workspace
+                else "policy_copy_cat"
+            )
             if self._batch_assembly_policy.allow_contiguous_storage_view:
                 packed, fallback_reason = _contiguous_storage_batch_view(values)
                 if packed is not None:
@@ -521,6 +612,47 @@ class BoundarySignatureTransformScheduler:
                         source=source,
                     )
                     return packed
+            if self._batch_assembly_policy.uses_workspace_for_source(source):
+                if workspace is None:
+                    raise RuntimeError(
+                        "preallocated batch assembly lacks a compiled workspace"
+                    )
+                if torch.is_grad_enabled() and any(
+                    value.requires_grad for value in values
+                ):
+                    packed = torch.cat(values, dim=0)
+                    self._record_batch_assembly(
+                        mode="copy_cat",
+                        values=values,
+                        source=source,
+                        fallback_reason="autograd_enabled",
+                    )
+                    return packed
+                expected_shape = (
+                    len(values) * self._context.batch_size,
+                    *values[0].shape[1:],
+                )
+                if tuple(workspace.shape) != expected_shape:
+                    raise RuntimeError(
+                        "compiled batch workspace has an invalid shape"
+                    )
+                if any(
+                    tuple(value.shape)
+                    != (self._context.batch_size, *values[0].shape[1:])
+                    or value.dtype != workspace.dtype
+                    or value.device != workspace.device
+                    for value in values
+                ):
+                    raise ValueError(
+                        "preallocated batch inputs do not match the workspace"
+                    )
+                packed = torch.cat(values, dim=0, out=workspace)
+                self._record_batch_assembly(
+                    mode="preallocated_workspace",
+                    values=values,
+                    source=source,
+                )
+                return packed
             packed = torch.cat(values, dim=0)
             self._record_batch_assembly(
                 mode="copy_cat",
@@ -554,6 +686,55 @@ class BoundarySignatureTransformScheduler:
         """Number of invariant component/direction signatures compiled."""
 
         return len(self._plan_cache)
+
+    @property
+    def compiled_workspace_count(self) -> int:
+        """Number of runtime-owned, input-free batch workspaces."""
+
+        return len(self._workspace_cache)
+
+    def _workspace_identity(
+        self,
+        plan: CompiledProjectedTransformPlan,
+        batch_index: int,
+    ) -> tuple[ProjectedTransformDirection, tuple[str, ...], int]:
+        return (plan.direction, plan.component_names, batch_index)
+
+    def _workspace_for_plan_batch(
+        self,
+        plan: CompiledProjectedTransformPlan,
+        batch_index: int,
+    ) -> torch.Tensor:
+        identity = self._workspace_identity(plan, batch_index)
+        cached = self._workspace_cache.get(identity)
+        if cached is not None:
+            return cached
+        context = self._context
+        indices = plan.batch_indices[batch_index]
+        if len(indices) < 2:
+            raise RuntimeError("singleton batches do not own a workspace")
+        if plan.direction is ProjectedTransformDirection.FORWARD:
+            shape = context.physical_shape
+            dtype = context.real_dtype
+        else:
+            shape = context.spectral_shape
+            dtype = context.spectral_dtype
+        workspace = torch.empty(
+            (len(indices) * context.batch_size, *shape),
+            dtype=dtype,
+            device=context.device,
+        )
+        self._workspace_cache[identity] = workspace
+        return workspace
+
+    @staticmethod
+    def _shares_storage(left: torch.Tensor, right: torch.Tensor) -> bool:
+        if left.layout is not torch.strided or right.layout is not torch.strided:
+            return False
+        return (
+            left.untyped_storage().data_ptr()
+            == right.untyped_storage().data_ptr()
+        )
 
     def compile_plan(
         self,
@@ -644,10 +825,12 @@ class BoundarySignatureTransformScheduler:
 
         source = self._resolved_attribution_source(attribution_source)
         result: list[torch.Tensor | None] = [None] * len(values)
-        for key, indices in zip(
-            plan.batch_keys,
-            plan.batch_indices,
-            strict=True,
+        for batch_index, (key, indices) in enumerate(
+            zip(
+                plan.batch_keys,
+                plan.batch_indices,
+                strict=True,
+            )
         ):
             if len(indices) == 1:
                 index = indices[0]
@@ -665,15 +848,37 @@ class BoundarySignatureTransformScheduler:
                     )
                 )
                 continue
-            packed = self._assemble_batch(
-                tuple(values[index] for index in indices),
-                source=source,
-            )
-            transformed = self._context.transform_projected_packed(
-                key.boundary_signature,
-                packed,
-                direction=plan.direction,
-            )
+            workspace_identity = self._workspace_identity(plan, batch_index)
+            workspace = None
+            if self._batch_assembly_policy.uses_workspace_for_source(source):
+                workspace = self._workspace_for_plan_batch(plan, batch_index)
+            if workspace is not None:
+                if workspace_identity in self._active_workspaces:
+                    raise RuntimeError(
+                        "preallocated batch workspace does not support reentry"
+                    )
+                self._active_workspaces.add(workspace_identity)
+            try:
+                packed = self._assemble_batch(
+                    tuple(values[index] for index in indices),
+                    source=source,
+                    workspace=workspace,
+                )
+                transformed = self._context.transform_projected_packed(
+                    key.boundary_signature,
+                    packed,
+                    direction=plan.direction,
+                )
+                if workspace is not None and self._shares_storage(
+                    transformed,
+                    workspace,
+                ):
+                    raise RuntimeError(
+                        "projected transform output aliases its input workspace"
+                    )
+            finally:
+                if workspace is not None:
+                    self._active_workspaces.remove(workspace_identity)
             pieces = transformed.split(self._context.batch_size, dim=0)
             if len(pieces) != len(indices):
                 raise RuntimeError("scheduled projected transform split is invalid")

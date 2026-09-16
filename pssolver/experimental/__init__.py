@@ -163,6 +163,12 @@ from .stage_p_diagnostics import (
 from .stage_p_plan import build_stage_p_h100_plan
 from .stage_q2_diagnostics import analyze_stage_q2_residual_gap
 from .stage_q3_diagnostics import analyze_stage_q3_algebraic_target
+from .stage_q4_qualification import (
+    analyze_stage_q4_qualification,
+    profile_stage_q4_h100_runtime,
+    run_stage_q4_h100_trajectory,
+)
+from .stage_q4_plan import build_stage_q4_h100_plan
 from .stage_o43_qualification import (
     analyze_stage_o431_qualification,
     analyze_stage_o433_qualification,
@@ -262,6 +268,7 @@ __all__ = [
     "analyze_stage_n4_qualification",
     "analyze_stage_q2_residual_gap",
     "analyze_stage_q3_algebraic_target",
+    "analyze_stage_q4_qualification",
     "analyze_stage_o4_qualification",
     "analyze_stage_o41_qualification",
     "profile_h100_plane_shadow_from_production_reference",
@@ -270,11 +277,13 @@ __all__ = [
     "profile_stage_n2_h100_shadow",
     "profile_stage_n3_h100_shadow",
     "profile_stage_n4_h100_shadow",
+    "profile_stage_q4_h100_runtime",
     "run_h100_plane_shadow_from_production_reference",
     "run_stage_n1_h100_candidate_trajectory",
     "run_stage_n2_h100_candidate_trajectory",
     "run_stage_n3_h100_candidate_trajectory",
     "run_stage_n4_h100_candidate_trajectory",
+    "run_stage_q4_h100_trajectory",
     "build_stage_o4_h100_plan",
     "build_stage_o41_h100_plan",
     "build_stage_o42_h100_plan",
@@ -308,5 +317,6 @@ __all__ = [
     "analyze_stage_p_diagnostics",
     "summarize_operator_kernel_events",
     "build_stage_p_h100_plan",
+    "build_stage_q4_h100_plan",
     "write_plane_shadow_comparison",
 ]
