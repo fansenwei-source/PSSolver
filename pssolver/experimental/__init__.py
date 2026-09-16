@@ -161,6 +161,7 @@ from .stage_p_diagnostics import (
     summarize_operator_kernel_events,
 )
 from .stage_p_plan import build_stage_p_h100_plan
+from .stage_q2_diagnostics import analyze_stage_q2_residual_gap
 from .stage_o43_qualification import (
     analyze_stage_o431_qualification,
     analyze_stage_o433_qualification,
@@ -258,6 +259,7 @@ __all__ = [
     "analyze_stage_n2_qualification",
     "analyze_stage_n3_qualification",
     "analyze_stage_n4_qualification",
+    "analyze_stage_q2_residual_gap",
     "analyze_stage_o4_qualification",
     "analyze_stage_o41_qualification",
     "profile_h100_plane_shadow_from_production_reference",
