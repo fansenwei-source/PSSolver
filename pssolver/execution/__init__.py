@@ -15,6 +15,7 @@ from .algebraic import (
     InspectableAlgebraicSolverProtocol,
 )
 from .contracts import (
+    ExplicitRHSExecutorProtocol,
     ExplicitRHSPhysicalDependenciesProtocol,
     ExecutableModelProtocol,
     MathematicalOperatorContext,
@@ -23,6 +24,8 @@ from .contracts import (
 from .dispatch import (
     AlgebraicSolverFactory,
     AlgebraicSolverRegistration,
+    ExplicitRHSExecutorFactory,
+    ExplicitRHSExecutorRegistration,
     GeometrySolverRegistry,
 )
 from .policy import (
@@ -58,6 +61,9 @@ __all__ = [
     "AlgebraicUpdatePhase",
     "build_algebraic_execution_plan",
     "ExecutableModelProtocol",
+    "ExplicitRHSExecutorFactory",
+    "ExplicitRHSExecutorProtocol",
+    "ExplicitRHSExecutorRegistration",
     "ExplicitRHSPhysicalDependenciesProtocol",
     "GeometrySolverRegistry",
     "INCOMPRESSIBLE_STOKES_CAPABILITY",

@@ -19,6 +19,7 @@ from pssolver.execution import (
     AlgebraicSolverContext,
     AlgebraicSystemSpec,
     GeometrySolverRegistry,
+    ModelExecutionContext,
 )
 from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics.beris_edwards import (
@@ -44,6 +45,7 @@ from pssolver.models.active_nematics.constitutive import (
     Q_GRADIENT_COMPONENTS,
     VELOCITY_COMPONENTS,
     VELOCITY_GRADIENT_COMPONENTS,
+    BerisEdwardsPlaneCoupledModel,
 )
 from pssolver.models.active_nematics.fields import Q_COMPONENTS
 from pssolver.transforms import (
@@ -73,6 +75,81 @@ _STRESS_BOUNDARY_STORAGE_ORDER = (
     *(DISTORTION_STRESS_COMPONENTS[index] for index in _DISTORTION_EVEN_INDICES),
     *(DISTORTION_STRESS_COMPONENTS[index] for index in _DISTORTION_ODD_INDICES),
 )
+
+
+class BerisEdwardsPlaneExplicitRHSExecutor:
+    """Execution-owned realization of the complete Plane Q explicit RHS.
+
+    The coupled model remains a pure declaration of the physical equations.
+    This executor owns only the eager/compiled pointwise policy and delegates
+    the actual Beris--Edwards algebra to the shared physical kernel.
+    """
+
+    implementation_name = "plane_beris_edwards_pointwise_explicit_rhs"
+
+    def __init__(
+        self,
+        model: BerisEdwardsPlaneCoupledModel,
+        kernels: BerisEdwardsPointwiseKernels,
+    ) -> None:
+        if not isinstance(model, BerisEdwardsPlaneCoupledModel):
+            raise TypeError("model must be a BerisEdwardsPlaneCoupledModel")
+        if not isinstance(kernels, BerisEdwardsPointwiseKernels):
+            raise TypeError("kernels must be BerisEdwardsPointwiseKernels")
+        self._model = model
+        self._kernels = kernels
+
+    def evaluate(
+        self,
+        state: Mapping[str, torch.Tensor],
+        context: ModelExecutionContext,
+    ) -> Mapping[str, torch.Tensor]:
+        del context
+        parameters = self._model.constitutive_model.parameters
+        q_components = tuple(state[name] for name in Q_COMPONENTS)
+        velocity = tuple(state[name] for name in VELOCITY_COMPONENTS)
+        q_gradient_values = tuple(
+            state[name] for name in Q_GRADIENT_COMPONENTS
+        )
+        q_gradients = tuple(
+            q_gradient_values[
+                axis * len(Q_COMPONENTS) : (axis + 1) * len(Q_COMPONENTS)
+            ]
+            for axis in range(3)
+        )
+        velocity_gradient_values = tuple(
+            state[name] for name in VELOCITY_GRADIENT_COMPONENTS
+        )
+        velocity_gradients = []
+        for axis in range(3):
+            start = axis * len(VELOCITY_COMPONENTS)
+            stop = (axis + 1) * len(VELOCITY_COMPONENTS)
+            velocity_gradients.append(velocity_gradient_values[start:stop])
+        nonlinear = self._kernels.q_nonlinear_components(
+            q_components,
+            velocity,
+            q_gradients,
+            tuple(velocity_gradients),
+            ldg_b_over_gamma=(
+                parameters.ldg_b / self._model.rotational_viscosity
+            ),
+            ldg_c_over_gamma=(
+                parameters.ldg_c / self._model.rotational_viscosity
+            ),
+            flow_alignment=parameters.flow_alignment,
+        )
+        return dict(zip(Q_COMPONENTS, nonlinear, strict=True))
+
+    def observability_metadata(self) -> dict[str, object]:
+        return {
+            "execution_owner": "geometry_explicit_rhs_executor",
+            "equation_source": (
+                "pssolver.models.active_nematics.beris_edwards."
+                "beris_edwards_q_nonlinear_components"
+            ),
+            "pointwise_kernels": self._kernels.metadata(),
+            "fallback_to_model": False,
+        }
 
 
 def _plane_packed_bulk_molecular_field(
@@ -994,6 +1071,18 @@ def create_beris_edwards_plane_geometry_solver_registry(
         plane_options=plane_stokes_options,
         channel_options=channel_stokes_options,
     )
+    registry.register_explicit_rhs(
+        geometry_type=PlaneSlab,
+        geometry_name="plane_slab",
+        model_type=BerisEdwardsPlaneCoupledModel,
+        implementation_name=(
+            BerisEdwardsPlaneExplicitRHSExecutor.implementation_name
+        ),
+        factory=lambda _context, model: BerisEdwardsPlaneExplicitRHSExecutor(
+            model,
+            kernels,
+        ),
+    )
     registry.register(
         geometry_type=PlaneSlab,
         geometry_name="plane_slab",
@@ -1049,6 +1138,7 @@ def create_beris_edwards_plane_geometry_solver_registry(
 
 
 __all__ = [
+    "BerisEdwardsPlaneExplicitRHSExecutor",
     "PlaneBerisEdwardsSolverOptions",
     "create_beris_edwards_plane_geometry_solver_registry",
 ]

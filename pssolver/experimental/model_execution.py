@@ -35,6 +35,8 @@ from pssolver.execution import (
     AlgebraicSystemSpec,
     AlgebraicUpdatePhase,
     ExecutableModelProtocol,
+    ExplicitRHSExecutorProtocol,
+    ExplicitRHSExecutorRegistration,
     ExplicitRHSPhysicalDependenciesProtocol,
     GeometrySolverRegistry,
     InspectableAlgebraicSolverProtocol,
@@ -1278,6 +1280,7 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
             AlgebraicPhysicalIslandScheduler | None
         ) = None,
         performance_recorder: RuntimePerformanceRecorder | None = None,
+        explicit_rhs_executor: ExplicitRHSExecutorProtocol | None = None,
     ) -> None:
         super().__init__()
         self._model = model
@@ -1301,6 +1304,15 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
             )
         self._physical_island_scheduler = physical_island_scheduler
         self._performance_recorder = performance_recorder
+        if explicit_rhs_executor is not None and not isinstance(
+            explicit_rhs_executor,
+            ExplicitRHSExecutorProtocol,
+        ):
+            raise TypeError(
+                "explicit_rhs_executor must implement "
+                "ExplicitRHSExecutorProtocol or be None"
+            )
+        self._explicit_rhs_executor = explicit_rhs_executor
         self._transient_names = assembly.omitted_transient_components
         self._batched_physical_islands = bool(
             algebraic_fields_adapter is not None
@@ -1360,11 +1372,16 @@ class LegacyExplicitRHSAdapter(torch.nn.Module):
             )
         else:
             state = MappingProxyType(state_values)
+        evaluator = (
+            self._model.explicit_rhs
+            if self._explicit_rhs_executor is None
+            else self._explicit_rhs_executor.evaluate
+        )
         if self._performance_recorder is None:
-            explicit = self._model.explicit_rhs(state, self._context)
+            explicit = evaluator(state, self._context)
         else:
             with self._performance_recorder.region("explicit_rhs.model"):
-                explicit = self._model.explicit_rhs(state, self._context)
+                explicit = evaluator(state, self._context)
         if not isinstance(explicit, Mapping):
             raise TypeError("model explicit_rhs() must return a mapping")
         explicit = dict(explicit)
@@ -1459,6 +1476,8 @@ class ExperimentalModelRuntime:
     solver: SpectralSolver
     projector: BasisAwareSpectralProjector
     explicit_rhs_adapter: LegacyExplicitRHSAdapter
+    explicit_rhs_executor: ExplicitRHSExecutorProtocol | None
+    explicit_rhs_registration: ExplicitRHSExecutorRegistration | None
     algebraic_fields_adapter: LegacyAlgebraicFieldsAdapter | None
     algebraic_execution_plan: AlgebraicExecutionPlan | None
     resolved_algebraic_systems: tuple[ResolvedAlgebraicSystem, ...]
@@ -1471,6 +1490,31 @@ class ExperimentalModelRuntime:
             "spectral_plan": self.plan.to_metadata(),
             "legacy_assembly": self.assembly.to_metadata(),
             "execution_adapter": "legacy_explicit_rhs",
+            "explicit_rhs_execution": (
+                {
+                    "owner": "physical_model_fallback",
+                    "implementation_name": "model_explicit_rhs",
+                    "registration": None,
+                    "observability": {
+                        "fallback_to_model": True,
+                    },
+                }
+                if self.explicit_rhs_executor is None
+                else {
+                    "owner": "geometry_executor",
+                    "implementation_name": (
+                        self.explicit_rhs_executor.implementation_name
+                    ),
+                    "registration": (
+                        self.explicit_rhs_registration.to_metadata()
+                        if self.explicit_rhs_registration is not None
+                        else None
+                    ),
+                    "observability": dict(
+                        self.explicit_rhs_executor.observability_metadata()
+                    ),
+                }
+            ),
             "algebraic_execution_policy": (
                 self.algebraic_execution_policy.to_metadata()
             ),
@@ -2104,6 +2148,32 @@ def build_experimental_model_runtime(
         projector,
         performance_recorder,
     )
+    explicit_rhs_registration = (
+        geometry_solver_registry.find_explicit_rhs(geometry, model)
+        if geometry_solver_registry is not None
+        else None
+    )
+    explicit_rhs_executor = None
+    if explicit_rhs_registration is not None:
+        explicit_rhs_executor = explicit_rhs_registration.factory(
+            context,
+            model,
+        )
+        if not isinstance(
+            explicit_rhs_executor,
+            ExplicitRHSExecutorProtocol,
+        ):
+            raise TypeError(
+                "explicit RHS factory must return an "
+                "ExplicitRHSExecutorProtocol"
+            )
+        if explicit_rhs_executor.implementation_name != (
+            explicit_rhs_registration.implementation_name
+        ):
+            raise ValueError(
+                "explicit RHS executor implementation name does not match "
+                "its registration"
+            )
     representation_cache = (
         AlgebraicRepresentationCache()
         if execution_policy.representation_reuse
@@ -2175,6 +2245,7 @@ def build_experimental_model_runtime(
             algebraic_fields_adapter,
             physical_island_scheduler,
             performance_recorder,
+            explicit_rhs_executor,
         )
         explicit_output = explicit_rhs_adapter(
             solver.fields,
@@ -2197,6 +2268,7 @@ def build_experimental_model_runtime(
             projector,
             context,
             performance_recorder=performance_recorder,
+            explicit_rhs_executor=explicit_rhs_executor,
         )
         solver.model.set_nonlinear_model(explicit_rhs_adapter)
         solver.build()
@@ -2226,6 +2298,8 @@ def build_experimental_model_runtime(
         solver=solver,
         projector=projector,
         explicit_rhs_adapter=explicit_rhs_adapter,
+        explicit_rhs_executor=explicit_rhs_executor,
+        explicit_rhs_registration=explicit_rhs_registration,
         algebraic_fields_adapter=algebraic_fields_adapter,
         algebraic_execution_plan=algebraic_execution_plan,
         resolved_algebraic_systems=resolved_algebraic_systems,

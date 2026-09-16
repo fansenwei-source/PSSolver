@@ -159,3 +159,34 @@ class ExplicitRHSPhysicalDependenciesProtocol(Protocol):
         """Return component names whose physical values the RHS consumes."""
 
         ...
+
+
+@runtime_checkable
+class ExplicitRHSExecutorProtocol(Protocol):
+    """Numerical realization of one model's physical-space explicit RHS.
+
+    The physical model remains the source of the equations.  An executor may
+    choose an execution policy such as eager evaluation or graph compilation,
+    but it must return the same component mapping as
+    :meth:`ExecutableModelProtocol.explicit_rhs`.
+    """
+
+    @property
+    def implementation_name(self) -> str:
+        """Stable identifier for the numerical implementation."""
+
+        ...
+
+    def evaluate(
+        self,
+        state: Mapping[str, torch.Tensor],
+        context: ModelExecutionContext,
+    ) -> Mapping[str, torch.Tensor]:
+        """Evaluate the explicit physical-space right-hand side."""
+
+        ...
+
+    def observability_metadata(self) -> Mapping[str, object]:
+        """Return JSON-compatible execution-policy metadata."""
+
+        ...

@@ -12,11 +12,20 @@ from .algebraic import (
     AlgebraicSolverProtocol,
     AlgebraicSystemSpec,
 )
+from .contracts import (
+    ExecutableModelProtocol,
+    ExplicitRHSExecutorProtocol,
+    ModelExecutionContext,
+)
 
 
 AlgebraicSolverFactory = Callable[
     [AlgebraicSolverContext, AlgebraicSystemSpec],
     AlgebraicSolverProtocol,
+]
+ExplicitRHSExecutorFactory = Callable[
+    [ModelExecutionContext, ExecutableModelProtocol],
+    ExplicitRHSExecutorProtocol,
 ]
 
 
@@ -81,6 +90,61 @@ class AlgebraicSolverRegistration:
         }
 
 
+@dataclass(frozen=True, slots=True)
+class ExplicitRHSExecutorRegistration:
+    """One exact geometry/model explicit-RHS implementation."""
+
+    geometry_type: type[GeometrySpec]
+    geometry_name: str
+    model_type: type
+    implementation_name: str
+    factory: ExplicitRHSExecutorFactory
+
+    def __init__(
+        self,
+        geometry_type: type[GeometrySpec],
+        geometry_name: str,
+        model_type: type,
+        implementation_name: str,
+        factory: ExplicitRHSExecutorFactory,
+    ) -> None:
+        if not isinstance(geometry_type, type) or not issubclass(
+            geometry_type,
+            GeometrySpec,
+        ):
+            raise TypeError("geometry_type must be a GeometrySpec subclass")
+        if not isinstance(model_type, type):
+            raise TypeError("model_type must be a type")
+        object.__setattr__(self, "geometry_type", geometry_type)
+        object.__setattr__(
+            self,
+            "geometry_name",
+            _identifier(geometry_name, "geometry_name"),
+        )
+        object.__setattr__(self, "model_type", model_type)
+        object.__setattr__(
+            self,
+            "implementation_name",
+            _identifier(implementation_name, "implementation_name"),
+        )
+        if not callable(factory):
+            raise TypeError("factory must be callable")
+        object.__setattr__(self, "factory", factory)
+
+    def to_metadata(self) -> dict[str, str]:
+        return {
+            "geometry_type": (
+                f"{self.geometry_type.__module__}."
+                f"{self.geometry_type.__qualname__}"
+            ),
+            "geometry_name": self.geometry_name,
+            "model_type": (
+                f"{self.model_type.__module__}.{self.model_type.__qualname__}"
+            ),
+            "implementation_name": self.implementation_name,
+        }
+
+
 class GeometrySolverRegistry:
     """Mutable construction registry with exact lookup and no fallback."""
 
@@ -88,6 +152,10 @@ class GeometrySolverRegistry:
         self._registrations: dict[
             tuple[type[GeometrySpec], str],
             AlgebraicSolverRegistration,
+        ] = {}
+        self._explicit_rhs_registrations: dict[
+            tuple[type[GeometrySpec], type],
+            ExplicitRHSExecutorRegistration,
         ] = {}
 
     def register(
@@ -143,6 +211,63 @@ class GeometrySolverRegistry:
             )
         return registration
 
+    def register_explicit_rhs(
+        self,
+        *,
+        geometry_type: type[GeometrySpec],
+        geometry_name: str,
+        model_type: type,
+        implementation_name: str,
+        factory: ExplicitRHSExecutorFactory,
+    ) -> ExplicitRHSExecutorRegistration:
+        """Register one exact geometry/model RHS executor without fallback."""
+
+        registration = ExplicitRHSExecutorRegistration(
+            geometry_type,
+            geometry_name,
+            model_type,
+            implementation_name,
+            factory,
+        )
+        key = (registration.geometry_type, registration.model_type)
+        if key in self._explicit_rhs_registrations:
+            raise ValueError(
+                "duplicate explicit RHS executor registration for "
+                f"geometry_type={key[0].__name__!r}, "
+                f"model_type={key[1].__name__!r}"
+            )
+        self._explicit_rhs_registrations[key] = registration
+        return registration
+
+    def find_explicit_rhs(
+        self,
+        geometry: GeometrySpec,
+        model: ExecutableModelProtocol,
+    ) -> ExplicitRHSExecutorRegistration | None:
+        """Return an exact optional RHS registration.
+
+        Absence means that the generic adapter must call the physical model's
+        ``explicit_rhs`` method.  Registrations for base geometry or model
+        classes are deliberately not inherited.
+        """
+
+        if not isinstance(geometry, GeometrySpec):
+            raise TypeError("geometry must be a GeometrySpec")
+        if not isinstance(model, ExecutableModelProtocol):
+            raise TypeError("model must implement ExecutableModelProtocol")
+        registration = self._explicit_rhs_registrations.get(
+            (type(geometry), type(model))
+        )
+        if registration is None:
+            return None
+        if registration.geometry_name != geometry.name:
+            raise ValueError(
+                "registered geometry name does not match the geometry "
+                f"instance: expected {registration.geometry_name!r}, "
+                f"got {geometry.name!r}"
+            )
+        return registration
+
     def to_metadata(self) -> list[dict[str, str]]:
         return [
             self._registrations[key].to_metadata()
@@ -152,6 +277,22 @@ class GeometrySolverRegistry:
                     item[0].__module__,
                     item[0].__qualname__,
                     item[1],
+                ),
+            )
+        ]
+
+    def explicit_rhs_metadata(self) -> list[dict[str, str]]:
+        """Return deterministic metadata for optional RHS registrations."""
+
+        return [
+            self._explicit_rhs_registrations[key].to_metadata()
+            for key in sorted(
+                self._explicit_rhs_registrations,
+                key=lambda item: (
+                    item[0].__module__,
+                    item[0].__qualname__,
+                    item[1].__module__,
+                    item[1].__qualname__,
                 ),
             )
         ]

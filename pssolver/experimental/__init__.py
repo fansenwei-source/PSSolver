@@ -10,6 +10,7 @@ from ._shadow_support import (
     shadow_runtime_identity_sha256,
 )
 from .beris_edwards import (
+    BerisEdwardsPlaneExplicitRHSExecutor,
     PlaneBerisEdwardsSolverOptions,
     create_beris_edwards_plane_geometry_solver_registry,
 )
@@ -178,6 +179,7 @@ from .stokes import (
 )
 
 __all__ = [
+    "BerisEdwardsPlaneExplicitRHSExecutor",
     "ExperimentalModelRuntime",
     "ExperimentalPlaneShadowRun",
     "ChannelStokesSolverOptions",
