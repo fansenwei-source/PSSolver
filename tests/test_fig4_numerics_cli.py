@@ -159,6 +159,8 @@ class Fig4NumericsCliTests(unittest.TestCase):
             set(files),
             {
                 "Plane_beris_edwards_stokes.py",
+                "pssolver/applications/__init__.py",
+                "pssolver/applications/plane_beris_edwards.py",
                 "pssolver/solver.py",
                 "pssolver/Field.py",
                 "pssolver/PDEmodel.py",

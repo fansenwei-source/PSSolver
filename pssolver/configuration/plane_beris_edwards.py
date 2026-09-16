@@ -59,6 +59,8 @@ DEFAULT_FRICTION_MODE_FRIC = 0.1
 DEFAULT_SPECTRAL_REFRESH_TIME = 0.2
 PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "Plane_beris_edwards_stokes.py",
+    "pssolver/applications/__init__.py",
+    "pssolver/applications/plane_beris_edwards.py",
     "pssolver/solver.py",
     "pssolver/Field.py",
     "pssolver/PDEmodel.py",
