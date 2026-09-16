@@ -11,11 +11,17 @@ from .plane_beris_edwards import (
     SeparatedCanaryPlaneRuntimeAdapter,
     build_plane_beris_edwards_runtime,
 )
+from .plane_legacy import (
+    DealiasedSemiImplicitEulerIntegrator,
+    build_legacy_plane_runtime,
+)
 
 __all__ = [
     "LegacyPlaneRuntimeAdapter",
     "PlaneRuntimeAdapterProtocol",
     "PlaneRuntimeBuildRequest",
     "SeparatedCanaryPlaneRuntimeAdapter",
+    "DealiasedSemiImplicitEulerIntegrator",
+    "build_legacy_plane_runtime",
     "build_plane_beris_edwards_runtime",
 ]

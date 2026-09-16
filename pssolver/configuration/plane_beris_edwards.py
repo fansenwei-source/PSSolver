@@ -71,6 +71,7 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/configuration/plane_beris_edwards.py",
     "pssolver/runtime/__init__.py",
     "pssolver/runtime/plane_beris_edwards.py",
+    "pssolver/runtime/plane_legacy.py",
     "pssolver/workflows/__init__.py",
     "pssolver/workflows/plane_checkpoint.py",
     "pssolver/workflows/plane_observation.py",

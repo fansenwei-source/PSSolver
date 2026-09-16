@@ -346,16 +346,30 @@ def _restore_integrator_progress(
 def build_plane_beris_edwards_runtime(
     request: PlaneRuntimeBuildRequest,
     *,
-    legacy_builder: LegacyRuntimeBuilder,
+    legacy_builder: LegacyRuntimeBuilder | None = None,
 ) -> PlaneRuntimeAdapterProtocol:
-    """Build exactly the runtime selected by the immutable run specification."""
+    """Build exactly the runtime selected by the immutable run specification.
+
+    The package-owned legacy builder is the production path.  The optional
+    injection point remains available for characterization tests and explicit
+    rollback checks; applications no longer need to own numerical assembly.
+    """
 
     if not isinstance(request, PlaneRuntimeBuildRequest):
         raise TypeError("request must be a PlaneRuntimeBuildRequest")
-    if not callable(legacy_builder):
+    if legacy_builder is not None and not callable(legacy_builder):
         raise TypeError("legacy_builder must be callable")
     if request.run_spec.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION:
-        solver, projector = legacy_builder()
+        if legacy_builder is None:
+            from .plane_legacy import build_legacy_plane_runtime
+
+            solver, projector = build_legacy_plane_runtime(
+                request.run_spec,
+                device=request.device,
+                initial_values=request.initial_values,
+            )
+        else:
+            solver, projector = legacy_builder()
         return LegacyPlaneRuntimeAdapter(solver, projector)
 
     if request.run_spec.disable_q_gradient_reuse:

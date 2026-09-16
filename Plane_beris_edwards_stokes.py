@@ -44,7 +44,6 @@ import json
 import platform
 from pathlib import Path
 import torch
-from pssolver import SpectralSolver
 from pssolver.configuration import (
     PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
     PLANE_FREE_SLIP_BOUNDARIES,
@@ -59,19 +58,12 @@ from pssolver.workflows import (
     read_plane_checkpoint_header,
 )
 from pssolver.models.active_nematics import (
-    BerisEdwardsFreeSlipStokes,
-    BerisEdwardsQGradientCache,
-    BerisEdwardsQNonlinearModel,
     BerisEdwardsPointwiseKernels,
     Q_convention_metadata,
-    beris_edwards_linear_operator,
     create_initial_condition,
     sample_periodic_neutral_defects_2d,
 )
-from pssolver.integrator import SemiImplicitEulerIntegrator
-from pssolver.plane import PLANE_HERMITIAN_AXIS
 from pssolver.transforms import (
-    BasisAwareSpectralProjector,
     DEALIAS_RULE_FRACTIONS,
 )
 from tqdm import trange
@@ -136,175 +128,6 @@ def tensor_sha256(tensors):
         digest.update(array.tobytes())
     return digest.hexdigest()
 
-
-class DealiasedSemiImplicitEulerIntegrator(SemiImplicitEulerIntegrator):
-    """Semi-implicit Euler with projection before every inverse transform.
-
-    This intentionally mirrors the core integrator so the nonlinear spectrum
-    is truncated after the IMEX update and before Q returns to real space. The
-    periodic real-to-spectral refresh is projected and synchronized as well.
-    """
-
-    def __init__(self, model, dt, qx, qy, q2):
-        super().__init__(model, dt, qx, qy, q2)
-        self.spectral_projector = model.spectral_projector
-
-    def _refresh_dynamic_spectra(self):
-        self.spectral_projector.refresh_dynamic_fields(
-            self.model.fields,
-            sync_spatial=True,
-        )
-
-    def step(self, pre_update_callback=None):
-        if self._static_fields_are_current:
-            self._static_fields_are_current = False
-        else:
-            self.model.update_static_fields()
-
-        if pre_update_callback is not None:
-            pre_update_callback()
-
-        nonlinear_hats = self.model.compute_nonlinear()
-        dynamic_fields = self.model.fields.spectral[:self.dyn_count]
-        dynamic_fields.add_(self.dt * nonlinear_hats)
-        dynamic_fields.div_(self.denom)
-        self.spectral_projector.project_dynamic_fields(
-            self.model.fields,
-            sync_spatial=False,
-        )
-
-        for group in self.dynamic_transform_groups:
-            boundary_conditions = self.model.fields.get_boundary_conditions(
-                group[0]
-            )
-            self.model.fields.spatial[group] = (
-                self.spectral_projector.inverse_transform(
-                    self.model.fields.spectral[group],
-                    boundary_conditions,
-                )
-            )
-
-        self._advance_spectral_refresh_clock()
-
-
-def build_legacy_plane_runtime(
-    run_spec,
-    *,
-    device,
-    real_dtype,
-    initial_values,
-    ldg_l1,
-    rotational_viscosity,
-    beta,
-    friction,
-    viscosity,
-    pointwise_kernels,
-):
-    """Construct the unchanged legacy Plane runtime behind its O.2 adapter."""
-
-    solver = SpectralSolver(
-        shape=(run_spec.nx, run_spec.ny, run_spec.nz),
-        L=(run_spec.lx, run_spec.ly, run_spec.height),
-        dt=run_spec.dt,
-        device=device,
-        batchsize=1,
-        dtype=real_dtype,
-        transform_execution_order=run_spec.transform_execution_order,
-        spectral_storage=run_spec.spectral_storage,
-        hermitian_axis=PLANE_HERMITIAN_AXIS,
-    )
-    spectral_projector = BasisAwareSpectralProjector(
-        solver,
-        rule=run_spec.dealias_rule,
-        transform_execution=run_spec.projected_transform_execution,
-    )
-    solver.model.spectral_projector = spectral_projector
-    solver.model.set_static_inverse_transform(
-        spectral_projector.inverse_transform
-    )
-    solver.integrator_cl = DealiasedSemiImplicitEulerIntegrator
-    q2_q = solver.get_q2(Q_BC)
-    q_linear_operator = beris_edwards_linear_operator(
-        q2_q,
-        ldg_a=run_spec.ldg_a,
-        ldg_l1=ldg_l1,
-        rotational_viscosity=rotational_viscosity,
-    )
-    for name, initial_value in initial_values.items():
-        solver.model.add_dynamic_field(
-            name,
-            init=initial_value,
-            L_hat=q_linear_operator,
-            boundary_conditions=Q_BC,
-        )
-    solver.model.add_static_field(
-        "ux", boundary_conditions=U_TANGENTIAL_BC
-    )
-    solver.model.add_static_field(
-        "uy", boundary_conditions=U_TANGENTIAL_BC
-    )
-    solver.model.add_static_field("uz", boundary_conditions=U_NORMAL_BC)
-    solver.model.add_static_field("p", boundary_conditions=PRESSURE_MODAL_BC)
-
-    q_gradient_cache = (
-        None
-        if run_spec.disable_q_gradient_reuse
-        else BerisEdwardsQGradientCache()
-    )
-    solver.model.set_nonlinear_model(
-        BerisEdwardsQNonlinearModel(
-            spectral_projector,
-            Q_BC,
-            ldg_b=run_spec.ldg_b,
-            ldg_c=run_spec.ldg_c,
-            rotational_viscosity=rotational_viscosity,
-            flow_alignment=run_spec.flow_alignment,
-            q_gradient_cache=q_gradient_cache,
-            pointwise_kernels=pointwise_kernels,
-        )
-    )
-    solver.model.set_static_compute_model(
-        BerisEdwardsFreeSlipStokes(
-            solver,
-            spectral_projector=spectral_projector,
-            beta_value=beta,
-            friction=friction,
-            viscosity=viscosity,
-            ldg_a=run_spec.ldg_a,
-            ldg_b=run_spec.ldg_b,
-            ldg_c=run_spec.ldg_c,
-            ldg_l1=ldg_l1,
-            flow_alignment=run_spec.flow_alignment,
-            molecular_field_linear_space=(
-                run_spec.molecular_field_linear_space
-            ),
-            stress_divergence_sum_space=(
-                run_spec.stress_divergence_sum_space
-            ),
-            cache_force_diagnostics=run_spec.diagnostics,
-            cache_pressure_diagnostics=run_spec.diagnostics,
-            q_gradient_cache=q_gradient_cache,
-            pointwise_kernels=pointwise_kernels,
-            zero_mode_policy=run_spec.zero_mode_policy,
-        )
-    )
-    alpha = torch.tensor(
-        run_spec.shendruk_preset.zeta,
-        device=device,
-        dtype=real_dtype,
-    )
-    solver.model.parameters.new_param("alpha", alpha)
-    solver.build()
-    solver.integrator.set_spectral_refresh_interval(
-        run_spec.spectral_refresh_interval_steps
-    )
-    spectral_projector.project_dynamic_fields(
-        solver.model.fields,
-        sync_spatial=True,
-    )
-    if spectral_projector.enabled:
-        solver.integrator._static_fields_are_current = False
-    return solver, spectral_projector
 
 args = parse_args()
 
@@ -773,18 +596,6 @@ runtime_request = PlaneRuntimeBuildRequest(
 )
 runtime_adapter = build_plane_beris_edwards_runtime(
     runtime_request,
-    legacy_builder=lambda: build_legacy_plane_runtime(
-        args,
-        device=device,
-        real_dtype=real_dtype,
-        initial_values=initial_values,
-        ldg_l1=ldg_l1,
-        rotational_viscosity=rotational_viscosity,
-        beta=beta,
-        friction=fric,
-        viscosity=eta,
-        pointwise_kernels=pointwise_kernels,
-    ),
 )
 spectral_projector = runtime_adapter.projector
 metadata["runtime_selection"] = {
