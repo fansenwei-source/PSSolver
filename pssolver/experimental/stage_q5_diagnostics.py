@@ -1,6 +1,6 @@
 """Post-Q.4 target selection from frozen Plane performance evidence.
 
-Stage R.0 is deliberately analysis-only.  It closes mechanisms that have
+Stage Q.5 is deliberately analysis-only.  It closes mechanisms that have
 already been measured, separates allocation reuse from data movement, and
 selects one diagnostic target for the next architecture stage.  It never
 constructs a solver or authorizes a production change.
@@ -18,8 +18,8 @@ from .h100_shadow_qualification import _write_new_json
 from .stage_q2_diagnostics import _read_unchanged_json
 
 
-STAGE_R0_CLASSIFICATION = "POST_Q4_RETARGETING_COMPLETE"
-STAGE_R0_PRIMARY_TARGET = (
+STAGE_Q5_CLASSIFICATION = "POST_Q4_RETARGETING_COMPLETE"
+STAGE_Q5_PRIMARY_TARGET = (
     "end_to_end_algebraic_data_movement_and_consumer_layout"
 )
 
@@ -80,7 +80,7 @@ def _stage_q2_contract(report: Mapping[str, object]) -> None:
         )
     except (KeyError, TypeError):
         valid = False
-    _require(valid, "Stage R.0 Q.2 evidence contract differs")
+    _require(valid, "Stage Q.5 Q.2 evidence contract differs")
 
 
 def _stage_q3_contract(
@@ -107,7 +107,7 @@ def _stage_q3_contract(
         )
     except (KeyError, TypeError):
         valid = False
-    _require(valid, "Stage R.0 Q.3 evidence contract differs")
+    _require(valid, "Stage Q.5 Q.3 evidence contract differs")
 
 
 def _stage_q4_contract(
@@ -132,7 +132,7 @@ def _stage_q4_contract(
         )
     except (KeyError, TypeError):
         valid = False
-    _require(valid, "Stage R.0 Q.4 evidence contract differs")
+    _require(valid, "Stage Q.5 Q.4 evidence contract differs")
 
 
 def _stage_o431_contract(report: Mapping[str, object]) -> None:
@@ -153,7 +153,7 @@ def _stage_o431_contract(report: Mapping[str, object]) -> None:
         )
     except (KeyError, TypeError):
         valid = False
-    _require(valid, "Stage R.0 O.4.3.1 evidence contract differs")
+    _require(valid, "Stage Q.5 O.4.3.1 evidence contract differs")
 
 
 def _stage_o433_contract(
@@ -178,7 +178,7 @@ def _stage_o433_contract(
         )
     except (KeyError, TypeError):
         valid = False
-    _require(valid, "Stage R.0 O.4.3.3 evidence contract differs")
+    _require(valid, "Stage Q.5 O.4.3.3 evidence contract differs")
 
 
 def _stage_o434_contract(
@@ -201,7 +201,7 @@ def _stage_o434_contract(
         )
     except (KeyError, TypeError):
         valid = False
-    _require(valid, "Stage R.0 O.4.3.4 evidence contract differs")
+    _require(valid, "Stage Q.5 O.4.3.4 evidence contract differs")
 
 
 def _r320_ratio(report: Mapping[str, object], description: str) -> float:
@@ -309,7 +309,7 @@ def _remaining_copy_summary(
     }
 
 
-def analyze_stage_r0_post_q4_retargeting(
+def analyze_stage_q5_post_q4_retargeting(
     *,
     stage_q2_report: str | Path,
     expected_stage_q2_sha256: str,
@@ -324,7 +324,7 @@ def analyze_stage_r0_post_q4_retargeting(
     stage_o434_report: str | Path,
     expected_stage_o434_sha256: str,
 ) -> dict[str, object]:
-    """Close rejected routes and select one analysis-only Stage R.1 target."""
+    """Close rejected routes and select one analysis-only Stage Q.6 target."""
 
     inputs: dict[str, tuple[Path, dict[str, object]]] = {}
     for key, path, digest, description in (
@@ -383,13 +383,13 @@ def analyze_stage_r0_post_q4_retargeting(
         "Stage Q.2 candidate time",
     )
     if not (production_ms > 0.0 and candidate_ms > production_ms):
-        raise ValueError("Stage R.0 requires a positive residual gap")
+        raise ValueError("Stage Q.5 requires a positive residual gap")
 
     q4_performance = q4["performance"]
     q4_baseline_peak = int(q4_performance["baseline_peak_allocated_bytes"])
     q4_candidate_peak = int(q4_performance["candidate_peak_allocated_bytes"])
     if q4_candidate_peak <= q4_baseline_peak:
-        raise ValueError("Stage R.0 expects the Q.4 memory regression")
+        raise ValueError("Stage Q.5 expects the Q.4 memory regression")
     workspace = _workspace_summary(q4)
     memory_increase = q4_candidate_peak - q4_baseline_peak
     remaining_copy = _remaining_copy_summary(o434)
@@ -453,7 +453,7 @@ def analyze_stage_r0_post_q4_retargeting(
     ranked_targets = [
         {
             "rank": 1,
-            "target": STAGE_R0_PRIMARY_TARGET,
+            "target": STAGE_Q5_PRIMARY_TARGET,
             "next_action": "diagnostic_design_only",
             "rationale": (
                 "Q.4 separated allocation reuse from unavoidable copies; "
@@ -492,8 +492,8 @@ def analyze_stage_r0_post_q4_retargeting(
 
     return {
         "schema_version": 1,
-        "qualification_stage": "R.0",
-        "classification": STAGE_R0_CLASSIFICATION,
+        "qualification_stage": "Q.5",
+        "classification": STAGE_Q5_CLASSIFICATION,
         "architecture_decision": "post_q4_evidence_retargeting",
         "authoritative_residual": {
             "production_mean_milliseconds_per_step": production_ms,
@@ -516,8 +516,8 @@ def analyze_stage_r0_post_q4_retargeting(
         },
         "closed_routes": closed_routes,
         "ranked_diagnostic_targets": ranked_targets,
-        "primary_target": STAGE_R0_PRIMARY_TARGET,
-        "stage_r1_scope": {
+        "primary_target": STAGE_Q5_PRIMARY_TARGET,
+        "stage_q6_scope": {
             "action": "define_one_read_only_end_to_end_data_movement_map",
             "must_cover_sources": [
                 row["source"] for row in remaining_copy["sources"]
@@ -544,8 +544,8 @@ def analyze_stage_r0_post_q4_retargeting(
             "changes_runtime_implementation": False,
             "changes_production_default": False,
         },
-        "eligible_for_stage_r1_diagnostic_design": True,
-        "eligible_for_stage_r1_candidate_implementation": False,
+        "eligible_for_stage_q6_diagnostic_design": True,
+        "eligible_for_stage_q6_candidate_implementation": False,
         "eligible_for_production_promotion": False,
         "production_default_changed": False,
         "inputs": [
@@ -568,7 +568,7 @@ def analysis_main(argv: Sequence[str] | None = None) -> int:
         parser.add_argument(f"--expected-stage-{stage}-sha256", required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
-    report = analyze_stage_r0_post_q4_retargeting(
+    report = analyze_stage_q5_post_q4_retargeting(
         stage_q2_report=args.stage_q2_report,
         expected_stage_q2_sha256=args.expected_stage_q2_sha256,
         stage_q3_report=args.stage_q3_report,
@@ -587,8 +587,8 @@ def analysis_main(argv: Sequence[str] | None = None) -> int:
 
 
 __all__ = [
-    "STAGE_R0_CLASSIFICATION",
-    "STAGE_R0_PRIMARY_TARGET",
+    "STAGE_Q5_CLASSIFICATION",
+    "STAGE_Q5_PRIMARY_TARGET",
     "analysis_main",
-    "analyze_stage_r0_post_q4_retargeting",
+    "analyze_stage_q5_post_q4_retargeting",
 ]

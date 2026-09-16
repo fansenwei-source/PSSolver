@@ -1,4 +1,4 @@
-"""CPU contracts for post-Q.4 Stage R.0 target selection."""
+"""CPU contracts for post-Q.4 Stage Q.5 target selection."""
 
 from __future__ import annotations
 
@@ -8,10 +8,10 @@ from pathlib import Path
 import pytest
 
 from pssolver.experimental._shadow_support import file_sha256
-from pssolver.experimental.stage_r0_diagnostics import (
-    STAGE_R0_PRIMARY_TARGET,
+from pssolver.experimental.stage_q5_diagnostics import (
+    STAGE_Q5_PRIMARY_TARGET,
     analysis_main,
-    analyze_stage_r0_post_q4_retargeting,
+    analyze_stage_q5_post_q4_retargeting,
 )
 
 
@@ -216,14 +216,15 @@ def _analyze(inputs: dict[str, tuple[Path, str]]) -> dict[str, object]:
     for stage, (path, digest) in inputs.items():
         kwargs[f"stage_{stage}_report"] = path
         kwargs[f"expected_stage_{stage}_sha256"] = digest
-    return analyze_stage_r0_post_q4_retargeting(**kwargs)
+    return analyze_stage_q5_post_q4_retargeting(**kwargs)
 
 
-def test_stage_r0_closes_workspace_and_selects_diagnostic_only(tmp_path):
+def test_stage_q5_closes_workspace_and_selects_diagnostic_only(tmp_path):
     report = _analyze(_reports(tmp_path))
 
+    assert report["qualification_stage"] == "Q.5"
     assert report["classification"] == "POST_Q4_RETARGETING_COMPLETE"
-    assert report["primary_target"] == STAGE_R0_PRIMARY_TARGET
+    assert report["primary_target"] == STAGE_Q5_PRIMARY_TARGET
     assert report["q4_workspace_outcome"][
         "peak_allocated_increase_bytes"
     ] == 3000
@@ -231,13 +232,14 @@ def test_stage_r0_closes_workspace_and_selects_diagnostic_only(tmp_path):
         "workspace_bytes_over_peak_allocated_increase"
     ] == pytest.approx(1.0)
     assert report["ranked_diagnostic_targets"][0]["rank"] == 1
-    assert report["eligible_for_stage_r1_diagnostic_design"] is True
-    assert report["eligible_for_stage_r1_candidate_implementation"] is False
+    assert report["eligible_for_stage_q6_diagnostic_design"] is True
+    assert report["eligible_for_stage_q6_candidate_implementation"] is False
+    assert report["stage_q6_scope"]["may_execute_solver"] is False
     assert report["eligible_for_production_promotion"] is False
     assert report["production_default_changed"] is False
 
 
-def test_stage_r0_rejects_changed_input_identity(tmp_path):
+def test_stage_q5_rejects_changed_input_identity(tmp_path):
     inputs = _reports(tmp_path)
     path, _ = inputs["q4"]
     path.write_text(path.read_text(encoding="utf-8") + "\n", encoding="utf-8")
@@ -246,7 +248,7 @@ def test_stage_r0_rejects_changed_input_identity(tmp_path):
         _analyze(inputs)
 
 
-def test_stage_r0_rejects_q4_without_memory_regression(tmp_path):
+def test_stage_q5_rejects_q4_without_memory_regression(tmp_path):
     inputs = _reports(tmp_path)
     path, _ = inputs["q4"]
     report = json.loads(path.read_text(encoding="utf-8"))
@@ -257,9 +259,9 @@ def test_stage_r0_rejects_q4_without_memory_regression(tmp_path):
         _analyze(inputs)
 
 
-def test_stage_r0_cli_writes_once(tmp_path):
+def test_stage_q5_cli_writes_once(tmp_path):
     inputs = _reports(tmp_path)
-    output = tmp_path / "stage_r0.json"
+    output = tmp_path / "stage_q5.json"
     argv = []
     for stage, (path, digest) in inputs.items():
         argv.extend(
