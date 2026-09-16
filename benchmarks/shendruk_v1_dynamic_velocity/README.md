@@ -108,3 +108,44 @@ The transform order is bound separately as
 `transform_execution_order=real_first`; this changes the order of commuting
 mixed-basis transforms for performance without changing their basis or
 normalization.
+
+## Inertial timestep convergence
+
+`fig4_timestep_convergence.py` defines the production time-integration gate
+that must pass before the 23-point scan is launched.  It fixes `H=20`, `A=18`,
+`320x320x80`, the V1 seed, all model coefficients, and a common physical end
+time `T=1`, then compares:
+
+- `dt=0.01` (100 steps),
+- `dt=0.005` (200 steps),
+- `dt=0.0025` (400 steps).
+
+All three runs save Q, u, and p at `T=0.25,0.5,0.75,1.0`.  The analyzer first
+uses the normal per-run validator, requires identical raw and projected Q
+initial-condition hashes, then computes chunked Q/u errors and gauge-invariant
+pressure errors.  It reports pairwise RMS, relative L2, normalized Linf,
+observed first-order rates, kinetic energy, RMS speed, mean velocity, and the
+final recommendation for `dt`.
+
+Create the bound plan with:
+
+```bash
+python -m benchmarks.shendruk_v1_dynamic_velocity.fig4_timestep_convergence \
+  plan --output /path/to/control/timestep_plan.json
+```
+
+Use `command --index 0`, `1`, and `2` to print or execute the three rows, and
+`validate --index ...` for their individual output gates.  Once all three are
+complete, run:
+
+```bash
+python -m benchmarks.shendruk_v1_dynamic_velocity.fig4_timestep_convergence \
+  analyze \
+  --plan /path/to/control/timestep_plan.json \
+  --output-root /path/to/output \
+  --report /path/to/control/timestep_convergence.json
+```
+
+This deterministic `T=1` study establishes short-time order and selects the
+candidate timestep.  It does not replace a later check of long-time Fig. 4
+statistics.

@@ -440,12 +440,21 @@ def validate_run(
 
     hydrodynamic_inventory = []
     for prefix, components in (("u", 3), ("p", None)):
-        paths = sorted(run_dir.glob(f"{prefix}_*.npy"))
-        if config["save_hydrodynamics"] and len(paths) != 1:
-            raise ValueError(f"preflight requires one {prefix} snapshot")
-        if not config["save_hydrodynamics"] and paths:
+        paths_by_step = {}
+        pattern = re.compile(rf"^{prefix}_([0-9]+)\.npy$")
+        for path in run_dir.glob(f"{prefix}_*.npy"):
+            match = pattern.fullmatch(path.name)
+            if match is None:
+                raise ValueError(f"unexpected {prefix} snapshot name: {path.name}")
+            paths_by_step[int(match.group(1))] = path
+        if config["save_hydrodynamics"] and sorted(paths_by_step) != expected_steps:
+            raise ValueError(
+                f"{prefix} snapshot steps do not match the bound configuration"
+            )
+        if not config["save_hydrodynamics"] and paths_by_step:
             raise ValueError(f"formal Q-only run unexpectedly saved {prefix}")
-        for path in paths:
+        for step in sorted(paths_by_step):
+            path = paths_by_step[step]
             array = np.load(path, mmap_mode="r", allow_pickle=False)
             expected_shape = (
                 (config["nx"], config["ny"], config["nz"], components)
