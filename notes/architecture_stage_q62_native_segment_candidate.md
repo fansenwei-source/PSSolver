@@ -21,7 +21,9 @@ are restored to the existing consumer component order by index metadata.
 The candidate deliberately changes transform partitioning and can increase
 kernel launches.  Qualification therefore measures three balanced R320 H100
 trials per role, a six-step Q/u/p trajectory, per-source copy and segment
-counters, peak allocated and reserved memory, and the observed timing cost.
+counters from the instrumented profiles, peak allocated and reserved memory,
+and the observed timing cost.  The trajectories are intentionally uninstrumented
+and provide only completion and numerical-equivalence evidence.
 Numerical equivalence is gated at relative L2 <= 1e-12.  The experiment cannot
 promote a production default; it can only authorize a later architecture
 decision when the copy elimination is both structurally real and measurably

@@ -270,6 +270,7 @@ def _diagnostics(role: str) -> dict[str, object]:
         }
         sources[source] = counters
     return {
+        "enabled": True,
         "policy": {
             "mode": (
                 "contiguous_storage_view"
@@ -284,6 +285,13 @@ def _diagnostics(role: str) -> dict[str, object]:
         "workspace_retains_timestep_inputs": False,
         "retained_tensor_references": 0,
     }
+
+
+def _trajectory_diagnostics(role: str) -> dict[str, object]:
+    diagnostics = _diagnostics(role)
+    diagnostics["enabled"] = False
+    diagnostics["source_attribution"] = {}
+    return diagnostics
 
 
 def _trajectory(root: Path, role: str) -> None:
@@ -315,7 +323,7 @@ def _trajectory(root: Path, role: str) -> None:
             "production_initial_q_sha256": "q0",
             "explicit_rhs_execution": _compiled_rhs(),
             "producer_outputs": _producer_outputs(),
-            "batch_assembly_diagnostics": _diagnostics(role),
+            "batch_assembly_diagnostics": _trajectory_diagnostics(role),
         },
     )
 
@@ -402,7 +410,7 @@ def test_stage_q62_analyzer_accepts_three_source_zero_copy_candidate(tmp_path):
     assert len(report["native_segment_fragmentation"]) == 3
 
 
-def test_stage_q62_analyzer_rejects_copy_at_designated_candidate_source(
+def test_stage_q62_analyzer_rejects_copy_at_designated_candidate_profile(
     tmp_path,
 ):
     evidence = tmp_path / "q61.json"
@@ -413,21 +421,21 @@ def test_stage_q62_analyzer_rejects_copy_at_designated_candidate_source(
     }
     for role, path in trajectories.items():
         _trajectory(path, role)
-    candidate_metrics = trajectories["candidate"] / "stage_q62_metrics.json"
-    report = json.loads(candidate_metrics.read_text(encoding="utf-8"))
-    source = report["batch_assembly_diagnostics"]["source_attribution"][
-        REQUIRED_SOURCES[1]
-    ]
-    source["copy_cat_batches"] = 1
-    _write_json(candidate_metrics, report)
     profiles = {role: [] for role in ("baseline", "candidate")}
     for role in profiles:
         for trial in range(3):
             path = tmp_path / f"{role}_{trial}.json"
             _profile(path, role, 1.0)
             profiles[role].append(path)
+    candidate_profile = profiles["candidate"][0]
+    report = json.loads(candidate_profile.read_text(encoding="utf-8"))
+    source = report["batch_assembly_diagnostics"]["source_attribution"][
+        REQUIRED_SOURCES[1]
+    ]
+    source["copy_cat_batches"] = 1
+    _write_json(candidate_profile, report)
 
-    with pytest.raises(ValueError, match="trajectory contract differs"):
+    with pytest.raises(ValueError, match="profile contract differs"):
         analyze_stage_q62_qualification(
             trajectories["baseline"],
             trajectories["candidate"],
@@ -436,6 +444,40 @@ def test_stage_q62_analyzer_rejects_copy_at_designated_candidate_source(
             stage_q61_report=evidence,
             expected_stage_q61_sha256=digest,
         )
+
+
+def test_stage_q62_formally_rejects_fragmented_candidate_on_safety_ratio(
+    tmp_path,
+):
+    evidence = tmp_path / "q61.json"
+    digest = _q61_report(evidence)
+    trajectories = {
+        role: tmp_path / f"trajectory_{role}"
+        for role in ("baseline", "candidate")
+    }
+    for role, path in trajectories.items():
+        _trajectory(path, role)
+    profiles = {role: [] for role in ("baseline", "candidate")}
+    for role in profiles:
+        for trial in range(3):
+            path = tmp_path / f"{role}_{trial}.json"
+            _profile(path, role, 1.0 if role == "baseline" else 1.16)
+            profiles[role].append(path)
+
+    report = analyze_stage_q62_qualification(
+        trajectories["baseline"],
+        trajectories["candidate"],
+        profiles["baseline"],
+        profiles["candidate"],
+        stage_q61_report=evidence,
+        expected_stage_q61_sha256=digest,
+    )
+
+    assert report["classification"] == "C_rejected"
+    assert report["gates"]["numerical_equivalence"] is True
+    assert report["gates"]["three_source_copy_elimination"] is True
+    assert report["gates"]["candidate_safety_non_regression"] is False
+    assert report["eligible_for_stage_q63_architecture_decision"] is False
 
 
 def test_stage_q62_plan_is_balanced_and_analysis_last(tmp_path):

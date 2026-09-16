@@ -306,6 +306,7 @@ def _validate_trajectory(directory: Path, role: str) -> dict[str, object]:
         "contiguous_storage_view" if role == "baseline" else "native_segments"
     )
     try:
+        diagnostics = report["batch_assembly_diagnostics"]
         valid = bool(
             report["qualification_stage"] == "Q.6.2"
             and report["classification"] == "TRAJECTORY_COMPLETE"
@@ -318,9 +319,10 @@ def _validate_trajectory(directory: Path, role: str) -> dict[str, object]:
             and report["production_default_changed"] is False
             and _validate_compiled_rhs(report["explicit_rhs_execution"])
             and _validate_boundary_packed_producers(report)
-            and _validate_native_sources(
-                report["batch_assembly_diagnostics"], role=role
-            )
+            and diagnostics["enabled"] is False
+            and diagnostics["source_attribution"] == {}
+            and diagnostics["retained_tensor_references"] == 0
+            and diagnostics["workspace_active_count"] == 0
         )
     except (KeyError, TypeError):
         valid = False
@@ -509,12 +511,6 @@ def analyze_stage_q62_qualification(
             for role, reports in profiles.items()
             for report in reports
         )
-        and all(
-            _validate_native_sources(
-                report["batch_assembly_diagnostics"], role=role
-            )
-            for role, report in trajectories.items()
-        )
     )
     memory_gate = bool(
         allocated_ratio <= STAGE_Q62_MAXIMUM_PEAK_ALLOCATED_RATIO
@@ -578,6 +574,8 @@ def analyze_stage_q62_qualification(
             "relative_l2_tolerance": STAGE_Q62_RELATIVE_L2_TOLERANCE,
             "maximum_relative_l2": maximum_relative_l2,
             "q0_byte_identical": q0_identical,
+            "instrumentation_role": "numerical_equivalence_only",
+            "structural_evidence_source": "balanced_h100_profiles",
             "arrays": arrays,
         },
         "performance": {
