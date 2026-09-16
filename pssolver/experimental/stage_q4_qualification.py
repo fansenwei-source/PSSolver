@@ -228,8 +228,8 @@ def _validate_compiled_rhs(metadata: Mapping[str, object]) -> bool:
             and compile_policy["backend"] == "inductor"
             and compile_policy["fullgraph"] is True
             and compile_policy["dynamic"] is False
-            and compile_policy["fallback_allowed"] is False
-            and compile_policy["fallback_reason"] is None
+            and pointwise["fallback_allowed"] is False
+            and pointwise["fallback_reason"] is None
             and metadata["observability"]["fallback_to_model"] is False
         )
     except (KeyError, TypeError):

@@ -12,7 +12,11 @@ from pssolver.experimental._shadow_support import file_sha256
 from pssolver.experimental.stage_q4_plan import build_stage_q4_h100_plan
 from pssolver.experimental.stage_q4_qualification import (
     STAGE_Q4_TRAJECTORY_STEPS,
+    _validate_compiled_rhs,
     analyze_stage_q4_qualification,
+)
+from pssolver.models.active_nematics.beris_edwards import (
+    BerisEdwardsPointwiseKernels,
 )
 
 
@@ -25,16 +29,43 @@ def _compiled_rhs() -> dict[str, object]:
             "pointwise_kernels": {
                 "requested": "compile",
                 "effective": "compile",
+                "fallback_allowed": False,
+                "fallback_reason": None,
                 "compile": {
                     "backend": "inductor",
                     "fullgraph": True,
                     "dynamic": False,
-                    "fallback_allowed": False,
-                    "fallback_reason": None,
                 },
             },
         },
     }
+
+
+def test_compiled_rhs_gate_uses_the_runtime_metadata_schema():
+    actual = _compiled_rhs()
+    assert _validate_compiled_rhs(actual)
+
+    runtime_metadata = {
+        "owner": "geometry_executor",
+        "implementation_name": "plane_beris_edwards_pointwise_explicit_rhs",
+        "observability": {
+            "fallback_to_model": False,
+            "pointwise_kernels": BerisEdwardsPointwiseKernels(
+                "compile"
+            ).metadata(),
+        },
+    }
+    assert _validate_compiled_rhs(runtime_metadata)
+
+    old_synthetic = json.loads(json.dumps(actual))
+    pointwise = old_synthetic["observability"]["pointwise_kernels"]
+    pointwise["compile"]["fallback_allowed"] = pointwise.pop(
+        "fallback_allowed"
+    )
+    pointwise["compile"]["fallback_reason"] = pointwise.pop(
+        "fallback_reason"
+    )
+    assert not _validate_compiled_rhs(old_synthetic)
 
 
 def _q3_report(path: Path) -> str:
