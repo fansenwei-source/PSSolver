@@ -1,10 +1,17 @@
 import torch
-from .Field import Fields, Parameters
+from .Field import DEFAULT_TRANSFORM_GROUP_INDEXING, Fields, Parameters
 import inspect
 
 
 class PDEModel:
-    def __init__(self, shape, device, batchsize, dtype=torch.float32):
+    def __init__(
+        self,
+        shape,
+        device,
+        batchsize,
+        dtype=torch.float32,
+        transform_group_indexing=DEFAULT_TRANSFORM_GROUP_INDEXING,
+    ):
         if dtype not in (torch.float32, torch.float64):
             raise ValueError(
                 "dtype must be torch.float32 or torch.float64, "
@@ -20,6 +27,7 @@ class PDEModel:
             device=device,
             dtype=dtype,
             batchsize=self.batchsize,
+            transform_group_indexing=transform_group_indexing,
         )
         self.parameters = Parameters()
         self.dyn_fields = []
@@ -207,10 +215,10 @@ class PDEModel:
                     group[0]
                 )
                 spatial = self.static_inverse_transform(
-                    self.fields.spectral[group],
+                    self.fields.select_spectral_group(group),
                     boundary_conditions,
                 )
-            self.fields.spatial[group] = spatial
+            self.fields.store_spatial_group(group, spatial)
         after_update = getattr(
             self.static_model,
             "after_static_fields_updated",

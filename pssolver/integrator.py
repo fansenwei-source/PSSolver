@@ -70,8 +70,9 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
         constraint, for example a spectral projection.
         """
         for group in self.dynamic_transform_groups:
-            self.model.fields.spectral[group] = (
-                self.model.fields.forward_transform_group(group)
+            self.model.fields.store_spectral_group(
+                group,
+                self.model.fields.forward_transform_group(group),
             )
 
     def _advance_spectral_refresh_clock(self):
@@ -106,7 +107,10 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
 
         # 4. 只更新 dynamic fields 的实空间 Q^{n+1}
         for group in self.dynamic_transform_groups:
-            self.model.fields.spatial[group] = self.model.fields.inverse_transform_group(group)
+            self.model.fields.store_spatial_group(
+                group,
+                self.model.fields.inverse_transform_group(group),
+            )
 
         # Periodically rebuild dynamic spectra from real fields to limit accumulated roundoff drift.
         self._advance_spectral_refresh_clock()

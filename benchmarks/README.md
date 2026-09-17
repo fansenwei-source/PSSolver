@@ -4,6 +4,21 @@ Microbenchmarks in this directory measure isolated numerical kernels. They are
 not scientific validation tests and do not replace convergence or manufactured
 solution tests.
 
+Run the four-way periodic fast-path benchmark with:
+
+```bash
+python -m benchmarks.benchmark_periodic_fast_path \
+  --device cuda --dtype float32 --shape 512,512 \
+  --field-count 4 --warmup-steps 5 --profile-steps 30 --trials 4
+```
+
+The four variants independently toggle contiguous transform-group views and
+multidimensional periodic ``fftn/ifftn`` calls. The benchmark runs complete
+semi-implicit diffusion timesteps, validates every candidate against the
+historical advanced-indexing/axiswise path, and records selector metadata and
+CUDA peak memory. Both production defaults remain on the historical path
+until a separate qualification promotes them.
+
 Run the tensor-product transform benchmark from the repository root:
 
 ```bash

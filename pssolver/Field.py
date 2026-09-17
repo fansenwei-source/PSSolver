@@ -1,5 +1,10 @@
 import torch
 
+
+DEFAULT_TRANSFORM_GROUP_INDEXING = "advanced"
+TRANSFORM_GROUP_INDEXING_MODES = ("advanced", "contiguous_slice")
+
+
 class Parameters:
     def __init__(self):
         self._params = {}
@@ -42,7 +47,14 @@ class Parameters:
 
 
 class Fields:
-    def __init__(self, shape, device="cuda", dtype=torch.float32, batchsize = 1):
+    def __init__(
+        self,
+        shape,
+        device="cuda",
+        dtype=torch.float32,
+        batchsize=1,
+        transform_group_indexing=DEFAULT_TRANSFORM_GROUP_INDEXING,
+    ):
         """
         field_names: list of str, e.g., ['u', 'v']
         shape: spatial grid shape of length 1, 2, or 3, e.g. (Nx,), (Nx, Ny), or (Nx, Ny, Nz).
@@ -52,10 +64,17 @@ class Fields:
                 "dtype must be torch.float32 or torch.float64, "
                 f"got {dtype}"
             )
+        if transform_group_indexing not in TRANSFORM_GROUP_INDEXING_MODES:
+            raise ValueError(
+                "transform_group_indexing must be one of "
+                f"{TRANSFORM_GROUP_INDEXING_MODES}, got "
+                f"{transform_group_indexing!r}"
+            )
         self.shape = shape
         self.device = device
         self.dtype = dtype
         self.batchsize = batchsize
+        self.transform_group_indexing = transform_group_indexing
 
         self.qx = None
         self.qy = None
@@ -276,6 +295,53 @@ class Fields:
             groups.setdefault(self.get_boundary_conditions(index), []).append(index)
         return list(groups.values())
 
+    def _transform_group_indexer(self, indices):
+        if self.transform_group_indexing == "contiguous_slice":
+            start = indices[0]
+            if indices == list(range(start, start + len(indices))):
+                return slice(start, start + len(indices)), "contiguous_slice"
+        return indices, "advanced"
+
+    def transform_group_indexing_metadata(self, keys):
+        indices = self._normalize_field_indices(keys)
+        _, effective = self._transform_group_indexer(indices)
+        fallback_reason = None
+        if (
+            self.transform_group_indexing == "contiguous_slice"
+            and effective == "advanced"
+        ):
+            fallback_reason = "noncontiguous_field_indices"
+        return {
+            "requested": self.transform_group_indexing,
+            "effective": effective,
+            "fallback_reason": fallback_reason,
+            "indices": list(indices),
+        }
+
+    def select_spatial_group(self, keys):
+        indices = self._normalize_field_indices(keys)
+        indexer, _ = self._transform_group_indexer(indices)
+        return self.spatial[indexer]
+
+    def select_spectral_group(self, keys):
+        indices = self._normalize_field_indices(keys)
+        indexer, _ = self._transform_group_indexer(indices)
+        return self.spectral[indexer]
+
+    def _store_group(self, destination, keys, values):
+        indices = self._normalize_field_indices(keys)
+        indexer, effective = self._transform_group_indexer(indices)
+        if effective == "contiguous_slice":
+            destination[indexer].copy_(values)
+        else:
+            destination[indexer] = values
+
+    def store_spatial_group(self, keys, values):
+        self._store_group(self.spatial, keys, values)
+
+    def store_spectral_group(self, keys, values):
+        self._store_group(self.spectral, keys, values)
+
     def forward_transform(self, key, tensor=None):
         backend = self._require_transform_backend()
         key = self._normalize_field_key(key)
@@ -289,7 +355,7 @@ class Fields:
         indices = self._normalize_field_indices(keys)
         boundary_conditions = self._common_boundary_conditions(indices)
         if tensor is None:
-            tensor = self.spatial[indices]
+            tensor = self.select_spatial_group(indices)
         return backend.forward(tensor, boundary_conditions)
 
     def inverse_transform(self, key, spectral=None, boundary_conditions=None):
@@ -311,7 +377,7 @@ class Fields:
         else:
             boundary_conditions = self._normalize_boundary_conditions(boundary_conditions)
         if spectral is None:
-            spectral = self.spectral[indices]
+            spectral = self.select_spectral_group(indices)
         return backend.inverse(spectral, boundary_conditions)
 
     def laplacian_hat(self, key, spectral=None):

@@ -54,6 +54,6 @@ The Stage S source candidate completed all local and HPCC gates:
 - a clean 0.1.0 wheel install passed package, compatibility-module, console,
   help, dry-run and implementation-provenance checks.
 
-Architecture Stage T remains intentionally paused and requires a separate
-decision. The 0.1.0 release does not imply support for any capability listed
-under the exclusions above.
+Stage T starts only after a separate architecture decision and remains
+intentionally paused. The 0.1.0 release does not imply support for any
+capability listed under the exclusions above.

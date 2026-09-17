@@ -26,6 +26,12 @@ class FakeFields:
         self.inverse_calls += 1
         return self.spectral[group].clone()
 
+    def store_spatial_group(self, group, values):
+        self.spatial[group] = values
+
+    def store_spectral_group(self, group, values):
+        self.spectral[group] = values
+
 
 class FakeModel:
     def __init__(self):

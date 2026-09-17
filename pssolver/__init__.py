@@ -1,6 +1,11 @@
 from .solver import SpectralSolver
 from ._version import __version__
-from .Field import Fields, Parameters
+from .Field import (
+    DEFAULT_TRANSFORM_GROUP_INDEXING,
+    TRANSFORM_GROUP_INDEXING_MODES,
+    Fields,
+    Parameters,
+)
 from .PDEmodel import PDEModel
 from .integrator import SemiImplicitEulerIntegrator
 from .loop_conventions import (
@@ -24,11 +29,13 @@ from .transforms import (
     DEALIAS_RULE_FRACTIONS,
     DEFAULT_DEALIAS_RULE,
     DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
+    DEFAULT_PERIODIC_TRANSFORM_EXECUTION,
     DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     FreeSlipModalStokesSolver,
     TensorProductTransformBackend,
     PROJECTED_TRANSFORM_EXECUTION_MODES,
+    PERIODIC_TRANSFORM_EXECUTION_MODES,
     SPECTRAL_STORAGE_MODES,
     projected_common_basis_stress_divergence,
     projected_distortion_stress_divergence,
@@ -39,6 +46,8 @@ __all__ = [
     'SpectralSolver',
     'Fields',
     'Parameters',
+    'DEFAULT_TRANSFORM_GROUP_INDEXING',
+    'TRANSFORM_GROUP_INDEXING_MODES',
     'PDEModel',
     'SemiImplicitEulerIntegrator',
     'CONVENTION_NAME',
@@ -50,11 +59,13 @@ __all__ = [
     'DEALIAS_RULE_FRACTIONS',
     'DEFAULT_DEALIAS_RULE',
     'DEFAULT_PROJECTED_TRANSFORM_EXECUTION',
+    'DEFAULT_PERIODIC_TRANSFORM_EXECUTION',
     'DEFAULT_SPECTRAL_STORAGE',
     'DEFAULT_TRANSFORM_EXECUTION_ORDER',
     'FreeSlipModalStokesSolver',
     'TensorProductTransformBackend',
     'PROJECTED_TRANSFORM_EXECUTION_MODES',
+    'PERIODIC_TRANSFORM_EXECUTION_MODES',
     'SPECTRAL_STORAGE_MODES',
     'projected_common_basis_stress_divergence',
     'projected_distortion_stress_divergence',

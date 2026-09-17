@@ -11,6 +11,8 @@ DEFAULT_PROJECTED_TRANSFORM_EXECUTION = "truncated"
 PROJECTED_TRANSFORM_EXECUTION_MODES = ("full", "truncated")
 DEFAULT_SPECTRAL_STORAGE = "full_complex"
 SPECTRAL_STORAGE_MODES = ("full_complex", "hermitian_half")
+DEFAULT_PERIODIC_TRANSFORM_EXECUTION = "axiswise"
+PERIODIC_TRANSFORM_EXECUTION_MODES = ("axiswise", "multidim")
 DEALIAS_RULE_FRACTIONS = {
     "none": None,
     "two_thirds": 2.0 / 3.0,
@@ -66,6 +68,7 @@ class TensorProductTransformBackend:
         execution_order=DEFAULT_TRANSFORM_EXECUTION_ORDER,
         spectral_storage=DEFAULT_SPECTRAL_STORAGE,
         hermitian_axis=None,
+        periodic_transform_execution=DEFAULT_PERIODIC_TRANSFORM_EXECUTION,
     ):
         if execution_order not in self._execution_orders:
             raise ValueError(
@@ -76,6 +79,12 @@ class TensorProductTransformBackend:
             raise ValueError(
                 f"spectral_storage must be one of {SPECTRAL_STORAGE_MODES}, "
                 f"got {spectral_storage!r}"
+            )
+        if periodic_transform_execution not in PERIODIC_TRANSFORM_EXECUTION_MODES:
+            raise ValueError(
+                "periodic_transform_execution must be one of "
+                f"{PERIODIC_TRANSFORM_EXECUTION_MODES}, got "
+                f"{periodic_transform_execution!r}"
             )
         if spectral_storage == "hermitian_half":
             if not isinstance(hermitian_axis, int) or isinstance(
@@ -100,6 +109,7 @@ class TensorProductTransformBackend:
         self.execution_order = execution_order
         self.spectral_storage = spectral_storage
         self.hermitian_axis = hermitian_axis
+        self.periodic_transform_execution = periodic_transform_execution
         self.dim = len(self.shape)
         spectral_shape = list(self.shape)
         if self.spectral_storage == "hermitian_half":
@@ -184,6 +194,53 @@ class TensorProductTransformBackend:
                 reversed(real_transforms)
             )
         return real_transforms + periodic_transforms
+
+    def _periodic_axes(self, transform_kinds, tensor_ndim):
+        return tuple(
+            tensor_ndim - self.dim + local_axis
+            for local_axis, kind in enumerate(transform_kinds)
+            if kind == "fft"
+        )
+
+    def _uses_multidim_periodic_transform(self, transform_kinds):
+        """Return whether periodic axes can be executed as one FFT call.
+
+        Real-first transforms already place every bounded transform before the
+        periodic transforms (and after them during inverse execution), so
+        grouping the periodic axes preserves that contract. An all-periodic
+        legacy transform is also safe to group. Mixed legacy transforms retain
+        their historical per-axis order and fall back to ``axiswise``.
+        """
+        if self.periodic_transform_execution != "multidim":
+            return False
+        periodic_count = sum(kind == "fft" for kind in transform_kinds)
+        if periodic_count < 2:
+            return False
+        return self.execution_order == "real_first" or periodic_count == self.dim
+
+    def periodic_transform_execution_metadata(self, boundary_conditions):
+        """Describe the requested and effective periodic transform policy."""
+        transform_kinds = self.get_metadata(boundary_conditions).transform_kinds
+        effective = (
+            "multidim"
+            if self._uses_multidim_periodic_transform(transform_kinds)
+            else "axiswise"
+        )
+        fallback_reason = None
+        if (
+            self.periodic_transform_execution == "multidim"
+            and effective == "axiswise"
+        ):
+            periodic_count = sum(kind == "fft" for kind in transform_kinds)
+            if periodic_count < 2:
+                fallback_reason = "fewer_than_two_periodic_axes"
+            else:
+                fallback_reason = "mixed_legacy_execution_order"
+        return {
+            "requested": self.periodic_transform_execution,
+            "effective": effective,
+            "fallback_reason": fallback_reason,
+        }
 
     def get_metadata(self, boundary_conditions):
         boundary_conditions = tuple(boundary_conditions)
@@ -341,6 +398,30 @@ class TensorProductTransformBackend:
             )
 
         output = tensor
+        if self._uses_multidim_periodic_transform(metadata.transform_kinds):
+            for local_axis, kind in self._ordered_axis_transforms(
+                metadata.transform_kinds,
+                inverse=False,
+            ):
+                if kind == "fft":
+                    continue
+                output = self._apply_retained_real_axis_transform(
+                    output,
+                    kind,
+                    local_axis,
+                    self.shape[local_axis]
+                    if counts is None
+                    else counts[local_axis],
+                    inverse=False,
+                )
+            periodic_axes = self._periodic_axes(
+                metadata.transform_kinds,
+                output.ndim,
+            )
+            return torch.fft.fftn(output, dim=periodic_axes).to(
+                self.spectral_dtype
+            )
+
         for local_axis, kind in self._ordered_axis_transforms(
             metadata.transform_kinds,
             inverse=False,
@@ -401,6 +482,31 @@ class TensorProductTransformBackend:
                 boundary_conditions,
                 retained_axis_counts=counts,
             )
+
+        if self._uses_multidim_periodic_transform(metadata.transform_kinds):
+            periodic_axes = self._periodic_axes(
+                metadata.transform_kinds,
+                output.ndim,
+            )
+            output = torch.fft.ifftn(output, dim=periodic_axes)
+            for local_axis, kind in self._ordered_axis_transforms(
+                metadata.transform_kinds,
+                inverse=True,
+            ):
+                if kind == "fft":
+                    continue
+                if output.is_complex():
+                    output = output.real
+                output = self._apply_retained_real_axis_transform(
+                    output,
+                    kind,
+                    local_axis,
+                    self.shape[local_axis]
+                    if counts is None
+                    else counts[local_axis],
+                    inverse=True,
+                )
+            return output.real
 
         for local_axis, kind in self._ordered_axis_transforms(
             metadata.transform_kinds,

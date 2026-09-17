@@ -1,7 +1,9 @@
 import torch
+from .Field import DEFAULT_TRANSFORM_GROUP_INDEXING
 from .integrator import SemiImplicitEulerIntegrator
 from .PDEmodel import PDEModel
 from .transforms import (
+    DEFAULT_PERIODIC_TRANSFORM_EXECUTION,
     DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     TensorProductTransformBackend,
@@ -19,6 +21,8 @@ class SpectralSolver:
         transform_execution_order=DEFAULT_TRANSFORM_EXECUTION_ORDER,
         spectral_storage=DEFAULT_SPECTRAL_STORAGE,
         hermitian_axis=None,
+        periodic_transform_execution=DEFAULT_PERIODIC_TRANSFORM_EXECUTION,
+        transform_group_indexing=DEFAULT_TRANSFORM_GROUP_INDEXING,
     ):
 
         if dtype not in (torch.float32, torch.float64):
@@ -46,6 +50,7 @@ class SpectralSolver:
             execution_order=transform_execution_order,
             spectral_storage=spectral_storage,
             hermitian_axis=hermitian_axis,
+            periodic_transform_execution=periodic_transform_execution,
         )
         self.spectral_shape = self.transform_backend.spectral_shape
         self._init_periodic_metadata()
@@ -55,6 +60,7 @@ class SpectralSolver:
             device,
             batchsize=batchsize,
             dtype=self.dtype,
+            transform_group_indexing=transform_group_indexing,
         )
         self.parameters = self.model.parameters
         self.fields = self.model.fields
@@ -95,6 +101,19 @@ class SpectralSolver:
     def inverse_transform_tensor(self, spectral, boundary_conditions):
         boundary_conditions = self.fields._normalize_boundary_conditions(boundary_conditions)
         return self.transform_backend.inverse(spectral, boundary_conditions)
+
+    def optimization_metadata(self):
+        periodic_bcs = ("periodic",) * len(self.shape)
+        return {
+            "periodic_transform_execution": (
+                self.transform_backend.periodic_transform_execution_metadata(
+                    periodic_bcs
+                )
+            ),
+            "transform_group_indexing": {
+                "requested": self.fields.transform_group_indexing,
+            },
+        }
 
     def build(self):
         self.model.build()
