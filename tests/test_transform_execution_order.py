@@ -11,13 +11,21 @@ SHAPE = (7, 6, 5)
 LENGTHS = (3.0, 4.0, 2.5)
 
 
-def _backend(dtype, execution_order):
+def _backend(
+    dtype,
+    execution_order,
+    periodic_transform_execution=None,
+):
+    kwargs = {}
+    if periodic_transform_execution is not None:
+        kwargs["periodic_transform_execution"] = periodic_transform_execution
     return TensorProductTransformBackend(
         SHAPE,
         LENGTHS,
         device="cpu",
         dtype=dtype,
         execution_order=execution_order,
+        **kwargs,
     )
 
 
@@ -139,7 +147,14 @@ def test_real_first_preserves_mixed_basis_spectral_derivatives(source_bc, axis):
 
 
 def test_real_first_applies_dct_while_data_are_real():
-    backend = _backend(torch.float64, "real_first")
+    # This test observes individual axis calls, so explicitly exercise the
+    # retained rollback implementation rather than the multidimensional
+    # periodic default.
+    backend = _backend(
+        torch.float64,
+        "real_first",
+        periodic_transform_execution="axiswise",
+    )
     calls = []
     original = backend._apply_axis_transform
 

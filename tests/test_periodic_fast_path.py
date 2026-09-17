@@ -248,8 +248,31 @@ def test_combined_fast_paths_preserve_complete_timesteps():
     )
 
 
-def test_fast_path_selectors_validate_and_default_to_legacy_behavior():
+def test_fast_path_selectors_default_to_qualified_combined_path():
     solver = SpectralSolver((4, 3), device="cpu", dtype=torch.float64)
+
+    assert solver.optimization_metadata() == {
+        "periodic_transform_execution": {
+            "requested": "multidim",
+            "effective": "multidim",
+            "fallback_reason": None,
+        },
+        "transform_group_indexing": {"requested": "contiguous_slice"},
+    }
+    with pytest.raises(ValueError, match="periodic_transform_execution"):
+        _backend((4, 3), torch.float64, "unknown")
+    with pytest.raises(ValueError, match="transform_group_indexing"):
+        Fields((4, 3), device="cpu", transform_group_indexing="unknown")
+
+
+def test_explicit_historical_rollback_selectors_remain_available():
+    solver = SpectralSolver(
+        (4, 3),
+        device="cpu",
+        dtype=torch.float64,
+        periodic_transform_execution="axiswise",
+        transform_group_indexing="advanced",
+    )
 
     assert solver.optimization_metadata() == {
         "periodic_transform_execution": {
@@ -259,7 +282,3 @@ def test_fast_path_selectors_validate_and_default_to_legacy_behavior():
         },
         "transform_group_indexing": {"requested": "advanced"},
     }
-    with pytest.raises(ValueError, match="periodic_transform_execution"):
-        _backend((4, 3), torch.float64, "unknown")
-    with pytest.raises(ValueError, match="transform_group_indexing"):
-        Fields((4, 3), device="cpu", transform_group_indexing="unknown")

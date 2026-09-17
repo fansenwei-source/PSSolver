@@ -16,8 +16,25 @@ The four variants independently toggle contiguous transform-group views and
 multidimensional periodic ``fftn/ifftn`` calls. The benchmark runs complete
 semi-implicit diffusion timesteps, validates every candidate against the
 historical advanced-indexing/axiswise path, and records selector metadata and
-CUDA peak memory. Both production defaults remain on the historical path
-until a separate qualification promotes them.
+CUDA peak memory. The qualified combined path is now the implicit default;
+the historical advanced-indexing/axiswise implementation remains available
+through explicit selectors.
+
+Qualify the implicit default against both the explicit combined path and the
+explicit historical rollback path with:
+
+```bash
+python -m benchmarks.smoke_periodic_fast_path_default \
+  --device cuda --dtype float64 --shape 512,512 \
+  --field-count 4 --warmup-steps 5 --profile-steps 30 \
+  --trajectory-steps 100 --trials 3 \
+  --output /tmp/periodic_fast_path_default_smoke.json
+```
+
+The smoke requires the implicit and explicit qualified paths to be bitwise
+identical. It checks the historical rollback path with a dtype-aware relative
+L2 tolerance and reports balanced timing and peak-memory observations for all
+three roles.
 
 Run the tensor-product transform benchmark from the repository root:
 

@@ -1,7 +1,7 @@
 import torch
 
 
-DEFAULT_TRANSFORM_GROUP_INDEXING = "advanced"
+DEFAULT_TRANSFORM_GROUP_INDEXING = "contiguous_slice"
 TRANSFORM_GROUP_INDEXING_MODES = ("advanced", "contiguous_slice")
 
 

@@ -92,11 +92,18 @@ def _build_solver(
     config: BenchmarkConfig,
     initial_fields: tuple[torch.Tensor, ...],
     *,
-    transform_group_indexing: str,
-    periodic_transform_execution: str,
+    transform_group_indexing: str | None,
+    periodic_transform_execution: str | None,
 ) -> SpectralSolver:
     device = torch.device(config.device)
     dtype = _dtype(config.dtype)
+    selector_kwargs = {}
+    if transform_group_indexing is not None:
+        selector_kwargs["transform_group_indexing"] = transform_group_indexing
+    if periodic_transform_execution is not None:
+        selector_kwargs["periodic_transform_execution"] = (
+            periodic_transform_execution
+        )
     solver = SpectralSolver(
         config.shape,
         L=config.lengths,
@@ -104,8 +111,7 @@ def _build_solver(
         batchsize=config.batch_size,
         device=device,
         dtype=dtype,
-        transform_group_indexing=transform_group_indexing,
-        periodic_transform_execution=periodic_transform_execution,
+        **selector_kwargs,
     )
     linear_operator = -0.1 * solver.q2_raw
     for index, initial in enumerate(initial_fields):
