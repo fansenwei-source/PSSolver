@@ -43,11 +43,17 @@ These exclusions are capability boundaries, not claims that the corresponding
 research directions are invalid.  They prevent the tested Plane application
 from being presented as a more general solver than it currently is.
 
-## Release gate
+## Release qualification
 
-Stage S is locally complete only when imports, the callable API, the historical
-CLI, checkpoint restart and the full CPU suite pass.  A bounded H100 smoke must
-then establish that the compatibility CLI and callable application preserve
-the accepted production trajectory and performance envelope before the v0.1
-candidate is tagged or merged.  Architecture Stage T starts only after a
-deliberate pause and separate decision.
+The Stage S source candidate completed all local and HPCC gates:
+
+- complete CPU suites passed;
+- three paired R320 H100 trajectories preserved byte-identical Q/u/p;
+- same-backend restart preserved a byte-identical final state;
+- the H100 performance non-regression gate passed;
+- a clean 0.1.0 wheel install passed package, compatibility-module, console,
+  help, dry-run and implementation-provenance checks.
+
+Architecture Stage T remains intentionally paused and requires a separate
+decision. The 0.1.0 release does not imply support for any capability listed
+under the exclusions above.
