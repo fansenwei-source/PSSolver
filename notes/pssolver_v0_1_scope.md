@@ -54,6 +54,17 @@ The Stage S source candidate completed all local and HPCC gates:
 - a clean 0.1.0 wheel install passed package, compatibility-module, console,
   help, dry-run and implementation-provenance checks.
 
-Architecture Stage T remains intentionally paused and requires a separate
-decision. The 0.1.0 release does not imply support for any capability listed
+Stage T starts only after a separate architecture decision and remains
+intentionally paused. The 0.1.0 release does not imply support for capabilities
 under the exclusions above.
+
+## Post-release bounded-transform research
+
+The `perf/bounded-r2r-fft-v0.1` branch is an isolated post-release performance
+line. Its opt-in FFT DCT-II/DST-II backend is not part of the frozen v0.1
+production contract, and the dense bounded-axis implementation remains the
+default. R2R-B establishes numerical equivalence and a local crossover curve;
+it does not authorize a production promotion. R2R-C adds an experimental,
+evidence-bound `auto` policy whose unmatched contexts fall back to dense. It
+also remains outside the v0.1 production contract and requires a separate
+hardware qualification artifact for every supported accelerator.

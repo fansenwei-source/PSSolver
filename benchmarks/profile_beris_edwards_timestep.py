@@ -32,12 +32,15 @@ from pssolver.plane import (
 )
 from pssolver import (
     BasisAwareSpectralProjector,
+    BOUNDED_TRANSFORM_ALGORITHMS,
     DEALIAS_RULE_FRACTIONS,
+    DEFAULT_BOUNDED_TRANSFORM_ALGORITHM,
     DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     PROJECTED_TRANSFORM_EXECUTION_MODES,
     SPECTRAL_STORAGE_MODES,
     SpectralSolver,
+    load_bounded_transform_policy,
 )
 from pssolver.integrator import SemiImplicitEulerIntegrator
 from pssolver.models.active_nematics import (
@@ -70,6 +73,8 @@ class ProfileConfig:
     dtype: str = "float64"
     dt: float = 0.005
     dealias_rule: str = "cubic_half"
+    bounded_transform_algorithm: str = DEFAULT_BOUNDED_TRANSFORM_ALGORITHM
+    bounded_transform_policy_path: str | None = None
     projected_transform_execution: str = DEFAULT_PROJECTED_TRANSFORM_EXECUTION
     warmup_steps: int = 3
     profile_steps: int = 10
@@ -87,6 +92,7 @@ class ProfileConfig:
     seed: int = 20260908
     initial_q_path: str | None = None
     timing_scope: str = "all_regions"
+    transform_attribution: bool = False
 
 
 class RegionTimer:
@@ -258,6 +264,25 @@ def _validate_config(config: ProfileConfig) -> None:
         raise ValueError(
             "projected_transform_execution must be 'full' or 'truncated'"
         )
+    if config.bounded_transform_algorithm not in BOUNDED_TRANSFORM_ALGORITHMS:
+        raise ValueError(
+            "bounded_transform_algorithm must be one of "
+            f"{BOUNDED_TRANSFORM_ALGORITHMS}"
+        )
+    if config.bounded_transform_algorithm == "auto":
+        if config.bounded_transform_policy_path is None:
+            raise ValueError(
+                "auto bounded transforms require a policy path"
+            )
+        if not Path(config.bounded_transform_policy_path).is_file():
+            raise FileNotFoundError(
+                "bounded-transform policy file is missing: "
+                f"{config.bounded_transform_policy_path}"
+            )
+    elif config.bounded_transform_policy_path is not None:
+        raise ValueError(
+            "bounded_transform_policy_path is only valid with auto"
+        )
     if (
         config.projected_transform_execution == "truncated"
         and config.dealias_rule == "none"
@@ -315,16 +340,26 @@ def _validate_config(config: ProfileConfig) -> None:
             raise FileNotFoundError(f"initial Q file is missing: {path}")
     if config.timing_scope not in {"all_regions", "whole_timestep"}:
         raise ValueError("timing_scope must be 'all_regions' or 'whole_timestep'")
+    if not isinstance(config.transform_attribution, bool):
+        raise ValueError("transform_attribution must be a boolean")
 
 
 def _torch_dtype(name: str) -> torch.dtype:
     return {"float32": torch.float32, "float64": torch.float64}[name]
 
 
-def _install_transform_timers(solver, timer: RegionTimer) -> None:
+def _install_transform_timers(
+    solver,
+    timer: RegionTimer,
+    *,
+    attribute_axes: bool = False,
+) -> None:
     backend = solver.transform_backend
     original_forward = backend.forward
     original_inverse = backend.inverse
+    original_axis_transform = backend._apply_axis_transform
+    original_retained_transform = backend._apply_retained_real_axis_transform
+    original_hermitian_periodic = backend._apply_hermitian_periodic_transform
 
     def timed_forward(tensor, boundary_conditions, **kwargs):
         with timer.region("transform_forward"):
@@ -334,8 +369,67 @@ def _install_transform_timers(solver, timer: RegionTimer) -> None:
         with timer.region("transform_inverse"):
             return original_inverse(spectral, boundary_conditions, **kwargs)
 
+    def timed_axis_transform(tensor, kind, axis, inverse=False):
+        direction = "inverse" if inverse else "forward"
+        base = (
+            f"periodic_fft_{direction}"
+            if kind == "fft"
+            else f"bounded_{kind}_{direction}"
+        )
+        detail = f"{base}_axis" if kind == "fft" else f"{base}_full"
+        with timer.region(base):
+            with timer.region(detail):
+                return original_axis_transform(
+                    tensor,
+                    kind,
+                    axis,
+                    inverse=inverse,
+                )
+
+    def timed_retained_transform(
+        tensor,
+        kind,
+        local_axis,
+        retained_count,
+        *,
+        inverse,
+    ):
+        direction = "inverse" if inverse else "forward"
+        base = f"bounded_{kind}_{direction}"
+        with timer.region(base):
+            with timer.region(f"{base}_truncated"):
+                return original_retained_transform(
+                    tensor,
+                    kind,
+                    local_axis,
+                    retained_count,
+                    inverse=inverse,
+                )
+
+    def timed_hermitian_periodic(
+        tensor,
+        periodic_axes,
+        *,
+        inverse,
+        physical_sizes=None,
+    ):
+        direction = "inverse" if inverse else "forward"
+        base = f"periodic_fft_{direction}"
+        with timer.region(base):
+            with timer.region(f"{base}_nd"):
+                return original_hermitian_periodic(
+                    tensor,
+                    periodic_axes,
+                    inverse=inverse,
+                    physical_sizes=physical_sizes,
+                )
+
     backend.forward = timed_forward
     backend.inverse = timed_inverse
+    if attribute_axes:
+        backend._apply_axis_transform = timed_axis_transform
+        backend._apply_retained_real_axis_transform = timed_retained_transform
+        backend._apply_hermitian_periodic_transform = timed_hermitian_periodic
 
 
 def _synthetic_initial_q(
@@ -385,6 +479,13 @@ def _initial_q(
 
 def _build_solver(config: ProfileConfig, timer: RegionTimer):
     dtype = _torch_dtype(config.dtype)
+    bounded_policy = (
+        None
+        if config.bounded_transform_policy_path is None
+        else load_bounded_transform_policy(
+            config.bounded_transform_policy_path
+        )
+    )
     solver = SpectralSolver(
         shape=config.shape,
         L=config.lengths,
@@ -393,6 +494,9 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
         batchsize=1,
         dtype=dtype,
         transform_execution_order=config.transform_execution_order,
+        bounded_transform_algorithm=config.bounded_transform_algorithm,
+        bounded_transform_geometry="plane",
+        bounded_transform_policy=bounded_policy,
         spectral_storage=config.spectral_storage,
         hermitian_axis=PLANE_HERMITIAN_AXIS,
     )
@@ -490,7 +594,11 @@ def _build_solver(config: ProfileConfig, timer: RegionTimer):
     )
     projector.project_dynamic_fields(solver.model.fields, sync_spatial=True)
     solver.integrator._static_fields_are_current = False
-    _install_transform_timers(solver, timer)
+    _install_transform_timers(
+        solver,
+        timer,
+        attribute_axes=config.transform_attribution,
+    )
     return solver
 
 
@@ -790,10 +898,35 @@ def run_profile(config: ProfileConfig) -> dict[str, object]:
                 "transform_forward",
                 "transform_inverse",
             ],
+            "transform_attribution": {
+                "enabled": config.transform_attribution,
+                "aggregate_regions": [
+                    "periodic_fft_forward",
+                    "periodic_fft_inverse",
+                    "bounded_dct_forward",
+                    "bounded_dct_inverse",
+                    "bounded_dst_forward",
+                    "bounded_dst_inverse",
+                ],
+                "execution_detail_suffixes": [
+                    "axis",
+                    "nd",
+                    "full",
+                    "truncated",
+                ],
+                "regions_are_nested_inside_transform_forward_inverse": True,
+                "basis_and_normalization_changed": False,
+            },
             "snapshot_regions_are_outside_whole_timestep": True,
             "cuda_synchronization_inside_timestep": False,
         },
         "transforms": {
+            "bounded_transform_algorithm": (
+                solver.transform_backend.bounded_transform_algorithm
+            ),
+            "bounded_transform_selection": (
+                solver.transform_backend.bounded_transform_selection_metadata()
+            ),
             "execution_order": solver.transform_backend.execution_order,
             "spectral_storage": solver.transform_backend.spectral_storage,
             "physical_shape": list(solver.shape),
@@ -900,6 +1033,24 @@ def parse_args() -> argparse.Namespace:
         default="cubic_half",
     )
     parser.add_argument(
+        "--bounded-transform-algorithm",
+        choices=BOUNDED_TRANSFORM_ALGORITHMS,
+        default=DEFAULT_BOUNDED_TRANSFORM_ALGORITHM,
+        help=(
+            "Experimental bounded-axis implementation. dense remains the "
+            "production default; fft is the opt-in R2R-B candidate; auto "
+            "requires an explicit R2R-C qualification policy."
+        ),
+    )
+    parser.add_argument(
+        "--bounded-transform-policy",
+        dest="bounded_transform_policy_path",
+        help=(
+            "R2R-C qualification artifact used only with "
+            "--bounded-transform-algorithm auto."
+        ),
+    )
+    parser.add_argument(
         "--projected-transform-execution",
         choices=PROJECTED_TRANSFORM_EXECUTION_MODES,
         default=DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
@@ -991,6 +1142,15 @@ def parse_args() -> argparse.Namespace:
             "only the outer step while still counting nested transform calls."
         ),
     )
+    parser.add_argument(
+        "--transform-attribution",
+        action="store_true",
+        help=(
+            "Record nested periodic-FFT and bounded DCT/DST timings. "
+            "Disabled by default so CUDA-event overhead cannot perturb "
+            "ordinary timestep throughput measurements."
+        ),
+    )
     parser.add_argument("--output", type=Path)
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
@@ -1009,6 +1169,10 @@ def main() -> None:
             dtype=args.dtype,
             dt=args.dt,
             dealias_rule=args.dealias_rule,
+            bounded_transform_algorithm=args.bounded_transform_algorithm,
+            bounded_transform_policy_path=(
+                args.bounded_transform_policy_path
+            ),
             projected_transform_execution=(
                 args.projected_transform_execution
             ),
@@ -1032,6 +1196,7 @@ def main() -> None:
             seed=args.seed,
             initial_q_path=args.initial_q_path,
             timing_scope=args.timing_scope,
+            transform_attribution=args.transform_attribution,
         )
     )
     serialized = json.dumps(result, indent=2, sort_keys=True) + "\n"

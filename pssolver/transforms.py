@@ -4,9 +4,16 @@ from dataclasses import dataclass
 import torch
 import torch.nn.functional as functional
 
+from .bounded_transform_policy import (
+    BoundedTransformSelectionContext,
+    QualifiedBoundedTransformPolicy,
+)
+
 
 DEFAULT_DEALIAS_RULE = "cubic_half"
 DEFAULT_TRANSFORM_EXECUTION_ORDER = "real_first"
+DEFAULT_BOUNDED_TRANSFORM_ALGORITHM = "dense"
+BOUNDED_TRANSFORM_ALGORITHMS = ("dense", "fft", "auto")
 DEFAULT_PROJECTED_TRANSFORM_EXECUTION = "truncated"
 PROJECTED_TRANSFORM_EXECUTION_MODES = ("full", "truncated")
 DEFAULT_SPECTRAL_STORAGE = "full_complex"
@@ -64,6 +71,9 @@ class TensorProductTransformBackend:
         device="cuda",
         dtype=torch.float32,
         execution_order=DEFAULT_TRANSFORM_EXECUTION_ORDER,
+        bounded_transform_algorithm=DEFAULT_BOUNDED_TRANSFORM_ALGORITHM,
+        bounded_transform_geometry="generic",
+        bounded_transform_policy=None,
         spectral_storage=DEFAULT_SPECTRAL_STORAGE,
         hermitian_axis=None,
     ):
@@ -71,6 +81,29 @@ class TensorProductTransformBackend:
             raise ValueError(
                 f"execution_order must be one of {self._execution_orders}, "
                 f"got {execution_order!r}"
+            )
+        if bounded_transform_algorithm not in BOUNDED_TRANSFORM_ALGORITHMS:
+            raise ValueError(
+                "bounded_transform_algorithm must be one of "
+                f"{BOUNDED_TRANSFORM_ALGORITHMS}, got "
+                f"{bounded_transform_algorithm!r}"
+            )
+        if not isinstance(bounded_transform_geometry, str) or not (
+            bounded_transform_geometry
+        ):
+            raise ValueError("bounded_transform_geometry must be non-empty")
+        if bounded_transform_algorithm == "auto":
+            if not isinstance(
+                bounded_transform_policy,
+                QualifiedBoundedTransformPolicy,
+            ):
+                raise ValueError(
+                    "auto bounded transforms require a qualified policy"
+                )
+        elif bounded_transform_policy is not None:
+            raise ValueError(
+                "bounded_transform_policy is only valid with the auto "
+                "algorithm"
             )
         if spectral_storage not in SPECTRAL_STORAGE_MODES:
             raise ValueError(
@@ -98,6 +131,9 @@ class TensorProductTransformBackend:
         self.real_dtype = _real_dtype(dtype)
         self.spectral_dtype = _complex_dtype(dtype)
         self.execution_order = execution_order
+        self.bounded_transform_algorithm = bounded_transform_algorithm
+        self.bounded_transform_geometry = bounded_transform_geometry
+        self.bounded_transform_policy = bounded_transform_policy
         self.spectral_storage = spectral_storage
         self.hermitian_axis = hermitian_axis
         self.dim = len(self.shape)
@@ -109,7 +145,17 @@ class TensorProductTransformBackend:
         self.spectral_shape = tuple(spectral_shape)
 
         self._matrix_cache = {}
+        self._fft_r2r_cache = {}
         self._metadata_cache = {}
+        self._bounded_transform_decisions = {}
+
+        policy_device = torch.device(self.device)
+        self._policy_device_type = policy_device.type
+        self._policy_device_name = (
+            torch.cuda.get_device_name(policy_device)
+            if policy_device.type == "cuda"
+            else policy_device.type.upper()
+        )
 
         self.axes = tuple(self._build_axis_grid(axis) for axis in range(self.dim))
         self.spatial_grids = torch.meshgrid(*self.axes, indexing="ij")
@@ -129,6 +175,105 @@ class TensorProductTransformBackend:
         view_shape = [1] * self.dim
         view_shape[axis] = values.shape[0]
         return values.reshape(*view_shape)
+
+    def _resolve_bounded_transform_algorithm(
+        self,
+        tensor,
+        kind,
+        axis,
+        *,
+        inverse,
+        physical_size,
+        retained_count,
+    ):
+        absolute_axis = axis % tensor.ndim
+        local_axis = absolute_axis - (tensor.ndim - self.dim)
+        if local_axis < 0 or local_axis >= self.dim:
+            raise ValueError("bounded transform axis is outside the backend")
+        effective_retained_count = (
+            physical_size if retained_count is None else retained_count
+        )
+        context = BoundedTransformSelectionContext(
+            geometry=self.bounded_transform_geometry,
+            local_axis=local_axis,
+            kind=kind,
+            direction="inverse" if inverse else "forward",
+            execution_mode=(
+                "full"
+                if effective_retained_count == physical_size
+                else "truncated"
+            ),
+            physical_size=physical_size,
+            retained_count=effective_retained_count,
+            line_count=tensor.numel() // tensor.shape[absolute_axis],
+            device_type=self._policy_device_type,
+            device_name=self._policy_device_name,
+            real_dtype=str(tensor.real.dtype).removeprefix("torch."),
+            value_type="complex" if tensor.is_complex() else "real",
+        )
+        selection = self.bounded_transform_policy.select(context)
+        record = self._bounded_transform_decisions.get(context)
+        if record is None:
+            self._bounded_transform_decisions[context] = [selection, 1]
+        else:
+            if record[0] != selection:
+                raise RuntimeError(
+                    "bounded-transform policy changed its decision for an "
+                    "identical runtime context"
+                )
+            record[1] += 1
+        return selection.algorithm
+
+    def bounded_transform_selection_metadata(self):
+        """Return the requested mode and all observed automatic decisions."""
+
+        if self.bounded_transform_algorithm != "auto":
+            return {
+                "schema_version": 1,
+                "requested_algorithm": self.bounded_transform_algorithm,
+                "geometry": self.bounded_transform_geometry,
+                "decision_mode": "forced",
+                "effective_algorithms": [self.bounded_transform_algorithm],
+                "policy": None,
+                "observed_decisions": [],
+            }
+        decisions = []
+        for context, (selection, calls) in sorted(
+            self._bounded_transform_decisions.items(),
+            key=lambda item: (
+                item[0].local_axis,
+                item[0].kind,
+                item[0].direction,
+                item[0].execution_mode,
+                item[0].physical_size,
+                item[0].retained_count,
+                item[0].line_count,
+                item[0].value_type,
+            ),
+        ):
+            decisions.append(
+                {
+                    "context": context.to_metadata(),
+                    "selection": selection.to_metadata(),
+                    "calls": calls,
+                }
+            )
+        effective = sorted(
+            {
+                entry["selection"]["algorithm"]
+                for entry in decisions
+            }
+            or {self.bounded_transform_policy.fallback_algorithm}
+        )
+        return {
+            "schema_version": 1,
+            "requested_algorithm": "auto",
+            "geometry": self.bounded_transform_geometry,
+            "decision_mode": "qualified_allow_list",
+            "effective_algorithms": effective,
+            "policy": self.bounded_transform_policy.to_metadata(),
+            "observed_decisions": decisions,
+        }
 
     def _get_matrix(self, kind, size):
         key = (kind, size, str(self.device), self.real_dtype)
@@ -154,11 +299,221 @@ class TensorProductTransformBackend:
         self._matrix_cache[key] = matrix
         return matrix
 
+    def _get_fft_r2r_data(self, size):
+        """Return O(N) phase, scale, modulation, and permutation data."""
+        key = (size, str(self.device), self.real_dtype)
+        if key in self._fft_r2r_cache:
+            return self._fft_r2r_cache[key]
+
+        modes = torch.arange(
+            size,
+            device=self.device,
+            dtype=self.real_dtype,
+        )
+        scale = torch.full(
+            (size,),
+            math.sqrt(2.0 / size),
+            device=self.device,
+            dtype=self.real_dtype,
+        )
+        scale[0] = math.sqrt(1.0 / size)
+        phase_inverse = torch.polar(
+            torch.ones_like(modes),
+            math.pi * modes / (2.0 * size),
+        )
+        modulation = torch.where(
+            modes.remainder(2) == 0,
+            torch.ones_like(modes),
+            -torch.ones_like(modes),
+        )
+        indices = torch.arange(size, device=self.device)
+        forward_permutation = torch.cat(
+            (indices[::2], indices[1::2].flip(0))
+        )
+        inverse_permutation = torch.where(
+            indices.remainder(2) == 0,
+            indices // 2,
+            size - 1 - indices // 2,
+        )
+        data = {
+            "scale": scale,
+            "phase_forward": phase_inverse.conj(),
+            "phase_inverse": phase_inverse,
+            "modulation": modulation,
+            "forward_permutation": forward_permutation,
+            "inverse_permutation": inverse_permutation,
+        }
+        self._fft_r2r_cache[key] = data
+        return data
+
+    def _apply_fft_dct_last_axis(
+        self,
+        tensor,
+        *,
+        inverse,
+        physical_size=None,
+    ):
+        """Apply the orthonormal cell-centered DCT-II using FFT primitives.
+
+        Real inputs use an N-point even/odd permutation with rFFT/irFFT.
+        Complex inputs retain the general linear 2N mirrored construction.
+        The inverse accepts a retained coefficient prefix and pads omitted
+        high modes with zero before reconstruction.
+        """
+        if not inverse:
+            size = tensor.shape[-1]
+            data = self._get_fft_r2r_data(size)
+            if tensor.is_complex():
+                mirrored = torch.cat((tensor, tensor.flip(-1)), dim=-1)
+                spectrum = torch.fft.fft(mirrored, dim=-1)[..., :size]
+                return (
+                    0.5
+                    * spectrum
+                    * data["phase_forward"]
+                    * data["scale"]
+                )
+
+            reordered = tensor.index_select(
+                -1,
+                data["forward_permutation"],
+            )
+            half_spectrum = torch.fft.rfft(reordered, dim=-1)
+            half_size = half_spectrum.shape[-1]
+            phase = data["phase_inverse"]
+            transformed = (
+                half_spectrum.real * phase.real[:half_size]
+                + half_spectrum.imag * phase.imag[:half_size]
+            )
+            tail_size = size - half_size
+            if tail_size:
+                reflected = (
+                    half_spectrum[..., 1 : 1 + tail_size]
+                    .flip(-1)
+                    .conj()
+                )
+                transformed = torch.cat(
+                    (
+                        transformed,
+                        reflected.real * phase.real[half_size:]
+                        + reflected.imag * phase.imag[half_size:],
+                    ),
+                    dim=-1,
+                )
+            return transformed * data["scale"]
+
+        if physical_size is None:
+            raise ValueError("physical_size is required for an inverse FFT DCT")
+        if tensor.shape[-1] > physical_size:
+            raise ValueError(
+                "inverse FFT DCT coefficients exceed the physical axis size"
+            )
+        data = self._get_fft_r2r_data(physical_size)
+        coefficients = functional.pad(
+            tensor,
+            (0, physical_size - tensor.shape[-1]),
+        )
+        unscaled = coefficients / data["scale"]
+        if tensor.is_complex():
+            positive = 2.0 * unscaled * data["phase_inverse"]
+            nyquist = torch.zeros_like(positive[..., :1])
+            negative = (
+                2.0
+                * unscaled[..., 1:]
+                * data["phase_forward"][1:]
+            ).flip(-1)
+            spectrum = torch.cat((positive, nyquist, negative), dim=-1)
+            return torch.fft.ifft(spectrum, dim=-1)[..., :physical_size]
+
+        half_size = physical_size // 2 + 1
+        imaginary = torch.cat(
+            (
+                torch.zeros_like(unscaled[..., :1]),
+                -unscaled.flip(-1)[..., : half_size - 1],
+            ),
+            dim=-1,
+        )
+        phase = data["phase_inverse"][:half_size]
+        half_spectrum = torch.complex(
+            unscaled[..., :half_size] * phase.real
+            - imaginary * phase.imag,
+            unscaled[..., :half_size] * phase.imag
+            + imaginary * phase.real,
+        )
+        reordered = torch.fft.irfft(
+            half_spectrum,
+            n=physical_size,
+            dim=-1,
+        )
+        return reordered.index_select(
+            -1,
+            data["inverse_permutation"],
+        )
+
+    def _apply_fft_bounded_axis_transform(
+        self,
+        tensor,
+        kind,
+        axis,
+        *,
+        inverse,
+        physical_size=None,
+        retained_count=None,
+    ):
+        moved = tensor.movedim(axis, -1)
+        size = moved.shape[-1] if physical_size is None else physical_size
+        if kind == "dct":
+            transformed = self._apply_fft_dct_last_axis(
+                moved,
+                inverse=inverse,
+                physical_size=size if inverse else None,
+            )
+        elif kind == "dst":
+            data = self._get_fft_r2r_data(size)
+            if inverse:
+                padded = functional.pad(
+                    moved.flip(-1),
+                    (size - moved.shape[-1], 0),
+                )
+                transformed = self._apply_fft_dct_last_axis(
+                    padded,
+                    inverse=True,
+                    physical_size=size,
+                ) * data["modulation"]
+            else:
+                transformed = self._apply_fft_dct_last_axis(
+                    moved * data["modulation"],
+                    inverse=False,
+                ).flip(-1)
+        else:
+            raise ValueError(f"Unsupported bounded transform kind '{kind}'.")
+        if not inverse and retained_count is not None:
+            transformed = transformed[..., :retained_count]
+        return transformed.movedim(-1, axis)
+
     def _apply_axis_transform(self, tensor, kind, axis, inverse=False):
         if kind == "fft":
             if inverse:
                 return torch.fft.ifft(tensor, dim=axis)
             return torch.fft.fft(tensor, dim=axis)
+
+        algorithm = self.bounded_transform_algorithm
+        if algorithm == "auto":
+            algorithm = self._resolve_bounded_transform_algorithm(
+                tensor,
+                kind,
+                axis,
+                inverse=inverse,
+                physical_size=tensor.shape[axis],
+                retained_count=None,
+            )
+        if algorithm == "fft":
+            return self._apply_fft_bounded_axis_transform(
+                tensor,
+                kind,
+                axis,
+                inverse=inverse,
+                physical_size=tensor.shape[axis],
+            )
 
         matrix = self._get_matrix(kind, tensor.shape[axis])
         moved = tensor.movedim(axis, -1)
@@ -168,6 +523,38 @@ class TensorProductTransformBackend:
         else:
             transformed = moved @ matrix.transpose(-1, -2)
         return transformed.movedim(-1, axis)
+
+    def _apply_hermitian_periodic_transform(
+        self,
+        tensor,
+        periodic_axes,
+        *,
+        inverse,
+        physical_sizes=None,
+    ):
+        """Apply the Plane real-input periodic transform.
+
+        This narrow method is an observability seam for benchmark tooling. It
+        deliberately preserves the historical ``rfftn``/``irfftn`` calls and
+        is not a second transform implementation.
+        """
+        if inverse:
+            if physical_sizes is None:
+                raise ValueError(
+                    "physical_sizes are required for an inverse Hermitian "
+                    "periodic transform"
+                )
+            return torch.fft.irfftn(
+                tensor,
+                s=physical_sizes,
+                dim=periodic_axes,
+            )
+        if physical_sizes is not None:
+            raise ValueError(
+                "physical_sizes are only valid for an inverse Hermitian "
+                "periodic transform"
+            )
+        return torch.fft.rfftn(tensor, dim=periodic_axes)
 
     def _transform_kinds(self, boundary_conditions):
         return tuple(self._transform_kind_map[bc] for bc in boundary_conditions)
@@ -307,6 +694,27 @@ class TensorProductTransformBackend:
         inverse,
     ):
         axis = tensor.ndim - self.dim + local_axis
+        algorithm = self.bounded_transform_algorithm
+        if algorithm == "auto":
+            algorithm = self._resolve_bounded_transform_algorithm(
+                tensor,
+                kind,
+                axis,
+                inverse=inverse,
+                physical_size=self.shape[local_axis],
+                retained_count=retained_count,
+            )
+        if algorithm == "fft":
+            return self._apply_fft_bounded_axis_transform(
+                tensor,
+                kind,
+                axis,
+                inverse=inverse,
+                physical_size=self.shape[local_axis],
+                retained_count=(
+                    None if inverse else retained_count
+                ),
+            )
         matrix = self._get_matrix(kind, self.shape[local_axis])
         matrix = matrix[:retained_count]
         moved = tensor.movedim(axis, -1)
@@ -490,7 +898,11 @@ class TensorProductTransformBackend:
             metadata.transform_kinds,
             output.ndim,
         )
-        output = torch.fft.rfftn(output, dim=periodic_axes)
+        output = self._apply_hermitian_periodic_transform(
+            output,
+            periodic_axes,
+            inverse=False,
+        )
         return output.to(self.spectral_dtype)
 
     def _inverse_hermitian(
@@ -525,10 +937,11 @@ class TensorProductTransformBackend:
         physical_sizes = tuple(
             self.shape[axis] for axis in local_periodic_axes
         )
-        output = torch.fft.irfftn(
+        output = self._apply_hermitian_periodic_transform(
             spectral,
-            s=physical_sizes,
-            dim=periodic_axes,
+            periodic_axes,
+            inverse=True,
+            physical_sizes=physical_sizes,
         )
         for local_axis, kind in reversed(
             tuple(enumerate(metadata.transform_kinds))

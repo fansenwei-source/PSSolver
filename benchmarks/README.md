@@ -19,6 +19,88 @@ legacy reference that applies one transform axis at a time. It checks numerical
 agreement before reporting timings. CUDA measurements synchronize around each
 timed region; setup and random input generation are excluded.
 
+Measure the R2R-A dense DCT/DST scaling baseline with:
+
+~~~bash
+python -m benchmarks.benchmark_bounded_axis_transforms \
+  --device cuda \
+  --dtype float64 \
+  --sizes 40,80,120,160,240,320 \
+  --algorithms dense \
+  --line-count 4096 \
+  --warmup 5 \
+  --repeats 20 \
+  --output /tmp/r2r_a_dense_cuda.json
+~~~
+
+This attribution-only sweep covers DCT/DST, full/truncated, and real/complex
+matrix products. See
+“notes/r2r_a_dense_bounded_transform_attribution.md” for its interpretation
+boundary.
+
+Add the opt-in R2R-B FFT candidate with the same frozen inputs:
+
+~~~bash
+python -m benchmarks.benchmark_bounded_axis_transforms \
+  --device cuda \
+  --dtype float64 \
+  --sizes 40,80,120,160,240,320 \
+  --kinds dct,dst \
+  --execution-modes full,truncated \
+  --value-types real,complex \
+  --algorithms dense,fft \
+  --retained-fraction 0.5 \
+  --line-count 4096 \
+  --warmup 5 \
+  --repeats 20 \
+  --output /tmp/r2r_b_dense_vs_fft_cuda.json
+~~~
+
+The candidate preserves the orthonormal DCT-II/DST-II convention and is checked
+against the dense reference before timings are accepted. `dense` remains the
+library and profiler default. The current FFT candidate computes the complete
+modal axis before slicing a truncated result, so full and truncated crossovers
+must be assessed separately. See
+“notes/r2r_b_fft_bounded_transform_candidate.md” for the local qualification
+and promotion decision.
+
+Build an explicit R2R-C policy from one frozen R2R-B artifact with:
+
+~~~bash
+python -m benchmarks.build_bounded_transform_policy \
+  /tmp/r2r_b_dense_vs_fft_cuda.json \
+  --output /tmp/r2r_c_hardware_policy.json \
+  --policy-name example_cuda_float64_policy \
+  --geometry plane \
+  --local-axis 2 \
+  --minimum-speedup 1.10 \
+  --maximum-peak-allocated-ratio 3.0 \
+  --minimum-samples 10
+~~~
+
+Then exercise the qualified selector either in the standalone sweep:
+
+~~~bash
+python -m benchmarks.benchmark_bounded_axis_transforms \
+  --device cuda \
+  --dtype float64 \
+  --sizes 40,80,160,320 \
+  --algorithms dense,fft,auto \
+  --geometry plane \
+  --policy /tmp/r2r_c_hardware_policy.json \
+  --line-count 4096 \
+  --warmup 5 \
+  --repeats 20 \
+  --output /tmp/r2r_c_policy_sweep.json
+~~~
+
+or in the complete-timestep profiler with
+`--bounded-transform-algorithm auto --bounded-transform-policy PATH`.
+Unmatched runtime contexts always use dense. Policy artifacts bind exact
+geometry, transform, size, device, dtype, and value-type evidence; do not move
+one hardware policy to another device. See
+“notes/r2r_c_qualified_bounded_transform_policy.md”.
+
 Measure the free-slip modal Stokes pressure-diagnostic overhead with:
 
 ~~~bash
@@ -47,6 +129,7 @@ python -m benchmarks.profile_beris_edwards_timestep \
   --dealias-rule cubic_half \
   --warmup-steps 3 \
   --profile-steps 10 \
+  --transform-attribution \
   --output /tmp/pssolver_profile_128.json
 ```
 
@@ -54,6 +137,11 @@ The additive regions partition the numerical timestep. The nematic-force,
 Stokes-solve, and transform regions are nested cross-cutting measurements and
 must not be added to the partition. CUDA events are recorded asynchronously;
 the benchmark synchronizes only after all profiled steps.
+
+The periodic-FFT and bounded DCT/DST subregions are opt-in through
+`--transform-attribution`. Leave this flag off for ordinary whole-timestep
+throughput measurements: the extra CUDA events are useful for attribution but
+can perturb a short timing sample.
 
 Snapshot transfer and I/O are disabled by default. To measure them separately,
 provide both `--snapshot-interval` and a new or empty `--snapshot-directory`.

@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 import torch
 
+from pssolver import QualifiedBoundedTransformPolicy
 from benchmarks.profile_beris_edwards_timestep import (
     ProfileConfig,
     RegionTimer,
@@ -28,6 +29,7 @@ def _small_config(**overrides):
         "profile_steps": 2,
         "pointwise_execution": "eager",
         "seed": 17,
+        "transform_attribution": True,
     }
     values.update(overrides)
     return ProfileConfig(**values)
@@ -40,6 +42,9 @@ def test_profiler_defaults_to_production_numerics_and_accepts_legacy_control():
     assert ProfileConfig().stress_divergence_sum_space == "spectral"
     assert ProfileConfig().pointwise_execution == "compile"
     assert ProfileConfig().projected_transform_execution == "truncated"
+    assert ProfileConfig().bounded_transform_algorithm == "dense"
+    assert ProfileConfig().bounded_transform_policy_path is None
+    assert ProfileConfig().transform_attribution is False
     legacy = _small_config(
         transform_execution_order="legacy",
         spectral_storage="full_complex",
@@ -57,6 +62,73 @@ def test_profiler_cli_accepts_two_thirds_rule(monkeypatch):
     assert parse_args().dealias_rule == "two_thirds"
 
 
+def test_profiler_cli_enables_transform_attribution_explicitly(monkeypatch):
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["profile_beris_edwards_timestep.py", "--transform-attribution"],
+    )
+
+    assert parse_args().transform_attribution is True
+
+
+def test_profiler_cli_accepts_fft_bounded_transform_candidate(monkeypatch):
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "profile_beris_edwards_timestep.py",
+            "--bounded-transform-algorithm",
+            "fft",
+        ],
+    )
+
+    assert parse_args().bounded_transform_algorithm == "fft"
+
+
+def test_profiler_auto_policy_falls_back_to_byte_identical_dense(tmp_path):
+    policy = QualifiedBoundedTransformPolicy(
+        name="empty_safe_fallback",
+        cells=(),
+    )
+    policy_path = tmp_path / "policy.json"
+    policy_path.write_text(json.dumps({"policy": policy.to_metadata()}))
+
+    dense = run_profile(_small_config(profile_steps=1))
+    automatic = run_profile(
+        _small_config(
+            profile_steps=1,
+            bounded_transform_algorithm="auto",
+            bounded_transform_policy_path=str(policy_path),
+        )
+    )
+
+    assert automatic["final_state_sha256"] == dense["final_state_sha256"]
+    selection = automatic["transforms"]["bounded_transform_selection"]
+    assert selection["requested_algorithm"] == "auto"
+    assert selection["geometry"] == "plane"
+    assert selection["effective_algorithms"] == ["dense"]
+    assert selection["observed_decisions"]
+    assert all(
+        entry["selection"]["reason"]
+        == "no_matching_qualification_cell"
+        for entry in selection["observed_decisions"]
+    )
+
+
+def test_transform_attribution_is_absent_from_default_timing_path():
+    result = run_profile(
+        _small_config(profile_steps=1, transform_attribution=False)
+    )
+
+    assert result["timing_notes"]["transform_attribution"]["enabled"] is False
+    assert result["timings"]["transform_forward"]["calls"] > 0
+    assert result["timings"]["transform_inverse"]["calls"] > 0
+    assert "periodic_fft_forward" not in result["timings"]
+    assert "bounded_dct_forward" not in result["timings"]
+    assert "bounded_dst_forward" not in result["timings"]
+
+
 def test_whole_timestep_scope_counts_nested_regions_without_timing_them():
     result = run_profile(
         _small_config(profile_steps=1, timing_scope="whole_timestep")
@@ -67,6 +139,32 @@ def test_whole_timestep_scope_counts_nested_regions_without_timing_them():
     assert result["timings"]["transform_forward"]["calls"] > 0
     assert result["timings"]["transform_forward"]["timed"] is False
     assert result["timings"]["transform_forward"]["total_seconds"] == 0.0
+    assert result["timings"]["bounded_dct_forward"]["calls"] > 0
+    assert result["timings"]["bounded_dct_forward"]["timed"] is False
+    assert result["timings"]["periodic_fft_forward"]["calls"] > 0
+
+
+def test_full_complex_profile_attributes_axis_fft_and_full_real_bases():
+    result = run_profile(
+        _small_config(
+            warmup_steps=0,
+            profile_steps=1,
+            transform_execution_order="legacy",
+            spectral_storage="full_complex",
+            projected_transform_execution="full",
+        )
+    )
+
+    for name in (
+        "periodic_fft_forward_axis",
+        "periodic_fft_inverse_axis",
+        "bounded_dct_forward_full",
+        "bounded_dct_inverse_full",
+        "bounded_dst_forward_full",
+        "bounded_dst_inverse_full",
+    ):
+        assert result["timings"][name]["calls"] > 0
+        assert result["timings"][name]["timed"] is True
 
 
 def test_profiler_accepts_production_layout_initial_q(tmp_path):
@@ -127,11 +225,40 @@ def test_complete_timestep_profile_has_expected_regions_and_provenance():
     assert result["pointwise_kernels"]["preprofile_wall_seconds"] >= 0.0
     assert "dynamo_during_build" in result["pointwise_kernels"]
     assert result["transforms"] == {
+        "bounded_transform_algorithm": "dense",
+        "bounded_transform_selection": {
+            "schema_version": 1,
+            "requested_algorithm": "dense",
+            "geometry": "plane",
+            "decision_mode": "forced",
+            "effective_algorithms": ["dense"],
+            "policy": None,
+            "observed_decisions": [],
+        },
         "execution_order": "real_first",
         "spectral_storage": "hermitian_half",
         "physical_shape": [6, 6, 5],
         "spectral_shape": [6, 4, 5],
         "hermitian_axis": 1,
+        "basis_and_normalization_changed": False,
+    }
+    assert result["timing_notes"]["transform_attribution"] == {
+        "enabled": True,
+        "aggregate_regions": [
+            "periodic_fft_forward",
+            "periodic_fft_inverse",
+            "bounded_dct_forward",
+            "bounded_dct_inverse",
+            "bounded_dst_forward",
+            "bounded_dst_inverse",
+        ],
+        "execution_detail_suffixes": [
+            "axis",
+            "nd",
+            "full",
+            "truncated",
+        ],
+        "regions_are_nested_inside_transform_forward_inverse": True,
         "basis_and_normalization_changed": False,
     }
 
@@ -146,6 +273,18 @@ def test_complete_timestep_profile_has_expected_regions_and_provenance():
         "stokes_solve",
         "transform_forward",
         "transform_inverse",
+        "periodic_fft_forward",
+        "periodic_fft_forward_nd",
+        "periodic_fft_inverse",
+        "periodic_fft_inverse_nd",
+        "bounded_dct_forward",
+        "bounded_dct_forward_truncated",
+        "bounded_dct_inverse",
+        "bounded_dct_inverse_truncated",
+        "bounded_dst_forward",
+        "bounded_dst_forward_truncated",
+        "bounded_dst_inverse",
+        "bounded_dst_inverse_truncated",
     ):
         assert result["timings"][name]["calls"] >= 2
         assert result["timings"][name]["total_seconds"] >= 0.0
@@ -458,6 +597,15 @@ def test_snapshot_profile_writes_requested_fields(tmp_path):
         ({"molecular_field_linear_space": "unknown"}, "linear_space"),
         ({"stress_divergence_sum_space": "unknown"}, "sum_space"),
         ({"pointwise_execution": "unknown"}, "pointwise_execution"),
+        ({"bounded_transform_algorithm": "unknown"}, "must be one of"),
+        (
+            {"bounded_transform_algorithm": "auto"},
+            "require a policy path",
+        ),
+        (
+            {"bounded_transform_policy_path": "/tmp/unused"},
+            "only valid with auto",
+        ),
         (
             {"projected_transform_execution": "unknown"},
             "projected_transform_execution",
@@ -475,6 +623,7 @@ def test_snapshot_profile_writes_requested_fields(tmp_path):
         ),
         ({"snapshot_interval": 2}, "enabled together"),
         ({"snapshot_directory": "/tmp/unused"}, "enabled together"),
+        ({"transform_attribution": "yes"}, "must be a boolean"),
     ),
 )
 def test_invalid_profile_config_is_rejected(overrides, message):

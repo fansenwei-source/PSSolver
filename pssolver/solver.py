@@ -2,6 +2,7 @@ import torch
 from .integrator import SemiImplicitEulerIntegrator
 from .PDEmodel import PDEModel
 from .transforms import (
+    DEFAULT_BOUNDED_TRANSFORM_ALGORITHM,
     DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     TensorProductTransformBackend,
@@ -17,6 +18,9 @@ class SpectralSolver:
         device="cuda",
         dtype=torch.float32,
         transform_execution_order=DEFAULT_TRANSFORM_EXECUTION_ORDER,
+        bounded_transform_algorithm=DEFAULT_BOUNDED_TRANSFORM_ALGORITHM,
+        bounded_transform_geometry="generic",
+        bounded_transform_policy=None,
         spectral_storage=DEFAULT_SPECTRAL_STORAGE,
         hermitian_axis=None,
     ):
@@ -44,6 +48,9 @@ class SpectralSolver:
             device=self.device,
             dtype=self.dtype,
             execution_order=transform_execution_order,
+            bounded_transform_algorithm=bounded_transform_algorithm,
+            bounded_transform_geometry=bounded_transform_geometry,
+            bounded_transform_policy=bounded_transform_policy,
             spectral_storage=spectral_storage,
             hermitian_axis=hermitian_axis,
         )

@@ -2,6 +2,7 @@ import pytest
 import torch
 
 from pssolver import (
+    DEFAULT_BOUNDED_TRANSFORM_ALGORITHM,
     DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     SpectralSolver,
@@ -83,9 +84,21 @@ def test_solver_defaults_to_real_first_transform_execution():
     solver = SpectralSolver((4,), device="cpu")
 
     assert DEFAULT_TRANSFORM_EXECUTION_ORDER == "real_first"
+    assert DEFAULT_BOUNDED_TRANSFORM_ALGORITHM == "dense"
     assert DEFAULT_SPECTRAL_STORAGE == "full_complex"
     assert solver.transform_backend.execution_order == "real_first"
+    assert solver.transform_backend.bounded_transform_algorithm == "dense"
     assert solver.transform_backend.spectral_storage == "full_complex"
+
+
+def test_solver_accepts_fft_bounded_transform_candidate_explicitly():
+    solver = SpectralSolver(
+        (4,),
+        device="cpu",
+        bounded_transform_algorithm="fft",
+    )
+
+    assert solver.transform_backend.bounded_transform_algorithm == "fft"
 
 
 def test_solver_build_supports_hermitian_half_spectral_shape():
