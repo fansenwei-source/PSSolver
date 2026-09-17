@@ -101,6 +101,13 @@ geometry, transform, size, device, dtype, and value-type evidence; do not move
 one hardware policy to another device. See
 “notes/r2r_c_qualified_bounded_transform_policy.md”.
 
+The completed H100 qualification accepted zero of 96 direction-specific cells.
+The policy therefore fell back to dense everywhere, preserved byte-identical
+Plane results, but regressed the R128 complete timestep by about 8.5%. R2R-C is
+closed as `C_rejected` for the current H100 Plane workload; these commands are
+retained for reproducibility and future materially different workloads, not as
+a recommendation to enable `auto`.
+
 Measure the free-slip modal Stokes pressure-diagnostic overhead with:
 
 ~~~bash

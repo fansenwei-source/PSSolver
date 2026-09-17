@@ -8,9 +8,11 @@ axis length alone. It consumes an explicit qualification artifact and permits
 the FFT implementation only when the complete runtime context matches an
 allow-listed cell. Every unmatched context uses the dense reference.
 
-The production default remains `dense`. R2R-C does not change the frozen
-PSSolver v0.1 contract and does not promote the FFT implementation on any
-machine.
+The production default remains `dense`. The completed H100 qualification
+classified R2R-C as `C_rejected`: the mechanism is numerically correct and
+fails safely, but it selected no FFT cell and its dispatch/accounting overhead
+regressed the small Plane case. R2R-C therefore does not change the frozen
+PSSolver v0.1 contract and is closed without a production promotion.
 
 ## Selection identity
 
@@ -107,6 +109,56 @@ The small `auto` overhead is expected when every call performs policy lookup
 and metadata accounting. This check establishes safe fallback, not a reason to
 enable `auto` for the current short Plane bounded axis.
 
+## H100 qualification and closure
+
+The authoritative H100 run used commit
+`ed4efcf639d8dc93a8b28679cc2755464d483275` in Slurm Job `10833253` on an
+NVIDIA H100 PCIe. The job completed normally in 4 minutes 23 seconds, with one
+submission and no retry. The CPU gates passed with 156 focused tests and 1,134
+full-suite tests; the only skip was the pre-existing optional `nematics3d`
+dependency test.
+
+The frozen H100 R2R-B sweep reviewed 96 direction-specific cases using a
+minimum median speedup of 1.10 and a maximum FFT/dense peak-allocated-memory
+ratio of 1.05. No case passed the complete qualification contract:
+
+- reviewed directions: 96;
+- accepted cells: 0;
+- rejected directions: 96.
+
+Consequently both Plane resolutions used dense fallback for all 13 observed
+contexts and selected zero qualified FFT contexts. This exercised the intended
+fail-closed behavior. At both R128 and R320, final Q, velocity, and pressure
+were byte-for-byte identical to forced dense; all reported relative L2 errors
+were exactly zero.
+
+The complete-timestep performance result was:
+
+| resolution | dense mean (ms) | auto mean (ms) | auto/dense mean | result |
+|---|---:|---:|---:|---|
+| R128 | 7.181127 | 7.794546 | 1.085421 | 8.54% regression |
+| R320 | 48.954697 | 48.987508 | 1.000670 | neutral |
+
+At R128 the median auto/dense ratio was 1.088788. This exceeded the frozen 5%
+non-regression limit, so the formal result was `C_rejected`. R320 was neutral,
+but it selected no FFT cell and provided no speedup. There were no OOMs,
+non-finite values, CUDA failures, compile fallbacks, graph breaks, or policy
+ambiguities.
+
+The authoritative control archive is
+`/home/fansenwei/pssolver_r2r_c_h100_ed4efcf_20260917_v1`; its checksum
+manifest verified 112 of 112 entries and has SHA-256
+`c5e27bfcc71ec683e66e8e26dd8e73ae59cd23eae2be3080ff8fca47e3aea3f2`.
+Large trajectory arrays remain under the corresponding `/scratch1` result
+root recorded by that archive.
+
+The rejection is a performance result, not a numerical or spectral-method
+failure. It establishes that an audited per-call `auto` selector is not useful
+for the current H100 Plane workload when no bounded transform meets the strict
+speedup and memory gates. The explicit R2R-B FFT implementation remains a
+research option for substantially larger bounded axes or different hardware,
+but the current Plane line is closed.
+
 ## Interface and safety boundary
 
 - `dense` remains the default and preserves the historical path.
@@ -119,8 +171,9 @@ enable `auto` for the current short Plane bounded axis.
 - The standalone benchmark can exercise dense, FFT, and policy-selected cases
   from identical inputs.
 
-R2R-C is complete as an experimental policy mechanism. Before a policy can be
-used on H100, its R2R-B evidence must be regenerated on H100 and converted into
-a separate H100-qualified artifact. Even a successful H100 artifact would
-authorize only its exact cells; changing the production default requires a
-separate decision and complete production-path qualification.
+R2R-C is complete as an experimental policy mechanism and closed as a
+production candidate for the current H100 Plane workload. No default-promotion
+smoke is authorized. Any future reconsideration requires a materially new
+workload or implementation, fresh hardware-specific evidence, and a separate
+production-path qualification; this rejected policy must not be reused as if
+it were a qualified accelerator-wide crossover table.

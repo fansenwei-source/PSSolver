@@ -66,5 +66,6 @@ production contract, and the dense bounded-axis implementation remains the
 default. R2R-B establishes numerical equivalence and a local crossover curve;
 it does not authorize a production promotion. R2R-C adds an experimental,
 evidence-bound `auto` policy whose unmatched contexts fall back to dense. It
-also remains outside the v0.1 production contract and requires a separate
-hardware qualification artifact for every supported accelerator.
+also remains outside the v0.1 production contract. Its H100 qualification
+accepted zero cells and was classified `C_rejected` after an 8.54% R128
+complete-timestep regression, so no default-promotion smoke is authorized.
