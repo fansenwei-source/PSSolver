@@ -1,9 +1,9 @@
 # Changelog
 
-## 0.1.1rc1 — 2026-09-17
+## 0.1.1 — 2026-09-17
 
-Release candidate for the first bounded v0.1 performance update. This is not
-the final 0.1.1 release and does not move the existing v0.1.0 tag.
+First bounded v0.1 performance update. The existing v0.1.0 tag remains
+unchanged.
 
 ### Changed
 
@@ -39,6 +39,13 @@ the final 0.1.1 release and does not move the existing v0.1.0 tag.
 - Channel qualification is regression evidence, not production promotion.
 - Arbitrary geometries, inertial Shendruk dynamics, optimal control and the
   separated/canary runtime remain outside the supported release boundary.
+
+### Release gates
+
+- The complete CPU suite passed with 1044 tests and 8 subtests.
+- The source distribution and wheel passed content and metadata validation.
+- A clean isolated wheel installation passed both CLI entry points, default
+  policy checks, a bounded dry run and an installed-package CPU smoke test.
 
 ## 0.1.0 — 2026-09-16
 

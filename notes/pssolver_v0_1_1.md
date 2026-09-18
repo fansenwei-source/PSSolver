@@ -1,19 +1,19 @@
-# PSSolver 0.1.1rc1 release-candidate notes
+# PSSolver 0.1.1 release notes
 
-PSSolver 0.1.1rc1 is a bounded performance release candidate based on the
-frozen 0.1.0 release. It does not broaden the scientific or architectural
-support boundary documented in `pssolver_v0_1_scope.md`.
+PSSolver 0.1.1 is the first bounded performance update built on the frozen
+0.1.0 release. It does not broaden the scientific or architectural support
+boundary documented in `pssolver_v0_1_scope.md`.
 
-## Candidate change
+## Changes
 
-The candidate promotes two generic periodic-transform optimizations that were
-introduced and qualified independently:
+Two independently qualified periodic-transform optimizations are now generic
+defaults:
 
 - contiguous transform groups use a zero-copy slice/view;
 - compatible transforms with at least two periodic axes use a single
   multidimensional FFT call.
 
-The previous `advanced` field indexing and `axiswise` periodic transform
+The previous `advanced` field indexing and `axiswise` periodic-transform
 execution remain available as explicit rollback modes. Non-contiguous groups
 and transforms with fewer than two periodic axes retain guarded fallbacks.
 
@@ -39,18 +39,22 @@ and transforms with fewer than two periodic axes retain guarded fallbacks.
   elapsed-time ratio was approximately 1.0124 and passed the 5% non-regression
   gate.
 
+The archived H100 evidence is tied to jobs 10833968, 10834013 and 10834996;
+their manifest hashes are recorded in `CHANGELOG.md`.
+
 ## Preserved boundaries
 
 - Plane `legacy_production` remains the supported runtime and rollback oracle.
 - Channel remains outside the supported production contract.
 - The v0.1.0 tag and release branch remain immutable.
-- This candidate does not authorize Stage T, arbitrary PDE/geometry claims,
+- This release does not authorize Stage T, arbitrary PDE/geometry claims,
   inertial Shendruk dynamics, paper-identical initialization, optimal-control
   production integration or separated-runtime promotion.
 
-## Release process
+## Release gates
 
-The `0.1.1rc1` source and wheel must pass the complete CPU suite, metadata
-checks, clean wheel installation, console-entry-point help and a bounded
-installed-package dry run. A final `v0.1.1` tag requires a separate explicit
-decision after those release-candidate gates pass.
+The 0.1.1 source and wheel passed the complete CPU suite, metadata and archive
+checks, clean isolated installation, both CLI entry points, a bounded dry run
+and an installed-package CPU smoke test. The annotated `v0.1.1` tag freezes the
+resulting source; subsequent solver or feature work must proceed on a new
+branch and version.

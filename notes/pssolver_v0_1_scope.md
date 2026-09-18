@@ -18,7 +18,7 @@ quasistatic incompressible Stokes--Brinkman solve.
   atomic completion marker are supported.
 - The accepted Plane optimizations remain enabled through their existing
   explicit metadata and rollback controls.
-- The 0.1.1rc1 generic transform defaults use qualified contiguous field-group
+- The 0.1.1 generic transform defaults use qualified contiguous field-group
   views and compatible multidimensional periodic FFT calls. The historical
   advanced-indexing and axiswise paths remain explicit rollback selectors.
 - `legacy_production` remains the v0.1 production runtime.  Experimental
@@ -61,6 +61,6 @@ Stage T starts only after a separate architecture decision and remains
 intentionally paused. The 0.1.0 release does not imply support for any
 capability listed under the exclusions above.
 
-The 0.1.1rc1 performance candidate retains this exact scope. Its additional
+The 0.1.1 performance release retains this exact scope. Its additional
 Channel smoke is regression evidence only and does not promote Channel to a
 supported production application.
