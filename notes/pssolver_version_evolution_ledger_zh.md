@@ -239,6 +239,34 @@ bounded transforms、必要 FFT、内存流量和完整 timestep 调度。
 主要解决“通用周期轴是否有合格快路径”，`v0.1.2` 主要解决“有界轴执行能否独立演进，
 以及其周围是否还在重复搬运数据”。三个版本并不是简单地连续增加同一种速度优化。
 
+#### 4.2.1 benchmark 与 `v0.1.0` 的直接总结
+
+`v0.1.0` 不是未经优化的 benchmark solver 加上一层 packaging。P1--P6 的 GPU
+优化先进入同一条生产主线，随后 Stage A--S 才把该主线整理为正式软件架构。因此，
+benchmark 到 `v0.1.0` 同时包含“数值不变的性能工程”和“性能中性的架构迁移”。
+
+| 维度 | benchmark-era 参照 | `v0.1.0` | 相对进步 |
+| --- | --- | --- | --- |
+| R320 warmed timestep 代表值 | 204.772225 ms | 49.364779 ms（进入架构迁移前的冻结优化核心） | 约 `4.148x` throughput；耗时减少约 75.89% |
+| R320 peak allocated 代表值 | 9.791970 GiB | 5.720723 GiB | 减少约 41.58% |
+| R320 peak reserved 代表值 | 15.328125 GiB | 8.533203 GiB | 减少约 44.33% |
+| transform/dataflow | legacy order、较多 physical/spectral 往返、full projected/full-complex 工作量 | real-first、spectral H、spectral stress、compile、truncated、Hermitian-half | 主要 GPU 热路径已系统优化 |
+| 软件权威入口 | benchmark/生产脚本为主 | immutable run spec、package application API、CLI 与 compatibility entry | 从脚本型科研代码变为有发布边界的软件包 |
+| 架构职责 | 当前 Plane 应用中的职责紧密组织 | geometry、model DAG、Stokes capability、spectral planning、execution、runtime 和 workflow 契约 | 可以在不改科学模型的情况下继续迁移和测试 |
+| 可重复性 | benchmark provenance 和专项验证 | metadata、diagnostics、checkpoint/restart、atomic COMPLETE、wheel/release gates | 正式、可安装和可审计 |
+| 科学模型 | Plane Beris--Edwards--Stokes benchmark | 同一受支持的 Plane Beris--Edwards--Stokes 离散 | 无物理模型或边界条件变化 |
+
+这里的 `4.148x` 仍是跨资格任务的代表性工程包络，不是 `d320089` 与 `v0.1.0`
+tag 在同一 H100 作业内的严格 A/B。`v0.1.0` 最终 Stage S Job `10832784` 验证的是
+架构迁移的直接 parent/candidate：aggregate elapsed ratio 为 `1.000991904034`，三组
+R320 轨迹的 Q/u/p 均 byte-identical。这证明正式软件架构没有丢掉此前的优化，但
+不能把 `4.148x` 写成误差条完备的直接版本 speedup。
+
+该 Stage S 任务的 target 100-step wall-clock mean 是 `17.097328027 s`，即约
+`170.973 ms/step`；它包含 production trajectory 合同的启动、完整运行和输出语义，
+而 `49.364779 ms` 是 warmup 后的 numerical timestep profiler。二者测量边界不同，
+因此不能拿 `170.973` 与 `204.772` 计算版本加速。
+
 ### 4.3 严格配对的 H100 性能证据
 
 下表只列同一个资格作业内的 parent/candidate 对照。不同表行不应机械相乘，因为
