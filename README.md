@@ -1,7 +1,7 @@
 # PSSolver
 
-PSSolver 0.1.1 is a bounded research-grade tensor-product spectral solver.
-Its scientific support boundary is unchanged from 0.1.0.
+PSSolver 0.1.2rc1 is a bounded research-grade tensor-product spectral solver
+release candidate. Its scientific support boundary is unchanged from 0.1.0.
 Its supported production application is a three-dimensional Plane
 (periodic-periodic-slab) Beris--Edwards active-nematic model coupled to a
 quasistatic incompressible Stokes--Brinkman solve.
@@ -58,3 +58,8 @@ byte-identical final state, and the performance non-regression gate. Version
 multidimensional periodic FFT execution as generic defaults while preserving
 explicit rollback selectors and byte-identical Plane/Channel qualification
 trajectories. Release evidence is summarized in CHANGELOG.md.
+
+Version 0.1.2rc1 additionally separates bounded-axis execution from
+tensor-product planning and reduces qualified bounded-transform data movement.
+The dense DCT/DST algorithm and all scientific discretization choices remain
+unchanged.

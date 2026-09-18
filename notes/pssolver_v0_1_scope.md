@@ -21,6 +21,8 @@ quasistatic incompressible Stokes--Brinkman solve.
 - The 0.1.1 generic transform defaults use qualified contiguous field-group
   views and compatible multidimensional periodic FFT calls. The historical
   advanced-indexing and axiswise paths remain explicit rollback selectors.
+- The 0.1.2rc1 bounded-axis layer retains the same dense DCT/DST algorithm and
+  adds qualified dataflow reductions without changing transform mathematics.
 - `legacy_production` remains the v0.1 production runtime.  Experimental
   separated runtimes remain opt-in and are not production-promoted.
 
@@ -64,3 +66,7 @@ capability listed under the exclusions above.
 The 0.1.1 performance release retains this exact scope. Its additional
 Channel smoke is regression evidence only and does not promote Channel to a
 supported production application.
+
+The 0.1.2rc1 performance candidate also retains this scope. Its bounded-axis
+execution seam is an implementation boundary, not a claim of arbitrary
+geometry support or a pruned real-to-real transform.

@@ -1,5 +1,52 @@
 # Changelog
 
+## 0.1.2rc1 — 2026-09-18
+
+Release candidate for the bounded-axis execution and dataflow update. This is
+not the final 0.1.2 release and does not move the existing v0.1.1 tag.
+
+### Changed
+
+- DCT/DST axis execution is separated from tensor-product planning through a
+  device-bound bounded-axis execution plan. The qualified dense matrix method
+  remains the sole executor and preserves the transform algorithm.
+- Repeated periodic-gradient multipliers are cached by basis, axis, device and
+  dtype.
+- Owned bounded-gradient and spectral-projection buffers use direct writes or
+  in-place updates outside autograd while retaining differentiable fallback
+  paths.
+- Contiguous stress batches use natural tensor views instead of repeated
+  advanced-index materialization.
+- Dynamic field synchronization uses the established grouped field-access
+  contract rather than direct advanced indexing.
+
+### Qualification evidence
+
+- Candidate source commit before RC metadata:
+  `f121428d7a5e66e4b65c6e6f3777fdf1c8f8b23a`.
+- Bounded-axis abstraction Job 10835044: `PASS`; R128 and R320 timings and
+  memory were neutral, transform calls were unchanged, and the 100-step Q,
+  velocity and pressure arrays were byte-for-byte identical. Its 111-entry
+  manifest has SHA-256
+  `6ff57b61e27985f842340fa6f3edc7cc5e9cf3944f39a49caad777a994a07efe`.
+- Bounded-transform dataflow Job 10835210: `A_recommended`; all CPU, CUDA,
+  numerical, memory and performance gates passed. Mean timestep speedups were
+  approximately 1.238x at R128 and 1.084x at R320, with byte-identical
+  100-step Q, velocity and pressure arrays. Its 103-entry manifest has
+  SHA-256
+  `65a72a34a42a526e8ada36bd436ff1cbbaed0d2213fb88804eed1db6248b7876`.
+
+### Scope
+
+- The v0.1 scientific and architectural support boundary is unchanged.
+- Plane `legacy_production` remains the supported production runtime.
+- The transform basis, normalization, mode order, boundary semantics,
+  projection, dealiasing, equations and production selectors are unchanged.
+- Dense bounded-axis execution remains the production implementation; this
+  release does not claim a pruned DCT/DST algorithm.
+- Arbitrary geometries, inertial Shendruk dynamics, optimal control and the
+  separated/canary runtime remain outside the supported release boundary.
+
 ## 0.1.1 — 2026-09-17
 
 First bounded v0.1 performance update. The existing v0.1.0 tag remains
