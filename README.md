@@ -63,3 +63,8 @@ Version 0.1.2 additionally separates bounded-axis execution from
 tensor-product planning and reduces qualified bounded-transform data movement.
 The dense DCT/DST algorithm and all scientific discretization choices remain
 unchanged.
+
+The append-only performance and architecture history is maintained in
+`notes/pssolver_version_evolution_ledger_zh.md`. It distinguishes matched H100
+comparisons from cross-campaign reference values so future releases can extend
+the record without rewriting historical evidence.
