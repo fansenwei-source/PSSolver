@@ -73,11 +73,12 @@ class DealiasedSemiImplicitEulerIntegrator(SemiImplicitEulerIntegrator):
             boundary_conditions = self.model.fields.get_boundary_conditions(
                 group[0]
             )
-            self.model.fields.spatial[group] = (
+            self.model.fields.store_spatial_group(
+                group,
                 self.spectral_projector.inverse_transform(
-                    self.model.fields.spectral[group],
+                    self.model.fields.select_spectral_group(group),
                     boundary_conditions,
-                )
+                ),
             )
 
         self._advance_spectral_refresh_clock()

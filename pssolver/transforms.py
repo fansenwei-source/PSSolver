@@ -127,6 +127,7 @@ class TensorProductTransformBackend:
         self._matrix_cache = {}
         self._bounded_axis_plan_cache = {}
         self._metadata_cache = {}
+        self._periodic_gradient_factor_cache = {}
 
         self.axes = tuple(self._build_axis_grid(axis) for axis in range(self.dim))
         self.spatial_grids = torch.meshgrid(*self.axes, indexing="ij")
@@ -699,42 +700,91 @@ class TensorProductTransformBackend:
         laplacian_eigs = self.get_laplacian_eigs(boundary_conditions)
         return spectral * laplacian_eigs.to(device=spectral.device)
 
+    def _periodic_gradient_factors(
+        self,
+        spectral,
+        boundary_conditions,
+        axis,
+    ):
+        key = (
+            tuple(boundary_conditions),
+            axis,
+            spectral.device,
+            spectral.dtype,
+        )
+        factors = self._periodic_gradient_factor_cache.get(key)
+        if factors is not None:
+            return factors
+
+        metadata = self.get_metadata(boundary_conditions)
+        modes = metadata.axis_modes[axis]
+        if (
+            self.spectral_storage == "hermitian_half"
+            and self.shape[axis] % 2 == 0
+        ):
+            # A first derivative of an even-grid Nyquist mode has no
+            # real-valued collocation-grid representation. Cache the exact
+            # zeroed multiplier instead of cloning and mutating the mode
+            # vector on every gradient evaluation.
+            modes = modes.clone()
+            modes[self.shape[axis] // 2] = 0
+        factors = self._broadcast_axis_values(1j * modes, axis).to(
+            device=spectral.device,
+            dtype=spectral.dtype,
+        )
+        self._periodic_gradient_factor_cache[key] = factors
+        return factors
+
     def gradient_hat(self, spectral, boundary_conditions, axis):
         boundary_conditions = tuple(boundary_conditions)
-        metadata = self.get_metadata(boundary_conditions)
         bc = boundary_conditions[axis]
-        modes = metadata.axis_modes[axis].to(device=spectral.device)
         spectral_axis = spectral.ndim - self.dim + axis
 
         if bc == "periodic":
-            if (
-                self.spectral_storage == "hermitian_half"
-                and self.shape[axis] % 2 == 0
-            ):
-                # A first derivative of an even-grid Nyquist mode has no
-                # real-valued collocation-grid representation. The legacy
-                # full-complex path implicitly discards that anti-Hermitian
-                # component when inverse() takes the real part; irfftn needs
-                # the equivalent convention to be enforced explicitly.
-                modes = modes.clone()
-                modes[self.shape[axis] // 2] = 0
-            factors = self._broadcast_axis_values(1j * modes, axis).to(dtype=spectral.dtype)
+            factors = self._periodic_gradient_factors(
+                spectral,
+                boundary_conditions,
+                axis,
+            )
             return spectral * factors, boundary_conditions
 
+        metadata = self.get_metadata(boundary_conditions)
+        modes = metadata.axis_modes[axis].to(device=spectral.device)
         moved = spectral.movedim(spectral_axis, -1)
         derivative = torch.zeros_like(moved)
+        preserve_autograd = torch.is_grad_enabled() and moved.requires_grad
 
         if bc == "dirichlet":
             if moved.shape[-1] > 1:
-                derivative[..., 1:] = moved[..., :-1] * modes[:-1]
+                if preserve_autograd:
+                    derivative[..., 1:] = moved[..., :-1] * modes[:-1]
+                else:
+                    # The derivative buffer is owned by this call. Write the
+                    # shifted product directly into it to avoid materializing
+                    # a full temporary followed by a strided copy kernel.
+                    torch.mul(
+                        moved[..., :-1],
+                        modes[:-1],
+                        out=derivative[..., 1:],
+                    )
         elif bc == "neumann":
             if moved.shape[-1] > 1:
-                derivative[..., :-1] = -moved[..., 1:] * modes[1:]
+                if preserve_autograd:
+                    derivative[..., :-1] = -moved[..., 1:] * modes[1:]
+                else:
+                    torch.neg(
+                        moved[..., 1:],
+                        out=derivative[..., :-1],
+                    )
+                    derivative[..., :-1].mul_(modes[1:])
         else:
             raise ValueError(f"Unsupported boundary condition '{bc}' for gradient.")
 
         derivative = derivative.movedim(-1, spectral_axis)
-        derivative_bcs = self.get_gradient_boundary_conditions(boundary_conditions, axis)
+        derivative_bcs = self.get_gradient_boundary_conditions(
+            boundary_conditions,
+            axis,
+        )
         return derivative, derivative_bcs
 
 
@@ -874,6 +924,18 @@ class BasisAwareSpectralProjector:
         # exactly the same finite 0/1 multiplication.
         return spectral * mask
 
+    def project_(self, spectral, boundary_conditions):
+        """Project owned spectral storage in place without materializing a copy."""
+        if not self.enabled:
+            return spectral
+        if tuple(spectral.shape[-len(self.shape) :]) != self.shape:
+            raise ValueError(
+                f"Expected trailing spectral shape {self.shape}, got "
+                f"{tuple(spectral.shape[-len(self.shape):])}."
+            )
+        spectral.mul_(self.mask(boundary_conditions))
+        return spectral
+
     def _retained_counts(self, boundary_conditions):
         boundary_conditions = tuple(boundary_conditions)
         if boundary_conditions not in self._retained_counts_cache:
@@ -985,14 +1047,17 @@ class BasisAwareSpectralProjector:
         )
         for group in groups:
             boundary_conditions = fields.get_boundary_conditions(group[0])
-            fields.spectral[group] = self.project(
-                fields.spectral[group],
-                boundary_conditions,
-            )
+            spectral = fields.select_spectral_group(group)
+            self.project_(spectral, boundary_conditions)
+            if (
+                fields.transform_group_indexing_metadata(group)["effective"]
+                == "advanced"
+            ):
+                fields.store_spectral_group(group, spectral)
             if sync_spatial:
-                fields.spatial[group] = self.inverse_transform(
-                    fields.spectral[group],
-                    boundary_conditions,
+                fields.store_spatial_group(
+                    group,
+                    self.inverse_transform(spectral, boundary_conditions),
                 )
 
     def refresh_dynamic_fields(self, fields, *, sync_spatial):
@@ -1002,14 +1067,15 @@ class BasisAwareSpectralProjector:
         )
         for group in groups:
             boundary_conditions = fields.get_boundary_conditions(group[0])
-            fields.spectral[group] = self.forward_transform(
-                fields.spatial[group],
+            spectral = self.forward_transform(
+                fields.select_spatial_group(group),
                 boundary_conditions,
             )
+            fields.store_spectral_group(group, spectral)
             if sync_spatial:
-                fields.spatial[group] = self.inverse_transform(
-                    fields.spectral[group],
-                    boundary_conditions,
+                fields.store_spatial_group(
+                    group,
+                    self.inverse_transform(spectral, boundary_conditions),
                 )
 
     def retained_axis_counts(self, boundary_conditions):
@@ -1105,24 +1171,25 @@ def projected_common_basis_stress_divergence(
         torch.stack(tuple(stress_components)),
         boundary_conditions,
     )
+    stress_matrix = stress_hat.unflatten(0, (3, 3))
     if sum_space == "physical":
         derivative_x = _inverse_spectral_gradient(
             backend,
-            stress_hat[[0, 3, 6]],
+            stress_matrix[:, 0],
             boundary_conditions,
             axis=0,
             projector=projector,
         )
         derivative_y = _inverse_spectral_gradient(
             backend,
-            stress_hat[[1, 4, 7]],
+            stress_matrix[:, 1],
             boundary_conditions,
             axis=1,
             projector=projector,
         )
         derivative_z = _inverse_spectral_gradient(
             backend,
-            stress_hat[[2, 5, 8]],
+            stress_matrix[:, 2],
             boundary_conditions,
             axis=2,
             projector=projector,
@@ -1131,13 +1198,13 @@ def projected_common_basis_stress_divergence(
 
     derivative_x_hat, derivative_x_bcs = _spectral_gradient(
         backend,
-        stress_hat[[0, 3, 6]],
+        stress_matrix[:, 0],
         boundary_conditions,
         axis=0,
     )
     derivative_y_hat, derivative_y_bcs = _spectral_gradient(
         backend,
-        stress_hat[[1, 4, 7]],
+        stress_matrix[:, 1],
         boundary_conditions,
         axis=1,
     )
@@ -1153,7 +1220,7 @@ def projected_common_basis_stress_divergence(
     )
     derivative_z = _inverse_spectral_gradient(
         backend,
-        stress_hat[[2, 5, 8]],
+        stress_matrix[:, 2],
         boundary_conditions,
         axis=2,
         projector=projector,
@@ -1199,18 +1266,20 @@ def projected_distortion_stress_divergence(
         odd_components,
         odd_boundary_conditions,
     )
+    even_matrix = even_hat[:4].unflatten(0, (2, 2))
+    odd_tangential = odd_hat[:2]
 
     if sum_space == "physical":
         even_x = _inverse_spectral_gradient(
             backend,
-            even_hat[[0, 2]],
+            even_matrix[:, 0],
             even_boundary_conditions,
             axis=0,
             projector=projector,
         )
         even_y = _inverse_spectral_gradient(
             backend,
-            even_hat[[1, 3]],
+            even_matrix[:, 1],
             even_boundary_conditions,
             axis=1,
             projector=projector,
@@ -1238,7 +1307,7 @@ def projected_distortion_stress_divergence(
         )
         odd_z = _inverse_spectral_gradient(
             backend,
-            odd_hat[[0, 1]],
+            odd_tangential,
             odd_boundary_conditions,
             axis=2,
             projector=projector,
@@ -1252,13 +1321,13 @@ def projected_distortion_stress_divergence(
         )
 
     even_x_hat, even_x_bcs = _spectral_gradient(
-        backend, even_hat[[0, 2]], even_boundary_conditions, axis=0
+        backend, even_matrix[:, 0], even_boundary_conditions, axis=0
     )
     even_y_hat, even_y_bcs = _spectral_gradient(
-        backend, even_hat[[1, 3]], even_boundary_conditions, axis=1
+        backend, even_matrix[:, 1], even_boundary_conditions, axis=1
     )
     odd_z_hat, odd_z_bcs = _spectral_gradient(
-        backend, odd_hat[[0, 1]], odd_boundary_conditions, axis=2
+        backend, odd_tangential, odd_boundary_conditions, axis=2
     )
     if not (even_x_bcs == even_y_bcs == odd_z_bcs):
         raise RuntimeError(
