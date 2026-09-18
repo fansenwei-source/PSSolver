@@ -4,6 +4,36 @@ Microbenchmarks in this directory measure isolated numerical kernels. They are
 not scientific validation tests and do not replace convergence or manufactured
 solution tests.
 
+Map the bounded-axis dense DCT/DST applicability region with:
+
+```bash
+python -m benchmarks.benchmark_bounded_axis_applicability \
+  --device cuda \
+  --sizes 32,40,64,80,128,160,256,320,512,1024 \
+  --retained-fractions 1,0.6666666666666666,0.5,0.25,0.125,0.0625 \
+  --line-counts 256 \
+  --kinds dct,dst --directions forward,inverse \
+  --dtypes float64 --value-types real,complex \
+  --tf32 off \
+  --warmup 5 --repeats 12 --trials 3 \
+  --json-output /tmp/bounded_axis_applicability.json \
+  --csv-output /tmp/bounded_axis_applicability.csv
+```
+
+The comparison uses the production dense execution plan and a benchmark-local
+full-FFT reference. The reference always computes a complete transform before
+slicing (or pads before a complete inverse), is explicitly not pruned, and is
+never imported by the solver. The sweep records cold-plan and steady timings,
+correctness against dense, retained/full transform identities, persistent plan
+storage, CUDA peak memory, and paired trial speedups. The reported cold value
+means a fresh Python plan and fresh explicit plan tensors after a common
+runtime preflight; CUDA libraries may retain internal kernel or FFT caches.
+TF32 is an explicit, fail-closed setting and defaults to off. JSON is published
+last as the completion artifact and binds the aggregate CSV hash and row count.
+Run large production line-count anchors as separate artifacts instead of
+forming impractical Cartesian products. A crossover in this benchmark is
+research evidence only and cannot change a production transform default.
+
 Run the four-way periodic fast-path benchmark with:
 
 ```bash
