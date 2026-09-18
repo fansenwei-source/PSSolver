@@ -191,7 +191,55 @@ bounded-axis 抽象本身在 H100 上性能与显存中性，并产生 byte-iden
 两种网格均为三次配对全部 candidate 更快；forward/inverse transforms 仍为
 `7/32` 次每步，peak reserved memory 不变，peak allocated 增加低于 `0.04%`。
 
-## 4. 严格配对的 H100 性能增益
+## 4. 每一步相对于上一阶段的进步
+
+这里的“一步”指进入主线的性能默认值晋升或正式 release，而不是仅用于诊断、测试
+或 provenance 的每一个 Git commit。这样可以避免把测试数量增加误写成求解器能力
+变化，也避免将没有进入生产路径的候选算作版本进步。
+
+### 4.1 性能默认值的逐步演进
+
+下表中的每一行都把新默认与它当时的直接生产 control 比较，不把最早 baseline
+重复拿来与每一代 candidate 比较。
+
+| 步骤 | 上一阶段 -> 新阶段 | 同次 H100 对照（R320） | 相对上一阶段的进步 | 代价或限制 | 数值保证 |
+| ---: | --- | ---: | --- | --- | --- |
+| P1 | legacy mixed-transform order -> real-first | 204.772225 -> 176.129441 ms | `1.162623x`；allocated -10.12%，reserved -7.21% | 改变等价运算顺序；保留 `legacy` rollback | float64 roundoff-level |
+| P2 | physical molecular-field linear term -> spectral linear term | 175.854459 -> 171.130451 ms | `1.027605x`；inverse calls `42 -> 37` | 仅线性 `L1 laplacian(Q)` 留在谱空间 | relative L2 < 3.5e-16 |
+| P3 | previous production -> Boolean mask + spectral stress sum | 171.175296 -> 159.071016 ms | `1.076094x`；inverse calls `37 -> 32` | allocated +0.79%；保留 physical sum rollback | relative L2 < 2.9e-16 |
+| P4 | eager pointwise algebra -> compiled pointwise algebra | 158.995313 -> 113.636758 ms（约） | `1.399154x`；主要点态核融合 | 首次编译约 21.4 s，约 472 个 R320 step 后摊销；保留 eager | relative L2 < 4.5e-16 |
+| P5 | full projected transforms -> truncated projected transforms | 113.872 -> 85.598 ms | `1.3303x`；forward/inverse 分别约 `1.895x/1.816x` | 只适用于随后会丢弃高模态的 projected path；保留 full | Q/u/p relative L2 <= 2.34e-15 |
+| P6 | truncated + full-complex -> truncated + Hermitian-half | control 未在冻结摘要中抄录；candidate 49.364779 ms | 严格 speedup `1.732440x`；candidate 显存 5.720723/8.533203 GiB | Plane 实输入专用；generic solver 不盲目继承 | max relative L2 约 4.44e-15 |
+| P7 | `v0.1.2` parent dataflow -> optimized bounded dataflow | 48.960003 -> 45.162243 ms | `1.084091x`；R128 为 `1.238387x` | transform calls 不变，说明收益来自 materialization/data movement | Q/u/p byte-identical |
+
+这条链上最重要的机制变化是：
+
+1. P1 减少复数 GEMM；
+2. P2/P3 减少不必要的物理--谱空间往返；
+3. P4 融合点态代数；
+4. P5 只计算 projector 真正保留的有界模态；
+5. P6 减少周期方向的冗余共轭谱存储；
+6. P7 不再减少 transform 次数，而是清理 transform 周围的数据搬运。
+
+因此后续 profiling 不应再默认“多做一次同类 kernel fusion 就一定有效”。截至
+`v0.1.2`，主要时间已经从早期的复数变换和点态小 kernel，逐渐转移到剩余 dense
+bounded transforms、必要 FFT、内存流量和完整 timestep 调度。
+
+### 4.2 正式版本相对于上一版的变化
+
+| 版本跃迁 | 性能变化 | 框架变化 | 科学范围变化 | 最准确的结论 |
+| --- | --- | --- | --- | --- |
+| benchmark `d320089` -> pre-`v0.1.0` optimized Plane | P1--P6 逐项进入生产线；R320 代表值从约 204.8 降至约 49.4 ms | 开始引入统一 policy、metadata、rollback 和 profiler | 无 | 科学模型不变，先完成主要 GPU 热路径优化 |
+| optimized Plane -> `v0.1.0` | 最终 Stage S candidate/parent elapsed ratio `1.000991904034`，性能中性 | 脚本组装迁入 package；增加 immutable config、API、CLI、workflow、restart 和 release contract | 正式冻结 Plane 支持边界 | 这一版主要获得职业化软件结构，而不是额外速度 |
+| `v0.1.0` -> `v0.1.1` | generic periodic benchmark `1.565x/1.621x`；Plane R320 candidate/parent elapsed ratio约 `1.0124`，属于中性 | contiguous group view 和 multidimensional periodic FFT 成为通用默认 | 无；Channel 只做 regression | 通用谱内核进步明显，但已专门优化的 Plane 没有重复获得同等加速 |
+| `v0.1.1` -> bounded-axis abstraction | R320 48.865793 -> 48.875339 ms，time ratio `1.000195`，性能中性 | planner 与 bounded executor 解耦，建立未来替换 dense DCT/DST 的 seam | 无 | 用零性能回退换来干净的扩展边界 |
+| bounded-axis abstraction -> `v0.1.2` | R320 `1.084091x`，R128 `1.238387x` | 缓存 multiplier、direct write、in-place projection、natural views、grouped sync | 无 | 在新架构边界内清理数据流，并取得 byte-identical 加速 |
+
+换句话说：`v0.1.0` 主要解决“代码是否已经成为可发布、可审计的软件”，`v0.1.1`
+主要解决“通用周期轴是否有合格快路径”，`v0.1.2` 主要解决“有界轴执行能否独立演进，
+以及其周围是否还在重复搬运数据”。三个版本并不是简单地连续增加同一种速度优化。
+
+### 4.3 严格配对的 H100 性能证据
 
 下表只列同一个资格作业内的 parent/candidate 对照。不同表行不应机械相乘，因为
 warmup、profiler 版本和完整配置可能不同。
