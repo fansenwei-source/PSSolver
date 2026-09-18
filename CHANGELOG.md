@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.1.1rc1 — 2026-09-17
+
+Release candidate for the first bounded v0.1 performance update. This is not
+the final 0.1.1 release and does not move the existing v0.1.0 tag.
+
+### Changed
+
+- Contiguous transform groups now use the qualified zero-copy slice/view path
+  by default.
+- Compatible transforms with at least two periodic axes now use one
+  multidimensional `torch.fft.fftn`/`torch.fft.ifftn` call by default.
+- The historical `advanced` transform-group indexing and `axiswise` periodic
+  transform modes remain explicit rollback selectors.
+
+### Qualification evidence
+
+- Candidate source commit before RC metadata:
+  `525ba2326de3604e75752364d561af6417063ddc`.
+- H100 A/B/C/D job 10833968: `A_recommended`; numerical, performance and
+  memory gates passed. The archived 51-entry manifest has SHA-256
+  `15ffa359a15eb7a8fd907053b7981dbf494b0f6f31aea95b4a7dfe7f116c5a3a`.
+- H100 implicit-default job 10834013: `PASS`; the implicit and explicit
+  qualified paths were byte-for-byte identical. Float64 512x512 and float32
+  1024x1024 rollback/default speedups were approximately 1.565x and 1.621x.
+  The archived 43-entry manifest has SHA-256
+  `f9a6f14b217a3f49d8abf065756f0082b124dd74b143f1a8499f1ded2fb76c7e`.
+- Plane/Channel geometry continuation job 10834996: `B_neutral`; two R320
+  Plane pairs and the Channel state were byte-for-byte identical. Plane
+  elapsed time remained within the non-regression envelope. The archived
+  84-entry manifest has SHA-256
+  `8cf0f0d35f8035290973ac405c7946385824072c6ddff821a4c2e59b2b89ea37`.
+
+### Scope
+
+- The v0.1 scientific and architectural support boundary is unchanged.
+- Plane `legacy_production` remains the supported production runtime.
+- Channel qualification is regression evidence, not production promotion.
+- Arbitrary geometries, inertial Shendruk dynamics, optimal control and the
+  separated/canary runtime remain outside the supported release boundary.
+
 ## 0.1.0 — 2026-09-16
 
 Initial bounded PSSolver release.

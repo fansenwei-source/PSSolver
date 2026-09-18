@@ -1,4 +1,4 @@
-"""Release-level contracts for the bounded PSSolver 0.1.0 package."""
+"""Release-level contracts for the bounded PSSolver 0.1.1rc1 package."""
 
 from __future__ import annotations
 
@@ -11,8 +11,8 @@ import pssolver
 PROJECT_ROOT = Path(__file__).parents[1]
 
 
-def test_public_version_is_0_1_0():
-    assert pssolver.__version__ == "0.1.0"
+def test_public_version_is_0_1_1_rc1():
+    assert pssolver.__version__ == "0.1.1rc1"
     assert "__version__" in pssolver.__all__
 
 
@@ -39,9 +39,16 @@ def test_standard_build_metadata_and_release_documents_exist():
     changelog = (PROJECT_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
 
     assert 'build-backend = "setuptools.build_meta"' in pyproject
-    assert "PSSolver 0.1.0" in readme
+    release_notes = (
+        PROJECT_ROOT / "notes" / "pssolver_v0_1_1_rc1.md"
+    ).read_text(encoding="utf-8")
+
+    assert "PSSolver 0.1.1rc1" in readme
+    assert "## 0.1.1rc1" in changelog
     assert "## 0.1.0" in changelog
     assert "38cd9335b13328922956a46bb0e9dcbc992a5de0" in changelog
+    assert "525ba2326de3604e75752364d561af6417063ddc" in changelog
+    assert "0.1.1rc1" in release_notes
 
 
 def test_generated_packaging_artifacts_are_ignored():
@@ -49,3 +56,17 @@ def test_generated_packaging_artifacts_are_ignored():
     assert "*.egg-info/" in patterns
     assert "build/" in patterns
     assert "dist/" in patterns
+
+
+def test_source_distribution_includes_release_and_scope_documents():
+    manifest = (PROJECT_ROOT / "MANIFEST.in").read_text(encoding="utf-8")
+
+    for path in (
+        "CHANGELOG.md",
+        "notes/pssolver_v0_1_scope.md",
+        "notes/pssolver_v0_1_1_rc1.md",
+        "benchmarks/README.md",
+        "benchmarks/periodic_fast_path_default_promotion.md",
+    ):
+        assert (PROJECT_ROOT / path).is_file()
+        assert f"include {path}" in manifest
