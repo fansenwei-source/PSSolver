@@ -1,19 +1,18 @@
-# PSSolver 0.1.2rc1 release-candidate notes
+# PSSolver 0.1.2 release notes
 
-PSSolver 0.1.2rc1 is a bounded transform-execution and dataflow performance
-candidate based on the frozen 0.1.1 release. It does not broaden the
-scientific or architectural support boundary documented in
-`pssolver_v0_1_scope.md`.
+PSSolver 0.1.2 is a bounded transform-execution and dataflow performance
+release based on the frozen 0.1.1 release. It does not broaden the scientific
+or architectural support boundary documented in `pssolver_v0_1_scope.md`.
 
-## Candidate changes
+## Changes
 
-The candidate adds a device-bound bounded-axis execution plan below the
+The release adds a device-bound bounded-axis execution plan below the
 tensor-product transform facade. The dense matrix DCT/DST operation remains
 the only executor, so this refactor changes ownership and extensibility rather
 than transform mathematics.
 
-The production dataflow candidate then removes several repeated
-materializations without changing public numerical selectors:
+The production dataflow update removes several repeated materializations
+without changing public numerical selectors:
 
 - periodic-gradient multipliers are cached by their complete execution
   identity;
@@ -64,7 +63,7 @@ SHA-256 is
 A separate static-nematic algebraic-fusion experiment was not promoted. Its
 first packed-output implementation regressed locally, while a smaller exact
 ablation improved R128 by only about 0.34%. No code from that experiment is in
-this release candidate, and no additional H100 job was consumed for it.
+this release, and no additional H100 job was consumed for it.
 
 ## Preserved boundaries
 
@@ -72,17 +71,20 @@ this release candidate, and no additional H100 job was consumed for it.
 - The v0.1.0 and v0.1.1 tags and release branches remain immutable.
 - The transform basis, normalization, mode order, boundary conditions,
   projection, dealiasing and equations are unchanged.
-- Dense bounded-axis execution remains the only implementation; this candidate
+- Dense bounded-axis execution remains the only implementation; this release
   does not claim a fast or pruned DCT/DST.
-- This candidate does not authorize arbitrary PDE/geometry claims, Channel
+- This release does not authorize arbitrary PDE/geometry claims, Channel
   production parity, inertial Shendruk dynamics, paper-identical
   initialization, optimal-control production integration or separated-runtime
   promotion.
 
-## Release process
+## Release gates
 
-The 0.1.2rc1 source and wheel must pass the complete CPU suite, metadata and
-archive checks, clean isolated installation, both command-line entry points, a
-bounded installed-package dry run and an installed-package CPU smoke test. A
-final `v0.1.2` tag requires a separate final metadata commit after these gates
-pass.
+The complete release source passed 1,134 CPU tests and eight subtests. The
+source distribution and wheel passed content and metadata validation. A clean
+isolated wheel installation passed version and import-source checks, both
+command-line entry points, a bounded dry run and a one-step CPU smoke with
+finite Q, velocity and pressure arrays and a valid completion marker.
+
+The annotated `v0.1.2` tag freezes the result. Subsequent architecture or
+feature work must proceed on a new branch and version.

@@ -1,9 +1,9 @@
 # Changelog
 
-## 0.1.2rc1 — 2026-09-18
+## 0.1.2 — 2026-09-18
 
-Release candidate for the bounded-axis execution and dataflow update. This is
-not the final 0.1.2 release and does not move the existing v0.1.1 tag.
+Bounded-axis execution and transform-dataflow performance update. The existing
+v0.1.0 and v0.1.1 tags remain unchanged.
 
 ### Changed
 
@@ -46,6 +46,16 @@ not the final 0.1.2 release and does not move the existing v0.1.1 tag.
   release does not claim a pruned DCT/DST algorithm.
 - Arbitrary geometries, inertial Shendruk dynamics, optimal control and the
   separated/canary runtime remain outside the supported release boundary.
+
+### Release gates
+
+- The complete CPU suite passed with 1,134 tests and eight subtests.
+- The source distribution and wheel passed content and metadata validation.
+- A clean isolated wheel installation passed package-version and import-source
+  checks, both CLI entry points, a bounded dry run and an installed-package
+  one-step CPU smoke with finite Q, velocity and pressure output.
+- No additional HPCC job was required beyond the two archived H100
+  qualification jobs above.
 
 ## 0.1.1 — 2026-09-17
 
