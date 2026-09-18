@@ -4,5 +4,6 @@ include pyproject.toml
 include setup.py
 include notes/pssolver_v0_1_scope.md
 include notes/pssolver_v0_1_1.md
+include notes/bounded_axis_execution_architecture.md
 include benchmarks/README.md
 include benchmarks/periodic_fast_path_default_promotion.md

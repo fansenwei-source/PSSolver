@@ -166,6 +166,8 @@ class Fig4NumericsCliTests(unittest.TestCase):
                 "pssolver/PDEmodel.py",
                 "pssolver/integrator.py",
                 "pssolver/transforms.py",
+                "pssolver/backends/__init__.py",
+                "pssolver/backends/bounded.py",
                 "pssolver/plane.py",
                 "pssolver/__init__.py",
                 "pssolver/adapters/legacy_boundaries.py",

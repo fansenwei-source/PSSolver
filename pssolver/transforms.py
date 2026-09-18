@@ -4,6 +4,12 @@ from dataclasses import dataclass
 import torch
 import torch.nn.functional as functional
 
+from .backends.bounded import (
+    BoundedAxisPlanKey,
+    DenseBoundedAxisExecutionPlan,
+    build_dense_orthonormal_matrix,
+)
+
 
 DEFAULT_DEALIAS_RULE = "cubic_half"
 DEFAULT_TRANSFORM_EXECUTION_ORDER = "real_first"
@@ -119,6 +125,7 @@ class TensorProductTransformBackend:
         self.spectral_shape = tuple(spectral_shape)
 
         self._matrix_cache = {}
+        self._bounded_axis_plan_cache = {}
         self._metadata_cache = {}
 
         self.axes = tuple(self._build_axis_grid(axis) for axis in range(self.dim))
@@ -145,24 +152,45 @@ class TensorProductTransformBackend:
         if key in self._matrix_cache:
             return self._matrix_cache[key]
 
-        n = torch.arange(size, device=self.device, dtype=self.real_dtype)
-        k = n.unsqueeze(1)
-        phase = math.pi * (n + 0.5) / size
-
-        if kind == "dct":
-            matrix = torch.cos(k * phase)
-            matrix[0] *= math.sqrt(1.0 / size)
-            if size > 1:
-                matrix[1:] *= math.sqrt(2.0 / size)
-        elif kind == "dst":
-            matrix = math.sqrt(2.0 / size) * torch.sin((k + 1.0) * phase)
-            if size > 0:
-                matrix[-1] *= math.sqrt(0.5)
-        else:
-            raise ValueError(f"Unsupported transform kind '{kind}'.")
+        matrix = build_dense_orthonormal_matrix(
+            kind,
+            size,
+            device=self.device,
+            dtype=self.real_dtype,
+        )
 
         self._matrix_cache[key] = matrix
         return matrix
+
+    def _get_bounded_axis_execution_plan(
+        self,
+        tensor,
+        kind,
+        physical_size,
+        retained_count,
+    ):
+        value_type = "complex" if tensor.is_complex() else "real"
+        # Device and real dtype are immutable backend properties.  Keep the
+        # hot-path lookup compact and construct the validated, fully explicit
+        # public plan key only on a cache miss.
+        cache_key = (kind, physical_size, retained_count, value_type)
+        cached = self._bounded_axis_plan_cache.get(cache_key)
+        if cached is not None:
+            return cached
+
+        full_matrix = self._get_matrix(kind, physical_size)
+        key = BoundedAxisPlanKey(
+            kind=kind,
+            physical_size=physical_size,
+            retained_count=retained_count,
+            device=full_matrix.device,
+            real_dtype=self.real_dtype,
+            value_type=value_type,
+        )
+        matrix = full_matrix[:retained_count]
+        plan = DenseBoundedAxisExecutionPlan(key=key, matrix=matrix)
+        self._bounded_axis_plan_cache[cache_key] = plan
+        return plan
 
     def _apply_axis_transform(self, tensor, kind, axis, inverse=False):
         if kind == "fft":
@@ -170,13 +198,18 @@ class TensorProductTransformBackend:
                 return torch.fft.ifft(tensor, dim=axis)
             return torch.fft.fft(tensor, dim=axis)
 
-        matrix = self._get_matrix(kind, tensor.shape[axis])
+        size = tensor.shape[axis]
+        plan = self._get_bounded_axis_execution_plan(
+            tensor,
+            kind,
+            size,
+            size,
+        )
         moved = tensor.movedim(axis, -1)
-        matrix = matrix.to(device=moved.device, dtype=moved.dtype)
         if inverse:
-            transformed = moved @ matrix
+            transformed = plan.inverse_last_axis(moved)
         else:
-            transformed = moved @ matrix.transpose(-1, -2)
+            transformed = plan.forward_last_axis(moved)
         return transformed.movedim(-1, axis)
 
     def _transform_kinds(self, boundary_conditions):
@@ -364,14 +397,17 @@ class TensorProductTransformBackend:
         inverse,
     ):
         axis = tensor.ndim - self.dim + local_axis
-        matrix = self._get_matrix(kind, self.shape[local_axis])
-        matrix = matrix[:retained_count]
+        plan = self._get_bounded_axis_execution_plan(
+            tensor,
+            kind,
+            self.shape[local_axis],
+            retained_count,
+        )
         moved = tensor.movedim(axis, -1)
-        matrix = matrix.to(device=moved.device, dtype=moved.dtype)
         if inverse:
-            transformed = moved @ matrix
+            transformed = plan.inverse_last_axis(moved)
         else:
-            transformed = moved @ matrix.transpose(-1, -2)
+            transformed = plan.forward_last_axis(moved)
         return transformed.movedim(-1, axis)
 
     def forward(
