@@ -640,7 +640,7 @@ def test_decomposition_rejects_non_facade_inputs(value):
         decompose_plane_beris_edwards_run_spec(value)
 
 
-def test_adapter_stays_private_and_only_application_consumer_is_pending():
+def test_adapter_stays_private_and_all_phase2_consumers_are_migrated():
     import pssolver.configuration.plane_beris_edwards_components as components
 
     name = "decompose_plane_beris_edwards_run_spec"
@@ -663,19 +663,14 @@ def test_adapter_stays_private_and_only_application_consumer_is_pending():
     assert name not in facade_source
     for relative in (
         "pssolver/applications/plane_beris_edwards.py",
-    ):
-        source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
-        assert "plane_beris_edwards_components" not in source
-        assert name not in source
-
-    for relative in (
         "pssolver/runtime/plane_legacy.py",
         "pssolver/runtime/plane_beris_edwards.py",
         "pssolver/workflows/plane_beris_edwards.py",
     ):
         runtime_source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
         assert "plane_beris_edwards_components" in runtime_source
-        assert runtime_source.count(name) == 2
+        expected_count = 3 if relative.startswith("pssolver/applications/") else 2
+        assert runtime_source.count(name) == expected_count
 
     tree = ast.parse(
         COMPONENT_MODULE.read_text(encoding="utf-8"),
@@ -716,6 +711,7 @@ def test_adapter_stays_private_and_only_application_consumer_is_pending():
             COMPONENT_MODULE,
             COMPONENT_GRAPH_MODULE,
             FACADE_MODULE,
+            PROJECT_ROOT / "pssolver/applications/plane_beris_edwards.py",
             PROJECT_ROOT / "pssolver/runtime/plane_legacy.py",
             PROJECT_ROOT / "pssolver/runtime/plane_beris_edwards.py",
             PROJECT_ROOT / "pssolver/workflows/plane_beris_edwards.py",

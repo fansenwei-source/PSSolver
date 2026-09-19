@@ -1064,12 +1064,6 @@ def test_components_remain_provisional_with_three_migrated_consumers():
 
     for relative in (
         "pssolver/applications/plane_beris_edwards.py",
-    ):
-        source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
-        assert "plane_beris_edwards_components" not in source
-        assert "active_nematics.specifications" not in source
-
-    for relative in (
         "pssolver/runtime/plane_legacy.py",
         "pssolver/runtime/plane_beris_edwards.py",
         "pssolver/workflows/plane_beris_edwards.py",

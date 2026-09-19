@@ -134,8 +134,29 @@ def _forbid_expensive_application_work(monkeypatch):
         monkeypatch.setattr(application, name, forbidden)
 
 
-def test_application_flat_facade_read_set_is_frozen_before_migration():
-    assert _run_spec_reads() == FLAT_APPLICATION_READS | FACADE_METHOD_READS
+def test_application_uses_one_component_graph_and_only_facade_identity_methods(
+    tmp_path,
+    monkeypatch,
+):
+    assert _run_spec_reads() == FACADE_METHOD_READS
+    calls = []
+    original = application.decompose_plane_beris_edwards_run_spec
+
+    def spy(value):
+        result = original(value)
+        calls.append((value, result))
+        return result
+
+    monkeypatch.setattr(
+        application,
+        "decompose_plane_beris_edwards_run_spec",
+        spy,
+    )
+    spec = _spec(tmp_path, dry_run=True)
+    assert application.run_plane_beris_edwards(spec) is None
+    assert len(calls) == 1
+    assert calls[0][0] is spec
+    assert FLAT_APPLICATION_READS.isdisjoint(_run_spec_reads())
 
 
 def test_dry_run_emits_metadata_before_allocation_and_creates_no_output(
