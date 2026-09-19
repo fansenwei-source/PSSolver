@@ -37,4 +37,3 @@ Strong anchoring and nonhomogeneous wall laws are bound to geometric faces but
 do not live in the geometry module.  Planning may choose lifting, a compatible
 eigenbasis, tau/bordering, or a surface-energy closure according to the
 physical boundary assignment and solver capability.
-

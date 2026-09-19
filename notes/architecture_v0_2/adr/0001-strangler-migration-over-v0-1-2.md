@@ -43,4 +43,3 @@ because it has cleaner object boundaries.
 
 This decision may be revisited only after an opt-in compiled runtime meets the
 full Plane numerical, restart, output, memory, and H100 performance gates.
-

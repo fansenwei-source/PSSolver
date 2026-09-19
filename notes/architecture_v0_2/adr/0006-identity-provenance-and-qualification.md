@@ -51,4 +51,3 @@ exists.
 An execution optimization can be audited without changing scientific
 identity.  Qualification evidence cannot silently authorize a new default,
 and tolerances cannot be relaxed after observing a result.
-

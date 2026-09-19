@@ -777,4 +777,3 @@ class TensorProductTransformBackend:
             axis,
         )
         return derivative, derivative_bcs
-

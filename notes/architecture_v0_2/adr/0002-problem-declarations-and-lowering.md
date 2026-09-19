@@ -45,4 +45,3 @@ not introduce a symbolic equation language.
 `PlaneBerisEdwardsRunSpec` remains the v0.1.2 compatibility facade while its
 responsibilities are split internally in a later phase.  Phase 0 changes no
 configuration schema or CLI behavior.
-

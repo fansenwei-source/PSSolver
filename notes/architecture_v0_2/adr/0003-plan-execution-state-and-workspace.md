@@ -48,4 +48,3 @@ retain an autograd graph.
 State and checkpoint contracts become inspectable without forcing a slower
 per-component runtime.  Internal packing remains private and may evolve as
 long as semantic state and qualified outputs are preserved.
-
