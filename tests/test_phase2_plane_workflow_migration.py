@@ -114,8 +114,49 @@ def _run_spec_reads() -> set[str]:
     return values
 
 
-def test_workflow_flat_facade_read_set_is_frozen_before_migration():
-    assert _run_spec_reads() == FLAT_WORKFLOW_READS | FACADE_METHOD_READS
+def test_workflow_uses_one_component_graph_and_only_facade_identity_method(
+    tmp_path,
+    monkeypatch,
+):
+    assert _run_spec_reads() == FACADE_METHOD_READS
+    assert FLAT_WORKFLOW_READS == {
+        "checkpoint_interval",
+        "diagnostic_interval",
+        "diagnostics",
+        "eta",
+        "friction_mode_fric",
+        "restart_from",
+        "runtime_path",
+        "save_hydrodynamics",
+        "save_interval",
+        "save_start_step",
+        "steps",
+        "zero_mode_policy",
+    }
+
+    calls = []
+    original = workflow_module.decompose_plane_beris_edwards_run_spec
+
+    def spy(value):
+        result = original(value)
+        calls.append((value, result))
+        return result
+
+    monkeypatch.setattr(
+        workflow_module,
+        "decompose_plane_beris_edwards_run_spec",
+        spy,
+    )
+    spec = _spec(tmp_path)
+    workflow = PlaneBerisEdwardsWorkflow(
+        _Adapter(),
+        spec,
+        tmp_path,
+        {"initial_condition": {}, "numerics": {}},
+    )
+    assert len(calls) == 1
+    assert calls[0][0] is spec
+    assert workflow._components is calls[0][1]
 
 
 @pytest.mark.parametrize(

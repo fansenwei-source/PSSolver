@@ -1015,7 +1015,7 @@ def test_new_leaf_modules_preserve_the_dependency_boundary():
     assert "from pssolver.execution" not in graph_source
 
 
-def test_components_remain_provisional_with_two_migrated_consumers():
+def test_components_remain_provisional_with_three_migrated_consumers():
     provisional_names = {
         "BerisEdwardsMaterialRequest",
         "ExtrudedDefectGasInitialConditionSpec",
@@ -1064,7 +1064,6 @@ def test_components_remain_provisional_with_two_migrated_consumers():
 
     for relative in (
         "pssolver/applications/plane_beris_edwards.py",
-        "pssolver/workflows/plane_beris_edwards.py",
     ):
         source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
         assert "plane_beris_edwards_components" not in source
@@ -1073,6 +1072,7 @@ def test_components_remain_provisional_with_two_migrated_consumers():
     for relative in (
         "pssolver/runtime/plane_legacy.py",
         "pssolver/runtime/plane_beris_edwards.py",
+        "pssolver/workflows/plane_beris_edwards.py",
     ):
         runtime_source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
         assert "plane_beris_edwards_components" in runtime_source

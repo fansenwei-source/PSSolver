@@ -640,7 +640,7 @@ def test_decomposition_rejects_non_facade_inputs(value):
         decompose_plane_beris_edwards_run_spec(value)
 
 
-def test_adapter_stays_private_and_only_runtime_consumers_are_migrated():
+def test_adapter_stays_private_and_only_application_consumer_is_pending():
     import pssolver.configuration.plane_beris_edwards_components as components
 
     name = "decompose_plane_beris_edwards_run_spec"
@@ -663,7 +663,6 @@ def test_adapter_stays_private_and_only_runtime_consumers_are_migrated():
     assert name not in facade_source
     for relative in (
         "pssolver/applications/plane_beris_edwards.py",
-        "pssolver/workflows/plane_beris_edwards.py",
     ):
         source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
         assert "plane_beris_edwards_components" not in source
@@ -672,6 +671,7 @@ def test_adapter_stays_private_and_only_runtime_consumers_are_migrated():
     for relative in (
         "pssolver/runtime/plane_legacy.py",
         "pssolver/runtime/plane_beris_edwards.py",
+        "pssolver/workflows/plane_beris_edwards.py",
     ):
         runtime_source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
         assert "plane_beris_edwards_components" in runtime_source
@@ -718,6 +718,7 @@ def test_adapter_stays_private_and_only_runtime_consumers_are_migrated():
             FACADE_MODULE,
             PROJECT_ROOT / "pssolver/runtime/plane_legacy.py",
             PROJECT_ROOT / "pssolver/runtime/plane_beris_edwards.py",
+            PROJECT_ROOT / "pssolver/workflows/plane_beris_edwards.py",
         }:
             continue
         source = path.read_text(encoding="utf-8")

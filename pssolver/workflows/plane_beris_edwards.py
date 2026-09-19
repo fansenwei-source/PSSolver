@@ -9,6 +9,9 @@ from pathlib import Path
 import time
 
 from pssolver.configuration import PlaneBerisEdwardsRunSpec
+from pssolver.configuration.plane_beris_edwards_components import (
+    decompose_plane_beris_edwards_run_spec,
+)
 from pssolver.run_metadata import write_run_metadata
 from pssolver.runtime import PlaneRuntimeAdapterProtocol
 
@@ -59,7 +62,8 @@ class PlaneBerisEdwardsWorkflow:
             raise TypeError("adapter must implement PlaneRuntimeAdapterProtocol")
         if not isinstance(run_spec, PlaneBerisEdwardsRunSpec):
             raise TypeError("run_spec must be PlaneBerisEdwardsRunSpec")
-        if adapter.runtime_path is not run_spec.runtime_path:
+        components = decompose_plane_beris_edwards_run_spec(run_spec)
+        if adapter.runtime_path is not components.execution.runtime_path:
             raise ValueError("workflow runtime path differs from run specification")
         directory = Path(output_directory).expanduser().resolve()
         if not directory.is_dir():
@@ -68,6 +72,7 @@ class PlaneBerisEdwardsWorkflow:
             raise TypeError("metadata must be a mapping")
         self.adapter = adapter
         self.run_spec = run_spec
+        self._components = components
         self.output_directory = directory
         self.metadata = deepcopy(dict(metadata))
         self._diagnostics: list[PlaneDiagnostic] = []
@@ -78,12 +83,8 @@ class PlaneBerisEdwardsWorkflow:
         value = capture_plane_diagnostic(
             self.adapter,
             step=step,
-            viscosity=self.run_spec.eta,
-            friction=(
-                0.0
-                if self.run_spec.zero_mode_policy == "zero_mean"
-                else self.run_spec.friction_mode_fric
-            ),
+            viscosity=self._components.physics.stokes.viscosity,
+            friction=self._components.physics.stokes.friction,
         )
         self._diagnostics.append(value)
         return value
@@ -93,7 +94,9 @@ class PlaneBerisEdwardsWorkflow:
         write_plane_observation(
             self.output_directory,
             observation,
-            save_hydrodynamics=self.run_spec.save_hydrodynamics,
+            save_hydrodynamics=(
+                self._components.workflow.save_hydrodynamics
+            ),
         )
         self._saved_steps.append(step)
         return observation
@@ -112,7 +115,7 @@ class PlaneBerisEdwardsWorkflow:
         self._checkpoint_steps.append(checkpoint.completed_steps)
 
     def _restore_if_requested(self) -> int:
-        source = self.run_spec.restart_from
+        source = self._components.workflow.restart_from
         if source is None:
             if self.adapter.completed_steps != 0:
                 raise ValueError("new Plane workflow requires an unadvanced runtime")
@@ -141,8 +144,8 @@ class PlaneBerisEdwardsWorkflow:
 
     def _record_pre_update(self, step: int, progress: object) -> None:
         if (
-            self.run_spec.diagnostics
-            and step % self.run_spec.diagnostic_interval == 0
+            self._components.workflow.diagnostics
+            and step % self._components.workflow.diagnostic_interval == 0
         ):
             value = self._capture_diagnostic(step)
             setter = getattr(progress, "set_postfix", None)
@@ -158,8 +161,8 @@ class PlaneBerisEdwardsWorkflow:
                     ),
                 )
         if (
-            step >= self.run_spec.save_start_step
-            and step % self.run_spec.save_interval == 0
+            step >= self._components.workflow.save_start_step
+            and step % self._components.workflow.save_interval == 0
         ):
             self._save_observation(step)
 
@@ -181,7 +184,7 @@ class PlaneBerisEdwardsWorkflow:
             ),
             "cross_backend_restart_supported": False,
             "start_step": start_step,
-            "requested_additional_steps": self.run_spec.steps,
+            "requested_additional_steps": self._components.workflow.steps,
             "completion_marker_order": "metadata_then_COMPLETE",
         }
         write_run_metadata(
@@ -190,7 +193,11 @@ class PlaneBerisEdwardsWorkflow:
             status="running",
         )
 
-        iterator = range(self.run_spec.steps) if progress is None else progress
+        iterator = (
+            range(self._components.workflow.steps)
+            if progress is None
+            else progress
+        )
         executed = 0
         started = time.time()
         for local_step in iterator:
@@ -208,16 +215,16 @@ class PlaneBerisEdwardsWorkflow:
             executed += 1
             if self.adapter.completed_steps != start_step + executed:
                 raise RuntimeError("runtime completed-step clock diverged")
-            interval = self.run_spec.checkpoint_interval
+            interval = self._components.workflow.checkpoint_interval
             if interval is not None and self.adapter.completed_steps % interval == 0:
                 self._save_checkpoint()
-        if executed != self.run_spec.steps:
+        if executed != self._components.workflow.steps:
             raise ValueError("progress iterator length differs from requested steps")
 
         final_step = start_step + executed
         self.adapter.synchronize_for_observation()
         final_observation = self._save_observation(final_step)
-        if self.run_spec.diagnostics:
+        if self._components.workflow.diagnostics:
             self._capture_diagnostic(final_step)
             write_plane_diagnostics(
                 self.output_directory,
