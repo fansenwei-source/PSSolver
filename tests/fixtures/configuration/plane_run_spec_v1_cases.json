@@ -1,0 +1,2799 @@
+{
+  "base_factory_kwargs": {
+    "activity_number": 18.0,
+    "output_dir": "oracle/run"
+  },
+  "canonical_json_encoding": {
+    "allow_nan": false,
+    "encoding": "utf-8",
+    "separators": [
+      ",",
+      ":"
+    ],
+    "sort_keys": true
+  },
+  "cases": [
+    {
+      "canonical_sha256": "2d55f648ce3bcb973ee597ea002525e49b6dd6eb7a69ec2b635eb0b82d53e224",
+      "expected_canonical_json": "{\"activity_number\":18.0,\"authority\":\"pssolver.configuration.PlaneBerisEdwardsRunSpec\",\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"initial_condition\":{\"background_angle\":0.0,\"defect_core_radius\":1.5,\"defect_min_separation\":10.0,\"num_defect_pairs\":6,\"seed\":24,\"twist_amplitude\":0.01,\"twist_modes\":[1,2,3]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"initial_s\":0.3333333333333333,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"spectral\",\"pointwise_execution\":\"compile\",\"stress_divergence_sum_space\":\"spectral\"},\"numerics\":{\"dealias_rule\":\"cubic_half\",\"hermitian_axis\":1,\"precision\":\"float32\",\"projected_transform_execution\":\"truncated\",\"spectral_storage\":\"hermitian_half\",\"transform_execution_order\":\"real_first\"},\"output_dir\":\"oracle/run\",\"parameterization\":\"paper-window\",\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"dry_run\":false,\"tf32\":\"off\",\"validation_config_sha256\":null},\"runtime_path\":\"legacy_production\",\"schema_version\":1,\"workflow\":{\"checkpoint_interval\":null,\"diagnostic_interval\":100,\"diagnostics\":false,\"dt\":0.01,\"restart_from\":null,\"save_hydrodynamics\":false,\"save_interval\":500,\"save_start_step\":5000,\"spectral_refresh\":{\"effective_interval_steps\":20,\"effective_interval_time\":0.2,\"mode\":\"physical_time\",\"requested_interval_steps\":null,\"requested_interval_time\":0.2},\"steps\":10000},\"zero_mode\":{\"friction_mode_fric\":0.1,\"policy\":\"zero_mean\"}}",
+      "expected_identity_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "canonical_sha256": "2d55f648ce3bcb973ee597ea002525e49b6dd6eb7a69ec2b635eb0b82d53e224",
+        "runtime_path": "legacy_production",
+        "schema_version": 1
+      },
+      "expected_metadata": {
+        "activity_number": 18.0,
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "initial_condition": {
+          "background_angle": 0.0,
+          "defect_core_radius": 1.5,
+          "defect_min_separation": 10.0,
+          "num_defect_pairs": 6,
+          "seed": 24,
+          "twist_amplitude": 0.01,
+          "twist_modes": [
+            1,
+            2,
+            3
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "initial_s": 0.3333333333333333,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "spectral",
+          "pointwise_execution": "compile",
+          "stress_divergence_sum_space": "spectral"
+        },
+        "numerics": {
+          "dealias_rule": "cubic_half",
+          "hermitian_axis": 1,
+          "precision": "float32",
+          "projected_transform_execution": "truncated",
+          "spectral_storage": "hermitian_half",
+          "transform_execution_order": "real_first"
+        },
+        "output_dir": "oracle/run",
+        "parameterization": "paper-window",
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "dry_run": false,
+          "tf32": "off",
+          "validation_config_sha256": null
+        },
+        "runtime_path": "legacy_production",
+        "schema_version": 1,
+        "workflow": {
+          "checkpoint_interval": null,
+          "diagnostic_interval": 100,
+          "diagnostics": false,
+          "dt": 0.01,
+          "restart_from": null,
+          "save_hydrodynamics": false,
+          "save_interval": 500,
+          "save_start_step": 5000,
+          "spectral_refresh": {
+            "effective_interval_steps": 20,
+            "effective_interval_time": 0.2,
+            "mode": "physical_time",
+            "requested_interval_steps": null,
+            "requested_interval_time": 0.2
+          },
+          "steps": 10000
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.1,
+          "policy": "zero_mean"
+        }
+      },
+      "expected_runtime_identity_json": "{\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"dt\":0.01,\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"spectral\",\"pointwise_execution\":\"compile\",\"stress_divergence_sum_space\":\"spectral\"},\"numerics\":{\"dealias_rule\":\"cubic_half\",\"hermitian_axis\":1,\"precision\":\"float32\",\"projected_transform_execution\":\"truncated\",\"spectral_storage\":\"hermitian_half\",\"transform_execution_order\":\"real_first\"},\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime_controls\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"tf32\":\"off\"},\"runtime_path\":\"legacy_production\",\"schema_version\":1,\"spectral_refresh\":{\"effective_interval_steps\":20,\"effective_interval_time\":0.2,\"mode\":\"physical_time\",\"requested_interval_steps\":null,\"requested_interval_time\":0.2},\"zero_mode\":{\"friction_mode_fric\":0.1,\"policy\":\"zero_mean\"}}",
+      "expected_runtime_identity_metadata": {
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "dt": 0.01,
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "spectral",
+          "pointwise_execution": "compile",
+          "stress_divergence_sum_space": "spectral"
+        },
+        "numerics": {
+          "dealias_rule": "cubic_half",
+          "hermitian_axis": 1,
+          "precision": "float32",
+          "projected_transform_execution": "truncated",
+          "spectral_storage": "hermitian_half",
+          "transform_execution_order": "real_first"
+        },
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime_controls": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "tf32": "off"
+        },
+        "runtime_path": "legacy_production",
+        "schema_version": 1,
+        "spectral_refresh": {
+          "effective_interval_steps": 20,
+          "effective_interval_time": 0.2,
+          "mode": "physical_time",
+          "requested_interval_steps": null,
+          "requested_interval_time": 0.2
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.1,
+          "policy": "zero_mean"
+        }
+      },
+      "expected_runtime_selection_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec.runtime_path",
+        "default": "legacy_production",
+        "effective": "legacy_production",
+        "fallback_allowed": false,
+        "requested": "legacy_production"
+      },
+      "factory_overrides": {},
+      "name": "default",
+      "runtime_identity_sha256": "0b2dfecb641a19b459624a026b81d6087784bca1096f0b0360cfcfd51d8630ae"
+    },
+    {
+      "canonical_sha256": "8c90b4a5585c7b9f73890e9607ef54ba3b98d4178c89f593742ecda8bf1375c9",
+      "expected_canonical_json": "{\"activity_number\":18.0,\"authority\":\"pssolver.configuration.PlaneBerisEdwardsRunSpec\",\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"initial_condition\":{\"background_angle\":0.0,\"defect_core_radius\":1.5,\"defect_min_separation\":10.0,\"num_defect_pairs\":6,\"seed\":24,\"twist_amplitude\":0.01,\"twist_modes\":[1,2,3]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"initial_s\":0.3333333333333333,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"spectral\",\"pointwise_execution\":\"eager\",\"stress_divergence_sum_space\":\"spectral\"},\"numerics\":{\"dealias_rule\":\"cubic_half\",\"hermitian_axis\":1,\"precision\":\"float64\",\"projected_transform_execution\":\"truncated\",\"spectral_storage\":\"hermitian_half\",\"transform_execution_order\":\"real_first\"},\"output_dir\":\"oracle/float64_disabled\",\"parameterization\":\"paper-window\",\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"dry_run\":false,\"tf32\":\"off\",\"validation_config_sha256\":null},\"runtime_path\":\"legacy_production\",\"schema_version\":1,\"workflow\":{\"checkpoint_interval\":null,\"diagnostic_interval\":100,\"diagnostics\":false,\"dt\":0.01,\"restart_from\":null,\"save_hydrodynamics\":false,\"save_interval\":500,\"save_start_step\":5000,\"spectral_refresh\":{\"effective_interval_steps\":null,\"effective_interval_time\":null,\"mode\":\"disabled\",\"requested_interval_steps\":null,\"requested_interval_time\":null},\"steps\":10000},\"zero_mode\":{\"friction_mode_fric\":0.1,\"policy\":\"zero_mean\"}}",
+      "expected_identity_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "canonical_sha256": "8c90b4a5585c7b9f73890e9607ef54ba3b98d4178c89f593742ecda8bf1375c9",
+        "runtime_path": "legacy_production",
+        "schema_version": 1
+      },
+      "expected_metadata": {
+        "activity_number": 18.0,
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "initial_condition": {
+          "background_angle": 0.0,
+          "defect_core_radius": 1.5,
+          "defect_min_separation": 10.0,
+          "num_defect_pairs": 6,
+          "seed": 24,
+          "twist_amplitude": 0.01,
+          "twist_modes": [
+            1,
+            2,
+            3
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "initial_s": 0.3333333333333333,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "spectral",
+          "pointwise_execution": "eager",
+          "stress_divergence_sum_space": "spectral"
+        },
+        "numerics": {
+          "dealias_rule": "cubic_half",
+          "hermitian_axis": 1,
+          "precision": "float64",
+          "projected_transform_execution": "truncated",
+          "spectral_storage": "hermitian_half",
+          "transform_execution_order": "real_first"
+        },
+        "output_dir": "oracle/float64_disabled",
+        "parameterization": "paper-window",
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "dry_run": false,
+          "tf32": "off",
+          "validation_config_sha256": null
+        },
+        "runtime_path": "legacy_production",
+        "schema_version": 1,
+        "workflow": {
+          "checkpoint_interval": null,
+          "diagnostic_interval": 100,
+          "diagnostics": false,
+          "dt": 0.01,
+          "restart_from": null,
+          "save_hydrodynamics": false,
+          "save_interval": 500,
+          "save_start_step": 5000,
+          "spectral_refresh": {
+            "effective_interval_steps": null,
+            "effective_interval_time": null,
+            "mode": "disabled",
+            "requested_interval_steps": null,
+            "requested_interval_time": null
+          },
+          "steps": 10000
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.1,
+          "policy": "zero_mean"
+        }
+      },
+      "expected_runtime_identity_json": "{\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"dt\":0.01,\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"spectral\",\"pointwise_execution\":\"eager\",\"stress_divergence_sum_space\":\"spectral\"},\"numerics\":{\"dealias_rule\":\"cubic_half\",\"hermitian_axis\":1,\"precision\":\"float64\",\"projected_transform_execution\":\"truncated\",\"spectral_storage\":\"hermitian_half\",\"transform_execution_order\":\"real_first\"},\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime_controls\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"tf32\":\"off\"},\"runtime_path\":\"legacy_production\",\"schema_version\":1,\"spectral_refresh\":{\"effective_interval_steps\":null,\"effective_interval_time\":null,\"mode\":\"disabled\",\"requested_interval_steps\":null,\"requested_interval_time\":null},\"zero_mode\":{\"friction_mode_fric\":0.1,\"policy\":\"zero_mean\"}}",
+      "expected_runtime_identity_metadata": {
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "dt": 0.01,
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "spectral",
+          "pointwise_execution": "eager",
+          "stress_divergence_sum_space": "spectral"
+        },
+        "numerics": {
+          "dealias_rule": "cubic_half",
+          "hermitian_axis": 1,
+          "precision": "float64",
+          "projected_transform_execution": "truncated",
+          "spectral_storage": "hermitian_half",
+          "transform_execution_order": "real_first"
+        },
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime_controls": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "tf32": "off"
+        },
+        "runtime_path": "legacy_production",
+        "schema_version": 1,
+        "spectral_refresh": {
+          "effective_interval_steps": null,
+          "effective_interval_time": null,
+          "mode": "disabled",
+          "requested_interval_steps": null,
+          "requested_interval_time": null
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.1,
+          "policy": "zero_mean"
+        }
+      },
+      "expected_runtime_selection_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec.runtime_path",
+        "default": "legacy_production",
+        "effective": "legacy_production",
+        "fallback_allowed": false,
+        "requested": "legacy_production"
+      },
+      "factory_overrides": {
+        "disable_spectral_refresh": true,
+        "dtype": "float64",
+        "output_dir": "oracle/float64_disabled",
+        "pointwise_execution": "eager"
+      },
+      "name": "float64_eager_refresh_disabled",
+      "runtime_identity_sha256": "2362f8152d68b7809ec803ab3472aa7271a5058edd4d955190ccdb213cb9113b"
+    },
+    {
+      "canonical_sha256": "7bf254f0781e3bf2d23e8661cb88846fcddac17a04a0e6f326f17ae4e1c9f77f",
+      "expected_canonical_json": "{\"activity_number\":18.0,\"authority\":\"pssolver.configuration.PlaneBerisEdwardsRunSpec\",\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"initial_condition\":{\"background_angle\":0.0,\"defect_core_radius\":1.5,\"defect_min_separation\":10.0,\"num_defect_pairs\":6,\"seed\":24,\"twist_amplitude\":0.01,\"twist_modes\":[1,2,3]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"initial_s\":0.3333333333333333,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"spectral\",\"pointwise_execution\":\"compile\",\"stress_divergence_sum_space\":\"spectral\"},\"numerics\":{\"dealias_rule\":\"cubic_half\",\"hermitian_axis\":1,\"precision\":\"float32\",\"projected_transform_execution\":\"truncated\",\"spectral_storage\":\"hermitian_half\",\"transform_execution_order\":\"real_first\"},\"output_dir\":\"oracle/step_refresh\",\"parameterization\":\"paper-window\",\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"dry_run\":false,\"tf32\":\"off\",\"validation_config_sha256\":null},\"runtime_path\":\"legacy_production\",\"schema_version\":1,\"workflow\":{\"checkpoint_interval\":null,\"diagnostic_interval\":100,\"diagnostics\":false,\"dt\":0.01,\"restart_from\":null,\"save_hydrodynamics\":false,\"save_interval\":500,\"save_start_step\":5000,\"spectral_refresh\":{\"effective_interval_steps\":7,\"effective_interval_time\":0.07,\"mode\":\"steps\",\"requested_interval_steps\":7,\"requested_interval_time\":null},\"steps\":10000},\"zero_mode\":{\"friction_mode_fric\":0.1,\"policy\":\"zero_mean\"}}",
+      "expected_identity_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "canonical_sha256": "7bf254f0781e3bf2d23e8661cb88846fcddac17a04a0e6f326f17ae4e1c9f77f",
+        "runtime_path": "legacy_production",
+        "schema_version": 1
+      },
+      "expected_metadata": {
+        "activity_number": 18.0,
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "initial_condition": {
+          "background_angle": 0.0,
+          "defect_core_radius": 1.5,
+          "defect_min_separation": 10.0,
+          "num_defect_pairs": 6,
+          "seed": 24,
+          "twist_amplitude": 0.01,
+          "twist_modes": [
+            1,
+            2,
+            3
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "initial_s": 0.3333333333333333,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "spectral",
+          "pointwise_execution": "compile",
+          "stress_divergence_sum_space": "spectral"
+        },
+        "numerics": {
+          "dealias_rule": "cubic_half",
+          "hermitian_axis": 1,
+          "precision": "float32",
+          "projected_transform_execution": "truncated",
+          "spectral_storage": "hermitian_half",
+          "transform_execution_order": "real_first"
+        },
+        "output_dir": "oracle/step_refresh",
+        "parameterization": "paper-window",
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "dry_run": false,
+          "tf32": "off",
+          "validation_config_sha256": null
+        },
+        "runtime_path": "legacy_production",
+        "schema_version": 1,
+        "workflow": {
+          "checkpoint_interval": null,
+          "diagnostic_interval": 100,
+          "diagnostics": false,
+          "dt": 0.01,
+          "restart_from": null,
+          "save_hydrodynamics": false,
+          "save_interval": 500,
+          "save_start_step": 5000,
+          "spectral_refresh": {
+            "effective_interval_steps": 7,
+            "effective_interval_time": 0.07,
+            "mode": "steps",
+            "requested_interval_steps": 7,
+            "requested_interval_time": null
+          },
+          "steps": 10000
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.1,
+          "policy": "zero_mean"
+        }
+      },
+      "expected_runtime_identity_json": "{\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"dt\":0.01,\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"spectral\",\"pointwise_execution\":\"compile\",\"stress_divergence_sum_space\":\"spectral\"},\"numerics\":{\"dealias_rule\":\"cubic_half\",\"hermitian_axis\":1,\"precision\":\"float32\",\"projected_transform_execution\":\"truncated\",\"spectral_storage\":\"hermitian_half\",\"transform_execution_order\":\"real_first\"},\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime_controls\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"tf32\":\"off\"},\"runtime_path\":\"legacy_production\",\"schema_version\":1,\"spectral_refresh\":{\"effective_interval_steps\":7,\"effective_interval_time\":0.07,\"mode\":\"steps\",\"requested_interval_steps\":7,\"requested_interval_time\":null},\"zero_mode\":{\"friction_mode_fric\":0.1,\"policy\":\"zero_mean\"}}",
+      "expected_runtime_identity_metadata": {
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "dt": 0.01,
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "spectral",
+          "pointwise_execution": "compile",
+          "stress_divergence_sum_space": "spectral"
+        },
+        "numerics": {
+          "dealias_rule": "cubic_half",
+          "hermitian_axis": 1,
+          "precision": "float32",
+          "projected_transform_execution": "truncated",
+          "spectral_storage": "hermitian_half",
+          "transform_execution_order": "real_first"
+        },
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime_controls": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "tf32": "off"
+        },
+        "runtime_path": "legacy_production",
+        "schema_version": 1,
+        "spectral_refresh": {
+          "effective_interval_steps": 7,
+          "effective_interval_time": 0.07,
+          "mode": "steps",
+          "requested_interval_steps": 7,
+          "requested_interval_time": null
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.1,
+          "policy": "zero_mean"
+        }
+      },
+      "expected_runtime_selection_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec.runtime_path",
+        "default": "legacy_production",
+        "effective": "legacy_production",
+        "fallback_allowed": false,
+        "requested": "legacy_production"
+      },
+      "factory_overrides": {
+        "output_dir": "oracle/step_refresh",
+        "spectral_refresh_steps": 7
+      },
+      "name": "step_refresh_7",
+      "runtime_identity_sha256": "4b26a4da770ec852f25400f733ae161c8dc98f26e7488f87b97692b1c79273d1"
+    },
+    {
+      "canonical_sha256": "7f89b9d2b9c968999677d8b8201e4197f6d18f93bc2a202eed99e01f8a371772",
+      "expected_canonical_json": "{\"activity_number\":18.0,\"authority\":\"pssolver.configuration.PlaneBerisEdwardsRunSpec\",\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"initial_condition\":{\"background_angle\":0.0,\"defect_core_radius\":1.5,\"defect_min_separation\":10.0,\"num_defect_pairs\":6,\"seed\":24,\"twist_amplitude\":0.01,\"twist_modes\":[1,2,3]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"initial_s\":0.3333333333333333,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"spectral\",\"pointwise_execution\":\"compile\",\"stress_divergence_sum_space\":\"spectral\"},\"numerics\":{\"dealias_rule\":\"cubic_half\",\"hermitian_axis\":1,\"precision\":\"float32\",\"projected_transform_execution\":\"truncated\",\"spectral_storage\":\"hermitian_half\",\"transform_execution_order\":\"real_first\"},\"output_dir\":\"oracle/friction\",\"parameterization\":\"paper-window\",\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"dry_run\":false,\"tf32\":\"off\",\"validation_config_sha256\":null},\"runtime_path\":\"legacy_production\",\"schema_version\":1,\"workflow\":{\"checkpoint_interval\":null,\"diagnostic_interval\":100,\"diagnostics\":false,\"dt\":0.01,\"restart_from\":null,\"save_hydrodynamics\":false,\"save_interval\":500,\"save_start_step\":5000,\"spectral_refresh\":{\"effective_interval_steps\":20,\"effective_interval_time\":0.2,\"mode\":\"physical_time\",\"requested_interval_steps\":null,\"requested_interval_time\":0.2},\"steps\":10000},\"zero_mode\":{\"friction_mode_fric\":0.125,\"policy\":\"friction\"}}",
+      "expected_identity_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "canonical_sha256": "7f89b9d2b9c968999677d8b8201e4197f6d18f93bc2a202eed99e01f8a371772",
+        "runtime_path": "legacy_production",
+        "schema_version": 1
+      },
+      "expected_metadata": {
+        "activity_number": 18.0,
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "initial_condition": {
+          "background_angle": 0.0,
+          "defect_core_radius": 1.5,
+          "defect_min_separation": 10.0,
+          "num_defect_pairs": 6,
+          "seed": 24,
+          "twist_amplitude": 0.01,
+          "twist_modes": [
+            1,
+            2,
+            3
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "initial_s": 0.3333333333333333,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "spectral",
+          "pointwise_execution": "compile",
+          "stress_divergence_sum_space": "spectral"
+        },
+        "numerics": {
+          "dealias_rule": "cubic_half",
+          "hermitian_axis": 1,
+          "precision": "float32",
+          "projected_transform_execution": "truncated",
+          "spectral_storage": "hermitian_half",
+          "transform_execution_order": "real_first"
+        },
+        "output_dir": "oracle/friction",
+        "parameterization": "paper-window",
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "dry_run": false,
+          "tf32": "off",
+          "validation_config_sha256": null
+        },
+        "runtime_path": "legacy_production",
+        "schema_version": 1,
+        "workflow": {
+          "checkpoint_interval": null,
+          "diagnostic_interval": 100,
+          "diagnostics": false,
+          "dt": 0.01,
+          "restart_from": null,
+          "save_hydrodynamics": false,
+          "save_interval": 500,
+          "save_start_step": 5000,
+          "spectral_refresh": {
+            "effective_interval_steps": 20,
+            "effective_interval_time": 0.2,
+            "mode": "physical_time",
+            "requested_interval_steps": null,
+            "requested_interval_time": 0.2
+          },
+          "steps": 10000
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.125,
+          "policy": "friction"
+        }
+      },
+      "expected_runtime_identity_json": "{\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"dt\":0.01,\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"spectral\",\"pointwise_execution\":\"compile\",\"stress_divergence_sum_space\":\"spectral\"},\"numerics\":{\"dealias_rule\":\"cubic_half\",\"hermitian_axis\":1,\"precision\":\"float32\",\"projected_transform_execution\":\"truncated\",\"spectral_storage\":\"hermitian_half\",\"transform_execution_order\":\"real_first\"},\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime_controls\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"tf32\":\"off\"},\"runtime_path\":\"legacy_production\",\"schema_version\":1,\"spectral_refresh\":{\"effective_interval_steps\":20,\"effective_interval_time\":0.2,\"mode\":\"physical_time\",\"requested_interval_steps\":null,\"requested_interval_time\":0.2},\"zero_mode\":{\"friction_mode_fric\":0.125,\"policy\":\"friction\"}}",
+      "expected_runtime_identity_metadata": {
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "dt": 0.01,
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "spectral",
+          "pointwise_execution": "compile",
+          "stress_divergence_sum_space": "spectral"
+        },
+        "numerics": {
+          "dealias_rule": "cubic_half",
+          "hermitian_axis": 1,
+          "precision": "float32",
+          "projected_transform_execution": "truncated",
+          "spectral_storage": "hermitian_half",
+          "transform_execution_order": "real_first"
+        },
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime_controls": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "tf32": "off"
+        },
+        "runtime_path": "legacy_production",
+        "schema_version": 1,
+        "spectral_refresh": {
+          "effective_interval_steps": 20,
+          "effective_interval_time": 0.2,
+          "mode": "physical_time",
+          "requested_interval_steps": null,
+          "requested_interval_time": 0.2
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.125,
+          "policy": "friction"
+        }
+      },
+      "expected_runtime_selection_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec.runtime_path",
+        "default": "legacy_production",
+        "effective": "legacy_production",
+        "fallback_allowed": false,
+        "requested": "legacy_production"
+      },
+      "factory_overrides": {
+        "friction_mode_fric": 0.125,
+        "output_dir": "oracle/friction",
+        "zero_mode_policy": "friction"
+      },
+      "name": "friction_0p125",
+      "runtime_identity_sha256": "4fc23f375e97d343d545c2b1bb5ca527d287d419561ad1aa324efe7f51d90718"
+    },
+    {
+      "canonical_sha256": "a7b699fd4c95359bb093b7e06d764677aea41c1ad2c4383375f1ea40480490ab",
+      "expected_canonical_json": "{\"activity_number\":18.0,\"authority\":\"pssolver.configuration.PlaneBerisEdwardsRunSpec\",\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"initial_condition\":{\"background_angle\":0.0,\"defect_core_radius\":1.5,\"defect_min_separation\":10.0,\"num_defect_pairs\":6,\"seed\":24,\"twist_amplitude\":0.01,\"twist_modes\":[1,2,3]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"initial_s\":0.3333333333333333,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"physical\",\"pointwise_execution\":\"eager\",\"stress_divergence_sum_space\":\"physical\"},\"numerics\":{\"dealias_rule\":\"two_thirds\",\"hermitian_axis\":null,\"precision\":\"float32\",\"projected_transform_execution\":\"full\",\"spectral_storage\":\"full_complex\",\"transform_execution_order\":\"legacy\"},\"output_dir\":\"oracle/rollback\",\"parameterization\":\"paper-window\",\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"dry_run\":false,\"tf32\":\"off\",\"validation_config_sha256\":null},\"runtime_path\":\"legacy_production\",\"schema_version\":1,\"workflow\":{\"checkpoint_interval\":null,\"diagnostic_interval\":100,\"diagnostics\":false,\"dt\":0.01,\"restart_from\":null,\"save_hydrodynamics\":false,\"save_interval\":500,\"save_start_step\":5000,\"spectral_refresh\":{\"effective_interval_steps\":20,\"effective_interval_time\":0.2,\"mode\":\"physical_time\",\"requested_interval_steps\":null,\"requested_interval_time\":0.2},\"steps\":10000},\"zero_mode\":{\"friction_mode_fric\":0.1,\"policy\":\"zero_mean\"}}",
+      "expected_identity_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "canonical_sha256": "a7b699fd4c95359bb093b7e06d764677aea41c1ad2c4383375f1ea40480490ab",
+        "runtime_path": "legacy_production",
+        "schema_version": 1
+      },
+      "expected_metadata": {
+        "activity_number": 18.0,
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "initial_condition": {
+          "background_angle": 0.0,
+          "defect_core_radius": 1.5,
+          "defect_min_separation": 10.0,
+          "num_defect_pairs": 6,
+          "seed": 24,
+          "twist_amplitude": 0.01,
+          "twist_modes": [
+            1,
+            2,
+            3
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "initial_s": 0.3333333333333333,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "physical",
+          "pointwise_execution": "eager",
+          "stress_divergence_sum_space": "physical"
+        },
+        "numerics": {
+          "dealias_rule": "two_thirds",
+          "hermitian_axis": null,
+          "precision": "float32",
+          "projected_transform_execution": "full",
+          "spectral_storage": "full_complex",
+          "transform_execution_order": "legacy"
+        },
+        "output_dir": "oracle/rollback",
+        "parameterization": "paper-window",
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "dry_run": false,
+          "tf32": "off",
+          "validation_config_sha256": null
+        },
+        "runtime_path": "legacy_production",
+        "schema_version": 1,
+        "workflow": {
+          "checkpoint_interval": null,
+          "diagnostic_interval": 100,
+          "diagnostics": false,
+          "dt": 0.01,
+          "restart_from": null,
+          "save_hydrodynamics": false,
+          "save_interval": 500,
+          "save_start_step": 5000,
+          "spectral_refresh": {
+            "effective_interval_steps": 20,
+            "effective_interval_time": 0.2,
+            "mode": "physical_time",
+            "requested_interval_steps": null,
+            "requested_interval_time": 0.2
+          },
+          "steps": 10000
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.1,
+          "policy": "zero_mean"
+        }
+      },
+      "expected_runtime_identity_json": "{\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"dt\":0.01,\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"physical\",\"pointwise_execution\":\"eager\",\"stress_divergence_sum_space\":\"physical\"},\"numerics\":{\"dealias_rule\":\"two_thirds\",\"hermitian_axis\":null,\"precision\":\"float32\",\"projected_transform_execution\":\"full\",\"spectral_storage\":\"full_complex\",\"transform_execution_order\":\"legacy\"},\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime_controls\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"tf32\":\"off\"},\"runtime_path\":\"legacy_production\",\"schema_version\":1,\"spectral_refresh\":{\"effective_interval_steps\":20,\"effective_interval_time\":0.2,\"mode\":\"physical_time\",\"requested_interval_steps\":null,\"requested_interval_time\":0.2},\"zero_mode\":{\"friction_mode_fric\":0.1,\"policy\":\"zero_mean\"}}",
+      "expected_runtime_identity_metadata": {
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "dt": 0.01,
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "physical",
+          "pointwise_execution": "eager",
+          "stress_divergence_sum_space": "physical"
+        },
+        "numerics": {
+          "dealias_rule": "two_thirds",
+          "hermitian_axis": null,
+          "precision": "float32",
+          "projected_transform_execution": "full",
+          "spectral_storage": "full_complex",
+          "transform_execution_order": "legacy"
+        },
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime_controls": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "tf32": "off"
+        },
+        "runtime_path": "legacy_production",
+        "schema_version": 1,
+        "spectral_refresh": {
+          "effective_interval_steps": 20,
+          "effective_interval_time": 0.2,
+          "mode": "physical_time",
+          "requested_interval_steps": null,
+          "requested_interval_time": 0.2
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.1,
+          "policy": "zero_mean"
+        }
+      },
+      "expected_runtime_selection_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec.runtime_path",
+        "default": "legacy_production",
+        "effective": "legacy_production",
+        "fallback_allowed": false,
+        "requested": "legacy_production"
+      },
+      "factory_overrides": {
+        "dealias_rule": "two_thirds",
+        "molecular_field_linear_space": "physical",
+        "output_dir": "oracle/rollback",
+        "pointwise_execution": "eager",
+        "projected_transform_execution": "full",
+        "spectral_storage": "full_complex",
+        "stress_divergence_sum_space": "physical",
+        "transform_execution_order": "legacy"
+      },
+      "name": "numerical_rollback",
+      "runtime_identity_sha256": "06af0a762a273b71cbf2f42a15fd4ed37d311774d9859326f92bcd4dd7e7cda7"
+    },
+    {
+      "canonical_sha256": "7f733f302a2f216a2fd79218b7802c7b412ff7a17de6f355837720d620a39d51",
+      "expected_canonical_json": "{\"activity_number\":18.0,\"authority\":\"pssolver.configuration.PlaneBerisEdwardsRunSpec\",\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"initial_condition\":{\"background_angle\":0.0,\"defect_core_radius\":1.5,\"defect_min_separation\":10.0,\"num_defect_pairs\":6,\"seed\":24,\"twist_amplitude\":0.01,\"twist_modes\":[1,2,3]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"initial_s\":0.3333333333333333,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"spectral\",\"pointwise_execution\":\"compile\",\"stress_divergence_sum_space\":\"spectral\"},\"numerics\":{\"dealias_rule\":\"cubic_half\",\"hermitian_axis\":1,\"precision\":\"float32\",\"projected_transform_execution\":\"truncated\",\"spectral_storage\":\"hermitian_half\",\"transform_execution_order\":\"real_first\"},\"output_dir\":\"oracle/canary\",\"parameterization\":\"paper-window\",\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"dry_run\":false,\"tf32\":\"off\",\"validation_config_sha256\":null},\"runtime_path\":\"separated_canary\",\"schema_version\":1,\"workflow\":{\"checkpoint_interval\":null,\"diagnostic_interval\":100,\"diagnostics\":false,\"dt\":0.01,\"restart_from\":null,\"save_hydrodynamics\":false,\"save_interval\":500,\"save_start_step\":5000,\"spectral_refresh\":{\"effective_interval_steps\":20,\"effective_interval_time\":0.2,\"mode\":\"physical_time\",\"requested_interval_steps\":null,\"requested_interval_time\":0.2},\"steps\":10000},\"zero_mode\":{\"friction_mode_fric\":0.1,\"policy\":\"zero_mean\"}}",
+      "expected_identity_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "canonical_sha256": "7f733f302a2f216a2fd79218b7802c7b412ff7a17de6f355837720d620a39d51",
+        "runtime_path": "separated_canary",
+        "schema_version": 1
+      },
+      "expected_metadata": {
+        "activity_number": 18.0,
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "initial_condition": {
+          "background_angle": 0.0,
+          "defect_core_radius": 1.5,
+          "defect_min_separation": 10.0,
+          "num_defect_pairs": 6,
+          "seed": 24,
+          "twist_amplitude": 0.01,
+          "twist_modes": [
+            1,
+            2,
+            3
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "initial_s": 0.3333333333333333,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "spectral",
+          "pointwise_execution": "compile",
+          "stress_divergence_sum_space": "spectral"
+        },
+        "numerics": {
+          "dealias_rule": "cubic_half",
+          "hermitian_axis": 1,
+          "precision": "float32",
+          "projected_transform_execution": "truncated",
+          "spectral_storage": "hermitian_half",
+          "transform_execution_order": "real_first"
+        },
+        "output_dir": "oracle/canary",
+        "parameterization": "paper-window",
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "dry_run": false,
+          "tf32": "off",
+          "validation_config_sha256": null
+        },
+        "runtime_path": "separated_canary",
+        "schema_version": 1,
+        "workflow": {
+          "checkpoint_interval": null,
+          "diagnostic_interval": 100,
+          "diagnostics": false,
+          "dt": 0.01,
+          "restart_from": null,
+          "save_hydrodynamics": false,
+          "save_interval": 500,
+          "save_start_step": 5000,
+          "spectral_refresh": {
+            "effective_interval_steps": 20,
+            "effective_interval_time": 0.2,
+            "mode": "physical_time",
+            "requested_interval_steps": null,
+            "requested_interval_time": 0.2
+          },
+          "steps": 10000
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.1,
+          "policy": "zero_mean"
+        }
+      },
+      "expected_runtime_identity_json": "{\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"dt\":0.01,\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"spectral\",\"pointwise_execution\":\"compile\",\"stress_divergence_sum_space\":\"spectral\"},\"numerics\":{\"dealias_rule\":\"cubic_half\",\"hermitian_axis\":1,\"precision\":\"float32\",\"projected_transform_execution\":\"truncated\",\"spectral_storage\":\"hermitian_half\",\"transform_execution_order\":\"real_first\"},\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime_controls\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"tf32\":\"off\"},\"runtime_path\":\"separated_canary\",\"schema_version\":1,\"spectral_refresh\":{\"effective_interval_steps\":20,\"effective_interval_time\":0.2,\"mode\":\"physical_time\",\"requested_interval_steps\":null,\"requested_interval_time\":0.2},\"zero_mode\":{\"friction_mode_fric\":0.1,\"policy\":\"zero_mean\"}}",
+      "expected_runtime_identity_metadata": {
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "dt": 0.01,
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "spectral",
+          "pointwise_execution": "compile",
+          "stress_divergence_sum_space": "spectral"
+        },
+        "numerics": {
+          "dealias_rule": "cubic_half",
+          "hermitian_axis": 1,
+          "precision": "float32",
+          "projected_transform_execution": "truncated",
+          "spectral_storage": "hermitian_half",
+          "transform_execution_order": "real_first"
+        },
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime_controls": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "tf32": "off"
+        },
+        "runtime_path": "separated_canary",
+        "schema_version": 1,
+        "spectral_refresh": {
+          "effective_interval_steps": 20,
+          "effective_interval_time": 0.2,
+          "mode": "physical_time",
+          "requested_interval_steps": null,
+          "requested_interval_time": 0.2
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.1,
+          "policy": "zero_mean"
+        }
+      },
+      "expected_runtime_selection_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec.runtime_path",
+        "default": "legacy_production",
+        "effective": "separated_canary",
+        "fallback_allowed": false,
+        "requested": "separated_canary"
+      },
+      "factory_overrides": {
+        "output_dir": "oracle/canary",
+        "runtime_path": "separated_canary"
+      },
+      "name": "separated_canary",
+      "runtime_identity_sha256": "7d2fb50dec8a21def28c19a9293c65ada670f1edc8d69f4a7b2bdb47a0f35358"
+    },
+    {
+      "canonical_sha256": "3b91ea7b7756d7df059edba498abf04557c335041a31594029b83e8eab8ab656",
+      "expected_canonical_json": "{\"activity_number\":18.0,\"authority\":\"pssolver.configuration.PlaneBerisEdwardsRunSpec\",\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"initial_condition\":{\"background_angle\":0.0,\"defect_core_radius\":1.5,\"defect_min_separation\":10.0,\"num_defect_pairs\":6,\"seed\":24,\"twist_amplitude\":0.01,\"twist_modes\":[1,2,3]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"initial_s\":0.3333333333333333,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"spectral\",\"pointwise_execution\":\"compile\",\"stress_divergence_sum_space\":\"spectral\"},\"numerics\":{\"dealias_rule\":\"cubic_half\",\"hermitian_axis\":1,\"precision\":\"float32\",\"projected_transform_execution\":\"truncated\",\"spectral_storage\":\"hermitian_half\",\"transform_execution_order\":\"real_first\"},\"output_dir\":\"oracle/workflow\",\"parameterization\":\"paper-window\",\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"dry_run\":true,\"tf32\":\"off\",\"validation_config_sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"runtime_path\":\"legacy_production\",\"schema_version\":1,\"workflow\":{\"checkpoint_interval\":250,\"diagnostic_interval\":125,\"diagnostics\":true,\"dt\":0.01,\"restart_from\":\"oracle/checkpoint\",\"save_hydrodynamics\":true,\"save_interval\":750,\"save_start_step\":4000,\"spectral_refresh\":{\"effective_interval_steps\":20,\"effective_interval_time\":0.2,\"mode\":\"physical_time\",\"requested_interval_steps\":null,\"requested_interval_time\":0.2},\"steps\":12000},\"zero_mode\":{\"friction_mode_fric\":0.1,\"policy\":\"zero_mean\"}}",
+      "expected_identity_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "canonical_sha256": "3b91ea7b7756d7df059edba498abf04557c335041a31594029b83e8eab8ab656",
+        "runtime_path": "legacy_production",
+        "schema_version": 1
+      },
+      "expected_metadata": {
+        "activity_number": 18.0,
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec",
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "initial_condition": {
+          "background_angle": 0.0,
+          "defect_core_radius": 1.5,
+          "defect_min_separation": 10.0,
+          "num_defect_pairs": 6,
+          "seed": 24,
+          "twist_amplitude": 0.01,
+          "twist_modes": [
+            1,
+            2,
+            3
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "initial_s": 0.3333333333333333,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "spectral",
+          "pointwise_execution": "compile",
+          "stress_divergence_sum_space": "spectral"
+        },
+        "numerics": {
+          "dealias_rule": "cubic_half",
+          "hermitian_axis": 1,
+          "precision": "float32",
+          "projected_transform_execution": "truncated",
+          "spectral_storage": "hermitian_half",
+          "transform_execution_order": "real_first"
+        },
+        "output_dir": "oracle/workflow",
+        "parameterization": "paper-window",
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "dry_run": true,
+          "tf32": "off",
+          "validation_config_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "runtime_path": "legacy_production",
+        "schema_version": 1,
+        "workflow": {
+          "checkpoint_interval": 250,
+          "diagnostic_interval": 125,
+          "diagnostics": true,
+          "dt": 0.01,
+          "restart_from": "oracle/checkpoint",
+          "save_hydrodynamics": true,
+          "save_interval": 750,
+          "save_start_step": 4000,
+          "spectral_refresh": {
+            "effective_interval_steps": 20,
+            "effective_interval_time": 0.2,
+            "mode": "physical_time",
+            "requested_interval_steps": null,
+            "requested_interval_time": 0.2
+          },
+          "steps": 12000
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.1,
+          "policy": "zero_mean"
+        }
+      },
+      "expected_runtime_identity_json": "{\"boundaries\":{\"distortion_odd_z\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"normal_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"dirichlet\"}],\"pressure_modal\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"q\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"tangential_velocity\":[{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"periodic\"},{\"is_homogeneous\":true,\"kind\":\"neumann\"}],\"wall_normal_axis\":2},\"dt\":0.01,\"geometry\":{\"axis_topologies\":[\"periodic\",\"periodic\",\"bounded\"],\"bounded_axes\":[2],\"domain\":{\"axis_names\":[\"x\",\"y\",\"z\"],\"grid_placement\":\"cell_centered\",\"lengths\":[100.0,100.0,20.0],\"shape\":[256,256,64]},\"name\":\"plane_slab\",\"periodic_axes\":[0,1]},\"model\":{\"beta\":-1.0,\"eta\":0.6666666666666666,\"flow_alignment\":0.3,\"gamma\":2.94,\"ldg_a\":0.0,\"ldg_b\":-0.3,\"ldg_c\":0.3,\"molecular_field_linear_space\":\"spectral\",\"pointwise_execution\":\"compile\",\"stress_divergence_sum_space\":\"spectral\"},\"numerics\":{\"dealias_rule\":\"cubic_half\",\"hermitian_axis\":1,\"precision\":\"float32\",\"projected_transform_execution\":\"truncated\",\"spectral_storage\":\"hermitian_half\",\"transform_execution_order\":\"real_first\"},\"preset\":{\"activity_number\":18.0,\"activity_ratio_zeta_over_k\":0.81,\"equilibrium_q_amplitude\":0.5,\"equilibrium_s\":0.33333333333333337,\"frank_k\":0.012345679012345678,\"height\":20.0,\"ldg_a\":0.0,\"ldg_a_over_gamma\":0.0,\"ldg_b\":-0.3,\"ldg_b_over_gamma\":-0.10204081632653061,\"ldg_c\":0.3,\"ldg_c_over_gamma\":0.10204081632653061,\"ldg_l1\":0.024691358024691357,\"ldg_l1_over_gamma\":0.008398421096833794,\"parameterization\":\"paper-window\",\"rotational_viscosity\":2.94,\"zeta\":0.01},\"runtime_controls\":{\"device\":\"auto\",\"disable_q_gradient_reuse\":false,\"tf32\":\"off\"},\"runtime_path\":\"legacy_production\",\"schema_version\":1,\"spectral_refresh\":{\"effective_interval_steps\":20,\"effective_interval_time\":0.2,\"mode\":\"physical_time\",\"requested_interval_steps\":null,\"requested_interval_time\":0.2},\"zero_mode\":{\"friction_mode_fric\":0.1,\"policy\":\"zero_mean\"}}",
+      "expected_runtime_identity_metadata": {
+        "boundaries": {
+          "distortion_odd_z": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "normal_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "dirichlet"
+            }
+          ],
+          "pressure_modal": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "q": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "tangential_velocity": [
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "periodic"
+            },
+            {
+              "is_homogeneous": true,
+              "kind": "neumann"
+            }
+          ],
+          "wall_normal_axis": 2
+        },
+        "dt": 0.01,
+        "geometry": {
+          "axis_topologies": [
+            "periodic",
+            "periodic",
+            "bounded"
+          ],
+          "bounded_axes": [
+            2
+          ],
+          "domain": {
+            "axis_names": [
+              "x",
+              "y",
+              "z"
+            ],
+            "grid_placement": "cell_centered",
+            "lengths": [
+              100.0,
+              100.0,
+              20.0
+            ],
+            "shape": [
+              256,
+              256,
+              64
+            ]
+          },
+          "name": "plane_slab",
+          "periodic_axes": [
+            0,
+            1
+          ]
+        },
+        "model": {
+          "beta": -1.0,
+          "eta": 0.6666666666666666,
+          "flow_alignment": 0.3,
+          "gamma": 2.94,
+          "ldg_a": 0.0,
+          "ldg_b": -0.3,
+          "ldg_c": 0.3,
+          "molecular_field_linear_space": "spectral",
+          "pointwise_execution": "compile",
+          "stress_divergence_sum_space": "spectral"
+        },
+        "numerics": {
+          "dealias_rule": "cubic_half",
+          "hermitian_axis": 1,
+          "precision": "float32",
+          "projected_transform_execution": "truncated",
+          "spectral_storage": "hermitian_half",
+          "transform_execution_order": "real_first"
+        },
+        "preset": {
+          "activity_number": 18.0,
+          "activity_ratio_zeta_over_k": 0.81,
+          "equilibrium_q_amplitude": 0.5,
+          "equilibrium_s": 0.33333333333333337,
+          "frank_k": 0.012345679012345678,
+          "height": 20.0,
+          "ldg_a": 0.0,
+          "ldg_a_over_gamma": 0.0,
+          "ldg_b": -0.3,
+          "ldg_b_over_gamma": -0.10204081632653061,
+          "ldg_c": 0.3,
+          "ldg_c_over_gamma": 0.10204081632653061,
+          "ldg_l1": 0.024691358024691357,
+          "ldg_l1_over_gamma": 0.008398421096833794,
+          "parameterization": "paper-window",
+          "rotational_viscosity": 2.94,
+          "zeta": 0.01
+        },
+        "runtime_controls": {
+          "device": "auto",
+          "disable_q_gradient_reuse": false,
+          "tf32": "off"
+        },
+        "runtime_path": "legacy_production",
+        "schema_version": 1,
+        "spectral_refresh": {
+          "effective_interval_steps": 20,
+          "effective_interval_time": 0.2,
+          "mode": "physical_time",
+          "requested_interval_steps": null,
+          "requested_interval_time": 0.2
+        },
+        "zero_mode": {
+          "friction_mode_fric": 0.1,
+          "policy": "zero_mean"
+        }
+      },
+      "expected_runtime_selection_metadata": {
+        "authority": "pssolver.configuration.PlaneBerisEdwardsRunSpec.runtime_path",
+        "default": "legacy_production",
+        "effective": "legacy_production",
+        "fallback_allowed": false,
+        "requested": "legacy_production"
+      },
+      "factory_overrides": {
+        "checkpoint_interval": 250,
+        "diagnostic_interval": 125,
+        "diagnostics": true,
+        "dry_run": true,
+        "output_dir": "oracle/workflow",
+        "restart_from": "oracle/checkpoint",
+        "save_hydrodynamics": true,
+        "save_interval": 750,
+        "save_start_step": 4000,
+        "steps": 12000,
+        "validation_config_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "name": "workflow_restart_variation",
+      "runtime_identity_sha256": "0b2dfecb641a19b459624a026b81d6087784bca1096f0b0360cfcfd51d8630ae"
+    }
+  ],
+  "identity_partition": {
+    "canonical_and_runtime": [
+      "activity_number",
+      "height",
+      "parameterization",
+      "frank_k",
+      "coefficient_min",
+      "lx",
+      "ly",
+      "nx",
+      "ny",
+      "nz",
+      "dt",
+      "ldg_a",
+      "ldg_b",
+      "ldg_c",
+      "gamma",
+      "flow_alignment",
+      "eta",
+      "zero_mode_policy",
+      "friction_mode_fric",
+      "dealias_rule",
+      "projected_transform_execution",
+      "beta",
+      "device",
+      "dtype",
+      "molecular_field_linear_space",
+      "stress_divergence_sum_space",
+      "pointwise_execution",
+      "transform_execution_order",
+      "spectral_storage",
+      "tf32",
+      "spectral_refresh",
+      "disable_q_gradient_reuse",
+      "runtime_path",
+      "boundaries"
+    ],
+    "canonical_only": [
+      "output_dir",
+      "steps",
+      "save_start_step",
+      "save_interval",
+      "diagnostic_interval",
+      "seed",
+      "num_defect_pairs",
+      "defect_min_separation",
+      "defect_core_radius",
+      "background_angle",
+      "twist_amplitude",
+      "twist_modes",
+      "initial_s",
+      "diagnostics",
+      "save_hydrodynamics",
+      "validation_config_sha256",
+      "dry_run",
+      "checkpoint_interval",
+      "restart_from"
+    ],
+    "neither_for_qualified_mutation": [
+      "coefficient_max"
+    ],
+    "runtime_only": []
+  },
+  "oracle_commit": "dc6fb2b48329473e6e0f613a678b40d71dfc3b65",
+  "schema_version": 1
+}

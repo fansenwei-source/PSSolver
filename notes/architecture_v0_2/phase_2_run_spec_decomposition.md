@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `DESIGN_FROZEN_IMPLEMENTATION_PENDING`
+Status: `P2.0_COMPATIBILITY_ORACLES_COMPLETE_P2.1_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -268,6 +268,20 @@ Add characterization only; do not change production code.
 At minimum, golden cases cover defaults, float64 with refresh disabled,
 step-based refresh, friction mode, numerical rollback policies, separated
 canary, and a workflow/restart-only variation.
+
+P2.0 was completed on 2026-09-18 without changing production code.  Its
+static compatibility evidence is:
+
+- `tests/fixtures/configuration/plane_run_spec_api_v1.json`;
+- `tests/fixtures/configuration/plane_run_spec_v1_cases.json`;
+- `tests/fixtures/configuration/plane_checkpoint_v1_header/checkpoint.json`;
+- `tests/test_phase2_run_spec_compatibility.py`.
+
+The focused P2.0 suite contains 75 passing tests.  The complete local CPU
+suite contains 1228 passing tests and 8 passing subtests.  These oracles are
+the fail-closed baseline for P2.1 and later Phase 2 commits; they are not a
+schema-v2 proposal and do not endorse the historical requested/effective
+boundary mismatch as a future design.
 
 ### P2.1: add disconnected immutable components
 

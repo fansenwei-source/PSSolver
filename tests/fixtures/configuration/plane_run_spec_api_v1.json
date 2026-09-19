@@ -1,0 +1,2394 @@
+{
+  "configuration_exports": [
+    "DEFAULT_FRICTION_MODE_FRIC",
+    "DEFAULT_PLANE_RUNTIME_PATH",
+    "DEFAULT_SPECTRAL_REFRESH_TIME",
+    "DEFAULT_ZERO_MODE_POLICY",
+    "PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES",
+    "PLANE_FREE_SLIP_BOUNDARIES",
+    "PLANE_RUN_SPEC_SCHEMA_VERSION",
+    "PlaneBerisEdwardsRunSpec",
+    "PlaneFreeSlipBoundaryConditions",
+    "PlaneRuntimePath",
+    "SpectralRefreshSpec",
+    "create_plane_beris_edwards_run_spec",
+    "parse_plane_beris_edwards_run_spec"
+  ],
+  "factory": {
+    "module": "pssolver.configuration.plane_beris_edwards",
+    "parameters": [
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "required"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "activity_number"
+      },
+      {
+        "annotation": "str | Path",
+        "default": {
+          "kind": "required"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "output_dir"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 20.0
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "height"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "value",
+          "value": "paper-window"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "parameterization"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 0.01
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "frank_k"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 0.01
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "coefficient_min"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 0.05
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "coefficient_max"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 100.0
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "lx"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 100.0
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "ly"
+      },
+      {
+        "annotation": "int",
+        "default": {
+          "kind": "value",
+          "value": 256
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "nx"
+      },
+      {
+        "annotation": "int",
+        "default": {
+          "kind": "value",
+          "value": 256
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "ny"
+      },
+      {
+        "annotation": "int",
+        "default": {
+          "kind": "value",
+          "value": 64
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "nz"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 0.01
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "dt"
+      },
+      {
+        "annotation": "int",
+        "default": {
+          "kind": "value",
+          "value": 10000
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "steps"
+      },
+      {
+        "annotation": "int",
+        "default": {
+          "kind": "value",
+          "value": 5000
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "save_start_step"
+      },
+      {
+        "annotation": "int",
+        "default": {
+          "kind": "value",
+          "value": 500
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "save_interval"
+      },
+      {
+        "annotation": "int",
+        "default": {
+          "kind": "value",
+          "value": 100
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "diagnostic_interval"
+      },
+      {
+        "annotation": "int",
+        "default": {
+          "kind": "value",
+          "value": 24
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "seed"
+      },
+      {
+        "annotation": "int",
+        "default": {
+          "kind": "value",
+          "value": 6
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "num_defect_pairs"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 10.0
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "defect_min_separation"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 1.5
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "defect_core_radius"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 0.0
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "background_angle"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 0.01
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "twist_amplitude"
+      },
+      {
+        "annotation": "Sequence[int]",
+        "default": {
+          "kind": "tuple",
+          "value": [
+            1,
+            2,
+            3
+          ]
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "twist_modes"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 0.0
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "ldg_a"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": -0.3
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "ldg_b"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 0.3
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "ldg_c"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 2.94
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "gamma"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 0.3
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "flow_alignment"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 0.6666666666666666
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "eta"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "value",
+          "value": "zero_mean"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "zero_mode_policy"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 0.1
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "friction_mode_fric"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "value",
+          "value": "cubic_half"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "dealias_rule"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "value",
+          "value": "truncated"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "projected_transform_execution"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": -1.0
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "beta"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 0.3333333333333333
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "initial_s"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "value",
+          "value": "auto"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "device"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "value",
+          "value": "float32"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "dtype"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "value",
+          "value": "spectral"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "molecular_field_linear_space"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "value",
+          "value": "spectral"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "stress_divergence_sum_space"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "value",
+          "value": "compile"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "pointwise_execution"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "value",
+          "value": "real_first"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "transform_execution_order"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "value",
+          "value": "hermitian_half"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "spectral_storage"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "value",
+          "value": "off"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "tf32"
+      },
+      {
+        "annotation": "float | None",
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "spectral_refresh_time"
+      },
+      {
+        "annotation": "int | None",
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "spectral_refresh_steps"
+      },
+      {
+        "annotation": "bool",
+        "default": {
+          "kind": "value",
+          "value": false
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "disable_spectral_refresh"
+      },
+      {
+        "annotation": "bool",
+        "default": {
+          "kind": "value",
+          "value": false
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "diagnostics"
+      },
+      {
+        "annotation": "bool",
+        "default": {
+          "kind": "value",
+          "value": false
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "disable_q_gradient_reuse"
+      },
+      {
+        "annotation": "bool",
+        "default": {
+          "kind": "value",
+          "value": false
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "save_hydrodynamics"
+      },
+      {
+        "annotation": "str | None",
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "validation_config_sha256"
+      },
+      {
+        "annotation": "bool",
+        "default": {
+          "kind": "value",
+          "value": false
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "dry_run"
+      },
+      {
+        "annotation": "int | None",
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "checkpoint_interval"
+      },
+      {
+        "annotation": "str | Path | None",
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "restart_from"
+      },
+      {
+        "annotation": "str | PlaneRuntimePath",
+        "default": {
+          "kind": "value",
+          "value": "legacy_production"
+        },
+        "kind": "KEYWORD_ONLY",
+        "name": "runtime_path"
+      }
+    ],
+    "qualname": "create_plane_beris_edwards_run_spec",
+    "return_annotation": "PlaneBerisEdwardsRunSpec"
+  },
+  "oracle_commit": "dc6fb2b48329473e6e0f613a678b40d71dfc3b65",
+  "parse_function": {
+    "module": "pssolver.configuration.plane_beris_edwards",
+    "parameters": [
+      {
+        "annotation": "Sequence[str] | None",
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "kind": "POSITIONAL_OR_KEYWORD",
+        "name": "argv"
+      }
+    ],
+    "qualname": "parse_plane_beris_edwards_run_spec",
+    "return_annotation": "PlaneBerisEdwardsRunSpec"
+  },
+  "parser": {
+    "allow_abbrev": true,
+    "domain_action_count": 55,
+    "domain_actions": [
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "dest": "activity_number",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--activity-number"
+        ],
+        "required": true,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "dest": "output_dir",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--output-dir"
+        ],
+        "required": true,
+        "type": "pathlib.Path"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 20.0
+        },
+        "dest": "height",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--height"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": [
+          "paper-window",
+          "fixed-k"
+        ],
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": "paper-window"
+        },
+        "dest": "parameterization",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--parameterization"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 0.01
+        },
+        "dest": "frank_k",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--frank-k"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 0.01
+        },
+        "dest": "coefficient_min",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--coefficient-min"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 0.05
+        },
+        "dest": "coefficient_max",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--coefficient-max"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 100.0
+        },
+        "dest": "lx",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--lx"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 100.0
+        },
+        "dest": "ly",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--ly"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 256
+        },
+        "dest": "nx",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--nx"
+        ],
+        "required": false,
+        "type": "builtins.int"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 256
+        },
+        "dest": "ny",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--ny"
+        ],
+        "required": false,
+        "type": "builtins.int"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 64
+        },
+        "dest": "nz",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--nz"
+        ],
+        "required": false,
+        "type": "builtins.int"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 0.01
+        },
+        "dest": "dt",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--dt"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 10000
+        },
+        "dest": "steps",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--steps"
+        ],
+        "required": false,
+        "type": "builtins.int"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 5000
+        },
+        "dest": "save_start_step",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--save-start-step"
+        ],
+        "required": false,
+        "type": "builtins.int"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 500
+        },
+        "dest": "save_interval",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--save-interval"
+        ],
+        "required": false,
+        "type": "builtins.int"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 100
+        },
+        "dest": "diagnostic_interval",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--diagnostic-interval"
+        ],
+        "required": false,
+        "type": "builtins.int"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 24
+        },
+        "dest": "seed",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--seed"
+        ],
+        "required": false,
+        "type": "builtins.int"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 6
+        },
+        "dest": "num_defect_pairs",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--num-defect-pairs"
+        ],
+        "required": false,
+        "type": "builtins.int"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 10.0
+        },
+        "dest": "defect_min_separation",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--defect-min-separation"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 1.5
+        },
+        "dest": "defect_core_radius",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--defect-core-radius"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 0.0
+        },
+        "dest": "background_angle",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--background-angle"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 0.01
+        },
+        "dest": "twist_amplitude",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--twist-amplitude"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "tuple",
+          "value": [
+            1,
+            2,
+            3
+          ]
+        },
+        "dest": "twist_modes",
+        "metavar": null,
+        "nargs": "+",
+        "option_strings": [
+          "--twist-modes"
+        ],
+        "required": false,
+        "type": "builtins.int"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 0.0
+        },
+        "dest": "ldg_a",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--ldg-a"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": -0.3
+        },
+        "dest": "ldg_b",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--ldg-b"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 0.3
+        },
+        "dest": "ldg_c",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--ldg-c"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 2.94
+        },
+        "dest": "gamma",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--gamma"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 0.3
+        },
+        "dest": "flow_alignment",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--flow-alignment"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 0.6666666666666666
+        },
+        "dest": "eta",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--eta"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": [
+          "zero_mean",
+          "friction"
+        ],
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": "zero_mean"
+        },
+        "dest": "zero_mode_policy",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--zero-mode-policy"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 0.1
+        },
+        "dest": "friction_mode_fric",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--friction-mode-fric"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": [
+          "none",
+          "two_thirds",
+          "cubic_half"
+        ],
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": "cubic_half"
+        },
+        "dest": "dealias_rule",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--dealias-rule"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": [
+          "full",
+          "truncated"
+        ],
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": "truncated"
+        },
+        "dest": "projected_transform_execution",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--projected-transform-execution"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": -1.0
+        },
+        "dest": "beta",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--beta"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": 0.3333333333333333
+        },
+        "dest": "initial_s",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--initial-s"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": "auto"
+        },
+        "dest": "device",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--device"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": [
+          "float32",
+          "float64"
+        ],
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": "float32"
+        },
+        "dest": "dtype",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--dtype"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": [
+          "physical",
+          "spectral"
+        ],
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": "spectral"
+        },
+        "dest": "molecular_field_linear_space",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--molecular-field-linear-space"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": [
+          "physical",
+          "spectral"
+        ],
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": "spectral"
+        },
+        "dest": "stress_divergence_sum_space",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--stress-divergence-sum-space"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": [
+          "eager",
+          "compile"
+        ],
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": "compile"
+        },
+        "dest": "pointwise_execution",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--pointwise-execution"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": [
+          "legacy",
+          "real_first"
+        ],
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": "real_first"
+        },
+        "dest": "transform_execution_order",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--transform-execution-order"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": [
+          "full_complex",
+          "hermitian_half"
+        ],
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": "hermitian_half"
+        },
+        "dest": "spectral_storage",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--spectral-storage"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": [
+          "off",
+          "on"
+        ],
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": "off"
+        },
+        "dest": "tf32",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--tf32"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "dest": "spectral_refresh_time",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--spectral-refresh-time"
+        ],
+        "required": false,
+        "type": "builtins.float"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "dest": "spectral_refresh_steps",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--spectral-refresh-steps"
+        ],
+        "required": false,
+        "type": "builtins.int"
+      },
+      {
+        "action": "store_true",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": true
+        },
+        "default": {
+          "kind": "value",
+          "value": false
+        },
+        "dest": "disable_spectral_refresh",
+        "metavar": null,
+        "nargs": 0,
+        "option_strings": [
+          "--disable-spectral-refresh"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store_true",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": true
+        },
+        "default": {
+          "kind": "value",
+          "value": false
+        },
+        "dest": "diagnostics",
+        "metavar": null,
+        "nargs": 0,
+        "option_strings": [
+          "--diagnostics"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store_true",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": true
+        },
+        "default": {
+          "kind": "value",
+          "value": false
+        },
+        "dest": "disable_q_gradient_reuse",
+        "metavar": null,
+        "nargs": 0,
+        "option_strings": [
+          "--disable-q-gradient-reuse"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store_true",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": true
+        },
+        "default": {
+          "kind": "value",
+          "value": false
+        },
+        "dest": "save_hydrodynamics",
+        "metavar": null,
+        "nargs": 0,
+        "option_strings": [
+          "--save-hydrodynamics"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "dest": "validation_config_sha256",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--validation-config-sha256"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "dest": "checkpoint_interval",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--checkpoint-interval"
+        ],
+        "required": false,
+        "type": "builtins.int"
+      },
+      {
+        "action": "store",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "dest": "restart_from",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--restart-from"
+        ],
+        "required": false,
+        "type": "pathlib.Path"
+      },
+      {
+        "action": "store",
+        "choices": [
+          "legacy_production",
+          "separated_canary"
+        ],
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "value",
+          "value": "legacy_production"
+        },
+        "dest": "runtime_path",
+        "metavar": null,
+        "nargs": null,
+        "option_strings": [
+          "--runtime-path"
+        ],
+        "required": false,
+        "type": null
+      },
+      {
+        "action": "store_true",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": true
+        },
+        "default": {
+          "kind": "value",
+          "value": false
+        },
+        "dest": "dry_run",
+        "metavar": null,
+        "nargs": 0,
+        "option_strings": [
+          "--dry-run"
+        ],
+        "required": false,
+        "type": null
+      }
+    ],
+    "help_actions": [
+      {
+        "action": "help",
+        "choices": null,
+        "const": {
+          "kind": "value",
+          "value": null
+        },
+        "default": {
+          "kind": "argparse_suppress"
+        },
+        "dest": "help",
+        "metavar": null,
+        "nargs": 0,
+        "option_strings": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "type": null
+      }
+    ],
+    "mutually_exclusive_groups": [
+      {
+        "destinations": [
+          "spectral_refresh_time",
+          "spectral_refresh_steps",
+          "disable_spectral_refresh"
+        ],
+        "required": false
+      }
+    ]
+  },
+  "run_spec": {
+    "dataclass_parameters": {
+      "eq": true,
+      "frozen": true,
+      "init": true,
+      "order": false,
+      "repr": true,
+      "unsafe_hash": false
+    },
+    "default_repr_sha256": "08a6a1a7a3b2d9323b9cf18fdbb380d8c507f7dd395b4d76618bbb317c9c132f",
+    "explicit_members": [
+      {
+        "kind": "method",
+        "name": "__post_init__"
+      },
+      {
+        "kind": "property",
+        "name": "S_initial",
+        "representative_type": "builtins.float"
+      },
+      {
+        "kind": "property",
+        "name": "spectral_refresh_mode",
+        "representative_type": "builtins.str"
+      },
+      {
+        "kind": "property",
+        "name": "spectral_refresh_requested_time",
+        "representative_type": "builtins.float"
+      },
+      {
+        "kind": "property",
+        "name": "spectral_refresh_requested_steps",
+        "representative_type": "builtins.NoneType"
+      },
+      {
+        "kind": "property",
+        "name": "spectral_refresh_interval_steps",
+        "representative_type": "builtins.int"
+      },
+      {
+        "kind": "property",
+        "name": "spectral_refresh_effective_time",
+        "representative_type": "builtins.float"
+      },
+      {
+        "kind": "property",
+        "name": "shendruk_preset",
+        "representative_type": "pssolver.presets.shendruk.ShendrukPlanePreset"
+      },
+      {
+        "kind": "property",
+        "name": "domain",
+        "representative_type": "pssolver.core.domain.DomainSpec"
+      },
+      {
+        "kind": "property",
+        "name": "geometry",
+        "representative_type": "pssolver.geometries.tensor_product.PlaneSlab"
+      },
+      {
+        "kind": "property",
+        "name": "numerics",
+        "representative_type": "pssolver.core.numerics.NumericsConfig"
+      },
+      {
+        "kind": "method",
+        "name": "to_metadata",
+        "representative_type": "builtins.dict"
+      },
+      {
+        "kind": "method",
+        "name": "canonical_sha256",
+        "representative_type": "builtins.str"
+      },
+      {
+        "kind": "method",
+        "name": "runtime_identity_metadata",
+        "representative_type": "builtins.dict"
+      },
+      {
+        "kind": "method",
+        "name": "runtime_identity_sha256",
+        "representative_type": "builtins.str"
+      },
+      {
+        "kind": "method",
+        "name": "identity_metadata",
+        "representative_type": "builtins.dict"
+      },
+      {
+        "kind": "method",
+        "name": "runtime_selection_metadata",
+        "representative_type": "builtins.dict"
+      }
+    ],
+    "fields": [
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "activity_number",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "output_dir",
+        "type": "Path"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "height",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "parameterization",
+        "type": "str"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "frank_k",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "coefficient_min",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "coefficient_max",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "lx",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "ly",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "nx",
+        "type": "int"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "ny",
+        "type": "int"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "nz",
+        "type": "int"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "dt",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "steps",
+        "type": "int"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "save_start_step",
+        "type": "int"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "save_interval",
+        "type": "int"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "diagnostic_interval",
+        "type": "int"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "seed",
+        "type": "int"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "num_defect_pairs",
+        "type": "int"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "defect_min_separation",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "defect_core_radius",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "background_angle",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "twist_amplitude",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "twist_modes",
+        "type": "tuple[int, ...]"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "ldg_a",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "ldg_b",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "ldg_c",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "gamma",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "flow_alignment",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "eta",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "zero_mode_policy",
+        "type": "str"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "friction_mode_fric",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "dealias_rule",
+        "type": "str"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "projected_transform_execution",
+        "type": "str"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "beta",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "initial_s",
+        "type": "float"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "device",
+        "type": "str"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "dtype",
+        "type": "str"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "molecular_field_linear_space",
+        "type": "str"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "stress_divergence_sum_space",
+        "type": "str"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "pointwise_execution",
+        "type": "str"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "transform_execution_order",
+        "type": "str"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "spectral_storage",
+        "type": "str"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "tf32",
+        "type": "str"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "spectral_refresh",
+        "type": "SpectralRefreshSpec"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "diagnostics",
+        "type": "bool"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "disable_q_gradient_reuse",
+        "type": "bool"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "save_hydrodynamics",
+        "type": "bool"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "validation_config_sha256",
+        "type": "str | None"
+      },
+      {
+        "default": {
+          "kind": "missing"
+        },
+        "name": "dry_run",
+        "type": "bool"
+      },
+      {
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "name": "checkpoint_interval",
+        "type": "int | None"
+      },
+      {
+        "default": {
+          "kind": "value",
+          "value": null
+        },
+        "name": "restart_from",
+        "type": "Path | None"
+      },
+      {
+        "default": {
+          "kind": "enum",
+          "type": "pssolver.configuration.plane_beris_edwards.PlaneRuntimePath",
+          "value": "legacy_production"
+        },
+        "name": "runtime_path",
+        "type": "PlaneRuntimePath"
+      },
+      {
+        "default": {
+          "kind": "plane_free_slip_boundaries",
+          "value": {
+            "distortion_odd_z": [
+              {
+                "is_homogeneous": true,
+                "kind": "periodic"
+              },
+              {
+                "is_homogeneous": true,
+                "kind": "periodic"
+              },
+              {
+                "is_homogeneous": true,
+                "kind": "dirichlet"
+              }
+            ],
+            "normal_velocity": [
+              {
+                "is_homogeneous": true,
+                "kind": "periodic"
+              },
+              {
+                "is_homogeneous": true,
+                "kind": "periodic"
+              },
+              {
+                "is_homogeneous": true,
+                "kind": "dirichlet"
+              }
+            ],
+            "pressure_modal": [
+              {
+                "is_homogeneous": true,
+                "kind": "periodic"
+              },
+              {
+                "is_homogeneous": true,
+                "kind": "periodic"
+              },
+              {
+                "is_homogeneous": true,
+                "kind": "neumann"
+              }
+            ],
+            "q": [
+              {
+                "is_homogeneous": true,
+                "kind": "periodic"
+              },
+              {
+                "is_homogeneous": true,
+                "kind": "periodic"
+              },
+              {
+                "is_homogeneous": true,
+                "kind": "neumann"
+              }
+            ],
+            "tangential_velocity": [
+              {
+                "is_homogeneous": true,
+                "kind": "periodic"
+              },
+              {
+                "is_homogeneous": true,
+                "kind": "periodic"
+              },
+              {
+                "is_homogeneous": true,
+                "kind": "neumann"
+              }
+            ],
+            "wall_normal_axis": 2
+          }
+        },
+        "name": "boundaries",
+        "type": "PlaneFreeSlipBoundaryConditions"
+      }
+    ],
+    "match_args": [
+      "activity_number",
+      "output_dir",
+      "height",
+      "parameterization",
+      "frank_k",
+      "coefficient_min",
+      "coefficient_max",
+      "lx",
+      "ly",
+      "nx",
+      "ny",
+      "nz",
+      "dt",
+      "steps",
+      "save_start_step",
+      "save_interval",
+      "diagnostic_interval",
+      "seed",
+      "num_defect_pairs",
+      "defect_min_separation",
+      "defect_core_radius",
+      "background_angle",
+      "twist_amplitude",
+      "twist_modes",
+      "ldg_a",
+      "ldg_b",
+      "ldg_c",
+      "gamma",
+      "flow_alignment",
+      "eta",
+      "zero_mode_policy",
+      "friction_mode_fric",
+      "dealias_rule",
+      "projected_transform_execution",
+      "beta",
+      "initial_s",
+      "device",
+      "dtype",
+      "molecular_field_linear_space",
+      "stress_divergence_sum_space",
+      "pointwise_execution",
+      "transform_execution_order",
+      "spectral_storage",
+      "tf32",
+      "spectral_refresh",
+      "diagnostics",
+      "disable_q_gradient_reuse",
+      "save_hydrodynamics",
+      "validation_config_sha256",
+      "dry_run",
+      "checkpoint_interval",
+      "restart_from",
+      "runtime_path",
+      "boundaries"
+    ],
+    "module": "pssolver.configuration.plane_beris_edwards",
+    "qualname": "PlaneBerisEdwardsRunSpec",
+    "slots": [
+      "activity_number",
+      "output_dir",
+      "height",
+      "parameterization",
+      "frank_k",
+      "coefficient_min",
+      "coefficient_max",
+      "lx",
+      "ly",
+      "nx",
+      "ny",
+      "nz",
+      "dt",
+      "steps",
+      "save_start_step",
+      "save_interval",
+      "diagnostic_interval",
+      "seed",
+      "num_defect_pairs",
+      "defect_min_separation",
+      "defect_core_radius",
+      "background_angle",
+      "twist_amplitude",
+      "twist_modes",
+      "ldg_a",
+      "ldg_b",
+      "ldg_c",
+      "gamma",
+      "flow_alignment",
+      "eta",
+      "zero_mode_policy",
+      "friction_mode_fric",
+      "dealias_rule",
+      "projected_transform_execution",
+      "beta",
+      "initial_s",
+      "device",
+      "dtype",
+      "molecular_field_linear_space",
+      "stress_divergence_sum_space",
+      "pointwise_execution",
+      "transform_execution_order",
+      "spectral_storage",
+      "tf32",
+      "spectral_refresh",
+      "diagnostics",
+      "disable_q_gradient_reuse",
+      "save_hydrodynamics",
+      "validation_config_sha256",
+      "dry_run",
+      "checkpoint_interval",
+      "restart_from",
+      "runtime_path",
+      "boundaries"
+    ],
+    "uniform_field_parameters": {
+      "compare": true,
+      "default_factory": "missing",
+      "hash": null,
+      "init": true,
+      "kw_only": false,
+      "repr": true
+    }
+  },
+  "schema_version": 1
+}
