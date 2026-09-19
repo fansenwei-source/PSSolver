@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.5_IN_PROGRESS_WORKFLOW_CONSUMER_COMPLETE`
+Status: `P2.5_COMPLETE_P2.6_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -682,6 +682,45 @@ an isolated installed wheel completes a diagnostic, hydrodynamic-output, and
 checkpoint-enabled workflow through each runtime path.  No floating-point
 operation or GPU hot path changed, so P2.5.3 requires no H100 job.  The final
 P2.5 consumer is `pssolver/applications/plane_beris_edwards.py`.
+
+#### P2.5.4: application consumer complete
+
+`pssolver/applications/plane_beris_edwards.py` is the fourth and final migrated
+consumer.  Commit `a192edb3ca245d25b662718731b9088885381c47`
+freezes its 54 direct flat-facade value reads, three schema-v1 facade method
+calls, dry-run no-allocation/no-output contract, and the rule that an
+incompatible checkpoint is rejected before output-directory creation, initial
+condition generation, or runtime construction.  Commit
+`b696df8a67251a89f96a024dc8cede1981806ac5` replaces all 54 value reads with
+one application-local component decomposition.  Device/precision policy comes
+from numerics and execution, domain sizes from geometry, physical coefficients
+from material/preset/Stokes components, initialization from the initial-
+condition request, and persistence controls from workflow and invocation.
+
+The supported facade remains the sole schema-v1 authority for configuration
+metadata, runtime-selection metadata, and checkpoint runtime identity.  The
+hand-written production metadata document is intentionally retained with the
+same keys and values.  Initial-condition construction order, early restart
+gate, output-directory refusal, runtime/workflow assembly order, CLI progress,
+runtime default, and every floating-point operation are unchanged.  The CLI
+presentation wrapper also obtains dry-run and step-count values from the
+component graph, so no flat application value reads remain.
+
+For both `legacy_production` and `separated_canary`, normalized dry-run metadata
+is equal to the pre-migration baseline.  Per runtime, 36 continuous trajectory,
+initial-condition, diagnostics, checkpoint, and completion files are
+byte-identical.  Baseline-to-candidate and candidate-to-baseline same-runtime
+checkpoint continuations both produce byte-identical final `Q/u/p` at step 4.
+Production metadata differs only in the output-path-derived configuration hash,
+elapsed time, and the expected application implementation-source hash.
+
+The expanded focused gate contains 498 passing tests.  The complete CPU suite
+contains 1618 passing tests and 8 passing subtests.  Fresh sdist and wheel
+builds pass; an isolated installed wheel preserves dry-run no-output behavior
+and completes one CPU step with `Q/u/p` plus `COMPLETE` through both runtime
+paths.  No floating-point operation or GPU hot path changed, so P2.5.4 itself
+requires no H100 job.  All four P2.5 consumers are now migrated; the next step
+is P2.6 exact configuration-import-debt retirement.
 
 ### P2.6: retire the exact configuration import debts
 

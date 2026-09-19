@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "p2_5_in_progress_workflow_consumer_complete",
+  "status": "p2_5_complete_p2_6_pending",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -617,7 +617,7 @@
     {
       "id": "P2.5",
       "name": "consumer migration one module per commit",
-      "implementation_in_progress": true,
+      "implementation_in_progress": false,
       "order": [
         "pssolver.runtime.plane_legacy",
         "pssolver.runtime.plane_beris_edwards",
@@ -627,11 +627,10 @@
       "completed_consumers": [
         "pssolver.runtime.plane_legacy",
         "pssolver.runtime.plane_beris_edwards",
-        "pssolver.workflows.plane_beris_edwards"
-      ],
-      "pending_consumers": [
+        "pssolver.workflows.plane_beris_edwards",
         "pssolver.applications.plane_beris_edwards"
       ],
+      "pending_consumers": [],
       "p2_5_1": {
         "characterization_commit": "140205cef8b01920a97becf5669f23a1326b84ef",
         "implementation_commit": "50435e9299caa0059b164ecb1d46939c57d3e6a7",
@@ -781,6 +780,67 @@
         "isolated_wheel_canary_workflow_smoke_passed": true,
         "h100_required": false,
         "next_consumer": "pssolver.applications.plane_beris_edwards"
+      },
+      "p2_5_4": {
+        "characterization_commit": "a192edb3ca245d25b662718731b9088885381c47",
+        "implementation_commit": "b696df8a67251a89f96a024dc8cede1981806ac5",
+        "consumer": "pssolver.applications.plane_beris_edwards",
+        "flat_facade_value_reads_before": 54,
+        "flat_facade_value_reads_after": 0,
+        "schema_v1_facade_method_reads_after": 3,
+        "component_decomposition_calls_per_application_run": 1,
+        "schema_v1_configuration_metadata_authority_preserved": true,
+        "schema_v1_runtime_selection_authority_preserved": true,
+        "schema_v1_runtime_identity_authority_preserved": true,
+        "dry_run_precedes_output_and_allocation": true,
+        "restart_gate_precedes_output_and_allocation": true,
+        "production_metadata_schema_changed": false,
+        "initial_condition_order_changed": false,
+        "runtime_workflow_assembly_order_changed": false,
+        "numerical_operation_order_changed": false,
+        "runtime_default_changed": false,
+        "schema_v1_changed": false,
+        "production_source_inventory_changed": false,
+        "focused_tests_passed": 498,
+        "full_cpu_tests_passed": 1618,
+        "full_cpu_subtests_passed": 8,
+        "qualified_runtime_paths": [
+          "legacy_production",
+          "separated_canary"
+        ],
+        "normalized_dry_run_metadata_equal": true,
+        "continuous_files_compared_per_runtime": 36,
+        "continuous_files_byte_identical": true,
+        "initial_condition_artifacts_byte_identical": true,
+        "diagnostics_npy_csv_byte_identical": true,
+        "checkpoint_directories_byte_identical": true,
+        "completion_markers_byte_identical": true,
+        "baseline_checkpoint_to_candidate_restart_byte_identical": true,
+        "candidate_checkpoint_to_baseline_restart_byte_identical": true,
+        "metadata_equal_after_frozen_allowances": true,
+        "continuous_output_sha256": {
+          "legacy_production": {
+            "Q_4.npy": "5474ca9e5e483045330518f03b758662ebca4d026b8acb5d20068a7ea0213c53",
+            "u_4.npy": "86b153a3decf07d54df549119983508b19a7701d90707c92b8dcea3292a52e33",
+            "p_4.npy": "741b50ca242ab558624b29631026f113af1dd40de7bbe92c864940bf98877166",
+            "diagnostics.npy": "3c4d5719e280064292634cabc09e10333ebd9fdc9a6b7d45c91ef968806bba02",
+            "diagnostics.csv": "50dd57a446d72c34899d0d8b985ee01770a8e8a8b344e6477b5c6915fc1d1cb0"
+          },
+          "separated_canary": {
+            "Q_4.npy": "888d550e76b59fd3b54a795f03a85b08501c206d65b264754b42c0fc1a67d62d",
+            "u_4.npy": "993b3e74d1906e536356dc9a72cf1960f9b5ff7f60af385122546e146ec6c925",
+            "p_4.npy": "cdf7b216046de363b9f22d8a4bdb403c858e46597e8fcb83d0fe9c4c9f05922f",
+            "diagnostics.npy": "4efd30aab39ca85e5123d517eb14e6e4ac0de0962f0b2e67d6c7f87c4534aa4d",
+            "diagnostics.csv": "9326deff7e5eb1b4d111e7c2a96d2e2084d3d0b09a9893429b3556d48766db60"
+          }
+        },
+        "fresh_sdist_passed": true,
+        "fresh_wheel_passed": true,
+        "isolated_wheel_dry_run_no_output_passed": true,
+        "isolated_wheel_legacy_one_step_passed": true,
+        "isolated_wheel_canary_one_step_passed": true,
+        "h100_required": false,
+        "next_phase": "P2.6 retire exact configuration import debts"
       }
     },
     {
