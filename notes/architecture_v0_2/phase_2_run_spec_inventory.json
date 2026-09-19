@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "p2_5_complete_p2_6_pending",
+  "status": "p2_6_complete_p2_7_pending",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -846,10 +846,49 @@
     {
       "id": "P2.6",
       "name": "remove exact configuration import debts",
+      "implementation_complete": true,
+      "characterization_commit": "b5464f19d38f04259b951265a8222f37d16dd07f",
+      "implementation_commit": "b99cc167f4e2deae98569d131edc259402df2661",
       "edges": [
         "configuration.plane_beris_edwards -> plane",
         "configuration.plane_beris_edwards -> transforms"
-      ]
+      ],
+      "edges_removed": 2,
+      "replacement_configuration_to_execution_edges": 0,
+      "generic_policy_authority": "pssolver.core.numerics",
+      "plane_policy_authority": "pssolver.geometries.plane_numerics",
+      "legacy_transform_facade_preserved": true,
+      "legacy_plane_facade_preserved": true,
+      "canonical_policy_object_identity_preserved": true,
+      "factory_defaults_changed": false,
+      "parser_defaults_changed": false,
+      "schema_v1_changed": false,
+      "numerical_operation_order_changed": false,
+      "runtime_default_changed": false,
+      "remaining_exact_legacy_import_exceptions": 4,
+      "production_source_inventory_additions": [
+        "pssolver/geometries/plane_numerics.py"
+      ],
+      "focused_tests_passed": 394,
+      "full_cpu_tests_passed": 1621,
+      "full_cpu_subtests_passed": 8,
+      "qualified_runtime_paths": [
+        "legacy_production",
+        "separated_canary"
+      ],
+      "normalized_dry_run_metadata_equal": true,
+      "continuous_files_compared_per_runtime": 36,
+      "continuous_files_byte_identical": true,
+      "checkpoint_directories_byte_identical": true,
+      "baseline_checkpoint_to_candidate_restart_byte_identical": true,
+      "candidate_checkpoint_to_baseline_restart_byte_identical": true,
+      "fresh_sdist_contains_plane_policy": true,
+      "fresh_wheel_contains_plane_policy": true,
+      "isolated_wheel_policy_identity_passed": true,
+      "isolated_wheel_legacy_one_step_passed": true,
+      "isolated_wheel_canary_one_step_passed": true,
+      "h100_required": false,
+      "next_phase": "P2.7 provenance and Phase 2 closure"
     },
     {
       "id": "P2.7",

@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.5_COMPLETE_P2.6_PENDING`
+Status: `P2.6_COMPLETE_P2.7_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -724,7 +724,10 @@ is P2.6 exact configuration-import-debt retirement.
 
 ### P2.6: retire the exact configuration import debts
 
-Remove:
+P2.6 is complete.  Commit `b5464f19d38f04259b951265a8222f37d16dd07f`
+freezes the exact legacy import edges, numerical-policy values, compatibility
+facade object identities, and factory defaults.  Commit
+`b99cc167f4e2deae98569d131edc259402df2661` removes:
 
 ```text
 configuration.plane_beris_edwards -> plane
@@ -734,6 +737,35 @@ configuration.plane_beris_edwards -> transforms
 Qualified numerical defaults move to tensor-free specification policy.  The
 configuration layer must not replace these edges with dependencies on
 backends, operators, solvers, runtimes, applications, or experimental code.
+
+Generic dealiasing, projected-transform, transform-order, and spectral-storage
+declarations now have one canonical tensor-free authority in
+`pssolver.core.numerics`.  The existing operator/backend implementations and
+the historical `pssolver.transforms` facade import and re-export those exact
+objects.  Plane-specific Hermitian storage and axis selection live separately
+in `pssolver.geometries.plane_numerics`; both the production configuration and
+the historical `pssolver.plane` facade import the same objects.  This avoids
+turning a Plane choice into a global numerical default and introduces no
+configuration dependency on an execution layer.
+
+The architecture ratchet drops the two retired exceptions and now contains
+four exact legacy exceptions.  All factory and parser defaults, transform and
+Plane facade constants, schema-v1 documents and hashes, numerical operation
+order, and runtime defaults remain unchanged.  The new Plane policy source is
+included in implementation provenance because it now determines production
+meaning; this is the only expected dry-run provenance difference.
+
+The focused gate contains 394 passing tests.  The complete CPU suite contains
+1621 passing tests and 8 passing subtests.  For both runtime paths, normalized
+dry-run metadata is equal to the pre-migration baseline and 36 continuous
+trajectory, initial-condition, diagnostic, checkpoint, and completion files
+per runtime are byte-identical.  Both directions of cross-version same-runtime
+restart produce byte-identical final `Q/u/p`.  Fresh sdist and wheel archives
+contain the policy module; isolated imports preserve canonical object identity,
+and the installed console completes dry-run plus one CPU step through both
+runtime paths.  No floating-point operation or GPU hot path changed, so P2.6
+itself requires no H100 job.  P2.7 provenance and final Phase 2 qualification
+is next.
 
 ### P2.7: provenance and Phase 2 closure
 

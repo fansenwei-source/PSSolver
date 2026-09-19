@@ -132,8 +132,9 @@ core
 
 The executable subset of this rule is in
 `tests/test_architecture_import_boundaries.py`.  The table records all eight
-v0.1.2 debts; Phase 1 retired one, leaving seven exact exceptions in the
-current ratchet.  Broad layer exemptions are forbidden.
+original v0.1.2 debts.  Phase 1, P2.5.1, and P2.6 have retired four, leaving
+four exact exceptions in the current ratchet.  Broad layer exemptions are
+forbidden.
 
 `pssolver.systems` is the narrow tensor-free declaration layer for generic
 algebraic requests and physical subsystems such as incompressible Stokes.  It
@@ -141,21 +142,22 @@ does not own solvers, registries, tensors, device policy, or runtime state.
 Existing execution import paths remain compatibility facades while these
 declarations move to their canonical layer.
 
-| Exact v0.1.2 debt | Planned removal |
-|---|---|
-| `models.active_nematics.stokes -> transforms` | model force/solver composition split after Phase 1 |
-| `configuration.plane_beris_edwards -> plane` | configuration-identity split |
-| `configuration.plane_beris_edwards -> transforms` | move numerical defaults into specifications after Phase 1 |
-| `runtime.plane_legacy -> integrator` | compiled-runtime adapter phase |
-| `runtime.plane_legacy -> plane` | compiled-runtime adapter phase |
-| `runtime.plane_legacy -> solver` | compiled-runtime adapter phase |
-| `runtime.plane_legacy -> transforms` | Phase 1 canonical imports, then runtime migration |
-| `runtime.plane_beris_edwards -> experimental.plane_shadow_driver` | replace canary bridge before production promotion |
+| Exact v0.1.2 debt | Planned removal | Status |
+|---|---|---|
+| `models.active_nematics.stokes -> transforms` | model force/solver composition split after Phase 1 | pending |
+| `configuration.plane_beris_edwards -> plane` | configuration-identity split | retired in P2.6 |
+| `configuration.plane_beris_edwards -> transforms` | move numerical defaults into specifications after Phase 1 | retired in P2.6 |
+| `runtime.plane_legacy -> integrator` | compiled-runtime adapter phase | pending |
+| `runtime.plane_legacy -> plane` | compiled-runtime adapter phase | retired in P2.5.1 |
+| `runtime.plane_legacy -> solver` | compiled-runtime adapter phase | pending |
+| `runtime.plane_legacy -> transforms` | Phase 1 canonical imports, then runtime migration | retired in Phase 1 |
+| `runtime.plane_beris_edwards -> experimental.plane_shadow_driver` | replace canary bridge before production promotion | pending |
 
-Phase 1 retired `runtime.plane_legacy -> transforms`.  It intentionally kept
-the model and configuration facade edges above: directly replacing either one
-with an operator/backend import would preserve the cycle in a different form
-and violate the target dependency direction.
+Phase 1 retired `runtime.plane_legacy -> transforms`; P2.5.1 retired
+`runtime.plane_legacy -> plane`; P2.6 retired both configuration facade edges
+by introducing tensor-free policy authorities.  The remaining model and
+runtime debts must likewise be removed without replacing them with a different
+reverse dependency.
 
 Key rules are:
 
