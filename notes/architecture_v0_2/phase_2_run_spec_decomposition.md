@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.1_LEAF_COMPONENTS_COMPLETE_STOKES_LAYER_DECISION_PENDING`
+Status: `P2.1_LEAF_COMPONENTS_COMPLETE_P2.1S_SYSTEMS_EXTRACTION_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -9,7 +9,9 @@ Design baseline: Phase 1 closure commit
 The machine-readable companion to this plan is
 [phase_2_run_spec_inventory.json](phase_2_run_spec_inventory.json).  The
 compatibility decision is recorded in
-[ADR 0007](adr/0007-run-spec-compatibility-facade.md).
+[ADR 0007](adr/0007-run-spec-compatibility-facade.md).  The declaration-layer
+decision that unblocks the Stokes component is recorded in
+[ADR 0008](adr/0008-tensor-free-system-declarations.md).
 
 ## Objective
 
@@ -314,12 +316,18 @@ deferred.  The accepted sketch requires
 `PlaneBerisEdwardsPhysicsSpec.stokes` to reuse
 `IncompressibleStokesSystemSpec`, but that declaration currently lives in
 `pssolver.execution`, while the dependency ratchet deliberately forbids
-`configuration -> execution` and this phase forbids broadening the allowlist.
-P2.1 does not hide that edge through `Any`, a string-only annotation, dynamic
-import, re-export indirection, or a duplicated Plane Stokes declaration.  A
-separate architecture decision must either place the tensor-free physical
-Stokes declaration in an admissible declaration layer or explicitly revise
-the layer direction before the physics aggregate is added.
+`configuration -> execution`.
+
+ADR 0008 resolves the ownership question without weakening that rule.  A
+narrow tensor-free `pssolver.systems` layer will become the canonical home of
+generic algebraic declarations and the shared Stokes request.  Existing
+`pssolver.execution` imports will remain exact-object compatibility facades;
+no duplicate, subclass, dynamic import, or new legacy exception is permitted.
+The next micro-phase is the characterized mechanical declaration extraction.
+This extraction is tracked as P2.1S rather than being hidden inside the
+already completed leaf subset.  Only after its identity, existing pickle
+behavior, tensor-free, wheel, and complete-CPU gates pass may the physics
+aggregate and pure decomposition be added.
 
 The focused P2.1 leaf suite contains 65 passing tests.  The combined P2.0,
 P2.1, import-boundary, and O.1 gate contains 157 passing tests.  The complete

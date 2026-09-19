@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "design_frozen_implementation_pending",
+  "status": "p2_1_leaf_components_complete_p2_1s_systems_extraction_pending",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -218,6 +218,48 @@
     "pssolver.models.active_nematics.constitutive.BerisEdwardsConstitutiveParameters",
     "pssolver.core.ProblemSpec"
   ],
+  "stokes_declaration_layer_decision": {
+    "adr": "notes/architecture_v0_2/adr/0008-tensor-free-system-declarations.md",
+    "current_canonical_module": "pssolver.execution.stokes",
+    "target_layer": "pssolver.systems",
+    "target_modules": {
+      "pssolver.systems.algebraic": [
+        "AlgebraicUpdatePhase",
+        "AlgebraicSystemSpec"
+      ],
+      "pssolver.systems.stokes": [
+        "INCOMPRESSIBLE_STOKES_CAPABILITY",
+        "PressureGauge",
+        "TangentialZeroModePolicy",
+        "IncompressibleStokesSystemSpec"
+      ]
+    },
+    "dependency_policy": {
+      "systems_may_import": [
+        "core",
+        "systems"
+      ],
+      "tensor_free": true,
+      "configuration_to_execution_allowed": false,
+      "new_legacy_exception_allowed": false
+    },
+    "compatibility": {
+      "execution_import_paths_retained": true,
+      "old_and_canonical_paths_resolve_to_same_object": true,
+      "wrapper_or_subclass_allowed": false,
+      "old_pickle_globals_remain_loadable": true,
+      "existing_instance_pickle_success_and_failure_preserved": true,
+      "production_checkpoint_format_changed": false
+    },
+    "implementation_order": [
+      "characterize declaration identity and behavior",
+      "extract generic algebraic declarations",
+      "extract typed Stokes declarations",
+      "install exact-object execution compatibility facades",
+      "enforce systems import and tensor-free ratchets",
+      "add PlaneBerisEdwardsPhysicsSpec"
+    ]
+  },
   "do_not_reuse_as_production_declaration": [
     "pssolver.models.active_nematics.constitutive.BerisEdwardsPlaneCoupledModel"
   ],
@@ -306,7 +348,15 @@
     {
       "id": "P2.1",
       "name": "disconnected immutable component value objects",
-      "production_code_changed": false
+      "production_code_changed": false,
+      "completed_subset": "dependency-safe leaf components",
+      "pending_prerequisite": "P2.1S systems declaration extraction"
+    },
+    {
+      "id": "P2.1S",
+      "name": "tensor-free algebraic and Stokes declaration extraction",
+      "production_runtime_changed": false,
+      "requires": "ADR 0008 compatibility characterization and alias gates"
     },
     {
       "id": "P2.2",

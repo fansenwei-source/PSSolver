@@ -122,7 +122,7 @@ The target dependency direction is:
 
 ```text
 core
-  -> geometries / model declarations
+  -> geometries / model declarations / system declarations
   -> planning
   -> backends / operators / linear solvers
   -> execution / integrators / runtime
@@ -131,8 +131,15 @@ core
 ```
 
 The executable subset of this rule is in
-`tests/test_architecture_import_boundaries.py`.  Current v0.1.2 debts are
-listed as eight exact edges.  Broad layer exemptions are forbidden.
+`tests/test_architecture_import_boundaries.py`.  The table records all eight
+v0.1.2 debts; Phase 1 retired one, leaving seven exact exceptions in the
+current ratchet.  Broad layer exemptions are forbidden.
+
+`pssolver.systems` is the narrow tensor-free declaration layer for generic
+algebraic requests and physical subsystems such as incompressible Stokes.  It
+does not own solvers, registries, tensors, device policy, or runtime state.
+Existing execution import paths remain compatibility facades while these
+declarations move to their canonical layer.
 
 | Exact v0.1.2 debt | Planned removal |
 |---|---|
@@ -160,6 +167,8 @@ Key rules are:
 6. production code does not acquire new dependencies on `experimental`.
 7. unsupported capability combinations fail explicitly; they do not silently
    fall back to another geometry or algorithm.
+8. system declarations remain tensor-free and geometry-neutral; planning and
+   execution own their numerical and device-bound lowering.
 
 ## GPU and hot-loop constraints
 
@@ -245,6 +254,8 @@ stable public commitment.
   provenance, and qualification.
 - [ADR 0007](adr/0007-run-spec-compatibility-facade.md): decompose the Plane
   run configuration behind its supported compatibility facade.
+- [ADR 0008](adr/0008-tensor-free-system-declarations.md): separate shared
+  tensor-free system declarations from execution.
 
 Supporting inventories:
 

@@ -132,6 +132,12 @@ generic types are imported from their current canonical modules.  No duplicate
 `DomainSpec`, `NumericsConfig`, refresh policy, pressure gauge, or zero-mode
 policy is introduced.
 
+ADR 0008 refines the placement of the generic algebraic and Stokes
+declarations: their canonical definitions move together to the tensor-free
+`pssolver.systems` layer, while the existing execution import paths remain
+exact-object compatibility facades.  This does not change the reuse or
+no-duplication decision above.
+
 ## Migration order
 
 1. Add exhaustive compatibility characterization without production changes.
