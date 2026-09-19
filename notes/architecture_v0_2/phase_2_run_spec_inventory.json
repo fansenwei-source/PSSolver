@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "p2_1_leaf_components_complete_p2_1s_systems_extraction_pending",
+  "status": "p2_1s_characterization_complete_algebraic_extraction_pending",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -253,10 +253,8 @@
     },
     "implementation_order": [
       "characterize declaration identity and behavior",
-      "extract generic algebraic declarations",
-      "extract typed Stokes declarations",
-      "install exact-object execution compatibility facades",
-      "enforce systems import and tensor-free ratchets",
+      "atomically extract generic algebraic declarations, install their exact-object execution facades, and enforce the initial systems import/tensor-free ratchets",
+      "atomically extract typed Stokes declarations, install their exact-object execution facades, and extend the systems ratchets",
       "add PlaneBerisEdwardsPhysicsSpec"
     ]
   },
@@ -356,7 +354,37 @@
       "id": "P2.1S",
       "name": "tensor-free algebraic and Stokes declaration extraction",
       "production_runtime_changed": false,
-      "requires": "ADR 0008 compatibility characterization and alias gates"
+      "requires": "ADR 0008 compatibility characterization and alias gates",
+      "characterization_complete": true,
+      "implementation_pending": true,
+      "fixtures": [
+        "tests/fixtures/systems/algebraic_stokes_api_v1.json",
+        "tests/fixtures/systems/algebraic_stokes_cases_v1.json"
+      ],
+      "tests": [
+        "tests/test_phase2_system_declaration_compatibility.py",
+        "tests/test_phase2_system_declaration_import_order.py",
+        "tests/test_phase2_system_declaration_restart_provenance.py"
+      ],
+      "golden_sha256": {
+        "legacy_algebraic_update_phase_protocol4_class_pickle": "cdc6049ac6d32eaae433ad84520f99d4a3e256e6fa41ee99eb209434e29a1b9f",
+        "legacy_algebraic_update_phase_protocol4_member_pickle": "056186446f281a4fbda5bfe094d72941cc2794bed8b20613fdd18154ba7e53c8",
+        "legacy_stokes_protocol4_pickle": "f5e97c7453d9b2caf03c634c585797f368f0ac863193b509fb84f219b9d12488",
+        "representative_stokes_metadata": "f89ce8db5693770e6c999b2171265e153c748d160093511f375c13c1eebb1c7e",
+        "plane_algebraic_restart_provenance": "e8808a592926bc47e855c7aaa246a0855606126b31f0a3850d6df6a3bdb24dbc"
+      },
+      "focused_tests_passed": 87,
+      "combined_tests_passed": 258,
+      "full_cpu_tests_passed": 1380,
+      "full_cpu_subtests_passed": 8,
+      "isolated_wheel_import_identity_smoke_passed": true,
+      "installed_console_entry_smoke_passed": true,
+      "next_commit_scope": [
+        "AlgebraicUpdatePhase extraction",
+        "AlgebraicSystemSpec extraction",
+        "execution algebraic exact-object compatibility facade",
+        "systems and execution import ratchets"
+      ]
     },
     {
       "id": "P2.2",

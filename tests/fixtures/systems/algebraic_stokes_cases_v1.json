@@ -1,0 +1,393 @@
+{
+  "schema_version": 1,
+  "canonical_json_encoding": {
+    "allow_nan": false,
+    "separators": [
+      ",",
+      ":"
+    ],
+    "sort_keys": true
+  },
+  "algebraic_representative": {
+    "canonical_json": "{\"capability\":\"incompressible_stokes\",\"dependencies\":[\"force_x\",\"force_y\",\"force_z\"],\"name\":\"flow\",\"output_components\":[\"ux\",\"uy\",\"uz\",\"p\"],\"parameters\":{\"enabled\":true,\"friction\":0,\"nested\":{\"modes\":[1,2]},\"viscosity\":0.73},\"update_phase\":\"pre_explicit_rhs\"}",
+    "canonical_sha256": "e95b0a2ebdbeaf2e491e4de5a867471254ee29e21de798a2ffbbccfcfc1caaa9",
+    "parameters_json": "{\"enabled\":true,\"friction\":0,\"nested\":{\"modes\":[1,2]},\"viscosity\":0.73}",
+    "repr_sha256": "2fbf940a7abbdcb0b6e65d269bcf905d7945aabf3fc9186cce87221bfc1f128d"
+  },
+  "algebraic_invalid_cases": [
+    [
+      "name_non_string",
+      "ValueError",
+      "algebraic system name must be a Python identifier"
+    ],
+    [
+      "name_empty",
+      "ValueError",
+      "algebraic system name must be a Python identifier"
+    ],
+    [
+      "name_bad_identifier",
+      "ValueError",
+      "algebraic system name must be a Python identifier"
+    ],
+    [
+      "capability_non_string",
+      "ValueError",
+      "algebraic capability must be a Python identifier"
+    ],
+    [
+      "capability_bad_identifier",
+      "ValueError",
+      "algebraic capability must be a Python identifier"
+    ],
+    [
+      "outputs_string",
+      "TypeError",
+      "output_components and dependencies must be iterables, not strings"
+    ],
+    [
+      "dependencies_string",
+      "TypeError",
+      "output_components and dependencies must be iterables, not strings"
+    ],
+    [
+      "outputs_non_iterable",
+      "TypeError",
+      "output_components and dependencies must be iterable"
+    ],
+    [
+      "dependencies_non_iterable",
+      "TypeError",
+      "output_components and dependencies must be iterable"
+    ],
+    [
+      "outputs_empty",
+      "ValueError",
+      "output_components must contain Python identifiers"
+    ],
+    [
+      "dependencies_empty",
+      "ValueError",
+      "dependencies must contain Python identifiers"
+    ],
+    [
+      "outputs_bad_member",
+      "ValueError",
+      "output_components must contain Python identifiers"
+    ],
+    [
+      "dependencies_bad_member",
+      "ValueError",
+      "dependencies must contain Python identifiers"
+    ],
+    [
+      "outputs_duplicate",
+      "ValueError",
+      "algebraic output components must be unique"
+    ],
+    [
+      "dependencies_duplicate",
+      "ValueError",
+      "algebraic dependencies must be unique"
+    ],
+    [
+      "output_dependency_overlap",
+      "ValueError",
+      "algebraic outputs cannot depend on themselves"
+    ],
+    [
+      "phase_string",
+      "TypeError",
+      "update_phase must be an AlgebraicUpdatePhase"
+    ],
+    [
+      "parameters_non_mapping",
+      "TypeError",
+      "algebraic parameters must be a mapping"
+    ],
+    [
+      "parameter_key_non_string",
+      "ValueError",
+      "algebraic parameter names must be Python identifiers"
+    ],
+    [
+      "parameter_key_bad_identifier",
+      "ValueError",
+      "algebraic parameter names must be Python identifiers"
+    ],
+    [
+      "parameter_nan",
+      "ValueError",
+      "algebraic parameters must be finite and JSON-compatible"
+    ],
+    [
+      "parameter_infinity",
+      "ValueError",
+      "algebraic parameters must be finite and JSON-compatible"
+    ],
+    [
+      "parameter_set",
+      "ValueError",
+      "algebraic parameters must be finite and JSON-compatible"
+    ],
+    [
+      "parameter_cycle",
+      "ValueError",
+      "algebraic parameters must be finite and JSON-compatible"
+    ]
+  ],
+  "stokes_base": {
+    "name": "flow",
+    "force_components": [
+      "force_x",
+      "force_y",
+      "force_z"
+    ],
+    "velocity_components": [
+      "ux",
+      "uy",
+      "uz"
+    ],
+    "pressure_component": "p",
+    "viscosity": 0.73,
+    "pressure_gauge": "zero_mean"
+  },
+  "stokes_valid_cases": [
+    {
+      "name": "zero_mean",
+      "friction": 0.0,
+      "policy": "zero_mean",
+      "canonical_json": "{\"capability\":\"incompressible_stokes\",\"dependencies\":[\"force_x\",\"force_y\",\"force_z\"],\"name\":\"flow\",\"output_components\":[\"ux\",\"uy\",\"uz\",\"p\"],\"parameters\":{\"friction\":0.0,\"pressure_gauge\":\"zero_mean\",\"tangential_zero_mode_policy\":\"zero_mean\",\"viscosity\":0.73},\"update_phase\":\"pre_explicit_rhs\"}",
+      "canonical_sha256": "f89ce8db5693770e6c999b2171265e153c748d160093511f375c13c1eebb1c7e",
+      "repr_sha256": "c9fd06dd20b9ee9bdbcf87555ddb8cca6d4a8e5c60ef594d4b3b283f5227d03d"
+    },
+    {
+      "name": "friction",
+      "friction": 0.25,
+      "policy": "friction",
+      "canonical_json": "{\"capability\":\"incompressible_stokes\",\"dependencies\":[\"force_x\",\"force_y\",\"force_z\"],\"name\":\"flow\",\"output_components\":[\"ux\",\"uy\",\"uz\",\"p\"],\"parameters\":{\"friction\":0.25,\"pressure_gauge\":\"zero_mean\",\"tangential_zero_mode_policy\":\"friction\",\"viscosity\":0.73},\"update_phase\":\"pre_explicit_rhs\"}",
+      "canonical_sha256": "0823117f2bbf151c8ce287dcea7a808bc62f1df880002fadad0add957de29f7f"
+    },
+    {
+      "name": "not_applicable",
+      "friction": 0.0,
+      "policy": "not_applicable",
+      "canonical_json": "{\"capability\":\"incompressible_stokes\",\"dependencies\":[\"force_x\",\"force_y\",\"force_z\"],\"name\":\"flow\",\"output_components\":[\"ux\",\"uy\",\"uz\",\"p\"],\"parameters\":{\"friction\":0.0,\"pressure_gauge\":\"zero_mean\",\"tangential_zero_mode_policy\":\"not_applicable\",\"viscosity\":0.73},\"update_phase\":\"pre_explicit_rhs\"}",
+      "canonical_sha256": "48d39ec742637d78e55da62d535de5bf77e1bb2a12a9289d34a0fc41bb71f2a2"
+    },
+    {
+      "name": "not_applicable_with_friction",
+      "friction": 0.25,
+      "policy": "not_applicable",
+      "canonical_json": "{\"capability\":\"incompressible_stokes\",\"dependencies\":[\"force_x\",\"force_y\",\"force_z\"],\"name\":\"flow\",\"output_components\":[\"ux\",\"uy\",\"uz\",\"p\"],\"parameters\":{\"friction\":0.25,\"pressure_gauge\":\"zero_mean\",\"tangential_zero_mode_policy\":\"not_applicable\",\"viscosity\":0.73},\"update_phase\":\"pre_explicit_rhs\"}",
+      "canonical_sha256": "98658d33f660e31021e53c1dbe963b6b5d97856276a480917e9df087802d5ab4"
+    }
+  ],
+  "stokes_invalid_cases": [
+    [
+      "name_non_string",
+      "ValueError",
+      "Stokes system name must be a Python identifier"
+    ],
+    [
+      "name_bad_identifier",
+      "ValueError",
+      "Stokes system name must be a Python identifier"
+    ],
+    [
+      "forces_string",
+      "TypeError",
+      "force_components must be an iterable, not a string"
+    ],
+    [
+      "forces_non_iterable",
+      "TypeError",
+      "force_components must be iterable"
+    ],
+    [
+      "forces_wrong_count",
+      "ValueError",
+      "force_components must contain three Python identifiers"
+    ],
+    [
+      "forces_bad_identifier",
+      "ValueError",
+      "force_components must contain three Python identifiers"
+    ],
+    [
+      "forces_duplicate",
+      "ValueError",
+      "force_components must contain unique names"
+    ],
+    [
+      "velocities_string",
+      "TypeError",
+      "velocity_components must be an iterable, not a string"
+    ],
+    [
+      "velocities_non_iterable",
+      "TypeError",
+      "velocity_components must be iterable"
+    ],
+    [
+      "velocities_wrong_count",
+      "ValueError",
+      "velocity_components must contain three Python identifiers"
+    ],
+    [
+      "velocities_bad_identifier",
+      "ValueError",
+      "velocity_components must contain three Python identifiers"
+    ],
+    [
+      "velocities_duplicate",
+      "ValueError",
+      "velocity_components must contain unique names"
+    ],
+    [
+      "pressure_non_string",
+      "ValueError",
+      "pressure_component must be a Python identifier"
+    ],
+    [
+      "pressure_bad_identifier",
+      "ValueError",
+      "pressure_component must be a Python identifier"
+    ],
+    [
+      "cross_group_overlap",
+      "ValueError",
+      "Stokes input and output component names must differ"
+    ],
+    [
+      "force_pressure_overlap",
+      "ValueError",
+      "Stokes input and output component names must differ"
+    ],
+    [
+      "velocity_pressure_overlap",
+      "ValueError",
+      "Stokes input and output component names must differ"
+    ],
+    [
+      "viscosity_bool",
+      "ValueError",
+      "viscosity must be finite and positive"
+    ],
+    [
+      "viscosity_zero",
+      "ValueError",
+      "viscosity must be finite and positive"
+    ],
+    [
+      "viscosity_nan",
+      "ValueError",
+      "viscosity must be finite and positive"
+    ],
+    [
+      "friction_bool",
+      "ValueError",
+      "friction must be finite and non-negative"
+    ],
+    [
+      "friction_negative",
+      "ValueError",
+      "friction must be finite and non-negative"
+    ],
+    [
+      "friction_infinite",
+      "ValueError",
+      "friction must be finite and non-negative"
+    ],
+    [
+      "gauge_string",
+      "TypeError",
+      "pressure_gauge must be a PressureGauge"
+    ],
+    [
+      "policy_string",
+      "TypeError",
+      "tangential_zero_mode_policy must be a TangentialZeroModePolicy"
+    ],
+    [
+      "zero_mean_positive_friction",
+      "ValueError",
+      "zero_mean tangential policy requires friction == 0"
+    ],
+    [
+      "friction_policy_zero",
+      "ValueError",
+      "friction tangential policy requires friction > 0"
+    ]
+  ],
+  "stokes_from_algebraic_invalid_cases": [
+    [
+      "wrong_type",
+      "TypeError",
+      "system must be an AlgebraicSystemSpec"
+    ],
+    [
+      "wrong_capability",
+      "ValueError",
+      "algebraic system does not request incompressible Stokes"
+    ],
+    [
+      "wrong_dependency_count",
+      "ValueError",
+      "incompressible Stokes requires three forces and u_x/u_y/u_z/p"
+    ],
+    [
+      "wrong_output_count",
+      "ValueError",
+      "incompressible Stokes requires three forces and u_x/u_y/u_z/p"
+    ],
+    [
+      "missing_parameter",
+      "ValueError",
+      "incompressible Stokes parameters must be exactly"
+    ],
+    [
+      "extra_parameter",
+      "ValueError",
+      "incompressible Stokes parameters must be exactly"
+    ],
+    [
+      "unsupported_gauge",
+      "ValueError",
+      "unsupported pressure gauge"
+    ],
+    [
+      "unsupported_policy",
+      "ValueError",
+      "unsupported tangential zero-mode policy"
+    ],
+    [
+      "invalid_viscosity",
+      "ValueError",
+      "viscosity must be finite and positive"
+    ],
+    [
+      "invalid_zero_mean_pair",
+      "ValueError",
+      "zero_mean tangential policy requires friction == 0"
+    ],
+    [
+      "invalid_friction_pair",
+      "ValueError",
+      "friction tangential policy requires friction > 0"
+    ]
+  ],
+  "legacy_algebraic_update_phase_pickle": {
+    "protocol": 4,
+    "class_base64": "gASVOQAAAAAAAACMHHBzc29sdmVyLmV4ZWN1dGlvbi5hbGdlYnJhaWOUjBRBbGdlYnJhaWNVcGRhdGVQaGFzZZSTlC4=",
+    "class_sha256": "cdc6049ac6d32eaae433ad84520f99d4a3e256e6fa41ee99eb209434e29a1b9f",
+    "member_base64": "gASVUAAAAAAAAACMHHBzc29sdmVyLmV4ZWN1dGlvbi5hbGdlYnJhaWOUjBRBbGdlYnJhaWNVcGRhdGVQaGFzZZSTlIwQcHJlX2V4cGxpY2l0X3Joc5SFlFKULg==",
+    "member_sha256": "056186446f281a4fbda5bfe094d72941cc2794bed8b20613fdd18154ba7e53c8"
+  },
+  "legacy_stokes_pickle": {
+    "protocol": 4,
+    "base64": "gASV3wAAAAAAAACMGXBzc29sdmVyLmV4ZWN1dGlvbi5zdG9rZXOUjB5JbmNvbXByZXNzaWJsZVN0b2tlc1N5c3RlbVNwZWOUk5QpgZRdlCiMBGZsb3eUjAdmb3JjZV94lIwHZm9yY2VfeZSMB2ZvcmNlX3qUh5SMAnV4lIwCdXmUjAJ1epSHlIwBcJRHP+dcKPXCj1xHAAAAAAAAAABoAIwNUHJlc3N1cmVHYXVnZZSTlIwJemVyb19tZWFulIWUUpRoAIwYVGFuZ2VudGlhbFplcm9Nb2RlUG9saWN5lJOUaBGFlFKUZWIu",
+    "sha256": "f5e97c7453d9b2caf03c634c585797f368f0ac863193b509fb84f219b9d12488"
+  },
+  "plane_restart_provenance_sha256": "e8808a592926bc47e855c7aaa246a0855606126b31f0a3850d6df6a3bdb24dbc"
+}

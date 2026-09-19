@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.1_LEAF_COMPONENTS_COMPLETE_P2.1S_SYSTEMS_EXTRACTION_PENDING`
+Status: `P2.1S_CHARACTERIZATION_COMPLETE_ALGEBRAIC_EXTRACTION_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -333,6 +333,42 @@ The focused P2.1 leaf suite contains 65 passing tests.  The combined P2.0,
 P2.1, import-boundary, and O.1 gate contains 157 passing tests.  The complete
 local CPU suite contains 1293 passing tests and 8 passing subtests; clean
 wheel import and console-entry smokes also pass.
+
+### P2.1S: characterize and extract shared system declarations
+
+The characterization portion of P2.1S was completed on 2026-09-19 without
+changing production code.  Two machine-readable fixtures and three focused
+test modules freeze:
+
+- the algebraic and Stokes class, enum, field, signature, default, slots, and
+  match-argument surfaces;
+- execution-package and leaf-module object identity plus package-root
+  non-exports;
+- normalization, validation boundaries, metadata, typed/generic round-trip,
+  and all three zero-mode policies;
+- real legacy-module `AlgebraicUpdatePhase` protocol-4 class/member pickles
+  with SHA-256 values
+  `cdc6049ac6d32eaae433ad84520f99d4a3e256e6fa41ee99eb209434e29a1b9f`
+  and
+  `056186446f281a4fbda5bfe094d72941cc2794bed8b20613fdd18154ba7e53c8`;
+- a real legacy-module Stokes protocol-4 pickle with SHA-256
+  `f5e97c7453d9b2caf03c634c585797f368f0ac863193b509fb84f219b9d12488`;
+- the existing negative contract that `AlgebraicSystemSpec` instances are not
+  pickleable because their normalized parameters use `MappingProxyType`;
+- representative Stokes metadata SHA-256
+  `f89ce8db5693770e6c999b2171265e153c748d160093511f375c13c1eebb1c7e`;
+- Plane algebraic restart-provenance SHA-256
+  `e8808a592926bc47e855c7aaa246a0855606126b31f0a3850d6df6a3bdb24dbc`;
+- fresh-process import ordering through the current execution paths.
+
+The new focused suite contains 87 passing tests.  The combined P2.1S,
+Stage F/G, import-boundary, and Phase 2 compatibility/component gate contains
+258 passing tests.  The complete local CPU suite contains 1380 passing tests
+and 8 passing subtests.  An isolated wheel install preserves declaration
+identity and package-root non-exports, and the installed console-entry smoke
+passes.  The next P2.1S commit may mechanically extract only
+`AlgebraicUpdatePhase` and `AlgebraicSystemSpec`; the Stokes extraction remains
+a separate subsequent commit.
 
 ### P2.2: add pure decomposition and parity adapter
 

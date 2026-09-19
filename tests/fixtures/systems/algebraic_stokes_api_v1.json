@@ -1,0 +1,460 @@
+{
+  "schema_version": 1,
+  "status": "p2_1s_pre_extraction_baseline",
+  "execution_exports": [
+    "AlgebraicSystemSpec",
+    "AlgebraicUpdatePhase",
+    "INCOMPRESSIBLE_STOKES_CAPABILITY",
+    "IncompressibleStokesSystemSpec",
+    "PressureGauge",
+    "TangentialZeroModePolicy"
+  ],
+  "root_absent": [
+    "AlgebraicSystemSpec",
+    "AlgebraicUpdatePhase",
+    "INCOMPRESSIBLE_STOKES_CAPABILITY",
+    "IncompressibleStokesSystemSpec",
+    "PressureGauge",
+    "TangentialZeroModePolicy"
+  ],
+  "algebraic_update_phase": {
+    "pre_extraction_module": "pssolver.execution.algebraic",
+    "legacy_module": "pssolver.execution.algebraic",
+    "target_canonical_module": "pssolver.systems.algebraic",
+    "qualname": "AlgebraicUpdatePhase",
+    "members": [
+      [
+        "PRE_EXPLICIT_RHS",
+        "pre_explicit_rhs"
+      ]
+    ]
+  },
+  "algebraic_system_spec": {
+    "pre_extraction_module": "pssolver.execution.algebraic",
+    "legacy_module": "pssolver.execution.algebraic",
+    "target_canonical_module": "pssolver.systems.algebraic",
+    "qualname": "AlgebraicSystemSpec",
+    "dataclass_parameters": {
+      "eq": true,
+      "frozen": true,
+      "init": true,
+      "order": false,
+      "repr": true,
+      "unsafe_hash": false
+    },
+    "fields": [
+      {
+        "compare": true,
+        "default": {
+          "kind": "missing"
+        },
+        "init": true,
+        "name": "name",
+        "repr": true,
+        "type": "str"
+      },
+      {
+        "compare": true,
+        "default": {
+          "kind": "missing"
+        },
+        "init": true,
+        "name": "capability",
+        "repr": true,
+        "type": "str"
+      },
+      {
+        "compare": true,
+        "default": {
+          "kind": "missing"
+        },
+        "init": true,
+        "name": "output_components",
+        "repr": true,
+        "type": "tuple[str, ...]"
+      },
+      {
+        "compare": true,
+        "default": {
+          "kind": "missing"
+        },
+        "init": true,
+        "name": "dependencies",
+        "repr": true,
+        "type": "tuple[str, ...]"
+      },
+      {
+        "compare": true,
+        "default": {
+          "callable": "builtins.dict",
+          "kind": "factory"
+        },
+        "init": true,
+        "name": "parameters",
+        "repr": true,
+        "type": "Mapping[str, object]"
+      },
+      {
+        "compare": true,
+        "default": {
+          "enum": "AlgebraicUpdatePhase",
+          "kind": "enum",
+          "value": "pre_explicit_rhs"
+        },
+        "init": true,
+        "name": "update_phase",
+        "repr": true,
+        "type": "AlgebraicUpdatePhase"
+      },
+      {
+        "compare": false,
+        "default": {
+          "kind": "missing"
+        },
+        "init": false,
+        "name": "_parameters_json",
+        "repr": false,
+        "type": "str"
+      }
+    ],
+    "slots": [
+      "name",
+      "capability",
+      "output_components",
+      "dependencies",
+      "parameters",
+      "update_phase",
+      "_parameters_json"
+    ],
+    "match_args": [
+      "name",
+      "capability",
+      "output_components",
+      "dependencies",
+      "parameters",
+      "update_phase"
+    ],
+    "signature": [
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "required"
+        },
+        "name": "name"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "required"
+        },
+        "name": "capability"
+      },
+      {
+        "annotation": "tuple[str, ...]",
+        "default": {
+          "kind": "required"
+        },
+        "name": "output_components"
+      },
+      {
+        "annotation": "tuple[str, ...]",
+        "default": {
+          "kind": "required"
+        },
+        "name": "dependencies"
+      },
+      {
+        "annotation": "Mapping[str, object]",
+        "default": {
+          "kind": "factory"
+        },
+        "name": "parameters"
+      },
+      {
+        "annotation": "AlgebraicUpdatePhase",
+        "default": {
+          "enum": "AlgebraicUpdatePhase",
+          "kind": "enum",
+          "value": "pre_explicit_rhs"
+        },
+        "name": "update_phase"
+      }
+    ],
+    "return_annotation": "None",
+    "methods": [
+      {
+        "kind": "function",
+        "name": "to_metadata",
+        "parameters": [
+          {
+            "annotation": null,
+            "kind": "POSITIONAL_OR_KEYWORD",
+            "name": "self"
+          }
+        ],
+        "return_annotation": "dict[str, object]"
+      }
+    ]
+  },
+  "pressure_gauge": {
+    "pre_extraction_module": "pssolver.execution.stokes",
+    "legacy_module": "pssolver.execution.stokes",
+    "target_canonical_module": "pssolver.systems.stokes",
+    "qualname": "PressureGauge",
+    "members": [
+      [
+        "ZERO_MEAN",
+        "zero_mean"
+      ]
+    ]
+  },
+  "tangential_zero_mode_policy": {
+    "pre_extraction_module": "pssolver.execution.stokes",
+    "legacy_module": "pssolver.execution.stokes",
+    "target_canonical_module": "pssolver.systems.stokes",
+    "qualname": "TangentialZeroModePolicy",
+    "members": [
+      [
+        "ZERO_MEAN",
+        "zero_mean"
+      ],
+      [
+        "FRICTION",
+        "friction"
+      ],
+      [
+        "NOT_APPLICABLE",
+        "not_applicable"
+      ]
+    ]
+  },
+  "incompressible_stokes_system_spec": {
+    "pre_extraction_module": "pssolver.execution.stokes",
+    "legacy_module": "pssolver.execution.stokes",
+    "target_canonical_module": "pssolver.systems.stokes",
+    "qualname": "IncompressibleStokesSystemSpec",
+    "capability": "incompressible_stokes",
+    "dataclass_parameters": {
+      "eq": true,
+      "frozen": true,
+      "init": true,
+      "order": false,
+      "repr": true,
+      "unsafe_hash": false
+    },
+    "fields": [
+      {
+        "compare": true,
+        "default": {
+          "kind": "missing"
+        },
+        "init": true,
+        "name": "name",
+        "repr": true,
+        "type": "str"
+      },
+      {
+        "compare": true,
+        "default": {
+          "kind": "missing"
+        },
+        "init": true,
+        "name": "force_components",
+        "repr": true,
+        "type": "tuple[str, str, str]"
+      },
+      {
+        "compare": true,
+        "default": {
+          "kind": "missing"
+        },
+        "init": true,
+        "name": "velocity_components",
+        "repr": true,
+        "type": "tuple[str, str, str]"
+      },
+      {
+        "compare": true,
+        "default": {
+          "kind": "missing"
+        },
+        "init": true,
+        "name": "pressure_component",
+        "repr": true,
+        "type": "str"
+      },
+      {
+        "compare": true,
+        "default": {
+          "kind": "missing"
+        },
+        "init": true,
+        "name": "viscosity",
+        "repr": true,
+        "type": "float"
+      },
+      {
+        "compare": true,
+        "default": {
+          "kind": "value",
+          "value": 0.0
+        },
+        "init": true,
+        "name": "friction",
+        "repr": true,
+        "type": "float"
+      },
+      {
+        "compare": true,
+        "default": {
+          "enum": "PressureGauge",
+          "kind": "enum",
+          "value": "zero_mean"
+        },
+        "init": true,
+        "name": "pressure_gauge",
+        "repr": true,
+        "type": "PressureGauge"
+      },
+      {
+        "compare": true,
+        "default": {
+          "enum": "TangentialZeroModePolicy",
+          "kind": "enum",
+          "value": "zero_mean"
+        },
+        "init": true,
+        "name": "tangential_zero_mode_policy",
+        "repr": true,
+        "type": "TangentialZeroModePolicy"
+      }
+    ],
+    "slots": [
+      "name",
+      "force_components",
+      "velocity_components",
+      "pressure_component",
+      "viscosity",
+      "friction",
+      "pressure_gauge",
+      "tangential_zero_mode_policy"
+    ],
+    "match_args": [
+      "name",
+      "force_components",
+      "velocity_components",
+      "pressure_component",
+      "viscosity",
+      "friction",
+      "pressure_gauge",
+      "tangential_zero_mode_policy"
+    ],
+    "signature": [
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "required"
+        },
+        "name": "name"
+      },
+      {
+        "annotation": "tuple[str, str, str]",
+        "default": {
+          "kind": "required"
+        },
+        "name": "force_components"
+      },
+      {
+        "annotation": "tuple[str, str, str]",
+        "default": {
+          "kind": "required"
+        },
+        "name": "velocity_components"
+      },
+      {
+        "annotation": "str",
+        "default": {
+          "kind": "required"
+        },
+        "name": "pressure_component"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "required"
+        },
+        "name": "viscosity"
+      },
+      {
+        "annotation": "float",
+        "default": {
+          "kind": "value",
+          "value": 0.0
+        },
+        "name": "friction"
+      },
+      {
+        "annotation": "PressureGauge",
+        "default": {
+          "enum": "PressureGauge",
+          "kind": "enum",
+          "value": "zero_mean"
+        },
+        "name": "pressure_gauge"
+      },
+      {
+        "annotation": "TangentialZeroModePolicy",
+        "default": {
+          "enum": "TangentialZeroModePolicy",
+          "kind": "enum",
+          "value": "zero_mean"
+        },
+        "name": "tangential_zero_mode_policy"
+      }
+    ],
+    "return_annotation": "None",
+    "methods": [
+      {
+        "kind": "function",
+        "name": "to_algebraic_system_spec",
+        "parameters": [
+          {
+            "annotation": null,
+            "kind": "POSITIONAL_OR_KEYWORD",
+            "name": "self"
+          }
+        ],
+        "return_annotation": "AlgebraicSystemSpec"
+      },
+      {
+        "kind": "classmethod",
+        "name": "from_algebraic_system_spec",
+        "parameters": [
+          {
+            "annotation": null,
+            "kind": "POSITIONAL_OR_KEYWORD",
+            "name": "cls"
+          },
+          {
+            "annotation": "AlgebraicSystemSpec",
+            "kind": "POSITIONAL_OR_KEYWORD",
+            "name": "system"
+          }
+        ],
+        "return_annotation": "'IncompressibleStokesSystemSpec'"
+      },
+      {
+        "kind": "function",
+        "name": "to_metadata",
+        "parameters": [
+          {
+            "annotation": null,
+            "kind": "POSITIONAL_OR_KEYWORD",
+            "name": "self"
+          }
+        ],
+        "return_annotation": "dict[str, object]"
+      }
+    ]
+  }
+}
