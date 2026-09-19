@@ -89,8 +89,8 @@ EXPECTED_SIGNATURES = {
 
 
 EXPECTED_IMPLEMENTATION_MODULES = {
-    "TransformMetadata": "pssolver.transforms",
-    "TensorProductTransformBackend": "pssolver.transforms",
+    "TransformMetadata": "pssolver.backends.tensor_product",
+    "TensorProductTransformBackend": "pssolver.backends.tensor_product",
     "BasisAwareSpectralProjector": "pssolver.transforms",
     "projected_common_basis_stress_divergence": "pssolver.transforms",
     "projected_distortion_stress_divergence": "pssolver.transforms",
@@ -254,6 +254,22 @@ def test_transform_implementation_provenance_is_explicit():
         for name in EXPECTED_IMPLEMENTATION_MODULES
     }
     assert observed == EXPECTED_IMPLEMENTATION_MODULES
+
+
+def test_backend_facade_names_are_the_canonical_objects():
+    from pssolver.backends import tensor_product
+
+    names = (
+        "DEFAULT_TRANSFORM_EXECUTION_ORDER",
+        "DEFAULT_SPECTRAL_STORAGE",
+        "SPECTRAL_STORAGE_MODES",
+        "DEFAULT_PERIODIC_TRANSFORM_EXECUTION",
+        "PERIODIC_TRANSFORM_EXECUTION_MODES",
+        "TransformMetadata",
+        "TensorProductTransformBackend",
+    )
+    for name in names:
+        assert getattr(transforms, name) is getattr(tensor_product, name)
 
 
 def test_legacy_transform_pickle_global_paths_resolve_through_the_facade():
