@@ -194,8 +194,18 @@ EXPECTED_METHOD_SIGNATURES = {
 def test_transform_facade_exports_the_frozen_v0_1_2_surface():
     for name in EXPECTED_FACADE_NAMES:
         assert hasattr(transforms, name), name
-    if hasattr(transforms, "__all__"):
-        assert tuple(transforms.__all__) == EXPECTED_FACADE_NAMES
+    assert tuple(transforms.__all__) == EXPECTED_FACADE_NAMES
+
+
+def test_transform_facade_contains_no_numerical_implementation():
+    path = PROJECT_ROOT / "pssolver" / "transforms.py"
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    forbidden = tuple(
+        node
+        for node in tree.body
+        if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
+    )
+    assert forbidden == ()
 
 
 def test_transform_constants_retain_exact_values_and_root_identity():
