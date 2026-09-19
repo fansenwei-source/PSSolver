@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.2_COMPLETE_P2.3_DEPENDENCY_SEAM_PENDING`
+Status: `P2.3_CHARACTERIZED_DEPENDENCY_SEAM_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -461,6 +461,17 @@ facade-specific decomposition adapter from the lower pure component builder.
 Then let `domain`, `geometry`, `numerics`, and `shendruk_preset` delegate to
 the component composition while preserving returned types and values.  Keep
 all flat fields and compatibility properties.
+
+The pre-extraction P2.3 characterization was completed on 2026-09-19 without
+changing production code.  Its independent oracle freezes the nominal module
+paths, dataclass and enum surfaces, exact facade/package object identities,
+and real protocol-4 pickle bytes for the three shared Plane declarations,
+representative values, and a complete RunSpec.  It also freezes all four
+derived views across the seven schema-v1 golden cases, their uncached
+freshness, and their field-local validation timing.  These gates must remain
+green while the dependency-neutral declarations and pure builders are
+introduced; the existing schema-v1, canonical-hash, runtime-identity, and
+checkpoint oracles remain authoritative and unchanged.
 
 ### P2.4: freeze an explicit schema-v1 serializer adapter
 

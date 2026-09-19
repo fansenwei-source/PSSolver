@@ -1,0 +1,81 @@
+{
+  "boundaries": {
+    "fields": [
+      ["q", "'BoundarySet'", "factory"],
+      ["tangential_velocity", "'BoundarySet'", "factory"],
+      ["normal_velocity", "'BoundarySet'", "factory"],
+      ["pressure_modal", "'BoundarySet'", "factory"],
+      ["distortion_odd_z", "'BoundarySet'", "factory"]
+    ],
+    "module": "pssolver.configuration.plane_beris_edwards",
+    "qualname": "PlaneFreeSlipBoundaryConditions",
+    "signature": "(q: 'BoundarySet' = <factory>, tangential_velocity: 'BoundarySet' = <factory>, normal_velocity: 'BoundarySet' = <factory>, pressure_modal: 'BoundarySet' = <factory>, distortion_odd_z: 'BoundarySet' = <factory>) -> None"
+  },
+  "protocol4_pickles": {
+    "PlaneFreeSlipBoundaryConditions_class": {
+      "base64": "gASVUgAAAAAAAACMKnBzc29sdmVyLmNvbmZpZ3VyYXRpb24ucGxhbmVfYmVyaXNfZWR3YXJkc5SMH1BsYW5lRnJlZVNsaXBCb3VuZGFyeUNvbmRpdGlvbnOUk5Qu",
+      "sha256": "1cfadfb5468f61293b754baace6af907d33ac20a04d7198f31c22534381e1b2b"
+    },
+    "PlaneRuntimePath_class": {
+      "base64": "gASVQwAAAAAAAACMKnBzc29sdmVyLmNvbmZpZ3VyYXRpb24ucGxhbmVfYmVyaXNfZWR3YXJkc5SMEFBsYW5lUnVudGltZVBhdGiUk5Qu",
+      "sha256": "f09987ec05ba8378e7b383722cae58423c3eadb17e5bc1eaa7a5581276e1b1fc"
+    },
+    "SpectralRefreshSpec_class": {
+      "base64": "gASVRgAAAAAAAACMKnBzc29sdmVyLmNvbmZpZ3VyYXRpb24ucGxhbmVfYmVyaXNfZWR3YXJkc5SME1NwZWN0cmFsUmVmcmVzaFNwZWOUk5Qu",
+      "sha256": "46947b636cb5ac7403118c6bf074cf9671d8c795df7bee0b9595d4ac698f9dc8"
+    },
+    "alternate_boundaries": {
+      "base64": "gASV/AEAAAAAAACMKnBzc29sdmVyLmNvbmZpZ3VyYXRpb24ucGxhbmVfYmVyaXNfZWR3YXJkc5SMH1BsYW5lRnJlZVNsaXBCb3VuZGFyeUNvbmRpdGlvbnOUk5QpgZRdlCiMFnBzc29sdmVyLmNvcmUuYm91bmRhcnmUjAtCb3VuZGFyeVNldJSTlCmBlF2UaAWMClBlcmlvZGljQkOUk5QpgZRdlChoBYwMQm91bmRhcnlLaW5klJOUjAhwZXJpb2RpY5SFlFKUiGViaAspgZRdlChoEohlYmgFjBZIb21vZ2VuZW91c0RpcmljaGxldEJDlJOUKYGUXZQoaA+MCWRpcmljaGxldJSFlFKUiGVih5RhYmgHKYGUXZRoCymBlF2UKGgSiGViaAspgZRdlChoEohlYmgFjBRIb21vZ2VuZW91c05ldW1hbm5CQ5STlCmBlF2UKGgPjAduZXVtYW5ulIWUUpSIZWKHlGFiaAcpgZRdlGgLKYGUXZQoaBKIZWJoCymBlF2UKGgSiGViaBYpgZRdlChoG4hlYoeUYWJoBymBlF2UaAspgZRdlChoEohlYmgLKYGUXZQoaBKIZWJoJCmBlF2UKGgpiGVih5RhYmgHKYGUXZRoCymBlF2UKGgSiGViaAspgZRdlChoEohlYmgWKYGUXZQoaBuIZWKHlGFiZWIu",
+      "sha256": "88963253492c91b4aaaad430322cbab40e4d6b6a8b42b8d426569ce16de977a5"
+    },
+    "default_boundaries": {
+      "base64": "gASV/AEAAAAAAACMKnBzc29sdmVyLmNvbmZpZ3VyYXRpb24ucGxhbmVfYmVyaXNfZWR3YXJkc5SMH1BsYW5lRnJlZVNsaXBCb3VuZGFyeUNvbmRpdGlvbnOUk5QpgZRdlCiMFnBzc29sdmVyLmNvcmUuYm91bmRhcnmUjAtCb3VuZGFyeVNldJSTlCmBlF2UaAWMClBlcmlvZGljQkOUk5QpgZRdlChoBYwMQm91bmRhcnlLaW5klJOUjAhwZXJpb2RpY5SFlFKUiGViaAspgZRdlChoEohlYmgFjBRIb21vZ2VuZW91c05ldW1hbm5CQ5STlCmBlF2UKGgPjAduZXVtYW5ulIWUUpSIZWKHlGFiaAcpgZRdlGgLKYGUXZQoaBKIZWJoCymBlF2UKGgSiGViaBYpgZRdlChoG4hlYoeUYWJoBymBlF2UaAspgZRdlChoEohlYmgLKYGUXZQoaBKIZWJoBYwWSG9tb2dlbmVvdXNEaXJpY2hsZXRCQ5STlCmBlF2UKGgPjAlkaXJpY2hsZXSUhZRSlIhlYoeUYWJoBymBlF2UaAspgZRdlChoEohlYmgLKYGUXZQoaBKIZWJoFimBlF2UKGgbiGVih5RhYmgHKYGUXZRoCymBlF2UKGgSiGViaAspgZRdlChoEohlYmgtKYGUXZQoaDKIZWKHlGFiZWIu",
+      "sha256": "78c1cd760a64f0e79c076d11ecc80308d5322ccaa4343f91f0fecc6873cbbd07"
+    },
+    "default_run_spec": {
+      "base64": "gASVJwQAAAAAAACMKnBzc29sdmVyLmNvbmZpZ3VyYXRpb24ucGxhbmVfYmVyaXNfZWR3YXJkc5SMGFBsYW5lQmVyaXNFZHdhcmRzUnVuU3BlY5STlCmBlF2UKEdAMgAAAAAAAIwHcGF0aGxpYpSMCVBvc2l4UGF0aJSTlIwGb3JhY2xllIwDcnVulIaUUpRHQDQAAAAAAACMDHBhcGVyLXdpbmRvd5RHP4R64UeuFHtHP4R64UeuFHtHP6mZmZmZmZpHQFkAAAAAAABHQFkAAAAAAABNAAFNAAFLQEc/hHrhR64Ue00QJ02IE030AUtkSxhLBkdAJAAAAAAAAEc/+AAAAAAAAEcAAAAAAAAAAEc/hHrhR64Ue0sBSwJLA4eURwAAAAAAAAAAR7/TMzMzMzMzRz/TMzMzMzMzR0AHhR64UeuFRz/TMzMzMzMzRz/lVVVVVVVVjAl6ZXJvX21lYW6URz+5mZmZmZmajApjdWJpY19oYWxmlIwJdHJ1bmNhdGVklEe/8AAAAAAAAEc/1VVVVVVVVYwEYXV0b5SMB2Zsb2F0MzKUjAhzcGVjdHJhbJRoE4wHY29tcGlsZZSMCnJlYWxfZmlyc3SUjA5oZXJtaXRpYW5faGFsZpSMA29mZpRoAIwTU3BlY3RyYWxSZWZyZXNoU3BlY5STlCmBlF2UKIwNcGh5c2ljYWxfdGltZZRHP8mZmZmZmZpOSxRHP8mZmZmZmZplYomJiU6JTk5oAIwQUGxhbmVSdW50aW1lUGF0aJSTlIwRbGVnYWN5X3Byb2R1Y3Rpb26UhZRSlGgAjB9QbGFuZUZyZWVTbGlwQm91bmRhcnlDb25kaXRpb25zlJOUKYGUXZQojBZwc3NvbHZlci5jb3JlLmJvdW5kYXJ5lIwLQm91bmRhcnlTZXSUk5QpgZRdlGgmjApQZXJpb2RpY0JDlJOUKYGUXZQoaCaMDEJvdW5kYXJ5S2luZJSTlIwIcGVyaW9kaWOUhZRSlIhlYmgsKYGUXZQoaDOIZWJoJowUSG9tb2dlbmVvdXNOZXVtYW5uQkOUk5QpgZRdlChoMIwHbmV1bWFubpSFlFKUiGVih5RhYmgoKYGUXZRoLCmBlF2UKGgziGViaCwpgZRdlChoM4hlYmg3KYGUXZQoaDyIZWKHlGFiaCgpgZRdlGgsKYGUXZQoaDOIZWJoLCmBlF2UKGgziGViaCaMFkhvbW9nZW5lb3VzRGlyaWNobGV0QkOUk5QpgZRdlChoMIwJZGlyaWNobGV0lIWUUpSIZWKHlGFiaCgpgZRdlGgsKYGUXZQoaDOIZWJoLCmBlF2UKGgziGViaDcpgZRdlChoPIhlYoeUYWJoKCmBlF2UaCwpgZRdlChoM4hlYmgsKYGUXZQoaDOIZWJoTimBlF2UKGhTiGVih5RhYmViZWIu",
+      "sha256": "bf1fb307aaf49064a26821003b00e78f17e44266a63209e20b0422bf71f0c587"
+    },
+    "refresh_disabled": {
+      "base64": "gASVXQAAAAAAAACMKnBzc29sdmVyLmNvbmZpZ3VyYXRpb24ucGxhbmVfYmVyaXNfZWR3YXJkc5SME1NwZWN0cmFsUmVmcmVzaFNwZWOUk5QpgZRdlCiMCGRpc2FibGVklE5OTk5lYi4=",
+      "sha256": "6685436f0005952be2f0683ffb21caa12cd3838c9c1cab105027a5e26b83ccc7"
+    },
+    "refresh_physical_time": {
+      "base64": "gASVcwAAAAAAAACMKnBzc29sdmVyLmNvbmZpZ3VyYXRpb24ucGxhbmVfYmVyaXNfZWR3YXJkc5SME1NwZWN0cmFsUmVmcmVzaFNwZWOUk5QpgZRdlCiMDXBoeXNpY2FsX3RpbWWURz/JmZmZmZmaTksURz/JmZmZmZmaZWIu",
+      "sha256": "c5463a70db6e9067bdf3e849990d454cad893be7d28f46137360dc9fe22708ce"
+    },
+    "refresh_steps": {
+      "base64": "gASVZAAAAAAAAACMKnBzc29sdmVyLmNvbmZpZ3VyYXRpb24ucGxhbmVfYmVyaXNfZWR3YXJkc5SME1NwZWN0cmFsUmVmcmVzaFNwZWOUk5QpgZRdlCiMBXN0ZXBzlE5LB0sHRz+x64UeuFHsZWIu",
+      "sha256": "75ed76b5154e4aad013c040bed9631305e3725bb42ce60a1b3ec82765511b2e0"
+    },
+    "runtime_canary_member": {
+      "base64": "gASVWgAAAAAAAACMKnBzc29sdmVyLmNvbmZpZ3VyYXRpb24ucGxhbmVfYmVyaXNfZWR3YXJkc5SMEFBsYW5lUnVudGltZVBhdGiUk5SMEHNlcGFyYXRlZF9jYW5hcnmUhZRSlC4=",
+      "sha256": "07b2826c86d0cd6e5eee8804ba0969ab8a120c0f18781437877167a6fdc72c50"
+    },
+    "runtime_legacy_member": {
+      "base64": "gASVWwAAAAAAAACMKnBzc29sdmVyLmNvbmZpZ3VyYXRpb24ucGxhbmVfYmVyaXNfZWR3YXJkc5SMEFBsYW5lUnVudGltZVBhdGiUk5SMEWxlZ2FjeV9wcm9kdWN0aW9ulIWUUpQu",
+      "sha256": "4d6596e6f9d32291666abe0535f5ad79fa62eef2e25348c9e842d158e0ad3f81"
+    }
+  },
+  "runtime_path": {
+    "members": [
+      ["LEGACY_PRODUCTION", "legacy_production"],
+      ["SEPARATED_CANARY", "separated_canary"]
+    ],
+    "module": "pssolver.configuration.plane_beris_edwards",
+    "qualname": "PlaneRuntimePath"
+  },
+  "schema_version": 1,
+  "spectral_refresh": {
+    "fields": [
+      ["mode", "'str'", "required"],
+      ["requested_interval_time", "'float | None'", "required"],
+      ["requested_interval_steps", "'int | None'", "required"],
+      ["effective_interval_steps", "'int | None'", "required"],
+      ["effective_interval_time", "'float | None'", "required"]
+    ],
+    "module": "pssolver.configuration.plane_beris_edwards",
+    "qualname": "SpectralRefreshSpec",
+    "signature": "(mode: 'str', requested_interval_time: 'float | None', requested_interval_steps: 'int | None', effective_interval_steps: 'int | None', effective_interval_time: 'float | None') -> None"
+  }
+}
