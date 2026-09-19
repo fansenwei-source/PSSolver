@@ -91,7 +91,7 @@ EXPECTED_SIGNATURES = {
 EXPECTED_IMPLEMENTATION_MODULES = {
     "TransformMetadata": "pssolver.backends.tensor_product",
     "TensorProductTransformBackend": "pssolver.backends.tensor_product",
-    "BasisAwareSpectralProjector": "pssolver.transforms",
+    "BasisAwareSpectralProjector": "pssolver.operators.projection",
     "projected_common_basis_stress_divergence": "pssolver.transforms",
     "projected_distortion_stress_divergence": "pssolver.transforms",
     "FreeSlipModalStokesSolver": "pssolver.transforms",
@@ -270,6 +270,20 @@ def test_backend_facade_names_are_the_canonical_objects():
     )
     for name in names:
         assert getattr(transforms, name) is getattr(tensor_product, name)
+
+
+def test_projection_facade_names_are_the_canonical_objects():
+    from pssolver.operators import projection
+
+    names = (
+        "DEFAULT_DEALIAS_RULE",
+        "DEFAULT_PROJECTED_TRANSFORM_EXECUTION",
+        "PROJECTED_TRANSFORM_EXECUTION_MODES",
+        "DEALIAS_RULE_FRACTIONS",
+        "BasisAwareSpectralProjector",
+    )
+    for name in names:
+        assert getattr(transforms, name) is getattr(projection, name)
 
 
 def test_legacy_transform_pickle_global_paths_resolve_through_the_facade():

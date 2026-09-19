@@ -70,6 +70,8 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/backends/__init__.py",
     "pssolver/backends/bounded.py",
     "pssolver/backends/tensor_product.py",
+    "pssolver/operators/__init__.py",
+    "pssolver/operators/projection.py",
     "pssolver/__init__.py",
     "pssolver/adapters/legacy_boundaries.py",
     "pssolver/configuration/__init__.py",
