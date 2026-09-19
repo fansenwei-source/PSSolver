@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.5_IN_PROGRESS_LEGACY_RUNTIME_COMPLETE`
+Status: `P2.5_IN_PROGRESS_TWO_RUNTIME_CONSUMERS_COMPLETE`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -617,6 +617,37 @@ contain every newly active module; an isolated installed-wheel one-step runtime
 smoke and installed console-entry dry-run pass.  Because no floating-point
 operation or GPU hot path changed, P2.5.1 requires no H100 job.  The next
 consumer is `pssolver/runtime/plane_beris_edwards.py`.
+
+#### P2.5.2: runtime selector consumer complete
+
+`pssolver/runtime/plane_beris_edwards.py` is the second migrated consumer.
+Commit `357a2e323f1cdf59a5a92ace97af0a20649b8062` freezes its two direct
+flat-facade selector reads and the ordering of request validation, injected
+legacy-builder validation, default legacy selection, and explicit lazy canary
+import.  Commit `015b7f8d45cb80b804de2e1853e08383ecb4c30f` replaces the direct
+`runtime_path` and `disable_q_gradient_reuse` reads with one selector-local
+component decomposition and values from `components.execution`.
+
+The supported flat facade remains the schema-v1 and mixed-authority identity
+gate.  The default remains `legacy_production`, no fallback is introduced, and
+the experimental canary module remains absent from the default process.  No
+adapter, solver, timestep, kernel, boundary condition, numerical operation, or
+implementation-source inventory is changed in this substep.
+
+Both runtime paths were qualified against the pre-migration selector.  For
+`legacy_production` and `separated_canary`, respectively, continuous four-step
+and two-step segmented `Q/u/p`, initial-condition artifacts, complete format-v1
+checkpoint directories, baseline-to-candidate restart, and
+candidate-to-baseline restart are byte-identical.  Metadata is equal after the
+expected output-path-derived canonical identity, elapsed-time, and
+implementation-provenance allowances.
+
+The focused gate contains 274 passing tests.  The complete CPU suite contains
+1612 passing tests and 8 passing subtests.  Fresh sdist and wheel builds pass;
+an isolated installed wheel completes one CPU step through each runtime path.
+No floating-point operation or GPU hot path changed, so P2.5.2 requires no
+H100 job.  The next consumer is
+`pssolver/workflows/plane_beris_edwards.py`.
 
 ### P2.6: retire the exact configuration import debts
 

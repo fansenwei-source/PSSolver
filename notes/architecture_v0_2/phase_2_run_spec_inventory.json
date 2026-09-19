@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "p2_5_in_progress_legacy_runtime_complete",
+  "status": "p2_5_in_progress_two_runtime_consumers_complete",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -625,10 +625,10 @@
         "pssolver.applications.plane_beris_edwards"
       ],
       "completed_consumers": [
-        "pssolver.runtime.plane_legacy"
+        "pssolver.runtime.plane_legacy",
+        "pssolver.runtime.plane_beris_edwards"
       ],
       "pending_consumers": [
-        "pssolver.runtime.plane_beris_edwards",
         "pssolver.workflows.plane_beris_edwards",
         "pssolver.applications.plane_beris_edwards"
       ],
@@ -672,6 +672,58 @@
         "installed_console_entry_smoke_passed": true,
         "h100_required": false,
         "next_consumer": "pssolver.runtime.plane_beris_edwards"
+      },
+      "p2_5_2": {
+        "characterization_commit": "357a2e323f1cdf59a5a92ace97af0a20649b8062",
+        "implementation_commit": "015b7f8d45cb80b804de2e1853e08383ecb4c30f",
+        "consumer": "pssolver.runtime.plane_beris_edwards",
+        "flat_facade_reads_before": 2,
+        "flat_facade_reads_after": 0,
+        "component_decomposition_calls_in_selector_per_build": 1,
+        "schema_v1_facade_remains_identity_authority": true,
+        "mixed_authority_gate_preserved": true,
+        "request_type_gate_order_preserved": true,
+        "legacy_builder_type_gate_order_preserved": true,
+        "default_runtime": "legacy_production",
+        "default_runtime_imports_experimental": false,
+        "canary_import_remains_lazy": true,
+        "fallback_added": false,
+        "numerical_operation_order_changed": false,
+        "runtime_default_changed": false,
+        "schema_v1_changed": false,
+        "production_source_inventory_changed": false,
+        "focused_tests_passed": 274,
+        "full_cpu_tests_passed": 1612,
+        "full_cpu_subtests_passed": 8,
+        "qualified_runtime_paths": [
+          "legacy_production",
+          "separated_canary"
+        ],
+        "continuous_q_u_p_byte_identical": true,
+        "segment_q_u_p_byte_identical": true,
+        "initial_condition_artifacts_byte_identical": true,
+        "checkpoint_directories_byte_identical": true,
+        "baseline_checkpoint_to_candidate_restart_byte_identical": true,
+        "candidate_checkpoint_to_baseline_restart_byte_identical": true,
+        "metadata_equal_after_frozen_allowances": true,
+        "continuous_output_sha256": {
+          "legacy_production": {
+            "Q_4.npy": "ba2165de06c553b7c779bde82ab95af8a3a32a07098e59b7cccb13651a0ba35d",
+            "u_4.npy": "452a4410f7e317abce99357446a187edd90fa70d04c4ca9571490679a894ef9e",
+            "p_4.npy": "59371ae09916749be610cd3837bdb1c83e56c9606d6971bb59ece9535c0874a4"
+          },
+          "separated_canary": {
+            "Q_4.npy": "f645679f1c562ee5dfa50adf2d741dac44ccf190dd5c4993c6d893659fe0b6fe",
+            "u_4.npy": "9035a1ad5384b50190855e9e8149fb0f37722ff2319619bddd2068e45d644e17",
+            "p_4.npy": "efe175d6033a77c36a3d6f0674fc825b6f9a9c15b3ee0694fd438095f152f05a"
+          }
+        },
+        "fresh_sdist_passed": true,
+        "fresh_wheel_passed": true,
+        "isolated_wheel_legacy_one_step_passed": true,
+        "isolated_wheel_canary_one_step_passed": true,
+        "h100_required": false,
+        "next_consumer": "pssolver.workflows.plane_beris_edwards"
       }
     },
     {
