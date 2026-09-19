@@ -1,5 +1,11 @@
 # Phase 1 plan: mechanical extraction of `transforms.py`
 
+Status: `COMPLETE_H100_PASS`
+
+The completed implementation and qualification are recorded in
+[Phase 1 qualification](phase_1_local_qualification.md) and its
+[machine-readable H100 evidence](phase_1_h100_qualification.json).
+
 Status: locally implemented; the balanced H100 phase-completion gate remains
 pending.  See [phase_1_local_qualification.md](phase_1_local_qualification.md).
 

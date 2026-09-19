@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "classification": "PASS_PHASE1_NON_REGRESSION",
+  "eligibility": {
+    "phase1_completion": true,
+    "default_promotion": false,
+    "production_default_changed": false
+  },
+  "source_identity": {
+    "baseline_commit": "4fa614616e9d67c98be52c150eaf303a0c80b5c1",
+    "baseline_tag": "v0.1.2",
+    "candidate_commit": "276f14ea08d372a384f87ce39ffe91f2b4f6fbc1",
+    "candidate_direct_parent": "db6964dce2f2ef9639eba38182048b7d6cf1aeb5",
+    "candidate_branch": "next/pssolver-v0.2.0-architecture",
+    "baseline_is_candidate_ancestor": true,
+    "git_diff_check_passed": true
+  },
+  "compatibility_gate": {
+    "transform_facade_names": 18,
+    "root_historical_reexports": 14,
+    "canonical_object_identity": true,
+    "public_signatures": true,
+    "canonical_module_provenance": true,
+    "legacy_pickle_global_resolution": true,
+    "stokes_state_dict_and_buffer_schema": true,
+    "pickle_free_checkpoint_contract": true,
+    "wheel_contains_canonical_modules": true
+  },
+  "cpu_gate": {
+    "candidate_targeted": {
+      "passed": 254,
+      "failed": 0,
+      "deselected": 2
+    },
+    "baseline_full": {
+      "passed": 1131,
+      "failed": 0,
+      "skipped": 1,
+      "deselected": 2,
+      "subtests_passed": 8
+    },
+    "candidate_full": {
+      "passed": 1150,
+      "failed": 0,
+      "skipped": 1,
+      "deselected": 2,
+      "subtests_passed": 8
+    },
+    "only_skip": "optional nematics3d dependency"
+  },
+  "h100_job": {
+    "job_id": 10835314,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:04:23",
+    "node": "gpu-h100-4-0",
+    "gpu": "NVIDIA H100 PCIe",
+    "visible_gpu_count": 1,
+    "driver": "550.54.14",
+    "cuda": "12.1",
+    "pytorch": "2.5.1+cu121",
+    "tf32_requested": false,
+    "tf32_effective": false,
+    "requeue": 0,
+    "restarts": 0,
+    "formal_submission_count": 1,
+    "automatic_retry": false,
+    "cuda_only_tests_passed": 2
+  },
+  "profile_gate": {
+    "raw_profile_json_count": 12,
+    "forward_transforms_per_step": 7,
+    "inverse_transforms_per_step": 32,
+    "graph_breaks": 0,
+    "compile_fallbacks": 0,
+    "projected_transform_fallbacks": 0,
+    "finite": true,
+    "oom": false,
+    "cuda_error": false,
+    "plan_sha256": "65f262810412279d3a81b4b1c444ee8416afc541c92b1aaada7e23ba4878daae",
+    "grids": {
+      "R128": {
+        "shape": [128, 128, 32],
+        "baseline_timestep_ms": [5.641634, 5.679786, 5.639727],
+        "baseline_mean_timestep_ms": 5.653715,
+        "baseline_median_timestep_ms": 5.641634,
+        "baseline_sample_standard_deviation_ms": 0.022598,
+        "candidate_timestep_ms": [5.623754, 5.660203, 5.626570],
+        "candidate_mean_timestep_ms": 5.636842,
+        "candidate_median_timestep_ms": 5.626570,
+        "candidate_sample_standard_deviation_ms": 0.020280,
+        "paired_candidate_over_baseline": [0.996831, 0.996552, 0.997667],
+        "aggregate_mean_candidate_over_baseline": 0.997016,
+        "aggregate_median_candidate_over_baseline": 0.997330,
+        "peak_allocated_gib": 0.396654,
+        "peak_reserved_gib": 0.839844,
+        "peak_allocated_ratio": 1.0,
+        "peak_reserved_ratio": 1.0,
+        "passed": true
+      },
+      "R320": {
+        "shape": [320, 320, 80],
+        "baseline_timestep_ms": [45.162741, 45.161872, 45.106824],
+        "baseline_mean_timestep_ms": 45.143812,
+        "baseline_median_timestep_ms": 45.161872,
+        "baseline_sample_standard_deviation_ms": 0.032036,
+        "candidate_timestep_ms": [45.119153, 45.175252, 45.119510],
+        "candidate_mean_timestep_ms": 45.137972,
+        "candidate_median_timestep_ms": 45.119510,
+        "candidate_sample_standard_deviation_ms": 0.032286,
+        "paired_candidate_over_baseline": [0.999035, 1.000296, 1.000281],
+        "aggregate_mean_candidate_over_baseline": 0.999871,
+        "aggregate_median_candidate_over_baseline": 0.999062,
+        "peak_allocated_gib": 5.721501,
+        "peak_reserved_gib": 8.533203,
+        "peak_allocated_ratio": 1.0,
+        "peak_reserved_ratio": 1.0,
+        "passed": true
+      }
+    }
+  },
+  "trajectory_100_step": {
+    "config_sha256": "85b7327dc5d73ee70b45b94bf3ccce76df0578d5410aa9db02be6e00f8c3293c",
+    "baseline_candidate_byte_identical": true,
+    "oracle_match": true,
+    "complete": true,
+    "completed_steps": 100,
+    "saved_steps": [100],
+    "dtype": "float64",
+    "finite": true,
+    "sha256": {
+      "Q_100.npy": "d20547158acba4d8ab6b9e3c6c0cc48954c6b4b6ce9af229fe826d510e577796",
+      "u_100.npy": "1199675fe7c1a0dcc4ec1f6a0c9130021a30be94e33dab523325c22076ec5a64",
+      "p_100.npy": "34ef4007db9f900f1902b5f3cd43efe83a82cbbc393dd8d0df6229613fc848ea"
+    }
+  },
+  "cross_version_restart": {
+    "protocol_sha256": "133555214eec42756ca837a6fb70a82f43527446bb7f29bf2d40d7b91191bddc",
+    "source_commit": "4fa614616e9d67c98be52c150eaf303a0c80b5c1",
+    "source_completed_step": 50,
+    "checkpoint": "checkpoint_50",
+    "checkpoint_pickle_free": true,
+    "resume_commit": "276f14ea08d372a384f87ce39ffe91f2b4f6fbc1",
+    "additional_steps": 50,
+    "final_absolute_step": 100,
+    "runtime_path": "legacy_production",
+    "continuous_and_oracle_byte_identical": true,
+    "output_schema_passed": true,
+    "complete": true
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_phase1_transform_extraction_h100_ab_276f14e_20260918_v2",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_phase1_transform_extraction_h100_ab_276f14e_20260918_v2",
+    "final_report": "/home/fansenwei/pssolver_phase1_transform_extraction_h100_ab_276f14e_20260918_v2/final_report.md",
+    "summary_json": "/home/fansenwei/pssolver_phase1_transform_extraction_h100_ab_276f14e_20260918_v2/summary.json",
+    "summary_csv": "/home/fansenwei/pssolver_phase1_transform_extraction_h100_ab_276f14e_20260918_v2/summary.csv",
+    "checksum_manifest": "/home/fansenwei/pssolver_phase1_transform_extraction_h100_ab_276f14e_20260918_v2/checksums.sha256",
+    "checksum_manifest_entries": 120,
+    "checksum_validation_passed": true,
+    "checksum_manifest_sha256": "26120611f8e0f38347b35566079f82350b67d624b07ccb31563ed10c68afa630",
+    "final_complete": true
+  }
+}

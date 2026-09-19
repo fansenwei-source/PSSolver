@@ -1,6 +1,14 @@
-# Phase 1 local qualification
+# Phase 1 qualification
 
-Status: `LOCAL_PASS_H100_PENDING`
+Status: `COMPLETE_H100_PASS`
+
+Final classification: `PASS_PHASE1_NON_REGRESSION`
+
+- v0.1.2 baseline: `4fa614616e9d67c98be52c150eaf303a0c80b5c1`;
+- qualified candidate: `276f14ea08d372a384f87ce39ffe91f2b4f6fbc1`;
+- H100 qualification Job: `10835314`;
+- machine-readable evidence:
+  [phase_1_h100_qualification.json](phase_1_h100_qualification.json).
 
 Phase 1 mechanically extracted the v0.1.2 transform responsibility cluster.
 It did not change equations, basis definitions, transform order, allocation
@@ -30,7 +38,9 @@ fallback implementations.
 5. `9580014` — extract projected tensor-divergence operators;
 6. `b7aac0f` — extract the Plane free-slip Stokes solver;
 7. `2748590` — finalize the compatibility facade;
-8. `0f9a6bf` — adopt canonical imports where allowed by the dependency graph.
+8. `0f9a6bf` — adopt canonical imports where allowed by the dependency graph;
+9. `db6964d` — record local qualification;
+10. `276f14e` — satisfy the frozen whitespace/static gate.
 
 For each extracted implementation block, an automated source comparison
 confirmed that the definition body was byte-preserved.  Only module imports,
@@ -74,14 +84,52 @@ executed at `0f9a6bf6571519c2f5b436b4c44ed4594fb93c09`.
 | `u_3.npy` | `3e6544aa24f563245deffdd9d2fc87c8ac9816874a99b97dfad6da467fe6f7f5` |
 | `p_3.npy` | `22bc104a31b051e068be5cefd3d4866e43a8de5439bbcc943f6d4bd009bce07b` |
 
-This control is supplementary to the frozen v0.1.2 H100 oracle; it is not a
-replacement for the formal R128/R320 phase-completion task.
+This control was supplementary to the frozen v0.1.2 H100 oracle.  The formal
+R128/R320 phase-completion task described below subsequently passed.
 
-## Remaining gate
+## Formal H100 phase-completion result
 
-Local qualification does not authorize integration or default promotion.  One
-balanced H100 task must still compare v0.1.2 with the final Phase 1 candidate
-at R128 and R320, including three paired trials, transform-call counts, peak
-memory, a 100-step byte-identity trajectory, restart, and output-schema checks.
-The thresholds and stop conditions remain those in
-[phase_1_transform_extraction.md](phase_1_transform_extraction.md).
+The balanced H100 task compared the release baseline with the final candidate
+in one allocation on an NVIDIA H100 PCIe.  Job `10835314` completed with exit
+code `0:0`; both real-GPU CUDA-only tests passed, and all twelve profiler JSON
+records were complete.
+
+| Grid | Baseline mean (ms) | Candidate mean (ms) | Candidate/baseline |
+|---|---:|---:|---:|
+| R128 (`128 x 128 x 32`) | 5.653715 | 5.636842 | 0.997016 |
+| R320 (`320 x 320 x 80`) | 45.143812 | 45.137972 | 0.999871 |
+
+Peak allocated and reserved memory ratios were exactly `1.0` at both grids.
+Forward/inverse transform counts remained `7/32`; graph breaks, compile
+fallbacks, and projected-transform fallbacks were all zero.  There was no OOM,
+NaN, Inf, or CUDA error.
+
+The baseline and candidate 100-step production trajectories were
+byte-identical and exactly reproduced the frozen v0.1.2 oracle:
+
+| Array | SHA-256 |
+|---|---|
+| `Q_100.npy` | `d20547158acba4d8ab6b9e3c6c0cc48954c6b4b6ce9af229fe826d510e577796` |
+| `u_100.npy` | `1199675fe7c1a0dcc4ec1f6a0c9130021a30be94e33dab523325c22076ec5a64` |
+| `p_100.npy` | `34ef4007db9f900f1902b5f3cd43efe83a82cbbc393dd8d0df6229613fc848ea` |
+
+A pickle-free checkpoint written by v0.1.2 at step 50 was resumed by the
+candidate to step 100.  Its Q/u/p outputs were byte-identical to both continuous
+runs and the frozen oracle.  This closes the checkpoint and module-provenance
+risk created by moving the concrete classes.
+
+The authoritative HPCC control directory is:
+
+```text
+/home/fansenwei/pssolver_phase1_transform_extraction_h100_ab_276f14e_20260918_v2
+```
+
+Its 120-entry checksum manifest passed completely.  The manifest's own
+SHA-256 is
+`26120611f8e0f38347b35566079f82350b67d624b07ccb31563ed10c68afa630`.
+
+All gates in
+[phase_1_transform_extraction.md](phase_1_transform_extraction.md) passed.
+Phase 1 is complete.  This result does not change a production default,
+authorize a merge to `develop`, remove the compatibility facade, or promote a
+new runtime because only module ownership changed.

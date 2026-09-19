@@ -249,3 +249,4 @@ Supporting inventories:
 - [v0.1.2 API surface](api_surface_v0_1_2.md)
 - [v0.1.2 oracle](v0_1_2_oracle.md)
 - [Phase 1 transform extraction](phase_1_transform_extraction.md)
+- [Phase 1 qualification](phase_1_local_qualification.md)
