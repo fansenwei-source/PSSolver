@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "p2_4_complete_p2_5_pending",
+  "status": "p2_5_in_progress_legacy_runtime_complete",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -617,12 +617,62 @@
     {
       "id": "P2.5",
       "name": "consumer migration one module per commit",
+      "implementation_in_progress": true,
       "order": [
         "pssolver.runtime.plane_legacy",
         "pssolver.runtime.plane_beris_edwards",
         "pssolver.workflows.plane_beris_edwards",
         "pssolver.applications.plane_beris_edwards"
-      ]
+      ],
+      "completed_consumers": [
+        "pssolver.runtime.plane_legacy"
+      ],
+      "pending_consumers": [
+        "pssolver.runtime.plane_beris_edwards",
+        "pssolver.workflows.plane_beris_edwards",
+        "pssolver.applications.plane_beris_edwards"
+      ],
+      "p2_5_1": {
+        "characterization_commit": "140205cef8b01920a97becf5669f23a1326b84ef",
+        "implementation_commit": "50435e9299caa0059b164ecb1d46939c57d3e6a7",
+        "flat_facade_reads_before": 27,
+        "flat_facade_reads_after": 0,
+        "component_decomposition_calls_per_build": 1,
+        "effective_boundary_qualification_preserved": true,
+        "construction_order_changed": false,
+        "numerical_operation_order_changed": false,
+        "runtime_default_changed": false,
+        "schema_v1_changed": false,
+        "stable_package_root_export_added": false,
+        "retired_import_debt": "pssolver.runtime.plane_legacy -> pssolver.plane",
+        "production_source_inventory_additions": [
+          "pssolver/configuration/plane_beris_edwards_component_graph.py",
+          "pssolver/configuration/plane_beris_edwards_components.py",
+          "pssolver/models/active_nematics/specifications.py",
+          "pssolver/systems/__init__.py",
+          "pssolver/systems/algebraic.py",
+          "pssolver/systems/stokes.py"
+        ],
+        "focused_tests_passed": 268,
+        "full_cpu_tests_passed": 1607,
+        "full_cpu_subtests_passed": 8,
+        "continuous_q_u_p_byte_identical": true,
+        "segment_q_u_p_byte_identical": true,
+        "checkpoint_directory_byte_identical": true,
+        "baseline_checkpoint_to_candidate_restart_byte_identical": true,
+        "candidate_checkpoint_to_baseline_restart_byte_identical": true,
+        "continuous_output_sha256": {
+          "Q.npy": "ce411c40eba73a43bb880d3694796e62cd1861588d8390eb8bc4bbf9adcb20ff",
+          "u.npy": "db6c6cd348a4ecaf593911b8312c91675d7b8ac27e95bd5368f9bb2ae2a589ad",
+          "p.npy": "6f8db8de546310147be6f39f56cb9455a2b2ab24620c54addd59570e25e2746d"
+        },
+        "fresh_sdist_contains_newly_active_modules": true,
+        "fresh_wheel_contains_newly_active_modules": true,
+        "isolated_wheel_runtime_smoke_passed": true,
+        "installed_console_entry_smoke_passed": true,
+        "h100_required": false,
+        "next_consumer": "pssolver.runtime.plane_beris_edwards"
+      }
     },
     {
       "id": "P2.6",

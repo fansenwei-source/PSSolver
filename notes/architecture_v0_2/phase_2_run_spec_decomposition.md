@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.4_COMPLETE_P2.5_PENDING`
+Status: `P2.5_IN_PROGRESS_LEGACY_RUNTIME_COMPLETE`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -578,6 +578,45 @@ Use this order:
 The application comes last because it combines initialization, checkpoint
 gating, runtime construction, workflow construction, and a second metadata
 description.
+
+#### P2.5.1: legacy runtime consumer complete
+
+`pssolver/runtime/plane_legacy.py` is the first migrated consumer.  Commit
+`140205cef8b01920a97becf5669f23a1326b84ef` froze its 27 direct flat-facade
+reads, resolved object graph, short CPU trajectory, and exact restart behavior
+before the production edit.  Commit
+`50435e9299caa0059b164ecb1d46939c57d3e6a7` replaces those direct reads with
+one call to
+`decompose_plane_beris_edwards_run_spec` and consumes the resulting geometry,
+numerics, physics, time-stepping, execution, workflow, and effective-boundary
+components.
+
+The migration preserves construction and floating-point operation order.  In
+particular, it uses qualified effective boundaries rather than requested
+boundary metadata and derives the existing Hermitian axis from the qualified
+Plane geometry, including the full-complex rollback path.  It adds no stable
+package-root export, changes no schema-v1 document or identity hash, and does
+not change a runtime default.  The former
+`runtime.plane_legacy -> pssolver.plane` import debt is retired.
+
+The component adapter, lower component graph, active-nematic request
+declarations, and Stokes system declarations now determine production runtime
+meaning and are therefore included in implementation-source provenance.  This
+is an implementation-identity change only.
+
+Qualification against the pre-migration commit is byte-exact:
+
+- continuous four-step `Q`, `u`, `p`, progress counters, and runtime identity;
+- two-step state and the complete format-v1 checkpoint directory;
+- candidate continuation from a baseline checkpoint;
+- baseline continuation from a candidate checkpoint.
+
+The focused gate contains 268 passing tests.  The complete CPU suite contains
+1607 passing tests and 8 passing subtests.  Fresh sdist and wheel archives
+contain every newly active module; an isolated installed-wheel one-step runtime
+smoke and installed console-entry dry-run pass.  Because no floating-point
+operation or GPU hot path changed, P2.5.1 requires no H100 job.  The next
+consumer is `pssolver/runtime/plane_beris_edwards.py`.
 
 ### P2.6: retire the exact configuration import debts
 
