@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "release": {
+    "tag": "v0.1.2",
+    "commit": "4fa614616e9d67c98be52c150eaf303a0c80b5c1",
+    "qualified_candidate_commit": "f121428d7a5e66e4b65c6e6f3777fdf1c8f8b23a",
+    "supported_runtime": "legacy_production"
+  },
+  "cpu_release_gate": {
+    "tests_passed": 1134,
+    "subtests_passed": 8
+  },
+  "h100_qualification": {
+    "job_id": 10835210,
+    "manifest_sha256": "65a72a34a42a526e8ada36bd436ff1cbbaed0d2213fb88804eed1db6248b7876",
+    "qualification_instruction_sha256": "7c499e182e6574f5233b3b98474e926d99f86991c560f84ff4b470e6b80ca6ea",
+    "control_directory": "/home/fansenwei/pssolver_bounded_dataflow_h100_ab_f121428_20260918_v1",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_bounded_dataflow_h100_ab_f121428_20260918_v1",
+    "environment": {
+      "gpu": "NVIDIA H100 PCIe",
+      "driver": "550.54.14",
+      "cuda": "12.1",
+      "pytorch": "2.5.1+cu121",
+      "tf32": false
+    },
+    "profile_config": {
+      "lengths": [100.0, 100.0, 20.0],
+      "dtype": "float64",
+      "dt": 0.005,
+      "activity_number": 18.0,
+      "seed": 20260908,
+      "dealias_rule": "cubic_half",
+      "projected_transform_execution": "truncated",
+      "transform_execution_order": "real_first",
+      "spectral_storage": "hermitian_half",
+      "molecular_field_linear_space": "spectral",
+      "stress_divergence_sum_space": "spectral",
+      "pointwise_execution": "compile",
+      "reuse_q_gradients": true,
+      "pressure_diagnostics": false,
+      "spectral_refresh_interval": null,
+      "timing_scope": "whole_timestep",
+      "warmup_steps": 10,
+      "profile_steps": 50,
+      "fresh_torchinductor_cache_per_process": true
+    },
+    "forward_transforms_per_step": 7,
+    "inverse_transforms_per_step": 32,
+    "graph_breaks": 0,
+    "compile_fallbacks": 0,
+    "projected_transform_fallbacks": 0,
+    "grids": {
+      "R128": {
+        "shape": [128, 128, 32],
+        "parent_mean_ms_per_step": 7.120957,
+        "mean_ms_per_step": 5.750187,
+        "median_ms_per_step": 5.756708,
+        "speedup": 1.238387,
+        "peak_allocated_gib": 0.396654,
+        "peak_reserved_gib": 0.839844
+      },
+      "R320": {
+        "shape": [320, 320, 80],
+        "parent_mean_ms_per_step": 48.960003,
+        "mean_ms_per_step": 45.162243,
+        "median_ms_per_step": 45.142706,
+        "speedup": 1.084091,
+        "peak_allocated_gib": 5.721501,
+        "peak_reserved_gib": 8.533203
+      }
+    }
+  },
+  "trajectory_100_step_sha256": {
+    "Q_100.npy": "d20547158acba4d8ab6b9e3c6c0cc48954c6b4b6ce9af229fe826d510e577796",
+    "u_100.npy": "1199675fe7c1a0dcc4ec1f6a0c9130021a30be94e33dab523325c22076ec5a64",
+    "p_100.npy": "34ef4007db9f900f1902b5f3cd43efe83a82cbbc393dd8d0df6229613fc848ea"
+  },
+  "trajectory_100_step_config": {
+    "activity_number": 18.0,
+    "height": 20.0,
+    "lengths": [100.0, 100.0, 20.0],
+    "shape": [128, 128, 32],
+    "dt": 0.005,
+    "steps": 100,
+    "seed": 24,
+    "dtype": "float64",
+    "tf32": false,
+    "dealias_rule": "cubic_half",
+    "projected_transform_execution": "truncated",
+    "transform_execution_order": "real_first",
+    "spectral_storage": "hermitian_half",
+    "molecular_field_linear_space": "spectral",
+    "stress_divergence_sum_space": "spectral",
+    "pointwise_execution": "compile",
+    "zero_mode_policy": "zero_mean",
+    "friction": 0.0,
+    "reuse_q_gradients": true,
+    "save_hydrodynamics": true,
+    "production_spectral_refresh": true
+  },
+  "evidence_gap": {
+    "canonical_config_sha256_available": false,
+    "require_for_future_qualifications": true
+  },
+  "separated_canary_r320_ratios": {
+    "timestep": 1.429558205567479,
+    "peak_allocated": 1.589530529807474,
+    "peak_reserved": 1.328679331654841
+  }
+}
