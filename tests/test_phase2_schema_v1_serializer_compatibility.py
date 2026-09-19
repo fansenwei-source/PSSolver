@@ -4,16 +4,22 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import replace
+import ast
 import hashlib
 import json
 from pathlib import Path
 
 import pytest
 
+import pssolver
+import pssolver.configuration as configuration
 from pssolver.configuration import (
+    PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
     PlaneBerisEdwardsRunSpec,
     create_plane_beris_edwards_run_spec,
 )
+from pssolver.configuration import plane_beris_edwards as facade
+from pssolver.configuration import plane_beris_edwards_schema_v1 as schema_v1
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -25,6 +31,15 @@ CASES_PATH = (
     / "plane_run_spec_v1_cases.json"
 )
 CASES_ORACLE = json.loads(CASES_PATH.read_text(encoding="utf-8"))
+FACADE_PATH = (
+    PROJECT_ROOT / "pssolver" / "configuration" / "plane_beris_edwards.py"
+)
+SERIALIZER_PATH = (
+    PROJECT_ROOT
+    / "pssolver"
+    / "configuration"
+    / "plane_beris_edwards_schema_v1.py"
+)
 
 
 def _spec(**overrides: object) -> PlaneBerisEdwardsRunSpec:
@@ -192,3 +207,160 @@ def test_schema_v1_hashes_continue_to_reject_non_finite_values(field):
         spec.canonical_sha256()
     with pytest.raises(ValueError, match="Out of range float values"):
         spec.runtime_identity_sha256()
+
+
+def test_serializer_is_one_stateless_direct_module_only_authority():
+    serializer = schema_v1.PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER
+
+    assert isinstance(
+        serializer,
+        schema_v1.PlaneBerisEdwardsSchemaV1CompatibilitySerializer,
+    )
+    assert (
+        schema_v1.PlaneBerisEdwardsSchemaV1CompatibilitySerializer.__slots__
+        == ()
+    )
+    assert not hasattr(serializer, "__dict__")
+    assert facade.PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER is serializer
+    assert facade.PLANE_RUN_SPEC_SCHEMA_VERSION == (
+        schema_v1.PLANE_RUN_SPEC_SCHEMA_VERSION
+    )
+    for name in (
+        "PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER",
+        "PlaneBerisEdwardsSchemaV1CompatibilitySerializer",
+    ):
+        assert name in schema_v1.__all__
+        assert name not in facade.__all__
+        assert name not in configuration.__all__
+        assert name not in pssolver.__all__
+        assert not hasattr(configuration, name)
+        assert not hasattr(pssolver, name)
+
+
+@pytest.mark.parametrize(
+    ("facade_method", "serializer_calls"),
+    (
+        ("to_metadata", ("to_metadata",)),
+        ("canonical_sha256", ("canonical_sha256", "to_metadata")),
+        (
+            "runtime_identity_metadata",
+            ("runtime_identity_metadata", "to_metadata"),
+        ),
+        (
+            "runtime_identity_sha256",
+            (
+                "runtime_identity_sha256",
+                "runtime_identity_metadata",
+                "to_metadata",
+            ),
+        ),
+        (
+            "identity_metadata",
+            ("identity_metadata", "canonical_sha256", "to_metadata"),
+        ),
+        ("runtime_selection_metadata", ("runtime_selection_metadata",)),
+    ),
+)
+def test_each_facade_method_delegates_through_the_single_serializer(
+    monkeypatch,
+    facade_method,
+    serializer_calls,
+):
+    serializer_type = schema_v1.PlaneBerisEdwardsSchemaV1CompatibilitySerializer
+    observed: list[str] = []
+
+    for method_name in (
+        "to_metadata",
+        "canonical_sha256",
+        "runtime_identity_metadata",
+        "runtime_identity_sha256",
+        "identity_metadata",
+        "runtime_selection_metadata",
+    ):
+        original = getattr(serializer_type, method_name)
+
+        def spy(self, run_spec, __name=method_name, __target=original):
+            observed.append(__name)
+            return __target(self, run_spec)
+
+        monkeypatch.setattr(serializer_type, method_name, spy)
+
+    getattr(_spec(), facade_method)()
+    assert tuple(observed) == serializer_calls
+
+
+def test_serializer_direct_entry_points_equal_all_facade_documents_and_hashes():
+    serializer = schema_v1.PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER
+    for case in CASES_ORACLE["cases"]:
+        spec = _spec(**case["factory_overrides"])
+        assert serializer.to_metadata(spec) == spec.to_metadata()
+        assert serializer.canonical_sha256(spec) == spec.canonical_sha256()
+        assert serializer.runtime_identity_metadata(spec) == (
+            spec.runtime_identity_metadata()
+        )
+        assert serializer.runtime_identity_sha256(spec) == (
+            spec.runtime_identity_sha256()
+        )
+        assert serializer.identity_metadata(spec) == spec.identity_metadata()
+        assert serializer.runtime_selection_metadata(spec) == (
+            spec.runtime_selection_metadata()
+        )
+
+
+def test_serializer_module_is_a_one_way_leaf_without_component_or_consumer_edges():
+    tree = ast.parse(
+        SERIALIZER_PATH.read_text(encoding="utf-8"),
+        filename=str(SERIALIZER_PATH),
+    )
+    source = SERIALIZER_PATH.read_text(encoding="utf-8")
+
+    assert "plane_beris_edwards_components" not in source
+    assert "plane_beris_edwards_component_graph" not in source
+    assert "pssolver.applications" not in source
+    assert "pssolver.runtime" not in source
+    assert "pssolver.workflows" not in source
+    assert "__import__" not in source
+    assert "import_module" not in source
+    facade_imports = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom)
+        and node.level == 1
+        and node.module == "plane_beris_edwards"
+    ]
+    assert len(facade_imports) == 1
+    type_checking_guards = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.If)
+        and isinstance(node.test, ast.Name)
+        and node.test.id == "TYPE_CHECKING"
+    ]
+    assert len(type_checking_guards) == 1
+    assert facade_imports[0] in type_checking_guards[0].body
+
+    facade_source = FACADE_PATH.read_text(encoding="utf-8")
+    assert "import hashlib" not in facade_source
+    assert "import json" not in facade_source
+    assert "plane_beris_edwards_schema_v1" in facade_source
+    for relative in (
+        "pssolver/applications/plane_beris_edwards.py",
+        "pssolver/runtime/plane_beris_edwards.py",
+        "pssolver/runtime/plane_legacy.py",
+        "pssolver/workflows/plane_beris_edwards.py",
+    ):
+        consumer_source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
+        assert "plane_beris_edwards_schema_v1" not in consumer_source
+
+
+def test_serializer_is_in_production_source_inventory_without_component_graph():
+    assert "pssolver/configuration/plane_beris_edwards_schema_v1.py" in (
+        PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
+    )
+    assert "pssolver/configuration/plane_beris_edwards_components.py" not in (
+        PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
+    )
+    assert (
+        "pssolver/configuration/plane_beris_edwards_component_graph.py"
+        not in PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
+    )

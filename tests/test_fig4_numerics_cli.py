@@ -181,6 +181,7 @@ class Fig4NumericsCliTests(unittest.TestCase):
                 "pssolver/configuration/__init__.py",
                 "pssolver/configuration/plane_beris_edwards_builders.py",
                 "pssolver/configuration/plane_beris_edwards_declarations.py",
+                "pssolver/configuration/plane_beris_edwards_schema_v1.py",
                 "pssolver/configuration/plane_beris_edwards.py",
                 "pssolver/core/boundary.py",
                 "pssolver/core/domain.py",

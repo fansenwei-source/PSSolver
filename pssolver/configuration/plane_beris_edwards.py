@@ -9,8 +9,6 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass
-import hashlib
-import json
 import math
 from pathlib import Path
 from typing import Sequence
@@ -59,6 +57,10 @@ from .plane_beris_edwards_declarations import (
     PlaneRuntimePath,
     SpectralRefreshSpec,
 )
+from .plane_beris_edwards_schema_v1 import (
+    PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER,
+    PLANE_RUN_SPEC_SCHEMA_VERSION,
+)
 
 # Preserve not only the legacy nominal path but also the exact module-string
 # identity used by protocol-4 pickles containing a RunSpec and nested shared
@@ -68,7 +70,6 @@ PlaneFreeSlipBoundaryConditions.__module__ = __name__
 SpectralRefreshSpec.__module__ = __name__
 
 
-PLANE_RUN_SPEC_SCHEMA_VERSION = 1
 PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "Plane_beris_edwards_stokes.py",
     "pssolver/applications/__init__.py",
@@ -93,6 +94,7 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/configuration/__init__.py",
     "pssolver/configuration/plane_beris_edwards_builders.py",
     "pssolver/configuration/plane_beris_edwards_declarations.py",
+    "pssolver/configuration/plane_beris_edwards_schema_v1.py",
     "pssolver/configuration/plane_beris_edwards.py",
     "pssolver/runtime/__init__.py",
     "pssolver/runtime/plane_beris_edwards.py",
@@ -262,144 +264,39 @@ class PlaneBerisEdwardsRunSpec:
     def to_metadata(self) -> dict[str, object]:
         """Return the complete resolved, JSON-compatible run specification."""
 
-        return {
-            "schema_version": PLANE_RUN_SPEC_SCHEMA_VERSION,
-            "authority": (
-                "pssolver.configuration.PlaneBerisEdwardsRunSpec"
-            ),
-            "runtime_path": self.runtime_path.value,
-            "activity_number": self.activity_number,
-            "output_dir": str(self.output_dir),
-            "parameterization": self.parameterization,
-            "geometry": self.geometry.to_metadata(),
-            "boundaries": self.boundaries.to_metadata(),
-            "numerics": self.numerics.to_metadata(),
-            "model": {
-                "ldg_a": self.ldg_a,
-                "ldg_b": self.ldg_b,
-                "ldg_c": self.ldg_c,
-                "gamma": self.gamma,
-                "flow_alignment": self.flow_alignment,
-                "eta": self.eta,
-                "beta": self.beta,
-                "initial_s": self.initial_s,
-                "molecular_field_linear_space": (
-                    self.molecular_field_linear_space
-                ),
-                "stress_divergence_sum_space": (
-                    self.stress_divergence_sum_space
-                ),
-                "pointwise_execution": self.pointwise_execution,
-            },
-            "preset": self.shendruk_preset.to_metadata(),
-            "workflow": {
-                "dt": self.dt,
-                "steps": self.steps,
-                "save_start_step": self.save_start_step,
-                "save_interval": self.save_interval,
-                "diagnostic_interval": self.diagnostic_interval,
-                "diagnostics": self.diagnostics,
-                "save_hydrodynamics": self.save_hydrodynamics,
-                "checkpoint_interval": self.checkpoint_interval,
-                "restart_from": (
-                    str(self.restart_from)
-                    if self.restart_from is not None
-                    else None
-                ),
-                "spectral_refresh": self.spectral_refresh.to_metadata(),
-            },
-            "initial_condition": {
-                "seed": self.seed,
-                "num_defect_pairs": self.num_defect_pairs,
-                "defect_min_separation": self.defect_min_separation,
-                "defect_core_radius": self.defect_core_radius,
-                "background_angle": self.background_angle,
-                "twist_amplitude": self.twist_amplitude,
-                "twist_modes": list(self.twist_modes),
-            },
-            "runtime": {
-                "device": self.device,
-                "tf32": self.tf32,
-                "disable_q_gradient_reuse": (
-                    self.disable_q_gradient_reuse
-                ),
-                "validation_config_sha256": self.validation_config_sha256,
-                "dry_run": self.dry_run,
-            },
-            "zero_mode": {
-                "policy": self.zero_mode_policy,
-                "friction_mode_fric": self.friction_mode_fric,
-            },
-        }
+        return PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER.to_metadata(self)
 
     def canonical_sha256(self) -> str:
-        encoded = json.dumps(
-            self.to_metadata(),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        ).encode("utf-8")
-        return hashlib.sha256(encoded).hexdigest()
+        return PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER.canonical_sha256(
+            self
+        )
 
     def runtime_identity_metadata(self) -> dict[str, object]:
         """Return the numerical identity required for same-backend restart."""
 
-        metadata = self.to_metadata()
-        model = dict(metadata["model"])
-        # The checkpoint supplies the evolved Q state, so the fresh-run
-        # initializer amplitude is provenance rather than restart identity.
-        model.pop("initial_s")
-        return {
-            "schema_version": PLANE_RUN_SPEC_SCHEMA_VERSION,
-            "runtime_path": self.runtime_path.value,
-            "geometry": metadata["geometry"],
-            "boundaries": metadata["boundaries"],
-            "numerics": metadata["numerics"],
-            "model": model,
-            "preset": metadata["preset"],
-            "dt": self.dt,
-            "spectral_refresh": self.spectral_refresh.to_metadata(),
-            "zero_mode": metadata["zero_mode"],
-            "runtime_controls": {
-                "device": self.device,
-                "tf32": self.tf32,
-                "disable_q_gradient_reuse": (
-                    self.disable_q_gradient_reuse
-                ),
-            },
-        }
+        return (
+            PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER
+            .runtime_identity_metadata(self)
+        )
 
     def runtime_identity_sha256(self) -> str:
-        encoded = json.dumps(
-            self.runtime_identity_metadata(),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        ).encode("utf-8")
-        return hashlib.sha256(encoded).hexdigest()
+        return (
+            PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER
+            .runtime_identity_sha256(self)
+        )
 
     def identity_metadata(self) -> dict[str, object]:
-        return {
-            "schema_version": PLANE_RUN_SPEC_SCHEMA_VERSION,
-            "authority": (
-                "pssolver.configuration.PlaneBerisEdwardsRunSpec"
-            ),
-            "runtime_path": self.runtime_path.value,
-            "canonical_sha256": self.canonical_sha256(),
-        }
+        return PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER.identity_metadata(
+            self
+        )
 
     def runtime_selection_metadata(self) -> dict[str, object]:
         """Return additive requested/effective runtime-path metadata."""
 
-        return {
-            "authority": (
-                "pssolver.configuration.PlaneBerisEdwardsRunSpec.runtime_path"
-            ),
-            "requested": self.runtime_path.value,
-            "effective": self.runtime_path.value,
-            "default": DEFAULT_PLANE_RUNTIME_PATH,
-            "fallback_allowed": False,
-        }
+        return (
+            PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER
+            .runtime_selection_metadata(self)
+        )
 
 
 def _resolve_spectral_refresh(
