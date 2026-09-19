@@ -937,7 +937,7 @@ def test_new_leaf_modules_preserve_the_dependency_boundary():
     assert "from pssolver.execution" not in component_source
 
 
-def test_p21_leaf_types_remain_provisional_and_disconnected():
+def test_phase2_components_and_adapter_remain_provisional_and_disconnected():
     provisional_names = {
         "BerisEdwardsMaterialRequest",
         "ExtrudedDefectGasInitialConditionSpec",
@@ -967,7 +967,8 @@ def test_p21_leaf_types_remain_provisional_and_disconnected():
     )
     assert "PlaneBerisEdwardsPhysicsSpec" in components.__all__
     assert "PlaneBerisEdwardsRunComponents" in components.__all__
-    assert not hasattr(components, "decompose_plane_beris_edwards_run_spec")
+    assert hasattr(components, "decompose_plane_beris_edwards_run_spec")
+    assert "decompose_plane_beris_edwards_run_spec" in components.__all__
     assert "pssolver/models/active_nematics/specifications.py" not in (
         PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     )

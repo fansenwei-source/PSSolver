@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.1_COMPLETE_P2.2_DECOMPOSITION_PENDING`
+Status: `P2.2_COMPLETE_P2.3_DEPENDENCY_SEAM_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -331,8 +331,10 @@ constructed by the facade or consumed by a runtime.  The first real
 request.  An exact-edge ratchet permits only
 `plane_beris_edwards_components -> systems.stokes`; `models`, `planning`, and
 `runtime` receive no such permission.
-There is still no `decompose_plane_beris_edwards_run_spec`; facade
-decomposition and parity remain the separate P2.2 change.
+P2.1 itself deliberately stopped before adding
+`decompose_plane_beris_edwards_run_spec`; the separately qualified P2.2
+follow-on described below now supplies that adapter without connecting a
+production consumer.
 
 The focused P2.1 component suite contains 98 passing tests.  The combined
 P2.1/P2.1S, Stage F/G/H, import-boundary, and Phase 2 compatibility gate
@@ -414,19 +416,51 @@ consumer is migrated.  The round-trip includes raw preset inputs, dormant
 requested friction, requested boundaries, and the separately recorded
 qualified effective boundaries.
 
-P2.2 must preserve the current one-way module dependency from
+P2.2 was completed on 2026-09-19.  The leaf-only
+`decompose_plane_beris_edwards_run_spec` adapter directly reads all 54 flat
+facade fields and constructs the provisional component graph without calling
+the facade's derived `geometry`, `numerics`, or `shendruk_preset` views.  A
+test-only reverse projection recovers the 54 fields in their exact dataclass
+order, reconstructs the facade, and then delegates every schema-v1 document
+and identity calculation to the original facade authority.  There is no
+second production serializer or reverse-composition API.
+
+All seven schema-v1 golden cases, all 54 individually mutated fields, two CLI
+paths, the format-v1 checkpoint identity, raw/resolved Shendruk inputs,
+dormant/effective friction, requested/effective boundaries, and unnormalized
+path spelling pass round-trip parity.  Existing weak direct-constructor
+behavior is unchanged: malformed or noncanonical direct instances may still
+be created exactly as before, while an explicit decomposition applies the
+stronger component validation and can reject them.  No facade method, parser,
+factory, production consumer, runtime, metadata authority, implementation
+source inventory, default, or numerical path changed.
+
+The P2.2-only suite contains 78 passing tests.  The focused component,
+adapter, and import-boundary gate contains 183 passing tests.  The combined
+P2.0/P2.1/P2.1S/P2.2, Stage F/G/H, and import-boundary gate contains 385
+passing tests.  The complete local CPU suite contains 1497 passing tests and
+8 passing subtests.  Fresh sdist and wheel archives, an isolated wheel
+adapter/import smoke, stable-root non-export checks, and the installed console
+entry smoke also pass.
+
+The implementation preserves the one-way module dependency from
 `plane_beris_edwards_components` to `plane_beris_edwards`; the supported
 facade must not acquire a reverse top-level dependency on the provisional
-components module.  Before P2.3 delegates facade views to components, shared
-Plane declarations must move to a dependency-neutral canonical leaf or cross
-another explicitly qualified one-way seam.  Bidirectional top-level imports,
-hidden dynamic imports, and local-import workarounds are forbidden.
+components module.  After P2.2 this edge exists both for shared Plane
+declarations and for the adapter's concrete `PlaneBerisEdwardsRunSpec` input.
+Before P2.3 delegates facade views, it must therefore both move shared Plane
+declarations to a dependency-neutral canonical leaf and split or relocate the
+facade-specific adapter, for example into an upper one-way adapter over a
+lower pure component builder.  Bidirectional top-level imports, hidden
+dynamic imports, and local-import workarounds are forbidden.
 
-### P2.3: delegate existing derived views
+### P2.3: prepare the dependency seam and delegate derived views
 
-Let `domain`, `geometry`, `numerics`, and `shendruk_preset` delegate to the
-component composition while preserving returned types and values.  Keep all
-flat fields and compatibility properties.
+First establish the dependency-neutral declarations and split the upper
+facade-specific decomposition adapter from the lower pure component builder.
+Then let `domain`, `geometry`, `numerics`, and `shendruk_preset` delegate to
+the component composition while preserving returned types and values.  Keep
+all flat fields and compatibility properties.
 
 ### P2.4: freeze an explicit schema-v1 serializer adapter
 

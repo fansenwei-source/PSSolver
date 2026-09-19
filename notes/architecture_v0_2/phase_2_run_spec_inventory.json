@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "p2_1_complete_p2_2_decomposition_pending",
+  "status": "p2_2_complete_p2_3_dependency_seam_pending",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -344,8 +344,8 @@
     {
       "severity": "P1",
       "name": "facade-component import cycle",
-      "description": "the provisional components module currently imports shared Plane declarations from the supported facade, so a reverse facade-to-components top-level import would create a cycle",
-      "phase_2_policy": "P2.2 preserves the current one-way edge; before P2.3, move shared declarations to a dependency-neutral canonical leaf or qualify another one-way seam, and forbid bidirectional, dynamic, or local-import workarounds"
+      "description": "the provisional components module imports both shared Plane declarations and the concrete PlaneBerisEdwardsRunSpec adapter input from the supported facade, so a reverse facade-to-components top-level import would create a cycle",
+      "phase_2_policy": "before P2.3, move shared declarations to a dependency-neutral canonical leaf and split or relocate the facade-specific adapter behind an explicitly qualified one-way seam; forbid bidirectional, dynamic, or local-import workarounds"
     }
   ],
   "migration": [
@@ -449,21 +449,49 @@
     {
       "id": "P2.2",
       "name": "pure facade decomposition and schema parity adapter",
+      "implementation_complete": true,
+      "production_code_changed": true,
+      "production_path_changed": false,
       "runtime_consumer_changed": false,
+      "facade_modified": false,
+      "factory_or_parser_modified": false,
+      "stable_package_root_export_added": false,
+      "production_source_inventory_changed": false,
+      "schema_v1_authority": "PlaneBerisEdwardsRunSpec",
+      "second_production_serializer_added": false,
+      "adapter_module": "pssolver.configuration.plane_beris_edwards_components",
+      "adapter_function": "decompose_plane_beris_edwards_run_spec",
+      "flat_fields_recovered": 54,
+      "schema_v1_golden_cases_passed": 7,
       "preserve_components_to_facade_one_way_dependency": true,
       "facade_to_components_top_level_import_allowed": false,
       "dynamic_or_local_import_cycle_workaround_allowed": false,
+      "derived_facade_views_read_by_adapter": false,
+      "p2_2_tests_passed": 78,
+      "focused_tests_passed": 183,
+      "combined_tests_passed": 385,
+      "full_cpu_tests_passed": 1497,
+      "full_cpu_subtests_passed": 8,
+      "fresh_sdist_and_wheel_passed": true,
+      "isolated_wheel_adapter_smoke_passed": true,
+      "installed_console_entry_smoke_passed": true,
       "lossless_round_trip_includes": [
         "all 54 facade fields",
         "raw Shendruk request inputs",
         "dormant requested friction",
         "requested boundaries",
         "qualified effective boundaries"
-      ]
+      ],
+      "next_phase": "P2.3 dependency seam preparation before facade view delegation"
     },
     {
       "id": "P2.3",
-      "name": "derived facade views delegate to components"
+      "name": "dependency seam and derived facade view delegation",
+      "requires_before_reverse_facade_dependency": [
+        "move shared Plane declarations to a dependency-neutral canonical leaf",
+        "split or relocate the facade-specific decomposition adapter",
+        "retain an explicitly qualified one-way adapter seam"
+      ]
     },
     {
       "id": "P2.4",

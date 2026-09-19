@@ -1,7 +1,8 @@
-"""Provisional Plane run-configuration component value objects.
+"""Provisional Plane run-configuration components and facade decomposition.
 
-The types in this module remain disconnected from the supported flat facade
-and every production consumer.  They do not construct a runtime, serialize
+The component graph remains disconnected from every production consumer.  A
+pure one-way adapter decomposes the supported flat facade, but the facade does
+not import this module.  These values do not construct a runtime, serialize
 schema-v1 metadata, or select a numerical implementation.  Their local and
 composition-root validation boundaries make ownership explicit before any
 production consumer migrates.
@@ -14,7 +15,15 @@ import math
 from numbers import Real
 from pathlib import Path
 
-from pssolver.core import NumericsConfig, SpectralStorage
+from pssolver.core import (
+    DealiasRule,
+    DomainSpec,
+    NumericsConfig,
+    Precision,
+    ProjectedTransformExecution,
+    SpectralStorage,
+    TransformExecutionOrder,
+)
 from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics.specifications import (
     BerisEdwardsMaterialRequest,
@@ -27,12 +36,14 @@ from pssolver.presets.shendruk import (
 )
 from pssolver.systems.stokes import (
     IncompressibleStokesSystemSpec,
+    PressureGauge,
     TangentialZeroModePolicy,
 )
 
 from .plane_beris_edwards import (
     PLANE_FREE_SLIP_BOUNDARIES,
     PLANE_HERMITIAN_AXIS,
+    PlaneBerisEdwardsRunSpec,
     PlaneFreeSlipBoundaryConditions,
     PlaneRuntimePath,
     SpectralRefreshSpec,
@@ -545,7 +556,156 @@ class PlaneBerisEdwardsRunComponents:
         }
 
 
+def decompose_plane_beris_edwards_run_spec(
+    legacy_spec: PlaneBerisEdwardsRunSpec,
+) -> PlaneBerisEdwardsRunComponents:
+    """Purely decompose one qualified flat facade into provisional parts.
+
+    This adapter deliberately reads flat fields instead of the facade's
+    derived ``geometry``, ``numerics``, or ``shendruk_preset`` properties.
+    That keeps a later facade-delegation phase from introducing recursion.
+    Schema-v1 serialization and identity remain owned by ``legacy_spec``.
+    """
+
+    if not isinstance(legacy_spec, PlaneBerisEdwardsRunSpec):
+        raise TypeError(
+            "legacy_spec must be a PlaneBerisEdwardsRunSpec"
+        )
+
+    geometry = PlaneSlab(
+        DomainSpec(
+            (legacy_spec.nx, legacy_spec.ny, legacy_spec.nz),
+            (legacy_spec.lx, legacy_spec.ly, legacy_spec.height),
+        ),
+        wall_normal_axis=2,
+    )
+    numerics = NumericsConfig(
+        precision=Precision(legacy_spec.dtype),
+        dealias_rule=DealiasRule(legacy_spec.dealias_rule),
+        transform_execution_order=TransformExecutionOrder(
+            legacy_spec.transform_execution_order
+        ),
+        projected_transform_execution=ProjectedTransformExecution(
+            legacy_spec.projected_transform_execution
+        ),
+        spectral_storage=SpectralStorage(legacy_spec.spectral_storage),
+        hermitian_axis=(
+            PLANE_HERMITIAN_AXIS
+            if legacy_spec.spectral_storage == "hermitian_half"
+            else None
+        ),
+    )
+    material = BerisEdwardsMaterialRequest(
+        ldg_a=legacy_spec.ldg_a,
+        ldg_b=legacy_spec.ldg_b,
+        ldg_c=legacy_spec.ldg_c,
+        gamma=legacy_spec.gamma,
+        flow_alignment=legacy_spec.flow_alignment,
+        beta=legacy_spec.beta,
+    )
+    shendruk_request = ShendrukPlaneParameterRequest(
+        activity_number=legacy_spec.activity_number,
+        parameterization=legacy_spec.parameterization,
+        frank_k=legacy_spec.frank_k,
+        coefficient_min=legacy_spec.coefficient_min,
+        coefficient_max=legacy_spec.coefficient_max,
+    )
+    preset = resolve_shendruk_plane_preset(
+        activity_number=legacy_spec.activity_number,
+        height=legacy_spec.height,
+        parameterization=legacy_spec.parameterization,
+        frank_k=legacy_spec.frank_k,
+        coefficient_min=legacy_spec.coefficient_min,
+        coefficient_max=legacy_spec.coefficient_max,
+        ldg_a=legacy_spec.ldg_a,
+        ldg_b=legacy_spec.ldg_b,
+        ldg_c=legacy_spec.ldg_c,
+        gamma=legacy_spec.gamma,
+    )
+    zero_mode_policy = TangentialZeroModePolicy(
+        legacy_spec.zero_mode_policy
+    )
+    effective_friction = (
+        legacy_spec.friction_mode_fric
+        if zero_mode_policy is TangentialZeroModePolicy.FRICTION
+        else 0.0
+    )
+    stokes = IncompressibleStokesSystemSpec(
+        name="flow",
+        force_components=("force_x", "force_y", "force_z"),
+        velocity_components=("ux", "uy", "uz"),
+        pressure_component="p",
+        viscosity=legacy_spec.eta,
+        friction=effective_friction,
+        pressure_gauge=PressureGauge.ZERO_MEAN,
+        tangential_zero_mode_policy=zero_mode_policy,
+    )
+
+    return PlaneBerisEdwardsRunComponents(
+        geometry=geometry,
+        boundaries=legacy_spec.boundaries,
+        effective_boundaries=PLANE_FREE_SLIP_BOUNDARIES,
+        numerics=numerics,
+        physics=PlaneBerisEdwardsPhysicsSpec(
+            material=material,
+            shendruk_request=shendruk_request,
+            stokes=stokes,
+            requested_friction_mode_fric=(
+                legacy_spec.friction_mode_fric
+            ),
+        ),
+        preset=preset,
+        time_stepping=PlaneTimeSteppingSpec(
+            dt=legacy_spec.dt,
+            spectral_refresh=legacy_spec.spectral_refresh,
+        ),
+        initial_condition=ExtrudedDefectGasInitialConditionSpec(
+            seed=legacy_spec.seed,
+            num_defect_pairs=legacy_spec.num_defect_pairs,
+            defect_min_separation=legacy_spec.defect_min_separation,
+            defect_core_radius=legacy_spec.defect_core_radius,
+            background_angle=legacy_spec.background_angle,
+            twist_amplitude=legacy_spec.twist_amplitude,
+            twist_modes=legacy_spec.twist_modes,
+            initial_s=legacy_spec.initial_s,
+        ),
+        execution=PlaneBerisEdwardsExecutionSpec(
+            device=legacy_spec.device,
+            tf32=legacy_spec.tf32,
+            molecular_field_linear_space=(
+                legacy_spec.molecular_field_linear_space
+            ),
+            stress_divergence_sum_space=(
+                legacy_spec.stress_divergence_sum_space
+            ),
+            pointwise_execution=legacy_spec.pointwise_execution,
+            disable_q_gradient_reuse=(
+                legacy_spec.disable_q_gradient_reuse
+            ),
+            runtime_path=legacy_spec.runtime_path,
+        ),
+        workflow=PlaneWorkflowSpec(
+            output_dir=legacy_spec.output_dir,
+            steps=legacy_spec.steps,
+            save_start_step=legacy_spec.save_start_step,
+            save_interval=legacy_spec.save_interval,
+            diagnostic_interval=legacy_spec.diagnostic_interval,
+            diagnostics=legacy_spec.diagnostics,
+            save_hydrodynamics=legacy_spec.save_hydrodynamics,
+            checkpoint_interval=legacy_spec.checkpoint_interval,
+            restart_from=legacy_spec.restart_from,
+        ),
+        invocation=PlaneInvocationSpec(
+            validation_config_sha256=(
+                legacy_spec.validation_config_sha256
+            ),
+            dry_run=legacy_spec.dry_run,
+        ),
+    )
+
+
 __all__ = [
+    "decompose_plane_beris_edwards_run_spec",
     "PlaneBerisEdwardsPhysicsSpec",
     "PlaneBerisEdwardsRunComponents",
     "PlaneBerisEdwardsExecutionSpec",
