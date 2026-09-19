@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.5_IN_PROGRESS_TWO_RUNTIME_CONSUMERS_COMPLETE`
+Status: `P2.5_IN_PROGRESS_WORKFLOW_CONSUMER_COMPLETE`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -648,6 +648,40 @@ an isolated installed wheel completes one CPU step through each runtime path.
 No floating-point operation or GPU hot path changed, so P2.5.2 requires no
 H100 job.  The next consumer is
 `pssolver/workflows/plane_beris_edwards.py`.
+
+#### P2.5.3: workflow consumer complete
+
+`pssolver/workflows/plane_beris_edwards.py` is the third migrated consumer.
+Commit `8e1a55449faa2060e2ee40ecdc038161c006496d` freezes its 12 direct
+flat-facade workflow/physics reads, schema-v1 runtime identity call, diagnostic
+viscosity and effective-friction values, observation policy, checkpoint naming,
+and the existing Stage O.3 scheduling and persistence contract.  Commit
+`e377bc9145d3a10e0d485d6050b4283f93b50f65` replaces those 12 value reads
+with one workflow-local component decomposition.  Scheduling and output policy
+come from `components.workflow`, runtime-path agreement comes from
+`components.execution`, and diagnostic viscosity/friction come from the
+qualified Stokes request.
+
+The supported facade's `runtime_identity_sha256()` remains the sole persistent
+schema-v1 checkpoint identity authority.  Output-directory ownership,
+running/complete metadata order, checkpoint format, restart gates, final
+observation, diagnostics ordering, and the rule that `COMPLETE` is written last
+are unchanged.  No solver, adapter, timestep, kernel, numerical operation,
+runtime default, or implementation-source inventory changes in this substep.
+
+For both `legacy_production` and `separated_canary`, qualification against the
+pre-migration workflow finds byte-identical continuous and segmented `Q/u/p`,
+initial-condition files, diagnostic NPY/CSV files, complete checkpoint
+directories, completion markers, and both directions of cross-version
+same-runtime restart.  Metadata is equal after the frozen output-path-derived
+identity, elapsed-time, and implementation-provenance allowances.
+
+The focused gate contains 282 passing tests.  The complete CPU suite contains
+1615 passing tests and 8 passing subtests.  Fresh sdist and wheel builds pass;
+an isolated installed wheel completes a diagnostic, hydrodynamic-output, and
+checkpoint-enabled workflow through each runtime path.  No floating-point
+operation or GPU hot path changed, so P2.5.3 requires no H100 job.  The final
+P2.5 consumer is `pssolver/applications/plane_beris_edwards.py`.
 
 ### P2.6: retire the exact configuration import debts
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "p2_5_in_progress_two_runtime_consumers_complete",
+  "status": "p2_5_in_progress_workflow_consumer_complete",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -626,10 +626,10 @@
       ],
       "completed_consumers": [
         "pssolver.runtime.plane_legacy",
-        "pssolver.runtime.plane_beris_edwards"
+        "pssolver.runtime.plane_beris_edwards",
+        "pssolver.workflows.plane_beris_edwards"
       ],
       "pending_consumers": [
-        "pssolver.workflows.plane_beris_edwards",
         "pssolver.applications.plane_beris_edwards"
       ],
       "p2_5_1": {
@@ -724,6 +724,63 @@
         "isolated_wheel_canary_one_step_passed": true,
         "h100_required": false,
         "next_consumer": "pssolver.workflows.plane_beris_edwards"
+      },
+      "p2_5_3": {
+        "characterization_commit": "8e1a55449faa2060e2ee40ecdc038161c006496d",
+        "implementation_commit": "e377bc9145d3a10e0d485d6050b4283f93b50f65",
+        "consumer": "pssolver.workflows.plane_beris_edwards",
+        "flat_facade_value_reads_before": 12,
+        "flat_facade_value_reads_after": 0,
+        "schema_v1_facade_identity_method_reads_after": 1,
+        "component_decomposition_calls_per_workflow": 1,
+        "workflow_schedule_from_components": true,
+        "effective_stokes_friction_from_components": true,
+        "schema_v1_runtime_identity_authority_preserved": true,
+        "completion_marker_written_last": true,
+        "checkpoint_format_unchanged": 1,
+        "restart_gate_order_preserved": true,
+        "numerical_operation_order_changed": false,
+        "runtime_default_changed": false,
+        "schema_v1_changed": false,
+        "production_source_inventory_changed": false,
+        "focused_tests_passed": 282,
+        "full_cpu_tests_passed": 1615,
+        "full_cpu_subtests_passed": 8,
+        "qualified_runtime_paths": [
+          "legacy_production",
+          "separated_canary"
+        ],
+        "continuous_q_u_p_byte_identical": true,
+        "segment_q_u_p_byte_identical": true,
+        "initial_condition_artifacts_byte_identical": true,
+        "diagnostics_npy_csv_byte_identical": true,
+        "checkpoint_directories_byte_identical": true,
+        "completion_markers_byte_identical": true,
+        "baseline_checkpoint_to_candidate_restart_byte_identical": true,
+        "candidate_checkpoint_to_baseline_restart_byte_identical": true,
+        "metadata_equal_after_frozen_allowances": true,
+        "continuous_output_sha256": {
+          "legacy_production": {
+            "Q_4.npy": "ba2165de06c553b7c779bde82ab95af8a3a32a07098e59b7cccb13651a0ba35d",
+            "u_4.npy": "452a4410f7e317abce99357446a187edd90fa70d04c4ca9571490679a894ef9e",
+            "p_4.npy": "59371ae09916749be610cd3837bdb1c83e56c9606d6971bb59ece9535c0874a4",
+            "diagnostics.npy": "3431dcdd95ffeee8d4cea2ea46c71b99d276c66ed5f9b4b3e49ee3804afa3bf5",
+            "diagnostics.csv": "5ad7ac36a525e2e1da79fe0ca404ce05f193b6c6cb77d2dc49033d036db0571b"
+          },
+          "separated_canary": {
+            "Q_4.npy": "f645679f1c562ee5dfa50adf2d741dac44ccf190dd5c4993c6d893659fe0b6fe",
+            "u_4.npy": "9035a1ad5384b50190855e9e8149fb0f37722ff2319619bddd2068e45d644e17",
+            "p_4.npy": "efe175d6033a77c36a3d6f0674fc825b6f9a9c15b3ee0694fd438095f152f05a",
+            "diagnostics.npy": "97d23145bd1a962bdf101b41dccbb1b71958ede0791a50ff71f8c6f336a82e2d",
+            "diagnostics.csv": "52c75dc958aa861ce876801f639562ccb5841985de333cfd3269790bb4ab3666"
+          }
+        },
+        "fresh_sdist_passed": true,
+        "fresh_wheel_passed": true,
+        "isolated_wheel_legacy_workflow_smoke_passed": true,
+        "isolated_wheel_canary_workflow_smoke_passed": true,
+        "h100_required": false,
+        "next_consumer": "pssolver.applications.plane_beris_edwards"
       }
     },
     {
