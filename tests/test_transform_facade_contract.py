@@ -98,7 +98,9 @@ EXPECTED_IMPLEMENTATION_MODULES = {
     "projected_distortion_stress_divergence": (
         "pssolver.operators.tensor_divergence"
     ),
-    "FreeSlipModalStokesSolver": "pssolver.transforms",
+    "FreeSlipModalStokesSolver": (
+        "pssolver.linear_solvers.stokes.plane_free_slip"
+    ),
     "BoundedAxisPlanKey": "pssolver.backends.bounded",
     "DenseBoundedAxisExecutionPlan": "pssolver.backends.bounded",
     "build_dense_orthonormal_matrix": "pssolver.backends.bounded",
@@ -299,6 +301,14 @@ def test_divergence_facade_names_are_the_canonical_objects():
     )
     for name in names:
         assert getattr(transforms, name) is getattr(tensor_divergence, name)
+
+
+def test_stokes_facade_name_is_the_canonical_object():
+    from pssolver.linear_solvers.stokes.plane_free_slip import (
+        FreeSlipModalStokesSolver,
+    )
+
+    assert transforms.FreeSlipModalStokesSolver is FreeSlipModalStokesSolver
 
 
 def test_legacy_transform_pickle_global_paths_resolve_through_the_facade():
