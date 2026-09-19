@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.0_COMPATIBILITY_ORACLES_COMPLETE_P2.1_PENDING`
+Status: `P2.1_LEAF_COMPONENTS_COMPLETE_STOKES_LAYER_DECISION_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -290,6 +290,41 @@ preset resolver, and their local validation tests.  Geometry and benchmark
 resolution must not leak into the geometry-neutral model specification.  Do
 not change the factory, parser, facade, serializer, consumer, runtime, or
 source provenance list.
+
+The dependency-safe leaf portion of P2.1 was completed on 2026-09-18.  It
+adds:
+
+- `BerisEdwardsMaterialRequest` and
+  `ExtrudedDefectGasInitialConditionSpec` in the stdlib-only model
+  specification module;
+- lossless raw `ShendrukPlaneParameterRequest` beside the existing resolver;
+- `PlaneTimeSteppingSpec`, `PlaneBerisEdwardsExecutionSpec`,
+  `PlaneWorkflowSpec`, and `PlaneInvocationSpec` as disconnected Plane
+  configuration leaves.
+
+These names remain provisional direct-module imports.  They are not exported
+from a stable package surface, connected to the facade, or consumed by a
+runtime.  The two newly created modules are not added to the production source
+inventory; the pre-existing `presets/shendruk.py` entry remains present and
+therefore transparently records the raw-request addition in implementation
+provenance without changing the inventory itself.
+
+The physics aggregate and final run-components aggregate remain intentionally
+deferred.  The accepted sketch requires
+`PlaneBerisEdwardsPhysicsSpec.stokes` to reuse
+`IncompressibleStokesSystemSpec`, but that declaration currently lives in
+`pssolver.execution`, while the dependency ratchet deliberately forbids
+`configuration -> execution` and this phase forbids broadening the allowlist.
+P2.1 does not hide that edge through `Any`, a string-only annotation, dynamic
+import, re-export indirection, or a duplicated Plane Stokes declaration.  A
+separate architecture decision must either place the tensor-free physical
+Stokes declaration in an admissible declaration layer or explicitly revise
+the layer direction before the physics aggregate is added.
+
+The focused P2.1 leaf suite contains 65 passing tests.  The combined P2.0,
+P2.1, import-boundary, and O.1 gate contains 157 passing tests.  The complete
+local CPU suite contains 1293 passing tests and 8 passing subtests; clean
+wheel import and console-entry smokes also pass.
 
 ### P2.2: add pure decomposition and parity adapter
 

@@ -14,6 +14,61 @@ from pssolver.models.active_nematics.q_tensor import positive_equilibrium_S
 
 
 @dataclass(frozen=True, slots=True)
+class ShendrukPlaneParameterRequest:
+    """Lossless raw inputs for Shendruk Plane parameter resolution."""
+
+    activity_number: float
+    parameterization: str
+    frank_k: float
+    coefficient_min: float
+    coefficient_max: float
+
+    def __post_init__(self) -> None:
+        if self.parameterization not in {"paper-window", "fixed-k"}:
+            raise ValueError(
+                "parameterization must be 'paper-window' or 'fixed-k'"
+            )
+        numeric = (
+            self.activity_number,
+            self.frank_k,
+            self.coefficient_min,
+            self.coefficient_max,
+        )
+        if any(
+            not isinstance(value, (int, float))
+            or isinstance(value, bool)
+            or not math.isfinite(float(value))
+            for value in numeric
+        ):
+            raise ValueError(
+                "Shendruk parameter-request coefficients must be finite "
+                "numbers"
+            )
+        if self.activity_number <= 0.0 or self.frank_k <= 0.0:
+            raise ValueError(
+                "activity number and raw Frank K must be positive"
+            )
+        if (
+            self.coefficient_min <= 0.0
+            or self.coefficient_max <= self.coefficient_min
+        ):
+            raise ValueError(
+                "coefficient bounds must be positive and strictly increasing"
+            )
+
+    def to_metadata(self) -> dict[str, object]:
+        """Return the validated raw request without resolving coefficients."""
+
+        return {
+            "activity_number": self.activity_number,
+            "parameterization": self.parameterization,
+            "frank_k": self.frank_k,
+            "coefficient_min": self.coefficient_min,
+            "coefficient_max": self.coefficient_max,
+        }
+
+
+@dataclass(frozen=True, slots=True)
 class ShendrukPlanePreset:
     """Resolved coefficients for one Shendruk-inspired Plane run."""
 
@@ -159,6 +214,7 @@ def resolve_shendruk_plane_preset(
 
 
 __all__ = [
+    "ShendrukPlaneParameterRequest",
     "ShendrukPlanePreset",
     "resolve_shendruk_plane_preset",
 ]
