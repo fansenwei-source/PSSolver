@@ -42,6 +42,26 @@ class SpectralStorage(str, Enum):
     HERMITIAN_HALF = "hermitian_half"
 
 
+# Dependency-neutral numerical-policy declarations.  Execution modules and
+# configuration composition roots import these exact objects rather than
+# depending on one another's compatibility facades.
+DEFAULT_DEALIAS_RULE = DealiasRule.CUBIC_HALF.value
+DEFAULT_PROJECTED_TRANSFORM_EXECUTION = (
+    ProjectedTransformExecution.TRUNCATED.value
+)
+PROJECTED_TRANSFORM_EXECUTION_MODES = tuple(
+    value.value for value in ProjectedTransformExecution
+)
+DEALIAS_RULE_FRACTIONS = {
+    DealiasRule.NONE.value: None,
+    DealiasRule.TWO_THIRDS.value: 2.0 / 3.0,
+    DealiasRule.CUBIC_HALF.value: 0.5,
+}
+DEFAULT_TRANSFORM_EXECUTION_ORDER = TransformExecutionOrder.REAL_FIRST.value
+DEFAULT_SPECTRAL_STORAGE = SpectralStorage.FULL_COMPLEX.value
+SPECTRAL_STORAGE_MODES = tuple(value.value for value in SpectralStorage)
+
+
 @dataclass(frozen=True, slots=True)
 class NumericsConfig:
     """Explicit, geometry-independent spectral execution choices.

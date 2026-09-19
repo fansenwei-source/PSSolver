@@ -1,15 +1,12 @@
 import torch
 import torch.nn.functional as functional
 
-
-DEFAULT_DEALIAS_RULE = "cubic_half"
-DEFAULT_PROJECTED_TRANSFORM_EXECUTION = "truncated"
-PROJECTED_TRANSFORM_EXECUTION_MODES = ("full", "truncated")
-DEALIAS_RULE_FRACTIONS = {
-    "none": None,
-    "two_thirds": 2.0 / 3.0,
-    "cubic_half": 0.5,
-}
+from pssolver.core.numerics import (
+    DEALIAS_RULE_FRACTIONS,
+    DEFAULT_DEALIAS_RULE,
+    DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
+    PROJECTED_TRANSFORM_EXECUTION_MODES,
+)
 
 
 class BasisAwareSpectralProjector:

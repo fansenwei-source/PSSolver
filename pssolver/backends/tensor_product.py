@@ -8,11 +8,13 @@ from .bounded import (
     DenseBoundedAxisExecutionPlan,
     build_dense_orthonormal_matrix,
 )
+from pssolver.core.numerics import (
+    DEFAULT_SPECTRAL_STORAGE,
+    DEFAULT_TRANSFORM_EXECUTION_ORDER,
+    SPECTRAL_STORAGE_MODES,
+)
 
 
-DEFAULT_TRANSFORM_EXECUTION_ORDER = "real_first"
-DEFAULT_SPECTRAL_STORAGE = "full_complex"
-SPECTRAL_STORAGE_MODES = ("full_complex", "hermitian_half")
 DEFAULT_PERIODIC_TRANSFORM_EXECUTION = "multidim"
 PERIODIC_TRANSFORM_EXECUTION_MODES = ("axiswise", "multidim")
 

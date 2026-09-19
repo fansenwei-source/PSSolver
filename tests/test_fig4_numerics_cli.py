@@ -189,6 +189,7 @@ class Fig4NumericsCliTests(unittest.TestCase):
                 "pssolver/core/domain.py",
                 "pssolver/core/geometry.py",
                 "pssolver/core/numerics.py",
+                "pssolver/geometries/plane_numerics.py",
                 "pssolver/geometries/tensor_product.py",
                 "pssolver/models/active_nematics/__init__.py",
                 "pssolver/models/active_nematics/fields.py",

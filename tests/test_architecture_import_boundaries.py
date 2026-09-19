@@ -2,7 +2,7 @@
 
 The test is intentionally a ratchet, not a claim that the v0.1.2 tree already
 has the target architecture.  New dependencies must follow the accepted
-direction.  Seven remaining legacy edges are named exactly so that a broad
+direction.  Four remaining legacy edges are named exactly so that a broad
 exemption cannot hide new coupling and removing a debt requires removing its
 allowance.
 """
@@ -93,10 +93,6 @@ ALLOWED_INTERNAL_LAYERS = {
 # removal rather than being treated as an acceptable layer-wide dependency.
 EXPECTED_LEGACY_EXCEPTIONS = {
     ImportEdge("pssolver.models.active_nematics.stokes", "pssolver.transforms"),
-    ImportEdge("pssolver.configuration.plane_beris_edwards", "pssolver.plane"),
-    ImportEdge(
-        "pssolver.configuration.plane_beris_edwards", "pssolver.transforms"
-    ),
     ImportEdge("pssolver.runtime.plane_legacy", "pssolver.integrator"),
     ImportEdge("pssolver.runtime.plane_legacy", "pssolver.solver"),
     ImportEdge(

@@ -43,10 +43,14 @@ def _absolute_imported_names(path: Path) -> dict[str, set[str]]:
     return result
 
 
-def test_configuration_policy_import_debt_is_frozen_before_migration():
+def test_configuration_policy_import_debt_is_retired_to_tensor_free_policy():
     imports = _absolute_imported_names(FACADE_PATH)
-    assert imports["pssolver.plane"] == PLANE_POLICY_NAMES
-    assert imports["pssolver.transforms"] == TRANSFORM_POLICY_NAMES
+    assert "pssolver.plane" not in imports
+    assert "pssolver.transforms" not in imports
+    assert imports["pssolver.geometries.plane_numerics"] == (
+        PLANE_POLICY_NAMES
+    )
+    assert imports["pssolver.core.numerics"] == TRANSFORM_POLICY_NAMES
 
 
 def test_numerical_policy_values_and_legacy_facade_aliases_are_frozen():

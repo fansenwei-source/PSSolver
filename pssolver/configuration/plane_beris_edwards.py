@@ -18,7 +18,19 @@ from pssolver.core import (
     DomainSpec,
     NumericsConfig,
 )
+from pssolver.core.numerics import (
+    DEALIAS_RULE_FRACTIONS,
+    DEFAULT_DEALIAS_RULE,
+    DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
+    DEFAULT_TRANSFORM_EXECUTION_ORDER,
+    PROJECTED_TRANSFORM_EXECUTION_MODES,
+    SPECTRAL_STORAGE_MODES,
+)
 from pssolver.geometries import PlaneSlab
+from pssolver.geometries.plane_numerics import (
+    DEFAULT_PLANE_SPECTRAL_STORAGE,
+    PLANE_HERMITIAN_AXIS,
+)
 from pssolver.models.active_nematics.beris_edwards import (
     DEFAULT_POINTWISE_EXECUTION,
     POINTWISE_EXECUTION_MODES,
@@ -27,19 +39,7 @@ from pssolver.models.active_nematics.stokes import (
     DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
     DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
 )
-from pssolver.plane import (
-    DEFAULT_PLANE_SPECTRAL_STORAGE,
-    PLANE_HERMITIAN_AXIS,
-)
 from pssolver.presets import ShendrukPlanePreset
-from pssolver.transforms import (
-    DEALIAS_RULE_FRACTIONS,
-    DEFAULT_DEALIAS_RULE,
-    DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
-    DEFAULT_TRANSFORM_EXECUTION_ORDER,
-    PROJECTED_TRANSFORM_EXECUTION_MODES,
-    SPECTRAL_STORAGE_MODES,
-)
 
 from .plane_beris_edwards_builders import (
     build_plane_beris_edwards_domain,
@@ -110,6 +110,7 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/core/geometry.py",
     "pssolver/core/numerics.py",
     "pssolver/geometries/tensor_product.py",
+    "pssolver/geometries/plane_numerics.py",
     "pssolver/models/active_nematics/__init__.py",
     "pssolver/models/active_nematics/fields.py",
     "pssolver/models/active_nematics/q_tensor.py",
