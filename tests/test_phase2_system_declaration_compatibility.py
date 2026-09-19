@@ -8,6 +8,7 @@ connect the provisional Phase 2 components to a runtime.
 
 from __future__ import annotations
 
+import ast
 import base64
 from dataclasses import FrozenInstanceError, MISSING, fields
 from enum import Enum
@@ -22,19 +23,20 @@ import pytest
 
 import pssolver
 import pssolver.execution as execution
-from pssolver.execution import (
-    INCOMPRESSIBLE_STOKES_CAPABILITY,
-    IncompressibleStokesSystemSpec,
-    PressureGauge,
-    TangentialZeroModePolicy,
-)
 from pssolver.execution import algebraic as algebraic_module
 from pssolver.execution import stokes as stokes_module
 import pssolver.systems as systems_package
 from pssolver.systems import algebraic as canonical_algebraic_module
+from pssolver.systems import stokes as canonical_stokes_module
 from pssolver.systems.algebraic import (
     AlgebraicSystemSpec,
     AlgebraicUpdatePhase,
+)
+from pssolver.systems.stokes import (
+    INCOMPRESSIBLE_STOKES_CAPABILITY,
+    IncompressibleStokesSystemSpec,
+    PressureGauge,
+    TangentialZeroModePolicy,
 )
 
 
@@ -199,7 +201,7 @@ def _stokes_spec(
         (
             IncompressibleStokesSystemSpec,
             "incompressible_stokes_system_spec",
-            "pre_extraction_module",
+            "target_canonical_module",
         ),
     ),
 )
@@ -239,6 +241,12 @@ def test_dataclass_surfaces_match_characterization_oracle(
 
 def test_execution_exports_and_root_absence_match_oracle():
     algebraic_names = {"AlgebraicSystemSpec", "AlgebraicUpdatePhase"}
+    stokes_names = {
+        "INCOMPRESSIBLE_STOKES_CAPABILITY",
+        "IncompressibleStokesSystemSpec",
+        "PressureGauge",
+        "TangentialZeroModePolicy",
+    }
 
     for name in API["execution_exports"]:
         assert name in execution.__all__
@@ -249,14 +257,51 @@ def test_execution_exports_and_root_absence_match_oracle():
                 canonical_algebraic_module,
                 name,
             )
+        if name in stokes_names:
+            assert getattr(execution, name) is getattr(
+                canonical_stokes_module,
+                name,
+            )
     assert systems_package.__all__ == []
-    for name in algebraic_names:
+    for name in algebraic_names | stokes_names:
         assert not hasattr(systems_package, name)
     for name in API["root_absent"]:
         assert name not in pssolver.__all__
         assert not hasattr(pssolver, name)
     assert INCOMPRESSIBLE_STOKES_CAPABILITY == (
         API["incompressible_stokes_system_spec"]["capability"]
+    )
+
+
+def test_legacy_stokes_leaf_is_a_static_exact_object_facade():
+    source = (PROJECT_ROOT / "pssolver" / "execution" / "stokes.py").read_text(
+        encoding="utf-8"
+    )
+    tree = ast.parse(source)
+    expected_names = {
+        "INCOMPRESSIBLE_STOKES_CAPABILITY",
+        "IncompressibleStokesSystemSpec",
+        "PressureGauge",
+        "TangentialZeroModePolicy",
+    }
+    imports = [node for node in tree.body if isinstance(node, ast.ImportFrom)]
+
+    assert len(imports) == 1
+    assert imports[0].module == "pssolver.systems.stokes"
+    assert {alias.name for alias in imports[0].names} == expected_names
+    assert all(alias.asname is None for alias in imports[0].names)
+    assert not any(
+        isinstance(
+            node,
+            (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef, ast.Assign),
+        )
+        for node in tree.body
+    )
+    assert not any(
+        isinstance(node, ast.AnnAssign)
+        and isinstance(node.target, ast.Name)
+        and node.target.id in expected_names
+        for node in tree.body
     )
 
 
@@ -268,11 +313,11 @@ def test_execution_exports_and_root_absence_match_oracle():
             "algebraic_update_phase",
             "target_canonical_module",
         ),
-        (PressureGauge, "pressure_gauge", "pre_extraction_module"),
+        (PressureGauge, "pressure_gauge", "target_canonical_module"),
         (
             TangentialZeroModePolicy,
             "tangential_zero_mode_policy",
-            "pre_extraction_module",
+            "target_canonical_module",
         ),
     ),
 )
@@ -738,10 +783,16 @@ def test_legacy_stokes_pickle_and_global_paths_remain_loadable():
         "PressureGauge",
         "TangentialZeroModePolicy",
     )
-    for module_name in ("pssolver.execution.stokes", "pssolver.execution"):
+    for module_name in (
+        "pssolver.systems.stokes",
+        "pssolver.execution.stokes",
+        "pssolver.execution",
+    ):
         for name in leaf_names:
             payload = f"c{module_name}\n{name}\n.".encode("ascii")
-            assert pickle.loads(payload) is getattr(execution, name)
+            target = getattr(canonical_stokes_module, name)
+            assert pickle.loads(payload) is target
+            assert getattr(execution, name) is target
 
 
 @pytest.mark.parametrize(
@@ -755,6 +806,9 @@ def test_current_stokes_instances_pickle_round_trip(case):
         policy=TangentialZeroModePolicy(case["policy"]),
     )
     for protocol in (0, 2, 4, pickle.HIGHEST_PROTOCOL):
-        restored = pickle.loads(pickle.dumps(value, protocol=protocol))
+        payload = pickle.dumps(value, protocol=protocol)
+        restored = pickle.loads(payload)
         assert type(restored) is IncompressibleStokesSystemSpec
         assert restored == value
+        if protocol == 4:
+            assert b"pssolver.systems.stokes" in payload

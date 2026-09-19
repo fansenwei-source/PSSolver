@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "p2_1s_algebraic_extraction_complete_stokes_extraction_pending",
+  "status": "p2_1s_system_declaration_extraction_complete_p2_1_aggregates_pending",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -212,9 +212,9 @@
     "pssolver.configuration.PlaneFreeSlipBoundaryConditions",
     "pssolver.configuration.SpectralRefreshSpec",
     "pssolver.presets.ShendrukPlanePreset",
-    "pssolver.execution.stokes.IncompressibleStokesSystemSpec",
-    "pssolver.execution.stokes.TangentialZeroModePolicy",
-    "pssolver.execution.stokes.PressureGauge",
+    "pssolver.systems.stokes.IncompressibleStokesSystemSpec",
+    "pssolver.systems.stokes.TangentialZeroModePolicy",
+    "pssolver.systems.stokes.PressureGauge",
     "pssolver.models.active_nematics.constitutive.BerisEdwardsConstitutiveParameters",
     "pssolver.core.ProblemSpec"
   ],
@@ -222,7 +222,8 @@
     "adr": "notes/architecture_v0_2/adr/0008-tensor-free-system-declarations.md",
     "algebraic_canonical_module": "pssolver.systems.algebraic",
     "algebraic_legacy_facade_module": "pssolver.execution.algebraic",
-    "stokes_current_canonical_module": "pssolver.execution.stokes",
+    "stokes_canonical_module": "pssolver.systems.stokes",
+    "stokes_legacy_facade_module": "pssolver.execution.stokes",
     "target_layer": "pssolver.systems",
     "target_modules": {
       "pssolver.systems.algebraic": [
@@ -257,7 +258,7 @@
       "characterize declaration identity and behavior",
       "atomically extract generic algebraic declarations, install their exact-object execution facades, and enforce the initial systems import/tensor-free ratchets",
       "atomically extract typed Stokes declarations, install their exact-object execution facades, and extend the systems ratchets",
-      "add PlaneBerisEdwardsPhysicsSpec"
+      "add PlaneBerisEdwardsPhysicsSpec and PlaneBerisEdwardsRunComponents as disconnected P2.1 aggregates"
     ]
   },
   "do_not_reuse_as_production_declaration": [
@@ -267,6 +268,12 @@
     "pssolver.systems.algebraic": [
       "AlgebraicUpdatePhase",
       "AlgebraicSystemSpec"
+    ],
+    "pssolver.systems.stokes": [
+      "INCOMPRESSIBLE_STOKES_CAPABILITY",
+      "PressureGauge",
+      "TangentialZeroModePolicy",
+      "IncompressibleStokesSystemSpec"
     ],
     "pssolver.models.active_nematics.specifications": [
       "BerisEdwardsMaterialRequest",
@@ -354,7 +361,11 @@
       "name": "disconnected immutable component value objects",
       "production_code_changed": false,
       "completed_subset": "dependency-safe leaf components",
-      "pending_prerequisite": "P2.1S Stokes declaration extraction"
+      "prerequisites_complete": true,
+      "pending_scope": [
+        "PlaneBerisEdwardsPhysicsSpec",
+        "PlaneBerisEdwardsRunComponents"
+      ]
     },
     {
       "id": "P2.1S",
@@ -362,15 +373,23 @@
       "production_runtime_changed": false,
       "requires": "ADR 0008 compatibility characterization and alias gates",
       "characterization_complete": true,
-      "implementation_pending": true,
+      "implementation_pending": false,
+      "implementation_complete": true,
       "declaration_ownership_changed": true,
       "algebraic_extraction_complete": true,
-      "stokes_extraction_pending": true,
+      "stokes_extraction_pending": false,
+      "stokes_extraction_complete": true,
       "canonical_algebraic_module": "pssolver.systems.algebraic",
       "legacy_algebraic_facades": [
         "pssolver.execution.algebraic",
         "pssolver.execution"
       ],
+      "canonical_stokes_module": "pssolver.systems.stokes",
+      "legacy_stokes_facades": [
+        "pssolver.execution.stokes",
+        "pssolver.execution"
+      ],
+      "private_stokes_validation_helpers_reexported": false,
       "fixtures": [
         "tests/fixtures/systems/algebraic_stokes_api_v1.json",
         "tests/fixtures/systems/algebraic_stokes_cases_v1.json"
@@ -387,9 +406,9 @@
         "representative_stokes_metadata": "f89ce8db5693770e6c999b2171265e153c748d160093511f375c13c1eebb1c7e",
         "plane_algebraic_restart_provenance": "e8808a592926bc47e855c7aaa246a0855606126b31f0a3850d6df6a3bdb24dbc"
       },
-      "focused_tests_passed": 89,
-      "combined_tests_passed": 271,
-      "full_cpu_tests_passed": 1383,
+      "focused_tests_passed": 91,
+      "combined_tests_passed": 273,
+      "full_cpu_tests_passed": 1385,
       "full_cpu_subtests_passed": 8,
       "fresh_sdist_contains_canonical_modules": true,
       "fresh_wheel_contains_canonical_modules": true,
@@ -397,11 +416,9 @@
       "isolated_wheel_legacy_pickle_smoke_passed": true,
       "installed_console_entry_smoke_passed": true,
       "next_commit_scope": [
-        "INCOMPRESSIBLE_STOKES_CAPABILITY extraction",
-        "PressureGauge extraction",
-        "TangentialZeroModePolicy extraction",
-        "IncompressibleStokesSystemSpec extraction",
-        "execution Stokes exact-object compatibility facade"
+        "PlaneBerisEdwardsPhysicsSpec",
+        "PlaneBerisEdwardsRunComponents",
+        "disconnected aggregate tests"
       ]
     },
     {

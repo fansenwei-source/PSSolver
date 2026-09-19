@@ -49,18 +49,53 @@ assert systems.__all__ == []
 assert not hasattr(systems, "AlgebraicSystemSpec")
 assert not hasattr(systems, "AlgebraicUpdatePhase")
 """,
+    "canonical_stokes_leaf_first": """
+import pssolver.systems.stokes as canonical_stokes
+import pssolver.systems.algebraic as canonical_algebraic
+import pssolver.systems as systems
+import pssolver.execution.stokes as legacy_stokes
+import pssolver.execution as execution
+assert canonical_stokes.IncompressibleStokesSystemSpec is legacy_stokes.IncompressibleStokesSystemSpec
+assert canonical_stokes.IncompressibleStokesSystemSpec is execution.IncompressibleStokesSystemSpec
+assert canonical_stokes.PressureGauge is legacy_stokes.PressureGauge
+assert canonical_stokes.PressureGauge is execution.PressureGauge
+assert canonical_stokes.TangentialZeroModePolicy is legacy_stokes.TangentialZeroModePolicy
+assert canonical_stokes.TangentialZeroModePolicy is execution.TangentialZeroModePolicy
+assert canonical_stokes.INCOMPRESSIBLE_STOKES_CAPABILITY is legacy_stokes.INCOMPRESSIBLE_STOKES_CAPABILITY
+assert canonical_stokes.INCOMPRESSIBLE_STOKES_CAPABILITY is execution.INCOMPRESSIBLE_STOKES_CAPABILITY
+value = canonical_stokes.IncompressibleStokesSystemSpec(
+    name="flow",
+    force_components=("fx", "fy", "fz"),
+    velocity_components=("ux", "uy", "uz"),
+    pressure_component="p",
+    viscosity=1.0,
+)
+assert type(value.to_algebraic_system_spec()) is canonical_algebraic.AlgebraicSystemSpec
+assert canonical_stokes.IncompressibleStokesSystemSpec.__module__ == "pssolver.systems.stokes"
+assert canonical_stokes.PressureGauge.__module__ == "pssolver.systems.stokes"
+assert canonical_stokes.TangentialZeroModePolicy.__module__ == "pssolver.systems.stokes"
+assert systems.__all__ == []
+assert not hasattr(systems, "IncompressibleStokesSystemSpec")
+assert not hasattr(systems, "PressureGauge")
+assert not hasattr(systems, "TangentialZeroModePolicy")
+""",
     "legacy_algebraic_leaf_first": """
 import pssolver.execution.algebraic as algebraic
 import pssolver.execution.stokes as stokes
 import pssolver.execution as execution
 import pssolver.systems.algebraic as canonical
+import pssolver.systems.stokes as canonical_stokes
 assert algebraic.AlgebraicSystemSpec is execution.AlgebraicSystemSpec
 assert algebraic.AlgebraicSystemSpec is canonical.AlgebraicSystemSpec
 assert algebraic.AlgebraicUpdatePhase is execution.AlgebraicUpdatePhase
 assert algebraic.AlgebraicUpdatePhase is canonical.AlgebraicUpdatePhase
 assert stokes.IncompressibleStokesSystemSpec is execution.IncompressibleStokesSystemSpec
+assert stokes.IncompressibleStokesSystemSpec is canonical_stokes.IncompressibleStokesSystemSpec
 assert stokes.PressureGauge is execution.PressureGauge
+assert stokes.PressureGauge is canonical_stokes.PressureGauge
 assert stokes.TangentialZeroModePolicy is execution.TangentialZeroModePolicy
+assert stokes.TangentialZeroModePolicy is canonical_stokes.TangentialZeroModePolicy
+assert stokes.INCOMPRESSIBLE_STOKES_CAPABILITY is canonical_stokes.INCOMPRESSIBLE_STOKES_CAPABILITY
 assert canonical.AlgebraicSystemSpec.__module__ == "pssolver.systems.algebraic"
 """,
     "execution_package_first": """
@@ -68,16 +103,21 @@ import pssolver.execution as execution
 import pssolver.execution.algebraic as algebraic
 import pssolver.execution.stokes as stokes
 import pssolver.systems.algebraic as canonical
+import pssolver.systems.stokes as canonical_stokes
 assert execution.AlgebraicSystemSpec is algebraic.AlgebraicSystemSpec
 assert execution.AlgebraicSystemSpec is canonical.AlgebraicSystemSpec
 assert execution.AlgebraicUpdatePhase is canonical.AlgebraicUpdatePhase
 assert execution.IncompressibleStokesSystemSpec is stokes.IncompressibleStokesSystemSpec
+assert execution.IncompressibleStokesSystemSpec is canonical_stokes.IncompressibleStokesSystemSpec
 assert execution.PressureGauge.ZERO_MEAN is stokes.PressureGauge.ZERO_MEAN
+assert execution.PressureGauge.ZERO_MEAN is canonical_stokes.PressureGauge.ZERO_MEAN
 assert execution.TangentialZeroModePolicy.FRICTION is stokes.TangentialZeroModePolicy.FRICTION
+assert execution.TangentialZeroModePolicy.FRICTION is canonical_stokes.TangentialZeroModePolicy.FRICTION
 """,
     "stokes_first": """
 import pssolver.execution.stokes as stokes
 import pssolver.systems.algebraic as canonical
+import pssolver.systems.stokes as canonical_stokes
 import pssolver.execution.algebraic as legacy
 import pssolver.execution as execution
 value = stokes.IncompressibleStokesSystemSpec(
@@ -89,6 +129,13 @@ value = stokes.IncompressibleStokesSystemSpec(
 )
 generic = value.to_algebraic_system_spec()
 assert type(generic) is canonical.AlgebraicSystemSpec
+assert stokes.IncompressibleStokesSystemSpec is canonical_stokes.IncompressibleStokesSystemSpec
+assert stokes.PressureGauge is canonical_stokes.PressureGauge
+assert stokes.TangentialZeroModePolicy is canonical_stokes.TangentialZeroModePolicy
+assert stokes.INCOMPRESSIBLE_STOKES_CAPABILITY is canonical_stokes.INCOMPRESSIBLE_STOKES_CAPABILITY
+assert canonical_stokes.IncompressibleStokesSystemSpec.__module__ == "pssolver.systems.stokes"
+assert canonical_stokes.PressureGauge.__module__ == "pssolver.systems.stokes"
+assert canonical_stokes.TangentialZeroModePolicy.__module__ == "pssolver.systems.stokes"
 assert canonical.AlgebraicSystemSpec is legacy.AlgebraicSystemSpec
 assert canonical.AlgebraicSystemSpec is execution.AlgebraicSystemSpec
 assert canonical.AlgebraicUpdatePhase is execution.AlgebraicUpdatePhase
@@ -98,11 +145,15 @@ import pssolver.models.active_nematics.constitutive as constitutive
 import pssolver.execution as execution
 import pssolver.execution.stokes as stokes
 import pssolver.systems.algebraic as canonical
+import pssolver.systems.stokes as canonical_stokes
 assert constitutive.AlgebraicSystemSpec is canonical.AlgebraicSystemSpec
 assert execution.AlgebraicSystemSpec is canonical.AlgebraicSystemSpec
 assert execution.AlgebraicUpdatePhase is canonical.AlgebraicUpdatePhase
 assert constitutive.IncompressibleStokesSystemSpec is execution.IncompressibleStokesSystemSpec
 assert execution.IncompressibleStokesSystemSpec is stokes.IncompressibleStokesSystemSpec
+assert execution.IncompressibleStokesSystemSpec is canonical_stokes.IncompressibleStokesSystemSpec
+assert execution.PressureGauge is canonical_stokes.PressureGauge
+assert execution.TangentialZeroModePolicy is canonical_stokes.TangentialZeroModePolicy
 """,
     "legacy_pickle_first": f"""
 import base64
@@ -111,11 +162,16 @@ payload = base64.b64decode({LEGACY_PICKLE_BASE64!r})
 value = pickle.loads(payload)
 import pssolver.execution as execution
 import pssolver.systems.algebraic as canonical
+import pssolver.systems.stokes as canonical_stokes
 assert type(value) is execution.IncompressibleStokesSystemSpec
+assert type(value) is canonical_stokes.IncompressibleStokesSystemSpec
 assert value.pressure_gauge is execution.PressureGauge.ZERO_MEAN
+assert value.pressure_gauge is canonical_stokes.PressureGauge.ZERO_MEAN
 assert value.tangential_zero_mode_policy is execution.TangentialZeroModePolicy.ZERO_MEAN
+assert value.tangential_zero_mode_policy is canonical_stokes.TangentialZeroModePolicy.ZERO_MEAN
 assert type(value.to_algebraic_system_spec()) is canonical.AlgebraicSystemSpec
 assert execution.AlgebraicSystemSpec is canonical.AlgebraicSystemSpec
+assert canonical_stokes.IncompressibleStokesSystemSpec.__module__ == "pssolver.systems.stokes"
 """,
     "legacy_algebraic_pickle_first": f"""
 import base64

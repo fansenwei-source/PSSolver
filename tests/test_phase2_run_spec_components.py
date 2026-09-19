@@ -2,9 +2,9 @@
 
 These provisional values make ownership explicit without connecting the
 supported flat RunSpec to a new composition path.  In particular, this stage
-does not introduce a Plane physics aggregate: its canonical Stokes declaration
-currently lives in an execution layer that the configuration import ratchet
-does not permit.
+does not introduce a Plane physics aggregate.  The Stokes declaration-layer
+prerequisite is now satisfied, but the disconnected aggregate remains the
+next separately qualified P2.1 change.
 """
 
 from __future__ import annotations

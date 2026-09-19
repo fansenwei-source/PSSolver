@@ -1,4 +1,4 @@
-"""Golden restart-provenance gate across the P2.1S algebraic extraction."""
+"""Golden restart-provenance gate across the P2.1S declaration extraction."""
 
 from __future__ import annotations
 
@@ -20,9 +20,9 @@ from pssolver.core import (
 )
 from pssolver.execution import (
     AlgebraicSystemSpec as LegacyAlgebraicSystemSpec,
-    IncompressibleStokesSystemSpec,
-    PressureGauge,
-    TangentialZeroModePolicy,
+    IncompressibleStokesSystemSpec as LegacyIncompressibleStokesSystemSpec,
+    PressureGauge as LegacyPressureGauge,
+    TangentialZeroModePolicy as LegacyTangentialZeroModePolicy,
 )
 from pssolver.experimental import (
     build_experimental_model_runtime,
@@ -31,6 +31,11 @@ from pssolver.experimental import (
 from pssolver.geometries import PlaneSlab
 from pssolver.models.canary import BodyForceStokesCanaryModel
 from pssolver.systems.algebraic import AlgebraicSystemSpec
+from pssolver.systems.stokes import (
+    IncompressibleStokesSystemSpec,
+    PressureGauge,
+    TangentialZeroModePolicy,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -88,12 +93,15 @@ def _runtime():
     )
 
 
-def test_plane_stokes_restart_provenance_is_preserved_after_algebraic_extraction():
+def test_plane_stokes_restart_provenance_is_preserved_after_declaration_extraction():
     runtime = _runtime()
     resolved = runtime.resolved_algebraic_systems[0]
     restart = runtime.capture_algebraic_restart_state()
 
     assert AlgebraicSystemSpec is LegacyAlgebraicSystemSpec
+    assert IncompressibleStokesSystemSpec is LegacyIncompressibleStokesSystemSpec
+    assert PressureGauge is LegacyPressureGauge
+    assert TangentialZeroModePolicy is LegacyTangentialZeroModePolicy
     assert type(resolved.system) is AlgebraicSystemSpec
     assert IncompressibleStokesSystemSpec.from_algebraic_system_spec(
         resolved.system

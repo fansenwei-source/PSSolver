@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.1S_ALGEBRAIC_EXTRACTION_COMPLETE_STOKES_EXTRACTION_PENDING`
+Status: `P2.1S_SYSTEM_DECLARATION_EXTRACTION_COMPLETE_P2.1_AGGREGATES_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -112,8 +112,8 @@ Phase 2 does not rebuild types that already express the required meaning:
 - `ShendrukPlanePreset` owns resolved benchmark coefficients;
 - `SpectralRefreshSpec` owns the resolved refresh schedule;
 - `IncompressibleStokesSystemSpec`, `TangentialZeroModePolicy`, and
-  `PressureGauge` own Stokes viscosity, friction, gauge, and tangential
-  zero-mode semantics;
+  `PressureGauge` in `pssolver.systems.stokes` own Stokes viscosity,
+  friction, gauge, and tangential zero-mode semantics;
 - `BerisEdwardsConstitutiveParameters` is reusable at the lowering boundary,
   but is not by itself a complete production model declaration;
 - `ProblemSpec` remains the eventual model/geometry/numerics scientific
@@ -312,22 +312,14 @@ therefore transparently records the raw-request addition in implementation
 provenance without changing the inventory itself.
 
 The physics aggregate and final run-components aggregate remain intentionally
-deferred.  The accepted sketch requires
-`PlaneBerisEdwardsPhysicsSpec.stokes` to reuse
-`IncompressibleStokesSystemSpec`, but that declaration currently lives in
-`pssolver.execution`, while the dependency ratchet deliberately forbids
-`configuration -> execution`.
-
-ADR 0008 resolves the ownership question without weakening that rule.  A
-narrow tensor-free `pssolver.systems` layer will become the canonical home of
-generic algebraic declarations and the shared Stokes request.  Existing
-`pssolver.execution` imports will remain exact-object compatibility facades;
-no duplicate, subclass, dynamic import, or new legacy exception is permitted.
-The next micro-phase is the characterized mechanical declaration extraction.
-This extraction is tracked as P2.1S rather than being hidden inside the
-already completed leaf subset.  Only after its identity, existing pickle
-behavior, tensor-free, wheel, and complete-CPU gates pass may the physics
-aggregate and pure decomposition be added.
+deferred.  ADR 0008's prerequisite is now complete: the generic algebraic
+declarations and shared Stokes request have canonical tensor-free homes in
+`pssolver.systems`, while all existing `pssolver.execution` imports remain
+exact-object compatibility facades.  P2.1 nevertheless remains open until
+the disconnected `PlaneBerisEdwardsPhysicsSpec` and
+`PlaneBerisEdwardsRunComponents` value objects and their local tests are
+added.  The facade decomposition and parity adapter remain a separate P2.2
+change.
 
 The focused P2.1 leaf suite contains 65 passing tests.  The combined P2.0,
 P2.1, import-boundary, and O.1 gate contains 157 passing tests.  The complete
@@ -361,30 +353,39 @@ test modules freeze:
   `e8808a592926bc47e855c7aaa246a0855606126b31f0a3850d6df6a3bdb24dbc`;
 - fresh-process import ordering through the canonical and legacy paths.
 
-The first implementation portion of P2.1S was completed on 2026-09-19.
-`AlgebraicUpdatePhase` and `AlgebraicSystemSpec` now have one canonical
-definition in `pssolver.systems.algebraic`.  The old
-`pssolver.execution.algebraic` and `pssolver.execution` paths are static
+The implementation portion of P2.1S was completed on 2026-09-19.
+`AlgebraicUpdatePhase` and `AlgebraicSystemSpec` have one canonical definition
+in `pssolver.systems.algebraic`.  `INCOMPRESSIBLE_STOKES_CAPABILITY`,
+`PressureGauge`, `TangentialZeroModePolicy`, and
+`IncompressibleStokesSystemSpec` have one canonical definition in
+`pssolver.systems.stokes`.  The old `pssolver.execution.algebraic`,
+`pssolver.execution.stokes`, and `pssolver.execution` paths are static
 exact-object compatibility facades; no wrapper, duplicate, subclass, dynamic
-import, runtime consumer, or numerical path was introduced.  The provisional
+import, runtime consumer, or numerical path was introduced.  The private
+Stokes validation helpers live only in the canonical module.  The provisional
 `pssolver.systems` package root intentionally exports no declarations.
 
 The architecture ratchet now recognizes `systems` as tensor-free, allows only
 `systems -> {core, systems}` and the first real `execution -> systems` edge,
 and does not pre-authorize configuration, models, planning, or runtime to
-depend on the new layer.  The existing Stokes declaration remains canonical
-in `pssolver.execution.stokes`, while its typed-to-generic conversion returns
-the exact canonical algebraic type.
+depend on the new layer.  Existing production consumers continue importing
+through `pssolver.execution`, which directly exercises the compatibility
+facades.  Stokes typed-to-generic conversion returns the exact canonical
+algebraic type.  The old Stokes pickle, representative metadata SHA-256, and
+Plane restart-provenance SHA-256 remain unchanged.
 
-The P2.1S focused suite now contains 89 passing tests.  The combined P2.1S,
+The P2.1S focused suite now contains 91 passing tests.  The combined P2.1S,
 Stage F/G/H, import-boundary, and Phase 2 compatibility/component gate
-contains 271 passing tests.  The complete local CPU suite contains 1383
+contains 273 passing tests.  The complete local CPU suite contains 1385
 passing tests and 8 passing subtests.  Fresh sdist and wheel archives contain
-both new systems files; an isolated wheel installation passes canonical and
-legacy identity, old-pickle loading, unchanged negative instance-pickle,
-package-root non-export, Stokes lowering, and console-entry smokes.  The next
-P2.1S commit is the separate mechanical extraction of the four Stokes
-declarations.
+the systems package, canonical algebraic and Stokes modules, and legacy
+facades; an isolated wheel installation passes canonical and legacy identity,
+old-pickle loading, new canonical pickle paths, unchanged negative
+instance-pickle behavior, package-root non-export, Stokes lowering, and
+console-entry smokes.  This mechanical migration changes declaration
+ownership only: equations, runtime behavior, numerical operation order,
+production provenance, and defaults are unchanged.  The next commit returns
+to P2.1 and adds the two remaining disconnected aggregate value objects.
 
 ### P2.2: add pure decomposition and parity adapter
 
