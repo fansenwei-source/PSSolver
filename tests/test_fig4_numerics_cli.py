@@ -171,6 +171,7 @@ class Fig4NumericsCliTests(unittest.TestCase):
                 "pssolver/backends/tensor_product.py",
                 "pssolver/operators/__init__.py",
                 "pssolver/operators/projection.py",
+                "pssolver/operators/tensor_divergence.py",
                 "pssolver/plane.py",
                 "pssolver/__init__.py",
                 "pssolver/adapters/legacy_boundaries.py",

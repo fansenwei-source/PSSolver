@@ -92,8 +92,12 @@ EXPECTED_IMPLEMENTATION_MODULES = {
     "TransformMetadata": "pssolver.backends.tensor_product",
     "TensorProductTransformBackend": "pssolver.backends.tensor_product",
     "BasisAwareSpectralProjector": "pssolver.operators.projection",
-    "projected_common_basis_stress_divergence": "pssolver.transforms",
-    "projected_distortion_stress_divergence": "pssolver.transforms",
+    "projected_common_basis_stress_divergence": (
+        "pssolver.operators.tensor_divergence"
+    ),
+    "projected_distortion_stress_divergence": (
+        "pssolver.operators.tensor_divergence"
+    ),
     "FreeSlipModalStokesSolver": "pssolver.transforms",
     "BoundedAxisPlanKey": "pssolver.backends.bounded",
     "DenseBoundedAxisExecutionPlan": "pssolver.backends.bounded",
@@ -284,6 +288,17 @@ def test_projection_facade_names_are_the_canonical_objects():
     )
     for name in names:
         assert getattr(transforms, name) is getattr(projection, name)
+
+
+def test_divergence_facade_names_are_the_canonical_objects():
+    from pssolver.operators import tensor_divergence
+
+    names = (
+        "projected_common_basis_stress_divergence",
+        "projected_distortion_stress_divergence",
+    )
+    for name in names:
+        assert getattr(transforms, name) is getattr(tensor_divergence, name)
 
 
 def test_legacy_transform_pickle_global_paths_resolve_through_the_facade():
