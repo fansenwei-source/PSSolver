@@ -1015,7 +1015,7 @@ def test_new_leaf_modules_preserve_the_dependency_boundary():
     assert "from pssolver.execution" not in graph_source
 
 
-def test_components_remain_provisional_with_one_migrated_consumer():
+def test_components_remain_provisional_with_two_migrated_consumers():
     provisional_names = {
         "BerisEdwardsMaterialRequest",
         "ExtrudedDefectGasInitialConditionSpec",
@@ -1064,15 +1064,16 @@ def test_components_remain_provisional_with_one_migrated_consumer():
 
     for relative in (
         "pssolver/applications/plane_beris_edwards.py",
-        "pssolver/runtime/plane_beris_edwards.py",
         "pssolver/workflows/plane_beris_edwards.py",
     ):
         source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
         assert "plane_beris_edwards_components" not in source
         assert "active_nematics.specifications" not in source
 
-    legacy_runtime_source = (
-        PROJECT_ROOT / "pssolver/runtime/plane_legacy.py"
-    ).read_text(encoding="utf-8")
-    assert "plane_beris_edwards_components" in legacy_runtime_source
-    assert "active_nematics.specifications" not in legacy_runtime_source
+    for relative in (
+        "pssolver/runtime/plane_legacy.py",
+        "pssolver/runtime/plane_beris_edwards.py",
+    ):
+        runtime_source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
+        assert "plane_beris_edwards_components" in runtime_source
+        assert "active_nematics.specifications" not in runtime_source

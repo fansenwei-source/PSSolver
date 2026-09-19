@@ -15,6 +15,7 @@ from pssolver.runtime import (
     PlaneRuntimeBuildRequest,
     build_plane_beris_edwards_runtime,
 )
+from pssolver.runtime import plane_beris_edwards as runtime_selector
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -106,8 +107,34 @@ def _run_spec_reads() -> set[str]:
     }
 
 
-def test_runtime_selector_flat_facade_read_set_is_frozen_before_migration():
-    assert _run_spec_reads() == FLAT_SELECTOR_READS
+def test_runtime_selector_uses_one_component_graph_without_flat_field_reads(
+    tmp_path,
+    monkeypatch,
+):
+    assert _run_spec_reads() == set()
+
+    spec = _spec(tmp_path)
+    calls = []
+    original = runtime_selector.decompose_plane_beris_edwards_run_spec
+
+    def spy(value):
+        calls.append(value)
+        return original(value)
+
+    monkeypatch.setattr(
+        runtime_selector,
+        "decompose_plane_beris_edwards_run_spec",
+        spy,
+    )
+    build_plane_beris_edwards_runtime(
+        _request(spec),
+        legacy_builder=lambda: (_DummySolver(), _DummyProjector()),
+    )
+    assert calls == [spec]
+    assert FLAT_SELECTOR_READS == {
+        "disable_q_gradient_reuse",
+        "runtime_path",
+    }
 
 
 def test_request_authority_gate_rejects_mixed_metadata_before_selection(

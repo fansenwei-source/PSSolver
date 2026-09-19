@@ -17,6 +17,9 @@ from pssolver.configuration import (
     PlaneBerisEdwardsRunSpec,
     PlaneRuntimePath,
 )
+from pssolver.configuration.plane_beris_edwards_components import (
+    decompose_plane_beris_edwards_run_spec,
+)
 
 
 def _require_runtime_surface(solver: object, projector: object) -> None:
@@ -359,7 +362,9 @@ def build_plane_beris_edwards_runtime(
         raise TypeError("request must be a PlaneRuntimeBuildRequest")
     if legacy_builder is not None and not callable(legacy_builder):
         raise TypeError("legacy_builder must be callable")
-    if request.run_spec.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION:
+    components = decompose_plane_beris_edwards_run_spec(request.run_spec)
+    execution = components.execution
+    if execution.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION:
         if legacy_builder is None:
             from .plane_legacy import build_legacy_plane_runtime
 
@@ -372,7 +377,7 @@ def build_plane_beris_edwards_runtime(
             solver, projector = legacy_builder()
         return LegacyPlaneRuntimeAdapter(solver, projector)
 
-    if request.run_spec.disable_q_gradient_reuse:
+    if execution.disable_q_gradient_reuse:
         raise ValueError(
             "separated_canary does not accept legacy Q-gradient cache flags"
         )
