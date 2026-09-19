@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "p2_1s_system_declaration_extraction_complete_p2_1_aggregates_pending",
+  "status": "p2_1_complete_p2_2_decomposition_pending",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -243,6 +243,7 @@
         "systems"
       ],
       "tensor_free": true,
+      "configuration_to_systems_allowed": true,
       "configuration_to_execution_allowed": false,
       "new_legacy_exception_allowed": false
     },
@@ -339,6 +340,12 @@
       "name": "operation-order drift",
       "description": "runtime reconstruction can change allocations or floating-point ordering despite equal configuration values",
       "phase_2_policy": "one consumer per commit with byte-identical short trajectories and restart checks"
+    },
+    {
+      "severity": "P1",
+      "name": "facade-component import cycle",
+      "description": "the provisional components module currently imports shared Plane declarations from the supported facade, so a reverse facade-to-components top-level import would create a cycle",
+      "phase_2_policy": "P2.2 preserves the current one-way edge; before P2.3, move shared declarations to a dependency-neutral canonical leaf or qualify another one-way seam, and forbid bidirectional, dynamic, or local-import workarounds"
     }
   ],
   "migration": [
@@ -359,13 +366,31 @@
     {
       "id": "P2.1",
       "name": "disconnected immutable component value objects",
-      "production_code_changed": false,
-      "completed_subset": "dependency-safe leaf components",
-      "prerequisites_complete": true,
-      "pending_scope": [
+      "production_code_changed": true,
+      "production_path_changed": false,
+      "production_runtime_changed": false,
+      "implementation_complete": true,
+      "completed_scope": [
+        "dependency-safe leaf components",
         "PlaneBerisEdwardsPhysicsSpec",
         "PlaneBerisEdwardsRunComponents"
-      ]
+      ],
+      "prerequisites_complete": true,
+      "facade_connected": false,
+      "decomposition_function_added": false,
+      "configuration_to_systems_edge_added": true,
+      "configuration_to_systems_exact_edge": "pssolver.configuration.plane_beris_edwards_components -> pssolver.systems.stokes",
+      "models_planning_runtime_to_systems_allowed": false,
+      "nested_metadata_is_schema_v1_authority": false,
+      "production_source_inventory_changed": false,
+      "focused_tests_passed": 98,
+      "combined_tests_passed": 307,
+      "full_cpu_tests_passed": 1419,
+      "full_cpu_subtests_passed": 8,
+      "fresh_sdist_and_wheel_passed": true,
+      "isolated_wheel_direct_import_smoke_passed": true,
+      "installed_console_entry_smoke_passed": true,
+      "next_phase": "P2.2 pure facade decomposition and schema parity adapter"
     },
     {
       "id": "P2.1S",
@@ -415,7 +440,7 @@
       "isolated_wheel_import_identity_smoke_passed": true,
       "isolated_wheel_legacy_pickle_smoke_passed": true,
       "installed_console_entry_smoke_passed": true,
-      "next_commit_scope": [
+      "completed_follow_on_scope": [
         "PlaneBerisEdwardsPhysicsSpec",
         "PlaneBerisEdwardsRunComponents",
         "disconnected aggregate tests"
@@ -425,6 +450,9 @@
       "id": "P2.2",
       "name": "pure facade decomposition and schema parity adapter",
       "runtime_consumer_changed": false,
+      "preserve_components_to_facade_one_way_dependency": true,
+      "facade_to_components_top_level_import_allowed": false,
+      "dynamic_or_local_import_cycle_workaround_allowed": false,
       "lossless_round_trip_includes": [
         "all 54 facade fields",
         "raw Shendruk request inputs",

@@ -53,7 +53,15 @@ ALLOWED_INTERNAL_LAYERS = {
     "adapters": frozenset({"adapters", "core", "planning"}),
     "presets": frozenset({"models", "presets"}),
     "configuration": frozenset(
-        {"adapters", "configuration", "core", "geometries", "models", "presets"}
+        {
+            "adapters",
+            "configuration",
+            "core",
+            "geometries",
+            "models",
+            "presets",
+            "systems",
+        }
     ),
     "runtime": frozenset(
         {
@@ -104,13 +112,22 @@ TENSOR_FREE_LAYERS = frozenset(
 )
 
 
-def test_systems_layer_has_only_the_first_authorized_dependency_edges():
+EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
+    ImportEdge(
+        "pssolver.configuration.plane_beris_edwards_components",
+        "pssolver.systems.stokes",
+    )
+}
+
+
+def test_systems_layer_has_only_the_authorized_dependency_edges():
     assert ALLOWED_INTERNAL_LAYERS["systems"] == frozenset(
         {"core", "systems"}
     )
     assert "systems" in ALLOWED_INTERNAL_LAYERS["execution"]
+    assert "systems" in ALLOWED_INTERNAL_LAYERS["configuration"]
     assert "systems" in TENSOR_FREE_LAYERS
-    for layer in ("configuration", "models", "planning", "runtime"):
+    for layer in ("models", "planning", "runtime"):
         assert "systems" not in ALLOWED_INTERNAL_LAYERS[layer]
 
 
@@ -215,6 +232,16 @@ def _all_edges() -> set[ImportEdge]:
             if destination == "pssolver" or destination.startswith("pssolver."):
                 edges.add(ImportEdge(source, destination))
     return edges
+
+
+def test_configuration_has_only_the_reviewed_systems_dependency_edge():
+    observed = {
+        edge
+        for edge in _all_edges()
+        if _layer(edge.source) == "configuration"
+        and _layer(edge.destination) == "systems"
+    }
+    assert observed == EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES
 
 
 def test_tensor_free_declaration_and_planning_layers_use_no_third_party_runtime():

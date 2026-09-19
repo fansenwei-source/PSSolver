@@ -1,9 +1,10 @@
-"""Provisional Plane run-configuration value objects.
+"""Provisional Plane run-configuration component value objects.
 
-The types in this module are disconnected Phase 2 leaves.  They do not
-construct a runtime, decompose the supported flat facade, serialize schema-v1
-metadata, or select a numerical implementation.  Their small validation
-boundaries make ownership explicit before any production consumer migrates.
+The types in this module remain disconnected from the supported flat facade
+and every production consumer.  They do not construct a runtime, serialize
+schema-v1 metadata, or select a numerical implementation.  Their local and
+composition-root validation boundaries make ownership explicit before any
+production consumer migrates.
 """
 
 from __future__ import annotations
@@ -13,7 +14,29 @@ import math
 from numbers import Real
 from pathlib import Path
 
-from .plane_beris_edwards import PlaneRuntimePath, SpectralRefreshSpec
+from pssolver.core import NumericsConfig, SpectralStorage
+from pssolver.geometries import PlaneSlab
+from pssolver.models.active_nematics.specifications import (
+    BerisEdwardsMaterialRequest,
+    ExtrudedDefectGasInitialConditionSpec,
+)
+from pssolver.presets.shendruk import (
+    ShendrukPlaneParameterRequest,
+    ShendrukPlanePreset,
+    resolve_shendruk_plane_preset,
+)
+from pssolver.systems.stokes import (
+    IncompressibleStokesSystemSpec,
+    TangentialZeroModePolicy,
+)
+
+from .plane_beris_edwards import (
+    PLANE_FREE_SLIP_BOUNDARIES,
+    PLANE_HERMITIAN_AXIS,
+    PlaneFreeSlipBoundaryConditions,
+    PlaneRuntimePath,
+    SpectralRefreshSpec,
+)
 
 
 def _positive_finite(value: object, description: str) -> float:
@@ -76,6 +99,72 @@ def _require_choice(
             f"{description} must be one of {tuple(sorted(choices))!r}"
         )
     return value
+
+
+@dataclass(frozen=True, slots=True)
+class PlaneBerisEdwardsPhysicsSpec:
+    """Plane-specific composition of tensor-free physical requests."""
+
+    material: BerisEdwardsMaterialRequest
+    shendruk_request: ShendrukPlaneParameterRequest
+    stokes: IncompressibleStokesSystemSpec
+    requested_friction_mode_fric: float
+
+    def __post_init__(self) -> None:
+        declarations = (
+            ("material", self.material, BerisEdwardsMaterialRequest),
+            (
+                "shendruk_request",
+                self.shendruk_request,
+                ShendrukPlaneParameterRequest,
+            ),
+            ("stokes", self.stokes, IncompressibleStokesSystemSpec),
+        )
+        for name, value, value_type in declarations:
+            if not isinstance(value, value_type):
+                raise TypeError(f"{name} must be a {value_type.__name__}")
+
+        requested_friction = self.requested_friction_mode_fric
+        if (
+            not isinstance(requested_friction, (int, float))
+            or isinstance(requested_friction, bool)
+            or not math.isfinite(float(requested_friction))
+        ):
+            raise ValueError(
+                "requested_friction_mode_fric must be a finite int or float"
+            )
+
+        policy = self.stokes.tangential_zero_mode_policy
+        if policy not in (
+            TangentialZeroModePolicy.ZERO_MEAN,
+            TangentialZeroModePolicy.FRICTION,
+        ):
+            raise ValueError(
+                "Plane Stokes zero-mode policy must be zero_mean or friction"
+            )
+        if policy is TangentialZeroModePolicy.FRICTION:
+            if requested_friction <= 0.0:
+                raise ValueError(
+                    "requested_friction_mode_fric must be positive in "
+                    "friction mode"
+                )
+            if self.stokes.friction != requested_friction:
+                raise ValueError(
+                    "effective Stokes friction must equal the requested "
+                    "friction-mode value"
+                )
+
+    def to_metadata(self) -> dict[str, object]:
+        """Return provisional component metadata, not schema-v1 metadata."""
+
+        return {
+            "material": self.material.to_metadata(),
+            "shendruk_request": self.shendruk_request.to_metadata(),
+            "stokes": self.stokes.to_metadata(),
+            "requested_friction_mode_fric": (
+                self.requested_friction_mode_fric
+            ),
+        }
 
 
 @dataclass(frozen=True, slots=True)
@@ -243,7 +332,222 @@ class PlaneInvocationSpec:
         }
 
 
+def _validate_refresh_consistency(value: PlaneTimeSteppingSpec) -> None:
+    refresh = value.spectral_refresh
+    interval_fields = (
+        refresh.requested_interval_time,
+        refresh.requested_interval_steps,
+        refresh.effective_interval_steps,
+        refresh.effective_interval_time,
+    )
+    if refresh.mode == "disabled":
+        if any(item is not None for item in interval_fields):
+            raise ValueError(
+                "disabled spectral refresh must not define intervals"
+            )
+        return
+
+    effective_steps = refresh.effective_interval_steps
+    if (
+        not isinstance(effective_steps, int)
+        or isinstance(effective_steps, bool)
+        or effective_steps <= 0
+    ):
+        raise ValueError(
+            "enabled spectral refresh requires positive effective steps"
+        )
+    expected_time = effective_steps * value.dt
+    effective_time = refresh.effective_interval_time
+    if (
+        not isinstance(effective_time, Real)
+        or isinstance(effective_time, bool)
+        or not math.isfinite(float(effective_time))
+        or not math.isclose(
+            float(effective_time),
+            expected_time,
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        )
+    ):
+        raise ValueError(
+            "effective spectral refresh time must equal steps * dt"
+        )
+
+    if refresh.mode == "steps":
+        if refresh.requested_interval_time is not None:
+            raise ValueError(
+                "step-based spectral refresh must not request physical time"
+            )
+        requested_steps = refresh.requested_interval_steps
+        if (
+            not isinstance(requested_steps, int)
+            or isinstance(requested_steps, bool)
+            or requested_steps <= 0
+            or requested_steps != effective_steps
+        ):
+            raise ValueError(
+                "step-based spectral refresh must preserve requested steps"
+            )
+        return
+
+    requested_time = refresh.requested_interval_time
+    if refresh.requested_interval_steps is not None:
+        raise ValueError(
+            "physical-time spectral refresh must not request step count"
+        )
+    if (
+        not isinstance(requested_time, Real)
+        or isinstance(requested_time, bool)
+        or not math.isfinite(float(requested_time))
+        or float(requested_time) <= 0.0
+        or not math.isclose(
+            float(requested_time),
+            expected_time,
+            rel_tol=1e-12,
+            abs_tol=1e-12,
+        )
+    ):
+        raise ValueError(
+            "physical-time spectral refresh must be an integer multiple of dt"
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class PlaneBerisEdwardsRunComponents:
+    """Disconnected, internally coherent component graph for one Plane run."""
+
+    geometry: PlaneSlab
+    boundaries: PlaneFreeSlipBoundaryConditions
+    effective_boundaries: PlaneFreeSlipBoundaryConditions
+    numerics: NumericsConfig
+    physics: PlaneBerisEdwardsPhysicsSpec
+    preset: ShendrukPlanePreset
+    time_stepping: PlaneTimeSteppingSpec
+    initial_condition: ExtrudedDefectGasInitialConditionSpec
+    execution: PlaneBerisEdwardsExecutionSpec
+    workflow: PlaneWorkflowSpec
+    invocation: PlaneInvocationSpec
+
+    def __post_init__(self) -> None:
+        components = (
+            ("geometry", self.geometry, PlaneSlab),
+            (
+                "boundaries",
+                self.boundaries,
+                PlaneFreeSlipBoundaryConditions,
+            ),
+            (
+                "effective_boundaries",
+                self.effective_boundaries,
+                PlaneFreeSlipBoundaryConditions,
+            ),
+            ("numerics", self.numerics, NumericsConfig),
+            ("physics", self.physics, PlaneBerisEdwardsPhysicsSpec),
+            ("preset", self.preset, ShendrukPlanePreset),
+            (
+                "time_stepping",
+                self.time_stepping,
+                PlaneTimeSteppingSpec,
+            ),
+            (
+                "initial_condition",
+                self.initial_condition,
+                ExtrudedDefectGasInitialConditionSpec,
+            ),
+            (
+                "execution",
+                self.execution,
+                PlaneBerisEdwardsExecutionSpec,
+            ),
+            ("workflow", self.workflow, PlaneWorkflowSpec),
+            ("invocation", self.invocation, PlaneInvocationSpec),
+        )
+        for name, value, value_type in components:
+            if not isinstance(value, value_type):
+                raise TypeError(f"{name} must be a {value_type.__name__}")
+
+        if (
+            self.geometry.domain.ndim != 3
+            or self.geometry.periodic_axes != (0, 1)
+            or self.geometry.bounded_axes != (2,)
+        ):
+            raise ValueError(
+                "geometry must be a three-dimensional Plane slab with "
+                "periodic axes (0, 1) and bounded axis 2"
+            )
+        if self.effective_boundaries != PLANE_FREE_SLIP_BOUNDARIES:
+            raise ValueError(
+                "effective_boundaries must be the qualified Plane free-slip "
+                "boundary declaration"
+            )
+
+        request = self.physics.shendruk_request
+        material = self.physics.material
+        expected_preset = resolve_shendruk_plane_preset(
+            activity_number=request.activity_number,
+            height=self.geometry.domain.lengths[2],
+            parameterization=request.parameterization,
+            frank_k=request.frank_k,
+            coefficient_min=request.coefficient_min,
+            coefficient_max=request.coefficient_max,
+            ldg_a=material.ldg_a,
+            ldg_b=material.ldg_b,
+            ldg_c=material.ldg_c,
+            gamma=material.gamma,
+        )
+        if self.preset != expected_preset:
+            raise ValueError(
+                "preset must match the geometry, material, and raw Shendruk "
+                "request"
+            )
+
+        nz = self.geometry.domain.shape[2]
+        if any(mode >= nz for mode in self.initial_condition.twist_modes):
+            raise ValueError(
+                "initial-condition twist modes must satisfy 1 <= mode < nz"
+            )
+        _validate_refresh_consistency(self.time_stepping)
+
+        if self.numerics.spectral_storage is SpectralStorage.HERMITIAN_HALF:
+            if (
+                self.numerics.hermitian_axis != PLANE_HERMITIAN_AXIS
+                or self.numerics.hermitian_axis
+                not in self.geometry.periodic_axes
+            ):
+                raise ValueError(
+                    "Hermitian-half storage must use the qualified periodic "
+                    "Plane axis"
+                )
+        if (
+            self.execution.runtime_path is PlaneRuntimePath.SEPARATED_CANARY
+            and self.execution.disable_q_gradient_reuse
+        ):
+            raise ValueError(
+                "separated_canary does not accept legacy Q-gradient cache "
+                "flags"
+            )
+
+    def to_metadata(self) -> dict[str, object]:
+        """Return provisional nested metadata, never schema-v1 authority."""
+
+        return {
+            "geometry": self.geometry.to_metadata(),
+            "boundaries": self.boundaries.to_metadata(),
+            "effective_boundaries": self.effective_boundaries.to_metadata(),
+            "numerics": self.numerics.to_metadata(),
+            "physics": self.physics.to_metadata(),
+            "preset": self.preset.to_metadata(),
+            "time_stepping": self.time_stepping.to_metadata(),
+            "initial_condition": self.initial_condition.to_metadata(),
+            "execution": self.execution.to_metadata(),
+            "workflow": self.workflow.to_metadata(),
+            "invocation": self.invocation.to_metadata(),
+        }
+
+
 __all__ = [
+    "PlaneBerisEdwardsPhysicsSpec",
+    "PlaneBerisEdwardsRunComponents",
     "PlaneBerisEdwardsExecutionSpec",
     "PlaneInvocationSpec",
     "PlaneTimeSteppingSpec",

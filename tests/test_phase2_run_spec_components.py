@@ -1,16 +1,22 @@
-"""Local qualification for the disconnected Phase 2.1 leaf components.
+"""Local qualification for the disconnected Phase 2.1 components.
 
 These provisional values make ownership explicit without connecting the
-supported flat RunSpec to a new composition path.  In particular, this stage
-does not introduce a Plane physics aggregate.  The Stokes declaration-layer
-prerequisite is now satisfied, but the disconnected aggregate remains the
-next separately qualified P2.1 change.
+supported flat RunSpec to a new composition path.  The aggregate validates
+its own component graph but is not constructed by the facade or consumed by a
+runtime.
 """
 
 from __future__ import annotations
 
 import ast
-from dataclasses import FrozenInstanceError, MISSING, fields, is_dataclass
+from dataclasses import (
+    FrozenInstanceError,
+    MISSING,
+    fields,
+    is_dataclass,
+    replace,
+)
+from fractions import Fraction
 import json
 from pathlib import Path
 
@@ -22,15 +28,33 @@ import pssolver.models.active_nematics as active_nematics_package
 import pssolver.presets as presets_package
 from pssolver.configuration import (
     PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
+    PLANE_FREE_SLIP_BOUNDARIES,
+    PlaneFreeSlipBoundaryConditions,
     PlaneRuntimePath,
     SpectralRefreshSpec,
 )
 from pssolver.configuration.plane_beris_edwards_components import (
     PlaneBerisEdwardsExecutionSpec,
+    PlaneBerisEdwardsPhysicsSpec,
+    PlaneBerisEdwardsRunComponents,
     PlaneInvocationSpec,
     PlaneTimeSteppingSpec,
     PlaneWorkflowSpec,
 )
+from pssolver.core import (
+    BoundarySet,
+    DealiasRule,
+    DomainSpec,
+    HomogeneousDirichletBC,
+    HomogeneousNeumannBC,
+    NumericsConfig,
+    PeriodicBC,
+    Precision,
+    ProjectedTransformExecution,
+    SpectralStorage,
+    TransformExecutionOrder,
+)
+from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics.specifications import (
     BerisEdwardsMaterialRequest,
     ExtrudedDefectGasInitialConditionSpec,
@@ -38,6 +62,11 @@ from pssolver.models.active_nematics.specifications import (
 from pssolver.presets.shendruk import (
     ShendrukPlaneParameterRequest,
     resolve_shendruk_plane_preset,
+)
+from pssolver.systems.stokes import (
+    IncompressibleStokesSystemSpec,
+    PressureGauge,
+    TangentialZeroModePolicy,
 )
 
 
@@ -147,6 +176,104 @@ def _invocation(**overrides: object) -> PlaneInvocationSpec:
     return PlaneInvocationSpec(**values)
 
 
+def _geometry(
+    *,
+    shape: tuple[int, ...] = (256, 256, 64),
+    lengths: tuple[float, ...] = (100.0, 100.0, 20.0),
+    wall_normal_axis: int = 2,
+) -> PlaneSlab:
+    return PlaneSlab(
+        DomainSpec(shape, lengths),
+        wall_normal_axis=wall_normal_axis,
+    )
+
+
+def _numerics(**overrides: object) -> NumericsConfig:
+    values = {
+        "precision": Precision.FLOAT32,
+        "dealias_rule": DealiasRule.CUBIC_HALF,
+        "transform_execution_order": TransformExecutionOrder.REAL_FIRST,
+        "projected_transform_execution": (
+            ProjectedTransformExecution.TRUNCATED
+        ),
+        "spectral_storage": SpectralStorage.HERMITIAN_HALF,
+        "hermitian_axis": 1,
+    }
+    values.update(overrides)
+    return NumericsConfig(**values)
+
+
+def _stokes(
+    *,
+    friction: float = 0.0,
+    policy: TangentialZeroModePolicy = TangentialZeroModePolicy.ZERO_MEAN,
+) -> IncompressibleStokesSystemSpec:
+    return IncompressibleStokesSystemSpec(
+        name="flow",
+        force_components=("force_x", "force_y", "force_z"),
+        velocity_components=("ux", "uy", "uz"),
+        pressure_component="p",
+        viscosity=2.0 / 3.0,
+        friction=friction,
+        pressure_gauge=PressureGauge.ZERO_MEAN,
+        tangential_zero_mode_policy=policy,
+    )
+
+
+def _physics(**overrides: object) -> PlaneBerisEdwardsPhysicsSpec:
+    values = {
+        "material": _material(),
+        "shendruk_request": _shendruk(),
+        "stokes": _stokes(),
+        "requested_friction_mode_fric": 0.1,
+    }
+    values.update(overrides)
+    return PlaneBerisEdwardsPhysicsSpec(**values)
+
+
+def _preset(
+    *,
+    geometry: PlaneSlab | None = None,
+    physics: PlaneBerisEdwardsPhysicsSpec | None = None,
+):
+    geometry = _geometry() if geometry is None else geometry
+    physics = _physics() if physics is None else physics
+    raw = physics.shendruk_request
+    material = physics.material
+    return resolve_shendruk_plane_preset(
+        activity_number=raw.activity_number,
+        height=geometry.domain.lengths[2],
+        parameterization=raw.parameterization,
+        frank_k=raw.frank_k,
+        coefficient_min=raw.coefficient_min,
+        coefficient_max=raw.coefficient_max,
+        ldg_a=material.ldg_a,
+        ldg_b=material.ldg_b,
+        ldg_c=material.ldg_c,
+        gamma=material.gamma,
+    )
+
+
+def _components(**overrides: object) -> PlaneBerisEdwardsRunComponents:
+    geometry = overrides.pop("geometry", _geometry())
+    physics = overrides.pop("physics", _physics())
+    values = {
+        "geometry": geometry,
+        "boundaries": PLANE_FREE_SLIP_BOUNDARIES,
+        "effective_boundaries": PLANE_FREE_SLIP_BOUNDARIES,
+        "numerics": _numerics(),
+        "physics": physics,
+        "preset": _preset(geometry=geometry, physics=physics),
+        "time_stepping": _time(),
+        "initial_condition": _initial(),
+        "execution": _execution(),
+        "workflow": _workflow(),
+        "invocation": _invocation(),
+    }
+    values.update(overrides)
+    return PlaneBerisEdwardsRunComponents(**values)
+
+
 def _representative_values() -> tuple[object, ...]:
     return (
         _material(),
@@ -156,6 +283,8 @@ def _representative_values() -> tuple[object, ...]:
         _execution(),
         _workflow(),
         _invocation(),
+        _physics(),
+        _components(),
     )
 
 
@@ -263,6 +392,257 @@ def test_leaf_metadata_is_explicit_json_compatible_and_lossless():
     mutated = initial.to_metadata()
     mutated["twist_modes"].append(99)
     assert initial.twist_modes == (1, 3)
+
+
+def test_aggregate_field_order_and_provisional_metadata_are_explicit():
+    physics = _physics()
+    components = _components(physics=physics)
+
+    assert tuple(item.name for item in fields(PlaneBerisEdwardsPhysicsSpec)) == (
+        "material",
+        "shendruk_request",
+        "stokes",
+        "requested_friction_mode_fric",
+    )
+    assert tuple(item.name for item in fields(PlaneBerisEdwardsRunComponents)) == (
+        "geometry",
+        "boundaries",
+        "effective_boundaries",
+        "numerics",
+        "physics",
+        "preset",
+        "time_stepping",
+        "initial_condition",
+        "execution",
+        "workflow",
+        "invocation",
+    )
+    assert components.physics is physics
+    physics_metadata = physics.to_metadata()
+    assert set(physics_metadata) == {
+        "material",
+        "shendruk_request",
+        "stokes",
+        "requested_friction_mode_fric",
+    }
+    assert physics_metadata["requested_friction_mode_fric"] == 0.1
+
+    metadata = components.to_metadata()
+    assert tuple(metadata) == tuple(
+        item.name for item in fields(PlaneBerisEdwardsRunComponents)
+    )
+    assert "schema_version" not in metadata
+    assert "authority" not in metadata
+    json.dumps(metadata, allow_nan=False, sort_keys=True)
+
+    metadata["physics"]["material"]["gamma"] = 99.0
+    assert components.physics.material.gamma == 2.94
+
+
+@pytest.mark.parametrize(
+    ("field_name", "expected_type"),
+    (
+        ("material", "BerisEdwardsMaterialRequest"),
+        ("shendruk_request", "ShendrukPlaneParameterRequest"),
+        ("stokes", "IncompressibleStokesSystemSpec"),
+    ),
+)
+def test_physics_aggregate_requires_canonical_declaration_types(
+    field_name,
+    expected_type,
+):
+    with pytest.raises(TypeError, match=f"must be a {expected_type}"):
+        replace(_physics(), **{field_name: object()})
+
+
+@pytest.mark.parametrize(
+    "value",
+    (True, "0.1", Fraction(1, 10), float("nan"), float("inf")),
+)
+def test_physics_aggregate_requires_finite_requested_friction(value):
+    with pytest.raises(ValueError, match="must be a finite int or float"):
+        _physics(requested_friction_mode_fric=value)
+
+
+def test_physics_aggregate_preserves_requested_and_effective_friction():
+    dormant = _physics(requested_friction_mode_fric=-0.25)
+    friction = _physics(
+        stokes=_stokes(
+            friction=0.2,
+            policy=TangentialZeroModePolicy.FRICTION,
+        ),
+        requested_friction_mode_fric=0.2,
+    )
+
+    assert dormant.requested_friction_mode_fric == -0.25
+    assert dormant.stokes.friction == 0.0
+    assert friction.requested_friction_mode_fric == 0.2
+    assert friction.stokes.friction == 0.2
+
+
+def test_physics_aggregate_rejects_non_plane_or_mismatched_friction_policy():
+    with pytest.raises(ValueError, match="must be zero_mean or friction"):
+        _physics(
+            stokes=_stokes(policy=TangentialZeroModePolicy.NOT_APPLICABLE)
+        )
+    with pytest.raises(ValueError, match="must be positive in friction mode"):
+        _physics(
+            stokes=_stokes(
+                friction=0.2,
+                policy=TangentialZeroModePolicy.FRICTION,
+            ),
+            requested_friction_mode_fric=0.0,
+        )
+    with pytest.raises(ValueError, match="must equal the requested"):
+        _physics(
+            stokes=_stokes(
+                friction=0.2,
+                policy=TangentialZeroModePolicy.FRICTION,
+            ),
+            requested_friction_mode_fric=0.3,
+        )
+
+
+@pytest.mark.parametrize(
+    ("field_name", "expected_type"),
+    (
+        ("geometry", "PlaneSlab"),
+        ("boundaries", "PlaneFreeSlipBoundaryConditions"),
+        ("effective_boundaries", "PlaneFreeSlipBoundaryConditions"),
+        ("numerics", "NumericsConfig"),
+        ("physics", "PlaneBerisEdwardsPhysicsSpec"),
+        ("preset", "ShendrukPlanePreset"),
+        ("time_stepping", "PlaneTimeSteppingSpec"),
+        ("initial_condition", "ExtrudedDefectGasInitialConditionSpec"),
+        ("execution", "PlaneBerisEdwardsExecutionSpec"),
+        ("workflow", "PlaneWorkflowSpec"),
+        ("invocation", "PlaneInvocationSpec"),
+    ),
+)
+def test_run_aggregate_requires_canonical_component_types(
+    field_name,
+    expected_type,
+):
+    with pytest.raises(TypeError, match=f"must be a {expected_type}"):
+        replace(_components(), **{field_name: object()})
+
+
+def _alternate_boundaries() -> PlaneFreeSlipBoundaryConditions:
+    periodic = PeriodicBC()
+    return PlaneFreeSlipBoundaryConditions(
+        q=BoundarySet(
+            (periodic, periodic, HomogeneousDirichletBC())
+        ),
+        tangential_velocity=BoundarySet(
+            (periodic, periodic, HomogeneousNeumannBC())
+        ),
+        normal_velocity=BoundarySet(
+            (periodic, periodic, HomogeneousDirichletBC())
+        ),
+        pressure_modal=BoundarySet(
+            (periodic, periodic, HomogeneousNeumannBC())
+        ),
+        distortion_odd_z=BoundarySet(
+            (periodic, periodic, HomogeneousDirichletBC())
+        ),
+    )
+
+
+def test_run_aggregate_keeps_requested_and_effective_boundaries_distinct():
+    requested = _alternate_boundaries()
+    value = _components(boundaries=requested)
+
+    assert value.boundaries is requested
+    assert value.effective_boundaries is PLANE_FREE_SLIP_BOUNDARIES
+
+    with pytest.raises(ValueError, match="qualified Plane free-slip"):
+        _components(effective_boundaries=requested)
+
+
+@pytest.mark.parametrize(
+    "geometry",
+    (
+        _geometry(
+            shape=(32, 16),
+            lengths=(10.0, 5.0),
+            wall_normal_axis=1,
+        ),
+        _geometry(wall_normal_axis=1),
+    ),
+)
+def test_run_aggregate_requires_the_qualified_plane_topology(geometry):
+    with pytest.raises(ValueError, match="three-dimensional Plane slab"):
+        replace(_components(), geometry=geometry)
+
+
+def test_run_aggregate_binds_preset_to_geometry_material_and_raw_request():
+    base = _components()
+    mismatched_preset = replace(base.preset, zeta=base.preset.zeta * 1.01)
+    changed_physics = _physics(
+        shendruk_request=_shendruk(activity_number=19.0)
+    )
+
+    with pytest.raises(ValueError, match="preset must match"):
+        replace(base, preset=mismatched_preset)
+    with pytest.raises(ValueError, match="preset must match"):
+        replace(base, physics=changed_physics)
+
+
+def test_run_aggregate_validates_twist_modes_against_nz():
+    with pytest.raises(ValueError, match="1 <= mode < nz"):
+        _components(initial_condition=_initial(twist_modes=(1, 64)))
+
+
+@pytest.mark.parametrize(
+    ("refresh", "message"),
+    (
+        (
+            SpectralRefreshSpec(
+                mode="disabled",
+                requested_interval_time=None,
+                requested_interval_steps=None,
+                effective_interval_steps=1,
+                effective_interval_time=None,
+            ),
+            "must not define intervals",
+        ),
+        (
+            SpectralRefreshSpec(
+                mode="steps",
+                requested_interval_time=None,
+                requested_interval_steps=7,
+                effective_interval_steps=8,
+                effective_interval_time=0.08,
+            ),
+            "must preserve requested steps",
+        ),
+        (
+            SpectralRefreshSpec(
+                mode="physical_time",
+                requested_interval_time=0.21,
+                requested_interval_steps=None,
+                effective_interval_steps=20,
+                effective_interval_time=0.2,
+            ),
+            "integer multiple of dt",
+        ),
+    ),
+)
+def test_run_aggregate_rejects_incoherent_refresh_schedules(refresh, message):
+    with pytest.raises(ValueError, match=message):
+        _components(time_stepping=_time(spectral_refresh=refresh))
+
+
+def test_run_aggregate_enforces_plane_hermitian_axis_and_canary_cache_rule():
+    with pytest.raises(ValueError, match="qualified periodic Plane axis"):
+        _components(numerics=_numerics(hermitian_axis=0))
+    with pytest.raises(ValueError, match="does not accept legacy"):
+        _components(
+            execution=_execution(
+                runtime_path=PlaneRuntimePath.SEPARATED_CANARY,
+                disable_q_gradient_reuse=True,
+            )
+        )
 
 
 def test_raw_shendruk_request_does_not_resolve_or_discard_inputs():
@@ -531,6 +911,7 @@ def test_new_leaf_modules_preserve_the_dependency_boundary():
         "math",
         "numbers",
         "pathlib",
+        "pssolver",
         "relative:plane_beris_edwards",
     }
 
@@ -551,6 +932,9 @@ def test_new_leaf_modules_preserve_the_dependency_boundary():
     for path in (MODEL_SPECIFICATIONS, PLANE_COMPONENTS):
         source = path.read_text(encoding="utf-8")
         assert all(name not in source for name in forbidden_text)
+    component_source = PLANE_COMPONENTS.read_text(encoding="utf-8")
+    assert "from pssolver.systems.stokes import" in component_source
+    assert "from pssolver.execution" not in component_source
 
 
 def test_p21_leaf_types_remain_provisional_and_disconnected():
@@ -560,6 +944,8 @@ def test_p21_leaf_types_remain_provisional_and_disconnected():
         "ShendrukPlaneParameterRequest",
         "PlaneTimeSteppingSpec",
         "PlaneBerisEdwardsExecutionSpec",
+        "PlaneBerisEdwardsPhysicsSpec",
+        "PlaneBerisEdwardsRunComponents",
         "PlaneWorkflowSpec",
         "PlaneInvocationSpec",
     }
@@ -573,8 +959,14 @@ def test_p21_leaf_types_remain_provisional_and_disconnected():
 
     import pssolver.configuration.plane_beris_edwards_components as components
 
-    assert not hasattr(components, "PlaneBerisEdwardsPhysicsSpec")
-    assert not hasattr(components, "PlaneBerisEdwardsRunComponents")
+    assert components.PlaneBerisEdwardsPhysicsSpec is (
+        PlaneBerisEdwardsPhysicsSpec
+    )
+    assert components.PlaneBerisEdwardsRunComponents is (
+        PlaneBerisEdwardsRunComponents
+    )
+    assert "PlaneBerisEdwardsPhysicsSpec" in components.__all__
+    assert "PlaneBerisEdwardsRunComponents" in components.__all__
     assert not hasattr(components, "decompose_plane_beris_edwards_run_spec")
     assert "pssolver/models/active_nematics/specifications.py" not in (
         PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES

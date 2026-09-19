@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.1S_SYSTEM_DECLARATION_EXTRACTION_COMPLETE_P2.1_AGGREGATES_PENDING`
+Status: `P2.1_COMPLETE_P2.2_DECOMPOSITION_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -311,20 +311,35 @@ inventory; the pre-existing `presets/shendruk.py` entry remains present and
 therefore transparently records the raw-request addition in implementation
 provenance without changing the inventory itself.
 
-The physics aggregate and final run-components aggregate remain intentionally
-deferred.  ADR 0008's prerequisite is now complete: the generic algebraic
-declarations and shared Stokes request have canonical tensor-free homes in
-`pssolver.systems`, while all existing `pssolver.execution` imports remain
-exact-object compatibility facades.  P2.1 nevertheless remains open until
-the disconnected `PlaneBerisEdwardsPhysicsSpec` and
-`PlaneBerisEdwardsRunComponents` value objects and their local tests are
-added.  The facade decomposition and parity adapter remain a separate P2.2
-change.
+The aggregate portion of P2.1 was completed on 2026-09-19 after ADR 0008's
+declaration-layer prerequisite passed.  It adds:
 
-The focused P2.1 leaf suite contains 65 passing tests.  The combined P2.0,
-P2.1, import-boundary, and O.1 gate contains 157 passing tests.  The complete
-local CPU suite contains 1293 passing tests and 8 passing subtests; clean
-wheel import and console-entry smokes also pass.
+- `PlaneBerisEdwardsPhysicsSpec`, which composes the material request, raw
+  Shendruk request, canonical Stokes request, and separately retained raw
+  friction-mode value;
+- `PlaneBerisEdwardsRunComponents`, which owns the 11-part disconnected
+  component graph and validates Plane topology, requested/effective boundary
+  separation, preset resolution, twist modes, refresh consistency, the
+  qualified Hermitian axis, and the separated-canary cache restriction.
+
+The aggregate's nested metadata is explicitly provisional and is not a
+schema-v1 serializer, identity source, or production metadata authority.  The
+new objects remain direct-module-only imports, are absent from every stable
+package root and the production implementation-source inventory, and are not
+constructed by the facade or consumed by a runtime.  The first real
+`configuration -> systems` edge is now authorized for the canonical Stokes
+request.  An exact-edge ratchet permits only
+`plane_beris_edwards_components -> systems.stokes`; `models`, `planning`, and
+`runtime` receive no such permission.
+There is still no `decompose_plane_beris_edwards_run_spec`; facade
+decomposition and parity remain the separate P2.2 change.
+
+The focused P2.1 component suite contains 98 passing tests.  The combined
+P2.1/P2.1S, Stage F/G/H, import-boundary, and Phase 2 compatibility gate
+contains 307 passing tests.  The complete local CPU suite contains 1419
+passing tests and 8 passing subtests.  Fresh sdist and wheel archives plus an
+isolated wheel installation pass direct aggregate import, provisional-export,
+stable package-root non-export, and console-entry smokes.
 
 ### P2.1S: characterize and extract shared system declarations
 
@@ -365,14 +380,16 @@ import, runtime consumer, or numerical path was introduced.  The private
 Stokes validation helpers live only in the canonical module.  The provisional
 `pssolver.systems` package root intentionally exports no declarations.
 
-The architecture ratchet now recognizes `systems` as tensor-free, allows only
-`systems -> {core, systems}` and the first real `execution -> systems` edge,
-and does not pre-authorize configuration, models, planning, or runtime to
-depend on the new layer.  Existing production consumers continue importing
-through `pssolver.execution`, which directly exercises the compatibility
-facades.  Stokes typed-to-generic conversion returns the exact canonical
-algebraic type.  The old Stokes pickle, representative metadata SHA-256, and
-Plane restart-provenance SHA-256 remain unchanged.
+The architecture ratchet recognizes `systems` as tensor-free and allows only
+`systems -> {core, systems}`.  P2.1S introduced the first real
+`execution -> systems` edge without pre-authorizing other consumers; the
+subsequent disconnected P2.1 aggregate adds only the reviewed
+`configuration -> systems` edge.  Models, planning, and runtime remain
+unauthorized.  Existing production consumers continue importing through
+`pssolver.execution`, which directly exercises the compatibility facades.
+Stokes typed-to-generic conversion returns the exact canonical algebraic type.
+The old Stokes pickle, representative metadata SHA-256, and Plane
+restart-provenance SHA-256 remain unchanged.
 
 The P2.1S focused suite now contains 91 passing tests.  The combined P2.1S,
 Stage F/G/H, import-boundary, and Phase 2 compatibility/component gate
@@ -384,8 +401,9 @@ old-pickle loading, new canonical pickle paths, unchanged negative
 instance-pickle behavior, package-root non-export, Stokes lowering, and
 console-entry smokes.  This mechanical migration changes declaration
 ownership only: equations, runtime behavior, numerical operation order,
-production provenance, and defaults are unchanged.  The next commit returns
-to P2.1 and adds the two remaining disconnected aggregate value objects.
+production provenance, and defaults are unchanged.  Its disconnected P2.1
+follow-on is now complete; the next phase is the pure P2.2 facade
+decomposition and parity adapter.
 
 ### P2.2: add pure decomposition and parity adapter
 
@@ -395,6 +413,14 @@ runtime identity, and runtime-selection metadata are unchanged.  No runtime
 consumer is migrated.  The round-trip includes raw preset inputs, dormant
 requested friction, requested boundaries, and the separately recorded
 qualified effective boundaries.
+
+P2.2 must preserve the current one-way module dependency from
+`plane_beris_edwards_components` to `plane_beris_edwards`; the supported
+facade must not acquire a reverse top-level dependency on the provisional
+components module.  Before P2.3 delegates facade views to components, shared
+Plane declarations must move to a dependency-neutral canonical leaf or cross
+another explicitly qualified one-way seam.  Bidirectional top-level imports,
+hidden dynamic imports, and local-import workarounds are forbidden.
 
 ### P2.3: delegate existing derived views
 
