@@ -136,14 +136,19 @@ listed as eight exact edges.  Broad layer exemptions are forbidden.
 
 | Exact v0.1.2 debt | Planned removal |
 |---|---|
-| `models.active_nematics.stokes -> transforms` | Phase 1 operator/solver extraction |
+| `models.active_nematics.stokes -> transforms` | model force/solver composition split after Phase 1 |
 | `configuration.plane_beris_edwards -> plane` | configuration-identity split |
-| `configuration.plane_beris_edwards -> transforms` | Phase 1 canonical policy imports |
+| `configuration.plane_beris_edwards -> transforms` | move numerical defaults into specifications after Phase 1 |
 | `runtime.plane_legacy -> integrator` | compiled-runtime adapter phase |
 | `runtime.plane_legacy -> plane` | compiled-runtime adapter phase |
 | `runtime.plane_legacy -> solver` | compiled-runtime adapter phase |
 | `runtime.plane_legacy -> transforms` | Phase 1 canonical imports, then runtime migration |
 | `runtime.plane_beris_edwards -> experimental.plane_shadow_driver` | replace canary bridge before production promotion |
+
+Phase 1 retired `runtime.plane_legacy -> transforms`.  It intentionally kept
+the model and configuration facade edges above: directly replacing either one
+with an operator/backend import would preserve the cycle in a different form
+and violate the target dependency direction.
 
 Key rules are:
 

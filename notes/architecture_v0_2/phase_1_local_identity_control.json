@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "status": "PASS_SUPPLEMENTARY_LOCAL_CONTROL",
+  "durability": "ephemeral_outputs_not_retained",
+  "baseline": {
+    "execution_commit": "dff450ed4d2fe9d293b0a05f7b8e7f36aca5fd9e",
+    "frozen_numerical_ancestor": "4fa614616e9d67c98be52c150eaf303a0c80b5c1",
+    "output_root": "/tmp/pssolver-phase1-baseline-mJ0OS0/run"
+  },
+  "candidate": {
+    "execution_commit": "0f9a6bf6571519c2f5b436b4c44ed4594fb93c09",
+    "output_root": "/tmp/pssolver-phase1-candidate-Q7032k/run"
+  },
+  "argv_without_output_dir": [
+    "Plane_beris_edwards_stokes.py",
+    "--activity-number",
+    "18",
+    "--runtime-path",
+    "legacy_production",
+    "--device",
+    "cpu",
+    "--dtype",
+    "float64",
+    "--pointwise-execution",
+    "eager",
+    "--nx",
+    "8",
+    "--ny",
+    "8",
+    "--nz",
+    "8",
+    "--steps",
+    "3",
+    "--save-start-step",
+    "0",
+    "--save-interval",
+    "3",
+    "--diagnostic-interval",
+    "1",
+    "--spectral-refresh-steps",
+    "2",
+    "--save-hydrodynamics"
+  ],
+  "argv_canonical_sha256": "d34499296fead503325937f160646642f9916d938719be44ea6978f012a7dda3",
+  "environment": {
+    "platform": "Linux-6.17.0-35-generic-x86_64-with-glibc2.39",
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700K",
+    "python": "3.12.13",
+    "torch": "2.6.0",
+    "torch_cuda_runtime": "12.6",
+    "numpy": "2.4.3",
+    "scipy": "1.16.0"
+  },
+  "arrays": {
+    "Q_3.npy": {
+      "size_bytes": 20608,
+      "sha256": "a935874bfd01ad89cdb23ae7dd450c1c9654eb469f826958e5f3bf48910f5f50",
+      "byte_identical": true
+    },
+    "u_3.npy": {
+      "size_bytes": 12416,
+      "sha256": "3e6544aa24f563245deffdd9d2fc87c8ac9816874a99b97dfad6da467fe6f7f5",
+      "byte_identical": true
+    },
+    "p_3.npy": {
+      "size_bytes": 4224,
+      "sha256": "22bc104a31b051e068be5cefd3d4866e43a8de5439bbcc943f6d4bd009bce07b",
+      "byte_identical": true
+    }
+  },
+  "notes": [
+    "Metadata hashes differ because implementation provenance intentionally records canonical source ownership.",
+    "The formal H100 R128/R320 non-regression gate remains pending."
+  ]
+}

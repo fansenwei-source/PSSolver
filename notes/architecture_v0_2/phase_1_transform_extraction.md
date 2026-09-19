@@ -1,6 +1,7 @@
 # Phase 1 plan: mechanical extraction of `transforms.py`
 
-Status: planned, not yet authorized by this Phase 0 commit.
+Status: locally implemented; the balanced H100 phase-completion gate remains
+pending.  See [phase_1_local_qualification.md](phase_1_local_qualification.md).
 
 ## Objective
 

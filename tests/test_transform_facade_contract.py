@@ -125,6 +125,45 @@ ROOT_REEXPORTS = (
 )
 
 
+EXPECTED_ROOT_ALL = (
+    "__version__",
+    "SpectralSolver",
+    "Fields",
+    "Parameters",
+    "DEFAULT_TRANSFORM_GROUP_INDEXING",
+    "TRANSFORM_GROUP_INDEXING_MODES",
+    "PDEModel",
+    "SemiImplicitEulerIntegrator",
+    "CONVENTION_NAME",
+    "IDEAL_LOOP_MODE_AXES",
+    "classify_ideal_loop",
+    "convention_metadata",
+    "ideal_loop_axis_angles",
+    "BasisAwareSpectralProjector",
+    "DEALIAS_RULE_FRACTIONS",
+    "DEFAULT_DEALIAS_RULE",
+    "DEFAULT_PROJECTED_TRANSFORM_EXECUTION",
+    "DEFAULT_PERIODIC_TRANSFORM_EXECUTION",
+    "DEFAULT_SPECTRAL_STORAGE",
+    "DEFAULT_TRANSFORM_EXECUTION_ORDER",
+    "FreeSlipModalStokesSolver",
+    "TensorProductTransformBackend",
+    "PROJECTED_TRANSFORM_EXECUTION_MODES",
+    "PERIODIC_TRANSFORM_EXECUTION_MODES",
+    "SPECTRAL_STORAGE_MODES",
+    "projected_common_basis_stress_divergence",
+    "projected_distortion_stress_divergence",
+    "prepare_new_run_directory",
+    "write_run_metadata",
+    "SimulationSnapshot",
+    "REPRESENTATIVE_ORDERED_S_DEFINITION",
+    "apply_snapshot_to_solver",
+    "load_snapshot",
+    "representative_ordered_S",
+    "require_distinct_output_directory",
+)
+
+
 EXPECTED_METHOD_SIGNATURES = {
     "TensorProductTransformBackend.periodic_transform_execution_metadata": (
         "(self, boundary_conditions)"
@@ -209,6 +248,7 @@ def test_transform_facade_contains_no_numerical_implementation():
 
 
 def test_transform_constants_retain_exact_values_and_root_identity():
+    assert tuple(pssolver.__all__) == EXPECTED_ROOT_ALL
     assert transforms.DEFAULT_DEALIAS_RULE == "cubic_half"
     assert transforms.DEFAULT_TRANSFORM_EXECUTION_ORDER == "real_first"
     assert transforms.DEFAULT_PROJECTED_TRANSFORM_EXECUTION == "truncated"
@@ -348,19 +388,24 @@ def test_free_slip_stokes_state_schema_is_frozen():
         normal_boundary_conditions=("periodic", "periodic", "dirichlet"),
         pressure_boundary_conditions=("periodic", "periodic", "neumann"),
     )
-    expected = (
-        "ikx",
-        "iky",
-        "a_tangential_inv",
-        "a_normal_inv",
-        "tangential_null_mask",
-        "dz_neumann_to_dirichlet",
-        "dz_dirichlet_to_neumann",
-        "schur_diag_safe",
-        "pressure_null_mask",
-    )
-    assert tuple(dict(solver.named_buffers())) == expected
-    assert tuple(solver.state_dict()) == expected
+    expected = {
+        "ikx": ((1, 4, 4, 1), torch.complex128),
+        "iky": ((1, 4, 4, 1), torch.complex128),
+        "a_tangential_inv": ((1, 4, 4, 4), torch.float64),
+        "a_normal_inv": ((1, 4, 4, 4), torch.float64),
+        "tangential_null_mask": ((1, 4, 4, 4), torch.bool),
+        "dz_neumann_to_dirichlet": ((4, 4), torch.complex128),
+        "dz_dirichlet_to_neumann": ((4, 4), torch.complex128),
+        "schur_diag_safe": ((1, 4, 4, 4), torch.float64),
+        "pressure_null_mask": ((1, 4, 4, 4), torch.bool),
+    }
+    buffers = dict(solver.named_buffers())
+    assert tuple(buffers) == tuple(expected)
+    assert tuple(solver.state_dict()) == tuple(expected)
+    assert {
+        name: (tuple(value.shape), value.dtype)
+        for name, value in buffers.items()
+    } == expected
 
 
 def _call_name(node: ast.Call) -> str:
@@ -387,18 +432,37 @@ def test_supported_checkpoint_code_does_not_pickle_concrete_classes():
     for path in checkpoint_sources:
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         imports = set()
+        torch_module_aliases = set()
+        torch_save_load_aliases = set()
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
                 imports.update(alias.name.split(".", 1)[0] for alias in node.names)
+                torch_module_aliases.update(
+                    alias.asname or alias.name
+                    for alias in node.names
+                    if alias.name == "torch"
+                )
             elif isinstance(node, ast.ImportFrom) and node.module:
                 imports.add(node.module.split(".", 1)[0])
+                if node.module == "torch":
+                    torch_save_load_aliases.update(
+                        alias.asname or alias.name
+                        for alias in node.names
+                        if alias.name in {"save", "load"}
+                    )
         assert imports.isdisjoint({"pickle", "dill", "cloudpickle"})
+
+        forbidden_torch_calls = torch_save_load_aliases | {
+            f"{alias}.{operation}"
+            for alias in torch_module_aliases
+            for operation in ("save", "load")
+        }
 
         for node in ast.walk(tree):
             if not isinstance(node, ast.Call):
                 continue
             name = _call_name(node)
-            assert name not in {"torch.save", "torch.load"}
+            assert name not in forbidden_torch_calls
             if name not in {"np.load", "numpy.load", "np.save", "numpy.save"}:
                 continue
             allow_pickle = next(
