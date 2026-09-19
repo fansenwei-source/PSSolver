@@ -53,8 +53,12 @@ PlaneBerisEdwardsRunComponents (provisional internal aggregate)
 ```
 
 Consumers migrate one at a time to component views.  The facade remains the
-input and schema-v1 serializer until all consumers have moved and a separate
-API decision authorizes a replacement.
+input and supported schema-v1 serializer API until all consumers have moved
+and a separate API decision authorizes a replacement.  Beginning in P2.4, its
+six serialization and identity methods delegate to one stateless internal
+compatibility serializer.  That adapter makes the existing implementation
+authority explicit; it does not replace the facade's supported API or create a
+second schema.
 
 The existing schema-v1 serializer remains the authority for:
 
@@ -68,6 +72,13 @@ Nested component metadata must not replace or augment schema-v1 output during
 Phase 2.  In particular, historical placements such as `initial_s` under
 `model` remain unchanged even though the new ownership model classifies it as
 initial-condition state.
+
+The P2.4 serializer is direct-module-only and is absent from stable package
+roots.  It does not import or serialize the provisional component graph.  The
+facade delegates to a single serializer instance while retaining the
+historical dynamic dispatch between public methods, exact canonical JSON
+encoding, path spelling, non-finite-value rejection, hashes, and checkpoint
+identity.
 
 ## Boundary compatibility decision
 

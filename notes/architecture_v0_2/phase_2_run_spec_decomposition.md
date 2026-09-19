@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.3_COMPLETE_P2.4_PENDING`
+Status: `P2.4_COMPLETE_P2.5_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -528,6 +528,43 @@ console-entry smoke.
 Make the compatibility serializer an explicit authority without changing a
 key, value, nesting level, list/tuple conversion, path spelling, JSON bytes,
 or hash.  Component metadata remains internal.
+
+P2.4 was completed on 2026-09-19.  Before extraction, a separate
+characterization commit froze all seven schema-v1 documents and hashes,
+fresh-document/mutation isolation, non-finite-value rejection, and the
+historical dynamic dispatch between the six supported facade methods.  In
+particular, canonical identity still dispatches through `self.to_metadata()`,
+runtime identity still dispatches through `self.to_metadata()`, restart hash
+still dispatches through `self.runtime_identity_metadata()`, and the compact
+identity document still dispatches through `self.canonical_sha256()`.
+
+The stateless direct-module-only
+`PlaneBerisEdwardsSchemaV1CompatibilitySerializer` in
+`plane_beris_edwards_schema_v1` is now the one implementation authority.  The
+existing `PlaneBerisEdwardsRunSpec` methods remain the supported API and thinly
+delegate to its singleton.  The schema-version constant is physically owned by
+the serializer module and re-exported through the exact historical facade and
+package paths.  No serializer type or singleton was added to a stable package
+root.  The serializer has only a type-checking reference to the concrete
+facade, has no dependency on the provisional component graph, and does not
+normalize paths or reinterpret identities.  Component metadata remains
+internal and is not a second production serializer.
+
+Because this file now determines production configuration identity, it was
+added to implementation-source provenance.  The four runtime/application
+consumers remain untouched and continue to call the supported facade; their
+one-at-a-time migration remains P2.5.  All 54 fields, all 17 members, the
+factory and parser, seven golden metadata/JSON/hash cases, format-v1 checkpoint
+identity, direct-constructor behavior, pickle identity, and production defaults
+remain unchanged.
+
+The final P2.4 serializer file contains 23 passing tests.  The expanded
+compatibility, component, Fig. 4 CLI, and Stage O gate contains 369 passing
+tests.  The complete local CPU suite contains 1604 passing tests and 8 passing
+subtests.  Fresh sdist and wheel archives contain the serializer, an isolated
+wheel installation reproduces facade/serializer metadata and hashes, and the
+installed console-entry dry-run passes.  P2.4 changes no floating-point
+operation, numerical runtime path, or GPU hot path, so no H100 job is required.
 
 ### P2.5: migrate consumers one per commit
 

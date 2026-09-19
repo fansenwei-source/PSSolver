@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "p2_3_complete_p2_4_pending",
+  "status": "p2_4_complete_p2_5_pending",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -577,7 +577,42 @@
     },
     {
       "id": "P2.4",
-      "name": "explicit schema-v1 compatibility serializer"
+      "name": "explicit schema-v1 compatibility serializer",
+      "implementation_complete": true,
+      "production_configuration_path_changed": true,
+      "numerical_operation_order_changed": false,
+      "runtime_consumer_changed": false,
+      "factory_or_parser_modified": false,
+      "stable_package_root_export_added": false,
+      "schema_version": 1,
+      "supported_serializer_api": "PlaneBerisEdwardsRunSpec",
+      "implementation_authority_module": "pssolver.configuration.plane_beris_edwards_schema_v1",
+      "implementation_authority_type": "PlaneBerisEdwardsSchemaV1CompatibilitySerializer",
+      "implementation_authority_singleton": "PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER",
+      "direct_module_only": true,
+      "component_metadata_used": false,
+      "second_production_serializer_added": false,
+      "historical_public_method_dispatch_preserved": true,
+      "canonical_json_encoding_preserved": true,
+      "path_normalization_added": false,
+      "production_source_inventory_changed": true,
+      "production_source_inventory_additions": [
+        "pssolver/configuration/plane_beris_edwards_schema_v1.py"
+      ],
+      "flat_fields_retained": 54,
+      "existing_members_retained": 17,
+      "schema_v1_golden_cases_passed": 7,
+      "pre_extraction_characterization_tests_passed": 13,
+      "p2_4_focused_tests_passed": 23,
+      "expanded_compatibility_tests_passed": 369,
+      "full_cpu_tests_passed": 1604,
+      "full_cpu_subtests_passed": 8,
+      "fresh_sdist_contains_serializer": true,
+      "fresh_wheel_contains_serializer": true,
+      "isolated_wheel_serializer_smoke_passed": true,
+      "installed_console_entry_smoke_passed": true,
+      "h100_required": false,
+      "next_phase": "P2.5 migrate pssolver.runtime.plane_legacy"
     },
     {
       "id": "P2.5",
