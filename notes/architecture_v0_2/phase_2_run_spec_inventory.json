@@ -1,0 +1,386 @@
+{
+  "schema_version": 1,
+  "status": "design_frozen_implementation_pending",
+  "design_baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
+    "production_oracle_tag": "v0.1.2",
+    "production_oracle_commit": "4fa614616e9d67c98be52c150eaf303a0c80b5c1"
+  },
+  "facade": {
+    "module": "pssolver.configuration.plane_beris_edwards",
+    "class": "PlaneBerisEdwardsRunSpec",
+    "field_count": 54,
+    "method_and_property_count": 17,
+    "supported_flat_facade_retained": true,
+    "schema_version": 1,
+    "field_groups": {
+      "model_and_stokes_request": [
+        "activity_number",
+        "parameterization",
+        "frank_k",
+        "coefficient_min",
+        "coefficient_max",
+        "ldg_a",
+        "ldg_b",
+        "ldg_c",
+        "gamma",
+        "flow_alignment",
+        "eta",
+        "zero_mode_policy",
+        "friction_mode_fric",
+        "beta"
+      ],
+      "domain_geometry_and_grid": [
+        "height",
+        "lx",
+        "ly",
+        "nx",
+        "ny",
+        "nz"
+      ],
+      "numerics_and_time_discretization": [
+        "dt",
+        "dtype",
+        "dealias_rule",
+        "projected_transform_execution",
+        "transform_execution_order",
+        "spectral_storage",
+        "spectral_refresh"
+      ],
+      "initialization": [
+        "seed",
+        "num_defect_pairs",
+        "defect_min_separation",
+        "defect_core_radius",
+        "background_angle",
+        "twist_amplitude",
+        "twist_modes",
+        "initial_s"
+      ],
+      "execution": [
+        "device",
+        "tf32",
+        "molecular_field_linear_space",
+        "stress_divergence_sum_space",
+        "pointwise_execution",
+        "disable_q_gradient_reuse",
+        "runtime_path"
+      ],
+      "workflow_output": [
+        "output_dir",
+        "steps",
+        "save_start_step",
+        "save_interval",
+        "diagnostic_interval",
+        "diagnostics",
+        "save_hydrodynamics",
+        "dry_run",
+        "checkpoint_interval",
+        "restart_from"
+      ],
+      "boundaries": [
+        "boundaries"
+      ],
+      "provenance": [
+        "validation_config_sha256"
+      ]
+    },
+    "methods_and_properties": [
+      "__post_init__",
+      "S_initial",
+      "spectral_refresh_mode",
+      "spectral_refresh_requested_time",
+      "spectral_refresh_requested_steps",
+      "spectral_refresh_interval_steps",
+      "spectral_refresh_effective_time",
+      "shendruk_preset",
+      "domain",
+      "geometry",
+      "numerics",
+      "to_metadata",
+      "canonical_sha256",
+      "runtime_identity_metadata",
+      "runtime_identity_sha256",
+      "identity_metadata",
+      "runtime_selection_metadata"
+    ]
+  },
+  "construction": {
+    "production_path": [
+      "CLI parser",
+      "create_plane_beris_edwards_run_spec",
+      "PlaneBerisEdwardsRunSpec"
+    ],
+    "supported_programmatic_factory": true,
+    "supported_direct_constructor": true,
+    "replacement_constructor_in_phase_2": false
+  },
+  "ownership_versus_identity": {
+    "grid_shape": {
+      "component_owner": "DomainSpec within PlaneSlab",
+      "identity_classification": "discretization"
+    },
+    "zero_mode_policy": {
+      "component_owner": "IncompressibleStokesSystemSpec",
+      "identity_classification": "discretization/reference frame"
+    },
+    "friction": {
+      "component_owner": "IncompressibleStokesSystemSpec with a separate raw compatibility request",
+      "identity_classification": "physical Stokes parameter"
+    },
+    "initial_s": {
+      "component_owner": "initial-condition specification",
+      "legacy_schema_v1_location": "model.initial_s"
+    },
+    "molecular_field_stress_and_pointwise_selectors": {
+      "component_owner": "execution policy",
+      "legacy_schema_v1_location": "model"
+    }
+  },
+  "identities": {
+    "canonical": {
+      "source": "to_metadata",
+      "json": {
+        "allow_nan": false,
+        "separators": [",", ":"],
+        "sort_keys": true
+      },
+      "meaning": "complete resolved run request",
+      "not_a_pure_scientific_identity": true
+    },
+    "runtime_restart": {
+      "source": "runtime_identity_metadata",
+      "meaning": "same-backend numerical restart contract",
+      "excludes": [
+        "output_dir",
+        "steps",
+        "save_start_step",
+        "save_interval",
+        "diagnostic_interval",
+        "diagnostics",
+        "save_hydrodynamics",
+        "checkpoint_interval",
+        "restart_from",
+        "validation_config_sha256",
+        "dry_run",
+        "seed",
+        "num_defect_pairs",
+        "defect_min_separation",
+        "defect_core_radius",
+        "background_angle",
+        "twist_amplitude",
+        "twist_modes",
+        "initial_s"
+      ]
+    },
+    "preserved_hidden_behavior": [
+      "paper-window ignores ineffective raw frank_k in resolved identity",
+      "paper-window coefficient_max is validation-only for an already-valid request",
+      "fixed-k binds frank_k while coefficient_min and coefficient_max remain raw validation inputs",
+      "paths use str(Path(value)) without resolve or normalization",
+      "workflow and initialization changes can preserve runtime identity"
+    ]
+  },
+  "consumers": [
+    {
+      "module": "pssolver.applications.plane_beris_edwards",
+      "role": "composition root, initialization, metadata, checkpoint gate"
+    },
+    {
+      "module": "pssolver.runtime.plane_legacy",
+      "role": "qualified numerical construction and execution policy"
+    },
+    {
+      "module": "pssolver.runtime.plane_beris_edwards",
+      "role": "runtime selection, authority validation, canary request"
+    },
+    {
+      "module": "pssolver.workflows.plane_beris_edwards",
+      "role": "schedule, observation, output, checkpoint and restart"
+    },
+    {
+      "module": "pssolver.workflows.plane_checkpoint",
+      "role": "format-v1 runtime identity and evolved-state persistence"
+    }
+  ],
+  "reuse": [
+    "pssolver.core.DomainSpec",
+    "pssolver.geometries.PlaneSlab",
+    "pssolver.core.NumericsConfig",
+    "pssolver.core.BoundarySet",
+    "pssolver.configuration.PlaneFreeSlipBoundaryConditions",
+    "pssolver.configuration.SpectralRefreshSpec",
+    "pssolver.presets.ShendrukPlanePreset",
+    "pssolver.execution.stokes.IncompressibleStokesSystemSpec",
+    "pssolver.execution.stokes.TangentialZeroModePolicy",
+    "pssolver.execution.stokes.PressureGauge",
+    "pssolver.models.active_nematics.constitutive.BerisEdwardsConstitutiveParameters",
+    "pssolver.core.ProblemSpec"
+  ],
+  "do_not_reuse_as_production_declaration": [
+    "pssolver.models.active_nematics.constitutive.BerisEdwardsPlaneCoupledModel"
+  ],
+  "provisional_modules": {
+    "pssolver.models.active_nematics.specifications": [
+      "BerisEdwardsMaterialRequest",
+      "ExtrudedDefectGasInitialConditionSpec"
+    ],
+    "pssolver.presets.shendruk": [
+      "ShendrukPlaneParameterRequest"
+    ],
+    "pssolver.configuration.plane_beris_edwards_components": [
+      "PlaneBerisEdwardsPhysicsSpec",
+      "PlaneTimeSteppingSpec",
+      "PlaneBerisEdwardsExecutionSpec",
+      "PlaneWorkflowSpec",
+      "PlaneInvocationSpec",
+      "PlaneBerisEdwardsRunComponents",
+      "decompose_plane_beris_edwards_run_spec"
+    ]
+  },
+  "public_api_policy": {
+    "new_components_are_provisional": true,
+    "add_to_root_public_api": false,
+    "add_to_stable_configuration_all": false,
+    "minimum_real_consumers_before_generalization": 2
+  },
+  "cross_component_invariants": [
+    "Shendruk resolution binds activity, wall height, and material parameters",
+    "twist modes satisfy 1 <= mode < nz",
+    "physical-time spectral refresh is an integer multiple of dt",
+    "Hermitian-half storage uses the qualified periodic axis",
+    "projected transform execution is compatible with dealiasing",
+    "zero_mean maps to effective friction zero while preserving dormant requested friction_mode_fric for facade round-trip",
+    "friction mode maps the positive requested friction_mode_fric to effective drag",
+    "separated-canary restrictions remain fail-closed",
+    "requested boundary metadata remains distinct from the qualified effective free-slip runtime boundary"
+  ],
+  "hazards": [
+    {
+      "severity": "P0",
+      "name": "metadata-only boundary configurability",
+      "description": "boundaries changes metadata and runtime identity while the legacy numerical path uses global qualified boundary constants",
+      "phase_2_policy": "preserve and characterize requested metadata separately from the qualified effective value; implement rejection or true lowering only as a separately authorized feature"
+    },
+    {
+      "severity": "P0",
+      "name": "parallel metadata authorities",
+      "description": "RunSpec.to_metadata and application production metadata restate overlapping meaning",
+      "phase_2_policy": "freeze schema v1 before composing metadata from components"
+    },
+    {
+      "severity": "P0",
+      "name": "identity drift",
+      "description": "canonical and runtime hashes have intentionally different partitions and hidden resolved-input behavior",
+      "phase_2_policy": "golden documents and exhaustive field-partition tests before code migration"
+    },
+    {
+      "severity": "P1",
+      "name": "constructor and validation drift",
+      "description": "direct construction and factory validation do not currently have identical coverage or error timing",
+      "phase_2_policy": "characterize rather than normalize during migration"
+    },
+    {
+      "severity": "P1",
+      "name": "operation-order drift",
+      "description": "runtime reconstruction can change allocations or floating-point ordering despite equal configuration values",
+      "phase_2_policy": "one consumer per commit with byte-identical short trajectories and restart checks"
+    }
+  ],
+  "migration": [
+    {
+      "id": "P2.0",
+      "name": "compatibility characterization",
+      "production_code_changed": false,
+      "freezes": [
+        "dataclass field order, flags, match args, equality, hash, repr and pickle path",
+        "all 17 existing members and representative return values",
+        "factory parameter order, kind, defaults, annotations and validation boundary",
+        "CLI option strings, dest, type, nargs, action, required state, defaults, choices and mutually exclusive groups",
+        "schema-v1 metadata, canonical bytes and both identity hashes",
+        "raw versus resolved preset inputs and dormant requested friction",
+        "checkpoint format-v1 identity facts and boundary mismatch behavior"
+      ]
+    },
+    {
+      "id": "P2.1",
+      "name": "disconnected immutable component value objects",
+      "production_code_changed": false
+    },
+    {
+      "id": "P2.2",
+      "name": "pure facade decomposition and schema parity adapter",
+      "runtime_consumer_changed": false,
+      "lossless_round_trip_includes": [
+        "all 54 facade fields",
+        "raw Shendruk request inputs",
+        "dormant requested friction",
+        "requested boundaries",
+        "qualified effective boundaries"
+      ]
+    },
+    {
+      "id": "P2.3",
+      "name": "derived facade views delegate to components"
+    },
+    {
+      "id": "P2.4",
+      "name": "explicit schema-v1 compatibility serializer"
+    },
+    {
+      "id": "P2.5",
+      "name": "consumer migration one module per commit",
+      "order": [
+        "pssolver.runtime.plane_legacy",
+        "pssolver.runtime.plane_beris_edwards",
+        "pssolver.workflows.plane_beris_edwards",
+        "pssolver.applications.plane_beris_edwards"
+      ]
+    },
+    {
+      "id": "P2.6",
+      "name": "remove exact configuration import debts",
+      "edges": [
+        "configuration.plane_beris_edwards -> plane",
+        "configuration.plane_beris_edwards -> transforms"
+      ]
+    },
+    {
+      "id": "P2.7",
+      "name": "provenance and Phase 2 closure"
+    }
+  ],
+  "completion_gates": {
+    "flat_fields_retained": 54,
+    "dataclass_semantics_compatible": true,
+    "existing_members_compatible": 17,
+    "schema_version_unchanged": 1,
+    "factory_and_cli_compatible": true,
+    "golden_metadata_and_hashes_unchanged": true,
+    "format_v1_checkpoint_compatible": true,
+    "same_backend_restart_byte_identical": true,
+    "short_q_u_p_byte_identical": true,
+    "initial_condition_artifacts_and_hashes_identical": true,
+    "metadata_values_equal_except_frozen_provenance_allowlist": true,
+    "dry_run_has_no_output_or_runtime_allocation": true,
+    "complete_cpu_suite": true,
+    "wheel_and_console_smoke": true,
+    "configuration_dependency_debts_removed": 2,
+    "production_default_changed": false,
+    "numerical_operation_order_changed": false,
+    "h100_required_per_commit": false,
+    "h100_final_r128_r320_after_consumer_migration": true
+  },
+  "deferred": [
+    "schema-v2 metadata",
+    "checkpoint format v2",
+    "identity redefinition",
+    "path normalization",
+    "direct constructor removal",
+    "generic cross-model RunSpec API",
+    "alternate boundary lowering and strong anchoring",
+    "state and timestep architecture migration",
+    "performance optimization"
+  ]
+}

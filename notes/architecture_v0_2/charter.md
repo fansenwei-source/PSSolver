@@ -243,6 +243,8 @@ stable public commitment.
   compatibility.
 - [ADR 0006](adr/0006-identity-provenance-and-qualification.md): identity,
   provenance, and qualification.
+- [ADR 0007](adr/0007-run-spec-compatibility-facade.md): decompose the Plane
+  run configuration behind its supported compatibility facade.
 
 Supporting inventories:
 
@@ -250,3 +252,5 @@ Supporting inventories:
 - [v0.1.2 oracle](v0_1_2_oracle.md)
 - [Phase 1 transform extraction](phase_1_transform_extraction.md)
 - [Phase 1 qualification](phase_1_local_qualification.md)
+- [Phase 2 RunSpec decomposition](phase_2_run_spec_decomposition.md)
+- [Phase 2 machine-readable inventory](phase_2_run_spec_inventory.json)
