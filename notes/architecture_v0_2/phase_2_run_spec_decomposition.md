@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.3_CHARACTERIZED_DEPENDENCY_SEAM_PENDING`
+Status: `P2.3_COMPLETE_P2.4_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -157,9 +157,12 @@ Only geometry-neutral model-owned tensor-free specifications belong in
 `pssolver/presets/shendruk.py`; it retains `activity_number`, parameterization,
 raw `frank_k`, and both coefficient bounds even when some are validation-only
 inputs.  Plane-only physics composition, execution, workflow, and invocation
-value objects belong in
-`pssolver/configuration/plane_beris_edwards_components.py` until a second real
-consumer justifies a more general public interface.
+value objects are physically defined in the dependency-neutral provisional
+`pssolver/configuration/plane_beris_edwards_component_graph.py` module.  Their
+P2.1 nominal/direct-import path remains
+`pssolver/configuration/plane_beris_edwards_components.py`, which is now the
+upper compatibility adapter.  Neither path becomes a stable package-root API
+until a second real consumer justifies a more general interface.
 
 Ownership rules are:
 
@@ -327,10 +330,12 @@ schema-v1 serializer, identity source, or production metadata authority.  The
 new objects remain direct-module-only imports, are absent from every stable
 package root and the production implementation-source inventory, and are not
 constructed by the facade or consumed by a runtime.  The first real
-`configuration -> systems` edge is now authorized for the canonical Stokes
-request.  An exact-edge ratchet permits only
-`plane_beris_edwards_components -> systems.stokes`; `models`, `planning`, and
-`runtime` receive no such permission.
+`configuration -> systems` edge was authorized for the canonical Stokes
+request.  At P2.1 completion the exact-edge ratchet permitted only
+`plane_beris_edwards_components -> systems.stokes`; P2.3 later moves that same
+edge with the physical component definitions to
+`plane_beris_edwards_component_graph -> systems.stokes`.  `models`,
+`planning`, and `runtime` receive no such permission.
 P2.1 itself deliberately stopped before adding
 `decompose_plane_beris_edwards_run_spec`; the separately qualified P2.2
 follow-on described below now supplies that adapter without connecting a
@@ -443,16 +448,15 @@ passing tests.  The complete local CPU suite contains 1497 passing tests and
 adapter/import smoke, stable-root non-export checks, and the installed console
 entry smoke also pass.
 
-The implementation preserves the one-way module dependency from
-`plane_beris_edwards_components` to `plane_beris_edwards`; the supported
-facade must not acquire a reverse top-level dependency on the provisional
-components module.  After P2.2 this edge exists both for shared Plane
-declarations and for the adapter's concrete `PlaneBerisEdwardsRunSpec` input.
-Before P2.3 delegates facade views, it must therefore both move shared Plane
-declarations to a dependency-neutral canonical leaf and split or relocate the
-facade-specific adapter, for example into an upper one-way adapter over a
-lower pure component builder.  Bidirectional top-level imports, hidden
-dynamic imports, and local-import workarounds are forbidden.
+At P2.2 completion the one-way dependency ran from
+`plane_beris_edwards_components` to `plane_beris_edwards`, both for shared
+Plane declarations and for the adapter's concrete
+`PlaneBerisEdwardsRunSpec` input.  The supported facade was forbidden from
+acquiring the reverse edge.  P2.3 therefore had to move shared declarations
+to a dependency-neutral canonical leaf and split the facade-specific upper
+adapter from a lower pure component graph before delegating facade views.
+Bidirectional top-level imports, hidden dynamic imports, and local-import
+workarounds remain forbidden.
 
 ### P2.3: prepare the dependency seam and delegate derived views
 
@@ -472,6 +476,52 @@ freshness, and their field-local validation timing.  These gates must remain
 green while the dependency-neutral declarations and pure builders are
 introduced; the existing schema-v1, canonical-hash, runtime-identity, and
 checkpoint oracles remain authoritative and unchanged.
+
+The P2.3 implementation was completed on 2026-09-19.  The shared runtime-path,
+free-slip-boundary, and spectral-refresh declarations now have one physical
+definition in the dependency-neutral
+`plane_beris_edwards_declarations` module.  Their supported nominal module,
+old pickle globals and bytes, stable package exports, singleton identity, and
+RunSpec defaults remain unchanged through exact-object facade aliases.  Four
+narrow functions in `plane_beris_edwards_builders` now own construction of
+the domain, geometry, numerics, and resolved Shendruk views.  The supported
+facade calls only those narrow builders.
+
+The six provisional component classes and explicit flat-value aggregate
+builder are physically defined in
+`plane_beris_edwards_component_graph`.  That lower graph imports declarations
+and narrow builders but never the concrete facade.  The legacy
+`plane_beris_edwards_components` path is a thin upper adapter: it imports the
+concrete `PlaneBerisEdwardsRunSpec`, checks its type, forwards all 54 flat
+values exactly once, and re-exports the exact component class objects under
+their existing nominal path.  The facade imports neither graph nor adapter,
+and all five modules are guarded by an exact acyclic-DAG test.  The graph may
+be imported first without mutating the legacy string annotations; after the
+legacy adapter path is loaded, `typing.get_type_hints` resolves exactly as it
+did before extraction.  The lower aggregate builder remains
+direct-module-only.
+
+Only the declarations and narrow builders are recorded in production
+implementation provenance because the supported facade executes them.  The
+disconnected component graph and upper adapter remain absent from that
+inventory and from every production runtime consumer.  The upper adapter
+passes the original `pssolver.plane` Hermitian-axis policy explicitly; the
+lower aggregate validates the same axis from the already-qualified Plane
+topology instead of declaring a second numerical-policy authority.  P2.6 will
+move that remaining production policy while removing the exact configuration
+import debts.  No view constructs the full aggregate or caches values, and
+validation timing is not broadened.
+
+All 54 flat fields, 17 existing members, seven schema-v1 golden cases,
+canonical and runtime hashes, format-v1 checkpoint identity, protocol-4
+pickle bytes, and public exports remain unchanged.  The final P2.3-focused,
+expanded, and complete CPU gates contain 161, 360, and 1581 passing tests,
+respectively; the complete suite also contains 8 passing subtests.  Fresh
+sdist and wheel archives contain declarations, narrow builders, the lower
+component graph, and the upper adapter.  An isolated wheel installation passes
+the six legacy component-class pickle hashes, exact declaration identities,
+delegated view/component parity, direct-only export gates, and the installed
+console-entry smoke.
 
 ### P2.4: freeze an explicit schema-v1 serializer adapter
 

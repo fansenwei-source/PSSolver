@@ -8,28 +8,17 @@ tensor, write output, or choose a non-legacy production runtime.
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass, field
-from enum import Enum
+from dataclasses import dataclass
 import hashlib
 import json
 import math
 from pathlib import Path
 from typing import Sequence
 
-from pssolver.adapters.legacy_boundaries import boundary_set_to_legacy
 from pssolver.core import (
-    BoundaryCondition,
     BoundarySet,
-    DealiasRule,
     DomainSpec,
-    HomogeneousDirichletBC,
-    HomogeneousNeumannBC,
     NumericsConfig,
-    PeriodicBC,
-    Precision,
-    ProjectedTransformExecution,
-    SpectralStorage,
-    TransformExecutionOrder,
 )
 from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics.beris_edwards import (
@@ -40,8 +29,11 @@ from pssolver.models.active_nematics.stokes import (
     DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
     DEFAULT_STRESS_DIVERGENCE_SUM_SPACE,
 )
-from pssolver.plane import DEFAULT_PLANE_SPECTRAL_STORAGE, PLANE_HERMITIAN_AXIS
-from pssolver.presets import ShendrukPlanePreset, resolve_shendruk_plane_preset
+from pssolver.plane import (
+    DEFAULT_PLANE_SPECTRAL_STORAGE,
+    PLANE_HERMITIAN_AXIS,
+)
+from pssolver.presets import ShendrukPlanePreset
 from pssolver.transforms import (
     DEALIAS_RULE_FRACTIONS,
     DEFAULT_DEALIAS_RULE,
@@ -51,12 +43,32 @@ from pssolver.transforms import (
     SPECTRAL_STORAGE_MODES,
 )
 
+from .plane_beris_edwards_builders import (
+    build_plane_beris_edwards_domain,
+    build_plane_beris_edwards_geometry,
+    build_plane_beris_edwards_numerics,
+    build_plane_beris_edwards_shendruk_preset,
+)
+from .plane_beris_edwards_declarations import (
+    DEFAULT_FRICTION_MODE_FRIC,
+    DEFAULT_PLANE_RUNTIME_PATH,
+    DEFAULT_SPECTRAL_REFRESH_TIME,
+    DEFAULT_ZERO_MODE_POLICY,
+    PLANE_FREE_SLIP_BOUNDARIES,
+    PlaneFreeSlipBoundaryConditions,
+    PlaneRuntimePath,
+    SpectralRefreshSpec,
+)
+
+# Preserve not only the legacy nominal path but also the exact module-string
+# identity used by protocol-4 pickles containing a RunSpec and nested shared
+# declarations.  The declarations remain single canonical class objects.
+PlaneRuntimePath.__module__ = __name__
+PlaneFreeSlipBoundaryConditions.__module__ = __name__
+SpectralRefreshSpec.__module__ = __name__
+
 
 PLANE_RUN_SPEC_SCHEMA_VERSION = 1
-DEFAULT_PLANE_RUNTIME_PATH = "legacy_production"
-DEFAULT_ZERO_MODE_POLICY = "zero_mean"
-DEFAULT_FRICTION_MODE_FRIC = 0.1
-DEFAULT_SPECTRAL_REFRESH_TIME = 0.2
 PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "Plane_beris_edwards_stokes.py",
     "pssolver/applications/__init__.py",
@@ -79,6 +91,8 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/__init__.py",
     "pssolver/adapters/legacy_boundaries.py",
     "pssolver/configuration/__init__.py",
+    "pssolver/configuration/plane_beris_edwards_builders.py",
+    "pssolver/configuration/plane_beris_edwards_declarations.py",
     "pssolver/configuration/plane_beris_edwards.py",
     "pssolver/runtime/__init__.py",
     "pssolver/runtime/plane_beris_edwards.py",
@@ -101,103 +115,6 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/presets/__init__.py",
     "pssolver/presets/shendruk.py",
 )
-
-
-class PlaneRuntimePath(str, Enum):
-    """Mutually exclusive Plane Beris--Edwards runtime implementations."""
-
-    LEGACY_PRODUCTION = "legacy_production"
-    SEPARATED_CANARY = "separated_canary"
-
-
-def _periodic_periodic(condition: BoundaryCondition) -> BoundarySet:
-    return BoundarySet((PeriodicBC(), PeriodicBC(), condition))
-
-
-@dataclass(frozen=True, slots=True)
-class PlaneFreeSlipBoundaryConditions:
-    """Physical BC declaration for the free-slip/free-Q Plane model."""
-
-    q: BoundarySet = field(
-        default_factory=lambda: _periodic_periodic(HomogeneousNeumannBC())
-    )
-    tangential_velocity: BoundarySet = field(
-        default_factory=lambda: _periodic_periodic(HomogeneousNeumannBC())
-    )
-    normal_velocity: BoundarySet = field(
-        default_factory=lambda: _periodic_periodic(HomogeneousDirichletBC())
-    )
-    pressure_modal: BoundarySet = field(
-        default_factory=lambda: _periodic_periodic(HomogeneousNeumannBC())
-    )
-    distortion_odd_z: BoundarySet = field(
-        default_factory=lambda: _periodic_periodic(HomogeneousDirichletBC())
-    )
-
-    def __post_init__(self) -> None:
-        values = (
-            self.q,
-            self.tangential_velocity,
-            self.normal_velocity,
-            self.pressure_modal,
-            self.distortion_odd_z,
-        )
-        if not all(isinstance(value, BoundarySet) for value in values):
-            raise TypeError("Plane boundary entries must be BoundarySet objects")
-        if any(value.ndim != 3 for value in values):
-            raise ValueError("Plane boundary entries must be three-dimensional")
-
-    def to_legacy(self) -> dict[str, tuple[str, ...]]:
-        """Translate the physical declaration at the legacy adapter edge."""
-
-        return {
-            "q": boundary_set_to_legacy(self.q),
-            "tangential_velocity": boundary_set_to_legacy(
-                self.tangential_velocity
-            ),
-            "normal_velocity": boundary_set_to_legacy(self.normal_velocity),
-            "pressure_modal": boundary_set_to_legacy(self.pressure_modal),
-            "distortion_odd_z": boundary_set_to_legacy(
-                self.distortion_odd_z
-            ),
-        }
-
-    def to_metadata(self) -> dict[str, object]:
-        return {
-            "q": self.q.to_metadata(),
-            "tangential_velocity": self.tangential_velocity.to_metadata(),
-            "normal_velocity": self.normal_velocity.to_metadata(),
-            "pressure_modal": self.pressure_modal.to_metadata(),
-            "distortion_odd_z": self.distortion_odd_z.to_metadata(),
-            "wall_normal_axis": 2,
-        }
-
-
-PLANE_FREE_SLIP_BOUNDARIES = PlaneFreeSlipBoundaryConditions()
-
-
-@dataclass(frozen=True, slots=True)
-class SpectralRefreshSpec:
-    """Resolved periodic dynamic-spectrum refresh policy."""
-
-    mode: str
-    requested_interval_time: float | None
-    requested_interval_steps: int | None
-    effective_interval_steps: int | None
-    effective_interval_time: float | None
-
-    def __post_init__(self) -> None:
-        if self.mode not in {"physical_time", "steps", "disabled"}:
-            raise ValueError("invalid spectral refresh mode")
-
-    def to_metadata(self) -> dict[str, object]:
-        return {
-            "mode": self.mode,
-            "requested_interval_time": self.requested_interval_time,
-            "requested_interval_steps": self.requested_interval_steps,
-            "effective_interval_steps": self.effective_interval_steps,
-            "effective_interval_time": self.effective_interval_time,
-        }
 
 
 @dataclass(frozen=True, slots=True)
@@ -301,7 +218,7 @@ class PlaneBerisEdwardsRunSpec:
 
     @property
     def shendruk_preset(self) -> ShendrukPlanePreset:
-        return resolve_shendruk_plane_preset(
+        return build_plane_beris_edwards_shendruk_preset(
             activity_number=self.activity_number,
             height=self.height,
             parameterization=self.parameterization,
@@ -316,32 +233,30 @@ class PlaneBerisEdwardsRunSpec:
 
     @property
     def domain(self) -> DomainSpec:
-        return DomainSpec(
-            (self.nx, self.ny, self.nz),
-            (self.lx, self.ly, self.height),
+        return build_plane_beris_edwards_domain(
+            nx=self.nx,
+            ny=self.ny,
+            nz=self.nz,
+            lx=self.lx,
+            ly=self.ly,
+            height=self.height,
         )
 
     @property
     def geometry(self) -> PlaneSlab:
-        return PlaneSlab(self.domain, wall_normal_axis=2)
+        return build_plane_beris_edwards_geometry(self.domain)
 
     @property
     def numerics(self) -> NumericsConfig:
-        return NumericsConfig(
-            precision=Precision(self.dtype),
-            dealias_rule=DealiasRule(self.dealias_rule),
-            transform_execution_order=TransformExecutionOrder(
-                self.transform_execution_order
-            ),
-            projected_transform_execution=ProjectedTransformExecution(
+        return build_plane_beris_edwards_numerics(
+            dtype=self.dtype,
+            dealias_rule=self.dealias_rule,
+            transform_execution_order=self.transform_execution_order,
+            projected_transform_execution=(
                 self.projected_transform_execution
             ),
-            spectral_storage=SpectralStorage(self.spectral_storage),
-            hermitian_axis=(
-                PLANE_HERMITIAN_AXIS
-                if self.spectral_storage == "hermitian_half"
-                else None
-            ),
+            spectral_storage=self.spectral_storage,
+            hermitian_axis=PLANE_HERMITIAN_AXIS,
         )
 
     def to_metadata(self) -> dict[str, object]:

@@ -10,6 +10,7 @@ import inspect
 import json
 from pathlib import Path
 import pickle
+from typing import get_type_hints
 
 import pytest
 
@@ -144,6 +145,17 @@ def test_legacy_facade_and_stable_package_share_exact_objects():
     spec = _spec()
     assert spec.boundaries is PLANE_FREE_SLIP_BOUNDARIES
     assert spec.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION
+
+
+def test_legacy_nominal_module_resolves_postponed_boundary_annotations():
+    hints = get_type_hints(PlaneFreeSlipBoundaryConditions)
+    assert hints == {
+        "q": BoundarySet,
+        "tangential_velocity": BoundarySet,
+        "normal_velocity": BoundarySet,
+        "pressure_modal": BoundarySet,
+        "distortion_odd_z": BoundarySet,
+    }
 
 
 def test_protocol4_pickle_bytes_and_legacy_globals_are_frozen():

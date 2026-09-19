@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "p2_2_complete_p2_3_dependency_seam_pending",
+  "status": "p2_3_complete_p2_4_pending",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -283,6 +283,15 @@
     "pssolver.presets.shendruk": [
       "ShendrukPlaneParameterRequest"
     ],
+    "pssolver.configuration.plane_beris_edwards_component_graph": [
+      "PlaneBerisEdwardsPhysicsSpec",
+      "PlaneTimeSteppingSpec",
+      "PlaneBerisEdwardsExecutionSpec",
+      "PlaneWorkflowSpec",
+      "PlaneInvocationSpec",
+      "PlaneBerisEdwardsRunComponents",
+      "build_plane_beris_edwards_run_components"
+    ],
     "pssolver.configuration.plane_beris_edwards_components": [
       "PlaneBerisEdwardsPhysicsSpec",
       "PlaneTimeSteppingSpec",
@@ -380,6 +389,7 @@
       "decomposition_function_added": false,
       "configuration_to_systems_edge_added": true,
       "configuration_to_systems_exact_edge": "pssolver.configuration.plane_beris_edwards_components -> pssolver.systems.stokes",
+      "configuration_to_systems_edge_after_p2_3": "pssolver.configuration.plane_beris_edwards_component_graph -> pssolver.systems.stokes",
       "models_planning_runtime_to_systems_allowed": false,
       "nested_metadata_is_schema_v1_authority": false,
       "production_source_inventory_changed": false,
@@ -487,11 +497,83 @@
     {
       "id": "P2.3",
       "name": "dependency seam and derived facade view delegation",
+      "implementation_complete": true,
+      "production_configuration_path_changed": true,
+      "numerical_operation_order_changed": false,
+      "runtime_consumer_changed": false,
+      "factory_or_parser_modified": false,
+      "stable_package_root_export_added": false,
+      "schema_v1_authority": "PlaneBerisEdwardsRunSpec",
+      "shared_declaration_module": "pssolver.configuration.plane_beris_edwards_declarations",
+      "pure_builder_module": "pssolver.configuration.plane_beris_edwards_builders",
+      "component_graph_module": "pssolver.configuration.plane_beris_edwards_component_graph",
+      "upper_adapter_module": "pssolver.configuration.plane_beris_edwards_components",
+      "component_class_physical_definition_module": "pssolver.configuration.plane_beris_edwards_component_graph",
+      "component_class_legacy_nominal_module": "pssolver.configuration.plane_beris_edwards_components",
+      "lower_aggregate_builder": "build_plane_beris_edwards_run_components",
+      "lower_aggregate_builder_direct_module_only": true,
+      "legacy_nominal_module_preserved": true,
+      "legacy_protocol4_pickle_bytes_preserved": true,
+      "component_protocol4_pickle_oracles_preserved": 8,
+      "facade_and_package_exact_object_identity_preserved": true,
+      "production_source_inventory_changed": true,
+      "production_source_inventory_additions": [
+        "pssolver/configuration/plane_beris_edwards_builders.py",
+        "pssolver/configuration/plane_beris_edwards_declarations.py"
+      ],
+      "disconnected_modules_excluded_from_production_inventory": [
+        "pssolver/configuration/plane_beris_edwards_component_graph.py",
+        "pssolver/configuration/plane_beris_edwards_components.py"
+      ],
+      "delegated_views": [
+        "domain",
+        "geometry",
+        "numerics",
+        "shendruk_preset"
+      ],
+      "facade_to_upper_adapter_top_level_import_allowed": false,
+      "facade_to_component_graph_top_level_import_allowed": false,
+      "five_module_dag": [
+        "plane_beris_edwards -> plane_beris_edwards_builders",
+        "plane_beris_edwards -> plane_beris_edwards_declarations",
+        "plane_beris_edwards_component_graph -> plane_beris_edwards_builders",
+        "plane_beris_edwards_component_graph -> plane_beris_edwards_declarations",
+        "plane_beris_edwards_components -> plane_beris_edwards",
+        "plane_beris_edwards_components -> plane_beris_edwards_component_graph",
+        "plane_beris_edwards_components -> plane_beris_edwards_declarations"
+      ],
+      "current_configuration_to_systems_exact_edge": "pssolver.configuration.plane_beris_edwards_component_graph -> pssolver.systems.stokes",
+      "dynamic_or_local_import_cycle_workaround_allowed": false,
+      "production_hermitian_axis_authority": "pssolver.plane.PLANE_HERMITIAN_AXIS",
+      "second_hermitian_axis_authority_added": false,
+      "view_cache_added": false,
+      "full_aggregate_constructed_for_view": false,
+      "flat_fields_retained": 54,
+      "existing_members_retained": 17,
+      "schema_v1_golden_cases_passed": 7,
+      "field_mutation_view_parity_cases_passed": 54,
+      "p2_3_focused_tests_passed": 161,
+      "expanded_compatibility_tests_passed": 360,
+      "full_cpu_tests_passed": 1581,
+      "full_cpu_subtests_passed": 8,
+      "fresh_sdist_contains_all_p2_3_modules": true,
+      "fresh_wheel_contains_all_p2_3_modules": true,
+      "packaged_modules_verified": [
+        "pssolver.configuration.plane_beris_edwards_declarations",
+        "pssolver.configuration.plane_beris_edwards_builders",
+        "pssolver.configuration.plane_beris_edwards_component_graph",
+        "pssolver.configuration.plane_beris_edwards_components"
+      ],
+      "isolated_wheel_legacy_pickle_smoke_passed": true,
+      "isolated_wheel_delegation_smoke_passed": true,
+      "installed_console_entry_smoke_passed": true,
       "requires_before_reverse_facade_dependency": [
         "move shared Plane declarations to a dependency-neutral canonical leaf",
         "split or relocate the facade-specific decomposition adapter",
         "retain an explicitly qualified one-way adapter seam"
-      ]
+      ],
+      "requirements_satisfied": true,
+      "next_phase": "P2.4 explicit schema-v1 compatibility serializer"
     },
     {
       "id": "P2.4",

@@ -52,6 +52,12 @@ COMPONENT_MODULE = (
     / "configuration"
     / "plane_beris_edwards_components.py"
 )
+COMPONENT_GRAPH_MODULE = (
+    PROJECT_ROOT
+    / "pssolver"
+    / "configuration"
+    / "plane_beris_edwards_component_graph.py"
+)
 FACADE_MODULE = (
     PROJECT_ROOT / "pssolver" / "configuration" / "plane_beris_edwards.py"
 )
@@ -322,6 +328,19 @@ IDENTITY_FIELDS = tuple(item.name for item in fields(PlaneBerisEdwardsRunSpec))
 def test_each_of_the_54_flat_fields_is_recoverable(field_name):
     assert set(IDENTITY_MUTATIONS) | {"boundaries"} == set(IDENTITY_FIELDS)
     _round_trip(_identity_variant(field_name))
+
+
+@pytest.mark.parametrize("field_name", IDENTITY_FIELDS)
+def test_each_field_keeps_delegated_views_equal_to_adapter_components(
+    field_name,
+):
+    spec = _identity_variant(field_name)
+    components, _ = _round_trip(spec)
+
+    assert spec.domain == components.geometry.domain
+    assert spec.geometry == components.geometry
+    assert spec.numerics == components.numerics
+    assert spec.shendruk_preset == components.preset
 
 
 def test_asymmetric_values_land_in_their_independent_component_owners():
@@ -634,6 +653,10 @@ def test_adapter_is_leaf_only_and_production_consumers_remain_disconnected():
     assert "pssolver/configuration/plane_beris_edwards_components.py" not in (
         PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     )
+    assert (
+        "pssolver/configuration/plane_beris_edwards_component_graph.py"
+        not in PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
+    )
 
     facade_source = FACADE_MODULE.read_text(encoding="utf-8")
     assert "plane_beris_edwards_components" not in facade_source
@@ -683,7 +706,7 @@ def test_adapter_is_leaf_only_and_production_consumers_remain_disconnected():
     assert derived_facade_views == set()
 
     for path in sorted((PROJECT_ROOT / "pssolver").rglob("*.py")):
-        if path == COMPONENT_MODULE:
+        if path in {COMPONENT_MODULE, COMPONENT_GRAPH_MODULE}:
             continue
         source = path.read_text(encoding="utf-8")
         assert "plane_beris_edwards_components" not in source

@@ -17,8 +17,10 @@ from dataclasses import (
     replace,
 )
 from fractions import Fraction
+import hashlib
 import json
 from pathlib import Path
+import pickle
 
 import pytest
 
@@ -79,6 +81,12 @@ PLANE_COMPONENTS = (
     / "pssolver"
     / "configuration"
     / "plane_beris_edwards_components.py"
+)
+PLANE_COMPONENT_GRAPH = (
+    PROJECT_ROOT
+    / "pssolver"
+    / "configuration"
+    / "plane_beris_edwards_component_graph.py"
 )
 
 
@@ -272,6 +280,65 @@ def _components(**overrides: object) -> PlaneBerisEdwardsRunComponents:
     }
     values.update(overrides)
     return PlaneBerisEdwardsRunComponents(**values)
+
+
+def test_component_graph_extraction_preserves_protocol4_pickle_oracles():
+    values = {
+        "PlaneBerisEdwardsPhysicsSpec": PlaneBerisEdwardsPhysicsSpec,
+        "PlaneTimeSteppingSpec": PlaneTimeSteppingSpec,
+        "PlaneBerisEdwardsExecutionSpec": PlaneBerisEdwardsExecutionSpec,
+        "PlaneWorkflowSpec": PlaneWorkflowSpec,
+        "PlaneInvocationSpec": PlaneInvocationSpec,
+        "PlaneBerisEdwardsRunComponents": PlaneBerisEdwardsRunComponents,
+        "representative_physics": _physics(),
+        "representative_components": _components(),
+    }
+    oracles = {
+        "PlaneBerisEdwardsPhysicsSpec": (
+            101,
+            "9b249577e6c264d6fa5e93f46914e380ed8005aa49c7f1ed5e05418471df94c4",
+        ),
+        "PlaneTimeSteppingSpec": (
+            94,
+            "16aadde85f367f1ccf355d4d5b752edc4174cbdb54b23413d6bd1b5d17f70b43",
+        ),
+        "PlaneBerisEdwardsExecutionSpec": (
+            103,
+            "e76958558d254ab8ba50331ac23b5117e06e630e635cf49de05515eaccc23d26",
+        ),
+        "PlaneWorkflowSpec": (
+            90,
+            "c4c86b5a106976a5641234070ef89be82943af6b341ef2875f69a94d3f497bf7",
+        ),
+        "PlaneInvocationSpec": (
+            92,
+            "21460de5b3bff745342169653ef7d855dc9995095e62d5cf80369a1ff4843719",
+        ),
+        "PlaneBerisEdwardsRunComponents": (
+            103,
+            "f92fab39c5c5f07bd59966b5fa8176cd53813b2516ed1809b5a0bb1a4ceb8dad",
+        ),
+        "representative_physics": (
+            602,
+            "6e9855bc3a245a3b8b50a6519d3d3c4b7a8723865e38a29be31f2fb5c4c8ed4b",
+        ),
+        "representative_components": (
+            2318,
+            "8900133d1a932248ca599e0c0fc331d624674afc054dff2c520ee76393148cd4",
+        ),
+    }
+
+    assert set(values) == set(oracles)
+    for name, value in values.items():
+        payload = pickle.dumps(value, protocol=4)
+        expected_length, expected_sha256 = oracles[name]
+        assert len(payload) == expected_length
+        assert hashlib.sha256(payload).hexdigest() == expected_sha256
+        restored = pickle.loads(payload)
+        if isinstance(value, type):
+            assert restored is value
+        else:
+            assert restored == value
 
 
 def _representative_values() -> tuple[object, ...]:
@@ -907,12 +974,19 @@ def test_new_leaf_modules_preserve_the_dependency_boundary():
     }
     assert _import_roots(PLANE_COMPONENTS) == {
         "__future__",
+        "relative:plane_beris_edwards",
+        "relative:plane_beris_edwards_component_graph",
+        "relative:plane_beris_edwards_declarations",
+    }
+    assert _import_roots(PLANE_COMPONENT_GRAPH) == {
+        "__future__",
         "dataclasses",
         "math",
         "numbers",
         "pathlib",
         "pssolver",
-        "relative:plane_beris_edwards",
+        "relative:plane_beris_edwards_builders",
+        "relative:plane_beris_edwards_declarations",
     }
 
     forbidden_text = (
@@ -929,12 +1003,16 @@ def test_new_leaf_modules_preserve_the_dependency_boundary():
         "pssolver.plane",
         "pssolver.transforms",
     )
-    for path in (MODEL_SPECIFICATIONS, PLANE_COMPONENTS):
+    for path in (
+        MODEL_SPECIFICATIONS,
+        PLANE_COMPONENTS,
+        PLANE_COMPONENT_GRAPH,
+    ):
         source = path.read_text(encoding="utf-8")
         assert all(name not in source for name in forbidden_text)
-    component_source = PLANE_COMPONENTS.read_text(encoding="utf-8")
-    assert "from pssolver.systems.stokes import" in component_source
-    assert "from pssolver.execution" not in component_source
+    graph_source = PLANE_COMPONENT_GRAPH.read_text(encoding="utf-8")
+    assert "from pssolver.systems.stokes import" in graph_source
+    assert "from pssolver.execution" not in graph_source
 
 
 def test_phase2_components_and_adapter_remain_provisional_and_disconnected():
