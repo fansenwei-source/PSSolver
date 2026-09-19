@@ -2,8 +2,9 @@
 
 The test is intentionally a ratchet, not a claim that the v0.1.2 tree already
 has the target architecture.  New dependencies must follow the accepted
-direction.  Eight legacy edges are named exactly so that a broad exemption
-cannot hide new coupling and removing a debt requires removing its allowance.
+direction.  Seven remaining legacy edges are named exactly so that a broad
+exemption cannot hide new coupling and removing a debt requires removing its
+allowance.
 """
 
 from __future__ import annotations
@@ -89,7 +90,6 @@ EXPECTED_LEGACY_EXCEPTIONS = {
     ImportEdge("pssolver.runtime.plane_legacy", "pssolver.integrator"),
     ImportEdge("pssolver.runtime.plane_legacy", "pssolver.plane"),
     ImportEdge("pssolver.runtime.plane_legacy", "pssolver.solver"),
-    ImportEdge("pssolver.runtime.plane_legacy", "pssolver.transforms"),
     ImportEdge(
         "pssolver.runtime.plane_beris_edwards",
         "pssolver.experimental.plane_shadow_driver",

@@ -48,7 +48,7 @@ from pssolver.models.active_nematics.constitutive import (
     BerisEdwardsPlaneCoupledModel,
 )
 from pssolver.models.active_nematics.fields import Q_COMPONENTS
-from pssolver.transforms import (
+from pssolver.operators.tensor_divergence import (
     projected_common_basis_stress_divergence,
     projected_distortion_stress_divergence,
 )

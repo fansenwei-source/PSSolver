@@ -26,7 +26,7 @@ from pssolver.models.active_nematics import (
 )
 from pssolver.plane import PLANE_HERMITIAN_AXIS
 from pssolver.solver import SpectralSolver
-from pssolver.transforms import BasisAwareSpectralProjector
+from pssolver.operators.projection import BasisAwareSpectralProjector
 
 
 _LEGACY_BOUNDARIES = PLANE_FREE_SLIP_BOUNDARIES.to_legacy()

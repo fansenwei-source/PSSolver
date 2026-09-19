@@ -74,7 +74,7 @@ from pssolver.models.active_nematics import (
     create_initial_condition,
     sample_periodic_neutral_defects_2d,
 )
-from pssolver.transforms import (
+from pssolver.operators.projection import (
     DEALIAS_RULE_FRACTIONS,
 )
 from tqdm import trange

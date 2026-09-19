@@ -21,7 +21,9 @@ from pssolver.execution import (
     TangentialZeroModePolicy,
 )
 from pssolver.geometries import PlaneSlab, RectangularChannel
-from pssolver.transforms import FreeSlipModalStokesSolver
+from pssolver.linear_solvers.stokes.plane_free_slip import (
+    FreeSlipModalStokesSolver,
+)
 
 from .model_execution import LegacyAlgebraicSolverContext
 

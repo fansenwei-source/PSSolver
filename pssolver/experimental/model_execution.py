@@ -46,7 +46,7 @@ from pssolver.execution import (
 )
 from pssolver.planning import SpectralPlan, assemble_spectral_plan
 from pssolver.solver import SpectralSolver
-from pssolver.transforms import BasisAwareSpectralProjector
+from pssolver.operators.projection import BasisAwareSpectralProjector
 
 from .legacy_assembly import (
     LegacyAssemblySpec,

@@ -28,7 +28,7 @@ from pssolver.core.numerics import (
 )
 from pssolver.planning import SpectralPlan
 from pssolver.solver import SpectralSolver
-from pssolver.transforms import BasisAwareSpectralProjector
+from pssolver.operators.projection import BasisAwareSpectralProjector
 
 
 @dataclass(frozen=True, slots=True)

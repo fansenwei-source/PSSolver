@@ -2,7 +2,7 @@ import torch
 from .Field import DEFAULT_TRANSFORM_GROUP_INDEXING
 from .integrator import SemiImplicitEulerIntegrator
 from .PDEmodel import PDEModel
-from .transforms import (
+from .backends.tensor_product import (
     DEFAULT_PERIODIC_TRANSFORM_EXECUTION,
     DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
