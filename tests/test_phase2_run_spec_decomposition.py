@@ -640,7 +640,7 @@ def test_decomposition_rejects_non_facade_inputs(value):
         decompose_plane_beris_edwards_run_spec(value)
 
 
-def test_adapter_is_leaf_only_and_production_consumers_remain_disconnected():
+def test_adapter_stays_private_and_only_legacy_runtime_is_migrated():
     import pssolver.configuration.plane_beris_edwards_components as components
 
     name = "decompose_plane_beris_edwards_run_spec"
@@ -650,26 +650,31 @@ def test_adapter_is_leaf_only_and_production_consumers_remain_disconnected():
     assert name not in configuration_package.__all__
     assert not hasattr(pssolver, name)
     assert not hasattr(configuration_package, name)
-    assert "pssolver/configuration/plane_beris_edwards_components.py" not in (
+    assert "pssolver/configuration/plane_beris_edwards_components.py" in (
         PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     )
     assert (
         "pssolver/configuration/plane_beris_edwards_component_graph.py"
-        not in PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
+        in PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     )
 
     facade_source = FACADE_MODULE.read_text(encoding="utf-8")
-    assert "plane_beris_edwards_components" not in facade_source
+    assert "from .plane_beris_edwards_components" not in facade_source
     assert name not in facade_source
     for relative in (
         "pssolver/applications/plane_beris_edwards.py",
         "pssolver/runtime/plane_beris_edwards.py",
-        "pssolver/runtime/plane_legacy.py",
         "pssolver/workflows/plane_beris_edwards.py",
     ):
         source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
         assert "plane_beris_edwards_components" not in source
         assert name not in source
+
+    legacy_runtime_source = (
+        PROJECT_ROOT / "pssolver/runtime/plane_legacy.py"
+    ).read_text(encoding="utf-8")
+    assert "plane_beris_edwards_components" in legacy_runtime_source
+    assert legacy_runtime_source.count(name) == 2
 
     tree = ast.parse(
         COMPONENT_MODULE.read_text(encoding="utf-8"),
@@ -706,7 +711,12 @@ def test_adapter_is_leaf_only_and_production_consumers_remain_disconnected():
     assert derived_facade_views == set()
 
     for path in sorted((PROJECT_ROOT / "pssolver").rglob("*.py")):
-        if path in {COMPONENT_MODULE, COMPONENT_GRAPH_MODULE}:
+        if path in {
+            COMPONENT_MODULE,
+            COMPONENT_GRAPH_MODULE,
+            FACADE_MODULE,
+            PROJECT_ROOT / "pssolver/runtime/plane_legacy.py",
+        }:
             continue
         source = path.read_text(encoding="utf-8")
         assert "plane_beris_edwards_components" not in source

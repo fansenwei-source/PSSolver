@@ -1015,7 +1015,7 @@ def test_new_leaf_modules_preserve_the_dependency_boundary():
     assert "from pssolver.execution" not in graph_source
 
 
-def test_phase2_components_and_adapter_remain_provisional_and_disconnected():
+def test_components_remain_provisional_with_one_migrated_consumer():
     provisional_names = {
         "BerisEdwardsMaterialRequest",
         "ExtrudedDefectGasInitialConditionSpec",
@@ -1047,20 +1047,32 @@ def test_phase2_components_and_adapter_remain_provisional_and_disconnected():
     assert "PlaneBerisEdwardsRunComponents" in components.__all__
     assert hasattr(components, "decompose_plane_beris_edwards_run_spec")
     assert "decompose_plane_beris_edwards_run_spec" in components.__all__
-    assert "pssolver/models/active_nematics/specifications.py" not in (
+    assert "pssolver/models/active_nematics/specifications.py" in (
         PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     )
-    assert "pssolver/configuration/plane_beris_edwards_components.py" not in (
+    assert "pssolver/configuration/plane_beris_edwards_components.py" in (
         PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     )
 
+    facade_source = (
+        PROJECT_ROOT / "pssolver/configuration/plane_beris_edwards.py"
+    ).read_text(encoding="utf-8")
+    assert "from .plane_beris_edwards_components" not in facade_source
+    assert "from pssolver.models.active_nematics.specifications" not in (
+        facade_source
+    )
+
     for relative in (
-        "pssolver/configuration/plane_beris_edwards.py",
         "pssolver/applications/plane_beris_edwards.py",
         "pssolver/runtime/plane_beris_edwards.py",
-        "pssolver/runtime/plane_legacy.py",
         "pssolver/workflows/plane_beris_edwards.py",
     ):
         source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
         assert "plane_beris_edwards_components" not in source
         assert "active_nematics.specifications" not in source
+
+    legacy_runtime_source = (
+        PROJECT_ROOT / "pssolver/runtime/plane_legacy.py"
+    ).read_text(encoding="utf-8")
+    assert "plane_beris_edwards_components" in legacy_runtime_source
+    assert "active_nematics.specifications" not in legacy_runtime_source

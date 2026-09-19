@@ -392,8 +392,8 @@ def test_p2_3_module_graph_is_one_way_and_has_no_hidden_import_workaround():
         and node.module == "plane_beris_edwards_declarations"
         for node in _top_level_imports(graph_tree)
     )
-    assert "plane_beris_edwards_components" not in facade_source
-    assert "plane_beris_edwards_component_graph" not in facade_source
+    assert "from .plane_beris_edwards_components" not in facade_source
+    assert "from .plane_beris_edwards_component_graph" not in facade_source
     assert "plane_beris_edwards_declarations" in facade_source
     assert "plane_beris_edwards_builders" in facade_source
     assert "plane_beris_edwards_declarations" in component_source

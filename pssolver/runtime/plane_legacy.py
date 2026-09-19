@@ -16,6 +16,9 @@ from pssolver.configuration import (
     PLANE_FREE_SLIP_BOUNDARIES,
     PlaneBerisEdwardsRunSpec,
 )
+from pssolver.configuration.plane_beris_edwards_components import (
+    decompose_plane_beris_edwards_run_spec,
+)
 from pssolver.integrator import SemiImplicitEulerIntegrator
 from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
@@ -24,7 +27,6 @@ from pssolver.models.active_nematics import (
     BerisEdwardsQNonlinearModel,
     beris_edwards_linear_operator,
 )
-from pssolver.plane import PLANE_HERMITIAN_AXIS
 from pssolver.solver import SpectralSolver
 from pssolver.operators.projection import BasisAwareSpectralProjector
 
@@ -125,42 +127,55 @@ def build_legacy_plane_runtime(
     if not isinstance(initial_values, Mapping):
         raise TypeError("initial_values must be a mapping")
 
-    real_dtype = _real_dtype(run_spec.dtype)
-    preset = run_spec.shendruk_preset
-    friction = (
-        0.0
-        if run_spec.zero_mode_policy == "zero_mean"
-        else float(run_spec.friction_mode_fric)
-    )
+    components = decompose_plane_beris_edwards_run_spec(run_spec)
+    domain = components.geometry.domain
+    numerics = components.numerics
+    material = components.physics.material
+    stokes_request = components.physics.stokes
+    preset = components.preset
+    time_stepping = components.time_stepping
+    execution = components.execution
+    workflow = components.workflow
+    boundaries = components.effective_boundaries.to_legacy()
+    q_boundaries = boundaries["q"]
+    tangential_velocity_boundaries = boundaries["tangential_velocity"]
+    normal_velocity_boundaries = boundaries["normal_velocity"]
+    pressure_modal_boundaries = boundaries["pressure_modal"]
+
+    real_dtype = _real_dtype(numerics.precision.value)
     pointwise_kernels = BerisEdwardsPointwiseKernels(
-        run_spec.pointwise_execution
+        execution.pointwise_execution
     )
 
     solver = SpectralSolver(
-        shape=(run_spec.nx, run_spec.ny, run_spec.nz),
-        L=(run_spec.lx, run_spec.ly, run_spec.height),
-        dt=run_spec.dt,
+        shape=domain.shape,
+        L=domain.lengths,
+        dt=time_stepping.dt,
         device=device,
         batchsize=1,
         dtype=real_dtype,
-        transform_execution_order=run_spec.transform_execution_order,
-        spectral_storage=run_spec.spectral_storage,
-        hermitian_axis=PLANE_HERMITIAN_AXIS,
+        transform_execution_order=(
+            numerics.transform_execution_order.value
+        ),
+        spectral_storage=numerics.spectral_storage.value,
+        hermitian_axis=components.geometry.periodic_axes[-1],
     )
     spectral_projector = BasisAwareSpectralProjector(
         solver,
-        rule=run_spec.dealias_rule,
-        transform_execution=run_spec.projected_transform_execution,
+        rule=numerics.dealias_rule.value,
+        transform_execution=(
+            numerics.projected_transform_execution.value
+        ),
     )
     solver.model.spectral_projector = spectral_projector
     solver.model.set_static_inverse_transform(
         spectral_projector.inverse_transform
     )
     solver.integrator_cl = DealiasedSemiImplicitEulerIntegrator
-    q2_q = solver.get_q2(Q_BOUNDARIES)
+    q2_q = solver.get_q2(q_boundaries)
     q_linear_operator = beris_edwards_linear_operator(
         q2_q,
-        ldg_a=run_spec.ldg_a,
+        ldg_a=material.ldg_a,
         ldg_l1=preset.ldg_l1,
         rotational_viscosity=preset.rotational_viscosity,
     )
@@ -169,34 +184,34 @@ def build_legacy_plane_runtime(
             name,
             init=initial_value,
             L_hat=q_linear_operator,
-            boundary_conditions=Q_BOUNDARIES,
+            boundary_conditions=q_boundaries,
         )
     solver.model.add_static_field(
-        "ux", boundary_conditions=TANGENTIAL_VELOCITY_BOUNDARIES
+        "ux", boundary_conditions=tangential_velocity_boundaries
     )
     solver.model.add_static_field(
-        "uy", boundary_conditions=TANGENTIAL_VELOCITY_BOUNDARIES
+        "uy", boundary_conditions=tangential_velocity_boundaries
     )
     solver.model.add_static_field(
-        "uz", boundary_conditions=NORMAL_VELOCITY_BOUNDARIES
+        "uz", boundary_conditions=normal_velocity_boundaries
     )
     solver.model.add_static_field(
-        "p", boundary_conditions=PRESSURE_MODAL_BOUNDARIES
+        "p", boundary_conditions=pressure_modal_boundaries
     )
 
     q_gradient_cache = (
         None
-        if run_spec.disable_q_gradient_reuse
+        if execution.disable_q_gradient_reuse
         else BerisEdwardsQGradientCache()
     )
     solver.model.set_nonlinear_model(
         BerisEdwardsQNonlinearModel(
             spectral_projector,
-            Q_BOUNDARIES,
-            ldg_b=run_spec.ldg_b,
-            ldg_c=run_spec.ldg_c,
+            q_boundaries,
+            ldg_b=material.ldg_b,
+            ldg_c=material.ldg_c,
             rotational_viscosity=preset.rotational_viscosity,
-            flow_alignment=run_spec.flow_alignment,
+            flow_alignment=material.flow_alignment,
             q_gradient_cache=q_gradient_cache,
             pointwise_kernels=pointwise_kernels,
         )
@@ -205,25 +220,27 @@ def build_legacy_plane_runtime(
         BerisEdwardsFreeSlipStokes(
             solver,
             spectral_projector=spectral_projector,
-            beta_value=run_spec.beta,
-            friction=friction,
-            viscosity=run_spec.eta,
-            ldg_a=run_spec.ldg_a,
-            ldg_b=run_spec.ldg_b,
-            ldg_c=run_spec.ldg_c,
+            beta_value=material.beta,
+            friction=stokes_request.friction,
+            viscosity=stokes_request.viscosity,
+            ldg_a=material.ldg_a,
+            ldg_b=material.ldg_b,
+            ldg_c=material.ldg_c,
             ldg_l1=preset.ldg_l1,
-            flow_alignment=run_spec.flow_alignment,
+            flow_alignment=material.flow_alignment,
             molecular_field_linear_space=(
-                run_spec.molecular_field_linear_space
+                execution.molecular_field_linear_space
             ),
             stress_divergence_sum_space=(
-                run_spec.stress_divergence_sum_space
+                execution.stress_divergence_sum_space
             ),
-            cache_force_diagnostics=run_spec.diagnostics,
-            cache_pressure_diagnostics=run_spec.diagnostics,
+            cache_force_diagnostics=workflow.diagnostics,
+            cache_pressure_diagnostics=workflow.diagnostics,
             q_gradient_cache=q_gradient_cache,
             pointwise_kernels=pointwise_kernels,
-            zero_mode_policy=run_spec.zero_mode_policy,
+            zero_mode_policy=(
+                stokes_request.tangential_zero_mode_policy.value
+            ),
         )
     )
     alpha = torch.tensor(
@@ -234,7 +251,7 @@ def build_legacy_plane_runtime(
     solver.model.parameters.new_param("alpha", alpha)
     solver.build()
     solver.integrator.set_spectral_refresh_interval(
-        run_spec.spectral_refresh_interval_steps
+        time_stepping.spectral_refresh.effective_interval_steps
     )
     spectral_projector.project_dynamic_fields(
         solver.model.fields,

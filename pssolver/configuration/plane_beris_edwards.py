@@ -93,6 +93,8 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/adapters/legacy_boundaries.py",
     "pssolver/configuration/__init__.py",
     "pssolver/configuration/plane_beris_edwards_builders.py",
+    "pssolver/configuration/plane_beris_edwards_component_graph.py",
+    "pssolver/configuration/plane_beris_edwards_components.py",
     "pssolver/configuration/plane_beris_edwards_declarations.py",
     "pssolver/configuration/plane_beris_edwards_schema_v1.py",
     "pssolver/configuration/plane_beris_edwards.py",
@@ -112,10 +114,14 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/models/active_nematics/fields.py",
     "pssolver/models/active_nematics/q_tensor.py",
     "pssolver/models/active_nematics/beris_edwards.py",
+    "pssolver/models/active_nematics/specifications.py",
     "pssolver/models/active_nematics/stokes.py",
     "pssolver/models/active_nematics/initial_conditions.py",
     "pssolver/presets/__init__.py",
     "pssolver/presets/shendruk.py",
+    "pssolver/systems/__init__.py",
+    "pssolver/systems/algebraic.py",
+    "pssolver/systems/stokes.py",
 )
 
 

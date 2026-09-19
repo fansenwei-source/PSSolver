@@ -98,7 +98,6 @@ EXPECTED_LEGACY_EXCEPTIONS = {
         "pssolver.configuration.plane_beris_edwards", "pssolver.transforms"
     ),
     ImportEdge("pssolver.runtime.plane_legacy", "pssolver.integrator"),
-    ImportEdge("pssolver.runtime.plane_legacy", "pssolver.plane"),
     ImportEdge("pssolver.runtime.plane_legacy", "pssolver.solver"),
     ImportEdge(
         "pssolver.runtime.plane_beris_edwards",

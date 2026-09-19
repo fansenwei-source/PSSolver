@@ -52,6 +52,35 @@ FLAT_RUNTIME_READS = {
     "transform_execution_order",
     "zero_mode_policy",
 }
+COMPONENT_OWNERS = {
+    "geometry": {"height", "lx", "ly", "nx", "ny", "nz"},
+    "numerics": {
+        "dealias_rule",
+        "dtype",
+        "projected_transform_execution",
+        "spectral_storage",
+        "transform_execution_order",
+    },
+    "physics": {
+        "beta",
+        "eta",
+        "flow_alignment",
+        "friction_mode_fric",
+        "ldg_a",
+        "ldg_b",
+        "ldg_c",
+        "shendruk_preset",
+        "zero_mode_policy",
+    },
+    "time_stepping": {"dt", "spectral_refresh_interval_steps"},
+    "execution": {
+        "disable_q_gradient_reuse",
+        "molecular_field_linear_space",
+        "pointwise_execution",
+        "stress_divergence_sum_space",
+    },
+    "workflow": {"diagnostics"},
+}
 
 
 def _spec(tmp_path: Path, **overrides: object):
@@ -122,8 +151,32 @@ def _run_spec_reads() -> set[str]:
     }
 
 
-def test_legacy_runtime_flat_facade_read_set_is_frozen_before_migration():
-    assert _run_spec_reads() == FLAT_RUNTIME_READS
+def test_legacy_runtime_consumes_one_component_graph_without_flat_field_reads(
+    tmp_path,
+    monkeypatch,
+):
+    assert set().union(*COMPONENT_OWNERS.values()) == FLAT_RUNTIME_READS
+    assert _run_spec_reads() == set()
+
+    spec = _spec(tmp_path)
+    calls = []
+    original = plane_legacy.decompose_plane_beris_edwards_run_spec
+
+    def spy(value):
+        calls.append(value)
+        return original(value)
+
+    monkeypatch.setattr(
+        plane_legacy,
+        "decompose_plane_beris_edwards_run_spec",
+        spy,
+    )
+    plane_legacy.build_legacy_plane_runtime(
+        spec,
+        device="cpu",
+        initial_values=_initial_values(),
+    )
+    assert calls == [spec]
 
 
 def test_legacy_runtime_object_graph_preserves_all_resolved_choices(tmp_path):

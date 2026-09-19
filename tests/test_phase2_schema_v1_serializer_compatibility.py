@@ -353,14 +353,14 @@ def test_serializer_module_is_a_one_way_leaf_without_component_or_consumer_edges
         assert "plane_beris_edwards_schema_v1" not in consumer_source
 
 
-def test_serializer_is_in_production_source_inventory_without_component_graph():
+def test_serializer_and_migrated_component_graph_are_in_source_inventory():
     assert "pssolver/configuration/plane_beris_edwards_schema_v1.py" in (
         PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     )
-    assert "pssolver/configuration/plane_beris_edwards_components.py" not in (
+    assert "pssolver/configuration/plane_beris_edwards_components.py" in (
         PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     )
     assert (
         "pssolver/configuration/plane_beris_edwards_component_graph.py"
-        not in PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
+        in PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     )
