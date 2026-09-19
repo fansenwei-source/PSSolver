@@ -23,8 +23,6 @@ import pytest
 import pssolver
 import pssolver.execution as execution
 from pssolver.execution import (
-    AlgebraicSystemSpec,
-    AlgebraicUpdatePhase,
     INCOMPRESSIBLE_STOKES_CAPABILITY,
     IncompressibleStokesSystemSpec,
     PressureGauge,
@@ -32,6 +30,12 @@ from pssolver.execution import (
 )
 from pssolver.execution import algebraic as algebraic_module
 from pssolver.execution import stokes as stokes_module
+import pssolver.systems as systems_package
+from pssolver.systems import algebraic as canonical_algebraic_module
+from pssolver.systems.algebraic import (
+    AlgebraicSystemSpec,
+    AlgebraicUpdatePhase,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -185,20 +189,30 @@ def _stokes_spec(
 
 
 @pytest.mark.parametrize(
-    ("value_type", "oracle_name"),
+    ("value_type", "oracle_name", "module_key"),
     (
-        (AlgebraicSystemSpec, "algebraic_system_spec"),
+        (
+            AlgebraicSystemSpec,
+            "algebraic_system_spec",
+            "target_canonical_module",
+        ),
         (
             IncompressibleStokesSystemSpec,
             "incompressible_stokes_system_spec",
+            "pre_extraction_module",
         ),
     ),
 )
-def test_dataclass_surfaces_match_pre_extraction_oracle(value_type, oracle_name):
+def test_dataclass_surfaces_match_characterization_oracle(
+    value_type,
+    oracle_name,
+    module_key,
+):
     oracle = API[oracle_name]
     observed_fields = list(fields(value_type))
 
-    assert value_type.__module__ == oracle["pre_extraction_module"]
+    assert oracle["pre_extraction_module"] == oracle["legacy_module"]
+    assert value_type.__module__ == oracle[module_key]
     assert oracle["legacy_module"].startswith("pssolver.execution.")
     assert oracle["target_canonical_module"].startswith("pssolver.systems.")
     assert value_type.__qualname__ == oracle["qualname"]
@@ -225,12 +239,19 @@ def test_dataclass_surfaces_match_pre_extraction_oracle(value_type, oracle_name)
 
 def test_execution_exports_and_root_absence_match_oracle():
     algebraic_names = {"AlgebraicSystemSpec", "AlgebraicUpdatePhase"}
-    stokes_names = set(API["execution_exports"]) - algebraic_names
 
     for name in API["execution_exports"]:
         assert name in execution.__all__
         leaf = algebraic_module if name in algebraic_names else stokes_module
         assert getattr(execution, name) is getattr(leaf, name)
+        if name in algebraic_names:
+            assert getattr(execution, name) is getattr(
+                canonical_algebraic_module,
+                name,
+            )
+    assert systems_package.__all__ == []
+    for name in algebraic_names:
+        assert not hasattr(systems_package, name)
     for name in API["root_absent"]:
         assert name not in pssolver.__all__
         assert not hasattr(pssolver, name)
@@ -240,17 +261,30 @@ def test_execution_exports_and_root_absence_match_oracle():
 
 
 @pytest.mark.parametrize(
-    ("enum_type", "oracle_name"),
+    ("enum_type", "oracle_name", "module_key"),
     (
-        (AlgebraicUpdatePhase, "algebraic_update_phase"),
-        (PressureGauge, "pressure_gauge"),
-        (TangentialZeroModePolicy, "tangential_zero_mode_policy"),
+        (
+            AlgebraicUpdatePhase,
+            "algebraic_update_phase",
+            "target_canonical_module",
+        ),
+        (PressureGauge, "pressure_gauge", "pre_extraction_module"),
+        (
+            TangentialZeroModePolicy,
+            "tangential_zero_mode_policy",
+            "pre_extraction_module",
+        ),
     ),
 )
-def test_enum_surfaces_identity_and_pickle_match_oracle(enum_type, oracle_name):
+def test_enum_surfaces_identity_and_pickle_match_oracle(
+    enum_type,
+    oracle_name,
+    module_key,
+):
     oracle = API[oracle_name]
 
-    assert enum_type.__module__ == oracle["pre_extraction_module"]
+    assert oracle["pre_extraction_module"] == oracle["legacy_module"]
+    assert enum_type.__module__ == oracle[module_key]
     assert oracle["legacy_module"].startswith("pssolver.execution.")
     assert oracle["target_canonical_module"].startswith("pssolver.systems.")
     assert enum_type.__qualname__ == oracle["qualname"]
@@ -420,6 +454,7 @@ def test_algebraic_validation_matrix_is_frozen(case):
 
 def test_algebraic_class_global_loads_but_instances_remain_unpickleable():
     for module_name in (
+        "pssolver.systems.algebraic",
         "pssolver.execution.algebraic",
         "pssolver.execution",
     ):
@@ -427,6 +462,11 @@ def test_algebraic_class_global_loads_but_instances_remain_unpickleable():
             f"c{module_name}\nAlgebraicSystemSpec\n.".encode("ascii")
         )
         assert pickle.loads(payload) is AlgebraicSystemSpec
+    for protocol in (0, 2, 4, pickle.HIGHEST_PROTOCOL):
+        assert (
+            pickle.loads(pickle.dumps(AlgebraicSystemSpec, protocol=protocol))
+            is AlgebraicSystemSpec
+        )
     value = _algebraic_spec()
     for protocol in (0, 2, 4, pickle.HIGHEST_PROTOCOL):
         with pytest.raises(
@@ -662,7 +702,11 @@ def test_legacy_algebraic_update_phase_pickles_and_globals_remain_loadable():
         is AlgebraicUpdatePhase.PRE_EXPLICIT_RHS
     )
 
-    for module_name in ("pssolver.execution.algebraic", "pssolver.execution"):
+    for module_name in (
+        "pssolver.systems.algebraic",
+        "pssolver.execution.algebraic",
+        "pssolver.execution",
+    ):
         payload = (
             f"c{module_name}\nAlgebraicUpdatePhase\n.".encode("ascii")
         )

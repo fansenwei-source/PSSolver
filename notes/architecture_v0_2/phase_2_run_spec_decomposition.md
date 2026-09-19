@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.1S_CHARACTERIZATION_COMPLETE_ALGEBRAIC_EXTRACTION_PENDING`
+Status: `P2.1S_ALGEBRAIC_EXTRACTION_COMPLETE_STOKES_EXTRACTION_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -359,16 +359,32 @@ test modules freeze:
   `f89ce8db5693770e6c999b2171265e153c748d160093511f375c13c1eebb1c7e`;
 - Plane algebraic restart-provenance SHA-256
   `e8808a592926bc47e855c7aaa246a0855606126b31f0a3850d6df6a3bdb24dbc`;
-- fresh-process import ordering through the current execution paths.
+- fresh-process import ordering through the canonical and legacy paths.
 
-The new focused suite contains 87 passing tests.  The combined P2.1S,
-Stage F/G, import-boundary, and Phase 2 compatibility/component gate contains
-258 passing tests.  The complete local CPU suite contains 1380 passing tests
-and 8 passing subtests.  An isolated wheel install preserves declaration
-identity and package-root non-exports, and the installed console-entry smoke
-passes.  The next P2.1S commit may mechanically extract only
-`AlgebraicUpdatePhase` and `AlgebraicSystemSpec`; the Stokes extraction remains
-a separate subsequent commit.
+The first implementation portion of P2.1S was completed on 2026-09-19.
+`AlgebraicUpdatePhase` and `AlgebraicSystemSpec` now have one canonical
+definition in `pssolver.systems.algebraic`.  The old
+`pssolver.execution.algebraic` and `pssolver.execution` paths are static
+exact-object compatibility facades; no wrapper, duplicate, subclass, dynamic
+import, runtime consumer, or numerical path was introduced.  The provisional
+`pssolver.systems` package root intentionally exports no declarations.
+
+The architecture ratchet now recognizes `systems` as tensor-free, allows only
+`systems -> {core, systems}` and the first real `execution -> systems` edge,
+and does not pre-authorize configuration, models, planning, or runtime to
+depend on the new layer.  The existing Stokes declaration remains canonical
+in `pssolver.execution.stokes`, while its typed-to-generic conversion returns
+the exact canonical algebraic type.
+
+The P2.1S focused suite now contains 89 passing tests.  The combined P2.1S,
+Stage F/G/H, import-boundary, and Phase 2 compatibility/component gate
+contains 271 passing tests.  The complete local CPU suite contains 1383
+passing tests and 8 passing subtests.  Fresh sdist and wheel archives contain
+both new systems files; an isolated wheel installation passes canonical and
+legacy identity, old-pickle loading, unchanged negative instance-pickle,
+package-root non-export, Stokes lowering, and console-entry smokes.  The next
+P2.1S commit is the separate mechanical extraction of the four Stokes
+declarations.
 
 ### P2.2: add pure decomposition and parity adapter
 

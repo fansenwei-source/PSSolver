@@ -1,4 +1,4 @@
-"""Golden restart-provenance gate for the P2.1S Stokes declaration."""
+"""Golden restart-provenance gate across the P2.1S algebraic extraction."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from pssolver.core import (
     TransformExecutionOrder,
 )
 from pssolver.execution import (
-    AlgebraicSystemSpec,
+    AlgebraicSystemSpec as LegacyAlgebraicSystemSpec,
     IncompressibleStokesSystemSpec,
     PressureGauge,
     TangentialZeroModePolicy,
@@ -30,6 +30,7 @@ from pssolver.experimental import (
 )
 from pssolver.geometries import PlaneSlab
 from pssolver.models.canary import BodyForceStokesCanaryModel
+from pssolver.systems.algebraic import AlgebraicSystemSpec
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -87,11 +88,12 @@ def _runtime():
     )
 
 
-def test_plane_stokes_restart_provenance_is_frozen_before_extraction():
+def test_plane_stokes_restart_provenance_is_preserved_after_algebraic_extraction():
     runtime = _runtime()
     resolved = runtime.resolved_algebraic_systems[0]
     restart = runtime.capture_algebraic_restart_state()
 
+    assert AlgebraicSystemSpec is LegacyAlgebraicSystemSpec
     assert type(resolved.system) is AlgebraicSystemSpec
     assert IncompressibleStokesSystemSpec.from_algebraic_system_spec(
         resolved.system

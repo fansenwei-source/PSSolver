@@ -29,6 +29,7 @@ class ImportEdge:
 # Applications are composition roots and are checked separately below.
 ALLOWED_INTERNAL_LAYERS = {
     "core": frozenset({"core"}),
+    "systems": frozenset({"core", "systems"}),
     "geometries": frozenset({"core", "geometries"}),
     "planning": frozenset({"core", "planning"}),
     "execution": frozenset(
@@ -39,6 +40,7 @@ ALLOWED_INTERNAL_LAYERS = {
             "linear_solvers",
             "operators",
             "planning",
+            "systems",
         }
     ),
     "backends": frozenset({"backends", "core", "planning"}),
@@ -97,7 +99,19 @@ EXPECTED_LEGACY_EXCEPTIONS = {
 }
 
 
-TENSOR_FREE_LAYERS = frozenset({"core", "geometries", "planning"})
+TENSOR_FREE_LAYERS = frozenset(
+    {"core", "geometries", "planning", "systems"}
+)
+
+
+def test_systems_layer_has_only_the_first_authorized_dependency_edges():
+    assert ALLOWED_INTERNAL_LAYERS["systems"] == frozenset(
+        {"core", "systems"}
+    )
+    assert "systems" in ALLOWED_INTERNAL_LAYERS["execution"]
+    assert "systems" in TENSOR_FREE_LAYERS
+    for layer in ("configuration", "models", "planning", "runtime"):
+        assert "systems" not in ALLOWED_INTERNAL_LAYERS[layer]
 
 
 def _module_name(path: Path) -> str:
