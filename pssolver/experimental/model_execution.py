@@ -1877,13 +1877,6 @@ class ExperimentalModelRuntime:
         if self.algebraic_fields_adapter is not None:
             self.algebraic_fields_adapter.clear_cached_outputs()
         self.solver.reset(initial_values)
-        rebind_runtime_state = getattr(
-            self.solver.integrator,
-            "rebind_runtime_state",
-            None,
-        )
-        if callable(rebind_runtime_state):
-            rebind_runtime_state()
         if self.projector.enabled:
             self.projector.project_dynamic_fields(
                 self.solver.fields,

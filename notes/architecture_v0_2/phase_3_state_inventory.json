@@ -21,6 +21,7 @@
     "p3_2_runtime_imports_workspace": false,
     "p3_3_step_program_connected": false,
     "p3_4_separated_canary_connected": true,
+    "p3_5_legacy_production_connected": true,
     "separated_canary_touched_before_p3_4": false
   },
   "ownership": {
@@ -71,7 +72,7 @@
     "stable_surfaces_unchanged": true
   },
   "schema_version": 1,
-  "status": "P3_4_SEPARATED_CANARY_H100_QUALIFIED",
+  "status": "P3_5_PRODUCTION_FACADE_CONNECTED_LOCAL",
   "timestep_oracle": [
     "synchronize_algebraic_if_needed",
     "pre_update_callback",

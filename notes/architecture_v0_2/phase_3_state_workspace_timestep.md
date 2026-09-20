@@ -1,6 +1,6 @@
 # Phase 3 plan: state, workspace, and timestep ownership
 
-Status: `P3_4_SEPARATED_CANARY_H100_QUALIFIED`.
+Status: `P3_5_PRODUCTION_FACADE_CONNECTED_LOCAL`.
 
 Baseline: Phase 2 closure commit
 `0d5b7186b7a104354db173e04a43e68c15daa515` on
@@ -112,4 +112,9 @@ cross-runtime-rejection gates.  The qualification is summarized in
 [machine-readable record](phase_3_p34_h100_qualification.json).  P3.5 may now
 connect the same contracts beneath the production compatibility facade; this
 qualification does not promote `separated_canary` or change the production
-default.
+default.  P3.5 now connects the same state-backed core beneath the stable
+`DealiasedSemiImplicitEulerIntegrator` production facade.  The facade name,
+runtime selection, metadata surface, checkpoint format, model-specific inverse
+storage operation, and default remain unchanged.  Local stepwise and
+bidirectional format-v1 restart gates pass; independent H100 qualification is
+required before P3.5 may be closed.

@@ -126,6 +126,13 @@ class SpectralSolver:
         for name, val in inits.items():
             self.model.fields[name] = val
         self.model.fields.spectral = self.model.fields.fftn()
+        rebind_runtime_state = getattr(
+            getattr(self, "integrator", None),
+            "rebind_runtime_state",
+            None,
+        )
+        if callable(rebind_runtime_state):
+            rebind_runtime_state()
 
     def refresh_static_fields(self):
         """Recompute static fields from the current dynamic field state."""

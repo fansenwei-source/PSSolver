@@ -150,6 +150,9 @@ class LegacyPlaneRuntimeAdapter:
     @property
     def completed_steps(self) -> int:
         integrator = self._solver.integrator
+        state = getattr(integrator, "runtime_state", None)
+        if isinstance(state, RuntimeState):
+            return int(state.progress.completed_steps)
         interval = integrator.spectral_refresh_interval
         if interval is None:
             return int(integrator.step_count)

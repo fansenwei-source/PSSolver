@@ -20,6 +20,9 @@ from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
 from pssolver.integrator import SemiImplicitEulerIntegrator
+from pssolver.integrators.state_backed import (
+    StateBackedProjectedIntegratorMixin,
+)
 from pssolver.models.active_nematics import (
     BerisEdwardsFreeSlipStokes,
     BerisEdwardsPointwiseKernels,
@@ -40,8 +43,13 @@ NORMAL_VELOCITY_BOUNDARIES = _LEGACY_BOUNDARIES["normal_velocity"]
 PRESSURE_MODAL_BOUNDARIES = _LEGACY_BOUNDARIES["pressure_modal"]
 
 
-class DealiasedSemiImplicitEulerIntegrator(SemiImplicitEulerIntegrator):
-    """Apply the projected-mode contract around each legacy IMEX update."""
+class DealiasedSemiImplicitEulerIntegrator(
+    StateBackedProjectedIntegratorMixin,
+    SemiImplicitEulerIntegrator,
+):
+    """Stable production facade over the Phase 3 state-backed step core."""
+
+    _phase3_connection_stage = "P3.5_legacy_production_facade"
 
     def __init__(self, model, dt, qx, qy, q2):
         super().__init__(model, dt, qx, qy, q2)
@@ -53,24 +61,7 @@ class DealiasedSemiImplicitEulerIntegrator(SemiImplicitEulerIntegrator):
             sync_spatial=True,
         )
 
-    def step(self, pre_update_callback=None):
-        if self._static_fields_are_current:
-            self._static_fields_are_current = False
-        else:
-            self.model.update_static_fields()
-
-        if pre_update_callback is not None:
-            pre_update_callback()
-
-        nonlinear_hats = self.model.compute_nonlinear()
-        dynamic_fields = self.model.fields.spectral[: self.dyn_count]
-        dynamic_fields.add_(self.dt * nonlinear_hats)
-        dynamic_fields.div_(self.denom)
-        self.spectral_projector.project_dynamic_fields(
-            self.model.fields,
-            sync_spatial=False,
-        )
-
+    def _inverse_dynamic_spectra(self, state, workspace, generation):
         for group in self.dynamic_transform_groups:
             boundary_conditions = self.model.fields.get_boundary_conditions(
                 group[0]
@@ -82,8 +73,6 @@ class DealiasedSemiImplicitEulerIntegrator(SemiImplicitEulerIntegrator):
                     boundary_conditions,
                 ),
             )
-
-        self._advance_spectral_refresh_clock()
 
 
 def _real_dtype(name: str) -> torch.dtype:

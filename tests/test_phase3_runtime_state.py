@@ -29,13 +29,16 @@ RUNTIME_MODULES = (
     PROJECT_ROOT / "pssolver" / "runtime" / "plane_legacy.py",
     PROJECT_ROOT / "pssolver" / "runtime" / "plane_beris_edwards.py",
 )
+STATE_BACKED_CORE = (
+    PROJECT_ROOT / "pssolver" / "integrators" / "state_backed.py"
+)
 
 
 def test_phase3_inventory_freezes_ownership_and_connection_order():
     inventory = json.loads(INVENTORY_PATH.read_text(encoding="utf-8"))
     assert inventory["schema_version"] == 1
     assert inventory["phase"] == 3
-    assert inventory["status"] == "P3_4_SEPARATED_CANARY_H100_QUALIFIED"
+    assert inventory["status"] == "P3_5_PRODUCTION_FACADE_CONNECTED_LOCAL"
     assert inventory["checkpoint"] == {
         "format_version": 1,
         "must_remain_readable": True,
@@ -57,6 +60,7 @@ def test_phase3_inventory_freezes_ownership_and_connection_order():
         "p3_2_runtime_imports_workspace": False,
         "p3_3_step_program_connected": False,
         "p3_4_separated_canary_connected": True,
+        "p3_5_legacy_production_connected": True,
         "separated_canary_touched_before_p3_4": False,
     }
     assert inventory["timestep_oracle"] == [
@@ -72,7 +76,7 @@ def test_phase3_inventory_freezes_ownership_and_connection_order():
     ]
 
 
-def test_state_is_not_promoted_and_only_canary_selector_imports_it():
+def test_state_is_not_promoted_and_shared_core_owns_runtime_imports():
     provisional = {
         "CurrentRepresentation",
         "IntegratorProgress",
@@ -83,9 +87,12 @@ def test_state_is_not_promoted_and_only_canary_selector_imports_it():
     assert provisional.isdisjoint(pssolver.__all__)
     legacy_source = RUNTIME_MODULES[0].read_text(encoding="utf-8")
     selector_source = RUNTIME_MODULES[1].read_text(encoding="utf-8")
+    core_source = STATE_BACKED_CORE.read_text(encoding="utf-8")
     assert "pssolver.execution.state" not in legacy_source
     assert "RuntimeState" not in legacy_source
     assert "from pssolver.execution.state import RuntimeState" in selector_source
+    assert "from pssolver.execution.state import (" in core_source
+    assert "StateBackedProjectedIntegratorMixin" in legacy_source
 
 
 def test_representation_ledger_models_updates_and_synchronization():
