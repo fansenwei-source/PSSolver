@@ -1,6 +1,6 @@
 # Phase 3 plan: state, workspace, and timestep ownership
 
-Status: `P3_5_PRODUCTION_FACADE_CONNECTED_LOCAL`.
+Status: `P3_5_H100_QUALIFIED_P3_6_AUTHORIZED`.
 
 Baseline: Phase 2 closure commit
 `0d5b7186b7a104354db173e04a43e68c15daa515` on
@@ -95,7 +95,8 @@ default changes require a separate explicit decision.
 
 ## Current implementation boundary
 
-P3.0 through P3.4 are complete locally.  `pssolver.execution.state` and
+P3.0 through P3.5 are complete and independently qualified.
+`pssolver.execution.state` and
 `pssolver.execution.workspace` are provisional direct-import modules and are
 deliberately absent from `pssolver.execution.__all__` and `pssolver.__all__`.
 Neither runtime imports them.  Workspace buffers are allocated once from an
@@ -109,12 +110,16 @@ independent R128/R320 H100 non-regression, continuous-trajectory,
 bidirectional cross-version restart, checkpoint-tamper, and
 cross-runtime-rejection gates.  The qualification is summarized in
 [phase_3_p34_h100_qualification.md](phase_3_p34_h100_qualification.md) and its
-[machine-readable record](phase_3_p34_h100_qualification.json).  P3.5 may now
-connect the same contracts beneath the production compatibility facade; this
-qualification does not promote `separated_canary` or change the production
-default.  P3.5 now connects the same state-backed core beneath the stable
+[machine-readable record](phase_3_p34_h100_qualification.json).  P3.5 connects
+the same state-backed core beneath the stable
 `DealiasedSemiImplicitEulerIntegrator` production facade.  The facade name,
 runtime selection, metadata surface, checkpoint format, model-specific inverse
-storage operation, and default remain unchanged.  Local stepwise and
-bidirectional format-v1 restart gates pass; independent H100 qualification is
-required before P3.5 may be closed.
+storage operation, and default remain unchanged.  It passed independent CPU
+and H100 non-regression qualification, including
+legacy and canary continuous trajectories, bidirectional format-v1 restart,
+reset/rebind, tamper rejection, and R128/R320 performance and memory gates.
+The qualification is summarized in
+[phase_3_p35_h100_qualification.md](phase_3_p35_h100_qualification.md) and its
+[machine-readable record](phase_3_p35_h100_qualification.json).  P3.5 is
+closed and P3.6 closure qualification is authorized; no runtime was promoted
+and the production default remains unchanged.

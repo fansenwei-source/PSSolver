@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "status": "complete_with_validator_recovery_v2",
+  "classification": "PASS_P3_5_PRODUCTION_FACADE_CONNECTION_NON_REGRESSION_WITH_VALIDATOR_RECOVERY_V2",
+  "source_identity": {
+    "parent_commit": "54cffec80ef8aab63988f8cd65dc66600b48452c",
+    "qualified_commit": "5bb796fa75a6d30afc37251f86dbd1b1723efa51",
+    "branch": "next/pssolver-v0.2.0-architecture"
+  },
+  "eligibility": {
+    "p3_5_complete": true,
+    "p3_6": true,
+    "default_promotion": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false,
+    "scientific_failure": false
+  },
+  "cpu_and_static_gates": {
+    "candidate_targeted": {
+      "passed": 47,
+      "subtests_passed": 5,
+      "failed": 0
+    },
+    "parent_full": {
+      "passed": 1646,
+      "skipped": 1,
+      "deselected": 2,
+      "subtests_passed": 8,
+      "failed": 0
+    },
+    "candidate_full": {
+      "passed": 1650,
+      "skipped": 1,
+      "deselected": 2,
+      "subtests_passed": 8,
+      "failed": 0
+    },
+    "static_compatibility_passed": 21,
+    "validator_synthetic_tests_passed": 10
+  },
+  "profile_gate": {
+    "records": 12,
+    "forward_transforms_per_step": 7,
+    "inverse_transforms_per_step": 32,
+    "graph_breaks": 0,
+    "compile_fallbacks": 0,
+    "projected_transform_fallbacks": 0,
+    "grids": {
+      "R128": {
+        "parent_mean_timestep_ms": 5.730392113,
+        "candidate_mean_timestep_ms": 5.782795944,
+        "aggregate_mean_candidate_over_parent": 1.009144895,
+        "aggregate_median_candidate_over_parent": 1.017766964,
+        "peak_allocated_ratio": 1.0,
+        "peak_reserved_ratio": 1.0
+      },
+      "R320": {
+        "parent_mean_timestep_ms": 45.097170359,
+        "candidate_mean_timestep_ms": 45.020379715,
+        "aggregate_mean_candidate_over_parent": 0.998297218,
+        "aggregate_median_candidate_over_parent": 0.997492328,
+        "peak_allocated_ratio": 1.0,
+        "peak_reserved_ratio": 1.0
+      }
+    }
+  },
+  "trajectory_gate": {
+    "R128_legacy_production": {
+      "byte_identical": true,
+      "frozen_oracle_match": true,
+      "sha256": {
+        "Q_100.npy": "d20547158acba4d8ab6b9e3c6c0cc48954c6b4b6ce9af229fe826d510e577796",
+        "u_100.npy": "1199675fe7c1a0dcc4ec1f6a0c9130021a30be94e33dab523325c22076ec5a64",
+        "p_100.npy": "34ef4007db9f900f1902b5f3cd43efe83a82cbbc393dd8d0df6229613fc848ea"
+      },
+      "runtime_identity_sha256": "32add97a2635a928b2ab3f0a3e97118cf48ae5518d9dd7828c62b6aa6dc0bd5f"
+    },
+    "R128_separated_canary": {
+      "byte_identical": true,
+      "frozen_oracle_match": true,
+      "sha256": {
+        "Q_100.npy": "f2a94bf9c55e71632f5397b67ff1dfdf34a934981dd27514ab3c8a5546c738f2",
+        "u_100.npy": "25ebb2f4ec51156d0504624a88ab336a9baaee58efa7f2d7f01d6a2fc0e65b33",
+        "p_100.npy": "44b9d577bb328537f3a67f876fbe1d34f390b7821761f2ed4f8f8b7db3b82a37"
+      },
+      "runtime_identity_sha256": "334643926f9db186a0427aeb5ee9e64a25f376925bd0aee8631ffed95788c41d"
+    },
+    "R320_legacy_production": {
+      "byte_identical": true,
+      "sha256": {
+        "Q_100.npy": "d30ac02728ac1d3e52b4fd8ad7385c4bf747e7e4615ba454e929b2c2538041eb",
+        "u_100.npy": "f2f169baa4b78441bcc83abd8063420055759f61aa0828e69c120a0412681e82",
+        "p_100.npy": "118dd56bf56eaf54cea3fe2b3bf75487975077e7c985f5356d395e5e5c8a864a"
+      },
+      "runtime_identity_sha256": "d02cc6b4d542138977971a7fdf34a9a8e113509179a0211c8234b0a1880ae866"
+    }
+  },
+  "identity_gate": {
+    "canonical_hashes_self_consistent": true,
+    "canonical_hash_equality_required": false,
+    "runtime_identity_equal_per_pair": true,
+    "resolved_run_spec_allowed_differences": [
+      "$.output_dir"
+    ],
+    "unauthorized_differences": 0,
+    "validation_config_sha256_difference": false,
+    "legacy_separated_architecture_is_null": true,
+    "connection_identity_smoke_passed": 14
+  },
+  "restart_and_negative_gates": {
+    "checkpoint_format_version": 1,
+    "parent_to_candidate_byte_identical": true,
+    "candidate_to_parent_byte_identical": true,
+    "reset_rebind_gpu_gates_passed": 12,
+    "tensor_tamper_rejected": true,
+    "metadata_tamper_rejected": true,
+    "runtime_identity_mismatch_rejected": true,
+    "cross_runtime_restart_rejected": true
+  },
+  "environment": {
+    "gpu": "NVIDIA H100 PCIe",
+    "gpu_memory_bytes": 84929478656,
+    "pytorch": "2.5.1+cu121",
+    "pytorch_cuda": "12.1",
+    "tf32": false,
+    "shadow_import": false
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_phase3_p35_h100_5bb796f_20260920_recovery_v2",
+    "complete": true,
+    "manifest_entries": 727,
+    "manifest_sha256": "59f92f35f5f8ad36b0a0dc81954d3bce01049e5c4f4b82b507fe09c4b8d8ddf4",
+    "jobs": [
+      {
+        "job_id": 10835804,
+        "state": "FAILED",
+        "job_script_body_started": false,
+        "scientific_failure": false
+      },
+      {
+        "job_id": 10835806,
+        "state": "FAILED",
+        "valid_partial_evidence": true,
+        "scientific_failure": false
+      },
+      {
+        "job_id": 10835824,
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:04:28",
+        "scientific_failure": false
+      }
+    ]
+  }
+}

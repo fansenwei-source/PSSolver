@@ -22,6 +22,8 @@
     "p3_3_step_program_connected": false,
     "p3_4_separated_canary_connected": true,
     "p3_5_legacy_production_connected": true,
+    "p3_5_h100_qualified": true,
+    "p3_6_authorized": true,
     "separated_canary_touched_before_p3_4": false
   },
   "ownership": {
@@ -72,7 +74,7 @@
     "stable_surfaces_unchanged": true
   },
   "schema_version": 1,
-  "status": "P3_5_PRODUCTION_FACADE_CONNECTED_LOCAL",
+  "status": "P3_5_H100_QUALIFIED_P3_6_AUTHORIZED",
   "timestep_oracle": [
     "synchronize_algebraic_if_needed",
     "pre_update_callback",

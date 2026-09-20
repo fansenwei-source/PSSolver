@@ -25,6 +25,12 @@ INVENTORY_PATH = (
     / "architecture_v0_2"
     / "phase_3_state_inventory.json"
 )
+P35_QUALIFICATION_PATH = (
+    PROJECT_ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_3_p35_h100_qualification.json"
+)
 RUNTIME_MODULES = (
     PROJECT_ROOT / "pssolver" / "runtime" / "plane_legacy.py",
     PROJECT_ROOT / "pssolver" / "runtime" / "plane_beris_edwards.py",
@@ -38,7 +44,9 @@ def test_phase3_inventory_freezes_ownership_and_connection_order():
     inventory = json.loads(INVENTORY_PATH.read_text(encoding="utf-8"))
     assert inventory["schema_version"] == 1
     assert inventory["phase"] == 3
-    assert inventory["status"] == "P3_5_PRODUCTION_FACADE_CONNECTED_LOCAL"
+    assert inventory["status"] == (
+        "P3_5_H100_QUALIFIED_P3_6_AUTHORIZED"
+    )
     assert inventory["checkpoint"] == {
         "format_version": 1,
         "must_remain_readable": True,
@@ -61,6 +69,8 @@ def test_phase3_inventory_freezes_ownership_and_connection_order():
         "p3_3_step_program_connected": False,
         "p3_4_separated_canary_connected": True,
         "p3_5_legacy_production_connected": True,
+        "p3_5_h100_qualified": True,
+        "p3_6_authorized": True,
         "separated_canary_touched_before_p3_4": False,
     }
     assert inventory["timestep_oracle"] == [
@@ -74,6 +84,44 @@ def test_phase3_inventory_freezes_ownership_and_connection_order():
         "scheduled_spectral_refresh",
         "commit_progress",
     ]
+
+
+def test_phase3_inventory_records_p35_h100_qualification():
+    qualification = json.loads(
+        P35_QUALIFICATION_PATH.read_text(encoding="utf-8")
+    )
+    assert qualification["classification"] == (
+        "PASS_P3_5_PRODUCTION_FACADE_CONNECTION_NON_REGRESSION_WITH_"
+        "VALIDATOR_RECOVERY_V2"
+    )
+    assert qualification["source_identity"] == {
+        "parent_commit": "54cffec80ef8aab63988f8cd65dc66600b48452c",
+        "qualified_commit": "5bb796fa75a6d30afc37251f86dbd1b1723efa51",
+        "branch": "next/pssolver-v0.2.0-architecture",
+    }
+    assert qualification["eligibility"] == {
+        "p3_5_complete": True,
+        "p3_6": True,
+        "default_promotion": False,
+        "production_default_changed": False,
+        "separated_canary_promoted": False,
+        "scientific_failure": False,
+    }
+    assert qualification["identity_gate"] == {
+        "canonical_hashes_self_consistent": True,
+        "canonical_hash_equality_required": False,
+        "runtime_identity_equal_per_pair": True,
+        "resolved_run_spec_allowed_differences": ["$.output_dir"],
+        "unauthorized_differences": 0,
+        "validation_config_sha256_difference": False,
+        "legacy_separated_architecture_is_null": True,
+        "connection_identity_smoke_passed": 14,
+    }
+    assert qualification["evidence"]["complete"] is True
+    assert qualification["evidence"]["manifest_entries"] == 727
+    assert qualification["evidence"]["manifest_sha256"] == (
+        "59f92f35f5f8ad36b0a0dc81954d3bce01049e5c4f4b82b507fe09c4b8d8ddf4"
+    )
 
 
 def test_state_is_not_promoted_and_shared_core_owns_runtime_imports():
