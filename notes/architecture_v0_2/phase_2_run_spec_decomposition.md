@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.7_LOCAL_COMPLETE_H100_PENDING`
+Status: `COMPLETE_H100_PASS_WITH_AUTHORIZED_RECOVERY`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -786,9 +786,18 @@ console, and both-runtime one-step gates pass.  Detailed immutable evidence is
 recorded in `phase_2_local_qualification.json` and
 `phase_2_local_qualification.md`.
 
-Only the single final balanced R128/R320 H100 non-regression task remains.
-Until it passes, Phase 2 status is local-complete/H100-pending rather than
-complete.
+The final balanced R128/R320 H100 non-regression gate is complete.  Job
+`10835683` passed CPU, CUDA, performance, memory, provenance, and all four
+continuous trajectories, but an external helper incorrectly rejected the
+legal restart schedule `saved_steps=[50,100]`.  The original 119-file manifest
+remained unchanged.  The single authorized recovery Job `10835702` corrected
+only that external validator, revalidated the legacy restart, completed the
+missing canary restart and cross-runtime rejection, and produced a separate
+passing 36-file manifest.  Full evidence is recorded in
+`phase_2_h100_qualification.json` and `phase_2_qualification.md`.
+
+Phase 2 is therefore complete.  No production default changed and no runtime
+was promoted.
 
 ## Per-commit gates
 

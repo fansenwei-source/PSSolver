@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "p2_7_local_complete_h100_pending",
+  "status": "phase2_complete_h100_pass_with_authorized_recovery",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -920,8 +920,23 @@
       "scientific_configuration_changed": false,
       "numerical_operation_order_changed": false,
       "production_default_changed": false,
-      "h100_final_closure_status": "pending",
-      "phase2_complete": false
+      "h100_final_closure_status": "pass_with_authorized_recovery",
+      "initial_h100_job_id": 10835683,
+      "recovery_h100_job_id": 10835702,
+      "r128_mean_timestep_ratio": 1.003826204,
+      "r320_mean_timestep_ratio": 0.999422158,
+      "peak_memory_ratios_passed": true,
+      "same_runtime_100_step_byte_identity_passed": true,
+      "legacy_v0_1_2_oracle_match": true,
+      "legacy_restart_byte_identity_passed": true,
+      "separated_canary_restart_byte_identity_passed": true,
+      "cross_runtime_mismatch_rejected_before_output": true,
+      "initial_manifest_entries": 119,
+      "initial_manifest_sha256": "bb47bbdf46bbb45720c197e7bed8f8193cef2cce36432781604d8508350d70fc",
+      "recovery_manifest_entries": 36,
+      "recovery_manifest_sha256": "71e913f4ffcab12b8b824aebbb12fe02bbf3595b7ecd7602499d18d05e914217",
+      "separated_canary_promoted": false,
+      "phase2_complete": true
     }
   ],
   "completion_gates": {
