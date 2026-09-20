@@ -35,7 +35,7 @@ def test_phase3_inventory_freezes_ownership_and_connection_order():
     inventory = json.loads(INVENTORY_PATH.read_text(encoding="utf-8"))
     assert inventory["schema_version"] == 1
     assert inventory["phase"] == 3
-    assert inventory["status"] == "P3_4_SEPARATED_CANARY_CONNECTED_LOCAL"
+    assert inventory["status"] == "P3_4_SEPARATED_CANARY_H100_QUALIFIED"
     assert inventory["checkpoint"] == {
         "format_version": 1,
         "must_remain_readable": True,
@@ -51,6 +51,7 @@ def test_phase3_inventory_freezes_ownership_and_connection_order():
     }
     assert inventory["connection_policy"] == {
         "legacy_production_touched_before_p3_5": False,
+        "p3_4_h100_qualified": True,
         "production_default_changed": False,
         "p3_1_runtime_imports_state": False,
         "p3_2_runtime_imports_workspace": False,

@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "status": "complete_with_authorized_recovery_v3",
+  "classification": "PASS_P3_4_SEPARATED_CANARY_NON_REGRESSION_WITH_AUTHORIZED_RECOVERY_V3",
+  "source_identity": {
+    "parent_commit": "b425ba9488253cda5f7b5ebe6d0fdf1a35f5eab8",
+    "qualified_commit": "4406868087b3b935bb194b8026a3bf1c0fd19ab6",
+    "branch": "next/pssolver-v0.2.0-architecture"
+  },
+  "eligibility": {
+    "p3_4_complete": true,
+    "p3_5": true,
+    "default_promotion": false,
+    "production_default_changed": false,
+    "scientific_failure": false
+  },
+  "profile_gate": {
+    "records": 12,
+    "forward_transforms_per_step": 7,
+    "inverse_transforms_per_step": 32,
+    "graph_breaks": 0,
+    "compile_fallbacks": 0,
+    "projected_transform_fallbacks": 0,
+    "grids": {
+      "R128": {
+        "parent_mean_timestep_ms": 5.854829,
+        "candidate_mean_timestep_ms": 5.792985,
+        "aggregate_mean_candidate_over_parent": 0.989437226,
+        "aggregate_median_candidate_over_parent": 0.991014164,
+        "peak_allocated_ratio": 1.0,
+        "peak_reserved_ratio": 1.0
+      },
+      "R320": {
+        "parent_mean_timestep_ms": 45.232064,
+        "candidate_mean_timestep_ms": 45.221354,
+        "aggregate_mean_candidate_over_parent": 0.999763203,
+        "aggregate_median_candidate_over_parent": 1.000719778,
+        "peak_allocated_ratio": 1.0,
+        "peak_reserved_ratio": 1.0
+      }
+    }
+  },
+  "trajectory_gate": {
+    "R128": {
+      "byte_identical": true,
+      "frozen_oracle_match": true,
+      "sha256": {
+        "Q_100.npy": "f2a94bf9c55e71632f5397b67ff1dfdf34a934981dd27514ab3c8a5546c738f2",
+        "u_100.npy": "25ebb2f4ec51156d0504624a88ab336a9baaee58efa7f2d7f01d6a2fc0e65b33",
+        "p_100.npy": "44b9d577bb328537f3a67f876fbe1d34f390b7821761f2ed4f8f8b7db3b82a37"
+      }
+    },
+    "R320": {
+      "byte_identical": true,
+      "sha256": {
+        "Q_100.npy": "95765115b54173bc25ae091ea45135f696a336b266a01d69c076290cfafefe51",
+        "u_100.npy": "9463a8cf395dd2e5b6c9a7b5539611949542594a60293f0d48b590c661d7b12b",
+        "p_100.npy": "9ea17a1a6f69f66ae657c13ebf4af1d55f68248795665de3e17148500e965e47"
+      }
+    }
+  },
+  "restart_gate": {
+    "checkpoint_format_version": 1,
+    "parent_to_candidate_byte_identical": true,
+    "candidate_to_parent_byte_identical": true,
+    "tensor_tamper_rejected": true,
+    "metadata_tamper_rejected": true,
+    "runtime_identity_mismatch_rejected": true,
+    "cross_runtime_restart_rejected": true
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_phase3_p34_recovery_4406868_20260920_v3",
+    "complete": true,
+    "manifest_entries": 134,
+    "manifest_sha256": "2e23ccbd820894559ecd65b6fe70c1baa93dbad7ed4cf6244c4b19233b466307",
+    "jobs": [
+      {"job_id": 10835768, "state": "FAILED", "scientific_failure": false},
+      {"job_id": 10835784, "state": "FAILED", "scientific_failure": false},
+      {"job_id": 10835787, "state": "FAILED", "scientific_failure": false},
+      {"job_id": 10835801, "state": "COMPLETED", "scientific_failure": false}
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 # Phase 3 plan: state, workspace, and timestep ownership
 
-Status: `P3_4_SEPARATED_CANARY_CONNECTED_LOCAL`.
+Status: `P3_4_SEPARATED_CANARY_H100_QUALIFIED`.
 
 Baseline: Phase 2 closure commit
 `0d5b7186b7a104354db173e04a43e68c15daa515` on
@@ -102,8 +102,14 @@ Neither runtime imports them.  Workspace buffers are allocated once from an
 immutable bounded plan and guarded by generation tokens.  The provisional
 `pssolver.integrators.step_program` freezes the qualified projected-IMEX
 operation sequence over these contracts.  The explicit `separated_canary`
-construction edge now adopts its existing evolved arrays by storage identity
-and uses the state-backed program.  Generic experimental builders and
-`legacy_production` retain their previous integrators.  Local step-by-step and
-same-backend restart gates pass; P3.5 production-facade connection remains
-prohibited until P3.4 receives its independent qualification.
+construction edge adopts its existing evolved arrays by storage identity and
+uses the state-backed program.  Generic experimental builders and
+`legacy_production` retain their previous integrators.  P3.4 passed its
+independent R128/R320 H100 non-regression, continuous-trajectory,
+bidirectional cross-version restart, checkpoint-tamper, and
+cross-runtime-rejection gates.  The qualification is summarized in
+[phase_3_p34_h100_qualification.md](phase_3_p34_h100_qualification.md) and its
+[machine-readable record](phase_3_p34_h100_qualification.json).  P3.5 may now
+connect the same contracts beneath the production compatibility facade; this
+qualification does not promote `separated_canary` or change the production
+default.

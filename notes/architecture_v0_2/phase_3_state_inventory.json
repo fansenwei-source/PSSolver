@@ -15,6 +15,7 @@
   },
   "connection_policy": {
     "legacy_production_touched_before_p3_5": false,
+    "p3_4_h100_qualified": true,
     "production_default_changed": false,
     "p3_1_runtime_imports_state": false,
     "p3_2_runtime_imports_workspace": false,
@@ -70,7 +71,7 @@
     "stable_surfaces_unchanged": true
   },
   "schema_version": 1,
-  "status": "P3_4_SEPARATED_CANARY_CONNECTED_LOCAL",
+  "status": "P3_4_SEPARATED_CANARY_H100_QUALIFIED",
   "timestep_oracle": [
     "synchronize_algebraic_if_needed",
     "pre_update_callback",
