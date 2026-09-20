@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "p2_6_complete_p2_7_pending",
+  "status": "p2_7_local_complete_h100_pending",
   "design_baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "fe7b9272c95f0de33cfa3b01b15559611b65786a",
@@ -892,7 +892,36 @@
     },
     {
       "id": "P2.7",
-      "name": "provenance and Phase 2 closure"
+      "name": "provenance and Phase 2 closure",
+      "local_implementation_complete": true,
+      "characterization_commit": "44d1d44d9f4e0c5d007eb12a9144aa6235bdbfa5",
+      "implementation_commit": "4260480989169e817fba4af1949c15c44223b248",
+      "production_source_inventory_additions": [
+        "pssolver/core/__init__.py",
+        "pssolver/geometries/__init__.py"
+      ],
+      "production_source_inventory_count": 54,
+      "all_imported_pssolver_package_facades_tracked": true,
+      "focused_tests_passed": 357,
+      "full_cpu_tests_passed": 1623,
+      "full_cpu_subtests_passed": 8,
+      "qualified_runtime_paths": [
+        "legacy_production",
+        "separated_canary"
+      ],
+      "continuous_files_compared_per_runtime": 34,
+      "continuous_files_byte_identical": true,
+      "normalized_dry_run_metadata_equal": true,
+      "baseline_checkpoint_to_candidate_restart_byte_identical": true,
+      "candidate_checkpoint_to_baseline_restart_byte_identical": true,
+      "fresh_wheel_passed": true,
+      "fresh_sdist_passed": true,
+      "isolated_console_and_runtime_paths_passed": true,
+      "scientific_configuration_changed": false,
+      "numerical_operation_order_changed": false,
+      "production_default_changed": false,
+      "h100_final_closure_status": "pending",
+      "phase2_complete": false
     }
   ],
   "completion_gates": {

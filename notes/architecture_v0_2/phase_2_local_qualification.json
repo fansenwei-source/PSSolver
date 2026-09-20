@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "status": "PASS_PHASE2_LOCAL_H100_PENDING",
+  "eligibility": {
+    "phase2_local_completion": true,
+    "phase2_completion": false,
+    "h100_closure_required": true,
+    "default_promotion": false,
+    "production_default_changed": false
+  },
+  "source_identity": {
+    "baseline_tag": "v0.1.2",
+    "baseline_commit": "4fa614616e9d67c98be52c150eaf303a0c80b5c1",
+    "provenance_characterization_commit": "44d1d44d9f4e0c5d007eb12a9144aa6235bdbfa5",
+    "qualified_implementation_commit": "4260480989169e817fba4af1949c15c44223b248",
+    "candidate_branch": "next/pssolver-v0.2.0-architecture",
+    "baseline_is_candidate_ancestor": true,
+    "git_diff_check_passed": true
+  },
+  "provenance_gate": {
+    "source_inventory_count": 54,
+    "closure_additions": [
+      "pssolver/core/__init__.py",
+      "pssolver/geometries/__init__.py"
+    ],
+    "all_imported_pssolver_package_facades_tracked": true,
+    "schema_v1_changed": false,
+    "scientific_configuration_changed": false,
+    "numerical_operation_order_changed": false
+  },
+  "cpu_gate": {
+    "focused_tests_passed": 357,
+    "full_tests_passed": 1623,
+    "full_subtests_passed": 8,
+    "failed": 0
+  },
+  "local_identity_gate": {
+    "environment": {
+      "python": "3.12.13",
+      "pytorch": "2.6.0",
+      "numpy": "2.4.3",
+      "scipy": "1.16.0",
+      "device": "cpu",
+      "dtype": "float64",
+      "pointwise_execution": "eager"
+    },
+    "shape": [8, 8, 8],
+    "steps": 4,
+    "checkpoint_step": 2,
+    "runtime_paths": [
+      "legacy_production",
+      "separated_canary"
+    ],
+    "continuous_non_json_files_compared_per_runtime": 34,
+    "continuous_files_byte_identical": true,
+    "normalized_dry_run_metadata_equal": true,
+    "dry_run_created_output": false,
+    "normalized_dry_run_sha256": {
+      "legacy_production": "5486398050a80cfbd9aabb0818193167d91587156b5a9011e89834f89d1e5f90",
+      "separated_canary": "a82ab3ff1c826c7cf2713348bda6e5b20ec7e23ee95531714614d028196d0f93"
+    },
+    "baseline_checkpoint_to_candidate_restart_byte_identical": true,
+    "candidate_checkpoint_to_baseline_restart_byte_identical": true,
+    "restart_arrays": [
+      "Q_4.npy",
+      "u_4.npy",
+      "p_4.npy"
+    ],
+    "output_sha256": {
+      "legacy_production": {
+        "Q_4.npy": "ba2165de06c553b7c779bde82ab95af8a3a32a07098e59b7cccb13651a0ba35d",
+        "u_4.npy": "452a4410f7e317abce99357446a187edd90fa70d04c4ca9571490679a894ef9e",
+        "p_4.npy": "59371ae09916749be610cd3837bdb1c83e56c9606d6971bb59ece9535c0874a4",
+        "diagnostics.npy": "3431dcdd95ffeee8d4cea2ea46c71b99d276c66ed5f9b4b3e49ee3804afa3bf5",
+        "diagnostics.csv": "5ad7ac36a525e2e1da79fe0ca404ce05f193b6c6cb77d2dc49033d036db0571b"
+      },
+      "separated_canary": {
+        "Q_4.npy": "f645679f1c562ee5dfa50adf2d741dac44ccf190dd5c4993c6d893659fe0b6fe",
+        "u_4.npy": "9035a1ad5384b50190855e9e8149fb0f37722ff2319619bddd2068e45d644e17",
+        "p_4.npy": "efe175d6033a77c36a3d6f0674fc825b6f9a9c15b3ee0694fd438095f152f05a",
+        "diagnostics.npy": "97d23145bd1a962bdf101b41dccbb1b71958ede0791a50ff71f8c6f336a82e2d",
+        "diagnostics.csv": "52c75dc958aa861ce876801f639562ccb5841985de333cfd3269790bb4ab3666"
+      },
+      "shared_initial_condition": {
+        "Q2D_initial.npy": "a415f2ec305f4264201b24014747e82a65ec1584f0192aa25e18c112ccc5ca5d",
+        "Q2D_defects.csv": "6d8222d332a74bc4551a20af4b4e1dfa39879557261bb2b3a84e0527f6acb467"
+      }
+    }
+  },
+  "package_gate": {
+    "wheel_sha256": "4d6a1c86eaf84270f4c3c2477ce9ed745aa6f443e37585c404534b1dad945c0b",
+    "sdist_sha256": "ccebe9dfc2e9be642ba93395e556a740380b4d1762ec48c225ce57e26d38d9ac",
+    "closure_facades_present_in_wheel": true,
+    "closure_facades_present_in_sdist": true,
+    "isolated_policy_object_identity_passed": true,
+    "isolated_legacy_one_step_passed": true,
+    "isolated_canary_one_step_passed": true,
+    "isolated_console_dry_run_passed": true
+  },
+  "final_h100_gate": {
+    "status": "pending",
+    "single_job": true,
+    "balanced_profile_grids": {
+      "R128": [128, 128, 32],
+      "R320": [320, 320, 80]
+    },
+    "trials_per_role_per_grid": 3,
+    "maximum_mean_timestep_ratio": 1.02,
+    "maximum_median_timestep_ratio": 1.02,
+    "maximum_peak_allocated_ratio": 1.02,
+    "maximum_peak_reserved_ratio": 1.02,
+    "production_trajectory_steps": 100,
+    "same_runtime_byte_identity_required": true,
+    "cross_version_restart_required": true,
+    "automatic_retry": false
+  }
+}

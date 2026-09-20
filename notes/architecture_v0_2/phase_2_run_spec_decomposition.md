@@ -1,6 +1,6 @@
 # Phase 2 plan: decompose `PlaneBerisEdwardsRunSpec`
 
-Status: `P2.6_COMPLETE_P2.7_PENDING`
+Status: `P2.7_LOCAL_COMPLETE_H100_PENDING`
 
 Design baseline: Phase 1 closure commit
 `fe7b9272c95f0de33cfa3b01b15559611b65786a` on
@@ -774,6 +774,21 @@ implementation source inventory.  This legitimately changes implementation
 provenance, not scientific configuration or numerical output.  Complete local
 qualification and, after the P2.5 consumer migrations, one final balanced
 R128/R320 H100 non-regression task.  No H100 job is required per commit.
+
+The local P2.7 gate is complete at implementation commit
+`4260480989169e817fba4af1949c15c44223b248`.  A transitive package-facade
+audit found and closed exactly two provenance omissions:
+`pssolver/core/__init__.py` and `pssolver/geometries/__init__.py`.  The
+54-file production inventory now covers every PSSolver package facade imported
+by an inventoried source.  Full CPU, same-runtime continuous identity,
+bidirectional cross-version restart, dry-run, wheel, sdist, isolated import,
+console, and both-runtime one-step gates pass.  Detailed immutable evidence is
+recorded in `phase_2_local_qualification.json` and
+`phase_2_local_qualification.md`.
+
+Only the single final balanced R128/R320 H100 non-regression task remains.
+Until it passes, Phase 2 status is local-complete/H100-pending rather than
+complete.
 
 ## Per-commit gates
 
