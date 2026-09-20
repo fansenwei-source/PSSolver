@@ -1,6 +1,6 @@
 # Phase 3 plan: state, workspace, and timestep ownership
 
-Status: `P3_5_H100_QUALIFIED_P3_6_AUTHORIZED`.
+Status: `P3_6_LOCAL_QUALIFIED_H100_CLOSURE_PENDING`.
 
 Baseline: Phase 2 closure commit
 `0d5b7186b7a104354db173e04a43e68c15daa515` on
@@ -122,4 +122,11 @@ The qualification is summarized in
 [phase_3_p35_h100_qualification.md](phase_3_p35_h100_qualification.md) and its
 [machine-readable record](phase_3_p35_h100_qualification.json).  P3.5 is
 closed and P3.6 closure qualification is authorized; no runtime was promoted
-and the production default remains unchanged.
+and the production default remains unchanged.  The cumulative P3.6 local gate
+also passes against the Phase 2 closure baseline: complete CPU suites, clean
+sdist/wheel installation, both-runtime continuous trajectories, and
+bidirectional cross-version restart remain exact.  Its
+[local qualification record](phase_3_p36_local_qualification.md) and
+[machine-readable contract](phase_3_p36_local_qualification.json) freeze one
+final balanced R128/R320 H100 task.  Phase 3 remains open until that task
+passes.

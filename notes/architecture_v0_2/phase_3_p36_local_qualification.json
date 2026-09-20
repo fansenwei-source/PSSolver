@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "status": "PASS_P3_6_LOCAL_H100_CLOSURE_PENDING",
+  "eligibility": {
+    "p3_6_local_complete": true,
+    "phase_3_complete": false,
+    "h100_closure_required": true,
+    "default_promotion": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "source_identity": {
+    "phase_2_closure_baseline": "0d5b7186b7a104354db173e04a43e68c15daa515",
+    "phase_3_cumulative_candidate": "227b095c12e494ca74756228a30962692474c516",
+    "candidate_branch": "next/pssolver-v0.2.0-architecture",
+    "baseline_is_candidate_ancestor": true,
+    "cumulative_changed_file_count": 23,
+    "git_diff_check_passed": true
+  },
+  "prerequisite": {
+    "p3_5_classification": "PASS_P3_5_PRODUCTION_FACADE_CONNECTION_NON_REGRESSION_WITH_VALIDATOR_RECOVERY_V2",
+    "p3_5_manifest_sha256": "59f92f35f5f8ad36b0a0dc81954d3bce01049e5c4f4b82b507fe09c4b8d8ddf4",
+    "p3_5_manifest_entries": 727,
+    "p3_5_complete": true
+  },
+  "cpu_gate": {
+    "environment": {
+      "python": "3.12.13",
+      "pytorch": "2.6.0",
+      "numpy": "2.4.3",
+      "scipy": "1.16.0",
+      "pytest": "9.1.1"
+    },
+    "baseline": {
+      "passed": 1623,
+      "subtests_passed": 8,
+      "failed": 0
+    },
+    "candidate": {
+      "passed": 1654,
+      "subtests_passed": 8,
+      "failed": 0
+    }
+  },
+  "local_identity_gate": {
+    "device": "cpu",
+    "dtype": "float64",
+    "pointwise_execution": "eager",
+    "shape": [8, 8, 8],
+    "steps": 4,
+    "checkpoint_step": 2,
+    "runtime_paths": [
+      "legacy_production",
+      "separated_canary"
+    ],
+    "continuous_parent_candidate_byte_identical": true,
+    "initial_artifacts_byte_identical": true,
+    "baseline_to_candidate_restart_byte_identical": true,
+    "candidate_to_baseline_restart_byte_identical": true,
+    "all_outputs_finite": true,
+    "complete_markers_present": true,
+    "output_sha256": {
+      "legacy_production": {
+        "Q_4.npy": "ba2165de06c553b7c779bde82ab95af8a3a32a07098e59b7cccb13651a0ba35d",
+        "u_4.npy": "452a4410f7e317abce99357446a187edd90fa70d04c4ca9571490679a894ef9e",
+        "p_4.npy": "59371ae09916749be610cd3837bdb1c83e56c9606d6971bb59ece9535c0874a4"
+      },
+      "separated_canary": {
+        "Q_4.npy": "f645679f1c562ee5dfa50adf2d741dac44ccf190dd5c4993c6d893659fe0b6fe",
+        "u_4.npy": "9035a1ad5384b50190855e9e8149fb0f37722ff2319619bddd2068e45d644e17",
+        "p_4.npy": "efe175d6033a77c36a3d6f0674fc825b6f9a9c15b3ee0694fd438095f152f05a"
+      }
+    }
+  },
+  "package_gate": {
+    "clean_git_archive_source": true,
+    "wheel": {
+      "name": "pssolver-0.1.2-py3-none-any.whl",
+      "sha256": "b05694c62a28fadb721c1fd7e61b8d93650fefa3f012665158ce02c7d7dc6f6f",
+      "size_bytes": 488287
+    },
+    "sdist": {
+      "name": "pssolver-0.1.2.tar.gz",
+      "sha256": "ae0b832c6615d9eb616f1cd509c62b2666f881ea4fa19d452aaabc5f95e00854",
+      "size_bytes": 633490
+    },
+    "installed_outside_source_checkout": true,
+    "installed_phase3_modules_imported": [
+      "pssolver.execution.state",
+      "pssolver.execution.workspace",
+      "pssolver.integrators.state_backed",
+      "pssolver.integrators.step_program",
+      "pssolver.runtime.plane_legacy",
+      "pssolver.runtime.plane_beris_edwards"
+    ],
+    "console_dry_run_output_absent": true,
+    "installed_legacy_one_step_passed": true,
+    "installed_canary_one_step_passed": true,
+    "installed_outputs_finite": true
+  },
+  "final_h100_gate": {
+    "status": "pending",
+    "single_job": true,
+    "automatic_retry": false,
+    "baseline_commit": "0d5b7186b7a104354db173e04a43e68c15daa515",
+    "candidate_commit": "227b095c12e494ca74756228a30962692474c516",
+    "complete_cpu_suites_required": true,
+    "candidate_package_gate_required": true,
+    "cuda_only_tests_required": true,
+    "balanced_profile_grids": {
+      "R128": [128, 128, 32],
+      "R320": [320, 320, 80]
+    },
+    "trials_per_role_per_grid": 3,
+    "maximum_mean_timestep_ratio": 1.02,
+    "maximum_median_timestep_ratio": 1.02,
+    "maximum_peak_allocated_ratio": 1.02,
+    "maximum_peak_reserved_ratio": 1.02,
+    "forward_transforms_per_step": 7,
+    "inverse_transforms_per_step": 32,
+    "production_trajectory_steps": 100,
+    "trajectory_grids": [
+      "R128",
+      "R320"
+    ],
+    "trajectory_runtime_paths": [
+      "legacy_production",
+      "separated_canary"
+    ],
+    "same_runtime_byte_identity_required": true,
+    "bidirectional_cross_version_restart_required": true,
+    "checkpoint_format_version": 1,
+    "reset_rebind_required": true,
+    "tamper_and_mismatch_rejection_required": true,
+    "eligible_classification": "PASS_PHASE3_CLOSURE_NON_REGRESSION"
+  }
+}

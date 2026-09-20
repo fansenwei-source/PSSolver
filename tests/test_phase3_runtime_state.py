@@ -31,6 +31,12 @@ P35_QUALIFICATION_PATH = (
     / "architecture_v0_2"
     / "phase_3_p35_h100_qualification.json"
 )
+P36_LOCAL_QUALIFICATION_PATH = (
+    PROJECT_ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_3_p36_local_qualification.json"
+)
 RUNTIME_MODULES = (
     PROJECT_ROOT / "pssolver" / "runtime" / "plane_legacy.py",
     PROJECT_ROOT / "pssolver" / "runtime" / "plane_beris_edwards.py",
@@ -45,7 +51,7 @@ def test_phase3_inventory_freezes_ownership_and_connection_order():
     assert inventory["schema_version"] == 1
     assert inventory["phase"] == 3
     assert inventory["status"] == (
-        "P3_5_H100_QUALIFIED_P3_6_AUTHORIZED"
+        "P3_6_LOCAL_QUALIFIED_H100_CLOSURE_PENDING"
     )
     assert inventory["checkpoint"] == {
         "format_version": 1,
@@ -71,6 +77,8 @@ def test_phase3_inventory_freezes_ownership_and_connection_order():
         "p3_5_legacy_production_connected": True,
         "p3_5_h100_qualified": True,
         "p3_6_authorized": True,
+        "p3_6_h100_closure_pending": True,
+        "p3_6_local_qualified": True,
         "separated_canary_touched_before_p3_4": False,
     }
     assert inventory["timestep_oracle"] == [
@@ -121,6 +129,52 @@ def test_phase3_inventory_records_p35_h100_qualification():
     assert qualification["evidence"]["manifest_entries"] == 727
     assert qualification["evidence"]["manifest_sha256"] == (
         "59f92f35f5f8ad36b0a0dc81954d3bce01049e5c4f4b82b507fe09c4b8d8ddf4"
+    )
+
+
+def test_phase3_inventory_freezes_p36_local_closure_contract():
+    qualification = json.loads(
+        P36_LOCAL_QUALIFICATION_PATH.read_text(encoding="utf-8")
+    )
+    assert qualification["status"] == (
+        "PASS_P3_6_LOCAL_H100_CLOSURE_PENDING"
+    )
+    assert qualification["source_identity"] == {
+        "phase_2_closure_baseline": (
+            "0d5b7186b7a104354db173e04a43e68c15daa515"
+        ),
+        "phase_3_cumulative_candidate": (
+            "227b095c12e494ca74756228a30962692474c516"
+        ),
+        "candidate_branch": "next/pssolver-v0.2.0-architecture",
+        "baseline_is_candidate_ancestor": True,
+        "cumulative_changed_file_count": 23,
+        "git_diff_check_passed": True,
+    }
+    assert qualification["eligibility"] == {
+        "p3_6_local_complete": True,
+        "phase_3_complete": False,
+        "h100_closure_required": True,
+        "default_promotion": False,
+        "production_default_changed": False,
+        "separated_canary_promoted": False,
+    }
+    gate = qualification["final_h100_gate"]
+    assert gate["baseline_commit"] == (
+        "0d5b7186b7a104354db173e04a43e68c15daa515"
+    )
+    assert gate["candidate_commit"] == (
+        "227b095c12e494ca74756228a30962692474c516"
+    )
+    assert gate["maximum_mean_timestep_ratio"] == 1.02
+    assert gate["maximum_median_timestep_ratio"] == 1.02
+    assert gate["maximum_peak_allocated_ratio"] == 1.02
+    assert gate["maximum_peak_reserved_ratio"] == 1.02
+    assert gate["forward_transforms_per_step"] == 7
+    assert gate["inverse_transforms_per_step"] == 32
+    assert gate["same_runtime_byte_identity_required"] is True
+    assert gate["eligible_classification"] == (
+        "PASS_PHASE3_CLOSURE_NON_REGRESSION"
     )
 
 

@@ -24,6 +24,8 @@
     "p3_5_legacy_production_connected": true,
     "p3_5_h100_qualified": true,
     "p3_6_authorized": true,
+    "p3_6_h100_closure_pending": true,
+    "p3_6_local_qualified": true,
     "separated_canary_touched_before_p3_4": false
   },
   "ownership": {
@@ -74,7 +76,7 @@
     "stable_surfaces_unchanged": true
   },
   "schema_version": 1,
-  "status": "P3_5_H100_QUALIFIED_P3_6_AUTHORIZED",
+  "status": "P3_6_LOCAL_QUALIFIED_H100_CLOSURE_PENDING",
   "timestep_oracle": [
     "synchronize_algebraic_if_needed",
     "pre_update_callback",
