@@ -354,6 +354,12 @@ def test_serializer_module_is_a_one_way_leaf_without_component_or_consumer_edges
 
 
 def test_serializer_and_migrated_component_graph_are_in_source_inventory():
+    assert "pssolver/core/__init__.py" in (
+        PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
+    )
+    assert "pssolver/geometries/__init__.py" in (
+        PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
+    )
     assert "pssolver/configuration/plane_beris_edwards_schema_v1.py" in (
         PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     )

@@ -1,4 +1,4 @@
-"""Characterize package facades missing from production provenance."""
+"""Close and continuously audit production provenance package facades."""
 
 from __future__ import annotations
 
@@ -41,17 +41,13 @@ def _untracked_imported_package_facades() -> dict[str, tuple[str, ...]]:
     }
 
 
-def test_phase2_provenance_gap_is_exactly_two_package_facades():
-    assert _untracked_imported_package_facades() == {
-        "pssolver/core/__init__.py": (
-            "pssolver/configuration/plane_beris_edwards.py",
-            "pssolver/configuration/plane_beris_edwards_builders.py",
-            "pssolver/configuration/plane_beris_edwards_component_graph.py",
-            "pssolver/configuration/plane_beris_edwards_declarations.py",
-        ),
-        "pssolver/geometries/__init__.py": (
-            "pssolver/configuration/plane_beris_edwards.py",
-            "pssolver/configuration/plane_beris_edwards_builders.py",
-            "pssolver/configuration/plane_beris_edwards_component_graph.py",
-        ),
-    }
+def test_phase2_provenance_tracks_all_imported_package_facades():
+    assert _untracked_imported_package_facades() == {}
+
+
+def test_phase2_provenance_contains_the_two_closure_facades():
+    inventory = set(PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES)
+    assert {
+        "pssolver/core/__init__.py",
+        "pssolver/geometries/__init__.py",
+    } <= inventory
