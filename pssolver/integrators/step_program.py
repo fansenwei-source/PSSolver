@@ -76,8 +76,11 @@ class ProjectedSemiImplicitEulerStepProgram:
         spectral = state.spectral
         if self.denominator.shape != spectral.shape:
             raise ValueError("denominator shape does not match evolved spectrum")
-        if self.denominator.dtype != spectral.dtype:
-            raise ValueError("denominator dtype does not match evolved spectrum")
+        if torch.promote_types(
+            self.denominator.dtype,
+            spectral.dtype,
+        ) != spectral.dtype:
+            raise ValueError("denominator dtype is incompatible with spectrum")
         if self.denominator.device != spectral.device:
             raise ValueError("denominator device does not match evolved spectrum")
 

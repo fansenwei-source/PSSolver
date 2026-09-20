@@ -20,6 +20,7 @@ from pssolver.configuration import (
 from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
+from pssolver.execution.state import RuntimeState
 
 
 def _require_runtime_surface(solver: object, projector: object) -> None:
@@ -247,6 +248,9 @@ class SeparatedCanaryPlaneRuntimeAdapter:
     @property
     def completed_steps(self) -> int:
         integrator = self._runtime.solver.integrator
+        state = getattr(integrator, "runtime_state", None)
+        if isinstance(state, RuntimeState):
+            return int(state.progress.completed_steps)
         interval = integrator.spectral_refresh_interval
         if interval is None:
             return int(integrator.step_count)

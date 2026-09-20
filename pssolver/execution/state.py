@@ -438,6 +438,23 @@ class RuntimeState:
         validated = self._validate_persistent_algebraic({name: value})
         self._persistent_algebraic[name] = validated[name]
 
+    def replace_progress(self, progress: IntegratorProgress) -> None:
+        """Replace restored progress without changing tensor ownership."""
+
+        if not isinstance(progress, IntegratorProgress):
+            raise TypeError("progress must be an IntegratorProgress")
+        self._progress = progress
+
+    def replace_representations(
+        self,
+        representations: RepresentationLedger,
+    ) -> None:
+        """Replace validity after an exact synchronized restore."""
+
+        if not isinstance(representations, RepresentationLedger):
+            raise TypeError("representations must be a RepresentationLedger")
+        self._representations = representations
+
     def to_metadata(self) -> dict[str, object]:
         return {
             "schema_version": 1,

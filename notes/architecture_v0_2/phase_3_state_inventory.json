@@ -19,6 +19,7 @@
     "p3_1_runtime_imports_state": false,
     "p3_2_runtime_imports_workspace": false,
     "p3_3_step_program_connected": false,
+    "p3_4_separated_canary_connected": true,
     "separated_canary_touched_before_p3_4": false
   },
   "ownership": {
@@ -69,7 +70,7 @@
     "stable_surfaces_unchanged": true
   },
   "schema_version": 1,
-  "status": "P3_3_DISCONNECTED_STEP_PROGRAM_IMPLEMENTED",
+  "status": "P3_4_SEPARATED_CANARY_CONNECTED_LOCAL",
   "timestep_oracle": [
     "synchronize_algebraic_if_needed",
     "pre_update_callback",

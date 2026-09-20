@@ -58,6 +58,7 @@ from .legacy_assembly import (
 from .integrators import (
     InstrumentedProjectedSemiImplicitEulerIntegrator,
     ProjectedSemiImplicitEulerIntegrator,
+    StateBackedProjectedSemiImplicitEulerIntegrator,
 )
 from .performance import (
     RuntimePerformanceRecorder,
@@ -1483,6 +1484,21 @@ class ExperimentalModelRuntime:
     resolved_algebraic_systems: tuple[ResolvedAlgebraicSystem, ...]
     performance_recorder: RuntimePerformanceRecorder | None = None
 
+    def _time_integration_metadata(self) -> dict[str, object]:
+        metadata = {
+            "scheme": "semi_implicit_euler",
+            "dynamic_spectral_projection": self.projector.enabled,
+            "integrator": type(self.solver.integrator).__name__,
+        }
+        phase3_metadata = getattr(
+            self.solver.integrator,
+            "phase3_execution_metadata",
+            None,
+        )
+        if callable(phase3_metadata):
+            metadata["phase3_execution"] = phase3_metadata()
+        return metadata
+
     def to_metadata(self) -> dict[str, object]:
         has_algebraic_fields = bool(self.resolved_algebraic_systems)
         return {
@@ -1524,11 +1540,7 @@ class ExperimentalModelRuntime:
             "projected_batch_assembly_policy": (
                 self.projected_batch_assembly_policy.to_metadata()
             ),
-            "time_integration": {
-                "scheme": "semi_implicit_euler",
-                "dynamic_spectral_projection": self.projector.enabled,
-                "integrator": type(self.solver.integrator).__name__,
-            },
+            "time_integration": self._time_integration_metadata(),
             "algebraic_lifecycle": {
                 "update_phase": AlgebraicUpdatePhase.PRE_EXPLICIT_RHS.value,
                 "has_algebraic_fields": has_algebraic_fields,
@@ -1865,6 +1877,13 @@ class ExperimentalModelRuntime:
         if self.algebraic_fields_adapter is not None:
             self.algebraic_fields_adapter.clear_cached_outputs()
         self.solver.reset(initial_values)
+        rebind_runtime_state = getattr(
+            self.solver.integrator,
+            "rebind_runtime_state",
+            None,
+        )
+        if callable(rebind_runtime_state):
+            rebind_runtime_state()
         if self.projector.enabled:
             self.projector.project_dynamic_fields(
                 self.solver.fields,
@@ -2042,6 +2061,7 @@ def build_experimental_model_runtime(
     algebraic_output_publication_policy: (
         AlgebraicOutputPublicationPolicy | None
     ) = None,
+    connect_phase3_runtime_state: bool = False,
 ) -> ExperimentalModelRuntime:
     """Build a canary through the frozen plan and legacy runtime adapter."""
 
@@ -2049,6 +2069,13 @@ def build_experimental_model_runtime(
         raise TypeError("model must implement ExecutableModelProtocol")
     if not isinstance(enable_performance_instrumentation, bool):
         raise TypeError("enable_performance_instrumentation must be a bool")
+    if not isinstance(connect_phase3_runtime_state, bool):
+        raise TypeError("connect_phase3_runtime_state must be a bool")
+    if connect_phase3_runtime_state and enable_performance_instrumentation:
+        raise ValueError(
+            "Phase 3 canary state connection does not yet support "
+            "performance instrumentation"
+        )
     execution_policy = resolve_algebraic_execution_policy(
         algebraic_execution_policy,
         enable_algebraic_representation_reuse=(
@@ -2136,11 +2163,16 @@ def build_experimental_model_runtime(
     projector = create_legacy_projector(solver, assembly)
     solver.model.spectral_projector = projector
     if projector.enabled:
-        solver.integrator_cl = (
-            InstrumentedProjectedSemiImplicitEulerIntegrator
-            if performance_recorder is not None
-            else ProjectedSemiImplicitEulerIntegrator
-        )
+        if connect_phase3_runtime_state:
+            solver.integrator_cl = (
+                StateBackedProjectedSemiImplicitEulerIntegrator
+            )
+        else:
+            solver.integrator_cl = (
+                InstrumentedProjectedSemiImplicitEulerIntegrator
+                if performance_recorder is not None
+                else ProjectedSemiImplicitEulerIntegrator
+            )
     elif performance_recorder is not None:
         raise ValueError(
             "performance instrumentation requires projected integration"

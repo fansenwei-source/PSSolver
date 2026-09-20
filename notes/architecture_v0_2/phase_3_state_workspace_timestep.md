@@ -1,6 +1,6 @@
 # Phase 3 plan: state, workspace, and timestep ownership
 
-Status: `P3_3_DISCONNECTED_STEP_PROGRAM_IMPLEMENTED`.
+Status: `P3_4_SEPARATED_CANARY_CONNECTED_LOCAL`.
 
 Baseline: Phase 2 closure commit
 `0d5b7186b7a104354db173e04a43e68c15daa515` on
@@ -95,12 +95,15 @@ default changes require a separate explicit decision.
 
 ## Current implementation boundary
 
-P3.0 through P3.3 are complete locally.  `pssolver.execution.state` and
+P3.0 through P3.4 are complete locally.  `pssolver.execution.state` and
 `pssolver.execution.workspace` are provisional direct-import modules and are
 deliberately absent from `pssolver.execution.__all__` and `pssolver.__all__`.
 Neither runtime imports them.  Workspace buffers are allocated once from an
 immutable bounded plan and guarded by generation tokens.  The provisional
 `pssolver.integrators.step_program` freezes the qualified projected-IMEX
-operation sequence over these contracts.  P3.4 canary connection is the next
-implementation slice; production timestep connection remains prohibited until
-P3.5.
+operation sequence over these contracts.  The explicit `separated_canary`
+construction edge now adopts its existing evolved arrays by storage identity
+and uses the state-backed program.  Generic experimental builders and
+`legacy_production` retain their previous integrators.  Local step-by-step and
+same-backend restart gates pass; P3.5 production-facade connection remains
+prohibited until P3.4 receives its independent qualification.

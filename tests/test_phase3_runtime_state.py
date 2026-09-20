@@ -35,7 +35,7 @@ def test_phase3_inventory_freezes_ownership_and_connection_order():
     inventory = json.loads(INVENTORY_PATH.read_text(encoding="utf-8"))
     assert inventory["schema_version"] == 1
     assert inventory["phase"] == 3
-    assert inventory["status"] == "P3_3_DISCONNECTED_STEP_PROGRAM_IMPLEMENTED"
+    assert inventory["status"] == "P3_4_SEPARATED_CANARY_CONNECTED_LOCAL"
     assert inventory["checkpoint"] == {
         "format_version": 1,
         "must_remain_readable": True,
@@ -55,6 +55,7 @@ def test_phase3_inventory_freezes_ownership_and_connection_order():
         "p3_1_runtime_imports_state": False,
         "p3_2_runtime_imports_workspace": False,
         "p3_3_step_program_connected": False,
+        "p3_4_separated_canary_connected": True,
         "separated_canary_touched_before_p3_4": False,
     }
     assert inventory["timestep_oracle"] == [
@@ -70,7 +71,7 @@ def test_phase3_inventory_freezes_ownership_and_connection_order():
     ]
 
 
-def test_disconnected_state_is_not_promoted_or_imported_by_plane_runtimes():
+def test_state_is_not_promoted_and_only_canary_selector_imports_it():
     provisional = {
         "CurrentRepresentation",
         "IntegratorProgress",
@@ -79,10 +80,11 @@ def test_disconnected_state_is_not_promoted_or_imported_by_plane_runtimes():
     }
     assert provisional.isdisjoint(execution.__all__)
     assert provisional.isdisjoint(pssolver.__all__)
-    for path in RUNTIME_MODULES:
-        source = path.read_text(encoding="utf-8")
-        assert "pssolver.execution.state" not in source
-        assert "RuntimeState" not in source
+    legacy_source = RUNTIME_MODULES[0].read_text(encoding="utf-8")
+    selector_source = RUNTIME_MODULES[1].read_text(encoding="utf-8")
+    assert "pssolver.execution.state" not in legacy_source
+    assert "RuntimeState" not in legacy_source
+    assert "from pssolver.execution.state import RuntimeState" in selector_source
 
 
 def test_representation_ledger_models_updates_and_synchronization():

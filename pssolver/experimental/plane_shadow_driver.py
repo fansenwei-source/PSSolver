@@ -292,6 +292,7 @@ def _build_plane_shadow_runtime_from_production_metadata(
         AlgebraicOutputPublicationPolicy | None
     ) = None,
     producer_output_layout: str = "component_mapping",
+    connect_phase3_runtime_state: bool = False,
 ) -> tuple[ExperimentalModelRuntime, ShadowMetadataComparison]:
     """Construct and parity-check a migrated runtime after contract checks."""
 
@@ -403,6 +404,7 @@ def _build_plane_shadow_runtime_from_production_metadata(
         algebraic_output_publication_policy=(
             algebraic_output_publication_policy
         ),
+        connect_phase3_runtime_state=connect_phase3_runtime_state,
     )
     runtime.solver.integrator.set_spectral_refresh_interval(
         numerical["spectral_refresh_interval_steps"]
@@ -478,6 +480,7 @@ def build_plane_separated_canary_runtime_from_production_metadata(
             algebraic_output_publication_policy
         ),
         producer_output_layout=producer_output_layout,
+        connect_phase3_runtime_state=True,
     )
 
 
