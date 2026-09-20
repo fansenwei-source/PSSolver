@@ -1,0 +1,84 @@
+{
+  "baseline_commit": "0d5b7186b7a104354db173e04a43e68c15daa515",
+  "checkpoint": {
+    "format_version": 1,
+    "must_remain_readable": true,
+    "persistent_payload": [
+      "evolved_spatial_Q",
+      "evolved_spectral_Q",
+      "completed_steps",
+      "spectral_refresh_interval",
+      "integrator_step_count",
+      "integrator_refresh_count",
+      "declared_backend_restart_state"
+    ]
+  },
+  "connection_policy": {
+    "legacy_production_touched_before_p3_5": false,
+    "production_default_changed": false,
+    "p3_1_runtime_imports_state": false,
+    "p3_2_runtime_imports_workspace": false,
+    "p3_3_step_program_connected": false,
+    "separated_canary_touched_before_p3_4": false
+  },
+  "ownership": {
+    "execution_plan": [
+      "field_layout",
+      "linear_operator",
+      "semi_implicit_denominator",
+      "transform_resources",
+      "wavenumbers",
+      "projection_masks",
+      "selected_solver_implementations",
+      "prebound_callables",
+      "workspace_plan"
+    ],
+    "runtime_state": [
+      "evolved_physical",
+      "evolved_spectral",
+      "completed_steps",
+      "physical_time",
+      "spectral_refresh_phase",
+      "representation_validity",
+      "declared_persistent_algebraic_state"
+    ],
+    "workspace": [
+      "gradients",
+      "molecular_field",
+      "stress",
+      "force",
+      "reconstructed_velocity",
+      "reconstructed_pressure",
+      "generation_local_representation_cache",
+      "transform_scratch"
+    ]
+  },
+  "phase": 3,
+  "phase_slices": [
+    "P3.0_audit_and_freeze",
+    "P3.1_disconnected_runtime_state",
+    "P3.2_bounded_workspace",
+    "P3.3_frozen_step_program",
+    "P3.4_separated_canary_connection",
+    "P3.5_legacy_facade_connection",
+    "P3.6_closure_qualification"
+  ],
+  "public_api": {
+    "new_root_exports": [],
+    "provisional_direct_import": "pssolver.execution.state",
+    "stable_surfaces_unchanged": true
+  },
+  "schema_version": 1,
+  "status": "P3_3_DISCONNECTED_STEP_PROGRAM_IMPLEMENTED",
+  "timestep_oracle": [
+    "synchronize_algebraic_if_needed",
+    "pre_update_callback",
+    "explicit_rhs",
+    "spectral_add_dt_rhs",
+    "spectral_divide_by_denominator",
+    "project_dynamic_spectra",
+    "inverse_dynamic_spectra",
+    "scheduled_spectral_refresh",
+    "commit_progress"
+  ]
+}
