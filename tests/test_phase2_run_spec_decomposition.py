@@ -665,6 +665,7 @@ def test_adapter_stays_private_and_all_phase2_consumers_are_migrated():
         "pssolver/applications/plane_beris_edwards.py",
         "pssolver/runtime/plane_legacy.py",
         "pssolver/runtime/plane_beris_edwards.py",
+        "pssolver/runtime/plane_compiled_v2_binding.py",
         "pssolver/workflows/plane_beris_edwards.py",
     ):
         runtime_source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
@@ -714,6 +715,7 @@ def test_adapter_stays_private_and_all_phase2_consumers_are_migrated():
             PROJECT_ROOT / "pssolver/applications/plane_beris_edwards.py",
             PROJECT_ROOT / "pssolver/runtime/plane_legacy.py",
             PROJECT_ROOT / "pssolver/runtime/plane_beris_edwards.py",
+            PROJECT_ROOT / "pssolver/runtime/plane_compiled_v2_binding.py",
             PROJECT_ROOT / "pssolver/workflows/plane_beris_edwards.py",
         }:
             continue

@@ -116,6 +116,9 @@ violates the memory budget, stop and introduce a shared private assembly
 factory behind a legacy byte-identity gate.  Do not silently accept duplicate
 production workspaces.
 
+Completion record: `phase_5_p52_construction_binding.md` and
+`phase_5_p52_construction_binding.json`.
+
 ### P5.3: compiled Euler step program
 
 Implement the fixed Euler stage program over pre-bound tensors and bounded

@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_P5_2_CONSTRUCTION_BINDING_AND_DATAFLOW_AUDIT",
+  "baseline_commit": "7b602c01d4023abfd23dec9a1940348f6fdb9cbc",
+  "authorization": {
+    "p5_2_implementation_authorized": true,
+    "p5_3_implementation_authorized": false,
+    "phase_6_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "binding": {
+    "identity": "compiled_v2",
+    "source_runtime": "legacy_production",
+    "construction_time_only": true,
+    "immutable_plan": true,
+    "tensor_references_prebound": true,
+    "operator_references_prebound": true,
+    "scalar_coefficients_prebound": true,
+    "semantic_transform_groups": 4,
+    "execution_transform_groups": 3,
+    "legacy_workspace_bytes": 0,
+    "additional_workspace_bytes": 0,
+    "duplicate_workspace_retained": false,
+    "shared_assembly_factory_required": false
+  },
+  "execution_groups": [
+    {
+      "name": "dynamic_q",
+      "components": ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"],
+      "indices": [0, 1, 2, 3, 4],
+      "indexing_mode": "contiguous_slice"
+    },
+    {
+      "name": "static_neumann",
+      "components": ["ux", "uy", "p"],
+      "indices": [5, 6, 8],
+      "indexing_mode": "advanced"
+    },
+    {
+      "name": "static_dirichlet",
+      "components": ["uz"],
+      "indices": [7],
+      "indexing_mode": "contiguous_slice"
+    }
+  ],
+  "connection": {
+    "runtime_selector_added": false,
+    "production_import_added": false,
+    "timestep_execution_added": false,
+    "fallback_allowed": false
+  },
+  "validation": {
+    "targeted_tests": {
+      "result": "PASS",
+      "passed": 173,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0
+    },
+    "full_cpu_suite": {
+      "result": "PASS",
+      "passed": 1870,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "subtests_passed": 8
+    },
+    "git_diff_check": "PASS",
+    "source_identity": {
+      "pssolver/runtime/plane_compiled_v2_binding.py": "292604d5e3fcee4b3e7343ffe08feb09194ff44a5d4ecf9b29fad91961adc3b1",
+      "tests/test_phase5_compiled_binding.py": "5972f031f8e14c7ea0df898d9fcc8f6c0446b9949998fdb1a1c3e201aee4607b"
+    }
+  },
+  "eligibility": {
+    "p5_2_complete": true,
+    "p5_3_locally_eligible": true,
+    "p5_5_selector_connection_eligible": false,
+    "phase_6_eligible": false,
+    "default_promotion_eligible": false
+  }
+}

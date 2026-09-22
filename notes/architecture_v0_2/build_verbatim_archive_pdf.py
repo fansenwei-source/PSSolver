@@ -89,6 +89,8 @@ SOURCE_ORDER = (
     "phase_5_plane_inventory.json",
     "phase_5_p51_compiled_declarations.md",
     "phase_5_p51_compiled_declarations.json",
+    "phase_5_p52_construction_binding.md",
+    "phase_5_p52_construction_binding.json",
 )
 
 PAGE_WIDTH = 595.276
