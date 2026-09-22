@@ -79,6 +79,8 @@ SOURCE_ORDER = (
     "phase_4_p45_combined_sbdf2_modal_block.json",
     "phase_4_p46_closure_qualification.md",
     "phase_4_p46_closure_qualification.json",
+    "phase_4_p46_memory_measurement_recovery.md",
+    "phase_4_p46_memory_measurement_recovery.json",
 )
 
 PAGE_WIDTH = 595.276

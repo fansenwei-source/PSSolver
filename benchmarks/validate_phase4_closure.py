@@ -257,11 +257,35 @@ def validate_evidence(
     *,
     expected_commit: str,
 ) -> dict[str, object]:
-    _exact(payload.get("schema_version"), 1, "schema version")
+    _exact(payload.get("schema_version"), 2, "schema version")
     _exact(
         payload.get("identity"),
         "p4_6_combined_sbdf2_modal_block_profile",
         "identity",
+    )
+    measurement = _mapping(
+        payload.get("memory_measurement"),
+        "memory_measurement",
+    )
+    _exact(
+        measurement.get("role_live_sets_isolated"),
+        True,
+        "role live-set isolation",
+    )
+    _exact(
+        measurement.get("comparison_snapshots_device"),
+        "cpu",
+        "comparison snapshot device",
+    )
+    _exact(
+        measurement.get("unused_allocator_cache_cleared_before_timing"),
+        True,
+        "allocator cache isolation",
+    )
+    _exact(
+        measurement.get("peak_scope"),
+        "current_role_only",
+        "memory peak scope",
     )
     config = _mapping(payload.get("config"), "config")
     _exact(config.get("point_counts"), list(EXPECTED_POINT_COUNTS), "point counts")
@@ -329,7 +353,7 @@ def validate_evidence(
     )
     _exact(eligibility.get("phase_5_authorized"), False, "Phase 5 authority")
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "classification": "PASS_P4_6_H100_PROFILE",
         "expected_commit": expected_commit,
         "rows": validated_rows,
@@ -343,6 +367,7 @@ def validate_evidence(
             "continuous_rebound_byte_identity": True,
             "performance": True,
             "memory": True,
+            "memory_role_isolation": True,
             "convergence": True,
         },
         "eligibility": {

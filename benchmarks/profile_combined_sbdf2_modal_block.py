@@ -184,6 +184,11 @@ def _advance_timed(
     pointers = _workspace_pointers(stepper)
     if device.type == "cuda":
         torch.cuda.synchronize(device)
+        # Keep the two roles on the same allocator footing.  In particular,
+        # cached blocks left by a previously measured role are not part of the
+        # current role's live tensor set and must not bias peak-reserved memory.
+        torch.cuda.empty_cache()
+        torch.cuda.synchronize(device)
         torch.cuda.reset_peak_memory_stats(device)
         starting_allocated = int(torch.cuda.memory_allocated(device))
         starting_reserved = int(torch.cuda.memory_reserved(device))
@@ -243,10 +248,13 @@ def _run_case(
     trial_records: dict[str, list[dict[str, object]]] = {
         name: [] for name in VARIANTS
     }
-    final_states: dict[int, dict[str, TwoComponentReferenceState]] = {}
+    comparison_states: dict[
+        int,
+        dict[str, tuple[torch.Tensor, torch.Tensor]],
+    ] = {}
     for trial in range(config.trials):
         order = VARIANTS if trial % 2 == 0 else tuple(reversed(VARIANTS))
-        final_states[trial] = {}
+        comparison_states[trial] = {}
         for position, variant in enumerate(order, start=1):
             stepper, state = _prepare_role(
                 config,
@@ -260,7 +268,12 @@ def _run_case(
                 steps=config.measured_steps,
                 device=device,
             )
-            final_states[trial][variant] = final
+            # Comparison artifacts live on CPU so that the second role is not
+            # measured while the first role's complete GPU state is retained.
+            comparison_states[trial][variant] = (
+                final.physical.detach().cpu().clone(),
+                final.native_spectrum.detach().cpu().clone(),
+            )
             trial_records[variant].append(
                 {
                     "trial": trial + 1,
@@ -275,28 +288,35 @@ def _run_case(
                     "implementation": stepper.operator.implementation,
                 }
             )
+            del final, state, stepper
+            if device.type == "cuda":
+                torch.cuda.empty_cache()
 
     comparisons = []
     for trial in range(config.trials):
-        continuous = final_states[trial][CONTINUOUS]
-        rebound = final_states[trial][REBOUND]
+        continuous_physical, continuous_spectrum = comparison_states[trial][
+            CONTINUOUS
+        ]
+        rebound_physical, rebound_spectrum = comparison_states[trial][REBOUND]
         comparisons.append(
             {
                 "trial": trial + 1,
                 "physical_byte_identical": torch.equal(
-                    continuous.physical,
-                    rebound.physical,
+                    continuous_physical,
+                    rebound_physical,
                 ),
                 "spectrum_byte_identical": torch.equal(
-                    continuous.native_spectrum,
-                    rebound.native_spectrum,
+                    continuous_spectrum,
+                    rebound_spectrum,
                 ),
                 "physical_relative_l2": _relative_l2(
-                    rebound.physical,
-                    continuous.physical,
+                    rebound_physical,
+                    continuous_physical,
                 ),
                 "physical_linf": float(
-                    torch.max(torch.abs(rebound.physical - continuous.physical))
+                    torch.max(
+                        torch.abs(rebound_physical - continuous_physical)
+                    )
                 ),
             }
         )
@@ -405,9 +425,15 @@ def run_profile(config: CombinedCanaryProfileConfig) -> dict[str, object]:
         else device
     )
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "identity": "p4_6_combined_sbdf2_modal_block_profile",
         "scope": "qualification_only_no_production_selection",
+        "memory_measurement": {
+            "role_live_sets_isolated": True,
+            "comparison_snapshots_device": "cpu",
+            "unused_allocator_cache_cleared_before_timing": True,
+            "peak_scope": "current_role_only",
+        },
         "config": asdict(config),
         "environment": {
             "git_head": _git_head(),

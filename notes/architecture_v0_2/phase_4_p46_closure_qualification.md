@@ -42,3 +42,7 @@ canary to Plane, promote a public API, or change a production default.
 
 The machine-readable record is
 [phase_4_p46_closure_qualification.json](phase_4_p46_closure_qualification.json).
+
+The first H100 execution exposed a live-set contamination in the memory
+profiler.  Its diagnosis and non-relaxing recovery are recorded in
+[phase_4_p46_memory_measurement_recovery.md](phase_4_p46_memory_measurement_recovery.md).

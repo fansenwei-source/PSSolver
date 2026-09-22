@@ -195,6 +195,12 @@ and its
 remains open until the single registered H100 closure job and its fail-closed
 validator pass.
 
+The first closure job passed the scientific and timing gates but exposed a
+role-live-set contamination in the profiler's GPU memory measurement.  The
+diagnosis and schema-v2 recovery are frozen in
+[phase_4_p46_memory_measurement_recovery.md](phase_4_p46_memory_measurement_recovery.md);
+the `1.10` memory limit was not relaxed.
+
 ## Qualification oracle
 
 - temporal grids use the fixed ratio ladder `(1, 1/2, 1/4, 1/8)` at unchanged

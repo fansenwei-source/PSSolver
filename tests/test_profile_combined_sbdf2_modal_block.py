@@ -114,9 +114,15 @@ def _row(point_count: int) -> dict[str, object]:
 
 def _evidence() -> dict[str, object]:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "identity": "p4_6_combined_sbdf2_modal_block_profile",
         "scope": "qualification_only_no_production_selection",
+        "memory_measurement": {
+            "role_live_sets_isolated": True,
+            "comparison_snapshots_device": "cpu",
+            "unused_allocator_cache_cleared_before_timing": True,
+            "peak_scope": "current_role_only",
+        },
         "config": {
             "point_counts": [131072, 1048576],
             "device": "cuda",
@@ -224,6 +230,7 @@ def test_validator_accepts_complete_h100_evidence():
         "continuous_rebound_byte_identity": True,
         "performance": True,
         "memory": True,
+        "memory_role_isolation": True,
         "convergence": True,
     }
     assert result["eligibility"]["phase_4_complete"] is False
@@ -267,6 +274,12 @@ def test_validator_accepts_complete_h100_evidence():
                 "minimum_observed_l2_order", 1.7
             ),
             "below 1.8",
+        ),
+        (
+            lambda value: value["memory_measurement"].__setitem__(
+                "role_live_sets_isolated", False
+            ),
+            "role live-set isolation",
         ),
     ],
 )

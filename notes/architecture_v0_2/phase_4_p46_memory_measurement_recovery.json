@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "status": "P4_6_MEMORY_MEASUREMENT_RECOVERY_LOCAL_COMPLETE",
+  "parent_commit": "b26609f9f114a55b5e4da45033a31080705c5bff",
+  "failed_h100_evidence": {
+    "job_id": "10837184",
+    "classification": "FAIL_P4_6_H100_PROFILE",
+    "stop_phase": "formal_validator_memory_gate",
+    "profile_sha256": "929ec2f386af3e95c77a5fbec9f9abadf7a5c01ebafa67b03cbd4abd780c17bb",
+    "manifest_sha256": "78dda593df890b3c96e72cc805319bf0921a1f224eb776106819fc1ede56b462",
+    "checksums_passed": 38,
+    "checksums_total": 38,
+    "scientific_failure": false,
+    "performance_failure": false,
+    "memory_measurement_contract_failure": true
+  },
+  "root_cause": {
+    "first_role_gpu_final_state_retained_during_second_role": true,
+    "reserved_memory_included_previous_role_allocator_cache": true,
+    "rebound_workspace_growth_demonstrated": false
+  },
+  "recovery": {
+    "profile_schema_version": 2,
+    "role_live_sets_isolated": true,
+    "comparison_snapshots_device": "cpu",
+    "unused_allocator_cache_cleared_before_timing": true,
+    "peak_scope": "current_role_only",
+    "memory_limit_relaxed": false,
+    "maximum_peak_allocated_ratio": 1.1,
+    "maximum_peak_reserved_ratio": 1.1
+  },
+  "local_cuda_smoke": {
+    "device": "NVIDIA GeForce RTX 3060 Ti",
+    "point_count": 131072,
+    "trials": 3,
+    "median_timing_ratio": 0.9963516772588991,
+    "continuous_peak_allocated_bytes": 42739200,
+    "rebound_peak_allocated_bytes": 44826624,
+    "continuous_peak_reserved_bytes": 67108864,
+    "rebound_peak_reserved_bytes": 67108864,
+    "minimum_pairwise_l2_order": 2.0038328225707627
+  },
+  "local_validation": {
+    "profiler_and_canary_tests_passed": 33,
+    "phase_4_tests_passed": 177,
+    "complete_tests_passed": 1835,
+    "subtests_passed": 8,
+    "failures": 0,
+    "git_diff_check_passed": true
+  },
+  "eligibility": {
+    "h100_recovery_required": true,
+    "phase_4_complete": false,
+    "phase_5_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  }
+}
