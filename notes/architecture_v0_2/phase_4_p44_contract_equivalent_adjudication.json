@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY",
+  "status": "PASS_P4_4_MODAL_BLOCK_H100_CONTRACT_EQUIVALENT",
   "candidate_commit": "7619c58c931eda89ff6613936851d8e7be1f52b9",
   "input_evidence": {
     "job_id": 10837117,
@@ -35,11 +35,20 @@
     "failures": 0,
     "archive_sources_verified": 62
   },
+  "formal_adjudication": {
+    "control_directory": "/home/fansenwei/pssolver_phase4_p44_contract_adjudication_05cb8fa_20260922_v1",
+    "report": "/home/fansenwei/pssolver_phase4_p44_contract_adjudication_05cb8fa_20260922_v1/reports/p4_4_contract_equivalent_adjudication.json",
+    "report_sha256": "5aab006967ce5df3cb387023c7b979db159b524cb0de92c0c9dd9ddae8050c4b",
+    "input_raw_sha256": "4d96ae1eab761581f94af48a46dd9cfe5f8d0b7bfb05204e8bea28ee0b4b0635",
+    "archive_manifest_entries": 19,
+    "archive_manifest_sha256": "a0aeef2c8149c5b3ec5918110b5e3352a78a215d1b9f98f5ae51cabb65fb05ff",
+    "complete_sha256": "00e4107471f299d074bd040741c34587d41702c0733f721b4530f429d1bf317b"
+  },
   "eligibility": {
     "contract_correction_authorized": true,
-    "analysis_only_adjudication_authorized": true,
-    "p4_4_h100_qualified": false,
-    "eligible_for_p4_5": false,
+    "analysis_only_adjudication_authorized": false,
+    "p4_4_h100_qualified": true,
+    "eligible_for_p4_5": true,
     "auto_policy_implemented": false,
     "phase_4_complete": false,
     "phase_5_authorized": false,

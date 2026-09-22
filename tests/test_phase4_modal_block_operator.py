@@ -382,9 +382,7 @@ def test_p44_types_are_direct_import_only_and_disconnected():
 
 def test_phase4_p44_machine_record_matches_local_contract():
     record = json.loads(P44_RECORD_PATH.read_text(encoding="utf-8"))
-    assert record["status"] == (
-        "P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY"
-    )
+    assert record["status"] == "P4_4_H100_QUALIFIED_P4_5_AUTHORIZED"
     assert record["baseline_commit"] == (
         "e262867d19f8a9ed9f30af801021cf00910542d5"
     )
@@ -396,7 +394,7 @@ def test_phase4_p44_machine_record_matches_local_contract():
         "optimized": "closed_form_2x2",
         "bounded_workspace_tensor_count": 5,
         "gpu_capable": True,
-        "h100_qualified": False,
+        "h100_qualified": True,
     }
     assert record["qualification_model"]["analytic_solution"] == (
         "matrix_exponential_single_cosine_mode"
@@ -437,7 +435,14 @@ def test_phase4_p44_machine_record_matches_local_contract():
         "classification": "FAIL_P4_4_CROSSOVER_NOT_REPRODUCED",
         "all_complete_operator_contract_gates_passed": True,
         "all_paired_trials_favored_candidate": True,
-        "contract_equivalent_adjudication_pending": True,
+        "contract_equivalent_adjudication_pending": False,
+        "contract_equivalent_adjudication_passed": True,
+        "formal_classification": (
+            "PASS_P4_4_MODAL_BLOCK_H100_CONTRACT_EQUIVALENT"
+        ),
+        "formal_report_sha256": (
+            "5aab006967ce5df3cb387023c7b979db159b524cb0de92c0c9dd9ddae8050c4b"
+        ),
         "adjudication_record": (
             "notes/architecture_v0_2/"
             "phase_4_p44_contract_equivalent_adjudication.json"
@@ -446,8 +451,8 @@ def test_phase4_p44_machine_record_matches_local_contract():
     assert record["eligibility"] == {
         "p4_4_local_complete": True,
         "crossover_h100_scan_authorized": False,
-        "analysis_only_adjudication_authorized": True,
-        "p4_5_authorized": False,
+        "analysis_only_adjudication_authorized": False,
+        "p4_5_authorized": True,
         "h100_qualification_required_before_p4_5": True,
         "phase_4_complete": False,
         "phase_5_authorized": False,

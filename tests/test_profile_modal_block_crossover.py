@@ -153,9 +153,9 @@ def test_cli_refuses_to_overwrite_existing_output(tmp_path, monkeypatch):
     assert output.read_text(encoding="utf-8") == "preserve\n"
 
 
-def test_recovery_record_preserves_failed_h100_evidence_and_blocks_p45():
+def test_recovery_record_preserves_raw_attempt_and_formal_p45_authority():
     record = json.loads(RECOVERY_RECORD.read_text(encoding="utf-8"))
-    assert record["status"] == "P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY"
+    assert record["status"] == "P4_4_H100_QUALIFIED_P4_5_AUTHORIZED"
     assert record["h100_attempt"]["job_id"] == 10837110
     cases = record["h100_attempt"]["cases"]
     assert [case["mode_count"] for case in cases] == [131072, 4194304]
@@ -165,6 +165,9 @@ def test_recovery_record_preserves_failed_h100_evidence_and_blocks_p45():
     assert record["crossover_attempt"][
         "all_paired_trials_favored_candidate"
     ] is True
+    assert record["crossover_attempt"][
+        "formal_adjudication_classification"
+    ] == "PASS_P4_4_MODAL_BLOCK_H100_CONTRACT_EQUIVALENT"
     assert record["recovery_profiler"]["mode_counts"] == [
         131072,
         262144,
@@ -174,11 +177,11 @@ def test_recovery_record_preserves_failed_h100_evidence_and_blocks_p45():
         4194304,
     ]
     assert record["eligibility"] == {
-        "p4_4_h100_qualified": False,
+        "p4_4_h100_qualified": True,
         "crossover_h100_scan_authorized": False,
-        "analysis_only_adjudication_authorized": True,
+        "analysis_only_adjudication_authorized": False,
         "auto_policy_implemented": False,
-        "p4_5_authorized": False,
+        "p4_5_authorized": True,
         "phase_4_complete": False,
         "phase_5_authorized": False,
         "production_default_changed": False,

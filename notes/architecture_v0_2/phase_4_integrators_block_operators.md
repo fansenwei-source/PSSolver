@@ -1,6 +1,6 @@
 # Phase 4 plan: second integrator and bounded modal block operators
 
-Status: `P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY`.
+Status: `P4_5_LOCAL_COMPLETE_P4_6_AUTHORIZED`.
 
 Baseline: Phase 3 closure record commit
 `e1fcc5d6df5ea6cad6b61cc770a85d19c04f9953` on
@@ -158,16 +158,27 @@ recovery are recorded in
 [phase_4_p44_h100_recovery.md](phase_4_p44_h100_recovery.md).  The completed
 recovery found no crossover in the registered range under the
 complete operator contract: the closed-form path passed all eighteen paired
-trials.  P4.4 now awaits the analysis-only contract-equivalent adjudication
-recorded in
+trials.  The analysis-only contract-equivalent adjudication passed and formally
+qualified P4.4 for the registered H100 range.  Its record is
 [phase_4_p44_contract_equivalent_adjudication.md](phase_4_p44_contract_equivalent_adjudication.md),
-not another H100 run or an automatic policy.
+and it did not create an automatic policy.
 
 ### P4.5: combined SBDF2/block canary
 
 Run the block-coupled reference model through SBDF2 with bounded workspaces,
 fixed history ownership, restart, and metadata provenance.  It remains an
 opt-in reference path.
+
+Completed locally.  The canary combines the qualified closed-form modal block
+with a nonzero explicit scalar-growth term, the frozen Euler startup, and
+constant-step SBDF2.  The result, temporal convergence, bounded workspace,
+byte-identical continuous/checkpoint restart, and negative gates are recorded
+in
+[phase_4_p45_combined_sbdf2_modal_block.md](phase_4_p45_combined_sbdf2_modal_block.md)
+and its
+[machine-readable evidence](phase_4_p45_combined_sbdf2_modal_block.json).
+The path remains direct-import-only and authorizes P4.6 closure qualification,
+not Phase 5 or production promotion.
 
 ### P4.6: closure qualification
 

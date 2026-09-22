@@ -1,6 +1,6 @@
 # Phase 4 P4.4 H100 performance recovery
 
-Status: `P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY`.
+Status: `P4_4_H100_QUALIFIED_P4_5_AUTHORIZED`.
 
 The first P4.4 H100 qualification ran at commit
 `ea4b051351f3e5b5dc1d3f51a3ed14dc64736603` in Slurm Job `10837110`.
@@ -41,4 +41,7 @@ because the low-size direction of the earlier non-equivalent reference scope
 did not repeat.  The corrected analysis-only contract and adjudicator are
 recorded in the
 [contract-equivalent adjudication](phase_4_p44_contract_equivalent_adjudication.md).
-No automatic policy is required or authorized.
+The analysis-only adjudication subsequently passed with classification
+`PASS_P4_4_MODAL_BLOCK_H100_CONTRACT_EQUIVALENT`.  No automatic policy was
+required or authorized; P4.5 was authorized on the explicit
+`closed_form_2x2` path.

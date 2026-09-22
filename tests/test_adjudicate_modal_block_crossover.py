@@ -161,9 +161,11 @@ def test_contract_equivalent_evidence_authorizes_p45_without_auto_policy():
     assert len(result["rows"]) == 6
 
 
-def test_machine_record_authorizes_only_analysis_not_p45_in_advance():
+def test_machine_record_captures_formal_adjudication_and_p45_authority():
     record = json.loads(ADJUDICATION_RECORD.read_text(encoding="utf-8"))
-    assert record["status"] == "P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY"
+    assert record["status"] == (
+        "PASS_P4_4_MODAL_BLOCK_H100_CONTRACT_EQUIVALENT"
+    )
     assert record["input_evidence"]["job_id"] == 10837117
     assert record["contract_correction"] == {
         "authoritative_scope": "complete_operator_contract",
@@ -184,9 +186,9 @@ def test_machine_record_authorizes_only_analysis_not_p45_in_advance():
     }
     assert record["eligibility"] == {
         "contract_correction_authorized": True,
-        "analysis_only_adjudication_authorized": True,
-        "p4_4_h100_qualified": False,
-        "eligible_for_p4_5": False,
+        "analysis_only_adjudication_authorized": False,
+        "p4_4_h100_qualified": True,
+        "eligible_for_p4_5": True,
         "auto_policy_implemented": False,
         "phase_4_complete": False,
         "phase_5_authorized": False,
