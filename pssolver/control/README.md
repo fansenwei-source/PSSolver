@@ -1,5 +1,38 @@
 # PSSolver discrete-adjoint control
 
+> **Status: frozen (2026-09-22).**  This provisional package is kept only so
+> that existing research scripts and tests continue to work.  It receives bug
+> fixes only: no new features, objectives, loss functions, or public names.
+> New optimal-control development happens outside PSSolver, in a consumer that
+> depends on PSSolver one way; PSSolver never imports it.
+>
+> PSSolver's long-term role is to provide a public functional
+> (differentiable) runtime: an immutable state, a functional step, an
+> observation interface, explicit control-field injection, deterministic
+> replay, and a production/functional consistency validator.  Once that
+> runtime exists and the research scripts have migrated, this package will be
+> deprecated under ADR 0005 (compatibility facade, deprecation over at least
+> two minor releases).  Until then its import paths and behavior are unchanged.
+>
+> Ownership notes for the transition:
+>
+> - `active_force.py` is active-nematic model physics.  It is expected to move
+>   to `pssolver.models.active_nematics`, keeping this path as a re-export, so
+>   that `pssolver/channel.py` no longer imports from `pssolver.control`.
+> - `functional.py` is not a stable contract.  `FunctionalSemiImplicitStep`
+>   overwrites the wrapped solver's `fields.spatial`, `fields.spectral`,
+>   `model.parameters[control_parameter]`, and the static model's
+>   `pressure_guess`, and re-implements the semi-implicit update outside the
+>   integrator.  Rebuild the solver before using it for production stepping
+>   after an adjoint run.
+>
+> Known limitation: `DiscreteAdjointLoop.gradient` differentiates
+> `stage_cost + <adjoint, q_next>` in a single VJP.  If a step detached the
+> control while the stage cost still depends on it (any nonzero control
+> weight), the result would silently omit the dynamics contribution.  The
+> current `FunctionalSemiImplicitStep` does not detach the control; custom
+> steppers must not either.
+
 This package provides a correctness-first direct-adjoint loop for a built
 `SpectralSolver`. It keeps the production in-place integrator unchanged and
 uses a functional one-step adapter during optimization.

@@ -1,4 +1,9 @@
-"""Discrete-adjoint optimal-control tools for PSSolver."""
+"""Discrete-adjoint optimal-control tools for PSSolver.
+
+Frozen (2026-09-22): kept so that existing research scripts and tests keep
+working; bug fixes only, no new features or public names.  New optimal-control
+development happens outside PSSolver.  See ``README.md`` in this package.
+"""
 
 from .active_force import active_force_divergence
 from .controls import (
