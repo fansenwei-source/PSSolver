@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "status": "P5_0_BASELINE_INVENTORY_FROZEN",
+  "baseline_commit": "e54db2f7e5be16d0e84b5d854e5232d6bb7fb72b",
+  "current_runtime_paths": {
+    "default": "legacy_production",
+    "diagnostic": "separated_canary",
+    "compiled_v2_present": false
+  },
+  "production_boundary": {
+    "application": "pssolver.applications.plane_beris_edwards.run_plane_beris_edwards",
+    "runtime_factory": "pssolver.runtime.plane_beris_edwards.build_plane_beris_edwards_runtime",
+    "legacy_builder": "pssolver.runtime.plane_legacy.build_legacy_plane_runtime",
+    "workflow": "pssolver.workflows.plane_beris_edwards.PlaneBerisEdwardsWorkflow",
+    "checkpoint_format": "plane_checkpoint_v1",
+    "default_integrator": "projected_semi_implicit_euler"
+  },
+  "source_oracle": {
+    "pssolver/configuration/plane_beris_edwards_declarations.py": "3316b8c54b57a74855e464a7b6b31c763c2b8171b21158d4980ad8692dd14615",
+    "pssolver/runtime/plane_beris_edwards.py": "247c96d6544a255af193b60941818930bbfaac6ac2dc85eacf9eee5f50e0f2ce",
+    "pssolver/runtime/plane_legacy.py": "7917a52236b334bcc796fb9fb9c6eb675d5d272c3190bfa16be5ea70bba9d1a9",
+    "pssolver/applications/plane_beris_edwards.py": "bda42d09ebf6e73efdaa5e1d37690e071c33a7068353ed50b40654b4f3cacedd",
+    "pssolver/workflows/plane_beris_edwards.py": "8333f049ef4ce68977b6e00f83cb6afac7c8de2a51aa8d80ddc5eb0448cce038",
+    "pssolver/workflows/plane_checkpoint.py": "2406ec956fe733dbd5b01d312cb80dc1cafcc287cdba5fdc944a7b0087f59a89",
+    "pssolver/solver.py": "917a7d960eb5f4f51d697644a8f62c14d2e902b1aca3510206d4767998463386",
+    "pssolver/integrator.py": "d79217d86fe4716ba9c51fbfc3988adc1eaac3b9d6a36263d9f283bf17473052",
+    "pssolver/integrators/state_backed.py": "74b3efa8da905b0c18e9b6fa9df70d6e6385fd445567e0859607b98edbf10595",
+    "pssolver/integrators/step_program.py": "43a8f9a04fbb7ce6a41a6d3b782bff4c44aeaf9a0c66fd9e0417b569cf04dbc9",
+    "pssolver/models/active_nematics/beris_edwards.py": "5cd080956103f986b2c8a22ec1a9c6f561b84d25d8a3298b6f6bab4da2f304dc",
+    "pssolver/models/active_nematics/stokes.py": "8ba1a34ca6a87031baa08cf87596f0412de18bca3392f2bc4b81869ab07831a1",
+    "pssolver/operators/projection.py": "707f3be37dca1f75ff19127719b211e3e23b3211c79e0f222a3361f9efc2e67d",
+    "pssolver/linear_solvers/stokes/plane_free_slip.py": "279c0ac58d032f907ae3ef8f61881e5e412e5458e2bf6f5e51daa1574b42fb17"
+  }
+}

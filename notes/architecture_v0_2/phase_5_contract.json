@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "status": "P5_0_PLANNING_FROZEN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "baseline": {
+    "phase_4_classification": "PASS_PHASE4_CLOSURE_WITH_MEMORY_MEASUREMENT_RECOVERY",
+    "phase_4_record_commit": "e54db2f7e5be16d0e84b5d854e5232d6bb7fb72b",
+    "phase_4_complete": true,
+    "eligible_for_phase_5_planning": true
+  },
+  "authorization": {
+    "phase_5_planning_authorized": true,
+    "phase_5_implementation_authorized": false,
+    "phase_6_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "runtime_paths": {
+    "current_default": "legacy_production",
+    "current_diagnostic": "separated_canary",
+    "planned_opt_in": "compiled_v2",
+    "planned_selector_introduction_slice": "P5.5",
+    "fallback_allowed": false
+  },
+  "parity_target": {
+    "integrator": "projected_semi_implicit_euler",
+    "scientific_reference": "legacy_production",
+    "reuse_high_performance_tensor_layout": true,
+    "reuse_qualified_numerical_kernels": true,
+    "reuse_separated_dynamic_scheduler": false,
+    "plane_checkpoint_format": 1,
+    "sbdf2_connected_to_plane": false
+  },
+  "hot_loop_forbidden": [
+    "registry_lookup",
+    "capability_lookup",
+    "string_field_discovery",
+    "json_parsing_or_serialization",
+    "cli_or_configuration_parsing",
+    "global_device_or_dtype_inference",
+    "unbounded_tensor_allocation",
+    "implicit_runtime_fallback"
+  ],
+  "phase_slices": [
+    "P5.0_plan_inventory_and_oracle_freeze",
+    "P5.1_disconnected_compiled_declarations",
+    "P5.2_construction_time_binding_and_dataflow_audit",
+    "P5.3_compiled_euler_step_program",
+    "P5.4_observation_diagnostics_and_checkpoint_adapter",
+    "P5.5_opt_in_application_connection",
+    "P5.6_local_closure_and_phase6_handoff"
+  ],
+  "phase_5_local_gates": {
+    "complete_cpu_suite": true,
+    "installed_wheel_workflow": true,
+    "local_cuda_smoke": true,
+    "step_counts": [1, 2, 100],
+    "continuous_restart_identity": true,
+    "metadata_output_identity": true,
+    "negative_identity_gates": true,
+    "tensor_lifetime_audit": true,
+    "hot_loop_static_audit": true,
+    "fallback_forbidden": true
+  },
+  "deferred_to_phase_6": [
+    "formal_r128_r320_h100_balanced_ab",
+    "formal_peak_memory_and_transform_call_gate",
+    "formal_100_step_q_u_p_gate",
+    "formal_restart_output_and_provenance_gate",
+    "long_time_scientific_benchmark",
+    "implicit_default_smoke",
+    "production_default_promotion_decision"
+  ],
+  "out_of_scope": [
+    "plane_sbdf2_activation",
+    "new_equations_or_physical_parameters",
+    "new_boundary_law",
+    "new_geometry",
+    "strong_anchoring",
+    "channel_migration",
+    "optimal_control",
+    "symbolic_pde_dsl",
+    "adaptive_timestep",
+    "arbitrary_modal_block_size",
+    "variable_coefficient_implicit_operator"
+  ]
+}

@@ -24,6 +24,7 @@ SOURCE_ORDER = (
     "adr/0008-tensor-free-system-declarations.md",
     "adr/0009-runtime-state-workspace-and-step-program.md",
     "adr/0010-sbdf2-and-modal-block-operators.md",
+    "adr/0011-plane-compiled-v2-static-control.md",
     "api_surface_v0_1_2.md",
     "v0_1_2_oracle.md",
     "v0_1_2_oracle.json",
@@ -83,6 +84,9 @@ SOURCE_ORDER = (
     "phase_4_p46_memory_measurement_recovery.json",
     "phase_4_p46_final_closure.md",
     "phase_4_p46_final_closure.json",
+    "phase_5_plane_compiled_v2.md",
+    "phase_5_contract.json",
+    "phase_5_plane_inventory.json",
 )
 
 PAGE_WIDTH = 595.276
