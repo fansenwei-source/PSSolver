@@ -94,4 +94,3 @@ This decision does not authorize CNAB2, adaptive or variable timesteps,
 arbitrary block size, spatially variable implicit coefficients, symbolic DSLs,
 Newton/Krylov solvers, complete Plane migration, strong anchoring, Channel,
 control, or any production-default promotion.
-

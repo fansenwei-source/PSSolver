@@ -172,4 +172,3 @@ def test_phase4_p40_is_documentation_only_against_frozen_sources():
     assert source_oracle
     for relative, expected in source_oracle.items():
         assert _sha256(PROJECT_ROOT / relative) == expected
-

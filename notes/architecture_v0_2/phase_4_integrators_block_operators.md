@@ -176,4 +176,3 @@ Phase 4 does not implement or authorize:
 
 The machine-readable authority is
 [phase_4_contract.json](phase_4_contract.json).
-
