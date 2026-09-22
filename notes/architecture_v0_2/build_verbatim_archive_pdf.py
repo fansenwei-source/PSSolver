@@ -65,6 +65,8 @@ SOURCE_ORDER = (
     "phase_4_contract.json",
     "phase_4_p41_integrator_history.md",
     "phase_4_p41_integrator_history.json",
+    "phase_4_p42_scalar_sbdf2_reference.md",
+    "phase_4_p42_scalar_sbdf2_reference.json",
 )
 
 PAGE_WIDTH = 595.276

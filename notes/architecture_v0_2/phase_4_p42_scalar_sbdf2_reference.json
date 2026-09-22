@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "status": "P4_2_LOCAL_COMPLETE_REFERENCE_ONLY",
+  "baseline_commit": "9273c7b5fb73d3f04be7dc1bf74befb14656b3d3",
+  "implementation": "pssolver/integrators/scalar_reference.py",
+  "model": {
+    "identity": "scalar_periodic_reaction_diffusion",
+    "dimension": 1,
+    "boundary": "periodic",
+    "implicit_term": "diffusion",
+    "explicit_term": "linear_reaction",
+    "analytic_solution": "single_cosine_mode",
+    "physical_dtype": "torch.float64",
+    "spectral_dtype": "torch.complex128",
+    "device": "cpu"
+  },
+  "semantics": {
+    "startup": "projected_semi_implicit_euler",
+    "multistep": "constant_step_sbdf2",
+    "functional_state_transition": true,
+    "failure_atomic": true,
+    "callback_timing": "after_prepare_before_explicit_rhs",
+    "scheduled_refresh_supported": true,
+    "history_commit_position": "last",
+    "implicit_fallback_allowed": false
+  },
+  "connection": {
+    "runtime_state_connected": false,
+    "step_program_connected": false,
+    "plane_connected": false,
+    "checkpoint_v1_changed": false,
+    "package_root_exported": false,
+    "integrators_package_exported": false
+  },
+  "validation": {
+    "focused_tests_passed": 70,
+    "complete_tests_passed": 1726,
+    "subtests_passed": 8,
+    "failures": 0,
+    "archive_sources_verified": 54,
+    "git_diff_check_passed": true
+  },
+  "eligibility": {
+    "p4_2_complete": true,
+    "p4_3_authorized": true,
+    "phase_4_complete": false,
+    "phase_5_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  }
+}

@@ -1,6 +1,6 @@
 # Phase 4 plan: second integrator and bounded modal block operators
 
-Status: `P4_1_LOCAL_COMPLETE_DISCONNECTED`.
+Status: `P4_2_LOCAL_COMPLETE_REFERENCE_ONLY`.
 
 Baseline: Phase 3 closure record commit
 `e1fcc5d6df5ea6cad6b61cc770a85d19c04f9953` on
@@ -123,6 +123,12 @@ types remain direct-import-only and disconnected from every runtime.
 
 Implement SBDF2 over a scalar periodic diffusion/reaction reference model.
 Freeze startup, callback, refresh, failure atomicity, and metadata behavior.
+
+Completed locally.  The result is recorded in
+[phase_4_p42_scalar_sbdf2_reference.md](phase_4_p42_scalar_sbdf2_reference.md)
+and its [machine-readable evidence](phase_4_p42_scalar_sbdf2_reference.json).
+The implementation is a CPU float64 functional reference and remains
+disconnected from every production runtime.
 
 ### P4.3: convergence and restart
 
