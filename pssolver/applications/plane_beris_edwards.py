@@ -57,6 +57,7 @@ from pssolver.configuration import (
     PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
     PLANE_FREE_SLIP_BOUNDARIES,
     PlaneBerisEdwardsRunSpec,
+    PlaneRuntimePath,
     parse_plane_beris_edwards_run_spec,
 )
 from pssolver.configuration.plane_beris_edwards_components import (
@@ -664,8 +665,23 @@ def run_plane_beris_edwards(
         initial_values=initial_values,
         device=device,
     )
+    compiled_builder = None
+    if execution.runtime_path is PlaneRuntimePath.COMPILED_V2:
+        from pssolver.workflows.plane_compiled_v2 import (
+            build_plane_compiled_v2_runtime,
+        )
+
+        def _build_compiled_runtime():
+            return build_plane_compiled_v2_runtime(
+                run_spec,
+                device=device,
+                initial_values=initial_values,
+            )
+
+        compiled_builder = _build_compiled_runtime
     runtime_adapter = build_plane_beris_edwards_runtime(
         runtime_request,
+        compiled_builder=compiled_builder,
     )
     spectral_projector = runtime_adapter.projector
     metadata["runtime_selection"] = {

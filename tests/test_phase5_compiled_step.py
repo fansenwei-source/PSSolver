@@ -347,7 +347,7 @@ def test_step_hot_path_has_no_configuration_or_field_name_discovery():
     assert "to_metadata" not in attributes
 
 
-def test_compiled_step_remains_private_and_selector_free():
+def test_compiled_step_remains_private_after_p55_selector_connection():
     import pssolver
 
     assert "PlaneCompiledEulerStepProgram" not in pssolver.__all__
@@ -356,6 +356,7 @@ def test_compiled_step_remains_private_and_selector_free():
     assert {member.value for member in PlaneRuntimePath} == {
         "legacy_production",
         "separated_canary",
+        "compiled_v2",
     }
 
 

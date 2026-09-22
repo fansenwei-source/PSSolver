@@ -89,7 +89,12 @@ def _solver(spec):
 
 
 def _compiled(tmp_path: Path, name: str, **overrides):
-    spec = _spec(tmp_path, name, **overrides)
+    spec = _spec(
+        tmp_path,
+        name,
+        runtime_path="compiled_v2",
+        **overrides,
+    )
     solver, projector = _solver(spec)
     binding = bind_plane_compiled_v2(
         spec,
@@ -102,7 +107,7 @@ def _compiled(tmp_path: Path, name: str, **overrides):
 
 
 def _legacy(tmp_path: Path, name: str):
-    spec = _spec(tmp_path, name)
+    spec = _spec(tmp_path, name, runtime_path="legacy_production")
     solver, projector = _solver(spec)
     return spec, LegacyPlaneRuntimeAdapter(solver, projector)
 
@@ -247,7 +252,7 @@ def test_checkpoint_v1_round_trip_preserves_existing_file_schema(tmp_path):
     )
 
     assert loaded.format_version == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION == 1
-    assert loaded.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION
+    assert loaded.runtime_path is PlaneRuntimePath.COMPILED_V2
     assert loaded.backend_restart["kind"] == "compiled_v2_plane_stateless"
     assert set(metadata) == {
         "backend_restart",
@@ -322,13 +327,13 @@ def test_cross_runtime_checkpoints_are_rejected_before_mutation(tmp_path):
     legacy_before = legacy.solver.fields.spatial.clone()
     compiled_before = solver.fields.spatial.clone()
 
-    with pytest.raises(ValueError, match="backend restart contract"):
+    with pytest.raises(ValueError, match="cross-runtime"):
         restore_plane_checkpoint(
             legacy,
             compiled_checkpoint,
             runtime_identity_sha256=spec.runtime_identity_sha256(),
         )
-    with pytest.raises(ValueError, match="backend restart contract"):
+    with pytest.raises(ValueError, match="cross-runtime"):
         adapter.restore_checkpoint(legacy_checkpoint)
 
     assert torch.equal(legacy.solver.fields.spatial, legacy_before)
@@ -350,7 +355,7 @@ def _tampered_checkpoint(checkpoint, case: str):
     if case == "runtime_path":
         return dataclasses.replace(
             checkpoint,
-            runtime_path=PlaneRuntimePath.SEPARATED_CANARY,
+            runtime_path=PlaneRuntimePath.LEGACY_PRODUCTION,
         )
     if case == "shape":
         values = dict(checkpoint.evolved_spectral)
@@ -403,7 +408,7 @@ def test_checkpoint_tamper_is_rejected_before_state_or_clock_change(
     assert target_adapter.completed_steps == 0
 
 
-def test_adapter_metadata_records_transitional_v1_identity_contract(tmp_path):
+def test_adapter_metadata_records_compiled_v1_identity_contract(tmp_path):
     _, _, _, _, _, adapter = _compiled(tmp_path, "metadata")
     metadata = adapter.to_metadata()
 
@@ -414,17 +419,17 @@ def test_adapter_metadata_records_transitional_v1_identity_contract(tmp_path):
     assert metadata["output_views"]["zero_copy"] is True
     assert metadata["checkpoint"] == {
         "format_version": 1,
-        "runtime_path_carrier": "legacy_production",
+        "runtime_path_carrier": "compiled_v2",
         "backend_identity_enforced": True,
         "preflight_before_mutation": True,
         "cross_runtime_restore": False,
     }
-    assert metadata["runtime_selector_added"] is False
-    assert metadata["application_import_added"] is False
+    assert metadata["runtime_selector_added"] is True
+    assert metadata["application_import_added"] is True
     assert metadata["implicit_fallback"] is False
 
 
-def test_compiled_workflow_adapter_remains_private_and_selector_free():
+def test_compiled_workflow_adapter_remains_private_after_p55_connection():
     import pssolver
 
     name = "PlaneCompiledV2WorkflowAdapter"
@@ -434,6 +439,7 @@ def test_compiled_workflow_adapter_remains_private_and_selector_free():
     assert {member.value for member in PlaneRuntimePath} == {
         "legacy_production",
         "separated_canary",
+        "compiled_v2",
     }
 
 

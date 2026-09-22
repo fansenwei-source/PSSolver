@@ -1,27 +1,31 @@
-"""Private P5.4 observation and checkpoint surface for compiled Plane.
+"""Private observation and checkpoint surface for compiled Plane.
 
-The adapter is deliberately absent from :mod:`pssolver.workflows` exports and
-from every application/runtime selector.  It exercises the existing Plane
-observation and checkpoint-v1 schemas over the disconnected P5.3 program.
+P5.4 introduced this adapter while the compiled runtime was disconnected.
+P5.5 keeps it private and composes it behind the explicit ``compiled_v2``
+runtime adapter.  The existing Plane observation and checkpoint-v1 schemas
+remain unchanged.
 """
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 import math
 
 import numpy as np
 import torch
 
-from pssolver.configuration import PlaneRuntimePath
+from pssolver.configuration import PlaneBerisEdwardsRunSpec, PlaneRuntimePath
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.plane_compiled_v2_binding import (
     PlaneCompiledV2BindingPlan,
+    bind_plane_compiled_v2,
 )
 from pssolver.runtime.plane_compiled_v2_step import (
     PlaneCompiledEulerStepProgram,
+    build_plane_compiled_v2_step_program,
 )
+from pssolver.runtime.plane_legacy import build_legacy_plane_runtime
 from pssolver.workflows.plane_checkpoint import (
     PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PlaneWorkflowCheckpoint,
@@ -33,7 +37,7 @@ from pssolver.workflows.plane_observation import (
 
 
 _VELOCITY_COMPONENTS = ("ux", "uy", "uz")
-_CHECKPOINT_PATH_CARRIER = PlaneRuntimePath.LEGACY_PRODUCTION
+_CHECKPOINT_PATH_CARRIER = PlaneRuntimePath.COMPILED_V2
 
 
 def _storage_identity(tensor: torch.Tensor) -> tuple[str, int, int]:
@@ -101,7 +105,7 @@ class PlaneCompiledCheckpointRestorePlan:
 
 
 class PlaneCompiledV2WorkflowAdapter:
-    """Disconnected observation/checkpoint adapter for one compiled program."""
+    """Private observation/checkpoint adapter for one compiled program."""
 
     __slots__ = (
         "_binding",
@@ -153,6 +157,19 @@ class PlaneCompiledV2WorkflowAdapter:
     def output_views(self) -> PlaneCompiledOutputViews:
         self._program.state.representations.require_physical_current()
         return self._views
+
+    def step(
+        self,
+        *,
+        pre_update_callback: Callable[[], None] | None = None,
+    ) -> None:
+        """Advance one pre-bound step without runtime fallback."""
+
+        if pre_update_callback is not None and not callable(
+            pre_update_callback
+        ):
+            raise TypeError("pre_update_callback must be callable or None")
+        self._program.step(pre_update_callback=pre_update_callback)
 
     def synchronize_for_observation(self) -> None:
         """Materialize algebraic fields for the current physical Q state."""
@@ -405,15 +422,139 @@ class PlaneCompiledV2WorkflowAdapter:
                     self._binding.operators.stokes_kernel.pressure_diagnostics
                 ),
             },
-            "runtime_selector_added": False,
-            "application_import_added": False,
+            "runtime_selector_added": True,
+            "application_import_added": True,
             "implicit_fallback": False,
             "connected_runtime": self.connected_runtime,
         }
+
+
+@dataclass(frozen=True, slots=True)
+class _CompiledV2PlaneRuntimeAdapter:
+    """Private application-facing composition of the P5.2--P5.4 pieces."""
+
+    _solver: object
+    _projector: object
+    _workflow: PlaneCompiledV2WorkflowAdapter
+
+    @property
+    def runtime_path(self) -> PlaneRuntimePath:
+        return PlaneRuntimePath.COMPILED_V2
+
+    @property
+    def solver(self) -> object:
+        return self._solver
+
+    @property
+    def projector(self) -> object:
+        return self._projector
+
+    @property
+    def fields(self) -> object:
+        return self._solver.fields
+
+    @property
+    def completed_steps(self) -> int:
+        return self._workflow.completed_steps
+
+    def advance(
+        self,
+        steps: int,
+        *,
+        pre_update_callback: Callable[[object, int], None] | None = None,
+    ) -> None:
+        if not isinstance(steps, int) or isinstance(steps, bool) or steps < 0:
+            raise ValueError("compiled-v2 steps must be a non-negative integer")
+        if pre_update_callback is not None and not callable(
+            pre_update_callback
+        ):
+            raise TypeError("pre_update_callback must be callable or None")
+        for local_step in range(steps):
+            callback = (
+                None
+                if pre_update_callback is None
+                else lambda local_step=local_step: pre_update_callback(
+                    self._solver,
+                    local_step,
+                )
+            )
+            self._workflow.step(pre_update_callback=callback)
+
+    def synchronize_for_observation(self) -> None:
+        self._workflow.synchronize_for_observation()
+
+    def projected_normal_force(self) -> torch.Tensor:
+        return self._workflow.projected_normal_force()
+
+    def flow_diagnostics(self) -> Mapping[str, object]:
+        return self._workflow.flow_diagnostics()
+
+    def backend_restart_metadata(self) -> dict[str, object]:
+        return self._workflow.backend_restart_metadata()
+
+    def restore_progress(
+        self,
+        *,
+        completed_steps: int,
+        spectral_refresh_interval: int | None,
+        integrator_step_count: int,
+        integrator_refresh_count: int,
+    ) -> None:
+        integrator = self._solver.integrator
+        integrator.set_spectral_refresh_interval(spectral_refresh_interval)
+        integrator.restore_progress(
+            completed_steps,
+            static_fields_are_current=True,
+        )
+        if (
+            int(integrator.step_count) != integrator_step_count
+            or int(integrator.refresh_count) != integrator_refresh_count
+        ):
+            raise RuntimeError(
+                "restored spectral-refresh counters are inconsistent"
+            )
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "requested": self.runtime_path.value,
+            "effective": self.runtime_path.value,
+            "adapter": type(self).__name__,
+            "fallback_used": False,
+            "separated_architecture": None,
+            "compiled_architecture": self._workflow.to_metadata(),
+        }
+
+
+def build_plane_compiled_v2_runtime(
+    run_spec: PlaneBerisEdwardsRunSpec,
+    *,
+    device: object,
+    initial_values: Mapping[str, object],
+) -> _CompiledV2PlaneRuntimeAdapter:
+    """Build the private compiled runtime selected by the application."""
+
+    if not isinstance(run_spec, PlaneBerisEdwardsRunSpec):
+        raise TypeError("run_spec must be a PlaneBerisEdwardsRunSpec")
+    if run_spec.runtime_path is not PlaneRuntimePath.COMPILED_V2:
+        raise ValueError("compiled runtime builder requires compiled_v2")
+    solver, projector = build_legacy_plane_runtime(
+        run_spec,
+        device=device,
+        initial_values=initial_values,
+    )
+    binding = bind_plane_compiled_v2(
+        run_spec,
+        solver=solver,
+        projector=projector,
+    )
+    program = build_plane_compiled_v2_step_program(binding)
+    workflow = PlaneCompiledV2WorkflowAdapter(binding, program)
+    return _CompiledV2PlaneRuntimeAdapter(solver, projector, workflow)
 
 
 __all__ = [
     "PlaneCompiledCheckpointRestorePlan",
     "PlaneCompiledOutputViews",
     "PlaneCompiledV2WorkflowAdapter",
+    "build_plane_compiled_v2_runtime",
 ]

@@ -450,8 +450,14 @@ def bind_plane_compiled_v2(
 
     if not isinstance(run_spec, PlaneBerisEdwardsRunSpec):
         raise TypeError("run_spec must be a PlaneBerisEdwardsRunSpec")
-    if run_spec.runtime_path is not PlaneRuntimePath.LEGACY_PRODUCTION:
-        raise ValueError("P5.2 binds only the legacy production oracle")
+    if run_spec.runtime_path not in {
+        PlaneRuntimePath.LEGACY_PRODUCTION,
+        PlaneRuntimePath.COMPILED_V2,
+    }:
+        raise ValueError(
+            "compiled-v2 binding accepts only the legacy oracle or the "
+            "explicit compiled_v2 runtime"
+        )
     required_solver_surface = (
         "batchsize",
         "dt",

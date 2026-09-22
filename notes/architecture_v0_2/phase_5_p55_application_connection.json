@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_P5_5_OPT_IN_APPLICATION_CONNECTION",
+  "baseline_commit": "1da0ceaf7b4af159d9ce363dd51476bc85e70d52",
+  "authorization": {
+    "p5_5_implementation_authorized": true,
+    "p5_6_implementation_authorized": false,
+    "phase_6_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false,
+    "compiled_v2_promoted": false
+  },
+  "runtime_paths": {
+    "default": "legacy_production",
+    "diagnostic_opt_in": "separated_canary",
+    "compiled_opt_in": "compiled_v2"
+  },
+  "connection": {
+    "selector_added": true,
+    "parser_choice_added": true,
+    "private_runtime_adapter_added": true,
+    "application_factory_connected": true,
+    "requested_equals_effective": true,
+    "fallback_allowed": false,
+    "dry_run_allocates_runtime_tensors": false
+  },
+  "numerics": {
+    "equations_changed": false,
+    "boundary_conditions_changed": false,
+    "integrator": "projected_semi_implicit_euler",
+    "operation_order_changed": false,
+    "tensor_layout_changed": false,
+    "checkpoint_format": 1,
+    "checkpoint_schema_changed": false,
+    "compiled_checkpoint_runtime_path": "compiled_v2"
+  },
+  "validation": {
+    "selector_default": "PASS",
+    "explicit_parser_selection": "PASS",
+    "construction_failure_without_fallback": "PASS",
+    "dry_run_tensor_free": "PASS",
+    "short_run_byte_identity": "PASS",
+    "split_restart_byte_identity": "PASS",
+    "targeted_tests": {
+      "result": "PASS",
+      "passed": 62,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0
+    },
+    "full_cpu_suite": {
+      "result": "PASS",
+      "passed": 1906,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "subtests_passed": 8
+    },
+    "git_diff_check": "PASS",
+    "dependency_direction_gate": "PASS",
+    "source_identity": {
+      "pssolver/configuration/plane_beris_edwards_declarations.py": "3df3198bbcfd1e08c5d94050c63b87da00c239d242e11cb6f8b3692681c345ac",
+      "pssolver/configuration/plane_beris_edwards.py": "965396c2474cf68c7af87ade9c6bd48c794601955685602b704fb0ea81d932aa",
+      "pssolver/runtime/plane_beris_edwards.py": "84d389125dc7417e765b3dd7acb1f269c2b2ad2391f6b0e373ba850eeca04c0d",
+      "pssolver/runtime/plane_compiled_v2_binding.py": "fe896c53220bd95cb3b15a9b468a34eff2a1e6866d2005c25a6639958774ef8b",
+      "pssolver/workflows/plane_compiled_v2.py": "ca37df25fffbffe80799ed273c50f6c4c768d7fc8a263bba9235addfbc3e0f90",
+      "pssolver/applications/plane_beris_edwards.py": "3b60a69223519ca2ee64adbed56dd2a89b84fc0faa2354f401657bd731fb55e5",
+      "tests/test_phase5_compiled_application_connection.py": "ce37d19d850a2d17a59f1cf4b586a845e2c89e6c02ea7d2ba746393de9eff899"
+    }
+  },
+  "eligibility": {
+    "p5_5_complete": true,
+    "p5_6_locally_eligible": true,
+    "phase_6_eligible": false,
+    "default_promotion_eligible": false
+  }
+}

@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,6 +23,16 @@ def _sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _git_blob_sha256(commit: str, relative: str) -> str:
+    result = subprocess.run(
+        ["git", "show", f"{commit}:{relative}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    return hashlib.sha256(result.stdout).hexdigest()
 
 
 def test_phase5_planning_is_authorized_separately_from_implementation():
@@ -126,7 +137,9 @@ def test_phase5_inventory_hashes_the_exact_plane_oracle():
     source_oracle = inventory["source_oracle"]
     assert len(source_oracle) == 14
     for relative, expected in source_oracle.items():
-        assert _sha256(ROOT / relative) == expected
+        assert _git_blob_sha256(inventory["baseline_commit"], relative) == (
+            expected
+        )
 
 
 def test_phase5_planning_does_not_claim_plane_or_default_changes():

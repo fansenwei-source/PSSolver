@@ -95,6 +95,8 @@ SOURCE_ORDER = (
     "phase_5_p53_compiled_euler_step.json",
     "phase_5_p54_observation_checkpoint.md",
     "phase_5_p54_observation_checkpoint.json",
+    "phase_5_p55_application_connection.md",
+    "phase_5_p55_application_connection.json",
 )
 
 PAGE_WIDTH = 595.276

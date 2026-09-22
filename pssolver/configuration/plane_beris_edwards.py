@@ -864,7 +864,8 @@ def _parser() -> argparse.ArgumentParser:
         help=(
             "Plane runtime implementation. legacy_production remains the "
             "default and rollback oracle; separated_canary is an explicit "
-            "Stage O opt-in with no fallback."
+            "Stage O opt-in; compiled_v2 is the explicit Phase 5 static-"
+            "control path. Neither opt-in path permits fallback."
         ),
     )
     parser.add_argument(

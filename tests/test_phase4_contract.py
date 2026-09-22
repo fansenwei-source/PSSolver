@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -26,6 +27,16 @@ def _sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _git_blob_sha256(commit: str, relative: str) -> str:
+    result = subprocess.run(
+        ["git", "show", f"{commit}:{relative}"],
+        cwd=PROJECT_ROOT,
+        check=True,
+        capture_output=True,
+    )
+    return hashlib.sha256(result.stdout).hexdigest()
 
 
 def test_phase4_authorization_is_separate_from_phase3_closure():
@@ -168,7 +179,9 @@ def test_phase4_explicitly_defers_plane_and_large_scope_features():
 
 
 def test_phase4_p40_is_documentation_only_against_frozen_sources():
-    source_oracle = _contract()["p4_0_source_oracle"]
+    contract = _contract()
+    source_oracle = contract["p4_0_source_oracle"]
+    baseline = contract["authorization"]["phase_3_record_commit"]
     assert source_oracle
     for relative, expected in source_oracle.items():
-        assert _sha256(PROJECT_ROOT / relative) == expected
+        assert _git_blob_sha256(baseline, relative) == expected

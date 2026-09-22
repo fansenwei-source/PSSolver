@@ -147,6 +147,9 @@ the private runtime adapter, and explicit application selection.  Omitted
 selection remains exactly `legacy_production`.  Dry-run must not allocate
 runtime tensors.  No fallback is allowed.
 
+Completion record: `phase_5_p55_application_connection.md` and
+`phase_5_p55_application_connection.json`.
+
 ### P5.6: local closure and Phase 6 handoff
 
 Run the complete CPU suite, installed-wheel import/workflow smoke, local CUDA

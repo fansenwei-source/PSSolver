@@ -35,6 +35,7 @@ class PlaneRuntimePath(str, Enum):
 
     LEGACY_PRODUCTION = "legacy_production"
     SEPARATED_CANARY = "separated_canary"
+    COMPILED_V2 = "compiled_v2"
 
 
 PlaneRuntimePath.__module__ = _LEGACY_DECLARATION_MODULE

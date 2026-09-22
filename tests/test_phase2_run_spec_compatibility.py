@@ -339,9 +339,23 @@ def test_parser_semantic_contract_matches_v1_oracle():
 
     assert parser.allow_abbrev is oracle["allow_abbrev"]
     assert len(domain_actions) == oracle["domain_action_count"]
-    assert [_argparse_action_contract(action) for action in domain_actions] == (
-        oracle["domain_actions"]
+    observed_actions = [
+        _argparse_action_contract(action) for action in domain_actions
+    ]
+    runtime_action = next(
+        action for action in observed_actions
+        if action["dest"] == "runtime_path"
     )
+    oracle_runtime_action = next(
+        action for action in oracle["domain_actions"]
+        if action["dest"] == "runtime_path"
+    )
+    assert runtime_action["choices"] == [
+        *oracle_runtime_action["choices"],
+        "compiled_v2",
+    ]
+    runtime_action["choices"] = oracle_runtime_action["choices"]
+    assert observed_actions == oracle["domain_actions"]
     assert [_argparse_action_contract(action) for action in help_actions] == (
         oracle["help_actions"]
     )

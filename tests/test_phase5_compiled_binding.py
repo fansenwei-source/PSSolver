@@ -320,11 +320,12 @@ def test_p52_rejects_binding_after_the_runtime_has_evolved(tmp_path):
         )
 
 
-def test_p52_remains_private_and_does_not_add_a_runtime_selector():
+def test_p52_binding_remains_private_after_p55_selector_connection():
     assert not hasattr(runtime_api, "bind_plane_compiled_v2")
     assert {member.value for member in PlaneRuntimePath} == {
         "legacy_production",
         "separated_canary",
+        "compiled_v2",
     }
 
 

@@ -212,7 +212,7 @@ assert 'torch' not in module.__dict__
     assert completed.returncode == 0, completed.stderr
 
 
-def test_compiled_declaration_remains_private_and_selector_free():
+def test_compiled_declaration_remains_private_after_p55_selector_connection():
     import pssolver
     import pssolver.planning as planning
     from pssolver.configuration import PlaneRuntimePath
@@ -222,6 +222,7 @@ def test_compiled_declaration_remains_private_and_selector_free():
     assert {member.value for member in PlaneRuntimePath} == {
         "legacy_production",
         "separated_canary",
+        "compiled_v2",
     }
 
 

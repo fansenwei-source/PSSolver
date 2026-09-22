@@ -331,6 +331,7 @@ class SeparatedCanaryPlaneRuntimeAdapter:
 
 
 LegacyRuntimeBuilder = Callable[[], tuple[object, object]]
+CompiledRuntimeBuilder = Callable[[], PlaneRuntimeAdapterProtocol]
 
 
 def _restore_integrator_progress(
@@ -357,18 +358,23 @@ def build_plane_beris_edwards_runtime(
     request: PlaneRuntimeBuildRequest,
     *,
     legacy_builder: LegacyRuntimeBuilder | None = None,
+    compiled_builder: CompiledRuntimeBuilder | None = None,
 ) -> PlaneRuntimeAdapterProtocol:
     """Build exactly the runtime selected by the immutable run specification.
 
-    The package-owned legacy builder is the production path.  The optional
+    The package-owned legacy builder is the production default.  Its optional
     injection point remains available for characterization tests and explicit
-    rollback checks; applications no longer need to own numerical assembly.
+    rollback checks.  The compiled builder is supplied only by the Plane
+    application layer so the runtime layer does not depend upward on workflow
+    code; selecting ``compiled_v2`` without it fails instead of falling back.
     """
 
     if not isinstance(request, PlaneRuntimeBuildRequest):
         raise TypeError("request must be a PlaneRuntimeBuildRequest")
     if legacy_builder is not None and not callable(legacy_builder):
         raise TypeError("legacy_builder must be callable")
+    if compiled_builder is not None and not callable(compiled_builder):
+        raise TypeError("compiled_builder must be callable")
     components = decompose_plane_beris_edwards_run_spec(request.run_spec)
     execution = components.execution
     if execution.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION:
@@ -383,6 +389,21 @@ def build_plane_beris_edwards_runtime(
         else:
             solver, projector = legacy_builder()
         return LegacyPlaneRuntimeAdapter(solver, projector)
+
+    if execution.runtime_path is PlaneRuntimePath.COMPILED_V2:
+        if compiled_builder is None:
+            raise RuntimeError(
+                "compiled_v2 requires the application-owned compiled builder; "
+                "runtime fallback is forbidden"
+            )
+        adapter = compiled_builder()
+        if not isinstance(adapter, PlaneRuntimeAdapterProtocol):
+            raise TypeError(
+                "compiled_builder must return PlaneRuntimeAdapterProtocol"
+            )
+        if adapter.runtime_path is not PlaneRuntimePath.COMPILED_V2:
+            raise ValueError("compiled_builder returned the wrong runtime path")
+        return adapter
 
     if execution.disable_q_gradient_reuse:
         raise ValueError(

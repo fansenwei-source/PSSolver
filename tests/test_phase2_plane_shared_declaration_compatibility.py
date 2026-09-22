@@ -109,9 +109,11 @@ def test_shared_declaration_surfaces_match_the_pre_extraction_oracle():
     assert PlaneRuntimePath.__qualname__ == runtime["qualname"]
     assert issubclass(PlaneRuntimePath, str)
     assert issubclass(PlaneRuntimePath, Enum)
-    assert [[item.name, item.value] for item in PlaneRuntimePath] == (
-        runtime["members"]
-    )
+    members = [[item.name, item.value] for item in PlaneRuntimePath]
+    assert members[: len(runtime["members"])] == runtime["members"]
+    assert members[len(runtime["members"]):] == [
+        ["COMPILED_V2", "compiled_v2"]
+    ]
 
     for value_type, key in (
         (PlaneFreeSlipBoundaryConditions, "boundaries"),
