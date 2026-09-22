@@ -71,6 +71,8 @@ SOURCE_ORDER = (
     "phase_4_p43_convergence_restart.json",
     "phase_4_p44_modal_block_operator.md",
     "phase_4_p44_modal_block_operator.json",
+    "phase_4_p44_h100_recovery.md",
+    "phase_4_p44_h100_recovery.json",
 )
 
 PAGE_WIDTH = 595.276

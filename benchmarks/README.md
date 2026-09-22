@@ -4,6 +4,23 @@ Microbenchmarks in this directory measure isolated numerical kernels. They are
 not scientific validation tests and do not replace convergence or manufactured
 solution tests.
 
+Map the P4.4 two-component modal-block H100 crossover with:
+
+```bash
+python -m benchmarks.profile_modal_block_crossover \
+  --device cuda --dtype complex128 \
+  --mode-counts 131072,262144,524288,1048576,2097152,4194304 \
+  --warmup 5 --repeats 30 --trials 3 \
+  --maximum-median-ratio 1.05 \
+  --output /tmp/p4_4_modal_block_crossover.json
+```
+
+The profiler compares `torch.linalg.solve` with the fixed-workspace analytic
+two-by-two solve under balanced trial order, TF32 disabled, and independent
+correctness and residual gates.  Its recommended switch count is evidence for
+a later explicit binding policy only; the profiler cannot change a default or
+authorize P4.5.
+
 Map the bounded-axis dense DCT/DST applicability region with:
 
 ```bash

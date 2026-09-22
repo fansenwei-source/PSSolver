@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "status": "P4_4_H100_RECOVERY_CROSSOVER_PROFILER_READY",
+  "candidate_commit": "ea4b051351f3e5b5dc1d3f51a3ed14dc64736603",
+  "h100_attempt": {
+    "job_id": 10837110,
+    "classification": "FAIL_P4_4_MODAL_BLOCK_H100",
+    "failure_scope": "small_mode_count_performance_only",
+    "cpu_targeted_passed": 116,
+    "cpu_complete_passed": 1769,
+    "cpu_subtests_passed": 8,
+    "cuda_only_tests_passed": 2,
+    "correctness_passed": true,
+    "residual_passed": true,
+    "finite_passed": true,
+    "workspace_identity_passed": true,
+    "singular_rejection_passed": true,
+    "memory_passed": true,
+    "cases": [
+      {
+        "mode_count": 131072,
+        "relative_l2": 1.5141459274070011e-16,
+        "residual_relative_l2": 1.395847317348472e-16,
+        "candidate_over_reference_median_ratio": 1.576770476,
+        "performance_passed": false,
+        "candidate_over_reference_peak_allocated_ratio": 0.405594406
+      },
+      {
+        "mode_count": 4194304,
+        "relative_l2": 1.5163503128573793e-16,
+        "residual_relative_l2": 1.392998616231165e-16,
+        "candidate_over_reference_median_ratio": 0.636732467,
+        "performance_passed": true,
+        "candidate_over_reference_peak_allocated_ratio": 0.716049383
+      }
+    ]
+  },
+  "recovery_profiler": {
+    "path": "benchmarks/profile_modal_block_crossover.py",
+    "test_path": "tests/test_profile_modal_block_crossover.py",
+    "mode_counts": [131072, 262144, 524288, 1048576, 2097152, 4194304],
+    "dtype": "complex128",
+    "tf32": false,
+    "trials": 3,
+    "balanced_order": true,
+    "maximum_acceptable_median_ratio": 1.05,
+    "selection_rule": "first count whose complete measured suffix passes",
+    "output_scope": "evidence_only_no_production_selection"
+  },
+  "local_validation": {
+    "profiler_tests_passed": 17,
+    "cuda_smoke_device": "NVIDIA GeForce RTX 3060 Ti",
+    "cuda_smoke_is_authoritative_for_h100": false
+  },
+  "eligibility": {
+    "p4_4_h100_qualified": false,
+    "crossover_h100_scan_authorized": true,
+    "auto_policy_implemented": false,
+    "p4_5_authorized": false,
+    "phase_4_complete": false,
+    "phase_5_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  }
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "P4_4_LOCAL_COMPLETE_GPU_NOT_YET_QUALIFIED",
+  "status": "P4_4_H100_RECOVERY_CROSSOVER_PROFILER_READY",
   "baseline_commit": "e262867d19f8a9ed9f30af801021cf00910542d5",
   "declaration": "pssolver/core/modal_blocks.py",
   "implementation": "pssolver/operators/modal_block.py",
@@ -45,15 +45,26 @@
     "operators_package_exported": false
   },
   "validation": {
-    "focused_tests_passed": 116,
-    "complete_tests_passed": 1772,
+    "focused_tests_passed": 118,
+    "complete_tests_passed": 1789,
     "subtests_passed": 8,
     "failures": 0,
-    "archive_sources_verified": 58,
+    "recovery_profiler_tests_passed": 17,
+    "archive_sources_verified": 60,
     "git_diff_check_passed": true
+  },
+  "h100_attempt": {
+    "job_id": 10837110,
+    "classification": "FAIL_P4_4_MODAL_BLOCK_H100",
+    "correctness_passed": true,
+    "memory_passed": true,
+    "small_case_performance_passed": false,
+    "large_case_performance_passed": true,
+    "recovery_record": "notes/architecture_v0_2/phase_4_p44_h100_recovery.json"
   },
   "eligibility": {
     "p4_4_local_complete": true,
+    "crossover_h100_scan_authorized": true,
     "p4_5_authorized": false,
     "h100_qualification_required_before_p4_5": true,
     "phase_4_complete": false,

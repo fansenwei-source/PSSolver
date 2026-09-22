@@ -1,6 +1,6 @@
 # Phase 4 P4.4 two-component modal block operator
 
-Status: `P4_4_LOCAL_COMPLETE_GPU_NOT_YET_QUALIFIED`.
+Status: `P4_4_H100_RECOVERY_CROSSOVER_PROFILER_READY`.
 
 P4.4 adds a tensor-free declaration for exactly two coupled components and a
 device-bound mode-local operator whose coefficient tensor has trailing shape
@@ -13,8 +13,11 @@ Binding validates the component order, geometry and basis capability, real and
 spectral dtype pairing, device, coefficient finiteness, and exact block shape.
 The CPU reference uses `torch.linalg.solve`.  The optimized implementation uses
 the closed-form inverse of a two-by-two matrix over every retained mode and is
-written entirely with device-resident PyTorch tensor operations.  It can run on
-CUDA but has not yet received H100 qualification.
+written entirely with device-resident PyTorch tensor operations.  Its first
+H100 qualification passed every numerical, residual, finite-value, workspace,
+singular-rejection, and memory gate, but failed the `131072`-mode performance
+gate.  The same path was about `1.57x` faster at `4194304` modes, establishing
+a size-dependent crossover rather than a numerical failure.
 
 The optimized path accepts a reusable bounded workspace containing one output
 and four mode-shaped scratch tensors.  The workspace and RHS must have the
@@ -30,8 +33,11 @@ solve implementations reproduce the same implicit-Euler modal update.
 
 The declaration, bound operator, workspace, and reference model remain
 direct-import-only.  No production runtime, StepProgram, Plane path, checkpoint
-format, or default imports them.  P4.5 is deliberately not authorized until
-the optimized CUDA path has passed a focused H100 qualification.
+format, or default imports them.  The evidence-only crossover profiler and the
+recovery plan are recorded in
+[phase_4_p44_h100_recovery.md](phase_4_p44_h100_recovery.md).  P4.5 remains
+blocked until an explicit size-aware policy has been implemented and qualified
+on H100.
 
 The machine-readable record is
 [phase_4_p44_modal_block_operator.json](phase_4_p44_modal_block_operator.json).
