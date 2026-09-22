@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_P5_4_OBSERVATION_DIAGNOSTICS_CHECKPOINT_ADAPTER",
+  "baseline_commit": "a4abfbe199cccf9dc4a953074d7f0ad9d22bacba",
+  "authorization": {
+    "p5_4_implementation_authorized": true,
+    "p5_5_implementation_authorized": false,
+    "phase_6_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "adapter": {
+    "identity": "compiled_v2_observation_checkpoint_adapter",
+    "private": true,
+    "disconnected": true,
+    "zero_copy_output_views": true,
+    "observation_layout_preserved": true,
+    "observation_filenames_preserved": true,
+    "projected_normal_force_diagnostics": true,
+    "pressure_diagnostics": true
+  },
+  "checkpoint": {
+    "format_version": 1,
+    "schema_changed": false,
+    "transitional_runtime_path_carrier": "legacy_production",
+    "compiled_backend_identity_enforced": true,
+    "runtime_identity_sha256_enforced": true,
+    "full_preflight_before_mutation": true,
+    "cross_runtime_restart_supported": false,
+    "continuous_split_byte_identity": true,
+    "tamper_rejection_before_step_or_output": true
+  },
+  "connection": {
+    "runtime_selector_added": false,
+    "production_import_added": false,
+    "application_entry_added": false,
+    "fallback_allowed": false
+  },
+  "validation": {
+    "observation_array_identity": "PASS",
+    "observation_file_byte_identity": "PASS",
+    "diagnostic_identity": "PASS",
+    "checkpoint_v1_round_trip": "PASS",
+    "continuous_split_restart": "PASS",
+    "cross_runtime_negative_gate": "PASS",
+    "identity_shape_dtype_finite_tamper_gates": "PASS",
+    "targeted_tests": {
+      "result": "PASS",
+      "passed": 222,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0
+    },
+    "full_cpu_suite": {
+      "result": "PASS",
+      "passed": 1899,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "subtests_passed": 8
+    },
+    "git_diff_check": "PASS",
+    "source_identity": {
+      "pssolver/workflows/plane_compiled_v2.py": "ff36702e5259a98d3d6d086b594aa8d70c910cad564376fe428395974c142b19",
+      "tests/test_phase5_compiled_workflow_adapter.py": "7c0b5e7a15a84df703de7be7317e464ded69e62fc965de0421fc7f4add170c51"
+    }
+  },
+  "eligibility": {
+    "p5_4_complete": true,
+    "p5_5_locally_eligible": true,
+    "phase_6_eligible": false,
+    "default_promotion_eligible": false
+  }
+}

@@ -137,6 +137,9 @@ pressure diagnostics, output views, and checkpoint identity without changing
 Plane checkpoint format v1.  Reject cross-runtime or incompatible restart
 before a timestep or output.  Add continuous/split restart and tamper tests.
 
+Completion record: `phase_5_p54_observation_checkpoint.md` and
+`phase_5_p54_observation_checkpoint.json`.
+
 ### P5.5: opt-in application connection
 
 Only after P5.1--P5.4 pass, add `PlaneRuntimePath.COMPILED_V2`, parser support,
