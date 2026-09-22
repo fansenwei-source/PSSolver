@@ -43,8 +43,35 @@ def test_phase6_tools_are_analysis_and_measurement_only():
     assert "LegacyPlaneRuntimeAdapter" in profiler
     assert "build_plane_compiled_v2_runtime" in profiler
     assert "adapter.advance(1)" in profiler
-    assert "PASS_PHASE6_H100_CANDIDATE_GATE" in analyzer
+    assert "PASS_PHASE6_H100_CANDIDATE_PERFORMANCE_EQUIVALENT" in analyzer
     assert "eligible_for_default_promotion\": False" in analyzer
     assert "production_default_changed\": False" in analyzer
     assert "build_legacy_plane_runtime" not in analyzer
     assert "build_plane_compiled_v2_runtime" not in analyzer
+
+
+def test_phase6_recovery_record_preserves_failure_and_changes_only_adjudication():
+    value = json.loads(
+        (NOTES / "phase_6_p61_performance_equivalence_recovery.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert value["classification"] == (
+        "READY_PHASE6_PERFORMANCE_EQUIVALENCE_RECOVERY"
+    )
+    assert value["profile_source"]["original_classification"] == (
+        "FAIL_PHASE6_H100_CANDIDATE_GATE"
+    )
+    assert value["corrected_performance_contract"][
+        "candidate_faster_count_role"
+    ] == "informational"
+    assert value["measured_results"]["R128"]["performance_class"] == (
+        "performance_equivalent"
+    )
+    assert value["measured_results"]["R320"]["performance_class"] == (
+        "performance_equivalent"
+    )
+    assert value["authorization"]["long_run_authorized"] is False
+    assert value["authorization"]["production_default_changed"] is False
+    assert value["recovery_scope"]["rerun_profiles"] is False

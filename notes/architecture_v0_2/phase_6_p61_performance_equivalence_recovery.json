@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "classification": "READY_PHASE6_PERFORMANCE_EQUIVALENCE_RECOVERY",
+  "profile_source": {
+    "commit": "bad9916ac1cae4969372712edf88d106d529d584",
+    "job_id": "10837343",
+    "job_state": "CANCELLED",
+    "profilers_complete": 12,
+    "manifest_entries_verified": 1670,
+    "manifest_sha256": "ba00f7f5bc64cd5ae022d53d6eab3505636b0384fd047b8650e91b7d3167133c",
+    "original_classification": "FAIL_PHASE6_H100_CANDIDATE_GATE"
+  },
+  "original_failure": {
+    "failed_gate": "paired_candidate_faster",
+    "required_faster_count_per_grid": 2,
+    "observed_faster_count": {
+      "R128": 1,
+      "R320": 1
+    },
+    "solver_failure": false,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "memory_failure": false,
+    "runtime_fallback": false
+  },
+  "corrected_performance_contract": {
+    "mean_timestep_ratio_max": 1.02,
+    "median_timestep_ratio_max": 1.02,
+    "every_paired_timestep_ratio_max": 1.02,
+    "peak_allocated_ratio_max": 1.02,
+    "peak_reserved_ratio_max": 1.02,
+    "material_acceleration_mean_and_median_ratio_max": 0.98,
+    "material_acceleration_faster_count_min": 2,
+    "candidate_faster_count_role": "informational"
+  },
+  "measured_results": {
+    "R128": {
+      "mean_ratio": 0.998114208,
+      "median_ratio": 1.000087885,
+      "paired_ratios": [1.000735697, 1.007441320, 0.986209464],
+      "faster_count": 1,
+      "performance_class": "performance_equivalent"
+    },
+    "R320": {
+      "mean_ratio": 1.000100141,
+      "median_ratio": 1.000225270,
+      "paired_ratios": [1.000225270, 0.999792755, 1.000282881],
+      "faster_count": 1,
+      "performance_class": "performance_equivalent"
+    },
+    "maximum_peak_memory_ratio": 1.002325581
+  },
+  "authorization": {
+    "analysis_only_readjudication_authorized": true,
+    "single_scientific_gate_recovery_authorized": true,
+    "total_formal_h100_submission_count_after_recovery": 2,
+    "automatic_retry": false,
+    "long_run_authorized": false,
+    "default_promotion_authorized": false,
+    "production_default_changed": false
+  },
+  "local_validation": {
+        "targeted_tests": {
+            "passed": 31,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0
+    },
+        "complete_suite": {
+            "passed": 1942,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "subtests_passed": 8
+    },
+    "git_diff_check": "PASS"
+  },
+  "recovery_scope": {
+    "reuse_original_profiles_read_only": true,
+    "rerun_profiles": false,
+    "new_control_root_required": true,
+    "new_scratch_root_required": true,
+    "complete_workflow_comparisons": true,
+    "complete_restart_gates": true,
+    "complete_negative_gates": true,
+    "complete_auxiliary_gates": true,
+    "run_T400": false
+  },
+  "eligibility": {
+    "ready_for_performance_only_adjudication": true,
+    "ready_for_scientific_gate_recovery_if_performance_passes": true,
+    "long_run_stage_eligible": false,
+    "default_promotion_eligible": false
+  }
+}

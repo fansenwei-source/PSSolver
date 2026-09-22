@@ -103,6 +103,8 @@ SOURCE_ORDER = (
     "phase_6_plane_compiled_v2_qualification_plan.json",
     "phase_6_p61_h100_qualification_support.md",
     "phase_6_p61_h100_qualification_support.json",
+    "phase_6_p61_performance_equivalence_recovery.md",
+    "phase_6_p61_performance_equivalence_recovery.json",
 )
 
 PAGE_WIDTH = 595.276
