@@ -60,7 +60,7 @@
     },
     "full_cpu_suite": {
       "result": "PASS",
-      "passed": 1870,
+      "passed": 1883,
       "failed": 0,
       "skipped": 0,
       "deselected": 0,
@@ -68,9 +68,10 @@
     },
     "git_diff_check": "PASS",
     "source_identity": {
-      "pssolver/runtime/plane_compiled_v2_binding.py": "292604d5e3fcee4b3e7343ffe08feb09194ff44a5d4ecf9b29fad91961adc3b1",
-      "tests/test_phase5_compiled_binding.py": "5972f031f8e14c7ea0df898d9fcc8f6c0446b9949998fdb1a1c3e201aee4607b"
-    }
+      "pssolver/runtime/plane_compiled_v2_binding.py": "7a6077ea2b2e48d587dc63737b03c03270cc5f14e0a9af43feada46dc44ef857",
+      "tests/test_phase5_compiled_binding.py": "571d6dd4afe23edb38b7f9f345abc014607370ceb51f855c7a351bc0053c8a29"
+    },
+    "p5_3_integration_correction": "bind exact integrator prepare/RHS operations so restored-static invalidation semantics cannot be bypassed"
   },
   "eligibility": {
     "p5_2_complete": true,

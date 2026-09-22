@@ -127,6 +127,9 @@ scheduled spectral refresh, static-field invalidation, failure atomicity, and
 progress commit.  Compare one-step and short continuous CPU results with the
 legacy runtime.
 
+Completion record: `phase_5_p53_compiled_euler_step.md` and
+`phase_5_p53_compiled_euler_step.json`.
+
 ### P5.4: observation, diagnostics, and checkpoint adapter
 
 Connect observation synchronization, projected normal-force diagnostics,

@@ -243,8 +243,12 @@ class PlaneCompiledOperatorBindings:
 
     def to_metadata(self) -> dict[str, object]:
         return {
-            "prepare_algebraic": "PDEModel.update_static_fields",
-            "explicit_rhs": "PDEModel.compute_nonlinear",
+            "prepare_algebraic": (
+                "DealiasedSemiImplicitEulerIntegrator._prepare_algebraic"
+            ),
+            "explicit_rhs": (
+                "DealiasedSemiImplicitEulerIntegrator._explicit_rhs"
+            ),
             "project_dynamic_spectra": (
                 "DealiasedSemiImplicitEulerIntegrator._project_dynamic_spectra"
             ),
@@ -419,8 +423,8 @@ def _validate_operator_graph(
     if nonlinear.q_gradient_cache is not stokes.q_gradient_cache:
         raise ValueError("Q and Stokes models must share the Q-gradient cache")
     return PlaneCompiledOperatorBindings(
-        prepare_algebraic=model.update_static_fields,
-        explicit_rhs=model.compute_nonlinear,
+        prepare_algebraic=integrator._prepare_algebraic,
+        explicit_rhs=integrator._explicit_rhs,
         project_dynamic_spectra=integrator._project_dynamic_spectra,
         inverse_dynamic_spectra=integrator._inverse_dynamic_spectra,
         refresh_dynamic_spectra=(

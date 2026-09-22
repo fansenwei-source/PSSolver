@@ -87,8 +87,8 @@ def test_p52_binds_exact_production_layout_operators_and_coefficients(tmp_path):
     assert plan.operators.q_rhs_kernel is solver.model.nlmodel
     assert plan.operators.stokes_kernel is solver.model.static_model
     assert plan.operators.projector is projector
-    assert plan.operators.prepare_algebraic.__self__ is solver.model
-    assert plan.operators.explicit_rhs.__self__ is solver.model
+    assert plan.operators.prepare_algebraic.__self__ is solver.integrator
+    assert plan.operators.explicit_rhs.__self__ is solver.integrator
     assert plan.operators.project_dynamic_spectra.__self__ is solver.integrator
     assert plan.operators.inverse_dynamic_spectra.__self__ is solver.integrator
     assert plan.operators.refresh_dynamic_spectra.__self__ is solver.integrator

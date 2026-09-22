@@ -93,14 +93,21 @@ P5.2 does not change:
 
 ## Local qualification
 
-The final local qualification completed with:
+The current local qualification completed with:
 
 - 173 targeted tests passed with no failure, skip, or deselection;
-- 1870 full-suite tests and 8 subtests passed with no failure, skip, or
+- 1883 full-suite tests and 8 subtests passed with no failure, skip, or
   deselection;
 - `git diff --check` passed;
 - the architecture import boundary remained closed, with this private binder
   added only to the exact Phase 2 decomposition-consumer allowlist.
+
+P5.3 integration additionally corrected the operator references from direct
+model calls to the exact integrator `_prepare_algebraic` and `_explicit_rhs`
+operations.  This does not change the numerical kernels; it prevents the
+compiled consumer from bypassing the qualified restored-static-field
+invalidation rule.  The hashes in the machine-readable record describe this
+corrected binding and the complete suite was rerun afterward.
 
 ## Next boundary
 

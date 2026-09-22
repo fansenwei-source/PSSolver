@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_P5_3_COMPILED_EULER_STEP_PROGRAM",
+  "baseline_commit": "f2bf7a3f1a5fa9f1886cdbac71e8ea616b728b28",
+  "authorization": {
+    "p5_3_implementation_authorized": true,
+    "p5_4_implementation_authorized": false,
+    "phase_6_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "program": {
+    "identity": "compiled_v2_projected_euler",
+    "source_runtime": "legacy_production",
+    "private": true,
+    "disconnected": true,
+    "prebound_tensor_references": true,
+    "prebound_operator_references": true,
+    "workspace_slots": 0,
+    "workspace_bytes": 0,
+    "operation_order_frozen": true,
+    "callback_position_frozen": true,
+    "static_field_invalidation_frozen": true,
+    "scheduled_refresh_frozen": true,
+    "progress_commit_last": true
+  },
+  "failure_semantics": {
+    "workspace_generation_aborted": true,
+    "progress_not_committed": true,
+    "tensor_rollback": false,
+    "algebraic_side_effect_rollback": false,
+    "callback_side_effect_rollback": false,
+    "matches_legacy_oracle": true
+  },
+  "connection": {
+    "runtime_selector_added": false,
+    "production_import_added": false,
+    "application_entry_added": false,
+    "fallback_allowed": false
+  },
+  "validation": {
+    "one_step_cpu_byte_identity": "PASS",
+    "two_step_cpu_byte_identity": "PASS",
+    "short_continuous_cpu_byte_identity": "PASS",
+    "refresh_boundary_identity": "PASS",
+    "callback_and_stage_order": "PASS",
+    "failure_semantics": "PASS",
+    "tensor_lifetime_audit": "PASS",
+    "targeted_tests": {
+      "result": "PASS",
+      "passed": 215,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0
+    },
+    "full_cpu_suite": {
+      "result": "PASS",
+      "passed": 1883,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "subtests_passed": 8
+    },
+    "git_diff_check": "PASS",
+    "source_identity": {
+      "pssolver/runtime/plane_compiled_v2_step.py": "5454c864382d00c4dc34aa47569ef55ab25bf16fdb8e17e7c6996079cfbb1428",
+      "tests/test_phase5_compiled_step.py": "a7ded46fd5ce7cd31072d3a5238aa0397ab1f4167c420be9646e5796cc574e3a"
+    }
+  },
+  "eligibility": {
+    "p5_3_complete": true,
+    "p5_4_locally_eligible": true,
+    "p5_5_selector_connection_eligible": false,
+    "phase_6_eligible": false,
+    "default_promotion_eligible": false
+  }
+}
