@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "status": "P4_3_LOCAL_COMPLETE_REFERENCE_ONLY",
+  "baseline_commit": "2393a59bb9464ad02705dc257a2e067a7fa35104",
+  "convergence": {
+    "base_dt": 0.04,
+    "final_time": 0.4,
+    "ladder": [1.0, 0.5, 0.25, 0.125],
+    "dt_values": [0.04, 0.02, 0.01, 0.005],
+    "euler": {
+      "pairwise_l2_orders": [
+        0.9753185405154503,
+        0.9874434658109138,
+        0.9936660939046241
+      ],
+      "minimum_required_order": 0.9,
+      "passed": true
+    },
+    "sbdf2": {
+      "pairwise_l2_orders": [
+        2.0448688429596804,
+        2.0191124361579202,
+        2.0087612216195248
+      ],
+      "minimum_required_order": 1.8,
+      "passed": true
+    },
+    "linf_reported": true,
+    "finite_required": true
+  },
+  "restart": {
+    "checkpoint_format": "provisional_generic_multistep_v1",
+    "continuous_steps": 12,
+    "split_steps": [5, 7],
+    "continuous_split_byte_identical": true,
+    "history_byte_identical": true,
+    "negative_gates_passed": 8,
+    "negative_gates": [
+      "missing_complete",
+      "missing_history",
+      "tampered_or_nonfinite_history",
+      "changed_dt",
+      "different_integrator",
+      "unsupported_schema_version",
+      "incompatible_model_or_discretization",
+      "stale_history_clock"
+    ]
+  },
+  "connection": {
+    "runtime_state_connected": false,
+    "step_program_connected": false,
+    "plane_connected": false,
+    "plane_checkpoint_v1_changed": false,
+    "package_root_exported": false,
+    "integrators_package_exported": false
+  },
+  "validation": {
+    "focused_tests_passed": 90,
+    "complete_tests_passed": 1746,
+    "subtests_passed": 8,
+    "failures": 0,
+    "archive_sources_verified": 56,
+    "git_diff_check_passed": true
+  },
+  "eligibility": {
+    "p4_3_complete": true,
+    "p4_4_authorized": true,
+    "phase_4_complete": false,
+    "phase_5_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  }
+}

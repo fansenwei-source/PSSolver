@@ -1,6 +1,6 @@
 # Phase 4 plan: second integrator and bounded modal block operators
 
-Status: `P4_2_LOCAL_COMPLETE_REFERENCE_ONLY`.
+Status: `P4_3_LOCAL_COMPLETE_REFERENCE_ONLY`.
 
 Baseline: Phase 3 closure record commit
 `e1fcc5d6df5ea6cad6b61cc770a85d19c04f9953` on
@@ -135,6 +135,12 @@ disconnected from every production runtime.
 Verify Euler order at least `0.9` and SBDF2 order at least `1.8` over a
 pre-registered halving ladder.  Add continuous/split equivalence and negative
 history/checkpoint gates.
+
+Completed locally.  The convergence results, provisional reference checkpoint,
+byte-identical split/restart result, and negative gates are recorded in
+[phase_4_p43_convergence_restart.md](phase_4_p43_convergence_restart.md) and
+its [machine-readable evidence](phase_4_p43_convergence_restart.json).  Plane
+checkpoint v1 and all production runtimes remain unchanged.
 
 ### P4.4: two-component modal block operator
 

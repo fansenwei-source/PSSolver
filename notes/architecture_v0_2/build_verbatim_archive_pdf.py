@@ -67,6 +67,8 @@ SOURCE_ORDER = (
     "phase_4_p41_integrator_history.json",
     "phase_4_p42_scalar_sbdf2_reference.md",
     "phase_4_p42_scalar_sbdf2_reference.json",
+    "phase_4_p43_convergence_restart.md",
+    "phase_4_p43_convergence_restart.json",
 )
 
 PAGE_WIDTH = 595.276

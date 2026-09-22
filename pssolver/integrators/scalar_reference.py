@@ -359,7 +359,9 @@ class ScalarPeriodicReferenceStepper:
         imaginary[-1] = 0.0
         return torch.complex(spectrum.real, imaginary)
 
-    def _validate_state(self, state: ScalarReferenceState) -> None:
+    def validate_state(self, state: ScalarReferenceState) -> None:
+        """Validate a complete state without advancing or writing output."""
+
         if not isinstance(state, ScalarReferenceState):
             raise TypeError("state must be ScalarReferenceState")
         if state.physical.shape != (self._model.point_count,):
@@ -408,7 +410,7 @@ class ScalarPeriodicReferenceStepper:
             raise TypeError("stage_observer must be callable or None")
 
         operations: list[str] = []
-        self._validate_state(state)
+        self.validate_state(state)
         self._mark(
             "require_current_state_and_history",
             operations,
