@@ -100,6 +100,9 @@ Introduce private immutable declarations for the compiled Plane field layout,
 stage identities, persistent progress, representation ledger, and workspace
 requirements.  Do not add a runtime selector or import them from production.
 
+Completion record: `phase_5_p51_compiled_declarations.md` and
+`phase_5_p51_compiled_declarations.json`.
+
 ### P5.2: construction-time binding and dataflow audit
 
 Bind the exact production field groups, tensor references, projected

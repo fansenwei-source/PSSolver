@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_P5_1_DISCONNECTED_COMPILED_DECLARATIONS",
+  "baseline_commit": "886a48b64b74aba74680583dd0d3d15074bac28e",
+  "authorization": {
+    "p5_1_implementation_authorized": true,
+    "p5_2_implementation_authorized": false,
+    "phase_6_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "declaration": {
+    "identity": "compiled_v2",
+    "schema_version": 1,
+    "tensor_free": true,
+    "immutable": true,
+    "private_direct_import_only": true,
+    "integrator": "projected_semi_implicit_euler",
+    "history_depth": 0,
+    "evolved_components": ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"],
+    "algebraic_components": ["ux", "uy", "uz", "p"],
+    "workspace_category_count": 7
+  },
+  "connection": {
+    "runtime_selector_added": false,
+    "production_import_added": false,
+    "tensor_binding_added": false,
+    "runtime_execution_added": false,
+    "fallback_allowed": false
+  },
+  "source_identity": {
+    "pssolver/planning/plane_compiled_v2.py": "651328d0cb228f03cd7776bb7f85545f822075d7849784ab19e59641b2a6aa0c",
+    "tests/test_phase5_compiled_declarations.py": "7eb0a2db1fa9be637e89690bf6d14196316a2e8f2d8f17e2aa09eaa5813bb549"
+  },
+  "validation": {
+    "targeted_and_architecture_tests": "24 passed",
+    "full_cpu_suite": "1853 passed, 8 subtests passed",
+    "git_diff_check": "PASS"
+  },
+  "operation_order": [
+    "prepare_algebraic",
+    "pre_update_callback",
+    "explicit_rhs",
+    "spectral_add_dt_rhs",
+    "spectral_divide_by_denominator",
+    "project_dynamic_spectra",
+    "inverse_dynamic_spectra",
+    "scheduled_spectral_refresh",
+    "commit_progress"
+  ],
+  "unchanged": {
+    "legacy_production": true,
+    "separated_canary": true,
+    "runtime_selector": true,
+    "cli": true,
+    "numerical_path": true,
+    "checkpoint_format": true,
+    "output_schema": true
+  },
+  "eligibility": {
+    "p5_1_complete": true,
+    "p5_2_locally_eligible": true,
+    "p5_5_selector_connection_eligible": false,
+    "phase_6_eligible": false,
+    "default_promotion_eligible": false
+  }
+}
