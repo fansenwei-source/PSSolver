@@ -23,6 +23,7 @@ SOURCE_ORDER = (
     "adr/0007-run-spec-compatibility-facade.md",
     "adr/0008-tensor-free-system-declarations.md",
     "adr/0009-runtime-state-workspace-and-step-program.md",
+    "adr/0010-sbdf2-and-modal-block-operators.md",
     "api_surface_v0_1_2.md",
     "v0_1_2_oracle.md",
     "v0_1_2_oracle.json",
@@ -60,6 +61,8 @@ SOURCE_ORDER = (
     "phase_3_p36_reset_rebind_recovery_v6.json",
     "phase_3_p36_final_closure.md",
     "phase_3_p36_final_closure.json",
+    "phase_4_integrators_block_operators.md",
+    "phase_4_contract.json",
 )
 
 PAGE_WIDTH = 595.276

@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "status": "P4_0_DESIGN_FROZEN_IMPLEMENTATION_NOT_STARTED",
+  "authorization": {
+    "phase_3_closure_classification": "PASS_PHASE3_CLOSURE_NON_REGRESSION_WITH_AUTHORIZED_COMPOSITE_RECOVERY_V7",
+    "phase_3_record_commit": "e1fcc5d6df5ea6cad6b61cc770a85d19c04f9953",
+    "eligible_for_phase_4_planning": true,
+    "phase_4_authorized": true,
+    "authorization_kind": "explicit_user_decision_after_phase3_closure",
+    "phase_5_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "scope": {
+    "second_integrator": "constant_step_sbdf2",
+    "startup_integrator": "projected_semi_implicit_euler",
+    "qualified_block_size": 2,
+    "qualifying_model": "two_component_periodic_reaction_diffusion",
+    "plane_connection": false,
+    "public_api_promotion": false
+  },
+  "sbdf2": {
+    "equation_split": "du_dt_equals_Lu_plus_N_of_u",
+    "formula": "(3*u_np1-4*u_n+u_nm1)/(2*dt)=L*u_np1+2*N_n-N_nm1",
+    "formal_order": 2,
+    "constant_dt_only": true,
+    "startup_steps": 1,
+    "startup_global_order_compatible": true,
+    "persistent_history": [
+      "previous_evolved_native_spectrum",
+      "previous_explicit_native_spectral_rhs"
+    ],
+    "commit_history_last": true,
+    "failed_step_preserves_last_complete_history": true,
+    "step_order": [
+      "require_current_state_and_history",
+      "prepare_algebraic",
+      "pre_update_callback",
+      "evaluate_current_explicit_rhs",
+      "assemble_sbdf2_implicit_rhs",
+      "solve_implicit_operator",
+      "project_dynamic_spectra",
+      "inverse_dynamic_spectra",
+      "scheduled_spectral_refresh",
+      "commit_progress",
+      "commit_integrator_history"
+    ]
+  },
+  "ownership": {
+    "runtime_state": [
+      "integrator_identity",
+      "history_depth",
+      "startup_phase",
+      "previous_evolved_native_spectrum",
+      "previous_explicit_native_spectral_rhs"
+    ],
+    "execution_plan": [
+      "component_order",
+      "linear_coefficients",
+      "modal_block_coefficients",
+      "selected_solve_implementation",
+      "factorization_policy"
+    ],
+    "workspace": [
+      "current_explicit_rhs",
+      "assembled_implicit_rhs",
+      "modal_block_solve_scratch",
+      "reconstruction_scratch"
+    ]
+  },
+  "modal_block": {
+    "qualified_block_size": 2,
+    "physical_coefficient_policy": "constant",
+    "spectral_policy": "mode_independent_solve_with_mode_dependent_coefficients",
+    "mode_coupling": false,
+    "spatially_variable_coefficients": false,
+    "arbitrary_block_size": false,
+    "bounded_workspace_required": true,
+    "construction_rejections": [
+      "component_order_mismatch",
+      "shape_mismatch",
+      "dtype_mismatch",
+      "device_mismatch",
+      "nonfinite_coefficients",
+      "singular_or_rejected_modal_matrix",
+      "unsupported_block_size",
+      "geometry_or_basis_capability_mismatch"
+    ]
+  },
+  "checkpoint": {
+    "plane_format_v1_unchanged": true,
+    "phase_4_reference_schema": "provisional_generic_multistep_v1",
+    "history_is_persistent": true,
+    "cross_integrator_restart_supported": false,
+    "dt_change_after_history_supported": false,
+    "reject_before_advance_or_output": [
+      "missing_history",
+      "tampered_history",
+      "changed_dt",
+      "different_integrator_identity",
+      "unsupported_format_version",
+      "incompatible_model_or_discretization_identity"
+    ]
+  },
+  "qualification": {
+    "temporal_step_ratio_ladder": [
+      1.0,
+      0.5,
+      0.25,
+      0.125
+    ],
+    "minimum_euler_l2_order": 0.9,
+    "minimum_sbdf2_l2_order": 1.8,
+    "same_backend_restart_byte_identity": true,
+    "report_linf": true,
+    "finite_required": true,
+    "cpu_gpu_float64_tolerance_pre_registered": true,
+    "h100_required_for_closure": true,
+    "implicit_fallback_allowed": false
+  },
+  "phase_slices": [
+    "P4.0_design_and_oracle_freeze",
+    "P4.1_integrator_declaration_and_disconnected_history",
+    "P4.2_scalar_sbdf2_reference",
+    "P4.3_convergence_and_restart",
+    "P4.4_two_component_modal_block_operator",
+    "P4.5_combined_sbdf2_block_canary",
+    "P4.6_closure_qualification"
+  ],
+  "deferred": [
+    "cnab2",
+    "adaptive_or_variable_timestep",
+    "arbitrary_block_size",
+    "variable_coefficient_implicit_operator",
+    "symbolic_dsl",
+    "newton_krylov_petsc",
+    "plane_beris_edwards_migration",
+    "new_geometry_or_physical_boundary",
+    "strong_anchoring",
+    "optimal_control",
+    "production_default_promotion",
+    "phase_5"
+  ],
+  "p4_0_source_oracle": {
+    "pssolver/integrators/step_program.py": "43a8f9a04fbb7ce6a41a6d3b782bff4c44aeaf9a0c66fd9e0417b569cf04dbc9",
+    "pssolver/execution/state.py": "da3340c54ab53bbed2dc3b5f32ad3f2324c43cb1869e08171b3ea650d6e08e44",
+    "pssolver/runtime/plane_beris_edwards.py": "247c96d6544a255af193b60941818930bbfaac6ac2dc85eacf9eee5f50e0f2ce",
+    "pssolver/configuration/plane_beris_edwards_declarations.py": "3316b8c54b57a74855e464a7b6b31c763c2b8171b21158d4980ad8692dd14615",
+    "pssolver/workflows/plane_checkpoint.py": "2406ec956fe733dbd5b01d312cb80dc1cafcc287cdba5fdc944a7b0087f59a89"
+  }
+}
+
