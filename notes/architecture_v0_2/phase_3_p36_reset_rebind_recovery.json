@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "classification": "FAIL_P3_6_RESET_REBIND_HARNESS_IDENTITY_RECOVERY_PENDING",
+  "source_identity": {
+    "phase_2_closure_baseline": "0d5b7186b7a104354db173e04a43e68c15daa515",
+    "phase_3_cumulative_candidate": "227b095c12e494ca74756228a30962692474c516",
+    "qualification_commit": "503d794dc7bea9ace11d23b60df95805b00037bb"
+  },
+  "failure": {
+    "gate": "legacy_production_reset_rebind_gpu_smoke",
+    "classification": "qualification_harness_failure",
+    "failed_assertions": [
+      "reset_state_rebound",
+      "reset_physical_storage_rebound",
+      "reset_progress_matched_fresh_byte_identical"
+    ],
+    "reset_call_returned": true,
+    "qualification_harness_failure": true,
+    "solver_failure": false,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "performance_failure": false,
+    "cuda_failure": false
+  },
+  "harness_findings": {
+    "old_objects_retained_by_strong_reference": false,
+    "integer_id_or_address_inequality_was_used_after_release": true,
+    "allocator_address_reuse_is_legal": true,
+    "initial_tensors_shared_across_evolving_reset_and_fresh_roles": true,
+    "fresh_control_had_independent_initial_storage": false
+  },
+  "required_correction": {
+    "retain_old_state_workspace_tensor_and_storage_objects": true,
+    "compare_live_objects_with_python_is": true,
+    "compare_storage_only_while_both_old_and_new_storages_are_live": true,
+    "independent_initial_clones_per_role": true,
+    "runtime_state_replaced": true,
+    "bounded_workspace_identity_preserved": true,
+    "workspace_reallocation_required": false,
+    "progress_preserved_across_rebind": true,
+    "fresh_control_progress_must_be_aligned": true,
+    "verify_no_storage_overlap_between_initial_clones": true,
+    "verify_pristine_source_hash_before_and_after": true,
+    "repeat_previous_continuous_trajectories": false,
+    "repeat_previous_restart_trajectories": false,
+    "repeat_performance_measurement": false
+  },
+  "eligibility": {
+    "performance_non_regression_resolved": true,
+    "cumulative_continuous_trajectory_gate_complete": true,
+    "bidirectional_restart_gate_complete": true,
+    "reset_rebind_gate_complete": false,
+    "negative_gate_complete": false,
+    "qualification_complete": false,
+    "phase_3_complete": false,
+    "phase_4_planning": false,
+    "phase_4_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "execution": {
+    "job_id": 10836586,
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:01:14",
+    "node": "gpu-h100-4-0",
+    "gpu": "NVIDIA H100 PCIe",
+    "requeue": 0,
+    "restarts": 0,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false
+  },
+  "remaining_gates": {
+    "legacy_production_reset_rebind": "pending_corrected_harness",
+    "separated_canary_reset_rebind": "not_started",
+    "negative_gates_passed": 0,
+    "negative_gates_expected": 11
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_phase3_p36_final_closure_503d794_20260921_recovery_v2",
+    "complete_marker_present": false,
+    "manifest_entries": 120,
+    "manifest_sha256": "1500e64f8def530a21a9dc9bda328518b6c019977d494089d8553db3386e6901",
+    "manifest_verification_passed": true,
+    "previous_closure_manifest_unchanged": true
+  }
+}

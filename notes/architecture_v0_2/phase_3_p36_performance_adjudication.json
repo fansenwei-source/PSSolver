@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "classification": "PASS_SIMULATION_TIMER_NON_REGRESSION",
+  "source_identity": {
+    "baseline_commit": "0d5b7186b7a104354db173e04a43e68c15daa515",
+    "candidate_commit": "227b095c12e494ca74756228a30962692474c516",
+    "qualification_commit": "503d794dc7bea9ace11d23b60df95805b00037bb",
+    "branch": "next/pssolver-v0.2.0-architecture"
+  },
+  "eligibility": {
+    "performance_non_regression_resolved": true,
+    "p3_6_closure_continuation": true,
+    "performance_optimization_required": false,
+    "additional_performance_measurement_required": false,
+    "phase_3_complete": false,
+    "phase_4_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "measurement_contract": {
+    "entry_point": "Plane_beris_edwards_stokes.py",
+    "runtime_path": "legacy_production",
+    "adapter": "LegacyPlaneRuntimeAdapter",
+    "fallback_used": false,
+    "real_dtype": "float64",
+    "tf32": false,
+    "pairs_per_grid": 12,
+    "primary_metric": "metadata.elapsed_seconds / metadata.workflow.requested_additional_steps",
+    "primary_statistic": "paired_geometric_mean_candidate_over_baseline",
+    "bootstrap_samples": 200000,
+    "bootstrap_seed": 20260921,
+    "confidence_interval": "two_sided_95_percent_percentile",
+    "non_regression_threshold": 1.02,
+    "outliers_removed": false,
+    "winsorized": false
+  },
+  "results": {
+    "R128": {
+      "shape": [128, 128, 32],
+      "steps_per_process": 1000,
+      "baseline_mean_seconds_per_step": 0.005760753750801087,
+      "candidate_mean_seconds_per_step": 0.005787593185901642,
+      "paired_geometric_candidate_over_baseline": 1.0046574288710872,
+      "confidence_interval_95": [
+        1.000614769826553,
+        1.0087158230204984
+      ],
+      "classification": "PASS_NON_REGRESSION"
+    },
+    "R320": {
+      "shape": [320, 320, 80],
+      "steps_per_process": 500,
+      "baseline_mean_seconds_per_step": 0.05728709729512532,
+      "candidate_mean_seconds_per_step": 0.05729497834046682,
+      "paired_geometric_candidate_over_baseline": 1.000136884205847,
+      "confidence_interval_95": [
+        0.999480995760241,
+        1.0008105426455927
+      ],
+      "classification": "PASS_NON_REGRESSION"
+    }
+  },
+  "execution": {
+    "job_id": 10836439,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:27:55",
+    "node": "gpu-h100-4-0",
+    "gpu": "NVIDIA H100 PCIe",
+    "pytorch": "2.5.1+cu121",
+    "pytorch_cuda": "12.1",
+    "formal_processes_completed": 48,
+    "formal_processes_expected": 48,
+    "requeue": 0,
+    "restarts": 0,
+    "automatic_retry": false
+  },
+  "validator": {
+    "synthetic_tests_passed": 33,
+    "core_validation_passed": true,
+    "derived_value_contract_passed": true,
+    "real_fixture_contract_passed": true,
+    "command_record_round_trip_passed": true
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_phase3_p36_simulation_timer_adjudication_503d794_20260920_recovery_v3",
+    "manifest_entries": 4228,
+    "manifest_sha256": "ce19ad4a1d3dbc8840a3bda59896a7ba9246ed145ef5ae2dae33c0317b95df46",
+    "complete": true,
+    "artifact_sha256": {
+      "final_report.md": "33ce8b17c83614f87392ffec55e09ff907df13b69d5c8b90db6d0d0f7f70b48d",
+      "summary.json": "8acb7581ec51491a6a5afc920b528a46466777833b1dab4d3bae60e81a77a6f7",
+      "summary.csv": "4ab888daee13ad77a5e56556d3101e625bf3b86373131dc97cf2994a0d1b76bb",
+      "derived_value_contract.json": "ce15dd0c28ba6e6c8b7b204cf67670d0df90432585575f5463d04618a4fe3be0",
+      "real_fixture_validation.json": "35966fe3c30c79709c21257d3c9b7ef62ff1eaf9b70180347262f4707951d61b",
+      "command_record_round_trip.json": "a4de7e58abc6ea41e1dc004738404386621937240b8d01f49c2a304395429fc3"
+    }
+  }
+}

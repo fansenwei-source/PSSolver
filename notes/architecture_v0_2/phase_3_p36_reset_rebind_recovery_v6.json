@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "status": "P3_6_RUNTIME_APPLICABILITY_NEGATIVE_CONTROL_RECOVERY_PENDING",
+  "classification": "FAIL_P3_6_RECOVERY_V6_CPU_NEGATIVE_CONTROL_DISCRIMINATION",
+  "source_identity": {
+    "phase_2_closure_baseline": "0d5b7186b7a104354db173e04a43e68c15daa515",
+    "phase_3_cumulative_candidate": "227b095c12e494ca74756228a30962692474c516",
+    "qualification_commit": "503d794dc7bea9ace11d23b60df95805b00037bb"
+  },
+  "relative_l2_schema": {
+    "recovery_passed": true,
+    "synthetic_tests_passed": 12,
+    "zero_reference_nonzero_difference_relative_l2": null,
+    "status": "undefined_zero_reference_nonzero_difference",
+    "strict_json": true
+  },
+  "strict_float64_contract": {
+    "epsilon": 2.220446049250313e-16,
+    "multiplier": 128,
+    "elementwise_formula": "abs(candidate-reference) <= 128*eps*max(1,abs(reference))",
+    "qualification_authority": "elementwise_violation_count"
+  },
+  "cpu_adjudication": {
+    "legacy_production": {
+      "formal_trials_passed": 3,
+      "formal_trials_expected": 3,
+      "production_maximum_linf": 4.577566798522237e-16,
+      "unsynchronized_control_violating_elements": 9417,
+      "negative_control_discrimination_applicable": true,
+      "status": "pass"
+    },
+    "separated_canary": {
+      "formal_trials_passed": 0,
+      "formal_trials_expected": 3,
+      "trial_1_exact_identity_gates_passed": true,
+      "unsynchronized_control_violating_elements": 0,
+      "unsynchronized_control_maximum_linf": 4.577566798522237e-16,
+      "maximum_allowed_error": 6.160530907798109e-13,
+      "negative_control_discrimination_applicable": false,
+      "status": "stopped_by_overgeneralized_harness_contract"
+    }
+  },
+  "contract_correction": {
+    "legacy_unsynchronized_control_must_violate_tolerance": true,
+    "canary_unsynchronized_control_must_violate_tolerance": false,
+    "canary_unsynchronized_control_is_diagnostic_only": true,
+    "canary_formal_sync_call_order_must_be_instrumented": true,
+    "canary_formal_production_order_must_pass_tolerance": true,
+    "runtime_applicability_must_be_explicit": true,
+    "repeat_legacy_cpu_trials": false,
+    "repeat_performance_measurement": false,
+    "solver_source_change_required": false
+  },
+  "execution": {
+    "formal_h100_submission_count": 0,
+    "h100_job_submitted": false,
+    "automatic_retry": false
+  },
+  "remaining_gates": {
+    "legacy_cpu_trials": "3/3_pass_reusable",
+    "separated_canary_cpu_trials": "0/3_pending_corrected_applicability_contract",
+    "legacy_h100_reset_rebind": "not_run",
+    "separated_canary_h100_reset_rebind": "not_run",
+    "negative_gates_passed": 0,
+    "negative_gates_expected": 11
+  },
+  "eligibility": {
+    "qualification_complete": false,
+    "phase_3_complete": false,
+    "eligible_for_phase_4_planning": false,
+    "phase_4_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_phase3_p36_final_closure_503d794_20260921_recovery_v6",
+    "complete_marker_present": false,
+    "manifest_entries": 44,
+    "manifest_sha256": "4d0beb30deaf505eb0d9dc49d880cc12289c6968853ddfa0a0bd6448d606e9f7",
+    "manifest_verification_passed": true
+  }
+}

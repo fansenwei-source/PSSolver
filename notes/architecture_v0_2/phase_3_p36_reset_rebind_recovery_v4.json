@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "status": "P3_6_RESET_REBIND_ROUNDOFF_CONTRACT_ADJUDICATION_PENDING",
+  "classification": "FAIL_P3_6_RECOVERY_V4_CPU_GATE",
+  "source_identity": {
+    "phase_2_closure_baseline": "0d5b7186b7a104354db173e04a43e68c15daa515",
+    "phase_3_cumulative_candidate": "227b095c12e494ca74756228a30962692474c516",
+    "qualification_commit": "503d794dc7bea9ace11d23b60df95805b00037bb"
+  },
+  "execution": {
+    "formal_h100_submission_count": 0,
+    "h100_job_submitted": false,
+    "automatic_retry": false,
+    "cpu_device": "cpu",
+    "dtype": "float64",
+    "shape": [8, 8, 8]
+  },
+  "passed_contracts": {
+    "initial_state_isolation": true,
+    "pristine_source_unchanged": true,
+    "runtime_state_replaced": true,
+    "physical_state_replaced": true,
+    "spectral_state_replaced": true,
+    "physical_storage_bound_to_current_fields": true,
+    "spectral_storage_bound_to_current_fields": true,
+    "workspace_identity_preserved": true,
+    "workspace_plan_preserved": true,
+    "workspace_inactive": true,
+    "progress_preserved": true,
+    "representation_generation_matches_progress": true,
+    "synchronize_before_restore": true,
+    "public_restore_progress_surface_used": true,
+    "private_state_not_modified": true,
+    "progress_aligned": true,
+    "representation_ledger_aligned": true,
+    "finite": true
+  },
+  "negative_control": {
+    "static_synchronization_omitted": true,
+    "physical_linf": 7.932307588887078e-06,
+    "spectral_linf": 0.00027438007550054127,
+    "Qxx_linf": 7.932307588887078e-06,
+    "ux_linf": 1.4170040617683677e-06,
+    "p_linf": 6.86775089690523e-08
+  },
+  "production_order_roundoff": {
+    "physical_linf": 1.3877787807814457e-17,
+    "spectral_linf": 4.577566798522237e-16,
+    "Qxx_linf": 1.3877787807814457e-17,
+    "Qxy_linf": 0.0,
+    "Qxz_linf": 1.6047303883528737e-22,
+    "Qyy_linf": 0.0,
+    "Qyz_linf": 1.3069453678337837e-22,
+    "ux_linf": 1.3877787807814457e-17,
+    "uy_linf": 6.938893903907228e-18,
+    "uz_linf": 1.3552527156068805e-19,
+    "p_linf": 1.0977546996415732e-18,
+    "byte_identity_required_by_external_harness": true,
+    "byte_identity_is_part_of_frozen_reset_contract": false
+  },
+  "contract_adjudication": {
+    "continuous_trajectory_byte_identity_remains_required": true,
+    "checkpoint_restart_byte_identity_remains_required": true,
+    "immediate_reset_binding_contract_remains_exact": true,
+    "independent_reconstruction_post_reset_uses_float64_tolerance": true,
+    "proposed_epsilon_multiplier": 128,
+    "proposed_mixed_tolerance": "abs(a-b) <= 128*eps*max(1, abs(reference))",
+    "additional_performance_measurement_required": false,
+    "solver_source_change_required": false
+  },
+  "remaining_gates": {
+    "legacy_production_reset_rebind": "pending_roundoff_contract_recovery",
+    "separated_canary_reset_rebind": "not_started",
+    "negative_gates_passed": 0,
+    "negative_gates_expected": 11
+  },
+  "eligibility": {
+    "qualification_complete": false,
+    "phase_3_complete": false,
+    "eligible_for_phase_4_planning": false,
+    "phase_4_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_phase3_p36_final_closure_503d794_20260921_recovery_v4",
+    "complete_marker_present": false,
+    "manifest_entries": 47,
+    "manifest_sha256": "155fbf22053a6cc3a0cda39dabfbd81e77147f014a2520f849c67959732eeaa8",
+    "manifest_verification_passed": true
+  }
+}

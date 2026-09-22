@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_PHASE3_CLOSURE_NON_REGRESSION_WITH_AUTHORIZED_COMPOSITE_RECOVERY_V7",
+  "source_identity": {
+    "phase_2_closure_baseline": "0d5b7186b7a104354db173e04a43e68c15daa515",
+    "phase_3_cumulative_candidate": "227b095c12e494ca74756228a30962692474c516",
+    "qualification_commit": "503d794dc7bea9ace11d23b60df95805b00037bb"
+  },
+  "closure_gates": {
+    "performance_non_regression_resolved": true,
+    "continuous_trajectory_gate_complete": true,
+    "bidirectional_restart_gate_complete": true,
+    "reset_rebind_gate_complete": true,
+    "negative_gate_complete": true
+  },
+  "reset_rebind": {
+    "cpu_legacy_trials_reused": 3,
+    "cpu_legacy_trials_expected": 3,
+    "cpu_canary_trials_passed": 3,
+    "cpu_canary_trials_expected": 3,
+    "h100_runtimes_passed": 2,
+    "h100_runtimes_expected": 2,
+    "formal_event_trace": [
+      "reset",
+      "synchronize_for_observation",
+      "restore_progress",
+      "advance"
+    ],
+    "legacy_negative_control_role": "formal_discrimination",
+    "legacy_h100_negative_control_violating_elements": 9725245,
+    "canary_negative_control_role": "diagnostic_only",
+    "canary_h100_negative_control_violating_elements": 0,
+    "formal_production_order_violating_elements": 0
+  },
+  "negative_checkpoint_gates": {
+    "passed": 11,
+    "expected": 11,
+    "rejected_before_timestep_output_or_complete": true,
+    "fallback_used": false
+  },
+  "execution": {
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "h100_job_id": 10837073,
+    "h100_state": "COMPLETED",
+    "h100_exit_code": "0:0",
+    "h100_elapsed": "00:01:33",
+    "h100_node": "gpu-h100-4-0",
+    "gpu": "NVIDIA H100 PCIe",
+    "pytorch": "2.5.1+cu121",
+    "cuda_runtime": "12.1",
+    "tf32": false
+  },
+  "failure_status": {
+    "scientific_failure": false,
+    "solver_failure": false,
+    "numerical_failure": false,
+    "performance_failure": false
+  },
+  "eligibility": {
+    "qualification_complete": true,
+    "phase_3_complete": true,
+    "eligible_for_phase_4_planning": true,
+    "phase_4_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false,
+    "eligible_for_default_promotion": false
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_phase3_p36_final_closure_503d794_20260921_recovery_v7",
+    "complete_marker_present": true,
+    "complete_marker": "PASS_PHASE3_CLOSURE_NON_REGRESSION_WITH_AUTHORIZED_COMPOSITE_RECOVERY_V7",
+    "manifest_entries": 302,
+    "manifest_sha256": "567bf448cfb9d0cefc70c41aa156c7196f30ed76933e8a52a45044569a80a582",
+    "manifest_verification_passed": true
+  }
+}

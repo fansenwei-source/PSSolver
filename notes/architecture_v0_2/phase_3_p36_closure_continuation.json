@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "classification": "FAIL_P3_6_CLOSURE_HARNESS_RECOVERY_PENDING",
+  "failure": {
+    "gate": "reset_rebind_gpu_smoke",
+    "layer": "reset_rebind_harness_production_metadata_contract",
+    "exception": "ValueError: production metadata lacks the Stage K comparison contract",
+    "qualification_harness_failure": true,
+    "solver_failure": false,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "performance_failure": false
+  },
+  "source_identity": {
+    "phase_2_closure_baseline": "0d5b7186b7a104354db173e04a43e68c15daa515",
+    "phase_3_cumulative_candidate": "227b095c12e494ca74756228a30962692474c516",
+    "qualification_commit": "503d794dc7bea9ace11d23b60df95805b00037bb"
+  },
+  "eligibility": {
+    "performance_non_regression_resolved": true,
+    "cumulative_continuous_trajectory_gate_complete": true,
+    "bidirectional_restart_gate_complete": true,
+    "reset_rebind_gate_complete": false,
+    "negative_gate_complete": false,
+    "qualification_complete": false,
+    "phase_3_complete": false,
+    "phase_4_planning": false,
+    "phase_4_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "execution": {
+    "job_id": 10836551,
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:06:44",
+    "node": "gpu-h100-4-0",
+    "gpu": "NVIDIA H100 PCIe",
+    "requeue": 0,
+    "restarts": 0,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false
+  },
+  "continuous_trajectory_gate": {
+    "commands_completed": 8,
+    "commands_expected": 8,
+    "comparison_groups_passed": 4,
+    "comparison_groups_expected": 4,
+    "same_runtime_parent_candidate_byte_identical": true,
+    "r128_frozen_oracles_passed": true,
+    "output_sha256": {
+      "R128_legacy_production": {
+        "Q_100.npy": "d20547158acba4d8ab6b9e3c6c0cc48954c6b4b6ce9af229fe826d510e577796",
+        "u_100.npy": "1199675fe7c1a0dcc4ec1f6a0c9130021a30be94e33dab523325c22076ec5a64",
+        "p_100.npy": "34ef4007db9f900f1902b5f3cd43efe83a82cbbc393dd8d0df6229613fc848ea"
+      },
+      "R128_separated_canary": {
+        "Q_100.npy": "f2a94bf9c55e71632f5397b67ff1dfdf34a934981dd27514ab3c8a5546c738f2",
+        "u_100.npy": "25ebb2f4ec51156d0504624a88ab336a9baaee58efa7f2d7f01d6a2fc0e65b33",
+        "p_100.npy": "44b9d577bb328537f3a67f876fbe1d34f390b7821761f2ed4f8f8b7db3b82a37"
+      },
+      "R320_legacy_production": {
+        "Q_100.npy": "bfffb81ae34968f801cc5dc192000539a1b1bb22f466bdbd97b1617e6dea4089",
+        "u_100.npy": "63c6468eadf9070fd4d89e90fa2785a41b018faad34ca00291629389aacca4fa",
+        "p_100.npy": "c0040263fc8efb783afe540f784d06f6d98a347e610170eef0c6318ff1800584"
+      },
+      "R320_separated_canary": {
+        "Q_100.npy": "20b8ecd5a6302dcf8603b4a53d0f826ba42d89db2e9ecb746697356fd3a22b82",
+        "u_100.npy": "a4a24964ec1d8095a3ab957dbc4f860fa81042d7bc348ad8071bc77058440b69",
+        "p_100.npy": "019c0a231095555dacb37b1504e6e713bb6f36e87660efa18ece89fe364afb86"
+      }
+    }
+  },
+  "restart_gate": {
+    "runtime_paths": [
+      "legacy_production",
+      "separated_canary"
+    ],
+    "directions_per_runtime": 2,
+    "passed": 4,
+    "expected": 4,
+    "all_q_u_p_byte_identical_to_continuous": true
+  },
+  "remaining_gates": {
+    "reset_rebind_gpu_smoke": "pending_harness_recovery",
+    "negative_gates_completed": 0,
+    "negative_gates_expected": 11,
+    "repeat_continuous_trajectories": false,
+    "repeat_restart_trajectories": false,
+    "repeat_performance_measurement": false
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_phase3_p36_final_closure_503d794_20260921_v1",
+    "complete_marker_present": false,
+    "manifest_entries": 1298,
+    "manifest_sha256": "98207dd3561e182d5da0af7364388bc94a5bf9d5a37ee45ccec761db9993fbab",
+    "manifest_verification_passed": true
+  }
+}

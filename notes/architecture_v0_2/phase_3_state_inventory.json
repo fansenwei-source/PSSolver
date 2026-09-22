@@ -24,8 +24,23 @@
     "p3_5_legacy_production_connected": true,
     "p3_5_h100_qualified": true,
     "p3_6_authorized": true,
-    "p3_6_h100_closure_pending": true,
+    "p3_6_closure_continuation_authorized": true,
+    "p3_6_cumulative_continuous_qualified": true,
+    "p3_6_cumulative_restart_qualified": true,
+    "p3_6_closure_complete": true,
+    "p3_6_h100_closure_pending": false,
+    "p3_6_h100_performance_qualified": true,
     "p3_6_local_qualified": true,
+    "p3_6_negative_gates_pending": false,
+    "p3_6_reset_rebind_harness_identity_recovery_pending": false,
+    "p3_6_reset_rebind_roundoff_contract_pending": false,
+    "p3_6_reset_rebind_relative_l2_serialization_pending": false,
+    "p3_6_runtime_applicability_negative_control_pending": false,
+    "p3_6_reset_rebind_static_sync_recovery_pending": false,
+    "p3_6_reset_rebind_pending": false,
+    "phase_3_complete": true,
+    "eligible_for_phase_4_planning": true,
+    "phase_4_authorized": false,
     "separated_canary_touched_before_p3_4": false
   },
   "ownership": {
@@ -76,7 +91,7 @@
     "stable_surfaces_unchanged": true
   },
   "schema_version": 1,
-  "status": "P3_6_LOCAL_QUALIFIED_H100_CLOSURE_PENDING",
+  "status": "PASS_PHASE3_CLOSURE_NON_REGRESSION_WITH_AUTHORIZED_COMPOSITE_RECOVERY_V7",
   "timestep_oracle": [
     "synchronize_algebraic_if_needed",
     "pre_update_callback",

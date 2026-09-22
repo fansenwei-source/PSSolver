@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "classification": "FAIL_P3_6_LEGACY_POST_RESET_HARNESS_DIAGNOSTIC_COMPLETE",
+  "source_identity": {
+    "phase_2_closure_baseline": "0d5b7186b7a104354db173e04a43e68c15daa515",
+    "phase_3_cumulative_candidate": "227b095c12e494ca74756228a30962692474c516",
+    "qualification_commit": "503d794dc7bea9ace11d23b60df95805b00037bb"
+  },
+  "execution": {
+    "job_id": 10836600,
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:00:49",
+    "node": "gpu-h100-4-0",
+    "requeue": 0,
+    "restarts": 0,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false
+  },
+  "preflight": {
+    "synthetic_tests_passed": 27,
+    "synthetic_tests_expected": 27,
+    "py_compile_passed": true,
+    "import_smoke_passed": true,
+    "slurm_and_path_preflight_passed": true,
+    "command_plan_unique": true,
+    "command_plan_entries": 12
+  },
+  "failure": {
+    "runtime_path": "legacy_production",
+    "gate": "aligned_post_reset_evolution_contract",
+    "aggregate_exception": "RuntimeError: {'runtime_contract_failed': 'legacy_production'}",
+    "per_predicate_results_persisted_before_raise": false,
+    "numerical_failure": "undetermined_from_persisted_subgate_detail",
+    "solver_failure": false,
+    "scientific_failure": false,
+    "performance_failure": false,
+    "oom": false,
+    "non_finite_values": false,
+    "cuda_error": false
+  },
+  "local_diagnostic": {
+    "device": "cpu",
+    "shape": [8, 8, 8],
+    "dtype": "float64",
+    "legacy_without_static_sync": {
+      "spatial_byte_identical": false,
+      "spectral_byte_identical": false,
+      "spatial_linf": 1.5515657882568605e-05
+    },
+    "legacy_with_production_restore_order": {
+      "spatial_byte_identical": true,
+      "spectral_byte_identical": true,
+      "spatial_linf": 0.0
+    },
+    "separated_canary_without_static_sync": {
+      "spatial_byte_identical": true,
+      "spectral_byte_identical": true,
+      "spatial_linf": 0.0
+    },
+    "separated_canary_with_production_restore_order": {
+      "spatial_byte_identical": true,
+      "spectral_byte_identical": true,
+      "spatial_linf": 0.0
+    },
+    "required_order": [
+      "restore_or_reset_independent_dynamic_fields",
+      "synchronize_for_observation",
+      "restore_progress",
+      "advance_equal_steps",
+      "compare_state_and_progress"
+    ]
+  },
+  "required_harness_correction": {
+    "persist_each_subgate_before_aggregate": true,
+    "use_runtime_adapter_synchronize_for_observation": true,
+    "synchronize_before_restore_progress": true,
+    "use_production_checkpoint_restore_order": true,
+    "repeat_previous_continuous_trajectories": false,
+    "repeat_previous_restart_trajectories": false,
+    "repeat_performance_measurement": false
+  },
+  "remaining_gates": {
+    "legacy_production_reset_rebind": "pending_corrected_static_sync_harness",
+    "separated_canary_reset_rebind": "not_started",
+    "negative_gates_passed": 0,
+    "negative_gates_expected": 11
+  },
+  "eligibility": {
+    "qualification_complete": false,
+    "phase_3_complete": false,
+    "eligible_for_phase_4_planning": false,
+    "phase_4_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_phase3_p36_final_closure_503d794_20260921_recovery_v3",
+    "complete_marker_present": false,
+    "manifest_entries": 51,
+    "manifest_sha256": "b4f2d1eba64e8945747281097062d250acbfaa73bc6afb9e8fe319682cd833a5",
+    "manifest_verification_passed": true
+  }
+}

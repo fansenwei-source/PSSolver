@@ -1,6 +1,6 @@
 # Phase 3 plan: state, workspace, and timestep ownership
 
-Status: `P3_6_LOCAL_QUALIFIED_H100_CLOSURE_PENDING`.
+Status: `PASS_PHASE3_CLOSURE_NON_REGRESSION_WITH_AUTHORIZED_COMPOSITE_RECOVERY_V7`.
 
 Baseline: Phase 2 closure commit
 `0d5b7186b7a104354db173e04a43e68c15daa515` on
@@ -127,6 +127,71 @@ also passes against the Phase 2 closure baseline: complete CPU suites, clean
 sdist/wheel installation, both-runtime continuous trajectories, and
 bidirectional cross-version restart remain exact.  Its
 [local qualification record](phase_3_p36_local_qualification.md) and
-[machine-readable contract](phase_3_p36_local_qualification.json) freeze one
-final balanced R128/R320 H100 task.  Phase 3 remains open until that task
-passes.
+[machine-readable contract](phase_3_p36_local_qualification.json) froze the
+cumulative closure boundary.  The independent, pre-registered production
+workflow simulation-timer adjudication subsequently passed at R128 and R320;
+its [qualification summary](phase_3_p36_performance_adjudication.md) and
+[machine-readable evidence](phase_3_p36_performance_adjudication.json) resolve
+the performance non-regression gate without changing either runtime or the
+default.  The subsequent cumulative closure continuation passed all eight
+R128/R320 parent/candidate continuous trajectories and all four R128
+bidirectional cross-version restart trajectories.  Its
+[continuation record](phase_3_p36_closure_continuation.md) and
+[machine-readable evidence](phase_3_p36_closure_continuation.json) preserve
+those results.  The job stopped only because the external reset/rebind harness
+supplied incomplete hand-built production metadata to the separated-canary
+constructor.  Phase 3 remains open solely for a corrected reset/rebind smoke
+and the eleven negative closure gates.  The first reset/rebind recovery then
+confirmed a second harness-only problem: it released old objects before
+comparing integer IDs and CUDA addresses, and it reused mutable initial tensor
+objects across the evolving, reset, and fresh-control roles.  The
+[reset/rebind recovery record](phase_3_p36_reset_rebind_recovery.md) and its
+[machine-readable evidence](phase_3_p36_reset_rebind_recovery.json) freeze the
+required correction: retain live old-object references and build independent,
+non-overlapping initial clones.  No previously qualified trajectory, restart,
+or performance gate needs to be repeated.  Recovery v3 then passed all
+immediate reset/rebind contracts but raised an aggregate legacy post-reset
+evolution error before persisting its individual predicates.  A local CPU
+diagnostic reproduced the mismatch when progress restoration marked stale
+fresh-control static fields current; following the production checkpoint
+order (`synchronize_for_observation()` before `restore_progress()`) restored
+bitwise identity.  The
+[v3 diagnostic](phase_3_p36_reset_rebind_recovery_v3.md) and its
+[machine-readable record](phase_3_p36_reset_rebind_recovery_v3.json) require
+atomic subgate persistence and the production restoration order in the next
+recovery.  Recovery v4 applied that order and passed all structural reset,
+workspace, progress, and representation gates.  Its remaining independent-
+reconstruction differences were only float64 roundoff (at most about
+`4.6e-16`) while the deliberately unsynchronized control differed by as much
+as `2.7e-4`.  The
+[v4 adjudication](phase_3_p36_reset_rebind_recovery_v4.md) and
+[machine-readable record](phase_3_p36_reset_rebind_recovery_v4.json) preserve
+the distinction between workflow byte-identity oracles, which remain frozen,
+and the reset-versus-independent-construction diagnostic, which now requires
+a pre-registered strict float64 tolerance.
+Recovery v5 implemented that tolerance but stopped before formal CPU trials
+because an unsynchronized negative control produced the mathematically
+infinite relative L2 associated with a zero-norm reference and nonzero
+difference.  Strict JSON correctly rejected the non-standard infinity token.
+The [v5 schema record](phase_3_p36_reset_rebind_recovery_v5.md) and its
+[machine-readable contract](phase_3_p36_reset_rebind_recovery_v5.json) require
+JSON `null` plus an explicit zero-reference status; the finite elementwise
+violation count remains the qualification authority.
+Recovery v6 completed that schema fix and passed all three legacy CPU trials.
+It stopped only because the harness required an unsynchronized numerical
+control to fail for the separated canary, although both the local diagnostic
+and v6 show that this runtime has no observable dependency on that omitted
+operation.  The [v6 applicability record](phase_3_p36_reset_rebind_recovery_v6.md)
+and its [machine-readable contract](phase_3_p36_reset_rebind_recovery_v6.json)
+retain numerical discrimination for legacy while requiring exact call-order
+instrumentation and production-order tolerance for canary.
+
+Recovery v7 applied that runtime-specific contract and completed the composite
+P3.6 closure.  The separated-canary CPU trials, both-runtime H100 reset/rebind
+checks, exact production event traces, and all eleven checkpoint negative
+gates passed.  Together with the frozen performance, continuous-trajectory,
+and bidirectional-restart evidence, this closes Phase 3 without changing the
+production default or promoting the canary.  The
+[final closure record](phase_3_p36_final_closure.md) and its
+[machine-readable evidence](phase_3_p36_final_closure.json) authorize Phase 4
+planning only; Phase 4 implementation remains separately unauthorized.

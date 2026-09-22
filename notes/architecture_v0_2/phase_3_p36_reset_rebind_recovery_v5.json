@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "status": "P3_6_RELATIVE_L2_SERIALIZATION_RECOVERY_PENDING",
+  "classification": "FAIL_P3_6_RECOVERY_V5_CPU_HARNESS_SERIALIZATION",
+  "failure": {
+    "layer": "qualification_harness_serialization",
+    "runtime_path": "legacy_production",
+    "trial": 1,
+    "stage": "unsynchronized_negative_control_jsonl",
+    "reference_l2_norm": 0.0,
+    "difference_l2_norm_positive": true,
+    "mathematical_relative_l2": "positive_infinity",
+    "exception": "ValueError: Out of range float values are not JSON compliant",
+    "solver_failure": false,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "performance_failure": false,
+    "harness_failure": true
+  },
+  "strict_float64_contract": {
+    "epsilon": 2.220446049250313e-16,
+    "multiplier": 128,
+    "elementwise_formula": "abs(candidate-reference) <= 128*eps*max(1,abs(reference))",
+    "synthetic_tests_passed": 5,
+    "qualification_authority": "elementwise_violation_count",
+    "relative_l2_role": "diagnostic_only"
+  },
+  "required_schema": {
+    "positive_reference_norm": {
+      "relative_l2": "difference_l2_norm/reference_l2_norm",
+      "relative_l2_status": "finite"
+    },
+    "zero_reference_zero_difference": {
+      "relative_l2": 0.0,
+      "relative_l2_status": "both_zero"
+    },
+    "zero_reference_nonzero_difference": {
+      "relative_l2": null,
+      "relative_l2_status": "undefined_zero_reference_nonzero_difference",
+      "relative_l2_is_mathematically_infinite": true
+    },
+    "required_finite_fields": [
+      "difference_l2_norm",
+      "reference_l2_norm",
+      "linf",
+      "rms",
+      "maximum_allowed_error",
+      "violating_element_count",
+      "total_element_count"
+    ],
+    "allow_nan": false,
+    "arbitrary_finite_sentinel_for_infinity": false
+  },
+  "partial_evidence": {
+    "persisted_legacy_subgate_records": 24,
+    "negative_control_physical_violations": 4608,
+    "negative_control_spectral_violations": 201,
+    "negative_control_Qxx_violations": 512,
+    "negative_control_Qxy_violations": 512,
+    "negative_control_physical_linf": 7.932307588887078e-06,
+    "negative_control_spectral_linf": 0.00027438007550054127,
+    "formal_legacy_trials_completed": 0,
+    "formal_canary_trials_completed": 0
+  },
+  "execution": {
+    "formal_h100_submission_count": 0,
+    "h100_job_submitted": false,
+    "automatic_retry": false
+  },
+  "remaining_gates": {
+    "legacy_cpu_trials": "0/3",
+    "separated_canary_cpu_trials": "0/3",
+    "legacy_h100_reset_rebind": "not_run",
+    "separated_canary_h100_reset_rebind": "not_run",
+    "negative_gates_passed": 0,
+    "negative_gates_expected": 11
+  },
+  "eligibility": {
+    "qualification_complete": false,
+    "phase_3_complete": false,
+    "eligible_for_phase_4_planning": false,
+    "phase_4_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_phase3_p36_final_closure_503d794_20260921_recovery_v5",
+    "complete_marker_present": false,
+    "manifest_entries": 48,
+    "manifest_sha256": "b9c5a2a96eb29c38b551e7401d3e7bc571a3ecfa2e66a4c4d7c8b06296cf7e14",
+    "manifest_verification_passed": true
+  }
+}
