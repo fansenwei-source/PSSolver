@@ -63,6 +63,8 @@ SOURCE_ORDER = (
     "phase_3_p36_final_closure.json",
     "phase_4_integrators_block_operators.md",
     "phase_4_contract.json",
+    "phase_4_p41_integrator_history.md",
+    "phase_4_p41_integrator_history.json",
 )
 
 PAGE_WIDTH = 595.276

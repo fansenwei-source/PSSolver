@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "status": "P4_1_LOCAL_COMPLETE_DISCONNECTED",
+  "baseline_commit": "6ba9ccda84922d629cdb6d75fd39d14ecffbd0fe",
+  "modules": {
+    "tensor_free_declaration": "pssolver.core.integrators",
+    "disconnected_history": "pssolver.integrators.history"
+  },
+  "declaration": {
+    "schemes": [
+      "projected_semi_implicit_euler",
+      "sbdf2"
+    ],
+    "sbdf2_formal_order": 2,
+    "sbdf2_history_depth": 1,
+    "constant_step_only": true,
+    "startup_scheme": "projected_semi_implicit_euler"
+  },
+  "history": {
+    "class": "SBDF2History",
+    "persistent_tensors": [
+      "previous_evolved_native_spectrum",
+      "previous_explicit_native_spectral_rhs"
+    ],
+    "stores_by_identity": true,
+    "clones_or_converts": false,
+    "requires_separate_storage": true,
+    "validates": [
+      "shape",
+      "dtype",
+      "device",
+      "source_completed_steps",
+      "constant_dt"
+    ],
+    "finite_validation_deferred_to_checkpoint_gate": true
+  },
+  "connection": {
+    "runtime_state_connected": false,
+    "step_program_connected": false,
+    "plane_connected": false,
+    "checkpoint_v1_changed": false,
+    "package_root_exported": false,
+    "core_package_exported": false,
+    "integrators_package_exported": false
+  },
+  "validation": {
+    "focused_tests_passed": 29,
+    "complete_tests_passed": 1685,
+    "subtests_passed": 8,
+    "failures": 0,
+    "archive_sources_verified": 52,
+    "git_diff_check_passed": true
+  },
+  "eligibility": {
+    "p4_1_complete": true,
+    "p4_2_authorized": true,
+    "phase_4_complete": false,
+    "phase_5_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  }
+}

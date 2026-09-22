@@ -1,6 +1,6 @@
 # Phase 4 plan: second integrator and bounded modal block operators
 
-Status: `P4_0_DESIGN_FROZEN_IMPLEMENTATION_NOT_STARTED`.
+Status: `P4_1_LOCAL_COMPLETE_DISCONNECTED`.
 
 Baseline: Phase 3 closure record commit
 `e1fcc5d6df5ea6cad6b61cc770a85d19c04f9953` on
@@ -113,6 +113,11 @@ unchanged.
 Introduce a tensor-free integrator specification and disconnected persistent
 history contract.  Do not connect either object to Plane or a production
 runtime.
+
+Completed locally.  The result is recorded in
+[phase_4_p41_integrator_history.md](phase_4_p41_integrator_history.md) and its
+[machine-readable evidence](phase_4_p41_integrator_history.json).  The new
+types remain direct-import-only and disconnected from every runtime.
 
 ### P4.2: scalar SBDF2 reference path
 
