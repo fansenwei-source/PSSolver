@@ -21,6 +21,21 @@ correctness and residual gates.  Its recommended switch count is evidence for
 a later explicit binding policy only; the profiler cannot change a default or
 authorize P4.5.
 
+Adjudicate an immutable, completed H100 crossover artifact without launching
+new GPU work with:
+
+```bash
+python -m benchmarks.adjudicate_modal_block_crossover \
+  --input /path/to/p4_4_modal_block_crossover.json \
+  --output /new/path/p4_4_contract_equivalent_adjudication.json
+```
+
+This fail-closed analysis treats the complete callable operator contract as
+the authoritative scope.  It independently recomputes timing, paired-trial,
+correctness, residual, workspace, and memory gates.  A passing report may
+authorize P4.5 but cannot complete Phase 4, authorize Phase 5, implement an
+automatic policy, or change a production default.
+
 Map the bounded-axis dense DCT/DST applicability region with:
 
 ```bash

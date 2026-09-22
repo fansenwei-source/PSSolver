@@ -1,6 +1,6 @@
 # Phase 4 P4.4 two-component modal block operator
 
-Status: `P4_4_H100_RECOVERY_CROSSOVER_PROFILER_READY`.
+Status: `P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY`.
 
 P4.4 adds a tensor-free declaration for exactly two coupled components and a
 device-bound mode-local operator whose coefficient tensor has trailing shape
@@ -35,9 +35,12 @@ The declaration, bound operator, workspace, and reference model remain
 direct-import-only.  No production runtime, StepProgram, Plane path, checkpoint
 format, or default imports them.  The evidence-only crossover profiler and the
 recovery plan are recorded in
-[phase_4_p44_h100_recovery.md](phase_4_p44_h100_recovery.md).  P4.5 remains
-blocked until an explicit size-aware policy has been implemented and qualified
-on H100.
+[phase_4_p44_h100_recovery.md](phase_4_p44_h100_recovery.md).  The completed
+six-size recovery showed that the closed-form path is faster at all registered
+sizes under the complete operator contract, so an automatic size-aware policy
+is no longer proposed.  P4.5 remains blocked pending the analysis-only
+adjudication documented in
+[phase_4_p44_contract_equivalent_adjudication.md](phase_4_p44_contract_equivalent_adjudication.md).
 
 The machine-readable record is
 [phase_4_p44_modal_block_operator.json](phase_4_p44_modal_block_operator.json).

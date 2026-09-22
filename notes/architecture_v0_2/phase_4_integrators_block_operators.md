@@ -1,6 +1,6 @@
 # Phase 4 plan: second integrator and bounded modal block operators
 
-Status: `P4_4_H100_RECOVERY_CROSSOVER_PROFILER_READY`.
+Status: `P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY`.
 
 Baseline: Phase 3 closure record commit
 `e1fcc5d6df5ea6cad6b61cc770a85d19c04f9953` on
@@ -155,9 +155,13 @@ its [machine-readable evidence](phase_4_p44_modal_block_operator.json).  The
 first H100 attempt proved correctness and large-mode speedup but failed the
 small-mode performance gate.  The evidence and the non-promoting crossover
 recovery are recorded in
-[phase_4_p44_h100_recovery.md](phase_4_p44_h100_recovery.md).  P4.5 remains
-blocked pending an H100-measured, explicit size-aware policy and recovery
-qualification.
+[phase_4_p44_h100_recovery.md](phase_4_p44_h100_recovery.md).  The completed
+recovery found no crossover in the registered range under the
+complete operator contract: the closed-form path passed all eighteen paired
+trials.  P4.4 now awaits the analysis-only contract-equivalent adjudication
+recorded in
+[phase_4_p44_contract_equivalent_adjudication.md](phase_4_p44_contract_equivalent_adjudication.md),
+not another H100 run or an automatic policy.
 
 ### P4.5: combined SBDF2/block canary
 

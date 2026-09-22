@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "status": "P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY",
+  "candidate_commit": "7619c58c931eda89ff6613936851d8e7be1f52b9",
+  "input_evidence": {
+    "job_id": 10837117,
+    "raw_profiler_sha256": "4d96ae1eab761581f94af48a46dd9cfe5f8d0b7bfb05204e8bea28ee0b4b0635",
+    "archive_manifest_sha256": "8e03cf6759269c5d8a05dccaaa1eb2b4c6589d9da79eb73f6a9b1cabae072284",
+    "archived_classification": "FAIL_P4_4_CROSSOVER_NOT_REPRODUCED",
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "cuda_failure": false
+  },
+  "contract_correction": {
+    "authoritative_scope": "complete_operator_contract",
+    "superseded_gate": "reproduce_non_equivalent_bare_kernel_low_endpoint",
+    "old_low_endpoint_direction_required": false,
+    "auto_policy_required": false,
+    "production_default_changed": false
+  },
+  "adjudicator": {
+    "path": "benchmarks/adjudicate_modal_block_crossover.py",
+    "test_path": "tests/test_adjudicate_modal_block_crossover.py",
+    "expected_mode_counts": [131072, 262144, 524288, 1048576, 2097152, 4194304],
+    "numerical_tolerance": 1e-12,
+    "maximum_timing_ratio": 1.05,
+    "maximum_memory_ratio": 1.1,
+    "execution_scope": "analysis_only_no_cuda_no_solver_execution"
+  },
+  "local_validation": {
+    "adjudicator_tests_passed": 13,
+    "phase_4_focused_tests_passed": 131,
+    "complete_tests_passed": 1802,
+    "subtests_passed": 8,
+    "failures": 0,
+    "archive_sources_verified": 62
+  },
+  "eligibility": {
+    "contract_correction_authorized": true,
+    "analysis_only_adjudication_authorized": true,
+    "p4_4_h100_qualified": false,
+    "eligible_for_p4_5": false,
+    "auto_policy_implemented": false,
+    "phase_4_complete": false,
+    "phase_5_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  }
+}

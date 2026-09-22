@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "P4_4_H100_RECOVERY_CROSSOVER_PROFILER_READY",
+  "status": "P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY",
   "candidate_commit": "ea4b051351f3e5b5dc1d3f51a3ed14dc64736603",
   "h100_attempt": {
     "job_id": 10837110,
@@ -52,9 +52,20 @@
     "cuda_smoke_device": "NVIDIA GeForce RTX 3060 Ti",
     "cuda_smoke_is_authoritative_for_h100": false
   },
+  "crossover_attempt": {
+    "job_id": 10837117,
+    "classification": "FAIL_P4_4_CROSSOVER_NOT_REPRODUCED",
+    "raw_profiler_sha256": "4d96ae1eab761581f94af48a46dd9cfe5f8d0b7bfb05204e8bea28ee0b4b0635",
+    "all_numerical_gates_passed": true,
+    "all_memory_gates_passed": true,
+    "all_paired_trials_favored_candidate": true,
+    "raw_recommended_switch_at_mode_count": 131072,
+    "contract_equivalent_adjudication": "notes/architecture_v0_2/phase_4_p44_contract_equivalent_adjudication.json"
+  },
   "eligibility": {
     "p4_4_h100_qualified": false,
-    "crossover_h100_scan_authorized": true,
+    "crossover_h100_scan_authorized": false,
+    "analysis_only_adjudication_authorized": true,
     "auto_policy_implemented": false,
     "p4_5_authorized": false,
     "phase_4_complete": false,

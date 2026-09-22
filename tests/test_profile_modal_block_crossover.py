@@ -155,12 +155,16 @@ def test_cli_refuses_to_overwrite_existing_output(tmp_path, monkeypatch):
 
 def test_recovery_record_preserves_failed_h100_evidence_and_blocks_p45():
     record = json.loads(RECOVERY_RECORD.read_text(encoding="utf-8"))
-    assert record["status"] == "P4_4_H100_RECOVERY_CROSSOVER_PROFILER_READY"
+    assert record["status"] == "P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY"
     assert record["h100_attempt"]["job_id"] == 10837110
     cases = record["h100_attempt"]["cases"]
     assert [case["mode_count"] for case in cases] == [131072, 4194304]
     assert cases[0]["performance_passed"] is False
     assert cases[1]["performance_passed"] is True
+    assert record["crossover_attempt"]["job_id"] == 10837117
+    assert record["crossover_attempt"][
+        "all_paired_trials_favored_candidate"
+    ] is True
     assert record["recovery_profiler"]["mode_counts"] == [
         131072,
         262144,
@@ -171,7 +175,8 @@ def test_recovery_record_preserves_failed_h100_evidence_and_blocks_p45():
     ]
     assert record["eligibility"] == {
         "p4_4_h100_qualified": False,
-        "crossover_h100_scan_authorized": True,
+        "crossover_h100_scan_authorized": False,
+        "analysis_only_adjudication_authorized": True,
         "auto_policy_implemented": False,
         "p4_5_authorized": False,
         "phase_4_complete": False,

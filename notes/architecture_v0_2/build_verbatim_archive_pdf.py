@@ -73,6 +73,8 @@ SOURCE_ORDER = (
     "phase_4_p44_modal_block_operator.json",
     "phase_4_p44_h100_recovery.md",
     "phase_4_p44_h100_recovery.json",
+    "phase_4_p44_contract_equivalent_adjudication.md",
+    "phase_4_p44_contract_equivalent_adjudication.json",
 )
 
 PAGE_WIDTH = 595.276

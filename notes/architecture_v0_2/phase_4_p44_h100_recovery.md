@@ -1,6 +1,6 @@
 # Phase 4 P4.4 H100 performance recovery
 
-Status: `P4_4_H100_RECOVERY_CROSSOVER_PROFILER_READY`.
+Status: `P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY`.
 
 The first P4.4 H100 qualification ran at commit
 `ea4b051351f3e5b5dc1d3f51a3ed14dc64736603` in Slurm Job `10837110`.
@@ -26,13 +26,19 @@ whose complete larger-size suffix satisfies the registered median-ratio gate.
 The output is evidence only: it cannot change an implementation, default,
 P4.4 qualification, or P4.5 authorization.
 
-The next H100 step is one crossover scan at counts `131072`, `262144`,
+The registered H100 recovery was one crossover scan at counts `131072`, `262144`,
 `524288`, `1048576`, `2097152`, and `4194304`.  Only after that artifact is
-complete may a separate commit add an explicit `auto` policy.  Such a policy
-must record the requested policy, effective implementation, threshold,
-device/dtype qualification identity, and mode count in metadata.  It must be
-selected during binding and may not silently change algorithms inside a
-timestep.
+complete may the result authorize a later execution-policy decision; the scan
+itself cannot change an implementation or default.
 
 P4.5 remains blocked.  Production defaults, Plane, runtime state, and the
 StepProgram remain unchanged.
+
+Job `10837117` subsequently completed this scan.  The closed-form path was
+faster in all eighteen paired trials, including the smallest registered case,
+while all correctness and memory gates passed.  Its external validator stopped
+because the low-size direction of the earlier non-equivalent reference scope
+did not repeat.  The corrected analysis-only contract and adjudicator are
+recorded in the
+[contract-equivalent adjudication](phase_4_p44_contract_equivalent_adjudication.md).
+No automatic policy is required or authorized.

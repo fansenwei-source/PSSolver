@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "P4_4_H100_RECOVERY_CROSSOVER_PROFILER_READY",
+  "status": "P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY",
   "baseline_commit": "e262867d19f8a9ed9f30af801021cf00910542d5",
   "declaration": "pssolver/core/modal_blocks.py",
   "implementation": "pssolver/operators/modal_block.py",
@@ -45,12 +45,13 @@
     "operators_package_exported": false
   },
   "validation": {
-    "focused_tests_passed": 118,
-    "complete_tests_passed": 1789,
+    "focused_tests_passed": 131,
+    "complete_tests_passed": 1802,
     "subtests_passed": 8,
     "failures": 0,
     "recovery_profiler_tests_passed": 17,
-    "archive_sources_verified": 60,
+    "adjudicator_tests_passed": 13,
+    "archive_sources_verified": 62,
     "git_diff_check_passed": true
   },
   "h100_attempt": {
@@ -62,9 +63,18 @@
     "large_case_performance_passed": true,
     "recovery_record": "notes/architecture_v0_2/phase_4_p44_h100_recovery.json"
   },
+  "crossover_attempt": {
+    "job_id": 10837117,
+    "classification": "FAIL_P4_4_CROSSOVER_NOT_REPRODUCED",
+    "all_complete_operator_contract_gates_passed": true,
+    "all_paired_trials_favored_candidate": true,
+    "contract_equivalent_adjudication_pending": true,
+    "adjudication_record": "notes/architecture_v0_2/phase_4_p44_contract_equivalent_adjudication.json"
+  },
   "eligibility": {
     "p4_4_local_complete": true,
-    "crossover_h100_scan_authorized": true,
+    "crossover_h100_scan_authorized": false,
+    "analysis_only_adjudication_authorized": true,
     "p4_5_authorized": false,
     "h100_qualification_required_before_p4_5": true,
     "phase_4_complete": false,

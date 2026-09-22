@@ -383,7 +383,7 @@ def test_p44_types_are_direct_import_only_and_disconnected():
 def test_phase4_p44_machine_record_matches_local_contract():
     record = json.loads(P44_RECORD_PATH.read_text(encoding="utf-8"))
     assert record["status"] == (
-        "P4_4_H100_RECOVERY_CROSSOVER_PROFILER_READY"
+        "P4_4_CONTRACT_EQUIVALENT_ADJUDICATION_READY"
     )
     assert record["baseline_commit"] == (
         "e262867d19f8a9ed9f30af801021cf00910542d5"
@@ -412,12 +412,13 @@ def test_phase4_p44_machine_record_matches_local_contract():
         "operators_package_exported": False,
     }
     assert record["validation"] == {
-        "focused_tests_passed": 118,
-        "complete_tests_passed": 1789,
+        "focused_tests_passed": 131,
+        "complete_tests_passed": 1802,
         "subtests_passed": 8,
         "failures": 0,
         "recovery_profiler_tests_passed": 17,
-        "archive_sources_verified": 60,
+        "adjudicator_tests_passed": 13,
+        "archive_sources_verified": 62,
         "git_diff_check_passed": True,
     }
     assert record["h100_attempt"] == {
@@ -431,9 +432,21 @@ def test_phase4_p44_machine_record_matches_local_contract():
             "notes/architecture_v0_2/phase_4_p44_h100_recovery.json"
         ),
     }
+    assert record["crossover_attempt"] == {
+        "job_id": 10837117,
+        "classification": "FAIL_P4_4_CROSSOVER_NOT_REPRODUCED",
+        "all_complete_operator_contract_gates_passed": True,
+        "all_paired_trials_favored_candidate": True,
+        "contract_equivalent_adjudication_pending": True,
+        "adjudication_record": (
+            "notes/architecture_v0_2/"
+            "phase_4_p44_contract_equivalent_adjudication.json"
+        ),
+    }
     assert record["eligibility"] == {
         "p4_4_local_complete": True,
-        "crossover_h100_scan_authorized": True,
+        "crossover_h100_scan_authorized": False,
+        "analysis_only_adjudication_authorized": True,
         "p4_5_authorized": False,
         "h100_qualification_required_before_p4_5": True,
         "phase_4_complete": False,
