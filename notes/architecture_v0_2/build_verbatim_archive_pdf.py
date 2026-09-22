@@ -69,6 +69,8 @@ SOURCE_ORDER = (
     "phase_4_p42_scalar_sbdf2_reference.json",
     "phase_4_p43_convergence_restart.md",
     "phase_4_p43_convergence_restart.json",
+    "phase_4_p44_modal_block_operator.md",
+    "phase_4_p44_modal_block_operator.json",
 )
 
 PAGE_WIDTH = 595.276

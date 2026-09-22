@@ -1,6 +1,6 @@
 # Phase 4 plan: second integrator and bounded modal block operators
 
-Status: `P4_3_LOCAL_COMPLETE_REFERENCE_ONLY`.
+Status: `P4_4_LOCAL_COMPLETE_GPU_NOT_YET_QUALIFIED`.
 
 Baseline: Phase 3 closure record commit
 `e1fcc5d6df5ea6cad6b61cc770a85d19c04f9953` on
@@ -147,6 +147,13 @@ checkpoint v1 and all production runtimes remain unchanged.
 Add tensor-free coupling declarations, bound 2-by-2 modal coefficients, a CPU
 reference solve, an optimized GPU solve, and a two-component analytic
 reaction--diffusion qualification model.
+
+Local implementation and CPU qualification are complete.  The result is
+recorded in
+[phase_4_p44_modal_block_operator.md](phase_4_p44_modal_block_operator.md) and
+its [machine-readable evidence](phase_4_p44_modal_block_operator.json).  The
+closed-form implementation is CUDA-capable but must pass a focused H100 gate
+before P4.5 is authorized.
 
 ### P4.5: combined SBDF2/block canary
 
