@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_P5_6_LOCAL_CLOSURE",
+  "baseline_commit": "e0388e6190b019ef438ab1a029970e4527e209ee",
+  "authorization": {
+    "p5_6_implementation_authorized": true,
+    "phase_6_planning_authorized": true,
+    "phase_6_execution_authorized": false,
+    "production_default_changed": false,
+    "compiled_v2_promoted": false,
+    "separated_canary_promoted": false
+  },
+  "runtime_paths": {
+    "default": "legacy_production",
+    "candidate": "compiled_v2",
+    "fallback_allowed": false
+  },
+  "validation": {
+    "targeted_tests": {
+      "result": "PASS",
+      "passed": 72,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0
+    },
+    "complete_cpu_suite": {
+      "result": "PASS",
+      "passed": 1917,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "subtests_passed": 8
+    },
+    "installed_wheel_workflow": {
+      "result": "PASS",
+      "wheel": "pssolver-0.1.2-py3-none-any.whl",
+      "wheel_sha256": "10035feea3aa2402c476a7519bb2c4ec40998fd483a8eed236523380b0296cab",
+      "imported_from_site_packages": true,
+      "compiled_workflow_completed_steps": 2,
+      "complete_marker_present": true
+    },
+    "local_cuda_smoke": {
+      "result": "PASS",
+      "gpu": "NVIDIA GeForce RTX 3060 Ti",
+      "driver": "580.178.04",
+      "pytorch": "2.6.0",
+      "cuda_runtime": "12.6",
+      "dtype": "float64",
+      "tf32": false,
+      "step_counts": [1, 2, 100],
+      "physical_byte_identical": true,
+      "spectral_byte_identical": true,
+      "peak_allocated_bytes": 9389568,
+      "peak_reserved_bytes": 23068672
+    },
+    "step_counts": [1, 2, 100],
+    "cpu_physical_byte_identity": "PASS",
+    "cpu_spectral_byte_identity": "PASS",
+    "checkpoint_continuous_split_identity": "PASS",
+    "cross_runtime_checkpoint_rejection_before_mutation": "PASS",
+    "output_and_metadata_identity": "PASS_INHERITED_AND_RECHECKED",
+    "tensor_lifetime_audit": "PASS",
+    "zero_byte_timestep_workspace": "PASS",
+    "hot_loop_static_audit": "PASS",
+    "fallback_forbidden": "PASS",
+    "git_diff_check": "PASS",
+    "source_identity": {
+      "pssolver/runtime/plane_compiled_v2_binding.py": "613df0c356dfad47bed01849a41cacce0a1b00a414a1b7f024377b1044e6eecb",
+      "pssolver/runtime/plane_compiled_v2_step.py": "5454c864382d00c4dc34aa47569ef55ab25bf16fdb8e17e7c6996079cfbb1428",
+      "pssolver/workflows/plane_compiled_v2.py": "ca37df25fffbffe80799ed273c50f6c4c768d7fc8a263bba9235addfbc3e0f90",
+      "pssolver/applications/plane_beris_edwards.py": "3b60a69223519ca2ee64adbed56dd2a89b84fc0faa2354f401657bd731fb55e5",
+      "tests/test_phase5_local_closure.py": "77781187f17b1feb02441cd5fc4a6b478694fd589d7633c1c42e3fd0608fad9f"
+    }
+  },
+  "device_identity_correction": {
+    "required": true,
+    "scope": "compiled_v2 construction-time validation only",
+    "cause": "unindexed cuda request versus concrete cuda:0 allocation",
+    "equations_changed": false,
+    "operation_order_changed": false,
+    "tensor_layout_changed": false,
+    "cpu_results_changed": false
+  },
+  "eligibility": {
+    "p5_6_complete": true,
+    "phase_5_complete": true,
+    "phase_6_planning_eligible": true,
+    "phase_6_execution_eligible": false,
+    "default_promotion_eligible": false
+  }
+}

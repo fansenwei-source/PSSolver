@@ -20,6 +20,7 @@ from pssolver.diagnostics import (
 from pssolver.execution.workspace import WorkspacePlan, WorkspaceSlotSpec
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.plane_compiled_v2_binding import (
+    _device_request_matches_allocation,
     bind_plane_compiled_v2,
 )
 from pssolver.runtime.plane_legacy import build_legacy_plane_runtime
@@ -29,6 +30,24 @@ ROOT = Path(__file__).resolve().parents[1]
 QUALIFICATION = ROOT / (
     "notes/architecture_v0_2/phase_5_p52_construction_binding.json"
 )
+
+
+@pytest.mark.parametrize(
+    ("requested", "allocated", "expected"),
+    (
+        ("cpu", torch.device("cpu"), True),
+        ("cuda", torch.device("cuda:0"), True),
+        ("cuda:0", torch.device("cuda:0"), True),
+        ("cuda:1", torch.device("cuda:0"), False),
+        ("cpu", torch.device("cuda:0"), False),
+    ),
+)
+def test_device_request_matches_concrete_allocation(
+    requested,
+    allocated,
+    expected,
+):
+    assert _device_request_matches_allocation(requested, allocated) is expected
 
 
 def _spec(tmp_path: Path, **overrides):

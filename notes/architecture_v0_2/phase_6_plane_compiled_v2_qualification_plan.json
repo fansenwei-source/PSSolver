@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_NOT_AUTHORIZED",
+  "objective": "qualify compiled_v2 against the unchanged legacy production runtime without changing scientific numerics",
+  "baseline_runtime": "legacy_production",
+  "candidate_runtime": "compiled_v2",
+  "same_commit_required": true,
+  "grids": [[128, 128, 32], [320, 320, 80]],
+  "formal_h100_submission_count": 1,
+  "automatic_retry": false,
+  "environment": {
+    "gpu": "NVIDIA H100 PCIe",
+    "dtype": "float64",
+    "tf32": false,
+    "fresh_torchinductor_cache_per_process": true
+  },
+  "common_configuration": {
+    "lengths": [100.0, 100.0, 20.0],
+    "dt": 0.005,
+    "activity_number": 18.0,
+    "seed": 24,
+    "dealias_rule": "cubic_half",
+    "projected_transform_execution": "truncated",
+    "transform_execution_order": "real_first",
+    "spectral_storage": "hermitian_half",
+    "molecular_field_linear_space": "spectral",
+    "stress_divergence_sum_space": "spectral",
+    "pointwise_execution": "compile",
+    "reuse_q_gradients": true,
+    "zero_mode_policy": "zero_mean",
+    "friction": 0.0,
+    "save_hydrodynamics": true,
+    "production_spectral_refresh": true
+  },
+  "profile": {
+    "warmup_steps": 10,
+    "profile_steps": 50,
+    "paired_trials_per_grid": 3,
+    "orders": [["legacy_production", "compiled_v2"], ["compiled_v2", "legacy_production"], ["legacy_production", "compiled_v2"]],
+    "timing_scope": "whole_timestep",
+    "required_forward_transforms_per_step": 7,
+    "required_inverse_transforms_per_step": 32,
+    "candidate_over_baseline_mean_timestep_max": 1.02,
+    "candidate_over_baseline_median_timestep_max": 1.02,
+    "candidate_over_baseline_peak_allocated_max": 1.02,
+    "candidate_over_baseline_peak_reserved_max": 1.02,
+    "candidate_faster_paired_trials_required": 2,
+    "graph_breaks_allowed": 0,
+    "compile_fallbacks_allowed": 0,
+    "projected_transform_fallbacks_allowed": 0
+  },
+  "trajectory": {
+    "steps": 100,
+    "initial_q_identity_required": true,
+    "q_u_p_byte_identity_required": true,
+    "diagnostic_byte_identity_required": true,
+    "output_filename_shape_dtype_identity_required": true,
+    "complete_marker_required": true,
+    "metadata_runtime_difference_allowlist": ["runtime_path", "requested", "effective", "adapter", "compiled_architecture", "canonical_sha256", "runtime_identity_sha256"]
+  },
+  "restart": {
+    "split_step": 50,
+    "final_step": 100,
+    "same_runtime_continuous_split_byte_identity_required": true,
+    "cross_runtime_restart_must_be_rejected_before_mutation": true,
+    "tampered_identity_must_be_rejected_before_mutation": true
+  },
+  "failure_conditions": [
+    "any CPU or CUDA qualification failure",
+    "runtime fallback",
+    "NaN or Inf",
+    "OOM or CUDA error",
+    "incomplete profiler or trajectory output",
+    "transform-call mismatch",
+    "numerical identity failure",
+    "performance or memory threshold failure",
+    "dirty qualification worktree"
+  ],
+  "long_run_stage": {
+    "separate_authorization_required": true,
+    "candidate_runtime": "compiled_v2",
+    "reference_runtime": "legacy_production",
+    "shape": [320, 320, 80],
+    "lengths": [100.0, 100.0, 20.0],
+    "dt": 0.005,
+    "steps": 80000,
+    "final_time": 400.0,
+    "save_interval": 1000,
+    "diagnostic_interval": 100,
+    "activity_number": 18.0,
+    "seed": 24,
+    "same_initial_q_sha256_required": true,
+    "scientific_observables": ["stationarity", "defect_lines", "sigma_over_H", "subgrid_sigma_over_H", "wall_normal_DCT_spectrum"],
+    "interpretation": "architecture equivalence only; it does not by itself establish strict Shendruk-model equivalence"
+  },
+  "authorization": {
+    "execution_authorized": false,
+    "long_run_authorized": false,
+    "default_promotion_authorized": false
+  }
+}

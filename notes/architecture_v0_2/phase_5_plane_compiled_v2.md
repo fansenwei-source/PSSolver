@@ -160,6 +160,10 @@ static audit.  Freeze the exact Phase 6 H100 and long-run qualification plan.
 P5.6 completion may make Phase 6 planning eligible.  It does not authorize
 Phase 6 execution or production-default promotion.
 
+Completion record: `phase_5_p56_local_closure.md` and
+`phase_5_p56_local_closure.json`.  The frozen, not-yet-authorized handoff is
+`phase_6_plane_compiled_v2_qualification_plan.md` and its JSON companion.
+
 ## Required local oracles
 
 The candidate must preserve or explicitly report:

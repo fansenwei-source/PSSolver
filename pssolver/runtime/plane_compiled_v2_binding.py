@@ -54,6 +54,24 @@ def _tensor_metadata(tensor: torch.Tensor) -> dict[str, object]:
     }
 
 
+def _device_request_matches_allocation(
+    requested: object,
+    allocated: torch.device,
+) -> bool:
+    """Match an optional-index device request to an allocated tensor device.
+
+    PyTorch records a tensor created through ``device="cuda"`` on its
+    concrete device (for example ``cuda:0``).  An omitted CUDA index means
+    "the current CUDA device", not a distinct device identity.  Explicit
+    indices remain strict, as do device types.
+    """
+
+    request = torch.device(requested)
+    if request.type != allocated.type:
+        return False
+    return request.index is None or request.index == allocated.index
+
+
 def _require_tensor(
     tensor: object,
     *,
@@ -548,8 +566,8 @@ def bind_plane_compiled_v2(
     ):
         raise ValueError("transform backend layout does not match the run spec")
     if (
-        torch.device(backend.device) != device
-        or torch.device(projector.device) != device
+        not _device_request_matches_allocation(backend.device, device)
+        or not _device_request_matches_allocation(projector.device, device)
     ):
         raise ValueError("transform backend and projector device are incompatible")
     if projector.real_dtype != real_dtype or projector.shape != (

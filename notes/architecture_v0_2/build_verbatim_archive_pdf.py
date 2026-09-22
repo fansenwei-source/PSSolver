@@ -97,6 +97,10 @@ SOURCE_ORDER = (
     "phase_5_p54_observation_checkpoint.json",
     "phase_5_p55_application_connection.md",
     "phase_5_p55_application_connection.json",
+    "phase_5_p56_local_closure.md",
+    "phase_5_p56_local_closure.json",
+    "phase_6_plane_compiled_v2_qualification_plan.md",
+    "phase_6_plane_compiled_v2_qualification_plan.json",
 )
 
 PAGE_WIDTH = 595.276
