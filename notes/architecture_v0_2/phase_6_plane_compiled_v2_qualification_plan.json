@@ -57,7 +57,7 @@
     "diagnostic_byte_identity_required": true,
     "output_filename_shape_dtype_identity_required": true,
     "complete_marker_required": true,
-    "metadata_runtime_difference_allowlist": ["runtime_path", "requested", "effective", "adapter", "compiled_architecture", "canonical_sha256", "runtime_identity_sha256"]
+    "metadata_runtime_difference_allowlist": ["runtime_path", "requested", "effective", "adapter", "compiled_architecture", "canonical_sha256", "runtime_identity_sha256", "elapsed_seconds"]
   },
   "restart": {
     "split_step": 50,

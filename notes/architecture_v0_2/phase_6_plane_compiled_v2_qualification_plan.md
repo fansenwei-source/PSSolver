@@ -26,6 +26,10 @@ dtypes, COMPLETE semantics, and normalized metadata must pass.  Same-runtime
 50+50 restart must match continuous execution byte for byte.  Cross-runtime
 and tampered-identity restarts must fail before mutation.
 
+Metadata normalization may remove only runtime-identity fields and measured
+`elapsed_seconds`; all scientific and workflow configuration fields remain
+part of the equality gate.
+
 Any incomplete output, dirty worktree, test failure, fallback, NaN, Inf, OOM,
 CUDA error, transform-count mismatch, numerical mismatch, or threshold failure
 stops the job.  There is no automatic retry.  A new attempt after an
