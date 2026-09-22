@@ -28,7 +28,11 @@ STAGE_O4_MAXIMUM_PAIRED_TIMESTEP_RATIO = 1.05
 STAGE_O4_MAXIMUM_MEMORY_RATIO = 1.03
 
 _FIELDS = ("Q", "u", "p")
-_RUNTIME_PATHS = ("legacy_production", "separated_canary")
+_RUNTIME_PATHS = (
+    "legacy_production",
+    "separated_canary",
+    "compiled_v2",
+)
 _ARRAY_PATTERN = re.compile(r"^(Q|u|p)_(\d+)\.npy$")
 _LIFECYCLE_KEYS = (
     "physical_materializations",

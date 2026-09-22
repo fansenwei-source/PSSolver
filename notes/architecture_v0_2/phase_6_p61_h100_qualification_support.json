@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "classification": "READY_P6_1_H100_CANDIDATE_GATE",
+  "baseline_commit": "9570c8c7c7d6bacf22ee09ab7dcaeff69f9709af",
+  "authorization": {
+    "phase_6_execution_authorized_by_user": true,
+    "formal_h100_candidate_gate_authorized": true,
+    "long_run_contingent_on_candidate_pass": true,
+    "production_default_changed": false,
+    "default_promotion_authorized": false
+  },
+  "runtime_paths": {
+    "baseline": "legacy_production",
+    "candidate": "compiled_v2",
+    "same_commit_required": true,
+    "fallback_allowed": false
+  },
+  "profile_matrix": {
+    "grids": [[128, 128, 32], [320, 320, 80]],
+    "trials_per_runtime_per_grid": 3,
+    "profile_count": 12,
+    "warmup_steps": 10,
+    "profile_steps": 50,
+    "spectral_refresh_interval": null,
+    "required_forward_transforms_per_step": 7,
+    "required_inverse_transforms_per_step": 32
+  },
+  "workflow_matrix": {
+    "comparison_count": 6,
+    "cross_runtime_steps": 100,
+    "same_runtime_restart_split": [50, 50],
+    "byte_identity_required": true,
+    "auxiliary_gate_report_required": true
+  },
+  "local_validation": {
+    "targeted_tests": {
+      "result": "PASS",
+      "passed": 31,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0
+    },
+    "complete_local_suite": {
+      "result": "PASS",
+      "passed": 1936,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "subtests_passed": 8
+    },
+    "local_cuda_functional_smoke": "PASS",
+    "local_cuda_gpu": "NVIDIA GeForce RTX 3060 Ti",
+    "h100_performance_conclusion": "NOT_RUN_LOCALLY"
+  },
+  "eligibility": {
+    "ready_for_h100_candidate_gate": true,
+    "long_run_stage_eligible": false,
+    "default_promotion_eligible": false
+  }
+}

@@ -16,6 +16,9 @@ Each grid uses three paired trials ordered A/B, B/A, A/B, with 10 warmup and
 32 inverse transforms per step, show no graph break or fallback, remain within
 2 percent of baseline mean and median timestep and peak allocated/reserved
 memory, and be faster in at least two of three paired trials per grid.
+The measurement window disables periodic spectral refresh so that refresh
+cadence does not contaminate the 7/32 transform-call oracle; production
+trajectory and restart gates retain the ordinary production refresh policy.
 
 The same job runs matched 100-step production workflows at both grids.
 Initial Q identity, Q/u/p and diagnostics byte identity, output names, shapes,
