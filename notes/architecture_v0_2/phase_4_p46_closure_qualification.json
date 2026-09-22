@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "status": "P4_6_LOCAL_COMPLETE_H100_CLOSURE_PENDING",
+  "baseline_commit": "9b4b0463791e1e71427087937c0002954425fd15",
+  "prerequisite": {
+    "p4_5_status": "P4_5_LOCAL_COMPLETE_OPT_IN_REFERENCE",
+    "p4_5_local_complete": true,
+    "p4_6_authorized": true,
+    "p4_4_classification": "PASS_P4_4_MODAL_BLOCK_H100_CONTRACT_EQUIVALENT"
+  },
+  "implementation": {
+    "profiler": "benchmarks/profile_combined_sbdf2_modal_block.py",
+    "validator": "benchmarks/validate_phase4_closure.py",
+    "test": "tests/test_profile_combined_sbdf2_modal_block.py",
+    "scope": "qualification_only_no_production_selection"
+  },
+  "package_gate": {
+    "clean_git_archive_required": true,
+    "fresh_sdist_required": true,
+    "fresh_wheel_required": true,
+    "isolated_installed_import_required": true,
+    "installed_modules": [
+      "pssolver.experimental.modal_block_reference",
+      "pssolver.experimental.modal_block_checkpoint"
+    ],
+    "installed_cpu_run_required": true,
+    "installed_checkpoint_restart_required": true
+  },
+  "h100_gate": {
+    "single_job": true,
+    "automatic_retry": false,
+    "dtype": "float64",
+    "tf32": false,
+    "point_counts": [131072, 1048576],
+    "dt": 0.005,
+    "warmup_steps": 5,
+    "measured_steps": 30,
+    "trials": 3,
+    "balanced_order": true,
+    "maximum_rebound_over_continuous_median_ratio": 1.1,
+    "maximum_peak_allocated_ratio": 1.1,
+    "maximum_peak_reserved_ratio": 1.1,
+    "workspace_allocated_tensor_count": 7,
+    "byte_identical_state_required": true,
+    "minimum_pairwise_l2_order": 1.8,
+    "cuda_only_test": "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite"
+  },
+  "local_validation": {
+    "profiler_validator_tests_passed": 21,
+    "combined_canary_tests_passed": 11,
+    "phase_4_tests_passed": 171,
+    "complete_tests_passed": 1834,
+    "subtests_passed": 8,
+    "failures": 0,
+    "git_diff_check_passed": true,
+    "local_cuda_profiler_smoke": {
+      "passed": true,
+      "device": "NVIDIA GeForce RTX 3060 Ti",
+      "minimum_pairwise_l2_order": 2.0038328225707627
+    }
+  },
+  "eligibility": {
+    "p4_6_local_complete": true,
+    "h100_closure_pending": true,
+    "phase_4_complete": false,
+    "phase_5_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false
+  }
+}

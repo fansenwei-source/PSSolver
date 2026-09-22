@@ -187,6 +187,14 @@ continuous/restart comparisons, negative gates, and balanced H100 performance,
 memory, finite-value, fallback, and allocation checks.  A separate decision is
 required before Phase 5.
 
+The local qualification harness and frozen H100 contract are complete.  They
+are recorded in
+[phase_4_p46_closure_qualification.md](phase_4_p46_closure_qualification.md)
+and its
+[machine-readable evidence](phase_4_p46_closure_qualification.json).  Phase 4
+remains open until the single registered H100 closure job and its fail-closed
+validator pass.
+
 ## Qualification oracle
 
 - temporal grids use the fixed ratio ladder `(1, 1/2, 1/4, 1/8)` at unchanged
