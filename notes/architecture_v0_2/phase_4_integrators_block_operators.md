@@ -1,6 +1,6 @@
 # Phase 4 plan: second integrator and bounded modal block operators
 
-Status: `P4_5_LOCAL_COMPLETE_P4_6_AUTHORIZED`.
+Status: `PASS_PHASE4_CLOSURE_WITH_MEMORY_MEASUREMENT_RECOVERY`.
 
 Baseline: Phase 3 closure record commit
 `e1fcc5d6df5ea6cad6b61cc770a85d19c04f9953` on
@@ -200,6 +200,14 @@ role-live-set contamination in the profiler's GPU memory measurement.  The
 diagnosis and schema-v2 recovery are frozen in
 [phase_4_p46_memory_measurement_recovery.md](phase_4_p46_memory_measurement_recovery.md);
 the `1.10` memory limit was not relaxed.
+
+The schema-v2 recovery passed every registered CPU, package, CUDA, numerical,
+timing, memory, workspace, and convergence gate.  The final evidence-only
+record is
+[phase_4_p46_final_closure.md](phase_4_p46_final_closure.md).  Phase 4 is
+complete and Phase 5 planning is eligible, but Phase 5 implementation remains
+unauthorized.  The canary is still opt-in and disconnected from Plane and all
+production defaults.
 
 ## Qualification oracle
 

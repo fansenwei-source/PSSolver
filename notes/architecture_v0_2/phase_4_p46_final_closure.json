@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_PHASE4_CLOSURE_WITH_MEMORY_MEASUREMENT_RECOVERY",
+  "source_identity": {
+    "phase_3_closure_record_commit": "e1fcc5d6df5ea6cad6b61cc770a85d19c04f9953",
+    "p4_6_initial_qualification_commit": "b26609f9f114a55b5e4da45033a31080705c5bff",
+    "p4_6_recovery_commit": "f8df249b7d16bc4e843711a08c391b7087cd9d16"
+  },
+  "closure_gates": {
+    "p4_1_integrator_history_complete": true,
+    "p4_2_scalar_sbdf2_reference_complete": true,
+    "p4_3_convergence_restart_complete": true,
+    "p4_4_modal_block_complete": true,
+    "p4_5_combined_canary_complete": true,
+    "p4_6_cpu_complete": true,
+    "p4_6_package_complete": true,
+    "p4_6_h100_complete": true,
+    "p4_6_memory_measurement_recovery_complete": true
+  },
+  "numerical": {
+    "dtype": "float64",
+    "tf32": false,
+    "minimum_required_temporal_order": 1.8,
+    "minimum_observed_temporal_order": 2.0038328225700184,
+    "physical_byte_identical": true,
+    "native_spectrum_byte_identical": true,
+    "workspace_pointer_stable": true,
+    "workspace_allocated_tensor_count": 7,
+    "implementation": "closed_form_2x2",
+    "finite": true,
+    "fallback_used": false
+  },
+  "h100_results": {
+    "131072": {
+      "median_rebound_over_continuous_timestep_ratio": 1.003408602806614,
+      "maximum_peak_allocated_ratio": 1.0488409703504042,
+      "maximum_peak_reserved_ratio": 1.0
+    },
+    "1048576": {
+      "median_rebound_over_continuous_timestep_ratio": 1.0019911480494244,
+      "maximum_peak_allocated_ratio": 1.0,
+      "maximum_peak_reserved_ratio": 1.0327868852459017
+    }
+  },
+  "execution": {
+    "recovery_h100_submission_count": 1,
+    "automatic_retry": false,
+    "h100_job_id": 10837188,
+    "h100_state": "COMPLETED",
+    "h100_exit_code": "0:0",
+    "h100_elapsed": "00:00:28",
+    "h100_node": "gpu-h100-4-0",
+    "gpu": "NVIDIA H100 PCIe",
+    "pytorch": "2.5.1+cu121",
+    "cuda_runtime": "12.1"
+  },
+  "failure_status": {
+    "scientific_failure": false,
+    "solver_failure": false,
+    "numerical_failure": false,
+    "performance_failure": false,
+    "memory_failure": false,
+    "cuda_failure": false
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_phase4_p46_memory_recovery_h100_f8df249_20260922_v1",
+    "complete_marker_present": true,
+    "complete_sha256": "7ac3ad5cc6efad1a74cd95e824c4289f36115ce676a72cd72838775b67a02627",
+    "manifest_entries": 49,
+    "manifest_sha256": "785cd9efd55eae46eb0393d24c9dddeb487b26d506692d8d94b7d05e4bfd1d76",
+    "manifest_verification_passed": true,
+    "profile_schema_version": 2,
+    "profile_sha256": "e25ece05bc8ae9ab48faf856d889d7b0d223694e5f587f1a1a2c70d3c4b598bc",
+    "validator_sha256": "a4f6ce2183b9a614ccf644db65fd7e5a7dde32e17f27d7840d6155388110b7fc",
+    "schema_v1_negative_control_rejected": true
+  },
+  "eligibility": {
+    "qualification_complete": true,
+    "phase_4_complete": true,
+    "eligible_for_phase_5_planning": true,
+    "phase_5_authorized": false,
+    "production_default_changed": false,
+    "separated_canary_promoted": false,
+    "plane_connected": false,
+    "eligible_for_default_promotion": false
+  }
+}

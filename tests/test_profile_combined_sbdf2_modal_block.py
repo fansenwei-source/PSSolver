@@ -23,6 +23,12 @@ RECORD = (
     / "architecture_v0_2"
     / "phase_4_p46_closure_qualification.json"
 )
+FINAL_CLOSURE = (
+    ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_4_p46_final_closure.json"
+)
 
 
 def _memory(peak_allocated: int, peak_reserved: int) -> dict[str, int]:
@@ -356,4 +362,64 @@ def test_p46_machine_record_freezes_local_and_h100_closure_contract():
         "phase_5_authorized": False,
         "production_default_changed": False,
         "separated_canary_promoted": False,
+    }
+
+
+def test_p46_final_closure_records_qualified_evidence_without_promotion():
+    record = json.loads(FINAL_CLOSURE.read_text(encoding="utf-8"))
+    assert record["classification"] == (
+        "PASS_PHASE4_CLOSURE_WITH_MEMORY_MEASUREMENT_RECOVERY"
+    )
+    assert all(record["closure_gates"].values())
+    assert record["numerical"] == {
+        "dtype": "float64",
+        "tf32": False,
+        "minimum_required_temporal_order": 1.8,
+        "minimum_observed_temporal_order": 2.0038328225700184,
+        "physical_byte_identical": True,
+        "native_spectrum_byte_identical": True,
+        "workspace_pointer_stable": True,
+        "workspace_allocated_tensor_count": 7,
+        "implementation": "closed_form_2x2",
+        "finite": True,
+        "fallback_used": False,
+    }
+    for result in record["h100_results"].values():
+        assert result[
+            "median_rebound_over_continuous_timestep_ratio"
+        ] <= 1.10
+        assert result["maximum_peak_allocated_ratio"] <= 1.10
+        assert result["maximum_peak_reserved_ratio"] <= 1.10
+    assert record["evidence"] == {
+        "control_directory": (
+            "/home/fansenwei/pssolver_phase4_p46_memory_recovery_h100_"
+            "f8df249_20260922_v1"
+        ),
+        "complete_marker_present": True,
+        "complete_sha256": (
+            "7ac3ad5cc6efad1a74cd95e824c4289f36115ce676a72cd72838775b67a02627"
+        ),
+        "manifest_entries": 49,
+        "manifest_sha256": (
+            "785cd9efd55eae46eb0393d24c9dddeb487b26d506692d8d94b7d05e4bfd1d76"
+        ),
+        "manifest_verification_passed": True,
+        "profile_schema_version": 2,
+        "profile_sha256": (
+            "e25ece05bc8ae9ab48faf856d889d7b0d223694e5f587f1a1a2c70d3c4b598bc"
+        ),
+        "validator_sha256": (
+            "a4f6ce2183b9a614ccf644db65fd7e5a7dde32e17f27d7840d6155388110b7fc"
+        ),
+        "schema_v1_negative_control_rejected": True,
+    }
+    assert record["eligibility"] == {
+        "qualification_complete": True,
+        "phase_4_complete": True,
+        "eligible_for_phase_5_planning": True,
+        "phase_5_authorized": False,
+        "production_default_changed": False,
+        "separated_canary_promoted": False,
+        "plane_connected": False,
+        "eligible_for_default_promotion": False,
     }

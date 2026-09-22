@@ -81,6 +81,8 @@ SOURCE_ORDER = (
     "phase_4_p46_closure_qualification.json",
     "phase_4_p46_memory_measurement_recovery.md",
     "phase_4_p46_memory_measurement_recovery.json",
+    "phase_4_p46_final_closure.md",
+    "phase_4_p46_final_closure.json",
 )
 
 PAGE_WIDTH = 595.276
