@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_P7_3_CHANNEL_COMPILED_EXECUTION",
+  "baseline": {
+    "p7_2_commit": "922e8da7a7871642ce65b3f15bfac7ca521a9e79",
+    "p7_2_classification": "PASS_P7_2_CHANNEL_STOKES_SCHUR_EXTRACTION"
+  },
+  "implementation": {
+    "identity": "compiled_channel_v2",
+    "declaration_module": "pssolver.planning.channel_compiled_v2",
+    "declaration_module_sha256": "475ffed9716962e2fbc4db90e6ed745115221e21ad9b0f6a4e2d200701daa15f",
+    "execution_adapter": "pssolver.experimental.channel_compiled_v2",
+    "execution_adapter_sha256": "7a265f20aa9b531c86b099bb5fc1b17c856f0cbfb04ec7212296a330cc822655",
+    "direct_import_only": true,
+    "runtime_state_explicit": true,
+    "runtime_workspace_explicit": true,
+    "step_program_prebound": true,
+    "pressure_guess_persistent": true,
+    "pressure_guess_identity_bound": true,
+    "supported_precision": "float32"
+  },
+  "state_contract": {
+    "evolved_components": [
+      "Qxx",
+      "Qxy",
+      "Qxz",
+      "Qyy",
+      "Qyz"
+    ],
+    "algebraic_components": [
+      "ux",
+      "uy",
+      "uz",
+      "p"
+    ],
+    "q_transform": "fft_dct_dct",
+    "velocity_transform": "fft_dst_dst",
+    "pressure_transform": "fft_dct_dct",
+    "integrator": "semi_implicit_euler",
+    "history_depth": 0,
+    "physical_storage_zero_copy": true,
+    "spectral_storage_zero_copy": true
+  },
+  "workspace_contract": {
+    "runtime_workspace_stable": true,
+    "runtime_workspace_slot_count": 0,
+    "runtime_workspace_required_bytes": 0,
+    "new_adapter_allocations_in_hot_loop": false,
+    "legacy_internal_scratch_not_yet_migrated": true,
+    "semantic_requirements_declared": true
+  },
+  "numerical_gates": {
+    "legacy_compiled_initial_state_byte_identical": "PASS",
+    "legacy_compiled_five_step_physical_byte_identical": "PASS",
+    "legacy_compiled_five_step_spectral_byte_identical": "PASS",
+    "legacy_compiled_pressure_guess_byte_identical": "PASS",
+    "finite_state": "PASS",
+    "pressure_restore_validation": "PASS",
+    "invalid_input_rejection": "PASS"
+  },
+  "compatibility": {
+    "legacy_channel_module_sha256": "3e85bd8e387eaeee48674998e08a3f97585f9d73ae3c7c4bd620d9ea1bd9605b",
+    "channel_entry_point_sha256": "ea7087c4a22796bcefb77407505d2971cee948a9d2b643ced03d6dcb0a5d34b2",
+    "legacy_channel_module_modified": false,
+    "channel_entry_point_modified": false,
+    "runtime_selector_modified": false,
+    "package_root_export_added": false,
+    "production_default_changed": false,
+    "output_schema_changed": false
+  },
+  "local_validation": {
+    "p7_3_tests_passed": 13,
+    "targeted_and_compatibility_tests_passed": 81,
+    "targeted_tests_failed": 0,
+    "complete_suite_passed": 2006,
+    "complete_suite_subtests_passed": 8,
+    "complete_suite_failed": 0,
+    "python_compile": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "authorization": {
+    "p7_3_complete": true,
+    "p7_4_planning_eligible": true,
+    "p7_4_implementation_authorized": false,
+    "phase_7_h100_authorized": false,
+    "production_connection_authorized": false,
+    "production_default_changed": false,
+    "new_boundary_law_authorized": false,
+    "plane_evidence_modified": false
+  }
+}
