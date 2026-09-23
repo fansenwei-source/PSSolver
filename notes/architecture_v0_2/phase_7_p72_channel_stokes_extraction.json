@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_P7_2_CHANNEL_STOKES_SCHUR_EXTRACTION",
+  "baseline": {
+    "p7_1_commit": "222a99efdd8cec52de9ae4302c7cec6f1888eb3a",
+    "p7_1_classification": "PASS_P7_1_CHANNEL_RUN_SPEC_DECOMPOSITION",
+    "historical_channel_module_sha256": "9be8c7fd97e6167c44df4f38f2481683d108ac4e191ef1e0562d616fb4406223"
+  },
+  "canonical_solver": {
+    "module": "pssolver.linear_solvers.stokes.channel_no_slip",
+    "class": "ChannelNoSlipModalStokesSolver",
+    "module_sha256": "4503f62df5204f7f48da7ca58674ebda45a3f775b7742dcc7bc7ab535c511b16",
+    "model_independent": true,
+    "operation_order_preserved": true,
+    "pressure_algorithm": "preconditioned_conjugate_gradient",
+    "pressure_warm_start": true
+  },
+  "geometry_contract": {
+    "velocity_boundaries": [
+      "periodic",
+      "dirichlet",
+      "dirichlet"
+    ],
+    "velocity_transform_kinds": [
+      "fft",
+      "dst",
+      "dst"
+    ],
+    "pressure_boundaries": [
+      "periodic",
+      "neumann",
+      "neumann"
+    ],
+    "pressure_transform_kinds": [
+      "fft",
+      "dct",
+      "dct"
+    ],
+    "pressure_gauge": "zero_mean",
+    "tangential_zero_mode_policy": "not_applicable"
+  },
+  "compatibility": {
+    "legacy_facade": "pssolver.channel.ModalSaddleStokesCompute",
+    "legacy_facade_module_sha256": "3e85bd8e387eaeee48674998e08a3f97585f9d73ae3c7c4bd620d9ea1bd9605b",
+    "experimental_adapter_module_sha256": "d9d3b0c7b2b97074cf8ba866d9c5b96e5a48771a8d765db60bc941dcb991b20a",
+    "channel_entry_point_sha256": "ea7087c4a22796bcefb77407505d2971cee948a9d2b643ced03d6dcb0a5d34b2",
+    "channel_entry_point_modified": false,
+    "legacy_constructor_preserved": true,
+    "legacy_active_force_forward_preserved": true,
+    "output_schema_changed": false
+  },
+  "equation_level_gates": {
+    "basis_parity": "PASS",
+    "legacy_canonical_registered_state_exact": "PASS",
+    "legacy_canonical_solve_byte_identical": "PASS",
+    "pressure_gauge": "PASS",
+    "incompressibility": "PASS",
+    "wall_momentum_residual": "PASS",
+    "manufactured_schur_pressure": "PASS",
+    "zero_force": "PASS",
+    "fixed_iteration_mode": "PASS",
+    "invalid_input_rejection": "PASS"
+  },
+  "local_validation": {
+    "targeted_and_compatibility_tests_passed": 61,
+    "targeted_tests_failed": 0,
+    "complete_suite_passed": 1993,
+    "complete_suite_subtests_passed": 8,
+    "complete_suite_failed": 0,
+    "python_compile": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "authorization": {
+    "p7_2_complete": true,
+    "p7_3_planning_eligible": true,
+    "p7_3_implementation_authorized": false,
+    "phase_7_h100_authorized": false,
+    "new_boundary_law_authorized": false,
+    "production_default_changed": false,
+    "plane_evidence_modified": false
+  }
+}

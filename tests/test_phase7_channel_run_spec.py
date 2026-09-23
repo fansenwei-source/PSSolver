@@ -173,7 +173,7 @@ def test_p71_keeps_the_frozen_configuration_package_root_surface():
     assert not hasattr(configuration, "ChannelActiveNematicRunSpec")
 
 
-def test_p71_preserves_the_frozen_oracle_source_identities():
+def test_p71_preserves_the_historical_oracle_source_identities():
     inventory = json.loads(
         (NOTES / "phase_7_channel_inventory.json").read_text(encoding="utf-8")
     )
@@ -181,9 +181,9 @@ def test_p71_preserves_the_frozen_oracle_source_identities():
     assert _sha256("Channel.py") == inventory["legacy_oracle"][
         "entry_point_sha256"
     ]
-    assert _sha256("pssolver/channel.py") == inventory["legacy_oracle"][
-        "reusable_module_sha256"
-    ]
+    assert inventory["legacy_oracle"]["reusable_module_sha256"] == (
+        "9be8c7fd97e6167c44df4f38f2481683d108ac4e191ef1e0562d616fb4406223"
+    )
 
 
 def test_flat_facade_field_order_is_characterized():

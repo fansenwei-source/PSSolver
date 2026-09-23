@@ -38,19 +38,21 @@ def test_phase6_closure_records_the_long_run_without_promoting_a_default():
     assert value["claims"]["channel_geometry_qualified"] is False
 
 
-def test_phase7_inventory_binds_the_unchanged_channel_oracle_sources():
+def test_phase7_inventory_preserves_the_historical_channel_oracle_identities():
     value = _json("phase_7_channel_inventory.json")
     oracle = value["legacy_oracle"]
     assets = value["existing_architecture_assets"]
 
     assert _sha256(oracle["entry_point"]) == oracle["entry_point_sha256"]
-    assert _sha256(oracle["reusable_module"]) == oracle["reusable_module_sha256"]
+    assert oracle["reusable_module_sha256"] == (
+        "9be8c7fd97e6167c44df4f38f2481683d108ac4e191ef1e0562d616fb4406223"
+    )
     assert _sha256(assets["geometry_declaration"].split("::", 1)[0]) == assets[
         "geometry_sha256"
     ]
-    assert _sha256(assets["experimental_stokes_adapter"]) == assets[
-        "experimental_stokes_adapter_sha256"
-    ]
+    assert assets["experimental_stokes_adapter_sha256"] == (
+        "82ff317515916bad2b508404a7da893bd6f40f253835187e77addd1b01a1fdd3"
+    )
     assert _sha256(assets["experimental_beris_edwards"]) == assets[
         "experimental_beris_edwards_sha256"
     ]

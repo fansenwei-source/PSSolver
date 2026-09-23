@@ -116,6 +116,8 @@ SOURCE_ORDER = (
     "phase_7_channel_migration_plan.json",
     "phase_7_p71_run_spec_decomposition.md",
     "phase_7_p71_run_spec_decomposition.json",
+    "phase_7_p72_channel_stokes_extraction.md",
+    "phase_7_p72_channel_stokes_extraction.json",
 )
 
 PAGE_WIDTH = 595.276

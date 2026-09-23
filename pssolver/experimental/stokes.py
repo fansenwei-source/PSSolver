@@ -6,11 +6,9 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 import math
 from numbers import Real
-from types import SimpleNamespace
 
 import torch
 
-from pssolver.channel import ModalSaddleStokesCompute
 from pssolver.execution import (
     AlgebraicSolverContext,
     AlgebraicSystemSpec,
@@ -23,6 +21,9 @@ from pssolver.execution import (
 from pssolver.geometries import PlaneSlab, RectangularChannel
 from pssolver.linear_solvers.stokes.plane_free_slip import (
     FreeSlipModalStokesSolver,
+)
+from pssolver.linear_solvers.stokes.channel_no_slip import (
+    ChannelNoSlipModalStokesSolver,
 )
 
 from .model_execution import LegacyAlgebraicSolverContext
@@ -350,18 +351,12 @@ def _channel_factory(
         velocity_boundaries=velocity_boundaries,
         pressure_boundaries=_CHANNEL_PRESSURE_BCS,
     )
-    backend = context.legacy_transform_backend
-    legacy_solver_view = SimpleNamespace(
-        transform_backend=backend,
-        qx=SimpleNamespace(device=backend.device),
-    )
-    lower = ModalSaddleStokesCompute(
-        legacy_solver_view,
-        beta=0.0,
+    lower = ChannelNoSlipModalStokesSolver(
+        context.legacy_transform_backend,
         friction=spec.friction,
         viscosity=spec.viscosity,
-        pressure_rel_tol=options.pressure_relative_tolerance,
-        pressure_max_iter=options.pressure_max_iterations,
+        pressure_relative_tolerance=options.pressure_relative_tolerance,
+        pressure_max_iterations=options.pressure_max_iterations,
         pressure_fixed_iterations=options.pressure_fixed_iterations,
     )
     return _LegacyStokesAlgebraicSolver(
