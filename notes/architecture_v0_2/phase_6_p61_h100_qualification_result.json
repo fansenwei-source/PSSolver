@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_PHASE6_H100_CANDIDATE_PERFORMANCE_EQUIVALENT",
+  "qualification_commit": "9dcb9dc0a00b7fa1b12b200e83aaf0c6f21eb4db",
+  "profile_source": {
+    "commit": "bad9916ac1cae4969372712edf88d106d529d584",
+    "job_id": "10837343",
+    "job_state": "CANCELLED",
+    "profile_count": 12,
+    "manifest_entries_verified": 1670,
+    "manifest_sha256": "ba00f7f5bc64cd5ae022d53d6eab3505636b0384fd047b8650e91b7d3167133c",
+    "original_classification": "FAIL_PHASE6_H100_CANDIDATE_GATE"
+  },
+  "recovery": {
+    "job_id": "10838294",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "node": "gpu-h100-4-0",
+    "gpu": "NVIDIA H100 PCIe",
+    "elapsed": "00:24:14",
+    "formal_h100_submission_count": 2,
+    "automatic_retry": false,
+    "manifest_entries_verified": 1241,
+    "manifest_sha256": "488a6ece0f2876c5d2ae2db841c0f7bb1b59251345edf7c05082f84d6c39db44"
+  },
+  "gates": {
+    "cpu": "PASS",
+    "cuda_only_tests": "3/3 PASS",
+    "performance_class": "performance_equivalent",
+    "new_profiler_count": 0,
+    "continuous_and_restart_trajectories": "8/8 COMPLETE",
+    "workflow_comparisons": "6/6 PASS",
+    "negative_restart_gates": "4/4 PASS",
+    "auxiliary_gates": "13/13 PASS",
+    "all_gates_passed": true
+  },
+  "eligibility": {
+    "p61_complete": true,
+    "p62_long_run_stage_eligible": true,
+    "default_promotion_eligible": false,
+    "production_default_changed": false
+  },
+  "claim_boundary": {
+    "architecture_qualification": true,
+    "physical_stationarity_established": false,
+    "strict_inertial_shendruk_equivalence_established": false
+  }
+}

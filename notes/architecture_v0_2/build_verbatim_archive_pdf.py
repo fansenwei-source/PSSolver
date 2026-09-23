@@ -105,6 +105,10 @@ SOURCE_ORDER = (
     "phase_6_p61_h100_qualification_support.json",
     "phase_6_p61_performance_equivalence_recovery.md",
     "phase_6_p61_performance_equivalence_recovery.json",
+    "phase_6_p61_h100_qualification_result.md",
+    "phase_6_p61_h100_qualification_result.json",
+    "phase_6_p62_long_run_equivalence.md",
+    "phase_6_p62_long_run_equivalence.json",
 )
 
 PAGE_WIDTH = 595.276

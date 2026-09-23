@@ -75,3 +75,43 @@ def test_phase6_recovery_record_preserves_failure_and_changes_only_adjudication(
     assert value["authorization"]["long_run_authorized"] is False
     assert value["authorization"]["production_default_changed"] is False
     assert value["recovery_scope"]["rerun_profiles"] is False
+
+
+def test_phase6_p61_result_authorizes_only_the_separate_long_run_stage():
+    value = json.loads(
+        (NOTES / "phase_6_p61_h100_qualification_result.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert value["classification"] == (
+        "PASS_PHASE6_H100_CANDIDATE_PERFORMANCE_EQUIVALENT"
+    )
+    assert value["profile_source"]["original_classification"] == (
+        "FAIL_PHASE6_H100_CANDIDATE_GATE"
+    )
+    assert value["gates"]["new_profiler_count"] == 0
+    assert value["eligibility"]["p61_complete"] is True
+    assert value["eligibility"]["p62_long_run_stage_eligible"] is True
+    assert value["eligibility"]["default_promotion_eligible"] is False
+
+
+def test_phase6_p62_plan_uses_byte_identity_without_changing_runtime_code():
+    value = json.loads(
+        (NOTES / "phase_6_p62_long_run_equivalence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    analyzer = (
+        ROOT / "scripts_plane/analyze_phase6_long_run_equivalence.py"
+    ).read_text(encoding="utf-8")
+
+    assert value["status"] == "READY_P6_2_LONG_RUN_HANDOFF"
+    assert value["pair"]["steps"] == 80_000
+    assert value["pair"]["frame_count_per_field"] == 81
+    assert value["gates"]["q_frame_byte_identity"] == "81/81 required"
+    assert value["authorization"]["phase_7_execution_authorized"] is False
+    assert value["authorization"]["production_default_changed"] is False
+    assert "PASS_PHASE6_LONG_RUN_BYTE_IDENTICAL" in analyzer
+    assert "build_legacy_plane_runtime" not in analyzer
+    assert "build_plane_compiled_v2_runtime" not in analyzer

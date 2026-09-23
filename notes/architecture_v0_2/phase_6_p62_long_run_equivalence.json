@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "status": "READY_P6_2_LONG_RUN_HANDOFF",
+  "p61_prerequisite": {
+    "classification": "PASS_PHASE6_H100_CANDIDATE_PERFORMANCE_EQUIVALENT",
+    "qualification_commit": "9dcb9dc0a00b7fa1b12b200e83aaf0c6f21eb4db",
+    "recovery_job_id": "10838294",
+    "recovery_manifest_sha256": "488a6ece0f2876c5d2ae2db841c0f7bb1b59251345edf7c05082f84d6c39db44",
+    "eligible_for_long_run_stage": true
+  },
+  "pair": {
+    "runtimes": [
+      "legacy_production",
+      "compiled_v2"
+    ],
+    "same_execution_commit_required": true,
+    "shape": [
+      320,
+      320,
+      80
+    ],
+    "lengths": [
+      100.0,
+      100.0,
+      20.0
+    ],
+    "activity_number": 18.0,
+    "seed": 24,
+    "dt": 0.005,
+    "steps": 80000,
+    "final_time": 400.0,
+    "save_start_step": 0,
+    "save_interval": 1000,
+    "diagnostic_interval": 100,
+    "frame_count_per_field": 81,
+    "dtype": "float64",
+    "tf32": false,
+    "save_hydrodynamics": true,
+    "initial_q_identity_required": true
+  },
+  "numerics": {
+    "dealias_rule": "cubic_half",
+    "projected_transform_execution": "truncated",
+    "transform_execution_order": "real_first",
+    "spectral_storage": "hermitian_half",
+    "molecular_field_linear_space": "spectral",
+    "stress_divergence_sum_space": "spectral",
+    "pointwise_execution": "compile",
+    "reuse_q_gradients": true,
+    "production_spectral_refresh": true,
+    "zero_mode_policy": "zero_mean",
+    "friction": 0.0
+  },
+  "gates": {
+    "execution_provenance_required": true,
+    "formal_h100_simulation_job_count": 1,
+    "q_frame_byte_identity": "81/81 required",
+    "velocity_frame_byte_identity": "81/81 required",
+    "pressure_frame_byte_identity": "81/81 required",
+    "diagnostic_byte_identity": true,
+    "normalized_metadata_identity": true,
+    "finite_arrays": true,
+    "complete_markers": true,
+    "runtime_fallback_allowed": false
+  },
+  "observable_implication": {
+    "basis": "complete saved-Q byte identity under one deterministic analyzer",
+    "observables": [
+      "stationarity",
+      "defect_lines",
+      "sigma_over_H",
+      "subgrid_sigma_over_H",
+      "wall_normal_DCT_spectrum"
+    ]
+  },
+  "authorization": {
+    "ready_for_hpcc_handoff": true,
+    "automatic_retry": false,
+    "phase_7_execution_authorized": false,
+    "default_promotion_authorized": false,
+    "production_default_changed": false
+  },
+  "local_validation": {
+    "targeted_tests": {
+      "passed": 34,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0
+    },
+    "complete_suite": {
+      "passed": 1958,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "subtests_passed": 8
+    },
+    "git_diff_check": "PASS"
+  }
+}
