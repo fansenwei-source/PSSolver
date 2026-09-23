@@ -35,6 +35,19 @@ from .channel_checkpoint import (
     restore_channel_checkpoint,
     write_channel_checkpoint,
 )
+from .channel_active_nematics import (
+    CHANNEL_WORKFLOW_SCHEMA_VERSION,
+    ChannelActiveNematicsWorkflow,
+    ChannelWorkflowResult,
+)
+from .channel_observation import (
+    ChannelDiagnostic,
+    ChannelObservation,
+    capture_channel_diagnostic,
+    capture_channel_observation,
+    write_channel_diagnostics,
+    write_channel_observation,
+)
 
 __all__ = [
     "DIAGNOSTIC_DTYPE",
@@ -64,4 +77,13 @@ __all__ = [
     "read_channel_checkpoint_header",
     "restore_channel_checkpoint",
     "write_channel_checkpoint",
+    "CHANNEL_WORKFLOW_SCHEMA_VERSION",
+    "ChannelActiveNematicsWorkflow",
+    "ChannelWorkflowResult",
+    "ChannelDiagnostic",
+    "ChannelObservation",
+    "capture_channel_diagnostic",
+    "capture_channel_observation",
+    "write_channel_diagnostics",
+    "write_channel_observation",
 ]

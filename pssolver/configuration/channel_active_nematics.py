@@ -50,6 +50,8 @@ class ChannelActiveNematicRunSpec:
     diagnostics_enabled: bool = True
     diagnostic_interval: int = 10
     batch_size: int = 1
+    checkpoint_interval: int | None = None
+    restart_from: Path | None = None
     seed: int = 24
     rho: float = 6.0
     elastic_constant: float = 1.0
@@ -107,6 +109,12 @@ class ChannelActiveNematicRunSpec:
             "diagnostic_interval",
             workflow.diagnostic_interval,
         )
+        object.__setattr__(
+            self,
+            "checkpoint_interval",
+            workflow.checkpoint_interval,
+        )
+        object.__setattr__(self, "restart_from", workflow.restart_from)
         object.__setattr__(self, "batch_size", execution.batch_size)
         object.__setattr__(self, "seed", initial.seed)
         object.__setattr__(self, "rho", material.rho)
@@ -296,6 +304,8 @@ def _build_channel_run_components(
         save_interval=spec.save_interval,
         diagnostics_enabled=spec.diagnostics_enabled,
         diagnostic_interval=spec.diagnostic_interval,
+        checkpoint_interval=spec.checkpoint_interval,
+        restart_from=spec.restart_from,
         generated_output_directory=spec.generated_output_directory,
         snapshot_output_directory=spec.snapshot_output_directory,
     )

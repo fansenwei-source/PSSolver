@@ -351,6 +351,8 @@ class ChannelWorkflowSpec:
     save_interval: int
     diagnostics_enabled: bool
     diagnostic_interval: int
+    checkpoint_interval: int | None
+    restart_from: Path | None
     generated_output_directory: Path
     snapshot_output_directory: Path
 
@@ -374,6 +376,22 @@ class ChannelWorkflowSpec:
                 positive=True,
             ),
         )
+        if self.checkpoint_interval is not None:
+            object.__setattr__(
+                self,
+                "checkpoint_interval",
+                _integer(
+                    self.checkpoint_interval,
+                    "checkpoint_interval",
+                    positive=True,
+                ),
+            )
+        if self.restart_from is not None:
+            object.__setattr__(
+                self,
+                "restart_from",
+                _path(self.restart_from, "restart_from"),
+            )
         if not isinstance(self.diagnostics_enabled, bool):
             raise TypeError("diagnostics_enabled must be a bool")
         object.__setattr__(
@@ -396,6 +414,10 @@ class ChannelWorkflowSpec:
             "save_interval": self.save_interval,
             "diagnostics_enabled": self.diagnostics_enabled,
             "diagnostic_interval": self.diagnostic_interval,
+            "checkpoint_interval": self.checkpoint_interval,
+            "restart_from": (
+                None if self.restart_from is None else str(self.restart_from)
+            ),
             "generated_output_directory": str(self.generated_output_directory),
             "snapshot_output_directory": str(self.snapshot_output_directory),
         }

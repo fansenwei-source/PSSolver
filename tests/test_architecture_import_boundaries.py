@@ -99,6 +99,10 @@ EXPECTED_LEGACY_EXCEPTIONS = {
         "pssolver.runtime.plane_beris_edwards",
         "pssolver.experimental.plane_shadow_driver",
     ),
+    ImportEdge(
+        "pssolver.runtime.channel_application_bridge",
+        "pssolver.experimental.channel_compiled_v2",
+    ),
 }
 
 
@@ -301,7 +305,11 @@ def test_only_the_frozen_runtime_bridge_reaches_into_experimental_code():
         ImportEdge(
             "pssolver.runtime.plane_beris_edwards",
             "pssolver.experimental.plane_shadow_driver",
-        )
+        ),
+        ImportEdge(
+            "pssolver.runtime.channel_application_bridge",
+            "pssolver.experimental.channel_compiled_v2",
+        ),
     }
     observed = {
         edge

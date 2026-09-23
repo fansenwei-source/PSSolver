@@ -122,6 +122,8 @@ SOURCE_ORDER = (
     "phase_7_p73_channel_compiled_execution.json",
     "phase_7_p74_channel_runtime_facade.md",
     "phase_7_p74_channel_runtime_facade.json",
+    "phase_7_p75_local_closure.md",
+    "phase_7_p75_local_closure.json",
 )
 
 PAGE_WIDTH = 595.276

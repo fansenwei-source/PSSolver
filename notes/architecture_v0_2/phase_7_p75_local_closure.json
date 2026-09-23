@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_P7_5_CHANNEL_LOCAL_CLOSURE",
+  "baseline": {
+    "p7_4_commit": "9de16bf8883efa51d8326d9e6e2cef8235ddd184",
+    "p7_4_classification": "PASS_P7_4_CHANNEL_RUNTIME_FACADE"
+  },
+  "implementation": {
+    "application": "pssolver/applications/channel_active_nematics.py",
+    "application_sha256": "ee1889699388bed7e08ce419f20985e7afef1be6dbac26b913329e60ecd915f0",
+    "compiled_runtime_bridge": "pssolver/runtime/channel_application_bridge.py",
+    "compiled_runtime_bridge_sha256": "ca239bb5ff5b5b44e8a6ec474138c6b641577bdb16109e5cea012f3d83dc498e",
+    "workflow": "pssolver/workflows/channel_active_nematics.py",
+    "workflow_sha256": "87b2f16b9527a0b87faf9f6820e486ecb935466ffd662e6e2066a1d5c6632a3f",
+    "observation": "pssolver/workflows/channel_observation.py",
+    "observation_sha256": "fec0e6b28aadb55fe03dd44d273574d33342bd33e72d9948348a0884e0f2b567"
+  },
+  "runtime": {
+    "default": "legacy_channel",
+    "compiled_opt_in": "compiled_channel_v2",
+    "fallback_allowed": false,
+    "historical_entry_point_connected": false,
+    "package_application_connected": true
+  },
+  "workflow": {
+    "output_files": ["Q_<step>.npy", "u_<step>.npy", "p_<step>.npy"],
+    "diagnostics": ["diagnostics.npy", "diagnostics.csv"],
+    "completion_marker_written_last": true,
+    "checkpoint_format_version": 1,
+    "same_runtime_restart_only": true,
+    "pressure_warm_start_restored": true,
+    "legacy_snapshot_reinterpreted": false
+  },
+  "validation": {
+    "one_step_q_u_p_byte_identity": "PASS",
+    "one_hundred_step_q_u_p_byte_identity": "PASS",
+    "legacy_continuous_vs_split_restart": "PASS",
+    "compiled_continuous_vs_split_restart": "PASS",
+    "cross_runtime_rejection": "PASS",
+    "finite_diagnostics": "PASS",
+    "output_overwrite_rejection": "PASS",
+    "progress_contract": "PASS",
+    "installed_wheel_legacy_one_step": "PASS",
+    "installed_wheel_compiled_one_step": "PASS"
+  },
+  "installed_wheel": {
+    "filename": "pssolver-0.1.2-py3-none-any.whl",
+    "sha256": "685f2cd62bff480474b53ea94cb892c9ea5c152d529a32a6ff67611dbc710b85",
+    "imported_outside_checkout": true,
+    "source_tree_shadowed": false
+  },
+  "compatibility": {
+    "channel_entry_point_sha256": "ea7087c4a22796bcefb77407505d2971cee948a9d2b643ced03d6dcb0a5d34b2",
+    "legacy_channel_module_sha256": "3e85bd8e387eaeee48674998e08a3f97585f9d73ae3c7c4bd620d9ea1bd9605b",
+    "channel_entry_point_modified": false,
+    "legacy_channel_module_modified": false,
+    "production_default_changed": false,
+    "plane_evidence_modified": false
+  },
+  "local_validation": {
+    "targeted_tests_passed": 58,
+    "complete_suite_passed": 2034,
+    "complete_suite_subtests_passed": 8,
+    "complete_suite_failed": 0,
+    "complete_suite_skipped": 0,
+    "git_diff_check": "PASS"
+  },
+  "authorization": {
+    "p7_5_complete": true,
+    "p7_6_planning_eligible": true,
+    "p7_6_h100_authorized": false,
+    "long_channel_run_authorized": false,
+    "default_promotion_authorized": false,
+    "production_default_changed": false,
+    "new_boundary_law_authorized": false,
+    "plane_evidence_modified": false
+  }
+}
