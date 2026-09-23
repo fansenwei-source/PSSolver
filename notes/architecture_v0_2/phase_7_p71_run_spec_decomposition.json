@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_P7_1_CHANNEL_RUN_SPEC_DECOMPOSITION",
+  "baseline": {
+    "phase_6_closure_classification": "PASS_PHASE6_LONG_RUN_BYTE_IDENTICAL",
+    "phase_6_record_commit": "4229567b1bba64cb78ca7f9c536110c9d3914c3d",
+    "phase_7_inventory_status": "P7_0_CHANNEL_ORACLE_INVENTORY_FROZEN"
+  },
+  "facade": {
+    "module": "pssolver.configuration.channel_active_nematics",
+    "class": "ChannelActiveNematicRunSpec",
+    "public_initialization_field_count": 37,
+    "private_component_cache_count": 1,
+    "schema_version": 1,
+    "default_canonical_sha256": "78d88d6513d2d9d7dd56df98c978c29fde3e3d5ed9911eaa986f99daf55db822",
+    "production_connection": false,
+    "package_root_exported": false,
+    "supported_runtime_paths": [
+      "legacy_channel"
+    ]
+  },
+  "component_owners": [
+    "rectangular_channel_geometry",
+    "homogeneous_boundary_spaces",
+    "numerics",
+    "rho_parameterized_material",
+    "incompressible_stokes_request",
+    "pcg_pressure_solver_controls",
+    "initial_condition",
+    "execution_identity",
+    "workflow_and_output",
+    "time_step"
+  ],
+  "frozen_oracle_defaults": {
+    "shape": [
+      512,
+      40,
+      40
+    ],
+    "lengths": [
+      128.0,
+      10.0,
+      10.0
+    ],
+    "dt": 0.01,
+    "steps": 1000,
+    "save_interval": 10,
+    "diagnostic_interval": 10,
+    "rho": 6.0,
+    "elastic_constant": 1.0,
+    "activity": 5.0,
+    "beta": -1.0,
+    "friction": 0.0,
+    "viscosity": 1.0,
+    "flow_alignment": 1.0,
+    "initial_s": 0.6666666666666666,
+    "dtype": "float32",
+    "dealias_rule": "none",
+    "projected_transform_execution": "full",
+    "transform_execution_order": "real_first",
+    "spectral_storage": "full_complex"
+  },
+  "geometry_specific_semantics": {
+    "streamwise_axis": 0,
+    "bounded_axes": [
+      1,
+      2
+    ],
+    "q_boundaries": [
+      "periodic",
+      "neumann",
+      "neumann"
+    ],
+    "velocity_boundaries": [
+      "periodic",
+      "dirichlet",
+      "dirichlet"
+    ],
+    "pressure_boundaries": [
+      "periodic",
+      "neumann",
+      "neumann"
+    ],
+    "pressure_gauge": "zero_mean",
+    "tangential_zero_mode_policy": "not_applicable",
+    "pressure_algorithm": "preconditioned_conjugate_gradient",
+    "pressure_warm_start": true
+  },
+  "source_isolation": {
+    "torch_imported_by_declarations": false,
+    "solver_allocated_by_facade": false,
+    "channel_entry_point_modified": false,
+    "pssolver_channel_modified": false,
+    "production_default_changed": false,
+    "output_schema_changed": false
+  },
+  "dependency_ratchet": {
+    "configuration_to_systems_edge": "pssolver.configuration.channel_active_nematics_declarations -> pssolver.systems.stokes",
+    "reviewed_and_named_exactly": true,
+    "facade_imports_systems_directly": false
+  },
+  "local_validation": {
+    "targeted_and_compatibility_tests_passed": 125,
+    "targeted_tests_failed": 0,
+    "complete_suite_passed": 1979,
+    "complete_suite_subtests_passed": 8,
+    "complete_suite_failed": 0,
+    "python_compile": "PASS",
+    "json_validation": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "authorization": {
+    "p7_1_complete": true,
+    "p7_2_planning_eligible": true,
+    "p7_2_implementation_authorized": false,
+    "phase_7_h100_authorized": false,
+    "new_boundary_law_authorized": false,
+    "production_default_changed": false
+  }
+}

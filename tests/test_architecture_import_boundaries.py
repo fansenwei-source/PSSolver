@@ -109,6 +109,10 @@ TENSOR_FREE_LAYERS = frozenset(
 
 EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
     ImportEdge(
+        "pssolver.configuration.channel_active_nematics_declarations",
+        "pssolver.systems.stokes",
+    ),
+    ImportEdge(
         "pssolver.configuration.plane_beris_edwards_component_graph",
         "pssolver.systems.stokes",
     )
