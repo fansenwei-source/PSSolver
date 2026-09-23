@@ -144,12 +144,13 @@ class ChannelActiveNematicRunSpec:
         return self._components
 
     def to_metadata(self) -> dict[str, object]:
-        """Return the provisional P7.1 declaration identity."""
+        """Return the resolved declaration without implying CLI connection."""
 
         return {
             "schema_version": CHANNEL_RUN_SPEC_SCHEMA_VERSION,
             "kind": "channel_active_nematics_run_spec",
             "production_connection": False,
+            "package_runtime_facade": True,
             "components": self.components.to_metadata(),
         }
 
@@ -163,6 +164,62 @@ class ChannelActiveNematicRunSpec:
             sort_keys=True,
         ).encode("utf-8")
         return hashlib.sha256(payload).hexdigest()
+
+    def runtime_identity_metadata(self) -> dict[str, object]:
+        """Return the numerical identity required for exact same-path restart."""
+
+        components = self.components.to_metadata()
+        execution = dict(components["execution"])
+        execution.pop("device")
+        return {
+            "schema_version": CHANNEL_RUN_SPEC_SCHEMA_VERSION,
+            "authority": (
+                "pssolver.configuration.channel_active_nematics."
+                "ChannelActiveNematicRunSpec"
+            ),
+            "runtime_path": self.runtime_path.value,
+            "geometry": components["geometry"],
+            "boundaries": components["boundaries"],
+            "numerics": components["numerics"],
+            "material": components["material"],
+            "stokes": components["stokes"],
+            "pressure_solver": components["pressure_solver"],
+            "execution": execution,
+            "dt": components["dt"],
+        }
+
+    def runtime_identity_sha256(self) -> str:
+        payload = json.dumps(
+            self.runtime_identity_metadata(),
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+        return hashlib.sha256(payload).hexdigest()
+
+    def identity_metadata(self) -> dict[str, object]:
+        return {
+            "schema_version": CHANNEL_RUN_SPEC_SCHEMA_VERSION,
+            "authority": (
+                "pssolver.configuration.channel_active_nematics."
+                "ChannelActiveNematicRunSpec"
+            ),
+            "runtime_path": self.runtime_path.value,
+            "canonical_sha256": self.canonical_sha256(),
+            "runtime_identity_sha256": self.runtime_identity_sha256(),
+        }
+
+    def runtime_selection_metadata(self) -> dict[str, object]:
+        return {
+            "authority": (
+                "pssolver.configuration.channel_active_nematics."
+                "ChannelActiveNematicRunSpec.runtime_path"
+            ),
+            "default": ChannelRuntimePath.LEGACY_CHANNEL.value,
+            "requested": self.runtime_path.value,
+            "effective": self.runtime_path.value,
+            "fallback_allowed": False,
+        }
 
 
 def _build_channel_run_components(

@@ -15,6 +15,13 @@ from .plane_legacy import (
     DealiasedSemiImplicitEulerIntegrator,
     build_legacy_plane_runtime,
 )
+from .channel_active_nematics import (
+    ChannelOutputViews,
+    ChannelRuntimeAdapterProtocol,
+    ChannelRuntimeBuildRequest,
+    LegacyChannelRuntimeAdapter,
+    build_channel_active_nematic_runtime,
+)
 
 __all__ = [
     "LegacyPlaneRuntimeAdapter",
@@ -24,4 +31,9 @@ __all__ = [
     "DealiasedSemiImplicitEulerIntegrator",
     "build_legacy_plane_runtime",
     "build_plane_beris_edwards_runtime",
+    "ChannelOutputViews",
+    "ChannelRuntimeAdapterProtocol",
+    "ChannelRuntimeBuildRequest",
+    "LegacyChannelRuntimeAdapter",
+    "build_channel_active_nematic_runtime",
 ]

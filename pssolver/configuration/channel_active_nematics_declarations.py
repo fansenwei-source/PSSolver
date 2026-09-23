@@ -69,9 +69,10 @@ def _path(value: object, description: str) -> Path:
 
 
 class ChannelRuntimePath(str, Enum):
-    """Runtime selectors available before the compiled Channel path exists."""
+    """Explicit Channel runtime selectors; legacy remains the default."""
 
     LEGACY_CHANNEL = "legacy_channel"
+    COMPILED_CHANNEL_V2 = "compiled_channel_v2"
 
 
 @dataclass(frozen=True, slots=True)

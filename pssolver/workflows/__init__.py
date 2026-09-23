@@ -25,6 +25,16 @@ from .plane_observation import (
     write_plane_diagnostics,
     write_plane_observation,
 )
+from .channel_checkpoint import (
+    CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    ChannelCheckpointHeader,
+    ChannelWorkflowCheckpoint,
+    capture_channel_checkpoint,
+    load_channel_checkpoint,
+    read_channel_checkpoint_header,
+    restore_channel_checkpoint,
+    write_channel_checkpoint,
+)
 
 __all__ = [
     "DIAGNOSTIC_DTYPE",
@@ -46,4 +56,12 @@ __all__ = [
     "write_plane_checkpoint",
     "write_plane_diagnostics",
     "write_plane_observation",
+    "CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
+    "ChannelCheckpointHeader",
+    "ChannelWorkflowCheckpoint",
+    "capture_channel_checkpoint",
+    "load_channel_checkpoint",
+    "read_channel_checkpoint_header",
+    "restore_channel_checkpoint",
+    "write_channel_checkpoint",
 ]

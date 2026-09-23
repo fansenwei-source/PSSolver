@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_P7_4_CHANNEL_RUNTIME_FACADE",
+  "baseline": {
+    "p7_3_commit": "dd8468d40687f914ab5d8f050b90a4433c048350",
+    "p7_3_classification": "PASS_P7_3_CHANNEL_COMPILED_EXECUTION"
+  },
+  "runtime_paths": {
+    "default": "legacy_channel",
+    "compiled_opt_in": "compiled_channel_v2",
+    "fallback_allowed": false,
+    "application_owned_builders": true,
+    "channel_entry_point_connected": false
+  },
+  "implementation": {
+    "runtime_facade": "pssolver.runtime.channel_active_nematics",
+    "runtime_facade_sha256": "50289b3e9854f4349c127bb7737dcc84ab880510506db70c6b01d3c5163ec416",
+    "checkpoint_module": "pssolver.workflows.channel_checkpoint",
+    "checkpoint_module_sha256": "e584f084f674e5406ee89d4d386754eba75b9ffc9b9676e5aa975dbf10efbc9f",
+    "run_spec_sha256": "1f9dad36d867b3c8eee38527c463c212d90e2ab8fef127d75328e022e220fd17",
+    "run_declarations_sha256": "5b41149cb117cec87de32f95f54b497e42c40009fbb5b4bd5bc30248746d72eb",
+    "configuration_package_root_unchanged": true,
+    "runtime_package_exported": true,
+    "workflow_package_exported": true
+  },
+  "output_ownership": {
+    "q_components": ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"],
+    "velocity_components": ["ux", "uy", "uz"],
+    "pressure_component": "p",
+    "zero_copy": true,
+    "stable_across_steps": true
+  },
+  "checkpoint": {
+    "format_version": 1,
+    "pickle_used": false,
+    "atomic_directory_write": true,
+    "evolved_physical_and_spectral": true,
+    "algebraic_physical_and_spectral": true,
+    "pressure_warm_start": true,
+    "refresh_clock": true,
+    "per_array_sha256": true,
+    "same_runtime_only": true,
+    "cross_runtime_restore": false,
+    "validate_before_mutation": true
+  },
+  "validation": {
+    "requested_effective_identity": "PASS",
+    "mixed_authority_rejection": "PASS",
+    "missing_builder_rejection": "PASS",
+    "builder_failure_no_fallback": "PASS",
+    "output_zero_copy": "PASS",
+    "five_step_legacy_compiled_byte_identity": "PASS",
+    "legacy_checkpoint_round_trip": "PASS",
+    "compiled_checkpoint_round_trip": "PASS",
+    "legacy_split_restart_byte_identity": "PASS",
+    "compiled_split_restart_byte_identity": "PASS",
+    "cross_runtime_rejection_before_mutation": "PASS",
+    "tamper_rejection_before_mutation": "PASS",
+    "disk_checksum_rejection": "PASS"
+  },
+  "compatibility": {
+    "channel_entry_point_sha256": "ea7087c4a22796bcefb77407505d2971cee948a9d2b643ced03d6dcb0a5d34b2",
+    "legacy_channel_module_sha256": "3e85bd8e387eaeee48674998e08a3f97585f9d73ae3c7c4bd620d9ea1bd9605b",
+    "channel_entry_point_modified": false,
+    "legacy_channel_module_modified": false,
+    "production_default_changed": false,
+    "plane_evidence_modified": false
+  },
+  "local_validation": {
+    "p7_4_tests_passed": 19,
+    "targeted_and_compatibility_tests_passed": 100,
+    "targeted_tests_failed": 0,
+    "complete_suite_passed": 2025,
+    "complete_suite_subtests_passed": 8,
+    "complete_suite_failed": 0,
+    "python_compile": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "authorization": {
+    "p7_4_complete": true,
+    "p7_5_planning_eligible": true,
+    "p7_5_implementation_authorized": false,
+    "phase_7_h100_authorized": false,
+    "channel_entry_point_connection_authorized": false,
+    "production_default_changed": false,
+    "new_boundary_law_authorized": false,
+    "plane_evidence_modified": false
+  }
+}

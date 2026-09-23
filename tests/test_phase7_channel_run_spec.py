@@ -100,7 +100,7 @@ def test_channel_numerics_and_stokes_are_explicit_geometry_specific_values():
     }
 
 
-def test_factory_is_additive_and_runtime_remains_legacy_only():
+def test_factory_keeps_legacy_default_and_accepts_explicit_compiled_path():
     spec = create_channel_active_nematic_run_spec(
         steps=17,
         runtime_path="legacy_channel",
@@ -110,8 +110,13 @@ def test_factory_is_additive_and_runtime_remains_legacy_only():
     assert spec.steps == 17
     assert spec.runtime_path is ChannelRuntimePath.LEGACY_CHANNEL
     assert spec.components.execution.runtime_path is ChannelRuntimePath.LEGACY_CHANNEL
-    with pytest.raises(ValueError, match="unsupported Channel runtime path"):
-        create_channel_active_nematic_run_spec(runtime_path="compiled_channel_v2")
+    compiled = create_channel_active_nematic_run_spec(
+        runtime_path="compiled_channel_v2"
+    )
+    assert compiled.runtime_path is ChannelRuntimePath.COMPILED_CHANNEL_V2
+    assert {
+        item.value for item in ChannelRuntimePath
+    } == {"legacy_channel", "compiled_channel_v2"}
 
 
 def test_metadata_and_canonical_identity_are_deterministic_and_disconnected():
@@ -124,6 +129,7 @@ def test_metadata_and_canonical_identity_are_deterministic_and_disconnected():
     assert left.canonical_sha256() != changed.canonical_sha256()
     assert len(left.canonical_sha256()) == 64
     assert left.to_metadata()["production_connection"] is False
+    assert left.to_metadata()["package_runtime_facade"] is True
     json.dumps(left.to_metadata(), allow_nan=False, sort_keys=True)
 
 
@@ -166,7 +172,7 @@ def test_p71_declarations_are_tensor_free_and_do_not_connect_production():
     assert "build_active_nematic_channel" not in facade
 
 
-def test_p71_keeps_the_frozen_configuration_package_root_surface():
+def test_p74_keeps_the_frozen_configuration_package_root_surface():
     import pssolver.configuration as configuration
 
     assert "ChannelActiveNematicRunSpec" not in configuration.__all__

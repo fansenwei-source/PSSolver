@@ -366,8 +366,11 @@ def test_runtime_rejects_unqualified_precision_and_invalid_step_count():
         runtime.advance(-1)
 
 
-def test_p73_remains_direct_import_only_and_does_not_change_a_selector():
-    assert {item.value for item in ChannelRuntimePath} == {"legacy_channel"}
+def test_p73_implementation_remains_direct_import_only_after_p74_selection():
+    assert {item.value for item in ChannelRuntimePath} == {
+        "legacy_channel",
+        "compiled_channel_v2",
+    }
     assert not hasattr(configuration, "ChannelActiveNematicRunSpec")
     assert not hasattr(experimental, "build_channel_compiled_v2_runtime")
     assert "channel_active_nematics" not in (
