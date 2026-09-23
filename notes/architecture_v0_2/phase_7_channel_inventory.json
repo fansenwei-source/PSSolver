@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "inventory_commit": "bba09525584057921b2c9dbbb785c7d35df095d1",
+  "status": "P7_0_CHANNEL_ORACLE_INVENTORY_FROZEN",
+  "legacy_oracle": {
+    "entry_point": "Channel.py",
+    "entry_point_sha256": "ea7087c4a22796bcefb77407505d2971cee948a9d2b643ced03d6dcb0a5d34b2",
+    "reusable_module": "pssolver/channel.py",
+    "reusable_module_sha256": "9be8c7fd97e6167c44df4f38f2481683d108ac4e191ef1e0562d616fb4406223",
+    "q_boundaries": [
+      "periodic",
+      "neumann",
+      "neumann"
+    ],
+    "velocity_boundaries": [
+      "periodic",
+      "dirichlet",
+      "dirichlet"
+    ],
+    "pressure_modal_boundaries": [
+      "periodic",
+      "neumann",
+      "neumann"
+    ],
+    "pressure_gauge": "zero_mean",
+    "pressure_algorithm": "preconditioned_conjugate_gradient",
+    "pressure_warm_start": true,
+    "tangential_zero_mode_policy": "not_applicable",
+    "spectral_storage": "full_complex"
+  },
+  "existing_architecture_assets": {
+    "geometry_declaration": "pssolver/geometries/tensor_product.py::RectangularChannel",
+    "geometry_sha256": "346932a45b4c6c83eceec233e61737b22506bbd4647f962c2020386ec06baa54",
+    "experimental_stokes_adapter": "pssolver/experimental/stokes.py",
+    "experimental_stokes_adapter_sha256": "82ff317515916bad2b508404a7da893bd6f40f253835187e77addd1b01a1fdd3",
+    "experimental_beris_edwards": "pssolver/experimental/beris_edwards.py",
+    "experimental_beris_edwards_sha256": "c0d7dc42d2a9ac91ad5c2dad471ff0d3a0d27d971bee168e1fdfb6ecfe234f9b",
+    "stage_g_tests": "tests/test_architecture_stage_g.py",
+    "stage_g_tests_sha256": "86ae71b1f65461499ed9a193fe74e0e536550b5719fb738a9a7706229de5d0c5",
+    "legacy_channel_tests": "tests/test_channel_dal.py",
+    "legacy_channel_tests_sha256": "2777cc8740d9f7d3cdd926ece78ea9bc9edb9b00826a50d7c8d8b18d5d23aa88"
+  },
+  "known_separation": {
+    "plane_qualification_covers_channel": false,
+    "experimental_adapter_is_production": false,
+    "legacy_channel_uses_plane_compiled_v2_runtime": false,
+    "channel_default_may_change_during_planning": false,
+    "control_workflows_are_in_phase_7_scope": false,
+    "new_boundary_laws_are_in_phase_7_scope": false
+  },
+  "independent_qualification_targets": [
+    "channel_stokes_schur_solver",
+    "no_slip_velocity_parity",
+    "pressure_gauge",
+    "pressure_warm_start_and_restart",
+    "wall_modes",
+    "incompressibility_and_momentum_residuals",
+    "q_u_p_trajectory_identity",
+    "h100_performance",
+    "h100_peak_memory"
+  ]
+}

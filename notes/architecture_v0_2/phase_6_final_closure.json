@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "classification": "PASS_PHASE6_LONG_RUN_BYTE_IDENTICAL",
+  "source_identity": {
+    "p61_qualification_commit": "9dcb9dc0a00b7fa1b12b200e83aaf0c6f21eb4db",
+    "p62_execution_commit": "bba09525584057921b2c9dbbb785c7d35df095d1",
+    "p61_manifest_sha256": "488a6ece0f2876c5d2ae2db841c0f7bb1b59251345edf7c05082f84d6c39db44",
+    "p61_final_analysis_sha256": "29ee66531fa8b87846c0f4b9e8ced7e76d606bff990796ab1e2f154fd1f8ce9f"
+  },
+  "execution": {
+    "h100_job_id": 10838329,
+    "h100_state": "COMPLETED",
+    "h100_exit_code": "0:0",
+    "h100_elapsed": "02:40:29",
+    "h100_node": "gpu-h100-4-0",
+    "h100_requeue": 0,
+    "h100_restarts": 0,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "cpu_analysis_job_id": 10838373,
+    "cpu_analysis_state": "COMPLETED",
+    "cpu_analysis_exit_code": "0:0",
+    "gpu": "NVIDIA H100 PCIe",
+    "pytorch": "2.5.1+cu121",
+    "cuda_runtime": "12.1",
+    "tf32": false
+  },
+  "frozen_pair": {
+    "runtimes": [
+      "legacy_production",
+      "compiled_v2"
+    ],
+    "activity_number": 18.0,
+    "shape": [
+      320,
+      320,
+      80
+    ],
+    "lengths": [
+      100.0,
+      100.0,
+      20.0
+    ],
+    "seed": 24,
+    "dt": 0.005,
+    "steps": 80000,
+    "final_time": 400.0,
+    "frame_count_per_field": 81,
+    "raw_initial_q_sha256": "585fcfd10202175a7c07a7d08c24dfb759a93dc70fa645283a51ad8cfbdae96d",
+    "projected_initial_q_sha256": "0ded8c79785225fa68aad6dc8b97d572970cfd8ff4c4d47f8df3683cf701ca11"
+  },
+  "equivalence": {
+    "q_byte_identical": "81/81",
+    "velocity_byte_identical": "81/81",
+    "pressure_byte_identical": "81/81",
+    "paired_arrays_byte_identical": "243/243",
+    "normalized_metadata_identical": true,
+    "diagnostics_npy_byte_identical": true,
+    "diagnostics_csv_byte_identical": true,
+    "first_mismatch": null,
+    "all_arrays_finite": true,
+    "runtime_fallback_used": false,
+    "architecture_equivalence": true,
+    "scientific_observable_input_identity": true
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_phase6_p62_long_run_bba0952_20260922_v1",
+    "scratch_root": "/scratch1/vincent/PSSolver/data_pssolver_phase6_p62_long_run_bba0952_20260922_v1",
+    "legacy_run_directory": "/scratch1/vincent/PSSolver/data_pssolver_phase6_p62_long_run_bba0952_20260922_v1/legacy_production",
+    "compiled_run_directory": "/scratch1/vincent/PSSolver/data_pssolver_phase6_p62_long_run_bba0952_20260922_v1/compiled_v2",
+    "manifest_entries": 692,
+    "manifest_sha256": "071599fd01917ae04a921d6b95d10798b6b191746c09687cd8e8491cecd6cf9d",
+    "manifest_verification_passed": true,
+    "complete_marker_present": true
+  },
+  "claims": {
+    "physical_stationarity_established": false,
+    "strict_inertial_shendruk_equivalence_established": false,
+    "channel_geometry_qualified": false
+  },
+  "eligibility": {
+    "qualification_complete": true,
+    "phase_6_complete": true,
+    "eligible_for_phase_7_planning": true,
+    "phase_7_execution_authorized": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false,
+    "compiled_v2_promoted": false
+  }
+}

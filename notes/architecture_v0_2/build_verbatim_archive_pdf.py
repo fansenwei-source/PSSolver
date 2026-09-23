@@ -109,6 +109,11 @@ SOURCE_ORDER = (
     "phase_6_p61_h100_qualification_result.json",
     "phase_6_p62_long_run_equivalence.md",
     "phase_6_p62_long_run_equivalence.json",
+    "phase_6_final_closure.md",
+    "phase_6_final_closure.json",
+    "phase_7_channel_inventory.json",
+    "phase_7_channel_migration_plan.md",
+    "phase_7_channel_migration_plan.json",
 )
 
 PAGE_WIDTH = 595.276

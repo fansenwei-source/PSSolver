@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "status": "P7_0_PLANNING_FROZEN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "phase_6_prerequisite": {
+    "classification": "PASS_PHASE6_LONG_RUN_BYTE_IDENTICAL",
+    "phase_6_complete": true,
+    "execution_commit": "bba09525584057921b2c9dbbb785c7d35df095d1",
+    "manifest_sha256": "071599fd01917ae04a921d6b95d10798b6b191746c09687cd8e8491cecd6cf9d",
+    "eligible_for_phase_7_planning": true
+  },
+  "objective": "qualify Channel as the second geometry without inheriting Plane conclusions",
+  "oracle": {
+    "entry_point": "Channel.py",
+    "reusable_module": "pssolver/channel.py",
+    "preserve_operation_order": true,
+    "preserve_output_schema": true,
+    "preserve_default_path": true
+  },
+  "reusable_architecture": [
+    "transform_primitives",
+    "declarations_and_lowering",
+    "runtime_state_and_workspace",
+    "integrator_contracts",
+    "active_nematic_constitutive_helpers",
+    "checkpoint_identity",
+    "provenance_schema"
+  ],
+  "channel_specific_qualification": [
+    "modal_stokes_schur",
+    "no_slip_velocity_parity",
+    "zero_mean_pressure_gauge",
+    "two_bounded_wall_axes",
+    "pcg_convergence_and_fixed_iteration_mode",
+    "pressure_warm_start_restart_state",
+    "wall_momentum_residual",
+    "h100_performance_and_peak_memory"
+  ],
+  "slices": [
+    "P7.0_inventory_and_oracle_freeze",
+    "P7.1_channel_run_spec_decomposition",
+    "P7.2_channel_stokes_schur_extraction",
+    "P7.3_compiled_channel_declarations_state_workspace_step_program",
+    "P7.4_opt_in_production_facade",
+    "P7.5_local_package_restart_closure",
+    "P7.6_h100_performance_memory_long_run_closure"
+  ],
+  "gate_order": [
+    "manufactured_equation_level",
+    "operation_order_and_trajectory_identity",
+    "checkpoint_restart_and_warm_start",
+    "pressure_gauge_incompressibility_and_wall_residual",
+    "metadata_package_and_provenance",
+    "h100_performance_and_memory",
+    "long_run_channel_evidence"
+  ],
+  "out_of_scope": [
+    "plane_default_change",
+    "compiled_v2_plane_promotion",
+    "new_boundary_law",
+    "nonhomogeneous_boundary_lifting",
+    "strong_anchoring",
+    "surface_energy_anchoring",
+    "optimal_control",
+    "channel_physics_model_change"
+  ],
+  "authorization": {
+    "phase_7_planning_authorized": true,
+    "p7_1_implementation_authorized": false,
+    "phase_7_execution_authorized": false,
+    "h100_authorized": false,
+    "production_default_changed": false,
+    "plane_evidence_may_be_modified": false
+  }
+}
