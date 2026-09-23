@@ -91,6 +91,20 @@ def _hash_tensors(values) -> str:
     return digest.hexdigest()
 
 
+def _scheduled_refreshes(
+    *,
+    start_step_count: int,
+    interval: int | None,
+    steps: int,
+) -> int:
+    """Return refreshes that must occur in a measured integration window."""
+    if interval is None:
+        return 0
+    if not 0 <= start_step_count < interval:
+        raise ValueError("spectral-refresh phase is outside its interval")
+    return (start_step_count + steps) // interval
+
+
 def _build(config: ChannelRuntimeProfileConfig, initial_q):
     spec = ChannelActiveNematicRunSpec(
         shape=config.shape,
@@ -159,6 +173,16 @@ def run_profile(config: ChannelRuntimeProfileConfig) -> dict[str, object]:
             torch.cuda.synchronize(device)
             torch.cuda.reset_peak_memory_stats(device)
         after_warmup = cuda_memory_snapshot(device)
+        integrator = adapter.solver.integrator
+        refresh_interval = integrator.spectral_refresh_interval
+        refresh_step_count_before = int(integrator.step_count)
+        refresh_count_before = int(integrator.refresh_count)
+        dynamic_transform_group_count = len(integrator.dynamic_transform_groups)
+        expected_scheduled_refreshes = _scheduled_refreshes(
+            start_step_count=refresh_step_count_before,
+            interval=refresh_interval,
+            steps=config.profile_steps,
+        )
         pressure_iterations = []
         timer.reset()
         for _ in range(config.profile_steps):
@@ -168,6 +192,8 @@ def run_profile(config: ChannelRuntimeProfileConfig) -> dict[str, object]:
         if device.type == "cuda":
             torch.cuda.synchronize(device)
         after_window = cuda_memory_snapshot(device)
+        refresh_step_count_after = int(integrator.step_count)
+        refresh_count_after = int(integrator.refresh_count)
         timings = timer.summarize()
         peak = cuda_memory_snapshot(device)
         adapter.synchronize_for_observation()
@@ -182,6 +208,15 @@ def run_profile(config: ChannelRuntimeProfileConfig) -> dict[str, object]:
         raise RuntimeError("Channel runtime fallback or identity mismatch")
     forward = int(timings.get("transform_forward", {}).get("calls", 0))
     inverse = int(timings.get("transform_inverse", {}).get("calls", 0))
+    observed_scheduled_refreshes = refresh_count_after - refresh_count_before
+    if observed_scheduled_refreshes != expected_scheduled_refreshes:
+        raise RuntimeError("spectral-refresh count differs from the integration clock")
+    scheduled_refresh_forward_calls = (
+        expected_scheduled_refreshes * dynamic_transform_group_count
+    )
+    base_forward = forward - scheduled_refresh_forward_calls
+    if base_forward < 0:
+        raise RuntimeError("scheduled refresh calls exceed observed forward transforms")
     return {
         "schema_version": 1,
         "config": asdict(config),
@@ -203,8 +238,22 @@ def run_profile(config: ChannelRuntimeProfileConfig) -> dict[str, object]:
             "timesteps_per_second": config.profile_steps / whole,
         },
         "transform_calls": {
+            "forward_total": forward,
+            "inverse_total": inverse,
             "forward_per_step": forward / config.profile_steps,
             "inverse_per_step": inverse / config.profile_steps,
+            "base_forward_per_step": base_forward / config.profile_steps,
+            "scheduled_refresh_forward_calls": scheduled_refresh_forward_calls,
+        },
+        "spectral_refresh": {
+            "interval": refresh_interval,
+            "step_count_before": refresh_step_count_before,
+            "step_count_after": refresh_step_count_after,
+            "count_before": refresh_count_before,
+            "count_after": refresh_count_after,
+            "expected_in_window": expected_scheduled_refreshes,
+            "observed_in_window": observed_scheduled_refreshes,
+            "dynamic_transform_group_count": dynamic_transform_group_count,
         },
         "pressure_iterations": {
             "values": pressure_iterations,

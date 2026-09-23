@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "status": "READY_FOR_H100_RECOVERY_EXECUTION",
+  "phase": "P7.6",
+  "source_job": {
+    "job_id": 10839461,
+    "classification": "FAIL_P7_6_CHANNEL_H100_CLOSURE",
+    "profile_count": 12,
+    "checksum_entries_passed": 76,
+    "checksum_entries_failed": 0
+  },
+  "root_cause": {
+    "kind": "frozen_transform_call_contract_omitted_scheduled_refresh",
+    "warmup_steps": 10,
+    "profile_steps": 50,
+    "refresh_interval": 20,
+    "refresh_completed_steps": [20, 40, 60],
+    "dynamic_transform_group_count": 1,
+    "base_forward_per_step": 11,
+    "scheduled_refresh_forward_calls": 3,
+    "raw_forward_total": 553,
+    "raw_forward_per_step": 11.06,
+    "inverse_total": 1800,
+    "inverse_per_step": 36
+  },
+  "scope": {
+    "profiler_schema_changed": true,
+    "analyzer_contract_changed": true,
+    "tests_changed": true,
+    "qualification_notes_changed": true,
+    "solver_changed": false,
+    "integrator_changed": false,
+    "runtime_changed": false,
+    "model_changed": false,
+    "production_default_changed": false
+  },
+  "local_validation": {
+    "same_window_cpu_reproduction": {
+      "legacy_forward_per_step": 11.06,
+      "legacy_inverse_per_step": 36.0,
+      "compiled_forward_per_step": 11.06,
+      "compiled_inverse_per_step": 36.0,
+      "final_state_sha256_identical": true
+    },
+    "combined_p7_5_p7_6_tests_passed": 21,
+    "complete_suite_passed": 2046,
+    "complete_suite_subtests_passed": 8,
+    "complete_suite_failed": 0
+  },
+  "authorization": {
+    "one_recovery_h100_job": true,
+    "automatic_retry": false,
+    "compiled_channel_v2_promotion": false,
+    "phase_8_implementation": false
+  }
+}

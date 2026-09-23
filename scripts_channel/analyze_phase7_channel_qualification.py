@@ -20,6 +20,9 @@ MEDIAN_RATIO_MAX = 1.02
 INDIVIDUAL_RATIO_MAX = 1.05
 MEMORY_RATIO_MAX = 1.05
 PCG_RATIO_MAX = 1.05
+BASE_FORWARD_TRANSFORMS_PER_STEP = 11
+INVERSE_TRANSFORMS_PER_STEP = 36
+SPECTRAL_REFRESH_INTERVAL = 20
 
 
 def _load(path: str | Path) -> tuple[Path, dict[str, object]]:
@@ -62,6 +65,7 @@ def _record(path: str | Path, *, expected_commit: str, gpu: str) -> dict[str, ob
     if value.get("finite") is not True or value.get("completed_steps") != 60:
         raise ValueError("profile is incomplete or non-finite")
     calls = value["transform_calls"]
+    refresh = value["spectral_refresh"]
     pressure = value["pressure_iterations"]
     timing = float(value["throughput"]["mean_timestep_seconds"])
     allocated = int(value["memory"]["peak_allocated_bytes"])
@@ -70,11 +74,55 @@ def _record(path: str | Path, *, expected_commit: str, gpu: str) -> dict[str, ob
         raise ValueError("profile timing or PCG evidence is invalid")
     if allocated <= 0 or reserved <= 0 or calls["forward_per_step"] <= 0 or calls["inverse_per_step"] <= 0:
         raise ValueError("profile memory or transform evidence is invalid")
+    profile_steps = int(config["profile_steps"])
+    warmup_steps = int(config["warmup_steps"])
+    expected_step_count_before = warmup_steps % SPECTRAL_REFRESH_INTERVAL
+    expected_refreshes = (
+        expected_step_count_before + profile_steps
+    ) // SPECTRAL_REFRESH_INTERVAL
+    expected_step_count_after = (
+        expected_step_count_before + profile_steps
+    ) % SPECTRAL_REFRESH_INTERVAL
+    expected_refresh_count_before = warmup_steps // SPECTRAL_REFRESH_INTERVAL
+    expected_refresh_forward = (
+        expected_refreshes * int(refresh["dynamic_transform_group_count"])
+    )
+    expected_forward_total = (
+        BASE_FORWARD_TRANSFORMS_PER_STEP * profile_steps
+        + expected_refresh_forward
+    )
+    expected_inverse_total = INVERSE_TRANSFORMS_PER_STEP * profile_steps
+    refresh_contract = {
+        "interval": refresh.get("interval") == SPECTRAL_REFRESH_INTERVAL,
+        "step_count_before": refresh.get("step_count_before") == expected_step_count_before,
+        "step_count_after": refresh.get("step_count_after") == expected_step_count_after,
+        "count_before": refresh.get("count_before") == expected_refresh_count_before,
+        "count_after": refresh.get("count_after") == expected_refresh_count_before + expected_refreshes,
+        "expected_in_window": refresh.get("expected_in_window") == expected_refreshes,
+        "observed_in_window": refresh.get("observed_in_window") == expected_refreshes,
+        "forward_calls": calls.get("scheduled_refresh_forward_calls") == expected_refresh_forward,
+    }
+    transform_contract = {
+        "forward_total": calls.get("forward_total") == expected_forward_total,
+        "inverse_total": calls.get("inverse_total") == expected_inverse_total,
+        "base_forward_per_step": calls.get("base_forward_per_step") == BASE_FORWARD_TRANSFORMS_PER_STEP,
+        "inverse_per_step": calls.get("inverse_per_step") == INVERSE_TRANSFORMS_PER_STEP,
+    }
+    if not all(refresh_contract.values()) or not all(transform_contract.values()):
+        raise ValueError(
+            "profile transform/refresh contract failed: "
+            f"refresh={refresh_contract}, transform={transform_contract}"
+        )
     return {
         "path": str(source), "runtime": name, "shape": shape, "trial": trial,
         "timestep": timing, "allocated": allocated, "reserved": reserved,
         "pcg_mean": float(pressure["mean"]), "pcg_max": int(pressure["maximum"]),
         "forward": float(calls["forward_per_step"]), "inverse": float(calls["inverse_per_step"]),
+        "forward_total": int(calls["forward_total"]),
+        "inverse_total": int(calls["inverse_total"]),
+        "base_forward": float(calls["base_forward_per_step"]),
+        "scheduled_refreshes": int(refresh["observed_in_window"]),
+        "scheduled_refresh_forward_calls": int(calls["scheduled_refresh_forward_calls"]),
         "initial": value["initial_q_sha256"], "final": value["final_state_sha256"],
     }
 
@@ -122,6 +170,13 @@ def analyze_profiles(profile_paths: Sequence[str | Path], *, expected_commit: st
             "peak_reserved_ratio": reserved_ratio,
             "pcg_iteration_ratio": pcg_ratio,
             "transform_calls_per_step": {"forward": legacy[0]["forward"], "inverse": legacy[0]["inverse"]},
+            "transform_contract": {
+                "base_forward_per_step": legacy[0]["base_forward"],
+                "raw_forward_per_step": legacy[0]["forward"],
+                "inverse_per_step": legacy[0]["inverse"],
+                "scheduled_refreshes_in_window": legacy[0]["scheduled_refreshes"],
+                "scheduled_refresh_forward_calls": legacy[0]["scheduled_refresh_forward_calls"],
+            },
             "gates": gates,
         }
     return {

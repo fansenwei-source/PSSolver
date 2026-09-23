@@ -126,6 +126,8 @@ SOURCE_ORDER = (
     "phase_7_p75_local_closure.json",
     "phase_7_p76_h100_qualification_plan.md",
     "phase_7_p76_h100_qualification_plan.json",
+    "phase_7_p76_transform_call_recovery.md",
+    "phase_7_p76_transform_call_recovery.json",
 )
 
 PAGE_WIDTH = 595.276

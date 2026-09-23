@@ -1,6 +1,6 @@
 # Phase 7 P7.6: frozen Channel H100 closure plan
 
-Status: `READY_FOR_H100_EXECUTION`.
+Status: `READY_FOR_H100_RECOVERY_EXECUTION`.
 
 P7.6 compares `legacy_channel` and explicit `compiled_channel_v2` from the
 same clean commit.  It does not change the default, promote the compiled path,
@@ -17,8 +17,13 @@ trials: legacy/compiled, compiled/legacy, legacy/compiled.
 
 Every pair must have identical initial and final state SHA-256, identical PCG
 iteration history, identical transform counts, finite state, requested equal
-to effective runtime, and no fallback.  The qualified local call contract is
-11 forward and 36 inverse transforms per timestep.  Candidate/reference mean
+to effective runtime, and no fallback.  The qualified base call contract is
+11 forward and 36 inverse transforms per timestep.  The production spectral
+refresh interval remains 20 steps.  The measured step-10-to-step-60 window
+therefore refreshes at completed steps 20, 40, and 60.  One dynamic transform
+group adds three forward calls, giving a raw contract of 553 forward calls
+(11.06 per step) and 1800 inverse calls.  The profiler and analyzer audit both
+the base contract and this phase-aware raw total.  Candidate/reference mean
 and median timestep ratios must be at most 1.02, every individual ratio at
 most 1.05, allocated and reserved memory ratios at most 1.05, and the PCG
 iteration ratio at most 1.05.  Directional paired-win count is informational.

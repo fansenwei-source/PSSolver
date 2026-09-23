@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "READY_FOR_H100_EXECUTION",
+  "status": "READY_FOR_H100_RECOVERY_EXECUTION",
   "baseline": {
     "p7_5_commit": "17c1d3e1ab5676f1dd860543b79f9b7bc60a9e49",
     "p7_5_classification": "PASS_P7_5_CHANNEL_LOCAL_CLOSURE"
@@ -31,8 +31,15 @@
     "profile_steps": 50,
     "trials": 3,
     "balanced_orders": [["legacy_channel", "compiled_channel_v2"], ["compiled_channel_v2", "legacy_channel"], ["legacy_channel", "compiled_channel_v2"]],
-    "forward_transforms_per_step": 11,
+    "base_forward_transforms_per_step": 11,
     "inverse_transforms_per_step": 36,
+    "spectral_refresh_interval": 20,
+    "profile_window_refresh_steps": [20, 40, 60],
+    "scheduled_refreshes_in_profile_window": 3,
+    "dynamic_transform_group_count": 1,
+    "raw_forward_transform_calls": 553,
+    "raw_forward_transforms_per_step": 11.06,
+    "raw_inverse_transform_calls": 1800,
     "candidate_over_reference_mean_timestep_max": 1.02,
     "candidate_over_reference_median_timestep_max": 1.02,
     "individual_paired_timestep_max": 1.05,
@@ -69,15 +76,15 @@
     "interpretation": "architecture equivalence only"
   },
   "support": {
-    "profiler_sha256": "edb18f50128c998c6a5ee41dbe747cf7cdcb3dc2b9e8bd6671278703d23b5b74",
+    "profiler_sha256": "7b89c9a4bed3fd3c833eb25f8a836331449c7d8059baf968db20c84294fa8ba2",
     "trajectory_runner_sha256": "d6f10164975a0c0c1d93001c47de902a54c51734147d801fca16813f8665efb1",
-    "analyzer_sha256": "4a90cc92b2b71e6465e0e54f02e1435f9a7f48fa69bbc9ba9587d66712274be0",
+    "analyzer_sha256": "2dbbecf4a18e02c92ff175618c8c0ef6285c1eaddd9e4012ee00e12cec9595ce",
     "comparator_sha256": "9ad8c7f29c3e1ec8e4206932bda9fcedce439c9dc2090b93b785caf8865fa05b"
   },
   "local_validation": {
-    "p7_6_support_tests_passed": 7,
-    "combined_p7_5_p7_6_tests_passed": 16,
-    "complete_suite_passed": 2041,
+    "p7_6_support_tests_passed": 12,
+    "combined_p7_5_p7_6_tests_passed": 21,
+    "complete_suite_passed": 2046,
     "complete_suite_subtests_passed": 8,
     "complete_suite_failed": 0
   },
@@ -89,5 +96,14 @@
     "phase_8_implementation_authorized": false,
     "new_boundary_law_authorized": false,
     "plane_evidence_modified": false
+  },
+  "recovery": {
+    "source_job_id": "10839461",
+    "source_classification": "FAIL_P7_6_CHANNEL_H100_CLOSURE",
+    "failure_was_scientific": false,
+    "failure_was_runtime": false,
+    "root_cause": "The frozen transform-call contract omitted three scheduled spectral refreshes in the measured step-10-to-step-60 window.",
+    "runtime_source_changed": false,
+    "automatic_retry_authorized": false
   }
 }
