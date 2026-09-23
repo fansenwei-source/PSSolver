@@ -124,6 +124,8 @@ SOURCE_ORDER = (
     "phase_7_p74_channel_runtime_facade.json",
     "phase_7_p75_local_closure.md",
     "phase_7_p75_local_closure.json",
+    "phase_7_p76_h100_qualification_plan.md",
+    "phase_7_p76_h100_qualification_plan.json",
 )
 
 PAGE_WIDTH = 595.276

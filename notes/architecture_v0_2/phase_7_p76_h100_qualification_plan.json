@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "status": "READY_FOR_H100_EXECUTION",
+  "baseline": {
+    "p7_5_commit": "17c1d3e1ab5676f1dd860543b79f9b7bc60a9e49",
+    "p7_5_classification": "PASS_P7_5_CHANNEL_LOCAL_CLOSURE"
+  },
+  "support_commit": "beaccbc8c10f914a727f8fa9807a9f6c90558c4a",
+  "runtimes": {
+    "reference": "legacy_channel",
+    "candidate": "compiled_channel_v2",
+    "implicit_default": "legacy_channel",
+    "fallback_allowed": false
+  },
+  "environment": {
+    "gpu": "NVIDIA H100 PCIe",
+    "dtype": "float32",
+    "tf32": false,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false
+  },
+  "profile": {
+    "grids": [
+      {"shape": [128, 20, 20], "lengths": [32.0, 5.0, 5.0]},
+      {"shape": [512, 40, 40], "lengths": [128.0, 10.0, 10.0]}
+    ],
+    "dt": 0.01,
+    "activity": 5.0,
+    "seed": 24,
+    "warmup_steps": 10,
+    "profile_steps": 50,
+    "trials": 3,
+    "balanced_orders": [["legacy_channel", "compiled_channel_v2"], ["compiled_channel_v2", "legacy_channel"], ["legacy_channel", "compiled_channel_v2"]],
+    "forward_transforms_per_step": 11,
+    "inverse_transforms_per_step": 36,
+    "candidate_over_reference_mean_timestep_max": 1.02,
+    "candidate_over_reference_median_timestep_max": 1.02,
+    "individual_paired_timestep_max": 1.05,
+    "peak_allocated_ratio_max": 1.05,
+    "peak_reserved_ratio_max": 1.05,
+    "pcg_iteration_ratio_max": 1.05,
+    "paired_win_count": "informational"
+  },
+  "trajectory": {
+    "grids": [[128, 20, 20], [512, 40, 40]],
+    "steps": 100,
+    "q_u_p_byte_identity_required": true,
+    "finite_diagnostics_required": true,
+    "complete_marker_required": true
+  },
+  "restart": {
+    "grid": [512, 40, 40],
+    "split_step": 50,
+    "final_step": 100,
+    "same_runtime_byte_identity_required": true,
+    "pressure_warm_start_required": true,
+    "cross_runtime_rejected_before_mutation": true,
+    "tamper_rejected_before_mutation": true
+  },
+  "long_run": {
+    "shape": [512, 40, 40],
+    "lengths": [128.0, 10.0, 10.0],
+    "dt": 0.01,
+    "steps": 1000,
+    "save_interval": 100,
+    "diagnostic_interval": 10,
+    "both_runtimes_required": true,
+    "all_saved_q_u_p_byte_identity_required": true,
+    "interpretation": "architecture equivalence only"
+  },
+  "support": {
+    "profiler_sha256": "edb18f50128c998c6a5ee41dbe747cf7cdcb3dc2b9e8bd6671278703d23b5b74",
+    "trajectory_runner_sha256": "d6f10164975a0c0c1d93001c47de902a54c51734147d801fca16813f8665efb1",
+    "analyzer_sha256": "4a90cc92b2b71e6465e0e54f02e1435f9a7f48fa69bbc9ba9587d66712274be0",
+    "comparator_sha256": "9ad8c7f29c3e1ec8e4206932bda9fcedce439c9dc2090b93b785caf8865fa05b"
+  },
+  "local_validation": {
+    "p7_6_support_tests_passed": 7,
+    "combined_p7_5_p7_6_tests_passed": 16,
+    "complete_suite_passed": 2041,
+    "complete_suite_subtests_passed": 8,
+    "complete_suite_failed": 0
+  },
+  "authorization": {
+    "p7_6_h100_execution_authorized": true,
+    "automatic_retry_authorized": false,
+    "default_promotion_authorized": false,
+    "production_default_changed": false,
+    "phase_8_implementation_authorized": false,
+    "new_boundary_law_authorized": false,
+    "plane_evidence_modified": false
+  }
+}

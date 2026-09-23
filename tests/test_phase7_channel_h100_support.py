@@ -100,3 +100,22 @@ def test_trajectory_cli_and_comparator_execute_both_paths(tmp_path):
     result = compare_channel_outputs(directories[0], directories[1], step=1, role="R8_cross_1")
     assert result["classification"] == "PASS"
     assert result["array_count"] == 3
+
+
+def test_frozen_p76_plan_binds_the_qualified_support_sources():
+    import hashlib
+
+    root = Path(__file__).resolve().parents[1]
+    plan = json.loads(
+        (root / "notes/architecture_v0_2/phase_7_p76_h100_qualification_plan.json").read_text()
+    )
+    paths = {
+        "profiler": "benchmarks/profile_channel_runtime_timestep.py",
+        "trajectory_runner": "benchmarks/run_channel_runtime_trajectory.py",
+        "analyzer": "scripts_channel/analyze_phase7_channel_qualification.py",
+        "comparator": "scripts_channel/compare_channel_runtime_outputs.py",
+    }
+    assert plan["status"] == "READY_FOR_H100_EXECUTION"
+    for name, relative in paths.items():
+        assert hashlib.sha256((root / relative).read_bytes()).hexdigest() == plan["support"][f"{name}_sha256"]
+    assert plan["authorization"]["production_default_changed"] is False
