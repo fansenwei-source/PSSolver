@@ -128,6 +128,8 @@ SOURCE_ORDER = (
     "phase_7_p76_h100_qualification_plan.json",
     "phase_7_p76_transform_call_recovery.md",
     "phase_7_p76_transform_call_recovery.json",
+    "phase_7_p770_model_geometry_coupling_inventory.md",
+    "phase_7_p770_model_geometry_coupling_inventory.json",
 )
 
 PAGE_WIDTH = 595.276

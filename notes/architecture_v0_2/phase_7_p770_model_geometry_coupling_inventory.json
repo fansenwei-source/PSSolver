@@ -1,0 +1,642 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.0",
+  "title": "Model-geometry coupling inventory",
+  "status": "P7_7_0_COMPLETE_P7_7_1_NOT_AUTHORIZED",
+  "classification": "PASS_P7_7_0_MODEL_GEOMETRY_COUPLING_INVENTORY",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "b8ce70842b6da0fb45aa1558d5e183dac9117990",
+    "plane_default_runtime": "legacy_production",
+    "channel_default_runtime": "legacy_channel",
+    "plane_candidate_runtime": "compiled_v2",
+    "channel_candidate_runtime": "compiled_channel_v2"
+  },
+  "scope": {
+    "changes_runtime_code": false,
+    "changes_equations": false,
+    "changes_boundaries": false,
+    "changes_numerics": false,
+    "changes_defaults": false,
+    "changes_output_or_checkpoint_schema": false,
+    "authorizes_p7_7_1": false
+  },
+  "architectural_diagnosis": {
+    "current_form": "qualified_vertical_application_slices",
+    "orthogonal_model_geometry_composition_available": false,
+    "generic_simulation_spec_available": false,
+    "generic_equation_system_spec_available": false,
+    "generic_capability_lowering_available": false,
+    "summary": "Plane Beris-Edwards and Channel active nematics are isolated and qualified application stacks, but their model, geometry, boundary, solver, runtime, and workflow choices are still composed by application-specific types and builders."
+  },
+  "source_identities": {
+    "pssolver/configuration/plane_beris_edwards.py": "965396c2474cf68c7af87ade9c6bd48c794601955685602b704fb0ea81d932aa",
+    "pssolver/configuration/plane_beris_edwards_component_graph.py": "739bcd3ee7ae3f9db62dd3138b123bf0992add705b2af49c399ee6750b951d90",
+    "pssolver/applications/plane_beris_edwards.py": "3b60a69223519ca2ee64adbed56dd2a89b84fc0faa2354f401657bd731fb55e5",
+    "pssolver/runtime/plane_beris_edwards.py": "84d389125dc7417e765b3dd7acb1f269c2b2ad2391f6b0e373ba850eeca04c0d",
+    "pssolver/workflows/plane_beris_edwards.py": "8333f049ef4ce68977b6e00f83cb6afac7c8de2a51aa8d80ddc5eb0448cce038",
+    "pssolver/configuration/channel_active_nematics.py": "32ff78faeaa36422ed17563c2861a9997758bf861f5f39e2e36d7e9981099206",
+    "pssolver/configuration/channel_active_nematics_declarations.py": "2e481783ed98f40f3abeab8850568f03f64b72751b6a58f5321609515f4155c2",
+    "pssolver/applications/channel_active_nematics.py": "ee1889699388bed7e08ce419f20985e7afef1be6dbac26b913329e60ecd915f0",
+    "pssolver/runtime/channel_active_nematics.py": "50289b3e9854f4349c127bb7737dcc84ab880510506db70c6b01d3c5163ec416",
+    "pssolver/workflows/channel_active_nematics.py": "87b2f16b9527a0b87faf9f6820e486ecb935466ffd662e6e2066a1d5c6632a3f",
+    "pssolver/models/active_nematics/stokes.py": "8ba1a34ca6a87031baa08cf87596f0412de18bca3392f2bc4b81869ab07831a1",
+    "pssolver/channel.py": "3e85bd8e387eaeee48674998e08a3f97585f9d73ae3c7c4bd620d9ea1bd9605b",
+    "pssolver/linear_solvers/stokes/plane_free_slip.py": "279c0ac58d032f907ae3ef8f61881e5e412e5458e2bf6f5e51daa1574b42fb17",
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": "4503f62df5204f7f48da7ca58674ebda45a3f775b7742dcc7bc7ab535c511b16",
+    "pssolver/systems/stokes.py": "6b4c9100beb5bb56ab4cdd4802e08aed5efebb5abfd9467305a6e00364c69fc2"
+  },
+  "shared_primitives": [
+    {
+      "layer": "core",
+      "objects": [
+        "DomainSpec",
+        "GeometrySpec",
+        "BoundarySet",
+        "NumericsConfig"
+      ],
+      "status": "reusable"
+    },
+    {
+      "layer": "geometries",
+      "objects": [
+        "PlaneSlab",
+        "RectangularChannel"
+      ],
+      "status": "topology_only_and_reusable"
+    },
+    {
+      "layer": "models.active_nematics",
+      "objects": [
+        "Q convention",
+        "Beris-Edwards pointwise kernels",
+        "initial-condition helpers",
+        "field component declarations"
+      ],
+      "status": "partly_reusable_but_not_a_complete_geometry_neutral_production_model"
+    },
+    {
+      "layer": "systems",
+      "objects": [
+        "IncompressibleStokesSystemSpec",
+        "PressureGauge",
+        "TangentialZeroModePolicy"
+      ],
+      "status": "reusable_tensor_free_request"
+    },
+    {
+      "layer": "backends_and_execution",
+      "objects": [
+        "tensor-product transforms",
+        "RuntimeState",
+        "workspace plans",
+        "integrator contracts"
+      ],
+      "status": "shared_below_application_specific_lowering"
+    }
+  ],
+  "applications": {
+    "plane_beris_edwards": {
+      "facade": "pssolver.configuration.plane_beris_edwards.PlaneBerisEdwardsRunSpec",
+      "component_graph": "pssolver.configuration.plane_beris_edwards_component_graph.PlaneBerisEdwardsRunComponents",
+      "application": "pssolver.applications.plane_beris_edwards.run_plane_beris_edwards",
+      "runtime_facade": "pssolver.runtime.plane_beris_edwards.build_plane_beris_edwards_runtime",
+      "workflow": "pssolver.workflows.plane_beris_edwards.PlaneBerisEdwardsWorkflow",
+      "geometry": "PlaneSlab(periodic_axes=(0,1), bounded_axes=(2,))",
+      "physical_model": "five-component Beris-Edwards Q dynamics with complete one-constant reactive, active, and distortion nematic stress",
+      "flow_system": "quasistatic incompressible free-slip Plane Stokes",
+      "boundary_contract": {
+        "q": [
+          "periodic",
+          "periodic",
+          "neumann"
+        ],
+        "tangential_velocity": [
+          "periodic",
+          "periodic",
+          "neumann"
+        ],
+        "normal_velocity": [
+          "periodic",
+          "periodic",
+          "dirichlet"
+        ],
+        "pressure_modal": [
+          "periodic",
+          "periodic",
+          "neumann"
+        ],
+        "distortion_odd_z": [
+          "periodic",
+          "periodic",
+          "dirichlet"
+        ]
+      },
+      "component_fields": [
+        "geometry",
+        "boundaries",
+        "effective_boundaries",
+        "numerics",
+        "physics",
+        "preset",
+        "time_stepping",
+        "initial_condition",
+        "execution",
+        "workflow",
+        "invocation"
+      ],
+      "facade_field_ownership": {
+        "model_and_preset": [
+          "activity_number",
+          "parameterization",
+          "frank_k",
+          "coefficient_min",
+          "coefficient_max",
+          "ldg_a",
+          "ldg_b",
+          "ldg_c",
+          "gamma",
+          "flow_alignment",
+          "beta"
+        ],
+        "geometry_and_grid": [
+          "height",
+          "lx",
+          "ly",
+          "nx",
+          "ny",
+          "nz"
+        ],
+        "stokes_system": [
+          "eta",
+          "zero_mode_policy",
+          "friction_mode_fric"
+        ],
+        "time_discretization": [
+          "dt",
+          "spectral_refresh"
+        ],
+        "numerics": [
+          "dtype",
+          "dealias_rule",
+          "projected_transform_execution",
+          "transform_execution_order",
+          "spectral_storage"
+        ],
+        "initial_condition": [
+          "seed",
+          "num_defect_pairs",
+          "defect_min_separation",
+          "defect_core_radius",
+          "background_angle",
+          "twist_amplitude",
+          "twist_modes",
+          "initial_s"
+        ],
+        "execution": [
+          "device",
+          "molecular_field_linear_space",
+          "stress_divergence_sum_space",
+          "pointwise_execution",
+          "tf32",
+          "disable_q_gradient_reuse",
+          "runtime_path"
+        ],
+        "workflow": [
+          "output_dir",
+          "steps",
+          "save_start_step",
+          "save_interval",
+          "diagnostic_interval",
+          "diagnostics",
+          "save_hydrodynamics",
+          "checkpoint_interval",
+          "restart_from"
+        ],
+        "invocation_and_provenance": [
+          "validation_config_sha256",
+          "dry_run"
+        ],
+        "boundary_assignment": [
+          "boundaries"
+        ]
+      },
+      "hard_couplings": [
+        {
+          "id": "PL-001",
+          "owners": [
+            "configuration",
+            "geometry"
+          ],
+          "description": "The component root requires exactly one three-dimensional PlaneSlab with periodic axes (0,1) and bounded axis 2."
+        },
+        {
+          "id": "PL-002",
+          "owners": [
+            "boundary",
+            "lowering"
+          ],
+          "description": "PlaneFreeSlipBoundaryConditions contains physical Q/velocity laws and derived pressure/distortion modal parity in one Plane-specific aggregate."
+        },
+        {
+          "id": "PL-003",
+          "owners": [
+            "geometry",
+            "preset",
+            "model"
+          ],
+          "description": "Shendruk coefficient resolution jointly consumes wall height, material coefficients, and the benchmark parameter request."
+        },
+        {
+          "id": "PL-004",
+          "owners": [
+            "model",
+            "system",
+            "preset"
+          ],
+          "description": "PlaneBerisEdwardsPhysicsSpec vertically bundles material, Shendruk parameterization, Stokes request, and friction-mode bookkeeping."
+        },
+        {
+          "id": "PL-005",
+          "owners": [
+            "initial_condition",
+            "geometry"
+          ],
+          "description": "Extruded-defect-gas twist modes are validated directly against Plane nz."
+        },
+        {
+          "id": "PL-006",
+          "owners": [
+            "numerics",
+            "geometry"
+          ],
+          "description": "Hermitian-half storage is pinned to the final qualified periodic Plane axis."
+        },
+        {
+          "id": "PL-007",
+          "owners": [
+            "model",
+            "geometry_specific_solver",
+            "application"
+          ],
+          "description": "The application composes complete nematic stress directly with the free-slip Plane modal Stokes implementation."
+        },
+        {
+          "id": "PL-008",
+          "owners": [
+            "flow_system",
+            "geometry"
+          ],
+          "description": "The zero-mean/friction tangential-mode policy exists because free slip leaves uniform tangential modes unresolved; it is not a generic pressure gauge."
+        },
+        {
+          "id": "PL-009",
+          "owners": [
+            "runtime",
+            "application"
+          ],
+          "description": "legacy_production, compiled_v2, and separated_canary selection and adapter construction are Plane-specific."
+        },
+        {
+          "id": "PL-010",
+          "owners": [
+            "workflow",
+            "runtime"
+          ],
+          "description": "Plane observation, checkpoint, restart identity, diagnostics, and completion ordering use a Plane-specific workflow schema."
+        }
+      ]
+    },
+    "channel_active_nematics": {
+      "facade": "pssolver.configuration.channel_active_nematics.ChannelActiveNematicRunSpec",
+      "component_graph": "pssolver.configuration.channel_active_nematics_declarations.ChannelRunComponents",
+      "application": "pssolver.applications.channel_active_nematics.run_channel_active_nematics",
+      "runtime_facade": "pssolver.runtime.channel_active_nematics.build_channel_active_nematic_runtime",
+      "workflow": "pssolver.workflows.channel_active_nematics.ChannelActiveNematicsWorkflow",
+      "geometry": "RectangularChannel(periodic_axes=(0,), bounded_axes=(1,2))",
+      "physical_model": "legacy rho-parameterized active-nematic Q dynamics with active-force-only Stokes forcing",
+      "flow_system": "quasistatic incompressible no-slip Channel Stokes with pressure PCG",
+      "boundary_contract": {
+        "q": [
+          "periodic",
+          "neumann",
+          "neumann"
+        ],
+        "velocity": [
+          "periodic",
+          "dirichlet",
+          "dirichlet"
+        ],
+        "pressure": [
+          "periodic",
+          "neumann",
+          "neumann"
+        ]
+      },
+      "component_fields": [
+        "geometry",
+        "boundaries",
+        "numerics",
+        "material",
+        "stokes",
+        "pressure_solver",
+        "initial_condition",
+        "execution",
+        "workflow",
+        "dt"
+      ],
+      "facade_field_ownership": {
+        "geometry_and_grid": [
+          "shape",
+          "lengths"
+        ],
+        "time_discretization": [
+          "dt"
+        ],
+        "model": [
+          "rho",
+          "elastic_constant",
+          "activity",
+          "beta",
+          "flow_alignment"
+        ],
+        "stokes_system": [
+          "friction",
+          "viscosity"
+        ],
+        "pressure_solver": [
+          "pressure_relative_tolerance",
+          "pressure_max_iterations",
+          "pressure_fixed_iterations"
+        ],
+        "numerics": [
+          "dealias_rule",
+          "projected_transform_execution",
+          "transform_execution_order",
+          "spectral_storage"
+        ],
+        "initial_condition": [
+          "seed",
+          "initial_s",
+          "noise_theta",
+          "noise_phi",
+          "smoothing_sigma",
+          "initialization_mode",
+          "snapshot_mode",
+          "snapshot_directory",
+          "snapshot_step"
+        ],
+        "execution": [
+          "batch_size",
+          "device",
+          "dtype",
+          "runtime_path"
+        ],
+        "workflow": [
+          "steps",
+          "save_interval",
+          "diagnostics_enabled",
+          "diagnostic_interval",
+          "checkpoint_interval",
+          "restart_from",
+          "generated_output_directory",
+          "snapshot_output_directory"
+        ],
+        "boundary_assignment": [
+          "boundaries"
+        ],
+        "derived_component_cache": [
+          "_components"
+        ]
+      },
+      "hard_couplings": [
+        {
+          "id": "CH-001",
+          "owners": [
+            "configuration",
+            "geometry"
+          ],
+          "description": "The component root requires a RectangularChannel whose only periodic axis is streamwise axis 0."
+        },
+        {
+          "id": "CH-002",
+          "owners": [
+            "model",
+            "parameterization"
+          ],
+          "description": "ChannelActiveNematicMaterialSpec derives Landau-de Gennes a,b,c from rho and packages flow coefficients in a Channel-specific model request."
+        },
+        {
+          "id": "CH-003",
+          "owners": [
+            "boundary",
+            "lowering"
+          ],
+          "description": "ChannelBoundaryConditions freezes physical laws as legacy parity strings rather than face-attached boundary-law declarations."
+        },
+        {
+          "id": "CH-004",
+          "owners": [
+            "numerics",
+            "geometry"
+          ],
+          "description": "The RunSpec builder freezes no dealiasing, full projected transforms, real-first execution, and full-complex storage for this Channel oracle."
+        },
+        {
+          "id": "CH-005",
+          "owners": [
+            "model",
+            "application"
+          ],
+          "description": "The application enforces float32, flow_alignment=1, and batch_size=1 instead of lowering general model/execution declarations."
+        },
+        {
+          "id": "CH-006",
+          "owners": [
+            "initial_condition",
+            "application"
+          ],
+          "description": "The package application hard-codes aligned_x_smooth_noise and rejects the facade's legacy snapshot initialization mode."
+        },
+        {
+          "id": "CH-007",
+          "owners": [
+            "model",
+            "geometry_specific_solver",
+            "application"
+          ],
+          "description": "The application composes active-force-only forcing directly with the no-slip Channel Stokes implementation; it is not the Plane complete-stress Beris-Edwards model."
+        },
+        {
+          "id": "CH-008",
+          "owners": [
+            "flow_system",
+            "geometry_specific_solver"
+          ],
+          "description": "Pressure PCG iteration policy and persistent warm-start pressure state are Channel-specific execution and restart requirements."
+        },
+        {
+          "id": "CH-009",
+          "owners": [
+            "runtime",
+            "application"
+          ],
+          "description": "legacy_channel and compiled_channel_v2 selection, adapter identity, and compiled bridge construction are Channel-specific."
+        },
+        {
+          "id": "CH-010",
+          "owners": [
+            "workflow",
+            "runtime"
+          ],
+          "description": "Channel observation, checkpoint, pressure-guess restoration, diagnostics, and completion ordering use a Channel-specific workflow schema."
+        }
+      ]
+    }
+  },
+  "model_geometry_matrix": [
+    {
+      "model": "complete_stress_beris_edwards",
+      "plane_slab": "qualified",
+      "rectangular_channel": "not_declared_or_lowered",
+      "interpretation": "A Channel geometry swap is not presently valid because its force law, wall-axis derivative parity, Stokes solver, and pressure path have not been lowered or qualified for the complete-stress model."
+    },
+    {
+      "model": "legacy_active_force_active_nematics",
+      "plane_slab": "not_declared_or_lowered",
+      "rectangular_channel": "qualified",
+      "interpretation": "The current Channel model is a distinct scientific model, not a geometry variant of the Plane complete-stress application."
+    }
+  ],
+  "cross_application_gaps": [
+    {
+      "id": "X-001",
+      "gap": "No common EquationSystemSpec declares the production Q evolution, constitutive force law, algebraic Stokes request, fields, and diagnostics independently of geometry."
+    },
+    {
+      "id": "X-002",
+      "gap": "No common SimulationSpec composes model, geometry, boundaries, initial condition, numerics, integrator, execution, workflow, and invocation identities."
+    },
+    {
+      "id": "X-003",
+      "gap": "No capability resolver validates a model/system requirement against geometry, boundary, basis, and solver capabilities and then selects an exact lowering."
+    },
+    {
+      "id": "X-004",
+      "gap": "Plane and Channel boundary declarations have different representations and mix physical laws with derived modal choices to different degrees."
+    },
+    {
+      "id": "X-005",
+      "gap": "Applications still own model-specific metadata assembly, initial-condition selection, runtime construction, and geometry-specific solver wiring."
+    },
+    {
+      "id": "X-006",
+      "gap": "Runtime and checkpoint adapter identities are application-specific; this is currently safe but prevents a shared composition root."
+    },
+    {
+      "id": "X-007",
+      "gap": "There is no explicit unsupported-combination report explaining why a requested model, geometry, boundary assignment, and numerical policy cannot be lowered."
+    }
+  ],
+  "target_ownership": {
+    "EquationSystemSpec": [
+      "logical fields and component roles",
+      "physical parameters",
+      "evolution and constitutive laws",
+      "algebraic subsystem requests",
+      "required capabilities",
+      "model diagnostics",
+      "model-owned initial-condition families"
+    ],
+    "GeometrySpec": [
+      "topology",
+      "axis and face identities",
+      "coordinates and metrics",
+      "wall normals and tangents",
+      "grid placement",
+      "separability capabilities"
+    ],
+    "BoundaryAssignment": [
+      "physical laws attached to field components and geometric faces",
+      "homogeneous or inhomogeneous data",
+      "anchoring and surface laws"
+    ],
+    "NumericsSpec": [
+      "precision",
+      "dealiasing",
+      "storage",
+      "transform policy",
+      "discretization intent"
+    ],
+    "TimeIntegrationSpec": [
+      "dt",
+      "integrator family",
+      "history requirements",
+      "refresh schedule"
+    ],
+    "ExecutionSpec": [
+      "backend",
+      "device",
+      "compile and cache policy",
+      "implementation selectors",
+      "runtime path"
+    ],
+    "WorkflowSpec": [
+      "duration and schedules",
+      "observation and output",
+      "checkpoint and restart",
+      "completion ordering"
+    ],
+    "SimulationSpec": [
+      "composition of all tensor-free declarations",
+      "cross-component validation",
+      "scientific, discretization, execution, and run identities"
+    ],
+    "CapabilityLowering": [
+      "basis and parity selection",
+      "derivative maps",
+      "lifting or tau policy",
+      "geometry-specific Poisson, Helmholtz, Stokes, and Schur implementation selection",
+      "explicit unsupported-combination diagnostics"
+    ],
+    "ApplicationPresetAdapter": [
+      "legacy flat facade compatibility",
+      "named benchmark presets",
+      "CLI translation",
+      "no independent PDE or solver logic"
+    ]
+  },
+  "migration_constraints": [
+    "Existing Plane and Channel applications remain qualified compatibility presets and rollback oracles.",
+    "No migration may silently substitute the Channel active-force model for complete-stress Beris-Edwards or vice versa.",
+    "Physical boundary laws remain distinct from FFT, DCT, DST, parity, lifting, and tau implementation choices.",
+    "Geometry-specific Stokes and Schur solvers remain first-class implementations selected by exact capabilities.",
+    "Unsupported model-geometry-boundary combinations fail before tensor allocation and never fall back silently.",
+    "Hot loops receive lowered immutable plans and direct callables; they do not perform registry or capability lookup.",
+    "Scientific, discretization, execution, and run identities remain separate and restart validation remains fail-closed.",
+    "Legacy and compiled defaults do not change during P7.7 declaration and lowering work.",
+    "P7.7 introduces no new physical boundary condition and does not begin Phase 8."
+  ],
+  "next_slice": {
+    "id": "P7.7.1",
+    "name": "geometry-neutral equation-system declarations",
+    "authorized": false,
+    "allowed_scope_when_authorized": [
+      "Introduce tensor-free field, model, constitutive-force, and algebraic-system declarations.",
+      "Express the two existing physical models honestly as distinct declarations.",
+      "Add compatibility adapters from existing Plane and Channel component graphs.",
+      "Keep runtime construction, numerical output, public facades, and defaults unchanged."
+    ],
+    "entrance_gates": [
+      "This P7.7.0 inventory and its source-identity tests pass.",
+      "The two currently qualified model-geometry combinations remain explicit.",
+      "Public Plane and Channel API signatures are frozen as compatibility surfaces."
+    ],
+    "exit_gates": [
+      "Every declared field and parameter has one owner.",
+      "No declaration imports Torch, transforms, runtime, workflows, applications, or geometry-specific solvers.",
+      "Existing Plane and Channel metadata can be reconstructed without loss.",
+      "No runtime path or production default changes."
+    ]
+  }
+}
