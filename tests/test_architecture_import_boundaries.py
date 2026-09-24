@@ -128,6 +128,22 @@ EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
         "pssolver.configuration.simulation",
         "pssolver.systems.equations",
     ),
+    ImportEdge(
+        "pssolver.configuration.simulation_lowering",
+        "pssolver.systems.stokes",
+    ),
+}
+
+
+REVIEWED_CONFIGURATION_TO_PLANNING_EDGES = {
+    ImportEdge(
+        "pssolver.configuration.simulation_lowering",
+        "pssolver.planning.plan",
+    ),
+    ImportEdge(
+        "pssolver.configuration.simulation_lowering",
+        "pssolver.planning.simulation",
+    ),
 }
 
 
@@ -267,6 +283,16 @@ def test_configuration_has_only_the_reviewed_systems_dependency_edge():
     assert observed == EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES
 
 
+def test_configuration_has_only_reviewed_planning_composition_edges():
+    observed = {
+        edge
+        for edge in _all_edges()
+        if _layer(edge.source) == "configuration"
+        and _layer(edge.destination) == "planning"
+    }
+    assert observed == REVIEWED_CONFIGURATION_TO_PLANNING_EDGES
+
+
 def test_models_have_only_reviewed_tensor_free_system_declaration_edges():
     observed = {
         edge
@@ -305,6 +331,8 @@ def test_internal_imports_follow_the_phase_zero_dependency_ratchet():
         if destination_layer in ALLOWED_INTERNAL_LAYERS[source_layer]:
             continue
         if edge in REVIEWED_MODEL_DECLARATION_TO_SYSTEMS_EDGES:
+            continue
+        if edge in REVIEWED_CONFIGURATION_TO_PLANNING_EDGES:
             continue
         if edge in EXPECTED_LEGACY_EXCEPTIONS:
             observed_exceptions.add(edge)

@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.3",
+  "status": "complete",
+  "classification": "PASS_P7_7_3_CAPABILITY_RESOLUTION_TENSOR_FREE_LOWERING",
+  "parent_commit": "2186191d22a007ed39c9655e06ee10f1dfdd8d37",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "supported_pairs": [
+    [
+      "complete_stress_beris_edwards",
+      "plane_slab"
+    ],
+    [
+      "legacy_active_force_active_nematics",
+      "rectangular_channel"
+    ]
+  ],
+  "lowering_product": {
+    "type": "SimulationLoweringPlan",
+    "tensor_free": true,
+    "immutable": true,
+    "deterministic_sha256": true,
+    "contains": [
+      "component_basis_requirements",
+      "derivative_requirements",
+      "capability_implementation_requirements",
+      "geometry_solver_requirement",
+      "nullspace_requirement",
+      "numerics_identity",
+      "time_integration_identity"
+    ]
+  },
+  "resolved_counts": {
+    "plane": {
+      "component_spaces": 59,
+      "derivatives": 24,
+      "capabilities": 7
+    },
+    "channel": {
+      "component_spaces": 36,
+      "derivatives": 24,
+      "capabilities": 5
+    }
+  },
+  "boundary_semantics": {
+    "physical_boundaries_distinct_from_modal_parity": true,
+    "pressure_is_algebraic_compatibility": true,
+    "derived_gradient_parity": true,
+    "derived_constitutive_parity": true,
+    "asymmetric_faces_representable_but_rejected_by_current_lowering": true,
+    "new_boundary_physics_added": false
+  },
+  "derivative_rules": {
+    "fft": "fourier_i_k_to_fft",
+    "dct": "negative_sine_multiplier_to_dst",
+    "dst": "positive_cosine_multiplier_to_dct"
+  },
+  "solvers": {
+    "plane": {
+      "implementation": "pssolver.linear_solvers.stokes.plane_free_slip.FreeSlipModalStokesSolver",
+      "pressure_gauge": "zero_mean",
+      "tangential_policies": [
+        "zero_mean",
+        "friction"
+      ]
+    },
+    "channel": {
+      "implementation": "pssolver.linear_solvers.stokes.channel_no_slip.ChannelNoSlipModalStokesSolver",
+      "pressure_gauge": "zero_mean",
+      "velocity_null_mode": "not_applicable",
+      "pressure_algorithm": "preconditioned_conjugate_gradient"
+    }
+  },
+  "fail_closed": {
+    "structured_rejection": true,
+    "fallback_allowed": false,
+    "before_tensor_allocation": true,
+    "rejection_codes": [
+      "unsupported_model_geometry",
+      "unsupported_dimension_or_topology",
+      "unsupported_capability_set",
+      "unsupported_integrator",
+      "unsupported_backend",
+      "invalid_hermitian_axis",
+      "asymmetric_face_pair",
+      "unsupported_boundary_signature",
+      "unsupported_boundary_semantic",
+      "invalid_equation_layout",
+      "invalid_stokes_contract",
+      "invalid_derived_space",
+      "unsupported_nullspace_policy",
+      "unsupported_solver_options"
+    ]
+  },
+  "runtime_connection": false,
+  "tensor_allocation": false,
+  "production_default_changed": false,
+  "numerical_path_changed": false,
+  "checkpoint_schema_changed": false,
+  "public_package_root_export_added": false,
+  "complete_stress_channel_claimed": false,
+  "phase_8_authorized": false,
+  "phase_9_authorized": false,
+  "verification": {
+    "targeted_cpu": "80 passed",
+    "full_cpu": "2092 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "h100_required": false
+  },
+  "next_slice": {
+    "name": "P7.7.4 opt-in construction binding and equivalence",
+    "authorized": false
+  },
+  "source_sha256": {
+    "pssolver/configuration/simulation_lowering.py": "f98e825a165a49a75cea0c1bc6461ded5204ec6bb5fcc1aa49f3a229977933e0",
+    "pssolver/planning/simulation.py": "24854f3da9bba1084b157604b476a1b42dfc4d3a79ee082f214b16d45ebdf9a5"
+  }
+}

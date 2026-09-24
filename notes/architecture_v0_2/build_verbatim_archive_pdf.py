@@ -134,6 +134,8 @@ SOURCE_ORDER = (
     "phase_7_p771_equation_system_declarations.json",
     "phase_7_p772_simulation_composition.md",
     "phase_7_p772_simulation_composition.json",
+    "phase_7_p773_capability_lowering.md",
+    "phase_7_p773_capability_lowering.json",
 )
 
 PAGE_WIDTH = 595.276
