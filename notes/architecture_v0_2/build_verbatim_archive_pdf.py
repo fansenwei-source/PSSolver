@@ -132,6 +132,8 @@ SOURCE_ORDER = (
     "phase_7_p770_model_geometry_coupling_inventory.json",
     "phase_7_p771_equation_system_declarations.md",
     "phase_7_p771_equation_system_declarations.json",
+    "phase_7_p772_simulation_composition.md",
+    "phase_7_p772_simulation_composition.json",
 )
 
 PAGE_WIDTH = 595.276

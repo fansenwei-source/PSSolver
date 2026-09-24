@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.2",
+  "status": "complete",
+  "classification": "PASS_P7_7_2_BOUNDARY_ASSIGNMENT_SIMULATION_COMPOSITION",
+  "parent_commit": "56c2682fbd1a237fc9c1deb69c8e2d7183da6a9b",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "boundary_assignment": {
+    "face_aware": true,
+    "oriented_sides": [
+      "lower",
+      "upper"
+    ],
+    "asymmetric_bounded_faces_representable": true,
+    "physical_semantics": [
+      "physical",
+      "algebraic_compatibility"
+    ],
+    "new_boundary_physics_added": false,
+    "derived_modal_parity_is_physical_boundary": false
+  },
+  "simulation_spec": {
+    "tensor_free": true,
+    "device_independent_declaration": true,
+    "composes": [
+      "equation_system",
+      "geometry",
+      "boundary_assignment",
+      "numerics",
+      "time_integration",
+      "discretization_parameters",
+      "initial_condition",
+      "execution",
+      "workflow",
+      "invocation"
+    ],
+    "identity_classes": [
+      "scientific",
+      "discretization",
+      "execution",
+      "run"
+    ]
+  },
+  "adapters": {
+    "plane": {
+      "source": "PlaneBerisEdwardsRunComponents",
+      "equation_variant": "complete_stress_beris_edwards",
+      "boundary_assignment": "qualified_plane_free_slip",
+      "assigned_components": 9,
+      "derived_distortion_parity_kept_as_discretization_metadata": true
+    },
+    "channel": {
+      "source": "ChannelRunComponents",
+      "equation_variant": "legacy_active_force_active_nematics",
+      "boundary_assignment": "qualified_channel_no_slip",
+      "assigned_components": 9,
+      "pressure_solver_kept_as_discretization_metadata": true
+    },
+    "complete_source_metadata_preserved": true,
+    "existing_application_connection": false
+  },
+  "runtime_connection": false,
+  "basis_or_solver_lowering": false,
+  "tensor_allocation": false,
+  "production_default_changed": false,
+  "numerical_path_changed": false,
+  "checkpoint_schema_changed": false,
+  "public_package_root_export_added": false,
+  "phase_8_authorized": false,
+  "verification": {
+    "targeted_cpu": "59 passed",
+    "full_cpu": "2079 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "h100_required": false
+  },
+  "next_slice": {
+    "name": "P7.7.3 capability resolution and tensor-free lowering",
+    "authorized": false
+  },
+  "source_sha256": {
+    "pssolver/configuration/active_nematics_simulation_adapters.py": "2502121539cfd615c9d6fefbbd7bedf31e9721cdb83beb036ce650edcef83d40",
+    "pssolver/configuration/simulation.py": "e90b5fd23d79c5a3a242342d6eb85e8da9e4d86e6cbd0832fb88256caee79839",
+    "pssolver/core/boundary.py": "2b1b9592f5e91a532b4fa7eeb4aaf619bf3b04d559c5046cf3d00b537943703a"
+  }
+}
