@@ -137,6 +137,14 @@ EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
 
 REVIEWED_CONFIGURATION_TO_PLANNING_EDGES = {
     ImportEdge(
+        "pssolver.configuration.simulation_binding",
+        "pssolver.planning.construction",
+    ),
+    ImportEdge(
+        "pssolver.configuration.simulation_binding",
+        "pssolver.planning.simulation",
+    ),
+    ImportEdge(
         "pssolver.configuration.simulation_lowering",
         "pssolver.planning.plan",
     ),

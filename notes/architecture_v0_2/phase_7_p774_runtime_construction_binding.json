@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.4",
+  "status": "complete",
+  "classification": "PASS_P7_7_4_OPT_IN_RUNTIME_CONSTRUCTION_BINDING",
+  "parent_commit": "2393362ae9816b9329d8e72f87acc1eeeb137743",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "qualified_targets": [
+    {
+      "kind": "plane_legacy_production",
+      "equation_variant": "complete_stress_beris_edwards",
+      "geometry": "plane_slab",
+      "runtime_path": "legacy_production",
+      "builder_provision": "package"
+    },
+    {
+      "kind": "plane_compiled_v2",
+      "equation_variant": "complete_stress_beris_edwards",
+      "geometry": "plane_slab",
+      "runtime_path": "compiled_v2",
+      "builder_provision": "caller",
+      "builder_parameter": "compiled_builder"
+    },
+    {
+      "kind": "channel_legacy",
+      "equation_variant": "legacy_active_force_active_nematics",
+      "geometry": "rectangular_channel",
+      "runtime_path": "legacy_channel",
+      "builder_provision": "caller",
+      "builder_parameter": "legacy_builder"
+    },
+    {
+      "kind": "channel_compiled_v2",
+      "equation_variant": "legacy_active_force_active_nematics",
+      "geometry": "rectangular_channel",
+      "runtime_path": "compiled_channel_v2",
+      "builder_provision": "caller",
+      "builder_parameter": "compiled_builder"
+    }
+  ],
+  "connection": {
+    "opt_in": true,
+    "production_applications_connected": false,
+    "package_root_export_added": false,
+    "factory_result_returned_directly": true,
+    "adapter_wrapper_added": false,
+    "tensor_copy_added": false,
+    "runtime_registry_added": false,
+    "hot_path_dispatch_added": false,
+    "fallback_allowed": false
+  },
+  "identity_contract": {
+    "simulation_sha256_bound": true,
+    "lowering_plan_sha256_bound": true,
+    "request_recomposition_required": true,
+    "binding_equality_required_before_factory": true,
+    "selected_builder_only": true
+  },
+  "equivalence": {
+    "plane_legacy_cpu_two_step": "byte_for_byte",
+    "channel_legacy_cpu_two_step": "byte_for_byte",
+    "factory_result_identity": "same_object",
+    "existing_factory_implementation_changed": false
+  },
+  "remaining_boundary": {
+    "plane_legacy_builder": "package_owned",
+    "plane_compiled_builder": "application_or_caller_owned",
+    "channel_legacy_builder": "application_or_caller_owned",
+    "channel_compiled_builder": "application_or_caller_owned",
+    "final_generic_factory_complete": false
+  },
+  "production_default_changed": false,
+  "numerical_kernel_changed": false,
+  "checkpoint_schema_changed": false,
+  "phase_8_authorized": false,
+  "phase_9_authorized": false,
+  "verification": {
+    "targeted_cpu": "190 passed",
+    "full_cpu": "2104 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "h100_required_for_opt_in_slice": false,
+    "h100_required_before_production_connection": true
+  },
+  "next_slice": {
+    "name": "P7.7.5 construction ownership normalization",
+    "authorized": false,
+    "goal": "move remaining application-owned builder assembly behind typed package construction inputs without changing kernels or defaults"
+  },
+  "source_sha256": {
+    "pssolver/configuration/simulation_binding.py": "e318c099865341e1ca1fd922145cf68b67865afdda8ac3ca692f47b4ef2e4f5c",
+    "pssolver/planning/construction.py": "28c2c7ee48ab210fd544f418099ba992477799a479521a4b024fedd81e54848d",
+    "pssolver/runtime/simulation_construction.py": "34c095f64055a4451a8c14e40319fd3e6dffd2826e6a21451787feaa60416ac5"
+  }
+}

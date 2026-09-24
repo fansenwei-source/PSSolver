@@ -182,7 +182,7 @@
     "pssolver/models/active_nematics/equation_systems.py": "c350d928a7719821b53098801a28a25f4301e12b20a7609f97cf15995fff3d34",
     "pssolver/configuration/active_nematics_equation_adapters.py": "fd1949d6d1d854875fb1ca7f7a01b0b9c07f3bbd5c1e71b7f917ae56bd4d6c43",
     "tests/test_phase7_p771_equation_system_declarations.py": "2f06922ec28f947879b115b00ecba4e7dd398363b288ee786a09e3c93277cae5",
-    "tests/test_architecture_import_boundaries.py": "8177148fd43cce2335cf63b1365c2a280c7a7e9888548e5e05315113817fcd8e"
+    "tests/test_architecture_import_boundaries.py": "1cf716c956d2450a6e18474f93385bd33fe99157db6c4243385c3282305325e2"
   },
   "public_api": {
     "package_root_exports_added": [],
