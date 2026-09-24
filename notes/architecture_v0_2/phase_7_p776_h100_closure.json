@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.6",
+  "status": "complete",
+  "classification": "PASS_P7_7_6_PRODUCTION_CONNECTION_H100_NON_REGRESSION_WITH_TARGETED_ADJUDICATION_AND_FINAL_CPU_GUARD_RECOVERY",
+  "date": "2026-09-24",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "baseline_commit": "1078f44214d03fdce9326955f176e17aa36c0093",
+  "candidate_commit": "174cf4df893e0fa1af713349f11e73b55ff9c8bb",
+  "local_candidate_record": {
+    "path": "notes/architecture_v0_2/phase_7_p776_production_connection.json",
+    "sha256": "bbe9f64a4d792033aa0c5acb8e9e8ebf5618dd3119bb48bfeef66dfba269e57c",
+    "historical_status_preserved": "local_candidate_ready_for_h100"
+  },
+  "imported_final_report": {
+    "kind": "HPCC execution report supplied after final recovery",
+    "sha256": "ef6cf43ffc1e9e64f430b66430e51284592f85ef26ff471e8b8477ea8bc8554c"
+  },
+  "qualification": {
+    "complete": true,
+    "production_applications_connected": true,
+    "fallback_used": false,
+    "numerical_kernel_changed": false,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false
+  },
+  "runtime_paths": [
+    "plane:legacy_production",
+    "plane:compiled_v2",
+    "plane:separated_canary",
+    "channel:legacy_channel",
+    "channel:compiled_channel_v2"
+  ],
+  "cpu": {
+    "candidate_targeted": "181 passed",
+    "baseline_full": "2114 passed, 1 skipped, 3 deselected, 8 subtests passed",
+    "candidate_full": "2120 passed, 1 skipped, 3 deselected, 8 subtests passed",
+    "allowed_skip": "optional nematics3d dependency",
+    "cuda_only_tests_on_h100": "3 passed"
+  },
+  "local_closure_record_verification": {
+    "targeted": "12 passed",
+    "full": "2130 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0
+  },
+  "jobs": [
+    {
+      "job_id": 10840829,
+      "resource": "H100",
+      "state": "FAILED",
+      "role": "original matrix; fail-closed at marginal small-grid performance threshold",
+      "scientific_failure": false
+    },
+    {
+      "job_id": 10840854,
+      "resource": "H100",
+      "state": "FAILED",
+      "role": "targeted performance, trajectories, and restart; stopped at external helper import bootstrap",
+      "scientific_failure": false
+    },
+    {
+      "job_id": 10841015,
+      "resource": "CPU",
+      "state": "FAILED",
+      "role": "negative gates; stopped at external helper guard-order setup",
+      "scientific_failure": false
+    },
+    {
+      "job_id": 10841045,
+      "resource": "CPU",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "role": "final backend and file-record guard closure",
+      "scientific_failure": false
+    }
+  ],
+  "profiles": {
+    "original_json_complete": 48,
+    "original_cells_passed": 7,
+    "original_cells_total": 8,
+    "initial_failed_cell": "channel:R128x20x20:compiled_channel_v2",
+    "targeted_pairs": 12,
+    "warmup_steps": 20,
+    "measured_steps": 200,
+    "arithmetic_mean_ratio": 1.0039120579297005,
+    "median_ratio": 1.0151954952542155,
+    "geometric_mean_ratio": 1.004142344359126,
+    "bootstrap_iterations": 200000,
+    "bootstrap_seed": 20260924,
+    "bootstrap_95_percent_ci": [
+      0.9845594354899496,
+      1.0248376844826659
+    ],
+    "candidate_faster_pairs": 7,
+    "peak_allocated_ratio": 1.0,
+    "peak_reserved_ratio": 1.0,
+    "forward_transforms_per_step": 11,
+    "inverse_transforms_per_step": 36,
+    "mean_ratio_limit": 1.03,
+    "median_ratio_limit": 1.03,
+    "classification": "PASS_P7_7_6_TARGETED_PERFORMANCE_ADJUDICATION"
+  },
+  "numerical_equivalence": {
+    "production_paths": 5,
+    "complete_continuous_segment_resumed_directories": 40,
+    "baseline_candidate_q_u_p": "byte_for_byte",
+    "same_runtime_restart": "PASS",
+    "baseline_to_candidate_restart": "PASS",
+    "candidate_to_baseline_restart": "PASS",
+    "runtime_identity_drift": false
+  },
+  "negative_gates": {
+    "plane_cross_runtime": "PASS",
+    "channel_cross_runtime": "PASS",
+    "separated_canary_package_rejection": "PASS",
+    "channel_legacy_runtime_identity_tamper": "PASS",
+    "channel_compiled_runtime_identity_tamper": "PASS",
+    "channel_tensor_raw_byte_tamper": "PASS",
+    "channel_checksum_metadata_tamper": "PASS",
+    "channel_backend_contract_tamper": "PASS",
+    "channel_file_record_shape_tamper": "PASS",
+    "all_applicable_target_mutation_invariance": "PASS"
+  },
+  "archive_evidence": [
+    {
+      "control_directory": "/home/fansenwei/pssolver_phase7_p776_h100_174cf4d_20260924_v1",
+      "manifest": "checksums.sha256",
+      "entries": 244,
+      "verified": "244/244 PASS",
+      "manifest_sha256": "d172818ab84cc97a4b1c01fab5e1942b5faeae7592cf2d689fe4e834a59e6af7",
+      "complete_marker": false
+    },
+    {
+      "control_directory": "/home/fansenwei/pssolver_phase7_p776_perf_recovery_174cf4d_20260924_v1",
+      "manifest": "checksums.sha256",
+      "entries": 268,
+      "verified": "268/268 PASS",
+      "manifest_sha256": "94d4dbf2440136e9bc134e78e56cce3c05159224558b0a27d99d59784ab1c7e2",
+      "complete_marker": false
+    },
+    {
+      "control_directory": "/home/fansenwei/pssolver_phase7_p776_channel_negative_recovery_174cf4d_20260924_v1",
+      "manifest": "checksums.sha256",
+      "entries": 19,
+      "verified": "19/19 PASS",
+      "manifest_sha256": "f7e9e4f98f3e0530bb75e181624286f9abe9774c9d1942c77084a1701e47c63a",
+      "complete_marker": false
+    },
+    {
+      "control_directory": "/home/fansenwei/pssolver_phase7_p776_channel_negative_recovery_174cf4d_20260924_v2",
+      "manifest": "checksums.sha256",
+      "entries": 78,
+      "verified": "78/78 PASS",
+      "manifest_sha256": "14593163794bfed3f65445630ce3783268ddab16612c7e6c659774a4dd7db068",
+      "complete_marker": true,
+      "complete_path": "/home/fansenwei/pssolver_phase7_p776_channel_negative_recovery_174cf4d_20260924_v2/COMPLETE"
+    }
+  ],
+  "eligibility": {
+    "p7_7_6_complete": true,
+    "phase_8_planning_eligible": true,
+    "phase_8_authorized": false,
+    "phase_9_authorized": false,
+    "plane_default": "legacy_production",
+    "channel_default": "legacy_channel"
+  },
+  "source_sha256": {
+    "notes/architecture_v0_2/phase_7_p776_production_connection.json": "bbe9f64a4d792033aa0c5acb8e9e8ebf5618dd3119bb48bfeef66dfba269e57c",
+    "pssolver/applications/channel_active_nematics.py": "072537286ec87fbcd703e5a685cecf0f9f54911249c82d3b104c6c3651c2b5b3",
+    "pssolver/applications/plane_beris_edwards.py": "ef4f0d92e243d4fc2156b796f34078af312f08955af6407d5dcf59f793fa0e03",
+    "tests/test_phase7_p776_production_connection.py": "9f7189f3c1ab518a6c318b0b9382128bd47797e4e1a3ad963153be5c44258e20"
+  }
+}
