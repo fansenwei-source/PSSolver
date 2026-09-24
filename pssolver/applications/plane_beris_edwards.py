@@ -60,12 +60,22 @@ from pssolver.configuration import (
     PlaneRuntimePath,
     parse_plane_beris_edwards_run_spec,
 )
+from pssolver.configuration.active_nematics_simulation_adapters import (
+    compose_plane_beris_edwards_simulation,
+)
+from pssolver.configuration.package_construction import (
+    plan_package_runtime_construction,
+)
 from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
-from pssolver.runtime import (
+from pssolver.runtime.plane_beris_edwards import (
     PlaneRuntimeBuildRequest,
     build_plane_beris_edwards_runtime,
+)
+from pssolver.runtime.package_construction import (
+    PackageRuntimeConstructionInput,
+    build_package_simulation_runtime,
 )
 from pssolver.workflows import (
     PlaneBerisEdwardsWorkflow,
@@ -665,24 +675,27 @@ def run_plane_beris_edwards(
         initial_values=initial_values,
         device=device,
     )
-    compiled_builder = None
-    if execution.runtime_path is PlaneRuntimePath.COMPILED_V2:
-        from pssolver.workflows.plane_compiled_v2 import (
-            build_plane_compiled_v2_runtime,
+    if execution.runtime_path is PlaneRuntimePath.SEPARATED_CANARY:
+        metadata["runtime_construction"] = {
+            "schema_version": 1,
+            "owner": "pssolver.runtime.plane_beris_edwards",
+            "compatibility_exception": "separated_canary",
+            "package_plan": None,
+            "fallback_allowed": False,
+        }
+        runtime_adapter = build_plane_beris_edwards_runtime(runtime_request)
+    else:
+        construction = PackageRuntimeConstructionInput(
+            plan=plan_package_runtime_construction(
+                compose_plane_beris_edwards_simulation(components)
+            ),
+            request=runtime_request,
         )
-
-        def _build_compiled_runtime():
-            return build_plane_compiled_v2_runtime(
-                run_spec,
-                device=device,
-                initial_values=initial_values,
-            )
-
-        compiled_builder = _build_compiled_runtime
-    runtime_adapter = build_plane_beris_edwards_runtime(
-        runtime_request,
-        compiled_builder=compiled_builder,
-    )
+        metadata["runtime_construction"] = {
+            "plan": construction.plan.to_metadata(),
+            "input": construction.to_metadata(),
+        }
+        runtime_adapter = build_package_simulation_runtime(construction)
     spectral_projector = runtime_adapter.projector
     metadata["runtime_selection"] = {
         **run_spec.runtime_selection_metadata(),

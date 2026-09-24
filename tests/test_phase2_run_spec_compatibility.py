@@ -592,7 +592,7 @@ def test_dry_run_keeps_requested_and_effective_friction_distinct(
 
     monkeypatch.setattr(
         application,
-        "build_plane_beris_edwards_runtime",
+        "build_package_simulation_runtime",
         _unexpected_runtime_build,
     )
     output_dir = tmp_path / zero_mode_policy

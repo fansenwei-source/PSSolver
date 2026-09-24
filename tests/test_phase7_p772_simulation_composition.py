@@ -376,7 +376,7 @@ def test_simulation_spec_is_frozen_and_deterministic():
         first.geometry = second.geometry
 
 
-def test_p772_remains_disconnected_from_applications_and_package_roots():
+def test_p772_record_remains_private_while_p776_uses_composition_in_apps():
     plane_application = (
         ROOT / "pssolver" / "applications" / "plane_beris_edwards.py"
     ).read_text(encoding="utf-8")
@@ -390,8 +390,8 @@ def test_p772_remains_disconnected_from_applications_and_package_roots():
         encoding="utf-8"
     )
 
-    assert "active_nematics_simulation_adapters" not in plane_application
-    assert "active_nematics_simulation_adapters" not in channel_application
+    assert "active_nematics_simulation_adapters" in plane_application
+    assert "active_nematics_simulation_adapters" in channel_application
     assert "from .simulation" not in configuration_root
     assert "BoundaryAssignment" not in core_root
 

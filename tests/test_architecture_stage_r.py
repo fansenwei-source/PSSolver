@@ -126,7 +126,7 @@ def test_top_level_driver_no_longer_owns_plane_numerical_assembly():
     assert "SpectralSolver(" not in source
     assert "legacy_builder=" not in source
     assert "build_plane_beris_edwards_runtime(" not in source
-    assert "build_plane_beris_edwards_runtime(" in application
+    assert "build_package_simulation_runtime(" in application
 
 
 def test_stage_r_does_not_change_other_geometry_or_public_root_api():

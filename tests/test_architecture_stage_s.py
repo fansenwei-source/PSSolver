@@ -98,7 +98,7 @@ def test_application_module_owns_orchestration_and_exports_callable_api():
     source = APPLICATION.read_text(encoding="utf-8")
     assert "def run_plane_beris_edwards(" in source
     assert "def main(" in source
-    assert "build_plane_beris_edwards_runtime(" in source
+    assert "build_package_simulation_runtime(" in source
     assert "PlaneBerisEdwardsWorkflow(" in source
 
     with pytest.raises(TypeError, match="PlaneBerisEdwardsRunSpec"):

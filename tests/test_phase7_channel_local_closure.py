@@ -136,7 +136,13 @@ def test_p75_record_binds_package_workflow_sources():
 
     implementation = record["implementation"]
     assert record["classification"] == "PASS_P7_5_CHANNEL_LOCAL_CLOSURE"
-    for name in ("application", "compiled_runtime_bridge", "workflow", "observation"):
+    assert implementation["application_sha256"] == (
+        "ee1889699388bed7e08ce419f20985e7afef1be6dbac26b913329e60ecd915f0"
+    )
+    assert digest(implementation["application"]) != implementation[
+        "application_sha256"
+    ]
+    for name in ("compiled_runtime_bridge", "workflow", "observation"):
         assert digest(implementation[name]) == implementation[f"{name}_sha256"]
     assert record["authorization"]["p7_5_complete"] is True
     assert record["authorization"]["p7_6_h100_authorized"] is False

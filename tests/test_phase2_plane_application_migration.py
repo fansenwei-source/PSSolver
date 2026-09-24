@@ -129,7 +129,7 @@ def _forbid_expensive_application_work(monkeypatch):
     for name in (
         "create_initial_condition",
         "sample_periodic_neutral_defects_2d",
-        "build_plane_beris_edwards_runtime",
+        "build_package_simulation_runtime",
     ):
         monkeypatch.setattr(application, name, forbidden)
 

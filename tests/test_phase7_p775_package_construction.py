@@ -421,10 +421,8 @@ def test_channel_package_construction_is_byte_identical_to_existing_path(
     assert package.completed_steps == direct.completed_steps == 2
 
 
-def test_new_package_factory_remains_opt_in_and_private():
+def test_p775_historical_record_remains_disconnected_while_p776_connects_apps():
     for path in (
-        ROOT / "pssolver/applications/plane_beris_edwards.py",
-        ROOT / "pssolver/applications/channel_active_nematics.py",
         ROOT / "pssolver/configuration/__init__.py",
         ROOT / "pssolver/planning/__init__.py",
         ROOT / "pssolver/runtime/__init__.py",
@@ -433,6 +431,13 @@ def test_new_package_factory_remains_opt_in_and_private():
         source = path.read_text(encoding="utf-8")
         assert "PackageRuntimeConstructionInput" not in source
         assert "build_package_simulation_runtime" not in source
+    for path in (
+        ROOT / "pssolver/applications/plane_beris_edwards.py",
+        ROOT / "pssolver/applications/channel_active_nematics.py",
+    ):
+        source = path.read_text(encoding="utf-8")
+        assert "PackageRuntimeConstructionInput" in source
+        assert "build_package_simulation_runtime" in source
     assert create_plane_beris_edwards_run_spec(
         activity_number=18.0,
         output_dir=ROOT / "unused_p775_default_output",

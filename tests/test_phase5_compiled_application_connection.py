@@ -173,7 +173,7 @@ def test_compiled_dry_run_is_tensor_free_and_creates_no_output(
 
     monkeypatch.setattr(
         application,
-        "build_plane_beris_edwards_runtime",
+        "build_package_simulation_runtime",
         forbidden,
     )
     monkeypatch.setattr(application, "create_initial_condition", forbidden)

@@ -14,19 +14,33 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from pssolver.channel import build_active_nematic_channel
-from pssolver.configuration.channel_active_nematics import ChannelActiveNematicRunSpec
-from pssolver.configuration.channel_active_nematics_declarations import ChannelRuntimePath
-from pssolver.models.active_nematics import Q_COMPONENTS, Q_convention_metadata, create_initial_condition, positive_equilibrium_S
+from pssolver.configuration.active_nematics_simulation_adapters import (
+    compose_channel_active_nematics_simulation,
+)
+from pssolver.configuration.channel_active_nematics import (
+    ChannelActiveNematicRunSpec,
+)
+from pssolver.configuration.package_construction import (
+    plan_package_runtime_construction,
+)
+from pssolver.models.active_nematics import (
+    Q_COMPONENTS,
+    Q_convention_metadata,
+    create_initial_condition,
+    positive_equilibrium_S,
+)
 from pssolver.run_metadata import prepare_new_run_directory
 from pssolver.runtime.channel_active_nematics import (
     ChannelRuntimeBuildRequest,
-    build_channel_active_nematic_runtime,
 )
-from pssolver.runtime.channel_application_bridge import (
-    build_package_compiled_channel_runtime,
+from pssolver.runtime.package_construction import (
+    PackageRuntimeConstructionInput,
+    build_package_simulation_runtime,
 )
-from pssolver.workflows.channel_active_nematics import ChannelActiveNematicsWorkflow, ChannelWorkflowResult
+from pssolver.workflows.channel_active_nematics import (
+    ChannelActiveNematicsWorkflow,
+    ChannelWorkflowResult,
+)
 
 
 def _resolve_device(requested: str) -> torch.device:
@@ -113,34 +127,21 @@ def run_channel_active_nematics(
     initial_q = _initial_q(run_spec)
     metadata = _metadata(run_spec, device)
     request = ChannelRuntimeBuildRequest(run_spec, metadata, initial_q, device)
-    material = run_spec.components.material
-    pressure = run_spec.components.pressure_solver
-
-    def legacy_builder():
-        solver = build_active_nematic_channel(
-            run_spec.shape, run_spec.lengths, run_spec.dt, initial_q,
-            device=device, batchsize=run_spec.batch_size, rho=material.rho,
-            elastic_constant=material.elastic_constant, beta=material.beta,
-            friction=material.friction, viscosity=material.viscosity,
-            pressure_rel_tol=pressure.relative_tolerance,
-            pressure_max_iter=pressure.max_iterations,
-            pressure_fixed_iterations=pressure.fixed_iterations,
-        )
-        solver.parameters["alpha"] = torch.full(
-            (run_spec.batch_size, *run_spec.shape), material.activity,
-            dtype=solver.dtype, device=solver.device,
-        )
-        return solver
-
-    def compiled_builder():
-        return build_package_compiled_channel_runtime(request)
-
-    adapter = build_channel_active_nematic_runtime(
-        request,
-        legacy_builder=legacy_builder if run_spec.runtime_path is ChannelRuntimePath.LEGACY_CHANNEL else None,
-        compiled_builder=compiled_builder if run_spec.runtime_path is ChannelRuntimePath.COMPILED_CHANNEL_V2 else None,
+    construction = PackageRuntimeConstructionInput(
+        plan=plan_package_runtime_construction(
+            compose_channel_active_nematics_simulation(run_spec.components)
+        ),
+        request=request,
     )
-    metadata["runtime_selection"] = {**run_spec.runtime_selection_metadata(), **adapter.to_metadata()}
+    metadata["runtime_construction"] = {
+        "plan": construction.plan.to_metadata(),
+        "input": construction.to_metadata(),
+    }
+    adapter = build_package_simulation_runtime(construction)
+    metadata["runtime_selection"] = {
+        **run_spec.runtime_selection_metadata(),
+        **adapter.to_metadata(),
+    }
     output = (
         run_spec.generated_output_directory
         if run_spec.initialization_mode == "generated"

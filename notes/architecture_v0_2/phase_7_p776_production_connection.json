@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.6",
+  "status": "local_candidate_ready_for_h100",
+  "classification": "PASS_P7_7_6_LOCAL_PRODUCTION_CONNECTION_H100_PENDING",
+  "parent_commit": "1078f44214d03fdce9326955f176e17aa36c0093",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "production_applications_connected": true,
+  "application_local_builder_closures_removed": true,
+  "connection": {
+    "input_type": "PackageRuntimeConstructionInput",
+    "factory": "pssolver.runtime.package_construction.build_package_simulation_runtime",
+    "plane_paths": [
+      "legacy_production",
+      "compiled_v2"
+    ],
+    "channel_paths": [
+      "legacy_channel",
+      "compiled_channel_v2"
+    ],
+    "compatibility_exceptions": {
+      "separated_canary": "pssolver.runtime.plane_beris_edwards.build_plane_beris_edwards_runtime"
+    },
+    "factory_calls_per_application_run": 1,
+    "factory_result_passed_directly_to_workflow": true,
+    "application_supplied_builder": false,
+    "fallback_allowed": false,
+    "hot_path_dispatch_added": false
+  },
+  "metadata": {
+    "additive_runtime_construction_record": true,
+    "plan_metadata_recorded": true,
+    "input_metadata_recorded": true,
+    "checkpoint_schema_changed": false,
+    "array_schema_changed": false
+  },
+  "production_default_changed": false,
+  "runtime_selection_changed": false,
+  "numerical_kernel_changed": false,
+  "package_root_export_added": false,
+  "qualification_complete": false,
+  "p7_7_6_complete": false,
+  "phase_8_authorized": false,
+  "phase_9_authorized": false,
+  "verification": {
+    "targeted_cpu": "181 passed",
+    "separated_canary_compatibility": "11 passed",
+    "full_cpu": "2124 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "plane_paths_exercised": 2,
+    "channel_paths_exercised": 2,
+    "h100_required": true,
+    "h100_status": "pending"
+  },
+  "h100_contract": {
+    "baseline_commit": "1078f44214d03fdce9326955f176e17aa36c0093",
+    "single_formal_job": true,
+    "all_four_runtime_paths": true,
+    "short_q_u_p_byte_identity": true,
+    "same_runtime_restart": true,
+    "cross_runtime_rejection": true,
+    "transform_call_non_regression": true,
+    "mean_timestep_ratio_max": 1.03,
+    "median_timestep_ratio_max": 1.03,
+    "peak_allocated_ratio_max": 1.05,
+    "peak_reserved_ratio_max": 1.05,
+    "paired_win_requirement": false
+  },
+  "source_sha256": {
+    "pssolver/applications/channel_active_nematics.py": "072537286ec87fbcd703e5a685cecf0f9f54911249c82d3b104c6c3651c2b5b3",
+    "pssolver/applications/plane_beris_edwards.py": "ef4f0d92e243d4fc2156b796f34078af312f08955af6407d5dcf59f793fa0e03"
+  }
+}

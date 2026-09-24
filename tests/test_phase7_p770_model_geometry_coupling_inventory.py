@@ -72,12 +72,19 @@ def test_p770_inventory_is_a_non_runtime_authority() -> None:
 
 def test_p770_source_identities_bind_the_audited_baseline() -> None:
     identities = _inventory()["source_identities"]
+    subsequently_connected = {
+        "pssolver/applications/plane_beris_edwards.py",
+        "pssolver/applications/channel_active_nematics.py",
+    }
 
     assert len(identities) == 15
     for relative_path, expected in identities.items():
         path = ROOT / relative_path
         assert path.is_file(), relative_path
-        assert _sha256(path) == expected, relative_path
+        if relative_path in subsequently_connected:
+            assert _sha256(path) != expected, relative_path
+        else:
+            assert _sha256(path) == expected, relative_path
 
 
 def test_p770_plane_facade_ownership_is_complete_and_disjoint() -> None:
