@@ -130,6 +130,8 @@ SOURCE_ORDER = (
     "phase_7_p76_transform_call_recovery.json",
     "phase_7_p770_model_geometry_coupling_inventory.md",
     "phase_7_p770_model_geometry_coupling_inventory.json",
+    "phase_7_p771_equation_system_declarations.md",
+    "phase_7_p771_equation_system_declarations.json",
 )
 
 PAGE_WIDTH = 595.276

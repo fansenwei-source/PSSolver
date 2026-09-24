@@ -113,6 +113,10 @@ TENSOR_FREE_LAYERS = frozenset(
 
 EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
     ImportEdge(
+        "pssolver.configuration.active_nematics_equation_adapters",
+        "pssolver.systems.equations",
+    ),
+    ImportEdge(
         "pssolver.configuration.channel_active_nematics_declarations",
         "pssolver.systems.stokes",
     ),
@@ -120,6 +124,18 @@ EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
         "pssolver.configuration.plane_beris_edwards_component_graph",
         "pssolver.systems.stokes",
     )
+}
+
+
+REVIEWED_MODEL_DECLARATION_TO_SYSTEMS_EDGES = {
+    ImportEdge(
+        "pssolver.models.active_nematics.equation_systems",
+        "pssolver.systems.equations",
+    ),
+    ImportEdge(
+        "pssolver.models.active_nematics.equation_systems",
+        "pssolver.systems.stokes",
+    ),
 }
 
 
@@ -247,6 +263,16 @@ def test_configuration_has_only_the_reviewed_systems_dependency_edge():
     assert observed == EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES
 
 
+def test_models_have_only_reviewed_tensor_free_system_declaration_edges():
+    observed = {
+        edge
+        for edge in _all_edges()
+        if _layer(edge.source) == "models"
+        and _layer(edge.destination) == "systems"
+    }
+    assert observed == REVIEWED_MODEL_DECLARATION_TO_SYSTEMS_EDGES
+
+
 def test_tensor_free_declaration_and_planning_layers_use_no_third_party_runtime():
     violations: list[str] = []
     for path in sorted(PACKAGE_ROOT.rglob("*.py")):
@@ -273,6 +299,8 @@ def test_internal_imports_follow_the_phase_zero_dependency_ratchet():
             continue
         destination_layer = _layer(edge.destination)
         if destination_layer in ALLOWED_INTERNAL_LAYERS[source_layer]:
+            continue
+        if edge in REVIEWED_MODEL_DECLARATION_TO_SYSTEMS_EDGES:
             continue
         if edge in EXPECTED_LEGACY_EXCEPTIONS:
             observed_exceptions.add(edge)

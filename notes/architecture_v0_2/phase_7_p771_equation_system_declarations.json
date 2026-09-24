@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.1",
+  "title": "Geometry-neutral active-nematic equation-system declarations",
+  "status": "P7_7_1_COMPLETE_P7_7_2_NOT_AUTHORIZED",
+  "classification": "PASS_P7_7_1_GEOMETRY_NEUTRAL_EQUATION_DECLARATIONS",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "parent_commit": "e7f1685d2493ed965f6b6652513a286a28b4fbda",
+    "p7_7_0_classification": "PASS_P7_7_0_MODEL_GEOMETRY_COUPLING_INVENTORY"
+  },
+  "authorization": {
+    "p7_7_1_implementation_authorized": true,
+    "p7_7_1_complete": true,
+    "p7_7_2_planning_eligible": true,
+    "p7_7_2_implementation_authorized": false,
+    "runtime_connection_authorized": false,
+    "production_default_change_authorized": false,
+    "new_boundary_law_authorized": false,
+    "phase_8_authorized": false
+  },
+  "scope": {
+    "tensor_free": true,
+    "geometry_free": true,
+    "boundary_assignment_free": true,
+    "runtime_connected": false,
+    "changes_equations": false,
+    "changes_numerical_path": false,
+    "changes_output_or_checkpoint_schema": false,
+    "changes_production_defaults": false
+  },
+  "generic_declarations": {
+    "module": "pssolver.systems.equations",
+    "types": {
+      "EquationFieldSpec": {
+        "owns": [
+          "logical field name",
+          "field role",
+          "ordered scalar component names"
+        ],
+        "does_not_own": [
+          "boundary conditions",
+          "geometry",
+          "storage",
+          "tensors"
+        ]
+      },
+      "EquationTermSpec": {
+        "owns": [
+          "term name",
+          "required capability",
+          "ordered outputs",
+          "ordered dependencies",
+          "physical term parameters"
+        ]
+      },
+      "EquationSystemSpec": {
+        "owns": [
+          "model name and physical variant",
+          "boundary-free fields",
+          "evolution laws",
+          "constitutive laws",
+          "algebraic subsystem requests",
+          "model parameters",
+          "diagnostic declarations",
+          "initial-condition families",
+          "canonical identity"
+        ],
+        "invariants": [
+          "logical field names are unique",
+          "component names are globally unique",
+          "all dependencies reference declared components",
+          "evolution outputs are evolved fields",
+          "constitutive outputs are transient fields",
+          "algebraic outputs are algebraic fields",
+          "every non-diagnostic component has exactly one producer",
+          "producer names are globally unique"
+        ]
+      }
+    }
+  },
+  "physical_variants": {
+    "complete_stress_beris_edwards": {
+      "request_type": "CompleteStressBerisEdwardsEquationRequest",
+      "component_count": 59,
+      "field_names": [
+        "Q",
+        "q_gradient",
+        "velocity_gradient",
+        "molecular_field",
+        "algebraic_stress",
+        "distortion_stress",
+        "nematic_force",
+        "velocity",
+        "pressure"
+      ],
+      "force_components": [
+        "force_x",
+        "force_y",
+        "force_z"
+      ],
+      "force_law": "complete_one_constant_nematic_stress",
+      "constitutive_chain": [
+        "q_gradient",
+        "velocity_gradient",
+        "molecular_field",
+        "nematic_stress",
+        "nematic_force",
+        "incompressible_stokes"
+      ],
+      "qualified_source_application": "plane_beris_edwards",
+      "geometry_attached": false,
+      "boundaries_attached": false
+    },
+    "legacy_active_force_active_nematics": {
+      "request_type": "LegacyActiveForceEquationRequest",
+      "component_count": 36,
+      "field_names": [
+        "Q",
+        "q_gradient",
+        "velocity_gradient",
+        "active_force",
+        "velocity",
+        "pressure"
+      ],
+      "force_components": [
+        "fx",
+        "fy",
+        "fz"
+      ],
+      "force_law": "active_force_divergence_only",
+      "constitutive_chain": [
+        "q_gradient",
+        "velocity_gradient",
+        "active_force",
+        "incompressible_stokes"
+      ],
+      "qualified_source_application": "channel_active_nematics",
+      "geometry_attached": false,
+      "boundaries_attached": false
+    }
+  },
+  "compatibility_adapters": {
+    "module": "pssolver.configuration.active_nematics_equation_adapters",
+    "plane": {
+      "function": "declare_plane_complete_stress_equation_system",
+      "input": "PlaneBerisEdwardsRunComponents",
+      "preserved_authorities": [
+        "BerisEdwardsMaterialRequest",
+        "resolved ldg_l1",
+        "resolved activity amplitude zeta",
+        "IncompressibleStokesSystemSpec"
+      ]
+    },
+    "channel": {
+      "function": "declare_channel_active_force_equation_system",
+      "input": "ChannelRunComponents",
+      "preserved_authorities": [
+        "rho and derived Landau-de Gennes coefficients",
+        "elastic constant",
+        "activity",
+        "beta",
+        "flow alignment",
+        "IncompressibleStokesSystemSpec"
+      ]
+    },
+    "application_imports_adapter": false,
+    "runtime_imports_adapter": false
+  },
+  "reviewed_import_edges": {
+    "model_to_tensor_free_systems": [
+      "pssolver.models.active_nematics.equation_systems -> pssolver.systems.equations",
+      "pssolver.models.active_nematics.equation_systems -> pssolver.systems.stokes"
+    ],
+    "configuration_to_tensor_free_systems": [
+      "pssolver.configuration.active_nematics_equation_adapters -> pssolver.systems.equations"
+    ],
+    "broad_models_to_systems_permission_added": false
+  },
+  "source_identities": {
+    "pssolver/systems/equations.py": "30ffb54cc197495f0cc01d8716923aaa5cc8ad3ae95fe7a1bd1796fbc53d3cd6",
+    "pssolver/models/active_nematics/equation_systems.py": "c350d928a7719821b53098801a28a25f4301e12b20a7609f97cf15995fff3d34",
+    "pssolver/configuration/active_nematics_equation_adapters.py": "fd1949d6d1d854875fb1ca7f7a01b0b9c07f3bbd5c1e71b7f917ae56bd4d6c43",
+    "tests/test_phase7_p771_equation_system_declarations.py": "2f06922ec28f947879b115b00ecba4e7dd398363b288ee786a09e3c93277cae5",
+    "tests/test_architecture_import_boundaries.py": "100e1575eb82c0d12d0b47f00b823a7c1c50ac891aabc78766cdbd1e1dd2b296"
+  },
+  "public_api": {
+    "package_root_exports_added": [],
+    "existing_facade_signatures_changed": false,
+    "existing_application_signatures_changed": false,
+    "existing_runtime_signatures_changed": false
+  },
+  "next_slice": {
+    "id": "P7.7.2",
+    "name": "BoundaryAssignment and SimulationSpec composition",
+    "authorized": false,
+    "allowed_scope_when_authorized": [
+      "Declare physical boundary assignments against logical components and geometric faces.",
+      "Compose EquationSystemSpec, GeometrySpec, BoundaryAssignment, NumericsSpec, TimeIntegrationSpec, ExecutionSpec, WorkflowSpec, and invocation identity into a tensor-free SimulationSpec.",
+      "Adapt the existing Plane and Channel component graphs without connecting a runtime.",
+      "Validate scientific, discretization, execution, and run identity separation."
+    ],
+    "forbidden_scope": [
+      "runtime construction",
+      "basis or solver selection",
+      "new boundary physics",
+      "production default changes",
+      "Phase 8 implementation"
+    ]
+  }
+}
