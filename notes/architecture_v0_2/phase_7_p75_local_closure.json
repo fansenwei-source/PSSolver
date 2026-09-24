@@ -9,7 +9,7 @@
     "application": "pssolver/applications/channel_active_nematics.py",
     "application_sha256": "ee1889699388bed7e08ce419f20985e7afef1be6dbac26b913329e60ecd915f0",
     "compiled_runtime_bridge": "pssolver/runtime/channel_application_bridge.py",
-    "compiled_runtime_bridge_sha256": "ca239bb5ff5b5b44e8a6ec474138c6b641577bdb16109e5cea012f3d83dc498e",
+    "compiled_runtime_bridge_sha256": "6e49ea2acf575a89846a1bbf6cdbfe67411409becf3066b2510bc42784d85d3a",
     "workflow": "pssolver/workflows/channel_active_nematics.py",
     "workflow_sha256": "87b2f16b9527a0b87faf9f6820e486ecb935466ffd662e6e2066a1d5c6632a3f",
     "observation": "pssolver/workflows/channel_observation.py",

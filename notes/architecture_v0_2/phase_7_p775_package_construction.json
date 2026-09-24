@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.5",
+  "status": "complete",
+  "classification": "PASS_P7_7_5_PACKAGE_CONSTRUCTION_OWNERSHIP_NORMALIZATION",
+  "parent_commit": "0fed57f04db1b91e67cebcac577ac63bd2427318",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "source_binding_phase": "P7.7.4",
+  "construction": {
+    "plan_type": "PackageRuntimeConstructionPlan",
+    "input_type": "PackageRuntimeConstructionInput",
+    "application_builder_required": false,
+    "callable_stored_in_plan": false,
+    "callable_stored_in_input": false,
+    "runtime_registry_added": false,
+    "hot_path_dispatch_added": false,
+    "fallback_allowed": false,
+    "factory_result_returned_directly": true
+  },
+  "qualified_targets": [
+    {
+      "kind": "plane_legacy_production",
+      "package_builder": "pssolver.runtime.plane_legacy.build_legacy_plane_runtime"
+    },
+    {
+      "kind": "plane_compiled_v2",
+      "package_builder": "pssolver.runtime.plane_application_bridge.build_package_compiled_plane_runtime"
+    },
+    {
+      "kind": "channel_legacy",
+      "package_builder": "pssolver.runtime.channel_application_bridge.build_package_legacy_channel_runtime"
+    },
+    {
+      "kind": "channel_compiled_v2",
+      "package_builder": "pssolver.runtime.channel_application_bridge.build_package_compiled_channel_runtime"
+    }
+  ],
+  "identity_contract": {
+    "p774_binding_sha256_bound": true,
+    "simulation_sha256_bound": true,
+    "lowering_plan_sha256_bound": true,
+    "package_plan_recomputed_from_request": true,
+    "exact_plan_equality_required_before_allocation": true,
+    "mixed_request_rejected_before_builder": true
+  },
+  "equivalence": {
+    "plane_legacy_two_step": "byte_for_byte",
+    "plane_compiled_v2_two_step": "byte_for_byte",
+    "channel_legacy_two_step": "byte_for_byte",
+    "channel_compiled_v2_two_step": "byte_for_byte",
+    "package_factory_passthrough": "same_object",
+    "existing_numerical_builder_changed": false
+  },
+  "compatibility_bridges": {
+    "plane_compiled": {
+      "path": "pssolver.runtime.plane_application_bridge",
+      "target": "pssolver.workflows.plane_compiled_v2",
+      "lazy": true,
+      "temporary_exact_dependency_debt": true
+    },
+    "channel_legacy": {
+      "path": "pssolver.runtime.channel_application_bridge",
+      "target": "pssolver.channel",
+      "lazy": true,
+      "temporary_exact_dependency_debt": true
+    },
+    "channel_compiled": {
+      "path": "pssolver.runtime.channel_application_bridge",
+      "target": "pssolver.experimental.channel_compiled_v2",
+      "lazy": true,
+      "temporary_exact_dependency_debt": true
+    }
+  },
+  "production_applications_connected": false,
+  "package_root_export_added": false,
+  "production_default_changed": false,
+  "numerical_kernel_changed": false,
+  "checkpoint_schema_changed": false,
+  "phase_8_authorized": false,
+  "phase_9_authorized": false,
+  "verification": {
+    "targeted_cpu": "204 passed",
+    "full_cpu": "2118 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "h100_required_for_opt_in_slice": false,
+    "h100_required_before_production_connection": true
+  },
+  "next_slice": {
+    "name": "P7.7.6 opt-in production application connection and qualification",
+    "authorized": false,
+    "goal": "replace application-local builder closures with the package construction input, then qualify CPU and H100 non-regression before any default promotion"
+  },
+  "source_sha256": {
+    "pssolver/configuration/package_construction.py": "39bcdb9f3d9c722a07bb7d39bc6b8cdb76d97259bf7f7a3caafbc2ebc5c81a12",
+    "pssolver/planning/package_construction.py": "e3c1cf32b7853aec9a1c5bccd613d1b734150415f343bdbdef2bef01e57a2f6e",
+    "pssolver/runtime/channel_application_bridge.py": "6e49ea2acf575a89846a1bbf6cdbfe67411409becf3066b2510bc42784d85d3a",
+    "pssolver/runtime/package_construction.py": "797cf4d638fa8adebc480e5498f3475e5f0353761ec3e472b3e16b63424093cc",
+    "pssolver/runtime/plane_application_bridge.py": "1c5314ac3964eee8b029799a3bd14a825491d6ff352a5b0d180496b2832ae4b7"
+  }
+}

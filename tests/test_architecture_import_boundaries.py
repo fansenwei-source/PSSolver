@@ -92,6 +92,10 @@ ALLOWED_INTERNAL_LAYERS = {
 # is narrow, observed, documented by the Phase 0 ADRs, and scheduled for
 # removal rather than being treated as an acceptable layer-wide dependency.
 EXPECTED_LEGACY_EXCEPTIONS = {
+    ImportEdge(
+        "pssolver.runtime.channel_application_bridge",
+        "pssolver.channel",
+    ),
     ImportEdge("pssolver.models.active_nematics.stokes", "pssolver.transforms"),
     ImportEdge("pssolver.runtime.plane_legacy", "pssolver.integrator"),
     ImportEdge("pssolver.runtime.plane_legacy", "pssolver.solver"),
@@ -102,6 +106,10 @@ EXPECTED_LEGACY_EXCEPTIONS = {
     ImportEdge(
         "pssolver.runtime.channel_application_bridge",
         "pssolver.experimental.channel_compiled_v2",
+    ),
+    ImportEdge(
+        "pssolver.runtime.plane_application_bridge",
+        "pssolver.workflows.plane_compiled_v2",
     ),
 }
 
@@ -136,6 +144,14 @@ EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
 
 
 REVIEWED_CONFIGURATION_TO_PLANNING_EDGES = {
+    ImportEdge(
+        "pssolver.configuration.package_construction",
+        "pssolver.planning.construction",
+    ),
+    ImportEdge(
+        "pssolver.configuration.package_construction",
+        "pssolver.planning.package_construction",
+    ),
     ImportEdge(
         "pssolver.configuration.simulation_binding",
         "pssolver.planning.construction",

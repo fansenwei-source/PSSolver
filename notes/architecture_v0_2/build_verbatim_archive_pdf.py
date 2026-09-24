@@ -138,6 +138,8 @@ SOURCE_ORDER = (
     "phase_7_p773_capability_lowering.json",
     "phase_7_p774_runtime_construction_binding.md",
     "phase_7_p774_runtime_construction_binding.json",
+    "phase_7_p775_package_construction.md",
+    "phase_7_p775_package_construction.json",
 )
 
 PAGE_WIDTH = 595.276
