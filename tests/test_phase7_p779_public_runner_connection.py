@@ -31,6 +31,7 @@ from pssolver.boundaries import (
     neumann_q,
 )
 from pssolver.configuration.public_simulation_runner import (
+    PUBLIC_CHANNEL_APPLICATION,
     PUBLIC_PLANE_APPLICATION,
     PublicSimulationCompilationError,
 )
@@ -46,6 +47,7 @@ RESULT_PATH = ROOT / (
 )
 REVIEWED_SOURCES = (
     "pssolver/api/runner.py",
+    "pssolver/configuration/public_channel_simulation_compiler.py",
     "pssolver/configuration/public_simulation_runner.py",
 )
 
@@ -323,10 +325,13 @@ def test_public_exports_include_compile_and_run_connection():
 def test_machine_record_binds_scope_and_source_identity():
     record = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
     assert record["classification"] == (
-        "PASS_P7_7_9_PUBLIC_COMPILER_RUNNER_CONNECTION"
+        "PASS_P7_7_9_TWO_COMBINATION_PUBLIC_COMPILER"
     )
-    assert record["run_simulation_connected"] is True
-    assert record["qualified_applications"] == [PUBLIC_PLANE_APPLICATION]
+    assert record["p7_7_10_complete"] is False
+    assert record["qualified_applications"] == [
+        PUBLIC_PLANE_APPLICATION,
+        PUBLIC_CHANNEL_APPLICATION,
+    ]
     assert record["runtime_fallback_allowed"] is False
     assert record["phase_8_authorized"] is False
     assert record["production_default_changed"] is False

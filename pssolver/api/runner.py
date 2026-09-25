@@ -11,9 +11,6 @@ from typing import TYPE_CHECKING, Any
 from .simulation import Simulation
 
 if TYPE_CHECKING:
-    from pssolver.configuration.plane_beris_edwards import (
-        PlaneBerisEdwardsRunSpec,
-    )
     from pssolver.configuration.simulation import SimulationSpec
     from pssolver.planning.package_construction import (
         PackageRuntimeConstructionPlan,
@@ -40,7 +37,7 @@ class CompiledSimulation:
     application_specification: SimulationSpec
     lowering_plan: SimulationLoweringPlan
     construction_plan: PackageRuntimeConstructionPlan
-    application_request: PlaneBerisEdwardsRunSpec
+    application_request: object
     normalization: Mapping[str, object]
 
     def __post_init__(self) -> None:
@@ -112,7 +109,11 @@ def run_simulation(
     )
 
     if compiled.application != PUBLIC_PLANE_APPLICATION:
-        raise RuntimeError("compiled simulation has no public application runner")
+        raise RuntimeError(
+            "the compiled application is not connected to run_simulation yet; "
+            "P7.7.9 compiles both qualified combinations, while P7.7.10 "
+            "owns the common application runner and result protocol"
+        )
     from pssolver.applications.plane_beris_edwards import (
         run_plane_beris_edwards,
     )

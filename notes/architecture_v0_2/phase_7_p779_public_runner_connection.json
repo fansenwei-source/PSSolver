@@ -1,50 +1,71 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "phase": "P7.7.9",
   "parent_commit": "0ba42120207c1ae7662a0e913ce4c1f6694fa116",
-  "classification": "PASS_P7_7_9_PUBLIC_COMPILER_RUNNER_CONNECTION",
-  "status": "P7_7_9_COMPLETE_PHASE_8_NOT_AUTHORIZED",
+  "intermediate_commit": "5f545bd0621df89782ecaf5708571e943e785e87",
+  "classification": "PASS_P7_7_9_TWO_COMBINATION_PUBLIC_COMPILER",
+  "status": "P7_7_9_COMPLETE_P7_7_10_NOT_STARTED",
   "public_exports": [
     "CompiledSimulation",
     "compile_simulation",
     "run_simulation"
   ],
   "qualified_applications": [
-    "plane_complete_stress_beris_edwards"
+    "plane_complete_stress_beris_edwards",
+    "channel_legacy_active_force_active_nematics"
   ],
-  "qualified_runtime_paths": [
-    "legacy_production",
-    "compiled_v2"
+  "qualified_combinations": [
+    {
+      "equation_variant": "complete_stress_beris_edwards",
+      "geometry": "plane_slab",
+      "runtime_paths": [
+        "legacy_production",
+        "compiled_v2"
+      ]
+    },
+    {
+      "equation_variant": "legacy_active_force_active_nematics",
+      "geometry": "rectangular_channel",
+      "runtime_paths": [
+        "legacy_channel",
+        "compiled_channel_v2"
+      ]
+    }
   ],
-  "compile_before_allocation": true,
-  "run_simulation_connected": true,
-  "runtime_construction_connected": true,
-  "runtime_fallback_allowed": false,
-  "application_dispatch_in_timestep": false,
-  "public_defaults_inferred_during_compilation": false,
-  "coefficient_translation": {
-    "parameterization": "fixed-k",
+  "architecture": {
+    "public_simulation_shape_contains_pair_whitelist": false,
+    "immutable_qualified_compiler_registry": true,
+    "extension_requires_public_api_change": false,
+    "compile_before_allocation": true,
+    "application_dispatch_in_timestep": false,
+    "runtime_fallback_allowed": false,
+    "unregistered_pair_is_structured_capability_gap": true
+  },
+  "plane_translation": {
+    "coefficient_parameterization": "fixed-k",
     "formula": "K=2*q_eq^2*L1; A=H*sqrt(activity/K)",
     "roundoff_checked": true,
     "requested_and_effective_values_recorded": true
   },
-  "explicit_inputs_required": {
-    "initial_condition": true,
-    "execution_policy": true,
-    "spectral_refresh": true,
-    "workflow": true,
-    "pressure_compatibility": true
+  "channel_translation": {
+    "coefficient_parameterization": "rho",
+    "physical_values_changed": false,
+    "initial_condition_identity_checked": true,
+    "pressure_solver_identity_checked": true,
+    "workflow_identity_checked": true
   },
-  "unsupported_fail_closed": [
-    "unqualified_model_or_geometry",
-    "channel_public_execution",
-    "snapshot_initial_condition",
-    "sbdf2",
-    "separated_canary",
-    "new_boundary_physics",
-    "implicit_refresh",
-    "runtime_fallback"
-  ],
+  "structured_rejection": {
+    "code": "unregistered_model_geometry",
+    "reports_required_capabilities": true,
+    "reports_registered_pairs": true,
+    "declaration_of_unregistered_pair_allowed": true,
+    "execution_of_unqualified_pair_allowed": false
+  },
+  "runtime_fallback_allowed": false,
+  "provisional_plane_runner_retained": true,
+  "channel_runner_connected": false,
+  "public_result_protocol_connected": false,
+  "p7_7_10_complete": false,
   "production_default_changed": false,
   "numerical_kernel_changed": false,
   "hot_path_changed": false,
@@ -54,20 +75,20 @@
   "phase_9_authorized": false,
   "h100_required": false,
   "verification": {
-    "targeted_passed": 87,
-    "public_dry_run_dispatch": "passed",
-    "full_passed": 2159,
+    "targeted_passed": 117,
+    "full_passed": 2165,
     "subtests_passed": 8,
     "failed": 0,
     "skipped": 0,
     "deselected": 0
   },
   "source_sha256": {
-    "pssolver/api/runner.py": "fa0eca3241721584366cafdd0aac85b3c7361f02fb8cfd37a547721d040dc3a3",
-    "pssolver/configuration/public_simulation_runner.py": "72f6916cf1a74fe8d9e1a07adc93364e110f2036b2fcfcad835bc7ee50ee3796"
+    "pssolver/api/runner.py": "8b72c00725964e6d508a90b0a21bed0ed8a4e58034ea4adc3a214585ef11265a",
+    "pssolver/configuration/public_channel_simulation_compiler.py": "6fb5714b44d4a115837d57167f7a2c8457ff41eaea8ffe4abfe0374ab8741dfc",
+    "pssolver/configuration/public_simulation_runner.py": "6ead3e143f1913e076425cc98776abf5ff3ff626d56092718d466f8e51b1acaa"
   },
   "next": {
-    "name": "typed ergonomic presets",
+    "name": "P7.7.10 common runner and public result protocol",
     "authorized": false,
     "phase_8_authorized": false
   }

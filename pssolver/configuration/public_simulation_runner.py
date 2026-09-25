@@ -1,16 +1,21 @@
-"""Fail-closed compilation of the public Simulation declaration.
+"""Fail-closed compilation of the public :class:`Simulation` declaration.
 
-This module connects only the already-qualified complete-stress Plane
-application.  It translates once, before allocation, into the historical
-production RunSpec and proves that the translated declaration retains the
-public model, geometry, boundary, numerical, execution, and workflow intent.
-It neither imports an application runner nor executes a timestep.
+The public API is not a hard-coded model/geometry switch.  A small immutable
+registry selects a qualified application adapter from the equation variant and
+geometry identity.  P7.7.9 contains the two combinations already qualified by
+the migration (Plane complete-stress and Channel active-force); future
+combinations extend the registry without changing :class:`Simulation`.
+
+Selection and translation happen before allocation.  An unregistered pair is
+reported as a structured capability gap rather than being coerced to a nearby
+application or discovered by failure in the timestep.
 """
 
 from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
+from enum import Enum
 import json
 import math
 from types import MappingProxyType
@@ -38,6 +43,13 @@ from pssolver.models.active_nematics.q_tensor import positive_equilibrium_S
 
 
 PUBLIC_PLANE_APPLICATION = "plane_complete_stress_beris_edwards"
+PUBLIC_CHANNEL_APPLICATION = "channel_legacy_active_force_active_nematics"
+
+_PLANE_COMPILER_KEY = ("complete_stress_beris_edwards", "plane_slab")
+_CHANNEL_COMPILER_KEY = (
+    "legacy_active_force_active_nematics",
+    "rectangular_channel",
+)
 
 _INITIAL_KEYS = frozenset(
     {
@@ -77,8 +89,35 @@ _WORKFLOW_KEYS = frozenset(
 _INVOCATION_KEYS = frozenset({"dry_run", "validation_config_sha256"})
 
 
+class PublicCompilationRejectionCode(str, Enum):
+    """Stable reason a public declaration cannot become an application."""
+
+    UNREGISTERED_MODEL_GEOMETRY = "unregistered_model_geometry"
+    APPLICATION_CONTRACT = "application_contract"
+
+
 class PublicSimulationCompilationError(ValueError):
     """Raised before allocation when the public request is not qualified."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        code: PublicCompilationRejectionCode = (
+            PublicCompilationRejectionCode.APPLICATION_CONTRACT
+        ),
+        context: Mapping[str, object] | None = None,
+    ) -> None:
+        self.code = code
+        self.context = _json_mapping({} if context is None else context)
+        super().__init__(f"{code.value}: {message}")
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "code": self.code.value,
+            "message": str(self).split(": ", 1)[-1],
+            "context": dict(self.context),
+        }
 
 
 def _reject(message: str) -> None:
@@ -205,12 +244,17 @@ class PublicSimulationCompilation:
     application_simulation: SimulationSpec
     lowering_plan: object
     construction_plan: object
-    run_spec: PlaneBerisEdwardsRunSpec
+    run_spec: object
     normalization: Mapping[str, object]
 
     def __post_init__(self) -> None:
-        if self.application != PUBLIC_PLANE_APPLICATION:
+        if self.application not in {
+            PUBLIC_PLANE_APPLICATION,
+            PUBLIC_CHANNEL_APPLICATION,
+        }:
             raise ValueError("unsupported public application identity")
+        if not callable(getattr(self.run_spec, "canonical_sha256", None)):
+            raise TypeError("public application request must have stable identity")
         object.__setattr__(self, "normalization", _json_mapping(self.normalization))
 
 
@@ -276,7 +320,7 @@ def _components_from_run_spec(run_spec: PlaneBerisEdwardsRunSpec):
     )
 
 
-def compile_public_simulation(
+def _compile_plane_public_simulation(
     source: SimulationSpec,
 ) -> PublicSimulationCompilation:
     """Compile one public declaration into the qualified Plane application.
@@ -286,12 +330,11 @@ def compile_public_simulation(
     allocation and are never mapped to a nearby runtime.
     """
 
-    if not isinstance(source, SimulationSpec):
-        raise TypeError("source must be a SimulationSpec")
-    if source.equation_system.variant != "complete_stress_beris_edwards":
-        _reject("only the qualified complete-stress Beris-Edwards model is connected")
-    if source.geometry.name != "plane_slab":
-        _reject("only the qualified Plane slab geometry is connected")
+    if (
+        source.equation_system.variant,
+        source.geometry.name,
+    ) != _PLANE_COMPILER_KEY:
+        raise AssertionError("Plane compiler received the wrong registry key")
     if source.execution.backend != "torch_spectral":
         _reject("only the torch_spectral backend is connected")
     if source.execution.runtime_path not in {"legacy_production", "compiled_v2"}:
@@ -437,9 +480,106 @@ def compile_public_simulation(
     )
 
 
+@dataclass(frozen=True, slots=True)
+class PublicApplicationCompilerRegistration:
+    """Tensor-free identity of one qualified public compiler adapter."""
+
+    equation_variant: str
+    geometry_name: str
+    application: str
+    adapter: str
+
+    def to_metadata(self) -> dict[str, str]:
+        return {
+            "equation_variant": self.equation_variant,
+            "geometry_name": self.geometry_name,
+            "application": self.application,
+            "adapter": self.adapter,
+        }
+
+
+_PUBLIC_COMPILER_REGISTRY = MappingProxyType(
+    {
+        _PLANE_COMPILER_KEY: PublicApplicationCompilerRegistration(
+            *_PLANE_COMPILER_KEY,
+            PUBLIC_PLANE_APPLICATION,
+            (
+                "pssolver.configuration.public_simulation_runner."
+                "_compile_plane_public_simulation"
+            ),
+        ),
+        _CHANNEL_COMPILER_KEY: PublicApplicationCompilerRegistration(
+            *_CHANNEL_COMPILER_KEY,
+            PUBLIC_CHANNEL_APPLICATION,
+            (
+                "pssolver.configuration.public_channel_simulation_compiler."
+                "compile_channel_public_simulation"
+            ),
+        ),
+    }
+)
+
+
+def public_compiler_capabilities() -> tuple[dict[str, str], ...]:
+    """Return the immutable set of currently qualified compiler adapters."""
+
+    return tuple(
+        registration.to_metadata()
+        for registration in _PUBLIC_COMPILER_REGISTRY.values()
+    )
+
+
+def compile_public_simulation(
+    source: SimulationSpec,
+) -> PublicSimulationCompilation:
+    """Compile through a qualified model/geometry application adapter.
+
+    The registry is deliberately finite because an executable combination
+    needs a lowering, runtime binding, and scientific qualification.  Its key
+    is not embedded in the public ``Simulation`` shape, so adding a qualified
+    combination does not change that API or add dispatch to the timestep.
+    """
+
+    if not isinstance(source, SimulationSpec):
+        raise TypeError("source must be a SimulationSpec")
+    key = (source.equation_system.variant, source.geometry.name)
+    registration = _PUBLIC_COMPILER_REGISTRY.get(key)
+    if registration is None:
+        raise PublicSimulationCompilationError(
+            "the model/geometry pair has no qualified public compiler adapter",
+            code=(
+                PublicCompilationRejectionCode.UNREGISTERED_MODEL_GEOMETRY
+            ),
+            context={
+                "equation_variant": key[0],
+                "geometry_name": key[1],
+                "required_capabilities": list(
+                    source.equation_system.required_capabilities
+                ),
+                "registered_pairs": [
+                    [candidate[0], candidate[1]]
+                    for candidate in _PUBLIC_COMPILER_REGISTRY
+                ],
+            },
+        )
+    if registration.application == PUBLIC_PLANE_APPLICATION:
+        return _compile_plane_public_simulation(source)
+    if registration.application == PUBLIC_CHANNEL_APPLICATION:
+        from .public_channel_simulation_compiler import (
+            compile_channel_public_simulation,
+        )
+
+        return compile_channel_public_simulation(source)
+    raise AssertionError("registered public compiler was not dispatched")
+
+
 __all__ = [
+    "PUBLIC_CHANNEL_APPLICATION",
     "PUBLIC_PLANE_APPLICATION",
+    "PublicApplicationCompilerRegistration",
+    "PublicCompilationRejectionCode",
     "PublicSimulationCompilation",
     "PublicSimulationCompilationError",
     "compile_public_simulation",
+    "public_compiler_capabilities",
 ]

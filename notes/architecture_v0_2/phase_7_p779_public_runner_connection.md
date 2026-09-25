@@ -1,224 +1,119 @@
-# Phase 7 P7.7.9: public compiler and runner connection
+# Phase 7 P7.7.9: qualified public compiler registry
 
-Status: `P7_7_9_COMPLETE_PHASE_8_NOT_AUTHORIZED`.
+Status: `P7_7_9_COMPLETE_P7_7_10_NOT_STARTED`.
 
-Parent baseline: `0ba42120207c1ae7662a0e913ce4c1f6694fa116` on
+Parent public-declaration baseline:
+`0ba42120207c1ae7662a0e913ce4c1f6694fa116` on
 `next/pssolver-v0.2.0-architecture`.
 
-Classification: `PASS_P7_7_9_PUBLIC_COMPILER_RUNNER_CONNECTION`.
+Classification: `PASS_P7_7_9_TWO_COMBINATION_PUBLIC_COMPILER`.
 
-P7.7.9 connects the typed public `Simulation` declaration to the already
-qualified complete-stress Plane production application. It adds the supported
-root imports:
+P7.7.9 compiles the stable public `Simulation` declaration into one of the
+two application combinations already qualified by the migration:
 
-```python
-from pssolver import CompiledSimulation, compile_simulation, run_simulation
-```
-
-It does not create a second runtime, replace a numerical kernel, add dispatch
-inside the timestep, promote a compiled default, or authorize Phase 8.
+| equation variant | geometry | runtime paths |
+|---|---|---|
+| complete-stress Beris--Edwards | Plane slab | `legacy_production`, `compiled_v2` |
+| legacy active-force active nematics | rectangular Channel | `legacy_channel`, `compiled_channel_v2` |
 
 The machine-readable authority is
 [phase_7_p779_public_runner_connection.json](phase_7_p779_public_runner_connection.json).
 
-## Compile once, run through the existing application
+## Extensibility boundary
 
-`compile_simulation(simulation)` performs the following work before tensor
-allocation:
+The two combinations are entries in an immutable qualified-compiler registry;
+they are not encoded in the public `Simulation` dataclass. A new combination
+is added by supplying:
 
-1. checks that the request is the qualified complete-stress Beris--Edwards
-   model on a Plane slab;
-2. requires the free-slip/Neumann/pressure-compatibility boundary signature;
-3. requires the projected semi-implicit Euler path and a qualified Plane
-   runtime (`legacy_production` or `compiled_v2`);
-4. translates the physical coefficients to the existing fixed-K Plane
-   application parameterization;
-5. requires the initial-condition, execution, refresh, and workflow controls
-   explicitly rather than filling benchmark defaults;
-6. recomposes the application `SimulationSpec` and verifies geometry,
-   boundaries, numerics, integrator, initial condition, execution, and
-   workflow identities;
-7. runs the existing capability lowering and package-construction planning;
-8. returns an immutable `CompiledSimulation` containing the source identity,
-   application request, lowering plan, construction plan, and normalization
-   record.
+1. an equation-system declaration and geometry declaration;
+2. capability lowering and a geometry-solver requirement;
+3. a runtime/package construction binding;
+4. one application compiler adapter that preserves all declared identities;
+5. numerical and performance qualification evidence.
 
-`run_simulation(...)` accepts either the original declaration or the compiled
-product. It imports and calls the existing
-`run_plane_beris_edwards(...)` application exactly once. Runtime selection is
-therefore completed before construction; there is no fallback and no public
-API lookup in the timestep.
+Adding that entry does not change the public `Simulation` fields and does not
+add model/geometry dispatch to the timestep. The public declaration layer can
+represent an unregistered pair today. Compilation then returns the structured
+rejection `unregistered_model_geometry`, including the requested capabilities
+and registered pairs. This is a missing executable capability, not a claim
+that models and geometries are permanently coupled.
 
-## Executable declaration example
+Silently accepting every Cartesian product would be unsafe: different
+topologies require different bases, Stokes solvers, nullspace policies, and
+boundary semantics. Orthogonality means independently owned declarations and
+extensible capability selection; it does not mean every mathematical product
+already has a correct implementation.
 
-The runner intentionally requires the controls that affect reproducibility to
-be present in the declaration:
+## Compile-once contract
 
-```python
-from pssolver import (
-    GeneratedInitialCondition,
-    Output,
-    Simulation,
-    SpectralNumerics,
-    TimeStepping,
-    TorchSpectralExecution,
-    run_simulation,
-)
-from pssolver.boundaries import (
-    assign_boundaries,
-    free_slip_velocity,
-    neumann_pressure_compatibility,
-    neumann_q,
-)
-from pssolver.geometries import PlaneSlab
-from pssolver.models.active_nematics import CompleteStressBerisEdwards
+`compile_simulation(simulation)` performs all application selection before
+allocation and returns an immutable `CompiledSimulation` containing:
 
-model = CompleteStressBerisEdwards(
-    ldg_a=0.0,
-    ldg_b=-0.3,
-    ldg_c=0.3,
-    ldg_l1=1.0 / 81.0,
-    gamma=2.94,
-    flow_alignment=0.3,
-    activity=0.01,
-    beta=-1.0,
-    viscosity=2.0 / 3.0,
-)
-geometry = PlaneSlab(
-    shape=(320, 320, 80),
-    lengths=(100.0, 100.0, 20.0),
-)
-boundaries = assign_boundaries(
-    model=model,
-    geometry=geometry,
-    policies={
-        "Q": neumann_q(),
-        "velocity": free_slip_velocity(),
-        "pressure": neumann_pressure_compatibility(),
-    },
-)
+- source declaration identity;
+- normalized application `SimulationSpec`;
+- capability lowering plan;
+- package-owned construction plan;
+- historical application RunSpec;
+- explicit normalization evidence.
 
-simulation = Simulation(
-    model=model,
-    geometry=geometry,
-    boundaries=boundaries,
-    numerics=SpectralNumerics(
-        dtype="float64",
-        dealias_rule="cubic_half",
-    ),
-    time=TimeStepping(
-        dt=0.005,
-        refresh={"mode": "disabled"},
-    ),
-    initial_condition=GeneratedInitialCondition(
-        "extruded_defect_gas",
-        parameters={
-            "seed": 24,
-            "num_defect_pairs": 6,
-            "defect_min_separation": 10.0,
-            "defect_core_radius": 1.5,
-            "background_angle": 0.0,
-            "twist_amplitude": 0.01,
-            "twist_modes": [1, 2, 3],
-            "initial_s": 1.0 / 3.0,
-        },
-    ),
-    execution=TorchSpectralExecution(
-        runtime_path="compiled_v2",
-        device="cuda",
-        options={
-            "tf32": "off",
-            "molecular_field_linear_space": "spectral",
-            "stress_divergence_sum_space": "spectral",
-            "pointwise_execution": "compile",
-            "disable_q_gradient_reuse": False,
-        },
-    ),
-    output=Output(
-        directory="data/A18",
-        steps=20_000,
-        save_interval=1_000,
-        diagnostic_interval=100,
-    ),
-)
+Both adapters forbid runtime fallback. The Plane adapter performs and audits
+the existing fixed-K coefficient conversion. The Channel adapter is an exact
+rho-parameterized translation and requires every initial-condition, PCG,
+execution, workflow, boundary, and numerical field explicitly; it changes no
+physical value.
 
-result = run_simulation(simulation)
-```
+## Scope correction
 
-The declaration is longer than the aspirational sketch because P7.7.9 does
-not hide initial-state realization parameters, execution policy, pressure
-compatibility, or spectral-refresh behavior. Later typed presets may shorten
-the syntax by expanding their defaults into the immutable declaration before
-compilation.
+Commit `5f545bd` introduced the compiler together with a provisional Plane
+`run_simulation()` connection before the planned phase boundary. This final
+P7.7.9 completion keeps that backward-compatible Plane connection but does not
+expand it. A compiled Channel request intentionally raises a clear P7.7.10
+boundary error if passed to `run_simulation()`.
 
-## Coefficient mapping
+P7.7.10 still owns:
 
-The existing production application is expressed through the Shendruk
-activity-number/fixed-K parameterization. The public model instead declares
-`activity` and `L1` directly. Compilation derives
+- dispatch to both qualified application runners;
+- a common public result protocol;
+- removal of application-specific return types from the public surface.
 
-```text
-q_eq = 3 S_eq / 2
-K = 2 q_eq^2 L1
-A = H sqrt(activity / K)
-```
+No rollback is needed because the provisional Plane call delegates once
+before the timestep and changed no numerical path.
 
-and requests the existing fixed-K application. It then recomposes the model
-and requires the effective activity and L1 to match the public request within
-double-precision roundoff. Requested and effective values are retained in
-`CompiledSimulation.normalization`; a material discrepancy is fatal.
+## Fail-closed behavior
 
-## Fail-closed boundary
+Compilation rejects before allocation when:
 
-P7.7.9 rejects, before allocation:
+- no registered adapter exists for the declared model/geometry pair;
+- the requested runtime is not qualified for that pair;
+- the integrator, boundary signature, topology, initial condition, numerical
+  policy, pressure solver, execution policy, or workflow differs from the
+  adapter contract;
+- runtime fallback is requested;
+- translation changes any declared scientific or operational identity.
 
-- models or geometries without a qualified application connection;
-- Channel, snapshot, SBDF2, separated-canary, and new boundary-physics paths;
-- missing or extra initial-condition, execution, or workflow controls;
-- implicit spectral-refresh behavior;
-- positive-friction or non-zero-mean tangential-flow requests;
-- runtime fallback;
-- any translation that changes a declared geometry, boundary, numerical,
-  execution, workflow, or material identity.
-
-These are unsupported combinations, not requests for a nearby default.
+The rejection is machine-readable. It does not choose a nearby geometry,
+boundary law, model, solver, runtime, or default.
 
 ## Compatibility and performance
 
-The public runner delegates to the existing Plane application with its
-existing `PlaneBerisEdwardsRunSpec`. Runtime construction, fields, transforms,
-operators, workflow, metadata, checkpoint format, output arrays, and timestep
-code are unchanged. Compilation and dispatch occur once before allocation.
-
-No H100 qualification is required for this connection slice because it adds
-no GPU operation, persistent allocation, transform call, kernel, or hot-path
-branch. Existing Plane defaults remain unchanged; selecting `compiled_v2` in
-the public declaration is explicit rather than a promotion.
+P7.7.9 adds no tensor operation, persistent allocation, numerical kernel,
+transform, solver, checkpoint schema, output schema, or hot-path branch.
+Selection and normalization occur once before construction. Existing Plane
+and Channel production defaults remain unchanged, and Phase 8 is not
+authorized by this work.
 
 ## Verification
 
-The P7.7.9 target tests cover successful compilation, coefficient mapping,
-immutable evidence, lazy application dispatch, source dependency boundaries,
-and fail-closed incomplete or unsupported declarations:
-
-```text
-87 passed
-```
-
-An actual public dry-run dispatched through the existing Plane application
-and returned normally without creating an output directory. The complete CPU
-suite passed:
-
-```text
-2159 passed, 8 subtests passed
-```
-
-No test failed, skipped, or was deselected.
+Tests cover both runtimes for both registered application combinations,
+stable construction identities, immutable compilation evidence, lossless
+Channel translation, structured rejection of an unregistered cross-product,
+and the explicit P7.7.10 runner boundary. The exact counts are recorded in the
+machine-readable authority after the final targeted and complete CPU suites.
 
 ## Next boundary
 
-Phase 8 remains unauthorized. A later ergonomic-preset slice may add typed
-initial-condition and execution presets that expand every default into the
-declaration. New boundary physics, additional geometries, additional models,
-and Channel public execution require independent capability and runtime
-qualification.
+The next task is P7.7.10: connect both compiled applications to
+`run_simulation()` and introduce one stable public result protocol. P7.7.11
+then owns CPU byte-identity and restart qualification, followed by the single
+P7.7.12 H100 non-regression closure. Phase 8 remains deferred until those
+steps pass.
