@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.11",
+  "parent_commit": "6bb269f717274a4c5ba864e42779d59610126a41",
+  "classification": "PASS_P7_7_11_CPU_BYTE_IDENTITY_AND_RESTART",
+  "status": "P7_7_11_COMPLETE_P7_7_12_NOT_STARTED",
+  "qualified_cases": [
+    "plane:legacy_production",
+    "plane:compiled_v2",
+    "channel:legacy_channel",
+    "channel:compiled_channel_v2"
+  ],
+  "continuous_oracle_sha256": {
+    "plane:legacy_production": {
+      "Q_2.npy": "b3192685137595092eedf03317c1bc3b622fd79b3736e70765c709321a1f1a70",
+      "u_2.npy": "1bc86b3d2908dd727537b2b204fd74c3b3b1e76a79f95871270fc00efe5bbfe2",
+      "p_2.npy": "771c7fa8f8b324afd1c4b687a5916b88a26319197a9d7def785a90142c0ad24c",
+      "diagnostics.npy": "a4b12af227d506ee32e97c7940852eed6ed51b4429b9aa9bde548ace0ef21334"
+    },
+    "plane:compiled_v2": {
+      "Q_2.npy": "b3192685137595092eedf03317c1bc3b622fd79b3736e70765c709321a1f1a70",
+      "u_2.npy": "1bc86b3d2908dd727537b2b204fd74c3b3b1e76a79f95871270fc00efe5bbfe2",
+      "p_2.npy": "771c7fa8f8b324afd1c4b687a5916b88a26319197a9d7def785a90142c0ad24c",
+      "diagnostics.npy": "a4b12af227d506ee32e97c7940852eed6ed51b4429b9aa9bde548ace0ef21334"
+    },
+    "channel:legacy_channel": {
+      "Q_2.npy": "1e1595e379a92e7de6de82490929146bd4b808df0aa07a8f0a02537436c8bd80",
+      "u_2.npy": "520e3ce9f8bf087b69f2a5be1456c0dad8f0e669c068a2cae8f90652ce1e0624",
+      "p_2.npy": "e4def7a6aa27e80bb00711ae005ca2ae77f72b276f7b0414237289460df2d405",
+      "diagnostics.npy": "42da89bbca04a53e2104da7753990a9878ef7bf9cb44396d7580eb32834ffa76"
+    },
+    "channel:compiled_channel_v2": {
+      "Q_2.npy": "1e1595e379a92e7de6de82490929146bd4b808df0aa07a8f0a02537436c8bd80",
+      "u_2.npy": "520e3ce9f8bf087b69f2a5be1456c0dad8f0e669c068a2cae8f90652ce1e0624",
+      "p_2.npy": "e4def7a6aa27e80bb00711ae005ca2ae77f72b276f7b0414237289460df2d405",
+      "diagnostics.npy": "42da89bbca04a53e2104da7753990a9878ef7bf9cb44396d7580eb32834ffa76"
+    }
+  },
+  "direct_and_public_byte_identity": true,
+  "same_runtime_restart_byte_identity": true,
+  "public_checkpoint_consumed_by_direct_entry": true,
+  "public_checkpoint_consumed_by_public_entry": true,
+  "runtime_fallback_allowed": false,
+  "numerical_kernel_changed": false,
+  "production_default_changed": false,
+  "qualified_source_sha256": {
+    "pssolver/api/results.py": "8ed89056f2c3b53c94d9947fda8fb048ce26a40636f9e732181f5e2f63b262a2",
+    "pssolver/api/runner.py": "ccd06a71a0c5731ca32d54683f4f6220bd67b27a6bba52f433abd372ea8527eb",
+    "pssolver/runtime/plane_legacy.py": "4cc51416927bf544edda7a4a7c07fa415ca3b392d56020e574b8a89bce0eb295"
+  },
+  "verification": {
+    "targeted_passed": 172,
+    "full_passed": 2180,
+    "subtests_passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0
+  },
+  "p7_7_12_complete": false,
+  "h100_required": false,
+  "phase_8_authorized": false,
+  "phase_9_authorized": false,
+  "next": {
+    "name": "P7.7.12 single H100 non-regression closure",
+    "authorized": false
+  }
+}

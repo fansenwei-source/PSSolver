@@ -208,7 +208,13 @@ def test_legacy_runtime_object_graph_preserves_all_resolved_choices(tmp_path):
     assert solver.dtype is torch.float64
     assert solver.transform_backend.execution_order == "legacy"
     assert solver.transform_backend.spectral_storage == "full_complex"
-    assert solver.transform_backend.hermitian_axis == 1
+    # Full-complex storage has no Hermitian truncation axis.  P7.7.11 makes
+    # the allocated backend identity agree with the resolved numerics instead
+    # of retaining the geometrical half-spectrum axis as unused metadata.
+    assert solver.transform_backend.hermitian_axis is None
+    assert solver.transform_backend.hermitian_axis is (
+        spec.numerics.hermitian_axis
+    )
     assert projector.rule == "two_thirds"
     assert projector.transform_execution == "full"
     assert tuple(solver.fields.name_to_idx) == (

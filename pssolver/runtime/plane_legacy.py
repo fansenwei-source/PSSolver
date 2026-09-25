@@ -147,7 +147,7 @@ def build_legacy_plane_runtime(
             numerics.transform_execution_order.value
         ),
         spectral_storage=numerics.spectral_storage.value,
-        hermitian_axis=components.geometry.periodic_axes[-1],
+        hermitian_axis=numerics.hermitian_axis,
     )
     spectral_projector = BasisAwareSpectralProjector(
         solver,
