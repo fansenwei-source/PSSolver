@@ -144,6 +144,8 @@ SOURCE_ORDER = (
     "phase_7_p776_production_connection.json",
     "phase_7_p776_h100_closure.md",
     "phase_7_p776_h100_closure.json",
+    "phase_7_p777_public_simulation_api.md",
+    "phase_7_p777_public_simulation_api.json",
 )
 
 PAGE_WIDTH = 595.276

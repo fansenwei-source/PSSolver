@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.7",
+  "status": "complete",
+  "classification": "PASS_P7_7_7_PUBLIC_SIMULATION_API_CONTRACT",
+  "date": "2026-09-24",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "parent_commit": "a739fbc0cb4c7addce5fab0cf259a65fa7627ad6",
+  "public_root_exports": [
+    "Simulation"
+  ],
+  "simulation_constructor_fields": [
+    "model",
+    "geometry",
+    "boundaries",
+    "numerics",
+    "time",
+    "initial_condition",
+    "execution",
+    "output",
+    "discretization",
+    "invocation"
+  ],
+  "field_ownership": {
+    "model": "equations_parameters_algebraic_requests_diagnostics_initial_condition_families",
+    "geometry": "domain_grid_lengths_axes_topology",
+    "boundaries": "component_face_physical_and_compatibility_laws",
+    "numerics": "precision_dealiasing_transform_intent_spectral_storage",
+    "time": "integrator_timestep_startup_refresh",
+    "initial_condition": "realization_family_source_parameters_seed",
+    "execution": "backend_runtime_device_compile_cache_implementation_policy",
+    "output": "duration_observation_save_checkpoint_restart_output_location",
+    "discretization": "algebraic_solver_and_additional_discretization_controls",
+    "invocation": "non_scientific_invocation_provenance"
+  },
+  "canonical_specification": "pssolver.configuration.simulation.SimulationSpec",
+  "identity_classes": [
+    "scientific",
+    "discretization",
+    "execution",
+    "run"
+  ],
+  "tensor_free": true,
+  "immutable": true,
+  "run_simulation_connected": false,
+  "runtime_construction_connected": false,
+  "convenience_builders_added": false,
+  "new_model_geometry_combination_added": false,
+  "new_boundary_physics_added": false,
+  "numerical_kernel_changed": false,
+  "checkpoint_schema_changed": false,
+  "production_default_changed": false,
+  "compiled_runtime_promoted": false,
+  "phase_8_authorized": false,
+  "phase_9_authorized": false,
+  "import_boundary": {
+    "layer": "api",
+    "allowed_internal_layers": [
+      "api",
+      "configuration",
+      "core",
+      "systems"
+    ],
+    "third_party_runtime_allowed": false
+  },
+  "verification": {
+    "architecture_api_targeted_cpu": "117 passed",
+    "public_root_compatibility_targeted_cpu": "30 passed",
+    "full_cpu": "2137 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "h100_required": false
+  },
+  "next_slice": {
+    "name": "P7.7.8 typed public convenience declarations",
+    "authorized": false
+  },
+  "source_sha256": {
+    "pssolver/api/simulation.py": "3842fca7c61fb7bda2fa760101fa1b5d20a0e9fa768f8cc1b39313dd7d81f3bd",
+    "pssolver/api/__init__.py": "b9101975b594acc34df9a4ed91994239084651e3f171010d50eb5bd25b4e900c",
+    "pssolver/__init__.py": "319d7f0a240dd70051e28c26ede564e8ea5f9037685daa14dd01e9c2ba002d13",
+    "tests/test_phase7_p777_public_simulation_api.py": "e277a210031454b2bbbf977e4602c5017f4fb7a4374d07fd81d1d6eab62dd988",
+    "tests/test_transform_facade_contract.py": "dd6fe74e4f23c3e9d248f0e0f1b1e5da75ab6772b96f00393fe97a473fb8967c"
+  }
+}

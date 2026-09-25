@@ -24,6 +24,7 @@ from .snapshots import (
     representative_ordered_S,
     require_distinct_output_directory,
 )
+from .api import Simulation
 from .transforms import (
     BasisAwareSpectralProjector,
     DEALIAS_RULE_FRACTIONS,
@@ -77,4 +78,5 @@ __all__ = [
     'load_snapshot',
     'representative_ordered_S',
     'require_distinct_output_directory',
+    'Simulation',
 ]
