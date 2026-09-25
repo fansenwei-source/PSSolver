@@ -35,10 +35,21 @@ For each matrix cell the test executes the same declaration through:
 2. `compile_simulation()` followed by public `run_simulation()`.
 
 All saved Q/u/p NPY files, diagnostics NPY and CSV files, and COMPLETE markers
-are byte-for-byte identical. Workflow steps, runtime selection, numerical
-metadata, boundary metadata, final observation arrays, and diagnostic records
-also agree. The final Q/u/p and diagnostics file SHA-256 values are frozen in
-the machine-readable authority rather than being recomputed into the record.
+are byte-for-byte identical within each observed environment. Workflow steps,
+runtime selection, numerical metadata, boundary metadata, final observation
+arrays, and diagnostic records also agree. The final Q/u/p and diagnostics
+file SHA-256 values are frozen as implementation fingerprints for the recorded
+Python/NumPy/PyTorch build.
+
+Those absolute hashes are deliberately enforced only when the complete
+reference-environment identity matches. They are not cross-environment
+numerical tolerances: different supported PyTorch/FFT and NumPy builds can
+produce different raw bytes while both entries remain mutually identical.
+On every environment the mandatory gate remains strict byte identity between
+direct and public runs, between direct and public resumes, and between resumed
+and uninterrupted trajectories. This keeps the connection test fail-closed
+without confusing a software-build fingerprint with a portable physical
+oracle.
 
 ## Same-runtime restart matrix
 

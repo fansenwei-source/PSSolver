@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "phase": "P7.7.12",
-  "status": "LOCAL_QUALIFICATION_SUPPORT_COMPLETE_H100_PENDING",
+  "status": "CPU_ORACLE_RECOVERY_READY_H100_PENDING",
   "classification": "READY_P7_7_12_SINGLE_H100_NON_REGRESSION",
   "branch": "next/pssolver-v0.2.0-architecture",
   "scientific_baseline_commit": "b90467f00f25541eb37e8ba424e40f158447944c",
@@ -83,8 +83,13 @@
     },
     {
       "path": "notes/architecture_v0_2/phase_7_p7711_cpu_equivalence.json",
-      "sha256": "ef9a4b1c6a4c01945ae9e6ad27878f7d8c87e4ceeaaee2a80755a18d1111b475",
+      "sha256": "44299230f62ad3d1433e0e07779ae566ea98a736101df56f01ce6b30efc17a27",
       "role": "public-entry CPU byte identity and same-runtime restart oracle"
+    },
+    {
+      "path": "notes/architecture_v0_2/phase_7_p7712_cpu_oracle_recovery.json",
+      "sha256": "1a513fdcd5d7143e57c59bd398a97f83696085bb9546e27a8b189f2cbae4a012",
+      "role": "environment-scoped absolute fingerprint contract after the zero-submission HPCC CPU stop"
     }
   ],
   "requirements": {
@@ -108,6 +113,13 @@
       "plane:legacy_production:direct",
       "channel:compiled_channel_v2:public_with_checkpoint"
     ]
+  },
+  "cpu_oracle_recovery_verification": {
+    "targeted": "15 passed",
+    "full": "2190 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0
   },
   "tooling_sha256": {
     "benchmarks/run_public_simulation_h100_case.py": "8933751dc9521201d1041f14208b702e840c7b5468503d9d51593f4d8965f723",

@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.12 CPU gate recovery",
+  "status": "LOCAL_RECOVERY_PENDING_HPCC_CPU_AND_H100",
+  "classification": "READY_P7_7_12_ENVIRONMENT_SCOPED_ORACLE_RECOVERY",
+  "failed_target_commit": "b93ad4e82b2baf51c6e83d37f49fff8862ce8910",
+  "failure": {
+    "classification": "cross_environment_absolute_sha_contract_error",
+    "scientific_failure": false,
+    "solver_failure": false,
+    "public_runner_failure": false,
+    "restart_failure": false,
+    "formal_h100_submission_count": 0,
+    "imported_hpcc_report_sha256": "6ab7f445791069921e41f9d03a99381d6541304d635cabda4b6ab3abd95ac524"
+  },
+  "hpcc_cpu_result": {
+    "direct_public_byte_identity": true,
+    "same_runtime_restart_byte_identity": true,
+    "continuous_resume_byte_identity": true,
+    "runtime_fallback_used": false,
+    "absolute_reference_environment_sha_match": false,
+    "full_suite": "2181 passed, 4 failed, 1 skipped, 3 deselected, 8 subtests passed"
+  },
+  "hpcc_observed_fingerprints": {
+    "plane:legacy_production": {
+      "Q_2.npy": "77e9be3ddfc32fa60d4ce48aa1f2fa6fd2d0a5e7cf7e861fed8b1fe938cc5127",
+      "u_2.npy": "8fd668302bfe08aee46fd8a666b14977bec5ddd7e657c457419a7441d5281522",
+      "p_2.npy": "0a0ec35555ff0c311127155b64740afa9c9792161d9e6b983d80dde4be7443b1",
+      "diagnostics.npy": "a2f89471e7ef1f7675d347bae5a59d7f10cbf4dfed53fc3b9bdea71c2a066758"
+    },
+    "plane:compiled_v2": {
+      "Q_2.npy": "77e9be3ddfc32fa60d4ce48aa1f2fa6fd2d0a5e7cf7e861fed8b1fe938cc5127",
+      "u_2.npy": "8fd668302bfe08aee46fd8a666b14977bec5ddd7e657c457419a7441d5281522",
+      "p_2.npy": "0a0ec35555ff0c311127155b64740afa9c9792161d9e6b983d80dde4be7443b1",
+      "diagnostics.npy": "a2f89471e7ef1f7675d347bae5a59d7f10cbf4dfed53fc3b9bdea71c2a066758"
+    },
+    "channel:legacy_channel": {
+      "Q_2.npy": "6afd40f72221d9136b71a0bfd033f138cdec2183ebe574de8ff8e10689fa9c07",
+      "u_2.npy": "403a6852b07a29e6faf88ce385aff1a79d21ecd394ba52dba507994be789d53e",
+      "p_2.npy": "33f02c5f668a71d22c4ee1f4c207547575ca88b7baa7f2b9d26242afa5f6d447",
+      "diagnostics.npy": "2ea3c5f0f1dbef25f230ddce70a511101034de044b23866e4ac3144372d756f0"
+    },
+    "channel:compiled_channel_v2": {
+      "Q_2.npy": "6afd40f72221d9136b71a0bfd033f138cdec2183ebe574de8ff8e10689fa9c07",
+      "u_2.npy": "403a6852b07a29e6faf88ce385aff1a79d21ecd394ba52dba507994be789d53e",
+      "p_2.npy": "33f02c5f668a71d22c4ee1f4c207547575ca88b7baa7f2b9d26242afa5f6d447",
+      "diagnostics.npy": "2ea3c5f0f1dbef25f230ddce70a511101034de044b23866e4ac3144372d756f0"
+    }
+  },
+  "corrected_contract": {
+    "reference_absolute_sha_enforced_only_for_matching_environment": true,
+    "same_environment_direct_public_byte_identity_required": true,
+    "same_environment_continuous_resume_byte_identity_required": true,
+    "same_environment_same_runtime_restart_required": true,
+    "cross_environment_absolute_sha_required": false,
+    "numerical_tolerance_added": false,
+    "scientific_gate_relaxed": false
+  },
+  "local_verification": {
+    "targeted": "15 passed",
+    "full": "2190 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "mismatched_environment_path_tested": true,
+    "matching_environment_tamper_rejected": true
+  },
+  "source_sha256": {
+    "tests/test_phase7_p7711_public_entry_equivalence.py": "594988e583aacd0f16cb83cadec4ef8ffefb038d0e2b9e2d2c3f8b9f1b7ffbcc",
+    "notes/architecture_v0_2/phase_7_p7711_cpu_equivalence.json": "44299230f62ad3d1433e0e07779ae566ea98a736101df56f01ce6b30efc17a27",
+    "notes/architecture_v0_2/phase_7_p7711_cpu_equivalence.md": "5abd47f8d25511434339b769d18709bec02fdb60f0f1cf10ab4b19fea2d413ca"
+  },
+  "scope": {
+    "numerical_kernel_changed": false,
+    "model_changed": false,
+    "boundary_conditions_changed": false,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false,
+    "phase_8_authorized": false,
+    "phase_9_authorized": false
+  }
+}

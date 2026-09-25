@@ -10,6 +10,24 @@
     "channel:legacy_channel",
     "channel:compiled_channel_v2"
   ],
+  "continuous_oracle_contract": {
+    "scope": "implementation_fingerprint_for_matching_environment",
+    "reference_environment": {
+      "byteorder": "little",
+      "numpy_version": "2.4.3",
+      "platform_machine": "x86_64",
+      "platform_system": "Linux",
+      "python_implementation": "CPython",
+      "python_version": "3.12.13",
+      "torch_config_sha256": "3e45b28a670b38f8c5fd303bc77b95082854107759645485b3d20703aea1ae7b",
+      "torch_cuda_runtime": "12.6",
+      "torch_version": "2.6.0"
+    },
+    "same_environment_byte_identity_required": true,
+    "cross_environment_raw_sha_required": false,
+    "cross_environment_gate": "direct_public_and_continuous_resume_byte_identity_within_the_observed_environment",
+    "reason": "Raw FFT and NPY byte hashes are software-build fingerprints, not portable numerical tolerances."
+  },
   "continuous_oracle_sha256": {
     "plane:legacy_production": {
       "Q_2.npy": "b3192685137595092eedf03317c1bc3b622fd79b3736e70765c709321a1f1a70",

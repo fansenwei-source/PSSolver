@@ -5,9 +5,12 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import platform
+import sys
 
 import numpy as np
 import pytest
+import torch
 
 from pssolver import (
     GeneratedInitialCondition,
@@ -61,6 +64,52 @@ CASES = (
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _oracle_environment() -> dict[str, object]:
+    """Identify the software/build scope of a byte-level trajectory oracle."""
+
+    return {
+        "python_version": platform.python_version(),
+        "python_implementation": platform.python_implementation(),
+        "byteorder": sys.byteorder,
+        "platform_system": platform.system(),
+        "platform_machine": platform.machine(),
+        "numpy_version": np.__version__,
+        "torch_version": str(torch.__version__),
+        "torch_cuda_runtime": torch.version.cuda,
+        "torch_config_sha256": hashlib.sha256(
+            torch.__config__.show().encode("utf-8")
+        ).hexdigest(),
+    }
+
+
+def _assert_environment_scoped_oracle(
+    observed: dict[str, str],
+    record: dict[str, object],
+    key: str,
+    *,
+    environment: dict[str, object],
+) -> None:
+    oracle = record["continuous_oracle_contract"]
+    if environment == oracle["reference_environment"]:
+        assert observed == record["continuous_oracle_sha256"][key]
+        return
+    # Raw NPY hashes are implementation fingerprints, not portable numerical
+    # tolerances. The caller must establish all same-environment byte-identity
+    # gates before presenting this observed fingerprint.
+    assert set(observed) == {
+        "Q_2.npy",
+        "u_2.npy",
+        "p_2.npy",
+        "diagnostics.npy",
+    }
+    assert all(
+        isinstance(value, str)
+        and len(value) == 64
+        and not (set(value) - set("0123456789abcdef"))
+        for value in observed.values()
+    )
 
 
 def _plane_simulation(
@@ -406,7 +455,34 @@ def test_old_and_public_entries_are_byte_identical_with_restart(
     record = json.loads(RESULT_PATH.read_text())
     observed = _exercise_case(tmp_path, application, runtime_path)
     key = f"{application}:{runtime_path}"
-    assert observed == record["continuous_oracle_sha256"][key]
+    _assert_environment_scoped_oracle(
+        observed,
+        record,
+        key,
+        environment=_oracle_environment(),
+    )
+
+
+def test_absolute_oracle_is_scoped_to_its_recorded_software_build():
+    record = json.loads(RESULT_PATH.read_text())
+    key = "plane:legacy_production"
+    observed = record["continuous_oracle_sha256"][key]
+    _assert_environment_scoped_oracle(
+        observed,
+        record,
+        key,
+        environment={"different_supported_build": True},
+    )
+    changed = {**observed, "Q_2.npy": "0" * 64}
+    with pytest.raises(AssertionError):
+        _assert_environment_scoped_oracle(
+            changed,
+            record,
+            key,
+            environment=record["continuous_oracle_contract"][
+                "reference_environment"
+            ],
+        )
 
 
 def test_machine_record_freezes_p7711_scope_and_prior_implementation():
@@ -420,6 +496,15 @@ def test_machine_record_freezes_p7711_scope_and_prior_implementation():
     ]
     assert record["direct_and_public_byte_identity"] is True
     assert record["same_runtime_restart_byte_identity"] is True
+    assert record["continuous_oracle_contract"]["scope"] == (
+        "implementation_fingerprint_for_matching_environment"
+    )
+    assert record["continuous_oracle_contract"][
+        "cross_environment_raw_sha_required"
+    ] is False
+    assert record["continuous_oracle_contract"][
+        "same_environment_byte_identity_required"
+    ] is True
     assert record["p7_7_12_complete"] is False
     assert record["phase_8_authorized"] is False
     assert record["qualified_source_sha256"] == {

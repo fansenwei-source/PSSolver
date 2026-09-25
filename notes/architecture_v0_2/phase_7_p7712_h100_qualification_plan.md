@@ -1,11 +1,20 @@
 # Phase 7 P7.7.12: public simulation H100 non-regression plan
 
-Status: `LOCAL_QUALIFICATION_SUPPORT_COMPLETE_H100_PENDING`.
+Status: `CPU_ORACLE_RECOVERY_READY_H100_PENDING`.
 
 P7.7.12 is the final P7.7 closure. Its machine-readable authority is
 [phase_7_p7712_h100_qualification_plan.json](phase_7_p7712_h100_qualification_plan.json).
 The frozen scientific baseline is P7.7.11 commit `b90467f`; this stage adds
 qualification tooling and evidence only.
+
+The first HPCC CPU gate stopped before submitting an H100 job because the
+P7.7.11 test incorrectly treated a desktop software build's raw NPY hashes as
+cross-environment numerical oracles. The recovered contract is documented in
+[phase_7_p7712_cpu_oracle_recovery.json](phase_7_p7712_cpu_oracle_recovery.json):
+absolute fingerprints remain exact for their matching environment, while
+every environment must independently pass strict direct/public and
+continuous/restart byte identity. No numerical tolerance or solver change was
+introduced. The formal H100 submission allowance remains unused.
 
 ## What is being compared
 
