@@ -24,7 +24,15 @@ from .snapshots import (
     representative_ordered_S,
     require_distinct_output_directory,
 )
-from .api import Simulation
+from .api import (
+    GeneratedInitialCondition,
+    Output,
+    Simulation,
+    SnapshotInitialCondition,
+    SpectralNumerics,
+    TimeStepping,
+    TorchSpectralExecution,
+)
 from .transforms import (
     BasisAwareSpectralProjector,
     DEALIAS_RULE_FRACTIONS,
@@ -79,4 +87,10 @@ __all__ = [
     'representative_ordered_S',
     'require_distinct_output_directory',
     'Simulation',
+    'GeneratedInitialCondition',
+    'Output',
+    'SnapshotInitialCondition',
+    'SpectralNumerics',
+    'TimeStepping',
+    'TorchSpectralExecution',
 ]

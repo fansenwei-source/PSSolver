@@ -1,6 +1,7 @@
 """Concrete tensor-product geometry specifications."""
 
-from .tensor_product import PeriodicBox, PlaneSlab, RectangularChannel
+from .public import PlaneSlab
+from .tensor_product import PeriodicBox, RectangularChannel
 
 __all__ = [
     "PeriodicBox",

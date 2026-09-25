@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.8",
+  "status": "complete",
+  "classification": "PASS_P7_7_8_TYPED_PUBLIC_DECLARATIONS",
+  "date": "2026-09-24",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "parent_commit": "65b8fad3f860bc97fe79b60e4f90ee087a18a527",
+  "public_declarations": {
+    "model": [
+      "CompleteStressBerisEdwards"
+    ],
+    "geometry": [
+      "PlaneSlab(shape=..., lengths=...)"
+    ],
+    "boundaries": [
+      "assign_boundaries",
+      "free_slip_velocity",
+      "neumann_pressure_compatibility",
+      "neumann_q"
+    ],
+    "configuration": [
+      "GeneratedInitialCondition",
+      "Output",
+      "SnapshotInitialCondition",
+      "SpectralNumerics",
+      "TimeStepping",
+      "TorchSpectralExecution"
+    ]
+  },
+  "normalization_targets": {
+    "model": "EquationSystemSpec",
+    "geometry": "GeometrySpec",
+    "boundaries": "BoundaryAssignment",
+    "numerics": "NumericsConfig",
+    "time": "TimeIntegrationSpec",
+    "initial_condition": "InitialConditionSpec",
+    "execution": "ExecutionSpec",
+    "output": "WorkflowSpec"
+  },
+  "ownership": {
+    "steps": "output_run_identity",
+    "dt_and_integrator": "time_discretization_identity",
+    "pressure_boundary": "explicit_algebraic_compatibility",
+    "device_and_runtime": "execution_identity"
+  },
+  "scope": {
+    "tensor_free": true,
+    "immutable": true,
+    "run_simulation_connected": false,
+    "runtime_construction_connected": false,
+    "capability_lowering_invoked": false,
+    "new_model_geometry_combination_qualified": false,
+    "new_boundary_physics_added": false,
+    "numerical_kernel_changed": false,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false,
+    "phase_8_authorized": false,
+    "phase_9_authorized": false
+  },
+  "run_simulation_connected": false,
+  "runtime_construction_connected": false,
+  "production_default_changed": false,
+  "phase_8_authorized": false,
+  "verification": {
+    "targeted_cpu": "66 passed",
+    "full_cpu": "2148 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "h100_required": false
+  },
+  "next_slice": {
+    "name": "public compiler and runner connection",
+    "authorized": false
+  },
+  "source_sha256": {
+    "pssolver/api/declarations.py": "96cb502b3c399f94ae9da328295096ee9e637abd06a196f7bdc4355b95c09a43",
+    "pssolver/boundaries/homogeneous.py": "25c436775e3a9efddd1d35e6bc7ff7b020bbb4328404ac45317efe22632e8e0d",
+    "pssolver/models/active_nematics/public.py": "4d430b5cd228a4fd25e3a9a328836babe5a7289db253d22e4ba20139bec436a3",
+    "pssolver/geometries/public.py": "4ab1f049cd632f6306eca93644aefe188bb23a04f46e74e57f00a953f426048d"
+  }
+}
