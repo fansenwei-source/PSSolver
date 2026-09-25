@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "phase": "P7.6",
+  "status": "complete",
+  "classification": "PASS_P7_6_CHANNEL_H100_CLOSURE",
+  "date": "2026-09-23",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "execution_commit": "b8ce70842b6da0fb45aa1558d5e183dac9117990",
+  "imported_report": {
+    "kind": "HPCC final negative-gate and conditional long-run closure report",
+    "sha256": "801c86ddbf0f7ca0312624ca5fa724394e7cf466f8d84a92869382e9de008fa9"
+  },
+  "qualification": {
+    "complete": true,
+    "scientific_failure": false,
+    "runtime_fallback_used": false,
+    "production_default_changed": false,
+    "compiled_channel_v2_promoted": false,
+    "default_runtime": "legacy_channel"
+  },
+  "jobs": [
+    {
+      "job_id": 10839811,
+      "resource": "CPU-only",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "role": "negative checkpoint gates",
+      "automatic_retry": false
+    },
+    {
+      "job_id": 10839820,
+      "resource": "NVIDIA H100 PCIe",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "role": "matched 1000-step Channel long-run closure",
+      "formal_h100_submission_count": 1,
+      "automatic_retry": false
+    }
+  ],
+  "negative_gates": {
+    "classification": "PASS_P7_6_CHANNEL_NEGATIVE_GATES",
+    "subgates_passed": 8,
+    "subgates_total": 8,
+    "cross_runtime_legacy_to_compiled_rejected": true,
+    "cross_runtime_compiled_to_legacy_rejected": true,
+    "tensor_raw_byte_tamper_rejected": true,
+    "runtime_path_tamper_rejected": true,
+    "runtime_identity_tamper_rejected": true,
+    "backend_contract_tamper_rejected": true,
+    "file_record_shape_tamper_rejected": true,
+    "checksum_metadata_tamper_rejected": true,
+    "all_rejected_before_target_mutation": true
+  },
+  "long_run": {
+    "shape": [512, 40, 40],
+    "lengths": [128.0, 10.0, 10.0],
+    "dtype": "float32",
+    "dt": 0.01,
+    "activity": 5.0,
+    "seed": 24,
+    "steps": 1000,
+    "save_interval": 100,
+    "diagnostic_interval": 10,
+    "runtimes": ["legacy_channel", "compiled_channel_v2"],
+    "initial_q_sha256": "fcfc2f55cbdeed1d28b68ee308ab1b1b3837ab88a8f2cec2c5a1c56de6705cf9",
+    "paired_frame_count": 10,
+    "paired_array_count": 30,
+    "q_u_p_byte_identical": "30/30",
+    "diagnostic_count": 101,
+    "diagnostics_byte_identical": true,
+    "diagnostics_sha256": "3af133bb6cd20426fca110444aca40ba409816d705710a7deb6a3755615564ac",
+    "pressure_zero_mean_gauge": "PASS",
+    "all_arrays_finite": true
+  },
+  "archive_evidence": [
+    {
+      "control_directory": "/home/fansenwei/pssolver_phase7_p76_channel_h100_recovery_b8ce708_20260923_v1",
+      "entries": 243,
+      "verified": "243/243 PASS",
+      "manifest_sha256": "7495f3d05f5aaeb64fe991b43ea346122cd9680dd3150291cea4cbf88a54bd3d",
+      "complete_marker": false
+    },
+    {
+      "control_directory": "/home/fansenwei/pssolver_phase7_p76_final_recovery_b8ce708_20260923_v1",
+      "entries": 39,
+      "verified": "39/39 PASS",
+      "manifest_sha256": "d4b4e44f979a1a8dffec089006f33c45d2d92632850013d4028375aaac1fe5af",
+      "complete_marker": false
+    },
+    {
+      "control_directory": "/home/fansenwei/pssolver_phase7_p76_negative_gate_recovery_v2_b8ce708_20260923",
+      "entries": 34,
+      "verified": "34/34 PASS",
+      "manifest_sha256": "c0679324a8fafbff0e78c48d9314ed629fdb8f3c65bc5de0ff487a87d2d631aa",
+      "complete_marker": true
+    },
+    {
+      "control_directory": "/home/fansenwei/pssolver_phase7_p76_long_run_closure_b8ce708_20260923",
+      "entries": 38,
+      "verified": "38/38 PASS",
+      "manifest_sha256": "0a84c76dbcde46722279e97edc6fb86a43de36e0f71ac611875ddb353ca72afe",
+      "complete_marker": true
+    }
+  ],
+  "claims": {
+    "channel_architecture_equivalence_established": true,
+    "physical_stationarity_established": false,
+    "new_boundary_physics_established": false,
+    "arbitrary_model_geometry_combinations_established": false
+  },
+  "eligibility": {
+    "p7_6_complete": true,
+    "phase_7_channel_migration_complete": true,
+    "eligible_for_phase_8_planning": true,
+    "phase_8_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false,
+    "compiled_channel_v2_promoted": false
+  }
+}

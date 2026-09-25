@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.12",
+  "status": "complete",
+  "classification": "PASS_P7_7_12_H100_EVIDENCE_WITH_ATTRIBUTION_CORRECT_RECOVERY",
+  "date": "2026-09-25",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "recovery_analyzer_commit": "e9f2cbef22addb70508a48499e32e8ab4bb1d510",
+  "h100_report_commit": "d577f4875d2c8a8b515183211f00fd7f06dadb33",
+  "imported_report": {
+    "kind": "HPCC CPU-only attribution-correct recovery report",
+    "sha256": "ddc0af086b0fd4ecd2ab458f5cd36bd47d757748cc413a929f1cd6b29350968e"
+  },
+  "execution": {
+    "reused_h100_job_id": 10841437,
+    "reused_h100_job_state": "FAILED",
+    "reused_h100_job_exit_code": "1:0",
+    "reused_job_failure_kind": "original analyzer contract rejection",
+    "new_slurm_jobs": 0,
+    "new_h100_submissions": 0,
+    "simulation_commands_started": 0,
+    "q_u_p_arrays_opened": 0,
+    "automatic_retry": false,
+    "solver_failure": false,
+    "scientific_failure": false
+  },
+  "cpu": {
+    "targeted": "13 passed",
+    "full": "2190 passed, 1 skipped, 3 deselected, 8 subtests passed",
+    "failed": 0,
+    "allowed_skip": "optional nematics3d dependency"
+  },
+  "input_evidence": {
+    "report_count": 36,
+    "unique_report_keys": 36,
+    "public_report_count": 20,
+    "input_copy_identity": "36/36 byte-for-byte",
+    "old_manifest_entries": 568,
+    "old_manifest_verification_before": "568/568 PASS",
+    "old_manifest_verification_after": "568/568 PASS",
+    "old_manifest_sha256": "4152252b4df135903303a1fd8a8bbeaa53e627acd83fdb58605daa0e01c2ce13"
+  },
+  "public_timestep_attribution": {
+    "public_timestep_loop_count": 0,
+    "application_invoke_count": 1,
+    "public_result_wrap_count": 1,
+    "application_elapsed_timer_passed_through": true,
+    "public_wrapper_inside_application_timer": false,
+    "independent_60_step_ratios": "diagnostic_only_not_attributable_to_public_wrapper",
+    "authoritative_runtime_performance_evidence": "P7.7.6"
+  },
+  "performance_observations": {
+    "channel_compiled_r128": {
+      "ratios": [1.2248022158866299, 1.164509696355708, 0.9849810251580139],
+      "mean": 1.1247643124667839,
+      "median": 1.164509696355708,
+      "peak_allocated_ratio": 1.0,
+      "peak_reserved_ratio": 1.0
+    },
+    "channel_legacy_r128": {
+      "ratios": [0.9784685471375231, 0.9775382094087554, 0.9924454190052893],
+      "mean": 0.9828173918505225,
+      "median": 0.9784685471375231,
+      "peak_allocated_ratio": 1.0,
+      "peak_reserved_ratio": 1.0
+    },
+    "plane_compiled_r128": {
+      "ratios": [1.0023926485159527, 1.001884525883025, 1.0142471319949462],
+      "mean": 1.0061747687979745,
+      "median": 1.0023926485159527,
+      "peak_allocated_ratio": 1.0,
+      "peak_reserved_ratio": 1.0
+    },
+    "plane_legacy_r128": {
+      "ratios": [0.8357493618361393, 1.0076952994387134, 0.9229619890472659],
+      "mean": 0.9221355501073729,
+      "median": 0.9229619890472659,
+      "peak_allocated_ratio": 1.0,
+      "peak_reserved_ratio": 1.0
+    }
+  },
+  "numerical_equivalence": {
+    "direct_public_scientific_artifacts": "byte-for-byte",
+    "direct_public_resume_artifacts": "byte-for-byte",
+    "continuous_resume_q_u_p_complete": "byte-for-byte",
+    "diagnostics_policy": "compare common physical step rather than unequal histories",
+    "common_final_step": 60,
+    "common_final_diagnostics_byte_identical": true,
+    "diagnostic_record_sha256": {
+      "channel_compiled_r128": "735dc58d9f0eafca38accc458d50b6132b05f15acbbb747c3724ecfec7be9497",
+      "channel_legacy_r128": "735dc58d9f0eafca38accc458d50b6132b05f15acbbb747c3724ecfec7be9497",
+      "plane_compiled_r128": "19551752005e1b8539a70534ecf370a2fdd38516e22b28f047bc4614c9b53331",
+      "plane_legacy_r128": "19551752005e1b8539a70534ecf370a2fdd38516e22b28f047bc4614c9b53331"
+    }
+  },
+  "recovery_archive": {
+    "control_directory": "/home/fansenwei/pssolver_phase7_p7712_evidence_recovery_e9f2cbe_20260925_v1",
+    "manifest_entries": 55,
+    "manifest_verification": "55/55 PASS",
+    "manifest_sha256": "761d74bf213088b72fc1819820e9366b24134d73e8f27a3631a51b64c61cf8ed",
+    "complete_marker": true,
+    "complete_sha256": "f3224605dd584e04dd3bd54c67d4b67e81bd40aaedcecc9fef7422de5e3bc908"
+  },
+  "qualification": {
+    "complete": true,
+    "p7_7_12_complete": true,
+    "p7_7_complete": true,
+    "eligible_for_phase_8_planning": true,
+    "phase_8_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false
+  }
+}

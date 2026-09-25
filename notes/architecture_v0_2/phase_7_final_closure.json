@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "phase": "Phase 7",
+  "status": "complete",
+  "classification": "PASS_PHASE7_CHANNEL_AND_PUBLIC_SIMULATION_ARCHITECTURE_CLOSURE",
+  "date": "2026-09-25",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "closing_commit_before_record": "e9f2cbef22addb70508a48499e32e8ab4bb1d510",
+  "prerequisite": {
+    "phase_6_classification": "PASS_PHASE6_LONG_RUN_BYTE_IDENTICAL",
+    "phase_6_complete": true,
+    "phase_6_closure_sha256": "bd45660a7a2627d9d17713a7443b863330cf39bab3c029cb9b10137af7a5e045"
+  },
+  "closure_chain": [
+    {
+      "scope": "Channel migration and architecture equivalence",
+      "phase": "P7.6",
+      "classification": "PASS_P7_6_CHANNEL_H100_CLOSURE",
+      "record": "notes/architecture_v0_2/phase_7_p76_h100_closure.json",
+      "record_sha256": "d7d79841ac485754fea478a0c2da3af9c3ae554948e7c8eacadd54a33ea84e6d",
+      "complete": true
+    },
+    {
+      "scope": "package-owned production application construction",
+      "phase": "P7.7.6",
+      "classification": "PASS_P7_7_6_PRODUCTION_CONNECTION_H100_NON_REGRESSION_WITH_TARGETED_ADJUDICATION_AND_FINAL_CPU_GUARD_RECOVERY",
+      "record": "notes/architecture_v0_2/phase_7_p776_h100_closure.json",
+      "record_sha256": "0368fef23c1e90ee499ba6325e83988572240ccdaf659c1c597372be4e554173",
+      "complete": true
+    },
+    {
+      "scope": "public Simulation API and direct/public execution equivalence",
+      "phase": "P7.7.12",
+      "classification": "PASS_P7_7_12_H100_EVIDENCE_WITH_ATTRIBUTION_CORRECT_RECOVERY",
+      "record": "notes/architecture_v0_2/phase_7_p7712_h100_closure.json",
+      "record_sha256": "016737345444c6fdf008b1e7336e0f47bab899bd4c464a0394e058f33f77d5a3",
+      "complete": true
+    }
+  ],
+  "architecture_outcome": {
+    "tensor_free_public_simulation_declaration": true,
+    "model_geometry_boundary_composition_seam": true,
+    "compile_before_allocation": true,
+    "application_dispatch_before_timestep": true,
+    "application_dispatch_in_timestep": false,
+    "package_owned_runtime_construction": true,
+    "stable_public_result_protocol": true,
+    "runtime_fallback_allowed": false,
+    "checkpoint_identity_fail_closed": true,
+    "plane_and_channel_independently_qualified": true
+  },
+  "qualified_applications": [
+    {
+      "application": "plane_complete_stress_beris_edwards",
+      "equation_variant": "complete_stress_beris_edwards",
+      "geometry": "plane_slab",
+      "runtime_paths": ["legacy_production", "compiled_v2"]
+    },
+    {
+      "application": "channel_legacy_active_force_active_nematics",
+      "equation_variant": "legacy_active_force_active_nematics",
+      "geometry": "rectangular_channel",
+      "runtime_paths": ["legacy_channel", "compiled_channel_v2"]
+    }
+  ],
+  "public_api": {
+    "declaration": "Simulation",
+    "compiler": "compile_simulation",
+    "runner": "run_simulation",
+    "result": "SimulationResult",
+    "unregistered_pair_behavior": "structured capability gap",
+    "declaration_of_unregistered_pair_allowed": true,
+    "execution_of_unqualified_pair_allowed": false
+  },
+  "compatibility": {
+    "plane_default": "legacy_production",
+    "channel_default": "legacy_channel",
+    "compiled_plane_promoted": false,
+    "compiled_channel_promoted": false,
+    "production_default_changed": false,
+    "numerical_kernel_changed_by_closure": false,
+    "checkpoint_schema_changed_by_closure": false
+  },
+  "non_claims": {
+    "arbitrary_model_geometry_pair_execution": false,
+    "new_boundary_physics": false,
+    "strong_anchoring": false,
+    "nonhomogeneous_boundary_lifting": false,
+    "physical_stationarity": false,
+    "optimal_control": false,
+    "phase_8_implementation": false,
+    "phase_9_implementation": false
+  },
+  "local_closure_verification": {
+    "targeted": "15 passed",
+    "full": "2199 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "pdf_regenerated": false
+  },
+  "eligibility": {
+    "qualification_complete": true,
+    "phase_7_complete": true,
+    "p7_7_complete": true,
+    "eligible_for_phase_8_planning": true,
+    "phase_8_authorized": false,
+    "phase_9_authorized": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}
