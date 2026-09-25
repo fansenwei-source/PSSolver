@@ -259,6 +259,9 @@ def test_transform_constants_retain_exact_values_and_root_identity():
         "SpectralNumerics",
         "TimeStepping",
         "TorchSpectralExecution",
+        "CompiledSimulation",
+        "compile_simulation",
+        "run_simulation",
     )
     assert transforms.DEFAULT_DEALIAS_RULE == "cubic_half"
     assert transforms.DEFAULT_TRANSFORM_EXECUTION_ORDER == "real_first"

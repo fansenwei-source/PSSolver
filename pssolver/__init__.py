@@ -25,6 +25,7 @@ from .snapshots import (
     require_distinct_output_directory,
 )
 from .api import (
+    CompiledSimulation,
     GeneratedInitialCondition,
     Output,
     Simulation,
@@ -32,6 +33,8 @@ from .api import (
     SpectralNumerics,
     TimeStepping,
     TorchSpectralExecution,
+    compile_simulation,
+    run_simulation,
 )
 from .transforms import (
     BasisAwareSpectralProjector,
@@ -93,4 +96,7 @@ __all__ = [
     'SpectralNumerics',
     'TimeStepping',
     'TorchSpectralExecution',
+    'CompiledSimulation',
+    'compile_simulation',
+    'run_simulation',
 ]

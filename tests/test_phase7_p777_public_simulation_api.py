@@ -81,14 +81,12 @@ def _identity_hashes(value: Simulation) -> dict[str, str]:
     }
 
 
-def test_public_root_exports_only_the_declaration_in_this_slice():
+def test_public_root_retains_the_p777_declaration_identity():
     from pssolver.api import Simulation as ApiSimulation
 
     assert Simulation is ApiSimulation
     assert pssolver.Simulation is Simulation
     assert "Simulation" in pssolver.__all__
-    assert "run_simulation" not in pssolver.__all__
-    assert not hasattr(pssolver, "run_simulation")
 
 
 def test_constructor_signature_freezes_field_ownership_and_order():

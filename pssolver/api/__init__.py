@@ -9,13 +9,17 @@ from .declarations import (
     TorchSpectralExecution,
 )
 from .simulation import Simulation
+from .runner import CompiledSimulation, compile_simulation, run_simulation
 
 __all__ = [
     "GeneratedInitialCondition",
+    "CompiledSimulation",
     "Output",
     "Simulation",
     "SnapshotInitialCondition",
     "SpectralNumerics",
     "TimeStepping",
     "TorchSpectralExecution",
+    "compile_simulation",
+    "run_simulation",
 ]

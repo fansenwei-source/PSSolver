@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.9",
+  "parent_commit": "0ba42120207c1ae7662a0e913ce4c1f6694fa116",
+  "classification": "PASS_P7_7_9_PUBLIC_COMPILER_RUNNER_CONNECTION",
+  "status": "P7_7_9_COMPLETE_PHASE_8_NOT_AUTHORIZED",
+  "public_exports": [
+    "CompiledSimulation",
+    "compile_simulation",
+    "run_simulation"
+  ],
+  "qualified_applications": [
+    "plane_complete_stress_beris_edwards"
+  ],
+  "qualified_runtime_paths": [
+    "legacy_production",
+    "compiled_v2"
+  ],
+  "compile_before_allocation": true,
+  "run_simulation_connected": true,
+  "runtime_construction_connected": true,
+  "runtime_fallback_allowed": false,
+  "application_dispatch_in_timestep": false,
+  "public_defaults_inferred_during_compilation": false,
+  "coefficient_translation": {
+    "parameterization": "fixed-k",
+    "formula": "K=2*q_eq^2*L1; A=H*sqrt(activity/K)",
+    "roundoff_checked": true,
+    "requested_and_effective_values_recorded": true
+  },
+  "explicit_inputs_required": {
+    "initial_condition": true,
+    "execution_policy": true,
+    "spectral_refresh": true,
+    "workflow": true,
+    "pressure_compatibility": true
+  },
+  "unsupported_fail_closed": [
+    "unqualified_model_or_geometry",
+    "channel_public_execution",
+    "snapshot_initial_condition",
+    "sbdf2",
+    "separated_canary",
+    "new_boundary_physics",
+    "implicit_refresh",
+    "runtime_fallback"
+  ],
+  "production_default_changed": false,
+  "numerical_kernel_changed": false,
+  "hot_path_changed": false,
+  "checkpoint_schema_changed": false,
+  "output_schema_changed": false,
+  "phase_8_authorized": false,
+  "phase_9_authorized": false,
+  "h100_required": false,
+  "verification": {
+    "targeted_passed": 87,
+    "public_dry_run_dispatch": "passed",
+    "full_passed": 2159,
+    "subtests_passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0
+  },
+  "source_sha256": {
+    "pssolver/api/runner.py": "fa0eca3241721584366cafdd0aac85b3c7361f02fb8cfd37a547721d040dc3a3",
+    "pssolver/configuration/public_simulation_runner.py": "72f6916cf1a74fe8d9e1a07adc93364e110f2036b2fcfcad835bc7ee50ee3796"
+  },
+  "next": {
+    "name": "typed ergonomic presets",
+    "authorized": false,
+    "phase_8_authorized": false
+  }
+}

@@ -148,6 +148,8 @@ SOURCE_ORDER = (
     "phase_7_p777_public_simulation_api.json",
     "phase_7_p778_typed_public_declarations.md",
     "phase_7_p778_typed_public_declarations.json",
+    "phase_7_p779_public_runner_connection.md",
+    "phase_7_p779_public_runner_connection.json",
 )
 
 PAGE_WIDTH = 595.276

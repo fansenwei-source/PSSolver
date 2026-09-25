@@ -324,7 +324,7 @@ def test_new_public_declaration_modules_are_tensor_and_runtime_free():
         }, relative
 
 
-def test_public_exports_add_declarations_but_not_execution():
+def test_public_exports_retain_p778_declarations_after_runner_connection():
     expected = {
         "GeneratedInitialCondition",
         "Output",
@@ -335,8 +335,8 @@ def test_public_exports_add_declarations_but_not_execution():
         "TorchSpectralExecution",
     }
     assert expected <= set(pssolver.__all__)
-    assert "run_simulation" not in pssolver.__all__
-    assert not hasattr(pssolver, "run_simulation")
+    assert "run_simulation" in pssolver.__all__
+    assert callable(pssolver.run_simulation)
 
 
 def test_machine_record_binds_scope_and_reviewed_sources():
