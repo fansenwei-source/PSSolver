@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.12",
+  "status": "LOCAL_QUALIFICATION_SUPPORT_COMPLETE_H100_PENDING",
+  "classification": "READY_P7_7_12_SINGLE_H100_NON_REGRESSION",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "scientific_baseline_commit": "b90467f00f25541eb37e8ba424e40f158447944c",
+  "comparison": "existing_application_entry_vs_public_run_simulation",
+  "cases": [
+    {
+      "case_id": "plane_legacy_r128",
+      "application": "plane",
+      "runtime_path": "legacy_production",
+      "shape": [128, 128, 32],
+      "lengths": [100.0, 100.0, 20.0],
+      "dt": 0.005,
+      "dtype": "float64",
+      "spectral_storage": "hermitian_half"
+    },
+    {
+      "case_id": "plane_compiled_r128",
+      "application": "plane",
+      "runtime_path": "compiled_v2",
+      "shape": [128, 128, 32],
+      "lengths": [100.0, 100.0, 20.0],
+      "dt": 0.005,
+      "dtype": "float64",
+      "spectral_storage": "hermitian_half"
+    },
+    {
+      "case_id": "channel_legacy_r128",
+      "application": "channel",
+      "runtime_path": "legacy_channel",
+      "shape": [128, 20, 20],
+      "lengths": [32.0, 5.0, 5.0],
+      "dt": 0.01,
+      "dtype": "float32",
+      "spectral_storage": "full_complex"
+    },
+    {
+      "case_id": "channel_compiled_r128",
+      "application": "channel",
+      "runtime_path": "compiled_channel_v2",
+      "shape": [128, 20, 20],
+      "lengths": [32.0, 5.0, 5.0],
+      "dt": 0.01,
+      "dtype": "float32",
+      "spectral_storage": "full_complex"
+    }
+  ],
+  "performance": {
+    "trials": 3,
+    "steps": 60,
+    "balanced_entry_order": [
+      ["direct", "public"],
+      ["public", "direct"],
+      ["direct", "public"]
+    ],
+    "public_over_direct_mean_timestep_ratio_max": 1.05,
+    "public_over_direct_median_timestep_ratio_max": 1.05,
+    "public_over_direct_peak_allocated_ratio_max": 1.01,
+    "public_over_direct_peak_reserved_ratio_max": 1.01
+  },
+  "restart": {
+    "continuous_steps": 60,
+    "segment_steps": 30,
+    "resume_steps": 30,
+    "checkpoint_entry": "public",
+    "resume_entries": ["direct", "public"],
+    "same_runtime_only": true,
+    "required_final_artifact_identity": "byte_for_byte"
+  },
+  "cuda_only_tests": [
+    "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+    "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+    "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite"
+  ],
+  "reused_evidence": [
+    {
+      "path": "notes/architecture_v0_2/phase_7_p776_h100_closure.json",
+      "sha256": "0368fef23c1e90ee499ba6325e83988572240ccdaf659c1c597372be4e554173",
+      "role": "large-grid production-entry CUDA, performance, restart, and negative-gate closure"
+    },
+    {
+      "path": "notes/architecture_v0_2/phase_7_p7711_cpu_equivalence.json",
+      "sha256": "ef9a4b1c6a4c01945ae9e6ad27878f7d8c87e4ceeaaee2a80755a18d1111b475",
+      "role": "public-entry CPU byte identity and same-runtime restart oracle"
+    }
+  ],
+  "requirements": {
+    "device_name": "NVIDIA H100 PCIe",
+    "cuda_visible_device_count": 1,
+    "tf32": false,
+    "runtime_fallback_used": false,
+    "finite_outputs": true,
+    "report_count": 36,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "worktree_clean_before_and_after": true
+  },
+  "local_verification": {
+    "targeted": "14 passed",
+    "full": "2189 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "real_cpu_smoke": [
+      "plane:legacy_production:direct",
+      "channel:compiled_channel_v2:public_with_checkpoint"
+    ]
+  },
+  "tooling_sha256": {
+    "benchmarks/run_public_simulation_h100_case.py": "8933751dc9521201d1041f14208b702e840c7b5468503d9d51593f4d8965f723",
+    "benchmarks/analyze_public_simulation_h100_qualification.py": "c8c6a22ee423322a0fdcf6213e245d18d887f32f7f6ad9cec8f4bc05c40bb8e0",
+    "tests/test_phase7_p7712_h100_qualification.py": "cfe40e69bdd4526953b8ad63933df58f303932b22e9f7e465db706d80399b798"
+  },
+  "scope": {
+    "numerical_kernel_changed": false,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false,
+    "phase_8_authorized": false,
+    "phase_9_authorized": false
+  }
+}
