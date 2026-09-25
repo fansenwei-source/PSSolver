@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.12",
+  "status": "READY_CPU_ONLY_EVIDENCE_RECOVERY",
+  "classification": "P7_7_12_RECOVERY_CONTRACT_FROZEN",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "input_commit": "d577f4875d2c8a8b515183211f00fd7f06dadb33",
+  "input_h100_evidence": {
+    "job_id": 10841437,
+    "control_directory": "/home/fansenwei/pssolver_phase7_p7712_h100_d577f48_20260925_v1",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_phase7_p7712_h100_d577f48_20260925_v1",
+    "report_count": 36,
+    "checksum_entries": 568,
+    "checksum_verification": "568/568 PASS",
+    "manifest_sha256": "4152252b4df135903303a1fd8a8bbeaa53e627acd83fdb58605daa0e01c2ce13",
+    "scientific_outputs_finite": true,
+    "direct_public_q_u_p_identity": "byte_for_byte",
+    "direct_public_resume_identity": "byte_for_byte",
+    "continuous_resume_q_u_p_identity": "byte_for_byte",
+    "runtime_fallback_used": false
+  },
+  "original_stops": {
+    "performance": {
+      "cell": "channel_compiled_r128",
+      "mean_ratio": 1.124764,
+      "median_ratio": 1.16451,
+      "reason_not_attributable": "run_simulation public dispatch and result wrapping are outside the application workflow elapsed timer"
+    },
+    "restart": {
+      "q_u_p_identity": "byte_for_byte",
+      "diagnostics_file_identity": false,
+      "reason_not_scientific_drift": "continuous and resumed workflows contain different diagnostic histories; checkpoints do not reconstruct prior diagnostic records"
+    }
+  },
+  "corrected_performance_contract": {
+    "public_timestep_boundary_static_audit_required": true,
+    "application_elapsed_timer_passthrough_required": true,
+    "all_direct_public_scientific_artifacts_byte_identical": true,
+    "peak_allocated_ratio_max": 1.01,
+    "peak_reserved_ratio_max": 1.01,
+    "authoritative_runtime_performance_evidence": "notes/architecture_v0_2/phase_7_p776_h100_closure.json",
+    "independent_60_step_elapsed_ratios": "diagnostic_only_not_attributable_to_public_wrapper"
+  },
+  "corrected_restart_contract": {
+    "direct_public_resumed_artifacts_byte_identical": true,
+    "continuous_resumed_q_u_p_complete_byte_identical": true,
+    "diagnostics_comparison": "byte_identity_at_common_final_physical_step",
+    "full_diagnostic_history_identity_required": false,
+    "full_history_reason": "diagnostic history is an observation schedule product and is not checkpoint state"
+  },
+  "recovery_execution": {
+    "resource": "CPU-only analysis",
+    "new_h100_job_authorized": false,
+    "simulation_rerun_authorized": false,
+    "reuse_original_reports_and_outputs": true,
+    "automatic_retry": false,
+    "write_new_control_directory": true,
+    "modify_original_control_or_scratch": false
+  },
+  "scope": {
+    "solver_source_changed": false,
+    "numerical_kernel_changed": false,
+    "checkpoint_schema_changed": false,
+    "boundary_condition_changed": false,
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false,
+    "phase_8_authorized": false,
+    "phase_9_authorized": false
+  },
+  "tooling": {
+    "analyzer": "benchmarks/recover_public_simulation_h100_qualification.py",
+    "tests": "tests/test_phase7_p7712_h100_recovery.py",
+    "frozen_plan": "notes/architecture_v0_2/phase_7_p7712_h100_qualification_plan.json"
+  }
+}
