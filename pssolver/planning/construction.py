@@ -42,6 +42,7 @@ class RuntimeConstructionKind(str, Enum):
     PLANE_COMPILED_V2 = "plane_compiled_v2"
     CHANNEL_LEGACY = "channel_legacy"
     CHANNEL_COMPILED_V2 = "channel_compiled_v2"
+    PERIODIC_COMPLETE_STRESS = "periodic_complete_stress"
 
 
 class BuilderProvision(str, Enum):

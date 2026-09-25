@@ -22,6 +22,12 @@ from .channel_active_nematics import (
     LegacyChannelRuntimeAdapter,
     build_channel_active_nematic_runtime,
 )
+from .periodic_beris_edwards import (
+    PeriodicRuntimeAdapter,
+    PeriodicRuntimeAdapterProtocol,
+    PeriodicRuntimeBuildRequest,
+    build_periodic_beris_edwards_runtime,
+)
 
 __all__ = [
     "LegacyPlaneRuntimeAdapter",
@@ -36,4 +42,8 @@ __all__ = [
     "ChannelRuntimeBuildRequest",
     "LegacyChannelRuntimeAdapter",
     "build_channel_active_nematic_runtime",
+    "PeriodicRuntimeAdapter",
+    "PeriodicRuntimeAdapterProtocol",
+    "PeriodicRuntimeBuildRequest",
+    "build_periodic_beris_edwards_runtime",
 ]

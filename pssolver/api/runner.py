@@ -120,6 +120,24 @@ def _run_channel_application(
     return result, output
 
 
+def _run_periodic_application(
+    compiled: CompiledSimulation,
+    progress: Iterable[int] | None,
+    emit_metadata: bool,
+) -> tuple[object | None, str | Path | None]:
+    from pssolver.applications.periodic_beris_edwards import (
+        run_periodic_beris_edwards,
+    )
+
+    result = run_periodic_beris_edwards(
+        compiled.application_request,
+        progress=progress,
+        emit_metadata=emit_metadata,
+    )
+    output = None if result is None else compiled.application_request.output_dir
+    return result, output
+
+
 _PUBLIC_APPLICATION_RUNNERS = MappingProxyType(
     {
         "plane_complete_stress_beris_edwards": (
@@ -140,6 +158,16 @@ _PUBLIC_APPLICATION_RUNNERS = MappingProxyType(
                     "run_channel_active_nematics"
                 ),
                 _run_channel_application,
+            )
+        ),
+        "periodic_complete_stress_beris_edwards": (
+            _PublicApplicationRunnerRegistration(
+                "periodic_complete_stress_beris_edwards",
+                (
+                    "pssolver.applications.periodic_beris_edwards."
+                    "run_periodic_beris_edwards"
+                ),
+                _run_periodic_application,
             )
         ),
     }
@@ -182,7 +210,10 @@ def _public_result(
     if application_result is None:
         if (
             compiled.application
-            != "plane_complete_stress_beris_edwards"
+            not in {
+                "plane_complete_stress_beris_edwards",
+                "periodic_complete_stress_beris_edwards",
+            }
             or compiled.application_request.dry_run is not True
         ):
             raise RuntimeError(

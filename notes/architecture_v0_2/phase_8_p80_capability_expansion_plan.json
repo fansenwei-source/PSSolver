@@ -1,0 +1,317 @@
+{
+  "schema_version": 1,
+  "phase": "P8.0",
+  "title": "Capability matrix and expansion plan",
+  "date": "2026-09-25",
+  "status": "P8_0_PLANNING_FROZEN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "classification": "PASS_P8_0_CAPABILITY_EXPANSION_PLAN",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "f8789461ee71391885d5e04c6906a13bc83a26b0",
+    "phase_7_record": "notes/architecture_v0_2/phase_7_final_closure.json",
+    "phase_7_record_sha256": "b0ab7f2cef30c922bfbb2c4606ca12ff7f805385755256f39580a8ac8f28e7b6",
+    "phase_7_classification": "PASS_PHASE7_CHANNEL_AND_PUBLIC_SIMULATION_ARCHITECTURE_CLOSURE",
+    "phase_7_complete": true,
+    "eligible_for_phase_8_planning": true,
+    "phase_8_execution_previously_authorized": false
+  },
+  "objective": "expand the qualified model-geometry-boundary capability matrix without changing existing equations, defaults, or hot-loop dispatch",
+  "architectural_invariants": {
+    "tensor_free_public_declarations": true,
+    "model_does_not_select_geometry": true,
+    "geometry_does_not_select_boundary_physics": true,
+    "boundary_declarations_do_not_select_transforms": true,
+    "capability_resolution_before_allocation": true,
+    "application_dispatch_before_timestep": true,
+    "registry_lookup_in_timestep": false,
+    "unregistered_combinations_fail_closed": true,
+    "runtime_fallback_allowed": false,
+    "pressure_gauge_is_distinct_from_wall_boundary_law": true,
+    "plane_tangential_zero_mode_policy_is_distinct_from_pressure_gauge": true
+  },
+  "current_public_surface": {
+    "models": [
+      {
+        "equation_variant": "complete_stress_beris_edwards",
+        "constructor": "pssolver.models.active_nematics.CompleteStressBerisEdwards",
+        "public_constructor_status": "stable",
+        "qualified_geometries": ["plane_slab"]
+      },
+      {
+        "equation_variant": "legacy_active_force_active_nematics",
+        "constructor": "pssolver.models.active_nematics.equation_systems.LegacyActiveForceEquationRequest",
+        "public_constructor_status": "canonical_internal_request_without_convenience_constructor",
+        "qualified_geometries": ["rectangular_channel"]
+      }
+    ],
+    "geometries": [
+      {
+        "name": "periodic_box",
+        "constructor": "pssolver.geometries.PeriodicBox",
+        "topology": "all_axes_periodic",
+        "ergonomic_shape_lengths_constructor": false,
+        "qualified_equation_variants": []
+      },
+      {
+        "name": "plane_slab",
+        "constructor": "pssolver.geometries.PlaneSlab",
+        "topology": "one_bounded_axis_all_other_axes_periodic",
+        "ergonomic_shape_lengths_constructor": true,
+        "qualified_equation_variants": ["complete_stress_beris_edwards"]
+      },
+      {
+        "name": "rectangular_channel",
+        "constructor": "pssolver.geometries.RectangularChannel",
+        "topology": "one_periodic_streamwise_axis_all_other_axes_bounded",
+        "ergonomic_shape_lengths_constructor": false,
+        "qualified_equation_variants": ["legacy_active_force_active_nematics"]
+      }
+    ],
+    "boundary_policies": [
+      {
+        "name": "neumann_q",
+        "field": "Q",
+        "status": "public",
+        "bounded_face_law": "homogeneous_neumann"
+      },
+      {
+        "name": "free_slip_velocity",
+        "field": "velocity",
+        "status": "public",
+        "bounded_face_law": "normal_homogeneous_dirichlet_tangential_homogeneous_neumann"
+      },
+      {
+        "name": "neumann_pressure_compatibility",
+        "field": "pressure",
+        "status": "public",
+        "bounded_face_law": "homogeneous_neumann_algebraic_compatibility"
+      },
+      {
+        "name": "periodic",
+        "field": "geometry_induced",
+        "status": "implicit_from_axis_topology",
+        "bounded_face_law": null
+      },
+      {
+        "name": "no_slip_velocity",
+        "field": "velocity",
+        "status": "qualified_inside_channel_application_but_not_public_policy",
+        "bounded_face_law": "homogeneous_dirichlet_all_components"
+      }
+    ],
+    "low_level_boundary_kinds": [
+      "periodic",
+      "homogeneous_dirichlet",
+      "homogeneous_neumann"
+    ]
+  },
+  "model_geometry_matrix": [
+    {
+      "equation_variant": "complete_stress_beris_edwards",
+      "periodic_box": "planned_p8_2",
+      "plane_slab": "qualified",
+      "rectangular_channel": "planned_p8_3"
+    },
+    {
+      "equation_variant": "legacy_active_force_active_nematics",
+      "periodic_box": "deferred_not_qualified",
+      "plane_slab": "deferred_not_qualified",
+      "rectangular_channel": "qualified"
+    }
+  ],
+  "qualified_applications": [
+    {
+      "application": "plane_complete_stress_beris_edwards",
+      "equation_variant": "complete_stress_beris_edwards",
+      "geometry": "plane_slab",
+      "boundary_summary": "Q Neumann, velocity free-slip, pressure Neumann compatibility",
+      "runtime_paths": ["legacy_production", "compiled_v2"]
+    },
+    {
+      "application": "channel_legacy_active_force_active_nematics",
+      "equation_variant": "legacy_active_force_active_nematics",
+      "geometry": "rectangular_channel",
+      "boundary_summary": "Q Neumann, velocity no-slip, pressure Neumann compatibility",
+      "runtime_paths": ["legacy_channel", "compiled_channel_v2"]
+    }
+  ],
+  "capability_gaps": [
+    {
+      "id": "P8-GAP-001",
+      "area": "public_model_surface",
+      "description": "the qualified legacy active-force equation system lacks an ergonomic public constructor",
+      "first_owner": "P8.1"
+    },
+    {
+      "id": "P8-GAP-002",
+      "area": "public_geometry_surface",
+      "description": "PeriodicBox and RectangularChannel lack the PlaneSlab shape/lengths convenience form",
+      "first_owner": "P8.1"
+    },
+    {
+      "id": "P8-GAP-003",
+      "area": "public_boundary_surface",
+      "description": "the qualified Channel no-slip law is not a public field-level policy",
+      "first_owner": "P8.1"
+    },
+    {
+      "id": "P8-GAP-004",
+      "area": "discoverability",
+      "description": "the public package has no stable catalog for models, geometries, boundary policies, and qualified combinations",
+      "first_owner": "P8.1"
+    },
+    {
+      "id": "P8-GAP-005",
+      "area": "periodic_application",
+      "description": "no equation system is qualified on PeriodicBox through the public compiler",
+      "first_owner": "P8.2"
+    },
+    {
+      "id": "P8-GAP-006",
+      "area": "cross_geometry_complete_stress",
+      "description": "complete-stress Beris-Edwards is not lowered or qualified on RectangularChannel",
+      "first_owner": "P8.3"
+    },
+    {
+      "id": "P8-GAP-007",
+      "area": "nonhomogeneous_boundary",
+      "description": "strong Q anchoring lacks a model-neutral value declaration and lifting contract",
+      "first_owner": "P8.4"
+    },
+    {
+      "id": "P8-GAP-008",
+      "area": "surface_energy_boundary",
+      "description": "finite anchoring lacks a Robin or tau operator contract",
+      "first_owner": "P8.5"
+    }
+  ],
+  "slices": [
+    {
+      "id": "P8.0",
+      "name": "capability_matrix_and_scope_freeze",
+      "changes_runtime_code": false,
+      "requires_h100": false,
+      "authorized": true
+    },
+    {
+      "id": "P8.1",
+      "name": "existing_capability_public_surface_and_catalog",
+      "changes_boundary_physics": false,
+      "requires_h100": false,
+      "authorized": false
+    },
+    {
+      "id": "P8.2",
+      "name": "complete_stress_beris_edwards_periodic_box_vertical_slice",
+      "changes_boundary_physics": false,
+      "requires_h100": true,
+      "authorized": false
+    },
+    {
+      "id": "P8.3",
+      "name": "complete_stress_beris_edwards_rectangular_channel_neumann_q_no_slip_velocity",
+      "changes_boundary_physics": false,
+      "requires_h100": true,
+      "authorized": false
+    },
+    {
+      "id": "P8.4",
+      "name": "generic_nonhomogeneous_dirichlet_lifting_and_strong_q_anchoring",
+      "changes_boundary_physics": true,
+      "requires_h100": true,
+      "authorized": false
+    },
+    {
+      "id": "P8.5",
+      "name": "finite_q_anchoring_robin_tau_pilot",
+      "changes_boundary_physics": true,
+      "requires_h100": true,
+      "authorized": false
+    },
+    {
+      "id": "P8.6",
+      "name": "capability_catalog_package_restart_performance_closure",
+      "changes_boundary_physics": false,
+      "requires_h100": true,
+      "authorized": false
+    }
+  ],
+  "slice_requirements": {
+    "P8.1": [
+      "add a convenience constructor for the existing legacy active-force equation declaration",
+      "add ergonomic shape/lengths constructors without changing canonical geometry identity",
+      "expose no-slip velocity as the already-qualified homogeneous wall law",
+      "add immutable capability discovery without treating declarations as executable qualification",
+      "preserve the two existing compiler registrations byte-for-byte"
+    ],
+    "P8.2": [
+      "inventory and manufacture-test the fully periodic incompressible Stokes lowering",
+      "register only complete_stress_beris_edwards plus periodic_box",
+      "define pressure gauge and all-zero-wave-number velocity policy explicitly",
+      "qualify checkpoint identity, restart, finite state, transform counts, performance, and memory"
+    ],
+    "P8.3": [
+      "preserve the existing Channel no-slip and pressure-PCG contracts",
+      "implement bounded-axis complete-stress derivatives and force projection without reusing a Plane conclusion",
+      "register only complete_stress_beris_edwards plus rectangular_channel after manufactured tests pass",
+      "qualify pressure warm-start restart state, residuals, performance, and memory independently"
+    ],
+    "P8.4": [
+      "represent prescribed Q wall values independently of active-nematic kernels",
+      "lower Q as a static lifting plus a homogeneous evolved field",
+      "keep boundary declarations independent of FFT, DCT, DST, lifting, and tau implementations",
+      "begin with time-independent Plane strong anchoring before any Channel extension",
+      "provide planar and homeotropic convenience policies over one generic Dirichlet-Q contract"
+    ],
+    "P8.5": [
+      "declare finite anchoring from a surface-energy or Robin law without disguising it as strong Dirichlet anchoring",
+      "qualify the Robin or tau operator with manufactured boundary residuals",
+      "keep P8.5 separately authorized after P8.4 closure"
+    ]
+  },
+  "gate_order": [
+    "static_ownership_import_and_public_api",
+    "capability_matrix_and_structured_rejection",
+    "manufactured_equation_operator_and_boundary_residual",
+    "unchanged_application_cpu_identity",
+    "new_application_one_step_and_trajectory_finiteness",
+    "checkpoint_restart_and_negative_identity",
+    "package_metadata_and_provenance",
+    "h100_performance_peak_memory_and_transform_counts",
+    "slice_specific_long_run_only_when_scientifically_required"
+  ],
+  "non_regression_contract": {
+    "plane_default": "legacy_production",
+    "channel_default": "legacy_channel",
+    "compiled_plane_promoted": false,
+    "compiled_channel_promoted": false,
+    "existing_equations_may_change": false,
+    "existing_boundary_laws_may_change": false,
+    "existing_checkpoint_schema_may_change": false,
+    "existing_output_schema_may_change": false,
+    "existing_qualified_pairs_must_remain_available": true,
+    "hot_loop_registry_dispatch_allowed": false,
+    "silent_runtime_or_capability_fallback_allowed": false
+  },
+  "out_of_scope": [
+    "phase_9_control_implementation",
+    "optimal_control_application_ownership",
+    "curved_or_unstructured_geometry",
+    "immersed_boundary_geometry",
+    "inertial_navier_stokes",
+    "arbitrary_third_party_model_plugin_execution",
+    "compiled_runtime_default_promotion",
+    "claim_of_shendruk_benchmark_reproduction",
+    "claim_of_physical_stationarity"
+  ],
+  "authorization": {
+    "p8_0_planning_authorized": true,
+    "p8_0_complete": true,
+    "p8_1_implementation_authorized": false,
+    "phase_8_execution_authorized": false,
+    "h100_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false,
+    "existing_phase_6_or_phase_7_evidence_may_be_modified": false
+  }
+}

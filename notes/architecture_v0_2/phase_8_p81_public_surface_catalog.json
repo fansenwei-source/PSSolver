@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "phase": "P8.1",
+  "title": "Existing-capability public surface and catalog",
+  "date": "2026-09-25",
+  "status": "complete",
+  "classification": "PASS_P8_1_EXISTING_CAPABILITY_PUBLIC_SURFACE_AND_CATALOG",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "f8789461ee71391885d5e04c6906a13bc83a26b0",
+    "p8_0_record": "notes/architecture_v0_2/phase_8_p80_capability_expansion_plan.json",
+    "p8_0_record_sha256": "785ed3f6a7a8915042f550ce23a1aa7767c8915953a9efda40f7cca129374293"
+  },
+  "delivered": {
+    "public_model_constructor": {
+      "constructor": "pssolver.models.active_nematics.LegacyActiveForceActiveNematics",
+      "equation_variant": "legacy_active_force_active_nematics",
+      "canonical_existing_declaration": true,
+      "hidden_physical_defaults": false
+    },
+    "geometry_facades": [
+      {
+        "constructor": "pssolver.geometries.PeriodicBox",
+        "canonical_type": "pssolver.geometries.tensor_product.PeriodicBox",
+        "shape_lengths_form": true
+      },
+      {
+        "constructor": "pssolver.geometries.RectangularChannel",
+        "canonical_type": "pssolver.geometries.tensor_product.RectangularChannel",
+        "shape_lengths_form": true
+      }
+    ],
+    "boundary_policy": {
+      "constructor": "pssolver.boundaries.no_slip_velocity",
+      "field": "velocity",
+      "bounded_face_law": "homogeneous_dirichlet_all_components",
+      "matches_qualified_channel_law": true
+    },
+    "catalog": {
+      "authority": "pssolver.api.capabilities",
+      "immutable_records": true,
+      "declarations_distinguished_from_qualified_execution": true,
+      "live_compiler_registry_is_execution_authority": true,
+      "root_exports": [
+        "available_models",
+        "available_geometries",
+        "available_boundary_policies",
+        "available_combinations",
+        "capability_catalog"
+      ]
+    }
+  },
+  "qualified_combinations": [
+    {
+      "equation_variant": "complete_stress_beris_edwards",
+      "geometry_name": "plane_slab",
+      "application": "plane_complete_stress_beris_edwards",
+      "runtime_paths": ["legacy_production", "compiled_v2"]
+    },
+    {
+      "equation_variant": "legacy_active_force_active_nematics",
+      "geometry_name": "rectangular_channel",
+      "application": "channel_legacy_active_force_active_nematics",
+      "runtime_paths": ["legacy_channel", "compiled_channel_v2"]
+    }
+  ],
+  "declarable_but_unqualified": [
+    {
+      "kind": "geometry",
+      "key": "periodic_box",
+      "rejection_code": "unregistered_model_geometry"
+    }
+  ],
+  "scope": {
+    "new_equation_variant": false,
+    "new_compiler_registration": false,
+    "new_boundary_physics": false,
+    "runtime_or_timestep_changed": false,
+    "numerical_kernel_changed": false,
+    "transform_changed": false,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false,
+    "runtime_fallback_allowed": false,
+    "h100_code_path_touched": false
+  },
+  "compatibility": {
+    "canonical_model_identity_preserved": true,
+    "canonical_geometry_type_preserved": true,
+    "geometry_pickle_identity_preserved": true,
+    "channel_boundary_component_identity_preserved": true,
+    "boundary_assignment_label_is_not_physical_identity": true,
+    "unregistered_combinations_fail_before_allocation": true,
+    "historical_p7_source_hashes_remain_archived": true
+  },
+  "verification": {
+    "targeted_cpu": "67 passed",
+    "import_and_package_regression": "45 passed",
+    "historical_contract_regression": "45 passed",
+    "full_cpu": "2212 passed, 8 subtests passed",
+    "json_validation": "pass",
+    "git_diff_check": "pass",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "h100_required": false,
+    "reason_h100_not_required": "no runtime, timestep, numerical kernel, transform, or executable registry change"
+  },
+  "source_sha256": {
+    "pssolver/models/active_nematics/equation_systems.py": "d785f2d42c29a3647777470d33a00c62aae323e33ed6ff6d71abe0e305a2e12d",
+    "pssolver/models/active_nematics/public.py": "cecb88457f6a8b937508ae2c1c9042621cfef34c37770fd2e89a773f6b835a89",
+    "pssolver/geometries/public.py": "41a7e0ee7a72025b4a1bc9630fafa24281afcded595b17730c5d97b33288e7a4",
+    "pssolver/boundaries/homogeneous.py": "027e8e6aca0e6f72a16e3a2b28dd5df79cb91eeb12db9585332ef0dfc75eeb3b",
+    "pssolver/api/capabilities.py": "da552d04c60196bd352a5f27e1228387871929e515abd8e4ba73b89480d258fd",
+    "pssolver/api/__init__.py": "f7a295616733d114f108ad6cb291052aa0e18a85bda5ac1565c6da8cf7504299",
+    "pssolver/__init__.py": "ec8aa010d22a8c27ee557119bfd6da85c51af251e316075f7eb0c10364e40b05",
+    "pssolver/configuration/public_channel_simulation_compiler.py": "e2a3222d4b4c44e3ef24c3427b6188b770f779299104b52cf60b3441663ecd81"
+  },
+  "eligibility": {
+    "p8_1_complete": true,
+    "p8_2_planning": true,
+    "p8_2_execution": false,
+    "h100_job_authorized": false,
+    "phase_9_authorized": false,
+    "default_promotion_authorized": false
+  }
+}

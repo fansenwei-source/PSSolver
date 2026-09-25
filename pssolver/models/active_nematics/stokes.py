@@ -9,7 +9,6 @@ from pssolver.transforms import (
     projected_common_basis_stress_divergence,
     projected_distortion_stress_divergence,
 )
-
 from .beris_edwards import (
     BerisEdwardsQGradientCache,
     BerisEdwardsPointwiseKernels,

@@ -100,7 +100,7 @@ def test_channel_public_compiler_connects_both_qualified_runtimes(
 
 def test_registry_is_capability_catalog_not_a_public_api_whitelist():
     capabilities = public_compiler_capabilities()
-    assert capabilities == (
+    assert capabilities[:2] == (
         {
             "equation_variant": "complete_stress_beris_edwards",
             "geometry_name": "plane_slab",
@@ -120,6 +120,15 @@ def test_registry_is_capability_catalog_not_a_public_api_whitelist():
             ),
         },
     )
+    assert capabilities[2] == {
+        "equation_variant": "complete_stress_beris_edwards",
+        "geometry_name": "periodic_box",
+        "application": "periodic_complete_stress_beris_edwards",
+        "adapter": (
+            "pssolver.configuration.public_periodic_simulation_compiler."
+            "compile_periodic_public_simulation"
+        ),
+    }
     capabilities[0]["application"] = "local-copy-only"
     assert public_compiler_capabilities()[0]["application"] == (
         PUBLIC_PLANE_APPLICATION
@@ -172,6 +181,7 @@ def test_unregistered_pair_reports_structured_capability_gap():
     assert metadata["context"]["registered_pairs"] == [
         ["complete_stress_beris_edwards", "plane_slab"],
         ["legacy_active_force_active_nematics", "rectangular_channel"],
+        ["complete_stress_beris_edwards", "periodic_box"],
     ]
 
 

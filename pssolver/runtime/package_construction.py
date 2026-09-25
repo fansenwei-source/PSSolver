@@ -32,13 +32,18 @@ from .channel_application_bridge import (
 )
 from .plane_application_bridge import build_package_compiled_plane_runtime
 from .plane_beris_edwards import PlaneRuntimeBuildRequest
+from .periodic_beris_edwards import PeriodicRuntimeBuildRequest
 from .simulation_construction import (
     RuntimeAdapter,
     build_bound_simulation_runtime,
 )
 
 
-PackageBuildRequest = PlaneRuntimeBuildRequest | ChannelRuntimeBuildRequest
+PackageBuildRequest = (
+    PlaneRuntimeBuildRequest
+    | ChannelRuntimeBuildRequest
+    | PeriodicRuntimeBuildRequest
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,11 +58,15 @@ class PackageRuntimeConstructionInput:
             raise TypeError("plan must be a PackageRuntimeConstructionPlan")
         if not isinstance(
             self.request,
-            (PlaneRuntimeBuildRequest, ChannelRuntimeBuildRequest),
+            (
+                PlaneRuntimeBuildRequest,
+                ChannelRuntimeBuildRequest,
+                PeriodicRuntimeBuildRequest,
+            ),
         ):
             raise TypeError(
                 "request must be a PlaneRuntimeBuildRequest or "
-                "ChannelRuntimeBuildRequest"
+                "ChannelRuntimeBuildRequest or PeriodicRuntimeBuildRequest"
             )
 
     def to_metadata(self) -> dict[str, object]:
@@ -69,7 +78,11 @@ class PackageRuntimeConstructionInput:
                 f"{type(self.request).__module__}."
                 f"{type(self.request).__qualname__}"
             ),
-            "runtime_path": run_spec.runtime_path.value,
+            "runtime_path": (
+                run_spec.runtime_path.value
+                if hasattr(run_spec.runtime_path, "value")
+                else str(run_spec.runtime_path)
+            ),
             "configuration_sha256": run_spec.canonical_sha256(),
             "device": str(self.request.device),
             "application_builder_supplied": False,
@@ -81,9 +94,11 @@ def _request_simulation(request: PackageBuildRequest):
         return compose_plane_beris_edwards_simulation(
             decompose_plane_beris_edwards_run_spec(request.run_spec)
         )
-    return compose_channel_active_nematics_simulation(
-        request.run_spec.components
-    )
+    if isinstance(request, ChannelRuntimeBuildRequest):
+        return compose_channel_active_nematics_simulation(
+            request.run_spec.components
+        )
+    return request.run_spec.simulation
 
 
 def build_package_simulation_runtime(
@@ -117,6 +132,12 @@ def build_package_simulation_runtime(
                 request
             ),
         )
+    if kind is RuntimeConstructionKind.PERIODIC_COMPLETE_STRESS:
+        if not isinstance(request, PeriodicRuntimeBuildRequest):
+            raise TypeError(
+                "periodic construction requires PeriodicRuntimeBuildRequest"
+            )
+        return build_bound_simulation_runtime(binding, request)
     if kind is RuntimeConstructionKind.CHANNEL_LEGACY:
         if not isinstance(request, ChannelRuntimeBuildRequest):
             raise TypeError("legacy Channel construction requires Channel request")

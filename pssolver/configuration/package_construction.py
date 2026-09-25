@@ -18,6 +18,10 @@ _PACKAGE_FACTORY = (
     "pssolver.runtime.package_construction.build_package_simulation_runtime"
 )
 _IMPLEMENTATION_BUILDERS = {
+    RuntimeConstructionKind.PERIODIC_COMPLETE_STRESS: (
+        "pssolver.runtime.periodic_beris_edwards."
+        "build_periodic_beris_edwards_runtime"
+    ),
     RuntimeConstructionKind.PLANE_LEGACY_PRODUCTION: (
         "pssolver.runtime.plane_legacy.build_legacy_plane_runtime"
     ),

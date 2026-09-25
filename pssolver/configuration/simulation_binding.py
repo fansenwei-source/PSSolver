@@ -27,6 +27,7 @@ _PLANE_VARIANT = "complete_stress_beris_edwards"
 _PLANE_GEOMETRY = "plane_slab"
 _CHANNEL_VARIANT = "legacy_active_force_active_nematics"
 _CHANNEL_GEOMETRY = "rectangular_channel"
+_PERIODIC_GEOMETRY = "periodic_box"
 
 _PLANE_REQUEST = (
     "pssolver.runtime.plane_beris_edwards.PlaneRuntimeBuildRequest"
@@ -47,6 +48,16 @@ _CHANNEL_FACTORY = (
 )
 _CHANNEL_PROTOCOL = (
     "pssolver.runtime.channel_active_nematics.ChannelRuntimeAdapterProtocol"
+)
+_PERIODIC_REQUEST = (
+    "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeBuildRequest"
+)
+_PERIODIC_FACTORY = (
+    "pssolver.runtime.periodic_beris_edwards."
+    "build_periodic_beris_edwards_runtime"
+)
+_PERIODIC_PROTOCOL = (
+    "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeAdapterProtocol"
 )
 
 
@@ -160,6 +171,14 @@ def bind_simulation_runtime(
         simulation.execution.runtime_path,
     )
     table = {
+        (_PLANE_VARIANT, _PERIODIC_GEOMETRY, "periodic_spectral"): (
+            RuntimeConstructionKind.PERIODIC_COMPLETE_STRESS,
+            _PERIODIC_REQUEST,
+            _PERIODIC_FACTORY,
+            _PERIODIC_PROTOCOL,
+            BuilderProvision.PACKAGE,
+            None,
+        ),
         (_PLANE_VARIANT, _PLANE_GEOMETRY, "legacy_production"): (
             RuntimeConstructionKind.PLANE_LEGACY_PRODUCTION,
             _PLANE_REQUEST,

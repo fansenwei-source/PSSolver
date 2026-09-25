@@ -89,13 +89,21 @@ def _validate_translation(
     source: SimulationSpec,
     application: SimulationSpec,
 ) -> None:
+    source_boundaries = source.boundaries.to_metadata()
+    application_boundaries = application.boundaries.to_metadata()
     comparisons = (
         ("equation system", source.equation_system, application.equation_system),
         ("geometry", source.geometry, application.geometry),
         (
             "boundary laws",
-            source.boundaries.to_metadata(),
-            application.boundaries.to_metadata(),
+            {
+                "ndim": source_boundaries["ndim"],
+                "components": source_boundaries["components"],
+            },
+            {
+                "ndim": application_boundaries["ndim"],
+                "components": application_boundaries["components"],
+            },
         ),
         (
             "numerical policy",

@@ -183,6 +183,21 @@ REVIEWED_MODEL_DECLARATION_TO_SYSTEMS_EDGES = {
 }
 
 
+# P8.2 connects a new geometry to the unchanged v0.1 spectral engine.  These
+# exact composition-root edges are temporary compatibility edges, not a
+# layer-wide allowance; a future engine extraction can remove them together.
+REVIEWED_RUNTIME_TO_V0_1_COMPATIBILITY_EDGES = {
+    ImportEdge(
+        "pssolver.runtime.periodic_beris_edwards",
+        "pssolver.integrator",
+    ),
+    ImportEdge(
+        "pssolver.runtime.periodic_beris_edwards",
+        "pssolver.solver",
+    ),
+}
+
+
 def test_systems_layer_has_only_the_authorized_dependency_edges():
     assert ALLOWED_INTERNAL_LAYERS["systems"] == frozenset(
         {"core", "systems"}
@@ -357,6 +372,8 @@ def test_internal_imports_follow_the_phase_zero_dependency_ratchet():
         if edge in REVIEWED_MODEL_DECLARATION_TO_SYSTEMS_EDGES:
             continue
         if edge in REVIEWED_CONFIGURATION_TO_PLANNING_EDGES:
+            continue
+        if edge in REVIEWED_RUNTIME_TO_V0_1_COMPATIBILITY_EDGES:
             continue
         if edge in EXPECTED_LEGACY_EXCEPTIONS:
             observed_exceptions.add(edge)

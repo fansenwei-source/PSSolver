@@ -34,7 +34,11 @@ class HomogeneousBoundaryPolicy:
             raise ValueError("boundary-policy field_name must be a Python identifier")
         if not isinstance(self.semantic, BoundarySemantic):
             raise TypeError("boundary-policy semantic must be a BoundarySemantic")
-        if self.kind not in {"neumann", "free_slip_velocity"}:
+        if self.kind not in {
+            "neumann",
+            "free_slip_velocity",
+            "no_slip_velocity",
+        }:
             raise ValueError("unsupported homogeneous boundary policy")
 
 
@@ -55,6 +59,16 @@ def free_slip_velocity() -> HomogeneousBoundaryPolicy:
         field_name="velocity",
         semantic=BoundarySemantic.PHYSICAL,
         kind="free_slip_velocity",
+    )
+
+
+def no_slip_velocity() -> HomogeneousBoundaryPolicy:
+    """Return zero velocity for every component on bounded faces."""
+
+    return HomogeneousBoundaryPolicy(
+        field_name="velocity",
+        semantic=BoundarySemantic.PHYSICAL,
+        kind="no_slip_velocity",
     )
 
 
@@ -83,6 +97,8 @@ def _axis_condition(
         if component_index == axis:
             return HomogeneousDirichletBC()
         return HomogeneousNeumannBC()
+    if policy.kind == "no_slip_velocity":
+        return HomogeneousDirichletBC()
     raise AssertionError("validated boundary policy was not handled")
 
 
@@ -169,11 +185,12 @@ def assign_boundaries(
             raise ValueError(
                 f"evolved field '{field.name}' requires physical boundaries"
             )
-        if policy.kind == "free_slip_velocity" and (
+        if policy.kind in {"free_slip_velocity", "no_slip_velocity"} and (
             len(field.components) != geometry.domain.ndim
         ):
             raise ValueError(
-                "free-slip velocity requires one ordered component per axis"
+                "velocity boundary policy requires one ordered component "
+                "per axis"
             )
         assignments.extend(
             _component_assignment(
@@ -196,6 +213,7 @@ __all__ = [
     "HomogeneousBoundaryPolicy",
     "assign_boundaries",
     "free_slip_velocity",
+    "no_slip_velocity",
     "neumann_pressure_compatibility",
     "neumann_q",
 ]

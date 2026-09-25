@@ -62,7 +62,10 @@ from .q_tensor import (
     positive_equilibrium_S,
     uniaxial_Q,
 )
-from .public import CompleteStressBerisEdwards
+from .public import (
+    CompleteStressBerisEdwards,
+    LegacyActiveForceActiveNematics,
+)
 from .stokes import (
     BerisEdwardsFreeSlipStokes,
     DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE,
@@ -89,6 +92,7 @@ __all__ = [
     "BerisEdwardsConstitutiveStokesCanaryModel",
     "BerisEdwardsPlaneCoupledModel",
     "CompleteStressBerisEdwards",
+    "LegacyActiveForceActiveNematics",
     "DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE",
     "DEFAULT_POINTWISE_EXECUTION",
     "DEFAULT_STRESS_DIVERGENCE_SUM_SPACE",

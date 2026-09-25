@@ -166,6 +166,12 @@ SOURCE_ORDER = (
     "phase_7_p7712_h100_closure.json",
     "phase_7_final_closure.md",
     "phase_7_final_closure.json",
+    "phase_8_p80_capability_expansion_plan.md",
+    "phase_8_p80_capability_expansion_plan.json",
+    "phase_8_p81_public_surface_catalog.md",
+    "phase_8_p81_public_surface_catalog.json",
+    "phase_8_p82_periodic_complete_stress.md",
+    "phase_8_p82_periodic_complete_stress.json",
 )
 
 PAGE_WIDTH = 595.276

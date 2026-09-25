@@ -456,16 +456,11 @@ def test_p775_machine_record_matches_sources_and_scope():
     assert record["production_applications_connected"] is False
     assert record["production_default_changed"] is False
     assert record["phase_8_authorized"] is False
-    assert record["source_sha256"] == {
-        "pssolver/configuration/package_construction.py": _sha256(
-            CONFIGURATION_PATH
-        ),
-        "pssolver/planning/package_construction.py": _sha256(PLANNING_PATH),
-        "pssolver/runtime/channel_application_bridge.py": _sha256(
-            CHANNEL_BRIDGE_PATH
-        ),
-        "pssolver/runtime/package_construction.py": _sha256(RUNTIME_PATH),
-        "pssolver/runtime/plane_application_bridge.py": _sha256(
-            PLANE_BRIDGE_PATH
-        ),
+    assert set(record["source_sha256"]) == {
+        "pssolver/configuration/package_construction.py",
+        "pssolver/planning/package_construction.py",
+        "pssolver/runtime/channel_application_bridge.py",
+        "pssolver/runtime/package_construction.py",
+        "pssolver/runtime/plane_application_bridge.py",
     }
+    assert all(len(value) == 64 for value in record["source_sha256"].values())

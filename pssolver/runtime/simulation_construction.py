@@ -34,9 +34,18 @@ from .plane_beris_edwards import (
     PlaneRuntimeBuildRequest,
     build_plane_beris_edwards_runtime,
 )
+from .periodic_beris_edwards import (
+    PeriodicRuntimeAdapterProtocol,
+    PeriodicRuntimeBuildRequest,
+    build_periodic_beris_edwards_runtime,
+)
 
 
-RuntimeAdapter = PlaneRuntimeAdapterProtocol | ChannelRuntimeAdapterProtocol
+RuntimeAdapter = (
+    PlaneRuntimeAdapterProtocol
+    | ChannelRuntimeAdapterProtocol
+    | PeriodicRuntimeAdapterProtocol
+)
 RuntimeBuilder = Callable[[], object]
 
 
@@ -49,9 +58,11 @@ def _request_simulation(request: object):
         return compose_channel_active_nematics_simulation(
             request.run_spec.components
         )
+    if isinstance(request, PeriodicRuntimeBuildRequest):
+        return request.run_spec.simulation
     raise TypeError(
         "request must be a PlaneRuntimeBuildRequest or "
-        "ChannelRuntimeBuildRequest"
+        "ChannelRuntimeBuildRequest or PeriodicRuntimeBuildRequest"
     )
 
 
@@ -93,7 +104,11 @@ def _require_builder_contract(
 
 def build_bound_simulation_runtime(
     binding: RuntimeConstructionBinding,
-    request: PlaneRuntimeBuildRequest | ChannelRuntimeBuildRequest,
+    request: (
+        PlaneRuntimeBuildRequest
+        | ChannelRuntimeBuildRequest
+        | PeriodicRuntimeBuildRequest
+    ),
     *,
     legacy_builder: RuntimeBuilder | None = None,
     compiled_builder: RuntimeBuilder | None = None,
@@ -138,6 +153,12 @@ def build_bound_simulation_runtime(
             legacy_builder=legacy_builder,
             compiled_builder=compiled_builder,
         )
+    if binding.kind is RuntimeConstructionKind.PERIODIC_COMPLETE_STRESS:
+        if not isinstance(request, PeriodicRuntimeBuildRequest):
+            raise TypeError(
+                "periodic construction requires PeriodicRuntimeBuildRequest"
+            )
+        return build_periodic_beris_edwards_runtime(request)
     raise AssertionError("unreachable runtime construction kind")
 
 

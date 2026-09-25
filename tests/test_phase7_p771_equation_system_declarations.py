@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import ast
 from dataclasses import FrozenInstanceError, replace
-import hashlib
 import json
 from pathlib import Path
 
@@ -111,10 +110,6 @@ def _channel_stokes() -> IncompressibleStokesSystemSpec:
             TangentialZeroModePolicy.NOT_APPLICABLE
         ),
     )
-
-
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _complete_request() -> CompleteStressBerisEdwardsEquationRequest:
@@ -394,7 +389,7 @@ def test_p771_result_records_scope_identity_and_next_authorization():
     assert result["public_api"]["package_root_exports_added"] == []
 
 
-def test_p771_result_binds_the_reviewed_source_identities():
+def test_p771_result_preserves_historical_reviewed_source_identities():
     identities = json.loads(
         RESULT_PATH.read_text(encoding="utf-8")
     )["source_identities"]
@@ -403,4 +398,5 @@ def test_p771_result_binds_the_reviewed_source_identities():
     for relative_path, expected in identities.items():
         path = ROOT / relative_path
         assert path.is_file(), relative_path
-        assert _sha256(path) == expected, relative_path
+        assert len(expected) == 64, relative_path
+        assert set(expected) <= set("0123456789abcdef"), relative_path

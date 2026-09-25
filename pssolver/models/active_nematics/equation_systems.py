@@ -18,7 +18,11 @@ from pssolver.systems.equations import (
     EquationSystemSpec,
     EquationTermSpec,
 )
-from pssolver.systems.stokes import IncompressibleStokesSystemSpec
+from pssolver.systems.stokes import (
+    IncompressibleStokesSystemSpec,
+    PressureGauge,
+    TangentialZeroModePolicy,
+)
 
 from .fields import Q_COMPONENTS
 from .specifications import BerisEdwardsMaterialRequest

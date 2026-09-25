@@ -70,6 +70,7 @@ _DERIVATIVE_BY_BASIS = {
 _PLANE_VARIANT = "complete_stress_beris_edwards"
 _CHANNEL_VARIANT = "legacy_active_force_active_nematics"
 _PLANE_GEOMETRY = "plane_slab"
+_PERIODIC_GEOMETRY = "periodic_box"
 _CHANNEL_GEOMETRY = "rectangular_channel"
 
 _PLANE_CAPABILITIES = (
@@ -233,6 +234,14 @@ def _validate_global_contract(
             AxisTopology.BOUNDED,
         )
         expected_capabilities = _PLANE_CAPABILITIES
+    elif pair == (_PLANE_VARIANT, _PERIODIC_GEOMETRY):
+        kind = "periodic"
+        expected_topology = (
+            AxisTopology.PERIODIC,
+            AxisTopology.PERIODIC,
+            AxisTopology.PERIODIC,
+        )
+        expected_capabilities = _PLANE_CAPABILITIES
     elif pair == (_CHANNEL_VARIANT, _CHANNEL_GEOMETRY):
         kind = "channel"
         expected_topology = (
@@ -249,6 +258,7 @@ def _validate_global_contract(
             geometry_name=geometry,
             supported_pairs=[
                 [_PLANE_VARIANT, _PLANE_GEOMETRY],
+                [_PLANE_VARIANT, _PERIODIC_GEOMETRY],
                 [_CHANNEL_VARIANT, _CHANNEL_GEOMETRY],
             ],
         )
@@ -436,6 +446,10 @@ def _validate_boundary_signatures(
         _require_signature(bases, q, even)
         _require_signature(bases, ("ux", "uy", "p"), even)
         _require_signature(bases, ("uz",), odd)
+    elif kind == "periodic":
+        periodic = (TransformKind.FFT,) * 3
+        _require_signature(bases, q, periodic)
+        _require_signature(bases, (*velocity, "p"), periodic)
     else:
         q_pressure = (
             TransformKind.FFT,
@@ -579,7 +593,7 @@ def _lower_transient_spaces(
     )
     q_components = _field_components(simulation, "Q")
     velocity = _field_components(simulation, "velocity")
-    if kind == "plane":
+    if kind in {"plane", "periodic"}:
         for component in _field_components(simulation, "molecular_field"):
             q_source = f"Q{component[1:]}"
             _copy_basis(
@@ -600,7 +614,11 @@ def _lower_transient_spaces(
         odd_suffixes = {"xz", "yz", "zx", "zy"}
         for component in _field_components(simulation, "distortion_stress"):
             suffix = component.rsplit("_", 1)[-1]
-            source = "uz" if suffix in odd_suffixes else q_components[0]
+            source = (
+                "uz"
+                if kind == "plane" and suffix in odd_suffixes
+                else q_components[0]
+            )
             _copy_basis(
                 bases,
                 field_name="distortion_stress",
@@ -608,7 +626,8 @@ def _lower_transient_spaces(
                 source_component=source,
                 provenance=BasisProvenance.CONSTITUTIVE_PARITY,
             )
-        _validate_plane_distortion_metadata(simulation, bases["uz"])
+        if kind == "plane":
+            _validate_plane_distortion_metadata(simulation, bases["uz"])
         force_field = "nematic_force"
     else:
         force_field = "active_force"
@@ -669,7 +688,7 @@ def _capability_requirements(
     simulation: SimulationSpec,
     kind: str,
 ) -> tuple[CapabilityImplementationRequirement, ...]:
-    if kind == "plane":
+    if kind in {"plane", "periodic"}:
         implementations = {
             "beris_edwards_q_evolution": (
                 "plane_complete_beris_edwards_q_evolution",
@@ -696,8 +715,16 @@ def _capability_requirements(
                 "spectral_sum_then_velocity_space_projection",
             ),
             INCOMPRESSIBLE_STOKES_CAPABILITY: (
-                "plane_free_slip_modal_stokes",
-                "geometry_specific_saddle_solve",
+                (
+                    "plane_free_slip_modal_stokes"
+                    if kind == "plane"
+                    else "periodic_modal_stokes"
+                ),
+                (
+                    "geometry_specific_saddle_solve"
+                    if kind == "plane"
+                    else "fourier_helmholtz_projection"
+                ),
             ),
         }
     else:
@@ -763,7 +790,7 @@ def _stokes_requirements(
             "only the zero-mean pressure gauge is qualified",
             observed=stokes.pressure_gauge.value,
         )
-    if kind == "plane":
+    if kind in {"plane", "periodic"}:
         if stokes.tangential_zero_mode_policy not in {
             TangentialZeroModePolicy.ZERO_MEAN,
             TangentialZeroModePolicy.FRICTION,
@@ -773,22 +800,44 @@ def _stokes_requirements(
                 "Plane requires an explicit tangential zero-mode policy",
                 observed=stokes.tangential_zero_mode_policy.value,
             )
-        action = (
-            "remove_uniform_tangential_velocity_and_force"
-            if stokes.tangential_zero_mode_policy
-            is TangentialZeroModePolicy.ZERO_MEAN
-            else "retain_uniform_tangential_mode_resolved_by_friction"
-        )
-        tangential_components = stokes.velocity_components[:2]
-        family = "free_slip_modal_stokes"
-        implementation = (
-            "pssolver.linear_solvers.stokes.plane_free_slip."
-            "FreeSlipModalStokesSolver"
-        )
-        extra_options = {
-            "wall_normal_axis": 2,
-            "pressure_algorithm": "direct_modal_schur",
-        }
+        if kind == "plane":
+            action = (
+                "remove_uniform_tangential_velocity_and_force"
+                if stokes.tangential_zero_mode_policy
+                is TangentialZeroModePolicy.ZERO_MEAN
+                else "retain_uniform_tangential_mode_resolved_by_friction"
+            )
+            tangential_components = stokes.velocity_components[:2]
+            family = "free_slip_modal_stokes"
+            implementation = (
+                "pssolver.linear_solvers.stokes.plane_free_slip."
+                "FreeSlipModalStokesSolver"
+            )
+            extra_options = {
+                "wall_normal_axis": 2,
+                "pressure_algorithm": "direct_modal_schur",
+            }
+        else:
+            action = (
+                "remove_all_uniform_velocity_and_force"
+                if stokes.tangential_zero_mode_policy
+                is TangentialZeroModePolicy.ZERO_MEAN
+                else "retain_all_uniform_velocity_resolved_by_friction"
+            )
+            # This legacy field name is retained in the version-1 lowering
+            # schema, but all three periodic velocity components are listed.
+            tangential_components = stokes.velocity_components
+            family = "periodic_modal_stokes"
+            implementation = (
+                "pssolver.linear_solvers.stokes.periodic."
+                "PeriodicModalStokesSolver"
+            )
+            extra_options = {
+                "pressure_algorithm": "direct_fourier_projection",
+                "uniform_velocity_components": list(
+                    stokes.velocity_components
+                ),
+            }
     else:
         if stokes.tangential_zero_mode_policy is not (
             TangentialZeroModePolicy.NOT_APPLICABLE

@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "phase": "P8.2",
+  "title": "Complete-stress Beris--Edwards periodic-box vertical slice",
+  "date": "2026-09-25",
+  "status": "local_candidate",
+  "classification": "P8_2_LOCAL_CANDIDATE_H100_QUALIFICATION_REQUIRED",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "f8789461ee71391885d5e04c6906a13bc83a26b0",
+    "p8_0_record": "notes/architecture_v0_2/phase_8_p80_capability_expansion_plan.json",
+    "p8_1_record": "notes/architecture_v0_2/phase_8_p81_public_surface_catalog.json"
+  },
+  "combination": {
+    "equation_variant": "complete_stress_beris_edwards",
+    "geometry_name": "periodic_box",
+    "application": "periodic_complete_stress_beris_edwards",
+    "runtime_paths": ["periodic_spectral"],
+    "public_registry_connected": true,
+    "h100_qualified": false
+  },
+  "stokes_contract": {
+    "family": "periodic_modal_stokes",
+    "implementation": "pssolver.linear_solvers.stokes.periodic.PeriodicModalStokesSolver",
+    "pressure_algorithm": "direct_fourier_projection",
+    "pressure_gauge": "zero_mean",
+    "qualified_velocity_zero_mode_policy": "zero_mean",
+    "qualified_friction": 0.0,
+    "qualified_uniform_mode_action": "remove_all_uniform_velocity_and_force",
+    "uniform_velocity_components": ["ux", "uy", "uz"],
+    "pressure_gauge_is_independent_of_velocity_reference_frame": true,
+    "operator_tested_friction_branch": true,
+    "public_friction_branch_qualified": false
+  },
+  "lowering": {
+    "topology": ["periodic", "periodic", "periodic"],
+    "transform_kinds": ["fft", "fft", "fft"],
+    "plane_wall_parity_reused": false,
+    "plane_dct_dst_reused": false,
+    "plane_free_slip_solver_reused": false,
+    "model_layer_depends_on_linear_solver": false,
+    "runtime_owns_concrete_composition": true
+  },
+  "public_contract": {
+    "entry_points": ["compile_simulation", "run_simulation"],
+    "initial_condition": "external_snapshot",
+    "integrator": "projected_semi_implicit_euler",
+    "fallback_allowed": false,
+    "tf32": "off",
+    "spectral_refresh": "disabled",
+    "unsupported_combinations_fail_before_allocation": true
+  },
+  "restart": {
+    "spatial_q_saved": true,
+    "spectral_q_saved": true,
+    "tensor_sha256_saved": true,
+    "shape_and_dtype_saved": true,
+    "runtime_identity_saved": true,
+    "backend_identity_saved": true,
+    "integrator_progress_saved": true,
+    "continuous_resumed_q_u_p_byte_identical": true,
+    "tensor_tamper_rejected_before_advance": true
+  },
+  "verification": {
+    "targeted_cpu": "105 passed",
+    "full_cpu": "2224 passed, 8 subtests passed",
+    "git_diff_check": "pass",
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected": 0,
+    "h100_required": true,
+    "h100_completed": false
+  },
+  "source_sha256": {
+    "pssolver/linear_solvers/stokes/periodic.py": "c15617a0c33d7afdac6fe9eac1546cee685253c00a91f212862c2932376daeed",
+    "pssolver/configuration/simulation_lowering.py": "94241555a6217aaa17e7645bbc4086b25217b75f2ebd76bcb2c0cea126a64eee",
+    "pssolver/configuration/periodic_beris_edwards.py": "97ac42a768925dd36a844ae02600c2e0845d1e3d1d0b7b58a1f8dc793dec33de",
+    "pssolver/configuration/public_periodic_simulation_compiler.py": "b3cc3a015e64824c2988da151de7084b9ffdf342b1a2a0b9e710551d6aee2a27",
+    "pssolver/configuration/public_simulation_runner.py": "b95e8819f693445c78ae380973db802cf468712f23b783551096bb4d5f52bcaa",
+    "pssolver/configuration/simulation_binding.py": "8495aeffb6a39f9e45ab4fed5de1e0ff9cde2a311086fc1746eeeeea533f1399",
+    "pssolver/configuration/package_construction.py": "84f73bb7b50ad237f3a243d091e27bc8a9137eea5d7b6bc86ffc8a42e4e6878e",
+    "pssolver/runtime/periodic_beris_edwards.py": "fe1e6add6874949bdc61ca1b4d61b2a4699e52c8fec6d70b7e019a69fea9e4c8",
+    "pssolver/runtime/simulation_construction.py": "573db79ff49f1750f392f6af5b264d7eefa15b29d4ad4995a89bc1dc127c15c4",
+    "pssolver/runtime/package_construction.py": "231698e9b3d28c19a686d5792844aa90050227d688f2ff2b4dc4b6fda192eb72",
+    "pssolver/applications/periodic_beris_edwards.py": "3bbf6bae5be942c04135e924b1b4553c8588045784b0602da47c9351d9323569",
+    "pssolver/workflows/periodic_beris_edwards.py": "455f83e12b7b9af43d6754d3c0e8dec912cbbfb45f23c397b623dc623428afba",
+    "pssolver/api/runner.py": "975b1c011f104d57979ad2ff4185a7d23d8ae04e96140c30a98fbbcef79d6276",
+    "pssolver/api/capabilities.py": "6c3e508219cd9f594e5f62cbeb5385cdb9b0f976bee20148ea9b1eb61ffb9549"
+  },
+  "compatibility_debt": {
+    "runtime_to_legacy_solver_edge": true,
+    "runtime_to_legacy_integrator_edge": true,
+    "edges_are_exact_and_tested": true,
+    "public_declaration_layers_expose_legacy_engine": false
+  },
+  "scope": {
+    "existing_plane_defaults_changed": false,
+    "existing_channel_defaults_changed": false,
+    "compiled_runtime_promoted": false,
+    "benchmark_claim_made": false,
+    "phase_9_authorized": false
+  },
+  "eligibility": {
+    "p8_2_local_implementation_complete": true,
+    "p8_2_h100_qualification_required": true,
+    "p8_2_complete": false,
+    "p8_3_authorized": false,
+    "p8_4_authorized": false,
+    "phase_9_authorized": false,
+    "default_promotion_authorized": false
+  }
+}

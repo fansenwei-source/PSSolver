@@ -26,6 +26,7 @@ from .snapshots import (
 )
 from .api import (
     CompiledSimulation,
+    DeclarationCapability,
     GeneratedInitialCondition,
     Output,
     Simulation,
@@ -33,11 +34,18 @@ from .api import (
     SimulationObservationProtocol,
     SimulationResult,
     SimulationRunStatus,
+    PublicCapabilityCatalog,
+    QualifiedCombination,
     SnapshotInitialCondition,
     SpectralNumerics,
     TimeStepping,
     TorchSpectralExecution,
     compile_simulation,
+    available_boundary_policies,
+    available_combinations,
+    available_geometries,
+    available_models,
+    capability_catalog,
     run_simulation,
 )
 from .transforms import (
@@ -107,4 +115,12 @@ __all__ = [
     'SimulationObservationProtocol',
     'SimulationResult',
     'SimulationRunStatus',
+    'DeclarationCapability',
+    'PublicCapabilityCatalog',
+    'QualifiedCombination',
+    'available_boundary_policies',
+    'available_combinations',
+    'available_geometries',
+    'available_models',
+    'capability_catalog',
 ]

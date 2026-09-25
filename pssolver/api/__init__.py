@@ -1,5 +1,15 @@
 """Supported high-level declaration API for complete simulations."""
 
+from .capabilities import (
+    DeclarationCapability,
+    PublicCapabilityCatalog,
+    QualifiedCombination,
+    available_boundary_policies,
+    available_combinations,
+    available_geometries,
+    available_models,
+    capability_catalog,
+)
 from .declarations import (
     GeneratedInitialCondition,
     Output,
@@ -18,14 +28,22 @@ from .results import (
 )
 
 __all__ = [
-    "GeneratedInitialCondition",
     "CompiledSimulation",
+    "DeclarationCapability",
+    "GeneratedInitialCondition",
     "Output",
+    "PublicCapabilityCatalog",
+    "QualifiedCombination",
     "Simulation",
     "SnapshotInitialCondition",
     "SpectralNumerics",
     "TimeStepping",
     "TorchSpectralExecution",
+    "available_boundary_policies",
+    "available_combinations",
+    "available_geometries",
+    "available_models",
+    "capability_catalog",
     "compile_simulation",
     "run_simulation",
     "SimulationDiagnosticProtocol",

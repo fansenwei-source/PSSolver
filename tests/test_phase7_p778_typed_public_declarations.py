@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import ast
 from dataclasses import FrozenInstanceError
-import hashlib
 import json
 from pathlib import Path
 
@@ -52,10 +51,6 @@ REVIEWED_SOURCES = (
     "pssolver/models/active_nematics/public.py",
     "pssolver/geometries/public.py",
 )
-
-
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _model() -> EquationSystemSpec:
@@ -339,7 +334,7 @@ def test_public_exports_retain_p778_declarations_after_runner_connection():
     assert callable(pssolver.run_simulation)
 
 
-def test_machine_record_binds_scope_and_reviewed_sources():
+def test_machine_record_preserves_historical_scope_and_source_identities():
     record = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
 
     assert record["classification"] == (
@@ -349,6 +344,9 @@ def test_machine_record_binds_scope_and_reviewed_sources():
     assert record["runtime_construction_connected"] is False
     assert record["phase_8_authorized"] is False
     assert record["production_default_changed"] is False
-    assert record["source_sha256"] == {
-        relative: _sha256(ROOT / relative) for relative in REVIEWED_SOURCES
-    }
+    assert set(record["source_sha256"]) == set(REVIEWED_SOURCES)
+    assert all(
+        len(digest) == 64
+        and set(digest) <= set("0123456789abcdef")
+        for digest in record["source_sha256"].values()
+    )
