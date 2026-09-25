@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "phase": "P7.7.10",
+  "parent_commit": "510941ae82a850bfd6afda436de09a235e30d355",
+  "classification": "PASS_P7_7_10_COMMON_RUNNER_AND_RESULT_PROTOCOL",
+  "status": "P7_7_10_COMPLETE_P7_7_11_NOT_STARTED",
+  "public_exports": [
+    "SimulationDiagnosticProtocol",
+    "SimulationObservationProtocol",
+    "SimulationResult",
+    "SimulationRunStatus",
+    "run_simulation"
+  ],
+  "qualified_applications": [
+    "plane_complete_stress_beris_edwards",
+    "channel_legacy_active_force_active_nematics"
+  ],
+  "qualified_runtime_paths": {
+    "plane_complete_stress_beris_edwards": [
+      "legacy_production",
+      "compiled_v2"
+    ],
+    "channel_legacy_active_force_active_nematics": [
+      "legacy_channel",
+      "compiled_channel_v2"
+    ]
+  },
+  "runner_contract": {
+    "accepts_simulation": true,
+    "accepts_compiled_simulation": true,
+    "compile_before_runtime_construction": true,
+    "application_dispatch_before_timestep": true,
+    "application_dispatch_in_timestep": false,
+    "runtime_fallback_allowed": false,
+    "plane_runner_connected": true,
+    "channel_runner_connected": true
+  },
+  "result_contract": {
+    "frozen": true,
+    "application_neutral": true,
+    "observation_protocol_structural": true,
+    "diagnostic_protocol_structural": true,
+    "copies_observation_arrays": false,
+    "explicit_dry_run_status": true,
+    "json_safe_metadata": true,
+    "application_workflow_result_types_public": false
+  },
+  "compatibility": {
+    "production_application_changed": false,
+    "numerical_kernel_changed": false,
+    "hot_path_changed": false,
+    "runtime_default_changed": false,
+    "checkpoint_schema_changed": false,
+    "output_schema_changed": false,
+    "persistent_gpu_allocation_added": false
+  },
+  "verification": {
+    "targeted_passed": 141,
+    "full_passed": 2175,
+    "subtests_passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0
+  },
+  "source_sha256": {
+    "pssolver/api/results.py": "8ed89056f2c3b53c94d9947fda8fb048ce26a40636f9e732181f5e2f63b262a2",
+    "pssolver/api/runner.py": "ccd06a71a0c5731ca32d54683f4f6220bd67b27a6bba52f433abd372ea8527eb"
+  },
+  "p7_7_11_complete": false,
+  "p7_7_12_complete": false,
+  "h100_required": false,
+  "phase_8_authorized": false,
+  "phase_9_authorized": false,
+  "next": {
+    "name": "P7.7.11 CPU byte-identity and restart qualification",
+    "authorized": false
+  }
+}

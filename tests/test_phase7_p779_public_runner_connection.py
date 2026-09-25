@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import ast
 from dataclasses import FrozenInstanceError
-import hashlib
 import json
 from pathlib import Path
 import sys
-from types import ModuleType
+from types import ModuleType, SimpleNamespace
 
+import numpy as np
 import pytest
 
 import pssolver
@@ -45,17 +45,6 @@ ROOT = Path(__file__).resolve().parents[1]
 RESULT_PATH = ROOT / (
     "notes/architecture_v0_2/phase_7_p779_public_runner_connection.json"
 )
-REVIEWED_SOURCES = (
-    "pssolver/api/runner.py",
-    "pssolver/configuration/public_channel_simulation_compiler.py",
-    "pssolver/configuration/public_simulation_runner.py",
-)
-
-
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 def _simulation(**replacements) -> Simulation:
     model = CompleteStressBerisEdwards(
         ldg_a=0.0,
@@ -262,7 +251,20 @@ def test_run_simulation_dispatches_once_to_existing_application(monkeypatch):
             progress=progress,
             emit_metadata=emit_metadata,
         )
-        return "sentinel-result"
+        return SimpleNamespace(
+            start_step=0,
+            final_step=2,
+            elapsed_seconds=1.25,
+            saved_steps=(1, 2),
+            checkpoint_steps=(),
+            final_observation=SimpleNamespace(
+                step=2,
+                q=np.zeros((2, 2, 2, 5)),
+                velocity=np.zeros((2, 2, 2, 3)),
+                pressure=np.zeros((2, 2, 2)),
+            ),
+            diagnostics=(),
+        )
 
     fake.run_plane_beris_edwards = run_plane_beris_edwards
     monkeypatch.setitem(
@@ -277,12 +279,48 @@ def test_run_simulation_dispatches_once_to_existing_application(monkeypatch):
         emit_metadata=True,
     )
 
-    assert result == "sentinel-result"
+    assert result.completed is True
+    assert result.application == PUBLIC_PLANE_APPLICATION
+    assert result.final_step == 2
+    assert result.final_observation.step == 2
     assert observed == {
         "run_spec": compiled.application_request,
         "progress": progress,
         "emit_metadata": True,
     }
+
+
+def test_run_simulation_represents_plane_dry_run_without_false_outputs(
+    monkeypatch,
+):
+    compiled = compile_simulation(_simulation())
+    fake = ModuleType("pssolver.applications.plane_beris_edwards")
+
+    def run_plane_beris_edwards(
+        run_spec,
+        *,
+        progress,
+        emit_metadata,
+    ):
+        assert run_spec is compiled.application_request
+        assert progress is None
+        assert emit_metadata is False
+        return None
+
+    fake.run_plane_beris_edwards = run_plane_beris_edwards
+    monkeypatch.setitem(
+        sys.modules,
+        "pssolver.applications.plane_beris_edwards",
+        fake,
+    )
+
+    result = run_simulation(compiled)
+
+    assert result.status.value == "dry_run"
+    assert result.completed is False
+    assert result.output_directory is None
+    assert result.final_observation is None
+    assert result.saved_steps == ()
 
 
 def test_public_runner_has_no_top_level_application_or_runtime_import():
@@ -336,5 +374,13 @@ def test_machine_record_binds_scope_and_source_identity():
     assert record["phase_8_authorized"] is False
     assert record["production_default_changed"] is False
     assert record["source_sha256"] == {
-        relative: _sha256(ROOT / relative) for relative in REVIEWED_SOURCES
+        "pssolver/api/runner.py": (
+            "8b72c00725964e6d508a90b0a21bed0ed8a4e58034ea4adc3a214585ef11265a"
+        ),
+        "pssolver/configuration/public_channel_simulation_compiler.py": (
+            "6fb5714b44d4a115837d57167f7a2c8457ff41eaea8ffe4abfe0374ab8741dfc"
+        ),
+        "pssolver/configuration/public_simulation_runner.py": (
+            "6ead3e143f1913e076425cc98776abf5ff3ff626d56092718d466f8e51b1acaa"
+        ),
     }

@@ -248,7 +248,7 @@ def test_transform_facade_contains_no_numerical_implementation():
 
 
 def test_transform_constants_retain_exact_values_and_root_identity():
-    # P7.7.7 adds one reviewed public declaration without narrowing or
+    # P7.7.7--P7.7.10 append reviewed public contracts without narrowing or
     # reordering the frozen v0.1.2 compatibility surface.
     assert tuple(pssolver.__all__[: len(EXPECTED_ROOT_ALL)]) == EXPECTED_ROOT_ALL
     assert tuple(pssolver.__all__[len(EXPECTED_ROOT_ALL) :]) == (
@@ -262,6 +262,10 @@ def test_transform_constants_retain_exact_values_and_root_identity():
         "CompiledSimulation",
         "compile_simulation",
         "run_simulation",
+        "SimulationDiagnosticProtocol",
+        "SimulationObservationProtocol",
+        "SimulationResult",
+        "SimulationRunStatus",
     )
     assert transforms.DEFAULT_DEALIAS_RULE == "cubic_half"
     assert transforms.DEFAULT_TRANSFORM_EXECUTION_ORDER == "real_first"

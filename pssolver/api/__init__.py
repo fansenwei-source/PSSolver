@@ -10,6 +10,12 @@ from .declarations import (
 )
 from .simulation import Simulation
 from .runner import CompiledSimulation, compile_simulation, run_simulation
+from .results import (
+    SimulationDiagnosticProtocol,
+    SimulationObservationProtocol,
+    SimulationResult,
+    SimulationRunStatus,
+)
 
 __all__ = [
     "GeneratedInitialCondition",
@@ -22,4 +28,8 @@ __all__ = [
     "TorchSpectralExecution",
     "compile_simulation",
     "run_simulation",
+    "SimulationDiagnosticProtocol",
+    "SimulationObservationProtocol",
+    "SimulationResult",
+    "SimulationRunStatus",
 ]

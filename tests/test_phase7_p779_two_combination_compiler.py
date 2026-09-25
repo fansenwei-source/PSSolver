@@ -7,7 +7,7 @@ import json
 
 import pytest
 
-from pssolver import Simulation, compile_simulation, run_simulation
+from pssolver import Simulation, compile_simulation
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
@@ -175,12 +175,10 @@ def test_unregistered_pair_reports_structured_capability_gap():
     ]
 
 
-def test_compiled_channel_is_immutable_and_execution_waits_for_p7710():
+def test_compiled_channel_is_immutable():
     compiled = compile_simulation(_channel_simulation("compiled_channel_v2"))
     with pytest.raises(FrozenInstanceError):
         compiled.application = "other"
-    with pytest.raises(RuntimeError, match="P7.7.10"):
-        run_simulation(compiled)
 
 
 def test_channel_compiler_preserves_snapshot_mode_without_guessing():
