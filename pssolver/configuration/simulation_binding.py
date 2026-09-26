@@ -77,6 +77,7 @@ class BindingRejectionCode(str, Enum):
     """Stable reason that a lowered declaration cannot be connected."""
 
     INVALID_LOWERING_PLAN = "invalid_lowering_plan"
+    UNSUPPORTED_LIFTING_RUNTIME = "unsupported_lifting_runtime"
     UNSUPPORTED_RUNTIME_PATH = "unsupported_runtime_path"
 
 
@@ -177,6 +178,13 @@ def bind_simulation_runtime(
     if not isinstance(simulation, SimulationSpec):
         raise TypeError("simulation must be a SimulationSpec")
     plan = _require_exact_plan(simulation, lowering_plan)
+    if plan.lifting_plan is not None:
+        _reject(
+            BindingRejectionCode.UNSUPPORTED_LIFTING_RUNTIME,
+            "static lifting is lowered but not connected to a runtime",
+            lifting_plan_sha256=plan.lifting_plan.canonical_sha256(),
+            next_phase="P8.4.4",
+        )
     key = (
         plan.equation_variant,
         plan.geometry_name,

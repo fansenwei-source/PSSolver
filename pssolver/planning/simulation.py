@@ -19,6 +19,7 @@ from pssolver.core.fields import FieldRole
 from pssolver.core.geometry import AxisTopology
 
 from .plan import TransformKind
+from .lifting import StaticLiftingPlan
 
 
 SIMULATION_LOWERING_PLAN_SCHEMA_VERSION = 1
@@ -433,6 +434,7 @@ class SimulationLoweringPlan:
     nullspace: NullspaceRequirement
     numerics_json: str
     time_integration_json: str
+    lifting_plan: StaticLiftingPlan | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -477,6 +479,11 @@ class SimulationLoweringPlan:
             raise TypeError("solver must be a GeometrySolverRequirement")
         if not isinstance(self.nullspace, NullspaceRequirement):
             raise TypeError("nullspace must be a NullspaceRequirement")
+        if self.lifting_plan is not None and not isinstance(
+            self.lifting_plan,
+            StaticLiftingPlan,
+        ):
+            raise TypeError("lifting_plan must be a StaticLiftingPlan or None")
         for value, description in (
             (self.numerics_json, "numerics"),
             (self.time_integration_json, "time integration"),
@@ -516,7 +523,7 @@ class SimulationLoweringPlan:
         raise KeyError(component)
 
     def to_metadata(self) -> dict[str, object]:
-        return {
+        metadata = {
             "schema_version": SIMULATION_LOWERING_PLAN_SCHEMA_VERSION,
             "source_simulation_sha256": self.source_simulation_sha256,
             "equation_variant": self.equation_variant,
@@ -535,6 +542,12 @@ class SimulationLoweringPlan:
             "numerics": json.loads(self.numerics_json),
             "time_integration": json.loads(self.time_integration_json),
         }
+        if self.lifting_plan is not None:
+            metadata["lifting_plan"] = self.lifting_plan.to_metadata()
+            metadata["lifting_plan_sha256"] = (
+                self.lifting_plan.canonical_sha256()
+            )
+        return metadata
 
     def canonical_sha256(self) -> str:
         payload = _canonical_json(self.to_metadata(), "lowering plan")

@@ -1,0 +1,68 @@
+{
+  "authorization": {
+    "h100_authorized": false,
+    "p8_4_3_complete": true,
+    "p8_4_4_eligible_for_planning": true,
+    "p8_4_4_implementation_authorized": false,
+    "p8_5_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false
+  },
+  "baseline": {
+    "commit": "5904ec8c090bd7ecee9e7de014e0e29b5ff0d116",
+    "p8_4_2_record": "notes/architecture_v0_2/phase_8_p842_plane_static_lifting.json"
+  },
+  "boundary_policy_catalog": {
+    "prescribed_q": "declarable_not_executable",
+    "strong_homeotropic_q": "declarable_not_executable",
+    "strong_planar_q": "declarable_not_executable"
+  },
+  "classification": "PASS_P8_4_3_Q_CONVENIENCES_AND_PLANE_APPLICATION_LOWERING",
+  "h100_used": false,
+  "homogeneous_plane_metadata_changed": false,
+  "local_verification": {
+    "failed": 0,
+    "full": "2284 passed, 8 subtests passed",
+    "git_diff_check": "pass",
+    "targeted": "48 passed"
+  },
+  "lowered_application": {
+    "component_coverage": "all_canonical_Q_components",
+    "geometry": "plane_slab",
+    "homogeneous_remainder_basis": [
+      "fft",
+      "fft",
+      "dst"
+    ],
+    "physical_reconstruction": "Q_homogeneous+Q_lift",
+    "wall_data": "static_constant_two_sided_dirichlet"
+  },
+  "nonhomogeneous_neumann_supported": false,
+  "phase": "P8.4.3",
+  "production_runtime_connected": false,
+  "q_convention_id": "de_gennes_S_lambda_max_v1",
+  "q_policies": [
+    "prescribed_q",
+    "strong_homeotropic_q",
+    "strong_planar_q"
+  ],
+  "rejections": [
+    "non_plane_geometry",
+    "incomplete_Q_component_coverage",
+    "nonconstant_wall_data",
+    "invalid_symmetric_traceless_Q",
+    "invalid_director_or_normal",
+    "non_tangent_planar_director",
+    "runtime_not_connected_until_P8_4_4"
+  ],
+  "source_sha256": {
+    "pssolver/api/capabilities.py": "d91897f61b96bd0e82fd88ee77e842487c25cab042c358fe5ef0d01d23091e3e",
+    "pssolver/configuration/simulation_binding.py": "1bd569a5daa5507496933dda690bf5fd12f900cf211d618ff6d93df80e2d5c6c",
+    "pssolver/configuration/simulation_lowering.py": "930c59ef096f80b1db8e4db34ade2ed5f8e3bc566a328b5d8abe069988938e39",
+    "pssolver/models/active_nematics/__init__.py": "6587b2fa3c796284766d3b1c6aaaaae706c58455870df2a0bf0583e57ba17959",
+    "pssolver/models/active_nematics/boundaries.py": "e48fea6d814914628605b18ee685efd9b1f780e86962f37c1d6942a6ffa44d3d",
+    "pssolver/planning/simulation.py": "903b5f1ea744d2e70b4f02b659c3294c8da289ffaa6d2e45da9c15471f641722"
+  },
+  "status": "P8_4_3_COMPLETE_P8_4_4_NOT_AUTHORIZED",
+  "workflow_or_restart_changed": false
+}

@@ -170,6 +170,10 @@ REVIEWED_CONFIGURATION_TO_PLANNING_EDGES = {
     ),
     ImportEdge(
         "pssolver.configuration.simulation_lowering",
+        "pssolver.planning.lifting",
+    ),
+    ImportEdge(
+        "pssolver.configuration.simulation_lowering",
         "pssolver.planning.plan",
     ),
     ImportEdge(
@@ -187,6 +191,14 @@ REVIEWED_MODEL_DECLARATION_TO_SYSTEMS_EDGES = {
     ImportEdge(
         "pssolver.models.active_nematics.equation_systems",
         "pssolver.systems.stokes",
+    ),
+}
+
+
+REVIEWED_MODEL_TO_BOUNDARY_POLICY_EDGES = {
+    ImportEdge(
+        "pssolver.models.active_nematics.boundaries",
+        "pssolver.boundaries",
     ),
 }
 
@@ -358,6 +370,16 @@ def test_models_have_only_reviewed_tensor_free_system_declaration_edges():
     assert observed == REVIEWED_MODEL_DECLARATION_TO_SYSTEMS_EDGES
 
 
+def test_models_have_only_reviewed_public_boundary_policy_edges():
+    observed = {
+        edge
+        for edge in _all_edges()
+        if _layer(edge.source) == "models"
+        and _layer(edge.destination) == "boundaries"
+    }
+    assert observed == REVIEWED_MODEL_TO_BOUNDARY_POLICY_EDGES
+
+
 def test_tensor_free_declaration_and_planning_layers_use_no_third_party_runtime():
     violations: list[str] = []
     for path in sorted(PACKAGE_ROOT.rglob("*.py")):
@@ -386,6 +408,8 @@ def test_internal_imports_follow_the_phase_zero_dependency_ratchet():
         if destination_layer in ALLOWED_INTERNAL_LAYERS[source_layer]:
             continue
         if edge in REVIEWED_MODEL_DECLARATION_TO_SYSTEMS_EDGES:
+            continue
+        if edge in REVIEWED_MODEL_TO_BOUNDARY_POLICY_EDGES:
             continue
         if edge in REVIEWED_CONFIGURATION_TO_PLANNING_EDGES:
             continue

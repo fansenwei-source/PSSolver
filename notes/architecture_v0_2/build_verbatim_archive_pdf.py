@@ -182,6 +182,8 @@ SOURCE_ORDER = (
     "phase_8_p841_prescribed_dirichlet_declarations.json",
     "phase_8_p842_plane_static_lifting.md",
     "phase_8_p842_plane_static_lifting.json",
+    "phase_8_p843_q_lifting_lowering.md",
+    "phase_8_p843_q_lifting_lowering.json",
 )
 
 PAGE_WIDTH = 595.276

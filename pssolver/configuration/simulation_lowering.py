@@ -23,6 +23,7 @@ from pssolver.core.geometry import AxisTopology
 from pssolver.core.integrators import IntegratorScheme
 from pssolver.core.numerics import SpectralStorage
 from pssolver.planning.plan import TransformKind
+from pssolver.planning.lifting import StaticLiftingPlan
 from pssolver.planning.simulation import (
     AxisBasisRequirement,
     BasisProvenance,
@@ -42,6 +43,7 @@ from pssolver.systems.stokes import (
 )
 
 from .simulation import SimulationSpec
+from .lifting import build_plane_static_lifting_plan
 
 
 _BASIS_BY_MODAL_KIND = {
@@ -322,6 +324,7 @@ def _validate_global_contract(
 def _component_modal_kinds(
     simulation: SimulationSpec,
     component: str,
+    lifting_plan: StaticLiftingPlan | None,
 ) -> tuple[BoundaryKind, ...]:
     assignment = simulation.boundaries.for_component(component)
     prescribed_faces = tuple(
@@ -329,7 +332,10 @@ def _component_modal_kinds(
         for face in assignment.faces
         if not face.condition.is_homogeneous
     )
-    if prescribed_faces:
+    if prescribed_faces and (
+        lifting_plan is None
+        or component not in lifting_plan.component_order
+    ):
         _reject(
             LoweringRejectionCode.UNSUPPORTED_PRESCRIBED_BOUNDARY,
             "prescribed boundary data require a qualified lifting plan",
@@ -398,6 +404,7 @@ def _axis_requirements(
 
 def _primary_bases(
     simulation: SimulationSpec,
+    lifting_plan: StaticLiftingPlan | None,
 ) -> dict[str, ComponentBasisRequirement]:
     field_lookup = _field_lookup(simulation)
     values = {}
@@ -420,7 +427,11 @@ def _primary_bases(
             role=role,
             axes=_axis_requirements(
                 simulation,
-                _component_modal_kinds(simulation, assignment.component),
+                _component_modal_kinds(
+                    simulation,
+                    assignment.component,
+                    lifting_plan,
+                ),
             ),
             provenance=provenance,
         )
@@ -454,6 +465,7 @@ def _validate_boundary_signatures(
     simulation: SimulationSpec,
     kind: str,
     bases: dict[str, ComponentBasisRequirement],
+    lifting_plan: StaticLiftingPlan | None,
 ) -> None:
     q = _field_components(simulation, "Q")
     velocity = _field_components(simulation, "velocity")
@@ -468,7 +480,11 @@ def _validate_boundary_signatures(
     if kind == "plane":
         even = (TransformKind.FFT, TransformKind.FFT, TransformKind.DCT)
         odd = (TransformKind.FFT, TransformKind.FFT, TransformKind.DST)
-        _require_signature(bases, q, even)
+        _require_signature(
+            bases,
+            q,
+            odd if lifting_plan is not None else even,
+        )
         _require_signature(bases, ("ux", "uy", "p"), even)
         _require_signature(bases, ("uz",), odd)
     elif kind == "periodic":
@@ -1040,6 +1056,47 @@ def _stokes_requirements(
     return solver, nullspace
 
 
+def _qualified_static_lifting_plan(
+    simulation: SimulationSpec,
+    kind: str,
+) -> StaticLiftingPlan | None:
+    prescribed_components = tuple(
+        assignment.component
+        for assignment in simulation.boundaries.components
+        if any(
+            not face.condition.is_homogeneous
+            for face in assignment.faces
+        )
+    )
+    if not prescribed_components:
+        return None
+    q_components = _field_components(simulation, "Q")
+    if kind != "plane" or set(prescribed_components) != set(q_components):
+        # Preserve the established component/face rejection emitted by
+        # ``_component_modal_kinds`` for every unqualified combination.
+        return None
+    try:
+        lifting_plan = build_plane_static_lifting_plan(
+            equation_system=simulation.equation_system,
+            geometry=simulation.geometry,
+            boundaries=simulation.boundaries,
+        )
+    except (TypeError, ValueError) as exc:
+        _reject(
+            LoweringRejectionCode.UNSUPPORTED_PRESCRIBED_BOUNDARY,
+            "prescribed Plane Q data do not satisfy the static lifting contract",
+            error=str(exc),
+        )
+    if set(lifting_plan.component_order) != set(q_components):
+        _reject(
+            LoweringRejectionCode.UNSUPPORTED_PRESCRIBED_BOUNDARY,
+            "the Plane lifting plan must cover exactly every Q component",
+            expected_components=list(q_components),
+            observed_components=list(lifting_plan.component_order),
+        )
+    return lifting_plan
+
+
 def lower_simulation_spec(simulation: SimulationSpec) -> SimulationLoweringPlan:
     """Lower one qualified request without importing or allocating a runtime.
 
@@ -1049,8 +1106,9 @@ def lower_simulation_spec(simulation: SimulationSpec) -> SimulationLoweringPlan:
     """
 
     kind, _expected_capabilities = _validate_global_contract(simulation)
-    bases = _primary_bases(simulation)
-    _validate_boundary_signatures(simulation, kind, bases)
+    lifting_plan = _qualified_static_lifting_plan(simulation, kind)
+    bases = _primary_bases(simulation, lifting_plan)
+    _validate_boundary_signatures(simulation, kind, bases, lifting_plan)
     derivatives = _lower_transient_spaces(simulation, kind, bases)
     capabilities = _capability_requirements(simulation, kind)
     solver, nullspace = _stokes_requirements(simulation, kind)
@@ -1067,6 +1125,7 @@ def lower_simulation_spec(simulation: SimulationSpec) -> SimulationLoweringPlan:
         time_integration_json=_canonical_json(
             simulation.time_integration.to_metadata()
         ),
+        lifting_plan=lifting_plan,
     )
 
 

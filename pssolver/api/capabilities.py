@@ -209,6 +209,21 @@ _BOUNDARY_POLICIES = (
             _CHANNEL_COMPLETE_APPLICATION,
         ),
     ),
+    DeclarationCapability(
+        kind="boundary_policy",
+        key="prescribed_q",
+        constructor="pssolver.models.active_nematics.prescribed_q",
+    ),
+    DeclarationCapability(
+        kind="boundary_policy",
+        key="strong_homeotropic_q",
+        constructor="pssolver.models.active_nematics.strong_homeotropic_q",
+    ),
+    DeclarationCapability(
+        kind="boundary_policy",
+        key="strong_planar_q",
+        constructor="pssolver.models.active_nematics.strong_planar_q",
+    ),
 )
 
 _RUNTIME_PATHS = {

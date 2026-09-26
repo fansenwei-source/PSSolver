@@ -21,6 +21,11 @@ from .beris_edwards import (
     beris_edwards_reactive_stress_components,
     q_tensor_contraction,
 )
+from .boundaries import (
+    prescribed_q,
+    strong_homeotropic_q,
+    strong_planar_q,
+)
 from .constitutive import (
     ALGEBRAIC_STRESS_COMPONENTS,
     BERIS_EDWARDS_FORCE_CAPABILITY,
@@ -144,6 +149,9 @@ __all__ = [
     "neumann_twist_profile",
     "positive_equilibrium_S",
     "q_tensor_contraction",
+    "prescribed_q",
     "sample_periodic_neutral_defects_2d",
+    "strong_homeotropic_q",
+    "strong_planar_q",
     "uniaxial_Q",
 ]

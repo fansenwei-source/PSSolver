@@ -7,6 +7,7 @@ from dataclasses import replace
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 import pytest
 
@@ -63,10 +64,17 @@ GENERIC_SOURCES = (
     "pssolver/boundaries/homogeneous.py",
     "pssolver/configuration/simulation_lowering.py",
 )
+P841_COMMIT = "9331f872cd24ae7999cbd8c4c60f8948b19e54e3"
 
 
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def _sha256_at_commit(relative: str) -> str:
+    payload = subprocess.run(
+        ["git", "show", f"{P841_COMMIT}:{relative}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    return hashlib.sha256(payload).hexdigest()
 
 
 def _generic_system() -> EquationSystemSpec:
@@ -402,7 +410,7 @@ def test_public_exports_and_record_freeze_p841_scope():
     assert record["authorization"]["p8_4_2_implementation_authorized"] is False
     assert set(record["source_sha256"]) == set(GENERIC_SOURCES)
     for relative, expected in record["source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256_at_commit(relative) == expected
 
 
 def test_future_verbatim_archive_lists_p841_without_regenerating_pdf():

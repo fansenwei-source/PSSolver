@@ -216,7 +216,24 @@ def test_discovery_is_frozen_and_matches_live_compiler_registry():
         "neumann_pressure_compatibility",
         "neumann_q",
         "no_slip_velocity",
+        "prescribed_q",
+        "strong_homeotropic_q",
+        "strong_planar_q",
     }
+    p843_policies = {
+        value.key: value
+        for value in pssolver.available_boundary_policies()
+        if value.key in {
+            "prescribed_q",
+            "strong_homeotropic_q",
+            "strong_planar_q",
+        }
+    }
+    assert all(not value.executable for value in p843_policies.values())
+    assert all(
+        value.qualified_applications == ()
+        for value in p843_policies.values()
+    )
     with pytest.raises(FrozenInstanceError):
         catalog.models[0].key = "changed"
     json.dumps(catalog.to_metadata(), allow_nan=False, sort_keys=True)
