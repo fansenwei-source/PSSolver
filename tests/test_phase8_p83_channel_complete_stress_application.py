@@ -30,6 +30,7 @@ from pssolver.models.active_nematics import (
     CompleteStressBerisEdwards,
 )
 from pssolver.planning.construction import RuntimeConstructionKind
+from pssolver.runtime.channel_beris_edwards import BerisEdwardsChannelStokes
 
 
 def _simulation(
@@ -40,6 +41,9 @@ def _simulation(
     checkpoint_interval=None,
     restart_from=None,
     stress_sum="physical",
+    diagnostics=True,
+    diagnostic_interval=1,
+    save_interval=10,
 ):
     model = CompleteStressBerisEdwards(
         ldg_a=0.0,
@@ -100,8 +104,9 @@ def _simulation(
         output=Output(
             directory=tmp_path / output_name,
             steps=steps,
-            save_interval=10,
-            diagnostic_interval=1,
+            save_interval=save_interval,
+            diagnostic_interval=diagnostic_interval,
+            diagnostics=diagnostics,
             checkpoint_interval=checkpoint_interval,
             restart_from=restart_from,
         ),
@@ -221,6 +226,67 @@ def test_channel_restart_rebuilds_q_gradient_cache_before_first_step(
     # is loaded.  The final take is the first resumed timestep and must consume
     # the cache reconstructed from the restored Q spectra.
     assert cache_hits[-1] is True
+
+
+def test_channel_observation_schedule_does_not_change_trajectory(tmp_path):
+    dense = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="dense_observation",
+            steps=6,
+            diagnostics=True,
+            diagnostic_interval=1,
+            save_interval=1,
+        )
+    )
+    sparse = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="sparse_observation",
+            steps=6,
+            diagnostics=False,
+            diagnostic_interval=6,
+            save_interval=6,
+        )
+    )
+
+    for prefix in ("Q", "u", "p"):
+        left = dense.output_directory / f"{prefix}_6.npy"
+        right = sparse.output_directory / f"{prefix}_6.npy"
+        assert left.read_bytes() == right.read_bytes()
+
+
+def test_channel_observation_sync_performs_one_static_solve_per_state(
+    tmp_path,
+    monkeypatch,
+):
+    calls = []
+    original_forward = BerisEdwardsChannelStokes.forward
+
+    def recording_forward(self, fields, params):
+        calls.append(self)
+        return original_forward(self, fields, params)
+
+    monkeypatch.setattr(
+        BerisEdwardsChannelStokes,
+        "forward",
+        recording_forward,
+    )
+    steps = 4
+    run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="static_solve_count",
+            steps=steps,
+            diagnostics=True,
+            diagnostic_interval=1,
+            save_interval=1,
+        )
+    )
+
+    # One validation call during runtime construction, one solve for each
+    # pre-step Q state, and one final solve for Q at the completed step.
+    assert len(calls) == steps + 2
 
 
 def test_channel_complete_stress_rejects_spectral_component_sum(tmp_path):

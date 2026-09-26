@@ -1,6 +1,6 @@
 # Phase 8 P8.3: complete-stress Beris--Edwards in a rectangular Channel
 
-Status: `P8_3_RESTART_RECOVERY_LOCAL_CANDIDATE_H100_REQUIRED`.
+Status: `P8_3_OBSERVATION_SYNC_RECOVERY_LOCAL_CANDIDATE_H100_REQUIRED`.
 
 Baseline: `b753d24acec1245f6335dd45ed5cb1f5d8fefd19` on
 `next/pssolver-v0.2.0-architecture`, after the completed P8.2 periodic H100
@@ -65,8 +65,8 @@ The workflow records Q/u/p observations, pressure residual diagnostics,
 metadata, and an exact checkpoint.  Checkpoints contain spatial and spectral
 Q/u/p state, pressure-PCG warm-start state, tensor hashes, shape, dtype,
 runtime identity, backend identity, and integrator progress.  Validation of
-all records finishes before target-state mutation.  On CPU, a two-step
-continuous trajectory and a one-step plus one-step restart are byte-for-byte
+all records finishes before target-state mutation.  On CPU, a six-step
+continuous trajectory and a three-step plus three-step restart are byte-for-byte
 identical for Q, velocity, and pressure; pressure-state byte tampering is
 rejected before advancement.
 
@@ -77,8 +77,8 @@ regressions, manufactured operator test, finite trajectory, exact restart,
 and tamper rejection pass locally:
 
 ```text
-focused P8.3 recovery and architecture suite: 62 passed
-complete CPU suite: 2241 passed, 8 subtests passed
+focused P8.3 recovery and architecture suite: 64 passed
+complete CPU suite: 2243 passed, 8 subtests passed
 git diff --check: pass
 ```
 
@@ -104,23 +104,27 @@ differences were approximately `1.5e-16` for Q, `5.8e-15` for velocity, and
 `1.8e-14` for pressure.  These values are not a scientific failure, but the
 exact-restart software contract was deliberately not relaxed.
 
-The checkpoint already preserved both spatial and spectral Q/u/p arrays, the
-PCG pressure guess, integrator progress, identities, and hashes.  The missing
-execution state was the single-use Q-gradient cache.  An uninterrupted step
-consumes gradients published by the preceding static-field solve, while the
-restored runtime marked those static fields current without reconstructing the
-derived cache.  The restart path therefore recomputed gradients and followed
-a mathematically equivalent but not necessarily byte-identical GPU path.
+The first recovery reconstructed the single-use Q-gradient cache from restored
+Q spectra.  This remains correct derived-state hygiene and avoids checkpointing
+fifteen redundant gradient arrays.  Its focused H100 run (Job 10842781),
+however, reproduced the original differences exactly and localized the first
+u/p divergence before the resumed advance.  It therefore disproved the cache
+as the primary cause.
 
-The recovery rebuilds that cache once from the restored Q spectra after every
-persistent record has passed validation and after progress has been restored.
-It does not add the fifteen derived gradient arrays to the checkpoint and does
-not change the timestep algorithm.  Backend metadata distinguishes the saved
-`pressure_guess` from the reconstructed `q_gradient_cache`.  The CPU restart
-oracle now covers a six-step continuous run against a three-plus-three split,
-and a separate test proves that the first resumed nonlinear evaluation consumes
-the reconstructed cache.  The focused recovery suite passes 62 tests and the
-complete CPU suite passes 2241 tests plus 8 subtests.  Final closure still
-requires a focused H100 rerun of
-the restart and negative gates; previously passed profiler evidence should be
+The remaining cause was observation synchronization.  Diagnostics, saves,
+checkpoints, and final output could recompute the Channel static solve and
+mutate the PCG warm start without marking the static fields current.  The next
+timestep then solved the same state again.  A continuous workflow and a split
+workflow could consequently execute different numbers of PCG solves at the
+split boundary even though Q and every persistent checkpoint tensor matched.
+
+The second recovery makes observation synchronization idempotent.  It solves
+only when the static state is stale, marks the result current, and lets the
+next timestep consume that already-computed state and its published gradient
+cache.  New tests prove that dense versus sparse diagnostics/save schedules
+produce byte-identical Q/u/p and that there is exactly one static solve per Q
+state.  Together with the longer restart oracle, the focused recovery suite
+passes 64 tests and the complete CPU suite passes 2243 tests plus 8 subtests.
+Final closure still requires a focused H100 rerun of restart and negative
+gates; previously passed manufactured-force and profiler evidence should be
 reused rather than repeated.

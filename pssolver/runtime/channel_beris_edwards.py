@@ -328,7 +328,7 @@ class ChannelBerisEdwardsRuntimeAdapterProtocol(Protocol):
         *,
         pre_update_callback: Callable[[object, int], None] | None = None,
     ) -> None: ...
-    def synchronize_for_observation(self) -> None: ...
+    def synchronize_for_observation(self) -> bool: ...
     def capture_pressure_guess(self) -> torch.Tensor: ...
     def restore_pressure_guess(self, value: torch.Tensor) -> None: ...
     def restore_derived_state(self) -> bool: ...
@@ -374,8 +374,13 @@ class ChannelBerisEdwardsRuntimeAdapter:
     def advance(self, steps, *, pre_update_callback=None):
         self._solver.run(steps, pre_update_callback=pre_update_callback)
 
-    def synchronize_for_observation(self):
+    def synchronize_for_observation(self) -> bool:
+        integrator = self._solver.integrator
+        if integrator._static_fields_are_current:
+            return False
         self._solver.refresh_static_fields()
+        integrator._static_fields_are_current = True
+        return True
 
     def capture_pressure_guess(self):
         value = self._solver.model.static_model.pressure_guess
