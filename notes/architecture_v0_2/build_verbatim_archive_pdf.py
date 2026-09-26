@@ -176,6 +176,8 @@ SOURCE_ORDER = (
     "phase_8_p82_h100_closure.json",
     "phase_8_p83_channel_complete_stress.md",
     "phase_8_p83_channel_complete_stress.json",
+    "phase_8_p84_lifting_plan.md",
+    "phase_8_p84_lifting_plan.json",
 )
 
 PAGE_WIDTH = 595.276

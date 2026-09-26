@@ -1,0 +1,240 @@
+{
+  "schema_version": 1,
+  "phase": "P8.4.0",
+  "title": "Field-neutral static Dirichlet lifting and strong-Q specialization plan",
+  "date": "2026-09-26",
+  "status": "P8_4_PLANNING_FROZEN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "classification": "PASS_P8_4_PLANNING",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "9c0cdc25ad875a964cffafa73a12eda3e45c2244",
+    "p8_3_record": "notes/architecture_v0_2/phase_8_p83_channel_complete_stress.json",
+    "p8_3_record_sha256": "8168fdf5744df73e3a7cbbc649d590b4c41b052845cd612ff00ab78118e14942",
+    "p8_3_complete": true,
+    "eligible_for_p8_4_planning": true
+  },
+  "decision": {
+    "generic_mathematical_field": "phi",
+    "decomposition": "phi=phi_lift+phi_homogeneous",
+    "homogeneous_wall_contract": "phi_homogeneous=0_on_prescribed_faces",
+    "lifting_core_is_field_neutral": true,
+    "q_is_first_scientific_specialization": true,
+    "generic_core_knows_director_or_scalar_order": false,
+    "boundary_declaration_names_transform_or_solver": false
+  },
+  "current_inventory": {
+    "face_aware_component_assignment_exists": true,
+    "only_homogeneous_boundary_conditions_admitted": true,
+    "fft_dct_dst_homogeneous_spaces_exist": true,
+    "prescribed_boundary_value_contract_exists": false,
+    "lifting_plan_exists": false,
+    "lifting_operator_exists": false,
+    "lifted_pde_correction_exists": false,
+    "lifting_checkpoint_provenance_exists": false,
+    "old_script_strong_q_lifting_prototype_exists": false
+  },
+  "ownership": {
+    "pssolver.core.boundary": [
+      "tensor_free_static_prescribed_value_identity",
+      "generic_component_and_oriented_face_contract"
+    ],
+    "pssolver.boundaries": [
+      "field_neutral_prescribed_dirichlet_policy",
+      "component_coverage_and_face_assignment"
+    ],
+    "pssolver.planning": [
+      "lifting_requirement",
+      "static_lifting_plan",
+      "homogeneous_remainder_basis_requirement"
+    ],
+    "pssolver.operators": [
+      "geometry_aware_static_lift_materialization",
+      "linear_operator_lift_correction"
+    ],
+    "pssolver.runtime_and_workspace": [
+      "one_time_lift_allocation",
+      "physical_field_reconstruction_without_hot_loop_allocation"
+    ],
+    "pssolver.models.active_nematics.boundaries": [
+      "strong_planar_q_convenience",
+      "strong_homeotropic_q_convenience",
+      "explicit_prescribed_q_validation"
+    ],
+    "pssolver.workflows_and_checkpoint": [
+      "physical_observations",
+      "homogeneous_remainder_checkpoint",
+      "lifting_identity_and_hash_validation_before_mutation"
+    ]
+  },
+  "first_qualified_slice": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "plane_slab",
+    "evolved_field": "Q",
+    "bounded_axis": 2,
+    "q_boundary": "static_prescribed_dirichlet_both_faces",
+    "velocity_boundary": "free_slip_velocity",
+    "pressure_boundary": "existing_plane_compatibility",
+    "wall_data": "constant_per_face",
+    "lower_and_upper_values_may_differ": true,
+    "homogeneous_remainder_basis": ["fft", "fft", "dst"],
+    "runtime_fallback_allowed": false
+  },
+  "equation_contract": {
+    "physical_field": "phi_homogeneous+phi_lift",
+    "evolved_field": "phi_homogeneous",
+    "static_lift": true,
+    "time_derivative_of_lift": "zero",
+    "split_rhs": "L(phi_homogeneous)+L(phi_lift)+N(phi_homogeneous+phi_lift)",
+    "linear_lift_correction_explicit_even_if_zero": true,
+    "constitutive_kernels_receive_physical_field": true,
+    "diagnostics_and_outputs_receive_physical_field": true,
+    "output_only_lift_addition_is_valid": false
+  },
+  "q_specialization": {
+    "module_owner": "pssolver.models.active_nematics.boundaries",
+    "conveniences": [
+      "strong_planar_q",
+      "strong_homeotropic_q",
+      "prescribed_q"
+    ],
+    "q_convention_id": "de_gennes_S_lambda_max_v1",
+    "q_convention_definition": "Q=(3S/2)(nn-I/3)",
+    "component_order": ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"],
+    "reuses_existing_q_tensor_helpers": true,
+    "validates_unit_director": true,
+    "validates_symmetric_traceless_q": true
+  },
+  "initial_observation_checkpoint_contract": {
+    "initial_condition_representation": "physical_field",
+    "incompatible_initial_wall_values_rejected": true,
+    "silent_wall_overwrite_allowed": false,
+    "integrator_state_representation": "homogeneous_remainder",
+    "observation_representation": "physical_field",
+    "checkpoint_representation": "homogeneous_remainder",
+    "lifting_rebuilt_and_hash_verified_before_mutation": true,
+    "continuous_restart_byte_identity_required": true
+  },
+  "performance_contract": {
+    "materialize_lift_once": true,
+    "hot_loop_registry_lookup": false,
+    "hot_loop_policy_dispatch": false,
+    "hot_loop_value_provider_call": false,
+    "hot_loop_new_allocation": false,
+    "preallocated_physical_field_workspace": true,
+    "h100_non_regression_required": true
+  },
+  "slices": [
+    {
+      "id": "P8.4.0",
+      "name": "planning_and_contract_freeze",
+      "authorized": true,
+      "implemented": true,
+      "requires_h100": false
+    },
+    {
+      "id": "P8.4.1",
+      "name": "generic_static_prescribed_dirichlet_declarations",
+      "authorized": false,
+      "implemented": false,
+      "requires_h100": false
+    },
+    {
+      "id": "P8.4.2",
+      "name": "plane_static_lifting_operator_and_manufactured_oracle",
+      "authorized": false,
+      "implemented": false,
+      "requires_h100": false
+    },
+    {
+      "id": "P8.4.3",
+      "name": "q_conveniences_and_plane_application_lowering",
+      "authorized": false,
+      "implemented": false,
+      "requires_h100": false
+    },
+    {
+      "id": "P8.4.4",
+      "name": "physical_observation_checkpoint_restart_and_negative_gates",
+      "authorized": false,
+      "implemented": false,
+      "requires_h100": false
+    },
+    {
+      "id": "P8.4.5",
+      "name": "h100_non_regression_and_p8_4_closure",
+      "authorized": false,
+      "implemented": false,
+      "requires_h100": true
+    }
+  ],
+  "gate_order": [
+    "static_ownership_import_and_public_api",
+    "generic_boundary_value_identity_and_structured_rejection",
+    "wall_value_and_lifted_equation_manufactured_convergence",
+    "unchanged_homogeneous_plane_cpu_identity",
+    "strong_q_one_step_and_finite_trajectory",
+    "checkpoint_restart_and_negative_identity",
+    "installed_package_metadata_and_provenance",
+    "h100_performance_memory_transform_and_exact_restart"
+  ],
+  "negative_gates": [
+    "prescribed_value_identity_mismatch",
+    "lifting_plan_identity_mismatch",
+    "q_convention_identity_mismatch",
+    "materialized_lift_hash_mismatch",
+    "geometry_or_face_mismatch",
+    "shape_dtype_or_finite_state_mismatch",
+    "runtime_or_backend_identity_mismatch",
+    "checkpoint_tensor_or_file_record_tamper"
+  ],
+  "explicit_rejections_first_slice": [
+    "time_dependent_boundary_data",
+    "python_callable_boundary_data",
+    "trainable_boundary_data",
+    "prescribed_data_on_periodic_face",
+    "algebraic_transient_or_diagnostic_field_lifting",
+    "spatially_varying_wall_data",
+    "robin_or_surface_energy_anchoring",
+    "channel_strong_anchoring",
+    "unregistered_geometry_builder"
+  ],
+  "out_of_scope": [
+    "finite_robin_or_tau_anchoring",
+    "surface_energy_dynamics",
+    "time_dependent_lifts",
+    "optimal_control",
+    "arbitrary_curved_geometry",
+    "channel_strong_anchoring",
+    "compiled_runtime_promotion",
+    "production_default_change",
+    "scientific_benchmark_claim",
+    "phase_9"
+  ],
+  "reviewed_source_sha256": {
+    "pssolver/core/boundary.py": "2b1b9592f5e91a532b4fa7eeb4aaf619bf3b04d559c5046cf3d00b537943703a",
+    "pssolver/boundaries/homogeneous.py": "027e8e6aca0e6f72a16e3a2b28dd5df79cb91eeb12db9585332ef0dfc75eeb3b",
+    "pssolver/configuration/simulation_lowering.py": "3da2573349d73972516f055e8889d5b068e1a08c402d2c1f23140ba06c14811d",
+    "pssolver/planning/simulation.py": "24854f3da9bba1084b157604b476a1b42dfc4d3a79ee082f214b16d45ebdf9a5",
+    "pssolver/workflows/plane_checkpoint.py": "2406ec956fe733dbd5b01d312cb80dc1cafcc287cdba5fdc944a7b0087f59a89",
+    "pssolver/models/active_nematics/q_tensor.py": "48afbc4c4e6cb72958bc2307af2f02f0164bd330e1ee78ae404f9d1c0eed01dd"
+  },
+  "local_verification": {
+    "targeted": "18 passed",
+    "full": "2252 passed, 8 subtests passed",
+    "git_diff_check": "pass",
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected": 0
+  },
+  "authorization": {
+    "p8_4_planning_authorized": true,
+    "p8_4_planning_complete": true,
+    "p8_4_1_implementation_authorized": false,
+    "p8_4_implementation_authorized": false,
+    "h100_authorized": false,
+    "p8_5_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false
+  }
+}
