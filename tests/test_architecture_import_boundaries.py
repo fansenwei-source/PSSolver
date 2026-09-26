@@ -129,6 +129,10 @@ EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
         "pssolver.systems.stokes",
     ),
     ImportEdge(
+        "pssolver.configuration.lifting",
+        "pssolver.systems.equations",
+    ),
+    ImportEdge(
         "pssolver.configuration.plane_beris_edwards_component_graph",
         "pssolver.systems.stokes",
     ),
@@ -144,6 +148,10 @@ EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
 
 
 REVIEWED_CONFIGURATION_TO_PLANNING_EDGES = {
+    ImportEdge(
+        "pssolver.configuration.lifting",
+        "pssolver.planning.lifting",
+    ),
     ImportEdge(
         "pssolver.configuration.package_construction",
         "pssolver.planning.construction",

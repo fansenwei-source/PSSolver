@@ -1,0 +1,76 @@
+{
+  "authorization": {
+    "h100_authorized": false,
+    "p8_4_2_complete": true,
+    "p8_4_3_eligible_for_planning": true,
+    "p8_4_3_implementation_authorized": false,
+    "p8_5_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false
+  },
+  "baseline": {
+    "commit": "9331f872cd24ae7999cbd8c4c60f8948b19e54e3",
+    "p8_4_1_record": "notes/architecture_v0_2/phase_8_p841_prescribed_dirichlet_declarations.json"
+  },
+  "classification": "PASS_P8_4_2_PLANE_STATIC_LIFTING_AND_MANUFACTURED_ORACLE",
+  "field_neutral": true,
+  "h100_used": false,
+  "lifting_contract": {
+    "extension": "affine_wall_normal",
+    "grid_placement": "cell_centered",
+    "homogeneous_remainder_boundary": "dirichlet",
+    "physical_field": "phi_homogeneous+phi_lift",
+    "static": true,
+    "wall_values": "independent_constant_lower_and_upper"
+  },
+  "linear_correction": {
+    "affine_laplacian_explicit": true,
+    "full_linear_operator_assumed_zero": false,
+    "model_supplied_operator_applied_at_construction": true
+  },
+  "local_verification": {
+    "failed": 0,
+    "full": "2272 passed, 8 subtests passed",
+    "git_diff_check": "pass",
+    "targeted": "38 passed"
+  },
+  "manufactured_oracle": {
+    "errors": [
+      0.005598158649073806,
+      0.0014008891512969812,
+      0.0003503066853420464
+    ],
+    "observed_orders": [
+      1.9986095691699335,
+      1.9996523773158625
+    ],
+    "wall_normal_points": [
+      16,
+      32,
+      64
+    ]
+  },
+  "nonhomogeneous_neumann_supported": false,
+  "phase": "P8.4.2",
+  "production_runtime_connected": false,
+  "q_conveniences_implemented": false,
+  "rejections": [
+    "non_plane_geometry",
+    "multiple_bounded_axes",
+    "node_centered_grid",
+    "missing_prescribed_wall_data",
+    "non_evolved_field",
+    "nonphysical_semantic",
+    "nonreal_dtype",
+    "shape_dtype_or_device_mismatch",
+    "nonfinite_state_or_correction",
+    "workspace_input_alias",
+    "materialized_lift_identity_mismatch"
+  ],
+  "source_sha256": {
+    "pssolver/configuration/lifting.py": "48689c4687ce8a61e4c4f10de4ae4f7356116cbc3c4e2edcb25d4e03bc420381",
+    "pssolver/operators/lifting.py": "43fbbd27490daaa90894bdf6fe0fc2cbb57c1e45e8e2afa4302b2105c25a3cca",
+    "pssolver/planning/lifting.py": "0805518ea81c8ca13859dedc7af911d32b5efbe6f2f9b7908e0720823dbcc33c"
+  },
+  "status": "P8_4_2_COMPLETE_P8_4_3_NOT_AUTHORIZED"
+}
