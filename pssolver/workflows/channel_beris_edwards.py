@@ -222,6 +222,7 @@ def _load_checkpoint(directory, adapter, *, runtime_identity_sha256):
         integrator_step_count=integrator["step_count"],
         integrator_refresh_count=integrator["refresh_count"],
     )
+    adapter.restore_derived_state()
     return int(metadata["completed_steps"])
 
 

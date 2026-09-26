@@ -25,7 +25,10 @@ from pssolver.boundaries import (
     no_slip_velocity,
 )
 from pssolver.geometries import RectangularChannel
-from pssolver.models.active_nematics import CompleteStressBerisEdwards
+from pssolver.models.active_nematics import (
+    BerisEdwardsQGradientCache,
+    CompleteStressBerisEdwards,
+)
 from pssolver.planning.construction import RuntimeConstructionKind
 
 
@@ -153,35 +156,71 @@ def test_channel_complete_stress_compiler_records_two_axis_parity(tmp_path):
 
 def test_channel_complete_stress_is_finite_and_restart_is_byte_identical(tmp_path):
     continuous = run_simulation(
-        _simulation(tmp_path, output_name="continuous", steps=2)
+        _simulation(tmp_path, output_name="continuous", steps=6)
     )
     first = run_simulation(
         _simulation(
             tmp_path,
             output_name="first",
-            steps=1,
-            checkpoint_interval=1,
+            steps=3,
+            checkpoint_interval=3,
         )
     )
     resumed = run_simulation(
         _simulation(
             tmp_path,
             output_name="resumed",
-            steps=1,
-            restart_from=first.output_directory / "checkpoint_1",
+            steps=3,
+            restart_from=first.output_directory / "checkpoint_3",
         )
     )
 
-    assert continuous.final_step == resumed.final_step == 2
+    assert continuous.final_step == resumed.final_step == 6
     for prefix in ("Q", "u", "p"):
-        left = continuous.output_directory / f"{prefix}_2.npy"
-        right = resumed.output_directory / f"{prefix}_2.npy"
+        left = continuous.output_directory / f"{prefix}_6.npy"
+        right = resumed.output_directory / f"{prefix}_6.npy"
         assert left.read_bytes() == right.read_bytes()
         assert np.isfinite(np.load(left, allow_pickle=False)).all()
     assert max(abs(value.pressure_mean) for value in resumed.diagnostics) < 1.0e-12
     assert max(
         value.pressure_relative_residual for value in resumed.diagnostics
     ) < 1.0
+
+
+def test_channel_restart_rebuilds_q_gradient_cache_before_first_step(
+    tmp_path,
+    monkeypatch,
+):
+    first = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="cache_source",
+            steps=2,
+            checkpoint_interval=2,
+        )
+    )
+    original_take = BerisEdwardsQGradientCache.take
+    cache_hits = []
+
+    def recording_take(self, fields):
+        gradients = original_take(self, fields)
+        cache_hits.append(gradients is not None)
+        return gradients
+
+    monkeypatch.setattr(BerisEdwardsQGradientCache, "take", recording_take)
+    run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="cache_resumed",
+            steps=1,
+            restart_from=first.output_directory / "checkpoint_2",
+        )
+    )
+
+    # Runtime construction validates the nonlinear model before the checkpoint
+    # is loaded.  The final take is the first resumed timestep and must consume
+    # the cache reconstructed from the restored Q spectra.
+    assert cache_hits[-1] is True
 
 
 def test_channel_complete_stress_rejects_spectral_component_sum(tmp_path):
@@ -215,3 +254,6 @@ def test_channel_complete_stress_restart_rejects_tamper(tmp_path):
         )
     metadata = json.loads((checkpoint / "checkpoint.json").read_text())
     assert metadata["backend_restart"]["state_keys"] == ["pressure_guess"]
+    assert metadata["backend_restart"]["reconstructed_state_keys"] == [
+        "q_gradient_cache"
+    ]

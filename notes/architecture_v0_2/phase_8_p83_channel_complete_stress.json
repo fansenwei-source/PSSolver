@@ -4,7 +4,7 @@
   "title": "Complete-stress Beris--Edwards rectangular-Channel vertical slice",
   "date": "2026-09-26",
   "status": "local_candidate",
-  "classification": "P8_3_LOCAL_CANDIDATE_H100_QUALIFICATION_REQUIRED",
+  "classification": "P8_3_RESTART_RECOVERY_LOCAL_CANDIDATE_H100_REQUIRED",
   "baseline": {
     "branch": "next/pssolver-v0.2.0-architecture",
     "commit": "b753d24acec1245f6335dd45ed5cb1f5d8fefd19",
@@ -51,12 +51,28 @@
     "pressure_guess_saved": true,
     "runtime_and_backend_identity_saved": true,
     "validation_before_mutation": true,
-    "continuous_resumed_q_u_p_byte_identical": true,
+    "derived_q_gradient_cache_reconstructed": true,
+    "local_continuous_resumed_q_u_p_byte_identical": true,
+    "initial_h100_continuous_resumed_q_u_p_byte_identical": false,
+    "h100_restart_recovery_required": true,
     "pressure_guess_tamper_rejected": true
   },
+  "initial_h100_qualification": {
+    "job_id": 10842705,
+    "manufactured_force_passed": true,
+    "channel_pcg_passed": true,
+    "profiles_passed": 6,
+    "restart_byte_identity_passed": false,
+    "scientific_failure": false,
+    "maximum_reported_relative_l2": {
+      "Q": 1.546382e-16,
+      "velocity": 5.813399e-15,
+      "pressure": 1.820152e-14
+    }
+  },
   "verification": {
-    "focused_cpu": "123 passed",
-    "full_cpu": "2240 passed, 8 subtests passed",
+    "focused_cpu": "62 passed",
+    "full_cpu": "2241 passed, 8 subtests passed",
     "git_diff_check": "pass",
     "failed": 0,
     "skipped": 0,
@@ -76,16 +92,16 @@
     "pssolver/configuration/public_simulation_runner.py": "e330c0cde6a017ff6d75ec509a4a4c73f73b925424b4cb5db11e107abd22e52f",
     "pssolver/configuration/simulation_binding.py": "2791b85bbb1a14987ca48ee5427e90cfc69e698f80119fb8448648e3894f7e9f",
     "pssolver/configuration/package_construction.py": "6c8e2d8d7100b0f538b047d78161de71f3ca6c99d0db67e69bfcf3e7f9dc6f14",
-    "pssolver/runtime/channel_beris_edwards.py": "69f5a29cd8f3b463edc8b01ff689822fa5c89cd22dbd427bc528934b15cd79b5",
+    "pssolver/runtime/channel_beris_edwards.py": "0dfbbccfad2fd29d04afbc96f3cf69ccde13f318a365e1ae49c47aa92073a3fc",
     "pssolver/runtime/__init__.py": "b8de49b604a4ed1c1c5e2ca57643932c1929a7ec3bc4d5a7cc443ae68ff6ea78",
     "pssolver/runtime/simulation_construction.py": "994a4b0de5ded24c870b9f70ac315e611e29bf10229cd3633e7ffc59e393a917",
     "pssolver/runtime/package_construction.py": "cfbd823f961f3d7bb97319361d84173e0fcd23e827106c29dcd9a5076fe120a2",
     "pssolver/applications/channel_beris_edwards.py": "431f0ce5af43bd44a6815373eb74dabab6134258cd05d27f84e0fec08e30a2d2",
-    "pssolver/workflows/channel_beris_edwards.py": "06cbfa5e0098310f4e59fc78aa17e238541b023985f8b6019262f684c1001b35",
+    "pssolver/workflows/channel_beris_edwards.py": "e1e5e7942aebce51438a35f0f54e54a93787fc35e3c0b4cb1e5c4d98eca8c50b",
     "pssolver/api/runner.py": "d99e12bf5d4ed1e8dd4474451c61c54b79697684827542345bb15d4b9149bfa9",
     "pssolver/api/capabilities.py": "281081ea4111657f41e6bd22cb5838a94b2a677f80a66866f6f2e05e3a4de62f",
     "tests/test_phase8_p83_channel_complete_stress_operator.py": "7e45471563925418a964d82a3990732197a85a259cc3aa8893b5de7bfa2a0171",
-    "tests/test_phase8_p83_channel_complete_stress_application.py": "b1c3a43b958064133597978c45859948ea6916fbbe36ed6208f83191220225c1"
+    "tests/test_phase8_p83_channel_complete_stress_application.py": "5ca2fda38b6c3b9df34d018d7cfdf84dbdeb7ff63c8a575e6b57f4d2d541fcf3"
   },
   "scope": {
     "existing_plane_defaults_changed": false,

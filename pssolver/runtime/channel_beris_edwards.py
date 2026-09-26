@@ -128,6 +128,35 @@ class BerisEdwardsChannelStokes(ChannelNoSlipModalStokesSolver):
             boundary_conditions,
         )
 
+    def _q_gradients(self, fields):
+        return tuple(
+            tuple(
+                fields.gradient(
+                    name,
+                    axis=axis,
+                    projector=self.spectral_projector,
+                )
+                for name in Q_COMPONENTS
+            )
+            for axis in range(3)
+        )
+
+    def rebuild_q_gradient_cache(self, fields):
+        """Reconstruct the derived one-use cache after exact restart.
+
+        The cache is an optimization derived entirely from the restored Q
+        spectra, so checkpointing its fifteen physical gradient tensors would
+        duplicate large arrays.  Rebuilding it once preserves the execution
+        path of an uninterrupted step without enlarging the checkpoint.
+        """
+
+        if self.q_gradient_cache is None:
+            return False
+        self.q_gradient_cache.stage(fields, self._q_gradients(fields))
+        if not self.q_gradient_cache.publish(fields):
+            raise RuntimeError("restored Channel Q-gradient cache is invalid")
+        return True
+
     def compute_nematic_force(self, fields, alpha):
         if self.q_gradient_cache is not None:
             self.q_gradient_cache.clear()
@@ -182,17 +211,7 @@ class BerisEdwardsChannelStokes(ChannelNoSlipModalStokesSolver):
             projector=self.spectral_projector,
             sum_space="physical",
         )
-        q_gradients = tuple(
-            tuple(
-                fields.gradient(
-                    name,
-                    axis=axis,
-                    projector=self.spectral_projector,
-                )
-                for name in Q_COMPONENTS
-            )
-            for axis in range(3)
-        )
+        q_gradients = self._q_gradients(fields)
         distortion_stress = self.pointwise_kernels.distortion_stress_components(
             q_gradients,
             ldg_l1=self.ldg_l1,
@@ -312,6 +331,7 @@ class ChannelBerisEdwardsRuntimeAdapterProtocol(Protocol):
     def synchronize_for_observation(self) -> None: ...
     def capture_pressure_guess(self) -> torch.Tensor: ...
     def restore_pressure_guess(self, value: torch.Tensor) -> None: ...
+    def restore_derived_state(self) -> bool: ...
     def restore_progress(self, **values) -> None: ...
     def backend_restart_metadata(self) -> dict[str, object]: ...
     def to_metadata(self) -> dict[str, object]: ...
@@ -373,6 +393,13 @@ class ChannelBerisEdwardsRuntimeAdapter:
             raise ValueError("pressure_guess must be finite")
         self._solver.model.static_model.pressure_guess = value.detach().clone()
 
+    def restore_derived_state(self):
+        return bool(
+            self._solver.model.static_model.rebuild_q_gradient_cache(
+                self._solver.fields
+            )
+        )
+
     def restore_progress(
         self,
         *,
@@ -394,9 +421,13 @@ class ChannelBerisEdwardsRuntimeAdapter:
             raise RuntimeError("restored Channel refresh counters differ")
 
     def backend_restart_metadata(self):
+        cache = self._solver.model.static_model.q_gradient_cache
         return {
             "kind": "channel_complete_stress_pressure_pcg",
             "state_keys": ["pressure_guess"],
+            "reconstructed_state_keys": (
+                ["q_gradient_cache"] if cache is not None else []
+            ),
         }
 
     def flow_diagnostics(self):

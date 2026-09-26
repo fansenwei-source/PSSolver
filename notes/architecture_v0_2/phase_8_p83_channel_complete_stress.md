@@ -1,6 +1,6 @@
 # Phase 8 P8.3: complete-stress Beris--Edwards in a rectangular Channel
 
-Status: `P8_3_LOCAL_CANDIDATE_H100_QUALIFICATION_REQUIRED`.
+Status: `P8_3_RESTART_RECOVERY_LOCAL_CANDIDATE_H100_REQUIRED`.
 
 Baseline: `b753d24acec1245f6335dd45ed5cb1f5d8fefd19` on
 `next/pssolver-v0.2.0-architecture`, after the completed P8.2 periodic H100
@@ -77,8 +77,8 @@ regressions, manufactured operator test, finite trajectory, exact restart,
 and tamper rejection pass locally:
 
 ```text
-focused P8.3 and architecture suite: 123 passed
-complete CPU suite: 2240 passed, 8 subtests passed
+focused P8.3 recovery and architecture suite: 62 passed
+complete CPU suite: 2241 passed, 8 subtests passed
 git diff --check: pass
 ```
 
@@ -92,3 +92,35 @@ immutable provenance, and checksums.
 
 Until then no runtime is promoted, no default changes, P8.4 and Phase 9 are
 not authorized, and no scientific benchmark claim is made.
+
+## Initial H100 qualification and restart recovery
+
+The first H100 qualification (Job 10842705) passed the installed-package,
+CUDA, manufactured-force, Channel PCG, finite-state, memory, and all six
+profile gates.  It stopped only because the C128 and C512 split/restart
+trajectories differed from their continuous references at roundoff scale
+instead of being byte-for-byte identical.  The largest reported relative-L2
+differences were approximately `1.5e-16` for Q, `5.8e-15` for velocity, and
+`1.8e-14` for pressure.  These values are not a scientific failure, but the
+exact-restart software contract was deliberately not relaxed.
+
+The checkpoint already preserved both spatial and spectral Q/u/p arrays, the
+PCG pressure guess, integrator progress, identities, and hashes.  The missing
+execution state was the single-use Q-gradient cache.  An uninterrupted step
+consumes gradients published by the preceding static-field solve, while the
+restored runtime marked those static fields current without reconstructing the
+derived cache.  The restart path therefore recomputed gradients and followed
+a mathematically equivalent but not necessarily byte-identical GPU path.
+
+The recovery rebuilds that cache once from the restored Q spectra after every
+persistent record has passed validation and after progress has been restored.
+It does not add the fifteen derived gradient arrays to the checkpoint and does
+not change the timestep algorithm.  Backend metadata distinguishes the saved
+`pressure_guess` from the reconstructed `q_gradient_cache`.  The CPU restart
+oracle now covers a six-step continuous run against a three-plus-three split,
+and a separate test proves that the first resumed nonlinear evaluation consumes
+the reconstructed cache.  The focused recovery suite passes 62 tests and the
+complete CPU suite passes 2241 tests plus 8 subtests.  Final closure still
+requires a focused H100 rerun of
+the restart and negative gates; previously passed profiler evidence should be
+reused rather than repeated.
