@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "phase": "P8.2",
+  "status": "complete",
+  "classification": "PASS_P8_2_PERIODIC_COMPLETE_STRESS_H100_QUALIFICATION",
+  "date": "2026-09-26",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "qualified_commit": "44a76b36a86e221fde3cfe0ef59d5a9a17a091c7",
+  "local_candidate_record": "notes/architecture_v0_2/phase_8_p82_periodic_complete_stress.json",
+  "imported_report": {
+    "kind": "HPCC P8.2 uncontaminated-performance recovery v3 final report",
+    "sha256": "73f3e47aa80931efbee4e0016201b2999f29be2718a72f7d159c909a7309ca9f"
+  },
+  "execution": {
+    "job_id": 10842576,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:06:39",
+    "node": "gpu-h100-4-0",
+    "start": "2026-09-26 01:34:00 EDT",
+    "end": "2026-09-26 01:40:39 EDT",
+    "requeue": 0,
+    "restarts": 0,
+    "formal_recovery_v3_h100_submissions": 1,
+    "automatic_retry": false,
+    "second_job_submitted": false,
+    "exclusive_requested": true
+  },
+  "environment": {
+    "gpu": "NVIDIA H100 PCIe",
+    "gpu_uuid": "GPU-a75d7f28-4c29-d6cb-0a5b-c13197e8a544",
+    "pytorch": "2.5.1+cu121",
+    "cuda_runtime": "12.1",
+    "visible_cuda_devices": 1,
+    "tf32": false,
+    "installed_package_import": "/home/fansenwei/pssolver_phase8_p82_periodic_h100_44a76b3_20260925_v1/package_site/pssolver/__init__.py",
+    "source_shadow_import": false,
+    "runtime_requested": "periodic_spectral",
+    "runtime_effective": "periodic_spectral",
+    "fallback_used": false,
+    "cuda_only_tests": "3 passed",
+    "manufactured_periodic_stokes": "PASS"
+  },
+  "gpu_process_gate": {
+    "initial_compute_process_list_empty": true,
+    "audit_records": 19,
+    "monitored_profile_trials": 6,
+    "foreign_gpu_process_count": 0,
+    "all_before_during_after_checks_passed": true
+  },
+  "profiles": {
+    "warmup_steps": 30,
+    "measured_steps": 100,
+    "independent_trials_per_grid": 3,
+    "r128": {
+      "trial_mean_ms": [5.139659, 5.164718, 5.200415],
+      "trial_median_ms": [5.129696, 5.146752, 5.191168],
+      "trial_sample_std_ms": [0.080048, 0.127693, 0.087747],
+      "trial_cv_percent": [1.557462, 2.472408, 1.687311],
+      "trial_steps_per_second": [194.565430, 193.621410, 192.292332],
+      "aggregate_mean_ms": 5.168264,
+      "aggregate_median_ms": 5.146752,
+      "mean_steps_per_second": 193.493057,
+      "trial_mean_max_min_ratio": 1.011821050,
+      "trial_median_max_min_ratio": 1.011983544,
+      "peak_allocated_bytes": 394224640,
+      "peak_reserved_bytes": 650117120
+    },
+    "r320": {
+      "trial_mean_ms": [86.888344, 86.949858, 86.882909],
+      "trial_median_ms": [86.872017, 86.935184, 86.873615],
+      "trial_sample_std_ms": [0.094553, 0.053727, 0.045007],
+      "trial_cv_percent": [0.108821, 0.061791, 0.051802],
+      "trial_steps_per_second": [11.509024, 11.500881, 11.509744],
+      "aggregate_mean_ms": 86.907037,
+      "aggregate_median_ms": 86.873615,
+      "mean_steps_per_second": 11.506549,
+      "trial_mean_max_min_ratio": 1.000770569,
+      "trial_median_max_min_ratio": 1.000727134,
+      "peak_allocated_bytes": 6132706816,
+      "peak_reserved_bytes": 9619636224
+    },
+    "single_trial_cv_limit": 0.20,
+    "trial_mean_max_min_limit": 1.15,
+    "trial_median_max_min_limit": 1.15,
+    "all_timing_samples_finite_positive": true,
+    "graph_breaks": 0,
+    "compile_fallbacks": 0,
+    "runtime_fallbacks": 0,
+    "oom": false,
+    "nan": false,
+    "inf": false,
+    "cuda_error": false,
+    "same_grid_final_state_hashes_match": true,
+    "speedup_claim": false,
+    "benchmark_claim": false
+  },
+  "transform_counter": {
+    "profiles": 6,
+    "measured_forward_raw_delta": 700,
+    "measured_inverse_raw_delta": 3100,
+    "denominator_steps": 100,
+    "forward_calls_per_step": 7.0,
+    "inverse_calls_per_step": 31.0,
+    "first_measured_step": {"forward": 7, "inverse": 31},
+    "remaining_99_steps": {"forward": 693, "inverse": 3069},
+    "post_measurement_observation": {"forward": 6, "inverse": 21},
+    "post_measurement_calls_excluded": true,
+    "r128_r320_topology_identical": true
+  },
+  "production_trajectories": {
+    "completed": 4,
+    "runs": [
+      "R128 continuous 100-step",
+      "R128 first 50-step plus checkpoint",
+      "R128 resumed additional 50-step to step 100",
+      "R320 continuous 100-step"
+    ],
+    "complete_markers_valid": true,
+    "runtime_identity_valid": true,
+    "fallback_used": false,
+    "dtype": "float64",
+    "arrays_finite": true,
+    "pressure_mean_limit": 1e-12,
+    "velocity_mean_norm_limit": 1e-12,
+    "divergence_max_limit": 1e-10
+  },
+  "restart": {
+    "r128_continuous_resumed_byte_identical": true,
+    "q_100_sha256": "49a9c283b6beb262ccd2a6db5d07dbf866cc420abcb67e6a41ec7ee7f9134584",
+    "u_100_sha256": "f972503fbc5343ff72cdf0afaf1ac40de6cb47179b2eac2ebe4d1800b42c47d5",
+    "p_100_sha256": "7f391c6478b15b38f0fdbc3552556f91292a90205703f52f466ba4991bb15826"
+  },
+  "r320_final_state": {
+    "q_100_sha256": "223598c91693d10df2214f5275174c6c25692240603f0ffb83531d9aa48aba18",
+    "u_100_sha256": "895604d46acd67e880f735560be82d7b4bbe7cbea6f75f10b9d81b3804d3aa15",
+    "p_100_sha256": "37ed0e1bf11a72b5d5bc6bfd6677f7eebacb85d1f7f8d144434443ea4d5a3772"
+  },
+  "negative_gates": {
+    "passed": 6,
+    "expected": 6,
+    "tensor_raw_bytes": "PASS",
+    "checksum_metadata": "PASS",
+    "shape_dtype_record": "PASS",
+    "runtime_path": "PASS",
+    "runtime_identity": "PASS",
+    "backend_identity": "PASS",
+    "all_rejected_before_timestep": true,
+    "target_state_unchanged": true,
+    "negative_copy_complete_absent": true
+  },
+  "cpu_preflight": {
+    "py_compile": "PASS",
+    "import_smoke": "PASS",
+    "synthetic_tests": "7/7 PASS",
+    "counter_window": "PASS",
+    "pointwise_metadata_serialization": "PASS",
+    "continuous_restart_byte_identity": "PASS",
+    "negative_gates": "6/6 PASS",
+    "profile_json_reread": "PASS"
+  },
+  "evidence_chain": [
+    {
+      "name": "original_p8_2",
+      "manifest_entries": 363,
+      "verification": "363/363 PASS",
+      "manifest_sha256": "b00ec613897da3f80c365cbabce7542de4aef42a4b44fd71366604c4877d6738",
+      "outcome": "external helper used compiled.run_spec instead of compiled.application_request"
+    },
+    {
+      "name": "recovery_v1",
+      "manifest_entries": 32,
+      "verification": "32/32 PASS",
+      "manifest_sha256": "540505c1a9150be1588d595396f42a0e9a2448b9ec694f135235c0dcea11470c",
+      "outcome": "external helper used model.nonlinear_model instead of model.nlmodel"
+    },
+    {
+      "name": "recovery_v2",
+      "manifest_entries": 141,
+      "verification": "141/141 PASS",
+      "manifest_sha256": "6d212eb1201f8f0761014e20995010f3a024a28c9dc66d402edc13ab94e81a84",
+      "outcome": "performance window contaminated by a foreign VLLM process and observation counters"
+    },
+    {
+      "name": "analysis_only_adjudication",
+      "manifest_entries": 8,
+      "verification": "8/8 PASS",
+      "manifest_sha256": "d4d8a100981408806e61b217e60de97edefabb780b6c88f794b539425463469c",
+      "outcome": "measurement-contract causes identified without solver or data mutation"
+    },
+    {
+      "name": "recovery_v3_final",
+      "control_directory": "/home/fansenwei/pssolver_phase8_p82_periodic_h100_44a76b3_20260926_recovery_v3",
+      "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_phase8_p82_periodic_h100_44a76b3_20260926_recovery_v3",
+      "manifest_entries": 265,
+      "verification": "265/265 PASS",
+      "manifest_sha256": "42d16ad9fcd30f0470e20752b09ce0bc5fe3e278f712eb10a8f07becc79572b7",
+      "complete_marker": true,
+      "complete_content": "PASS_P8_2_PERIODIC_COMPLETE_STRESS_H100_QUALIFICATION"
+    }
+  ],
+  "qualification": {
+    "complete": true,
+    "p8_2_complete": true,
+    "eligible_for_p8_3_planning": true,
+    "p8_3_started": false,
+    "p8_4_started": false,
+    "production_default_changed": false,
+    "plane_default": "legacy_production",
+    "channel_default": "legacy_channel",
+    "compiled_runtime_promoted": false,
+    "benchmark_claim_made": false,
+    "phase_9_authorized": false
+  }
+}

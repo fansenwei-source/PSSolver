@@ -172,6 +172,8 @@ SOURCE_ORDER = (
     "phase_8_p81_public_surface_catalog.json",
     "phase_8_p82_periodic_complete_stress.md",
     "phase_8_p82_periodic_complete_stress.json",
+    "phase_8_p82_h100_closure.md",
+    "phase_8_p82_h100_closure.json",
 )
 
 PAGE_WIDTH = 595.276
