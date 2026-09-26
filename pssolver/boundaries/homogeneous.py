@@ -15,10 +15,13 @@ from pssolver.core.boundary import (
     HomogeneousDirichletBC,
     HomogeneousNeumannBC,
     PeriodicBC,
+    PrescribedDirichletBC,
 )
 from pssolver.core.fields import FieldRole
 from pssolver.core.geometry import AxisTopology, GeometrySpec
 from pssolver.systems.equations import EquationSystemSpec
+
+from .prescribed import StaticPrescribedDirichletPolicy
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,6 +43,9 @@ class HomogeneousBoundaryPolicy:
             "no_slip_velocity",
         }:
             raise ValueError("unsupported homogeneous boundary policy")
+
+
+BoundaryPolicy = HomogeneousBoundaryPolicy | StaticPrescribedDirichletPolicy
 
 
 def neumann_q() -> HomogeneousBoundaryPolicy:
@@ -128,11 +134,67 @@ def _component_assignment(
     )
 
 
+def _prescribed_component_assignments(
+    *,
+    components: tuple[str, ...],
+    geometry: GeometrySpec,
+    policy: StaticPrescribedDirichletPolicy,
+) -> tuple[ComponentBoundaryAssignment, ...]:
+    declared = {value.key: value.value for value in policy.face_values}
+    expected = {
+        (component, axis, side)
+        for component in components
+        for axis in geometry.bounded_axes
+        for side in BoundarySide
+    }
+    observed = set(declared)
+    if observed != expected:
+        missing = tuple(
+            (component, axis, side.value)
+            for component, axis, side in sorted(
+                expected - observed,
+                key=lambda value: (value[0], value[1], value[2].value),
+            )
+        )
+        extra = tuple(
+            (component, axis, side.value)
+            for component, axis, side in sorted(
+                observed - expected,
+                key=lambda value: (value[0], value[1], value[2].value),
+            )
+        )
+        raise ValueError(
+            "prescribed Dirichlet values must cover exactly every bounded "
+            f"component-face; missing={missing!r}, extra={extra!r}"
+        )
+
+    assignments = []
+    for component in components:
+        faces = []
+        for axis, topology in enumerate(geometry.axis_topologies):
+            for side in BoundarySide:
+                if topology is AxisTopology.PERIODIC:
+                    condition = PeriodicBC()
+                else:
+                    condition = PrescribedDirichletBC(
+                        declared[(component, axis, side)]
+                    )
+                faces.append(FaceBoundaryCondition(axis, side, condition))
+        assignments.append(
+            ComponentBoundaryAssignment(
+                component=component,
+                semantic=BoundarySemantic.PHYSICAL,
+                faces=tuple(faces),
+            )
+        )
+    return tuple(assignments)
+
+
 def assign_boundaries(
     *,
     model: EquationSystemSpec,
     geometry: GeometrySpec,
-    policies: Mapping[str, HomogeneousBoundaryPolicy],
+    policies: Mapping[str, BoundaryPolicy],
     name: str = "public_boundary_assignment",
 ) -> BoundaryAssignment:
     """Expand typed logical-field policies into a canonical assignment.
@@ -168,16 +230,35 @@ def assign_boundaries(
     assignments = []
     for field in required_fields:
         policy = policies[field.name]
-        if not isinstance(policy, HomogeneousBoundaryPolicy):
+        if not isinstance(
+            policy,
+            (HomogeneousBoundaryPolicy, StaticPrescribedDirichletPolicy),
+        ):
             raise TypeError(
                 f"boundary policy for '{field.name}' must be a "
-                "HomogeneousBoundaryPolicy"
+                "HomogeneousBoundaryPolicy or "
+                "StaticPrescribedDirichletPolicy"
             )
         if policy.field_name != field.name:
             raise ValueError(
                 f"boundary policy for '{field.name}' declares "
                 f"'{policy.field_name}'"
             )
+        if isinstance(policy, StaticPrescribedDirichletPolicy):
+            if field.role is not FieldRole.EVOLVED:
+                raise ValueError(
+                    "static prescribed Dirichlet data are supported only "
+                    f"for evolved fields; '{field.name}' has role "
+                    f"'{field.role.value}'"
+                )
+            assignments.extend(
+                _prescribed_component_assignments(
+                    components=field.components,
+                    geometry=geometry,
+                    policy=policy,
+                )
+            )
+            continue
         if (
             field.role is FieldRole.EVOLVED
             and policy.semantic is not BoundarySemantic.PHYSICAL
@@ -210,6 +291,7 @@ def assign_boundaries(
 
 
 __all__ = [
+    "BoundaryPolicy",
     "HomogeneousBoundaryPolicy",
     "assign_boundaries",
     "free_slip_velocity",

@@ -12,6 +12,8 @@ from .boundary import (
     HomogeneousDirichletBC,
     HomogeneousNeumannBC,
     PeriodicBC,
+    PrescribedDirichletBC,
+    StaticConstantBoundaryValue,
 )
 from .domain import DomainSpec, GridPlacement
 from .fields import FieldComponentSpec, FieldRole, FieldSpec
@@ -44,9 +46,11 @@ __all__ = [
     "ModelProtocol",
     "NumericsConfig",
     "PeriodicBC",
+    "PrescribedDirichletBC",
     "Precision",
     "ProblemSpec",
     "ProjectedTransformExecution",
     "SpectralStorage",
+    "StaticConstantBoundaryValue",
     "TransformExecutionOrder",
 ]

@@ -102,6 +102,7 @@ class LoweringRejectionCode(str, Enum):
     INVALID_HERMITIAN_AXIS = "invalid_hermitian_axis"
     ASYMMETRIC_FACE_PAIR = "asymmetric_face_pair"
     UNSUPPORTED_BOUNDARY_SIGNATURE = "unsupported_boundary_signature"
+    UNSUPPORTED_PRESCRIBED_BOUNDARY = "unsupported_prescribed_boundary"
     UNSUPPORTED_BOUNDARY_SEMANTIC = "unsupported_boundary_semantic"
     INVALID_EQUATION_LAYOUT = "invalid_equation_layout"
     INVALID_STOKES_CONTRACT = "invalid_stokes_contract"
@@ -323,6 +324,21 @@ def _component_modal_kinds(
     component: str,
 ) -> tuple[BoundaryKind, ...]:
     assignment = simulation.boundaries.for_component(component)
+    prescribed_faces = tuple(
+        face
+        for face in assignment.faces
+        if not face.condition.is_homogeneous
+    )
+    if prescribed_faces:
+        _reject(
+            LoweringRejectionCode.UNSUPPORTED_PRESCRIBED_BOUNDARY,
+            "prescribed boundary data require a qualified lifting plan",
+            component=component,
+            faces=[
+                {"axis": face.axis, "side": face.side.value}
+                for face in prescribed_faces
+            ],
+        )
     kinds = []
     for axis in range(simulation.geometry.domain.ndim):
         faces = {

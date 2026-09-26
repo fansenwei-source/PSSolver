@@ -178,6 +178,8 @@ SOURCE_ORDER = (
     "phase_8_p83_channel_complete_stress.json",
     "phase_8_p84_lifting_plan.md",
     "phase_8_p84_lifting_plan.json",
+    "phase_8_p841_prescribed_dirichlet_declarations.md",
+    "phase_8_p841_prescribed_dirichlet_declarations.json",
 )
 
 PAGE_WIDTH = 595.276

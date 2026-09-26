@@ -5,16 +5,24 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 from pssolver import available_combinations
 
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/architecture_v0_2/phase_8_p83_channel_complete_stress.json"
+P83_CLOSURE_COMMIT = "9c0cdc25ad875a964cffafa73a12eda3e45c2244"
 
 
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def _sha256_at_p83_closure(relative: str) -> str:
+    payload = subprocess.run(
+        ["git", "show", f"{P83_CLOSURE_COMMIT}:{relative}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    return hashlib.sha256(payload).hexdigest()
 
 
 def test_p83_record_closes_h100_without_authorizing_later_slices():
@@ -43,7 +51,7 @@ def test_p83_record_binds_reviewed_implementation_sources():
     record = json.loads(RECORD.read_text(encoding="utf-8"))
 
     for relative, expected in record["source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256_at_p83_closure(relative) == expected
 
 
 def test_complete_stress_channel_is_distinct_registered_combination():

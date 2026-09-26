@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 import pytest
 
@@ -23,6 +24,16 @@ def _plan() -> dict[str, object]:
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _sha256_at_commit(commit: str, relative: str) -> str:
+    payload = subprocess.run(
+        ["git", "show", f"{commit}:{relative}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    return hashlib.sha256(payload).hexdigest()
 
 
 def test_p84_planning_binds_completed_p83_without_authorizing_implementation():
@@ -150,8 +161,10 @@ def test_p84_slice_order_and_h100_boundary_are_explicit():
 
 
 def test_p84_reviewed_sources_are_content_addressed():
-    for relative, expected in _plan()["reviewed_source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+    plan = _plan()
+    baseline = plan["baseline"]["commit"]
+    for relative, expected in plan["reviewed_source_sha256"].items():
+        assert _sha256_at_commit(baseline, relative) == expected
 
 
 def test_p84_records_local_planning_verification_without_h100_claim():
@@ -169,9 +182,13 @@ def test_p84_records_local_planning_verification_without_h100_claim():
     assert plan["authorization"]["h100_authorized"] is False
 
 
-def test_p84_has_not_silently_implemented_the_planned_public_surface():
-    assert not hasattr(core_boundary, "PrescribedDirichletBC")
-    assert not hasattr(public_boundaries, "prescribed_dirichlet")
+def test_p84_historical_plan_did_not_authorize_lifting_execution():
+    plan = _plan()
+
+    assert plan["authorization"]["p8_4_1_implementation_authorized"] is False
+    assert plan["authorization"]["p8_4_implementation_authorized"] is False
+    assert hasattr(core_boundary, "PrescribedDirichletBC")
+    assert hasattr(public_boundaries, "prescribed_dirichlet")
     assert not hasattr(public_boundaries, "strong_planar_q")
     assert not hasattr(public_boundaries, "strong_homeotropic_q")
     with pytest.raises(ValueError, match="homogeneous boundary contracts only"):

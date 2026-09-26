@@ -1,0 +1,56 @@
+{
+  "authorization": {
+    "h100_authorized": false,
+    "p8_4_1_complete": true,
+    "p8_4_2_eligible_for_planning": true,
+    "p8_4_2_implementation_authorized": false,
+    "p8_4_3_authorized": false,
+    "p8_5_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false
+  },
+  "baseline": {
+    "commit": "64f44087d808686f895f079b1d14966d39345bce",
+    "planning_record": "notes/architecture_v0_2/phase_8_p84_lifting_plan.json"
+  },
+  "classification": "PASS_P8_4_1_GENERIC_PRESCRIBED_DIRICHLET_DECLARATIONS",
+  "contracts_added": [
+    "StaticConstantBoundaryValue",
+    "PrescribedDirichletBC",
+    "PrescribedFaceValue",
+    "StaticPrescribedDirichletPolicy",
+    "prescribed_dirichlet",
+    "unsupported_prescribed_boundary"
+  ],
+  "declaration_scope": {
+    "field_roles": [
+      "evolved"
+    ],
+    "spatial_representation": "constant_scalar_per_component_face",
+    "time_dependence": "static",
+    "value_identity": "canonical_json_sha256"
+  },
+  "generic_field_support": true,
+  "h100_used": false,
+  "local_verification": {
+    "failed": 0,
+    "full": "2261 passed, 8 subtests passed",
+    "git_diff_check": "pass",
+    "targeted": "114 passed"
+  },
+  "new_executable_combinations": [],
+  "numerical_lifting_implemented": false,
+  "phase": "P8.4.1",
+  "rejection_contract": {
+    "code": "unsupported_prescribed_boundary",
+    "reason": "prescribed boundary data require a qualified lifting plan",
+    "stage": "construction_time_lowering"
+  },
+  "source_sha256": {
+    "pssolver/boundaries/homogeneous.py": "228f65d54c4ef87a9856329c61668c4a505ab135ec518b425c4fead446ba7101",
+    "pssolver/boundaries/prescribed.py": "2789aa3f1ab74b7a2be3cc7001085af297e77f62be1d5b241359aace8000b5f7",
+    "pssolver/configuration/simulation_lowering.py": "b01cd09b3a3b948f42484d2d11434120e7b8354d5143284b66f47a95f6813384",
+    "pssolver/core/boundary.py": "fbb48c0a402a13272cd1ac45e3b13a2d25b131f83636048afa71ebc2791f065e"
+  },
+  "status": "P8_4_1_COMPLETE_P8_4_2_NOT_AUTHORIZED"
+}

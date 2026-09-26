@@ -5,6 +5,7 @@ from dataclasses import FrozenInstanceError, replace
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 import pytest
 
@@ -52,6 +53,17 @@ RESULT_PATH = (
     / "architecture_v0_2"
     / "phase_7_p772_simulation_composition.json"
 )
+P772_COMMIT = "2186191d22a007ed39c9655e06ee10f1dfdd8d37"
+
+
+def _sha256_at_p772(relative: str) -> str:
+    payload = subprocess.run(
+        ["git", "show", f"{P772_COMMIT}:{relative}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    return hashlib.sha256(payload).hexdigest()
 
 
 def _sha256(path: Path) -> str:
@@ -407,11 +419,6 @@ def test_p772_machine_readable_record_matches_sources_and_scope():
     assert record["production_default_changed"] is False
     assert record["phase_8_authorized"] is False
     assert record["source_sha256"] == {
-        "pssolver/configuration/active_nematics_simulation_adapters.py": (
-            _sha256(ADAPTERS)
-        ),
-        "pssolver/configuration/simulation.py": (
-            _sha256(SIMULATION_DECLARATIONS)
-        ),
-        "pssolver/core/boundary.py": _sha256(BOUNDARY_DECLARATIONS),
+        relative: _sha256_at_p772(relative)
+        for relative in record["source_sha256"]
     }

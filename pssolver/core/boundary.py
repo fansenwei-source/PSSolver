@@ -9,6 +9,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+import hashlib
+import json
+import math
+from numbers import Real
 
 
 class BoundaryKind(str, Enum):
@@ -41,7 +45,12 @@ class BoundarySemantic(str, Enum):
 
 @dataclass(frozen=True, slots=True)
 class BoundaryCondition:
-    """A homogeneous physical law assignable by coordinate axis or face."""
+    """A physical law assignable by coordinate axis or face.
+
+    The base constructor remains restricted to homogeneous conditions so a
+    nonhomogeneous declaration cannot omit its prescribed-data identity.
+    Typed subclasses may define a complete nonhomogeneous contract.
+    """
 
     kind: BoundaryKind
     is_homogeneous: bool = True
@@ -63,6 +72,75 @@ class BoundaryCondition:
             "kind": self.kind.value,
             "is_homogeneous": self.is_homogeneous,
         }
+
+
+@dataclass(frozen=True, slots=True)
+class StaticConstantBoundaryValue:
+    """Finite scalar boundary data that are constant in space and time.
+
+    This declaration owns identity only.  It contains no tensor, callable,
+    transform, lifting algorithm, model, or geometry reference.
+    """
+
+    value: float
+
+    def __post_init__(self) -> None:
+        if isinstance(self.value, bool) or not isinstance(self.value, Real):
+            raise TypeError("static boundary value must be a real scalar")
+        normalized = float(self.value)
+        if not math.isfinite(normalized):
+            raise ValueError("static boundary value must be finite")
+        if normalized == 0.0:
+            normalized = 0.0
+        object.__setattr__(self, "value", normalized)
+
+    def to_metadata(self) -> dict[str, object]:
+        """Return the canonical JSON-compatible value declaration."""
+
+        return {
+            "representation": "constant_scalar",
+            "time_dependence": "static",
+            "value": self.value,
+        }
+
+    def canonical_sha256(self) -> str:
+        """Return a stable identity for the prescribed scalar data."""
+
+        payload = json.dumps(
+            self.to_metadata(),
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+        return hashlib.sha256(payload).hexdigest()
+
+
+@dataclass(frozen=True, slots=True, init=False)
+class PrescribedDirichletBC(BoundaryCondition):
+    """Static nonhomogeneous Dirichlet data on one oriented face."""
+
+    value: StaticConstantBoundaryValue
+    kind: BoundaryKind = field(default=BoundaryKind.DIRICHLET, init=False)
+    is_homogeneous: bool = field(default=False, init=False)
+
+    def __init__(self, value: StaticConstantBoundaryValue | Real) -> None:
+        if not isinstance(value, StaticConstantBoundaryValue):
+            value = StaticConstantBoundaryValue(value)
+        object.__setattr__(self, "value", value)
+        object.__setattr__(self, "kind", BoundaryKind.DIRICHLET)
+        object.__setattr__(self, "is_homogeneous", False)
+
+    def to_metadata(self) -> dict[str, object]:
+        """Return physical-law metadata including prescribed-data identity."""
+
+        metadata = BoundaryCondition.to_metadata(self)
+        metadata.update(
+            {
+                "value": self.value.to_metadata(),
+                "value_sha256": self.value.canonical_sha256(),
+            }
+        )
+        return metadata
 
 
 @dataclass(frozen=True, slots=True)
