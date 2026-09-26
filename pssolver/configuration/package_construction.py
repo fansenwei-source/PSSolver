@@ -18,6 +18,10 @@ _PACKAGE_FACTORY = (
     "pssolver.runtime.package_construction.build_package_simulation_runtime"
 )
 _IMPLEMENTATION_BUILDERS = {
+    RuntimeConstructionKind.CHANNEL_COMPLETE_STRESS: (
+        "pssolver.runtime.channel_beris_edwards."
+        "build_channel_beris_edwards_runtime"
+    ),
     RuntimeConstructionKind.PERIODIC_COMPLETE_STRESS: (
         "pssolver.runtime.periodic_beris_edwards."
         "build_periodic_beris_edwards_runtime"

@@ -261,3 +261,77 @@ def projected_distortion_stress_divergence(
         odd_x_bcs,
     )
     return torch.stack((tangential[0], tangential[1], normal))
+
+
+def projected_component_basis_stress_divergence(
+    backend,
+    stress_components,
+    component_boundary_conditions,
+    *,
+    output_boundary_conditions,
+    projector=None,
+):
+    """Return a row-wise stress divergence with per-component bases.
+
+    This is the fail-closed two-bounded-axis path used by the rectangular
+    Channel complete-stress model.  Each row-major stress component declares
+    its native tensor-product basis.  Derivatives are evaluated in that basis,
+    summed in physical space, and the three resulting force components are
+    projected together into the native velocity basis.
+
+    The physical-space sum is intentional: with two bounded directions the
+    three derivatives in one stress row generally occupy three different
+    intermediate parity spaces.  Treating them as a common spectral basis
+    would be mathematically invalid.
+    """
+
+    if len(stress_components) != 9:
+        raise ValueError("A three-dimensional stress requires nine components.")
+    component_boundary_conditions = tuple(
+        tuple(value) for value in component_boundary_conditions
+    )
+    if len(component_boundary_conditions) != 9:
+        raise ValueError(
+            "component_boundary_conditions must contain nine basis tuples."
+        )
+    ndim = len(tuple(output_boundary_conditions))
+    if ndim != 3 or any(
+        len(value) != ndim for value in component_boundary_conditions
+    ):
+        raise ValueError("stress and output bases must be three-dimensional.")
+
+    rows = []
+    for row in range(3):
+        terms = []
+        for axis in range(3):
+            index = 3 * row + axis
+            boundary_conditions = component_boundary_conditions[index]
+            spectral = _forward_projected(
+                backend,
+                projector,
+                stress_components[index],
+                boundary_conditions,
+            )
+            terms.append(
+                _inverse_spectral_gradient(
+                    backend,
+                    spectral,
+                    boundary_conditions,
+                    axis,
+                    projector=projector,
+                )
+            )
+        rows.append(sum(terms))
+
+    physical_force = torch.stack(tuple(rows))
+    return _inverse_projected(
+        backend,
+        projector,
+        _forward_projected(
+            backend,
+            projector,
+            physical_force,
+            tuple(output_boundary_conditions),
+        ),
+        tuple(output_boundary_conditions),
+    )

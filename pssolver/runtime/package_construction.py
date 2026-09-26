@@ -26,6 +26,7 @@ from pssolver.planning.package_construction import (
 )
 
 from .channel_active_nematics import ChannelRuntimeBuildRequest
+from .channel_beris_edwards import ChannelBerisEdwardsRuntimeBuildRequest
 from .channel_application_bridge import (
     build_package_compiled_channel_runtime,
     build_package_legacy_channel_runtime,
@@ -43,6 +44,7 @@ PackageBuildRequest = (
     PlaneRuntimeBuildRequest
     | ChannelRuntimeBuildRequest
     | PeriodicRuntimeBuildRequest
+    | ChannelBerisEdwardsRuntimeBuildRequest
 )
 
 
@@ -62,11 +64,13 @@ class PackageRuntimeConstructionInput:
                 PlaneRuntimeBuildRequest,
                 ChannelRuntimeBuildRequest,
                 PeriodicRuntimeBuildRequest,
+                ChannelBerisEdwardsRuntimeBuildRequest,
             ),
         ):
             raise TypeError(
                 "request must be a PlaneRuntimeBuildRequest or "
-                "ChannelRuntimeBuildRequest or PeriodicRuntimeBuildRequest"
+                "ChannelRuntimeBuildRequest, PeriodicRuntimeBuildRequest, "
+                "or ChannelBerisEdwardsRuntimeBuildRequest"
             )
 
     def to_metadata(self) -> dict[str, object]:
@@ -98,6 +102,8 @@ def _request_simulation(request: PackageBuildRequest):
         return compose_channel_active_nematics_simulation(
             request.run_spec.components
         )
+    if isinstance(request, ChannelBerisEdwardsRuntimeBuildRequest):
+        return request.run_spec.simulation
     return request.run_spec.simulation
 
 
@@ -136,6 +142,12 @@ def build_package_simulation_runtime(
         if not isinstance(request, PeriodicRuntimeBuildRequest):
             raise TypeError(
                 "periodic construction requires PeriodicRuntimeBuildRequest"
+            )
+        return build_bound_simulation_runtime(binding, request)
+    if kind is RuntimeConstructionKind.CHANNEL_COMPLETE_STRESS:
+        if not isinstance(request, ChannelBerisEdwardsRuntimeBuildRequest):
+            raise TypeError(
+                "complete-stress Channel construction requires Channel request"
             )
         return build_bound_simulation_runtime(binding, request)
     if kind is RuntimeConstructionKind.CHANNEL_LEGACY:

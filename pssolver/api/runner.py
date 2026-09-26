@@ -138,6 +138,24 @@ def _run_periodic_application(
     return result, output
 
 
+def _run_channel_beris_edwards_application(
+    compiled: CompiledSimulation,
+    progress: Iterable[int] | None,
+    emit_metadata: bool,
+) -> tuple[object | None, str | Path | None]:
+    from pssolver.applications.channel_beris_edwards import (
+        run_channel_beris_edwards,
+    )
+
+    result = run_channel_beris_edwards(
+        compiled.application_request,
+        progress=progress,
+        emit_metadata=emit_metadata,
+    )
+    output = None if result is None else compiled.application_request.output_dir
+    return result, output
+
+
 _PUBLIC_APPLICATION_RUNNERS = MappingProxyType(
     {
         "plane_complete_stress_beris_edwards": (
@@ -168,6 +186,16 @@ _PUBLIC_APPLICATION_RUNNERS = MappingProxyType(
                     "run_periodic_beris_edwards"
                 ),
                 _run_periodic_application,
+            )
+        ),
+        "channel_complete_stress_beris_edwards": (
+            _PublicApplicationRunnerRegistration(
+                "channel_complete_stress_beris_edwards",
+                (
+                    "pssolver.applications.channel_beris_edwards."
+                    "run_channel_beris_edwards"
+                ),
+                _run_channel_beris_edwards_application,
             )
         ),
     }
@@ -213,6 +241,7 @@ def _public_result(
             not in {
                 "plane_complete_stress_beris_edwards",
                 "periodic_complete_stress_beris_edwards",
+                "channel_complete_stress_beris_edwards",
             }
             or compiled.application_request.dry_run is not True
         ):

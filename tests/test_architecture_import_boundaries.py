@@ -183,7 +183,7 @@ REVIEWED_MODEL_DECLARATION_TO_SYSTEMS_EDGES = {
 }
 
 
-# P8.2 connects a new geometry to the unchanged v0.1 spectral engine.  These
+# P8.2 and P8.3 connect new geometries to the unchanged v0.1 spectral engine. These
 # exact composition-root edges are temporary compatibility edges, not a
 # layer-wide allowance; a future engine extraction can remove them together.
 REVIEWED_RUNTIME_TO_V0_1_COMPATIBILITY_EDGES = {
@@ -193,6 +193,14 @@ REVIEWED_RUNTIME_TO_V0_1_COMPATIBILITY_EDGES = {
     ),
     ImportEdge(
         "pssolver.runtime.periodic_beris_edwards",
+        "pssolver.solver",
+    ),
+    ImportEdge(
+        "pssolver.runtime.channel_beris_edwards",
+        "pssolver.integrator",
+    ),
+    ImportEdge(
+        "pssolver.runtime.channel_beris_edwards",
         "pssolver.solver",
     ),
 }

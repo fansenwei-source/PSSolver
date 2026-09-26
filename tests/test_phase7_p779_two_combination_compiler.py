@@ -182,6 +182,7 @@ def test_unregistered_pair_reports_structured_capability_gap():
         ["complete_stress_beris_edwards", "plane_slab"],
         ["legacy_active_force_active_nematics", "rectangular_channel"],
         ["complete_stress_beris_edwards", "periodic_box"],
+        ["complete_stress_beris_edwards", "rectangular_channel"],
     ]
 
 

@@ -38,6 +38,10 @@ from .constitutive import (
     BerisEdwardsConstitutiveStokesCanaryModel,
     BerisEdwardsPlaneCoupledModel,
 )
+from .channel_stokes import (
+    CHANNEL_DISTORTION_STRESS_BOUNDARY_CONDITIONS,
+    CHANNEL_Q_BOUNDARY_CONDITIONS,
+)
 from .fields import Q_COMPONENTS
 from .initial_conditions import (
     aligned_x_smooth_noise,
@@ -115,6 +119,8 @@ __all__ = [
     "PLANE_PRESSURE_BOUNDARY_CONDITIONS",
     "PLANE_Q_BOUNDARY_CONDITIONS",
     "PLANE_TANGENTIAL_VELOCITY_BOUNDARY_CONDITIONS",
+    "CHANNEL_DISTORTION_STRESS_BOUNDARY_CONDITIONS",
+    "CHANNEL_Q_BOUNDARY_CONDITIONS",
     "S_from_Q",
     "S_and_director_from_Q",
     "director_from_Q",

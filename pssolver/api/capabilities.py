@@ -121,6 +121,7 @@ class PublicCapabilityCatalog:
 _PLANE_APPLICATION = "plane_complete_stress_beris_edwards"
 _CHANNEL_APPLICATION = "channel_legacy_active_force_active_nematics"
 _PERIODIC_APPLICATION = "periodic_complete_stress_beris_edwards"
+_CHANNEL_COMPLETE_APPLICATION = "channel_complete_stress_beris_edwards"
 
 _MODELS = (
     DeclarationCapability(
@@ -129,7 +130,11 @@ _MODELS = (
         constructor=(
             "pssolver.models.active_nematics.CompleteStressBerisEdwards"
         ),
-        qualified_applications=(_PLANE_APPLICATION, _PERIODIC_APPLICATION),
+        qualified_applications=(
+            _PLANE_APPLICATION,
+            _PERIODIC_APPLICATION,
+            _CHANNEL_COMPLETE_APPLICATION,
+        ),
     ),
     DeclarationCapability(
         kind="model",
@@ -159,7 +164,10 @@ _GEOMETRIES = (
         kind="geometry",
         key="rectangular_channel",
         constructor="pssolver.geometries.RectangularChannel",
-        qualified_applications=(_CHANNEL_APPLICATION,),
+        qualified_applications=(
+            _CHANNEL_APPLICATION,
+            _CHANNEL_COMPLETE_APPLICATION,
+        ),
     ),
 )
 
@@ -172,6 +180,7 @@ _BOUNDARY_POLICIES = (
             _PLANE_APPLICATION,
             _CHANNEL_APPLICATION,
             _PERIODIC_APPLICATION,
+            _CHANNEL_COMPLETE_APPLICATION,
         ),
     ),
     DeclarationCapability(
@@ -184,7 +193,10 @@ _BOUNDARY_POLICIES = (
         kind="boundary_policy",
         key="no_slip_velocity",
         constructor="pssolver.boundaries.no_slip_velocity",
-        qualified_applications=(_CHANNEL_APPLICATION,),
+        qualified_applications=(
+            _CHANNEL_APPLICATION,
+            _CHANNEL_COMPLETE_APPLICATION,
+        ),
     ),
     DeclarationCapability(
         kind="boundary_policy",
@@ -194,6 +206,7 @@ _BOUNDARY_POLICIES = (
             _PLANE_APPLICATION,
             _CHANNEL_APPLICATION,
             _PERIODIC_APPLICATION,
+            _CHANNEL_COMPLETE_APPLICATION,
         ),
     ),
 )
@@ -202,6 +215,7 @@ _RUNTIME_PATHS = {
     _PLANE_APPLICATION: ("legacy_production", "compiled_v2"),
     _CHANNEL_APPLICATION: ("legacy_channel", "compiled_channel_v2"),
     _PERIODIC_APPLICATION: ("periodic_spectral",),
+    _CHANNEL_COMPLETE_APPLICATION: ("channel_complete_stress",),
 }
 
 

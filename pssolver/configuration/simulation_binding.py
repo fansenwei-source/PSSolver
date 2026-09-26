@@ -59,6 +59,18 @@ _PERIODIC_FACTORY = (
 _PERIODIC_PROTOCOL = (
     "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeAdapterProtocol"
 )
+_CHANNEL_COMPLETE_REQUEST = (
+    "pssolver.runtime.channel_beris_edwards."
+    "ChannelBerisEdwardsRuntimeBuildRequest"
+)
+_CHANNEL_COMPLETE_FACTORY = (
+    "pssolver.runtime.channel_beris_edwards."
+    "build_channel_beris_edwards_runtime"
+)
+_CHANNEL_COMPLETE_PROTOCOL = (
+    "pssolver.runtime.channel_beris_edwards."
+    "ChannelBerisEdwardsRuntimeAdapterProtocol"
+)
 
 
 class BindingRejectionCode(str, Enum):
@@ -176,6 +188,14 @@ def bind_simulation_runtime(
             _PERIODIC_REQUEST,
             _PERIODIC_FACTORY,
             _PERIODIC_PROTOCOL,
+            BuilderProvision.PACKAGE,
+            None,
+        ),
+        (_PLANE_VARIANT, _CHANNEL_GEOMETRY, "channel_complete_stress"): (
+            RuntimeConstructionKind.CHANNEL_COMPLETE_STRESS,
+            _CHANNEL_COMPLETE_REQUEST,
+            _CHANNEL_COMPLETE_FACTORY,
+            _CHANNEL_COMPLETE_PROTOCOL,
             BuilderProvision.PACKAGE,
             None,
         ),

@@ -324,7 +324,7 @@ def test_lowering_is_frozen_deterministic_and_shape_sensitive():
         first.geometry_name = "changed"
 
 
-def test_lowering_rejects_unqualified_model_geometry_pair_without_fallback():
+def test_lowering_rejects_channel_name_with_plane_topology_without_fallback():
     simulation = _plane_simulation()
     mislabeled = GeometrySpec(
         name="rectangular_channel",
@@ -334,7 +334,7 @@ def test_lowering_rejects_unqualified_model_geometry_pair_without_fallback():
     invalid = replace(simulation, geometry=mislabeled)
 
     assert _error_code(lambda: lower_simulation_spec(invalid)) is (
-        LoweringRejectionCode.UNSUPPORTED_MODEL_GEOMETRY
+        LoweringRejectionCode.UNSUPPORTED_DIMENSION_OR_TOPOLOGY
     )
 
 

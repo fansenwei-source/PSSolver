@@ -29,6 +29,11 @@ from .channel_active_nematics import (
     ChannelRuntimeBuildRequest,
     build_channel_active_nematic_runtime,
 )
+from .channel_beris_edwards import (
+    ChannelBerisEdwardsRuntimeAdapterProtocol,
+    ChannelBerisEdwardsRuntimeBuildRequest,
+    build_channel_beris_edwards_runtime,
+)
 from .plane_beris_edwards import (
     PlaneRuntimeAdapterProtocol,
     PlaneRuntimeBuildRequest,
@@ -45,6 +50,7 @@ RuntimeAdapter = (
     PlaneRuntimeAdapterProtocol
     | ChannelRuntimeAdapterProtocol
     | PeriodicRuntimeAdapterProtocol
+    | ChannelBerisEdwardsRuntimeAdapterProtocol
 )
 RuntimeBuilder = Callable[[], object]
 
@@ -60,9 +66,12 @@ def _request_simulation(request: object):
         )
     if isinstance(request, PeriodicRuntimeBuildRequest):
         return request.run_spec.simulation
+    if isinstance(request, ChannelBerisEdwardsRuntimeBuildRequest):
+        return request.run_spec.simulation
     raise TypeError(
         "request must be a PlaneRuntimeBuildRequest or "
-        "ChannelRuntimeBuildRequest or PeriodicRuntimeBuildRequest"
+        "ChannelRuntimeBuildRequest, PeriodicRuntimeBuildRequest, or "
+        "ChannelBerisEdwardsRuntimeBuildRequest"
     )
 
 
@@ -108,6 +117,7 @@ def build_bound_simulation_runtime(
         PlaneRuntimeBuildRequest
         | ChannelRuntimeBuildRequest
         | PeriodicRuntimeBuildRequest
+        | ChannelBerisEdwardsRuntimeBuildRequest
     ),
     *,
     legacy_builder: RuntimeBuilder | None = None,
@@ -159,6 +169,13 @@ def build_bound_simulation_runtime(
                 "periodic construction requires PeriodicRuntimeBuildRequest"
             )
         return build_periodic_beris_edwards_runtime(request)
+    if binding.kind is RuntimeConstructionKind.CHANNEL_COMPLETE_STRESS:
+        if not isinstance(request, ChannelBerisEdwardsRuntimeBuildRequest):
+            raise TypeError(
+                "complete-stress Channel construction requires "
+                "ChannelBerisEdwardsRuntimeBuildRequest"
+            )
+        return build_channel_beris_edwards_runtime(request)
     raise AssertionError("unreachable runtime construction kind")
 
 

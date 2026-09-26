@@ -243,13 +243,21 @@ def _validate_global_contract(
         )
         expected_capabilities = _PLANE_CAPABILITIES
     elif pair == (_CHANNEL_VARIANT, _CHANNEL_GEOMETRY):
-        kind = "channel"
+        kind = "channel_legacy"
         expected_topology = (
             AxisTopology.PERIODIC,
             AxisTopology.BOUNDED,
             AxisTopology.BOUNDED,
         )
         expected_capabilities = _CHANNEL_CAPABILITIES
+    elif pair == (_PLANE_VARIANT, _CHANNEL_GEOMETRY):
+        kind = "channel_complete"
+        expected_topology = (
+            AxisTopology.PERIODIC,
+            AxisTopology.BOUNDED,
+            AxisTopology.BOUNDED,
+        )
+        expected_capabilities = _PLANE_CAPABILITIES
     else:
         _reject(
             LoweringRejectionCode.UNSUPPORTED_MODEL_GEOMETRY,
@@ -259,6 +267,7 @@ def _validate_global_contract(
             supported_pairs=[
                 [_PLANE_VARIANT, _PLANE_GEOMETRY],
                 [_PLANE_VARIANT, _PERIODIC_GEOMETRY],
+                [_PLANE_VARIANT, _CHANNEL_GEOMETRY],
                 [_CHANNEL_VARIANT, _CHANNEL_GEOMETRY],
             ],
         )
@@ -572,6 +581,41 @@ def _copy_basis(
     )
 
 
+def _channel_distortion_basis(
+    source: ComponentBasisRequirement,
+    component: str,
+) -> tuple[AxisBasisRequirement, ...]:
+    """Return the parity of ``(partial_i Q)(partial_j Q)`` in a Channel."""
+
+    suffix = component.rsplit("_", 1)[-1]
+    if len(suffix) != 2 or any(value not in "xyz" for value in suffix):
+        _reject(
+            LoweringRejectionCode.INVALID_EQUATION_LAYOUT,
+            "distortion-stress component does not have a Cartesian suffix",
+            component=component,
+        )
+    axes = []
+    for axis in source.axes:
+        axis_name = axis.axis_name
+        odd = suffix.count(axis_name) == 1 and axis_name in {"y", "z"}
+        modal_kind = (
+            BoundaryKind.DIRICHLET if odd else axis.modal_kind
+        )
+        axes.append(
+            AxisBasisRequirement(
+                axis=axis.axis,
+                axis_name=axis.axis_name,
+                topology=axis.topology,
+                modal_kind=modal_kind,
+                transform_kind=_BASIS_BY_MODAL_KIND[modal_kind],
+                physical_size=axis.physical_size,
+                spectral_size=axis.spectral_size,
+                hermitian_packed=axis.hermitian_packed,
+            )
+        )
+    return tuple(axes)
+
+
 def _lower_transient_spaces(
     simulation: SimulationSpec,
     kind: str,
@@ -593,7 +637,7 @@ def _lower_transient_spaces(
     )
     q_components = _field_components(simulation, "Q")
     velocity = _field_components(simulation, "velocity")
-    if kind in {"plane", "periodic"}:
+    if kind in {"plane", "periodic", "channel_complete"}:
         for component in _field_components(simulation, "molecular_field"):
             q_source = f"Q{component[1:]}"
             _copy_basis(
@@ -619,12 +663,31 @@ def _lower_transient_spaces(
                 if kind == "plane" and suffix in odd_suffixes
                 else q_components[0]
             )
-            _copy_basis(
-                bases,
+            if kind != "channel_complete":
+                _copy_basis(
+                    bases,
+                    field_name="distortion_stress",
+                    component=component,
+                    source_component=source,
+                    provenance=BasisProvenance.CONSTITUTIVE_PARITY,
+                )
+                continue
+            bases[component] = ComponentBasisRequirement(
                 field_name="distortion_stress",
                 component=component,
-                source_component=source,
+                role=FieldRole.TRANSIENT,
+                axes=_channel_distortion_basis(
+                    bases[q_components[0]],
+                    component,
+                ),
                 provenance=BasisProvenance.CONSTITUTIVE_PARITY,
+                source_components=tuple(
+                    dict.fromkeys(
+                        f"d{q_component}_d{axis_name}"
+                        for axis_name in suffix
+                        for q_component in q_components
+                    )
+                ),
             )
         if kind == "plane":
             _validate_plane_distortion_metadata(simulation, bases["uz"])
@@ -725,6 +788,37 @@ def _capability_requirements(
                     if kind == "plane"
                     else "fourier_helmholtz_projection"
                 ),
+            ),
+        }
+    elif kind == "channel_complete":
+        implementations = {
+            "beris_edwards_q_evolution": (
+                "channel_complete_beris_edwards_q_evolution",
+                "imex_pointwise_q_rhs",
+            ),
+            "beris_edwards_q_gradient": (
+                "tensor_product_spectral_q_gradient",
+                "axis_major_spectral_derivatives",
+            ),
+            "beris_edwards_velocity_gradient": (
+                "tensor_product_spectral_velocity_gradient",
+                "axis_major_spectral_derivatives",
+            ),
+            "beris_edwards_molecular_field": (
+                "channel_one_constant_molecular_field",
+                "spectral_linear_plus_pointwise_bulk",
+            ),
+            "beris_edwards_stress": (
+                "channel_complete_two_bounded_axis_nematic_stress",
+                "component_parity_physical_divergence_then_projection",
+            ),
+            "beris_edwards_force": (
+                "channel_projected_complete_stress_divergence",
+                "component_basis_physical_sum_then_velocity_projection",
+            ),
+            INCOMPRESSIBLE_STOKES_CAPABILITY: (
+                "channel_no_slip_modal_stokes_pcg",
+                "geometry_specific_pressure_schur_pcg",
             ),
         }
     else:
@@ -839,9 +933,15 @@ def _stokes_requirements(
                 ),
             }
     else:
-        if stokes.tangential_zero_mode_policy is not (
-            TangentialZeroModePolicy.NOT_APPLICABLE
-        ):
+        allowed_channel_policies = {TangentialZeroModePolicy.NOT_APPLICABLE}
+        if kind == "channel_complete":
+            # The public complete-stress constructor predates Channel support
+            # and explicitly declares the Plane/periodic zero-mean policy.
+            # No-slip on two bounded axes removes that velocity nullspace, so
+            # the lowering records the declaration but resolves the effective
+            # Channel policy to not-applicable without changing an equation.
+            allowed_channel_policies.add(TangentialZeroModePolicy.ZERO_MEAN)
+        if stokes.tangential_zero_mode_policy not in allowed_channel_policies:
             _reject(
                 LoweringRejectionCode.UNSUPPORTED_NULLSPACE_POLICY,
                 "no-slip Channel has no uniform velocity null mode",
@@ -883,13 +983,19 @@ def _stokes_requirements(
         extra_options = {
             "streamwise_axis": 0,
             "pressure_solver": pressure_solver,
+            "declared_tangential_zero_mode_policy": (
+                stokes.tangential_zero_mode_policy.value
+            ),
+            "effective_tangential_zero_mode_policy": "not_applicable",
         }
     options = {
         "viscosity": stokes.viscosity,
         "friction": stokes.friction,
         "pressure_gauge": stokes.pressure_gauge.value,
         "tangential_zero_mode_policy": (
-            stokes.tangential_zero_mode_policy.value
+            "not_applicable"
+            if kind in {"channel_complete", "channel_legacy"}
+            else stokes.tangential_zero_mode_policy.value
         ),
         **extra_options,
     }
@@ -907,7 +1013,11 @@ def _stokes_requirements(
         pressure_component=stokes.pressure_component,
         pressure_gauge=stokes.pressure_gauge.value,
         tangential_velocity_components=tangential_components,
-        tangential_policy=stokes.tangential_zero_mode_policy.value,
+        tangential_policy=(
+            "not_applicable"
+            if kind in {"channel_complete", "channel_legacy"}
+            else stokes.tangential_zero_mode_policy.value
+        ),
         friction=stokes.friction,
         uniform_mode_action=action,
     )

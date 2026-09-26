@@ -45,6 +45,7 @@ from pssolver.models.active_nematics.q_tensor import positive_equilibrium_S
 PUBLIC_PLANE_APPLICATION = "plane_complete_stress_beris_edwards"
 PUBLIC_CHANNEL_APPLICATION = "channel_legacy_active_force_active_nematics"
 PUBLIC_PERIODIC_APPLICATION = "periodic_complete_stress_beris_edwards"
+PUBLIC_CHANNEL_COMPLETE_APPLICATION = "channel_complete_stress_beris_edwards"
 
 _PLANE_COMPILER_KEY = ("complete_stress_beris_edwards", "plane_slab")
 _CHANNEL_COMPILER_KEY = (
@@ -54,6 +55,10 @@ _CHANNEL_COMPILER_KEY = (
 _PERIODIC_COMPILER_KEY = (
     "complete_stress_beris_edwards",
     "periodic_box",
+)
+_CHANNEL_COMPLETE_COMPILER_KEY = (
+    "complete_stress_beris_edwards",
+    "rectangular_channel",
 )
 
 _INITIAL_KEYS = frozenset(
@@ -257,6 +262,7 @@ class PublicSimulationCompilation:
             PUBLIC_PLANE_APPLICATION,
             PUBLIC_CHANNEL_APPLICATION,
             PUBLIC_PERIODIC_APPLICATION,
+            PUBLIC_CHANNEL_COMPLETE_APPLICATION,
         }:
             raise ValueError("unsupported public application identity")
         if not callable(getattr(self.run_spec, "canonical_sha256", None)):
@@ -530,6 +536,15 @@ _PUBLIC_COMPILER_REGISTRY = MappingProxyType(
                 "compile_periodic_public_simulation"
             ),
         ),
+        _CHANNEL_COMPLETE_COMPILER_KEY: PublicApplicationCompilerRegistration(
+            *_CHANNEL_COMPLETE_COMPILER_KEY,
+            PUBLIC_CHANNEL_COMPLETE_APPLICATION,
+            (
+                "pssolver.configuration."
+                "public_channel_beris_edwards_compiler."
+                "compile_channel_beris_edwards_public_simulation"
+            ),
+        ),
     }
 )
 
@@ -593,6 +608,15 @@ def compile_public_simulation(
             source,
             PublicSimulationCompilation,
         )
+    if registration.application == PUBLIC_CHANNEL_COMPLETE_APPLICATION:
+        from .public_channel_beris_edwards_compiler import (
+            compile_channel_beris_edwards_public_simulation,
+        )
+
+        return compile_channel_beris_edwards_public_simulation(
+            source,
+            PublicSimulationCompilation,
+        )
     raise AssertionError("registered public compiler was not dispatched")
 
 
@@ -600,6 +624,7 @@ __all__ = [
     "PUBLIC_CHANNEL_APPLICATION",
     "PUBLIC_PLANE_APPLICATION",
     "PUBLIC_PERIODIC_APPLICATION",
+    "PUBLIC_CHANNEL_COMPLETE_APPLICATION",
     "PublicApplicationCompilerRegistration",
     "PublicCompilationRejectionCode",
     "PublicSimulationCompilation",

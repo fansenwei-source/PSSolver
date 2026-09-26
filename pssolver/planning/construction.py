@@ -43,6 +43,7 @@ class RuntimeConstructionKind(str, Enum):
     CHANNEL_LEGACY = "channel_legacy"
     CHANNEL_COMPILED_V2 = "channel_compiled_v2"
     PERIODIC_COMPLETE_STRESS = "periodic_complete_stress"
+    CHANNEL_COMPLETE_STRESS = "channel_complete_stress"
 
 
 class BuilderProvision(str, Enum):

@@ -28,6 +28,11 @@ from .periodic_beris_edwards import (
     PeriodicRuntimeBuildRequest,
     build_periodic_beris_edwards_runtime,
 )
+from .channel_beris_edwards import (
+    ChannelBerisEdwardsRuntimeAdapter,
+    ChannelBerisEdwardsRuntimeBuildRequest,
+    build_channel_beris_edwards_runtime,
+)
 
 __all__ = [
     "LegacyPlaneRuntimeAdapter",
@@ -46,4 +51,7 @@ __all__ = [
     "PeriodicRuntimeAdapterProtocol",
     "PeriodicRuntimeBuildRequest",
     "build_periodic_beris_edwards_runtime",
+    "ChannelBerisEdwardsRuntimeAdapter",
+    "ChannelBerisEdwardsRuntimeBuildRequest",
+    "build_channel_beris_edwards_runtime",
 ]

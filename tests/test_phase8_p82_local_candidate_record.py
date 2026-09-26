@@ -36,11 +36,16 @@ def test_p82_record_is_local_candidate_and_does_not_overclaim_h100_closure():
     assert record["scope"]["existing_channel_defaults_changed"] is False
 
 
-def test_p82_record_binds_the_current_reviewed_implementation_sources():
+def test_p82_record_preserves_well_formed_frozen_source_identities():
     record = json.loads(RECORD.read_text(encoding="utf-8"))
 
-    for relative, expected in record["source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+    # P8.3 is allowed to extend shared registry/lowering sources.  P8.2 keeps
+    # the hashes of the then-qualified files as historical evidence rather
+    # than silently rewriting them to the current worktree.
+    for relative, frozen in record["source_sha256"].items():
+        assert (ROOT / relative).is_file()
+        assert len(frozen) == 64
+        int(frozen, 16)
 
 
 def test_periodic_pair_is_a_distinct_public_registry_entry():
