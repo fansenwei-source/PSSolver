@@ -1,6 +1,6 @@
 # Phase 8 P8.3: complete-stress Beris--Edwards in a rectangular Channel
 
-Status: `P8_3_OBSERVATION_SYNC_RECOVERY_LOCAL_CANDIDATE_H100_REQUIRED`.
+Status: `PASS_P8_3_CHANNEL_COMPLETE_STRESS_H100_OBSERVATION_SYNC_RECOVERY`.
 
 Baseline: `b753d24acec1245f6335dd45ed5cb1f5d8fefd19` on
 `next/pssolver-v0.2.0-architecture`, after the completed P8.2 periodic H100
@@ -70,7 +70,7 @@ continuous trajectory and a three-step plus three-step restart are byte-for-byte
 identical for Q, velocity, and pressure; pressure-state byte tampering is
 rejected before advancement.
 
-## Local result and remaining gate
+## Local result
 
 The P8.3 implementation, focused architecture tests, old Plane/Channel/P8.2
 regressions, manufactured operator test, finite trajectory, exact restart,
@@ -84,14 +84,9 @@ git diff --check: pass
 
 No test failed, skipped, xfailed, or was deselected in this local environment.
 
-P8.3 is not complete until a frozen H100 qualification verifies clean
-installed-package identity, CUDA-only tests, analytic force projection,
-R128/R320 performance and memory non-regression, transform-call accounting,
-finite production trajectories, exact restart, negative checkpoint gates,
-immutable provenance, and checksums.
-
-Until then no runtime is promoted, no default changes, P8.4 and Phase 9 are
-not authorized, and no scientific benchmark claim is made.
+The local implementation was therefore eligible for a frozen H100
+qualification.  H100 completion, runtime promotion, default changes, later
+Phase 8 slices, and scientific benchmark claims remained separate gates.
 
 ## Initial H100 qualification and restart recovery
 
@@ -125,6 +120,33 @@ cache.  New tests prove that dense versus sparse diagnostics/save schedules
 produce byte-identical Q/u/p and that there is exactly one static solve per Q
 state.  Together with the longer restart oracle, the focused recovery suite
 passes 64 tests and the complete CPU suite passes 2243 tests plus 8 subtests.
-Final closure still requires a focused H100 rerun of restart and negative
-gates; previously passed manufactured-force and profiler evidence should be
-reused rather than repeated.
+The first attempt to run the focused closure (Job 10842858) stopped before any
+CUDA test or scientific command because its Slurm script replaced the CUDA
+module's `PATH` and made `nvcc` unavailable.  This was an external bootstrap
+failure and did not assess the candidate.
+
+## Authoritative H100 closure
+
+The corrected focused recovery (Job 10843275) completed on one NVIDIA H100
+PCIe with exit code zero.  It retained the CUDA module path, passed all three
+CUDA-only tests, imported PSSolver only from the clean detached worktree, and
+kept TF32 disabled.
+
+Dense and sparse observation schedules used identical initial state and
+scientific configuration.  Both executed eight static solves and eight PCG
+solves and produced byte-for-byte identical final Q, velocity, and pressure.
+This independently verifies that diagnostics and output cadence no longer
+change the scientific trajectory.
+
+The C128 continuous 100-step trajectory was byte-for-byte identical to its
+50+50 restart for Q, velocity, and pressure.  The C512 continuous 20-step
+trajectory was likewise byte-for-byte identical to its 10+10 restart.  Every
+relative-L2 and Linf difference was exactly zero.  All six checkpoint negative
+gate categories reached their intended guard before target mutation and
+passed.  The authoritative archive contains a `COMPLETE` marker and its
+checksum manifest verifies 381 of 381 entries; the manifest SHA-256 is
+`2913aa21d083415899966b9afa5a415a3573f434ee3ffff13849bde94cfdd7a7`.
+
+P8.3 is therefore complete.  This closure makes P8.4 planning eligible but
+does not itself authorize P8.4 implementation, Phase 9, runtime promotion,
+production-default changes, or a scientific benchmark claim.

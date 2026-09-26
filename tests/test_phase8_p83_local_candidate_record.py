@@ -1,4 +1,4 @@
-"""P8.3 local-candidate evidence and source-identity contract."""
+"""P8.3 closure evidence and source-identity contract."""
 
 from __future__ import annotations
 
@@ -17,16 +17,25 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def test_p83_record_is_local_candidate_without_h100_overclaim():
+def test_p83_record_closes_h100_without_authorizing_later_slices():
     record = json.loads(RECORD.read_text(encoding="utf-8"))
 
     assert record["phase"] == "P8.3"
-    assert record["status"] == "local_candidate"
+    assert record["status"] == "complete"
+    assert record["classification"] == (
+        "PASS_P8_3_CHANNEL_COMPLETE_STRESS_H100_OBSERVATION_SYNC_RECOVERY"
+    )
     assert record["combination"]["public_registry_connected"] is True
-    assert record["combination"]["h100_qualified"] is False
+    assert record["combination"]["h100_qualified"] is True
     assert record["verification"]["h100_required"] is True
-    assert record["verification"]["h100_completed"] is False
-    assert record["eligibility"]["p8_3_complete"] is False
+    assert record["verification"]["h100_completed"] is True
+    assert record["eligibility"]["p8_3_complete"] is True
+    assert record["eligibility"]["p8_3_h100_qualification_fulfilled"] is True
+    assert record["eligibility"]["eligible_for_p8_4_planning"] is True
+    assert record["eligibility"]["p8_4_authorized"] is False
+    assert record["eligibility"]["phase_9_authorized"] is False
+    assert record["final_h100_qualification"]["complete_marker_present"] is True
+    assert record["final_h100_qualification"]["checksum_entries_passed"] == 381
     assert record["scope"]["existing_channel_defaults_changed"] is False
 
 
