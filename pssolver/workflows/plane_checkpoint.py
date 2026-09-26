@@ -17,7 +17,11 @@ import torch
 
 from pssolver.configuration import PlaneRuntimePath
 from pssolver.models.active_nematics import Q_COMPONENTS
-from pssolver.runtime import PlaneRuntimeAdapterProtocol
+from pssolver.runtime import (
+    PlaneRuntimeAdapterProtocol,
+    plane_lifting_restart_metadata,
+    verify_plane_lifting_identity,
+)
 
 
 PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1
@@ -80,6 +84,7 @@ class PlaneWorkflowCheckpoint:
     evolved_spatial: Mapping[str, torch.Tensor]
     evolved_spectral: Mapping[str, torch.Tensor]
     backend_restart: Mapping[str, object]
+    lifting_restart: Mapping[str, object] | None = None
 
     def __post_init__(self) -> None:
         if self.format_version != PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
@@ -134,9 +139,29 @@ class PlaneWorkflowCheckpoint:
         object.__setattr__(self, "evolved_spatial", spatial)
         object.__setattr__(self, "evolved_spectral", spectral)
         object.__setattr__(self, "backend_restart", MappingProxyType(backend))
+        lifting = self.lifting_restart
+        if lifting is not None:
+            if not isinstance(lifting, Mapping):
+                raise TypeError("lifting_restart must be a mapping or None")
+            try:
+                encoded = json.dumps(
+                    dict(lifting),
+                    allow_nan=False,
+                    separators=(",", ":"),
+                    sort_keys=True,
+                )
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    "lifting restart metadata is not JSON-compatible"
+                ) from exc
+            object.__setattr__(
+                self,
+                "lifting_restart",
+                MappingProxyType(json.loads(encoded)),
+            )
 
     def to_metadata(self) -> dict[str, object]:
-        return {
+        metadata = {
             "format_version": self.format_version,
             "runtime_path": self.runtime_path.value,
             "runtime_identity_sha256": self.runtime_identity_sha256,
@@ -149,6 +174,9 @@ class PlaneWorkflowCheckpoint:
             "evolved_components": list(Q_COMPONENTS),
             "backend_restart": dict(self.backend_restart),
         }
+        if self.lifting_restart is not None:
+            metadata["lifting_restart"] = dict(self.lifting_restart)
+        return metadata
 
 
 def capture_plane_checkpoint(
@@ -177,6 +205,7 @@ def capture_plane_checkpoint(
             name: fields[f"{name}.hat"] for name in Q_COMPONENTS
         },
         backend_restart=adapter.backend_restart_metadata(),
+        lifting_restart=plane_lifting_restart_metadata(adapter),
     )
 
 
@@ -198,8 +227,18 @@ def restore_plane_checkpoint(
         raise ValueError("checkpoint runtime identity does not match target")
     if dict(checkpoint.backend_restart) != adapter.backend_restart_metadata():
         raise ValueError("checkpoint backend restart contract does not match target")
+    expected_lifting = plane_lifting_restart_metadata(adapter)
+    observed_lifting = (
+        None
+        if checkpoint.lifting_restart is None
+        else dict(checkpoint.lifting_restart)
+    )
+    if observed_lifting != expected_lifting:
+        raise ValueError("checkpoint static lifting identity does not match target")
+    verify_plane_lifting_identity(adapter)
 
     fields = adapter.fields
+    targets: list[tuple[torch.Tensor, torch.Tensor, str]] = []
     for name in Q_COMPONENTS:
         for suffix, source in (
             ("", checkpoint.evolved_spatial[name]),
@@ -210,7 +249,12 @@ def restore_plane_checkpoint(
                 raise ValueError(f"checkpoint shape for {name}{suffix} differs")
             if target.dtype != source.dtype:
                 raise ValueError(f"checkpoint dtype for {name}{suffix} differs")
-            target.copy_(source.to(device=target.device))
+            targets.append((target, source, f"{name}{suffix}"))
+
+    # All identities, shapes, and dtypes are validated before the first target
+    # mutation.  Device transfer happens only after that fail-closed boundary.
+    for target, source, _description in targets:
+        target.copy_(source.to(device=target.device))
 
     adapter.synchronize_for_observation()
     adapter.restore_progress(
@@ -374,6 +418,7 @@ def load_plane_checkpoint(directory: str | Path) -> PlaneWorkflowCheckpoint:
         evolved_spatial=loaded["evolved_spatial"],
         evolved_spectral=loaded["evolved_spectral"],
         backend_restart=backend,
+        lifting_restart=metadata.get("lifting_restart"),
     )
 
 

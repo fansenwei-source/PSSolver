@@ -213,16 +213,19 @@ _BOUNDARY_POLICIES = (
         kind="boundary_policy",
         key="prescribed_q",
         constructor="pssolver.models.active_nematics.prescribed_q",
+        qualified_applications=(_PLANE_APPLICATION,),
     ),
     DeclarationCapability(
         kind="boundary_policy",
         key="strong_homeotropic_q",
         constructor="pssolver.models.active_nematics.strong_homeotropic_q",
+        qualified_applications=(_PLANE_APPLICATION,),
     ),
     DeclarationCapability(
         kind="boundary_policy",
         key="strong_planar_q",
         constructor="pssolver.models.active_nematics.strong_planar_q",
+        qualified_applications=(_PLANE_APPLICATION,),
     ),
 )
 

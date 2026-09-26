@@ -93,20 +93,28 @@ def test_numerical_restart_and_negative_gates_are_complete():
 
 
 def test_closure_source_hashes_match_local_candidate_sources():
-    assert _record()["source_sha256"] == {
+    recorded = _record()["source_sha256"]
+    unchanged = {
         "notes/architecture_v0_2/phase_7_p776_production_connection.json": _sha256(
             "notes/architecture_v0_2/phase_7_p776_production_connection.json"
         ),
         "pssolver/applications/channel_active_nematics.py": _sha256(
             "pssolver/applications/channel_active_nematics.py"
         ),
-        "pssolver/applications/plane_beris_edwards.py": _sha256(
-            "pssolver/applications/plane_beris_edwards.py"
-        ),
-        "tests/test_phase7_p776_production_connection.py": _sha256(
-            "tests/test_phase7_p776_production_connection.py"
-        ),
     }
+    assert set(recorded) == {
+        *unchanged,
+        "pssolver/applications/plane_beris_edwards.py",
+        "tests/test_phase7_p776_production_connection.py",
+    }
+    assert all(recorded[path] == digest for path, digest in unchanged.items())
+    # P8.4.4 later connected static Plane lifting through this application.
+    assert recorded["pssolver/applications/plane_beris_edwards.py"] != _sha256(
+        "pssolver/applications/plane_beris_edwards.py"
+    )
+    assert recorded["tests/test_phase7_p776_production_connection.py"] != _sha256(
+        "tests/test_phase7_p776_production_connection.py"
+    )
 
 
 def test_archive_source_list_includes_closure_without_regenerating_pdf():

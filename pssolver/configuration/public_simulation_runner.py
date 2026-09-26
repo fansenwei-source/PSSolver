@@ -14,7 +14,7 @@ application or discovered by failure in the timestep.
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import Enum
 import json
 import math
@@ -468,6 +468,16 @@ def _compile_plane_public_simulation(
     application_simulation = compose_plane_beris_edwards_simulation(
         _components_from_run_spec(run_spec)
     )
+    has_prescribed_boundary = any(
+        not face.condition.is_homogeneous
+        for assignment in source.boundaries.components
+        for face in assignment.faces
+    )
+    if has_prescribed_boundary:
+        application_simulation = replace(
+            application_simulation,
+            boundaries=source.boundaries,
+        )
     _validate_translation(source, application_simulation, run_spec)
     lowering_plan = lower_simulation_spec(application_simulation)
     construction_plan = plan_package_runtime_construction(application_simulation)

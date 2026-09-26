@@ -17,10 +17,28 @@ from pssolver.configuration import (
     PlaneBerisEdwardsRunSpec,
     PlaneRuntimePath,
 )
+from pssolver.configuration.active_nematics_simulation_adapters import (
+    compose_plane_beris_edwards_simulation,
+)
 from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
 from pssolver.execution.state import RuntimeState
+from pssolver.configuration.simulation import SimulationSpec
+from pssolver.configuration.simulation_lowering import lower_simulation_spec
+from pssolver.models.active_nematics import Q_COMPONENTS
+
+
+def _decompose_run_spec(run_spec: PlaneBerisEdwardsRunSpec):
+    return decompose_plane_beris_edwards_run_spec(run_spec)
+
+
+def _compose_run_spec_simulation(
+    run_spec: PlaneBerisEdwardsRunSpec,
+) -> SimulationSpec:
+    return compose_plane_beris_edwards_simulation(
+        _decompose_run_spec(run_spec)
+    )
 
 
 def _require_runtime_surface(solver: object, projector: object) -> None:
@@ -40,6 +58,7 @@ class PlaneRuntimeBuildRequest:
     production_metadata: Mapping[str, object]
     initial_values: Mapping[str, object]
     device: object
+    application_simulation: SimulationSpec | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.run_spec, PlaneBerisEdwardsRunSpec):
@@ -48,6 +67,27 @@ class PlaneRuntimeBuildRequest:
             raise TypeError("production_metadata must be a mapping")
         if not isinstance(self.initial_values, Mapping):
             raise TypeError("initial_values must be a mapping")
+        if self.application_simulation is not None:
+            if not isinstance(self.application_simulation, SimulationSpec):
+                raise TypeError(
+                    "application_simulation must be SimulationSpec or None"
+                )
+            baseline = _compose_run_spec_simulation(self.run_spec)
+            candidate = self.application_simulation
+            if (
+                candidate.equation_system != baseline.equation_system
+                or candidate.geometry != baseline.geometry
+                or candidate.numerics != baseline.numerics
+                or candidate.time_integration != baseline.time_integration
+                or candidate.initial_condition != baseline.initial_condition
+                or candidate.execution != baseline.execution
+                or candidate.workflow != baseline.workflow
+                or candidate.invocation != baseline.invocation
+            ):
+                raise ValueError(
+                    "application_simulation differs from its Plane run spec "
+                    "outside the boundary declaration"
+                )
         metadata = dict(self.production_metadata)
         configuration = metadata.get("configuration")
         if not isinstance(configuration, Mapping):
@@ -73,6 +113,18 @@ class PlaneRuntimeBuildRequest:
             raise ValueError(
                 "runtime selection metadata must come from the resolved run spec"
             )
+
+    @property
+    def simulation(self) -> SimulationSpec:
+        if self.application_simulation is not None:
+            return self.application_simulation
+        return _compose_run_spec_simulation(self.run_spec)
+
+    @property
+    def lifting_plan(self):
+        if self.application_simulation is None:
+            return None
+        return lower_simulation_spec(self.simulation).lifting_plan
 
 
 @runtime_checkable
@@ -208,13 +260,17 @@ class LegacyPlaneRuntimeAdapter:
         )
 
     def to_metadata(self) -> dict[str, object]:
-        return {
+        metadata = {
             "requested": self.runtime_path.value,
             "effective": self.runtime_path.value,
             "adapter": type(self).__name__,
             "fallback_used": False,
             "separated_architecture": None,
         }
+        lifting = plane_lifting_restart_metadata(self)
+        if lifting is not None:
+            metadata["static_lifting"] = lifting
+        return metadata
 
 
 @dataclass(frozen=True, slots=True)
@@ -334,6 +390,44 @@ LegacyRuntimeBuilder = Callable[[], tuple[object, object]]
 CompiledRuntimeBuilder = Callable[[], PlaneRuntimeAdapterProtocol]
 
 
+def _lifting_runtime(adapter: PlaneRuntimeAdapterProtocol):
+    model = getattr(adapter.solver, "model", None)
+    return getattr(model, "static_lifting_runtime", None)
+
+
+def plane_physical_component(
+    adapter: PlaneRuntimeAdapterProtocol,
+    component: str,
+):
+    """Return a physical evolved component for observations/constitutive use."""
+
+    if component not in Q_COMPONENTS:
+        raise KeyError(component)
+    lifting = _lifting_runtime(adapter)
+    if lifting is None:
+        return adapter.fields[component]
+    return lifting.physical_component(adapter.fields, component)
+
+
+def plane_lifting_restart_metadata(
+    adapter: PlaneRuntimeAdapterProtocol,
+) -> dict[str, object] | None:
+    """Return immutable lifting identity or ``None`` for homogeneous runs."""
+
+    lifting = _lifting_runtime(adapter)
+    if lifting is None:
+        return None
+    return lifting.restart_metadata()
+
+
+def verify_plane_lifting_identity(
+    adapter: PlaneRuntimeAdapterProtocol,
+) -> None:
+    lifting = _lifting_runtime(adapter)
+    if lifting is not None:
+        lifting.verify_identity()
+
+
 def _restore_integrator_progress(
     integrator: object,
     *,
@@ -375,9 +469,21 @@ def build_plane_beris_edwards_runtime(
         raise TypeError("legacy_builder must be callable")
     if compiled_builder is not None and not callable(compiled_builder):
         raise TypeError("compiled_builder must be callable")
-    components = decompose_plane_beris_edwards_run_spec(request.run_spec)
+    components = _decompose_run_spec(request.run_spec)
     execution = components.execution
+    lifting_plan = request.lifting_plan
+    if (
+        lifting_plan is not None
+        and execution.runtime_path is not PlaneRuntimePath.LEGACY_PRODUCTION
+    ):
+        raise ValueError(
+            "static Plane lifting is qualified only for legacy_production"
+        )
     if execution.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION:
+        if lifting_plan is not None and legacy_builder is not None:
+            raise ValueError(
+                "static Plane lifting requires the package-owned legacy builder"
+            )
         if legacy_builder is None:
             from .plane_legacy import build_legacy_plane_runtime
 
@@ -385,6 +491,7 @@ def build_plane_beris_edwards_runtime(
                 request.run_spec,
                 device=request.device,
                 initial_values=request.initial_values,
+                lifting_plan=lifting_plan,
             )
         else:
             solver, projector = legacy_builder()
@@ -433,4 +540,7 @@ __all__ = [
     "PlaneRuntimeBuildRequest",
     "SeparatedCanaryPlaneRuntimeAdapter",
     "build_plane_beris_edwards_runtime",
+    "plane_lifting_restart_metadata",
+    "plane_physical_component",
+    "verify_plane_lifting_identity",
 ]

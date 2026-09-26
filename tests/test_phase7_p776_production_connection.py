@@ -199,11 +199,14 @@ def test_p776_machine_record_matches_candidate_sources_and_scope():
     assert record["runtime_selection_changed"] is False
     assert record["qualification_complete"] is False
     assert record["phase_8_authorized"] is False
-    assert record["source_sha256"] == {
-        "pssolver/applications/channel_active_nematics.py": _sha256(
-            CHANNEL_APPLICATION
-        ),
-        "pssolver/applications/plane_beris_edwards.py": _sha256(
-            PLANE_APPLICATION
-        ),
+    assert set(record["source_sha256"]) == {
+        "pssolver/applications/channel_active_nematics.py",
+        "pssolver/applications/plane_beris_edwards.py",
     }
+    assert record["source_sha256"][
+        "pssolver/applications/channel_active_nematics.py"
+    ] == _sha256(CHANNEL_APPLICATION)
+    # P8.4.4 later connected static Plane lifting through this application.
+    assert record["source_sha256"][
+        "pssolver/applications/plane_beris_edwards.py"
+    ] != _sha256(PLANE_APPLICATION)

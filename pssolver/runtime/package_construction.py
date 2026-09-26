@@ -11,13 +11,9 @@ from dataclasses import dataclass
 
 from pssolver.configuration.active_nematics_simulation_adapters import (
     compose_channel_active_nematics_simulation,
-    compose_plane_beris_edwards_simulation,
 )
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
-)
-from pssolver.configuration.plane_beris_edwards_components import (
-    decompose_plane_beris_edwards_run_spec,
 )
 from pssolver.configuration.simulation_binding import bind_simulation_runtime
 from pssolver.planning.construction import RuntimeConstructionKind
@@ -95,9 +91,7 @@ class PackageRuntimeConstructionInput:
 
 def _request_simulation(request: PackageBuildRequest):
     if isinstance(request, PlaneRuntimeBuildRequest):
-        return compose_plane_beris_edwards_simulation(
-            decompose_plane_beris_edwards_run_spec(request.run_spec)
-        )
+        return request.simulation
     if isinstance(request, ChannelRuntimeBuildRequest):
         return compose_channel_active_nematics_simulation(
             request.run_spec.components

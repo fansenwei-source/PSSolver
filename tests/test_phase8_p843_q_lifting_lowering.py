@@ -26,11 +26,7 @@ from pssolver.configuration.plane_beris_edwards import (
 from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
-from pssolver.configuration.simulation_binding import (
-    BindingRejectionCode,
-    SimulationBindingError,
-    bind_simulation_runtime,
-)
+from pssolver.configuration.simulation_binding import bind_simulation_runtime
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.core.boundary import BoundarySide
 from pssolver.models.active_nematics import (
@@ -261,7 +257,7 @@ def test_homogeneous_plane_lowering_metadata_remains_without_lifting_key(
         )
 
 
-def test_lifted_plane_binding_remains_fail_closed_until_p844(tmp_path):
+def test_historical_p843_runtime_rejection_is_superseded_by_p844(tmp_path):
     simulation = _with_q_policy(
         _plane_simulation(tmp_path),
         strong_homeotropic_q(
@@ -271,15 +267,9 @@ def test_lifted_plane_binding_remains_fail_closed_until_p844(tmp_path):
     )
     plan = lower_simulation_spec(simulation)
 
-    with pytest.raises(SimulationBindingError) as caught:
-        bind_simulation_runtime(simulation, plan)
-    assert caught.value.rejection.code is (
-        BindingRejectionCode.UNSUPPORTED_LIFTING_RUNTIME
-    )
-    assert caught.value.rejection.to_metadata()["context"] == {
-        "lifting_plan_sha256": plan.lifting_plan.canonical_sha256(),
-        "next_phase": "P8.4.4",
-    }
+    binding = bind_simulation_runtime(simulation, plan)
+    assert binding.runtime_path == "legacy_production"
+    assert binding.lowering_plan_sha256 == plan.canonical_sha256()
 
 
 def test_q_convenience_layer_does_not_own_geometry_planning_or_runtime():
@@ -324,7 +314,13 @@ def test_p843_record_freezes_lowering_only_scope():
     assert record["authorization"]["p8_4_4_eligible_for_planning"] is True
     assert record["authorization"]["p8_4_4_implementation_authorized"] is False
     assert set(record["source_sha256"]) == set(IMPLEMENTATION_SOURCES)
+    superseded_by_p844 = {
+        "pssolver/api/capabilities.py",
+        "pssolver/configuration/simulation_binding.py",
+    }
     for relative, expected in record["source_sha256"].items():
+        if relative in superseded_by_p844:
+            continue
         assert _sha256(ROOT / relative) == expected
 
 

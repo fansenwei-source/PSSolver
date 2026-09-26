@@ -1,0 +1,71 @@
+{
+  "authorization": {
+    "h100_authorized": false,
+    "p8_4_4_complete": true,
+    "p8_4_5_eligible_for_authorization": true,
+    "p8_4_5_performed": false,
+    "p8_5_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false
+  },
+  "baseline": {
+    "commit": "fd2bd03f235711d57eff098ee0d90f7bb7213f58",
+    "p8_4_3_record": "notes/architecture_v0_2/phase_8_p843_q_lifting_lowering.json"
+  },
+  "checkpoint": {
+    "evolved_tensor_representation": "homogeneous_remainder",
+    "exact_cpu_restart": "byte_for_byte",
+    "identity_checked_before_target_mutation": true,
+    "lifting_identity_included": true,
+    "physical_q_reconstructed_after_restart": true
+  },
+  "classification": "PASS_P8_4_4_PLANE_STATIC_LIFTING_WORKFLOW_RESTART",
+  "h100_used": false,
+  "local_verification": {
+    "failed": 0,
+    "full": "2290 passed, 8 subtests passed",
+    "git_diff_check": "pass",
+    "targeted": "6 passed"
+  },
+  "nonhomogeneous_neumann_supported": false,
+  "output": {
+    "checkpoint_q": "homogeneous_remainder",
+    "saved_q": "physical_field",
+    "velocity_and_pressure_changed": false
+  },
+  "phase": "P8.4.4",
+  "qualified_combination": {
+    "boundary_data": "static_constant_two_sided_dirichlet",
+    "geometry": "plane_slab",
+    "model": "complete_stress_beris_edwards",
+    "prescribed_field": "canonical_Q_five_components",
+    "pressure": "neumann_pressure_compatibility",
+    "runtime_path": "legacy_production",
+    "velocity": "free_slip_velocity"
+  },
+  "representation": {
+    "constitutive_field": "physical_field",
+    "evolved_field": "homogeneous_remainder",
+    "homogeneous_basis": [
+      "fft",
+      "fft",
+      "dst"
+    ],
+    "reconstruction": "homogeneous_remainder_plus_static_lift"
+  },
+  "source_sha256": {
+    "pssolver/api/runner.py": "0ca883d3a3b139030880e1ee40941d523c6384911295d9638c154ef2c15b2fa4",
+    "pssolver/applications/plane_beris_edwards.py": "8adcc6a5533d07a92c7ea11ce6b3281946fc18d9f7172ffda429d885208fd8da",
+    "pssolver/configuration/public_simulation_runner.py": "5a45e5d1949f2b3630293ac5db332657ecfb9ee2abf793f0ed814bfa9668a39b",
+    "pssolver/configuration/simulation_binding.py": "c91c214ed98f4f49c7c861e01c9ebfee6dde21d5de019d7cd2e9a2d8174be386",
+    "pssolver/models/active_nematics/beris_edwards.py": "a1bbde14014caf0f6cc11efa0395f0bc241a1b011a383a2d55aa55443a6943c1",
+    "pssolver/models/active_nematics/stokes.py": "9aca3802a2e7086b7f4682d3f29588e53c4067fd04c4fb4ee5bec7af077ddf07",
+    "pssolver/operators/lifting.py": "a8db73a54a5eca77fe1ae95c61a1be502c34800a6276e206eb1cffd6b904c8e3",
+    "pssolver/runtime/plane_beris_edwards.py": "912c29354ad858d618afa8fa019a99e16d845c6a4bc7552a06fd6da722d9a3c0",
+    "pssolver/runtime/plane_legacy.py": "adb8d77f3f3c8406b2f6e318325785a497596debf4656aa35e2e027126eeed45",
+    "pssolver/runtime/static_lifting.py": "1e1493ae1080d0ce3af2b1a327d2ceb26319be90b0a7e19bbbc83fe2bbde7a84",
+    "pssolver/workflows/plane_checkpoint.py": "d21bd41120466ae96a231f45bd79797415fd1943c68a19ce58ac400a605ba8ec",
+    "pssolver/workflows/plane_observation.py": "9977b4998d2ac5840a71137f67e6396288e331233b13453709d90d5eb3f437b2"
+  },
+  "status": "P8_4_4_COMPLETE_P8_4_5_H100_PENDING"
+}

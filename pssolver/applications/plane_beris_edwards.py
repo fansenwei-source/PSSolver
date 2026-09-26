@@ -63,6 +63,8 @@ from pssolver.configuration import (
 from pssolver.configuration.active_nematics_simulation_adapters import (
     compose_plane_beris_edwards_simulation,
 )
+from pssolver.configuration.simulation import SimulationSpec
+from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
@@ -72,6 +74,7 @@ from pssolver.configuration.plane_beris_edwards_components import (
 from pssolver.runtime.plane_beris_edwards import (
     PlaneRuntimeBuildRequest,
     build_plane_beris_edwards_runtime,
+    plane_physical_component,
 )
 from pssolver.runtime.package_construction import (
     PackageRuntimeConstructionInput,
@@ -154,6 +157,7 @@ def run_plane_beris_edwards(
     *,
     progress: Iterable[int] | None = None,
     emit_metadata: bool = False,
+    application_simulation: SimulationSpec | None = None,
 ) -> PlaneWorkflowResult | None:
     """Execute one validated Plane run through the supported application API.
 
@@ -165,6 +169,13 @@ def run_plane_beris_edwards(
     if not isinstance(run_spec, PlaneBerisEdwardsRunSpec):
         raise TypeError("run_spec must be PlaneBerisEdwardsRunSpec")
     components = decompose_plane_beris_edwards_run_spec(run_spec)
+    baseline_simulation = compose_plane_beris_edwards_simulation(components)
+    if application_simulation is None:
+        application_simulation = baseline_simulation
+    elif not isinstance(application_simulation, SimulationSpec):
+        raise TypeError("application_simulation must be SimulationSpec or None")
+    lowering_plan = lower_simulation_spec(application_simulation)
+    lifting_plan = lowering_plan.lifting_plan
     domain = components.geometry.domain
     numerics = components.numerics
     physics = components.physics
@@ -587,6 +598,14 @@ def run_plane_beris_edwards(
             ),
         ],
     }
+    if lifting_plan is not None:
+        metadata["static_lifting"] = {
+            "plan": lifting_plan.to_metadata(),
+            "plan_sha256": lifting_plan.canonical_sha256(),
+            "evolved_representation": "homogeneous_remainder",
+            "saved_observation_representation": "physical_field",
+            "nonhomogeneous_neumann_supported": False,
+        }
     if emit_metadata:
         print(json.dumps(metadata, indent=2))
     if invocation.dry_run:
@@ -674,6 +693,9 @@ def run_plane_beris_edwards(
         production_metadata=metadata,
         initial_values=initial_values,
         device=device,
+        application_simulation=(
+            application_simulation if lifting_plan is not None else None
+        ),
     )
     if execution.runtime_path is PlaneRuntimePath.SEPARATED_CANARY:
         metadata["runtime_construction"] = {
@@ -686,9 +708,7 @@ def run_plane_beris_edwards(
         runtime_adapter = build_plane_beris_edwards_runtime(runtime_request)
     else:
         construction = PackageRuntimeConstructionInput(
-            plan=plan_package_runtime_construction(
-                compose_plane_beris_edwards_simulation(components)
-            ),
+            plan=plan_package_runtime_construction(application_simulation),
             request=runtime_request,
         )
         metadata["runtime_construction"] = {
@@ -701,13 +721,27 @@ def run_plane_beris_edwards(
         **run_spec.runtime_selection_metadata(),
         **runtime_adapter.to_metadata(),
     }
+    if lifting_plan is not None:
+        metadata["initial_condition"]["evolved_remainder_sha256"] = (
+            tensor_sha256(
+                tuple(
+                    runtime_adapter.fields[name]
+                    for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")
+                )
+            )
+        )
     metadata["initial_condition"]["projected_q_sha256"] = tensor_sha256(
         tuple(
-            runtime_adapter.fields[name]
+            plane_physical_component(runtime_adapter, name)
             for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")
         )
     )
-    metadata["retained_q_modes"] = spectral_projector.retained_axis_counts(Q_BC)
+    q_runtime_boundaries = runtime_adapter.fields.get_boundary_conditions(
+        "Qxx"
+    )
+    metadata["retained_q_modes"] = (
+        spectral_projector.retained_axis_counts(q_runtime_boundaries)
+    )
     metadata["retained_normal_velocity_modes"] = (
         spectral_projector.retained_axis_counts(U_NORMAL_BC)
     )

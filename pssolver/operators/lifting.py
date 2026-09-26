@@ -164,10 +164,30 @@ class PlaneStaticLiftingOperator:
         if not bool(torch.isfinite(value).all().item()):
             raise ValueError(f"{description} must be finite")
 
+    def _validate_output_workspace(
+        self,
+        value: torch.Tensor,
+        description: str,
+    ) -> None:
+        if not isinstance(value, torch.Tensor):
+            raise TypeError(f"{description} must be a tensor")
+        if tuple(value.shape) != self.plan.domain_shape:
+            raise ValueError(f"{description} shape does not match the lifting plan")
+        if value.dtype is not self.dtype:
+            raise ValueError(f"{description} dtype does not match the lifting plan")
+        if value.device != self.device:
+            raise ValueError(f"{description} device does not match the lifting plan")
+
     def lift(self, component: str) -> torch.Tensor:
         """Return the construction-owned lift view for one component."""
 
         return self._lift_values[self._index(component)]
+
+    @property
+    def stacked_lift(self) -> torch.Tensor:
+        """Return the construction-owned component-first lift tensor."""
+
+        return self._lift_values
 
     def affine_laplacian(self, component: str) -> torch.Tensor:
         """Return the explicit zero Laplacian of the affine extension."""
@@ -191,7 +211,7 @@ class PlaneStaticLiftingOperator:
         self._validate_field_tensor(homogeneous_remainder, "homogeneous remainder")
         if out is None:
             return homogeneous_remainder + self.lift(component)
-        self._validate_field_tensor(out, "physical output workspace")
+        self._validate_output_workspace(out, "physical output workspace")
         if out.data_ptr() == homogeneous_remainder.data_ptr():
             raise ValueError("physical output must not alias the evolved remainder")
         return torch.add(homogeneous_remainder, self.lift(component), out=out)
@@ -208,7 +228,7 @@ class PlaneStaticLiftingOperator:
         self._validate_field_tensor(physical_field, "physical field")
         if out is None:
             return physical_field - self.lift(component)
-        self._validate_field_tensor(out, "remainder output workspace")
+        self._validate_output_workspace(out, "remainder output workspace")
         if out.data_ptr() == physical_field.data_ptr():
             raise ValueError("remainder output must not alias the physical field")
         return torch.sub(physical_field, self.lift(component), out=out)

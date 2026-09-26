@@ -32,6 +32,10 @@ from pssolver.models.active_nematics import (
 )
 from pssolver.solver import SpectralSolver
 from pssolver.operators.projection import BasisAwareSpectralProjector
+from pssolver.models.active_nematics.q_tensor import Q_convention_metadata
+from pssolver.planning.lifting import StaticLiftingPlan
+
+from .static_lifting import PlaneStaticLiftingRuntime
 
 
 _LEGACY_BOUNDARIES = PLANE_FREE_SLIP_BOUNDARIES.to_legacy()
@@ -87,6 +91,7 @@ def build_legacy_plane_runtime(
     *,
     device: object,
     initial_values: Mapping[str, object],
+    lifting_plan: StaticLiftingPlan | None = None,
 ) -> tuple[SpectralSolver, BasisAwareSpectralProjector]:
     """Construct the validated Plane production backend.
 
@@ -126,7 +131,16 @@ def build_legacy_plane_runtime(
     execution = components.execution
     workflow = components.workflow
     boundaries = components.effective_boundaries.to_legacy()
-    q_boundaries = boundaries["q"]
+    if lifting_plan is not None and not isinstance(
+        lifting_plan,
+        StaticLiftingPlan,
+    ):
+        raise TypeError("lifting_plan must be StaticLiftingPlan or None")
+    q_boundaries = (
+        boundaries["q"]
+        if lifting_plan is None
+        else ("periodic", "periodic", "dirichlet")
+    )
     tangential_velocity_boundaries = boundaries["tangential_velocity"]
     normal_velocity_boundaries = boundaries["normal_velocity"]
     pressure_modal_boundaries = boundaries["pressure_modal"]
@@ -161,6 +175,19 @@ def build_legacy_plane_runtime(
         spectral_projector.inverse_transform
     )
     solver.integrator_cl = DealiasedSemiImplicitEulerIntegrator
+    lifting_runtime = None
+    evolved_initial_values = dict(initial_values)
+    if lifting_plan is not None:
+        lifting_runtime = PlaneStaticLiftingRuntime(
+            lifting_plan,
+            dtype=real_dtype,
+            device=device,
+            batch_size=solver.batchsize,
+            convention=Q_convention_metadata(),
+        )
+        evolved_initial_values = lifting_runtime.extract_initial_remainders(
+            initial_values
+        )
     q2_q = solver.get_q2(q_boundaries)
     q_linear_operator = beris_edwards_linear_operator(
         q2_q,
@@ -168,7 +195,11 @@ def build_legacy_plane_runtime(
         ldg_l1=preset.ldg_l1,
         rotational_viscosity=preset.rotational_viscosity,
     )
-    for name, initial_value in initial_values.items():
+    expected_q = {"Qxx", "Qxy", "Qxz", "Qyy", "Qyz"}
+    if set(evolved_initial_values) != expected_q:
+        raise ValueError("Plane initial values must exactly cover Q components")
+    for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz"):
+        initial_value = evolved_initial_values[name]
         solver.model.add_dynamic_field(
             name,
             init=initial_value,
@@ -193,6 +224,16 @@ def build_legacy_plane_runtime(
         if execution.disable_q_gradient_reuse
         else BerisEdwardsQGradientCache()
     )
+    if lifting_runtime is not None:
+        lifting_runtime.materialize_linear_correction(
+            projector=spectral_projector,
+            boundary_conditions=q_boundaries,
+            operator_name="beris_edwards_linear_lift",
+            linear_operator=lambda value: (
+                (-material.ldg_a / preset.rotational_viscosity) * value
+            ),
+        )
+        solver.model.static_lifting_runtime = lifting_runtime
     solver.model.set_nonlinear_model(
         BerisEdwardsQNonlinearModel(
             spectral_projector,
@@ -203,6 +244,7 @@ def build_legacy_plane_runtime(
             flow_alignment=material.flow_alignment,
             q_gradient_cache=q_gradient_cache,
             pointwise_kernels=pointwise_kernels,
+            static_lifting_runtime=lifting_runtime,
         )
     )
     solver.model.set_static_compute_model(
@@ -230,6 +272,18 @@ def build_legacy_plane_runtime(
             zero_mode_policy=(
                 stokes_request.tangential_zero_mode_policy.value
             ),
+            q_boundary_conditions=q_boundaries,
+            tangential_velocity_boundary_conditions=(
+                tangential_velocity_boundaries
+            ),
+            normal_velocity_boundary_conditions=(
+                normal_velocity_boundaries
+            ),
+            pressure_boundary_conditions=pressure_modal_boundaries,
+            distortion_odd_boundary_conditions=boundaries[
+                "distortion_odd_z"
+            ],
+            static_lifting_runtime=lifting_runtime,
         )
     )
     alpha = torch.tensor(

@@ -88,10 +88,16 @@ def _run_plane_application(
         run_plane_beris_edwards,
     )
 
+    kwargs = {}
+    if compiled.lowering_plan.lifting_plan is not None:
+        kwargs["application_simulation"] = (
+            compiled.application_specification
+        )
     result = run_plane_beris_edwards(
         compiled.application_request,
         progress=progress,
         emit_metadata=emit_metadata,
+        **kwargs,
     )
     return result, compiled.application_request.output_dir
 

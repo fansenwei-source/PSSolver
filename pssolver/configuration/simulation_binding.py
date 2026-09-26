@@ -178,12 +178,19 @@ def bind_simulation_runtime(
     if not isinstance(simulation, SimulationSpec):
         raise TypeError("simulation must be a SimulationSpec")
     plan = _require_exact_plan(simulation, lowering_plan)
-    if plan.lifting_plan is not None:
+    lifting_supported = (
+        plan.equation_variant == _PLANE_VARIANT
+        and plan.geometry_name == _PLANE_GEOMETRY
+        and simulation.execution.runtime_path == "legacy_production"
+    )
+    if plan.lifting_plan is not None and not lifting_supported:
         _reject(
             BindingRejectionCode.UNSUPPORTED_LIFTING_RUNTIME,
-            "static lifting is lowered but not connected to a runtime",
+            "static lifting is connected only to the qualified Plane "
+            "legacy_production runtime",
             lifting_plan_sha256=plan.lifting_plan.canonical_sha256(),
-            next_phase="P8.4.4",
+            requested_runtime_path=simulation.execution.runtime_path,
+            supported_runtime_path="legacy_production",
         )
     key = (
         plan.equation_variant,

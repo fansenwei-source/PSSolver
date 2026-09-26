@@ -666,14 +666,21 @@ def test_adapter_stays_private_and_all_phase2_consumers_are_migrated():
         "pssolver/runtime/plane_legacy.py",
         "pssolver/runtime/plane_beris_edwards.py",
         "pssolver/runtime/plane_compiled_v2_binding.py",
-        "pssolver/runtime/package_construction.py",
-        "pssolver/runtime/simulation_construction.py",
         "pssolver/workflows/plane_beris_edwards.py",
     ):
         runtime_source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
         assert "plane_beris_edwards_components" in runtime_source
         expected_count = 3 if relative.startswith("pssolver/applications/") else 2
         assert runtime_source.count(name) == expected_count
+    # P8.4.4 carries the exact application SimulationSpec through package
+    # construction so prescribed boundaries are not recomposed away.
+    for relative in (
+        "pssolver/runtime/package_construction.py",
+        "pssolver/runtime/simulation_construction.py",
+    ):
+        runtime_source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
+        assert "plane_beris_edwards_components" not in runtime_source
+        assert name not in runtime_source
 
     tree = ast.parse(
         COMPONENT_MODULE.read_text(encoding="utf-8"),

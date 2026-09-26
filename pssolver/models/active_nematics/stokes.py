@@ -89,6 +89,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         distortion_odd_boundary_conditions=(
             PLANE_DISTORTION_ODD_BOUNDARY_CONDITIONS
         ),
+        static_lifting_runtime=None,
     ):
         numeric_values = (
             beta_value,
@@ -118,10 +119,21 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         normal_bcs = tuple(normal_velocity_boundary_conditions)
         pressure_bcs = tuple(pressure_boundary_conditions)
         distortion_odd_bcs = tuple(distortion_odd_boundary_conditions)
-        if q_bcs != tangential_bcs or q_bcs != pressure_bcs:
+        lifted_q = static_lifting_runtime is not None
+        if (not lifted_q) and (
+            q_bcs != tangential_bcs or q_bcs != pressure_bcs
+        ):
             raise ValueError(
                 "This adapter requires Q, tangential velocity, and pressure "
                 "to share periodic/periodic/Neumann parity."
+            )
+        if lifted_q and (
+            q_bcs != ("periodic", "periodic", "dirichlet")
+            or tangential_bcs != pressure_bcs
+        ):
+            raise ValueError(
+                "lifted Plane Q requires a periodic/periodic/Dirichlet "
+                "remainder and matching tangential/pressure spaces."
             )
         if distortion_odd_bcs != normal_bcs:
             raise ValueError(
@@ -166,7 +178,14 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         self.q_gradient_cache = q_gradient_cache
         self.spectral_projector = spectral_projector
         self.q_boundary_conditions = q_bcs
+        self.algebraic_stress_boundary_conditions = (
+            tangential_bcs if lifted_q else q_bcs
+        )
+        self.distortion_even_boundary_conditions = (
+            tangential_bcs if lifted_q else q_bcs
+        )
         self.distortion_odd_boundary_conditions = distortion_odd_bcs
+        self.static_lifting_runtime = static_lifting_runtime
         self.last_tangential_force_mean = None
         self.last_total_tangential_force_mean = None
         self.last_active_tangential_force_mean = None
@@ -188,7 +207,12 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         """Return the projected complete force and active tangential part."""
         if self.q_gradient_cache is not None:
             self.q_gradient_cache.clear()
-        q_components = tuple(fields[name] for name in Q_COMPONENTS)
+        lifting = getattr(self, "static_lifting_runtime", None)
+        q_components = (
+            tuple(fields[name] for name in Q_COMPONENTS)
+            if lifting is None
+            else lifting.physical_components(fields, Q_COMPONENTS)
+        )
 
         # Stress uses raw H, not H/gamma. Project H as one resolved field,
         # then project the complete reactive stress rather than Q:H alone; this
@@ -198,9 +222,17 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         # or projection.
         if self.molecular_field_linear_space == "physical":
             laplacian_components = tuple(
-                fields.laplacian(
-                    name,
-                    projector=self.spectral_projector,
+                (
+                    fields.laplacian(
+                        name,
+                        projector=self.spectral_projector,
+                    )
+                    if lifting is None
+                    else lifting.laplacian(
+                        fields,
+                        name,
+                        projector=self.spectral_projector,
+                    )
                 )
                 for name in Q_COMPONENTS
             )
@@ -251,7 +283,11 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         algebraic_force = projected_common_basis_stress_divergence(
             self.transform_backend,
             algebraic_stress,
-            self.q_boundary_conditions,
+            getattr(
+                self,
+                "algebraic_stress_boundary_conditions",
+                self.q_boundary_conditions,
+            ),
             projector=self.spectral_projector,
             sum_space=self.stress_divergence_sum_space,
         )
@@ -263,10 +299,19 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
 
         q_gradients = tuple(
             tuple(
-                fields.gradient(
-                    name,
-                    axis=axis,
-                    projector=self.spectral_projector,
+                (
+                    fields.gradient(
+                        name,
+                        axis=axis,
+                        projector=self.spectral_projector,
+                    )
+                    if lifting is None
+                    else lifting.gradient(
+                        fields,
+                        name,
+                        axis=axis,
+                        projector=self.spectral_projector,
+                    )
                 )
                 for name in Q_COMPONENTS
             )
@@ -279,7 +324,11 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         distortion_force = projected_distortion_stress_divergence(
             self.transform_backend,
             distortion_stress,
-            self.q_boundary_conditions,
+            getattr(
+                self,
+                "distortion_even_boundary_conditions",
+                self.q_boundary_conditions,
+            ),
             self.distortion_odd_boundary_conditions,
             projector=self.spectral_projector,
             sum_space=self.stress_divergence_sum_space,

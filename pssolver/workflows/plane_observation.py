@@ -10,7 +10,10 @@ import numpy as np
 import torch
 
 from pssolver.models.active_nematics import Q_COMPONENTS, VELOCITY_COMPONENTS
-from pssolver.runtime import PlaneRuntimeAdapterProtocol
+from pssolver.runtime import (
+    PlaneRuntimeAdapterProtocol,
+    plane_physical_component,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -147,9 +150,14 @@ def capture_plane_observation(
     if adapter.solver.batchsize != 1:
         raise ValueError("Plane production observations require batch_size=1")
 
-    def cpu_array(name: str) -> np.ndarray:
+    def cpu_array(name: str, *, evolved: bool = False) -> np.ndarray:
+        value = (
+            plane_physical_component(adapter, name)
+            if evolved
+            else fields[name]
+        )
         return (
-            fields[name][0]
+            value[0]
             .detach()
             .to(device="cpu")
             .contiguous()
@@ -158,7 +166,10 @@ def capture_plane_observation(
 
     return PlaneObservation(
         step=actual_step,
-        q=np.stack([cpu_array(name) for name in Q_COMPONENTS], axis=-1),
+        q=np.stack(
+            [cpu_array(name, evolved=True) for name in Q_COMPONENTS],
+            axis=-1,
+        ),
         velocity=np.stack(
             [cpu_array(name) for name in VELOCITY_COMPONENTS],
             axis=-1,

@@ -428,11 +428,9 @@ def test_lowering_rejects_backend_and_bounded_hermitian_axis():
     )
 
 
-def test_p773_remains_disconnected_from_applications_runtimes_and_roots():
+def test_p773_stays_out_of_unmigrated_runtime_roots_after_later_connections():
     paths = (
-        ROOT / "pssolver" / "applications" / "plane_beris_edwards.py",
         ROOT / "pssolver" / "applications" / "channel_active_nematics.py",
-        ROOT / "pssolver" / "runtime" / "plane_beris_edwards.py",
         ROOT / "pssolver" / "runtime" / "channel_application_bridge.py",
         ROOT / "pssolver" / "configuration" / "__init__.py",
         ROOT / "pssolver" / "planning" / "__init__.py",
@@ -441,6 +439,16 @@ def test_p773_remains_disconnected_from_applications_runtimes_and_roots():
         source = path.read_text(encoding="utf-8")
         assert "simulation_lowering" not in source
         assert "from .simulation import" not in source
+
+    # The Plane application and runtime were intentionally connected by the
+    # later public-Simulation and P8.4 lowering slices.  Keep that evolution
+    # explicit instead of pretending the original P7.7.3 disconnection is
+    # still the current architecture.
+    for path in (
+        ROOT / "pssolver" / "applications" / "plane_beris_edwards.py",
+        ROOT / "pssolver" / "runtime" / "plane_beris_edwards.py",
+    ):
+        assert "simulation_lowering" in path.read_text(encoding="utf-8")
 
 
 def test_p773_machine_record_matches_sources_and_scope():

@@ -184,6 +184,8 @@ SOURCE_ORDER = (
     "phase_8_p842_plane_static_lifting.json",
     "phase_8_p843_q_lifting_lowering.md",
     "phase_8_p843_q_lifting_lowering.json",
+    "phase_8_p844_lifting_workflow_restart.md",
+    "phase_8_p844_lifting_workflow_restart.json",
 )
 
 PAGE_WIDTH = 595.276

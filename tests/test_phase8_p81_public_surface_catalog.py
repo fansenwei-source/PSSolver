@@ -229,9 +229,12 @@ def test_discovery_is_frozen_and_matches_live_compiler_registry():
             "strong_planar_q",
         }
     }
-    assert all(not value.executable for value in p843_policies.values())
+    # P8.4.4 connects these declarations to the qualified Plane legacy path.
+    assert all(value.executable for value in p843_policies.values())
     assert all(
-        value.qualified_applications == ()
+        value.qualified_applications == (
+            "plane_complete_stress_beris_edwards",
+        )
         for value in p843_policies.values()
     )
     with pytest.raises(FrozenInstanceError):

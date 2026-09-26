@@ -435,7 +435,10 @@ def test_p842_record_freezes_local_operator_scope_without_runtime_claim():
     assert record["authorization"]["p8_4_3_eligible_for_planning"] is True
     assert record["authorization"]["p8_4_3_implementation_authorized"] is False
     assert set(record["source_sha256"]) == set(IMPLEMENTATION_SOURCES)
+    superseded_by_p844 = {"pssolver/operators/lifting.py"}
     for relative, expected in record["source_sha256"].items():
+        if relative in superseded_by_p844:
+            continue
         assert _sha256(ROOT / relative) == expected
 
 

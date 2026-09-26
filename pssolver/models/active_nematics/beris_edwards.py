@@ -786,6 +786,7 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
         flow_alignment,
         q_gradient_cache=None,
         pointwise_kernels=None,
+        static_lifting_runtime=None,
     ):
         super().__init__()
         coefficients = (
@@ -824,10 +825,16 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
                 "q_gradient_cache must be a BerisEdwardsQGradientCache or None."
             )
         self.q_gradient_cache = q_gradient_cache
+        self.static_lifting_runtime = static_lifting_runtime
 
     def forward(self, fields, params):
         del params
-        q_components = tuple(fields[name] for name in Q_COMPONENTS)
+        lifting = getattr(self, "static_lifting_runtime", None)
+        q_components = (
+            tuple(fields[name] for name in Q_COMPONENTS)
+            if lifting is None
+            else lifting.physical_components(fields, Q_COMPONENTS)
+        )
         velocity_components = tuple(
             fields[name]
             for name in ("ux", "uy", "uz")
@@ -840,10 +847,19 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
         if q_gradients is None:
             q_gradients = tuple(
                 tuple(
-                    fields.gradient(
-                        name,
-                        axis=axis,
-                        projector=self.spectral_projector,
+                    (
+                        fields.gradient(
+                            name,
+                            axis=axis,
+                            projector=self.spectral_projector,
+                        )
+                        if lifting is None
+                        else lifting.gradient(
+                            fields,
+                            name,
+                            axis=axis,
+                            projector=self.spectral_projector,
+                        )
                     )
                     for name in Q_COMPONENTS
                 )
@@ -869,10 +885,13 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
             ldg_c_over_gamma=self.ldg_c_over_gamma,
             flow_alignment=self.flow_alignment,
         )
-        return self.spectral_projector.forward_transform(
+        transformed = self.spectral_projector.forward_transform(
             torch.stack(nonlinear_components),
             self.q_boundary_conditions,
         )
+        if lifting is not None:
+            transformed.add_(lifting.linear_correction_hat)
+        return transformed
 
 
 __all__ = [

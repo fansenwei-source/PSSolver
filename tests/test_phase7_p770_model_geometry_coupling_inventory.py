@@ -76,6 +76,7 @@ def test_p770_source_identities_bind_the_audited_baseline() -> None:
         "pssolver/applications/plane_beris_edwards.py",
         "pssolver/applications/channel_active_nematics.py",
         "pssolver/models/active_nematics/stokes.py",
+        "pssolver/runtime/plane_beris_edwards.py",
     }
 
     assert len(identities) == 15

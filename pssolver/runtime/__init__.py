@@ -10,7 +10,11 @@ from .plane_beris_edwards import (
     PlaneRuntimeBuildRequest,
     SeparatedCanaryPlaneRuntimeAdapter,
     build_plane_beris_edwards_runtime,
+    plane_lifting_restart_metadata,
+    plane_physical_component,
+    verify_plane_lifting_identity,
 )
+from .static_lifting import PlaneStaticLiftingRuntime
 from .plane_legacy import (
     DealiasedSemiImplicitEulerIntegrator,
     build_legacy_plane_runtime,
@@ -42,6 +46,10 @@ __all__ = [
     "DealiasedSemiImplicitEulerIntegrator",
     "build_legacy_plane_runtime",
     "build_plane_beris_edwards_runtime",
+    "plane_lifting_restart_metadata",
+    "plane_physical_component",
+    "verify_plane_lifting_identity",
+    "PlaneStaticLiftingRuntime",
     "ChannelOutputViews",
     "ChannelRuntimeAdapterProtocol",
     "ChannelRuntimeBuildRequest",
