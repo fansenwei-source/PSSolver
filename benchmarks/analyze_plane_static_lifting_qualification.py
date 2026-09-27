@@ -207,6 +207,10 @@ def analyze(
     )
     restart = restarts[0]
     _require(restart.get("device") == "cuda", "restart device mismatch")
+    _require(
+        restart.get("pointwise_execution") == "compile",
+        "restart did not exercise compiled pointwise kernels",
+    )
     _require(restart.get("finite") is True, "restart state is non-finite")
     _require(restart.get("all_byte_identical") is True, "restart is not exact")
     _require(

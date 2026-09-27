@@ -481,12 +481,13 @@ def _runtime_for_restart(
     shape: tuple[int, int, int],
     device: str,
     seed: int,
+    pointwise_execution: str,
 ):
     config = LiftingProfileConfig(
         variant="strong_planar_lifting",
         shape=shape,
         device=device,
-        pointwise_execution="eager",
+        pointwise_execution=pointwise_execution,
         warmup_steps=0,
         profile_steps=1,
         seed=seed,
@@ -502,6 +503,7 @@ def run_restart(
     segment_steps: int,
     final_steps: int,
     seed: int,
+    pointwise_execution: str = "compile",
 ) -> dict[str, object]:
     """Compare continuous and restored lifted trajectories exactly."""
 
@@ -513,9 +515,20 @@ def run_restart(
         shape=shape,
         device=device,
         seed=seed,
+        pointwise_execution=pointwise_execution,
     )
-    _, _, segment = _runtime_for_restart(shape=shape, device=device, seed=seed)
-    _, _, resumed = _runtime_for_restart(shape=shape, device=device, seed=seed)
+    _, _, segment = _runtime_for_restart(
+        shape=shape,
+        device=device,
+        seed=seed,
+        pointwise_execution=pointwise_execution,
+    )
+    _, _, resumed = _runtime_for_restart(
+        shape=shape,
+        device=device,
+        seed=seed,
+        pointwise_execution=pointwise_execution,
+    )
     runtime_identity = identity.runtime_identity_sha256()
     with torch.no_grad():
         continuous.advance(final_steps)
@@ -551,6 +564,7 @@ def run_restart(
         "kind": "plane_static_lifting_restart",
         "shape": list(shape),
         "device": device,
+        "pointwise_execution": pointwise_execution,
         "segment_steps": segment_steps,
         "final_steps": final_steps,
         "fields_byte_identical": fields_equal,
@@ -618,6 +632,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     restart.add_argument("--segment-steps", type=int, default=10)
     restart.add_argument("--final-steps", type=int, default=20)
     restart.add_argument("--seed", type=int, default=20260926)
+    restart.add_argument(
+        "--pointwise-execution",
+        choices=("eager", "compile"),
+        default="compile",
+    )
     restart.add_argument("--output", type=Path, required=True)
     return parser.parse_args(argv)
 
@@ -647,6 +666,7 @@ def main(argv: list[str] | None = None) -> int:
             segment_steps=args.segment_steps,
             final_steps=args.final_steps,
             seed=args.seed,
+            pointwise_execution=args.pointwise_execution,
         )
     _write_json(args.output, result)
     return 0

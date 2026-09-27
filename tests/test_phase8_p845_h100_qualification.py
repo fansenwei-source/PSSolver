@@ -91,6 +91,7 @@ def test_restart_helper_is_byte_exact_for_physical_and_evolved_state():
         segment_steps=1,
         final_steps=2,
         seed=24,
+        pointwise_execution="eager",
     )
     assert report["finite"] is True
     assert report["all_byte_identical"] is True
@@ -177,6 +178,7 @@ def _synthetic_reports() -> list[dict[str, object]]:
                 "phase": "P8.4.5",
                 "kind": "plane_static_lifting_restart",
                 "device": "cuda",
+                "pointwise_execution": "compile",
                 "finite": True,
                 "all_byte_identical": True,
                 "continuous_physical_sha256": "same",
