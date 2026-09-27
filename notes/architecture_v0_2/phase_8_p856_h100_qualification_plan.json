@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "phase": "P8.5.6",
+  "status": "READY_P8_5_6_H100_QUALIFICATION_NOT_EXECUTED",
+  "classification": "P8_5_6_IMPLEMENTED_H100_RESULT_PENDING",
+  "baseline_commit": "2c99942",
+  "candidate_commit": "c8028845293247290a2e9aa51ce8847206768bfa",
+  "scope": {
+    "runtime_kind": "plane_finite_q_anchoring_relaxation_pilot",
+    "complete_beris_edwards_timestep": false,
+    "stokes_connected": false,
+    "public_simulation_connected": false,
+    "production_runtime_selector_connected": false,
+    "production_default_changed": false
+  },
+  "execution": {
+    "construction_device": "cpu",
+    "construction_dtype": "torch.float64",
+    "execution_devices": ["cpu", "cuda"],
+    "execution_dtype": "torch.float64",
+    "one_time_device_transfer": true,
+    "cache_keys_concrete_device": true,
+    "timestep_root_solve": false,
+    "timestep_basis_construction": false,
+    "timestep_matrix_inverse": false,
+    "timestep_matrix_factorization": false
+  },
+  "qualification_contract": {
+    "gpu_model": "NVIDIA H100 PCIe",
+    "tf32": false,
+    "profile_report_count": 12,
+    "profile_shapes": [[128, 128, 32], [320, 320, 80]],
+    "profile_lengths": [100.0, 100.0, 20.0],
+    "profile_trials": 3,
+    "profile_modes": ["scalar_reference", "aggregate_runtime"],
+    "dt": 0.005,
+    "seed": 20260927,
+    "warmup_steps": 5,
+    "profile_steps": 30,
+    "forward_transforms_per_step": 10.0,
+    "inverse_transforms_per_step": 5.0,
+    "helmholtz_solves_per_step": 5.0,
+    "helmholtz_applies_per_step": 0.0,
+    "maximum_basis_condition_number": 10000000000.0,
+    "aggregate_reference_mean_timestep_ratio_max": 1.15,
+    "aggregate_reference_median_timestep_ratio_max": 1.15,
+    "aggregate_reference_peak_allocated_ratio_max": 1.10,
+    "aggregate_reference_peak_active_ratio_max": 1.10,
+    "aggregate_reference_peak_reserved_ratio_max": 1.10,
+    "paired_initial_q_sha256_equal": true,
+    "paired_final_q_sha256_equal": true,
+    "runtime_fallback_allowed": false,
+    "graph_breaks": 0,
+    "installed_package_import_required": true,
+    "clean_worktree_required": true
+  },
+  "cuda_only_tests": [
+    "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+    "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+    "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact"
+  ],
+  "local_verification": {
+    "targeted_pre_record": "71 passed, 1 deselected",
+    "full_pre_record": "2397 passed, 1 deselected, 8 subtests passed",
+    "full_after_record": "2398 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "pre_record_deselection_reason": "record_not_yet_created",
+    "local_cuda_r128_smoke": "pass"
+  },
+  "authorization": {
+    "single_h100_job": true,
+    "automatic_retry": false,
+    "second_h100_job": false,
+    "long_run": false,
+    "p8_6_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false
+  }
+}
