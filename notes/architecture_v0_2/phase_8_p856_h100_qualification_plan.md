@@ -4,9 +4,10 @@ Status: `READY_P8_5_6_H100_QUALIFICATION_NOT_EXECUTED`.
 
 Implementation commit: `c8028845293247290a2e9aa51ce8847206768bfa`.
 Frozen qualification source commit:
-`902e5a234cfeb9c861210301593c3eb904f034d9`; it adds only this plan record and
-the archive source-list entry on top of the implementation.  Its recorded
-baseline is the P8.5.5 record commit `2c99942`.  P8.5.6 is a
+`74a5226f6798cc311d3b839624b85349e3647fe8`; it contains the plan record and
+the explicit per-process TF32-off qualification policy on top of the core
+implementation.  Its recorded baseline is the P8.5.5 record commit
+`2c99942`.  P8.5.6 is a
 qualification boundary for the existing finite-Q anchoring relaxation pilot;
 it is not permission to connect Robin Q to the complete Beris--Edwards
 timestep, public `Simulation` compiler, or a production runtime selector.

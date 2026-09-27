@@ -5,7 +5,8 @@
   "classification": "P8_5_6_IMPLEMENTED_H100_RESULT_PENDING",
   "baseline_commit": "2c99942",
   "implementation_commit": "c8028845293247290a2e9aa51ce8847206768bfa",
-  "qualification_source_commit": "902e5a234cfeb9c861210301593c3eb904f034d9",
+  "precision_policy_commit": "74a5226f6798cc311d3b839624b85349e3647fe8",
+  "qualification_source_commit": "74a5226f6798cc311d3b839624b85349e3647fe8",
   "scope": {
     "runtime_kind": "plane_finite_q_anchoring_relaxation_pilot",
     "complete_beris_edwards_timestep": false,
