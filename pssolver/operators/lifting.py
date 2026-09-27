@@ -55,6 +55,7 @@ class MaterializedLinearLiftCorrection:
     values: torch.Tensor = field(repr=False, compare=False)
     source_lift_sha256: str
     values_sha256: str
+    storage_layout: str = "full_domain"
 
     def __post_init__(self) -> None:
         for value, description in (
@@ -69,6 +70,8 @@ class MaterializedLinearLiftCorrection:
             raise ValueError("linear correction values must be finite")
         _require_digest(self.source_lift_sha256, "source lift identity")
         _require_digest(self.values_sha256, "linear correction identity")
+        if self.storage_layout not in ("full_domain", "broadcast_zero"):
+            raise ValueError("unsupported linear correction storage layout")
         if _tensor_sha256(self.values) != self.values_sha256:
             raise ValueError("linear correction identity does not match its values")
 
@@ -92,8 +95,8 @@ class PlaneStaticLiftingOperator:
         "dtype",
         "device",
         "_component_indices",
-        "_lift_values",
-        "_affine_laplacians",
+        "_lift_profiles",
+        "_affine_laplacian_profiles",
         "_materialized_sha256",
     )
 
@@ -122,22 +125,29 @@ class PlaneStaticLiftingOperator:
         broadcast_shape[axis] = count
         fraction = fraction.reshape(broadcast_shape)
 
-        values = []
+        profiles = []
         for component in plan.components:
             lower = component.lower_value.value
             upper = component.upper_value.value
             affine = lower + (upper - lower) * fraction
-            values.append(affine.expand(plan.domain_shape).clone())
-        self._lift_values = torch.stack(values, dim=0).contiguous()
-        self.device = self._lift_values.device
-        self._affine_laplacians = torch.zeros_like(self._lift_values)
+            profiles.append(affine)
+        # Constant face data produce an affine field that varies only along
+        # the bounded axis.  Retain that one-dimensional profile and expose
+        # zero-stride full-domain views instead of owning one dense 3-D tensor
+        # per component.  This preserves the logical field exactly while
+        # avoiding duplicate construction-owned domain storage.
+        self._lift_profiles = torch.stack(profiles, dim=0).contiguous()
+        self.device = self._lift_profiles.device
+        self._affine_laplacian_profiles = torch.zeros_like(
+            self._lift_profiles
+        )
         self._component_indices = MappingProxyType(
             {
                 component: index
                 for index, component in enumerate(plan.component_order)
             }
         )
-        self._materialized_sha256 = _tensor_sha256(self._lift_values)
+        self._materialized_sha256 = _tensor_sha256(self.stacked_lift)
 
     @property
     def component_order(self) -> tuple[str, ...]:
@@ -186,18 +196,25 @@ class PlaneStaticLiftingOperator:
     def lift(self, component: str) -> torch.Tensor:
         """Return the construction-owned lift view for one component."""
 
-        return self._lift_values[self._index(component)]
+        return self._lift_profiles[self._index(component)].expand(
+            self.plan.domain_shape
+        )
 
     @property
     def stacked_lift(self) -> torch.Tensor:
         """Return the construction-owned component-first lift tensor."""
 
-        return self._lift_values
+        return self._lift_profiles.expand(
+            len(self.component_order),
+            *self.plan.domain_shape,
+        )
 
     def affine_laplacian(self, component: str) -> torch.Tensor:
         """Return the explicit zero Laplacian of the affine extension."""
 
-        return self._affine_laplacians[self._index(component)]
+        return self._affine_laplacian_profiles[
+            self._index(component)
+        ].expand(self.plan.domain_shape)
 
     def component_lift_sha256(self, component: str) -> str:
         """Return the dtype-aware content identity of one component lift."""
@@ -264,13 +281,72 @@ class PlaneStaticLiftingOperator:
             values=values,
             source_lift_sha256=source_sha256,
             values_sha256=_tensor_sha256(values),
+            storage_layout="full_domain",
+        )
+
+    def materialize_zero_linear_correction(
+        self,
+        component: str,
+        *,
+        operator_name: str,
+        linear_operator: Callable[[torch.Tensor], torch.Tensor],
+    ) -> MaterializedLinearLiftCorrection:
+        """Represent a model-declared zero correction without dense storage."""
+
+        if not isinstance(operator_name, str) or not operator_name.isidentifier():
+            raise ValueError("linear operator name must be a Python identifier")
+        if not callable(linear_operator):
+            raise TypeError("linear_operator must be callable")
+        index = self._index(component)
+        source = self.lift(component)
+        source_sha256 = _tensor_sha256(source)
+        compact = linear_operator(self._lift_profiles[index].clone())
+        if not isinstance(compact, torch.Tensor):
+            raise TypeError("zero linear correction must be a tensor")
+        if compact.shape != self._lift_profiles[index].shape:
+            raise ValueError("zero linear correction profile shape mismatch")
+        if compact.dtype is not self.dtype or compact.device != self.device:
+            raise ValueError("zero linear correction profile identity mismatch")
+        if not bool(torch.isfinite(compact).all().item()):
+            raise ValueError("zero linear correction must be finite")
+        if bool(torch.count_nonzero(compact).item()):
+            raise ValueError("declared zero linear correction is nonzero")
+        if _tensor_sha256(source) != source_sha256:
+            raise RuntimeError("construction-owned lift changed during correction")
+        values = compact.detach().clone().contiguous().expand(
+            self.plan.domain_shape
+        )
+        return MaterializedLinearLiftCorrection(
+            component=component,
+            operator_name=operator_name,
+            values=values,
+            source_lift_sha256=source_sha256,
+            values_sha256=_tensor_sha256(values),
+            storage_layout="broadcast_zero",
         )
 
     def verify_materialized_identity(self) -> None:
         """Fail if construction-owned lift storage has been mutated."""
 
-        if _tensor_sha256(self._lift_values) != self._materialized_sha256:
+        if _tensor_sha256(self.stacked_lift) != self._materialized_sha256:
             raise RuntimeError("materialized static lift identity mismatch")
+
+    def storage_metadata(self) -> dict[str, object]:
+        """Describe physical storage separately from logical field extent."""
+
+        logical_numel = len(self.component_order)
+        for size in self.plan.domain_shape:
+            logical_numel *= size
+        return {
+            "layout": "wall_normal_profile_broadcast",
+            "logical_lift_numel": logical_numel,
+            "lift_profile_storage_bytes": (
+                self._lift_profiles.untyped_storage().nbytes()
+            ),
+            "affine_laplacian_storage_bytes": (
+                self._affine_laplacian_profiles.untyped_storage().nbytes()
+            ),
+        }
 
     def to_metadata(self) -> dict[str, object]:
         return {

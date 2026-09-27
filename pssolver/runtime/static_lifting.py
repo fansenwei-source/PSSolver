@@ -83,6 +83,9 @@ class PlaneStaticLiftingRuntime:
         self._cached_spatial_version: int | None = None
         self._linear_correction_hat: torch.Tensor | None = None
         self._linear_correction_metadata: tuple[dict[str, object], ...] = ()
+        self._linear_correction_storage_metadata: tuple[
+            dict[str, object], ...
+        ] = ()
         self._convention = _frozen_json(convention)
 
     @property
@@ -191,22 +194,59 @@ class PlaneStaticLiftingRuntime:
         boundary_conditions: Sequence[str],
         operator_name: str,
         linear_operator: Callable[[torch.Tensor], torch.Tensor],
+        identically_zero: bool = False,
     ) -> torch.Tensor:
         """Materialize and transform all ``L(phi_lift)`` terms once."""
 
-        corrections = tuple(
-            self.operator.materialize_linear_correction(
-                name,
-                operator_name=operator_name,
-                linear_operator=linear_operator,
+        if not isinstance(identically_zero, bool):
+            raise TypeError("identically_zero must be a bool")
+        if not callable(linear_operator):
+            raise TypeError("linear_operator must be callable")
+        if identically_zero:
+            corrections = tuple(
+                self.operator.materialize_zero_linear_correction(
+                    name,
+                    operator_name=operator_name,
+                    linear_operator=linear_operator,
+                )
+                for name in self.component_order
             )
-            for name in self.component_order
-        )
-        values = torch.stack(tuple(item.values for item in corrections))
-        transformed = projector.forward_transform(values, boundary_conditions)
-        self._linear_correction_hat = transformed[:, None].contiguous()
+            spectral_dtype = projector.transform_backend.spectral_dtype
+            zero = torch.zeros(
+                (),
+                dtype=spectral_dtype,
+                device=self.operator.device,
+            )
+            self._linear_correction_hat = zero.expand(
+                len(self.component_order),
+                1,
+                *projector.shape,
+            )
+        else:
+            corrections = tuple(
+                self.operator.materialize_linear_correction(
+                    name,
+                    operator_name=operator_name,
+                    linear_operator=linear_operator,
+                )
+                for name in self.component_order
+            )
+            values = torch.stack(tuple(item.values for item in corrections))
+            transformed = projector.forward_transform(
+                values,
+                boundary_conditions,
+            )
+            self._linear_correction_hat = transformed[:, None].contiguous()
         self._linear_correction_metadata = tuple(
             item.to_metadata() for item in corrections
+        )
+        self._linear_correction_storage_metadata = tuple(
+            {
+                "component": item.component,
+                "storage_layout": item.storage_layout,
+                "storage_bytes": item.values.untyped_storage().nbytes(),
+            }
+            for item in corrections
         )
         return self._linear_correction_hat
 
@@ -218,6 +258,32 @@ class PlaneStaticLiftingRuntime:
 
     def verify_identity(self) -> None:
         self.operator.verify_materialized_identity()
+
+    def storage_metadata(self) -> dict[str, object]:
+        """Report owned persistent storage used by the lifting runtime."""
+
+        correction_bytes = (
+            0
+            if self._linear_correction_hat is None
+            else self._linear_correction_hat.untyped_storage().nbytes()
+        )
+        return {
+            "operator": self.operator.storage_metadata(),
+            "physical_workspace_bytes": (
+                self._physical_workspace.untyped_storage().nbytes()
+            ),
+            "wall_normal_slope_bytes": (
+                self._wall_normal_slopes.untyped_storage().nbytes()
+            ),
+            "linear_correction_storage_bytes": correction_bytes,
+            "linear_correction_layouts": [
+                item["storage_layout"]
+                for item in self._linear_correction_storage_metadata
+            ],
+            "linear_corrections": list(
+                self._linear_correction_storage_metadata
+            ),
+        }
 
     def restart_metadata(self) -> dict[str, object]:
         self.verify_identity()

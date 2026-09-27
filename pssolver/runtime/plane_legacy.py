@@ -232,6 +232,7 @@ def build_legacy_plane_runtime(
             linear_operator=lambda value: (
                 (-material.ldg_a / preset.rotational_viscosity) * value
             ),
+            identically_zero=(material.ldg_a == 0.0),
         )
         solver.model.static_lifting_runtime = lifting_runtime
     solver.model.set_nonlinear_model(

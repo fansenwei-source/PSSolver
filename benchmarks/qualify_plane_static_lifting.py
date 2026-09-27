@@ -11,6 +11,7 @@ oracle, and exact checkpoint/restart.
 from __future__ import annotations
 
 import argparse
+import gc
 from dataclasses import asdict, dataclass, replace
 import hashlib
 import json
@@ -302,9 +303,16 @@ def run_profile(config: LiftingProfileConfig) -> dict[str, object]:
 
     with torch.no_grad():
         run_spec, simulation, adapter = _build_runtime(config, initial_values)
+        # The runtime owns its evolved state after construction.  Do not keep
+        # the caller-owned physical initial tensors alive in the measurement
+        # scope, and release cached construction temporaries before measuring
+        # the frozen steady-state CUDA footprint.
+        del initial_values
         _install_transform_timers(adapter.solver, transform_timer)
         if device.type == "cuda":
             torch.cuda.synchronize(device)
+            gc.collect()
+            torch.cuda.empty_cache()
         counters_after_build = _dynamo_counter_snapshot()
         adapter.advance(config.warmup_steps)
         if device.type == "cuda":
@@ -401,6 +409,11 @@ def run_profile(config: LiftingProfileConfig) -> dict[str, object]:
             None
             if lifting_runtime is None
             else lifting_runtime.restart_metadata()
+        ),
+        "lifting_storage": (
+            None
+            if lifting_runtime is None
+            else lifting_runtime.storage_metadata()
         ),
         "wall_residual": wall_residual,
         "initial_q_sha256": initial_sha256,

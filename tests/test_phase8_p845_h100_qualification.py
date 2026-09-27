@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -29,6 +30,12 @@ RECOVERY_PATH = (
     / "notes"
     / "architecture_v0_2"
     / "phase_8_p845_cuda_device_identity_recovery.json"
+)
+MEMORY_RECOVERY_PATH = (
+    ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_8_p845_memory_recovery.json"
 )
 
 
@@ -67,12 +74,31 @@ def test_p845_recovery_record_binds_the_cuda_device_fix_without_overclaim():
     assert record["fix"]["requested_device"] == "cuda"
     assert record["fix"]["allocated_device_example"] == "cuda:0"
     assert record["authorization"]["nonhomogeneous_neumann"] is False
-    source = ROOT / "pssolver/operators/lifting.py"
-    import hashlib
-
-    assert hashlib.sha256(source.read_bytes()).hexdigest() == (
-        record["source_sha256"]["pssolver/operators/lifting.py"]
+    assert record["source_sha256"]["pssolver/operators/lifting.py"] == (
+        "66cba570635caf2b471eb6582a4820281bf69a59d3771db917f03b79e4688bfe"
     )
+
+
+def test_p845_memory_recovery_records_real_failure_and_compact_scope():
+    record = json.loads(MEMORY_RECOVERY_PATH.read_text(encoding="utf-8"))
+    assert record["classification"] == (
+        "READY_P8_4_5_STATIC_LIFTING_MEMORY_RECOVERY"
+    )
+    assert record["failed_job"]["job_id"] == 10843551
+    assert record["failed_job"]["numerical_gates_passed"] is True
+    assert record["failed_job"]["memory_gate_passed"] is False
+    assert record["cpu_equivalence"]["restart_metadata_equal"] is True
+    assert record["recovery"]["lift_storage"] == (
+        "wall_normal_profile_broadcast"
+    )
+    assert record["recovery"]["zero_linear_correction"] == (
+        "broadcast_zero"
+    )
+    assert record["authorization"]["nonhomogeneous_neumann"] is False
+    for relative, expected in record["source_sha256"].items():
+        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == (
+            expected
+        )
 
 
 @pytest.mark.parametrize(
@@ -98,9 +124,13 @@ def test_profile_helper_uses_real_runtime_and_counts_only_timesteps(
     assert report["transform_calls"]["forward_per_step"] == 7.0
     assert report["transform_calls"]["inverse_per_step"] == 32.0
     assert (report["lifting"] is not None) is has_lifting
+    assert (report["lifting_storage"] is not None) is has_lifting
     assert (report["wall_residual"] is not None) is has_lifting
     if has_lifting:
         assert report["wall_residual"]["max_linf"] <= 2e-16
+        assert report["lifting_storage"]["operator"]["layout"] == (
+            "wall_normal_profile_broadcast"
+        )
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")

@@ -201,6 +201,17 @@ def test_runtime_evolves_dst_remainder_and_observes_physical_q(tmp_path):
     assert lift.restart_metadata()["convention"]["id"] == (
         "de_gennes_S_lambda_max_v1"
     )
+    storage = lift.storage_metadata()
+    assert storage["operator"]["layout"] == (
+        "wall_normal_profile_broadcast"
+    )
+    assert storage["linear_correction_storage_bytes"] == (
+        torch.empty((), dtype=torch.complex128).element_size()
+    )
+    assert all(
+        item == "broadcast_zero"
+        for item in storage["linear_correction_layouts"]
+    )
     boundary_identity = hashlib.sha256(
         json.dumps(
             simulation.boundaries.to_metadata(),
@@ -387,9 +398,14 @@ def test_p844_record_matches_qualified_sources_and_scope():
         "homogeneous_remainder"
     )
     assert record["output"]["saved_q"] == "physical_field"
-    # P8.4.5 is allowed to normalize the materialized CUDA device identity.
-    # Keep the P8.4.4 hash as historical evidence instead of rewriting it.
-    superseded_by_p845 = {"pssolver/operators/lifting.py"}
+    # Later P8.4.5 recovery slices changed only runtime representation and
+    # qualification behavior. Keep the P8.4.4 hashes as historical evidence
+    # instead of rewriting the already qualified record.
+    superseded_by_p845 = {
+        "pssolver/operators/lifting.py",
+        "pssolver/runtime/plane_legacy.py",
+        "pssolver/runtime/static_lifting.py",
+    }
     for relative, expected in record["source_sha256"].items():
         if relative in superseded_by_p845:
             continue

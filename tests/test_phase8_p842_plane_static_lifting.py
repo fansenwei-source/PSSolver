@@ -223,7 +223,12 @@ def test_materialized_affine_lift_uses_cell_centers_and_exact_wall_contract(dtyp
 
     assert lift.shape == plan.domain_shape
     assert lift.dtype is dtype
-    assert lift.is_contiguous()
+    assert not lift.is_contiguous()
+    storage = operator.storage_metadata()
+    assert storage["layout"] == "wall_normal_profile_broadcast"
+    assert storage["lift_profile_storage_bytes"] < (
+        lift.numel() * lift.element_size()
+    )
     assert torch.count_nonzero(operator.affine_laplacian("c")) == 0
     expected_lower_cell = component.value_at_fraction(0.5 / count)
     expected_upper_cell = component.value_at_fraction((count - 0.5) / count)
@@ -305,6 +310,7 @@ def test_explicit_linear_lift_correction_is_model_supplied_and_one_time():
     assert correction.source_lift_sha256 == operator.component_lift_sha256("c")
     assert len(correction.values_sha256) == 64
     assert correction.to_metadata()["operator_name"] == "linear_reaction"
+    assert correction.storage_layout == "full_domain"
     operator.verify_materialized_identity()
 
     with pytest.raises(ValueError, match="shape"):
@@ -321,6 +327,32 @@ def test_explicit_linear_lift_correction_is_model_supplied_and_one_time():
         )
 
 
+def test_zero_linear_lift_correction_uses_broadcast_storage():
+    operator = materialize_plane_static_lifting(
+        _plan(),
+        dtype=torch.float64,
+        device="cpu",
+    )
+    correction = operator.materialize_zero_linear_correction(
+        "c",
+        operator_name="zero_linear_reaction",
+        linear_operator=lambda value: -0.0 * value,
+    )
+
+    assert correction.values.shape == operator.plan.domain_shape
+    assert torch.count_nonzero(correction.values) == 0
+    assert correction.storage_layout == "broadcast_zero"
+    assert correction.values.untyped_storage().nbytes() < (
+        correction.values.numel() * correction.values.element_size()
+    )
+    with pytest.raises(ValueError, match="declared zero"):
+        operator.materialize_zero_linear_correction(
+            "c",
+            operator_name="not_zero",
+            linear_operator=lambda value: value,
+        )
+
+
 def test_materialized_lift_mutation_is_detected_before_provenance_use():
     operator = materialize_plane_static_lifting(
         _plan(),
@@ -328,7 +360,9 @@ def test_materialized_lift_mutation_is_detected_before_provenance_use():
         device="cpu",
     )
 
-    operator.lift("c").add_(1.0)
+    # Select one representative line so the write reaches the compact
+    # wall-normal profile without asking PyTorch to mutate a zero-stride view.
+    operator.lift("c")[0, 0].add_(1.0)
     with pytest.raises(RuntimeError, match="identity mismatch"):
         operator.verify_materialized_identity()
 

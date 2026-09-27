@@ -1,0 +1,55 @@
+{
+  "authorization": {
+    "compiled_runtime_promotion": false,
+    "nonhomogeneous_neumann": false,
+    "p8_4_5_memory_recovery_submission": true,
+    "p8_5": false,
+    "phase_9": false,
+    "production_default_change": false
+  },
+  "baseline_commit": "0e4a5fb58de77f629fc496fe13d71a26ef8fbe66",
+  "classification": "READY_P8_4_5_STATIC_LIFTING_MEMORY_RECOVERY",
+  "cpu_equivalence": {
+    "completed_steps": 4,
+    "initial_q_sha256": "66e0053c5d36359a71406397989b7acbb041f071ec7baa4d0c38bac686175cf6",
+    "internal_final_state_sha256": "07a4a9af0503fbf66da4e53501bdb57896fca84bb5790ab1862c86c445899166",
+    "physical_final_state_sha256": "c9877ebf63dea51fb296afe2025aef24fca47708a800a6e1a45e3f4808d22287",
+    "reference_commit": "0e4a5fb58de77f629fc496fe13d71a26ef8fbe66",
+    "result": "byte_identical",
+    "restart_metadata_equal": true
+  },
+  "failed_job": {
+    "allocated_ratio_r128": 1.246970882727,
+    "allocated_ratio_r320": 1.265965394373,
+    "job_id": 10843551,
+    "memory_gate_passed": false,
+    "numerical_gates_passed": true,
+    "reserved_ratio_r128": 1.141531322506,
+    "reserved_ratio_r320": 1.230029755093,
+    "timestep_gate_passed": true
+  },
+  "frozen_contract": {
+    "peak_allocated_ratio_max": 1.1,
+    "peak_reserved_ratio_max": 1.1,
+    "thresholds_relaxed": false,
+    "transform_counts_per_step": {
+      "forward": 7.0,
+      "inverse": 32.0
+    }
+  },
+  "phase": "P8.4.5",
+  "recovery": {
+    "affine_laplacian_storage": "wall_normal_profile_broadcast_zero",
+    "construction_cache_released_before_warmup": true,
+    "lift_storage": "wall_normal_profile_broadcast",
+    "physical_workspace": "one_preallocated_full_domain_field",
+    "zero_linear_correction": "broadcast_zero"
+  },
+  "schema_version": 1,
+  "source_sha256": {
+    "benchmarks/qualify_plane_static_lifting.py": "0a7aa92e1eb45370571f7767dfbe315f1eb94569710cdfd7836f7d7db04abce5",
+    "pssolver/operators/lifting.py": "2c8b7900104e268e2d923678ae3e17b8ac9eacaa4570fab591e6d059063d9fd3",
+    "pssolver/runtime/plane_legacy.py": "7f3cb0e73541067305a503733a73459bdc1a56a586a79f2b4c184bced4fcd2fc",
+    "pssolver/runtime/static_lifting.py": "4f8d1d7e206fcefc94c7b47b39c55e521c7b6bd19cce5762855e4cff23c6689f"
+  }
+}
