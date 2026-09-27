@@ -169,6 +169,8 @@ def _load_tensor(
 
 def load_finite_q_anchoring_checkpoint(
     directory: str | Path,
+    *,
+    device: str | torch.device = "cpu",
 ) -> PlaneFiniteQAnchoringCheckpoint:
     """Load and fully validate one finite-Q checkpoint file set."""
 
@@ -194,6 +196,11 @@ def load_finite_q_anchoring_checkpoint(
     components = metadata.get("components")
     if not isinstance(components, dict) or tuple(components) != Q_COMPONENTS:
         raise ValueError("checkpoint component manifest is incomplete")
+    normalized_device = torch.device(device)
+    if normalized_device.type == "cuda" and normalized_device.index is None:
+        if not torch.cuda.is_available():
+            raise ValueError("CUDA is unavailable")
+        normalized_device = torch.device("cuda", torch.cuda.current_device())
     snapshots = []
     for component in Q_COMPONENTS:
         scalar = components[component]
@@ -219,6 +226,8 @@ def load_finite_q_anchoring_checkpoint(
             expected_shape=modal_metadata.get("shape"),
             expected_dtype=modal_metadata.get("dtype"),
         )
+        remainder = remainder.to(normalized_device)
+        modal = modal.to(normalized_device)
         snapshots.append(
             (
                 component,
@@ -267,7 +276,7 @@ class PlaneFiniteQAnchoringWorkflowResult:
 
 
 class PlaneFiniteQAnchoringWorkflow:
-    """Small CPU-only workflow around the finite-Q relaxation oracle."""
+    """Small file-backed workflow around the finite-Q relaxation oracle."""
 
     def __init__(
         self,
@@ -312,7 +321,10 @@ class PlaneFiniteQAnchoringWorkflow:
             raise FileExistsError("workflow output directory is not empty")
         if restart_from is not None:
             self.runtime.restore_checkpoint(
-                load_finite_q_anchoring_checkpoint(restart_from)
+                load_finite_q_anchoring_checkpoint(
+                    restart_from,
+                    device=self.runtime.device,
+                )
             )
         start_step = self.runtime.completed_steps
         if final_step < start_step:

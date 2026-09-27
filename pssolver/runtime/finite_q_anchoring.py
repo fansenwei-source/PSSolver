@@ -1,4 +1,4 @@
-"""CPU reference runtime for the P8.5 finite-Q anchoring pilot.
+"""Reference runtime for the P8.5 finite-Q anchoring pilot.
 
 The runtime composes five generic scalar Robin runtimes and advances only the
 wall-normal elastic relaxation equation.  It is deliberately not a complete
@@ -106,7 +106,7 @@ class PlaneFiniteQAnchoringCheckpoint:
 
 
 class PlaneFiniteQAnchoringRuntime:
-    """Five-component CPU oracle for finite anchoring workflow semantics."""
+    """Five-component oracle for finite anchoring workflow semantics."""
 
     def __init__(
         self,
@@ -140,6 +140,13 @@ class PlaneFiniteQAnchoringRuntime:
         self.plan = plan
         self.dt = float(dt)
         self.cache = cache
+        devices = {value.device for value in initial_physical.values()}
+        dtypes = {value.dtype for value in initial_physical.values()}
+        if len(devices) != 1:
+            raise ValueError("initial Q components must share one device")
+        if dtypes != {torch.float64}:
+            raise ValueError("initial Q components must use torch.float64")
+        self.device = devices.pop()
         self.components = {
             component: PlaneRobinScalarRuntime(
                 plan.for_component(component),
@@ -197,7 +204,7 @@ class PlaneFiniteQAnchoringRuntime:
         }
 
     def advance(self, steps: int = 1) -> None:
-        """Advance the implicit wall-normal elastic-relaxation CPU oracle."""
+        """Advance the implicit wall-normal elastic-relaxation oracle."""
 
         if (
             not isinstance(steps, int)
@@ -224,6 +231,28 @@ class PlaneFiniteQAnchoringRuntime:
             for runtime in self.components.values():
                 runtime.state.progress.commit_step(refreshed=False)
             self._require_synchronized_clocks()
+
+    def reset_operation_counts(self) -> None:
+        for runtime in self.components.values():
+            runtime.operator.reset_operation_counts()
+
+    def operation_counts(self) -> dict[str, int]:
+        totals = {
+            "forward_transform": 0,
+            "inverse_transform": 0,
+            "helmholtz_apply": 0,
+            "helmholtz_solve": 0,
+        }
+        for runtime in self.components.values():
+            for name, value in runtime.operator.operation_counts().items():
+                totals[name] += value
+        return totals
+
+    def maximum_condition_number(self) -> float:
+        return max(
+            runtime.operator.condition_number
+            for runtime in self.components.values()
+        )
 
     def checkpoint_identity_metadata(self) -> dict[str, object]:
         component_identities = {
@@ -253,7 +282,7 @@ class PlaneFiniteQAnchoringRuntime:
                 component_identities
             ),
             "dtype": "torch.float64",
-            "device": "cpu",
+            "device": str(self.device),
         }
 
     def capture_checkpoint(self) -> PlaneFiniteQAnchoringCheckpoint:
@@ -308,6 +337,8 @@ class PlaneFiniteQAnchoringRuntime:
             ),
             "completed_steps": self.completed_steps,
             "operator_cache_entry_count": self.cache.entry_count,
+            "operation_counts": self.operation_counts(),
+            "maximum_condition_number": self.maximum_condition_number(),
             "components": {
                 component: runtime.to_metadata()
                 for component, runtime in self.components.items()

@@ -1,7 +1,7 @@
-"""P8.5.3 runtime state for a generic scalar Plane Robin pilot.
+"""Runtime state for a generic scalar Plane Robin pilot.
 
-This module binds the P8.5.2 CPU operator once.  It is intentionally not a
-complete PDE timestep and is not reachable through the public simulation
+This module binds the coefficient-specific operator once.  It is intentionally
+not a complete PDE timestep and is not reachable through the public simulation
 runner or any production runtime selector.
 """
 
@@ -105,8 +105,14 @@ class PlaneRobinOperatorCacheKey:
             not math.isfinite(value) or value <= 0.0 for value in lengths
         ):
             raise ValueError("Robin cache domain lengths are invalid")
-        if self.dtype != "torch.float64" or self.device != "cpu":
-            raise ValueError("P8.5.3 cache supports torch.float64 CPU only")
+        if self.dtype != "torch.float64":
+            raise ValueError("Robin cache supports torch.float64 only")
+        device = torch.device(self.device)
+        if device.type not in {"cpu", "cuda"}:
+            raise ValueError("Robin cache supports CPU or CUDA only")
+        if device.type == "cuda" and device.index is None:
+            raise ValueError("CUDA cache identity requires an explicit index")
+        object.__setattr__(self, "device", str(device))
         object.__setattr__(self, "domain_shape", shape)
         object.__setattr__(self, "domain_lengths", lengths)
 
@@ -142,25 +148,38 @@ class PlaneRobinOperatorCache:
     def bind(
         self,
         plan: PlaneRobinScalarLoweringPlan,
+        *,
+        dtype: torch.dtype = torch.float64,
+        device: str | torch.device = "cpu",
     ) -> tuple[
         PlaneRobinOperatorCacheKey,
         CellCenteredRobinEigenbasisOperator,
     ]:
         if not isinstance(plan, PlaneRobinScalarLoweringPlan):
             raise TypeError("plan must be a PlaneRobinScalarLoweringPlan")
+        normalized_device = torch.device(device)
+        if normalized_device.type == "cuda" and normalized_device.index is None:
+            if not torch.cuda.is_available():
+                raise ValueError("CUDA is unavailable")
+            normalized_device = torch.device(
+                "cuda",
+                torch.cuda.current_device(),
+            )
         key = PlaneRobinOperatorCacheKey(
             lowering_plan_sha256=plan.canonical_sha256(),
             bounded_axis_plan_sha256=plan.robin_plan.canonical_sha256(),
             geometry_name=plan.geometry_name,
             domain_shape=plan.domain_shape,
             domain_lengths=plan.domain_lengths,
-            dtype="torch.float64",
-            device="cpu",
+            dtype=str(dtype),
+            device=str(normalized_device),
         )
         operator = self._entries.get(key)
         if operator is None:
             operator = materialize_cell_centered_robin_eigenbasis(
-                plan.robin_plan
+                plan.robin_plan,
+                dtype=dtype,
+                device=normalized_device,
             )
             self._entries[key] = operator
         return key, operator
@@ -236,7 +255,13 @@ class PlaneRobinScalarRuntime:
             raise TypeError("cache must be a PlaneRobinOperatorCache")
         self.plan = plan
         self.cache = cache
-        self.cache_key, self.operator = cache.bind(plan)
+        if not isinstance(initial_physical, torch.Tensor):
+            raise TypeError("initial physical field must be a tensor")
+        self.cache_key, self.operator = cache.bind(
+            plan,
+            dtype=initial_physical.dtype,
+            device=initial_physical.device,
+        )
         self._validate_domain_tensor(initial_physical, "initial physical field")
         remainder = self.operator.homogeneous_remainder(
             initial_physical
@@ -261,8 +286,10 @@ class PlaneRobinScalarRuntime:
             raise ValueError(f"{description} shape does not match the plan")
         if value.dtype is not torch.float64:
             raise ValueError(f"{description} must use torch.float64")
-        if value.device.type != "cpu":
-            raise ValueError(f"{description} must be on CPU for P8.5.3")
+        if value.device != self.operator.device:
+            raise ValueError(
+                f"{description} must be on device {self.operator.device}"
+            )
         if not bool(torch.isfinite(value).all().item()):
             raise ValueError(f"{description} must be finite")
 
@@ -338,8 +365,8 @@ class PlaneRobinScalarRuntime:
             "domain_shape": list(self.plan.domain_shape),
             "domain_lengths": list(self.plan.domain_lengths),
             "wall_normal_axis": self.plan.wall_normal_axis,
-            "dtype": "torch.float64",
-            "device": "cpu",
+            "dtype": str(self.operator.dtype),
+            "device": str(self.operator.device),
             "evolved_representation": "homogeneous_remainder",
             "physical_observation": "homogeneous_remainder_plus_affine_lift",
             "model_specialization": None,

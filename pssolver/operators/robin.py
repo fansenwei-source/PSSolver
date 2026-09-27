@@ -1,4 +1,4 @@
-"""CPU oracle for the P8.5.2 cell-centered Robin eigenbasis."""
+"""CPU-constructed cell-centered Robin eigenbasis for CPU or CUDA use."""
 
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ def _tensor_sha256(value: torch.Tensor) -> str:
 
 
 class CellCenteredRobinEigenbasisOperator:
-    """Materialized float64 CPU oracle for one bounded Plane axis."""
+    """Materialized float64 operator for one bounded Plane axis."""
 
     __slots__ = (
         "plan",
@@ -50,43 +50,63 @@ class CellCenteredRobinEigenbasisOperator:
         "_lower_basis_derivatives",
         "_upper_basis_values",
         "_upper_basis_derivatives",
+        "_operation_counts",
     )
 
-    def __init__(self, plan: CellCenteredRobinEigenbasisPlan) -> None:
+    def __init__(
+        self,
+        plan: CellCenteredRobinEigenbasisPlan,
+        *,
+        dtype: torch.dtype = torch.float64,
+        device: str | torch.device = "cpu",
+    ) -> None:
         if not isinstance(plan, CellCenteredRobinEigenbasisPlan):
             raise TypeError("plan must be a CellCenteredRobinEigenbasisPlan")
+        if dtype is not torch.float64:
+            raise ValueError("Robin eigenbasis supports torch.float64 only")
+        normalized_device = torch.device(device)
+        if normalized_device.type not in {"cpu", "cuda"}:
+            raise ValueError("Robin eigenbasis supports CPU or CUDA only")
+        if normalized_device.type == "cuda":
+            if not torch.cuda.is_available():
+                raise ValueError("CUDA is unavailable")
+            if normalized_device.index is None:
+                normalized_device = torch.device(
+                    "cuda",
+                    torch.cuda.current_device(),
+                )
         self.plan = plan
-        self.dtype = torch.float64
-        self.device = torch.device("cpu")
-        self.coordinates = (
-            torch.arange(plan.size, dtype=self.dtype) + 0.5
+        self.dtype = dtype
+        self.device = normalized_device
+        coordinates = (
+            torch.arange(plan.size, dtype=torch.float64) + 0.5
         ) * (plan.length / plan.size)
-        self.wavenumbers = torch.tensor(
+        wavenumbers = torch.tensor(
             plan.wavenumbers,
-            dtype=self.dtype,
+            dtype=torch.float64,
         )
         lower_impedance = (
             plan.lower.alpha.value / plan.lower.beta.value
         )
         unscaled = torch.empty(
             (plan.size, plan.size),
-            dtype=self.dtype,
+            dtype=torch.float64,
         )
-        lower_values = torch.empty(plan.size, dtype=self.dtype)
-        lower_derivatives = torch.empty(plan.size, dtype=self.dtype)
-        upper_values = torch.empty(plan.size, dtype=self.dtype)
-        upper_derivatives = torch.empty(plan.size, dtype=self.dtype)
+        lower_values = torch.empty(plan.size, dtype=torch.float64)
+        lower_derivatives = torch.empty(plan.size, dtype=torch.float64)
+        upper_values = torch.empty(plan.size, dtype=torch.float64)
+        upper_derivatives = torch.empty(plan.size, dtype=torch.float64)
         for index, wavenumber in enumerate(plan.wavenumbers):
             if wavenumber == 0.0:
-                column = torch.ones_like(self.coordinates)
+                column = torch.ones_like(coordinates)
                 lower_values[index] = 1.0
                 lower_derivatives[index] = 0.0
                 upper_values[index] = 1.0
                 upper_derivatives[index] = 0.0
             else:
-                column = torch.cos(wavenumber * self.coordinates) + (
+                column = torch.cos(wavenumber * coordinates) + (
                     lower_impedance / wavenumber
-                ) * torch.sin(wavenumber * self.coordinates)
+                ) * torch.sin(wavenumber * coordinates)
                 lower_values[index] = 1.0
                 lower_derivatives[index] = lower_impedance
                 upper_values[index] = math.cos(wavenumber * plan.length) + (
@@ -102,13 +122,10 @@ class CellCenteredRobinEigenbasisOperator:
             (scales <= 0.0).any().item()
         ):
             raise ValueError("Robin sampled basis has an invalid column norm")
-        self.basis_scales = scales
-        self.basis_matrix = (unscaled / scales).contiguous()
-        self.inverse_basis_matrix = torch.linalg.inv(
-            self.basis_matrix
-        ).contiguous()
+        basis_matrix = (unscaled / scales).contiguous()
+        inverse_basis_matrix = torch.linalg.inv(basis_matrix).contiguous()
         self.condition_number = float(
-            torch.linalg.cond(self.basis_matrix).item()
+            torch.linalg.cond(basis_matrix).item()
         )
         if not math.isfinite(self.condition_number):
             raise ValueError("Robin sampled basis is singular")
@@ -116,15 +133,24 @@ class CellCenteredRobinEigenbasisOperator:
             raise ValueError(
                 "Robin sampled basis exceeds the P8.5.2 conditioning limit"
             )
+        self.coordinates = coordinates.to(self.device)
+        self.wavenumbers = wavenumbers.to(self.device)
+        self.basis_scales = scales.to(self.device)
+        self.basis_matrix = basis_matrix.to(self.device)
+        self.inverse_basis_matrix = inverse_basis_matrix.to(self.device)
         self.eigenvalues = self.wavenumbers.square()
-        self._lower_basis_values = (lower_values / scales).contiguous()
+        self._lower_basis_values = (lower_values / scales).to(
+            self.device
+        ).contiguous()
         self._lower_basis_derivatives = (
             lower_derivatives / scales
+        ).to(self.device).contiguous()
+        self._upper_basis_values = (upper_values / scales).to(
+            self.device
         ).contiguous()
-        self._upper_basis_values = (upper_values / scales).contiguous()
         self._upper_basis_derivatives = (
             upper_derivatives / scales
-        ).contiguous()
+        ).to(self.device).contiguous()
         self.lift_intercept, self.lift_slope = self._solve_affine_lift()
         self.lift_values = (
             self.lift_intercept + self.lift_slope * self.coordinates
@@ -137,6 +163,12 @@ class CellCenteredRobinEigenbasisOperator:
             )
         )
         self.materialized_sha256 = _tensor_sha256(identity_payload)
+        self._operation_counts = {
+            "forward_transform": 0,
+            "inverse_transform": 0,
+            "helmholtz_apply": 0,
+            "helmholtz_solve": 0,
+        }
 
     def _solve_affine_lift(self) -> tuple[float, float]:
         lower = self.plan.lower
@@ -174,8 +206,10 @@ class CellCenteredRobinEigenbasisOperator:
     ) -> None:
         if not isinstance(values, torch.Tensor):
             raise TypeError(f"{description} must be a tensor")
-        if values.device.type != "cpu":
-            raise ValueError(f"{description} must be on CPU for P8.5.2")
+        if values.device != self.device:
+            raise ValueError(
+                f"{description} must be on device {self.device}"
+            )
         if values.dtype is not self.dtype:
             raise ValueError(f"{description} must use torch.float64")
         if values.ndim < 1 or values.shape[-1] != self.plan.size:
@@ -189,6 +223,7 @@ class CellCenteredRobinEigenbasisOperator:
         """Transform sampled homogeneous-remainder values to coefficients."""
 
         self._validate_values(homogeneous_values, "homogeneous values")
+        self._operation_counts["forward_transform"] += 1
         return torch.matmul(
             homogeneous_values,
             self.inverse_basis_matrix.transpose(0, 1),
@@ -198,6 +233,7 @@ class CellCenteredRobinEigenbasisOperator:
         """Transform Robin modal coefficients to cell-centered values."""
 
         self._validate_values(coefficients, "Robin modal coefficients")
+        self._operation_counts["inverse_transform"] += 1
         return torch.matmul(
             coefficients,
             self.basis_matrix.transpose(0, 1),
@@ -223,6 +259,7 @@ class CellCenteredRobinEigenbasisOperator:
         """Apply ``mass - d2/dz2`` through the Robin modal oracle."""
 
         normalized_mass = self._validate_mass(mass)
+        self._operation_counts["helmholtz_apply"] += 1
         coefficients = self.to_modal(
             self.homogeneous_remainder(physical_values)
         )
@@ -241,6 +278,7 @@ class CellCenteredRobinEigenbasisOperator:
 
         self._validate_values(forcing, "Helmholtz forcing")
         normalized_mass = self._validate_mass(mass)
+        self._operation_counts["helmholtz_solve"] += 1
         denominator = normalized_mass + self.eigenvalues
         if bool((denominator == 0.0).any().item()):
             raise ValueError(
@@ -304,6 +342,13 @@ class CellCenteredRobinEigenbasisOperator:
         )
         return lower_residual, upper_residual
 
+    def reset_operation_counts(self) -> None:
+        for name in self._operation_counts:
+            self._operation_counts[name] = 0
+
+    def operation_counts(self) -> dict[str, int]:
+        return dict(self._operation_counts)
+
     def to_metadata(self) -> dict[str, object]:
         return {
             "schema_version": 1,
@@ -327,14 +372,22 @@ class CellCenteredRobinEigenbasisOperator:
             ],
             "timestep_root_solve": False,
             "timestep_matrix_factorization": False,
+            "operation_counts": self.operation_counts(),
             "runtime_connected": False,
         }
 
 
 def materialize_cell_centered_robin_eigenbasis(
     plan: CellCenteredRobinEigenbasisPlan,
+    *,
+    dtype: torch.dtype = torch.float64,
+    device: str | torch.device = "cpu",
 ) -> CellCenteredRobinEigenbasisOperator:
-    return CellCenteredRobinEigenbasisOperator(plan)
+    return CellCenteredRobinEigenbasisOperator(
+        plan,
+        dtype=dtype,
+        device=device,
+    )
 
 
 __all__ = [
