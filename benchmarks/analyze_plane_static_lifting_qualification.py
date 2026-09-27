@@ -62,6 +62,7 @@ def analyze(
     reports: Iterable[Mapping[str, object]],
     *,
     expected_commit: str,
+    expected_package_root: Path,
 ) -> dict[str, object]:
     """Validate a complete P8.4.5 bundle and return its compact verdict."""
 
@@ -104,6 +105,7 @@ def analyze(
     expected_forward = float(contract["forward_transforms_per_step"])
     expected_inverse = float(contract["inverse_transforms_per_step"])
     graph_breaks = 0
+    package_root = expected_package_root.resolve()
     for key, report in profile_index.items():
         runtime = report["runtime_identity"]
         _require(isinstance(runtime, Mapping), "runtime identity is missing")
@@ -114,6 +116,11 @@ def analyze(
         git = report["git"]
         _require(isinstance(git, Mapping), "git provenance is missing")
         _require(git.get("head") == expected_commit, "profile commit mismatch")
+        imported = Path(str(report.get("pssolver_import"))).resolve()
+        _require(
+            imported.is_relative_to(package_root),
+            "profile did not import the installed qualification package",
+        )
         transforms = report["transform_calls"]
         _require(isinstance(transforms, Mapping), "transform counts are missing")
         _require(
@@ -231,6 +238,7 @@ def analyze(
         "classification": "PASS_P8_4_5_PLANE_STATIC_LIFTING_H100_CLOSURE",
         "qualification_complete": True,
         "expected_commit": expected_commit,
+        "installed_package_root": str(package_root),
         "report_count": len(profiles) + len(manufactured) + len(restarts),
         "performance": performance,
         "wall_residual_passed": True,
@@ -252,6 +260,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--plan", type=Path, required=True)
     parser.add_argument("--reports-directory", type=Path, required=True)
     parser.add_argument("--expected-commit", required=True)
+    parser.add_argument("--expected-package-root", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     return parser.parse_args(argv)
 
@@ -262,7 +271,12 @@ def main(argv: list[str] | None = None) -> int:
         raise FileExistsError(f"output already exists: {args.output}")
     plan = json.loads(args.plan.read_text(encoding="utf-8"))
     reports = _objects(sorted(args.reports_directory.glob("*.json")))
-    result = analyze(plan, reports, expected_commit=args.expected_commit)
+    result = analyze(
+        plan,
+        reports,
+        expected_commit=args.expected_commit,
+        expected_package_root=args.expected_package_root,
+    )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
         json.dumps(result, indent=2, sort_keys=True) + "\n",

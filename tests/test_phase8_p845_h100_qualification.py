@@ -122,6 +122,7 @@ def _synthetic_profile(
         },
         "finite": True,
         "git": {"head": "candidate"},
+        "pssolver_import": "/installed/pssolver/__init__.py",
         "transform_calls": {"forward_per_step": 7.0, "inverse_per_step": 32.0},
         "pointwise_compile": {
             "execution": {
@@ -191,7 +192,12 @@ def _synthetic_reports() -> list[dict[str, object]]:
 
 
 def test_analyzer_accepts_complete_frozen_evidence():
-    result = analyze(_plan(), _synthetic_reports(), expected_commit="candidate")
+    result = analyze(
+        _plan(),
+        _synthetic_reports(),
+        expected_commit="candidate",
+        expected_package_root=Path("/installed"),
+    )
     assert result["classification"] == (
         "PASS_P8_4_5_PLANE_STATIC_LIFTING_H100_CLOSURE"
     )
@@ -203,9 +209,19 @@ def test_analyzer_fails_closed_on_transform_or_restart_regression():
     reports = _synthetic_reports()
     reports[0]["transform_calls"]["forward_per_step"] = 8.0
     with pytest.raises(RuntimeError, match="forward transform"):
-        analyze(_plan(), reports, expected_commit="candidate")
+        analyze(
+            _plan(),
+            reports,
+            expected_commit="candidate",
+            expected_package_root=Path("/installed"),
+        )
 
     reports = _synthetic_reports()
     reports[-1]["all_byte_identical"] = False
     with pytest.raises(RuntimeError, match="restart is not exact"):
-        analyze(_plan(), reports, expected_commit="candidate")
+        analyze(
+            _plan(),
+            reports,
+            expected_commit="candidate",
+            expected_package_root=Path("/installed"),
+        )
