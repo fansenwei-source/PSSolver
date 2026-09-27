@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "phase": "P8.6.2",
+  "status": "SOURCE_BOUND_H100_NOT_EXECUTED",
+  "classification": "P8_6_2_SOURCE_BOUND_INTEGRATED_H100_CLOSURE_PENDING",
+  "repository": "https://github.com/fansenwei-source/PSSolver.git",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "qualification_source_commit": "24739c772fb6f046b6e9d5a40ae32fb54f525246",
+  "direct_parent_commit": "aeee095a2191fe80b311e488144566f55da3c19f",
+  "bound_files": {
+    "p861_record": {
+      "path": "notes/architecture_v0_2/phase_8_p861_local_cumulative_audit.json",
+      "sha256": "88950076d250a61654cdbe162e69e058c12832f65055d78eba2a80f6de580d3c"
+    },
+    "p862_plan": {
+      "path": "notes/architecture_v0_2/phase_8_p862_h100_qualification_plan.json",
+      "sha256": "2d1a37cd48f20aeb7f2e35dd9a40762fa2166977e83b9f128bb1cd0e82e7ac7e"
+    },
+    "analyzer": {
+      "path": "benchmarks/analyze_phase8_cumulative_closure.py",
+      "sha256": "cd68cdd36edef4c65ff83dbbef78012d061e72c9e19fc45a3e54a66be2b33ce8"
+    }
+  },
+  "local_gate": {
+    "targeted": "18 passed",
+    "full": "2416 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass"
+  },
+  "execution_contract": {
+    "build_installed_wheel_from_qualification_source_commit": true,
+    "single_h100_job": true,
+    "automatic_retry": false,
+    "formal_submission_limit": 1,
+    "source_shadow_import_allowed": false,
+    "production_default_changed": false,
+    "new_performance_claim": false
+  },
+  "authorization": {
+    "p8_6_2_h100_execution_authorized": true,
+    "p8_6_2_complete": false,
+    "p8_6_3_authorized": false,
+    "phase_9_authorized": false
+  }
+}

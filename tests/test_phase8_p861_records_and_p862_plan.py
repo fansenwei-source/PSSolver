@@ -102,6 +102,36 @@ def test_p862_plan_moves_all_six_cuda_only_tests_to_the_h100_job():
     assert all("::test_" in node_id for node_id in tests)
 
 
+def test_p862_source_binding_names_an_exact_audited_commit():
+    binding = _json("phase_8_p862_source_binding.json")
+    assert binding["classification"] == (
+        "P8_6_2_SOURCE_BOUND_INTEGRATED_H100_CLOSURE_PENDING"
+    )
+    assert binding["qualification_source_commit"] == (
+        "24739c772fb6f046b6e9d5a40ae32fb54f525246"
+    )
+    assert binding["direct_parent_commit"] == (
+        "aeee095a2191fe80b311e488144566f55da3c19f"
+    )
+    for value in binding["bound_files"].values():
+        assert value["sha256"] == _sha256(value["path"])
+    assert binding["execution_contract"] == {
+        "build_installed_wheel_from_qualification_source_commit": True,
+        "single_h100_job": True,
+        "automatic_retry": False,
+        "formal_submission_limit": 1,
+        "source_shadow_import_allowed": False,
+        "production_default_changed": False,
+        "new_performance_claim": False,
+    }
+    assert binding["authorization"] == {
+        "p8_6_2_h100_execution_authorized": True,
+        "p8_6_2_complete": False,
+        "p8_6_3_authorized": False,
+        "phase_9_authorized": False,
+    }
+
+
 def test_p861_and_p862_sources_are_registered_without_regenerating_pdf():
     archive = (NOTES / "build_verbatim_archive_pdf.py").read_text(
         encoding="utf-8"
@@ -111,6 +141,7 @@ def test_p861_and_p862_sources_are_registered_without_regenerating_pdf():
         "phase_8_p861_local_cumulative_audit.json",
         "phase_8_p862_h100_qualification_plan.md",
         "phase_8_p862_h100_qualification_plan.json",
+        "phase_8_p862_source_binding.json",
     )
     positions = []
     for name in names:

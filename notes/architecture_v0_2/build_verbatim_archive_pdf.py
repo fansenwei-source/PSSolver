@@ -223,6 +223,7 @@ SOURCE_ORDER = (
     "phase_8_p861_local_cumulative_audit.json",
     "phase_8_p862_h100_qualification_plan.md",
     "phase_8_p862_h100_qualification_plan.json",
+    "phase_8_p862_source_binding.json",
 )
 
 PAGE_WIDTH = 595.276
