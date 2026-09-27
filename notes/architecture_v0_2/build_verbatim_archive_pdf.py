@@ -25,6 +25,7 @@ SOURCE_ORDER = (
     "adr/0009-runtime-state-workspace-and-step-program.md",
     "adr/0010-sbdf2-and-modal-block-operators.md",
     "adr/0011-plane-compiled-v2-static-control.md",
+    "adr/0012-cell-centered-robin-eigenbasis.md",
     "api_surface_v0_1_2.md",
     "v0_1_2_oracle.md",
     "v0_1_2_oracle.json",

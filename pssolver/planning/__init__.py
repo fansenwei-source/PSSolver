@@ -15,12 +15,18 @@ from .plan import (
     SpectralPlan,
     TransformKind,
 )
+from .robin import (
+    ROBIN_EIGENBASIS_PLAN_SCHEMA_VERSION,
+    CellCenteredRobinEigenbasisPlan,
+    build_cell_centered_robin_eigenbasis_plan,
+)
 
 __all__ = [
     "ComponentTransformPlan",
     "DomainAxisPlan",
     "FieldPlan",
     "SPECTRAL_PLAN_SCHEMA_VERSION",
+    "ROBIN_EIGENBASIS_PLAN_SCHEMA_VERSION",
     "STATIC_LIFTING_PLAN_SCHEMA_VERSION",
     "SpectralPlan",
     "StaticLiftExtension",
@@ -28,4 +34,6 @@ __all__ = [
     "StaticLiftingPlan",
     "TransformKind",
     "assemble_spectral_plan",
+    "CellCenteredRobinEigenbasisPlan",
+    "build_cell_centered_robin_eigenbasis_plan",
 ]
