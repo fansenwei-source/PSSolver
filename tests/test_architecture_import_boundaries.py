@@ -161,6 +161,10 @@ REVIEWED_CONFIGURATION_TO_PLANNING_EDGES = {
         "pssolver.planning.package_construction",
     ),
     ImportEdge(
+        "pssolver.configuration.robin",
+        "pssolver.planning.robin",
+    ),
+    ImportEdge(
         "pssolver.configuration.simulation_binding",
         "pssolver.planning.construction",
     ),

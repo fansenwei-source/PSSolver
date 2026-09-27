@@ -16,8 +16,10 @@ from .plan import (
     TransformKind,
 )
 from .robin import (
+    PLANE_ROBIN_SCALAR_LOWERING_SCHEMA_VERSION,
     ROBIN_EIGENBASIS_PLAN_SCHEMA_VERSION,
     CellCenteredRobinEigenbasisPlan,
+    PlaneRobinScalarLoweringPlan,
     build_cell_centered_robin_eigenbasis_plan,
 )
 
@@ -27,6 +29,7 @@ __all__ = [
     "FieldPlan",
     "SPECTRAL_PLAN_SCHEMA_VERSION",
     "ROBIN_EIGENBASIS_PLAN_SCHEMA_VERSION",
+    "PLANE_ROBIN_SCALAR_LOWERING_SCHEMA_VERSION",
     "STATIC_LIFTING_PLAN_SCHEMA_VERSION",
     "SpectralPlan",
     "StaticLiftExtension",
@@ -35,5 +38,6 @@ __all__ = [
     "TransformKind",
     "assemble_spectral_plan",
     "CellCenteredRobinEigenbasisPlan",
+    "PlaneRobinScalarLoweringPlan",
     "build_cell_centered_robin_eigenbasis_plan",
 ]

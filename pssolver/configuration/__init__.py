@@ -15,7 +15,6 @@ from .plane_beris_edwards import (
     create_plane_beris_edwards_run_spec,
     parse_plane_beris_edwards_run_spec,
 )
-
 __all__ = [
     "DEFAULT_FRICTION_MODE_FRIC",
     "DEFAULT_PLANE_RUNTIME_PATH",

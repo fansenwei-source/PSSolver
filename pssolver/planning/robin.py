@@ -18,6 +18,7 @@ from pssolver.core.domain import GridPlacement
 
 
 ROBIN_EIGENBASIS_PLAN_SCHEMA_VERSION = 1
+PLANE_ROBIN_SCALAR_LOWERING_SCHEMA_VERSION = 1
 
 
 def _canonical_sha256(value: object) -> str:
@@ -199,6 +200,108 @@ class CellCenteredRobinEigenbasisPlan:
         return _canonical_sha256(self.to_metadata())
 
 
+@dataclass(frozen=True, slots=True)
+class PlaneRobinScalarLoweringPlan:
+    """Field-neutral lowering for one registered scalar Plane component.
+
+    The plan resolves only the P8.5.3 bounded-axis runtime pilot.  Periodic
+    axes are declared as Fourier axes but are not materialized by this slice.
+    """
+
+    source_simulation_sha256: str
+    source_boundary_sha256: str
+    field_name: str
+    component: str
+    geometry_name: str
+    domain_shape: tuple[int, ...]
+    domain_lengths: tuple[float, ...]
+    axis_names: tuple[str, ...]
+    periodic_axes: tuple[int, ...]
+    wall_normal_axis: int
+    robin_plan: CellCenteredRobinEigenbasisPlan
+    evolved_representation: str = "homogeneous_remainder"
+
+    def __post_init__(self) -> None:
+        for name in ("source_simulation_sha256", "source_boundary_sha256"):
+            value = getattr(self, name)
+            if (
+                not isinstance(value, str)
+                or len(value) != 64
+                or any(character not in "0123456789abcdef" for character in value)
+            ):
+                raise ValueError(f"{name} must be a lowercase SHA-256 digest")
+        for name in ("field_name", "component"):
+            value = getattr(self, name)
+            if not isinstance(value, str) or not value.isidentifier():
+                raise ValueError(f"{name} must be a Python identifier")
+        if self.geometry_name != "plane_slab":
+            raise ValueError("Robin scalar lowering requires plane_slab geometry")
+        shape = tuple(self.domain_shape)
+        lengths = tuple(float(value) for value in self.domain_lengths)
+        axis_names = tuple(self.axis_names)
+        if len(shape) != 3 or len(lengths) != 3 or len(axis_names) != 3:
+            raise ValueError("P8.5.3 requires a three-dimensional Plane domain")
+        if any(
+            not isinstance(value, int)
+            or isinstance(value, bool)
+            or value <= 0
+            for value in shape
+        ):
+            raise ValueError("domain_shape entries must be positive integers")
+        if any(not math.isfinite(value) or value <= 0.0 for value in lengths):
+            raise ValueError("domain_lengths entries must be positive and finite")
+        if any(
+            not isinstance(value, str) or not value.isidentifier()
+            for value in axis_names
+        ) or len(set(axis_names)) != 3:
+            raise ValueError("axis_names must contain three unique identifiers")
+        periodic_axes = tuple(self.periodic_axes)
+        if periodic_axes != (0, 1) or self.wall_normal_axis != 2:
+            raise ValueError(
+                "P8.5.3 requires periodic axes (0, 1) and wall axis 2"
+            )
+        if not isinstance(self.robin_plan, CellCenteredRobinEigenbasisPlan):
+            raise TypeError("robin_plan must be a Robin eigenbasis plan")
+        if (
+            self.robin_plan.size != shape[self.wall_normal_axis]
+            or self.robin_plan.length != lengths[self.wall_normal_axis]
+        ):
+            raise ValueError("Robin plan and Plane wall axis disagree")
+        if self.evolved_representation != "homogeneous_remainder":
+            raise ValueError("unsupported Robin evolved representation")
+        object.__setattr__(self, "domain_shape", shape)
+        object.__setattr__(self, "domain_lengths", lengths)
+        object.__setattr__(self, "axis_names", axis_names)
+        object.__setattr__(self, "periodic_axes", periodic_axes)
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "schema_version": PLANE_ROBIN_SCALAR_LOWERING_SCHEMA_VERSION,
+            "kind": "plane_robin_scalar_bounded_axis_pilot",
+            "source_simulation_sha256": self.source_simulation_sha256,
+            "source_boundary_sha256": self.source_boundary_sha256,
+            "field_name": self.field_name,
+            "component": self.component,
+            "field_role": "evolved",
+            "geometry_name": self.geometry_name,
+            "domain_shape": list(self.domain_shape),
+            "domain_lengths": list(self.domain_lengths),
+            "axis_names": list(self.axis_names),
+            "periodic_axes": list(self.periodic_axes),
+            "periodic_axis_method": "fourier_declared_not_materialized_p8_5_3",
+            "wall_normal_axis": self.wall_normal_axis,
+            "bounded_axis_operator": self.robin_plan.to_metadata(),
+            "bounded_axis_plan_sha256": self.robin_plan.canonical_sha256(),
+            "evolved_representation": self.evolved_representation,
+            "physical_observation": "homogeneous_remainder_plus_affine_lift",
+            "model_specialization": None,
+            "complete_timestep_connected": False,
+        }
+
+    def canonical_sha256(self) -> str:
+        return _canonical_sha256(self.to_metadata())
+
+
 def build_cell_centered_robin_eigenbasis_plan(
     *,
     size: int,
@@ -249,7 +352,9 @@ def build_cell_centered_robin_eigenbasis_plan(
 
 
 __all__ = [
+    "PLANE_ROBIN_SCALAR_LOWERING_SCHEMA_VERSION",
     "ROBIN_EIGENBASIS_PLAN_SCHEMA_VERSION",
     "CellCenteredRobinEigenbasisPlan",
+    "PlaneRobinScalarLoweringPlan",
     "build_cell_centered_robin_eigenbasis_plan",
 ]

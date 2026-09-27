@@ -37,6 +37,12 @@ from .channel_beris_edwards import (
     ChannelBerisEdwardsRuntimeBuildRequest,
     build_channel_beris_edwards_runtime,
 )
+from .robin_scalar import (
+    PlaneRobinOperatorCache,
+    PlaneRobinOperatorCacheKey,
+    PlaneRobinScalarCheckpoint,
+    PlaneRobinScalarRuntime,
+)
 
 __all__ = [
     "LegacyPlaneRuntimeAdapter",
@@ -62,4 +68,8 @@ __all__ = [
     "ChannelBerisEdwardsRuntimeAdapter",
     "ChannelBerisEdwardsRuntimeBuildRequest",
     "build_channel_beris_edwards_runtime",
+    "PlaneRobinOperatorCache",
+    "PlaneRobinOperatorCacheKey",
+    "PlaneRobinScalarCheckpoint",
+    "PlaneRobinScalarRuntime",
 ]
