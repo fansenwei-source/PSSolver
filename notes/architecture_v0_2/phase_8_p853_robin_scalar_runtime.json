@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "phase": "P8.5.3",
+  "status": "P8_5_3_COMPLETE_P8_5_4_NOT_IMPLEMENTED",
+  "classification": "PASS_P8_5_3_GENERIC_PLANE_ROBIN_SCALAR_RUNTIME_STATE",
+  "baseline_commit": "6b6995a",
+  "implementation_commit": "9d337feb17f9ad931fa756c34cbbf2a2455477c5",
+  "lowering_contract": {
+    "entry_point": "pssolver.configuration.robin.lower_plane_robin_scalar_pilot",
+    "public_configuration_exported": false,
+    "top_level_exported": false,
+    "geometry": "plane_slab",
+    "axis_topology": ["periodic", "periodic", "bounded"],
+    "wall_normal_axis": 2,
+    "grid_placement": "cell_centered",
+    "field_role": "evolved",
+    "component_count": 1,
+    "boundary_semantics": "physical",
+    "wall_law": "static_robin",
+    "dtype": "torch.float64",
+    "device": "cpu",
+    "backend_intent": "torch_spectral",
+    "model_neutral": true
+  },
+  "runtime_scope": {
+    "runtime_kind": "plane_robin_scalar_bounded_axis_pilot",
+    "state_representation": "homogeneous_remainder",
+    "physical_observation": "homogeneous_remainder_plus_affine_lift",
+    "bounded_modal_representation_synchronized": true,
+    "bounded_helmholtz_apply": true,
+    "bounded_helmholtz_solve": true,
+    "periodic_axes_declared_fourier": true,
+    "periodic_axes_materialized": false,
+    "complete_timestep_connected": false,
+    "public_runner_connected": false,
+    "runtime_selector_connected": false
+  },
+  "operator_cache": {
+    "ownership": "construction",
+    "key_fields": [
+      "lowering_plan_sha256",
+      "bounded_axis_plan_sha256",
+      "geometry_name",
+      "domain_shape",
+      "domain_lengths",
+      "dtype",
+      "device"
+    ],
+    "exact_plan_reuse": true,
+    "coefficient_change_creates_new_key": true,
+    "hot_loop_lookup": false,
+    "hot_loop_root_solve": false,
+    "hot_loop_factorization": false
+  },
+  "checkpoint_contract": {
+    "storage": "in_memory_pilot",
+    "identity_validation_before_mutation": true,
+    "payload_validation_before_mutation": true,
+    "representation_synchronization_validated": true,
+    "progress_restored": true,
+    "raw_coefficient_identity_recorded": true,
+    "operator_and_cache_identity_recorded": true,
+    "file_backed_workflow_connected": false
+  },
+  "architecture": {
+    "new_reviewed_dependency_edges": [
+      "pssolver.configuration.robin->pssolver.planning.robin"
+    ],
+    "frozen_configuration_exports_unchanged": true,
+    "top_level_public_api_unchanged": true,
+    "active_nematics_imported": false,
+    "production_robin_rejection_remains": true,
+    "new_executable_public_combinations": []
+  },
+  "source_sha256": {
+    "pssolver/configuration/robin.py": "4fb2dd48bd7b7a39abc606dfdde82dd6340cd31f7354184bb1dae2a1ca42d255",
+    "pssolver/planning/robin.py": "0bab6f8495ed14aa0bc74a12029445fb0e8267ab8a98397b1e12384c9b46a716",
+    "pssolver/planning/__init__.py": "500e75292dda39b0c5589be052e74d5b13309faf0b8364f0b096197b87adacaa",
+    "pssolver/runtime/robin_scalar.py": "19c18f20bf190cfe983e1df52b7822c68eceb1c0319e5ea8e5c99419bf49174e",
+    "pssolver/runtime/__init__.py": "6490c77f68e079093e7bf72205d77814d4973f9322024dd39ac6edfe1fdbd231",
+    "tests/test_architecture_import_boundaries.py": "b13b31c1b34238f212bfe5f606814256a4399a9d4c67431ccd257fffd2ae3ce6",
+    "tests/test_phase8_p853_robin_scalar_runtime.py": "9bdd98eed83abc760c2be26e53a50a4cc8ca87c0f8b6b8be1759da4ca6faa041"
+  },
+  "local_verification": {
+    "focused_regression": "13 passed, 1 deselected",
+    "full_before_record": "2357 passed, 1 deselected, 8 subtests passed",
+    "full_after_record": "2358 passed, 8 subtests passed",
+    "git_diff_check": "pass",
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected": 0
+  },
+  "finite_q_anchoring_implemented": false,
+  "h100_used": false,
+  "production_default_changed": false,
+  "archive_pdf_regenerated": false,
+  "authorization": {
+    "p8_5_3_complete": true,
+    "eligible_for_p8_5_4": true,
+    "p8_5_4_implemented": false,
+    "finite_q_specialization_authorized": false,
+    "h100_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false
+  }
+}
