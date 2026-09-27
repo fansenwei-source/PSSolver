@@ -2,8 +2,11 @@
 
 Status: `READY_P8_5_6_H100_QUALIFICATION_NOT_EXECUTED`.
 
-Frozen candidate: `c8028845293247290a2e9aa51ce8847206768bfa`.
-Its recorded parent is the P8.5.5 record commit `2c99942`.  P8.5.6 is a
+Implementation commit: `c8028845293247290a2e9aa51ce8847206768bfa`.
+Frozen qualification source commit:
+`902e5a234cfeb9c861210301593c3eb904f034d9`; it adds only this plan record and
+the archive source-list entry on top of the implementation.  Its recorded
+baseline is the P8.5.5 record commit `2c99942`.  P8.5.6 is a
 qualification boundary for the existing finite-Q anchoring relaxation pilot;
 it is not permission to connect Robin Q to the complete Beris--Edwards
 timestep, public `Simulation` compiler, or a production runtime selector.
@@ -59,7 +62,7 @@ Run exactly twelve profiles:
 - paired order `reference/aggregate`, `aggregate/reference`, then
   `reference/aggregate`.
 
-Every report must identify the exact clean candidate commit and import the
+Every report must identify the exact clean qualification source commit and import the
 installed qualification wheel rather than the source checkout.  Every report
 must be finite, use `NVIDIA H100 PCIe`, keep TF32 off, report no fallback or
 graph break, and prove that no construction, root solve, or matrix
