@@ -38,17 +38,18 @@ identical Q in every paired trial.
 ## Frozen CPU and CUDA gates
 
 Before any formal H100 submission, run the complete CPU suite from a clean
-detached worktree.  A login node without CUDA may deselect exactly these five
+detached worktree.  A login node without CUDA may deselect exactly these six
 CUDA-only node IDs:
 
 1. `tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity`
 2. `tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory`
 3. `tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite`
-4. `tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device`
-5. `tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact`
+4. `tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity`
+5. `tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device`
+6. `tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact`
 
 Only the existing optional `nematics3d` dependency skip is admissible.  All
-five deselected tests must run on the allocated H100 before profiling and must
+six deselected tests must run on the allocated H100 before profiling and must
 pass without skip, deselect, xfail, or fallback.
 
 ## Frozen H100 profile matrix
@@ -96,8 +97,11 @@ failure, skip, or xfail.  With the record present, the complete suite passed
 exact frozen operation counts, and no construction work in the timed loop.
 Those results are development evidence, not the formal H100 result.
 
-Exactly one formal H100 job is authorized.  No automatic retry, second job,
+The first attempt stopped before any H100 submission because the original
+contract omitted CUDA-only node ID 4 above.  That login-node skip is accepted
+only through precise deselection, and the test is transferred to the real-H100
+gate.  Exactly one formal H100 job remains authorized.  No automatic retry, second job,
 long run, public-runtime connection, production-default change, P8.6, or
-Phase 9 work is authorized.  Write `COMPLETE` only after the CPU gate, five
+Phase 9 work is authorized.  Write `COMPLETE` only after the CPU gate, six
 real-H100 CUDA tests, twelve-profile analyzer, provenance, and checksum
 manifest all pass.  Otherwise archive the precise failure and stop.

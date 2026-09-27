@@ -60,6 +60,7 @@
     "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
     "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
     "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+    "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
     "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
     "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact"
   ],
@@ -74,6 +75,8 @@
     "local_cuda_r128_smoke": "pass"
   },
   "authorization": {
+    "cpu_gate_recovery_authorized": true,
+    "first_attempt_h100_submission_count": 0,
     "single_h100_job": true,
     "automatic_retry": false,
     "second_h100_job": false,
