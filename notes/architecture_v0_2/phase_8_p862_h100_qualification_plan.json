@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "phase": "P8.6.2",
+  "status": "READY_FOR_SOURCE_BINDING_H100_NOT_EXECUTED",
+  "classification": "P8_6_2_INTEGRATED_H100_CLOSURE_PLANNED_NOT_EXECUTED",
+  "p861_prerequisite": {
+    "path": "notes/architecture_v0_2/phase_8_p861_local_cumulative_audit.json",
+    "classification": "PASS_P8_6_1_LOCAL_CUMULATIVE_AUDIT"
+  },
+  "qualification_source": {
+    "binding_record_required": true,
+    "binding_record": "notes/architecture_v0_2/phase_8_p862_source_binding.json",
+    "exact_commit_bound": false
+  },
+  "cpu_gate": {
+    "full_suite_required": true,
+    "p861_analyzer_required": true,
+    "installed_wheel_required": true,
+    "source_shadow_import_allowed": false,
+    "rejection_matrix_case_count": 8,
+    "allowed_skip": "optional_nematics3d_dependency_only",
+    "cuda_only_deselect_count": 6
+  },
+  "cuda_only_tests": [
+    "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+    "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+    "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+    "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact"
+  ],
+  "h100_cases": [
+    {"case": "plane_complete_stress_legacy", "runtime_path": "legacy_production", "public": true},
+    {"case": "plane_complete_stress_compiled", "runtime_path": "compiled_v2", "public": true},
+    {"case": "channel_legacy_active_force_legacy", "runtime_path": "legacy_channel", "public": true},
+    {"case": "channel_legacy_active_force_compiled", "runtime_path": "compiled_channel_v2", "public": true},
+    {"case": "periodic_complete_stress", "runtime_path": "periodic_spectral", "public": true},
+    {"case": "channel_complete_stress", "runtime_path": "channel_complete_stress", "public": true},
+    {"case": "plane_static_q_lifting", "runtime_path": "legacy_production", "public": true},
+    {"case": "finite_q_robin_relaxation_pilot", "runtime_path": "internal_partial_pilot", "public": false}
+  ],
+  "qualification_gates": {
+    "gpu_model": "NVIDIA H100 PCIe",
+    "single_job": true,
+    "automatic_retry": false,
+    "tf32": false,
+    "requested_effective_runtime_equal": true,
+    "fallback_allowed": false,
+    "finite": true,
+    "continuous_restart_contract": "reuse_each_path_existing_qualified_contract",
+    "negative_gates_before_target_mutation": true,
+    "source_worktree_clean": true,
+    "installed_wheel_only": true,
+    "new_performance_claim": false,
+    "paper_benchmark_claim": false,
+    "steady_state_claim": false
+  },
+  "compatibility": {
+    "plane_default": "legacy_production",
+    "channel_default": "legacy_channel",
+    "robin_publicly_executable": false,
+    "finite_q_pilot_public": false,
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false
+  },
+  "authorization": {
+    "p8_6_2_planned": true,
+    "h100_execution_authorized_after_source_binding": true,
+    "formal_h100_submission_limit": 1,
+    "p8_6_3_authorized": false,
+    "phase_9_authorized": false
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "phase": "P8.6.1",
+  "status": "P8_6_1_COMPLETE_P8_6_2_PLANNING_ELIGIBLE",
+  "classification": "PASS_P8_6_1_LOCAL_CUMULATIVE_AUDIT",
+  "identity": {
+    "implementation_commit": "aeee095a2191fe80b311e488144566f55da3c19f",
+    "p860_plan_sha256": "05e072e0f029df6252f17e45fd69c350cd57dab327150a66ad089076f1991807",
+    "analyzer_sha256": "cd68cdd36edef4c65ff83dbbef78012d061e72c9e19fc45a3e54a66be2b33ce8",
+    "test_sha256": "2a01d48977366710c49b27dce84cfb4b7eb9d0910ae10f9bc9f93d9ae762c20e"
+  },
+  "prerequisites": {
+    "record_count": 5,
+    "phases": ["P8.1", "P8.2", "P8.3", "P8.4.5", "P8.5.6"],
+    "sha256_and_classification_gate": "pass"
+  },
+  "catalog": {
+    "source_installed_wheel_equal": true,
+    "model_count": 2,
+    "geometry_count": 3,
+    "boundary_policy_count": 8,
+    "qualified_combination_count": 4,
+    "qualified_runtime_path_count": 6,
+    "robin_declarable": true,
+    "robin_publicly_executable": false
+  },
+  "installed_wheel": {
+    "filename": "pssolver-0.1.2-py3-none-any.whl",
+    "sha256": "4803b8c80e05f20e564fe8a121cfb7b38f7565d47209db77a3abc1d1496b23fb",
+    "member_count": 232,
+    "source_shadow_import": false,
+    "editable_install": false,
+    "artifact_digest_scope": "this_local_audit_only"
+  },
+  "rejection_matrix": {
+    "case_count": 8,
+    "executable_repository_test_coverage": 8,
+    "status": "pass"
+  },
+  "defaults": {
+    "plane": "legacy_production",
+    "channel": "legacy_channel",
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false
+  },
+  "verification": {
+    "targeted": "12 passed",
+    "full": "2410 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass",
+    "archive_pdf_regenerated": false
+  },
+  "scope": {
+    "runtime_or_timestep_changed": false,
+    "numerical_operator_changed": false,
+    "compiler_registration_changed": false,
+    "public_api_changed": false,
+    "checkpoint_or_output_schema_changed": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "p8_6_1_complete": true,
+    "eligible_for_p8_6_2_h100_planning": true,
+    "p8_6_2_h100_executed": false,
+    "p8_6_3_authorized": false,
+    "phase_9_authorized": false
+  }
+}
