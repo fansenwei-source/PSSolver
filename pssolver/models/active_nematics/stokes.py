@@ -208,10 +208,11 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         if self.q_gradient_cache is not None:
             self.q_gradient_cache.clear()
         lifting = getattr(self, "static_lifting_runtime", None)
-        q_components = (
-            tuple(fields[name] for name in Q_COMPONENTS)
+        q_components = tuple(fields[name] for name in Q_COMPONENTS)
+        q_lift_components = (
+            None
             if lifting is None
-            else lifting.physical_components(fields, Q_COMPONENTS)
+            else lifting.lift_components(Q_COMPONENTS)
         )
 
         # Stress uses raw H, not H/gamma. Project H as one resolved field,
@@ -221,6 +222,11 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         # space and removes five inverse transforms without changing the basis
         # or projection.
         if self.molecular_field_linear_space == "physical":
+            physical_q_components = (
+                q_components
+                if lifting is None
+                else lifting.physical_components(fields, Q_COMPONENTS)
+            )
             laplacian_components = tuple(
                 (
                     fields.laplacian(
@@ -237,7 +243,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
                 for name in Q_COMPONENTS
             )
             raw_h_components = beris_edwards_molecular_field_components(
-                q_components,
+                physical_q_components,
                 laplacian_components,
                 ldg_a=self.ldg_a,
                 ldg_b=self.ldg_b,
@@ -250,14 +256,29 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
                 self.q_boundary_conditions,
             )
             del laplacian_components, raw_h_components
+            if lifting is not None:
+                del physical_q_components
         else:
-            bulk_kernel = self.pointwise_kernels.bulk_molecular_field_components
-            bulk_h_components = bulk_kernel(
-                q_components,
-                ldg_a=self.ldg_a,
-                ldg_b=self.ldg_b,
-                ldg_c=self.ldg_c,
-            )
+            if lifting is None:
+                bulk_h_components = (
+                    self.pointwise_kernels.bulk_molecular_field_components(
+                        q_components,
+                        ldg_a=self.ldg_a,
+                        ldg_b=self.ldg_b,
+                        ldg_c=self.ldg_c,
+                    )
+                )
+            else:
+                bulk_h_components = (
+                    self.pointwise_kernels
+                    .bulk_molecular_field_components_with_static_lift(
+                        q_components,
+                        q_lift_components,
+                        ldg_a=self.ldg_a,
+                        ldg_b=self.ldg_b,
+                        ldg_c=self.ldg_c,
+                    )
+                )
             h_hat = self.spectral_projector.forward_transform(
                 torch.stack(bulk_h_components),
                 self.q_boundary_conditions,
@@ -274,12 +295,26 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
             del bulk_h_components, h_hat
         h_components = tuple(h_tensor[index] for index in range(5))
         active_prefactor = self.beta * alpha
-        algebraic_stress = self.pointwise_kernels.algebraic_stress_components(
-            q_components,
-            h_components,
-            flow_alignment=self.flow_alignment,
-            active_prefactor=active_prefactor,
-        )
+        if lifting is None:
+            algebraic_stress = (
+                self.pointwise_kernels.algebraic_stress_components(
+                    q_components,
+                    h_components,
+                    flow_alignment=self.flow_alignment,
+                    active_prefactor=active_prefactor,
+                )
+            )
+        else:
+            algebraic_stress = (
+                self.pointwise_kernels
+                .algebraic_stress_components_with_static_lift(
+                    q_components,
+                    q_lift_components,
+                    h_components,
+                    flow_alignment=self.flow_alignment,
+                    active_prefactor=active_prefactor,
+                )
+            )
         algebraic_force = projected_common_basis_stress_divergence(
             self.transform_backend,
             algebraic_stress,

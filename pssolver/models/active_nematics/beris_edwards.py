@@ -562,6 +562,79 @@ def beris_edwards_algebraic_stress_components(
     )
 
 
+def _add_static_lift_components(remainders, lift_components):
+    """Form physical compact-Q expressions inside a pointwise kernel."""
+
+    remainders = _five_components(remainders, "q_remainders")
+    lift_components = _five_components(lift_components, "q_lift_components")
+    return tuple(
+        remainder + lift
+        for remainder, lift in zip(remainders, lift_components)
+    )
+
+
+def beris_edwards_bulk_molecular_field_components_with_static_lift(
+    q_remainders,
+    q_lift_components,
+    *,
+    ldg_a,
+    ldg_b,
+    ldg_c,
+):
+    """Evaluate bulk H while allowing compilation to fuse Q reconstruction."""
+
+    return beris_edwards_bulk_molecular_field_components(
+        _add_static_lift_components(q_remainders, q_lift_components),
+        ldg_a=ldg_a,
+        ldg_b=ldg_b,
+        ldg_c=ldg_c,
+    )
+
+
+def beris_edwards_algebraic_stress_components_with_static_lift(
+    q_remainders,
+    q_lift_components,
+    h_components,
+    *,
+    flow_alignment,
+    active_prefactor,
+    q_dot_h=None,
+):
+    """Evaluate algebraic stress with fused physical-Q reconstruction."""
+
+    return beris_edwards_algebraic_stress_components(
+        _add_static_lift_components(q_remainders, q_lift_components),
+        h_components,
+        flow_alignment=flow_alignment,
+        active_prefactor=active_prefactor,
+        q_dot_h=q_dot_h,
+    )
+
+
+def beris_edwards_q_nonlinear_components_with_static_lift(
+    q_remainders,
+    q_lift_components,
+    velocity_components,
+    q_gradients,
+    velocity_gradients,
+    *,
+    ldg_b_over_gamma,
+    ldg_c_over_gamma,
+    flow_alignment,
+):
+    """Evaluate nonlinear Q dynamics with fused physical-Q reconstruction."""
+
+    return beris_edwards_q_nonlinear_components(
+        _add_static_lift_components(q_remainders, q_lift_components),
+        velocity_components,
+        q_gradients,
+        velocity_gradients,
+        ldg_b_over_gamma=ldg_b_over_gamma,
+        ldg_c_over_gamma=ldg_c_over_gamma,
+        flow_alignment=flow_alignment,
+    )
+
+
 def beris_edwards_distortion_stress_components(
     q_gradients,
     *,
@@ -618,9 +691,18 @@ class BerisEdwardsPointwiseKernels:
 
     _EAGER_KERNELS = {
         "bulk_molecular_field": beris_edwards_bulk_molecular_field_components,
+        "bulk_molecular_field_with_static_lift": (
+            beris_edwards_bulk_molecular_field_components_with_static_lift
+        ),
         "algebraic_stress": beris_edwards_algebraic_stress_components,
+        "algebraic_stress_with_static_lift": (
+            beris_edwards_algebraic_stress_components_with_static_lift
+        ),
         "distortion_stress": beris_edwards_distortion_stress_components,
         "q_nonlinear": beris_edwards_q_nonlinear_components,
+        "q_nonlinear_with_static_lift": (
+            beris_edwards_q_nonlinear_components_with_static_lift
+        ),
     }
 
     def __init__(
@@ -687,14 +769,37 @@ class BerisEdwardsPointwiseKernels:
     def bulk_molecular_field_components(self, *args, **kwargs):
         return self._kernels["bulk_molecular_field"](*args, **kwargs)
 
+    def bulk_molecular_field_components_with_static_lift(
+        self,
+        *args,
+        **kwargs,
+    ):
+        return self._kernels["bulk_molecular_field_with_static_lift"](
+            *args,
+            **kwargs,
+        )
+
     def algebraic_stress_components(self, *args, **kwargs):
         return self._kernels["algebraic_stress"](*args, **kwargs)
+
+    def algebraic_stress_components_with_static_lift(
+        self,
+        *args,
+        **kwargs,
+    ):
+        return self._kernels["algebraic_stress_with_static_lift"](
+            *args,
+            **kwargs,
+        )
 
     def distortion_stress_components(self, *args, **kwargs):
         return self._kernels["distortion_stress"](*args, **kwargs)
 
     def q_nonlinear_components(self, *args, **kwargs):
         return self._kernels["q_nonlinear"](*args, **kwargs)
+
+    def q_nonlinear_components_with_static_lift(self, *args, **kwargs):
+        return self._kernels["q_nonlinear_with_static_lift"](*args, **kwargs)
 
 
 class BerisEdwardsQGradientCache:
@@ -830,10 +935,11 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
     def forward(self, fields, params):
         del params
         lifting = getattr(self, "static_lifting_runtime", None)
-        q_components = (
-            tuple(fields[name] for name in Q_COMPONENTS)
+        q_components = tuple(fields[name] for name in Q_COMPONENTS)
+        q_lift_components = (
+            None
             if lifting is None
-            else lifting.physical_components(fields, Q_COMPONENTS)
+            else lifting.lift_components(Q_COMPONENTS)
         )
         velocity_components = tuple(
             fields[name]
@@ -876,15 +982,30 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
             )
             for axis in range(3)
         )
-        nonlinear_components = self.pointwise_kernels.q_nonlinear_components(
-            q_components,
-            velocity_components,
-            q_gradients,
-            velocity_gradients,
-            ldg_b_over_gamma=self.ldg_b_over_gamma,
-            ldg_c_over_gamma=self.ldg_c_over_gamma,
-            flow_alignment=self.flow_alignment,
-        )
+        if lifting is None:
+            nonlinear_components = self.pointwise_kernels.q_nonlinear_components(
+                q_components,
+                velocity_components,
+                q_gradients,
+                velocity_gradients,
+                ldg_b_over_gamma=self.ldg_b_over_gamma,
+                ldg_c_over_gamma=self.ldg_c_over_gamma,
+                flow_alignment=self.flow_alignment,
+            )
+        else:
+            nonlinear_components = (
+                self.pointwise_kernels
+                .q_nonlinear_components_with_static_lift(
+                    q_components,
+                    q_lift_components,
+                    velocity_components,
+                    q_gradients,
+                    velocity_gradients,
+                    ldg_b_over_gamma=self.ldg_b_over_gamma,
+                    ldg_c_over_gamma=self.ldg_c_over_gamma,
+                    flow_alignment=self.flow_alignment,
+                )
+            )
         transformed = self.spectral_projector.forward_transform(
             torch.stack(nonlinear_components),
             self.q_boundary_conditions,

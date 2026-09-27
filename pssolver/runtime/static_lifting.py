@@ -1,8 +1,8 @@
 """Runtime state for field-neutral, static Plane lifting.
 
 The evolved :class:`~pssolver.Field.Fields` object remains the homogeneous
-remainder authority.  This module owns immutable lift data and reusable
-physical-field workspaces; it does not know about Q tensors or any model.
+remainder authority.  This module owns immutable lift data and reconstructs
+physical fields on demand; it does not know about Q tensors or any model.
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ def _frozen_json(value: Mapping[str, object] | None) -> Mapping[str, object]:
 
 
 class PlaneStaticLiftingRuntime:
-    """Materialized static lift and preallocated physical-field workspace."""
+    """Materialized static lift with allocation-free hot-path metadata."""
 
     def __init__(
         self,
@@ -55,16 +55,6 @@ class PlaneStaticLiftingRuntime:
         self._indices = MappingProxyType(
             {name: index for index, name in enumerate(self.component_order)}
         )
-        # This is a view of the operator-owned, identity-checked storage.  It
-        # avoids retaining a second full-domain copy of every static lift.
-        self._stacked_lift = self.operator.stacked_lift[:, None]
-        self._physical_workspace = torch.empty(
-            len(self.component_order),
-            batch_size,
-            *plan.domain_shape,
-            dtype=dtype,
-            device=device,
-        )
         wall_axis = plan.wall_normal_axis
         length = plan.domain_lengths[wall_axis]
         slopes = []
@@ -80,7 +70,6 @@ class PlaneStaticLiftingRuntime:
             device=device,
         )
         self._batch_size = batch_size
-        self._cached_spatial_version: int | None = None
         self._linear_correction_hat: torch.Tensor | None = None
         self._linear_correction_metadata: tuple[dict[str, object], ...] = ()
         self._linear_correction_storage_metadata: tuple[
@@ -91,13 +80,6 @@ class PlaneStaticLiftingRuntime:
     @property
     def plan(self) -> StaticLiftingPlan:
         return self.operator.plan
-
-    @staticmethod
-    def _tensor_version(value: torch.Tensor) -> int | None:
-        try:
-            return int(value._version)
-        except (AttributeError, RuntimeError):
-            return None
 
     def _index(self, component: str) -> int:
         try:
@@ -130,36 +112,32 @@ class PlaneStaticLiftingRuntime:
             )
         return remainders
 
-    def _refresh_physical_workspace(self, fields: object) -> None:
-        spatial = fields.spatial
-        version = self._tensor_version(spatial)
-        if version is not None and version == self._cached_spatial_version:
-            return
-        homogeneous = fields.select_spatial_group(self.component_order)
-        if homogeneous.shape != self._physical_workspace.shape:
-            raise ValueError("evolved remainder shape does not match lift workspace")
-        torch.add(
-            homogeneous,
-            self._stacked_lift,
-            out=self._physical_workspace,
-        )
-        self._cached_spatial_version = version
-
     def physical_component(self, fields: object, component: str) -> torch.Tensor:
-        """Return one non-owning physical-field workspace view."""
+        """Reconstruct one physical component for observation."""
 
-        self._refresh_physical_workspace(fields)
-        return self._physical_workspace[self._index(component)]
+        homogeneous = fields[component]
+        if homogeneous.shape != (self._batch_size, *self.plan.domain_shape):
+            raise ValueError("evolved remainder shape does not match lift plan")
+        return homogeneous + self.operator.lift(component)
 
     def physical_components(
         self,
         fields: object,
         components: Sequence[str],
     ) -> tuple[torch.Tensor, ...]:
-        self._refresh_physical_workspace(fields)
+        """Reconstruct physical components outside the production hot path."""
+
         return tuple(
-            self._physical_workspace[self._index(name)] for name in components
+            self.physical_component(fields, name) for name in components
         )
+
+    def lift_components(
+        self,
+        components: Sequence[str],
+    ) -> tuple[torch.Tensor, ...]:
+        """Return immutable broadcast lift views for fused pointwise kernels."""
+
+        return tuple(self.operator.lift(name) for name in components)
 
     def gradient(
         self,
@@ -269,9 +247,8 @@ class PlaneStaticLiftingRuntime:
         )
         return {
             "operator": self.operator.storage_metadata(),
-            "physical_workspace_bytes": (
-                self._physical_workspace.untyped_storage().nbytes()
-            ),
+            "physical_workspace_layout": "on_demand_fused_pointwise",
+            "physical_workspace_bytes": 0,
             "wall_normal_slope_bytes": (
                 self._wall_normal_slopes.untyped_storage().nbytes()
             ),

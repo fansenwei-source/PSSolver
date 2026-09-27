@@ -205,6 +205,10 @@ def test_runtime_evolves_dst_remainder_and_observes_physical_q(tmp_path):
     assert storage["operator"]["layout"] == (
         "wall_normal_profile_broadcast"
     )
+    assert storage["physical_workspace_layout"] == (
+        "on_demand_fused_pointwise"
+    )
+    assert storage["physical_workspace_bytes"] == 0
     assert storage["linear_correction_storage_bytes"] == (
         torch.empty((), dtype=torch.complex128).element_size()
     )
@@ -402,6 +406,8 @@ def test_p844_record_matches_qualified_sources_and_scope():
     # qualification behavior. Keep the P8.4.4 hashes as historical evidence
     # instead of rewriting the already qualified record.
     superseded_by_p845 = {
+        "pssolver/models/active_nematics/beris_edwards.py",
+        "pssolver/models/active_nematics/stokes.py",
         "pssolver/operators/lifting.py",
         "pssolver/runtime/plane_legacy.py",
         "pssolver/runtime/static_lifting.py",

@@ -1,0 +1,60 @@
+{
+  "authorization": {
+    "compiled_runtime_promotion": false,
+    "nonhomogeneous_neumann": false,
+    "p8_4_5_fused_reconstruction_submission": true,
+    "p8_5": false,
+    "phase_9": false,
+    "production_default_change": false
+  },
+  "baseline_commit": "046ad5b12b31ea627f8f87fe4286ba6dae22393e",
+  "classification": "READY_P8_4_5_FUSED_RECONSTRUCTION_MEMORY_RECOVERY",
+  "cpu_compiled_equivalence": {
+    "baseline_commit": "046ad5b12b31ea627f8f87fe4286ba6dae22393e",
+    "completed_steps": 3,
+    "internal_final_state_sha256": "d18743a084a95374d3fc92fb628ea81684b0e748122711e6f6b5abe9b2f07c3f",
+    "physical_final_state_sha256": "9542397e9b3a9601f9ec8c2ff4e27853d71032102b437fecd48c2945ae1ddaf0",
+    "result": "byte_identical",
+    "shape": [8, 8, 6],
+    "transform_calls_per_step": {
+      "forward": 7.0,
+      "inverse": 32.0
+    }
+  },
+  "failed_job": {
+    "allocated_ratio_r128": 1.09879748943,
+    "allocated_ratio_r320": 1.106109098049,
+    "job_id": 10843753,
+    "memory_gate_passed": false,
+    "reserved_ratio_r128": 1.18018018018,
+    "reserved_ratio_r320": 1.11306456502,
+    "scientific_gates_passed": true,
+    "timestep_gate_passed": true
+  },
+  "frozen_contract": {
+    "peak_allocated_ratio_max": 1.1,
+    "peak_reserved_ratio_max": 1.1,
+    "thresholds_relaxed": false,
+    "transform_counts_per_step": {
+      "forward": 7.0,
+      "inverse": 32.0
+    }
+  },
+  "phase": "P8.4.5",
+  "recovery": {
+    "evolved_representation": "homogeneous_remainder",
+    "physical_observation": "one_component_on_demand",
+    "physical_q_hot_path": "fused_pointwise_reconstruction",
+    "persistent_physical_workspace_bytes": 0,
+    "static_lift_storage": "wall_normal_profile_broadcast"
+  },
+  "schema_version": 1,
+  "source_sha256": {
+    "pssolver/models/active_nematics/beris_edwards.py": "4aca31944a3dd7f263d64167ab53e26d992642af58b8fdefc457454905faf31d",
+    "pssolver/models/active_nematics/stokes.py": "dfa1f2604ac419f6a438aa75a107b4678e52d6dbe272ec924d9333d4b2f9cb8b",
+    "pssolver/runtime/static_lifting.py": "bf5fd00ffdb165401a725d6b1ca92ddda4a231d20fcbcc0d25340f4d9102e8f3",
+    "tests/test_beris_edwards_pointwise_execution.py": "a20f5c6e8c6b5ce8e8907e5b25b26541e0b51d7b7b73dd09e03e47ca5df561ab",
+    "tests/test_phase8_p844_lifting_workflow_restart.py": "ae87e6637102193d202a4155848c279002345168270ee92f6460776e3c861707",
+    "tests/test_phase8_p845_h100_qualification.py": "9f3c964b0ee4fde155e35c49d410ba5f1422c76f1c776bfa8bc729ddcfde0213"
+  }
+}

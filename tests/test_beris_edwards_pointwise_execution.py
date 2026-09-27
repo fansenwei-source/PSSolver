@@ -100,7 +100,71 @@ def test_explicit_eager_matches_public_constitutive_helpers_exactly():
     )
 
 
-def test_compile_policy_wraps_exactly_four_fullgraph_static_kernels(monkeypatch):
+def test_lift_aware_eager_kernels_match_explicit_physical_q_exactly():
+    q, h, q_gradients, velocity, velocity_gradients = _inputs()
+    lifts = tuple(
+        torch.linspace(-0.2, 0.3, q[0].shape[-1], dtype=q[0].dtype)
+        .reshape(1, 1, 1, -1)
+        .expand_as(q[0])
+        for _ in range(5)
+    )
+    physical = tuple(value + lift for value, lift in zip(q, lifts))
+    kernels = BerisEdwardsPointwiseKernels("eager")
+
+    _assert_componentwise_identical(
+        kernels.bulk_molecular_field_components_with_static_lift(
+            q,
+            lifts,
+            ldg_a=0.0,
+            ldg_b=-0.3,
+            ldg_c=0.3,
+        ),
+        kernels.bulk_molecular_field_components(
+            physical,
+            ldg_a=0.0,
+            ldg_b=-0.3,
+            ldg_c=0.3,
+        ),
+    )
+    _assert_componentwise_identical(
+        kernels.algebraic_stress_components_with_static_lift(
+            q,
+            lifts,
+            h,
+            flow_alignment=0.3,
+            active_prefactor=-0.01,
+        ),
+        kernels.algebraic_stress_components(
+            physical,
+            h,
+            flow_alignment=0.3,
+            active_prefactor=-0.01,
+        ),
+    )
+    _assert_componentwise_identical(
+        kernels.q_nonlinear_components_with_static_lift(
+            q,
+            lifts,
+            velocity,
+            q_gradients,
+            velocity_gradients,
+            ldg_b_over_gamma=-0.1,
+            ldg_c_over_gamma=0.1,
+            flow_alignment=0.3,
+        ),
+        kernels.q_nonlinear_components(
+            physical,
+            velocity,
+            q_gradients,
+            velocity_gradients,
+            ldg_b_over_gamma=-0.1,
+            ldg_c_over_gamma=0.1,
+            flow_alignment=0.3,
+        ),
+    )
+
+
+def test_compile_policy_wraps_all_fullgraph_static_kernels(monkeypatch):
     calls = []
 
     def fake_compile(function, **options):
@@ -111,7 +175,7 @@ def test_compile_policy_wraps_exactly_four_fullgraph_static_kernels(monkeypatch)
     kernels = BerisEdwardsPointwiseKernels()
 
     assert DEFAULT_POINTWISE_EXECUTION == "compile"
-    assert len(calls) == 4
+    assert len(calls) == 7
     assert all(
         options
         == {

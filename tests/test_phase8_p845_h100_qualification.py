@@ -37,6 +37,12 @@ MEMORY_RECOVERY_PATH = (
     / "architecture_v0_2"
     / "phase_8_p845_memory_recovery.json"
 )
+FUSED_RECOVERY_PATH = (
+    ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_8_p845_fused_reconstruction_recovery.json"
+)
 
 
 def _plan() -> dict[str, object]:
@@ -95,6 +101,31 @@ def test_p845_memory_recovery_records_real_failure_and_compact_scope():
         "broadcast_zero"
     )
     assert record["authorization"]["nonhomogeneous_neumann"] is False
+    superseded_by_fused_recovery = {
+        "pssolver/runtime/static_lifting.py",
+    }
+    for relative, expected in record["source_sha256"].items():
+        if relative in superseded_by_fused_recovery:
+            continue
+        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == (
+            expected
+        )
+
+
+def test_p845_fused_reconstruction_recovery_records_measured_failure_and_scope():
+    record = json.loads(FUSED_RECOVERY_PATH.read_text(encoding="utf-8"))
+    assert record["classification"] == (
+        "READY_P8_4_5_FUSED_RECONSTRUCTION_MEMORY_RECOVERY"
+    )
+    assert record["failed_job"]["job_id"] == 10843753
+    assert record["failed_job"]["scientific_gates_passed"] is True
+    assert record["failed_job"]["memory_gate_passed"] is False
+    assert record["recovery"]["persistent_physical_workspace_bytes"] == 0
+    assert record["recovery"]["physical_q_hot_path"] == (
+        "fused_pointwise_reconstruction"
+    )
+    assert record["frozen_contract"]["thresholds_relaxed"] is False
+    assert record["authorization"]["nonhomogeneous_neumann"] is False
     for relative, expected in record["source_sha256"].items():
         assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == (
             expected
@@ -131,6 +162,7 @@ def test_profile_helper_uses_real_runtime_and_counts_only_timesteps(
         assert report["lifting_storage"]["operator"]["layout"] == (
             "wall_normal_profile_broadcast"
         )
+        assert report["lifting_storage"]["physical_workspace_bytes"] == 0
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
