@@ -205,6 +205,8 @@ SOURCE_ORDER = (
     "phase_8_p850_finite_anchoring_plan.json",
     "phase_8_p851_robin_declarations.md",
     "phase_8_p851_robin_declarations.json",
+    "phase_8_p852_robin_eigenbasis_operator.md",
+    "phase_8_p852_robin_eigenbasis_operator.json",
 )
 
 PAGE_WIDTH = 595.276

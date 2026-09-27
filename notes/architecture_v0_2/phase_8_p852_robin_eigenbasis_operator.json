@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "phase": "P8.5.2",
+  "status": "P8_5_2_COMPLETE_P8_5_3_NOT_IMPLEMENTED",
+  "classification": "PASS_P8_5_2_CELL_CENTERED_ROBIN_EIGENBASIS_CPU_ORACLE",
+  "baseline_commit": "d98fcf286979ae47c36388beac84b9e68f97b121",
+  "implementation_commit": "d75d4db2195e5512f9034427190f68f9ac7929de",
+  "decision": {
+    "adr": "notes/architecture_v0_2/adr/0012-cell-centered-robin-eigenbasis.md",
+    "selected": "cell_centered_robin_eigenbasis",
+    "chebyshev_tau_selected": false,
+    "public_boundary_law_remains_method_independent": true,
+    "grid_placement": "cell_centered",
+    "periodic_axes": "unchanged_fourier",
+    "bounded_transform_complexity": "dense_O_N_squared",
+    "replaceable_operator_backend": true
+  },
+  "qualified_scope": {
+    "geometry_axis": "one_bounded_plane_axis",
+    "coefficient_representation": "static_finite_real_constant",
+    "alpha_constraint": "alpha>=0_on_both_faces",
+    "beta_constraint": "beta>0_on_both_faces",
+    "gamma": "static_finite_real_with_affine_lift",
+    "dtype": "torch.float64",
+    "device": "cpu",
+    "lower_upper_may_differ": true,
+    "pure_homogeneous_neumann": true,
+    "prescribed_nonzero_neumann_flux": false
+  },
+  "mathematical_contract": {
+    "canonical_law": "alpha*phi+beta*(n_dot_grad_phi)=gamma",
+    "lower_normal": "-z_hat",
+    "upper_normal": "+z_hat",
+    "homogeneous_mode": "cos(k*z)+(h_lower/k)*sin(k*z)",
+    "dimensionless_characteristic": "(a*b-x^2)*sin(x)+x*(a+b)*cos(x)=0",
+    "root_solver": "deterministic_bracketed_bisection",
+    "root_solve_location": "plan_construction_only",
+    "nonhomogeneous_treatment": "affine_lift",
+    "helmholtz_operator": "mass-d2_dz2",
+    "pure_neumann_zero_mass": "reject_unresolved_constant_null_mode"
+  },
+  "cpu_oracle": {
+    "manufactured_sizes": [8, 16, 32],
+    "relative_solution_errors": [
+      0.0003113397128132618,
+      0.00007960597550283833,
+      0.000020200222680378565
+    ],
+    "minimum_observed_order": 1.9,
+    "interior_relative_residual_max": 2e-12,
+    "lower_wall_absolute_residual_max": 2e-13,
+    "upper_wall_absolute_residual_max": 2e-12,
+    "pure_neumann_cosine_limit": "pass_near_float64_roundoff",
+    "pure_neumann_null_mode_rejection": "pass",
+    "strong_dirichlet_limit": {
+      "finite_impedances": [10.0, 100.0, 1000.0],
+      "relative_errors": [
+        0.14735885309434435,
+        0.015954247409521047,
+        0.0016085260115998293
+      ],
+      "monotone_approach": true
+    },
+    "raw_scaling_preserves_normalized_spectrum": true,
+    "raw_scaling_preserves_distinct_provenance": true,
+    "condition_number_fail_closed_limit": 10000000000.0
+  },
+  "construction_and_memory": {
+    "construction_only": [
+      "root_solve",
+      "basis_materialization",
+      "basis_inverse",
+      "conditioning_check",
+      "affine_lift_solve"
+    ],
+    "timestep_root_solve": false,
+    "timestep_matrix_factorization": false,
+    "stored_dense_matrices": 2,
+    "two_matrix_float64_bytes_N80": 102400,
+    "two_matrix_float64_bytes_N160": 409600,
+    "batched_gpu_feasible": true,
+    "gpu_implemented": false
+  },
+  "source_sha256": {
+    "pssolver/planning/robin.py": "3a185f34eeb976aaa5fa3544a42e3fc520ec535c28dfe7a7afdc401e9d2f36ed",
+    "pssolver/operators/robin.py": "5923ac6b669f4f14b4973cff151f236b355a06f6209023dd86f97a71401f0f24",
+    "pssolver/planning/__init__.py": "a2f539d6633e8c0ca933e399782cb3097fa6d799e3ba3ad3ebe60d52bbdd2d74",
+    "pssolver/operators/__init__.py": "44b00f9d077dfc67d4218353070a8a242eda1340da2b68e0d34357eec3f0b401",
+    "notes/architecture_v0_2/adr/0012-cell-centered-robin-eigenbasis.md": "d253509b4e77876666ad90010c4fa523aaa9be3393a690c6c084b523fa5ead19",
+    "tests/test_phase8_p852_robin_eigenbasis_operator.py": "bab7977d7083eb19fbcb0e0f1c4516779868e2157c8c6852d423a9fd1e6db328"
+  },
+  "local_verification": {
+    "targeted": "32 passed",
+    "full": "2347 passed, 8 subtests passed",
+    "git_diff_check": "pass",
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected": 0
+  },
+  "runtime_connected": false,
+  "finite_q_anchoring_implemented": false,
+  "new_executable_public_combinations": [],
+  "h100_used": false,
+  "production_default_changed": false,
+  "archive_pdf_regenerated": false,
+  "authorization": {
+    "p8_5_2_complete": true,
+    "eligible_for_p8_5_3": true,
+    "p8_5_3_implemented": false,
+    "finite_q_specialization_authorized": false,
+    "h100_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false
+  }
+}
