@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "phase": "P8.5.5",
+  "status": "P8_5_5_COMPLETE_P8_5_6_NOT_IMPLEMENTED",
+  "classification": "PASS_P8_5_5_FINITE_Q_WORKFLOW_RESTART_CPU_CLOSURE",
+  "baseline_commit": "46ddffa18ce345c1c4902b3505979139ea64cc50",
+  "implementation_commit": "8dadb2e3c73f8a0d9af86f6911179be78cb112e5",
+  "runtime": {
+    "kind": "plane_finite_q_anchoring_relaxation_pilot",
+    "component_order": ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"],
+    "component_runtime": "PlaneRobinScalarRuntime",
+    "evolved_representation": "homogeneous_remainder",
+    "synchronized_representation": "bounded_robin_modal_coefficients",
+    "physical_observation": "five_component_q_reconstructed_on_demand",
+    "reference_evolution": "implicit_wall_normal_elastic_relaxation",
+    "equation": "(I-dt*K_Q*d_z^2)Q_next=Q_current",
+    "complete_beris_edwards_timestep": false,
+    "stokes_connected": false,
+    "periodic_fourier_execution_connected": false,
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "component_clocks_must_agree": true,
+    "all_candidates_validated_before_replacement": true
+  },
+  "checkpoint": {
+    "format_version": 1,
+    "aggregate_pre_mutation_validation": true,
+    "component_pre_mutation_validation": true,
+    "stores_homogeneous_remainder": true,
+    "stores_bounded_modal_coefficients": true,
+    "stores_physical_q": false,
+    "identity_fields": [
+      "finite_q_lowering_plan",
+      "source_simulation",
+      "quadratic_surface_law",
+      "q_convention",
+      "lower_and_upper_target_q",
+      "wall_strengths",
+      "k_q",
+      "outward_normal_convention",
+      "raw_robin_coefficients",
+      "bounded_axis_operator_kind",
+      "bounded_axis_plan",
+      "materialized_operator",
+      "operator_cache_key",
+      "geometry_shape_and_lengths",
+      "component_order",
+      "dtype_and_device",
+      "runtime_and_backend",
+      "reference_evolution_and_dt",
+      "progress_and_representation_ledgers"
+    ],
+    "continuous_split_byte_identity": true,
+    "rejected_restore_leaves_target_unchanged": true
+  },
+  "workflow": {
+    "schema_version": 1,
+    "saved_q": "physical_five_component_q",
+    "checkpoint_payload": "remainder_and_bounded_modal",
+    "pickle_allowed": false,
+    "atomic_checkpoint_directory": true,
+    "atomic_json_and_npy": true,
+    "existing_output_overwritten": false,
+    "complete_written_only_after_success": true,
+    "file_record_fields": [
+      "path",
+      "size_bytes",
+      "sha256",
+      "shape",
+      "dtype"
+    ]
+  },
+  "negative_gates": {
+    "raw_coefficient_identity": "pass",
+    "face_orientation_and_normal_convention": "pass",
+    "target_q": "pass",
+    "q_convention": "pass",
+    "surface_law": "pass",
+    "operator_kind": "pass",
+    "eigenbasis_plan": "pass",
+    "geometry": "pass",
+    "dtype": "pass",
+    "runtime": "pass",
+    "backend": "pass",
+    "tensor_payload": "pass",
+    "file_checksum": "pass",
+    "file_shape_record": "pass"
+  },
+  "limits_and_controls": {
+    "w_zero_homogeneous_neumann_executes": true,
+    "w_zero_target_provenance_preserved": true,
+    "p8_5_2_manufactured_and_limiting_oracles_unchanged": true,
+    "p8_4_4_strong_dirichlet_workflow_restart_unchanged": true
+  },
+  "installed_package": {
+    "wheel_built_from_copied_source": true,
+    "runtime_module_present": true,
+    "workflow_module_present": true,
+    "imported_outside_source_checkout": true
+  },
+  "architecture": {
+    "top_level_public_api_changed": false,
+    "public_compile_simulation_connected": false,
+    "public_run_simulation_connected": false,
+    "production_lowering_accepts_robin_q": false,
+    "production_runtime_selector_connected": false,
+    "new_public_executable_combinations": [],
+    "production_default_changed": false
+  },
+  "source_sha256": {
+    "pssolver/runtime/__init__.py": "e60af0f7cfe74bf167095cd3467e588d55aed75d8857e93eddc5c0a670536cda",
+    "pssolver/runtime/robin_scalar.py": "88fdd6a9c0b1503c1b2e23791b34fc769b066f9972560cef8ae21ec7a1fcbb7e",
+    "pssolver/runtime/finite_q_anchoring.py": "2ccbb9bc26c9db4eb2776b297503a361bcd81099254ce21a33619ca31d1c4f53",
+    "pssolver/workflows/__init__.py": "2bbb7f50babf03493afaa6b16a2aac2798776dc19e016310bd554d4db8023f54",
+    "pssolver/workflows/finite_q_anchoring.py": "1ccd98eee816500bdd5bf62a0a8615d276b00804874f23935542e1001468ad6c",
+    "tests/test_phase8_p855_finite_q_workflow_restart.py": "9d983c2a2321f208c0db6f4187e018de545593021baf42f8881e1fe87fbd962c"
+  },
+  "local_verification": {
+    "new_module_before_record": "19 passed, 1 deselected",
+    "p8_4_p8_5_regression_before_record": "82 passed, 1 deselected",
+    "full_before_record": "2392 passed, 1 deselected, 8 subtests passed",
+    "full_after_record": "2393 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "pre_record_deselection_reason": "record_not_yet_created"
+  },
+  "complete_q_timestep_connected": false,
+  "h100_used": false,
+  "production_default_changed": false,
+  "archive_pdf_regenerated": false,
+  "authorization": {
+    "p8_5_5_complete": true,
+    "eligible_for_p8_5_6": true,
+    "p8_5_6_implemented": false,
+    "h100_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false
+  }
+}
