@@ -49,6 +49,12 @@ CORRECTED_PLAN_PATH = (
     / "architecture_v0_2"
     / "phase_8_p845_corrected_closure_plan.json"
 )
+QUALIFICATION_PATH = (
+    ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_8_p845_h100_qualification.json"
+)
 
 
 def _plan() -> dict[str, object]:
@@ -163,6 +169,40 @@ def test_p845_corrected_plan_separates_live_memory_and_roundoff_contracts():
     assert contract["cross_version_minimum_steps"] == 20
     assert plan["authorization"]["nonhomogeneous_neumann"] is False
     assert plan["authorization"]["p8_5"] is False
+
+
+def test_p845_final_h100_record_closes_only_the_qualified_scope():
+    record = json.loads(QUALIFICATION_PATH.read_text(encoding="utf-8"))
+    assert record["classification"] == (
+        "PASS_P8_4_5_PLANE_STATIC_LIFTING_H100_CLOSURE"
+    )
+    assert record["qualification_complete"] is True
+    assert record["h100_job"] == {
+        "archive_checksum_entries_passed": 2739,
+        "archive_manifest_sha256": (
+            "11212eddf626a9adf07cba743cfd49429df5dac43adb787b655679cb2a8dafdf"
+        ),
+        "elapsed": "00:06:03",
+        "exit_code": "0:0",
+        "job_id": 10843953,
+        "node": "gpu-h100-4-0",
+        "state": "COMPLETED",
+    }
+    assert record["qualification"]["restart_byte_identity_passed"] is True
+    assert record["cross_version_equivalence"][
+        "all_fields_within_tolerance"
+    ] is True
+    assert record["memory_and_performance"]["reserved_memory_role"] == (
+        "diagnostic_only"
+    )
+    assert record["authorization"] == {
+        "compiled_runtime_promotion": False,
+        "nonhomogeneous_neumann": False,
+        "p8_5_implementation": False,
+        "p8_5_planning": True,
+        "phase_9": False,
+        "production_default_change": False,
+    }
 
 
 @pytest.mark.parametrize(

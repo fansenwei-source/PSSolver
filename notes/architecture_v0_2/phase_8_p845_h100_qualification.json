@@ -1,0 +1,68 @@
+{
+  "authorization": {
+    "compiled_runtime_promotion": false,
+    "nonhomogeneous_neumann": false,
+    "p8_5_implementation": false,
+    "p8_5_planning": true,
+    "phase_9": false,
+    "production_default_change": false
+  },
+  "candidate_commit": "6a9e4e0cb9b1fdd4f0255ca71aeedfb168748bc2",
+  "classification": "PASS_P8_4_5_PLANE_STATIC_LIFTING_H100_CLOSURE",
+  "cross_version_equivalence": {
+    "all_fields_within_tolerance": true,
+    "field_linf_tolerance": 1e-12,
+    "field_relative_l2_tolerance": 1e-12,
+    "initial_q_identical": true,
+    "maximum_field_linf": 2.220446049250313e-16,
+    "maximum_field_relative_l2": 6.650683458073026e-15,
+    "pointwise_execution": "compile",
+    "reference_commit": "046ad5b12b31ea627f8f87fe4286ba6dae22393e",
+    "shape": [128, 128, 32],
+    "steps": 20
+  },
+  "h100_job": {
+    "archive_checksum_entries_passed": 2739,
+    "archive_manifest_sha256": "11212eddf626a9adf07cba743cfd49429df5dac43adb787b655679cb2a8dafdf",
+    "elapsed": "00:06:03",
+    "exit_code": "0:0",
+    "job_id": 10843953,
+    "node": "gpu-h100-4-0",
+    "state": "COMPLETED"
+  },
+  "memory_and_performance": {
+    "r128": {
+      "maximum_peak_active_ratio": 1.0495574285,
+      "maximum_peak_allocated_ratio": 1.0495574285,
+      "maximum_peak_reserved_ratio_diagnostic": 1.2972972973,
+      "mean_timestep_ratio": 1.0186896994,
+      "median_timestep_ratio": 1.0107321865
+    },
+    "r320": {
+      "maximum_peak_active_ratio": 1.0529987104,
+      "maximum_peak_allocated_ratio": 1.0529987104,
+      "maximum_peak_reserved_ratio_diagnostic": 0.9990906335,
+      "mean_timestep_ratio": 0.9888881647,
+      "median_timestep_ratio": 0.9893546372
+    },
+    "reserved_memory_role": "diagnostic_only"
+  },
+  "phase": "P8.4.5",
+  "qualification": {
+    "cross_version_numerical_equivalence": true,
+    "graph_breaks": 0,
+    "manufactured_minimum_rate": 1.9986095691686334,
+    "persistent_physical_workspace_bytes": 0,
+    "profile_report_count": 12,
+    "qualification_complete": true,
+    "restart_byte_identity_passed": true,
+    "transform_calls_per_step": {
+      "forward": 7.0,
+      "inverse": 32.0
+    },
+    "wall_residual_linf": 0.0
+  },
+  "qualification_complete": true,
+  "result_directory": "/home/fansenwei/pssolver_phase8_p845_corrected_final_h100_6a9e4e0_20260927_v1",
+  "schema_version": 1
+}
