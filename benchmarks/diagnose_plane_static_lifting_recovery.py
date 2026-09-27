@@ -332,6 +332,159 @@ def compare_states(
     }
 
 
+def _json_object(path: Path) -> dict[str, object]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise TypeError(f"JSON root must be an object: {path}")
+    return value
+
+
+def adjudicate_equivalence(
+    *,
+    reference_capture_path: Path,
+    actual_capture_path: Path,
+    comparison_path: Path,
+    expected_reference_commit: str,
+    expected_actual_commit: str,
+    expected_reference_package_root: Path,
+    expected_actual_package_root: Path,
+    minimum_steps: int,
+    relative_l2_tolerance: float,
+    linf_tolerance: float,
+) -> dict[str, object]:
+    """Bind captures to one preregistered cross-version numerical gate."""
+
+    if minimum_steps <= 0:
+        raise ValueError("minimum_steps must be positive")
+    if relative_l2_tolerance < 0.0 or linf_tolerance < 0.0:
+        raise ValueError("equivalence tolerances must be nonnegative")
+    reference = _json_object(reference_capture_path)
+    actual = _json_object(actual_capture_path)
+    comparison = _json_object(comparison_path)
+    if reference.get("kind") != "plane_static_lifting_state_capture":
+        raise ValueError("reference capture kind is invalid")
+    if actual.get("kind") != "plane_static_lifting_state_capture":
+        raise ValueError("actual capture kind is invalid")
+    if comparison.get("kind") != "plane_static_lifting_state_comparison":
+        raise ValueError("comparison kind is invalid")
+    reference_config = reference.get("config")
+    actual_config = actual.get("config")
+    if not isinstance(reference_config, Mapping) or not isinstance(
+        actual_config, Mapping
+    ):
+        raise TypeError("capture config is missing")
+    if dict(reference_config) != dict(actual_config):
+        raise ValueError("capture configurations differ")
+    if reference_config.get("variant") != "strong_planar_lifting":
+        raise ValueError("cross-version capture must use strong planar lifting")
+    if reference_config.get("pointwise_execution") != "compile":
+        raise ValueError("cross-version capture must use compiled pointwise execution")
+    steps = int(reference_config.get("steps", -1))
+    if steps < minimum_steps:
+        raise ValueError("cross-version capture is shorter than the frozen minimum")
+    for capture, commit, package_root, label in (
+        (
+            reference,
+            expected_reference_commit,
+            expected_reference_package_root,
+            "reference",
+        ),
+        (actual, expected_actual_commit, expected_actual_package_root, "actual"),
+    ):
+        git = capture.get("git")
+        if not isinstance(git, Mapping) or git.get("head") != commit:
+            raise ValueError(f"{label} Git identity mismatch")
+        if git.get("dirty") is not False:
+            raise ValueError(f"{label} Git worktree is dirty")
+        imported = Path(str(capture.get("pssolver_import"))).resolve()
+        if not imported.is_relative_to(package_root.resolve()):
+            raise ValueError(f"{label} package import mismatch")
+        if capture.get("finite") is not True:
+            raise ValueError(f"{label} capture is non-finite")
+        runtime = capture.get("runtime_identity")
+        if not isinstance(runtime, Mapping):
+            raise TypeError(f"{label} runtime identity is missing")
+        if runtime.get("requested") != runtime.get("effective"):
+            raise ValueError(f"{label} runtime selection changed")
+        if runtime.get("fallback_used") is not False:
+            raise ValueError(f"{label} runtime fallback was used")
+    initial_q_identical = (
+        reference.get("initial_q_sha256") == actual.get("initial_q_sha256")
+    )
+    if not initial_q_identical:
+        raise ValueError("cross-version initial Q differs")
+    reference_arrays = reference.get("arrays")
+    actual_arrays = actual.get("arrays")
+    comparison_reference = comparison.get("reference")
+    comparison_actual = comparison.get("actual")
+    if not all(
+        isinstance(value, Mapping)
+        for value in (
+            reference_arrays,
+            actual_arrays,
+            comparison_reference,
+            comparison_actual,
+        )
+    ):
+        raise TypeError("array identity metadata is missing")
+    if reference_arrays.get("sha256") != comparison_reference.get("sha256"):
+        raise ValueError("reference array identity mismatch")
+    if actual_arrays.get("sha256") != comparison_actual.get("sha256"):
+        raise ValueError("actual array identity mismatch")
+    fields = comparison.get("fields")
+    if not isinstance(fields, Mapping) or not fields:
+        raise TypeError("comparison fields are missing")
+    maximum_relative_l2 = 0.0
+    maximum_linf = 0.0
+    all_fields_within_tolerance = True
+    field_gates: dict[str, dict[str, object]] = {}
+    for name, raw in sorted(fields.items()):
+        if not isinstance(raw, Mapping):
+            raise TypeError(f"comparison field is invalid: {name}")
+        relative_l2_raw = raw.get("relative_l2")
+        if relative_l2_raw is None:
+            relative_l2 = math.inf
+        else:
+            relative_l2 = float(relative_l2_raw)
+        linf = float(raw["linf"])
+        if not math.isfinite(relative_l2) or not math.isfinite(linf):
+            passed = False
+        else:
+            passed = (
+                relative_l2 <= relative_l2_tolerance
+                and linf <= linf_tolerance
+            )
+        maximum_relative_l2 = max(maximum_relative_l2, relative_l2)
+        maximum_linf = max(maximum_linf, linf)
+        all_fields_within_tolerance &= passed
+        field_gates[str(name)] = {
+            "relative_l2": relative_l2_raw,
+            "linf": linf,
+            "maximum_ulp": int(raw["maximum_ulp"]),
+            "mismatch_count": int(raw["mismatch_count"]),
+            "within_tolerance": passed,
+        }
+    return {
+        "schema_version": DIAGNOSTIC_SCHEMA_VERSION,
+        "phase": "P8.4.5",
+        "kind": "plane_static_lifting_cross_version_equivalence",
+        "reference_commit": expected_reference_commit,
+        "actual_commit": expected_actual_commit,
+        "shape": list(reference_config["shape"]),
+        "steps": steps,
+        "pointwise_execution": reference_config["pointwise_execution"],
+        "initial_q_identical": initial_q_identical,
+        "finite": reference.get("finite") is True and actual.get("finite") is True,
+        "relative_l2_tolerance": relative_l2_tolerance,
+        "linf_tolerance": linf_tolerance,
+        "maximum_field_relative_l2": maximum_relative_l2,
+        "maximum_field_linf": maximum_linf,
+        "all_fields_within_tolerance": all_fields_within_tolerance,
+        "same_runtime_restart_byte_identity_required_separately": True,
+        "fields": field_gates,
+    }
+
+
 def _memory_snapshot(device: torch.device) -> dict[str, int]:
     stats = torch.cuda.memory_stats(device)
     return {key: int(stats.get(key, 0)) for key in _MEMORY_STAT_KEYS}
@@ -449,6 +602,23 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     compare.add_argument("--actual", type=Path, required=True)
     compare.add_argument("--output", type=Path, required=True)
 
+    adjudicate = subparsers.add_parser("adjudicate-equivalence")
+    adjudicate.add_argument("--reference-capture", type=Path, required=True)
+    adjudicate.add_argument("--actual-capture", type=Path, required=True)
+    adjudicate.add_argument("--comparison", type=Path, required=True)
+    adjudicate.add_argument("--expected-reference-commit", required=True)
+    adjudicate.add_argument("--expected-actual-commit", required=True)
+    adjudicate.add_argument(
+        "--expected-reference-package-root", type=Path, required=True
+    )
+    adjudicate.add_argument(
+        "--expected-actual-package-root", type=Path, required=True
+    )
+    adjudicate.add_argument("--minimum-steps", type=int, required=True)
+    adjudicate.add_argument("--relative-l2-tolerance", type=float, required=True)
+    adjudicate.add_argument("--linf-tolerance", type=float, required=True)
+    adjudicate.add_argument("--output", type=Path, required=True)
+
     memory = subparsers.add_parser("diagnose-memory")
     memory.add_argument("--variant", choices=PROFILE_VARIANTS, required=True)
     memory.add_argument("--shape", type=_shape, required=True)
@@ -479,6 +649,19 @@ def main(argv: list[str] | None = None) -> int:
         result = compare_states(
             reference_path=args.reference,
             actual_path=args.actual,
+        )
+    elif args.command == "adjudicate-equivalence":
+        result = adjudicate_equivalence(
+            reference_capture_path=args.reference_capture,
+            actual_capture_path=args.actual_capture,
+            comparison_path=args.comparison,
+            expected_reference_commit=args.expected_reference_commit,
+            expected_actual_commit=args.expected_actual_commit,
+            expected_reference_package_root=args.expected_reference_package_root,
+            expected_actual_package_root=args.expected_actual_package_root,
+            minimum_steps=args.minimum_steps,
+            relative_l2_tolerance=args.relative_l2_tolerance,
+            linf_tolerance=args.linf_tolerance,
         )
     else:
         result = diagnose_memory(

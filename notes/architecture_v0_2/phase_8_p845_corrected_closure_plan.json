@@ -1,0 +1,79 @@
+{
+  "authorization": {
+    "compiled_runtime_promotion": false,
+    "nonhomogeneous_neumann": false,
+    "p8_4_5_corrected_closure_submission": true,
+    "p8_5": false,
+    "phase_9": false,
+    "production_default_change": false
+  },
+  "classification": "READY_P8_4_5_CORRECTED_CONTRACT_CLOSURE",
+  "diagnostic_basis": {
+    "allocator_attribution_r128": "excess_reserved_without_live_allocation_growth",
+    "analysis_job_id": 10843883,
+    "analysis_manifest_sha256": "a393da88a810d3699a111762cd985954a8a103b8af0ab74b48471c096bb5ffbb",
+    "compile_maximum_field_linf": 4.336808689942018e-19,
+    "compile_maximum_field_relative_l2": 4.963388905214048e-16,
+    "eager_parent_candidate_byte_identical": true,
+    "q_components_compile_byte_identical": true,
+    "r128_active_peak_delta_bytes": 21106688,
+    "r128_reserved_peak_delta_bytes": 138412032
+  },
+  "evidence_commands": {
+    "analyzer": "benchmarks/analyze_plane_static_lifting_qualification.py",
+    "cross_version_diagnostic": "benchmarks/diagnose_plane_static_lifting_recovery.py",
+    "helper": "benchmarks/qualify_plane_static_lifting.py",
+    "manufactured": 1,
+    "profiles": 12,
+    "restart": 1
+  },
+  "phase": "P8.4.5",
+  "qualification_contract": {
+    "cross_version_field_linf_max": 1e-12,
+    "cross_version_field_relative_l2_max": 1e-12,
+    "cross_version_minimum_steps": 20,
+    "cross_version_reference_commit": "046ad5b12b31ea627f8f87fe4286ba6dae22393e",
+    "cross_version_report_count": 1,
+    "cross_version_shape": [128, 128, 32],
+    "forward_transforms_per_step": 7.0,
+    "inverse_transforms_per_step": 32.0,
+    "lifting_control_peak_active_ratio_max": 1.1,
+    "lifting_control_peak_allocated_ratio_max": 1.1,
+    "lifting_control_timestep_ratio_max": 1.15,
+    "manufactured_minimum_rate": 1.95,
+    "profile_report_count": 12,
+    "profile_shapes": [
+      [128, 128, 32],
+      [320, 320, 80]
+    ],
+    "profile_trials": 3,
+    "reserved_memory_role": "diagnostic_only",
+    "restart_final_steps": 20,
+    "restart_segment_steps": 10,
+    "restart_shape": [128, 128, 32],
+    "wall_residual_linf_max": 1e-12
+  },
+  "qualification_scope": {
+    "boundary": "static strong planar Q Dirichlet on both Plane z faces",
+    "control": "homogeneous Neumann Q with otherwise identical Plane numerics",
+    "dtype": "float64",
+    "geometry": "plane_slab",
+    "model": "complete_stress_beris_edwards",
+    "runtime": "legacy_production"
+  },
+  "required_gates": [
+    "clean installed-package import identity",
+    "three balanced control/lifting profile pairs per frozen grid",
+    "finite physical fields and zero runtime fallback",
+    "wall residual at or below the frozen tolerance",
+    "second-order independent manufactured convergence",
+    "unchanged per-step transform counts",
+    "zero pointwise graph breaks",
+    "bounded timestep, peak allocated memory, and peak active memory",
+    "reserved memory recorded as allocator diagnostic rather than a hard gate",
+    "byte-identical continuous versus restored same-runtime physical state",
+    "cross-version compiled trajectory within per-field L2 and Linf tolerances",
+    "Slurm, Git, environment, SHA-256, and final COMPLETE provenance"
+  ],
+  "schema_version": 2
+}

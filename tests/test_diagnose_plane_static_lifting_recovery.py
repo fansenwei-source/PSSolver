@@ -177,3 +177,157 @@ def test_cli_comparison_writes_one_json_without_overwrite(tmp_path: Path) -> Non
                 str(output),
             ]
         )
+
+
+def _write_json(path: Path, value: object) -> Path:
+    path.write_text(json.dumps(value), encoding="utf-8")
+    return path
+
+
+def _capture_record(
+    *,
+    commit: str,
+    package_root: Path,
+    array_sha256: str,
+) -> dict[str, object]:
+    return {
+        "kind": "plane_static_lifting_state_capture",
+        "config": {
+            "variant": "strong_planar_lifting",
+            "shape": [8, 8, 6],
+            "lengths": [100.0, 100.0, 20.0],
+            "device": "cuda",
+            "steps": 20,
+            "seed": 20260926,
+            "pointwise_execution": "compile",
+        },
+        "git": {"head": commit, "dirty": False},
+        "pssolver_import": str(package_root / "pssolver" / "__init__.py"),
+        "runtime_identity": {
+            "requested": "legacy_production",
+            "effective": "legacy_production",
+            "fallback_used": False,
+        },
+        "initial_q_sha256": "a" * 64,
+        "finite": True,
+        "arrays": {"sha256": array_sha256},
+    }
+
+
+def test_equivalence_adjudicator_binds_provenance_and_tolerances(
+    tmp_path: Path,
+) -> None:
+    reference_root = tmp_path / "reference-package"
+    actual_root = tmp_path / "actual-package"
+    reference = _write_json(
+        tmp_path / "reference.json",
+        _capture_record(
+            commit="reference",
+            package_root=reference_root,
+            array_sha256="b" * 64,
+        ),
+    )
+    actual = _write_json(
+        tmp_path / "actual.json",
+        _capture_record(
+            commit="actual",
+            package_root=actual_root,
+            array_sha256="c" * 64,
+        ),
+    )
+    comparison = _write_json(
+        tmp_path / "comparison.json",
+        {
+            "kind": "plane_static_lifting_state_comparison",
+            "reference": {"sha256": "b" * 64},
+            "actual": {"sha256": "c" * 64},
+            "fields": {
+                "internal__Qxx": {
+                    "relative_l2": 5e-16,
+                    "linf": 4e-19,
+                    "maximum_ulp": 8,
+                    "mismatch_count": 2,
+                },
+                "physical__Qxx": {
+                    "relative_l2": 0.0,
+                    "linf": 0.0,
+                    "maximum_ulp": 0,
+                    "mismatch_count": 0,
+                },
+            },
+        },
+    )
+
+    result = diagnostic.adjudicate_equivalence(
+        reference_capture_path=reference,
+        actual_capture_path=actual,
+        comparison_path=comparison,
+        expected_reference_commit="reference",
+        expected_actual_commit="actual",
+        expected_reference_package_root=reference_root,
+        expected_actual_package_root=actual_root,
+        minimum_steps=20,
+        relative_l2_tolerance=1e-12,
+        linf_tolerance=1e-12,
+    )
+
+    assert result["all_fields_within_tolerance"] is True
+    assert result["maximum_field_relative_l2"] == 5e-16
+    assert result["maximum_field_linf"] == 4e-19
+    assert result["same_runtime_restart_byte_identity_required_separately"] is True
+
+
+def test_equivalence_adjudicator_rejects_tolerance_and_identity_failures(
+    tmp_path: Path,
+) -> None:
+    reference_root = tmp_path / "reference-package"
+    actual_root = tmp_path / "actual-package"
+    reference_record = _capture_record(
+        commit="reference",
+        package_root=reference_root,
+        array_sha256="b" * 64,
+    )
+    actual_record = _capture_record(
+        commit="actual",
+        package_root=actual_root,
+        array_sha256="c" * 64,
+    )
+    reference = _write_json(tmp_path / "reference.json", reference_record)
+    actual = _write_json(tmp_path / "actual.json", actual_record)
+    comparison = _write_json(
+        tmp_path / "comparison.json",
+        {
+            "kind": "plane_static_lifting_state_comparison",
+            "reference": {"sha256": "b" * 64},
+            "actual": {"sha256": "c" * 64},
+            "fields": {
+                "internal__ux": {
+                    "relative_l2": 2e-12,
+                    "linf": 2e-13,
+                    "maximum_ulp": 10,
+                    "mismatch_count": 1,
+                }
+            },
+        },
+    )
+    kwargs = {
+        "reference_capture_path": reference,
+        "actual_capture_path": actual,
+        "comparison_path": comparison,
+        "expected_reference_commit": "reference",
+        "expected_actual_commit": "actual",
+        "expected_reference_package_root": reference_root,
+        "expected_actual_package_root": actual_root,
+        "minimum_steps": 20,
+        "relative_l2_tolerance": 1e-12,
+        "linf_tolerance": 1e-12,
+    }
+
+    result = diagnostic.adjudicate_equivalence(**kwargs)
+    assert result["all_fields_within_tolerance"] is False
+
+    actual_record["initial_q_sha256"] = "d" * 64
+    _write_json(tmp_path / "actual-mismatch.json", actual_record)
+    kwargs["actual_capture_path"] = tmp_path / "actual-mismatch.json"
+    with pytest.raises(ValueError, match="initial Q"):
+        diagnostic.adjudicate_equivalence(**kwargs)

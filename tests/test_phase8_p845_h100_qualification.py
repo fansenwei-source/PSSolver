@@ -43,10 +43,20 @@ FUSED_RECOVERY_PATH = (
     / "architecture_v0_2"
     / "phase_8_p845_fused_reconstruction_recovery.json"
 )
+CORRECTED_PLAN_PATH = (
+    ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_8_p845_corrected_closure_plan.json"
+)
 
 
 def _plan() -> dict[str, object]:
     return json.loads(PLAN_PATH.read_text(encoding="utf-8"))
+
+
+def _corrected_plan() -> dict[str, object]:
+    return json.loads(CORRECTED_PLAN_PATH.read_text(encoding="utf-8"))
 
 
 def test_p845_plan_freezes_narrow_scope_and_keeps_neumann_deferred():
@@ -102,6 +112,7 @@ def test_p845_memory_recovery_records_real_failure_and_compact_scope():
     )
     assert record["authorization"]["nonhomogeneous_neumann"] is False
     superseded_by_fused_recovery = {
+        "benchmarks/qualify_plane_static_lifting.py",
         "pssolver/runtime/static_lifting.py",
     }
     for relative, expected in record["source_sha256"].items():
@@ -126,10 +137,32 @@ def test_p845_fused_reconstruction_recovery_records_measured_failure_and_scope()
     )
     assert record["frozen_contract"]["thresholds_relaxed"] is False
     assert record["authorization"]["nonhomogeneous_neumann"] is False
+    superseded_by_corrected_contract = {
+        "tests/test_phase8_p845_h100_qualification.py",
+    }
     for relative, expected in record["source_sha256"].items():
+        if relative in superseded_by_corrected_contract:
+            continue
         assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == (
             expected
         )
+
+
+def test_p845_corrected_plan_separates_live_memory_and_roundoff_contracts():
+    plan = _corrected_plan()
+    assert plan["classification"] == (
+        "READY_P8_4_5_CORRECTED_CONTRACT_CLOSURE"
+    )
+    contract = plan["qualification_contract"]
+    assert contract["lifting_control_peak_allocated_ratio_max"] == 1.1
+    assert contract["lifting_control_peak_active_ratio_max"] == 1.1
+    assert contract["reserved_memory_role"] == "diagnostic_only"
+    assert "lifting_control_peak_reserved_ratio_max" not in contract
+    assert contract["cross_version_field_relative_l2_max"] == 1e-12
+    assert contract["cross_version_field_linf_max"] == 1e-12
+    assert contract["cross_version_minimum_steps"] == 20
+    assert plan["authorization"]["nonhomogeneous_neumann"] is False
+    assert plan["authorization"]["p8_5"] is False
 
 
 @pytest.mark.parametrize(
@@ -245,6 +278,7 @@ def _synthetic_profile(
         },
         "memory": {
             "peak_allocated_bytes": 105 if lifting else 100,
+            "peak_active_bytes": 105 if lifting else 100,
             "peak_reserved_bytes": 105 if lifting else 100,
         },
         "initial_q_sha256": f"initial-{shape}-{trial}",
@@ -296,6 +330,31 @@ def _synthetic_reports() -> list[dict[str, object]]:
     return reports
 
 
+def _synthetic_cross_version_report() -> dict[str, object]:
+    contract = _corrected_plan()["qualification_contract"]
+    return {
+        "phase": "P8.4.5",
+        "kind": "plane_static_lifting_cross_version_equivalence",
+        "reference_commit": contract["cross_version_reference_commit"],
+        "actual_commit": "candidate",
+        "shape": [128, 128, 32],
+        "steps": 20,
+        "pointwise_execution": "compile",
+        "initial_q_identical": True,
+        "finite": True,
+        "maximum_field_relative_l2": 5e-16,
+        "maximum_field_linf": 5e-19,
+        "all_fields_within_tolerance": True,
+        "relative_l2_tolerance": 1e-12,
+        "linf_tolerance": 1e-12,
+        "same_runtime_restart_byte_identity_required_separately": True,
+    }
+
+
+def _corrected_reports() -> list[dict[str, object]]:
+    return [*_synthetic_reports(), _synthetic_cross_version_report()]
+
+
 def test_analyzer_accepts_complete_frozen_evidence():
     result = analyze(
         _plan(),
@@ -326,6 +385,56 @@ def test_analyzer_fails_closed_on_transform_or_restart_regression():
     with pytest.raises(RuntimeError, match="restart is not exact"):
         analyze(
             _plan(),
+            reports,
+            expected_commit="candidate",
+            expected_package_root=Path("/installed"),
+        )
+
+
+def test_corrected_analyzer_gates_live_memory_but_not_allocator_reservation():
+    reports = _corrected_reports()
+    for report in reports:
+        if report.get("kind") != "plane_static_lifting_profile":
+            continue
+        if report["config"]["variant"] == "strong_planar_lifting":
+            report["memory"]["peak_reserved_bytes"] = 200
+
+    result = analyze(
+        _corrected_plan(),
+        reports,
+        expected_commit="candidate",
+        expected_package_root=Path("/installed"),
+    )
+
+    assert result["qualification_complete"] is True
+    assert result["reserved_memory_role"] == "diagnostic_only"
+    assert all(
+        value["max_peak_reserved_ratio"] == 2.0
+        for value in result["performance"].values()
+    )
+    assert result["cross_version_numerical_equivalence"][
+        "all_fields_within_tolerance"
+    ] is True
+
+    reports = _corrected_reports()
+    reports[1]["memory"]["peak_active_bytes"] = 111
+    with pytest.raises(RuntimeError, match="active-memory"):
+        analyze(
+            _corrected_plan(),
+            reports,
+            expected_commit="candidate",
+            expected_package_root=Path("/installed"),
+        )
+
+
+def test_corrected_analyzer_fails_closed_on_cross_version_regression():
+    reports = _corrected_reports()
+    reports[-1]["maximum_field_relative_l2"] = 2e-12
+    reports[-1]["all_fields_within_tolerance"] = False
+
+    with pytest.raises(RuntimeError, match="numerical-equivalence"):
+        analyze(
+            _corrected_plan(),
             reports,
             expected_commit="candidate",
             expected_package_root=Path("/installed"),

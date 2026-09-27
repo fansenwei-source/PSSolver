@@ -347,6 +347,11 @@ def run_profile(config: LiftingProfileConfig) -> dict[str, object]:
             if device.type == "cuda"
             else 0
         )
+        memory_stats = (
+            torch.cuda.memory_stats(device) if device.type == "cuda" else {}
+        )
+        peak_active = int(memory_stats.get("active_bytes.all.peak", 0))
+        peak_requested = int(memory_stats.get("requested_bytes.all.peak", 0))
 
     runtime = adapter.to_metadata()
     if runtime["requested"] != runtime["effective"]:
@@ -385,6 +390,8 @@ def run_profile(config: LiftingProfileConfig) -> dict[str, object]:
         },
         "memory": {
             "peak_allocated_bytes": peak_allocated,
+            "peak_active_bytes": peak_active,
+            "peak_requested_bytes": peak_requested,
             "peak_reserved_bytes": peak_reserved,
         },
         "transform_calls": {

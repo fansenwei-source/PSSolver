@@ -72,6 +72,7 @@ def analyze(
     profiles = []
     manufactured = []
     restarts = []
+    cross_version = []
     for report in reports:
         _require(report.get("phase") == "P8.4.5", "report phase mismatch")
         kind = report.get("kind")
@@ -81,6 +82,8 @@ def analyze(
             manufactured.append(report)
         elif kind == "plane_static_lifting_restart":
             restarts.append(report)
+        elif kind == "plane_static_lifting_cross_version_equivalence":
+            cross_version.append(report)
         else:
             raise RuntimeError(f"unexpected report kind: {kind!r}")
 
@@ -88,6 +91,11 @@ def analyze(
     _require(len(profiles) == expected_profiles, "profile report count mismatch")
     _require(len(manufactured) == 1, "one manufactured report is required")
     _require(len(restarts) == 1, "one restart report is required")
+    expected_cross_version = int(contract.get("cross_version_report_count", 0))
+    _require(
+        len(cross_version) == expected_cross_version,
+        "cross-version report count mismatch",
+    )
 
     profile_index = {_profile_key(report): report for report in profiles}
     _require(len(profile_index) == len(profiles), "duplicate profile identity")
@@ -158,7 +166,19 @@ def analyze(
     performance: dict[str, object] = {}
     timestep_limit = float(contract["lifting_control_timestep_ratio_max"])
     allocated_limit = float(contract["lifting_control_peak_allocated_ratio_max"])
-    reserved_limit = float(contract["lifting_control_peak_reserved_ratio_max"])
+    active_limit_raw = contract.get("lifting_control_peak_active_ratio_max")
+    active_limit = None if active_limit_raw is None else float(active_limit_raw)
+    reserved_role = str(contract.get("reserved_memory_role", "hard_gate"))
+    _require(
+        reserved_role in {"hard_gate", "diagnostic_only"},
+        "reserved-memory role is invalid",
+    )
+    reserved_limit_raw = contract.get("lifting_control_peak_reserved_ratio_max")
+    if reserved_role == "hard_gate":
+        _require(reserved_limit_raw is not None, "reserved-memory limit is missing")
+        reserved_limit = float(reserved_limit_raw)
+    else:
+        reserved_limit = None
     for shape in expected_shapes:
         ratios: dict[str, list[float]] = defaultdict(list)
         for trial in range(1, expected_trials + 1):
@@ -173,7 +193,10 @@ def analyze(
                     _profile_seconds(lifting, statistic)
                     / _profile_seconds(control, statistic)
                 )
-            for memory_name in ("peak_allocated_bytes", "peak_reserved_bytes"):
+            memory_names = ["peak_allocated_bytes", "peak_reserved_bytes"]
+            if active_limit is not None:
+                memory_names.append("peak_active_bytes")
+            for memory_name in memory_names:
                 control_memory = int(control["memory"][memory_name])
                 lifting_memory = int(lifting["memory"][memory_name])
                 _require(control_memory > 0, "CUDA memory evidence is required")
@@ -182,20 +205,30 @@ def analyze(
         median_ratio = statistics.median(ratios["median"])
         allocated_ratio = max(ratios["peak_allocated_bytes"])
         reserved_ratio = max(ratios["peak_reserved_bytes"])
+        active_ratio = (
+            None
+            if active_limit is None
+            else max(ratios["peak_active_bytes"])
+        )
         _require(mean_ratio <= timestep_limit, "mean timestep non-regression failed")
         _require(
             median_ratio <= timestep_limit,
             "median timestep non-regression failed",
         )
         _require(allocated_ratio <= allocated_limit, "allocated-memory gate failed")
-        _require(reserved_ratio <= reserved_limit, "reserved-memory gate failed")
+        if active_limit is not None:
+            _require(active_ratio <= active_limit, "active-memory gate failed")
+        if reserved_role == "hard_gate":
+            _require(reserved_ratio <= reserved_limit, "reserved-memory gate failed")
         performance["x".join(str(value) for value in shape)] = {
             "paired_mean_timestep_ratios": ratios["mean"],
             "paired_median_timestep_ratios": ratios["median"],
             "mean_timestep_ratio": mean_ratio,
             "median_timestep_ratio": median_ratio,
             "max_peak_allocated_ratio": allocated_ratio,
+            "max_peak_active_ratio": active_ratio,
             "max_peak_reserved_ratio": reserved_ratio,
+            "reserved_memory_role": reserved_role,
         }
 
     manufactured_report = manufactured[0]
@@ -232,6 +265,73 @@ def analyze(
         "checkpoint representation changed",
     )
 
+    cross_version_equivalence = None
+    if expected_cross_version:
+        _require(expected_cross_version == 1, "only one cross-version report is valid")
+        cross_version_equivalence = cross_version[0]
+        _require(
+            cross_version_equivalence.get("pointwise_execution") == "compile",
+            "cross-version comparison did not exercise compiled execution",
+        )
+        _require(
+            cross_version_equivalence.get("shape")
+            == contract["cross_version_shape"],
+            "cross-version shape mismatch",
+        )
+        _require(
+            int(cross_version_equivalence.get("steps", -1))
+            >= int(contract["cross_version_minimum_steps"]),
+            "cross-version trajectory is too short",
+        )
+        _require(
+            cross_version_equivalence.get("reference_commit")
+            == contract["cross_version_reference_commit"],
+            "cross-version reference commit mismatch",
+        )
+        _require(
+            cross_version_equivalence.get("actual_commit") == expected_commit,
+            "cross-version candidate commit mismatch",
+        )
+        _require(
+            cross_version_equivalence.get("initial_q_identical") is True,
+            "cross-version initial Q differs",
+        )
+        _require(
+            cross_version_equivalence.get("finite") is True,
+            "cross-version state is non-finite",
+        )
+        _require(
+            cross_version_equivalence.get("all_fields_within_tolerance") is True,
+            "cross-version numerical-equivalence gate failed",
+        )
+        _require(
+            float(cross_version_equivalence["relative_l2_tolerance"])
+            == float(contract["cross_version_field_relative_l2_max"]),
+            "cross-version relative-L2 tolerance mismatch",
+        )
+        _require(
+            float(cross_version_equivalence["linf_tolerance"])
+            == float(contract["cross_version_field_linf_max"]),
+            "cross-version Linf tolerance mismatch",
+        )
+        _require(
+            cross_version_equivalence.get(
+                "same_runtime_restart_byte_identity_required_separately"
+            )
+            is True,
+            "same-runtime restart identity requirement is missing",
+        )
+        _require(
+            float(cross_version_equivalence["maximum_field_relative_l2"])
+            <= float(contract["cross_version_field_relative_l2_max"]),
+            "cross-version relative-L2 gate failed",
+        )
+        _require(
+            float(cross_version_equivalence["maximum_field_linf"])
+            <= float(contract["cross_version_field_linf_max"]),
+            "cross-version Linf gate failed",
+        )
+
     return {
         "schema_version": 1,
         "phase": "P8.4.5",
@@ -239,11 +339,15 @@ def analyze(
         "qualification_complete": True,
         "expected_commit": expected_commit,
         "installed_package_root": str(package_root),
-        "report_count": len(profiles) + len(manufactured) + len(restarts),
+        "report_count": (
+            len(profiles) + len(manufactured) + len(restarts) + len(cross_version)
+        ),
         "performance": performance,
         "wall_residual_passed": True,
         "manufactured_convergence_passed": True,
         "restart_byte_identity_passed": True,
+        "cross_version_numerical_equivalence": cross_version_equivalence,
+        "reserved_memory_role": reserved_role,
         "transform_call_non_regression_passed": True,
         "graph_breaks": graph_breaks,
         "production_default_changed": False,
