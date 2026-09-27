@@ -48,6 +48,13 @@ from .channel_observation import (
     write_channel_diagnostics,
     write_channel_observation,
 )
+from .finite_q_anchoring import (
+    FINITE_Q_ANCHORING_WORKFLOW_SCHEMA_VERSION,
+    PlaneFiniteQAnchoringWorkflow,
+    PlaneFiniteQAnchoringWorkflowResult,
+    load_finite_q_anchoring_checkpoint,
+    write_finite_q_anchoring_checkpoint,
+)
 
 __all__ = [
     "DIAGNOSTIC_DTYPE",
@@ -86,4 +93,9 @@ __all__ = [
     "capture_channel_observation",
     "write_channel_diagnostics",
     "write_channel_observation",
+    "FINITE_Q_ANCHORING_WORKFLOW_SCHEMA_VERSION",
+    "PlaneFiniteQAnchoringWorkflow",
+    "PlaneFiniteQAnchoringWorkflowResult",
+    "load_finite_q_anchoring_checkpoint",
+    "write_finite_q_anchoring_checkpoint",
 ]

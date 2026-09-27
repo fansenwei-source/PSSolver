@@ -375,6 +375,29 @@ class PlaneRobinScalarRuntime:
     ) -> None:
         """Validate all identity and payload gates before target mutation."""
 
+        progress, representations = self._validated_checkpoint_state(
+            checkpoint
+        )
+
+        self.remainder.copy_(checkpoint.remainder)
+        self.bounded_modal.copy_(checkpoint.bounded_modal)
+        self.state.replace_progress(progress)
+        self.state.replace_representations(representations)
+
+    def validate_checkpoint(
+        self,
+        checkpoint: PlaneRobinScalarCheckpoint,
+    ) -> None:
+        """Validate one snapshot without mutating runtime-owned state."""
+
+        self._validated_checkpoint_state(checkpoint)
+
+    def _validated_checkpoint_state(
+        self,
+        checkpoint: PlaneRobinScalarCheckpoint,
+    ) -> tuple[IntegratorProgress, RepresentationLedger]:
+        """Return reconstructed metadata after every pre-mutation gate."""
+
         if not isinstance(checkpoint, PlaneRobinScalarCheckpoint):
             raise TypeError("checkpoint must be a PlaneRobinScalarCheckpoint")
         expected_identity = _canonical_json(
@@ -415,11 +438,7 @@ class PlaneRobinScalarRuntime:
         )
         representations.require_physical_current()
         representations.require_spectral_current()
-
-        self.remainder.copy_(checkpoint.remainder)
-        self.bounded_modal.copy_(checkpoint.bounded_modal)
-        self.state.replace_progress(progress)
-        self.state.replace_representations(representations)
+        return progress, representations
 
     def to_metadata(self) -> dict[str, object]:
         return {
