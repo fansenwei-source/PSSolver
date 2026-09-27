@@ -22,20 +22,36 @@ import time
 import numpy as np
 import torch
 
-from benchmarks.profile_beris_edwards_timestep import (
-    RegionTimer,
-    _counter_delta,
-    _dynamo_counter_snapshot,
-    _git_provenance,
-    _install_transform_timers,
-)
-from benchmarks.profile_plane_runtime_timestep import (
-    RuntimeProfileConfig,
-    _initial_q,
-    _run_spec,
-    _state_sha256,
-    _tensor_mapping_sha256,
-)
+if __package__:
+    from benchmarks.profile_beris_edwards_timestep import (
+        RegionTimer,
+        _counter_delta,
+        _dynamo_counter_snapshot,
+        _git_provenance,
+        _install_transform_timers,
+    )
+    from benchmarks.profile_plane_runtime_timestep import (
+        RuntimeProfileConfig,
+        _initial_q,
+        _run_spec,
+        _state_sha256,
+        _tensor_mapping_sha256,
+    )
+else:
+    from profile_beris_edwards_timestep import (
+        RegionTimer,
+        _counter_delta,
+        _dynamo_counter_snapshot,
+        _git_provenance,
+        _install_transform_timers,
+    )
+    from profile_plane_runtime_timestep import (
+        RuntimeProfileConfig,
+        _initial_q,
+        _run_spec,
+        _state_sha256,
+        _tensor_mapping_sha256,
+    )
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
