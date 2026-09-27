@@ -188,6 +188,8 @@ SOURCE_ORDER = (
     "phase_8_p844_lifting_workflow_restart.json",
     "phase_8_p845_h100_qualification_plan.md",
     "phase_8_p845_h100_qualification_plan.json",
+    "phase_8_p845_cuda_device_identity_recovery.md",
+    "phase_8_p845_cuda_device_identity_recovery.json",
 )
 
 PAGE_WIDTH = 595.276

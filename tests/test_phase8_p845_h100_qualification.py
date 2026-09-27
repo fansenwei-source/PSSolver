@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import pytest
+import torch
 
 from benchmarks.analyze_plane_static_lifting_qualification import analyze
 from benchmarks.qualify_plane_static_lifting import (
@@ -22,6 +23,12 @@ PLAN_PATH = (
     / "notes"
     / "architecture_v0_2"
     / "phase_8_p845_h100_qualification_plan.json"
+)
+RECOVERY_PATH = (
+    ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_8_p845_cuda_device_identity_recovery.json"
 )
 
 
@@ -50,6 +57,24 @@ def test_p845_plan_freezes_narrow_scope_and_keeps_neumann_deferred():
     assert contract["inverse_transforms_per_step"] == 32.0
 
 
+def test_p845_recovery_record_binds_the_cuda_device_fix_without_overclaim():
+    record = json.loads(RECOVERY_PATH.read_text(encoding="utf-8"))
+    assert record["classification"] == (
+        "READY_P8_4_5_CUDA_DEVICE_IDENTITY_RECOVERY"
+    )
+    assert record["failed_job"]["job_id"] == 10843514
+    assert record["failed_job"]["timestep_started"] is False
+    assert record["fix"]["requested_device"] == "cuda"
+    assert record["fix"]["allocated_device_example"] == "cuda:0"
+    assert record["authorization"]["nonhomogeneous_neumann"] is False
+    source = ROOT / "pssolver/operators/lifting.py"
+    import hashlib
+
+    assert hashlib.sha256(source.read_bytes()).hexdigest() == (
+        record["source_sha256"]["pssolver/operators/lifting.py"]
+    )
+
+
 @pytest.mark.parametrize(
     ("variant", "has_lifting"),
     (("homogeneous_control", False), ("strong_planar_lifting", True)),
@@ -76,6 +101,24 @@ def test_profile_helper_uses_real_runtime_and_counts_only_timesteps(
     assert (report["wall_residual"] is not None) is has_lifting
     if has_lifting:
         assert report["wall_residual"]["max_linf"] <= 2e-16
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is unavailable")
+def test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity():
+    report = run_profile(
+        LiftingProfileConfig(
+            variant="strong_planar_lifting",
+            shape=(8, 8, 6),
+            device="cuda",
+            pointwise_execution="eager",
+            warmup_steps=0,
+            profile_steps=1,
+        )
+    )
+    assert report["finite"] is True
+    assert report["lifting"]["lifting"]["device"] == (
+        f"cuda:{torch.cuda.current_device()}"
+    )
 
 
 def test_manufactured_helper_recovers_second_order_rate():

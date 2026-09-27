@@ -1,0 +1,39 @@
+{
+  "authorization": {
+    "compiled_runtime_promotion": false,
+    "nonhomogeneous_neumann": false,
+    "p8_4_5_recovery_eligible": true,
+    "p8_5": false,
+    "phase_9": false,
+    "production_default_change": false
+  },
+  "classification": "READY_P8_4_5_CUDA_DEVICE_IDENTITY_RECOVERY",
+  "failed_job": {
+    "classification": "FAIL_P8_4_5_PLANE_STATIC_LIFTING_H100_CLOSURE",
+    "exit_code": "1:0",
+    "job_id": 10843514,
+    "profile_timing_started": false,
+    "scientific_failure": false,
+    "timestep_started": false
+  },
+  "fix": {
+    "allocated_device_example": "cuda:0",
+    "old_comparison": "torch.device('cuda') != torch.device('cuda:0')",
+    "requested_device": "cuda",
+    "runtime_identity": "materialized_lift_tensor.device",
+    "scope": "construction-time device identity normalization"
+  },
+  "phase": "P8.4.5",
+  "recovery_contract": {
+    "new_h100_job_required": true,
+    "old_control_profile_reused": false,
+    "old_failed_job_preserved": true,
+    "repeat_complete_profile_matrix": true,
+    "single_submission": true
+  },
+  "schema_version": 1,
+  "source_sha256": {
+    "pssolver/operators/lifting.py": "66cba570635caf2b471eb6582a4820281bf69a59d3771db917f03b79e4688bfe"
+  },
+  "status": "LOCAL_FIX_REQUIRES_H100_RECOVERY"
+}

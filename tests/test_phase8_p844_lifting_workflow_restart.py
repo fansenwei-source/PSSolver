@@ -387,6 +387,11 @@ def test_p844_record_matches_qualified_sources_and_scope():
         "homogeneous_remainder"
     )
     assert record["output"]["saved_q"] == "physical_field"
+    # P8.4.5 is allowed to normalize the materialized CUDA device identity.
+    # Keep the P8.4.4 hash as historical evidence instead of rewriting it.
+    superseded_by_p845 = {"pssolver/operators/lifting.py"}
     for relative, expected in record["source_sha256"].items():
+        if relative in superseded_by_p845:
+            continue
         actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
         assert actual == expected, relative

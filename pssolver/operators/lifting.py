@@ -108,6 +108,10 @@ class PlaneStaticLiftingOperator:
             raise TypeError("plan must be a StaticLiftingPlan")
         self.plan = plan
         self.dtype = _require_real_dtype(dtype)
+        # ``torch.device("cuda")`` is an unindexed allocation request, not
+        # the concrete identity reported by allocated tensors (for example
+        # ``cuda:0``).  Use it for construction, then bind validation and
+        # provenance to the device that actually owns the materialized lift.
         self.device = torch.device(device)
         axis = plan.wall_normal_axis
         count = plan.domain_shape[axis]
@@ -125,6 +129,7 @@ class PlaneStaticLiftingOperator:
             affine = lower + (upper - lower) * fraction
             values.append(affine.expand(plan.domain_shape).clone())
         self._lift_values = torch.stack(values, dim=0).contiguous()
+        self.device = self._lift_values.device
         self._affine_laplacians = torch.zeros_like(self._lift_values)
         self._component_indices = MappingProxyType(
             {
