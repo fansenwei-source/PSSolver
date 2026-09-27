@@ -1,0 +1,77 @@
+{
+  "analysis_continuation": {
+    "allocator_stages": [
+      "empty_process",
+      "after_build",
+      "after_construction_cleanup",
+      "after_warmup",
+      "profile_start",
+      "after_profile",
+      "after_observation"
+    ],
+    "cross_version_metrics": [
+      "byte_identity",
+      "mismatch_count",
+      "relative_l2",
+      "rms",
+      "linf",
+      "maximum_ulp"
+    ],
+    "qualification_decision": null,
+    "tool": "benchmarks/diagnose_plane_static_lifting_recovery.py"
+  },
+  "authorization": {
+    "analysis_only_h100_diagnostic": true,
+    "compiled_runtime_promotion": false,
+    "nonhomogeneous_neumann": false,
+    "p8_5": false,
+    "phase_9": false,
+    "production_default_change": false,
+    "qualification_threshold_change": false
+  },
+  "candidate_commit": "0e883b3efedf65c5b9cfa01cb1cfbe7025c976bc",
+  "classification": "FAIL_P8_4_5_PLANE_STATIC_LIFTING_H100_CLOSURE",
+  "failed_gates": {
+    "cross_version_three_step_byte_identity": {
+      "candidate_internal_sha256": "ad548d8036614b25805e6696c6a0590a158828d7b63f557c4a28b91ead2bba50",
+      "candidate_physical_sha256": "27b2975b613745753d99de26ce2f1a0e6921c09280b65df77f33016eba182a69",
+      "parent_internal_sha256": "90b9c7507005ed513fa49d50ed3667c858dd1e64afca32bc72de774a47c105fd",
+      "parent_physical_sha256": "3086f3c18bd95edea2343d2b2d5f053655d3148ac176e1eff3cd825635ade4a2",
+      "passed": false
+    },
+    "r128_peak_reserved_ratio": {
+      "candidate_bytes": 603979776,
+      "control_bytes": 465567744,
+      "limit": 1.1,
+      "ratio": 1.2972972972972974
+    }
+  },
+  "h100_job": {
+    "archive_checksum_entries_passed": 2716,
+    "archive_manifest_sha256": "00ded77e1ba33bf095cde3f94a5ceeb9ffdb19fcf912a933c6f7a371585e9bcc",
+    "elapsed": "00:06:12",
+    "exit_code": "1:0",
+    "job_id": 10843818,
+    "node": "gpu-h100-4-0",
+    "state": "FAILED"
+  },
+  "parent_commit": "046ad5b12b31ea627f8f87fe4286ba6dae22393e",
+  "passed_evidence": {
+    "allocated_ratio_r128": 1.049557429,
+    "allocated_ratio_r320": 1.05299871,
+    "manufactured_minimum_rate": 1.9986095692,
+    "mean_timestep_ratio_r128": 1.014429703,
+    "mean_timestep_ratio_r320": 0.989166307,
+    "persistent_full_domain_lifting_storage_count": 0,
+    "reserved_ratio_r320": 0.999090634,
+    "restart_byte_identity": true,
+    "transform_calls_per_step": {
+      "forward": 7.0,
+      "inverse": 32.0
+    },
+    "wall_residual_linf": 0.0
+  },
+  "phase": "P8.4.5",
+  "qualification_complete": false,
+  "schema_version": 1
+}
