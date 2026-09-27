@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "phase": "P8.5.4",
+  "status": "P8_5_4_COMPLETE_P8_5_5_NOT_IMPLEMENTED",
+  "classification": "PASS_P8_5_4_QUADRATIC_FINITE_Q_ANCHORING_SPECIALIZATION",
+  "baseline_commit": "fb4b745ffe4289d83c39a7304a7a82ae02c58eca",
+  "implementation_commit": "ce9d8ec4d68515663e886298b2241d8817d69b64",
+  "surface_law": {
+    "id": "quadratic_one_constant_q_anchoring_v1",
+    "bulk_energy": "(K_Q/2)*integral[(partial_k Q_ij)^2]",
+    "surface_energy": "(W/2)*integral[(Q_ij-Qstar_ij)^2]",
+    "natural_boundary_law": "K_Q*(n_dot_grad_Q_ij)+W*(Q_ij-Qstar_ij)=0",
+    "robin_alpha": "W",
+    "robin_beta": "K_Q",
+    "robin_gamma": "W*Qstar_component",
+    "k_q_constraint": "positive_finite_and_explicit",
+    "wall_strength_constraint": "finite_nonnegative",
+    "ambiguous_k_l1_frank_inference": false,
+    "w_zero_limit": "homogeneous_neumann_with_distinct_target_provenance",
+    "strong_dirichlet_remains_distinct": true
+  },
+  "q_contract": {
+    "convention_id": "de_gennes_S_lambda_max_v1",
+    "definition": "Q=(3S/2)(nn-I/3)",
+    "component_order": ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"],
+    "qzz_definition": "Qzz=-(Qxx+Qyy)",
+    "component_metric": [
+      [2.0, 0.0, 0.0, 1.0, 0.0],
+      [0.0, 2.0, 0.0, 0.0, 0.0],
+      [0.0, 0.0, 2.0, 0.0, 0.0],
+      [1.0, 0.0, 0.0, 2.0, 0.0],
+      [0.0, 0.0, 0.0, 0.0, 2.0]
+    ],
+    "metric_positive_definite": true,
+    "full_tensor_projection_equals_metric_times_component_law": true,
+    "metric_cancels_between_bulk_and_surface_variations": true,
+    "five_components_are_independent_scalar_order_parameters": false,
+    "target_requires_symmetric_traceless_tensor": true
+  },
+  "conveniences": {
+    "explicit_target": "quadratic_finite_q_anchoring",
+    "homeotropic": "finite_homeotropic_q_anchoring",
+    "explicit_planar": "finite_planar_q_anchoring",
+    "planar_director_must_be_tangent": true,
+    "lower_upper_strengths_may_differ": true,
+    "lower_upper_targets_may_differ": true
+  },
+  "first_application": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "plane_slab",
+    "velocity_boundary": "free_slip_velocity",
+    "pressure_boundary": "neumann_pressure_compatibility",
+    "runtime_intent": "legacy_production",
+    "wall_axis": 2,
+    "faces": ["lower", "upper"],
+    "k_q_matches_all_declared_ldg_l1_exactly": true,
+    "component_plan_count": 5,
+    "generic_component_lowering": "P8.5.3",
+    "anchoring_identity_in_simulation_provenance": true
+  },
+  "architecture": {
+    "model_specialization_owner": "pssolver.models.active_nematics.boundaries",
+    "application_lowering_owner": "pssolver.configuration.finite_q_anchoring",
+    "generic_robin_layers_import_active_nematics": false,
+    "top_level_public_api_changed": false,
+    "frozen_configuration_facade_changed": false,
+    "production_lowering_accepts_robin_q": false,
+    "production_rejection": "unsupported_robin_boundary",
+    "new_executable_public_combinations": []
+  },
+  "source_sha256": {
+    "pssolver/configuration/finite_q_anchoring.py": "85544bea0d8858ecff4645a1caa3ae488ea193bb548f166855538aca8673e767",
+    "pssolver/configuration/robin.py": "1e1c02c0a262ece97cff6ea98f4485964456d5cc3f33c6aa82d7a661abd20fea",
+    "pssolver/models/active_nematics/boundaries.py": "a5cbd86dc7634128a67ddc12202e7698d2ced306c51a669e48190e0d5bd4ebbe",
+    "pssolver/models/active_nematics/__init__.py": "9d943b480d1b68d0ff0fd2c1563b68b43fed2a91f8f1f63fa7e053603e4e0a7a",
+    "tests/test_architecture_import_boundaries.py": "35aca5bc6ebbf3821f6272083a1bbccac3858ce816bccadcf4f21215f6f0ffd3",
+    "tests/test_phase8_p843_q_lifting_lowering.py": "94239bab9ea67e77a5e4298568c4787a1f9b6c3825585afc53e2be6fb9f03d63",
+    "tests/test_phase8_p854_finite_q_anchoring.py": "bd35fc4da3687b5c184db68eebf6920274a03548d870fd1a7c035b4442435ca6"
+  },
+  "local_verification": {
+    "implementation_before_record": "14 passed, 1 deselected",
+    "related_q_robin_architecture": "80 passed, 1 deselected",
+    "full_before_record": "2372 passed, 1 deselected, 8 subtests passed",
+    "full_after_record": "2373 passed, 8 subtests passed",
+    "git_diff_check": "pass",
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected": 0
+  },
+  "complete_q_timestep_connected": false,
+  "workflow_connected": false,
+  "file_backed_restart_connected": false,
+  "h100_used": false,
+  "production_default_changed": false,
+  "archive_pdf_regenerated": false,
+  "authorization": {
+    "p8_5_4_complete": true,
+    "eligible_for_p8_5_5": true,
+    "p8_5_5_implemented": false,
+    "h100_authorized": false,
+    "p8_5_6_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false
+  }
+}

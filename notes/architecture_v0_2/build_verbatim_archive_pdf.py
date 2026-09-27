@@ -209,6 +209,8 @@ SOURCE_ORDER = (
     "phase_8_p852_robin_eigenbasis_operator.json",
     "phase_8_p853_robin_scalar_runtime.md",
     "phase_8_p853_robin_scalar_runtime.json",
+    "phase_8_p854_finite_q_anchoring.md",
+    "phase_8_p854_finite_q_anchoring.json",
 )
 
 PAGE_WIDTH = 595.276
