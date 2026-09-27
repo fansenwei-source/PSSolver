@@ -1,0 +1,59 @@
+{
+  "authorization": {
+    "compiled_runtime_promotion": false,
+    "nonhomogeneous_neumann": false,
+    "p8_4_5_h100_submission": true,
+    "p8_5": false,
+    "phase_9": false,
+    "production_default_change": false
+  },
+  "baseline_commit": "70eb409c26ad335b9b6519501e4ecd5fa9f0d3e2",
+  "classification": "READY_P8_4_5_H100_QUALIFICATION_NOT_EXECUTED",
+  "evidence_commands": {
+    "analyzer": "benchmarks/analyze_plane_static_lifting_qualification.py",
+    "helper": "benchmarks/qualify_plane_static_lifting.py",
+    "manufactured": 1,
+    "profiles": 12,
+    "restart": 1
+  },
+  "phase": "P8.4.5",
+  "qualification_contract": {
+    "forward_transforms_per_step": 7.0,
+    "inverse_transforms_per_step": 32.0,
+    "lifting_control_peak_allocated_ratio_max": 1.1,
+    "lifting_control_peak_reserved_ratio_max": 1.1,
+    "lifting_control_timestep_ratio_max": 1.15,
+    "manufactured_minimum_rate": 1.95,
+    "profile_report_count": 12,
+    "profile_shapes": [
+      [128, 128, 32],
+      [320, 320, 80]
+    ],
+    "profile_trials": 3,
+    "restart_final_steps": 20,
+    "restart_segment_steps": 10,
+    "restart_shape": [128, 128, 32],
+    "wall_residual_linf_max": 1e-12
+  },
+  "qualification_scope": {
+    "boundary": "static strong planar Q Dirichlet on both Plane z faces",
+    "control": "homogeneous Neumann Q with otherwise identical Plane numerics",
+    "dtype": "float64",
+    "geometry": "plane_slab",
+    "model": "complete_stress_beris_edwards",
+    "runtime": "legacy_production"
+  },
+  "required_gates": [
+    "clean installed-package import identity",
+    "three balanced control/lifting profile pairs per frozen grid",
+    "finite physical fields and zero runtime fallback",
+    "wall residual at or below the frozen tolerance",
+    "second-order independent manufactured convergence",
+    "unchanged per-step transform counts",
+    "zero pointwise graph breaks",
+    "bounded timestep and CUDA-memory overhead",
+    "byte-identical continuous versus restored physical state",
+    "Slurm, Git, environment, SHA-256, and final COMPLETE provenance"
+  ],
+  "schema_version": 1
+}

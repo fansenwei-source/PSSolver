@@ -186,6 +186,8 @@ SOURCE_ORDER = (
     "phase_8_p843_q_lifting_lowering.json",
     "phase_8_p844_lifting_workflow_restart.md",
     "phase_8_p844_lifting_workflow_restart.json",
+    "phase_8_p845_h100_qualification_plan.md",
+    "phase_8_p845_h100_qualification_plan.json",
 )
 
 PAGE_WIDTH = 595.276
