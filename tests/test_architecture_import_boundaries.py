@@ -149,6 +149,10 @@ EXPECTED_CONFIGURATION_TO_SYSTEMS_EDGES = {
 
 REVIEWED_CONFIGURATION_TO_PLANNING_EDGES = {
     ImportEdge(
+        "pssolver.configuration.finite_q_anchoring",
+        "pssolver.planning.robin",
+    ),
+    ImportEdge(
         "pssolver.configuration.lifting",
         "pssolver.planning.lifting",
     ),

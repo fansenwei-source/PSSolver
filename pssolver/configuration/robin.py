@@ -32,12 +32,13 @@ def _sha256(value: object) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
-def lower_plane_robin_scalar_pilot(
+def lower_plane_robin_component_pilot(
     simulation: SimulationSpec,
     *,
     field_name: str,
+    component: str,
 ) -> PlaneRobinScalarLoweringPlan:
-    """Resolve one registered evolved scalar onto the P8.5.2 operator.
+    """Resolve one component of a registered evolved field onto P8.5.2.
 
     This deliberately separate entry point cannot make an unsupported Robin
     law executable through the production simulation compiler.
@@ -47,6 +48,8 @@ def lower_plane_robin_scalar_pilot(
         raise TypeError("simulation must be a SimulationSpec")
     if not isinstance(field_name, str) or not field_name.isidentifier():
         raise ValueError("field_name must be a Python identifier")
+    if not isinstance(component, str) or not component.isidentifier():
+        raise ValueError("component must be a Python identifier")
     geometry = simulation.geometry
     domain = geometry.domain
     if geometry.name != "plane_slab":
@@ -76,9 +79,8 @@ def lower_plane_robin_scalar_pilot(
     field = matches[0]
     if field.role is not FieldRole.EVOLVED:
         raise ValueError("Robin pilot field must have the evolved role")
-    if len(field.components) != 1:
-        raise ValueError("P8.5.3 supports one scalar component only")
-    component = field.components[0]
+    if component not in field.components:
+        raise ValueError("Robin pilot component is not registered by the field")
     assignment = simulation.boundaries.for_component(component)
     if assignment.semantic is not BoundarySemantic.PHYSICAL:
         raise ValueError("Robin pilot field requires physical boundary semantics")
@@ -118,4 +120,30 @@ def lower_plane_robin_scalar_pilot(
     )
 
 
-__all__ = ["lower_plane_robin_scalar_pilot"]
+def lower_plane_robin_scalar_pilot(
+    simulation: SimulationSpec,
+    *,
+    field_name: str,
+) -> PlaneRobinScalarLoweringPlan:
+    """Resolve a registered one-component evolved field onto P8.5.2."""
+
+    matches = tuple(
+        value
+        for value in simulation.equation_system.fields
+        if value.name == field_name
+    )
+    if len(matches) != 1:
+        raise ValueError("Robin pilot field must be registered exactly once")
+    if len(matches[0].components) != 1:
+        raise ValueError("P8.5.3 supports one scalar component only")
+    return lower_plane_robin_component_pilot(
+        simulation,
+        field_name=field_name,
+        component=matches[0].components[0],
+    )
+
+
+__all__ = [
+    "lower_plane_robin_component_pilot",
+    "lower_plane_robin_scalar_pilot",
+]

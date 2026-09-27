@@ -314,13 +314,15 @@ def test_p843_record_freezes_lowering_only_scope():
     assert record["authorization"]["p8_4_4_eligible_for_planning"] is True
     assert record["authorization"]["p8_4_4_implementation_authorized"] is False
     assert set(record["source_sha256"]) == set(IMPLEMENTATION_SOURCES)
-    superseded_by_p844 = {
+    superseded_after_p843 = {
         "pssolver/api/capabilities.py",
         "pssolver/configuration/simulation_binding.py",
         "pssolver/configuration/simulation_lowering.py",
+        "pssolver/models/active_nematics/__init__.py",
+        "pssolver/models/active_nematics/boundaries.py",
     }
     for relative, expected in record["source_sha256"].items():
-        if relative in superseded_by_p844:
+        if relative in superseded_after_p843:
             continue
         assert _sha256(ROOT / relative) == expected
 
