@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "phase": "P8.5.1",
+  "status": "P8_5_1_COMPLETE_P8_5_2_NOT_AUTHORIZED",
+  "classification": "PASS_P8_5_1_FIELD_NEUTRAL_STATIC_ROBIN_DECLARATIONS",
+  "baseline": {
+    "commit": "36f49a76f80110e48dd3cdb96f3ef94bb988e5c0",
+    "planning_record": "notes/architecture_v0_2/phase_8_p850_finite_anchoring_plan.json",
+    "planning_record_sha256": "02822558a8eac35058e425d107646eb02962c0a2b7e24a84d6b88da2c2f40d9a"
+  },
+  "implementation_commit": "34c4c8f1884aefe8f700ad387a2be324a6a3e078",
+  "contracts_added": [
+    "BoundaryKind.ROBIN",
+    "StaticRobinCoefficients",
+    "StaticRobinBC",
+    "RobinFaceLaw",
+    "StaticRobinBoundaryPolicy",
+    "robin",
+    "unsupported_robin_boundary",
+    "non_executable_robin_capability_catalog_entry"
+  ],
+  "canonical_law": {
+    "form": "alpha*phi+beta*(n_dot_grad_phi)=gamma",
+    "normal_derivative_convention": "outward_unit_normal",
+    "coefficient_representation": "static_finite_real_constant",
+    "raw_coefficient_identity": "canonical_json_sha256",
+    "operator_normalization_performed": false,
+    "alpha_and_beta_both_zero_allowed": false,
+    "homogeneous_when": "gamma==0"
+  },
+  "declaration_scope": {
+    "generic_field_support": true,
+    "field_roles": ["evolved"],
+    "component_face_granularity": true,
+    "lower_and_upper_laws_independent": true,
+    "time_dependence": "static",
+    "spatial_representation": "constant_scalar_coefficients_per_component_face",
+    "periodic_faces_geometry_induced": true,
+    "model_or_q_specific_names_in_generic_layer": false
+  },
+  "composition_rejections": [
+    "boolean_or_nonfinite_coefficient",
+    "alpha_and_beta_both_zero",
+    "duplicate_component_face",
+    "missing_bounded_component_face",
+    "extra_or_periodic_component_face",
+    "unknown_field_or_component",
+    "algebraic_transient_or_diagnostic_field",
+    "policy_field_name_mismatch"
+  ],
+  "execution_boundary": {
+    "rejection_code": "unsupported_robin_boundary",
+    "reason": "Robin boundary laws require a qualified bounded-axis operator",
+    "stage": "construction_time_before_transform_or_runtime",
+    "dct_or_dst_selected": false,
+    "dirichlet_or_neumann_fallback": false,
+    "problem_spec_assembler_has_explicit_error": true
+  },
+  "capability_catalog": {
+    "key": "robin",
+    "constructor": "pssolver.boundaries.robin",
+    "declarable": true,
+    "executable": false,
+    "qualified_applications": []
+  },
+  "numerical_robin_operator_implemented": false,
+  "finite_q_anchoring_implemented": false,
+  "new_executable_combinations": [],
+  "h100_used": false,
+  "source_sha256": {
+    "pssolver/core/boundary.py": "abf8aa69b31bdf4e7f7ee1c4472cdbafdd8f57d86595f132e6e632c13ea0aa62",
+    "pssolver/core/__init__.py": "8494b19fb2c60970598eb8989f2a888b65cb321846cea8aa3dabc0104d190247",
+    "pssolver/boundaries/robin.py": "d23c5848b1fadd417845673186e5fb26c572566fb0aa4071ee889bbc2f48c6ab",
+    "pssolver/boundaries/homogeneous.py": "fa990f414ae91b4252e529a25ddd050e7378bbc4cf022de0cd3d04ae79f0a49c",
+    "pssolver/boundaries/__init__.py": "2004ceadb7c99059204ab04730796dfe1b5d091c0746f14123cc37b59f094a2f",
+    "pssolver/configuration/simulation_lowering.py": "e853935785db52dedd9ff30f2d279abea30c129dc53d2491a4f210c50c9f1061",
+    "pssolver/planning/assembler.py": "9e51fb6451d7cac2649d3cb781ed31ad49bc26bd7fb1b895972987338c2c4461",
+    "pssolver/api/capabilities.py": "e9aa54d4090232d8ee312dc627abf7203d9c27be137bb30c8fa42d14e65aad0f"
+  },
+  "local_verification": {
+    "targeted": "89 passed",
+    "full": "2337 passed, 8 subtests passed",
+    "git_diff_check": "pass",
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected": 0
+  },
+  "authorization": {
+    "p8_5_1_complete": true,
+    "eligible_for_p8_5_2_method_adr_planning": true,
+    "p8_5_2_implementation_authorized": false,
+    "p8_5_runtime_implementation_authorized": false,
+    "h100_authorized": false,
+    "nonhomogeneous_neumann_authorized": false,
+    "p8_6_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false
+  }
+}

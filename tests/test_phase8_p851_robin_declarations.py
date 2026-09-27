@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import ast
 from dataclasses import replace
+import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 import pytest
 
@@ -54,6 +56,23 @@ from pssolver.systems.equations import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+NOTES = ROOT / "notes" / "architecture_v0_2"
+RECORD_PATH = NOTES / "phase_8_p851_robin_declarations.json"
+P851_IMPLEMENTATION_COMMIT = "34c4c8f1884aefe8f700ad387a2be324a6a3e078"
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _sha256_at_commit(relative: str) -> str:
+    payload = subprocess.run(
+        ["git", "show", f"{P851_IMPLEMENTATION_COMMIT}:{relative}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    return hashlib.sha256(payload).hexdigest()
 
 
 def _generic_system() -> EquationSystemSpec:
@@ -402,3 +421,68 @@ def test_public_exports_and_capability_catalog_do_not_claim_execution():
     assert capability.constructor == "pssolver.boundaries.robin"
     assert capability.executable is False
     assert capability.qualified_applications == ()
+
+
+def test_p851_record_binds_plan_and_content_addressed_implementation():
+    record = json.loads(RECORD_PATH.read_text(encoding="utf-8"))
+
+    assert record["phase"] == "P8.5.1"
+    assert record["classification"] == (
+        "PASS_P8_5_1_FIELD_NEUTRAL_STATIC_ROBIN_DECLARATIONS"
+    )
+    assert record["implementation_commit"] == P851_IMPLEMENTATION_COMMIT
+    assert _sha256(ROOT / record["baseline"]["planning_record"]) == (
+        record["baseline"]["planning_record_sha256"]
+    )
+    for relative, expected in record["source_sha256"].items():
+        assert _sha256_at_commit(relative) == expected
+
+
+def test_p851_record_freezes_declaration_only_scope_and_authorization():
+    record = json.loads(RECORD_PATH.read_text(encoding="utf-8"))
+
+    assert record["canonical_law"] == {
+        "form": "alpha*phi+beta*(n_dot_grad_phi)=gamma",
+        "normal_derivative_convention": "outward_unit_normal",
+        "coefficient_representation": "static_finite_real_constant",
+        "raw_coefficient_identity": "canonical_json_sha256",
+        "operator_normalization_performed": False,
+        "alpha_and_beta_both_zero_allowed": False,
+        "homogeneous_when": "gamma==0",
+    }
+    assert record["numerical_robin_operator_implemented"] is False
+    assert record["finite_q_anchoring_implemented"] is False
+    assert record["new_executable_combinations"] == []
+    assert record["h100_used"] is False
+    assert record["execution_boundary"]["dct_or_dst_selected"] is False
+    assert record["execution_boundary"][
+        "dirichlet_or_neumann_fallback"
+    ] is False
+    assert record["local_verification"] == {
+        "targeted": "89 passed",
+        "full": "2337 passed, 8 subtests passed",
+        "git_diff_check": "pass",
+        "failed": 0,
+        "skipped": 0,
+        "xfailed": 0,
+        "deselected": 0,
+    }
+    authorization = record["authorization"]
+    assert authorization["p8_5_1_complete"] is True
+    assert authorization["eligible_for_p8_5_2_method_adr_planning"] is True
+    assert authorization["p8_5_2_implementation_authorized"] is False
+    assert authorization["h100_authorized"] is False
+    assert authorization["nonhomogeneous_neumann_authorized"] is False
+    assert authorization["phase_9_authorized"] is False
+    assert authorization["production_default_changed"] is False
+
+
+def test_future_verbatim_archive_lists_p851_without_regenerating_pdf():
+    source = (NOTES / "build_verbatim_archive_pdf.py").read_text(
+        encoding="utf-8"
+    )
+    for name in (
+        "phase_8_p851_robin_declarations.md",
+        "phase_8_p851_robin_declarations.json",
+    ):
+        assert source.count(f'"{name}"') == 1

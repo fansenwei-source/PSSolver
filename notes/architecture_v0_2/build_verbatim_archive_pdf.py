@@ -202,6 +202,8 @@ SOURCE_ORDER = (
     "phase_8_p845_h100_qualification.json",
     "phase_8_p850_finite_anchoring_plan.md",
     "phase_8_p850_finite_anchoring_plan.json",
+    "phase_8_p851_robin_declarations.md",
+    "phase_8_p851_robin_declarations.json",
 )
 
 PAGE_WIDTH = 595.276
