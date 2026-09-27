@@ -190,6 +190,18 @@ SOURCE_ORDER = (
     "phase_8_p845_h100_qualification_plan.json",
     "phase_8_p845_cuda_device_identity_recovery.md",
     "phase_8_p845_cuda_device_identity_recovery.json",
+    "phase_8_p845_memory_recovery.md",
+    "phase_8_p845_memory_recovery.json",
+    "phase_8_p845_fused_reconstruction_recovery.md",
+    "phase_8_p845_fused_reconstruction_recovery.json",
+    "phase_8_p845_corrected_closure_plan.md",
+    "phase_8_p845_corrected_closure_plan.json",
+    "phase_8_p845_fused_reconstruction_h100_result.md",
+    "phase_8_p845_fused_reconstruction_h100_result.json",
+    "phase_8_p845_h100_qualification.md",
+    "phase_8_p845_h100_qualification.json",
+    "phase_8_p850_finite_anchoring_plan.md",
+    "phase_8_p850_finite_anchoring_plan.json",
 )
 
 PAGE_WIDTH = 595.276

@@ -1,0 +1,285 @@
+{
+  "schema_version": 1,
+  "phase": "P8.5.0",
+  "title": "Field-neutral Robin laws and finite-Q anchoring plan",
+  "date": "2026-09-27",
+  "status": "P8_5_0_PLANNING_FROZEN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "classification": "PASS_P8_5_0_PLANNING",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "104258d5787921e527c61b180b6eb828013d184b",
+    "p8_4_5_record": "notes/architecture_v0_2/phase_8_p845_h100_qualification.json",
+    "p8_4_5_record_sha256": "2b2a2078ddf1f6de095075048cae5ba3b36436a4b08d631f6412e67d28c059b6",
+    "p8_4_5_complete": true,
+    "eligible_for_p8_5_planning": true
+  },
+  "generic_robin_law": {
+    "field_symbol": "phi",
+    "canonical_form": "alpha*phi+beta*(n_dot_grad_phi)=gamma",
+    "normal_orientation": "outward_unit_normal",
+    "lower_plane_normal_derivative": "-partial_z",
+    "upper_plane_normal_derivative": "+partial_z",
+    "first_coefficient_representation": "static_finite_real_constant",
+    "per_component_per_face": true,
+    "raw_coefficients_preserved_in_identity": true,
+    "operator_normalization_is_separate_metadata": true,
+    "declaration_names_transform_or_solver": false,
+    "field_neutral": true
+  },
+  "finite_q_anchoring": {
+    "bulk_energy": "(K_Q/2)*integral_V[(partial_k Q_ij)*(partial_k Q_ij)]",
+    "surface_energy": "(W/2)*integral_boundary[(Q_ij-Qstar_ij)*(Q_ij-Qstar_ij)]",
+    "natural_boundary_law": "K_Q*n_k*partial_k(Q_ij)+W*(Q_ij-Qstar_ij)=0",
+    "robin_alpha": "W",
+    "robin_beta": "K_Q",
+    "robin_gamma": "W*Qstar_component",
+    "extrapolation_length": "K_Q/W",
+    "extrapolation_length_domain": "W>0",
+    "w_zero_limit": "homogeneous_neumann_with_existing_nullspace_contract",
+    "w_infinity_runtime_value_allowed": false,
+    "strong_dirichlet_remains_distinct": true,
+    "k_q_must_be_explicit_qualified_gradient_coefficient": true,
+    "ambiguous_k_l1_frank_alias_inference_allowed": false,
+    "q_convention_id": "de_gennes_S_lambda_max_v1",
+    "qstar_definition": "Qstar=(3S/2)(nn-I/3)",
+    "full_symmetric_traceless_variation": true,
+    "five_component_metric_consistency_required": true,
+    "five_components_are_independent_scalar_order_parameters": false
+  },
+  "ownership": {
+    "pssolver.core.boundary": [
+      "tensor_free_robin_condition_identity",
+      "static_coefficient_provider_identity",
+      "component_oriented_face_and_semantic_metadata"
+    ],
+    "pssolver.boundaries": [
+      "field_neutral_registered_field_robin_policy",
+      "component_coverage_uniqueness_and_periodic_face_rejection"
+    ],
+    "pssolver.planning": [
+      "robin_requirement_and_immutable_lowering_plan",
+      "capability_selection_and_structured_rejection"
+    ],
+    "pssolver.geometries": [
+      "oriented_faces_outward_normals_wall_axis_grid_placement_and_metrics"
+    ],
+    "pssolver.operators": [
+      "discrete_robin_boundary_residual",
+      "bounded_axis_robin_eigenbasis_or_tau_operator"
+    ],
+    "pssolver.runtime_and_workspace": [
+      "one_time_operator_plan_and_factorization_cache",
+      "hot_loop_bounded_axis_application_without_policy_dispatch"
+    ],
+    "pssolver.models.active_nematics.boundaries": [
+      "quadratic_finite_q_anchoring_adapter",
+      "target_q_planar_homeotropic_and_explicit_conveniences",
+      "five_component_metric_validation"
+    ],
+    "pssolver.workflows_and_checkpoint": [
+      "physical_observations",
+      "robin_operator_and_surface_law_identity_before_target_mutation"
+    ]
+  },
+  "operator_decision": {
+    "periodic_axes": "fourier_spectral",
+    "generic_dct_or_dst_is_valid_for_arbitrary_finite_robin": false,
+    "full_dct_dst_then_wall_patch_allowed": false,
+    "public_boundary_name": "robin",
+    "tau_is_public_physical_boundary_name": false,
+    "p8_5_2_candidates": [
+      "qualified_robin_eigenbasis",
+      "chebyshev_or_ultraspherical_tau_or_bordered_operator"
+    ],
+    "method_must_be_frozen_by_operator_adr": true,
+    "method_gate_evidence": [
+      "manufactured_convergence",
+      "oriented_wall_residual",
+      "conditioning",
+      "live_memory",
+      "batched_gpu_feasibility"
+    ],
+    "runtime_before_method_decision_allowed": false
+  },
+  "first_qualified_slice": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "plane_slab",
+    "bounded_axis": 2,
+    "evolved_field": "Q",
+    "velocity_boundary": "free_slip_velocity",
+    "q_elasticity": "one_constant",
+    "q_surface_energy": "static_quadratic_finite_anchoring",
+    "faces": ["lower_z", "upper_z"],
+    "wall_strength": "constant_per_face",
+    "target_q": "constant_per_face",
+    "lower_and_upper_data_may_differ": true,
+    "first_dtype": "float64",
+    "control_runtime": "legacy_production",
+    "runtime_fallback_allowed": false
+  },
+  "manufactured_oracles": {
+    "wall_residual": "alpha*phi+beta*(n_dot_grad_phi)-gamma",
+    "lower_and_upper_signs_tested_independently": true,
+    "reports_interior_and_each_wall_residual_separately": true,
+    "minimum_first_discretization_convergence_rate": 1.9,
+    "exactly_represented_wall_residual": "near_roundoff",
+    "limiting_controls": [
+      "W_zero_matches_homogeneous_neumann_with_nullspace_contract",
+      "increasing_finite_W_approaches_qualified_strong_dirichlet",
+      "zero_and_nonzero_target_q",
+      "equal_and_unequal_lower_upper_data"
+    ],
+    "q_oracle_checks_full_tensor_and_five_component_residuals": true
+  },
+  "checkpoint_contract": {
+    "raw_robin_coefficient_identity": true,
+    "normalized_operator_coefficient_identity": true,
+    "outward_normal_convention_identity": true,
+    "surface_energy_law_identity": true,
+    "q_convention_and_target_identity": true,
+    "bounded_axis_operator_and_plan_identity": true,
+    "geometry_dtype_runtime_backend_identity": true,
+    "plan_rebuilt_and_hash_verified_before_target_mutation": true,
+    "same_runtime_continuous_restart_byte_identity_required": true
+  },
+  "performance_contract": {
+    "hot_loop_registry_lookup": false,
+    "hot_loop_policy_dispatch": false,
+    "hot_loop_coefficient_provider_call": false,
+    "hot_loop_root_solve_or_factorization": false,
+    "hot_loop_plan_allocation": false,
+    "cache_key_includes_device_dtype_shape_geometry_and_coefficients": true,
+    "h100_reports_timestep_live_memory_transform_and_solve_counts": true,
+    "h100_reports_graph_break_fallback_conditioning_and_restart": true
+  },
+  "slices": [
+    {
+      "id": "P8.5.0",
+      "name": "planning_and_contract_freeze",
+      "authorized": true,
+      "implemented": true,
+      "requires_h100": false
+    },
+    {
+      "id": "P8.5.1",
+      "name": "field_neutral_static_robin_declarations",
+      "authorized": false,
+      "implemented": false,
+      "requires_h100": false
+    },
+    {
+      "id": "P8.5.2",
+      "name": "bounded_axis_method_adr_and_cpu_operator",
+      "authorized": false,
+      "implemented": false,
+      "requires_h100": false
+    },
+    {
+      "id": "P8.5.3",
+      "name": "generic_plane_lowering_runtime_and_checkpoint_state",
+      "authorized": false,
+      "implemented": false,
+      "requires_h100": false
+    },
+    {
+      "id": "P8.5.4",
+      "name": "finite_q_anchoring_surface_energy_specialization",
+      "authorized": false,
+      "implemented": false,
+      "requires_h100": false
+    },
+    {
+      "id": "P8.5.5",
+      "name": "workflow_restart_package_and_cpu_closure",
+      "authorized": false,
+      "implemented": false,
+      "requires_h100": false
+    },
+    {
+      "id": "P8.5.6",
+      "name": "h100_non_regression_and_p8_5_closure",
+      "authorized": false,
+      "implemented": false,
+      "requires_h100": true
+    }
+  ],
+  "gate_order": [
+    "static_ownership_import_and_public_api",
+    "generic_robin_identity_component_coverage_and_structured_rejection",
+    "operator_adr_manufactured_convergence_and_oriented_wall_residual",
+    "neumann_and_strong_dirichlet_limiting_controls",
+    "unchanged_p8_4_plane_cpu_identity",
+    "finite_q_full_tensor_and_five_component_variational_residual",
+    "one_step_finite_trajectory_and_no_fallback",
+    "checkpoint_restart_and_negative_identity",
+    "installed_package_metadata_and_provenance",
+    "h100_performance_live_memory_transform_solve_conditioning_and_restart"
+  ],
+  "negative_gates": [
+    "raw_or_normalized_coefficient_identity_mismatch",
+    "face_orientation_or_normal_convention_mismatch",
+    "target_q_or_q_convention_mismatch",
+    "surface_energy_law_or_five_component_metric_mismatch",
+    "operator_kind_eigenvalue_tau_or_factorization_plan_mismatch",
+    "geometry_shape_dtype_runtime_or_backend_mismatch",
+    "checkpoint_tensor_payload_or_file_record_tamper"
+  ],
+  "explicit_rejections_first_slice": [
+    "time_dependent_or_trainable_robin_data",
+    "spatially_varying_wall_strength_or_target_q",
+    "python_callable_coefficient_provider",
+    "robin_law_on_periodic_face",
+    "zero_or_negative_k_q",
+    "negative_w_for_quadratic_finite_q_anchoring",
+    "infinite_coefficient_runtime_value",
+    "ambiguous_k_l1_or_frank_constant_inference",
+    "multiple_elastic_constants",
+    "nonlinear_or_degenerate_planar_surface_energy",
+    "curved_surface_or_channel_finite_anchoring",
+    "unqualified_bounded_axis_backend"
+  ],
+  "out_of_scope": [
+    "prescribed_nonzero_neumann_flux",
+    "time_dependent_or_trainable_robin_data",
+    "spatially_varying_surface_energy",
+    "degenerate_planar_fournier_galatola_surface_energy",
+    "multiple_elastic_constants",
+    "curved_geometry",
+    "channel_finite_anchoring",
+    "optimal_control",
+    "compiled_runtime_promotion",
+    "production_default_change",
+    "scientific_benchmark_claim",
+    "phase_9"
+  ],
+  "reviewed_source_sha256": {
+    "pssolver/core/boundary.py": "fbb48c0a402a13272cd1ac45e3b13a2d25b131f83636048afa71ebc2791f065e",
+    "pssolver/boundaries/prescribed.py": "2789aa3f1ab74b7a2be3cc7001085af297e77f62be1d5b241359aace8000b5f7",
+    "pssolver/planning/lifting.py": "0805518ea81c8ca13859dedc7af911d32b5efbe6f2f9b7908e0720823dbcc33c",
+    "pssolver/operators/lifting.py": "2c8b7900104e268e2d923678ae3e17b8ac9eacaa4570fab591e6d059063d9fd3",
+    "pssolver/models/active_nematics/boundaries.py": "e48fea6d814914628605b18ee685efd9b1f780e86962f37c1d6942a6ffa44d3d",
+    "pssolver/configuration/simulation_lowering.py": "930c59ef096f80b1db8e4db34ade2ed5f8e3bc566a328b5d8abe069988938e39"
+  },
+  "local_verification": {
+    "targeted": "41 passed",
+    "full": "2326 passed, 8 subtests passed",
+    "git_diff_check": "pass",
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected": 0
+  },
+  "authorization": {
+    "p8_5_0_planning_authorized": true,
+    "p8_5_0_planning_complete": true,
+    "eligible_for_p8_5_1": true,
+    "p8_5_1_implementation_authorized": false,
+    "p8_5_runtime_implementation_authorized": false,
+    "h100_authorized": false,
+    "nonhomogeneous_neumann_authorized": false,
+    "p8_6_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false
+  }
+}
