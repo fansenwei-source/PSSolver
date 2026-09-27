@@ -49,6 +49,8 @@ def test_cpu_profiler_records_frozen_operation_counts_and_finite_state():
     assert report["runtime"]["fallback_used"] is False
     assert report["runtime"]["construction_in_timed_loop"] is False
     assert report["conditioning"]["maximum_basis_condition_number"] < 2.0
+    assert report["torch"]["tf32_matmul"] is False
+    assert report["torch"]["tf32_cudnn"] is False
 
 
 def _synthetic_report(shape, trial, mode, package_root):

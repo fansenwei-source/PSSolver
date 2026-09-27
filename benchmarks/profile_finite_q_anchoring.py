@@ -190,6 +190,10 @@ def _advance(runtime, mode: str, steps: int) -> None:
 
 
 def profile(config: FiniteQAnchoringProfileConfig) -> dict[str, object]:
+    # Qualification processes must not inherit accelerator precision policy
+    # from an interactive shell, site configuration, or earlier benchmark.
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.backends.cudnn.allow_tf32 = False
     runtime = build_runtime(config)
     device = runtime.device
     initial_sha256 = _tensor_sha256(runtime.physical_q())
