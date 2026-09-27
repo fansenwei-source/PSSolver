@@ -14,6 +14,8 @@ from .boundary import (
     PeriodicBC,
     PrescribedDirichletBC,
     StaticConstantBoundaryValue,
+    StaticRobinBC,
+    StaticRobinCoefficients,
 )
 from .domain import DomainSpec, GridPlacement
 from .fields import FieldComponentSpec, FieldRole, FieldSpec
@@ -52,5 +54,7 @@ __all__ = [
     "ProjectedTransformExecution",
     "SpectralStorage",
     "StaticConstantBoundaryValue",
+    "StaticRobinBC",
+    "StaticRobinCoefficients",
     "TransformExecutionOrder",
 ]

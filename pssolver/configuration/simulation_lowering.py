@@ -105,6 +105,7 @@ class LoweringRejectionCode(str, Enum):
     ASYMMETRIC_FACE_PAIR = "asymmetric_face_pair"
     UNSUPPORTED_BOUNDARY_SIGNATURE = "unsupported_boundary_signature"
     UNSUPPORTED_PRESCRIBED_BOUNDARY = "unsupported_prescribed_boundary"
+    UNSUPPORTED_ROBIN_BOUNDARY = "unsupported_robin_boundary"
     UNSUPPORTED_BOUNDARY_SEMANTIC = "unsupported_boundary_semantic"
     INVALID_EQUATION_LAYOUT = "invalid_equation_layout"
     INVALID_STOKES_CONTRACT = "invalid_stokes_contract"
@@ -327,6 +328,21 @@ def _component_modal_kinds(
     lifting_plan: StaticLiftingPlan | None,
 ) -> tuple[BoundaryKind, ...]:
     assignment = simulation.boundaries.for_component(component)
+    robin_faces = tuple(
+        face
+        for face in assignment.faces
+        if face.condition.kind is BoundaryKind.ROBIN
+    )
+    if robin_faces:
+        _reject(
+            LoweringRejectionCode.UNSUPPORTED_ROBIN_BOUNDARY,
+            "Robin boundary laws require a qualified bounded-axis operator",
+            component=component,
+            faces=[
+                {"axis": face.axis, "side": face.side.value}
+                for face in robin_faces
+            ],
+        )
     prescribed_faces = tuple(
         face
         for face in assignment.faces

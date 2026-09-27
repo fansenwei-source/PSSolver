@@ -14,16 +14,24 @@ from .prescribed import (
     StaticPrescribedDirichletPolicy,
     prescribed_dirichlet,
 )
+from .robin import (
+    RobinFaceLaw,
+    StaticRobinBoundaryPolicy,
+    robin,
+)
 
 __all__ = [
     "BoundaryPolicy",
     "HomogeneousBoundaryPolicy",
     "PrescribedFaceValue",
+    "RobinFaceLaw",
     "StaticPrescribedDirichletPolicy",
+    "StaticRobinBoundaryPolicy",
     "assign_boundaries",
     "free_slip_velocity",
     "no_slip_velocity",
     "neumann_pressure_compatibility",
     "neumann_q",
     "prescribed_dirichlet",
+    "robin",
 ]

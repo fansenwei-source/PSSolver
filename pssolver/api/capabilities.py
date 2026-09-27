@@ -174,6 +174,12 @@ _GEOMETRIES = (
 _BOUNDARY_POLICIES = (
     DeclarationCapability(
         kind="boundary_policy",
+        key="robin",
+        constructor="pssolver.boundaries.robin",
+        qualified_applications=(),
+    ),
+    DeclarationCapability(
+        kind="boundary_policy",
         key="neumann_q",
         constructor="pssolver.boundaries.neumann_q",
         qualified_applications=(

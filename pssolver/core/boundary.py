@@ -21,6 +21,7 @@ class BoundaryKind(str, Enum):
     PERIODIC = "periodic"
     DIRICHLET = "dirichlet"
     NEUMANN = "neumann"
+    ROBIN = "robin"
 
 
 class BoundarySide(str, Enum):
@@ -60,6 +61,11 @@ class BoundaryCondition:
             raise TypeError("kind must be a BoundaryKind")
         if not isinstance(self.is_homogeneous, bool):
             raise TypeError("is_homogeneous must be a bool")
+        if self.kind is BoundaryKind.ROBIN:
+            raise ValueError(
+                "Robin boundary contracts require StaticRobinBC "
+                "coefficient identity"
+            )
         if not self.is_homogeneous:
             raise ValueError(
                 "Stage A supports homogeneous boundary contracts only"
@@ -115,6 +121,66 @@ class StaticConstantBoundaryValue:
         return hashlib.sha256(payload).hexdigest()
 
 
+@dataclass(frozen=True, slots=True)
+class StaticRobinCoefficients:
+    """Raw finite coefficients for one static physical Robin law.
+
+    The canonical convention is
+    ``alpha * phi + beta * (n dot grad phi) = gamma``, where ``n`` is the
+    outward unit normal.  The raw triple is retained as identity; an eventual
+    numerical operator may record a separate deterministic normalization.
+    """
+
+    alpha: StaticConstantBoundaryValue
+    beta: StaticConstantBoundaryValue
+    gamma: StaticConstantBoundaryValue
+
+    def __post_init__(self) -> None:
+        for name in ("alpha", "beta", "gamma"):
+            value = getattr(self, name)
+            if not isinstance(value, StaticConstantBoundaryValue):
+                value = StaticConstantBoundaryValue(value)
+                object.__setattr__(self, name, value)
+        if self.alpha.value == 0.0 and self.beta.value == 0.0:
+            raise ValueError(
+                "Robin alpha and beta cannot both be zero"
+            )
+
+    @property
+    def is_homogeneous(self) -> bool:
+        """Whether the Robin right-hand side is exactly zero."""
+
+        return self.gamma.value == 0.0
+
+    def to_metadata(self) -> dict[str, object]:
+        """Return canonical coefficient and outward-normal metadata."""
+
+        return {
+            "alpha": self.alpha.to_metadata(),
+            "beta": self.beta.to_metadata(),
+            "gamma": self.gamma.to_metadata(),
+            "canonical_form": "alpha*phi+beta*(n_dot_grad_phi)=gamma",
+            "coefficient_roles": {
+                "alpha": "field_multiplier",
+                "beta": "outward_normal_gradient_multiplier",
+                "gamma": "right_hand_side",
+            },
+            "normal_derivative_convention": "outward_unit_normal",
+            "normalization": "raw_coefficients",
+        }
+
+    def canonical_sha256(self) -> str:
+        """Return the stable identity of the raw Robin coefficient triple."""
+
+        payload = json.dumps(
+            self.to_metadata(),
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+        return hashlib.sha256(payload).hexdigest()
+
+
 @dataclass(frozen=True, slots=True, init=False)
 class PrescribedDirichletBC(BoundaryCondition):
     """Static nonhomogeneous Dirichlet data on one oriented face."""
@@ -138,6 +204,44 @@ class PrescribedDirichletBC(BoundaryCondition):
             {
                 "value": self.value.to_metadata(),
                 "value_sha256": self.value.canonical_sha256(),
+            }
+        )
+        return metadata
+
+
+@dataclass(frozen=True, slots=True, init=False)
+class StaticRobinBC(BoundaryCondition):
+    """Static Robin law on one component and oriented face."""
+
+    coefficients: StaticRobinCoefficients
+    kind: BoundaryKind = field(default=BoundaryKind.ROBIN, init=False)
+    is_homogeneous: bool = field(init=False)
+
+    def __init__(
+        self,
+        alpha: StaticConstantBoundaryValue | Real,
+        beta: StaticConstantBoundaryValue | Real,
+        gamma: StaticConstantBoundaryValue | Real,
+    ) -> None:
+        coefficients = StaticRobinCoefficients(alpha, beta, gamma)
+        object.__setattr__(self, "coefficients", coefficients)
+        object.__setattr__(self, "kind", BoundaryKind.ROBIN)
+        object.__setattr__(
+            self,
+            "is_homogeneous",
+            coefficients.is_homogeneous,
+        )
+
+    def to_metadata(self) -> dict[str, object]:
+        """Return the physical law and raw coefficient identity."""
+
+        metadata = BoundaryCondition.to_metadata(self)
+        metadata.update(
+            {
+                "coefficients": self.coefficients.to_metadata(),
+                "coefficients_sha256": (
+                    self.coefficients.canonical_sha256()
+                ),
             }
         )
         return metadata

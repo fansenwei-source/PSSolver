@@ -217,6 +217,7 @@ def test_discovery_is_frozen_and_matches_live_compiler_registry():
         "neumann_q",
         "no_slip_velocity",
         "prescribed_q",
+        "robin",
         "strong_homeotropic_q",
         "strong_planar_q",
     }

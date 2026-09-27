@@ -317,6 +317,7 @@ def test_p843_record_freezes_lowering_only_scope():
     superseded_by_p844 = {
         "pssolver/api/capabilities.py",
         "pssolver/configuration/simulation_binding.py",
+        "pssolver/configuration/simulation_lowering.py",
     }
     for relative, expected in record["source_sha256"].items():
         if relative in superseded_by_p844:

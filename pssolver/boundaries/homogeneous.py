@@ -16,12 +16,14 @@ from pssolver.core.boundary import (
     HomogeneousNeumannBC,
     PeriodicBC,
     PrescribedDirichletBC,
+    StaticRobinBC,
 )
 from pssolver.core.fields import FieldRole
 from pssolver.core.geometry import AxisTopology, GeometrySpec
 from pssolver.systems.equations import EquationSystemSpec
 
 from .prescribed import StaticPrescribedDirichletPolicy
+from .robin import StaticRobinBoundaryPolicy
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,7 +47,11 @@ class HomogeneousBoundaryPolicy:
             raise ValueError("unsupported homogeneous boundary policy")
 
 
-BoundaryPolicy = HomogeneousBoundaryPolicy | StaticPrescribedDirichletPolicy
+BoundaryPolicy = (
+    HomogeneousBoundaryPolicy
+    | StaticPrescribedDirichletPolicy
+    | StaticRobinBoundaryPolicy
+)
 
 
 def neumann_q() -> HomogeneousBoundaryPolicy:
@@ -190,6 +196,65 @@ def _prescribed_component_assignments(
     return tuple(assignments)
 
 
+def _robin_component_assignments(
+    *,
+    components: tuple[str, ...],
+    geometry: GeometrySpec,
+    policy: StaticRobinBoundaryPolicy,
+) -> tuple[ComponentBoundaryAssignment, ...]:
+    declared = {value.key: value.coefficients for value in policy.face_laws}
+    expected = {
+        (component, axis, side)
+        for component in components
+        for axis in geometry.bounded_axes
+        for side in BoundarySide
+    }
+    observed = set(declared)
+    if observed != expected:
+        missing = tuple(
+            (component, axis, side.value)
+            for component, axis, side in sorted(
+                expected - observed,
+                key=lambda value: (value[0], value[1], value[2].value),
+            )
+        )
+        extra = tuple(
+            (component, axis, side.value)
+            for component, axis, side in sorted(
+                observed - expected,
+                key=lambda value: (value[0], value[1], value[2].value),
+            )
+        )
+        raise ValueError(
+            "Robin laws must cover exactly every bounded component-face; "
+            f"missing={missing!r}, extra={extra!r}"
+        )
+
+    assignments = []
+    for component in components:
+        faces = []
+        for axis, topology in enumerate(geometry.axis_topologies):
+            for side in BoundarySide:
+                if topology is AxisTopology.PERIODIC:
+                    condition = PeriodicBC()
+                else:
+                    coefficients = declared[(component, axis, side)]
+                    condition = StaticRobinBC(
+                        coefficients.alpha.value,
+                        coefficients.beta.value,
+                        coefficients.gamma.value,
+                    )
+                faces.append(FaceBoundaryCondition(axis, side, condition))
+        assignments.append(
+            ComponentBoundaryAssignment(
+                component=component,
+                semantic=BoundarySemantic.PHYSICAL,
+                faces=tuple(faces),
+            )
+        )
+    return tuple(assignments)
+
+
 def assign_boundaries(
     *,
     model: EquationSystemSpec,
@@ -232,12 +297,17 @@ def assign_boundaries(
         policy = policies[field.name]
         if not isinstance(
             policy,
-            (HomogeneousBoundaryPolicy, StaticPrescribedDirichletPolicy),
+            (
+                HomogeneousBoundaryPolicy,
+                StaticPrescribedDirichletPolicy,
+                StaticRobinBoundaryPolicy,
+            ),
         ):
             raise TypeError(
                 f"boundary policy for '{field.name}' must be a "
                 "HomogeneousBoundaryPolicy or "
-                "StaticPrescribedDirichletPolicy"
+                "StaticPrescribedDirichletPolicy or "
+                "StaticRobinBoundaryPolicy"
             )
         if policy.field_name != field.name:
             raise ValueError(
@@ -253,6 +323,21 @@ def assign_boundaries(
                 )
             assignments.extend(
                 _prescribed_component_assignments(
+                    components=field.components,
+                    geometry=geometry,
+                    policy=policy,
+                )
+            )
+            continue
+        if isinstance(policy, StaticRobinBoundaryPolicy):
+            if field.role is not FieldRole.EVOLVED:
+                raise ValueError(
+                    "static Robin laws are supported only for evolved "
+                    f"fields; '{field.name}' has role "
+                    f"'{field.role.value}'"
+                )
+            assignments.extend(
+                _robin_component_assignments(
                     components=field.components,
                     geometry=geometry,
                     policy=policy,

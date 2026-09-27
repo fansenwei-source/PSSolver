@@ -36,6 +36,16 @@ _DEALIAS_FRACTIONS = {
 }
 
 
+def _transform_kind(boundary_kind: BoundaryKind) -> TransformKind:
+    try:
+        return _TRANSFORM_KIND_BY_BOUNDARY[boundary_kind]
+    except KeyError as exc:
+        raise ValueError(
+            f"boundary kind '{boundary_kind.value}' requires a qualified "
+            "bounded-axis lowering"
+        ) from exc
+
+
 def _periodic_mode_numbers(size: int, hermitian_packed: bool) -> tuple[int, ...]:
     if hermitian_packed:
         return tuple(range(size // 2 + 1))
@@ -143,7 +153,7 @@ def assemble_spectral_plan(problem: ProblemSpec) -> SpectralPlan:
         component_plans = []
         for component in field_spec.components:
             transform_kinds = tuple(
-                _TRANSFORM_KIND_BY_BOUNDARY[condition.kind]
+                _transform_kind(condition.kind)
                 for condition in component.boundaries.axes
             )
             retained_counts = tuple(
