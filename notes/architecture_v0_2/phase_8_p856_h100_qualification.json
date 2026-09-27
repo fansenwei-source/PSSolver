@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "phase": "P8.5.6",
+  "status": "P8_5_COMPLETE_P8_6_PLANNING_ELIGIBLE",
+  "classification": "PASS_P8_5_6_FINITE_Q_ANCHORING_H100_CLOSURE",
+  "qualification_complete": true,
+  "p8_5_6_complete": true,
+  "p8_5_complete": true,
+  "identity": {
+    "baseline_commit": "2c99942f37149aaa92791ab8616697707f6abfbb",
+    "core_implementation_commit": "c8028845293247290a2e9aa51ce8847206768bfa",
+    "qualification_source_commit": "74a5226f6798cc311d3b839624b85349e3647fe8",
+    "corrected_contract_commit": "5f1ba3f2e24f0070f25e39931e0a7c62bc86990b",
+    "wheel_sha256": "17d9d698bd2400d6c7005a6518b9201dc856d2f52fadb8b08c14313080c40fbc",
+    "source_archive_sha256": "007082be63a55114ab464b7f00521b16c29086b29926abf75422662762c983c6",
+    "source_shadow_import": false,
+    "editable_install": false
+  },
+  "cpu_gate": {
+    "passed": 2391,
+    "skipped": 1,
+    "deselected": 6,
+    "failed": 0,
+    "subtests_passed": 8,
+    "only_skip": "optional_nematics3d_dependency",
+    "contract_satisfied": true
+  },
+  "h100": {
+    "job_id": "10844444",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:01:36",
+    "node": "gpu-h100-4-0",
+    "gpu": "NVIDIA H100 PCIe",
+    "gpu_total_memory_bytes": 84929478656,
+    "pytorch": "2.5.1+cu121",
+    "cuda_runtime": "12.1",
+    "driver": "550.54.14",
+    "tf32_matmul": false,
+    "tf32_cudnn": false,
+    "requeue": 0,
+    "restarts": 0,
+    "formal_submission_count": 1,
+    "automatic_retry": false,
+    "second_job_submitted": false
+  },
+  "cuda_only_tests": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "xfailed": 0
+  },
+  "profiles": {
+    "report_count": 12,
+    "shapes": [[128, 128, 32], [320, 320, 80]],
+    "trials_per_shape": 3,
+    "modes": ["scalar_reference", "aggregate_runtime"],
+    "finite": true,
+    "fallback_used": false,
+    "graph_breaks": 0,
+    "construction_in_timed_loop": false,
+    "root_solve_in_timed_loop": false,
+    "matrix_factorization_in_timed_loop": false,
+    "paired_initial_q_sha256_equal": true,
+    "paired_final_q_sha256_equal": true,
+    "operation_counts_per_step": {
+      "forward_transform": 10.0,
+      "inverse_transform": 5.0,
+      "helmholtz_solve": 5.0,
+      "helmholtz_apply": 0.0
+    },
+    "maximum_basis_condition_number": 1.2099038387330427
+  },
+  "performance": {
+    "128x128x32": {
+      "aggregate_reference_mean_timestep_ratio": 1.070141406632,
+      "aggregate_reference_median_timestep_ratio": 1.070852792396,
+      "maximum_peak_allocated_ratio": 1.0,
+      "maximum_peak_active_ratio": 1.0,
+      "maximum_peak_reserved_ratio": 1.0
+    },
+    "320x320x80": {
+      "aggregate_reference_mean_timestep_ratio": 1.069896692523,
+      "aggregate_reference_median_timestep_ratio": 1.070174058065,
+      "maximum_peak_allocated_ratio": 1.0,
+      "maximum_peak_active_ratio": 1.0,
+      "maximum_peak_reserved_ratio": 1.0
+    },
+    "mean_ratio_limit": 1.15,
+    "median_ratio_limit": 1.15,
+    "memory_ratio_limit": 1.10
+  },
+  "analyzer": {
+    "classification": "PASS_P8_5_6_PROFILE_MATRIX",
+    "profile_count": 12,
+    "eligible_for_final_scientific_gates": true
+  },
+  "archive": {
+    "control_directory": "/home/fansenwei/pssolver_phase8_p856_finite_q_h100_74a5226_20260927_recovery_v1",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_phase8_p856_finite_q_h100_74a5226_20260927_recovery_v1",
+    "manifest_entries": 34,
+    "manifest_passed": 34,
+    "checksums_sha256": "1db095d21d6375b3192fa048e1b7b33a0bef960a925206e3e025d0847c4d59d0",
+    "complete": true,
+    "complete_value": "PASS_P8_5_6_FINITE_Q_ANCHORING_H100_CLOSURE"
+  },
+  "scope": {
+    "finite_q_relaxation_pilot_qualified": true,
+    "complete_beris_edwards_timestep_connected": false,
+    "stokes_connected": false,
+    "public_simulation_connected": false,
+    "production_runtime_selector_connected": false,
+    "production_default_changed": false,
+    "paper_benchmark_claim": false
+  },
+  "authorization": {
+    "eligible_for_p8_6_planning": true,
+    "p8_6_implementation_authorized": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false
+  }
+}

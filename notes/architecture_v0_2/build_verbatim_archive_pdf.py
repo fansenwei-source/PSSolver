@@ -215,6 +215,8 @@ SOURCE_ORDER = (
     "phase_8_p855_finite_q_workflow_restart.json",
     "phase_8_p856_h100_qualification_plan.md",
     "phase_8_p856_h100_qualification_plan.json",
+    "phase_8_p856_h100_qualification.md",
+    "phase_8_p856_h100_qualification.json",
 )
 
 PAGE_WIDTH = 595.276
