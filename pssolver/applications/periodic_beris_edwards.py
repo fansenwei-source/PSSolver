@@ -37,7 +37,16 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _load_initial_q(run_spec: PeriodicBerisEdwardsRunSpec):
+def load_periodic_initial_q(run_spec: PeriodicBerisEdwardsRunSpec):
+    """Load the validated compact-Q snapshot used by periodic runtimes.
+
+    The helper is shared by the production application and the provisional
+    functional runtime so both construction paths start from the same bytes,
+    layout checks, and dtype contract.
+    """
+
+    if not isinstance(run_spec, PeriodicBerisEdwardsRunSpec):
+        raise TypeError("run_spec must be PeriodicBerisEdwardsRunSpec")
     spec = run_spec.simulation
     snapshot = spec.initial_condition.parameters
     path = Path(snapshot["directory"]).expanduser().resolve() / (
@@ -107,7 +116,9 @@ def run_periodic_beris_edwards(
     if run_spec.dry_run:
         return None
 
-    initial_values, snapshot_path, snapshot_sha256 = _load_initial_q(run_spec)
+    initial_values, snapshot_path, snapshot_sha256 = load_periodic_initial_q(
+        run_spec
+    )
     metadata["initial_condition"] = {
         "source": str(snapshot_path),
         "sha256": snapshot_sha256,
@@ -138,4 +149,4 @@ def run_periodic_beris_edwards(
     return workflow.run(progress=progress)
 
 
-__all__ = ["run_periodic_beris_edwards"]
+__all__ = ["load_periodic_initial_q", "run_periodic_beris_edwards"]

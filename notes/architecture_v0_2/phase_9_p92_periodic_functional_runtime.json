@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "phase": "P9.2",
+  "title": "Batch-one periodic complete-stress activity-control functional runtime",
+  "date": "2026-09-28",
+  "status": "complete",
+  "classification": "PASS_P9_2_PERIODIC_ACTIVITY_FUNCTIONAL_RUNTIME",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "dc7177fb95bc94797aa995553d986a9229b14378",
+    "p9_1_complete": true
+  },
+  "scope": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "periodic_box",
+    "runtime_path": "periodic_spectral",
+    "batch_sizes": [1],
+    "pointwise_execution": "eager",
+    "spectral_refresh": "disabled",
+    "production_default_changed": false,
+    "stable_package_root_changed": false
+  },
+  "state": {
+    "container": "flat_tuple",
+    "components": ["q_physical", "q_spectral"],
+    "physical_layout": [5, "batch", "nx", "ny", "nz"],
+    "spectral_layout": [5, "batch", "native_spectral_x", "native_spectral_y", "native_spectral_z"],
+    "explicit_batch_axis": true,
+    "all_persistent_next_step_values_included": true,
+    "caller_tensor_mutation": false
+  },
+  "control": {
+    "name": "activity",
+    "layout": ["batch", "nx", "ny", "nz"],
+    "grid_location": "cell_centered_physical_grid",
+    "equation_term": "div(beta * alpha * Q)",
+    "injection_order": "form_beta_alpha_q_product_before_divergence",
+    "admissible_min": 0.0,
+    "implicit_dtype_or_device_conversion": false,
+    "implicit_clipping": false,
+    "parameter_registry_mutation": false,
+    "dealiasing_in_runtime_identity": true
+  },
+  "observations": {
+    "time_alignment": "input_state_under_current_control",
+    "names": ["Q", "velocity", "pressure"],
+    "terminal_without_control": ["Q"],
+    "combined_evaluates_flow_once": true,
+    "combined_matches_separate_observe_bitwise": true
+  },
+  "capabilities": {
+    "pure_step": true,
+    "combined_step_and_observe": true,
+    "differentiability": "torch_autograd",
+    "differentiable_inputs": ["state", "activity"],
+    "inner_solve_gradient": "direct_periodic_fourier_autograd",
+    "deterministic_replay": "not_qualified",
+    "durable_checkpoint_bridge": false,
+    "explicit_jvp": false,
+    "explicit_vjp": false
+  },
+  "reuse": {
+    "production_complete_stress_model": true,
+    "production_periodic_direct_stokes": true,
+    "production_transform_backend": true,
+    "production_dealias_projector": true,
+    "production_imex_coefficients": true,
+    "shared_snapshot_loader": true,
+    "legacy_control_oracle_changed": false,
+    "external_control_dependency_added": false
+  },
+  "qualification": {
+    "focused": "12 passed",
+    "full": "2458 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass",
+    "production_one_step_byte_identity": true,
+    "autograd_smoke": true,
+    "h100_submissions": 0,
+    "verbatim_pdf_regenerated": false
+  },
+  "source_scope": [
+    "pssolver/applications/periodic_beris_edwards.py",
+    "pssolver/functional/__init__.py",
+    "pssolver/functional/periodic_activity.py",
+    "tests/test_phase9_p92_periodic_functional_runtime.py",
+    "tests/test_phase9_p92_record.py",
+    "notes/architecture_v0_2/phase_9_p92_periodic_functional_runtime.md",
+    "notes/architecture_v0_2/phase_9_p92_periodic_functional_runtime.json",
+    "notes/architecture_v0_2/build_verbatim_archive_pdf.py"
+  ],
+  "authorization": {
+    "p9_2_complete": true,
+    "p9_3_implementation_authorized": false,
+    "later_phase_9_slices_authorized": false,
+    "h100_authorized": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  },
+  "next_slice": "P9.3 deterministic replay and functional/durable state bridge"
+}

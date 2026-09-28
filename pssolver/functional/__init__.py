@@ -1,8 +1,9 @@
-"""Provisional functional execution declarations.
+"""Provisional functional execution declarations and qualified runtimes.
 
-The declarations are intentionally imported through ``pssolver.functional``
-and are not part of the stable package-root API.  P9.1 provides no functional
-runtime implementation and does not modify production execution.
+The interface is intentionally imported through ``pssolver.functional`` and
+is not part of the stable package-root API.  P9.2 implements only the
+batch-one periodic complete-stress activity-control runtime; unsupported
+model--geometry combinations continue to fail before execution.
 """
 
 from .contracts import (
@@ -22,6 +23,12 @@ from .contracts import (
     FunctionalStateSpec,
     FunctionalTensorSpec,
 )
+from .periodic_activity import (
+    PeriodicActivityFunctionalRuntime,
+    PeriodicActivityFunctionalRuntimeFactory,
+    build_functional_runtime,
+    periodic_activity_functional_request,
+)
 
 __all__ = [
     "FUNCTIONAL_API_VERSION",
@@ -39,4 +46,8 @@ __all__ = [
     "FunctionalState",
     "FunctionalStateSpec",
     "FunctionalTensorSpec",
+    "PeriodicActivityFunctionalRuntime",
+    "PeriodicActivityFunctionalRuntimeFactory",
+    "build_functional_runtime",
+    "periodic_activity_functional_request",
 ]

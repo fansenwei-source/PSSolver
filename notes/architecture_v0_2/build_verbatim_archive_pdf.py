@@ -233,6 +233,8 @@ SOURCE_ORDER = (
     "phase_9_p90_control_contract_freeze.json",
     "phase_9_p91_functional_prerequisites.md",
     "phase_9_p91_functional_prerequisites.json",
+    "phase_9_p92_periodic_functional_runtime.md",
+    "phase_9_p92_periodic_functional_runtime.json",
 )
 
 PAGE_WIDTH = 595.276
