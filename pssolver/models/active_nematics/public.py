@@ -31,14 +31,32 @@ def CompleteStressBerisEdwards(
     activity: float,
     beta: float,
     viscosity: float,
+    friction: float = 0.0,
+    tangential_zero_mode_policy: str | TangentialZeroModePolicy = (
+        TangentialZeroModePolicy.ZERO_MEAN
+    ),
 ) -> EquationSystemSpec:
     """Declare the qualified complete-stress Beris--Edwards equations.
 
-    The zero-wave-number treatment is the explicit zero-mean tangential-flow
-    policy with zero friction.  A future public constructor may expose the
-    already-supported friction policy, but this convenience surface does not
-    silently select it.
+    The default zero-wave-number treatment remains the explicit zero-mean
+    velocity policy with zero friction.  The alternative ``friction`` policy
+    retains the uniform velocity mode and requires a strictly positive drag
+    coefficient.  Pressure always uses the zero-mean gauge.
     """
+
+    try:
+        zero_mode_policy = TangentialZeroModePolicy(
+            tangential_zero_mode_policy
+        )
+    except (TypeError, ValueError) as exc:
+        raise ValueError(
+            "tangential_zero_mode_policy must be 'zero_mean' or 'friction'"
+        ) from exc
+    if zero_mode_policy is TangentialZeroModePolicy.NOT_APPLICABLE:
+        raise ValueError(
+            "complete-stress periodic/Plane flow requires zero_mean or "
+            "friction tangential_zero_mode_policy"
+        )
 
     stokes = IncompressibleStokesSystemSpec(
         name="flow",
@@ -46,6 +64,9 @@ def CompleteStressBerisEdwards(
         velocity_components=("ux", "uy", "uz"),
         pressure_component="p",
         viscosity=viscosity,
+        friction=friction,
+        pressure_gauge=PressureGauge.ZERO_MEAN,
+        tangential_zero_mode_policy=zero_mode_policy,
     )
     request = CompleteStressBerisEdwardsEquationRequest(
         material=BerisEdwardsMaterialRequest(

@@ -73,11 +73,14 @@ from .nematics3d_adapter import (
     q_field_object_from_Q,
 )
 from .q_tensor import (
+    PLANAR_Q_COMPONENTS,
     Q_components,
     Q_convention_metadata,
     Q_magnitude,
     S_from_Q,
+    embed_z_invariant_planar_q,
     positive_equilibrium_S,
+    project_z_invariant_planar_q,
     uniaxial_Q,
 )
 from .public import (
@@ -118,6 +121,7 @@ __all__ = [
     "POINTWISE_COMPILE_MODE",
     "POINTWISE_EXECUTION_MODES",
     "Q_COMPONENTS",
+    "PLANAR_Q_COMPONENTS",
     "Q_COMPONENT_METRIC",
     "Q_GRADIENT_COMPONENTS",
     "QUADRATIC_FINITE_Q_SURFACE_LAW_ID",
@@ -140,6 +144,7 @@ __all__ = [
     "CHANNEL_DISTORTION_STRESS_BOUNDARY_CONDITIONS",
     "CHANNEL_Q_BOUNDARY_CONDITIONS",
     "S_from_Q",
+    "embed_z_invariant_planar_q",
     "S_and_director_from_Q",
     "director_from_Q",
     "eigenframe_from_Q",
@@ -164,6 +169,7 @@ __all__ = [
     "finite_q_variational_residual",
     "neumann_twist_profile",
     "positive_equilibrium_S",
+    "project_z_invariant_planar_q",
     "q_tensor_contraction",
     "prescribed_q",
     "q_component_metric",

@@ -23,6 +23,7 @@ from .fields import Q_COMPONENTS
 
 Q_CONVENTION_ID = "de_gennes_S_lambda_max_v1"
 Q_CONVENTION_DEFINITION = "Q=(3S/2)(nn-I/3)"
+PLANAR_Q_COMPONENTS = ("Qxx", "Qxy", "Qyy")
 
 
 def _torch_float_dtype(value: torch.Tensor) -> torch.dtype:
@@ -318,6 +319,101 @@ def Q_magnitude(
     return np.sqrt(np.maximum(contraction, 0.0))
 
 
+def _validate_planar_q_layout(
+    value: np.ndarray | torch.Tensor,
+    *,
+    component_count: int,
+    description: str,
+) -> None:
+    expected_rank = 4 if component_count == 3 else 5
+    if value.ndim != expected_rank or value.shape[0] != component_count:
+        expected = (
+            "(3, batch, nx, ny)"
+            if component_count == 3
+            else "(5, batch, nx, ny, nz)"
+        )
+        raise ValueError(f"{description} must have shape {expected}")
+    if any(int(length) <= 0 for length in value.shape[1:]):
+        raise ValueError(f"{description} axes must all be non-empty")
+    if torch.is_tensor(value):
+        if value.is_complex() or not value.is_floating_point():
+            raise TypeError(f"{description} must be a real floating tensor")
+        finite = bool(torch.isfinite(value).all())
+    else:
+        if np.iscomplexobj(value) or not np.issubdtype(
+            value.dtype,
+            np.floating,
+        ):
+            raise TypeError(f"{description} must be a real floating array")
+        finite = bool(np.isfinite(value).all())
+    if not finite:
+        raise ValueError(f"{description} must contain only finite values")
+
+
+def embed_z_invariant_planar_q(
+    planar_q: np.ndarray | torch.Tensor,
+    *,
+    z_points: int = 1,
+) -> np.ndarray | torch.Tensor:
+    """Embed a planar Q field into the canonical five-component 3D layout.
+
+    ``planar_q`` has the explicit layout ``(Q-component, batch, nx, ny)``
+    with component order ``(Qxx, Qxy, Qyy)``.  The returned layout is
+    ``(Q-component, batch, nx, ny, nz)`` in canonical order
+    ``(Qxx, Qxy, Qxz, Qyy, Qyz)``.  The out-of-plane components are exactly
+    zero and every z plane is identical.  No dtype or device conversion is
+    performed.
+    """
+
+    if not isinstance(planar_q, (np.ndarray, torch.Tensor)):
+        raise TypeError("planar_q must be a NumPy array or PyTorch tensor")
+    if not isinstance(z_points, int) or isinstance(z_points, bool) or z_points <= 0:
+        raise ValueError("z_points must be a positive integer")
+    _validate_planar_q_layout(
+        planar_q,
+        component_count=3,
+        description="planar_q",
+    )
+    qxx, qxy, qyy = planar_q
+    if torch.is_tensor(planar_q):
+        zero = torch.zeros_like(qxx)
+        compact = torch.stack((qxx, qxy, zero, qyy, zero), dim=0)
+        return compact.unsqueeze(-1).expand(*compact.shape, z_points).clone()
+    zero = np.zeros_like(qxx)
+    compact = np.stack((qxx, qxy, zero, qyy, zero), axis=0)
+    return np.repeat(compact[..., None], z_points, axis=-1)
+
+
+def project_z_invariant_planar_q(
+    q: np.ndarray | torch.Tensor,
+) -> np.ndarray | torch.Tensor:
+    """Recover planar components from an exactly z-invariant 3D Q field.
+
+    This is a fail-closed projection contract, not an averaging operation.
+    It rejects nonzero ``Qxz``/``Qyz`` components and any variation along z,
+    then returns ``(Qxx, Qxy, Qyy)`` with layout
+    ``(3, batch, nx, ny)``.  No dtype or device conversion is performed.
+    """
+
+    if not isinstance(q, (np.ndarray, torch.Tensor)):
+        raise TypeError("q must be a NumPy array or PyTorch tensor")
+    _validate_planar_q_layout(q, component_count=5, description="q")
+    if torch.is_tensor(q):
+        zero = torch.zeros_like(q[0])
+        if not torch.equal(q[2], zero) or not torch.equal(q[4], zero):
+            raise ValueError("z-invariant planar Q requires Qxz == Qyz == 0")
+        reference = q[..., :1]
+        if not torch.equal(q, reference.expand_as(q)):
+            raise ValueError("q must be exactly invariant along z")
+        return torch.stack((q[0, ..., 0], q[1, ..., 0], q[3, ..., 0]))
+    zero = np.zeros_like(q[0])
+    if not np.array_equal(q[2], zero) or not np.array_equal(q[4], zero):
+        raise ValueError("z-invariant planar Q requires Qxz == Qyz == 0")
+    if not np.array_equal(q, np.broadcast_to(q[..., :1], q.shape)):
+        raise ValueError("q must be exactly invariant along z")
+    return np.stack((q[0, ..., 0], q[1, ..., 0], q[3, ..., 0]))
+
+
 def positive_equilibrium_S(A: float, B: float, C: float) -> float:
     """Return the positive root of ``3 C S^2 + B S + 2 A = 0``."""
     coefficients = (float(A), float(B), float(C))
@@ -355,10 +451,13 @@ def Q_convention_metadata() -> dict[str, Any]:
 
 
 __all__ = [
+    "PLANAR_Q_COMPONENTS",
     "Q_components",
     "Q_convention_metadata",
     "Q_magnitude",
     "S_from_Q",
+    "embed_z_invariant_planar_q",
     "positive_equilibrium_S",
+    "project_z_invariant_planar_q",
     "uniaxial_Q",
 ]

@@ -258,14 +258,17 @@ class PeriodicRuntimeAdapter:
         }
 
     def to_metadata(self):
+        flow = self._solver.model.static_model
         return {
             "requested": PERIODIC_RUNTIME_PATH,
             "effective": PERIODIC_RUNTIME_PATH,
             "adapter": type(self).__name__,
             "fallback_used": False,
             "pressure_gauge": "zero_mean",
+            "tangential_zero_mode_policy": flow.zero_mode_policy,
+            "friction": flow.friction,
             "uniform_velocity_mode_action": (
-                "remove_all_uniform_velocity_and_force"
+                flow.last_uniform_velocity_mode_action
             ),
         }
 

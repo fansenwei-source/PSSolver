@@ -77,6 +77,12 @@ def run_periodic_beris_edwards(
     if not isinstance(run_spec, PeriodicBerisEdwardsRunSpec):
         raise TypeError("run_spec must be PeriodicBerisEdwardsRunSpec")
     spec = run_spec.simulation
+    stokes = spec.equation_system.parameters["stokes"]["parameters"]
+    uniform_mode_action = (
+        "remove_all_uniform_velocity_and_force"
+        if stokes["tangential_zero_mode_policy"] == "zero_mean"
+        else "retain_all_uniform_velocity_resolved_by_friction"
+    )
     metadata = {
         "schema_version": 1,
         "application": "periodic_complete_stress_beris_edwards",
@@ -90,9 +96,11 @@ def run_periodic_beris_edwards(
             "fallback_used": False,
         },
         "pressure_gauge": "zero_mean",
-        "uniform_velocity_mode_action": (
-            "remove_all_uniform_velocity_and_force"
-        ),
+        "tangential_zero_mode_policy": stokes[
+            "tangential_zero_mode_policy"
+        ],
+        "friction": stokes["friction"],
+        "uniform_velocity_mode_action": uniform_mode_action,
     }
     if emit_metadata:
         print(json.dumps(metadata, indent=2, sort_keys=True))

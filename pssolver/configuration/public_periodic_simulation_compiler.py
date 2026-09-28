@@ -130,10 +130,22 @@ def compile_periodic_public_simulation(source: SimulationSpec, product_type):
     stokes = source.equation_system.parameters["stokes"]["parameters"]
     if stokes["pressure_gauge"] != "zero_mean":
         _reject("periodic pressure requires the zero-mean gauge")
-    if stokes["tangential_zero_mode_policy"] != "zero_mean":
-        _reject("P8.2 qualifies zero-mean uniform velocity only")
-    if stokes["friction"] != 0.0:
-        _reject("zero-mean periodic velocity requires zero friction")
+    zero_mode_policy = stokes["tangential_zero_mode_policy"]
+    friction = stokes["friction"]
+    if zero_mode_policy == "zero_mean":
+        if friction != 0.0:
+            _reject("zero-mean periodic velocity requires zero friction")
+        uniform_mode_action = "remove_all_uniform_velocity_and_force"
+    elif zero_mode_policy == "friction":
+        if friction <= 0.0:
+            _reject("periodic friction mode requires positive friction")
+        uniform_mode_action = (
+            "retain_all_uniform_velocity_resolved_by_friction"
+        )
+    else:
+        _reject(
+            "periodic velocity requires zero_mean or friction zero-mode policy"
+        )
 
     run_spec = PeriodicBerisEdwardsRunSpec(source)
     return product_type(
@@ -147,9 +159,7 @@ def compile_periodic_public_simulation(source: SimulationSpec, product_type):
             "schema_version": 1,
             "physical_values_changed": False,
             "pressure_gauge": "zero_mean",
-            "uniform_velocity_mode_action": (
-                "remove_all_uniform_velocity_and_force"
-            ),
+            "uniform_velocity_mode_action": uniform_mode_action,
             "runtime_fallback_allowed": False,
         },
     )

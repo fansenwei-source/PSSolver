@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "phase": "P9.1",
+  "title": "Periodic friction, z-invariant Q, and provisional functional declarations",
+  "date": "2026-09-27",
+  "status": "complete",
+  "classification": "PASS_P9_1_FUNCTIONAL_PREREQUISITES",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "30c1d4c92045f0cb5db6ef58c3e0d49feb598feb",
+    "p9_0_record": "notes/architecture_v0_2/phase_9_p90_control_contract_freeze.json",
+    "p9_0_record_sha256": "e50ff872f04234d437e1815e7aab25ca70bc45e325aeb6bfd9d5c359f0b1e681",
+    "p9_0_complete": true
+  },
+  "periodic_friction": {
+    "publicly_connected": true,
+    "pressure_gauge": "zero_mean",
+    "valid_zero_mean_pair": {
+      "tangential_zero_mode_policy": "zero_mean",
+      "friction": 0.0,
+      "uniform_velocity_mode_action": "remove_all_uniform_velocity_and_force"
+    },
+    "valid_friction_pair": {
+      "tangential_zero_mode_policy": "friction",
+      "friction_constraint": "finite_and_strictly_positive",
+      "uniform_velocity_mode_action": "retain_all_uniform_velocity_resolved_by_friction"
+    },
+    "default_changed": false,
+    "equation_or_operator_changed": false,
+    "plane_or_channel_compiler_broadened": false
+  },
+  "z_invariant_contract": {
+    "nz_one_public_step_qualified_on_cpu": true,
+    "multi_plane_invariant_subspace_qualified_on_cpu": true,
+    "planar_components": ["Qxx", "Qxy", "Qyy"],
+    "three_dimensional_components": ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"],
+    "input_layout": [3, "batch", "nx", "ny"],
+    "output_layout": [5, "batch", "nx", "ny", "nz"],
+    "out_of_plane_components_exactly_zero": true,
+    "projection_is_fail_closed_not_averaging": true,
+    "dtype_or_device_conversion": false,
+    "torch_differentiable": true,
+    "separate_two_dimensional_q_theory_added": false
+  },
+  "functional_declarations": {
+    "namespace": "pssolver.functional",
+    "api_version": "0.1-provisional",
+    "stable_package_root_exported": false,
+    "runtime_protocol_declared": true,
+    "factory_protocol_declared": true,
+    "construction_request_declared": true,
+    "flat_tuple_state_declared": true,
+    "explicit_batch_axis": true,
+    "first_required_batch_size": 1,
+    "larger_batches_claimed": false,
+    "observation_time": "input_state_under_current_control",
+    "step_index_explicit": true,
+    "json_identity_sections": [
+      "scientific",
+      "discretization",
+      "execution",
+      "state_layout"
+    ],
+    "control_schema_fields": [
+      "name",
+      "shape",
+      "dtype",
+      "device",
+      "grid_location",
+      "broadcast_rules",
+      "equation_term",
+      "injection_order",
+      "dealiasing_identity",
+      "admissible_bounds"
+    ],
+    "default_capabilities_fail_closed": true,
+    "functional_runtime_implemented": false,
+    "functional_timestep_implemented": false,
+    "gradient_or_adjoint_implemented": false
+  },
+  "ownership": {
+    "legacy_control_oracle_changed": false,
+    "new_dependency_on_independent_consumer": false,
+    "production_default_changed": false,
+    "checkpoint_schema_changed": false,
+    "stable_package_root_changed": false
+  },
+  "source_scope": [
+    "pssolver/applications/periodic_beris_edwards.py",
+    "pssolver/configuration/public_periodic_simulation_compiler.py",
+    "pssolver/functional/__init__.py",
+    "pssolver/functional/contracts.py",
+    "pssolver/models/active_nematics/__init__.py",
+    "pssolver/models/active_nematics/public.py",
+    "pssolver/models/active_nematics/q_tensor.py",
+    "pssolver/runtime/periodic_beris_edwards.py"
+  ],
+  "local_verification": {
+    "focused": "39 passed",
+    "full": "2446 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass",
+    "h100_submissions": 0,
+    "verbatim_pdf_regenerated": false
+  },
+  "authorization": {
+    "p9_1_complete": true,
+    "p9_2_implementation_authorized": false,
+    "later_phase_9_slices_authorized": false,
+    "h100_authorized": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  },
+  "next_slice": "P9.2 batch-one periodic complete-stress activity-control functional runtime"
+}
