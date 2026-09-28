@@ -1,4 +1,10 @@
-"""Discrete-adjoint optimal-control tools for PSSolver."""
+"""Frozen compatibility surface for legacy PSSolver control tools.
+
+Phase 9 keeps these names and their behavior as a numerical oracle, but adds
+no new control features here. New control research is owned by an independent
+consumer; PSSolver owns only the provisional differentiable-runtime contract.
+See this package's ``README.md`` and ADR 0013.
+"""
 
 from .active_force import active_force_divergence
 from .controls import (

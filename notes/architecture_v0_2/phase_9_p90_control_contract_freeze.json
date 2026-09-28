@@ -1,0 +1,427 @@
+{
+  "schema_version": 1,
+  "phase": "P9.0",
+  "title": "Control ownership, functional-runtime contract, and legacy oracle freeze",
+  "date": "2026-09-27",
+  "status": "complete",
+  "classification": "PASS_P9_0_CONTROL_CONTRACT_AND_ORACLE_FREEZE",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "4688021624b017fd55e476466310e4908cd19b99",
+    "phase_8_record": "notes/architecture_v0_2/phase_8_final_closure.json",
+    "phase_8_record_sha256": "274e977542544903747c8079b535c503a7d408a34ae2a971fdf87c17c7a70d9e",
+    "phase_8_classification": "PASS_PHASE8_CAPABILITY_EXPANSION_AND_INTEGRATED_H100_CLOSURE",
+    "phase_8_complete": true,
+    "eligible_for_phase_9_planning": true
+  },
+  "decision_record": {
+    "path": "notes/architecture_v0_2/adr/0013-functional-runtime-and-external-control-ownership.md",
+    "sha256": "251b0301f7d3032dbffcaf39e84cfeaa3868500bea04d54c12d7945c1b3e7779",
+    "status": "accepted_for_phase_9"
+  },
+  "dependency_direction": {
+    "allowed": "independent_control_consumer_to_pssolver_public_provisional_api",
+    "reverse_dependency_allowed": false,
+    "consumer_repository_identity_in_pssolver_docs": false,
+    "consumer_objectives_or_experiments_in_pssolver": false
+  },
+  "ownership": {
+    "pssolver": [
+      "scientific_equations_and_parameter_meaning",
+      "geometry_boundary_and_discretization_identity",
+      "model_declared_physical_control_admissibility",
+      "control_field_equation_injection",
+      "functional_state_and_observation_conventions",
+      "functional_execution_and_differentiability_capabilities",
+      "deterministic_replay_declaration",
+      "durable_checkpoint_conversion",
+      "production_functional_consistency_validation"
+    ],
+    "independent_control_consumer": [
+      "spatial_actuator_basis",
+      "temporal_control_parameterization",
+      "optimization_constraint_enforcement_within_physical_bounds",
+      "objectives_and_experiment_diagnostics",
+      "adjoint_checkpoint_schedule",
+      "forward_and_adjoint_orchestration",
+      "optimizers_line_searches_and_campaigns"
+    ]
+  },
+  "legacy_control": {
+    "status": "frozen_compatibility_public_numerical_oracle",
+    "new_features_allowed": false,
+    "compatibility_preserving_bug_fixes_allowed_with_oracle_requalification": true,
+    "new_public_names_allowed": false,
+    "removal_requires_adr_0005_deprecation_window": true,
+    "only_production_import_debt": {
+      "source": "pssolver.channel",
+      "destination": "pssolver.control.active_force",
+      "disposition": "later_mechanical_move_to_model_layer_with_compatibility_reexport"
+    },
+    "public_names": [
+      "DALResult",
+      "DiscreteAdjointLoop",
+      "FunctionalSemiImplicitStep",
+      "CoreAwareAlignedShapeObjective",
+      "CoreAwareComovingQTrajectoryObjective",
+      "CoreAwareMomentObjective",
+      "CoreTranslationNoMassObjective",
+      "CoreTranslationObjective",
+      "FreePathShapePreservingObjective",
+      "LOSS_FUNCTIONS",
+      "QTrackingObjective",
+      "TemporalMaskControl",
+      "active_force_divergence",
+      "available_loss_functions",
+      "build_loss_function",
+      "conservative_block_average",
+      "core_centerline_geometry",
+      "defect_plaquette_counts",
+      "load_q_target",
+      "loop_core_metrics",
+      "periodic_profile_shift",
+      "periodic_translate_axis",
+      "partition_mask_along_axis",
+      "partition_mask_rbf",
+      "principal_director_and_S",
+      "soft_core_center",
+      "soft_core_density",
+      "smooth_box_mask",
+      "x_disturbance_profile"
+    ],
+    "module_disposition": [
+      {
+        "module": "pssolver.control.active_force",
+        "owner": "pssolver_model_physics",
+        "disposition": "extract_later_preserve_compatibility_reexport"
+      },
+      {
+        "module": "pssolver.control.functional",
+        "owner": "legacy_oracle_only",
+        "disposition": "replace_do_not_extend"
+      },
+      {
+        "module": "pssolver.control.controls",
+        "owner": "independent_control_consumer",
+        "disposition": "freeze_and_migrate_usage_outward"
+      },
+      {
+        "module": "pssolver.control.dal",
+        "owner": "independent_control_consumer",
+        "disposition": "freeze_and_migrate_usage_outward"
+      },
+      {
+        "module": "pssolver.control.objectives",
+        "owner": "independent_control_consumer",
+        "disposition": "freeze_and_migrate_usage_outward"
+      },
+      {
+        "module": "pssolver.control.loop_diagnostics",
+        "owner": "independent_control_consumer",
+        "disposition": "freeze_and_migrate_usage_outward"
+      },
+      {
+        "module": "pssolver.control.grid_transfer",
+        "owner": "independent_control_consumer",
+        "disposition": "freeze_and_migrate_usage_outward"
+      },
+      {
+        "module": "pssolver.control.__init__",
+        "owner": "pssolver_compatibility_facade",
+        "disposition": "preserve_until_deprecation_window_completes"
+      }
+    ]
+  },
+  "oracle_files": [
+    {
+      "path": "pssolver/control/__init__.py",
+      "role": "compatibility_public_surface",
+      "sha256": "e709b98ec9f8f692b5ee9a3fe186faef3493de595e66356035564eca9c6ce3f1",
+      "git_blob": "6bf53c4be879a1ed44b326e44717d700a40c7bfd"
+    },
+    {
+      "path": "pssolver/control/active_force.py",
+      "role": "legacy_active_force_physics_oracle",
+      "sha256": "98211072b92e1555a0597397541f7e9163ebe61672a285571d4a2a5485edea2f",
+      "git_blob": "e20629787b5ab8fe5b5007e55b964df10f8adf17"
+    },
+    {
+      "path": "pssolver/control/controls.py",
+      "role": "legacy_control_parameterization_oracle",
+      "sha256": "706827dd82546df8a0b8e676c12488e0463da9c75fdf96ae9b32fd53b1794080",
+      "git_blob": "119aee72a3f127267dc5dcac7fce229e28c64993"
+    },
+    {
+      "path": "pssolver/control/dal.py",
+      "role": "legacy_discrete_adjoint_oracle",
+      "sha256": "517c3244664738bf8a8be4b2705ba8c7baddc4ceb1d36c15643549798eac3b0f",
+      "git_blob": "d41b09096a4146cd7349f7660062408c22a7c3b2"
+    },
+    {
+      "path": "pssolver/control/functional.py",
+      "role": "legacy_functional_step_oracle",
+      "sha256": "276f9175184cd865ed92a3bffa55cbbaaef14e36fc878cf5061fb6ce4897605b",
+      "git_blob": "db9115625dbac778d27a57f388bdb9605b23850b"
+    },
+    {
+      "path": "pssolver/control/grid_transfer.py",
+      "role": "legacy_grid_transfer_oracle",
+      "sha256": "e8042114904219b9d530571666d2aa8d67a33a0f4c955312b03cc9ece47d7b58",
+      "git_blob": "2b7d49089348a762b723bb9339079f297e62717c"
+    },
+    {
+      "path": "pssolver/control/loop_diagnostics.py",
+      "role": "legacy_loop_diagnostics_oracle",
+      "sha256": "24d3142a40617dc2a05ffc000a7508ac3bdf59682e49b5e349913ddaae821862",
+      "git_blob": "2eaa5d7e0e86dcf4239f8637d5e27e29f6ef1472"
+    },
+    {
+      "path": "pssolver/control/objectives.py",
+      "role": "legacy_objective_oracle",
+      "sha256": "d6f827ed0e007b0c80abab835e11e153376c24626b2e96d632e10f7227f2869f",
+      "git_blob": "0dfb2ee4aa2052c45401aeae88c510c3624d5a9d"
+    },
+    {
+      "path": "Channel_dal.py",
+      "role": "legacy_channel_control_consumer",
+      "sha256": "c68389060e48c082b6078f470ff22f77d2327c87e1ad362a5e875f7880bb96db",
+      "git_blob": "654fe042b1cce400072cad6389bf224d4ebfb556"
+    },
+    {
+      "path": "scripts_channel/validate_dal_forward.py",
+      "role": "legacy_production_functional_consistency_oracle",
+      "sha256": "d3f558f6893ab2477c19e54fbb762cc0eab5eef883397f9335f7e311fa794183",
+      "git_blob": "57ae1c1f2d7d9f271e5fa57480828247880fd7a2"
+    },
+    {
+      "path": "tests/test_dal.py",
+      "role": "legacy_plane_control_regression_oracle",
+      "sha256": "6b7c69bd75afd25d888cbeb7fe8290d9471319fe98abf7ee66e7b739f8bd2c94",
+      "git_blob": "e17c9a150860271e402538bb3e43be369a63e8f6"
+    },
+    {
+      "path": "tests/test_channel_dal.py",
+      "role": "legacy_channel_control_regression_oracle",
+      "sha256": "2777cc8740d9f7d3cdd926ece78ea9bc9edb9b00826a50d7c8d8b18d5d23aa88",
+      "git_blob": "0ed1a2563a48cf39d52bfc97d5433bf4a4f05381"
+    },
+    {
+      "path": "examples/dal_small_3d.py",
+      "role": "legacy_small_3d_control_example",
+      "sha256": "35ab7ddde8decde26e7fa2d201f61666d6fdba3e61b2be7f6919226c4829ab79",
+      "git_blob": "598e7701c18ee4b67bd74af3abcf5fd266de0313"
+    }
+  ],
+  "requirements": [
+    {
+      "id": "R1",
+      "name": "functional_runtime_protocol",
+      "first_periodic_slice_blocking": true,
+      "first_owner": "P9.1",
+      "acceptance": "explicit construction, immutable specs, capabilities, identity, api version, no production mutation, unsupported combinations fail without fallback"
+    },
+    {
+      "id": "R2",
+      "name": "immutable_complete_functional_state",
+      "first_periodic_slice_blocking": true,
+      "first_owner": "P9.1",
+      "acceptance": "flat tensor tuple and layout include every evolved, integrator-history, and persistent algebraic value that affects the next step"
+    },
+    {
+      "id": "R3",
+      "name": "pure_step_and_combined_observation",
+      "first_periodic_slice_blocking": true,
+      "first_owner": "P9.2",
+      "acceptance": "actual integrator map, no input mutation or conversion, and input-state step_and_observe output bitwise equal to separate observe"
+    },
+    {
+      "id": "R4",
+      "name": "declared_runtime_identity",
+      "first_periodic_slice_blocking": true,
+      "first_owner": "P9.1",
+      "acceptance": "JSON scientific, discretization, and execution identity includes executor, dtype, device, state layout, and deterministic settings"
+    },
+    {
+      "id": "R5",
+      "name": "deterministic_replay",
+      "first_periodic_slice_blocking": true,
+      "first_owner": "P9.3",
+      "acceptance": "same state and control replay bitwise on one device, dtype, and execution identity; hidden warm state is forbidden"
+    },
+    {
+      "id": "R6",
+      "name": "named_differentiable_observations",
+      "first_periodic_slice_blocking": true,
+      "first_owner": "P9.2",
+      "acceptance": "input-state observations declare field meaning and convention; terminal observation omits control-dependent algebraic fields"
+    },
+    {
+      "id": "R7",
+      "name": "control_field_injection_schema",
+      "first_periodic_slice_blocking": true,
+      "first_owner": "P9.2",
+      "acceptance": "name, shape, dtype, device, placement, broadcast, equation term, and dealiasing are explicit; no parameter-registry mutation"
+    },
+    {
+      "id": "R8",
+      "name": "model_owned_physical_admissibility",
+      "first_periodic_slice_blocking": false,
+      "first_owner": "P9.2",
+      "acceptance": "model declares physical bounds and a consumer parameterization outside them fails at construction without clipping"
+    },
+    {
+      "id": "R9",
+      "name": "durable_checkpoint_state_bridge",
+      "first_periodic_slice_blocking": false,
+      "first_owner": "P9.3",
+      "acceptance": "versioned export and import validate identity, layout, shape, dtype, checksum, and finiteness before copying data"
+    },
+    {
+      "id": "R10",
+      "name": "differentiability_capabilities",
+      "first_periodic_slice_blocking": true,
+      "first_owner": "P9.2",
+      "acceptance": "runtime declares differentiable state/control inputs, reverse-mode support, and inner-solve differentiation semantics"
+    },
+    {
+      "id": "R11",
+      "name": "explicit_jvp_vjp_and_custom_adjoint",
+      "first_periodic_slice_blocking": false,
+      "first_owner": "P9.7",
+      "acceptance": "custom adjoints pass transpose tests and agree with an unrolled small-grid reference"
+    },
+    {
+      "id": "R12",
+      "name": "production_functional_consistency",
+      "first_periodic_slice_blocking": true,
+      "first_owner": "P9.4",
+      "acceptance": "per-step state and observation comparison uses frozen strict tolerances and fails closed without an approximate override"
+    }
+  ],
+  "semantic_contract": {
+    "observation_time": "input_state_under_current_control",
+    "combined_and_separate_observation_bitwise_equal": true,
+    "terminal_observation_includes_control_dependent_algebraic_fields": false,
+    "functional_state_is_flat_tensor_tuple": true,
+    "functional_state_has_explicit_batch_axis": true,
+    "first_periodic_required_batch_size": 1,
+    "larger_batch_is_optional_declared_capability": true,
+    "functional_replay_same_execution_identity": "bitwise",
+    "checkpoint_stride_gradient_same_execution_identity": "bitwise",
+    "production_functional_comparison": "strict_predeclared_tolerance",
+    "active_force_equation_term": "div(beta * alpha * Q)",
+    "form_control_q_product_before_divergence": true,
+    "control_q_product_dealiasing_is_identity_bearing": true,
+    "hidden_warm_state_allowed": false,
+    "diagnostic_cache_may_affect_future_step": false,
+    "permanent_package_wide_state_packing_frozen": false,
+    "concrete_runtime_state_layout_is_identity_bearing": true
+  },
+  "phase_sequence": [
+    {
+      "id": "P9.0",
+      "name": "control_contract_and_legacy_oracle_freeze",
+      "authorized": true,
+      "requires_h100": false
+    },
+    {
+      "id": "P9.1",
+      "name": "periodic_prerequisites_and_provisional_functional_declarations",
+      "authorized": false,
+      "requires_h100": false
+    },
+    {
+      "id": "P9.2",
+      "name": "periodic_complete_stress_activity_functional_runtime",
+      "authorized": false,
+      "requires_h100": true
+    },
+    {
+      "id": "P9.3",
+      "name": "deterministic_replay_and_state_bridge",
+      "authorized": false,
+      "requires_h100": true
+    },
+    {
+      "id": "P9.4",
+      "name": "gradient_and_production_consistency_validation",
+      "authorized": false,
+      "requires_h100": true
+    },
+    {
+      "id": "P9.5",
+      "name": "functional_forward_vjp_memory_and_batch_qualification",
+      "authorized": false,
+      "requires_h100": true
+    },
+    {
+      "id": "P9.6",
+      "name": "first_independent_periodic_consumer",
+      "authorized": false,
+      "requires_h100": true
+    },
+    {
+      "id": "P9.7",
+      "name": "channel_functional_runtime_pressure_adjoint_and_second_consumer",
+      "authorized": false,
+      "requires_h100": true
+    },
+    {
+      "id": "P9.8",
+      "name": "public_api_stabilization_and_installed_wheel_closure",
+      "authorized": false,
+      "requires_h100": true
+    }
+  ],
+  "periodic_first_decision": {
+    "first_application": "periodic_complete_stress_beris_edwards",
+    "first_control_field": "activity",
+    "reasons": [
+      "direct_fourier_stokes_without_pressure_pcg",
+      "no_bounded_wall_lifting_or_robin_contract",
+      "no_bounded_domain_velocity_zero_mode",
+      "matches_first_independent_3d_consumer"
+    ],
+    "p9_1_prerequisites": [
+      "public_positive_friction_periodic_application",
+      "nz_one_and_z_invariant_contract",
+      "explicit_2d_to_3d_q_embedding_and_projection"
+    ]
+  },
+  "non_claims": {
+    "functional_runtime_implemented": false,
+    "activity_field_control_connected": false,
+    "gradient_or_adjoint_qualified": false,
+    "batch_greater_than_one_qualified": false,
+    "periodic_positive_friction_publicly_qualified": false,
+    "z_invariant_consistency_qualified": false,
+    "channel_pressure_adjoint_qualified": false,
+    "h100_result": false,
+    "control_science_result": false,
+    "production_default_changed": false,
+    "stable_public_functional_api": false
+  },
+  "local_verification": {
+    "focused": "74 passed",
+    "full": "2436 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass",
+    "h100_submissions": 0,
+    "verbatim_pdf_regenerated": false
+  },
+  "authorization": {
+    "p9_0_complete": true,
+    "p9_1_implementation_authorized": false,
+    "later_phase_9_slices_authorized": false,
+    "h100_authorized": false,
+    "runtime_or_timestep_changed": false,
+    "equation_or_operator_changed": false,
+    "checkpoint_or_output_schema_changed": false,
+    "public_package_root_changed": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  }
+}

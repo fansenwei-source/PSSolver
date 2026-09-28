@@ -26,6 +26,7 @@ SOURCE_ORDER = (
     "adr/0010-sbdf2-and-modal-block-operators.md",
     "adr/0011-plane-compiled-v2-static-control.md",
     "adr/0012-cell-centered-robin-eigenbasis.md",
+    "adr/0013-functional-runtime-and-external-control-ownership.md",
     "api_surface_v0_1_2.md",
     "v0_1_2_oracle.md",
     "v0_1_2_oracle.json",
@@ -228,6 +229,8 @@ SOURCE_ORDER = (
     "phase_8_p862_h100_closure.json",
     "phase_8_final_closure.md",
     "phase_8_final_closure.json",
+    "phase_9_p90_control_contract_freeze.md",
+    "phase_9_p90_control_contract_freeze.json",
 )
 
 PAGE_WIDTH = 595.276

@@ -1,5 +1,31 @@
 # PSSolver discrete-adjoint control
 
+> **Status: frozen (2026-09-27).** This provisional package is retained only
+> so existing research scripts and regression tests continue to work. It
+> receives compatibility-preserving bug fixes only: no new features,
+> objectives, optimizers, experiments, or public names are added here.
+>
+> New control research belongs to an independent consumer project with a
+> one-way dependency on PSSolver. PSSolver must not import that consumer.
+> PSSolver Phase 9 instead supplies a provisional differentiable-runtime
+> contract: immutable explicit state, a pure functional step, named
+> observations, explicit control-field injection, deterministic replay, and a
+> production/functional consistency validator. Once two real consumers have
+> qualified that interface, it may become a stable public API under ADR 0005.
+>
+> `FunctionalSemiImplicitStep` is a numerical oracle, not that future API. It
+> mutates private field storage and the parameter registry, clears a pressure
+> warm start, and duplicates the semi-implicit update outside the integrator.
+> `DiscreteAdjointLoop`, the control parameterizations, objectives, and loop
+> diagnostics likewise remain compatibility code rather than solver-layer
+> architecture.
+>
+> `active_force.py` is the one ownership exception: it contains model physics
+> and is still imported by the legacy Channel module. A later mechanical move
+> may place that implementation under `pssolver.models.active_nematics` while
+> preserving this import path as a compatibility re-export. P9.0 does not
+> perform that move.
+
 This package provides a correctness-first direct-adjoint loop for a built
 `SpectralSolver`. It keeps the production in-place integrator unchanged and
 uses a functional one-step adapter during optimization.
