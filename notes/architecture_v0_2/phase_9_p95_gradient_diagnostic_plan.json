@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "phase": "P9.5-gradient-diagnostic",
+  "title": "Analysis-only activity-gradient finite-difference scale diagnostic",
+  "date": "2026-09-28",
+  "status": "frozen_before_diagnostic_h100_execution",
+  "trigger": {
+    "failed_commit": "69bd0776b80a384b5018e459f56d280a9101e527",
+    "failed_job": "10844957",
+    "failure": "R128 functional_vjp trial 1 frozen gradient validation",
+    "p9_5_qualification_complete": false,
+    "eligible_for_p9_6": false
+  },
+  "grids": [
+    {
+      "id": "R128",
+      "shape": [128, 128, 32],
+      "lengths": [100.0, 100.0, 20.0]
+    },
+    {
+      "id": "R320",
+      "shape": [320, 320, 80],
+      "lengths": [100.0, 100.0, 20.0]
+    }
+  ],
+  "activity_epsilons": [
+    0.0001,
+    0.0003,
+    0.001,
+    0.002,
+    0.003,
+    0.004,
+    0.005,
+    0.008,
+    0.01
+  ],
+  "frozen_relative_tolerance": 0.00002,
+  "execution": {
+    "device": "cuda:0",
+    "gpu_model": "NVIDIA H100 PCIe",
+    "dtype": "float64",
+    "dt": 0.001,
+    "base_activity": 0.013,
+    "tf32": false,
+    "fresh_process_per_trial": true,
+    "trials_per_grid": 3,
+    "diagnostic_process_count": 6,
+    "objective_repeats_per_sign": 2,
+    "submission_count_max": 1,
+    "automatic_retry": false,
+    "analysis_only": true
+  },
+  "required_evidence": [
+    "raw frozen validator report",
+    "six gradient-path finite/nonzero results",
+    "state directional derivative result",
+    "activity autograd directional derivative",
+    "two repeated plus/minus objectives per epsilon",
+    "finite-difference derivative and errors per epsilon",
+    "objective bitwise replay per epsilon",
+    "memory and device provenance",
+    "immutable input SHA-256",
+    "clean Git identity"
+  ],
+  "local_r128_observations": {
+    "device": "NVIDIA GeForce RTX 3060 Ti",
+    "frozen_activity_epsilon": 0.0001,
+    "frozen_activity_relative_error": 0.007019973980130563,
+    "state_relative_error": 0.000009066141381031966,
+    "fresh_process_candidate_variation": [
+      {
+        "epsilon": 0.003,
+        "relative_error": 0.000008539602631720915
+      },
+      {
+        "epsilon": 0.003,
+        "relative_error": 0.00010721545115596116
+      },
+      {
+        "epsilon": 0.008,
+        "relative_error": 0.0000059297152819425385
+      }
+    ],
+    "interpretation": "single-process epsilon selection is not robust",
+    "formal_h100_evidence": false
+  },
+  "stopping_rules": {
+    "does_not_qualify_p9_5": true,
+    "does_not_authorize_epsilon_change": true,
+    "does_not_authorize_tolerance_change": true,
+    "does_not_authorize_p9_6": true,
+    "does_not_reuse_failed_profile_directory": true,
+    "write_complete_only_for_diagnostic_archive": true
+  },
+  "nonclaims": {
+    "solver_gradient_failure_proven": false,
+    "finite_difference_contract_repaired": false,
+    "p9_5_passed": false,
+    "production_default_changed": false,
+    "larger_batch_qualified": false,
+    "control_algorithm_added": false
+  }
+}
