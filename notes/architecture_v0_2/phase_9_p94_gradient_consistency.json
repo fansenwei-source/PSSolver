@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "phase": "P9.4",
+  "title": "Gradient, hidden-detach, checkpoint-stride, and R12 validation",
+  "date": "2026-09-28",
+  "status": "complete_for_cpu_identity",
+  "classification": "PASS_P9_4_CPU_GRADIENT_AND_R12_VALIDATION",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "3bc3841",
+    "p9_3_cpu_complete": true
+  },
+  "scope": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "periodic_box",
+    "runtime_path": "periodic_spectral",
+    "batch_sizes": [1],
+    "qualified_device_type": "cpu",
+    "real_dtype": "float64",
+    "pointwise_execution": "eager",
+    "spectral_refresh": "disabled",
+    "production_default_changed": false,
+    "stable_package_root_changed": false
+  },
+  "gradient_validation": {
+    "reverse_mode": "torch_autograd",
+    "finite_difference": "central",
+    "state_epsilon": 1e-06,
+    "activity_epsilon": 0.0001,
+    "relative_tolerance": 2e-05,
+    "tolerance_override_available": false,
+    "state_directional_derivative_passed": true,
+    "activity_directional_derivative_passed": true,
+    "separate_dynamics_and_observation_graphs": true,
+    "state_detach_negative_gate_passed": true,
+    "control_detach_negative_gate_passed": true
+  },
+  "gradient_paths": [
+    "dynamics<-q_physical",
+    "dynamics<-q_spectral",
+    "dynamics<-activity",
+    "observations<-q_physical",
+    "observations<-q_spectral",
+    "observations<-activity"
+  ],
+  "checkpoint_stride": {
+    "owner": "independent_consumer",
+    "pssolver_scheduler_added": false,
+    "reference_method": "segmented_reverse_replay",
+    "tested_strides": [1, 2, 3],
+    "terminal_state": "bitwise_identical",
+    "initial_state_cotangent": "bitwise_identical",
+    "activity_gradients": "bitwise_identical"
+  },
+  "r12": {
+    "requirement": "production_functional_consistency",
+    "control": "spatially_varying_activity",
+    "float64_atol": 5e-13,
+    "float64_rtol": 5e-12,
+    "tolerance_override_available": false,
+    "compared": [
+      "input.q_physical",
+      "input.q_spectral",
+      "observation.Q",
+      "observation.velocity",
+      "observation.pressure",
+      "next.q_physical",
+      "next.q_spectral"
+    ],
+    "cpu_observed_result": "byte_for_byte_identical",
+    "formal_contract": "strict_predeclared_tolerance",
+    "deliberate_mismatch_rejected": true,
+    "fail_closed_exception": "FunctionalValidationError"
+  },
+  "qualification": {
+    "focused": "51 passed",
+    "full": "2478 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass",
+    "h100_submissions": 0,
+    "cuda_qualified": false,
+    "verbatim_pdf_regenerated": false
+  },
+  "source_scope": [
+    "pssolver/functional/__init__.py",
+    "pssolver/functional/validation.py",
+    "tests/test_phase9_p94_gradient_consistency.py",
+    "tests/test_phase9_p94_record.py",
+    "notes/architecture_v0_2/phase_9_p94_gradient_consistency.md",
+    "notes/architecture_v0_2/phase_9_p94_gradient_consistency.json",
+    "notes/architecture_v0_2/build_verbatim_archive_pdf.py"
+  ],
+  "nonclaims": {
+    "optimizer_added": false,
+    "objective_added": false,
+    "checkpoint_scheduler_added": false,
+    "explicit_jvp_added": false,
+    "explicit_vjp_added": false,
+    "custom_adjoint_added": false,
+    "larger_batch_qualified": false,
+    "channel_pressure_adjoint_qualified": false,
+    "external_control_dependency_added": false
+  },
+  "authorization": {
+    "p9_4_complete_for_cpu_identity": true,
+    "p9_5_implementation_authorized": false,
+    "later_phase_9_slices_authorized": false,
+    "h100_authorized": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  },
+  "next_slice": "P9.5 H100 forward/VJP/memory and optional larger-batch qualification"
+}
