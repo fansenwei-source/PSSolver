@@ -1,6 +1,6 @@
 """Pure batch-one activity control for the qualified periodic runtime.
 
-This P9.2 runtime is deliberately narrow.  It reuses the qualified periodic
+This P9.2--P9.3 runtime is deliberately narrow.  It reuses the qualified periodic
 complete-stress models, transforms, direct Stokes solve, projector, and IMEX
 coefficients while making every trajectory-dependent value an explicit tensor
 in a flat state tuple.  It does not wrap or extend the legacy
@@ -41,6 +41,7 @@ from .contracts import (
     FunctionalStateSpec,
     FunctionalTensorSpec,
 )
+from .periodic_checkpoint import PeriodicActivityCheckpointBridge
 
 
 _ACTIVITY_NAME = "activity"
@@ -231,6 +232,7 @@ class PeriodicActivityFunctionalRuntime:
         *,
         adapter,
         snapshot_sha256: str,
+        production_runtime_identity_sha256: str,
     ) -> None:
         if not isinstance(request, FunctionalRuntimeConstructionRequest):
             raise TypeError("request must be FunctionalRuntimeConstructionRequest")
@@ -255,13 +257,16 @@ class PeriodicActivityFunctionalRuntime:
         self._state_spec = state_spec
         self._control_specs = controls
         self._observation_specs = observations
+        replay_capability = (
+            "bitwise" if torch.device(device).type == "cpu" else "not_qualified"
+        )
         self._capabilities = FunctionalCapabilitySet(
             supported_batch_sizes=(1,),
             pure_step=True,
             combined_step_and_observe=True,
-            deterministic_replay="not_qualified",
+            deterministic_replay=replay_capability,
             differentiability="torch_autograd",
-            durable_checkpoint_bridge=False,
+            durable_checkpoint_bridge=True,
             explicit_jvp=False,
             explicit_vjp=False,
             inner_solve_gradient="direct_periodic_fourier_autograd",
@@ -294,12 +299,22 @@ class PeriodicActivityFunctionalRuntime:
             "snapshot_sha256": snapshot_sha256,
             "fallback_allowed": False,
             "fallback_used": False,
+            "deterministic_replay": replay_capability,
+            "durable_checkpoint_bridge_version": 1,
         }
         self._identity = FunctionalRuntimeIdentity(
             scientific=dict(identities["scientific"]),
             discretization=dict(identities["discretization"]),
             execution=execution_identity,
             state_layout=state_spec.to_metadata(),
+        )
+        self._checkpoint_bridge = PeriodicActivityCheckpointBridge(
+            state_spec=state_spec,
+            functional_identity=self._identity,
+            production_runtime_identity_sha256=(
+                production_runtime_identity_sha256
+            ),
+            backend_restart=adapter.backend_restart_metadata(),
         )
 
     @property
@@ -325,6 +340,10 @@ class PeriodicActivityFunctionalRuntime:
     @property
     def capabilities(self) -> FunctionalCapabilitySet:
         return self._capabilities
+
+    @property
+    def checkpoint_bridge(self) -> PeriodicActivityCheckpointBridge:
+        return self._checkpoint_bridge
 
     def identity(self) -> FunctionalRuntimeIdentity:
         return self._identity
@@ -495,6 +514,9 @@ class PeriodicActivityFunctionalRuntimeFactory:
             request,
             adapter=adapter,
             snapshot_sha256=snapshot_sha256,
+            production_runtime_identity_sha256=(
+                run_spec.runtime_identity_sha256()
+            ),
         )
 
 

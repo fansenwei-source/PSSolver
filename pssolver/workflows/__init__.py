@@ -25,6 +25,16 @@ from .plane_observation import (
     write_plane_diagnostics,
     write_plane_observation,
 )
+from .periodic_checkpoint import (
+    PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    PeriodicCheckpointHeader,
+    PeriodicWorkflowCheckpoint,
+    capture_periodic_checkpoint,
+    load_periodic_checkpoint,
+    read_periodic_checkpoint_header,
+    restore_periodic_checkpoint,
+    write_periodic_checkpoint,
+)
 from .channel_checkpoint import (
     CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     ChannelCheckpointHeader,
@@ -76,6 +86,14 @@ __all__ = [
     "write_plane_checkpoint",
     "write_plane_diagnostics",
     "write_plane_observation",
+    "PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
+    "PeriodicCheckpointHeader",
+    "PeriodicWorkflowCheckpoint",
+    "capture_periodic_checkpoint",
+    "load_periodic_checkpoint",
+    "read_periodic_checkpoint_header",
+    "restore_periodic_checkpoint",
+    "write_periodic_checkpoint",
     "CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "ChannelCheckpointHeader",
     "ChannelWorkflowCheckpoint",

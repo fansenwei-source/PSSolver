@@ -235,6 +235,8 @@ SOURCE_ORDER = (
     "phase_9_p91_functional_prerequisites.json",
     "phase_9_p92_periodic_functional_runtime.md",
     "phase_9_p92_periodic_functional_runtime.json",
+    "phase_9_p93_replay_checkpoint_bridge.md",
+    "phase_9_p93_replay_checkpoint_bridge.json",
 )
 
 PAGE_WIDTH = 595.276

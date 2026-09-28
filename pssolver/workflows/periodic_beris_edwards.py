@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import hashlib
 import json
 from pathlib import Path
 import time
@@ -13,20 +12,15 @@ import torch
 
 from pssolver.models.active_nematics import Q_COMPONENTS, VELOCITY_COMPONENTS
 from pssolver.runtime.periodic_beris_edwards import (
-    PERIODIC_RUNTIME_PATH,
     PeriodicRuntimeAdapterProtocol,
 )
-
-
-CHECKPOINT_VERSION = 1
-
-
-def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+from .periodic_checkpoint import (
+    capture_periodic_checkpoint,
+    load_periodic_checkpoint,
+    read_periodic_checkpoint_header,
+    restore_periodic_checkpoint,
+    write_periodic_checkpoint,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -104,88 +98,27 @@ def _save_observation(directory, observation, *, hydrodynamics):
 
 
 def _write_checkpoint(directory, adapter, *, runtime_identity_sha256):
-    if directory.exists():
-        raise FileExistsError(f"checkpoint already exists: {directory}")
-    directory.mkdir(parents=True)
-    adapter.synchronize_for_observation()
-    fields = adapter.fields
-    records = {"spatial": {}, "spectral": {}}
-    for kind, suffix in (("spatial", ""), ("spectral", ".hat")):
-        for name in Q_COMPONENTS:
-            path = directory / f"{kind}__{name}.npy"
-            values = fields[f"{name}{suffix}"].detach().cpu().numpy()
-            with path.open("xb") as handle:
-                np.save(handle, values, allow_pickle=False)
-            records[kind][name] = {
-                "file": path.name,
-                "shape": list(values.shape),
-                "dtype": str(values.dtype),
-                "sha256": _sha256(path),
-            }
-    integrator = adapter.solver.integrator
-    metadata = {
-        "format_version": CHECKPOINT_VERSION,
-        "runtime_path": PERIODIC_RUNTIME_PATH,
-        "runtime_identity_sha256": runtime_identity_sha256,
-        "completed_steps": adapter.completed_steps,
-        "integrator": {
-            "spectral_refresh_interval": integrator.spectral_refresh_interval,
-            "step_count": int(integrator.step_count),
-            "refresh_count": int(integrator.refresh_count),
-        },
-        "backend_restart": adapter.backend_restart_metadata(),
-        "tensor_files": records,
-    }
-    (directory / "checkpoint.json").write_text(
-        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
+    return write_periodic_checkpoint(
+        directory,
+        capture_periodic_checkpoint(
+            adapter,
+            runtime_identity_sha256=runtime_identity_sha256,
+        ),
     )
 
 
 def _load_checkpoint(directory, adapter, *, runtime_identity_sha256):
-    directory = Path(directory).expanduser().resolve()
-    metadata = json.loads(
-        (directory / "checkpoint.json").read_text(encoding="utf-8")
-    )
-    if metadata.get("format_version") != CHECKPOINT_VERSION:
-        raise ValueError("unsupported periodic checkpoint version")
-    if metadata.get("runtime_path") != PERIODIC_RUNTIME_PATH:
-        raise ValueError("checkpoint runtime identity does not match target")
-    if metadata.get("runtime_identity_sha256") != runtime_identity_sha256:
+    header = read_periodic_checkpoint_header(directory)
+    if header.runtime_identity_sha256 != runtime_identity_sha256:
         raise ValueError("checkpoint scientific/runtime identity does not match")
-    if metadata.get("backend_restart") != adapter.backend_restart_metadata():
+    if dict(header.backend_restart) != adapter.backend_restart_metadata():
         raise ValueError("checkpoint backend contract does not match target")
-    fields = adapter.fields
-    manifest = metadata.get("tensor_files")
-    for kind, suffix in (("spatial", ""), ("spectral", ".hat")):
-        records = manifest.get(kind, {})
-        if tuple(records) != Q_COMPONENTS:
-            raise ValueError("periodic checkpoint tensor manifest is incomplete")
-        for name in Q_COMPONENTS:
-            record = records[name]
-            path = directory / record["file"]
-            if _sha256(path) != record["sha256"]:
-                raise ValueError("periodic checkpoint tensor checksum mismatch")
-            values = np.load(path, allow_pickle=False)
-            target = fields[f"{name}{suffix}"]
-            if list(values.shape) != record["shape"] or str(values.dtype) != record["dtype"]:
-                raise ValueError("periodic checkpoint tensor metadata differs")
-            if tuple(values.shape) != tuple(target.shape):
-                raise ValueError("periodic checkpoint tensor shape differs")
-            if str(values.dtype) != str(target.detach().cpu().numpy().dtype):
-                raise ValueError("periodic checkpoint tensor dtype differs")
-            if not np.isfinite(values).all():
-                raise ValueError("periodic checkpoint tensor is not finite")
-            target.copy_(torch.from_numpy(values).to(device=target.device))
-    integrator = metadata["integrator"]
-    adapter.synchronize_for_observation()
-    adapter.restore_progress(
-        completed_steps=metadata["completed_steps"],
-        spectral_refresh_interval=integrator["spectral_refresh_interval"],
-        integrator_step_count=integrator["step_count"],
-        integrator_refresh_count=integrator["refresh_count"],
+    checkpoint = load_periodic_checkpoint(directory)
+    return restore_periodic_checkpoint(
+        adapter,
+        checkpoint,
+        runtime_identity_sha256=runtime_identity_sha256,
     )
-    return int(metadata["completed_steps"])
 
 
 class PeriodicBerisEdwardsWorkflow:

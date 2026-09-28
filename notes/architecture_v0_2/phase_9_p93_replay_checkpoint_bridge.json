@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "phase": "P9.3",
+  "title": "Deterministic replay and durable periodic functional/production state bridge",
+  "date": "2026-09-28",
+  "status": "complete",
+  "classification": "PASS_P9_3_CPU_REPLAY_AND_PERIODIC_STATE_BRIDGE",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "b61e14c9e7e1e67c0afbfc6dfae882a740794005",
+    "p9_2_complete": true
+  },
+  "scope": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "periodic_box",
+    "runtime_path": "periodic_spectral",
+    "batch_sizes": [1],
+    "qualified_replay_device_type": "cpu",
+    "pointwise_execution": "eager",
+    "spectral_refresh": "disabled",
+    "production_default_changed": false,
+    "stable_package_root_changed": false
+  },
+  "replay": {
+    "same_fixed_execution_identity": "bitwise",
+    "intervening_calls_change_result": false,
+    "fresh_runtime_same_identity": "bitwise",
+    "physical_and_spectral_state_explicit": true,
+    "hidden_pressure_warm_start": false,
+    "trajectory_dependent_gradient_cache": false,
+    "cuda_replay_qualified": false,
+    "cuda_capability_declaration": "not_qualified"
+  },
+  "checkpoint_bridge": {
+    "functional_bridge_format_version": 1,
+    "production_checkpoint_format_version": 1,
+    "one_shared_periodic_codec": true,
+    "functional_export_loadable_by_production": true,
+    "production_export_loadable_by_functional": true,
+    "atomic_directory_commit": true,
+    "existing_destination_overwritten": false,
+    "pickle_allowed": false,
+    "durable_serialization_detaches_graph": true,
+    "checkpoint_schedule_owner": "independent_consumer"
+  },
+  "preflight": {
+    "before_payload_open": [
+      "format_version",
+      "runtime_path",
+      "production_runtime_identity",
+      "backend_restart_contract",
+      "integrator_refresh_phase",
+      "functional_runtime_identity",
+      "functional_state_layout"
+    ],
+    "payload_validation": [
+      "safe_filename",
+      "sha256",
+      "recorded_shape",
+      "recorded_dtype",
+      "finite_values"
+    ],
+    "implicit_dtype_conversion": false,
+    "target_mutation_before_complete_restore_preflight": false
+  },
+  "capabilities": {
+    "pure_step": true,
+    "combined_step_and_observe": true,
+    "deterministic_replay_cpu": "bitwise",
+    "differentiability": "torch_autograd",
+    "durable_checkpoint_bridge": true,
+    "explicit_jvp": false,
+    "explicit_vjp": false
+  },
+  "qualification": {
+    "focused": "46 passed",
+    "full": "2469 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass",
+    "production_restart_oracle_preserved": true,
+    "functional_production_bidirectional_bridge": true,
+    "h100_submissions": 0,
+    "verbatim_pdf_regenerated": false
+  },
+  "source_scope": [
+    "pssolver/functional/__init__.py",
+    "pssolver/functional/contracts.py",
+    "pssolver/functional/periodic_activity.py",
+    "pssolver/functional/periodic_checkpoint.py",
+    "pssolver/workflows/__init__.py",
+    "pssolver/workflows/periodic_beris_edwards.py",
+    "pssolver/workflows/periodic_checkpoint.py",
+    "tests/test_phase9_p92_periodic_functional_runtime.py",
+    "tests/test_phase9_p93_replay_checkpoint_bridge.py",
+    "tests/test_phase9_p93_record.py",
+    "notes/architecture_v0_2/phase_9_p93_replay_checkpoint_bridge.md",
+    "notes/architecture_v0_2/phase_9_p93_replay_checkpoint_bridge.json",
+    "notes/architecture_v0_2/build_verbatim_archive_pdf.py"
+  ],
+  "authorization": {
+    "p9_3_complete_for_cpu_identity": true,
+    "p9_4_implementation_authorized": false,
+    "later_phase_9_slices_authorized": false,
+    "h100_authorized": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  },
+  "next_slice": "P9.4 gradient validation, hidden-detach gates, checkpoint-stride invariance, and R12 consistency"
+}

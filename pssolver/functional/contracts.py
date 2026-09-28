@@ -13,6 +13,7 @@ import hashlib
 import json
 import math
 from numbers import Real
+from pathlib import Path
 from types import MappingProxyType
 from typing import Protocol, TypeAlias, runtime_checkable
 
@@ -426,6 +427,49 @@ class FunctionalRuntimeIdentity:
 
 
 @dataclass(frozen=True, slots=True)
+class FunctionalCheckpointState:
+    """Owned state returned by one durable checkpoint import."""
+
+    state: FunctionalState
+    completed_steps: int
+    source_format: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.state, tuple) or any(
+            not isinstance(value, torch.Tensor) for value in self.state
+        ):
+            raise TypeError("checkpoint state must be a flat tensor tuple")
+        if (
+            not isinstance(self.completed_steps, int)
+            or isinstance(self.completed_steps, bool)
+            or self.completed_steps < 0
+        ):
+            raise ValueError("completed_steps must be non-negative")
+        _nonempty(self.source_format, "source_format")
+
+
+@runtime_checkable
+class FunctionalCheckpointBridgeProtocol(Protocol):
+    """Versioned conversion between functional and production checkpoint state."""
+
+    @property
+    def format_version(self) -> int: ...
+
+    def export_checkpoint(
+        self,
+        directory: str | Path,
+        state: FunctionalState,
+        *,
+        completed_steps: int,
+    ) -> Path: ...
+
+    def import_checkpoint(
+        self,
+        directory: str | Path,
+    ) -> FunctionalCheckpointState: ...
+
+
+@dataclass(frozen=True, slots=True)
 class FunctionalRuntimeConstructionRequest:
     """Explicit request consumed by a future functional-runtime factory."""
 
@@ -506,6 +550,9 @@ class FunctionalRuntimeProtocol(Protocol):
     @property
     def capabilities(self) -> FunctionalCapabilitySet: ...
 
+    @property
+    def checkpoint_bridge(self) -> FunctionalCheckpointBridgeProtocol | None: ...
+
     def identity(self) -> FunctionalRuntimeIdentity: ...
 
     def initial_state(self) -> FunctionalState: ...
@@ -546,6 +593,8 @@ __all__ = [
     "FUNCTIONAL_OBSERVATION_TIME",
     "FunctionalCapabilities",
     "FunctionalCapabilitySet",
+    "FunctionalCheckpointBridgeProtocol",
+    "FunctionalCheckpointState",
     "FunctionalControlFieldSpec",
     "FunctionalControls",
     "FunctionalObservationSpec",

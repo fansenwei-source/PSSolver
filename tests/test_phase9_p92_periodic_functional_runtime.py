@@ -155,9 +155,10 @@ def test_p92_constructs_explicit_state_identity_and_capabilities(tmp_path):
     capabilities = runtime.capabilities
     assert capabilities.pure_step is True
     assert capabilities.combined_step_and_observe is True
-    assert capabilities.deterministic_replay == "not_qualified"
+    # P9.3 subsequently qualifies these capabilities on this same runtime.
+    assert capabilities.deterministic_replay == "bitwise"
     assert capabilities.differentiability == "torch_autograd"
-    assert capabilities.durable_checkpoint_bridge is False
+    assert capabilities.durable_checkpoint_bridge is True
     assert capabilities.differentiable_inputs == ("state", "activity")
     identity = runtime.identity().to_metadata()
     assert identity["execution"]["functional_runtime"]["kind"] == (
