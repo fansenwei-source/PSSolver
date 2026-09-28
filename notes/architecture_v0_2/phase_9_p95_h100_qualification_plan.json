@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "phase": "P9.5",
+  "title": "Batch-one periodic functional forward, VJP, and memory H100 qualification",
+  "date": "2026-09-28",
+  "status": "frozen_before_h100_execution",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "p9_4_commit": "91173655d14094e8be826310597101bb68018ab0",
+    "expected_commit": "the clean qualification commit supplied to the analyzer"
+  },
+  "scope": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "periodic_box",
+    "runtime_path": "periodic_spectral",
+    "control": "spatially_varying_activity",
+    "batch_sizes_qualified": [1],
+    "larger_batch_qualified": false,
+    "larger_batch_attempted": false,
+    "real_dtype": "float64",
+    "pointwise_execution": "eager",
+    "spectral_refresh": "disabled",
+    "production_default_changed": false,
+    "stable_package_root_changed": false
+  },
+  "grids": [
+    {
+      "id": "R128",
+      "shape": [128, 128, 32],
+      "lengths": [100.0, 100.0, 20.0]
+    },
+    {
+      "id": "R320",
+      "shape": [320, 320, 80],
+      "lengths": [100.0, 100.0, 20.0]
+    }
+  ],
+  "roles": [
+    "production_forward",
+    "functional_forward",
+    "functional_vjp"
+  ],
+  "trials": 3,
+  "warmup_steps": 5,
+  "profile_steps": 20,
+  "dt": 0.001,
+  "base_activity": 0.013,
+  "gpu_model": "NVIDIA H100 PCIe",
+  "tf32": false,
+  "fresh_process_per_profile": true,
+  "profile_count": 18,
+  "gates": {
+    "profile_cv_max": 0.2,
+    "functional_over_production_mean_max": 1.2,
+    "functional_over_production_median_max": 1.2,
+    "forward_peak_allocated_ratio_max": 1.75,
+    "forward_peak_reserved_ratio_max": 1.75,
+    "vjp_over_functional_forward_mean_max": 12.0,
+    "vjp_peak_allocated_device_fraction_max": 0.85,
+    "vjp_peak_reserved_device_fraction_max": 0.95,
+    "production_functional_state": "paired_sha256_exact",
+    "functional_replay": "sha256_exact_across_trials",
+    "vjp_replay": "sha256_exact_across_trials",
+    "r12": "pass_on_each_grid",
+    "gradient_validation": "pass_on_each_grid",
+    "finite": true
+  },
+  "login_cpu_cuda_deselects": [
+    "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+    "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+    "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+    "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact"
+  ],
+  "h100_execution": {
+    "submission_count_max": 1,
+    "automatic_retry": false,
+    "run_all_six_cuda_only_tests_before_profiles": true,
+    "fail_closed": true,
+    "write_complete_only_after_analyzer_pass": true
+  },
+  "nonclaims": {
+    "optimizer_added": false,
+    "objective_added": false,
+    "checkpoint_scheduler_added": false,
+    "custom_adjoint_added": false,
+    "larger_batch_qualified": false,
+    "channel_pressure_adjoint_qualified": false,
+    "external_control_dependency_added": false
+  },
+  "authorization": {
+    "p9_5_local_implementation_complete": true,
+    "h100_execution_pending": true,
+    "p9_6_authorized": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  }
+}
