@@ -1,10 +1,10 @@
 """Pure batch-one activity control for the qualified periodic runtime.
 
-This P9.2--P9.3 runtime is deliberately narrow.  It reuses the qualified periodic
-complete-stress models, transforms, direct Stokes solve, projector, and IMEX
-coefficients while making every trajectory-dependent value an explicit tensor
-in a flat state tuple.  It does not wrap or extend the legacy
-control implementation.
+This runtime, introduced in P9.2--P9.3 and qualified through P9.5, is
+deliberately narrow.  It reuses the qualified periodic complete-stress models,
+transforms, direct Stokes solve, projector, and IMEX coefficients while making
+every trajectory-dependent value an explicit tensor in a flat state tuple.  It
+does not wrap or extend the legacy control implementation.
 """
 
 from __future__ import annotations

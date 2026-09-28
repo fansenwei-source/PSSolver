@@ -1,11 +1,12 @@
 """Provisional functional execution declarations and qualified runtimes.
 
 The interface is intentionally imported through ``pssolver.functional`` and
-is not part of the stable package-root API.  P9.2--P9.4 implement only the
-batch-one periodic complete-stress activity-control runtime, CPU deterministic
-replay, its periodic production-checkpoint bridge, and frozen gradient and
-production-consistency qualification; unsupported
-model--geometry combinations continue to fail before execution.
+is not part of the stable package-root API.  P9.2--P9.5 implement and qualify
+only the batch-one periodic complete-stress activity-control runtime, bitwise
+CPU/H100 replay under a fixed execution identity, its periodic
+production-checkpoint bridge, and frozen gradient, performance, memory, and
+production-consistency gates; unsupported model--geometry combinations
+continue to fail before execution.
 """
 
 from .contracts import (
