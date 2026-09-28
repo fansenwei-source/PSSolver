@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "phase": "P8.6.2",
+  "status": "complete",
+  "classification": "PASS_P8_6_2_INTEGRATED_INSTALLED_WHEEL_H100_CLOSURE",
+  "date": "2026-09-27",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "imported_report": {
+    "kind": "HPCC canonical checkpoint-schema validator recovery-v2 final report",
+    "sha256": "2cce0f3c368ba05ba06f95218ea77f0d5f7ebedea7100cdaf1e1b130a68c9e2c"
+  },
+  "identity": {
+    "qualification_source_commit": "24739c772fb6f046b6e9d5a40ae32fb54f525246",
+    "direct_parent_commit": "aeee095a2191fe80b311e488144566f55da3c19f",
+    "remote_tip_at_execution": "9e5bcd1f8f9fa95315c8ceb6a8297fdebf326554",
+    "wheel_sha256": "8d230798ac8cc5e9423841e39408166a7613208a8c6b7de4f35781fecf8c06e7",
+    "editable_install": false,
+    "source_shadow_import": false,
+    "installed_wheel_only": true
+  },
+  "reused_evidence": {
+    "original_manifest": "1169/1169 PASS",
+    "original_manifest_sha256": "352274902790b9b3a6b5ebcae960fbafc6df5fd2f1a3287dc6203bc74bd1049c",
+    "recovery_v1_manifest": "68/68 PASS",
+    "recovery_v1_manifest_sha256": "79af255b7c18001a09443b308b48a0975ac8cff7ec7627534057c03f94040f0e"
+  },
+  "canonical_channel_checkpoint_schema": {
+    "kind": "channel_complete_stress_pressure_pcg",
+    "state_keys": ["pressure_guess"],
+    "reconstructed_state_keys": ["q_gradient_cache"],
+    "exact_match_required": true,
+    "q_gradient_cache_persisted_as_backend_tensor": false,
+    "synthetic_tests": "10/10 PASS",
+    "actual_fixture_validation": "PASS_CANONICAL_CHANNEL_COMPLETE_STRESS_CHECKPOINT_SCHEMA",
+    "checkpoint_json_sha256": "b8531a5ce9cafd51a73666e3db453321f606b5860a531575a0440f4aa0b73946",
+    "pressure_guess_sha256": "f2fcd625b57f1badf1a3edf7f4d91b7e190c1d5892718d5f7b108721a43ded21"
+  },
+  "cpu_gate": {
+    "targeted_passed": 18,
+    "full_passed": 2409,
+    "skipped": 1,
+    "deselected": 6,
+    "subtests_passed": 8,
+    "failed": 0,
+    "only_skip": "optional_nematics3d_dependency"
+  },
+  "h100": {
+    "job_id": "10844682",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:06:05",
+    "node": "gpu-h100-4-0",
+    "gpu": "NVIDIA H100 PCIe",
+    "gpu_total_memory_bytes": 84929478656,
+    "driver": "550.54.14",
+    "pytorch": "2.5.1+cu121",
+    "cuda_runtime": "12.1",
+    "python": "3.10.18",
+    "tf32_matmul": false,
+    "tf32_cudnn": false,
+    "requeue": 0,
+    "restarts": 0,
+    "formal_submission_count": 1,
+    "automatic_retry": false,
+    "second_job_submitted": false,
+    "cuda_only_tests_passed": 6,
+    "authoritative_channel_restart_tests_passed": 2
+  },
+  "runtime_matrix": [
+    {
+      "case": "plane_legacy",
+      "runtime": "legacy_production",
+      "public": true,
+      "finite": true,
+      "restart": true,
+      "fallback_used": false
+    },
+    {
+      "case": "plane_compiled",
+      "runtime": "compiled_v2",
+      "public": true,
+      "finite": true,
+      "restart": true,
+      "fallback_used": false
+    },
+    {
+      "case": "channel_legacy",
+      "runtime": "legacy_channel",
+      "public": true,
+      "finite": true,
+      "restart": true,
+      "fallback_used": false
+    },
+    {
+      "case": "channel_compiled",
+      "runtime": "compiled_channel_v2",
+      "public": true,
+      "finite": true,
+      "restart": true,
+      "fallback_used": false
+    },
+    {
+      "case": "periodic_complete_stress",
+      "runtime": "periodic_spectral",
+      "public": true,
+      "finite": true,
+      "restart": true,
+      "fallback_used": false,
+      "forward_transforms_per_step": 7,
+      "inverse_transforms_per_step": 31
+    },
+    {
+      "case": "channel_complete_stress",
+      "runtime": "channel_complete_stress",
+      "public": true,
+      "finite": true,
+      "restart": true,
+      "fallback_used": false,
+      "forward_transforms_per_step": 15,
+      "inverse_transforms_per_step": 42
+    },
+    {
+      "case": "plane_static_q_lifting",
+      "runtime": "legacy_production",
+      "public": true,
+      "finite": true,
+      "restart": true,
+      "strong_homeotropic_q": "PASS",
+      "strong_planar_q": "PASS",
+      "fallback_used": false
+    },
+    {
+      "case": "finite_q_robin_relaxation_pilot",
+      "runtime": "internal_partial_pilot",
+      "public": false,
+      "finite": true,
+      "restart": true,
+      "maximum_basis_condition_number": 1.113841312
+    }
+  ],
+  "restart": {
+    "required_gates": 8,
+    "passed_gates": 8,
+    "all_required_complete": true,
+    "channel_c128_q_sha256": "f1c4c98f82630fda81318a03526bc9d1eef7675d371978f82d824917e9a4e511",
+    "channel_c128_u_sha256": "34c60ac62534686f511033078b2b5e9216e690e3eb2b14c2c3c1ec01356b7426",
+    "channel_c128_p_sha256": "e35d416a0053d1579b3feee0c53a7ffe5c52be99d29c5cd6811a08b442d548e4",
+    "channel_c128_byte_identical": true,
+    "channel_c512_byte_identical": true,
+    "periodic_byte_identical": true,
+    "plane_static_lifting_byte_identical": true
+  },
+  "negative_gates": {
+    "all_required_complete": true,
+    "frozen_pytest": "20 passed",
+    "additional_progress_counter_guards": "PASS_P8_6_2_ADDITIONAL_PROGRESS_COUNTER_NEGATIVE_GATES",
+    "target_mutation_before_rejection": false
+  },
+  "archive": {
+    "control_directory": "/home/fansenwei/pssolver_phase8_p862_integrated_h100_24739c7_20260927_recovery_v2",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_phase8_p862_integrated_h100_24739c7_20260927_recovery_v2",
+    "manifest_entries": 1204,
+    "manifest_passed": 1204,
+    "manifest_sha256": "70d65ad5a79a7282fd3653157442f4e443efe3788d1c2c83c2874ed71184203d",
+    "complete_written_after_checksum_verification": true
+  },
+  "compatibility": {
+    "plane_default": "legacy_production",
+    "channel_default": "legacy_channel",
+    "compiled_runtime_promoted": false,
+    "robin_publicly_executable": false,
+    "finite_q_pilot_public": false,
+    "finite_q_pilot_complete_beris_edwards_connected": false,
+    "finite_q_pilot_stokes_connected": false,
+    "production_default_changed": false
+  },
+  "non_claims": {
+    "new_performance_claim": false,
+    "paper_benchmark_claim": false,
+    "steady_state_claim": false,
+    "arbitrary_model_geometry_pair_execution": false,
+    "general_robin_boundary_support": false,
+    "phase_9_implementation": false
+  },
+  "eligibility": {
+    "qualification_complete": true,
+    "p8_6_2_complete": true,
+    "eligible_for_p8_6_3_local_finalization": true,
+    "phase_8_complete": false,
+    "phase_9_authorized": false,
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false
+  }
+}
