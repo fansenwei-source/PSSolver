@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "phase": "Phase 8",
+  "status": "complete",
+  "classification": "PASS_PHASE8_CAPABILITY_EXPANSION_AND_INTEGRATED_H100_CLOSURE",
+  "date": "2026-09-27",
+  "branch": "next/pssolver-v0.2.0-architecture",
+  "closing_commit_before_record": "85fa3f7cfd1ddb0f8c654df60cdc22c9905592e1",
+  "prerequisite": {
+    "phase_7_classification": "PASS_PHASE7_CHANNEL_AND_PUBLIC_SIMULATION_ARCHITECTURE_CLOSURE",
+    "phase_7_complete": true,
+    "phase_7_closure_sha256": "b0ab7f2cef30c922bfbb2c4606ca12ff7f805385755256f39580a8ac8f28e7b6"
+  },
+  "closure_chain": [
+    {
+      "scope": "public capability surface and catalog",
+      "phase": "P8.1",
+      "classification": "PASS_P8_1_EXISTING_CAPABILITY_PUBLIC_SURFACE_AND_CATALOG",
+      "record": "notes/architecture_v0_2/phase_8_p81_public_surface_catalog.json",
+      "record_sha256": "bc55be87fd9f0c61a8cff2e1638521000d0be3fadec54815b32eed6bacdb2a1d",
+      "complete": true
+    },
+    {
+      "scope": "complete-stress periodic-box application",
+      "phase": "P8.2",
+      "classification": "PASS_P8_2_PERIODIC_COMPLETE_STRESS_H100_CLOSURE",
+      "record": "notes/architecture_v0_2/phase_8_p82_h100_closure.json",
+      "record_sha256": "23383c204610d3ccaf089a210c5eefb02c0e336e387ce53b358691a8034612bc",
+      "complete": true
+    },
+    {
+      "scope": "complete-stress rectangular-Channel application",
+      "phase": "P8.3",
+      "classification": "PASS_P8_3_CHANNEL_COMPLETE_STRESS_H100_OBSERVATION_SYNC_RECOVERY",
+      "record": "notes/architecture_v0_2/phase_8_p83_channel_complete_stress.json",
+      "record_sha256": "8168fdf5744df73e3a7cbbc649d590b4c41b052845cd612ff00ab78118e14942",
+      "complete": true
+    },
+    {
+      "scope": "generic static Dirichlet lifting and strong Plane Q anchoring",
+      "phase": "P8.4.5",
+      "classification": "PASS_P8_4_5_PLANE_STATIC_LIFTING_H100_CLOSURE",
+      "record": "notes/architecture_v0_2/phase_8_p845_h100_qualification.json",
+      "record_sha256": "2b2a2078ddf1f6de095075048cae5ba3b36436a4b08d631f6412e67d28c059b6",
+      "complete": true
+    },
+    {
+      "scope": "finite-Q Robin relaxation internal pilot",
+      "phase": "P8.5.6",
+      "classification": "PASS_P8_5_6_FINITE_Q_ANCHORING_H100_CLOSURE",
+      "record": "notes/architecture_v0_2/phase_8_p856_h100_qualification.json",
+      "record_sha256": "d03331962371e0e83f36e52edd5ce25fda601bc530c3d6b8ab5c30bb31d40f04",
+      "complete": true
+    },
+    {
+      "scope": "local cumulative package and rejection-matrix audit",
+      "phase": "P8.6.1",
+      "classification": "PASS_P8_6_1_LOCAL_CUMULATIVE_AUDIT",
+      "record": "notes/architecture_v0_2/phase_8_p861_local_cumulative_audit.json",
+      "record_sha256": "88950076d250a61654cdbe162e69e058c12832f65055d78eba2a80f6de580d3c",
+      "complete": true
+    },
+    {
+      "scope": "integrated installed-wheel H100 closure",
+      "phase": "P8.6.2",
+      "classification": "PASS_P8_6_2_INTEGRATED_INSTALLED_WHEEL_H100_CLOSURE",
+      "record": "notes/architecture_v0_2/phase_8_p862_h100_closure.json",
+      "record_sha256": "058cf1223517906569c35a1d4e4270ea0a136e513b07f84072618adb52ea1caf",
+      "complete": true
+    }
+  ],
+  "architecture_outcome": {
+    "tensor_free_public_simulation_declaration": true,
+    "model_geometry_boundary_declarations_remain_orthogonal": true,
+    "capability_resolution_before_allocation": true,
+    "application_dispatch_before_timestep": true,
+    "registry_lookup_in_timestep": false,
+    "unregistered_combinations_fail_closed": true,
+    "runtime_fallback_allowed": false,
+    "installed_wheel_catalog_matches_source": true,
+    "checkpoint_identity_and_payload_fail_closed": true,
+    "plane_periodic_and_channel_independently_qualified": true
+  },
+  "public_catalog": {
+    "model_count": 2,
+    "geometry_count": 3,
+    "boundary_policy_count": 8,
+    "qualified_combination_count": 4,
+    "qualified_runtime_path_count": 6,
+    "models": [
+      "complete_stress_beris_edwards",
+      "legacy_active_force_active_nematics"
+    ],
+    "geometries": ["periodic_box", "plane_slab", "rectangular_channel"],
+    "boundary_policies": [
+      "robin",
+      "neumann_q",
+      "free_slip_velocity",
+      "no_slip_velocity",
+      "neumann_pressure_compatibility",
+      "prescribed_q",
+      "strong_homeotropic_q",
+      "strong_planar_q"
+    ]
+  },
+  "qualified_applications": [
+    {
+      "application": "plane_complete_stress_beris_edwards",
+      "equation_variant": "complete_stress_beris_edwards",
+      "geometry": "plane_slab",
+      "runtime_paths": ["legacy_production", "compiled_v2"]
+    },
+    {
+      "application": "channel_legacy_active_force_active_nematics",
+      "equation_variant": "legacy_active_force_active_nematics",
+      "geometry": "rectangular_channel",
+      "runtime_paths": ["legacy_channel", "compiled_channel_v2"]
+    },
+    {
+      "application": "periodic_complete_stress_beris_edwards",
+      "equation_variant": "complete_stress_beris_edwards",
+      "geometry": "periodic_box",
+      "runtime_paths": ["periodic_spectral"]
+    },
+    {
+      "application": "channel_complete_stress_beris_edwards",
+      "equation_variant": "complete_stress_beris_edwards",
+      "geometry": "rectangular_channel",
+      "runtime_paths": ["channel_complete_stress"]
+    }
+  ],
+  "boundary_capabilities": {
+    "plane_static_prescribed_q": true,
+    "plane_strong_homeotropic_q": true,
+    "plane_strong_planar_q": true,
+    "static_dirichlet_lifting_restart_qualified": true,
+    "finite_q_robin_relaxation_pilot_qualified": true,
+    "finite_q_robin_publicly_executable": false,
+    "finite_q_robin_complete_timestep_connected": false,
+    "nonhomogeneous_neumann_supported": false
+  },
+  "compatibility": {
+    "plane_default": "legacy_production",
+    "channel_default": "legacy_channel",
+    "compiled_plane_promoted": false,
+    "compiled_channel_promoted": false,
+    "production_default_changed": false,
+    "runtime_or_timestep_changed_by_finalization": false,
+    "numerical_operator_changed_by_finalization": false,
+    "public_api_changed_by_finalization": false,
+    "checkpoint_or_output_schema_changed_by_finalization": false
+  },
+  "non_claims": {
+    "arbitrary_model_geometry_pair_execution": false,
+    "arbitrary_field_boundary_execution": false,
+    "dynamic_or_trainable_boundary_data": false,
+    "nonhomogeneous_neumann_lifting": false,
+    "general_public_robin_execution": false,
+    "paper_benchmark_reproduction": false,
+    "physical_stationarity": false,
+    "optimal_control": false,
+    "phase_9_implementation": false
+  },
+  "local_closure_verification": {
+    "targeted": "10 passed",
+    "full": "2427 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass",
+    "pdf_regenerated": false
+  },
+  "eligibility": {
+    "qualification_complete": true,
+    "phase_8_complete": true,
+    "p8_6_complete": true,
+    "eligible_for_phase_9_planning": true,
+    "phase_9_authorized": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

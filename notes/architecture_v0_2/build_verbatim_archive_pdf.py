@@ -226,6 +226,8 @@ SOURCE_ORDER = (
     "phase_8_p862_source_binding.json",
     "phase_8_p862_h100_closure.md",
     "phase_8_p862_h100_closure.json",
+    "phase_8_final_closure.md",
+    "phase_8_final_closure.json",
 )
 
 PAGE_WIDTH = 595.276
