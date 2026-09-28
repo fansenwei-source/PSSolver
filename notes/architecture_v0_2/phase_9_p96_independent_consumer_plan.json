@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "phase": "P9.6",
+  "date": "2026-09-28",
+  "status": "authorized_pending_independent_consumer_implementation",
+  "title": "First independent periodic functional consumer qualification",
+  "prerequisite": {
+    "classification": "PASS_P9_5_H100_BATCH_ONE_FORWARD_VJP_MEMORY",
+    "source_commit": "bdf9268a8b668eb79510dc0c51bae587142d26a8",
+    "deterministic_replay": "bitwise",
+    "batch_sizes_qualified": [1]
+  },
+  "ownership": {
+    "dependency_direction": "independent_consumer_to_pssolver_only",
+    "pssolver_owns": [
+      "functional runtime",
+      "state and control declarations",
+      "observations",
+      "scientific and execution identity",
+      "differentiability and replay capabilities"
+    ],
+    "consumer_owns": [
+      "adapter",
+      "control parameterization",
+      "objective",
+      "checkpoint schedule",
+      "discrete adjoint orchestration"
+    ],
+    "pssolver_imports_consumer": false
+  },
+  "provider_api": {
+    "module": "pssolver.functional",
+    "api_version": "0.1-provisional",
+    "construction": [
+      "periodic_activity_functional_request",
+      "build_functional_runtime"
+    ],
+    "runtime_members": [
+      "state_spec",
+      "control_specs",
+      "observation_specs",
+      "capabilities",
+      "identity",
+      "initial_state",
+      "step",
+      "observe",
+      "step_and_observe"
+    ],
+    "forbidden_private_access": true,
+    "legacy_fallback": false
+  },
+  "adapter_mapping": {
+    "state": "FunctionalStateSpec.components -> ordered consumer TensorSpec tuple",
+    "control": "single activity tensor <-> {'activity': tensor}",
+    "observation_names": ["Q", "velocity", "pressure"],
+    "identity": "FunctionalRuntimeIdentity.to_metadata() without omitted blocks",
+    "capability_requirements": {
+      "supported_batch_sizes": [1],
+      "pure_step": true,
+      "combined_step_and_observe": true,
+      "deterministic_replay": "bitwise",
+      "differentiability": "torch_autograd",
+      "inner_solve_gradient": "direct_periodic_fourier_autograd"
+    },
+    "implicit_tensor_conversion": false
+  },
+  "consumer_exercise": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "periodic_box",
+    "runtime_path": "periodic_spectral",
+    "control": "spatially_varying_activity",
+    "objective": "quadratic_Q_tracking",
+    "algorithm": "checkpointed_discrete_adjoint",
+    "batch_size": 1,
+    "real_dtype": "float64",
+    "checkpoint_strides": [1, 2, 4],
+    "optimizer_iteration_required": false,
+    "scientific_control_claim": false
+  },
+  "cpu_gates": [
+    "public-import-only static audit",
+    "adapter contract",
+    "combined observation bitwise equivalence",
+    "input non-mutation",
+    "finite nonzero state and activity gradients",
+    "directional finite difference",
+    "bitwise forward replay",
+    "bitwise gradient invariance across checkpoint strides",
+    "identity and replay-capability negative gates"
+  ],
+  "h100": {
+    "grid": {
+      "id": "R128",
+      "shape": [128, 128, 32],
+      "lengths": [100.0, 100.0, 20.0]
+    },
+    "gpu": "NVIDIA H100 PCIe",
+    "tf32": false,
+    "installed_provider_wheel": true,
+    "installed_consumer_wheel": true,
+    "source_shadowing": false,
+    "submission_count_max": 1,
+    "automatic_retry": false,
+    "fail_closed": true
+  },
+  "provenance": {
+    "pin_provider_commit_and_wheel_sha256": true,
+    "pin_consumer_commit_and_wheel_sha256": true,
+    "pin_runtime_identity_sha256": true,
+    "archive_checksum_manifest": true,
+    "write_complete_only_after_pass": true
+  },
+  "authorization": {
+    "independent_consumer_implementation_authorized": true,
+    "p9_6_h100_authorized_only_after_consumer_commit_review": true,
+    "p9_7_authorized": false,
+    "p9_8_authorized": false,
+    "larger_batch_authorized": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  }
+}

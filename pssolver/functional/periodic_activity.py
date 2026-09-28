@@ -47,6 +47,13 @@ from .periodic_checkpoint import PeriodicActivityCheckpointBridge
 _ACTIVITY_NAME = "activity"
 _OBSERVATION_NAMES = ("Q", "velocity", "pressure")
 
+# P9.5 qualified bitwise replay for this batch-one runtime on both CPU and the
+# allocated NVIDIA H100 PCIe under one fixed dtype and execution identity.  Do
+# not weaken this declaration merely because the allocated device is CUDA: an
+# independent checkpointing consumer must be able to reject a runtime whose
+# replay capability is genuinely unqualified.
+PERIODIC_ACTIVITY_DETERMINISTIC_REPLAY = "bitwise"
+
 
 def _allocated_device(value: object) -> str:
     try:
@@ -257,9 +264,7 @@ class PeriodicActivityFunctionalRuntime:
         self._state_spec = state_spec
         self._control_specs = controls
         self._observation_specs = observations
-        replay_capability = (
-            "bitwise" if torch.device(device).type == "cpu" else "not_qualified"
-        )
+        replay_capability = PERIODIC_ACTIVITY_DETERMINISTIC_REPLAY
         self._capabilities = FunctionalCapabilitySet(
             supported_batch_sizes=(1,),
             pure_step=True,

@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "phase": "P9.5",
+  "date": "2026-09-28",
+  "status": "complete",
+  "classification": "PASS_P9_5_H100_BATCH_ONE_FORWARD_VJP_MEMORY",
+  "source_commit": "bdf9268a8b668eb79510dc0c51bae587142d26a8",
+  "scope": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "periodic_box",
+    "runtime_path": "periodic_spectral",
+    "control": "spatially_varying_activity",
+    "batch_sizes_qualified": [1],
+    "larger_batch_qualified": false,
+    "real_dtype": "float64",
+    "pointwise_execution": "eager",
+    "spectral_refresh": "disabled",
+    "production_default_changed": false
+  },
+  "cpu": {
+    "targeted": "27 passed",
+    "full": "2517 passed, 1 skipped, 6 deselected, 8 subtests passed",
+    "failed": 0
+  },
+  "h100": {
+    "job_id": 10845880,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:02:30",
+    "node": "gpu-h100-4-0",
+    "gpu": "NVIDIA H100 PCIe",
+    "formal_submission_count": 1,
+    "automatic_retry": false,
+    "cuda_only_tests": "6 passed",
+    "profile_count": 18
+  },
+  "performance": {
+    "R128": {
+      "production_forward_mean_ms": 7.423167,
+      "functional_forward_mean_ms": 7.455183,
+      "functional_vjp_mean_ms": 30.245436,
+      "functional_over_production_mean": 1.004313,
+      "vjp_over_functional_mean": 4.056967
+    },
+    "R320": {
+      "production_forward_mean_ms": 113.732030,
+      "functional_forward_mean_ms": 117.391653,
+      "functional_vjp_mean_ms": 431.254724,
+      "functional_over_production_mean": 1.032178,
+      "vjp_over_functional_mean": 3.673640
+    },
+    "all_performance_gates_passed": true,
+    "all_memory_gates_passed": true
+  },
+  "stable_gradient_validator_v2": {
+    "R128": {
+      "state_relative_error": 4.628092885e-08,
+      "state_cosine_error": 0.0024200033,
+      "activity_relative_error": 2.606013108e-08,
+      "activity_cosine_error": 0.01045478886
+    },
+    "R320": {
+      "state_relative_error": 6.736089116e-08,
+      "state_cosine_error": 0.01097040152,
+      "activity_relative_error": 3.763900776e-08,
+      "activity_cosine_error": 0.01017337344
+    },
+    "all_six_gradient_paths_finite_nonzero_and_passed": true
+  },
+  "correctness": {
+    "production_functional_r12": "pass",
+    "deterministic_replay": "bitwise",
+    "gradient_replay": "bitwise",
+    "nonfinite_detected": false,
+    "fallback_used": false,
+    "graph_breaks": 0
+  },
+  "archive": {
+    "directory": "/home/fansenwei/pssolver_phase9_p95_h100_bdf9268_20260928_v1",
+    "checksum_entries": 43,
+    "checksum_passed": 43,
+    "manifest_sha256": "c41c72fe86e9b33e35c75170da04838ed06e7244b46cffb5a6167ea1dbc736c9",
+    "complete_present": true
+  },
+  "authorization": {
+    "p9_5_complete": true,
+    "p9_6_authorized": true,
+    "p9_7_authorized": false,
+    "p9_8_authorized": false,
+    "larger_batch_authorized": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  }
+}
