@@ -21,7 +21,7 @@ from pssolver.runtime.periodic_beris_edwards import PeriodicRuntimeAdapterProtoc
 from .contracts import FunctionalControls, FunctionalState
 
 
-PERIODIC_GRADIENT_VALIDATION_VERSION = 1
+PERIODIC_GRADIENT_VALIDATION_VERSION = 2
 PERIODIC_CONSISTENCY_VALIDATION_VERSION = 1
 
 
@@ -44,23 +44,29 @@ class FunctionalValidationError(RuntimeError):
 @dataclass(frozen=True, slots=True)
 class DirectionalDerivativeCheck:
     input_name: str
+    direction_kind: str
+    finite_difference_method: str
     epsilon: float
     autograd: float
     finite_difference: float
     absolute_error: float
     relative_error: float
     tolerance: float
+    absolute_direction_cosine: float
     passed: bool
 
     def to_metadata(self) -> dict[str, object]:
         return {
             "input": self.input_name,
+            "direction": self.direction_kind,
+            "finite_difference_method": self.finite_difference_method,
             "epsilon": self.epsilon,
             "autograd": self.autograd,
             "finite_difference": self.finite_difference,
             "absolute_error": self.absolute_error,
             "relative_error": self.relative_error,
             "relative_tolerance": self.tolerance,
+            "absolute_direction_cosine": self.absolute_direction_cosine,
             "passed": self.passed,
         }
 
@@ -159,7 +165,7 @@ class PeriodicProductionConsistencyReport:
 
 def _frozen_gradient_contract(dtype: torch.dtype) -> tuple[float, float, float]:
     if dtype is torch.float64:
-        return 1.0e-6, 1.0e-4, 2.0e-5
+        return 1.0e-5, 1.0e-2, 2.0e-5
     if dtype is torch.float32:
         return 2.0e-3, 1.0e-2, 2.0e-2
     raise TypeError("gradient validation requires float32 or float64 state")
@@ -173,30 +179,68 @@ def _frozen_consistency_contract(dtype: torch.dtype) -> tuple[float, float]:
     raise TypeError("consistency validation requires float32 or float64 state")
 
 
-def _direction(value: torch.Tensor, phase: float) -> torch.Tensor:
+def _low_mode_direction(value: torch.Tensor, phase: float) -> torch.Tensor:
     real_dtype = value.real.dtype if value.is_complex() else value.dtype
-    indices = torch.arange(
-        value.numel(), dtype=real_dtype, device=value.device
-    ).reshape(value.shape)
-    real = torch.sin(indices * 0.173 + phase)
+    real = torch.zeros(value.shape, dtype=real_dtype, device=value.device)
+    imaginary = torch.zeros(value.shape, dtype=real_dtype, device=value.device)
+    for axis, size in enumerate(value.shape):
+        coordinate = torch.arange(size, dtype=real_dtype, device=value.device)
+        view = [1] * value.ndim
+        view[axis] = size
+        angle = (
+            (2.0 * torch.pi * coordinate.reshape(view) / float(size))
+            + phase
+            + 0.37 * axis
+        )
+        real = real + torch.cos(angle)
+        imaginary = imaginary + 0.5 * torch.sin(angle + 0.19)
     if value.is_complex():
-        result = torch.complex(real, torch.cos(indices * 0.119 + phase))
+        result = torch.complex(real, imaginary)
     else:
         result = real
     scale = result.abs().amax()
     if not bool(torch.isfinite(scale).item()) or float(scale.item()) == 0.0:
-        raise RuntimeError("failed to construct a finite audit direction")
+        raise RuntimeError("failed to construct a finite low-mode audit direction")
     return result / scale
 
 
-def _audit_scalars(runtime, state, controls):
+def _audit_outputs(runtime, state, controls) -> tuple[torch.Tensor, ...]:
     next_state, observations = runtime.step_and_observe(state, controls, 0)
-    dynamics = next_state[0].square().mean() + next_state[1].abs().square().mean()
+    return (
+        next_state[0],
+        next_state[1],
+        observations["velocity"],
+        observations["pressure"],
+    )
+
+
+def _audit_scalars(runtime, state, controls):
+    outputs = _audit_outputs(runtime, state, controls)
+    dynamics = outputs[0].square().mean() + outputs[1].abs().square().mean()
     observation = (
-        observations["velocity"].square().mean()
-        + observations["pressure"].square().mean()
+        outputs[2].square().mean()
+        + outputs[3].square().mean()
     )
     return dynamics, observation
+
+
+def _paired_quadratic_derivative(
+    plus: tuple[torch.Tensor, ...],
+    minus: tuple[torch.Tensor, ...],
+    epsilon: float,
+) -> float:
+    if len(plus) != len(minus) or not plus:
+        raise ValueError("plus/minus audit outputs must be nonempty and aligned")
+    terms = []
+    for plus_value, minus_value in zip(plus, minus, strict=True):
+        if plus_value.shape != minus_value.shape:
+            raise ValueError("plus/minus audit output shapes differ")
+        terms.append(
+            ((plus_value - minus_value).conj() * (plus_value + minus_value))
+            .real.mean()
+        )
+    value = sum(terms) / (2.0 * epsilon)
+    return float(value.detach().cpu().item())
 
 
 def _real_directional_product(gradient, direction) -> float:
@@ -204,6 +248,32 @@ def _real_directional_product(gradient, direction) -> float:
         return 0.0
     value = (gradient.conj() * direction).real.sum()
     return float(value.detach().cpu().item())
+
+
+def _directional_product(gradients, directions) -> float:
+    return sum(
+        _real_directional_product(gradient, direction)
+        for gradient, direction in zip(gradients, directions, strict=True)
+    )
+
+
+def _directional_conditioning(gradients, directions) -> float:
+    numerator = abs(_directional_product(gradients, directions))
+    gradient_norm_squared = 0.0
+    direction_norm_squared = 0.0
+    for gradient, direction in zip(gradients, directions, strict=True):
+        if gradient is None:
+            return 0.0
+        gradient_norm_squared += float(
+            gradient.abs().square().sum().detach().cpu().item()
+        )
+        direction_norm_squared += float(
+            direction.abs().square().sum().detach().cpu().item()
+        )
+    denominator = math.sqrt(gradient_norm_squared * direction_norm_squared)
+    if denominator == 0.0:
+        return 0.0
+    return min(1.0, numerator / denominator)
 
 
 def _gradient_path(name: str, gradient) -> GradientPathCheck:
@@ -278,9 +348,10 @@ def evaluate_periodic_activity_gradients(
         (*state_for_ad, controls_for_ad["activity"]),
     )
     state_directions = tuple(
-        _direction(value, 0.31 + index) for index, value in enumerate(state)
+        _low_mode_direction(value, 0.31 + index)
+        for index, value in enumerate(state)
     )
-    control_direction = _direction(activity, 2.71)
+    control_direction = _low_mode_direction(activity, 2.71)
     if bool(
         (activity - control_epsilon * control_direction.abs() < 0.0)
         .any()
@@ -290,17 +361,14 @@ def evaluate_periodic_activity_gradients(
             "activity must be interior to its admissible range for the "
             "frozen central finite-difference audit"
         )
-    state_autograd = sum(
-        _real_directional_product(gradient, direction)
-        for gradient, direction in zip(gradients[:2], state_directions, strict=True)
-    )
+    state_autograd = _directional_product(gradients[:2], state_directions)
     control_autograd = _real_directional_product(gradients[2], control_direction)
-
-    def objective(test_state, test_controls) -> float:
-        dynamic_value, observation_value = _audit_scalars(
-            runtime, test_state, test_controls
-        )
-        return float((dynamic_value + observation_value).detach().cpu().item())
+    state_direction_cosine = _directional_conditioning(
+        gradients[:2], state_directions
+    )
+    control_direction_cosine = _directional_conditioning(
+        (gradients[2],), (control_direction,)
+    )
 
     plus_state = tuple(
         value + state_epsilon * direction
@@ -310,20 +378,32 @@ def evaluate_periodic_activity_gradients(
         value - state_epsilon * direction
         for value, direction in zip(state, state_directions, strict=True)
     )
-    state_fd = (
-        objective(plus_state, controls) - objective(minus_state, controls)
-    ) / (2.0 * state_epsilon)
+    with torch.no_grad():
+        state_fd = _paired_quadratic_derivative(
+            _audit_outputs(runtime, plus_state, controls),
+            _audit_outputs(runtime, minus_state, controls),
+            state_epsilon,
+        )
     plus_controls = {
         "activity": activity + control_epsilon * control_direction
     }
     minus_controls = {
         "activity": activity - control_epsilon * control_direction
     }
-    control_fd = (
-        objective(state, plus_controls) - objective(state, minus_controls)
-    ) / (2.0 * control_epsilon)
+    with torch.no_grad():
+        control_fd = _paired_quadratic_derivative(
+            _audit_outputs(runtime, state, plus_controls),
+            _audit_outputs(runtime, state, minus_controls),
+            control_epsilon,
+        )
 
-    def derivative_check(name, epsilon, autograd_value, finite_difference_value):
+    def derivative_check(
+        name,
+        epsilon,
+        autograd_value,
+        finite_difference_value,
+        direction_cosine,
+    ):
         absolute = abs(autograd_value - finite_difference_value)
         scale = max(
             abs(autograd_value),
@@ -333,23 +413,45 @@ def evaluate_periodic_activity_gradients(
         relative = absolute / scale
         finite = all(
             math.isfinite(value)
-            for value in (autograd_value, finite_difference_value, relative)
+            for value in (
+                autograd_value,
+                finite_difference_value,
+                relative,
+                direction_cosine,
+            )
         )
         return DirectionalDerivativeCheck(
-            name,
-            epsilon,
-            autograd_value,
-            finite_difference_value,
-            absolute,
-            relative,
-            tolerance,
-            finite and relative <= tolerance,
+            input_name=name,
+            direction_kind="low_mode",
+            finite_difference_method="paired_quadratic",
+            epsilon=epsilon,
+            autograd=autograd_value,
+            finite_difference=finite_difference_value,
+            absolute_error=absolute,
+            relative_error=relative,
+            tolerance=tolerance,
+            absolute_direction_cosine=direction_cosine,
+            passed=(
+                finite
+                and direction_cosine > 0.0
+                and relative <= tolerance
+            ),
         )
 
     derivatives = (
-        derivative_check("state", state_epsilon, state_autograd, state_fd),
         derivative_check(
-            "activity", control_epsilon, control_autograd, control_fd
+            "state",
+            state_epsilon,
+            state_autograd,
+            state_fd,
+            state_direction_cosine,
+        ),
+        derivative_check(
+            "activity",
+            control_epsilon,
+            control_autograd,
+            control_fd,
+            control_direction_cosine,
         ),
     )
     passed = all(value.passed for value in (*paths, *derivatives))

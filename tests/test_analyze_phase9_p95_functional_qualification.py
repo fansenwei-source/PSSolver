@@ -54,7 +54,57 @@ def _report(plan, grid, role, trial):
     if trial == 1 and role != "production_forward":
         correctness["r12"] = {"passed": True}
     if trial == 1 and role == "functional_vjp":
-        correctness["gradient"] = {"passed": True}
+        correctness["gradient"] = {
+            "format_version": 2,
+            "device": "cuda:0",
+            "real_dtype": "float64",
+            "directional_derivatives": [
+                {
+                    "input": "state",
+                    "direction": "low_mode",
+                    "finite_difference_method": "paired_quadratic",
+                    "epsilon": 1.0e-5,
+                    "autograd": 1.0,
+                    "finite_difference": 1.0,
+                    "absolute_error": 0.0,
+                    "relative_error": 0.0,
+                    "relative_tolerance": 2.0e-5,
+                    "absolute_direction_cosine": 0.01,
+                    "passed": True,
+                },
+                {
+                    "input": "activity",
+                    "direction": "low_mode",
+                    "finite_difference_method": "paired_quadratic",
+                    "epsilon": 1.0e-2,
+                    "autograd": 2.0,
+                    "finite_difference": 2.0,
+                    "absolute_error": 0.0,
+                    "relative_error": 0.0,
+                    "relative_tolerance": 2.0e-5,
+                    "absolute_direction_cosine": 0.01,
+                    "passed": True,
+                },
+            ],
+            "gradient_paths": [
+                {
+                    "path": path,
+                    "gradient_norm": 1.0,
+                    "finite": True,
+                    "nonzero": True,
+                    "passed": True,
+                }
+                for path in (
+                    "dynamics<-q_physical",
+                    "dynamics<-q_spectral",
+                    "dynamics<-activity",
+                    "observations<-q_physical",
+                    "observations<-q_spectral",
+                    "observations<-activity",
+                )
+            ],
+            "passed": True,
+        }
     return {
         "schema_version": 1,
         "kind": "p95_periodic_functional_profile",
@@ -205,4 +255,43 @@ def test_analyzer_rejects_measured_profile_variability_above_gate():
     )
 
     with pytest.raises(P95EvidenceError, match="CV exceeds"):
+        analyze(plan, reports, expected_commit=COMMIT)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        (
+            lambda gradient: gradient.update(format_version=1),
+            "validator version differs",
+        ),
+        (
+            lambda gradient: gradient["directional_derivatives"][0].update(
+                direction="frozen_oscillatory"
+            ),
+            "gradient direction differs",
+        ),
+        (
+            lambda gradient: gradient["directional_derivatives"][1].update(
+                epsilon=1.0e-4
+            ),
+            "gradient epsilon differs",
+        ),
+        (
+            lambda gradient: gradient["gradient_paths"][0].update(nonzero=False),
+            "gradient path failed",
+        ),
+    ],
+)
+def test_analyzer_rejects_non_v2_gradient_evidence(mutation, message):
+    plan, reports = _matrix()
+    target = next(
+        report
+        for report in reports
+        if report["config"]["role"] == "functional_vjp"
+        and report["config"]["trial"] == 1
+    )
+    mutation(target["correctness"]["gradient"])
+
+    with pytest.raises(P95EvidenceError, match=message):
         analyze(plan, reports, expected_commit=COMMIT)

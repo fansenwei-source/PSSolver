@@ -9,6 +9,8 @@ import numpy as np
 import pytest
 import torch
 
+import pssolver.functional.validation as functional_validation
+
 from pssolver import (
     Output,
     Simulation,
@@ -206,7 +208,56 @@ def test_p94_finite_difference_and_hidden_detach_gates_pass(tmp_path):
     }
     assert all(value.passed for value in report.directional_derivatives)
     assert all(value.passed for value in report.gradient_paths)
-    assert report.to_metadata()["passed"] is True
+    metadata = report.to_metadata()
+    assert report.format_version == 2
+    assert metadata["passed"] is True
+    directional = {item["input"]: item for item in metadata["directional_derivatives"]}
+    assert directional["state"]["direction"] == "low_mode"
+    assert directional["state"]["finite_difference_method"] == "paired_quadratic"
+    assert directional["state"]["epsilon"] == 1.0e-5
+    assert directional["activity"]["epsilon"] == 1.0e-2
+    assert all(
+        item["relative_tolerance"] == 2.0e-5
+        for item in directional.values()
+    )
+    assert all(
+        item["absolute_direction_cosine"] > 0.0
+        for item in directional.values()
+    )
+
+
+def test_p94_paired_quadratic_derivative_matches_direct_complex_difference():
+    plus = (
+        torch.tensor([1.0 + 2.0j, -0.5 + 0.25j], dtype=torch.complex128),
+        torch.tensor([0.75 - 0.5j], dtype=torch.complex128),
+    )
+    minus = (
+        torch.tensor([0.9 + 1.8j, -0.45 + 0.2j], dtype=torch.complex128),
+        torch.tensor([0.7 - 0.45j], dtype=torch.complex128),
+    )
+    epsilon = 0.01
+    expected = sum(
+        value.abs().square().mean() for value in plus
+    ) - sum(value.abs().square().mean() for value in minus)
+    expected = float((expected / (2.0 * epsilon)).item())
+
+    observed = functional_validation._paired_quadratic_derivative(
+        plus, minus, epsilon
+    )
+
+    assert observed == pytest.approx(expected, rel=1.0e-14, abs=1.0e-14)
+
+
+@pytest.mark.parametrize("dtype", [torch.float64, torch.complex128])
+def test_p94_low_mode_direction_is_finite_normalized_and_shape_preserving(dtype):
+    value = torch.zeros((2, 3, 4), dtype=dtype)
+
+    direction = functional_validation._low_mode_direction(value, 0.31)
+
+    assert direction.shape == value.shape
+    assert direction.dtype == dtype
+    assert torch.isfinite(direction).all()
+    assert direction.abs().amax().item() == pytest.approx(1.0)
 
 
 @pytest.mark.parametrize("detached", ["state", "control"])

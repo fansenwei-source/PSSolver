@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "phase": "P9.5-gradient-validator-v2-source",
+  "title": "Stable formal periodic directional-gradient validator v2",
+  "date": "2026-09-28",
+  "status": "implemented_pending_h100_closure",
+  "trigger": {
+    "diagnostic_source_commit": "f592aefbb6db417d034085487ed1ec837606f698",
+    "diagnostic_job": "10845746",
+    "diagnostic_classification": "PAIRED_FD_INDEPENDENT_CROSS_GRID_CANDIDATE_FOUND",
+    "diagnostic_manifest_sha256": "235fe3d7a5182100ad103fad7c39b073ffbd300a7890db3728b3dccd30ba8709",
+    "qualification_complete": false,
+    "p9_5_complete": false,
+    "eligible_for_p9_6": false
+  },
+  "validator": {
+    "format_version": 2,
+    "objective": "fixed_quadratic_dynamics_plus_observations",
+    "direction": "low_mode",
+    "direction_is_independent_of_autograd": true,
+    "finite_difference_method": "paired_quadratic",
+    "state_epsilon": 0.00001,
+    "activity_epsilon": 0.01,
+    "relative_tolerance": 0.00002,
+    "direction_cosine_requirement": "finite_and_strictly_positive",
+    "gradient_path_count": 6,
+    "all_gradient_paths_must_be_finite_nonzero_and_pass": true,
+    "activity_perturbation_must_remain_admissible": true
+  },
+  "diagnostic_evidence": {
+    "state_max_cross_grid_relative_error": 6.7360891e-08,
+    "activity_max_cross_grid_relative_error": 3.7639008e-08,
+    "state_low_mode_absolute_direction_cosines": {
+      "R128": 0.0024200033,
+      "R320": 0.010970402
+    },
+    "activity_low_mode_absolute_direction_cosines": {
+      "R128": 0.010454789,
+      "R320": 0.010173373
+    }
+  },
+  "required_closure": {
+    "matrix_profile_count": 18,
+    "grids": ["R128", "R320"],
+    "roles": [
+      "production_forward",
+      "functional_forward",
+      "functional_vjp"
+    ],
+    "trials_per_grid_and_role": 3,
+    "fresh_evidence": true,
+    "analyzer_must_validate_validator_v2_metadata": true,
+    "batch_sizes_qualified_on_pass": [1],
+    "larger_batch_qualified_on_pass": false
+  },
+  "nonchanges": {
+    "pde_equations_changed": false,
+    "pseudo_spectral_discretization_changed": false,
+    "stokes_solver_changed": false,
+    "production_default_changed": false,
+    "public_control_api_changed": false,
+    "finite_difference_used_by_forward_solver": false
+  },
+  "stopping_rules": {
+    "p9_5_complete_before_h100_closure": false,
+    "eligible_for_p9_6_before_h100_closure": false,
+    "automatic_retry": false,
+    "does_not_authorize_p9_6_execution": true
+  }
+}

@@ -9,6 +9,7 @@ import math
 import os
 from pathlib import Path
 import statistics
+import sys
 
 
 PASS_CLASSIFICATION = "PASS_P9_5_H100_BATCH_ONE_FORWARD_VJP_MEMORY"
@@ -36,6 +37,25 @@ FROZEN_GATES = {
     "r12": "pass_on_each_grid",
     "gradient_validation": "pass_on_each_grid",
     "finite": True,
+}
+FROZEN_GRADIENT_VALIDATION_VERSION = 2
+FROZEN_GRADIENT_DIRECTIONS = {
+    "state": {
+        "epsilon": 1.0e-5,
+        "relative_tolerance": 2.0e-5,
+    },
+    "activity": {
+        "epsilon": 1.0e-2,
+        "relative_tolerance": 2.0e-5,
+    },
+}
+FROZEN_GRADIENT_PATHS = {
+    "dynamics<-q_physical",
+    "dynamics<-q_spectral",
+    "dynamics<-activity",
+    "observations<-q_physical",
+    "observations<-q_spectral",
+    "observations<-activity",
 }
 
 
@@ -75,6 +95,127 @@ def _integer(value: object, description: str) -> int:
         f"{description} must be a positive integer",
     )
     return value
+
+
+def _finite(value: object, description: str) -> float:
+    try:
+        result = float(value)
+    except (TypeError, ValueError) as exc:
+        raise P95EvidenceError(f"{description} is not numeric") from exc
+    _require(math.isfinite(result), f"{description} must be finite")
+    return result
+
+
+def _validate_gradient_report(report: object, grid: str) -> None:
+    _require(isinstance(report, dict), f"H100 gradient report is absent for {grid}")
+    _require(
+        report.get("format_version") == FROZEN_GRADIENT_VALIDATION_VERSION,
+        f"gradient validator version differs for {grid}",
+    )
+    _require(
+        report.get("device") == "cuda:0",
+        f"gradient device differs for {grid}",
+    )
+    _require(
+        report.get("real_dtype") == "float64",
+        f"gradient dtype differs for {grid}",
+    )
+    _require(report.get("passed") is True, f"H100 gradient gate failed for {grid}")
+
+    paths = report.get("gradient_paths")
+    _require(
+        isinstance(paths, list) and len(paths) == 6,
+        f"gradient paths absent for {grid}",
+    )
+    observed_paths = {item.get("path") for item in paths if isinstance(item, dict)}
+    _require(
+        observed_paths == FROZEN_GRADIENT_PATHS,
+        f"gradient paths differ for {grid}",
+    )
+    for item in paths:
+        _require(
+            isinstance(item, dict)
+            and item.get("finite") is True
+            and item.get("nonzero") is True
+            and item.get("passed") is True,
+            f"gradient path failed for {grid}",
+        )
+        _positive(item.get("gradient_norm"), f"gradient path norm for {grid}")
+
+    derivatives = report.get("directional_derivatives")
+    _require(
+        isinstance(derivatives, list) and len(derivatives) == 2,
+        f"directional derivatives absent for {grid}",
+    )
+    indexed = {
+        item.get("input"): item for item in derivatives if isinstance(item, dict)
+    }
+    _require(
+        set(indexed) == set(FROZEN_GRADIENT_DIRECTIONS),
+        f"directional derivative inputs differ for {grid}",
+    )
+    for input_name, contract in FROZEN_GRADIENT_DIRECTIONS.items():
+        item = indexed[input_name]
+        _require(
+            item.get("direction") == "low_mode",
+            f"gradient direction differs for {grid}",
+        )
+        _require(
+            item.get("finite_difference_method") == "paired_quadratic",
+            f"gradient finite-difference method differs for {grid}",
+        )
+        _require(
+            item.get("epsilon") == contract["epsilon"],
+            f"gradient epsilon differs for {grid}",
+        )
+        _require(
+            item.get("relative_tolerance") == contract["relative_tolerance"],
+            f"gradient tolerance differs for {grid}",
+        )
+        autograd = _finite(item.get("autograd"), f"autograd derivative for {grid}")
+        finite_difference = _finite(
+            item.get("finite_difference"), f"finite-difference derivative for {grid}"
+        )
+        absolute = _finite(
+            item.get("absolute_error"), f"absolute gradient error for {grid}"
+        )
+        relative = _finite(
+            item.get("relative_error"), f"relative gradient error for {grid}"
+        )
+        cosine = _finite(
+            item.get("absolute_direction_cosine"),
+            f"gradient direction cosine for {grid}",
+        )
+        _require(
+            0.0 < cosine <= 1.0,
+            f"gradient direction is ill conditioned for {grid}",
+        )
+        expected_absolute = abs(autograd - finite_difference)
+        expected_relative = expected_absolute / max(
+            abs(autograd), abs(finite_difference), sys.float_info.min
+        )
+        _require(
+            math.isclose(
+                absolute,
+                expected_absolute,
+                rel_tol=1.0e-12,
+                abs_tol=1.0e-15,
+            ),
+            f"absolute gradient error disagrees for {grid}",
+        )
+        _require(
+            math.isclose(
+                relative,
+                expected_relative,
+                rel_tol=1.0e-12,
+                abs_tol=1.0e-15,
+            ),
+            f"relative gradient error disagrees for {grid}",
+        )
+        _require(
+            relative <= contract["relative_tolerance"] and item.get("passed") is True,
+            f"directional gradient gate failed for {grid}",
+        )
 
 
 def _grid_id(report: dict[str, object], plan: dict[str, object]) -> str:
@@ -318,11 +459,7 @@ def analyze(
                 isinstance(r12, dict) and r12.get("passed") is True,
                 f"R12 H100 gate failed for {grid}",
             )
-        gradient = vjp[0]["correctness"].get("gradient")
-        _require(
-            isinstance(gradient, dict) and gradient.get("passed") is True,
-            f"H100 gradient gate failed for {grid}",
-        )
+        _validate_gradient_report(vjp[0]["correctness"].get("gradient"), grid)
 
         production_times = [item["timing"]["mean_seconds"] for item in production]
         functional_times = [item["timing"]["mean_seconds"] for item in functional]
