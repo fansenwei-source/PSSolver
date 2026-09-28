@@ -243,6 +243,8 @@ SOURCE_ORDER = (
     "phase_9_p95_h100_qualification_plan.json",
     "phase_9_p95_gradient_diagnostic_plan.md",
     "phase_9_p95_gradient_diagnostic_plan.json",
+    "phase_9_p95_gradient_validator_v2_diagnostic_plan.md",
+    "phase_9_p95_gradient_validator_v2_diagnostic_plan.json",
 )
 
 PAGE_WIDTH = 595.276
