@@ -10,6 +10,7 @@ restricted to small CPU problems and exists only as a qualification oracle.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 from numbers import Integral
 from typing import Protocol, runtime_checkable
 
@@ -42,6 +43,16 @@ class ChannelImplicitPressureAdjointProtocol(Protocol):
 
     def solve(self, rhs_hat: torch.Tensor) -> torch.Tensor:
         """Return the zero-gauge pressure with a custom implicit VJP."""
+
+        ...
+
+    def solve_force_hats(
+        self,
+        fx_hat: torch.Tensor,
+        fy_hat: torch.Tensor,
+        fz_hat: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Return velocity and pressure hats without pressure warm state."""
 
         ...
 
@@ -170,6 +181,7 @@ class ChannelImplicitPressureAdjoint:
             rhs_hat,
             self._operators.apply_pressure_operator,
         )
+        self._validate_solve_diagnostics(diagnostics, "primal")
         self.last_primal_diagnostics = diagnostics
         return value
 
@@ -178,14 +190,92 @@ class ChannelImplicitPressureAdjoint:
             rhs_hat,
             self._operators.apply_pressure_operator_transpose,
         )
+        self._validate_solve_diagnostics(diagnostics, "transpose")
         self.last_transpose_diagnostics = diagnostics
         return value
+
+    def _validate_solve_diagnostics(
+        self,
+        diagnostics: ChannelPressureSolveDiagnostics,
+        description: str,
+    ) -> None:
+        if not all(
+            math.isfinite(value)
+            for value in (
+                diagnostics.residual,
+                diagnostics.relative_residual,
+            )
+        ):
+            raise RuntimeError(
+                f"functional pressure {description} solve is non-finite"
+            )
+        fixed = self._solver.pressure_fixed_iterations
+        if fixed is None:
+            if diagnostics.relative_residual > self._solver.pressure_rel_tol:
+                raise RuntimeError(
+                    f"functional pressure {description} solve did not meet "
+                    "its relative-residual tolerance"
+                )
+            return
+        if diagnostics.iterations > fixed:
+            raise RuntimeError(
+                f"functional pressure {description} solve exceeded its "
+                "fixed-iteration contract"
+            )
+        if (
+            diagnostics.iterations < fixed
+            and diagnostics.relative_residual > self._solver.pressure_rel_tol
+        ):
+            raise RuntimeError(
+                f"functional pressure {description} solve stopped before "
+                "its fixed-iteration or residual contract"
+            )
 
     def solve(self, rhs_hat: torch.Tensor) -> torch.Tensor:
         """Solve pressure and attach the graph-free implicit VJP."""
 
         self._validate_rhs(rhs_hat)
         return _ImplicitPressureSolve.apply(rhs_hat, self)
+
+    def solve_force_hats(self, fx_hat, fy_hat, fz_hat):
+        """Solve the surrounding Stokes map with functional pressure state."""
+
+        force_hats = (fx_hat, fy_hat, fz_hat)
+        if any(
+            not isinstance(value, torch.Tensor) for value in force_hats
+        ):
+            raise TypeError("Channel force coefficients must be tensors")
+        expected = tuple(self._solver.a_inv.shape)
+        for value in force_hats:
+            if tuple(value.shape) != expected:
+                raise ValueError(
+                    "Channel force coefficient shape must be "
+                    f"{expected}, got {tuple(value.shape)}"
+                )
+            if value.dtype is not self._solver.ikx.dtype:
+                raise TypeError(
+                    "Channel force coefficient dtype must match the solver"
+                )
+            if value.device != self._solver.ikx.device:
+                raise ValueError(
+                    "Channel force coefficient device must match the solver"
+                )
+            if not bool(torch.isfinite(value.detach()).all().item()):
+                raise ValueError("Channel force coefficients must be finite")
+        free_velocity = tuple(
+            self._solver._helmholtz_inverse(value) for value in force_hats
+        )
+        pressure_rhs = self._operators._project_gauge(
+            -self._solver.divergence_hat(*free_velocity)
+        )
+        pressure_hat = self.solve(pressure_rhs)
+        pressure_gradient = self._solver.pressure_gradient_hats(pressure_hat)
+        velocity_hat = tuple(
+            free_velocity[axis]
+            - self._solver._helmholtz_inverse(pressure_gradient[axis])
+            for axis in range(3)
+        )
+        return (*velocity_hat, pressure_hat)
 
     def implicit_adjoint_metadata(self) -> dict[str, object]:
         """Describe the qualified scope without claiming a Channel runtime."""

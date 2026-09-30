@@ -30,6 +30,17 @@ from .channel_pressure_adjoint import (
     ChannelPressureSolveDiagnostics,
     unrolled_channel_pressure_solve_oracle,
 )
+from .channel_activity_runtime import (
+    CHANNEL_ACTIVITY_DETERMINISTIC_REPLAY,
+    CHANNEL_ACTIVITY_RUNTIME_STAGE,
+    ChannelActivityFunctionalRuntime,
+    ChannelActivityFunctionalRuntimeFactory,
+    build_channel_activity_functional_runtime,
+)
+from .channel_checkpoint import (
+    CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION,
+    ChannelActivityCheckpointBridge,
+)
 
 from .contracts import (
     FUNCTIONAL_API_VERSION,
@@ -85,6 +96,12 @@ __all__ = [
     "CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION",
     "CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION",
     "CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES",
+    "CHANNEL_ACTIVITY_DETERMINISTIC_REPLAY",
+    "CHANNEL_ACTIVITY_RUNTIME_STAGE",
+    "CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
+    "ChannelActivityCheckpointBridge",
+    "ChannelActivityFunctionalRuntime",
+    "ChannelActivityFunctionalRuntimeFactory",
     "ChannelImplicitPressureAdjoint",
     "ChannelImplicitPressureAdjointProtocol",
     "ChannelPressureSolveDiagnostics",
@@ -119,6 +136,7 @@ __all__ = [
     "PeriodicProductionConsistencyReport",
     "TensorConsistencyCheck",
     "build_functional_runtime",
+    "build_channel_activity_functional_runtime",
     "channel_activity_functional_declaration",
     "channel_activity_functional_request",
     "evaluate_periodic_activity_gradients",

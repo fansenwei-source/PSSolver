@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "phase": "P9.7.4",
+  "stage": "P9.7.4",
+  "date": "2026-09-29",
+  "status": "complete",
+  "classification": "PASS_P9_7_4_CHANNEL_FUNCTIONAL_RUNTIME",
+  "title": "Pure Channel activity-control runtime, replay, observations, and durable Q-state bridge",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "f2bfd5a",
+    "p9_7_3_record": "notes/architecture_v0_2/phase_9_p973_channel_pressure_implicit_adjoint.json",
+    "p9_7_3_complete": true
+  },
+  "scope": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "rectangular_channel",
+    "batch_sizes": [1],
+    "real_dtype": "float64",
+    "spectral_dtype": "complex128",
+    "state": ["q_physical", "q_spectral"],
+    "control": ["activity"],
+    "observations": ["Q", "velocity", "pressure"],
+    "stable_package_root_changed": false,
+    "production_default_changed": false
+  },
+  "capabilities": {
+    "pure_step": true,
+    "combined_step_and_observe": true,
+    "deterministic_replay": "bitwise",
+    "differentiability": "validated_custom_adjoint",
+    "differentiable_inputs": ["state", "activity"],
+    "inner_solve_gradient": "custom_implicit_pressure_adjoint_v1",
+    "checkpoint_bridge": "functional_q_state_only_with_production_q_import",
+    "explicit_jvp": false,
+    "explicit_vjp": false
+  },
+  "pressure_policy": {
+    "operator": "channel_no_slip_modal_stokes_pcg",
+    "gauge": "zero_mean",
+    "functional_initial_guess": "zero_every_call",
+    "functional_warm_start": false,
+    "production_warm_start_changed": false,
+    "custom_implicit_adjoint": true,
+    "forward_iteration_graph_retained": false,
+    "backward_iteration_graph_retained": false
+  },
+  "checkpoint": {
+    "format_version": 1,
+    "export_format": "channel_activity_functional_checkpoint",
+    "export_contains": ["q_physical", "q_spectral", "completed_steps", "identity"],
+    "export_is_production_restart": false,
+    "production_import": "q_state_only_after_identity_and_checksum_gates",
+    "pressure_guess_in_functional_state": false,
+    "algebraic_fields_in_functional_state": false
+  },
+  "cpu_gates": {
+    "input_purity": "pass",
+    "intervening_call_replay": "bitwise_pass",
+    "fresh_construction_replay": "bitwise_pass",
+    "state_gradient_finite": "pass",
+    "activity_gradient_finite_nonzero": "pass",
+    "activity_central_finite_difference": "pass",
+    "production_zero_start_observation": "byte_identical",
+    "production_zero_start_one_step": "byte_identical",
+    "functional_checkpoint_round_trip": "byte_identical",
+    "production_checkpoint_q_import": "byte_identical",
+    "checkpoint_negative_gates": "pass"
+  },
+  "frozen_solver": {
+    "path": "pssolver/linear_solvers/stokes/channel_no_slip.py",
+    "sha256": "4503f62df5204f7f48da7ca58674ebda45a3f775b7742dcc7bc7ab535c511b16",
+    "modified": false
+  },
+  "ownership": {
+    "repository_changed": "PSSolver_only",
+    "control_repository_changed": false,
+    "legacy_pssolver_control_changed": false,
+    "pssolver_imports_consumer": false
+  },
+  "qualification": {
+    "focused": "17 passed",
+    "related": "75 passed",
+    "full": "2580 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "git_diff_check": "pass",
+    "h100_required": false,
+    "h100_submissions": 0,
+    "verbatim_pdf_regenerated": false
+  },
+  "boundaries": {
+    "p9_7_4_complete": true,
+    "p9_7_5_planning_eligible": true,
+    "p9_7_5_implemented": false,
+    "p9_7_6_authorized": false,
+    "h100_job_submitted": false,
+    "control_repository_modified": false,
+    "phase_9_complete": false,
+    "production_default_changed": false
+  },
+  "source_scope": [
+    "pssolver/applications/channel_beris_edwards.py",
+    "pssolver/functional/channel_activity_runtime.py",
+    "pssolver/functional/channel_checkpoint.py",
+    "pssolver/functional/channel_pressure_adjoint.py",
+    "pssolver/functional/__init__.py",
+    "pssolver/workflows/channel_beris_edwards.py",
+    "tests/test_phase9_p974_channel_functional_runtime.py",
+    "tests/test_phase9_p974_record.py",
+    "notes/architecture_v0_2/phase_9_p974_channel_functional_runtime.md",
+    "notes/architecture_v0_2/phase_9_p974_channel_functional_runtime.json",
+    "notes/architecture_v0_2/build_verbatim_archive_pdf.py"
+  ],
+  "next_slice": "P9.7.5 independent PSSolver-Control Channel consumer migration and qualification"
+}

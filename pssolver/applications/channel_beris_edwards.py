@@ -37,7 +37,11 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _load_initial_q(run_spec: ChannelBerisEdwardsRunSpec):
+def load_channel_initial_q(run_spec: ChannelBerisEdwardsRunSpec):
+    """Load the canonical Channel Q snapshot without constructing a runtime."""
+
+    if not isinstance(run_spec, ChannelBerisEdwardsRunSpec):
+        raise TypeError("run_spec must be a ChannelBerisEdwardsRunSpec")
     spec = run_spec.simulation
     snapshot = spec.initial_condition.parameters
     path = Path(snapshot["directory"]).expanduser().resolve() / (
@@ -97,7 +101,9 @@ def run_channel_beris_edwards(
     if run_spec.dry_run:
         return None
 
-    initial_values, snapshot_path, snapshot_sha256 = _load_initial_q(run_spec)
+    initial_values, snapshot_path, snapshot_sha256 = load_channel_initial_q(
+        run_spec
+    )
     metadata["initial_condition"] = {
         "source": str(snapshot_path),
         "sha256": snapshot_sha256,
@@ -128,4 +134,4 @@ def run_channel_beris_edwards(
     return workflow.run(progress=progress)
 
 
-__all__ = ["run_channel_beris_edwards"]
+__all__ = ["load_channel_initial_q", "run_channel_beris_edwards"]

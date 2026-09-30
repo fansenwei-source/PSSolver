@@ -113,7 +113,14 @@ def _tensor_record(path, values):
     }
 
 
-def _write_checkpoint(directory, adapter, *, runtime_identity_sha256):
+def write_channel_beris_edwards_checkpoint(
+    directory,
+    adapter,
+    *,
+    runtime_identity_sha256,
+):
+    """Write the complete-stress Channel production checkpoint format."""
+
     if directory.exists():
         raise FileExistsError(f"checkpoint already exists: {directory}")
     directory.mkdir(parents=True)
@@ -288,7 +295,7 @@ class ChannelBerisEdwardsWorkflow:
             executed += 1
             interval = self.options["checkpoint_interval"]
             if interval is not None and self.adapter.completed_steps % interval == 0:
-                _write_checkpoint(
+                write_channel_beris_edwards_checkpoint(
                     self.output_directory
                     / f"checkpoint_{self.adapter.completed_steps}",
                     self.adapter,
@@ -355,4 +362,5 @@ __all__ = [
     "ChannelBerisEdwardsWorkflowResult",
     "capture_channel_beris_edwards_diagnostic",
     "capture_channel_beris_edwards_observation",
+    "write_channel_beris_edwards_checkpoint",
 ]
