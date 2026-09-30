@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "phase": "P9.8.5a",
+  "date": "2026-09-30",
+  "status": "complete",
+  "classification": "PASS_P9_8_5A_LOCAL_STABLE_RUNTIME_DIAGNOSTICS",
+  "provider": {
+    "repository": "https://github.com/fansenwei-source/PSSolver",
+    "implementation_commit": "0ee442638f31ec831cf1c66b30691a9b2056da48",
+    "stable_module": "pssolver.functional.api",
+    "functional_api_version": "1.0",
+    "wheel_sha256": "634399ba409183d585312a4bd8a4cc1bfff5c27afa258321c0451eb37184979c"
+  },
+  "consumer": {
+    "repository": "https://github.com/fansenwei-source/PSSolver-Control",
+    "qualification_commit": "28857a59610df355469dca55372e0d0cd1311f3c",
+    "wheel_sha256": "aacc3fc2263d320cfa6e2fdf72aed14d4ce895908aa5dfc6d1aee195a3382f11",
+    "access_path": "PSSolverChannelActivityStepper.runtime.diagnostics()",
+    "private_provider_members_used": false
+  },
+  "diagnostic_contract": {
+    "method": "diagnostics()",
+    "owned_snapshot": true,
+    "finite_json": true,
+    "schema_version": 1,
+    "periodic": {
+      "runtime_kind": "periodic_activity_batch_one",
+      "pressure": null
+    },
+    "channel": {
+      "runtime_kind": "channel_activity_batch_one",
+      "pressure_outcomes": [
+        "primal",
+        "transpose"
+      ],
+      "not_run_is_explicit": true,
+      "actual_iteration_count": true,
+      "actual_absolute_residual": true,
+      "actual_relative_residual": true,
+      "termination_reason": true,
+      "acceptable": true
+    },
+    "non_json_and_non_finite_rejected": true,
+    "private_storage_exposed": false
+  },
+  "compatibility": {
+    "functional_runtime_protocol_expanded": false,
+    "api_1_0_structural_implementers_preserved": true,
+    "stable_factory_returned_runtimes_guarantee_diagnostics": true,
+    "runtime_identity_changed": false,
+    "checkpoint_schema_changed": false,
+    "numerical_path_changed": false,
+    "pressure_algorithm_changed": false
+  },
+  "local_evidence": {
+    "provider_targeted": "3 passed",
+    "provider_implementation_full": "2614 passed, 8 subtests passed",
+    "provider_record_tree_full": "2615 passed, 8 subtests passed",
+    "consumer_full": "239 passed, 1 skipped",
+    "consumer_allowed_skip": "tests/test_warmup_experiments.py::test_r5_benchmark",
+    "installed_wheel_diagnostics": "1 passed",
+    "installed_source_shadow_import": false,
+    "historical_records_modified": false,
+    "shared_environment_modified": false,
+    "nematics3d_modified": false
+  },
+  "authorization": {
+    "p9_8_5a_complete": true,
+    "p9_8_5_channel_recovery_eligible": true,
+    "p9_8_5_complete": false,
+    "phase_9_complete": false,
+    "production_default_changed": false,
+    "larger_batch_qualified": false,
+    "optimizer_campaign_authorized": false,
+    "verbatim_pdf_regenerated": false
+  }
+}

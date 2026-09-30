@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 import torch
@@ -19,6 +20,15 @@ from pssolver.functional.periodic_activity import (
     PeriodicActivityFunctionalRuntime,
 )
 from pssolver.linear_solvers.stokes import ChannelNoSlipModalStokesSolver
+
+
+ROOT = Path(__file__).resolve().parents[1]
+RECORD = (
+    ROOT
+    / "notes"
+    / "architecture_v0_2"
+    / "phase_9_p985a_runtime_diagnostics.json"
+)
 
 
 class _DiagnosticsDelegate:
@@ -123,3 +133,26 @@ def test_stable_runtime_diagnostics_require_a_json_object(monkeypatch):
     runtime = stable.build_functional_runtime(object())
     with pytest.raises(stable.FunctionalTypeError, match="must be a dict"):
         runtime.diagnostics()
+
+
+def test_p985a_record_preserves_phase9_boundaries():
+    record = json.loads(RECORD.read_text(encoding="utf-8"))
+    assert record["classification"] == (
+        "PASS_P9_8_5A_LOCAL_STABLE_RUNTIME_DIAGNOSTICS"
+    )
+    assert record["compatibility"] == {
+        "functional_runtime_protocol_expanded": False,
+        "api_1_0_structural_implementers_preserved": True,
+        "stable_factory_returned_runtimes_guarantee_diagnostics": True,
+        "runtime_identity_changed": False,
+        "checkpoint_schema_changed": False,
+        "numerical_path_changed": False,
+        "pressure_algorithm_changed": False,
+    }
+    authorization = record["authorization"]
+    assert authorization["p9_8_5a_complete"] is True
+    assert authorization["p9_8_5_channel_recovery_eligible"] is True
+    assert authorization["p9_8_5_complete"] is False
+    assert authorization["phase_9_complete"] is False
+    assert authorization["production_default_changed"] is False
+    assert authorization["verbatim_pdf_regenerated"] is False
