@@ -191,6 +191,25 @@ def test_implicit_vjp_matches_the_fixed_iteration_unrolled_cpu_oracle():
     assert _relative_norm(implicit_vjp - oracle_vjp, oracle_vjp) < 3.0e-13
 
 
+def test_fixed_iteration_transpose_solve_is_scale_homogeneous():
+    """A tiny cotangent must not trip an absolute PCG breakdown threshold."""
+
+    spectral, pressure = _solver(fixed_iterations=12)
+    implicit = ChannelImplicitPressureAdjoint(pressure)
+    cotangent = _pressure_hat(spectral, pressure, 137)
+    reference = implicit._solve_transpose_no_grad(cotangent)
+
+    for scale in (1.0e-8, 1.0e-10, 1.0e-12):
+        actual = implicit._solve_transpose_no_grad(scale * cotangent)
+        torch.testing.assert_close(
+            actual,
+            scale * reference,
+            rtol=3.0e-13,
+            atol=1.0e-28,
+        )
+        assert implicit.last_transpose_diagnostics.relative_residual < 1.0e-13
+
+
 def test_custom_vjp_passes_directional_finite_difference_and_taylor_gate():
     spectral, pressure = _solver()
     operators = ChannelPressureTransposeOperator(pressure)

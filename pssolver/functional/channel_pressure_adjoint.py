@@ -148,7 +148,16 @@ class ChannelImplicitPressureAdjoint:
             denominator = torch.sum(
                 torch.conj(direction) * operator_direction
             ).real
-            if denominator.abs().item() < 1e-30:
+            denominator_scale = (
+                torch.linalg.vector_norm(direction.reshape(-1))
+                * torch.linalg.vector_norm(operator_direction.reshape(-1))
+            ).item()
+            denominator_floor = (
+                torch.finfo(denominator.dtype).eps * denominator_scale
+            )
+            if denominator_scale == 0.0 or (
+                denominator.abs().item() <= denominator_floor
+            ):
                 break
             step = rz_old / denominator
             pressure_hat = self._operators._project_gauge(
@@ -165,7 +174,12 @@ class ChannelImplicitPressureAdjoint:
                 break
             preconditioned = residual / self._solver.schur_diag_safe
             rz_new = torch.sum(torch.conj(residual) * preconditioned).real
-            if rz_old.abs().item() < 1e-30:
+            rz_scale = (
+                torch.linalg.vector_norm(residual.reshape(-1))
+                * torch.linalg.vector_norm(preconditioned.reshape(-1))
+            ).item()
+            rz_floor = torch.finfo(rz_old.dtype).eps * rz_scale
+            if rz_scale == 0.0 or rz_old.abs().item() <= rz_floor:
                 break
             direction = preconditioned + (rz_new / rz_old) * direction
             rz_old = rz_new
