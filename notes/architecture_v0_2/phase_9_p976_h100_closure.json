@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "phase": "P9.7.6",
+  "date": "2026-09-30",
+  "status": "complete",
+  "classification": "PASS_P9_7_6_INDEPENDENT_CHANNEL_CONSUMER_INSTALLED_WHEEL_H100",
+  "provider_commit": "3b6fb9c71d3cd68a72caf3b184bdf0a61826e39c",
+  "external_consumer_commit": "73c022b00fff71b964b91a4d497419fff21e34ef",
+  "scope": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "rectangular_channel",
+    "runtime_kind": "channel_activity_batch_one",
+    "control": "spatially_varying_activity",
+    "batch_sizes_qualified": [1],
+    "checkpoint_strides": [1, 2, 4, 5],
+    "real_dtype": "float64",
+    "tf32": false,
+    "production_default_changed": false
+  },
+  "package_and_cpu": {
+    "provider_suite": "pass",
+    "consumer_suite": "pass",
+    "provider_wheel": "pass",
+    "consumer_wheel": "pass",
+    "installed_wheel_smoke": "18 passed",
+    "installed_static_audit_python_files": 24,
+    "installed_static_audit_byte_identical": true,
+    "source_shadow_import": false
+  },
+  "h100_functional": {
+    "job_id": 10847306,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:00:40",
+    "node": "gpu-h100-4-0",
+    "gpu": "NVIDIA H100 PCIe",
+    "pytorch": "2.5.1+cu121",
+    "cuda_runtime": "12.1",
+    "formal_submission_count": 1,
+    "automatic_retry": false,
+    "provider_cuda_only_tests": "6 passed",
+    "consumer_cuda_only_tests": "5 passed",
+    "runtime_identity_sha256": "d5d624e744862350b5f6cf1256b4c1f39ebebd4fd90abbc3ae463f513d3580ac",
+    "production_functional_byte_identity": true,
+    "replay_byte_identity": true,
+    "checkpoint_stride_byte_identity": true,
+    "durable_checkpoint_round_trip": "byte_for_byte",
+    "checkpointed_full_history_gradient_relative_l2": 0.0,
+    "central_fd_max_relative_error": 3.13844556216355e-06,
+    "central_fd_limit": 2e-05,
+    "taylor_direction_sha256": "e6babd44653b77c5f498f698ee67fef796f23e08d28aeab7800fa214c6e07ea0",
+    "taylor_unsubtracted_rates": [
+      1.0060938636421612,
+      1.0028433402550738,
+      1.0011859927971247
+    ],
+    "taylor_gradient_subtracted_rates": [
+      2.112358347151925,
+      2.121849620746324,
+      1.9712815120499314
+    ],
+    "negative_gates": "8/8 pass",
+    "fallback_used": false,
+    "source_shadow_import": false
+  },
+  "pressure_adjoint": {
+    "kind": "custom_implicit_pressure_adjoint_v1",
+    "pressure_initial_guess": "zero_every_call",
+    "production_warm_start_read": false,
+    "production_warm_start_written": false,
+    "forward_iteration_tensors_saved": 0,
+    "backward_iteration_tensors_saved": 0,
+    "graph_nodes_by_fixed_iteration_count": {
+      "2": 2,
+      "5": 2
+    },
+    "configured_relative_tolerance": 1e-10,
+    "configured_fixed_iterations": 12,
+    "last_primal_relative_residual": 3.4966156236046585e-07,
+    "last_transpose_relative_residual": 7.04577187511506e-07,
+    "current_fixed_iteration_semantics": "deterministic_work_cap_with_early_convergence",
+    "relative_tolerance_is_unconditional_postcondition": false,
+    "stable_metadata_semantics_deferred_to": "P9.8"
+  },
+  "archive": {
+    "failed_predecessor_directory": "/home/fansenwei/pssolver_phase9_p976_h100_3b6fb9c_73c022b_20260929_v1",
+    "failed_predecessor_manifest_sha256": "359d77b0dcb34e4f1c2d2c2e15eda6347fdc02bd34c5b4259289b294d07631f3",
+    "failed_predecessor_checksum": "31/31 pass",
+    "directory": "/home/fansenwei/pssolver_phase9_p976_h100_3b6fb9c_73c022b_20260929_recovery_v1",
+    "checksum_entries": 54,
+    "checksum_passed": 54,
+    "manifest_sha256": "d9ad175d9e4dbda9a27313fc139a6409225e86089b8fd7890ac1e55ca8bcfd5f",
+    "complete_sha256": "c31a76da29f61cc3574251508047bc273c8d561c84310b3e3976ffb4ae14fefe",
+    "complete_present": true,
+    "finalization_reused_scientific_evidence": true
+  },
+  "authorization": {
+    "p9_7_complete": true,
+    "p9_8_planning_eligible": true,
+    "p9_8_implementation_authorized": false,
+    "phase_9_complete": false,
+    "scientific_control_result": false,
+    "larger_batch_qualified": false,
+    "optimizer_campaign_authorized": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  }
+}

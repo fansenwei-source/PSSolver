@@ -263,6 +263,10 @@ SOURCE_ORDER = (
     "phase_9_p973_channel_pressure_implicit_adjoint.json",
     "phase_9_p974_channel_functional_runtime.md",
     "phase_9_p974_channel_functional_runtime.json",
+    "phase_9_p976_h100_closure.md",
+    "phase_9_p976_h100_closure.json",
+    "phase_9_p980_public_api_stabilization_plan.md",
+    "phase_9_p980_public_api_stabilization_plan.json",
 )
 
 PAGE_WIDTH = 595.276

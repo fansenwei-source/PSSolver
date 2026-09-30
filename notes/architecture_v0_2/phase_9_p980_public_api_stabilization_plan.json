@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "phase": "P9.8.0",
+  "date": "2026-09-30",
+  "status": "planning_complete",
+  "title": "Public functional API stabilization and installed-wheel closure plan",
+  "prerequisites": {
+    "p9_6_classification": "PASS_P9_6_INDEPENDENT_PERIODIC_CONSUMER_INSTALLED_WHEEL_H100",
+    "p9_7_6_classification": "PASS_P9_7_6_INDEPENDENT_CHANNEL_CONSUMER_INSTALLED_WHEEL_H100",
+    "independent_consumers_qualified": 2,
+    "runtime_kinds": [
+      "periodic_activity_batch_one",
+      "channel_activity_batch_one"
+    ]
+  },
+  "invariants": {
+    "equations_changed": false,
+    "spectral_discretization_changed": false,
+    "boundary_treatment_changed": false,
+    "time_integrator_changed": false,
+    "pressure_operator_changed": false,
+    "production_default_changed": false,
+    "qualified_runtime_identity_changed": false,
+    "batch_sizes_qualified": [1]
+  },
+  "surface_inventory": {
+    "required": true,
+    "categories": [
+      "public_exports",
+      "constructor_signatures",
+      "immutable_declarations",
+      "state_and_control_layouts",
+      "runtime_properties",
+      "observation_contracts",
+      "checkpoint_schemas",
+      "identity_digests",
+      "exception_taxonomy",
+      "package_exports"
+    ],
+    "classifications": [
+      "stable_public",
+      "compatibility_public",
+      "consumer_owned",
+      "internal_or_experimental"
+    ],
+    "qualification_harness_usage_does_not_imply_public": true
+  },
+  "versioning": {
+    "current_functional_api_version": "0.1-provisional",
+    "p9_8_0_changes_version": false,
+    "stable_version_literal_preselected": false,
+    "supported_version_negotiation_required": true,
+    "unknown_version_refused": true,
+    "qualified_checkpoint_compatibility_required": true,
+    "adr_0005_two_minor_release_deprecation_required": true,
+    "silent_fallback_allowed": false,
+    "source_shadow_import_allowed": false
+  },
+  "pressure_convergence_contract": {
+    "existing_numerical_path_changed_by_p9_8_0": false,
+    "current_fixed_iteration_semantics": "deterministic_work_cap_with_early_convergence",
+    "required_metadata": [
+      "solver_identity",
+      "operator_identity",
+      "requested_iteration_count",
+      "achieved_iteration_count",
+      "achieved_absolute_residual",
+      "achieved_relative_residual",
+      "requested_tolerance",
+      "tolerance_role",
+      "termination_reason",
+      "accepted_under_selected_mode"
+    ],
+    "relative_tolerance_is_always_a_postcondition": false,
+    "stable_semantics_required_before_phase9_closure": true
+  },
+  "slices": [
+    {
+      "id": "P9.8.1",
+      "scope": "public surface and schema inventory",
+      "runtime_change": false,
+      "requires_h100": false
+    },
+    {
+      "id": "P9.8.2",
+      "scope": "stable protocol version, compatibility facade, refusal semantics, and convergence metadata",
+      "requires_h100": false
+    },
+    {
+      "id": "P9.8.3",
+      "scope": "packaging documentation and two-consumer migration",
+      "requires_h100": false
+    },
+    {
+      "id": "P9.8.4",
+      "scope": "local cumulative CPU and installed-wheel closure",
+      "requires_h100": false
+    },
+    {
+      "id": "P9.8.5",
+      "scope": "single-H100 cumulative periodic and Channel closure",
+      "requires_h100": true
+    },
+    {
+      "id": "P9.8.6",
+      "scope": "Phase 9 final evidence and release-eligibility record",
+      "requires_h100": false
+    }
+  ],
+  "acceptance": {
+    "both_consumers_installed_wheel_stable_protocol": true,
+    "qualified_checkpoint_compatibility_tested": true,
+    "identity_and_convergence_outcomes_machine_readable": true,
+    "provider_and_consumer_cpu_closure": true,
+    "single_h100_cumulative_closure": true,
+    "unsupported_scientific_claims": false
+  },
+  "authorization": {
+    "p9_8_0_complete": true,
+    "p9_8_1_planning_eligible": true,
+    "p9_8_1_implementation_authorized": false,
+    "p9_8_2_through_p9_8_6_authorized": false,
+    "phase_9_complete": false,
+    "h100_authorized": false,
+    "larger_batch_authorized": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  }
+}
