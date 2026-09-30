@@ -1,0 +1,419 @@
+{
+  "schema_version": 1,
+  "phase": "P9.8.1",
+  "date": "2026-09-30",
+  "status": "complete",
+  "title": "Public functional API and schema inventory",
+  "provider_baseline_commit": "1fade33cf42a9f4bca6745fa5848c93fb3662053",
+  "module": {
+    "path": "pssolver.functional",
+    "api_version": "0.1-provisional",
+    "package_root_reexported": false,
+    "export_count": 57,
+    "public_exports": [
+      "FUNCTIONAL_API_VERSION",
+      "FUNCTIONAL_OBSERVATION_TIME",
+      "CHANNEL_ACTIVITY_FUNCTIONAL_KIND",
+      "CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT",
+      "CHANNEL_FUNCTIONAL_PRESSURE_WARM_START",
+      "CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION",
+      "CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION",
+      "CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES",
+      "CHANNEL_ACTIVITY_DETERMINISTIC_REPLAY",
+      "CHANNEL_ACTIVITY_RUNTIME_STAGE",
+      "CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
+      "ChannelActivityCheckpointBridge",
+      "ChannelActivityFunctionalRuntime",
+      "ChannelActivityFunctionalRuntimeFactory",
+      "ChannelImplicitPressureAdjoint",
+      "ChannelImplicitPressureAdjointProtocol",
+      "ChannelPressureSolveDiagnostics",
+      "FunctionalCapabilities",
+      "FunctionalCapabilitySet",
+      "FunctionalCheckpointBridgeProtocol",
+      "FunctionalCheckpointState",
+      "FunctionalControlFieldSpec",
+      "FunctionalControls",
+      "FunctionalObservationSpec",
+      "FunctionalObservations",
+      "FunctionalRuntimeConstructionRequest",
+      "FunctionalRuntimeDeclaration",
+      "FunctionalRuntimeFactoryProtocol",
+      "FunctionalRuntimeIdentity",
+      "FunctionalRuntimeProtocol",
+      "FunctionalState",
+      "FunctionalStateSpec",
+      "FunctionalTensorSpec",
+      "ChannelPressureTransposeOperator",
+      "ChannelPressureTransposeProtocol",
+      "PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
+      "PeriodicActivityCheckpointBridge",
+      "PeriodicActivityFunctionalRuntime",
+      "PeriodicActivityFunctionalRuntimeFactory",
+      "DirectionalDerivativeCheck",
+      "FunctionalValidationError",
+      "GradientPathCheck",
+      "PERIODIC_CONSISTENCY_VALIDATION_VERSION",
+      "PERIODIC_GRADIENT_VALIDATION_VERSION",
+      "PeriodicGradientValidationReport",
+      "PeriodicProductionConsistencyReport",
+      "TensorConsistencyCheck",
+      "build_functional_runtime",
+      "build_channel_activity_functional_runtime",
+      "channel_activity_functional_declaration",
+      "channel_activity_functional_request",
+      "evaluate_periodic_activity_gradients",
+      "evaluate_periodic_production_consistency",
+      "periodic_activity_functional_request",
+      "validate_periodic_activity_gradients",
+      "validate_periodic_production_consistency",
+      "unrolled_channel_pressure_solve_oracle"
+    ]
+  },
+  "export_review_groups": {
+    "core_contract_candidates": [
+      "FUNCTIONAL_API_VERSION",
+      "FUNCTIONAL_OBSERVATION_TIME",
+      "FunctionalCapabilitySet",
+      "FunctionalCheckpointBridgeProtocol",
+      "FunctionalCheckpointState",
+      "FunctionalControlFieldSpec",
+      "FunctionalControls",
+      "FunctionalObservationSpec",
+      "FunctionalObservations",
+      "FunctionalRuntimeConstructionRequest",
+      "FunctionalRuntimeDeclaration",
+      "FunctionalRuntimeFactoryProtocol",
+      "FunctionalRuntimeIdentity",
+      "FunctionalRuntimeProtocol",
+      "FunctionalState",
+      "FunctionalStateSpec",
+      "FunctionalTensorSpec"
+    ],
+    "qualified_runtime_entry_candidates": [
+      "CHANNEL_ACTIVITY_FUNCTIONAL_KIND",
+      "CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT",
+      "CHANNEL_FUNCTIONAL_PRESSURE_WARM_START",
+      "CHANNEL_ACTIVITY_DETERMINISTIC_REPLAY",
+      "CHANNEL_ACTIVITY_RUNTIME_STAGE",
+      "CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
+      "ChannelActivityCheckpointBridge",
+      "ChannelActivityFunctionalRuntime",
+      "ChannelActivityFunctionalRuntimeFactory",
+      "PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
+      "PeriodicActivityCheckpointBridge",
+      "PeriodicActivityFunctionalRuntime",
+      "PeriodicActivityFunctionalRuntimeFactory",
+      "build_functional_runtime",
+      "build_channel_activity_functional_runtime",
+      "channel_activity_functional_declaration",
+      "channel_activity_functional_request",
+      "periodic_activity_functional_request"
+    ],
+    "compatibility_alias_review": [
+      "FunctionalCapabilities"
+    ],
+    "provider_primitive_review": [
+      "CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION",
+      "CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION",
+      "CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES",
+      "ChannelImplicitPressureAdjoint",
+      "ChannelImplicitPressureAdjointProtocol",
+      "ChannelPressureSolveDiagnostics",
+      "ChannelPressureTransposeOperator",
+      "ChannelPressureTransposeProtocol",
+      "unrolled_channel_pressure_solve_oracle"
+    ],
+    "qualification_only_review": [
+      "DirectionalDerivativeCheck",
+      "FunctionalValidationError",
+      "GradientPathCheck",
+      "PERIODIC_CONSISTENCY_VALIDATION_VERSION",
+      "PERIODIC_GRADIENT_VALIDATION_VERSION",
+      "PeriodicGradientValidationReport",
+      "PeriodicProductionConsistencyReport",
+      "TensorConsistencyCheck",
+      "evaluate_periodic_activity_gradients",
+      "evaluate_periodic_production_consistency",
+      "validate_periodic_activity_gradients",
+      "validate_periodic_production_consistency"
+    ]
+  },
+  "qualified_consumer_usage": {
+    "periodic_consumer_evidence_commit": "53a1a0903021789c2edb6d029cb49b85071528c9",
+    "periodic_direct_imports": [
+      "FUNCTIONAL_API_VERSION",
+      "FunctionalCapabilitySet",
+      "FunctionalControlFieldSpec",
+      "FunctionalRuntimeIdentity",
+      "FunctionalRuntimeProtocol",
+      "FunctionalStateSpec",
+      "FunctionalTensorSpec",
+      "build_functional_runtime",
+      "periodic_activity_functional_request"
+    ],
+    "channel_consumer_evidence_commit": "73c022b00fff71b964b91a4d497419fff21e34ef",
+    "channel_direct_imports": [
+      "CHANNEL_ACTIVITY_RUNTIME_STAGE",
+      "FUNCTIONAL_API_VERSION",
+      "FunctionalCapabilitySet",
+      "FunctionalControlFieldSpec",
+      "FunctionalRuntimeIdentity",
+      "FunctionalRuntimeProtocol",
+      "FunctionalStateSpec",
+      "build_channel_activity_functional_runtime",
+      "channel_activity_functional_request"
+    ],
+    "direct_import_union_count": 12,
+    "direct_import_union": [
+      "CHANNEL_ACTIVITY_RUNTIME_STAGE",
+      "FUNCTIONAL_API_VERSION",
+      "FunctionalCapabilitySet",
+      "FunctionalControlFieldSpec",
+      "FunctionalRuntimeIdentity",
+      "FunctionalRuntimeProtocol",
+      "FunctionalStateSpec",
+      "FunctionalTensorSpec",
+      "build_channel_activity_functional_runtime",
+      "build_functional_runtime",
+      "channel_activity_functional_request",
+      "periodic_activity_functional_request"
+    ],
+    "consumer_repository_identity_recorded_here": false,
+    "consumer_objective_or_experiment_recorded_here": false
+  },
+  "protocols": {
+    "runtime_properties": [
+      "api_version",
+      "state_spec",
+      "control_specs",
+      "control_field_schema",
+      "observation_specs",
+      "capabilities",
+      "checkpoint_bridge"
+    ],
+    "runtime_methods": [
+      "identity",
+      "initial_state",
+      "step",
+      "observe",
+      "step_and_observe"
+    ],
+    "factory_methods": [
+      "build"
+    ],
+    "checkpoint_bridge_properties": [
+      "format_version"
+    ],
+    "checkpoint_bridge_methods": [
+      "export_checkpoint",
+      "import_checkpoint"
+    ],
+    "implicit_conversion_allowed": false,
+    "input_mutation_allowed": false,
+    "silent_fallback_allowed": false
+  },
+  "metadata_schemas": {
+    "FunctionalTensorSpec": [
+      "name",
+      "shape",
+      "dtype",
+      "device",
+      "batch_axis",
+      "layout",
+      "meaning",
+      "component_names"
+    ],
+    "FunctionalStateSpec": [
+      "container",
+      "layout_version",
+      "batch_size",
+      "components"
+    ],
+    "FunctionalControlFieldSpec": [
+      "name",
+      "tensor",
+      "equation_term",
+      "injection_order",
+      "dealiasing_identity",
+      "grid_location",
+      "broadcast_rules",
+      "admissible_bounds"
+    ],
+    "FunctionalObservationSpec": [
+      "name",
+      "tensor",
+      "convention",
+      "control_dependent",
+      "terminal_available_without_control",
+      "time_alignment"
+    ],
+    "FunctionalCapabilitySet": [
+      "supported_batch_sizes",
+      "pure_step",
+      "combined_step_and_observe",
+      "deterministic_replay",
+      "differentiability",
+      "durable_checkpoint_bridge",
+      "explicit_jvp",
+      "explicit_vjp",
+      "inner_solve_gradient",
+      "differentiable_inputs"
+    ],
+    "FunctionalRuntimeIdentity": [
+      "api_version",
+      "scientific",
+      "discretization",
+      "execution",
+      "state_layout"
+    ],
+    "FunctionalRuntimeConstructionRequest": [
+      "api_version",
+      "batch_size",
+      "simulation_sha256",
+      "simulation_identity",
+      "control_fields",
+      "observations"
+    ],
+    "FunctionalRuntimeDeclaration": [
+      "executable",
+      "request",
+      "state_spec",
+      "capabilities",
+      "identity",
+      "identity_sha256"
+    ],
+    "FunctionalCheckpointState_dataclass_fields": [
+      "state",
+      "completed_steps",
+      "source_format"
+    ]
+  },
+  "identity_contract": {
+    "encoding": "utf-8 canonical JSON",
+    "sort_keys": true,
+    "separators": [",", ":"],
+    "allow_nan": false,
+    "digest": "sha256",
+    "python_object_identity_included": false
+  },
+  "checkpoint_formats": {
+    "periodic": {
+      "bridge_format_version": 1,
+      "storage_owner": "periodic_production_workflow_checkpoint",
+      "bridge_metadata_fields": [
+        "format_version",
+        "api_version",
+        "runtime_kind",
+        "functional_runtime_identity_sha256",
+        "production_runtime_identity_sha256",
+        "state_layout",
+        "state_layout_sha256"
+      ],
+      "source_formats": [
+        "periodic_production_v1",
+        "periodic_functional_bridge_v1"
+      ]
+    },
+    "channel": {
+      "bridge_format_version": 1,
+      "format_kind": "channel_activity_functional_checkpoint",
+      "top_level_fields": [
+        "format_kind",
+        "format_version",
+        "completed_steps",
+        "functional_bridge",
+        "tensor_files"
+      ],
+      "bridge_metadata_fields": [
+        "format_version",
+        "api_version",
+        "runtime_kind",
+        "functional_runtime_identity_sha256",
+        "production_runtime_identity_sha256",
+        "state_layout",
+        "state_layout_sha256",
+        "pressure_warm_start"
+      ],
+      "tensor_names": [
+        "q_physical",
+        "q_spectral"
+      ],
+      "tensor_record_fields": [
+        "file",
+        "shape",
+        "dtype",
+        "sha256"
+      ],
+      "source_formats": [
+        "channel_functional_bridge_v1",
+        "channel_production_v1"
+      ],
+      "pressure_persisted": false,
+      "pressure_warm_start_persisted": false
+    },
+    "same_integer_version_implies_same_format": false
+  },
+  "error_inventory": {
+    "type_or_dtype_violation": "TypeError",
+    "shape_device_identity_capability_or_nonfinite_violation": "ValueError",
+    "missing_checkpoint_path": "FileNotFoundError",
+    "existing_channel_checkpoint_target": "FileExistsError",
+    "qualification_failure": "FunctionalValidationError(RuntimeError)",
+    "stable_functional_exception_hierarchy_exists": false,
+    "consumer_refusal_owner": "consumer_owned_integration_exception",
+    "message_parsing_allowed_for_stable_contract": false,
+    "p9_8_2_action": "define stable machine-distinguishable policy with explicit compatibility behavior"
+  },
+  "source_bindings": [
+    {
+      "path": "pssolver/functional/__init__.py",
+      "sha256": "fd817c7978aa72d4dbfede67da3177dff90637c5ee6b473ed1e04d6fc9f63368"
+    },
+    {
+      "path": "pssolver/functional/contracts.py",
+      "sha256": "d0515831c0b1d1fcf92f39be29aa5d55b67598d556ee86501ee9c1b8801da0eb"
+    },
+    {
+      "path": "pssolver/functional/periodic_activity.py",
+      "sha256": "75a13485372e593ba5f1659423363bbddb474012f84d3ddc4a31669458eed427"
+    },
+    {
+      "path": "pssolver/functional/channel_activity.py",
+      "sha256": "bd1d64db134f1a704fb372b611f63e481c1e95df939aa267abae690ae41511b3"
+    },
+    {
+      "path": "pssolver/functional/channel_activity_runtime.py",
+      "sha256": "3e3c304020fe8bee8b680fe1aea9279ace42c0700375975692613266b138c5d7"
+    },
+    {
+      "path": "pssolver/functional/periodic_checkpoint.py",
+      "sha256": "e1298430cdf3b66de3f27e5d6863f31eecd95fbf9adbe435a964c84ccf105218"
+    },
+    {
+      "path": "pssolver/functional/channel_checkpoint.py",
+      "sha256": "73a558037a69df1336e7226a710bdc2cab742d20304206bc08083ae4b09afbf2"
+    },
+    {
+      "path": "pssolver/functional/channel_pressure.py",
+      "sha256": "e9591d61ca7e5d63e86d705c5a893b8fff5c4146141da6990be907d7b48f462b"
+    },
+    {
+      "path": "pssolver/functional/channel_pressure_adjoint.py",
+      "sha256": "647dcaa69d8b7454cc77dcf9493a7ccc41e5745964f188197c3d60ea98766c23"
+    }
+  ],
+  "authorization": {
+    "p9_8_1_complete": true,
+    "p9_8_2_planning_eligible": true,
+    "p9_8_2_implementation_authorized": false,
+    "stable_api_published": false,
+    "functional_api_version_changed": false,
+    "runtime_or_checkpoint_changed": false,
+    "h100_authorized": false,
+    "production_default_changed": false,
+    "larger_batch_authorized": false,
+    "phase_9_complete": false,
+    "verbatim_pdf_regenerated": false
+  }
+}

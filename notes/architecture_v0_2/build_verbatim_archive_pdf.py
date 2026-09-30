@@ -267,6 +267,8 @@ SOURCE_ORDER = (
     "phase_9_p976_h100_closure.json",
     "phase_9_p980_public_api_stabilization_plan.md",
     "phase_9_p980_public_api_stabilization_plan.json",
+    "phase_9_p981_public_api_surface_inventory.md",
+    "phase_9_p981_public_api_surface_inventory.json",
 )
 
 PAGE_WIDTH = 595.276
