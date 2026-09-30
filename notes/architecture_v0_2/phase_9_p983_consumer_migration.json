@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "phase": "P9.8.3",
+  "date": "2026-09-30",
+  "status": "complete",
+  "title": "Stable functional API consumer migration",
+  "provider": {
+    "repository": "https://github.com/fansenwei-source/PSSolver",
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "stable_api_baseline_commit": "1ebafc22c6ed75ea5ba70a508724eddd8a090ef2",
+    "module": "pssolver.functional.api",
+    "construction_protocol_version": "1.0",
+    "p9_8_2_record": "notes/architecture_v0_2/phase_9_p982_stable_functional_api.json"
+  },
+  "consumer": {
+    "repository": "https://github.com/fansenwei-source/PSSolver-Control",
+    "branch": "integration/p9.7-channel-functional-consumer",
+    "implementation_commit": "b830865b1fbea07ec708a3af181a136f84559977",
+    "record_commit": "ea24027",
+    "record": "docs/p9_8_stable_functional_api_migration.json",
+    "adapters": {
+      "periodic": {
+        "class": "PSSolverPeriodicActivityStepper",
+        "adapter_version": 2
+      },
+      "channel": {
+        "class": "PSSolverChannelActivityStepper",
+        "adapter_version": 2
+      }
+    }
+  },
+  "migration_contract": {
+    "live_consumer_import_module": "pssolver.functional.api",
+    "compatibility_facade_imported_by_live_consumers": false,
+    "private_provider_imports": false,
+    "construction_versions": [
+      "1.0"
+    ],
+    "future_versions_accepted_implicitly": false,
+    "dependency_direction": "PSSolver-Control -> PSSolver public API",
+    "control_algorithm_changed": false,
+    "model_equations_changed": false,
+    "discretization_changed": false,
+    "production_default_changed": false
+  },
+  "historical_evidence": {
+    "records_rewritten": false,
+    "provisional_api_version": "0.1-provisional",
+    "periodic_p9_6_retained": true,
+    "channel_p9_7_retained": true,
+    "relabelled_as_stable_installed_wheel_evidence": false
+  },
+  "checkpoint_compatibility": {
+    "new_construction_accepts_legacy_protocol": false,
+    "stable_checkpoint_read_versions": [
+      "1.0",
+      "0.1-provisional"
+    ],
+    "compatibility_reader_owned_by": "PSSolver",
+    "consumer_schema_repair": false,
+    "silent_fallback": false
+  },
+  "consumer_local_cpu_evidence": {
+    "focused": "71 passed",
+    "complete": "235 passed, 1 skipped",
+    "allowed_skip": "tests/test_warmup_experiments.py::test_r5_benchmark",
+    "failures": 0
+  },
+  "provider_local_cpu_evidence": {
+    "complete": "2607 passed, 8 subtests passed",
+    "failures": 0
+  },
+  "authorization": {
+    "p9_8_3_complete": true,
+    "p9_8_4_planning_eligible": true,
+    "installed_wheel_closure_complete": false,
+    "h100_authorized": false,
+    "production_default_changed": false,
+    "larger_batch_authorized": false,
+    "optimizer_campaign_authorized": false,
+    "phase_9_complete": false,
+    "verbatim_pdf_regenerated": false
+  }
+}
