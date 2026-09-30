@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "phase": "P9.7.3",
+  "date": "2026-09-29",
+  "status": "complete",
+  "classification": "PASS_P9_7_3_CHANNEL_IMPLICIT_PRESSURE_ADJOINT",
+  "title": "Custom implicit Channel pressure VJP and small-grid unrolled oracle",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "9b7b040",
+    "p9_7_2_record": "notes/architecture_v0_2/phase_9_p972_channel_pressure_transpose.json",
+    "p9_7_2_complete": true
+  },
+  "scope": {
+    "batch_sizes": [1],
+    "differentiable_input": "pressure_rhs_hat",
+    "pressure_basis": ["periodic", "neumann", "neumann"],
+    "real_dtype": "float64",
+    "spectral_dtype": "complex128",
+    "pressure_gauge": "zero_mean",
+    "production_default_changed": false,
+    "production_hot_path_changed": false,
+    "functional_runtime_executable": false
+  },
+  "implicit_adjoint": {
+    "version": "1",
+    "forward_equation": "S*p=b",
+    "backward_equation": "S_adjoint*b_bar=p_bar",
+    "forward_solve": "zero_initial_guess_pcg",
+    "backward_solve": "explicit_transpose_zero_initial_guess_pcg",
+    "operator_coefficients_differentiable": false,
+    "production_warm_start_read": false,
+    "production_warm_start_written": false,
+    "forward_iteration_tensors_saved": 0,
+    "backward_iteration_tensors_saved": 0,
+    "graph_size_independent_of_iteration_count": true,
+    "higher_order_derivatives": false
+  },
+  "oracle": {
+    "kind": "fixed_iteration_unrolled_autograd_pcg",
+    "role": "small_grid_cpu_qualification_only",
+    "device": "cpu",
+    "maximum_modes": 512,
+    "registered_shape": [3, 2, 2],
+    "registered_iterations": 5,
+    "production_fallback": false,
+    "forward_byte_identical": true,
+    "implicit_vjp_matches_unrolled": true
+  },
+  "gradient_gates": {
+    "manufactured_forward_recovery": "pass",
+    "explicit_transpose_vjp": "pass",
+    "implicit_vjp_vs_unrolled_oracle": "pass",
+    "central_finite_difference": "pass",
+    "gradient_subtracted_taylor_second_order": "pass",
+    "memory_independent_of_pcg_iteration_history": "pass",
+    "input_and_warm_start_isolation": "pass"
+  },
+  "compatibility": {
+    "canonical_production_solver": "pssolver/linear_solvers/stokes/channel_no_slip.py",
+    "canonical_production_solver_sha256": "4503f62df5204f7f48da7ca58674ebda45a3f775b7742dcc7bc7ab535c511b16",
+    "canonical_production_solver_modified": false,
+    "p9_7_2_protocol_modified": false,
+    "production_pressure_pcg_modified": false,
+    "channel_runtime_modified": false,
+    "stable_package_root_changed": false
+  },
+  "nonclaims": {
+    "activity_gradient_qualified": false,
+    "channel_functional_step_executable": false,
+    "functional_checkpoint_bridge_available": false,
+    "second_consumer_migrated": false,
+    "h100_qualified": false,
+    "phase_9_complete": false
+  },
+  "ownership": {
+    "repository_changed": "PSSolver_only",
+    "control_repository_changed": false,
+    "legacy_pssolver_control_changed": false,
+    "external_control_dependency_added": false
+  },
+  "qualification": {
+    "focused_with_prior_pressure_slices": "39 passed",
+    "related_phase9_and_channel": "156 passed",
+    "full": "2571 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "git_diff_check": "pass",
+    "h100_required": false,
+    "h100_submissions": 0,
+    "verbatim_pdf_regenerated": false
+  },
+  "source_scope": [
+    "pssolver/functional/channel_pressure_adjoint.py",
+    "pssolver/functional/__init__.py",
+    "tests/test_phase9_p973_channel_pressure_implicit_adjoint.py",
+    "tests/test_phase9_p973_record.py",
+    "notes/architecture_v0_2/phase_9_p973_channel_pressure_implicit_adjoint.md",
+    "notes/architecture_v0_2/phase_9_p973_channel_pressure_implicit_adjoint.json",
+    "notes/architecture_v0_2/build_verbatim_archive_pdf.py"
+  ],
+  "authorization": {
+    "p9_7_3_complete": true,
+    "p9_7_4_planning_eligible": true,
+    "p9_7_4_implementation_authorized": false,
+    "p9_7_5_through_p9_7_6_authorized": false,
+    "h100_authorized": false,
+    "phase_9_complete": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  },
+  "next_slice": "P9.7.4 pure Channel step, activity control, observations, replay, and checkpoint bridge"
+}

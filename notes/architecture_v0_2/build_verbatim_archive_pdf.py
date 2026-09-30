@@ -259,6 +259,8 @@ SOURCE_ORDER = (
     "phase_9_p971_channel_functional_declarations.json",
     "phase_9_p972_channel_pressure_transpose.md",
     "phase_9_p972_channel_pressure_transpose.json",
+    "phase_9_p973_channel_pressure_implicit_adjoint.md",
+    "phase_9_p973_channel_pressure_implicit_adjoint.json",
 )
 
 PAGE_WIDTH = 595.276

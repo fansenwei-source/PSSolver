@@ -22,6 +22,14 @@ from .channel_pressure import (
     ChannelPressureTransposeOperator,
     ChannelPressureTransposeProtocol,
 )
+from .channel_pressure_adjoint import (
+    CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION,
+    CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES,
+    ChannelImplicitPressureAdjoint,
+    ChannelImplicitPressureAdjointProtocol,
+    ChannelPressureSolveDiagnostics,
+    unrolled_channel_pressure_solve_oracle,
+)
 
 from .contracts import (
     FUNCTIONAL_API_VERSION,
@@ -75,6 +83,11 @@ __all__ = [
     "CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT",
     "CHANNEL_FUNCTIONAL_PRESSURE_WARM_START",
     "CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION",
+    "CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION",
+    "CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES",
+    "ChannelImplicitPressureAdjoint",
+    "ChannelImplicitPressureAdjointProtocol",
+    "ChannelPressureSolveDiagnostics",
     "FunctionalCapabilities",
     "FunctionalCapabilitySet",
     "FunctionalCheckpointBridgeProtocol",
@@ -113,4 +126,5 @@ __all__ = [
     "periodic_activity_functional_request",
     "validate_periodic_activity_gradients",
     "validate_periodic_production_consistency",
+    "unrolled_channel_pressure_solve_oracle",
 ]
