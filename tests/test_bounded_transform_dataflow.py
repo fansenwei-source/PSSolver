@@ -210,3 +210,14 @@ def test_in_place_projection_preserves_disabled_projector_contract():
 
     assert returned is values
     assert torch.equal(values, original)
+
+
+def test_dynamic_state_projection_enforces_reality_when_dealiasing_is_disabled():
+    solver = _built_dynamic_solver(indexing="contiguous_slice")
+    fields = solver.fields
+    projector = BasisAwareSpectralProjector(solver, rule="none")
+    fields.spectral[0, 0, 0, 0, 0] += 1.0j
+
+    projector.project_dynamic_fields(fields, sync_spatial=False)
+
+    assert fields.spectral[0, 0, 0, 0, 0].imag.item() == 0.0

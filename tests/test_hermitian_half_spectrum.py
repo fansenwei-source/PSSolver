@@ -36,6 +36,34 @@ def _positive_y_slice(tensor, ny):
     return tensor[tuple(index)]
 
 
+def _self_conjugate_plane_violation(
+    spectral,
+    physical_shape,
+    boundary_conditions,
+    *,
+    hermitian_axis=1,
+):
+    """Return the largest packed-plane real-field constraint violation."""
+
+    spatial_offset = spectral.ndim - len(physical_shape)
+    tensor_axis = spatial_offset + hermitian_axis
+    plane_indices = [0]
+    if physical_shape[hermitian_axis] % 2 == 0:
+        plane_indices.append(physical_shape[hermitian_axis] // 2)
+    indices = torch.tensor(plane_indices, device=spectral.device)
+    planes = spectral.index_select(tensor_axis, indices)
+    reflected = planes
+    for axis, boundary_condition in enumerate(boundary_conditions):
+        if axis == hermitian_axis or boundary_condition != "periodic":
+            continue
+        reverse = torch.remainder(
+            -torch.arange(physical_shape[axis], device=spectral.device),
+            physical_shape[axis],
+        )
+        reflected = reflected.index_select(spatial_offset + axis, reverse)
+    return (planes - reflected.conj()).abs().max()
+
+
 def test_full_complex_remains_the_default_storage():
     backend = TensorProductTransformBackend(
         (7, 6, 5),
@@ -324,3 +352,178 @@ def test_hermitian_axis_can_be_a_nonterminal_tensor_axis():
         rtol=8.0e-13,
         atol=8.0e-13,
     )
+
+
+@pytest.mark.parametrize("shape", ((8, 10, 7), (7, 9, 5)))
+@pytest.mark.parametrize(
+    "boundary_conditions",
+    (
+        ("periodic", "periodic", "neumann"),
+        ("periodic", "periodic", "periodic"),
+    ),
+)
+@pytest.mark.parametrize("rule", ("none", "cubic_half"))
+def test_real_spectrum_projection_enforces_packed_self_conjugate_planes(
+    shape,
+    boundary_conditions,
+    rule,
+):
+    generator = torch.Generator().manual_seed(20260930)
+    backend = _backend(shape, storage="hermitian_half")
+    projector = BasisAwareSpectralProjector(
+        SimpleNamespace(shape=shape, transform_backend=backend),
+        rule=rule,
+    )
+    spectral = torch.complex(
+        torch.randn(
+            2,
+            3,
+            *backend.spectral_shape,
+            generator=generator,
+            dtype=torch.float64,
+        ),
+        torch.randn(
+            2,
+            3,
+            *backend.spectral_shape,
+            generator=generator,
+            dtype=torch.float64,
+        ),
+    )
+    before = spectral.clone()
+
+    projected = projector.project_real_spectrum(
+        spectral,
+        boundary_conditions,
+    )
+
+    assert torch.equal(spectral, before)
+    assert projected is not spectral
+    assert _self_conjugate_plane_violation(
+        projected,
+        shape,
+        boundary_conditions,
+    ).item() == 0.0
+    torch.testing.assert_close(
+        backend.inverse(projected, boundary_conditions),
+        backend.inverse(
+            spectral
+            * (
+                projector.mask(boundary_conditions)
+                if projector.enabled
+                else 1
+            ),
+            boundary_conditions,
+        ),
+        rtol=5.0e-13,
+        atol=5.0e-13,
+    )
+
+
+def test_real_spectrum_projection_in_place_enforces_planes_and_reuses_storage():
+    shape = (8, 10, 7)
+    boundary_conditions = ("periodic", "periodic", "neumann")
+    backend = _backend(shape, storage="hermitian_half")
+    projector = BasisAwareSpectralProjector(
+        SimpleNamespace(shape=shape, transform_backend=backend),
+        rule="none",
+    )
+    spectral = torch.randn(
+        2,
+        *backend.spectral_shape,
+        dtype=torch.complex128,
+    )
+
+    returned = projector.project_real_spectrum_(
+        spectral,
+        boundary_conditions,
+    )
+
+    assert returned is spectral
+    assert _self_conjugate_plane_violation(
+        spectral,
+        shape,
+        boundary_conditions,
+    ).item() == 0.0
+
+
+def test_plane_projection_supports_a_nonterminal_packed_axis():
+    shape = (8, 7, 6)
+    boundary_conditions = ("periodic", "periodic", "neumann")
+    backend = TensorProductTransformBackend(
+        shape,
+        LENGTHS,
+        device="cpu",
+        dtype=torch.float64,
+        spectral_storage="hermitian_half",
+        hermitian_axis=0,
+    )
+    projector = BasisAwareSpectralProjector(
+        SimpleNamespace(shape=shape, transform_backend=backend),
+        rule="cubic_half",
+    )
+    spectral = torch.randn(
+        2,
+        *backend.spectral_shape,
+        dtype=torch.complex128,
+    )
+
+    projected = projector.project_real_spectrum(
+        spectral,
+        boundary_conditions,
+    )
+
+    assert _self_conjugate_plane_violation(
+        projected,
+        shape,
+        boundary_conditions,
+        hermitian_axis=0,
+    ).item() == 0.0
+
+
+def test_hermitian_plane_projection_remains_autograd_compatible():
+    shape = (8, 10, 7)
+    boundary_conditions = ("periodic", "periodic", "periodic")
+    backend = _backend(shape, storage="hermitian_half")
+    projector = BasisAwareSpectralProjector(
+        SimpleNamespace(shape=shape, transform_backend=backend),
+        rule="cubic_half",
+    )
+    spectral = torch.randn(
+        2,
+        *backend.spectral_shape,
+        dtype=torch.complex128,
+        requires_grad=True,
+    )
+
+    physical = backend.inverse(
+        projector.project_real_spectrum(spectral, boundary_conditions),
+        boundary_conditions,
+    )
+    physical.square().sum().backward()
+
+    assert spectral.grad is not None
+    assert bool(torch.isfinite(spectral.grad).all())
+
+
+def test_hermitian_projection_is_recorded_only_for_packed_storage():
+    shape = (8, 10, 7)
+    half = BasisAwareSpectralProjector(
+        SimpleNamespace(
+            shape=shape,
+            transform_backend=_backend(shape, storage="hermitian_half"),
+        ),
+        rule="cubic_half",
+    )
+    full = BasisAwareSpectralProjector(
+        SimpleNamespace(
+            shape=shape,
+            transform_backend=_backend(shape, storage="full_complex"),
+        ),
+        rule="cubic_half",
+    )
+
+    assert half.execution_metadata()["hermitian_state_projection"] == (
+        "self_conjugate_planes"
+    )
+    assert "hermitian_state_projection" not in full.execution_metadata()

@@ -300,6 +300,9 @@ class PeriodicActivityFunctionalRuntime:
             "q_gradient_reuse": False,
             "pressure_solver": "direct_periodic_fourier",
             "spectral_refresh": "disabled",
+            "hermitian_state_projection": (
+                "self_conjugate_planes_each_step"
+            ),
             "activity_product_before_divergence": True,
             "snapshot_sha256": snapshot_sha256,
             "fallback_allowed": False,
@@ -443,7 +446,7 @@ class PeriodicActivityFunctionalRuntime:
         next_spectral = (
             q_spectral + integrator.dt * rhs
         ) / integrator.denom
-        next_spectral = self._projector.project(
+        next_spectral = self._projector.project_real_spectrum(
             next_spectral,
             PERIODIC_BOUNDARIES,
         )

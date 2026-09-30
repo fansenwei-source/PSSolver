@@ -265,6 +265,9 @@ class PeriodicRuntimeAdapter:
             "adapter": type(self).__name__,
             "fallback_used": False,
             "pressure_gauge": "zero_mean",
+            "hermitian_state_projection": (
+                "self_conjugate_planes_each_step"
+            ),
             "tangential_zero_mode_policy": flow.zero_mode_policy,
             "friction": flow.friction,
             "uniform_velocity_mode_action": (
