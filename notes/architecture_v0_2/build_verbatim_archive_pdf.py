@@ -273,6 +273,8 @@ SOURCE_ORDER = (
     "phase_9_p982_stable_functional_api.json",
     "phase_9_p983_consumer_migration.md",
     "phase_9_p983_consumer_migration.json",
+    "phase_9_p984_local_cumulative_closure.md",
+    "phase_9_p984_local_cumulative_closure.json",
 )
 
 PAGE_WIDTH = 595.276

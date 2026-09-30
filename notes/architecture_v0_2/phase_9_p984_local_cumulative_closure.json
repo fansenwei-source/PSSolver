@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "phase": "P9.8.4",
+  "date": "2026-09-30",
+  "status": "complete",
+  "classification": "PASS_P9_8_4_LOCAL_CUMULATIVE_CPU_INSTALLED_WHEEL_CLOSURE",
+  "provider": {
+    "repository": "https://github.com/fansenwei-source/PSSolver",
+    "qualification_source_commit": "710df30256ac7d960b3539b060b06e787f7d558e",
+    "source_archive_sha256": "790cef37b6305c9e51fd03d15b35cb0d0847dbe2a37dfba7390f2dd1710eb641",
+    "wheel": "pssolver-0.1.2-py3-none-any.whl",
+    "wheel_sha256": "5159aeb4939f2e689d1ca1ec02139491edcc6d963fc0106bfb75e5ebe95c2388",
+    "wheel_member_count": 298,
+    "source_cpu_result": "2607 passed, 8 subtests passed"
+  },
+  "consumer": {
+    "repository": "https://github.com/fansenwei-source/PSSolver-Control",
+    "qualification_source_commit": "ea24027525bb39085b4624f6c82e42d8ae04854a",
+    "record_commit": "11e1dddc46b9cc3b4868cd950e593c48d0cfb917",
+    "source_archive_sha256": "b50f86e4a9db6ee37f24435f5773636d32e167539374a7e5dbc595dc9e092827",
+    "wheel": "pssolver_control-0.0.1.dev0-py3-none-any.whl",
+    "wheel_sha256": "54ae5af30336e85da5495bc0b5638375b790b67cf883f56b93e8639c4aa1567c",
+    "wheel_member_count": 22,
+    "source_cpu_result": "235 passed, 1 skipped",
+    "allowed_skip": "tests/test_warmup_experiments.py::test_r5_benchmark"
+  },
+  "installed_identity": {
+    "stable_module": "pssolver.functional.api",
+    "functional_api_version": "1.0",
+    "source_shadow_import": false,
+    "provider_console_help": "pass",
+    "periodic_consumer": "pass",
+    "channel_consumer": "pass"
+  },
+  "installed_cpu_evidence": {
+    "result": "92 passed",
+    "checkpoint_read": "pass",
+    "replay_and_restart": "pass",
+    "gradient": "pass",
+    "negative_gates": "pass",
+    "import_boundary": "pass"
+  },
+  "dependency_audit": {
+    "provider_and_consumer_declared_requirements": "pass",
+    "global_pip_check": "pre_existing_unrelated_nematics3d_numpy_pin_conflict",
+    "shared_environment_modified": false
+  },
+  "authorization": {
+    "p9_8_4_complete": true,
+    "p9_8_5_planning_eligible": true,
+    "h100_authorized": false,
+    "h100_executed": false,
+    "production_default_changed": false,
+    "larger_batch_authorized": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false,
+    "phase_9_complete": false,
+    "verbatim_pdf_regenerated": false
+  }
+}
