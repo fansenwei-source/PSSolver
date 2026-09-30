@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "phase": "P9.8.2",
+  "date": "2026-09-30",
+  "status": "complete",
+  "title": "Stable functional protocol and compatibility facade",
+  "provider_baseline_commit": "6ee14455d6d13d189d0df21118db58eb3ccd5d04",
+  "stable_module": {
+    "path": "pssolver.functional.api",
+    "protocol_version": "1.0",
+    "export_count": 46,
+    "exports": [
+      "CHANNEL_ACTIVITY_RUNTIME_STAGE",
+      "CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION",
+      "FUNCTIONAL_API_VERSION",
+      "FUNCTIONAL_CHECKPOINT_READ_API_VERSIONS",
+      "FUNCTIONAL_COMPATIBILITY_POLICY_VERSION",
+      "FUNCTIONAL_CONSTRUCTION_API_VERSIONS",
+      "FUNCTIONAL_LEGACY_CHECKPOINT_API_VERSIONS",
+      "FUNCTIONAL_OBSERVATION_TIME",
+      "ChannelPressureSolveDiagnostics",
+      "FunctionalAPIVersionSelection",
+      "FunctionalCapabilitySet",
+      "FunctionalCheckpointBridgeProtocol",
+      "FunctionalCheckpointCompatibility",
+      "FunctionalCheckpointCompatibilityError",
+      "FunctionalCheckpointError",
+      "FunctionalCheckpointExistsError",
+      "FunctionalCheckpointIntegrityError",
+      "FunctionalCheckpointNotFoundError",
+      "FunctionalCheckpointState",
+      "FunctionalContractError",
+      "FunctionalControlFieldSpec",
+      "FunctionalControls",
+      "FunctionalConvergenceError",
+      "FunctionalError",
+      "FunctionalExecutionError",
+      "FunctionalIdentityError",
+      "FunctionalObservationSpec",
+      "FunctionalObservations",
+      "FunctionalRuntimeConstructionRequest",
+      "FunctionalRuntimeDeclaration",
+      "FunctionalRuntimeFactoryProtocol",
+      "FunctionalRuntimeIdentity",
+      "FunctionalRuntimeProtocol",
+      "FunctionalState",
+      "FunctionalStateSpec",
+      "FunctionalTensorSpec",
+      "FunctionalTypeError",
+      "FunctionalValueError",
+      "FunctionalVersionError",
+      "build_channel_activity_functional_runtime",
+      "build_functional_runtime",
+      "channel_activity_functional_declaration",
+      "channel_activity_functional_request",
+      "functional_protocol_provenance",
+      "negotiate_functional_api_version",
+      "periodic_activity_functional_request"
+    ],
+    "package_root_reexported": false,
+    "private_runtime_members_exposed": false
+  },
+  "compatibility_facade": {
+    "path": "pssolver.functional",
+    "preserves_pre_p9_8_imports": true,
+    "stable_names_are_subset_of_facade": true,
+    "FunctionalCapabilities": {
+      "status": "compatibility_public_alias",
+      "canonical_name": "FunctionalCapabilitySet",
+      "deprecated_in_package_version": "0.2.0",
+      "earliest_removal_package_version": "0.4.0"
+    }
+  },
+  "version_negotiation": {
+    "construction_versions": ["1.0"],
+    "checkpoint_read_versions": ["1.0", "0.1-provisional"],
+    "legacy_checkpoint_only_versions": ["0.1-provisional"],
+    "rule": "exact_literal_fail_closed",
+    "silent_fallback": false,
+    "heuristic_schema_repair": false,
+    "unknown_version_error": "FunctionalVersionError"
+  },
+  "error_policy": {
+    "message_parsing_required": false,
+    "metadata_fields": ["code", "message", "operation", "details"],
+    "classes": {
+      "FunctionalError": "functional_error",
+      "FunctionalContractError": "functional_contract_error",
+      "FunctionalTypeError": "functional_type_error",
+      "FunctionalValueError": "functional_value_error",
+      "FunctionalVersionError": "functional_version_error",
+      "FunctionalIdentityError": "functional_identity_error",
+      "FunctionalCheckpointError": "functional_checkpoint_error",
+      "FunctionalCheckpointNotFoundError": "functional_checkpoint_not_found",
+      "FunctionalCheckpointExistsError": "functional_checkpoint_exists",
+      "FunctionalCheckpointIntegrityError": "functional_checkpoint_integrity_error",
+      "FunctionalCheckpointCompatibilityError": "functional_checkpoint_compatibility_error",
+      "FunctionalExecutionError": "functional_execution_error",
+      "FunctionalConvergenceError": "functional_convergence_error"
+    },
+    "builtin_compatibility": {
+      "FunctionalTypeError": "TypeError",
+      "FunctionalValueError": "ValueError",
+      "FunctionalCheckpointNotFoundError": "FileNotFoundError",
+      "FunctionalCheckpointExistsError": "FileExistsError"
+    }
+  },
+  "checkpoint_compatibility": {
+    "returned_metadata_type": "FunctionalCheckpointCompatibility",
+    "returned_metadata_fields": [
+      "source_api_version",
+      "target_api_version",
+      "reader",
+      "exact_current_protocol"
+    ],
+    "periodic": {
+      "format_version": 1,
+      "current_api": "1.0",
+      "legacy_api": "0.1-provisional",
+      "legacy_reader": "qualified_v1_exact_schema_reader_for_0_1_provisional",
+      "production_reader": "qualified_periodic_production_v1_reader"
+    },
+    "channel": {
+      "format_version": 1,
+      "current_api": "1.0",
+      "legacy_api": "0.1-provisional",
+      "legacy_reader": "qualified_v1_exact_schema_reader_for_0_1_provisional",
+      "production_reader": "qualified_channel_production_v1_reader"
+    },
+    "cross_format_interchange_allowed": false,
+    "missing_field_synthesis_allowed": false,
+    "checksum_repair_allowed": false
+  },
+  "pressure_convergence": {
+    "schema_version": 1,
+    "fields": [
+      "schema_version",
+      "solver_identity",
+      "operator_identity",
+      "convergence_mode",
+      "requested_iteration_limit",
+      "achieved_iteration_count",
+      "achieved_absolute_residual",
+      "achieved_relative_residual",
+      "requested_relative_tolerance",
+      "tolerance_semantics",
+      "termination_reason",
+      "acceptable"
+    ],
+    "fixed_iteration_mode": "deterministic_iteration_cap_with_early_convergence",
+    "fixed_iteration_tolerance_semantics": "early_convergence_criterion_not_required_at_cap",
+    "adaptive_mode": "relative_tolerance_required_with_maximum_iteration_cap",
+    "adaptive_tolerance_semantics": "required_postcondition",
+    "numerical_algorithm_changed": false
+  },
+  "behavior_boundary": {
+    "spectral_discretization_changed": false,
+    "model_equations_changed": false,
+    "timestep_arithmetic_changed": false,
+    "pcg_arithmetic_changed": false,
+    "checkpoint_tensor_content_changed": false,
+    "functional_identity_metadata_changed": true,
+    "new_checkpoint_api_version": "1.0"
+  },
+  "authorization": {
+    "p9_8_2_complete": true,
+    "p9_8_3_planning_eligible": true,
+    "p9_8_3_implementation_authorized": false,
+    "stable_api_published_in_source": true,
+    "consumer_migration_complete": false,
+    "installed_wheel_closure_complete": false,
+    "h100_authorized": false,
+    "production_default_changed": false,
+    "larger_batch_authorized": false,
+    "optimizer_campaign_authorized": false,
+    "phase_9_complete": false,
+    "verbatim_pdf_regenerated": false
+  }
+}

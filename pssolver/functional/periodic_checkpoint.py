@@ -20,10 +20,16 @@ from pssolver.workflows.periodic_checkpoint import (
 
 from .contracts import (
     FUNCTIONAL_API_VERSION,
+    FunctionalCheckpointCompatibility,
     FunctionalCheckpointState,
     FunctionalRuntimeIdentity,
     FunctionalState,
     FunctionalStateSpec,
+)
+from .errors import FunctionalCheckpointCompatibilityError
+from .versioning import (
+    negotiate_functional_api_version,
+    runtime_identity_sha256_for_api_version,
 )
 
 
@@ -73,6 +79,7 @@ class PeriodicActivityCheckpointBridge:
         if not isinstance(functional_identity, FunctionalRuntimeIdentity):
             raise TypeError("functional_identity must be a FunctionalRuntimeIdentity")
         self._state_spec = state_spec
+        self._functional_identity_metadata = functional_identity.to_metadata()
         self._functional_identity_sha256 = functional_identity.canonical_sha256()
         self._production_runtime_identity_sha256 = _require_sha256(
             production_runtime_identity_sha256,
@@ -96,13 +103,26 @@ class PeriodicActivityCheckpointBridge:
     def format_version(self) -> int:
         return PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION
 
-    def _bridge_metadata(self) -> dict[str, object]:
+    def _bridge_metadata(
+        self,
+        *,
+        api_version: str = FUNCTIONAL_API_VERSION,
+    ) -> dict[str, object]:
+        negotiate_functional_api_version(
+            api_version,
+            purpose="checkpoint_read",
+        )
         return {
             "format_version": self.format_version,
-            "api_version": FUNCTIONAL_API_VERSION,
+            "api_version": api_version,
             "runtime_kind": "periodic_activity_batch_one",
             "functional_runtime_identity_sha256": (
                 self._functional_identity_sha256
+                if api_version == FUNCTIONAL_API_VERSION
+                else runtime_identity_sha256_for_api_version(
+                    self._functional_identity_metadata,
+                    api_version,
+                )
             ),
             "production_runtime_identity_sha256": (
                 self._production_runtime_identity_sha256
@@ -114,15 +134,41 @@ class PeriodicActivityCheckpointBridge:
     def _validate_bridge_metadata(
         self,
         metadata: Mapping[str, object] | None,
-    ) -> str:
+    ) -> tuple[str, FunctionalCheckpointCompatibility]:
         if metadata is None:
-            return _SOURCE_PRODUCTION
-        expected = self._bridge_metadata()
-        if dict(metadata) != expected:
-            raise ValueError(
-                "functional checkpoint identity or state layout does not match target"
+            return (
+                _SOURCE_PRODUCTION,
+                FunctionalCheckpointCompatibility(
+                    source_api_version=None,
+                    target_api_version=FUNCTIONAL_API_VERSION,
+                    reader="qualified_periodic_production_v1_reader",
+                    exact_current_protocol=False,
+                ),
             )
-        return _SOURCE_FUNCTIONAL
+        api_version = metadata.get("api_version")
+        selection = negotiate_functional_api_version(
+            api_version,
+            purpose="checkpoint_read",
+        )
+        expected = self._bridge_metadata(api_version=selection.requested)
+        if dict(metadata) != expected:
+            raise FunctionalCheckpointCompatibilityError(
+                "functional checkpoint identity or state layout does not match target",
+                operation="periodic_checkpoint_import",
+                details={"source_api_version": selection.requested},
+            )
+        return (
+            _SOURCE_FUNCTIONAL,
+            FunctionalCheckpointCompatibility(
+                source_api_version=selection.requested,
+                target_api_version=selection.effective,
+                reader=(
+                    selection.compatibility_reader
+                    or "current_periodic_functional_bridge_v1_reader"
+                ),
+                exact_current_protocol=not selection.legacy,
+            ),
+        )
 
     def export_checkpoint(
         self,
@@ -174,14 +220,23 @@ class PeriodicActivityCheckpointBridge:
             header.runtime_identity_sha256
             != self._production_runtime_identity_sha256
         ):
-            raise ValueError("checkpoint scientific/runtime identity does not match")
-        if dict(header.backend_restart) != self._backend_restart:
-            raise ValueError("checkpoint backend contract does not match target")
-        if header.spectral_refresh_interval is not None:
-            raise ValueError(
-                "functional checkpoint import requires disabled spectral refresh"
+            raise FunctionalCheckpointCompatibilityError(
+                "checkpoint scientific/runtime identity does not match",
+                operation="periodic_checkpoint_import",
             )
-        source_format = self._validate_bridge_metadata(header.functional_bridge)
+        if dict(header.backend_restart) != self._backend_restart:
+            raise FunctionalCheckpointCompatibilityError(
+                "checkpoint backend contract does not match target",
+                operation="periodic_checkpoint_import",
+            )
+        if header.spectral_refresh_interval is not None:
+            raise FunctionalCheckpointCompatibilityError(
+                "functional checkpoint import requires disabled spectral refresh",
+                operation="periodic_checkpoint_import",
+            )
+        source_format, compatibility = self._validate_bridge_metadata(
+            header.functional_bridge
+        )
 
         # Tensor payloads are opened only after all small identity and layout
         # metadata gates above have succeeded.
@@ -209,6 +264,7 @@ class PeriodicActivityCheckpointBridge:
             state=state,
             completed_steps=checkpoint.completed_steps,
             source_format=source_format,
+            compatibility=compatibility,
         )
 
 

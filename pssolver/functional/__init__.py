@@ -1,7 +1,8 @@
-"""Provisional functional execution declarations and qualified runtimes.
+"""Compatibility facade for functional execution declarations and runtimes.
 
-The interface is intentionally imported through ``pssolver.functional`` and
-is not part of the stable package-root API.  P9.2--P9.5 implement and qualify
+New consumers should import the stable surface from ``pssolver.functional.api``.
+This broader namespace preserves the qualified pre-P9.8 import paths through
+the compatibility window required by ADR 0005.  P9.2--P9.5 implement and qualify
 only the batch-one periodic complete-stress activity-control runtime, bitwise
 CPU/H100 replay under a fixed execution identity, its periodic
 production-checkpoint bridge, and frozen gradient, performance, memory, and
@@ -48,6 +49,7 @@ from .contracts import (
     FunctionalCapabilities,
     FunctionalCapabilitySet,
     FunctionalCheckpointBridgeProtocol,
+    FunctionalCheckpointCompatibility,
     FunctionalCheckpointState,
     FunctionalControlFieldSpec,
     FunctionalControls,
@@ -61,6 +63,31 @@ from .contracts import (
     FunctionalState,
     FunctionalStateSpec,
     FunctionalTensorSpec,
+)
+from .errors import (
+    FunctionalCheckpointCompatibilityError,
+    FunctionalCheckpointError,
+    FunctionalCheckpointExistsError,
+    FunctionalCheckpointIntegrityError,
+    FunctionalCheckpointNotFoundError,
+    FunctionalContractError,
+    FunctionalConvergenceError,
+    FunctionalError,
+    FunctionalExecutionError,
+    FunctionalIdentityError,
+    FunctionalTypeError,
+    FunctionalValueError,
+    FunctionalVersionError,
+)
+from .pressure_metadata import CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION
+from .versioning import (
+    FUNCTIONAL_CHECKPOINT_READ_API_VERSIONS,
+    FUNCTIONAL_COMPATIBILITY_POLICY_VERSION,
+    FUNCTIONAL_CONSTRUCTION_API_VERSIONS,
+    FUNCTIONAL_LEGACY_CHECKPOINT_API_VERSIONS,
+    FunctionalAPIVersionSelection,
+    functional_protocol_provenance,
+    negotiate_functional_api_version,
 )
 from .periodic_checkpoint import (
     PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION,
@@ -96,6 +123,7 @@ __all__ = [
     "CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION",
     "CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION",
     "CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES",
+    "CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION",
     "CHANNEL_ACTIVITY_DETERMINISTIC_REPLAY",
     "CHANNEL_ACTIVITY_RUNTIME_STAGE",
     "CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
@@ -108,9 +136,20 @@ __all__ = [
     "FunctionalCapabilities",
     "FunctionalCapabilitySet",
     "FunctionalCheckpointBridgeProtocol",
+    "FunctionalCheckpointCompatibility",
+    "FunctionalCheckpointCompatibilityError",
+    "FunctionalCheckpointError",
+    "FunctionalCheckpointExistsError",
+    "FunctionalCheckpointIntegrityError",
+    "FunctionalCheckpointNotFoundError",
     "FunctionalCheckpointState",
+    "FunctionalContractError",
     "FunctionalControlFieldSpec",
     "FunctionalControls",
+    "FunctionalConvergenceError",
+    "FunctionalError",
+    "FunctionalExecutionError",
+    "FunctionalIdentityError",
     "FunctionalObservationSpec",
     "FunctionalObservations",
     "FunctionalRuntimeConstructionRequest",
@@ -121,6 +160,10 @@ __all__ = [
     "FunctionalState",
     "FunctionalStateSpec",
     "FunctionalTensorSpec",
+    "FunctionalTypeError",
+    "FunctionalValueError",
+    "FunctionalVersionError",
+    "FunctionalAPIVersionSelection",
     "ChannelPressureTransposeOperator",
     "ChannelPressureTransposeProtocol",
     "PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
@@ -145,4 +188,10 @@ __all__ = [
     "validate_periodic_activity_gradients",
     "validate_periodic_production_consistency",
     "unrolled_channel_pressure_solve_oracle",
+    "FUNCTIONAL_CHECKPOINT_READ_API_VERSIONS",
+    "FUNCTIONAL_COMPATIBILITY_POLICY_VERSION",
+    "FUNCTIONAL_CONSTRUCTION_API_VERSIONS",
+    "FUNCTIONAL_LEGACY_CHECKPOINT_API_VERSIONS",
+    "functional_protocol_provenance",
+    "negotiate_functional_api_version",
 ]

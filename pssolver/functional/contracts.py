@@ -1,9 +1,4 @@
-"""Provisional, tensor-explicit contracts for functional PDE execution.
-
-P9.1 defines declarations only.  This module does not construct a runtime,
-allocate state, execute a timestep, or claim differentiability.  The API is
-deliberately not re-exported from :mod:`pssolver` while it remains provisional.
-"""
+"""Tensor-explicit contracts shared by the stable functional PDE facade."""
 
 from __future__ import annotations
 
@@ -21,8 +16,12 @@ import torch
 
 from pssolver.configuration.simulation import SimulationSpec
 
+from .errors import FunctionalTypeError, FunctionalValueError
+from .versioning import (
+    FUNCTIONAL_API_VERSION,
+    negotiate_functional_api_version,
+)
 
-FUNCTIONAL_API_VERSION = "0.1-provisional"
 FUNCTIONAL_OBSERVATION_TIME = "input_state_under_current_control"
 
 FunctionalState: TypeAlias = tuple[torch.Tensor, ...]
@@ -39,13 +38,13 @@ _DTYPES = {
 
 def _identifier(value: object, description: str) -> str:
     if not isinstance(value, str) or not value.isidentifier():
-        raise ValueError(f"{description} must be a Python identifier")
+        raise FunctionalValueError(f"{description} must be a Python identifier")
     return value
 
 
 def _nonempty(value: object, description: str) -> str:
     if not isinstance(value, str) or not value.strip():
-        raise ValueError(f"{description} must be a non-empty string")
+        raise FunctionalValueError(f"{description} must be a non-empty string")
     return value
 
 
@@ -81,21 +80,21 @@ class FunctionalTensorSpec:
             or value <= 0
             for value in shape
         ):
-            raise ValueError("tensor shape must contain positive integers")
+            raise FunctionalValueError("tensor shape must contain positive integers")
         if self.dtype not in _DTYPES:
-            raise ValueError(f"unsupported functional tensor dtype: {self.dtype!r}")
+            raise FunctionalValueError(f"unsupported functional tensor dtype: {self.dtype!r}")
         try:
             device = torch.device(self.device)
         except (TypeError, RuntimeError) as exc:
-            raise ValueError("functional tensor device is invalid") from exc
+            raise FunctionalValueError("functional tensor device is invalid") from exc
         if device.type == "cuda" and device.index is None:
-            raise ValueError("CUDA functional tensor identity requires an index")
+            raise FunctionalValueError("CUDA functional tensor identity requires an index")
         if (
             not isinstance(self.batch_axis, int)
             or isinstance(self.batch_axis, bool)
             or not 0 <= self.batch_axis < len(shape)
         ):
-            raise ValueError("batch_axis must index the tensor shape")
+            raise FunctionalValueError("batch_axis must index the tensor shape")
         _nonempty(self.layout, "tensor layout")
         _nonempty(self.meaning, "tensor meaning")
         components = tuple(self.component_names)
@@ -104,11 +103,11 @@ class FunctionalTensorSpec:
                 not isinstance(value, str) or not value.isidentifier()
                 for value in components
             ):
-                raise ValueError("component_names must be Python identifiers")
+                raise FunctionalValueError("component_names must be Python identifiers")
             if len(set(components)) != len(components):
-                raise ValueError("component_names must be unique")
+                raise FunctionalValueError("component_names must be unique")
             if len(components) not in shape:
-                raise ValueError(
+                raise FunctionalValueError(
                     "one tensor axis must match the component_names length"
                 )
         object.__setattr__(self, "shape", shape)
@@ -121,17 +120,17 @@ class FunctionalTensorSpec:
 
     def validate(self, value: torch.Tensor) -> None:
         if not isinstance(value, torch.Tensor):
-            raise TypeError(f"{self.name} must be a torch.Tensor")
+            raise FunctionalTypeError(f"{self.name} must be a torch.Tensor")
         if tuple(value.shape) != self.shape:
-            raise ValueError(
+            raise FunctionalValueError(
                 f"{self.name} shape must be {self.shape}, got {tuple(value.shape)}"
             )
         if value.dtype is not _DTYPES[self.dtype]:
-            raise TypeError(
+            raise FunctionalTypeError(
                 f"{self.name} dtype must be {self.dtype}, got {value.dtype}"
             )
         if str(value.device) != self.device:
-            raise ValueError(
+            raise FunctionalValueError(
                 f"{self.name} device must be {self.device}, got {value.device}"
             )
 
@@ -160,18 +159,18 @@ class FunctionalStateSpec:
         if not components or any(
             not isinstance(value, FunctionalTensorSpec) for value in components
         ):
-            raise TypeError("state components must be FunctionalTensorSpec values")
+            raise FunctionalTypeError("state components must be FunctionalTensorSpec values")
         if len({value.name for value in components}) != len(components):
-            raise ValueError("state component names must be unique")
+            raise FunctionalValueError("state component names must be unique")
         batch_sizes = {value.batch_size for value in components}
         if len(batch_sizes) != 1:
-            raise ValueError("all state components must use one batch size")
+            raise FunctionalValueError("all state components must use one batch size")
         if (
             not isinstance(self.layout_version, int)
             or isinstance(self.layout_version, bool)
             or self.layout_version <= 0
         ):
-            raise ValueError("layout_version must be a positive integer")
+            raise FunctionalValueError("layout_version must be a positive integer")
         object.__setattr__(self, "components", components)
 
     @property
@@ -180,9 +179,9 @@ class FunctionalStateSpec:
 
     def validate(self, state: FunctionalState) -> None:
         if not isinstance(state, tuple):
-            raise TypeError("functional state must be a flat tuple")
+            raise FunctionalTypeError("functional state must be a flat tuple")
         if len(state) != len(self.components):
-            raise ValueError("functional state component count is incorrect")
+            raise FunctionalValueError("functional state component count is incorrect")
         for specification, value in zip(self.components, state, strict=True):
             specification.validate(value)
 
@@ -212,9 +211,9 @@ class FunctionalControlFieldSpec:
     def __post_init__(self) -> None:
         _identifier(self.name, "control field name")
         if not isinstance(self.tensor, FunctionalTensorSpec):
-            raise TypeError("control tensor must be a FunctionalTensorSpec")
+            raise FunctionalTypeError("control tensor must be a FunctionalTensorSpec")
         if self.tensor.name != self.name:
-            raise ValueError("control field and tensor names must match")
+            raise FunctionalValueError("control field and tensor names must match")
         _nonempty(self.equation_term, "equation_term")
         _nonempty(self.injection_order, "injection_order")
         _nonempty(self.dealiasing_identity, "dealiasing_identity")
@@ -224,7 +223,7 @@ class FunctionalControlFieldSpec:
             not isinstance(value, str) or not value.strip()
             for value in broadcast_rules
         ):
-            raise ValueError("broadcast_rules must contain explicit rules")
+            raise FunctionalValueError("broadcast_rules must contain explicit rules")
         object.__setattr__(self, "broadcast_rules", broadcast_rules)
         lower, upper = self.admissible_min, self.admissible_max
         if any(
@@ -236,22 +235,22 @@ class FunctionalControlFieldSpec:
             )
             for value in (lower, upper)
         ):
-            raise ValueError("admissible bounds must be finite real values")
+            raise FunctionalValueError("admissible bounds must be finite real values")
         if lower is not None and upper is not None and lower > upper:
-            raise ValueError("admissible_min cannot exceed admissible_max")
+            raise FunctionalValueError("admissible_min cannot exceed admissible_max")
 
     def validate(self, value: torch.Tensor) -> None:
         self.tensor.validate(value)
         if not bool(torch.isfinite(value).all()):
-            raise ValueError(f"control field {self.name} contains NaN or Inf")
+            raise FunctionalValueError(f"control field {self.name} contains NaN or Inf")
         if self.admissible_min is not None and bool(
             (value < self.admissible_min).any()
         ):
-            raise ValueError(f"control field {self.name} is below its lower bound")
+            raise FunctionalValueError(f"control field {self.name} is below its lower bound")
         if self.admissible_max is not None and bool(
             (value > self.admissible_max).any()
         ):
-            raise ValueError(f"control field {self.name} is above its upper bound")
+            raise FunctionalValueError(f"control field {self.name} is above its upper bound")
 
     def to_metadata(self) -> dict[str, object]:
         return {
@@ -280,19 +279,19 @@ class FunctionalObservationSpec:
     def __post_init__(self) -> None:
         _identifier(self.name, "observation name")
         if not isinstance(self.tensor, FunctionalTensorSpec):
-            raise TypeError("observation tensor must be a FunctionalTensorSpec")
+            raise FunctionalTypeError("observation tensor must be a FunctionalTensorSpec")
         if self.tensor.name != self.name:
-            raise ValueError("observation and tensor names must match")
+            raise FunctionalValueError("observation and tensor names must match")
         _nonempty(self.convention, "observation convention")
         if self.time_alignment != FUNCTIONAL_OBSERVATION_TIME:
-            raise ValueError("unsupported functional observation time alignment")
+            raise FunctionalValueError("unsupported functional observation time alignment")
         if not isinstance(self.control_dependent, bool) or not isinstance(
             self.terminal_available_without_control,
             bool,
         ):
-            raise TypeError("observation dependency flags must be bool values")
+            raise FunctionalTypeError("observation dependency flags must be bool values")
         if self.control_dependent and self.terminal_available_without_control:
-            raise ValueError(
+            raise FunctionalValueError(
                 "a control-dependent observation cannot be a terminal "
                 "observation without control"
             )
@@ -333,17 +332,17 @@ class FunctionalCapabilitySet:
             or value <= 0
             for value in sizes
         ):
-            raise ValueError("supported_batch_sizes must be positive integers")
+            raise FunctionalValueError("supported_batch_sizes must be positive integers")
         if len(set(sizes)) != len(sizes):
-            raise ValueError("supported_batch_sizes must be unique")
+            raise FunctionalValueError("supported_batch_sizes must be unique")
         if self.deterministic_replay not in {"not_qualified", "bitwise"}:
-            raise ValueError("unsupported deterministic replay capability")
+            raise FunctionalValueError("unsupported deterministic replay capability")
         if self.differentiability not in {
             "not_qualified",
             "torch_autograd",
             "validated_custom_adjoint",
         }:
-            raise ValueError("unsupported differentiability capability")
+            raise FunctionalValueError("unsupported differentiability capability")
         flags = (
             self.pure_step,
             self.combined_step_and_observe,
@@ -352,18 +351,18 @@ class FunctionalCapabilitySet:
             self.explicit_vjp,
         )
         if any(not isinstance(value, bool) for value in flags):
-            raise TypeError("functional capability flags must be bool values")
+            raise FunctionalTypeError("functional capability flags must be bool values")
         _nonempty(self.inner_solve_gradient, "inner_solve_gradient")
         differentiable_inputs = tuple(self.differentiable_inputs)
         if any(
             not isinstance(value, str) or not value.isidentifier()
             for value in differentiable_inputs
         ):
-            raise ValueError("differentiable_inputs must be Python identifiers")
+            raise FunctionalValueError("differentiable_inputs must be Python identifiers")
         if len(set(differentiable_inputs)) != len(differentiable_inputs):
-            raise ValueError("differentiable_inputs must be unique")
+            raise FunctionalValueError("differentiable_inputs must be unique")
         if self.differentiability == "not_qualified" and differentiable_inputs:
-            raise ValueError(
+            raise FunctionalValueError(
                 "unqualified differentiability cannot claim differentiable inputs"
             )
         object.__setattr__(self, "supported_batch_sizes", sizes)
@@ -396,8 +395,10 @@ class FunctionalRuntimeIdentity:
     _canonical_json: str = field(init=False, repr=False, compare=False)
 
     def __post_init__(self) -> None:
-        if self.api_version != FUNCTIONAL_API_VERSION:
-            raise ValueError("unsupported provisional functional API version")
+        negotiate_functional_api_version(
+            self.api_version,
+            purpose="construction",
+        )
         payload = {
             "api_version": self.api_version,
             "scientific": dict(self.scientific),
@@ -413,7 +414,7 @@ class FunctionalRuntimeIdentity:
                 sort_keys=True,
             )
         except (TypeError, ValueError) as exc:
-            raise ValueError("functional runtime identity must be JSON-safe") from exc
+            raise FunctionalValueError("functional runtime identity must be JSON-safe") from exc
         frozen = json.loads(canonical)
         for name in ("scientific", "discretization", "execution", "state_layout"):
             object.__setattr__(self, name, _freeze_json(frozen[name]))
@@ -427,25 +428,62 @@ class FunctionalRuntimeIdentity:
 
 
 @dataclass(frozen=True, slots=True)
+class FunctionalCheckpointCompatibility:
+    """Machine-readable compatibility path used by a checkpoint import."""
+
+    source_api_version: str | None
+    target_api_version: str
+    reader: str
+    exact_current_protocol: bool
+
+    def __post_init__(self) -> None:
+        if self.source_api_version is not None:
+            _nonempty(self.source_api_version, "source_api_version")
+        _nonempty(self.target_api_version, "target_api_version")
+        _nonempty(self.reader, "checkpoint compatibility reader")
+        if not isinstance(self.exact_current_protocol, bool):
+            raise FunctionalTypeError("exact_current_protocol must be a bool")
+        if self.target_api_version != FUNCTIONAL_API_VERSION:
+            raise FunctionalValueError("checkpoint target API version is not current")
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "source_api_version": self.source_api_version,
+            "target_api_version": self.target_api_version,
+            "reader": self.reader,
+            "exact_current_protocol": self.exact_current_protocol,
+        }
+
+
+@dataclass(frozen=True, slots=True)
 class FunctionalCheckpointState:
     """Owned state returned by one durable checkpoint import."""
 
     state: FunctionalState
     completed_steps: int
     source_format: str
+    compatibility: FunctionalCheckpointCompatibility | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.state, tuple) or any(
             not isinstance(value, torch.Tensor) for value in self.state
         ):
-            raise TypeError("checkpoint state must be a flat tensor tuple")
+            raise FunctionalTypeError("checkpoint state must be a flat tensor tuple")
         if (
             not isinstance(self.completed_steps, int)
             or isinstance(self.completed_steps, bool)
             or self.completed_steps < 0
         ):
-            raise ValueError("completed_steps must be non-negative")
+            raise FunctionalValueError("completed_steps must be non-negative")
         _nonempty(self.source_format, "source_format")
+        if self.compatibility is not None and not isinstance(
+            self.compatibility,
+            FunctionalCheckpointCompatibility,
+        ):
+            raise FunctionalTypeError(
+                "checkpoint compatibility must be "
+                "FunctionalCheckpointCompatibility or None"
+            )
 
 
 @runtime_checkable
@@ -481,33 +519,35 @@ class FunctionalRuntimeConstructionRequest:
 
     def __post_init__(self) -> None:
         if not isinstance(self.simulation, SimulationSpec):
-            raise TypeError("simulation must be a SimulationSpec")
+            raise FunctionalTypeError("simulation must be a SimulationSpec")
         controls = tuple(self.control_fields)
         observations = tuple(self.observations)
         if not controls or any(
             not isinstance(value, FunctionalControlFieldSpec)
             for value in controls
         ):
-            raise TypeError("control_fields must contain functional controls")
+            raise FunctionalTypeError("control_fields must contain functional controls")
         if not observations or any(
             not isinstance(value, FunctionalObservationSpec)
             for value in observations
         ):
-            raise TypeError("observations must contain functional observations")
+            raise FunctionalTypeError("observations must contain functional observations")
         if len({value.name for value in controls}) != len(controls):
-            raise ValueError("functional control names must be unique")
+            raise FunctionalValueError("functional control names must be unique")
         if len({value.name for value in observations}) != len(observations):
-            raise ValueError("functional observation names must be unique")
+            raise FunctionalValueError("functional observation names must be unique")
         if self.batch_size != 1:
-            raise ValueError("P9.1 construction declarations require batch_size=1")
-        if self.api_version != FUNCTIONAL_API_VERSION:
-            raise ValueError("unsupported provisional functional API version")
+            raise FunctionalValueError("P9.1 construction declarations require batch_size=1")
+        negotiate_functional_api_version(
+            self.api_version,
+            purpose="construction",
+        )
         if any(value.tensor.batch_size != self.batch_size for value in controls):
-            raise ValueError("control tensor batch size does not match the request")
+            raise FunctionalValueError("control tensor batch size does not match the request")
         if any(
             value.tensor.batch_size != self.batch_size for value in observations
         ):
-            raise ValueError(
+            raise FunctionalValueError(
                 "observation tensor batch size does not match the request"
             )
         object.__setattr__(self, "control_fields", controls)
@@ -545,26 +585,26 @@ class FunctionalRuntimeDeclaration:
 
     def __post_init__(self) -> None:
         if not isinstance(self.request, FunctionalRuntimeConstructionRequest):
-            raise TypeError("request must be a functional construction request")
+            raise FunctionalTypeError("request must be a functional construction request")
         if not isinstance(self.state_spec, FunctionalStateSpec):
-            raise TypeError("state_spec must be a FunctionalStateSpec")
+            raise FunctionalTypeError("state_spec must be a FunctionalStateSpec")
         if not isinstance(self.capabilities, FunctionalCapabilitySet):
-            raise TypeError("capabilities must be a FunctionalCapabilitySet")
+            raise FunctionalTypeError("capabilities must be a FunctionalCapabilitySet")
         if not isinstance(self.identity, FunctionalRuntimeIdentity):
-            raise TypeError("identity must be a FunctionalRuntimeIdentity")
+            raise FunctionalTypeError("identity must be a FunctionalRuntimeIdentity")
         if not isinstance(self.executable, bool):
-            raise TypeError("executable must be a bool")
+            raise FunctionalTypeError("executable must be a bool")
         if self.request.batch_size != self.state_spec.batch_size:
-            raise ValueError("request and state batch sizes differ")
+            raise FunctionalValueError("request and state batch sizes differ")
         if self.request.batch_size not in self.capabilities.supported_batch_sizes:
-            raise ValueError("capabilities do not declare the request batch size")
+            raise FunctionalValueError("capabilities do not declare the request batch size")
         if self.request.api_version != self.identity.api_version:
-            raise ValueError("request and identity API versions differ")
+            raise FunctionalValueError("request and identity API versions differ")
         if (
             self.identity.to_metadata()["state_layout"]
             != self.state_spec.to_metadata()
         ):
-            raise ValueError("identity state layout differs from the declaration")
+            raise FunctionalValueError("identity state layout differs from the declaration")
         if not self.executable and (
             self.capabilities.pure_step
             or self.capabilities.combined_step_and_observe
@@ -579,7 +619,7 @@ class FunctionalRuntimeDeclaration:
             )
             or self.capabilities.differentiable_inputs
         ):
-            raise ValueError(
+            raise FunctionalValueError(
                 "a non-executable declaration cannot claim runtime capabilities"
             )
 
@@ -604,7 +644,7 @@ class FunctionalRuntimeDeclaration:
 
 @runtime_checkable
 class FunctionalRuntimeProtocol(Protocol):
-    """Provisional protocol; no implementation is provided by P9.1."""
+    """Stable batch-explicit functional runtime protocol."""
 
     @property
     def api_version(self) -> str: ...
@@ -667,6 +707,7 @@ __all__ = [
     "FUNCTIONAL_OBSERVATION_TIME",
     "FunctionalCapabilities",
     "FunctionalCapabilitySet",
+    "FunctionalCheckpointCompatibility",
     "FunctionalCheckpointBridgeProtocol",
     "FunctionalCheckpointState",
     "FunctionalControlFieldSpec",

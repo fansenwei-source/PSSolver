@@ -28,10 +28,21 @@ from pssolver.runtime.channel_beris_edwards import (
 
 from .contracts import (
     FUNCTIONAL_API_VERSION,
+    FunctionalCheckpointCompatibility,
     FunctionalCheckpointState,
     FunctionalRuntimeIdentity,
     FunctionalState,
     FunctionalStateSpec,
+)
+from .errors import (
+    FunctionalCheckpointCompatibilityError,
+    FunctionalCheckpointExistsError,
+    FunctionalCheckpointIntegrityError,
+    FunctionalCheckpointNotFoundError,
+)
+from .versioning import (
+    negotiate_functional_api_version,
+    runtime_identity_sha256_for_api_version,
 )
 
 
@@ -85,6 +96,7 @@ class ChannelActivityCheckpointBridge:
         if not isinstance(functional_identity, FunctionalRuntimeIdentity):
             raise TypeError("functional_identity must be a FunctionalRuntimeIdentity")
         self._state_spec = state_spec
+        self._functional_identity_metadata = functional_identity.to_metadata()
         self._functional_identity_sha256 = functional_identity.canonical_sha256()
         self._production_runtime_identity_sha256 = _require_sha256(
             production_runtime_identity_sha256,
@@ -110,13 +122,26 @@ class ChannelActivityCheckpointBridge:
     def format_version(self) -> int:
         return CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION
 
-    def _bridge_metadata(self) -> dict[str, object]:
+    def _bridge_metadata(
+        self,
+        *,
+        api_version: str = FUNCTIONAL_API_VERSION,
+    ) -> dict[str, object]:
+        negotiate_functional_api_version(
+            api_version,
+            purpose="checkpoint_read",
+        )
         return {
             "format_version": self.format_version,
-            "api_version": FUNCTIONAL_API_VERSION,
+            "api_version": api_version,
             "runtime_kind": "channel_activity_batch_one",
             "functional_runtime_identity_sha256": (
                 self._functional_identity_sha256
+                if api_version == FUNCTIONAL_API_VERSION
+                else runtime_identity_sha256_for_api_version(
+                    self._functional_identity_metadata,
+                    api_version,
+                )
             ),
             "production_runtime_identity_sha256": (
                 self._production_runtime_identity_sha256
@@ -157,7 +182,10 @@ class ChannelActivityCheckpointBridge:
         target = Path(directory).expanduser().resolve()
         target.parent.mkdir(parents=True, exist_ok=True)
         if target.exists():
-            raise FileExistsError(f"checkpoint directory already exists: {target}")
+            raise FunctionalCheckpointExistsError(
+                f"checkpoint directory already exists: {target}",
+                operation="channel_checkpoint_export",
+            )
         staging = Path(
             tempfile.mkdtemp(prefix=f".{target.name}.tmp-", dir=target.parent)
         )
@@ -192,11 +220,17 @@ class ChannelActivityCheckpointBridge:
     def _metadata(directory: Path) -> Mapping[str, object]:
         path = directory / "checkpoint.json"
         if not path.is_file():
-            raise FileNotFoundError(f"checkpoint metadata is missing: {path}")
+            raise FunctionalCheckpointNotFoundError(
+                f"checkpoint metadata is missing: {path}",
+                operation="channel_checkpoint_import",
+            )
         try:
             value = json.loads(path.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
-            raise ValueError("checkpoint metadata is not valid JSON") from exc
+            raise FunctionalCheckpointIntegrityError(
+                "checkpoint metadata is not valid JSON",
+                operation="channel_checkpoint_import",
+            ) from exc
         if not isinstance(value, Mapping):
             raise TypeError("checkpoint metadata must be a JSON object")
         return value
@@ -218,10 +252,16 @@ class ChannelActivityCheckpointBridge:
             raise ValueError(f"{description} tensor filename is invalid")
         path = directory / filename
         if not path.is_file():
-            raise FileNotFoundError(f"checkpoint tensor is missing: {path}")
+            raise FunctionalCheckpointNotFoundError(
+                f"checkpoint tensor is missing: {path}",
+                operation="channel_checkpoint_import",
+            )
         expected = _require_sha256(record.get("sha256"), "tensor SHA-256")
         if _sha256(path) != expected:
-            raise ValueError(f"checkpoint tensor checksum mismatch: {path}")
+            raise FunctionalCheckpointIntegrityError(
+                f"checkpoint tensor checksum mismatch: {path}",
+                operation="channel_checkpoint_import",
+            )
         array = np.load(path, allow_pickle=False)
         if list(array.shape) != record.get("shape"):
             raise ValueError(f"checkpoint tensor shape metadata differs: {path}")
@@ -237,10 +277,25 @@ class ChannelActivityCheckpointBridge:
         metadata: Mapping[str, object],
     ) -> FunctionalCheckpointState:
         if metadata.get("format_version") != self.format_version:
-            raise ValueError("unsupported Channel functional checkpoint version")
-        if metadata.get("functional_bridge") != self._bridge_metadata():
-            raise ValueError(
-                "functional checkpoint identity or state layout does not match target"
+            raise FunctionalCheckpointCompatibilityError(
+                "unsupported Channel functional checkpoint version",
+                operation="channel_checkpoint_import",
+            )
+        bridge = metadata.get("functional_bridge")
+        if not isinstance(bridge, Mapping):
+            raise FunctionalCheckpointCompatibilityError(
+                "functional checkpoint bridge metadata is missing",
+                operation="channel_checkpoint_import",
+            )
+        selection = negotiate_functional_api_version(
+            bridge.get("api_version"),
+            purpose="checkpoint_read",
+        )
+        if dict(bridge) != self._bridge_metadata(api_version=selection.requested):
+            raise FunctionalCheckpointCompatibilityError(
+                "functional checkpoint identity or state layout does not match target",
+                operation="channel_checkpoint_import",
+                details={"source_api_version": selection.requested},
             )
         completed = metadata.get("completed_steps")
         if (
@@ -265,7 +320,20 @@ class ChannelActivityCheckpointBridge:
                 values, self._state_spec.components, strict=True
             )
         )
-        return self._validated_state(state, completed, _SOURCE_FUNCTIONAL)
+        return self._validated_state(
+            state,
+            completed,
+            _SOURCE_FUNCTIONAL,
+            FunctionalCheckpointCompatibility(
+                source_api_version=selection.requested,
+                target_api_version=selection.effective,
+                reader=(
+                    selection.compatibility_reader
+                    or "current_channel_functional_bridge_v1_reader"
+                ),
+                exact_current_protocol=not selection.legacy,
+            ),
+        )
 
     def _import_production(
         self,
@@ -273,14 +341,23 @@ class ChannelActivityCheckpointBridge:
         metadata: Mapping[str, object],
     ) -> FunctionalCheckpointState:
         if metadata.get("runtime_path") != CHANNEL_COMPLETE_STRESS_RUNTIME_PATH:
-            raise ValueError("checkpoint runtime identity does not match target")
+            raise FunctionalCheckpointCompatibilityError(
+                "checkpoint runtime identity does not match target",
+                operation="channel_checkpoint_import",
+            )
         if (
             metadata.get("runtime_identity_sha256")
             != self._production_runtime_identity_sha256
         ):
-            raise ValueError("checkpoint scientific/runtime identity does not match")
+            raise FunctionalCheckpointCompatibilityError(
+                "checkpoint scientific/runtime identity does not match",
+                operation="channel_checkpoint_import",
+            )
         if metadata.get("backend_restart") != self._production_backend_restart:
-            raise ValueError("checkpoint backend contract does not match target")
+            raise FunctionalCheckpointCompatibilityError(
+                "checkpoint backend contract does not match target",
+                operation="channel_checkpoint_import",
+            )
         completed = metadata.get("completed_steps")
         if (
             not isinstance(completed, int)
@@ -329,6 +406,12 @@ class ChannelActivityCheckpointBridge:
             state,
             completed,
             _SOURCE_PRODUCTION,
+            FunctionalCheckpointCompatibility(
+                source_api_version=None,
+                target_api_version=FUNCTIONAL_API_VERSION,
+                reader="qualified_channel_production_v1_reader",
+                exact_current_protocol=False,
+            ),
         )
 
     def _validated_state(
@@ -336,6 +419,7 @@ class ChannelActivityCheckpointBridge:
         state: FunctionalState,
         completed_steps: int,
         source_format: str,
+        compatibility: FunctionalCheckpointCompatibility,
     ) -> FunctionalCheckpointState:
         self._state_spec.validate(state)
         if any(not bool(value.isfinite().all()) for value in state):
@@ -344,6 +428,7 @@ class ChannelActivityCheckpointBridge:
             state=state,
             completed_steps=completed_steps,
             source_format=source_format,
+            compatibility=compatibility,
         )
 
     def import_checkpoint(

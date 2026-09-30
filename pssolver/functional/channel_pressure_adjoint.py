@@ -9,7 +9,6 @@ restricted to small CPU problems and exists only as a qualification oracle.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
 from numbers import Integral
 from typing import Protocol, runtime_checkable
@@ -22,19 +21,16 @@ from pssolver.linear_solvers.stokes.channel_no_slip import (
 )
 
 from .channel_pressure import ChannelPressureTransposeOperator
+from .errors import FunctionalConvergenceError
+from .pressure_metadata import (
+    CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION,
+    ChannelPressureSolveDiagnostics,
+    channel_pressure_solve_diagnostics,
+)
 
 
 CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION = "1"
 CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES = 512
-
-
-@dataclass(frozen=True, slots=True)
-class ChannelPressureSolveDiagnostics:
-    """Scalar diagnostics from one graph-free pressure solve."""
-
-    iterations: int
-    residual: float
-    relative_residual: float
 
 
 @runtime_checkable
@@ -58,6 +54,11 @@ class ChannelImplicitPressureAdjointProtocol(Protocol):
 
     def implicit_adjoint_metadata(self) -> dict[str, object]:
         """Return the JSON-safe differentiation identity."""
+
+        ...
+
+    def pressure_solve_metadata(self) -> dict[str, object]:
+        """Return stable primal and transpose convergence outcomes."""
 
         ...
 
@@ -85,15 +86,21 @@ class ChannelImplicitPressureAdjoint:
             )
         self._solver = solver
         self._operators = ChannelPressureTransposeOperator(solver)
-        self.last_primal_diagnostics = ChannelPressureSolveDiagnostics(
-            iterations=0,
-            residual=0.0,
-            relative_residual=0.0,
+        self.last_primal_diagnostics = channel_pressure_solve_diagnostics(
+            solver,
+            operator_identity="channel_pressure_schur_primal",
+            achieved_iteration_count=0,
+            achieved_absolute_residual=0.0,
+            achieved_relative_residual=0.0,
+            termination_reason="not_run",
         )
-        self.last_transpose_diagnostics = ChannelPressureSolveDiagnostics(
-            iterations=0,
-            residual=0.0,
-            relative_residual=0.0,
+        self.last_transpose_diagnostics = channel_pressure_solve_diagnostics(
+            solver,
+            operator_identity="channel_pressure_schur_conjugate_transpose",
+            achieved_iteration_count=0,
+            achieved_absolute_residual=0.0,
+            achieved_relative_residual=0.0,
+            termination_reason="not_run",
         )
 
     def _validate_rhs(self, rhs_hat: torch.Tensor) -> None:
@@ -118,14 +125,17 @@ class ChannelImplicitPressureAdjoint:
             raise ValueError("pressure right-hand side must be finite")
 
     @torch.no_grad()
-    def _solve_no_grad(self, rhs_hat, action):
+    def _solve_no_grad(self, rhs_hat, action, operator_identity):
         rhs_hat = self._operators._project_gauge(rhs_hat)
         rhs_norm = torch.linalg.vector_norm(rhs_hat.reshape(-1)).item()
         if rhs_norm == 0.0:
-            return torch.zeros_like(rhs_hat), ChannelPressureSolveDiagnostics(
-                iterations=0,
-                residual=0.0,
-                relative_residual=0.0,
+            return torch.zeros_like(rhs_hat), channel_pressure_solve_diagnostics(
+                self._solver,
+                operator_identity=operator_identity,
+                achieved_iteration_count=0,
+                achieved_absolute_residual=0.0,
+                achieved_relative_residual=0.0,
+                termination_reason="zero_rhs",
             )
         pressure_hat = torch.zeros_like(rhs_hat)
         residual = rhs_hat.clone()
@@ -140,6 +150,12 @@ class ChannelImplicitPressureAdjoint:
             if self._solver.pressure_fixed_iterations is not None
             else self._solver.pressure_max_iter
         )
+        termination_reason = "iteration_limit_reached"
+        if (
+            self._solver.pressure_fixed_iterations is None
+            and residual_norm <= tolerance
+        ):
+            termination_reason = "relative_tolerance_met"
         while iterations < iteration_limit and (
             self._solver.pressure_fixed_iterations is not None
             or residual_norm > tolerance
@@ -158,6 +174,7 @@ class ChannelImplicitPressureAdjoint:
             if denominator_scale == 0.0 or (
                 denominator.abs().item() <= denominator_floor
             ):
+                termination_reason = "operator_breakdown"
                 break
             step = rz_old / denominator
             pressure_hat = self._operators._project_gauge(
@@ -171,6 +188,7 @@ class ChannelImplicitPressureAdjoint:
             ).item()
             iterations += 1
             if residual_norm <= tolerance:
+                termination_reason = "relative_tolerance_met"
                 break
             preconditioned = residual / self._solver.schur_diag_safe
             rz_new = torch.sum(torch.conj(residual) * preconditioned).real
@@ -180,13 +198,29 @@ class ChannelImplicitPressureAdjoint:
             ).item()
             rz_floor = torch.finfo(rz_old.dtype).eps * rz_scale
             if rz_scale == 0.0 or rz_old.abs().item() <= rz_floor:
+                termination_reason = "preconditioned_residual_breakdown"
                 break
             direction = preconditioned + (rz_new / rz_old) * direction
             rz_old = rz_new
-        diagnostics = ChannelPressureSolveDiagnostics(
-            iterations=iterations,
-            residual=residual_norm,
-            relative_residual=residual_norm / rhs_norm,
+        relative_residual = residual_norm / rhs_norm
+        if not all(
+            math.isfinite(value) for value in (residual_norm, relative_residual)
+        ):
+            raise FunctionalConvergenceError(
+                "functional pressure solve is non-finite",
+                operation="channel_pressure_solve",
+                details={
+                    "achieved_iteration_count": iterations,
+                    "termination_reason": termination_reason,
+                },
+            )
+        diagnostics = channel_pressure_solve_diagnostics(
+            self._solver,
+            operator_identity=operator_identity,
+            achieved_iteration_count=iterations,
+            achieved_absolute_residual=residual_norm,
+            achieved_relative_residual=relative_residual,
+            termination_reason=termination_reason,
         )
         return pressure_hat, diagnostics
 
@@ -194,6 +228,7 @@ class ChannelImplicitPressureAdjoint:
         value, diagnostics = self._solve_no_grad(
             rhs_hat,
             self._operators.apply_pressure_operator,
+            "channel_pressure_schur_primal",
         )
         self._validate_solve_diagnostics(diagnostics, "primal")
         self.last_primal_diagnostics = diagnostics
@@ -203,6 +238,7 @@ class ChannelImplicitPressureAdjoint:
         value, diagnostics = self._solve_no_grad(
             rhs_hat,
             self._operators.apply_pressure_operator_transpose,
+            "channel_pressure_schur_conjugate_transpose",
         )
         self._validate_solve_diagnostics(diagnostics, "transpose")
         self.last_transpose_diagnostics = diagnostics
@@ -213,36 +249,11 @@ class ChannelImplicitPressureAdjoint:
         diagnostics: ChannelPressureSolveDiagnostics,
         description: str,
     ) -> None:
-        if not all(
-            math.isfinite(value)
-            for value in (
-                diagnostics.residual,
-                diagnostics.relative_residual,
-            )
-        ):
-            raise RuntimeError(
-                f"functional pressure {description} solve is non-finite"
-            )
-        fixed = self._solver.pressure_fixed_iterations
-        if fixed is None:
-            if diagnostics.relative_residual > self._solver.pressure_rel_tol:
-                raise RuntimeError(
-                    f"functional pressure {description} solve did not meet "
-                    "its relative-residual tolerance"
-                )
-            return
-        if diagnostics.iterations > fixed:
-            raise RuntimeError(
-                f"functional pressure {description} solve exceeded its "
-                "fixed-iteration contract"
-            )
-        if (
-            diagnostics.iterations < fixed
-            and diagnostics.relative_residual > self._solver.pressure_rel_tol
-        ):
-            raise RuntimeError(
-                f"functional pressure {description} solve stopped before "
-                "its fixed-iteration or residual contract"
+        if not diagnostics.acceptable:
+            raise FunctionalConvergenceError(
+                f"functional pressure {description} solve is unacceptable",
+                operation=f"channel_pressure_{description}_solve",
+                details=diagnostics.to_metadata(),
             )
 
     def solve(self, rhs_hat: torch.Tensor) -> torch.Tensor:
@@ -308,6 +319,15 @@ class ChannelImplicitPressureAdjoint:
             "higher_order_derivatives": False,
             "unrolled_oracle": "small_grid_cpu_fixed_iteration_only",
             "functional_runtime_executable": False,
+        }
+
+    def pressure_solve_metadata(self) -> dict[str, object]:
+        """Return stable outcomes for the most recent primal/transpose solves."""
+
+        return {
+            "schema_version": CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION,
+            "primal": self.last_primal_diagnostics.to_metadata(),
+            "transpose": self.last_transpose_diagnostics.to_metadata(),
         }
 
 

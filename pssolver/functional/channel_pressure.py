@@ -17,6 +17,10 @@ from pssolver.linear_solvers.stokes.channel_no_slip import (
     ChannelNoSlipModalStokesSolver,
 )
 
+from .pressure_metadata import (
+    channel_pressure_solve_diagnostics,
+)
+
 
 CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION = "1"
 
@@ -54,6 +58,11 @@ class ChannelPressureTransposeProtocol(Protocol):
 
         ...
 
+    def pressure_solve_metadata(self) -> dict[str, object]:
+        """Return the most recent stable transpose-solve outcome."""
+
+        ...
+
 
 class ChannelPressureTransposeOperator:
     """Functional adapter over a frozen production Channel pressure solver.
@@ -74,6 +83,14 @@ class ChannelPressureTransposeOperator:
         self.last_transpose_iterations = 0
         self.last_transpose_residual = 0.0
         self.last_transpose_relative_residual = 0.0
+        self.last_transpose_diagnostics = channel_pressure_solve_diagnostics(
+            solver,
+            operator_identity="channel_pressure_schur_conjugate_transpose",
+            achieved_iteration_count=0,
+            achieved_absolute_residual=0.0,
+            achieved_relative_residual=0.0,
+            termination_reason="not_run",
+        )
 
     def _apply_axis_matrix(self, tensor, matrix, axis):
         spectral_axis = tensor.ndim - 3 + axis
@@ -215,6 +232,18 @@ class ChannelPressureTransposeOperator:
             self.last_transpose_iterations = 0
             self.last_transpose_residual = 0.0
             self.last_transpose_relative_residual = 0.0
+            self.last_transpose_diagnostics = (
+                channel_pressure_solve_diagnostics(
+                    self._solver,
+                    operator_identity=(
+                        "channel_pressure_schur_conjugate_transpose"
+                    ),
+                    achieved_iteration_count=0,
+                    achieved_absolute_residual=0.0,
+                    achieved_relative_residual=0.0,
+                    termination_reason="zero_rhs",
+                )
+            )
             return torch.zeros_like(rhs_hat)
         pressure_hat = torch.zeros_like(rhs_hat)
         residual = rhs_hat.clone()
@@ -229,6 +258,12 @@ class ChannelPressureTransposeOperator:
             if self._solver.pressure_fixed_iterations is not None
             else self._solver.pressure_max_iter
         )
+        termination_reason = "iteration_limit_reached"
+        if (
+            self._solver.pressure_fixed_iterations is None
+            and residual_norm <= tolerance
+        ):
+            termination_reason = "relative_tolerance_met"
         while iterations < iteration_limit and (
             self._solver.pressure_fixed_iterations is not None
             or residual_norm > tolerance
@@ -240,6 +275,7 @@ class ChannelPressureTransposeOperator:
                 torch.conj(direction) * operator_direction
             ).real
             if denominator.abs().item() < 1e-30:
+                termination_reason = "operator_breakdown"
                 break
             step = rz_old / denominator
             pressure_hat = self._project_gauge(pressure_hat + step * direction)
@@ -251,16 +287,26 @@ class ChannelPressureTransposeOperator:
             ).item()
             iterations += 1
             if residual_norm <= tolerance:
+                termination_reason = "relative_tolerance_met"
                 break
             preconditioned = residual / self._solver.schur_diag_safe
             rz_new = torch.sum(torch.conj(residual) * preconditioned).real
             if rz_old.abs().item() < 1e-30:
+                termination_reason = "preconditioned_residual_breakdown"
                 break
             direction = preconditioned + (rz_new / rz_old) * direction
             rz_old = rz_new
         self.last_transpose_iterations = iterations
         self.last_transpose_residual = residual_norm
         self.last_transpose_relative_residual = residual_norm / rhs_norm
+        self.last_transpose_diagnostics = channel_pressure_solve_diagnostics(
+            self._solver,
+            operator_identity="channel_pressure_schur_conjugate_transpose",
+            achieved_iteration_count=iterations,
+            achieved_absolute_residual=residual_norm,
+            achieved_relative_residual=residual_norm / rhs_norm,
+            termination_reason=termination_reason,
+        )
         return pressure_hat
 
     def pressure_transpose_metadata(self) -> dict[str, object]:
@@ -279,6 +325,11 @@ class ChannelPressureTransposeOperator:
             "custom_autograd_rule": False,
             "functional_runtime_executable": False,
         }
+
+    def pressure_solve_metadata(self) -> dict[str, object]:
+        """Return the latest transpose solve without changing PCG behavior."""
+
+        return self.last_transpose_diagnostics.to_metadata()
 
 
 __all__ = [
