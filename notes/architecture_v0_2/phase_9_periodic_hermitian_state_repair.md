@@ -49,6 +49,19 @@ The Provider functional identity and periodic runtime metadata record:
 hermitian_state_projection = self_conjugate_planes_each_step
 ```
 
+The repository-owned qualification command is:
+
+```bash
+python benchmarks/check_periodic_hermitian_stability.py \
+  --case loop3d --device cuda:0 --horizon 200 \
+  --output loop3d_hermitian_stability.json
+```
+
+The same command supports `--case r1`.  It emits strict JSON atomically,
+refuses to overwrite an existing report, checks the complete zero/Nyquist
+planes, and returns a nonzero status when the state becomes non-finite or the
+scale-aware Hermitian bound is exceeded.
+
 ## Local evidence
 
 - pre-fix reproducer: non-finite at `t = 86.48`;
@@ -56,7 +69,7 @@ hermitian_state_projection = self_conjugate_planes_each_step
   five-time-unit sample;
 - standard CPU long-horizon gate: finite through `t = 200`, with both packed
   self-conjugate planes exactly constrained at every sampled point;
-- full CPU suite: `2629 passed, 8 subtests passed`;
+- full CPU suite: `2630 passed, 8 subtests passed`;
 - a 120-step cross-version diagnostic changed the physical state by relative
   L2 `4.710330580247838e-17` and Linf `1.6653345369377348e-16`;
 - the same diagnostic changed the three one-step VJP components by relative

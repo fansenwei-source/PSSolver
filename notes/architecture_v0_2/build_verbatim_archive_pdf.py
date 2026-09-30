@@ -277,6 +277,7 @@ SOURCE_ORDER = (
     "phase_9_p984_local_cumulative_closure.json",
     "phase_9_p985a_runtime_diagnostics.md",
     "phase_9_p985a_runtime_diagnostics.json",
+    "phase_9_periodic_hermitian_state_repair.md",
 )
 
 PAGE_WIDTH = 595.276
