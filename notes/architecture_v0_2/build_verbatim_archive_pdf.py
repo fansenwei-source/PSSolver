@@ -257,6 +257,8 @@ SOURCE_ORDER = (
     "phase_9_p970_channel_functional_plan.json",
     "phase_9_p971_channel_functional_declarations.md",
     "phase_9_p971_channel_functional_declarations.json",
+    "phase_9_p972_channel_pressure_transpose.md",
+    "phase_9_p972_channel_pressure_transpose.json",
 )
 
 PAGE_WIDTH = 595.276

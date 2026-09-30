@@ -17,6 +17,11 @@ from .channel_activity import (
     channel_activity_functional_declaration,
     channel_activity_functional_request,
 )
+from .channel_pressure import (
+    CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION,
+    ChannelPressureTransposeOperator,
+    ChannelPressureTransposeProtocol,
+)
 
 from .contracts import (
     FUNCTIONAL_API_VERSION,
@@ -69,6 +74,7 @@ __all__ = [
     "CHANNEL_ACTIVITY_FUNCTIONAL_KIND",
     "CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT",
     "CHANNEL_FUNCTIONAL_PRESSURE_WARM_START",
+    "CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION",
     "FunctionalCapabilities",
     "FunctionalCapabilitySet",
     "FunctionalCheckpointBridgeProtocol",
@@ -85,6 +91,8 @@ __all__ = [
     "FunctionalState",
     "FunctionalStateSpec",
     "FunctionalTensorSpec",
+    "ChannelPressureTransposeOperator",
+    "ChannelPressureTransposeProtocol",
     "PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
     "PeriodicActivityCheckpointBridge",
     "PeriodicActivityFunctionalRuntime",

@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "phase": "P9.7.2",
+  "date": "2026-09-29",
+  "status": "complete",
+  "classification": "PASS_P9_7_2_CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL",
+  "title": "Explicit Channel pressure transpose and equation-level qualification",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "4fdb339",
+    "p9_7_1_record": "notes/architecture_v0_2/phase_9_p971_channel_functional_declarations.json",
+    "p9_7_1_complete": true
+  },
+  "scope": {
+    "operator": "channel_pressure_schur_complement",
+    "pressure_basis": ["periodic", "neumann", "neumann"],
+    "velocity_basis": ["periodic", "dirichlet", "dirichlet"],
+    "gauge": "zero_mean_pressure_mode",
+    "inner_product": "native_complex_euclidean_coefficient_space",
+    "protocol_version": "1",
+    "production_default_changed": false,
+    "production_hot_path_changed": false,
+    "functional_runtime_executable": false
+  },
+  "operator_contract": {
+    "primal": "P*(-D*A_inverse*G)*P",
+    "transpose": "P*G_adjoint*A_inverse_adjoint*(-D_adjoint)*P",
+    "transpose_assembly": "explicit_reverse_dataflow_conjugate_transpose",
+    "transpose_delegates_to_primal": false,
+    "symmetry_assumed_without_test": false,
+    "current_discretization_hermitian_after_validation": true,
+    "complex_linearity_tested": true,
+    "per_axis_adjoint_identity_tested": true,
+    "full_dot_product_identity_tested": true,
+    "zero_gauge_invariance_tested": true
+  },
+  "transpose_solve": {
+    "algorithm": "preconditioned_conjugate_gradient",
+    "initial_guess": "zero",
+    "uses_explicit_transpose_action": true,
+    "production_warm_start_read": false,
+    "production_warm_start_written": false,
+    "diagnostics_owned_by_adapter": true,
+    "pcg_iteration_graph_retained": false,
+    "manufactured_primal_recovery_tested": true,
+    "manufactured_transpose_recovery_tested": true
+  },
+  "compatibility": {
+    "canonical_production_solver": "pssolver/linear_solvers/stokes/channel_no_slip.py",
+    "canonical_production_solver_sha256": "4503f62df5204f7f48da7ca58674ebda45a3f775b7742dcc7bc7ab535c511b16",
+    "canonical_production_solver_modified": false,
+    "production_pressure_pcg_modified": false,
+    "production_pressure_warm_start_modified": false,
+    "channel_runtime_modified": false,
+    "stable_package_root_changed": false
+  },
+  "nonclaims": {
+    "custom_implicit_autograd_rule": false,
+    "pressure_gradient_qualified": false,
+    "activity_gradient_qualified": false,
+    "channel_functional_step_executable": false,
+    "functional_checkpoint_bridge_available": false,
+    "h100_qualified": false,
+    "phase_9_complete": false
+  },
+  "ownership": {
+    "repository_changed": "PSSolver_only",
+    "control_repository_changed": false,
+    "legacy_pssolver_control_changed": false,
+    "external_control_dependency_added": false
+  },
+  "qualification": {
+    "focused_with_frozen_solver": "27 passed",
+    "full": "2559 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "git_diff_check": "pass",
+    "h100_required": false,
+    "h100_submissions": 0,
+    "verbatim_pdf_regenerated": false
+  },
+  "source_scope": [
+    "pssolver/functional/channel_pressure.py",
+    "pssolver/functional/__init__.py",
+    "tests/test_phase9_p972_channel_pressure_transpose.py",
+    "tests/test_phase9_p972_record.py",
+    "notes/architecture_v0_2/phase_9_p972_channel_pressure_transpose.md",
+    "notes/architecture_v0_2/phase_9_p972_channel_pressure_transpose.json",
+    "notes/architecture_v0_2/build_verbatim_archive_pdf.py"
+  ],
+  "authorization": {
+    "p9_7_2_complete": true,
+    "p9_7_3_planning_eligible": true,
+    "p9_7_3_implementation_authorized": false,
+    "p9_7_4_through_p9_7_6_authorized": false,
+    "h100_authorized": false,
+    "phase_9_complete": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  },
+  "next_slice": "P9.7.3 custom implicit pressure adjoint and small-grid unrolled CPU oracle"
+}
