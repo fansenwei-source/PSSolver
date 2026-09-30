@@ -8,6 +8,7 @@ facade through the deprecation window recorded by the protocol provenance.
 from __future__ import annotations
 
 from collections.abc import Callable
+import json
 from pathlib import Path
 from typing import TypeVar
 
@@ -162,6 +163,32 @@ class _StableFunctionalRuntime:
 
     def identity(self) -> FunctionalRuntimeIdentity:
         return _invoke("runtime_identity", self._delegate.identity)
+
+    def diagnostics(self) -> dict[str, object]:
+        """Return an owned JSON snapshot without exposing runtime internals."""
+
+        metadata = _invoke("runtime_diagnostics", self._delegate.diagnostics)
+        if not isinstance(metadata, dict):
+            raise FunctionalTypeError(
+                "runtime diagnostics must be a dict",
+                operation="runtime_diagnostics",
+            )
+        try:
+            encoded = json.dumps(
+                metadata,
+                allow_nan=False,
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+            snapshot = json.loads(encoded)
+        except (TypeError, ValueError) as exc:
+            raise FunctionalValueError(
+                "runtime diagnostics must be finite JSON data",
+                operation="runtime_diagnostics",
+            ) from exc
+        if not isinstance(snapshot, dict):  # pragma: no cover - guarded above
+            raise AssertionError("JSON object diagnostics decoded incorrectly")
+        return snapshot
 
     def initial_state(self) -> FunctionalState:
         return _invoke("initial_state", self._delegate.initial_state)

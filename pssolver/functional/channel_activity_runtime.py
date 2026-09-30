@@ -200,6 +200,15 @@ class ChannelActivityFunctionalRuntime:
     def identity(self) -> FunctionalRuntimeIdentity:
         return self._identity
 
+    def diagnostics(self) -> dict[str, object]:
+        """Return stable outcomes from the latest primal/transpose solves."""
+
+        return {
+            "schema_version": 1,
+            "runtime_kind": CHANNEL_ACTIVITY_FUNCTIONAL_KIND,
+            "pressure": self._pressure.pressure_solve_metadata(),
+        }
+
     def initial_state(self) -> FunctionalState:
         return tuple(value.clone() for value in self._initial_state)
 

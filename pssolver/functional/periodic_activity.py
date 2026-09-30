@@ -353,6 +353,15 @@ class PeriodicActivityFunctionalRuntime:
     def identity(self) -> FunctionalRuntimeIdentity:
         return self._identity
 
+    def diagnostics(self) -> dict[str, object]:
+        """Return the stable diagnostic shape for the direct pressure path."""
+
+        return {
+            "schema_version": 1,
+            "runtime_kind": "periodic_activity_batch_one",
+            "pressure": None,
+        }
+
     def initial_state(self) -> FunctionalState:
         return tuple(value.clone() for value in self._initial_state)
 
