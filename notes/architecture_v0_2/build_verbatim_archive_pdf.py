@@ -251,6 +251,10 @@ SOURCE_ORDER = (
     "phase_9_p95_h100_closure.json",
     "phase_9_p96_independent_consumer_plan.md",
     "phase_9_p96_independent_consumer_plan.json",
+    "phase_9_p96_h100_closure.md",
+    "phase_9_p96_h100_closure.json",
+    "phase_9_p970_channel_functional_plan.md",
+    "phase_9_p970_channel_functional_plan.json",
 )
 
 PAGE_WIDTH = 595.276

@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "phase": "P9.6",
+  "date": "2026-09-29",
+  "status": "complete",
+  "classification": "PASS_P9_6_INDEPENDENT_PERIODIC_CONSUMER_INSTALLED_WHEEL_H100",
+  "provider_commit": "d878abd3caecffb99f2cbf9255963a42f401af11",
+  "external_consumer_commit": "53a1a0903021789c2edb6d029cb49b85071528c9",
+  "scope": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "periodic_box",
+    "runtime_path": "periodic_spectral",
+    "control": "spatially_varying_activity",
+    "batch_sizes_qualified": [1],
+    "checkpoint_strides": [1, 2, 4],
+    "real_dtype": "float64",
+    "tf32": false,
+    "production_default_changed": false
+  },
+  "package_and_cpu": {
+    "provider_suite": "pass",
+    "consumer_pytorch_2_5_1_compatibility": "pass",
+    "onemkl_irfft2_backward_compatibility": "pass",
+    "provider_wheel": "pass",
+    "consumer_wheel": "pass",
+    "installed_wheel_smoke": "69 passed",
+    "pip_check": "pass",
+    "source_shadow_import": false
+  },
+  "h100_functional": {
+    "gpu": "NVIDIA H100 PCIe",
+    "pytorch": "2.5.1+cu121",
+    "cuda_runtime": "12.1",
+    "provider_cuda_only_tests": "6 passed",
+    "consumer_cuda_only_tests": "5 passed",
+    "input_mapping": "pass",
+    "negative_gates": "10/10 pass",
+    "replay": "byte_for_byte",
+    "checkpointed_full_history_vjp_relative_l2": 0.0,
+    "objective_finite": true,
+    "gradient_finite": true,
+    "initial_state_adjoint_finite": true,
+    "memory_gate": "pass",
+    "fallback_used": false,
+    "source_shadow_import": false
+  },
+  "gradient_contract": {
+    "authoritative_gate": "independent_direction_gradient_subtracted_taylor_second_order",
+    "pointwise_richardson_status": "diagnostic_not_authoritative",
+    "directions": [
+      "normalized_gradient",
+      "low_frequency",
+      "random_seed_31",
+      "random_seed_37",
+      "random_seed_41"
+    ],
+    "all_direction_sha256_match": true,
+    "all_r1_finite": true,
+    "all_second_order_gates_passed": true,
+    "stable_first_order_tail_detected": false,
+    "classification": "GRADIENT_CONSISTENT_TAYLOR_SUPPORTED"
+  },
+  "archive": {
+    "directory": "/home/fansenwei/pssolver_phase9_p96_final_evidence_closure_d878abd_53a1a09_20260929_v8",
+    "checksum_entries": 24,
+    "checksum_passed": 24,
+    "manifest_sha256": "4c73933d629f25698286a7a150d74e8343ed080059f09d06409465a45860db3d",
+    "complete_present": true
+  },
+  "authorization": {
+    "p9_6_complete": true,
+    "p9_7_planning_eligible": true,
+    "p9_7_implementation_authorized": false,
+    "p9_8_authorized": false,
+    "larger_batch_authorized": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  }
+}

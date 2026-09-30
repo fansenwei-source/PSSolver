@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "phase": "P9.7.0",
+  "date": "2026-09-29",
+  "status": "complete",
+  "classification": "PASS_P9_7_0_CHANNEL_FUNCTIONAL_CONTRACT_FREEZE",
+  "title": "Channel functional runtime, implicit pressure adjoint, and second-consumer plan",
+  "prerequisite": {
+    "record": "notes/architecture_v0_2/phase_9_p96_h100_closure.json",
+    "classification": "PASS_P9_6_INDEPENDENT_PERIODIC_CONSUMER_INSTALLED_WHEEL_H100",
+    "p9_6_complete": true,
+    "p9_7_planning_eligible": true
+  },
+  "existing_assets": [
+    {
+      "path": "pssolver/runtime/channel_beris_edwards.py",
+      "role": "complete_stress_channel_production_runtime",
+      "change_policy": "p9_7_subject_to_reviewed_change",
+      "sha256": "cb16ae4456847801740f93e4d290146274b2f96a09917f514bea47c8318d9a4a",
+      "git_blob": "9b60af95f46df1fc1bc33ee8cb44502156c772f6"
+    },
+    {
+      "path": "pssolver/linear_solvers/stokes/channel_no_slip.py",
+      "role": "matrix_free_channel_pressure_schur_solver",
+      "change_policy": "p9_7_subject_to_reviewed_change",
+      "sha256": "4503f62df5204f7f48da7ca58674ebda45a3f775b7742dcc7bc7ab535c511b16",
+      "git_blob": "f6154b8b28efa8f57b1d2e01d0d50411d1948392"
+    },
+    {
+      "path": "pssolver/functional/contracts.py",
+      "role": "provisional_functional_contract",
+      "change_policy": "p9_7_subject_to_reviewed_change",
+      "sha256": "e6d7ae09d91f38501f75e8fe301f63e1f8d5f01d9f2cdda6a25db04f83f8f657",
+      "git_blob": "47d568cfb3c8bce1cc012de33489d757661f4eb1"
+    },
+    {
+      "path": "pssolver/control/functional.py",
+      "role": "frozen_legacy_channel_functional_oracle",
+      "change_policy": "frozen_oracle",
+      "sha256": "276f9175184cd865ed92a3bffa55cbbaaef14e36fc878cf5061fb6ce4897605b",
+      "git_blob": "db9115625dbac778d27a57f388bdb9605b23850b"
+    },
+    {
+      "path": "pssolver/control/dal.py",
+      "role": "frozen_legacy_channel_discrete_adjoint_oracle",
+      "change_policy": "frozen_oracle",
+      "sha256": "517c3244664738bf8a8be4b2705ba8c7baddc4ceb1d36c15643549798eac3b0f",
+      "git_blob": "d41b09096a4146cd7349f7660062408c22a7c3b2"
+    },
+    {
+      "path": "tests/test_channel_dal.py",
+      "role": "frozen_channel_control_numerical_oracle",
+      "change_policy": "frozen_oracle",
+      "sha256": "2777cc8740d9f7d3cdd926ece78ea9bc9edb9b00826a50d7c8d8b18d5d23aa88",
+      "git_blob": "0ed1a2563a48cf39d52bfc97d5433bf4a4f05381"
+    }
+  ],
+  "first_supported_combination": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "rectangular_channel",
+    "periodic_axes": ["x"],
+    "bounded_axes": ["y", "z"],
+    "boundary_conditions": {
+      "Q": ["periodic", "neumann", "neumann"],
+      "velocity": ["periodic", "dirichlet", "dirichlet"],
+      "pressure": ["periodic", "neumann", "neumann"]
+    },
+    "pressure_gauge": "zero_mean",
+    "control": {
+      "name": "activity",
+      "kind": "spatial_field",
+      "admissible_minimum": 0.0,
+      "equation_injection": "form_beta_times_activity_times_Q_before_divergence"
+    },
+    "batch_sizes": [1],
+    "real_dtype": "float64",
+    "tf32": false,
+    "static_q_dirichlet_lifting_required": false,
+    "robin_required": false
+  },
+  "functional_contract": {
+    "api_module": "pssolver.functional",
+    "api_stability": "provisional_until_p9_8",
+    "runtime_kind": "channel_activity_batch_one",
+    "state_components": ["q_physical", "q_spectral"],
+    "state_order_is_identity": true,
+    "pressure_guess_in_state": false,
+    "pressure_warm_start_policy": "disabled_in_functional_path",
+    "production_pressure_warm_start_unchanged": true,
+    "q_gradient_cache": "derived_and_rebuilt_not_state",
+    "diagnostics": "observation_only_never_future_affecting_state",
+    "progress_counter": "external_not_hidden",
+    "input_mutation_allowed": false,
+    "pure_step_required": true,
+    "step_and_observe_required": true,
+    "observations": ["Q", "velocity", "pressure"],
+    "terminal_observation_without_control": ["Q"],
+    "replay_target": "bitwise_same_device_dtype_and_execution_identity"
+  },
+  "pressure_adjoint_contract": {
+    "primal_problem": "solve_S_p_equals_b_in_zero_mean_pressure_subspace",
+    "reverse_problem": "solve_explicit_transpose_S_T_lambda_equals_pressure_cotangent",
+    "transpose_symmetry_assumed_without_test": false,
+    "production_strategy": "custom_implicit_adjoint",
+    "forward_iterations_retained_for_backward": false,
+    "unrolled_fixed_iteration_role": "small_grid_cpu_oracle_only",
+    "forward_pressure_initial_guess": "zero",
+    "primal_and_adjoint_zero_mean_projection": true,
+    "residual_failure_policy": "fail_closed",
+    "required_gates": [
+      "pressure_operator_linearity",
+      "pressure_operator_zero_mean_invariance",
+      "transpose_dot_product_identity",
+      "manufactured_primal_pressure_solve",
+      "manufactured_transpose_pressure_solve",
+      "implicit_vjp_vs_unrolled_small_grid_oracle",
+      "finite_difference_and_gradient_subtracted_taylor",
+      "memory_independent_of_pcg_iteration_history"
+    ]
+  },
+  "ownership": {
+    "dependency_direction": "independent_consumer_to_pssolver_public_api_only",
+    "pssolver_owns": [
+      "channel_functional_state_control_observation_and_identity",
+      "channel_primal_pressure_operator",
+      "channel_pressure_transpose_and_implicit_adjoint",
+      "physical_control_admissibility_and_equation_injection",
+      "functional_production_consistency",
+      "durable_checkpoint_conversion"
+    ],
+    "independent_consumer_owns": [
+      "channel_adapter",
+      "control_parameterization",
+      "objective",
+      "checkpoint_schedule",
+      "adjoint_orchestration",
+      "optimizer_and_campaign"
+    ],
+    "pssolver_imports_consumer": false,
+    "consumer_private_pssolver_access": false,
+    "legacy_pssolver_control_status": "frozen_oracle_no_new_features"
+  },
+  "second_consumer": {
+    "location": "independently_maintained_control_project",
+    "task": "migrate_channel_dal_exercise_to_public_pssolver_functional_api",
+    "must_use_installed_wheel": true,
+    "must_not_use": [
+      "private_pssolver_members",
+      "pssolver.control_as_runtime_dependency",
+      "source_checkout_shadowing",
+      "legacy_fallback"
+    ],
+    "scientific_control_claim": false
+  },
+  "slices": [
+    {
+      "id": "P9.7.1",
+      "scope": "channel functional declarations, request, state, controls, observations, and identities"
+    },
+    {
+      "id": "P9.7.2",
+      "scope": "pressure transpose protocol plus linearity, gauge, dot-product, and manufactured tests"
+    },
+    {
+      "id": "P9.7.3",
+      "scope": "custom implicit pressure adjoint and small-grid unrolled oracle"
+    },
+    {
+      "id": "P9.7.4",
+      "scope": "pure Channel step, activity control, observations, replay, and checkpoint bridge"
+    },
+    {
+      "id": "P9.7.5",
+      "scope": "independent second consumer migration and CPU qualification"
+    },
+    {
+      "id": "P9.7.6",
+      "scope": "installed-wheel CPU and single-H100 closure with correctness, gradients, memory, and provenance"
+    }
+  ],
+  "acceptance": {
+    "production_functional_forward_consistency": "R12_or_stronger_under_matched_zero_warm_start_policy",
+    "checkpointed_full_history_vjp": "match",
+    "gradient_gate": "independent_direction_gradient_subtracted_taylor_second_order",
+    "restart_and_replay": "bitwise_same_identity",
+    "pressure_memory": "does_not_retain_pcg_iteration_graph",
+    "negative_gates": [
+      "runtime_identity_tamper",
+      "backend_identity_tamper",
+      "state_layout_tamper",
+      "pressure_solver_identity_tamper",
+      "checkpoint_tensor_tamper",
+      "unsupported_batch_size",
+      "nonconverged_primal_pressure",
+      "nonconverged_adjoint_pressure"
+    ]
+  },
+  "nonclaims": [
+    "no_channel_functional_runtime_is_implemented_by_p9_7_0",
+    "no_pressure_gradient_is_qualified_by_p9_7_0",
+    "no_h100_job_is_required_by_p9_7_0",
+    "no_runtime_or_production_default_is_changed",
+    "no_batch_size_above_one_is_authorized",
+    "no_static_dirichlet_lifting_or_robin_channel_control_is_added",
+    "no_optimizer_or_scientific_control_campaign_is_run"
+  ],
+  "authorization": {
+    "p9_7_0_complete": true,
+    "p9_7_1_planning_eligible": true,
+    "p9_7_1_implementation_authorized": false,
+    "p9_7_2_through_p9_7_6_authorized": false,
+    "phase_9_complete": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  }
+}
