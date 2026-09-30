@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "phase": "P9.7.1",
+  "date": "2026-09-29",
+  "status": "complete",
+  "classification": "PASS_P9_7_1_CHANNEL_FUNCTIONAL_DECLARATIONS",
+  "title": "Non-executable complete-stress Channel functional declarations",
+  "baseline": {
+    "branch": "next/pssolver-v0.2.0-architecture",
+    "commit": "fa63323",
+    "p9_7_0_record": "notes/architecture_v0_2/phase_9_p970_channel_functional_plan.json",
+    "p9_7_0_complete": true
+  },
+  "scope": {
+    "model": "complete_stress_beris_edwards",
+    "geometry": "rectangular_channel",
+    "runtime_path": "channel_complete_stress",
+    "functional_kind": "channel_activity_batch_one",
+    "batch_sizes": [1],
+    "real_dtype": "float64",
+    "spectral_dtype": "complex128",
+    "spectral_storage": "full_complex",
+    "pointwise_execution": "eager",
+    "tf32": false,
+    "executable": false,
+    "production_default_changed": false,
+    "stable_package_root_changed": false
+  },
+  "public_provisional_api": {
+    "module": "pssolver.functional",
+    "names": [
+      "FunctionalRuntimeDeclaration",
+      "CHANNEL_ACTIVITY_FUNCTIONAL_KIND",
+      "CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT",
+      "CHANNEL_FUNCTIONAL_PRESSURE_WARM_START",
+      "channel_activity_functional_declaration",
+      "channel_activity_functional_request"
+    ],
+    "package_root_reexported": false,
+    "api_version": "0.1-provisional"
+  },
+  "state": {
+    "container": "flat_tuple",
+    "components": ["q_physical", "q_spectral"],
+    "physical_layout": [5, "batch", "nx", "ny", "nz"],
+    "spectral_layout": [5, "batch", "periodic_x", "neumann_y", "neumann_z"],
+    "pressure_guess_in_state": false,
+    "q_gradient_cache_in_state": false,
+    "progress_counter_in_state": false,
+    "caller_tensor_mutation_allowed": false
+  },
+  "control": {
+    "name": "activity",
+    "layout": ["batch", "nx", "ny", "nz"],
+    "grid_location": "cell_centered_physical_grid",
+    "equation_term": "div(beta * alpha * Q)",
+    "injection_order": "form_beta_alpha_q_product_before_divergence",
+    "admissible_min": 0.0,
+    "implicit_conversion": false,
+    "implicit_clipping": false
+  },
+  "observations": {
+    "time_alignment": "input_state_under_current_control",
+    "names": ["Q", "velocity", "pressure"],
+    "terminal_without_control": ["Q"],
+    "velocity_and_pressure_control_dependent": true
+  },
+  "boundary_spaces": {
+    "Q": ["periodic", "neumann", "neumann"],
+    "velocity": ["periodic", "dirichlet", "dirichlet"],
+    "pressure": ["periodic", "neumann", "neumann"],
+    "pressure_gauge": "zero_mean"
+  },
+  "pressure_policy": {
+    "solver": "channel_no_slip_modal_stokes_pcg",
+    "production_warm_start": true,
+    "functional_warm_start": false,
+    "functional_initial_guess": "zero",
+    "transpose_action": "not_implemented",
+    "gradient": "not_qualified"
+  },
+  "capabilities": {
+    "pure_step": false,
+    "combined_step_and_observe": false,
+    "deterministic_replay": "not_qualified",
+    "differentiability": "not_qualified",
+    "durable_checkpoint_bridge": false,
+    "explicit_jvp": false,
+    "explicit_vjp": false,
+    "inner_solve_gradient": "not_qualified",
+    "differentiable_inputs": []
+  },
+  "identity": {
+    "includes_scientific_discretization_execution_and_state_layout": true,
+    "includes_boundary_spaces": true,
+    "includes_pressure_solver_controls": true,
+    "includes_production_and_functional_warm_start_distinction": true,
+    "canonical_sha256": true,
+    "json_finite": true,
+    "fallback_allowed": false,
+    "fallback_used": false
+  },
+  "ownership": {
+    "repository_changed": "PSSolver_only",
+    "control_repository_changed": false,
+    "legacy_pssolver_control_changed": false,
+    "external_control_dependency_added": false
+  },
+  "qualification": {
+    "focused_and_adjacent": "106 passed",
+    "full": "2546 passed, 8 subtests passed",
+    "failed": 0,
+    "skipped": 0,
+    "deselected": 0,
+    "git_diff_check": "pass",
+    "output_directory_created": false,
+    "snapshot_read_for_execution": false,
+    "h100_required": false,
+    "h100_submissions": 0,
+    "verbatim_pdf_regenerated": false
+  },
+  "source_scope": [
+    "pssolver/functional/contracts.py",
+    "pssolver/functional/channel_activity.py",
+    "pssolver/functional/__init__.py",
+    "tests/test_phase9_p971_channel_functional_declarations.py",
+    "tests/test_phase9_p971_record.py",
+    "notes/architecture_v0_2/phase_9_p971_channel_functional_declarations.md",
+    "notes/architecture_v0_2/phase_9_p971_channel_functional_declarations.json",
+    "notes/architecture_v0_2/build_verbatim_archive_pdf.py"
+  ],
+  "authorization": {
+    "p9_7_1_complete": true,
+    "p9_7_2_planning_eligible": true,
+    "p9_7_2_implementation_authorized": false,
+    "p9_7_3_through_p9_7_6_authorized": false,
+    "h100_authorized": false,
+    "phase_9_complete": false,
+    "production_default_changed": false,
+    "verbatim_pdf_regenerated": false
+  },
+  "next_slice": "P9.7.2 explicit Channel pressure-transpose protocol and operator tests"
+}

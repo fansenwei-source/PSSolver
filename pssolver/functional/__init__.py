@@ -5,9 +5,18 @@ is not part of the stable package-root API.  P9.2--P9.5 implement and qualify
 only the batch-one periodic complete-stress activity-control runtime, bitwise
 CPU/H100 replay under a fixed execution identity, its periodic
 production-checkpoint bridge, and frozen gradient, performance, memory, and
-production-consistency gates; unsupported model--geometry combinations
-continue to fail before execution.
+production-consistency gates.  P9.7.1 additionally declares, but does not
+execute, the first batch-one complete-stress Channel functional contract;
+unsupported model--geometry combinations continue to fail before execution.
 """
+
+from .channel_activity import (
+    CHANNEL_ACTIVITY_FUNCTIONAL_KIND,
+    CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT,
+    CHANNEL_FUNCTIONAL_PRESSURE_WARM_START,
+    channel_activity_functional_declaration,
+    channel_activity_functional_request,
+)
 
 from .contracts import (
     FUNCTIONAL_API_VERSION,
@@ -21,6 +30,7 @@ from .contracts import (
     FunctionalObservationSpec,
     FunctionalObservations,
     FunctionalRuntimeConstructionRequest,
+    FunctionalRuntimeDeclaration,
     FunctionalRuntimeFactoryProtocol,
     FunctionalRuntimeIdentity,
     FunctionalRuntimeProtocol,
@@ -56,6 +66,9 @@ from .validation import (
 __all__ = [
     "FUNCTIONAL_API_VERSION",
     "FUNCTIONAL_OBSERVATION_TIME",
+    "CHANNEL_ACTIVITY_FUNCTIONAL_KIND",
+    "CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT",
+    "CHANNEL_FUNCTIONAL_PRESSURE_WARM_START",
     "FunctionalCapabilities",
     "FunctionalCapabilitySet",
     "FunctionalCheckpointBridgeProtocol",
@@ -65,6 +78,7 @@ __all__ = [
     "FunctionalObservationSpec",
     "FunctionalObservations",
     "FunctionalRuntimeConstructionRequest",
+    "FunctionalRuntimeDeclaration",
     "FunctionalRuntimeFactoryProtocol",
     "FunctionalRuntimeIdentity",
     "FunctionalRuntimeProtocol",
@@ -84,6 +98,8 @@ __all__ = [
     "PeriodicProductionConsistencyReport",
     "TensorConsistencyCheck",
     "build_functional_runtime",
+    "channel_activity_functional_declaration",
+    "channel_activity_functional_request",
     "evaluate_periodic_activity_gradients",
     "evaluate_periodic_production_consistency",
     "periodic_activity_functional_request",

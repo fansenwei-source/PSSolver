@@ -528,6 +528,80 @@ class FunctionalRuntimeConstructionRequest:
         }
 
 
+@dataclass(frozen=True, slots=True)
+class FunctionalRuntimeDeclaration:
+    """Non-executable declaration of one future functional runtime.
+
+    The declaration binds the prospective state layout and runtime identity to
+    a canonical construction request without claiming that a factory, step,
+    observation, checkpoint bridge, or derivative is available.
+    """
+
+    request: FunctionalRuntimeConstructionRequest
+    state_spec: FunctionalStateSpec
+    capabilities: FunctionalCapabilitySet
+    identity: FunctionalRuntimeIdentity
+    executable: bool = False
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.request, FunctionalRuntimeConstructionRequest):
+            raise TypeError("request must be a functional construction request")
+        if not isinstance(self.state_spec, FunctionalStateSpec):
+            raise TypeError("state_spec must be a FunctionalStateSpec")
+        if not isinstance(self.capabilities, FunctionalCapabilitySet):
+            raise TypeError("capabilities must be a FunctionalCapabilitySet")
+        if not isinstance(self.identity, FunctionalRuntimeIdentity):
+            raise TypeError("identity must be a FunctionalRuntimeIdentity")
+        if not isinstance(self.executable, bool):
+            raise TypeError("executable must be a bool")
+        if self.request.batch_size != self.state_spec.batch_size:
+            raise ValueError("request and state batch sizes differ")
+        if self.request.batch_size not in self.capabilities.supported_batch_sizes:
+            raise ValueError("capabilities do not declare the request batch size")
+        if self.request.api_version != self.identity.api_version:
+            raise ValueError("request and identity API versions differ")
+        if (
+            self.identity.to_metadata()["state_layout"]
+            != self.state_spec.to_metadata()
+        ):
+            raise ValueError("identity state layout differs from the declaration")
+        if not self.executable and (
+            self.capabilities.pure_step
+            or self.capabilities.combined_step_and_observe
+            or self.capabilities.deterministic_replay != "not_qualified"
+            or self.capabilities.differentiability != "not_qualified"
+            or self.capabilities.durable_checkpoint_bridge
+            or self.capabilities.explicit_jvp
+            or self.capabilities.explicit_vjp
+            or (
+                self.capabilities.inner_solve_gradient
+                not in {"not_applicable", "not_qualified"}
+            )
+            or self.capabilities.differentiable_inputs
+        ):
+            raise ValueError(
+                "a non-executable declaration cannot claim runtime capabilities"
+            )
+
+    @property
+    def control_specs(self) -> tuple[FunctionalControlFieldSpec, ...]:
+        return self.request.control_fields
+
+    @property
+    def observation_specs(self) -> tuple[FunctionalObservationSpec, ...]:
+        return self.request.observations
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "executable": self.executable,
+            "request": self.request.to_metadata(),
+            "state_spec": self.state_spec.to_metadata(),
+            "capabilities": self.capabilities.to_metadata(),
+            "identity": self.identity.to_metadata(),
+            "identity_sha256": self.identity.canonical_sha256(),
+        }
+
+
 @runtime_checkable
 class FunctionalRuntimeProtocol(Protocol):
     """Provisional protocol; no implementation is provided by P9.1."""
@@ -600,6 +674,7 @@ __all__ = [
     "FunctionalObservationSpec",
     "FunctionalObservations",
     "FunctionalRuntimeConstructionRequest",
+    "FunctionalRuntimeDeclaration",
     "FunctionalRuntimeFactoryProtocol",
     "FunctionalRuntimeIdentity",
     "FunctionalRuntimeProtocol",
