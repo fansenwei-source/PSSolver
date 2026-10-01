@@ -62,6 +62,34 @@ refuses to overwrite an existing report, checks the complete zero/Nyquist
 planes, and returns a nonzero status when the state becomes non-finite or the
 scale-aware Hermitian bound is exceeded.
 
+## Qualification profiler contract
+
+The frozen P9.5 profiler predates this repair and intentionally does not emit
+transform-dispatch or production fallback evidence.  It remains unchanged.
+The versioned wrapper
+`benchmarks/profile_periodic_hermitian_qualification.py` reuses its timing,
+memory, forward, and VJP measurements and adds a separate capability audit on
+a fresh, untimed runtime.
+
+That audit:
+
+- counts actual Python backend `forward` and `inverse` dispatches without
+  installing CUDA event timers;
+- records production fallback from `PeriodicRuntimeAdapter.to_metadata()`;
+- records functional fallback from the functional runtime identity;
+- requires the candidate identity to declare
+  `self_conjugate_planes_each_step`;
+- keeps transform counting outside the performance window; and
+- records graph-break and compile-fallback metrics as inapplicable for the
+  explicitly requested eager pointwise path.
+
+Inapplicable metrics use a typed record with `applicable=false`, `value=null`,
+and `reason=pointwise_execution_eager`.  They are never represented by an
+invented zero or false value.  The fail-closed A/B analyzer is
+`benchmarks/analyze_periodic_hermitian_profiles.py`; it requires 36 profiles,
+exact A/B transform-count preservation, runtime fallback rejection, and the
+pre-registered timing and memory non-regression bounds.
+
 ## Local evidence
 
 - pre-fix reproducer: non-finite at `t = 86.48`;
