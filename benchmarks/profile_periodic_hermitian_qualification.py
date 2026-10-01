@@ -16,11 +16,14 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager
+import hashlib
 import math
+import os
 from pathlib import Path
 import tempfile
 from typing import Iterator
 
+import numpy as np
 import torch
 
 from benchmarks.profile_periodic_functional import (
@@ -125,8 +128,54 @@ def _finite(values) -> bool:
     return all(bool(torch.isfinite(value).all().item()) for value in values)
 
 
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _atomic_physical_q(path: Path, value: torch.Tensor) -> dict[str, object]:
+    path = path.expanduser().resolve()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists():
+        raise FileExistsError(f"refusing to overwrite {path}")
+    if path.suffix != ".npy":
+        raise ValueError("physical Q artifact must use a .npy filename")
+    if value.ndim != 5 or value.shape[0] != 5 or value.shape[1] != 1:
+        raise ValueError("physical Q tensor has an unexpected layout")
+    array = (
+        value[:, 0]
+        .movedim(0, -1)
+        .detach()
+        .to(device="cpu")
+        .contiguous()
+        .numpy()
+    )
+    if array.dtype != np.float64 or not bool(np.isfinite(array).all()):
+        raise ValueError("physical Q artifact must be finite float64")
+    temporary = path.with_name(f".{path.stem}.tmp-{os.getpid()}.npy")
+    try:
+        with temporary.open("xb") as handle:
+            np.save(handle, array, allow_pickle=False)
+        os.replace(temporary, path)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+    return {
+        "path": str(path),
+        "sha256": _sha256(path),
+        "shape": list(array.shape),
+        "dtype": str(array.dtype),
+        "finite": True,
+    }
+
+
 def _runtime_capability_audit(
     config: PeriodicFunctionalProfileConfig,
+    *,
+    physical_artifact_path: Path | None = None,
 ) -> dict[str, object]:
     """Run one fresh, untimed operation and report actual capabilities."""
 
@@ -205,6 +254,11 @@ def _runtime_capability_audit(
         raise RuntimeError("transform dispatch audit observed no transform calls")
     if not _finite(values):
         raise RuntimeError("capability audit produced a non-finite result")
+    physical_artifact = (
+        None
+        if physical_artifact_path is None
+        else _atomic_physical_q(physical_artifact_path, values[0])
+    )
     return {
         "measurement_scope": "one_fresh_untimed_operation",
         "timing_contaminated": False,
@@ -221,6 +275,7 @@ def _runtime_capability_audit(
             "finite": True,
             "sha256": _tensor_sha256(values),
         },
+        "physical_q_artifact": physical_artifact,
     }
 
 
@@ -229,11 +284,21 @@ def run_qualification_profile(
     *,
     variant: str,
     repository_root: Path | None = None,
+    physical_artifact_path: Path | None = None,
 ) -> dict[str, object]:
     if variant not in QUALIFICATION_VARIANTS:
         raise ValueError(f"variant must be one of {QUALIFICATION_VARIANTS}")
     base = run_profile(config, repository_root=repository_root)
-    capability = _runtime_capability_audit(config)
+    if physical_artifact_path is not None and (
+        config.role != "production_forward" or config.trial != 1
+    ):
+        raise ValueError(
+            "physical Q artifacts are restricted to production_forward trial 1"
+        )
+    capability = _runtime_capability_audit(
+        config,
+        physical_artifact_path=physical_artifact_path,
+    )
     return {
         "schema_version": QUALIFICATION_PROFILE_SCHEMA_VERSION,
         "kind": QUALIFICATION_PROFILE_KIND,
@@ -259,6 +324,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--warmup-steps", type=int, default=5)
     parser.add_argument("--profile-steps", type=int, default=20)
     parser.add_argument("--repository-root", type=Path)
+    parser.add_argument("--physical-artifact", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
     config = PeriodicFunctionalProfileConfig(
@@ -278,6 +344,7 @@ def main(argv: list[str] | None = None) -> int:
         config,
         variant=args.variant,
         repository_root=args.repository_root,
+        physical_artifact_path=args.physical_artifact,
     )
     _atomic_json(args.output, report)
     return 0

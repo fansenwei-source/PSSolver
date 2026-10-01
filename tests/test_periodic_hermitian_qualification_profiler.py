@@ -3,14 +3,17 @@
 from __future__ import annotations
 
 import copy
+from pathlib import Path
 
 import numpy as np
 import pytest
 
+import benchmarks.analyze_periodic_hermitian_profiles as analyzer
 from benchmarks.analyze_periodic_hermitian_profiles import (
     FROZEN_INPUT_SHA256,
     HermitianProfileEvidenceError,
     PASS_CLASSIFICATION,
+    _compare_physical_q,
     analyze,
     validate_capability_audit,
 )
@@ -119,6 +122,45 @@ def test_capability_validator_rejects_fallback_and_missing_projection(role_repor
         )
 
 
+def test_profiler_writes_canonical_physical_q_artifact(tmp_path):
+    path = _initial_q(tmp_path)
+    artifact = tmp_path / "physical_q.npy"
+    report = run_qualification_profile(
+        _config(path, "production_forward"),
+        variant="candidate",
+        physical_artifact_path=artifact,
+    )
+    metadata = report["capability_audit"]["physical_q_artifact"]
+    values = np.load(artifact, allow_pickle=False)
+    assert metadata["shape"] == [6, 6, 4, 5]
+    assert metadata["dtype"] == "float64"
+    assert metadata["finite"] is True
+    assert values.shape == (6, 6, 4, 5)
+    assert values.dtype == np.float64
+
+    with pytest.raises(FileExistsError, match="overwrite"):
+        run_qualification_profile(
+            _config(path, "production_forward"),
+            variant="candidate",
+            physical_artifact_path=artifact,
+        )
+
+
+def test_physical_q_comparison_uses_relative_l2_gate(tmp_path):
+    left = tmp_path / "left.npy"
+    right = tmp_path / "right.npy"
+    values = np.ones((3, 2, 2, 5), dtype=np.float64)
+    np.save(left, values, allow_pickle=False)
+    np.save(right, values + 1.0e-14, allow_pickle=False)
+    result = _compare_physical_q(left, right)
+    assert result["relative_l2"] < 1.0e-12
+    assert result["linf"] > 0.0
+
+    np.save(right, values + 1.0e-4, allow_pickle=False)
+    with pytest.raises(HermitianProfileEvidenceError, match="relative L2"):
+        _compare_physical_q(left, right)
+
+
 def _matrix(role_reports):
     reports = []
     for variant, commit, factor in (
@@ -171,11 +213,36 @@ def _matrix(role_reports):
                         "peak_reserved_bytes": int(2000 * factor),
                         "device_total_bytes": 10000,
                     }
+                    report["capability_audit"]["physical_q_artifact"] = (
+                        {
+                            "path": f"/synthetic/{variant}-{shape[0]}.npy",
+                            "sha256": "d" * 64,
+                            "shape": [*shape, 5],
+                            "dtype": "float64",
+                            "finite": True,
+                        }
+                        if role == "production_forward" and trial == 1
+                        else None
+                    )
                     reports.append(report)
     return reports
 
 
-def test_analyzer_accepts_non_regression_matrix(role_reports):
+def _mock_artifacts(monkeypatch):
+    monkeypatch.setattr(
+        analyzer,
+        "_validate_physical_artifact",
+        lambda value, expected_shape: Path(value["path"]),
+    )
+    monkeypatch.setattr(
+        analyzer,
+        "_compare_physical_q",
+        lambda left, right: {"relative_l2": 0.0, "linf": 0.0},
+    )
+
+
+def test_analyzer_accepts_non_regression_matrix(role_reports, monkeypatch):
+    _mock_artifacts(monkeypatch)
     result = analyze(
         _matrix(role_reports),
         baseline_commit=BASELINE,
@@ -186,7 +253,11 @@ def test_analyzer_accepts_non_regression_matrix(role_reports):
     assert result["profile_count"] == 36
 
 
-def test_analyzer_rejects_performance_and_transform_regressions(role_reports):
+def test_analyzer_rejects_performance_and_transform_regressions(
+    role_reports,
+    monkeypatch,
+):
+    _mock_artifacts(monkeypatch)
     reports = _matrix(role_reports)
     target = next(
         report

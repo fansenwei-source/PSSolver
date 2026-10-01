@@ -4,11 +4,14 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
 from pathlib import Path
 import statistics
+
+import numpy as np
 
 from benchmarks.profile_periodic_hermitian_qualification import (
     EAGER_INAPPLICABLE_REASON,
@@ -38,6 +41,7 @@ MEMORY_RATIO_MAX = 1.05
 PROFILE_CV_MAX = 0.20
 H100_NAME = "NVIDIA H100 PCIe"
 CANDIDATE_PROJECTION = "self_conjugate_planes_each_step"
+PHYSICAL_RELATIVE_L2_MAX = 1.0e-12
 
 
 class HermitianProfileEvidenceError(RuntimeError):
@@ -81,6 +85,71 @@ def _positive_integer(value: object, description: str) -> int:
         f"{description} must be a positive integer",
     )
     return value
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _validate_physical_artifact(
+    value: object,
+    *,
+    expected_shape: tuple[int, int, int],
+) -> Path:
+    _require(isinstance(value, dict), "physical Q artifact is absent")
+    path_value = value.get("path")
+    _require(isinstance(path_value, str), "physical Q artifact path is absent")
+    unresolved = Path(path_value).expanduser()
+    _require(
+        unresolved.is_file() and not unresolved.is_symlink(),
+        "physical Q artifact is not a regular file",
+    )
+    path = unresolved.resolve()
+    _require(_sha256(path) == value.get("sha256"), "physical Q artifact SHA-256 differs")
+    expected = (*expected_shape, 5)
+    _require(value.get("shape") == list(expected), "physical Q artifact shape differs")
+    _require(value.get("dtype") == "float64", "physical Q artifact dtype differs")
+    _require(value.get("finite") is True, "physical Q artifact is non-finite")
+    array = np.load(path, allow_pickle=False, mmap_mode="r")
+    _require(array.shape == expected, "physical Q file shape differs")
+    _require(array.dtype == np.float64, "physical Q file dtype differs")
+    _require(bool(np.isfinite(array).all()), "physical Q file contains NaN or Inf")
+    return path
+
+
+def _compare_physical_q(left_path: Path, right_path: Path) -> dict[str, float]:
+    left = np.load(left_path, allow_pickle=False, mmap_mode="r")
+    right = np.load(right_path, allow_pickle=False, mmap_mode="r")
+    _require(left.shape == right.shape, "A/B physical Q shapes differ")
+    difference_squared = []
+    left_squared = []
+    right_squared = []
+    linf = 0.0
+    for index in range(left.shape[0]):
+        left_slice = np.asarray(left[index], dtype=np.float64)
+        right_slice = np.asarray(right[index], dtype=np.float64)
+        difference = left_slice - right_slice
+        difference_squared.append(float(np.vdot(difference, difference).real))
+        left_squared.append(float(np.vdot(left_slice, left_slice).real))
+        right_squared.append(float(np.vdot(right_slice, right_slice).real))
+        linf = max(linf, float(np.max(np.abs(difference))))
+    numerator = math.sqrt(math.fsum(difference_squared))
+    denominator = max(
+        math.sqrt(math.fsum(left_squared)),
+        math.sqrt(math.fsum(right_squared)),
+        np.finfo(np.float64).tiny,
+    )
+    relative_l2 = numerator / denominator
+    _require(math.isfinite(relative_l2), "physical Q relative L2 is non-finite")
+    _require(
+        relative_l2 <= PHYSICAL_RELATIVE_L2_MAX,
+        "physical Q relative L2 exceeds the frozen gate",
+    )
+    return {"relative_l2": relative_l2, "linf": linf}
 
 
 def _validate_inapplicable(value: object, description: str) -> None:
@@ -294,6 +363,14 @@ def _validate_profile(
         role=role,
         candidate=variant == "candidate",
     )
+    artifact = report["capability_audit"].get("physical_q_artifact")
+    if role == "production_forward" and trial == 1:
+        _validate_physical_artifact(
+            artifact,
+            expected_shape=FROZEN_GRIDS[grid],
+        )
+    else:
+        _require(artifact is None, "unexpected physical Q artifact")
     return variant, grid, role, trial, counts
 
 
@@ -422,6 +499,20 @@ def analyze(
                 isinstance(gradient, dict) and gradient.get("passed") is True,
                 f"gradient validation failed for {variant} {grid}",
             )
+        baseline_artifact = Path(
+            indexed[("baseline", grid, "production_forward", 1)][
+                "capability_audit"
+            ]["physical_q_artifact"]["path"]
+        )
+        candidate_artifact = Path(
+            indexed[("candidate", grid, "production_forward", 1)][
+                "capability_audit"
+            ]["physical_q_artifact"]["path"]
+        )
+        grid_summary["cross_version_physical_q"] = _compare_physical_q(
+            baseline_artifact,
+            candidate_artifact,
+        )
         summary[grid] = grid_summary
 
     return {
@@ -438,6 +529,7 @@ def analyze(
             "profile_cv_max": PROFILE_CV_MAX,
             "transform_calls_must_match": True,
             "eager_compile_metrics_must_be_inapplicable": True,
+            "physical_q_relative_l2_max": PHYSICAL_RELATIVE_L2_MAX,
         },
         "summary": summary,
     }

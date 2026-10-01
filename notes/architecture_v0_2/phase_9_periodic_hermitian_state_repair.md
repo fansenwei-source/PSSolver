@@ -79,6 +79,9 @@ That audit:
 - records functional fallback from the functional runtime identity;
 - requires the candidate identity to declare
   `self_conjugate_planes_each_step`;
+- writes a canonical physical-Q artifact only for each grid's first
+  production trial, so the analyzer can enforce cross-version relative L2
+  without requiring illegal spectral bytes to match;
 - keeps transform counting outside the performance window; and
 - records graph-break and compile-fallback metrics as inapplicable for the
   explicitly requested eager pointwise path.
@@ -88,7 +91,8 @@ and `reason=pointwise_execution_eager`.  They are never represented by an
 invented zero or false value.  The fail-closed A/B analyzer is
 `benchmarks/analyze_periodic_hermitian_profiles.py`; it requires 36 profiles,
 exact A/B transform-count preservation, runtime fallback rejection, and the
-pre-registered timing and memory non-regression bounds.
+pre-registered timing and memory non-regression bounds.  The A/B physical-Q
+relative L2 limit is `1e-12`; Linf is also reported.
 
 ## Local evidence
 
