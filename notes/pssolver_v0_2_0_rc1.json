@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "release": "0.2.0rc1",
+  "date": "2026-10-01",
+  "status": "local_release_gates_passed",
+  "source": {
+    "architecture_finalization_commit": "e43979aa8797ed8c49876612c6ce50b1a1fc4510",
+    "qualified_provider_commit": "0838ecd1cd314a5e8879ce6d1a1ced921d0cf69f",
+    "qualified_consumer_commit": "28857a59610df355469dca55372e0d0cd1311f3c"
+  },
+  "public_contract": {
+    "package_version": "0.2.0rc1",
+    "functional_api_version": "1.0",
+    "models": 2,
+    "geometries": 3,
+    "boundary_policies": 8,
+    "qualified_combinations": 4,
+    "runtime_paths": 6,
+    "functional_batch_sizes": [1]
+  },
+  "release_boundary": {
+    "production_default_changed": false,
+    "larger_batch_qualified": false,
+    "plane_control_qualified": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false,
+    "nematics3d_modified": false,
+    "pssolver_control_bundled": false
+  },
+  "artifacts": {
+    "source_distribution_built": true,
+    "wheel_built": true,
+    "isolated_install_verified": true,
+    "release_smoke_complete": false,
+    "tag_created": false,
+    "github_prerelease_created": false,
+    "pypi_published": false
+  },
+  "local_verification": {
+    "targeted_release_and_functional_tests": "23 passed",
+    "complete_cpu_suite": "2646 passed",
+    "source_archive_content": "pass",
+    "wheel_content_and_metadata": "pass",
+    "pip_check_without_nematics3d": "pass",
+    "source_shadow_import": false,
+    "console_dry_run": "pass",
+    "installed_wheel_cpu_one_step": "pass",
+    "nematics3d_modified": false,
+    "h100_release_smoke": "pending"
+  }
+}

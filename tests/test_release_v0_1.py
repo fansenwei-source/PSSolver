@@ -1,4 +1,4 @@
-"""Release-level contracts for the bounded PSSolver 0.1.2 package."""
+"""Historical release-document contracts retained by PSSolver v0.2."""
 
 from __future__ import annotations
 
@@ -11,8 +11,9 @@ import pssolver
 PROJECT_ROOT = Path(__file__).parents[1]
 
 
-def test_public_version_is_0_1_2():
-    assert pssolver.__version__ == "0.1.2"
+def test_public_version_is_exported():
+    assert isinstance(pssolver.__version__, str)
+    assert pssolver.__version__
     assert "__version__" in pssolver.__all__
 
 
@@ -43,7 +44,7 @@ def test_standard_build_metadata_and_release_documents_exist():
         PROJECT_ROOT / "notes" / "pssolver_v0_1_2.md"
     ).read_text(encoding="utf-8")
 
-    assert "PSSolver 0.1.2" in readme
+    assert "PSSolver 0.2.0rc1" in readme
     assert "## 0.1.2" in changelog
     assert "## 0.1.1" in changelog
     assert "## 0.1.0" in changelog

@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 import torch
 
+from pssolver import __version__ as PSSOLVER_PACKAGE_VERSION
 from pssolver import SpectralSolver
 import pssolver.functional as compatibility
 import pssolver.functional.api as stable
@@ -128,7 +129,10 @@ def test_version_negotiation_is_exact_and_legacy_is_read_only():
 
 def test_protocol_provenance_records_package_and_two_minor_alias_window():
     metadata = stable.functional_protocol_provenance()
-    assert metadata["package"] == {"name": "pssolver", "version": "0.1.2"}
+    assert metadata["package"] == {
+        "name": "pssolver",
+        "version": PSSOLVER_PACKAGE_VERSION,
+    }
     protocol = metadata["functional_protocol"]
     assert protocol["current"] == "1.0"
     assert protocol["construction_versions"] == ["1.0"]

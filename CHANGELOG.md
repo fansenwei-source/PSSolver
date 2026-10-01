@@ -1,5 +1,78 @@
 # Changelog
 
+## 0.2.0rc1 — 2026-10-01
+
+First release candidate for the composable v0.2 architecture.  The v0.1 tags,
+release branches, and historical qualification records remain unchanged.
+
+### Added
+
+- A package-root `Simulation` declaration with typed model, geometry,
+  boundary, numerical, time, initial-condition, execution, and output
+  ownership.
+- Public `compile_simulation`, `run_simulation`, result protocols, and an
+  immutable capability catalog that rejects unsupported combinations before
+  tensor allocation.
+- Qualified complete-stress Beris--Edwards applications for periodic boxes,
+  Plane slabs, and rectangular Channels, plus the retained legacy active-force
+  Channel application.
+- Generic static prescribed-Dirichlet declarations, Plane Q lifting, and
+  strong homeotropic/planar Q convenience policies.  The finite-Q Robin work
+  remains an internal qualified pilot rather than a public runtime.
+- Versioned `pssolver.functional.api` protocol 1.0 for independent batch-one
+  Periodic and Channel consumers, including replay, observations, diagnostics,
+  checkpoint bridges, and differentiable execution.
+
+### Changed
+
+- Runtime construction is separated into tensor-free declarations, lowering,
+  plans, state, workspace, integrators, and application adapters.
+- Model declarations, geometry declarations, and field-level boundary
+  policies are orthogonal at the public composition boundary.
+- Plane and Channel compiled runtimes remain opt-in; the production defaults
+  remain `legacy_production` and `legacy_channel`.
+
+### Fixed
+
+- Periodic half-spectrum states are projected onto the self-conjugate-plane
+  Hermitian subspace at every step.  The repair prevents hidden anti-Hermitian
+  modes from growing during long-horizon functional execution while retaining
+  the physical-Q and short-trajectory numerical contracts.
+
+### Qualification evidence
+
+- Architecture baseline and Phase 9 finalization commit:
+  `e43979aa8797ed8c49876612c6ce50b1a1fc4510`.
+- Qualified Provider source:
+  `0838ecd1cd314a5e8879ce6d1a1ced921d0cf69f`.
+- Qualified independent Consumer source:
+  `28857a59610df355469dca55372e0d0cd1311f3c`.
+- P9.8.5 cumulative closure:
+  `PASS_P9_8_5_STABLE_FUNCTIONAL_API_CUMULATIVE_CLOSURE_WITH_CANONICAL_ZERO_START_CHANNEL_ORACLE`.
+- Phase 9 final closure:
+  `PASS_PHASE_9_STABLE_FUNCTIONAL_API_FINAL_CLOSURE`.
+
+### Scope
+
+- The qualified public capability matrix contains two model declarations,
+  three geometries, eight boundary policies, four executable model--geometry
+  combinations, and six runtime paths.
+- Functional qualification is limited to batch-one Periodic and rectangular-
+  Channel consumers.  Plane control, larger batches, production-scale
+  optimizers, optimizer campaigns, and scientific control results remain out
+  of scope.
+- Nonhomogeneous Neumann lifting, dynamic/trainable boundary data, and general
+  public Robin execution remain future work.
+- PSSolver-Control and `nematics3d` are independent projects and are not
+  bundled or modified by this release.
+
+### Release status
+
+- This is a release candidate, not the final 0.2.0 release.
+- The source distribution, wheel, isolated installation, and final release
+  smoke must pass before the annotated `v0.2.0rc1` tag is created.
+- No production default is promoted by the version change.
+
 ## 0.1.2 — 2026-09-18
 
 Bounded-axis execution and transform-dataflow performance update. The existing

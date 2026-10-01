@@ -14,8 +14,8 @@ setup(
     name="pssolver",
     version=VERSION_NAMESPACE["__version__"],
     description=(
-        "Tensor-product spectral solver with a supported Plane "
-        "Beris-Edwards-Stokes application"
+        "Composable tensor-product spectral solver for active-nematic "
+        "simulations"
     ),
     long_description=(PROJECT_ROOT / "README.md").read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
