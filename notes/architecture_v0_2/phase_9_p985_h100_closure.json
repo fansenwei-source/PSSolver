@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "phase": "P9.8.5",
+  "date": "2026-10-01",
+  "status": "complete",
+  "classification": "PASS_P9_8_5_STABLE_FUNCTIONAL_API_CUMULATIVE_CLOSURE_WITH_CANONICAL_ZERO_START_CHANNEL_ORACLE",
+  "provider": {
+    "repository": "https://github.com/fansenwei-source/PSSolver",
+    "qualification_commit": "0838ecd1cd314a5e8879ce6d1a1ced921d0cf69f",
+    "stable_module": "pssolver.functional.api",
+    "functional_api_version": "1.0",
+    "package_version": "0.1.2"
+  },
+  "consumer": {
+    "repository": "https://github.com/fansenwei-source/PSSolver-Control",
+    "qualification_commit": "28857a59610df355469dca55372e0d0cd1311f3c",
+    "periodic_adapter": "pssolver_control.adapters.pssolver.PSSolverPeriodicActivityStepper",
+    "channel_adapter": "pssolver_control.adapters.pssolver_channel.PSSolverChannelActivityStepper"
+  },
+  "runtime_identities": {
+    "periodic": {
+      "kind": "periodic_activity_batch_one",
+      "canonical_sha256": "426b24fb3226a26f1e58895c2f85bdc3fdc1c25a61e931dc38a334d05751f47d",
+      "hermitian_state_projection": "self_conjugate_planes_each_step"
+    },
+    "channel": {
+      "kind": "channel_activity_batch_one",
+      "canonical_sha256": "e64b5291fcf8be62630bd27894b9d8ba5654623e013e324b2ad5eba2133b2e32",
+      "pressure_gradient": "custom_implicit_pressure_adjoint_v1"
+    }
+  },
+  "periodic_component": {
+    "passed": true,
+    "long_horizon_time": 200.0,
+    "long_horizon_finite": true,
+    "maximum_hermitian_violation": 0.0,
+    "focused_h100_performance_passed": true,
+    "checkpoint_gradient_taylor_memory_and_negative_gates": "pass"
+  },
+  "channel_component": {
+    "classification": "PASS_P985_CHANNEL_COMPONENT_GATE_WITH_CANONICAL_ZERO_START_ORACLE",
+    "gates": {
+      "A": "pass",
+      "B1": "pass",
+      "B2": "pass",
+      "C": "pass",
+      "D": "pass",
+      "E": "pass",
+      "F": "pass"
+    },
+    "canonical_zero_start_oracle": {
+      "production_initial_guess": "zero_before_every_pressure_solve",
+      "functional_initial_guess": "zero_every_call",
+      "one_step_q_u_p_byte_identical": true,
+      "four_step_q_u_p_byte_identical": true,
+      "first_different_step": null
+    },
+    "production_warm_start": {
+      "preserved": true,
+      "functional_hidden_state_extended": false,
+      "all_frozen_numerical_bounds_passed": true,
+      "q_physical_relative_l2": 5.129730651943982e-15,
+      "q_spectral_relative_l2": 5.123907983081798e-15,
+      "velocity_relative_l2": 8.086591674947588e-08,
+      "raw_pressure_relative_l2": 1.0767557757805968e-07,
+      "demeaned_pressure_relative_l2": 1.0767557757615241e-07
+    },
+    "checkpointed_full_history_gradient_relative_l2": 0.0,
+    "central_finite_difference_max_relative_error": 3.13844556216355e-06,
+    "checkpoint_gradient_taylor_memory_and_negative_gates": "pass"
+  },
+  "checkpoint_integrity": {
+    "schema_helper_dynamic": true,
+    "discovered_tensor_payloads": 10,
+    "selected_logical_field": "spatial.Qxx",
+    "selected_relative_path": "spatial__Qxx.npy",
+    "raw_byte_tamper_rejected": true,
+    "rejection": "checkpoint tensor checksum mismatch",
+    "target_mutated": false,
+    "timestep_started": false,
+    "source_checkpoint_modified": false,
+    "aggregate_passed": true
+  },
+  "evidence": [
+    {
+      "name": "periodic_provider_focused_h100_v5",
+      "manifest_entries": 36,
+      "manifest_passed": 36,
+      "manifest_sha256": "158390775fb371aa4bd8a2d4232d8607e7ab73f2b3c04883349a42a3d0a21206"
+    },
+    {
+      "name": "p9_8_5_cumulative_recovery_v9",
+      "manifest_entries": 230,
+      "manifest_passed": 230,
+      "manifest_sha256": "6e544074c5f6b5fc0c02f6e84eb1563f78b41131e705b61e80f668fdfb816ccc"
+    },
+    {
+      "name": "channel_pressure_causality_v11",
+      "manifest_entries": 29,
+      "manifest_passed": 29,
+      "manifest_sha256": "3cfd6a17bf1c67cfc0a47dfa4415ce10ab9cd48353b119d0846283f5d6a0f06c"
+    },
+    {
+      "name": "channel_canonical_zero_start_v12",
+      "manifest_entries": 72,
+      "manifest_passed": 72,
+      "manifest_sha256": "49d9a625dceaac20dacd2a219dd97a8d9902535df93429fbe5a0680f71b5bb5a"
+    },
+    {
+      "name": "checkpoint_schema_finalization_v13",
+      "manifest_entries": 30,
+      "manifest_passed": 30,
+      "manifest_sha256": "179c167279303cd54793f5cb7792cdb13f643662fe6bef8a5055b2492f67035b",
+      "complete_marker": true
+    }
+  ],
+  "authorization": {
+    "qualification_complete": true,
+    "p9_8_5_complete": true,
+    "p9_8_6_planning_eligible": true,
+    "phase_9_complete": false,
+    "production_default_changed": false,
+    "larger_batch_qualified": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false,
+    "verbatim_pdf_regenerated": false
+  }
+}

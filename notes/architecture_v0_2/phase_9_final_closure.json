@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "phase": "P9.8.6",
+  "date": "2026-10-01",
+  "status": "complete",
+  "classification": "PASS_PHASE_9_STABLE_FUNCTIONAL_API_FINAL_CLOSURE",
+  "qualified_sources": {
+    "provider_repository": "https://github.com/fansenwei-source/PSSolver",
+    "provider_commit": "0838ecd1cd314a5e8879ce6d1a1ced921d0cf69f",
+    "consumer_repository": "https://github.com/fansenwei-source/PSSolver-Control",
+    "consumer_commit": "28857a59610df355469dca55372e0d0cd1311f3c",
+    "p9_8_5_record": "notes/architecture_v0_2/phase_9_p985_h100_closure.json"
+  },
+  "public_contract": {
+    "module": "pssolver.functional.api",
+    "functional_api_version": "1.0",
+    "package_version": "0.1.2",
+    "qualified_runtime_kinds": [
+      "periodic_activity_batch_one",
+      "channel_activity_batch_one"
+    ],
+    "qualified_batch_sizes": [
+      1
+    ],
+    "checkpoint_bridge_format_versions": {
+      "periodic": 1,
+      "channel": 1
+    },
+    "construction_versions": [
+      "1.0"
+    ],
+    "checkpoint_read_versions": [
+      "1.0",
+      "0.1-provisional"
+    ],
+    "silent_fallback": false,
+    "heuristic_checkpoint_repair": false,
+    "private_provider_imports": false,
+    "source_shadow_import": false,
+    "factory_runtime_diagnostics": true,
+    "structural_protocol_expanded_for_diagnostics": false
+  },
+  "runtime_identities": {
+    "periodic": "426b24fb3226a26f1e58895c2f85bdc3fdc1c25a61e931dc38a334d05751f47d",
+    "channel": "e64b5291fcf8be62630bd27894b9d8ba5654623e013e324b2ad5eba2133b2e32"
+  },
+  "numerical_semantics": {
+    "periodic_hermitian_state_projection": "self_conjugate_planes_each_step",
+    "channel_functional_pressure_initial_guess": "zero_every_call",
+    "channel_production_pressure_warm_start_preserved": true,
+    "channel_functional_pressure_guess_is_hidden_state": false,
+    "channel_byte_identity_oracle": "canonical_zero_start_production_comparator",
+    "production_default_changed": false
+  },
+  "release_decision": {
+    "eligible_for_versioned_release_candidate_preparation": true,
+    "package_version_changed": false,
+    "tag_created": false,
+    "wheel_published": false,
+    "production_default_promoted": false
+  },
+  "local_finalization_evidence": {
+    "provider_phase9_tests": "159 passed",
+    "consumer_complete_tests": "244 passed, 1 skipped",
+    "consumer_allowed_skip": "tests/test_warmup_experiments.py::test_r5_benchmark",
+    "provider_diff_check": "pass",
+    "consumer_diff_check": "pass",
+    "json_parse": "pass"
+  },
+  "boundaries": {
+    "larger_batch_qualified": false,
+    "plane_control_qualified": false,
+    "production_scale_optimizer_qualified": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false,
+    "nematics3d_modified": false,
+    "shared_environment_modified": false,
+    "historical_archives_rewritten": false,
+    "verbatim_pdf_regenerated": false
+  },
+  "authorization": {
+    "p9_8_6_complete": true,
+    "phase_9_complete": true,
+    "eligible_for_post_phase9_planning": true,
+    "release_candidate_preparation_eligible": true,
+    "release_performed": false,
+    "larger_batch_qualified": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false,
+    "production_default_changed": false
+  }
+}
