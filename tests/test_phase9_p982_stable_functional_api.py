@@ -231,6 +231,42 @@ def test_stable_errors_remain_compatible_with_builtin_exception_catches():
     )
     assert isinstance(checkpoint_error, ValueError)
 
+    checkpoint_io_error = translate_functional_exception(
+        PermissionError("read-only checkpoint target"),
+        operation="checkpoint_export",
+    )
+    assert type(checkpoint_io_error) is stable.FunctionalCheckpointError
+    assert checkpoint_io_error.operation == "checkpoint_export"
+
+
+def test_wrong_geometry_checkpoint_is_compatibility_not_integrity(tmp_path):
+    from pssolver.functional import (
+        ChannelActivityCheckpointBridge,
+        PeriodicActivityCheckpointBridge,
+    )
+
+    state_spec, channel_identity, state = _state_contract()
+    channel = ChannelActivityCheckpointBridge(
+        state_spec=state_spec,
+        functional_identity=channel_identity,
+        production_runtime_identity_sha256="a" * 64,
+        production_backend_restart={},
+    )
+    periodic = PeriodicActivityCheckpointBridge(
+        state_spec=state_spec,
+        functional_identity=_periodic_identity(state_spec),
+        production_runtime_identity_sha256="b" * 64,
+        backend_restart={},
+    )
+    channel_directory = channel.export_checkpoint(
+        tmp_path / "channel_for_periodic",
+        state,
+        completed_steps=0,
+    )
+
+    with pytest.raises(stable.FunctionalCheckpointCompatibilityError):
+        periodic.import_checkpoint(channel_directory)
+
 
 def test_channel_v1_legacy_checkpoint_reader_is_exact_and_machine_readable(
     tmp_path,

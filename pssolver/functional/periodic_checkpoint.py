@@ -9,6 +9,9 @@ from pathlib import Path
 
 import torch
 
+from pssolver.configuration.periodic_beris_edwards import (
+    PERIODIC_RUNTIME_PATH,
+)
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.workflows.periodic_checkpoint import (
     PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
@@ -241,6 +244,30 @@ class PeriodicActivityCheckpointBridge:
     ) -> FunctionalCheckpointState:
         """Preflight identities, then return fresh tensors on the target device."""
 
+        directory = Path(directory).expanduser().resolve()
+        metadata_path = directory / "checkpoint.json"
+        if metadata_path.is_file():
+            try:
+                raw_metadata = json.loads(
+                    metadata_path.read_text(encoding="utf-8")
+                )
+            except json.JSONDecodeError:
+                raw_metadata = None
+            if isinstance(raw_metadata, Mapping):
+                runtime_path = raw_metadata.get("runtime_path")
+                format_kind = raw_metadata.get("format_kind")
+                if (
+                    runtime_path is not None
+                    and runtime_path != PERIODIC_RUNTIME_PATH
+                ) or format_kind is not None:
+                    raise FunctionalCheckpointCompatibilityError(
+                        "checkpoint belongs to a non-periodic runtime schema",
+                        operation="periodic_checkpoint_import",
+                        details={
+                            "runtime_path": runtime_path,
+                            "format_kind": format_kind,
+                        },
+                    )
         header = read_periodic_checkpoint_header(directory)
         if (
             header.runtime_identity_sha256

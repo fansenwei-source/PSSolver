@@ -133,6 +133,13 @@ def translate_functional_exception(
         return FunctionalCheckpointExistsError(
             str(exception), operation=operation, details=details
         )
+    if operation in {"checkpoint_export", "checkpoint_import"} and isinstance(
+        exception,
+        OSError,
+    ):
+        return FunctionalCheckpointError(
+            str(exception), operation=operation, details=details
+        )
     if operation == "checkpoint_import" and isinstance(
         exception,
         (TypeError, ValueError),
