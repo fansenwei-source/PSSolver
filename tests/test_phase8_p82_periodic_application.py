@@ -23,6 +23,7 @@ from pssolver.boundaries import (
     neumann_pressure_compatibility,
     neumann_q,
 )
+from pssolver.configuration.simulation import InvocationSpec
 from pssolver.core import GridPlacement
 from pssolver.geometries import PeriodicBox
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
@@ -43,6 +44,8 @@ def _simulation(
     dealias_rule="cubic_half",
     projected_transform_execution="truncated",
     grid_placement=GridPlacement.CELL_CENTERED,
+    disable_q_gradient_reuse=False,
+    invocation_options=None,
 ):
     model = CompleteStressBerisEdwards(
         ldg_a=0.0,
@@ -100,7 +103,7 @@ def _simulation(
                 "molecular_field_linear_space": "spectral",
                 "stress_divergence_sum_space": "spectral",
                 "pointwise_execution": "eager",
-                "disable_q_gradient_reuse": False,
+                "disable_q_gradient_reuse": disable_q_gradient_reuse,
             },
         ),
         output=Output(
@@ -112,6 +115,7 @@ def _simulation(
             checkpoint_interval=checkpoint_interval,
             restart_from=restart_from,
         ),
+        invocation=InvocationSpec(invocation_options or {}),
     )
 
 
@@ -146,6 +150,26 @@ def test_periodic_compiler_rejects_unsupported_node_centered_grid(tmp_path):
                 grid_placement=GridPlacement.NODE_CENTERED,
             )
         )
+
+
+@pytest.mark.parametrize(
+    ("overrides", "message"),
+    (
+        ({"invocation_options": {"dry_run": "false"}}, "dry_run"),
+        (
+            {"invocation_options": {"validation_config_sha256": "zz"}},
+            "validation_config_sha256",
+        ),
+        ({"disable_q_gradient_reuse": "yes"}, "gradient reuse"),
+    ),
+)
+def test_periodic_compiler_rejects_coerced_flags_and_invalid_digest(
+    tmp_path,
+    overrides,
+    message,
+):
+    with pytest.raises(ValueError, match=message):
+        compile_simulation(_simulation(tmp_path, **overrides))
 
 
 def test_periodic_application_is_finite_and_restart_is_byte_identical(tmp_path):

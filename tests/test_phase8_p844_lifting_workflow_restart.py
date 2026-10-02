@@ -407,6 +407,7 @@ def test_p844_record_matches_qualified_sources_and_scope():
     # rewriting the already qualified record.
     superseded_after_p844 = {
         "pssolver/applications/plane_beris_edwards.py",
+        "pssolver/configuration/public_simulation_runner.py",
         "pssolver/models/active_nematics/beris_edwards.py",
         "pssolver/models/active_nematics/stokes.py",
         "pssolver/operators/lifting.py",

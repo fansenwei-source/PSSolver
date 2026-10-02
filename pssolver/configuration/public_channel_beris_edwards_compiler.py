@@ -44,7 +44,6 @@ _WORKFLOW_KEYS = frozenset(
         "save_start_step",
     }
 )
-_INVOCATION_KEYS = frozenset({"dry_run", "validation_config_sha256"})
 _PRESSURE_KEYS = frozenset(
     {
         "algorithm",
@@ -75,7 +74,10 @@ def compile_channel_beris_edwards_public_simulation(
 ):
     """Compile the single P8.3 Channel application without allocation."""
 
-    from .public_simulation_runner import _reject
+    from .public_simulation_runner import (
+        _reject,
+        _validate_invocation_options,
+    )
 
     if (source.equation_system.variant, source.geometry.name) != (
         "complete_stress_beris_edwards",
@@ -128,17 +130,17 @@ def compile_channel_beris_edwards_public_simulation(
         )
     if execution["pointwise_execution"] not in {"eager", "compile"}:
         _reject("unsupported Channel pointwise execution mode")
+    if not isinstance(execution["disable_q_gradient_reuse"], bool):
+        _reject("Channel Q-gradient reuse flag must be a bool")
     _exact_keys(
         source.workflow.options,
         _WORKFLOW_KEYS,
         "complete-stress Channel workflow options",
     )
-    invocation = dict(source.invocation.options)
-    if not set(invocation) <= _INVOCATION_KEYS:
-        _reject(
-            "Channel invocation options may contain only dry_run and "
-            "validation_config_sha256"
-        )
+    _validate_invocation_options(
+        source.invocation.options,
+        description="Channel invocation options",
+    )
     discretization = _exact_keys(
         source.discretization_parameters,
         frozenset({"pressure_solver"}),

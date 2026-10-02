@@ -44,7 +44,6 @@ _WORKFLOW_KEYS = frozenset(
         "save_start_step",
     }
 )
-_INVOCATION_KEYS = frozenset({"dry_run", "validation_config_sha256"})
 
 
 def _exact_keys(value: Mapping[str, object], expected, description):
@@ -63,7 +62,10 @@ def _exact_keys(value: Mapping[str, object], expected, description):
 def compile_periodic_public_simulation(source: SimulationSpec, product_type):
     """Compile the single P8.2 periodic application without allocation."""
 
-    from .public_simulation_runner import _reject
+    from .public_simulation_runner import (
+        _reject,
+        _validate_invocation_options,
+    )
 
     if (source.equation_system.variant, source.geometry.name) != (
         "complete_stress_beris_edwards",
@@ -110,17 +112,17 @@ def compile_periodic_public_simulation(source: SimulationSpec, product_type):
         _reject("unsupported periodic stress-divergence sum space")
     if execution["pointwise_execution"] not in {"eager", "compile"}:
         _reject("unsupported periodic pointwise execution mode")
+    if not isinstance(execution["disable_q_gradient_reuse"], bool):
+        _reject("periodic Q-gradient reuse flag must be a bool")
     _exact_keys(
         source.workflow.options,
         _WORKFLOW_KEYS,
         "periodic workflow options",
     )
-    invocation = dict(source.invocation.options)
-    if not set(invocation) <= _INVOCATION_KEYS:
-        _reject(
-            "periodic invocation options may contain only dry_run and "
-            "validation_config_sha256"
-        )
+    _validate_invocation_options(
+        source.invocation.options,
+        description="periodic invocation options",
+    )
     if source.discretization_parameters:
         _reject("periodic execution accepts no discretization overrides")
     if source.time_integration.refresh != {"mode": "disabled"}:

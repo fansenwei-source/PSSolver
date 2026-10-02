@@ -160,6 +160,33 @@ def _require_exact_keys(
     return dict(value)
 
 
+def _validate_invocation_options(
+    value: Mapping[str, object],
+    *,
+    description: str,
+) -> dict[str, object]:
+    invocation = dict(value)
+    if not set(invocation) <= _INVOCATION_KEYS:
+        _reject(
+            f"{description} may contain only dry_run and "
+            "validation_config_sha256"
+        )
+    dry_run = invocation.get("dry_run", False)
+    if not isinstance(dry_run, bool):
+        _reject(f"{description} dry_run must be a bool")
+    digest = invocation.get("validation_config_sha256")
+    if digest is not None and (
+        not isinstance(digest, str)
+        or len(digest) != 64
+        or any(character not in "0123456789abcdef" for character in digest)
+    ):
+        _reject(
+            f"{description} validation_config_sha256 must be null or exactly "
+            "64 lowercase hexadecimal characters"
+        )
+    return invocation
+
+
 def _require_close(
     requested: float,
     effective: float,
@@ -379,12 +406,10 @@ def _compile_plane_public_simulation(
         _WORKFLOW_KEYS,
         "output workflow options",
     )
-    invocation = dict(source.invocation.options)
-    if not set(invocation) <= _INVOCATION_KEYS:
-        _reject(
-            "invocation options may contain only dry_run and "
-            "validation_config_sha256"
-        )
+    invocation = _validate_invocation_options(
+        source.invocation.options,
+        description="invocation options",
+    )
 
     parameters = source.equation_system.parameters
     material = dict(parameters["material"])

@@ -43,7 +43,10 @@ class ChannelBerisEdwardsRunSpec:
 
     @property
     def dry_run(self) -> bool:
-        return bool(self.simulation.invocation.options.get("dry_run", False))
+        value = self.simulation.invocation.options.get("dry_run", False)
+        if not isinstance(value, bool):
+            raise TypeError("Channel dry_run must be a bool")
+        return value
 
     def canonical_sha256(self) -> str:
         return self.simulation.canonical_sha256()
