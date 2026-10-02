@@ -139,6 +139,15 @@ def _assert_state_equal(left, right):
     )
 
 
+def _channel_full_complex_violation(spectral):
+    reverse_x = torch.remainder(
+        -torch.arange(spectral.shape[-3], device=spectral.device),
+        spectral.shape[-3],
+    )
+    reflected = spectral.index_select(-3, reverse_x)
+    return (spectral - reflected.conj()).abs().max()
+
+
 def _production_adapter(simulation):
     compiled = compile_public_simulation(simulation.specification)
     values, _, _ = load_channel_initial_q(compiled.run_spec)
@@ -222,6 +231,23 @@ def test_p974_step_is_input_pure_and_replay_is_bitwise(tmp_path):
     assert np.isfinite(runtime._pressure.last_primal_diagnostics.residual)
     assert runtime._solver.model.nlmodel.q_gradient_cache is None
     assert runtime._flow_model.q_gradient_cache is None
+
+
+def test_p974_projects_injected_anti_hermitian_state_after_each_step(tmp_path):
+    _, _, runtime = _runtime(tmp_path)
+    physical, spectral = runtime.initial_state()
+    perturbed = spectral.clone()
+    perturbed[0, 0, 1, 2, 1] += 1.0e-6j
+    assert _channel_full_complex_violation(perturbed).item() > 0.0
+
+    next_state = runtime.step(
+        (physical, perturbed),
+        _control(runtime),
+        0,
+    )
+
+    assert _channel_full_complex_violation(next_state[1]).item() == 0.0
+    assert all(bool(torch.isfinite(value).all()) for value in next_state)
 
 
 def test_p974_activity_and_state_have_finite_first_order_gradients(tmp_path):

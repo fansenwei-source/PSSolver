@@ -38,6 +38,32 @@ def test_periodic_functional_state_remains_hermitian_through_time_200():
     )
 
 
+def test_periodic_full_complex_state_remains_hermitian_past_old_failure():
+    """The rc1 full spectrum failed near ``t=97.26`` without projection."""
+
+    report = run_stability_check(
+        HermitianStabilityConfig(
+            case="loop3d",
+            device="cpu",
+            spectral_storage="full_complex",
+            horizon=100.0,
+        )
+    )
+
+    assert report["passed"] is True
+    assert report["failure"] is None
+    assert report["completed_time"] == 100.0
+    assert report["hermitian_state_projection"] == (
+        "self_conjugate_planes_each_step"
+    )
+    assert report["samples"]
+    assert all(sample["finite"] for sample in report["samples"])
+    assert all(
+        sample["hermitian_violation"] <= sample["violation_bound"]
+        for sample in report["samples"]
+    )
+
+
 def test_hermitian_stability_report_is_strict_json_and_atomic(tmp_path):
     report = run_stability_check(
         HermitianStabilityConfig(

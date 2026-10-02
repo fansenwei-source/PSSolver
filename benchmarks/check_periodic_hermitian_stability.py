@@ -84,6 +84,7 @@ CASES = {
 class HermitianStabilityConfig:
     case: str = "loop3d"
     device: str = "cpu"
+    spectral_storage: str = "hermitian_half"
     dt: float = 0.02
     horizon: float = 200.0
     noise: float = 1.0e-3
@@ -94,6 +95,10 @@ class HermitianStabilityConfig:
 def _validate_config(config: HermitianStabilityConfig) -> None:
     if config.case not in CASES:
         raise ValueError(f"case must be one of {tuple(CASES)}")
+    if config.spectral_storage not in ("full_complex", "hermitian_half"):
+        raise ValueError(
+            "spectral_storage must be full_complex or hermitian_half"
+        )
     for name in ("dt", "horizon", "sample_interval", "tolerance_factor"):
         value = getattr(config, name)
         if not math.isfinite(value) or value <= 0.0:
@@ -174,8 +179,10 @@ def _runtime(config, case, device, root: Path):
         numerics=SpectralNumerics(
             dtype="float64",
             dealias_rule="cubic_half",
-            spectral_storage="hermitian_half",
-            hermitian_axis=1,
+            spectral_storage=config.spectral_storage,
+            hermitian_axis=(
+                1 if config.spectral_storage == "hermitian_half" else None
+            ),
         ),
         time=TimeStepping(dt=config.dt, refresh={"mode": "disabled"}),
         initial_condition=SnapshotInitialCondition(root, step=0),
@@ -222,6 +229,22 @@ def _packed_plane_violation(spectral, shape) -> torch.Tensor:
         _reverse_index(shape[2], spectral.device),
     )
     return (planes - reflected.conj()).abs().max()
+
+
+def _full_spectrum_violation(spectral, shape) -> torch.Tensor:
+    reflected = spectral
+    for tensor_axis, size in zip((-3, -2, -1), shape):
+        reflected = reflected.index_select(
+            tensor_axis,
+            _reverse_index(size, spectral.device),
+        )
+    return (spectral - reflected.conj()).abs().max()
+
+
+def _hermitian_violation(spectral, shape, storage) -> torch.Tensor:
+    if storage == "hermitian_half":
+        return _packed_plane_violation(spectral, shape)
+    return _full_spectrum_violation(spectral, shape)
 
 
 def run_stability_check(config: HermitianStabilityConfig) -> dict[str, object]:
@@ -293,7 +316,13 @@ def run_stability_check(config: HermitianStabilityConfig) -> dict[str, object]:
                 if completed_steps % sample_steps != 0 and completed_steps != steps:
                     continue
                 finite = all(bool(torch.isfinite(value).all()) for value in state)
-                violation = float(_packed_plane_violation(state[1], case["shape"]))
+                violation = float(
+                    _hermitian_violation(
+                        state[1],
+                        case["shape"],
+                        config.spectral_storage,
+                    )
+                )
                 maximum = float(state[1].abs().max())
                 bound = config.tolerance_factor * torch.finfo(
                     state[0].dtype
@@ -344,6 +373,11 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--case", choices=tuple(CASES), default="loop3d")
     parser.add_argument(
+        "--spectral-storage",
+        choices=("full_complex", "hermitian_half"),
+        default="hermitian_half",
+    )
+    parser.add_argument(
         "--device",
         default="cuda" if torch.cuda.is_available() else "cpu",
     )
@@ -358,6 +392,7 @@ def main(argv: list[str] | None = None) -> int:
         HermitianStabilityConfig(
             case=args.case,
             device=args.device,
+            spectral_storage=args.spectral_storage,
             dt=args.dt,
             horizon=args.horizon,
             noise=args.noise,

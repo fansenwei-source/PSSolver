@@ -64,6 +64,22 @@ def _self_conjugate_plane_violation(
     return (planes - reflected.conj()).abs().max()
 
 
+def _full_complex_violation(spectral, physical_shape, boundary_conditions):
+    """Return the largest full-spectrum real-field constraint violation."""
+
+    spatial_offset = spectral.ndim - len(physical_shape)
+    reflected = spectral
+    for axis, boundary_condition in enumerate(boundary_conditions):
+        if boundary_condition != "periodic":
+            continue
+        reverse = torch.remainder(
+            -torch.arange(physical_shape[axis], device=spectral.device),
+            physical_shape[axis],
+        )
+        reflected = reflected.index_select(spatial_offset + axis, reverse)
+    return (spectral - reflected.conj()).abs().max()
+
+
 def test_full_complex_remains_the_default_storage():
     backend = TensorProductTransformBackend(
         (7, 6, 5),
@@ -492,6 +508,107 @@ def test_hermitian_plane_projection_remains_autograd_compatible():
     spectral = torch.randn(
         2,
         *backend.spectral_shape,
+        dtype=torch.complex128,
+        requires_grad=True,
+    )
+
+    physical = backend.inverse(
+        projector.project_real_spectrum(spectral, boundary_conditions),
+        boundary_conditions,
+    )
+    physical.square().sum().backward()
+
+    assert spectral.grad is not None
+    assert bool(torch.isfinite(spectral.grad).all())
+
+
+@pytest.mark.parametrize("shape", ((8, 10, 6), (7, 9, 5)))
+@pytest.mark.parametrize(
+    "boundary_conditions",
+    (
+        ("periodic", "periodic", "neumann"),
+        ("periodic", "periodic", "periodic"),
+    ),
+)
+@pytest.mark.parametrize("rule", ("none", "cubic_half"))
+def test_full_complex_projection_enforces_all_periodic_mode_pairs(
+    shape,
+    boundary_conditions,
+    rule,
+):
+    generator = torch.Generator().manual_seed(20261002)
+    backend = _backend(shape, storage="full_complex")
+    projector = BasisAwareSpectralProjector(
+        SimpleNamespace(shape=shape, transform_backend=backend),
+        rule=rule,
+    )
+    spectral = torch.complex(
+        torch.randn(2, *shape, generator=generator, dtype=torch.float64),
+        torch.randn(2, *shape, generator=generator, dtype=torch.float64),
+    )
+    before = spectral.clone()
+
+    projected = projector.project_real_spectrum(
+        spectral,
+        boundary_conditions,
+    )
+
+    assert torch.equal(spectral, before)
+    assert projected is not spectral
+    assert _full_complex_violation(
+        projected,
+        shape,
+        boundary_conditions,
+    ).item() == 0.0
+    filtered = (
+        spectral * projector.mask(boundary_conditions)
+        if projector.enabled
+        else spectral
+    )
+    torch.testing.assert_close(
+        backend.inverse(projected, boundary_conditions),
+        backend.inverse(filtered, boundary_conditions),
+        rtol=5.0e-13,
+        atol=5.0e-13,
+    )
+
+
+def test_full_complex_projection_in_place_reuses_owned_storage():
+    shape = (8, 10, 6)
+    boundary_conditions = ("periodic", "periodic", "periodic")
+    backend = _backend(shape, storage="full_complex")
+    projector = BasisAwareSpectralProjector(
+        SimpleNamespace(shape=shape, transform_backend=backend),
+        rule="none",
+    )
+    spectral = torch.randn(2, *shape, dtype=torch.complex128)
+    data_ptr = spectral.untyped_storage().data_ptr()
+
+    returned = projector.project_real_spectrum_(
+        spectral,
+        boundary_conditions,
+    )
+
+    assert returned is spectral
+    assert spectral.untyped_storage().data_ptr() == data_ptr
+    assert _full_complex_violation(
+        spectral,
+        shape,
+        boundary_conditions,
+    ).item() == 0.0
+
+
+def test_full_complex_projection_remains_autograd_compatible():
+    shape = (7, 9, 5)
+    boundary_conditions = ("periodic", "periodic", "periodic")
+    backend = _backend(shape, storage="full_complex")
+    projector = BasisAwareSpectralProjector(
+        SimpleNamespace(shape=shape, transform_backend=backend),
+        rule="cubic_half",
+    )
+    spectral = torch.randn(
+        2,
+        *shape,
         dtype=torch.complex128,
         requires_grad=True,
     )

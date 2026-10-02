@@ -61,6 +61,66 @@ class BasisAwareSpectralProjector:
         self._hermitian_plane_index_cache = {}
         self._hermitian_reverse_index_cache = {}
 
+    def _validate_real_spectrum(self, spectral, boundary_conditions):
+        boundary_conditions = tuple(boundary_conditions)
+        if len(boundary_conditions) != len(self.shape):
+            raise ValueError(
+                "Boundary-condition count must match the spectral dimension."
+            )
+        if tuple(spectral.shape[-len(self.shape) :]) != self.shape:
+            raise ValueError(
+                f"Expected trailing spectral shape {self.shape}, got "
+                f"{tuple(spectral.shape[-len(self.shape):])}."
+            )
+        return boundary_conditions
+
+    def _full_complex_reflection(self, spectral, boundary_conditions):
+        """Return ``conj(F(-k))`` over every periodic spectral axis."""
+
+        boundary_conditions = self._validate_real_spectrum(
+            spectral,
+            boundary_conditions,
+        )
+        tensor_axis_offset = spectral.ndim - len(self.shape)
+        reflected = spectral
+        for local_axis, boundary_condition in enumerate(boundary_conditions):
+            if boundary_condition != "periodic":
+                continue
+            cache_key = (local_axis, spectral.device)
+            reverse_index = self._hermitian_reverse_index_cache.get(cache_key)
+            if reverse_index is None:
+                reverse_index = torch.remainder(
+                    -torch.arange(
+                        self.physical_shape[local_axis],
+                        device=spectral.device,
+                        dtype=torch.long,
+                    ),
+                    self.physical_shape[local_axis],
+                )
+                self._hermitian_reverse_index_cache[cache_key] = reverse_index
+            reflected = reflected.index_select(
+                tensor_axis_offset + local_axis,
+                reverse_index,
+            )
+        return reflected.conj()
+
+    def _enforce_hermitian_full(self, spectral, boundary_conditions):
+        """Project a full complex spectrum onto the real-field subspace."""
+
+        reflected = self._full_complex_reflection(
+            spectral,
+            boundary_conditions,
+        )
+        return 0.5 * (spectral + reflected)
+
+    def _enforce_hermitian_full_(self, spectral, boundary_conditions):
+        """In-place counterpart of :meth:`_enforce_hermitian_full`."""
+
+        spectral.copy_(
+            self._enforce_hermitian_full(spectral, boundary_conditions)
+        )
+        return spectral
+
     def _enforce_hermitian_half_(self, spectral, boundary_conditions):
         """Project packed self-conjugate planes onto the real-field subspace.
 
@@ -82,23 +142,16 @@ class BasisAwareSpectralProjector:
         if backend.spectral_storage != "hermitian_half":
             return spectral
 
-        boundary_conditions = tuple(boundary_conditions)
-        if len(boundary_conditions) != len(self.shape):
-            raise ValueError(
-                "Boundary-condition count must match the spectral dimension."
-            )
+        boundary_conditions = self._validate_real_spectrum(
+            spectral,
+            boundary_conditions,
+        )
         packed_axis = backend.hermitian_axis
         if boundary_conditions[packed_axis] != "periodic":
             raise ValueError(
                 "hermitian_half storage requires a periodic boundary "
                 f"condition on axis {packed_axis}"
             )
-        if tuple(spectral.shape[-len(self.shape) :]) != self.shape:
-            raise ValueError(
-                f"Expected trailing spectral shape {self.shape}, got "
-                f"{tuple(spectral.shape[-len(self.shape):])}."
-            )
-
         tensor_axis_offset = spectral.ndim - len(self.shape)
         packed_tensor_axis = tensor_axis_offset + packed_axis
         plane_indices = [0]
@@ -241,10 +294,13 @@ class BasisAwareSpectralProjector:
         """Project evolved coefficients into a valid real-field spectrum."""
 
         projected = self.project(spectral, boundary_conditions)
-        if (
-            projected is spectral
-            and self.transform_backend.spectral_storage == "hermitian_half"
-        ):
+        storage = self.transform_backend.spectral_storage
+        if storage == "full_complex":
+            return self._enforce_hermitian_full(
+                projected,
+                boundary_conditions,
+            )
+        if projected is spectral:
             projected = spectral.clone()
         return self._enforce_hermitian_half_(
             projected,
@@ -255,6 +311,11 @@ class BasisAwareSpectralProjector:
         """Project owned evolved coefficients in place into real-field space."""
 
         self.project_(spectral, boundary_conditions)
+        if self.transform_backend.spectral_storage == "full_complex":
+            return self._enforce_hermitian_full_(
+                spectral,
+                boundary_conditions,
+            )
         return self._enforce_hermitian_half_(spectral, boundary_conditions)
 
     def _retained_counts(self, boundary_conditions):
@@ -374,11 +435,6 @@ class BasisAwareSpectralProjector:
 
     def project_dynamic_fields(self, fields, *, sync_spatial):
         """Project dynamic transform groups and optionally sync real fields."""
-        if (
-            not self.enabled
-            and self.transform_backend.spectral_storage != "hermitian_half"
-        ):
-            return
         groups = fields.group_indices_by_boundary_conditions(
             range(fields.dyn_count)
         )

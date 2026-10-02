@@ -13,21 +13,21 @@ LENGTHS = (4.0, 3.5, 3.0)
 BOUNDARY_CONDITIONS = ("periodic", "periodic", "neumann")
 
 
-def _solver(*, indexing="contiguous_slice"):
+def _solver(*, indexing="contiguous_slice", storage="hermitian_half"):
     return SpectralSolver(
         SHAPE,
         L=LENGTHS,
         device="cpu",
         dtype=torch.float64,
-        spectral_storage="hermitian_half",
-        hermitian_axis=1,
+        spectral_storage=storage,
+        hermitian_axis=1 if storage == "hermitian_half" else None,
         transform_execution_order="real_first",
         transform_group_indexing=indexing,
     )
 
 
-def _built_dynamic_solver(*, indexing):
-    solver = _solver(indexing=indexing)
+def _built_dynamic_solver(*, indexing, storage="hermitian_half"):
+    solver = _solver(indexing=indexing, storage=storage)
     generator = torch.Generator().manual_seed(20260918)
     for index in range(2):
         initial = torch.randn(
@@ -221,3 +221,21 @@ def test_dynamic_state_projection_enforces_reality_when_dealiasing_is_disabled()
     projector.project_dynamic_fields(fields, sync_spatial=False)
 
     assert fields.spectral[0, 0, 0, 0, 0].imag.item() == 0.0
+
+
+def test_full_complex_dynamic_state_is_projected_when_dealiasing_is_disabled():
+    solver = _built_dynamic_solver(
+        indexing="contiguous_slice",
+        storage="full_complex",
+    )
+    fields = solver.fields
+    projector = BasisAwareSpectralProjector(solver, rule="none")
+    fields.spectral[0, 0, 1, 2, 3] += 1.0j
+    expected = projector.project_real_spectrum(
+        fields.spectral[: fields.dyn_count],
+        BOUNDARY_CONDITIONS,
+    )
+
+    projector.project_dynamic_fields(fields, sync_spatial=False)
+
+    assert torch.equal(fields.spectral[: fields.dyn_count], expected)

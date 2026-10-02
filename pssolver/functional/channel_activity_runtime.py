@@ -308,7 +308,7 @@ class ChannelActivityFunctionalRuntime:
         next_spectral = (
             state[1] + integrator.dt * rhs
         ) / integrator.denom
-        next_spectral = self._projector.project(
+        next_spectral = self._projector.project_real_spectrum(
             next_spectral,
             CHANNEL_Q_BOUNDARY_CONDITIONS,
         )
