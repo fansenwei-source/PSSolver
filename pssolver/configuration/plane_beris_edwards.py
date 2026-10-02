@@ -86,6 +86,7 @@ PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
     "pssolver/operators/__init__.py",
     "pssolver/operators/projection.py",
     "pssolver/operators/tensor_divergence.py",
+    "pssolver/planning/__init__.py",
     "pssolver/linear_solvers/__init__.py",
     "pssolver/linear_solvers/stokes/__init__.py",
     "pssolver/linear_solvers/stokes/plane_free_slip.py",

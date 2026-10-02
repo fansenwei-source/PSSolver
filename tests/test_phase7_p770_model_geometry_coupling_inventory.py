@@ -73,6 +73,8 @@ def test_p770_inventory_is_a_non_runtime_authority() -> None:
 def test_p770_source_identities_bind_the_audited_baseline() -> None:
     identities = _inventory()["source_identities"]
     subsequently_connected = {
+        "pssolver/configuration/plane_beris_edwards.py",
+        "pssolver/configuration/plane_beris_edwards_component_graph.py",
         "pssolver/applications/plane_beris_edwards.py",
         "pssolver/applications/channel_active_nematics.py",
         "pssolver/linear_solvers/stokes/channel_no_slip.py",
