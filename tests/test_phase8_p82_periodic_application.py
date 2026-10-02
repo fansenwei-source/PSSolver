@@ -23,6 +23,7 @@ from pssolver.boundaries import (
     neumann_pressure_compatibility,
     neumann_q,
 )
+from pssolver.core import GridPlacement
 from pssolver.geometries import PeriodicBox
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
 from pssolver.planning.construction import RuntimeConstructionKind
@@ -41,6 +42,7 @@ def _simulation(
     save_interval=10,
     dealias_rule="cubic_half",
     projected_transform_execution="truncated",
+    grid_placement=GridPlacement.CELL_CENTERED,
 ):
     model = CompleteStressBerisEdwards(
         ldg_a=0.0,
@@ -56,6 +58,7 @@ def _simulation(
     geometry = PeriodicBox(
         shape=(8, 8, 8),
         lengths=(8.0, 8.0, 8.0),
+        grid_placement=grid_placement,
     )
     boundaries = assign_boundaries(
         model=model,
@@ -133,6 +136,16 @@ def test_periodic_public_compiler_records_fft_lowering_and_uniform_policy(tmp_pa
         for basis in compiled.lowering_plan.component_bases
         for axis in basis.axes
     } == {"fft"}
+
+
+def test_periodic_compiler_rejects_unsupported_node_centered_grid(tmp_path):
+    with pytest.raises(ValueError, match="cell-centered"):
+        compile_simulation(
+            _simulation(
+                tmp_path,
+                grid_placement=GridPlacement.NODE_CENTERED,
+            )
+        )
 
 
 def test_periodic_application_is_finite_and_restart_is_byte_identical(tmp_path):

@@ -16,6 +16,7 @@ from pssolver.configuration.simulation import (
     SimulationSpec,
 )
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
+from pssolver.core.domain import GridPlacement
 from pssolver.core.integrators import IntegratorScheme
 from pssolver.core.numerics import SpectralStorage
 
@@ -69,6 +70,8 @@ def compile_periodic_public_simulation(source: SimulationSpec, product_type):
         "periodic_box",
     ):
         raise AssertionError("periodic compiler received the wrong registry key")
+    if source.geometry.domain.grid_placement is not GridPlacement.CELL_CENTERED:
+        _reject("periodic execution currently requires a cell-centered grid")
     if source.execution.backend != "torch_spectral":
         _reject("periodic execution requires the torch_spectral backend")
     if source.execution.runtime_path != PERIODIC_RUNTIME_PATH:

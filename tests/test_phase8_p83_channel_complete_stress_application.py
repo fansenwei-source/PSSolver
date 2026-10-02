@@ -25,6 +25,7 @@ from pssolver.boundaries import (
     neumann_q,
     no_slip_velocity,
 )
+from pssolver.core import GridPlacement
 from pssolver.geometries import RectangularChannel
 from pssolver.models.active_nematics import (
     BerisEdwardsQGradientCache,
@@ -53,6 +54,7 @@ def _simulation(
     save_interval=10,
     dealias_rule="cubic_half",
     projected_transform_execution="truncated",
+    grid_placement=GridPlacement.CELL_CENTERED,
 ):
     model = CompleteStressBerisEdwards(
         ldg_a=0.0,
@@ -68,6 +70,7 @@ def _simulation(
     geometry = RectangularChannel(
         shape=(8, 8, 8),
         lengths=(8.0, 8.0, 8.0),
+        grid_placement=grid_placement,
     )
     boundaries = assign_boundaries(
         model=model,
@@ -167,6 +170,16 @@ def test_channel_complete_stress_compiler_records_two_axis_parity(tmp_path):
         "dirichlet",
         "dirichlet",
     )
+
+
+def test_channel_compiler_rejects_unsupported_node_centered_grid(tmp_path):
+    with pytest.raises(ValueError, match="cell-centered"):
+        compile_simulation(
+            _simulation(
+                tmp_path,
+                grid_placement=GridPlacement.NODE_CENTERED,
+            )
+        )
 
 
 def test_channel_complete_stress_is_finite_and_restart_is_byte_identical(tmp_path):

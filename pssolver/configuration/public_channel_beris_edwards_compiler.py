@@ -16,6 +16,7 @@ from pssolver.configuration.simulation import (
     SimulationSpec,
 )
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
+from pssolver.core.domain import GridPlacement
 from pssolver.core.integrators import IntegratorScheme
 from pssolver.core.numerics import SpectralStorage
 
@@ -81,6 +82,10 @@ def compile_channel_beris_edwards_public_simulation(
         "rectangular_channel",
     ):
         raise AssertionError("complete-stress Channel compiler got wrong key")
+    if source.geometry.domain.grid_placement is not GridPlacement.CELL_CENTERED:
+        _reject(
+            "complete-stress Channel currently requires a cell-centered grid"
+        )
     if source.execution.backend != "torch_spectral":
         _reject("complete-stress Channel requires torch_spectral")
     if source.execution.runtime_path != CHANNEL_COMPLETE_STRESS_RUNTIME_PATH:
