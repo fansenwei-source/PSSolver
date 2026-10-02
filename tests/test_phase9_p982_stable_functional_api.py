@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -78,8 +79,26 @@ def _state_contract():
     return state_spec, identity, state
 
 
+def _periodic_identity(state_spec):
+    return FunctionalRuntimeIdentity(
+        scientific={"model": "test"},
+        discretization={"grid": [2, 2, 2]},
+        execution={
+            "runtime": "test",
+            "functional_runtime": {
+                "kind": "periodic_activity_batch_one",
+                "hermitian_state_projection": (
+                    "self_conjugate_planes_each_step"
+                ),
+            },
+        },
+        state_layout=state_spec.to_metadata(),
+    )
+
+
 def _legacy_bridge_metadata(identity, bridge_metadata):
     result = dict(bridge_metadata)
+    result["format_version"] = 1
     result["api_version"] = "0.1-provisional"
     result["functional_runtime_identity_sha256"] = (
         runtime_identity_sha256_for_api_version(
@@ -141,7 +160,16 @@ def test_protocol_provenance_records_package_and_two_minor_alias_window():
         "0.1-provisional",
     ]
     assert protocol["silent_fallback"] is False
-    alias = metadata["compatibility_policy"]["FunctionalCapabilities_alias"]
+    policy = metadata["compatibility_policy"]
+    assert policy["version"] == 2
+    assert policy["legacy_checkpoint_schema_repair"] is False
+    assert policy["periodic_bridge_current_format_version"] == 2
+    assert policy["legacy_identity_schemas"] == {
+        "0.1-provisional": (
+            "frozen_periodic_identity_before_hermitian_state_repair"
+        )
+    }
+    alias = policy["FunctionalCapabilities_alias"]
     assert alias["deprecated_in_package_version"] == "0.2.0"
     assert alias["earliest_removal_package_version"] == "0.4.0"
 
@@ -218,7 +246,8 @@ def test_periodic_v1_legacy_checkpoint_reader_is_exact_and_machine_readable(
 ):
     from pssolver.functional import PeriodicActivityCheckpointBridge
 
-    state_spec, identity, state = _state_contract()
+    state_spec, _, state = _state_contract()
+    identity = _periodic_identity(state_spec)
     bridge = PeriodicActivityCheckpointBridge(
         state_spec=state_spec,
         functional_identity=identity,
@@ -234,6 +263,22 @@ def test_periodic_v1_legacy_checkpoint_reader_is_exact_and_machine_readable(
         identity,
         metadata["functional_bridge"],
     )
+    historical_identity = identity.to_metadata()
+    historical_identity["api_version"] = "0.1-provisional"
+    historical_identity["execution"]["functional_runtime"].pop(
+        "hermitian_state_projection"
+    )
+    expected_legacy_sha256 = hashlib.sha256(
+        json.dumps(
+            historical_identity,
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+    ).hexdigest()
+    assert metadata["functional_bridge"][
+        "functional_runtime_identity_sha256"
+    ] == expected_legacy_sha256
     path.write_text(
         json.dumps(metadata, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -245,6 +290,60 @@ def test_periodic_v1_legacy_checkpoint_reader_is_exact_and_machine_readable(
     assert restored.compatibility.target_api_version == "1.0"
     assert restored.compatibility.exact_current_protocol is False
     assert all(torch.equal(a, b) for a, b in zip(restored.state, state, strict=True))
+
+
+def test_periodic_v1_current_checkpoint_reader_requires_current_identity(
+    tmp_path,
+):
+    from pssolver.functional import PeriodicActivityCheckpointBridge
+
+    state_spec, _, state = _state_contract()
+    identity = _periodic_identity(state_spec)
+    bridge = PeriodicActivityCheckpointBridge(
+        state_spec=state_spec,
+        functional_identity=identity,
+        production_runtime_identity_sha256="d" * 64,
+        backend_restart={},
+    )
+    directory = bridge.export_checkpoint(
+        tmp_path / "periodic-current-v1", state, completed_steps=4
+    )
+    path = directory / "checkpoint.json"
+    metadata = json.loads(path.read_text(encoding="utf-8"))
+    metadata["functional_bridge"]["format_version"] = 1
+    path.write_text(
+        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    restored = bridge.import_checkpoint(directory)
+
+    assert restored.source_format == "periodic_functional_bridge_v1"
+    assert restored.compatibility.reader == (
+        "current_periodic_functional_bridge_v1_reader"
+    )
+    assert restored.compatibility.exact_current_protocol is True
+
+    pre_repair_identity = identity.to_metadata()
+    pre_repair_identity["execution"]["functional_runtime"].pop(
+        "hermitian_state_projection"
+    )
+    metadata["functional_bridge"][
+        "functional_runtime_identity_sha256"
+    ] = hashlib.sha256(
+        json.dumps(
+            pre_repair_identity,
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+    ).hexdigest()
+    path.write_text(
+        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(stable.FunctionalCheckpointCompatibilityError):
+        bridge.import_checkpoint(directory)
 
 
 def test_unknown_checkpoint_api_is_rejected_before_tensor_loading(tmp_path):

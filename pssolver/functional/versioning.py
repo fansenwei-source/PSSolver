@@ -19,7 +19,7 @@ FUNCTIONAL_CHECKPOINT_READ_API_VERSIONS = (
     FUNCTIONAL_API_VERSION,
     *FUNCTIONAL_LEGACY_CHECKPOINT_API_VERSIONS,
 )
-FUNCTIONAL_COMPATIBILITY_POLICY_VERSION = 1
+FUNCTIONAL_COMPATIBILITY_POLICY_VERSION = 2
 
 FunctionalVersionPurpose = Literal["construction", "checkpoint_read"]
 
@@ -115,14 +115,35 @@ def runtime_identity_sha256_for_api_version(
     metadata: dict[str, object],
     api_version: str,
 ) -> str:
-    """Hash an identity under a selected, already-negotiated API literal."""
+    """Hash the exact identity schema owned by one checkpoint API version."""
 
     selection = negotiate_functional_api_version(
         api_version,
         purpose="checkpoint_read",
     )
-    payload = dict(metadata)
+    payload = json.loads(
+        json.dumps(
+            metadata,
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        )
+    )
     payload["api_version"] = selection.requested
+    if selection.requested == "0.1-provisional":
+        execution = payload.get("execution")
+        if isinstance(execution, dict):
+            functional_runtime = execution.get("functional_runtime")
+            if (
+                isinstance(functional_runtime, dict)
+                and functional_runtime.get("kind")
+                == "periodic_activity_batch_one"
+            ):
+                # The provisional periodic identity predates the Hermitian
+                # state repair.  Its digest is defined by that historical
+                # schema, not by changing only the API literal in today's
+                # identity payload.
+                functional_runtime.pop("hermitian_state_projection", None)
     encoded = json.dumps(
         payload,
         allow_nan=False,
@@ -155,6 +176,12 @@ def functional_protocol_provenance() -> dict[str, object]:
         "compatibility_policy": {
             "version": FUNCTIONAL_COMPATIBILITY_POLICY_VERSION,
             "legacy_checkpoint_schema_repair": False,
+            "periodic_bridge_current_format_version": 2,
+            "legacy_identity_schemas": {
+                "0.1-provisional": (
+                    "frozen_periodic_identity_before_hermitian_state_repair"
+                )
+            },
             "source_shadowing_allowed": False,
             "FunctionalCapabilities_alias": {
                 "status": "compatibility_public",

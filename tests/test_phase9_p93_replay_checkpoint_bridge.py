@@ -162,7 +162,7 @@ def test_p93_declares_bitwise_replay_and_versioned_bridge(tmp_path):
     assert runtime.capabilities.durable_checkpoint_bridge is True
     assert isinstance(runtime.checkpoint_bridge, FunctionalCheckpointBridgeProtocol)
     assert isinstance(runtime.checkpoint_bridge, PeriodicActivityCheckpointBridge)
-    assert runtime.checkpoint_bridge.format_version == 1
+    assert runtime.checkpoint_bridge.format_version == 2
 
 
 def test_p93_replay_is_bitwise_after_intervening_calls_and_fresh_construction(
@@ -228,12 +228,12 @@ def test_p93_functional_export_is_production_compatible_and_continues_bitwise(
     _assert_state_equal(state, before)
     metadata = json.loads((directory / "checkpoint.json").read_text())
     assert metadata["format_version"] == 1
-    assert metadata["functional_bridge"]["format_version"] == 1
+    assert metadata["functional_bridge"]["format_version"] == 2
     assert metadata["completed_steps"] == 3
 
     imported = runtime.checkpoint_bridge.import_checkpoint(directory)
     assert imported.completed_steps == 3
-    assert imported.source_format == "periodic_functional_bridge_v1"
+    assert imported.source_format == "periodic_functional_bridge_v2"
     _assert_state_equal(imported.state, state)
 
     run_spec, production = _production_adapter(simulation)

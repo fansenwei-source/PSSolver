@@ -33,9 +33,11 @@ from .versioning import (
 )
 
 
-PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 1
+PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 2
+_LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 1
 _SOURCE_PRODUCTION = "periodic_production_v1"
-_SOURCE_FUNCTIONAL = "periodic_functional_bridge_v1"
+_SOURCE_FUNCTIONAL_V1 = "periodic_functional_bridge_v1"
+_SOURCE_FUNCTIONAL_V2 = "periodic_functional_bridge_v2"
 
 
 def _canonical_sha256(value: object) -> str:
@@ -63,7 +65,9 @@ class PeriodicActivityCheckpointBridge:
 
     Durable serialization intentionally detaches tensors.  The independent
     consumer owns checkpoint scheduling and reconstructs each differentiable
-    replay segment from the returned owned tensors.
+    replay segment from the returned owned tensors.  Format 2 identifies the
+    Hermitian-repaired timestep.  Exact format-1 readers remain available for
+    the current post-repair identity and the frozen provisional identity.
     """
 
     def __init__(
@@ -113,7 +117,11 @@ class PeriodicActivityCheckpointBridge:
             purpose="checkpoint_read",
         )
         return {
-            "format_version": self.format_version,
+            "format_version": (
+                self.format_version
+                if api_version == FUNCTIONAL_API_VERSION
+                else _LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION
+            ),
             "api_version": api_version,
             "runtime_kind": "periodic_activity_batch_one",
             "functional_runtime_identity_sha256": (
@@ -151,6 +159,23 @@ class PeriodicActivityCheckpointBridge:
             purpose="checkpoint_read",
         )
         expected = self._bridge_metadata(api_version=selection.requested)
+        source_format = (
+            _SOURCE_FUNCTIONAL_V1
+            if selection.legacy
+            else _SOURCE_FUNCTIONAL_V2
+        )
+        current_reader = "current_periodic_functional_bridge_v2_reader"
+        if (
+            not selection.legacy
+            and metadata.get("format_version")
+            == _LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION
+        ):
+            expected = dict(expected)
+            expected["format_version"] = (
+                _LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION
+            )
+            source_format = _SOURCE_FUNCTIONAL_V1
+            current_reader = "current_periodic_functional_bridge_v1_reader"
         if dict(metadata) != expected:
             raise FunctionalCheckpointCompatibilityError(
                 "functional checkpoint identity or state layout does not match target",
@@ -158,13 +183,13 @@ class PeriodicActivityCheckpointBridge:
                 details={"source_api_version": selection.requested},
             )
         return (
-            _SOURCE_FUNCTIONAL,
+            source_format,
             FunctionalCheckpointCompatibility(
                 source_api_version=selection.requested,
                 target_api_version=selection.effective,
                 reader=(
                     selection.compatibility_reader
-                    or "current_periodic_functional_bridge_v1_reader"
+                    or current_reader
                 ),
                 exact_current_protocol=not selection.legacy,
             ),
