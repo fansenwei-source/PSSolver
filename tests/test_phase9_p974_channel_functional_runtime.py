@@ -46,7 +46,12 @@ from pssolver.workflows.channel_beris_edwards import (
 )
 
 
-def _simulation(tmp_path: Path, *, name: str = "p974") -> Simulation:
+def _simulation(
+    tmp_path: Path,
+    *,
+    name: str = "p974",
+    device: str = "cpu",
+) -> Simulation:
     model = CompleteStressBerisEdwards(
         ldg_a=0.0,
         ldg_b=-0.3,
@@ -89,7 +94,7 @@ def _simulation(tmp_path: Path, *, name: str = "p974") -> Simulation:
         initial_condition=SnapshotInitialCondition(source, step=0),
         execution=TorchSpectralExecution(
             runtime_path="channel_complete_stress",
-            device="cpu",
+            device=device,
             options={
                 "tf32": "off",
                 "molecular_field_linear_space": "spectral",
@@ -120,6 +125,15 @@ def _runtime(tmp_path: Path):
     simulation = _simulation(tmp_path)
     request = channel_activity_functional_request(simulation.specification)
     return simulation, request, build_channel_activity_functional_runtime(request)
+
+
+def test_non_cuda_index_is_normalized_to_tensor_device_type(tmp_path):
+    simulation = _simulation(tmp_path, name="cpu_index", device="cpu:0")
+    request = channel_activity_functional_request(simulation.specification)
+    runtime = build_channel_activity_functional_runtime(request)
+
+    assert runtime.state_spec.components[0].device == "cpu"
+    runtime.state_spec.validate(runtime.initial_state())
 
 
 def _control(runtime, value: float = 0.01, *, requires_grad=False):

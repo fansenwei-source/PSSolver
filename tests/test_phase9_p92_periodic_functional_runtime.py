@@ -59,7 +59,12 @@ def _model():
     )
 
 
-def _simulation(tmp_path: Path, *, name: str = "functional") -> Simulation:
+def _simulation(
+    tmp_path: Path,
+    *,
+    name: str = "functional",
+    device: str = "cpu",
+) -> Simulation:
     model = _model()
     shape = (6, 6, 4)
     geometry = PeriodicBox(shape=shape, lengths=(6.0, 6.0, 4.0))
@@ -93,7 +98,7 @@ def _simulation(tmp_path: Path, *, name: str = "functional") -> Simulation:
         initial_condition=SnapshotInitialCondition(source, step=0),
         execution=TorchSpectralExecution(
             runtime_path="periodic_spectral",
-            device="cpu",
+            device=device,
             options={
                 "tf32": "off",
                 "molecular_field_linear_space": "spectral",
@@ -115,6 +120,15 @@ def _runtime(tmp_path: Path):
     simulation = _simulation(tmp_path)
     request = periodic_activity_functional_request(simulation.specification)
     return simulation, request, build_functional_runtime(request)
+
+
+def test_non_cuda_index_is_normalized_to_tensor_device_type(tmp_path):
+    simulation = _simulation(tmp_path, name="cpu_index", device="cpu:0")
+    request = periodic_activity_functional_request(simulation.specification)
+    runtime = build_functional_runtime(request)
+
+    assert runtime.state_spec.components[0].device == "cpu"
+    runtime.state_spec.validate(runtime.initial_state())
 
 
 def _control(runtime, value=0.01, *, requires_grad=False):

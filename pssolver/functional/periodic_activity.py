@@ -61,7 +61,7 @@ def _allocated_device(value: object) -> str:
     except (TypeError, RuntimeError) as exc:
         raise ValueError("functional execution device is invalid") from exc
     if requested.type != "cuda":
-        return str(requested)
+        return requested.type
     if not torch.cuda.is_available():
         raise RuntimeError("functional CUDA construction requires CUDA")
     index = requested.index
