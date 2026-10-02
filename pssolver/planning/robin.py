@@ -57,6 +57,8 @@ def _positive_robin_roots(
     lower: float,
     upper: float,
 ) -> tuple[float, ...]:
+    product = lower * upper
+    total = lower + upper
     roots: list[float] = []
     for index in range(count):
         left_endpoint = index * math.pi
@@ -68,6 +70,42 @@ def _positive_robin_roots(
         right_value = _characteristic(right, lower, upper)
         if not math.isfinite(left_value) or not math.isfinite(right_value):
             raise ValueError("Robin characteristic is not finite")
+        if left_value * right_value >= 0.0:
+            # The normal bracket is intentionally separated from n*pi to
+            # suppress endpoint roundoff.  A weak finite impedance can place
+            # the root inside that offset.  Retry around its continuum
+            # asymptotic position without changing the robust common path.
+            if index == 0:
+                estimate = math.sqrt(product + total)
+                if 0.0 < estimate < 0.5 * math.pi:
+                    left = max(
+                        math.nextafter(left_endpoint, right_endpoint),
+                        0.25 * estimate,
+                    )
+                    right = min(
+                        math.nextafter(right_endpoint, left_endpoint),
+                        4.0 * estimate,
+                    )
+            else:
+                base = left_endpoint
+                denominator = base * base - product
+                estimate = (
+                    base + base * total / denominator
+                    if denominator > 0.0
+                    else math.nan
+                )
+                if left_endpoint < estimate < right_endpoint:
+                    distance = estimate - left_endpoint
+                    left = max(
+                        math.nextafter(left_endpoint, right_endpoint),
+                        left_endpoint + 0.25 * distance,
+                    )
+                    right = min(
+                        math.nextafter(right_endpoint, left_endpoint),
+                        left_endpoint + 4.0 * distance,
+                    )
+            left_value = _characteristic(left, lower, upper)
+            right_value = _characteristic(right, lower, upper)
         if left_value == 0.0:
             roots.append(left)
             continue
@@ -75,10 +113,34 @@ def _positive_robin_roots(
             roots.append(right)
             continue
         if left_value * right_value >= 0.0:
-            raise ValueError(
-                "Robin characteristic does not bracket one root in the "
-                f"expected interval {index}"
+            if index == 0:
+                estimate = math.sqrt(product + total)
+            else:
+                base = left_endpoint
+                denominator = base * base - product
+                estimate = (
+                    base + base * total / denominator
+                    if denominator > 0.0
+                    else math.nan
+                )
+            estimate = min(
+                max(
+                    estimate,
+                    math.nextafter(left_endpoint, right_endpoint),
+                ),
+                math.nextafter(right_endpoint, left_endpoint),
             )
+            estimate_value = _characteristic(estimate, lower, upper)
+            if (
+                not math.isfinite(estimate_value)
+                or abs(estimate_value) > 512.0 * math.ulp(1.0)
+            ):
+                raise ValueError(
+                    "Robin characteristic does not bracket one root in the "
+                    f"expected interval {index}"
+                )
+            roots.append(estimate)
+            continue
         for _ in range(128):
             midpoint = 0.5 * (left + right)
             midpoint_value = _characteristic(midpoint, lower, upper)

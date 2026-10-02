@@ -247,6 +247,34 @@ def test_pure_neumann_limit_matches_cosine_mode_and_rejects_null_solve():
         )
 
 
+@pytest.mark.parametrize("impedance", (1.0e-16, 1.0e-14, 1.0e-12))
+def test_tiny_finite_impedance_continuously_approaches_neumann_roots(
+    impedance,
+):
+    plan = build_cell_centered_robin_eigenbasis_plan(
+        size=12,
+        length=1.0,
+        lower=_coefficients(impedance, 1.0, 0.0),
+        upper=_coefficients(impedance, 1.0, 0.0),
+    )
+
+    assert plan.is_pure_neumann is False
+    assert plan.dimensionless_roots[0] > 0.0
+    assert plan.dimensionless_roots[0] == pytest.approx(
+        math.sqrt(2.0 * impedance + impedance * impedance),
+        rel=5.0e-8,
+        abs=0.0,
+    )
+    for index, root in enumerate(plan.dimensionless_roots[1:], start=1):
+        assert root == pytest.approx(index * math.pi, abs=2.0e-12)
+        residual = (
+            (impedance * impedance - root * root) * math.sin(root)
+            + root * (2.0 * impedance) * math.cos(root)
+        )
+        scale = max(1.0, root * root, root * 2.0 * impedance)
+        assert abs(residual) / scale < 3.0e-14
+
+
 def test_increasing_finite_impedance_approaches_strong_dirichlet_control():
     length = 2.0
     size = 64
@@ -334,4 +362,3 @@ def test_p852_method_record_and_archive_are_present():
         "phase_8_p852_robin_eigenbasis_operator.json",
     ):
         assert archive_source.count(f'"{name}"') == 1
-
