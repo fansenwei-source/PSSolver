@@ -260,6 +260,29 @@ def test_fixed_iteration_pressure_mode_preserves_the_requested_work_count():
 
     assert stokes.last_pressure_iterations == 4
     assert stokes.pressure_fixed_iterations == 4
+    assert stokes.pressure_convergence_policy() == {
+        "mode": "fixed_iteration_cap_with_early_relative_tolerance",
+        "iteration_limit": 4,
+        "iteration_limit_source": "pressure_fixed_iterations",
+        "max_iterations_role": "inactive_while_fixed_iterations_is_set",
+        "relative_tolerance_role": "early_exit_only",
+    }
+
+
+def test_tolerance_pressure_mode_reports_maximum_iteration_precedence():
+    stokes = _canonical(
+        _spectral_solver(),
+        pressure_relative_tolerance=1.0e-9,
+        pressure_max_iterations=37,
+    )
+
+    assert stokes.pressure_convergence_policy() == {
+        "mode": "relative_tolerance_with_maximum_iteration_cap",
+        "iteration_limit": 37,
+        "iteration_limit_source": "pressure_max_iterations",
+        "max_iterations_role": "authoritative_cap",
+        "relative_tolerance_role": "required_postcondition",
+    }
 
 
 @pytest.mark.parametrize(

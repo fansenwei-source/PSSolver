@@ -56,7 +56,13 @@ def _positive_integer(value: object, description: str) -> int:
 
 
 class ChannelNoSlipModalStokesSolver(torch.nn.Module):
-    """Matrix-free mixed FFT/DST/DCT Channel Stokes/Brinkman solve."""
+    """Matrix-free mixed FFT/DST/DCT Channel Stokes/Brinkman solve.
+
+    ``pressure_fixed_iterations`` selects an authoritative iteration cap.
+    In that mode ``pressure_max_iterations`` is inactive and the relative
+    tolerance can only terminate the solve early; reaching the fixed cap is
+    accepted even when the tolerance has not been met.
+    """
 
     def __init__(
         self,
@@ -199,10 +205,34 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         self.pressure_rel_tol = pressure_relative_tolerance
         self.pressure_max_iter = pressure_max_iterations
         self.pressure_fixed_iterations = pressure_fixed_iterations
+        self.pressure_iteration_limit = (
+            pressure_fixed_iterations
+            if pressure_fixed_iterations is not None
+            else pressure_max_iterations
+        )
         self.pressure_guess = None
         self.last_pressure_iterations = 0
         self.last_pressure_residual = 0.0
         self.last_pressure_relative_residual = 0.0
+
+    def pressure_convergence_policy(self) -> dict[str, object]:
+        """Return the explicit precedence of the PCG stopping controls."""
+
+        if self.pressure_fixed_iterations is None:
+            return {
+                "mode": "relative_tolerance_with_maximum_iteration_cap",
+                "iteration_limit": self.pressure_iteration_limit,
+                "iteration_limit_source": "pressure_max_iterations",
+                "max_iterations_role": "authoritative_cap",
+                "relative_tolerance_role": "required_postcondition",
+            }
+        return {
+            "mode": "fixed_iteration_cap_with_early_relative_tolerance",
+            "iteration_limit": self.pressure_iteration_limit,
+            "iteration_limit_source": "pressure_fixed_iterations",
+            "max_iterations_role": "inactive_while_fixed_iterations_is_set",
+            "relative_tolerance_role": "early_exit_only",
+        }
 
     def _apply_axis_matrix(self, tensor, matrix, axis):
         spectral_axis = tensor.ndim - 3 + axis
@@ -315,11 +345,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         tolerance = self.pressure_rel_tol * rhs_norm
         residual_norm = torch.linalg.vector_norm(residual.reshape(-1)).item()
         iterations = 0
-        iteration_limit = (
-            self.pressure_fixed_iterations
-            if self.pressure_fixed_iterations is not None
-            else self.pressure_max_iter
-        )
+        iteration_limit = self.pressure_iteration_limit
         while iterations < iteration_limit and (
             self.pressure_fixed_iterations is not None
             or residual_norm > tolerance

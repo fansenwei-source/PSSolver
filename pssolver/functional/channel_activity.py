@@ -243,6 +243,12 @@ def channel_activity_functional_declaration(
             "relative_tolerance": pressure["relative_tolerance"],
             "max_iterations": pressure["max_iterations"],
             "fixed_iterations": pressure["fixed_iterations"],
+            "stopping_precedence": (
+                "fixed_iterations_overrides_max_iterations;"
+                "relative_tolerance_is_early_exit_only"
+                if pressure["fixed_iterations"] is not None
+                else "relative_tolerance_required_with_max_iterations_cap"
+            ),
             "gauge": "zero_mean",
             "production_warm_start": pressure["warm_start"],
             "functional_warm_start": False,

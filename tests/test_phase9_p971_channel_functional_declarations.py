@@ -186,6 +186,10 @@ def test_p971_identity_exposes_pressure_and_boundary_policy_without_claims(
         CHANNEL_FUNCTIONAL_PRESSURE_WARM_START
     )
     assert pressure["functional_initial_guess"] == "zero"
+    assert pressure["stopping_precedence"] == (
+        "fixed_iterations_overrides_max_iterations;"
+        "relative_tolerance_is_early_exit_only"
+    )
     assert pressure["transpose_action"] == (
         "explicit_reverse_dataflow_conjugate_transpose"
     )
