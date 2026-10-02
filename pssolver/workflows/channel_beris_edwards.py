@@ -266,21 +266,24 @@ class ChannelBerisEdwardsWorkflow:
                     "progress must yield consecutive local steps from zero"
                 )
             absolute = start + local_step
-            if (
+            diagnostic_due = (
                 self.options["diagnostics"]
                 and absolute % self.options["diagnostic_interval"] == 0
-            ):
+            )
+            save_due = (
+                absolute >= self.options["save_start_step"]
+                and absolute % self.options["save_interval"] == 0
+            )
+            if diagnostic_due or save_due:
                 self.adapter.synchronize_for_observation()
+            if diagnostic_due:
                 self.diagnostics.append(
                     capture_channel_beris_edwards_diagnostic(
                         self.adapter,
                         step=absolute,
                     )
                 )
-            if (
-                absolute >= self.options["save_start_step"]
-                and absolute % self.options["save_interval"] == 0
-            ):
+            if save_due:
                 observation = capture_channel_beris_edwards_observation(
                     self.adapter,
                     step=absolute,

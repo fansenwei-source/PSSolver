@@ -256,6 +256,32 @@ def test_channel_observation_schedule_does_not_change_trajectory(tmp_path):
         assert left.read_bytes() == right.read_bytes()
 
 
+def test_channel_saved_hydrodynamics_match_the_saved_q_state(tmp_path):
+    multi_step = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="multi_step_observations",
+            steps=3,
+            diagnostics=False,
+            save_interval=1,
+        )
+    )
+    one_step = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="one_step_reference",
+            steps=1,
+            diagnostics=False,
+            save_interval=1,
+        )
+    )
+
+    for prefix in ("Q", "u", "p"):
+        observed = multi_step.output_directory / f"{prefix}_1.npy"
+        reference = one_step.output_directory / f"{prefix}_1.npy"
+        assert observed.read_bytes() == reference.read_bytes(), prefix
+
+
 def test_channel_observation_sync_performs_one_static_solve_per_state(
     tmp_path,
     monkeypatch,

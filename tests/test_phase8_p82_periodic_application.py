@@ -36,6 +36,9 @@ def _simulation(
     checkpoint_interval=None,
     restart_from=None,
     runtime_path="periodic_spectral",
+    diagnostics=True,
+    diagnostic_interval=1,
+    save_interval=10,
 ):
     model = CompleteStressBerisEdwards(
         ldg_a=0.0,
@@ -97,8 +100,9 @@ def _simulation(
         output=Output(
             directory=tmp_path / output_name,
             steps=steps,
-            save_interval=10,
-            diagnostic_interval=1,
+            save_interval=save_interval,
+            diagnostic_interval=diagnostic_interval,
+            diagnostics=diagnostics,
             checkpoint_interval=checkpoint_interval,
             restart_from=restart_from,
         ),
@@ -160,6 +164,32 @@ def test_periodic_application_is_finite_and_restart_is_byte_identical(tmp_path):
         assert np.isfinite(np.load(left, allow_pickle=False)).all()
     assert max(abs(value.pressure_mean) for value in resumed.diagnostics) < 1.0e-12
     assert max(value.velocity_mean_norm for value in resumed.diagnostics) < 1.0e-12
+
+
+def test_periodic_saved_hydrodynamics_match_the_saved_q_state(tmp_path):
+    multi_step = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="multi_step_observations",
+            steps=3,
+            diagnostics=False,
+            save_interval=1,
+        )
+    )
+    one_step = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="one_step_reference",
+            steps=1,
+            diagnostics=False,
+            save_interval=1,
+        )
+    )
+
+    for prefix in ("Q", "u", "p"):
+        observed = multi_step.output_directory / f"{prefix}_1.npy"
+        reference = one_step.output_directory / f"{prefix}_1.npy"
+        assert observed.read_bytes() == reference.read_bytes(), prefix
 
 
 def test_periodic_compiler_rejects_unqualified_runtime_before_allocation(tmp_path):

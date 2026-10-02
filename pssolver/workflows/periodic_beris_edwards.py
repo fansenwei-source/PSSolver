@@ -151,12 +151,21 @@ class PeriodicBerisEdwardsWorkflow:
                     "progress must yield consecutive local steps starting at zero"
                 )
             absolute = start + local_step
-            if self.options["diagnostics"] and absolute % self.options["diagnostic_interval"] == 0:
+            diagnostic_due = (
+                self.options["diagnostics"]
+                and absolute % self.options["diagnostic_interval"] == 0
+            )
+            save_due = (
+                absolute >= self.options["save_start_step"]
+                and absolute % self.options["save_interval"] == 0
+            )
+            if diagnostic_due or save_due:
                 self.adapter.synchronize_for_observation()
+            if diagnostic_due:
                 self.diagnostics.append(
                     capture_periodic_diagnostic(self.adapter, step=absolute)
                 )
-            if absolute >= self.options["save_start_step"] and absolute % self.options["save_interval"] == 0:
+            if save_due:
                 observation = capture_periodic_observation(self.adapter, step=absolute)
                 _save_observation(
                     self.output_directory,
