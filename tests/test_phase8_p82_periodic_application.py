@@ -223,6 +223,59 @@ def test_periodic_application_applies_and_records_tf32_policy(
     assert torch.backends.cudnn.allow_tf32 is False
 
 
+def test_periodic_application_persists_diagnostics_and_metadata(tmp_path):
+    result = run_simulation(_simulation(tmp_path, steps=1))
+    values = np.load(
+        result.output_directory / "diagnostics.npy",
+        allow_pickle=False,
+    )
+    metadata = json.loads(
+        (result.output_directory / "metadata.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert values.dtype.names == (
+        "step",
+        "divergence_max",
+        "divergence_rms",
+        "pressure_mean",
+        "velocity_mean_norm",
+    )
+    assert values["step"].tolist() == [0, 1]
+    assert np.isfinite(values.view(np.recarray).divergence_max).all()
+    assert (result.output_directory / "diagnostics.csv").is_file()
+    assert metadata["diagnostics"] == {
+        "enabled": True,
+        "count": 2,
+        "steps": [0, 1],
+        "npy": "diagnostics.npy",
+        "csv": "diagnostics.csv",
+    }
+
+
+def test_periodic_disabled_diagnostics_are_recorded_without_files(tmp_path):
+    result = run_simulation(
+        _simulation(tmp_path, steps=1, diagnostics=False)
+    )
+    metadata = json.loads(
+        (result.output_directory / "metadata.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert result.diagnostics == ()
+    assert not (result.output_directory / "diagnostics.npy").exists()
+    assert not (result.output_directory / "diagnostics.csv").exists()
+    assert metadata["diagnostics"] == {
+        "enabled": False,
+        "count": 0,
+        "steps": [],
+        "npy": None,
+        "csv": None,
+    }
+
+
 def test_periodic_application_is_finite_and_restart_is_byte_identical(tmp_path):
     continuous = run_simulation(
         _simulation(tmp_path, output_name="continuous", steps=2)

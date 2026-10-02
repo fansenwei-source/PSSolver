@@ -20,6 +20,7 @@ from pssolver.runtime.channel_beris_edwards import (
     CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
     ChannelBerisEdwardsRuntimeAdapterProtocol,
 )
+from .diagnostic_io import write_structured_diagnostics
 
 
 CHECKPOINT_VERSION = 2
@@ -51,6 +52,32 @@ class ChannelBerisEdwardsDiagnostic:
     pressure_mean: float
     pressure_iterations: int
     pressure_relative_residual: float
+
+    def as_tuple(self) -> tuple[int | float, ...]:
+        return (
+            self.step,
+            self.divergence_max,
+            self.divergence_rms,
+            self.pressure_mean,
+            self.pressure_iterations,
+            self.pressure_relative_residual,
+        )
+
+
+CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_DTYPE = np.dtype(
+    [
+        ("step", np.int64),
+        ("divergence_max", np.float64),
+        ("divergence_rms", np.float64),
+        ("pressure_mean", np.float64),
+        ("pressure_iterations", np.int64),
+        ("pressure_relative_residual", np.float64),
+    ]
+)
+CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_HEADER = (
+    "step,divergence_max,divergence_rms,pressure_mean,pressure_iterations,"
+    "pressure_relative_residual"
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -422,6 +449,12 @@ class ChannelBerisEdwardsWorkflow:
                     step=final_step,
                 )
             )
+            write_structured_diagnostics(
+                self.output_directory,
+                [value.as_tuple() for value in self.diagnostics],
+                dtype=CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_DTYPE,
+                header=CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_HEADER,
+            )
         elapsed = time.time() - started
         self.metadata.update(
             status="complete",
@@ -429,6 +462,17 @@ class ChannelBerisEdwardsWorkflow:
             elapsed_seconds=elapsed,
             saved_steps=self.saved,
             checkpoint_steps=self.checkpoints,
+            diagnostics={
+                "enabled": self.options["diagnostics"],
+                "count": len(self.diagnostics),
+                "steps": [value.step for value in self.diagnostics],
+                "npy": (
+                    "diagnostics.npy" if self.options["diagnostics"] else None
+                ),
+                "csv": (
+                    "diagnostics.csv" if self.options["diagnostics"] else None
+                ),
+            },
         )
         (self.output_directory / "metadata.json").write_text(
             json.dumps(self.metadata, indent=2, sort_keys=True) + "\n",
@@ -451,6 +495,8 @@ class ChannelBerisEdwardsWorkflow:
 
 __all__ = [
     "ChannelBerisEdwardsDiagnostic",
+    "CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_DTYPE",
+    "CHANNEL_BERIS_EDWARDS_DIAGNOSTIC_HEADER",
     "ChannelBerisEdwardsObservation",
     "ChannelBerisEdwardsWorkflow",
     "ChannelBerisEdwardsWorkflowResult",

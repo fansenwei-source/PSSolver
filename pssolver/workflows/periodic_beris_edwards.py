@@ -21,6 +21,7 @@ from .periodic_checkpoint import (
     restore_periodic_checkpoint,
     write_periodic_checkpoint,
 )
+from .diagnostic_io import write_structured_diagnostics
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,6 +39,29 @@ class PeriodicDiagnostic:
     divergence_rms: float
     pressure_mean: float
     velocity_mean_norm: float
+
+    def as_tuple(self) -> tuple[int | float, ...]:
+        return (
+            self.step,
+            self.divergence_max,
+            self.divergence_rms,
+            self.pressure_mean,
+            self.velocity_mean_norm,
+        )
+
+
+PERIODIC_DIAGNOSTIC_DTYPE = np.dtype(
+    [
+        ("step", np.int64),
+        ("divergence_max", np.float64),
+        ("divergence_rms", np.float64),
+        ("pressure_mean", np.float64),
+        ("velocity_mean_norm", np.float64),
+    ]
+)
+PERIODIC_DIAGNOSTIC_HEADER = (
+    "step,divergence_max,divergence_rms,pressure_mean,velocity_mean_norm"
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -205,6 +229,12 @@ class PeriodicBerisEdwardsWorkflow:
             self.diagnostics.append(
                 capture_periodic_diagnostic(self.adapter, step=final_step)
             )
+            write_structured_diagnostics(
+                self.output_directory,
+                [value.as_tuple() for value in self.diagnostics],
+                dtype=PERIODIC_DIAGNOSTIC_DTYPE,
+                header=PERIODIC_DIAGNOSTIC_HEADER,
+            )
         elapsed = time.time() - started
         self.metadata.update(
             status="complete",
@@ -212,6 +242,17 @@ class PeriodicBerisEdwardsWorkflow:
             elapsed_seconds=elapsed,
             saved_steps=self.saved,
             checkpoint_steps=self.checkpoints,
+            diagnostics={
+                "enabled": self.options["diagnostics"],
+                "count": len(self.diagnostics),
+                "steps": [value.step for value in self.diagnostics],
+                "npy": (
+                    "diagnostics.npy" if self.options["diagnostics"] else None
+                ),
+                "csv": (
+                    "diagnostics.csv" if self.options["diagnostics"] else None
+                ),
+            },
         )
         (self.output_directory / "metadata.json").write_text(
             json.dumps(self.metadata, indent=2, sort_keys=True) + "\n",
@@ -232,6 +273,8 @@ class PeriodicBerisEdwardsWorkflow:
 __all__ = [
     "PeriodicBerisEdwardsWorkflow",
     "PeriodicDiagnostic",
+    "PERIODIC_DIAGNOSTIC_DTYPE",
+    "PERIODIC_DIAGNOSTIC_HEADER",
     "PeriodicObservation",
     "PeriodicWorkflowResult",
     "capture_periodic_diagnostic",
