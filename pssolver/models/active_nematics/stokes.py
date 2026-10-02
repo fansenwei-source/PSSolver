@@ -178,6 +178,14 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         self.q_gradient_cache = q_gradient_cache
         self.spectral_projector = spectral_projector
         self.q_boundary_conditions = q_bcs
+        # A prescribed-Q remainder evolves in the homogeneous Dirichlet (DST)
+        # basis, but the physical molecular field generally does not vanish at
+        # either wall.  Stress-side H must therefore be projected in the
+        # tangential/pressure (DCT) basis.  Keeping these two roles explicit
+        # prevents the Q evolution basis from imposing a false wall value on H.
+        self.molecular_field_boundary_conditions = (
+            tangential_bcs if lifted_q else q_bcs
+        )
         self.algebraic_stress_boundary_conditions = (
             tangential_bcs if lifted_q else q_bcs
         )
@@ -214,6 +222,11 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
             if lifting is None
             else lifting.lift_components(Q_COMPONENTS)
         )
+        molecular_field_bcs = getattr(
+            self,
+            "molecular_field_boundary_conditions",
+            self.q_boundary_conditions,
+        )
 
         # Stress uses raw H, not H/gamma. Project H as one resolved field,
         # then project the complete reactive stress rather than Q:H alone; this
@@ -221,27 +234,33 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
         # candidate spectral path leaves the linear L1 laplacian in modal
         # space and removes five inverse transforms without changing the basis
         # or projection.
-        if self.molecular_field_linear_space == "physical":
+        if lifting is not None or self.molecular_field_linear_space == "physical":
             physical_q_components = (
                 q_components
                 if lifting is None
                 else lifting.physical_components(fields, Q_COMPONENTS)
             )
-            laplacian_components = tuple(
-                (
+            if lifting is None:
+                laplacian_components = tuple(
                     fields.laplacian(
                         name,
                         projector=self.spectral_projector,
                     )
-                    if lifting is None
-                    else lifting.laplacian(
-                        fields,
-                        name,
-                        projector=self.spectral_projector,
-                    )
+                    for name in Q_COMPONENTS
                 )
-                for name in Q_COMPONENTS
-            )
+            else:
+                # All lifted Q components share one homogeneous DST basis.
+                # Invert their modal Laplacians as one transform group before
+                # projecting the assembled physical H into the DCT basis.
+                laplacian_tensor = self.spectral_projector.inverse_transform(
+                    torch.stack(
+                        tuple(fields.laplacian_hat(name) for name in Q_COMPONENTS)
+                    ),
+                    self.q_boundary_conditions,
+                )
+                laplacian_components = tuple(
+                    laplacian_tensor[index] for index in range(len(Q_COMPONENTS))
+                )
             raw_h_components = beris_edwards_molecular_field_components(
                 physical_q_components,
                 laplacian_components,
@@ -253,9 +272,11 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
             h_tensor = self._project_physical_tensor(
                 fields,
                 torch.stack(raw_h_components),
-                self.q_boundary_conditions,
+                molecular_field_bcs,
             )
             del laplacian_components, raw_h_components
+            if lifting is not None:
+                del laplacian_tensor
             if lifting is not None:
                 del physical_q_components
         else:
@@ -281,7 +302,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
                 )
             h_hat = self.spectral_projector.forward_transform(
                 torch.stack(bulk_h_components),
-                self.q_boundary_conditions,
+                molecular_field_bcs,
             )
             for index, name in enumerate(Q_COMPONENTS):
                 h_hat[index].add_(
@@ -290,7 +311,7 @@ class BerisEdwardsFreeSlipStokes(FreeSlipModalStokesSolver):
                 )
             h_tensor = self.spectral_projector.inverse_transform(
                 h_hat,
-                self.q_boundary_conditions,
+                molecular_field_bcs,
             )
             del bulk_h_components, h_hat
         h_components = tuple(h_tensor[index] for index in range(5))

@@ -145,6 +145,7 @@ def test_p845_fused_reconstruction_recovery_records_measured_failure_and_scope()
     assert record["authorization"]["nonhomogeneous_neumann"] is False
     superseded_by_corrected_contract = {
         "pssolver/models/active_nematics/beris_edwards.py",
+        "pssolver/models/active_nematics/stokes.py",
         "tests/test_phase8_p844_lifting_workflow_restart.py",
         "tests/test_phase8_p845_h100_qualification.py",
     }
@@ -228,7 +229,9 @@ def test_profile_helper_uses_real_runtime_and_counts_only_timesteps(
     assert report["completed_steps"] == 3
     assert report["runtime_identity"]["effective"] == "legacy_production"
     assert report["transform_calls"]["forward_per_step"] == 7.0
-    assert report["transform_calls"]["inverse_per_step"] == 32.0
+    assert report["transform_calls"]["inverse_per_step"] == (
+        33.0 if has_lifting else 32.0
+    )
     assert (report["lifting"] is not None) is has_lifting
     assert (report["lifting_storage"] is not None) is has_lifting
     assert (report["wall_residual"] is not None) is has_lifting

@@ -20,6 +20,7 @@ from pssolver import (
     TorchSpectralExecution,
     compile_simulation,
     run_simulation,
+    SpectralSolver,
 )
 from pssolver.boundaries import (
     assign_boundaries,
@@ -47,10 +48,12 @@ from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics import (
     CompleteStressBerisEdwards,
     Q_COMPONENTS,
+    beris_edwards_bulk_molecular_field_components,
     strong_homeotropic_q,
     strong_planar_q,
 )
 from pssolver.operators import materialize_plane_static_lifting
+from pssolver.operators.projection import BasisAwareSpectralProjector
 from pssolver.runtime.package_construction import (
     PackageRuntimeConstructionInput,
     build_package_simulation_runtime,
@@ -182,6 +185,11 @@ def test_lifted_plane_binding_is_narrow_and_compiled_path_stays_closed(tmp_path)
 def test_runtime_evolves_dst_remainder_and_observes_physical_q(tmp_path):
     _spec, simulation, adapter = _runtime(tmp_path, planar=True)
     lift = adapter.solver.model.static_lifting_runtime
+    assert adapter.solver.model.static_model.molecular_field_boundary_conditions == (
+        "periodic",
+        "periodic",
+        "neumann",
+    )
 
     assert adapter.fields["Qxx.bc"] == (
         "periodic",
@@ -228,6 +236,64 @@ def test_runtime_evolves_dst_remainder_and_observes_physical_q(tmp_path):
     adapter.advance(1)
     assert adapter.completed_steps == 1
     assert all(torch.isfinite(adapter.fields[name]).all() for name in Q_COMPONENTS)
+
+
+def test_lifted_stress_projects_nonzero_wall_molecular_field_in_dct_basis():
+    errors = []
+    dirichlet_errors = []
+    height = 10.0
+    scalar_order = 0.4
+    for nz in (16, 32, 64):
+        solver = SpectralSolver(
+            (4, 4, nz),
+            L=(4.0, 4.0, height),
+            device="cpu",
+            dtype=torch.float64,
+            spectral_storage="full_complex",
+        )
+        projector = BasisAwareSpectralProjector(
+            solver,
+            rule="cubic_half",
+            transform_execution="full",
+        )
+        z = (torch.arange(nz, dtype=torch.float64) + 0.5) * height / nz
+        theta = 0.5 * torch.pi * z / height
+        zero = torch.zeros_like(z)
+        q = torch.stack(
+            (
+                scalar_order * (torch.sin(theta).square() - 1.0 / 3.0),
+                zero,
+                scalar_order * torch.sin(theta) * torch.cos(theta),
+                torch.full_like(z, -scalar_order / 3.0),
+                zero,
+            )
+        )[:, None, None, :].expand(-1, 4, 4, -1)
+        raw_h = torch.stack(
+            beris_edwards_bulk_molecular_field_components(
+                tuple(q),
+                ldg_a=-0.1,
+                ldg_b=-0.3,
+                ldg_c=0.3,
+            )
+        )
+        neumann = ("periodic", "periodic", "neumann")
+        dirichlet = ("periodic", "periodic", "dirichlet")
+        projected = projector.inverse_transform(
+            projector.forward_transform(raw_h, neumann),
+            neumann,
+        )
+        incorrectly_projected = projector.inverse_transform(
+            projector.forward_transform(raw_h, dirichlet),
+            dirichlet,
+        )
+        errors.append(float((projected - raw_h).abs().max().item()))
+        dirichlet_errors.append(
+            float((incorrectly_projected - raw_h).abs().max().item())
+        )
+
+    assert errors[1] < 0.5 * errors[0]
+    assert errors[2] < 0.5 * errors[1]
+    assert dirichlet_errors[-1] > 100.0 * errors[-1]
 
 
 def test_lifted_checkpoint_restart_is_exact_and_stores_remainder(tmp_path):
