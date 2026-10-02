@@ -174,12 +174,6 @@ def test_coefficient_translation_preserves_requested_physics_with_roundoff_only(
         ),
         (
             {
-                "time": TimeStepping(dt=0.005),
-            },
-            "time refresh must be exactly one of",
-        ),
-        (
-            {
                 "execution": TorchSpectralExecution(
                     runtime_path="separated_canary",
                     device="cpu",
@@ -199,6 +193,18 @@ def test_coefficient_translation_preserves_requested_physics_with_roundoff_only(
 def test_compile_simulation_fails_closed_without_guessing(replacement, message):
     with pytest.raises(PublicSimulationCompilationError, match=message):
         compile_simulation(_simulation(**replacement))
+
+
+def test_default_time_stepping_has_explicit_disabled_refresh():
+    source = _simulation(time=TimeStepping(dt=0.005))
+
+    compiled = compile_simulation(source)
+
+    assert source.time.refresh == {"mode": "disabled"}
+    assert (
+        compiled.application_specification.time_integration.refresh["mode"]
+        == "disabled"
+    )
 
 
 def test_compile_simulation_rejects_unqualified_negative_activity():

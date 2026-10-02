@@ -257,6 +257,7 @@ def test_typed_run_declarations_validate_and_remain_immutable():
     assert value.time.integrator.scheme is (
         IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER
     )
+    assert value.time.refresh == {"mode": "disabled"}
     assert value.initial_condition.source is InitialConditionSource.GENERATED
     assert value.execution.backend == "torch_spectral"
     assert value.execution.options["fallback_allowed"] is False

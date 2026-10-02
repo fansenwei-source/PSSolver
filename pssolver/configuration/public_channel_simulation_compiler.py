@@ -177,8 +177,10 @@ def compile_channel_public_simulation(
         IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER
     ):
         _reject("the public Channel compiler currently requires projected Euler")
-    if source.time_integration.refresh:
-        _reject("the qualified Channel application does not use spectral refresh")
+    if source.time_integration.refresh != {"mode": "disabled"}:
+        _reject(
+            "the qualified Channel application requires disabled spectral refresh"
+        )
     if source.invocation.options:
         _reject("the qualified Channel application accepts no invocation options")
 

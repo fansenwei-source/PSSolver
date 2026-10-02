@@ -126,10 +126,13 @@ class TimeIntegrationSpec:
     def __post_init__(self) -> None:
         if not isinstance(self.integrator, IntegratorSpec):
             raise TypeError("integrator must be an IntegratorSpec")
+        refresh = dict(self.refresh)
+        if not refresh:
+            refresh = {"mode": "disabled"}
         object.__setattr__(
             self,
             "refresh",
-            _json_mapping(self.refresh, "time-integration refresh"),
+            _json_mapping(refresh, "time-integration refresh"),
         )
 
     def to_metadata(self) -> dict[str, object]:

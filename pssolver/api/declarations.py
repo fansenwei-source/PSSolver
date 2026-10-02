@@ -108,7 +108,7 @@ class TimeStepping(TimeIntegrationSpec):
             specification = IntegratorSpec.sbdf2(dt=dt)
         super().__init__(
             integrator=specification,
-            refresh={} if refresh is None else refresh,
+            refresh={"mode": "disabled"} if refresh is None else refresh,
         )
 
 

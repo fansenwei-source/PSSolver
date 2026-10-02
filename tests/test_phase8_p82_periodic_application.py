@@ -97,7 +97,7 @@ def _simulation(
             spectral_storage="hermitian_half",
             hermitian_axis=1,
         ),
-        time=TimeStepping(dt=0.001, refresh={"mode": "disabled"}),
+        time=TimeStepping(dt=0.001),
         initial_condition=SnapshotInitialCondition(snapshot, step=0),
         execution=TorchSpectralExecution(
             runtime_path=runtime_path,
