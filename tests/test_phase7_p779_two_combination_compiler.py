@@ -7,7 +7,7 @@ import json
 
 import pytest
 
-from pssolver import Simulation, compile_simulation
+from pssolver import Output, Simulation, compile_simulation
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
@@ -96,6 +96,44 @@ def test_channel_public_compiler_connects_both_qualified_runtimes(
         compiled.application_specification.canonical_sha256()
     )
     json.dumps(compiled.to_metadata(), allow_nan=False, sort_keys=True)
+
+
+def test_geometry_neutral_output_adapts_to_legacy_channel_workflow():
+    original = _channel_simulation("legacy_channel")
+    public_output = Output(
+        directory="data/public_channel",
+        steps=2,
+        save_interval=1,
+        diagnostic_interval=1,
+        save_start_step=0,
+        diagnostics=True,
+        save_hydrodynamics=True,
+    )
+    source = Simulation(
+        model=original.model,
+        geometry=original.geometry,
+        boundaries=original.boundaries,
+        numerics=original.numerics,
+        time=original.time,
+        discretization=original.discretization,
+        initial_condition=original.initial_condition,
+        execution=original.execution,
+        output=public_output,
+        invocation=original.invocation,
+    )
+
+    compiled = compile_simulation(source)
+
+    assert compiled.application == PUBLIC_CHANNEL_APPLICATION
+    assert str(compiled.application_request.generated_output_directory) == (
+        "data/public_channel"
+    )
+    assert str(compiled.application_request.snapshot_output_directory) == (
+        "data/public_channel"
+    )
+    assert compiled.normalization["workflow_adapter"] == (
+        "public_output_to_legacy_channel"
+    )
 
 
 def test_registry_is_capability_catalog_not_a_public_api_whitelist():

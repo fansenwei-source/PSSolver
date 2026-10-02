@@ -24,6 +24,7 @@ from pssolver.configuration.public_simulation_runner import (
 from pssolver.configuration.simulation import (
     InitialConditionSource,
     SimulationSpec,
+    WorkflowSpec,
 )
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.core.integrators import IntegratorScheme
@@ -44,7 +45,7 @@ _SNAPSHOT_KEYS = frozenset({"directory", "mode", "step"})
 _EXECUTION_KEYS = frozenset(
     {"batch_size", "device", "dtype", "fallback_allowed"}
 )
-_WORKFLOW_KEYS = frozenset(
+_LEGACY_WORKFLOW_KEYS = frozenset(
     {
         "checkpoint_interval",
         "diagnostic_interval",
@@ -53,6 +54,18 @@ _WORKFLOW_KEYS = frozenset(
         "restart_from",
         "save_interval",
         "snapshot_output_directory",
+    }
+)
+_COMMON_OUTPUT_KEYS = frozenset(
+    {
+        "checkpoint_interval",
+        "diagnostic_interval",
+        "diagnostics",
+        "output_dir",
+        "restart_from",
+        "save_hydrodynamics",
+        "save_interval",
+        "save_start_step",
     }
 )
 _PRESSURE_KEYS = frozenset(
@@ -88,6 +101,8 @@ def _exact_keys(
 def _validate_translation(
     source: SimulationSpec,
     application: SimulationSpec,
+    *,
+    expected_workflow: WorkflowSpec | None = None,
 ) -> None:
     source_boundaries = source.boundaries.to_metadata()
     application_boundaries = application.boundaries.to_metadata()
@@ -132,7 +147,11 @@ def _validate_translation(
         ),
         (
             "workflow",
-            source.workflow.to_metadata(),
+            (
+                source.workflow
+                if expected_workflow is None
+                else expected_workflow
+            ).to_metadata(),
             application.workflow.to_metadata(),
         ),
         (
@@ -146,14 +165,52 @@ def _validate_translation(
             _reject(f"public {description} changed during Channel translation")
 
 
+def _adapt_workflow(
+    source: WorkflowSpec,
+) -> tuple[dict[str, object], WorkflowSpec, bool]:
+    """Adapt the geometry-neutral Output contract to legacy Channel keys."""
+
+    observed = set(source.options)
+    if observed == _LEGACY_WORKFLOW_KEYS:
+        return dict(source.options), source, False
+    if observed != _COMMON_OUTPUT_KEYS:
+        _reject(
+            "Channel workflow options must match either the public Output "
+            "contract or the legacy Channel workflow contract; "
+            f"observed={tuple(sorted(observed))!r}"
+        )
+    common = dict(source.options)
+    if common["save_start_step"] != 0:
+        _reject("legacy Channel public Output requires save_start_step=0")
+    if common["save_hydrodynamics"] is not True:
+        _reject(
+            "legacy Channel always saves hydrodynamics; "
+            "save_hydrodynamics must be true"
+        )
+    output_directory = common["output_dir"]
+    adapted = {
+        "checkpoint_interval": common["checkpoint_interval"],
+        "diagnostic_interval": common["diagnostic_interval"],
+        "diagnostics_enabled": common["diagnostics"],
+        "generated_output_directory": output_directory,
+        "restart_from": common["restart_from"],
+        "save_interval": common["save_interval"],
+        # Snapshot initialization is rejected before this adaptation.  Keep a
+        # deterministic value for the legacy schema without exposing a second
+        # directory in the geometry-neutral public API.
+        "snapshot_output_directory": output_directory,
+    }
+    return adapted, WorkflowSpec(source.steps, adapted), True
+
+
 def compile_channel_public_simulation(
     source: SimulationSpec,
 ) -> PublicSimulationCompilation:
     """Translate the qualified Channel declaration to its existing RunSpec.
 
-    This adapter is intentionally exact: it normalizes no physical value and
-    supplies no hidden default.  The source must fully declare the already
-    qualified Channel application contract.
+    This adapter normalizes no physical value and supplies no hidden default.
+    It does translate the geometry-neutral public ``Output`` schema into the
+    legacy Channel workflow's historical directory-key schema.
     """
 
     if not isinstance(source, SimulationSpec):
@@ -237,10 +294,8 @@ def compile_channel_public_simulation(
         _reject("the qualified Channel production application requires float32")
     if execution["batch_size"] != 1:
         _reject("the qualified Channel production application requires batch_size=1")
-    workflow = _exact_keys(
-        source.workflow.options,
-        _WORKFLOW_KEYS,
-        "Channel workflow options",
+    workflow, effective_workflow, workflow_adapted = _adapt_workflow(
+        source.workflow
     )
     discretization = _exact_keys(
         source.discretization_parameters,
@@ -317,7 +372,11 @@ def compile_channel_public_simulation(
     application_simulation = compose_channel_active_nematics_simulation(
         run_spec.components
     )
-    _validate_translation(source, application_simulation)
+    _validate_translation(
+        source,
+        application_simulation,
+        expected_workflow=effective_workflow,
+    )
     lowering_plan = lower_simulation_spec(application_simulation)
     construction_plan = plan_package_runtime_construction(
         application_simulation
@@ -335,6 +394,11 @@ def compile_channel_public_simulation(
             "coefficient_parameterization": "rho",
             "physical_values_changed": False,
             "runtime_fallback_allowed": False,
+            "workflow_adapter": (
+                "public_output_to_legacy_channel"
+                if workflow_adapted
+                else "legacy_channel_exact"
+            ),
         },
     )
 

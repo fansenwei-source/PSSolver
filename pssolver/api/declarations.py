@@ -189,6 +189,8 @@ class Output(WorkflowSpec):
 
     Start, diagnostic, and hydrodynamic policies are explicit so changing
     from a CLI/run-spec entry point cannot silently change saved evidence.
+    Application compilers may translate these common fields into a legacy
+    workflow's internal key names without changing their meaning.
     """
 
     __slots__ = ()
