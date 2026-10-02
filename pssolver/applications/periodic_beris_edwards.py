@@ -10,7 +10,10 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from pssolver.configuration.execution_device import resolve_execution_device
+from pssolver.configuration.execution_device import (
+    configure_tf32_execution,
+    resolve_execution_device,
+)
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
@@ -118,6 +121,18 @@ def run_periodic_beris_edwards(
         return None
 
     device = resolve_execution_device(spec.execution.options["device"])
+    real_dtype = getattr(torch, spec.numerics.precision.value)
+    metadata["precision"] = {
+        "real_dtype": spec.numerics.precision.value,
+        "spectral_dtype": (
+            "complex64" if real_dtype == torch.float32 else "complex128"
+        ),
+        **configure_tf32_execution(
+            spec.execution.options["tf32"],
+            real_dtype=real_dtype,
+            device=device,
+        ),
+    }
     initial_values, snapshot_path, snapshot_sha256 = load_periodic_initial_q(
         run_spec
     )

@@ -252,6 +252,33 @@ def test_channel_auto_device_resolves_before_runtime(monkeypatch, tmp_path):
     assert result.output_directory == tmp_path / "run"
 
 
+def test_channel_application_applies_and_records_tf32_policy(
+    monkeypatch,
+    tmp_path,
+):
+    monkeypatch.setattr(torch.backends.cuda.matmul, "allow_tf32", True)
+    monkeypatch.setattr(torch.backends.cudnn, "allow_tf32", True)
+
+    result = run_simulation(_simulation(tmp_path, steps=1))
+    metadata = json.loads(
+        (result.output_directory / "metadata.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert metadata["precision"] == {
+        "real_dtype": "float64",
+        "spectral_dtype": "complex128",
+        "tf32_requested": "off",
+        "tf32_effective": False,
+        "float32_matmul_precision": "highest",
+        "cuda_matmul_allow_tf32": False,
+        "cudnn_allow_tf32": False,
+    }
+    assert torch.backends.cuda.matmul.allow_tf32 is False
+    assert torch.backends.cudnn.allow_tf32 is False
+
+
 def test_channel_complete_stress_is_finite_and_restart_is_byte_identical(tmp_path):
     continuous = run_simulation(
         _simulation(tmp_path, output_name="continuous", steps=6)

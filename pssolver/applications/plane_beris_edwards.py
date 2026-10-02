@@ -63,6 +63,7 @@ from pssolver.configuration import (
 from pssolver.configuration.active_nematics_simulation_adapters import (
     compose_plane_beris_edwards_simulation,
 )
+from pssolver.configuration.execution_device import configure_tf32_execution
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.configuration.package_construction import (
@@ -205,15 +206,11 @@ def run_plane_beris_edwards(
         "float64": torch.float64,
     }[real_dtype_name]
     spectral_dtype_name = "complex64" if real_dtype == torch.float32 else "complex128"
-    tf32_requested = execution.tf32 == "on"
-    tf32_effective = (
-        tf32_requested
-        and real_dtype == torch.float32
-        and torch.device(device).type == "cuda"
+    tf32_metadata = configure_tf32_execution(
+        execution.tf32,
+        real_dtype=real_dtype,
+        device=device,
     )
-    torch.set_float32_matmul_precision("high" if tf32_effective else "highest")
-    torch.backends.cuda.matmul.allow_tf32 = tf32_effective
-    torch.backends.cudnn.allow_tf32 = tf32_effective
 
     resolved_torch_device = torch.device(device)
     cuda_device_name = None
@@ -476,13 +473,7 @@ def run_plane_beris_edwards(
             "precision": {
                 "real_dtype": real_dtype_name,
                 "spectral_dtype": spectral_dtype_name,
-                "tf32_requested": execution.tf32,
-                "tf32_effective": tf32_effective,
-                "float32_matmul_precision": torch.get_float32_matmul_precision(),
-                "cuda_matmul_allow_tf32": bool(
-                    torch.backends.cuda.matmul.allow_tf32
-                ),
-                "cudnn_allow_tf32": bool(torch.backends.cudnn.allow_tf32),
+                **tf32_metadata,
             },
             "spectral_refresh": {
                 "mode": time_stepping.spectral_refresh.mode,
