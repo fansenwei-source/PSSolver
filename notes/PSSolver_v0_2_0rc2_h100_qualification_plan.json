@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "kind": "pssolver_v0_2_0rc2_audit_h100_qualification_plan",
+  "status": "READY_FOR_REMOTE_PUBLICATION_AND_HPCC_EXECUTION",
+  "baseline": {
+    "tag": "v0.2.0rc1",
+    "commit": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1"
+  },
+  "candidate": {
+    "branch": "fix/v0.2.0rc2-audit",
+    "runtime_commit": "1c8b3330139dec7cbb2ea138b261fcaadf5e871f",
+    "production_default_changed": false
+  },
+  "local_cpu_evidence": {
+    "passed": 2716,
+    "deselected_cuda_only": 6,
+    "subtests_passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "xfail": 0,
+    "pytest_cache_disabled": true,
+    "bytecode_disabled": true
+  },
+  "frozen_inputs": {
+    "R128": {
+      "shape": [128, 128, 32, 5],
+      "sha256": "28c70b72118c6d55b7646919ef2157959f40f52a1585753bb0732565cc6895c6"
+    },
+    "R320": {
+      "shape": [320, 320, 80, 5],
+      "sha256": "84a934a828794a3976b4af897f85d60c79e0c5f545b5f8265a9a4abed1e2cb4a"
+    }
+  },
+  "execution_contract": {
+    "single_h100_job": true,
+    "automatic_retry": false,
+    "second_job_without_new_authorization": false,
+    "gpu": "NVIDIA H100 PCIe",
+    "tf32": false,
+    "dtype": "float64",
+    "installed_wheels": true,
+    "separate_baseline_and_candidate_venvs": true,
+    "source_shadow_import": false,
+    "fail_fast": true
+  },
+  "cuda_only_node_ids": [
+    "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+    "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+    "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+    "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact"
+  ],
+  "gates": [
+    {
+      "id": "G0",
+      "name": "git_static_and_package_identity",
+      "requirements": [
+        "exact baseline and candidate commits",
+        "candidate branch tip contains runtime commit",
+        "git diff --check passes",
+        "detached clean worktrees",
+        "installed wheels import only from their own venv site-packages"
+      ]
+    },
+    {
+      "id": "G1",
+      "name": "cuda_environment_and_cuda_only_tests",
+      "requirements": [
+        "one visible H100",
+        "TF32 disabled",
+        "six frozen CUDA-only node IDs all pass with no skip or deselect"
+      ]
+    },
+    {
+      "id": "G2",
+      "name": "periodic_long_horizon_hermitian",
+      "requirements": [
+        "candidate loop3d full_complex reaches t=200",
+        "candidate r1 full_complex reaches t=200",
+        "candidate loop3d hermitian_half reaches t=200",
+        "candidate r1 hermitian_half reaches t=200",
+        "all samples finite and within the versioned Hermitian bound",
+        "identity reports self_conjugate_planes_each_step"
+      ]
+    },
+    {
+      "id": "G3",
+      "name": "periodic_ab_profile_matrix",
+      "requirements": [
+        "36 versioned profile JSON files",
+        "R128 and R320",
+        "production_forward, functional_forward, functional_vjp",
+        "three balanced trials per role and version",
+        "versioned analyzer passes",
+        "mean and median candidate/baseline ratios <= 1.03",
+        "allocated and reserved memory ratios <= 1.05",
+        "physical Q relative L2 <= 1e-12"
+      ]
+    },
+    {
+      "id": "G4",
+      "name": "candidate_numerical_regressions",
+      "requirements": [
+        "even-grid periodic Stokes Nyquist manufactured gate passes for full_complex and hermitian_half",
+        "Channel complete-stress cubic-half velocity divergence/max-velocity < 1e-9",
+        "Channel full and truncated projected transforms agree within rtol=2e-12 and atol=2e-12",
+        "Channel continuous and split restart Q/u/p are byte-identical",
+        "Periodic and Channel application metadata report effective TF32 false",
+        "lifting and finite-Q CUDA device/restart gates pass",
+        "extreme-scale Channel pressure primal and transpose solves remain finite and normalized at 1e-155 and 1e155"
+      ]
+    },
+    {
+      "id": "G5",
+      "name": "production_smoke_and_non_regression",
+      "requirements": [
+        "R128 Periodic and Channel complete-stress 100-step candidate trajectories complete",
+        "Q/u/p are finite and checkpoint restart matches the corresponding continuous trajectory",
+        "no fallback, OOM, NaN, Inf, CUDA error, graph-break regression, or transform-call regression",
+        "candidate peak allocated and reserved memory do not exceed the matching baseline by more than 5 percent"
+      ]
+    }
+  ],
+  "pass_classification": "PASS_V0_2_0RC2_AUDIT_H100_NON_REGRESSION",
+  "failure_classification": "FAIL_V0_2_0RC2_AUDIT_H100_NON_REGRESSION",
+  "pass_effect": {
+    "eligible_for_rc2_integration_review": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false
+  },
+  "not_authorized": [
+    "merge",
+    "push without user authorization",
+    "production default change",
+    "long production simulation",
+    "activity scan",
+    "multiseed campaign",
+    "automatic Slurm retry"
+  ]
+}
