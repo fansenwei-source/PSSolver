@@ -233,7 +233,9 @@ def restore_plane_checkpoint(
         if checkpoint.lifting_restart is None
         else dict(checkpoint.lifting_restart)
     )
-    if observed_lifting != expected_lifting:
+    if _lifting_compatibility_identity(observed_lifting) != (
+        _lifting_compatibility_identity(expected_lifting)
+    ):
         raise ValueError("checkpoint static lifting identity does not match target")
     verify_plane_lifting_identity(adapter)
 
@@ -266,6 +268,39 @@ def restore_plane_checkpoint(
     if adapter.completed_steps != checkpoint.completed_steps:
         raise RuntimeError("restored completed-step count is inconsistent")
     return checkpoint.completed_steps
+
+
+def _lifting_compatibility_identity(
+    metadata: Mapping[str, object] | None,
+) -> dict[str, object] | None:
+    """Remove execution-location provenance from lifting compatibility.
+
+    Older checkpoints stored ``device`` inside the lifting and linear-
+    correction records.  Those locations do not alter the numerical lifting
+    plan or checkpoint tensors, so accept them across CPU/CUDA materialization
+    while retaining every scientific identity field.
+    """
+
+    if metadata is None:
+        return None
+    normalized = json.loads(
+        json.dumps(
+            dict(metadata),
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        )
+    )
+    normalized.pop("materialization_provenance", None)
+    lifting = normalized.get("lifting")
+    if isinstance(lifting, dict):
+        lifting.pop("device", None)
+    corrections = normalized.get("linear_corrections", ())
+    if isinstance(corrections, list):
+        for correction in corrections:
+            if isinstance(correction, dict):
+                correction.pop("device", None)
+    return normalized
 
 
 def _write_tensor(path: Path, value: torch.Tensor) -> dict[str, object]:

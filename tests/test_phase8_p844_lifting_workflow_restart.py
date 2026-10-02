@@ -392,6 +392,37 @@ def test_lifting_identity_tamper_is_rejected_before_target_mutation(tmp_path):
     )
 
 
+def test_lifting_checkpoint_device_provenance_is_not_compatibility_identity(
+    tmp_path,
+):
+    identity, _simulation, source = _runtime(tmp_path / "source")
+    _, _, target = _runtime(tmp_path / "target")
+    source.advance(1)
+    checkpoint = capture_plane_checkpoint(
+        source,
+        runtime_identity_sha256=identity.runtime_identity_sha256(),
+    )
+    lifting = json.loads(json.dumps(dict(checkpoint.lifting_restart)))
+    lifting["lifting"]["device"] = "cuda:0"
+    for correction in lifting["linear_corrections"]:
+        correction["device"] = "cuda:0"
+    lifting.pop("materialization_provenance", None)
+    legacy_gpu_checkpoint = replace(checkpoint, lifting_restart=lifting)
+
+    restored_step = restore_plane_checkpoint(
+        target,
+        legacy_gpu_checkpoint,
+        runtime_identity_sha256=identity.runtime_identity_sha256(),
+    )
+
+    assert restored_step == 1
+    assert all(
+        torch.equal(source.fields[f"{name}{suffix}"], target.fields[f"{name}{suffix}"])
+        for name in Q_COMPONENTS
+        for suffix in ("", ".hat")
+    )
+
+
 def _public_simulation(tmp_path: Path) -> Simulation:
     model = CompleteStressBerisEdwards(
         ldg_a=0.0,
@@ -529,6 +560,7 @@ def test_p844_record_matches_qualified_sources_and_scope():
         "pssolver/operators/lifting.py",
         "pssolver/runtime/plane_legacy.py",
         "pssolver/runtime/static_lifting.py",
+        "pssolver/workflows/plane_checkpoint.py",
     }
     for relative, expected in record["source_sha256"].items():
         if relative in superseded_after_p844:

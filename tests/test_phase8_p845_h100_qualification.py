@@ -258,7 +258,9 @@ def test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity():
         )
     )
     assert report["finite"] is True
-    assert report["lifting"]["lifting"]["device"] == (
+    assert report["lifting"]["materialization_provenance"][
+        "lifting_device"
+    ] == (
         f"cuda:{torch.cuda.current_device()}"
     )
 

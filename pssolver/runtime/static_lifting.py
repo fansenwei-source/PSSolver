@@ -266,13 +266,25 @@ class PlaneStaticLiftingRuntime:
 
     def restart_metadata(self) -> dict[str, object]:
         self.verify_identity()
+        lifting_identity = self.operator.to_metadata()
+        lifting_device = lifting_identity.pop("device")
+        correction_identities = []
+        correction_devices = []
+        for correction in self._linear_correction_metadata:
+            identity = dict(correction)
+            correction_devices.append(identity.pop("device"))
+            correction_identities.append(identity)
         return {
             "schema_version": 1,
             "representation": "homogeneous_remainder",
             "physical_reconstruction": "homogeneous_remainder_plus_lift",
-            "lifting": self.operator.to_metadata(),
-            "linear_corrections": list(self._linear_correction_metadata),
+            "lifting": lifting_identity,
+            "linear_corrections": correction_identities,
             "convention": dict(self._convention),
+            "materialization_provenance": {
+                "lifting_device": lifting_device,
+                "linear_correction_devices": correction_devices,
+            },
         }
 
 
