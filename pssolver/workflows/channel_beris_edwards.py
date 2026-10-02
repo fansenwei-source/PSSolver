@@ -11,6 +11,10 @@ import time
 import numpy as np
 import torch
 
+from pssolver.io.checkpoint import (
+    seal_checkpoint_metadata,
+    verify_checkpoint_metadata,
+)
 from pssolver.models.active_nematics import Q_COMPONENTS, VELOCITY_COMPONENTS
 from pssolver.runtime.channel_beris_edwards import (
     CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
@@ -18,7 +22,8 @@ from pssolver.runtime.channel_beris_edwards import (
 )
 
 
-CHECKPOINT_VERSION = 1
+CHECKPOINT_VERSION = 2
+_LEGACY_CHECKPOINT_VERSION = 1
 _STATE_COMPONENTS = (*Q_COMPONENTS, *VELOCITY_COMPONENTS, "p")
 
 
@@ -154,6 +159,7 @@ def write_channel_beris_edwards_checkpoint(
         "tensor_files": records,
         "backend_files": {"pressure_guess": pressure_record},
     }
+    metadata = seal_checkpoint_metadata(metadata)
     (directory / "checkpoint.json").write_text(
         json.dumps(metadata, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -229,8 +235,17 @@ def _load_checkpoint(directory, adapter, *, runtime_identity_sha256):
     metadata = json.loads(
         (directory / "checkpoint.json").read_text(encoding="utf-8")
     )
-    if metadata.get("format_version") != CHECKPOINT_VERSION:
+    format_version = metadata.get("format_version")
+    if (
+        not isinstance(format_version, int)
+        or isinstance(format_version, bool)
+        or format_version not in {_LEGACY_CHECKPOINT_VERSION, CHECKPOINT_VERSION}
+    ):
         raise ValueError("unsupported complete-stress Channel checkpoint")
+    verify_checkpoint_metadata(
+        metadata,
+        required=format_version == CHECKPOINT_VERSION,
+    )
     if metadata.get("runtime_path") != CHANNEL_COMPLETE_STRESS_RUNTIME_PATH:
         raise ValueError("checkpoint runtime identity does not match target")
     if metadata.get("runtime_identity_sha256") != runtime_identity_sha256:

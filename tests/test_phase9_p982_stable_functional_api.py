@@ -28,6 +28,11 @@ from pssolver.functional.errors import translate_functional_exception
 from pssolver.functional.pressure_metadata import (
     channel_pressure_solve_diagnostics,
 )
+from pssolver.io.checkpoint import (
+    FUNCTIONAL_CHECKPOINT_PROVENANCE_FILE,
+    seal_checkpoint_metadata,
+    write_functional_checkpoint_provenance,
+)
 from pssolver.linear_solvers.stokes import ChannelNoSlipModalStokesSolver
 
 
@@ -107,6 +112,30 @@ def _legacy_bridge_metadata(identity, bridge_metadata):
         )
     )
     return result
+
+
+def _write_legacy_checkpoint_metadata(directory, metadata):
+    metadata["format_version"] = 1
+    metadata.pop("metadata_sha256", None)
+    (directory / FUNCTIONAL_CHECKPOINT_PROVENANCE_FILE).unlink()
+    (directory / "checkpoint.json").write_text(
+        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+
+def _rewrite_current_checkpoint_metadata(directory, metadata):
+    metadata.pop("metadata_sha256", None)
+    sealed = seal_checkpoint_metadata(metadata)
+    (directory / "checkpoint.json").write_text(
+        json.dumps(sealed, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    write_functional_checkpoint_provenance(
+        directory,
+        sealed,
+        sealed["functional_bridge"],
+    )
 
 
 def test_stable_surface_is_exactly_the_machine_readable_contract():
@@ -224,10 +253,7 @@ def test_channel_v1_legacy_checkpoint_reader_is_exact_and_machine_readable(
         identity,
         metadata["functional_bridge"],
     )
-    path.write_text(
-        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
+    _write_legacy_checkpoint_metadata(directory, metadata)
 
     restored = bridge.import_checkpoint(directory)
     assert restored.source_format == "channel_functional_bridge_v1"
@@ -279,10 +305,7 @@ def test_periodic_v1_legacy_checkpoint_reader_is_exact_and_machine_readable(
     assert metadata["functional_bridge"][
         "functional_runtime_identity_sha256"
     ] == expected_legacy_sha256
-    path.write_text(
-        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
+    _write_legacy_checkpoint_metadata(directory, metadata)
 
     restored = bridge.import_checkpoint(directory)
     assert restored.source_format == "periodic_functional_bridge_v1"
@@ -311,6 +334,9 @@ def test_periodic_v1_current_checkpoint_reader_requires_current_identity(
     path = directory / "checkpoint.json"
     metadata = json.loads(path.read_text(encoding="utf-8"))
     metadata["functional_bridge"]["format_version"] = 1
+    metadata["format_version"] = 1
+    metadata.pop("metadata_sha256", None)
+    (directory / FUNCTIONAL_CHECKPOINT_PROVENANCE_FILE).unlink()
     path.write_text(
         json.dumps(metadata, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -362,10 +388,7 @@ def test_unknown_checkpoint_api_is_rejected_before_tensor_loading(tmp_path):
     path = directory / "checkpoint.json"
     metadata = json.loads(path.read_text(encoding="utf-8"))
     metadata["functional_bridge"]["api_version"] = "9.9"
-    path.write_text(
-        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
+    _rewrite_current_checkpoint_metadata(directory, metadata)
     (directory / "state__q_physical.npy").unlink()
     with pytest.raises(stable.FunctionalVersionError):
         bridge.import_checkpoint(directory)

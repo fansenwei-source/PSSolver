@@ -16,11 +16,18 @@ import numpy as np
 import torch
 
 from pssolver.configuration.periodic_beris_edwards import PERIODIC_RUNTIME_PATH
+from pssolver.io.checkpoint import (
+    seal_checkpoint_metadata,
+    verify_checkpoint_metadata,
+    verify_functional_checkpoint_provenance,
+    write_functional_checkpoint_provenance,
+)
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.periodic_beris_edwards import PeriodicRuntimeAdapterProtocol
 
 
-PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1
+PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 2
+_LEGACY_PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1
 
 
 def _sha256(path: Path) -> str:
@@ -108,6 +115,7 @@ def _validate_progress(
 class PeriodicCheckpointHeader:
     """Small identity record read before any checkpoint array is loaded."""
 
+    format_version: int
     runtime_identity_sha256: str
     completed_steps: int
     spectral_refresh_interval: int | None
@@ -117,6 +125,15 @@ class PeriodicCheckpointHeader:
     functional_bridge: Mapping[str, object] | None = None
 
     def __post_init__(self) -> None:
+        if (
+            not isinstance(self.format_version, int)
+            or isinstance(self.format_version, bool)
+            or self.format_version not in {
+                _LEGACY_PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+                PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+            }
+        ):
+            raise ValueError("unsupported periodic workflow checkpoint version")
         _require_sha256(self.runtime_identity_sha256, "runtime_identity_sha256")
         _validate_progress(
             self.completed_steps,
@@ -153,7 +170,14 @@ class PeriodicWorkflowCheckpoint:
     functional_bridge: Mapping[str, object] | None = None
 
     def __post_init__(self) -> None:
-        if self.format_version != PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        if (
+            not isinstance(self.format_version, int)
+            or isinstance(self.format_version, bool)
+            or self.format_version not in {
+                _LEGACY_PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+                PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+            }
+        ):
             raise ValueError("unsupported periodic workflow checkpoint version")
         _require_sha256(self.runtime_identity_sha256, "runtime_identity_sha256")
         _validate_progress(
@@ -311,6 +335,14 @@ def write_periodic_checkpoint(
                 )
         metadata = checkpoint.to_metadata()
         metadata["tensor_files"] = files
+        if checkpoint.format_version == PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+            metadata = seal_checkpoint_metadata(metadata)
+        if checkpoint.functional_bridge is not None:
+            write_functional_checkpoint_provenance(
+                staging,
+                metadata,
+                checkpoint.functional_bridge,
+            )
         (staging / "checkpoint.json").write_text(
             json.dumps(metadata, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
@@ -333,6 +365,31 @@ def _read_metadata(directory: Path) -> Mapping[str, object]:
         raise ValueError("checkpoint metadata is not valid JSON") from exc
     if not isinstance(metadata, Mapping):
         raise TypeError("checkpoint metadata must be a JSON object")
+    version = metadata.get("format_version")
+    if (
+        not isinstance(version, int)
+        or isinstance(version, bool)
+        or version
+        not in {
+            _LEGACY_PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+            PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        }
+    ):
+        raise ValueError("unsupported periodic workflow checkpoint version")
+    verify_checkpoint_metadata(
+        metadata,
+        required=version == PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    )
+    bridge = metadata.get("functional_bridge")
+    bridge_version = (
+        bridge.get("format_version") if isinstance(bridge, Mapping) else None
+    )
+    verify_functional_checkpoint_provenance(
+        directory,
+        metadata,
+        bridge,
+        required=bridge_version == 2,
+    )
     return metadata
 
 
@@ -342,8 +399,6 @@ def read_periodic_checkpoint_header(
     """Read all small restart identities without opening tensor payloads."""
 
     metadata = _read_metadata(Path(directory).expanduser().resolve())
-    if metadata.get("format_version") != PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
-        raise ValueError("unsupported periodic workflow checkpoint version")
     if metadata.get("runtime_path") != PERIODIC_RUNTIME_PATH:
         raise ValueError("checkpoint runtime identity does not match target")
     identity = _require_sha256(
@@ -355,6 +410,7 @@ def read_periodic_checkpoint_header(
     if not isinstance(integrator, Mapping):
         raise ValueError("checkpoint integrator metadata is missing")
     return PeriodicCheckpointHeader(
+        format_version=metadata.get("format_version"),
         runtime_identity_sha256=identity,
         completed_steps=completed,
         spectral_refresh_interval=integrator.get("spectral_refresh_interval"),

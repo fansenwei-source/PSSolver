@@ -28,6 +28,7 @@ from pssolver.boundaries import (
 from pssolver.configuration.simulation import InvocationSpec
 from pssolver.core import GridPlacement
 from pssolver.geometries import RectangularChannel
+from pssolver.io.checkpoint import seal_checkpoint_metadata
 from pssolver.models.active_nematics import (
     BerisEdwardsQGradientCache,
     CompleteStressBerisEdwards,
@@ -534,6 +535,8 @@ def test_channel_progress_tamper_is_rejected_before_target_mutation(tmp_path):
     metadata_path = checkpoint / "checkpoint.json"
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
     metadata["completed_steps"] = 7
+    metadata.pop("metadata_sha256")
+    metadata = seal_checkpoint_metadata(metadata)
     metadata_path.write_text(
         json.dumps(metadata, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",

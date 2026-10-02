@@ -33,6 +33,10 @@ from pssolver.functional import (
     periodic_activity_functional_request,
 )
 from pssolver.geometries import PeriodicBox
+from pssolver.io.checkpoint import (
+    seal_checkpoint_metadata,
+    write_functional_checkpoint_provenance,
+)
 from pssolver.models.active_nematics import CompleteStressBerisEdwards, Q_COMPONENTS
 from pssolver.runtime.periodic_beris_edwards import (
     PeriodicRuntimeBuildRequest,
@@ -227,7 +231,7 @@ def test_p93_functional_export_is_production_compatible_and_continues_bitwise(
     assert written == directory.resolve()
     _assert_state_equal(state, before)
     metadata = json.loads((directory / "checkpoint.json").read_text())
-    assert metadata["format_version"] == 1
+    assert metadata["format_version"] == 2
     assert metadata["functional_bridge"]["format_version"] == 2
     assert metadata["completed_steps"] == 3
 
@@ -270,7 +274,7 @@ def test_p93_imports_an_existing_production_checkpoint_without_repacking_loss(
     imported = runtime.checkpoint_bridge.import_checkpoint(directory)
 
     assert imported.completed_steps == 2
-    assert imported.source_format == "periodic_production_v1"
+    assert imported.source_format == "periodic_production_v2"
     _assert_state_equal(imported.state, expected)
 
 
@@ -280,9 +284,9 @@ def test_p93_imports_an_existing_production_checkpoint_without_repacking_loss(
         (
             "functional_runtime_identity_sha256",
             "0" * 64,
-            "identity or state layout",
+            "metadata checksum mismatch",
         ),
-        ("state_layout_sha256", "1" * 64, "identity or state layout"),
+        ("state_layout_sha256", "1" * 64, "metadata checksum mismatch"),
     ),
 )
 def test_p93_bridge_identity_fails_before_any_tensor_payload_is_loaded(
@@ -338,7 +342,14 @@ def test_p93_bridge_rejects_checksum_nonfinite_and_existing_destination(tmp_path
     metadata["tensor_files"]["spatial"]["Qxx"]["sha256"] = hashlib.sha256(
         tensor_path.read_bytes()
     ).hexdigest()
+    metadata.pop("metadata_sha256")
+    metadata = seal_checkpoint_metadata(metadata)
     metadata_path.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n")
+    write_functional_checkpoint_provenance(
+        nonfinite,
+        metadata,
+        metadata["functional_bridge"],
+    )
     with pytest.raises(ValueError, match="NaN or Inf"):
         runtime.checkpoint_bridge.import_checkpoint(nonfinite)
 
@@ -348,6 +359,41 @@ def test_p93_bridge_rejects_checksum_nonfinite_and_existing_destination(tmp_path
             state,
             completed_steps=0,
         )
+
+
+@pytest.mark.parametrize("mutation", ("completed_steps", "functional_bridge"))
+def test_p93_functional_metadata_tamper_cannot_fall_back_to_production(
+    tmp_path,
+    monkeypatch,
+    mutation,
+):
+    _, _, runtime = _runtime(tmp_path)
+    directory = tmp_path / f"metadata_{mutation}"
+    runtime.checkpoint_bridge.export_checkpoint(
+        directory,
+        runtime.initial_state(),
+        completed_steps=0,
+    )
+    metadata_path = directory / "checkpoint.json"
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    if mutation == "completed_steps":
+        metadata["completed_steps"] = 999
+    else:
+        del metadata["functional_bridge"]
+    metadata_path.write_text(
+        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError("np.load must not run before metadata preflight")
+
+    monkeypatch.setattr(
+        "pssolver.workflows.periodic_checkpoint.np.load",
+        forbidden,
+    )
+    with pytest.raises(ValueError, match="metadata checksum mismatch"):
+        runtime.checkpoint_bridge.import_checkpoint(directory)
 
 
 def test_p93_cross_identity_checkpoint_is_rejected(tmp_path, monkeypatch):

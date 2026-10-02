@@ -152,9 +152,8 @@ def test_protocol_and_checkpoint_versions_are_distinctly_recorded():
     # when the Hermitian state repair changed its timestep identity.
     assert checkpoints["periodic"]["bridge_format_version"] == 1
     assert PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION == 2
-    assert checkpoints["channel"]["bridge_format_version"] == (
-        CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION
-    )
+    assert checkpoints["channel"]["bridge_format_version"] == 1
+    assert CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION == 2
     assert checkpoints["same_integer_version_implies_same_format"] is False
     assert checkpoints["channel"]["pressure_persisted"] is False
     assert checkpoints["channel"]["pressure_warm_start_persisted"] is False

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import shutil
 
 import numpy as np
 import pytest
@@ -34,6 +35,7 @@ from pssolver.functional import (
     channel_activity_functional_request,
 )
 from pssolver.geometries import RectangularChannel
+from pssolver.io.checkpoint import seal_checkpoint_metadata
 from pssolver.models.active_nematics import CompleteStressBerisEdwards, Q_COMPONENTS
 from pssolver.runtime.channel_beris_edwards import (
     ChannelBerisEdwardsRuntimeBuildRequest,
@@ -308,7 +310,7 @@ def test_p974_checkpoint_round_trip_and_production_import(tmp_path):
     _assert_state_equal(state, before)
     _assert_state_equal(state, imported.state)
     assert imported.completed_steps == 1
-    assert imported.source_format == "channel_functional_bridge_v1"
+    assert imported.source_format == "channel_functional_bridge_v2"
     metadata = json.loads(
         (functional_directory / "checkpoint.json").read_text()
     )
@@ -328,7 +330,7 @@ def test_p974_checkpoint_round_trip_and_production_import(tmp_path):
         production_directory
     )
     _assert_state_equal(imported_production.state, _adapter_state(production))
-    assert imported_production.source_format == "channel_production_v1"
+    assert imported_production.source_format == "channel_production_v2"
 
 
 def test_p974_checkpoint_rejects_identity_checksum_and_existing_target(
@@ -351,7 +353,7 @@ def test_p974_checkpoint_rejects_identity_checksum_and_existing_target(
         "functional_runtime_identity_sha256"
     ] = "0" * 64
     metadata_path.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n")
-    with pytest.raises(ValueError, match="identity or state layout"):
+    with pytest.raises(ValueError, match="metadata checksum mismatch"):
         runtime.checkpoint_bridge.import_checkpoint(target)
 
     checksum = tmp_path / "checksum"
@@ -364,6 +366,78 @@ def test_p974_checkpoint_rejects_identity_checksum_and_existing_target(
     tensor_path.write_bytes(data)
     with pytest.raises(ValueError, match="checksum mismatch"):
         runtime.checkpoint_bridge.import_checkpoint(checksum)
+
+
+def test_p974_functional_completed_step_tamper_is_rejected_before_loading(
+    tmp_path,
+    monkeypatch,
+):
+    _, _, runtime = _runtime(tmp_path)
+    target = tmp_path / "functional_progress_tamper"
+    runtime.checkpoint_bridge.export_checkpoint(
+        target,
+        runtime.initial_state(),
+        completed_steps=0,
+    )
+    metadata_path = target / "checkpoint.json"
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    metadata["completed_steps"] = 999
+    metadata_path.write_text(
+        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError("np.load must not run before metadata preflight")
+
+    monkeypatch.setattr(
+        "pssolver.functional.channel_checkpoint.np.load",
+        forbidden,
+    )
+    with pytest.raises(ValueError, match="metadata checksum mismatch"):
+        runtime.checkpoint_bridge.import_checkpoint(target)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    (
+        ("format_version", "unsupported complete-stress Channel checkpoint"),
+        ("completed_steps", "progress counters differ"),
+        ("backend_files", "backend manifest is incomplete"),
+    ),
+)
+def test_p974_production_import_applies_the_complete_checkpoint_contract(
+    tmp_path,
+    mutation,
+    message,
+):
+    simulation, _, runtime = _runtime(tmp_path)
+    run_spec, production = _production_adapter(simulation)
+    source = tmp_path / "strict_production_source"
+    write_channel_beris_edwards_checkpoint(
+        source,
+        production,
+        runtime_identity_sha256=run_spec.runtime_identity_sha256(),
+    )
+    target = tmp_path / f"strict_production_{mutation}"
+    shutil.copytree(source, target)
+    metadata_path = target / "checkpoint.json"
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    if mutation == "format_version":
+        metadata["format_version"] = 99
+    elif mutation == "completed_steps":
+        metadata["completed_steps"] = 7
+    else:
+        del metadata["backend_files"]
+    metadata.pop("metadata_sha256")
+    metadata = seal_checkpoint_metadata(metadata)
+    metadata_path.write_text(
+        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match=message):
+        runtime.checkpoint_bridge.import_checkpoint(target)
 
 
 def test_p974_rejects_invalid_control_and_terminal_observation_is_q_only(

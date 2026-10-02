@@ -35,7 +35,8 @@ from .versioning import (
 
 PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 2
 _LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 1
-_SOURCE_PRODUCTION = "periodic_production_v1"
+_SOURCE_PRODUCTION_V1 = "periodic_production_v1"
+_SOURCE_PRODUCTION_V2 = "periodic_production_v2"
 _SOURCE_FUNCTIONAL_V1 = "periodic_functional_bridge_v1"
 _SOURCE_FUNCTIONAL_V2 = "periodic_functional_bridge_v2"
 
@@ -145,7 +146,7 @@ class PeriodicActivityCheckpointBridge:
     ) -> tuple[str, FunctionalCheckpointCompatibility]:
         if metadata is None:
             return (
-                _SOURCE_PRODUCTION,
+                _SOURCE_PRODUCTION_V2,
                 FunctionalCheckpointCompatibility(
                     source_api_version=None,
                     target_api_version=FUNCTIONAL_API_VERSION,
@@ -262,6 +263,14 @@ class PeriodicActivityCheckpointBridge:
         source_format, compatibility = self._validate_bridge_metadata(
             header.functional_bridge
         )
+        if header.functional_bridge is None and header.format_version == 1:
+            source_format = _SOURCE_PRODUCTION_V1
+            compatibility = FunctionalCheckpointCompatibility(
+                source_api_version=None,
+                target_api_version=FUNCTIONAL_API_VERSION,
+                reader="qualified_periodic_production_v1_reader",
+                exact_current_protocol=False,
+            )
 
         # Tensor payloads are opened only after all small identity and layout
         # metadata gates above have succeeded.
