@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+import torch
 
 from pssolver import (
     Output,
@@ -29,8 +30,14 @@ from pssolver.models.active_nematics import (
     BerisEdwardsQGradientCache,
     CompleteStressBerisEdwards,
 )
+from pssolver.applications.channel_beris_edwards import load_channel_initial_q
 from pssolver.planning.construction import RuntimeConstructionKind
-from pssolver.runtime.channel_beris_edwards import BerisEdwardsChannelStokes
+from pssolver.runtime.channel_beris_edwards import (
+    BerisEdwardsChannelStokes,
+    ChannelBerisEdwardsRuntimeBuildRequest,
+    build_channel_beris_edwards_runtime,
+)
+from pssolver.workflows.channel_beris_edwards import _load_checkpoint
 
 
 def _simulation(
@@ -430,3 +437,55 @@ def test_channel_complete_stress_restart_rejects_tamper(tmp_path):
     assert metadata["backend_restart"]["reconstructed_state_keys"] == [
         "q_gradient_cache"
     ]
+
+
+def test_channel_progress_tamper_is_rejected_before_target_mutation(tmp_path):
+    source = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="progress_source",
+            steps=1,
+            checkpoint_interval=1,
+        )
+    )
+    checkpoint = source.output_directory / "checkpoint_1"
+    metadata_path = checkpoint / "checkpoint.json"
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    metadata["completed_steps"] = 7
+    metadata_path.write_text(
+        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    compiled = compile_simulation(
+        _simulation(tmp_path, output_name="progress_target", steps=1)
+    )
+    run_spec = compiled.application_request
+    initial_values, _, _ = load_channel_initial_q(run_spec)
+    adapter = build_channel_beris_edwards_runtime(
+        ChannelBerisEdwardsRuntimeBuildRequest(
+            run_spec=run_spec,
+            initial_values=initial_values,
+            device="cpu",
+        )
+    )
+    before_fields = {
+        name: value.detach().clone()
+        for name, value in adapter.fields.items()
+    }
+    before_pressure = adapter.capture_pressure_guess()
+    before_steps = adapter.completed_steps
+
+    with pytest.raises(ValueError, match="progress counters differ"):
+        _load_checkpoint(
+            checkpoint,
+            adapter,
+            runtime_identity_sha256=run_spec.runtime_identity_sha256(),
+        )
+
+    assert adapter.completed_steps == before_steps
+    assert all(
+        torch.equal(adapter.fields[name], value)
+        for name, value in before_fields.items()
+    )
+    assert torch.equal(adapter.capture_pressure_guess(), before_pressure)

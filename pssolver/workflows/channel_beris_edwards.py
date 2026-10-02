@@ -178,6 +178,52 @@ def _validated_array(directory, record, target, description):
     return values
 
 
+def _validated_progress(metadata):
+    completed_steps = metadata.get("completed_steps")
+    if (
+        not isinstance(completed_steps, int)
+        or isinstance(completed_steps, bool)
+        or completed_steps < 0
+    ):
+        raise ValueError("checkpoint completed_steps is invalid")
+    integrator = metadata.get("integrator")
+    if not isinstance(integrator, dict) or set(integrator) != {
+        "spectral_refresh_interval",
+        "step_count",
+        "refresh_count",
+    }:
+        raise ValueError("checkpoint integrator metadata differs")
+    interval = integrator["spectral_refresh_interval"]
+    if interval is not None and (
+        not isinstance(interval, int)
+        or isinstance(interval, bool)
+        or interval <= 0
+    ):
+        raise ValueError("checkpoint spectral refresh interval is invalid")
+    for name in ("step_count", "refresh_count"):
+        value = integrator[name]
+        if (
+            not isinstance(value, int)
+            or isinstance(value, bool)
+            or value < 0
+        ):
+            raise ValueError(f"checkpoint {name} is invalid")
+    if interval is None:
+        expected_refresh_count = 0
+        expected_step_count = completed_steps
+    else:
+        expected_refresh_count, expected_step_count = divmod(
+            completed_steps,
+            interval,
+        )
+    if (
+        integrator["step_count"] != expected_step_count
+        or integrator["refresh_count"] != expected_refresh_count
+    ):
+        raise ValueError("checkpoint progress counters differ")
+    return completed_steps, integrator
+
+
 def _load_checkpoint(directory, adapter, *, runtime_identity_sha256):
     directory = Path(directory).expanduser().resolve()
     metadata = json.loads(
@@ -191,6 +237,7 @@ def _load_checkpoint(directory, adapter, *, runtime_identity_sha256):
         raise ValueError("checkpoint scientific/runtime identity does not match")
     if metadata.get("backend_restart") != adapter.backend_restart_metadata():
         raise ValueError("checkpoint backend contract does not match target")
+    completed_steps, integrator = _validated_progress(metadata)
 
     fields = adapter.fields
     pending = []
@@ -224,15 +271,14 @@ def _load_checkpoint(directory, adapter, *, runtime_identity_sha256):
     adapter.restore_pressure_guess(
         torch.from_numpy(pressure_values).to(device=pressure_target.device)
     )
-    integrator = metadata["integrator"]
     adapter.restore_progress(
-        completed_steps=metadata["completed_steps"],
+        completed_steps=completed_steps,
         spectral_refresh_interval=integrator["spectral_refresh_interval"],
         integrator_step_count=integrator["step_count"],
         integrator_refresh_count=integrator["refresh_count"],
     )
     adapter.restore_derived_state()
-    return int(metadata["completed_steps"])
+    return completed_steps
 
 
 class ChannelBerisEdwardsWorkflow:
