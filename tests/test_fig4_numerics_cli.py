@@ -200,6 +200,7 @@ class Fig4NumericsCliTests(unittest.TestCase):
                 "pssolver/models/active_nematics/specifications.py",
                 "pssolver/models/active_nematics/stokes.py",
                 "pssolver/models/active_nematics/initial_conditions.py",
+                "pssolver/planning/__init__.py",
                 "pssolver/presets/__init__.py",
                 "pssolver/presets/shendruk.py",
                 "pssolver/systems/__init__.py",
