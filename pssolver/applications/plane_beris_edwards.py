@@ -645,6 +645,11 @@ def run_plane_beris_edwards(
             "saved_observation_representation": "physical_field",
             "nonhomogeneous_neumann_supported": False,
         }
+        metadata["initial_condition"]["boundary_compatibility"] = {
+            "kind": "sine_wall_taper",
+            "target_representation": "homogeneous_dirichlet_remainder",
+            "applied_before_first_transform": True,
+        }
     if emit_metadata:
         print(json.dumps(metadata, indent=2))
     if invocation.dry_run:

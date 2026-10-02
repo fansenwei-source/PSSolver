@@ -106,9 +106,11 @@ class PlaneStaticLiftingRuntime:
                 dtype=self.operator.dtype,
                 device=self.operator.device,
             )
-            remainders[name] = self.operator.extract_homogeneous_remainder(
-                name,
-                value,
+            remainders[name] = (
+                self.operator.extract_boundary_compatible_initial_remainder(
+                    name,
+                    value,
+                )
             )
         return remainders
 

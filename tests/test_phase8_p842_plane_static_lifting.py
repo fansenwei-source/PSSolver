@@ -289,6 +289,69 @@ def test_physical_reconstruction_and_remainder_extraction_support_workspace():
         )
 
 
+def test_fresh_initial_remainder_is_smoothly_tapered_to_bounded_faces():
+    operator = materialize_plane_static_lifting(
+        _plan(),
+        dtype=torch.float64,
+        device="cpu",
+    )
+    physical = torch.full(
+        operator.plan.domain_shape,
+        1.0 / 3.0,
+        dtype=torch.float64,
+    )
+    raw = operator.extract_homogeneous_remainder("c", physical)
+    compatible = operator.extract_boundary_compatible_initial_remainder(
+        "c",
+        physical,
+    )
+    count = operator.plan.domain_shape[operator.plan.wall_normal_axis]
+    expected = torch.sin(
+        torch.pi
+        * (torch.arange(count, dtype=torch.float64) + 0.5)
+        / count
+    ).reshape(1, 1, count)
+
+    torch.testing.assert_close(
+        compatible,
+        raw * expected,
+        rtol=0.0,
+        atol=0.0,
+    )
+    assert compatible[..., 0].abs().max() < raw[..., 0].abs().max()
+    assert compatible[..., -1].abs().max() < raw[..., -1].abs().max()
+    metadata = operator.to_metadata()
+    assert metadata["fresh_initial_remainder_conditioning"]["kind"] == (
+        "sine_wall_taper"
+    )
+
+    edge_amplitudes = []
+    for count in (32, 64):
+        refined = materialize_plane_static_lifting(
+            _plan((8, 6, count)),
+            dtype=torch.float64,
+            device="cpu",
+        )
+        refined_physical = torch.full(
+            refined.plan.domain_shape,
+            1.0 / 3.0,
+            dtype=torch.float64,
+        )
+        refined_remainder = (
+            refined.extract_boundary_compatible_initial_remainder(
+                "c",
+                refined_physical,
+            )
+        )
+        edge_amplitudes.append(
+            max(
+                refined_remainder[..., 0].abs().max().item(),
+                refined_remainder[..., -1].abs().max().item(),
+            )
+        )
+    assert edge_amplitudes[1] < 0.51 * edge_amplitudes[0]
+
+
 def test_explicit_linear_lift_correction_is_model_supplied_and_one_time():
     operator = materialize_plane_static_lifting(
         _plan(),

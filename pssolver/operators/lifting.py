@@ -255,6 +255,35 @@ class PlaneStaticLiftingOperator:
             raise ValueError("remainder output must not alias the physical field")
         return torch.sub(physical_field, self.lift(component), out=out)
 
+    def extract_boundary_compatible_initial_remainder(
+        self,
+        component: str,
+        physical_field: torch.Tensor,
+    ) -> torch.Tensor:
+        """Return a smooth homogeneous remainder for fresh initialization.
+
+        A generic generated field need not satisfy the prescribed wall values.
+        Subtracting the lift alone would leave an order-one jump at the walls;
+        truncating that jump in the DST basis produces a Gibbs layer.  Taper the
+        construction-time remainder to zero at both physical faces before its
+        first transform.  The evolved representation and its spectral method
+        remain unchanged.
+        """
+
+        remainder = self.extract_homogeneous_remainder(
+            component,
+            physical_field,
+        )
+        axis = self.plan.wall_normal_axis
+        count = self.plan.domain_shape[axis]
+        fraction = (
+            torch.arange(count, dtype=self.dtype, device=self.device) + 0.5
+        ) / count
+        envelope = torch.sin(torch.pi * fraction)
+        shape = [1] * len(self.plan.domain_shape)
+        shape[axis] = count
+        return remainder * envelope.reshape(shape)
+
     def materialize_linear_correction(
         self,
         component: str,
@@ -358,6 +387,11 @@ class PlaneStaticLiftingOperator:
             "materialized_lift_sha256": self.materialized_sha256,
             "affine_laplacian_explicit": True,
             "allocation_lifetime": "construction_owned_static",
+            "fresh_initial_remainder_conditioning": {
+                "kind": "sine_wall_taper",
+                "wall_values": [0.0, 0.0],
+                "applied_before_first_transform": True,
+            },
         }
 
 
