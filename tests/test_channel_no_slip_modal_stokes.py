@@ -230,6 +230,24 @@ def test_zero_force_has_exact_zero_solution_and_diagnostics():
     assert stokes.last_pressure_relative_residual == 0.0
 
 
+def test_even_channel_removes_unresolved_periodic_nyquist_plane():
+    solver = _spectral_solver(shape=(8, 6, 5))
+    stokes = _canonical(solver)
+    zero = torch.zeros(
+        (2, *solver.spectral_shape),
+        dtype=torch.complex128,
+    )
+    tangential_force = zero.clone()
+    tangential_force[:, solver.shape[0] // 2, 0, 0] = 1.0
+
+    solution = stokes.solve_force_hats(zero, tangential_force, zero)
+
+    assert all(bool((value == 0).all().item()) for value in solution)
+    assert stokes.last_pressure_iterations == 0
+    assert stokes.last_pressure_residual == 0.0
+    assert stokes.last_pressure_relative_residual == 0.0
+
+
 def test_fixed_iteration_pressure_mode_preserves_the_requested_work_count():
     solver = _spectral_solver()
     stokes = _canonical(
@@ -276,7 +294,7 @@ def test_canonical_solver_is_model_independent_and_adapter_uses_it_directly():
     assert "ChannelNoSlipModalStokesSolver(" in adapter_source
 
 
-def test_p72_record_binds_the_extracted_solver_and_limits_authorization():
+def test_p72_record_preserves_extracted_solver_history_and_limits_authorization():
     value = json.loads(
         (NOTES / "phase_7_p72_channel_stokes_extraction.json").read_text(
             encoding="utf-8"
@@ -298,9 +316,13 @@ def test_p72_record_binds_the_extracted_solver_and_limits_authorization():
     assert sha256("pssolver/experimental/stokes.py") == value[
         "compatibility"
     ]["experimental_adapter_module_sha256"]
-    assert sha256(
-        "pssolver/linear_solvers/stokes/channel_no_slip.py"
-    ) == value["canonical_solver"]["module_sha256"]
+    # P7.2 is an immutable historical qualification record.  The canonical
+    # solver subsequently acquired the even-grid Nyquist repair, so preserve
+    # the reviewed P7.2 digest instead of rewriting the old evidence to match
+    # the current source.
+    assert value["canonical_solver"]["module_sha256"] == (
+        "4503f62df5204f7f48da7ca58674ebda45a3f775b7742dcc7bc7ab535c511b16"
+    )
     assert value["authorization"] == {
         "p7_2_complete": True,
         "p7_3_planning_eligible": True,

@@ -75,6 +75,7 @@ def test_p770_source_identities_bind_the_audited_baseline() -> None:
     subsequently_connected = {
         "pssolver/applications/plane_beris_edwards.py",
         "pssolver/applications/channel_active_nematics.py",
+        "pssolver/linear_solvers/stokes/channel_no_slip.py",
         "pssolver/models/active_nematics/stokes.py",
         "pssolver/runtime/plane_beris_edwards.py",
     }

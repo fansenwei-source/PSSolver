@@ -108,12 +108,23 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         pressure_metadata = backend.get_metadata(
             CHANNEL_PRESSURE_BOUNDARY_CONDITIONS
         )
-        qx = velocity_metadata.axis_modes[0]
+        qx = velocity_metadata.axis_modes[0].clone()
         ky_d = velocity_metadata.axis_modes[1]
         kz_d = velocity_metadata.axis_modes[2]
         ky_n = pressure_metadata.axis_modes[1]
         kz_n = pressure_metadata.axis_modes[2]
         nx, ny, nz = qx.numel(), ky_d.numel(), kz_d.numel()
+        nyquist_mask = torch.zeros(
+            (1, nx, ny, nz),
+            device=device,
+            dtype=torch.bool,
+        )
+        periodic_size = int(backend.shape[0])
+        if periodic_size % 2 == 0:
+            nyquist_index = periodic_size // 2
+            if nyquist_index < nx:
+                qx[nyquist_index] = 0
+                nyquist_mask[:, nyquist_index, :, :] = True
 
         wall_ops = {}
         for axis, size, k_dirichlet in (
@@ -165,7 +176,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         )
         null_mask[:, 0, 0, 0] = True
         schur_safe = schur_diag.unsqueeze(0).clone()
-        schur_safe[null_mask] = 1.0
+        schur_safe[null_mask | nyquist_mask] = 1.0
 
         self.register_buffer(
             "ikx",
@@ -177,6 +188,14 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 self.register_buffer(f"{operator_name}_{axis_name}", operator)
         self.register_buffer("schur_diag_safe", schur_safe)
         self.register_buffer("pressure_null_mask", null_mask)
+        # The periodic Nyquist plane has no real first derivative on an even
+        # grid.  It is derived from the transform shape and deliberately kept
+        # out of state_dict to preserve the checkpoint schema.
+        self.register_buffer(
+            "nyquist_mask",
+            nyquist_mask,
+            persistent=False,
+        )
         self.pressure_rel_tol = pressure_relative_tolerance
         self.pressure_max_iter = pressure_max_iterations
         self.pressure_fixed_iterations = pressure_fixed_iterations
@@ -191,10 +210,13 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         return torch.matmul(moved, matrix).movedim(-1, spectral_axis)
 
     def _project_pressure_gauge(self, pressure_hat):
-        return pressure_hat.masked_fill(self.pressure_null_mask, 0)
+        return pressure_hat.masked_fill(
+            self.pressure_null_mask | self.nyquist_mask,
+            0,
+        )
 
     def _helmholtz_inverse(self, rhs_hat):
-        return rhs_hat * self.a_inv
+        return (rhs_hat * self.a_inv).masked_fill(self.nyquist_mask, 0)
 
     def _pressure_to_velocity(self, pressure_hat):
         out = self._apply_axis_matrix(pressure_hat, self.n_to_d_y, axis=1)
@@ -336,7 +358,10 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
     def solve_force_hats(self, fx_hat, fy_hat, fz_hat):
         """Solve the Channel saddle system for native force spectra."""
 
-        force_hats = (fx_hat, fy_hat, fz_hat)
+        force_hats = tuple(
+            force_hat.masked_fill(self.nyquist_mask, 0)
+            for force_hat in (fx_hat, fy_hat, fz_hat)
+        )
         free_velocity = [
             self._helmholtz_inverse(force_hat)
             for force_hat in force_hats

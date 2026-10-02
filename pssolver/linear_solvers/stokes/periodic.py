@@ -49,19 +49,39 @@ class PeriodicModalStokesSolver(torch.nn.Module):
             raise ValueError("Periodic Stokes fields require periodic boundaries.")
 
         metadata = backend.get_metadata(bcs)
-        wave_numbers = torch.meshgrid(*metadata.axis_modes, indexing="ij")
+        axis_modes = tuple(value.clone() for value in metadata.axis_modes)
+        nyquist_mask = torch.zeros(
+            tuple(value.numel() for value in axis_modes),
+            device=backend.device,
+            dtype=torch.bool,
+        )
+        for axis, spatial_size in enumerate(backend.shape):
+            if spatial_size % 2:
+                continue
+            nyquist_index = spatial_size // 2
+            if nyquist_index >= axis_modes[axis].numel():
+                continue
+            axis_modes[axis][nyquist_index] = 0
+            index = [slice(None)] * backend.dim
+            index[axis] = nyquist_index
+            nyquist_mask[tuple(index)] = True
+        wave_numbers = torch.meshgrid(*axis_modes, indexing="ij")
         k_components = tuple(
             value.to(dtype=backend.spectral_dtype) for value in wave_numbers
         )
         k2 = sum(value.square() for value in wave_numbers)
-        uniform_mask = k2 == 0
+        uniform_mask = torch.zeros_like(k2, dtype=torch.bool)
+        uniform_mask[(0,) * backend.dim] = True
         helmholtz = float(friction) + float(viscosity) * k2
         helmholtz_null_mask = helmholtz == 0
         helmholtz_safe = helmholtz.masked_fill(helmholtz_null_mask, 1.0)
         helmholtz_inverse = helmholtz_safe.reciprocal()
         if zero_mode_policy == "zero_mean":
             helmholtz_inverse.masked_fill_(helmholtz_null_mask, 0.0)
-        pressure_k2_safe = k2.masked_fill(uniform_mask, 1.0)
+        pressure_k2_safe = k2.masked_fill(
+            uniform_mask | nyquist_mask,
+            1.0,
+        )
 
         self.transform_backend = backend
         self.boundary_conditions = bcs
@@ -81,6 +101,14 @@ class PeriodicModalStokesSolver(torch.nn.Module):
         self.register_buffer("k2_safe", pressure_k2_safe)
         self.register_buffer("helmholtz_inverse", helmholtz_inverse)
         self.register_buffer("uniform_mask", uniform_mask)
+        # These planes cannot represent real first derivatives on an even
+        # collocation grid.  Keep the mask out of state_dict so this numerical
+        # repair does not change the serialized solver schema.
+        self.register_buffer(
+            "nyquist_mask",
+            nyquist_mask,
+            persistent=False,
+        )
         self.has_tangential_null_mode = bool(
             zero_mode_policy == "zero_mean" and uniform_mask.any().item()
         )
@@ -91,7 +119,7 @@ class PeriodicModalStokesSolver(torch.nn.Module):
 
     def _project_pressure_gauge(self, pressure_hat):
         extra = pressure_hat.ndim - self.uniform_mask.ndim
-        mask = self.uniform_mask.reshape(
+        mask = (self.uniform_mask | self.nyquist_mask).reshape(
             *((1,) * extra), *self.uniform_mask.shape
         )
         return pressure_hat.masked_fill(mask, 0)
@@ -125,6 +153,8 @@ class PeriodicModalStokesSolver(torch.nn.Module):
             raise ValueError("periodic force spectra have an incompatible shape")
         ik = self._ik_for(force)
         uniform_mask = self._scalar_for(self.uniform_mask, fx_hat)
+        nyquist_mask = self._scalar_for(self.nyquist_mask, fx_hat)
+        force = force.masked_fill(nyquist_mask.unsqueeze(0), 0)
         inverse = self._scalar_for(self.helmholtz_inverse, fx_hat)
         k2_safe = self._scalar_for(self.k2_safe, fx_hat)
         if self.zero_mode_policy == "zero_mean":

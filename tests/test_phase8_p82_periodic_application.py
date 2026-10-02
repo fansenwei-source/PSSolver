@@ -39,6 +39,8 @@ def _simulation(
     diagnostics=True,
     diagnostic_interval=1,
     save_interval=10,
+    dealias_rule="cubic_half",
+    projected_transform_execution="truncated",
 ):
     model = CompleteStressBerisEdwards(
         ldg_a=0.0,
@@ -80,7 +82,8 @@ def _simulation(
         boundaries=boundaries,
         numerics=SpectralNumerics(
             dtype="float64",
-            dealias_rule="cubic_half",
+            dealias_rule=dealias_rule,
+            projected_transform_execution=projected_transform_execution,
             spectral_storage="hermitian_half",
             hermitian_axis=1,
         ),
@@ -190,6 +193,28 @@ def test_periodic_saved_hydrodynamics_match_the_saved_q_state(tmp_path):
         observed = multi_step.output_directory / f"{prefix}_1.npy"
         reference = one_step.output_directory / f"{prefix}_1.npy"
         assert observed.read_bytes() == reference.read_bytes(), prefix
+
+
+def test_periodic_even_grid_without_dealiasing_remains_divergence_free(tmp_path):
+    result = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="undealiased_divergence",
+            steps=2,
+            save_interval=2,
+            dealias_rule="none",
+            projected_transform_execution="full",
+        )
+    )
+    velocity = np.load(
+        result.output_directory / "u_2.npy",
+        allow_pickle=False,
+    )
+    scale = float(np.abs(velocity).max())
+
+    assert scale > 0.0
+    assert np.isfinite(velocity).all()
+    assert result.diagnostics[-1].divergence_max / scale < 1.0e-9
 
 
 def test_periodic_compiler_rejects_unqualified_runtime_before_allocation(tmp_path):

@@ -142,6 +142,26 @@ def test_periodic_friction_policy_retains_uniform_velocity_but_not_pressure():
     )
 
 
+@pytest.mark.parametrize("storage", ("full_complex", "hermitian_half"))
+def test_periodic_stokes_removes_unresolved_even_grid_nyquist_planes(storage):
+    backend = _backend(storage=storage)
+    stokes = PeriodicModalStokesSolver(
+        backend,
+        viscosity=0.71,
+        friction=0.4,
+        zero_mode_policy="friction",
+    )
+    zero = torch.zeros(backend.spectral_shape, dtype=torch.complex128)
+    tangential_force = zero.clone()
+    tangential_force[backend.shape[0] // 2, 0, 0] = 1.0
+
+    solution = stokes.solve_force_hats(zero, tangential_force, zero)
+
+    assert all(bool((value == 0).all().item()) for value in solution)
+    assert stokes.last_pressure_residual == 0.0
+    assert stokes.last_pressure_relative_residual == 0.0
+
+
 def test_periodic_stokes_rejects_implicit_or_inconsistent_nullspace_choices():
     backend = _backend()
     with pytest.raises(ValueError, match="zero_mean mode requires"):

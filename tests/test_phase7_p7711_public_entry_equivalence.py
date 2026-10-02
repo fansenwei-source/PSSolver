@@ -92,7 +92,18 @@ def _assert_environment_scoped_oracle(
     environment: dict[str, object],
 ) -> None:
     oracle = record["continuous_oracle_contract"]
-    if environment == oracle["reference_environment"]:
+    # The two Channel fingerprints are immutable P7.7.11 evidence from before
+    # the rc2 even-grid Nyquist repair.  Direct/public and restart byte identity
+    # are still established by _exercise_case; do not rewrite that historical
+    # JSON to bless the corrected numerical path retroactively.
+    superseded_channel_oracles = {
+        "channel:legacy_channel",
+        "channel:compiled_channel_v2",
+    }
+    if (
+        environment == oracle["reference_environment"]
+        and key not in superseded_channel_oracles
+    ):
         assert observed == record["continuous_oracle_sha256"][key]
         return
     # Raw NPY hashes are implementation fingerprints, not portable numerical
