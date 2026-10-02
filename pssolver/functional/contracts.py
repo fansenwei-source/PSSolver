@@ -606,11 +606,10 @@ class FunctionalRuntimeConstructionRequest:
 
 @dataclass(frozen=True, slots=True)
 class FunctionalRuntimeDeclaration:
-    """Non-executable declaration of one future functional runtime.
+    """Declarative capability view of a functional runtime request.
 
-    The declaration binds the prospective state layout and runtime identity to
-    a canonical construction request without claiming that a factory, step,
-    observation, checkpoint bridge, or derivative is available.
+    A declaration does not itself construct the runtime.  ``executable``
+    states whether a qualified public factory exists for the declared request.
     """
 
     request: FunctionalRuntimeConstructionRequest

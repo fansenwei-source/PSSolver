@@ -6,9 +6,9 @@ the compatibility window required by ADR 0005.  P9.2--P9.5 implement and qualify
 only the batch-one periodic complete-stress activity-control runtime, bitwise
 CPU/H100 replay under a fixed execution identity, its periodic
 production-checkpoint bridge, and frozen gradient, performance, memory, and
-production-consistency gates.  P9.7.1 additionally declares, but does not
-execute, the first batch-one complete-stress Channel functional contract;
-unsupported model--geometry combinations continue to fail before execution.
+production-consistency gates.  P9.7.4 provides the qualified batch-one
+complete-stress Channel functional contract and runtime; unsupported
+model--geometry combinations continue to fail before execution.
 """
 
 from .channel_activity import (

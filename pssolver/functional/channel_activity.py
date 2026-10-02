@@ -1,9 +1,8 @@
-"""P9.7.1 declarations for batch-one complete-stress Channel control.
+"""Qualified declarations for batch-one complete-stress Channel control.
 
-This module is intentionally non-executable.  It freezes the state, control,
-observation, boundary-space, pressure-policy, and identity contracts that the
-later P9.7 slices must implement and qualify.  It does not construct a solver,
-read the Q snapshot, run PCG, or claim a pressure derivative.
+Declaration remains side-effect free, while its capability and pressure
+metadata describe the executable P9.7.4 runtime now available from the public
+functional factory.
 """
 
 from __future__ import annotations
@@ -37,7 +36,9 @@ from .contracts import (
 
 
 CHANNEL_ACTIVITY_FUNCTIONAL_KIND = "channel_activity_batch_one"
-CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT = "not_qualified"
+CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT = (
+    "custom_implicit_pressure_adjoint_v1"
+)
 CHANNEL_FUNCTIONAL_PRESSURE_WARM_START = "disabled_in_functional_path"
 _ACTIVITY_NAME = "activity"
 
@@ -186,7 +187,7 @@ def _state_control_observation_specs(
 def channel_activity_functional_declaration(
     simulation: SimulationSpec,
 ) -> FunctionalRuntimeDeclaration:
-    """Declare the P9.7 Channel functional contract without execution."""
+    """Declare the qualified P9.7 Channel runtime without constructing it."""
 
     if not isinstance(simulation, SimulationSpec):
         raise TypeError("simulation must be a SimulationSpec")
@@ -213,15 +214,15 @@ def channel_activity_functional_declaration(
     )
     capabilities = FunctionalCapabilitySet(
         supported_batch_sizes=(1,),
-        pure_step=False,
-        combined_step_and_observe=False,
-        deterministic_replay="not_qualified",
-        differentiability="not_qualified",
-        durable_checkpoint_bridge=False,
+        pure_step=True,
+        combined_step_and_observe=True,
+        deterministic_replay="bitwise",
+        differentiability="validated_custom_adjoint",
+        durable_checkpoint_bridge=True,
         explicit_jvp=False,
         explicit_vjp=False,
         inner_solve_gradient=CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT,
-        differentiable_inputs=(),
+        differentiable_inputs=("state", "activity"),
     )
 
     identities = simulation.identity_metadata()
@@ -229,9 +230,9 @@ def channel_activity_functional_declaration(
     pressure = dict(simulation.discretization_parameters["pressure_solver"])
     execution_identity["functional_runtime_declaration"] = {
         "kind": CHANNEL_ACTIVITY_FUNCTIONAL_KIND,
-        "stage": "P9.7.1",
+        "stage": "P9.7.4",
         "device": device,
-        "executable": False,
+        "executable": True,
         "pointwise_execution": "eager",
         "state_components": ["q_physical", "q_spectral"],
         "activity_product_before_divergence": True,
@@ -249,7 +250,9 @@ def channel_activity_functional_declaration(
                 CHANNEL_FUNCTIONAL_PRESSURE_WARM_START
             ),
             "functional_initial_guess": "zero",
-            "transpose_action": "not_implemented",
+            "transpose_action": (
+                "explicit_reverse_dataflow_conjugate_transpose"
+            ),
             "gradient": CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT,
         },
         "boundary_spaces": {
@@ -259,6 +262,8 @@ def channel_activity_functional_declaration(
         },
         "fallback_allowed": False,
         "fallback_used": False,
+        "deterministic_replay": "bitwise",
+        "durable_checkpoint_bridge_version": 1,
     }
     identity = FunctionalRuntimeIdentity(
         scientific=dict(identities["scientific"]),
@@ -271,14 +276,14 @@ def channel_activity_functional_declaration(
         state_spec=state_spec,
         capabilities=capabilities,
         identity=identity,
-        executable=False,
+        executable=True,
     )
 
 
 def channel_activity_functional_request(
     simulation: SimulationSpec,
 ) -> FunctionalRuntimeConstructionRequest:
-    """Return the canonical non-executable P9.7.1 construction request."""
+    """Return the canonical executable Channel construction request."""
 
     return channel_activity_functional_declaration(simulation).request
 

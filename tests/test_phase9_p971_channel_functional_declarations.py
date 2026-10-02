@@ -32,6 +32,7 @@ from pssolver.functional import (
     CHANNEL_FUNCTIONAL_PRESSURE_WARM_START,
     FunctionalCapabilitySet,
     FunctionalRuntimeDeclaration,
+    build_channel_activity_functional_runtime,
     build_functional_runtime,
     channel_activity_functional_declaration,
     channel_activity_functional_request,
@@ -116,7 +117,7 @@ def test_p971_declares_exact_channel_state_control_and_observations(tmp_path):
     )
 
     assert isinstance(declaration, FunctionalRuntimeDeclaration)
-    assert declaration.executable is False
+    assert declaration.executable is True
     assert [item.name for item in declaration.state_spec.components] == [
         "q_physical",
         "q_spectral",
@@ -167,8 +168,8 @@ def test_p971_identity_exposes_pressure_and_boundary_policy_without_claims(
         "functional_runtime_declaration"
     ]
     assert functional["kind"] == CHANNEL_ACTIVITY_FUNCTIONAL_KIND
-    assert functional["stage"] == "P9.7.1"
-    assert functional["executable"] is False
+    assert functional["stage"] == "P9.7.4"
+    assert functional["executable"] is True
     assert functional["activity_product_before_divergence"] is True
     assert functional["q_gradient_cache"] == "derived_rebuilt_not_state"
     assert functional["boundary_spaces"] == {
@@ -185,20 +186,28 @@ def test_p971_identity_exposes_pressure_and_boundary_policy_without_claims(
         CHANNEL_FUNCTIONAL_PRESSURE_WARM_START
     )
     assert pressure["functional_initial_guess"] == "zero"
-    assert pressure["transpose_action"] == "not_implemented"
+    assert pressure["transpose_action"] == (
+        "explicit_reverse_dataflow_conjugate_transpose"
+    )
     assert pressure["gradient"] == CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT
     assert len(metadata["identity_sha256"]) == 64
 
     capabilities = declaration.capabilities
     assert capabilities == FunctionalCapabilitySet(
-        inner_solve_gradient=CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT
+        pure_step=True,
+        combined_step_and_observe=True,
+        deterministic_replay="bitwise",
+        differentiability="validated_custom_adjoint",
+        durable_checkpoint_bridge=True,
+        inner_solve_gradient=CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT,
+        differentiable_inputs=("state", "activity"),
     )
-    assert capabilities.pure_step is False
-    assert capabilities.combined_step_and_observe is False
-    assert capabilities.deterministic_replay == "not_qualified"
-    assert capabilities.differentiability == "not_qualified"
-    assert capabilities.differentiable_inputs == ()
-    assert capabilities.durable_checkpoint_bridge is False
+    assert capabilities.pure_step is True
+    assert capabilities.combined_step_and_observe is True
+    assert capabilities.deterministic_replay == "bitwise"
+    assert capabilities.differentiability == "validated_custom_adjoint"
+    assert capabilities.differentiable_inputs == ("state", "activity")
+    assert capabilities.durable_checkpoint_bridge is True
 
 
 def test_p971_declaration_does_not_allocate_execute_or_write_output(tmp_path):
@@ -210,8 +219,10 @@ def test_p971_declaration_does_not_allocate_execute_or_write_output(tmp_path):
         simulation.specification
     )
 
-    assert declaration.executable is False
+    assert declaration.executable is True
     assert not output.exists()
+    with pytest.raises(FileNotFoundError):
+        build_channel_activity_functional_runtime(declaration.request)
     with pytest.raises(ValueError, match="periodic"):
         build_functional_runtime(declaration.request)
     assert not output.exists()
@@ -241,17 +252,14 @@ def test_p971_rejects_noncanonical_requests_before_execution(tmp_path):
             channel_activity_functional_declaration(cuda_specification)
 
 
-def test_nonexecutable_generic_declaration_rejects_capability_overclaim(tmp_path):
+def test_executable_declaration_cannot_be_downgraded_with_capabilities(tmp_path):
     declaration = channel_activity_functional_declaration(
         _simulation(tmp_path).specification
     )
     with pytest.raises(ValueError, match="cannot claim runtime capabilities"):
         replace(
             declaration,
-            capabilities=FunctionalCapabilitySet(
-                pure_step=True,
-                inner_solve_gradient=CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT,
-            ),
+            executable=False,
         )
 
 
