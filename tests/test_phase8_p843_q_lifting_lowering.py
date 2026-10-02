@@ -166,6 +166,17 @@ def test_q_conveniences_reject_invalid_order_structure_and_orientation():
             scalar_order=0.6,
             face_normals={(2, "lower"): (0.0, 0.0, 2.0)},
         )
+    with pytest.raises(ValueError, match="oriented face normal"):
+        strong_homeotropic_q(
+            scalar_order=0.6,
+            face_normals={(2, "lower"): (1.0, 0.0, 0.0)},
+        )
+    with pytest.raises(ValueError, match="oriented face normal"):
+        strong_planar_q(
+            scalar_order=0.6,
+            face_directors={(2, "lower"): (0.0, 1.0, 0.0)},
+            face_normals={(2, "lower"): (1.0, 0.0, 0.0)},
+        )
     with pytest.raises(ValueError, match="tangent"):
         strong_planar_q(
             scalar_order=0.6,

@@ -159,6 +159,24 @@ def _unit_vector(value: object, description: str) -> np.ndarray:
     return array
 
 
+def _oriented_face_normal(
+    face: tuple[int, BoundarySide],
+    value: object,
+    description: str,
+) -> np.ndarray:
+    normal = _unit_vector(value, description)
+    axis, side = face
+    if axis >= 3:
+        raise ValueError("Q face axis must identify one of three dimensions")
+    expected = np.zeros(3, dtype=float)
+    expected[axis] = -1.0 if side is BoundarySide.LOWER else 1.0
+    if not np.allclose(normal, expected, rtol=0.0, atol=1.0e-10):
+        raise ValueError(
+            f"{description} must match the oriented face normal"
+        )
+    return normal
+
+
 def _full_from_component_tuple(
     values: tuple[float, ...],
 ) -> np.ndarray:
@@ -400,7 +418,11 @@ def finite_homeotropic_q_anchoring(
         wall_strengths=wall_strengths,
         target_q={
             face: uniaxial_Q(
-                _unit_vector(normal, "homeotropic face normal"),
+                _oriented_face_normal(
+                    face,
+                    normal,
+                    "homeotropic face normal",
+                ),
                 order,
             )
             for face, normal in normals.items()
@@ -428,7 +450,11 @@ def finite_planar_q_anchoring(
     targets = {}
     for face in directors:
         director = _unit_vector(directors[face], "planar face director")
-        normal = _unit_vector(normals[face], "planar face normal")
+        normal = _oriented_face_normal(
+            face,
+            normals[face],
+            "planar face normal",
+        )
         if not math.isclose(
             float(np.dot(director, normal)),
             0.0,
@@ -520,7 +546,11 @@ def strong_homeotropic_q(
     normals = _faces(face_normals, "homeotropic face normals")
     tensors = {
         face: uniaxial_Q(
-            _unit_vector(normal, "homeotropic face normal"),
+            _oriented_face_normal(
+                face,
+                normal,
+                "homeotropic face normal",
+            ),
             order,
         )
         for face, normal in normals.items()
@@ -546,7 +576,11 @@ def strong_planar_q(
     tensors = {}
     for face in directors:
         director = _unit_vector(directors[face], "planar face director")
-        normal = _unit_vector(normals[face], "planar face normal")
+        normal = _oriented_face_normal(
+            face,
+            normals[face],
+            "planar face normal",
+        )
         if not math.isclose(
             float(np.dot(director, normal)),
             0.0,

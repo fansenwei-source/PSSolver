@@ -251,7 +251,22 @@ def test_adapter_rejects_invalid_strength_target_and_planar_data():
             wall_strengths={(2, "lower"): 0.1},
             scalar_order=0.6,
             face_directors={(2, "lower"): (0.0, 0.0, 1.0)},
-            face_normals={(2, "lower"): (0.0, 0.0, 1.0)},
+            face_normals={(2, "lower"): (0.0, 0.0, -1.0)},
+        )
+    with pytest.raises(ValueError, match="oriented face normal"):
+        finite_homeotropic_q_anchoring(
+            k_q=0.02,
+            wall_strengths={(2, "lower"): 0.1},
+            scalar_order=0.6,
+            face_normals={(2, "lower"): (1.0, 0.0, 0.0)},
+        )
+    with pytest.raises(ValueError, match="oriented face normal"):
+        finite_planar_q_anchoring(
+            k_q=0.02,
+            wall_strengths={(2, "lower"): 0.1},
+            scalar_order=0.6,
+            face_directors={(2, "lower"): (0.0, 1.0, 0.0)},
+            face_normals={(2, "lower"): (1.0, 0.0, 0.0)},
         )
 
 
