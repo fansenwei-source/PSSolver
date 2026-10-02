@@ -212,6 +212,51 @@ def test_compiled_application_is_byte_identical_to_legacy_for_short_run(
     assert (compiled.output_dir / "COMPLETE").is_file()
 
 
+def test_compiled_application_runs_in_float32(tmp_path):
+    compiled = _spec(
+        tmp_path,
+        "compiled_float32",
+        runtime_path="compiled_v2",
+        dtype="float32",
+        steps=2,
+    )
+
+    result = application.run_plane_beris_edwards(compiled)
+
+    assert result is not None
+    assert result.final_step == 2
+    assert (compiled.output_dir / "COMPLETE").is_file()
+
+
+def test_compiled_construction_failure_leaves_no_output_directory(
+    tmp_path,
+    monkeypatch,
+):
+    compiled = _spec(
+        tmp_path,
+        "compiled_construction_failure",
+        runtime_path="compiled_v2",
+        steps=2,
+    )
+
+    def fail(*args, **kwargs):
+        raise RuntimeError("sentinel package-runtime construction failure")
+
+    monkeypatch.setattr(
+        application,
+        "build_package_simulation_runtime",
+        fail,
+    )
+
+    with pytest.raises(
+        RuntimeError,
+        match="sentinel package-runtime construction failure",
+    ):
+        application.run_plane_beris_edwards(compiled)
+
+    assert not compiled.output_dir.exists()
+
+
 def test_compiled_application_split_restart_is_byte_identical(tmp_path):
     continuous = _spec(
         tmp_path,

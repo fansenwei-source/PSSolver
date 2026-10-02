@@ -628,7 +628,6 @@ def run_plane_beris_edwards(
     output_dir = workflow_spec.output_dir.resolve()
     if output_dir.exists() and any(output_dir.iterdir()):
         raise FileExistsError(f"Refusing to mix pilot outputs in nonempty {output_dir}")
-    output_dir.mkdir(parents=True, exist_ok=True)
 
     q_2d = create_initial_condition(
         "analytic_periodic_defect_gas_2d",
@@ -647,20 +646,6 @@ def run_plane_beris_edwards(
         num_defect_pairs=initial_condition.num_defect_pairs,
         min_separation=initial_condition.defect_min_separation,
         seed=seed,
-    )
-    np.save(
-        output_dir / "Q2D_initial.npy",
-        np.stack(
-            [q_2d[name].numpy() for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")],
-            axis=-1,
-        ),
-    )
-    np.savetxt(
-        output_dir / "Q2D_defects.csv",
-        np.column_stack((defect_positions, defect_charges)),
-        delimiter=",",
-        header="x,y,charge",
-        comments="",
     )
 
     q_initial_condition = create_initial_condition(
@@ -744,6 +729,21 @@ def run_plane_beris_edwards(
     )
     metadata["retained_normal_velocity_modes"] = (
         spectral_projector.retained_axis_counts(U_NORMAL_BC)
+    )
+    output_dir.mkdir(parents=True, exist_ok=True)
+    np.save(
+        output_dir / "Q2D_initial.npy",
+        np.stack(
+            [q_2d[name].numpy() for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")],
+            axis=-1,
+        ),
+    )
+    np.savetxt(
+        output_dir / "Q2D_defects.csv",
+        np.column_stack((defect_positions, defect_charges)),
+        delimiter=",",
+        header="x,y,charge",
+        comments="",
     )
     workflow = PlaneBerisEdwardsWorkflow(
         runtime_adapter,

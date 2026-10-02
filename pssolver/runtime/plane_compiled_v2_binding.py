@@ -679,7 +679,11 @@ def bind_plane_compiled_v2(
     expected_denominator = 1.0 - linear_operator * time_stepping.dt
     if not torch.equal(denominator, expected_denominator):
         raise ValueError("semi-implicit denominator does not match 1-dt*L")
-    if float(activity.item()) != float(preset.zeta):
+    # Runtime scalar parameters are represented in the requested real dtype.
+    # Compare against the preset after the same dtype quantization so the
+    # identity audit remains exact for both float32 and float64.
+    expected_activity = float(activity.new_tensor(preset.zeta).item())
+    if float(activity.item()) != expected_activity:
         raise ValueError("activity tensor does not match the resolved preset")
 
     state = integrator.runtime_state
@@ -841,7 +845,7 @@ def bind_plane_compiled_v2(
         ),
         PlaneScalarBinding(
             "zeta",
-            _require_close(activity.item(), preset.zeta, "zeta"),
+            _require_close(activity.item(), expected_activity, "zeta"),
             "preset.zeta",
         ),
     )

@@ -402,10 +402,11 @@ def test_p844_record_matches_qualified_sources_and_scope():
         "homogeneous_remainder"
     )
     assert record["output"]["saved_q"] == "physical_field"
-    # Later P8.4.5 recovery slices changed only runtime representation and
-    # qualification behavior. Keep the P8.4.4 hashes as historical evidence
-    # instead of rewriting the already qualified record.
-    superseded_by_p845 = {
+    # Later qualification and compatibility-maintenance slices changed these
+    # sources. Keep the P8.4.4 hashes as historical evidence instead of
+    # rewriting the already qualified record.
+    superseded_after_p844 = {
+        "pssolver/applications/plane_beris_edwards.py",
         "pssolver/models/active_nematics/beris_edwards.py",
         "pssolver/models/active_nematics/stokes.py",
         "pssolver/operators/lifting.py",
@@ -413,7 +414,7 @@ def test_p844_record_matches_qualified_sources_and_scope():
         "pssolver/runtime/static_lifting.py",
     }
     for relative, expected in record["source_sha256"].items():
-        if relative in superseded_by_p845:
+        if relative in superseded_after_p844:
             continue
         actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
         assert actual == expected, relative
