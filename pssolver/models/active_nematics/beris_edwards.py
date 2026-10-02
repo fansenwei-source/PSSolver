@@ -892,6 +892,7 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
         q_gradient_cache=None,
         pointwise_kernels=None,
         static_lifting_runtime=None,
+        velocity_gradient_inverse_transform=None,
     ):
         super().__init__()
         coefficients = (
@@ -931,6 +932,16 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
             )
         self.q_gradient_cache = q_gradient_cache
         self.static_lifting_runtime = static_lifting_runtime
+        if (
+            velocity_gradient_inverse_transform is not None
+            and not callable(velocity_gradient_inverse_transform)
+        ):
+            raise TypeError(
+                "velocity_gradient_inverse_transform must be callable or None"
+            )
+        self.velocity_gradient_inverse_transform = (
+            velocity_gradient_inverse_transform
+        )
 
     def forward(self, fields, params):
         del params
@@ -971,17 +982,28 @@ class BerisEdwardsQNonlinearModel(torch.nn.Module):
                 )
                 for axis in range(3)
             )
-        velocity_gradients = tuple(
-            tuple(
-                fields.gradient(
-                    name,
-                    axis=axis,
-                    projector=self.spectral_projector,
+        if self.velocity_gradient_inverse_transform is None:
+            velocity_gradients = tuple(
+                tuple(
+                    fields.gradient(
+                        name,
+                        axis=axis,
+                        projector=self.spectral_projector,
+                    )
+                    for name in ("ux", "uy", "uz")
                 )
-                for name in ("ux", "uy", "uz")
+                for axis in range(3)
             )
-            for axis in range(3)
-        )
+        else:
+            velocity_gradients = tuple(
+                tuple(
+                    self.velocity_gradient_inverse_transform(
+                        *fields.gradient_hat(name, axis=axis)
+                    )
+                    for name in ("ux", "uy", "uz")
+                )
+                for axis in range(3)
+            )
         if lifting is None:
             nonlinear_components = self.pointwise_kernels.q_nonlinear_components(
                 q_components,

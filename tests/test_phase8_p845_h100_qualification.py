@@ -144,6 +144,7 @@ def test_p845_fused_reconstruction_recovery_records_measured_failure_and_scope()
     assert record["frozen_contract"]["thresholds_relaxed"] is False
     assert record["authorization"]["nonhomogeneous_neumann"] is False
     superseded_by_corrected_contract = {
+        "pssolver/models/active_nematics/beris_edwards.py",
         "tests/test_phase8_p844_lifting_workflow_restart.py",
         "tests/test_phase8_p845_h100_qualification.py",
     }

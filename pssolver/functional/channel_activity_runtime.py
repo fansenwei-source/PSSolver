@@ -264,11 +264,11 @@ class ChannelActivityFunctionalRuntime:
             *force_hat
         )
         velocity_hat = torch.stack(tuple(velocity_hats))
-        velocity = self._projector.inverse_transform(
+        velocity = self._projector.inverse_transform_full(
             velocity_hat,
             CHANNEL_VELOCITY_BOUNDARY_CONDITIONS,
         )
-        pressure = self._projector.inverse_transform(
+        pressure = self._projector.inverse_transform_full(
             pressure_hat,
             CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
         )

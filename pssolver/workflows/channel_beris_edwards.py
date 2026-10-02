@@ -76,7 +76,9 @@ def capture_channel_beris_edwards_observation(adapter, *, step=None):
 def capture_channel_beris_edwards_diagnostic(adapter, *, step):
     fields = adapter.fields
     divergence = sum(
-        fields.gradient(name, axis=axis, projector=adapter.projector)
+        adapter.projector.inverse_transform_full(
+            *fields.gradient_hat(name, axis=axis)
+        )
         for axis, name in enumerate(VELOCITY_COMPONENTS)
     )
     flow = adapter.flow_diagnostics()

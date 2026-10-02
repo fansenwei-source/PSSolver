@@ -498,7 +498,7 @@ def build_channel_beris_edwards_runtime(
         transform_execution=numerics.projected_transform_execution.value,
     )
     solver.model.spectral_projector = projector
-    solver.model.set_static_inverse_transform(projector.inverse_transform)
+    solver.model.set_static_inverse_transform(projector.inverse_transform_full)
     solver.integrator_cl = _ChannelProjectedEuler
     pointwise = BerisEdwardsPointwiseKernels(execution["pointwise_execution"])
     q2 = solver.get_q2(CHANNEL_Q_BOUNDARY_CONDITIONS)
@@ -539,6 +539,9 @@ def build_channel_beris_edwards_runtime(
             flow_alignment=material["flow_alignment"],
             q_gradient_cache=cache,
             pointwise_kernels=pointwise,
+            velocity_gradient_inverse_transform=(
+                projector.inverse_transform_full
+            ),
         )
     )
     solver.model.set_static_compute_model(

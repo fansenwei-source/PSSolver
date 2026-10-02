@@ -405,6 +405,21 @@ class BasisAwareSpectralProjector:
             retained_axis_counts=counts,
         )
 
+    def inverse_transform_full(self, spectral, boundary_conditions):
+        """Invert all stored modes, including modes created by basis mixing.
+
+        A projected nonlinear product has no retained high modes, so its
+        inverse may use the truncated transform.  A coupled modal solve can
+        repopulate those modes while enforcing a constraint, however.  Such
+        output must be inverted in full or the truncation can destroy the
+        constraint (for example, incompressibility in the Channel solver).
+        """
+
+        return self.transform_backend.inverse(
+            spectral,
+            tuple(boundary_conditions),
+        )
+
     def execution_metadata(self):
         """Return JSON-compatible provenance for projected transforms."""
         enabled = self.transform_execution == "truncated"

@@ -44,6 +44,8 @@ def _simulation(
     diagnostics=True,
     diagnostic_interval=1,
     save_interval=10,
+    dealias_rule="cubic_half",
+    projected_transform_execution="truncated",
 ):
     model = CompleteStressBerisEdwards(
         ldg_a=0.0,
@@ -85,7 +87,8 @@ def _simulation(
         boundaries=boundaries,
         numerics=SpectralNumerics(
             dtype="float64",
-            dealias_rule="cubic_half",
+            dealias_rule=dealias_rule,
+            projected_transform_execution=projected_transform_execution,
             spectral_storage="full_complex",
         ),
         time=TimeStepping(dt=0.001, refresh={"mode": "disabled"}),
@@ -190,6 +193,62 @@ def test_channel_complete_stress_is_finite_and_restart_is_byte_identical(tmp_pat
     assert max(
         value.pressure_relative_residual for value in resumed.diagnostics
     ) < 1.0
+
+
+def test_channel_dealiased_velocity_remains_divergence_free(tmp_path):
+    result = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="dealiased_divergence",
+            steps=2,
+            save_interval=2,
+        )
+    )
+    velocity = np.load(
+        result.output_directory / "u_2.npy",
+        allow_pickle=False,
+    )
+    scale = float(np.abs(velocity).max())
+
+    assert scale > 0.0
+    assert result.diagnostics[-1].divergence_max / scale < 1.0e-9
+
+
+def test_channel_full_and_truncated_projected_transforms_match(tmp_path):
+    full = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="projected_full",
+            steps=2,
+            save_interval=2,
+            projected_transform_execution="full",
+        )
+    )
+    truncated = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="projected_truncated",
+            steps=2,
+            save_interval=2,
+            projected_transform_execution="truncated",
+        )
+    )
+
+    for prefix in ("Q", "u", "p"):
+        expected = np.load(
+            full.output_directory / f"{prefix}_2.npy",
+            allow_pickle=False,
+        )
+        observed = np.load(
+            truncated.output_directory / f"{prefix}_2.npy",
+            allow_pickle=False,
+        )
+        np.testing.assert_allclose(
+            observed,
+            expected,
+            rtol=2.0e-12,
+            atol=2.0e-12,
+        )
 
 
 def test_channel_restart_rebuilds_q_gradient_cache_before_first_step(
