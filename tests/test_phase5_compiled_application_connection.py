@@ -290,6 +290,19 @@ def test_compiled_application_split_restart_is_byte_identical(tmp_path):
     assert resumed_result.start_step == 2
     assert resumed_result.final_step == 4
     assert resumed_result.saved_steps == (4,)
+    assert not (resumed.output_dir / "Q2D_initial.npy").exists()
+    assert not (resumed.output_dir / "Q2D_defects.csv").exists()
+    metadata = json.loads(
+        (resumed.output_dir / "metadata.json").read_text(encoding="utf-8")
+    )
+    assert metadata["initial_condition"]["runtime_construction_only"] is True
+    assert metadata["initial_condition"]["artifacts_written"] is False
+    assert metadata["initial_condition"]["trajectory_state_source"] == (
+        "authenticated_checkpoint"
+    )
+    assert metadata["initial_condition"]["checkpoint_path"] == str(
+        checkpoint.resolve()
+    )
     for prefix in ("Q", "u", "p"):
         assert _sha256(continuous.output_dir / f"{prefix}_4.npy") == _sha256(
             resumed.output_dir / f"{prefix}_4.npy"

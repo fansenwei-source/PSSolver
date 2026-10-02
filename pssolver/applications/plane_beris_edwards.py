@@ -604,7 +604,8 @@ def run_plane_beris_edwards(
 
     # Reject unsupported cross-runtime or numerically incompatible restart before
     # creating an output directory, generating Q, or constructing either solver.
-    if workflow_spec.restart_from is not None:
+    is_restart = workflow_spec.restart_from is not None
+    if is_restart:
         restart_header = read_plane_checkpoint_header(workflow_spec.restart_from)
         if restart_header.runtime_path is not execution.runtime_path:
             raise ValueError(
@@ -619,6 +620,20 @@ def run_plane_beris_edwards(
             raise ValueError(
                 "save_start_step must not exceed the absolute final step"
             )
+
+    metadata["initial_condition"]["runtime_construction_only"] = is_restart
+    metadata["initial_condition"]["artifacts_written"] = not is_restart
+    if is_restart:
+        metadata["initial_condition"]["trajectory_state_source"] = (
+            "authenticated_checkpoint"
+        )
+        metadata["initial_condition"]["checkpoint_path"] = str(
+            workflow_spec.restart_from.resolve()
+        )
+    else:
+        metadata["initial_condition"]["trajectory_state_source"] = (
+            "generated_initial_condition"
+        )
 
     output_dir = workflow_spec.output_dir.resolve()
     if output_dir.exists() and any(output_dir.iterdir()):
@@ -636,12 +651,13 @@ def run_plane_beris_edwards(
         background_angle=initial_condition.background_angle,
         dtype=real_dtype,
     )
-    defect_positions, defect_charges = sample_periodic_neutral_defects_2d(
-        lengths=(Lx, Ly),
-        num_defect_pairs=initial_condition.num_defect_pairs,
-        min_separation=initial_condition.defect_min_separation,
-        seed=seed,
-    )
+    if not is_restart:
+        defect_positions, defect_charges = sample_periodic_neutral_defects_2d(
+            lengths=(Lx, Ly),
+            num_defect_pairs=initial_condition.num_defect_pairs,
+            min_separation=initial_condition.defect_min_separation,
+            seed=seed,
+        )
 
     q_initial_condition = create_initial_condition(
         "extruded_2d_twist",
@@ -726,20 +742,24 @@ def run_plane_beris_edwards(
         spectral_projector.retained_axis_counts(U_NORMAL_BC)
     )
     output_dir.mkdir(parents=True, exist_ok=True)
-    np.save(
-        output_dir / "Q2D_initial.npy",
-        np.stack(
-            [q_2d[name].numpy() for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")],
-            axis=-1,
-        ),
-    )
-    np.savetxt(
-        output_dir / "Q2D_defects.csv",
-        np.column_stack((defect_positions, defect_charges)),
-        delimiter=",",
-        header="x,y,charge",
-        comments="",
-    )
+    if not is_restart:
+        np.save(
+            output_dir / "Q2D_initial.npy",
+            np.stack(
+                [
+                    q_2d[name].numpy()
+                    for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")
+                ],
+                axis=-1,
+            ),
+        )
+        np.savetxt(
+            output_dir / "Q2D_defects.csv",
+            np.column_stack((defect_positions, defect_charges)),
+            delimiter=",",
+            header="x,y,charge",
+            comments="",
+        )
     workflow = PlaneBerisEdwardsWorkflow(
         runtime_adapter,
         run_spec,
