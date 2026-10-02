@@ -205,7 +205,8 @@ class Output(WorkflowSpec):
             save_start_step,
             "save_start_step",
         )
-        if save_start_step > steps:
+        restart_path = None if restart_from is None else Path(restart_from)
+        if restart_path is None and save_start_step > steps:
             raise ValueError("save_start_step must not exceed steps")
         values = {} if options is None else dict(options)
         reserved = {
@@ -248,9 +249,7 @@ class Output(WorkflowSpec):
                 "diagnostics": diagnostics,
                 "save_hydrodynamics": save_hydrodynamics,
                 "checkpoint_interval": checkpoint_interval,
-                "restart_from": (
-                    None if restart_from is None else str(Path(restart_from))
-                ),
+                "restart_from": None if restart_path is None else str(restart_path),
             }
         )
         super().__init__(steps=steps, options=values)

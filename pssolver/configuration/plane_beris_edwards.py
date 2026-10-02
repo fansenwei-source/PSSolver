@@ -534,9 +534,11 @@ def create_plane_beris_edwards_run_spec(
             "--projected-transform-execution truncated requires enabled "
             "dealiasing"
         )
-    if save_start_step < 0 or save_start_step > steps:
+    if save_start_step < 0 or (
+        restart_from is None and save_start_step > steps
+    ):
         raise ValueError(
-            "--save-start-step must lie between 0 and --steps"
+            "--save-start-step must lie between 0 and --steps for a fresh run"
         )
     if validation_config_sha256 is not None and (
         len(validation_config_sha256) != 64

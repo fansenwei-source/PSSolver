@@ -30,6 +30,7 @@ from pssolver.runtime.package_construction import (
 )
 from pssolver.workflows.channel_beris_edwards import (
     ChannelBerisEdwardsWorkflow,
+    read_channel_beris_edwards_checkpoint_progress,
 )
 
 
@@ -118,6 +119,13 @@ def run_channel_beris_edwards(
             device=device,
         ),
     }
+    restart = spec.workflow.options["restart_from"]
+    if restart is not None:
+        start = read_channel_beris_edwards_checkpoint_progress(restart)
+        if spec.workflow.options["save_start_step"] > start + spec.workflow.steps:
+            raise ValueError(
+                "save_start_step must not exceed the absolute final step"
+            )
     initial_values, snapshot_path, snapshot_sha256 = load_channel_initial_q(
         run_spec
     )

@@ -277,7 +277,8 @@ class PlaneWorkflowSpec:
             self.save_start_step,
             "save_start_step",
         )
-        if save_start > steps:
+        restart_from = _optional_path(self.restart_from, "restart_from")
+        if restart_from is None and save_start > steps:
             raise ValueError("save_start_step must not exceed steps")
         _positive_integer(self.save_interval, "save_interval")
         _positive_integer(
@@ -289,7 +290,6 @@ class PlaneWorkflowSpec:
         checkpoint_interval = self.checkpoint_interval
         if checkpoint_interval is not None:
             _positive_integer(checkpoint_interval, "checkpoint_interval")
-        restart_from = _optional_path(self.restart_from, "restart_from")
         object.__setattr__(self, "output_dir", output_dir)
         object.__setattr__(self, "steps", steps)
         object.__setattr__(self, "save_start_step", save_start)

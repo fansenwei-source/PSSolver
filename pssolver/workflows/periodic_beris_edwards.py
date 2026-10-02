@@ -142,6 +142,10 @@ class PeriodicBerisEdwardsWorkflow:
             runtime_identity_sha256=self.run_spec.runtime_identity_sha256(),
         )
         steps = self.run_spec.simulation.workflow.steps
+        if self.options["save_start_step"] > start + steps:
+            raise ValueError(
+                "save_start_step must not exceed the absolute final step"
+            )
         iterator = range(steps) if progress is None else progress
         started = time.time()
         executed = 0

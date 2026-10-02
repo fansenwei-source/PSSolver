@@ -615,6 +615,10 @@ def run_plane_beris_edwards(
             != run_spec.runtime_identity_sha256()
         ):
             raise ValueError("checkpoint runtime identity does not match target")
+        if save_start_step > restart_header.completed_steps + steps:
+            raise ValueError(
+                "save_start_step must not exceed the absolute final step"
+            )
 
     output_dir = workflow_spec.output_dir.resolve()
     if output_dir.exists() and any(output_dir.iterdir()):

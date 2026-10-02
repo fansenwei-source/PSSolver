@@ -31,6 +31,9 @@ from pssolver.runtime.periodic_beris_edwards import (
 from pssolver.workflows.periodic_beris_edwards import (
     PeriodicBerisEdwardsWorkflow,
 )
+from pssolver.workflows.periodic_checkpoint import (
+    read_periodic_checkpoint_header,
+)
 
 
 def _sha256(path: Path) -> str:
@@ -133,6 +136,13 @@ def run_periodic_beris_edwards(
             device=device,
         ),
     }
+    restart = spec.workflow.options["restart_from"]
+    if restart is not None:
+        start = read_periodic_checkpoint_header(restart).completed_steps
+        if spec.workflow.options["save_start_step"] > start + spec.workflow.steps:
+            raise ValueError(
+                "save_start_step must not exceed the absolute final step"
+            )
     initial_values, snapshot_path, snapshot_sha256 = load_periodic_initial_q(
         run_spec
     )

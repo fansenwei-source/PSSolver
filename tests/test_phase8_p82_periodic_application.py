@@ -43,6 +43,7 @@ def _simulation(
     diagnostics=True,
     diagnostic_interval=1,
     save_interval=10,
+    save_start_step=0,
     dealias_rule="cubic_half",
     projected_transform_execution="truncated",
     grid_placement=GridPlacement.CELL_CENTERED,
@@ -112,6 +113,7 @@ def _simulation(
         output=Output(
             directory=tmp_path / output_name,
             steps=steps,
+            save_start_step=save_start_step,
             save_interval=save_interval,
             diagnostic_interval=diagnostic_interval,
             diagnostics=diagnostics,
@@ -253,6 +255,55 @@ def test_periodic_application_is_finite_and_restart_is_byte_identical(tmp_path):
         assert np.isfinite(np.load(left, allow_pickle=False)).all()
     assert max(abs(value.pressure_mean) for value in resumed.diagnostics) < 1.0e-12
     assert max(value.velocity_mean_norm for value in resumed.diagnostics) < 1.0e-12
+
+
+def test_periodic_restart_accepts_absolute_save_start_step(tmp_path):
+    first = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="absolute_save_source",
+            steps=1,
+            checkpoint_interval=1,
+        )
+    )
+
+    resumed = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="absolute_save_target",
+            steps=1,
+            save_start_step=2,
+            restart_from=first.output_directory / "checkpoint_1",
+        )
+    )
+
+    assert resumed.start_step == 1
+    assert resumed.final_step == 2
+    assert resumed.saved_steps == (2,)
+
+
+def test_periodic_restart_rejects_save_start_after_absolute_final_step(tmp_path):
+    first = run_simulation(
+        _simulation(
+            tmp_path,
+            output_name="invalid_save_source",
+            steps=1,
+            checkpoint_interval=1,
+        )
+    )
+
+    with pytest.raises(ValueError, match="absolute final step"):
+        run_simulation(
+            _simulation(
+                tmp_path,
+                output_name="invalid_save_target",
+                steps=1,
+                save_start_step=3,
+                restart_from=first.output_directory / "checkpoint_1",
+            )
+        )
+
+    assert not (tmp_path / "invalid_save_target").exists()
 
 
 def test_periodic_saved_hydrodynamics_match_the_saved_q_state(tmp_path):

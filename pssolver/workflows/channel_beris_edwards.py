@@ -230,6 +230,30 @@ def _validated_progress(metadata):
     return completed_steps, integrator
 
 
+def read_channel_beris_edwards_checkpoint_progress(directory):
+    """Read authenticated progress without opening checkpoint tensors."""
+
+    directory = Path(directory).expanduser().resolve()
+    metadata = json.loads(
+        (directory / "checkpoint.json").read_text(encoding="utf-8")
+    )
+    format_version = metadata.get("format_version")
+    if (
+        not isinstance(format_version, int)
+        or isinstance(format_version, bool)
+        or format_version not in {_LEGACY_CHECKPOINT_VERSION, CHECKPOINT_VERSION}
+    ):
+        raise ValueError("unsupported complete-stress Channel checkpoint")
+    verify_checkpoint_metadata(
+        metadata,
+        required=format_version == CHECKPOINT_VERSION,
+    )
+    if metadata.get("runtime_path") != CHANNEL_COMPLETE_STRESS_RUNTIME_PATH:
+        raise ValueError("checkpoint runtime identity does not match target")
+    completed_steps, _ = _validated_progress(metadata)
+    return completed_steps
+
+
 def _load_checkpoint(directory, adapter, *, runtime_identity_sha256):
     directory = Path(directory).expanduser().resolve()
     metadata = json.loads(
@@ -320,6 +344,10 @@ class ChannelBerisEdwardsWorkflow:
             runtime_identity_sha256=self.run_spec.runtime_identity_sha256(),
         )
         steps = self.run_spec.simulation.workflow.steps
+        if self.options["save_start_step"] > start + steps:
+            raise ValueError(
+                "save_start_step must not exceed the absolute final step"
+            )
         iterator = range(steps) if progress is None else progress
         started = time.time()
         executed = 0
@@ -428,5 +456,6 @@ __all__ = [
     "ChannelBerisEdwardsWorkflowResult",
     "capture_channel_beris_edwards_diagnostic",
     "capture_channel_beris_edwards_observation",
+    "read_channel_beris_edwards_checkpoint_progress",
     "write_channel_beris_edwards_checkpoint",
 ]

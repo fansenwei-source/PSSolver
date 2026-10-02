@@ -280,12 +280,16 @@ def test_compiled_application_split_restart_is_byte_identical(tmp_path):
         "resumed",
         runtime_path="compiled_v2",
         steps=2,
+        save_start_step=4,
         restart_from=checkpoint,
     )
 
-    application.run_plane_beris_edwards(resumed)
+    resumed_result = application.run_plane_beris_edwards(resumed)
 
     assert header.runtime_path is PlaneRuntimePath.COMPILED_V2
+    assert resumed_result.start_step == 2
+    assert resumed_result.final_step == 4
+    assert resumed_result.saved_steps == (4,)
     for prefix in ("Q", "u", "p"):
         assert _sha256(continuous.output_dir / f"{prefix}_4.npy") == _sha256(
             resumed.output_dir / f"{prefix}_4.npy"
