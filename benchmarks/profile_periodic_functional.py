@@ -218,6 +218,9 @@ def _simulation(config, *, device: torch.device, output_directory: Path) -> Simu
             steps=1,
             save_interval=2,
             diagnostic_interval=1,
+            save_start_step=0,
+            diagnostics=True,
+            save_hydrodynamics=True,
         ),
     )
 

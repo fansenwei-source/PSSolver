@@ -161,6 +161,7 @@ def _plane_simulation(
         numerics=SpectralNumerics(
             dtype="float64",
             dealias_rule="cubic_half",
+            spectral_storage="full_complex",
         ),
         time=TimeStepping(
             dt=0.005,
@@ -195,6 +196,9 @@ def _plane_simulation(
             steps=steps,
             save_interval=100,
             diagnostic_interval=100,
+            save_start_step=0,
+            diagnostics=True,
+            save_hydrodynamics=True,
             checkpoint_interval=checkpoint_interval,
             restart_from=restart_from,
         ),

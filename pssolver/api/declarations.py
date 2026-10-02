@@ -16,7 +16,6 @@ from pssolver.core.integrators import IntegratorScheme, IntegratorSpec
 from pssolver.core.numerics import (
     DEFAULT_DEALIAS_RULE,
     DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
-    DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     DealiasRule,
     NumericsConfig,
@@ -47,7 +46,11 @@ def _non_negative_integer(value: object, description: str) -> int:
 
 
 class SpectralNumerics(NumericsConfig):
-    """String-friendly constructor for canonical spectral numerics."""
+    """String-friendly constructor for canonical spectral numerics.
+
+    Storage is explicit because the qualified representation depends on the
+    selected geometry/runtime and therefore has no honest global default.
+    """
 
     __slots__ = ()
 
@@ -55,6 +58,7 @@ class SpectralNumerics(NumericsConfig):
         self,
         *,
         dtype: str | Precision,
+        spectral_storage: str | SpectralStorage,
         dealias_rule: str | DealiasRule = DEFAULT_DEALIAS_RULE,
         transform_execution_order: str | TransformExecutionOrder = (
             DEFAULT_TRANSFORM_EXECUTION_ORDER
@@ -62,7 +66,6 @@ class SpectralNumerics(NumericsConfig):
         projected_transform_execution: str | ProjectedTransformExecution = (
             DEFAULT_PROJECTED_TRANSFORM_EXECUTION
         ),
-        spectral_storage: str | SpectralStorage = DEFAULT_SPECTRAL_STORAGE,
         hermitian_axis: int | None = None,
     ) -> None:
         super().__init__(
@@ -182,7 +185,11 @@ class TorchSpectralExecution(ExecutionSpec):
 
 
 class Output(WorkflowSpec):
-    """Finite output, observation, checkpoint, and restart schedule."""
+    """Finite output, observation, checkpoint, and restart schedule.
+
+    Start, diagnostic, and hydrodynamic policies are explicit so changing
+    from a CLI/run-spec entry point cannot silently change saved evidence.
+    """
 
     __slots__ = ()
 
@@ -193,9 +200,9 @@ class Output(WorkflowSpec):
         steps: int,
         save_interval: int,
         diagnostic_interval: int,
-        save_start_step: int = 0,
-        diagnostics: bool = True,
-        save_hydrodynamics: bool = True,
+        save_start_step: int,
+        diagnostics: bool,
+        save_hydrodynamics: bool,
         checkpoint_interval: int | None = None,
         restart_from: str | Path | None = None,
         options: Mapping[str, object] | None = None,

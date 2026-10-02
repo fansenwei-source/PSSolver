@@ -96,6 +96,7 @@ def _simulation() -> Simulation:
         numerics=SpectralNumerics(
             dtype="float64",
             dealias_rule="cubic_half",
+            spectral_storage="full_complex",
         ),
         time=TimeStepping(dt=0.005),
         initial_condition=GeneratedInitialCondition(
@@ -112,6 +113,9 @@ def _simulation() -> Simulation:
             steps=20_000,
             save_interval=1_000,
             diagnostic_interval=100,
+            save_start_step=0,
+            diagnostics=True,
+            save_hydrodynamics=True,
         ),
     )
 
@@ -128,6 +132,18 @@ def test_public_conveniences_normalize_to_p777_canonical_types():
     assert value.specification.equation_system is value.model
     assert value.specification.boundaries is value.boundaries
     json.dumps(value.to_metadata(), allow_nan=False, sort_keys=True)
+
+
+def test_geometry_dependent_numerics_and_output_policies_are_explicit():
+    with pytest.raises(TypeError, match="spectral_storage"):
+        SpectralNumerics(dtype="float64")
+    with pytest.raises(TypeError, match="save_start_step"):
+        Output(
+            directory="data/ambiguous",
+            steps=2,
+            save_interval=1,
+            diagnostic_interval=1,
+        )
 
 
 def test_complete_stress_model_is_geometry_and_boundary_free():

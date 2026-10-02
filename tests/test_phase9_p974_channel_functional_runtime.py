@@ -108,6 +108,9 @@ def _simulation(
             steps=1,
             save_interval=1,
             diagnostic_interval=1,
+            save_start_step=0,
+            diagnostics=True,
+            save_hydrodynamics=True,
         ),
         discretization={
             "pressure_solver": {

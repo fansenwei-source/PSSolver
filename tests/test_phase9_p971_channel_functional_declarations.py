@@ -97,6 +97,9 @@ def _simulation(tmp_path: Path, *, pointwise_execution: str = "eager") -> Simula
             steps=1,
             save_interval=1,
             diagnostic_interval=1,
+            save_start_step=0,
+            diagnostics=True,
+            save_hydrodynamics=True,
         ),
         discretization={
             "pressure_solver": {

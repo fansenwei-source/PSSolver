@@ -123,6 +123,7 @@ def _simulation(
             save_interval=save_interval,
             diagnostic_interval=diagnostic_interval,
             diagnostics=diagnostics,
+            save_hydrodynamics=True,
             checkpoint_interval=checkpoint_interval,
             restart_from=restart_from,
         ),

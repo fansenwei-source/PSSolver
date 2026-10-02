@@ -77,6 +77,7 @@ def _simulation(**replacements) -> Simulation:
         "numerics": SpectralNumerics(
             dtype="float64",
             dealias_rule="cubic_half",
+            spectral_storage="full_complex",
         ),
         "time": TimeStepping(
             dt=0.005,
@@ -111,6 +112,9 @@ def _simulation(**replacements) -> Simulation:
             steps=2,
             save_interval=1,
             diagnostic_interval=1,
+            save_start_step=0,
+            diagnostics=True,
+            save_hydrodynamics=True,
         ),
         "invocation": InvocationSpec({"dry_run": True}),
     }

@@ -456,7 +456,11 @@ def _public_simulation(tmp_path: Path) -> Simulation:
         model=model,
         geometry=geometry,
         boundaries=boundaries,
-        numerics=SpectralNumerics(dtype="float64", dealias_rule="cubic_half"),
+        numerics=SpectralNumerics(
+            dtype="float64",
+            dealias_rule="cubic_half",
+            spectral_storage="full_complex",
+        ),
         time=TimeStepping(dt=0.005, refresh={"mode": "disabled"}),
         initial_condition=GeneratedInitialCondition(
             "extruded_defect_gas",
@@ -488,6 +492,8 @@ def _public_simulation(tmp_path: Path) -> Simulation:
             save_start_step=0,
             save_interval=1,
             diagnostic_interval=1,
+            diagnostics=True,
+            save_hydrodynamics=True,
             checkpoint_interval=1,
         ),
     )

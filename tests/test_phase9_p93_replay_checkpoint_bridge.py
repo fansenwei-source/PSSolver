@@ -111,6 +111,9 @@ def _simulation(tmp_path: Path, *, name: str = "p93") -> Simulation:
             steps=1,
             save_interval=10,
             diagnostic_interval=1,
+            save_start_step=0,
+            diagnostics=True,
+            save_hydrodynamics=True,
         ),
     )
 
