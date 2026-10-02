@@ -95,6 +95,7 @@ from pssolver.models.active_nematics import (
 from pssolver.operators.projection import (
     DEALIAS_RULE_FRACTIONS,
 )
+from pssolver.planning import TransformKind
 from tqdm import trange
 
 
@@ -177,6 +178,36 @@ def run_plane_beris_edwards(
         raise TypeError("application_simulation must be SimulationSpec or None")
     lowering_plan = lower_simulation_spec(application_simulation)
     lifting_plan = lowering_plan.lifting_plan
+    q_assignment = application_simulation.boundaries.for_component("Qxx")
+    q_physical_boundary_conditions = []
+    for axis in range(application_simulation.geometry.domain.ndim):
+        axis_kinds = {
+            face.condition.kind.value
+            for face in q_assignment.faces
+            if face.axis == axis
+        }
+        if len(axis_kinds) != 1:
+            raise ValueError(
+                "Plane Q metadata requires matching boundary kinds on each "
+                "axis pair"
+            )
+        q_physical_boundary_conditions.append(next(iter(axis_kinds)))
+    transform_boundary_kind = {
+        TransformKind.FFT: "periodic",
+        TransformKind.DCT: "neumann",
+        TransformKind.DST: "dirichlet",
+    }
+    q_evolved_boundary_conditions = tuple(
+        transform_boundary_kind[kind]
+        for kind in lowering_plan.basis_for("Qxx").transform_kinds
+    )
+    q_physical_boundary_conditions = tuple(q_physical_boundary_conditions)
+    q_wall_model_note = (
+        "prescribed static Dirichlet Q reconstructed from a homogeneous "
+        "Dirichlet/DST remainder plus an affine lift"
+        if lifting_plan is not None
+        else "free/Neumann; matches the Fig. 4 free-anchoring branch"
+    )
     domain = components.geometry.domain
     numerics = components.numerics
     physics = components.physics
@@ -413,7 +444,23 @@ def run_plane_beris_edwards(
             },
         },
         "boundary_conditions": {
-            "Q": Q_BC,
+            "Q": q_physical_boundary_conditions,
+            "Q_assignment": [
+                application_simulation.boundaries.for_component(
+                    component
+                ).to_metadata()
+                for component in (
+                    lifting_plan.component_order
+                    if lifting_plan is not None
+                    else ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")
+                )
+            ],
+            "Q_evolved_representation": (
+                "homogeneous_remainder"
+                if lifting_plan is not None
+                else "physical_field"
+            ),
+            "Q_evolved_boundary_conditions": q_evolved_boundary_conditions,
             "velocity_tangential": U_TANGENTIAL_BC,
             "velocity_normal": U_NORMAL_BC,
             "pressure": PRESSURE_MODAL_BC,
@@ -524,11 +571,12 @@ def run_plane_beris_edwards(
         ),
         "pointwise_execution": execution.pointwise_execution,
         "tf32": execution.tf32,
-        "q_boundary_conditions": Q_BC,
+        "q_boundary_conditions": q_physical_boundary_conditions,
+        "q_evolved_boundary_conditions": q_evolved_boundary_conditions,
         "tangential_velocity_boundary_conditions": U_TANGENTIAL_BC,
         "normal_velocity_boundary_conditions": U_NORMAL_BC,
         "velocity_wall_model": "free-slip",
-        "q_wall_model_note": "free/Neumann; matches the Fig. 4 free-anchoring branch",
+        "q_wall_model_note": q_wall_model_note,
         "zero_mode_policy": zero_mode_policy,
         "dealias_rule": dealias_rule,
         "dealias_fraction": DEALIAS_RULE_FRACTIONS[dealias_rule],

@@ -470,6 +470,21 @@ def test_public_runner_writes_physical_q_and_checkpointed_remainder(tmp_path):
     assert result.final_step == 1
 
     output = tmp_path / "public_lifted"
+    metadata = json.loads((output / "metadata.json").read_text())
+    assert metadata["boundary_conditions"]["Q"] == [
+        "periodic",
+        "periodic",
+        "dirichlet",
+    ]
+    assert metadata["boundary_conditions"]["Q_evolved_representation"] == (
+        "homogeneous_remainder"
+    )
+    assert metadata["boundary_conditions"][
+        "Q_evolved_boundary_conditions"
+    ] == ["periodic", "periodic", "dirichlet"]
+    assert metadata["q_wall_model_note"].startswith(
+        "prescribed static Dirichlet Q"
+    )
     physical = np.load(output / "Q_1.npy", allow_pickle=False)
     checkpoint = load_plane_checkpoint(output / "checkpoint_1")
     operator = materialize_plane_static_lifting(
