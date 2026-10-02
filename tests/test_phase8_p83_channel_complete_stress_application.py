@@ -58,6 +58,8 @@ def _simulation(
     grid_placement=GridPlacement.CELL_CENTERED,
     disable_q_gradient_reuse=False,
     invocation_options=None,
+    device="cpu",
+    pressure_overrides=None,
 ):
     model = CompleteStressBerisEdwards(
         ldg_a=0.0,
@@ -94,6 +96,16 @@ def _simulation(
         rng = np.random.default_rng(20260926)
         values += rng.normal(scale=1.0e-3, size=values.shape)
         np.save(path, values, allow_pickle=False)
+    pressure_solver = {
+        "algorithm": "preconditioned_conjugate_gradient",
+        "relative_tolerance": 1.0e-10,
+        "max_iterations": 40,
+        "fixed_iterations": 12,
+        "warm_start": True,
+    }
+    pressure_solver.update(
+        {} if pressure_overrides is None else pressure_overrides
+    )
     return Simulation(
         model=model,
         geometry=geometry,
@@ -108,7 +120,7 @@ def _simulation(
         initial_condition=SnapshotInitialCondition(snapshot, step=0),
         execution=TorchSpectralExecution(
             runtime_path="channel_complete_stress",
-            device="cpu",
+            device=device,
             options={
                 "tf32": "off",
                 "molecular_field_linear_space": "spectral",
@@ -126,15 +138,7 @@ def _simulation(
             checkpoint_interval=checkpoint_interval,
             restart_from=restart_from,
         ),
-        discretization={
-            "pressure_solver": {
-                "algorithm": "preconditioned_conjugate_gradient",
-                "relative_tolerance": 1.0e-10,
-                "max_iterations": 40,
-                "fixed_iterations": 12,
-                "warm_start": True,
-            }
-        },
+        discretization={"pressure_solver": pressure_solver},
         invocation=InvocationSpec(invocation_options or {}),
     )
 
@@ -204,6 +208,47 @@ def test_channel_compiler_rejects_coerced_flags_and_invalid_digest(
 ):
     with pytest.raises(ValueError, match=message):
         compile_simulation(_simulation(tmp_path, **overrides))
+
+
+@pytest.mark.parametrize(
+    ("overrides", "message"),
+    (
+        ({"device": "banana"}, "invalid execution device"),
+        (
+            {"pressure_overrides": {"relative_tolerance": -1.0}},
+            "relative_tolerance",
+        ),
+        (
+            {"pressure_overrides": {"max_iterations": 0}},
+            "max_iterations",
+        ),
+        (
+            {"pressure_overrides": {"fixed_iterations": 0}},
+            "fixed_iterations",
+        ),
+    ),
+)
+def test_channel_compiler_rejects_runtime_options_before_output(
+    tmp_path,
+    overrides,
+    message,
+):
+    with pytest.raises(ValueError, match=message):
+        compile_simulation(_simulation(tmp_path, **overrides))
+
+    assert not (tmp_path / "run").exists()
+
+
+def test_channel_auto_device_resolves_before_runtime(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        "pssolver.configuration.execution_device.torch.cuda.is_available",
+        lambda: False,
+    )
+
+    result = run_simulation(_simulation(tmp_path, device="auto", steps=1))
+
+    assert result.final_step == 1
+    assert result.output_directory == tmp_path / "run"
 
 
 def test_channel_complete_stress_is_finite_and_restart_is_byte_identical(tmp_path):

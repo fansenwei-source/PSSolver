@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
+from pssolver.configuration.execution_device import validate_execution_device
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
@@ -112,6 +113,10 @@ def compile_periodic_public_simulation(source: SimulationSpec, product_type):
         _reject("unsupported periodic stress-divergence sum space")
     if execution["pointwise_execution"] not in {"eager", "compile"}:
         _reject("unsupported periodic pointwise execution mode")
+    try:
+        validate_execution_device(execution["device"])
+    except ValueError as exc:
+        _reject(str(exc))
     if not isinstance(execution["disable_q_gradient_reuse"], bool):
         _reject("periodic Q-gradient reuse flag must be a bool")
     _exact_keys(

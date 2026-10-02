@@ -13,6 +13,7 @@ import torch
 from pssolver.configuration.channel_beris_edwards import (
     ChannelBerisEdwardsRunSpec,
 )
+from pssolver.configuration.execution_device import resolve_execution_device
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
@@ -101,6 +102,7 @@ def run_channel_beris_edwards(
     if run_spec.dry_run:
         return None
 
+    device = resolve_execution_device(spec.execution.options["device"])
     initial_values, snapshot_path, snapshot_sha256 = load_channel_initial_q(
         run_spec
     )
@@ -116,7 +118,7 @@ def run_channel_beris_edwards(
     request = ChannelBerisEdwardsRuntimeBuildRequest(
         run_spec=run_spec,
         initial_values=initial_values,
-        device=spec.execution.options["device"],
+        device=device,
     )
     construction = PackageRuntimeConstructionInput(
         plan=plan_package_runtime_construction(spec),

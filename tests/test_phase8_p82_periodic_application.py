@@ -46,6 +46,7 @@ def _simulation(
     grid_placement=GridPlacement.CELL_CENTERED,
     disable_q_gradient_reuse=False,
     invocation_options=None,
+    device="cpu",
 ):
     model = CompleteStressBerisEdwards(
         ldg_a=0.0,
@@ -97,7 +98,7 @@ def _simulation(
         initial_condition=SnapshotInitialCondition(snapshot, step=0),
         execution=TorchSpectralExecution(
             runtime_path=runtime_path,
-            device="cpu",
+            device=device,
             options={
                 "tf32": "off",
                 "molecular_field_linear_space": "spectral",
@@ -170,6 +171,25 @@ def test_periodic_compiler_rejects_coerced_flags_and_invalid_digest(
 ):
     with pytest.raises(ValueError, match=message):
         compile_simulation(_simulation(tmp_path, **overrides))
+
+
+def test_periodic_compiler_rejects_invalid_device_before_output(tmp_path):
+    with pytest.raises(ValueError, match="invalid execution device"):
+        compile_simulation(_simulation(tmp_path, device="banana"))
+
+    assert not (tmp_path / "run").exists()
+
+
+def test_periodic_auto_device_resolves_before_runtime(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        "pssolver.configuration.execution_device.torch.cuda.is_available",
+        lambda: False,
+    )
+
+    result = run_simulation(_simulation(tmp_path, device="auto", steps=1))
+
+    assert result.final_step == 1
+    assert result.output_directory == tmp_path / "run"
 
 
 def test_periodic_application_is_finite_and_restart_is_byte_identical(tmp_path):

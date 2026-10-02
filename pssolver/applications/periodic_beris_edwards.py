@@ -10,6 +10,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from pssolver.configuration.execution_device import resolve_execution_device
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
@@ -116,6 +117,7 @@ def run_periodic_beris_edwards(
     if run_spec.dry_run:
         return None
 
+    device = resolve_execution_device(spec.execution.options["device"])
     initial_values, snapshot_path, snapshot_sha256 = load_periodic_initial_q(
         run_spec
     )
@@ -131,7 +133,7 @@ def run_periodic_beris_edwards(
     request = PeriodicRuntimeBuildRequest(
         run_spec=run_spec,
         initial_values=initial_values,
-        device=spec.execution.options["device"],
+        device=device,
     )
     construction = PackageRuntimeConstructionInput(
         plan=plan_package_runtime_construction(spec),
