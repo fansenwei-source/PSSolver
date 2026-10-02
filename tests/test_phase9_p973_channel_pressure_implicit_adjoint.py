@@ -210,6 +210,42 @@ def test_fixed_iteration_transpose_solve_is_scale_homogeneous():
         assert implicit.last_transpose_diagnostics.relative_residual < 1.0e-13
 
 
+@pytest.mark.parametrize("scale", (1.0e-155, 1.0e155))
+@pytest.mark.parametrize("solve_kind", ("primal", "transpose"))
+def test_pressure_solve_normalizes_extreme_rhs_scales(scale, solve_kind):
+    """PCG quadratic products must not inherit the caller's RHS scale."""
+
+    spectral, pressure = _solver(fixed_iterations=12)
+    implicit = ChannelImplicitPressureAdjoint(pressure)
+    rhs = _pressure_hat(spectral, pressure, 138)
+    solve = getattr(implicit, f"_solve_{solve_kind}_no_grad")
+
+    reference = solve(rhs)
+    reference_diagnostics = getattr(
+        implicit,
+        f"last_{solve_kind}_diagnostics",
+    )
+    actual = solve(scale * rhs)
+    actual_diagnostics = getattr(
+        implicit,
+        f"last_{solve_kind}_diagnostics",
+    )
+
+    assert bool(torch.isfinite(actual).all().item())
+    torch.testing.assert_close(
+        actual / scale,
+        reference,
+        rtol=5.0e-13,
+        atol=5.0e-13,
+    )
+    assert actual_diagnostics.termination_reason == (
+        reference_diagnostics.termination_reason
+    )
+    assert actual_diagnostics.iterations == reference_diagnostics.iterations
+    assert actual_diagnostics.relative_residual < 1.0e-13
+    assert actual_diagnostics.residual < abs(scale) * 1.0e-13
+
+
 def test_custom_vjp_passes_directional_finite_difference_and_taylor_gate():
     spectral, pressure = _solver()
     operators = ChannelPressureTransposeOperator(pressure)

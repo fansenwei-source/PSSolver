@@ -127,8 +127,8 @@ class ChannelImplicitPressureAdjoint:
     @torch.no_grad()
     def _solve_no_grad(self, rhs_hat, action, operator_identity):
         rhs_hat = self._operators._project_gauge(rhs_hat)
-        rhs_norm = torch.linalg.vector_norm(rhs_hat.reshape(-1)).item()
-        if rhs_norm == 0.0:
+        rhs_max = torch.max(torch.abs(rhs_hat)).item()
+        if rhs_max == 0.0:
             return torch.zeros_like(rhs_hat), channel_pressure_solve_diagnostics(
                 self._solver,
                 operator_identity=operator_identity,
@@ -137,13 +137,30 @@ class ChannelImplicitPressureAdjoint:
                 achieved_relative_residual=0.0,
                 termination_reason="zero_rhs",
             )
+        # Normalize only when PCG's quadratic products would leave the normal
+        # floating-point range.  Keeping ordinary inputs untouched preserves
+        # the qualified operation order and its byte-identical oracles.
+        real_dtype = rhs_hat.real.dtype
+        safe_quadratic_min = math.sqrt(torch.finfo(real_dtype).tiny)
+        safe_quadratic_max = math.sqrt(torch.finfo(real_dtype).max)
+        rhs_scale = 1.0
+        if rhs_max < safe_quadratic_min or rhs_max > safe_quadratic_max:
+            rhs_unit = rhs_hat / rhs_max
+            rhs_unit_norm = torch.linalg.vector_norm(
+                rhs_unit.reshape(-1)
+            ).item()
+            rhs_scale = rhs_max * rhs_unit_norm
+            rhs_hat = rhs_unit / rhs_unit_norm
+        working_rhs_norm = torch.linalg.vector_norm(
+            rhs_hat.reshape(-1)
+        ).item()
         pressure_hat = torch.zeros_like(rhs_hat)
         residual = rhs_hat.clone()
         preconditioned = residual / self._solver.schur_diag_safe
         direction = preconditioned.clone()
         rz_old = torch.sum(torch.conj(residual) * preconditioned).real
-        tolerance = self._solver.pressure_rel_tol * rhs_norm
-        residual_norm = rhs_norm
+        tolerance = self._solver.pressure_rel_tol * working_rhs_norm
+        residual_norm = working_rhs_norm
         iterations = 0
         iteration_limit = (
             self._solver.pressure_fixed_iterations
@@ -202,9 +219,11 @@ class ChannelImplicitPressureAdjoint:
                 break
             direction = preconditioned + (rz_new / rz_old) * direction
             rz_old = rz_new
-        relative_residual = residual_norm / rhs_norm
+        relative_residual = residual_norm / working_rhs_norm
+        absolute_residual = residual_norm * rhs_scale
         if not all(
-            math.isfinite(value) for value in (residual_norm, relative_residual)
+            math.isfinite(value)
+            for value in (absolute_residual, relative_residual)
         ):
             raise FunctionalConvergenceError(
                 "functional pressure solve is non-finite",
@@ -218,11 +237,11 @@ class ChannelImplicitPressureAdjoint:
             self._solver,
             operator_identity=operator_identity,
             achieved_iteration_count=iterations,
-            achieved_absolute_residual=residual_norm,
+            achieved_absolute_residual=absolute_residual,
             achieved_relative_residual=relative_residual,
             termination_reason=termination_reason,
         )
-        return pressure_hat, diagnostics
+        return pressure_hat * rhs_scale, diagnostics
 
     def _solve_primal_no_grad(self, rhs_hat):
         value, diagnostics = self._solve_no_grad(
