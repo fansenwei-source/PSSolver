@@ -24,6 +24,7 @@ from pssolver.boundaries import (
     free_slip_velocity,
     neumann_pressure_compatibility,
     neumann_q,
+    no_slip_velocity,
 )
 from pssolver.configuration.simulation import InvocationSpec
 from pssolver.core import GridPlacement
@@ -50,6 +51,7 @@ def _simulation(
     disable_q_gradient_reuse=False,
     invocation_options=None,
     device="cpu",
+    velocity_boundary=None,
 ):
     model = CompleteStressBerisEdwards(
         ldg_a=0.0,
@@ -72,7 +74,11 @@ def _simulation(
         geometry=geometry,
         policies={
             "Q": neumann_q(),
-            "velocity": free_slip_velocity(),
+            "velocity": (
+                free_slip_velocity()
+                if velocity_boundary is None
+                else velocity_boundary
+            ),
             "pressure": neumann_pressure_compatibility(),
         },
     )
@@ -145,6 +151,25 @@ def test_periodic_public_compiler_records_fft_lowering_and_uniform_policy(tmp_pa
         for basis in compiled.lowering_plan.component_bases
         for axis in basis.axes
     } == {"fft"}
+
+
+def test_periodic_no_slip_declaration_is_a_qualified_periodic_equivalent(
+    tmp_path,
+):
+    free_slip = compile_simulation(_simulation(tmp_path))
+    no_slip = compile_simulation(
+        _simulation(
+            tmp_path,
+            output_name="no_slip_periodic",
+            velocity_boundary=no_slip_velocity(),
+        )
+    )
+
+    assert no_slip.application == "periodic_complete_stress_beris_edwards"
+    assert (
+        no_slip.application_specification.boundaries
+        == free_slip.application_specification.boundaries
+    )
 
 
 def test_periodic_compiler_rejects_unsupported_node_centered_grid(tmp_path):

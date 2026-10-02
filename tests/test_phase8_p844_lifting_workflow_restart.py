@@ -33,6 +33,10 @@ from pssolver.configuration.active_nematics_simulation_adapters import (
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
+from pssolver.configuration.public_simulation_runner import (
+    PublicCompilationRejectionCode,
+    PublicSimulationCompilationError,
+)
 from pssolver.configuration.plane_beris_edwards import (
     create_plane_beris_edwards_run_spec,
 )
@@ -179,6 +183,37 @@ def test_lifted_plane_binding_is_narrow_and_compiled_path_stays_closed(tmp_path)
         bind_simulation_runtime(compiled_simulation)
     assert caught.value.rejection.code is (
         BindingRejectionCode.UNSUPPORTED_LIFTING_RUNTIME
+    )
+
+    public = Simulation(
+        model=compiled_simulation.equation_system,
+        geometry=compiled_simulation.geometry,
+        boundaries=compiled_simulation.boundaries,
+        numerics=compiled_simulation.numerics,
+        time=TimeStepping(
+            dt=compiled_simulation.time_integration.integrator.dt,
+        ),
+        discretization={},
+        initial_condition=compiled_simulation.initial_condition,
+        execution=TorchSpectralExecution(
+            runtime_path=compiled_simulation.execution.runtime_path,
+            device=compiled_simulation.execution.options["device"],
+            options={
+                key: value
+                for key, value in compiled_simulation.execution.options.items()
+                if key != "device"
+            },
+        ),
+        output=compiled_simulation.workflow,
+        invocation=compiled_simulation.invocation,
+    )
+    with pytest.raises(PublicSimulationCompilationError) as public_error:
+        compile_simulation(public)
+    assert public_error.value.code is (
+        PublicCompilationRejectionCode.RUNTIME_BINDING
+    )
+    assert public_error.value.context["binding_rejection"]["code"] == (
+        "unsupported_lifting_runtime"
     )
 
 

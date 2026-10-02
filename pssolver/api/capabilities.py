@@ -201,6 +201,7 @@ _BOUNDARY_POLICIES = (
         constructor="pssolver.boundaries.no_slip_velocity",
         qualified_applications=(
             _CHANNEL_APPLICATION,
+            _PERIODIC_APPLICATION,
             _CHANNEL_COMPLETE_APPLICATION,
         ),
     ),

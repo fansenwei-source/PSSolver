@@ -33,6 +33,7 @@ from pssolver.boundaries import (
 from pssolver.configuration.public_simulation_runner import (
     PUBLIC_CHANNEL_APPLICATION,
     PUBLIC_PLANE_APPLICATION,
+    PublicCompilationRejectionCode,
     PublicSimulationCompilationError,
 )
 from pssolver.configuration.simulation import InvocationSpec
@@ -236,6 +237,41 @@ def test_compile_simulation_rejects_unqualified_negative_activity():
         compile_simulation(
             _simulation(model=invalid, boundaries=boundaries)
         )
+
+
+def test_plane_compiler_wraps_non_nematic_bulk_coefficients():
+    original = _simulation()
+    material = original.model.parameters["material"]
+    invalid = CompleteStressBerisEdwards(
+        ldg_a=1.0,
+        ldg_b=0.0,
+        ldg_c=1.0,
+        ldg_l1=original.model.parameters["ldg_l1"],
+        gamma=material["gamma"],
+        flow_alignment=material["flow_alignment"],
+        activity=0.01,
+        beta=material["beta"],
+        viscosity=original.model.parameters["stokes"]["parameters"][
+            "viscosity"
+        ],
+    )
+    boundaries = assign_boundaries(
+        model=invalid,
+        geometry=original.geometry,
+        policies={
+            "Q": neumann_q(),
+            "velocity": free_slip_velocity(),
+            "pressure": neumann_pressure_compatibility(),
+        },
+    )
+
+    with pytest.raises(PublicSimulationCompilationError) as caught:
+        compile_simulation(_simulation(model=invalid, boundaries=boundaries))
+
+    assert caught.value.code is (
+        PublicCompilationRejectionCode.APPLICATION_CONTRACT
+    )
+    assert "positive real uniaxial equilibrium" in str(caught.value)
 
 
 def test_compiled_product_is_immutable():

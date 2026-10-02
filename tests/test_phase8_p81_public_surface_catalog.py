@@ -238,6 +238,14 @@ def test_discovery_is_frozen_and_matches_live_compiler_registry():
         )
         for value in p843_policies.values()
     )
+    no_slip = next(
+        value
+        for value in pssolver.available_boundary_policies()
+        if value.key == "no_slip_velocity"
+    )
+    assert "periodic_complete_stress_beris_edwards" in (
+        no_slip.qualified_applications
+    )
     with pytest.raises(FrozenInstanceError):
         catalog.models[0].key = "changed"
     json.dumps(catalog.to_metadata(), allow_nan=False, sort_keys=True)

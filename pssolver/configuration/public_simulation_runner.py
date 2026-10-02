@@ -38,6 +38,7 @@ from pssolver.configuration.simulation import (
     SimulationSpec,
 )
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
+from pssolver.configuration.simulation_binding import SimulationBindingError
 from pssolver.core.integrators import IntegratorScheme
 from pssolver.models.active_nematics.q_tensor import positive_equilibrium_S
 
@@ -104,6 +105,7 @@ class PublicCompilationRejectionCode(str, Enum):
 
     UNREGISTERED_MODEL_GEOMETRY = "unregistered_model_geometry"
     APPLICATION_CONTRACT = "application_contract"
+    RUNTIME_BINDING = "runtime_binding"
 
 
 class PublicSimulationCompilationError(ValueError):
@@ -425,11 +427,17 @@ def _compile_plane_public_simulation(
     if not math.isfinite(activity) or activity <= 0.0:
         _reject("the qualified Plane translation requires positive activity")
     ldg_l1 = float(parameters["ldg_l1"])
-    equilibrium_s = positive_equilibrium_S(
-        material["ldg_a"],
-        material["ldg_b"],
-        material["ldg_c"],
-    )
+    try:
+        equilibrium_s = positive_equilibrium_S(
+            material["ldg_a"],
+            material["ldg_b"],
+            material["ldg_c"],
+        )
+    except ValueError as exc:
+        _reject(
+            "the qualified Plane translation requires bulk coefficients "
+            f"with a positive real uniaxial equilibrium: {exc}"
+        )
     equilibrium_q = 1.5 * equilibrium_s
     frank_k = 2.0 * equilibrium_q**2 * ldg_l1
     height = source.geometry.domain.lengths[2]
@@ -626,33 +634,42 @@ def compile_public_simulation(
                 ],
             },
         )
-    if registration.application == PUBLIC_PLANE_APPLICATION:
-        return _compile_plane_public_simulation(source)
-    if registration.application == PUBLIC_CHANNEL_APPLICATION:
-        from .public_channel_simulation_compiler import (
-            compile_channel_public_simulation,
-        )
+    try:
+        if registration.application == PUBLIC_PLANE_APPLICATION:
+            return _compile_plane_public_simulation(source)
+        if registration.application == PUBLIC_CHANNEL_APPLICATION:
+            from .public_channel_simulation_compiler import (
+                compile_channel_public_simulation,
+            )
 
-        return compile_channel_public_simulation(source)
-    if registration.application == PUBLIC_PERIODIC_APPLICATION:
-        from .public_periodic_simulation_compiler import (
-            compile_periodic_public_simulation,
-        )
+            return compile_channel_public_simulation(source)
+        if registration.application == PUBLIC_PERIODIC_APPLICATION:
+            from .public_periodic_simulation_compiler import (
+                compile_periodic_public_simulation,
+            )
 
-        return compile_periodic_public_simulation(
-            source,
-            PublicSimulationCompilation,
-        )
-    if registration.application == PUBLIC_CHANNEL_COMPLETE_APPLICATION:
-        from .public_channel_beris_edwards_compiler import (
-            compile_channel_beris_edwards_public_simulation,
-        )
+            return compile_periodic_public_simulation(
+                source,
+                PublicSimulationCompilation,
+            )
+        if registration.application == PUBLIC_CHANNEL_COMPLETE_APPLICATION:
+            from .public_channel_beris_edwards_compiler import (
+                compile_channel_beris_edwards_public_simulation,
+            )
 
-        return compile_channel_beris_edwards_public_simulation(
-            source,
-            PublicSimulationCompilation,
-        )
-    raise AssertionError("registered public compiler was not dispatched")
+            return compile_channel_beris_edwards_public_simulation(
+                source,
+                PublicSimulationCompilation,
+            )
+        raise AssertionError("registered public compiler was not dispatched")
+    except SimulationBindingError as exc:
+        rejection = exc.rejection.to_metadata()
+        raise PublicSimulationCompilationError(
+            "the public declaration has no qualified runtime binding: "
+            f"{rejection['message']}",
+            code=PublicCompilationRejectionCode.RUNTIME_BINDING,
+            context={"binding_rejection": rejection},
+        ) from exc
 
 
 __all__ = [
