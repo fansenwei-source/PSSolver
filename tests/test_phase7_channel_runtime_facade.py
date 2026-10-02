@@ -6,6 +6,7 @@ import dataclasses
 import hashlib
 import json
 from pathlib import Path
+import stat
 
 import pytest
 import torch
@@ -300,6 +301,7 @@ def test_checkpoint_disk_round_trip_preserves_q_pressure_and_header(
     header = read_channel_checkpoint_header(directory)
     loaded = load_channel_checkpoint(directory)
 
+    assert stat.S_IMODE(directory.stat().st_mode) == 0o755
     assert checkpoint.format_version == (
         CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION
     )

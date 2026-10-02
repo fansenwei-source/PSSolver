@@ -339,6 +339,9 @@ def write_channel_checkpoint(
     staging = Path(
         tempfile.mkdtemp(prefix=f".{target.name}.tmp-", dir=target.parent)
     )
+    # Preserve atomic construction without publishing mkdtemp's private 0700
+    # staging mode as the final shared checkpoint directory.
+    staging.chmod(0o755)
     try:
         files = {
             "evolved_spatial": {},

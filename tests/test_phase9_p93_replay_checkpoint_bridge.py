@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import stat
 
 import numpy as np
 import pytest
@@ -229,6 +230,7 @@ def test_p93_functional_export_is_production_compatible_and_continues_bitwise(
     )
 
     assert written == directory.resolve()
+    assert stat.S_IMODE(directory.stat().st_mode) == 0o755
     _assert_state_equal(state, before)
     metadata = json.loads((directory / "checkpoint.json").read_text())
     assert metadata["format_version"] == 2

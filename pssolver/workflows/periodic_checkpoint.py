@@ -322,6 +322,10 @@ def write_periodic_checkpoint(
     if target.exists():
         raise FileExistsError(f"checkpoint directory already exists: {target}")
     staging = Path(tempfile.mkdtemp(prefix=f".{target.name}.tmp-", dir=target.parent))
+    # mkdtemp deliberately creates mode 0700.  The atomic rename would make
+    # that private staging mode the durable checkpoint mode, preventing
+    # read-only service accounts from consuming an otherwise shared run.
+    staging.chmod(0o755)
     try:
         files = {"spatial": {}, "spectral": {}}
         for kind, tensors in (

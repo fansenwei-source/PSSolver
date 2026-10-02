@@ -16,7 +16,7 @@
     "runtime_facade": "pssolver.runtime.channel_active_nematics",
     "runtime_facade_sha256": "50289b3e9854f4349c127bb7737dcc84ab880510506db70c6b01d3c5163ec416",
     "checkpoint_module": "pssolver.workflows.channel_checkpoint",
-    "checkpoint_module_sha256": "e584f084f674e5406ee89d4d386754eba75b9ffc9b9676e5aa975dbf10efbc9f",
+    "checkpoint_module_sha256": "cb70a2a570a7c0260825e58a71ee003f71e0d1d666a2727bd88dad34672e9316",
     "run_spec_sha256": "1f9dad36d867b3c8eee38527c463c212d90e2ab8fef127d75328e022e220fd17",
     "run_declarations_sha256": "5b41149cb117cec87de32f95f54b497e42c40009fbb5b4bd5bc30248746d72eb",
     "configuration_package_root_unchanged": true,
