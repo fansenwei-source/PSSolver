@@ -58,6 +58,16 @@ def _freeze_json(value: object) -> object:
     return value
 
 
+def _thaw_json(value: object) -> object:
+    """Return a mutable JSON-shaped copy of frozen contract metadata."""
+
+    if isinstance(value, Mapping):
+        return {key: _thaw_json(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_thaw_json(item) for item in value]
+    return value
+
+
 @dataclass(frozen=True, slots=True)
 class FunctionalTensorSpec:
     """Exact tensor identity; validation never converts dtype or device."""
@@ -401,10 +411,10 @@ class FunctionalRuntimeIdentity:
         )
         payload = {
             "api_version": self.api_version,
-            "scientific": dict(self.scientific),
-            "discretization": dict(self.discretization),
-            "execution": dict(self.execution),
-            "state_layout": dict(self.state_layout),
+            "scientific": _thaw_json(self.scientific),
+            "discretization": _thaw_json(self.discretization),
+            "execution": _thaw_json(self.execution),
+            "state_layout": _thaw_json(self.state_layout),
         }
         try:
             canonical = json.dumps(
@@ -425,6 +435,32 @@ class FunctionalRuntimeIdentity:
 
     def to_metadata(self) -> dict[str, object]:
         return json.loads(self._canonical_json)
+
+    def __copy__(self):
+        """Immutable identities can be shared by shallow copies."""
+
+        return self
+
+    def __deepcopy__(self, memo):
+        """Immutable identities can be shared by deep copies."""
+
+        memo[id(self)] = self
+        return self
+
+    def __reduce__(self):
+        """Serialize JSON metadata instead of unpicklable mapping proxies."""
+
+        metadata = self.to_metadata()
+        return (
+            type(self),
+            (
+                metadata["scientific"],
+                metadata["discretization"],
+                metadata["execution"],
+                metadata["state_layout"],
+                metadata["api_version"],
+            ),
+        )
 
 
 @dataclass(frozen=True, slots=True)

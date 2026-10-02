@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import copy
+from dataclasses import replace
 import hashlib
 import json
 from pathlib import Path
+import pickle
 
 import pytest
 import torch
@@ -99,6 +102,27 @@ def _periodic_identity(state_spec):
         },
         state_layout=state_spec.to_metadata(),
     )
+
+
+def test_functional_runtime_identity_supports_standard_copy_protocols():
+    _, identity, _ = _state_contract()
+    reconstructed = FunctionalRuntimeIdentity(
+        scientific=identity.scientific,
+        discretization=identity.discretization,
+        execution=identity.execution,
+        state_layout=identity.state_layout,
+        api_version=identity.api_version,
+    )
+    replaced = replace(identity)
+    shallow = copy.copy(identity)
+    deep = copy.deepcopy(identity)
+    restored = pickle.loads(pickle.dumps(identity))
+
+    assert shallow is identity
+    assert deep is identity
+    for value in (reconstructed, replaced, restored):
+        assert value.to_metadata() == identity.to_metadata()
+        assert value.canonical_sha256() == identity.canonical_sha256()
 
 
 def _legacy_bridge_metadata(identity, bridge_metadata):
