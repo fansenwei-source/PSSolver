@@ -192,7 +192,7 @@ def test_compiled_channel_is_immutable():
         compiled.application = "other"
 
 
-def test_channel_compiler_preserves_snapshot_mode_without_guessing():
+def test_channel_compiler_rejects_unimplemented_snapshot_mode(tmp_path):
     request = ChannelActiveNematicRunSpec(
         shape=(16, 8, 8),
         lengths=(16.0, 8.0, 8.0),
@@ -204,9 +204,9 @@ def test_channel_compiler_preserves_snapshot_mode_without_guessing():
         runtime_path="compiled_channel_v2",
         initialization_mode="snapshot",
         snapshot_mode="branch",
-        snapshot_directory="data/source",
+        snapshot_directory=tmp_path / "source",
         snapshot_step=50,
-        snapshot_output_directory="data/branch",
+        snapshot_output_directory=tmp_path / "branch",
     )
     specification = compose_channel_active_nematics_simulation(
         request.components
@@ -224,12 +224,7 @@ def test_channel_compiler_preserves_snapshot_mode_without_guessing():
         invocation=specification.invocation,
     )
 
-    compiled = compile_simulation(source)
+    with pytest.raises(ValueError, match="does not implement snapshot"):
+        compile_simulation(source)
 
-    assert compiled.application_request.initialization_mode == "snapshot"
-    assert compiled.application_request.snapshot_mode == "branch"
-    assert compiled.application_request.snapshot_step == 50
-    assert str(compiled.application_request.snapshot_directory) == "data/source"
-    assert str(compiled.application_request.snapshot_output_directory) == (
-        "data/branch"
-    )
+    assert not (tmp_path / "branch").exists()

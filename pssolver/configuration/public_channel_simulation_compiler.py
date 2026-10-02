@@ -200,6 +200,11 @@ def compile_channel_public_simulation(
     mode = initial["mode"]
     if mode not in {"generated", "snapshot"}:
         _reject("Channel initial-condition mode must be generated or snapshot")
+    if mode == "snapshot":
+        _reject(
+            "the public legacy Channel application does not implement "
+            "snapshot initial conditions; use a workflow checkpoint to resume"
+        )
     expected_source = (
         InitialConditionSource.GENERATED
         if mode == "generated"
