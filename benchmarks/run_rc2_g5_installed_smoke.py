@@ -301,7 +301,12 @@ def run_smoke(args: argparse.Namespace) -> dict[str, object]:
         raise RuntimeError("CUDA was requested but is unavailable")
     torch.backends.cuda.matmul.allow_tf32 = False
     torch.backends.cudnn.allow_tf32 = False
-    device = torch.device(args.device)
+    requested_device = torch.device(args.device)
+    device = (
+        torch.device("cuda", torch.cuda.current_device())
+        if requested_device.type == "cuda"
+        else requested_device
+    )
     if device.type == "cuda":
         torch.cuda.synchronize(device)
         torch.cuda.empty_cache()
@@ -383,6 +388,7 @@ def run_smoke(args: argparse.Namespace) -> dict[str, object]:
             **installed_wheel,
             "torch": torch.__version__,
             "cuda_runtime": torch.version.cuda,
+            "requested_device": str(requested_device),
             "device": str(device),
             "device_name": (
                 torch.cuda.get_device_name(device) if device.type == "cuda" else "CPU"

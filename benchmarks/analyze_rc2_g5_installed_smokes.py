@@ -94,6 +94,8 @@ def analyze(reports: dict[tuple[str, str], dict[str, object]]) -> dict[str, obje
         prefix = Path(str(environment.get("python_prefix", ""))).resolve()
         _require(purelib.is_relative_to(prefix), f"{key} purelib is outside venv")
         _require(imported.is_relative_to(purelib), f"{key} import is outside purelib")
+        _require(environment.get("requested_device") == "cuda", f"{key} request differs")
+        _require(environment.get("device") == "cuda:0", f"{key} device differs")
         _require(environment.get("tf32_matmul") is False, f"{key} TF32 matmul enabled")
         _require(environment.get("tf32_cudnn") is False, f"{key} TF32 cuDNN enabled")
         validated[key] = {

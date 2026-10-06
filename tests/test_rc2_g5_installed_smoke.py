@@ -108,6 +108,8 @@ def _report(variant: str, application: str, memory: int = 100) -> dict[str, obje
             "python_prefix": "/venv",
             "purelib": "/venv/lib/python3.10/site-packages",
             "pssolver_file": "/venv/lib/python3.10/site-packages/pssolver/__init__.py",
+            "requested_device": "cuda",
+            "device": "cuda:0",
             "tf32_matmul": False,
             "tf32_cudnn": False,
         },
