@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "kind": "pssolver_v0_2_0rc2_audit_h100_qualification_plan",
-  "status": "READY_FOR_ISOLATED_CHILD_IMPORT_BOOTSTRAP_RECOVERY",
+  "status": "READY_FOR_VENV_IDENTITY_PRESERVING_CHILD_RECOVERY",
   "baseline": {
     "tag": "v0.2.0rc1",
     "commit": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1"
@@ -52,6 +52,14 @@
     "child_import_bootstrap": "benchmarks_package_path_shim",
     "repository_root_on_pythonpath": false,
     "installed_wheel_pssolver_preserved": true,
+    "venv_python_final_symlink_resolved": false,
+    "child_identity_preflight": {
+      "requested_python_preserved": true,
+      "sys_executable_matches_requested_python": true,
+      "sys_prefix_matches_venv_root": true,
+      "pssolver_file_within_venv_purelib": true,
+      "source_shadow_import": false
+    },
     "physical_artifact_profiles": 4,
     "profiles_without_physical_artifact": 32
   },
@@ -105,6 +113,8 @@
         "production_forward, functional_forward, functional_vjp",
         "three balanced trials per role and version",
         "profiler CLI receives cuda and the persisted allocated-device identity is cuda:0",
+        "child Python path preserves the requested venv bin/python without resolving its final symlink",
+        "child identity preflight verifies sys.executable, sys.prefix, purelib, installed pssolver and benchmarks shim before profiling",
         "versioned analyzer passes",
         "mean and median candidate/baseline ratios <= 1.03",
         "allocated and reserved memory ratios <= 1.05",

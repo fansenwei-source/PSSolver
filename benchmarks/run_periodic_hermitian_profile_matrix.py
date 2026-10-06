@@ -148,6 +148,97 @@ def _child_environment(
     return environment
 
 
+_CHILD_IDENTITY_PROBE = """
+import json
+from pathlib import Path
+import sys
+import sysconfig
+
+import benchmarks
+import pssolver
+
+print(json.dumps({
+    "sys_executable": str(Path(sys.executable).absolute()),
+    "sys_prefix": str(Path(sys.prefix).resolve()),
+    "sys_base_prefix": str(Path(sys.base_prefix).resolve()),
+    "purelib": str(Path(sysconfig.get_path("purelib")).resolve()),
+    "pssolver_file": str(Path(pssolver.__file__).resolve()),
+    "benchmarks_file": str(Path(benchmarks.__file__).resolve()),
+    "benchmarks_paths": [str(Path(value).resolve()) for value in benchmarks.__path__],
+}, sort_keys=True))
+"""
+
+
+def _child_identity(
+    runtime: VariantRuntime,
+    *,
+    bootstrap_root: Path,
+    base_environment: dict[str, str],
+) -> dict[str, object]:
+    """Verify that a child keeps its venv while using the benchmark shim."""
+
+    completed = subprocess.run(
+        [str(runtime.python), "-c", _CHILD_IDENTITY_PROBE],
+        # ``python -c`` would otherwise add the repository cwd as sys.path[0]
+        # and could make the source checkout shadow the installed wheel.
+        cwd=bootstrap_root,
+        env=_child_environment(base_environment, bootstrap_root),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise RuntimeError(
+            "child identity probe failed with exit code "
+            f"{completed.returncode}: {completed.stderr.strip()}"
+        )
+    try:
+        value = json.loads(completed.stdout)
+    except json.JSONDecodeError as error:
+        raise RuntimeError("child identity probe did not emit valid JSON") from error
+    if not isinstance(value, dict):
+        raise RuntimeError("child identity probe JSON must be an object")
+    requested_python = runtime.python.absolute()
+    reported_python = Path(str(value.get("sys_executable"))).absolute()
+    expected_prefix = requested_python.parent.parent.resolve()
+    reported_prefix = Path(str(value.get("sys_prefix"))).resolve()
+    purelib = Path(str(value.get("purelib"))).resolve()
+    pssolver_file = Path(str(value.get("pssolver_file"))).resolve()
+    benchmarks_file = Path(str(value.get("benchmarks_file"))).resolve()
+    benchmark_paths = {
+        Path(str(path)).resolve() for path in value.get("benchmarks_paths", [])
+    }
+    repository_root = runtime.repository_root.resolve()
+    expected_benchmarks = (repository_root / "benchmarks").resolve()
+    expected_shim = (bootstrap_root / "benchmarks" / "__init__.py").resolve()
+    if reported_python != requested_python:
+        raise RuntimeError("child sys.executable differs from requested venv Python")
+    if reported_prefix != expected_prefix:
+        raise RuntimeError("child sys.prefix differs from requested venv root")
+    if not purelib.is_relative_to(expected_prefix):
+        raise RuntimeError("child purelib is outside the requested venv")
+    if not pssolver_file.is_relative_to(purelib):
+        raise RuntimeError("child pssolver is not imported from venv purelib")
+    if pssolver_file.is_relative_to(repository_root):
+        raise RuntimeError("child imported pssolver from the source repository")
+    if benchmarks_file != expected_shim:
+        raise RuntimeError("child benchmarks package did not use the generated shim")
+    if expected_benchmarks not in benchmark_paths:
+        raise RuntimeError("child benchmarks path does not expose the requested repository")
+    return {
+        "requested_python": str(requested_python),
+        "reported_python": str(reported_python),
+        "expected_prefix": str(expected_prefix),
+        "reported_prefix": str(reported_prefix),
+        "purelib": str(purelib),
+        "pssolver_file": str(pssolver_file),
+        "benchmarks_file": str(benchmarks_file),
+        "benchmarks_source": str(expected_benchmarks),
+        "source_shadow_import": False,
+        "passed": True,
+    }
+
+
 def _variant_order(cell_index: int, trial: int) -> tuple[str, str]:
     """Alternate the leading variant globally across the frozen matrix."""
 
@@ -306,6 +397,7 @@ def execute_matrix(
     profiles: tuple[MatrixProfile, ...],
     *,
     output_root: Path,
+    baseline: VariantRuntime,
     candidate: VariantRuntime,
     baseline_commit: str,
 ) -> None:
@@ -321,10 +413,26 @@ def execute_matrix(
     import_bootstraps = _prepare_import_bootstraps(
         output_root,
         {
-            variant: next(
-                profile.cwd for profile in profiles if profile.variant == variant
-            )
-            for variant in VARIANTS
+            "baseline": baseline.repository_root,
+            "candidate": candidate.repository_root,
+        },
+    )
+    _atomic_json(
+        output_root / "child_identity.json",
+        {
+            "schema_version": 1,
+            "kind": "periodic_hermitian_matrix_child_identity",
+            "variants": {
+                variant: _child_identity(
+                    runtime,
+                    bootstrap_root=import_bootstraps[variant],
+                    base_environment=environment,
+                )
+                for variant, runtime in {
+                    "baseline": baseline,
+                    "candidate": candidate,
+                }.items()
+            },
         },
     )
     for profile in profiles:
@@ -403,7 +511,11 @@ def execute_matrix(
 
 def _runtime(python: str, root: str, commit: str) -> VariantRuntime:
     return VariantRuntime(
-        python=Path(python).expanduser().resolve(),
+        # A venv's bin/python is commonly a symlink to the base interpreter.
+        # Resolving that final symlink discards the venv launch identity and
+        # therefore its site-packages.  Make the path absolute without
+        # dereferencing it.
+        python=Path(os.path.abspath(os.path.expanduser(python))),
         repository_root=Path(root).expanduser().resolve(),
         commit=commit,
     )
@@ -452,6 +564,7 @@ def main(argv: list[str] | None = None) -> int:
         execute_matrix(
             profiles,
             output_root=args.output_root.expanduser().resolve(),
+            baseline=baseline,
             candidate=candidate,
             baseline_commit=args.baseline_commit,
         )

@@ -15,6 +15,8 @@
 
 每个 child profiler 必须通过 runner 生成的隔离 `benchmarks` package-path shim 导入对应 A/B repository 中的 benchmark 模块。不得把整个 repository root 加入 `PYTHONPATH`，因为这会让源码 `pssolver` 覆盖待验证的 installed wheel；bootstrap 根目录只能暴露 `benchmarks`，不能包含或链接 `pssolver`。正式 analyzer 使用 candidate 的同类隔离 bootstrap。
 
+传给 runner 的 A/B `venv/bin/python` 路径必须只做绝对化，不能对最终 symlink 调用 `Path.resolve()`。Python venv 通常以指向基础解释器的 symlink 实现；解引用该路径会使 child 丢失 venv 的 `sys.prefix` 和 site-packages。正式 profile 之前，runner 必须对 A/B 分别核对请求的 Python 路径、`sys.executable`、`sys.prefix`、purelib、`pssolver.__file__`、benchmarks shim 和 source-shadow 状态，并把结果原子写入 `child_identity.json`。
+
 ## 2. 为什么不能只跑一次 smoke
 
 本轮同时改变了 Periodic Hermitian 投影、Channel dealias 后投影、Nyquist 处理、lifting、TF32 policy 和极端尺度 pressure adjoint。短 smoke 可以发现 import、CUDA 和 finite 错误，但不能发现：
@@ -35,7 +37,7 @@
 5. 创建全新 control 和 scratch 目录，提交且只提交一个 H100 Job。
 6. H100 Job 内先运行六个 CUDA-only tests；任一失败立即停止。
 7. 使用 `benchmarks/check_periodic_hermitian_stability.py` 对 `loop3d` 和 `r1`、`full_complex` 和 `hermitian_half` 四种组合分别跑到 `t=200`。
-8. 使用 `benchmarks/run_periodic_hermitian_profile_matrix.py --device cuda --execute` 生成 36 份 A/B profile；runner 必须先建立只暴露相应 `benchmarks` 包的 child import bootstrap，且保持 `pssolver` 从对应 venv 的 installed wheel 导入。每份 JSON 必须记录实际分配身份 `cuda:0`，runner 随后通过 candidate bootstrap 调用 `benchmarks/analyze_periodic_hermitian_profiles.py` 裁决。
+8. 使用 `benchmarks/run_periodic_hermitian_profile_matrix.py --device cuda --execute` 生成 36 份 A/B profile；runner 必须先建立只暴露相应 `benchmarks` 包的 child import bootstrap，保留请求的 `venv/bin/python` 路径，并通过 child identity preflight 证明 `pssolver` 从对应 venv 的 installed wheel 导入。每份 JSON 必须记录实际分配身份 `cuda:0`，runner 随后通过 candidate bootstrap 调用 `benchmarks/analyze_periodic_hermitian_profiles.py` 裁决。
 9. 运行 machine-readable 合同 G4 中的 Nyquist、Channel、TF32、lifting、finite-Q 和 pressure gates。
 10. 运行 R128 100-step production/restart smoke，完成 checksum、provenance、summary 和 final report。
 
