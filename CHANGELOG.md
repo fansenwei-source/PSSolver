@@ -1,5 +1,54 @@
 # Changelog
 
+## 0.2.0rc3 — unreleased
+
+Correctness and compatibility follow-up to `v0.2.0rc2`.
+
+### Fixed
+
+- Make the Channel functional pressure transpose use the same unresolved
+  x-Nyquist subspace as the production pressure operator on even grids.
+- Reject fixed-cap Channel pressure solves that terminate by operator
+  breakdown or amplify the initial relative residual.  Generic pressure
+  objectives now retain a consistent VJP in both tolerance and fixed-work
+  modes.
+
+### Breaking API migration inherited from rc2
+
+`v0.2.0rc2` intentionally removed ambiguous defaults from two typed public
+declarations.  This was a **breaking source-level API change**, not a change
+to the selected production runtime:
+
+- `SpectralNumerics(...)` requires `spectral_storage`;
+- `Output(...)` requires `save_start_step`, `diagnostics`, and
+  `save_hydrodynamics`.
+
+Call sites that intentionally want the former rc1 values must now write them
+explicitly:
+
+```python
+numerics = SpectralNumerics(
+    dtype="float64",
+    dealias_rule="cubic_half",
+    spectral_storage="full_complex",
+)
+output = Output(
+    directory="data/run",
+    steps=20_000,
+    save_interval=1_000,
+    diagnostic_interval=100,
+    save_start_step=0,
+    diagnostics=True,
+    save_hydrodynamics=True,
+)
+```
+
+`full_complex` is only the former constructor default; it is not a universal
+recommendation.  Periodic half-spectrum applications should continue to
+declare `hermitian_half` and their `hermitian_axis`.  Independent consumers,
+including PSSolver-Control, must migrate their declarations explicitly rather
+than relying on Provider defaults.
+
 ## 0.2.0rc2 — 2026-10-06
 
 Second release candidate for the composable v0.2 architecture.  It is a
@@ -30,13 +79,18 @@ unchanged.
 
 ### Public API stabilization
 
-- Require callers to state numerical and output policies whose previous
-  implicit defaults could disagree across applications.
+- **Breaking:** require callers to state `SpectralNumerics.spectral_storage`
+  and the `Output.save_start_step`, `Output.diagnostics`, and
+  `Output.save_hydrodynamics` policies whose previous implicit defaults could
+  disagree across applications.  The rc3 migration section above gives the
+  explicit replacement for callers that intended the former rc1 values.
 - Adapt the legacy Channel workflow to the geometry-neutral public `Output`
   declaration without changing its default runtime.
 - Persist Periodic and Channel diagnostics alongside metadata and results.
 - Retain functional protocol `1.0`, batch-one scope, the four qualified
-  model--geometry combinations, and all rc1 compatibility entry points.
+  model--geometry combinations, and the legacy command/runtime compatibility
+  entry points.  Typed constructor calls that omitted the newly explicit
+  fields are not source compatible and must be migrated.
 
 ### Qualification evidence
 
@@ -62,7 +116,9 @@ unchanged.
   the preregistered G5 contract and is retained as a release observation.
 - The broader R1--R9 architecture and redundancy cleanup remains separate
   from this bug-fix candidate.
-- `nematics3d` and PSSolver-Control remain independent and unmodified.
+- `nematics3d` and PSSolver-Control remain independent and unmodified by the
+  Provider release.  Consequently PSSolver-Control call sites using the old
+  constructor shorthand require a separate consumer-owned migration.
 - The final rc2 source distribution, wheel, isolated install, and H100 release
   smoke must pass before the annotated `v0.2.0rc2` tag is created.
 

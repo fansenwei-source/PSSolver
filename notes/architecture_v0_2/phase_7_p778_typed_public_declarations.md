@@ -70,6 +70,7 @@ simulation = Simulation(
     numerics=SpectralNumerics(
         dtype="float64",
         dealias_rule="cubic_half",
+        spectral_storage="full_complex",
     ),
     time=TimeStepping(dt=0.005),
     initial_condition=GeneratedInitialCondition(
@@ -86,6 +87,9 @@ simulation = Simulation(
         steps=20_000,
         save_interval=1_000,
         diagnostic_interval=100,
+        save_start_step=0,
+        diagnostics=True,
+        save_hydrodynamics=True,
     ),
 )
 ```
@@ -170,6 +174,17 @@ deliberate:
 
 `TorchSpectralExecution` records `fallback_allowed=False`. It does not import
 or instantiate Torch and it requires an explicit runtime path and device.
+
+### Stabilization correction
+
+The example above reflects the public constructor contract shipped in
+`v0.2.0rc2`.  `spectral_storage`, `save_start_step`, `diagnostics`, and
+`save_hydrodynamics` are required keyword arguments.  Making them explicit was
+a source-level breaking change relative to rc1; it did not change the default
+runtime selected by any application.  Existing callers must choose values
+deliberately.  The former rc1 values were `full_complex`, `0`, `True`, and
+`True`, respectively, but `full_complex` is not appropriate for every
+geometry/runtime combination.
 
 ## Compatibility and performance boundary
 
