@@ -11,6 +11,8 @@
 
 设备字段采用两阶段合同：调用 `profile_periodic_hermitian_qualification.py` 时传入的 CLI token 必须是 `cuda`；profiler 分配当前可见 GPU 后，正式 JSON 中的 `config.device` 和 `environment.device` 必须规范化为 `cuda:0`。不得把输出身份 `cuda:0` 原样传回只接受 `cpu`/`cuda` 的基础 profiler。
 
+36 项矩阵必须由 `benchmarks/run_periodic_hermitian_profile_matrix.py` 编排。该工具以 Python `list[str]` 构造 subprocess 参数；四项 production-forward trial-one 命令显式追加 `--physical-artifact`，其余 32 项完全不包含该参数。不得再用 Bash 可选数组展开这一路径。
+
 ## 2. 为什么不能只跑一次 smoke
 
 本轮同时改变了 Periodic Hermitian 投影、Channel dealias 后投影、Nyquist 处理、lifting、TF32 policy 和极端尺度 pressure adjoint。短 smoke 可以发现 import、CUDA 和 finite 错误，但不能发现：
@@ -31,7 +33,7 @@
 5. 创建全新 control 和 scratch 目录，提交且只提交一个 H100 Job。
 6. H100 Job 内先运行六个 CUDA-only tests；任一失败立即停止。
 7. 使用 `benchmarks/check_periodic_hermitian_stability.py` 对 `loop3d` 和 `r1`、`full_complex` 和 `hermitian_half` 四种组合分别跑到 `t=200`。
-8. 使用 `benchmarks/profile_periodic_hermitian_qualification.py --device cuda` 生成 36 份 A/B profile；每份 JSON 必须记录实际分配身份 `cuda:0`，再用 `benchmarks/analyze_periodic_hermitian_profiles.py` 裁决。
+8. 使用 `benchmarks/run_periodic_hermitian_profile_matrix.py --device cuda --execute` 生成 36 份 A/B profile；每份 JSON 必须记录实际分配身份 `cuda:0`，runner 随后调用 `benchmarks/analyze_periodic_hermitian_profiles.py` 裁决。
 9. 运行 machine-readable 合同 G4 中的 Nyquist、Channel、TF32、lifting、finite-Q 和 pressure gates。
 10. 运行 R128 100-step production/restart smoke，完成 checksum、provenance、summary 和 final report。
 

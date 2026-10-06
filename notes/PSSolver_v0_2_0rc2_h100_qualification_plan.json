@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "kind": "pssolver_v0_2_0rc2_audit_h100_qualification_plan",
-  "status": "READY_FOR_G3_DEVICE_TOKEN_RECOVERY",
+  "status": "READY_FOR_VERSIONED_PYTHON_MATRIX_RUNNER_RECOVERY",
   "baseline": {
     "tag": "v0.2.0rc1",
     "commit": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1"
@@ -44,6 +44,13 @@
     "fail_fast": true,
     "profiler_cli_device_token": "cuda",
     "expected_allocated_device_identity": "cuda:0"
+  },
+  "profile_matrix_runner": {
+    "path": "benchmarks/run_periodic_hermitian_profile_matrix.py",
+    "orchestration": "python_subprocess_argument_lists",
+    "shell_optional_argument_arrays": false,
+    "physical_artifact_profiles": 4,
+    "profiles_without_physical_artifact": 32
   },
   "cuda_only_node_ids": [
     "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
