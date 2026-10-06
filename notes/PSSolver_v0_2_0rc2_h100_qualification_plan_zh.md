@@ -17,6 +17,8 @@
 
 传给 runner 的 A/B `venv/bin/python` 路径必须只做绝对化，不能对最终 symlink 调用 `Path.resolve()`。Python venv 通常以指向基础解释器的 symlink 实现；解引用该路径会使 child 丢失 venv 的 `sys.prefix` 和 site-packages。正式 profile 之前，runner 必须对 A/B 分别核对请求的 Python 路径、`sys.executable`、`sys.prefix`、purelib、`pssolver.__file__`、benchmarks shim 和 source-shadow 状态，并把结果原子写入 `child_identity.json`。
 
+G5 必须由 `benchmarks/run_rc2_g5_installed_smoke.py` 构造公共 `Simulation`，并由 `benchmarks/analyze_rc2_g5_installed_smokes.py` 作累计裁决。每个 child 都必须正面证明 `pssolver` 来自当前 venv 的 purelib，不能只用“不是某个源码目录”间接推断 installed-wheel 身份。每一条 Periodic/Channel 声明都必须显式给出 `refresh={"mode": "disabled"}`，不能依赖外部 helper 猜测或遗漏。Periodic 保持已验证的 spectral stress summation；两有界轴 Channel 保持已验证的 physical component-basis stress summation。两种应用都执行 100-step continuous 与 50+50 split/restart，要求 Q/u/p 逐字节一致、有限且 A/B 峰值显存比不超过 1.05。
+
 ## 2. 为什么不能只跑一次 smoke
 
 本轮同时改变了 Periodic Hermitian 投影、Channel dealias 后投影、Nyquist 处理、lifting、TF32 policy 和极端尺度 pressure adjoint。短 smoke 可以发现 import、CUDA 和 finite 错误，但不能发现：
@@ -39,7 +41,7 @@
 7. 使用 `benchmarks/check_periodic_hermitian_stability.py` 对 `loop3d` 和 `r1`、`full_complex` 和 `hermitian_half` 四种组合分别跑到 `t=200`。
 8. 使用 `benchmarks/run_periodic_hermitian_profile_matrix.py --device cuda --execute` 生成 36 份 A/B profile；runner 必须先建立只暴露相应 `benchmarks` 包的 child import bootstrap，保留请求的 `venv/bin/python` 路径，并通过 child identity preflight 证明 `pssolver` 从对应 venv 的 installed wheel 导入。每份 JSON 必须记录实际分配身份 `cuda:0`，runner 随后通过 candidate bootstrap 调用 `benchmarks/analyze_periodic_hermitian_profiles.py` 裁决。
 9. 运行 machine-readable 合同 G4 中的 Nyquist、Channel、TF32、lifting、finite-Q 和 pressure gates。
-10. 运行 R128 100-step production/restart smoke，完成 checksum、provenance、summary 和 final report。
+10. 使用版本化 G5 installed-wheel runner 分别运行 A/B 的 R128 Periodic 和 Channel 100-step continuous 与 50+50 split/restart smoke，再由版本化 analyzer 裁决显存和 restart 门禁，完成 checksum、provenance、summary 和 final report。
 
 ## 4. 停止规则
 

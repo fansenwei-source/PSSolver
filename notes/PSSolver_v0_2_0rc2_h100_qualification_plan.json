@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "kind": "pssolver_v0_2_0rc2_audit_h100_qualification_plan",
-  "status": "READY_FOR_VENV_IDENTITY_PRESERVING_CHILD_RECOVERY",
+  "status": "READY_FOR_VERSIONED_G5_INSTALLED_SMOKE_RECOVERY",
   "baseline": {
     "tag": "v0.2.0rc1",
     "commit": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1"
@@ -62,6 +62,24 @@
     },
     "physical_artifact_profiles": 4,
     "profiles_without_physical_artifact": 32
+  },
+  "g5_installed_smoke": {
+    "runner": "benchmarks/run_rc2_g5_installed_smoke.py",
+    "analyzer": "benchmarks/analyze_rc2_g5_installed_smokes.py",
+    "applications": [
+      "periodic",
+      "channel"
+    ],
+    "variants": [
+      "baseline",
+      "candidate"
+    ],
+    "spectral_refresh": "explicitly_disabled",
+    "continuous_steps": 100,
+    "split_steps": 50,
+    "continuous_restart_byte_identity": true,
+    "installed_wheel_identity_required": true,
+    "memory_ratio_max": 1.05
   },
   "cuda_only_node_ids": [
     "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
@@ -139,6 +157,9 @@
       "name": "production_smoke_and_non_regression",
       "requirements": [
         "R128 Periodic and Channel complete-stress 100-step candidate trajectories complete",
+        "the versioned G5 runner explicitly disables spectral refresh for every declaration",
+        "each child positively proves that pssolver is imported from the active venv purelib",
+        "Periodic uses spectral stress summation and Channel uses its qualified physical component-basis summation",
         "Q/u/p are finite and checkpoint restart matches the corresponding continuous trajectory",
         "no fallback, OOM, NaN, Inf, CUDA error, graph-break regression, or transform-call regression",
         "candidate peak allocated and reserved memory do not exceed the matching baseline by more than 5 percent"
