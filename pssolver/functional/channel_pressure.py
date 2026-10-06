@@ -105,7 +105,18 @@ class ChannelPressureTransposeOperator:
         )
 
     def _project_gauge(self, pressure_hat):
-        return pressure_hat.masked_fill(self._solver.pressure_null_mask, 0)
+        return pressure_hat.masked_fill(
+            self._solver.pressure_null_mask | self._solver.nyquist_mask,
+            0,
+        )
+
+    def _helmholtz_inverse_adjoint(self, rhs_hat):
+        """Apply the transpose Helmholtz inverse on the production subspace."""
+
+        return (torch.conj(self._solver.a_inv) * rhs_hat).masked_fill(
+            self._solver.nyquist_mask,
+            0,
+        )
 
     def _pressure_to_velocity_adjoint(self, velocity_hat):
         out = self._apply_axis_matrix_adjoint(
@@ -208,7 +219,7 @@ class ChannelPressureTransposeOperator:
             for axis in range(3)
         ]
         helmholtz_adjoint_hats = [
-            torch.conj(self._solver.a_inv) * value
+            self._helmholtz_inverse_adjoint(value)
             for value in divergence_adjoint_hats
         ]
         result = sum(

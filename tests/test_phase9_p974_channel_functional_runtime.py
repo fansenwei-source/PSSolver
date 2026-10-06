@@ -505,3 +505,73 @@ def test_p974_activity_gradient_matches_central_difference(tmp_path):
         - objective((control - epsilon * direction).detach())
     ) / (2.0 * epsilon)
     torch.testing.assert_close(predicted, measured, rtol=2.0e-5, atol=2.0e-10)
+
+
+@pytest.mark.parametrize(
+    ("fixed_iterations", "relative_error_limit"),
+    ((None, 1.0e-7), (12, 1.0e-4)),
+)
+def test_pressure_objective_gradient_handles_even_grid_nyquist_cotangents(
+    tmp_path,
+    fixed_iterations,
+    relative_error_limit,
+):
+    _, _, runtime = _runtime(tmp_path)
+    runtime._flow_model.pressure_fixed_iterations = fixed_iterations
+    initial_state = runtime.initial_state()
+    control = _control(runtime, requires_grad=True)["activity"]
+
+    _, sample_observations = runtime.step_and_observe(
+        initial_state,
+        {"activity": control.detach()},
+        0,
+    )
+    generator = torch.Generator().manual_seed(20261006)
+    pressure_weight = torch.randn(
+        sample_observations["pressure"].shape,
+        generator=generator,
+        dtype=sample_observations["pressure"].dtype,
+        device=sample_observations["pressure"].device,
+    )
+    pressure_weight_hat_x = torch.fft.fft(pressure_weight, dim=-3)
+    assert bool((pressure_weight_hat_x[:, 4] != 0).any())
+
+    direction = torch.randn(
+        control.shape,
+        generator=generator,
+        dtype=control.dtype,
+        device=control.device,
+    )
+    direction *= 1.0e-3 / torch.linalg.vector_norm(direction)
+
+    def objective(activity):
+        state = initial_state
+        value = torch.zeros((), dtype=activity.dtype, device=activity.device)
+        for step_index in range(2):
+            state, observations = runtime.step_and_observe(
+                state,
+                {"activity": activity},
+                step_index,
+            )
+            value = value + torch.sum(
+                observations["pressure"] * pressure_weight
+            )
+        return value
+
+    value = objective(control)
+    gradient = torch.autograd.grad(value, control)[0]
+    predicted = torch.sum(gradient * direction)
+    measured = (
+        objective((control + direction).detach())
+        - objective((control - direction).detach())
+    ) / 2.0
+    scale = max(
+        float(torch.abs(predicted)),
+        float(torch.abs(measured)),
+        1.0e-30,
+    )
+    relative_error = float(torch.abs(predicted - measured)) / scale
+
+    assert bool(torch.isfinite(predicted))
+    assert bool(torch.isfinite(measured))
+    assert relative_error < relative_error_limit

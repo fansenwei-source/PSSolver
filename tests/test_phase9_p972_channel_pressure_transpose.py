@@ -181,6 +181,65 @@ def test_pressure_operator_satisfies_the_complex_dot_product_identity():
     _assert_complex_close(left, right)
 
 
+@pytest.mark.parametrize("shape", ((7, 6, 5), (8, 6, 4)))
+def test_pressure_transpose_uses_the_production_subspace_on_all_grid_parities(
+    shape,
+):
+    spectral = SpectralSolver(
+        shape,
+        L=tuple(float(length) for length in shape),
+        device="cpu",
+        dtype=torch.float64,
+    )
+    production = ChannelNoSlipModalStokesSolver(
+        spectral.transform_backend,
+        friction=0.2,
+        viscosity=0.73,
+        pressure_relative_tolerance=1.0e-12,
+        pressure_max_iterations=300,
+    )
+    pressure = ChannelPressureTransposeOperator(production)
+    generator = torch.Generator().manual_seed(20261006 + shape[0])
+
+    def random_complex():
+        real = torch.randn(
+            (2, *shape), generator=generator, dtype=torch.float64
+        )
+        imaginary = torch.randn(
+            (2, *shape), generator=generator, dtype=torch.float64
+        )
+        return torch.complex(real, imaginary)
+
+    primal_input = random_complex()
+    transpose_input = random_complex()
+    left = torch.sum(
+        torch.conj(pressure.apply_pressure_operator(primal_input))
+        * transpose_input
+    )
+    right = torch.sum(
+        torch.conj(primal_input)
+        * pressure.apply_pressure_operator_transpose(transpose_input)
+    )
+    _assert_complex_close(left, right)
+
+    projected = pressure._project_gauge(primal_input)
+    null_modes = projected.masked_select(production.pressure_null_mask)
+    assert bool((null_modes == 0).all())
+    if shape[0] % 2 == 0:
+        assert bool(
+            (primal_input.masked_select(production.nyquist_mask) != 0).any()
+        )
+        assert bool(
+            (projected.masked_select(production.nyquist_mask) == 0).all()
+        )
+        transpose_output = pressure.apply_pressure_operator_transpose(
+            transpose_input
+        )
+        assert bool(
+            (transpose_output.masked_select(production.nyquist_mask) == 0).all()
+        )
+
+
 def test_current_discretization_is_hermitian_only_after_explicit_validation():
     _, production, pressure = _solver()
     pressure_hat = production._project_pressure_gauge(_random_complex(61))

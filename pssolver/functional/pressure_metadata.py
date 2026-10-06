@@ -21,6 +21,8 @@ _TERMINATION_REASONS = {
     "preconditioned_residual_breakdown",
 }
 
+_FIXED_CAP_MAX_RELATIVE_RESIDUAL = 1.0
+
 
 @dataclass(frozen=True, slots=True)
 class ChannelPressureSolveDiagnostics:
@@ -131,12 +133,20 @@ def channel_pressure_solve_diagnostics(
     else:
         limit = int(fixed)
         mode = "deterministic_iteration_cap_with_early_convergence"
-        semantics = "early_convergence_criterion_not_required_at_cap"
+        semantics = (
+            "early_convergence_criterion_optional_at_cap;"
+            "relative_residual_must_not_exceed_initial"
+        )
         acceptable = termination_reason in {
             "zero_rhs",
             "relative_tolerance_met",
-            "iteration_limit_reached",
-        } or achieved_iteration_count == limit
+        }
+        if termination_reason == "iteration_limit_reached":
+            acceptable = bool(
+                achieved_iteration_count == limit
+                and achieved_relative_residual
+                <= _FIXED_CAP_MAX_RELATIVE_RESIDUAL
+            )
     if termination_reason == "not_run":
         acceptable = False
     finite = math.isfinite(float(achieved_absolute_residual)) and math.isfinite(

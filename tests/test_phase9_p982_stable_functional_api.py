@@ -497,14 +497,35 @@ def test_pressure_metadata_distinguishes_cap_from_required_postcondition():
         "deterministic_iteration_cap_with_early_convergence"
     )
     assert metadata["tolerance_semantics"] == (
-        "early_convergence_criterion_not_required_at_cap"
+        "early_convergence_criterion_optional_at_cap;"
+        "relative_residual_must_not_exceed_initial"
     )
     assert metadata["requested_iteration_limit"] == 2
     assert metadata["achieved_iteration_count"] == 2
     assert metadata["termination_reason"] == "iteration_limit_reached"
     assert metadata["acceptable"] is True
 
-    cap_edge = channel_pressure_solve_diagnostics(
+    bounded_cap = channel_pressure_solve_diagnostics(
+        solver,
+        operator_identity="channel_pressure_schur_primal",
+        achieved_iteration_count=2,
+        achieved_absolute_residual=1.0,
+        achieved_relative_residual=1.0,
+        termination_reason="iteration_limit_reached",
+    )
+    assert bounded_cap.acceptable is True
+
+    divergent_cap = channel_pressure_solve_diagnostics(
+        solver,
+        operator_identity="channel_pressure_schur_primal",
+        achieved_iteration_count=2,
+        achieved_absolute_residual=2.0,
+        achieved_relative_residual=1.01,
+        termination_reason="iteration_limit_reached",
+    )
+    assert divergent_cap.acceptable is False
+
+    breakdown_at_cap = channel_pressure_solve_diagnostics(
         solver,
         operator_identity="channel_pressure_schur_primal",
         achieved_iteration_count=2,
@@ -512,7 +533,7 @@ def test_pressure_metadata_distinguishes_cap_from_required_postcondition():
         achieved_relative_residual=1.0,
         termination_reason="preconditioned_residual_breakdown",
     )
-    assert cap_edge.acceptable is True
+    assert breakdown_at_cap.acceptable is False
 
 
 def test_p982_record_does_not_authorize_consumer_migration_or_h100():
