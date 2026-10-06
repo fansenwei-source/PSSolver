@@ -1,5 +1,71 @@
 # Changelog
 
+## 0.2.0rc2 — 2026-10-06
+
+Second release candidate for the composable v0.2 architecture.  It is a
+stabilization release over `v0.2.0rc1`; the public capability matrix,
+functional protocol version, production defaults, and explicit v0.2 scope are
+unchanged.
+
+### Fixed
+
+- Repair long-horizon Periodic spectral-state drift by enforcing Hermitian
+  consistency, including the self-conjugate and unresolved Nyquist modes.
+- Preserve Channel incompressibility after dealiasing and align complete-
+  stress functional declarations, pressure-solver precedence, and production
+  observation synchronization with their qualified runtimes.
+- Harden public compilation against unsupported grid placement, malformed
+  runtime flags, invalid device/pressure options, unsupported snapshot starts,
+  and inconsistent capability rejection paths.
+- Validate checkpoint schema, payload hashes, shapes, dtypes, finite values,
+  progress, runtime identity, and target immutability before restoration.
+- Make periodic and Channel checkpoint identities, failure classifications,
+  file permissions, and device-independent lifting identities stable across
+  copy, serialization, restart, and installed-wheel execution.
+- Correct Plane float32 construction, static lifting projection and metadata,
+  restart artifacts, initial wall-compatible remainders, and weak-impedance
+  Robin root conditioning.
+- Apply the declared TF32 policy consistently and canonicalize disabled
+  spectral refresh across every qualified public application.
+
+### Public API stabilization
+
+- Require callers to state numerical and output policies whose previous
+  implicit defaults could disagree across applications.
+- Adapt the legacy Channel workflow to the geometry-neutral public `Output`
+  declaration without changing its default runtime.
+- Persist Periodic and Channel diagnostics alongside metadata and results.
+- Retain functional protocol `1.0`, batch-one scope, the four qualified
+  model--geometry combinations, and all rc1 compatibility entry points.
+
+### Qualification evidence
+
+- Runtime candidate:
+  `1c8b3330139dec7cbb2ea138b261fcaadf5e871f`.
+- Versioned qualification tip:
+  `7abda0966741961220c3b1ba3c4152307485ba06`.
+- H100 Job 10857114 completed with `ExitCode=0:0` and classification
+  `PASS_V0_2_0RC2_AUDIT_H100_NON_REGRESSION`.
+- The cumulative v8 archive passed 197/197 checksums; its manifest SHA-256 is
+  `50da02431bbedf9936fd7397dc308cd1cca028fad9bc4bd67fdf32c1405d9561`.
+- Periodic and Channel 100-step continuous and 50+50 restart paths were finite
+  and byte-identical within each version.  Candidate/baseline peak reserved
+  memory ratios were 1.0000 for Periodic and approximately 1.04675 for
+  Channel, within the frozen 1.05 limit.
+
+### Scope and release status
+
+- This release does not promote `compiled_v2` or `compiled_channel_v2` and
+  does not change any production default.
+- The Channel qualification smoke showed an approximately 4.77 percent higher
+  mean step time for the candidate in that short run; it was not a failure of
+  the preregistered G5 contract and is retained as a release observation.
+- The broader R1--R9 architecture and redundancy cleanup remains separate
+  from this bug-fix candidate.
+- `nematics3d` and PSSolver-Control remain independent and unmodified.
+- The final rc2 source distribution, wheel, isolated install, and H100 release
+  smoke must pass before the annotated `v0.2.0rc2` tag is created.
+
 ## 0.2.0rc1 — 2026-10-01
 
 First release candidate for the composable v0.2 architecture.  The v0.1 tags,

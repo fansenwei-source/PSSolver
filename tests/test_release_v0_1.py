@@ -44,7 +44,7 @@ def test_standard_build_metadata_and_release_documents_exist():
         PROJECT_ROOT / "notes" / "pssolver_v0_1_2.md"
     ).read_text(encoding="utf-8")
 
-    assert "PSSolver 0.2.0rc1" in readme
+    assert "PSSolver 0.2.0rc2" in readme
     assert "## 0.1.2" in changelog
     assert "## 0.1.1" in changelog
     assert "## 0.1.0" in changelog
