@@ -3,14 +3,18 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import subprocess
+import sys
 
 import pytest
 
 from benchmarks.run_periodic_hermitian_profile_matrix import (
     VariantRuntime,
+    _child_environment,
     _plan_metadata,
+    _prepare_import_bootstraps,
     build_matrix_plan,
     execute_matrix,
 )
@@ -23,6 +27,7 @@ CANDIDATE = "b" * 40
 def _runtime(tmp_path: Path, name: str, commit: str) -> VariantRuntime:
     root = tmp_path / name
     root.mkdir()
+    (root / "benchmarks").mkdir()
     return VariantRuntime(
         python=tmp_path / f"{name}-python",
         repository_root=root,
@@ -111,9 +116,9 @@ def test_python_orchestrator_executes_profiles_with_and_without_artifacts(
     output_root = tmp_path / "output"
     calls = []
 
-    def fake_run(command, **_kwargs):
+    def fake_run(command, **kwargs):
         command = list(command)
-        calls.append(command)
+        calls.append((command, kwargs))
         output = Path(command[command.index("--output") + 1])
         if "analyze_periodic_hermitian_profiles.py" in command[1]:
             output.write_text(json.dumps({"passed": True}), encoding="utf-8")
@@ -155,7 +160,64 @@ def test_python_orchestrator_executes_profiles_with_and_without_artifacts(
     )
 
     assert len(calls) == 37
-    assert sum("--physical-artifact" in command for command in calls[:-1]) == 4
+    assert sum(
+        "--physical-artifact" in command for command, _kwargs in calls[:-1]
+    ) == 4
+    for command, kwargs in calls:
+        bootstrap = Path(kwargs["env"]["PYTHONPATH"])
+        assert bootstrap.is_relative_to(output_root / "import_bootstrap")
+        assert (bootstrap / "benchmarks" / "__init__.py").is_file()
+        assert not (bootstrap / "pssolver").exists()
+        if "analyze_periodic_hermitian_profiles.py" not in command[1]:
+            variant = command[command.index("--variant") + 1]
+            assert bootstrap.name == variant
     assert json.loads(
         (output_root / "MATRIX_COMPLETE.json").read_text(encoding="utf-8")
     )["passed"] is True
+
+
+def test_import_bootstrap_exposes_benchmarks_but_not_source_pssolver(tmp_path):
+    repository = tmp_path / "repository"
+    benchmarks = repository / "benchmarks"
+    benchmarks.mkdir(parents=True)
+    (benchmarks / "probe.py").write_text("VALUE = 17\n", encoding="utf-8")
+    entry = benchmarks / "entry.py"
+    entry.write_text(
+        "import importlib.util, pathlib\n"
+        "from benchmarks.probe import VALUE\n"
+        "print(VALUE)\n"
+        "spec = importlib.util.find_spec('pssolver')\n"
+        "print(None if spec is None else pathlib.Path(spec.origin).resolve())\n",
+        encoding="utf-8",
+    )
+    (repository / "pssolver").mkdir()
+    (repository / "pssolver" / "__init__.py").write_text(
+        "SOURCE_SHADOW = True\n",
+        encoding="utf-8",
+    )
+    output_root = tmp_path / "output"
+    output_root.mkdir()
+    roots = _prepare_import_bootstraps(
+        output_root,
+        {"baseline": repository, "candidate": repository},
+    )
+    environment = _child_environment(
+        {
+            **os.environ,
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONNOUSERSITE": "1",
+        },
+        roots["candidate"],
+    )
+    completed = subprocess.run(
+        [sys.executable, str(entry)],
+        cwd=repository,
+        env=environment,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    output = completed.stdout.splitlines()
+    assert output[0] == "17"
+    assert output[1] != str((repository / "pssolver" / "__init__.py").resolve())

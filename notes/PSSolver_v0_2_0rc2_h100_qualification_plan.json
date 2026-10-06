@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "kind": "pssolver_v0_2_0rc2_audit_h100_qualification_plan",
-  "status": "READY_FOR_VERSIONED_PYTHON_MATRIX_RUNNER_RECOVERY",
+  "status": "READY_FOR_ISOLATED_CHILD_IMPORT_BOOTSTRAP_RECOVERY",
   "baseline": {
     "tag": "v0.2.0rc1",
     "commit": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1"
@@ -49,6 +49,9 @@
     "path": "benchmarks/run_periodic_hermitian_profile_matrix.py",
     "orchestration": "python_subprocess_argument_lists",
     "shell_optional_argument_arrays": false,
+    "child_import_bootstrap": "benchmarks_package_path_shim",
+    "repository_root_on_pythonpath": false,
+    "installed_wheel_pssolver_preserved": true,
     "physical_artifact_profiles": 4,
     "profiles_without_physical_artifact": 32
   },

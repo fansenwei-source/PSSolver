@@ -86,6 +86,68 @@ def _atomic_json(path: Path, value: object) -> None:
             temporary.unlink()
 
 
+def _prepare_import_bootstraps(
+    output_root: Path,
+    repositories: dict[str, Path],
+) -> dict[str, Path]:
+    """Expose repository benchmarks without exposing repository PSSolver.
+
+    Executing ``.../benchmarks/script.py`` directly puts the benchmarks
+    directory, not its parent, on ``sys.path``.  Consequently absolute
+    ``benchmarks.*`` imports fail.  Adding the whole repository root to
+    ``PYTHONPATH`` would fix that import while also shadowing the installed
+    ``pssolver`` wheel with the source checkout.  A tiny package shim gives
+    ``benchmarks`` the required package path and deliberately exposes no
+    other repository package.
+    """
+
+    roots: dict[str, Path] = {}
+    records: dict[str, dict[str, object]] = {}
+    for variant in VARIANTS:
+        repository_root = repositories[variant].expanduser().resolve()
+        benchmarks_root = repository_root / "benchmarks"
+        if not benchmarks_root.is_dir():
+            raise FileNotFoundError(
+                f"{variant} benchmarks directory is absent: {benchmarks_root}"
+            )
+        bootstrap_root = output_root / "import_bootstrap" / variant
+        package_root = bootstrap_root / "benchmarks"
+        package_root.mkdir(parents=True)
+        initializer = package_root / "__init__.py"
+        initializer.write_text(
+            '"""Generated qualification-only benchmarks package shim."""\n'
+            f"__path__ = [{json.dumps(str(benchmarks_root))}]\n",
+            encoding="utf-8",
+        )
+        if (bootstrap_root / "pssolver").exists():
+            raise RuntimeError("import bootstrap must not expose source pssolver")
+        roots[variant] = bootstrap_root.resolve()
+        records[variant] = {
+            "bootstrap_root": str(roots[variant]),
+            "benchmarks_source": str(benchmarks_root),
+            "pssolver_source_exposed": False,
+        }
+    _atomic_json(
+        output_root / "import_bootstrap.json",
+        {
+            "schema_version": 1,
+            "kind": "periodic_hermitian_matrix_import_bootstrap",
+            "strategy": "benchmarks_package_path_shim",
+            "variants": records,
+        },
+    )
+    return roots
+
+
+def _child_environment(
+    base: dict[str, str],
+    bootstrap_root: Path,
+) -> dict[str, str]:
+    environment = dict(base)
+    environment["PYTHONPATH"] = str(bootstrap_root)
+    return environment
+
+
 def _variant_order(cell_index: int, trial: int) -> tuple[str, str]:
     """Alternate the leading variant globally across the frozen matrix."""
 
@@ -256,11 +318,23 @@ def execute_matrix(
     environment["PYTHONDONTWRITEBYTECODE"] = "1"
     environment["PYTHONNOUSERSITE"] = "1"
     environment.pop("PYTHONPATH", None)
+    import_bootstraps = _prepare_import_bootstraps(
+        output_root,
+        {
+            variant: next(
+                profile.cwd for profile in profiles if profile.variant == variant
+            )
+            for variant in VARIANTS
+        },
+    )
     for profile in profiles:
         completed = subprocess.run(
             list(profile.command),
             cwd=profile.cwd,
-            env=environment,
+            env=_child_environment(
+                environment,
+                import_bootstraps[profile.variant],
+            ),
             capture_output=True,
             text=True,
             check=False,
@@ -295,7 +369,7 @@ def execute_matrix(
     completed = subprocess.run(
         command,
         cwd=candidate.repository_root,
-        env=environment,
+        env=_child_environment(environment, import_bootstraps["candidate"]),
         capture_output=True,
         text=True,
         check=False,
