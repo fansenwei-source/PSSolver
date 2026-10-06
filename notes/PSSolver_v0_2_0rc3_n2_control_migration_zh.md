@@ -61,3 +61,16 @@ Control 维护者应在不修改 PSSolver Provider 的前提下完成以下门�
 
 Control 完成并推送自己的迁移提交后，PSSolver rc3 只记录 Consumer commit 身份和测试结果，
 不把 Consumer 源码复制进 Provider 仓库。
+
+## Provider 本构兼容记录
+
+后续只读审计发现，Control planar adapter 的 whole-file constitutive pin 会被 rc3 Provider
+中与所消费 helper 无关的 runtime-adapter 改动触发。Provider 已将允许更新该 pin 所需的
+符号级证据单独记录在：
+
+- `notes/PSSolver_v0_2_0rc3_constitutive_compatibility.json`；
+- `notes/PSSolver_v0_2_0rc3_constitutive_compatibility_zh.md`。
+
+该记录只覆盖 Control 明确消费的六个 helper 与 `q_tensor.py`，不宣称整个
+`beris_edwards.py` 等价。Control 必须在独立提交中更新 pin/provenance，并在未绕过 pin
+的情况下重新运行自己的资格门禁。

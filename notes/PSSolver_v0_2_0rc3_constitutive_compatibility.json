@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "record_kind": "consumer_constitutive_symbol_compatibility",
+  "date": "2026-10-06",
+  "status": "compatible_for_listed_consumer_symbols",
+  "provider": {
+    "repository": "https://github.com/fansenwei-source/PSSolver",
+    "baseline_commit": "d878abd3caecffb99f2cbf9255963a42f401af11",
+    "target_commit": "bb4489075301176c78772b07d14021432d4ad2b1",
+    "target_branch": "fix/v0.2.0rc3-correctness"
+  },
+  "consumer": {
+    "repository": "https://github.com/fansenwei-source/PSSolver-Control",
+    "adapter": "src/pssolver_control/adapters/pssolver_planar.py",
+    "pin_update_permitted": true,
+    "pin_update_qualified_by_this_record": false
+  },
+  "files": {
+    "beris_edwards": {
+      "path": "pssolver/models/active_nematics/beris_edwards.py",
+      "baseline_git_blob": "681f8bdbc9cf4a6c06bbc8b86a044cfafb788217",
+      "target_git_blob": "07f1f03f7f2f35e28e8ce629c1d73c5d59e4f5f3",
+      "baseline_file_sha256": "4aca31944a3dd7f263d64167ab53e26d992642af58b8fdefc457454905faf31d",
+      "target_file_sha256": "2b2e8d9a0555e1337cc314a5776b9fb5073eab1bafa6087f70b468eabe62906d",
+      "whole_file_byte_identical": false
+    },
+    "q_tensor": {
+      "path": "pssolver/models/active_nematics/q_tensor.py",
+      "baseline_git_blob": "5427df4402f31fc43ac409e1936cd31e58269966",
+      "target_git_blob": "5427df4402f31fc43ac409e1936cd31e58269966",
+      "baseline_file_sha256": "adae50e10adff6d0c6daeaaba215afd9664ebbcf9bfe0471fe6880d8f511601b",
+      "target_file_sha256": "adae50e10adff6d0c6daeaaba215afd9664ebbcf9bfe0471fe6880d8f511601b",
+      "whole_file_byte_identical": true
+    }
+  },
+  "symbol_hash_contract": {
+    "algorithm": "sha256",
+    "encoding": "utf-8",
+    "extraction": "inclusive ast FunctionDef lineno..end_lineno with original line endings",
+    "listed_symbols_byte_identical": true,
+    "symbols": [
+      {
+        "consumer_name": "active_stress",
+        "provider_name": "beris_edwards_active_stress_components",
+        "baseline_sha256": "6cf9dbbca9c547b4a40a3e895b693e0f554d110efbc938fde982208a93aeecc0",
+        "target_sha256": "6cf9dbbca9c547b4a40a3e895b693e0f554d110efbc938fde982208a93aeecc0"
+      },
+      {
+        "consumer_name": "algebraic_stress",
+        "provider_name": "beris_edwards_algebraic_stress_components",
+        "baseline_sha256": "f658010d3cb5ac8b233e3e0906470c7ddd0903e968cbe005dcaf28eacf96462b",
+        "target_sha256": "f658010d3cb5ac8b233e3e0906470c7ddd0903e968cbe005dcaf28eacf96462b"
+      },
+      {
+        "consumer_name": "bulk_molecular_field",
+        "provider_name": "beris_edwards_bulk_molecular_field_components",
+        "baseline_sha256": "12b74ac1da4907cfa1367c8869998501e2d0cc7ba5b8a5908d6cd391c99a8ce0",
+        "target_sha256": "12b74ac1da4907cfa1367c8869998501e2d0cc7ba5b8a5908d6cd391c99a8ce0"
+      },
+      {
+        "consumer_name": "distortion_stress",
+        "provider_name": "beris_edwards_distortion_stress_components",
+        "baseline_sha256": "de2d8bf180ea4798b18905a705c0672786de48eac4526a6f41f5dea646e03e8e",
+        "target_sha256": "de2d8bf180ea4798b18905a705c0672786de48eac4526a6f41f5dea646e03e8e"
+      },
+      {
+        "consumer_name": "molecular_field",
+        "provider_name": "beris_edwards_molecular_field_components",
+        "baseline_sha256": "6cfc9ae7c585d56c094e7f613e350e633f6127d1594049e1ca5c8d7bc82780b3",
+        "target_sha256": "6cfc9ae7c585d56c094e7f613e350e633f6127d1594049e1ca5c8d7bc82780b3"
+      },
+      {
+        "consumer_name": "q_nonlinear_components",
+        "provider_name": "beris_edwards_q_nonlinear_components",
+        "baseline_sha256": "ad3633e84e5624e70646ef7c0df75e8b605981726fc532c8c3c61962c03d49ee",
+        "target_sha256": "ad3633e84e5624e70646ef7c0df75e8b605981726fc532c8c3c61962c03d49ee"
+      }
+    ]
+  },
+  "classified_provider_change": {
+    "commit": "5e1ef3ed6cf5954e723f10ae923de5873d010253",
+    "changed_top_level_definition": "BerisEdwardsQNonlinearModel",
+    "baseline_definition_sha256": "3efbcc290b42144ea84ca691a760a76e136dffdf774e5d35022c4b6ad75aa1a6",
+    "target_definition_sha256": "4e64f39bb5d299d26a7afd9687e61fa0551bb3bc878588a4e606972ca501b391",
+    "summary": "adds an optional velocity-gradient inverse-transform path to the provider runtime adapter",
+    "listed_consumer_symbols_changed": false
+  },
+  "scope": {
+    "establishes": [
+      "the six listed consumer-visible constitutive helper definitions are byte-identical",
+      "q_tensor.py is byte-identical",
+      "the consumer may update its exact Provider commit and blob provenance before running its own qualification"
+    ],
+    "does_not_establish": [
+      "whole-file equivalence for beris_edwards.py",
+      "equivalence of BerisEdwardsQNonlinearModel",
+      "equivalence of every active-nematics implementation file",
+      "PSSolver-Control qualification",
+      "permission to weaken or bypass consumer tests",
+      "production-default promotion",
+      "H100 qualification"
+    ]
+  },
+  "authorization": {
+    "consumer_planar_pin_update_may_proceed": true,
+    "consumer_must_requalify_after_pin_update": true,
+    "consumer_push_authorized_by_this_record": false,
+    "production_default_changed": false,
+    "nematics3d_modified": false
+  }
+}
