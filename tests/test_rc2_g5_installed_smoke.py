@@ -14,6 +14,7 @@ from benchmarks.run_rc2_g5_installed_smoke import (
     FROZEN_SHAPE,
     FROZEN_TOTAL_STEPS,
     KIND,
+    _run,
     build_simulation,
 )
 from pssolver import compile_simulation
@@ -55,6 +56,25 @@ def test_g5_builder_explicitly_disables_refresh_and_compiles(
     }
     assert simulation.execution.runtime_path == runtime_path
     assert compile_simulation(simulation).application == expected_application
+
+
+@pytest.mark.parametrize("application", ("periodic", "channel"))
+def test_g5_runner_executes_the_declared_public_workflow(tmp_path, application):
+    simulation = build_simulation(
+        application=application,
+        initial_q_path=_snapshot(tmp_path),
+        output_directory=tmp_path / "output",
+        steps=2,
+        device="cpu",
+        shape=(8, 8, 8),
+        lengths=(8.0, 8.0, 8.0),
+    )
+
+    _compiled, result = _run(simulation)
+
+    assert result.start_step == 0
+    assert result.final_step == simulation.output.steps == 2
+    assert (result.output_directory / "COMPLETE").is_file()
 
 
 def _report(variant: str, application: str, memory: int = 100) -> dict[str, object]:

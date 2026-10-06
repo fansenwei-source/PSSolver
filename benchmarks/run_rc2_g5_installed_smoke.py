@@ -205,7 +205,7 @@ def _run(simulation: Simulation):
     metadata = simulation.to_metadata()
     if metadata["time_integration"]["refresh"] != {"mode": "disabled"}:
         raise RuntimeError("G5 simulation does not explicitly disable spectral refresh")
-    steps = int(simulation.output.options["steps"])
+    steps = int(simulation.output.steps)
     result = run_simulation(compiled, progress=range(steps))
     return compiled, result
 
