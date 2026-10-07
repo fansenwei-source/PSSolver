@@ -408,7 +408,7 @@ def test_free_slip_stokes_state_schema_is_frozen():
         normal_boundary_conditions=("periodic", "periodic", "dirichlet"),
         pressure_boundary_conditions=("periodic", "periodic", "neumann"),
     )
-    expected = {
+    expected_state = {
         "ikx": ((1, 4, 4, 1), torch.complex128),
         "iky": ((1, 4, 4, 1), torch.complex128),
         "a_tangential_inv": ((1, 4, 4, 4), torch.float64),
@@ -419,13 +419,17 @@ def test_free_slip_stokes_state_schema_is_frozen():
         "schur_diag_safe": ((1, 4, 4, 4), torch.float64),
         "pressure_null_mask": ((1, 4, 4, 4), torch.bool),
     }
+    expected_buffers = {
+        **expected_state,
+        "nyquist_mask": ((1, 4, 4, 4), torch.bool),
+    }
     buffers = dict(solver.named_buffers())
-    assert tuple(buffers) == tuple(expected)
-    assert tuple(solver.state_dict()) == tuple(expected)
+    assert tuple(buffers) == tuple(expected_buffers)
+    assert tuple(solver.state_dict()) == tuple(expected_state)
     assert {
         name: (tuple(value.shape), value.dtype)
         for name, value in buffers.items()
-    } == expected
+    } == expected_buffers
 
 
 def _call_name(node: ast.Call) -> str:

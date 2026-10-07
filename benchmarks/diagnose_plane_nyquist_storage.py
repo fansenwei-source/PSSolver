@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Analysis-only Plane free-slip Nyquist/storage diagnostic for RC4.1.0.
+"""Analysis-only Plane free-slip Nyquist/storage diagnostic for RC4.1.
 
-This program intentionally exercises the released rc3 solver without repairing
-it.  It compares full-complex and Hermitian-half storage for identical real
-forces, localizes the mismatch to the non-reduced periodic-axis Nyquist plane,
-and repeats the comparison after removing only that input plane.
+The frozen RC4.1.0 record captures the released rc3 mismatch.  This program
+compares full-complex and Hermitian-half storage for identical real forces and
+can therefore adjudicate either the original defect or a candidate repair.
+The filtered control still removes only the formerly causal non-reduced-axis
+Nyquist input plane.
 """
 
 from __future__ import annotations
@@ -26,8 +27,9 @@ from pssolver.transforms import (
 )
 
 
-SCHEMA = "pssolver.rc4_1_0.plane_nyquist_storage_diagnostic.v1"
+SCHEMA = "pssolver.rc4_1_1.plane_nyquist_storage_diagnostic.v2"
 BASELINE_COMMIT = "5071d73a00e0d19be62ebd39edf9918818d1267a"
+STORAGE_EQUIVALENCE_TOLERANCE = 1.0e-12
 TANGENTIAL_BC = ("periodic", "periodic", "neumann")
 NORMAL_BC = ("periodic", "periodic", "dirichlet")
 PRESSURE_BC = TANGENTIAL_BC
@@ -354,11 +356,24 @@ def diagnose(*, seed: int = 24680) -> dict[str, Any]:
             "even_xy_rotated_axis0", (16, 16, 8), hermitian_axis=0, seed=seed
         ),
     )
+    repaired = all(
+        case["summary"][metric] <= STORAGE_EQUIVALENCE_TOLERANCE
+        for case in cases
+        for metric in (
+            "raw_max_velocity_relative_l2",
+            "raw_pressure_relative_l2",
+        )
+    )
+    classification = (
+        "PASS_PLANE_PERIODIC_NYQUIST_STORAGE_EQUIVALENCE"
+        if repaired
+        else "REPRODUCED_PLANE_NON_REDUCED_PERIODIC_NYQUIST_STORAGE_MISMATCH"
+    )
     return {
         "schema": SCHEMA,
-        "classification": "REPRODUCED_PLANE_NON_REDUCED_PERIODIC_NYQUIST_STORAGE_MISMATCH",
+        "classification": classification,
         "analysis_only": True,
-        "solver_modified": False,
+        "diagnostic_modifies_solver": False,
         "baseline": {
             "release": "v0.2.0rc3",
             "commit": BASELINE_COMMIT,
@@ -379,7 +394,8 @@ def diagnose(*, seed: int = 24680) -> dict[str, Any]:
         "causal_finding": {
             "trigger": "an even non-reduced periodic axis",
             "control": "removing only that input Nyquist plane restores storage equivalence",
-            "repair_not_claimed": True,
+            "released_rc3_mismatch_frozen_separately": True,
+            "current_storage_equivalence_passed": repaired,
         },
         "cases": list(cases),
     }

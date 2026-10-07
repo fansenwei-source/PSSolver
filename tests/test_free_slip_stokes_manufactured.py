@@ -46,6 +46,129 @@ def _stokes(backend, *, friction, zero_mode_policy, viscosity=0.73):
     )
 
 
+def _rc3_reference_solve(stokes, fx_hat, fy_hat, fz_hat):
+    """Evaluate the pre-RC4.1 Plane formula for odd-grid byte checks."""
+
+    def project_pressure(pressure_hat):
+        return pressure_hat.masked_fill(stokes.pressure_null_mask, 0)
+
+    def tangential_inverse(rhs_hat):
+        return (rhs_hat * stokes.a_tangential_inv).masked_fill(
+            stokes.tangential_null_mask,
+            0,
+        )
+
+    def normal_inverse(rhs_hat):
+        return rhs_hat * stokes.a_normal_inv
+
+    def pressure_grad_z(pressure_hat):
+        return torch.matmul(pressure_hat, stokes.dz_neumann_to_dirichlet)
+
+    def velocity_div_z(velocity_hat):
+        return torch.matmul(velocity_hat, stokes.dz_dirichlet_to_neumann)
+
+    def divergence(ux_hat, uy_hat, uz_hat):
+        return (
+            stokes.ikx * ux_hat
+            + stokes.iky * uy_hat
+            + velocity_div_z(uz_hat)
+        )
+
+    ux_hat_free = tangential_inverse(fx_hat)
+    uy_hat_free = tangential_inverse(fy_hat)
+    uz_hat_free = normal_inverse(fz_hat)
+    pressure_rhs = project_pressure(
+        -divergence(ux_hat_free, uy_hat_free, uz_hat_free)
+    )
+    pressure_hat = project_pressure(
+        pressure_rhs / stokes.schur_diag_safe
+    )
+    ux_hat = ux_hat_free - tangential_inverse(stokes.ikx * pressure_hat)
+    uy_hat = uy_hat_free - tangential_inverse(stokes.iky * pressure_hat)
+    uz_hat = uz_hat_free - normal_inverse(pressure_grad_z(pressure_hat))
+    return ux_hat, uy_hat, uz_hat, pressure_hat
+
+
+@pytest.mark.parametrize("spectral_storage", ("full_complex", "hermitian_half"))
+@pytest.mark.parametrize("periodic_axis", (0, 1))
+def test_even_periodic_nyquist_force_plane_is_removed(
+    spectral_storage,
+    periodic_axis,
+):
+    shape = (8, 10, 7)
+    backend = _backend(
+        shape=shape,
+        execution_order="real_first",
+        spectral_storage=spectral_storage,
+    )
+    stokes = _stokes(
+        backend,
+        friction=0.23,
+        zero_mode_policy="friction",
+    )
+    zero = torch.zeros(
+        (1, *backend.spectral_shape),
+        dtype=torch.complex128,
+    )
+    force = zero.clone()
+    index = [0, 0, 0, 0]
+    index[periodic_axis + 1] = shape[periodic_axis] // 2
+    force[tuple(index)] = 1.0 + 0.25j
+
+    solution = stokes.solve_force_hats(zero, force, zero)
+
+    assert bool(stokes.nyquist_mask[tuple(index)].item())
+    assert all(torch.equal(value, torch.zeros_like(value)) for value in solution)
+    assert stokes.last_pressure_iterations == 0
+    assert stokes.last_pressure_residual == 0.0
+    assert stokes.last_pressure_relative_residual == 0.0
+
+
+@pytest.mark.parametrize("spectral_storage", ("full_complex", "hermitian_half"))
+def test_odd_periodic_grid_is_byte_identical_to_the_rc3_formula(
+    spectral_storage,
+):
+    backend = _backend(
+        shape=(9, 11, 7),
+        execution_order="real_first",
+        spectral_storage=spectral_storage,
+    )
+    stokes = _stokes(
+        backend,
+        friction=0.23,
+        zero_mode_policy="friction",
+    )
+    generator = torch.Generator().manual_seed(31071)
+    forces = tuple(
+        torch.complex(
+            torch.randn(
+                (2, *backend.spectral_shape),
+                generator=generator,
+                dtype=torch.float64,
+            ),
+            torch.randn(
+                (2, *backend.spectral_shape),
+                generator=generator,
+                dtype=torch.float64,
+            ),
+        )
+        for _ in range(3)
+    )
+
+    expected = _rc3_reference_solve(stokes, *forces)
+    observed = stokes.solve_force_hats(*forces)
+
+    assert not bool(stokes.nyquist_mask.any().item())
+    assert all(
+        torch.equal(observed_value, expected_value)
+        for observed_value, expected_value in zip(
+            observed,
+            expected,
+            strict=True,
+        )
+    )
+
+
 @pytest.mark.parametrize(
     ("boundary_conditions", "mode_number", "expected_boundary_conditions"),
     (

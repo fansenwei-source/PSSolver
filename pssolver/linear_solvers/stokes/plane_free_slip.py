@@ -76,15 +76,30 @@ class FreeSlipModalStokesSolver(torch.nn.Module):
         real_dtype = backend.real_dtype
         device = backend.device
 
-        qx_xy, qy_xy = torch.meshgrid(
-            pressure_metadata.axis_modes[0],
-            pressure_metadata.axis_modes[1],
-            indexing="ij",
-        )
         kz_tangential = tangential_metadata.axis_modes[2]
         kz_normal = normal_metadata.axis_modes[2]
         kz_pressure = pressure_metadata.axis_modes[2]
         nz = kz_normal.numel()
+        periodic_modes = [
+            pressure_metadata.axis_modes[axis].clone() for axis in range(2)
+        ]
+        nx, ny = (value.numel() for value in periodic_modes)
+        nyquist_mask = torch.zeros(
+            (1, nx, ny, nz),
+            device=device,
+            dtype=torch.bool,
+        )
+        for axis, spatial_size in enumerate(backend.shape[:2]):
+            if spatial_size % 2:
+                continue
+            nyquist_index = spatial_size // 2
+            if nyquist_index >= periodic_modes[axis].numel():
+                continue
+            periodic_modes[axis][nyquist_index] = 0
+            index = [slice(None)] * 4
+            index[axis + 1] = nyquist_index
+            nyquist_mask[tuple(index)] = True
+        qx_xy, qy_xy = torch.meshgrid(*periodic_modes, indexing="ij")
 
         # Row-vector coefficient convention. The terminal DST mode maps to
         # unavailable DCT mode m=N and is absent from this derivative pair.
@@ -125,8 +140,15 @@ class FreeSlipModalStokesSolver(torch.nn.Module):
         )
         pressure_null_mask[:, 0, 0, 0] = True
         schur_diag_safe = schur_diag.unsqueeze(0).clone()
-        schur_diag_safe.masked_fill_(pressure_null_mask, 1.0)
-        unresolved = (schur_diag_safe == 0) & ~pressure_null_mask
+        schur_diag_safe.masked_fill_(
+            pressure_null_mask | nyquist_mask,
+            1.0,
+        )
+        unresolved = (
+            (schur_diag_safe == 0)
+            & ~pressure_null_mask
+            & ~nyquist_mask
+        )
         if unresolved.any():
             raise ValueError(
                 "Free-slip pressure Schur complement contains a non-gauge "
@@ -158,6 +180,14 @@ class FreeSlipModalStokesSolver(torch.nn.Module):
         )
         self.register_buffer("schur_diag_safe", schur_diag_safe)
         self.register_buffer("pressure_null_mask", pressure_null_mask)
+        # Even-grid periodic Nyquist planes cannot represent real first
+        # derivatives.  The mask is derived from the transform shape and kept
+        # out of state_dict so the serialized solver schema remains stable.
+        self.register_buffer(
+            "nyquist_mask",
+            nyquist_mask,
+            persistent=False,
+        )
 
         self.has_tangential_null_mode = bool(tangential_null_mask.any().item())
         self.last_pressure_hat = None
@@ -170,15 +200,22 @@ class FreeSlipModalStokesSolver(torch.nn.Module):
         return torch.matmul(tensor, matrix)
 
     def _project_pressure_gauge(self, pressure_hat):
-        return pressure_hat.masked_fill(self.pressure_null_mask, 0)
+        return pressure_hat.masked_fill(
+            self.pressure_null_mask | self.nyquist_mask,
+            0,
+        )
 
     def _tangential_helmholtz_inverse(self, rhs_hat):
         return (rhs_hat * self.a_tangential_inv).masked_fill(
-            self.tangential_null_mask, 0
+            self.tangential_null_mask | self.nyquist_mask,
+            0,
         )
 
     def _normal_helmholtz_inverse(self, rhs_hat):
-        return rhs_hat * self.a_normal_inv
+        return (rhs_hat * self.a_normal_inv).masked_fill(
+            self.nyquist_mask,
+            0,
+        )
 
     def _pressure_grad_z(self, pressure_hat):
         return self._matmul_lastdim(

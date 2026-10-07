@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.1.1 Plane free-slip periodic Nyquist repair",
+  "classification": "PASS_RC4_1_1_PLANE_NYQUIST_CPU_NON_REGRESSION",
+  "baseline": {
+    "release": "v0.2.0rc3",
+    "commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+    "diagnostic_commit": "0ce1e898d0b46f74e1032a3a7e93b46ea8667692",
+    "known_issue": "B5"
+  },
+  "implementation": {
+    "source": "pssolver/linear_solvers/stokes/plane_free_slip.py",
+    "source_sha256": "ef1935b36050c08cd92079c8e4af324788a3f401b9a3c69fa46da8bb4d031a59",
+    "periodic_axes": [0, 1],
+    "real_grid_convention": "zero first-derivative multipliers and project complete Nyquist planes for every even periodic axis",
+    "projected_quantities": [
+      "tangential force/velocity Helmholtz paths",
+      "normal force/velocity Helmholtz path",
+      "pressure gauge and pressure solution",
+      "pressure-gradient and divergence paths through the zeroed multipliers"
+    ],
+    "nyquist_mask_persistent": false,
+    "state_dict_key_schema_changed": false,
+    "public_api_changed": false,
+    "production_default_changed": false
+  },
+  "storage_equivalence": {
+    "schema": "pssolver.rc4_1_1.plane_nyquist_storage_diagnostic.v2",
+    "classification": "PASS_PLANE_PERIODIC_NYQUIST_STORAGE_EQUIVALENCE",
+    "tolerance": 1e-12,
+    "cases": {
+      "even_xy_default_axis1": {
+        "raw_max_velocity_relative_l2": 3.5973583694804104e-16,
+        "raw_pressure_relative_l2": 3.484112613209578e-16
+      },
+      "odd_xy_default_axis1": {
+        "raw_max_velocity_relative_l2": 3.3696418934186138e-16,
+        "raw_pressure_relative_l2": 3.8703505816997486e-16
+      },
+      "even_x_only_default_axis1": {
+        "raw_max_velocity_relative_l2": 3.734858381591295e-16,
+        "raw_pressure_relative_l2": 3.58639960961027e-16
+      },
+      "even_y_only_default_axis1": {
+        "raw_max_velocity_relative_l2": 3.5127523169864786e-16,
+        "raw_pressure_relative_l2": 3.4585036938401074e-16
+      },
+      "even_xy_rotated_axis0": {
+        "raw_max_velocity_relative_l2": 2.8470641386367663e-16,
+        "raw_pressure_relative_l2": 2.6983446202196614e-16
+      }
+    },
+    "even_xy_default_residuals": {
+      "full_complex_native_divergence_relative_l2": 1.1930836893191377e-16,
+      "full_complex_collocation_divergence_relative_l2": 2.081537982018047e-15,
+      "full_complex_pressure_relative_residual": 1.1820751840191944e-16,
+      "hermitian_half_native_divergence_relative_l2": 9.367690003760626e-17,
+      "hermitian_half_collocation_divergence_relative_l2": 2.1191263105268724e-15,
+      "hermitian_half_pressure_relative_residual": 1.137143336227158e-16
+    }
+  },
+  "cpu_gates": {
+    "cross_layer_targeted": {
+      "passed": 102,
+      "failed": 0
+    },
+    "full_suite": {
+      "passed": 2767,
+      "deselected_cuda_only": 6,
+      "subtests_passed": 8,
+      "failed": 0,
+      "elapsed_seconds": 199.01
+    },
+    "odd_grid_rc3_formula": "byte_for_byte_identical_for_full_complex_and_hermitian_half",
+    "even_nyquist_force_planes": "exact_zero_solution_for_both_periodic_axes_and_both_storage_modes",
+    "manufactured_stokes": "pass",
+    "historical_p770_inventory": "original_record_preserved_and_plane_free_slip_registered_as_subsequently_connected"
+  },
+  "scope": {
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false,
+    "checkpoint_identity_modified": false,
+    "lifting_modified": false,
+    "pressure_policy_modified": false,
+    "h100_executed": false
+  },
+  "qualification": {
+    "rc4_1_1_cpu_complete": true,
+    "b5_closed": false,
+    "eligible_for_single_h100_non_regression": true,
+    "single_h100_non_regression_complete": false,
+    "eligible_for_default_promotion": false,
+    "eligible_for_release": false
+  }
+}
