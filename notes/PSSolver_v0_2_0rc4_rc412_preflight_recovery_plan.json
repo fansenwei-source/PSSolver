@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "kind": "pssolver_v0_2_0rc4_rc412_h100_preflight_recovery_plan",
+  "status": "LOCAL_CPU_GATE_PASS_H100_NOT_AUTHORIZED",
+  "qualification_branch": "fix/v0.2.0rc4-audit",
+  "parent_qualification_commit": "ac9f5dfe1d270581f20494ab96968f2a972db63f",
+  "runtime_identity": {
+    "baseline": "0ce1e898d0b46f74e1032a3a7e93b46ea8667692",
+    "candidate": "d358ed66fe75da68a3e17fed402a956f21f1dd37",
+    "runtime_source_changed_by_this_recovery": false,
+    "production_default_changed": false
+  },
+  "prior_evidence": {
+    "submission_configuration_archive": {
+      "path": "/home/fansenwei/pssolver_rc4_plane_nyquist_h100_ac9f5df_20261007_v1",
+      "classification": "FAIL_H100_SUBMISSION_CONFIGURATION",
+      "manifest_sha256": "d11cd27cd50233a5323b5391ff77b72c40a685e4cac5f749329b13727b879d09"
+    },
+    "opaque_preflight_archive": {
+      "path": "/home/fansenwei/pssolver_rc4_plane_nyquist_h100_ac9f5df_20261007_recovery_v2",
+      "job_id": "10859008",
+      "classification": "FAIL_H100_PREFLIGHT_ASSERTION",
+      "manifest_sha256": "9246ad5fb835d7bad100e0cf4f75a1d51bf234a5470545138056ee1002b07608",
+      "formal_h100_submission_count": 1,
+      "scientific_commands_started": false
+    },
+    "analysis_archive": {
+      "path": "/home/fansenwei/pssolver_rc4_plane_nyquist_preflight_analysis_ac9f5df_20261007_v3",
+      "classification": "UNRESOLVED_REQUIRES_DECOMPOSED_H100_PREFLIGHT",
+      "checksums_verified": true
+    }
+  },
+  "versioned_helper": {
+    "path": "benchmarks/capture_rc4_h100_preflight.py",
+    "sha256": "66bfbb49959266dcc3f47bc57ca302bae2fbee9013cc28639c1fafbb98c45eeb",
+    "schema": "pssolver.rc4_1_2.h100_preflight.v1",
+    "pass_classification": "PASS_RC4_1_2_H100_PREFLIGHT",
+    "failure_classification": "FAIL_RC4_1_2_H100_PREFLIGHT",
+    "refuses_existing_output": true,
+    "strict_json": true,
+    "atomic_checkpoint_after_each_predicate": true,
+    "enforcement_after_complete_capture": true,
+    "naked_assertions": false
+  },
+  "tf32_policy": {
+    "capture_before_assignment": true,
+    "assignments": [
+      "torch.backends.cuda.matmul.allow_tf32 = False",
+      "torch.backends.cudnn.allow_tf32 = False"
+    ],
+    "capture_after_assignment": true,
+    "nvidia_tf32_override_alone_is_sufficient": false
+  },
+  "predicates": [
+    {
+      "id": "P01",
+      "meaning": "pssolver import resides under the exact Q worktree"
+    },
+    {
+      "id": "P02",
+      "meaning": "diagnostic import resides under the exact Q worktree"
+    },
+    {
+      "id": "P03",
+      "meaning": "torch CUDA is available"
+    },
+    {
+      "id": "P04",
+      "meaning": "exactly one CUDA device is visible"
+    },
+    {
+      "id": "P05",
+      "meaning": "the allocated CUDA identity is cuda:0"
+    },
+    {
+      "id": "P06",
+      "meaning": "the allocated GPU name contains H100"
+    },
+    {
+      "id": "P07",
+      "meaning": "CUDA matmul TF32 is disabled after explicit assignment"
+    },
+    {
+      "id": "P08",
+      "meaning": "cuDNN TF32 is disabled after explicit assignment"
+    }
+  ],
+  "local_tests": {
+    "synthetic_preflight_tests": 5,
+    "targeted_passed": 76,
+    "full_suite_passed": 2790,
+    "full_suite_deselected_cuda_only": 7,
+    "full_suite_subtests_passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "full_suite_elapsed_seconds": 203.69
+  },
+  "authorization": {
+    "helper_implementation_complete": true,
+    "push_after_cpu_gate_authorized": true,
+    "new_h100_submission_authorized": false,
+    "automatic_retry": false,
+    "b5_complete": false,
+    "eligible_for_rc4_2_planning": false,
+    "eligible_for_default_promotion": false,
+    "eligible_for_release": false
+  },
+  "scope": {
+    "pssolver_runtime_modified": false,
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false,
+    "scientific_thresholds_modified": false,
+    "profile_contract_modified": false
+  }
+}
