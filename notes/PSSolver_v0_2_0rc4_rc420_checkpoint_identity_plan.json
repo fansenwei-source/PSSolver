@@ -1,0 +1,485 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.2.0 checkpoint and dynamics identity migration plan",
+  "phase": "RC4.2.0",
+  "classification": "PASS_RC4_2_CHECKPOINT_IDENTITY_PLANNING",
+  "status": "RC4_2_PLANNING_FROZEN_IMPLEMENTATION_NOT_AUTHORIZED",
+  "baseline": {
+    "released_baseline": {
+      "release": "v0.2.0rc3",
+      "commit": "5071d73a00e0d19be62ebd39edf9918818d1267a"
+    },
+    "planning_parent": "9e32739ca3b67c5cb50b097b671da3a1236a5ec6",
+    "branch": "fix/v0.2.0rc4-audit",
+    "rc4_1_complete": true,
+    "rc4_1_closure_record": "notes/PSSolver_v0_2_0rc4_rc412_h100_closure.json",
+    "rc4_1_closure_record_sha256": "75b006aebdf5af11e645078d1709ce15a274094fde12d0ce154bc9709081c694",
+    "known_issues_record": "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json",
+    "known_issues_record_sha256": "3e30469d7de61365100a740e5228a2989ff0fac8d69bcef9f2819dc96cd6b0e8"
+  },
+  "issues": ["B10", "B22", "N3", "N5", "N6"],
+  "decision": {
+    "checkpoint_compatibility_authority": "explicit_dynamics_and_state_contracts_not_whole_run_identity",
+    "exact_restart_definition": "restoring the checkpoint produces the same next-step map and persistent algorithmic state, modulo qualified device rounding",
+    "same_dynamics_different_device": "accept",
+    "same_dynamics_different_fresh_initializer": "accept",
+    "different_forward_dynamics": "reject_or_explicit_state_migration_never_exact_restart",
+    "different_derivative_or_adjoint_dynamics": "reject_for_functional_exact_restart",
+    "unknown_legacy_schema_or_digest": "reject_fail_closed",
+    "cross_runtime_path": "retain_existing_rejection_unless_separately_qualified",
+    "silent_identity_normalization": false,
+    "hash_reversal_or_guessing": false
+  },
+  "identity_layers": [
+    {
+      "name": "run_provenance",
+      "purpose": "reproduce the original invocation",
+      "includes": [
+        "requested device token",
+        "allocated device",
+        "initial seed or snapshot source",
+        "output and invocation policy"
+      ],
+      "checkpoint_compatibility_gate": false
+    },
+    {
+      "name": "forward_dynamics",
+      "purpose": "identify the physical next-state map",
+      "includes": [
+        "model and material",
+        "geometry and physical boundary data",
+        "discretization and timestep",
+        "spectral storage and transform convention",
+        "Nyquist and Hermitian projection semantics",
+        "lifting representation and linear correction",
+        "forward pressure and zero-mode semantics"
+      ],
+      "excludes": [
+        "requested or allocated device",
+        "fresh initial seed or snapshot path",
+        "fresh_initial_remainder_conditioning",
+        "output directory and save cadence"
+      ],
+      "checkpoint_compatibility_gate": true
+    },
+    {
+      "name": "derivative_dynamics",
+      "purpose": "identify JVP, VJP, custom adjoint, and implicit-solve transpose semantics",
+      "includes": [
+        "functional runtime kind",
+        "gradient algorithm",
+        "Channel even-grid Nyquist transpose convention",
+        "inner-solve gradient policy"
+      ],
+      "applies_to": "functional checkpoints",
+      "checkpoint_compatibility_gate": true
+    },
+    {
+      "name": "state_layout",
+      "purpose": "identify durable tensor meaning, component order, shape, dtype, and spectral representation",
+      "checkpoint_compatibility_gate": true
+    },
+    {
+      "name": "backend_restart",
+      "purpose": "identify persistent algorithmic state and reconstructible caches",
+      "checkpoint_compatibility_gate": true
+    },
+    {
+      "name": "materialization_provenance",
+      "purpose": "record execution location without changing compatibility",
+      "includes": ["device", "allocator", "runtime import identity"],
+      "checkpoint_compatibility_gate": false
+    }
+  ],
+  "dynamics_components": {
+    "plane": {
+      "family": "plane_complete_stress_beris_edwards",
+      "required_version_fields": [
+        "q_evolution",
+        "stokes_nyquist",
+        "lifting_equation",
+        "spectral_refresh"
+      ],
+      "device_is_provenance_only": true,
+      "fresh_initial_remainder_conditioning_is_provenance_only": true,
+      "prescribed_lift_and_linear_correction_remain_dynamics": true
+    },
+    "periodic": {
+      "family": "periodic_complete_stress_beris_edwards",
+      "required_version_fields": [
+        "q_evolution",
+        "hermitian_projection",
+        "stokes_nyquist",
+        "spectral_refresh"
+      ],
+      "full_complex_repaired_semantics": "complete_conjugate_pair_projection_each_step",
+      "hermitian_half_repaired_semantics": "self_conjugate_stored_planes_projection_each_step"
+    },
+    "channel": {
+      "family": "channel_complete_stress_beris_edwards",
+      "required_version_fields": [
+        "q_evolution",
+        "forward_stokes_nyquist",
+        "pressure_warm_start",
+        "spectral_refresh"
+      ],
+      "functional_additional_version_fields": [
+        "pressure_transpose_nyquist",
+        "implicit_pressure_adjoint"
+      ]
+    }
+  },
+  "legacy_schema_policy": {
+    "registry_is_independent_of_live_identity_objects": true,
+    "registry_key": [
+      "checkpoint_family",
+      "format_version",
+      "source_release_generation",
+      "runtime_path",
+      "applicability_class"
+    ],
+    "legacy_digest_generation": "frozen_versioned_canonicalizer_with_content_addressed_oracles",
+    "forbidden_implementation": "copy_current_metadata_then_delete_or_rename_fields",
+    "legacy_checkpoint_with_only_an_opaque_hash": "may_not_cross_a_removed_field_without_authenticated_source_spec_or_explicit_upgrade_record",
+    "unknown_versions": "reject_before_tensor_load_or_target_mutation",
+    "frozen_release_generations": {
+      "rc1": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1",
+      "rc2": "2bbe21e88fec318787fc31dc0a82bca5a171c024",
+      "rc3": "5071d73a00e0d19be62ebd39edf9918818d1267a"
+    }
+  },
+  "cross_version_restart_matrix": [
+    {
+      "id": "M01",
+      "family": "plane",
+      "source": "rc4_vnext",
+      "target": "rc4_vnext",
+      "difference": "requested_or_allocated_device_only",
+      "expected": "accept_exact_restart",
+      "covers": ["B22"]
+    },
+    {
+      "id": "M02",
+      "family": "plane_lifted",
+      "source": "rc4_vnext",
+      "target": "rc4_vnext",
+      "difference": "fresh_initial_remainder_conditioning_only",
+      "expected": "accept_exact_restart",
+      "covers": ["N5"]
+    },
+    {
+      "id": "M03",
+      "family": "plane_lifted",
+      "source": "rc4_vnext",
+      "target": "rc4_vnext",
+      "difference": "prescribed_lift_or_linear_correction",
+      "expected": "reject_before_tensor_load_and_target_mutation",
+      "covers": ["N5"]
+    },
+    {
+      "id": "M04",
+      "family": "plane_lifted",
+      "source": "rc1",
+      "target": "rc4_vnext",
+      "difference": "pre_B8_lifting_dynamics",
+      "expected": "reject_exact_restart_by_forward_dynamics_version",
+      "covers": ["N5"]
+    },
+    {
+      "id": "M05",
+      "family": "plane_unlifted",
+      "source": "rc1_or_rc2_or_rc3",
+      "target": "rc4_vnext",
+      "difference": "RC4_1_even_periodic_nyquist_applicable",
+      "expected": "reject_exact_restart_by_forward_dynamics_version",
+      "covers": ["B22"]
+    },
+    {
+      "id": "M06",
+      "family": "plane_unlifted",
+      "source": "rc1_or_rc2_or_rc3",
+      "target": "rc4_vnext",
+      "difference": "RC4_1_nyquist_change_proven_inapplicable_and_all_other_dynamics_equal",
+      "expected": "accept_through_frozen_legacy_reader",
+      "covers": ["B22"]
+    },
+    {
+      "id": "M07",
+      "family": "periodic_full_complex",
+      "source": "rc1_pre_Hermitian_repair",
+      "target": "rc4_vnext",
+      "difference": "forward_Hermitian_projection_dynamics",
+      "expected": "reject_exact_restart_allow_only_separately_qualified_state_migration",
+      "covers": ["N6"]
+    },
+    {
+      "id": "M08",
+      "family": "periodic_hermitian_half",
+      "source": "rc1",
+      "target": "rc4_vnext",
+      "difference": "repair_proven_inapplicable_and_rc1_rc2_oracle_byte_identical",
+      "expected": "accept_through_frozen_legacy_reader",
+      "covers": ["N6"]
+    },
+    {
+      "id": "M09",
+      "family": "periodic",
+      "source": "rc2_or_rc3_post_Hermitian_repair",
+      "target": "rc4_vnext",
+      "difference": "identity_schema_only",
+      "expected": "accept_through_frozen_legacy_reader",
+      "covers": ["B10", "N6"]
+    },
+    {
+      "id": "M10",
+      "family": "channel_production_even_periodic_grid",
+      "source": "rc1",
+      "target": "rc4_vnext",
+      "difference": "pre_Nyquist_forward_dynamics",
+      "expected": "reject_exact_restart_by_forward_dynamics_version",
+      "covers": ["N3"]
+    },
+    {
+      "id": "M11",
+      "family": "channel_production_odd_periodic_grid",
+      "source": "rc1",
+      "target": "rc4_vnext",
+      "difference": "Nyquist_change_proven_inapplicable_and_all_other_dynamics_equal",
+      "expected": "accept_through_frozen_legacy_reader",
+      "covers": ["N3"]
+    },
+    {
+      "id": "M12",
+      "family": "channel_production",
+      "source": "rc2_or_rc3",
+      "target": "rc4_vnext",
+      "difference": "identity_schema_only",
+      "expected": "accept_through_frozen_legacy_reader",
+      "covers": ["N3"]
+    },
+    {
+      "id": "M13",
+      "family": "channel_functional_even_periodic_grid",
+      "source": "pre_rc3_pressure_transpose_fix",
+      "target": "rc4_vnext",
+      "difference": "derivative_dynamics",
+      "expected": "reject_functional_exact_restart_or_use_explicit_state_only_migration",
+      "covers": ["B10", "N3"]
+    },
+    {
+      "id": "M14",
+      "family": "periodic_functional",
+      "source": "0.1-provisional_pre_Hermitian_repair",
+      "target": "functional_API_1_0_rc4",
+      "difference": "forward_dynamics",
+      "expected": "explicit_reprojection_state_migration_not_exact_restart",
+      "covers": ["B10", "N6"]
+    },
+    {
+      "id": "M15",
+      "family": "all",
+      "source": "unknown_or_unregistered_schema",
+      "target": "rc4_vnext",
+      "difference": "unresolved",
+      "expected": "reject_before_tensor_load_and_target_mutation",
+      "covers": ["B10", "B22", "N3", "N5", "N6"]
+    },
+    {
+      "id": "M16",
+      "family": "all",
+      "source": "different_runtime_path",
+      "target": "rc4_vnext",
+      "difference": "runtime_path",
+      "expected": "retain_existing_rejection",
+      "covers": []
+    }
+  ],
+  "legacy_opaque_hash_constraint": {
+    "problem": "Plane, Periodic, and Channel legacy headers persist a digest but not the complete identity payload",
+    "consequence": "a removed device or initializer field cannot be recovered from the digest",
+    "direct_read_rule": "accept only when a frozen legacy canonicalizer can reproduce the exact stored digest from authenticated target and source metadata",
+    "upgrade_tool_rule": "cross-field migration requires an explicit source run specification, verifies the old digest first, emits a new checkpoint without mutating the source, and records migration provenance",
+    "guess_source_device_or_initializer": false
+  },
+  "validation_order": [
+    "metadata JSON and metadata checksum",
+    "checkpoint family and format version",
+    "registered legacy reader or current schema",
+    "runtime family and runtime path",
+    "forward dynamics identity",
+    "derivative dynamics identity for functional state",
+    "state layout identity",
+    "backend restart identity",
+    "lifting dynamics identity",
+    "tensor manifest filenames and checksums",
+    "tensor shape, dtype, and finite values",
+    "construct complete copy or migration plan",
+    "first target mutation",
+    "restore progress and rebuild declared derived caches"
+  ],
+  "pre_mutation_contract": {
+    "target_tensors_unchanged_on_every_rejection": true,
+    "persistent_solver_state_unchanged_on_every_rejection": true,
+    "completed_steps_unchanged_on_every_rejection": true,
+    "no_partial_output_or_migrated_checkpoint": true,
+    "negative_gates": [
+      "unknown format version",
+      "unregistered legacy identity",
+      "forward dynamics mismatch",
+      "derivative dynamics mismatch",
+      "state layout mismatch",
+      "backend restart mismatch",
+      "lifting dynamics mismatch",
+      "tensor checksum mismatch",
+      "tensor shape or dtype mismatch"
+    ]
+  },
+  "implementation_slices": [
+    {
+      "id": "RC4.2.0",
+      "name": "freeze_identity_and_compatibility_contract",
+      "authorized": true,
+      "implemented": true,
+      "runtime_change": false,
+      "h100_required": false
+    },
+    {
+      "id": "RC4.2.1",
+      "name": "add_typed_identity_layers_and_frozen_legacy_registry",
+      "authorized": false,
+      "implemented": false,
+      "runtime_change": false,
+      "h100_required": false
+    },
+    {
+      "id": "RC4.2.2",
+      "name": "migrate_Plane_checkpoint_identity_and_legacy_upgrade_path",
+      "authorized": false,
+      "implemented": false,
+      "runtime_change": true,
+      "h100_required": false
+    },
+    {
+      "id": "RC4.2.3",
+      "name": "version_Periodic_and_Channel_forward_dynamics",
+      "authorized": false,
+      "implemented": false,
+      "runtime_change": true,
+      "h100_required": false
+    },
+    {
+      "id": "RC4.2.4",
+      "name": "freeze_functional_identity_registry_and_derivative_dynamics",
+      "authorized": false,
+      "implemented": false,
+      "runtime_change": true,
+      "h100_required": false,
+      "consumer_requalification_required": true
+    },
+    {
+      "id": "RC4.2.5",
+      "name": "installed_wheel_cross_version_CPU_closure",
+      "authorized": false,
+      "implemented": false,
+      "runtime_change": false,
+      "h100_required": false
+    },
+    {
+      "id": "RC4.2.6",
+      "name": "single_H100_cross_device_checkpoint_smoke_if_GPU_portability_is_claimed",
+      "authorized": false,
+      "implemented": false,
+      "runtime_change": false,
+      "h100_required": true
+    }
+  ],
+  "qualification": {
+    "required_provider_CPU_gates": [
+      "cross_version_restart_matrix",
+      "pre_mutation_rejection",
+      "continuous_vs_restart_equivalence",
+      "legacy_oracle_digest_freeze",
+      "full_CPU_suite"
+    ],
+    "required_installed_wheel_gates": [
+      "current_checkpoint_round_trip",
+      "registered_legacy_acceptance",
+      "incompatible_legacy_rejection",
+      "upgrade_tool_source_immutability"
+    ],
+    "single_H100_scope": [
+      "CPU_checkpoint_to_CUDA_restore",
+      "CUDA_checkpoint_to_CPU_restore",
+      "same_dynamics_device_token_independence",
+      "no_profile_or_performance_claim"
+    ],
+    "functional_identity_change_triggers_PSSolver_Control": true,
+    "consumer_required_gates": [
+      "installed_wheel_checkpoint_round_trip",
+      "frozen_periodic_and_channel_identity_oracles",
+      "checkpointed_vs_full_history_gradient",
+      "legacy_reader_or_migration_negative_gates"
+    ]
+  },
+  "reviewed_source_sha256": {
+    "pssolver/configuration/plane_beris_edwards.py": "fba7cbc608781b9fea31f721e983f75d6923d2ed8e5f87224748c83e15ea55cd",
+    "pssolver/configuration/plane_beris_edwards_schema_v1.py": "c31ecb04659f7cdc18bcc43db81ddc1db2f695bfd07ed8bed08d4a9af80440d6",
+    "pssolver/configuration/simulation.py": "e36d2ab3c0b9c99483c41afd6e69d82e5302f3d00012bd8c1919b9a378696319",
+    "pssolver/configuration/periodic_beris_edwards.py": "b4b70ba694c12a387bee99ebf57d5060788457e81074ecf69d7fd3b168051998",
+    "pssolver/configuration/channel_beris_edwards.py": "4a3c92fcfac6da71e869240a88fb17511857be9d37d1e73fdfef4b3181a7c456",
+    "pssolver/workflows/plane_checkpoint.py": "c2c5112084fc3cf3552c16c221cafd7a9c341940b88c59534a81e0db9a685eb3",
+    "pssolver/workflows/periodic_checkpoint.py": "a70808c7a66f489b1292204cc39a1390a449bcf1dc0d8a57a8058e34f687a91d",
+    "pssolver/workflows/channel_checkpoint.py": "cb70a2a570a7c0260825e58a71ee003f71e0d1d666a2727bd88dad34672e9316",
+    "pssolver/functional/versioning.py": "9df32260b0667bd59c4328e721c4602e7ece8d43824823ea7d99683273e3cec5",
+    "pssolver/functional/periodic_checkpoint.py": "7d4d239b6ed07b3cb482d915bb1577955d127a86c06053b0af8f0544d74ebc1a",
+    "pssolver/functional/channel_checkpoint.py": "93c6706930b68b4847868dcc6bc517f55c9a2e34af20ec65f11d9a1cdeba42fb",
+    "pssolver/runtime/periodic_beris_edwards.py": "5a35ea35ec684bcfec9b837395d268ac9ee377a4ef33a40d6772f973f1c947a6",
+    "pssolver/runtime/channel_beris_edwards.py": "394ad02c61c6db4676e1e55fc2fca6faf23325246db7c1909e0b564f48e65e72",
+    "pssolver/runtime/static_lifting.py": "5f9de4683ea2ba10cba5de41480da546cbdd4e29a651d8b47925dc103ccf0270"
+  },
+  "local_verification": {
+    "targeted": "21 passed",
+    "full": "2804 passed, 7 deselected, 8 subtests passed",
+    "git_diff_check": "pass",
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected_cuda_only": 7,
+    "full_suite_elapsed_seconds": 204.11
+  },
+  "scope": {
+    "runtime_source_modified": false,
+    "checkpoint_reader_or_writer_modified": false,
+    "public_API_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "rc4_2_planning_authorized": true,
+    "rc4_2_planning_complete": true,
+    "rc4_2_1_implementation_authorized": false,
+    "rc4_2_implementation_authorized": false,
+    "legacy_checkpoint_rewrite_authorized": false,
+    "PSSolver_Control_change_authorized": false,
+    "H100_authorized": false,
+    "rc4_3_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false,
+    "production_default_changed": false
+  },
+  "not_authorized": [
+    "checkpoint format or identity implementation",
+    "legacy checkpoint in-place rewrite",
+    "silent acceptance of unknown legacy identity",
+    "cross-runtime restart expansion",
+    "lifting mathematics change",
+    "pressure solver contract change",
+    "PSSolver-Control modification",
+    "nematics3d modification",
+    "H100 submission",
+    "merge, tag, release, or production-default promotion"
+  ]
+}

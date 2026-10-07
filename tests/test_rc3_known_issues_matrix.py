@@ -127,6 +127,10 @@ def test_rc41_progress_closes_only_b5_and_authorizes_only_rc42_planning():
             "notes/PSSolver_v0_2_0rc4_rc412_h100_closure.json"
         ),
         "eligible_for_rc4_2_planning": True,
+        "rc4_2_planning_complete": True,
+        "rc4_2_plan_record": (
+            "notes/PSSolver_v0_2_0rc4_rc420_checkpoint_identity_plan.json"
+        ),
         "rc4_2_implementation_authorized": False,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,

@@ -58,4 +58,4 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 ## 下一项实现
 
-`rc4.1_plane_nyquist` 已完成，B5 已转为 `closed_verified`。下一项只授权规划 `rc4.2_checkpoint_identity`；在单独冻结 RC4.2 合同前，不实施 checkpoint identity 改动，也不并行修改 lifting 或 pressure contract，不改变生产默认值。
+`rc4.1_plane_nyquist` 已完成，B5 已转为 `closed_verified`。RC4.2.0 规划合同现已写入 `PSSolver_v0_2_0rc4_rc420_checkpoint_identity_plan.json`，冻结了分层身份、rc1/rc2/rc3 接受或拒绝矩阵、pre-mutation 拒绝顺序和分阶段迁移路径。当前仍未授权 RC4.2.1 实现，也不授权并行修改 lifting 或 pressure contract、改变生产默认值、自动 merge 或发布。
