@@ -11,6 +11,8 @@ include notes/pssolver_v0_2_0_rc1.md
 include notes/pssolver_v0_2_0_rc1.json
 include notes/pssolver_v0_2_0_rc2.md
 include notes/pssolver_v0_2_0_rc2.json
+include notes/pssolver_v0_2_0_rc3.md
+include notes/pssolver_v0_2_0_rc3.json
 include notes/architecture_v0_2/phase_8_final_closure.md
 include notes/architecture_v0_2/phase_8_final_closure.json
 include notes/architecture_v0_2/phase_9_p985_h100_closure.md

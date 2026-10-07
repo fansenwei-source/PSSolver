@@ -1,4 +1,4 @@
-"""Release-candidate contracts for PSSolver 0.2.0rc2."""
+"""Release-candidate contracts for PSSolver 0.2.0rc3."""
 
 from __future__ import annotations
 
@@ -14,10 +14,10 @@ PROJECT_ROOT = Path(__file__).parents[1]
 
 
 def test_release_candidate_version_and_public_metadata_agree():
-    assert pssolver.__version__ == "0.2.0rc2"
+    assert pssolver.__version__ == "0.2.0rc3"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.2.0rc2",
+        "version": "0.2.0rc3",
     }
 
 
@@ -28,22 +28,22 @@ def test_release_candidate_documents_and_machine_record_agree():
         encoding="utf-8"
     )
     release_notes = (
-        PROJECT_ROOT / "notes" / "pssolver_v0_2_0_rc2.md"
+        PROJECT_ROOT / "notes" / "pssolver_v0_2_0_rc3.md"
     ).read_text(encoding="utf-8")
     record = json.loads(
-        (PROJECT_ROOT / "notes" / "pssolver_v0_2_0_rc2.json").read_text(
+        (PROJECT_ROOT / "notes" / "pssolver_v0_2_0_rc3.json").read_text(
             encoding="utf-8"
         )
     )
 
-    assert "PSSolver 0.2.0rc2" in readme
-    assert "## 0.2.0rc2" in changelog
+    assert "PSSolver 0.2.0rc3" in readme
+    assert "## 0.2.0rc3" in changelog
     assert "PSSolver v0.2 support scope" in scope
-    assert "PSSolver 0.2.0rc2 release candidate" in release_notes
+    assert "PSSolver 0.2.0rc3 release candidate" in release_notes
     assert record["release"] == pssolver.__version__
-    assert record["status"] == "local_release_gates_passed"
+    assert record["status"] == "local_source_gates_passed"
     assert record["local_verification"]["complete_cpu_suite"] == (
-        "2733 passed, 6 deselected, 8 subtests passed"
+        "2744 passed, 6 deselected, 8 subtests passed"
     )
     assert record["local_verification"]["h100_release_smoke"] == "pending"
     assert record["artifacts"]["tag_created"] is False
@@ -52,7 +52,7 @@ def test_release_candidate_documents_and_machine_record_agree():
 
 def test_release_candidate_capability_counts_match_live_catalog():
     record = json.loads(
-        (PROJECT_ROOT / "notes" / "pssolver_v0_2_0_rc2.json").read_text(
+        (PROJECT_ROOT / "notes" / "pssolver_v0_2_0_rc3.json").read_text(
             encoding="utf-8"
         )
     )["public_contract"]
@@ -76,6 +76,8 @@ def test_release_candidate_documents_are_in_source_manifest():
         "notes/pssolver_v0_2_0_rc1.json",
         "notes/pssolver_v0_2_0_rc2.md",
         "notes/pssolver_v0_2_0_rc2.json",
+        "notes/pssolver_v0_2_0_rc3.md",
+        "notes/pssolver_v0_2_0_rc3.json",
         "notes/architecture_v0_2/phase_8_final_closure.json",
         "notes/architecture_v0_2/phase_9_p985_h100_closure.json",
         "notes/architecture_v0_2/phase_9_final_closure.json",

@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0rc3 — unreleased
+## 0.2.0rc3 — 2026-10-06
 
 Correctness and compatibility follow-up to `v0.2.0rc2`.
 
@@ -48,6 +48,41 @@ recommendation.  Periodic half-spectrum applications should continue to
 declare `hermitian_half` and their `hermitian_axis`.  Independent consumers,
 including PSSolver-Control, must migrate their declarations explicitly rather
 than relying on Provider defaults.
+
+### Consumer compatibility and qualification status
+
+- Record symbol-level compatibility for the six Beris--Edwards constitutive
+  helpers consumed by the independent planar Control adapter.  The record
+  explicitly does not claim whole-file equivalence.
+- PSSolver-Control migrated its five affected declarations, updated the
+  planar constitutive pin, and replaced its noise-sensitive Channel Taylor
+  adjudication with a resolution-aware gate.  Its source and local
+  installed-wheel CPU suites pass at Consumer commit
+  `03dbc39975978d9d0b7f84965015da24f9d3c206`.
+- PSSolver-Control remains an independent package and is not bundled into
+  PSSolver.  Final installed-wheel H100 Consumer qualification is still
+  required before the rc3 release is tagged.
+
+### Qualification evidence
+
+- The Channel pressure-adjoint correction at
+  `165d3b6a4007f8ebd46f3455ceb2a4d57667653c` passed its H100 correctness,
+  forward non-regression, performance, and memory qualification in Job
+  10857845.  The classification was
+  `PASS_V0_2_0RC3_N1_CHANNEL_PRESSURE_ADJOINT_H100`.
+- The explicit public-declaration migration is documented at
+  `bb4489075301176c78772b07d14021432d4ad2b1`; the Provider compatibility
+  record is at `4ca7a004c394135290285d60a4989cd5a1446240`.
+
+### Release boundary
+
+- Functional API version 1.0, batch-one scope, qualified model--geometry
+  combinations, runtime defaults, and checkpoint formats are unchanged.
+- This release does not authorize larger functional batches, Plane control,
+  optimizer campaigns, or scientific control conclusions.
+- A final rc3 source/wheel build, isolated install, and single-H100
+  Provider--Consumer smoke must pass before an annotated `v0.2.0rc3` tag or
+  GitHub prerelease is created.
 
 ## 0.2.0rc2 — 2026-10-06
 

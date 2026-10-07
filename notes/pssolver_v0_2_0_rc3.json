@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "release": "0.2.0rc3",
+  "date": "2026-10-06",
+  "status": "local_source_gates_passed",
+  "source": {
+    "rc2_tag_commit": "2bbe21e88fec318787fc31dc0a82bca5a171c024",
+    "channel_pressure_adjoint_commit": "165d3b6a4007f8ebd46f3455ceb2a4d57667653c",
+    "explicit_consumer_migration_record_commit": "bb4489075301176c78772b07d14021432d4ad2b1",
+    "constitutive_compatibility_record_commit": "4ca7a004c394135290285d60a4989cd5a1446240"
+  },
+  "public_contract": {
+    "package_version": "0.2.0rc3",
+    "functional_api_version": "1.0",
+    "models": 2,
+    "geometries": 3,
+    "boundary_policies": 8,
+    "qualified_combinations": 4,
+    "runtime_paths": 6,
+    "functional_batch_sizes": [
+      1
+    ]
+  },
+  "provider_n1_qualification": {
+    "classification": "PASS_V0_2_0RC3_N1_CHANNEL_PRESSURE_ADJOINT_H100",
+    "job_id": 10857845,
+    "manifest_entries": 48,
+    "manifest_sha256": "f7f7a0e5fc0cbe9377dde49a931dc05e9fb9c8df4c54cde88ae36662292387a6",
+    "even_grid_transpose_relative_difference": 1.0119190964154992e-16,
+    "tolerance_gradient_relative_error": 4.992954264586745e-10,
+    "fixed_12_gradient_relative_error": 3.6762268595141013e-06,
+    "r128_median_timestep_ratio": 0.979043405,
+    "r128_peak_allocated_ratio": 1.0,
+    "r128_peak_reserved_ratio": 1.0
+  },
+  "consumer": {
+    "repository": "https://github.com/fansenwei-source/PSSolver-Control",
+    "branch": "migration/pssolver-v0.2.0rc3-consumer-qualification",
+    "commit": "03dbc39975978d9d0b7f84965015da24f9d3c206",
+    "source_cpu_suite": "277 passed, 6 skipped",
+    "local_installed_wheel_cpu_suite": "277 passed, 6 skipped",
+    "installed_wheel_h100_qualification": "pending",
+    "bundled_into_pssolver": false
+  },
+  "release_boundary": {
+    "production_default_changed": false,
+    "functional_api_version_changed": false,
+    "checkpoint_format_changed": false,
+    "larger_batch_qualified": false,
+    "plane_control_qualified": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false,
+    "nematics3d_modified": false,
+    "pssolver_control_bundled": false
+  },
+  "artifacts": {
+    "final_rc3_source_distribution_built": false,
+    "final_rc3_wheel_built": false,
+    "final_rc3_isolated_install_verified": false,
+    "final_rc3_h100_release_smoke_complete": false,
+    "tag_created": false,
+    "github_prerelease_created": false,
+    "pypi_published": false
+  },
+  "local_verification": {
+    "complete_cpu_suite": "2744 passed, 6 deselected, 8 subtests passed",
+    "source_archive_content": "pending final rc3 build",
+    "wheel_content_and_metadata": "pending final rc3 build",
+    "pip_check": "pending final rc3 isolated install",
+    "source_shadow_import": null,
+    "installed_wheel_version": "pending final rc3 build",
+    "functional_api_version": "1.0",
+    "installed_wheel_cpu_smoke": "pending final rc3 build",
+    "h100_release_smoke": "pending"
+  }
+}
