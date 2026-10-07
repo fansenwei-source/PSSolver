@@ -13,6 +13,11 @@ RECORD = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc423_periodic_channel_checkpoint_identity.json"
 )
+SUCCESSOR_RECORD = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc424_functional_checkpoint_identity.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -25,6 +30,7 @@ def _sha256(relative: str) -> str:
 
 def test_rc423_record_binds_plan_parent_and_implementation_files():
     record = _record()
+    successor = json.loads(SUCCESSOR_RECORD.read_text(encoding="utf-8"))
     assert record["status"] == "complete"
     assert record["classification"] == (
         "PASS_RC4_2_3_PERIODIC_CHANNEL_PRODUCTION_LAYERED_"
@@ -37,7 +43,13 @@ def test_rc423_record_binds_plan_parent_and_implementation_files():
         record["git_identity"]["planning_record_sha256"]
     )
     for relative, expected in record["implementation_files"].items():
-        assert _sha256(relative) == expected
+        actual = _sha256(relative)
+        if actual == expected:
+            continue
+        registered = successor["historical_successor_sources"][relative]
+        assert registered["historical_sha256"] == expected
+        assert registered["current_sha256"] == actual
+        assert registered["introduced_by_phase"] == "RC4.2.4"
 
 
 def test_rc423_record_freezes_periodic_and_channel_v3_contracts():

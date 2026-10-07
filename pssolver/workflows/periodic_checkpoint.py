@@ -621,7 +621,7 @@ def _read_metadata(directory: Path) -> Mapping[str, object]:
         directory,
         metadata,
         bridge,
-        required=bridge_version == 2,
+        required=bridge_version in {2, 3},
     )
     return metadata
 

@@ -41,6 +41,8 @@ from .channel_activity_runtime import (
 from .channel_checkpoint import (
     CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION,
     ChannelActivityCheckpointBridge,
+    build_channel_functional_checkpoint_identity,
+    upgrade_channel_functional_checkpoint_directory,
 )
 
 from .contracts import (
@@ -92,6 +94,8 @@ from .versioning import (
 from .periodic_checkpoint import (
     PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION,
     PeriodicActivityCheckpointBridge,
+    build_periodic_functional_checkpoint_identity,
+    upgrade_periodic_functional_checkpoint_directory,
 )
 from .periodic_activity import (
     PeriodicActivityFunctionalRuntime,
@@ -128,6 +132,8 @@ __all__ = [
     "CHANNEL_ACTIVITY_RUNTIME_STAGE",
     "CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
     "ChannelActivityCheckpointBridge",
+    "build_channel_functional_checkpoint_identity",
+    "upgrade_channel_functional_checkpoint_directory",
     "ChannelActivityFunctionalRuntime",
     "ChannelActivityFunctionalRuntimeFactory",
     "ChannelImplicitPressureAdjoint",
@@ -168,6 +174,8 @@ __all__ = [
     "ChannelPressureTransposeProtocol",
     "PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
     "PeriodicActivityCheckpointBridge",
+    "build_periodic_functional_checkpoint_identity",
+    "upgrade_periodic_functional_checkpoint_directory",
     "PeriodicActivityFunctionalRuntime",
     "PeriodicActivityFunctionalRuntimeFactory",
     "DirectionalDerivativeCheck",

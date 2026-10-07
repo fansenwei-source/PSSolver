@@ -120,6 +120,21 @@ class _StableCheckpointBridge:
             directory,
         )
 
+    def migrate_legacy_checkpoint(
+        self,
+        source_directory: str | Path,
+        target_directory: str | Path,
+        *,
+        source_release_generation: str,
+    ) -> Path:
+        return _invoke(
+            "checkpoint_migration",
+            self._delegate.migrate_legacy_checkpoint,
+            source_directory,
+            target_directory,
+            source_release_generation=source_release_generation,
+        )
+
 
 class _StableFunctionalRuntime:
     """Protocol-only facade that prevents reliance on private runtime members."""

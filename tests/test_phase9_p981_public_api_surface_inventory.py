@@ -148,12 +148,12 @@ def test_protocol_and_checkpoint_versions_are_distinctly_recorded():
         "step_and_observe",
     }
     checkpoints = record["checkpoint_formats"]
-    # P9.8.1 is a historical inventory.  The Periodic bridge advanced to v2
-    # when the Hermitian state repair changed its timestep identity.
+    # P9.8.1 remains a historical inventory.  RC4.2.4 advances both live
+    # bridges to v3 while leaving this record unchanged.
     assert checkpoints["periodic"]["bridge_format_version"] == 1
-    assert PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION == 2
+    assert PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION == 3
     assert checkpoints["channel"]["bridge_format_version"] == 1
-    assert CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION == 2
+    assert CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION == 3
     assert checkpoints["same_integer_version_implies_same_format"] is False
     assert checkpoints["channel"]["pressure_persisted"] is False
     assert checkpoints["channel"]["pressure_warm_start_persisted"] is False

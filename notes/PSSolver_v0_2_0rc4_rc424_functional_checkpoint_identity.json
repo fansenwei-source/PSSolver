@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.2.4 functional derivative-aware checkpoint identity and explicit legacy state migration",
+  "phase": "RC4.2.4",
+  "status": "complete",
+  "classification": "PASS_RC4_2_4_FUNCTIONAL_DERIVATIVE_IDENTITY_AND_EXPLICIT_STATE_MIGRATION",
+  "git_identity": {
+    "implementation_parent": "18f255fef74721c3d6c62725d32af096e4bdb2c7",
+    "branch": "fix/v0.2.0rc4-audit",
+    "planning_record": "notes/PSSolver_v0_2_0rc4_rc420_checkpoint_identity_plan.json",
+    "planning_record_sha256": "88839d3d92b185876d3eb03e4933c26644fc0f2cae59061a66bb86a55d066b59",
+    "predecessor_record": "notes/PSSolver_v0_2_0rc4_rc423_periodic_channel_checkpoint_identity.json",
+    "predecessor_record_sha256": "211330513cb1f4aed0d563f2e0b1d32cfdeca8701d199e29f64b2d2f28d31363"
+  },
+  "functional_identity_contract": {
+    "identity_layers": [
+      "forward_dynamics",
+      "derivative_dynamics",
+      "state_layout",
+      "backend_restart"
+    ],
+    "periodic_derivative_semantics": "torch_autograd_direct_periodic_fourier_with_Hermitian_state_projection",
+    "channel_derivative_semantics": "custom_implicit_pressure_adjoint_with_even_periodic_Nyquist_transpose_projection",
+    "run_provenance_in_compatibility_digest": false,
+    "device_token_in_compatibility_digest": false,
+    "snapshot_identity_in_compatibility_digest": false,
+    "output_policy_in_compatibility_digest": false,
+    "unknown_identity_rejected_before_tensor_load": true,
+    "migration_provenance_validated_before_tensor_load": true,
+    "target_mutation_before_compatibility_acceptance": false
+  },
+  "periodic_functional": {
+    "current_bridge_format_version": 3,
+    "legacy_bridge_format_versions": [1, 2],
+    "rc1_direct_restore_allowed": false,
+    "qualified_post_repair_v2_direct_restore_allowed": true,
+    "migration_is_explicit": true,
+    "migration_writes_new_directory_only": true,
+    "source_checkpoint_immutability_verified": true,
+    "rc1_pre_Hermitian_repair": "state_only_migration_with_current_projector_reprojection",
+    "rc1_trajectory_equivalent": false,
+    "rc2_rc3_post_repair": "qualified_direct_reader_or_exact_legacy_upgrade",
+    "current_v3_production_exact_restore_allowed": false
+  },
+  "channel_functional": {
+    "current_bridge_format_version": 3,
+    "legacy_bridge_format_versions": [1, 2],
+    "legacy_direct_restore_allowed": false,
+    "migration_is_explicit": true,
+    "migration_writes_new_directory_only": true,
+    "source_checkpoint_immutability_verified": true,
+    "rc1_rc2_even_periodic_axis": "state_only_migration",
+    "rc1_rc2_even_periodic_axis_trajectory_equivalent": false,
+    "rc1_rc2_odd_periodic_axis": "exact_legacy_upgrade",
+    "rc3": "exact_legacy_upgrade"
+  },
+  "cross_version_matrix": {
+    "M13_channel_functional_even_periodic_grid_pre_rc3": "PASS_REJECT_DIRECT_EXACT_RESTART_AND_ALLOW_EXPLICIT_STATE_ONLY_MIGRATION",
+    "M14_periodic_functional_provisional_pre_Hermitian_repair": "PASS_EXPLICIT_REPROJECTION_STATE_MIGRATION_NOT_EXACT_RESTART",
+    "M15_unknown_or_unregistered_schema": "PASS_REJECT_BEFORE_TENSOR_LOAD_AND_TARGET_MUTATION",
+    "M16_different_runtime_path": "PASS_EXISTING_REJECTION_RETAINED"
+  },
+  "historical_successor_sources": {
+    "pssolver/workflows/periodic_checkpoint.py": {
+      "historical_sha256": "286ffb7ae48612dbda6192e8c1b24037b9dd488d1449ff4332fc877a6dd71d59",
+      "current_sha256": "e6a2642ff8a787813911cfd3ceb50a195e10cf117ecc899afe737872ed4b4cb6",
+      "introduced_by_phase": "RC4.2.4",
+      "reason": "Require functional provenance for the derivative-aware bridge v3 while preserving the production tensor carrier."
+    },
+    "pssolver/functional/periodic_checkpoint.py": {
+      "historical_sha256": "695e7c611d210038b0ba79f52e09bb8c2b903fcb2cd40b23175691d22abdb8d3",
+      "current_sha256": "dd742bb2da300d8b34a752d1ec476f77f2e0a45e6900b1bbd4f65c2a2cbae0de",
+      "introduced_by_phase": "RC4.2.4",
+      "reason": "Add Periodic derivative identity, bridge v3, and explicit non-exact reprojection migration."
+    },
+    "pssolver/functional/channel_checkpoint.py": {
+      "historical_sha256": "fe14d89f839f84dc39383b5d0ad44b9e0b2cea8d61851412fbce50e3cf6fe789",
+      "current_sha256": "b7b426c82798ca34aca0456b7a3f98732009f8a18e255f3da6ab9212cf6200ea",
+      "introduced_by_phase": "RC4.2.4",
+      "reason": "Add Channel derivative identity, bridge v3, and parity-aware explicit legacy migration."
+    }
+  },
+  "implementation_files": {
+    "pssolver/functional/checkpoint_identity.py": "49d693e52537f4687fd000bed815ea45da3ec7b5ec28b5f12f076fad3189a596",
+    "pssolver/functional/periodic_checkpoint.py": "dd742bb2da300d8b34a752d1ec476f77f2e0a45e6900b1bbd4f65c2a2cbae0de",
+    "pssolver/functional/channel_checkpoint.py": "b7b426c82798ca34aca0456b7a3f98732009f8a18e255f3da6ab9212cf6200ea",
+    "pssolver/functional/contracts.py": "4c4877432c28473ed011e9b1a97f7c53749168010197461e04ebcd1492718ef4",
+    "pssolver/functional/api.py": "8c5b21e0b34fcac6d28b90767ffacfb3bd0d906aa7ca6c451d321bb4a37f9c24",
+    "pssolver/functional/periodic_activity.py": "e157e28112d889cc3117e277eae4ef199058f17627df92fa0bdf78aff2a3dcff",
+    "pssolver/functional/versioning.py": "cdb12d80984da344128e2307747b419408deeda5fbc404be248bef0c25d234c5",
+    "pssolver/functional/__init__.py": "789cd197015f14efbc80785017a55d7d7f5daea2b128445720a217ee8ba14fb3",
+    "pssolver/workflows/periodic_checkpoint.py": "e6a2642ff8a787813911cfd3ceb50a195e10cf117ecc899afe737872ed4b4cb6",
+    "tests/test_rc4_functional_checkpoint_identity.py": "a82cc4d0da50b4ebf645245850bbd94fe3f30d9b13d40f5ab6ea8d05ac4969f2"
+  },
+  "adapted_regression_tests": {
+    "tests/test_phase9_p93_replay_checkpoint_bridge.py": "8f0c1564207d1eba03b62d4112b0ccadf3e87033c33bba242c3f218d6939a30c",
+    "tests/test_phase9_p974_channel_functional_runtime.py": "21dd6f86f0b3b43cc32404a678d76113efc468ac13caf47887137f40e86dee39",
+    "tests/test_phase9_p981_public_api_surface_inventory.py": "092d9e17d6600233cb7f2fd8a491d33aa2f9e393a4c9a1e7c44bdec1663b3260",
+    "tests/test_phase9_p982_stable_functional_api.py": "1b778c3df00bc848057db203654db8d274c7252a21bdf04dacb347d162cca617",
+    "tests/test_rc4_checkpoint_identity_primitives.py": "f72bc50a3bff3c8113b888b25eebf390f51fdf51be7a4691c47d9be3287d4319"
+  },
+  "local_verification": {
+    "focused_functional_identity_passed": 69,
+    "broader_functional_regression_passed": 59,
+    "long_horizon_Hermitian_stability_passed": 3,
+    "long_horizon_Hermitian_stability_elapsed_seconds": 105.58,
+    "full_suite_passed": 2873,
+    "full_suite_skipped_optional": 0,
+    "full_suite_deselected_cuda_only": 7,
+    "full_suite_subtests_passed": 8,
+    "full_suite_elapsed_seconds": 200.15,
+    "failed": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass"
+  },
+  "scope": {
+    "functional_checkpoint_format_changed": true,
+    "functional_derivative_identity_changed": true,
+    "stable_functional_API_version_changed": false,
+    "public_legacy_migration_entry_added": true,
+    "production_checkpoint_exact_acceptance_broadened": false,
+    "cross_runtime_restart_expanded": false,
+    "runtime_hot_path_changed": false,
+    "PSSolver_Control_modified": false,
+    "PSSolver_Control_requalification_required": true,
+    "PSSolver_Control_requalification_executed": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "rc4_2_4_complete": true,
+    "eligible_for_rc4_2_5_planning": true,
+    "rc4_2_5_implementation_authorized": false,
+    "PSSolver_Control_change_authorized": false,
+    "H100_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false
+  }
+}

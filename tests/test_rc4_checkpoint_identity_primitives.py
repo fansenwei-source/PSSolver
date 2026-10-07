@@ -340,7 +340,7 @@ def test_registry_resolution_is_exact_and_unknown_keys_fail_closed():
         resolve_legacy_identity_schema(known.key.to_metadata())
 
 
-def test_identity_primitives_are_schema_independent_and_production_is_wired():
+def test_identity_primitives_are_schema_independent_and_all_rc42_families_are_wired():
     tree = ast.parse(MODULE.read_text(encoding="utf-8"))
     imports = []
     for node in ast.walk(tree):
@@ -359,13 +359,18 @@ def test_identity_primitives_are_schema_independent_and_production_is_wired():
         source = (ROOT / relative).read_text(encoding="utf-8")
         assert "pssolver.io.checkpoint_identity" in source
 
-    untouched_readers = [
-        "pssolver/workflows/channel_checkpoint.py",
+    functional_identity = (
+        ROOT / "pssolver/functional/checkpoint_identity.py"
+    ).read_text(encoding="utf-8")
+    assert "pssolver.io.checkpoint_identity" in functional_identity
+    for relative in (
         "pssolver/functional/periodic_checkpoint.py",
         "pssolver/functional/channel_checkpoint.py",
-    ]
-    for relative in untouched_readers:
+    ):
         source = (ROOT / relative).read_text(encoding="utf-8")
-        assert "checkpoint_identity" not in source
+        assert ".checkpoint_identity" in source
+    assert "checkpoint_identity" not in (
+        ROOT / "pssolver/workflows/channel_checkpoint.py"
+    ).read_text(encoding="utf-8")
     assert "CheckpointCompatibilityIdentity" not in public_io.__all__
     assert "legacy_identity_registry" not in public_io.__all__

@@ -27,6 +27,12 @@ from pssolver.io.checkpoint import (
     verify_functional_checkpoint_provenance,
     write_functional_checkpoint_provenance,
 )
+from pssolver.io.checkpoint_identity import (
+    CheckpointFamily,
+    LegacyIdentityKey,
+    SourceReleaseGeneration,
+    resolve_legacy_identity_schema,
+)
 from pssolver.models.active_nematics import Q_COMPONENTS, VELOCITY_COMPONENTS
 from pssolver.runtime.channel_beris_edwards import (
     CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
@@ -47,17 +53,20 @@ from .errors import (
     FunctionalCheckpointIntegrityError,
     FunctionalCheckpointNotFoundError,
 )
+from .checkpoint_identity import build_channel_functional_checkpoint_identity
 from .versioning import (
     negotiate_functional_api_version,
     runtime_identity_sha256_for_api_version,
 )
 
 
-CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 2
+CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 3
 _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 1
+_LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_V2 = 2
 _FORMAT_KIND = "channel_activity_functional_checkpoint"
 _SOURCE_FUNCTIONAL_V1 = "channel_functional_bridge_v1"
 _SOURCE_FUNCTIONAL_V2 = "channel_functional_bridge_v2"
+_SOURCE_FUNCTIONAL_V3 = "channel_functional_bridge_v3"
 _SOURCE_PRODUCTION_V1 = "channel_production_v1"
 _SOURCE_PRODUCTION_V2 = "channel_production_v2"
 _SOURCE_PRODUCTION_V3 = "channel_production_v3"
@@ -129,6 +138,12 @@ class ChannelActivityCheckpointBridge:
             ) from exc
         self._state_layout = state_spec.to_metadata()
         self._state_layout_sha256 = _canonical_sha256(self._state_layout)
+        self._compatibility_identity = (
+            build_channel_functional_checkpoint_identity(
+                functional_identity=functional_identity,
+                state_spec=state_spec,
+            )
+        )
 
     @property
     def format_version(self) -> int:
@@ -139,34 +154,56 @@ class ChannelActivityCheckpointBridge:
         *,
         api_version: str = FUNCTIONAL_API_VERSION,
         format_version: int | None = None,
+        production_runtime_identity_sha256: str | None = None,
     ) -> dict[str, object]:
         negotiate_functional_api_version(
             api_version,
             purpose="checkpoint_read",
         )
-        return {
-            "format_version": (
-                self.format_version
-                if format_version is None
-                else format_version
-            ),
+        version = self.format_version if format_version is None else format_version
+        functional_sha256 = (
+            self._functional_identity_sha256
+            if api_version == FUNCTIONAL_API_VERSION
+            else runtime_identity_sha256_for_api_version(
+                self._functional_identity_metadata,
+                api_version,
+            )
+        )
+        production_sha256 = (
+            self._production_runtime_identity_sha256
+            if production_runtime_identity_sha256 is None
+            else _require_sha256(
+                production_runtime_identity_sha256,
+                "production_runtime_identity_sha256",
+            )
+        )
+        metadata = {
+            "format_version": version,
             "api_version": api_version,
             "runtime_kind": "channel_activity_batch_one",
-            "functional_runtime_identity_sha256": (
-                self._functional_identity_sha256
-                if api_version == FUNCTIONAL_API_VERSION
-                else runtime_identity_sha256_for_api_version(
-                    self._functional_identity_metadata,
-                    api_version,
-                )
-            ),
-            "production_runtime_identity_sha256": (
-                self._production_runtime_identity_sha256
-            ),
-            "state_layout": self._state_layout,
-            "state_layout_sha256": self._state_layout_sha256,
             "pressure_warm_start": "absent_functional_zero_start",
         }
+        if version == self.format_version:
+            metadata["checkpoint_compatibility_identity"] = (
+                self._compatibility_identity.to_metadata()
+            )
+            metadata["checkpoint_compatibility_sha256"] = (
+                self._compatibility_identity.canonical_sha256()
+            )
+            metadata["run_provenance"] = {
+                "functional_runtime_identity_sha256": functional_sha256,
+                "production_runtime_identity_sha256": production_sha256,
+            }
+        else:
+            metadata.update(
+                {
+                    "functional_runtime_identity_sha256": functional_sha256,
+                    "production_runtime_identity_sha256": production_sha256,
+                    "state_layout": self._state_layout,
+                    "state_layout_sha256": self._state_layout_sha256,
+                }
+            )
+        return metadata
 
     @staticmethod
     def _write_tensor(path: Path, value: torch.Tensor) -> dict[str, object]:
@@ -186,6 +223,21 @@ class ChannelActivityCheckpointBridge:
         state: FunctionalState,
         *,
         completed_steps: int,
+    ) -> Path:
+        return self._write_state_checkpoint(
+            directory,
+            state,
+            completed_steps=completed_steps,
+            migration_provenance=None,
+        )
+
+    def _write_state_checkpoint(
+        self,
+        directory: str | Path,
+        state: FunctionalState,
+        *,
+        completed_steps: int,
+        migration_provenance: Mapping[str, object] | None,
     ) -> Path:
         if (
             not isinstance(completed_steps, int)
@@ -222,6 +274,15 @@ class ChannelActivityCheckpointBridge:
                 "functional_bridge": self._bridge_metadata(),
                 "tensor_files": records,
             }
+            if migration_provenance is not None:
+                metadata["migration_provenance"] = json.loads(
+                    json.dumps(
+                        dict(migration_provenance),
+                        allow_nan=False,
+                        separators=(",", ":"),
+                        sort_keys=True,
+                    )
+                )
             metadata = seal_checkpoint_metadata(metadata)
             write_functional_checkpoint_provenance(
                 staging,
@@ -238,6 +299,221 @@ class ChannelActivityCheckpointBridge:
                 shutil.rmtree(staging)
             raise
         return target
+
+    def migrate_legacy_checkpoint(
+        self,
+        source_directory: str | Path,
+        target_directory: str | Path,
+        *,
+        source_release_generation: SourceReleaseGeneration | str,
+    ) -> Path:
+        """Upgrade legacy Channel state without claiming derivative continuity."""
+
+        try:
+            generation = SourceReleaseGeneration(source_release_generation)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("source_release_generation is invalid") from exc
+        source = Path(source_directory).expanduser().resolve()
+        target = Path(target_directory).expanduser().resolve()
+        if source == target:
+            raise ValueError("legacy migration must write a new directory")
+        metadata = self._metadata(source)
+        if metadata.get("format_kind") != _FORMAT_KIND:
+            raise FunctionalCheckpointCompatibilityError(
+                "source is not a Channel functional checkpoint",
+                operation="channel_checkpoint_migration",
+            )
+        expected_version = (
+            _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION
+            if generation is SourceReleaseGeneration.RC1
+            else _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_V2
+        )
+        if metadata.get("format_version") != expected_version:
+            raise FunctionalCheckpointCompatibilityError(
+                "legacy Channel functional format does not match source release",
+                operation="channel_checkpoint_migration",
+            )
+        verify_checkpoint_metadata(
+            metadata,
+            required=expected_version
+            == _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_V2,
+        )
+        bridge = metadata.get("functional_bridge")
+        verify_functional_checkpoint_provenance(
+            source,
+            metadata,
+            bridge,
+            required=expected_version
+            == _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_V2,
+        )
+        if not isinstance(bridge, Mapping):
+            raise FunctionalCheckpointCompatibilityError(
+                "legacy Channel functional bridge metadata is missing",
+                operation="channel_checkpoint_migration",
+            )
+        resolve_legacy_identity_schema(
+            LegacyIdentityKey(
+                checkpoint_family=CheckpointFamily.CHANNEL_FUNCTIONAL,
+                format_version=expected_version,
+                source_release_generation=generation,
+                runtime_path="channel_activity_batch_one",
+                applicability_class="configuration_dependent",
+            )
+        )
+        api_version = (
+            "0.1-provisional"
+            if generation is SourceReleaseGeneration.RC1
+            else FUNCTIONAL_API_VERSION
+        )
+        source_production_identity = _require_sha256(
+            bridge.get("production_runtime_identity_sha256"),
+            "production_runtime_identity_sha256",
+        )
+        expected_bridge = self._bridge_metadata(
+            api_version=api_version,
+            format_version=expected_version,
+            production_runtime_identity_sha256=source_production_identity,
+        )
+        if dict(bridge) != expected_bridge:
+            raise FunctionalCheckpointCompatibilityError(
+                "legacy Channel functional identity does not match frozen schema",
+                operation="channel_checkpoint_migration",
+            )
+        if (
+            generation is SourceReleaseGeneration.RC3
+            and source_production_identity
+            != self._production_runtime_identity_sha256
+        ):
+            raise FunctionalCheckpointCompatibilityError(
+                "legacy Channel forward identity does not match target",
+                operation="channel_checkpoint_migration",
+            )
+        completed = metadata.get("completed_steps")
+        if (
+            not isinstance(completed, int)
+            or isinstance(completed, bool)
+            or completed < 0
+        ):
+            raise ValueError("checkpoint completed_steps is invalid")
+        records = metadata.get("tensor_files")
+        if not isinstance(records, Mapping) or set(records) != {
+            "q_physical",
+            "q_spectral",
+        }:
+            raise ValueError("functional checkpoint tensor manifest is incomplete")
+
+        # The derivative applicability decision is made from the target's
+        # already-validated state contract, before opening either payload.
+        periodic_size = self._state_spec.components[0].shape[-3]
+        state_only = (
+            generation
+            in {SourceReleaseGeneration.RC1, SourceReleaseGeneration.RC2}
+            and periodic_size % 2 == 0
+        )
+        values = tuple(
+            self._load_tensor(source, records[name], name)
+            for name in ("q_physical", "q_spectral")
+        )
+        state = tuple(
+            value.to(device=spec.device)
+            for value, spec in zip(
+                values,
+                self._state_spec.components,
+                strict=True,
+            )
+        )
+        self._state_spec.validate(state)
+        return self._write_state_checkpoint(
+            target,
+            state,
+            completed_steps=completed,
+            migration_provenance={
+                "derivative_dynamics_change": (
+                    "pre_rc3_pressure_transpose_nyquist"
+                    if state_only
+                    else "proven_inapplicable_or_already_repaired"
+                ),
+                "migration_kind": (
+                    "state_only_migration"
+                    if state_only
+                    else "exact_legacy_upgrade"
+                ),
+                "periodic_axis_size": periodic_size,
+                "source_api_version": api_version,
+                "source_family": CheckpointFamily.CHANNEL_FUNCTIONAL.value,
+                "source_format_version": expected_version,
+                "source_release_generation": generation.value,
+                "trajectory_equivalent": not state_only,
+            },
+        )
+
+    def _validate_migration_provenance(
+        self,
+        provenance: object,
+    ) -> Mapping[str, object] | None:
+        if provenance is None:
+            return None
+        if not isinstance(provenance, Mapping) or set(provenance) != {
+            "derivative_dynamics_change",
+            "migration_kind",
+            "periodic_axis_size",
+            "source_api_version",
+            "source_family",
+            "source_format_version",
+            "source_release_generation",
+            "trajectory_equivalent",
+        }:
+            raise FunctionalCheckpointCompatibilityError(
+                "Channel migration provenance schema is invalid",
+                operation="channel_checkpoint_import",
+            )
+        try:
+            generation = SourceReleaseGeneration(
+                provenance["source_release_generation"]
+            )
+        except (TypeError, ValueError) as exc:
+            raise FunctionalCheckpointCompatibilityError(
+                "Channel migration source release is invalid",
+                operation="channel_checkpoint_import",
+            ) from exc
+        periodic_size = self._state_spec.components[0].shape[-3]
+        state_only = (
+            generation
+            in {SourceReleaseGeneration.RC1, SourceReleaseGeneration.RC2}
+            and periodic_size % 2 == 0
+        )
+        expected = {
+            "derivative_dynamics_change": (
+                "pre_rc3_pressure_transpose_nyquist"
+                if state_only
+                else "proven_inapplicable_or_already_repaired"
+            ),
+            "migration_kind": (
+                "state_only_migration"
+                if state_only
+                else "exact_legacy_upgrade"
+            ),
+            "periodic_axis_size": periodic_size,
+            "source_api_version": (
+                "0.1-provisional"
+                if generation is SourceReleaseGeneration.RC1
+                else FUNCTIONAL_API_VERSION
+            ),
+            "source_family": CheckpointFamily.CHANNEL_FUNCTIONAL.value,
+            "source_format_version": (
+                _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION
+                if generation is SourceReleaseGeneration.RC1
+                else _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_V2
+            ),
+            "source_release_generation": generation.value,
+            "trajectory_equivalent": not state_only,
+        }
+        if dict(provenance) != expected:
+            raise FunctionalCheckpointCompatibilityError(
+                "Channel migration provenance is inconsistent",
+                operation="channel_checkpoint_import",
+            )
+        return provenance
 
     @staticmethod
     def _metadata(directory: Path) -> Mapping[str, object]:
@@ -302,15 +578,15 @@ class ChannelActivityCheckpointBridge:
         metadata: Mapping[str, object],
     ) -> FunctionalCheckpointState:
         format_version = metadata.get("format_version")
-        if (
-            not isinstance(format_version, int)
-            or isinstance(format_version, bool)
-            or format_version
-            not in {
-                _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION,
-                self.format_version,
-            }
-        ):
+        if format_version in {
+            _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION,
+            _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_V2,
+        }:
+            raise FunctionalCheckpointCompatibilityError(
+                "legacy Channel functional checkpoint requires explicit migration",
+                operation="channel_checkpoint_import",
+            )
+        if format_version != self.format_version:
             raise FunctionalCheckpointCompatibilityError(
                 "unsupported Channel functional checkpoint version",
                 operation="channel_checkpoint_import",
@@ -326,15 +602,7 @@ class ChannelActivityCheckpointBridge:
             purpose="checkpoint_read",
         )
         bridge_version = bridge.get("format_version")
-        if (
-            not isinstance(bridge_version, int)
-            or isinstance(bridge_version, bool)
-            or bridge_version
-            not in {
-                _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION,
-                self.format_version,
-            }
-        ):
+        if bridge_version != self.format_version:
             raise FunctionalCheckpointCompatibilityError(
                 "unsupported Channel functional bridge version",
                 operation="channel_checkpoint_import",
@@ -348,14 +616,31 @@ class ChannelActivityCheckpointBridge:
             api_version=selection.requested,
             format_version=bridge_version,
         )
-        if dict(bridge) != expected:
+        observed = dict(bridge)
+        provenance = observed.get("run_provenance")
+        if not isinstance(provenance, Mapping) or set(provenance) != {
+            "functional_runtime_identity_sha256",
+            "production_runtime_identity_sha256",
+        }:
+            raise FunctionalCheckpointCompatibilityError(
+                "functional checkpoint run provenance is invalid",
+                operation="channel_checkpoint_import",
+            )
+        for key, value in provenance.items():
+            _require_sha256(value, key)
+        expected["run_provenance"] = dict(provenance)
+        if observed != expected:
             raise FunctionalCheckpointCompatibilityError(
                 "functional checkpoint identity or state layout does not match target",
                 operation="channel_checkpoint_import",
                 details={"source_api_version": selection.requested},
             )
-        current = bridge_version == self.format_version and not selection.legacy
-        source = _SOURCE_FUNCTIONAL_V2 if current else _SOURCE_FUNCTIONAL_V1
+        if selection.legacy:
+            raise FunctionalCheckpointCompatibilityError(
+                "legacy Channel functional API requires explicit migration",
+                operation="channel_checkpoint_import",
+            )
+        source = _SOURCE_FUNCTIONAL_V3
         completed = metadata.get("completed_steps")
         if (
             not isinstance(completed, int)
@@ -369,6 +654,9 @@ class ChannelActivityCheckpointBridge:
             "q_spectral",
         }:
             raise ValueError("functional checkpoint tensor manifest is incomplete")
+        migration = self._validate_migration_provenance(
+            metadata.get("migration_provenance")
+        )
         values = tuple(
             self._load_tensor(directory, records[name], name)
             for name in ("q_physical", "q_spectral")
@@ -384,17 +672,23 @@ class ChannelActivityCheckpointBridge:
             completed,
             source,
             FunctionalCheckpointCompatibility(
-                source_api_version=selection.requested,
+                source_api_version=(
+                    migration.get("source_api_version")
+                    if migration is not None
+                    and migration.get("migration_kind") == "state_only_migration"
+                    else selection.requested
+                ),
                 target_api_version=selection.effective,
                 reader=(
-                    selection.compatibility_reader
-                    or (
-                        "current_channel_functional_bridge_v2_reader"
-                        if current
-                        else "current_channel_functional_bridge_v1_reader"
-                    )
+                    "channel_state_only_migration_v3_reader"
+                    if migration is not None
+                    and migration.get("migration_kind") == "state_only_migration"
+                    else "current_channel_functional_bridge_v3_reader"
                 ),
-                exact_current_protocol=current,
+                exact_current_protocol=(
+                    migration is None
+                    or migration.get("migration_kind") != "state_only_migration"
+                ),
             ),
         )
 
@@ -605,7 +899,27 @@ class ChannelActivityCheckpointBridge:
         return self._import_production(directory, metadata)
 
 
+def upgrade_channel_functional_checkpoint_directory(
+    source_directory: str | Path,
+    target_directory: str | Path,
+    *,
+    bridge: ChannelActivityCheckpointBridge,
+    source_release_generation: SourceReleaseGeneration | str,
+) -> Path:
+    """Public non-in-place entry point for Channel functional migration."""
+
+    if not isinstance(bridge, ChannelActivityCheckpointBridge):
+        raise TypeError("bridge must be a ChannelActivityCheckpointBridge")
+    return bridge.migrate_legacy_checkpoint(
+        source_directory,
+        target_directory,
+        source_release_generation=source_release_generation,
+    )
+
+
 __all__ = [
     "CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
     "ChannelActivityCheckpointBridge",
+    "build_channel_functional_checkpoint_identity",
+    "upgrade_channel_functional_checkpoint_directory",
 ]

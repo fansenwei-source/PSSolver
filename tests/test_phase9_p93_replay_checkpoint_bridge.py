@@ -170,7 +170,7 @@ def test_p93_declares_bitwise_replay_and_versioned_bridge(tmp_path):
     assert runtime.capabilities.durable_checkpoint_bridge is True
     assert isinstance(runtime.checkpoint_bridge, FunctionalCheckpointBridgeProtocol)
     assert isinstance(runtime.checkpoint_bridge, PeriodicActivityCheckpointBridge)
-    assert runtime.checkpoint_bridge.format_version == 2
+    assert runtime.checkpoint_bridge.format_version == 3
 
 
 def test_p93_replay_is_bitwise_after_intervening_calls_and_fresh_construction(
@@ -210,7 +210,7 @@ def test_p93_replay_is_bitwise_after_intervening_calls_and_fresh_construction(
     assert simulation.specification == request.simulation
 
 
-def test_p93_functional_export_is_production_compatible_and_continues_bitwise(
+def test_p93_functional_export_is_v3_and_requires_explicit_production_migration(
     tmp_path,
 ):
     simulation, _, runtime = _runtime(tmp_path)
@@ -237,27 +237,24 @@ def test_p93_functional_export_is_production_compatible_and_continues_bitwise(
     _assert_state_equal(state, before)
     metadata = json.loads((directory / "checkpoint.json").read_text())
     assert metadata["format_version"] == 2
-    assert metadata["functional_bridge"]["format_version"] == 2
+    assert metadata["functional_bridge"]["format_version"] == 3
+    assert "checkpoint_compatibility_identity" in metadata["functional_bridge"]
     assert metadata["completed_steps"] == 3
 
     imported = runtime.checkpoint_bridge.import_checkpoint(directory)
     assert imported.completed_steps == 3
-    assert imported.source_format == "periodic_functional_bridge_v2"
+    assert imported.source_format == "periodic_functional_bridge_v3"
     _assert_state_equal(imported.state, state)
 
     run_spec, production = _production_adapter(simulation)
     checkpoint = load_periodic_checkpoint(directory)
-    restored = restore_periodic_checkpoint(
-        production,
-        checkpoint,
-        run_spec=run_spec,
-    )
-    assert restored == production.completed_steps == 3
-    _assert_state_equal(_adapter_state(production), state)
-
-    expected = runtime.step(state, uniform, 3)
-    production.advance(1)
-    _assert_state_equal(_adapter_state(production), expected)
+    with pytest.raises(ValueError, match="explicit identity upgrade"):
+        restore_periodic_checkpoint(
+            production,
+            checkpoint,
+            run_spec=run_spec,
+        )
+    assert production.completed_steps == 0
 
 
 def test_p93_imports_an_existing_production_checkpoint_without_repacking_loss(
@@ -287,11 +284,11 @@ def test_p93_imports_an_existing_production_checkpoint_without_repacking_loss(
     ("field", "replacement", "message"),
     (
         (
-            "functional_runtime_identity_sha256",
+            "checkpoint_compatibility_sha256",
             "0" * 64,
             "metadata checksum mismatch",
         ),
-        ("state_layout_sha256", "1" * 64, "metadata checksum mismatch"),
+        ("api_version", "9.9", "metadata checksum mismatch"),
     ),
 )
 def test_p93_bridge_identity_fails_before_any_tensor_payload_is_loaded(

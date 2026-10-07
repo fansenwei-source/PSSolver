@@ -19,7 +19,7 @@ FUNCTIONAL_CHECKPOINT_READ_API_VERSIONS = (
     FUNCTIONAL_API_VERSION,
     *FUNCTIONAL_LEGACY_CHECKPOINT_API_VERSIONS,
 )
-FUNCTIONAL_COMPATIBILITY_POLICY_VERSION = 2
+FUNCTIONAL_COMPATIBILITY_POLICY_VERSION = 3
 
 FunctionalVersionPurpose = Literal["construction", "checkpoint_read"]
 
@@ -175,12 +175,18 @@ def functional_protocol_provenance() -> dict[str, object]:
         },
         "compatibility_policy": {
             "version": FUNCTIONAL_COMPATIBILITY_POLICY_VERSION,
-            "legacy_checkpoint_schema_repair": False,
-            "periodic_bridge_current_format_version": 2,
+            "legacy_checkpoint_schema_repair": True,
+            "periodic_bridge_current_format_version": 3,
+            "channel_bridge_current_format_version": 3,
+            "legacy_migration": "explicit_non_in_place",
             "legacy_identity_schemas": {
-                "0.1-provisional": (
-                    "frozen_periodic_identity_before_hermitian_state_repair"
-                )
+                "0.1-provisional": [
+                    "frozen_periodic_identity_before_hermitian_state_repair",
+                    "frozen_channel_identity_before_derivative_versioning",
+                ],
+                "1.0_pre_rc4_functional_v2": (
+                    "frozen_release_generation_registry_required"
+                ),
             },
             "source_shadowing_allowed": False,
             "FunctionalCapabilities_alias": {

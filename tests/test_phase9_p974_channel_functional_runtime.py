@@ -327,13 +327,14 @@ def test_p974_checkpoint_round_trip_and_production_import(tmp_path):
     _assert_state_equal(state, before)
     _assert_state_equal(state, imported.state)
     assert imported.completed_steps == 1
-    assert imported.source_format == "channel_functional_bridge_v2"
+    assert imported.source_format == "channel_functional_bridge_v3"
     metadata = json.loads(
         (functional_directory / "checkpoint.json").read_text()
     )
     assert metadata["functional_bridge"]["pressure_warm_start"] == (
         "absent_functional_zero_start"
     )
+    assert "checkpoint_compatibility_identity" in metadata["functional_bridge"]
 
     run_spec, production = _production_adapter(simulation)
     production.synchronize_for_observation()
@@ -367,7 +368,7 @@ def test_p974_checkpoint_rejects_identity_checksum_and_existing_target(
     metadata_path = target / "checkpoint.json"
     metadata = json.loads(metadata_path.read_text())
     metadata["functional_bridge"][
-        "functional_runtime_identity_sha256"
+        "checkpoint_compatibility_sha256"
     ] = "0" * 64
     metadata_path.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n")
     with pytest.raises(ValueError, match="metadata checksum mismatch"):

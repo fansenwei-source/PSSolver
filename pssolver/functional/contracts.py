@@ -542,6 +542,14 @@ class FunctionalCheckpointBridgeProtocol(Protocol):
         directory: str | Path,
     ) -> FunctionalCheckpointState: ...
 
+    def migrate_legacy_checkpoint(
+        self,
+        source_directory: str | Path,
+        target_directory: str | Path,
+        *,
+        source_release_generation: str,
+    ) -> Path: ...
+
 
 @dataclass(frozen=True, slots=True)
 class FunctionalRuntimeConstructionRequest:

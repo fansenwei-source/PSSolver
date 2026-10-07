@@ -323,6 +323,7 @@ class PeriodicActivityFunctionalRuntime:
                 production_runtime_identity_sha256
             ),
             backend_restart=adapter.backend_restart_metadata(),
+            projector=adapter.projector,
         )
 
     @property
