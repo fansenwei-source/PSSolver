@@ -212,7 +212,7 @@ def test_p35_solver_reset_rebinds_reallocated_storage(tmp_path, monkeypatch):
     assert rebound.progress.completed_steps == 2
 
 
-def test_p35_checkpoint_v1_restarts_in_both_version_directions(
+def test_p35_checkpoint_v2_restarts_in_both_integrator_directions(
     tmp_path,
     monkeypatch,
 ):
@@ -226,7 +226,7 @@ def test_p35_checkpoint_v1_restarts_in_both_version_directions(
     old_source.advance(2)
     old_checkpoint = capture_plane_checkpoint(
         old_source,
-        runtime_identity_sha256=spec.runtime_identity_sha256(),
+        run_spec=spec,
     )
     new_target = _build_with_integrator(
         spec,
@@ -236,7 +236,7 @@ def test_p35_checkpoint_v1_restarts_in_both_version_directions(
     assert restore_plane_checkpoint(
         new_target,
         old_checkpoint,
-        runtime_identity_sha256=spec.runtime_identity_sha256(),
+        run_spec=spec,
     ) == 2
 
     new_source = _build_with_integrator(
@@ -247,7 +247,7 @@ def test_p35_checkpoint_v1_restarts_in_both_version_directions(
     new_source.advance(2)
     new_checkpoint = capture_plane_checkpoint(
         new_source,
-        runtime_identity_sha256=spec.runtime_identity_sha256(),
+        run_spec=spec,
     )
     old_target = _build_with_integrator(
         spec,
@@ -257,7 +257,7 @@ def test_p35_checkpoint_v1_restarts_in_both_version_directions(
     assert restore_plane_checkpoint(
         old_target,
         new_checkpoint,
-        runtime_identity_sha256=spec.runtime_identity_sha256(),
+        run_spec=spec,
     ) == 2
 
     old_source.advance(2)
@@ -266,4 +266,4 @@ def test_p35_checkpoint_v1_restarts_in_both_version_directions(
     old_target.advance(2)
     _assert_storage_equal(old_source, new_target)
     _assert_storage_equal(new_source, old_target)
-    assert old_checkpoint.format_version == new_checkpoint.format_version == 1
+    assert old_checkpoint.format_version == new_checkpoint.format_version == 2

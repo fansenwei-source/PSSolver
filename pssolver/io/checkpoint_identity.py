@@ -174,6 +174,27 @@ class CheckpointIdentityLayer:
     def to_metadata(self) -> dict[str, object]:
         return json.loads(self._canonical)
 
+    @classmethod
+    def from_metadata(
+        cls,
+        metadata: Mapping[str, object],
+    ) -> CheckpointIdentityLayer:
+        if not isinstance(metadata, Mapping):
+            raise TypeError("identity layer metadata must be a mapping")
+        expected = {"kind", "payload", "schema_version", "version"}
+        if set(metadata) != expected:
+            raise ValueError("identity layer metadata keys are invalid")
+        try:
+            kind = IdentityLayerKind(metadata["kind"])
+        except (TypeError, ValueError) as exc:
+            raise ValueError("identity layer kind is invalid") from exc
+        return cls(
+            kind=kind,
+            version=metadata["version"],
+            payload=metadata["payload"],
+            schema_version=metadata["schema_version"],
+        )
+
 
 @dataclass(frozen=True, slots=True)
 class CheckpointCompatibilityIdentity:
@@ -255,6 +276,50 @@ class CheckpointCompatibilityIdentity:
 
     def to_metadata(self) -> dict[str, object]:
         return json.loads(self._canonical)
+
+    @classmethod
+    def from_metadata(
+        cls,
+        metadata: Mapping[str, object],
+    ) -> CheckpointCompatibilityIdentity:
+        if not isinstance(metadata, Mapping):
+            raise TypeError("compatibility identity metadata must be a mapping")
+        expected = {
+            "backend_restart",
+            "derivative_dynamics",
+            "family",
+            "forward_dynamics",
+            "runtime_path",
+            "schema_version",
+            "state_layout",
+        }
+        if set(metadata) != expected:
+            raise ValueError("compatibility identity metadata keys are invalid")
+        try:
+            family = CheckpointFamily(metadata["family"])
+        except (TypeError, ValueError) as exc:
+            raise ValueError("checkpoint family is invalid") from exc
+        derivative_metadata = metadata["derivative_dynamics"]
+        derivative = (
+            None
+            if derivative_metadata is None
+            else CheckpointIdentityLayer.from_metadata(derivative_metadata)
+        )
+        return cls(
+            family=family,
+            runtime_path=metadata["runtime_path"],
+            forward_dynamics=CheckpointIdentityLayer.from_metadata(
+                metadata["forward_dynamics"]
+            ),
+            derivative_dynamics=derivative,
+            state_layout=CheckpointIdentityLayer.from_metadata(
+                metadata["state_layout"]
+            ),
+            backend_restart=CheckpointIdentityLayer.from_metadata(
+                metadata["backend_restart"]
+            ),
+            schema_version=metadata["schema_version"],
+        )
 
 
 @dataclass(frozen=True, slots=True)

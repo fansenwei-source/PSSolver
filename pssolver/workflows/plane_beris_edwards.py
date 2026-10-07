@@ -104,9 +104,7 @@ class PlaneBerisEdwardsWorkflow:
     def _save_checkpoint(self) -> None:
         checkpoint = capture_plane_checkpoint(
             self.adapter,
-            runtime_identity_sha256=(
-                self.run_spec.runtime_identity_sha256()
-            ),
+            run_spec=self.run_spec,
         )
         write_plane_checkpoint(
             self.output_directory / f"checkpoint_{checkpoint.completed_steps}",
@@ -125,7 +123,7 @@ class PlaneBerisEdwardsWorkflow:
         start = restore_plane_checkpoint(
             self.adapter,
             checkpoint,
-            runtime_identity_sha256=self.run_spec.runtime_identity_sha256(),
+            run_spec=self.run_spec,
         )
         self.metadata["restart"] = {
             "kind": "same_backend_plane_workflow_checkpoint",

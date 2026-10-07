@@ -82,8 +82,10 @@ from pssolver.runtime.package_construction import (
     build_package_simulation_runtime,
 )
 from pssolver.workflows import (
+    PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PlaneBerisEdwardsWorkflow,
     PlaneWorkflowResult,
+    plane_run_spec_dynamics_identity,
     read_plane_checkpoint_header,
 )
 from pssolver.models.active_nematics import (
@@ -664,11 +666,46 @@ def run_plane_beris_edwards(
             raise ValueError(
                 "cross-runtime Plane checkpoint restart is unsupported"
             )
-        if (
-            restart_header.runtime_identity_sha256
-            != run_spec.runtime_identity_sha256()
+        if restart_header.format_version == (
+            PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION
         ):
-            raise ValueError("checkpoint runtime identity does not match target")
+            raise ValueError(
+                "legacy Plane checkpoint requires explicit identity upgrade"
+            )
+        checkpoint_identity = restart_header.compatibility_identity
+        if checkpoint_identity is None:
+            raise ValueError("checkpoint compatibility identity is missing")
+        checkpoint_forward = (
+            checkpoint_identity.forward_dynamics.to_metadata()["payload"]
+        )
+        checkpoint_run_spec = checkpoint_forward.get("run_spec_dynamics")
+        target_run_spec = plane_run_spec_dynamics_identity(
+            run_spec
+        ).to_metadata()
+        if checkpoint_run_spec != target_run_spec:
+            raise ValueError(
+                "checkpoint forward dynamics does not match target"
+            )
+        checkpoint_lifting = checkpoint_forward.get("lifting_dynamics")
+        if lifting_plan is None:
+            target_lifting_plan_sha256 = None
+        else:
+            target_lifting_plan_sha256 = lifting_plan.canonical_sha256()
+        if checkpoint_lifting is None:
+            checkpoint_lifting_plan_sha256 = None
+        elif isinstance(checkpoint_lifting, dict):
+            lifting_identity = checkpoint_lifting.get("lifting")
+            checkpoint_lifting_plan_sha256 = (
+                lifting_identity.get("plan_sha256")
+                if isinstance(lifting_identity, dict)
+                else None
+            )
+        else:
+            checkpoint_lifting_plan_sha256 = None
+        if checkpoint_lifting_plan_sha256 != target_lifting_plan_sha256:
+            raise ValueError(
+                "checkpoint static lifting dynamics does not match target"
+            )
         if save_start_step > restart_header.completed_steps + steps:
             raise ValueError(
                 "save_start_step must not exceed the absolute final step"

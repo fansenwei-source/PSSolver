@@ -34,7 +34,7 @@ FLAT_WORKFLOW_READS = {
     "steps",
     "zero_mode_policy",
 }
-FACADE_METHOD_READS = {"runtime_identity_sha256"}
+FACADE_METHOD_READS = set()
 
 
 class _Adapter:
@@ -196,10 +196,8 @@ def test_diagnostics_output_and_checkpoint_values_are_frozen(
             ("write_observation", directory, value, save_hydrodynamics)
         )
 
-    def capture_checkpoint(adapter, *, runtime_identity_sha256):
-        calls.append(
-            ("checkpoint", adapter, runtime_identity_sha256)
-        )
+    def capture_checkpoint(adapter, *, run_spec):
+        calls.append(("checkpoint", adapter, run_spec))
         return checkpoint
 
     def write_checkpoint(directory, value):
@@ -246,7 +244,7 @@ def test_diagnostics_output_and_checkpoint_values_are_frozen(
         ("diagnostic", adapter, 2, spec.eta, expected_friction),
         ("observation", adapter, 2),
         ("write_observation", tmp_path.resolve(), observation, True),
-        ("checkpoint", adapter, spec.runtime_identity_sha256()),
+        ("checkpoint", adapter, spec),
         (
             "write_checkpoint",
             tmp_path.resolve() / "checkpoint_3",

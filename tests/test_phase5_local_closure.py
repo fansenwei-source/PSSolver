@@ -132,20 +132,20 @@ def test_compiled_checkpoint_restart_matches_continuous_and_rejects_cross_path(
     tmp_path,
 ):
     continuous_spec, continuous = _compiled(tmp_path, "continuous")
-    _, source = _compiled(tmp_path, "source")
-    _, resumed = _compiled(tmp_path, "resumed")
-    _, legacy = _legacy(tmp_path, "legacy_target")
+    source_spec, source = _compiled(tmp_path, "source")
+    resumed_spec, resumed = _compiled(tmp_path, "resumed")
+    legacy_spec, legacy = _legacy(tmp_path, "legacy_target")
 
     continuous.advance(100)
     source.advance(37)
     checkpoint = capture_plane_checkpoint(
         source,
-        runtime_identity_sha256=continuous_spec.runtime_identity_sha256(),
+        run_spec=source_spec,
     )
     restore_plane_checkpoint(
         resumed,
         checkpoint,
-        runtime_identity_sha256=continuous_spec.runtime_identity_sha256(),
+        run_spec=resumed_spec,
     )
     resumed.advance(63)
 
@@ -155,7 +155,7 @@ def test_compiled_checkpoint_restart_matches_continuous_and_rejects_cross_path(
         restore_plane_checkpoint(
             legacy,
             checkpoint,
-            runtime_identity_sha256=continuous_spec.runtime_identity_sha256(),
+            run_spec=legacy_spec,
         )
     assert torch.equal(legacy.fields.spatial, legacy_before)
     assert legacy.completed_steps == 0

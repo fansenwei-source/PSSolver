@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 from pssolver.io.checkpoint_identity import (
     LEGACY_IDENTITY_SCHEMAS,
@@ -26,6 +27,16 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _git_blob_sha256(commit: str, relative: str) -> str:
+    value = subprocess.run(
+        ["git", "show", f"{commit}:{relative}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    return hashlib.sha256(value).hexdigest()
+
+
 def test_rc421_record_binds_the_frozen_plan_and_implementation_files():
     record = _record()
     assert record["status"] == "complete"
@@ -37,9 +48,11 @@ def test_rc421_record_binds_the_frozen_plan_and_implementation_files():
     )
     plan = ROOT / record["git_identity"]["planning_record"]
     assert _sha256(plan) == record["git_identity"]["planning_record_sha256"]
-    module = ROOT / record["implementation"]["module"]
     fixture = ROOT / record["legacy_registry"]["fixture"]
-    assert _sha256(module) == record["implementation"]["module_sha256"]
+    assert _git_blob_sha256(
+        "1cbb8167dc9fbbaa57cad5b118766618d8ebb3bb",
+        record["implementation"]["module"],
+    ) == record["implementation"]["module_sha256"]
     assert _sha256(fixture) == record["legacy_registry"]["fixture_sha256"]
 
 

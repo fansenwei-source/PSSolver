@@ -269,9 +269,11 @@ def test_checkpoint_header_is_small_and_backend_explicit(tmp_path):
     output = tmp_path / "canary"
     _run(output, "separated_canary", 2, "--checkpoint-interval", "2")
     header = read_plane_checkpoint_header(output / "checkpoint_2")
+    assert header.format_version == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION
     assert header.runtime_path.value == "separated_canary"
     assert header.completed_steps == 2
     assert len(header.runtime_identity_sha256) == 64
+    assert len(header.compatibility_identity_sha256) == 64
 
 
 def test_o3_workflow_is_not_promoted_through_generic_or_channel_api():

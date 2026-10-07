@@ -2,8 +2,8 @@
 
 P5.4 introduced this adapter while the compiled runtime was disconnected.
 P5.5 keeps it private and composes it behind the explicit ``compiled_v2``
-runtime adapter.  The existing Plane observation and checkpoint-v1 schemas
-remain unchanged.
+runtime adapter.  RC4.2.2 binds its checkpoint surface to the same layered
+Plane format-v2 identity used by the legacy production adapter.
 """
 
 from __future__ import annotations
@@ -27,8 +27,11 @@ from pssolver.runtime.plane_compiled_v2_step import (
 )
 from pssolver.runtime.plane_legacy import build_legacy_plane_runtime
 from pssolver.workflows.plane_checkpoint import (
+    PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PlaneWorkflowCheckpoint,
+    _validate_plane_checkpoint_embedded_identity,
+    build_plane_checkpoint_compatibility_identity,
 )
 from pssolver.workflows.plane_observation import (
     PlaneDiagnostic,
@@ -111,6 +114,7 @@ class PlaneCompiledV2WorkflowAdapter:
         "_binding",
         "_integrator",
         "_program",
+        "_run_spec",
         "_views",
     )
 
@@ -120,11 +124,16 @@ class PlaneCompiledV2WorkflowAdapter:
         self,
         binding: PlaneCompiledV2BindingPlan,
         program: PlaneCompiledEulerStepProgram,
+        run_spec: PlaneBerisEdwardsRunSpec,
     ) -> None:
         if not isinstance(binding, PlaneCompiledV2BindingPlan):
             raise TypeError("binding must be a PlaneCompiledV2BindingPlan")
         if not isinstance(program, PlaneCompiledEulerStepProgram):
             raise TypeError("program must be a PlaneCompiledEulerStepProgram")
+        if not isinstance(run_spec, PlaneBerisEdwardsRunSpec):
+            raise TypeError("run_spec must be a PlaneBerisEdwardsRunSpec")
+        if run_spec.runtime_path is not PlaneRuntimePath.COMPILED_V2:
+            raise ValueError("compiled workflow requires compiled_v2 run spec")
         if program.state is not binding.state:
             raise ValueError("compiled workflow state identity is incompatible")
         if (
@@ -147,6 +156,7 @@ class PlaneCompiledV2WorkflowAdapter:
         self._binding = binding
         self._program = program
         self._integrator = integrator
+        self._run_spec = run_spec
         self._views = views
 
     @property
@@ -313,6 +323,17 @@ class PlaneCompiledV2WorkflowAdapter:
         self.synchronize_for_observation()
         fields = self._binding.fields
         progress = self._program.state.progress
+        spatial = {name: fields[name] for name in Q_COMPONENTS}
+        spectral = {name: fields[f"{name}.hat"] for name in Q_COMPONENTS}
+        backend = self.backend_restart_metadata()
+        identity = build_plane_checkpoint_compatibility_identity(
+            self._run_spec,
+            runtime_path=_CHECKPOINT_PATH_CARRIER,
+            evolved_spatial=spatial,
+            evolved_spectral=spectral,
+            backend_restart=backend,
+            lifting_restart=None,
+        )
         return PlaneWorkflowCheckpoint(
             format_version=PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
             runtime_path=_CHECKPOINT_PATH_CARRIER,
@@ -321,11 +342,10 @@ class PlaneCompiledV2WorkflowAdapter:
             spectral_refresh_interval=progress.refresh_interval,
             integrator_step_count=progress.refresh_step_count,
             integrator_refresh_count=progress.refresh_count,
-            evolved_spatial={name: fields[name] for name in Q_COMPONENTS},
-            evolved_spectral={
-                name: fields[f"{name}.hat"] for name in Q_COMPONENTS
-            },
-            backend_restart=self.backend_restart_metadata(),
+            evolved_spatial=spatial,
+            evolved_spectral=spectral,
+            backend_restart=backend,
+            compatibility_identity=identity,
         )
 
     def validate_checkpoint(
@@ -336,18 +356,15 @@ class PlaneCompiledV2WorkflowAdapter:
 
         if not isinstance(checkpoint, PlaneWorkflowCheckpoint):
             raise TypeError("checkpoint must be a PlaneWorkflowCheckpoint")
+        if checkpoint.format_version == PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+            raise ValueError(
+                "legacy Plane checkpoint requires explicit identity upgrade"
+            )
         if checkpoint.format_version != PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
             raise ValueError("unsupported Plane workflow checkpoint version")
         if checkpoint.runtime_path is not _CHECKPOINT_PATH_CARRIER:
             raise ValueError("cross-runtime Plane checkpoint restart is unsupported")
-        if checkpoint.runtime_identity_sha256 != (
-            self._binding.runtime_identity_sha256
-        ):
-            raise ValueError("checkpoint runtime identity does not match target")
-        if dict(checkpoint.backend_restart) != self.backend_restart_metadata():
-            raise ValueError(
-                "checkpoint backend restart contract does not match target"
-            )
+        _validate_plane_checkpoint_embedded_identity(checkpoint)
         if self._program.workspace.active:
             raise RuntimeError("cannot restore during an active timestep")
 
@@ -369,6 +386,20 @@ class PlaneCompiledV2WorkflowAdapter:
                         f"checkpoint tensor for {name}{suffix} is non-finite"
                     )
                 copies.append((target, source))
+        target_identity = build_plane_checkpoint_compatibility_identity(
+            self._run_spec,
+            runtime_path=_CHECKPOINT_PATH_CARRIER,
+            evolved_spatial={name: fields[name] for name in Q_COMPONENTS},
+            evolved_spectral={
+                name: fields[f"{name}.hat"] for name in Q_COMPONENTS
+            },
+            backend_restart=self.backend_restart_metadata(),
+            lifting_restart=None,
+        )
+        if checkpoint.compatibility_identity != target_identity:
+            raise ValueError(
+                "checkpoint compatibility identity does not match target"
+            )
         return PlaneCompiledCheckpointRestorePlan(
             checkpoint=checkpoint,
             copies=tuple(copies),
@@ -548,7 +579,7 @@ def build_plane_compiled_v2_runtime(
         projector=projector,
     )
     program = build_plane_compiled_v2_step_program(binding)
-    workflow = PlaneCompiledV2WorkflowAdapter(binding, program)
+    workflow = PlaneCompiledV2WorkflowAdapter(binding, program, run_spec)
     return _CompiledV2PlaneRuntimeAdapter(solver, projector, workflow)
 
 

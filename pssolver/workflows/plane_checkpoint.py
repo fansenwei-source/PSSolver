@@ -15,7 +15,16 @@ from types import MappingProxyType
 import numpy as np
 import torch
 
-from pssolver.configuration import PlaneRuntimePath
+from pssolver.configuration import PlaneBerisEdwardsRunSpec, PlaneRuntimePath
+from pssolver.io.checkpoint_identity import (
+    CheckpointCompatibilityIdentity,
+    CheckpointFamily,
+    CheckpointIdentityLayer,
+    IdentityLayerKind,
+    LegacyIdentityKey,
+    SourceReleaseGeneration,
+    resolve_legacy_identity_schema,
+)
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime import (
     PlaneRuntimeAdapterProtocol,
@@ -24,7 +33,8 @@ from pssolver.runtime import (
 )
 
 
-PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1
+PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1
+PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 2
 
 
 def _sha256(path: Path) -> str:
@@ -65,9 +75,16 @@ def _clone_tensors(
 class PlaneCheckpointHeader:
     """Small header that can reject cross-backend restart before arrays load."""
 
+    format_version: int
     runtime_path: PlaneRuntimePath
-    runtime_identity_sha256: str
     completed_steps: int
+    runtime_identity_sha256: str | None = None
+    compatibility_identity: CheckpointCompatibilityIdentity | None = None
+
+    @property
+    def compatibility_identity_sha256(self) -> str | None:
+        identity = self.compatibility_identity
+        return None if identity is None else identity.canonical_sha256()
 
 
 @dataclass(frozen=True, slots=True)
@@ -85,9 +102,14 @@ class PlaneWorkflowCheckpoint:
     evolved_spectral: Mapping[str, torch.Tensor]
     backend_restart: Mapping[str, object]
     lifting_restart: Mapping[str, object] | None = None
+    compatibility_identity: CheckpointCompatibilityIdentity | None = None
+    migration_provenance: Mapping[str, object] | None = None
 
     def __post_init__(self) -> None:
-        if self.format_version != PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        if self.format_version not in {
+            PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+            PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        }:
             raise ValueError("unsupported Plane workflow checkpoint version")
         if not isinstance(self.runtime_path, PlaneRuntimePath):
             raise TypeError("checkpoint runtime_path must be PlaneRuntimePath")
@@ -159,12 +181,42 @@ class PlaneWorkflowCheckpoint:
                 "lifting_restart",
                 MappingProxyType(json.loads(encoded)),
             )
+        identity = self.compatibility_identity
+        if self.format_version == PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+            if identity is not None:
+                raise ValueError("legacy Plane checkpoints cannot carry v2 identity")
+        else:
+            if not isinstance(identity, CheckpointCompatibilityIdentity):
+                raise TypeError("format-v2 Plane checkpoint identity is missing")
+            if identity.family is not CheckpointFamily.PLANE_WORKFLOW:
+                raise ValueError("Plane checkpoint identity has the wrong family")
+            if identity.runtime_path != self.runtime_path.value:
+                raise ValueError("Plane checkpoint identity runtime path differs")
+        migration = self.migration_provenance
+        if migration is not None:
+            if not isinstance(migration, Mapping):
+                raise TypeError("migration_provenance must be a mapping or None")
+            try:
+                encoded = json.dumps(
+                    dict(migration),
+                    allow_nan=False,
+                    separators=(",", ":"),
+                    sort_keys=True,
+                )
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    "migration provenance is not JSON-compatible"
+                ) from exc
+            object.__setattr__(
+                self,
+                "migration_provenance",
+                MappingProxyType(json.loads(encoded)),
+            )
 
     def to_metadata(self) -> dict[str, object]:
-        metadata = {
+        metadata: dict[str, object] = {
             "format_version": self.format_version,
             "runtime_path": self.runtime_path.value,
-            "runtime_identity_sha256": self.runtime_identity_sha256,
             "completed_steps": self.completed_steps,
             "integrator": {
                 "spectral_refresh_interval": self.spectral_refresh_interval,
@@ -174,24 +226,219 @@ class PlaneWorkflowCheckpoint:
             "evolved_components": list(Q_COMPONENTS),
             "backend_restart": dict(self.backend_restart),
         }
+        if self.format_version == PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+            metadata["runtime_identity_sha256"] = self.runtime_identity_sha256
+        else:
+            identity = self.compatibility_identity
+            if identity is None:  # pragma: no cover - guarded by __post_init__
+                raise RuntimeError("format-v2 identity unexpectedly missing")
+            metadata["compatibility_identity"] = identity.to_metadata()
+            metadata["compatibility_identity_sha256"] = (
+                identity.canonical_sha256()
+            )
+            metadata["run_provenance"] = {
+                "legacy_runtime_identity_sha256": (
+                    self.runtime_identity_sha256
+                )
+            }
         if self.lifting_restart is not None:
             metadata["lifting_restart"] = dict(self.lifting_restart)
+        if self.migration_provenance is not None:
+            metadata["migration_provenance"] = dict(
+                self.migration_provenance
+            )
         return metadata
+
+
+def _plane_run_spec_dynamics(
+    run_spec: PlaneBerisEdwardsRunSpec,
+) -> dict[str, object]:
+    if not isinstance(run_spec, PlaneBerisEdwardsRunSpec):
+        raise TypeError("run_spec must be a PlaneBerisEdwardsRunSpec")
+    metadata = json.loads(
+        json.dumps(
+            run_spec.runtime_identity_metadata(),
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        )
+    )
+    metadata.pop("runtime_path")
+    controls = metadata["runtime_controls"]
+    controls.pop("device")
+    return metadata
+
+
+def plane_forward_dynamics_identity(
+    run_spec: PlaneBerisEdwardsRunSpec,
+    *,
+    lifting_restart: Mapping[str, object] | None,
+) -> CheckpointIdentityLayer:
+    """Build the Plane next-step identity without run provenance."""
+
+    lifting = _lifting_compatibility_identity(lifting_restart)
+    run_spec_dynamics = plane_run_spec_dynamics_identity(run_spec)
+    return CheckpointIdentityLayer(
+        kind=IdentityLayerKind.FORWARD_DYNAMICS,
+        version="plane.forward.v2",
+        payload={
+            "run_spec_dynamics": run_spec_dynamics.to_metadata(),
+            "lifting_dynamics": lifting,
+            "lifting_equation_version": (
+                "none" if lifting is None else "static_affine_dirichlet.v1"
+            ),
+        },
+    )
+
+
+def plane_run_spec_dynamics_identity(
+    run_spec: PlaneBerisEdwardsRunSpec,
+) -> CheckpointIdentityLayer:
+    """Return the allocation-free part of Plane forward dynamics."""
+
+    return CheckpointIdentityLayer(
+        kind=IdentityLayerKind.FORWARD_DYNAMICS,
+        version="plane.run_spec_dynamics.v2",
+        payload={
+            "run_spec": _plane_run_spec_dynamics(run_spec),
+            "dynamics_versions": {
+                "q_evolution": "complete_stress_beris_edwards.v1",
+                "stokes_nyquist": "plane_free_slip.periodic_nyquist_zero.v2",
+                "spectral_refresh": "semi_implicit_euler_refresh.v1",
+            },
+        },
+    )
+
+
+def _plane_state_layout_identity(
+    evolved_spatial: Mapping[str, torch.Tensor],
+    evolved_spectral: Mapping[str, torch.Tensor],
+) -> CheckpointIdentityLayer:
+    def layout(values: Mapping[str, torch.Tensor]) -> dict[str, object]:
+        return {
+            name: {
+                "shape": list(values[name].shape),
+                "dtype": str(values[name].dtype),
+            }
+            for name in Q_COMPONENTS
+        }
+
+    return CheckpointIdentityLayer(
+        kind=IdentityLayerKind.STATE_LAYOUT,
+        version="plane.state.v2",
+        payload={
+            "component_order": list(Q_COMPONENTS),
+            "spatial": layout(evolved_spatial),
+            "spectral": layout(evolved_spectral),
+        },
+    )
+
+
+def _plane_backend_restart_identity(
+    backend_restart: Mapping[str, object],
+) -> CheckpointIdentityLayer:
+    normalized = json.loads(
+        json.dumps(
+            dict(backend_restart),
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        )
+    )
+    for provenance_key in (
+        "runtime_identity_sha256",
+        "format_v1_runtime_path_carrier",
+        "compiled_runtime_identity",
+    ):
+        normalized.pop(provenance_key, None)
+    return CheckpointIdentityLayer(
+        kind=IdentityLayerKind.BACKEND_RESTART,
+        version="plane.backend.v1",
+        payload=normalized,
+    )
+
+
+def build_plane_checkpoint_compatibility_identity(
+    run_spec: PlaneBerisEdwardsRunSpec,
+    *,
+    runtime_path: PlaneRuntimePath,
+    evolved_spatial: Mapping[str, torch.Tensor],
+    evolved_spectral: Mapping[str, torch.Tensor],
+    backend_restart: Mapping[str, object],
+    lifting_restart: Mapping[str, object] | None,
+) -> CheckpointCompatibilityIdentity:
+    if not isinstance(runtime_path, PlaneRuntimePath):
+        raise TypeError("runtime_path must be a PlaneRuntimePath")
+    if run_spec.runtime_path is not runtime_path:
+        raise ValueError("run specification and checkpoint runtime path differ")
+    return CheckpointCompatibilityIdentity(
+        family=CheckpointFamily.PLANE_WORKFLOW,
+        runtime_path=runtime_path.value,
+        forward_dynamics=plane_forward_dynamics_identity(
+            run_spec,
+            lifting_restart=lifting_restart,
+        ),
+        state_layout=_plane_state_layout_identity(
+            evolved_spatial,
+            evolved_spectral,
+        ),
+        backend_restart=_plane_backend_restart_identity(backend_restart),
+    )
+
+
+def _validate_plane_checkpoint_embedded_identity(
+    checkpoint: PlaneWorkflowCheckpoint,
+) -> None:
+    """Bind persisted layout/backend/lifting metadata to the signed layers."""
+
+    identity = checkpoint.compatibility_identity
+    if identity is None:
+        raise ValueError("format-v2 Plane checkpoint identity is missing")
+    expected_layout = _plane_state_layout_identity(
+        checkpoint.evolved_spatial,
+        checkpoint.evolved_spectral,
+    )
+    if identity.state_layout != expected_layout:
+        raise ValueError("checkpoint state layout identity is inconsistent")
+    expected_backend = _plane_backend_restart_identity(
+        checkpoint.backend_restart
+    )
+    if identity.backend_restart != expected_backend:
+        raise ValueError("checkpoint backend restart identity is inconsistent")
+    forward_payload = identity.forward_dynamics.to_metadata()["payload"]
+    if forward_payload.get("lifting_dynamics") != (
+        _lifting_compatibility_identity(checkpoint.lifting_restart)
+    ):
+        raise ValueError("checkpoint lifting identity is inconsistent")
 
 
 def capture_plane_checkpoint(
     adapter: PlaneRuntimeAdapterProtocol,
     *,
-    runtime_identity_sha256: str,
+    run_spec: PlaneBerisEdwardsRunSpec,
 ) -> PlaneWorkflowCheckpoint:
-    """Synchronize algebraic fields and capture exact evolved state."""
+    """Synchronize algebraic fields and capture layered format-v2 state."""
 
     if not isinstance(adapter, PlaneRuntimeAdapterProtocol):
         raise TypeError("adapter must implement PlaneRuntimeAdapterProtocol")
-    _require_sha256(runtime_identity_sha256, "runtime_identity_sha256")
+    if not isinstance(run_spec, PlaneBerisEdwardsRunSpec):
+        raise TypeError("run_spec must be a PlaneBerisEdwardsRunSpec")
+    runtime_identity_sha256 = run_spec.runtime_identity_sha256()
     adapter.synchronize_for_observation()
     fields = adapter.fields
     integrator = adapter.solver.integrator
+    spatial = {name: fields[name] for name in Q_COMPONENTS}
+    spectral = {name: fields[f"{name}.hat"] for name in Q_COMPONENTS}
+    backend = adapter.backend_restart_metadata()
+    lifting = plane_lifting_restart_metadata(adapter)
+    compatibility_identity = build_plane_checkpoint_compatibility_identity(
+        run_spec,
+        runtime_path=adapter.runtime_path,
+        evolved_spatial=spatial,
+        evolved_spectral=spectral,
+        backend_restart=backend,
+        lifting_restart=lifting,
+    )
     return PlaneWorkflowCheckpoint(
         format_version=PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
         runtime_path=adapter.runtime_path,
@@ -200,12 +447,11 @@ def capture_plane_checkpoint(
         spectral_refresh_interval=integrator.spectral_refresh_interval,
         integrator_step_count=int(integrator.step_count),
         integrator_refresh_count=int(integrator.refresh_count),
-        evolved_spatial={name: fields[name] for name in Q_COMPONENTS},
-        evolved_spectral={
-            name: fields[f"{name}.hat"] for name in Q_COMPONENTS
-        },
-        backend_restart=adapter.backend_restart_metadata(),
-        lifting_restart=plane_lifting_restart_metadata(adapter),
+        evolved_spatial=spatial,
+        evolved_spectral=spectral,
+        backend_restart=backend,
+        lifting_restart=lifting,
+        compatibility_identity=compatibility_identity,
     )
 
 
@@ -213,7 +459,7 @@ def restore_plane_checkpoint(
     adapter: PlaneRuntimeAdapterProtocol,
     checkpoint: PlaneWorkflowCheckpoint,
     *,
-    runtime_identity_sha256: str,
+    run_spec: PlaneBerisEdwardsRunSpec,
 ) -> int:
     """Restore a checksum-validated checkpoint on its exact runtime path."""
 
@@ -221,12 +467,15 @@ def restore_plane_checkpoint(
         raise TypeError("adapter must implement PlaneRuntimeAdapterProtocol")
     if not isinstance(checkpoint, PlaneWorkflowCheckpoint):
         raise TypeError("checkpoint must be PlaneWorkflowCheckpoint")
+    if not isinstance(run_spec, PlaneBerisEdwardsRunSpec):
+        raise TypeError("run_spec must be a PlaneBerisEdwardsRunSpec")
+    if checkpoint.format_version == PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        raise ValueError(
+            "legacy Plane checkpoint requires explicit identity upgrade"
+        )
     if checkpoint.runtime_path is not adapter.runtime_path:
         raise ValueError("cross-runtime Plane checkpoint restart is unsupported")
-    if checkpoint.runtime_identity_sha256 != runtime_identity_sha256:
-        raise ValueError("checkpoint runtime identity does not match target")
-    if dict(checkpoint.backend_restart) != adapter.backend_restart_metadata():
-        raise ValueError("checkpoint backend restart contract does not match target")
+    _validate_plane_checkpoint_embedded_identity(checkpoint)
     expected_lifting = plane_lifting_restart_metadata(adapter)
     observed_lifting = (
         None
@@ -237,9 +486,26 @@ def restore_plane_checkpoint(
         _lifting_compatibility_identity(expected_lifting)
     ):
         raise ValueError("checkpoint static lifting identity does not match target")
-    verify_plane_lifting_identity(adapter)
 
     fields = adapter.fields
+    target_spatial = {name: fields[name] for name in Q_COMPONENTS}
+    target_spectral = {
+        name: fields[f"{name}.hat"] for name in Q_COMPONENTS
+    }
+    target_identity = build_plane_checkpoint_compatibility_identity(
+        run_spec,
+        runtime_path=adapter.runtime_path,
+        evolved_spatial=target_spatial,
+        evolved_spectral=target_spectral,
+        backend_restart=adapter.backend_restart_metadata(),
+        lifting_restart=expected_lifting,
+    )
+    if checkpoint.compatibility_identity != target_identity:
+        raise ValueError(
+            "checkpoint compatibility identity does not match target"
+        )
+    verify_plane_lifting_identity(adapter)
+
     targets: list[tuple[torch.Tensor, torch.Tensor, str]] = []
     for name in Q_COMPONENTS:
         for suffix, source in (
@@ -295,6 +561,7 @@ def _lifting_compatibility_identity(
     lifting = normalized.get("lifting")
     if isinstance(lifting, dict):
         lifting.pop("device", None)
+        lifting.pop("fresh_initial_remainder_conditioning", None)
     corrections = normalized.get("linear_corrections", ())
     if isinstance(corrections, list):
         for correction in corrections:
@@ -372,20 +639,53 @@ def read_plane_checkpoint_header(directory: str | Path) -> PlaneCheckpointHeader
     """Read only the versioned identity fields needed for an early gate."""
 
     metadata = _read_metadata(Path(directory).expanduser().resolve())
-    if metadata.get("format_version") != PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+    format_version = metadata.get("format_version")
+    if format_version not in {
+        PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    }:
         raise ValueError("unsupported Plane workflow checkpoint version")
     try:
         runtime_path = PlaneRuntimePath(metadata.get("runtime_path"))
     except (TypeError, ValueError) as exc:
         raise ValueError("checkpoint runtime path is invalid") from exc
-    identity = _require_sha256(
-        metadata.get("runtime_identity_sha256"),
-        "runtime_identity_sha256",
-    )
     completed = metadata.get("completed_steps")
     if not isinstance(completed, int) or isinstance(completed, bool) or completed < 0:
         raise ValueError("checkpoint completed_steps is invalid")
-    return PlaneCheckpointHeader(runtime_path, identity, completed)
+    if format_version == PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        runtime_identity = _require_sha256(
+            metadata.get("runtime_identity_sha256"),
+            "runtime_identity_sha256",
+        )
+        compatibility_identity = None
+    else:
+        run_provenance = metadata.get("run_provenance")
+        if not isinstance(run_provenance, Mapping):
+            raise ValueError("checkpoint run provenance is missing")
+        runtime_identity = _require_sha256(
+            run_provenance.get("legacy_runtime_identity_sha256"),
+            "legacy_runtime_identity_sha256",
+        )
+        compatibility_identity = CheckpointCompatibilityIdentity.from_metadata(
+            metadata.get("compatibility_identity")
+        )
+        expected = _require_sha256(
+            metadata.get("compatibility_identity_sha256"),
+            "compatibility_identity_sha256",
+        )
+        if compatibility_identity.canonical_sha256() != expected:
+            raise ValueError("checkpoint compatibility identity checksum mismatch")
+        if compatibility_identity.family is not CheckpointFamily.PLANE_WORKFLOW:
+            raise ValueError("checkpoint compatibility identity family differs")
+        if compatibility_identity.runtime_path != runtime_path.value:
+            raise ValueError("checkpoint compatibility runtime path differs")
+    return PlaneCheckpointHeader(
+        format_version=format_version,
+        runtime_path=runtime_path,
+        completed_steps=completed,
+        runtime_identity_sha256=runtime_identity,
+        compatibility_identity=compatibility_identity,
+    )
 
 
 def _load_tensor(
@@ -454,16 +754,186 @@ def load_plane_checkpoint(directory: str | Path) -> PlaneWorkflowCheckpoint:
         evolved_spectral=loaded["evolved_spectral"],
         backend_restart=backend,
         lifting_restart=metadata.get("lifting_restart"),
+        compatibility_identity=header.compatibility_identity,
+        migration_provenance=metadata.get("migration_provenance"),
     )
 
 
+def _legacy_plane_registry_key(
+    *,
+    generation: SourceReleaseGeneration,
+    runtime_path: PlaneRuntimePath,
+) -> LegacyIdentityKey:
+    if not isinstance(generation, SourceReleaseGeneration):
+        raise TypeError("generation must be a SourceReleaseGeneration")
+    return LegacyIdentityKey(
+        checkpoint_family=CheckpointFamily.PLANE_WORKFLOW,
+        format_version=PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        source_release_generation=generation,
+        runtime_path=runtime_path.value,
+        applicability_class="configuration_dependent",
+    )
+
+
+def _validate_legacy_plane_upgrade_contract(
+    *,
+    runtime_path: PlaneRuntimePath,
+    runtime_identity_sha256: str,
+    lifting_restart: Mapping[str, object] | None,
+    source_run_spec: PlaneBerisEdwardsRunSpec,
+    source_release_generation: SourceReleaseGeneration,
+):
+    if not isinstance(source_run_spec, PlaneBerisEdwardsRunSpec):
+        raise TypeError("source_run_spec must be a PlaneBerisEdwardsRunSpec")
+    schema = resolve_legacy_identity_schema(
+        _legacy_plane_registry_key(
+            generation=source_release_generation,
+            runtime_path=runtime_path,
+        )
+    )
+    if source_run_spec.runtime_path is not runtime_path:
+        raise ValueError("legacy source run specification path differs")
+    if source_run_spec.runtime_identity_sha256() != runtime_identity_sha256:
+        raise ValueError("legacy checkpoint opaque identity is not authenticated")
+    if (
+        source_release_generation is SourceReleaseGeneration.RC1
+        and lifting_restart is not None
+    ):
+        raise ValueError(
+            "rc1 lifted Plane checkpoint has incompatible lifting dynamics"
+        )
+    rc4_1_nyquist_applicable = (
+        source_run_spec.nx % 2 == 0 or source_run_spec.ny % 2 == 0
+    )
+    if rc4_1_nyquist_applicable:
+        raise ValueError(
+            "legacy Plane checkpoint has pre-RC4.1 Nyquist dynamics"
+        )
+    return schema
+
+
+def upgrade_plane_checkpoint_v1(
+    checkpoint: PlaneWorkflowCheckpoint,
+    *,
+    source_run_spec: PlaneBerisEdwardsRunSpec,
+    source_release_generation: SourceReleaseGeneration,
+) -> PlaneWorkflowCheckpoint:
+    """Create a v2 checkpoint after explicit legacy dynamics adjudication."""
+
+    if not isinstance(checkpoint, PlaneWorkflowCheckpoint):
+        raise TypeError("checkpoint must be a PlaneWorkflowCheckpoint")
+    if checkpoint.format_version != PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        raise ValueError("only Plane checkpoint format v1 can be upgraded")
+    schema = _validate_legacy_plane_upgrade_contract(
+        runtime_path=checkpoint.runtime_path,
+        runtime_identity_sha256=checkpoint.runtime_identity_sha256,
+        lifting_restart=checkpoint.lifting_restart,
+        source_run_spec=source_run_spec,
+        source_release_generation=source_release_generation,
+    )
+    identity = build_plane_checkpoint_compatibility_identity(
+        source_run_spec,
+        runtime_path=checkpoint.runtime_path,
+        evolved_spatial=checkpoint.evolved_spatial,
+        evolved_spectral=checkpoint.evolved_spectral,
+        backend_restart=checkpoint.backend_restart,
+        lifting_restart=checkpoint.lifting_restart,
+    )
+    return PlaneWorkflowCheckpoint(
+        format_version=PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        runtime_path=checkpoint.runtime_path,
+        runtime_identity_sha256=checkpoint.runtime_identity_sha256,
+        completed_steps=checkpoint.completed_steps,
+        spectral_refresh_interval=checkpoint.spectral_refresh_interval,
+        integrator_step_count=checkpoint.integrator_step_count,
+        integrator_refresh_count=checkpoint.integrator_refresh_count,
+        evolved_spatial=checkpoint.evolved_spatial,
+        evolved_spectral=checkpoint.evolved_spectral,
+        backend_restart=checkpoint.backend_restart,
+        lifting_restart=checkpoint.lifting_restart,
+        compatibility_identity=identity,
+        migration_provenance={
+            "kind": "plane_checkpoint_identity_upgrade_v1_to_v2",
+            "source_release_generation": source_release_generation.value,
+            "source_commit": schema.source_commit,
+            "legacy_schema_id": schema.schema_id,
+            "legacy_canonicalizer_id": schema.canonicalizer_id,
+            "legacy_runtime_identity_sha256": (
+                checkpoint.runtime_identity_sha256
+            ),
+            "rc4_1_nyquist_applicable": False,
+            "rc4_1_nyquist_applicability_basis": (
+                "both_periodic_axis_lengths_are_odd"
+            ),
+            "source_checkpoint_mutated": False,
+        },
+    )
+
+
+def upgrade_plane_checkpoint_directory_v1(
+    source_directory: str | Path,
+    target_directory: str | Path,
+    *,
+    source_run_spec: PlaneBerisEdwardsRunSpec,
+    source_release_generation: SourceReleaseGeneration,
+) -> Path:
+    """Write an authenticated v2 copy without modifying the v1 source."""
+
+    source = Path(source_directory).expanduser().resolve()
+    target_directory = Path(target_directory).expanduser().resolve()
+    if target_directory == source or source in target_directory.parents:
+        raise ValueError(
+            "legacy upgrade target must be outside the source checkpoint"
+        )
+    header = read_plane_checkpoint_header(source)
+    if header.format_version != PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        raise ValueError("only Plane checkpoint format v1 can be upgraded")
+    metadata = _read_metadata(source)
+    lifting = metadata.get("lifting_restart")
+    if lifting is not None and not isinstance(lifting, Mapping):
+        raise ValueError("legacy lifting restart metadata is invalid")
+    _validate_legacy_plane_upgrade_contract(
+        runtime_path=header.runtime_path,
+        runtime_identity_sha256=header.runtime_identity_sha256,
+        lifting_restart=lifting,
+        source_run_spec=source_run_spec,
+        source_release_generation=source_release_generation,
+    )
+    source_hashes = {
+        path.relative_to(source).as_posix(): _sha256(path)
+        for path in sorted(source.rglob("*"))
+        if path.is_file()
+    }
+    checkpoint = load_plane_checkpoint(source)
+    upgraded = upgrade_plane_checkpoint_v1(
+        checkpoint,
+        source_run_spec=source_run_spec,
+        source_release_generation=source_release_generation,
+    )
+    target = write_plane_checkpoint(target_directory, upgraded)
+    final_hashes = {
+        path.relative_to(source).as_posix(): _sha256(path)
+        for path in sorted(source.rglob("*"))
+        if path.is_file()
+    }
+    if source_hashes != final_hashes:
+        raise RuntimeError("legacy source checkpoint changed during upgrade")
+    return target
+
+
 __all__ = [
+    "PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "PlaneCheckpointHeader",
     "PlaneWorkflowCheckpoint",
+    "build_plane_checkpoint_compatibility_identity",
     "capture_plane_checkpoint",
     "load_plane_checkpoint",
+    "plane_forward_dynamics_identity",
+    "plane_run_spec_dynamics_identity",
     "read_plane_checkpoint_header",
     "restore_plane_checkpoint",
+    "upgrade_plane_checkpoint_directory_v1",
+    "upgrade_plane_checkpoint_v1",
     "write_plane_checkpoint",
 ]

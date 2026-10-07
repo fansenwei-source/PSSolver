@@ -15,6 +15,7 @@ from pssolver.configuration import (
     PlaneRuntimePath,
     create_plane_beris_edwards_run_spec,
 )
+from pssolver.io.checkpoint_identity import CheckpointIdentityLayer
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.plane_beris_edwards import LegacyPlaneRuntimeAdapter
 from pssolver.runtime.plane_compiled_v2_binding import (
@@ -102,7 +103,7 @@ def _compiled(tmp_path: Path, name: str, **overrides):
         projector=projector,
     )
     program = build_plane_compiled_v2_step_program(binding)
-    adapter = PlaneCompiledV2WorkflowAdapter(binding, program)
+    adapter = PlaneCompiledV2WorkflowAdapter(binding, program, spec)
     return spec, solver, projector, binding, program, adapter
 
 
@@ -239,11 +240,11 @@ def test_disabled_diagnostics_do_not_block_observation_or_checkpoint(tmp_path):
         adapter.flow_diagnostics()
 
 
-def test_checkpoint_v1_round_trip_preserves_existing_file_schema(tmp_path):
+def test_checkpoint_v2_round_trip_persists_layered_identity(tmp_path):
     _, _, _, _, program, adapter = _compiled(tmp_path, "checkpoint")
     _advance(program, 3)
     checkpoint = adapter.capture_checkpoint()
-    directory = tmp_path / "checkpoint_v1"
+    directory = tmp_path / "checkpoint_v2"
 
     write_plane_checkpoint(directory, checkpoint)
     loaded = load_plane_checkpoint(directory)
@@ -251,16 +252,18 @@ def test_checkpoint_v1_round_trip_preserves_existing_file_schema(tmp_path):
         (directory / "checkpoint.json").read_text(encoding="utf-8")
     )
 
-    assert loaded.format_version == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION == 1
+    assert loaded.format_version == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION == 2
     assert loaded.runtime_path is PlaneRuntimePath.COMPILED_V2
     assert loaded.backend_restart["kind"] == "compiled_v2_plane_stateless"
     assert set(metadata) == {
         "backend_restart",
         "completed_steps",
+        "compatibility_identity",
+        "compatibility_identity_sha256",
         "evolved_components",
         "format_version",
         "integrator",
-        "runtime_identity_sha256",
+        "run_provenance",
         "runtime_path",
         "tensor_files",
     }
@@ -321,7 +324,7 @@ def test_cross_runtime_checkpoints_are_rejected_before_mutation(tmp_path):
     _advance(program, 2)
     legacy_checkpoint = capture_plane_checkpoint(
         legacy,
-        runtime_identity_sha256=spec.runtime_identity_sha256(),
+        run_spec=spec,
     )
     compiled_checkpoint = adapter.capture_checkpoint()
     legacy_before = legacy.solver.fields.spatial.clone()
@@ -331,7 +334,7 @@ def test_cross_runtime_checkpoints_are_rejected_before_mutation(tmp_path):
         restore_plane_checkpoint(
             legacy,
             compiled_checkpoint,
-            runtime_identity_sha256=spec.runtime_identity_sha256(),
+            run_spec=spec,
         )
     with pytest.raises(ValueError, match="cross-runtime"):
         adapter.restore_checkpoint(legacy_checkpoint)
@@ -343,9 +346,17 @@ def test_cross_runtime_checkpoints_are_rejected_before_mutation(tmp_path):
 
 def _tampered_checkpoint(checkpoint, case: str):
     if case == "identity":
+        identity = checkpoint.compatibility_identity
+        forward = identity.forward_dynamics.to_metadata()
+        forward["payload"]["tampered"] = True
         return dataclasses.replace(
             checkpoint,
-            runtime_identity_sha256="0" * 64,
+            compatibility_identity=dataclasses.replace(
+                identity,
+                forward_dynamics=CheckpointIdentityLayer.from_metadata(
+                    forward
+                ),
+            ),
         )
     if case == "backend":
         return dataclasses.replace(
@@ -353,9 +364,14 @@ def _tampered_checkpoint(checkpoint, case: str):
             backend_restart={"kind": "wrong", "state_keys": []},
         )
     if case == "runtime_path":
+        identity = dataclasses.replace(
+            checkpoint.compatibility_identity,
+            runtime_path=PlaneRuntimePath.LEGACY_PRODUCTION.value,
+        )
         return dataclasses.replace(
             checkpoint,
             runtime_path=PlaneRuntimePath.LEGACY_PRODUCTION,
+            compatibility_identity=identity,
         )
     if case == "shape":
         values = dict(checkpoint.evolved_spectral)
@@ -374,11 +390,11 @@ def _tampered_checkpoint(checkpoint, case: str):
 @pytest.mark.parametrize(
     ("case", "message"),
     (
-        ("identity", "runtime identity"),
-        ("backend", "backend restart contract"),
+        ("identity", "compatibility identity"),
+        ("backend", "backend restart identity"),
         ("runtime_path", "cross-runtime"),
-        ("shape", "shape"),
-        ("dtype", "dtype"),
+        ("shape", "state layout"),
+        ("dtype", "state layout"),
         ("nonfinite", "non-finite"),
     ),
 )
@@ -408,7 +424,7 @@ def test_checkpoint_tamper_is_rejected_before_state_or_clock_change(
     assert target_adapter.completed_steps == 0
 
 
-def test_adapter_metadata_records_compiled_v1_identity_contract(tmp_path):
+def test_adapter_metadata_records_compiled_v2_identity_contract(tmp_path):
     _, _, _, _, _, adapter = _compiled(tmp_path, "metadata")
     metadata = adapter.to_metadata()
 
@@ -418,7 +434,7 @@ def test_adapter_metadata_records_compiled_v1_identity_contract(tmp_path):
     assert metadata["connected_runtime"] is None
     assert metadata["output_views"]["zero_copy"] is True
     assert metadata["checkpoint"] == {
-        "format_version": 1,
+        "format_version": 2,
         "runtime_path_carrier": "compiled_v2",
         "backend_identity_enforced": True,
         "preflight_before_mutation": True,

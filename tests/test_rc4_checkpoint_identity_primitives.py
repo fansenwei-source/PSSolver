@@ -180,6 +180,34 @@ def test_compatibility_identity_excludes_provenance_by_layer_kind():
     assert hash(rebuilt) == hash(plane)
 
 
+def test_identity_metadata_round_trips_through_strict_readers():
+    layer = _plane_identity().forward_dynamics
+    identity = _plane_identity()
+
+    assert CheckpointIdentityLayer.from_metadata(layer.to_metadata()) == layer
+    assert CheckpointCompatibilityIdentity.from_metadata(
+        identity.to_metadata()
+    ) == identity
+
+
+@pytest.mark.parametrize("kind", ("layer", "aggregate"))
+def test_identity_metadata_readers_reject_unknown_keys(kind):
+    value = (
+        _plane_identity().forward_dynamics.to_metadata()
+        if kind == "layer"
+        else _plane_identity().to_metadata()
+    )
+    value["unknown"] = True
+    reader = (
+        CheckpointIdentityLayer.from_metadata
+        if kind == "layer"
+        else CheckpointCompatibilityIdentity.from_metadata
+    )
+
+    with pytest.raises(ValueError, match="metadata keys"):
+        reader(value)
+
+
 def test_functional_identity_requires_derivative_dynamics_and_production_forbids_it():
     plane = _plane_identity()
     derivative = _layer(
@@ -312,7 +340,7 @@ def test_registry_resolution_is_exact_and_unknown_keys_fail_closed():
         resolve_legacy_identity_schema(known.key.to_metadata())
 
 
-def test_rc421_has_no_live_schema_imports_and_is_not_wired_into_readers():
+def test_identity_primitives_are_schema_independent_and_only_plane_is_wired():
     tree = ast.parse(MODULE.read_text(encoding="utf-8"))
     imports = []
     for node in ast.walk(tree):
@@ -322,14 +350,18 @@ def test_rc421_has_no_live_schema_imports_and_is_not_wired_into_readers():
             imports.append(node.module)
     assert not any(name.startswith("pssolver") for name in imports)
 
-    readers = [
-        "pssolver/workflows/plane_checkpoint.py",
+    plane_reader = (
+        ROOT / "pssolver/workflows/plane_checkpoint.py"
+    ).read_text(encoding="utf-8")
+    assert "pssolver.io.checkpoint_identity" in plane_reader
+
+    untouched_readers = [
         "pssolver/workflows/periodic_checkpoint.py",
         "pssolver/workflows/channel_checkpoint.py",
         "pssolver/functional/periodic_checkpoint.py",
         "pssolver/functional/channel_checkpoint.py",
     ]
-    for relative in readers:
+    for relative in untouched_readers:
         source = (ROOT / relative).read_text(encoding="utf-8")
         assert "checkpoint_identity" not in source
     assert "CheckpointCompatibilityIdentity" not in public_io.__all__

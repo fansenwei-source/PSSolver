@@ -340,7 +340,7 @@ def test_lifted_checkpoint_restart_is_exact_and_stores_remainder(tmp_path):
     segment.advance(2)
     checkpoint = capture_plane_checkpoint(
         segment,
-        runtime_identity_sha256=identity.runtime_identity_sha256(),
+        run_spec=identity,
     )
     assert checkpoint.lifting_restart["representation"] == "homogeneous_remainder"
     assert all(
@@ -350,7 +350,7 @@ def test_lifted_checkpoint_restart_is_exact_and_stores_remainder(tmp_path):
     restore_plane_checkpoint(
         resumed,
         checkpoint,
-        runtime_identity_sha256=identity.runtime_identity_sha256(),
+        run_spec=identity,
     )
     resumed.advance(2)
 
@@ -369,7 +369,7 @@ def test_lifting_identity_tamper_is_rejected_before_target_mutation(tmp_path):
     source.advance(1)
     checkpoint = capture_plane_checkpoint(
         source,
-        runtime_identity_sha256=identity.runtime_identity_sha256(),
+        run_spec=identity,
     )
     lifting = json.loads(json.dumps(dict(checkpoint.lifting_restart)))
     lifting["lifting"]["plan_sha256"] = "0" * 64
@@ -384,7 +384,7 @@ def test_lifting_identity_tamper_is_rejected_before_target_mutation(tmp_path):
         restore_plane_checkpoint(
             target,
             tampered,
-            runtime_identity_sha256=identity.runtime_identity_sha256(),
+            run_spec=identity,
         )
     assert all(
         torch.equal(value, target.fields[name])
@@ -400,7 +400,7 @@ def test_lifting_checkpoint_device_provenance_is_not_compatibility_identity(
     source.advance(1)
     checkpoint = capture_plane_checkpoint(
         source,
-        runtime_identity_sha256=identity.runtime_identity_sha256(),
+        run_spec=identity,
     )
     lifting = json.loads(json.dumps(dict(checkpoint.lifting_restart)))
     lifting["lifting"]["device"] = "cuda:0"
@@ -412,7 +412,7 @@ def test_lifting_checkpoint_device_provenance_is_not_compatibility_identity(
     restored_step = restore_plane_checkpoint(
         target,
         legacy_gpu_checkpoint,
-        runtime_identity_sha256=identity.runtime_identity_sha256(),
+        run_spec=identity,
     )
 
     assert restored_step == 1

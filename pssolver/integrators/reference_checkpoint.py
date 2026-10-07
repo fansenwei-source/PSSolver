@@ -1,8 +1,8 @@
 """Provisional checkpoint schema for the disconnected Phase 4 reference.
 
-The Plane workflow checkpoint-v1 implementation is intentionally not imported
-or modified.  This directory-based format exists only to qualify multistep
-history and restart identity before a generic production checkpoint is designed.
+The Plane workflow checkpoint implementation is intentionally not imported.
+This directory-based format exists only to qualify multistep history and
+restart identity before a generic production checkpoint is designed.
 """
 
 from __future__ import annotations

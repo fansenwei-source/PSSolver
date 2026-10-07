@@ -77,7 +77,6 @@ FLAT_APPLICATION_READS = {
 }
 FACADE_METHOD_READS = {
     "identity_metadata",
-    "runtime_identity_sha256",
     "runtime_selection_metadata",
 }
 
@@ -196,4 +195,46 @@ def test_cross_runtime_restart_is_rejected_before_output_or_allocation(
         match="cross-runtime Plane checkpoint restart is unsupported",
     ):
         application.run_plane_beris_edwards(spec)
+    assert not spec.output_dir.exists()
+
+
+def test_lifting_dynamics_restart_mismatch_rejects_before_allocation(
+    tmp_path,
+    monkeypatch,
+):
+    _forbid_expensive_application_work(monkeypatch)
+    checkpoint = tmp_path / "checkpoint"
+    spec = _spec(tmp_path, restart_from=checkpoint)
+    run_spec_identity = application.plane_run_spec_dynamics_identity(
+        spec
+    ).to_metadata()
+    forward = SimpleNamespace(
+        to_metadata=lambda: {
+            "kind": "forward_dynamics",
+            "schema_version": 1,
+            "version": "plane.forward.v2",
+            "payload": {
+                "run_spec_dynamics": run_spec_identity,
+                "lifting_dynamics": {
+                    "lifting": {"plan_sha256": "a" * 64}
+                },
+            },
+        }
+    )
+    monkeypatch.setattr(
+        application,
+        "read_plane_checkpoint_header",
+        lambda _path: SimpleNamespace(
+            format_version=2,
+            runtime_path=PlaneRuntimePath.LEGACY_PRODUCTION,
+            completed_steps=0,
+            compatibility_identity=SimpleNamespace(
+                forward_dynamics=forward,
+            ),
+        ),
+    )
+
+    with pytest.raises(ValueError, match="static lifting dynamics"):
+        application.run_plane_beris_edwards(spec)
+
     assert not spec.output_dir.exists()

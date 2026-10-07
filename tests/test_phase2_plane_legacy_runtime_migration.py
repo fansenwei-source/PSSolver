@@ -269,12 +269,12 @@ def test_short_cpu_trajectory_and_checkpoint_restart_are_byte_exact(tmp_path):
     segment.advance(2)
     checkpoint = capture_plane_checkpoint(
         segment,
-        runtime_identity_sha256=spec.runtime_identity_sha256(),
+        run_spec=spec,
     )
     assert restore_plane_checkpoint(
         resumed,
         checkpoint,
-        runtime_identity_sha256=spec.runtime_identity_sha256(),
+        run_spec=spec,
     ) == 2
     resumed.advance(2)
     continuous.synchronize_for_observation()

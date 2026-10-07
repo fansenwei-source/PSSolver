@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +22,16 @@ def _plan() -> dict[str, object]:
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _git_blob_sha256(commit: str, relative: str) -> str:
+    value = subprocess.run(
+        ["git", "show", f"{commit}:{relative}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    return hashlib.sha256(value).hexdigest()
 
 
 def test_rc420_freezes_only_the_checkpoint_identity_batch():
@@ -192,7 +203,10 @@ def test_rc420_reviewed_sources_are_content_addressed_and_unmodified():
     plan = _plan()
 
     for relative, expected in plan["reviewed_source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _git_blob_sha256(
+            plan["baseline"]["planning_parent"],
+            relative,
+        ) == expected
     assert plan["scope"] == {
         "runtime_source_modified": False,
         "checkpoint_reader_or_writer_modified": False,

@@ -549,18 +549,17 @@ def run_restart(
         seed=seed,
         pointwise_execution=pointwise_execution,
     )
-    runtime_identity = identity.runtime_identity_sha256()
     with torch.no_grad():
         continuous.advance(final_steps)
         segment.advance(segment_steps)
         checkpoint = capture_plane_checkpoint(
             segment,
-            runtime_identity_sha256=runtime_identity,
+            run_spec=identity,
         )
         restore_plane_checkpoint(
             resumed,
             checkpoint,
-            runtime_identity_sha256=runtime_identity,
+            run_spec=identity,
         )
         resumed.advance(final_steps - segment_steps)
         if device == "cuda":
