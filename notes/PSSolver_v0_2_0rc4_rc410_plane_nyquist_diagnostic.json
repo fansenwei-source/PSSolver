@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.1.0 Plane free-slip Nyquist/storage diagnostic",
+  "classification": "REPRODUCED_PLANE_NON_REDUCED_PERIODIC_NYQUIST_STORAGE_MISMATCH",
+  "scope": {
+    "analysis_only": true,
+    "solver_modified": false,
+    "h100_required": false,
+    "production_default_changed": false,
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false
+  },
+  "baseline": {
+    "release": "v0.2.0rc3",
+    "commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+    "audit_parent": "2e7b2198c4629f614d52acf26c5c9837124e725d",
+    "known_issue": "B5"
+  },
+  "reproducer": {
+    "module": "benchmarks.diagnose_plane_nyquist_storage",
+    "command": "python -m benchmarks.diagnose_plane_nyquist_storage --summary-only",
+    "seed": 24680,
+    "dtype": "float64",
+    "device": "cpu",
+    "execution_order": "real_first",
+    "dealias_rule": "none",
+    "friction": 0.23,
+    "viscosity": 0.73,
+    "measurement_environment": {
+      "python": "3.12.13",
+      "torch": "2.6.0"
+    }
+  },
+  "observations": {
+    "even_xy_default_axis1": {
+      "shape": [16, 16, 8],
+      "hermitian_axis": 1,
+      "non_reduced_periodic_axis": 0,
+      "raw_max_velocity_relative_l2": 0.030402185149778473,
+      "raw_pressure_relative_l2": 0.1046452001688196,
+      "filtered_max_velocity_relative_l2": 3.6430810042521934e-16,
+      "filtered_pressure_relative_l2": 3.7123820923981095e-16
+    },
+    "odd_xy_default_axis1": {
+      "shape": [15, 15, 8],
+      "hermitian_axis": 1,
+      "non_reduced_periodic_axis": 0,
+      "raw_max_velocity_relative_l2": 3.3696418934186138e-16,
+      "raw_pressure_relative_l2": 3.8703505816997486e-16
+    },
+    "even_x_only_default_axis1": {
+      "shape": [16, 15, 8],
+      "hermitian_axis": 1,
+      "non_reduced_periodic_axis": 0,
+      "raw_max_velocity_relative_l2": 0.027553408158291656,
+      "raw_pressure_relative_l2": 0.10867477451502493,
+      "filtered_max_velocity_relative_l2": 4.2452976597737195e-16,
+      "filtered_pressure_relative_l2": 3.531945913642277e-16
+    },
+    "even_y_only_default_axis1": {
+      "shape": [15, 16, 8],
+      "hermitian_axis": 1,
+      "non_reduced_periodic_axis": 0,
+      "raw_max_velocity_relative_l2": 3.684929549589396e-16,
+      "raw_pressure_relative_l2": 3.597728547016019e-16
+    },
+    "even_xy_rotated_axis0": {
+      "shape": [16, 16, 8],
+      "hermitian_axis": 0,
+      "non_reduced_periodic_axis": 1,
+      "raw_max_velocity_relative_l2": 0.04310874543989033,
+      "raw_pressure_relative_l2": 0.11497843176815108,
+      "filtered_max_velocity_relative_l2": 2.625849305389493e-16,
+      "filtered_pressure_relative_l2": 2.825302581925282e-16
+    }
+  },
+  "causal_adjudication": {
+    "trigger": "The periodic axis not used as the Hermitian-half reduction axis has an even spatial extent and carries Nyquist content.",
+    "axis_rotation_control": "Changing hermitian_axis from 1 to 0 changes the triggering non-reduced axis from x to y.",
+    "input_filter_control": "Removing only the triggering non-reduced-axis Nyquist input plane restores full-complex versus Hermitian-half physical-field agreement to below 1e-12.",
+    "odd_grid_control": "Odd periodic extents agree to below 1e-12 without filtering.",
+    "residual_blind_spot": "Both storage paths satisfy their native modal saddle residuals near roundoff even when their physical outputs disagree, so native residual tests alone cannot detect B5.",
+    "scope_limit": "This record localizes the storage-equivalence trigger. It does not claim that filtering only the non-reduced axis is the production repair; the qualified repair must apply the common real-grid Nyquist convention to both periodic axes."
+  },
+  "frozen_oracle": {
+    "mismatch_case_raw_velocity_relative_l2_min": 0.01,
+    "mismatch_case_raw_pressure_relative_l2_min": 0.05,
+    "storage_equivalence_relative_l2_max": 1e-12,
+    "native_divergence_relative_l2_max": 1e-12,
+    "pressure_relative_residual_max": 1e-12
+  },
+  "next_stage": {
+    "name": "RC4.1.1 Plane Nyquist repair",
+    "authorized_by_this_record": true,
+    "required_behavior": [
+      "zero the real-grid first-derivative Nyquist multiplier on every even periodic axis",
+      "project the affected force and solution modes consistently with the Periodic and Channel Stokes conventions",
+      "preserve odd-grid output byte-for-byte",
+      "make full-complex and Hermitian-half storage equivalent on even grids"
+    ],
+    "b5_closed": false,
+    "h100_qualification_still_required": true
+  }
+}
