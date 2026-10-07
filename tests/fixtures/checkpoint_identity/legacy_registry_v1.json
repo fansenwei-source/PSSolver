@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "registry": {
+    "sha256": "4cdee98ee4130698f21129467ccba60bf6f023b6c7c5294b30289f22ea8d6c7c",
+    "entry_count": 21,
+    "family_counts": {
+      "plane_workflow": 9,
+      "periodic_workflow": 3,
+      "channel_workflow": 3,
+      "periodic_functional": 3,
+      "channel_functional": 3
+    },
+    "release_commits": {
+      "rc1": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1",
+      "rc2": "2bbe21e88fec318787fc31dc0a82bca5a171c024",
+      "rc3": "5071d73a00e0d19be62ebd39edf9918818d1267a"
+    }
+  },
+  "identity_oracles": [
+    {
+      "name": "plane_production_v1",
+      "sha256": "b1188ff8c302cd9c687b957327a529c870cbf5aceab63c0840952aea19fb7dbe",
+      "metadata": {
+        "backend_restart": {
+          "kind": "backend_restart",
+          "payload": {
+            "state_keys": []
+          },
+          "schema_version": 1,
+          "version": "plane.backend.v1"
+        },
+        "derivative_dynamics": null,
+        "family": "plane_workflow",
+        "forward_dynamics": {
+          "kind": "forward_dynamics",
+          "payload": {
+            "device_excluded": true,
+            "dt": 0.01,
+            "semantics": ["q", "stokes"]
+          },
+          "schema_version": 1,
+          "version": "plane.forward.v1"
+        },
+        "runtime_path": "legacy_production",
+        "schema_version": 1,
+        "state_layout": {
+          "kind": "state_layout",
+          "payload": {
+            "components": ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"],
+            "representation": "spatial_and_spectral"
+          },
+          "schema_version": 1,
+          "version": "plane.state.v1"
+        }
+      }
+    },
+    {
+      "name": "channel_functional_v2",
+      "sha256": "fb7c67c80b8c109e08a487f669a5a6e08815d6be6b4783bc09d19dbd26736a19",
+      "metadata": {
+        "backend_restart": {
+          "kind": "backend_restart",
+          "payload": {
+            "state_keys": []
+          },
+          "schema_version": 1,
+          "version": "channel.functional.backend.v1"
+        },
+        "derivative_dynamics": {
+          "kind": "derivative_dynamics",
+          "payload": {
+            "gradient": "custom_implicit_pressure_adjoint_v1",
+            "pressure_transpose_nyquist": "project_even_periodic_plane"
+          },
+          "schema_version": 1,
+          "version": "channel.derivative.v2"
+        },
+        "family": "channel_functional",
+        "forward_dynamics": {
+          "kind": "forward_dynamics",
+          "payload": {
+            "forward_stokes_nyquist": "project_even_periodic_plane"
+          },
+          "schema_version": 1,
+          "version": "channel.forward.v2"
+        },
+        "runtime_path": "channel_activity_batch_one",
+        "schema_version": 1,
+        "state_layout": {
+          "kind": "state_layout",
+          "payload": {
+            "components": ["q_physical", "q_spectral"]
+          },
+          "schema_version": 1,
+          "version": "channel.functional.state.v1"
+        }
+      }
+    }
+  ]
+}

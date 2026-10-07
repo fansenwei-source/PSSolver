@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.2.1 typed checkpoint identity primitives and frozen legacy registry",
+  "phase": "RC4.2.1",
+  "status": "complete",
+  "classification": "PASS_RC4_2_1_TYPED_IDENTITY_PRIMITIVES_AND_FROZEN_LEGACY_REGISTRY",
+  "git_identity": {
+    "implementation_parent": "0684e61b30f8a29fc4fe822df8c68602d7b8bf6e",
+    "branch": "fix/v0.2.0rc4-audit",
+    "planning_record": "notes/PSSolver_v0_2_0rc4_rc420_checkpoint_identity_plan.json",
+    "planning_record_sha256": "88839d3d92b185876d3eb03e4933c26644fc0f2cae59061a66bb86a55d066b59"
+  },
+  "implementation": {
+    "module": "pssolver/io/checkpoint_identity.py",
+    "module_sha256": "434639ef8819f827a0a2e00bff8b34fd0a44e17c0dc99e08088e51aab4096ee1",
+    "identity_schema_version": 1,
+    "legacy_registry_schema_version": 1,
+    "identity_layers": [
+      "run_provenance",
+      "forward_dynamics",
+      "derivative_dynamics",
+      "state_layout",
+      "backend_restart",
+      "materialization_provenance"
+    ],
+    "compatibility_layers": [
+      "forward_dynamics",
+      "derivative_dynamics",
+      "state_layout",
+      "backend_restart"
+    ],
+    "provenance_layers_excluded_from_compatibility_digest": [
+      "run_provenance",
+      "materialization_provenance"
+    ],
+    "functional_identity_requires_derivative_dynamics": true,
+    "production_identity_rejects_derivative_dynamics": true,
+    "canonical_json_rejects_nonfinite_values": true,
+    "identity_payloads_are_deeply_immutable": true
+  },
+  "legacy_registry": {
+    "fixture": "tests/fixtures/checkpoint_identity/legacy_registry_v1.json",
+    "fixture_sha256": "2141a5229fc2628ba6513cc45edad9477f1875ca58639865f102f5c21ef0023a",
+    "registry_sha256": "4cdee98ee4130698f21129467ccba60bf6f023b6c7c5294b30289f22ea8d6c7c",
+    "entry_count": 21,
+    "release_generations": {
+      "rc1": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1",
+      "rc2": "2bbe21e88fec318787fc31dc0a82bca5a171c024",
+      "rc3": "5071d73a00e0d19be62ebd39edf9918818d1267a"
+    },
+    "family_counts": {
+      "plane_workflow": 9,
+      "periodic_workflow": 3,
+      "channel_workflow": 3,
+      "periodic_functional": 3,
+      "channel_functional": 3
+    },
+    "unknown_key_policy": "reject_fail_closed",
+    "registration_alone_accepts_checkpoint": false,
+    "source_schema_hashes_verified_from_released_commits": true,
+    "live_run_spec_derivation_used": false
+  },
+  "oracles": {
+    "count": 2,
+    "names": [
+      "plane_production_v1",
+      "channel_functional_v2"
+    ],
+    "plane_production_v1_sha256": "b1188ff8c302cd9c687b957327a529c870cbf5aceab63c0840952aea19fb7dbe",
+    "channel_functional_v2_sha256": "fb7c67c80b8c109e08a487f669a5a6e08815d6be6b4783bc09d19dbd26736a19"
+  },
+  "local_verification": {
+    "primitive_and_plan_tests_passed": 20,
+    "closure_tests_passed": 4,
+    "known_issues_matrix_tests_passed": 8,
+    "targeted_total_passed": 32,
+    "full_suite_passed": 2820,
+    "full_suite_deselected_cuda_only": 7,
+    "full_suite_subtests_passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "full_suite_elapsed_seconds": 202.56,
+    "git_diff_check": "pass"
+  },
+  "scope": {
+    "checkpoint_reader_modified": false,
+    "checkpoint_writer_modified": false,
+    "restore_acceptance_behavior_changed": false,
+    "runtime_hot_path_changed": false,
+    "public_api_changed": false,
+    "pssolver_io_reexport_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "rc4_2_1_complete": true,
+    "eligible_for_rc4_2_2_planning": true,
+    "rc4_2_2_implementation_authorized": false,
+    "legacy_checkpoint_rewrite_authorized": false,
+    "checkpoint_reader_or_writer_migration_authorized": false,
+    "PSSolver_Control_change_authorized": false,
+    "H100_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false
+  }
+}
