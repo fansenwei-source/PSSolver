@@ -65,8 +65,8 @@ def test_state_counts_match_the_machine_readable_summary():
     for item in record["items"]:
         counts[item["state"]] = counts.get(item["state"], 0) + 1
     assert counts == {
-        "closed_verified": 17,
-        "partial_residual": 21,
+        "closed_verified": 18,
+        "partial_residual": 20,
         "accepted_limitation": 3,
         "deferred_architecture": 9,
     }
@@ -74,6 +74,7 @@ def test_state_counts_match_the_machine_readable_summary():
         "item_count": 50,
         **counts,
         "first_implementation_batch": "rc4.1_plane_nyquist",
+        "next_implementation_batch": "rc4.2_checkpoint_identity",
     }
 
 
@@ -81,7 +82,12 @@ def test_release_blockers_and_closed_rc3_regressions_are_not_conflated():
     items = {item["id"]: item for item in _record()["items"]}
     for identifier in ("B1", "B2", "B3", "B4", "N1", "N2"):
         assert items[identifier]["state"] == "closed_verified"
-    for identifier in ("B5", "B8", "B29", "N3", "N4", "N5", "N6"):
+    assert items["B5"]["state"] == "closed_verified"
+    assert items["B5"]["disposition"] == "closed"
+    assert items["B5"]["closure_record"] == (
+        "notes/PSSolver_v0_2_0rc4_rc412_h100_closure.json"
+    )
+    for identifier in ("B8", "B29", "N3", "N4", "N5", "N6"):
         assert items[identifier]["state"] == "partial_residual"
         assert items[identifier]["disposition"] != "closed"
 
@@ -110,3 +116,19 @@ def test_architecture_work_is_deferred_until_correctness_batches_close():
         for item in record["items"]
         if item["id"].startswith("R")
     )
+
+
+def test_rc41_progress_closes_only_b5_and_authorizes_only_rc42_planning():
+    assert _record()["progress"] == {
+        "completed_batches": ["rc4.1_plane_nyquist"],
+        "next_batch": "rc4.2_checkpoint_identity",
+        "b5_complete": True,
+        "b5_closure_record": (
+            "notes/PSSolver_v0_2_0rc4_rc412_h100_closure.json"
+        ),
+        "eligible_for_rc4_2_planning": True,
+        "rc4_2_implementation_authorized": False,
+        "eligible_for_automatic_merge": False,
+        "eligible_for_default_promotion": False,
+        "production_default_changed": False,
+    }

@@ -40,11 +40,23 @@
   },
   "summary": {
     "item_count": 50,
-    "closed_verified": 17,
-    "partial_residual": 21,
+    "closed_verified": 18,
+    "partial_residual": 20,
     "accepted_limitation": 3,
     "deferred_architecture": 9,
-    "first_implementation_batch": "rc4.1_plane_nyquist"
+    "first_implementation_batch": "rc4.1_plane_nyquist",
+    "next_implementation_batch": "rc4.2_checkpoint_identity"
+  },
+  "progress": {
+    "completed_batches": ["rc4.1_plane_nyquist"],
+    "next_batch": "rc4.2_checkpoint_identity",
+    "b5_complete": true,
+    "b5_closure_record": "notes/PSSolver_v0_2_0rc4_rc412_h100_closure.json",
+    "eligible_for_rc4_2_planning": true,
+    "rc4_2_implementation_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
   },
   "work_queue": [
     {
@@ -95,7 +107,7 @@
     {"id": "B2", "kind": "bug", "severity": "high", "state": "closed_verified", "summary": "Channel dealiasing could leave the velocity field non-solenoidal.", "disposition": "closed", "target": "rc2", "requires_h100": true},
     {"id": "B3", "kind": "bug", "severity": "high", "state": "closed_verified", "summary": "Plane compiled_v2 rejected valid float32 configurations and left partial output.", "disposition": "closed", "target": "rc2", "requires_h100": false},
     {"id": "B4", "kind": "bug", "severity": "high", "state": "closed_verified", "summary": "Periodic and Channel saved hydrodynamics one step later than Q.", "disposition": "closed", "target": "rc2", "requires_h100": false},
-    {"id": "B5", "kind": "bug", "severity": "medium", "state": "partial_residual", "summary": "Nyquist handling was repaired for Periodic and Channel Stokes but remains inconsistent in Plane free-slip Stokes.", "disposition": "fix", "target": "rc4.1_plane_nyquist", "requires_h100": true},
+    {"id": "B5", "kind": "bug", "severity": "medium", "state": "closed_verified", "summary": "Plane free-slip Stokes now applies the qualified even-grid Nyquist convention consistently across full-complex and Hermitian-half storage.", "disposition": "closed", "target": "rc4.1_plane_nyquist", "requires_h100": true, "closure_record": "notes/PSSolver_v0_2_0rc4_rc412_h100_closure.json"},
     {"id": "B6", "kind": "bug", "severity": "medium", "state": "closed_verified", "summary": "Unsupported node-centered layouts were silently ignored.", "disposition": "closed", "target": "rc2", "requires_h100": false},
     {"id": "B7", "kind": "bug", "severity": "medium", "state": "partial_residual", "summary": "Checkpoint integrity was hardened, but downgrade, path, filename, and extra-key edge cases remain.", "disposition": "fix", "target": "rc4.5_cross_runtime_robustness", "requires_h100": false},
     {"id": "B8", "kind": "bug", "severity": "medium", "state": "partial_residual", "summary": "Static lifting still represents a nonzero wall molecular-field contribution in a basis that does not converge at the wall.", "disposition": "fix_or_restrict", "target": "rc4.3_lifting_correctness", "requires_h100": true},

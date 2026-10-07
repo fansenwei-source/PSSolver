@@ -17,8 +17,8 @@
 
 | 状态 | 数量 | 含义 |
 |---|---:|---|
-| `closed_verified` | 17 | 目标行为已有回归或资格证据 |
-| `partial_residual` | 21 | 主问题部分缓解，但仍有路径或语义缺口 |
+| `closed_verified` | 18 | 目标行为已有回归或资格证据 |
+| `partial_residual` | 20 | 主问题部分缓解，但仍有路径或语义缺口 |
 | `accepted_limitation` | 3 | 已知且明确接受，不作为当前正确性修复 |
 | `deferred_architecture` | 9 | 架构债务，推迟到正确性关闭之后 |
 
@@ -28,7 +28,7 @@
 
 ### rc4.1：Plane Nyquist
 
-只处理 B5。目标是让 Plane free-slip Stokes 在偶数网格、`dealias_rule="none"` 下采用与 Periodic/Channel 一致的 Nyquist 约定。这个批次必须保持奇数网格逐字节不变，并补 manufactured Stokes、两种谱存储等价性和单次 H100 非回退验证。
+只处理 B5。该批次现已完成：Plane free-slip Stokes 在偶数网格、`dealias_rule="none"` 下采用与 Periodic/Channel 一致的 Nyquist 约定；奇数网格保持逐字节不变，manufactured Stokes、两种谱存储等价性、CUDA correctness 与 R128/R320 H100 非回退门禁均已通过。权威关闭记录为 `PSSolver_v0_2_0rc4_rc412_h100_closure.json`。
 
 把它单独作为第一个批次，是因为改动局部、物理判据清楚，且不会把 checkpoint 身份、lifting 数学和 PCG 合同混进同一次验证。
 
@@ -58,4 +58,4 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 ## 下一项实现
 
-下一项实现冻结为 `rc4.1_plane_nyquist`。在它完成 CPU 与 H100 资格前，不并行修改 lifting、checkpoint identity 或 pressure contract，也不改变生产默认值。
+`rc4.1_plane_nyquist` 已完成，B5 已转为 `closed_verified`。下一项只授权规划 `rc4.2_checkpoint_identity`；在单独冻结 RC4.2 合同前，不实施 checkpoint identity 改动，也不并行修改 lifting 或 pressure contract，不改变生产默认值。

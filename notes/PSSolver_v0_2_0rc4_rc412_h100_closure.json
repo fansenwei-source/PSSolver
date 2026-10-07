@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.1.2 Plane Nyquist H100 closure",
+  "status": "complete",
+  "classification": "PASS_RC4_1_2_PLANE_NYQUIST_H100_NON_REGRESSION_WITH_AUTHORIZED_HOST_COMPILER_RECOVERY_V5",
+  "known_issue": {
+    "id": "B5",
+    "state_before": "partial_residual",
+    "state_after": "closed_verified",
+    "batch": "rc4.1_plane_nyquist"
+  },
+  "git_identity": {
+    "released_baseline": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+    "diagnostic_commit": "0ce1e898d0b46f74e1032a3a7e93b46ea8667692",
+    "candidate_commit": "d358ed66fe75da68a3e17fed402a956f21f1dd37",
+    "qualification_commit": "c39dabba1478e7b47b94b8422096f50860ecc118",
+    "qualification_parent": "ac9f5dfe1d270581f20494ab96968f2a972db63f",
+    "runtime_source_changed_after_candidate": false,
+    "implementation_source": "pssolver/linear_solvers/stokes/plane_free_slip.py",
+    "implementation_source_sha256": "ef1935b36050c08cd92079c8e4af324788a3f401b9a3c69fa46da8bb4d031a59"
+  },
+  "local_records": {
+    "known_issues_matrix_initial_commit": "2e7b2198c4629f614d52acf26c5c9837124e725d",
+    "known_issues_matrix_initial_sha256": "5faade2ffa5bf9696c3ea6f6e9b51d858c992f935ca904f715ac668a4d2e3ab0",
+    "cpu_repair_record": {
+      "path": "notes/PSSolver_v0_2_0rc4_rc411_plane_nyquist_repair.json",
+      "sha256": "6bfb24d540308ce65ae8cd5069bb26da5423db2360682c5e05869ab004c45a9c"
+    },
+    "h100_plan": {
+      "path": "notes/PSSolver_v0_2_0rc4_rc412_h100_qualification_plan.json",
+      "sha256": "a8dd9809cdcc95230763c6a423d5938da2bd15b9f44ff643d7acc0822038fb8b"
+    },
+    "preflight_recovery_plan": {
+      "path": "notes/PSSolver_v0_2_0rc4_rc412_preflight_recovery_plan.json",
+      "sha256": "bcaec1a63ccb5c6cdead4354f87c958b7f0fd656f52ddaf1378aecd060009273"
+    }
+  },
+  "external_evidence": {
+    "recovery_v4": {
+      "control_directory": "/home/fansenwei/pssolver_rc4_plane_nyquist_h100_c39dabb_20261007_recovery_v4",
+      "classification": "FAIL_RC4_1_2_PROFILE_COMPILER_ENVIRONMENT",
+      "classification_preserved": true,
+      "checksums_sha256": "126c29f5a0a33e4a4b6d05b46b538ebd2979410fb89e4d3be3e2842e75e1bb18",
+      "checksum_passed": 30,
+      "checksum_failed": 0,
+      "reused_gates": [
+        "76 targeted CPU tests",
+        "2789 full-suite CPU tests with one optional nematics3d skip and seven authorized CUDA deselections",
+        "seven CUDA-only tests",
+        "five-case Plane full-complex/Hermitian-half storage-equivalence diagnostic"
+      ],
+      "partial_profile_reused": false
+    },
+    "recovery_v5": {
+      "control_directory": "/home/fansenwei/pssolver_rc4_plane_nyquist_h100_c39dabb_20261007_recovery_v5",
+      "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_rc4_plane_nyquist_h100_c39dabb_20261007_recovery_v5",
+      "checksums_sha256": "0f891b57d7b665bae6a0d0dd29839fbf1955853f96a9cdccb29d3fab77514717",
+      "checksum_passed": 50,
+      "checksum_failed": 0,
+      "complete_marker_present": true,
+      "complete_marker_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary_sha256": "7f724786ba05fa622615a964b21dfa5e9be3224eae5c0f6e178b60bf6ce1cf99",
+      "analysis_sha256": "10b9d3864b6c89ff37406bc9f48f4b394f2c4bf8c7799edfb93e25469e27ffcf",
+      "profile_manifest_sha256": "3f9b2df0f60dd035db32b5fb080f6bcb05342d6ff06c2aa1acf1cde979c3178d"
+    }
+  },
+  "h100_job": {
+    "job_id": "10859206",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:04:01",
+    "node": "gpu-h100-4-0",
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "requeue": 0,
+    "restarts": 0,
+    "submission_attempt_count_total": 4,
+    "formal_h100_submission_count_total": 3,
+    "new_h100_submission_count": 1,
+    "automatic_retry": false
+  },
+  "host_compiler_recovery": {
+    "classification": "PASS_RC4_1_2_HOST_COMPILER_ENVIRONMENT_RECOVERY_V5",
+    "cc": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/gcc",
+    "cxx": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/g++",
+    "version": "7.3.0",
+    "stdatomic_header_present": true,
+    "stdatomic_pic_compile": true,
+    "cuda_driver_link_and_load": true,
+    "fresh_triton_cuda_utils_compile": true,
+    "fresh_torch_compile_cuda": true,
+    "compile_fallback": false,
+    "runtime_fallback": false,
+    "tf32_matmul": false,
+    "tf32_cudnn": false
+  },
+  "correctness": {
+    "decomposed_preflight_classification": "PASS_RC4_1_2_H100_PREFLIGHT",
+    "decomposed_preflight_predicates_passed": 8,
+    "cuda_only_tests_passed": 7,
+    "storage_diagnostic_classification": "PASS_PLANE_PERIODIC_NYQUIST_STORAGE_EQUIVALENCE",
+    "storage_diagnostic_case_count": 5,
+    "maximum_storage_relative_l2_bound": 1e-12,
+    "all_profiles_finite": true,
+    "forward_transforms_per_step": 7,
+    "inverse_transforms_per_step": 32,
+    "graph_breaks": 0,
+    "transform_execution_order": "real_first"
+  },
+  "profiles": {
+    "expected": 12,
+    "completed": 12,
+    "all_new_in_recovery_v5": true,
+    "independent_cache_directory_count": 24,
+    "thresholds": {
+      "mean_timestep_ratio_max": 1.03,
+      "median_timestep_ratio_max": 1.03,
+      "paired_timestep_ratio_max": 1.05,
+      "peak_memory_ratio_max": 1.03
+    },
+    "R128": {
+      "mean_candidate_over_baseline": 1.016821506007903,
+      "median_candidate_over_baseline": 1.016249248186746,
+      "paired_candidate_over_baseline": [
+        1.0160006814980689,
+        1.0250638009706416,
+        1.009558619114927
+      ],
+      "peak_allocated_candidate_over_baseline": 1.000625115706513,
+      "peak_reserved_candidate_over_baseline": 1.0
+    },
+    "R320": {
+      "mean_candidate_over_baseline": 1.0098417616077326,
+      "median_candidate_over_baseline": 1.0091830505853483,
+      "paired_candidate_over_baseline": [
+        1.0105684044187013,
+        1.0098078426886037,
+        1.0091500931593487
+      ],
+      "peak_allocated_candidate_over_baseline": 1.0006708968449014,
+      "peak_reserved_candidate_over_baseline": 1.0022888532845045
+    }
+  },
+  "analyzer": {
+    "classification": "PASS_RC4_1_2_PLANE_NYQUIST_SINGLE_H100_NON_REGRESSION",
+    "qualification_complete": true
+  },
+  "local_closeout": {
+    "targeted_passed": 33,
+    "full_suite_passed": 2796,
+    "full_suite_deselected_cuda_only": 7,
+    "full_suite_subtests_passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "full_suite_elapsed_seconds": 198.34
+  },
+  "scope": {
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false,
+    "public_api_changed": false,
+    "checkpoint_identity_modified": false,
+    "lifting_modified": false,
+    "pressure_policy_modified": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "complete": true,
+    "b5_complete": true,
+    "eligible_for_rc4_2_planning": true,
+    "rc4_2_implementation_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "eligible_for_release": false
+  }
+}
