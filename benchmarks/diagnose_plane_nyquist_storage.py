@@ -41,13 +41,14 @@ def _backend(
     shape: tuple[int, int, int],
     lengths: tuple[float, float, float],
     *,
+    device: str,
     spectral_storage: str,
     hermitian_axis: int | None,
 ) -> TensorProductTransformBackend:
     return TensorProductTransformBackend(
         shape,
         lengths,
-        device="cpu",
+        device=device,
         dtype=torch.float64,
         execution_order="real_first",
         spectral_storage=spectral_storage,
@@ -147,6 +148,7 @@ def _solve(
     shape: tuple[int, int, int],
     lengths: tuple[float, float, float],
     *,
+    device: str,
     spectral_storage: str,
     hermitian_axis: int | None,
     diagnostic_backend: TensorProductTransformBackend,
@@ -154,6 +156,7 @@ def _solve(
     backend = _backend(
         shape,
         lengths,
+        device=device,
         spectral_storage=spectral_storage,
         hermitian_axis=hermitian_axis,
     )
@@ -239,18 +242,24 @@ def diagnose_case(
     name: str,
     shape: tuple[int, int, int],
     *,
+    device: str,
     hermitian_axis: int,
     seed: int,
 ) -> dict[str, Any]:
     lengths = (2.0 * math.pi, 3.0 * math.pi, 2.5)
     generator = torch.Generator().manual_seed(seed)
     forces = tuple(
-        torch.randn((1, *shape), generator=generator, dtype=torch.float64)
+        torch.randn(
+            (1, *shape),
+            generator=generator,
+            dtype=torch.float64,
+        ).to(device=device)
         for _ in range(3)
     )
     diagnostic_backend = _backend(
         shape,
         lengths,
+        device=device,
         spectral_storage="full_complex",
         hermitian_axis=None,
     )
@@ -275,6 +284,7 @@ def diagnose_case(
             input_forces,
             shape,
             lengths,
+            device=device,
             spectral_storage="full_complex",
             hermitian_axis=None,
             diagnostic_backend=diagnostic_backend,
@@ -283,6 +293,7 @@ def diagnose_case(
             input_forces,
             shape,
             lengths,
+            device=device,
             spectral_storage="hermitian_half",
             hermitian_axis=hermitian_axis,
             diagnostic_backend=diagnostic_backend,
@@ -332,28 +343,46 @@ def diagnose_case(
     }
 
 
-def diagnose(*, seed: int = 24680) -> dict[str, Any]:
+def diagnose(*, seed: int = 24680, device: str = "cpu") -> dict[str, Any]:
+    if device not in {"cpu", "cuda"}:
+        raise ValueError("device must be cpu or cuda")
+    if device == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError("CUDA was requested but is unavailable")
     cases = (
         diagnose_case(
-            "even_xy_default_axis1", (16, 16, 8), hermitian_axis=1, seed=seed
+            "even_xy_default_axis1",
+            (16, 16, 8),
+            device=device,
+            hermitian_axis=1,
+            seed=seed,
         ),
         diagnose_case(
-            "odd_xy_default_axis1", (15, 15, 8), hermitian_axis=1, seed=seed
+            "odd_xy_default_axis1",
+            (15, 15, 8),
+            device=device,
+            hermitian_axis=1,
+            seed=seed,
         ),
         diagnose_case(
             "even_x_only_default_axis1",
             (16, 15, 8),
+            device=device,
             hermitian_axis=1,
             seed=seed,
         ),
         diagnose_case(
             "even_y_only_default_axis1",
             (15, 16, 8),
+            device=device,
             hermitian_axis=1,
             seed=seed,
         ),
         diagnose_case(
-            "even_xy_rotated_axis0", (16, 16, 8), hermitian_axis=0, seed=seed
+            "even_xy_rotated_axis0",
+            (16, 16, 8),
+            device=device,
+            hermitian_axis=0,
+            seed=seed,
         ),
     )
     repaired = all(
@@ -380,7 +409,7 @@ def diagnose(*, seed: int = 24680) -> dict[str, Any]:
         },
         "configuration": {
             "dtype": "float64",
-            "device": "cpu",
+            "device": device,
             "execution_order": "real_first",
             "dealias_rule": "none",
             "friction": 0.23,
@@ -390,6 +419,18 @@ def diagnose(*, seed: int = 24680) -> dict[str, Any]:
         "environment": {
             "python": platform.python_version(),
             "torch": torch.__version__,
+            "cuda_runtime": torch.version.cuda,
+            "cuda_available": torch.cuda.is_available(),
+            "allocated_device": str(torch.empty((), device=device).device),
+            "device_name": (
+                torch.cuda.get_device_name(torch.device(device))
+                if device == "cuda"
+                else "CPU"
+            ),
+            "cuda_matmul_allow_tf32": bool(
+                torch.backends.cuda.matmul.allow_tf32
+            ),
+            "cudnn_allow_tf32": bool(torch.backends.cudnn.allow_tf32),
         },
         "causal_finding": {
             "trigger": "an even non-reduced periodic axis",
@@ -445,8 +486,9 @@ def main() -> int:
     parser.add_argument("--output", type=Path)
     parser.add_argument("--summary-only", action="store_true")
     parser.add_argument("--seed", type=int, default=24680)
+    parser.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
     args = parser.parse_args()
-    report = diagnose(seed=args.seed)
+    report = diagnose(seed=args.seed, device=args.device)
     payload = summary(report) if args.summary_only else report
     if args.output is None:
         print(json.dumps(payload, indent=2, sort_keys=True, allow_nan=False))

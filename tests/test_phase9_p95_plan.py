@@ -29,7 +29,7 @@ def test_p95_plan_freezes_batch_one_matrix_and_nonclaims():
     assert plan["authorization"]["p9_6_authorized"] is False
 
 
-def test_p95_plan_lists_every_existing_cuda_only_login_node_test():
+def test_p95_plan_preserves_its_six_historical_cuda_only_login_node_tests():
     plan = json.loads(PLAN.read_text(encoding="utf-8"))
     frozen = set(plan["login_cpu_cuda_deselects"])
     discovered = set()
@@ -45,7 +45,9 @@ def test_p95_plan_lists_every_existing_cuda_only_login_node_test():
                     name = stripped.split("(", 1)[0].removeprefix("def ")
                     discovered.add(f"tests/{path.name}::{name}")
                     break
-    assert discovered == frozen
+    assert len(frozen) == 6
+    assert frozen <= discovered
+    assert plan["h100_execution"]["run_all_six_cuda_only_tests_before_profiles"] is True
 
 
 def test_future_archive_lists_p95_after_p94_without_regenerating_pdf():

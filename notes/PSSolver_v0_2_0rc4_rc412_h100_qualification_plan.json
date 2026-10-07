@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "kind": "pssolver_v0_2_0rc4_rc412_plane_nyquist_h100_qualification_plan",
+  "status": "LOCAL_CPU_GATE_PASS_READY_FOR_SINGLE_H100",
+  "purpose": "Close B5 by qualifying the Plane periodic-Nyquist repair for CUDA correctness and production-runtime non-regression on one H100.",
+  "runtime_identity": {
+    "baseline": {
+      "role": "A",
+      "commit": "0ce1e898d0b46f74e1032a3a7e93b46ea8667692",
+      "description": "RC4.1.0 frozen reproducer with the rc3 runtime"
+    },
+    "candidate": {
+      "role": "B",
+      "commit": "d358ed66fe75da68a3e17fed402a956f21f1dd37",
+      "description": "RC4.1.1 Plane periodic-Nyquist runtime repair"
+    },
+    "branch": "fix/v0.2.0rc4-audit",
+    "qualification_support_may_be_a_descendant_of_candidate": true,
+    "qualification_support_must_not_change_runtime_sources": true
+  },
+  "qualification_support": {
+    "profile_runner": "benchmarks/profile_plane_runtime_timestep.py",
+    "profile_runner_sha256": "aa682428089be0c00903c3f863ae12b1f565bf3ccdec5a97866068214c39d658",
+    "cuda_diagnostic": "benchmarks/diagnose_plane_nyquist_storage.py",
+    "cuda_diagnostic_sha256": "b97586570210a057b5a793b38302489146273c2296871fc1c91ceb09be8b9b07",
+    "analyzer": "benchmarks/analyze_rc4_plane_nyquist_qualification.py",
+    "analyzer_sha256": "5a0b0d1f4008ec0c3e4f42f09436d983bfed8d2afd588b75eb4c0df972afc44c",
+    "cuda_test": "tests/test_rc4_plane_nyquist_cuda.py",
+    "cuda_test_sha256": "e02a40c24593d4afe310cdb904e41237a9fcfcdcac05ad62d3165f6ad35285ae"
+  },
+  "frozen_inputs": {
+    "R128": {
+      "path": "/scratch1/vincent/PSSolver/data_pssolver_phase9_p95_h100_69bd077_20260928_v1/inputs/R128/Q_0.npy",
+      "shape": [128, 128, 32, 5],
+      "dtype": "float64",
+      "sha256": "28c70b72118c6d55b7646919ef2157959f40f52a1585753bb0732565cc6895c6"
+    },
+    "R320": {
+      "path": "/scratch1/vincent/PSSolver/data_pssolver_phase9_p95_h100_69bd077_20260928_v1/inputs/R320/Q_0.npy",
+      "shape": [320, 320, 80, 5],
+      "dtype": "float64",
+      "sha256": "84a934a828794a3976b4af897f85d60c79e0c5f545b5f8265a9a4abed1e2cb4a"
+    }
+  },
+  "cpu_gate": {
+    "full_suite_required": true,
+    "pytest_cache_disabled": true,
+    "bytecode_disabled": true,
+    "allowed_skip": "optional_nematics3d_dependency_only",
+    "cuda_only_deselect_count": 7,
+    "any_other_skip_xfail_deselect_or_failure_stops": true,
+    "result": {
+      "passed": 2781,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "elapsed_seconds": 199.90
+    }
+  },
+  "cuda_only_node_ids": [
+    "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+    "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+    "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+    "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact",
+    "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+  ],
+  "h100_execution": {
+    "gpu": "NVIDIA H100 PCIe",
+    "visible_cuda_device_count": 1,
+    "requested_device_token": "cuda",
+    "expected_allocated_device": "cuda:0",
+    "dtype": "float64",
+    "tf32": false,
+    "formal_submission_limit": 1,
+    "automatic_retry": false,
+    "second_job_without_new_authorization": false,
+    "fail_fast": true,
+    "source_shadow_import": false,
+    "production_default_changed": false
+  },
+  "cuda_correctness_gate": {
+    "case_count": 5,
+    "periodic_axes_covered": [0, 1],
+    "storage_modes": ["full_complex", "hermitian_half"],
+    "finite_required": true,
+    "maximum_velocity_relative_l2": 1e-12,
+    "maximum_pressure_relative_l2": 1e-12,
+    "pass_classification": "PASS_PLANE_PERIODIC_NYQUIST_STORAGE_EQUIVALENCE"
+  },
+  "profile_matrix": {
+    "profile_count": 12,
+    "roles": ["baseline", "candidate"],
+    "grids": ["R128", "R320"],
+    "trials_per_role_and_grid": 3,
+    "balanced_order": ["A/B", "B/A", "A/B"],
+    "runtime_path": "legacy_production",
+    "lengths": [100.0, 100.0, 20.0],
+    "dt": 0.005,
+    "activity_number": 18.0,
+    "dealias_rule": "cubic_half",
+    "projected_transform_execution": "truncated",
+    "transform_execution_order": "real_first",
+    "spectral_storage": "hermitian_half",
+    "molecular_field_linear_space": "spectral",
+    "stress_divergence_sum_space": "spectral",
+    "pointwise_execution": "compile",
+    "reuse_q_gradients": true,
+    "spectral_refresh_interval": null,
+    "warmup_steps": 10,
+    "profile_steps": 50,
+    "seed": 24,
+    "completed_steps": 60,
+    "forward_transforms_per_step": 7.0,
+    "inverse_transforms_per_step": 32.0,
+    "graph_breaks": 0,
+    "runtime_fallback": false,
+    "finite": true,
+    "same_grid_initial_sha_must_match_across_roles": true,
+    "final_sha_must_be_deterministic_within_each_role": true,
+    "cross_role_final_sha_identity_required": false
+  },
+  "thresholds": {
+    "mean_candidate_over_baseline_timestep_max": 1.03,
+    "median_candidate_over_baseline_timestep_max": 1.03,
+    "each_paired_candidate_over_baseline_timestep_max": 1.05,
+    "peak_allocated_candidate_over_baseline_max": 1.03,
+    "peak_reserved_candidate_over_baseline_max": 1.03
+  },
+  "stop_conditions": [
+    "Git, worktree, input, import, GPU, CUDA-device, or TF32 identity mismatch",
+    "CPU failure, unauthorized skip, xfail, or deselect",
+    "any CUDA-only test failure, skip, or deselect on H100",
+    "incomplete or duplicate profile matrix",
+    "non-finite state, OOM, CUDA error, runtime fallback, or graph break",
+    "transform-call, correctness, performance, or memory threshold failure",
+    "qualification helper failure"
+  ],
+  "pass_classification": "PASS_RC4_1_2_PLANE_NYQUIST_SINGLE_H100_NON_REGRESSION",
+  "pass_effect": {
+    "b5_complete": true,
+    "eligible_for_rc4_2_planning": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false
+  },
+  "not_authorized": [
+    "push without user authorization",
+    "merge",
+    "release",
+    "production default change",
+    "PSSolver-Control modification",
+    "nematics3d modification",
+    "long production simulation",
+    "automatic Slurm retry"
+  ]
+}
