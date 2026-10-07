@@ -250,7 +250,7 @@ def test_p93_functional_export_is_production_compatible_and_continues_bitwise(
     restored = restore_periodic_checkpoint(
         production,
         checkpoint,
-        runtime_identity_sha256=run_spec.runtime_identity_sha256(),
+        run_spec=run_spec,
     )
     assert restored == production.completed_steps == 3
     _assert_state_equal(_adapter_state(production), state)
@@ -272,14 +272,14 @@ def test_p93_imports_an_existing_production_checkpoint_without_repacking_loss(
         directory,
         capture_periodic_checkpoint(
             production,
-            runtime_identity_sha256=run_spec.runtime_identity_sha256(),
+            run_spec=run_spec,
         ),
     )
 
     imported = runtime.checkpoint_bridge.import_checkpoint(directory)
 
     assert imported.completed_steps == 2
-    assert imported.source_format == "periodic_production_v2"
+    assert imported.source_format == "periodic_production_v3"
     _assert_state_equal(imported.state, expected)
 
 

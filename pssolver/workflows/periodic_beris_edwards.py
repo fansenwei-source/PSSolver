@@ -121,27 +121,27 @@ def _save_observation(directory, observation, *, hydrodynamics):
             np.save(handle, value, allow_pickle=False)
 
 
-def _write_checkpoint(directory, adapter, *, runtime_identity_sha256):
+def _write_checkpoint(directory, adapter, *, run_spec):
     return write_periodic_checkpoint(
         directory,
         capture_periodic_checkpoint(
             adapter,
-            runtime_identity_sha256=runtime_identity_sha256,
+            run_spec=run_spec,
         ),
     )
 
 
-def _load_checkpoint(directory, adapter, *, runtime_identity_sha256):
+def _load_checkpoint(directory, adapter, *, run_spec):
     header = read_periodic_checkpoint_header(directory)
-    if header.runtime_identity_sha256 != runtime_identity_sha256:
-        raise ValueError("checkpoint scientific/runtime identity does not match")
-    if dict(header.backend_restart) != adapter.backend_restart_metadata():
-        raise ValueError("checkpoint backend contract does not match target")
+    if header.compatibility_identity is None:
+        raise ValueError(
+            "legacy periodic checkpoint requires explicit identity upgrade"
+        )
     checkpoint = load_periodic_checkpoint(directory)
     return restore_periodic_checkpoint(
         adapter,
         checkpoint,
-        runtime_identity_sha256=runtime_identity_sha256,
+        run_spec=run_spec,
     )
 
 
@@ -163,7 +163,7 @@ class PeriodicBerisEdwardsWorkflow:
         start = 0 if restart is None else _load_checkpoint(
             restart,
             self.adapter,
-            runtime_identity_sha256=self.run_spec.runtime_identity_sha256(),
+            run_spec=self.run_spec,
         )
         steps = self.run_spec.simulation.workflow.steps
         if self.options["save_start_step"] > start + steps:
@@ -208,7 +208,7 @@ class PeriodicBerisEdwardsWorkflow:
                 _write_checkpoint(
                     self.output_directory / f"checkpoint_{self.adapter.completed_steps}",
                     self.adapter,
-                    runtime_identity_sha256=self.run_spec.runtime_identity_sha256(),
+                    run_spec=self.run_spec,
                 )
                 self.checkpoints.append(self.adapter.completed_steps)
         if executed != steps:

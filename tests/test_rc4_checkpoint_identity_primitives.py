@@ -340,7 +340,7 @@ def test_registry_resolution_is_exact_and_unknown_keys_fail_closed():
         resolve_legacy_identity_schema(known.key.to_metadata())
 
 
-def test_identity_primitives_are_schema_independent_and_only_plane_is_wired():
+def test_identity_primitives_are_schema_independent_and_production_is_wired():
     tree = ast.parse(MODULE.read_text(encoding="utf-8"))
     imports = []
     for node in ast.walk(tree):
@@ -350,13 +350,16 @@ def test_identity_primitives_are_schema_independent_and_only_plane_is_wired():
             imports.append(node.module)
     assert not any(name.startswith("pssolver") for name in imports)
 
-    plane_reader = (
-        ROOT / "pssolver/workflows/plane_checkpoint.py"
-    ).read_text(encoding="utf-8")
-    assert "pssolver.io.checkpoint_identity" in plane_reader
+    wired_readers = [
+        "pssolver/workflows/plane_checkpoint.py",
+        "pssolver/workflows/periodic_checkpoint.py",
+        "pssolver/workflows/channel_beris_edwards.py",
+    ]
+    for relative in wired_readers:
+        source = (ROOT / relative).read_text(encoding="utf-8")
+        assert "pssolver.io.checkpoint_identity" in source
 
     untouched_readers = [
-        "pssolver/workflows/periodic_checkpoint.py",
         "pssolver/workflows/channel_checkpoint.py",
         "pssolver/functional/periodic_checkpoint.py",
         "pssolver/functional/channel_checkpoint.py",

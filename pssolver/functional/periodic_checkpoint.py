@@ -14,7 +14,7 @@ from pssolver.configuration.periodic_beris_edwards import (
 )
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.workflows.periodic_checkpoint import (
-    PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PeriodicWorkflowCheckpoint,
     load_periodic_checkpoint,
     read_periodic_checkpoint_header,
@@ -40,6 +40,7 @@ PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 2
 _LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 1
 _SOURCE_PRODUCTION_V1 = "periodic_production_v1"
 _SOURCE_PRODUCTION_V2 = "periodic_production_v2"
+_SOURCE_PRODUCTION_V3 = "periodic_production_v3"
 _SOURCE_FUNCTIONAL_V1 = "periodic_functional_bridge_v1"
 _SOURCE_FUNCTIONAL_V2 = "periodic_functional_bridge_v2"
 
@@ -219,7 +220,9 @@ class PeriodicActivityCheckpointBridge:
             raise ValueError("functional state contains NaN or Inf")
         q_physical, q_spectral = state
         checkpoint = PeriodicWorkflowCheckpoint(
-            format_version=PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+            # RC4.2.3 leaves the functional bridge on its qualified production
+            # v2 carrier.  RC4.2.4 owns its derivative-aware v3 migration.
+            format_version=PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
             runtime_identity_sha256=self._production_runtime_identity_sha256,
             completed_steps=completed_steps,
             spectral_refresh_interval=None,
@@ -290,6 +293,14 @@ class PeriodicActivityCheckpointBridge:
         source_format, compatibility = self._validate_bridge_metadata(
             header.functional_bridge
         )
+        if header.functional_bridge is None and header.format_version == 3:
+            source_format = _SOURCE_PRODUCTION_V3
+            compatibility = FunctionalCheckpointCompatibility(
+                source_api_version=None,
+                target_api_version=FUNCTIONAL_API_VERSION,
+                reader="qualified_periodic_production_v3_reader",
+                exact_current_protocol=False,
+            )
         if header.functional_bridge is None and header.format_version == 1:
             source_format = _SOURCE_PRODUCTION_V1
             compatibility = FunctionalCheckpointCompatibility(

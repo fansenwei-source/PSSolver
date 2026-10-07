@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.2.3 Periodic and Channel production layered checkpoint identity and legacy upgrade paths",
+  "phase": "RC4.2.3",
+  "status": "complete",
+  "classification": "PASS_RC4_2_3_PERIODIC_CHANNEL_PRODUCTION_LAYERED_CHECKPOINT_IDENTITY_AND_LEGACY_UPGRADE",
+  "git_identity": {
+    "implementation_parent": "f4a5aa344a98eec40ff8e3be2194cd7ba6098ccb",
+    "branch": "fix/v0.2.0rc4-audit",
+    "planning_record": "notes/PSSolver_v0_2_0rc4_rc420_checkpoint_identity_plan.json",
+    "planning_record_sha256": "88839d3d92b185876d3eb03e4933c26644fc0f2cae59061a66bb86a55d066b59"
+  },
+  "periodic_production": {
+    "current_format_version": 3,
+    "legacy_format_versions": [1, 2],
+    "current_writer_emits_v3_only": true,
+    "legacy_direct_production_restore_allowed": false,
+    "legacy_upgrade_writes_new_directory_only": true,
+    "source_checkpoint_immutability_verified": true,
+    "full_complex_rc1_exact_restart": "rejected_before_tensor_load",
+    "hermitian_half_rc1_exact_restart": "accepted_after_explicit_upgrade",
+    "rc2_rc3_post_repair_exact_restart": "accepted_after_explicit_upgrade",
+    "functional_bridge_v2_direct_restore_preserved": true,
+    "functional_bridge_upgrade_deferred_to": "RC4.2.4"
+  },
+  "channel_complete_stress_production": {
+    "runtime_path": "channel_complete_stress",
+    "current_format_version": 3,
+    "legacy_rc1_format_version": 1,
+    "legacy_rc2_rc3_format_version": 2,
+    "current_writer_emits_v3_only": true,
+    "legacy_direct_production_restore_allowed": false,
+    "legacy_upgrade_writes_new_directory_only": true,
+    "source_checkpoint_immutability_verified": true,
+    "rc1_even_periodic_axis_exact_restart": "rejected_before_tensor_load",
+    "rc1_odd_periodic_axis_exact_restart": "accepted_after_explicit_upgrade",
+    "rc2_rc3_exact_restart": "accepted_after_explicit_upgrade"
+  },
+  "identity_contract": {
+    "identity_layers": [
+      "forward_dynamics",
+      "state_layout",
+      "backend_restart"
+    ],
+    "run_provenance_in_compatibility_digest": false,
+    "device_token_in_compatibility_digest": false,
+    "output_policy_in_compatibility_digest": false,
+    "source_opaque_digest_authenticated_before_tensor_load": true,
+    "current_identity_digest_checked_before_tensor_load": true,
+    "unknown_format_rejected_before_tensor_load": true,
+    "target_mutation_before_compatibility_acceptance": false,
+    "cross_runtime_restart_expanded": false,
+    "migration_provenance_persisted": true,
+    "in_place_rewrite": false
+  },
+  "cross_version_matrix": {
+    "M07_periodic_full_complex_rc1_pre_repair": "PASS_REJECT_EXACT_RESTART_PRE_TENSOR_LOAD",
+    "M08_periodic_hermitian_half_rc1": "PASS_UPGRADE_AND_EXACT_RESTART",
+    "M09_periodic_rc2_rc3_post_repair": "PASS_UPGRADE_AND_EXACT_RESTART",
+    "M10_channel_rc1_even_periodic_grid": "PASS_REJECT_EXACT_RESTART_PRE_TENSOR_LOAD",
+    "M11_channel_rc1_odd_periodic_grid": "PASS_UPGRADE_AND_EXACT_RESTART",
+    "M12_channel_rc2_rc3": "PASS_UPGRADE_AND_EXACT_RESTART"
+  },
+  "implementation_files": {
+    "pssolver/workflows/periodic_checkpoint.py": "286ffb7ae48612dbda6192e8c1b24037b9dd488d1449ff4332fc877a6dd71d59",
+    "pssolver/workflows/periodic_beris_edwards.py": "aa4537b9ebdee6febdc6060a0906fd57b2d1fef0711ac41c7b98c55915e40cb5",
+    "pssolver/functional/periodic_checkpoint.py": "695e7c611d210038b0ba79f52e09bb8c2b903fcb2cd40b23175691d22abdb8d3",
+    "pssolver/workflows/channel_beris_edwards.py": "2c8ee4fbc7a9a322b2959877619aaecf363705c83505850795acceab337e0252",
+    "pssolver/functional/channel_checkpoint.py": "fe14d89f839f84dc39383b5d0ad44b9e0b2cea8d61851412fbce50e3cf6fe789",
+    "pssolver/workflows/__init__.py": "4d6ab536095aed47dcec00306f5ccc352f08ebf298dc7c05d8e8f90fcb47ca85",
+    "tests/test_rc4_periodic_channel_checkpoint_identity.py": "382317b58d270d6425810835243b9cfeb7a2c9c7cb5fac0a35de53502aecc761"
+  },
+  "local_verification": {
+    "targeted_passed": 102,
+    "initial_full_suite_passed": 2854,
+    "initial_full_suite_skipped_optional": 0,
+    "initial_full_suite_deselected_cuda_only": 7,
+    "initial_full_suite_subtests_passed": 8,
+    "initial_full_suite_elapsed_seconds": 202.26,
+    "final_full_suite_passed": 2859,
+    "final_full_suite_skipped_optional": 0,
+    "final_full_suite_deselected_cuda_only": 7,
+    "final_full_suite_subtests_passed": 8,
+    "final_full_suite_elapsed_seconds": 202.58,
+    "failed": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass"
+  },
+  "scope": {
+    "periodic_production_checkpoint_modified": true,
+    "channel_complete_stress_production_checkpoint_modified": true,
+    "periodic_functional_integration_reader_modified": true,
+    "channel_functional_integration_reader_modified": true,
+    "functional_checkpoint_format_changed": false,
+    "functional_derivative_identity_changed": false,
+    "p7_channel_checkpoint_modified": false,
+    "runtime_hot_path_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "rc4_2_3_complete": true,
+    "eligible_for_rc4_2_4_planning": true,
+    "rc4_2_4_implementation_authorized": false,
+    "PSSolver_Control_change_authorized": false,
+    "H100_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false
+  }
+}

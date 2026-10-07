@@ -698,7 +698,7 @@ def test_channel_progress_tamper_is_rejected_before_target_mutation(tmp_path):
         _load_checkpoint(
             checkpoint,
             adapter,
-            runtime_identity_sha256=run_spec.runtime_identity_sha256(),
+            run_spec=run_spec,
         )
 
     assert adapter.completed_steps == before_steps

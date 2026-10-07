@@ -60,6 +60,7 @@ _SOURCE_FUNCTIONAL_V1 = "channel_functional_bridge_v1"
 _SOURCE_FUNCTIONAL_V2 = "channel_functional_bridge_v2"
 _SOURCE_PRODUCTION_V1 = "channel_production_v1"
 _SOURCE_PRODUCTION_V2 = "channel_production_v2"
+_SOURCE_PRODUCTION_V3 = "channel_production_v3"
 _PRODUCTION_STATE_COMPONENTS = (*Q_COMPONENTS, *VELOCITY_COMPONENTS, "p")
 
 
@@ -450,7 +451,7 @@ class ChannelActivityCheckpointBridge:
         if (
             not isinstance(format_version, int)
             or isinstance(format_version, bool)
-            or format_version not in {1, CHECKPOINT_VERSION}
+            or format_version not in {1, 2, CHECKPOINT_VERSION}
         ):
             raise FunctionalCheckpointCompatibilityError(
                 "unsupported complete-stress Channel checkpoint version",
@@ -458,17 +459,25 @@ class ChannelActivityCheckpointBridge:
             )
         verify_checkpoint_metadata(
             metadata,
-            required=format_version == CHECKPOINT_VERSION,
+            required=format_version in {2, CHECKPOINT_VERSION},
         )
         if metadata.get("runtime_path") != CHANNEL_COMPLETE_STRESS_RUNTIME_PATH:
             raise FunctionalCheckpointCompatibilityError(
                 "checkpoint runtime identity does not match target",
                 operation="channel_checkpoint_import",
             )
-        if (
-            metadata.get("runtime_identity_sha256")
-            != self._production_runtime_identity_sha256
-        ):
+        runtime_identity = metadata.get("runtime_identity_sha256")
+        if format_version == CHECKPOINT_VERSION:
+            provenance = metadata.get("run_provenance")
+            if not isinstance(provenance, Mapping):
+                raise FunctionalCheckpointCompatibilityError(
+                    "checkpoint run provenance is missing",
+                    operation="channel_checkpoint_import",
+                )
+            runtime_identity = provenance.get(
+                "legacy_runtime_identity_sha256"
+            )
+        if runtime_identity != self._production_runtime_identity_sha256:
             raise FunctionalCheckpointCompatibilityError(
                 "checkpoint scientific/runtime identity does not match",
                 operation="channel_checkpoint_import",
@@ -532,17 +541,25 @@ class ChannelActivityCheckpointBridge:
             state,
             completed,
             (
-                _SOURCE_PRODUCTION_V2
+                _SOURCE_PRODUCTION_V3
                 if format_version == CHECKPOINT_VERSION
-                else _SOURCE_PRODUCTION_V1
+                else (
+                    _SOURCE_PRODUCTION_V2
+                    if format_version == 2
+                    else _SOURCE_PRODUCTION_V1
+                )
             ),
             FunctionalCheckpointCompatibility(
                 source_api_version=None,
                 target_api_version=FUNCTIONAL_API_VERSION,
                 reader=(
-                    "qualified_channel_production_v2_reader"
+                    "qualified_channel_production_v3_reader"
                     if format_version == CHECKPOINT_VERSION
-                    else "qualified_channel_production_v1_reader"
+                    else (
+                        "qualified_channel_production_v2_reader"
+                        if format_version == 2
+                        else "qualified_channel_production_v1_reader"
+                    )
                 ),
                 exact_current_protocol=False,
             ),

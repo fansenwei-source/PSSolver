@@ -341,13 +341,13 @@ def test_p974_checkpoint_round_trip_and_production_import(tmp_path):
     write_channel_beris_edwards_checkpoint(
         production_directory,
         production,
-        runtime_identity_sha256=run_spec.runtime_identity_sha256(),
+        run_spec=run_spec,
     )
     imported_production = runtime.checkpoint_bridge.import_checkpoint(
         production_directory
     )
     _assert_state_equal(imported_production.state, _adapter_state(production))
-    assert imported_production.source_format == "channel_production_v2"
+    assert imported_production.source_format == "channel_production_v3"
 
 
 def test_p974_checkpoint_rejects_identity_checksum_and_existing_target(
@@ -434,7 +434,7 @@ def test_p974_production_import_applies_the_complete_checkpoint_contract(
     write_channel_beris_edwards_checkpoint(
         source,
         production,
-        runtime_identity_sha256=run_spec.runtime_identity_sha256(),
+        run_spec=run_spec,
     )
     target = tmp_path / f"strict_production_{mutation}"
     shutil.copytree(source, target)
