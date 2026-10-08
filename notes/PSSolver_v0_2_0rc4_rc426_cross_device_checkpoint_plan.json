@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.2.6 single-H100 cross-device checkpoint portability plan",
+  "phase": "RC4.2.6",
+  "status": "ready_for_implementation",
+  "classification": "READY_RC4_2_6_SINGLE_H100_CROSS_DEVICE_CHECKPOINT_PORTABILITY",
+  "source_identity": {
+    "planning_parent": "6f9bc92539a016fee8bcc39acf2cf717ff5e14d8",
+    "branch": "fix/v0.2.0rc4-audit",
+    "rc4_2_0_plan": "notes/PSSolver_v0_2_0rc4_rc420_checkpoint_identity_plan.json",
+    "rc4_2_0_plan_sha256": "88839d3d92b185876d3eb03e4933c26644fc0f2cae59061a66bb86a55d066b59",
+    "rc4_2_5_record": "notes/PSSolver_v0_2_0rc4_rc425_installed_cpu_closure.json",
+    "rc4_2_5_record_sha256": "e75838c04400bcd8b397bdc6045267e921f15d8f11e1ef6d2d945549fe972f2c",
+    "rc4_2_5_control_directory": "/home/fansenwei/pssolver_rc425_installed_cpu_d8a7fde_03dbc39_20261007_v2",
+    "rc4_2_5_manifest_sha256": "3573f412a45a288fb6aae76619eefa815d108061fe03cb9e653313715e4c92c9",
+    "rc4_2_5_manifest_entries": 26
+  },
+  "claim_boundary": {
+    "claim": "A current-format checkpoint created on CPU can restore on one allocated CUDA device, and a current-format checkpoint created on that CUDA device can restore on CPU, when every scientific, discretization, runtime-path, state-layout, backend-restart, lifting, and derivative identity is otherwise unchanged.",
+    "device_token_is_run_provenance_not_compatibility_identity": true,
+    "cross_runtime_restart_claimed": false,
+    "cross_dtype_restart_claimed": false,
+    "cross_shape_restart_claimed": false,
+    "cross_release_legacy_portability_claimed": false,
+    "cross_device_post_restore_byte_identical_trajectory_claimed": false,
+    "performance_or_memory_claimed": false,
+    "scientific_long_run_claimed": false
+  },
+  "matrix": [
+    {"id": "X01", "family": "plane_production", "runtime_path": "legacy_production", "source": "cpu", "target": "cuda"},
+    {"id": "X02", "family": "plane_production", "runtime_path": "legacy_production", "source": "cuda", "target": "cpu"},
+    {"id": "X03", "family": "plane_production", "runtime_path": "compiled_v2", "source": "cpu", "target": "cuda"},
+    {"id": "X04", "family": "plane_production", "runtime_path": "compiled_v2", "source": "cuda", "target": "cpu"},
+    {"id": "X05", "family": "plane_production", "runtime_path": "separated_canary", "source": "cpu", "target": "cuda"},
+    {"id": "X06", "family": "plane_production", "runtime_path": "separated_canary", "source": "cuda", "target": "cpu"},
+    {"id": "X07", "family": "periodic_production", "runtime_path": "periodic_spectral", "source": "cpu", "target": "cuda"},
+    {"id": "X08", "family": "periodic_production", "runtime_path": "periodic_spectral", "source": "cuda", "target": "cpu"},
+    {"id": "X09", "family": "channel_production", "runtime_path": "channel_complete_stress", "source": "cpu", "target": "cuda"},
+    {"id": "X10", "family": "channel_production", "runtime_path": "channel_complete_stress", "source": "cuda", "target": "cpu"},
+    {"id": "X11", "family": "periodic_functional", "runtime_path": "periodic_activity_batch_one", "source": "cpu", "target": "cuda"},
+    {"id": "X12", "family": "periodic_functional", "runtime_path": "periodic_activity_batch_one", "source": "cuda", "target": "cpu"},
+    {"id": "X13", "family": "channel_functional", "runtime_path": "channel_activity_batch_one", "source": "cpu", "target": "cuda"},
+    {"id": "X14", "family": "channel_functional", "runtime_path": "channel_activity_batch_one", "source": "cuda", "target": "cpu"}
+  ],
+  "canonical_problem": {
+    "dtype": "float64",
+    "batch_size": 1,
+    "initialization": "deterministic analytic finite Q with no random-number dependency",
+    "source_steps_before_checkpoint": 1,
+    "post_restore_smoke_steps": 1,
+    "requested_cuda_token": "cuda",
+    "allocated_cuda_device": "cuda:0",
+    "separate_output_directory_per_matrix_cell": true,
+    "existing_output_overwrite_allowed": false
+  },
+  "per_cell_required_gates": [
+    "requested source and target devices match the allocated tensors",
+    "runtime path and checkpoint family match exactly",
+    "source and target compatibility identities are byte-for-byte equal",
+    "run-provenance device tokens may differ and are recorded",
+    "checkpoint directory is an ordinary non-symlink directory",
+    "checkpoint metadata and every tensor checksum validate before restore",
+    "checkpoint source tree hash is unchanged by restore",
+    "restore returns the exact completed-step count and integrator counters",
+    "every restored serialized tensor is torch.equal after transfer to CPU",
+    "persistent backend state is exact after transfer to CPU",
+    "all restored tensors and the one-step post-restore smoke are finite",
+    "fallback_used is false",
+    "no target mutation occurs before complete compatibility and integrity acceptance"
+  ],
+  "comparison_semantics": {
+    "serialized_state_comparison": "torch.equal_after_detach_contiguous_CPU_transfer",
+    "metadata_comparison": "canonical_JSON_byte_identity_for_compatibility_layers",
+    "progress_comparison": "integer_exact",
+    "post_restore_step": "finite_and_successful_only",
+    "post_restore_cross_device_numerical_equality_gate": false,
+    "reason": "A device-portability claim covers exact checkpoint materialization and usable restore, not bitwise identity of subsequent CPU and CUDA floating-point evolution."
+  },
+  "submission_preconditions": {
+    "rc4_2_5_complete_present": true,
+    "rc4_2_5_checksum_verification": "26/26 PASS",
+    "git_diff_check": "required",
+    "qualification_commit_is_remote_tip": "required",
+    "detached_clean_worktree": "required",
+    "helper_py_compile_import_and_synthetic_tests": "required",
+    "helper_planning_matrix": "exactly X01 through X14 once each",
+    "installed_wheel_pip_check": "required",
+    "installed_wheel_source_shadow_import": false,
+    "scratch_initial_entry_count": 0
+  },
+  "cuda_only_node_ids": [
+    "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+    "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+    "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+    "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact",
+    "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+  ],
+  "h100_environment": {
+    "gpu_name_contains": "H100",
+    "visible_cuda_device_count": 1,
+    "torch_cuda_available": true,
+    "allocated_device": "cuda:0",
+    "tf32_matmul": false,
+    "tf32_cudnn": false,
+    "source_shadow_import": false,
+    "runtime_fallback": false,
+    "compile_fallback": false,
+    "decomposed_preflight_required": true,
+    "host_compiler_preflight_required_if_torch_compile_is_exercised": true,
+    "isolated_triton_and_torchinductor_caches": true
+  },
+  "slurm": {
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "gres": "gpu:H100:1",
+    "cpus_per_task": 8,
+    "memory": "64G",
+    "time_limit": "01:00:00",
+    "requeue": false,
+    "formal_h100_submission_limit": 1,
+    "automatic_retry": false
+  },
+  "execution_order": [
+    "validate Git, RC4.2.5 evidence, CPU gates, wheel identity, helper, paths, and empty scratch before sbatch",
+    "persist decomposed GPU, import, TF32, compiler, and allocated-device observations before enforcement",
+    "run seven CUDA-only tests with zero skip, xfail, or deselect",
+    "execute X01 through X14 in order with an atomic per-cell report",
+    "run a fail-closed aggregate analyzer",
+    "verify worktree cleanliness and archive checksums",
+    "write COMPLETE only after all preceding gates pass"
+  ],
+  "stop_conditions": [
+    "Git or RC4.2.5 evidence mismatch",
+    "CPU, wheel, helper, import, or preflight failure",
+    "any H100 CUDA-only test failure, skip, xfail, or deselect",
+    "any missing, duplicate, reordered, or failed matrix cell",
+    "identity, checksum, progress, tensor equality, finite, fallback, or source-immutability failure",
+    "OOM, NaN, Inf, CUDA error, compiler error, or unexpected output overwrite",
+    "any attempt to infer an unpersisted value or silently retry"
+  ],
+  "successful_classification": "PASS_RC4_2_6_SINGLE_H100_CROSS_DEVICE_CHECKPOINT_PORTABILITY",
+  "failure_semantics": {
+    "external_harness_or_environment_failure_is_scientific_failure": false,
+    "matrix_identity_or_state_failure_is_checkpoint_portability_failure": true,
+    "earlier_RC4_2_5_CPU_closure_remains_valid_on_failure": true,
+    "partial_matrix_is_qualification_complete": false
+  },
+  "reviewed_source_sha256": {
+    "pssolver/workflows/plane_checkpoint.py": "589f46ab1b2b2e41c483ff7b5aa2c91457483239352e4e7d7925c48e6916bb50",
+    "pssolver/workflows/periodic_checkpoint.py": "e6a2642ff8a787813911cfd3ceb50a195e10cf117ecc899afe737872ed4b4cb6",
+    "pssolver/workflows/channel_beris_edwards.py": "2c8ee4fbc7a9a322b2959877619aaecf363705c83505850795acceab337e0252",
+    "pssolver/functional/periodic_checkpoint.py": "dd742bb2da300d8b34a752d1ec476f77f2e0a45e6900b1bbd4f65c2a2cbae0de",
+    "pssolver/functional/channel_checkpoint.py": "b7b426c82798ca34aca0456b7a3f98732009f8a18e255f3da6ab9212cf6200ea",
+    "pssolver/io/checkpoint_identity.py": "22949e1f786931e98d4c1c2c86893ba4c52a6c33a839e2ec2d4f67dd11f05ef5",
+    "pssolver/functional/checkpoint_identity.py": "49d693e52537f4687fd000bed815ea45da3ec7b5ec28b5f12f076fad3189a596",
+    "tests/test_rc4_plane_nyquist_cuda.py": "e02a40c24593d4afe310cdb904e41237a9fcfcdcac05ad62d3165f6ad35285ae"
+  },
+  "local_verification": {
+    "targeted_contract_tests_passed": 19,
+    "full_suite_passed": 2890,
+    "full_suite_deselected_cuda_only": 7,
+    "full_suite_subtests_passed": 8,
+    "full_suite_elapsed_seconds": 204.22,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass"
+  },
+  "success_state": {
+    "rc4_2_6_complete": true,
+    "rc4_2_complete": true,
+    "GPU_checkpoint_portability_claimed": true,
+    "eligible_for_rc4_3_planning": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  },
+  "scope": {
+    "planning_only": true,
+    "runtime_source_modified": false,
+    "checkpoint_reader_or_writer_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "H100_executed": false,
+    "profile_or_performance_executed": false
+  },
+  "authorization": {
+    "rc4_2_6_planning_authorized": true,
+    "rc4_2_6_planning_complete": true,
+    "rc4_2_6_implementation_authorized": false,
+    "H100_submission_authorized": false,
+    "PSSolver_Control_change_authorized": false,
+    "nematics3d_change_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "push_authorized": false,
+    "release_authorized": false
+  }
+}
