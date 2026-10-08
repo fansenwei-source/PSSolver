@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.2.6 cross-device checkpoint execution support",
+  "phase": "RC4.2.6",
+  "status": "ready_for_single_h100_qualification",
+  "classification": "READY_RC4_2_6_SINGLE_H100_EXECUTION_NOT_SUBMITTED",
+  "source_identity": {
+    "implementation_parent": "9f693a3eee7183ad380948839b922da5d2fb1604",
+    "branch": "fix/v0.2.0rc4-audit",
+    "plan": "notes/PSSolver_v0_2_0rc4_rc426_cross_device_checkpoint_plan.json",
+    "plan_sha256": "06e4f18c7a9617355612ee4975b8650700b3a89fd724041c056ecf46bc3a39f2",
+    "rc4_2_5_record": "notes/PSSolver_v0_2_0rc4_rc425_installed_cpu_closure.json",
+    "rc4_2_5_record_sha256": "e75838c04400bcd8b397bdc6045267e921f15d8f11e1ef6d2d945549fe972f2c"
+  },
+  "support_files": {
+    "matrix_runner": {
+      "path": "benchmarks/run_rc426_cross_device_checkpoint.py",
+      "sha256": "484e5e4192b79ef707d9b21307e14ef989695a8962f002ae95f95bc70d826e9c"
+    },
+    "analyzer": {
+      "path": "benchmarks/analyze_rc426_cross_device_checkpoint.py",
+      "sha256": "d6b9a46d8b90506b8a8190c3cb09ac83f10f27a3e85b1d17a975ba9ddf730ff8"
+    },
+    "cuda_test_runner": {
+      "path": "benchmarks/run_rc426_cuda_tests.py",
+      "sha256": "4255beda82bd78001bc0c02dc66f296f1ff486a492b0163b4b8ba145aeb8594b"
+    },
+    "slurm_harness": {
+      "path": "jobs/rc426_cross_device_checkpoint_h100.sbatch",
+      "sha256": "176ca584ca4f94eab5d37d641fbca9d98c3c11072d4f3321b2c6a4db33002cf2"
+    }
+  },
+  "matrix_contract": {
+    "cell_count": 14,
+    "ordered_cell_ids": [
+      "X01", "X02", "X03", "X04", "X05", "X06", "X07",
+      "X08", "X09", "X10", "X11", "X12", "X13", "X14"
+    ],
+    "cpu_to_cuda": 7,
+    "cuda_to_cpu": 7,
+    "atomic_report_per_cell": true,
+    "stop_after_first_failed_cell": true,
+    "matrix_complete_written_only_after_all_cells_pass": true
+  },
+  "implemented_gates": {
+    "installed_wheel_identity_and_source_shadow": true,
+    "decomposed_h100_preflight": true,
+    "explicit_tf32_disable_and_verification": true,
+    "seven_cuda_only_tests_with_strict_outcome_accounting": true,
+    "ordinary_non_symlink_checkpoint_directory": true,
+    "compatibility_identity_byte_identity": true,
+    "raw_byte_tamper_reaches_checksum_guard": true,
+    "target_unchanged_after_negative_gate": true,
+    "source_tree_unchanged_by_restore": true,
+    "completed_steps_and_serialized_progress_exact": true,
+    "serialized_tensor_payload_exact_after_cpu_transfer": true,
+    "persistent_backend_payload_exact": true,
+    "restored_state_finite": true,
+    "one_step_post_restore_finite": true,
+    "runtime_fallback_false": true,
+    "fail_closed_aggregate_analyzer": true
+  },
+  "claim_boundary": {
+    "checkpoint_materialization_exact": true,
+    "finite_post_restore_step": true,
+    "post_restore_cross_device_byte_identical_trajectory_claimed": false,
+    "performance_or_memory_claimed": false,
+    "scientific_long_run_claimed": false,
+    "cross_runtime_or_cross_release_claimed": false
+  },
+  "slurm": {
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "gres": "gpu:H100:1",
+    "cpus_per_task": 8,
+    "memory": "64G",
+    "time_limit": "01:00:00",
+    "requeue": false,
+    "formal_h100_submission_limit": 1,
+    "automatic_retry": false
+  },
+  "local_verification": {
+    "targeted_tests_passed": 28,
+    "full_suite_passed": 2912,
+    "full_suite_deselected_cuda_only": 7,
+    "full_suite_subtests_passed": 8,
+    "full_suite_elapsed_seconds": 198.08,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass",
+    "cpu_same_device_real_checkpoint_cells_executed": 7
+  },
+  "scope": {
+    "qualification_support_only": true,
+    "runtime_source_modified": false,
+    "checkpoint_reader_or_writer_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "H100_executed": false,
+    "slurm_submitted": false,
+    "push_performed": false
+  },
+  "authorization": {
+    "rc4_2_6_execution_support_complete": true,
+    "H100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "push_authorized": false,
+    "release_authorized": false
+  },
+  "next_step": "Build one fresh installed-wheel environment, copy the authenticated qualification-only benchmarks and seven tests under that venv, run all login-node gates, and only then request explicit authorization for one H100 submission."
+}
