@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.2.5 installed-wheel cross-version and consumer CPU closure",
+  "phase": "RC4.2.5",
+  "status": "complete",
+  "classification": "PASS_RC4_2_5_INSTALLED_WHEEL_CROSS_VERSION_AND_CONSUMER_CPU_CLOSURE",
+  "git_identity": {
+    "provider_runtime_source_commit": "573daaf1e2d4ad7e54c6c084a6fbb04126fd4966",
+    "provider_qualification_support_commit": "d8a7fdeb99b810d60d63fe07103704b9110f9fd9",
+    "provider_branch": "fix/v0.2.0rc4-audit",
+    "consumer_source_commit": "03dbc39975978d9d0b7f84965015da24f9d3c206",
+    "consumer_evidence_successor_commit": "c4b50e63cafba14d1985fbe4a71aa78212eaf050",
+    "planning_record": "notes/PSSolver_v0_2_0rc4_rc425_installed_cpu_qualification_plan.json",
+    "planning_record_sha256": "3386887fc2c01952e53ebc227318af16bb68fd7b3875d6d3d4dd19f8c8188e81",
+    "predecessor_record": "notes/PSSolver_v0_2_0rc4_rc424_functional_checkpoint_identity.json",
+    "predecessor_record_sha256": "5fdc8c026d9a59a8eb2a1b05146943ae1530c363608a59bc9649a9ecb0b425e5"
+  },
+  "installed_wheel_gate": {
+    "control_directory": "/home/fansenwei/pssolver_rc425_installed_cpu_d8a7fde_03dbc39_20261007_v2",
+    "result": "results/installed_wheel_closure.json",
+    "result_sha256": "c62ed0ee58289f1295f65edfcc13615f36696a814c9ca50b1c2e00ffbc9732f1",
+    "classification": "PASS_RC4_2_5_INSTALLED_WHEEL_CPU_CLOSURE",
+    "provider_tests_passed": 35,
+    "consumer_tests_passed": 60,
+    "total_tests_passed": 95,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "collection_errors": 0,
+    "pip_check": "pass",
+    "source_shadow_import": false,
+    "functional_api_version": "1.0",
+    "functional_compatibility_policy_version": 3,
+    "periodic_functional_bridge_format_version": 3,
+    "channel_functional_bridge_format_version": 3
+  },
+  "artifact_identity": {
+    "provider_archive_sha256": "b30dd4160458702d8ed714691ea06d2e010ba3137c21735dba3b6149beac6d67",
+    "consumer_archive_sha256": "7141dd277b643a4e116cecae087cab0d3b1542da47c8dc83ce964dce9fbe34c1",
+    "provider_wheel_sha256": "60cdb34a3cbf20eab33dc781d07c18391a266b7171e8c00ee43c669de2549069",
+    "consumer_wheel_sha256": "bd9b5f572b7397b7f9fb4dd5af4576dd92970984286e7a0cec7774163823ca85",
+    "runner_sha256": "16090ed6e78d1f79ae4c278e2aefc2e98e03cc5a5c4dc05bfa4130cb7ec6e22d"
+  },
+  "environment": {
+    "python": "3.12.13",
+    "torch": "2.6.0+cu126",
+    "numpy": "2.4.6",
+    "scipy": "1.15.1",
+    "pytest": "9.1.1",
+    "pssolver": "0.2.0rc3",
+    "pssolver_control": "0.0.1.dev0",
+    "nematics3d_installed_in_qualification_venv": false,
+    "dependency_source": "clean Eva-derived venv plus local offline SciPy and pytest materialization",
+    "network_used": false
+  },
+  "cross_version_closure": {
+    "matrix_M01_through_M16": "PASS",
+    "current_checkpoint_round_trip": "PASS",
+    "registered_legacy_acceptance": "PASS",
+    "incompatible_or_unknown_legacy_rejection": "PASS_BEFORE_TENSOR_LOAD_AND_TARGET_MUTATION",
+    "upgrade_source_immutability": "PASS",
+    "continuous_vs_restart_equivalence": "PASS",
+    "device_token_excluded_from_compatibility_identity": true,
+    "state_only_migration_not_reported_as_exact_restart": true
+  },
+  "consumer_closure": {
+    "installed_wheel_checkpoint_round_trip": "PASS",
+    "frozen_periodic_identity_oracle": "PASS",
+    "frozen_channel_identity_oracle": "PASS",
+    "checkpointed_vs_full_history_gradient": "PASS",
+    "finite_difference_and_Taylor": "PASS",
+    "legacy_or_identity_negative_gates": "PASS",
+    "consumer_source_modified_by_RC4_2_5": false,
+    "consumer_requalification_executed": true
+  },
+  "recovery_history": {
+    "v1_classification": "STOPPED_AT_EXTERNAL_BASE_ENVIRONMENT_METADATA_GATE",
+    "v1_installed_tests_started": false,
+    "v1_reason": "The inherited nematics3d 0.9.0b1 metadata required NumPy 2.3.2 while that base environment exposed NumPy 2.4.3.",
+    "v1_nematics3d_modified": false,
+    "v2_excludes_nematics3d": true,
+    "v2_pip_check": "pass"
+  },
+  "local_verification": {
+    "runner_unit_tests_passed": 6,
+    "installed_wheel_tests_passed": 95,
+    "initial_provider_full_suite_passed": 2879,
+    "initial_provider_full_suite_deselected_cuda_only": 7,
+    "initial_provider_full_suite_subtests_passed": 8,
+    "initial_provider_full_suite_elapsed_seconds": 202.78,
+    "final_provider_full_suite_passed": 2884,
+    "final_provider_full_suite_deselected_cuda_only": 7,
+    "final_provider_full_suite_subtests_passed": 8,
+    "final_provider_full_suite_elapsed_seconds": 204.86,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass"
+  },
+  "scope": {
+    "runtime_hot_path_changed": false,
+    "checkpoint_acceptance_changed": false,
+    "stable_functional_API_version_changed": false,
+    "PSSolver_Control_modified": false,
+    "PSSolver_Control_requalification_executed": true,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "H100_executed": false,
+    "GPU_portability_claimed": false
+  },
+  "authorization": {
+    "rc4_2_5_complete": true,
+    "eligible_for_rc4_2_6_planning": true,
+    "rc4_2_6_implementation_authorized": false,
+    "H100_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "push_authorized": false,
+    "release_authorized": false
+  }
+}
