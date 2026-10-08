@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.2.5 installed-wheel cross-version CPU closure plan",
+  "phase": "RC4.2.5",
+  "status": "ready_for_execution",
+  "classification": "READY_RC4_2_5_INSTALLED_WHEEL_CPU_CLOSURE",
+  "source_identity": {
+    "provider_parent": "573daaf1e2d4ad7e54c6c084a6fbb04126fd4966",
+    "provider_branch": "fix/v0.2.0rc4-audit",
+    "consumer_source_commit": "03dbc39975978d9d0b7f84965015da24f9d3c206",
+    "consumer_evidence_successor_commit": "c4b50e63cafba14d1985fbe4a71aa78212eaf050",
+    "consumer_repository": "PSSolver-Control",
+    "rc4_2_0_plan": "notes/PSSolver_v0_2_0rc4_rc420_checkpoint_identity_plan.json",
+    "rc4_2_0_plan_sha256": "88839d3d92b185876d3eb03e4933c26644fc0f2cae59061a66bb86a55d066b59"
+  },
+  "build_contract": {
+    "source_acquisition": "git_archive_from_exact_commit",
+    "wheel_build": "pip_wheel_no_deps_no_build_isolation",
+    "venv": "fresh_venv_with_system_site_packages_for_frozen_dependencies",
+    "wheel_install": "pip_install_no_deps",
+    "pip_check_required": true,
+    "provider_and_consumer_import_from_venv_purelib": true,
+    "source_shadow_import_forbidden": true,
+    "network_required": false
+  },
+  "provider_tests": {
+    "expected": 35,
+    "files": {
+      "tests/test_rc4_plane_checkpoint_identity.py": "8bde20dddb552b6e1db4d56ea2ed46daf873b22c72b0c6b6b867c7bbd85b807e",
+      "tests/test_rc4_periodic_channel_checkpoint_identity.py": "382317b58d270d6425810835243b9cfeb7a2c9c7cb5fac0a35de53502aecc761",
+      "tests/test_rc4_functional_checkpoint_identity.py": "a82cc4d0da50b4ebf645245850bbd94fe3f30d9b13d40f5ab6ea8d05ac4969f2"
+    },
+    "gates": [
+      "M01_through_M16",
+      "current_checkpoint_round_trip",
+      "registered_legacy_acceptance",
+      "incompatible_legacy_rejection",
+      "upgrade_tool_source_immutability",
+      "pre_mutation_rejection"
+    ]
+  },
+  "consumer_tests": {
+    "expected": 60,
+    "files": {
+      "tests/test_pssolver_adapter.py": "a5cf053bdcefc4a89b049b806a8afc60cc1fe3071ba5a80b43f302d247464892",
+      "tests/test_pssolver_periodic_consumer.py": "f00976c941cfc77fb82a222cf129739daf4f24c06dc7768543b6b5d2c430f46b",
+      "tests/test_pssolver_channel_adapter.py": "0f8abac59fff627c5096a4a1ad372bd3bf98e1bd4d10882c36b5445806cb8c16",
+      "tests/test_pssolver_channel_consumer.py": "aa0043ee1763ab9e27f5df519deb84dd85db3f2526b8c0199ac472569324f29d"
+    },
+    "support_files": {
+      "tests/periodic_runtime.py": "6bc103bb7ab28fe297c5847fa715a5479f2a4aeef2af7c07ea956fa725e3ca79",
+      "tests/channel_runtime.py": "15958068d17cf472aa7fc2b323434eb665f1f1e90ead6c7a43d880d2d3d2a8d9"
+    },
+    "gates": [
+      "installed_wheel_checkpoint_round_trip",
+      "frozen_periodic_and_channel_identity_oracles",
+      "checkpointed_vs_full_history_gradient",
+      "finite_difference_and_Taylor",
+      "legacy_or_identity_negative_gates"
+    ]
+  },
+  "runner": {
+    "path": "benchmarks/run_rc425_installed_checkpoint_closure.py",
+    "sha256": "16090ed6e78d1f79ae4c278e2aefc2e98e03cc5a5c4dc05bfa4130cb7ec6e22d",
+    "expected_total_tests": 95,
+    "skip_allowed": 0,
+    "xfail_allowed": 0,
+    "failure_allowed": 0,
+    "atomic_JSON": true,
+    "existing_output_overwrite_allowed": false
+  },
+  "post_installed_gates": {
+    "provider_full_CPU_suite_required": true,
+    "cuda_only_deselect_count": 7,
+    "git_diff_check_required": true,
+    "worktree_clean_required": true
+  },
+  "scope": {
+    "runtime_source_change_authorized": false,
+    "checkpoint_acceptance_change_authorized": false,
+    "PSSolver_Control_source_change_authorized": false,
+    "nematics3d_change_authorized": false,
+    "H100_authorized": false,
+    "production_default_change_authorized": false,
+    "push_authorized": false,
+    "release_authorized": false
+  }
+}
