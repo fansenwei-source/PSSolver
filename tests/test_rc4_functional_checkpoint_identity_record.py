@@ -13,10 +13,19 @@ RECORD = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc424_functional_checkpoint_identity.json"
 )
+SUCCESSOR_RECORD = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc426_functional_checkpoint_recovery.json"
+)
 
 
 def _record() -> dict[str, object]:
     return json.loads(RECORD.read_text(encoding="utf-8"))
+
+
+def _successor_record() -> dict[str, object]:
+    return json.loads(SUCCESSOR_RECORD.read_text(encoding="utf-8"))
 
 
 def _sha256(relative: str) -> str:
@@ -36,9 +45,16 @@ def test_rc424_record_binds_parent_plans_and_implementation_files():
     for key in ("planning_record", "predecessor_record"):
         relative = record["git_identity"][key]
         assert _sha256(relative) == record["git_identity"][f"{key}_sha256"]
+    successor = _successor_record()
     for section in ("implementation_files", "adapted_regression_tests"):
         for relative, expected in record[section].items():
-            assert _sha256(relative) == expected
+            actual = _sha256(relative)
+            if actual == expected:
+                continue
+            registration = successor["historical_successor_sources"][relative]
+            assert registration["historical_sha256"] == expected
+            assert registration["current_sha256"] == actual
+            assert registration["introduced_by_phase"] == "RC4.2.6 recovery"
 
 
 def test_rc424_record_freezes_four_layer_functional_identity():
@@ -91,7 +107,16 @@ def test_rc424_registers_exact_rc423_historical_successors():
     }
     for relative, registration in successors.items():
         assert registration["introduced_by_phase"] == "RC4.2.4"
-        assert _sha256(relative) == registration["current_sha256"]
+        actual = _sha256(relative)
+        if actual != registration["current_sha256"]:
+            latest = _successor_record()["historical_successor_sources"][
+                relative
+            ]
+            assert latest["historical_sha256"] == registration["current_sha256"]
+            assert latest["current_sha256"] == actual
+            assert latest["introduced_by_phase"] == "RC4.2.6 recovery"
+        else:
+            assert actual == registration["current_sha256"]
         assert registration["historical_sha256"] != registration["current_sha256"]
 
 

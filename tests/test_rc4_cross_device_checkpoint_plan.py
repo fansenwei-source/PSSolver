@@ -9,6 +9,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc426_cross_device_checkpoint_plan.json"
+RECOVERY = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc426_functional_checkpoint_recovery.json"
+)
 
 
 def _plan() -> dict[str, object]:
@@ -21,6 +26,7 @@ def _sha256(relative: str) -> str:
 
 def test_rc426_plan_binds_rc425_and_reviewed_sources():
     plan = _plan()
+    recovery = json.loads(RECOVERY.read_text(encoding="utf-8"))
     assert plan["status"] == "ready_for_implementation"
     assert plan["classification"] == (
         "READY_RC4_2_6_SINGLE_H100_CROSS_DEVICE_CHECKPOINT_PORTABILITY"
@@ -31,7 +37,13 @@ def test_rc426_plan_binds_rc425_and_reviewed_sources():
         assert _sha256(source[key]) == source[f"{key}_sha256"]
     assert source["rc4_2_5_manifest_entries"] == 26
     for relative, expected in plan["reviewed_source_sha256"].items():
-        assert _sha256(relative) == expected
+        actual = _sha256(relative)
+        if actual == expected:
+            continue
+        registration = recovery["historical_successor_sources"][relative]
+        assert registration["historical_sha256"] == expected
+        assert registration["current_sha256"] == actual
+        assert registration["introduced_by_phase"] == "RC4.2.6 recovery"
 
 
 def test_rc426_matrix_is_complete_ordered_and_bidirectional():

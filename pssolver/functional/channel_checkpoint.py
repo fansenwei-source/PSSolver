@@ -28,6 +28,7 @@ from pssolver.io.checkpoint import (
     write_functional_checkpoint_provenance,
 )
 from pssolver.io.checkpoint_identity import (
+    CheckpointCompatibilityIdentity,
     CheckpointFamily,
     LegacyIdentityKey,
     SourceReleaseGeneration,
@@ -53,7 +54,10 @@ from .errors import (
     FunctionalCheckpointIntegrityError,
     FunctionalCheckpointNotFoundError,
 )
-from .checkpoint_identity import build_channel_functional_checkpoint_identity
+from .checkpoint_identity import (
+    build_channel_functional_checkpoint_identity,
+    normalize_functional_checkpoint_identity,
+)
 from .versioning import (
     negotiate_functional_api_version,
     runtime_identity_sha256_for_api_version,
@@ -629,6 +633,37 @@ class ChannelActivityCheckpointBridge:
         for key, value in provenance.items():
             _require_sha256(value, key)
         expected["run_provenance"] = dict(provenance)
+        try:
+            source_identity = CheckpointCompatibilityIdentity.from_metadata(
+                observed.get("checkpoint_compatibility_identity")
+            )
+            source_sha256 = _require_sha256(
+                observed.get("checkpoint_compatibility_sha256"),
+                "checkpoint_compatibility_sha256",
+            )
+            if source_identity.canonical_sha256() != source_sha256:
+                raise ValueError(
+                    "checkpoint compatibility identity digest differs"
+                )
+            normalized = normalize_functional_checkpoint_identity(
+                source_identity.to_metadata()
+            )
+        except (TypeError, ValueError) as exc:
+            raise FunctionalCheckpointCompatibilityError(
+                "functional checkpoint compatibility identity is invalid",
+                operation="channel_checkpoint_import",
+            ) from exc
+        if normalized != self._compatibility_identity:
+            raise FunctionalCheckpointCompatibilityError(
+                "functional checkpoint forward compatibility differs",
+                operation="channel_checkpoint_import",
+            )
+        observed["checkpoint_compatibility_identity"] = expected[
+            "checkpoint_compatibility_identity"
+        ]
+        observed["checkpoint_compatibility_sha256"] = expected[
+            "checkpoint_compatibility_sha256"
+        ]
         if observed != expected:
             raise FunctionalCheckpointCompatibilityError(
                 "functional checkpoint identity or state layout does not match target",

@@ -98,6 +98,71 @@ def _channel_identity(state_spec, *, device: str = "cpu"):
     )
 
 
+def _identity_record(metadata):
+    return {
+        "metadata": metadata,
+        "sha256": hashlib.sha256(
+            json.dumps(
+                metadata,
+                allow_nan=False,
+                separators=(",", ":"),
+                sort_keys=True,
+            ).encode("utf-8")
+        ).hexdigest(),
+    }
+
+
+def _layered_identity(state_spec, *, device: str, channel: bool):
+    execution = _identity_record(
+        {
+            "backend": "torch_spectral",
+            "device": device,
+            "options": {"tf32": "off"},
+            "runtime_path": (
+                "channel_complete_stress" if channel else "periodic_spectral"
+            ),
+            "stage": "test_provenance",
+        }
+    )
+    execution["functional_runtime"] = {
+        "kind": (
+            "channel_activity_batch_one"
+            if channel
+            else "periodic_activity_batch_one"
+        ),
+        "device": device,
+        "snapshot_sha256": "b" * 64 if channel else "a" * 64,
+        "fallback_allowed": False,
+        "fallback_used": False,
+        "spectral_refresh": "disabled",
+        **(
+            {
+                "pressure_solver": {
+                    "kind": "channel_no_slip_modal_stokes_pcg",
+                    "gradient": "custom_implicit_pressure_adjoint_v1",
+                    "initial_guess": "zero_every_call",
+                }
+            }
+            if channel
+            else {
+                "hermitian_state_projection": (
+                    "self_conjugate_planes_each_step"
+                )
+            }
+        ),
+    }
+    return FunctionalRuntimeIdentity(
+        scientific=_identity_record(
+            {"model": "complete_stress_beris_edwards"}
+        ),
+        discretization=_identity_record(
+            {"grid": list(state_spec.components[0].shape[-3:])}
+        ),
+        execution=execution,
+        state_layout=state_spec.to_metadata(),
+    )
+
+
 def _state(state_spec):
     physical = torch.arange(
         torch.tensor(state_spec.components[0].shape).prod().item(),
@@ -250,6 +315,168 @@ def test_functional_layered_identity_excludes_device_and_run_provenance():
     assert channel_cpu == channel_cuda
     assert periodic_cpu.derivative_dynamics is not None
     assert channel_cpu.derivative_dynamics is not None
+
+
+@pytest.mark.parametrize("channel", (False, True))
+def test_layered_identity_rehashes_filtered_execution_metadata(channel):
+    state_spec = _state_spec(periodic_size=4)
+    cpu_runtime = _layered_identity(
+        state_spec,
+        device="cpu",
+        channel=channel,
+    )
+    cuda_runtime = _layered_identity(
+        state_spec,
+        device="cuda:0",
+        channel=channel,
+    )
+    builder = (
+        build_channel_functional_checkpoint_identity
+        if channel
+        else build_periodic_functional_checkpoint_identity
+    )
+    cpu = builder(functional_identity=cpu_runtime, state_spec=state_spec)
+    cuda = builder(functional_identity=cuda_runtime, state_spec=state_spec)
+
+    assert cpu == cuda
+    execution = cpu.forward_dynamics.to_metadata()["payload"]["execution"]
+    assert "device" not in execution["metadata"]
+    assert "stage" not in execution["metadata"]
+    assert execution["sha256"] == hashlib.sha256(
+        json.dumps(
+            execution["metadata"],
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+    ).hexdigest()
+
+
+@pytest.mark.parametrize("channel", (False, True))
+def test_current_functional_checkpoint_crosses_device_identity_tokens(
+    tmp_path,
+    channel,
+):
+    state_spec = _state_spec(periodic_size=4)
+    source_identity = _layered_identity(
+        state_spec,
+        device="cpu",
+        channel=channel,
+    )
+    target_identity = _layered_identity(
+        state_spec,
+        device="cuda:0",
+        channel=channel,
+    )
+    if channel:
+        source_bridge = ChannelActivityCheckpointBridge(
+            state_spec=state_spec,
+            functional_identity=source_identity,
+            production_runtime_identity_sha256="c" * 64,
+            production_backend_restart={},
+        )
+        target_bridge = ChannelActivityCheckpointBridge(
+            state_spec=state_spec,
+            functional_identity=target_identity,
+            production_runtime_identity_sha256="d" * 64,
+            production_backend_restart={},
+        )
+    else:
+        source_bridge = PeriodicActivityCheckpointBridge(
+            state_spec=state_spec,
+            functional_identity=source_identity,
+            production_runtime_identity_sha256="c" * 64,
+            backend_restart={},
+            projector=_Projector(),
+        )
+        target_bridge = PeriodicActivityCheckpointBridge(
+            state_spec=state_spec,
+            functional_identity=target_identity,
+            production_runtime_identity_sha256="d" * 64,
+            backend_restart={},
+            projector=_Projector(),
+        )
+
+    source = source_bridge.export_checkpoint(
+        tmp_path / "source",
+        _state(state_spec),
+        completed_steps=4,
+    )
+    target = target_bridge.export_checkpoint(
+        tmp_path / "target",
+        _state(state_spec),
+        completed_steps=0,
+    )
+    source_metadata = json.loads((source / "checkpoint.json").read_text())
+    target_metadata = json.loads((target / "checkpoint.json").read_text())
+    assert source_metadata["functional_bridge"][
+        "checkpoint_compatibility_sha256"
+    ] == target_metadata["functional_bridge"][
+        "checkpoint_compatibility_sha256"
+    ]
+
+    restored = target_bridge.import_checkpoint(source)
+    assert restored.completed_steps == 4
+    assert all(
+        torch.equal(left, right)
+        for left, right in zip(
+            restored.state,
+            _state(state_spec),
+            strict=True,
+        )
+    )
+
+
+@pytest.mark.parametrize("channel", (False, True))
+def test_pre_recovery_stale_execution_digest_remains_readable(tmp_path, channel):
+    state_spec = _state_spec(periodic_size=4)
+    identity = _layered_identity(state_spec, device="cpu", channel=channel)
+    if channel:
+        bridge = ChannelActivityCheckpointBridge(
+            state_spec=state_spec,
+            functional_identity=identity,
+            production_runtime_identity_sha256="e" * 64,
+            production_backend_restart={},
+        )
+    else:
+        bridge = PeriodicActivityCheckpointBridge(
+            state_spec=state_spec,
+            functional_identity=identity,
+            production_runtime_identity_sha256="e" * 64,
+            backend_restart={},
+            projector=_Projector(),
+        )
+    directory = bridge.export_checkpoint(
+        tmp_path / "checkpoint",
+        _state(state_spec),
+        completed_steps=2,
+    )
+    path = directory / "checkpoint.json"
+    metadata = json.loads(path.read_text())
+    functional_bridge = metadata["functional_bridge"]
+    compatibility = functional_bridge["checkpoint_compatibility_identity"]
+    compatibility["forward_dynamics"]["payload"]["execution"]["sha256"] = (
+        "f" * 64
+    )
+    functional_bridge["checkpoint_compatibility_sha256"] = hashlib.sha256(
+        json.dumps(
+            compatibility,
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+    ).hexdigest()
+    metadata.pop("metadata_sha256", None)
+    sealed = seal_checkpoint_metadata(metadata)
+    path.write_text(json.dumps(sealed, indent=2, sort_keys=True) + "\n")
+    write_functional_checkpoint_provenance(
+        directory,
+        sealed,
+        sealed["functional_bridge"],
+    )
+
+    restored = bridge.import_checkpoint(directory)
+    assert restored.completed_steps == 2
 
 
 def test_m14_periodic_provisional_checkpoint_requires_reprojection_migration(

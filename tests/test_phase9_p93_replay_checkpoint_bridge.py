@@ -29,6 +29,7 @@ from pssolver.boundaries import (
 from pssolver.configuration.public_simulation_runner import compile_public_simulation
 from pssolver.functional import (
     FunctionalCheckpointBridgeProtocol,
+    FunctionalRuntimeIdentity,
     PeriodicActivityCheckpointBridge,
     build_functional_runtime,
     periodic_activity_functional_request,
@@ -407,9 +408,18 @@ def test_p93_cross_identity_checkpoint_is_rejected(tmp_path, monkeypatch):
         completed_steps=0,
     )
 
+    identity_metadata = runtime.identity().to_metadata()
+    incompatible_scientific = dict(identity_metadata["scientific"])
+    incompatible_scientific["incompatible_test_model"] = True
+    incompatible_identity = FunctionalRuntimeIdentity(
+        scientific=incompatible_scientific,
+        discretization=identity_metadata["discretization"],
+        execution=identity_metadata["execution"],
+        state_layout=identity_metadata["state_layout"],
+    )
     other = PeriodicActivityCheckpointBridge(
         state_spec=runtime.state_spec,
-        functional_identity=runtime.identity(),
+        functional_identity=incompatible_identity,
         production_runtime_identity_sha256="0" * 64,
         backend_restart={"kind": "periodic_stokes_stateless", "state_keys": []},
     )
@@ -421,5 +431,5 @@ def test_p93_cross_identity_checkpoint_is_rejected(tmp_path, monkeypatch):
         "pssolver.workflows.periodic_checkpoint.np.load",
         forbidden,
     )
-    with pytest.raises(ValueError, match="scientific/runtime identity"):
+    with pytest.raises(ValueError, match="forward compatibility differs"):
         other.import_checkpoint(directory)

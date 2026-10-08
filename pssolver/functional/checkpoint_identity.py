@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+import hashlib
 import json
 
 from pssolver.io.checkpoint_identity import (
@@ -29,17 +30,6 @@ _PROVENANCE_KEYS = frozenset(
 )
 
 
-def _owned_json(value: object) -> object:
-    return json.loads(
-        json.dumps(
-            value,
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
-    )
-
-
 def _without_keys(value: object, excluded: frozenset[str]) -> object:
     if isinstance(value, Mapping):
         return {
@@ -50,6 +40,73 @@ def _without_keys(value: object, excluded: frozenset[str]) -> object:
     if isinstance(value, (tuple, list)):
         return [_without_keys(item, excluded) for item in value]
     return value
+
+
+def _canonical_sha256(value: object) -> str:
+    payload = json.dumps(
+        value,
+        allow_nan=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _normalized_identity_record(value: object) -> dict[str, object]:
+    """Remove provenance and keep any embedded digest self-consistent."""
+
+    normalized = _without_keys(value, _PROVENANCE_KEYS)
+    if not isinstance(normalized, Mapping):
+        raise ValueError("functional identity section must be a mapping")
+    result = dict(normalized)
+    if "sha256" in result:
+        metadata = result.get("metadata")
+        if not isinstance(metadata, Mapping):
+            raise ValueError(
+                "functional identity section with sha256 must contain metadata"
+            )
+        result["sha256"] = _canonical_sha256(metadata)
+    return result
+
+
+def normalize_functional_checkpoint_identity(
+    metadata: Mapping[str, object],
+) -> CheckpointCompatibilityIdentity:
+    """Normalize the pre-RC4.2.6 embedded execution-digest defect.
+
+    RC4.2.4 correctly removed device and run-provenance fields from the
+    functional forward layer, but retained the execution digest computed
+    before that filtering.  Rebuilding the digest from the filtered metadata
+    makes the compatibility identity device-neutral while still validating
+    every scientific, discretization, derivative, layout, and backend fact.
+    """
+
+    identity = CheckpointCompatibilityIdentity.from_metadata(metadata)
+    forward = identity.forward_dynamics.to_metadata()
+    payload = forward.get("payload")
+    if not isinstance(payload, Mapping):
+        raise ValueError("functional forward identity payload is missing")
+    normalized_payload = dict(payload)
+    for name in ("scientific", "discretization", "execution"):
+        section = normalized_payload.get(name)
+        if section is None:
+            continue
+        normalized_payload[name] = _normalized_identity_record(section)
+    normalized_forward = CheckpointIdentityLayer(
+        kind=identity.forward_dynamics.kind,
+        version=identity.forward_dynamics.version,
+        payload=normalized_payload,
+        schema_version=identity.forward_dynamics.schema_version,
+    )
+    return CheckpointCompatibilityIdentity(
+        family=identity.family,
+        runtime_path=identity.runtime_path,
+        forward_dynamics=normalized_forward,
+        derivative_dynamics=identity.derivative_dynamics,
+        state_layout=identity.state_layout,
+        backend_restart=identity.backend_restart,
+        schema_version=identity.schema_version,
+    )
 
 
 def _functional_runtime(
@@ -83,9 +140,11 @@ def _forward_payload(
     execution = dict(metadata["execution"])
     execution["functional_runtime"] = runtime
     return {
-        "scientific": _owned_json(metadata["scientific"]),
-        "discretization": _owned_json(metadata["discretization"]),
-        "execution": _without_keys(execution, _PROVENANCE_KEYS),
+        "scientific": _normalized_identity_record(metadata["scientific"]),
+        "discretization": _normalized_identity_record(
+            metadata["discretization"]
+        ),
+        "execution": _normalized_identity_record(execution),
     }
 
 
@@ -213,4 +272,5 @@ def build_channel_functional_checkpoint_identity(
 __all__ = [
     "build_channel_functional_checkpoint_identity",
     "build_periodic_functional_checkpoint_identity",
+    "normalize_functional_checkpoint_identity",
 ]

@@ -40,6 +40,7 @@ from .contracts import (
 from .errors import FunctionalCheckpointCompatibilityError
 from .checkpoint_identity import (
     build_periodic_functional_checkpoint_identity,
+    normalize_functional_checkpoint_identity,
 )
 from .versioning import (
     negotiate_functional_api_version,
@@ -253,6 +254,37 @@ class PeriodicActivityCheckpointBridge:
             for key, value in provenance.items():
                 _require_sha256(value, key)
             expected["run_provenance"] = dict(provenance)
+            try:
+                source_identity = CheckpointCompatibilityIdentity.from_metadata(
+                    observed.get("checkpoint_compatibility_identity")
+                )
+                source_sha256 = _require_sha256(
+                    observed.get("checkpoint_compatibility_sha256"),
+                    "checkpoint_compatibility_sha256",
+                )
+                if source_identity.canonical_sha256() != source_sha256:
+                    raise ValueError(
+                        "checkpoint compatibility identity digest differs"
+                    )
+                normalized = normalize_functional_checkpoint_identity(
+                    source_identity.to_metadata()
+                )
+            except (TypeError, ValueError) as exc:
+                raise FunctionalCheckpointCompatibilityError(
+                    "functional checkpoint compatibility identity is invalid",
+                    operation="periodic_checkpoint_import",
+                ) from exc
+            if normalized != self._compatibility_identity:
+                raise FunctionalCheckpointCompatibilityError(
+                    "functional checkpoint forward compatibility differs",
+                    operation="periodic_checkpoint_import",
+                )
+            observed["checkpoint_compatibility_identity"] = expected[
+                "checkpoint_compatibility_identity"
+            ]
+            observed["checkpoint_compatibility_sha256"] = expected[
+                "checkpoint_compatibility_sha256"
+            ]
         if observed != expected:
             raise FunctionalCheckpointCompatibilityError(
                 "functional checkpoint identity or state layout does not match target",
@@ -555,14 +587,6 @@ class PeriodicActivityCheckpointBridge:
                         },
                     )
         header = read_periodic_checkpoint_header(directory)
-        if (
-            header.runtime_identity_sha256
-            != self._production_runtime_identity_sha256
-        ):
-            raise FunctionalCheckpointCompatibilityError(
-                "checkpoint scientific/runtime identity does not match",
-                operation="periodic_checkpoint_import",
-            )
         if dict(header.backend_restart) != self._backend_restart:
             raise FunctionalCheckpointCompatibilityError(
                 "checkpoint backend contract does not match target",
@@ -576,6 +600,25 @@ class PeriodicActivityCheckpointBridge:
         source_format, compatibility = self._validate_bridge_metadata(
             header.functional_bridge
         )
+        if source_format == _SOURCE_FUNCTIONAL_V3:
+            provenance = header.functional_bridge.get("run_provenance")
+            if (
+                not isinstance(provenance, Mapping)
+                or provenance.get("production_runtime_identity_sha256")
+                != header.runtime_identity_sha256
+            ):
+                raise FunctionalCheckpointCompatibilityError(
+                    "functional checkpoint production provenance is inconsistent",
+                    operation="periodic_checkpoint_import",
+                )
+        elif (
+            header.runtime_identity_sha256
+            != self._production_runtime_identity_sha256
+        ):
+            raise FunctionalCheckpointCompatibilityError(
+                "checkpoint scientific/runtime identity does not match",
+                operation="periodic_checkpoint_import",
+            )
         migration_provenance = self._validate_migration_provenance(
             migration_provenance
         )

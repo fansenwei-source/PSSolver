@@ -1,0 +1,109 @@
+{
+  "authorization": {
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "eligible_for_rc4_2_6_h100_recovery": true,
+    "h100_submission_authorized": false,
+    "production_default_changed": false,
+    "rc4_2_6_complete": false
+  },
+  "backward_compatibility": {
+    "current_bridge_format_version_changed": false,
+    "legacy_functional_readers_relaxed": false,
+    "pre_recovery_current_v3_execution_digest_normalized": true,
+    "raw_source_identity_digest_verified_before_normalization": true,
+    "production_checkpoint_runtime_identity_gate_preserved": true,
+    "unknown_scientific_or_discretization_identity_rejected": true
+  },
+  "classification": "PASS_RC4_2_6_FUNCTIONAL_CHECKPOINT_DEVICE_NEUTRAL_IDENTITY_CPU_RECOVERY",
+  "cpu_validation": {
+    "cuda_only_deselected": 7,
+    "failed": 0,
+    "full_passed": 2926,
+    "subtests_passed": 8,
+    "targeted_passed": 93,
+    "xfailed": 0
+  },
+  "failure_evidence": {
+    "classification": "FAIL_RC4_2_6_FUNCTIONAL_CHECKPOINT_CROSS_DEVICE_IDENTITY",
+    "control_directory": "/home/fansenwei/pssolver_rc426_cross_device_checkpoint_h100_949058d_20261008_recovery_v4",
+    "failed_cell": "X11",
+    "failure_message": "checkpoint scientific/runtime identity does not match",
+    "formal_h100_submission_count": 1,
+    "job_id": "10861281",
+    "manifest_entries": 596,
+    "manifest_sha256": "fe98d2b8184591e8ed0dc222628be91a5795ec12b73e9d9e9689c541fc668967",
+    "passed_cells_before_failure": [
+      "X01",
+      "X02",
+      "X03",
+      "X04",
+      "X05",
+      "X06",
+      "X07",
+      "X08",
+      "X09",
+      "X10"
+    ],
+    "scientific_failure": false
+  },
+  "git_identity": {
+    "implementation_parent": "949058d97f1beb12774fd981fe9e0c49adeebdfb",
+    "planning_record": "notes/PSSolver_v0_2_0rc4_rc426_cross_device_checkpoint_plan.json",
+    "planning_record_sha256": "06e4f18c7a9617355612ee4975b8650700b3a89fd724041c056ecf46bc3a39f2",
+    "predecessor_record": "notes/PSSolver_v0_2_0rc4_rc426_tf32_bootstrap_recovery.json",
+    "predecessor_record_sha256": "482631467dabdefd71c8ea7806da08784fc0e137405afcba25f1b95a3d51ac44"
+  },
+  "historical_successor_sources": {
+    "pssolver/functional/channel_checkpoint.py": {
+      "current_sha256": "9d6f2ea4931818ce574a579283224799f34cad2a9e19e0d0bc442ee9ce89cd29",
+      "historical_sha256": "b7b426c82798ca34aca0456b7a3f98732009f8a18e255f3da6ab9212cf6200ea",
+      "introduced_by_phase": "RC4.2.6 recovery",
+      "reason": "validate the raw layered identity, normalize its pre-recovery embedded execution digest, and compare the normalized Channel functional compatibility identity"
+    },
+    "pssolver/functional/checkpoint_identity.py": {
+      "current_sha256": "0b2e5a7c57e861f33e718d3f4296c9772db3694a46ba9416a419568aa199d9fb",
+      "historical_sha256": "49d693e52537f4687fd000bed815ea45da3ec7b5ec28b5f12f076fad3189a596",
+      "introduced_by_phase": "RC4.2.6 recovery",
+      "reason": "recompute identity-section digests after recursively excluding device and run-provenance fields"
+    },
+    "pssolver/functional/periodic_checkpoint.py": {
+      "current_sha256": "85d882d1540f0af663b342d89626678538578dd58929c8e955a053b8c13f0c36",
+      "historical_sha256": "dd742bb2da300d8b34a752d1ec476f77f2e0a45e6900b1bbd4f65c2a2cbae0de",
+      "introduced_by_phase": "RC4.2.6 recovery",
+      "reason": "make current functional-v3 restore use the layered compatibility identity while retaining carrier/run-provenance consistency and strict production readers"
+    },
+    "tests/test_phase9_p93_replay_checkpoint_bridge.py": {
+      "current_sha256": "20d4ae98147b0ac6d6fb1859811ff2f3d317e2da39deac71590fe859e1f5310a",
+      "historical_sha256": "8f0c1564207d1eba03b62d4112b0ccadf3e87033c33bba242c3f218d6939a30c",
+      "introduced_by_phase": "RC4.2.6 recovery",
+      "reason": "retain a pre-payload negative gate for a real scientific compatibility difference instead of device-sensitive run provenance"
+    },
+    "tests/test_rc4_functional_checkpoint_identity.py": {
+      "current_sha256": "e7aff82c743d0c46d8872e98f53d5e78bdb87a7933910c8f8bb31f3c7f519546",
+      "historical_sha256": "a82cc4d0da50b4ebf645245850bbd94fe3f30d9b13d40f5ab6ea8d05ac4969f2",
+      "introduced_by_phase": "RC4.2.6 recovery",
+      "reason": "cover realistic layered execution records, bidirectional device-token portability semantics, and pre-recovery current-v3 readability"
+    }
+  },
+  "identity_contract": {
+    "device_and_run_provenance_excluded_before_digest": true,
+    "filtered_execution_digest_recomputed": true,
+    "functional_run_provenance_retained_for_audit": true,
+    "periodic_carrier_identity_matches_bridge_provenance": true,
+    "production_runtime_identity_used_as_current_functional_gate": false,
+    "scientific_discretization_derivative_layout_and_backend_gated": true,
+    "target_tensor_load_before_identity_acceptance": false
+  },
+  "scope": {
+    "PSSolver_Control_modified": false,
+    "functional_API_version_changed": false,
+    "functional_checkpoint_compatibility_semantics_changed": true,
+    "nematics3d_modified": false,
+    "production_checkpoint_acceptance_broadened": false,
+    "production_default_changed": false,
+    "runtime_hot_path_changed": false,
+    "solver_numerics_changed": false
+  },
+  "status": "ready_for_h100_recovery"
+}
