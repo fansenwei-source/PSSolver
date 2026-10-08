@@ -56,6 +56,7 @@ CUDA_TESTS="${QUALIFICATION}/tests"
   --node "${CUDA_TESTS}/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact" \
   --node "${CUDA_TESTS}/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence" \
   --expected 7 \
+  --policy-output "${PSSOLVER_RC426_CONTROL}/preflight/cuda_test_tf32_policy.json" \
   --output "${PSSOLVER_RC426_CONTROL}/cuda_only_tests.json"
 
 "${PYTHON}" "${QUALIFICATION}/benchmarks/run_rc426_cross_device_checkpoint.py" \

@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.2.6 CUDA-test TF32 process-bootstrap recovery",
+  "phase": "RC4.2.6",
+  "status": "ready_for_authorized_h100_recovery",
+  "classification": "READY_RC4_2_6_TF32_PROCESS_BOOTSTRAP_RECOVERY_NOT_SUBMITTED",
+  "source_identity": {
+    "qualification_parent": "c0858b698d8058b41a48a6304530f4aa98380cc9",
+    "branch": "fix/v0.2.0rc4-audit",
+    "historical_execution_support": "notes/PSSolver_v0_2_0rc4_rc426_execution_support.json",
+    "historical_execution_support_sha256": "1103351765163453db53f87ee59adab279a2d09aa3d0be1594722bf74f1be94e"
+  },
+  "failed_external_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc426_cross_device_checkpoint_h100_c0858b6_20261008_recovery_v3",
+    "job_id": 10861272,
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:00:41",
+    "node": "gpu-h100-4-0",
+    "manifest_entries_passed": 20,
+    "manifest_entries_failed": 0,
+    "manifest_sha256": "f484addf8efbc78b6d211ffcd34566a051da670bf36069ef0350d86401fa252b",
+    "preflight_predicates_passed": 8,
+    "preflight_predicates_expected": 8,
+    "cuda_only_tests_passed": 6,
+    "cuda_only_tests_expected": 7,
+    "failed_node": "test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence",
+    "observed_cudnn_allow_tf32": true,
+    "expected_cudnn_allow_tf32": false,
+    "matrix_cells_started": 0,
+    "scientific_timestep_started": false,
+    "analyzer_run": false,
+    "automatic_retry": false,
+    "second_h100_job_submitted": false,
+    "scientific_failure": false,
+    "solver_failure": false
+  },
+  "root_cause": {
+    "failure_domain": "external_qualification_harness",
+    "preflight_and_cuda_test_are_distinct_python_processes": true,
+    "preflight_assignments_are_process_local": true,
+    "nvidia_tf32_override_did_not_make_cudnn_python_flag_false": true,
+    "cuda_test_runner_previously_set_python_tf32_flags": false
+  },
+  "recovery": {
+    "cuda_test_runner_sets_flags_before_pytest_main": true,
+    "explicit_assignments": [
+      "torch.backends.cuda.matmul.allow_tf32 = False",
+      "torch.backends.cudnn.allow_tf32 = False"
+    ],
+    "policy_output": "preflight/cuda_test_tf32_policy.json",
+    "policy_output_written_before_pytest_main": true,
+    "policy_output_atomic_and_strict_json": true,
+    "records_before_values": true,
+    "records_assignment_results": true,
+    "records_after_values": true,
+    "fails_before_pytest_when_enforcement_fails": true,
+    "cuda_test_report_binds_policy_sha256": true,
+    "cuda_test_schema": "pssolver.rc4_2_6.cuda_only_tests.v2",
+    "tf32_policy_schema": "pssolver.rc4_2_6.cuda_test_tf32_policy.v1"
+  },
+  "support_files": {
+    "matrix_runner": {
+      "path": "benchmarks/run_rc426_cross_device_checkpoint.py",
+      "sha256": "484e5e4192b79ef707d9b21307e14ef989695a8962f002ae95f95bc70d826e9c",
+      "changed_by_recovery": false
+    },
+    "analyzer": {
+      "path": "benchmarks/analyze_rc426_cross_device_checkpoint.py",
+      "sha256": "d6b9a46d8b90506b8a8190c3cb09ac83f10f27a3e85b1d17a975ba9ddf730ff8",
+      "changed_by_recovery": false
+    },
+    "cuda_test_runner": {
+      "path": "benchmarks/run_rc426_cuda_tests.py",
+      "sha256": "5658a0f51076c068043ec0811be53d727f8310884bb9af36edde799f2d289fb1",
+      "changed_by_recovery": true
+    },
+    "slurm_harness": {
+      "path": "jobs/rc426_cross_device_checkpoint_h100.sbatch",
+      "sha256": "17c9263c0d06f897800e13d62c303a372fa3ebbbacbfc6f3341dc1cf177f859e",
+      "changed_by_recovery": true
+    }
+  },
+  "local_verification": {
+    "targeted_tests_passed": 32,
+    "real_process_runner_smoke": "pass",
+    "real_process_before_cudnn_allow_tf32": true,
+    "real_process_after_cuda_matmul_allow_tf32": false,
+    "real_process_after_cudnn_allow_tf32": false,
+    "policy_sha256_binding_verified": true,
+    "full_suite_passed": 2916,
+    "full_suite_deselected_cuda_only": 7,
+    "full_suite_subtests_passed": 8,
+    "full_suite_elapsed_seconds": 201.91,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "git_diff_check": "pass"
+  },
+  "scope": {
+    "qualification_support_only": true,
+    "runtime_source_modified": false,
+    "checkpoint_reader_or_writer_modified": false,
+    "numerical_implementation_modified": false,
+    "tests_or_thresholds_relaxed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "H100_executed_by_this_commit": false,
+    "slurm_submitted_by_this_commit": false,
+    "push_performed": false
+  },
+  "authorization": {
+    "qualification_only_recovery_complete": true,
+    "new_H100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "push_authorized": false,
+    "release_authorized": false
+  },
+  "next_step": "Request explicit authorization for one new RC4.2.6 H100 recovery submission. Reuse prior immutable CPU and package evidence only after checksum verification; do not retry automatically."
+}
