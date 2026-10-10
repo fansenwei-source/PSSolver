@@ -1,0 +1,283 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.3.2 public lifting capability and identity contract",
+  "phase": "RC4.3.2",
+  "status": "contract_complete_implementation_not_started",
+  "classification": "PASS_RC4_3_2_PUBLIC_LIFTING_CAPABILITY_RESTRICTION_CONTRACT",
+  "baseline": {
+    "branch": "fix/v0.2.0rc4-audit",
+    "contract_parent_commit": "7dbdd395b7665782c17d8cf2cb1362a693f06882",
+    "rc4_3_plan": "notes/PSSolver_v0_2_0rc4_rc430_lifting_correctness_plan.json",
+    "rc4_3_plan_sha256": "3742ea254678a6156fd6ae14039adda427bce30d0019480aa2bf4ff42fe57aa8",
+    "rc4_3_1_analysis": "notes/PSSolver_v0_2_0rc4_rc431_lifting_correctness_analysis.json",
+    "rc4_3_1_analysis_sha256": "1157b08b5328996876307fb0333aa28e85932d9d09e9ed0f16f08cc7a3a62ef1",
+    "required_decision": "PUBLIC_CAPABILITY_RESTRICTION_REQUIRED"
+  },
+  "decision": {
+    "mode": "public_fail_closed_restriction",
+    "reason": "The current homogeneous-Dirichlet DST remainder representation does not converge to the nonzero physical wall molecular field required by the lifted complete-stress Plane problem, and lifted spectral/physical requests execute the same physical path.",
+    "representation_repair_claimed": false,
+    "approximate_public_execution_allowed": false,
+    "warning_only_execution_allowed": false,
+    "silent_runtime_fallback_allowed": false,
+    "metadata_relabeling_as_repair_allowed": false
+  },
+  "unsupported_public_capability": {
+    "equation_variant": "complete_stress_beris_edwards",
+    "geometry_name": "plane_slab",
+    "field_name": "Q",
+    "components": ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"],
+    "boundary_semantics": "static_constant_two_sided_prescribed_dirichlet",
+    "runtime_paths": ["legacy_production", "compiled_v2"],
+    "molecular_field_linear_space_requests": ["physical", "spectral"],
+    "scope_rule": "A well-formed static lifting signature that prescribes both Plane wall faces for every canonical Q component is rejected by the public compiler. Malformed, partial, nonconstant, or non-Q prescribed data continue to fail through their existing stricter validation paths and are not thereby supported.",
+    "publicly_qualified": false,
+    "internal_primitive_removed": false,
+    "historical_runtime_claimed_qualified": false
+  },
+  "supported_public_subset": {
+    "plane_complete_stress": {
+      "geometry_name": "plane_slab",
+      "Q_boundary": "homogeneous_neumann",
+      "velocity_boundary": "homogeneous_free_slip",
+      "pressure_gauge": "zero_mean",
+      "runtime_paths": ["legacy_production", "compiled_v2"],
+      "remains_qualified": true
+    },
+    "periodic_complete_stress_unchanged": true,
+    "channel_complete_stress_unchanged": true,
+    "legacy_channel_unchanged": true,
+    "finite_Q_Robin_public_status_unchanged": "declarable_not_qualified",
+    "nonhomogeneous_Neumann_added": false
+  },
+  "public_rejection_contract": {
+    "enforcement_layer": "pssolver.configuration.public_simulation_runner._compile_plane_public_simulation",
+    "enforcement_order": [
+      "validate public Simulation type and registered model/geometry pair",
+      "recognize the complete static prescribed-Q lifting signature without allocating tensors",
+      "raise the stable public compilation error",
+      "do not create a run specification, lowering plan, construction plan, runtime, output directory, or tensor"
+    ],
+    "exception_type": "pssolver.configuration.public_simulation_runner.PublicSimulationCompilationError",
+    "rejection_enum_member": "UNSUPPORTED_LIFTED_WALL_MOLECULAR_FIELD",
+    "rejection_code": "unsupported_lifted_wall_molecular_field",
+    "message_token": "nonzero wall molecular-field semantics are not qualified for Plane static prescribed-Q lifting",
+    "required_context_keys": [
+      "equation_variant",
+      "geometry_name",
+      "field_name",
+      "boundary_semantics",
+      "requested_runtime_path",
+      "requested_molecular_field_linear_space",
+      "supported_Q_boundary",
+      "analysis_record_sha256"
+    ],
+    "supported_Q_boundary_context_value": "homogeneous_neumann",
+    "same_error_for_physical_and_spectral_requests": true,
+    "rejection_before_runtime_construction": true,
+    "rejection_before_output_creation": true
+  },
+  "capability_catalog_contract": {
+    "catalog_schema_version": 1,
+    "catalog_shape_changes": false,
+    "model_geometry_combination_remains_qualified_for_homogeneous_Q": true,
+    "boundary_declarations": {
+      "prescribed_q": {
+        "declarable": true,
+        "executable": false,
+        "qualified_applications": []
+      },
+      "strong_homeotropic_q": {
+        "declarable": true,
+        "executable": false,
+        "qualified_applications": []
+      },
+      "strong_planar_q": {
+        "declarable": true,
+        "executable": false,
+        "qualified_applications": []
+      },
+      "neumann_q": {
+        "plane_complete_stress_remains_qualified": true
+      }
+    },
+    "declaration_does_not_imply_execution": true
+  },
+  "molecular_field_space_contract": {
+    "successful_public_compile_requires_requested_equals_effective": true,
+    "successful_metadata_required_keys": [
+      "requested_molecular_field_linear_space",
+      "effective_molecular_field_linear_space",
+      "molecular_field_space_fallback_used"
+    ],
+    "molecular_field_space_fallback_used": false,
+    "lifted_physical_request": "reject",
+    "lifted_spectral_request": "reject",
+    "nonlifted_physical_request": "execute_physical_and_report_physical",
+    "nonlifted_spectral_request": "execute_spectral_and_report_spectral",
+    "silent_physical_override_for_lifted_spectral_request": false
+  },
+  "fresh_initial_conditioning_contract": {
+    "public_default": {
+      "kind": "strict_no_automatic_conditioning_v1",
+      "behavior": "subtract the lift without changing the requested physical initial field, validate boundary compatibility, and reject incompatible fresh data",
+      "mutates_requested_initial_field": false
+    },
+    "qualified_opt_in_candidate": {
+      "kind": "localized_quintic_wall_transition_v1",
+      "formula": "r_conditioned = smoothstep5(clamp(distance_to_nearest_wall / transition_width, 0, 1)) * r_raw; smoothstep5(x) = 6*x^5 - 15*x^4 + 10*x^3",
+      "transition_width_constraint": "0 < transition_width <= 0.5 * wall_normal_domain_length",
+      "transition_width_units": "same_physical_length_units_as_geometry",
+      "affected_field": "Q",
+      "affected_components": ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"],
+      "interior_identity": "requested initial Q is byte-identical wherever distance_to_nearest_wall >= transition_width",
+      "status": "not_publicly_qualified_until_RC4_3_4_CPU_and_RC4_3_7_H100_gates_pass"
+    },
+    "legacy_policy": {
+      "kind": "legacy_whole_slab_sine_v1",
+      "automatic_public_default": false,
+      "allowed_use": "historical provenance and explicitly isolated compatibility analysis only",
+      "formula": "r_conditioned = sin(pi * (cell_index + 0.5) / wall_normal_cell_count) * r_raw"
+    },
+    "canonical_metadata_required": [
+      "schema_version",
+      "requested_policy",
+      "effective_policy",
+      "formula",
+      "transition_width",
+      "transition_width_units",
+      "affected_field",
+      "affected_components",
+      "fresh_only"
+    ],
+    "fresh_only": true,
+    "restored_checkpoint_state_may_be_conditioned": false,
+    "no_lifting_construction_must_remain_byte_identical": true,
+    "deterministic_CPU_and_CUDA_required": true
+  },
+  "identity_and_version_contract": {
+    "RC4_3_3_public_restriction": {
+      "changes_forward_numerical_dynamics": false,
+      "checkpoint_format_bump_required": false,
+      "plane_forward_dynamics_version_bump_required": false,
+      "static_lifting_plan_schema_bump_required": false,
+      "public_capability_catalog_schema_bump_required": false,
+      "new_stable_public_rejection_code_required": true
+    },
+    "RC4_3_4_fresh_policy": {
+      "conditioning_metadata_schema_version": 1,
+      "part_of_fresh_construction_reproducibility": true,
+      "part_of_restart_compatibility_digest": false,
+      "part_of_forward_dynamics_identity": false,
+      "restored_state_is_never_reconditioned": true
+    },
+    "future_representation_repair": {
+      "requires_plane_forward_dynamics_version_bump": true,
+      "requires_lifting_restart_identity_version_bump": true,
+      "requires_explicit_cross_version_acceptance_or_pre_mutation_rejection": true,
+      "requires_new_CPU_and_H100_qualification": true
+    },
+    "historical_checkpoints": {
+      "rewritten_in_place": false,
+      "historical_reader_removed": false,
+      "public_compiler_restriction_claims_cross_version_compatibility": false,
+      "unknown_or_unregistered_dynamics_reject_before_tensor_load_and_target_mutation": true
+    }
+  },
+  "implementation_slices": [
+    {
+      "stage": "RC4.3.2",
+      "name": "freeze public restriction and identity contract",
+      "authorized": true,
+      "complete": true,
+      "runtime_change": false
+    },
+    {
+      "stage": "RC4.3.3",
+      "name": "implement public compiler rejection, catalog correction, and requested/effective metadata",
+      "authorized": false,
+      "complete": false,
+      "runtime_change": false
+    },
+    {
+      "stage": "RC4.3.4",
+      "name": "replace implicit whole-slab conditioning with explicit fresh-state policies",
+      "authorized": false,
+      "complete": false,
+      "runtime_change": true
+    },
+    {
+      "stage": "RC4.3.5",
+      "name": "integrate metadata and checkpoint version behavior",
+      "authorized": false,
+      "complete": false,
+      "runtime_change": true
+    },
+    {
+      "stage": "RC4.3.6",
+      "name": "installed-wheel CPU closure",
+      "authorized": false,
+      "complete": false,
+      "runtime_change": false
+    },
+    {
+      "stage": "RC4.3.7",
+      "name": "single-H100 closure",
+      "authorized": false,
+      "complete": false,
+      "runtime_change": false
+    }
+  ],
+  "RC4_3_3_acceptance_tests": [
+    "prescribed_q, strong_homeotropic_q, and strong_planar_q remain importable declarations but advertise no qualified application",
+    "well-formed lifted Plane requests with physical and spectral molecular-field requests raise the same stable public rejection code",
+    "rejection context contains the supported homogeneous-Neumann Q subset and the RC4.3.1 evidence digest",
+    "no run specification, lowering plan, construction plan, tensor, runtime, or output directory is created",
+    "homogeneous-Neumann Plane physical and spectral requests compile with requested equal to effective and no fallback",
+    "Periodic and both Channel application connections retain their existing public catalog and compile behavior",
+    "lower-level static lifting primitives and historical checkpoint readers remain importable without a public qualification claim"
+  ],
+  "RC4_3_4_acceptance_tests": [
+    "strict_no_automatic_conditioning_v1 preserves compatible requested initial Q byte-for-byte and rejects incompatible Q",
+    "localized_quintic_wall_transition_v1 is byte-identical outside its physical-width transition region",
+    "policy metadata contains the exact formula, width, units, field, components, and requested/effective values",
+    "legacy whole-slab sine is never selected implicitly",
+    "no-lifting initial construction is byte-identical to the RC4.2 baseline",
+    "restart restore never invokes fresh conditioning",
+    "CPU and CUDA produce deterministic policy metadata and states"
+  ],
+  "reviewed_source_sha256": {
+    "pssolver/api/capabilities.py": "93571ad2b47b6a6d5a2143b6298f3075c73a2dd38540e625e9889a0930e87403",
+    "pssolver/configuration/public_simulation_runner.py": "7bb8ef69c131993e5584a80714ed60b29a20c07a43b7340614acf2fcb17754ab",
+    "pssolver/configuration/simulation_lowering.py": "e853935785db52dedd9ff30f2d279abea30c129dc53d2491a4f210c50c9f1061",
+    "pssolver/configuration/simulation_binding.py": "c91c214ed98f4f49c7c861e01c9ebfee6dde21d5de019d7cd2e9a2d8174be386",
+    "pssolver/planning/lifting.py": "0805518ea81c8ca13859dedc7af911d32b5efbe6f2f9b7908e0720823dbcc33c",
+    "pssolver/operators/lifting.py": "8230c0305c9da83e9ec9e063e79684ca22aed482048fc36d9cc43d522082c5dd",
+    "pssolver/runtime/static_lifting.py": "5f9de4683ea2ba10cba5de41480da546cbdd4e29a651d8b47925dc103ccf0270",
+    "pssolver/runtime/plane_legacy.py": "7f3cb0e73541067305a503733a73459bdc1a56a586a79f2b4c184bced4fcd2fc",
+    "pssolver/models/active_nematics/stokes.py": "38d327ab829a23ad472a9406c340deced99296cc1f3243b0397e3e9be8ac69fd",
+    "pssolver/applications/plane_beris_edwards.py": "0ddef1605496648d82dd288f7e7975b666a05b2cc3dde8e675f89c45db019367",
+    "pssolver/workflows/plane_checkpoint.py": "589f46ab1b2b2e41c483ff7b5aa2c91457483239352e4e7d7925c48e6916bb50",
+    "tests/test_phase8_p842_plane_static_lifting.py": "e193fc4382b90f6a83de97fe1f6ec804181edc03028c0fc98e6dff4ca40fa0d2"
+  },
+  "scope": {
+    "runtime_source_modified": false,
+    "public_API_modified": false,
+    "checkpoint_reader_or_writer_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "rc4_3_2_authorized_by_user": true,
+    "rc4_3_2_complete": true,
+    "rc4_3_3_implementation_authorized": false,
+    "rc4_3_4_implementation_authorized": false,
+    "h100_submission_authorized": false,
+    "push_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false
+  }
+}

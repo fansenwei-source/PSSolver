@@ -125,7 +125,7 @@ def test_architecture_work_is_deferred_until_correctness_batches_close():
     )
 
 
-def test_rc431_progress_records_analysis_without_authorizing_implementation():
+def test_rc432_progress_records_contract_without_authorizing_implementation():
     progress = _record()["progress"]
     assert progress == {
         "completed_batches": [
@@ -161,6 +161,18 @@ def test_rc431_progress_records_analysis_without_authorizing_implementation():
             "1157b08b5328996876307fb0333aa28e85932d9d09e9ed0f16f08cc7a3a62ef1"
         ),
         "eligible_for_rc4_3_2_planning": True,
+        "rc4_3_2_contract_authorized": True,
+        "rc4_3_2_contract_complete": True,
+        "rc4_3_2_classification": (
+            "PASS_RC4_3_2_PUBLIC_LIFTING_CAPABILITY_RESTRICTION_CONTRACT"
+        ),
+        "rc4_3_2_contract_record": (
+            "notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json"
+        ),
+        "rc4_3_2_contract_record_sha256": (
+            "5e6b64626f1927eb9846f62b3fbe31243d96131bbf2d3d0e36aeb254018d2741"
+        ),
+        "eligible_for_rc4_3_3_implementation": True,
         "rc4_3_implementation_authorized": False,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,
@@ -169,4 +181,8 @@ def test_rc431_progress_records_analysis_without_authorizing_implementation():
     analysis = ROOT / progress["rc4_3_1_analysis_record"]
     assert hashlib.sha256(analysis.read_bytes()).hexdigest() == progress[
         "rc4_3_1_analysis_record_sha256"
+    ]
+    contract = ROOT / progress["rc4_3_2_contract_record"]
+    assert hashlib.sha256(contract.read_bytes()).hexdigest() == progress[
+        "rc4_3_2_contract_record_sha256"
     ]
