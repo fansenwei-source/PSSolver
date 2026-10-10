@@ -170,6 +170,13 @@ def compile_periodic_public_simulation(source: SimulationSpec, product_type):
             "physical_values_changed": False,
             "pressure_gauge": "zero_mean",
             "uniform_velocity_mode_action": uniform_mode_action,
+            "requested_molecular_field_linear_space": execution[
+                "molecular_field_linear_space"
+            ],
+            "effective_molecular_field_linear_space": execution[
+                "molecular_field_linear_space"
+            ],
+            "molecular_field_space_fallback_used": False,
             "runtime_fallback_allowed": False,
         },
     )

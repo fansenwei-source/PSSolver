@@ -72,7 +72,12 @@
     "rc4_3_2_contract_record": "notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json",
     "rc4_3_2_contract_record_sha256": "5e6b64626f1927eb9846f62b3fbe31243d96131bbf2d3d0e36aeb254018d2741",
     "eligible_for_rc4_3_3_implementation": true,
-    "rc4_3_implementation_authorized": false,
+    "rc4_3_3_implementation_authorized": true,
+    "rc4_3_3_implementation_complete": true,
+    "rc4_3_3_classification": "PASS_RC4_3_3_PUBLIC_LIFTING_CAPABILITY_RESTRICTION",
+    "rc4_3_3_record": "notes/PSSolver_v0_2_0rc4_rc433_lifting_capability_restriction.json",
+    "eligible_for_rc4_3_4_implementation": true,
+    "rc4_3_implementation_authorized": true,
     "eligible_for_automatic_merge": false,
     "eligible_for_default_promotion": false,
     "production_default_changed": false

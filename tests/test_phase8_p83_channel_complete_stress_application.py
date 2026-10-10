@@ -151,6 +151,15 @@ def test_channel_complete_stress_compiler_records_two_axis_parity(tmp_path):
     compiled = compile_simulation(_simulation(tmp_path))
 
     assert compiled.application == "channel_complete_stress_beris_edwards"
+    assert compiled.normalization[
+        "requested_molecular_field_linear_space"
+    ] == "spectral"
+    assert compiled.normalization[
+        "effective_molecular_field_linear_space"
+    ] == "spectral"
+    assert compiled.normalization[
+        "molecular_field_space_fallback_used"
+    ] is False
     assert compiled.construction_plan.kind is (
         RuntimeConstructionKind.CHANNEL_COMPLETE_STRESS
     )

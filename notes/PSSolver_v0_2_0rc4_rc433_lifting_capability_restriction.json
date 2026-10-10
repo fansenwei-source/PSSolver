@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.3.3 public lifting capability restriction",
+  "phase": "RC4.3.3",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_RC4_3_3_PUBLIC_LIFTING_CAPABILITY_RESTRICTION",
+  "baseline": {
+    "branch": "fix/v0.2.0rc4-audit",
+    "implementation_parent_commit": "66e92dfb10ec63b7deadd0d37f8037e048224789",
+    "contract_record": "notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json",
+    "contract_record_sha256": "5e6b64626f1927eb9846f62b3fbe31243d96131bbf2d3d0e36aeb254018d2741",
+    "analysis_record": "notes/PSSolver_v0_2_0rc4_rc431_lifting_correctness_analysis.json",
+    "analysis_record_sha256": "1157b08b5328996876307fb0333aa28e85932d9d09e9ed0f16f08cc7a3a62ef1"
+  },
+  "implementation": {
+    "mode": "public_fail_closed_restriction",
+    "enforcement_layer": "pssolver.configuration.public_simulation_runner._compile_plane_public_simulation",
+    "rejection_enum_member": "UNSUPPORTED_LIFTED_WALL_MOLECULAR_FIELD",
+    "rejection_code": "unsupported_lifted_wall_molecular_field",
+    "message_token": "nonzero wall molecular-field semantics are not qualified for Plane static prescribed-Q lifting",
+    "rejected_runtime_paths": [
+      "legacy_production",
+      "compiled_v2"
+    ],
+    "rejected_molecular_field_linear_space_requests": [
+      "physical",
+      "spectral"
+    ],
+    "rejected_boundary_declarations": [
+      "prescribed_q",
+      "strong_homeotropic_q",
+      "strong_planar_q"
+    ],
+    "rejection_before_run_spec": true,
+    "rejection_before_lowering": true,
+    "rejection_before_construction": true,
+    "rejection_before_runtime": true,
+    "rejection_before_output": true
+  },
+  "catalog": {
+    "schema_version_changed": false,
+    "declarations_remain_importable": true,
+    "prescribed_q_executable": false,
+    "strong_homeotropic_q_executable": false,
+    "strong_planar_q_executable": false,
+    "qualified_applications_for_restricted_declarations": [],
+    "homogeneous_neumann_plane_remains_qualified": true
+  },
+  "molecular_field_space_metadata": {
+    "successful_public_compilers": [
+      "plane_complete_stress_beris_edwards",
+      "periodic_complete_stress_beris_edwards",
+      "channel_complete_stress_beris_edwards"
+    ],
+    "required_keys": [
+      "requested_molecular_field_linear_space",
+      "effective_molecular_field_linear_space",
+      "molecular_field_space_fallback_used"
+    ],
+    "requested_equals_effective": true,
+    "fallback_used": false
+  },
+  "preserved_internal_capabilities": {
+    "field_neutral_lifting_primitives_removed": false,
+    "internal_lifting_lowering_removed": false,
+    "legacy_internal_lifting_binding_removed": false,
+    "historical_checkpoint_reader_removed": false,
+    "historical_evidence_rewritten": false,
+    "future_representation_repair_precluded": false
+  },
+  "verification": {
+    "focused_contract_tests": {
+      "passed": 31,
+      "failed": 0
+    },
+    "public_and_lifting_regression_tests": {
+      "passed": 125,
+      "failed": 0
+    },
+    "restricted_combination_count": 12,
+    "restricted_combination_formula": "3 boundary declarations x 2 runtime paths x 2 molecular-field spaces",
+    "malformed_or_partial_declarations_use_existing_validation": true,
+    "H100_required": false,
+    "H100_executed": false
+  },
+  "source_sha256": {
+    "pssolver/api/capabilities.py": "03bf98c42765869c4013694c85c252670c669386a63c3db1a8ae963e751aced6",
+    "pssolver/configuration/public_simulation_runner.py": "693da690460f607030235e02b15605f8fc25a918c8f0bff236591b2a05110fb9",
+    "pssolver/configuration/public_periodic_simulation_compiler.py": "6e090c1db3e3a8fa0180b617fbf9c77bde5ec9a96aee8f24ab9ea2dc3694d189",
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": "495ca158a6965f2ae313ad485ff75b3a0b84912b29b1c5debd99a0d4e4980a96",
+    "tests/test_rc4_lifting_capability_restriction.py": "76938e169fdc2f70cfd597453161e0138b1ae80db9a18d39cc64a31262c9f536",
+    "tests/test_phase8_p81_public_surface_catalog.py": "43e452677a989f25363485365f57535666e893ea524542d83aaaea375beeca05",
+    "tests/test_phase8_p82_periodic_application.py": "6f09bc29006343b29f64e8e41848f48025730a7f9190fbc04f10268787728b05",
+    "tests/test_phase8_p83_channel_complete_stress_application.py": "45b4690387a4f09ed7471ac464ef8fcfdbe2b63de67408632d6424fed91aee07",
+    "tests/test_phase8_p844_lifting_workflow_restart.py": "29e4521e0d2f6ec286766144b8dbffaabfcf1ba0c77e3391f3672c825c81deb2"
+  },
+  "scope": {
+    "supported_forward_dynamics_changed": false,
+    "runtime_or_numerical_kernel_modified": false,
+    "checkpoint_schema_changed": false,
+    "fresh_conditioning_policy_implemented": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "rc4_3_3_implementation_authorized_by_user": true,
+    "rc4_3_3_complete": true,
+    "rc4_3_4_implementation_authorized": false,
+    "h100_submission_authorized": false,
+    "push_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false
+  },
+  "eligibility": {
+    "eligible_for_rc4_3_4_implementation": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false
+  }
+}

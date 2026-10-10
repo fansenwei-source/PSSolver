@@ -219,6 +219,13 @@ def compile_channel_beris_edwards_public_simulation(
             "velocity_nullspace": (
                 "absent_due_to_two_bounded_no_slip_axes"
             ),
+            "requested_molecular_field_linear_space": execution[
+                "molecular_field_linear_space"
+            ],
+            "effective_molecular_field_linear_space": execution[
+                "molecular_field_linear_space"
+            ],
+            "molecular_field_space_fallback_used": False,
             "runtime_fallback_allowed": False,
         },
     )

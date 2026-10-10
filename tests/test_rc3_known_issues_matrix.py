@@ -173,7 +173,16 @@ def test_rc432_progress_records_contract_without_authorizing_implementation():
             "5e6b64626f1927eb9846f62b3fbe31243d96131bbf2d3d0e36aeb254018d2741"
         ),
         "eligible_for_rc4_3_3_implementation": True,
-        "rc4_3_implementation_authorized": False,
+        "rc4_3_3_implementation_authorized": True,
+        "rc4_3_3_implementation_complete": True,
+        "rc4_3_3_classification": (
+            "PASS_RC4_3_3_PUBLIC_LIFTING_CAPABILITY_RESTRICTION"
+        ),
+        "rc4_3_3_record": (
+            "notes/PSSolver_v0_2_0rc4_rc433_lifting_capability_restriction.json"
+        ),
+        "eligible_for_rc4_3_4_implementation": True,
+        "rc4_3_implementation_authorized": True,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,
         "production_default_changed": False,
@@ -186,3 +195,4 @@ def test_rc432_progress_records_contract_without_authorizing_implementation():
     assert hashlib.sha256(contract.read_bytes()).hexdigest() == progress[
         "rc4_3_2_contract_record_sha256"
     ]
+    assert (ROOT / progress["rc4_3_3_record"]).is_file()

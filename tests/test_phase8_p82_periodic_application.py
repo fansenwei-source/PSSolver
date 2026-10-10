@@ -135,6 +135,15 @@ def test_periodic_public_compiler_records_fft_lowering_and_uniform_policy(tmp_pa
     compiled = compile_simulation(_simulation(tmp_path))
 
     assert compiled.application == "periodic_complete_stress_beris_edwards"
+    assert compiled.normalization[
+        "requested_molecular_field_linear_space"
+    ] == "spectral"
+    assert compiled.normalization[
+        "effective_molecular_field_linear_space"
+    ] == "spectral"
+    assert compiled.normalization[
+        "molecular_field_space_fallback_used"
+    ] is False
     assert compiled.construction_plan.kind is (
         RuntimeConstructionKind.PERIODIC_COMPLETE_STRESS
     )

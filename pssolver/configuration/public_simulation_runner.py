@@ -39,7 +39,13 @@ from pssolver.configuration.simulation import (
 )
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.configuration.simulation_binding import SimulationBindingError
+from pssolver.core.boundary import (
+    BoundarySemantic,
+    BoundarySide,
+    PrescribedDirichletBC,
+)
 from pssolver.core.integrators import IntegratorScheme
+from pssolver.models.active_nematics.fields import Q_COMPONENTS
 from pssolver.models.active_nematics.q_tensor import positive_equilibrium_S
 
 
@@ -106,6 +112,9 @@ class PublicCompilationRejectionCode(str, Enum):
     UNREGISTERED_MODEL_GEOMETRY = "unregistered_model_geometry"
     APPLICATION_CONTRACT = "application_contract"
     RUNTIME_BINDING = "runtime_binding"
+    UNSUPPORTED_LIFTED_WALL_MOLECULAR_FIELD = (
+        "unsupported_lifted_wall_molecular_field"
+    )
 
 
 class PublicSimulationCompilationError(ValueError):
@@ -229,6 +238,94 @@ def _boundary_identity(specification: SimulationSpec) -> dict[str, object]:
         "ndim": metadata["ndim"],
         "components": metadata["components"],
     }
+
+
+def _has_complete_static_prescribed_q_lifting_signature(
+    source: SimulationSpec,
+) -> bool:
+    """Recognize only the complete P8.4 static prescribed-Q signature.
+
+    Partial or malformed prescribed data deliberately fall through to the
+    existing boundary/lowering validators.  Recognizing the qualified old
+    signature here lets the public compiler withdraw that execution claim
+    before it creates an application request or construction plan, while the
+    field-neutral low-level lifting primitives remain available for historical
+    evidence and compatibility readers.
+    """
+
+    if tuple(source.geometry.bounded_axes) != (2,):
+        return False
+    assignments = {
+        assignment.component: assignment
+        for assignment in source.boundaries.components
+    }
+    prescribed_components = {
+        assignment.component
+        for assignment in source.boundaries.components
+        if any(
+            not face.condition.is_homogeneous
+            for face in assignment.faces
+        )
+    }
+    if prescribed_components != set(Q_COMPONENTS):
+        return False
+    for component in Q_COMPONENTS:
+        assignment = assignments.get(component)
+        if (
+            assignment is None
+            or assignment.semantic is not BoundarySemantic.PHYSICAL
+        ):
+            return False
+        wall_faces = {
+            face.side: face.condition
+            for face in assignment.faces
+            if face.axis == 2
+        }
+        if set(wall_faces) != set(BoundarySide) or not all(
+            isinstance(wall_faces[side], PrescribedDirichletBC)
+            for side in BoundarySide
+        ):
+            return False
+        if any(
+            not face.condition.is_homogeneous
+            for face in assignment.faces
+            if face.axis != 2
+        ):
+            return False
+    return True
+
+
+def _reject_unqualified_static_q_lifting(
+    source: SimulationSpec,
+    execution: Mapping[str, object],
+) -> None:
+    if not _has_complete_static_prescribed_q_lifting_signature(source):
+        return
+    raise PublicSimulationCompilationError(
+        "nonzero wall molecular-field semantics are not qualified for "
+        "Plane static prescribed-Q lifting; the supported Plane Q boundary "
+        "is homogeneous_neumann",
+        code=(
+            PublicCompilationRejectionCode
+            .UNSUPPORTED_LIFTED_WALL_MOLECULAR_FIELD
+        ),
+        context={
+            "equation_variant": source.equation_system.variant,
+            "geometry_name": source.geometry.name,
+            "field_name": "Q",
+            "boundary_semantics": (
+                "static_constant_two_sided_prescribed_dirichlet"
+            ),
+            "requested_runtime_path": source.execution.runtime_path,
+            "requested_molecular_field_linear_space": execution[
+                "molecular_field_linear_space"
+            ],
+            "supported_Q_boundary": "homogeneous_neumann",
+            "analysis_record_sha256": (
+                "1157b08b5328996876307fb0333aa28e85932d9d09e9ed0f16f08cc7a3a62ef1"
+            ),
+        },
+    )
 
 
 def _validate_translation(
@@ -403,6 +500,7 @@ def _compile_plane_public_simulation(
     )
     if execution["fallback_allowed"] is not False:
         _reject("runtime fallback must remain disabled")
+    _reject_unqualified_static_q_lifting(source, execution)
     workflow = _require_exact_keys(
         source.workflow.options,
         _WORKFLOW_KEYS,
@@ -512,6 +610,13 @@ def _compile_plane_public_simulation(
             boundaries=source.boundaries,
         )
     _validate_translation(source, application_simulation, run_spec)
+    effective_molecular_field_space = run_spec.molecular_field_linear_space
+    if effective_molecular_field_space != execution[
+        "molecular_field_linear_space"
+    ]:
+        _reject(
+            "molecular-field linear space changed during Plane translation"
+        )
     lowering_plan = lower_simulation_spec(application_simulation)
     construction_plan = plan_package_runtime_construction(application_simulation)
     return PublicSimulationCompilation(
@@ -530,6 +635,13 @@ def _compile_plane_public_simulation(
             "effective_ldg_l1": run_spec.shendruk_preset.ldg_l1,
             "derived_activity_number": activity_number,
             "derived_frank_k": frank_k,
+            "requested_molecular_field_linear_space": execution[
+                "molecular_field_linear_space"
+            ],
+            "effective_molecular_field_linear_space": (
+                effective_molecular_field_space
+            ),
+            "molecular_field_space_fallback_used": False,
             "runtime_fallback_allowed": False,
         },
     )

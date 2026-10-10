@@ -19,7 +19,6 @@ from pssolver import (
     TimeStepping,
     TorchSpectralExecution,
     compile_simulation,
-    run_simulation,
     SpectralSolver,
 )
 from pssolver.boundaries import (
@@ -56,7 +55,6 @@ from pssolver.models.active_nematics import (
     strong_homeotropic_q,
     strong_planar_q,
 )
-from pssolver.operators import materialize_plane_static_lifting
 from pssolver.operators.projection import BasisAwareSpectralProjector
 from pssolver.runtime.package_construction import (
     PackageRuntimeConstructionInput,
@@ -69,7 +67,6 @@ from pssolver.runtime.plane_beris_edwards import (
 from pssolver.workflows import capture_plane_observation
 from pssolver.workflows.plane_checkpoint import (
     capture_plane_checkpoint,
-    load_plane_checkpoint,
     restore_plane_checkpoint,
 )
 
@@ -210,10 +207,11 @@ def test_lifted_plane_binding_is_narrow_and_compiled_path_stays_closed(tmp_path)
     with pytest.raises(PublicSimulationCompilationError) as public_error:
         compile_simulation(public)
     assert public_error.value.code is (
-        PublicCompilationRejectionCode.RUNTIME_BINDING
+        PublicCompilationRejectionCode
+        .UNSUPPORTED_LIFTED_WALL_MOLECULAR_FIELD
     )
-    assert public_error.value.context["binding_rejection"]["code"] == (
-        "unsupported_lifting_runtime"
+    assert public_error.value.context["supported_Q_boundary"] == (
+        "homogeneous_neumann"
     )
 
 
@@ -499,48 +497,18 @@ def _public_simulation(tmp_path: Path) -> Simulation:
     )
 
 
-def test_public_runner_writes_physical_q_and_checkpointed_remainder(tmp_path):
+def test_public_runner_rejects_historical_lifted_capability_before_output(
+    tmp_path,
+):
     simulation = _public_simulation(tmp_path)
-    compiled = compile_simulation(simulation)
-    assert compiled.lowering_plan.lifting_plan is not None
-    result = run_simulation(compiled)
-    assert result.final_step == 1
+    with pytest.raises(PublicSimulationCompilationError) as caught:
+        compile_simulation(simulation)
 
-    output = tmp_path / "public_lifted"
-    metadata = json.loads((output / "metadata.json").read_text())
-    assert metadata["boundary_conditions"]["Q"] == [
-        "periodic",
-        "periodic",
-        "dirichlet",
-    ]
-    assert metadata["boundary_conditions"]["Q_evolved_representation"] == (
-        "homogeneous_remainder"
+    assert caught.value.code is (
+        PublicCompilationRejectionCode
+        .UNSUPPORTED_LIFTED_WALL_MOLECULAR_FIELD
     )
-    assert metadata["boundary_conditions"][
-        "Q_evolved_boundary_conditions"
-    ] == ["periodic", "periodic", "dirichlet"]
-    assert metadata["q_wall_model_note"].startswith(
-        "prescribed static Dirichlet Q"
-    )
-    physical = np.load(output / "Q_1.npy", allow_pickle=False)
-    checkpoint = load_plane_checkpoint(output / "checkpoint_1")
-    operator = materialize_plane_static_lifting(
-        compiled.lowering_plan.lifting_plan,
-        dtype=torch.float64,
-        device="cpu",
-    )
-    reconstructed = np.stack(
-        [
-            (
-                checkpoint.evolved_spatial[name][0]
-                + operator.lift(name)
-            ).numpy()
-            for name in Q_COMPONENTS
-        ],
-        axis=-1,
-    )
-    assert np.array_equal(physical, reconstructed)
-    assert checkpoint.lifting_restart is not None
+    assert not (tmp_path / "public_lifted").exists()
 
 
 def test_p844_record_matches_qualified_sources_and_scope():

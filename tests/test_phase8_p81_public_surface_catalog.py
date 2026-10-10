@@ -230,12 +230,13 @@ def test_discovery_is_frozen_and_matches_live_compiler_registry():
             "strong_planar_q",
         }
     }
-    # P8.4.4 connects these declarations to the qualified Plane legacy path.
-    assert all(value.executable for value in p843_policies.values())
+    # P8.4.4 historically connected these declarations. RC4.3.1 found that
+    # the lifted wall molecular field does not converge in the current DST
+    # remainder representation, so RC4.3.3 keeps them declarable but removes
+    # the public execution claim until a new representation is qualified.
+    assert all(not value.executable for value in p843_policies.values())
     assert all(
-        value.qualified_applications == (
-            "plane_complete_stress_beris_edwards",
-        )
+        value.qualified_applications == ()
         for value in p843_policies.values()
     )
     no_slip = next(

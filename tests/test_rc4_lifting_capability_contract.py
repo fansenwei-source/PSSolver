@@ -214,7 +214,16 @@ def test_rc432_stages_stop_before_implementation_and_h100():
 
 
 def test_rc432_reviewed_sources_are_content_addressed():
+    superseded_by_rc433 = {
+        "pssolver/api/capabilities.py",
+        "pssolver/configuration/public_simulation_runner.py",
+    }
     for relative, expected in _record()["reviewed_source_sha256"].items():
+        # RC4.3.2 is an immutable planning record. RC4.3.3 implements the
+        # frozen changes in these two files and content-addresses their
+        # successor versions in its own implementation record.
+        if relative in superseded_by_rc433:
+            continue
         assert _sha256(ROOT / relative) == expected, relative
 
 

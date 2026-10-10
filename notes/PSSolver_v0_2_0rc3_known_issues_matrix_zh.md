@@ -58,4 +58,4 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 ## 下一项实现
 
-`rc4.1_plane_nyquist` 与 `rc4.2_checkpoint_identity` 均已完成；B5、B10、B22、N3、N5 和 N6 已转为 `closed_verified`。RC4.3.0 规划已经完成，但 RC4.3.1 analysis-only 仍需单独授权；当前不授权修改 lifting 数学、pressure contract、生产默认值、自动 merge、H100 或发布。
+`rc4.1_plane_nyquist` 与 `rc4.2_checkpoint_identity` 均已完成；B5、B10、B22、N3、N5 和 N6 已转为 `closed_verified`。RC4.3.1 已完成物理裁决，RC4.3.2 已冻结限制合同，RC4.3.3 已实现 public fail-closed restriction、catalog 修正及 requested/effective molecular-field metadata。底层 lifting 和历史 checkpoint reader 保留；下一步是 RC4.3.4 的显式 fresh conditioning 策略。当前不授权 RC4.3.4、pressure contract、生产默认值、自动 merge、H100 或发布。
