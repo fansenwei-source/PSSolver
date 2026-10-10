@@ -10,7 +10,7 @@ spectral solver do not reinterpret the choice.
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Protocol, runtime_checkable
 
 from pssolver.configuration import (
@@ -27,6 +27,10 @@ from pssolver.execution.state import RuntimeState
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.models.active_nematics import Q_COMPONENTS
+from pssolver.operators.lifting import (
+    FreshInitialConditioningPolicy,
+    strict_no_automatic_conditioning,
+)
 
 
 def _decompose_run_spec(run_spec: PlaneBerisEdwardsRunSpec):
@@ -59,6 +63,10 @@ class PlaneRuntimeBuildRequest:
     initial_values: Mapping[str, object]
     device: object
     application_simulation: SimulationSpec | None = None
+    fresh_initial_conditioning: FreshInitialConditioningPolicy = field(
+        default_factory=strict_no_automatic_conditioning
+    )
+    apply_fresh_initial_conditioning: bool = True
 
     def __post_init__(self) -> None:
         if not isinstance(self.run_spec, PlaneBerisEdwardsRunSpec):
@@ -67,6 +75,16 @@ class PlaneRuntimeBuildRequest:
             raise TypeError("production_metadata must be a mapping")
         if not isinstance(self.initial_values, Mapping):
             raise TypeError("initial_values must be a mapping")
+        if not isinstance(
+            self.fresh_initial_conditioning,
+            FreshInitialConditioningPolicy,
+        ):
+            raise TypeError(
+                "fresh_initial_conditioning must be "
+                "FreshInitialConditioningPolicy"
+            )
+        if not isinstance(self.apply_fresh_initial_conditioning, bool):
+            raise TypeError("apply_fresh_initial_conditioning must be a bool")
         if self.application_simulation is not None:
             if not isinstance(self.application_simulation, SimulationSpec):
                 raise TypeError(
@@ -88,6 +106,9 @@ class PlaneRuntimeBuildRequest:
                     "application_simulation differs from its Plane run spec "
                     "outside the boundary declaration"
                 )
+        lifting_plan = self.lifting_plan
+        if lifting_plan is not None:
+            self.fresh_initial_conditioning.validate_for_plan(lifting_plan)
         metadata = dict(self.production_metadata)
         configuration = metadata.get("configuration")
         if not isinstance(configuration, Mapping):
@@ -125,6 +146,17 @@ class PlaneRuntimeBuildRequest:
         if self.application_simulation is None:
             return None
         return lower_simulation_spec(self.simulation).lifting_plan
+
+    def fresh_initial_conditioning_metadata(
+        self,
+    ) -> dict[str, object] | None:
+        lifting_plan = self.lifting_plan
+        if lifting_plan is None:
+            return None
+        return self.fresh_initial_conditioning.to_metadata(
+            affected_field="Q",
+            affected_components=lifting_plan.component_order,
+        )
 
 
 @runtime_checkable
@@ -492,6 +524,12 @@ def build_plane_beris_edwards_runtime(
                 device=request.device,
                 initial_values=request.initial_values,
                 lifting_plan=lifting_plan,
+                fresh_initial_conditioning=(
+                    request.fresh_initial_conditioning
+                ),
+                apply_fresh_initial_conditioning=(
+                    request.apply_fresh_initial_conditioning
+                ),
             )
         else:
             solver, projector = legacy_builder()

@@ -22,12 +22,18 @@ from pssolver.core.boundary import BoundarySemantic
 from pssolver.core.domain import DomainSpec, GridPlacement
 from pssolver.core.fields import FieldRole
 from pssolver.geometries import PlaneSlab, RectangularChannel
-from pssolver.operators import materialize_plane_static_lifting
+from pssolver.operators import (
+    legacy_whole_slab_sine_conditioning,
+    localized_quintic_wall_transition,
+    materialize_plane_static_lifting,
+    strict_no_automatic_conditioning,
+)
 from pssolver.planning import (
     STATIC_LIFTING_PLAN_SCHEMA_VERSION,
     StaticLiftExtension,
     StaticLiftingPlan,
 )
+from pssolver.runtime.static_lifting import PlaneStaticLiftingRuntime
 from pssolver.systems.algebraic import AlgebraicSystemSpec
 from pssolver.systems.equations import (
     EquationFieldSpec,
@@ -289,7 +295,43 @@ def test_physical_reconstruction_and_remainder_extraction_support_workspace():
         )
 
 
-def test_fresh_initial_remainder_is_smoothly_tapered_to_bounded_faces():
+def test_fresh_initial_remainder_default_is_strict_and_byte_identical():
+    operator = materialize_plane_static_lifting(
+        _plan(),
+        dtype=torch.float64,
+        device="cpu",
+    )
+    physical = torch.full(
+        operator.plan.domain_shape,
+        1.0 / 3.0,
+        dtype=torch.float64,
+    )
+    raw = operator.extract_homogeneous_remainder("c", physical)
+    strict = operator.extract_boundary_compatible_initial_remainder(
+        "c",
+        physical,
+    )
+
+    assert torch.equal(strict, raw)
+    policy = strict_no_automatic_conditioning()
+    assert policy.to_metadata(
+        affected_field="Q",
+        affected_components=("Qxx", "Qxy", "Qxz", "Qyy", "Qyz"),
+    ) == {
+        "schema_version": 1,
+        "requested_policy": "strict_no_automatic_conditioning_v1",
+        "effective_policy": "strict_no_automatic_conditioning_v1",
+        "formula": "r_conditioned = r_raw",
+        "transition_width": None,
+        "transition_width_units": "not_applicable",
+        "affected_field": "Q",
+        "affected_components": ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"],
+        "fresh_only": True,
+    }
+    assert "fresh_initial_remainder_conditioning" not in operator.to_metadata()
+
+
+def test_legacy_whole_slab_sine_is_explicit_compatibility_only():
     operator = materialize_plane_static_lifting(
         _plan(),
         dtype=torch.float64,
@@ -304,6 +346,7 @@ def test_fresh_initial_remainder_is_smoothly_tapered_to_bounded_faces():
     compatible = operator.extract_boundary_compatible_initial_remainder(
         "c",
         physical,
+        policy=legacy_whole_slab_sine_conditioning(),
     )
     count = operator.plan.domain_shape[operator.plan.wall_normal_axis]
     expected = torch.sin(
@@ -320,10 +363,6 @@ def test_fresh_initial_remainder_is_smoothly_tapered_to_bounded_faces():
     )
     assert compatible[..., 0].abs().max() < raw[..., 0].abs().max()
     assert compatible[..., -1].abs().max() < raw[..., -1].abs().max()
-    metadata = operator.to_metadata()
-    assert metadata["fresh_initial_remainder_conditioning"]["kind"] == (
-        "sine_wall_taper"
-    )
 
     edge_amplitudes = []
     for count in (32, 64):
@@ -341,6 +380,7 @@ def test_fresh_initial_remainder_is_smoothly_tapered_to_bounded_faces():
             refined.extract_boundary_compatible_initial_remainder(
                 "c",
                 refined_physical,
+                policy=legacy_whole_slab_sine_conditioning(),
             )
         )
         edge_amplitudes.append(
@@ -350,6 +390,114 @@ def test_fresh_initial_remainder_is_smoothly_tapered_to_bounded_faces():
             )
         )
     assert edge_amplitudes[1] < 0.51 * edge_amplitudes[0]
+
+
+def test_localized_quintic_transition_preserves_the_interior_exactly():
+    operator = materialize_plane_static_lifting(
+        _plan((8, 6, 16)),
+        dtype=torch.float64,
+        device="cpu",
+    )
+    generator = torch.Generator(device="cpu").manual_seed(731)
+    physical = torch.randn(
+        operator.plan.domain_shape,
+        generator=generator,
+        dtype=torch.float64,
+    )
+    physical_before = physical.clone()
+    raw = operator.extract_homogeneous_remainder("c", physical)
+    width = 0.5
+    policy = localized_quintic_wall_transition(width)
+    conditioned = operator.extract_boundary_compatible_initial_remainder(
+        "c",
+        physical,
+        policy=policy,
+    )
+    repeated = operator.extract_boundary_compatible_initial_remainder(
+        "c",
+        physical,
+        policy=policy,
+    )
+
+    count = operator.plan.domain_shape[operator.plan.wall_normal_axis]
+    wall_length = operator.plan.domain_lengths[operator.plan.wall_normal_axis]
+    centers = (torch.arange(count, dtype=torch.float64) + 0.5) * (
+        wall_length / count
+    )
+    distance = torch.minimum(centers, wall_length - centers)
+    interior = distance >= width
+    transition = ~interior
+    assert torch.equal(conditioned[..., interior], raw[..., interior])
+    assert torch.any(conditioned[..., transition] != raw[..., transition])
+    assert torch.equal(conditioned, repeated)
+    assert torch.equal(physical, physical_before)
+    assert torch.isfinite(conditioned).all()
+
+    metadata = policy.to_metadata(
+        affected_field="Q",
+        affected_components=("Qxx", "Qxy", "Qxz", "Qyy", "Qyz"),
+    )
+    assert metadata["requested_policy"] == (
+        "localized_quintic_wall_transition_v1"
+    )
+    assert metadata["effective_policy"] == metadata["requested_policy"]
+    assert metadata["transition_width"] == width
+    assert metadata["transition_width_units"] == (
+        "same_physical_length_units_as_geometry"
+    )
+
+
+@pytest.mark.parametrize("width", (0.0, -0.1, float("nan"), float("inf")))
+def test_localized_quintic_transition_rejects_invalid_width(width):
+    with pytest.raises(ValueError, match="finite and positive"):
+        localized_quintic_wall_transition(width)
+
+    operator = materialize_plane_static_lifting(
+        _plan(),
+        dtype=torch.float64,
+        device="cpu",
+    )
+    with pytest.raises(ValueError, match="half the wall-normal"):
+        operator.extract_boundary_compatible_initial_remainder(
+            "c",
+            torch.zeros(operator.plan.domain_shape, dtype=torch.float64),
+            policy=localized_quintic_wall_transition(1.1),
+        )
+
+
+def test_lifting_runtime_applies_policy_only_to_fresh_construction():
+    plan = _plan()
+    runtime = PlaneStaticLiftingRuntime(
+        plan,
+        dtype=torch.float64,
+        device="cpu",
+        batch_size=1,
+        fresh_initial_conditioning=localized_quintic_wall_transition(0.5),
+        affected_field="concentration",
+    )
+    physical = {
+        "c": torch.full(plan.domain_shape, 1.0 / 3.0, dtype=torch.float64)
+    }
+    fresh = runtime.extract_initial_remainders(
+        physical,
+        apply_fresh_conditioning=True,
+    )["c"]
+    restored_construction = runtime.extract_initial_remainders(
+        physical,
+        apply_fresh_conditioning=False,
+    )["c"]
+    raw = runtime.operator.extract_homogeneous_remainder("c", physical["c"])
+
+    assert torch.equal(restored_construction, raw)
+    assert not torch.equal(fresh, raw)
+    assert runtime.fresh_initial_conditioning_metadata()["fresh_only"] is True
+    assert (
+        runtime.fresh_initial_conditioning_metadata()["affected_field"]
+        == "concentration"
+    )
+    assert "fresh_initial_remainder_conditioning" not in (
+        runtime.restart_metadata()["lifting"]
+    )
 
 
 def test_explicit_linear_lift_correction_is_model_supplied_and_one_time():

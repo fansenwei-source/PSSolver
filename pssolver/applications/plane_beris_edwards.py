@@ -94,6 +94,7 @@ from pssolver.models.active_nematics import (
     create_initial_condition,
     sample_periodic_neutral_defects_2d,
 )
+from pssolver.operators.lifting import strict_no_automatic_conditioning
 from pssolver.operators.projection import (
     DEALIAS_RULE_FRACTIONS,
 )
@@ -180,6 +181,7 @@ def run_plane_beris_edwards(
         raise TypeError("application_simulation must be SimulationSpec or None")
     lowering_plan = lower_simulation_spec(application_simulation)
     lifting_plan = lowering_plan.lifting_plan
+    fresh_initial_conditioning = strict_no_automatic_conditioning()
     q_assignment = application_simulation.boundaries.for_component("Qxx")
     q_physical_boundary_conditions = []
     for axis in range(application_simulation.geometry.domain.ndim):
@@ -221,6 +223,7 @@ def run_plane_beris_edwards(
     execution = components.execution
     workflow_spec = components.workflow
     invocation = components.invocation
+    is_restart = workflow_spec.restart_from is not None
 
     seed = initial_condition.seed
     dt = time_stepping.dt
@@ -648,9 +651,12 @@ def run_plane_beris_edwards(
             "nonhomogeneous_neumann_supported": False,
         }
         metadata["initial_condition"]["boundary_compatibility"] = {
-            "kind": "sine_wall_taper",
+            **fresh_initial_conditioning.to_metadata(
+                affected_field="Q",
+                affected_components=lifting_plan.component_order,
+            ),
             "target_representation": "homogeneous_dirichlet_remainder",
-            "applied_before_first_transform": True,
+            "applied_to_this_construction": not is_restart,
         }
     if emit_metadata:
         print(json.dumps(metadata, indent=2))
@@ -659,7 +665,6 @@ def run_plane_beris_edwards(
 
     # Reject unsupported cross-runtime or numerically incompatible restart before
     # creating an output directory, generating Q, or constructing either solver.
-    is_restart = workflow_spec.restart_from is not None
     if is_restart:
         restart_header = read_plane_checkpoint_header(workflow_spec.restart_from)
         if restart_header.runtime_path is not execution.runtime_path:
@@ -782,6 +787,8 @@ def run_plane_beris_edwards(
         application_simulation=(
             application_simulation if lifting_plan is not None else None
         ),
+        fresh_initial_conditioning=fresh_initial_conditioning,
+        apply_fresh_initial_conditioning=not is_restart,
     )
     if execution.runtime_path is PlaneRuntimePath.SEPARATED_CANARY:
         metadata["runtime_construction"] = {

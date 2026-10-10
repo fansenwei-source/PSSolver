@@ -55,6 +55,7 @@ from pssolver.models.active_nematics import (
     strong_homeotropic_q,
     strong_planar_q,
 )
+from pssolver.operators.lifting import localized_quintic_wall_transition
 from pssolver.operators.projection import BasisAwareSpectralProjector
 from pssolver.runtime.package_construction import (
     PackageRuntimeConstructionInput,
@@ -166,6 +167,41 @@ def _runtime(tmp_path: Path, *, planar: bool = False):
         simulation,
         build_package_simulation_runtime(construction),
     )
+
+
+def test_lifted_package_input_records_fresh_conditioning_policy(tmp_path):
+    run_spec = _run_spec(tmp_path)
+    simulation = _lifted_simulation(run_spec)
+    metadata = {
+        "configuration": run_spec.identity_metadata(),
+        "runtime_selection": run_spec.runtime_selection_metadata(),
+    }
+    request = PlaneRuntimeBuildRequest(
+        run_spec=run_spec,
+        production_metadata=metadata,
+        initial_values={
+            name: torch.zeros((8, 8, 6), dtype=torch.float64)
+            for name in Q_COMPONENTS
+        },
+        device="cpu",
+        application_simulation=simulation,
+        fresh_initial_conditioning=localized_quintic_wall_transition(2.0),
+        apply_fresh_initial_conditioning=False,
+    )
+    construction = PackageRuntimeConstructionInput(
+        plan_package_runtime_construction(simulation),
+        request,
+    )
+    recorded = construction.to_metadata()
+
+    assert recorded["fresh_initial_conditioning"]["effective_policy"] == (
+        "localized_quintic_wall_transition_v1"
+    )
+    assert recorded["fresh_initial_conditioning"]["transition_width"] == 2.0
+    assert recorded["fresh_initial_conditioning"]["affected_components"] == (
+        list(Q_COMPONENTS)
+    )
+    assert recorded["fresh_initial_conditioning_applied"] is False
 
 
 def test_lifted_plane_binding_is_narrow_and_compiled_path_stays_closed(tmp_path):
@@ -532,6 +568,7 @@ def test_p844_record_matches_qualified_sources_and_scope():
         "pssolver/models/active_nematics/beris_edwards.py",
         "pssolver/models/active_nematics/stokes.py",
         "pssolver/operators/lifting.py",
+        "pssolver/runtime/plane_beris_edwards.py",
         "pssolver/runtime/plane_legacy.py",
         "pssolver/runtime/static_lifting.py",
         "pssolver/workflows/plane_checkpoint.py",

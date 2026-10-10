@@ -6,11 +6,132 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 import hashlib
 import json
+import math
 from types import MappingProxyType
 
 import torch
 
 from pssolver.planning.lifting import StaticLiftingPlan
+
+
+FRESH_INITIAL_CONDITIONING_SCHEMA_VERSION = 1
+STRICT_NO_AUTOMATIC_CONDITIONING = "strict_no_automatic_conditioning_v1"
+LOCALIZED_QUINTIC_WALL_TRANSITION = "localized_quintic_wall_transition_v1"
+LEGACY_WHOLE_SLAB_SINE = "legacy_whole_slab_sine_v1"
+
+_STRICT_FORMULA = "r_conditioned = r_raw"
+_LOCALIZED_QUINTIC_FORMULA = (
+    "r_conditioned = smoothstep5(clamp(distance_to_nearest_wall / "
+    "transition_width, 0, 1)) * r_raw; smoothstep5(x) = 6*x^5 - "
+    "15*x^4 + 10*x^3"
+)
+_LEGACY_SINE_FORMULA = (
+    "r_conditioned = sin(pi * (cell_index + 0.5) / "
+    "wall_normal_cell_count) * r_raw"
+)
+
+
+@dataclass(frozen=True, slots=True)
+class FreshInitialConditioningPolicy:
+    """Immutable, model-neutral policy for one fresh lifted field."""
+
+    kind: str = STRICT_NO_AUTOMATIC_CONDITIONING
+    transition_width: float | None = None
+
+    def __post_init__(self) -> None:
+        supported = {
+            STRICT_NO_AUTOMATIC_CONDITIONING,
+            LOCALIZED_QUINTIC_WALL_TRANSITION,
+            LEGACY_WHOLE_SLAB_SINE,
+        }
+        if self.kind not in supported:
+            raise ValueError("unsupported fresh initial conditioning policy")
+        if self.kind == LOCALIZED_QUINTIC_WALL_TRANSITION:
+            width = self.transition_width
+            if (
+                not isinstance(width, (int, float))
+                or isinstance(width, bool)
+                or not math.isfinite(float(width))
+                or float(width) <= 0.0
+            ):
+                raise ValueError(
+                    "localized transition_width must be finite and positive"
+                )
+            object.__setattr__(self, "transition_width", float(width))
+        elif self.transition_width is not None:
+            raise ValueError(
+                "transition_width is valid only for localized conditioning"
+            )
+
+    @property
+    def formula(self) -> str:
+        return {
+            STRICT_NO_AUTOMATIC_CONDITIONING: _STRICT_FORMULA,
+            LOCALIZED_QUINTIC_WALL_TRANSITION: _LOCALIZED_QUINTIC_FORMULA,
+            LEGACY_WHOLE_SLAB_SINE: _LEGACY_SINE_FORMULA,
+        }[self.kind]
+
+    def validate_for_plan(self, plan: StaticLiftingPlan) -> None:
+        if not isinstance(plan, StaticLiftingPlan):
+            raise TypeError("plan must be a StaticLiftingPlan")
+        if self.kind != LOCALIZED_QUINTIC_WALL_TRANSITION:
+            return
+        wall_length = plan.domain_lengths[plan.wall_normal_axis]
+        if self.transition_width > 0.5 * wall_length:
+            raise ValueError(
+                "transition_width must not exceed half the wall-normal "
+                "domain length"
+            )
+
+    def to_metadata(
+        self,
+        *,
+        affected_field: str,
+        affected_components: tuple[str, ...],
+    ) -> dict[str, object]:
+        if not isinstance(affected_field, str) or not affected_field:
+            raise ValueError("affected_field must be a non-empty string")
+        if (
+            not isinstance(affected_components, tuple)
+            or not affected_components
+            or any(
+                not isinstance(component, str) or not component
+                for component in affected_components
+            )
+        ):
+            raise ValueError("affected_components must be non-empty strings")
+        return {
+            "schema_version": FRESH_INITIAL_CONDITIONING_SCHEMA_VERSION,
+            "requested_policy": self.kind,
+            "effective_policy": self.kind,
+            "formula": self.formula,
+            "transition_width": self.transition_width,
+            "transition_width_units": (
+                "same_physical_length_units_as_geometry"
+                if self.transition_width is not None
+                else "not_applicable"
+            ),
+            "affected_field": affected_field,
+            "affected_components": list(affected_components),
+            "fresh_only": True,
+        }
+
+
+def strict_no_automatic_conditioning() -> FreshInitialConditioningPolicy:
+    return FreshInitialConditioningPolicy()
+
+
+def localized_quintic_wall_transition(
+    transition_width: float,
+) -> FreshInitialConditioningPolicy:
+    return FreshInitialConditioningPolicy(
+        kind=LOCALIZED_QUINTIC_WALL_TRANSITION,
+        transition_width=transition_width,
+    )
+
+
+def legacy_whole_slab_sine_conditioning() -> FreshInitialConditioningPolicy:
+    return FreshInitialConditioningPolicy(kind=LEGACY_WHOLE_SLAB_SINE)
 
 
 def _tensor_sha256(value: torch.Tensor) -> str:
@@ -259,30 +380,57 @@ class PlaneStaticLiftingOperator:
         self,
         component: str,
         physical_field: torch.Tensor,
+        *,
+        policy: FreshInitialConditioningPolicy | None = None,
     ) -> torch.Tensor:
-        """Return a smooth homogeneous remainder for fresh initialization.
-
-        A generic generated field need not satisfy the prescribed wall values.
-        Subtracting the lift alone would leave an order-one jump at the walls;
-        truncating that jump in the DST basis produces a Gibbs layer.  Taper the
-        construction-time remainder to zero at both physical faces before its
-        first transform.  The evolved representation and its spectral method
-        remain unchanged.
-        """
+        """Apply an explicit fresh-only policy to a lifted remainder."""
 
         remainder = self.extract_homogeneous_remainder(
             component,
             physical_field,
         )
+        if policy is None:
+            policy = strict_no_automatic_conditioning()
+        if not isinstance(policy, FreshInitialConditioningPolicy):
+            raise TypeError("policy must be FreshInitialConditioningPolicy")
+        policy.validate_for_plan(self.plan)
+        if policy.kind == STRICT_NO_AUTOMATIC_CONDITIONING:
+            return remainder
+
         axis = self.plan.wall_normal_axis
         count = self.plan.domain_shape[axis]
-        fraction = (
-            torch.arange(count, dtype=self.dtype, device=self.device) + 0.5
-        ) / count
-        envelope = torch.sin(torch.pi * fraction)
+        cell_index = torch.arange(
+            count,
+            dtype=self.dtype,
+            device=self.device,
+        )
+        if policy.kind == LEGACY_WHOLE_SLAB_SINE:
+            envelope = torch.sin(torch.pi * (cell_index + 0.5) / count)
+            preserve_raw = None
+        else:
+            wall_length = self.plan.domain_lengths[axis]
+            cell_centers = (cell_index + 0.5) * (wall_length / count)
+            distance = torch.minimum(cell_centers, wall_length - cell_centers)
+            scaled = torch.clamp(
+                distance / policy.transition_width,
+                min=0.0,
+                max=1.0,
+            )
+            envelope = scaled**3 * (
+                scaled * (scaled * 6.0 - 15.0) + 10.0
+            )
+            preserve_raw = scaled >= 1.0
         shape = [1] * len(self.plan.domain_shape)
         shape[axis] = count
-        return remainder * envelope.reshape(shape)
+        envelope = envelope.reshape(shape)
+        conditioned = remainder * envelope
+        if preserve_raw is None:
+            return conditioned
+        return torch.where(
+            preserve_raw.reshape(shape),
+            remainder,
+            conditioned,
+        )
 
     def materialize_linear_correction(
         self,
@@ -387,11 +535,6 @@ class PlaneStaticLiftingOperator:
             "materialized_lift_sha256": self.materialized_sha256,
             "affine_laplacian_explicit": True,
             "allocation_lifetime": "construction_owned_static",
-            "fresh_initial_remainder_conditioning": {
-                "kind": "sine_wall_taper",
-                "wall_values": [0.0, 0.0],
-                "applied_before_first_transform": True,
-            },
         }
 
 
@@ -407,7 +550,15 @@ def materialize_plane_static_lifting(
 
 
 __all__ = [
+    "FRESH_INITIAL_CONDITIONING_SCHEMA_VERSION",
+    "FreshInitialConditioningPolicy",
+    "LEGACY_WHOLE_SLAB_SINE",
+    "LOCALIZED_QUINTIC_WALL_TRANSITION",
     "MaterializedLinearLiftCorrection",
     "PlaneStaticLiftingOperator",
+    "STRICT_NO_AUTOMATIC_CONDITIONING",
+    "legacy_whole_slab_sine_conditioning",
+    "localized_quintic_wall_transition",
     "materialize_plane_static_lifting",
+    "strict_no_automatic_conditioning",
 ]

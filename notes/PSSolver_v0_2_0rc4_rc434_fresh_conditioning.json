@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.3.4 explicit fresh-state conditioning policies",
+  "phase": "RC4.3.4",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_RC4_3_4_EXPLICIT_FRESH_CONDITIONING_CPU_CANDIDATE",
+  "baseline": {
+    "branch": "fix/v0.2.0rc4-audit",
+    "implementation_parent_commit": "8e86e36462e7ba268f96877200ac35b09a5dfb71",
+    "contract_record": "notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json",
+    "contract_record_sha256": "5e6b64626f1927eb9846f62b3fbe31243d96131bbf2d3d0e36aeb254018d2741",
+    "rc4_3_3_commit": "8e86e36462e7ba268f96877200ac35b09a5dfb71"
+  },
+  "implementation": {
+    "schema_version": 1,
+    "declaration_type": "pssolver.operators.lifting.FreshInitialConditioningPolicy",
+    "immutable": true,
+    "model_neutral": true,
+    "default_policy": "strict_no_automatic_conditioning_v1",
+    "default_formula": "r_conditioned = r_raw",
+    "localized_opt_in_policy": "localized_quintic_wall_transition_v1",
+    "localized_formula": "r_conditioned = smoothstep5(clamp(distance_to_nearest_wall / transition_width, 0, 1)) * r_raw; smoothstep5(x) = 6*x^5 - 15*x^4 + 10*x^3",
+    "localized_width_constraint": "0 < transition_width <= 0.5 * wall_normal_domain_length",
+    "localized_width_units": "same_physical_length_units_as_geometry",
+    "localized_interior_identity": "byte_identical_where_distance_to_nearest_wall_is_at_least_transition_width",
+    "legacy_policy": "legacy_whole_slab_sine_v1",
+    "legacy_policy_implicit_default": false,
+    "legacy_policy_allowed_use": "explicit_historical_compatibility_analysis_only",
+    "requested_equals_effective": true,
+    "fallback_used": false
+  },
+  "canonical_metadata": {
+    "schema_version": 1,
+    "required_keys": [
+      "schema_version",
+      "requested_policy",
+      "effective_policy",
+      "formula",
+      "transition_width",
+      "transition_width_units",
+      "affected_field",
+      "affected_components",
+      "fresh_only"
+    ],
+    "affected_field": "Q",
+    "affected_components": ["Qxx", "Qxy", "Qxz", "Qyy", "Qyz"],
+    "fresh_only": true
+  },
+  "restart_contract": {
+    "fresh_only": true,
+    "restored_state_reconditioned": false,
+    "part_of_restart_compatibility_digest": false,
+    "checkpoint_format_changed": false,
+    "forward_dynamics_identity_changed": false
+  },
+  "validation": {
+    "strict_policy_preserves_raw_remainder_exactly": true,
+    "localized_policy_preserves_interior_exactly": true,
+    "localized_policy_is_deterministic_on_cpu": true,
+    "localized_policy_rejects_nonfinite_nonpositive_or_oversized_width": true,
+    "legacy_sine_requires_explicit_policy": true,
+    "input_physical_tensor_is_not_mutated": true,
+    "restart_construction_bypasses_fresh_conditioning": true,
+    "conditioning_absent_from_restart_lifting_identity": true,
+    "no_lifting_runtime_path_modified": false,
+    "cuda_determinism_qualified": false,
+    "cuda_qualification_deferred_to": "RC4.3.7"
+  },
+  "verification": {
+    "focused_tests": {
+      "passed": 54,
+      "failed": 0
+    },
+    "broader_plane_and_restart_tests": {
+      "passed": 95,
+      "failed": 0
+    },
+    "full_cpu_suite": {
+      "executed": true,
+      "passed": 2997,
+      "skipped": 0,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "failed": 0
+    },
+    "H100_required_for_this_slice": false,
+    "H100_executed": false
+  },
+  "source_sha256": {
+    "benchmarks/diagnose_rc4_lifting_correctness.py": "4e50626e4009090d82cfb489cc21da0e876b162dffc19b84546d8c91cf352339",
+    "pssolver/operators/lifting.py": "4f5fd2f4469882c1a538a67972cf14fde9250f47d2ffad1417a5800b51cff93a",
+    "pssolver/operators/__init__.py": "b2033d008ca4a2277ac0671ba14ba29ac060fd25021f2e972a1a36495b1ed0b9",
+    "pssolver/runtime/static_lifting.py": "f877b7d884603e0919cda8dec8005b993b0320a04b831b71f23da5aecb401b85",
+    "pssolver/runtime/plane_legacy.py": "8151da0ecf269cadded94fdfc58ffcc3c3bfca33bbd874d308b3f5f8d3e0333d",
+    "pssolver/runtime/plane_beris_edwards.py": "eba02d941ee57b789efb72b3543d82d13d434b162178b7dbf962b7dced934517",
+    "pssolver/runtime/package_construction.py": "df7026c0933831cfd439916927a6f572575846a174e4cf2bcf6963b991ab6a02",
+    "pssolver/applications/plane_beris_edwards.py": "0c7b2327d1eeef40e37f753c0d0910d7f132f7973b4c7409dd01957836b8d41e",
+    "tests/test_phase8_p842_plane_static_lifting.py": "d35a5f92996ab84361e39111abf33c430b63e42437c291046206e0a216f1cf21",
+    "tests/test_phase8_p844_lifting_workflow_restart.py": "316da4d9a321f05a6f8bf77f3c4c1f01277dbfb558beb7b5ea2efbfe1f3d13ed",
+    "tests/test_phase8_p845_h100_qualification.py": "1a065700776c939b22b656226af7ba849470f89fb0d86c9392a89a1a32d28b5a",
+    "tests/test_rc4_fresh_initial_conditioning.py": "8bbc812a7ce648fea3e71265ee251de6e44ec8730cecf86c1776022a3722df7f"
+  },
+  "scope": {
+    "fresh_construction_behavior_changed": true,
+    "implicit_whole_slab_sine_removed": true,
+    "public_lifting_restriction_changed": false,
+    "supported_public_forward_dynamics_changed": false,
+    "hot_path_kernel_modified": false,
+    "checkpoint_schema_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "rc4_3_4_implementation_authorized_by_user": true,
+    "rc4_3_4_complete": true,
+    "rc4_3_5_implementation_authorized": false,
+    "h100_submission_authorized": false,
+    "push_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false
+  },
+  "eligibility": {
+    "eligible_for_rc4_3_5_integration": true,
+    "localized_policy_publicly_qualified": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false
+  }
+}

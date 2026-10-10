@@ -120,6 +120,7 @@ def test_p845_memory_recovery_records_real_failure_and_compact_scope():
     superseded_by_fused_recovery = {
         "benchmarks/qualify_plane_static_lifting.py",
         "pssolver/operators/lifting.py",
+        "pssolver/runtime/plane_legacy.py",
         "pssolver/runtime/static_lifting.py",
     }
     for relative, expected in record["source_sha256"].items():

@@ -33,6 +33,7 @@ from pssolver.models.active_nematics import (
 from pssolver.solver import SpectralSolver
 from pssolver.operators.projection import BasisAwareSpectralProjector
 from pssolver.models.active_nematics.q_tensor import Q_convention_metadata
+from pssolver.operators.lifting import FreshInitialConditioningPolicy
 from pssolver.planning.lifting import StaticLiftingPlan
 
 from .static_lifting import PlaneStaticLiftingRuntime
@@ -92,6 +93,8 @@ def build_legacy_plane_runtime(
     device: object,
     initial_values: Mapping[str, object],
     lifting_plan: StaticLiftingPlan | None = None,
+    fresh_initial_conditioning: FreshInitialConditioningPolicy | None = None,
+    apply_fresh_initial_conditioning: bool = True,
 ) -> tuple[SpectralSolver, BasisAwareSpectralProjector]:
     """Construct the validated Plane production backend.
 
@@ -136,6 +139,16 @@ def build_legacy_plane_runtime(
         StaticLiftingPlan,
     ):
         raise TypeError("lifting_plan must be StaticLiftingPlan or None")
+    if fresh_initial_conditioning is not None and not isinstance(
+        fresh_initial_conditioning,
+        FreshInitialConditioningPolicy,
+    ):
+        raise TypeError(
+            "fresh_initial_conditioning must be "
+            "FreshInitialConditioningPolicy or None"
+        )
+    if not isinstance(apply_fresh_initial_conditioning, bool):
+        raise TypeError("apply_fresh_initial_conditioning must be a bool")
     q_boundaries = (
         boundaries["q"]
         if lifting_plan is None
@@ -184,9 +197,12 @@ def build_legacy_plane_runtime(
             device=device,
             batch_size=solver.batchsize,
             convention=Q_convention_metadata(),
+            fresh_initial_conditioning=fresh_initial_conditioning,
+            affected_field="Q",
         )
         evolved_initial_values = lifting_runtime.extract_initial_remainders(
-            initial_values
+            initial_values,
+            apply_fresh_conditioning=apply_fresh_initial_conditioning,
         )
     q2_q = solver.get_q2(q_boundaries)
     q_linear_operator = beris_edwards_linear_operator(

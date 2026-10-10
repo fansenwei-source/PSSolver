@@ -53,7 +53,12 @@ def test_rc420_freezes_only_the_checkpoint_identity_batch():
     assert _sha256(ROOT / plan["baseline"]["rc4_1_closure_record"]) == (
         plan["baseline"]["rc4_1_closure_record_sha256"]
     )
-    assert _sha256(ROOT / plan["baseline"]["known_issues_record"]) == (
+    assert _git_blob_sha256(
+        # The planning commit registered the then-current closure matrix in
+        # the same commit as this immutable plan.
+        "0684e61b30f8a29fc4fe822df8c68602d7b8bf6e",
+        plan["baseline"]["known_issues_record"],
+    ) == (
         plan["baseline"]["known_issues_record_sha256"]
     )
 

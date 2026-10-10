@@ -62,6 +62,7 @@ from pssolver.models.active_nematics import (
 from pssolver.models.active_nematics.stokes import (
     BerisEdwardsFreeSlipStokes,
 )
+from pssolver.operators.lifting import legacy_whole_slab_sine_conditioning
 from pssolver.runtime.package_construction import (
     PackageRuntimeConstructionInput,
     build_package_simulation_runtime,
@@ -300,6 +301,9 @@ def _build_lifted_runtime(
         initial_values,
         "cpu",
         simulation,
+        fresh_initial_conditioning=(
+            legacy_whole_slab_sine_conditioning()
+        ),
     )
     construction = PackageRuntimeConstructionInput(
         plan_package_runtime_construction(simulation),
@@ -705,7 +709,18 @@ def _conditioning_row(
     requested = torch.stack(tuple(initial[name] for name in Q_COMPONENTS))[:, None]
     deviation = torch.abs(physical - requested).amax(dim=(0, 1, 2, 3))
     quarter_index = wall_points // 4
-    metadata = adapter.solver.model.static_model.static_lifting_runtime.operator.to_metadata()
+    runtime = adapter.solver.model.static_model.static_lifting_runtime
+    policy_metadata = runtime.fresh_initial_conditioning_metadata()
+    if policy_metadata["effective_policy"] != "legacy_whole_slab_sine_v1":
+        raise RuntimeError("RC4.3.1 reproducer did not select legacy conditioning")
+    # Preserve the exact pre-RC4.3.4 report schema.  The numerical behavior is
+    # now requested explicitly above; this compatibility view exists only so
+    # the immutable RC4.3.1 analysis remains reproducible byte for byte.
+    historical_metadata = {
+        "kind": "sine_wall_taper",
+        "wall_values": [0.0, 0.0],
+        "applied_before_first_transform": True,
+    }
     return {
         "wall_points": wall_points,
         "requested_sha256": _mapping_sha256(initial),
@@ -718,7 +733,7 @@ def _conditioning_row(
         "center_deviation_linf": float(deviation[wall_points // 2].item()),
         "domain_max_deviation_linf": float(deviation.max().item()),
         "exactly_unchanged_cell_count": int(torch.count_nonzero(deviation == 0).item()),
-        "conditioning_metadata": metadata["fresh_initial_remainder_conditioning"],
+        "conditioning_metadata": historical_metadata,
         "finite": bool(torch.isfinite(physical).all().item()),
     }
 

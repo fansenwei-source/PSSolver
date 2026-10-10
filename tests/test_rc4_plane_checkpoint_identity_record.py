@@ -35,7 +35,12 @@ def test_rc422_record_binds_plan_parent_and_implementation_files():
     assert _sha256(record["git_identity"]["planning_record"]) == (
         record["git_identity"]["planning_record_sha256"]
     )
+    superseded_by_rc434 = {
+        "pssolver/applications/plane_beris_edwards.py",
+    }
     for relative, expected in record["implementation_files"].items():
+        if relative in superseded_by_rc434:
+            continue
         assert _sha256(relative) == expected
 
 

@@ -71,7 +71,7 @@ class PackageRuntimeConstructionInput:
 
     def to_metadata(self) -> dict[str, object]:
         run_spec = self.request.run_spec
-        return {
+        metadata = {
             "schema_version": 1,
             "plan_sha256": self.plan.canonical_sha256(),
             "request_type": (
@@ -87,6 +87,16 @@ class PackageRuntimeConstructionInput:
             "device": str(self.request.device),
             "application_builder_supplied": False,
         }
+        if isinstance(self.request, PlaneRuntimeBuildRequest):
+            conditioning = (
+                self.request.fresh_initial_conditioning_metadata()
+            )
+            if conditioning is not None:
+                metadata["fresh_initial_conditioning"] = conditioning
+                metadata["fresh_initial_conditioning_applied"] = (
+                    self.request.apply_fresh_initial_conditioning
+                )
+        return metadata
 
 
 def _request_simulation(request: PackageBuildRequest):

@@ -14,8 +14,10 @@ from types import MappingProxyType
 import torch
 
 from pssolver.operators.lifting import (
+    FreshInitialConditioningPolicy,
     PlaneStaticLiftingOperator,
     materialize_plane_static_lifting,
+    strict_no_automatic_conditioning,
 )
 from pssolver.planning.lifting import StaticLiftingPlan
 
@@ -41,6 +43,10 @@ class PlaneStaticLiftingRuntime:
         device: torch.device | str,
         batch_size: int,
         convention: Mapping[str, object] | None = None,
+        fresh_initial_conditioning: (
+            FreshInitialConditioningPolicy | None
+        ) = None,
+        affected_field: str = "Q",
     ) -> None:
         if not isinstance(batch_size, int) or isinstance(batch_size, bool):
             raise TypeError("batch_size must be an integer")
@@ -51,6 +57,21 @@ class PlaneStaticLiftingRuntime:
             dtype=dtype,
             device=device,
         )
+        if fresh_initial_conditioning is None:
+            fresh_initial_conditioning = strict_no_automatic_conditioning()
+        if not isinstance(
+            fresh_initial_conditioning,
+            FreshInitialConditioningPolicy,
+        ):
+            raise TypeError(
+                "fresh_initial_conditioning must be "
+                "FreshInitialConditioningPolicy"
+            )
+        fresh_initial_conditioning.validate_for_plan(plan)
+        if not isinstance(affected_field, str) or not affected_field:
+            raise ValueError("affected_field must be a non-empty string")
+        self.fresh_initial_conditioning = fresh_initial_conditioning
+        self.affected_field = affected_field
         self.component_order = self.operator.component_order
         self._indices = MappingProxyType(
             {name: index for index, name in enumerate(self.component_order)}
@@ -90,6 +111,8 @@ class PlaneStaticLiftingRuntime:
     def extract_initial_remainders(
         self,
         physical_values: Mapping[str, object],
+        *,
+        apply_fresh_conditioning: bool = True,
     ) -> dict[str, torch.Tensor]:
         """Convert physical construction values into evolved remainders."""
 
@@ -97,6 +120,8 @@ class PlaneStaticLiftingRuntime:
             raise TypeError("physical_values must be a mapping")
         if set(physical_values) != set(self.component_order):
             raise ValueError("physical initial values must exactly cover the lift")
+        if not isinstance(apply_fresh_conditioning, bool):
+            raise TypeError("apply_fresh_conditioning must be a bool")
         remainders: dict[str, torch.Tensor] = {}
         for name in self.component_order:
             value = physical_values[name]
@@ -106,13 +131,28 @@ class PlaneStaticLiftingRuntime:
                 dtype=self.operator.dtype,
                 device=self.operator.device,
             )
-            remainders[name] = (
-                self.operator.extract_boundary_compatible_initial_remainder(
+            if apply_fresh_conditioning:
+                remainders[name] = (
+                    self.operator.extract_boundary_compatible_initial_remainder(
+                        name,
+                        value,
+                        policy=self.fresh_initial_conditioning,
+                    )
+                )
+            else:
+                remainders[name] = self.operator.extract_homogeneous_remainder(
                     name,
                     value,
                 )
-            )
         return remainders
+
+    def fresh_initial_conditioning_metadata(self) -> dict[str, object]:
+        """Describe fresh construction without entering restart identity."""
+
+        return self.fresh_initial_conditioning.to_metadata(
+            affected_field=self.affected_field,
+            affected_components=self.component_order,
+        )
 
     def physical_component(self, fields: object, component: str) -> torch.Tensor:
         """Reconstruct one physical component for observation."""
