@@ -65,8 +65,8 @@ def test_state_counts_match_the_machine_readable_summary():
     for item in record["items"]:
         counts[item["state"]] = counts.get(item["state"], 0) + 1
     assert counts == {
-        "closed_verified": 18,
-        "partial_residual": 20,
+        "closed_verified": 23,
+        "partial_residual": 15,
         "accepted_limitation": 3,
         "deferred_architecture": 9,
     }
@@ -74,7 +74,7 @@ def test_state_counts_match_the_machine_readable_summary():
         "item_count": 50,
         **counts,
         "first_implementation_batch": "rc4.1_plane_nyquist",
-        "next_implementation_batch": "rc4.2_checkpoint_identity",
+        "next_implementation_batch": "rc4.3_lifting_correctness",
     }
 
 
@@ -87,7 +87,13 @@ def test_release_blockers_and_closed_rc3_regressions_are_not_conflated():
     assert items["B5"]["closure_record"] == (
         "notes/PSSolver_v0_2_0rc4_rc412_h100_closure.json"
     )
-    for identifier in ("B8", "B29", "N3", "N4", "N5", "N6"):
+    for identifier in ("B10", "B22", "N3", "N5", "N6"):
+        assert items[identifier]["state"] == "closed_verified"
+        assert items[identifier]["disposition"] == "closed"
+        assert items[identifier]["closure_record"] == (
+            "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"
+        )
+    for identifier in ("B8", "B29", "N4"):
         assert items[identifier]["state"] == "partial_residual"
         assert items[identifier]["disposition"] != "closed"
 
@@ -118,10 +124,13 @@ def test_architecture_work_is_deferred_until_correctness_batches_close():
     )
 
 
-def test_rc41_progress_closes_only_b5_and_authorizes_only_rc42_planning():
+def test_rc42_progress_closes_checkpoint_batch_and_authorizes_only_rc43_planning():
     assert _record()["progress"] == {
-        "completed_batches": ["rc4.1_plane_nyquist"],
-        "next_batch": "rc4.2_checkpoint_identity",
+        "completed_batches": [
+            "rc4.1_plane_nyquist",
+            "rc4.2_checkpoint_identity",
+        ],
+        "next_batch": "rc4.3_lifting_correctness",
         "b5_complete": True,
         "b5_closure_record": (
             "notes/PSSolver_v0_2_0rc4_rc412_h100_closure.json"
@@ -131,7 +140,13 @@ def test_rc41_progress_closes_only_b5_and_authorizes_only_rc42_planning():
         "rc4_2_plan_record": (
             "notes/PSSolver_v0_2_0rc4_rc420_checkpoint_identity_plan.json"
         ),
-        "rc4_2_implementation_authorized": False,
+        "rc4_2_complete": True,
+        "rc4_2_closure_record": (
+            "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"
+        ),
+        "eligible_for_rc4_3_planning": True,
+        "rc4_3_planning_complete": False,
+        "rc4_3_implementation_authorized": False,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,
         "production_default_changed": False,

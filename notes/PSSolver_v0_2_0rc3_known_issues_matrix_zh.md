@@ -17,8 +17,8 @@
 
 | 状态 | 数量 | 含义 |
 |---|---:|---|
-| `closed_verified` | 18 | 目标行为已有回归或资格证据 |
-| `partial_residual` | 20 | 主问题部分缓解，但仍有路径或语义缺口 |
+| `closed_verified` | 23 | 目标行为已有回归或资格证据 |
+| `partial_residual` | 15 | 主问题部分缓解，但仍有路径或语义缺口 |
 | `accepted_limitation` | 3 | 已知且明确接受，不作为当前正确性修复 |
 | `deferred_architecture` | 9 | 架构债务，推迟到正确性关闭之后 |
 
@@ -34,7 +34,7 @@
 
 ### rc4.2：checkpoint 与动力学身份
 
-处理 B10、B22、N3、N5、N6。目标是让身份表达真实动力学版本，同时去掉 device token、fresh-initial conditioning 等不应阻断物理兼容续跑的因素。必须覆盖 rc1/rc2/rc3 的接受或明确拒绝矩阵，并保证在 target mutation 之前拒绝不兼容输入。
+处理 B10、B22、N3、N5、N6。该批次已经完成：分层身份表达真实动力学版本，device token 与 fresh-only conditioning 不再错误阻断兼容续跑；legacy 输入按已登记 reader 接受或在 target mutation 前拒绝。installed-wheel CPU 门禁和 X01–X14 双向 CPU/CUDA checkpoint H100 矩阵均通过。权威关闭记录为 `PSSolver_v0_2_0rc4_rc426_h100_closure.json`。
 
 ### rc4.3：lifting 正确性
 
@@ -58,4 +58,4 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 ## 下一项实现
 
-`rc4.1_plane_nyquist` 已完成，B5 已转为 `closed_verified`。RC4.2.0 规划合同现已写入 `PSSolver_v0_2_0rc4_rc420_checkpoint_identity_plan.json`，冻结了分层身份、rc1/rc2/rc3 接受或拒绝矩阵、pre-mutation 拒绝顺序和分阶段迁移路径。当前仍未授权 RC4.2.1 实现，也不授权并行修改 lifting 或 pressure contract、改变生产默认值、自动 merge 或发布。
+`rc4.1_plane_nyquist` 与 `rc4.2_checkpoint_identity` 均已完成；B5、B10、B22、N3、N5 和 N6 已转为 `closed_verified`。下一步只授权 RC4.3 lifting correctness 的规划阶段，不授权先行修改 lifting 数学、pressure contract、生产默认值、自动 merge 或发布。

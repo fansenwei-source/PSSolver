@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.2.6 cross-device checkpoint H100 closure",
+  "phase": "RC4.2.6",
+  "status": "complete",
+  "classification": "PASS_RC4_2_6_SINGLE_H100_CROSS_DEVICE_CHECKPOINT_PORTABILITY",
+  "known_issues": [
+    {"id": "B10", "state_before": "partial_residual", "state_after": "closed_verified"},
+    {"id": "B22", "state_before": "partial_residual", "state_after": "closed_verified"},
+    {"id": "N3", "state_before": "partial_residual", "state_after": "closed_verified"},
+    {"id": "N5", "state_before": "partial_residual", "state_after": "closed_verified"},
+    {"id": "N6", "state_before": "partial_residual", "state_after": "closed_verified"}
+  ],
+  "git_identity": {
+    "released_baseline": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+    "planning_commit": "0684e61145270b9527267007c9043ff423257b52",
+    "identity_primitives_commit": "1cbb8160d440963371826198e368476ed04aa5c0",
+    "plane_identity_commit": "f4a5aa332f973e38778792342cbaba67dc86c88b",
+    "periodic_channel_identity_commit": "18f255fa771663149198c495033f6c42b893bc98",
+    "functional_identity_commit": "573daafd2a3e33b5c218a3ad337c11a5f685e56e",
+    "installed_cpu_closure_commit": "6f9bc92539a016fee8bcc39acf2cf717ff5e14d8",
+    "qualification_plan_commit": "9f693a3eee7183ad380948839b922da5d2fb1604",
+    "qualification_support_commit": "c0858b64a5d014f77db68f36e3a26620bf77803d",
+    "tf32_bootstrap_commit": "949058d97f1beb12774fd981fe9e0c49adeebdfb",
+    "qualified_candidate_commit": "5e3e821458f3ff451c206a8be7cd9765f6e634db",
+    "branch": "fix/v0.2.0rc4-audit"
+  },
+  "local_records": {
+    "rc4_2_0_plan": {"path": "notes/PSSolver_v0_2_0rc4_rc420_checkpoint_identity_plan.json", "sha256": "88839d3d92b185876d3eb03e4933c26644fc0f2cae59061a66bb86a55d066b59"},
+    "rc4_2_1_primitives": {"path": "notes/PSSolver_v0_2_0rc4_rc421_checkpoint_identity_primitives.json", "sha256": "5c3bafe6401e1fc57ffd7ef53759e370fa81f8063914e64c84aaedf62d40ec0f"},
+    "rc4_2_2_plane": {"path": "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json", "sha256": "922661f5a1311020e8a2b7e3cbe35d207d59ae221b53b8b1d3da539071cca1a0"},
+    "rc4_2_3_periodic_channel": {"path": "notes/PSSolver_v0_2_0rc4_rc423_periodic_channel_checkpoint_identity.json", "sha256": "211330513cb1f4aed0d563f2e0b1d32cfdeca8701d199e29f64b2d2f28d31363"},
+    "rc4_2_4_functional": {"path": "notes/PSSolver_v0_2_0rc4_rc424_functional_checkpoint_identity.json", "sha256": "5fdc8c026d9a59a8eb2a1b05146943ae1530c363608a59bc9649a9ecb0b425e5"},
+    "rc4_2_5_cpu_closure": {"path": "notes/PSSolver_v0_2_0rc4_rc425_installed_cpu_closure.json", "sha256": "e75838c04400bcd8b397bdc6045267e921f15d8f11e1ef6d2d945549fe972f2c"},
+    "rc4_2_6_plan": {"path": "notes/PSSolver_v0_2_0rc4_rc426_cross_device_checkpoint_plan.json", "sha256": "06e4f18c7a9617355612ee4975b8650700b3a89fd724041c056ecf46bc3a39f2"},
+    "functional_recovery": {"path": "notes/PSSolver_v0_2_0rc4_rc426_functional_checkpoint_recovery.json", "sha256": "b5610f300571f1dc0db809c61fc1e8c5c6f9672ec031676a7f6d3ad6fbb16823"},
+    "tf32_recovery": {"path": "notes/PSSolver_v0_2_0rc4_rc426_tf32_bootstrap_recovery.json", "sha256": "482631467dabdefd71c8ea7806da08784fc0e137405afcba25f1b95a3d51ac44"}
+  },
+  "external_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc426_cross_device_checkpoint_h100_5e3e821_20261010_recovery_v9",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_rc426_cross_device_checkpoint_h100_5e3e821_20261010_recovery_v9",
+    "control_manifest_entries": 1428,
+    "control_manifest_sha256": "5c4053ce0807bd63c3b2016b9fc6bf69fd4410a08ed57af6b97f528cfef9d147",
+    "scratch_manifest_entries": 673,
+    "scratch_manifest_sha256": "3ead63c184979cff688fca9c5b2ae3a08ee8782f7a7a1434341b0730269469d4",
+    "complete_marker_sha256": "c1198d1101f1745cd7d7a6e6fb79cc6f306f2331d5382d2afc76e0801666204b",
+    "summary_sha256": "5cd252785be7aa348f33c078135fc547058600630517700c972f77ec6c41db8f",
+    "analysis_sha256": "e4f1da5e34fbe69e6eb7e0dd6ef2e190bb4c9c18e07f8c7be840aa1c79b1a6db",
+    "environment_sha256": "f3959d30e380cf5eaa5bb393b8a0446dfd230692f570645fea1161a605664f51",
+    "cuda_tests_sha256": "8ed5f02791f9a5b2ce6b68aaf12fe2ed64aa74944b3109ad970962542e903c72",
+    "matrix_complete_sha256": "9fb729e9699dccd51d20101344accee6e9bfb539fb748e13856d33c19b6c2c6d"
+  },
+  "h100_job": {
+    "job_id": 10874642,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:00:35",
+    "node": "gpu-h100-4-0",
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "requeue": 0,
+    "restarts": 0,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "second_job_submitted": false
+  },
+  "qualification": {
+    "installed_wheel_harness_passed": 26,
+    "decomposed_preflight_passed": 8,
+    "cuda_only_tests_passed": 7,
+    "matrix_cells_expected": 14,
+    "matrix_cells_passed": 14,
+    "cpu_to_cuda_passed": 7,
+    "cuda_to_cpu_passed": 7,
+    "compatibility_identity_equal": 14,
+    "serialized_payload_equal": 14,
+    "progress_exact": 14,
+    "persistent_backend_state_equal": 14,
+    "restored_finite": 14,
+    "post_restore_step_finite": 14,
+    "integrity_negative_gate_passed": 14,
+    "source_tree_unchanged": 14,
+    "runtime_fallback_used": 0,
+    "tf32_matmul": false,
+    "tf32_cudnn": false
+  },
+  "claim_boundary": {
+    "checkpoint_materialization_exact": true,
+    "finite_post_restore_step": true,
+    "post_restore_cross_device_byte_identical_trajectory_claimed": false,
+    "performance_or_memory_claimed": false,
+    "scientific_long_run_claimed": false,
+    "cross_runtime_or_cross_release_claimed": false
+  },
+  "scope": {
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "lifting_modified": false,
+    "pressure_contract_modified": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "qualification_complete": true,
+    "rc4_2_6_complete": true,
+    "rc4_2_complete": true,
+    "eligible_for_rc4_3_planning": true,
+    "rc4_3_implementation_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "eligible_for_release": false
+  }
+}
