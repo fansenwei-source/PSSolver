@@ -1,0 +1,645 @@
+{
+  "analysis_only": true,
+  "authorization": {
+    "PSSolver_Control_modified": false,
+    "analysis_authorized_by_user": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "h100_submitted": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "rc4_3_2_authorized": false,
+    "runtime_source_modified": false
+  },
+  "cases": {
+    "L01": {
+      "adjacent_rates": [
+        1.998609569168704,
+        1.999652377307173,
+        1.9999130935024048,
+        1.9999782727135413
+      ],
+      "case": "L01",
+      "claimed_second_order_passed": true,
+      "errors": [
+        5.598158649073786e-05,
+        1.4008891512981704e-05,
+        3.5030668534445368e-06,
+        8.758194702557286e-07,
+        2.1895816509446867e-07
+      ],
+      "finite": true,
+      "kind": "affine_lift_scalar_manufactured_control",
+      "regression_rate": 1.9995872096193235,
+      "wall_points": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ]
+    },
+    "L02": {
+      "bulk_error_adjacent_rates": [
+        0.5772174463199475,
+        0.5366329090267272,
+        0.5179039266692179,
+        0.5088585112273873
+      ],
+      "bulk_error_regression_rate": 0.5335762422182497,
+      "case": "L02",
+      "kind": "real_solver_nonzero_wall_molecular_field",
+      "last_two_wall_errors_strictly_decrease": true,
+      "profile": "analytic_in_plane_director_twist",
+      "reference": "direct_constitutive_evaluation_with_analytic_q_laplacian",
+      "representation_repair_supported": false,
+      "rows": [
+        {
+          "finite": true,
+          "molecular_field_bulk_linf": 0.0006330381887611619,
+          "molecular_field_bulk_relative_l2": 0.00785190808145587,
+          "molecular_field_first_interior_linf": 4.882527705792755e-05,
+          "molecular_field_wall_linf": 0.0006330381887611619,
+          "q_first_interior_linf": 0.0,
+          "q_wall_linf": 0.0,
+          "runtime_fallback": false,
+          "transforms": {
+            "forward": 6,
+            "inverse": 23
+          },
+          "wall_points": 16
+        },
+        {
+          "finite": true,
+          "molecular_field_bulk_linf": 0.0005970490295587258,
+          "molecular_field_bulk_relative_l2": 0.0052627827378511904,
+          "molecular_field_first_interior_linf": 8.794456858681951e-05,
+          "molecular_field_wall_linf": 0.0005970490295587258,
+          "q_first_interior_linf": 0.0,
+          "q_wall_linf": 0.0,
+          "runtime_fallback": false,
+          "transforms": {
+            "forward": 6,
+            "inverse": 23
+          },
+          "wall_points": 32
+        },
+        {
+          "finite": true,
+          "molecular_field_bulk_linf": 0.0005802562394200822,
+          "molecular_field_bulk_relative_l2": 0.0036280464544153667,
+          "molecular_field_first_interior_linf": 0.00010549970475596387,
+          "molecular_field_wall_linf": 0.0005802562394200822,
+          "q_first_interior_linf": 0.0,
+          "q_wall_linf": 0.0,
+          "runtime_fallback": false,
+          "transforms": {
+            "forward": 6,
+            "inverse": 23
+          },
+          "wall_points": 64
+        },
+        {
+          "finite": true,
+          "molecular_field_bulk_linf": 0.0005721091774016432,
+          "molecular_field_bulk_relative_l2": 0.0025337760248614685,
+          "molecular_field_first_interior_linf": 0.0001138360871352842,
+          "molecular_field_wall_linf": 0.0005721091774016432,
+          "q_first_interior_linf": 0.0,
+          "q_wall_linf": 0.0,
+          "runtime_fallback": false,
+          "transforms": {
+            "forward": 6,
+            "inverse": 23
+          },
+          "wall_points": 128
+        },
+        {
+          "finite": true,
+          "molecular_field_bulk_linf": 0.0005680923624983708,
+          "molecular_field_bulk_relative_l2": 0.0017806827312598405,
+          "molecular_field_first_interior_linf": 0.00011790015294949052,
+          "molecular_field_wall_linf": 0.0005680923624983708,
+          "q_first_interior_linf": 0.0,
+          "q_wall_linf": 0.0,
+          "runtime_fallback": false,
+          "transforms": {
+            "forward": 6,
+            "inverse": 23
+          },
+          "wall_points": 256
+        }
+      ],
+      "wall_error_adjacent_rates": [
+        0.08444312431474892,
+        0.04115927944585471,
+        0.020399643437091733,
+        0.010164979983328893
+      ],
+      "wall_error_regression_rate": 0.03738929772449866
+    },
+    "L03": {
+      "case": "L03",
+      "claimed_second_order_velocity_passed": false,
+      "kind": "real_solver_twisted_q_to_stokes_flow",
+      "pressure_linf_adjacent_rates": [
+        1.4608334997164147,
+        -0.14406189342192308,
+        -0.006039227951016559,
+        0.026567679763018145
+      ],
+      "pressure_linf_regression_rate": 0.2524498994840025,
+      "pressure_relative_l2_adjacent_rates": [
+        1.335016009716073,
+        0.9475656739973843,
+        0.761739546840435,
+        0.6854856635999975
+      ],
+      "pressure_relative_l2_regression_rate": 0.91689190091456,
+      "profile": "analytic_xz_director_twist",
+      "reference": "analytic_q_derivatives_plus_direct_constitutive_stress_plus_independent_dense_physical_quadrature",
+      "rows": [
+        {
+          "actual_velocity_max": 0.06753427786754118,
+          "finite": true,
+          "pressure_demeaned": {
+            "linf": 6.416880697078173e-05,
+            "relative_l2": 0.003385345544214071
+          },
+          "reference_velocity_max": 0.07666351401782938,
+          "runtime_fallback": false,
+          "transforms": {
+            "forward": 6,
+            "inverse": 23
+          },
+          "velocity": {
+            "linf": 0.011264966557152908,
+            "relative_l2": 0.11399144389043288
+          },
+          "wall_points": 16
+        },
+        {
+          "actual_velocity_max": 0.07241528966369074,
+          "finite": true,
+          "pressure_demeaned": {
+            "linf": 2.3311448650758723e-05,
+            "relative_l2": 0.0013419092308290751
+          },
+          "reference_velocity_max": 0.07694166460308947,
+          "runtime_fallback": false,
+          "transforms": {
+            "forward": 6,
+            "inverse": 23
+          },
+          "velocity": {
+            "linf": 0.0052728086797727974,
+            "relative_l2": 0.053329239637716755
+          },
+          "wall_points": 32
+        },
+        {
+          "actual_velocity_max": 0.07476427408161236,
+          "finite": true,
+          "pressure_demeaned": {
+            "linf": 2.5759427936301177e-05,
+            "relative_l2": 0.0006957888255163032
+          },
+          "reference_velocity_max": 0.07701125464113838,
+          "runtime_fallback": false,
+          "transforms": {
+            "forward": 6,
+            "inverse": 23
+          },
+          "velocity": {
+            "linf": 0.0025609399152726198,
+            "relative_l2": 0.025834758879633928
+          },
+          "wall_points": 64
+        },
+        {
+          "actual_velocity_max": 0.07591791783714594,
+          "finite": true,
+          "pressure_demeaned": {
+            "linf": 2.5867484812622937e-05,
+            "relative_l2": 0.00041036564669435306
+          },
+          "reference_velocity_max": 0.07702865542616939,
+          "runtime_fallback": false,
+          "transforms": {
+            "forward": 6,
+            "inverse": 23
+          },
+          "velocity": {
+            "linf": 0.001264888505038128,
+            "relative_l2": 0.012686175377470911
+          },
+          "wall_points": 128
+        },
+        {
+          "actual_velocity_max": 0.07648628118411234,
+          "finite": true,
+          "pressure_demeaned": {
+            "linf": 2.539548633921987e-05,
+            "relative_l2": 0.0002551639113917758
+          },
+          "reference_velocity_max": 0.07703300582716323,
+          "runtime_fallback": false,
+          "transforms": {
+            "forward": 6,
+            "inverse": 23
+          },
+          "velocity": {
+            "linf": 0.0006297459088914492,
+            "relative_l2": 0.006264278790116889
+          },
+          "wall_points": 256
+        }
+      ],
+      "velocity_linf_adjacent_rates": [
+        1.0951994749963923,
+        1.0418982456259285,
+        1.0176631822335676,
+        1.0061684728969793
+      ],
+      "velocity_linf_regression_rate": 1.0381420179365233,
+      "velocity_relative_l2_adjacent_rates": [
+        1.095926877383426,
+        1.045613339486323,
+        1.026056227230389,
+        1.0180368657254397
+      ],
+      "velocity_relative_l2_regression_rate": 1.044293618636787
+    },
+    "L04": {
+      "case": "L04",
+      "defect_gas": [
+        {
+          "center_deviation_linf": 0.1003443242923946,
+          "conditioning_metadata": {
+            "applied_before_first_transform": true,
+            "kind": "sine_wall_taper",
+            "wall_values": [
+              0.0,
+              0.0
+            ]
+          },
+          "domain_max_deviation_linf": 0.6704597024716664,
+          "exactly_unchanged_cell_count": 0,
+          "finite": true,
+          "first_eight_cell_deviation_linf": [
+            0.6698301503435737,
+            0.49304032928390595,
+            0.35144445641798305,
+            0.24602396727711692,
+            0.16936385186819522,
+            0.12596024859604826,
+            0.10517363787260467,
+            0.10141239122568127
+          ],
+          "physical_sha256": "28ac1af301556abd02a3b3f17615fc07bbe580902d9752f96f5c213cd2067af0",
+          "quarter_height_deviation_linf": 0.16936385186819522,
+          "quarter_height_index": 4,
+          "requested_sha256": "eeba199c190f847436c8842bcc437eeee5eae8894e7a1d9f8e414b27e637048a",
+          "wall_points": 16
+        },
+        {
+          "center_deviation_linf": 0.10015444253476088,
+          "conditioning_metadata": {
+            "applied_before_first_transform": true,
+            "kind": "sine_wall_taper",
+            "wall_values": [
+              0.0,
+              0.0
+            ]
+          },
+          "domain_max_deviation_linf": 0.7170312899717523,
+          "exactly_unchanged_cell_count": 0,
+          "finite": true,
+          "first_eight_cell_deviation_linf": [
+            0.7159731738494762,
+            0.6203697152706054,
+            0.5325087483794604,
+            0.45391663809898064,
+            0.38454663212810747,
+            0.32371776046474887,
+            0.2702047474322209,
+            0.22423969770290872
+          ],
+          "physical_sha256": "ed1c8f74892e04d69a434dceee0f97149342bbe431f0ff8984c9786c20f8bc00",
+          "quarter_height_deviation_linf": 0.18533494640933393,
+          "quarter_height_index": 8,
+          "requested_sha256": "09f2e44e0e689e11b0fd0f76d8d3e0a673ed740d50da61fdd5a539dd6fcbbed0",
+          "wall_points": 32
+        },
+        {
+          "center_deviation_linf": 0.10003774545111876,
+          "conditioning_metadata": {
+            "applied_before_first_transform": true,
+            "kind": "sine_wall_taper",
+            "wall_values": [
+              0.0,
+              0.0
+            ]
+          },
+          "domain_max_deviation_linf": 0.7414839988490176,
+          "exactly_unchanged_cell_count": 0,
+          "finite": true,
+          "first_eight_cell_deviation_linf": [
+            0.7408566655660161,
+            0.6910361096597631,
+            0.6434269275910552,
+            0.5975637221855373,
+            0.5537243922225797,
+            0.5124518722892969,
+            0.4729489993791641,
+            0.43529626327184234
+          ],
+          "physical_sha256": "42c7e17f049924227d42f3d5afb037afa13a675011c5be931cb09fecc294eeea",
+          "quarter_height_deviation_linf": 0.1943317066172041,
+          "quarter_height_index": 16,
+          "requested_sha256": "fbcda6e6627c816607f1818f111f8c5e166b878595ca3b40476a4abb78573810",
+          "wall_points": 64
+        },
+        {
+          "center_deviation_linf": 0.10000174412281715,
+          "conditioning_metadata": {
+            "applied_before_first_transform": true,
+            "kind": "sine_wall_taper",
+            "wall_values": [
+              0.0,
+              0.0
+            ]
+          },
+          "domain_max_deviation_linf": 0.7539681657493634,
+          "exactly_unchanged_cell_count": 0,
+          "finite": true,
+          "first_eight_cell_deviation_linf": [
+            0.7535852536715405,
+            0.7279669788186961,
+            0.7031372176146047,
+            0.6790124468529511,
+            0.6552537226210358,
+            0.6318625689213647,
+            0.6088806018083753,
+            0.5863218141326276
+          ],
+          "physical_sha256": "e1965901a9cb82a57c1748c7991d0933d50c69b446d4340768a813eab871ba5f",
+          "quarter_height_deviation_linf": 0.1990369938616827,
+          "quarter_height_index": 32,
+          "requested_sha256": "bf415d63fc6c27d5b68ced7a72890e6bd90850f427fb76d89f2f33a287c46f43",
+          "wall_points": 128
+        },
+        {
+          "center_deviation_linf": 0.09999199381733195,
+          "conditioning_metadata": {
+            "applied_before_first_transform": true,
+            "kind": "sine_wall_taper",
+            "wall_values": [
+              0.0,
+              0.0
+            ]
+          },
+          "domain_max_deviation_linf": 0.7602710180064146,
+          "exactly_unchanged_cell_count": 0,
+          "finite": true,
+          "first_eight_cell_deviation_linf": [
+            0.760025513622392,
+            0.7471214406608786,
+            0.7343256052541379,
+            0.721629282487107,
+            0.7092536047317909,
+            0.6970826782734488,
+            0.6850080062957907,
+            0.6730316986311373
+          ],
+          "physical_sha256": "191b78becdf153d3a3b26ba938e4de306b09c6546ea803fad984223626a14af1",
+          "quarter_height_deviation_linf": 0.20143564529646077,
+          "quarter_height_index": 64,
+          "requested_sha256": "6ad22c23ca9b6dd84578dbedb9e7c777919d8484c8a004943bab70f5d6f58a2e",
+          "wall_points": 256
+        }
+      ],
+      "formula_present": false,
+      "kind": "fresh_initial_conditioning_scope",
+      "localized_unchanged_interior_supported": false,
+      "policy_kind": "sine_wall_taper",
+      "transition_width_present": false,
+      "transition_width_units_present": false,
+      "uniform": [
+        {
+          "center_deviation_linf": 0.0016328395308679022,
+          "conditioning_metadata": {
+            "applied_before_first_transform": true,
+            "kind": "sine_wall_taper",
+            "wall_values": [
+              0.0,
+              0.0
+            ]
+          },
+          "domain_max_deviation_linf": 0.7891692983318473,
+          "exactly_unchanged_cell_count": 0,
+          "finite": true,
+          "first_eight_cell_deviation_linf": [
+            0.02261527537154806,
+            0.059345290138851925,
+            0.07599564994441077,
+            0.07238096127081212,
+            0.0563142800780142,
+            0.03601485247408143,
+            0.016605483738597104,
+            0.002700906464154662
+          ],
+          "physical_sha256": "70293fad3b104c5063baa655dd564b920dffafac0b87712ec2cb0c10ba878837",
+          "quarter_height_deviation_linf": 0.0563142800780142,
+          "quarter_height_index": 4,
+          "requested_sha256": "c2405c7cbf0f21552e252a7efeff0a55fdc988ee69e9b6f507e0b1c933a1e725",
+          "wall_points": 16
+        },
+        {
+          "center_deviation_linf": 0.00048530561668713723,
+          "conditioning_metadata": {
+            "applied_before_first_transform": true,
+            "kind": "sine_wall_taper",
+            "wall_values": [
+              0.0,
+              0.0
+            ]
+          },
+          "domain_max_deviation_linf": 0.8430707022653654,
+          "exactly_unchanged_cell_count": 0,
+          "finite": true,
+          "first_eight_cell_deviation_linf": [
+            0.012768390839958954,
+            0.03595466378682988,
+            0.05357264859150679,
+            0.06527134186734046,
+            0.07222097510108597,
+            0.07515451925905275,
+            0.0740841953645518,
+            0.06930356611809285
+          ],
+          "physical_sha256": "3dbea2e5b1ca9b98da03f2d68e77d16523e533caaff74f4982bdc203ff9a051f",
+          "quarter_height_deviation_linf": 0.06178900501610152,
+          "quarter_height_index": 8,
+          "requested_sha256": "0dff6f8da226f11b8a7df7efbb3afd2d2b2fa3b13d86fae00150b04efa708099",
+          "wall_points": 32
+        },
+        {
+          "center_deviation_linf": 0.00012901511299501234,
+          "conditioning_metadata": {
+            "applied_before_first_transform": true,
+            "kind": "sine_wall_taper",
+            "wall_values": [
+              0.0,
+              0.0
+            ]
+          },
+          "domain_max_deviation_linf": 0.8711960629648932,
+          "exactly_unchanged_cell_count": 0,
+          "finite": true,
+          "first_eight_cell_deviation_linf": [
+            0.0067168313644853095,
+            0.019540956617676408,
+            0.03093063723371392,
+            0.040793008744382964,
+            0.04936636932968669,
+            0.05672441630344682,
+            0.06277050415311092,
+            0.0675047434246977
+          ],
+          "physical_sha256": "da97cac4806786f8ae963c7e55f011265fb8b396a0dd5e2b77c04244eab5ade4",
+          "quarter_height_deviation_linf": 0.06396627434096946,
+          "quarter_height_index": 16,
+          "requested_sha256": "cf1576974297949c2f2edbec0dab25b25a7e8ff86272471add3aa9df1500dbde",
+          "wall_points": 64
+        },
+        {
+          "center_deviation_linf": 3.3104152308505164e-05,
+          "conditioning_metadata": {
+            "applied_before_first_transform": true,
+            "kind": "sine_wall_taper",
+            "wall_values": [
+              0.0,
+              0.0
+            ]
+          },
+          "domain_max_deviation_linf": 0.8855175242114071,
+          "exactly_unchanged_cell_count": 0,
+          "finite": true,
+          "first_eight_cell_deviation_linf": [
+            0.0034380913314439043,
+            0.01015951647839014,
+            0.016518674101842046,
+            0.02249400875718055,
+            0.028141618529151202,
+            0.03347088887338001,
+            0.03845108353858645,
+            0.043079053268804124
+          ],
+          "physical_sha256": "54317f13278b04a8956c77258ade85455d9432a989b73f07c05f1d66b62dad38",
+          "quarter_height_deviation_linf": 0.06495786647383239,
+          "quarter_height_index": 32,
+          "requested_sha256": "31f04ce004847402280ae7de36c1eca69ccd6190573c1ac1813c1be85d9757e8",
+          "wall_points": 128
+        },
+        {
+          "center_deviation_linf": 8.375733834720123e-06,
+          "conditioning_metadata": {
+            "applied_before_first_transform": true,
+            "kind": "sine_wall_taper",
+            "wall_values": [
+              0.0,
+              0.0
+            ]
+          },
+          "domain_max_deviation_linf": 0.8927391447110614,
+          "exactly_unchanged_cell_count": 0,
+          "finite": true,
+          "first_eight_cell_deviation_linf": [
+            0.0017385591046951698,
+            0.005176713437962999,
+            0.008523946124487702,
+            0.01177522401918929,
+            0.014944353024453072,
+            0.018032859302797855,
+            0.02103264239508551,
+            0.023942959113871898
+          ],
+          "physical_sha256": "7d387fbc9cc6430edbc562aed3f6ec42f424348a7357a3702fc77ba1990ea8f0",
+          "quarter_height_deviation_linf": 0.06543474733563304,
+          "quarter_height_index": 64,
+          "requested_sha256": "3d772c87ec10a418f2f3e6a3975465b2c775881f000ad8cf76f5625933a5d865",
+          "wall_points": 256
+        }
+      ],
+      "whole_slab_sine_taper_confirmed": true
+    },
+    "L05": {
+      "case": "L05",
+      "explicit_effective_space_metadata_present": false,
+      "kind": "molecular_field_requested_effective_path_identity",
+      "lifting_forces_physical_branch_guard_present": true,
+      "observed_outputs_and_transform_counts_identical": true,
+      "physical_request": {
+        "configuration_requested": "physical",
+        "effective_path_observation": "physical_h_assembly_and_projection",
+        "model_requested": "physical",
+        "observed_physical_projection_calls": 1,
+        "projected_h_sha256": "f192c46dd3edc47050deced8cab0ed1783039a732962ffb56eb6f0dd470deee2",
+        "raw_h_sha256": "2403b36a0a68d5e6a88d5b1a6ca9fdbac6d6d459ff2e95674309ff5c953f35df",
+        "requested": "physical",
+        "runtime_fallback": false,
+        "simulation_identity": "88904c0d42de95ed58ad4f3f7c929456ab3e6a0860e71ca5ccb8c949bf729a98",
+        "state_sha256": "368193f15d6b25d21800e7fb67156fc6f85467c1123db3cd09b8f8331afe5041",
+        "transforms": {
+          "forward": 6,
+          "inverse": 23
+        }
+      },
+      "requested_space_is_silently_ignored": true,
+      "runtime_source_sha256": "07e449a942b2bb0e3ca892a6841310cf12febbbd90098f07ffd40f343e1845ba",
+      "spectral_request": {
+        "configuration_requested": "spectral",
+        "effective_path_observation": "physical_h_assembly_and_projection",
+        "model_requested": "spectral",
+        "observed_physical_projection_calls": 1,
+        "projected_h_sha256": "f192c46dd3edc47050deced8cab0ed1783039a732962ffb56eb6f0dd470deee2",
+        "raw_h_sha256": "2403b36a0a68d5e6a88d5b1a6ca9fdbac6d6d459ff2e95674309ff5c953f35df",
+        "requested": "spectral",
+        "runtime_fallback": false,
+        "simulation_identity": "a174cb562e510f0a41f2f9f483dde2ff7da208506621ed9c5602e44a2acfc285",
+        "state_sha256": "368193f15d6b25d21800e7fb67156fc6f85467c1123db3cd09b8f8331afe5041",
+        "transforms": {
+          "forward": 6,
+          "inverse": 23
+        }
+      }
+    }
+  },
+  "decision": {
+    "affine_scalar_control_passed": true,
+    "all_arrays_finite": true,
+    "classification": "PUBLIC_CAPABILITY_RESTRICTION_REQUIRED",
+    "fresh_conditioning_local_and_explicit": false,
+    "molecular_field_request_is_not_silently_ignored": false,
+    "nonzero_wall_molecular_field_converged": false,
+    "rationale": [
+      "The scalar affine-lift control converges, so the diagnostic is capable of observing second order.",
+      "The real lifted solver does not provide second-order convergent nonzero-wall molecular fields in the current DST remainder representation.",
+      "The independent twisted-flow reference exposes approximately first-order velocity convergence.",
+      "Fresh-state sine conditioning changes the slab interior and does not declare a formula or physical transition width.",
+      "Lifted spectral and physical molecular-field requests execute the same observed physical branch and produce identical outputs."
+    ],
+    "twisted_velocity_second_order": false
+  },
+  "phase": "RC4.3.1",
+  "record": "PSSolver RC4.3.1 lifting-correctness analysis",
+  "schema_version": 1,
+  "wall_points": [
+    16,
+    32,
+    64,
+    128,
+    256
+  ]
+}

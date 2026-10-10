@@ -22,11 +22,22 @@ def test_rc430_plan_starts_from_the_rc42_closure_commit_and_evidence():
     assert baseline["planning_parent_commit"] == (
         "1b15bf856cb6597ae709ee7496cde96d0b2cc7d1"
     )
-    for path_key, sha_key in (
-        ("rc4_2_closure_record", "rc4_2_closure_record_sha256"),
-        ("known_issues_record", "known_issues_record_sha256"),
-    ):
-        assert _sha256(ROOT / baseline[path_key]) == baseline[sha_key]
+    assert _sha256(ROOT / baseline["rc4_2_closure_record"]) == baseline[
+        "rc4_2_closure_record_sha256"
+    ]
+    # The plan binds the pre-adjudication matrix. RC4.3.1 legitimately adds
+    # its successor status to the live matrix without rewriting this frozen
+    # planning record or pretending the old digest still names current bytes.
+    assert baseline["known_issues_record_sha256"] == (
+        "f23fd7d759ac57f2bc57a449884cb4d6d175232bf749e9d060164a12319f2f38"
+    )
+    current = json.loads(
+        (ROOT / baseline["known_issues_record"]).read_text(encoding="utf-8")
+    )
+    assert current["progress"]["rc4_3_1_analysis_complete"] is True
+    assert _sha256(ROOT / baseline["known_issues_record"]) != baseline[
+        "known_issues_record_sha256"
+    ]
 
 
 def test_rc430_plan_handles_exactly_the_three_lifting_residuals():

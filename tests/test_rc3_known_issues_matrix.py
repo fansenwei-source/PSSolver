@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -124,8 +125,9 @@ def test_architecture_work_is_deferred_until_correctness_batches_close():
     )
 
 
-def test_rc42_progress_closes_checkpoint_batch_and_authorizes_only_rc43_planning():
-    assert _record()["progress"] == {
+def test_rc431_progress_records_analysis_without_authorizing_implementation():
+    progress = _record()["progress"]
+    assert progress == {
         "completed_batches": [
             "rc4.1_plane_nyquist",
             "rc4.2_checkpoint_identity",
@@ -149,9 +151,22 @@ def test_rc42_progress_closes_checkpoint_batch_and_authorizes_only_rc43_planning
         "rc4_3_plan_record": (
             "notes/PSSolver_v0_2_0rc4_rc430_lifting_correctness_plan.json"
         ),
-        "rc4_3_1_analysis_authorized": False,
+        "rc4_3_1_analysis_authorized": True,
+        "rc4_3_1_analysis_complete": True,
+        "rc4_3_1_classification": "PUBLIC_CAPABILITY_RESTRICTION_REQUIRED",
+        "rc4_3_1_analysis_record": (
+            "notes/PSSolver_v0_2_0rc4_rc431_lifting_correctness_analysis.json"
+        ),
+        "rc4_3_1_analysis_record_sha256": (
+            "1157b08b5328996876307fb0333aa28e85932d9d09e9ed0f16f08cc7a3a62ef1"
+        ),
+        "eligible_for_rc4_3_2_planning": True,
         "rc4_3_implementation_authorized": False,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,
         "production_default_changed": False,
     }
+    analysis = ROOT / progress["rc4_3_1_analysis_record"]
+    assert hashlib.sha256(analysis.read_bytes()).hexdigest() == progress[
+        "rc4_3_1_analysis_record_sha256"
+    ]
