@@ -1,0 +1,275 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.3.0 lifting-correctness plan",
+  "phase": "RC4.3.0",
+  "status": "planning_complete_implementation_not_authorized",
+  "classification": "READY_RC4_3_1_LIFTING_CORRECTNESS_ADJUDICATION_NOT_EXECUTED",
+  "baseline": {
+    "released_rc3_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+    "qualified_rc4_2_candidate_commit": "5e3e821458f3ff451c206a8be7cd9765f6e634db",
+    "planning_parent_commit": "1b15bf856cb6597ae709ee7496cde96d0b2cc7d1",
+    "branch": "fix/v0.2.0rc4-audit",
+    "rc4_2_closure_record": "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json",
+    "rc4_2_closure_record_sha256": "9ed901a8d029894460a107a6cddd11b974608f9f14dfefe5bd1e8dfd7badc918",
+    "known_issues_record": "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json",
+    "known_issues_record_sha256": "f23fd7d759ac57f2bc57a449884cb4d6d175232bf749e9d060164a12319f2f38",
+    "source_audit_sha256": "140986b3f6f20b0c0c874b21df02b037cf8ee1bb32e43dd11bc2d638cd9b8f76"
+  },
+  "issues": [
+    {
+      "id": "B8",
+      "required_disposition": "repair_or_explicit_public_restriction",
+      "problem": "The static-lifting path does not demonstrate convergence of a nonzero wall molecular-field contribution."
+    },
+    {
+      "id": "B20",
+      "required_disposition": "localized_fresh_conditioning_or_complete_public_documentation",
+      "problem": "Fresh lifted initial-state conditioning applies a sine envelope across the whole slab."
+    },
+    {
+      "id": "N4",
+      "required_disposition": "repair_or_explicit_public_restriction",
+      "problem": "The partial B8 repair worsened a twisted-profile velocity convergence case and silently ignored molecular_field_linear_space."
+    }
+  ],
+  "frozen_observations": {
+    "wall_molecular_field_reference_magnitude": 0.093,
+    "wall_molecular_field_error": {
+      "wall_normal_points": [16, 32, 64, 128, 256],
+      "rc3_ancestral_rc1": [0.053, 0.050, 0.049, 0.048, 0.048],
+      "rc3_lifting_lineage": [0.037, 0.034, 0.032, 0.030, 0.030]
+    },
+    "twisted_profile_velocity": {
+      "ancestral_rate": 1.0,
+      "lifting_lineage_rate": 0.75,
+      "shape": [8, 8, 16],
+      "activity": 18.0,
+      "steps": 50,
+      "ancestral_max_velocity": 0.037,
+      "lifting_lineage_max_velocity": 0.049
+    },
+    "whole_slab_taper": {
+      "uniform_case_requested_q_deviation_at_quarter_height": 0.18,
+      "production_defect_gas_first_four_cell_deviations": [0.61, 0.43, 0.27, 0.15],
+      "metadata_kind": "sine_wall_taper",
+      "formula_and_width_present": false
+    },
+    "declared_space_mismatch": {
+      "declared_values": ["spectral", "physical"],
+      "current_lifted_outputs_byte_identical": true,
+      "silent_override_allowed": false
+    }
+  },
+  "scope": {
+    "geometry": "plane_slab",
+    "model": "complete_stress_beris_edwards",
+    "field": "canonical_Q_five_components",
+    "boundary": "static_constant_two_sided_dirichlet",
+    "runtime": "legacy_production",
+    "dtype": "float64",
+    "field_neutral_lifting_core_preserved": true,
+    "q_specific_policy_remains_in_composition_layer": true,
+    "nonhomogeneous_neumann_added": false,
+    "finite_robin_anchoring_modified": false,
+    "new_geometry_or_model_added": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false
+  },
+  "non_negotiable_contracts": {
+    "no_metadata_only_fix": true,
+    "no_projection_only_oracle": true,
+    "end_to_end_solver_must_be_exercised": true,
+    "independent_reference_required": true,
+    "requested_effective_space_must_match_or_compile_must_reject": true,
+    "silent_physical_space_override_for_spectral_request_forbidden": true,
+    "unsupported_wall_observable_claim_must_be_removed": true,
+    "fresh_conditioning_is_not_restart_compatibility_identity": true,
+    "forward_dynamics_changes_require_explicit_versioning": true,
+    "checkpoint_rejection_precedes_target_mutation": true,
+    "same_version_restart_must_remain_exact": true,
+    "runtime_fallback_forbidden": true
+  },
+  "rc4_3_1_adjudication": {
+    "kind": "analysis_only",
+    "source_changes_allowed": false,
+    "required_cases": {
+      "L01": "existing affine-lift manufactured scalar control",
+      "L02": "nonzero-wall molecular-field manufactured Q profile evaluated through the real solver",
+      "L03": "twisted-profile Q-to-velocity convergence evaluated through the real solver",
+      "L04": "fresh uniform and defect-gas initialization before and after conditioning",
+      "L05": "spectral-versus-physical molecular-field request and effective-path identity"
+    },
+    "wall_normal_resolutions": [16, 32, 64, 128, 256],
+    "required_measurements": [
+      "wall_and_first_interior_cell_Q_error",
+      "wall_and_first_interior_cell_molecular_field_error",
+      "bulk_molecular_field_relative_l2",
+      "velocity_relative_l2_and_linf",
+      "pressure_demeaned_relative_l2_and_linf",
+      "observed_adjacent_and_regression_convergence_rates",
+      "requested_and_effective_molecular_field_space",
+      "fresh_initial_state_deviation_by_wall_distance",
+      "transform_counts_and_runtime_fallback"
+    ],
+    "independent_references": [
+      "analytic derivatives where available",
+      "second-order physical-space finite differences on the physical Q field",
+      "a separately implemented direct constitutive evaluation that does not call the lifting projector under test"
+    ],
+    "decision_classes": [
+      "REPRESENTATION_REPAIR_SUPPORTED",
+      "PUBLIC_CAPABILITY_RESTRICTION_REQUIRED"
+    ],
+    "pass_requirements": {
+      "all_arrays_finite": true,
+      "reference_implementations_agree_with_each_other": true,
+      "last_two_wall_sensitive_error_ratios_strictly_decrease": true,
+      "minimum_regression_rate_for_claimed_second_order_quantities": 1.8,
+      "molecular_field_request_is_not_silently_ignored": true,
+      "analysis_record_is_complete_before_rc4_3_2": true
+    }
+  },
+  "decision_protocol": {
+    "REPRESENTATION_REPAIR_SUPPORTED": [
+      "The repair must give a convergent real-solver wall molecular field and must not worsen the twisted-profile velocity gate.",
+      "The selected physical or spectral molecular-field path must be reflected by requested/effective metadata and runtime identity.",
+      "The repair must preserve the field-neutral lifting operator boundary and may specialize only in the Plane Beris-Edwards composition/runtime layer."
+    ],
+    "PUBLIC_CAPABILITY_RESTRICTION_REQUIRED": [
+      "Compile or lowering must reject the precisely identified unsupported combination before runtime construction.",
+      "The public error must name the unsupported wall molecular-field semantics and the supported subset.",
+      "Tests and documentation must stop claiming pointwise wall convergence that the DST representation cannot provide.",
+      "No approximate execution, warning-only path, metadata relabeling, or silent fallback is permitted."
+    ]
+  },
+  "fresh_initial_conditioning_contract": {
+    "preferred_outcome": "localized_wall_transition",
+    "alternatives_to_adjudicate": [
+      "localized physical-width transition with an explicit smooth formula",
+      "no automatic taper plus fail-closed compatibility validation",
+      "retain whole-slab sine taper only as an explicitly named opt-in policy"
+    ],
+    "acceptance_requirements": [
+      "The selected formula, width, units, affected field components, and policy version are in canonical metadata.",
+      "Outside a localized transition region the requested initial Q is byte-identical when localization is selected.",
+      "The transition width has grid-independent physical semantics rather than an undocumented cell count.",
+      "Conditioning applies only to fresh construction and never rewrites restored checkpoint state.",
+      "No-lifting initial construction remains byte-identical to the RC4.2 baseline.",
+      "The policy is deterministic on CPU and CUDA."
+    ]
+  },
+  "stages": [
+    {
+      "stage": "RC4.3.1",
+      "name": "lifting representation and initial-conditioning adjudication",
+      "kind": "analysis_only",
+      "exit": "one decision class plus complete independent-reference evidence"
+    },
+    {
+      "stage": "RC4.3.2",
+      "name": "public capability and identity contract",
+      "kind": "planning_and_contract_tests",
+      "exit": "freeze the repair or restriction, effective-space semantics, initialization policy, and version changes"
+    },
+    {
+      "stage": "RC4.3.3",
+      "name": "molecular-field representation or fail-closed restriction",
+      "kind": "implementation",
+      "exit": "B8 and the molecular-field-space part of N4 pass CPU convergence and negative gates"
+    },
+    {
+      "stage": "RC4.3.4",
+      "name": "fresh initial-conditioning correction",
+      "kind": "implementation",
+      "exit": "B20 passes locality, metadata, determinism, and no-lifting identity gates"
+    },
+    {
+      "stage": "RC4.3.5",
+      "name": "runtime and checkpoint integration",
+      "kind": "implementation",
+      "exit": "same-version continuous/restart identity and explicit legacy acceptance or pre-mutation rejection"
+    },
+    {
+      "stage": "RC4.3.6",
+      "name": "installed-wheel CPU closure",
+      "kind": "qualification",
+      "exit": "source and installed-wheel suites plus independent end-to-end convergence pass"
+    },
+    {
+      "stage": "RC4.3.7",
+      "name": "single-H100 lifting closure",
+      "kind": "qualification",
+      "exit": "correctness, restart, performance, memory, and provenance gates pass"
+    }
+  ],
+  "h100_contract": {
+    "authorization_required_separately": true,
+    "single_formal_submission": true,
+    "automatic_retry": false,
+    "profile_shapes": [[128, 128, 32], [320, 320, 80]],
+    "profile_trials": 3,
+    "candidate_baseline_pairing_required": true,
+    "mean_and_median_timestep_ratio_max": 1.15,
+    "peak_allocated_ratio_max": 1.1,
+    "peak_active_ratio_max": 1.1,
+    "peak_reserved_role": "diagnostic_only",
+    "forward_transforms_per_step": 7.0,
+    "inverse_transforms_per_step_control": 32.0,
+    "runtime_fallback_allowed": false,
+    "compile_fallback_allowed": false,
+    "graph_breaks_allowed": 0,
+    "wall_residual_linf_max": 1e-12,
+    "same_version_restart_byte_identity_required": true,
+    "cross_version_tolerance_must_be_preregistered_if_dynamics_change": true
+  },
+  "expected_changed_file_boundaries": {
+    "analysis_and_contract": [
+      "notes/PSSolver_v0_2_0rc4_rc43*.json",
+      "notes/PSSolver_v0_2_0rc4_rc43*_zh.md",
+      "benchmarks/diagnose_plane_lifting_correctness.py",
+      "tests/test_rc4_lifting_*.py"
+    ],
+    "conditional_runtime_repair": [
+      "pssolver/configuration/lifting.py",
+      "pssolver/planning/lifting.py",
+      "pssolver/operators/lifting.py",
+      "pssolver/runtime/static_lifting.py",
+      "pssolver/configuration/plane_beris_edwards_components.py",
+      "pssolver/models/active_nematics/beris_edwards.py"
+    ],
+    "any_additional_runtime_file_requires_new_scope_authorization": true
+  },
+  "reviewed_source_sha256": {
+    "pssolver/configuration/lifting.py": "48689c4687ce8a61e4c4f10de4ae4f7356116cbc3c4e2edcb25d4e03bc420381",
+    "pssolver/planning/lifting.py": "0805518ea81c8ca13859dedc7af911d32b5efbe6f2f9b7908e0720823dbcc33c",
+    "pssolver/operators/lifting.py": "8230c0305c9da83e9ec9e063e79684ca22aed482048fc36d9cc43d522082c5dd",
+    "pssolver/runtime/static_lifting.py": "5f9de4683ea2ba10cba5de41480da546cbdd4e29a651d8b47925dc103ccf0270",
+    "pssolver/configuration/plane_beris_edwards_components.py": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
+    "pssolver/models/active_nematics/beris_edwards.py": "2b2e8d9a0555e1337cc314a5776b9fb5073eab1bafa6087f70b468eabe62906d",
+    "tests/test_phase8_p842_plane_static_lifting.py": "e193fc4382b90f6a83de97fe1f6ec804181edc03028c0fc98e6dff4ca40fa0d2",
+    "tests/test_phase8_p844_lifting_workflow_restart.py": "b03d05b2398578cf3d42b311d2909baeebd9267dfb845ac74867cf59474c2d92",
+    "notes/architecture_v0_2/phase_8_p845_corrected_closure_plan.json": "8606b38272cab291743ffb02ec67434cfa6a5e8b4dd524f913ec01137ec86d63"
+  },
+  "success_criteria": {
+    "B8_closed_verified": true,
+    "B20_closed_verified": true,
+    "N4_closed_verified": true,
+    "installed_wheel_cpu_complete": true,
+    "single_h100_complete": true,
+    "old_evidence_immutable": true,
+    "complete_marker_after_checksum_verification": true
+  },
+  "authorization": {
+    "rc4_3_planning_authorized": true,
+    "rc4_3_planning_complete": true,
+    "rc4_3_1_analysis_authorized": false,
+    "rc4_3_implementation_authorized": false,
+    "h100_submission_authorized": false,
+    "PSSolver_Control_change_authorized": false,
+    "nematics3d_change_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "eligible_for_release": false
+  }
+}

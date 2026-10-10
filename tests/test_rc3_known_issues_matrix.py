@@ -145,7 +145,11 @@ def test_rc42_progress_closes_checkpoint_batch_and_authorizes_only_rc43_planning
             "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"
         ),
         "eligible_for_rc4_3_planning": True,
-        "rc4_3_planning_complete": False,
+        "rc4_3_planning_complete": True,
+        "rc4_3_plan_record": (
+            "notes/PSSolver_v0_2_0rc4_rc430_lifting_correctness_plan.json"
+        ),
+        "rc4_3_1_analysis_authorized": False,
         "rc4_3_implementation_authorized": False,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,

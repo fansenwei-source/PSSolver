@@ -38,7 +38,7 @@
 
 ### rc4.3：lifting 正确性
 
-处理 B8、B20、N4。这里不能只改 metadata：需要重新评估壁面 molecular field 的表示空间、非零壁面 Laplacian 以及初值 taper。如果当前 DCT/DST 结构无法给出所需收敛，应缩小公开能力或明确限制，而不是继续用不调用真实 solver 的投影测试代替端到端收敛。
+处理 B8、B20、N4。RC4.3.0 规划合同已经写入 `PSSolver_v0_2_0rc4_rc430_lifting_correctness_plan.json`。这里不能只改 metadata：RC4.3.1 必须用真实 solver 和独立参考重新评估壁面 molecular field 的表示空间、非零壁面 Laplacian、扭转速度收敛和初值 taper。如果当前 DCT/DST 结构无法给出所需收敛，应在 compile/lowering 阶段缩小公开能力并明确报错，而不是继续用不调用真实 solver 的投影测试代替端到端收敛。
 
 ### rc4.4：压力求解合同
 
@@ -58,4 +58,4 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 ## 下一项实现
 
-`rc4.1_plane_nyquist` 与 `rc4.2_checkpoint_identity` 均已完成；B5、B10、B22、N3、N5 和 N6 已转为 `closed_verified`。下一步只授权 RC4.3 lifting correctness 的规划阶段，不授权先行修改 lifting 数学、pressure contract、生产默认值、自动 merge 或发布。
+`rc4.1_plane_nyquist` 与 `rc4.2_checkpoint_identity` 均已完成；B5、B10、B22、N3、N5 和 N6 已转为 `closed_verified`。RC4.3.0 规划已经完成，但 RC4.3.1 analysis-only 仍需单独授权；当前不授权修改 lifting 数学、pressure contract、生产默认值、自动 merge、H100 或发布。
