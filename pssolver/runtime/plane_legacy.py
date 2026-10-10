@@ -204,6 +204,11 @@ def build_legacy_plane_runtime(
             initial_values,
             apply_fresh_conditioning=apply_fresh_initial_conditioning,
         )
+        solver.model.static_lifting_fresh_construction_provenance = (
+            lifting_runtime.fresh_construction_provenance(
+                conditioning_applied=apply_fresh_initial_conditioning,
+            )
+        )
     q2_q = solver.get_q2(q_boundaries)
     q_linear_operator = beris_edwards_linear_operator(
         q2_q,

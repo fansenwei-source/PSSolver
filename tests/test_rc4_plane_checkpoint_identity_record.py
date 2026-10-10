@@ -35,11 +35,15 @@ def test_rc422_record_binds_plan_parent_and_implementation_files():
     assert _sha256(record["git_identity"]["planning_record"]) == (
         record["git_identity"]["planning_record_sha256"]
     )
-    superseded_by_rc434 = {
+    superseded_by_later_rc43_slices = {
         "pssolver/applications/plane_beris_edwards.py",
+        "pssolver/runtime/plane_beris_edwards.py",
+        "pssolver/runtime/plane_legacy.py",
+        "pssolver/workflows/plane_checkpoint.py",
+        "tests/test_rc4_plane_checkpoint_identity.py",
     }
     for relative, expected in record["implementation_files"].items():
-        if relative in superseded_by_rc434:
+        if relative in superseded_by_later_rc43_slices:
             continue
         assert _sha256(relative) == expected
 

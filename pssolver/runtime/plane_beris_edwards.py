@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
+import json
 from typing import Protocol, runtime_checkable
 
 from pssolver.configuration import (
@@ -302,6 +303,9 @@ class LegacyPlaneRuntimeAdapter:
         lifting = plane_lifting_restart_metadata(self)
         if lifting is not None:
             metadata["static_lifting"] = lifting
+            metadata["fresh_construction"] = (
+                plane_lifting_fresh_construction_provenance(self)
+            )
         return metadata
 
 
@@ -452,6 +456,33 @@ def plane_lifting_restart_metadata(
     return lifting.restart_metadata()
 
 
+def plane_lifting_fresh_construction_provenance(
+    adapter: PlaneRuntimeAdapterProtocol,
+) -> dict[str, object] | None:
+    """Return fresh-only provenance without adding it to restart identity."""
+
+    lifting = _lifting_runtime(adapter)
+    if lifting is None:
+        return None
+    value = getattr(
+        adapter.solver.model,
+        "static_lifting_fresh_construction_provenance",
+        None,
+    )
+    if not isinstance(value, Mapping):
+        raise RuntimeError(
+            "static lifting fresh-construction provenance is missing"
+        )
+    return json.loads(
+        json.dumps(
+            dict(value),
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        )
+    )
+
+
 def verify_plane_lifting_identity(
     adapter: PlaneRuntimeAdapterProtocol,
 ) -> None:
@@ -579,6 +610,7 @@ __all__ = [
     "SeparatedCanaryPlaneRuntimeAdapter",
     "build_plane_beris_edwards_runtime",
     "plane_lifting_restart_metadata",
+    "plane_lifting_fresh_construction_provenance",
     "plane_physical_component",
     "verify_plane_lifting_identity",
 ]

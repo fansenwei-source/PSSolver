@@ -55,6 +55,7 @@ from pssolver.models.active_nematics import (
     strong_homeotropic_q,
     strong_planar_q,
 )
+from pssolver.io.checkpoint_identity import CheckpointCompatibilityIdentity
 from pssolver.operators.lifting import localized_quintic_wall_transition
 from pssolver.operators.projection import BasisAwareSpectralProjector
 from pssolver.runtime.package_construction import (
@@ -63,13 +64,18 @@ from pssolver.runtime.package_construction import (
 )
 from pssolver.runtime.plane_beris_edwards import (
     PlaneRuntimeBuildRequest,
+    plane_lifting_fresh_construction_provenance,
     plane_physical_component,
 )
 from pssolver.workflows import capture_plane_observation
 from pssolver.workflows.plane_checkpoint import (
+    build_plane_checkpoint_compatibility_identity,
     capture_plane_checkpoint,
+    load_plane_checkpoint,
     restore_plane_checkpoint,
+    write_plane_checkpoint,
 )
+from pssolver.workflows import plane_checkpoint as checkpoint_module
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -138,7 +144,13 @@ def _lifted_simulation(run_spec, *, planar: bool = False):
     return replace(base, boundaries=boundaries)
 
 
-def _runtime(tmp_path: Path, *, planar: bool = False):
+def _runtime(
+    tmp_path: Path,
+    *,
+    planar: bool = False,
+    fresh_initial_conditioning=None,
+    apply_fresh_initial_conditioning: bool = True,
+):
     run_spec = _run_spec(tmp_path)
     simulation = _lifted_simulation(run_spec, planar=planar)
     metadata = {
@@ -151,12 +163,19 @@ def _runtime(tmp_path: Path, *, planar: bool = False):
         * torch.randn((8, 8, 6), generator=generator, dtype=torch.float64)
         for name in Q_COMPONENTS
     }
+    request_kwargs = {}
+    if fresh_initial_conditioning is not None:
+        request_kwargs["fresh_initial_conditioning"] = (
+            fresh_initial_conditioning
+        )
     request = PlaneRuntimeBuildRequest(
         run_spec,
         metadata,
         initial,
         "cpu",
         simulation,
+        apply_fresh_initial_conditioning=apply_fresh_initial_conditioning,
+        **request_kwargs,
     )
     construction = PackageRuntimeConstructionInput(
         plan_package_runtime_construction(simulation),
@@ -254,6 +273,7 @@ def test_lifted_plane_binding_is_narrow_and_compiled_path_stays_closed(tmp_path)
 def test_runtime_evolves_dst_remainder_and_observes_physical_q(tmp_path):
     _spec, simulation, adapter = _runtime(tmp_path, planar=True)
     lift = adapter.solver.model.static_lifting_runtime
+    runtime_metadata = adapter.to_metadata()
     assert adapter.solver.model.static_model.molecular_field_boundary_conditions == (
         "periodic",
         "periodic",
@@ -278,6 +298,15 @@ def test_runtime_evolves_dst_remainder_and_observes_physical_q(tmp_path):
     assert lift.restart_metadata()["convention"]["id"] == (
         "de_gennes_S_lambda_max_v1"
     )
+    assert "fresh_initial_remainder_conditioning" not in (
+        runtime_metadata["static_lifting"]["lifting"]
+    )
+    assert runtime_metadata["fresh_construction"][
+        "conditioning_applied"
+    ] is True
+    assert runtime_metadata["fresh_construction"][
+        "checkpoint_compatibility_identity"
+    ] is False
     storage = lift.storage_metadata()
     assert storage["operator"]["layout"] == (
         "wall_normal_profile_broadcast"
@@ -368,7 +397,11 @@ def test_lifted_stress_projects_nonzero_wall_molecular_field_in_dct_basis():
 def test_lifted_checkpoint_restart_is_exact_and_stores_remainder(tmp_path):
     identity, _simulation, continuous = _runtime(tmp_path / "continuous", planar=True)
     _, _, segment = _runtime(tmp_path / "segment", planar=True)
-    _, _, resumed = _runtime(tmp_path / "resumed", planar=True)
+    _, _, resumed = _runtime(
+        tmp_path / "resumed",
+        planar=True,
+        apply_fresh_initial_conditioning=False,
+    )
 
     continuous.advance(4)
     segment.advance(2)
@@ -381,9 +414,23 @@ def test_lifted_checkpoint_restart_is_exact_and_stores_remainder(tmp_path):
         torch.equal(checkpoint.evolved_spatial[name], segment.fields[name])
         for name in Q_COMPONENTS
     )
+    provenance = checkpoint.fresh_construction_provenance
+    assert provenance["schema_version"] == 1
+    assert provenance["conditioning_applied"] is True
+    assert provenance["checkpoint_compatibility_identity"] is False
+    assert provenance["forward_dynamics_identity"] is False
+    assert provenance["restored_state_reconditioned"] is False
+    assert provenance["conditioning"]["effective_policy"] == (
+        "strict_no_automatic_conditioning_v1"
+    )
+    persisted = load_plane_checkpoint(
+        write_plane_checkpoint(tmp_path / "persisted", checkpoint)
+    )
+    assert dict(persisted.fresh_construction_provenance) == dict(provenance)
+    assert persisted.compatibility_identity == checkpoint.compatibility_identity
     restore_plane_checkpoint(
         resumed,
-        checkpoint,
+        persisted,
         run_spec=identity,
     )
     resumed.advance(2)
@@ -395,6 +442,139 @@ def test_lifted_checkpoint_restart_is_exact_and_stores_remainder(tmp_path):
             plane_physical_component(continuous, name),
             plane_physical_component(resumed, name),
         )
+
+
+def test_historical_conditioning_metadata_accepts_file_restart_exactly(
+    tmp_path,
+):
+    localized = localized_quintic_wall_transition(2.0)
+    identity, _simulation, continuous = _runtime(
+        tmp_path / "continuous",
+        planar=True,
+        fresh_initial_conditioning=localized,
+    )
+    _, _, segment = _runtime(
+        tmp_path / "segment",
+        planar=True,
+        fresh_initial_conditioning=localized,
+    )
+    _, _, resumed = _runtime(
+        tmp_path / "resumed",
+        planar=True,
+        apply_fresh_initial_conditioning=False,
+    )
+
+    continuous.advance(4)
+    segment.advance(2)
+    checkpoint = capture_plane_checkpoint(segment, run_spec=identity)
+    historical_lifting = json.loads(
+        json.dumps(dict(checkpoint.lifting_restart))
+    )
+    historical_lifting["lifting"][
+        "fresh_initial_remainder_conditioning"
+    ] = {
+        "kind": "legacy_whole_slab_sine_v1",
+        "fresh_only": True,
+    }
+    historical_identity = build_plane_checkpoint_compatibility_identity(
+        identity,
+        runtime_path=checkpoint.runtime_path,
+        evolved_spatial=checkpoint.evolved_spatial,
+        evolved_spectral=checkpoint.evolved_spectral,
+        backend_restart=checkpoint.backend_restart,
+        lifting_restart=historical_lifting,
+    )
+    historical = replace(
+        checkpoint,
+        lifting_restart=historical_lifting,
+        compatibility_identity=historical_identity,
+        fresh_construction_provenance=None,
+    )
+    loaded = load_plane_checkpoint(
+        write_plane_checkpoint(tmp_path / "historical", historical)
+    )
+
+    assert loaded.fresh_construction_provenance is None
+    assert loaded.compatibility_identity == checkpoint.compatibility_identity
+    assert plane_lifting_fresh_construction_provenance(resumed)[
+        "conditioning_applied"
+    ] is False
+    assert restore_plane_checkpoint(resumed, loaded, run_spec=identity) == 2
+    resumed.advance(2)
+    for name in (*Q_COMPONENTS, "ux", "uy", "uz", "p"):
+        assert torch.equal(continuous.fields[name], resumed.fields[name])
+
+
+def test_unknown_lifting_restart_schema_rejects_before_tensor_load(
+    tmp_path,
+    monkeypatch,
+):
+    identity, _simulation, source = _runtime(tmp_path / "source")
+    checkpoint = capture_plane_checkpoint(source, run_spec=identity)
+    directory = write_plane_checkpoint(tmp_path / "checkpoint", checkpoint)
+    metadata_path = directory / "checkpoint.json"
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    metadata["lifting_restart"]["schema_version"] = 2
+    forward_payload = metadata["compatibility_identity"][
+        "forward_dynamics"
+    ]["payload"]
+    forward_payload["lifting_dynamics"]["schema_version"] = 2
+    changed_identity = CheckpointCompatibilityIdentity.from_metadata(
+        metadata["compatibility_identity"]
+    )
+    metadata["compatibility_identity_sha256"] = (
+        changed_identity.canonical_sha256()
+    )
+    metadata_path.write_text(
+        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        checkpoint_module,
+        "_load_tensor",
+        lambda *_args, **_kwargs: pytest.fail("tensor load started"),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="unsupported Plane static lifting restart identity schema",
+    ):
+        load_plane_checkpoint(directory)
+
+
+def test_unknown_forward_dynamics_version_rejects_before_tensor_load(
+    tmp_path,
+    monkeypatch,
+):
+    identity, _simulation, source = _runtime(tmp_path / "source")
+    checkpoint = capture_plane_checkpoint(source, run_spec=identity)
+    directory = write_plane_checkpoint(tmp_path / "checkpoint", checkpoint)
+    metadata_path = directory / "checkpoint.json"
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    metadata["compatibility_identity"]["forward_dynamics"]["version"] = (
+        "plane.forward.v3"
+    )
+    changed_identity = CheckpointCompatibilityIdentity.from_metadata(
+        metadata["compatibility_identity"]
+    )
+    metadata["compatibility_identity_sha256"] = (
+        changed_identity.canonical_sha256()
+    )
+    metadata_path.write_text(
+        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        checkpoint_module,
+        "_load_tensor",
+        lambda *_args, **_kwargs: pytest.fail("tensor load started"),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="unsupported Plane forward dynamics identity version",
+    ):
+        load_plane_checkpoint(directory)
 
 
 def test_lifting_identity_tamper_is_rejected_before_target_mutation(tmp_path):

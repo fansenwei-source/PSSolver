@@ -22,6 +22,9 @@ from pssolver.operators.lifting import (
 from pssolver.planning.lifting import StaticLiftingPlan
 
 
+FRESH_CONSTRUCTION_PROVENANCE_SCHEMA_VERSION = 1
+
+
 def _frozen_json(value: Mapping[str, object] | None) -> Mapping[str, object]:
     payload = json.dumps(
         {} if value is None else dict(value),
@@ -153,6 +156,24 @@ class PlaneStaticLiftingRuntime:
             affected_field=self.affected_field,
             affected_components=self.component_order,
         )
+
+    def fresh_construction_provenance(
+        self,
+        *,
+        conditioning_applied: bool,
+    ) -> dict[str, object]:
+        """Record fresh-only policy use outside checkpoint compatibility."""
+
+        if not isinstance(conditioning_applied, bool):
+            raise TypeError("conditioning_applied must be a bool")
+        return {
+            "schema_version": FRESH_CONSTRUCTION_PROVENANCE_SCHEMA_VERSION,
+            "conditioning": self.fresh_initial_conditioning_metadata(),
+            "conditioning_applied": conditioning_applied,
+            "checkpoint_compatibility_identity": False,
+            "forward_dynamics_identity": False,
+            "restored_state_reconditioned": False,
+        }
 
     def physical_component(self, fields: object, component: str) -> torch.Tensor:
         """Reconstruct one physical component for observation."""
@@ -328,4 +349,7 @@ class PlaneStaticLiftingRuntime:
         }
 
 
-__all__ = ["PlaneStaticLiftingRuntime"]
+__all__ = [
+    "FRESH_CONSTRUCTION_PROVENANCE_SCHEMA_VERSION",
+    "PlaneStaticLiftingRuntime",
+]

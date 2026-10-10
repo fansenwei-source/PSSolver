@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.3.5 lifted Plane runtime metadata and checkpoint version integration",
+  "phase": "RC4.3.5",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_RC4_3_5_LIFTING_RUNTIME_CHECKPOINT_INTEGRATION_CPU_CANDIDATE",
+  "baseline": {
+    "branch": "fix/v0.2.0rc4-audit",
+    "implementation_parent_commit": "90e3da79037fdc963de265fbdc59118ea39ffbca",
+    "capability_contract": "notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json",
+    "capability_contract_sha256": "5e6b64626f1927eb9846f62b3fbe31243d96131bbf2d3d0e36aeb254018d2741",
+    "fresh_policy_record": "notes/PSSolver_v0_2_0rc4_rc434_fresh_conditioning.json",
+    "fresh_policy_record_sha256": "d4d95ec3d719f85abf5a93c30c37877a78696bfa90699a3de517e201f23d7f79"
+  },
+  "identity_versions": {
+    "plane_workflow_checkpoint_format_version": 2,
+    "plane_forward_dynamics_identity_version": "plane.forward.v2",
+    "static_lifting_restart_identity_schema_version": 1,
+    "fresh_construction_provenance_schema_version": 1,
+    "checkpoint_format_bumped": false,
+    "forward_dynamics_identity_bumped": false,
+    "static_lifting_restart_identity_bumped": false,
+    "reason": "fresh-only conditioning does not alter the restored next-step map"
+  },
+  "metadata_separation": {
+    "runtime_metadata_records_fresh_construction": true,
+    "checkpoint_run_provenance_records_fresh_construction": true,
+    "fresh_policy_records_requested_and_effective_policy": true,
+    "conditioning_applied_is_explicit": true,
+    "fresh_construction_in_compatibility_digest": false,
+    "fresh_construction_in_forward_dynamics_identity": false,
+    "static_lift_plan_and_linear_correction_remain_in_identity": true,
+    "restored_state_reconditioned": false
+  },
+  "checkpoint_behavior": {
+    "current_writer": "format_v2_with_optional_fresh_construction_run_provenance",
+    "current_reader_accepts_format_v2_without_fresh_provenance": true,
+    "historical_nested_conditioning_field": "accepted_as_fresh_only_provenance_when_all_scientific_identity_fields_match",
+    "unknown_static_lifting_restart_schema": "reject_before_tensor_file_read",
+    "unknown_plane_forward_dynamics_identity_version": "reject_before_tensor_file_read",
+    "changed_lift_or_linear_correction": "reject_before_target_mutation",
+    "legacy_format_v1_direct_restore": "still_rejected_requires_explicit_registered_upgrade",
+    "historical_checkpoint_rewritten_in_place": false
+  },
+  "regression_matrix": {
+    "same_version_continuous_vs_split_restart": "PASS_BYTE_IDENTICAL",
+    "different_fresh_policy_after_restore": "PASS_BYTE_IDENTICAL",
+    "historical_conditioning_metadata_file_round_trip": "PASS_ACCEPT_EXACT_RESTART",
+    "missing_fresh_provenance_on_historical_v2": "PASS_ACCEPT_EXACT_RESTART",
+    "unknown_lifting_schema": "PASS_REJECT_PRE_TENSOR_LOAD",
+    "different_lift_plan": "PASS_REJECT_PRE_TARGET_MUTATION"
+  },
+  "historical_successor_sources": {
+    "pssolver/workflows/plane_checkpoint.py": {
+      "historical_sha256": "589f46ab1b2b2e41c483ff7b5aa2c91457483239352e4e7d7925c48e6916bb50",
+      "current_sha256": "b4b51a0b98a1da5c4ddf501bafcd7a57ff98d1da4c179818da3fb3716e147806",
+      "introduced_by_phase": "RC4.3.5",
+      "reason": "persist fresh-only construction policy as non-compatibility run provenance and reject unknown lifting identity versions before tensor reads without changing Plane format-v2 compatibility semantics"
+    }
+  },
+  "verification": {
+    "focused_tests": {
+      "passed": 103,
+      "failed": 0
+    },
+    "full_cpu_suite": {
+      "executed": true,
+      "passed": 3004,
+      "skipped": 0,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "failed": 0
+    },
+    "H100_required_for_this_slice": false,
+    "H100_executed": false
+  },
+  "source_sha256": {
+    "pssolver/runtime/__init__.py": "5ff947035e5d2447373ee04f569f1b764971b8c0c094cdc87aa8a34ab37f8e35",
+    "pssolver/runtime/plane_beris_edwards.py": "e8b56669bc9c315db67a1536bcc73040fda8a3b1ad36083f2d060321e50ff030",
+    "pssolver/runtime/plane_legacy.py": "cbabca39d2f270bb5dd284b3f1908003d11b489db3bed1d46659a39ad562fdb4",
+    "pssolver/runtime/static_lifting.py": "108a59b4c730788767aab403fed47928d6b8f3df981613fa1815663ebc5c6a16",
+    "pssolver/workflows/plane_checkpoint.py": "b4b51a0b98a1da5c4ddf501bafcd7a57ff98d1da4c179818da3fb3716e147806",
+    "tests/test_phase8_p844_lifting_workflow_restart.py": "d7eba748ec0abf15a49d49a0bd662568ddec5d8d59fdbdd02b6ea743eddb7b00",
+    "tests/test_rc4_fresh_initial_conditioning.py": "7c4c699f51ef52e8c5f9a664b4769cd3d7d951633d2c44ba3994bf32ceefd8d8",
+    "tests/test_rc4_lifting_capability_contract.py": "b609f78cb7043a696b28f6caefa9beb0b1ffebe52d13b513ab06c3a887630da5",
+    "tests/test_rc4_plane_checkpoint_identity_record.py": "6fe9a8a406fbd274d5f3e34dbd6928f2d9f08a543612f50cff294c590407a78f"
+  },
+  "scope": {
+    "runtime_metadata_modified": true,
+    "plane_checkpoint_reader_modified": true,
+    "plane_checkpoint_writer_modified": true,
+    "supported_forward_numerical_dynamics_changed": false,
+    "hot_path_kernel_modified": false,
+    "public_lifting_restriction_changed": false,
+    "checkpoint_tensor_layout_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "rc4_3_5_implementation_authorized_by_user": true,
+    "rc4_3_5_complete": true,
+    "h100_submission_authorized": false,
+    "push_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false
+  },
+  "eligibility": {
+    "eligible_for_rc4_3_6_installed_wheel_cpu_closure": true,
+    "localized_policy_publicly_qualified": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false
+  }
+}

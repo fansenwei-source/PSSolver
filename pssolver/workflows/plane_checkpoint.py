@@ -28,6 +28,7 @@ from pssolver.io.checkpoint_identity import (
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime import (
     PlaneRuntimeAdapterProtocol,
+    plane_lifting_fresh_construction_provenance,
     plane_lifting_restart_metadata,
     verify_plane_lifting_identity,
 )
@@ -35,6 +36,8 @@ from pssolver.runtime import (
 
 PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1
 PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 2
+PLANE_FORWARD_DYNAMICS_IDENTITY_VERSION = "plane.forward.v2"
+PLANE_STATIC_LIFTING_RESTART_SCHEMA_VERSION = 1
 
 
 def _sha256(path: Path) -> str:
@@ -103,6 +106,7 @@ class PlaneWorkflowCheckpoint:
     backend_restart: Mapping[str, object]
     lifting_restart: Mapping[str, object] | None = None
     compatibility_identity: CheckpointCompatibilityIdentity | None = None
+    fresh_construction_provenance: Mapping[str, object] | None = None
     migration_provenance: Mapping[str, object] | None = None
 
     def __post_init__(self) -> None:
@@ -192,6 +196,28 @@ class PlaneWorkflowCheckpoint:
                 raise ValueError("Plane checkpoint identity has the wrong family")
             if identity.runtime_path != self.runtime_path.value:
                 raise ValueError("Plane checkpoint identity runtime path differs")
+        fresh = self.fresh_construction_provenance
+        if fresh is not None:
+            if not isinstance(fresh, Mapping):
+                raise TypeError(
+                    "fresh_construction_provenance must be a mapping or None"
+                )
+            try:
+                encoded = json.dumps(
+                    dict(fresh),
+                    allow_nan=False,
+                    separators=(",", ":"),
+                    sort_keys=True,
+                )
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    "fresh construction provenance is not JSON-compatible"
+                ) from exc
+            object.__setattr__(
+                self,
+                "fresh_construction_provenance",
+                MappingProxyType(json.loads(encoded)),
+            )
         migration = self.migration_provenance
         if migration is not None:
             if not isinstance(migration, Mapping):
@@ -236,11 +262,16 @@ class PlaneWorkflowCheckpoint:
             metadata["compatibility_identity_sha256"] = (
                 identity.canonical_sha256()
             )
-            metadata["run_provenance"] = {
+            run_provenance: dict[str, object] = {
                 "legacy_runtime_identity_sha256": (
                     self.runtime_identity_sha256
                 )
             }
+            if self.fresh_construction_provenance is not None:
+                run_provenance["fresh_construction"] = dict(
+                    self.fresh_construction_provenance
+                )
+            metadata["run_provenance"] = run_provenance
         if self.lifting_restart is not None:
             metadata["lifting_restart"] = dict(self.lifting_restart)
         if self.migration_provenance is not None:
@@ -280,7 +311,7 @@ def plane_forward_dynamics_identity(
     run_spec_dynamics = plane_run_spec_dynamics_identity(run_spec)
     return CheckpointIdentityLayer(
         kind=IdentityLayerKind.FORWARD_DYNAMICS,
-        version="plane.forward.v2",
+        version=PLANE_FORWARD_DYNAMICS_IDENTITY_VERSION,
         payload={
             "run_spec_dynamics": run_spec_dynamics.to_metadata(),
             "lifting_dynamics": lifting,
@@ -439,6 +470,7 @@ def capture_plane_checkpoint(
         backend_restart=backend,
         lifting_restart=lifting,
     )
+    fresh_construction = plane_lifting_fresh_construction_provenance(adapter)
     return PlaneWorkflowCheckpoint(
         format_version=PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
         runtime_path=adapter.runtime_path,
@@ -452,6 +484,7 @@ def capture_plane_checkpoint(
         backend_restart=backend,
         lifting_restart=lifting,
         compatibility_identity=compatibility_identity,
+        fresh_construction_provenance=fresh_construction,
     )
 
 
@@ -549,6 +582,8 @@ def _lifting_compatibility_identity(
 
     if metadata is None:
         return None
+    if not isinstance(metadata, Mapping):
+        raise TypeError("lifting restart metadata must be a mapping or None")
     normalized = json.loads(
         json.dumps(
             dict(metadata),
@@ -557,6 +592,12 @@ def _lifting_compatibility_identity(
             sort_keys=True,
         )
     )
+    if normalized.get("schema_version") != (
+        PLANE_STATIC_LIFTING_RESTART_SCHEMA_VERSION
+    ):
+        raise ValueError(
+            "unsupported Plane static lifting restart identity schema"
+        )
     normalized.pop("materialization_provenance", None)
     lifting = normalized.get("lifting")
     if isinstance(lifting, dict):
@@ -568,6 +609,24 @@ def _lifting_compatibility_identity(
             if isinstance(correction, dict):
                 correction.pop("device", None)
     return normalized
+
+
+def _validate_plane_forward_identity_schema(
+    identity: CheckpointCompatibilityIdentity,
+) -> None:
+    """Reject unknown lifting identity versions before tensor-file reads."""
+
+    forward = identity.forward_dynamics
+    if forward.version != PLANE_FORWARD_DYNAMICS_IDENTITY_VERSION:
+        raise ValueError("unsupported Plane forward dynamics identity version")
+    payload = forward.to_metadata()["payload"]
+    lifting = payload.get("lifting_dynamics")
+    _lifting_compatibility_identity(lifting)
+    expected_equation = (
+        "none" if lifting is None else "static_affine_dirichlet.v1"
+    )
+    if payload.get("lifting_equation_version") != expected_equation:
+        raise ValueError("unsupported Plane static lifting equation version")
 
 
 def _write_tensor(path: Path, value: torch.Tensor) -> dict[str, object]:
@@ -679,6 +738,7 @@ def read_plane_checkpoint_header(directory: str | Path) -> PlaneCheckpointHeader
             raise ValueError("checkpoint compatibility identity family differs")
         if compatibility_identity.runtime_path != runtime_path.value:
             raise ValueError("checkpoint compatibility runtime path differs")
+        _validate_plane_forward_identity_schema(compatibility_identity)
     return PlaneCheckpointHeader(
         format_version=format_version,
         runtime_path=runtime_path,
@@ -742,6 +802,12 @@ def load_plane_checkpoint(directory: str | Path) -> PlaneWorkflowCheckpoint:
     backend = metadata.get("backend_restart")
     if not isinstance(backend, Mapping):
         raise ValueError("checkpoint backend restart metadata is missing")
+    run_provenance = metadata.get("run_provenance")
+    fresh_construction = (
+        None
+        if not isinstance(run_provenance, Mapping)
+        else run_provenance.get("fresh_construction")
+    )
     return PlaneWorkflowCheckpoint(
         format_version=metadata.get("format_version"),
         runtime_path=header.runtime_path,
@@ -755,6 +821,7 @@ def load_plane_checkpoint(directory: str | Path) -> PlaneWorkflowCheckpoint:
         backend_restart=backend,
         lifting_restart=metadata.get("lifting_restart"),
         compatibility_identity=header.compatibility_identity,
+        fresh_construction_provenance=fresh_construction,
         migration_provenance=metadata.get("migration_provenance"),
     )
 
@@ -922,7 +989,9 @@ def upgrade_plane_checkpoint_directory_v1(
 
 
 __all__ = [
+    "PLANE_FORWARD_DYNAMICS_IDENTITY_VERSION",
     "PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
+    "PLANE_STATIC_LIFTING_RESTART_SCHEMA_VERSION",
     "PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "PlaneCheckpointHeader",
     "PlaneWorkflowCheckpoint",

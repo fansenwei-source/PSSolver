@@ -221,6 +221,7 @@ def test_rc432_reviewed_sources_are_content_addressed():
         "pssolver/runtime/static_lifting.py",
         "pssolver/runtime/plane_legacy.py",
         "pssolver/applications/plane_beris_edwards.py",
+        "pssolver/workflows/plane_checkpoint.py",
         "tests/test_phase8_p842_plane_static_lifting.py",
     }
     for relative, expected in _record()["reviewed_source_sha256"].items():
