@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.3.7 single-H100 internal lifting closure plan",
+  "phase": "RC4.3.7",
+  "status": "LOCAL_CPU_GATE_PASS_READY_FOR_SEPARATE_H100_AUTHORIZATION",
+  "classification": "READY_RC4_3_7_SINGLE_H100_INTERNAL_LIFTING_CLOSURE",
+  "source_identity": {
+    "branch": "fix/v0.2.0rc4-audit",
+    "baseline_commit": "1b15bf856cb6597ae709ee7496cde96d0b2cc7d1",
+    "candidate_runtime_commit": "e1dea73c5d0f00e097599c4ff2c94ed7dceaa915",
+    "local_planning_parent": "382768348e2af84e482362ff5266a86c56c56cd6",
+    "master_plan": "notes/PSSolver_v0_2_0rc4_rc430_lifting_correctness_plan.json",
+    "master_plan_sha256": "3742ea254678a6156fd6ae14039adda427bce30d0019480aa2bf4ff42fe57aa8",
+    "rc4_3_6_record": "notes/PSSolver_v0_2_0rc4_rc436_installed_cpu_closure.json",
+    "rc4_3_6_record_sha256": "e3fb84e9192f879055a08b6633145bb4b00addab5278482811f3e923a6312a21"
+  },
+  "claim_boundary": {
+    "qualified_candidate_surface": "internal field-neutral static lifting, localized fresh conditioning, provenance, and same-version restart",
+    "performance_surface": "supported homogeneous-Neumann legacy_production Plane runtime",
+    "public_lifted_plane_reopened": false,
+    "localized_policy_publicly_qualified": false,
+    "lifted_Beris_Edwards_scientific_dynamics_qualified": false,
+    "cross_version_lifted_trajectory_equivalence_claimed": false,
+    "production_default_changed": false
+  },
+  "qualification_support": {
+    "profile_runner": "benchmarks/profile_rc437_plane_runtime.py",
+    "profile_runner_sha256": "4852642e1f7fad04df14d95e97eb18ad6dd790eecbf8d9ba2bb77aac0eaacad6",
+    "cuda_correctness_runner": "benchmarks/qualify_rc437_lifting_cuda.py",
+    "cuda_correctness_runner_sha256": "a291e301a34501115d7eb261720c68d88437638ae86f99c51b72dac9f47fd8e5",
+    "analyzer": "benchmarks/analyze_rc437_lifting_h100.py",
+    "analyzer_sha256": "011c3f7cfeac2c10835b13eaaf5c3696cf6653081ca149ad8f953f6fb3546908",
+    "qualification_support_may_be_a_descendant_of_candidate": true,
+    "qualification_support_must_not_change_runtime_sources": true
+  },
+  "frozen_inputs": {
+    "R128": {
+      "path": "/scratch1/vincent/PSSolver/data_pssolver_phase9_p95_h100_69bd077_20260928_v1/inputs/R128/Q_0.npy",
+      "shape": [128, 128, 32, 5],
+      "dtype": "float64",
+      "sha256": "28c70b72118c6d55b7646919ef2157959f40f52a1585753bb0732565cc6895c6"
+    },
+    "R320": {
+      "path": "/scratch1/vincent/PSSolver/data_pssolver_phase9_p95_h100_69bd077_20260928_v1/inputs/R320/Q_0.npy",
+      "shape": [320, 320, 80, 5],
+      "dtype": "float64",
+      "sha256": "84a934a828794a3976b4af897f85d60c79e0c5f545b5f8265a9a4abed1e2cb4a"
+    }
+  },
+  "profile_matrix": {
+    "profile_count": 12,
+    "roles": ["baseline", "candidate"],
+    "grids": ["R128", "R320"],
+    "trials_per_role_and_grid": 3,
+    "balanced_order": ["A/B", "B/A", "A/B"],
+    "runtime_path": "legacy_production",
+    "boundaries": "homogeneous_Neumann_Q",
+    "lengths": [100.0, 100.0, 20.0],
+    "dtype": "float64",
+    "device": "cuda",
+    "dt": 0.005,
+    "activity_number": 18.0,
+    "pointwise_execution": "compile",
+    "warmup_steps": 10,
+    "profile_steps": 50,
+    "completed_steps": 60,
+    "forward_transforms_per_step": 7.0,
+    "inverse_transforms_per_step": 32.0,
+    "runtime_fallback": false,
+    "compile_fallback": false,
+    "graph_breaks": 0,
+    "cross_role_initial_sha_identity_required": true,
+    "cross_role_final_sha_identity_required": true
+  },
+  "thresholds": {
+    "mean_candidate_over_baseline_timestep_max": 1.15,
+    "median_candidate_over_baseline_timestep_max": 1.15,
+    "peak_allocated_candidate_over_baseline_max": 1.1,
+    "peak_active_candidate_over_baseline_max": 1.1,
+    "peak_reserved_role": "diagnostic_only",
+    "localized_conditioning_cpu_cuda_relative_l2_max": 1e-15,
+    "wall_residual_linf_max": 1e-12
+  },
+  "candidate_cuda_correctness": {
+    "device": "cuda:0",
+    "fresh_policy": "localized_quintic_wall_transition_v1",
+    "transition_width": 2.0,
+    "interior_byte_identity_required": true,
+    "transition_region_change_required": true,
+    "fresh_construction_provenance_required": true,
+    "fresh_policy_absent_from_restart_compatibility_identity": true,
+    "same_version_file_restart": "4 continuous steps versus 2 plus restore plus 2",
+    "restart_byte_identity_required": true,
+    "finite_required": true
+  },
+  "cpu_gate": {
+    "targeted_tests": {
+      "passed": 53,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_suite": {
+      "passed": 3035,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "elapsed_seconds": 202.76
+    },
+    "pytest_cache_disabled": true,
+    "bytecode_disabled": true,
+    "any_other_skip_xfail_deselect_or_failure_stops": true
+  },
+  "cuda_only_node_ids": [
+    "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+    "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+    "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+    "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact",
+    "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+  ],
+  "h100_environment": {
+    "gpu_name_contains": "H100",
+    "visible_cuda_device_count": 1,
+    "requested_device": "cuda",
+    "allocated_device": "cuda:0",
+    "tf32_matmul": false,
+    "tf32_cudnn": false,
+    "decomposed_preflight_required": true,
+    "host_compiler": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/gcc",
+    "host_cxx_compiler": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/g++",
+    "isolated_triton_and_torchinductor_caches_per_profile": true,
+    "source_shadow_import": false
+  },
+  "slurm": {
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "gres": "gpu:H100:1",
+    "cpus_per_task": 8,
+    "memory": "64G",
+    "time_limit": "01:00:00",
+    "requeue": false,
+    "formal_submission_limit": 1,
+    "automatic_retry": false
+  },
+  "execution_order": [
+    "validate Git identities, RC4.3.6 evidence, frozen inputs, helper hashes, CPU gates, worktrees, and empty scratch before sbatch",
+    "persist decomposed GPU, import, TF32, host-compiler, and allocated-device observations before enforcement",
+    "run the seven CUDA-only tests with zero failure, skip, xfail, or deselect",
+    "run candidate-only CUDA lifting correctness and file-restart gate",
+    "run the 12 balanced A/B production profiles with isolated compiler caches",
+    "run the fail-closed aggregate analyzer",
+    "verify worktree cleanliness and archive checksums",
+    "write COMPLETE only after all gates pass"
+  ],
+  "stop_conditions": [
+    "Git, evidence, input, helper, import, GPU, compiler, device, TF32, worktree, or scratch mismatch",
+    "CPU failure or unauthorized skip, xfail, or deselect",
+    "any CUDA-only test failure, skip, xfail, or deselect",
+    "conditioning, wall residual, provenance, restart, finite, fallback, graph-break, transform, state-identity, performance, or memory gate failure",
+    "OOM, NaN, Inf, CUDA error, compiler error, missing or duplicate report, or attempted overwrite",
+    "any inference of an unpersisted value or automatic retry"
+  ],
+  "successful_classification": "PASS_RC4_3_7_INTERNAL_LIFTING_SINGLE_H100_CLOSURE",
+  "success_state": {
+    "rc4_3_7_complete": true,
+    "rc4_3_complete": true,
+    "public_lifted_plane_reopened": false,
+    "localized_policy_publicly_qualified": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "local_qualification_support_authorized_by_user": true,
+    "h100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "push_authorized": false,
+    "merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false,
+    "PSSolver_Control_change_authorized": false,
+    "nematics3d_change_authorized": false
+  }
+}
