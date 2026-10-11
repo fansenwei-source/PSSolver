@@ -59,13 +59,14 @@ def _atomic_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(f".{path.name}.tmp-{os.getpid()}")
     payload = json.dumps(value, allow_nan=False, indent=2, sort_keys=True) + "\n"
+    expected = json.loads(payload)
     try:
         with temporary.open("x", encoding="utf-8") as stream:
             stream.write(payload)
             stream.flush()
             os.fsync(stream.fileno())
         os.replace(temporary, path)
-        if json.loads(path.read_text(encoding="utf-8")) != value:
+        if json.loads(path.read_text(encoding="utf-8")) != expected:
             raise RuntimeError("profile JSON round-trip differs")
     finally:
         if temporary.exists():

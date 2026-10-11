@@ -6,6 +6,7 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 import pytest
 
@@ -24,7 +25,10 @@ from benchmarks.analyze_rc437_lifting_h100_recovery import (
     SCHEMA as RECOVERY_ANALYSIS_SCHEMA,
     analyze as analyze_recovery,
 )
-from benchmarks.profile_rc437_plane_runtime import SCHEMA as PROFILE_SCHEMA
+from benchmarks.profile_rc437_plane_runtime import (
+    SCHEMA as PROFILE_SCHEMA,
+    _atomic_json as write_profile_json,
+)
 from benchmarks.qualify_rc437_lifting_cuda import (
     PASS as CUDA_PASS,
     SCHEMA as CUDA_SCHEMA,
@@ -45,12 +49,27 @@ PLAN = ROOT / "notes/PSSolver_v0_2_0rc4_rc437_h100_qualification_plan.json"
 RECOVERY_PLAN = (
     ROOT / "notes/PSSolver_v0_2_0rc4_rc437_h100_recovery_plan.json"
 )
+PROFILE_SERIALIZATION_RECOVERY_PLAN = (
+    ROOT
+    / "notes/PSSolver_v0_2_0rc4_rc437_profile_serialization_recovery_plan.json"
+)
 BASELINE = "1b15bf856cb6597ae709ee7496cde96d0b2cc7d1"
 CANDIDATE = "e1dea73c5d0f00e097599c4ff2c94ed7dceaa915"
+FAILED_QUALIFICATION = "d9d340d7fe49aa245802a975b6eaa49906815cbb"
+CORRECT_LAYER_RECOVERY = "2121cfbffd31857484dc912f9413465d5a2b4806"
 
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _git_blob_sha256(revision: str, path: str) -> str:
+    completed = subprocess.run(
+        ["git", "-C", str(ROOT), "show", f"{revision}:{path}"],
+        check=True,
+        capture_output=True,
+    )
+    return hashlib.sha256(completed.stdout).hexdigest()
 
 
 def _plan() -> dict[str, object]:
@@ -59,6 +78,12 @@ def _plan() -> dict[str, object]:
 
 def _recovery_plan() -> dict[str, object]:
     return json.loads(RECOVERY_PLAN.read_text(encoding="utf-8"))
+
+
+def _profile_serialization_recovery_plan() -> dict[str, object]:
+    return json.loads(
+        PROFILE_SERIALIZATION_RECOVERY_PLAN.read_text(encoding="utf-8")
+    )
 
 
 def _profile(
@@ -206,7 +231,9 @@ def test_rc437_plan_binds_tools_inputs_and_master_contract():
     plan = _plan()
     for name in ("profile_runner", "cuda_correctness_runner", "analyzer"):
         relative = plan["qualification_support"][name]
-        assert _sha256(ROOT / relative) == plan["qualification_support"][f"{name}_sha256"]
+        assert _git_blob_sha256(FAILED_QUALIFICATION, relative) == plan[
+            "qualification_support"
+        ][f"{name}_sha256"]
     assert _sha256(ROOT / plan["source_identity"]["master_plan"]) == plan["source_identity"]["master_plan_sha256"]
     assert _sha256(ROOT / plan["source_identity"]["rc4_3_6_record"]) == plan["source_identity"]["rc4_3_6_record_sha256"]
     assert plan["thresholds"] == {
@@ -227,12 +254,16 @@ def test_rc437_recovery_plan_preserves_v1_and_binds_v2_support():
     ]["original_plan_sha256"]
     for name in ("profile_runner", "failed_cuda_runner", "failed_analyzer"):
         relative = plan["immutable_v1_support"][name]
-        assert _sha256(ROOT / relative) == plan["immutable_v1_support"][
+        assert _git_blob_sha256(FAILED_QUALIFICATION, relative) == plan[
+            "immutable_v1_support"
+        ][
             f"{name}_sha256"
         ]
     for name in ("cuda_correctness_runner", "analyzer"):
         relative = plan["recovery_support"][name]
-        assert _sha256(ROOT / relative) == plan["recovery_support"][
+        assert _git_blob_sha256(CORRECT_LAYER_RECOVERY, relative) == plan[
+            "recovery_support"
+        ][
             f"{name}_sha256"
         ]
     assert plan["failure_adjudication"]["scientific_contract_relaxed"] is False
@@ -242,6 +273,47 @@ def test_rc437_recovery_plan_preserves_v1_and_binds_v2_support():
     assert plan["authorization"]["push_authorized"] is False
     assert plan["authorization"]["h100_recovery_submission_authorized"] is False
     assert plan["future_h100_recovery"]["automatic_retry"] is False
+
+
+def test_rc437_profile_json_round_trip_normalizes_tuple_values(tmp_path):
+    output = tmp_path / "profile.json"
+    value = {
+        "config": {
+            "shape": (128, 128, 32),
+            "lengths": (100.0, 100.0, 20.0),
+        },
+        "completed_steps": 60,
+        "finite": True,
+    }
+
+    write_profile_json(output, value)
+
+    assert json.loads(output.read_text(encoding="utf-8")) == {
+        "config": {
+            "shape": [128, 128, 32],
+            "lengths": [100.0, 100.0, 20.0],
+        },
+        "completed_steps": 60,
+        "finite": True,
+    }
+    assert not list(tmp_path.glob(".profile.json.tmp-*"))
+
+
+def test_rc437_profile_serialization_recovery_plan_binds_failure_and_fix():
+    plan = _profile_serialization_recovery_plan()
+    profile = ROOT / plan["qualification_support"]["profile_runner"]
+
+    assert _sha256(profile) == plan["qualification_support"][
+        "profile_runner_sha256"
+    ]
+    assert plan["failed_job_evidence"]["job_id"] == "10874753"
+    assert plan["failed_job_evidence"]["checksums_verified"] == 206
+    assert plan["failure_adjudication"]["scientific_failure_supported"] is False
+    assert plan["fix_contract"]["runtime_source_changed"] is False
+    assert plan["fix_contract"]["profile_schema_changed"] is False
+    assert plan["authorization"]["push_authorized"] is False
+    assert plan["authorization"]["h100_recovery_submission_authorized"] is False
+    assert plan["authorization"]["automatic_retry_authorized"] is False
 
 
 def test_rc437_analyzer_accepts_complete_evidence(tmp_path):

@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.3.7 profile JSON serialization recovery plan",
+  "phase": "RC4.3.7 recovery v3",
+  "status": "LOCAL_CPU_GATE_PASS_READY_FOR_SEPARATE_PUSH_AND_H100_AUTHORIZATION",
+  "classification": "READY_RC4_3_7_PROFILE_SERIALIZATION_H100_RECOVERY",
+  "source_identity": {
+    "branch": "fix/v0.2.0rc4-audit",
+    "recovery_parent": "2121cfbffd31857484dc912f9413465d5a2b4806",
+    "baseline_commit": "1b15bf856cb6597ae709ee7496cde96d0b2cc7d1",
+    "candidate_runtime_commit": "e1dea73c5d0f00e097599c4ff2c94ed7dceaa915",
+    "runtime_source_changed_by_recovery": false,
+    "correct_layer_recovery_plan": "notes/PSSolver_v0_2_0rc4_rc437_h100_recovery_plan.json",
+    "correct_layer_recovery_plan_sha256": "814102a8d8190afe657cc62b5631e2c02168734540fb9042bf948b1723bc8d40"
+  },
+  "failed_job_evidence": {
+    "job_id": "10874753",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:01:07",
+    "node": "gpu-h100-4-0",
+    "control_directory": "/home/fansenwei/pssolver_rc437_lifting_h100_2121cfb_20261010_recovery_v2",
+    "checksums_verified": 206,
+    "checksums_failed": 0,
+    "checksums_sha256": "71db08f6d2aeb5f678ae27279540b8daa795da28bac111aa61e7195ef95c50b4",
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "complete_written": false
+  },
+  "passed_h100_evidence": {
+    "decomposed_preflight": "8/8 PASS",
+    "cuda_only_tests": "7/7 PASS",
+    "correct_layer_cuda_restart": "PASS_RC4_3_7_INTERNAL_LIFTING_CUDA_CORRECTNESS_AND_RESTART",
+    "measurement_layer": "direct_conditioning_operator_output_before_spectral_projection",
+    "interior_byte_identical_to_unconditioned": true,
+    "transition_region_changed": true,
+    "cpu_cuda_relative_l2": 0.0,
+    "wall_residual_linf": 0.0,
+    "restart_byte_identical": true,
+    "finite": true
+  },
+  "failure_adjudication": {
+    "classification": "EXTERNAL_PROFILE_JSON_ROUNDTRIP_TYPE_NORMALIZATION_ERROR_SUPPORTED",
+    "failure_stage": "first_baseline_R128_profile_atomic_json_round_trip",
+    "exception": "RuntimeError: profile JSON round-trip differs",
+    "scientific_execution_completed": true,
+    "completed_steps": 60,
+    "finite": true,
+    "accepted_profile_count": 0,
+    "expected_profile_count": 12,
+    "candidate_profile_started": false,
+    "analyzer_started": false,
+    "only_type_mismatches": {
+      "config.shape": "tuple before serialization, list after JSON decoding",
+      "config.lengths": "tuple before serialization, list after JSON decoding"
+    },
+    "solver_failure_supported": false,
+    "scientific_failure_supported": false,
+    "numerical_failure_supported": false,
+    "performance_failure_supported": false,
+    "memory_failure_supported": false,
+    "cuda_failure_supported": false
+  },
+  "qualification_support": {
+    "profile_runner": "benchmarks/profile_rc437_plane_runtime.py",
+    "profile_runner_sha256": "a5a0e0e50ab8c29822415b452f2c1bb868f1c8fd3ce4e64a3649ef9e39d93aa5",
+    "cuda_correctness_runner": "benchmarks/qualify_rc437_lifting_cuda_recovery.py",
+    "cuda_correctness_runner_sha256": "7bc54dc13b78c8a07ef289d2eb7a9d81582a0e21aa1f70c04345402eb3bb60c9",
+    "analyzer": "benchmarks/analyze_rc437_lifting_h100_recovery.py",
+    "analyzer_sha256": "56340ecb934a5ed68506b13ab88b6544b8e3a431dd0d2ba522b30dd0179897dd"
+  },
+  "fix_contract": {
+    "write_payload_once": true,
+    "expected_round_trip_value_is_json_decoded_payload": true,
+    "tuple_values_normalize_to_json_arrays": true,
+    "nan_and_inf_remain_rejected": true,
+    "existing_target_remains_rejected": true,
+    "temporary_file_cleanup_preserved": true,
+    "profile_schema_changed": false,
+    "profile_matrix_changed": false,
+    "performance_thresholds_changed": false,
+    "memory_thresholds_changed": false,
+    "runtime_source_changed": false,
+    "scientific_contract_relaxed": false,
+    "production_default_changed": false,
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false
+  },
+  "local_cpu_gate": {
+    "targeted": {
+      "passed": 157,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_suite": {
+      "passed": 3045,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "elapsed_seconds": 202.59
+    },
+    "pytest_cache_disabled": true,
+    "bytecode_disabled": true
+  },
+  "future_h100_recovery": {
+    "requires_separate_explicit_authorization": true,
+    "formal_submission_limit": 1,
+    "automatic_retry": false,
+    "reuse_failed_job_as_pass": false,
+    "reuse_passed_v2_preflight_cuda_and_correctness_evidence": false,
+    "fresh_profile_matrix_required": true,
+    "profile_count": 12,
+    "final_analyzer_required": true
+  },
+  "successful_classification": "PASS_RC4_3_7_INTERNAL_LIFTING_SINGLE_H100_CLOSURE",
+  "authorization": {
+    "local_recovery_support_authorized_by_user": true,
+    "push_authorized": false,
+    "h100_recovery_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false
+  }
+}
