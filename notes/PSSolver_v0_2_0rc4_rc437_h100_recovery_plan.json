@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.3.7 correct-layer H100 qualification recovery plan",
+  "phase": "RC4.3.7 recovery v2",
+  "status": "LOCAL_CPU_GATE_PASS_READY_FOR_SEPARATE_PUSH_AND_H100_AUTHORIZATION",
+  "classification": "READY_RC4_3_7_CORRECT_LAYER_H100_RECOVERY",
+  "source_identity": {
+    "branch": "fix/v0.2.0rc4-audit",
+    "baseline_commit": "1b15bf856cb6597ae709ee7496cde96d0b2cc7d1",
+    "candidate_runtime_commit": "e1dea73c5d0f00e097599c4ff2c94ed7dceaa915",
+    "failed_qualification_commit": "d9d340d7fe49aa245802a975b6eaa49906815cbb",
+    "recovery_parent": "d9d340d7fe49aa245802a975b6eaa49906815cbb",
+    "runtime_source_changed_by_recovery": false,
+    "original_plan": "notes/PSSolver_v0_2_0rc4_rc437_h100_qualification_plan.json",
+    "original_plan_sha256": "35b6423b9755b1251559db6f65c7500d563c82798bef4ddc1af90b75add01f50"
+  },
+  "failed_job_evidence": {
+    "job_id": "10874707",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:00:57",
+    "node": "gpu-h100-4-0",
+    "control_directory": "/home/fansenwei/pssolver_rc437_lifting_h100_d9d340d_20261010_v1",
+    "checksum_entries": 124,
+    "checksums_sha256": "b47797dba3c332702075db758239e7f56d6887f9a1fea82e803dc0695a3cd1ab",
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "profiles_completed": 0,
+    "profiles_expected": 12,
+    "complete_written": false
+  },
+  "failure_adjudication": {
+    "classification": "EXTERNAL_QUALIFICATION_HELPER_LAYER_SELECTION_ERROR_SUPPORTED",
+    "incorrect_measurement_layer": "adapter_fields_spatial_after_global_truncated_spectral_projection",
+    "authoritative_measurement_layer": "direct_conditioning_operator_output_before_spectral_projection",
+    "frozen_invariant": "localized conditioning leaves every interior entry of the unconditioned homogeneous remainder byte-identical",
+    "reason": "a wall-local construction change may be redistributed globally by the truncated spectral projection, so post-projection adapter fields do not measure conditioning-policy locality",
+    "source_implementation_failure_supported": false,
+    "scientific_failure_supported": false,
+    "cuda_failure_supported": false,
+    "restart_failure_supported": false,
+    "performance_failure_supported": false,
+    "scientific_contract_relaxed": false
+  },
+  "immutable_v1_support": {
+    "profile_runner": "benchmarks/profile_rc437_plane_runtime.py",
+    "profile_runner_sha256": "4852642e1f7fad04df14d95e97eb18ad6dd790eecbf8d9ba2bb77aac0eaacad6",
+    "failed_cuda_runner": "benchmarks/qualify_rc437_lifting_cuda.py",
+    "failed_cuda_runner_sha256": "a291e301a34501115d7eb261720c68d88437638ae86f99c51b72dac9f47fd8e5",
+    "failed_analyzer": "benchmarks/analyze_rc437_lifting_h100.py",
+    "failed_analyzer_sha256": "011c3f7cfeac2c10835b13eaaf5c3696cf6653081ca149ad8f953f6fb3546908",
+    "files_modified_by_recovery": false
+  },
+  "recovery_support": {
+    "cuda_correctness_runner": "benchmarks/qualify_rc437_lifting_cuda_recovery.py",
+    "cuda_correctness_runner_sha256": "7bc54dc13b78c8a07ef289d2eb7a9d81582a0e21aa1f70c04345402eb3bb60c9",
+    "analyzer": "benchmarks/analyze_rc437_lifting_h100_recovery.py",
+    "analyzer_sha256": "56340ecb934a5ed68506b13ab88b6544b8e3a431dd0d2ba522b30dd0179897dd",
+    "cuda_schema": "pssolver.rc4_3_7.lifting_cuda_correctness.v2",
+    "analysis_schema": "pssolver.rc4_3_7.lifting_h100_analysis.v2",
+    "direct_cuda_component_identity_required": true,
+    "post_projection_comparison_role": "diagnostic_only",
+    "legacy_cuda_schema_rejected": true,
+    "wrong_measurement_layer_rejected": true,
+    "post_projection_gate_promotion_rejected": true
+  },
+  "unchanged_contract": {
+    "frozen_inputs_unchanged": true,
+    "profile_matrix_unchanged": true,
+    "performance_thresholds_unchanged": true,
+    "memory_thresholds_unchanged": true,
+    "wall_residual_threshold_unchanged": true,
+    "cpu_cuda_relative_l2_threshold_unchanged": true,
+    "restart_byte_identity_unchanged": true,
+    "public_lifted_plane_reopened": false,
+    "localized_policy_publicly_qualified": false,
+    "production_default_changed": false,
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false
+  },
+  "local_cpu_gate": {
+    "targeted": {
+      "passed": 69,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_suite": {
+      "passed": 3043,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "elapsed_seconds": 202.62
+    },
+    "pytest_cache_disabled": true,
+    "bytecode_disabled": true
+  },
+  "future_h100_recovery": {
+    "requires_separate_explicit_authorization": true,
+    "formal_submission_limit": 1,
+    "automatic_retry": false,
+    "reuse_failed_job_as_pass": false,
+    "execution_order": [
+      "validate the failed archive checksum without modifying it",
+      "validate Git identities, helper hashes, frozen inputs, worktrees, and empty recovery scratch",
+      "persist decomposed H100, import, TF32, and host-compiler observations before enforcement",
+      "run the seven CUDA-only tests",
+      "run the v2 candidate CUDA correctness and same-version restart gate",
+      "run a fresh balanced 12-profile A/B matrix",
+      "run the v2 fail-closed aggregate analyzer",
+      "archive checksums and write COMPLETE only after every gate passes"
+    ]
+  },
+  "successful_classification": "PASS_RC4_3_7_INTERNAL_LIFTING_SINGLE_H100_CLOSURE",
+  "authorization": {
+    "local_recovery_support_authorized_by_user": true,
+    "push_authorized": false,
+    "h100_recovery_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false
+  }
+}

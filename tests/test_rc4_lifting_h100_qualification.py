@@ -20,18 +20,31 @@ from benchmarks.analyze_rc437_lifting_h100 import (
     TRIALS,
     analyze,
 )
+from benchmarks.analyze_rc437_lifting_h100_recovery import (
+    SCHEMA as RECOVERY_ANALYSIS_SCHEMA,
+    analyze as analyze_recovery,
+)
 from benchmarks.profile_rc437_plane_runtime import SCHEMA as PROFILE_SCHEMA
 from benchmarks.qualify_rc437_lifting_cuda import (
     PASS as CUDA_PASS,
     SCHEMA as CUDA_SCHEMA,
     _build,
+    _initial,
     _wall_residual,
+)
+from benchmarks.qualify_rc437_lifting_cuda_recovery import (
+    MEASUREMENT_LAYER,
+    SCHEMA as RECOVERY_CUDA_SCHEMA,
+    _direct_conditioning_evidence,
 )
 from pssolver.workflows.plane_checkpoint import capture_plane_checkpoint
 
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "notes/PSSolver_v0_2_0rc4_rc437_h100_qualification_plan.json"
+RECOVERY_PLAN = (
+    ROOT / "notes/PSSolver_v0_2_0rc4_rc437_h100_recovery_plan.json"
+)
 BASELINE = "1b15bf856cb6597ae709ee7496cde96d0b2cc7d1"
 CANDIDATE = "e1dea73c5d0f00e097599c4ff2c94ed7dceaa915"
 
@@ -42,6 +55,10 @@ def _sha256(path: Path) -> str:
 
 def _plan() -> dict[str, object]:
     return json.loads(PLAN.read_text(encoding="utf-8"))
+
+
+def _recovery_plan() -> dict[str, object]:
+    return json.loads(RECOVERY_PLAN.read_text(encoding="utf-8"))
 
 
 def _profile(
@@ -128,6 +145,50 @@ def _analyze(tmp_path: Path, baseline=None, candidate=None, cuda=None):
     )
 
 
+def _recovery_cuda(candidate_root: Path) -> dict[str, object]:
+    report = _cuda(candidate_root)
+    report["schema"] = RECOVERY_CUDA_SCHEMA
+    report["fresh_conditioning"].update(
+        {
+            "measurement_layer": MEASUREMENT_LAYER,
+            "cuda": {
+                "measurement_layer": MEASUREMENT_LAYER,
+                "components": {
+                    name: {
+                        "interior_byte_identical_to_unconditioned": True,
+                        "transition_region_changed": True,
+                    }
+                    for name in ("Qxx", "Qxy", "Qxz", "Qyy", "Qyz")
+                },
+            },
+            "post_projection_diagnostic": {
+                "measurement_layer": (
+                    "adapter_fields_spatial_after_global_truncated_"
+                    "spectral_projection"
+                ),
+                "qualification_gate": False,
+                "all_interior_byte_identical_to_unconditioned": False,
+            },
+        }
+    )
+    return report
+
+
+def _analyze_recovery(tmp_path: Path, cuda=None):
+    baseline_root = tmp_path / "baseline"
+    candidate_root = tmp_path / "candidate"
+    report = _recovery_cuda(candidate_root) if cuda is None else cuda
+    return analyze_recovery(
+        _profiles("baseline", root=baseline_root),
+        _profiles("candidate", root=candidate_root),
+        report,
+        baseline_commit=BASELINE,
+        candidate_commit=CANDIDATE,
+        baseline_root=baseline_root,
+        candidate_root=candidate_root,
+    )
+
+
 def test_rc437_plan_freezes_honest_claim_boundary_and_single_job():
     plan = _plan()
     assert plan["source_identity"]["baseline_commit"] == BASELINE
@@ -159,6 +220,30 @@ def test_rc437_plan_binds_tools_inputs_and_master_contract():
     }
 
 
+def test_rc437_recovery_plan_preserves_v1_and_binds_v2_support():
+    plan = _recovery_plan()
+    assert _sha256(ROOT / plan["source_identity"]["original_plan"]) == plan[
+        "source_identity"
+    ]["original_plan_sha256"]
+    for name in ("profile_runner", "failed_cuda_runner", "failed_analyzer"):
+        relative = plan["immutable_v1_support"][name]
+        assert _sha256(ROOT / relative) == plan["immutable_v1_support"][
+            f"{name}_sha256"
+        ]
+    for name in ("cuda_correctness_runner", "analyzer"):
+        relative = plan["recovery_support"][name]
+        assert _sha256(ROOT / relative) == plan["recovery_support"][
+            f"{name}_sha256"
+        ]
+    assert plan["failure_adjudication"]["scientific_contract_relaxed"] is False
+    assert plan["recovery_support"]["post_projection_comparison_role"] == (
+        "diagnostic_only"
+    )
+    assert plan["authorization"]["push_authorized"] is False
+    assert plan["authorization"]["h100_recovery_submission_authorized"] is False
+    assert plan["future_h100_recovery"]["automatic_retry"] is False
+
+
 def test_rc437_analyzer_accepts_complete_evidence(tmp_path):
     result = _analyze(tmp_path)
     assert result["classification"] == PASS
@@ -185,6 +270,85 @@ def test_rc437_cuda_helper_cpu_reference_construction_and_provenance():
     assert "fresh_initial_remainder_conditioning" not in (
         checkpoint.lifting_restart["lifting"]
     )
+
+
+def test_rc437_recovery_measures_locality_at_the_direct_operator_output():
+    _, adapter = _build(
+        device="cpu",
+        apply_fresh=True,
+        pointwise_execution="eager",
+    )
+    evidence, conditioned = _direct_conditioning_evidence(
+        adapter.solver.model.static_lifting_runtime,
+        _initial((8, 8, 8)),
+    )
+
+    assert evidence["measurement_layer"] == MEASUREMENT_LAYER
+    assert evidence["interior_byte_identical_to_unconditioned"] is True
+    assert evidence["transition_region_changed"] is True
+    assert evidence["interior_cell_count"] == 6
+    assert evidence["transition_cell_count"] == 2
+    assert tuple(conditioned.shape) == (5, 8, 8, 8)
+    assert all(
+        component["interior_byte_identical_to_unconditioned"] is True
+        for component in evidence["components"].values()
+    )
+
+
+def test_rc437_recovery_analyzer_accepts_nonidentical_post_projection_diagnostic(
+    tmp_path,
+):
+    result = _analyze_recovery(tmp_path)
+
+    assert result["schema"] == RECOVERY_ANALYSIS_SCHEMA
+    assert result["classification"] == PASS
+    assert result["cuda_correctness"]["measurement_layer"] == MEASUREMENT_LAYER
+    assert result["cuda_correctness"]["post_projection_role"] == (
+        "diagnostic_only"
+    )
+    assert result["qualification_recovery"]["runtime_source_changed"] is False
+    assert result["qualification_recovery"]["scientific_contract_relaxed"] is False
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    (
+        (
+            lambda report: report["fresh_conditioning"].update(
+                {"measurement_layer": "adapter.fields.spatial"}
+            ),
+            "measurement layer differs",
+        ),
+        (
+            lambda report: report["fresh_conditioning"].update(
+                {"interior_byte_identical_to_unconditioned": False}
+            ),
+            "direct conditioning interior changed",
+        ),
+        (
+            lambda report: report["fresh_conditioning"][
+                "post_projection_diagnostic"
+            ].update({"qualification_gate": True}),
+            "became a qualification gate",
+        ),
+    ),
+)
+def test_rc437_recovery_analyzer_rejects_wrong_layer_or_relaxed_gate(
+    tmp_path,
+    mutation,
+    message,
+):
+    candidate_root = tmp_path / "candidate"
+    report = _recovery_cuda(candidate_root)
+    mutation(report)
+    with pytest.raises(ValueError, match=message):
+        _analyze_recovery(tmp_path, cuda=report)
+
+
+def test_rc437_recovery_analyzer_rejects_legacy_cuda_schema(tmp_path):
+    candidate_root = tmp_path / "candidate"
+    with pytest.raises(ValueError, match="recovery schema differs"):
+        _analyze_recovery(tmp_path, cuda=_cuda(candidate_root))
 
 
 def test_rc437_analyzer_rejects_missing_duplicate_or_changed_dynamics(tmp_path):
