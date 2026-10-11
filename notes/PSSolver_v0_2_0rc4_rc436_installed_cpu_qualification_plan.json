@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.3.6 installed-wheel lifting CPU closure plan",
+  "phase": "RC4.3.6",
+  "status": "ready_for_execution",
+  "classification": "READY_RC4_3_6_INSTALLED_WHEEL_LIFTING_CPU_CLOSURE",
+  "source_identity": {
+    "runtime_source_commit": "e1dea73c5d0f00e097599c4ff2c94ed7dceaa915",
+    "branch": "fix/v0.2.0rc4-audit",
+    "predecessor_record": "notes/PSSolver_v0_2_0rc4_rc435_runtime_checkpoint_integration.json",
+    "predecessor_record_sha256": "a96b5d103813ad558b6e13a52054e2dba5a2e72bf462606ba0500abe0e29d8ec",
+    "phase_plan": "notes/PSSolver_v0_2_0rc4_rc430_lifting_correctness_plan.json",
+    "phase_plan_sha256": "3742ea254678a6156fd6ae14039adda427bce30d0019480aa2bf4ff42fe57aa8"
+  },
+  "build_contract": {
+    "source_acquisition": "git_archive_from_exact_qualification_support_commit",
+    "wheel_build": "pip_wheel_no_deps_no_build_isolation",
+    "venv": "fresh_venv_with_system_site_packages_for_frozen_dependencies",
+    "wheel_install": "pip_install_no_deps",
+    "pip_check_required": true,
+    "pssolver_import_from_venv_purelib": true,
+    "source_shadow_import_forbidden": true,
+    "network_required": false,
+    "nematics3d_install_modify_or_remove_allowed": false
+  },
+  "source_gate": {
+    "test_file": "tests/test_rc4_lifting_installed_wheel.py",
+    "expected_tests": 11,
+    "failed_allowed": 0,
+    "skipped_allowed": 0,
+    "xfailed_allowed": 0
+  },
+  "installed_wheel_gate": {
+    "runner": "benchmarks/run_rc436_installed_lifting_closure.py",
+    "test_file": "tests/test_rc4_lifting_installed_wheel.py",
+    "expected_tests": 11,
+    "failed_allowed": 0,
+    "skipped_allowed": 0,
+    "xfailed_allowed": 0,
+    "atomic_JSON": true,
+    "existing_output_overwrite_allowed": false
+  },
+  "independent_oracle": {
+    "kind": "field_neutral_static_lifting_pipeline_manufactured_diffusion",
+    "wall_points": [16, 32, 64],
+    "required_error_ordering": "strictly_decreasing",
+    "minimum_adjacent_order": 1.95,
+    "uses_publicly_rejected_lifted_Beris_Edwards_path": false,
+    "interpretation": "qualifies the field-neutral lifting pipeline; does not reopen the fail-closed public lifted Plane capability"
+  },
+  "behavioral_matrix": [
+    "public lifted Plane rejects before output for both runtimes and both molecular-field requests",
+    "public homogeneous-Neumann Plane preserves requested/effective molecular-field space without fallback",
+    "field-neutral lifting plan/materialization/runtime pipeline has second-order manufactured convergence",
+    "localized quintic conditioning is deterministic, fresh-only, and byte-identical outside the physical transition width",
+    "same-version internal lifted Plane 4-step continuous and 2+2 file restart states are byte-identical"
+  ],
+  "post_installed_gates": {
+    "full_source_CPU_suite_required": true,
+    "cuda_only_deselect_count": 7,
+    "git_diff_check_required": true,
+    "worktree_clean_required": true
+  },
+  "qualification_boundary": {
+    "public_lifted_Plane_remains_fail_closed": true,
+    "localized_policy_publicly_qualified": false,
+    "runtime_hot_path_change_authorized": false,
+    "checkpoint_acceptance_change_authorized": false,
+    "H100_authorized": false,
+    "PSSolver_Control_change_authorized": false,
+    "nematics3d_change_authorized": false,
+    "production_default_change_authorized": false,
+    "push_authorized": false,
+    "release_authorized": false
+  },
+  "qualification_sources": {
+    "benchmarks/run_rc436_installed_lifting_closure.py": "bfde190822e5431bc820b9682984813edaa31cdb6d92ae9c6368b7a5892d0351",
+    "tests/test_rc4_lifting_installed_wheel.py": "3045a7df9162b103736906daf1963e021ab273aca1743ee4646657890de06631",
+    "tests/test_run_rc436_installed_lifting_closure.py": "bb9821a17cc8f3b3ae7a1d98a306f86ca7d1988c45367ee5a677a5b4399f1d65"
+  }
+}
