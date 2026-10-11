@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.3.6 installed-wheel lifting CPU closure",
+  "phase": "RC4.3.6",
+  "status": "complete",
+  "classification": "PASS_RC4_3_6_INSTALLED_WHEEL_LIFTING_CPU_CLOSURE",
+  "git_identity": {
+    "runtime_source_commit": "e1dea73c5d0f00e097599c4ff2c94ed7dceaa915",
+    "qualification_support_commit": "72225698005897cbc8559a17628c387f7a20b3a6",
+    "branch": "fix/v0.2.0rc4-audit",
+    "predecessor_record": "notes/PSSolver_v0_2_0rc4_rc435_runtime_checkpoint_integration.json",
+    "predecessor_record_sha256": "a96b5d103813ad558b6e13a52054e2dba5a2e72bf462606ba0500abe0e29d8ec",
+    "qualification_plan": "notes/PSSolver_v0_2_0rc4_rc436_installed_cpu_qualification_plan.json",
+    "qualification_plan_sha256": "397e463030e73075f3e13df89c931bd61234cf2287528bdb788012caaae4d136"
+  },
+  "artifact_identity": {
+    "control_directory": "/home/fansenwei/pssolver_rc436_installed_cpu_7222569_20261010_v1",
+    "source_archive_sha256": "752baa62b1a4b0caf7b46326e374da9f5ed4cecd050cbdf61de96d3e73fbf971",
+    "wheel_sha256": "56d7fd22395c225c0fc8fbaa9b126405af6057b3f96db9a1f779cb2e85d95988",
+    "installed_result": "results/installed_wheel_closure.json",
+    "installed_result_sha256": "7b6eee3340331cce3637a22e0ff5205b3581fff15ae0e7c3df823d1ca42c5c69",
+    "independent_oracle": "results/independent_oracle.json",
+    "independent_oracle_sha256": "01bfa70a765f6ecd36e0b19cb0a5811cceca0d67d13cfe7a3e701bdab51cd1c6",
+    "manifest_entries": 23,
+    "manifest_verification": "23/23 PASS",
+    "checksums_sha256": "6958b80060ff8b4be4e3a07d375a7df5f134aa2745184c2dfb5e0254964b51a5",
+    "complete_present": true
+  },
+  "installed_wheel_gate": {
+    "classification": "PASS_RC4_3_6_INSTALLED_WHEEL_LIFTING_CPU_CLOSURE",
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "collection_errors": 0,
+    "pip_check": "pass",
+    "pssolver_import": "/home/fansenwei/pssolver_rc436_installed_cpu_7222569_20261010_v1/venv/lib/python3.12/site-packages/pssolver/__init__.py",
+    "source_shadow_import": false,
+    "python": "3.12.13",
+    "pssolver_version": "0.2.0rc3",
+    "torch": "2.6.0+cu126",
+    "numpy": "2.4.6",
+    "scipy": "1.15.1",
+    "pytest": "9.1.1",
+    "nematics3d_installed": false,
+    "network_used": false
+  },
+  "source_verification": {
+    "qualification_runner_unit_tests_passed": 5,
+    "dedicated_source_tests_passed": 11,
+    "full_CPU_suite": {
+      "passed": 3025,
+      "skipped": 0,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "failed": 0,
+      "xfailed": 0,
+      "elapsed_seconds": 200.99
+    },
+    "git_diff_check": "pass"
+  },
+  "independent_convergence": {
+    "classification": "PASS_RC4_3_6_FIELD_NEUTRAL_LIFTING_PIPELINE_CONVERGENCE",
+    "wall_points": [16, 32, 64],
+    "errors": [
+      0.005598158649073774,
+      0.0014008891512969812,
+      0.0003503066853420365
+    ],
+    "adjacent_orders": [
+      1.9986095691699255,
+      1.9996523773159034
+    ],
+    "minimum_required_adjacent_order": 1.95,
+    "public_lifted_Beris_Edwards_qualified": false
+  },
+  "behavioral_closure": {
+    "public_lifted_Plane_fail_closed": "PASS_4_OF_4_RUNTIME_AND_SPACE_COMBINATIONS",
+    "public_homogeneous_Neumann_requested_effective_identity": "PASS_4_OF_4_RUNTIME_AND_SPACE_COMBINATIONS",
+    "localized_quintic_fresh_only_interior_identity": "PASS",
+    "same_version_internal_lifted_file_restart": "PASS_BYTE_IDENTICAL_4_STEP_VS_2_PLUS_2",
+    "field_neutral_pipeline_convergence": "PASS_SECOND_ORDER",
+    "public_lifting_capability_reopened": false,
+    "localized_policy_publicly_qualified": false
+  },
+  "bootstrap_history": {
+    "pre_collection_failures": 2,
+    "first": "offline dependency materialization omitted the _pytest package",
+    "second": "offline dependency materialization omitted the py.py compatibility shim",
+    "formal_result_written_before_dependency_closure": false,
+    "solver_failure": false,
+    "scientific_failure": false
+  },
+  "qualification_source_sha256": {
+    "benchmarks/run_rc436_installed_lifting_closure.py": "bfde190822e5431bc820b9682984813edaa31cdb6d92ae9c6368b7a5892d0351",
+    "tests/test_rc4_lifting_installed_wheel.py": "3045a7df9162b103736906daf1963e021ab273aca1743ee4646657890de06631",
+    "tests/test_run_rc436_installed_lifting_closure.py": "bb9821a17cc8f3b3ae7a1d98a306f86ca7d1988c45367ee5a677a5b4399f1d65"
+  },
+  "scope": {
+    "runtime_hot_path_changed": false,
+    "checkpoint_acceptance_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "eligibility": {
+    "qualification_complete": true,
+    "rc4_3_6_complete": true,
+    "eligible_for_rc4_3_7_planning": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false
+  },
+  "authorization": {
+    "rc4_3_6_authorized_by_user": true,
+    "rc4_3_7_H100_authorized": false,
+    "push_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false
+  }
+}
