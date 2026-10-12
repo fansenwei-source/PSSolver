@@ -1,0 +1,50 @@
+{
+  "schema": "pssolver.rc4_4_7.python310_h100_recovery_plan.v5",
+  "phase": "RC4.4.7-recovery-v5",
+  "status": "READY_FOR_SINGLE_H100_SUBMISSION",
+  "baseline_provider_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+  "candidate_provider_commit": "5b4ee16c81a3ae452ffcf8992a84a738a76ff629",
+  "candidate_runtime_parent": "b94aa54d32b2a55da029d8b48ca669b2f3ce9b0f",
+  "consumer_source_commit": "0cf55b4fb699ff40433000f5b4efe52b1d33546b",
+  "baseline_provider_wheel_sha256": "9c99ebcdc2e03b2c61b5bc3a5d84d97e99775f488409e2e61f5c06e009695e61",
+  "candidate_provider_wheel_sha256": "6f38996c31586ff7b2a0637de5ff479410bbd01bb53926828071affaf5d4cf26",
+  "consumer_wheel_sha256": "068dc2f3d3be5b8eee96169711878a71bb4e513b452cdcc2fa54dd67c124b96d",
+  "compatibility_fix_record": {
+    "path": "notes/PSSolver_v0_2_0rc4_rc447_python310_compatibility_recovery.json",
+    "sha256": "952f1b00ab1faf1db329d319699fd9bd0872dd5008bd17305f84394cc96e0145"
+  },
+  "failed_v4_evidence": {
+    "job_id": "10875720",
+    "classification": "FAIL_RC4_4_7_PROVIDER_PYTHON_3_10_MATH_EXP2_COMPATIBILITY",
+    "control_directory": "/home/fansenwei/pssolver_rc447_pressure_h100_dc8c87a_0cf55b4_20261012_recovery_v4",
+    "checksums_sha256": "74f7ed2f912c4420c18ed7ef9dec1285aab92677ef515b1826d06aa72232ff9d"
+  },
+  "qualification_support_successors": {
+    "benchmarks/analyze_rc447_pressure_h100.py": {
+      "historical_sha256": "a9c047423c4fe198af6efda0a9cd50fde931c7966cce5c4f03a16baba897d907",
+      "current_sha256": "a971bbe28888671a354eacdc8841419c382cc91a85629f65c332773063c3a2fc",
+      "change_scope": "candidate_identity_only",
+      "reason": "bind the analyzer to the Python-3.10-compatible Provider source commit and its freshly built wheel"
+    },
+    "benchmarks/qualify_rc447_pressure_cuda.py": {
+      "historical_sha256": "803bc5495b200958b2286e0f79ef4a56fe96edad4e060bbd2a181cfe33c93e11",
+      "current_sha256": "aa4af5d37c42b9c2273656976f1b102fb343f418c0415a9a9b5981b1b71ae53f",
+      "change_scope": "candidate_identity_only",
+      "reason": "bind candidate correctness evidence to the Python-3.10-compatible Provider source commit and wheel"
+    }
+  },
+  "thresholds_changed": false,
+  "scientific_contract_changed": false,
+  "profile_matrix_changed": false,
+  "correctness_matrix_changed": false,
+  "production_default_changed": false,
+  "PSSolver_Control_modified": false,
+  "nematics3d_modified": false,
+  "formal_h100_submission_limit": 1,
+  "automatic_retry": false,
+  "authorization": {
+    "push_authorized": true,
+    "single_h100_submission_authorized": true,
+    "automatic_retry_authorized": false
+  }
+}

@@ -30,11 +30,11 @@ GRIDS = {
 TRIALS = (1, 2, 3)
 COMMITS = {
     "baseline": "5071d73a00e0d19be62ebd39edf9918818d1267a",
-    "candidate": "dc8c87abc7b216231d09ca12fcc7e76b2249a7ab",
+    "candidate": "5b4ee16c81a3ae452ffcf8992a84a738a76ff629",
 }
 WHEELS = {
     "baseline": "9c99ebcdc2e03b2c61b5bc3a5d84d97e99775f488409e2e61f5c06e009695e61",
-    "candidate": "814c8a22252b290f7ebd3a249ebaa63152ec978d2726a7eaf82946ec64901ca7",
+    "candidate": "6f38996c31586ff7b2a0637de5ff479410bbd01bb53926828071affaf5d4cf26",
 }
 THRESHOLDS = {
     "mean_timestep_ratio_max": 1.05,

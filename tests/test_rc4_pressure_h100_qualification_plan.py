@@ -9,6 +9,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "notes/PSSolver_v0_2_0rc4_rc447_h100_qualification_plan.json"
+RECOVERY = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_python310_h100_recovery_v5.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -165,6 +170,9 @@ def test_rc447_plan_freezes_single_job_and_requires_later_authorization():
 
 def test_rc447_plan_binds_the_local_qualification_support_by_hash():
     support = _record()["qualification_support"]
+    successors = json.loads(RECOVERY.read_text(encoding="utf-8"))[
+        "qualification_support_successors"
+    ]
     assert support["implementation_scope"] == (
         "qualification_only_no_solver_or_runtime_change"
     )
@@ -176,7 +184,32 @@ def test_rc447_plan_binds_the_local_qualification_support_by_hash():
     assert support["execution_started"] is False
     assert support["h100_job_submitted"] is False
     for relative, expected in support["files"].items():
-        assert _sha256(relative) == expected
+        actual = _sha256(relative)
+        if actual == expected:
+            continue
+        successor = successors[relative]
+        assert successor["historical_sha256"] == expected
+        assert successor["current_sha256"] == actual
+        assert successor["change_scope"] == "candidate_identity_only"
+
+
+def test_rc447_python310_recovery_binds_candidate_without_changing_thresholds():
+    recovery = json.loads(RECOVERY.read_text(encoding="utf-8"))
+
+    assert recovery["phase"] == "RC4.4.7-recovery-v5"
+    assert recovery["candidate_provider_commit"] == (
+        "5b4ee16c81a3ae452ffcf8992a84a738a76ff629"
+    )
+    assert recovery["candidate_provider_wheel_sha256"] == (
+        "6f38996c31586ff7b2a0637de5ff479410bbd01bb53926828071affaf5d4cf26"
+    )
+    assert recovery["consumer_source_commit"] == (
+        "0cf55b4fb699ff40433000f5b4efe52b1d33546b"
+    )
+    assert recovery["thresholds_changed"] is False
+    assert recovery["scientific_contract_changed"] is False
+    assert recovery["formal_h100_submission_limit"] == 1
+    assert recovery["automatic_retry"] is False
 
 
 def test_rc447_plan_stops_on_incomplete_or_inferred_evidence():
