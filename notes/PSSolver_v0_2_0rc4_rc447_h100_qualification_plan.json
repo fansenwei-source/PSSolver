@@ -3,8 +3,8 @@
   "record": "PSSolver RC4.4.7 single-H100 cumulative Channel pressure closure plan",
   "phase": "RC4.4.7",
   "date": "2026-10-12",
-  "status": "PLANNING_COMPLETE_EXECUTION_SUPPORT_NOT_IMPLEMENTED_H100_NOT_AUTHORIZED",
-  "classification": "READY_TO_IMPLEMENT_RC4_4_7_QUALIFICATION_SUPPORT",
+  "status": "LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED",
+  "classification": "READY_FOR_RC4_4_7_CPU_PREFLIGHT_AND_SEPARATE_H100_AUTHORIZATION",
   "source_identity": {
     "provider_repository": "https://github.com/fansenwei-source/PSSolver",
     "provider_branch": "fix/v0.2.0rc4-audit",
@@ -46,6 +46,48 @@
       "path_in_consumer_commit": "docs/pssolver_v0_2_0rc3_h100_qualification.json",
       "sha256": "5b07a7dfdbbf6a0deace47d9a8ae63f7cb5bb6b521b2fd91d55005858cd100f7"
     }
+  },
+  "qualification_support": {
+    "implementation_scope": "qualification_only_no_solver_or_runtime_change",
+    "installed_package_shadow_protection": "external support root contains benchmarks but no pssolver package",
+    "profile_count": 12,
+    "balanced_profile_order": [
+      "A/B",
+      "B/A",
+      "A/B"
+    ],
+    "isolated_compiler_cache_per_profile": true,
+    "atomic_json_no_overwrite": true,
+    "fail_closed_analyzer": true,
+    "files": {
+      "benchmarks/profile_rc447_channel_pressure.py": "d86a64de9d74676fb4f8e461232f333fa003805f01657c9accd7a6a28b1119f2",
+      "benchmarks/run_rc447_cuda_tests.py": "ab3a42aedba9f5a0f6b2ad9945eb1ea7918129ba30162602299428f9cc90b281",
+      "benchmarks/qualify_rc447_pressure_cuda.py": "803bc5495b200958b2286e0f79ef4a56fe96edad4e060bbd2a181cfe33c93e11",
+      "benchmarks/analyze_rc447_pressure_h100.py": "a9c047423c4fe198af6efda0a9cd50fde931c7966cce5c4f03a16baba897d907",
+      "benchmarks/plan_rc447_pressure_h100.py": "888bdd6cd717531907d5e2e7a54ad6c19c580c1e73cef0682803c372b2bce964",
+      "tests/test_rc447_pressure_h100_support.py": "49a0ed06ee4d682eff716763053f87fbd7f1bdc26af2f04589146b4cf68a9836"
+    },
+    "synthetic_test_result": {
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0
+    },
+    "related_pressure_test_result": {
+      "passed": 95,
+      "failed": 0
+    },
+    "full_cpu_test_result": {
+      "passed": 3165,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "seconds": 204.77,
+      "environment": "/home/fansenwei/anaconda3/envs/Nematics3D/bin/python"
+    },
+    "execution_started": false,
+    "h100_job_submitted": false
   },
   "artifact_contract": {
     "installed_wheels_only": true,
@@ -237,7 +279,7 @@
   },
   "authorization": {
     "local_planning_authorized_by_user": true,
-    "qualification_support_implementation_authorized": false,
+    "qualification_support_implementation_authorized": true,
     "push_authorized": false,
     "h100_submission_authorized": false,
     "automatic_retry_authorized": false,

@@ -23,7 +23,7 @@ def test_rc447_plan_binds_exact_provider_consumer_sources_and_records():
     record = _record()
     assert record["phase"] == "RC4.4.7"
     assert record["status"] == (
-        "PLANNING_COMPLETE_EXECUTION_SUPPORT_NOT_IMPLEMENTED_H100_NOT_AUTHORIZED"
+        "LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED"
     )
     identity = record["source_identity"]
     assert identity["provider_baseline_commit"] == (
@@ -154,9 +154,29 @@ def test_rc447_plan_freezes_single_job_and_requires_later_authorization():
     }
     authorization = record["authorization"]
     assert authorization["local_planning_authorized_by_user"] is True
+    assert authorization["qualification_support_implementation_authorized"] is True
     for key, value in authorization.items():
-        if key != "local_planning_authorized_by_user":
+        if key not in {
+            "local_planning_authorized_by_user",
+            "qualification_support_implementation_authorized",
+        }:
             assert value is False, key
+
+
+def test_rc447_plan_binds_the_local_qualification_support_by_hash():
+    support = _record()["qualification_support"]
+    assert support["implementation_scope"] == (
+        "qualification_only_no_solver_or_runtime_change"
+    )
+    assert support["profile_count"] == 12
+    assert support["balanced_profile_order"] == ["A/B", "B/A", "A/B"]
+    assert support["isolated_compiler_cache_per_profile"] is True
+    assert support["atomic_json_no_overwrite"] is True
+    assert support["fail_closed_analyzer"] is True
+    assert support["execution_started"] is False
+    assert support["h100_job_submitted"] is False
+    for relative, expected in support["files"].items():
+        assert _sha256(relative) == expected
 
 
 def test_rc447_plan_stops_on_incomplete_or_inferred_evidence():
