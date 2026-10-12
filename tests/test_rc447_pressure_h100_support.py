@@ -379,6 +379,45 @@ def test_command_plan_has_balanced_unique_profiles_and_installed_interpreters(
     assert plan["analyzer_command"]["stage"] == 4
 
 
+def test_command_plan_preserves_distinct_venv_python_symlinks(tmp_path):
+    base_python = tmp_path / "base" / "python3.10"
+    base_python.parent.mkdir(parents=True)
+    base_python.write_text("#!/bin/sh\n", encoding="utf-8")
+    baseline_python = tmp_path / "venv_a" / "bin" / "python"
+    candidate_python = tmp_path / "venv_b" / "bin" / "python"
+    for path in (baseline_python, candidate_python):
+        path.parent.mkdir(parents=True)
+        path.symlink_to(base_python)
+    support = tmp_path / "support"
+    for relative in SUPPORT_FILES:
+        path = support / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("# frozen support\n", encoding="utf-8")
+    consumer = tmp_path / "consumer"
+    provider = tmp_path / "provider"
+    consumer.mkdir()
+    provider.mkdir()
+
+    plan = build_plan(
+        baseline_python=baseline_python,
+        candidate_python=candidate_python,
+        support_root=support,
+        output_root=tmp_path / "results",
+        consumer_root=consumer,
+        provider_test_root=provider,
+    )
+
+    assert plan["roles"]["baseline"]["python"] == str(baseline_python.absolute())
+    assert plan["roles"]["candidate"]["python"] == str(candidate_python.absolute())
+    assert plan["roles"]["baseline"]["python"] != plan["roles"]["candidate"]["python"]
+    assert plan["cuda_test_command"]["argv"][0] == str(candidate_python.absolute())
+    assert plan["correctness_command"]["argv"][0] == str(candidate_python.absolute())
+    assert plan["analyzer_command"]["argv"][0] == str(candidate_python.absolute())
+    assert {
+        command["argv"][0] for command in plan["profile_commands"]
+    } == {str(baseline_python.absolute()), str(candidate_python.absolute())}
+
+
 def test_command_plan_refuses_support_root_that_can_shadow_pssolver(tmp_path):
     baseline_python = tmp_path / "a-python"
     candidate_python = tmp_path / "b-python"

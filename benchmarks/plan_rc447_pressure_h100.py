@@ -35,8 +35,17 @@ ORDER = (("baseline", "candidate"), ("candidate", "baseline"), ("baseline", "can
 
 
 def _ordinary_file(path: Path, name: str) -> Path:
-    path = path.expanduser().resolve()
-    if not path.is_file() or path.is_symlink():
+    # A venv's ``bin/python`` is normally a symlink to its base interpreter.
+    # Resolving that symlink before constructing argv discards the venv prefix
+    # and makes independently installed A/B wheels indistinguishable.  Keep
+    # the absolute invocation path while validating that its final target is
+    # an ordinary file.
+    path = path.expanduser().absolute()
+    try:
+        target = path.resolve(strict=True)
+    except (FileNotFoundError, RuntimeError) as error:
+        raise ValueError(f"{name} must resolve to an ordinary file: {path}") from error
+    if not path.is_file() or not target.is_file():
         raise ValueError(f"{name} must be an ordinary file: {path}")
     return path
 
