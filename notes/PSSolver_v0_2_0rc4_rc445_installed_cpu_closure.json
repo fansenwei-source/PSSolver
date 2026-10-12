@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.4.5 Provider source and installed-wheel pressure CPU closure",
+  "phase": "RC4.4.5",
+  "status": "complete",
+  "classification": "PASS_RC4_4_5_PROVIDER_SOURCE_AND_INSTALLED_WHEEL_PRESSURE_CPU_CLOSURE",
+  "git_identity": {
+    "runtime_source_commit": "dc8c87abc7b216231d09ca12fcc7e76b2249a7ab",
+    "qualification_support_commit": "115067817244858eb77a164aae4ef90759af9a2a",
+    "branch": "fix/v0.2.0rc4-audit",
+    "predecessor_record": "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json",
+    "predecessor_record_sha256": "c0c1b72d12bceea7a5fd9c5bd7b58487791e3d0618c2fc491bc59d7ecb189466",
+    "qualification_plan": "notes/PSSolver_v0_2_0rc4_rc445_installed_cpu_qualification_plan.json",
+    "qualification_plan_sha256": "7457981116133e39e58522cadd47bc052313e09c2483dabdb0b8994b0981a5c8"
+  },
+  "artifact_identity": {
+    "control_directory": "/home/fansenwei/pssolver_rc445_installed_cpu_1150678_20261012_v1",
+    "source_archive_sha256": "560121c0c63aa9f8e26ce96605cfff89eec2ab482c30337fa1853f0993d53e35",
+    "wheel_sha256": "814c8a22252b290f7ebd3a249ebaa63152ec978d2726a7eaf82946ec64901ca7",
+    "installed_result": "results/installed_wheel_closure.json",
+    "installed_result_sha256": "ae8cb451a07d231b9a825ac4b8ab756da5b892e6caca91b813a72ed56965b487",
+    "manifest_entries": 23,
+    "manifest_verification": "23/23 PASS",
+    "checksums_sha256": "0c08b1cf6ed4237c4c6135bc9725d105c60a02b305afd4dedafabfe5aa31fa0d",
+    "complete_present": true
+  },
+  "installed_wheel_gate": {
+    "classification": "PASS_RC4_4_5_INSTALLED_WHEEL_PRESSURE_CPU_CLOSURE",
+    "passed": 85,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "collection_errors": 0,
+    "pip_check": "pass",
+    "pssolver_import": "/home/fansenwei/pssolver_rc445_installed_cpu_1150678_20261012_v1/venv/lib/python3.12/site-packages/pssolver/__init__.py",
+    "source_shadow_import": false,
+    "python": "3.12.13",
+    "pssolver_version": "0.2.0rc3",
+    "torch": "2.6.0+cu126",
+    "numpy": "2.4.6",
+    "scipy": "1.15.1",
+    "pytest": "9.1.1",
+    "nematics3d_installed": false,
+    "network_used": false
+  },
+  "source_verification": {
+    "qualification_runner_unit_tests_passed": 5,
+    "dedicated_source_tests_passed": 85,
+    "full_CPU_suite": {
+      "passed": 3138,
+      "skipped": 0,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "failed": 0,
+      "xfailed": 0,
+      "elapsed_seconds": 204.30
+    },
+    "git_diff_check": "pass",
+    "worktree_clean_including_ignored": true
+  },
+  "pressure_closure": {
+    "B25_scale_robust_primal_and_transpose": "PASS_PROVIDER_SOURCE_AND_INSTALLED_WHEEL_CPU",
+    "B28_capability_metadata_truth": "PASS_DECLARATION_RUNTIME_IDENTITY",
+    "B29_fixed_and_tolerance_policy": "PASS_UNAMBIGUOUS_PUBLIC_AND_RUNTIME_SEMANTICS",
+    "pressure_convergence_schema_version": 2,
+    "pressure_transpose_protocol_version": "2",
+    "implicit_pressure_adjoint_version": "2",
+    "production_forward_identity": "channel.production.forward.v4",
+    "functional_forward_identity": "channel.functional.forward.v4",
+    "functional_derivative_identity": "channel.functional.derivative.v4",
+    "same_version_checkpoint_round_trip": "PASS",
+    "stale_or_tampered_identity_rejection": "PASS_BEFORE_TENSOR_LOAD_AND_TARGET_MUTATION",
+    "consumer_requalification_executed": false,
+    "h100_requalification_executed": false
+  },
+  "qualification_source_sha256": {
+    "benchmarks/run_rc445_installed_pressure_closure.py": "35bbe2a6d5da131413d3c810f818a2eaf7255cb397b672f994622f5e5643ff75",
+    "tests/test_run_rc445_installed_pressure_closure.py": "ca3033bdbb612daad36355440d9d2005f1d30949aad8339bbdd80a4f9c355eb4",
+    "tests/test_rc4_pressure_policy_implementation.py": "7e634ea7503a4f1939e2cfae15ae446679e2a35701a45797834ffdc10a5a3d40",
+    "tests/test_rc4_pressure_metadata_identity_connection.py": "aa3567082fda3a669ebca484555894150ad1dc650745d198c9e463089011d6bc",
+    "tests/test_phase9_p972_channel_pressure_transpose.py": "22e1a713f49677e49090217001ee08f56726b2aa00c7e7ee7d8cac964f77f4ae",
+    "tests/test_phase9_p973_channel_pressure_implicit_adjoint.py": "5affcd0e40f79078712aa20071b2008e1b7538424ede1e2c119025f9be9155f8",
+    "tests/test_phase9_p974_channel_functional_runtime.py": "7abcf56c97e367708d5c21fb014a2892418ed13bed5cb2d2d73402e9e9ad827f"
+  },
+  "scope": {
+    "runtime_hot_path_changed_by_RC4_4_5": false,
+    "checkpoint_acceptance_changed_by_RC4_4_5": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "eligibility": {
+    "qualification_complete": true,
+    "rc4_4_5_complete": true,
+    "eligible_for_rc4_4_6_planning": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false
+  },
+  "authorization": {
+    "rc4_4_5_authorized_by_user": true,
+    "rc4_4_6_consumer_change_authorized": false,
+    "rc4_4_7_H100_authorized": false,
+    "push_authorized": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false
+  }
+}
