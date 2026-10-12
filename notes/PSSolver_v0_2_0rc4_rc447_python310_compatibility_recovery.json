@@ -1,0 +1,70 @@
+{
+  "schema": "pssolver.rc4_4_7.python310_compatibility_recovery.v1",
+  "phase": "RC4.4.7-recovery",
+  "status": "cpu_qualified_h100_requalification_pending",
+  "classification": "PASS_RC4_4_7_PYTHON_3_10_COMPATIBILITY_FIX_CPU",
+  "failure_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc447_pressure_h100_dc8c87a_0cf55b4_20261012_recovery_v4",
+    "checksums_sha256": "74f7ed2f912c4420c18ed7ef9dec1285aab92677ef515b1826d06aa72232ff9d",
+    "job_id": "10875720",
+    "exception_type": "AttributeError",
+    "exception_message": "module 'math' has no attribute 'exp2'",
+    "python": "3.10.18"
+  },
+  "failed_h100_job_id": "10875720",
+  "failed_h100_classification": "FAIL_RC4_4_7_PROVIDER_PYTHON_3_10_MATH_EXP2_COMPATIBILITY",
+  "repair": {
+    "scope": "provider_runtime_compatibility_only",
+    "old_expression": "math.exp2(difference)",
+    "new_expression": "math.pow(2.0, difference)",
+    "python_requires": ">=3.10",
+    "version_branch_added": false,
+    "overflow_contract_changed": false,
+    "zero_contract_changed": false,
+    "underflow_contract_changed": false,
+    "pressure_algorithm_changed": false,
+    "model_equations_changed": false
+  },
+  "successor_sources": {
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "historical_sha256": "d77b29b0834a35e8e8d41d31cad75018765272880570ce8cb293f359774aeb75",
+      "current_sha256": "012f1fc77b66b7cc328c2b325ff10a3a4512e2aedc5e6b31433a66d423ce1d8d",
+      "introduced_by_phase": "RC4.4.7-recovery",
+      "reason": "replace the Python-3.11-only math.exp2 call with the Python-3.10-compatible math.pow base-two equivalent while preserving the frozen ratio and failure contracts"
+    }
+  },
+  "qualification_sources": {
+    "tests/test_rc447_python310_compatibility.py": "3a8fa986323dae2ebfb1345028e48f2d69432967234129b92e65db94c602ae2d"
+  },
+  "validation": {
+    "focused_rc4_4_CPU": {
+      "passed": 121,
+      "failed": 0
+    },
+    "full_CPU": {
+      "passed": 3170,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "failed": 0
+    },
+    "python_3_10_18_smoke": {
+      "math_exp2_present": false,
+      "ordinary_ratio": "PASS",
+      "overflow_contract": "PASS",
+      "minimum_subnormal_contract": "PASS",
+      "underflow_contract": "PASS"
+    }
+  },
+  "completion": {
+    "python_3_10_runtime_compatibility_fixed": true,
+    "focused_CPU_tests_passed": true,
+    "full_CPU_suite_passed": true,
+    "H100_requalified": false,
+    "rc4_4_7_complete": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  }
+}

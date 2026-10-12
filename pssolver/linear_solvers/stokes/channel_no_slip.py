@@ -311,7 +311,10 @@ def channel_pressure_magnitude_ratio(
         return 0.0
     difference = float(numerator.log2_value) - float(denominator.log2_value)
     try:
-        value = math.exp2(difference)
+        # ``math.exp2`` is unavailable on supported Python 3.10.  ``math.pow``
+        # preserves the same base-two ratio and overflow contract across all
+        # supported Python versions without introducing a version branch.
+        value = math.pow(2.0, difference)
     except OverflowError as exc:
         raise ValueError("normalized pressure magnitude is not finite") from exc
     if not math.isfinite(value):
