@@ -1,0 +1,250 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.4.7 single-H100 cumulative Channel pressure closure plan",
+  "phase": "RC4.4.7",
+  "date": "2026-10-12",
+  "status": "PLANNING_COMPLETE_EXECUTION_SUPPORT_NOT_IMPLEMENTED_H100_NOT_AUTHORIZED",
+  "classification": "READY_TO_IMPLEMENT_RC4_4_7_QUALIFICATION_SUPPORT",
+  "source_identity": {
+    "provider_repository": "https://github.com/fansenwei-source/PSSolver",
+    "provider_branch": "fix/v0.2.0rc4-audit",
+    "provider_baseline_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+    "provider_candidate_runtime_commit": "dc8c87abc7b216231d09ca12fcc7e76b2249a7ab",
+    "provider_cpu_closure_record_commit": "908b3b72ac4625543349f3f752b485fa970efd6a",
+    "provider_planning_parent": "908b3b72ac4625543349f3f752b485fa970efd6a",
+    "consumer_repository": "https://github.com/fansenwei-source/PSSolver-Control",
+    "consumer_baseline_source_commit": "03dbc39975978d9d0b7f84965015da24f9d3c206",
+    "consumer_baseline_record_commit": "c4b50e63cafba14d1985fbe4a71aa78212eaf050",
+    "consumer_candidate_runtime_commit": "f112833ec13895f836b9953fb5a15bf752f24cbe",
+    "consumer_candidate_source_commit": "0cf55b4fb699ff40433000f5b4efe52b1d33546b",
+    "consumer_cpu_closure_record_commit": "c7e7f8631d94c98bd6fa92192e0b806ac25c912c",
+    "consumer_branch": "migration/pssolver-v0.2.0rc4-pressure-v4",
+    "consumer_remote_tip_at_planning": "c7e7f8631d94c98bd6fa92192e0b806ac25c912c"
+  },
+  "predecessor_records": {
+    "master_plan": {
+      "path": "notes/PSSolver_v0_2_0rc4_rc440_pressure_contract_plan.json",
+      "sha256": "11eef6e67ccf040462ee982a60817ff65bb04e4c13b554aab199d1382d43bb10"
+    },
+    "pressure_contract": {
+      "path": "notes/PSSolver_v0_2_0rc4_rc442_pressure_contract.json",
+      "sha256": "98cb05bb9e34617ae8bb1a4a7eab531a9ccfb5a73728a7de50c71b1674eafdf8"
+    },
+    "provider_cpu_closure": {
+      "path": "notes/PSSolver_v0_2_0rc4_rc445_installed_cpu_closure.json",
+      "sha256": "e455e89d968424cf220a4fbd3b6c6e8f4585334e630871b04a97ed81640d0467"
+    },
+    "consumer_migration": {
+      "path_in_consumer_commit": "docs/pssolver_v0_2_0rc4_pressure_v4_migration.json",
+      "sha256": "3e2e4bbcffeca3761a9511e1d3a15b629b41069cfd650924eb5fcc793727ea58"
+    },
+    "consumer_cpu_closure": {
+      "path_in_consumer_commit": "docs/pssolver_v0_2_0rc4_pressure_v4_cpu_closure.json",
+      "sha256": "f949107b3cf1b11ec08c1b31e16fcc630cc134c6be71542a8038ed017e0c5be4"
+    },
+    "baseline_consumer_h100": {
+      "path_in_consumer_commit": "docs/pssolver_v0_2_0rc3_h100_qualification.json",
+      "sha256": "5b07a7dfdbbf6a0deace47d9a8ae63f7cb5bb6b521b2fd91d55005858cd100f7"
+    }
+  },
+  "artifact_contract": {
+    "installed_wheels_only": true,
+    "provider_baseline_wheel_sha256": "9c99ebcdc2e03b2c61b5bc3a5d84d97e99775f488409e2e61f5c06e009695e61",
+    "provider_candidate_wheel_sha256": "814c8a22252b290f7ebd3a249ebaa63152ec978d2726a7eaf82946ec64901ca7",
+    "consumer_baseline_wheel_sha256": "48a452a53dabff90eae50da74b7beb46d5a3fee90c0337fba1341e13cbf0da5b",
+    "consumer_candidate_wheel_sha256": "068dc2f3d3be5b8eee96169711878a71bb4e513b452cdcc2fa54dd67c124b96d",
+    "fresh_isolated_venvs": true,
+    "install_with_no_deps": true,
+    "pip_check_required": true,
+    "source_shadow_import_forbidden": true,
+    "nematics3d_required": false,
+    "nematics3d_modification_forbidden": true
+  },
+  "candidate_pressure_contract": {
+    "functional_api_version": "1.0",
+    "consumer_adapter_schema": "pssolver_control.adapters.pssolver_channel.activity",
+    "consumer_adapter_version": 3,
+    "convergence_schema_version": 2,
+    "diagnostics_schema_version": 2,
+    "pressure_transpose_protocol": "2",
+    "implicit_pressure_adjoint": "2",
+    "inner_solve_gradient": "custom_implicit_pressure_adjoint_v2",
+    "production_forward": "channel.production.forward.v4",
+    "functional_forward": "channel.functional.forward.v4",
+    "functional_derivative": "channel.functional.derivative.v4",
+    "functional_initial_guess": "zero_every_call",
+    "functional_warm_start": false,
+    "production_warm_start_preserved": true
+  },
+  "candidate_correctness_matrix": {
+    "dtype": "float64",
+    "device": "cuda:0",
+    "batch_size": 1,
+    "convergence_modes": [
+      "fixed_work",
+      "relative_tolerance"
+    ],
+    "pressure_scale_exponents": [
+      -600,
+      0,
+      600
+    ],
+    "pressure_scale_shapes": [
+      [7, 6, 5],
+      [8, 6, 4],
+      [9, 8, 6]
+    ],
+    "solve_actions": [
+      "production_primal",
+      "functional_primal",
+      "functional_transpose"
+    ],
+    "gradient_gates": [
+      "custom_adjoint_against_unrolled_autograd",
+      "central_finite_difference",
+      "resolution_aware_Taylor",
+      "checkpointed_against_full_history"
+    ],
+    "restart_gates": [
+      "production_fixed_work_same_version_continuous_split_file_exact",
+      "production_tolerance_same_version_continuous_split_file_exact",
+      "functional_fixed_work_same_version_continuous_split_file_exact",
+      "functional_tolerance_same_version_continuous_split_file_exact"
+    ],
+    "negative_gates": [
+      "old_production_forward_identity_rejected_before_tensor_load_and_target_mutation",
+      "old_functional_forward_identity_rejected_before_tensor_load_and_target_mutation",
+      "old_functional_derivative_identity_rejected_before_tensor_load_and_target_mutation",
+      "tampered_pressure_policy_or_version_rejected_before_tensor_load_and_target_mutation"
+    ],
+    "finite_required": true,
+    "runtime_fallback_allowed": false,
+    "compile_fallback_allowed": false,
+    "graph_breaks_allowed": 0
+  },
+  "performance_matrix": {
+    "roles": [
+      "baseline",
+      "candidate"
+    ],
+    "runtime_path": "legacy_channel",
+    "pressure_mode": "relative_tolerance",
+    "pressure_relative_tolerance": 1e-06,
+    "pressure_max_iterations": 80,
+    "pressure_fixed_iterations": null,
+    "dtype": "float32",
+    "device_argument": "cuda",
+    "allocated_device": "cuda:0",
+    "lengths": [32.0, 5.0, 5.0],
+    "grids": [
+      {
+        "id": "R128x20x20",
+        "shape": [128, 20, 20]
+      },
+      {
+        "id": "R512x40x40",
+        "shape": [512, 40, 40]
+      }
+    ],
+    "trials_per_role_and_grid": 3,
+    "balanced_order": [
+      "A/B",
+      "B/A",
+      "A/B"
+    ],
+    "warmup_steps": 10,
+    "profile_steps": 50,
+    "completed_steps": 60,
+    "forward_transforms_per_step": 11.0,
+    "inverse_transforms_per_step": 36.0,
+    "paired_initial_state_sha_equal": true,
+    "paired_final_state_sha_equal_when_pressure_iteration_and_termination_paths_match": true,
+    "raw_pressure_iteration_and_termination_history_required": true
+  },
+  "thresholds": {
+    "scale_covariance_relative_l2_max": 2e-11,
+    "primal_transpose_inner_product_relative_error_max": 2e-13,
+    "pcg_vs_dense_relative_l2_max": 5e-12,
+    "normwise_backward_error_max": 5e-14,
+    "custom_vjp_vs_unrolled_relative_l2_max": 3e-13,
+    "central_finite_difference_max_relative_error": 2e-05,
+    "checkpointed_full_history_gradient_relative_l2_max": 1e-12,
+    "taylor_min_resolved_levels": 3,
+    "taylor_r0_slope_range": [0.8, 1.2],
+    "taylor_r1_slope_range": [1.8, 2.2],
+    "mean_candidate_over_baseline_timestep_max": 1.05,
+    "median_candidate_over_baseline_timestep_max": 1.05,
+    "every_paired_candidate_over_baseline_timestep_max": 1.1,
+    "peak_allocated_candidate_over_baseline_max": 1.05,
+    "peak_reserved_role": "diagnostic_only"
+  },
+  "h100_environment": {
+    "gpu_name": "NVIDIA H100 PCIe",
+    "visible_cuda_device_count": 1,
+    "torch_cuda_available": true,
+    "tf32_matmul": false,
+    "tf32_cudnn": false,
+    "decomposed_preflight_required": true,
+    "host_compiler": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/gcc",
+    "host_cxx_compiler": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/g++",
+    "isolated_triton_and_torchinductor_caches_per_profile": true
+  },
+  "slurm": {
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "gres": "gpu:H100:1",
+    "cpus_per_task": 8,
+    "memory": "64G",
+    "time_limit": "01:00:00",
+    "requeue": false,
+    "formal_submission_limit": 1,
+    "automatic_retry": false
+  },
+  "execution_order": [
+    "verify Provider and Consumer Git identities, predecessor manifests, clean detached worktrees and empty scratch",
+    "build source archives and wheels from the exact qualified source commits and verify the frozen artifact digests",
+    "create fresh isolated A and B environments, install both wheels with --no-deps, run pip check and reject source shadow imports",
+    "run qualification-support compile, import, synthetic, schema, serialization and command-plan preflight on CPU",
+    "persist decomposed H100, import, TF32, compiler and allocated-device observations before enforcement",
+    "run the exact login-node CUDA-only tests on the H100 with no failure, skip, xfail or deselect",
+    "run the candidate fixed-work and tolerance correctness, scale, adjoint, checkpoint and negative gates",
+    "run twelve balanced fresh-process A/B production profiles with isolated compiler caches",
+    "run the fail-closed cumulative analyzer, reverify worktrees and manifests, then write COMPLETE"
+  ],
+  "stop_conditions": [
+    "Git, artifact, archive, wheel, import, schema, environment, device, TF32, compiler, worktree, scratch or provenance mismatch",
+    "any unauthorized CPU or CUDA failure, skip, xfail or deselect",
+    "any scale, primal, transpose, diagnostics, gradient, finite-difference, Taylor, checkpoint, restart, old identity, negative or target-nonmutation gate failure",
+    "any runtime fallback, compile fallback, graph break, transform-count, performance or allocated-memory gate failure",
+    "OOM, NaN, Inf, CUDA error, missing or duplicate report, non-atomic result, attempted overwrite or inferred unpersisted value",
+    "any automatic retry or threshold change after formal evidence is observed"
+  ],
+  "successful_classification": "PASS_RC4_4_7_CHANNEL_PRESSURE_SINGLE_H100_CUMULATIVE_CLOSURE",
+  "success_state": {
+    "rc4_4_7_complete": true,
+    "rc4_4_complete": true,
+    "B25_closed_verified": true,
+    "B28_closed_verified": true,
+    "B29_closed_verified": true,
+    "eligible_for_rc4_5_planning": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false,
+    "larger_batch_qualified": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false
+  },
+  "authorization": {
+    "local_planning_authorized_by_user": true,
+    "qualification_support_implementation_authorized": false,
+    "push_authorized": false,
+    "h100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "merge_authorized": false,
+    "default_promotion_authorized": false,
+    "release_authorized": false,
+    "PSSolver_Control_runtime_change_authorized": false,
+    "nematics3d_change_authorized": false
+  }
+}

@@ -1,0 +1,173 @@
+"""Frozen RC4.4.7 cumulative Channel-pressure H100 plan."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+PLAN = ROOT / "notes/PSSolver_v0_2_0rc4_rc447_h100_qualification_plan.json"
+
+
+def _record() -> dict[str, object]:
+    return json.loads(PLAN.read_text(encoding="utf-8"))
+
+
+def _sha256(relative: str) -> str:
+    return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def test_rc447_plan_binds_exact_provider_consumer_sources_and_records():
+    record = _record()
+    assert record["phase"] == "RC4.4.7"
+    assert record["status"] == (
+        "PLANNING_COMPLETE_EXECUTION_SUPPORT_NOT_IMPLEMENTED_H100_NOT_AUTHORIZED"
+    )
+    identity = record["source_identity"]
+    assert identity["provider_baseline_commit"] == (
+        "5071d73a00e0d19be62ebd39edf9918818d1267a"
+    )
+    assert identity["provider_candidate_runtime_commit"] == (
+        "dc8c87abc7b216231d09ca12fcc7e76b2249a7ab"
+    )
+    assert identity["consumer_baseline_source_commit"] == (
+        "03dbc39975978d9d0b7f84965015da24f9d3c206"
+    )
+    assert identity["consumer_candidate_source_commit"] == (
+        "0cf55b4fb699ff40433000f5b4efe52b1d33546b"
+    )
+    assert identity["consumer_cpu_closure_record_commit"] == (
+        "c7e7f8631d94c98bd6fa92192e0b806ac25c912c"
+    )
+
+    records = record["predecessor_records"]
+    for key in ("master_plan", "pressure_contract", "provider_cpu_closure"):
+        assert _sha256(records[key]["path"]) == records[key]["sha256"]
+
+
+def test_rc447_plan_requires_only_installed_artifacts_and_preserves_scope():
+    record = _record()
+    artifacts = record["artifact_contract"]
+    assert artifacts == {
+        "installed_wheels_only": True,
+        "provider_baseline_wheel_sha256": (
+            "9c99ebcdc2e03b2c61b5bc3a5d84d97e99775f488409e2e61f5c06e009695e61"
+        ),
+        "provider_candidate_wheel_sha256": (
+            "814c8a22252b290f7ebd3a249ebaa63152ec978d2726a7eaf82946ec64901ca7"
+        ),
+        "consumer_baseline_wheel_sha256": (
+            "48a452a53dabff90eae50da74b7beb46d5a3fee90c0337fba1341e13cbf0da5b"
+        ),
+        "consumer_candidate_wheel_sha256": (
+            "068dc2f3d3be5b8eee96169711878a71bb4e513b452cdcc2fa54dd67c124b96d"
+        ),
+        "fresh_isolated_venvs": True,
+        "install_with_no_deps": True,
+        "pip_check_required": True,
+        "source_shadow_import_forbidden": True,
+        "nematics3d_required": False,
+        "nematics3d_modification_forbidden": True,
+    }
+    success = record["success_state"]
+    assert success["eligible_for_automatic_merge"] is False
+    assert success["eligible_for_default_promotion"] is False
+    assert success["production_default_changed"] is False
+    assert success["larger_batch_qualified"] is False
+    assert success["optimizer_campaign_authorized"] is False
+    assert success["scientific_control_result"] is False
+
+
+def test_rc447_plan_freezes_pressure_identity_and_correctness_matrix():
+    record = _record()
+    pressure = record["candidate_pressure_contract"]
+    assert pressure["functional_api_version"] == "1.0"
+    assert pressure["consumer_adapter_version"] == 3
+    assert pressure["convergence_schema_version"] == 2
+    assert pressure["diagnostics_schema_version"] == 2
+    assert pressure["pressure_transpose_protocol"] == "2"
+    assert pressure["implicit_pressure_adjoint"] == "2"
+    assert pressure["inner_solve_gradient"] == (
+        "custom_implicit_pressure_adjoint_v2"
+    )
+    assert pressure["functional_warm_start"] is False
+    assert pressure["production_warm_start_preserved"] is True
+
+    matrix = record["candidate_correctness_matrix"]
+    assert matrix["convergence_modes"] == ["fixed_work", "relative_tolerance"]
+    assert matrix["pressure_scale_exponents"] == [-600, 0, 600]
+    assert matrix["pressure_scale_shapes"] == [[7, 6, 5], [8, 6, 4], [9, 8, 6]]
+    assert set(matrix["solve_actions"]) == {
+        "production_primal",
+        "functional_primal",
+        "functional_transpose",
+    }
+    assert len(matrix["restart_gates"]) == 4
+    assert len(matrix["negative_gates"]) == 4
+    assert matrix["runtime_fallback_allowed"] is False
+    assert matrix["compile_fallback_allowed"] is False
+    assert matrix["graph_breaks_allowed"] == 0
+
+
+def test_rc447_plan_freezes_profile_matrix_and_thresholds_before_h100():
+    record = _record()
+    profiles = record["performance_matrix"]
+    assert profiles["roles"] == ["baseline", "candidate"]
+    assert [item["shape"] for item in profiles["grids"]] == [
+        [128, 20, 20],
+        [512, 40, 40],
+    ]
+    assert profiles["trials_per_role_and_grid"] == 3
+    assert profiles["balanced_order"] == ["A/B", "B/A", "A/B"]
+    assert profiles["completed_steps"] == 60
+    assert profiles["forward_transforms_per_step"] == 11.0
+    assert profiles["inverse_transforms_per_step"] == 36.0
+
+    thresholds = record["thresholds"]
+    assert thresholds["checkpointed_full_history_gradient_relative_l2_max"] == 1e-12
+    assert thresholds["central_finite_difference_max_relative_error"] == 2e-5
+    assert thresholds["taylor_min_resolved_levels"] == 3
+    assert thresholds["taylor_r0_slope_range"] == [0.8, 1.2]
+    assert thresholds["taylor_r1_slope_range"] == [1.8, 2.2]
+    assert thresholds["mean_candidate_over_baseline_timestep_max"] == 1.05
+    assert thresholds["median_candidate_over_baseline_timestep_max"] == 1.05
+    assert thresholds["peak_allocated_candidate_over_baseline_max"] == 1.05
+    assert thresholds["peak_reserved_role"] == "diagnostic_only"
+
+
+def test_rc447_plan_freezes_single_job_and_requires_later_authorization():
+    record = _record()
+    slurm = record["slurm"]
+    assert slurm == {
+        "partition": "hagan-gpu",
+        "account": "hagan-lab",
+        "qos": "medium",
+        "gres": "gpu:H100:1",
+        "cpus_per_task": 8,
+        "memory": "64G",
+        "time_limit": "01:00:00",
+        "requeue": False,
+        "formal_submission_limit": 1,
+        "automatic_retry": False,
+    }
+    authorization = record["authorization"]
+    assert authorization["local_planning_authorized_by_user"] is True
+    for key, value in authorization.items():
+        if key != "local_planning_authorized_by_user":
+            assert value is False, key
+
+
+def test_rc447_plan_stops_on_incomplete_or_inferred_evidence():
+    record = _record()
+    execution = " ".join(record["execution_order"])
+    stops = " ".join(record["stop_conditions"])
+    assert "decomposed H100" in execution
+    assert "twelve balanced" in execution
+    assert "old identity" in stops
+    assert "inferred unpersisted value" in stops
+    assert "automatic retry" in stops
+    assert record["successful_classification"] == (
+        "PASS_RC4_4_7_CHANNEL_PRESSURE_SINGLE_H100_CUMULATIVE_CLOSURE"
+    )
