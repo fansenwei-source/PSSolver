@@ -100,11 +100,15 @@ def test_solver_satisfies_the_explicit_pressure_transpose_protocol():
         "transpose_action": "explicit_reverse_dataflow_conjugate_transpose",
         "transpose_solve": "zero_initial_guess_pcg",
         "production_pressure_warm_start_read": False,
-        "production_pressure_warm_start_written": False,
-        "pcg_iteration_graph_retained": False,
-        "custom_autograd_rule": False,
-        "functional_runtime_executable": False,
-    }
+            "production_pressure_warm_start_written": False,
+            "pcg_iteration_graph_retained": False,
+            "component_role": "pressure_transpose_operator",
+            "component_is_runtime": False,
+            "component_connected_to_executable_runtime": True,
+            "connected_runtime_kind": "channel_activity_batch_one",
+            "custom_autograd_rule": False,
+            "public_explicit_vjp_method": False,
+        }
 
 
 def test_primal_and_transpose_actions_are_complex_linear_and_zero_gauge():

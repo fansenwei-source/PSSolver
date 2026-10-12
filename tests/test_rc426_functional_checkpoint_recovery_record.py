@@ -13,6 +13,9 @@ RECORD = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc426_functional_checkpoint_recovery.json"
 )
+RC444 = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -59,7 +62,15 @@ def test_rc426_recovery_registers_exact_historical_successors():
     for relative, registration in successors.items():
         assert registration["introduced_by_phase"] == "RC4.2.6 recovery"
         assert registration["historical_sha256"] != registration["current_sha256"]
-        assert _sha256(relative) == registration["current_sha256"]
+        actual = _sha256(relative)
+        if actual == registration["current_sha256"]:
+            continue
+        latest = json.loads(RC444.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ][relative]
+        assert latest["historical_sha256"] == registration["current_sha256"]
+        assert latest["current_sha256"] == actual
+        assert latest["introduced_by_phase"] == "RC4.4.4"
 
 
 def test_rc426_recovery_contract_is_device_neutral_but_fail_closed():

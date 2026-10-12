@@ -10,6 +10,9 @@ from pssolver.configuration.channel_beris_edwards import (
     CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
     ChannelBerisEdwardsRunSpec,
 )
+from pssolver.configuration.channel_active_nematics_declarations import (
+    channel_pressure_policy_metadata,
+)
 from pssolver.configuration.execution_device import validate_execution_device
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
@@ -227,6 +230,14 @@ def compile_channel_beris_edwards_public_simulation(
             ],
             "molecular_field_space_fallback_used": False,
             "runtime_fallback_allowed": False,
+            "pressure_solver_policy": channel_pressure_policy_metadata(
+                relative_tolerance=pressure["relative_tolerance"],
+                max_iterations=pressure["max_iterations"],
+                fixed_iterations=pressure["fixed_iterations"],
+                initial_guess_policy=(
+                    "persistent_production_warm_start"
+                ),
+            ),
         },
     )
 

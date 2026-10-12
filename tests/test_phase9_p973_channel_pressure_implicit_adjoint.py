@@ -101,10 +101,15 @@ def test_implicit_pressure_adjoint_protocol_and_nonclaims_are_explicit():
         "production_pressure_warm_start_written": False,
         "forward_iteration_tensors_saved": 0,
         "backward_iteration_tensors_saved": 0,
-        "higher_order_derivatives": False,
-        "unrolled_oracle": "small_grid_cpu_fixed_iteration_only",
-        "functional_runtime_executable": False,
-    }
+            "higher_order_derivatives": False,
+            "unrolled_oracle": "small_grid_cpu_fixed_iteration_only",
+            "component_role": "implicit_pressure_adjoint",
+            "component_is_runtime": False,
+            "component_connected_to_executable_runtime": True,
+            "connected_runtime_kind": "channel_activity_batch_one",
+            "custom_autograd_rule": True,
+            "public_explicit_vjp_method": False,
+        }
 
     with pytest.raises(TypeError, match="ChannelNoSlipModalStokesSolver"):
         ChannelImplicitPressureAdjoint(object())

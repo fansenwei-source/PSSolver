@@ -31,6 +31,9 @@ from pssolver.io.checkpoint_identity import (
 from pssolver.configuration.channel_beris_edwards import (
     ChannelBerisEdwardsRunSpec,
 )
+from pssolver.configuration.channel_active_nematics_declarations import (
+    channel_pressure_policy_metadata,
+)
 from pssolver.models.active_nematics import Q_COMPONENTS, VELOCITY_COMPONENTS
 from pssolver.runtime.channel_beris_edwards import (
     CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
@@ -198,17 +201,30 @@ def _channel_run_spec_dynamics(
 def channel_forward_dynamics_identity(
     run_spec: ChannelBerisEdwardsRunSpec,
 ) -> CheckpointIdentityLayer:
+    pressure = dict(
+        run_spec.simulation.discretization_parameters["pressure_solver"]
+    )
     return CheckpointIdentityLayer(
         kind=IdentityLayerKind.FORWARD_DYNAMICS,
-        version="channel.production.forward.v3",
+        version="channel.production.forward.v4",
         payload={
             "run_spec_dynamics": _channel_run_spec_dynamics(run_spec),
+            "pressure_solver_policy": channel_pressure_policy_metadata(
+                relative_tolerance=pressure["relative_tolerance"],
+                max_iterations=pressure["max_iterations"],
+                fixed_iterations=pressure["fixed_iterations"],
+                initial_guess_policy=(
+                    "persistent_production_warm_start"
+                ),
+            ),
+            "pressure_convergence_schema_version": 2,
             "dynamics_versions": {
                 "q_evolution": "complete_stress_beris_edwards.v1",
                 "forward_stokes_nyquist": (
                     "channel_no_slip.periodic_nyquist_zero.v2"
                 ),
-                "pressure_warm_start": "pcg_persistent_guess.v1",
+                "pressure_warm_start": "pcg_persistent_guess.v2",
+                "pressure_policy": "channel_pressure_policy.v1",
                 "spectral_refresh": "projected_euler_refresh.v1",
             },
         },

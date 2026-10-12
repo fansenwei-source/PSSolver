@@ -451,7 +451,12 @@ class ChannelImplicitPressureAdjoint:
             "backward_iteration_tensors_saved": 0,
             "higher_order_derivatives": False,
             "unrolled_oracle": "small_grid_cpu_fixed_iteration_only",
-            "functional_runtime_executable": False,
+            "component_role": "implicit_pressure_adjoint",
+            "component_is_runtime": False,
+            "component_connected_to_executable_runtime": True,
+            "connected_runtime_kind": "channel_activity_batch_one",
+            "custom_autograd_rule": True,
+            "public_explicit_vjp_method": False,
         }
 
     def pressure_solve_metadata(self) -> dict[str, object]:

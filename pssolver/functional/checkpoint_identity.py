@@ -229,7 +229,7 @@ def build_channel_functional_checkpoint_identity(
         runtime_path="channel_activity_batch_one",
         forward_dynamics=CheckpointIdentityLayer(
             kind=IdentityLayerKind.FORWARD_DYNAMICS,
-            version="channel.functional.forward.v3",
+            version="channel.functional.forward.v4",
             payload=_forward_payload(
                 functional_identity,
                 family=CheckpointFamily.CHANNEL_FUNCTIONAL,
@@ -237,11 +237,13 @@ def build_channel_functional_checkpoint_identity(
         ),
         derivative_dynamics=CheckpointIdentityLayer(
             kind=IdentityLayerKind.DERIVATIVE_DYNAMICS,
-            version="channel.functional.derivative.v3",
+            version="channel.functional.derivative.v4",
             payload={
                 "gradient": pressure.get("gradient"),
                 "higher_order_derivatives": False,
-                "implicit_adjoint": "channel_pressure_implicit_adjoint.v1",
+                "implicit_adjoint": "channel_pressure_implicit_adjoint.v2",
+                "pressure_transpose_protocol": "2",
+                "pressure_convergence_schema_version": 2,
                 "pressure_transpose_nyquist": (
                     "project_even_periodic_plane.v2"
                 ),

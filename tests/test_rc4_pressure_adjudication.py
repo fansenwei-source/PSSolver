@@ -15,6 +15,11 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc441_pressure_adjudication.json"
 PLAN = ROOT / "notes/PSSolver_v0_2_0rc4_rc440_pressure_contract_plan.json"
 DIAGNOSTIC = ROOT / "benchmarks/diagnose_channel_pressure_contract.py"
+RC444 = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -32,7 +37,14 @@ def test_rc441_record_binds_the_plan_and_reproducible_diagnostic():
         "PASS_RC4_4_1_ACTIVE_MODE_RMS_AND_SCOPED_CAPABILITY_CONTRACT"
     )
     assert record["identity"]["rc4_4_0_plan_sha256"] == _sha256(PLAN)
-    assert record["identity"]["diagnostic_sha256"] == _sha256(DIAGNOSTIC)
+    observed = _sha256(DIAGNOSTIC)
+    historical = record["identity"]["diagnostic_sha256"]
+    assert historical != observed
+    successor = json.loads(RC444.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]["benchmarks/diagnose_channel_pressure_contract.py"]
+    assert successor["historical_sha256"] == historical
+    assert successor["current_sha256"] == observed
     assert record["completion"] == {
         "analysis_complete": True,
         "B25_formula_selected": True,
@@ -119,7 +131,7 @@ def test_dense_gradient_and_capability_truth_gates_are_live():
     assert capability["declaration_runtime_capabilities_equal"] is True
     assert capability["explicit_vjp_false_is_truthful"] is True
     assert capability["custom_autograd_adjoint_exists"] is True
-    assert capability["finding"].startswith("METADATA_REPAIR_REQUIRED")
+    assert capability["finding"].startswith("METADATA_REPAIR_COMPLETE")
     components = {
         row["subject"]: row for row in capability["truth_table"]
     }

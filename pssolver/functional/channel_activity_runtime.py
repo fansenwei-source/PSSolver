@@ -30,7 +30,9 @@ from pssolver.runtime.channel_beris_edwards import (
 from .channel_activity import (
     CHANNEL_ACTIVITY_FUNCTIONAL_KIND,
     _state_control_observation_specs,
+    channel_activity_functional_capabilities,
     channel_activity_functional_request,
+    channel_functional_pressure_identity,
 )
 from .channel_checkpoint import ChannelActivityCheckpointBridge
 from .channel_pressure_adjoint import ChannelImplicitPressureAdjoint
@@ -64,6 +66,7 @@ class ChannelActivityFunctionalRuntime:
         snapshot_sha256: str,
         production_runtime_identity_sha256: str,
         production_backend_restart: Mapping[str, object],
+        production_forward_dynamics: Mapping[str, object] | None = None,
     ) -> None:
         if not isinstance(request, FunctionalRuntimeConstructionRequest):
             raise TypeError("request must be a FunctionalRuntimeConstructionRequest")
@@ -90,18 +93,7 @@ class ChannelActivityFunctionalRuntime:
         self._observation_specs = observations
         self._flow_model = self._solver.model.static_model
         self._pressure = ChannelImplicitPressureAdjoint(self._flow_model)
-        self._capabilities = FunctionalCapabilitySet(
-            supported_batch_sizes=(1,),
-            pure_step=True,
-            combined_step_and_observe=True,
-            deterministic_replay=CHANNEL_ACTIVITY_DETERMINISTIC_REPLAY,
-            differentiability="validated_custom_adjoint",
-            durable_checkpoint_bridge=True,
-            explicit_jvp=False,
-            explicit_vjp=False,
-            inner_solve_gradient="custom_implicit_pressure_adjoint_v1",
-            differentiable_inputs=("state", "activity"),
-        )
+        self._capabilities = channel_activity_functional_capabilities()
 
         # The functional map owns no trajectory-dependent cache.  These are
         # private objects built solely for this runtime; production defaults
@@ -118,9 +110,6 @@ class ChannelActivityFunctionalRuntime:
         )
         identities = request.simulation.identity_metadata()
         execution_identity = dict(identities["execution"])
-        pressure = dict(
-            request.simulation.discretization_parameters["pressure_solver"]
-        )
         execution_identity["functional_runtime"] = {
             "kind": CHANNEL_ACTIVITY_FUNCTIONAL_KIND,
             "stage": CHANNEL_ACTIVITY_RUNTIME_STAGE,
@@ -129,26 +118,9 @@ class ChannelActivityFunctionalRuntime:
             "q_gradient_reuse": False,
             "spectral_refresh": "disabled",
             "activity_product_before_divergence": True,
-            "pressure_solver": {
-                "kind": "channel_no_slip_modal_stokes_pcg",
-                "algorithm": pressure["algorithm"],
-                "relative_tolerance": pressure["relative_tolerance"],
-                "max_iterations": pressure["max_iterations"],
-                "fixed_iterations": pressure["fixed_iterations"],
-                "stopping_precedence": (
-                    "fixed_iterations_overrides_max_iterations;"
-                    "relative_tolerance_is_early_exit_only"
-                    if pressure["fixed_iterations"] is not None
-                    else (
-                        "relative_tolerance_required_with_max_iterations_cap"
-                    )
-                ),
-                "gauge": "zero_mean",
-                "initial_guess": "zero_every_call",
-                "production_warm_start_read": False,
-                "production_warm_start_written": False,
-                "gradient": "custom_implicit_pressure_adjoint_v1",
-            },
+            "pressure_solver": channel_functional_pressure_identity(
+                request.simulation
+            ),
             "boundary_spaces": {
                 "Q": list(CHANNEL_Q_BOUNDARY_CONDITIONS),
                 "velocity": list(CHANNEL_VELOCITY_BOUNDARY_CONDITIONS),
@@ -175,6 +147,7 @@ class ChannelActivityFunctionalRuntime:
                 production_runtime_identity_sha256
             ),
             production_backend_restart=production_backend_restart,
+            production_forward_dynamics=production_forward_dynamics,
         )
 
     @property
@@ -212,7 +185,7 @@ class ChannelActivityFunctionalRuntime:
         """Return stable outcomes from the latest primal/transpose solves."""
 
         return {
-            "schema_version": 1,
+            "schema_version": 2,
             "runtime_kind": CHANNEL_ACTIVITY_FUNCTIONAL_KIND,
             "pressure": self._pressure.pressure_solve_metadata(),
         }
@@ -398,6 +371,10 @@ class ChannelActivityFunctionalRuntimeFactory:
             )
         )
         production_backend_restart = adapter.backend_restart_metadata()
+        from pssolver.workflows.channel_beris_edwards import (
+            channel_forward_dynamics_identity,
+        )
+
         return ChannelActivityFunctionalRuntime(
             request,
             adapter=adapter,
@@ -406,6 +383,9 @@ class ChannelActivityFunctionalRuntimeFactory:
                 run_spec.runtime_identity_sha256()
             ),
             production_backend_restart=production_backend_restart,
+            production_forward_dynamics=(
+                channel_forward_dynamics_identity(run_spec).to_metadata()
+            ),
         )
 
 

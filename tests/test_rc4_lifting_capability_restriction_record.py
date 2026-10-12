@@ -11,6 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc433_lifting_capability_restriction.json"
 )
+RC444 = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -90,7 +93,15 @@ def test_rc433_sources_are_content_addressed_and_scope_is_narrow():
     for relative, expected in record["source_sha256"].items():
         if relative in superseded_by_rc434:
             continue
-        assert _sha256(ROOT / relative) == expected, relative
+        actual = _sha256(ROOT / relative)
+        if actual == expected:
+            continue
+        successor = json.loads(RC444.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ][relative]
+        assert successor["historical_sha256"] == expected
+        assert successor["current_sha256"] == actual
+        assert successor["introduced_by_phase"] == "RC4.4.4"
     scope = record["scope"]
     assert all(value is False for value in scope.values())
     assert record["verification"]["H100_executed"] is False

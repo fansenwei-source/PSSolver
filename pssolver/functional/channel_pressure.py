@@ -476,8 +476,12 @@ class ChannelPressureTransposeOperator:
             "production_pressure_warm_start_read": False,
             "production_pressure_warm_start_written": False,
             "pcg_iteration_graph_retained": False,
+            "component_role": "pressure_transpose_operator",
+            "component_is_runtime": False,
+            "component_connected_to_executable_runtime": True,
+            "connected_runtime_kind": "channel_activity_batch_one",
             "custom_autograd_rule": False,
-            "functional_runtime_executable": False,
+            "public_explicit_vjp_method": False,
         }
 
     def pressure_solve_metadata(self) -> dict[str, object]:

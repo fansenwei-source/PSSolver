@@ -713,23 +713,29 @@ def _capability_truth_table() -> dict[str, object]:
         },
         {
             "subject": "implicit_adjoint_component",
-            "is_runtime": False,
-            "declares_executable_runtime": implicit[
-                "functional_runtime_executable"
+            "is_runtime": implicit["component_is_runtime"],
+            "declares_executable_runtime": implicit["component_is_runtime"],
+            "connected_to_executable_runtime": implicit[
+                "component_connected_to_executable_runtime"
             ],
-            "connected_to_executable_runtime": True,
-            "custom_autograd_adjoint": True,
-            "public_explicit_vjp_method": False,
+            "custom_autograd_adjoint": implicit["custom_autograd_rule"],
+            "public_explicit_vjp_method": implicit[
+                "public_explicit_vjp_method"
+            ],
         },
         {
             "subject": "standalone_transpose_operator_component",
-            "is_runtime": False,
+            "is_runtime": transpose["component_is_runtime"],
             "declares_executable_runtime": transpose[
-                "functional_runtime_executable"
+                "component_is_runtime"
             ],
-            "connected_to_executable_runtime": True,
-            "custom_autograd_adjoint": False,
-            "public_explicit_vjp_method": False,
+            "connected_to_executable_runtime": transpose[
+                "component_connected_to_executable_runtime"
+            ],
+            "custom_autograd_adjoint": transpose["custom_autograd_rule"],
+            "public_explicit_vjp_method": transpose[
+                "public_explicit_vjp_method"
+            ],
         },
     ]
     return {
@@ -745,8 +751,8 @@ def _capability_truth_table() -> dict[str, object]:
         },
         "truth_table": rows,
         "finding": (
-            "METADATA_REPAIR_REQUIRED: component_is_runtime and "
-            "component_connected_to_executable_runtime must replace the "
+            "METADATA_REPAIR_COMPLETE: component_is_runtime and "
+            "component_connected_to_executable_runtime replace the removed "
             "ambiguous functional_runtime_executable component boolean"
         ),
         "explicit_vjp_false_is_truthful": True,

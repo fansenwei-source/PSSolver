@@ -206,7 +206,7 @@ def test_p974_constructs_executable_pure_channel_runtime(tmp_path):
     assert capabilities.deterministic_replay == "bitwise"
     assert capabilities.differentiability == "validated_custom_adjoint"
     assert capabilities.inner_solve_gradient == (
-        "custom_implicit_pressure_adjoint_v1"
+        "custom_implicit_pressure_adjoint_v2"
     )
     assert capabilities.durable_checkpoint_bridge is True
     assert capabilities.differentiable_inputs == ("state", "activity")

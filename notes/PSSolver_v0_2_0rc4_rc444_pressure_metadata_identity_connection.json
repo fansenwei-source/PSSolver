@@ -1,0 +1,212 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.4.4 Provider Channel pressure metadata and identity connection",
+  "phase": "RC4.4.4",
+  "status": "complete",
+  "classification": "PASS_RC4_4_4_PROVIDER_PRESSURE_METADATA_AND_IDENTITY_CONNECTION",
+  "implementation_parent": "cf7431c6336bb700183d6b9862d1e32cd18f171a",
+  "frozen_contract": {
+    "path": "notes/PSSolver_v0_2_0rc4_rc442_pressure_contract.json",
+    "sha256": "98cb05bb9e34617ae8bb1a4a7eab531a9ccfb5a73728a7de50c71b1674eafdf8",
+    "classification": "PASS_RC4_4_2_PUBLIC_CHANNEL_PRESSURE_CONTRACT"
+  },
+  "predecessor": {
+    "path": "notes/PSSolver_v0_2_0rc4_rc443_pressure_policy_implementation.json",
+    "sha256": "adc018bc7751e4330ec76118b724448341bd17a2883006ba37721e3069e85ab5",
+    "classification": "PASS_RC4_4_3_PROVIDER_PRESSURE_POLICY_IMPLEMENTATION"
+  },
+  "connection": {
+    "tensor_free_declaration_policy_metadata": true,
+    "public_compiler_normalization_policy_metadata": true,
+    "public_user_input_keys_unchanged": true,
+    "unknown_derived_input_keys_rejected": true,
+    "production_runtime_public_diagnostics_schema": 2,
+    "functional_runtime_public_diagnostics_schema": 2,
+    "diagnostics_are_owned_JSON_safe_snapshots": true,
+    "declaration_runtime_capabilities_equal": true,
+    "explicit_vjp": false,
+    "differentiability": "validated_custom_adjoint",
+    "inner_solve_gradient": "custom_implicit_pressure_adjoint_v2",
+    "ambiguous_component_field_removed": "functional_runtime_executable"
+  },
+  "identity": {
+    "production_forward_dynamics": "channel.production.forward.v4",
+    "functional_forward_dynamics": "channel.functional.forward.v4",
+    "functional_derivative_dynamics": "channel.functional.derivative.v4",
+    "production_state_layout": "channel.production.state.v3",
+    "production_backend_restart": "channel.production.backend.v1",
+    "functional_state_layout": "channel.functional.state.v2",
+    "functional_backend_restart": "channel.functional.backend.v2",
+    "functional_bridge_format": 3,
+    "pressure_convergence_schema_version": 2,
+    "pressure_transpose_protocol": "2",
+    "implicit_pressure_adjoint": "2",
+    "production_initial_guess_policy": "persistent_production_warm_start",
+    "functional_initial_guess_policy": "zero_every_call",
+    "checkpoint_envelope_changed": false
+  },
+  "restart": {
+    "same_v4_functional_round_trip_exact": true,
+    "same_v4_production_split_and_file_restart_preserved": true,
+    "production_v3_to_v4_rejected_before_tensor_load": true,
+    "functional_forward_v3_to_v4_rejected_before_tensor_load": true,
+    "functional_derivative_v3_to_v4_rejected_before_tensor_load": true,
+    "production_v3_to_functional_v4_rejected_before_tensor_load": true,
+    "target_mutation_before_identity_acceptance": false,
+    "old_checkpoint_rewritten": false,
+    "silent_state_migration_added": false
+  },
+  "source_sha256": {
+    "benchmarks/diagnose_channel_pressure_contract.py": "de2e050ea2ed07380763ff1d458c9de1c0afd6a2c55088e2a1bab3f200253635",
+    "pssolver/configuration/channel_active_nematics_declarations.py": "e27538dda1dab2154db2c7e6780e0342fd228d45823eca80f2ac6ad26a0f8a96",
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": "3c68e8d0ad6ad13e576996f58b8d428f4b67babeecfcbd2aeda6ac5ace110ace",
+    "pssolver/functional/channel_activity.py": "2f2e02e3db226eb785f528734d24217fa7c77c60439900319a34050304bc33bc",
+    "pssolver/functional/channel_activity_runtime.py": "fde37ddf207afff0014b4e3a501854d8a0fb3725e185aaff842e25b30b7c1353",
+    "pssolver/functional/channel_checkpoint.py": "1afc80cb7b8978911437f7caf17bc29cf0055872dd38b3a6101f28edb1204fbe",
+    "pssolver/functional/channel_pressure.py": "70c58620370105e842fab1480b029e56eaa9c9cf1dea1c65964d7d6526852adf",
+    "pssolver/functional/channel_pressure_adjoint.py": "5b5176ded83bb3ff2b9e58de52d93f0da6e1c35337d94882dfaa464b9ee079e0",
+    "pssolver/functional/checkpoint_identity.py": "266edeecf66e22c1a65626acbf0c6d5ed343ee8fba970b889cdce845d81e0659",
+    "pssolver/runtime/channel_beris_edwards.py": "2c4ee711657222b8d91a98d4ddcbd5ef462f7cad4d540bbd65a9ab5ed784dc31",
+    "pssolver/workflows/channel_beris_edwards.py": "7c5aaf239160932e5df31194040d70723fb3aead3607cca46207581b67c4c328",
+    "tests/test_rc4_pressure_metadata_identity_connection.py": "aa3567082fda3a669ebca484555894150ad1dc650745d198c9e463089011d6bc"
+  },
+  "historical_successor_sources": {
+    "benchmarks/diagnose_channel_pressure_contract.py": {
+      "historical_sha256": "49b7baa2576c90fbf1bf4796504ceb8826d910291fd3e92c9924aef14b72f471",
+      "current_sha256": "de2e050ea2ed07380763ff1d458c9de1c0afd6a2c55088e2a1bab3f200253635",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "consume the repaired component capability schema without restoring the removed ambiguous field"
+    },
+    "pssolver/configuration/channel_active_nematics_declarations.py": {
+      "historical_sha256": "2e481783ed98f40f3abeab8850568f03f64b72751b6a58f5321609515f4155c2",
+      "current_sha256": "e27538dda1dab2154db2c7e6780e0342fd228d45823eca80f2ac6ad26a0f8a96",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "publish the frozen derived pressure policy from the tensor-free declaration while retaining the five-field user input"
+    },
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": {
+      "historical_sha256": "495ca158a6965f2ae313ad485ff75b3a0b84912b29b1c5debd99a0d4e4980a96",
+      "current_sha256": "3c68e8d0ad6ad13e576996f58b8d428f4b67babeecfcbd2aeda6ac5ace110ace",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "publish the derived pressure policy in public compilation normalization"
+    },
+    "pssolver/functional/channel_activity.py": {
+      "historical_sha256": "50c4fb0dcb1e886e3c50bd8b8bcd20f2363d384fce55e5870dac69c8c7a0eaba",
+      "current_sha256": "2f2e02e3db226eb785f528734d24217fa7c77c60439900319a34050304bc33bc",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "bind pressure policy v1, diagnostics v2, transpose v2 and implicit-adjoint v2 into the functional declaration identity"
+    },
+    "pssolver/functional/channel_activity_runtime.py": {
+      "historical_sha256": "8de38312cd780f51ab3ebd20f3c70c9df62152b946bbc919b3a1ace2788be3df",
+      "current_sha256": "fde37ddf207afff0014b4e3a501854d8a0fb3725e185aaff842e25b30b7c1353",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "make declaration and runtime capabilities identical and expose public diagnostics schema v2"
+    },
+    "pssolver/functional/channel_checkpoint.py": {
+      "historical_sha256": "9d6f2ea4931818ce574a579283224799f34cad2a9e19e0d0bc442ee9ce89cd29",
+      "current_sha256": "1afc80cb7b8978911437f7caf17bc29cf0055872dd38b3a6101f28edb1204fbe",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "enforce production forward v4 before production tensors can enter the functional bridge"
+    },
+    "pssolver/functional/channel_pressure.py": {
+      "historical_sha256": "570325d20b340e15287367bbcb14a2ba191d153b04fc999485c9c20cc2865bd5",
+      "current_sha256": "70c58620370105e842fab1480b029e56eaa9c9cf1dea1c65964d7d6526852adf",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "replace the ambiguous component runtime boolean with truthful component capability metadata"
+    },
+    "pssolver/functional/channel_pressure_adjoint.py": {
+      "historical_sha256": "b5ab764677b85d17a4435c712fc333c7b4f786840c880eb3799f290712700bf3",
+      "current_sha256": "5b5176ded83bb3ff2b9e58de52d93f0da6e1c35337d94882dfaa464b9ee079e0",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "publish truthful custom-autograd component capability metadata"
+    },
+    "pssolver/functional/checkpoint_identity.py": {
+      "historical_sha256": "0b2e5a7c57e861f33e718d3f4296c9772db3694a46ba9416a419568aa199d9fb",
+      "current_sha256": "266edeecf66e22c1a65626acbf0c6d5ed343ee8fba970b889cdce845d81e0659",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "advance Channel functional forward and derivative compatibility identities to v4"
+    },
+    "pssolver/runtime/channel_beris_edwards.py": {
+      "historical_sha256": "394ad02c61c6db4676e1e55fc2fca6faf23325246db7c1909e0b564f48e65e72",
+      "current_sha256": "2c4ee711657222b8d91a98d4ddcbd5ef462f7cad4d540bbd65a9ab5ed784dc31",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "expose immutable public production pressure diagnostics and policy metadata"
+    },
+    "pssolver/workflows/channel_beris_edwards.py": {
+      "historical_sha256": "2c8ee4fbc7a9a322b2959877619aaecf363705c83505850795acceab337e0252",
+      "current_sha256": "7c5aaf239160932e5df31194040d70723fb3aead3607cca46207581b67c4c328",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "advance production forward compatibility to v4 and bind the frozen pressure policy"
+    },
+    "tests/test_phase9_p971_channel_functional_declarations.py": {
+      "historical_sha256": "74d9f6e8e611d1aa032903afc366f96c58b9654d3e275668a99b746a03bfda30",
+      "current_sha256": "9bab68a1529af8241383fde159f1d951e32e58b187a029578981ee05879ff7fd",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "replace the historical inaccurate fixed-work early-exit assertion with the frozen derived-policy role"
+    },
+    "tests/test_phase9_p972_channel_pressure_transpose.py": {
+      "historical_sha256": "31f0afd110b86772dd3052dd558648fc804b412d063377c2583b10da50e4f974",
+      "current_sha256": "22e1a713f49677e49090217001ee08f56726b2aa00c7e7ee7d8cac964f77f4ae",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "assert the repaired standalone transpose component capability schema"
+    },
+    "tests/test_phase9_p973_channel_pressure_implicit_adjoint.py": {
+      "historical_sha256": "5d0f0e6cea9602b0226d96c7ff9378bbff74bb84cc152e9d4172861c26ce793e",
+      "current_sha256": "5affcd0e40f79078712aa20071b2008e1b7538424ede1e2c119025f9be9155f8",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "assert the repaired implicit-adjoint component capability schema"
+    },
+    "tests/test_phase9_p974_channel_functional_runtime.py": {
+      "historical_sha256": "21dd6f86f0b3b43cc32404a678d76113efc468ac13caf47887137f40e86dee39",
+      "current_sha256": "7abcf56c97e367708d5c21fb014a2892418ed13bed5cb2d2d73402e9e9ad827f",
+      "introduced_by_phase": "RC4.4.4",
+      "reason": "assert the functional runtime inner-solve gradient v2 capability"
+    }
+  },
+  "verification": {
+    "rc444_contract_tests": {
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "targeted_regression": {
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 3133,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "final_rerun_pending": false
+    },
+    "git_diff_check": "PASS"
+  },
+  "nonclaims": {
+    "B25_closed": false,
+    "B28_closed": false,
+    "B29_closed": false,
+    "rc4_4_complete": false,
+    "provider_installed_wheel_qualified": false,
+    "consumer_migrated": false,
+    "H100_qualified": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  },
+  "authorization": {
+    "rc4_4_4_complete": true,
+    "rc4_4_5_planning_eligible": true,
+    "rc4_4_5_execution_authorized": false,
+    "PSSolver_Control_change_authorized": false,
+    "h100_submission_authorized": false,
+    "push_authorized": false,
+    "production_default_changed": false
+  }
+}

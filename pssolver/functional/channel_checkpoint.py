@@ -30,6 +30,8 @@ from pssolver.io.checkpoint import (
 from pssolver.io.checkpoint_identity import (
     CheckpointCompatibilityIdentity,
     CheckpointFamily,
+    CheckpointIdentityLayer,
+    IdentityLayerKind,
     LegacyIdentityKey,
     SourceReleaseGeneration,
     resolve_legacy_identity_schema,
@@ -115,6 +117,7 @@ class ChannelActivityCheckpointBridge:
         functional_identity: FunctionalRuntimeIdentity,
         production_runtime_identity_sha256: str,
         production_backend_restart: Mapping[str, object],
+        production_forward_dynamics: Mapping[str, object] | None = None,
     ) -> None:
         if not isinstance(state_spec, FunctionalStateSpec):
             raise TypeError("state_spec must be a FunctionalStateSpec")
@@ -127,6 +130,22 @@ class ChannelActivityCheckpointBridge:
             production_runtime_identity_sha256,
             "production_runtime_identity_sha256",
         )
+        if production_forward_dynamics is None:
+            self._production_forward_dynamics = None
+        else:
+            try:
+                layer = CheckpointIdentityLayer.from_metadata(
+                    production_forward_dynamics
+                )
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    "production_forward_dynamics is invalid"
+                ) from exc
+            if layer.kind is not IdentityLayerKind.FORWARD_DYNAMICS:
+                raise ValueError(
+                    "production_forward_dynamics must be a forward layer"
+                )
+            self._production_forward_dynamics = layer
         try:
             self._production_backend_restart = json.loads(
                 json.dumps(
@@ -811,6 +830,44 @@ class ChannelActivityCheckpointBridge:
                 "checkpoint scientific/runtime identity does not match",
                 operation="channel_checkpoint_import",
             )
+        if format_version == CHECKPOINT_VERSION:
+            try:
+                source_identity = CheckpointCompatibilityIdentity.from_metadata(
+                    metadata.get("compatibility_identity")
+                )
+                source_sha256 = _require_sha256(
+                    metadata.get("compatibility_identity_sha256"),
+                    "compatibility_identity_sha256",
+                )
+            except (TypeError, ValueError) as exc:
+                raise FunctionalCheckpointCompatibilityError(
+                    "production checkpoint compatibility identity is invalid",
+                    operation="channel_checkpoint_import",
+                ) from exc
+            if source_identity.canonical_sha256() != source_sha256:
+                raise FunctionalCheckpointCompatibilityError(
+                    "production checkpoint compatibility digest differs",
+                    operation="channel_checkpoint_import",
+                )
+            if (
+                source_identity.family is not CheckpointFamily.CHANNEL_WORKFLOW
+                or source_identity.runtime_path
+                != CHANNEL_COMPLETE_STRESS_RUNTIME_PATH
+            ):
+                raise FunctionalCheckpointCompatibilityError(
+                    "production checkpoint compatibility family differs",
+                    operation="channel_checkpoint_import",
+                )
+            if self._production_forward_dynamics is None:
+                raise FunctionalCheckpointCompatibilityError(
+                    "target production forward identity is unavailable",
+                    operation="channel_checkpoint_import",
+                )
+            if source_identity.forward_dynamics != self._production_forward_dynamics:
+                raise FunctionalCheckpointCompatibilityError(
+                    "production checkpoint forward dynamics differs",
+                    operation="channel_checkpoint_import",
+                )
         if metadata.get("backend_restart") != self._production_backend_restart:
             raise FunctionalCheckpointCompatibilityError(
                 "checkpoint backend contract does not match target",

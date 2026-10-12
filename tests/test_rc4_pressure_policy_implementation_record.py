@@ -13,6 +13,11 @@ RECORD = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc443_pressure_policy_implementation.json"
 )
+RC444 = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -35,8 +40,17 @@ def test_rc443_record_binds_parent_contract_and_current_sources():
     )
     contract = record["frozen_contract"]
     assert _sha256(contract["path"]) == contract["sha256"]
+    latest = json.loads(RC444.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, expected in record["source_sha256"].items():
-        assert _sha256(relative) == expected, relative
+        actual = _sha256(relative)
+        if actual == expected:
+            continue
+        successor = latest[relative]
+        assert successor["historical_sha256"] == expected
+        assert successor["current_sha256"] == actual
+        assert successor["introduced_by_phase"] == "RC4.4.4"
 
 
 def test_rc443_registers_exact_historical_successors():
@@ -48,10 +62,20 @@ def test_rc443_registers_exact_historical_successors():
         "pssolver/functional/channel_pressure_adjoint.py",
         "tests/test_phase9_p982_stable_functional_api.py",
     }
+    latest = json.loads(RC444.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, registration in successors.items():
         assert registration["introduced_by_phase"] == "RC4.4.3"
         assert registration["historical_sha256"] != registration["current_sha256"]
-        assert _sha256(relative) == registration["current_sha256"]
+        actual = _sha256(relative)
+        if actual != registration["current_sha256"]:
+            newest = latest[relative]
+            assert newest["historical_sha256"] == registration["current_sha256"]
+            assert newest["current_sha256"] == actual
+            assert newest["introduced_by_phase"] == "RC4.4.4"
+        else:
+            assert actual == registration["current_sha256"]
         assert registration["reason"]
 
 

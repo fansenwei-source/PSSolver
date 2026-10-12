@@ -9,6 +9,9 @@ from __future__ import annotations
 
 import torch
 
+from pssolver.configuration.channel_active_nematics_declarations import (
+    channel_pressure_policy_metadata,
+)
 from pssolver.configuration.public_simulation_runner import (
     PUBLIC_CHANNEL_COMPLETE_APPLICATION,
     compile_public_simulation,
@@ -33,14 +36,74 @@ from .contracts import (
     FunctionalStateSpec,
     FunctionalTensorSpec,
 )
+from .channel_pressure import CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION
+from .channel_pressure_adjoint import (
+    CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION,
+)
+from .pressure_metadata import CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION
 
 
 CHANNEL_ACTIVITY_FUNCTIONAL_KIND = "channel_activity_batch_one"
 CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT = (
-    "custom_implicit_pressure_adjoint_v1"
+    "custom_implicit_pressure_adjoint_v2"
 )
 CHANNEL_FUNCTIONAL_PRESSURE_WARM_START = "disabled_in_functional_path"
 _ACTIVITY_NAME = "activity"
+
+
+def channel_activity_functional_capabilities() -> FunctionalCapabilitySet:
+    """Return the one truthful declaration/runtime capability set."""
+
+    return FunctionalCapabilitySet(
+        supported_batch_sizes=(1,),
+        pure_step=True,
+        combined_step_and_observe=True,
+        deterministic_replay="bitwise",
+        differentiability="validated_custom_adjoint",
+        durable_checkpoint_bridge=True,
+        explicit_jvp=False,
+        explicit_vjp=False,
+        inner_solve_gradient=CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT,
+        differentiable_inputs=("state", "activity"),
+    )
+
+
+def channel_functional_pressure_identity(
+    simulation: SimulationSpec,
+) -> dict[str, object]:
+    """Build the canonical functional pressure identity payload."""
+
+    pressure = dict(simulation.discretization_parameters["pressure_solver"])
+    return {
+        "kind": "channel_no_slip_modal_stokes_pcg",
+        "algorithm": pressure["algorithm"],
+        "relative_tolerance": pressure["relative_tolerance"],
+        "max_iterations": pressure["max_iterations"],
+        "fixed_iterations": pressure["fixed_iterations"],
+        "derived_policy": channel_pressure_policy_metadata(
+            relative_tolerance=pressure["relative_tolerance"],
+            max_iterations=pressure["max_iterations"],
+            fixed_iterations=pressure["fixed_iterations"],
+            initial_guess_policy="zero_every_call",
+        ),
+        "diagnostics_schema_version": (
+            CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION
+        ),
+        "gauge": "zero_mean",
+        "production_warm_start": pressure["warm_start"],
+        "functional_warm_start": False,
+        "functional_warm_start_policy": CHANNEL_FUNCTIONAL_PRESSURE_WARM_START,
+        "functional_initial_guess": "zero",
+        "initial_guess": "zero_every_call",
+        "production_warm_start_read": False,
+        "production_warm_start_written": False,
+        "transpose_action": "explicit_reverse_dataflow_conjugate_transpose",
+        "pressure_transpose_protocol": (
+            CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION
+        ),
+        "implicit_adjoint": CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION,
+        "gradient": CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT,
+    }
 
 
 def _allocated_device(value: object) -> str:
@@ -212,22 +275,10 @@ def channel_activity_functional_declaration(
         observations=observations,
         batch_size=1,
     )
-    capabilities = FunctionalCapabilitySet(
-        supported_batch_sizes=(1,),
-        pure_step=True,
-        combined_step_and_observe=True,
-        deterministic_replay="bitwise",
-        differentiability="validated_custom_adjoint",
-        durable_checkpoint_bridge=True,
-        explicit_jvp=False,
-        explicit_vjp=False,
-        inner_solve_gradient=CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT,
-        differentiable_inputs=("state", "activity"),
-    )
+    capabilities = channel_activity_functional_capabilities()
 
     identities = simulation.identity_metadata()
     execution_identity = dict(identities["execution"])
-    pressure = dict(simulation.discretization_parameters["pressure_solver"])
     execution_identity["functional_runtime_declaration"] = {
         "kind": CHANNEL_ACTIVITY_FUNCTIONAL_KIND,
         "stage": "P9.7.4",
@@ -237,30 +288,7 @@ def channel_activity_functional_declaration(
         "state_components": ["q_physical", "q_spectral"],
         "activity_product_before_divergence": True,
         "q_gradient_cache": "derived_rebuilt_not_state",
-        "pressure_solver": {
-            "kind": "channel_no_slip_modal_stokes_pcg",
-            "algorithm": pressure["algorithm"],
-            "relative_tolerance": pressure["relative_tolerance"],
-            "max_iterations": pressure["max_iterations"],
-            "fixed_iterations": pressure["fixed_iterations"],
-            "stopping_precedence": (
-                "fixed_iterations_overrides_max_iterations;"
-                "relative_tolerance_is_early_exit_only"
-                if pressure["fixed_iterations"] is not None
-                else "relative_tolerance_required_with_max_iterations_cap"
-            ),
-            "gauge": "zero_mean",
-            "production_warm_start": pressure["warm_start"],
-            "functional_warm_start": False,
-            "functional_warm_start_policy": (
-                CHANNEL_FUNCTIONAL_PRESSURE_WARM_START
-            ),
-            "functional_initial_guess": "zero",
-            "transpose_action": (
-                "explicit_reverse_dataflow_conjugate_transpose"
-            ),
-            "gradient": CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT,
-        },
+        "pressure_solver": channel_functional_pressure_identity(simulation),
         "boundary_spaces": {
             "Q": list(CHANNEL_Q_BOUNDARY_CONDITIONS),
             "velocity": list(CHANNEL_VELOCITY_BOUNDARY_CONDITIONS),
@@ -298,6 +326,8 @@ __all__ = [
     "CHANNEL_ACTIVITY_FUNCTIONAL_KIND",
     "CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT",
     "CHANNEL_FUNCTIONAL_PRESSURE_WARM_START",
+    "channel_activity_functional_capabilities",
     "channel_activity_functional_declaration",
     "channel_activity_functional_request",
+    "channel_functional_pressure_identity",
 ]

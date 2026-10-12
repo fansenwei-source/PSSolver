@@ -23,6 +23,9 @@ RC443_SUCCESSOR_RECORD = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc443_pressure_policy_implementation.json"
 )
+RC444_SUCCESSOR_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -34,7 +37,11 @@ def _successor_record() -> dict[str, object]:
 
 
 def _registered_successor(relative: str, historical_sha256: str) -> dict[str, object]:
-    for path in (SUCCESSOR_RECORD, RC443_SUCCESSOR_RECORD):
+    for path in (
+        SUCCESSOR_RECORD,
+        RC443_SUCCESSOR_RECORD,
+        RC444_SUCCESSOR_RECORD,
+    ):
         record = json.loads(path.read_text(encoding="utf-8"))
         registration = record["historical_successor_sources"].get(relative)
         if (
@@ -69,11 +76,21 @@ def test_rc424_record_binds_parent_plans_and_implementation_files():
                 continue
             registration = _registered_successor(relative, expected)
             assert registration["historical_sha256"] == expected
-            assert registration["current_sha256"] == actual
-            assert registration["introduced_by_phase"] in {
-                "RC4.2.6 recovery",
-                "RC4.4.3",
-            }
+            if registration["current_sha256"] != actual:
+                latest = json.loads(
+                    RC444_SUCCESSOR_RECORD.read_text(encoding="utf-8")
+                )["historical_successor_sources"][relative]
+                assert latest["historical_sha256"] == registration[
+                    "current_sha256"
+                ]
+                assert latest["current_sha256"] == actual
+                assert latest["introduced_by_phase"] == "RC4.4.4"
+            else:
+                assert registration["introduced_by_phase"] in {
+                    "RC4.2.6 recovery",
+                    "RC4.4.3",
+                    "RC4.4.4",
+                }
 
 
 def test_rc424_record_freezes_four_layer_functional_identity():
@@ -128,12 +145,21 @@ def test_rc424_registers_exact_rc423_historical_successors():
         assert registration["introduced_by_phase"] == "RC4.2.4"
         actual = _sha256(relative)
         if actual != registration["current_sha256"]:
-            latest = _successor_record()["historical_successor_sources"][
+            recovery = _successor_record()["historical_successor_sources"][
                 relative
             ]
-            assert latest["historical_sha256"] == registration["current_sha256"]
+            if recovery["current_sha256"] == actual:
+                assert recovery["historical_sha256"] == registration[
+                    "current_sha256"
+                ]
+                assert recovery["introduced_by_phase"] == "RC4.2.6 recovery"
+                continue
+            latest = json.loads(
+                RC444_SUCCESSOR_RECORD.read_text(encoding="utf-8")
+            )["historical_successor_sources"][relative]
+            assert latest["historical_sha256"] == recovery["current_sha256"]
             assert latest["current_sha256"] == actual
-            assert latest["introduced_by_phase"] == "RC4.2.6 recovery"
+            assert latest["introduced_by_phase"] == "RC4.4.4"
         else:
             assert actual == registration["current_sha256"]
         assert registration["historical_sha256"] != registration["current_sha256"]

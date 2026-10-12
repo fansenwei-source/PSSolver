@@ -15,6 +15,11 @@ RC443 = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc443_pressure_policy_implementation.json"
 )
+RC444 = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
+)
 
 
 def _plan() -> dict[str, object]:
@@ -211,14 +216,25 @@ def test_rc440_reviewed_provider_sources_are_content_addressed():
     successor = json.loads(RC443.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    latest = json.loads(RC444.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, expected in _plan()["reviewed_source_sha256"].items():
         actual = _sha256(ROOT / relative)
         if actual == expected:
             continue
-        registration = successor[relative]
-        assert registration["historical_sha256"] == expected
-        assert registration["current_sha256"] == actual
-        assert registration["introduced_by_phase"] == "RC4.4.3"
+        registration = successor.get(relative)
+        if registration is not None and registration["current_sha256"] == actual:
+            assert registration["historical_sha256"] == expected
+            assert registration["introduced_by_phase"] == "RC4.4.3"
+            continue
+        newest = latest[relative]
+        predecessor = expected if registration is None else registration[
+            "current_sha256"
+        ]
+        assert newest["historical_sha256"] == predecessor
+        assert newest["current_sha256"] == actual
+        assert newest["introduced_by_phase"] == "RC4.4.4"
 
 
 def test_rc440_only_authorizes_planning():

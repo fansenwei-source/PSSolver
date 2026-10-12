@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
+from copy import deepcopy
 from dataclasses import dataclass
 import math
 from typing import Protocol, runtime_checkable
@@ -334,6 +335,7 @@ class ChannelBerisEdwardsRuntimeAdapterProtocol(Protocol):
     def restore_derived_state(self) -> bool: ...
     def restore_progress(self, **values) -> None: ...
     def backend_restart_metadata(self) -> dict[str, object]: ...
+    def flow_diagnostics(self) -> dict[str, object]: ...
     def to_metadata(self) -> dict[str, object]: ...
 
 
@@ -438,11 +440,15 @@ class ChannelBerisEdwardsRuntimeAdapter:
     def flow_diagnostics(self):
         flow = self._solver.model.static_model
         return {
+            "schema_version": 2,
             "last_pressure_iterations": int(flow.last_pressure_iterations),
             "last_pressure_residual": float(flow.last_pressure_residual),
-            "last_pressure_relative_residual": float(
-                flow.last_pressure_relative_residual
+            "last_pressure_relative_residual": (
+                None
+                if flow.last_pressure_relative_residual is None
+                else float(flow.last_pressure_relative_residual)
             ),
+            "pressure": deepcopy(flow.last_pressure_diagnostics),
         }
 
     def to_metadata(self):
@@ -454,6 +460,10 @@ class ChannelBerisEdwardsRuntimeAdapter:
             "pressure_gauge": "zero_mean",
             "velocity_nullspace": "absent_due_to_two_bounded_no_slip_axes",
             "pressure_warm_start": True,
+            "pressure_solver_policy": (
+                self._solver.model.static_model.pressure_convergence_policy()
+            ),
+            "pressure_diagnostics_schema_version": 2,
         }
 
 

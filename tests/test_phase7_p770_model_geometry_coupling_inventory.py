@@ -77,6 +77,7 @@ def test_p770_source_identities_bind_the_audited_baseline() -> None:
         "pssolver/configuration/plane_beris_edwards_component_graph.py",
         "pssolver/applications/plane_beris_edwards.py",
         "pssolver/applications/channel_active_nematics.py",
+        "pssolver/configuration/channel_active_nematics_declarations.py",
         "pssolver/linear_solvers/stokes/channel_no_slip.py",
         "pssolver/linear_solvers/stokes/plane_free_slip.py",
         "pssolver/models/active_nematics/stokes.py",
