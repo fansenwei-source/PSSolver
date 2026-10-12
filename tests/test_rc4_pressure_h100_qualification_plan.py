@@ -14,6 +14,11 @@ RECOVERY = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_python310_h100_recovery_v5.json"
 )
+FIELDS_RECOVERY = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_fields_iteration_harness_recovery_v6.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -173,6 +178,9 @@ def test_rc447_plan_binds_the_local_qualification_support_by_hash():
     successors = json.loads(RECOVERY.read_text(encoding="utf-8"))[
         "qualification_support_successors"
     ]
+    latest = json.loads(FIELDS_RECOVERY.read_text(encoding="utf-8"))[
+        "qualification_support_successors"
+    ]
     assert support["implementation_scope"] == (
         "qualification_only_no_solver_or_runtime_change"
     )
@@ -187,10 +195,20 @@ def test_rc447_plan_binds_the_local_qualification_support_by_hash():
         actual = _sha256(relative)
         if actual == expected:
             continue
-        successor = successors[relative]
-        assert successor["historical_sha256"] == expected
-        assert successor["current_sha256"] == actual
-        assert successor["change_scope"] == "candidate_identity_only"
+        successor = successors.get(relative)
+        predecessor = expected
+        if successor is not None:
+            assert successor["historical_sha256"] == expected
+            predecessor = successor["current_sha256"]
+            if actual == predecessor:
+                assert successor["change_scope"] == "candidate_identity_only"
+                continue
+        newest = latest[relative]
+        assert newest["historical_sha256"] == predecessor
+        assert newest["current_sha256"] == actual
+        assert newest["change_scope"] == (
+            "external_qualification_harness_fields_iteration_only"
+        )
 
 
 def test_rc447_python310_recovery_binds_candidate_without_changing_thresholds():
@@ -210,6 +228,36 @@ def test_rc447_python310_recovery_binds_candidate_without_changing_thresholds():
     assert recovery["scientific_contract_changed"] is False
     assert recovery["formal_h100_submission_limit"] == 1
     assert recovery["automatic_retry"] is False
+
+
+def test_rc447_fields_iteration_recovery_is_local_and_preserves_science_contract():
+    recovery = json.loads(FIELDS_RECOVERY.read_text(encoding="utf-8"))
+
+    assert recovery["phase"] == "RC4.4.7-recovery-v6"
+    assert recovery["status"] == (
+        "LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED"
+    )
+    assert recovery["failed_v5_evidence"]["job_id"] == "10875768"
+    assert recovery["failure_classification"] == (
+        "external_qualification_harness_fields_iteration_contract"
+    )
+    assert recovery["field_comparison_contract"] == {
+        "public_keys_only": True,
+        "both_key_sets_must_match": True,
+        "values_compared_by_field_name": True,
+        "private_fields_storage_used": False,
+        "bare_fields_iteration_used": False,
+    }
+    assert recovery["thresholds_changed"] is False
+    assert recovery["scientific_contract_changed"] is False
+    assert recovery["profile_matrix_changed"] is False
+    assert recovery["correctness_matrix_changed"] is False
+    assert recovery["production_default_changed"] is False
+    assert recovery["authorization"] == {
+        "push_authorized": False,
+        "single_h100_submission_authorized": False,
+        "automatic_retry_authorized": False,
+    }
 
 
 def test_rc447_plan_stops_on_incomplete_or_inferred_evidence():

@@ -108,6 +108,16 @@ def _state_equal(left, right) -> bool:
     )
 
 
+def _fields_byte_identical(left, right) -> bool:
+    """Compare public ``Fields`` mappings without assuming they are iterable."""
+
+    left_names = tuple(left.keys())
+    right_names = tuple(right.keys())
+    if len(left_names) != len(right_names) or set(left_names) != set(right_names):
+        return False
+    return all(torch.equal(left[name], right[name]) for name in left_names)
+
+
 def _all_finite(values) -> bool:
     return all(bool(torch.isfinite(value).all().item()) for value in values)
 
@@ -608,19 +618,20 @@ def _production_restart(output: Path, channel_runtime, mode: str) -> dict[str, o
     resumed.advance(2)
     continuous.synchronize_for_observation()
     resumed.synchronize_for_observation()
-    fields_equal = all(
-        torch.equal(continuous.fields[name], resumed.fields[name])
-        for name in continuous.fields
-    )
+    continuous_names = tuple(continuous.fields.keys())
+    resumed_names = tuple(resumed.fields.keys())
+    fields_equal = _fields_byte_identical(continuous.fields, resumed.fields)
     pressure_equal = torch.equal(
         continuous.capture_pressure_guess(), resumed.capture_pressure_guess()
     )
-    values = tuple(continuous.fields.values())
-    resumed_values = tuple(resumed.fields.values())
+    values = tuple(continuous.fields[name] for name in continuous_names)
+    resumed_values = tuple(resumed.fields[name] for name in resumed_names)
     return {
         "mode": mode,
         "continuous_steps": continuous.completed_steps,
         "resumed_steps": resumed.completed_steps,
+        "continuous_field_names": list(continuous_names),
+        "resumed_field_names": list(resumed_names),
         "fields_byte_identical": fields_equal,
         "pressure_guess_byte_identical": pressure_equal,
         "continuous_sha256": _tensor_sha256(values),

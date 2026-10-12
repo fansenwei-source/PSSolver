@@ -1,0 +1,90 @@
+{
+  "schema": "pssolver.rc4_4_7.fields_iteration_harness_recovery_plan.v6",
+  "phase": "RC4.4.7-recovery-v6",
+  "status": "LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED",
+  "qualification_parent_commit": "cb4883859d0ac3129e109208d1908e943525a6ce",
+  "baseline_provider_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+  "candidate_provider_commit": "5b4ee16c81a3ae452ffcf8992a84a738a76ff629",
+  "consumer_source_commit": "0cf55b4fb699ff40433000f5b4efe52b1d33546b",
+  "failed_v5_evidence": {
+    "job_id": "10875768",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:01:05",
+    "node": "gpu-h100-4-0",
+    "classification": "FAIL_RC4_4_7_PYTHON310_RECOVERY_H100_QUALIFICATION_HARNESS",
+    "control_directory": "/home/fansenwei/pssolver_rc447_pressure_h100_5b4ee16_0cf55b4_20261012_recovery_v5",
+    "checksums_sha256": "a1eb79bc286f8ab65b5b77e5b95a159de5aa40f79013bdb3368c86b7a5e976b4",
+    "cuda_only_tests_passed": 7,
+    "scientific_profile_started": false,
+    "automatic_retry": false
+  },
+  "failure_classification": "external_qualification_harness_fields_iteration_contract",
+  "failure_cause": {
+    "expression": "for name in continuous.fields",
+    "observed_exception": "KeyError: field keys must be str, got int",
+    "explanation": "Fields exposes keys() and named lookup but does not promise bare iteration; Python therefore fell back to __getitem__(0).",
+    "solver_failure": false,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "cuda_failure": false
+  },
+  "field_comparison_contract": {
+    "public_keys_only": true,
+    "both_key_sets_must_match": true,
+    "values_compared_by_field_name": true,
+    "private_fields_storage_used": false,
+    "bare_fields_iteration_used": false
+  },
+  "qualification_support_successors": {
+    "benchmarks/qualify_rc447_pressure_cuda.py": {
+      "historical_sha256": "aa4af5d37c42b9c2273656976f1b102fb343f418c0415a9a9b5981b1b71ae53f",
+      "current_sha256": "cce6a0c4b2fa71ad156f51501797fb652c5472e66bf858af51103709656c3b61",
+      "change_scope": "external_qualification_harness_fields_iteration_only",
+      "reason": "compare public Fields objects through explicit keys() and named lookup, and persist both observed field-name lists"
+    },
+    "tests/test_rc447_pressure_h100_support.py": {
+      "historical_sha256": "d06c4b303b4c43d64dbbf696493594b53765492b12392e52f269317095a0c8f0",
+      "current_sha256": "66547795af88f2ee8d3f16e0f382e686db4d868ef6f0b5d8240ec3bf85f7e50c",
+      "change_scope": "external_qualification_harness_fields_iteration_only",
+      "reason": "reproduce the non-iterable public Fields contract and cover key-set and named-value comparisons"
+    }
+  },
+  "cpu_validation": {
+    "focused_synthetic_tests": {
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    "targeted_suite": {
+      "passed": 58,
+      "failed": 0,
+      "skipped": 0
+    },
+    "full_suite": {
+      "passed": 3173,
+      "failed": 0,
+      "skipped": 0,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "seconds": 201.53,
+      "environment": "/home/fansenwei/anaconda3/envs/Nematics3D/bin/python3.12"
+    }
+  },
+  "thresholds_changed": false,
+  "scientific_contract_changed": false,
+  "profile_matrix_changed": false,
+  "correctness_matrix_changed": false,
+  "provider_runtime_modified": false,
+  "PSSolver_Control_modified": false,
+  "nematics3d_modified": false,
+  "production_default_changed": false,
+  "qualification_complete": false,
+  "rc4_4_7_complete": false,
+  "eligible_for_rc4_5_planning": false,
+  "authorization": {
+    "push_authorized": false,
+    "single_h100_submission_authorized": false,
+    "automatic_retry_authorized": false
+  }
+}

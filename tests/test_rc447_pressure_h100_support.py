@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 import pytest
+import torch
 
 from benchmarks.analyze_rc447_pressure_h100 import (
     COMMITS,
@@ -25,6 +26,7 @@ from benchmarks.plan_rc447_pressure_h100 import SUPPORT_FILES, build_plan
 from benchmarks.qualify_rc447_pressure_cuda import (
     Gate,
     _atomic_json as write_correctness,
+    _fields_byte_identical,
 )
 from benchmarks.run_rc447_cuda_tests import NODE_IDS, classify
 
@@ -197,6 +199,35 @@ def test_gate_persists_a_failed_check_without_claiming_pass(tmp_path):
     loaded = gate.finish()
     assert loaded["passed"] is False
     assert [item["passed"] for item in loaded["checks"]] == [True, False]
+
+
+def test_restart_field_comparison_uses_public_keys_and_named_lookup():
+    class FieldsWithoutIteration:
+        def __init__(self, values):
+            self._values = dict(values)
+
+        def keys(self):
+            return self._values.keys()
+
+        def __getitem__(self, name):
+            if not isinstance(name, str):
+                raise KeyError("field keys must be str")
+            return self._values[name]
+
+    left = FieldsWithoutIteration(
+        {"Q": torch.tensor([1.0]), "u": torch.tensor([2.0])}
+    )
+    same_reordered = FieldsWithoutIteration(
+        {"u": torch.tensor([2.0]), "Q": torch.tensor([1.0])}
+    )
+    changed = FieldsWithoutIteration(
+        {"Q": torch.tensor([1.0]), "u": torch.tensor([3.0])}
+    )
+    missing = FieldsWithoutIteration({"Q": torch.tensor([1.0])})
+
+    assert _fields_byte_identical(left, same_reordered) is True
+    assert _fields_byte_identical(left, changed) is False
+    assert _fields_byte_identical(left, missing) is False
 
 
 def test_profile_preserves_legacy_and_v2_pressure_schema_without_inference():
