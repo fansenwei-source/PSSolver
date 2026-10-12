@@ -222,7 +222,14 @@ def test_rc437_progress_closes_lifting_and_only_authorizes_pressure_planning():
             "notes/PSSolver_v0_2_0rc4_rc437_h100_closure.json"
         ),
         "eligible_for_rc4_4_planning": True,
-        "rc4_4_planning_complete": False,
+        "rc4_4_planning_complete": True,
+        "rc4_4_plan_classification": (
+            "READY_RC4_4_1_PRESSURE_CONTRACT_ADJUDICATION_NOT_EXECUTED"
+        ),
+        "rc4_4_plan_record": (
+            "notes/PSSolver_v0_2_0rc4_rc440_pressure_contract_plan.json"
+        ),
+        "rc4_4_1_analysis_authorized": False,
         "rc4_4_implementation_authorized": False,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,

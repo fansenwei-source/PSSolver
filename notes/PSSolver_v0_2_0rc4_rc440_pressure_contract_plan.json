@@ -1,0 +1,427 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.4.0 Channel pressure-contract plan",
+  "phase": "RC4.4.0",
+  "status": "planning_complete_analysis_and_implementation_not_authorized",
+  "classification": "READY_RC4_4_1_PRESSURE_CONTRACT_ADJUDICATION_NOT_EXECUTED",
+  "baseline": {
+    "released_rc3_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+    "planning_parent_commit": "b469d908c25fe66a45915f5654f50696f5648a10",
+    "branch": "fix/v0.2.0rc4-audit",
+    "rc4_3_closure_record": "notes/PSSolver_v0_2_0rc4_rc437_h100_closure.json",
+    "rc4_3_closure_record_sha256": "c6a9f3c062350f4725f6f4b5bb490b94a4d65181c5dc5ab5be55e55dbf71e0cc",
+    "known_issues_record": "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json",
+    "known_issues_record_at_planning_parent_sha256": "35b9e3e75ce1441ed0e79b28b2ab2a164b43d65acd1b89636e037b8dd32066ac",
+    "source_audit_sha256": "140986b3f6f20b0c0c874b21df02b037cf8ee1bb32e43dd11bc2d638cd9b8f76"
+  },
+  "issues": [
+    {
+      "id": "B25",
+      "required_disposition": "scale_robust_primal_and_transpose_pressure_solves",
+      "problem": "Channel pressure-adjoint scaling and breakdown tests are not uniformly robust to global vector norm, grid size, underflow, and overflow."
+    },
+    {
+      "id": "B28",
+      "required_disposition": "truthful_scoped_capability_and_execution_metadata",
+      "problem": "Channel functional declaration, executable runtime, operator protocol, and implicit-adjoint component expose overlapping capability claims that are not all scoped consistently."
+    },
+    {
+      "id": "B29",
+      "required_disposition": "one_explicit_policy_with_enforced_postconditions",
+      "problem": "Fixed-iteration and tolerance/max-iteration controls currently have ambiguous precedence and path-dependent success criteria."
+    }
+  ],
+  "review_inventory": {
+    "pressure_loop_implementations": [
+      {
+        "id": "L1",
+        "path": "pssolver/linear_solvers/stokes/channel_no_slip.py",
+        "symbol": "ChannelNoSlipModalStokesSolver._solve_pressure",
+        "role": "production_primal_with_persistent_warm_start"
+      },
+      {
+        "id": "L2",
+        "path": "pssolver/functional/channel_pressure.py",
+        "symbol": "ChannelPressureTransposeOperator.solve_pressure_transpose",
+        "role": "operator_qualification_transpose_with_zero_start"
+      },
+      {
+        "id": "L3",
+        "path": "pssolver/functional/channel_pressure_adjoint.py",
+        "symbol": "ChannelImplicitPressureAdjoint._solve_no_grad",
+        "role": "functional_primal_and_transpose_with_zero_start"
+      },
+      {
+        "id": "L4",
+        "path": "pssolver/functional/channel_pressure_adjoint.py",
+        "symbol": "unrolled_channel_pressure_solve_oracle",
+        "role": "small_grid_cpu_fixed_work_gradient_oracle"
+      }
+    ],
+    "observed_policy_drift": [
+      "production and operator-qualification loops use absolute 1e-30 breakdown thresholds while the functional implicit-adjoint loop uses scale-relative thresholds",
+      "fixed_iterations is described as deterministic work but all executable loops can stop early on relative tolerance",
+      "the production loop returns after cap or breakdown without an enforceable convergence postcondition",
+      "functional diagnostics accept fixed-cap residuals up to the initial residual while production exposes only three scalar counters",
+      "extreme-RHS normalization is present only in the functional implicit-adjoint loop"
+    ],
+    "b28_source_finding": {
+      "declaration_executable": true,
+      "runtime_executable": true,
+      "implicit_adjoint_component_metadata_claims_functional_runtime_executable": false,
+      "standalone_transpose_operator_is_not_itself_a_runtime": true,
+      "explicit_vjp_false_means_no_public_vjp_method_and_must_not_be_reinterpreted_as_no_custom_autograd": true,
+      "required_action": "replace ambiguous component-level runtime booleans with scoped role metadata and prove declaration/runtime/capability agreement"
+    },
+    "current_versions": {
+      "pressure_convergence_schema": 1,
+      "pressure_transpose_protocol": "1",
+      "implicit_pressure_adjoint": "1",
+      "production_forward_dynamics": "channel.production.forward.v3",
+      "functional_forward_dynamics": "channel.functional.forward.v3",
+      "functional_derivative_dynamics": "channel.functional.derivative.v3"
+    }
+  },
+  "scope": {
+    "geometry": "rectangular_channel",
+    "model": "complete_stress_beris_edwards",
+    "pressure_algorithm": "preconditioned_conjugate_gradient",
+    "production_initial_guess": "persistent_warm_start_preserved",
+    "functional_initial_guess": "zero_every_call_preserved",
+    "production_and_functional_primal": true,
+    "functional_transpose_and_custom_adjoint": true,
+    "operator_qualification_path": true,
+    "public_configuration_and_diagnostics": true,
+    "checkpoint_forward_and_derivative_identity": true,
+    "plane_pressure_modified": false,
+    "periodic_pressure_modified": false,
+    "all_pcg_loops_consolidated": false,
+    "post_0_2_R5_refactor_authorized": false,
+    "new_geometry_or_model_added": false,
+    "PSSolver_Control_modified_by_rc4_4_0": false,
+    "nematics3d_modified": false,
+    "production_default_selection_changed": false
+  },
+  "frozen_policy_contract": {
+    "public_constructor_compatibility": {
+      "fields_retained": [
+        "relative_tolerance",
+        "max_iterations",
+        "fixed_iterations"
+      ],
+      "breaking_constructor_change_allowed": false,
+      "canonical_metadata_must_add_derived_mode_and_field_roles": true
+    },
+    "modes": {
+      "fixed_work": {
+        "selected_when": "fixed_iterations_is_not_none",
+        "authoritative_iteration_limit": "fixed_iterations",
+        "max_iterations_role": "inactive_compatibility_field",
+        "relative_tolerance_role": "diagnostic_only_not_an_early_exit",
+        "success_postcondition": "perform_the_requested_work_unless_the_projected_rhs_or_residual_is_exactly_zero; any_numerical_breakdown_is_fail_closed",
+        "ordinary_tolerance_early_exit_allowed": false
+      },
+      "relative_tolerance": {
+        "selected_when": "fixed_iterations_is_none",
+        "authoritative_iteration_limit": "max_iterations",
+        "relative_tolerance_role": "required_postcondition",
+        "success_postcondition": "normalized_residual_not_greater_than_requested_relative_tolerance",
+        "iteration_cap_without_postcondition": "fail_closed"
+      }
+    },
+    "common_rules": {
+      "zero_projected_rhs": "successful_zero_rhs_with_zero_iterations",
+      "nonfinite_input_or_intermediate": "fail_closed",
+      "operator_or_preconditioned_residual_breakdown": "fail_closed_unless_exact_zero_residual_was_already_established",
+      "configuration_mode_is_derived_once_and_must_match_all_metadata": true,
+      "production_warm_start_may_change_iteration_count_but_not_policy_or_postcondition": true,
+      "functional_primal_and_transpose_remain_zero_start": true,
+      "path_specific_public_exception_families_remain_until_rc4_5": true
+    }
+  },
+  "scale_adjudication": {
+    "stage": "RC4.4.1",
+    "kind": "analysis_only",
+    "source_changes_allowed": false,
+    "formula_selected_by_rc4_4_0": false,
+    "candidates": [
+      "overflow_safe_global_l2_relative_residual",
+      "active_mode_rms_relative_residual",
+      "normwise_backward_error",
+      "a_preregistered_hybrid_if_no_single_candidate_passes"
+    ],
+    "required_cases": {
+      "P01": "projected zero right-hand side",
+      "P02": "ordinary qualified fixed-work and tolerance controls",
+      "P03": "powers-of-two RHS scale sweep spanning safe float64 subnormal-adjacent through overflow-adjacent quadratic regimes",
+      "P04": "at least three Channel grid sizes with different active pressure degrees of freedom",
+      "P05": "primal and explicit conjugate-transpose actions",
+      "P06": "warm-start production versus zero-start functional solve",
+      "P07": "operator and preconditioned-residual near-breakdown manufactured cases",
+      "P08": "small-grid independent dense solve and unrolled-gradient oracle"
+    },
+    "required_measurements": [
+      "active_pressure_degree_count",
+      "rhs_scale_and_norm_without_overflow_or_underflow",
+      "initial_and_final_absolute_residual",
+      "candidate_normalized_residuals",
+      "iteration_count_and_termination_reason",
+      "pressure_scale_covariance_error",
+      "primal_transpose_inner_product_error",
+      "custom_adjoint_relative_l2",
+      "central_finite_difference_error",
+      "Taylor_remainder_orders",
+      "ordinary_range_byte_identity_where_the_selected_policy_has_the_same_termination_path"
+    ],
+    "selection_requirements": [
+      "The selected norm and breakdown criteria remain finite across every supported scale and grid in the adjudication matrix.",
+      "Scaling a nonzero RHS by an exactly representable power of two preserves the normalized outcome and scales pressure covariantly within a preregistered rounding bound.",
+      "The result does not change merely because inactive pressure modes or grid size change.",
+      "No absolute magic breakdown threshold such as 1e-30 remains authoritative.",
+      "The same definitions are implementable in production primal, functional primal, and transpose paths without consolidating the four loop implementations."
+    ],
+    "decision_classes": [
+      "SCALED_GLOBAL_L2_SUPPORTED",
+      "ACTIVE_MODE_RMS_REQUIRED",
+      "NORMWISE_BACKWARD_ERROR_REQUIRED",
+      "PUBLIC_SCALE_BOUND_REQUIRED"
+    ]
+  },
+  "diagnostics_schema_v2": {
+    "public_and_json_safe": true,
+    "atomic_snapshot_per_solve_phase": true,
+    "no_stale_transpose_result_after_a_new_primal_phase": true,
+    "required_fields": [
+      "schema_version",
+      "solver_identity",
+      "operator_identity",
+      "solve_phase",
+      "initial_guess_policy",
+      "convergence_mode",
+      "requested_relative_tolerance",
+      "requested_fixed_iterations",
+      "requested_max_iterations",
+      "authoritative_iteration_limit",
+      "authoritative_iteration_limit_source",
+      "max_iterations_role",
+      "relative_tolerance_role",
+      "active_pressure_degrees_of_freedom",
+      "rhs_norm_definition",
+      "rhs_norm",
+      "initial_absolute_residual",
+      "achieved_absolute_residual",
+      "normalized_residual_definition",
+      "achieved_normalized_residual",
+      "achieved_iteration_count",
+      "termination_reason",
+      "required_postcondition",
+      "postcondition_satisfied",
+      "acceptable"
+    ],
+    "termination_reasons": [
+      "not_run",
+      "zero_rhs",
+      "exact_zero_residual",
+      "fixed_work_completed",
+      "relative_tolerance_met",
+      "iteration_limit_reached_without_postcondition",
+      "operator_breakdown",
+      "preconditioned_residual_breakdown",
+      "nonfinite_input",
+      "nonfinite_intermediate"
+    ],
+    "production_and_functional_use_same_field_meanings": true,
+    "production_exposes_warm_start_without_mislabeling_it_zero_start": true
+  },
+  "capability_truth_contract": {
+    "declaration_and_runtime_capability_metadata_must_match": true,
+    "declaration_and_runtime_pressure_policy_metadata_must_match": true,
+    "component_is_runtime_and_component_is_connected_to_runtime_are_distinct": true,
+    "standalone_transpose_operator_may_remain_non_runtime": true,
+    "implicit_adjoint_component_connected_to_executable_runtime_must_not_claim_the_runtime_is_unavailable": true,
+    "explicit_vjp_false_remains_valid_until_a_public_explicit_vjp_method_exists": true,
+    "custom_autograd_adjoint_must_be_named_separately": true,
+    "stage_and_historical_provenance_are_not_capabilities": true,
+    "b28_may_close_only_after_source_and_installed_wheel_truth_table_tests": true
+  },
+  "identity_and_restart_contract": {
+    "pressure_convergence_schema_target": 2,
+    "pressure_transpose_protocol_target": "2",
+    "implicit_pressure_adjoint_target": "2",
+    "production_forward_dynamics_target": "channel.production.forward.v4",
+    "functional_forward_dynamics_target": "channel.functional.forward.v4",
+    "functional_derivative_dynamics_target": "channel.functional.derivative.v4",
+    "production_state_layout_version_changes": false,
+    "functional_state_layout_version_changes": false,
+    "backend_restart_layout_version_changes": false,
+    "old_exact_restart_into_new_pressure_dynamics": "reject_before_tensor_load_or_target_mutation",
+    "same_version_continuous_split_and_file_restart": "exact",
+    "state_only_migration_from_old_pressure_dynamics": "not_implicitly_authorized",
+    "device_remains_materialization_provenance_only": true,
+    "production_pressure_guess_remains_persistent_backend_state": true,
+    "functional_pressure_guess_remains_absent": true
+  },
+  "cpu_and_package_gates": {
+    "configuration_truth_table": true,
+    "fixed_work_exact_budget_except_exact_zero": true,
+    "tolerance_postcondition_enforced": true,
+    "negative_configuration_and_cap_exhaustion": true,
+    "scale_and_grid_sweep": true,
+    "dense_small_grid_primal_and_transpose_oracle": true,
+    "primal_transpose_inner_product": true,
+    "custom_adjoint_vs_unrolled_and_autograd": true,
+    "fixed_and_tolerance_central_difference_and_Taylor": true,
+    "production_warm_start_preserved": true,
+    "functional_zero_start_and_replay_preserved": true,
+    "diagnostics_phase_isolation": true,
+    "checkpoint_pre_mutation_negative_gates": true,
+    "source_and_installed_wheel_full_suites": true,
+    "source_shadow_import_forbidden": true
+  },
+  "consumer_contract": {
+    "requalification_required": true,
+    "consumer_repository": "PSSolver-Control",
+    "qualified_source_commit": "03dbc39975978d9d0b7f84965015da24f9d3c206",
+    "qualification_record_commit": "c4b50e63cafba14d1985fbe4a71aa78212eaf050",
+    "remote_branch": "migration/pssolver-v0.2.0rc3-consumer-qualification",
+    "provider_must_publish_policy_and_identity_record_before_consumer_edits": true,
+    "consumer_changes_authorized_by_rc4_4_0": false,
+    "required_consumer_requalification": [
+      "public_only_import_boundary",
+      "fixed_work_forward_gradient_FD_and_resolution_aware_Taylor",
+      "tolerance_forward_gradient_FD_and_resolution_aware_Taylor",
+      "checkpointed_vs_full_history_gradient",
+      "diagnostics_schema_and_phase_order",
+      "old_identity_rejection_before_mutation",
+      "installed_wheel_CPU_and_single_H100"
+    ]
+  },
+  "stages": [
+    {
+      "stage": "RC4.4.1",
+      "name": "pressure scale and capability adjudication",
+      "kind": "analysis_only",
+      "exit": "select a scale-safe norm and breakdown contract and produce a complete declaration-runtime truth table"
+    },
+    {
+      "stage": "RC4.4.2",
+      "name": "public pressure policy, diagnostics, and identity contract",
+      "kind": "planning_and_contract_tests",
+      "exit": "freeze schema-v2 field meanings, failure postconditions, version bumps, and exact CPU/H100 thresholds"
+    },
+    {
+      "stage": "RC4.4.3",
+      "name": "Provider pressure-policy implementation",
+      "kind": "implementation",
+      "exit": "production primal, functional primal/transpose, and oracle paths obey the frozen policy without an R5 refactor"
+    },
+    {
+      "stage": "RC4.4.4",
+      "name": "Provider declarations, diagnostics, and checkpoint integration",
+      "kind": "implementation",
+      "exit": "B28 truth tests and versioned restart/negative gates pass"
+    },
+    {
+      "stage": "RC4.4.5",
+      "name": "Provider source and installed-wheel CPU closure",
+      "kind": "qualification",
+      "exit": "B25/B28/B29 CPU, package, scale, gradient, and restart gates pass"
+    },
+    {
+      "stage": "RC4.4.6",
+      "name": "independent Consumer migration and installed-wheel CPU closure",
+      "kind": "consumer_qualification",
+      "exit": "PSSolver-Control binds the new public policy and identities using only stable APIs"
+    },
+    {
+      "stage": "RC4.4.7",
+      "name": "single-H100 cumulative pressure closure",
+      "kind": "qualification",
+      "exit": "Provider and Consumer fixed/tolerance gradients, scale, restart, performance, memory, and provenance gates pass"
+    }
+  ],
+  "h100_contract": {
+    "authorization_required_separately": true,
+    "single_formal_submission": true,
+    "automatic_retry": false,
+    "installed_wheels_only": true,
+    "TF32": false,
+    "fixed_work_and_tolerance_modes_required": true,
+    "extreme_scale_subset_selected_before_submission": true,
+    "custom_adjoint_FD_and_Taylor_required": true,
+    "checkpointed_and_full_history_gradient_match_required": true,
+    "profile_shapes": [[128, 20, 20], [512, 40, 40]],
+    "profile_trials": 3,
+    "mean_and_median_timestep_ratio_max": 1.05,
+    "peak_allocated_ratio_max": 1.05,
+    "peak_reserved_role": "diagnostic_only",
+    "graph_breaks_allowed": 0,
+    "runtime_fallback_allowed": false,
+    "compile_fallback_allowed": false,
+    "same_version_restart_exact_required": true,
+    "threshold_changes_after_observing_formal_results_forbidden": true
+  },
+  "expected_changed_file_boundaries": {
+    "analysis_and_contract": [
+      "notes/PSSolver_v0_2_0rc4_rc44*.json",
+      "notes/PSSolver_v0_2_0rc4_rc44*_zh.md",
+      "benchmarks/diagnose_channel_pressure_contract.py",
+      "tests/test_rc4_pressure_*.py"
+    ],
+    "conditional_provider_implementation": [
+      "pssolver/configuration/channel_active_nematics_declarations.py",
+      "pssolver/configuration/public_channel_beris_edwards_compiler.py",
+      "pssolver/linear_solvers/stokes/channel_no_slip.py",
+      "pssolver/functional/pressure_metadata.py",
+      "pssolver/functional/channel_pressure.py",
+      "pssolver/functional/channel_pressure_adjoint.py",
+      "pssolver/functional/channel_activity.py",
+      "pssolver/functional/channel_activity_runtime.py",
+      "pssolver/functional/checkpoint_identity.py",
+      "pssolver/workflows/channel_beris_edwards.py"
+    ],
+    "PSSolver_Control_changes_require_separate_consumer_authorization": true,
+    "any_additional_runtime_file_requires_new_scope_authorization": true
+  },
+  "reviewed_source_sha256": {
+    "pssolver/configuration/channel_active_nematics_declarations.py": "2e481783ed98f40f3abeab8850568f03f64b72751b6a58f5321609515f4155c2",
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": "495ca158a6965f2ae313ad485ff75b3a0b84912b29b1c5debd99a0d4e4980a96",
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": "ba6789b5f3a117206b82e9bdd2b173f6fabde9fd9e0c9085d770355b1d3cb526",
+    "pssolver/functional/pressure_metadata.py": "39f886042360d0ef12504050c28d593fad291ac6a119fd513b2b6f165f2d590e",
+    "pssolver/functional/channel_pressure.py": "518c782f2947b8f3a5224178ed14c41f32a32be3904305907f83cce4b426337d",
+    "pssolver/functional/channel_pressure_adjoint.py": "7a4a597c3601e020a053fd45199dd24601255e1f6438db88e0dc30af7d9d31a5",
+    "pssolver/functional/channel_activity.py": "50c4fb0dcb1e886e3c50bd8b8bcd20f2363d384fce55e5870dac69c8c7a0eaba",
+    "pssolver/functional/channel_activity_runtime.py": "8de38312cd780f51ab3ebd20f3c70c9df62152b946bbc919b3a1ace2788be3df",
+    "pssolver/functional/checkpoint_identity.py": "0b2e5a7c57e861f33e718d3f4296c9772db3694a46ba9416a419568aa199d9fb"
+  },
+  "reviewed_consumer_source_sha256_at_03dbc39": {
+    "src/pssolver_control/adapters/pssolver_channel.py": "20b0d77442f349e0a5fa6f9a775d6d19a3b9fdc5c3a307869b6385157fe446e9",
+    "tests/channel_runtime.py": "15958068d17cf472aa7fc2b323434eb665f1f1e90ead6c7a43d880d2d3d2a8d9",
+    "tests/test_pssolver_channel_consumer.py": "aa0043ee1763ab9e27f5df519deb84dd85db3f2526b8c0199ac472569324f29d"
+  },
+  "non_claims": {
+    "B25_closed": false,
+    "B28_closed": false,
+    "B29_closed": false,
+    "pressure_formula_selected": false,
+    "implementation_complete": false,
+    "consumer_migrated": false,
+    "installed_wheel_qualified": false,
+    "H100_qualified": false,
+    "rc4_4_complete": false,
+    "rc4_5_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "eligible_for_release": false
+  },
+  "authorization": {
+    "rc4_4_planning_authorized": true,
+    "rc4_4_planning_complete": true,
+    "rc4_4_1_analysis_authorized": false,
+    "rc4_4_implementation_authorized": false,
+    "PSSolver_Control_change_authorized": false,
+    "h100_submission_authorized": false,
+    "nematics3d_change_authorized": false,
+    "production_default_changed": false
+  }
+}
