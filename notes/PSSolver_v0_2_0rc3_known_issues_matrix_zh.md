@@ -58,4 +58,4 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 ## 下一项实现
 
-`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity` 与 `rc4.3_lifting_correctness` 均已完成；B5、B8、B10、B20、B22、N3、N4、N5 和 N6 已转为 `closed_verified`。下一步是 RC4.4.0：先冻结 pressure stopping precedence、极端尺度归一化、后置条件、public diagnostics、forward/transpose/adjoint 与 derivative identity 合同，再决定 Provider 和 PSSolver-Control 的分阶段迁移。当前只允许 RC4.4 规划，不授权实现、Control 修改、生产默认值、自动 merge、H100 或发布。
+`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity` 与 `rc4.3_lifting_correctness` 均已完成；B5、B8、B10、B20、B22、N3、N4、N5 和 N6 已转为 `closed_verified`。RC4.4.0 规划与 RC4.4.1 analysis-only 裁决也已完成：B25 选择 active-mode RMS、精确 2 的幂工作缩放和相对尺度 breakdown；B28 已形成 declaration/runtime/component truth table，确认需要拆分组件是否为 runtime 与是否连接到 executable runtime；B29 的 fixed-work 与 tolerance fail-closed 合同得到重申。下一步是 RC4.4.2，冻结 diagnostics schema v2、公开配置语义、identity 版本和精确资格门禁。当前仍不授权 Provider 实现、Control 修改、生产默认值、自动 merge、H100 或发布。

@@ -130,7 +130,7 @@ def test_architecture_work_is_deferred_until_correctness_batches_close():
     )
 
 
-def test_rc437_progress_closes_lifting_and_only_authorizes_pressure_planning():
+def test_rc441_progress_records_pressure_analysis_without_implementation():
     progress = _record()["progress"]
     assert progress == {
         "completed_batches": [
@@ -229,7 +229,16 @@ def test_rc437_progress_closes_lifting_and_only_authorizes_pressure_planning():
         "rc4_4_plan_record": (
             "notes/PSSolver_v0_2_0rc4_rc440_pressure_contract_plan.json"
         ),
-        "rc4_4_1_analysis_authorized": False,
+        "rc4_4_1_analysis_authorized": True,
+        "rc4_4_1_analysis_complete": True,
+        "rc4_4_1_classification": (
+            "PASS_RC4_4_1_ACTIVE_MODE_RMS_AND_SCOPED_CAPABILITY_CONTRACT"
+        ),
+        "rc4_4_1_analysis_record": (
+            "notes/PSSolver_v0_2_0rc4_rc441_pressure_adjudication.json"
+        ),
+        "eligible_for_rc4_4_2": True,
+        "rc4_4_2_contract_authorized": False,
         "rc4_4_implementation_authorized": False,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,
@@ -247,3 +256,4 @@ def test_rc437_progress_closes_lifting_and_only_authorizes_pressure_planning():
     for stage in ("rc4_3_4", "rc4_3_5", "rc4_3_6", "rc4_3_7"):
         assert (ROOT / progress[f"{stage}_record"]).is_file()
     assert (ROOT / progress["rc4_3_closure_record"]).is_file()
+    assert (ROOT / progress["rc4_4_1_analysis_record"]).is_file()

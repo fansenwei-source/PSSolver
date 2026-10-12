@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.4.1 Channel pressure scale/capability adjudication",
+  "phase": "RC4.4.1",
+  "kind": "analysis_only",
+  "classification": "PASS_RC4_4_1_ACTIVE_MODE_RMS_AND_SCOPED_CAPABILITY_CONTRACT",
+  "identity": {
+    "branch": "fix/v0.2.0rc4-audit",
+    "analysis_parent_commit": "0ef789cb91159d2fb4982468ef0531d9932b5b2a",
+    "rc4_4_0_plan": "notes/PSSolver_v0_2_0rc4_rc440_pressure_contract_plan.json",
+    "rc4_4_0_plan_sha256": "11eef6e67ccf040462ee982a60817ff65bb04e4c13b554aab199d1382d43bb10",
+    "diagnostic": "benchmarks/diagnose_channel_pressure_contract.py",
+    "diagnostic_sha256": "49b7baa2576c90fbf1bf4796504ceb8826d910291fd3e92c9924aef14b72f471",
+    "complete_raw_diagnostic_sha256": "1c3803295a582e9e92704acd45b922bea417c0ab0b2c239be408b9453dbe809a"
+  },
+  "selected_scale_contract": {
+    "decision_class": "ACTIVE_MODE_RMS_REQUIRED",
+    "public_rhs_and_residual_norm": "overflow_safe_active_pressure_mode_root_mean_square",
+    "definition": "amax * vector_norm(active_values / amax) / sqrt(active_pressure_degrees_of_freedom)",
+    "zero_definition": "zero when every projected active coefficient is exactly zero",
+    "normalized_residual": "active_mode_rms(residual) / active_mode_rms(projected_rhs)",
+    "working_vector_scaling": "exact_power_of_two_derived_from_active_mode_amax",
+    "breakdown": "abs(inner_product) <= eps * safe_norm(left) * safe_norm(right), evaluated in normalized working space; zero scale is breakdown unless exact zero residual was already established",
+    "absolute_magic_threshold_allowed": false,
+    "normwise_backward_error_role": "independent_dense_qualification_diagnostic_not_hot_path_stop",
+    "global_l2_finding": "The ratio from overflow-safe global L2 is mathematically equivalent to the active-RMS ratio on one fixed active subspace, but the absolute global L2 cannot always be represented by one finite float64 when all individual coefficients are finite.",
+    "inactive_modes_contribute": false
+  },
+  "policy_contract": {
+    "fixed_work": {
+      "selected_when": "fixed_iterations is not null",
+      "authoritative_limit": "fixed_iterations",
+      "relative_tolerance_role": "diagnostic_only",
+      "ordinary_tolerance_early_exit": false,
+      "successful_termination": [
+        "zero_rhs",
+        "exact_zero_residual",
+        "fixed_work_completed"
+      ],
+      "breakdown": "fail_closed"
+    },
+    "relative_tolerance": {
+      "selected_when": "fixed_iterations is null",
+      "authoritative_limit": "max_iterations",
+      "relative_tolerance_role": "required_postcondition",
+      "successful_termination": [
+        "zero_rhs",
+        "exact_zero_residual",
+        "relative_tolerance_met"
+      ],
+      "cap_without_postcondition": "fail_closed"
+    }
+  },
+  "matrix": {
+    "device": "cpu",
+    "dtype": "float64/complex128",
+    "grid_shapes": [
+      [3, 2, 2],
+      [4, 3, 2],
+      [5, 4, 3]
+    ],
+    "active_pressure_degrees_of_freedom": [11, 17, 59],
+    "solve_scale_exponents": [-900, -600, 0, 600, 900],
+    "norm_stress_scale_exponents": [-1074, -1020, 0, 1018, 1023],
+    "operators": ["primal", "explicit_conjugate_transpose"],
+    "modes": ["fixed_work", "relative_tolerance"],
+    "fixed_iterations": 5,
+    "relative_tolerance": 1e-13,
+    "max_iterations": 160
+  },
+  "results": {
+    "P01_zero_rhs": {
+      "iterations": 0,
+      "termination_reason": "zero_rhs",
+      "normalized_residual": 0.0,
+      "acceptable": true
+    },
+    "P02_fixed_and_tolerance": {
+      "fixed_work_iteration_count_all_grids_and_scales": 5,
+      "fixed_work_termination_reason": "fixed_work_completed",
+      "tolerance_iteration_counts_by_grid": [5, 11, 19],
+      "tolerance_termination_reason": "relative_tolerance_met",
+      "all_outcomes_acceptable": true
+    },
+    "P03_scale_sweep": {
+      "maximum_pressure_scale_covariance_relative_l2": 0.0,
+      "bound": 2e-11,
+      "active_mode_rms_nonfinite_or_zero_count": 0,
+      "global_l2_nonfinite_count": 3,
+      "global_l2_failures": [
+        {"shape": [3, 2, 2], "active_dof": 11, "scale_exponent": 1023, "global_l2_log2": 1024.7297158093186},
+        {"shape": [4, 3, 2], "active_dof": 17, "scale_exponent": 1023, "global_l2_log2": 1025.0437314206251},
+        {"shape": [5, 4, 3], "active_dof": 59, "scale_exponent": 1023, "global_l2_log2": 1025.941321524681}
+      ],
+      "active_rms_at_scale_2_pow_1023": 8.98846567431158e307
+    },
+    "P04_grid_independence": {
+      "grid_count": 3,
+      "active_dof_varies": true,
+      "termination_signature_scale_invariant_within_each_grid": true
+    },
+    "P05_primal_transpose": {
+      "inner_product_relative_error": 4.690676280363306e-16,
+      "bound": 2e-13,
+      "both_actions_pass_scale_matrix": true
+    },
+    "P06_initial_guess": {
+      "production_initial_guess": "persistent_warm_start",
+      "functional_initial_guess": "zero_every_call",
+      "first_production_iterations": 11,
+      "warm_production_iterations": 0,
+      "warm_vs_first_relative_l2": 0.0,
+      "functional_vs_first_relative_l2": 0.0,
+      "functional_did_not_replace_production_guess": true
+    },
+    "P07_breakdown": {
+      "tiny_well_scaled_value": 1.499696813895631e-241,
+      "absolute_1e_30_incorrectly_declares_breakdown": true,
+      "scale_relative_test_declares_breakdown": false,
+      "true_orthogonal_zero_declares_breakdown": true,
+      "selected": "scale_relative_machine_epsilon_test"
+    },
+    "P08_dense_and_gradient": {
+      "dense_active_matrix_shape": [11, 11],
+      "primal_pcg_vs_dense_relative_l2": 1.8663975464931542e-16,
+      "transpose_pcg_vs_dense_relative_l2": 1.8663975464931542e-16,
+      "primal_normwise_backward_error": 5.537037130234737e-17,
+      "transpose_normwise_backward_error": 5.537037130234737e-17,
+      "fixed_work_custom_vjp_vs_unrolled_relative_l2": 8.92234618258491e-17,
+      "central_finite_difference_relative_error": 2.7215291462121836e-11,
+      "Taylor_remainder_orders": [
+        1.9999999800382182,
+        1.999999977548953,
+        1.9999996755376919
+      ]
+    }
+  },
+  "capability_truth_contract": {
+    "declaration_executable": true,
+    "runtime_executable": true,
+    "declaration_runtime_capabilities_equal": true,
+    "custom_autograd_adjoint_exists": true,
+    "public_explicit_vjp_method_exists": false,
+    "explicit_vjp_false_is_truthful": true,
+    "rows": [
+      {
+        "subject": "functional_declaration",
+        "is_runtime": false,
+        "declares_executable_runtime": true,
+        "connected_to_executable_runtime": true,
+        "custom_autograd_adjoint": true
+      },
+      {
+        "subject": "functional_runtime",
+        "is_runtime": true,
+        "declares_executable_runtime": true,
+        "connected_to_executable_runtime": true,
+        "custom_autograd_adjoint": true
+      },
+      {
+        "subject": "implicit_adjoint_component",
+        "is_runtime": false,
+        "current_functional_runtime_executable": false,
+        "connected_to_executable_runtime": true,
+        "custom_autograd_adjoint": true
+      },
+      {
+        "subject": "standalone_transpose_operator_component",
+        "is_runtime": false,
+        "current_functional_runtime_executable": false,
+        "connected_to_executable_runtime": true,
+        "custom_autograd_adjoint": false
+      }
+    ],
+    "finding": "METADATA_REPAIR_REQUIRED",
+    "required_replacement": "Components must expose component_is_runtime and component_connected_to_executable_runtime separately; the standalone transpose remains non-runtime, while the implicit-adjoint component truthfully records its connection to the executable Channel functional runtime."
+  },
+  "implementation_requirements": [
+    "Use active-mode RMS for public RHS, initial-residual, achieved-residual, and normalized-residual fields.",
+    "Use exact power-of-two active-amax scaling for PCG working vectors before quadratic products.",
+    "Use the same norm and scale-relative breakdown definitions in production primal, functional primal, and explicit transpose loops without consolidating the four loops before R5.",
+    "Derive fixed_work versus relative_tolerance once from configuration and publish every field role.",
+    "Replace ambiguous component runtime booleans with scoped role and connection metadata.",
+    "Retain the production persistent warm start and functional zero-every-call policy."
+  ],
+  "verification": {
+    "diagnostic_runs": 2,
+    "diagnostic_outputs_byte_identical": true,
+    "diagnostic_output_sha256": "1c3803295a582e9e92704acd45b922bea417c0ab0b2c239be408b9453dbe809a",
+    "targeted_pressure_and_functional_tests": {
+      "passed": 95,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 3066,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "deselected_scope": "the seven pre-existing CUDA-only node IDs frozen by the RC4 CPU contract",
+      "optional_nematics3d_available": true
+    },
+    "git_diff_check": "PASS"
+  },
+  "ordinary_range_byte_identity": {
+    "status": "NOT_APPLICABLE_TO_ANALYSIS_ONLY_REFERENCE_LOOP",
+    "required_next": "RC4.4.3 must measure unchanged-path byte identity where the selected implementation follows the historical termination path."
+  },
+  "completion": {
+    "analysis_complete": true,
+    "B25_formula_selected": true,
+    "B28_truth_table_complete": true,
+    "B28_source_repair_complete": false,
+    "B29_policy_reconfirmed": true,
+    "eligible_for_rc4_4_2": true,
+    "solver_source_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "installed_wheel_qualified": false,
+    "H100_qualified": false,
+    "rc4_4_complete": false
+  },
+  "authorization": {
+    "rc4_4_1_analysis_authorized_by_user_next_step_request": true,
+    "rc4_4_2_contract_authorized": false,
+    "provider_implementation_authorized": false,
+    "PSSolver_Control_change_authorized": false,
+    "H100_submission_authorized": false,
+    "automatic_merge_authorized": false,
+    "production_default_changed": false
+  }
+}
