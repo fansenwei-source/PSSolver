@@ -66,8 +66,8 @@ def test_state_counts_match_the_machine_readable_summary():
     for item in record["items"]:
         counts[item["state"]] = counts.get(item["state"], 0) + 1
     assert counts == {
-        "closed_verified": 23,
-        "partial_residual": 15,
+        "closed_verified": 26,
+        "partial_residual": 12,
         "accepted_limitation": 3,
         "deferred_architecture": 9,
     }
@@ -75,7 +75,7 @@ def test_state_counts_match_the_machine_readable_summary():
         "item_count": 50,
         **counts,
         "first_implementation_batch": "rc4.1_plane_nyquist",
-        "next_implementation_batch": "rc4.3_lifting_correctness",
+        "next_implementation_batch": "rc4.4_pressure_contract",
     }
 
 
@@ -94,7 +94,12 @@ def test_release_blockers_and_closed_rc3_regressions_are_not_conflated():
         assert items[identifier]["closure_record"] == (
             "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"
         )
-    for identifier in ("B8", "B29", "N4"):
+    for identifier in ("B8", "B20", "N4"):
+        assert items[identifier]["state"] == "closed_verified"
+        assert items[identifier]["closure_record"] == (
+            "notes/PSSolver_v0_2_0rc4_rc437_h100_closure.json"
+        )
+    for identifier in ("B25", "B28", "B29"):
         assert items[identifier]["state"] == "partial_residual"
         assert items[identifier]["disposition"] != "closed"
 
@@ -125,14 +130,15 @@ def test_architecture_work_is_deferred_until_correctness_batches_close():
     )
 
 
-def test_rc432_progress_records_contract_without_authorizing_implementation():
+def test_rc437_progress_closes_lifting_and_only_authorizes_pressure_planning():
     progress = _record()["progress"]
     assert progress == {
         "completed_batches": [
             "rc4.1_plane_nyquist",
             "rc4.2_checkpoint_identity",
+            "rc4.3_lifting_correctness",
         ],
-        "next_batch": "rc4.3_lifting_correctness",
+        "next_batch": "rc4.4_pressure_contract",
         "b5_complete": True,
         "b5_closure_record": (
             "notes/PSSolver_v0_2_0rc4_rc412_h100_closure.json"
@@ -183,6 +189,41 @@ def test_rc432_progress_records_contract_without_authorizing_implementation():
         ),
         "eligible_for_rc4_3_4_implementation": True,
         "rc4_3_implementation_authorized": True,
+        "rc4_3_4_implementation_complete": True,
+        "rc4_3_4_classification": (
+            "PASS_RC4_3_4_EXPLICIT_FRESH_CONDITIONING_CPU_CANDIDATE"
+        ),
+        "rc4_3_4_record": (
+            "notes/PSSolver_v0_2_0rc4_rc434_fresh_conditioning.json"
+        ),
+        "rc4_3_5_implementation_complete": True,
+        "rc4_3_5_classification": (
+            "PASS_RC4_3_5_LIFTING_RUNTIME_CHECKPOINT_INTEGRATION_CPU_CANDIDATE"
+        ),
+        "rc4_3_5_record": (
+            "notes/PSSolver_v0_2_0rc4_rc435_runtime_checkpoint_integration.json"
+        ),
+        "rc4_3_6_installed_cpu_complete": True,
+        "rc4_3_6_classification": (
+            "PASS_RC4_3_6_INSTALLED_WHEEL_LIFTING_CPU_CLOSURE"
+        ),
+        "rc4_3_6_record": (
+            "notes/PSSolver_v0_2_0rc4_rc436_installed_cpu_closure.json"
+        ),
+        "rc4_3_7_h100_complete": True,
+        "rc4_3_7_classification": (
+            "PASS_RC4_3_7_INTERNAL_LIFTING_SINGLE_H100_CLOSURE"
+        ),
+        "rc4_3_7_record": (
+            "notes/PSSolver_v0_2_0rc4_rc437_h100_closure.json"
+        ),
+        "rc4_3_complete": True,
+        "rc4_3_closure_record": (
+            "notes/PSSolver_v0_2_0rc4_rc437_h100_closure.json"
+        ),
+        "eligible_for_rc4_4_planning": True,
+        "rc4_4_planning_complete": False,
+        "rc4_4_implementation_authorized": False,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,
         "production_default_changed": False,
@@ -196,3 +237,6 @@ def test_rc432_progress_records_contract_without_authorizing_implementation():
         "rc4_3_2_contract_record_sha256"
     ]
     assert (ROOT / progress["rc4_3_3_record"]).is_file()
+    for stage in ("rc4_3_4", "rc4_3_5", "rc4_3_6", "rc4_3_7"):
+        assert (ROOT / progress[f"{stage}_record"]).is_file()
+    assert (ROOT / progress["rc4_3_closure_record"]).is_file()

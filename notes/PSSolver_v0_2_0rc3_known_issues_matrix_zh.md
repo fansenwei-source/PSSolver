@@ -17,8 +17,8 @@
 
 | 状态 | 数量 | 含义 |
 |---|---:|---|
-| `closed_verified` | 23 | 目标行为已有回归或资格证据 |
-| `partial_residual` | 15 | 主问题部分缓解，但仍有路径或语义缺口 |
+| `closed_verified` | 26 | 目标行为已有回归或资格证据 |
+| `partial_residual` | 12 | 主问题部分缓解，但仍有路径或语义缺口 |
 | `accepted_limitation` | 3 | 已知且明确接受，不作为当前正确性修复 |
 | `deferred_architecture` | 9 | 架构债务，推迟到正确性关闭之后 |
 
@@ -38,7 +38,7 @@
 
 ### rc4.3：lifting 正确性
 
-处理 B8、B20、N4。RC4.3.0 规划合同已经写入 `PSSolver_v0_2_0rc4_rc430_lifting_correctness_plan.json`。这里不能只改 metadata：RC4.3.1 必须用真实 solver 和独立参考重新评估壁面 molecular field 的表示空间、非零壁面 Laplacian、扭转速度收敛和初值 taper。如果当前 DCT/DST 结构无法给出所需收敛，应在 compile/lowering 阶段缩小公开能力并明确报错，而不是继续用不调用真实 solver 的投影测试代替端到端收敛。
+处理 B8、B20、N4。该批次已经完成：RC4.3.1 用真实 solver 与独立参考证明当前 DST remainder 不能支持公开的非零壁面 molecular-field 收敛声明；RC4.3.2–RC4.3.5 随后以 fail-closed restriction、显式 fresh-only conditioning、requested/effective metadata 和分层 checkpoint identity 关闭错误能力声明。RC4.3.6 installed-wheel CPU 门禁及 RC4.3.7 correct-layer CUDA、restart、R128/R320 性能与显存门禁均已通过。权威关闭记录为 `PSSolver_v0_2_0rc4_rc437_h100_closure.json`。这不表示原非收敛路径已被数学修复，也不重新开放 public lifted Plane。
 
 ### rc4.4：压力求解合同
 
@@ -58,4 +58,4 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 ## 下一项实现
 
-`rc4.1_plane_nyquist` 与 `rc4.2_checkpoint_identity` 均已完成；B5、B10、B22、N3、N5 和 N6 已转为 `closed_verified`。RC4.3.1 已完成物理裁决，RC4.3.2 已冻结限制合同，RC4.3.3 已实现 public fail-closed restriction、catalog 修正及 requested/effective molecular-field metadata。底层 lifting 和历史 checkpoint reader 保留；下一步是 RC4.3.4 的显式 fresh conditioning 策略。当前不授权 RC4.3.4、pressure contract、生产默认值、自动 merge、H100 或发布。
+`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity` 与 `rc4.3_lifting_correctness` 均已完成；B5、B8、B10、B20、B22、N3、N4、N5 和 N6 已转为 `closed_verified`。下一步是 RC4.4.0：先冻结 pressure stopping precedence、极端尺度归一化、后置条件、public diagnostics、forward/transpose/adjoint 与 derivative identity 合同，再决定 Provider 和 PSSolver-Control 的分阶段迁移。当前只允许 RC4.4 规划，不授权实现、Control 修改、生产默认值、自动 merge、H100 或发布。
