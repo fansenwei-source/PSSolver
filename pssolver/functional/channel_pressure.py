@@ -15,14 +15,20 @@ import torch
 
 from pssolver.linear_solvers.stokes.channel_no_slip import (
     ChannelNoSlipModalStokesSolver,
+    channel_pressure_active_rms,
+    channel_pressure_magnitude_ratio,
+    channel_pressure_relative_breakdown,
+    channel_pressure_scale_power_of_two,
+    channel_pressure_working_vector,
 )
 
+from .errors import FunctionalConvergenceError
 from .pressure_metadata import (
     channel_pressure_solve_diagnostics,
 )
 
 
-CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION = "1"
+CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION = "2"
 
 
 @runtime_checkable
@@ -83,13 +89,11 @@ class ChannelPressureTransposeOperator:
         self.last_transpose_iterations = 0
         self.last_transpose_residual = 0.0
         self.last_transpose_relative_residual = 0.0
+        self._transpose_solve_sequence_id = 0
         self.last_transpose_diagnostics = channel_pressure_solve_diagnostics(
             solver,
             operator_identity="channel_pressure_schur_conjugate_transpose",
-            achieved_iteration_count=0,
-            achieved_absolute_residual=0.0,
-            achieved_relative_residual=0.0,
-            termination_reason="not_run",
+            solve_phase="not_run",
         )
 
     def _apply_axis_matrix(self, tensor, matrix, axis):
@@ -238,87 +242,226 @@ class ChannelPressureTransposeOperator:
         """
 
         rhs_hat = self._project_gauge(rhs_hat)
-        rhs_norm = torch.linalg.vector_norm(rhs_hat.reshape(-1)).item()
-        if rhs_norm == 0.0:
-            self.last_transpose_iterations = 0
-            self.last_transpose_residual = 0.0
-            self.last_transpose_relative_residual = 0.0
-            self.last_transpose_diagnostics = (
-                channel_pressure_solve_diagnostics(
-                    self._solver,
-                    operator_identity=(
-                        "channel_pressure_schur_conjugate_transpose"
-                    ),
-                    achieved_iteration_count=0,
-                    achieved_absolute_residual=0.0,
-                    achieved_relative_residual=0.0,
-                    termination_reason="zero_rhs",
-                )
+        self._transpose_solve_sequence_id += 1
+        sequence = self._transpose_solve_sequence_id
+        if not bool(torch.isfinite(rhs_hat).all().item()):
+            diagnostics = channel_pressure_solve_diagnostics(
+                self._solver,
+                operator_identity="channel_pressure_schur_conjugate_transpose",
+                solve_phase="standalone_transpose_qualification",
+                solve_sequence_id=sequence,
+                achieved_normalized_residual=None,
+                termination_reason="nonfinite_input",
             )
+            self._record_transpose_diagnostics(diagnostics)
+            raise FunctionalConvergenceError(
+                "standalone Channel pressure transpose input is non-finite",
+                operation="channel_pressure_transpose_solve",
+                details=diagnostics.to_metadata(),
+            )
+        working_rhs, working_exponent, rhs_magnitude = (
+            channel_pressure_working_vector(
+                rhs_hat,
+                self._solver.pressure_inactive_mask,
+            )
+        )
+        if rhs_magnitude.is_zero:
+            diagnostics = channel_pressure_solve_diagnostics(
+                self._solver,
+                operator_identity="channel_pressure_schur_conjugate_transpose",
+                solve_phase="standalone_transpose_qualification",
+                solve_sequence_id=sequence,
+                rhs_norm=rhs_magnitude,
+                initial_absolute_residual=rhs_magnitude,
+                achieved_absolute_residual=rhs_magnitude,
+                achieved_normalized_residual=0.0,
+                working_scale_binary_exponent=None,
+                achieved_iteration_count=0,
+                termination_reason="zero_rhs",
+            )
+            self._record_transpose_diagnostics(diagnostics)
             return torch.zeros_like(rhs_hat)
-        pressure_hat = torch.zeros_like(rhs_hat)
-        residual = rhs_hat.clone()
+        pressure_hat = torch.zeros_like(working_rhs)
+        residual = working_rhs.clone()
+        initial_residual = rhs_magnitude
+        rhs_work_magnitude = channel_pressure_active_rms(
+            working_rhs,
+            self._solver.pressure_inactive_mask,
+        )
         preconditioned = residual / self._solver.schur_diag_safe
+        if channel_pressure_relative_breakdown(
+            residual,
+            preconditioned,
+            self._solver.pressure_inactive_mask,
+        ):
+            return self._fail_transpose_solve(
+                sequence=sequence,
+                rhs_norm=rhs_magnitude,
+                initial_residual=initial_residual,
+                achieved_residual=initial_residual,
+                relative_residual=1.0,
+                working_exponent=working_exponent,
+                iterations=0,
+                termination_reason="preconditioned_residual_breakdown",
+            )
         direction = preconditioned.clone()
         rz_old = torch.sum(torch.conj(residual) * preconditioned).real
-        tolerance = self._solver.pressure_rel_tol * rhs_norm
-        residual_norm = rhs_norm
+        residual_work_magnitude = rhs_work_magnitude
+        residual_magnitude = initial_residual
+        relative_residual = 1.0
         iterations = 0
-        iteration_limit = (
-            self._solver.pressure_fixed_iterations
-            if self._solver.pressure_fixed_iterations is not None
-            else self._solver.pressure_max_iter
-        )
-        termination_reason = "iteration_limit_reached"
-        if (
-            self._solver.pressure_fixed_iterations is None
-            and residual_norm <= tolerance
-        ):
-            termination_reason = "relative_tolerance_met"
-        while iterations < iteration_limit and (
-            self._solver.pressure_fixed_iterations is not None
-            or residual_norm > tolerance
-        ):
+        fixed_work = self._solver.pressure_fixed_iterations is not None
+        iteration_limit = self._solver.pressure_iteration_limit
+        termination_reason = "iteration_limit_reached_without_postcondition"
+        acceptable = False
+        while iterations < iteration_limit:
             operator_direction = self.apply_pressure_operator_transpose(
                 direction
             )
+            if not bool(torch.isfinite(operator_direction).all().item()):
+                termination_reason = "nonfinite_intermediate"
+                break
+            if channel_pressure_relative_breakdown(
+                direction,
+                operator_direction,
+                self._solver.pressure_inactive_mask,
+            ):
+                termination_reason = "operator_breakdown"
+                break
             denominator = torch.sum(
                 torch.conj(direction) * operator_direction
             ).real
-            if denominator.abs().item() < 1e-30:
-                termination_reason = "operator_breakdown"
-                break
             step = rz_old / denominator
             pressure_hat = self._project_gauge(pressure_hat + step * direction)
             residual = self._project_gauge(
                 residual - step * operator_direction
             )
-            residual_norm = torch.linalg.vector_norm(
-                residual.reshape(-1)
-            ).item()
             iterations += 1
-            if residual_norm <= tolerance:
+            if not bool(
+                torch.isfinite(pressure_hat).all().item()
+                and torch.isfinite(residual).all().item()
+            ):
+                termination_reason = "nonfinite_intermediate"
+                break
+            residual_work_magnitude = channel_pressure_active_rms(
+                residual,
+                self._solver.pressure_inactive_mask,
+            )
+            residual_magnitude = residual_work_magnitude.shifted(
+                int(working_exponent)
+            )
+            relative_residual = channel_pressure_magnitude_ratio(
+                residual_work_magnitude,
+                rhs_work_magnitude,
+            )
+            if residual_work_magnitude.is_zero:
+                termination_reason = "exact_zero_residual"
+                acceptable = True
+                break
+            if not fixed_work and (
+                relative_residual <= self._solver.pressure_rel_tol
+            ):
                 termination_reason = "relative_tolerance_met"
+                acceptable = True
+                break
+            if iterations == iteration_limit:
+                if fixed_work:
+                    termination_reason = "fixed_work_completed"
+                    acceptable = True
                 break
             preconditioned = residual / self._solver.schur_diag_safe
-            rz_new = torch.sum(torch.conj(residual) * preconditioned).real
-            if rz_old.abs().item() < 1e-30:
+            if not bool(torch.isfinite(preconditioned).all().item()):
+                termination_reason = "nonfinite_intermediate"
+                break
+            if channel_pressure_relative_breakdown(
+                residual,
+                preconditioned,
+                self._solver.pressure_inactive_mask,
+            ):
                 termination_reason = "preconditioned_residual_breakdown"
                 break
+            rz_new = torch.sum(torch.conj(residual) * preconditioned).real
             direction = preconditioned + (rz_new / rz_old) * direction
             rz_old = rz_new
-        self.last_transpose_iterations = iterations
-        self.last_transpose_residual = residual_norm
-        self.last_transpose_relative_residual = residual_norm / rhs_norm
-        self.last_transpose_diagnostics = channel_pressure_solve_diagnostics(
+        if not acceptable:
+            return self._fail_transpose_solve(
+                sequence=sequence,
+                rhs_norm=rhs_magnitude,
+                initial_residual=initial_residual,
+                achieved_residual=residual_magnitude,
+                relative_residual=relative_residual,
+                working_exponent=working_exponent,
+                iterations=iterations,
+                termination_reason=termination_reason,
+            )
+        diagnostics = channel_pressure_solve_diagnostics(
             self._solver,
             operator_identity="channel_pressure_schur_conjugate_transpose",
+            solve_phase="standalone_transpose_qualification",
+            solve_sequence_id=sequence,
+            rhs_norm=rhs_magnitude,
+            initial_absolute_residual=initial_residual,
+            achieved_absolute_residual=residual_magnitude,
+            achieved_normalized_residual=relative_residual,
+            working_scale_binary_exponent=working_exponent,
             achieved_iteration_count=iterations,
-            achieved_absolute_residual=residual_norm,
-            achieved_relative_residual=residual_norm / rhs_norm,
             termination_reason=termination_reason,
         )
-        return pressure_hat
+        self._record_transpose_diagnostics(diagnostics)
+        result = channel_pressure_scale_power_of_two(
+            pressure_hat,
+            int(working_exponent),
+        )
+        if not bool(torch.isfinite(result).all().item()):
+            return self._fail_transpose_solve(
+                sequence=sequence,
+                rhs_norm=rhs_magnitude,
+                initial_residual=initial_residual,
+                achieved_residual=residual_magnitude,
+                relative_residual=relative_residual,
+                working_exponent=working_exponent,
+                iterations=iterations,
+                termination_reason="nonfinite_intermediate",
+            )
+        return result
+
+    def _record_transpose_diagnostics(self, diagnostics) -> None:
+        self.last_transpose_diagnostics = diagnostics
+        self.last_transpose_iterations = diagnostics.iterations
+        self.last_transpose_residual = diagnostics.residual
+        self.last_transpose_relative_residual = diagnostics.relative_residual
+
+    def _fail_transpose_solve(
+        self,
+        *,
+        sequence,
+        rhs_norm,
+        initial_residual,
+        achieved_residual,
+        relative_residual,
+        working_exponent,
+        iterations,
+        termination_reason,
+    ):
+        diagnostics = channel_pressure_solve_diagnostics(
+            self._solver,
+            operator_identity="channel_pressure_schur_conjugate_transpose",
+            solve_phase="standalone_transpose_qualification",
+            solve_sequence_id=sequence,
+            rhs_norm=rhs_norm,
+            initial_absolute_residual=initial_residual,
+            achieved_absolute_residual=achieved_residual,
+            achieved_normalized_residual=relative_residual,
+            working_scale_binary_exponent=working_exponent,
+            achieved_iteration_count=iterations,
+            termination_reason=termination_reason,
+        )
+        self._record_transpose_diagnostics(diagnostics)
+        raise FunctionalConvergenceError(
+            "standalone Channel pressure transpose solve is unacceptable",
+            operation="channel_pressure_transpose_solve",
+            details=diagnostics.to_metadata(),
+        )
 
     def pressure_transpose_metadata(self) -> dict[str, object]:
         """Describe the exact operator-level contract without runtime claims."""

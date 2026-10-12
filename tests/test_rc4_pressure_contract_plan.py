@@ -10,6 +10,11 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "notes/PSSolver_v0_2_0rc4_rc440_pressure_contract_plan.json"
+RC443 = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc443_pressure_policy_implementation.json"
+)
 
 
 def _plan() -> dict[str, object]:
@@ -203,8 +208,17 @@ def test_rc440_h100_contract_requires_separate_single_submission():
 
 
 def test_rc440_reviewed_provider_sources_are_content_addressed():
+    successor = json.loads(RC443.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, expected in _plan()["reviewed_source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected, relative
+        actual = _sha256(ROOT / relative)
+        if actual == expected:
+            continue
+        registration = successor[relative]
+        assert registration["historical_sha256"] == expected
+        assert registration["current_sha256"] == actual
+        assert registration["introduced_by_phase"] == "RC4.4.3"
 
 
 def test_rc440_only_authorizes_planning():

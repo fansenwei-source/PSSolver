@@ -50,7 +50,8 @@ def test_p972_preserves_the_frozen_production_solver_and_warm_start():
 def test_p972_api_is_provisional_and_control_ownership_does_not_move():
     record = _record()
 
-    assert functional.CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION == "1"
+    assert record["scope"]["protocol_version"] == "1"
+    assert functional.CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION == "2"
     assert hasattr(functional, "ChannelPressureTransposeOperator")
     assert hasattr(functional, "ChannelPressureTransposeProtocol")
     assert not hasattr(pssolver, "ChannelPressureTransposeOperator")

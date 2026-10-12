@@ -37,6 +37,9 @@ from pssolver.io.checkpoint import (
     write_functional_checkpoint_provenance,
 )
 from pssolver.linear_solvers.stokes import ChannelNoSlipModalStokesSolver
+from pssolver.linear_solvers.stokes.channel_no_slip import (
+    ChannelPressureMagnitude,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -509,56 +512,67 @@ def test_pressure_metadata_distinguishes_cap_from_required_postcondition():
     implicit.solve(rhs)
     metadata = implicit.pressure_solve_metadata()["primal"]
     required = {
+        "schema_version",
+        "solve_phase",
+        "initial_guess_policy",
         "solver_identity",
         "operator_identity",
-        "requested_iteration_limit",
+        "authoritative_iteration_limit",
         "achieved_iteration_count",
         "achieved_absolute_residual",
-        "achieved_relative_residual",
+        "achieved_normalized_residual",
         "requested_relative_tolerance",
-        "tolerance_semantics",
+        "relative_tolerance_role",
         "termination_reason",
         "acceptable",
     }
     assert required <= set(metadata)
-    assert metadata["convergence_mode"] == (
-        "deterministic_iteration_cap_with_early_convergence"
+    assert metadata["schema_version"] == 2
+    assert metadata["convergence_mode"] == "fixed_work"
+    assert metadata["relative_tolerance_role"] == (
+        "diagnostic_only_not_early_exit"
     )
-    assert metadata["tolerance_semantics"] == (
-        "early_convergence_criterion_optional_at_cap;"
-        "relative_residual_must_not_exceed_initial"
-    )
-    assert metadata["requested_iteration_limit"] == 2
+    assert metadata["authoritative_iteration_limit"] == 2
     assert metadata["achieved_iteration_count"] == 2
-    assert metadata["termination_reason"] == "iteration_limit_reached"
+    assert metadata["termination_reason"] == "fixed_work_completed"
     assert metadata["acceptable"] is True
 
-    bounded_cap = channel_pressure_solve_diagnostics(
+    one = ChannelPressureMagnitude(False, 1.0, True, 0.0, 0.5, 1)
+    completed_work = channel_pressure_solve_diagnostics(
         solver,
         operator_identity="channel_pressure_schur_primal",
+        solve_phase="functional_primal",
+        rhs_norm=one,
+        initial_absolute_residual=one,
+        achieved_absolute_residual=one,
+        achieved_normalized_residual=1.0,
         achieved_iteration_count=2,
-        achieved_absolute_residual=1.0,
-        achieved_relative_residual=1.0,
-        termination_reason="iteration_limit_reached",
+        termination_reason="fixed_work_completed",
     )
-    assert bounded_cap.acceptable is True
+    assert completed_work.acceptable is True
 
-    divergent_cap = channel_pressure_solve_diagnostics(
+    unmet_cap = channel_pressure_solve_diagnostics(
         solver,
         operator_identity="channel_pressure_schur_primal",
+        solve_phase="functional_primal",
+        rhs_norm=one,
+        initial_absolute_residual=one,
+        achieved_absolute_residual=one,
+        achieved_normalized_residual=1.0,
         achieved_iteration_count=2,
-        achieved_absolute_residual=2.0,
-        achieved_relative_residual=1.01,
-        termination_reason="iteration_limit_reached",
+        termination_reason="iteration_limit_reached_without_postcondition",
     )
-    assert divergent_cap.acceptable is False
+    assert unmet_cap.acceptable is False
 
     breakdown_at_cap = channel_pressure_solve_diagnostics(
         solver,
         operator_identity="channel_pressure_schur_primal",
+        solve_phase="functional_primal",
+        rhs_norm=one,
+        initial_absolute_residual=one,
+        achieved_absolute_residual=one,
+        achieved_normalized_residual=1.0,
         achieved_iteration_count=2,
-        achieved_absolute_residual=1.0,
-        achieved_relative_residual=1.0,
         termination_reason="preconditioned_residual_breakdown",
     )
     assert breakdown_at_cap.acceptable is False

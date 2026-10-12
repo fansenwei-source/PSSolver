@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.4.3 Provider Channel pressure-policy implementation",
+  "phase": "RC4.4.3",
+  "status": "complete",
+  "classification": "PASS_RC4_4_3_PROVIDER_PRESSURE_POLICY_IMPLEMENTATION",
+  "implementation_parent": "069c4d84f26763699e4c92d9482eb492a87ae7fc",
+  "frozen_contract": {
+    "path": "notes/PSSolver_v0_2_0rc4_rc442_pressure_contract.json",
+    "sha256": "98cb05bb9e34617ae8bb1a4a7eab531a9ccfb5a73728a7de50c71b1674eafdf8",
+    "classification": "PASS_RC4_4_2_PUBLIC_CHANNEL_PRESSURE_CONTRACT"
+  },
+  "implemented_scope": {
+    "production_primal": true,
+    "functional_primal": true,
+    "functional_transpose": true,
+    "standalone_transpose_qualification": true,
+    "small_grid_unrolled_oracle": true,
+    "production_warm_start_preserved": true,
+    "functional_zero_start_preserved": true,
+    "public_user_pressure_input_shape_changed": false,
+    "all_pcg_loops_consolidated": false,
+    "R5_refactor_performed": false
+  },
+  "policy": {
+    "fixed_work": {
+      "authoritative_limit": "fixed_iterations",
+      "relative_tolerance_role": "diagnostic_only_not_early_exit",
+      "exact_budget_required": true,
+      "exact_zero_rhs_or_residual_may_exit_early": true,
+      "breakdown_fails_closed": true
+    },
+    "relative_tolerance": {
+      "authoritative_limit": "max_iterations",
+      "relative_tolerance_role": "required_postcondition",
+      "unmet_cap_fails_closed": true
+    },
+    "production_warm_start": {
+      "read_before_initial_residual": true,
+      "committed_only_after_acceptable_solve": true,
+      "unchanged_on_failure": true
+    }
+  },
+  "scale_contract": {
+    "rhs_norm_definition": "active_mode_root_mean_square.v1",
+    "normalized_residual_definition": "active_rms(projected_residual)/active_rms(projected_rhs)",
+    "working_vector_scaling": "largest_power_of_two_not_greater_than_active_component_amax",
+    "breakdown_definition": "abs(mean_active(conj(left)*right))<=eps*active_rms(left)*active_rms(right)",
+    "absolute_breakdown_threshold_present": false,
+    "scale_exponents_tested": [-1074, -1020, 0, 1018, 1023],
+    "grid_shapes_tested": [[3, 2, 2], [4, 3, 2], [5, 4, 3]],
+    "ordinary_fixed_work_byte_identity": true,
+    "production_primal_scale_covariance": true,
+    "functional_primal_scale_covariance": true,
+    "functional_transpose_scale_covariance": true
+  },
+  "diagnostics_core": {
+    "schema_version": 2,
+    "immutable_functional_snapshot": true,
+    "json_safe": true,
+    "production_and_functional_field_meanings_equal": true,
+    "failure_snapshot_persisted_before_exception": true,
+    "new_primal_invalidates_published_transpose_snapshot": true,
+    "multi_step_reverse_mode_remains_executable": true,
+    "older_primal_transpose_does_not_overwrite_current_snapshot": true,
+    "pressure_transpose_protocol_version": "2",
+    "implicit_pressure_adjoint_version": "2"
+  },
+  "failure_contract": {
+    "production_exception": "pssolver.linear_solvers.stokes.ChannelPressureConvergenceError",
+    "production_code": "channel_pressure_convergence_error",
+    "functional_exception": "pssolver.functional.FunctionalConvergenceError",
+    "partial_result_published": false,
+    "production_warm_start_mutated_on_failure": false
+  },
+  "source_sha256": {
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": "d77b29b0834a35e8e8d41d31cad75018765272880570ce8cb293f359774aeb75",
+    "pssolver/linear_solvers/stokes/__init__.py": "450bd344340515e97a9411725bb69cec90e88464e0acea30ff3c19c2cdf4ef01",
+    "pssolver/functional/pressure_metadata.py": "99a351ca4e5df7acd25bd6a0524f142ef1874a80c435779eb7537d39dd2da566",
+    "pssolver/functional/channel_pressure.py": "570325d20b340e15287367bbcb14a2ba191d153b04fc999485c9c20cc2865bd5",
+    "pssolver/functional/channel_pressure_adjoint.py": "b5ab764677b85d17a4435c712fc333c7b4f786840c880eb3799f290712700bf3",
+    "tests/test_rc4_pressure_policy_implementation.py": "7e634ea7503a4f1939e2cfae15ae446679e2a35701a45797834ffdc10a5a3d40"
+  },
+  "historical_successor_sources": {
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "historical_sha256": "ba6789b5f3a117206b82e9bdd2b173f6fabde9fd9e0c9085d770355b1d3cb526",
+      "current_sha256": "d77b29b0834a35e8e8d41d31cad75018765272880570ce8cb293f359774aeb75",
+      "introduced_by_phase": "RC4.4.3",
+      "reason": "implement the frozen production pressure policy, scale-safe magnitude and relative breakdown semantics"
+    },
+    "pssolver/functional/pressure_metadata.py": {
+      "historical_sha256": "39f886042360d0ef12504050c28d593fad291ac6a119fd513b2b6f165f2d590e",
+      "current_sha256": "99a351ca4e5df7acd25bd6a0524f142ef1874a80c435779eb7537d39dd2da566",
+      "introduced_by_phase": "RC4.4.3",
+      "reason": "implement the frozen immutable JSON-safe pressure diagnostics schema v2 core"
+    },
+    "pssolver/functional/channel_pressure.py": {
+      "historical_sha256": "518c782f2947b8f3a5224178ed14c41f32a32be3904305907f83cce4b426337d",
+      "current_sha256": "570325d20b340e15287367bbcb14a2ba191d153b04fc999485c9c20cc2865bd5",
+      "introduced_by_phase": "RC4.4.3",
+      "reason": "apply the frozen scale-safe fixed-work and tolerance policy to the standalone transpose qualification path"
+    },
+    "pssolver/functional/channel_pressure_adjoint.py": {
+      "historical_sha256": "7a4a597c3601e020a053fd45199dd24601255e1f6438db88e0dc30af7d9d31a5",
+      "current_sha256": "b5ab764677b85d17a4435c712fc333c7b4f786840c880eb3799f290712700bf3",
+      "introduced_by_phase": "RC4.4.3",
+      "reason": "apply the frozen scale-safe policy to functional primal, transpose and the unrolled oracle without retaining PCG graphs"
+    },
+    "tests/test_phase9_p982_stable_functional_api.py": {
+      "historical_sha256": "1b778c3df00bc848057db203654db8d274c7252a21bdf04dacb347d162cca617",
+      "current_sha256": "7b0252f50a4a9ee922cdbce92bfc6d478a4c0b7089d6853899281cccbbde7db7",
+      "introduced_by_phase": "RC4.4.3",
+      "reason": "migrate the pressure diagnostics regression from ambiguous schema v1 cap acceptance to the frozen schema v2 fixed-work postcondition"
+    }
+  },
+  "verification": {
+    "rc443_implementation_tests": {
+      "passed": 28,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "channel_and_p97_regression": {
+      "passed": 211,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 3111,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "failed_before_historical_successor_registration": 2,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "final_rerun_pending": false,
+      "deselected_scope": "the seven pre-existing CUDA-only node IDs frozen by the RC4 CPU contract"
+    },
+    "git_diff_check": "PASS"
+  },
+  "deferred_to_rc4_4_4": [
+    "tensor-free declaration derived-policy metadata connection",
+    "compiled public Simulation normalization connection",
+    "public runtime diagnostics exposure",
+    "capability truth metadata repair",
+    "production and functional forward/derivative identity v4",
+    "checkpoint restart compatibility and negative gates"
+  ],
+  "nonclaims": {
+    "B25_closed": false,
+    "B28_closed": false,
+    "B29_closed": false,
+    "rc4_4_complete": false,
+    "provider_installed_wheel_qualified": false,
+    "consumer_migrated": false,
+    "H100_qualified": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  },
+  "authorization": {
+    "rc4_4_3_complete": true,
+    "rc4_4_4_planning_eligible": true,
+    "rc4_4_4_implementation_authorized": false,
+    "PSSolver_Control_change_authorized": false,
+    "h100_submission_authorized": false,
+    "push_authorized": false,
+    "production_default_changed": false
+  }
+}

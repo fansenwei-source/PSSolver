@@ -58,7 +58,8 @@ def test_p973_preserves_frozen_solver_and_provisional_api_boundary():
     )
     assert compatibility["canonical_production_solver_modified"] is False
     assert compatibility["p9_7_2_protocol_modified"] is False
-    assert functional.CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION == "1"
+    assert record["implicit_adjoint"]["version"] == "1"
+    assert functional.CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION == "2"
     assert hasattr(functional, "ChannelImplicitPressureAdjoint")
     assert hasattr(functional, "unrolled_channel_pressure_solve_oracle")
     assert not hasattr(pssolver, "ChannelImplicitPressureAdjoint")

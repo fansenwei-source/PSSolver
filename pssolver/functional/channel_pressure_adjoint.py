@@ -9,7 +9,6 @@ restricted to small CPU problems and exists only as a qualification oracle.
 
 from __future__ import annotations
 
-import math
 from numbers import Integral
 from typing import Protocol, runtime_checkable
 
@@ -18,6 +17,11 @@ from torch.autograd.function import once_differentiable
 
 from pssolver.linear_solvers.stokes.channel_no_slip import (
     ChannelNoSlipModalStokesSolver,
+    channel_pressure_active_rms,
+    channel_pressure_magnitude_ratio,
+    channel_pressure_relative_breakdown,
+    channel_pressure_scale_power_of_two,
+    channel_pressure_working_vector,
 )
 
 from .channel_pressure import ChannelPressureTransposeOperator
@@ -29,7 +33,7 @@ from .pressure_metadata import (
 )
 
 
-CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION = "1"
+CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION = "2"
 CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES = 512
 
 
@@ -67,12 +71,17 @@ class _ImplicitPressureSolve(torch.autograd.Function):
     @staticmethod
     def forward(ctx, rhs_hat, operator):
         ctx.operator = operator
-        return operator._solve_primal_no_grad(rhs_hat)
+        value = operator._solve_primal_no_grad(rhs_hat)
+        ctx.solve_sequence_id = operator._solve_sequence_id
+        return value
 
     @staticmethod
     @once_differentiable
     def backward(ctx, grad_pressure_hat):
-        grad_rhs = ctx.operator._solve_transpose_no_grad(grad_pressure_hat)
+        grad_rhs = ctx.operator._solve_transpose_no_grad(
+            grad_pressure_hat,
+            source_primal_sequence_id=ctx.solve_sequence_id,
+        )
         return grad_rhs, None
 
 
@@ -86,21 +95,16 @@ class ChannelImplicitPressureAdjoint:
             )
         self._solver = solver
         self._operators = ChannelPressureTransposeOperator(solver)
+        self._solve_sequence_id = 0
         self.last_primal_diagnostics = channel_pressure_solve_diagnostics(
             solver,
             operator_identity="channel_pressure_schur_primal",
-            achieved_iteration_count=0,
-            achieved_absolute_residual=0.0,
-            achieved_relative_residual=0.0,
-            termination_reason="not_run",
+            solve_phase="not_run",
         )
         self.last_transpose_diagnostics = channel_pressure_solve_diagnostics(
             solver,
             operator_identity="channel_pressure_schur_conjugate_transpose",
-            achieved_iteration_count=0,
-            achieved_absolute_residual=0.0,
-            achieved_relative_residual=0.0,
-            termination_reason="not_run",
+            solve_phase="not_run",
         )
 
     def _validate_rhs(self, rhs_hat: torch.Tensor) -> None:
@@ -121,78 +125,110 @@ class ChannelImplicitPressureAdjoint:
             raise ValueError(
                 "pressure right-hand side device must match the solver device"
             )
-        if not bool(torch.isfinite(rhs_hat.detach()).all().item()):
-            raise ValueError("pressure right-hand side must be finite")
-
     @torch.no_grad()
-    def _solve_no_grad(self, rhs_hat, action, operator_identity):
+    def _solve_no_grad(
+        self,
+        rhs_hat,
+        action,
+        operator_identity,
+        *,
+        solve_phase,
+        solve_sequence_id,
+        source_primal_sequence_id,
+    ):
         rhs_hat = self._operators._project_gauge(rhs_hat)
-        rhs_max = torch.max(torch.abs(rhs_hat)).item()
-        if rhs_max == 0.0:
-            return torch.zeros_like(rhs_hat), channel_pressure_solve_diagnostics(
+        if not bool(torch.isfinite(rhs_hat).all().item()):
+            diagnostics = channel_pressure_solve_diagnostics(
                 self._solver,
                 operator_identity=operator_identity,
+                solve_phase=solve_phase,
+                solve_sequence_id=solve_sequence_id,
+                source_primal_sequence_id=source_primal_sequence_id,
                 achieved_iteration_count=0,
-                achieved_absolute_residual=0.0,
-                achieved_relative_residual=0.0,
+                achieved_normalized_residual=None,
+                termination_reason="nonfinite_input",
+            )
+            self._persist_solve_diagnostics(diagnostics)
+            raise FunctionalConvergenceError(
+                f"functional pressure {solve_phase} input is non-finite",
+                operation=f"channel_pressure_{solve_phase}_solve",
+                details=diagnostics.to_metadata(),
+            )
+        working_rhs, working_exponent, rhs_magnitude = (
+            channel_pressure_working_vector(
+                rhs_hat,
+                self._solver.pressure_inactive_mask,
+            )
+        )
+        if rhs_magnitude.is_zero:
+            diagnostics = channel_pressure_solve_diagnostics(
+                self._solver,
+                operator_identity=operator_identity,
+                solve_phase=solve_phase,
+                solve_sequence_id=solve_sequence_id,
+                source_primal_sequence_id=source_primal_sequence_id,
+                rhs_norm=rhs_magnitude,
+                initial_absolute_residual=rhs_magnitude,
+                achieved_absolute_residual=rhs_magnitude,
+                achieved_normalized_residual=0.0,
+                working_scale_binary_exponent=None,
+                achieved_iteration_count=0,
                 termination_reason="zero_rhs",
             )
-        # Normalize only when PCG's quadratic products would leave the normal
-        # floating-point range.  Keeping ordinary inputs untouched preserves
-        # the qualified operation order and its byte-identical oracles.
-        real_dtype = rhs_hat.real.dtype
-        safe_quadratic_min = math.sqrt(torch.finfo(real_dtype).tiny)
-        safe_quadratic_max = math.sqrt(torch.finfo(real_dtype).max)
-        rhs_scale = 1.0
-        if rhs_max < safe_quadratic_min or rhs_max > safe_quadratic_max:
-            rhs_unit = rhs_hat / rhs_max
-            rhs_unit_norm = torch.linalg.vector_norm(
-                rhs_unit.reshape(-1)
-            ).item()
-            rhs_scale = rhs_max * rhs_unit_norm
-            rhs_hat = rhs_unit / rhs_unit_norm
-        working_rhs_norm = torch.linalg.vector_norm(
-            rhs_hat.reshape(-1)
-        ).item()
-        pressure_hat = torch.zeros_like(rhs_hat)
-        residual = rhs_hat.clone()
+            return torch.zeros_like(rhs_hat), diagnostics
+        pressure_hat = torch.zeros_like(working_rhs)
+        residual = working_rhs.clone()
+        rhs_work_magnitude = channel_pressure_active_rms(
+            working_rhs,
+            self._solver.pressure_inactive_mask,
+        )
+        initial_residual = rhs_magnitude
         preconditioned = residual / self._solver.schur_diag_safe
+        if channel_pressure_relative_breakdown(
+            residual,
+            preconditioned,
+            self._solver.pressure_inactive_mask,
+        ):
+            diagnostics = channel_pressure_solve_diagnostics(
+                self._solver,
+                operator_identity=operator_identity,
+                solve_phase=solve_phase,
+                solve_sequence_id=solve_sequence_id,
+                source_primal_sequence_id=source_primal_sequence_id,
+                rhs_norm=rhs_magnitude,
+                initial_absolute_residual=initial_residual,
+                achieved_absolute_residual=initial_residual,
+                achieved_normalized_residual=1.0,
+                working_scale_binary_exponent=working_exponent,
+                achieved_iteration_count=0,
+                termination_reason="preconditioned_residual_breakdown",
+            )
+            return pressure_hat, diagnostics
         direction = preconditioned.clone()
         rz_old = torch.sum(torch.conj(residual) * preconditioned).real
-        tolerance = self._solver.pressure_rel_tol * working_rhs_norm
-        residual_norm = working_rhs_norm
+        residual_work_magnitude = rhs_work_magnitude
+        residual_magnitude = initial_residual
+        relative_residual = 1.0
         iterations = 0
-        iteration_limit = (
-            self._solver.pressure_fixed_iterations
-            if self._solver.pressure_fixed_iterations is not None
-            else self._solver.pressure_max_iter
-        )
-        termination_reason = "iteration_limit_reached"
-        if (
-            self._solver.pressure_fixed_iterations is None
-            and residual_norm <= tolerance
-        ):
-            termination_reason = "relative_tolerance_met"
-        while iterations < iteration_limit and (
-            self._solver.pressure_fixed_iterations is not None
-            or residual_norm > tolerance
-        ):
+        fixed_work = self._solver.pressure_fixed_iterations is not None
+        iteration_limit = self._solver.pressure_iteration_limit
+        termination_reason = "iteration_limit_reached_without_postcondition"
+        acceptable = False
+        while iterations < iteration_limit:
             operator_direction = action(direction)
-            denominator = torch.sum(
-                torch.conj(direction) * operator_direction
-            ).real
-            denominator_scale = (
-                torch.linalg.vector_norm(direction.reshape(-1))
-                * torch.linalg.vector_norm(operator_direction.reshape(-1))
-            ).item()
-            denominator_floor = (
-                torch.finfo(denominator.dtype).eps * denominator_scale
-            )
-            if denominator_scale == 0.0 or (
-                denominator.abs().item() <= denominator_floor
+            if not bool(torch.isfinite(operator_direction).all().item()):
+                termination_reason = "nonfinite_intermediate"
+                break
+            if channel_pressure_relative_breakdown(
+                direction,
+                operator_direction,
+                self._solver.pressure_inactive_mask,
             ):
                 termination_reason = "operator_breakdown"
                 break
+            denominator = torch.sum(
+                torch.conj(direction) * operator_direction
+            ).real
             step = rz_old / denominator
             pressure_hat = self._operators._project_gauge(
                 pressure_hat + step * direction
@@ -200,68 +236,146 @@ class ChannelImplicitPressureAdjoint:
             residual = self._operators._project_gauge(
                 residual - step * operator_direction
             )
-            residual_norm = torch.linalg.vector_norm(
-                residual.reshape(-1)
-            ).item()
             iterations += 1
-            if residual_norm <= tolerance:
+            if not bool(
+                torch.isfinite(pressure_hat).all().item()
+                and torch.isfinite(residual).all().item()
+            ):
+                termination_reason = "nonfinite_intermediate"
+                break
+            residual_work_magnitude = channel_pressure_active_rms(
+                residual,
+                self._solver.pressure_inactive_mask,
+            )
+            residual_magnitude = residual_work_magnitude.shifted(
+                int(working_exponent)
+            )
+            relative_residual = channel_pressure_magnitude_ratio(
+                residual_work_magnitude,
+                rhs_work_magnitude,
+            )
+            if residual_work_magnitude.is_zero:
+                termination_reason = "exact_zero_residual"
+                acceptable = True
+                break
+            if not fixed_work and (
+                relative_residual <= self._solver.pressure_rel_tol
+            ):
                 termination_reason = "relative_tolerance_met"
+                acceptable = True
+                break
+            if iterations == iteration_limit:
+                if fixed_work:
+                    termination_reason = "fixed_work_completed"
+                    acceptable = True
                 break
             preconditioned = residual / self._solver.schur_diag_safe
-            rz_new = torch.sum(torch.conj(residual) * preconditioned).real
-            rz_scale = (
-                torch.linalg.vector_norm(residual.reshape(-1))
-                * torch.linalg.vector_norm(preconditioned.reshape(-1))
-            ).item()
-            rz_floor = torch.finfo(rz_old.dtype).eps * rz_scale
-            if rz_scale == 0.0 or rz_old.abs().item() <= rz_floor:
+            if not bool(torch.isfinite(preconditioned).all().item()):
+                termination_reason = "nonfinite_intermediate"
+                break
+            if channel_pressure_relative_breakdown(
+                residual,
+                preconditioned,
+                self._solver.pressure_inactive_mask,
+            ):
                 termination_reason = "preconditioned_residual_breakdown"
                 break
+            rz_new = torch.sum(torch.conj(residual) * preconditioned).real
             direction = preconditioned + (rz_new / rz_old) * direction
             rz_old = rz_new
-        relative_residual = residual_norm / working_rhs_norm
-        absolute_residual = residual_norm * rhs_scale
-        if not all(
-            math.isfinite(value)
-            for value in (absolute_residual, relative_residual)
-        ):
-            raise FunctionalConvergenceError(
-                "functional pressure solve is non-finite",
-                operation="channel_pressure_solve",
-                details={
-                    "achieved_iteration_count": iterations,
-                    "termination_reason": termination_reason,
-                },
-            )
         diagnostics = channel_pressure_solve_diagnostics(
             self._solver,
             operator_identity=operator_identity,
+            solve_phase=solve_phase,
+            solve_sequence_id=solve_sequence_id,
+            source_primal_sequence_id=source_primal_sequence_id,
+            rhs_norm=rhs_magnitude,
+            initial_absolute_residual=initial_residual,
+            achieved_absolute_residual=residual_magnitude,
+            achieved_normalized_residual=relative_residual,
+            working_scale_binary_exponent=working_exponent,
             achieved_iteration_count=iterations,
-            achieved_absolute_residual=absolute_residual,
-            achieved_relative_residual=relative_residual,
             termination_reason=termination_reason,
         )
-        return pressure_hat * rhs_scale, diagnostics
+        if acceptable != diagnostics.acceptable:
+            raise RuntimeError("pressure-loop and diagnostics postconditions disagree")
+        if diagnostics.acceptable:
+            pressure_hat = channel_pressure_scale_power_of_two(
+                pressure_hat,
+                int(working_exponent),
+            )
+            if not bool(torch.isfinite(pressure_hat).all().item()):
+                diagnostics = channel_pressure_solve_diagnostics(
+                    self._solver,
+                    operator_identity=operator_identity,
+                    solve_phase=solve_phase,
+                    solve_sequence_id=solve_sequence_id,
+                    source_primal_sequence_id=source_primal_sequence_id,
+                    rhs_norm=rhs_magnitude,
+                    initial_absolute_residual=initial_residual,
+                    achieved_absolute_residual=residual_magnitude,
+                    achieved_normalized_residual=relative_residual,
+                    working_scale_binary_exponent=working_exponent,
+                    achieved_iteration_count=iterations,
+                    termination_reason="nonfinite_intermediate",
+                )
+        return pressure_hat, diagnostics
 
     def _solve_primal_no_grad(self, rhs_hat):
+        self._solve_sequence_id += 1
+        sequence = self._solve_sequence_id
+        self.last_transpose_diagnostics = channel_pressure_solve_diagnostics(
+            self._solver,
+            operator_identity="channel_pressure_schur_conjugate_transpose",
+            solve_phase="not_run",
+            solve_sequence_id=sequence,
+            source_primal_sequence_id=sequence,
+        )
         value, diagnostics = self._solve_no_grad(
             rhs_hat,
             self._operators.apply_pressure_operator,
             "channel_pressure_schur_primal",
+            solve_phase="functional_primal",
+            solve_sequence_id=sequence,
+            source_primal_sequence_id=None,
         )
-        self._validate_solve_diagnostics(diagnostics, "primal")
         self.last_primal_diagnostics = diagnostics
+        self._validate_solve_diagnostics(diagnostics, "primal")
         return value
 
-    def _solve_transpose_no_grad(self, rhs_hat):
+    def _solve_transpose_no_grad(
+        self,
+        rhs_hat,
+        *,
+        source_primal_sequence_id=None,
+    ):
+        if source_primal_sequence_id is None:
+            source_primal_sequence_id = self._solve_sequence_id
         value, diagnostics = self._solve_no_grad(
             rhs_hat,
             self._operators.apply_pressure_operator_transpose,
             "channel_pressure_schur_conjugate_transpose",
+            solve_phase="functional_transpose",
+            solve_sequence_id=source_primal_sequence_id,
+            source_primal_sequence_id=source_primal_sequence_id,
         )
+        if source_primal_sequence_id == self._solve_sequence_id:
+            self.last_transpose_diagnostics = diagnostics
         self._validate_solve_diagnostics(diagnostics, "transpose")
-        self.last_transpose_diagnostics = diagnostics
         return value
+
+    def _persist_solve_diagnostics(
+        self,
+        diagnostics: ChannelPressureSolveDiagnostics,
+    ) -> None:
+        if diagnostics.solve_phase == "functional_primal":
+            self.last_primal_diagnostics = diagnostics
+        elif (
+            diagnostics.solve_phase == "functional_transpose"
+            and diagnostics.source_primal_sequence_id
+            == self._solve_sequence_id
+        ):
+            self.last_transpose_diagnostics = diagnostics
 
     def _validate_solve_diagnostics(
         self,
@@ -345,6 +459,7 @@ class ChannelImplicitPressureAdjoint:
 
         return {
             "schema_version": CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION,
+            "solve_sequence_id": self._solve_sequence_id,
             "primal": self.last_primal_diagnostics.to_metadata(),
             "transpose": self.last_transpose_diagnostics.to_metadata(),
         }
@@ -377,13 +492,49 @@ def unrolled_channel_pressure_solve_oracle(
 
     actions = ChannelPressureTransposeOperator(solver)
     rhs_hat = actions._project_gauge(rhs_hat)
-    pressure_hat = torch.zeros_like(rhs_hat)
-    residual = rhs_hat
+    if not bool(torch.isfinite(rhs_hat).all().item()):
+        raise FunctionalConvergenceError(
+            "unrolled pressure oracle input is non-finite",
+            operation="channel_pressure_unrolled_oracle",
+            details={"termination_reason": "nonfinite_input"},
+        )
+    working_rhs, working_exponent, rhs_magnitude = (
+        channel_pressure_working_vector(
+            rhs_hat,
+            solver.pressure_inactive_mask,
+        )
+    )
+    if rhs_magnitude.is_zero:
+        return torch.zeros_like(rhs_hat)
+    pressure_hat = torch.zeros_like(working_rhs)
+    residual = working_rhs
     preconditioned = residual / solver.schur_diag_safe
+    if channel_pressure_relative_breakdown(
+        residual,
+        preconditioned,
+        solver.pressure_inactive_mask,
+    ):
+        raise FunctionalConvergenceError(
+            "unrolled pressure oracle preconditioner broke down",
+            operation="channel_pressure_unrolled_oracle",
+            details={
+                "termination_reason": "preconditioned_residual_breakdown"
+            },
+        )
     direction = preconditioned
     rz_old = torch.sum(torch.conj(residual) * preconditioned).real
     for index in range(int(iterations)):
         operator_direction = actions.apply_pressure_operator(direction)
+        if channel_pressure_relative_breakdown(
+            direction,
+            operator_direction,
+            solver.pressure_inactive_mask,
+        ):
+            raise FunctionalConvergenceError(
+                "unrolled pressure oracle operator broke down",
+                operation="channel_pressure_unrolled_oracle",
+                details={"termination_reason": "operator_breakdown"},
+            )
         denominator = torch.sum(
             torch.conj(direction) * operator_direction
         ).real
@@ -394,12 +545,35 @@ def unrolled_channel_pressure_solve_oracle(
         residual = actions._project_gauge(
             residual - step * operator_direction
         )
+        if channel_pressure_active_rms(
+            residual,
+            solver.pressure_inactive_mask,
+        ).is_zero:
+            break
+        if index + 1 == int(iterations):
+            continue
         preconditioned = residual / solver.schur_diag_safe
+        if channel_pressure_relative_breakdown(
+            residual,
+            preconditioned,
+            solver.pressure_inactive_mask,
+        ):
+            raise FunctionalConvergenceError(
+                "unrolled pressure oracle preconditioner broke down",
+                operation="channel_pressure_unrolled_oracle",
+                details={
+                    "termination_reason": (
+                        "preconditioned_residual_breakdown"
+                    )
+                },
+            )
         rz_new = torch.sum(torch.conj(residual) * preconditioned).real
-        if index + 1 < int(iterations):
-            direction = preconditioned + (rz_new / rz_old) * direction
+        direction = preconditioned + (rz_new / rz_old) * direction
         rz_old = rz_new
-    return pressure_hat
+    return channel_pressure_scale_power_of_two(
+        pressure_hat,
+        int(working_exponent),
+    )
 
 
 __all__ = [

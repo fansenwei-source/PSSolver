@@ -18,6 +18,11 @@ SUCCESSOR_RECORD = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc426_functional_checkpoint_recovery.json"
 )
+RC443_SUCCESSOR_RECORD = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc443_pressure_policy_implementation.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -26,6 +31,18 @@ def _record() -> dict[str, object]:
 
 def _successor_record() -> dict[str, object]:
     return json.loads(SUCCESSOR_RECORD.read_text(encoding="utf-8"))
+
+
+def _registered_successor(relative: str, historical_sha256: str) -> dict[str, object]:
+    for path in (SUCCESSOR_RECORD, RC443_SUCCESSOR_RECORD):
+        record = json.loads(path.read_text(encoding="utf-8"))
+        registration = record["historical_successor_sources"].get(relative)
+        if (
+            registration is not None
+            and registration["historical_sha256"] == historical_sha256
+        ):
+            return registration
+    raise AssertionError(f"no registered successor for {relative}")
 
 
 def _sha256(relative: str) -> str:
@@ -45,16 +62,18 @@ def test_rc424_record_binds_parent_plans_and_implementation_files():
     for key in ("planning_record", "predecessor_record"):
         relative = record["git_identity"][key]
         assert _sha256(relative) == record["git_identity"][f"{key}_sha256"]
-    successor = _successor_record()
     for section in ("implementation_files", "adapted_regression_tests"):
         for relative, expected in record[section].items():
             actual = _sha256(relative)
             if actual == expected:
                 continue
-            registration = successor["historical_successor_sources"][relative]
+            registration = _registered_successor(relative, expected)
             assert registration["historical_sha256"] == expected
             assert registration["current_sha256"] == actual
-            assert registration["introduced_by_phase"] == "RC4.2.6 recovery"
+            assert registration["introduced_by_phase"] in {
+                "RC4.2.6 recovery",
+                "RC4.4.3",
+            }
 
 
 def test_rc424_record_freezes_four_layer_functional_identity():

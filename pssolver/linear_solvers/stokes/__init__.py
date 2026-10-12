@@ -4,6 +4,7 @@ from .channel_no_slip import (
     CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     CHANNEL_VELOCITY_BOUNDARY_CONDITIONS,
     ChannelNoSlipModalStokesSolver,
+    ChannelPressureConvergenceError,
 )
 from .plane_free_slip import FreeSlipModalStokesSolver
 from .periodic import PeriodicModalStokesSolver
@@ -12,6 +13,7 @@ __all__ = [
     "CHANNEL_PRESSURE_BOUNDARY_CONDITIONS",
     "CHANNEL_VELOCITY_BOUNDARY_CONDITIONS",
     "ChannelNoSlipModalStokesSolver",
+    "ChannelPressureConvergenceError",
     "FreeSlipModalStokesSolver",
     "PeriodicModalStokesSolver",
 ]

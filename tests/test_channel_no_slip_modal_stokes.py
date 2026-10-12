@@ -261,11 +261,21 @@ def test_fixed_iteration_pressure_mode_preserves_the_requested_work_count():
     assert stokes.last_pressure_iterations == 4
     assert stokes.pressure_fixed_iterations == 4
     assert stokes.pressure_convergence_policy() == {
-        "mode": "fixed_iteration_cap_with_early_relative_tolerance",
-        "iteration_limit": 4,
-        "iteration_limit_source": "pressure_fixed_iterations",
-        "max_iterations_role": "inactive_while_fixed_iterations_is_set",
-        "relative_tolerance_role": "early_exit_only",
+        "schema_version": 1,
+        "convergence_mode": "fixed_work",
+        "authoritative_iteration_limit": 4,
+        "authoritative_iteration_limit_source": "fixed_iterations",
+        "max_iterations_role": "inactive_compatibility_field",
+        "relative_tolerance_role": "diagnostic_only_not_early_exit",
+        "initial_guess_policy": "persistent_production_warm_start",
+        "rhs_norm_definition": "active_mode_root_mean_square.v1",
+        "working_vector_scaling": (
+            "largest_power_of_two_not_greater_than_active_component_amax"
+        ),
+        "breakdown_definition": (
+            "abs(mean_active(conj(left)*right))"
+            "<=eps*active_rms(left)*active_rms(right)"
+        ),
     }
 
 
@@ -277,11 +287,21 @@ def test_tolerance_pressure_mode_reports_maximum_iteration_precedence():
     )
 
     assert stokes.pressure_convergence_policy() == {
-        "mode": "relative_tolerance_with_maximum_iteration_cap",
-        "iteration_limit": 37,
-        "iteration_limit_source": "pressure_max_iterations",
-        "max_iterations_role": "authoritative_cap",
+        "schema_version": 1,
+        "convergence_mode": "relative_tolerance",
+        "authoritative_iteration_limit": 37,
+        "authoritative_iteration_limit_source": "max_iterations",
+        "max_iterations_role": "authoritative_iteration_cap",
         "relative_tolerance_role": "required_postcondition",
+        "initial_guess_policy": "persistent_production_warm_start",
+        "rhs_norm_definition": "active_mode_root_mean_square.v1",
+        "working_vector_scaling": (
+            "largest_power_of_two_not_greater_than_active_component_amax"
+        ),
+        "breakdown_definition": (
+            "abs(mean_active(conj(left)*right))"
+            "<=eps*active_rms(left)*active_rms(right)"
+        ),
     }
 
 

@@ -12,6 +12,7 @@ from pssolver.functional import (
     ChannelImplicitPressureAdjoint,
     ChannelImplicitPressureAdjointProtocol,
     ChannelPressureTransposeOperator,
+    FunctionalConvergenceError,
     unrolled_channel_pressure_solve_oracle,
 )
 from pssolver.linear_solvers.stokes import (
@@ -90,7 +91,7 @@ def test_implicit_pressure_adjoint_protocol_and_nonclaims_are_explicit():
 
     assert isinstance(implicit, ChannelImplicitPressureAdjointProtocol)
     assert implicit.implicit_adjoint_metadata() == {
-        "version": "1",
+        "version": "2",
         "batch_size": 1,
         "differentiable_input": "pressure_rhs_hat",
         "operator_coefficients_differentiable": False,
@@ -342,7 +343,7 @@ def test_unrolled_oracle_and_implicit_input_contracts_fail_closed():
         implicit.solve(valid.real)
     invalid = valid.clone()
     invalid[:, 1, 0, 0] = complex(float("nan"), 0.0)
-    with pytest.raises(ValueError, match="finite"):
+    with pytest.raises(FunctionalConvergenceError, match="non-finite"):
         implicit.solve(invalid)
     with pytest.raises(ValueError, match="positive integer"):
         unrolled_channel_pressure_solve_oracle(

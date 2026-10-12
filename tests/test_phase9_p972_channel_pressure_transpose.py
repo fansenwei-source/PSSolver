@@ -93,7 +93,7 @@ def test_solver_satisfies_the_explicit_pressure_transpose_protocol():
     assert "_velocity_divergence_component_adjoint" in source
     assert "apply_pressure_operator(" not in source
     assert pressure.pressure_transpose_metadata() == {
-        "protocol_version": "1",
+        "protocol_version": "2",
         "inner_product": "native_complex_euclidean_coefficient_space",
         "gauge": "zero_mean_pressure_mode",
         "primal_action": "frozen_production_schur_operator",
