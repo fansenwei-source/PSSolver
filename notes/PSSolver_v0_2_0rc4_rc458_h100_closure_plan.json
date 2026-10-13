@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 RC4.5.8 single-H100 TF32 cumulative closure plan",
+  "phase": "RC4.5.8",
+  "status": "plan_frozen_waiting_for_remote_identity_and_authorization",
+  "classification": "READY_RC4_5_8_SINGLE_H100_PLAN",
+  "qualification_complete": false,
+  "baseline": {
+    "provider_pre_rc4_5_commit": "51f47e9f06bd3e019d785305bff47c80f5519b10",
+    "provider_runtime_candidate_commit": "a195bd05992bc6553c72c400587d2b07afe722d0",
+    "provider_qualification_parent_commit": "27490c7dc759433a97f95b32de6dd81e3002eab1",
+    "consumer_qualified_source_commit": "b8539e0ec4c137a6c13746f6832e26e74be24515",
+    "rc4_5_7_record": "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_recovery.json",
+    "rc4_5_7_record_sha256": "87d0ea3f4aa693d9143a0b53cf30cbae6db1e8d207b36399a46ee5cf49ac06c4"
+  },
+  "remote_identity_precondition": {
+    "provider_branch": "fix/v0.2.0rc4-audit",
+    "provider_observed_remote_tip_before_plan": "51f47e9f06bd3e019d785305bff47c80f5519b10",
+    "provider_required_remote_tip": "qualification support commit descended from 27490c7dc759433a97f95b32de6dd81e3002eab1",
+    "consumer_branch": "migration/pssolver-v0.2.0rc4-rc457-tf32-identity",
+    "consumer_observed_remote_branch_before_plan": "absent",
+    "consumer_required_qualified_source_ancestor": "b8539e0ec4c137a6c13746f6832e26e74be24515",
+    "ready": false
+  },
+  "qualification_matrix": {
+    "schema": "pssolver.rc4_5_8.tf32_h100_plan.v1",
+    "canonical_sha256": "cb0866559a60169c08ef3cbe801aa9aacdbd34a4601030a1c5892349318d506e",
+    "runtime_family_count": 8,
+    "grid_count_per_family": 2,
+    "trial_count_per_grid": 3,
+    "provider_role_count": 2,
+    "profile_count": 96,
+    "cuda_only_test_count": 7,
+    "caller_state_count": 3
+  },
+  "execution_order": [
+    "installed-wheel and H100 environment identity",
+    "seven CUDA-only tests",
+    "scoped TF32 success, exception, nesting, invalid-policy and caller-state restoration gates",
+    "eight runtime-family CUDA execution gates",
+    "ninety-six A/B profiles",
+    "PSSolver-Control installed-wheel H100 suite",
+    "fail-closed cumulative analyzer",
+    "checksum verification and COMPLETE"
+  ],
+  "runtime_families": [
+    "plane_legacy_production",
+    "plane_compiled_v2",
+    "periodic_complete_stress",
+    "channel_legacy",
+    "channel_compiled_v2",
+    "channel_complete_stress",
+    "periodic_functional",
+    "channel_functional"
+  ],
+  "thresholds": {
+    "mean_timestep_ratio_max": 1.03,
+    "median_timestep_ratio_max": 1.03,
+    "paired_timestep_ratio_max": 1.05,
+    "peak_allocated_ratio_max": 1.03,
+    "peak_reserved_ratio_max": 1.03,
+    "paired_initial_sha_equal": true,
+    "paired_final_state_sha_equal": true,
+    "transform_counts_exact": true,
+    "fallback_allowed": false,
+    "graph_breaks_allowed": 0,
+    "finite_required": true
+  },
+  "consumer": {
+    "qualified_source_commit": "b8539e0ec4c137a6c13746f6832e26e74be24515",
+    "installed_wheel_full_suite_required": true,
+    "allowed_skip": "tests/test_warmup_experiments.py::test_r5_benchmark",
+    "r5_benchmark_authorized": false,
+    "new_control_algorithm_authorized": false
+  },
+  "local_verification": {
+    "py_compile": "PASS",
+    "cuda_node_collection": "7 tests collected",
+    "targeted_passed": 6,
+    "targeted_failed": 0,
+    "full_passed": 3368,
+    "full_failed": 0,
+    "full_skipped": 0,
+    "full_deselected": 1,
+    "subtests_passed": 8,
+    "deselected_node_id": "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+  },
+  "source_sha256": {
+    "benchmarks/plan_rc458_tf32_h100.py": "03518af57c35fc888b4f2a11746696b83887e24dc6000aa0e6342985ce7aa26f",
+    "tests/test_plan_rc458_tf32_h100.py": "49650a38596101791edad06a384a1e17e880e8c6a000c378d5d21756246343be"
+  },
+  "scope": {
+    "runtime_source_modified_by_plan": false,
+    "PSSolver_Control_modified_by_plan": false,
+    "nematics3d_modified": false,
+    "numerical_equations_changed": false,
+    "spectral_transform_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "production_default_changed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "h100_submission_authorized": false,
+    "automatic_retry": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}
