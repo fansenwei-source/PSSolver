@@ -8,6 +8,7 @@ import math
 import pytest
 import torch
 
+import pssolver.linear_solvers.stokes.channel_no_slip as channel_no_slip
 from pssolver import SpectralSolver
 from pssolver.functional import (
     CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION,
@@ -23,7 +24,11 @@ from pssolver.linear_solvers.stokes import (
     ChannelPressureConvergenceError,
 )
 from pssolver.linear_solvers.stokes.channel_no_slip import (
+    _channel_pressure_bounded_operator_nonbreakdown,
+    _channel_pressure_initial_direction_rms_upper_bound,
+    _channel_pressure_next_direction_rms_upper_bound,
     _channel_pressure_operator_breakdown,
+    _channel_pressure_rms_interval,
     _channel_pressure_working_breakdown,
     _channel_pressure_working_magnitude,
     _channel_pressure_working_residual_observation,
@@ -341,6 +346,146 @@ def test_operator_upper_bound_fast_path_matches_full_relative_breakdown_gate():
         operator_direction,
         mask,
     )
+
+
+def test_host_direction_bound_is_conservative_and_fails_closed():
+    magnitude = channel_pressure_active_rms(
+        torch.tensor([[[[0.0, 3.0 + 4.0j]]]], dtype=torch.complex64),
+        torch.tensor([[[[True, False]]]]),
+    )
+    interval = _channel_pressure_rms_interval(
+        magnitude,
+        real_dtype=torch.float32,
+    )
+    assert interval is not None
+    assert interval[0] < magnitude.float64_value < interval[1]
+
+    initial = _channel_pressure_initial_direction_rms_upper_bound(
+        interval,
+        preconditioner_inverse_max=2.0,
+        real_dtype=torch.float32,
+    )
+    assert initial is not None
+    assert initial > 2.0 * interval[1]
+
+    next_magnitude = channel_pressure_active_rms(
+        torch.tensor([[[[0.0, 1.5 + 2.0j]]]], dtype=torch.complex64),
+        torch.tensor([[[[True, False]]]]),
+    )
+    next_interval = _channel_pressure_rms_interval(
+        next_magnitude,
+        real_dtype=torch.float32,
+    )
+    propagated = _channel_pressure_next_direction_rms_upper_bound(
+        initial,
+        interval,
+        next_interval,
+        preconditioner_inverse_min=0.5,
+        preconditioner_inverse_max=2.0,
+        real_dtype=torch.float32,
+    )
+    assert propagated is not None
+    assert propagated > 2.0 * next_interval[1]
+
+    assert _channel_pressure_next_direction_rms_upper_bound(
+        initial,
+        None,
+        next_interval,
+        preconditioner_inverse_min=0.5,
+        preconditioner_inverse_max=2.0,
+        real_dtype=torch.float32,
+    ) is None
+
+
+def test_bounded_operator_observation_only_certifies_strict_safe_side():
+    safe, finite = _channel_pressure_bounded_operator_nonbreakdown(
+        torch.tensor(1.0 + 0.0j, dtype=torch.complex64),
+        direction_rms_upper_bound=1.0,
+        active_count=16,
+        operator_norm_upper_bound=2.0,
+    )
+    assert finite is True
+    assert safe is True
+
+    unresolved, finite = _channel_pressure_bounded_operator_nonbreakdown(
+        torch.tensor(1.0e-8 + 0.0j, dtype=torch.complex64),
+        direction_rms_upper_bound=1.0,
+        active_count=16,
+        operator_norm_upper_bound=2.0,
+    )
+    assert finite is True
+    assert unresolved is False
+
+    unresolved, finite = _channel_pressure_bounded_operator_nonbreakdown(
+        torch.tensor(complex(float("nan"), 0.0), dtype=torch.complex64),
+        direction_rms_upper_bound=1.0,
+        active_count=16,
+        operator_norm_upper_bound=2.0,
+    )
+    assert finite is False
+    assert unresolved is False
+
+
+def test_float32_bound_fast_path_avoids_exact_direction_reduction(monkeypatch):
+    shape = (8, 4, 4)
+    spectral = SpectralSolver(
+        shape,
+        L=(32.0, 5.0, 5.0),
+        device="cpu",
+        dtype=torch.float32,
+    )
+    pressure = ChannelNoSlipModalStokesSolver(
+        spectral.transform_backend,
+        friction=0.0,
+        viscosity=1.0,
+        pressure_relative_tolerance=1.0e-6,
+        pressure_max_iterations=20,
+        pressure_fixed_iterations=5,
+    )
+    reference = ChannelNoSlipModalStokesSolver(
+        spectral.transform_backend,
+        friction=0.0,
+        viscosity=1.0,
+        pressure_relative_tolerance=1.0e-6,
+        pressure_max_iterations=20,
+        pressure_fixed_iterations=5,
+    )
+    generator = torch.Generator().manual_seed(4492)
+    physical = torch.randn((1, *shape), generator=generator, dtype=torch.float32)
+    exact = spectral.transform_tensor(
+        physical,
+        CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
+    )
+    exact = pressure._project_pressure_gauge(exact)
+    rhs = ChannelPressureTransposeOperator(pressure).apply_pressure_operator(exact)
+
+    assert pressure._pressure_operator_breakdown_certified is False
+    assert pressure._pressure_preconditioner_breakdown_certified is True
+    exact_fallback_calls = 0
+    original_exact = channel_no_slip._channel_pressure_operator_breakdown
+
+    def counted_exact(*args, **kwargs):
+        nonlocal exact_fallback_calls
+        exact_fallback_calls += 1
+        return original_exact(*args, **kwargs)
+
+    monkeypatch.setattr(
+        channel_no_slip,
+        "_channel_pressure_operator_breakdown",
+        counted_exact,
+    )
+    actual = pressure._solve_pressure(rhs)
+    assert exact_fallback_calls == 0
+
+    monkeypatch.setattr(
+        channel_no_slip,
+        "_channel_pressure_initial_direction_rms_upper_bound",
+        lambda *args, **kwargs: None,
+    )
+    expected = reference._solve_pressure(rhs)
+    assert exact_fallback_calls == reference.pressure_fixed_iterations
+    assert torch.equal(actual, expected)
+    assert pressure.last_pressure_diagnostics == reference.last_pressure_diagnostics
 
 
 def test_fixed_work_ignores_loose_tolerance_on_all_three_executable_loops():

@@ -1,0 +1,114 @@
+{
+  "schema": "pssolver.rc4_4_7.pressure_bounded_operator_recovery.v11",
+  "phase": "RC4.4.7-bounded-operator-recovery-v11-provider",
+  "status": "LOCAL_PROVIDER_CANDIDATE_H100_NOT_AUTHORIZED",
+  "classification": "LOCAL_CHANNEL_PRESSURE_BOUNDED_OPERATOR_NONBREAKDOWN_REPAIR",
+  "baseline_provider_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+  "failed_v10_runtime_commit": "5b7d839c4034eb46a48a61c7be349df01473a2cd",
+  "qualification_parent_commit": "930ea366fec5d7ccacd74d984d0de27381a30cdc",
+  "failed_v10_evidence": {
+    "job_id": "10878393",
+    "classification": "FAIL_RC4_4_7_PRESSURE_PERFORMANCE_NON_REGRESSION",
+    "R128_mean_candidate_over_baseline": 1.0778377172177989,
+    "R128_median_candidate_over_baseline": 1.0414556946734892,
+    "R512_mean_candidate_over_baseline": 1.0186936860601168,
+    "R512_median_candidate_over_baseline": 1.0271469802332345,
+    "pressure_iteration_histories_equal": true,
+    "paired_final_states_equal": true,
+    "scientific_failure": false,
+    "solver_correctness_failure": false,
+    "performance_failure": true,
+    "automatic_retry": false
+  },
+  "analysis_only_input": {
+    "directory": "/home/fansenwei/Desktop/Develop/PSSolver_rc447_pressure_performance_analysis_5b7d839_20261013_v1",
+    "classification": "R128_FIXED_PRESSURE_GUARD_OVERHEAD_WITH_UNRESOLVED_TIMING_TAIL",
+    "checksums_sha256": "91cc97425d258876843efb15492fd4c2f2ab962d2930b7aec687de19c6f8adf8",
+    "recommended_next_action": "implement_and_cpu_cuda_qualify_a_bounded_operator_breakdown_fast_path_without_changing_the_frozen_fail_closed_contract"
+  },
+  "repair": {
+    "scope": "provider_pressure_runtime_performance_only",
+    "changes": [
+      "derive a conservative host interval around each already-observed residual RMS",
+      "maintain a PCG direction-RMS upper bound from the diagonal preconditioner extrema and residual intervals",
+      "prove ordinary operator nonbreakdown from the existing d^H A d scalar and the operator-norm upper bound",
+      "fall back to the exact frozen two-vector relative-breakdown gate whenever the proof is unavailable or inconclusive",
+      "select the real component dtype from tensor.dtype on the host instead of constructing repeated CUDA .real views"
+    ],
+    "breakdown_definition_changed": false,
+    "breakdown_threshold_changed": false,
+    "exact_fallback_removed": false,
+    "nonfinite_failure_changed": false,
+    "fixed_work_changed": false,
+    "relative_tolerance_changed": false,
+    "pressure_tensor_update_order_changed": false,
+    "diagnostics_schema_changed": false,
+    "model_equations_changed": false,
+    "production_default_changed": false
+  },
+  "successor_sources": {
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "historical_sha256": "7b7f0c0f27e087ab60c79577adb302ed58b021d00c2afed728ec1efbb338b9e8",
+      "current_sha256": "75579ee8c9c0f8208816a7546c0e1a18067d865f76cc94be4a2d6de07070b758",
+      "introduced_by_phase": "RC4.4.7-bounded-operator-recovery-v11-provider",
+      "reason": "replace the remaining ordinary per-iteration direction-vector reductions and CUDA dtype views with a conservative host proof while retaining the exact fail-closed fallback"
+    },
+    "tests/test_rc4_pressure_policy_implementation.py": {
+      "historical_sha256": "407e4178f897ab765d87bd78fcdcedf84401a20ef988d60fbf44b93be6bd228d",
+      "current_sha256": "29facc8207d17d73e34f3e1017d61aed982c08c11087934d49964994edc6a277",
+      "introduced_by_phase": "RC4.4.7-bounded-operator-recovery-v11-provider",
+      "reason": "verify conservative bound propagation, inconclusive and non-finite behavior, exact fallback availability, byte-identical output and diagnostics"
+    }
+  },
+  "local_validation": {
+    "pressure_policy_tests": {
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0
+    },
+    "targeted_pressure_and_record_tests": {
+      "passed": 163,
+      "failed": 0,
+      "skipped": 0
+    },
+    "full_CPU": {
+      "passed": 3205,
+      "failed": 0,
+      "skipped": 0,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "seconds": 201.44
+    },
+    "local_CUDA_frozen_nodes": {
+      "passed": 6,
+      "failed_only_H100_device_name_assertion": 1,
+      "local_device": "NVIDIA GeForce RTX 3060 Ti",
+      "qualification_evidence": false
+    },
+    "operator_inventory_RTX3060Ti": {
+      "qualification_evidence": false,
+      "profile_steps": 3,
+      "pressure_iterations_per_step": 17,
+      "R128_baseline_mean_timestep_ms": 35.245,
+      "R128_candidate_mean_timestep_ms": 35.002,
+      "R512_baseline_mean_timestep_ms": 92.917,
+      "R512_candidate_mean_timestep_ms": 92.845,
+      "baseline_real_operations_per_step": 106,
+      "candidate_real_operations_per_step": 108,
+      "v10_real_operations_per_step": 177,
+      "candidate_vdot_operations_per_step": 0,
+      "candidate_gt_operations_per_step": 0,
+      "candidate_item_operations_per_step": 37
+    },
+    "H100_requalified": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "single_h100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false
+  },
+  "PSSolver_Control_modified": false,
+  "nematics3d_modified": false
+}

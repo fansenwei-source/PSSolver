@@ -19,6 +19,11 @@ PERFORMANCE_RECOVERY_V10 = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_pressure_performance_recovery_v10.json"
 )
+BOUNDED_OPERATOR_RECOVERY_V11 = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_pressure_bounded_operator_recovery_v11.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -93,14 +98,23 @@ def test_rc445_binds_qualification_sources_and_archive_integrity():
     v10 = json.loads(
         PERFORMANCE_RECOVERY_V10.read_text(encoding="utf-8")
     )["successor_sources"]
+    v11 = json.loads(
+        BOUNDED_OPERATOR_RECOVERY_V11.read_text(encoding="utf-8")
+    )["successor_sources"]
     for relative, expected in record["qualification_source_sha256"].items():
         actual = _sha256(ROOT / relative)
         if actual == expected:
             continue
         repaired = successors[relative]
-        successor = v10.get(relative, repaired)
+        successor = v11.get(relative, v10.get(relative, repaired))
         assert repaired["historical_sha256"] == expected
-        if relative in v10:
+        if relative in v11:
+            assert v10[relative]["historical_sha256"] == repaired["current_sha256"]
+            assert successor["historical_sha256"] == v10[relative]["current_sha256"]
+            assert successor["introduced_by_phase"] == (
+                "RC4.4.7-bounded-operator-recovery-v11-provider"
+            )
+        elif relative in v10:
             assert successor["historical_sha256"] == repaired["current_sha256"]
             assert successor["introduced_by_phase"] == (
                 "RC4.4.7-performance-recovery-v10-provider"

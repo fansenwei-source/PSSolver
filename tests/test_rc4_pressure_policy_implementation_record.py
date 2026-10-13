@@ -33,6 +33,11 @@ RC447_PERFORMANCE_RECOVERY_V10 = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_pressure_performance_recovery_v10.json"
 )
+RC447_BOUNDED_OPERATOR_RECOVERY_V11 = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_pressure_bounded_operator_recovery_v11.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -67,20 +72,28 @@ def test_rc443_record_binds_parent_contract_and_current_sources():
     performance_recovery = json.loads(
         RC447_PERFORMANCE_RECOVERY_V10.read_text(encoding="utf-8")
     )["successor_sources"]
+    bounded_recovery = json.loads(
+        RC447_BOUNDED_OPERATOR_RECOVERY_V11.read_text(encoding="utf-8")
+    )["successor_sources"]
     for relative, expected in record["source_sha256"].items():
         actual = _sha256(relative)
         if actual == expected:
             continue
-        successor = performance_recovery.get(
+        successor = bounded_recovery.get(
             relative,
-            performance_repair.get(
+            performance_recovery.get(
                 relative,
-                latest.get(relative, recovery.get(relative)),
+                performance_repair.get(
+                    relative,
+                    latest.get(relative, recovery.get(relative)),
+                ),
             ),
         )
         assert successor is not None
         predecessor = expected
-        if relative in performance_recovery:
+        if relative in bounded_recovery:
+            predecessor = performance_recovery[relative]["current_sha256"]
+        elif relative in performance_recovery:
             predecessor = performance_repair[relative]["current_sha256"]
         elif relative in performance_repair:
             intermediate = latest.get(relative, recovery.get(relative))
@@ -89,6 +102,9 @@ def test_rc443_record_binds_parent_contract_and_current_sources():
         assert successor["historical_sha256"] == predecessor
         assert successor["current_sha256"] == actual
         expected_phase = (
+            "RC4.4.7-bounded-operator-recovery-v11-provider"
+            if relative in bounded_recovery
+            else
             "RC4.4.7-performance-recovery-v10-provider"
             if relative in performance_recovery
             else
@@ -122,21 +138,29 @@ def test_rc443_registers_exact_historical_successors():
     performance_recovery = json.loads(
         RC447_PERFORMANCE_RECOVERY_V10.read_text(encoding="utf-8")
     )["successor_sources"]
+    bounded_recovery = json.loads(
+        RC447_BOUNDED_OPERATOR_RECOVERY_V11.read_text(encoding="utf-8")
+    )["successor_sources"]
     for relative, registration in successors.items():
         assert registration["introduced_by_phase"] == "RC4.4.3"
         assert registration["historical_sha256"] != registration["current_sha256"]
         actual = _sha256(relative)
         if actual != registration["current_sha256"]:
-            newest = performance_recovery.get(
+            newest = bounded_recovery.get(
                 relative,
-                performance_repair.get(
+                performance_recovery.get(
                     relative,
-                    latest.get(relative, recovery.get(relative)),
+                    performance_repair.get(
+                        relative,
+                        latest.get(relative, recovery.get(relative)),
+                    ),
                 ),
             )
             assert newest is not None
             predecessor = registration["current_sha256"]
-            if relative in performance_recovery:
+            if relative in bounded_recovery:
+                predecessor = performance_recovery[relative]["current_sha256"]
+            elif relative in performance_recovery:
                 predecessor = performance_repair[relative]["current_sha256"]
             elif relative in performance_repair:
                 intermediate = latest.get(relative, recovery.get(relative))
@@ -145,6 +169,9 @@ def test_rc443_registers_exact_historical_successors():
             assert newest["historical_sha256"] == predecessor
             assert newest["current_sha256"] == actual
             expected_phase = (
+                "RC4.4.7-bounded-operator-recovery-v11-provider"
+                if relative in bounded_recovery
+                else
                 "RC4.4.7-performance-recovery-v10-provider"
                 if relative in performance_recovery
                 else
