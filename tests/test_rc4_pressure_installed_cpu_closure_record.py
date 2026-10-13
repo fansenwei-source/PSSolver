@@ -30,6 +30,7 @@ RC455 = ROOT / (
 RC456 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 )
+RELEASE = ROOT / "notes/pssolver_v0_2_0_rc4.json"
 
 
 def _sha256(path: Path) -> str:
@@ -105,6 +106,7 @@ def test_rc445_binds_qualification_sources_and_archive_integrity():
         BOUNDED_OPERATOR_RECOVERY_V11,
         RC455,
         RC456,
+        RELEASE,
     ):
         successor_record = json.loads(path.read_text(encoding="utf-8"))
         successor_records.append(

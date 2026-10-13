@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc458_h100_closure.json"
+RELEASE = ROOT / "notes" / "pssolver_v0_2_0_rc4.json"
 
 
 def _record() -> dict[str, object]:
@@ -105,6 +106,9 @@ def test_rc458_closure_only_authorizes_release_preparation():
 
 def test_rc458_closure_registers_exact_historical_source_successors():
     successors = _record()["historical_successor_sources"]
+    release_successors = json.loads(RELEASE.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert set(successors) == {
         "tests/test_rc451_cross_runtime_adjudication.py",
         "tests/test_rc455_public_robustness.py",
@@ -114,8 +118,10 @@ def test_rc458_closure_registers_exact_historical_source_successors():
         "tests/test_rc3_known_issues_matrix.py",
     }
     for relative, registration in successors.items():
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == (
-            registration["current_sha256"]
-        )
+        resolved = registration["current_sha256"]
+        release = release_successors.get(relative)
+        if release is not None and release["historical_sha256"] == resolved:
+            resolved = release["current_sha256"]
+        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolved
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["introduced_by_phase"] == "RC4.5.8-finalization"

@@ -16,6 +16,7 @@ INITIAL = ROOT / (
 )
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
 RC458 = ROOT / "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
+RELEASE = ROOT / "notes/pssolver_v0_2_0_rc4.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -78,6 +79,7 @@ def test_rc457_recovery_binds_the_exact_tf32_identity_without_api_bumps():
 def test_rc457_recovery_preserves_initial_failure_and_binds_successors():
     record = _read(RECORD)
     closure_successors = _read(RC458)["historical_successor_sources"]
+    release_successors = _read(RELEASE)["historical_successor_sources"]
     assert _sha256(INITIAL) == record["baseline"]["initial_record_sha256"]
     assert _read(INITIAL)["qualification_complete"] is False
     for relative, registration in record[
@@ -87,10 +89,16 @@ def test_rc457_recovery_preserves_initial_failure_and_binds_successors():
         successor = closure_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
+        successor = release_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
         assert _sha256(ROOT / relative) == resolved
     for relative, expected in record["source_sha256"].items():
         resolved = expected
         successor = closure_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = release_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(ROOT / relative) == resolved

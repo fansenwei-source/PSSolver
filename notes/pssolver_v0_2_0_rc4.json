@@ -34,6 +34,107 @@
     "accepted_limitations": 3,
     "deferred_architecture": 9
   },
+  "historical_successor_sources": {
+    "tests/test_rc447_pressure_bounded_operator_recovery.py": {
+      "historical_sha256": "88c2675eb29d5e71a8303ade07a8c25cd878a5b7085493e6b0331a9f369cc018",
+      "current_sha256": "cd5e5f65fd1eb6bf498ea75eafcb404b7b6d864a492841c3ce2a2fda92237744",
+      "introduced_by_phase": "v0.2.0rc4-release-preparation",
+      "reason": "Resolve the frozen RC4.4.7 source binding through the release-preparation portability successor without rewriting the historical qualification record.",
+      "runtime_changed": false,
+      "scientific_threshold_changed": false,
+      "historical_record_rewritten": false
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "1d4eb362ba7e24df53be5483e4894c2409cc54df2d7a2323dba24b830d9b6dd7",
+      "current_sha256": "c5bd5adb91cbcfc5f699b29b4d8a8239c2758a372913de1c6bf12979e862d860",
+      "introduced_by_phase": "v0.2.0rc4-release-preparation",
+      "reason": "Continue the established RC4.5 successor chain into the release-preparation record; public validation behavior is unchanged.",
+      "runtime_changed": false,
+      "scientific_threshold_changed": false,
+      "historical_record_rewritten": false
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "73eebf9c5a9b0d76df61dff0c052989d906a036c86f226d2a8db740443023072",
+      "current_sha256": "9cc416123d3e3caa97f3fa873b4fd77e7d821a8be15cbe786e988d23860f8958",
+      "introduced_by_phase": "v0.2.0rc4-release-preparation",
+      "reason": "Continue the established TF32 source-successor chain into release preparation without changing TF32 ownership or restoration semantics.",
+      "runtime_changed": false,
+      "scientific_threshold_changed": false,
+      "historical_record_rewritten": false
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "9954d41827c97250ca10080ed2a4cc226abcfba053078a63fe2215bc1d1ba685",
+      "current_sha256": "37e663693c0cc84ebf09cef1501ebada493a77f6014731eb6b4af6c840372693",
+      "introduced_by_phase": "v0.2.0rc4-release-preparation",
+      "reason": "Allow the frozen RC4.5.7 impact record to resolve later test-only release portability successors.",
+      "runtime_changed": false,
+      "scientific_threshold_changed": false,
+      "historical_record_rewritten": false
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "80214513a0e7e7bfe08413cb6785d3c5cc6f369c16c45c9a49e061672c4c0fe6",
+      "current_sha256": "a548371cd1ed55441c52e35cb9b4f0007034c22afa5d9c0b07588d708d930087",
+      "introduced_by_phase": "v0.2.0rc4-release-preparation",
+      "reason": "Allow the frozen RC4.5.7 recovery record to resolve later test-only release portability successors.",
+      "runtime_changed": false,
+      "scientific_threshold_changed": false,
+      "historical_record_rewritten": false
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "34cb01163f6ded1e7d25f404763a76f857b20377e37ef21febc2903af132ad56",
+      "current_sha256": "43d6afe59e4cba1487fd1f750d95c7d90b8f4c09b4964de7a993bc5fc239fa8f",
+      "introduced_by_phase": "v0.2.0rc4-release-preparation",
+      "reason": "Validate release-preparation successors while preserving the completed RC4.5.8 H100 closure record byte for byte.",
+      "runtime_changed": false,
+      "scientific_threshold_changed": false,
+      "historical_record_rewritten": false
+    },
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {
+      "historical_sha256": "881b4f69e614e399985261f53ac645c0f27eeab1fb2090b7391d78b46792094c",
+      "current_sha256": "54696ff4545784c8e833dce689ae20868cb1631e27d8e8160a538b3a9d065840",
+      "introduced_by_phase": "v0.2.0rc4-release-preparation",
+      "reason": "Synchronize the planning assertion with the final 38-of-38 closed RC4 issue inventory and release-preparation eligibility.",
+      "runtime_changed": false,
+      "scientific_threshold_changed": false,
+      "historical_record_rewritten": false
+    },
+    "tests/test_rc4_pressure_adjudication.py": {
+      "historical_sha256": "d7165314ed2a231ddc470847a6b87798dd0e018597d5f9f084f592667558e5eb",
+      "current_sha256": "358817cdb59571168b3ae373e0bb0c15312e640182bfffd1705322192261e235",
+      "introduced_by_phase": "v0.2.0rc4-release-preparation",
+      "reason": "Express the existing frozen 2e-13 pressure error bound with a cross-platform comparison allowance equal to one percent of that bound.",
+      "runtime_changed": false,
+      "scientific_threshold_changed": false,
+      "historical_record_rewritten": false
+    },
+    "tests/test_rc4_pressure_installed_cpu_closure_record.py": {
+      "historical_sha256": "1d98d312ac9ecf70061be84c8a0d41b78beb04fe4cdef5a745b596492e93384a",
+      "current_sha256": "778c59e9cc4a5186506dd72d698fe49274a002a52ec62b20f0e76bf61972addb",
+      "introduced_by_phase": "v0.2.0rc4-release-preparation",
+      "reason": "Extend the frozen installed-CPU qualification source chain to the test-only release portability successor.",
+      "runtime_changed": false,
+      "scientific_threshold_changed": false,
+      "historical_record_rewritten": false
+    },
+    "tests/test_rc4_pressure_policy_implementation.py": {
+      "historical_sha256": "29facc8207d17d73e34f3e1017d61aed982c08c11087934d49964994edc6a277",
+      "current_sha256": "260e0d35578c27a1aa5467a350e5bd7d080199471e91ac39a2a33bf2bb06fdd7",
+      "introduced_by_phase": "v0.2.0rc4-release-preparation",
+      "reason": "Compare reduction-derived pressure diagnostics within 32 machine ulps across supported CPU platforms while retaining exact structural and policy assertions.",
+      "runtime_changed": false,
+      "scientific_threshold_changed": false,
+      "historical_record_rewritten": false
+    },
+    "tests/test_rc4_pressure_policy_implementation_record.py": {
+      "historical_sha256": "7be638591694af8cbea4e91e859786a4264ee3b2d69c1f0745215b5f4cfa9ce4",
+      "current_sha256": "2655923f6d8305783e0017e979af04dd44877f45ccd103bcafb223653cb6fda8",
+      "introduced_by_phase": "v0.2.0rc4-release-preparation",
+      "reason": "Resolve the frozen pressure-policy record through the release portability successor without changing its historical assertions.",
+      "runtime_changed": false,
+      "scientific_threshold_changed": false,
+      "historical_record_rewritten": false
+    }
+  },
   "consumer": {
     "repository": "https://github.com/fansenwei-source/PSSolver-Control",
     "qualified_source_commit": "b8539e0ec4c137a6c13746f6832e26e74be24515",

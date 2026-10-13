@@ -16,6 +16,7 @@ RECOVERY = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_recovery.json"
 )
 RC458 = ROOT / "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
+RELEASE = ROOT / "notes/pssolver_v0_2_0_rc4.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -78,12 +79,16 @@ def test_rc457_preserves_the_stop_and_resolves_through_the_recovery():
     recovery = _read(RECOVERY)
     recovery_successors = recovery["historical_successor_sources"]
     closure_successors = _read(RC458)["historical_successor_sources"]
+    release_successors = _read(RELEASE)["historical_successor_sources"]
     for relative, expected in record["source_sha256"].items():
         successor = recovery_successors.get(relative)
         resolved = expected
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = closure_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = release_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(ROOT / relative) == resolved
@@ -95,6 +100,9 @@ def test_rc457_preserves_the_stop_and_resolves_through_the_recovery():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = closure_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = release_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(ROOT / relative) == resolved

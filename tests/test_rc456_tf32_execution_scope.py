@@ -25,6 +25,7 @@ RC457_RECOVERY = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_recovery.json"
 )
 RC458 = ROOT / "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
+RELEASE = ROOT / "notes/pssolver_v0_2_0_rc4.json"
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
 
 
@@ -36,7 +37,7 @@ def _set_state(precision: str, matmul: bool, cudnn: bool) -> None:
 
 def _resolve_rc457_successor(relative: str, historical: str) -> str:
     resolved = historical
-    for record_path in (RC457, RC457_RECOVERY, RC458):
+    for record_path in (RC457, RC457_RECOVERY, RC458, RELEASE):
         successor = json.loads(record_path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)

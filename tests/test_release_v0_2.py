@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -70,6 +71,40 @@ def test_release_candidate_capability_counts_match_live_catalog():
         len(combination.runtime_paths)
         for combination in catalog.qualified_combinations
     ) == record["runtime_paths"]
+
+
+def test_release_candidate_registers_exact_portability_successors():
+    record = json.loads(
+        (PROJECT_ROOT / "notes" / "pssolver_v0_2_0_rc4.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    successors = record["historical_successor_sources"]
+    assert set(successors) == {
+        "tests/test_rc447_pressure_bounded_operator_recovery.py",
+        "tests/test_rc455_public_robustness.py",
+        "tests/test_rc456_tf32_execution_scope.py",
+        "tests/test_rc457_installed_consumer_impact.py",
+        "tests/test_rc457_installed_consumer_recovery.py",
+        "tests/test_rc458_h100_closure_record.py",
+        "tests/test_rc4_cross_runtime_robustness_plan.py",
+        "tests/test_rc4_pressure_adjudication.py",
+        "tests/test_rc4_pressure_installed_cpu_closure_record.py",
+        "tests/test_rc4_pressure_policy_implementation.py",
+        "tests/test_rc4_pressure_policy_implementation_record.py",
+    }
+    for relative, registration in successors.items():
+        assert registration["historical_sha256"] != registration["current_sha256"]
+        assert registration["current_sha256"] == hashlib.sha256(
+            (PROJECT_ROOT / relative).read_bytes()
+        ).hexdigest()
+        assert registration["introduced_by_phase"] == (
+            "v0.2.0rc4-release-preparation"
+        )
+        assert registration["runtime_changed"] is False
+        assert registration["scientific_threshold_changed"] is False
+        assert registration["historical_record_rewritten"] is False
+        assert registration["reason"]
 
 
 def test_release_candidate_documents_are_in_source_manifest():
