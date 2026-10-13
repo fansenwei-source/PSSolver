@@ -5,8 +5,10 @@ from __future__ import annotations
 import dataclasses
 import hashlib
 import json
+import os
 from pathlib import Path
 import stat
+import subprocess
 
 import pytest
 import torch
@@ -301,7 +303,9 @@ def test_checkpoint_disk_round_trip_preserves_q_pressure_and_header(
     header = read_channel_checkpoint_header(directory)
     loaded = load_channel_checkpoint(directory)
 
-    assert stat.S_IMODE(directory.stat().st_mode) == 0o755
+    current_umask = os.umask(0)
+    os.umask(current_umask)
+    assert stat.S_IMODE(directory.stat().st_mode) == (0o777 & ~current_umask)
     assert checkpoint.format_version == (
         CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION
     )
@@ -446,9 +450,31 @@ def test_p74_record_binds_runtime_and_checkpoint_sources():
     assert sha256("pssolver/runtime/channel_active_nematics.py") == record[
         "implementation"
     ]["runtime_facade_sha256"]
-    assert sha256("pssolver/workflows/channel_checkpoint.py") == record[
+    historical_checkpoint = subprocess.run(
+        [
+            "git",
+            "show",
+            (
+                "19b241d62d2ea04455201e3321e86e3702563bb1:"
+                "pssolver/workflows/channel_checkpoint.py"
+            ),
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    ).stdout
+    assert hashlib.sha256(historical_checkpoint).hexdigest() == record[
         "implementation"
     ]["checkpoint_module_sha256"]
+    successor = json.loads(
+        (
+            ROOT
+            / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert sha256("pssolver/workflows/channel_checkpoint.py") == successor[
+        "source_sha256"
+    ]["pssolver/workflows/channel_checkpoint.py"]
     assert record["authorization"] == {
         "p7_4_complete": True,
         "p7_5_planning_eligible": True,

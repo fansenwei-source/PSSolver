@@ -4,18 +4,23 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-import hashlib
 import json
-import os
 from pathlib import Path
 import shutil
-import tempfile
 import time
 
 import numpy as np
 import torch
 
 from pssolver.io.checkpoint import (
+    CheckpointCompatibilityError,
+    CheckpointIntegrityError,
+    checkpoint_file_sha256,
+    checkpoint_directory_transaction,
+    load_checkpoint_numpy,
+    read_checkpoint_json,
+    require_exact_checkpoint_keys,
+    resolve_checkpoint_payload,
     seal_checkpoint_metadata,
     verify_checkpoint_metadata,
 )
@@ -52,11 +57,10 @@ _STATE_COMPONENTS = (*Q_COMPONENTS, *VELOCITY_COMPONENTS, "p")
 
 
 def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    return checkpoint_file_sha256(
+        path,
+        operation="complete_stress_channel_checkpoint_io",
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -298,74 +302,116 @@ def write_channel_beris_edwards_checkpoint(
 ):
     """Write the complete-stress Channel production checkpoint format."""
 
-    if directory.exists():
-        raise FileExistsError(f"checkpoint already exists: {directory}")
-    directory.mkdir(parents=True)
     adapter.synchronize_for_observation()
     fields = adapter.fields
-    records = {"spatial": {}, "spectral": {}}
-    for kind, suffix in (("spatial", ""), ("spectral", ".hat")):
-        for name in _STATE_COMPONENTS:
-            values = fields[f"{name}{suffix}"].detach().cpu().numpy()
-            path = directory / f"{kind}__{name}.npy"
-            records[kind][name] = _tensor_record(path, values)
-    pressure_guess = adapter.capture_pressure_guess().cpu().numpy()
-    pressure_record = _tensor_record(
-        directory / "backend__pressure_guess.npy",
-        pressure_guess,
-    )
-    integrator = adapter.solver.integrator
-    backend_restart = adapter.backend_restart_metadata()
-    compatibility_identity = build_channel_checkpoint_compatibility_identity(
-        run_spec,
-        fields=fields,
-        pressure_guess=adapter.capture_pressure_guess(),
-        backend_restart=backend_restart,
-    )
-    metadata = {
-        "format_version": CHECKPOINT_VERSION,
-        "runtime_path": CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
-        "run_provenance": {
-            "legacy_runtime_identity_sha256": (
-                run_spec.runtime_identity_sha256()
+    with checkpoint_directory_transaction(
+        directory,
+        operation="complete_stress_channel_checkpoint_export",
+    ) as (staging, _target):
+        records = {"spatial": {}, "spectral": {}}
+        for kind, suffix in (("spatial", ""), ("spectral", ".hat")):
+            for name in _STATE_COMPONENTS:
+                values = fields[f"{name}{suffix}"].detach().cpu().numpy()
+                path = staging / f"{kind}__{name}.npy"
+                records[kind][name] = _tensor_record(path, values)
+        pressure_guess = adapter.capture_pressure_guess().cpu().numpy()
+        pressure_record = _tensor_record(
+            staging / "backend__pressure_guess.npy",
+            pressure_guess,
+        )
+        integrator = adapter.solver.integrator
+        backend_restart = adapter.backend_restart_metadata()
+        compatibility_identity = build_channel_checkpoint_compatibility_identity(
+            run_spec,
+            fields=fields,
+            pressure_guess=adapter.capture_pressure_guess(),
+            backend_restart=backend_restart,
+        )
+        metadata = {
+            "format_version": CHECKPOINT_VERSION,
+            "runtime_path": CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
+            "run_provenance": {
+                "legacy_runtime_identity_sha256": (
+                    run_spec.runtime_identity_sha256()
+                ),
+            },
+            "compatibility_identity": compatibility_identity.to_metadata(),
+            "compatibility_identity_sha256": (
+                compatibility_identity.canonical_sha256()
             ),
-        },
-        "compatibility_identity": compatibility_identity.to_metadata(),
-        "compatibility_identity_sha256": (
-            compatibility_identity.canonical_sha256()
-        ),
-        "completed_steps": adapter.completed_steps,
-        "integrator": {
-            "spectral_refresh_interval": integrator.spectral_refresh_interval,
-            "step_count": int(integrator.step_count),
-            "refresh_count": int(integrator.refresh_count),
-        },
-        "backend_restart": backend_restart,
-        "tensor_files": records,
-        "backend_files": {"pressure_guess": pressure_record},
-    }
-    metadata = seal_checkpoint_metadata(metadata)
-    (directory / "checkpoint.json").write_text(
-        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
+            "completed_steps": adapter.completed_steps,
+            "integrator": {
+                "spectral_refresh_interval": integrator.spectral_refresh_interval,
+                "step_count": int(integrator.step_count),
+                "refresh_count": int(integrator.refresh_count),
+            },
+            "backend_restart": backend_restart,
+            "tensor_files": records,
+            "backend_files": {"pressure_guess": pressure_record},
+        }
+        metadata = seal_checkpoint_metadata(metadata)
+        (staging / "checkpoint.json").write_text(
+            json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+
+
+def _validated_array(
+    directory,
+    record,
+    target,
+    description,
+    expected_filename,
+):
+    record = require_exact_checkpoint_keys(
+        record,
+        required={"file", "shape", "dtype", "sha256"},
+        description=f"{description} record",
+        operation="complete_stress_channel_checkpoint_import",
     )
-
-
-def _validated_array(directory, record, target, description):
-    if set(record) != {"file", "shape", "dtype", "sha256"}:
-        raise ValueError(f"{description} record schema differs")
-    path = directory / record["file"]
+    path = resolve_checkpoint_payload(
+        directory,
+        record["file"],
+        operation="complete_stress_channel_checkpoint_import",
+        description=description,
+        expected_filename=expected_filename,
+    )
     if _sha256(path) != record["sha256"]:
-        raise ValueError(f"{description} checksum mismatch")
-    values = np.load(path, allow_pickle=False)
+        raise CheckpointIntegrityError(
+            f"{description} checksum mismatch",
+            operation="complete_stress_channel_checkpoint_import",
+        )
+    try:
+        values = load_checkpoint_numpy(
+            path,
+            operation="complete_stress_channel_checkpoint_import",
+        )
+    except (OSError, ValueError) as exc:
+        raise CheckpointIntegrityError(
+            f"{description} payload is invalid",
+            operation="complete_stress_channel_checkpoint_import",
+            legacy_exception_type=type(exc).__name__,
+        ) from exc
     if list(values.shape) != record["shape"] or str(values.dtype) != record["dtype"]:
-        raise ValueError(f"{description} metadata differs")
+        raise CheckpointIntegrityError(
+            f"{description} metadata differs",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     if tuple(values.shape) != tuple(target.shape):
-        raise ValueError(f"{description} shape differs")
+        raise CheckpointIntegrityError(
+            f"{description} shape differs",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     if str(values.dtype) != str(target.detach().cpu().numpy().dtype):
-        raise ValueError(f"{description} dtype differs")
+        raise CheckpointIntegrityError(
+            f"{description} dtype differs",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     if not np.isfinite(values).all():
-        raise ValueError(f"{description} is not finite")
+        raise CheckpointIntegrityError(
+            f"{description} is not finite",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     return values
 
 
@@ -416,28 +462,56 @@ def _validated_progress(metadata):
 
 
 def _read_channel_checkpoint_metadata(directory: Path) -> dict[str, object]:
-    path = directory / "checkpoint.json"
-    if not path.is_file():
-        raise FileNotFoundError(f"checkpoint metadata is missing: {path}")
-    try:
-        metadata = json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        raise ValueError("checkpoint metadata is not valid JSON") from exc
-    if not isinstance(metadata, dict):
-        raise TypeError("checkpoint metadata must be a JSON object")
+    metadata = read_checkpoint_json(
+        directory / "checkpoint.json",
+        operation="complete_stress_channel_checkpoint_import",
+    )
     format_version = metadata.get("format_version")
     if (
         not isinstance(format_version, int)
         or isinstance(format_version, bool)
         or format_version not in _SUPPORTED_CHECKPOINT_VERSIONS
     ):
-        raise ValueError("unsupported complete-stress Channel checkpoint")
+        raise CheckpointCompatibilityError(
+            "unsupported complete-stress Channel checkpoint",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     verify_checkpoint_metadata(
         metadata,
         required=format_version in {LEGACY_CHECKPOINT_VERSION, CHECKPOINT_VERSION},
     )
+    if format_version == CHECKPOINT_VERSION:
+        require_exact_checkpoint_keys(
+            metadata,
+            required={
+                "format_version",
+                "runtime_path",
+                "run_provenance",
+                "compatibility_identity",
+                "compatibility_identity_sha256",
+                "completed_steps",
+                "integrator",
+                "backend_restart",
+                "tensor_files",
+                "backend_files",
+                "metadata_sha256",
+            },
+            optional={"migration_provenance"},
+            description="complete-stress Channel checkpoint metadata",
+            operation="complete_stress_channel_checkpoint_import",
+            require_all=False,
+        )
+        require_exact_checkpoint_keys(
+            metadata.get("run_provenance"),
+            required={"legacy_runtime_identity_sha256"},
+            description="complete-stress Channel run provenance",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     if metadata.get("runtime_path") != CHANNEL_COMPLETE_STRESS_RUNTIME_PATH:
-        raise ValueError("checkpoint runtime identity does not match target")
+        raise CheckpointCompatibilityError(
+            "checkpoint runtime identity does not match target",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     return metadata
 
 
@@ -533,6 +607,7 @@ def _load_checkpoint(directory, adapter, *, run_spec):
                 records[name],
                 target,
                 f"{kind} {name}",
+                f"{kind}__{name}.npy",
             )
             pending.append((target, values))
     pressure_target = fields["p.hat"]
@@ -542,15 +617,22 @@ def _load_checkpoint(directory, adapter, *, run_spec):
         pressure_record,
         pressure_target,
         "pressure guess",
+        "backend__pressure_guess.npy",
+    )
+
+    materialized = tuple(
+        (target, torch.from_numpy(values).to(device=target.device))
+        for target, values in pending
+    )
+    materialized_pressure = torch.from_numpy(pressure_values).to(
+        device=pressure_target.device
     )
 
     # Mutation starts only after every identity, file, shape, dtype, checksum,
-    # and finite-value gate has passed.
-    for target, values in pending:
-        target.copy_(torch.from_numpy(values).to(device=target.device))
-    adapter.restore_pressure_guess(
-        torch.from_numpy(pressure_values).to(device=pressure_target.device)
-    )
+    # finite-value, and device-materialization gate has passed.
+    for target, values in materialized:
+        target.copy_(values)
+    adapter.restore_pressure_guess(materialized_pressure)
     adapter.restore_progress(
         completed_steps=completed_steps,
         spectral_refresh_interval=integrator["spectral_refresh_interval"],
@@ -705,11 +787,10 @@ def upgrade_channel_beris_edwards_checkpoint_directory(
         state_layout=state_layout,
         backend_restart=_channel_backend_restart_identity(backend),
     )
-    target.parent.mkdir(parents=True, exist_ok=True)
-    if target.exists():
-        raise FileExistsError(f"checkpoint already exists: {target}")
-    staging = Path(tempfile.mkdtemp(prefix=f".{target.name}.tmp-", dir=target.parent))
-    try:
+    with checkpoint_directory_transaction(
+        target,
+        operation="complete_stress_channel_checkpoint_migration",
+    ) as (staging, target):
         shutil.copytree(source, staging, dirs_exist_ok=True)
         upgraded = dict(metadata)
         upgraded.pop("metadata_sha256", None)
@@ -743,11 +824,6 @@ def upgrade_channel_beris_edwards_checkpoint_directory(
             json.dumps(upgraded, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
-        os.replace(staging, target)
-    except BaseException:
-        if staging.exists():
-            shutil.rmtree(staging)
-        raise
     return target
 
 

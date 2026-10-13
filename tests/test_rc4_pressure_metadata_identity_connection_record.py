@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
 )
+RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 
 
 def _record() -> dict[str, object]:
@@ -37,8 +38,16 @@ def test_rc444_record_binds_frozen_contract_predecessor_and_current_sources():
     assert _sha256(record["predecessor"]["path"]) == record["predecessor"][
         "sha256"
     ]
+    successors = json.loads(RC453.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, expected in record["source_sha256"].items():
-        assert _sha256(relative) == expected, relative
+        actual = _sha256(relative)
+        if actual == expected:
+            continue
+        registration = successors[relative]
+        assert registration["historical_sha256"] == expected
+        assert registration["current_sha256"] == actual
 
 
 def test_rc444_connects_policy_diagnostics_and_truthful_capabilities():

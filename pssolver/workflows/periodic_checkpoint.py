@@ -4,12 +4,8 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-import hashlib
 import json
-import os
 from pathlib import Path
-import shutil
-import tempfile
 from types import MappingProxyType
 
 import numpy as np
@@ -20,6 +16,14 @@ from pssolver.configuration.periodic_beris_edwards import (
     PeriodicBerisEdwardsRunSpec,
 )
 from pssolver.io.checkpoint import (
+    CheckpointCompatibilityError,
+    CheckpointIntegrityError,
+    checkpoint_file_sha256,
+    checkpoint_directory_transaction,
+    load_checkpoint_numpy,
+    read_checkpoint_json,
+    require_exact_checkpoint_keys,
+    resolve_checkpoint_payload,
     seal_checkpoint_metadata,
     verify_checkpoint_metadata,
     verify_functional_checkpoint_provenance,
@@ -48,14 +52,21 @@ _SUPPORTED_PERIODIC_WORKFLOW_CHECKPOINT_FORMATS = frozenset(
         PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     }
 )
+_PERIODIC_COMMON_REQUIRED_KEYS = frozenset(
+    {
+        "format_version",
+        "runtime_path",
+        "completed_steps",
+        "integrator",
+        "backend_restart",
+        "tensor_files",
+        "metadata_sha256",
+    }
+)
 
 
 def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    return checkpoint_file_sha256(path, operation="periodic_checkpoint_io")
 
 
 def _require_sha256(value: object, description: str) -> str:
@@ -508,9 +519,13 @@ def restore_periodic_checkpoint(
                 raise ValueError(f"checkpoint tensor dtype differs for {name}{suffix}")
             targets.append((target, source, f"{name}{suffix}"))
 
-    # No target is mutated until the complete preflight above succeeds.
-    for target, source, _description in targets:
-        target.copy_(source.to(device=target.device))
+    # Device materialization is part of preflight, before any target mutation.
+    pending = tuple(
+        (target, source.to(device=target.device))
+        for target, source, _description in targets
+    )
+    for target, source in pending:
+        target.copy_(source)
     adapter.synchronize_for_observation()
     adapter.restore_progress(
         completed_steps=checkpoint.completed_steps,
@@ -543,16 +558,10 @@ def write_periodic_checkpoint(
 
     if not isinstance(checkpoint, PeriodicWorkflowCheckpoint):
         raise TypeError("checkpoint must be PeriodicWorkflowCheckpoint")
-    target = Path(directory).expanduser().resolve()
-    target.parent.mkdir(parents=True, exist_ok=True)
-    if target.exists():
-        raise FileExistsError(f"checkpoint directory already exists: {target}")
-    staging = Path(tempfile.mkdtemp(prefix=f".{target.name}.tmp-", dir=target.parent))
-    # mkdtemp deliberately creates mode 0700.  The atomic rename would make
-    # that private staging mode the durable checkpoint mode, preventing
-    # read-only service accounts from consuming an otherwise shared run.
-    staging.chmod(0o755)
-    try:
+    with checkpoint_directory_transaction(
+        directory,
+        operation="periodic_checkpoint_export",
+    ) as (staging, target):
         files = {"spatial": {}, "spectral": {}}
         for kind, tensors in (
             ("spatial", checkpoint.evolved_spatial),
@@ -580,31 +589,24 @@ def write_periodic_checkpoint(
             json.dumps(metadata, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
-        os.replace(staging, target)
-    except BaseException:
-        if staging.exists():
-            shutil.rmtree(staging)
-        raise
     return target
 
 
 def _read_metadata(directory: Path) -> Mapping[str, object]:
-    path = directory / "checkpoint.json"
-    if not path.is_file():
-        raise FileNotFoundError(f"checkpoint metadata is missing: {path}")
-    try:
-        metadata = json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        raise ValueError("checkpoint metadata is not valid JSON") from exc
-    if not isinstance(metadata, Mapping):
-        raise TypeError("checkpoint metadata must be a JSON object")
+    metadata = read_checkpoint_json(
+        directory / "checkpoint.json",
+        operation="periodic_checkpoint_import",
+    )
     version = metadata.get("format_version")
     if (
         not isinstance(version, int)
         or isinstance(version, bool)
         or version not in _SUPPORTED_PERIODIC_WORKFLOW_CHECKPOINT_FORMATS
     ):
-        raise ValueError("unsupported periodic workflow checkpoint version")
+        raise CheckpointCompatibilityError(
+            "unsupported periodic workflow checkpoint version",
+            operation="periodic_checkpoint_import",
+        )
     verify_checkpoint_metadata(
         metadata,
         required=version
@@ -617,6 +619,47 @@ def _read_metadata(directory: Path) -> Mapping[str, object]:
     bridge_version = (
         bridge.get("format_version") if isinstance(bridge, Mapping) else None
     )
+    if version == PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        require_exact_checkpoint_keys(
+            metadata,
+            required=_PERIODIC_COMMON_REQUIRED_KEYS
+            | {
+                "run_provenance",
+                "compatibility_identity",
+                "compatibility_identity_sha256",
+            },
+            optional={"migration_provenance"},
+            description="Periodic checkpoint metadata",
+            operation="periodic_checkpoint_import",
+        )
+        require_exact_checkpoint_keys(
+            metadata.get("run_provenance"),
+            required={"legacy_runtime_identity_sha256"},
+            description="Periodic checkpoint run provenance",
+            operation="periodic_checkpoint_import",
+        )
+    elif (
+        version == PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+        and bridge_version == 3
+    ):
+        require_exact_checkpoint_keys(
+            metadata,
+            required=_PERIODIC_COMMON_REQUIRED_KEYS
+            | {"runtime_identity_sha256", "functional_bridge"},
+            optional={"migration_provenance"},
+            description="Periodic functional checkpoint metadata",
+            operation="periodic_checkpoint_import",
+        )
+    if version in {
+        PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    } and (version == PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION or bridge_version == 3):
+        require_exact_checkpoint_keys(
+            metadata.get("integrator"),
+            required={"spectral_refresh_interval", "step_count", "refresh_count"},
+            description="Periodic checkpoint integrator",
+            operation="periodic_checkpoint_import",
+        )
     verify_functional_checkpoint_provenance(
         directory,
         metadata,
@@ -633,7 +676,10 @@ def read_periodic_checkpoint_header(
 
     metadata = _read_metadata(Path(directory).expanduser().resolve())
     if metadata.get("runtime_path") != PERIODIC_RUNTIME_PATH:
-        raise ValueError("checkpoint runtime identity does not match target")
+        raise CheckpointCompatibilityError(
+            "checkpoint runtime identity does not match target",
+            operation="periodic_checkpoint_import",
+        )
     format_version = metadata.get("format_version")
     compatibility_identity = None
     if format_version == PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
@@ -683,29 +729,54 @@ def _load_tensor(
     directory: Path,
     record: object,
     description: str,
+    expected_filename: str,
 ) -> torch.Tensor:
-    if not isinstance(record, Mapping):
-        raise TypeError(f"{description} tensor record must be a mapping")
+    record = require_exact_checkpoint_keys(
+        record,
+        required={"file", "shape", "dtype", "sha256"},
+        description=f"{description} tensor record",
+        operation="periodic_checkpoint_import",
+    )
     filename = record.get("file")
-    if (
-        not isinstance(filename, str)
-        or Path(filename).name != filename
-        or not filename.endswith(".npy")
-    ):
-        raise ValueError(f"{description} tensor filename is invalid")
-    path = directory / filename
-    if not path.is_file():
-        raise FileNotFoundError(f"checkpoint tensor is missing: {path}")
+    path = resolve_checkpoint_payload(
+        directory,
+        filename,
+        operation="periodic_checkpoint_import",
+        description=f"{description} tensor",
+        expected_filename=expected_filename,
+    )
     expected = _require_sha256(record.get("sha256"), "tensor SHA-256")
     if _sha256(path) != expected:
-        raise ValueError(f"checkpoint tensor checksum mismatch: {path}")
-    values = np.load(path, allow_pickle=False)
+        raise CheckpointIntegrityError(
+            f"checkpoint tensor checksum mismatch: {path}",
+            operation="periodic_checkpoint_import",
+        )
+    try:
+        values = load_checkpoint_numpy(
+            path,
+            operation="periodic_checkpoint_import",
+        )
+    except (OSError, ValueError) as exc:
+        raise CheckpointIntegrityError(
+            f"checkpoint tensor is invalid: {path}",
+            operation="periodic_checkpoint_import",
+            legacy_exception_type=type(exc).__name__,
+        ) from exc
     if list(values.shape) != record.get("shape"):
-        raise ValueError(f"checkpoint tensor shape metadata differs: {path}")
+        raise CheckpointIntegrityError(
+            f"checkpoint tensor shape metadata differs: {path}",
+            operation="periodic_checkpoint_import",
+        )
     if str(values.dtype) != record.get("dtype"):
-        raise ValueError(f"checkpoint tensor dtype metadata differs: {path}")
+        raise CheckpointIntegrityError(
+            f"checkpoint tensor dtype metadata differs: {path}",
+            operation="periodic_checkpoint_import",
+        )
     if not np.isfinite(values).all():
-        raise ValueError(f"checkpoint tensor contains NaN or Inf: {path}")
+        raise CheckpointIntegrityError(
+            f"checkpoint tensor contains NaN or Inf: {path}",
+            operation="periodic_checkpoint_import",
+        )
     return torch.from_numpy(np.array(values, copy=True))
 
 
@@ -718,15 +789,24 @@ def load_periodic_checkpoint(
     metadata = _read_metadata(directory)
     header = read_periodic_checkpoint_header(directory)
     files = metadata.get("tensor_files")
-    if not isinstance(files, Mapping):
-        raise ValueError("checkpoint tensor-file manifest is missing")
+    files = require_exact_checkpoint_keys(
+        files,
+        required={"spatial", "spectral"},
+        description="Periodic checkpoint tensor-file manifest",
+        operation="periodic_checkpoint_import",
+    )
     loaded = {}
     for kind in ("spatial", "spectral"):
         records = files.get(kind)
         if not isinstance(records, Mapping) or tuple(records) != Q_COMPONENTS:
             raise ValueError(f"checkpoint {kind} manifest is incomplete")
         loaded[kind] = {
-            name: _load_tensor(directory, records[name], f"{kind}.{name}")
+            name: _load_tensor(
+                directory,
+                records[name],
+                f"{kind}.{name}",
+                f"{kind}__{name}.npy",
+            )
             for name in Q_COMPONENTS
         }
     return PeriodicWorkflowCheckpoint(

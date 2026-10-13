@@ -26,6 +26,9 @@ RC443_SUCCESSOR_RECORD = (
 RC444_SUCCESSOR_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
 )
+RC453_SUCCESSOR_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -41,6 +44,7 @@ def _registered_successor(relative: str, historical_sha256: str) -> dict[str, ob
         SUCCESSOR_RECORD,
         RC443_SUCCESSOR_RECORD,
         RC444_SUCCESSOR_RECORD,
+        RC453_SUCCESSOR_RECORD,
     ):
         record = json.loads(path.read_text(encoding="utf-8"))
         registration = record["historical_successor_sources"].get(relative)
@@ -50,6 +54,29 @@ def _registered_successor(relative: str, historical_sha256: str) -> dict[str, ob
         ):
             return registration
     raise AssertionError(f"no registered successor for {relative}")
+
+
+def _assert_successor_chain(
+    relative: str,
+    historical_sha256: str,
+    current_sha256: str,
+) -> None:
+    observed = historical_sha256
+    for path in (
+        SUCCESSOR_RECORD,
+        RC443_SUCCESSOR_RECORD,
+        RC444_SUCCESSOR_RECORD,
+        RC453_SUCCESSOR_RECORD,
+    ):
+        registration = json.loads(path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if registration is None or registration["historical_sha256"] != observed:
+            continue
+        observed = registration["current_sha256"]
+        if observed == current_sha256:
+            return
+    raise AssertionError(f"successor chain for {relative} stops at {observed}")
 
 
 def _sha256(relative: str) -> str:
@@ -77,19 +104,13 @@ def test_rc424_record_binds_parent_plans_and_implementation_files():
             registration = _registered_successor(relative, expected)
             assert registration["historical_sha256"] == expected
             if registration["current_sha256"] != actual:
-                latest = json.loads(
-                    RC444_SUCCESSOR_RECORD.read_text(encoding="utf-8")
-                )["historical_successor_sources"][relative]
-                assert latest["historical_sha256"] == registration[
-                    "current_sha256"
-                ]
-                assert latest["current_sha256"] == actual
-                assert latest["introduced_by_phase"] == "RC4.4.4"
+                _assert_successor_chain(relative, expected, actual)
             else:
                 assert registration["introduced_by_phase"] in {
                     "RC4.2.6 recovery",
                     "RC4.4.3",
                     "RC4.4.4",
+                    "RC4.5.3",
                 }
 
 
@@ -145,21 +166,11 @@ def test_rc424_registers_exact_rc423_historical_successors():
         assert registration["introduced_by_phase"] == "RC4.2.4"
         actual = _sha256(relative)
         if actual != registration["current_sha256"]:
-            recovery = _successor_record()["historical_successor_sources"][
-                relative
-            ]
-            if recovery["current_sha256"] == actual:
-                assert recovery["historical_sha256"] == registration[
-                    "current_sha256"
-                ]
-                assert recovery["introduced_by_phase"] == "RC4.2.6 recovery"
-                continue
-            latest = json.loads(
-                RC444_SUCCESSOR_RECORD.read_text(encoding="utf-8")
-            )["historical_successor_sources"][relative]
-            assert latest["historical_sha256"] == recovery["current_sha256"]
-            assert latest["current_sha256"] == actual
-            assert latest["introduced_by_phase"] == "RC4.4.4"
+            _assert_successor_chain(
+                relative,
+                registration["current_sha256"],
+                actual,
+            )
         else:
             assert actual == registration["current_sha256"]
         assert registration["historical_sha256"] != registration["current_sha256"]

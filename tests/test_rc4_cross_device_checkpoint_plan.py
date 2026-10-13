@@ -22,6 +22,7 @@ RC435 = (
 RC444 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
 )
+RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 
 
 def _plan() -> dict[str, object]:
@@ -37,6 +38,7 @@ def test_rc426_plan_binds_rc425_and_reviewed_sources():
     recovery = json.loads(RECOVERY.read_text(encoding="utf-8"))
     rc435 = json.loads(RC435.read_text(encoding="utf-8"))
     rc444 = json.loads(RC444.read_text(encoding="utf-8"))
+    rc453 = json.loads(RC453.read_text(encoding="utf-8"))
     assert plan["status"] == "ready_for_implementation"
     assert plan["classification"] == (
         "READY_RC4_2_6_SINGLE_H100_CROSS_DEVICE_CHECKPOINT_PORTABILITY"
@@ -54,6 +56,19 @@ def test_rc426_plan_binds_rc425_and_reviewed_sources():
         if registration is None:
             registration = rc435["historical_successor_sources"].get(relative)
         latest = rc444["historical_successor_sources"].get(relative)
+        newest = rc453["historical_successor_sources"].get(relative)
+        if newest is not None:
+            predecessor = (
+                latest["current_sha256"]
+                if latest is not None
+                else registration["current_sha256"]
+                if registration is not None
+                else expected
+            )
+            assert newest["historical_sha256"] == predecessor
+            assert newest["current_sha256"] == actual
+            assert newest["introduced_by_phase"] == "RC4.5.3"
+            continue
         if latest is not None:
             assert latest["current_sha256"] == actual
             assert latest["introduced_by_phase"] == "RC4.4.4"

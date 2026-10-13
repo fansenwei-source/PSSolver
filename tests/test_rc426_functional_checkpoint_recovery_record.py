@@ -16,6 +16,7 @@ RECORD = (
 RC444 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
 )
+RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 
 
 def _record() -> dict[str, object]:
@@ -24,6 +25,20 @@ def _record() -> dict[str, object]:
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def _assert_successor_chain(relative, historical_sha256, current_sha256):
+    observed = historical_sha256
+    for path in (RC444, RC453):
+        registration = json.loads(path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if registration is None or registration["historical_sha256"] != observed:
+            continue
+        observed = registration["current_sha256"]
+        if observed == current_sha256:
+            return
+    raise AssertionError(f"successor chain for {relative} stops at {observed}")
 
 
 def test_rc426_recovery_binds_failure_and_parent_records():
@@ -65,12 +80,7 @@ def test_rc426_recovery_registers_exact_historical_successors():
         actual = _sha256(relative)
         if actual == registration["current_sha256"]:
             continue
-        latest = json.loads(RC444.read_text(encoding="utf-8"))[
-            "historical_successor_sources"
-        ][relative]
-        assert latest["historical_sha256"] == registration["current_sha256"]
-        assert latest["current_sha256"] == actual
-        assert latest["introduced_by_phase"] == "RC4.4.4"
+        _assert_successor_chain(relative, registration["current_sha256"], actual)
 
 
 def test_rc426_recovery_contract_is_device_neutral_but_fail_closed():

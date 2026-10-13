@@ -13,15 +13,20 @@ from __future__ import annotations
 from collections.abc import Mapping
 import hashlib
 import json
-import os
 from pathlib import Path
-import shutil
-import tempfile
 
 import numpy as np
 import torch
 
 from pssolver.io.checkpoint import (
+    CheckpointExistsError,
+    checkpoint_file_sha256,
+    CheckpointIOError,
+    checkpoint_directory_transaction,
+    load_checkpoint_numpy,
+    read_checkpoint_json,
+    require_exact_checkpoint_keys,
+    resolve_checkpoint_payload,
     seal_checkpoint_metadata,
     verify_checkpoint_metadata,
     verify_functional_checkpoint_provenance,
@@ -54,7 +59,9 @@ from .errors import (
     FunctionalCheckpointCompatibilityError,
     FunctionalCheckpointExistsError,
     FunctionalCheckpointIntegrityError,
+    FunctionalCheckpointIOError,
     FunctionalCheckpointNotFoundError,
+    translate_functional_exception,
 )
 from .checkpoint_identity import (
     build_channel_functional_checkpoint_identity,
@@ -90,11 +97,10 @@ def _canonical_sha256(value: object) -> str:
 
 
 def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    return checkpoint_file_sha256(
+        path,
+        operation="channel_functional_checkpoint_io",
+    )
 
 
 def _require_sha256(value: object, description: str) -> str:
@@ -271,56 +277,57 @@ class ChannelActivityCheckpointBridge:
         self._state_spec.validate(state)
         if any(not bool(value.detach().isfinite().all()) for value in state):
             raise ValueError("functional state contains NaN or Inf")
-        target = Path(directory).expanduser().resolve()
-        target.parent.mkdir(parents=True, exist_ok=True)
-        if target.exists():
-            raise FunctionalCheckpointExistsError(
-                f"checkpoint directory already exists: {target}",
-                operation="channel_checkpoint_export",
-            )
-        staging = Path(
-            tempfile.mkdtemp(prefix=f".{target.name}.tmp-", dir=target.parent)
-        )
         try:
-            records: dict[str, dict[str, object]] = {}
-            for name, value in zip(
-                ("q_physical", "q_spectral"), state, strict=True
-            ):
-                records[name] = self._write_tensor(
-                    staging / f"state__{name}.npy",
-                    value,
-                )
-            metadata = {
-                "format_kind": _FORMAT_KIND,
-                "format_version": self.format_version,
-                "completed_steps": completed_steps,
-                "functional_bridge": self._bridge_metadata(),
-                "tensor_files": records,
-            }
-            if migration_provenance is not None:
-                metadata["migration_provenance"] = json.loads(
-                    json.dumps(
-                        dict(migration_provenance),
-                        allow_nan=False,
-                        separators=(",", ":"),
-                        sort_keys=True,
+            with checkpoint_directory_transaction(
+                directory,
+                operation="channel_checkpoint_export",
+            ) as (staging, target):
+                records: dict[str, dict[str, object]] = {}
+                for name, value in zip(
+                    ("q_physical", "q_spectral"), state, strict=True
+                ):
+                    records[name] = self._write_tensor(
+                        staging / f"state__{name}.npy",
+                        value,
                     )
+                metadata = {
+                    "format_kind": _FORMAT_KIND,
+                    "format_version": self.format_version,
+                    "completed_steps": completed_steps,
+                    "functional_bridge": self._bridge_metadata(),
+                    "tensor_files": records,
+                }
+                if migration_provenance is not None:
+                    metadata["migration_provenance"] = json.loads(
+                        json.dumps(
+                            dict(migration_provenance),
+                            allow_nan=False,
+                            separators=(",", ":"),
+                            sort_keys=True,
+                        )
+                    )
+                metadata = seal_checkpoint_metadata(metadata)
+                write_functional_checkpoint_provenance(
+                    staging,
+                    metadata,
+                    metadata["functional_bridge"],
                 )
-            metadata = seal_checkpoint_metadata(metadata)
-            write_functional_checkpoint_provenance(
-                staging,
-                metadata,
-                metadata["functional_bridge"],
-            )
-            (staging / "checkpoint.json").write_text(
-                json.dumps(metadata, indent=2, sort_keys=True) + "\n",
-                encoding="utf-8",
-            )
-            os.replace(staging, target)
-        except BaseException:
-            if staging.exists():
-                shutil.rmtree(staging)
-            raise
+                (staging / "checkpoint.json").write_text(
+                    json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+                    encoding="utf-8",
+                )
+        except CheckpointExistsError as exc:
+            raise FunctionalCheckpointExistsError(
+                str(exc),
+                operation="channel_checkpoint_export",
+                details=exc.to_metadata(),
+            ) from exc
+        except CheckpointIOError as exc:
+            raise FunctionalCheckpointIOError(
+                str(exc),
+                operation="channel_checkpoint_export",
+                details=exc.to_metadata(),
+            ) from exc
         return target
 
     def migrate_legacy_checkpoint(
@@ -434,7 +441,12 @@ class ChannelActivityCheckpointBridge:
             and periodic_size % 2 == 0
         )
         values = tuple(
-            self._load_tensor(source, records[name], name)
+            self._load_tensor(
+                source,
+                records[name],
+                name,
+                f"state__{name}.npy",
+            )
             for name in ("q_physical", "q_spectral")
         )
         state = tuple(
@@ -540,21 +552,75 @@ class ChannelActivityCheckpointBridge:
 
     @staticmethod
     def _metadata(directory: Path) -> Mapping[str, object]:
-        path = directory / "checkpoint.json"
-        if not path.is_file():
-            raise FunctionalCheckpointNotFoundError(
-                f"checkpoint metadata is missing: {path}",
+        try:
+            value = read_checkpoint_json(
+                directory / "checkpoint.json",
                 operation="channel_checkpoint_import",
             )
-        try:
-            value = json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as exc:
-            raise FunctionalCheckpointIntegrityError(
-                "checkpoint metadata is not valid JSON",
-                operation="channel_checkpoint_import",
-            ) from exc
-        if not isinstance(value, Mapping):
-            raise TypeError("checkpoint metadata must be a JSON object")
+        except Exception as exc:
+            translated = translate_functional_exception(
+                exc,
+                operation="checkpoint_import",
+            )
+            raise translated from exc
+        if (
+            value.get("format_kind") == _FORMAT_KIND
+            and value.get("format_version")
+            == CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION
+        ):
+            try:
+                require_exact_checkpoint_keys(
+                    value,
+                    required={
+                        "format_kind",
+                        "format_version",
+                        "completed_steps",
+                        "functional_bridge",
+                        "tensor_files",
+                        "metadata_sha256",
+                    },
+                    optional={"migration_provenance"},
+                    description="Channel functional checkpoint metadata",
+                    operation="channel_checkpoint_import",
+                )
+            except Exception as exc:
+                translated = translate_functional_exception(
+                    exc,
+                    operation="checkpoint_import",
+                )
+                raise translated from exc
+        elif (
+            value.get("runtime_path")
+            == CHANNEL_COMPLETE_STRESS_RUNTIME_PATH
+            and value.get("format_version") == CHECKPOINT_VERSION
+        ):
+            try:
+                require_exact_checkpoint_keys(
+                    value,
+                    required={
+                        "format_version",
+                        "runtime_path",
+                        "run_provenance",
+                        "compatibility_identity",
+                        "compatibility_identity_sha256",
+                        "completed_steps",
+                        "integrator",
+                        "backend_restart",
+                        "tensor_files",
+                        "backend_files",
+                        "metadata_sha256",
+                    },
+                    optional={"migration_provenance"},
+                    description="Channel production checkpoint metadata",
+                    operation="channel_checkpoint_import",
+                    require_all=False,
+                )
+            except Exception as exc:
+                translated = translate_functional_exception(
+                    exc,
+                    operation="checkpoint_import",
+                )
+                raise translated from exc
         return value
 
     @staticmethod
@@ -562,31 +628,53 @@ class ChannelActivityCheckpointBridge:
         directory: Path,
         record: object,
         description: str,
+        expected_filename: str,
     ) -> torch.Tensor:
-        if not isinstance(record, Mapping):
-            raise TypeError(f"{description} tensor record must be a mapping")
-        if set(record) != {"file", "shape", "dtype", "sha256"}:
-            raise ValueError(f"{description} tensor record schema differs")
-        filename = record.get("file")
-        if (
-            not isinstance(filename, str)
-            or Path(filename).name != filename
-            or not filename.endswith(".npy")
-        ):
-            raise ValueError(f"{description} tensor filename is invalid")
-        path = directory / filename
-        if not path.is_file():
-            raise FunctionalCheckpointNotFoundError(
-                f"checkpoint tensor is missing: {path}",
+        try:
+            record = require_exact_checkpoint_keys(
+                record,
+                required={"file", "shape", "dtype", "sha256"},
+                description=f"{description} tensor record",
                 operation="channel_checkpoint_import",
             )
+        except Exception as exc:
+            translated = translate_functional_exception(
+                exc,
+                operation="checkpoint_import",
+            )
+            raise translated from exc
+        filename = record.get("file")
+        try:
+            path = resolve_checkpoint_payload(
+                directory,
+                filename,
+                operation="channel_checkpoint_import",
+                description=f"{description} tensor",
+                expected_filename=expected_filename,
+            )
+        except Exception as exc:
+            translated = translate_functional_exception(
+                exc,
+                operation="checkpoint_import",
+            )
+            raise translated from exc
         expected = _require_sha256(record.get("sha256"), "tensor SHA-256")
         if _sha256(path) != expected:
             raise FunctionalCheckpointIntegrityError(
                 f"checkpoint tensor checksum mismatch: {path}",
                 operation="channel_checkpoint_import",
             )
-        array = np.load(path, allow_pickle=False)
+        try:
+            array = load_checkpoint_numpy(
+                path,
+                operation="channel_checkpoint_import",
+            )
+        except Exception as exc:
+            translated = translate_functional_exception(
+                exc,
+                operation="checkpoint_import",
+            )
+            raise translated from exc
         if list(array.shape) != record.get("shape"):
             raise ValueError(f"checkpoint tensor shape metadata differs: {path}")
         if str(array.dtype) != record.get("dtype"):
@@ -712,7 +800,12 @@ class ChannelActivityCheckpointBridge:
             metadata.get("migration_provenance")
         )
         values = tuple(
-            self._load_tensor(directory, records[name], name)
+            self._load_tensor(
+                directory,
+                records[name],
+                name,
+                f"state__{name}.npy",
+            )
             for name in ("q_physical", "q_spectral")
         )
         state = tuple(
@@ -899,6 +992,7 @@ class ChannelActivityCheckpointBridge:
                     directory,
                     records[name],
                     f"{kind} {name}",
+                    f"{kind}__{name}.npy",
                 )
                 for name in _PRODUCTION_STATE_COMPONENTS
             }
@@ -908,6 +1002,7 @@ class ChannelActivityCheckpointBridge:
             directory,
             backend_files["pressure_guess"],
             "pressure guess",
+            "backend__pressure_guess.npy",
         )
         values = (
             torch.stack(

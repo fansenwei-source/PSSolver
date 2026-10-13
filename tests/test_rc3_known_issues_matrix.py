@@ -66,8 +66,8 @@ def test_state_counts_match_the_machine_readable_summary():
     for item in record["items"]:
         counts[item["state"]] = counts.get(item["state"], 0) + 1
     assert counts == {
-        "closed_verified": 29,
-        "partial_residual": 9,
+        "closed_verified": 32,
+        "partial_residual": 6,
         "accepted_limitation": 3,
         "deferred_architecture": 9,
     }
@@ -104,6 +104,12 @@ def test_release_blockers_and_closed_rc3_regressions_are_not_conflated():
         assert items[identifier]["disposition"] == "closed"
         assert items[identifier]["closure_record"] == (
             "notes/PSSolver_v0_2_0rc4_rc447_h100_closure.json"
+        )
+    for identifier in ("B7", "B24", "B27"):
+        assert items[identifier]["state"] == "closed_verified"
+        assert items[identifier]["disposition"] == "closed"
+        assert items[identifier]["closure_record"] == (
+            "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
         )
 
 
@@ -302,6 +308,19 @@ def test_rc450_progress_records_rc44_closure_and_rc45_planning_boundary():
             "ca8dbcf7b1b2d4144f28883f6a420331dbaf9af712d452a9d26551affaa9cdaf"
         ),
         "eligible_for_rc4_5_3_implementation": True,
+        "rc4_5_3_implementation_authorized": True,
+        "rc4_5_3_complete": True,
+        "rc4_5_3_classification": (
+            "PASS_RC4_5_3_CHECKPOINT_TRANSACTIONALITY_CPU_CANDIDATE"
+        ),
+        "rc4_5_3_record": (
+            "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
+        ),
+        "rc4_5_3_record_sha256": (
+            "4716b47e589dac8f13b56458ace00179e4fd0815042f81f2d034e6547edb03b4"
+        ),
+        "eligible_for_rc4_5_4_implementation": True,
+        "rc4_5_4_implementation_authorized": False,
         "rc4_5_implementation_authorized": False,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,
@@ -326,6 +345,7 @@ def test_rc450_progress_records_rc44_closure_and_rc45_planning_boundary():
         "rc4_5_plan",
         "rc4_5_1_analysis",
         "rc4_5_2_contract",
+        "rc4_5_3",
     ):
         path = ROOT / progress[f"{stage}_record"]
         assert path.is_file()

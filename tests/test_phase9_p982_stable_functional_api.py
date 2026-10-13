@@ -32,6 +32,7 @@ from pssolver.functional.pressure_metadata import (
     channel_pressure_solve_diagnostics,
 )
 from pssolver.io.checkpoint import (
+    CheckpointIOError,
     FUNCTIONAL_CHECKPOINT_PROVENANCE_FILE,
     seal_checkpoint_metadata,
     write_functional_checkpoint_provenance,
@@ -291,7 +292,8 @@ def test_stable_errors_remain_compatible_with_builtin_exception_catches():
         PermissionError("read-only checkpoint target"),
         operation="checkpoint_export",
     )
-    assert type(checkpoint_io_error) is stable.FunctionalCheckpointError
+    assert isinstance(checkpoint_io_error, stable.FunctionalCheckpointError)
+    assert isinstance(checkpoint_io_error, CheckpointIOError)
     assert checkpoint_io_error.operation == "checkpoint_export"
 
 

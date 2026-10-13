@@ -38,6 +38,7 @@ RC447_BOUNDED_OPERATOR_RECOVERY_V11 = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_pressure_bounded_operator_recovery_v11.json"
 )
+RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 
 
 def _record() -> dict[str, object]:
@@ -75,11 +76,14 @@ def test_rc443_record_binds_parent_contract_and_current_sources():
     bounded_recovery = json.loads(
         RC447_BOUNDED_OPERATOR_RECOVERY_V11.read_text(encoding="utf-8")
     )["successor_sources"]
+    rc453 = json.loads(RC453.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, expected in record["source_sha256"].items():
         actual = _sha256(relative)
         if actual == expected:
             continue
-        successor = bounded_recovery.get(
+        successor = rc453.get(relative, bounded_recovery.get(
             relative,
             performance_recovery.get(
                 relative,
@@ -88,10 +92,12 @@ def test_rc443_record_binds_parent_contract_and_current_sources():
                     latest.get(relative, recovery.get(relative)),
                 ),
             ),
-        )
+        ))
         assert successor is not None
         predecessor = expected
-        if relative in bounded_recovery:
+        if relative in rc453:
+            predecessor = rc453[relative]["historical_sha256"]
+        elif relative in bounded_recovery:
             predecessor = performance_recovery[relative]["current_sha256"]
         elif relative in performance_recovery:
             predecessor = performance_repair[relative]["current_sha256"]
@@ -102,7 +108,9 @@ def test_rc443_record_binds_parent_contract_and_current_sources():
         assert successor["historical_sha256"] == predecessor
         assert successor["current_sha256"] == actual
         expected_phase = (
-            "RC4.4.7-bounded-operator-recovery-v11-provider"
+            "RC4.5.3"
+            if relative in rc453
+            else "RC4.4.7-bounded-operator-recovery-v11-provider"
             if relative in bounded_recovery
             else
             "RC4.4.7-performance-recovery-v10-provider"
@@ -141,12 +149,15 @@ def test_rc443_registers_exact_historical_successors():
     bounded_recovery = json.loads(
         RC447_BOUNDED_OPERATOR_RECOVERY_V11.read_text(encoding="utf-8")
     )["successor_sources"]
+    rc453 = json.loads(RC453.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, registration in successors.items():
         assert registration["introduced_by_phase"] == "RC4.4.3"
         assert registration["historical_sha256"] != registration["current_sha256"]
         actual = _sha256(relative)
         if actual != registration["current_sha256"]:
-            newest = bounded_recovery.get(
+            newest = rc453.get(relative, bounded_recovery.get(
                 relative,
                 performance_recovery.get(
                     relative,
@@ -155,10 +166,12 @@ def test_rc443_registers_exact_historical_successors():
                         latest.get(relative, recovery.get(relative)),
                     ),
                 ),
-            )
+            ))
             assert newest is not None
             predecessor = registration["current_sha256"]
-            if relative in bounded_recovery:
+            if relative in rc453:
+                predecessor = rc453[relative]["historical_sha256"]
+            elif relative in bounded_recovery:
                 predecessor = performance_recovery[relative]["current_sha256"]
             elif relative in performance_recovery:
                 predecessor = performance_repair[relative]["current_sha256"]
@@ -169,7 +182,9 @@ def test_rc443_registers_exact_historical_successors():
             assert newest["historical_sha256"] == predecessor
             assert newest["current_sha256"] == actual
             expected_phase = (
-                "RC4.4.7-bounded-operator-recovery-v11-provider"
+                "RC4.5.3"
+                if relative in rc453
+                else "RC4.4.7-bounded-operator-recovery-v11-provider"
                 if relative in bounded_recovery
                 else
                 "RC4.4.7-performance-recovery-v10-provider"

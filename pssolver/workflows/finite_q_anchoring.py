@@ -7,11 +7,20 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import shutil
-import tempfile
 
 import numpy as np
 import torch
+
+from pssolver.io.checkpoint import (
+    CheckpointCompatibilityError,
+    CheckpointIntegrityError,
+    checkpoint_file_sha256,
+    checkpoint_directory_transaction,
+    load_checkpoint_numpy,
+    read_checkpoint_json,
+    require_exact_checkpoint_keys,
+    resolve_checkpoint_payload,
+)
 
 from pssolver.models.active_nematics.fields import Q_COMPONENTS
 from pssolver.runtime.finite_q_anchoring import (
@@ -26,35 +35,7 @@ FINITE_Q_ANCHORING_WORKFLOW_SCHEMA_VERSION = 1
 
 
 def _sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
-def _strict_json(path: Path) -> dict[str, object]:
-    def unique_pairs(pairs):
-        result = {}
-        for key, value in pairs:
-            if key in result:
-                raise ValueError(f"duplicate JSON key in {path}: {key}")
-            result[key] = value
-        return result
-
-    try:
-        value = json.loads(
-            path.read_text(encoding="utf-8"),
-            object_pairs_hook=unique_pairs,
-            parse_constant=lambda value: (_ for _ in ()).throw(
-                ValueError(f"non-finite JSON value in {path}: {value}")
-            ),
-        )
-    except (OSError, json.JSONDecodeError) as exc:
-        raise ValueError(f"invalid JSON file: {path}") from exc
-    if not isinstance(value, dict):
-        raise ValueError(f"JSON root must be an object: {path}")
-    return value
+    return checkpoint_file_sha256(path, operation="finite_q_checkpoint_io")
 
 
 def _atomic_json(path: Path, value: object) -> None:
@@ -99,17 +80,10 @@ def write_finite_q_anchoring_checkpoint(
         raise TypeError(
             "checkpoint must be a PlaneFiniteQAnchoringCheckpoint"
         )
-    target = Path(directory)
-    if target.exists():
-        raise FileExistsError(f"checkpoint directory already exists: {target}")
-    target.parent.mkdir(parents=True, exist_ok=True)
-    staging = Path(
-        tempfile.mkdtemp(
-            prefix=f".{target.name}.tmp-",
-            dir=target.parent,
-        )
-    )
-    try:
+    with checkpoint_directory_transaction(
+        directory,
+        operation="finite_q_checkpoint_export",
+    ) as (staging, _target):
         metadata = checkpoint.to_metadata()
         for component, scalar in checkpoint.components:
             tensors = metadata["components"][component]["tensors"]
@@ -123,10 +97,6 @@ def write_finite_q_anchoring_checkpoint(
                     tensor,
                 )
         _atomic_json(staging / "checkpoint.json", metadata)
-        os.replace(staging, target)
-    except BaseException:
-        shutil.rmtree(staging, ignore_errors=True)
-        raise
 
 
 def _load_tensor(
@@ -135,35 +105,52 @@ def _load_tensor(
     *,
     expected_shape: object,
     expected_dtype: object,
+    expected_filename: str,
 ) -> torch.Tensor:
-    if not isinstance(record, dict):
-        raise ValueError("checkpoint tensor file record is missing")
-    if set(record) != {"path", "size_bytes", "sha256", "shape", "dtype"}:
-        raise ValueError("checkpoint tensor file record schema differs")
+    record = require_exact_checkpoint_keys(
+        record,
+        required={"path", "size_bytes", "sha256", "shape", "dtype"},
+        description="finite-Q checkpoint tensor file record",
+        operation="finite_q_checkpoint_import",
+    )
     filename = record["path"]
-    if not isinstance(filename, str) or Path(filename).name != filename:
-        raise ValueError("checkpoint tensor path is invalid")
-    path = directory / filename
-    if not path.is_file():
-        raise FileNotFoundError(f"checkpoint tensor is missing: {path}")
+    path = resolve_checkpoint_payload(
+        directory,
+        filename,
+        operation="finite_q_checkpoint_import",
+        description="finite-Q checkpoint tensor",
+        expected_filename=expected_filename,
+    )
     if path.stat().st_size != record["size_bytes"]:
-        raise ValueError("checkpoint tensor file size differs")
+        raise CheckpointIntegrityError(
+            "checkpoint tensor file size differs",
+            operation="finite_q_checkpoint_import",
+        )
     if _sha256_file(path) != record["sha256"]:
-        raise ValueError("checkpoint tensor file checksum differs")
-    try:
-        array = np.load(path, allow_pickle=False)
-    except (OSError, ValueError) as exc:
-        raise ValueError("checkpoint tensor file is invalid") from exc
+        raise CheckpointIntegrityError(
+            "checkpoint tensor file checksum differs",
+            operation="finite_q_checkpoint_import",
+        )
+    array = load_checkpoint_numpy(path, operation="finite_q_checkpoint_import")
     if list(array.shape) != record["shape"] or list(array.shape) != expected_shape:
-        raise ValueError("checkpoint tensor shape metadata differs")
+        raise CheckpointIntegrityError(
+            "checkpoint tensor shape metadata differs",
+            operation="finite_q_checkpoint_import",
+        )
     normalized_expected_dtype = str(expected_dtype).removeprefix("torch.")
     if (
         str(array.dtype) != record["dtype"]
         or str(array.dtype) != normalized_expected_dtype
     ):
-        raise ValueError("checkpoint tensor dtype metadata differs")
+        raise CheckpointIntegrityError(
+            "checkpoint tensor dtype metadata differs",
+            operation="finite_q_checkpoint_import",
+        )
     if not np.isfinite(array).all():
-        raise ValueError("checkpoint tensor contains NaN or Inf")
+        raise CheckpointIntegrityError(
+            "checkpoint tensor contains NaN or Inf",
+            operation="finite_q_checkpoint_import",
+        )
     return torch.from_numpy(array.copy()).contiguous()
 
 
@@ -175,11 +162,30 @@ def load_finite_q_anchoring_checkpoint(
     """Load and fully validate one finite-Q checkpoint file set."""
 
     source = Path(directory)
-    metadata = _strict_json(source / "checkpoint.json")
+    metadata = read_checkpoint_json(
+        source / "checkpoint.json",
+        operation="finite_q_checkpoint_import",
+    )
+    require_exact_checkpoint_keys(
+        metadata,
+        required={
+            "schema_version",
+            "identity",
+            "identity_sha256",
+            "component_order",
+            "completed_steps",
+            "components",
+        },
+        description="finite-Q checkpoint metadata",
+        operation="finite_q_checkpoint_import",
+    )
     if metadata.get("schema_version") != (
         FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION
     ):
-        raise ValueError("unsupported finite-Q checkpoint version")
+        raise CheckpointCompatibilityError(
+            "unsupported finite-Q checkpoint version",
+            operation="finite_q_checkpoint_import",
+        )
     if metadata.get("component_order") != list(Q_COMPONENTS):
         raise ValueError("checkpoint component order differs")
     identity = metadata.get("identity")
@@ -204,27 +210,52 @@ def load_finite_q_anchoring_checkpoint(
     snapshots = []
     for component in Q_COMPONENTS:
         scalar = components[component]
-        if not isinstance(scalar, dict):
-            raise ValueError("checkpoint scalar metadata is invalid")
+        scalar = require_exact_checkpoint_keys(
+            scalar,
+            required={
+                "schema_version",
+                "identity",
+                "progress",
+                "representations",
+                "tensors",
+            },
+            description=f"finite-Q checkpoint component {component}",
+            operation="finite_q_checkpoint_import",
+        )
         tensors = scalar.get("tensors")
-        if not isinstance(tensors, dict) or set(tensors) != {
-            "remainder",
-            "bounded_modal",
-        }:
-            raise ValueError("checkpoint tensor manifest is incomplete")
+        tensors = require_exact_checkpoint_keys(
+            tensors,
+            required={"remainder", "bounded_modal"},
+            description=f"finite-Q checkpoint component {component} tensors",
+            operation="finite_q_checkpoint_import",
+        )
         remainder_metadata = tensors["remainder"]
         modal_metadata = tensors["bounded_modal"]
+        for tensor_name, tensor_metadata in (
+            ("remainder", remainder_metadata),
+            ("bounded_modal", modal_metadata),
+        ):
+            require_exact_checkpoint_keys(
+                tensor_metadata,
+                required={"shape", "dtype", "device", "sha256", "file"},
+                description=(
+                    f"finite-Q checkpoint {component}.{tensor_name} metadata"
+                ),
+                operation="finite_q_checkpoint_import",
+            )
         remainder = _load_tensor(
             source,
             remainder_metadata.get("file"),
             expected_shape=remainder_metadata.get("shape"),
             expected_dtype=remainder_metadata.get("dtype"),
+            expected_filename=f"{component}.remainder.npy",
         )
         modal = _load_tensor(
             source,
             modal_metadata.get("file"),
             expected_shape=modal_metadata.get("shape"),
             expected_dtype=modal_metadata.get("dtype"),
+            expected_filename=f"{component}.bounded_modal.npy",
         )
         remainder = remainder.to(normalized_device)
         modal = modal.to(normalized_device)

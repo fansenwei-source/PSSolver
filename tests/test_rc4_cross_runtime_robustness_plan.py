@@ -13,6 +13,7 @@ CLOSURE = ROOT / "notes/PSSolver_v0_2_0rc4_rc447_h100_closure.json"
 PLAN = ROOT / "notes/PSSolver_v0_2_0rc4_rc450_cross_runtime_robustness_plan.json"
 CONTRACT = ROOT / "notes/PSSolver_v0_2_0rc4_rc452_public_robustness_contract.json"
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
+RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -257,22 +258,32 @@ def test_rc450_consumer_and_h100_work_remain_separately_authorized():
 
 
 def test_rc450_reviewed_sources_are_content_addressed():
+    successors = _read(RC453)["historical_successor_sources"]
     for relative, expected in _read(PLAN)["reviewed_source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+        actual = _sha256(ROOT / relative)
+        if actual == expected:
+            continue
+        registration = successors[relative]
+        assert registration["historical_sha256"] == expected
+        assert registration["current_sha256"] == actual
 
 
 def test_known_issue_matrix_advances_only_after_rc44_evidence():
     matrix = _read(MATRIX)
-    assert matrix["summary"]["closed_verified"] == 29
-    assert matrix["summary"]["partial_residual"] == 9
+    assert matrix["summary"]["closed_verified"] == 32
+    assert matrix["summary"]["partial_residual"] == 6
     assert matrix["summary"]["next_implementation_batch"] == (
         "rc4.5_cross_runtime_robustness"
     )
     issues = {item["id"]: item for item in matrix["items"]}
     assert all(issues[item]["state"] == "closed_verified" for item in ("B25", "B28", "B29"))
     assert all(
+        issues[item]["state"] == "closed_verified"
+        for item in ("B7", "B24", "B27")
+    )
+    assert all(
         issues[item]["state"] == "partial_residual"
-        for item in ("B7", "B9", "B11", "B13", "B15", "B17", "B21", "B24", "B27")
+        for item in ("B9", "B11", "B13", "B15", "B17", "B21")
     )
     progress = matrix["progress"]
     assert progress["rc4_4_complete"] is True

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 import stat
 
@@ -234,7 +235,9 @@ def test_p93_functional_export_is_v3_and_requires_explicit_production_migration(
     )
 
     assert written == directory.resolve()
-    assert stat.S_IMODE(directory.stat().st_mode) == 0o755
+    current_umask = os.umask(0)
+    os.umask(current_umask)
+    assert stat.S_IMODE(directory.stat().st_mode) == (0o777 & ~current_umask)
     _assert_state_equal(state, before)
     metadata = json.loads((directory / "checkpoint.json").read_text())
     assert metadata["format_version"] == 2

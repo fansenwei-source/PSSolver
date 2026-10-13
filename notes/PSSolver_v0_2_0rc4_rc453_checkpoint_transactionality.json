@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 RC4.5.3 checkpoint transactionality implementation",
+  "phase": "RC4.5.3",
+  "classification": "PASS_RC4_5_3_CHECKPOINT_TRANSACTIONALITY_CPU_CANDIDATE",
+  "status": "implementation_complete_cpu_verified",
+  "baseline": {
+    "implementation_parent_commit": "19b241d62d2ea04455201e3321e86e3702563bb1",
+    "contract_record": "notes/PSSolver_v0_2_0rc4_rc452_public_robustness_contract.json",
+    "contract_record_sha256": "ca8dbcf7b1b2d4144f28883f6a420331dbaf9af712d452a9d26551affaa9cdaf"
+  },
+  "issues": {
+    "B7": "closed_verified",
+    "B24": "closed_verified",
+    "B27": "closed_verified"
+  },
+  "checkpoint_surfaces": [
+    "plane_production",
+    "legacy_channel_production",
+    "periodic_production",
+    "channel_complete_stress_production",
+    "finite_q_anchoring",
+    "periodic_functional",
+    "channel_functional"
+  ],
+  "schema_and_path_contract": {
+    "current_format_exact_top_level_schema": true,
+    "nested_identity_exact_schema": true,
+    "nested_bridge_exact_schema": true,
+    "tensor_record_exact_schema": true,
+    "strict_json_duplicate_keys_rejected": true,
+    "strict_json_nonfinite_values_rejected": true,
+    "payload_single_basename_only": true,
+    "payload_symlink_rejected": true,
+    "payload_regular_file_required": true,
+    "canonical_payload_filename_enforced": true,
+    "functional_origin_marker_preserved": true,
+    "checkpoint_format_or_tensor_layout_version_changed": false
+  },
+  "restore_transaction": {
+    "identity_and_payload_preflight_before_target_mutation": true,
+    "device_materialization_before_target_mutation": true,
+    "source_checkpoint_mutation": false,
+    "partial_restored_state_returned_on_failure": false
+  },
+  "writer_transaction": {
+    "same_filesystem_sibling_staging": true,
+    "single_atomic_publish": true,
+    "target_overwrite_allowed": false,
+    "failed_target_or_staging_residue_allowed": false,
+    "caller_umask_respected": true,
+    "umask_matrix": ["002", "022", "077"]
+  },
+  "error_taxonomy": {
+    "generic_categories": [
+      "CheckpointNotFoundError",
+      "CheckpointExistsError",
+      "CheckpointIntegrityError",
+      "CheckpointCompatibilityError",
+      "CheckpointIOError"
+    ],
+    "functional_compatibility_names_retained": true,
+    "stable_functional_exports_changed": false,
+    "functional_categories_are_generic_category_subclasses": true,
+    "filesystem_cause_preserved": true,
+    "message_text_used_for_classification": false,
+    "machine_metadata": [
+      "code",
+      "operation",
+      "failure_domain",
+      "legacy_exception_type"
+    ]
+  },
+  "failure_injection": {
+    "points": [
+      "first_payload",
+      "middle_payload",
+      "metadata",
+      "origin_marker",
+      "atomic_publish"
+    ],
+    "failed_target_absent": true,
+    "failed_staging_absent": true,
+    "parent_is_file_classified_as_io": true,
+    "device_full_publish_classified_as_io": true
+  },
+  "historical_evidence": {
+    "phase_7_p74_record_rewritten": false,
+    "phase_7_p74_checkpoint_source_bound_to_parent_blob": "19b241d62d2ea04455201e3321e86e3702563bb1",
+    "current_checkpoint_source_bound_by_this_successor": true
+  },
+  "historical_successor_sources": {
+    "pssolver/functional/__init__.py": {
+      "historical_sha256": "789cd197015f14efbc80785017a55d7d7f5daea2b128445720a217ee8ba14fb3",
+      "current_sha256": "abe179a9e9d011711a80107a31bc58a1597606e918ffc55c0809d46bf083ac73",
+      "introduced_by_phase": "RC4.5.3",
+      "reason": "Expose the generic-I/O-compatible functional checkpoint category through the compatibility facade without changing the stable API export list."
+    },
+    "pssolver/functional/channel_checkpoint.py": {
+      "historical_sha256": "1afc80cb7b8978911437f7caf17bc29cf0055872dd38b3a6101f28edb1204fbe",
+      "current_sha256": "b2b21e92c14d962cdfbee3f0beaf9d67dc29786e0aa50967385e556998ed63ee",
+      "introduced_by_phase": "RC4.5.3",
+      "reason": "Apply exact-schema, confined-payload, typed-error and transactional publication contracts to Channel functional checkpoints."
+    },
+    "pssolver/functional/errors.py": {
+      "historical_sha256": "dcfc1b7ca45b5ca20791dfcfac7165e5ebe1f57099e7ad32e42ae63a9c2e919d",
+      "current_sha256": "17a9e316171127744e873e5cb13cc6af3a1df04e625b5c47ddc037a9c588b804",
+      "introduced_by_phase": "RC4.5.3",
+      "reason": "Retain functional exception names while adding generic checkpoint category inheritance and machine-readable filesystem provenance."
+    },
+    "pssolver/io/__init__.py": {
+      "historical_sha256": "eaa2fb313977ebee2506fba7365044cf0390b65f5fe16e90c45873ad3f1dfcac",
+      "current_sha256": "c23542a087d868a6c1e6d9c60954ee53aafb56ec75b22302314481fcfddde7b3",
+      "introduced_by_phase": "RC4.5.3",
+      "reason": "Export the shared tensor-free checkpoint I/O contract."
+    },
+    "pssolver/io/checkpoint.py": {
+      "historical_sha256": "41351f32122479bc66cde569be400ea5be3f7907a8c94d9810b41465f9466c4f",
+      "current_sha256": "3977ae6fa5294234f758e8e2c5367e2c565fc085c6d567013d8e4f798fa59df0",
+      "introduced_by_phase": "RC4.5.3",
+      "reason": "Add strict JSON and payload readers, typed errors, umask-preserving sibling staging, cleanup and atomic directory publication."
+    },
+    "pssolver/workflows/channel_beris_edwards.py": {
+      "historical_sha256": "7c5aaf239160932e5df31194040d70723fb3aead3607cca46207581b67c4c328",
+      "current_sha256": "8b2b0d394a8070f5fb214f0715c6bb782c4888a10c148ff4985827a636512035",
+      "introduced_by_phase": "RC4.5.3",
+      "reason": "Connect complete-stress Channel production and migration checkpoints to the shared transaction and reader contract."
+    },
+    "pssolver/workflows/channel_checkpoint.py": {
+      "historical_sha256": "cb70a2a570a7c0260825e58a71ee003f71e0d1d666a2727bd88dad34672e9316",
+      "current_sha256": "1034785e29eebf347c1585b7fd19d269d291c3fc7c690f036cfdc196c830e156",
+      "introduced_by_phase": "RC4.5.3",
+      "reason": "Connect legacy Channel production checkpoints to exact-schema reads and shared atomic publication."
+    },
+    "pssolver/workflows/finite_q_anchoring.py": {
+      "historical_sha256": "7e46875114adaeb1c0e9e120c67287603431b5d03c75f9012bf1fbb68d015902",
+      "current_sha256": "5f619cf3fe8aa9bcc05c4f72f1c8e943e1fecd5fc3ceff1947d07eb7fd931b94",
+      "introduced_by_phase": "RC4.5.3",
+      "reason": "Connect finite-Q checkpoint files to canonical basenames, strict records and shared atomic publication."
+    },
+    "pssolver/workflows/periodic_checkpoint.py": {
+      "historical_sha256": "e6a2642ff8a787813911cfd3ceb50a195e10cf117ecc899afe737872ed4b4cb6",
+      "current_sha256": "1bad547e17edf21647c5ded093e9ba8b4d4f8acbf9ecbe8bd53a57ae9c06d8be",
+      "introduced_by_phase": "RC4.5.3",
+      "reason": "Connect Periodic production and functional carriers to strict reads and shared atomic publication."
+    },
+    "pssolver/workflows/plane_checkpoint.py": {
+      "historical_sha256": "b4b51a0b98a1da5c4ddf501bafcd7a57ff98d1da4c179818da3fb3716e147806",
+      "current_sha256": "116dd657f8854aa88054c0ca5ea04cfb16cf78eb43dddd5caf80b5fb5ea81564",
+      "introduced_by_phase": "RC4.5.3",
+      "reason": "Connect Plane production checkpoints to exact-schema reads, pre-materialized restore and shared atomic publication."
+    },
+    "tests/test_phase7_channel_runtime_facade.py": {
+      "historical_sha256": "b921a683175c05ac9b68ea5727afb7a3155fcd9eee7398736377439ee3194ad5",
+      "current_sha256": "81e57aaff968f1a339d443d7198421ed419030718b2cebe6922f0664bc1ad5da",
+      "introduced_by_phase": "RC4.5.3",
+      "reason": "Preserve the historical P7.4 source binding and validate the RC4.5.3 successor plus caller-umask directory mode."
+    },
+    "tests/test_phase9_p93_replay_checkpoint_bridge.py": {
+      "historical_sha256": "20d4ae98147b0ac6d6fb1859811ff2f3d317e2da39deac71590fe859e1f5310a",
+      "current_sha256": "98793729197fba5022d09f47c51eb4a3d48d3619d3a3840be732e1b15191017d",
+      "introduced_by_phase": "RC4.5.3",
+      "reason": "Replace historical hard-coded directory mode with the frozen caller-umask oracle."
+    },
+    "tests/test_phase9_p982_stable_functional_api.py": {
+      "historical_sha256": "7b0252f50a4a9ee922cdbce92bfc6d478a4c0b7089d6853899281cccbbde7db7",
+      "current_sha256": "1ae5f16e444ba9eb07b4f6ee669228ba49bed39a26b2ec3da13252fcb9186a9a",
+      "introduced_by_phase": "RC4.5.3",
+      "reason": "Verify that filesystem failures retain the functional base while also exposing the generic I/O category."
+    }
+  },
+  "source_sha256": {
+    "pssolver/io/checkpoint.py": "3977ae6fa5294234f758e8e2c5367e2c565fc085c6d567013d8e4f798fa59df0",
+    "pssolver/io/__init__.py": "c23542a087d868a6c1e6d9c60954ee53aafb56ec75b22302314481fcfddde7b3",
+    "pssolver/functional/errors.py": "17a9e316171127744e873e5cb13cc6af3a1df04e625b5c47ddc037a9c588b804",
+    "pssolver/functional/__init__.py": "abe179a9e9d011711a80107a31bc58a1597606e918ffc55c0809d46bf083ac73",
+    "pssolver/functional/channel_checkpoint.py": "b2b21e92c14d962cdfbee3f0beaf9d67dc29786e0aa50967385e556998ed63ee",
+    "pssolver/functional/periodic_checkpoint.py": "85d882d1540f0af663b342d89626678538578dd58929c8e955a053b8c13f0c36",
+    "pssolver/workflows/plane_checkpoint.py": "116dd657f8854aa88054c0ca5ea04cfb16cf78eb43dddd5caf80b5fb5ea81564",
+    "pssolver/workflows/channel_checkpoint.py": "1034785e29eebf347c1585b7fd19d269d291c3fc7c690f036cfdc196c830e156",
+    "pssolver/workflows/periodic_checkpoint.py": "1bad547e17edf21647c5ded093e9ba8b4d4f8acbf9ecbe8bd53a57ae9c06d8be",
+    "pssolver/workflows/channel_beris_edwards.py": "8b2b0d394a8070f5fb214f0715c6bb782c4888a10c148ff4985827a636512035",
+    "pssolver/workflows/finite_q_anchoring.py": "5f619cf3fe8aa9bcc05c4f72f1c8e943e1fecd5fc3ceff1947d07eb7fd931b94",
+    "tests/test_rc453_checkpoint_transactionality.py": "891762ae214ab2396e281b8abce41a6a19568586bd3b10121e33398d383e5478",
+    "tests/test_phase7_channel_runtime_facade.py": "81e57aaff968f1a339d443d7198421ed419030718b2cebe6922f0664bc1ad5da",
+    "tests/test_phase9_p93_replay_checkpoint_bridge.py": "98793729197fba5022d09f47c51eb4a3d48d3619d3a3840be732e1b15191017d",
+    "tests/test_phase9_p982_stable_functional_api.py": "1ae5f16e444ba9eb07b4f6ee669228ba49bed39a26b2ec3da13252fcb9186a9a"
+  },
+  "verification": {
+    "py_compile": "PASS",
+    "focused_checkpoint_tests": {
+      "passed": 215,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 3276,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 1,
+      "subtests_passed": 8,
+      "deselected_node_ids": [
+        "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+      ]
+    },
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "checkpoint_schema_or_tensor_layout_version_changed": false,
+    "scientific_model_changed": false,
+    "numerical_hot_path_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "h100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "rc4_5_3_implementation_authorized": true,
+    "rc4_5_3_complete": true,
+    "eligible_for_rc4_5_4_implementation": true,
+    "rc4_5_4_implementation_authorized": false,
+    "PSSolver_Control_modification_authorized": false,
+    "h100_submission_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

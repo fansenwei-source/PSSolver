@@ -26,6 +26,9 @@ LATEST_SUCCESSOR_RECORD = (
 RC444_SUCCESSOR_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
 )
+RC453_SUCCESSOR_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -41,6 +44,7 @@ def test_rc423_record_binds_plan_parent_and_implementation_files():
     successor = json.loads(SUCCESSOR_RECORD.read_text(encoding="utf-8"))
     latest = json.loads(LATEST_SUCCESSOR_RECORD.read_text(encoding="utf-8"))
     rc444 = json.loads(RC444_SUCCESSOR_RECORD.read_text(encoding="utf-8"))
+    rc453 = json.loads(RC453_SUCCESSOR_RECORD.read_text(encoding="utf-8"))
     assert record["status"] == "complete"
     assert record["classification"] == (
         "PASS_RC4_2_3_PERIODIC_CHANNEL_PRODUCTION_LAYERED_"
@@ -57,6 +61,22 @@ def test_rc423_record_binds_plan_parent_and_implementation_files():
         if actual == expected:
             continue
         registered = successor["historical_successor_sources"].get(relative)
+        newest = rc453["historical_successor_sources"].get(relative)
+        if newest is not None:
+            predecessor = (
+                rc444["historical_successor_sources"].get(relative, {}).get(
+                    "current_sha256"
+                )
+                or latest["historical_successor_sources"].get(relative, {}).get(
+                    "current_sha256"
+                )
+                or (registered or {}).get("current_sha256")
+                or expected
+            )
+            assert newest["historical_sha256"] == predecessor
+            assert newest["current_sha256"] == actual
+            assert newest["introduced_by_phase"] == "RC4.5.3"
+            continue
         if registered is None:
             newest = rc444["historical_successor_sources"][relative]
             assert newest["historical_sha256"] == expected

@@ -4,12 +4,8 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-import hashlib
 import json
-import os
 from pathlib import Path
-import shutil
-import tempfile
 from types import MappingProxyType
 
 import numpy as np
@@ -17,6 +13,16 @@ import torch
 
 from pssolver.configuration.channel_active_nematics_declarations import (
     ChannelRuntimePath,
+)
+from pssolver.io.checkpoint import (
+    CheckpointCompatibilityError,
+    CheckpointIntegrityError,
+    checkpoint_file_sha256,
+    checkpoint_directory_transaction,
+    load_checkpoint_numpy,
+    read_checkpoint_json,
+    require_exact_checkpoint_keys,
+    resolve_checkpoint_payload,
 )
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.channel_active_nematics import (
@@ -26,14 +32,24 @@ from pssolver.runtime.channel_active_nematics import (
 
 CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1
 CHANNEL_ALGEBRAIC_COMPONENTS = ("ux", "uy", "uz", "p")
+_CHANNEL_REQUIRED_KEYS = frozenset(
+    {
+        "format_version",
+        "runtime_path",
+        "runtime_identity_sha256",
+        "completed_steps",
+        "integrator",
+        "evolved_components",
+        "algebraic_components",
+        "persistent_algebraic",
+        "backend_restart",
+        "tensor_files",
+    }
+)
 
 
 def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    return checkpoint_file_sha256(path, operation="legacy_channel_checkpoint_io")
 
 
 def _require_sha256(value: object, description: str) -> str:
@@ -288,18 +304,32 @@ def restore_channel_checkpoint(
     if not isinstance(checkpoint, ChannelWorkflowCheckpoint):
         raise TypeError("checkpoint must be ChannelWorkflowCheckpoint")
     if checkpoint.runtime_path is not adapter.runtime_path:
-        raise ValueError("cross-runtime Channel checkpoint restart is unsupported")
+        raise CheckpointCompatibilityError(
+            "cross-runtime Channel checkpoint restart is unsupported",
+            operation="legacy_channel_checkpoint_import",
+        )
     if checkpoint.runtime_identity_sha256 != runtime_identity_sha256:
-        raise ValueError("checkpoint runtime identity does not match target")
+        raise CheckpointCompatibilityError(
+            "checkpoint runtime identity does not match target",
+            operation="legacy_channel_checkpoint_import",
+        )
     if dict(checkpoint.backend_restart) != adapter.backend_restart_metadata():
-        raise ValueError("checkpoint backend restart contract does not match target")
+        raise CheckpointCompatibilityError(
+            "checkpoint backend restart contract does not match target",
+            operation="legacy_channel_checkpoint_import",
+        )
     copies = _validated_copy_plan(adapter, checkpoint)
-
-    for target, source in copies:
-        target.copy_(source.to(device=target.device))
     current_pressure = adapter.fields["p.hat"]
+    pending = tuple(
+        (target, source.to(device=target.device)) for target, source in copies
+    )
+    pending_pressure = checkpoint.pressure_guess.to(
+        device=current_pressure.device
+    )
+    for target, source in pending:
+        target.copy_(source)
     adapter.restore_pressure_guess(
-        checkpoint.pressure_guess.to(device=current_pressure.device)
+        pending_pressure
     )
     adapter.restore_progress(
         completed_steps=checkpoint.completed_steps,
@@ -332,17 +362,10 @@ def write_channel_checkpoint(
 
     if not isinstance(checkpoint, ChannelWorkflowCheckpoint):
         raise TypeError("checkpoint must be ChannelWorkflowCheckpoint")
-    target = Path(directory).expanduser().resolve()
-    target.parent.mkdir(parents=True, exist_ok=True)
-    if target.exists():
-        raise FileExistsError(f"checkpoint directory already exists: {target}")
-    staging = Path(
-        tempfile.mkdtemp(prefix=f".{target.name}.tmp-", dir=target.parent)
-    )
-    # Preserve atomic construction without publishing mkdtemp's private 0700
-    # staging mode as the final shared checkpoint directory.
-    staging.chmod(0o755)
-    try:
+    with checkpoint_directory_transaction(
+        directory,
+        operation="legacy_channel_checkpoint_export",
+    ) as (staging, target):
         files = {
             "evolved_spatial": {},
             "evolved_spectral": {},
@@ -370,24 +393,27 @@ def write_channel_checkpoint(
             json.dumps(metadata, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
-        os.replace(staging, target)
-    except BaseException:
-        if staging.exists():
-            shutil.rmtree(staging)
-        raise
     return target
 
 
 def _read_metadata(directory: Path) -> Mapping[str, object]:
-    path = directory / "checkpoint.json"
-    if not path.is_file():
-        raise FileNotFoundError(f"checkpoint metadata is missing: {path}")
-    try:
-        metadata = json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        raise ValueError("checkpoint metadata is not valid JSON") from exc
-    if not isinstance(metadata, Mapping):
-        raise TypeError("checkpoint metadata must be a JSON object")
+    metadata = read_checkpoint_json(
+        directory / "checkpoint.json",
+        operation="legacy_channel_checkpoint_import",
+    )
+    if metadata.get("format_version") == CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        require_exact_checkpoint_keys(
+            metadata,
+            required=_CHANNEL_REQUIRED_KEYS,
+            description="Channel checkpoint metadata",
+            operation="legacy_channel_checkpoint_import",
+        )
+        require_exact_checkpoint_keys(
+            metadata.get("integrator"),
+            required={"spectral_refresh_interval", "step_count", "refresh_count"},
+            description="Channel checkpoint integrator",
+            operation="legacy_channel_checkpoint_import",
+        )
     return metadata
 
 
@@ -398,11 +424,17 @@ def read_channel_checkpoint_header(
 
     metadata = _read_metadata(Path(directory).expanduser().resolve())
     if metadata.get("format_version") != CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
-        raise ValueError("unsupported Channel checkpoint version")
+        raise CheckpointCompatibilityError(
+            "unsupported Channel checkpoint version",
+            operation="legacy_channel_checkpoint_import",
+        )
     try:
         runtime_path = ChannelRuntimePath(metadata.get("runtime_path"))
     except (TypeError, ValueError) as exc:
-        raise ValueError("checkpoint runtime path is invalid") from exc
+        raise CheckpointCompatibilityError(
+            "checkpoint runtime path is invalid",
+            operation="legacy_channel_checkpoint_import",
+        ) from exc
     identity = _require_sha256(
         metadata.get("runtime_identity_sha256"),
         "runtime_identity_sha256",
@@ -417,29 +449,54 @@ def _load_tensor(
     directory: Path,
     record: object,
     description: str,
+    expected_filename: str,
 ) -> torch.Tensor:
-    if not isinstance(record, Mapping):
-        raise TypeError(f"{description} tensor record must be a mapping")
+    record = require_exact_checkpoint_keys(
+        record,
+        required={"file", "shape", "dtype", "sha256"},
+        description=f"{description} tensor record",
+        operation="legacy_channel_checkpoint_import",
+    )
     filename = record.get("file")
-    if (
-        not isinstance(filename, str)
-        or Path(filename).name != filename
-        or not filename.endswith(".npy")
-    ):
-        raise ValueError(f"{description} tensor filename is invalid")
-    path = directory / filename
-    if not path.is_file():
-        raise FileNotFoundError(f"checkpoint tensor is missing: {path}")
+    path = resolve_checkpoint_payload(
+        directory,
+        filename,
+        operation="legacy_channel_checkpoint_import",
+        description=f"{description} tensor",
+        expected_filename=expected_filename,
+    )
     expected = _require_sha256(record.get("sha256"), "tensor SHA-256")
     if _sha256(path) != expected:
-        raise ValueError(f"checkpoint tensor checksum mismatch: {path}")
-    values = np.load(path, allow_pickle=False)
+        raise CheckpointIntegrityError(
+            f"checkpoint tensor checksum mismatch: {path}",
+            operation="legacy_channel_checkpoint_import",
+        )
+    try:
+        values = load_checkpoint_numpy(
+            path,
+            operation="legacy_channel_checkpoint_import",
+        )
+    except (OSError, ValueError) as exc:
+        raise CheckpointIntegrityError(
+            f"checkpoint tensor is invalid: {path}",
+            operation="legacy_channel_checkpoint_import",
+            legacy_exception_type=type(exc).__name__,
+        ) from exc
     if list(values.shape) != record.get("shape"):
-        raise ValueError(f"checkpoint tensor shape metadata differs: {path}")
+        raise CheckpointIntegrityError(
+            f"checkpoint tensor shape metadata differs: {path}",
+            operation="legacy_channel_checkpoint_import",
+        )
     if str(values.dtype) != record.get("dtype"):
-        raise ValueError(f"checkpoint tensor dtype metadata differs: {path}")
+        raise CheckpointIntegrityError(
+            f"checkpoint tensor dtype metadata differs: {path}",
+            operation="legacy_channel_checkpoint_import",
+        )
     if not np.isfinite(values).all():
-        raise ValueError(f"checkpoint tensor contains NaN or Inf: {path}")
+        raise CheckpointIntegrityError(
+            f"checkpoint tensor contains NaN or Inf: {path}",
+            operation="legacy_channel_checkpoint_import",
+        )
     return torch.from_numpy(np.array(values, copy=True))
 
 
@@ -450,8 +507,18 @@ def load_channel_checkpoint(directory: str | Path) -> ChannelWorkflowCheckpoint:
     metadata = _read_metadata(directory)
     header = read_channel_checkpoint_header(directory)
     files = metadata.get("tensor_files")
-    if not isinstance(files, Mapping):
-        raise ValueError("checkpoint tensor-file manifest is missing")
+    files = require_exact_checkpoint_keys(
+        files,
+        required={
+            "evolved_spatial",
+            "evolved_spectral",
+            "algebraic_spatial",
+            "algebraic_spectral",
+            "pressure_guess",
+        },
+        description="Channel checkpoint tensor-file manifest",
+        operation="legacy_channel_checkpoint_import",
+    )
     loaded = {}
     for kind, components in (
         ("evolved_spatial", Q_COMPONENTS),
@@ -467,7 +534,12 @@ def load_channel_checkpoint(directory: str | Path) -> ChannelWorkflowCheckpoint:
         ):
             raise ValueError(f"checkpoint {kind} manifest is incomplete")
         loaded[kind] = {
-            name: _load_tensor(directory, records[name], f"{kind}.{name}")
+            name: _load_tensor(
+                directory,
+                records[name],
+                f"{kind}.{name}",
+                f"{kind}__{name}.npy",
+            )
             for name in components
         }
     integrator = metadata.get("integrator")
@@ -492,6 +564,7 @@ def load_channel_checkpoint(directory: str | Path) -> ChannelWorkflowCheckpoint:
             directory,
             files.get("pressure_guess"),
             "pressure_guess",
+            "persistent__pressure_guess.npy",
         ),
         backend_restart=backend,
     )
