@@ -236,6 +236,165 @@ def channel_pressure_active_rms(
     )
 
 
+def _channel_pressure_working_magnitude(
+    value: torch.Tensor,
+    inactive_mask: torch.Tensor,
+    *,
+    finite_companions: tuple[torch.Tensor, ...] = (),
+    active_count: int | None = None,
+) -> tuple[ChannelPressureMagnitude, bool]:
+    """Measure an already scaled PCG vector with one host synchronization.
+
+    ``channel_pressure_working_vector`` first places the production solve in a
+    safe quadratic range.  Subsequent residuals normally remain in that range,
+    so their RMS and companion finite flags can be copied to the host together.
+    If a finite nonzero vector nevertheless falls outside that range, fall
+    back to the fully scale-safe public primitive.
+    """
+
+    if active_count is None:
+        count = (~inactive_mask.expand_as(value)).sum(dtype=value.real.dtype)
+    else:
+        if active_count <= 0:
+            raise ValueError("active pressure degree count must be positive")
+        count = active_count
+    rms = torch.linalg.vector_norm(value.reshape(-1)) / math.sqrt(float(count))
+    metrics = [rms]
+    metrics.extend(
+        torch.isfinite(companion).all().to(dtype=value.real.dtype)
+        for companion in finite_companions
+    )
+    observed = torch.stack(metrics).tolist()
+    rms_value = float(observed[0])
+    companions_finite = all(item == 1.0 for item in observed[1:])
+    if not companions_finite:
+        return _channel_pressure_zero_magnitude(), False
+    if not math.isfinite(rms_value) or rms_value <= 0.0:
+        # This branch is intentionally exceptional.  It preserves the public
+        # underflow/overflow contract without charging the ordinary CUDA path
+        # for a second scalar synchronization on every PCG iteration.
+        try:
+            return channel_pressure_active_rms(value, inactive_mask), True
+        except ValueError:
+            return _channel_pressure_zero_magnitude(), False
+    mantissa, exponent = math.frexp(rms_value)
+    return _channel_pressure_magnitude_from_binary(mantissa, exponent), True
+
+
+def _channel_pressure_working_breakdown(
+    left: torch.Tensor,
+    right: torch.Tensor,
+    inactive_mask: torch.Tensor,
+    *,
+    inner_product: torch.Tensor | None = None,
+) -> tuple[bool, bool]:
+    """Evaluate the relative breakdown gate with one host synchronization.
+
+    The caller supplies vectors in the safe PCG working scale.  The returned
+    booleans are ``(breakdown, finite)``.  Exceptional finite scales fall back
+    to the fully scale-safe public implementation; non-finite vectors are
+    reported separately so the caller can retain its fail-closed reason.
+    """
+
+    if inner_product is None:
+        inner_product = torch.sum(torch.conj(left) * right)
+    paired_square_sum = torch.sum(
+        torch.complex(
+            left.real.square() + left.imag.square(),
+            right.real.square() + right.imag.square(),
+        )
+    )
+    observed = torch.stack(
+        (
+            torch.abs(inner_product),
+            paired_square_sum.real,
+            paired_square_sum.imag,
+        )
+    ).tolist()
+    inner_value, left_square_value, right_square_value = (
+        float(item) for item in observed
+    )
+    if not all(
+        math.isfinite(item) and item > 0.0
+        for item in (left_square_value, right_square_value)
+    ) or not math.isfinite(inner_value):
+        try:
+            return channel_pressure_relative_breakdown(
+                left,
+                right,
+                inactive_mask,
+            ), True
+        except ValueError:
+            return False, False
+    epsilon = torch.finfo(left.real.dtype).eps
+    threshold = epsilon * math.sqrt(left_square_value * right_square_value)
+    return inner_value <= threshold, True
+
+
+def _channel_pressure_working_residual_observation(
+    residual: torch.Tensor,
+    preconditioned: torch.Tensor,
+    inactive_mask: torch.Tensor,
+    *,
+    inner_product: torch.Tensor,
+    active_count: int,
+    finite_companions: tuple[torch.Tensor, ...] = (),
+) -> tuple[ChannelPressureMagnitude, bool, bool, bool]:
+    """Observe residual magnitude and preconditioned breakdown in one sync."""
+
+    if active_count <= 0:
+        raise ValueError("active pressure degree count must be positive")
+    residual_square_sum = torch.sum(
+        residual.real.square() + residual.imag.square()
+    )
+    preconditioned_square_sum = torch.sum(
+        preconditioned.real.square() + preconditioned.imag.square()
+    )
+    metrics = [
+        torch.abs(inner_product),
+        residual_square_sum,
+        preconditioned_square_sum,
+    ]
+    metrics.extend(
+        torch.isfinite(companion).all().to(dtype=residual.real.dtype)
+        for companion in finite_companions
+    )
+    observed = torch.stack(metrics).tolist()
+    inner_value, residual_square_value, preconditioned_square_value = (
+        float(item) for item in observed[:3]
+    )
+    companions_finite = all(item == 1.0 for item in observed[3:])
+    ordinary = (
+        companions_finite
+        and math.isfinite(inner_value)
+        and math.isfinite(residual_square_value)
+        and residual_square_value > 0.0
+        and math.isfinite(preconditioned_square_value)
+        and preconditioned_square_value > 0.0
+    )
+    if not ordinary:
+        magnitude, residual_finite = _channel_pressure_working_magnitude(
+            residual,
+            inactive_mask,
+            finite_companions=finite_companions,
+            active_count=active_count,
+        )
+        breakdown, pair_finite = _channel_pressure_working_breakdown(
+            residual,
+            preconditioned,
+            inactive_mask,
+            inner_product=inner_product,
+        )
+        return magnitude, residual_finite, breakdown, pair_finite
+    rms_value = math.sqrt(residual_square_value / active_count)
+    mantissa, exponent = math.frexp(rms_value)
+    magnitude = _channel_pressure_magnitude_from_binary(mantissa, exponent)
+    threshold = torch.finfo(residual.real.dtype).eps * math.sqrt(
+        residual_square_value * preconditioned_square_value
+    )
+    return magnitude, True, inner_value <= threshold, True
+
+
 def channel_pressure_scale_power_of_two(
     value: torch.Tensor,
     binary_exponent: int,
@@ -556,6 +715,9 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
             nyquist_mask,
             persistent=False,
         )
+        self._active_pressure_degrees_of_freedom = int(
+            (~(null_mask | nyquist_mask)).sum().item()
+        )
         self.pressure_rel_tol = pressure_relative_tolerance
         self.pressure_max_iter = pressure_max_iterations
         self.pressure_fixed_iterations = pressure_fixed_iterations
@@ -716,8 +878,8 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
             ),
             "max_iterations_role": policy["max_iterations_role"],
             "relative_tolerance_role": policy["relative_tolerance_role"],
-            "active_pressure_degrees_of_freedom": int(
-                (~self.pressure_inactive_mask).sum().item()
+            "active_pressure_degrees_of_freedom": (
+                self._active_pressure_degrees_of_freedom
             ),
             "rhs_norm_definition": CHANNEL_PRESSURE_RHS_NORM_DEFINITION,
             "rhs_norm": rhs_norm.to_metadata(),
@@ -906,7 +1068,30 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     -int(working_exponent),
                 )
             )
-        if not bool(torch.isfinite(pressure_work).all().item()):
+        residual = self._project_pressure_gauge(
+            working_rhs - self._pressure_operator(pressure_work)
+        )
+        active_count = (
+            self._active_pressure_degrees_of_freedom
+            * residual.numel()
+            // self.pressure_inactive_mask.numel()
+        )
+        preconditioned = residual / self.schur_diag_safe
+        rz_old = torch.sum(torch.conj(residual) * preconditioned).real
+        (
+            residual_work_magnitude,
+            initial_state_finite,
+            initial_breakdown,
+            initial_pair_finite,
+        ) = _channel_pressure_working_residual_observation(
+            residual,
+            preconditioned,
+            self.pressure_inactive_mask,
+            inner_product=rz_old,
+            active_count=active_count,
+            finite_companions=(pressure_work,),
+        )
+        if not initial_state_finite:
             self._raise_pressure_failure(
                 rhs_norm=rhs_magnitude,
                 initial_residual=rhs_magnitude,
@@ -916,23 +1101,14 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 termination_reason="nonfinite_intermediate",
                 working_scale_binary_exponent=working_exponent,
             )
-        residual = self._project_pressure_gauge(
-            working_rhs - self._pressure_operator(pressure_work)
-        )
-        residual_work_magnitude = channel_pressure_active_rms(
-            residual,
-            self.pressure_inactive_mask,
-        )
+        rhs_work_magnitude = rhs_magnitude.shifted(-int(working_exponent))
         residual_magnitude = residual_work_magnitude.shifted(
             int(working_exponent)
         )
         initial_residual = residual_magnitude
         relative_residual = channel_pressure_magnitude_ratio(
             residual_work_magnitude,
-            channel_pressure_active_rms(
-                working_rhs,
-                self.pressure_inactive_mask,
-            ),
+            rhs_work_magnitude,
         )
         if residual_work_magnitude.is_zero:
             pressure_hat = channel_pressure_scale_power_of_two(
@@ -969,12 +1145,17 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 working_scale_binary_exponent=working_exponent,
             )
             return pressure_hat
-        preconditioned = residual / self.schur_diag_safe
-        if channel_pressure_relative_breakdown(
-            residual,
-            preconditioned,
-            self.pressure_inactive_mask,
-        ):
+        if not initial_pair_finite:
+            self._raise_pressure_failure(
+                rhs_norm=rhs_magnitude,
+                initial_residual=initial_residual,
+                iterations=0,
+                residual=residual_magnitude,
+                relative_residual=relative_residual,
+                termination_reason="nonfinite_intermediate",
+                working_scale_binary_exponent=working_exponent,
+            )
+        if initial_breakdown:
             self._raise_pressure_failure(
                 rhs_norm=rhs_magnitude,
                 initial_residual=initial_residual,
@@ -985,26 +1166,30 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 working_scale_binary_exponent=working_exponent,
             )
         direction = preconditioned.clone()
-        rz_old = torch.sum(torch.conj(residual) * preconditioned).real
         iterations = 0
         iteration_limit = self.pressure_iteration_limit
         termination_reason = "iteration_limit_reached_without_postcondition"
         acceptable = False
         while iterations < iteration_limit:
             operator_direction = self._pressure_operator(direction)
-            if not bool(torch.isfinite(operator_direction).all().item()):
+            direction_operator_inner = torch.sum(
+                torch.conj(direction) * operator_direction
+            )
+            operator_breakdown, operator_pair_finite = (
+                _channel_pressure_working_breakdown(
+                    direction,
+                    operator_direction,
+                    self.pressure_inactive_mask,
+                    inner_product=direction_operator_inner,
+                )
+            )
+            if not operator_pair_finite:
                 termination_reason = "nonfinite_intermediate"
                 break
-            if channel_pressure_relative_breakdown(
-                direction,
-                operator_direction,
-                self.pressure_inactive_mask,
-            ):
+            if operator_breakdown:
                 termination_reason = "operator_breakdown"
                 break
-            denominator = torch.sum(
-                torch.conj(direction) * operator_direction
-            ).real
+            denominator = direction_operator_inner.real
             step = rz_old / denominator
             pressure_work = self._project_pressure_gauge(
                 pressure_work + step * direction
@@ -1013,25 +1198,30 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 residual - step * operator_direction
             )
             iterations += 1
-            if not bool(
-                torch.isfinite(pressure_work).all().item()
-                and torch.isfinite(residual).all().item()
-            ):
+            preconditioned = residual / self.schur_diag_safe
+            rz_new = torch.sum(torch.conj(residual) * preconditioned).real
+            (
+                residual_work_magnitude,
+                state_finite,
+                preconditioned_breakdown,
+                preconditioned_pair_finite,
+            ) = _channel_pressure_working_residual_observation(
+                residual,
+                preconditioned,
+                self.pressure_inactive_mask,
+                inner_product=rz_new,
+                active_count=active_count,
+                finite_companions=(pressure_work,),
+            )
+            if not state_finite:
                 termination_reason = "nonfinite_intermediate"
                 break
-            residual_work_magnitude = channel_pressure_active_rms(
-                residual,
-                self.pressure_inactive_mask,
-            )
             residual_magnitude = residual_work_magnitude.shifted(
                 int(working_exponent)
             )
             relative_residual = channel_pressure_magnitude_ratio(
                 residual_work_magnitude,
-                channel_pressure_active_rms(
-                    working_rhs,
-                    self.pressure_inactive_mask,
-                ),
+                rhs_work_magnitude,
             )
             if residual_work_magnitude.is_zero:
                 termination_reason = "exact_zero_residual"
@@ -1046,18 +1236,12 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     termination_reason = "fixed_work_completed"
                     acceptable = True
                 break
-            preconditioned = residual / self.schur_diag_safe
-            if not bool(torch.isfinite(preconditioned).all().item()):
+            if not preconditioned_pair_finite:
                 termination_reason = "nonfinite_intermediate"
                 break
-            if channel_pressure_relative_breakdown(
-                residual,
-                preconditioned,
-                self.pressure_inactive_mask,
-            ):
+            if preconditioned_breakdown:
                 termination_reason = "preconditioned_residual_breakdown"
                 break
-            rz_new = torch.sum(torch.conj(residual) * preconditioned).real
             direction = preconditioned + (rz_new / rz_old) * direction
             rz_old = rz_new
         if not acceptable:

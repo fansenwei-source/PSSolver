@@ -24,6 +24,11 @@ RC447_RECOVERY = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_python310_compatibility_recovery.json"
 )
+RC447_PERFORMANCE_REPAIR = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_pressure_performance_repair.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -366,6 +371,9 @@ def test_rc442_reviewed_sources_are_content_addressed():
     recovery = json.loads(RC447_RECOVERY.read_text(encoding="utf-8"))[
         "successor_sources"
     ]
+    performance_repair = json.loads(
+        RC447_PERFORMANCE_REPAIR.read_text(encoding="utf-8")
+    )["successor_sources"]
     for relative, expected in _record()["reviewed_source_sha256"].items():
         actual = _sha256(ROOT / relative)
         if actual == expected:
@@ -375,15 +383,24 @@ def test_rc442_reviewed_sources_are_content_addressed():
             assert registration["historical_sha256"] == expected
             assert registration["introduced_by_phase"] == "RC4.4.3"
             continue
-        newest = latest.get(relative, recovery.get(relative))
+        newest = performance_repair.get(
+            relative,
+            latest.get(relative, recovery.get(relative)),
+        )
         assert newest is not None
-        predecessor = expected if registration is None else registration[
-            "current_sha256"
-        ]
+        predecessor = expected if registration is None else registration["current_sha256"]
+        if relative in performance_repair:
+            intermediate = latest.get(relative, recovery.get(relative))
+            if intermediate is not None:
+                predecessor = intermediate["current_sha256"]
         assert newest["historical_sha256"] == predecessor
         assert newest["current_sha256"] == actual
         expected_phase = (
-            "RC4.4.4" if relative in latest else "RC4.4.7-recovery"
+            "RC4.4.7-performance-repair-v9-provider"
+            if relative in performance_repair
+            else "RC4.4.4"
+            if relative in latest
+            else "RC4.4.7-recovery"
         )
         assert newest["introduced_by_phase"] == expected_phase
 

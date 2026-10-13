@@ -23,6 +23,8 @@ from pssolver.linear_solvers.stokes import (
     ChannelPressureConvergenceError,
 )
 from pssolver.linear_solvers.stokes.channel_no_slip import (
+    _channel_pressure_working_breakdown,
+    _channel_pressure_working_magnitude,
     channel_pressure_active_rms,
     channel_pressure_relative_breakdown,
     channel_pressure_scale_power_of_two,
@@ -158,6 +160,57 @@ def test_relative_breakdown_is_scale_invariant_and_has_positive_control():
             )
             is False
         )
+
+
+def test_working_scale_fast_measurements_match_public_pressure_primitives():
+    _, pressure = _solver()
+    mask = pressure.pressure_inactive_mask
+    generator = torch.Generator().manual_seed(4437)
+    left = torch.complex(
+        torch.randn(mask.shape, generator=generator, dtype=torch.float64),
+        torch.randn(mask.shape, generator=generator, dtype=torch.float64),
+    ).masked_fill(mask, 0)
+    right = (0.75 * left).masked_fill(mask, 0)
+
+    magnitude, finite = _channel_pressure_working_magnitude(
+        left,
+        mask,
+        finite_companions=(right,),
+    )
+    breakdown, pair_finite = _channel_pressure_working_breakdown(
+        left,
+        right,
+        mask,
+    )
+
+    assert finite is True
+    assert pair_finite is True
+    assert magnitude == channel_pressure_active_rms(left, mask)
+    assert breakdown is channel_pressure_relative_breakdown(left, right, mask)
+
+
+def test_working_scale_fast_measurements_fail_closed_on_nonfinite_values():
+    _, pressure = _solver()
+    mask = pressure.pressure_inactive_mask
+    left = torch.ones(mask.shape, dtype=torch.complex128).masked_fill(mask, 0)
+    nonfinite = left.clone()
+    nonfinite[:, 1, 0, 0] = complex(float("nan"), 0.0)
+
+    magnitude, finite = _channel_pressure_working_magnitude(
+        left,
+        mask,
+        finite_companions=(nonfinite,),
+    )
+    breakdown, pair_finite = _channel_pressure_working_breakdown(
+        left,
+        nonfinite,
+        mask,
+    )
+
+    assert magnitude.is_zero is True
+    assert finite is False
+    assert breakdown is False
+    assert pair_finite is False
 
 
 def test_fixed_work_ignores_loose_tolerance_on_all_three_executable_loops():

@@ -1,0 +1,94 @@
+{
+  "schema": "pssolver.rc4_4_7.pressure_performance_repair.v9",
+  "phase": "RC4.4.7-performance-repair-v9-provider",
+  "status": "LOCAL_PROVIDER_REPAIR_READY_H100_NOT_AUTHORIZED",
+  "classification": "LOCAL_CHANNEL_PRESSURE_HOST_SYNCHRONIZATION_REPAIR",
+  "baseline_provider_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+  "failed_candidate_provider_commit": "5b4ee16c81a3ae452ffcf8992a84a738a76ff629",
+  "failed_v8_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc447_pressure_h100_5b4ee16_0cf55b4_20261012_recovery_v8",
+    "job_id": "10878190",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:02:30",
+    "node": "gpu-h100-4-0",
+    "checksums_sha256": "067a8ae82717c29ecc9e622aa26940ba800a709ad9a67e24b44513612e1a0ad3",
+    "checksums_verified": 1514,
+    "cuda_tests_passed": 7,
+    "correctness_gates_passed": 9,
+    "profiles_complete": 12,
+    "R128_mean_candidate_over_baseline": 2.800664109,
+    "R128_median_candidate_over_baseline": 2.832800628,
+    "R512_mean_candidate_over_baseline": 2.61773493,
+    "R512_median_candidate_over_baseline": 2.649879164,
+    "paired_pressure_iteration_histories_equal": true,
+    "paired_final_states_equal": true,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "automatic_retry": false
+  },
+  "root_cause": {
+    "classification": "production_pressure_pcg_excess_host_scalar_synchronization",
+    "failed_candidate_ordinary_host_observations_per_iteration": 2,
+    "failed_candidate_problem": "each observation expanded into multiple sequential scalar extractions and the RHS RMS was recomputed on every iteration",
+    "why_results_remained_correct": "the scale-safe magnitude and relative-breakdown formulas were correct; only their CUDA observation schedule introduced the regression",
+    "solver_algorithm_failure": false,
+    "scientific_model_failure": false
+  },
+  "repair": {
+    "scope": "provider_runtime_performance_only",
+    "changes": [
+      "cache the immutable active pressure degree count",
+      "derive the working-scale RHS magnitude from the already measured scale-safe RHS magnitude",
+      "reuse PCG inner products already required by the update",
+      "fuse residual magnitude, relative-breakdown inputs, and companion finite flags into one ordinary host observation",
+      "fuse operator-breakdown inputs into one ordinary host observation",
+      "retain the public fully scale-safe primitives as exceptional-range fallbacks"
+    ],
+    "pressure_policy_changed": false,
+    "fixed_work_changed": false,
+    "tolerance_semantics_changed": false,
+    "breakdown_semantics_changed": false,
+    "diagnostics_schema_changed": false,
+    "model_equations_changed": false,
+    "production_default_changed": false
+  },
+  "successor_sources": {
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "historical_sha256": "012f1fc77b66b7cc328c2b325ff10a3a4512e2aedc5e6b31433a66d423ce1d8d",
+      "current_sha256": "3b052817352e7a4a7c3d175535db22db2169587f220b50c759362ec52142ad94",
+      "introduced_by_phase": "RC4.4.7-performance-repair-v9-provider",
+      "reason": "remove redundant CUDA scalar synchronization from the production pressure PCG while preserving the frozen scale-safe pressure policy and diagnostics"
+    }
+  },
+  "local_validation": {
+    "old_candidate_vs_repair_CPU": {
+      "batch_sizes": [1, 2],
+      "modes": ["fixed_work_5", "relative_tolerance"],
+      "pressure_tensor_byte_identical": true,
+      "iteration_count_identical": true,
+      "last_pressure_diagnostics_identical": true
+    },
+    "isolated_pressure_screening_RTX3060Ti_seconds": {
+      "baseline": 0.006891,
+      "failed_candidate": 0.020245,
+      "repair": 0.006802,
+      "qualification_evidence": false
+    },
+    "interleaved_R128_profile_screening_RTX3060Ti_seconds": {
+      "candidate": [0.010836, 0.010934],
+      "baseline": [0.01091, 0.011009],
+      "qualification_evidence": false
+    },
+    "H100_requalified": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "single_h100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false
+  },
+  "PSSolver_Control_modified": false,
+  "nematics3d_modified": false
+}
