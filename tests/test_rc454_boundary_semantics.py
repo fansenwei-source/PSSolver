@@ -322,4 +322,3 @@ def test_rc454_record_and_matrix_close_only_b9_and_b21():
     assert issues["B9"]["state"] == "closed_verified"
     assert issues["B21"]["state"] == "closed_verified"
     assert matrix["progress"]["rc4_5_4_complete"] is True
-
