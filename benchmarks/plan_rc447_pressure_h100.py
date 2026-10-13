@@ -20,12 +20,19 @@ from benchmarks.analyze_rc447_pressure_h100 import COMMITS, WHEELS
 SCHEMA = "pssolver.rc4_4_7.channel_pressure_command_plan.v1"
 SUPPORT_FILES = (
     "benchmarks/__init__.py",
+    "benchmarks/analyze_finite_q_anchoring_qualification.py",
+    "benchmarks/analyze_plane_static_lifting_qualification.py",
+    "benchmarks/analyze_rc447_pressure_h100.py",
+    "benchmarks/benchmark_bounded_axis_applicability.py",
+    "benchmarks/diagnose_plane_nyquist_storage.py",
     "benchmarks/profile_beris_edwards_timestep.py",
     "benchmarks/profile_channel_runtime_timestep.py",
+    "benchmarks/profile_finite_q_anchoring.py",
+    "benchmarks/profile_plane_runtime_timestep.py",
     "benchmarks/profile_rc447_channel_pressure.py",
-    "benchmarks/run_rc447_cuda_tests.py",
+    "benchmarks/qualify_plane_static_lifting.py",
     "benchmarks/qualify_rc447_pressure_cuda.py",
-    "benchmarks/analyze_rc447_pressure_h100.py",
+    "benchmarks/run_rc447_cuda_tests.py",
 )
 GRIDS = (
     ("R128x20x20", "128,20,20"),

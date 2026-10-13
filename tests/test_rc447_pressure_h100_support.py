@@ -4,7 +4,11 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 from pathlib import Path
+import shutil
+import subprocess
+import sys
 
 import pytest
 import torch
@@ -465,6 +469,55 @@ def test_command_plan_refuses_support_root_that_can_shadow_pssolver(tmp_path):
             consumer_root=tmp_path / "consumer",
             provider_test_root=tmp_path / "provider",
         )
+
+
+def test_cuda_test_support_collects_all_seven_nodes_without_source_shadow(tmp_path):
+    support = tmp_path / "support"
+    installed = tmp_path / "installed"
+    for relative in SUPPORT_FILES:
+        source = Path(__file__).resolve().parents[1] / relative
+        destination = support / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, destination)
+    shutil.copytree(
+        Path(__file__).resolve().parents[1] / "pssolver",
+        installed / "pssolver",
+        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+    )
+    assert not (support / "pssolver").exists()
+
+    root = Path(__file__).resolve().parents[1]
+    node_paths = [str(root / node) for node in NODE_IDS]
+    environment = os.environ.copy()
+    environment["PYTHONPATH"] = str(installed)
+    environment["PYTHONNOUSERSITE"] = "1"
+    environment["PYTHONDONTWRITEBYTECODE"] = "1"
+    pytest_root = tmp_path / "pytest_root"
+    pytest_root.mkdir()
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "--collect-only",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--import-mode=importlib",
+            f"--rootdir={pytest_root}",
+            *node_paths,
+        ],
+        cwd=support,
+        env=environment,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "ModuleNotFoundError" not in result.stdout + result.stderr
+    for node in NODE_IDS:
+        assert node.split("::", 1)[1] in result.stdout
 
 
 def test_cuda_test_classifier_requires_seven_unique_passes():

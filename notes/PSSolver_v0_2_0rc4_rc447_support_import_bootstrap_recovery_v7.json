@@ -1,0 +1,109 @@
+{
+  "schema": "pssolver.rc4_4_7.support_import_bootstrap_recovery_plan.v7",
+  "phase": "RC4.4.7-recovery-v7",
+  "status": "LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED",
+  "qualification_parent_commit": "071d310e11b9aa7ca72c28e6d839cc953afbec27",
+  "baseline_provider_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+  "candidate_provider_commit": "5b4ee16c81a3ae452ffcf8992a84a738a76ff629",
+  "consumer_source_commit": "0cf55b4fb699ff40433000f5b4efe52b1d33546b",
+  "failed_v6_evidence": {
+    "job_id": "10878065",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:00:11",
+    "node": "gpu-h100-4-0",
+    "classification": "FAIL_RC4_4_7_FIELDS_ITERATION_RECOVERY_H100_QUALIFICATION_HARNESS",
+    "control_directory": "/home/fansenwei/pssolver_rc447_pressure_h100_5b4ee16_0cf55b4_20261012_recovery_v6",
+    "checksums_sha256": "27fba843a55d58f0f61b7c7e965e06ca3af0c96474f6f2f7498dad627488b851",
+    "checksums_verified": 1393,
+    "cuda_tests_collected": 0,
+    "cuda_tests_expected": 7,
+    "scientific_profile_started": false,
+    "automatic_retry": false
+  },
+  "failure_classification": "external_qualification_support_incomplete_benchmarks_import_bootstrap",
+  "failure_cause": {
+    "explanation": "The versioned support contract exported seven benchmark files, but CUDA test collection imported additional benchmark modules outside that list.",
+    "pytest_collection_returncode": 4,
+    "solver_failure": false,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "cuda_failure": false
+  },
+  "support_import_contract": {
+    "cuda_node_count": 7,
+    "support_file_count": 14,
+    "support_files": [
+      "benchmarks/__init__.py",
+      "benchmarks/analyze_finite_q_anchoring_qualification.py",
+      "benchmarks/analyze_plane_static_lifting_qualification.py",
+      "benchmarks/analyze_rc447_pressure_h100.py",
+      "benchmarks/benchmark_bounded_axis_applicability.py",
+      "benchmarks/diagnose_plane_nyquist_storage.py",
+      "benchmarks/profile_beris_edwards_timestep.py",
+      "benchmarks/profile_channel_runtime_timestep.py",
+      "benchmarks/profile_finite_q_anchoring.py",
+      "benchmarks/profile_plane_runtime_timestep.py",
+      "benchmarks/profile_rc447_channel_pressure.py",
+      "benchmarks/qualify_plane_static_lifting.py",
+      "benchmarks/qualify_rc447_pressure_cuda.py",
+      "benchmarks/run_rc447_cuda_tests.py"
+    ],
+    "collection_only_bootstrap_passed": true,
+    "collection_only_bootstrap_collected": 7,
+    "temporary_support_contains_pssolver": false,
+    "source_shadow_import": false,
+    "transitive_benchmark_dependencies_explicit": true
+  },
+  "qualification_support_successors": {
+    "benchmarks/plan_rc447_pressure_h100.py": {
+      "historical_sha256": "4d5ba2c8bd55fa5c55e0a97c4896272aec21c83c50368b76a13bec1d59d8eaee",
+      "current_sha256": "09df7c69da7c72050caca8e5621a27f5c385804542382a5569678c161c5cbbaa",
+      "change_scope": "external_qualification_support_import_bootstrap_only",
+      "reason": "freeze the complete benchmark import closure needed to collect all seven CUDA-only tests"
+    },
+    "tests/test_rc447_pressure_h100_support.py": {
+      "historical_sha256": "66547795af88f2ee8d3f16e0f382e686db4d868ef6f0b5d8240ec3bf85f7e50c",
+      "current_sha256": "2dde13e058795049d49ad56884756c1da36f2fa594c370133e5cf4d1365a13f4",
+      "change_scope": "external_qualification_support_import_bootstrap_only",
+      "reason": "materialize the frozen support closure in isolation and require successful collection of all seven CUDA node IDs without source shadowing"
+    }
+  },
+  "cpu_validation": {
+    "focused_support_tests": {
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0
+    },
+    "targeted_suite": {
+      "passed": 60,
+      "failed": 0,
+      "skipped": 0
+    },
+    "full_suite": {
+      "passed": 3175,
+      "failed": 0,
+      "skipped": 0,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "seconds": 208.14,
+      "environment": "/home/fansenwei/anaconda3/envs/Nematics3D/bin/python3.12"
+    }
+  },
+  "thresholds_changed": false,
+  "scientific_contract_changed": false,
+  "profile_matrix_changed": false,
+  "correctness_matrix_changed": false,
+  "provider_runtime_modified": false,
+  "PSSolver_Control_modified": false,
+  "nematics3d_modified": false,
+  "production_default_changed": false,
+  "qualification_complete": false,
+  "rc4_4_7_complete": false,
+  "eligible_for_rc4_5_planning": false,
+  "authorization": {
+    "push_authorized": false,
+    "single_h100_submission_authorized": false,
+    "automatic_retry_authorized": false
+  }
+}
