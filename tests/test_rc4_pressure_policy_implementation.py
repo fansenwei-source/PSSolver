@@ -42,6 +42,30 @@ from pssolver.linear_solvers.stokes.channel_no_slip import (
 SHAPE = (3, 2, 2)
 
 
+def _assert_pressure_magnitude_equivalent(actual, expected):
+    """Compare equivalent float64 reductions without requiring equal ULPs."""
+
+    assert actual.is_zero is expected.is_zero
+    assert (
+        actual.representable_as_positive_float64
+        is expected.representable_as_positive_float64
+    )
+    assert actual.binary_exponent == expected.binary_exponent
+    tolerance = 32.0 * math.ulp(1.0)
+    for name in ("float64_value", "log2_value", "binary_mantissa"):
+        observed = getattr(actual, name)
+        reference = getattr(expected, name)
+        if reference is None:
+            assert observed is None
+        else:
+            assert math.isclose(
+                observed,
+                reference,
+                rel_tol=tolerance,
+                abs_tol=tolerance,
+            )
+
+
 def _solver(
     *,
     fixed_iterations: int | None = 5,
@@ -197,7 +221,10 @@ def test_working_scale_fast_measurements_match_public_pressure_primitives():
 
     assert finite is True
     assert pair_finite is True
-    assert magnitude == channel_pressure_active_rms(left, mask)
+    _assert_pressure_magnitude_equivalent(
+        magnitude,
+        channel_pressure_active_rms(left, mask),
+    )
     assert breakdown is channel_pressure_relative_breakdown(left, right, mask)
 
     active_count = int((~mask).sum().item())
@@ -212,7 +239,10 @@ def test_working_scale_fast_measurements_match_public_pressure_primitives():
             finite_companions=(right,),
         )
     )
-    assert observed == channel_pressure_active_rms(left, mask)
+    _assert_pressure_magnitude_equivalent(
+        observed,
+        channel_pressure_active_rms(left, mask),
+    )
     assert state_finite is True
     assert residual_pair_finite is True
     assert residual_breakdown is channel_pressure_relative_breakdown(

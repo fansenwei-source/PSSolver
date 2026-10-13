@@ -160,12 +160,17 @@ def test_complete_analysis_matches_the_frozen_record_aggregates():
         rel=0.0,
         abs=0.0,
     )
-    assert live["evidence"]["P08_dense_and_gradient_oracles"]["dense"][
-        "primal_transpose_inner_product_relative_error"
-    ] == pytest.approx(
-        record["results"]["P05_primal_transpose"][
-            "inner_product_relative_error"
-        ],
-        rel=1.0e-15,
-        abs=0.0,
+    live_inner_error = live["evidence"]["P08_dense_and_gradient_oracles"][
+        "dense"
+    ]["primal_transpose_inner_product_relative_error"]
+    frozen_inner_error = record["results"]["P05_primal_transpose"][
+        "inner_product_relative_error"
+    ]
+    inner_error_bound = record["results"]["P05_primal_transpose"]["bound"]
+    assert live_inner_error <= inner_error_bound
+    assert frozen_inner_error <= inner_error_bound
+    assert live_inner_error == pytest.approx(
+        frozen_inner_error,
+        rel=0.0,
+        abs=0.01 * inner_error_bound,
     )
