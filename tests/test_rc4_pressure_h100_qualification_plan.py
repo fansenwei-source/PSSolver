@@ -34,6 +34,11 @@ PERFORMANCE_RECOVERY = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_performance_recovery_v9.json"
 )
+PERFORMANCE_QUALIFICATION_RECOVERY = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_pressure_performance_qualification_recovery_v10.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -221,6 +226,12 @@ def test_rc447_plan_binds_the_local_qualification_support_by_hash():
             ],
             "external_profile_counter_and_nonapplicability_contract",
         ),
+        (
+            json.loads(
+                PERFORMANCE_QUALIFICATION_RECOVERY.read_text(encoding="utf-8")
+            )["qualification_support_successors"],
+            "qualification_identity_propagation_only",
+        ),
     ]
     assert support["implementation_scope"] == (
         "qualification_only_no_solver_or_runtime_change"
@@ -327,6 +338,45 @@ def test_rc447_performance_recovery_binds_runtime_artifact_and_counter_layers():
     assert recovery["profile_matrix_changed"] is False
     assert recovery["correctness_matrix_changed"] is False
     assert recovery["scientific_contract_changed"] is False
+    assert recovery["production_default_changed"] is False
+    assert recovery["authorization"] == {
+        "push_authorized": False,
+        "single_h100_submission_authorized": False,
+        "automatic_retry_authorized": False,
+    }
+
+
+def test_rc447_v10_qualification_recovery_binds_exact_four_way_identity():
+    recovery = json.loads(
+        PERFORMANCE_QUALIFICATION_RECOVERY.read_text(encoding="utf-8")
+    )
+
+    assert recovery["phase"] == "RC4.4.7-performance-recovery-v10-qualification"
+    assert recovery["runtime_candidate_commit"] == (
+        "5b7d839c4034eb46a48a61c7be349df01473a2cd"
+    )
+    assert recovery["candidate_provider_wheel"]["sha256"] == (
+        "76200d6fdfa5bd9a7dfb6eb518913f81715156a507b3ef0310172c3a86484172"
+    )
+    assert recovery["candidate_provider_wheel"][
+        "two_independent_local_builds_byte_identical"
+    ] is True
+    identity = recovery["identity_repair"]
+    assert identity["identity_inference_allowed"] is False
+    assert identity["identity_default_allowed"] is False
+    assert identity["incorrect_persisted_provider_commit"] != recovery[
+        "failed_v9_evidence"
+    ]["runtime_provider_commit"]
+    assert identity["incorrect_persisted_provider_wheel_sha256"] != recovery[
+        "failed_v9_evidence"
+    ]["runtime_provider_wheel_sha256"]
+    assert recovery["thresholds_changed"] is False
+    assert recovery["profile_matrix_changed"] is False
+    assert recovery["correctness_matrix_changed"] is False
+    assert recovery["scientific_contract_changed"] is False
+    assert recovery["provider_runtime_modified_by_qualification_commit"] is False
+    assert recovery["PSSolver_Control_modified"] is False
+    assert recovery["nematics3d_modified"] is False
     assert recovery["production_default_changed"] is False
     assert recovery["authorization"] == {
         "push_authorized": False,

@@ -30,10 +30,6 @@ import torch
 SCHEMA = "pssolver.rc4_4_7.channel_pressure_cuda.v1"
 GATE_SCHEMA = "pssolver.rc4_4_7.channel_pressure_cuda.gate.v1"
 PASS = "PASS_RC4_4_7_CHANNEL_PRESSURE_CUDA_CORRECTNESS"
-PROVIDER_COMMIT = "5b4ee16c81a3ae452ffcf8992a84a738a76ff629"
-CONSUMER_SOURCE_COMMIT = "0cf55b4fb699ff40433000f5b4efe52b1d33546b"
-PROVIDER_WHEEL_SHA256 = "6f38996c31586ff7b2a0637de5ff479410bbd01bb53926828071affaf5d4cf26"
-CONSUMER_WHEEL_SHA256 = "068dc2f3d3be5b8eee96169711878a71bb4e513b452cdcc2fa54dd67c124b96d"
 SCALE_SHAPES = ((7, 6, 5), (8, 6, 4), (9, 8, 6))
 SCALE_EXPONENTS = (-600, 0, 600)
 SCALE_RELATIVE_L2_MAX = 2.0e-11
@@ -715,7 +711,41 @@ def _graph_breaks() -> int:
     return 0
 
 
-def run(output: Path, consumer_root: Path, provider_test_root: Path) -> dict[str, Any]:
+def _sha256_identity(value: str, name: str) -> str:
+    if len(value) != 64 or any(character not in "0123456789abcdef" for character in value):
+        raise ValueError(f"{name} must be a lowercase SHA-256 digest")
+    return value
+
+
+def _git_identity(value: str, name: str) -> str:
+    if len(value) != 40 or any(character not in "0123456789abcdef" for character in value):
+        raise ValueError(f"{name} must be a lowercase full Git commit")
+    return value
+
+
+def run(
+    output: Path,
+    consumer_root: Path,
+    provider_test_root: Path,
+    *,
+    provider_commit: str,
+    provider_wheel_sha256: str,
+    consumer_source_commit: str,
+    consumer_wheel_sha256: str,
+) -> dict[str, Any]:
+    provider_commit = _git_identity(provider_commit, "Provider commit")
+    provider_wheel_sha256 = _sha256_identity(
+        provider_wheel_sha256,
+        "Provider wheel SHA-256",
+    )
+    consumer_source_commit = _git_identity(
+        consumer_source_commit,
+        "Consumer source commit",
+    )
+    consumer_wheel_sha256 = _sha256_identity(
+        consumer_wheel_sha256,
+        "Consumer wheel SHA-256",
+    )
     if output.exists() or output.is_symlink():
         raise FileExistsError(f"refusing to overwrite {output}")
     output.mkdir(parents=True)
@@ -785,10 +815,10 @@ def run(output: Path, consumer_root: Path, provider_test_root: Path) -> dict[str
         "qualification_complete": all(item["passed"] for item in final_gates.values()),
         "environment": gates["environment"]["observations"]["environment"],
         "identities": {
-            "provider_commit": PROVIDER_COMMIT,
-            "provider_wheel_sha256": PROVIDER_WHEEL_SHA256,
-            "consumer_source_commit": CONSUMER_SOURCE_COMMIT,
-            "consumer_wheel_sha256": CONSUMER_WHEEL_SHA256,
+            "provider_commit": provider_commit,
+            "provider_wheel_sha256": provider_wheel_sha256,
+            "consumer_source_commit": consumer_source_commit,
+            "consumer_wheel_sha256": consumer_wheel_sha256,
         },
         "gates": final_gates,
         "gate_files": {name: f"gate_{name}.json" for name in gates},
@@ -811,8 +841,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--consumer-root", type=Path, required=True)
     parser.add_argument("--provider-test-root", type=Path, required=True)
+    parser.add_argument("--provider-commit", required=True)
+    parser.add_argument("--provider-wheel-sha256", required=True)
+    parser.add_argument("--consumer-source-commit", required=True)
+    parser.add_argument("--consumer-wheel-sha256", required=True)
     args = parser.parse_args(argv)
-    run(args.output.resolve(), args.consumer_root.resolve(), args.provider_test_root.resolve())
+    run(
+        args.output.resolve(),
+        args.consumer_root.resolve(),
+        args.provider_test_root.resolve(),
+        provider_commit=args.provider_commit,
+        provider_wheel_sha256=args.provider_wheel_sha256,
+        consumer_source_commit=args.consumer_source_commit,
+        consumer_wheel_sha256=args.consumer_wheel_sha256,
+    )
     return 0
 
 

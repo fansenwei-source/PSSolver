@@ -15,6 +15,8 @@ import torch
 
 from benchmarks.analyze_rc447_pressure_h100 import (
     COMMITS,
+    CONSUMER_SOURCE_COMMIT,
+    CONSUMER_WHEEL_SHA256,
     CORRECTNESS_PASS,
     CORRECTNESS_SCHEMA,
     PASS,
@@ -59,9 +61,9 @@ def _correctness() -> dict[str, object]:
         },
         "identities": {
             "provider_commit": COMMITS["candidate"],
-            "consumer_source_commit": (
-                "0cf55b4fb699ff40433000f5b4efe52b1d33546b"
-            ),
+            "provider_wheel_sha256": WHEELS["candidate"],
+            "consumer_source_commit": CONSUMER_SOURCE_COMMIT,
+            "consumer_wheel_sha256": CONSUMER_WHEEL_SHA256,
         },
         "gates": {name: {"passed": True} for name in names},
         "runtime_fallback_used": False,
@@ -449,6 +451,29 @@ def test_analyzer_rejects_incomplete_or_regressed_evidence(mutation, message):
         analyze(baseline, candidate, correctness, _cuda_tests())
 
 
+@pytest.mark.parametrize(
+    ("identity", "message"),
+    [
+        ("provider_commit", "Provider commit differs"),
+        ("provider_wheel_sha256", "Provider wheel differs"),
+        ("consumer_source_commit", "Consumer source differs"),
+        ("consumer_wheel_sha256", "Consumer wheel differs"),
+    ],
+)
+def test_analyzer_rejects_any_correctness_identity_mismatch(identity, message):
+    correctness = _correctness()
+    correctness["identities"][identity] = "0" * len(
+        correctness["identities"][identity]
+    )
+    with pytest.raises(ValueError, match=message):
+        analyze(
+            _matrix("baseline"),
+            _matrix("candidate"),
+            correctness,
+            _cuda_tests(),
+        )
+
+
 def test_final_state_identity_is_conditional_on_pressure_path_identity():
     baseline = _matrix("baseline")
     candidate = _matrix("candidate")
@@ -542,6 +567,19 @@ def test_command_plan_has_balanced_unique_profiles_and_installed_interpreters(
     assert cuda["argv"][0] == str(candidate_python.resolve())
     assert cuda["argv"][1:3] == ["-m", "benchmarks.run_rc447_cuda_tests"]
     assert plan["correctness_command"]["stage"] == 2
+    correctness_argv = plan["correctness_command"]["argv"]
+    assert correctness_argv[correctness_argv.index("--provider-commit") + 1] == (
+        COMMITS["candidate"]
+    )
+    assert correctness_argv[
+        correctness_argv.index("--provider-wheel-sha256") + 1
+    ] == WHEELS["candidate"]
+    assert correctness_argv[
+        correctness_argv.index("--consumer-source-commit") + 1
+    ] == CONSUMER_SOURCE_COMMIT
+    assert correctness_argv[
+        correctness_argv.index("--consumer-wheel-sha256") + 1
+    ] == CONSUMER_WHEEL_SHA256
     assert plan["analyzer_command"]["stage"] == 4
 
 

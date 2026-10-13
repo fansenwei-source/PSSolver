@@ -1,0 +1,119 @@
+{
+  "schema": "pssolver.rc4_4_7.pressure_performance_qualification_recovery.v10",
+  "phase": "RC4.4.7-performance-recovery-v10-qualification",
+  "status": "LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED",
+  "runtime_candidate_commit": "5b7d839c4034eb46a48a61c7be349df01473a2cd",
+  "baseline_provider_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+  "consumer_source_commit": "0cf55b4fb699ff40433000f5b4efe52b1d33546b",
+  "consumer_wheel_sha256": "068dc2f3d3be5b8eee96169711878a71bb4e513b452cdcc2fa54dd67c124b96d",
+  "candidate_source_archive": {
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_rc447_v10_candidate_artifacts_5b7d839/PSSolver-5b7d839.tar",
+    "sha256": "b524021c5e9991e6d52cce3af60ccef0bbbdeb2ea3f273ef387efa1ecdf551f2",
+    "bytes": 20418560
+  },
+  "candidate_provider_wheel": {
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_rc447_v10_candidate_artifacts_5b7d839/pssolver-0.2.0rc3-py3-none-any.whl",
+    "sha256": "76200d6fdfa5bd9a7dfb6eb518913f81715156a507b3ef0310172c3a86484172",
+    "bytes": 1047474,
+    "source_date_epoch": 1791865779,
+    "two_independent_local_builds_byte_identical": true
+  },
+  "failed_v9_evidence": {
+    "job_id": "10878267",
+    "reported_outcome": "FAIL_PERFORMANCE_GATE",
+    "control_directory": "/home/fansenwei/pssolver_rc447_pressure_h100_4902743_0cf55b4_20261012_recovery_v9",
+    "checksums_sha256": "630e1d4d13085dbd5a57bc3477c4b0edd18a979f1a238d13cb02336ab99248a9",
+    "checksums_verified": 1743,
+    "runtime_provider_commit": "490274343081c4305d406f5515891dc6bd272aec",
+    "runtime_provider_wheel_sha256": "92cbf470157473e4bce16810a5ff8cf1437e22e30fc6d45a3c835a9276e11df6",
+    "cuda_tests_passed": 7,
+    "correctness_gates_passed": 9,
+    "profiles_complete": 12,
+    "scientific_failure": false,
+    "solver_failure": false,
+    "numerical_failure": false,
+    "cuda_failure": false,
+    "performance_failure": true,
+    "automatic_retry": false
+  },
+  "identity_repair": {
+    "failure_classification": "external_qualification_helper_stale_identity_constants",
+    "failed_v9_runtime_commit": "490274343081c4305d406f5515891dc6bd272aec",
+    "failed_v9_runtime_wheel_sha256": "92cbf470157473e4bce16810a5ff8cf1437e22e30fc6d45a3c835a9276e11df6",
+    "incorrect_persisted_provider_commit": "5b4ee16c81a3ae452ffcf8992a84a738a76ff629",
+    "incorrect_persisted_provider_wheel_sha256": "6f38996c31586ff7b2a0637de5ff479410bbd01bb53926828071affaf5d4cf26",
+    "repair": "make all four Provider and Consumer identities mandatory command-plan inputs, validate their full lowercase hashes, persist them verbatim, and require the cumulative analyzer to match every identity",
+    "identity_inference_allowed": false,
+    "identity_default_allowed": false
+  },
+  "qualification_support_successors": {
+    "benchmarks/analyze_rc447_pressure_h100.py": {
+      "historical_sha256": "e0477a128ec878a764646f502a3b6999facfb589a12cae37f3aea5bb31978d38",
+      "current_sha256": "8a763d022653d74cdfa34541c501847201936860c6cf4d5238913c460755335a",
+      "change_scope": "qualification_identity_propagation_only",
+      "reason": "bind the v10 runtime commit and reproducible wheel and reject correctness evidence whose Provider or Consumer source or wheel identity differs"
+    },
+    "benchmarks/plan_rc447_pressure_h100.py": {
+      "historical_sha256": "09df7c69da7c72050caca8e5621a27f5c385804542382a5569678c161c5cbbaa",
+      "current_sha256": "6599e14aac8c81059af3ca92bf412fe92e20b64a412e8defc0b313c4a31a21b2",
+      "change_scope": "qualification_identity_propagation_only",
+      "reason": "pass the exact Provider and Consumer source and wheel identities to the correctness helper"
+    },
+    "benchmarks/qualify_rc447_pressure_cuda.py": {
+      "historical_sha256": "cce6a0c4b2fa71ad156f51501797fb652c5472e66bf858af51103709656c3b61",
+      "current_sha256": "64df606d69a874d03d3df60301149f76509a1fb7ea7aabb2dfd9f507a721f588",
+      "change_scope": "qualification_identity_propagation_only",
+      "reason": "remove stale hard-coded identities and require validated full source and wheel identities from the command plan"
+    },
+    "tests/test_rc447_pressure_h100_support.py": {
+      "historical_sha256": "74bedaa1ff452d360200998a90ac84602404b533b891612e9a3c357c8f991658",
+      "current_sha256": "8dc1661f8259cbde4593298f20b656eaf3e0028733069c769160b62c08ed7b23",
+      "change_scope": "qualification_identity_propagation_only",
+      "reason": "cover exact four-way identity propagation and cumulative analyzer rejection semantics"
+    }
+  },
+  "validation": {
+    "support_py_compile": "PASS",
+    "support_import_smoke": "PASS",
+    "synthetic_support_tests": {
+      "passed": 44,
+      "failed": 0,
+      "skipped": 0
+    },
+    "targeted_CPU": {
+      "passed": 158,
+      "failed": 0,
+      "skipped": 0
+    },
+    "full_CPU": {
+      "passed": 3198,
+      "failed": 0,
+      "skipped": 0,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "seconds": 201.96,
+      "environment": "/home/fansenwei/anaconda3/envs/Nematics3D/bin/python"
+    },
+    "installed_wheel_import_smoke": {
+      "passed": true,
+      "source_shadow_import": false,
+      "pip_check_not_claimed_due_to_local_nematics3d_numpy_metadata_conflict": true
+    },
+    "H100_requalified": false
+  },
+  "thresholds_changed": false,
+  "profile_matrix_changed": false,
+  "correctness_matrix_changed": false,
+  "scientific_contract_changed": false,
+  "provider_runtime_modified_by_qualification_commit": false,
+  "PSSolver_Control_modified": false,
+  "nematics3d_modified": false,
+  "production_default_changed": false,
+  "qualification_complete": false,
+  "rc4_4_7_complete": false,
+  "authorization": {
+    "push_authorized": false,
+    "single_h100_submission_authorized": false,
+    "automatic_retry_authorized": false
+  }
+}

@@ -30,12 +30,16 @@ GRIDS = {
 TRIALS = (1, 2, 3)
 COMMITS = {
     "baseline": "5071d73a00e0d19be62ebd39edf9918818d1267a",
-    "candidate": "490274343081c4305d406f5515891dc6bd272aec",
+    "candidate": "5b7d839c4034eb46a48a61c7be349df01473a2cd",
 }
 WHEELS = {
     "baseline": "9c99ebcdc2e03b2c61b5bc3a5d84d97e99775f488409e2e61f5c06e009695e61",
-    "candidate": "92cbf470157473e4bce16810a5ff8cf1437e22e30fc6d45a3c835a9276e11df6",
+    "candidate": "76200d6fdfa5bd9a7dfb6eb518913f81715156a507b3ef0310172c3a86484172",
 }
+CONSUMER_SOURCE_COMMIT = "0cf55b4fb699ff40433000f5b4efe52b1d33546b"
+CONSUMER_WHEEL_SHA256 = (
+    "068dc2f3d3be5b8eee96169711878a71bb4e513b452cdcc2fa54dd67c124b96d"
+)
 THRESHOLDS = {
     "mean_timestep_ratio_max": 1.05,
     "median_timestep_ratio_max": 1.05,
@@ -82,9 +86,17 @@ def _validate_correctness(report: dict[str, Any]) -> None:
     identities = report.get("identities", {})
     _require(identities.get("provider_commit") == COMMITS["candidate"], "correctness Provider commit differs")
     _require(
+        identities.get("provider_wheel_sha256") == WHEELS["candidate"],
+        "correctness Provider wheel differs",
+    )
+    _require(
         identities.get("consumer_source_commit")
-        == "0cf55b4fb699ff40433000f5b4efe52b1d33546b",
+        == CONSUMER_SOURCE_COMMIT,
         "correctness Consumer source differs",
+    )
+    _require(
+        identities.get("consumer_wheel_sha256") == CONSUMER_WHEEL_SHA256,
+        "correctness Consumer wheel differs",
     )
     gates = report.get("gates", {})
     expected = {

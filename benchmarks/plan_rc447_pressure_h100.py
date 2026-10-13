@@ -14,7 +14,12 @@ import json
 import os
 from pathlib import Path
 
-from benchmarks.analyze_rc447_pressure_h100 import COMMITS, WHEELS
+from benchmarks.analyze_rc447_pressure_h100 import (
+    COMMITS,
+    CONSUMER_SOURCE_COMMIT,
+    CONSUMER_WHEEL_SHA256,
+    WHEELS,
+)
 
 
 SCHEMA = "pssolver.rc4_4_7.channel_pressure_command_plan.v1"
@@ -178,6 +183,14 @@ def build_plan(
             str(consumer_root),
             "--provider-test-root",
             str(provider_test_root),
+            "--provider-commit",
+            roles["candidate"]["commit"],
+            "--provider-wheel-sha256",
+            roles["candidate"]["wheel_sha256"],
+            "--consumer-source-commit",
+            CONSUMER_SOURCE_COMMIT,
+            "--consumer-wheel-sha256",
+            CONSUMER_WHEEL_SHA256,
         ],
     }
     analyzer_argv = [
