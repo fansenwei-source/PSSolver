@@ -21,6 +21,9 @@ RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc435_runtime_checkpoint_integration.json"
 )
 RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
+RC455 = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -102,16 +105,23 @@ def test_rc435_freezes_acceptance_and_fail_closed_boundaries():
 
 def test_rc435_record_binds_implementation_and_scope():
     record = _record()
-    successors = json.loads(RC453.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
+    successor_records = [
+        json.loads(path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ]
+        for path in (RC453, RC455)
     ]
     for relative, expected in record["source_sha256"].items():
         actual = _sha256(relative)
-        if actual == expected:
-            continue
-        registration = successors[relative]
-        assert registration["historical_sha256"] == expected
-        assert registration["current_sha256"] == actual
+        resolved = expected
+        for successors in successor_records:
+            registration = successors.get(relative)
+            if (
+                registration is not None
+                and registration["historical_sha256"] == resolved
+            ):
+                resolved = registration["current_sha256"]
+        assert resolved == actual
 
     scope = record["scope"]
     assert scope["runtime_metadata_modified"] is True

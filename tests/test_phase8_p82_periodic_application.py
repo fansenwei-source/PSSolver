@@ -144,6 +144,8 @@ def test_periodic_public_compiler_records_fft_lowering_and_uniform_policy(tmp_pa
     assert compiled.normalization[
         "molecular_field_space_fallback_used"
     ] is False
+    assert compiled.normalization["requested_execution_device"] == "cpu"
+    assert compiled.normalization["resolved_execution_device"] == "cpu"
     assert compiled.construction_plan.kind is (
         RuntimeConstructionKind.PERIODIC_COMPLETE_STRESS
     )
@@ -180,6 +182,19 @@ def test_periodic_no_slip_declaration_is_a_qualified_periodic_equivalent(
         no_slip.application_specification.boundaries
         == free_slip.application_specification.boundaries
     )
+    assert free_slip.normalization[
+        "requested_velocity_boundary_policy"
+    ] == "free_slip_velocity"
+    assert no_slip.normalization[
+        "requested_velocity_boundary_policy"
+    ] == "no_slip_velocity"
+    for compiled in (free_slip, no_slip):
+        assert compiled.normalization[
+            "effective_velocity_boundary_policy"
+        ] == "periodic_continuation"
+        assert compiled.normalization[
+            "velocity_boundary_policy_equivalence"
+        ] == "qualified_periodic_no_face_equivalence"
 
 
 def test_periodic_compiler_rejects_unsupported_node_centered_grid(tmp_path):
@@ -281,9 +296,30 @@ def test_periodic_application_persists_diagnostics_and_metadata(tmp_path):
     assert np.isfinite(values.view(np.recarray).divergence_max).all()
     assert (result.output_directory / "diagnostics.csv").is_file()
     assert metadata["diagnostics"] == {
+        "schema_version": 1,
+        "application_family": "periodic_complete_stress",
+        "runtime_path": "periodic_spectral",
         "enabled": True,
         "count": 2,
         "steps": [0, 1],
+        "artifact_paths": {
+            "npy": "diagnostics.npy",
+            "csv": "diagnostics.csv",
+        },
+        "payload_schema": [
+            {"name": "step", "dtype": "int64"},
+            {"name": "divergence_max", "dtype": "float64"},
+            {"name": "divergence_rms", "dtype": "float64"},
+            {"name": "pressure_mean", "dtype": "float64"},
+            {"name": "velocity_mean_norm", "dtype": "float64"},
+        ],
+        "payload_units": {
+            "step": "step_index",
+            "divergence_max": "solver_native_dimensionless",
+            "divergence_rms": "solver_native_dimensionless",
+            "pressure_mean": "solver_native_dimensionless",
+            "velocity_mean_norm": "solver_native_dimensionless",
+        },
         "npy": "diagnostics.npy",
         "csv": "diagnostics.csv",
     }
@@ -303,9 +339,27 @@ def test_periodic_disabled_diagnostics_are_recorded_without_files(tmp_path):
     assert not (result.output_directory / "diagnostics.npy").exists()
     assert not (result.output_directory / "diagnostics.csv").exists()
     assert metadata["diagnostics"] == {
+        "schema_version": 1,
+        "application_family": "periodic_complete_stress",
+        "runtime_path": "periodic_spectral",
         "enabled": False,
         "count": 0,
         "steps": [],
+        "artifact_paths": {"npy": None, "csv": None},
+        "payload_schema": [
+            {"name": "step", "dtype": "int64"},
+            {"name": "divergence_max", "dtype": "float64"},
+            {"name": "divergence_rms", "dtype": "float64"},
+            {"name": "pressure_mean", "dtype": "float64"},
+            {"name": "velocity_mean_norm", "dtype": "float64"},
+        ],
+        "payload_units": {
+            "step": "step_index",
+            "divergence_max": "solver_native_dimensionless",
+            "divergence_rms": "solver_native_dimensionless",
+            "pressure_mean": "solver_native_dimensionless",
+            "velocity_mean_norm": "solver_native_dimensionless",
+        },
         "npy": None,
         "csv": None,
     }

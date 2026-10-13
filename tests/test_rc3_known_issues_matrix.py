@@ -66,8 +66,8 @@ def test_state_counts_match_the_machine_readable_summary():
     for item in record["items"]:
         counts[item["state"]] = counts.get(item["state"], 0) + 1
     assert counts == {
-        "closed_verified": 34,
-        "partial_residual": 4,
+        "closed_verified": 37,
+        "partial_residual": 1,
         "accepted_limitation": 3,
         "deferred_architecture": 9,
     }
@@ -116,6 +116,12 @@ def test_release_blockers_and_closed_rc3_regressions_are_not_conflated():
         assert items[identifier]["disposition"] == "closed"
         assert items[identifier]["closure_record"] == (
             "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json"
+        )
+    for identifier in ("B13", "B15", "B17"):
+        assert items[identifier]["state"] == "closed_verified"
+        assert items[identifier]["disposition"] == "closed"
+        assert items[identifier]["closure_record"] == (
+            "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
         )
 
 
@@ -338,7 +344,22 @@ def test_rc450_progress_records_rc44_closure_and_rc45_planning_boundary():
             "7e8a7ac578697d8fd06143e4b437c77a6ab576dd2d5b03d5a1f7c87c3deff8a8"
         ),
         "eligible_for_rc4_5_5_implementation": True,
-        "rc4_5_5_implementation_authorized": False,
+        "rc4_5_5_implementation_authorized": True,
+        "rc4_5_5_complete": True,
+        "rc4_5_5_classification": (
+            "PASS_RC4_5_5_PUBLIC_VALIDATION_OBSERVABILITY_CPU_CANDIDATE"
+        ),
+        "rc4_5_5_record": (
+            "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
+        ),
+        "rc4_5_5_record_sha256": hashlib.sha256(
+            (
+                ROOT
+                / "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
+            ).read_bytes()
+        ).hexdigest(),
+        "eligible_for_rc4_5_6_implementation": True,
+        "rc4_5_6_implementation_authorized": False,
         "rc4_5_implementation_authorized": False,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,
@@ -365,6 +386,7 @@ def test_rc450_progress_records_rc44_closure_and_rc45_planning_boundary():
         "rc4_5_2_contract",
         "rc4_5_3",
         "rc4_5_4",
+        "rc4_5_5",
     ):
         path = ROOT / progress[f"{stage}_record"]
         assert path.is_file()

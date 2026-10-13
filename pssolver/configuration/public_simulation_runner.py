@@ -26,6 +26,9 @@ from pssolver.configuration.active_nematics_simulation_adapters import (
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
+from pssolver.configuration.public_option_validation import (
+    validate_public_execution_device,
+)
 from pssolver.configuration.plane_beris_edwards import (
     PlaneBerisEdwardsRunSpec,
     create_plane_beris_edwards_run_spec,
@@ -41,7 +44,10 @@ from pssolver.configuration.simulation import (
     InitialConditionSource,
     SimulationSpec,
 )
-from pssolver.configuration.simulation_lowering import lower_simulation_spec
+from pssolver.configuration.simulation_lowering import (
+    SimulationLoweringError,
+    lower_simulation_spec,
+)
 from pssolver.configuration.simulation_binding import SimulationBindingError
 from pssolver.core.boundary import (
     BoundarySemantic,
@@ -504,6 +510,12 @@ def _compile_plane_public_simulation(
     )
     if execution["fallback_allowed"] is not False:
         _reject("runtime fallback must remain disabled")
+    try:
+        device_normalization = validate_public_execution_device(
+            execution["device"]
+        )
+    except ValueError as exc:
+        _reject(str(exc))
     _reject_unqualified_static_q_lifting(source, execution)
     workflow = _require_exact_keys(
         source.workflow.options,
@@ -647,6 +659,7 @@ def _compile_plane_public_simulation(
             ),
             "molecular_field_space_fallback_used": False,
             "runtime_fallback_allowed": False,
+            **device_normalization,
         },
     )
 
@@ -786,6 +799,8 @@ def compile_public_simulation(
                 PublicSimulationCompilation,
             )
         raise AssertionError("registered public compiler was not dispatched")
+    except PublicSimulationCompilationError:
+        raise
     except SimulationBindingError as exc:
         rejection = exc.rejection.to_metadata()
         raise PublicSimulationCompilationError(
@@ -793,6 +808,23 @@ def compile_public_simulation(
             f"{rejection['message']}",
             code=PublicCompilationRejectionCode.RUNTIME_BINDING,
             context={"binding_rejection": rejection},
+        ) from exc
+    except SimulationLoweringError as exc:
+        rejection = exc.rejection.to_metadata()
+        raise PublicSimulationCompilationError(
+            "the public declaration has no qualified lowering: "
+            f"{rejection['message']}",
+            code=PublicCompilationRejectionCode.APPLICATION_CONTRACT,
+            context={"lowering_rejection": rejection},
+        ) from exc
+    except (ValueError, TypeError) as exc:
+        raise PublicSimulationCompilationError(
+            str(exc),
+            code=PublicCompilationRejectionCode.APPLICATION_CONTRACT,
+            context={
+                "boundary": "public_compiler_dispatch",
+                "exception_type": type(exc).__name__,
+            },
         ) from exc
 
 

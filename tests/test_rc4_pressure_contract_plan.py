@@ -40,6 +40,10 @@ RC447_BOUNDED_OPERATOR_RECOVERY_V11 = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_pressure_bounded_operator_recovery_v11.json"
 )
+RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
+RC455 = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
+)
 
 
 def _plan() -> dict[str, object]:
@@ -233,70 +237,32 @@ def test_rc440_h100_contract_requires_separate_single_submission():
 
 
 def test_rc440_reviewed_provider_sources_are_content_addressed():
-    successor = json.loads(RC443.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    latest = json.loads(RC444.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    recovery = json.loads(RC447_RECOVERY.read_text(encoding="utf-8"))[
-        "successor_sources"
-    ]
-    performance_repair = json.loads(
-        RC447_PERFORMANCE_REPAIR.read_text(encoding="utf-8")
-    )["successor_sources"]
-    performance_recovery = json.loads(
-        RC447_PERFORMANCE_RECOVERY_V10.read_text(encoding="utf-8")
-    )["successor_sources"]
-    bounded_recovery = json.loads(
-        RC447_BOUNDED_OPERATOR_RECOVERY_V11.read_text(encoding="utf-8")
-    )["successor_sources"]
+    successor_records = []
+    for path in (
+        RC443,
+        RC444,
+        RC447_RECOVERY,
+        RC447_PERFORMANCE_REPAIR,
+        RC447_PERFORMANCE_RECOVERY_V10,
+        RC447_BOUNDED_OPERATOR_RECOVERY_V11,
+        RC453,
+        RC455,
+    ):
+        record = json.loads(path.read_text(encoding="utf-8"))
+        successor_records.append(
+            record.get("historical_successor_sources", record.get("successor_sources", {}))
+        )
     for relative, expected in _plan()["reviewed_source_sha256"].items():
         actual = _sha256(ROOT / relative)
-        if actual == expected:
-            continue
-        registration = successor.get(relative)
-        if registration is not None and registration["current_sha256"] == actual:
-            assert registration["historical_sha256"] == expected
-            assert registration["introduced_by_phase"] == "RC4.4.3"
-            continue
-        newest = bounded_recovery.get(
-            relative,
-            performance_recovery.get(
-                relative,
-                performance_repair.get(
-                    relative,
-                    latest.get(relative, recovery.get(relative)),
-                ),
-            ),
-        )
-        assert newest is not None
-        predecessor = expected if registration is None else registration[
-            "current_sha256"
-        ]
-        if relative in bounded_recovery:
-            predecessor = performance_recovery[relative]["current_sha256"]
-        elif relative in performance_recovery:
-            predecessor = performance_repair[relative]["current_sha256"]
-        elif relative in performance_repair:
-            intermediate = latest.get(relative, recovery.get(relative))
-            if intermediate is not None:
-                predecessor = intermediate["current_sha256"]
-        assert newest["historical_sha256"] == predecessor
-        assert newest["current_sha256"] == actual
-        expected_phase = (
-            "RC4.4.7-bounded-operator-recovery-v11-provider"
-            if relative in bounded_recovery
-            else "RC4.4.7-performance-recovery-v10-provider"
-            if relative in performance_recovery
-            else
-            "RC4.4.7-performance-repair-v9-provider"
-            if relative in performance_repair
-            else "RC4.4.4"
-            if relative in latest
-            else "RC4.4.7-recovery"
-        )
-        assert newest["introduced_by_phase"] == expected_phase
+        resolved = expected
+        for successors in successor_records:
+            registration = successors.get(relative)
+            if (
+                registration is not None
+                and registration["historical_sha256"] == resolved
+            ):
+                resolved = registration["current_sha256"]
+        assert resolved == actual
 
 
 def test_rc440_only_authorizes_planning():

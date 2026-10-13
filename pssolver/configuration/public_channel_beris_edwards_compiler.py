@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-import math
-from numbers import Integral, Real
 
 from pssolver.configuration.channel_beris_edwards import (
     CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
@@ -13,9 +11,13 @@ from pssolver.configuration.channel_beris_edwards import (
 from pssolver.configuration.channel_active_nematics_declarations import (
     channel_pressure_policy_metadata,
 )
-from pssolver.configuration.execution_device import validate_execution_device
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
+)
+from pssolver.configuration.public_option_validation import (
+    ITERATIVE_PRESSURE_OPTION_KEYS,
+    validate_iterative_pressure_options,
+    validate_public_execution_device,
 )
 from pssolver.configuration.simulation import (
     InitialConditionSource,
@@ -50,42 +52,6 @@ _WORKFLOW_KEYS = frozenset(
         "save_start_step",
     }
 )
-_PRESSURE_KEYS = frozenset(
-    {
-        "algorithm",
-        "fixed_iterations",
-        "max_iterations",
-        "relative_tolerance",
-        "warm_start",
-    }
-)
-
-
-def _validate_pressure_solver_options(pressure: Mapping[str, object]) -> None:
-    relative_tolerance = pressure["relative_tolerance"]
-    if (
-        not isinstance(relative_tolerance, Real)
-        or isinstance(relative_tolerance, bool)
-        or not math.isfinite(float(relative_tolerance))
-        or float(relative_tolerance) <= 0.0
-    ):
-        raise ValueError(
-            "Channel pressure relative_tolerance must be finite and positive"
-        )
-    for name in ("max_iterations", "fixed_iterations"):
-        value = pressure[name]
-        if name == "fixed_iterations" and value is None:
-            continue
-        if (
-            not isinstance(value, Integral)
-            or isinstance(value, bool)
-            or int(value) <= 0
-        ):
-            raise ValueError(
-                f"Channel pressure {name} must be a positive integer"
-            )
-
-
 def _exact_keys(value: Mapping[str, object], expected, description):
     from .public_simulation_runner import _reject
 
@@ -162,7 +128,9 @@ def compile_channel_beris_edwards_public_simulation(
     if execution["pointwise_execution"] not in {"eager", "compile"}:
         _reject("unsupported Channel pointwise execution mode")
     try:
-        validate_execution_device(execution["device"])
+        device_normalization = validate_public_execution_device(
+            execution["device"]
+        )
     except ValueError as exc:
         _reject(str(exc))
     if not isinstance(execution["disable_q_gradient_reuse"], bool):
@@ -183,17 +151,18 @@ def compile_channel_beris_edwards_public_simulation(
     )
     pressure = _exact_keys(
         discretization["pressure_solver"],
-        _PRESSURE_KEYS,
+        ITERATIVE_PRESSURE_OPTION_KEYS,
         "Channel pressure solver",
     )
-    if pressure["algorithm"] != "preconditioned_conjugate_gradient":
-        _reject("P8.3 requires the Channel pressure PCG")
-    if pressure["warm_start"] is not True:
-        _reject("P8.3 requires pressure-PCG warm start")
     try:
-        _validate_pressure_solver_options(pressure)
+        pressure = validate_iterative_pressure_options(
+            pressure,
+            description="Channel pressure solver",
+        )
     except ValueError as exc:
         _reject(str(exc))
+    if pressure["warm_start"] is not True:
+        _reject("P8.3 requires pressure-PCG warm start")
     if source.time_integration.refresh != {"mode": "disabled"}:
         _reject("P8.3 requires disabled spectral refresh")
     if source.numerics.spectral_storage is not SpectralStorage.FULL_COMPLEX:
@@ -230,6 +199,7 @@ def compile_channel_beris_edwards_public_simulation(
             ],
             "molecular_field_space_fallback_used": False,
             "runtime_fallback_allowed": False,
+            **device_normalization,
             "pressure_solver_policy": channel_pressure_policy_metadata(
                 relative_tolerance=pressure["relative_tolerance"],
                 max_iterations=pressure["max_iterations"],

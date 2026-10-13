@@ -27,6 +27,7 @@ from pssolver.boundaries import (
     neumann_q,
 )
 from pssolver.configuration.public_simulation_runner import (
+    PublicSimulationCompilationError,
     compile_public_simulation,
 )
 from pssolver.functional import (
@@ -125,13 +126,13 @@ def _runtime(tmp_path: Path):
     return simulation, request, build_functional_runtime(request)
 
 
-def test_non_cuda_index_is_normalized_to_tensor_device_type(tmp_path):
+def test_noncanonical_cpu_index_is_rejected_by_public_compiler(tmp_path):
     simulation = _simulation(tmp_path, name="cpu_index", device="cpu:0")
-    request = periodic_activity_functional_request(simulation.specification)
-    runtime = build_functional_runtime(request)
-
-    assert runtime.state_spec.components[0].device == "cpu"
-    runtime.state_spec.validate(runtime.initial_state())
+    with pytest.raises(
+        PublicSimulationCompilationError,
+        match="invalid execution device",
+    ):
+        periodic_activity_functional_request(simulation.specification)
 
 
 def _control(runtime, value=0.01, *, requires_grad=False):

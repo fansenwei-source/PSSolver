@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 RC4.5.5 public validation, capability, and diagnostics implementation",
+  "phase": "RC4.5.5",
+  "classification": "PASS_RC4_5_5_PUBLIC_VALIDATION_OBSERVABILITY_CPU_CANDIDATE",
+  "status": "implementation_complete_cpu_verified",
+  "baseline": {
+    "implementation_parent_commit": "3c422f802dfbf49bb0dd50c85e8ec3827ccf3bae",
+    "contract_record": "notes/PSSolver_v0_2_0rc4_rc452_public_robustness_contract.json",
+    "contract_record_sha256": "ca8dbcf7b1b2d4144f28883f6a420331dbaf9af712d452a9d26551affaa9cdaf",
+    "preceding_stage_record": "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json",
+    "preceding_stage_record_sha256": "7e8a7ac578697d8fd06143e4b437c77a6ab576dd2d5b03d5a1f7c87c3deff8a8"
+  },
+  "issues": {
+    "B13": "closed_verified",
+    "B15": "closed_verified",
+    "B17": "closed_verified"
+  },
+  "public_validation": {
+    "shared_pre_materialization_validation": true,
+    "device_tokens_accepted": ["auto", "cpu", "cuda", "cuda:N"],
+    "canonical_cuda_index_required": true,
+    "cpu_index_rejected": true,
+    "whitespace_rejected": true,
+    "non_string_rejected": true,
+    "requested_and_resolved_device_persisted_in_compiler_normalization": true,
+    "allocated_device_identity_remains_runtime_metadata": true,
+    "iterative_pressure_validation_shared_by_channel_families": true,
+    "pressure_relative_tolerance_finite_positive": true,
+    "pressure_iteration_counts_positive_non_boolean": true,
+    "pressure_fixed_not_greater_than_max": true,
+    "pressure_unknown_keys_rejected": true,
+    "pressure_declaration_on_non_applicable_families_rejected": true
+  },
+  "capability_and_errors": {
+    "qualified_combinations_derived_from_live_compiler_registry": true,
+    "uncatalogued_combination_rejected": true,
+    "periodic_no_slip_catalogued_as_qualified_equivalent": true,
+    "periodic_requested_policy_persisted": true,
+    "periodic_effective_policy": "periodic_continuation",
+    "periodic_equivalence_reason": "periodic_geometry_has_no_boundary_faces",
+    "implicit_capability_fallback_allowed": false,
+    "public_error_type": "PublicSimulationCompilationError",
+    "known_binding_lowering_and_option_errors_translated": true,
+    "machine_rejection_code_present": true,
+    "original_exception_preserved_as_cause": true
+  },
+  "diagnostics_envelope": {
+    "schema_version": 1,
+    "application_families": [
+      "plane_complete_stress",
+      "legacy_channel_active_nematic",
+      "periodic_complete_stress",
+      "channel_complete_stress"
+    ],
+    "required_fields": [
+      "schema_version",
+      "application_family",
+      "runtime_path",
+      "enabled",
+      "count",
+      "steps",
+      "artifact_paths",
+      "payload_schema",
+      "payload_units"
+    ],
+    "payload_schema_matches_structured_dtype_order": true,
+    "payload_units_cover_fields_exactly": true,
+    "disabled_envelope_retains_schema_and_units": true,
+    "legacy_npy_csv_aliases_retained": true,
+    "diagnostics_npy_filename_retained": true,
+    "diagnostics_csv_filename_retained": true,
+    "existing_field_names_changed": false,
+    "existing_dtypes_changed": false,
+    "existing_payload_serialization_changed": false
+  },
+  "historical_successor_sources": {
+    "pssolver/api/capabilities.py": {
+      "historical_sha256": "03bf98c42765869c4013694c85c252670c669386a63c3db1a8ae963e751aced6",
+      "current_sha256": "a47759ae302350cc7743e837a4273c37fc3c1833dcb0e949f8901f6b258eed53",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Expose the compiler-derived qualified periodic no-face boundary equivalence in the public capability catalog."
+    },
+    "pssolver/configuration/execution_device.py": {
+      "historical_sha256": "ed6513cc6c027a80608f3a30f7ef32b86d2378540bf3a0815511f9cd31d22dca",
+      "current_sha256": "4e348a5048ba6a9eef8d8819acb9fd4e93f7c753ae6e0dab0de0b50c6a4a1d60",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Replace permissive torch.device parsing with the frozen canonical public device-token grammar."
+    },
+    "pssolver/configuration/public_simulation_runner.py": {
+      "historical_sha256": "5e63316b37cc595a3b842964a7d6b54e268dc0164277c9f6bba6d5667e180d0d",
+      "current_sha256": "a8ab18173edc535ae596733c23c0374a40d55112829504ee9dbbcd19f9a47e32",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Apply shared Plane device validation and translate known public compiler boundary errors without changing scientific lowering."
+    },
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": {
+      "historical_sha256": "3c68e8d0ad6ad13e576996f58b8d428f4b67babeecfcbd2aeda6ac5ace110ace",
+      "current_sha256": "e746def5ac25d3482b108e717ca9d2b2bbbea65abfb543ee46ba88ab35b562a1",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Apply the shared strict device and iterative-pressure option validators before complete-stress Channel lowering."
+    },
+    "pssolver/configuration/public_periodic_simulation_compiler.py": {
+      "historical_sha256": "6e090c1db3e3a8fa0180b617fbf9c77bde5ec9a96aee8f24ab9ea2dc3694d189",
+      "current_sha256": "fb8e82901256ea7e2da4757468513d5bc0213de9f8f00ca4d2fd5c87cd9d5b1d",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Apply strict device validation and persist the requested/effective periodic no-face boundary equivalence."
+    },
+    "pssolver/workflows/channel_active_nematics.py": {
+      "historical_sha256": "87b2f16b9527a0b87faf9f6820e486ecb935466ffd662e6e2066a1d5c6632a3f",
+      "current_sha256": "d9e8b5d95c2516201294ce3e969e6f10650c95ad20262687b346df7223f68f65",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Add the common diagnostics discovery envelope while retaining legacy Channel payload serialization."
+    },
+    "pssolver/workflows/channel_beris_edwards.py": {
+      "historical_sha256": "8b2b0d394a8070f5fb214f0715c6bb782c4888a10c148ff4985827a636512035",
+      "current_sha256": "d7fe7d546f279fbe60c328fb0e720bc8aa8fbac097d47d2e69f60088b368ce88",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Replace the local diagnostics metadata fragment with the common envelope without changing payload bytes."
+    },
+    "pssolver/workflows/periodic_beris_edwards.py": {
+      "historical_sha256": "aa4537b9ebdee6febdc6060a0906fd57b2d1fef0711ac41c7b98c55915e40cb5",
+      "current_sha256": "172fd5132de65206e2311159b20d23321a44796f5eed3a2a175e2cdaecb91548",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Replace the local diagnostics metadata fragment with the common envelope without changing payload bytes."
+    },
+    "pssolver/workflows/plane_beris_edwards.py": {
+      "historical_sha256": "3a64c9902420a6fa0d29c5bcd26f3d457552213989312c350b694fc6777b2969",
+      "current_sha256": "8effdd8ea2a67457da49de38a96bb4080eab989d4b55b5498a310ac197e10fd6",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Add the common diagnostics discovery envelope while retaining Plane payload serialization."
+    },
+    "pssolver/workflows/diagnostic_io.py": {
+      "historical_sha256": "ec7aa353b1cd30bb6b02e9832307aa1a69a68bf805be4ac9476d5cfff323cec5",
+      "current_sha256": "a2cebd79415d46164131bd017413b2a92f4879e7c871904830aadea0ae227680",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Define the shared schema-versioned diagnostics discovery envelope while retaining existing payload writers."
+    },
+    "tests/test_phase8_p81_public_surface_catalog.py": {
+      "historical_sha256": "43e452677a989f25363485365f57535666e893ea524542d83aaaea375beeca05",
+      "current_sha256": "0c78059ecb4fbda5b8e52b8aa7cd5592934345ff775e7bf1e40197e2847b8e28",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Assert the qualified periodic no-face boundary equivalence exposed by the public capability catalog."
+    },
+    "tests/test_phase8_p82_periodic_application.py": {
+      "historical_sha256": "6f09bc29006343b29f64e8e41848f48025730a7f9190fbc04f10268787728b05",
+      "current_sha256": "487cd09e90e8fe301cf296a61661590250278a98256543e16aca6e3fd9fdd46e",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Assert periodic boundary provenance, strict public validation, and the common diagnostics envelope."
+    },
+    "tests/test_phase8_p83_channel_complete_stress_application.py": {
+      "historical_sha256": "45b4690387a4f09ed7471ac464ef8fcfdbe2b63de67408632d6424fed91aee07",
+      "current_sha256": "6bfdceebc6b4711ff32e6955419f434e9915b3850579afa595c50b500e317f36",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Assert complete-stress Channel device and pressure validation plus the common diagnostics envelope."
+    },
+    "tests/test_phase9_p974_channel_functional_runtime.py": {
+      "historical_sha256": "7abcf56c97e367708d5c21fb014a2892418ed13bed5cb2d2d73402e9e9ad827f",
+      "current_sha256": "12685e85f935fe031ffed1384569a7e8f86423222f16f15a3264606a19bc9383",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Replace the obsolete cpu:0 normalization expectation with the frozen canonical public device-token rejection contract."
+    },
+    "tests/test_rc4_plane_checkpoint_identity_record.py": {
+      "historical_sha256": "6fe9a8a406fbd274d5f3e34dbd6928f2d9f08a543612f50cff294c590407a78f",
+      "current_sha256": "1b3f1aee90b325f3f29afd87c681517bc170ff44b4aaa5975a37eda915198753",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Resolve immutable RC4.2.2 workflow identities through the RC4.5.5 diagnostics-envelope successor registration."
+    },
+    "tests/test_rc453_checkpoint_transactionality.py": {
+      "historical_sha256": "7f59d86d7d95a134fb859364c4c08f941b2105c37d19d1d648aa9878589c5130",
+      "current_sha256": "9dbd7d5d3f13192b3cdfc62bc49e017808d51a4489bc1bcbae6a3241ff1a4788",
+      "introduced_by_phase": "RC4.5.5",
+      "reason": "Resolve the immutable RC4.5.3 source binding through the ordered RC4.5.4 and RC4.5.5 successor records."
+    }
+  },
+  "source_sha256": {
+    "pssolver/api/capabilities.py": "a47759ae302350cc7743e837a4273c37fc3c1833dcb0e949f8901f6b258eed53",
+    "pssolver/boundaries/homogeneous.py": "6ccefc2763b60403445f4a659a499abe16f17c92d0994ec3ba953b7e0ccd11a4",
+    "pssolver/configuration/execution_device.py": "4e348a5048ba6a9eef8d8819acb9fd4e93f7c753ae6e0dab0de0b50c6a4a1d60",
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": "e746def5ac25d3482b108e717ca9d2b2bbbea65abfb543ee46ba88ab35b562a1",
+    "pssolver/configuration/public_channel_simulation_compiler.py": "2cfe19766539138fa3a9f1ec90b6c1a132aecd743ac7b571a8831a6ad0f639bf",
+    "pssolver/configuration/public_option_validation.py": "f0d01bbf33ad1b59090996c9d7a55402bb39a5768b007e3fc5cc389990613f59",
+    "pssolver/configuration/public_periodic_simulation_compiler.py": "fb8e82901256ea7e2da4757468513d5bc0213de9f8f00ca4d2fd5c87cd9d5b1d",
+    "pssolver/configuration/public_simulation_runner.py": "a8ab18173edc535ae596733c23c0374a40d55112829504ee9dbbcd19f9a47e32",
+    "pssolver/core/boundary.py": "5547d2c12403a93d66aa2c56f193f760b6afd5255eac4d74e24402880e155243",
+    "pssolver/workflows/channel_active_nematics.py": "d9e8b5d95c2516201294ce3e969e6f10650c95ad20262687b346df7223f68f65",
+    "pssolver/workflows/channel_beris_edwards.py": "d7fe7d546f279fbe60c328fb0e720bc8aa8fbac097d47d2e69f60088b368ce88",
+    "pssolver/workflows/diagnostic_io.py": "a2cebd79415d46164131bd017413b2a92f4879e7c871904830aadea0ae227680",
+    "pssolver/workflows/periodic_beris_edwards.py": "172fd5132de65206e2311159b20d23321a44796f5eed3a2a175e2cdaecb91548",
+    "pssolver/workflows/plane_beris_edwards.py": "8effdd8ea2a67457da49de38a96bb4080eab989d4b55b5498a310ac197e10fd6",
+    "tests/test_phase7_channel_local_closure.py": "0ee22594b6df65f6ab6dfcc435f49a88704ff0017a935bf2583e3b2e66b0cc80",
+    "tests/test_phase7_p7711_public_entry_equivalence.py": "f42042210556ddcbf8faad08468f5005baf308784398a75450535ee9fe3b1508",
+    "tests/test_phase7_p779_public_runner_connection.py": "dc5d4105dc3404d55dab43d07ae9fcadd806fb55c26ca0b820e30e051bdc11dd",
+    "tests/test_phase7_p779_two_combination_compiler.py": "ae07899cfd8b800762d1e909304f54940207359ef01be46980f14aaac0970f69",
+    "tests/test_phase8_p81_public_surface_catalog.py": "0c78059ecb4fbda5b8e52b8aa7cd5592934345ff775e7bf1e40197e2847b8e28",
+    "tests/test_phase8_p82_periodic_application.py": "487cd09e90e8fe301cf296a61661590250278a98256543e16aca6e3fd9fdd46e",
+    "tests/test_phase8_p83_channel_complete_stress_application.py": "6bfdceebc6b4711ff32e6955419f434e9915b3850579afa595c50b500e317f36",
+    "tests/test_rc451_cross_runtime_adjudication.py": "747c57eaeb8a907987cad99eee386c4d4f9637b6380e1fdedf287db5d949ee8d",
+    "tests/test_rc453_checkpoint_transactionality.py": "9dbd7d5d3f13192b3cdfc62bc49e017808d51a4489bc1bcbae6a3241ff1a4788",
+    "tests/test_rc455_public_robustness.py": "74102a46e967aecde24173d2c43b28cc28ceba1845ed1524447c58b2c17ced01",
+    "tests/test_phase7_p770_model_geometry_coupling_inventory.py": "c9c6cbda25159c72f35dd6dbaea72d3e7c4331193f11b77fb66bf6d16f0f02d0",
+    "tests/test_phase9_p92_periodic_functional_runtime.py": "f57762a269a787f9217e234dd600a2a90efadc472f14454858793d86bb8d0386",
+    "tests/test_phase9_p974_channel_functional_runtime.py": "12685e85f935fe031ffed1384569a7e8f86423222f16f15a3264606a19bc9383",
+    "tests/test_rc3_known_issues_matrix.py": "5347645ef168e93d223af19bb28106c8827c1112d2342265ce68466184168eec",
+    "tests/test_rc4_cross_device_checkpoint_plan.py": "8efea56d369c9c1b5202dac1f77705f278e7fc57f77d32c7849ab5d458267969",
+    "tests/test_rc4_cross_runtime_robustness_plan.py": "d990c188775e077496f257cfcba3dca65b7de27c232fc5fc8fc6272102a67fea",
+    "tests/test_rc4_functional_checkpoint_identity_record.py": "1087eb79b0961a3d57f5700e851851b9881b6292900e09a855a9ada934430011",
+    "tests/test_rc4_lifting_checkpoint_integration_record.py": "16dec3686ee0ebcb49c14036989f3a526c1d768432053904dcf6843da333be29",
+    "tests/test_rc4_lifting_capability_restriction_record.py": "8b1cdacdd951a2f419d7837a61c0fdb549a08a5e4af57d9b74d473be62b8f869",
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py": "a9dc6484a7b9ce9d69599f3688e220ede34bb957b5b758131db6346c79175e80",
+    "tests/test_rc4_plane_checkpoint_identity_record.py": "1b3f1aee90b325f3f29afd87c681517bc170ff44b4aaa5975a37eda915198753",
+    "tests/test_rc4_pressure_contract_plan.py": "093fe114537471773b639ffca308704ef6b1ea0d558f3caf78e3f3b350554a3b",
+    "tests/test_rc4_pressure_installed_cpu_closure_record.py": "147868aeccf8468ec1ebfb7513155d101e6434afd34718309503666460c9f5af",
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": "8752e4b00502808603e8c3b191a6d64967ed70c8d7b5a50a7cbe7c662a614117",
+    "tests/test_rc4_pressure_public_contract.py": "7ea9903a604085f2a2735112c25b0132ba92df1d9f5caea0cc4e3beed8f3e570"
+  },
+  "verification": {
+    "py_compile": "PASS",
+    "focused_public_tests": {
+      "passed": 200,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 3348,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 1,
+      "subtests_passed": 8,
+      "deselected_node_id": "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence",
+      "deselected_reason": "pre-existing CUDA-only test reserved for an explicitly authorized H100 qualification"
+    },
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "B13_B15_B17_modified": true,
+    "B11_modified": false,
+    "scientific_model_equations_changed": false,
+    "time_integrator_changed": false,
+    "spectral_transform_algorithm_changed": false,
+    "pressure_algorithm_changed": false,
+    "diagnostic_payload_bytes_changed": false,
+    "stable_top_level_public_api_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "h100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "rc4_5_5_implementation_authorized": true,
+    "rc4_5_5_complete": true,
+    "eligible_for_rc4_5_6_implementation": true,
+    "rc4_5_6_implementation_authorized": false,
+    "PSSolver_Control_modification_authorized": false,
+    "h100_submission_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

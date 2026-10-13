@@ -7,6 +7,66 @@ from pathlib import Path
 import numpy as np
 
 
+DIAGNOSTICS_ENVELOPE_SCHEMA_VERSION = 1
+
+
+def diagnostics_metadata_envelope(
+    *,
+    application_family: str,
+    runtime_path: str,
+    enabled: bool,
+    steps: list[int] | tuple[int, ...],
+    dtype: np.dtype,
+) -> dict[str, object]:
+    """Describe a diagnostics payload without changing its byte layout."""
+
+    if not isinstance(application_family, str) or not application_family:
+        raise ValueError("diagnostics application_family must be non-empty")
+    if not isinstance(runtime_path, str) or not runtime_path:
+        raise ValueError("diagnostics runtime_path must be non-empty")
+    if not isinstance(enabled, bool):
+        raise TypeError("diagnostics enabled must be a bool")
+    steps = list(steps)
+    if any(
+        not isinstance(step, int) or isinstance(step, bool) or step < 0
+        for step in steps
+    ):
+        raise ValueError("diagnostics steps must be non-negative integers")
+    dtype = np.dtype(dtype)
+    if dtype.names is None:
+        raise TypeError("diagnostics dtype must be structured")
+    if not enabled and steps:
+        raise ValueError("disabled diagnostics cannot declare captured steps")
+    npy = "diagnostics.npy" if enabled else None
+    csv = "diagnostics.csv" if enabled else None
+    payload_schema = []
+    payload_units = {}
+    for name in dtype.names:
+        field_dtype = dtype.fields[name][0]
+        payload_schema.append({"name": name, "dtype": field_dtype.name})
+        payload_units[name] = (
+            "step_index"
+            if name == "step"
+            else "count"
+            if name.endswith("_iterations")
+            else "solver_native_dimensionless"
+        )
+    return {
+        "schema_version": DIAGNOSTICS_ENVELOPE_SCHEMA_VERSION,
+        "application_family": application_family,
+        "runtime_path": runtime_path,
+        "enabled": enabled,
+        "count": len(steps),
+        "steps": steps,
+        "artifact_paths": {"npy": npy, "csv": csv},
+        "payload_schema": payload_schema,
+        "payload_units": payload_units,
+        # v0.2 compatibility aliases.  New consumers use artifact_paths.
+        "npy": npy,
+        "csv": csv,
+    }
+
+
 def write_structured_diagnostics(
     directory: str | Path,
     rows: list[tuple[object, ...]],
@@ -47,4 +107,8 @@ def write_structured_diagnostics(
     return npy_path, csv_path
 
 
-__all__ = ["write_structured_diagnostics"]
+__all__ = [
+    "DIAGNOSTICS_ENVELOPE_SCHEMA_VERSION",
+    "diagnostics_metadata_envelope",
+    "write_structured_diagnostics",
+]

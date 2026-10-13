@@ -4,9 +4,11 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from pssolver.configuration.execution_device import validate_execution_device
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
+)
+from pssolver.configuration.public_option_validation import (
+    validate_public_execution_device,
 )
 from pssolver.configuration.periodic_beris_edwards import (
     PERIODIC_RUNTIME_PATH,
@@ -114,7 +116,9 @@ def compile_periodic_public_simulation(source: SimulationSpec, product_type):
     if execution["pointwise_execution"] not in {"eager", "compile"}:
         _reject("unsupported periodic pointwise execution mode")
     try:
-        validate_execution_device(execution["device"])
+        device_normalization = validate_public_execution_device(
+            execution["device"]
+        )
     except ValueError as exc:
         _reject(str(exc))
     if not isinstance(execution["disable_q_gradient_reuse"], bool):
@@ -130,6 +134,15 @@ def compile_periodic_public_simulation(source: SimulationSpec, product_type):
     )
     if source.discretization_parameters:
         _reject("periodic execution accepts no discretization overrides")
+    requested_velocity_policy = source.boundaries.declared_policy("velocity")
+    if requested_velocity_policy is None:
+        requested_velocity_policy = "qualified_periodic_wall_policy_unspecified"
+    if requested_velocity_policy not in {
+        "free_slip_velocity",
+        "no_slip_velocity",
+        "qualified_periodic_wall_policy_unspecified",
+    }:
+        _reject("periodic velocity boundary declaration is not qualified")
     if source.time_integration.refresh != {"mode": "disabled"}:
         _reject("P8.2 periodic execution requires disabled spectral refresh")
     if (
@@ -178,6 +191,12 @@ def compile_periodic_public_simulation(source: SimulationSpec, product_type):
             ],
             "molecular_field_space_fallback_used": False,
             "runtime_fallback_allowed": False,
+            **device_normalization,
+            "requested_velocity_boundary_policy": requested_velocity_policy,
+            "effective_velocity_boundary_policy": "periodic_continuation",
+            "velocity_boundary_policy_equivalence": (
+                "qualified_periodic_no_face_equivalence"
+            ),
         },
     )
 

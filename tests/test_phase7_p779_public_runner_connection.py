@@ -135,6 +135,8 @@ def test_compile_simulation_binds_exact_existing_plane_application():
     assert compiled.application_request.runtime_path.value == "compiled_v2"
     assert compiled.application_request.device == "cpu"
     assert compiled.application_request.dry_run is True
+    assert compiled.normalization["requested_execution_device"] == "cpu"
+    assert compiled.normalization["resolved_execution_device"] == "cpu"
     assert compiled.application_request.parameterization == "fixed-k"
     assert compiled.application_request.output_dir == Path(
         "data/public_runner_test"
@@ -198,6 +200,29 @@ def test_coefficient_translation_preserves_requested_physics_with_roundoff_only(
 def test_compile_simulation_fails_closed_without_guessing(replacement, message):
     with pytest.raises(PublicSimulationCompilationError, match=message):
         compile_simulation(_simulation(**replacement))
+
+
+@pytest.mark.parametrize("device", ("cpu:0", " cuda", "cuda:01"))
+def test_plane_compiler_uses_strict_shared_device_validation(device):
+    with pytest.raises(
+        PublicSimulationCompilationError,
+        match="invalid execution device",
+    ):
+        compile_simulation(
+            _simulation(
+                execution=TorchSpectralExecution(
+                    runtime_path="compiled_v2",
+                    device=device,
+                    options={
+                        "tf32": "off",
+                        "molecular_field_linear_space": "spectral",
+                        "stress_divergence_sum_space": "spectral",
+                        "pointwise_execution": "eager",
+                        "disable_q_gradient_reuse": False,
+                    },
+                )
+            )
+        )
 
 
 def test_default_time_stepping_has_explicit_disabled_refresh():
@@ -276,6 +301,27 @@ def test_plane_compiler_wraps_non_nematic_bulk_coefficients():
         PublicCompilationRejectionCode.APPLICATION_CONTRACT
     )
     assert "positive real uniaxial equilibrium" in str(caught.value)
+
+
+def test_public_compiler_translates_known_option_boundary_errors(monkeypatch):
+    def fail_at_known_boundary(_source):
+        raise TypeError("synthetic option boundary failure")
+
+    monkeypatch.setattr(
+        "pssolver.configuration.public_simulation_runner."
+        "_compile_plane_public_simulation",
+        fail_at_known_boundary,
+    )
+
+    with pytest.raises(PublicSimulationCompilationError) as caught:
+        compile_simulation(_simulation())
+
+    assert caught.value.code is PublicCompilationRejectionCode.APPLICATION_CONTRACT
+    assert caught.value.context == {
+        "boundary": "public_compiler_dispatch",
+        "exception_type": "TypeError",
+    }
+    assert isinstance(caught.value.__cause__, TypeError)
 
 
 def test_compiled_product_is_immutable():

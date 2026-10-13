@@ -247,6 +247,15 @@ def test_discovery_is_frozen_and_matches_live_compiler_registry():
     assert "periodic_complete_stress_beris_edwards" in (
         no_slip.qualified_applications
     )
+    assert catalog.to_metadata()["qualified_policy_equivalences"] == [
+        {
+            "requested_policy": "no_slip_velocity",
+            "geometry_name": "periodic_box",
+            "application": "periodic_complete_stress_beris_edwards",
+            "effective_policy": "periodic_continuation",
+            "reason": "periodic_geometry_has_no_boundary_faces",
+        }
+    ]
     with pytest.raises(FrozenInstanceError):
         catalog.models[0].key = "changed"
     json.dumps(catalog.to_metadata(), allow_nan=False, sort_keys=True)

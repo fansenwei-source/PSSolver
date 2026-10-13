@@ -16,6 +16,11 @@ from pssolver.configuration.channel_active_nematics_declarations import (
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
+from pssolver.configuration.public_option_validation import (
+    ITERATIVE_PRESSURE_OPTION_KEYS,
+    validate_iterative_pressure_options,
+    validate_public_execution_device,
+)
 from pssolver.configuration.public_simulation_runner import (
     PUBLIC_CHANNEL_APPLICATION,
     PublicSimulationCompilation,
@@ -68,17 +73,6 @@ _COMMON_OUTPUT_KEYS = frozenset(
         "save_start_step",
     }
 )
-_PRESSURE_KEYS = frozenset(
-    {
-        "algorithm",
-        "fixed_iterations",
-        "max_iterations",
-        "relative_tolerance",
-        "warm_start",
-    }
-)
-
-
 def _reject(message: str) -> None:
     raise PublicSimulationCompilationError(message)
 
@@ -294,6 +288,12 @@ def compile_channel_public_simulation(
         _reject("the qualified Channel production application requires float32")
     if execution["batch_size"] != 1:
         _reject("the qualified Channel production application requires batch_size=1")
+    try:
+        device_normalization = validate_public_execution_device(
+            execution["device"]
+        )
+    except ValueError as exc:
+        _reject(str(exc))
     workflow, effective_workflow, workflow_adapted = _adapt_workflow(
         source.workflow
     )
@@ -304,11 +304,16 @@ def compile_channel_public_simulation(
     )
     pressure = _exact_keys(
         discretization["pressure_solver"],
-        _PRESSURE_KEYS,
+        ITERATIVE_PRESSURE_OPTION_KEYS,
         "Channel pressure solver",
     )
-    if pressure["algorithm"] != "preconditioned_conjugate_gradient":
-        _reject("the qualified Channel pressure solver is PCG")
+    try:
+        pressure = validate_iterative_pressure_options(
+            pressure,
+            description="Channel pressure solver",
+        )
+    except ValueError as exc:
+        _reject(str(exc))
     if pressure["warm_start"] is not True:
         _reject("the qualified Channel pressure solver uses a warm start")
 
@@ -394,6 +399,7 @@ def compile_channel_public_simulation(
             "coefficient_parameterization": "rho",
             "physical_values_changed": False,
             "runtime_fallback_allowed": False,
+            **device_normalization,
             "workflow_adapter": (
                 "public_output_to_legacy_channel"
                 if workflow_adapted

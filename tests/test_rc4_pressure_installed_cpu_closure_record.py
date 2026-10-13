@@ -24,6 +24,9 @@ BOUNDED_OPERATOR_RECOVERY_V11 = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_pressure_bounded_operator_recovery_v11.json"
 )
+RC455 = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -92,38 +95,31 @@ def test_rc445_closes_provider_cpu_pressure_contract_without_overclaiming():
 
 def test_rc445_binds_qualification_sources_and_archive_integrity():
     record = _record()
-    successors = json.loads(
-        PERFORMANCE_REPAIR.read_text(encoding="utf-8")
-    )["successor_sources"]
-    v10 = json.loads(
-        PERFORMANCE_RECOVERY_V10.read_text(encoding="utf-8")
-    )["successor_sources"]
-    v11 = json.loads(
-        BOUNDED_OPERATOR_RECOVERY_V11.read_text(encoding="utf-8")
-    )["successor_sources"]
+    successor_records = []
+    for path in (
+        PERFORMANCE_REPAIR,
+        PERFORMANCE_RECOVERY_V10,
+        BOUNDED_OPERATOR_RECOVERY_V11,
+        RC455,
+    ):
+        successor_record = json.loads(path.read_text(encoding="utf-8"))
+        successor_records.append(
+            successor_record.get(
+                "historical_successor_sources",
+                successor_record.get("successor_sources", {}),
+            )
+        )
     for relative, expected in record["qualification_source_sha256"].items():
         actual = _sha256(ROOT / relative)
-        if actual == expected:
-            continue
-        repaired = successors[relative]
-        successor = v11.get(relative, v10.get(relative, repaired))
-        assert repaired["historical_sha256"] == expected
-        if relative in v11:
-            assert v10[relative]["historical_sha256"] == repaired["current_sha256"]
-            assert successor["historical_sha256"] == v10[relative]["current_sha256"]
-            assert successor["introduced_by_phase"] == (
-                "RC4.4.7-bounded-operator-recovery-v11-provider"
-            )
-        elif relative in v10:
-            assert successor["historical_sha256"] == repaired["current_sha256"]
-            assert successor["introduced_by_phase"] == (
-                "RC4.4.7-performance-recovery-v10-provider"
-            )
-        else:
-            assert successor["introduced_by_phase"] == (
-                "RC4.4.7-performance-repair-v9-provider"
-            )
-        assert successor["current_sha256"] == actual
+        resolved = expected
+        for successors in successor_records:
+            registration = successors.get(relative)
+            if (
+                registration is not None
+                and registration["historical_sha256"] == resolved
+            ):
+                resolved = registration["current_sha256"]
+        assert resolved == actual
     artifacts = record["artifact_identity"]
     assert artifacts["manifest_verification"] == "23/23 PASS"
     assert artifacts["complete_present"] is True

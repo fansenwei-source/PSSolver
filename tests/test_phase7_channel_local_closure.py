@@ -143,6 +143,17 @@ def test_p75_record_binds_package_workflow_sources():
         "application_sha256"
     ]
     for name in ("compiled_runtime_bridge", "workflow", "observation"):
-        assert digest(implementation[name]) == implementation[f"{name}_sha256"]
+        actual = digest(implementation[name])
+        historical = implementation[f"{name}_sha256"]
+        if actual == historical:
+            continue
+        successor = json.loads(
+            (
+                root
+                / "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
+            ).read_text(encoding="utf-8")
+        )["historical_successor_sources"][implementation[name]]
+        assert successor["historical_sha256"] == historical
+        assert successor["current_sha256"] == actual
     assert record["authorization"]["p7_5_complete"] is True
     assert record["authorization"]["p7_6_h100_authorized"] is False

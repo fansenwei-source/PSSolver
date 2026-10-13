@@ -317,6 +317,7 @@ def _assert_workflow_metadata_agrees(
     *,
     runtime_path: str,
     final_step: int,
+    application: str,
 ) -> None:
     left_metadata = json.loads((left / "metadata.json").read_text())
     right_metadata = json.loads((right / "metadata.json").read_text())
@@ -326,6 +327,35 @@ def _assert_workflow_metadata_agrees(
         assert metadata["runtime_selection"]["requested"] == runtime_path
         assert metadata["runtime_selection"]["effective"] == runtime_path
         assert metadata["runtime_selection"]["fallback_used"] is False
+        diagnostics = metadata["diagnostics"]
+        assert diagnostics["schema_version"] == 1
+        assert diagnostics["application_family"] == (
+            "plane_complete_stress"
+            if application == "plane"
+            else "legacy_channel_active_nematic"
+        )
+        assert diagnostics["runtime_path"] == runtime_path
+        assert diagnostics["enabled"] is True
+        assert diagnostics["count"] == len(diagnostics["steps"])
+        assert diagnostics["artifact_paths"] == {
+            "npy": "diagnostics.npy",
+            "csv": "diagnostics.csv",
+        }
+        assert diagnostics["npy"] == diagnostics["artifact_paths"]["npy"]
+        assert diagnostics["csv"] == diagnostics["artifact_paths"]["csv"]
+        assert [entry["name"] for entry in diagnostics["payload_schema"]] == [
+            "step",
+            "div_max",
+            "div_rms",
+            "div_rel",
+            "schur_iterations",
+            "schur_abs_residual",
+            "schur_rel_residual",
+            "wall_normal_momentum_max",
+            "wall_normal_momentum_rms",
+        ]
+        assert diagnostics["payload_units"]["step"] == "step_index"
+        assert diagnostics["payload_units"]["schur_iterations"] == "count"
     for key in ("runtime_selection", "boundary_conditions", "numerics"):
         assert left_metadata[key] == right_metadata[key]
     assert left_metadata["workflow"] == right_metadata["workflow"]
@@ -396,6 +426,7 @@ def _exercise_case(
         public_directory,
         runtime_path=runtime_path,
         final_step=2,
+        application=application,
     )
     assert public.output_directory == public_directory.resolve()
     assert public.to_metadata()["final_observation"]["step"] == 2
@@ -447,6 +478,7 @@ def _exercise_case(
         public_resume_directory,
         runtime_path=runtime_path,
         final_step=2,
+        application=application,
     )
     for resumed in (direct_resume_directory, public_resume_directory):
         for name in ("Q_2.npy", "u_2.npy", "p_2.npy"):

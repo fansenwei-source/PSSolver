@@ -115,6 +115,22 @@ class PublicCapabilityCatalog:
             "qualified_combinations": [
                 item.to_metadata() for item in self.qualified_combinations
             ],
+            "qualified_policy_equivalences": [
+                {
+                    "requested_policy": requested,
+                    "geometry_name": geometry,
+                    "application": application,
+                    "effective_policy": effective,
+                    "reason": reason,
+                }
+                for (
+                    requested,
+                    geometry,
+                    application,
+                    effective,
+                    reason,
+                ) in _QUALIFIED_POLICY_EQUIVALENCES
+            ],
         }
 
 
@@ -242,6 +258,16 @@ _RUNTIME_PATHS = {
     _PERIODIC_APPLICATION: ("periodic_spectral",),
     _CHANNEL_COMPLETE_APPLICATION: ("channel_complete_stress",),
 }
+
+_QUALIFIED_POLICY_EQUIVALENCES = (
+    (
+        "no_slip_velocity",
+        "periodic_box",
+        _PERIODIC_APPLICATION,
+        "periodic_continuation",
+        "periodic_geometry_has_no_boundary_faces",
+    ),
+)
 
 
 def available_models() -> tuple[DeclarationCapability, ...]:

@@ -381,6 +381,11 @@ class BoundaryAssignment:
     name: str
     ndim: int
     components: tuple[ComponentBoundaryAssignment, ...]
+    declared_policies: tuple[tuple[str, str], ...] = field(
+        default=(),
+        compare=False,
+        repr=False,
+    )
 
     def __post_init__(self) -> None:
         if not isinstance(self.name, str) or not self.name.isidentifier():
@@ -428,6 +433,23 @@ class BoundaryAssignment:
             "components",
             tuple(sorted(components, key=lambda value: value.component)),
         )
+        policies = tuple(self.declared_policies)
+        if any(
+            not isinstance(entry, tuple)
+            or len(entry) != 2
+            or not all(isinstance(value, str) and value for value in entry)
+            for entry in policies
+        ):
+            raise ValueError(
+                "declared boundary policies must be non-empty string pairs"
+            )
+        if len({name for name, _kind in policies}) != len(policies):
+            raise ValueError("declared boundary-policy fields must be unique")
+        object.__setattr__(
+            self,
+            "declared_policies",
+            tuple(sorted(policies)),
+        )
 
     @property
     def component_names(self) -> tuple[str, ...]:
@@ -438,6 +460,21 @@ class BoundaryAssignment:
             if value.component == name:
                 return value
         raise KeyError(name)
+
+    def declared_policy(self, field_name: str) -> str | None:
+        """Return composition-time policy provenance when it is available.
+
+        The sidecar is intentionally excluded from equality and canonical
+        boundary metadata: numerical boundary identity is still determined by
+        the expanded component/face laws.  Public compiler normalization uses
+        it to distinguish qualified declarations that become the same law on
+        a geometry with no physical faces.
+        """
+
+        for name, kind in self.declared_policies:
+            if name == field_name:
+                return kind
+        return None
 
     def to_metadata(self) -> dict[str, object]:
         return {

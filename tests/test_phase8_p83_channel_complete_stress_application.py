@@ -26,6 +26,9 @@ from pssolver.boundaries import (
     no_slip_velocity,
 )
 from pssolver.configuration.simulation import InvocationSpec
+from pssolver.configuration.public_simulation_runner import (
+    PublicSimulationCompilationError,
+)
 from pssolver.core import GridPlacement
 from pssolver.geometries import RectangularChannel
 from pssolver.io.checkpoint import seal_checkpoint_metadata
@@ -160,6 +163,8 @@ def test_channel_complete_stress_compiler_records_two_axis_parity(tmp_path):
     assert compiled.normalization[
         "molecular_field_space_fallback_used"
     ] is False
+    assert compiled.normalization["requested_execution_device"] == "cpu"
+    assert compiled.normalization["resolved_execution_device"] == "cpu"
     assert compiled.construction_plan.kind is (
         RuntimeConstructionKind.CHANNEL_COMPLETE_STRESS
     )
@@ -252,6 +257,27 @@ def test_channel_compiler_rejects_runtime_options_before_output(
     assert not (tmp_path / "run").exists()
 
 
+@pytest.mark.parametrize(
+    "pressure_overrides",
+    (
+        {"max_iterations": True},
+        {"fixed_iterations": True},
+        {"fixed_iterations": 41},
+        {"warm_start": "yes"},
+    ),
+)
+def test_channel_compiler_applies_shared_pressure_contract_before_output(
+    tmp_path,
+    pressure_overrides,
+):
+    with pytest.raises(PublicSimulationCompilationError):
+        compile_simulation(
+            _simulation(tmp_path, pressure_overrides=pressure_overrides)
+        )
+
+    assert not (tmp_path / "run").exists()
+
+
 def test_channel_auto_device_resolves_before_runtime(monkeypatch, tmp_path):
     monkeypatch.setattr(
         "pssolver.configuration.execution_device.torch.cuda.is_available",
@@ -315,9 +341,32 @@ def test_channel_application_persists_diagnostics_and_metadata(tmp_path):
     assert np.isfinite(values.view(np.recarray).divergence_max).all()
     assert (result.output_directory / "diagnostics.csv").is_file()
     assert metadata["diagnostics"] == {
+        "schema_version": 1,
+        "application_family": "channel_complete_stress",
+        "runtime_path": "channel_complete_stress",
         "enabled": True,
         "count": 2,
         "steps": [0, 1],
+        "artifact_paths": {
+            "npy": "diagnostics.npy",
+            "csv": "diagnostics.csv",
+        },
+        "payload_schema": [
+            {"name": "step", "dtype": "int64"},
+            {"name": "divergence_max", "dtype": "float64"},
+            {"name": "divergence_rms", "dtype": "float64"},
+            {"name": "pressure_mean", "dtype": "float64"},
+            {"name": "pressure_iterations", "dtype": "int64"},
+            {"name": "pressure_relative_residual", "dtype": "float64"},
+        ],
+        "payload_units": {
+            "step": "step_index",
+            "divergence_max": "solver_native_dimensionless",
+            "divergence_rms": "solver_native_dimensionless",
+            "pressure_mean": "solver_native_dimensionless",
+            "pressure_iterations": "count",
+            "pressure_relative_residual": "solver_native_dimensionless",
+        },
         "npy": "diagnostics.npy",
         "csv": "diagnostics.csv",
     }
@@ -337,9 +386,29 @@ def test_channel_disabled_diagnostics_are_recorded_without_files(tmp_path):
     assert not (result.output_directory / "diagnostics.npy").exists()
     assert not (result.output_directory / "diagnostics.csv").exists()
     assert metadata["diagnostics"] == {
+        "schema_version": 1,
+        "application_family": "channel_complete_stress",
+        "runtime_path": "channel_complete_stress",
         "enabled": False,
         "count": 0,
         "steps": [],
+        "artifact_paths": {"npy": None, "csv": None},
+        "payload_schema": [
+            {"name": "step", "dtype": "int64"},
+            {"name": "divergence_max", "dtype": "float64"},
+            {"name": "divergence_rms", "dtype": "float64"},
+            {"name": "pressure_mean", "dtype": "float64"},
+            {"name": "pressure_iterations", "dtype": "int64"},
+            {"name": "pressure_relative_residual", "dtype": "float64"},
+        ],
+        "payload_units": {
+            "step": "step_index",
+            "divergence_max": "solver_native_dimensionless",
+            "divergence_rms": "solver_native_dimensionless",
+            "pressure_mean": "solver_native_dimensionless",
+            "pressure_iterations": "count",
+            "pressure_relative_residual": "solver_native_dimensionless",
+        },
         "npy": None,
         "csv": None,
     }

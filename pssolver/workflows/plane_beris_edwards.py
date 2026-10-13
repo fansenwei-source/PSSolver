@@ -23,6 +23,7 @@ from .plane_checkpoint import (
     write_plane_checkpoint,
 )
 from .plane_observation import (
+    DIAGNOSTIC_DTYPE,
     PlaneDiagnostic,
     PlaneObservation,
     capture_plane_diagnostic,
@@ -30,6 +31,7 @@ from .plane_observation import (
     write_plane_diagnostics,
     write_plane_observation,
 )
+from .diagnostic_io import diagnostics_metadata_envelope
 
 
 PLANE_WORKFLOW_SCHEMA_VERSION = 1
@@ -239,6 +241,13 @@ class PlaneBerisEdwardsWorkflow:
             saved_steps=list(self._saved_steps),
             checkpoint_steps=list(self._checkpoint_steps),
             final_step=final_step,
+        )
+        self.metadata["diagnostics"] = diagnostics_metadata_envelope(
+            application_family="plane_complete_stress",
+            runtime_path=self.adapter.runtime_path.value,
+            enabled=self._components.workflow.diagnostics,
+            steps=[value.step for value in self._diagnostics],
+            dtype=DIAGNOSTIC_DTYPE,
         )
         write_run_metadata(
             self.output_directory,

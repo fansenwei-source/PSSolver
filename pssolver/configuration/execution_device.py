@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
+import re
+
 import torch
+
+
+_PUBLIC_DEVICE_PATTERN = re.compile(r"(?:auto|cpu|cuda|cuda:(?:0|[1-9][0-9]*))\Z")
 
 
 def configure_tf32_execution(
@@ -45,14 +50,13 @@ def configure_tf32_execution(
 def validate_execution_device(requested: object) -> str:
     """Return a validated request without requiring a device allocation."""
 
-    if not isinstance(requested, str) or not requested:
-        raise ValueError("execution device must be a non-empty string")
-    if requested == "auto":
-        return requested
-    try:
-        torch.device(requested)
-    except (RuntimeError, TypeError) as exc:
-        raise ValueError(f"invalid execution device: {requested!r}") from exc
+    if not isinstance(requested, str) or _PUBLIC_DEVICE_PATTERN.fullmatch(
+        requested
+    ) is None:
+        raise ValueError(
+            "invalid execution device; expected exactly 'auto', 'cpu', "
+            "'cuda', or 'cuda:N' with canonical non-negative N"
+        )
     return requested
 
 

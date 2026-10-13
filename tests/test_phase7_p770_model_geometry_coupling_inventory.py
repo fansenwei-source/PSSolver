@@ -82,8 +82,9 @@ def test_p770_source_identities_bind_the_audited_baseline() -> None:
         "pssolver/linear_solvers/stokes/plane_free_slip.py",
         "pssolver/models/active_nematics/stokes.py",
         "pssolver/runtime/plane_beris_edwards.py",
-        "pssolver/workflows/plane_beris_edwards.py",
-    }
+            "pssolver/workflows/plane_beris_edwards.py",
+            "pssolver/workflows/channel_active_nematics.py",
+        }
 
     assert len(identities) == 15
     for relative_path, expected in identities.items():

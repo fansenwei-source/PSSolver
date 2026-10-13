@@ -18,10 +18,12 @@ from .channel_checkpoint import (
     restore_channel_checkpoint, write_channel_checkpoint,
 )
 from .channel_observation import (
+    DIAGNOSTIC_DTYPE,
     ChannelDiagnostic, ChannelObservation, capture_channel_diagnostic,
     capture_channel_observation, write_channel_diagnostics,
     write_channel_observation,
 )
+from .diagnostic_io import diagnostics_metadata_envelope
 
 
 CHANNEL_WORKFLOW_SCHEMA_VERSION = 1
@@ -153,6 +155,13 @@ class ChannelActiveNematicsWorkflow:
         elapsed = time.time() - started
         self.metadata.update(completed_steps=final_step, elapsed_seconds=elapsed)
         self.metadata["workflow"].update(saved_steps=list(self._saved_steps), checkpoint_steps=list(self._checkpoint_steps), final_step=final_step)
+        self.metadata["diagnostics"] = diagnostics_metadata_envelope(
+            application_family="legacy_channel_active_nematic",
+            runtime_path=self.adapter.runtime_path.value,
+            enabled=self.workflow.diagnostics_enabled,
+            steps=[value.step for value in self._diagnostics],
+            dtype=DIAGNOSTIC_DTYPE,
+        )
         write_run_metadata(self.output_directory, self.metadata, status="complete")
         (self.output_directory / "COMPLETE").write_text("complete\n", encoding="utf-8")
         return ChannelWorkflowResult(start_step, final_step, elapsed, tuple(self._saved_steps), tuple(self._checkpoint_steps), final, tuple(self._diagnostics))

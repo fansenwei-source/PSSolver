@@ -37,6 +37,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
 RC454 = ROOT / "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json"
+RC455 = ROOT / "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
 
 
 @contextmanager
@@ -310,16 +311,20 @@ def test_rc453_record_binds_contract_sources_and_scope():
         "B24": "closed_verified",
         "B27": "closed_verified",
     }
-    successors = json.loads(RC454.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
     for relative, expected in record["source_sha256"].items():
         actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
         if actual == expected:
             continue
-        registration = successors[relative]
-        assert registration["historical_sha256"] == expected
-        assert registration["current_sha256"] == actual
+        resolved = expected
+        for successor_path in (RC454, RC455):
+            registration = json.loads(
+                successor_path.read_text(encoding="utf-8")
+            )["historical_successor_sources"].get(relative)
+            if registration is None:
+                continue
+            if registration["historical_sha256"] == resolved:
+                resolved = registration["current_sha256"]
+        assert resolved == actual
     parent = record["baseline"]["implementation_parent_commit"]
     for relative, registration in record[
         "historical_successor_sources"
@@ -333,9 +338,13 @@ def test_rc453_record_binds_contract_sources_and_scope():
         assert hashlib.sha256(historical).hexdigest() == registration[
             "historical_sha256"
         ]
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == (
-            registration["current_sha256"]
-        )
+        resolved = registration["current_sha256"]
+        successor = json.loads(RC455.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolved
     assert record["scope"] == {
         "checkpoint_schema_or_tensor_layout_version_changed": False,
         "scientific_model_changed": False,
@@ -394,4 +403,6 @@ def test_known_issue_matrix_preserves_rc453_and_registers_rc454_successor():
     assert progress["rc4_5_4_implementation_authorized"] is True
     assert progress["rc4_5_4_complete"] is True
     assert progress["eligible_for_rc4_5_5_implementation"] is True
-    assert progress["rc4_5_5_implementation_authorized"] is False
+    assert progress["rc4_5_5_implementation_authorized"] is True
+    assert progress["rc4_5_5_complete"] is True
+    assert progress["eligible_for_rc4_5_6_implementation"] is True

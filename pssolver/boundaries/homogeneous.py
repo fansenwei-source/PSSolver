@@ -372,6 +372,10 @@ def assign_boundaries(
         name=name,
         ndim=geometry.domain.ndim,
         components=tuple(assignments),
+        declared_policies=tuple(
+            (field_name, policy.kind)
+            for field_name, policy in policies.items()
+        ),
     )
 
 

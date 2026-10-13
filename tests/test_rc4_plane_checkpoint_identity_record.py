@@ -13,6 +13,9 @@ RECORD = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json"
 )
+RC455 = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -25,6 +28,9 @@ def _sha256(relative: str) -> str:
 
 def test_rc422_record_binds_plan_parent_and_implementation_files():
     record = _record()
+    successors = json.loads(RC455.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert record["status"] == "complete"
     assert record["classification"] == (
         "PASS_RC4_2_2_PLANE_LAYERED_CHECKPOINT_IDENTITY_AND_LEGACY_UPGRADE"
@@ -45,7 +51,13 @@ def test_rc422_record_binds_plan_parent_and_implementation_files():
     for relative, expected in record["implementation_files"].items():
         if relative in superseded_by_later_rc43_slices:
             continue
-        assert _sha256(relative) == expected
+        actual = _sha256(relative)
+        if actual == expected:
+            continue
+        successor = successors[relative]
+        assert successor["historical_sha256"] == expected
+        assert successor["current_sha256"] == actual
+        assert successor["introduced_by_phase"] == "RC4.5.5"
 
 
 def test_rc422_record_freezes_v2_and_legacy_upgrade_contracts():

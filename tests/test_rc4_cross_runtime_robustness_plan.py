@@ -15,6 +15,9 @@ CONTRACT = ROOT / "notes/PSSolver_v0_2_0rc4_rc452_public_robustness_contract.jso
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
 RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 RC454 = ROOT / "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json"
+RC455 = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
+)
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -37,7 +40,7 @@ def _git_blob_sha256(commit: str, relative: str) -> str:
 
 def _resolve_successor_sha256(relative: str, historical: str) -> str:
     resolved = historical
-    for record_path in (RC453, RC454):
+    for record_path in (RC453, RC454, RC455):
         registration = _read(record_path).get(
             "historical_successor_sources", {}
         ).get(relative)
@@ -279,8 +282,8 @@ def test_rc450_reviewed_sources_are_content_addressed():
 
 def test_known_issue_matrix_advances_only_after_rc44_evidence():
     matrix = _read(MATRIX)
-    assert matrix["summary"]["closed_verified"] == 34
-    assert matrix["summary"]["partial_residual"] == 4
+    assert matrix["summary"]["closed_verified"] == 37
+    assert matrix["summary"]["partial_residual"] == 1
     assert matrix["summary"]["next_implementation_batch"] == (
         "rc4.5_cross_runtime_robustness"
     )
@@ -295,9 +298,10 @@ def test_known_issue_matrix_advances_only_after_rc44_evidence():
         for item in ("B9", "B21")
     )
     assert all(
-        issues[item]["state"] == "partial_residual"
-        for item in ("B11", "B13", "B15", "B17")
+        issues[item]["state"] == "closed_verified"
+        for item in ("B13", "B15", "B17")
     )
+    assert issues["B11"]["state"] == "partial_residual"
     progress = matrix["progress"]
     assert progress["rc4_4_complete"] is True
     assert progress["rc4_4_closure_record_sha256"] == _sha256(CLOSURE)
@@ -313,6 +317,10 @@ def test_known_issue_matrix_advances_only_after_rc44_evidence():
     assert progress["eligible_for_rc4_5_3_implementation"] is True
     assert progress["rc4_5_4_complete"] is True
     assert progress["eligible_for_rc4_5_5_implementation"] is True
+    assert progress["rc4_5_5_implementation_authorized"] is True
+    assert progress["rc4_5_5_complete"] is True
+    assert progress["eligible_for_rc4_5_6_implementation"] is True
+    assert progress["rc4_5_6_implementation_authorized"] is False
     assert progress["rc4_5_implementation_authorized"] is False
 
 

@@ -21,7 +21,10 @@ from .periodic_checkpoint import (
     restore_periodic_checkpoint,
     write_periodic_checkpoint,
 )
-from .diagnostic_io import write_structured_diagnostics
+from .diagnostic_io import (
+    diagnostics_metadata_envelope,
+    write_structured_diagnostics,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -242,17 +245,13 @@ class PeriodicBerisEdwardsWorkflow:
             elapsed_seconds=elapsed,
             saved_steps=self.saved,
             checkpoint_steps=self.checkpoints,
-            diagnostics={
-                "enabled": self.options["diagnostics"],
-                "count": len(self.diagnostics),
-                "steps": [value.step for value in self.diagnostics],
-                "npy": (
-                    "diagnostics.npy" if self.options["diagnostics"] else None
-                ),
-                "csv": (
-                    "diagnostics.csv" if self.options["diagnostics"] else None
-                ),
-            },
+            diagnostics=diagnostics_metadata_envelope(
+                application_family="periodic_complete_stress",
+                runtime_path=self.adapter.runtime_path,
+                enabled=self.options["diagnostics"],
+                steps=[value.step for value in self.diagnostics],
+                dtype=PERIODIC_DIAGNOSTIC_DTYPE,
+            ),
         )
         (self.output_directory / "metadata.json").write_text(
             json.dumps(self.metadata, indent=2, sort_keys=True) + "\n",

@@ -23,6 +23,9 @@ RC444 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
 )
 RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
+RC455 = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
+)
 
 
 def _plan() -> dict[str, object]:
@@ -35,10 +38,12 @@ def _sha256(relative: str) -> str:
 
 def test_rc426_plan_binds_rc425_and_reviewed_sources():
     plan = _plan()
-    recovery = json.loads(RECOVERY.read_text(encoding="utf-8"))
-    rc435 = json.loads(RC435.read_text(encoding="utf-8"))
-    rc444 = json.loads(RC444.read_text(encoding="utf-8"))
-    rc453 = json.loads(RC453.read_text(encoding="utf-8"))
+    successor_records = [
+        json.loads(path.read_text(encoding="utf-8")).get(
+            "historical_successor_sources", {}
+        )
+        for path in (RECOVERY, RC435, RC444, RC453, RC455)
+    ]
     assert plan["status"] == "ready_for_implementation"
     assert plan["classification"] == (
         "READY_RC4_2_6_SINGLE_H100_CROSS_DEVICE_CHECKPOINT_PORTABILITY"
@@ -50,38 +55,15 @@ def test_rc426_plan_binds_rc425_and_reviewed_sources():
     assert source["rc4_2_5_manifest_entries"] == 26
     for relative, expected in plan["reviewed_source_sha256"].items():
         actual = _sha256(relative)
-        if actual == expected:
-            continue
-        registration = recovery["historical_successor_sources"].get(relative)
-        if registration is None:
-            registration = rc435["historical_successor_sources"].get(relative)
-        latest = rc444["historical_successor_sources"].get(relative)
-        newest = rc453["historical_successor_sources"].get(relative)
-        if newest is not None:
-            predecessor = (
-                latest["current_sha256"]
-                if latest is not None
-                else registration["current_sha256"]
-                if registration is not None
-                else expected
-            )
-            assert newest["historical_sha256"] == predecessor
-            assert newest["current_sha256"] == actual
-            assert newest["introduced_by_phase"] == "RC4.5.3"
-            continue
-        if latest is not None:
-            assert latest["current_sha256"] == actual
-            assert latest["introduced_by_phase"] == "RC4.4.4"
-            assert registration is None or latest["historical_sha256"] == (
-                registration["current_sha256"]
-            )
-        else:
-            assert registration["historical_sha256"] == expected
-            assert registration["current_sha256"] == actual
-            assert registration["introduced_by_phase"] in {
-                "RC4.2.6 recovery",
-                "RC4.3.5",
-            }
+        resolved = expected
+        for successors in successor_records:
+            registration = successors.get(relative)
+            if (
+                registration is not None
+                and registration["historical_sha256"] == resolved
+            ):
+                resolved = registration["current_sha256"]
+        assert resolved == actual
 
 
 def test_rc426_matrix_is_complete_ordered_and_bidirectional():

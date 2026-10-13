@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import FrozenInstanceError
+from dataclasses import FrozenInstanceError, replace
 import json
 
 import pytest
@@ -92,10 +92,72 @@ def test_channel_public_compiler_connects_both_qualified_runtimes(
     )
     assert compiled.normalization["physical_values_changed"] is False
     assert compiled.normalization["runtime_fallback_allowed"] is False
+    assert compiled.normalization["requested_execution_device"] == "cpu"
+    assert compiled.normalization["resolved_execution_device"] == "cpu"
     assert compiled.lowering_plan.source_simulation_sha256 == (
         compiled.application_specification.canonical_sha256()
     )
     json.dumps(compiled.to_metadata(), allow_nan=False, sort_keys=True)
+
+
+def _replace_channel_declarations(source, *, execution=None, discretization=None):
+    return Simulation(
+        model=source.model,
+        geometry=source.geometry,
+        boundaries=source.boundaries,
+        numerics=source.numerics,
+        time=source.time,
+        discretization=(
+            source.discretization
+            if discretization is None
+            else discretization
+        ),
+        initial_condition=source.initial_condition,
+        execution=source.execution if execution is None else execution,
+        output=source.output,
+        invocation=source.invocation,
+    )
+
+
+@pytest.mark.parametrize("device", ("cpu:0", " cuda", "cuda:01"))
+def test_legacy_channel_uses_strict_shared_device_validation(device):
+    source = _channel_simulation("compiled_channel_v2")
+    options = dict(source.execution.options)
+    options["device"] = device
+    invalid = _replace_channel_declarations(
+        source,
+        execution=replace(source.execution, options=options),
+    )
+
+    with pytest.raises(
+        PublicSimulationCompilationError,
+        match="invalid execution device",
+    ):
+        compile_simulation(invalid)
+
+
+@pytest.mark.parametrize(
+    ("name", "value"),
+    (
+        ("max_iterations", True),
+        ("fixed_iterations", True),
+        ("fixed_iterations", 101),
+        ("warm_start", "yes"),
+    ),
+)
+def test_legacy_channel_uses_shared_pressure_validation(name, value):
+    source = _channel_simulation("compiled_channel_v2")
+    discretization = dict(source.discretization)
+    pressure = dict(discretization["pressure_solver"])
+    pressure[name] = value
+    discretization["pressure_solver"] = pressure
+    invalid = _replace_channel_declarations(
+        source,
+        discretization=discretization,
+    )
+
+    with pytest.raises(PublicSimulationCompilationError, match=name):
+        compile_simulation(invalid)
 
 
 def test_geometry_neutral_output_adapts_to_legacy_channel_workflow():
