@@ -39,6 +39,11 @@ PERFORMANCE_QUALIFICATION_RECOVERY = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_pressure_performance_qualification_recovery_v10.json"
 )
+BOUNDED_OPERATOR_QUALIFICATION_V11 = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_bounded_operator_qualification_v11.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -232,6 +237,12 @@ def test_rc447_plan_binds_the_local_qualification_support_by_hash():
             )["qualification_support_successors"],
             "qualification_identity_propagation_only",
         ),
+        (
+            json.loads(
+                BOUNDED_OPERATOR_QUALIFICATION_V11.read_text(encoding="utf-8")
+            )["qualification_support_successors"],
+            "qualification_candidate_identity_binding_only",
+        ),
     ]
     assert support["implementation_scope"] == (
         "qualification_only_no_solver_or_runtime_change"
@@ -378,6 +389,84 @@ def test_rc447_v10_qualification_recovery_binds_exact_four_way_identity():
     assert recovery["PSSolver_Control_modified"] is False
     assert recovery["nematics3d_modified"] is False
     assert recovery["production_default_changed"] is False
+    assert recovery["authorization"] == {
+        "push_authorized": False,
+        "single_h100_submission_authorized": False,
+        "automatic_retry_authorized": False,
+    }
+
+
+def test_rc447_v11_qualification_binds_reproducible_candidate_artifacts():
+    recovery = json.loads(
+        BOUNDED_OPERATOR_QUALIFICATION_V11.read_text(encoding="utf-8")
+    )
+
+    assert recovery["phase"] == (
+        "RC4.4.7-bounded-operator-recovery-v11-qualification"
+    )
+    assert recovery["status"] == (
+        "LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED"
+    )
+    assert recovery["runtime_candidate_commit"] == (
+        "95208795a73197c7a822303a911ea1a29a1f2c96"
+    )
+    assert recovery["candidate_source_archive"] == {
+        "path": (
+            "/home/fansenwei/Desktop/Develop/"
+            "PSSolver_rc447_v11_candidate_artifacts_9520879/"
+            "PSSolver-9520879.tar"
+        ),
+        "sha256": (
+            "4c313d0af2455a78fd1832ce073a6d3f1e20dbf5c1ca30d3cdb1c2c3a3a33c42"
+        ),
+        "bytes": 20459520,
+    }
+    wheel = recovery["candidate_provider_wheel"]
+    assert wheel["sha256"] == (
+        "e47bacd10640e20c8f616e170ec91beb12f5a0cf4f75e2a511c91dcebfdb5356"
+    )
+    assert wheel["bytes"] == 1049314
+    assert wheel["two_independent_local_builds_byte_identical"] is True
+    assert recovery["artifact_manifest"]["verification"] == "3/3 PASS"
+    assert recovery["artifact_manifest"]["sha256"] == (
+        "372edb8be9b30e1127b6742e454fb68a545c30b530c1297f4ee994e62f2d10d9"
+    )
+    identity = recovery["qualification_identity_update"]
+    assert identity["new_candidate_commit"] == recovery[
+        "runtime_candidate_commit"
+    ]
+    assert identity["new_candidate_wheel_sha256"] == wheel["sha256"]
+    assert identity["identity_inference_allowed"] is False
+    assert identity["identity_default_allowed"] is False
+    validation = recovery["validation"]
+    assert validation["support_py_compile"] == "PASS"
+    assert validation["support_import_smoke"] == "PASS"
+    assert validation["synthetic_support_tests"]["passed"] == 31
+    assert validation["targeted_CPU"]["passed"] == 124
+    assert validation["full_CPU_qualification_commit"] == {
+        "passed": 3206,
+        "failed": 0,
+        "skipped": 0,
+        "deselected_cuda_only": 7,
+        "subtests_passed": 8,
+        "seconds": 208.03,
+    }
+    assert validation["installed_wheel_import_smoke"]["passed"] is True
+    assert validation["installed_wheel_import_smoke"][
+        "pip_check_failure_is_preexisting_nematics3d_numpy_metadata_conflict"
+    ] is True
+    assert validation["command_plan"]["profile_count"] == 12
+    assert validation["command_plan"]["execution_started"] is False
+    assert validation["H100_requalified"] is False
+    assert recovery["thresholds_changed"] is False
+    assert recovery["profile_matrix_changed"] is False
+    assert recovery["correctness_matrix_changed"] is False
+    assert recovery["scientific_contract_changed"] is False
+    assert recovery["provider_runtime_modified_by_qualification_commit"] is False
+    assert recovery["PSSolver_Control_modified"] is False
+    assert recovery["nematics3d_modified"] is False
+    assert recovery["production_default_changed"] is False
+    assert recovery["qualification_complete"] is False
     assert recovery["authorization"] == {
         "push_authorized": False,
         "single_h100_submission_authorized": False,

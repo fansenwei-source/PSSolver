@@ -30,11 +30,11 @@ GRIDS = {
 TRIALS = (1, 2, 3)
 COMMITS = {
     "baseline": "5071d73a00e0d19be62ebd39edf9918818d1267a",
-    "candidate": "5b7d839c4034eb46a48a61c7be349df01473a2cd",
+    "candidate": "95208795a73197c7a822303a911ea1a29a1f2c96",
 }
 WHEELS = {
     "baseline": "9c99ebcdc2e03b2c61b5bc3a5d84d97e99775f488409e2e61f5c06e009695e61",
-    "candidate": "76200d6fdfa5bd9a7dfb6eb518913f81715156a507b3ef0310172c3a86484172",
+    "candidate": "e47bacd10640e20c8f616e170ec91beb12f5a0cf4f75e2a511c91dcebfdb5356",
 }
 CONSUMER_SOURCE_COMMIT = "0cf55b4fb699ff40433000f5b4efe52b1d33546b"
 CONSUMER_WHEEL_SHA256 = (

@@ -1,0 +1,125 @@
+{
+  "schema": "pssolver.rc4_4_7.bounded_operator_qualification.v11",
+  "phase": "RC4.4.7-bounded-operator-recovery-v11-qualification",
+  "status": "LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED",
+  "runtime_candidate_commit": "95208795a73197c7a822303a911ea1a29a1f2c96",
+  "runtime_parent_commit": "930ea366fec5d7ccacd74d984d0de27381a30cdc",
+  "baseline_provider_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+  "consumer_source_commit": "0cf55b4fb699ff40433000f5b4efe52b1d33546b",
+  "consumer_wheel_sha256": "068dc2f3d3be5b8eee96169711878a71bb4e513b452cdcc2fa54dd67c124b96d",
+  "runtime_recovery_record": {
+    "path": "notes/PSSolver_v0_2_0rc4_rc447_pressure_bounded_operator_recovery_v11.json",
+    "sha256": "f3caf86c397e0c8a6d7987a9f361977a2505cf2bb1af024314e0c24fa7be2c97"
+  },
+  "candidate_source_archive": {
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_rc447_v11_candidate_artifacts_9520879/PSSolver-9520879.tar",
+    "sha256": "4c313d0af2455a78fd1832ce073a6d3f1e20dbf5c1ca30d3cdb1c2c3a3a33c42",
+    "bytes": 20459520
+  },
+  "candidate_provider_wheel": {
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_rc447_v11_candidate_artifacts_9520879/pssolver-0.2.0rc3-py3-none-any.whl",
+    "sha256": "e47bacd10640e20c8f616e170ec91beb12f5a0cf4f75e2a511c91dcebfdb5356",
+    "bytes": 1049314,
+    "source_date_epoch": 1791869796,
+    "two_independent_local_builds_byte_identical": true
+  },
+  "artifact_manifest": {
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_rc447_v11_candidate_artifacts_9520879/checksums.sha256",
+    "entries": 3,
+    "verification": "3/3 PASS",
+    "sha256": "372edb8be9b30e1127b6742e454fb68a545c30b530c1297f4ee994e62f2d10d9"
+  },
+  "failed_v10_evidence": {
+    "job_id": "10878393",
+    "classification": "FAIL_RC4_4_7_PRESSURE_PERFORMANCE_NON_REGRESSION",
+    "R128_mean_candidate_over_baseline": 1.0778377172177989,
+    "R128_median_candidate_over_baseline": 1.0414556946734892,
+    "R512_mean_candidate_over_baseline": 1.0186936860601168,
+    "R512_median_candidate_over_baseline": 1.0271469802332345,
+    "scientific_failure": false,
+    "solver_correctness_failure": false,
+    "performance_failure": true,
+    "automatic_retry": false
+  },
+  "qualification_identity_update": {
+    "scope": "qualification_candidate_identity_binding_only",
+    "old_candidate_commit": "5b7d839c4034eb46a48a61c7be349df01473a2cd",
+    "new_candidate_commit": "95208795a73197c7a822303a911ea1a29a1f2c96",
+    "old_candidate_wheel_sha256": "76200d6fdfa5bd9a7dfb6eb518913f81715156a507b3ef0310172c3a86484172",
+    "new_candidate_wheel_sha256": "e47bacd10640e20c8f616e170ec91beb12f5a0cf4f75e2a511c91dcebfdb5356",
+    "identity_inference_allowed": false,
+    "identity_default_allowed": false
+  },
+  "qualification_support_successors": {
+    "benchmarks/analyze_rc447_pressure_h100.py": {
+      "historical_sha256": "8a763d022653d74cdfa34541c501847201936860c6cf4d5238913c460755335a",
+      "current_sha256": "46cac8e9cf6c29d28681f940c9c740d48af2f3fb8c3b71960992b319b5f44d09",
+      "change_scope": "qualification_candidate_identity_binding_only",
+      "reason": "bind the v11 runtime commit and reproducible wheel while retaining the frozen correctness matrix, profile matrix and thresholds"
+    }
+  },
+  "validation": {
+    "support_py_compile": "PASS",
+    "support_import_smoke": "PASS",
+    "synthetic_support_tests": {
+      "passed": 31,
+      "failed": 0,
+      "skipped": 0
+    },
+    "targeted_CPU": {
+      "passed": 124,
+      "failed": 0,
+      "skipped": 0
+    },
+    "full_CPU_reused_from_runtime_commit": {
+      "passed": 3205,
+      "failed": 0,
+      "skipped": 0,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8
+    },
+    "full_CPU_qualification_commit": {
+      "passed": 3206,
+      "failed": 0,
+      "skipped": 0,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "seconds": 208.03
+    },
+    "installed_wheel_import_smoke": {
+      "passed": true,
+      "classification": "PASS_RC447_V11_INSTALLED_WHEEL_CPU_SMOKE",
+      "report_sha256": "7f28eb7d12fe2f93098bd1ab342f248ecc66363270245e822ac726d36689f1d9",
+      "source_shadow_import": false,
+      "pressure_iterations": 5,
+      "termination_reason": "fixed_work_completed",
+      "finite": true,
+      "pip_check_passed": false,
+      "pip_check_failure_is_preexisting_nematics3d_numpy_metadata_conflict": true,
+      "nematics3d_modified": false
+    },
+    "command_plan": {
+      "synthetic_tests_passed": true,
+      "profile_count": 12,
+      "balanced_order": ["A/B", "B/A", "A/B"],
+      "thresholds_unchanged": true,
+      "execution_started": false
+    },
+    "H100_requalified": false
+  },
+  "thresholds_changed": false,
+  "profile_matrix_changed": false,
+  "correctness_matrix_changed": false,
+  "scientific_contract_changed": false,
+  "provider_runtime_modified_by_qualification_commit": false,
+  "PSSolver_Control_modified": false,
+  "nematics3d_modified": false,
+  "production_default_changed": false,
+  "qualification_complete": false,
+  "rc4_4_7_complete": false,
+  "authorization": {
+    "push_authorized": false,
+    "single_h100_submission_authorized": false,
+    "automatic_retry_authorized": false
+  }
+}
