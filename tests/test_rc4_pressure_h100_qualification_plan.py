@@ -24,6 +24,11 @@ IMPORT_RECOVERY = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_support_import_bootstrap_recovery_v7.json"
 )
+PROFILE_RECOVERY = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_profile_diagnostics_recovery_v8.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -199,6 +204,12 @@ def test_rc447_plan_binds_the_local_qualification_support_by_hash():
             ],
             "external_qualification_support_import_bootstrap_only",
         ),
+        (
+            json.loads(PROFILE_RECOVERY.read_text(encoding="utf-8"))[
+                "qualification_support_successors"
+            ],
+            "external_profile_helper_diagnostics_compatibility_only",
+        ),
     ]
     assert support["implementation_scope"] == (
         "qualification_only_no_solver_or_runtime_change"
@@ -240,6 +251,32 @@ def test_rc447_python310_recovery_binds_candidate_without_changing_thresholds():
     assert recovery["scientific_contract_changed"] is False
     assert recovery["formal_h100_submission_limit"] == 1
     assert recovery["automatic_retry"] is False
+
+
+def test_rc447_profile_diagnostics_recovery_is_qualification_only_and_fail_closed():
+    recovery = json.loads(PROFILE_RECOVERY.read_text(encoding="utf-8"))
+
+    assert recovery["phase"] == "RC4.4.7-recovery-v8"
+    assert recovery["failed_v7_evidence"]["job_id"] == "10878109"
+    assert recovery["failed_v7_evidence"]["profile_json_persisted"] == 0
+    contract = recovery["diagnostics_compatibility_contract"]
+    assert contract["diagnostics_owner"] == "adapter.solver.model.static_model"
+    assert contract["role_selection_explicit"] is True
+    assert contract["candidate_silent_legacy_downgrade_allowed"] is False
+    assert contract["missing_or_malformed_diagnostics_fail_closed"] is True
+    assert recovery["thresholds_changed"] is False
+    assert recovery["scientific_contract_changed"] is False
+    assert recovery["profile_matrix_changed"] is False
+    assert recovery["correctness_matrix_changed"] is False
+    assert recovery["provider_runtime_modified"] is False
+    assert recovery["PSSolver_Control_modified"] is False
+    assert recovery["nematics3d_modified"] is False
+    assert recovery["production_default_changed"] is False
+    assert recovery["authorization"] == {
+        "push_authorized": False,
+        "single_h100_submission_authorized": False,
+        "automatic_retry_authorized": False,
+    }
 
 
 def test_rc447_fields_iteration_recovery_is_local_and_preserves_science_contract():

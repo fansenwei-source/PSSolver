@@ -235,37 +235,99 @@ def test_restart_field_comparison_uses_public_keys_and_named_lookup():
 
 
 def test_profile_preserves_legacy_and_v2_pressure_schema_without_inference():
-    class Legacy:
-        @staticmethod
-        def flow_diagnostics():
-            return {
-                "last_pressure_iterations": 9,
-                "last_pressure_residual": 1.0e-8,
-                "last_pressure_relative_residual": 2.0e-7,
-            }
+    class StaticModel:
+        last_pressure_iterations = 9
+        last_pressure_relative_residual = 2.0e-7
+        last_pressure_diagnostics = {
+            "schema_version": 2,
+            "achieved_iteration_count": 8,
+            "termination_reason": "relative_tolerance_met",
+            "acceptable": True,
+            "achieved_normalized_residual": 1.0e-7,
+        }
 
-    class V2:
-        @staticmethod
-        def flow_diagnostics():
-            return {
-                "schema_version": 2,
-                "pressure": {
-                    "schema_version": 2,
-                    "achieved_iteration_count": 8,
-                    "termination_reason": "relative_tolerance_met",
-                    "acceptable": True,
-                    "achieved_normalized_residual": 1.0e-7,
-                },
-            }
+    class Model:
+        static_model = StaticModel()
 
-    legacy = _pressure_observation(Legacy())
-    current = _pressure_observation(V2())
+    class Solver:
+        model = Model()
+
+    class Adapter:
+        solver = Solver()
+
+    legacy = _pressure_observation(Adapter(), role="baseline")
+    current = _pressure_observation(Adapter(), role="candidate")
     assert legacy["termination_reason"] == "not_exposed_by_legacy_schema"
     assert legacy["termination_reason_observed"] is False
     assert legacy["acceptable"] is None
+    assert legacy["achieved_iteration_count"] == 9
+    assert legacy["achieved_normalized_residual"] == 2.0e-7
     assert current["termination_reason"] == "relative_tolerance_met"
     assert current["termination_reason_observed"] is True
     assert current["acceptable"] is True
+    assert current["achieved_iteration_count"] == 8
+    assert current["achieved_normalized_residual"] == 1.0e-7
+
+
+def test_profile_candidate_pressure_schema_cannot_silently_downgrade():
+    class StaticModel:
+        last_pressure_iterations = 9
+        last_pressure_relative_residual = 2.0e-7
+
+    class Model:
+        static_model = StaticModel()
+
+    class Solver:
+        model = Model()
+
+    class Adapter:
+        solver = Solver()
+
+    with pytest.raises(RuntimeError, match="last_pressure_diagnostics"):
+        _pressure_observation(Adapter(), role="candidate")
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        ({"schema_version": 1}, "schema_version"),
+        ({"achieved_iteration_count": 0}, "achieved_iteration_count"),
+        ({"termination_reason": ""}, "termination_reason"),
+        ({"acceptable": 1}, "acceptable"),
+        ({"achieved_normalized_residual": float("nan")}, "normalized_residual"),
+    ],
+)
+def test_profile_candidate_pressure_schema_fails_closed(mutation, message):
+    diagnostics = {
+        "schema_version": 2,
+        "achieved_iteration_count": 8,
+        "termination_reason": "relative_tolerance_met",
+        "acceptable": True,
+        "achieved_normalized_residual": 1.0e-7,
+    }
+    diagnostics.update(mutation)
+
+    class StaticModel:
+        last_pressure_diagnostics = diagnostics
+
+    class Model:
+        static_model = StaticModel()
+
+    class Solver:
+        model = Model()
+
+    class Adapter:
+        solver = Solver()
+
+    with pytest.raises(RuntimeError, match=message):
+        _pressure_observation(Adapter(), role="candidate")
+
+
+def test_profile_pressure_observation_rejects_unknown_role_and_adapter_shape():
+    with pytest.raises(ValueError, match="unsupported role"):
+        _pressure_observation(object(), role="unknown")
+    with pytest.raises(RuntimeError, match="solver.model.static_model"):
+        _pressure_observation(object(), role="baseline")
 
 
 def test_analyzer_accepts_complete_matrix_and_preserves_nonclaims():

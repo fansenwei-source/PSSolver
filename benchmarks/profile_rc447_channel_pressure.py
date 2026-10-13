@@ -10,6 +10,7 @@ memory observations.  Threshold adjudication belongs to
 from __future__ import annotations
 
 import argparse
+from collections.abc import Mapping
 from dataclasses import asdict
 import json
 import math
@@ -107,33 +108,95 @@ def _pointwise_metadata(adapter) -> dict[str, object]:
     return dict(kernels.metadata())
 
 
-def _pressure_observation(adapter) -> dict[str, object]:
-    """Preserve each version's public diagnostics without inference."""
+def _pressure_static_model(adapter):
+    """Return the pressure owner used by the frozen Channel profiler layer."""
 
-    diagnostics = adapter.flow_diagnostics()
-    if "pressure" not in diagnostics:
+    try:
+        return adapter.solver.model.static_model
+    except AttributeError as exc:
+        raise RuntimeError(
+            "Channel profile adapter does not expose solver.model.static_model"
+        ) from exc
+
+
+def _pressure_count(value: object, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+        raise RuntimeError(f"{name} must be a positive integer")
+    return value
+
+
+def _pressure_residual(value: object, name: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise RuntimeError(f"{name} must be a finite non-negative number")
+    result = float(value)
+    if not math.isfinite(result) or result < 0.0:
+        raise RuntimeError(f"{name} must be a finite non-negative number")
+    return result
+
+
+def _pressure_observation(adapter, *, role: str) -> dict[str, object]:
+    """Read the exact diagnostics schema available to each frozen Provider role.
+
+    Both installed Provider versions are driven through
+    ``LegacyChannelRuntimeAdapter``.  That adapter does not define
+    ``flow_diagnostics()``; the established Channel benchmark surface owns the
+    pressure diagnostics on ``solver.model.static_model``.  Role selection is
+    explicit so a malformed candidate cannot silently fall back to the legacy
+    evidence schema.
+    """
+
+    if role not in ROLES:
+        raise ValueError(f"unsupported role: {role!r}")
+    pressure = _pressure_static_model(adapter)
+    if role == "baseline":
+        iterations = _pressure_count(
+            getattr(pressure, "last_pressure_iterations", None),
+            "legacy last_pressure_iterations",
+        )
+        residual = _pressure_residual(
+            getattr(pressure, "last_pressure_relative_residual", None),
+            "legacy last_pressure_relative_residual",
+        )
         return {
             "schema": "legacy_public_flow_diagnostics.v1",
-            "achieved_iteration_count": diagnostics["last_pressure_iterations"],
+            "achieved_iteration_count": iterations,
             "termination_reason": "not_exposed_by_legacy_schema",
             "termination_reason_observed": False,
             "acceptable": None,
             "acceptable_observed": False,
-            "achieved_normalized_residual": diagnostics[
-                "last_pressure_relative_residual"
-            ],
+            "achieved_normalized_residual": residual,
         }
-    pressure = diagnostics["pressure"]
+
+    diagnostics = getattr(pressure, "last_pressure_diagnostics", None)
+    if not isinstance(diagnostics, Mapping):
+        raise RuntimeError(
+            "candidate static pressure model does not expose "
+            "last_pressure_diagnostics"
+        )
+    if diagnostics.get("schema_version") != 2:
+        raise RuntimeError("candidate pressure diagnostics schema_version must be 2")
+    iterations = _pressure_count(
+        diagnostics.get("achieved_iteration_count"),
+        "candidate achieved_iteration_count",
+    )
+    termination_reason = diagnostics.get("termination_reason")
+    if not isinstance(termination_reason, str) or not termination_reason:
+        raise RuntimeError("candidate termination_reason must be a non-empty string")
+    acceptable = diagnostics.get("acceptable")
+    if not isinstance(acceptable, bool):
+        raise RuntimeError("candidate acceptable must be a boolean")
+    residual = _pressure_residual(
+        diagnostics.get("achieved_normalized_residual"),
+        "candidate achieved_normalized_residual",
+    )
     return {
-        "schema": f"channel_pressure_diagnostics.v{pressure['schema_version']}",
-        "achieved_iteration_count": pressure["achieved_iteration_count"],
-        "termination_reason": pressure["termination_reason"],
+        "schema": "channel_pressure_diagnostics.v2",
+        "achieved_iteration_count": iterations,
+        "termination_reason": termination_reason,
         "termination_reason_observed": True,
-        "acceptable": pressure["acceptable"],
+        "acceptable": acceptable,
         "acceptable_observed": True,
-        "achieved_normalized_residual": pressure[
-            "achieved_normalized_residual"
-        ],
+        "achieved_normalized_residual": residual,
     }
 
 
@@ -200,7 +263,7 @@ def run_profile(
             adapter.advance(1)
             torch.cuda.synchronize(device)
             samples.append(time.perf_counter() - started)
-            pressure_history.append(_pressure_observation(adapter))
+            pressure_history.append(_pressure_observation(adapter, role=role))
         transform_summary = timer.summarize()
         counters_after_profile = _dynamo_counter_snapshot()
         adapter.synchronize_for_observation()

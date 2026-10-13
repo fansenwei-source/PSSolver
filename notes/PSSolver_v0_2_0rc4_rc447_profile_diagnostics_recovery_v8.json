@@ -1,0 +1,106 @@
+{
+  "schema": "pssolver.rc4_4_7.profile_diagnostics_recovery_plan.v8",
+  "phase": "RC4.4.7-recovery-v8",
+  "status": "LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED",
+  "qualification_parent_commit": "861458ed09b7b06f5b5f3f81a5a29c38476aba8b",
+  "baseline_provider_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+  "candidate_provider_commit": "5b4ee16c81a3ae452ffcf8992a84a738a76ff629",
+  "consumer_source_commit": "0cf55b4fb699ff40433000f5b4efe52b1d33546b",
+  "failed_v7_evidence": {
+    "job_id": "10878109",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:01:15",
+    "node": "gpu-h100-4-0",
+    "classification": "FAIL_RC4_4_7_SUPPORT_IMPORT_RECOVERY_H100_QUALIFICATION_HARNESS",
+    "failure_classification": "external_profile_helper_baseline_diagnostics_api_mismatch",
+    "control_directory": "/home/fansenwei/pssolver_rc447_pressure_h100_5b4ee16_0cf55b4_20261012_recovery_v7",
+    "checksums_sha256": "67e79ce8492bb1b640fd308ae229bd9f89b8eb78afb8c5891bdc73cbfa8ca0e1",
+    "checksums_verified": 1477,
+    "cuda_tests_passed": 7,
+    "correctness_gates_passed": 9,
+    "profile_json_persisted": 0,
+    "automatic_retry": false
+  },
+  "failure_cause": {
+    "failed_profile": "baseline_R128x20x20_trial1",
+    "exception_type": "AttributeError",
+    "exception_message": "'LegacyChannelRuntimeAdapter' object has no attribute 'flow_diagnostics'",
+    "actual_diagnostics_owner": "adapter.solver.model.static_model",
+    "solver_constructed": true,
+    "warmup_steps_completed": 10,
+    "first_timed_step_completed": true,
+    "solver_failure": false,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "performance_failure": false,
+    "cuda_failure": false
+  },
+  "diagnostics_compatibility_contract": {
+    "adapter_type": "pssolver.runtime.channel_active_nematics.LegacyChannelRuntimeAdapter",
+    "diagnostics_owner": "adapter.solver.model.static_model",
+    "role_selection_explicit": true,
+    "baseline_schema": "legacy_public_flow_diagnostics.v1",
+    "baseline_fields": [
+      "last_pressure_iterations",
+      "last_pressure_relative_residual"
+    ],
+    "candidate_schema": "channel_pressure_diagnostics.v2",
+    "candidate_field": "last_pressure_diagnostics",
+    "candidate_schema_version": 2,
+    "candidate_silent_legacy_downgrade_allowed": false,
+    "missing_or_malformed_diagnostics_fail_closed": true,
+    "provider_runtime_modified": false
+  },
+  "qualification_support_successors": {
+    "benchmarks/profile_rc447_channel_pressure.py": {
+      "historical_sha256": "d86a64de9d74676fb4f8e461232f333fa003805f01657c9accd7a6a28b1119f2",
+      "current_sha256": "51ac11a0c4ddd63160497839e1b66fab86c1611139e101c4d88c52ba230a8919",
+      "change_scope": "external_profile_helper_diagnostics_compatibility_only",
+      "reason": "read each installed Provider role's exact pressure diagnostics from the established Channel benchmark owner and fail closed on role or schema mismatch"
+    },
+    "tests/test_rc447_pressure_h100_support.py": {
+      "historical_sha256": "2dde13e058795049d49ad56884756c1da36f2fa594c370133e5cf4d1365a13f4",
+      "current_sha256": "94a84ebd4f4b7efb9434077fcb0ee0f555b8e6fc24a153616d0bf4e2211bb3db",
+      "change_scope": "external_profile_helper_diagnostics_compatibility_only",
+      "reason": "model the real nested adapter surface and reject missing, downgraded, malformed, non-finite, or role-inconsistent pressure evidence"
+    }
+  },
+  "cpu_validation": {
+    "focused_support_tests": {
+      "passed": 36,
+      "failed": 0,
+      "skipped": 0
+    },
+    "targeted_suite": {
+      "passed": 73,
+      "failed": 0,
+      "skipped": 0
+    },
+    "full_suite": {
+      "passed": 3183,
+      "failed": 0,
+      "skipped": 0,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "seconds": 210.51,
+      "environment": "/home/fansenwei/anaconda3/envs/Nematics3D/bin/python3.12"
+    }
+  },
+  "thresholds_changed": false,
+  "scientific_contract_changed": false,
+  "profile_matrix_changed": false,
+  "correctness_matrix_changed": false,
+  "provider_runtime_modified": false,
+  "PSSolver_Control_modified": false,
+  "nematics3d_modified": false,
+  "production_default_changed": false,
+  "qualification_complete": false,
+  "rc4_4_7_complete": false,
+  "eligible_for_rc4_5_planning": false,
+  "authorization": {
+    "push_authorized": false,
+    "single_h100_submission_authorized": false,
+    "automatic_retry_authorized": false
+  }
+}
