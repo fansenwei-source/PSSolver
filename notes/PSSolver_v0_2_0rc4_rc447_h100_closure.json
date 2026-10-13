@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.4.7 Channel pressure H100 cumulative closure",
+  "phase": "RC4.4.7",
+  "status": "complete",
+  "classification": "PASS_RC4_4_7_CHANNEL_PRESSURE_SINGLE_H100_CUMULATIVE_CLOSURE",
+  "known_issues": [
+    {"id": "B25", "state_before": "partial_residual", "state_after": "closed_verified"},
+    {"id": "B28", "state_before": "partial_residual", "state_after": "closed_verified"},
+    {"id": "B29", "state_before": "partial_residual", "state_after": "closed_verified"}
+  ],
+  "git_identity": {
+    "released_baseline": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+    "rc4_4_planning_commit": "0ef789cb91159d2fb4982468ef0531d9932b5b2a",
+    "rc4_4_analysis_commit": "0ce8828508982d3d156f31fecd2533328acc095c",
+    "pressure_contract_commit": "069c4d84f26763699e4c92d9482eb492a87ae7fc",
+    "pressure_policy_commit": "cf7431c6336bb700183d6b9862d1e32cd18f171a",
+    "metadata_identity_commit": "dc8c87abc7b216231d09ca12fcc7e76b2249a7ab",
+    "installed_cpu_closure_commit": "908b3b72ac4625543349f3f752b485fa970efd6a",
+    "qualified_runtime_commit": "95208795a73197c7a822303a911ea1a29a1f2c96",
+    "qualification_commit": "51f47e9f06bd3e019d785305bff47c80f5519b10",
+    "consumer_source_commit": "0cf55b4fb699ff40433000f5b4efe52b1d33546b",
+    "branch": "fix/v0.2.0rc4-audit"
+  },
+  "local_records": {
+    "rc4_4_0_plan": {"path": "notes/PSSolver_v0_2_0rc4_rc440_pressure_contract_plan.json", "sha256": "11eef6e67ccf040462ee982a60817ff65bb04e4c13b554aab199d1382d43bb10"},
+    "rc4_4_1_analysis": {"path": "notes/PSSolver_v0_2_0rc4_rc441_pressure_adjudication.json", "sha256": "4e4f1044423c9af3964336f954e0e8785281c5e87b0031d7abd31d6f686b9af1"},
+    "rc4_4_2_contract": {"path": "notes/PSSolver_v0_2_0rc4_rc442_pressure_contract.json", "sha256": "98cb05bb9e34617ae8bb1a4a7eab531a9ccfb5a73728a7de50c71b1674eafdf8"},
+    "rc4_4_3_implementation": {"path": "notes/PSSolver_v0_2_0rc4_rc443_pressure_policy_implementation.json", "sha256": "adc018bc7751e4330ec76118b724448341bd17a2883006ba37721e3069e85ab5"},
+    "rc4_4_4_connection": {"path": "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json", "sha256": "c0c1b72d12bceea7a5fd9c5bd7b58487791e3d0618c2fc491bc59d7ecb189466"},
+    "rc4_4_5_installed_cpu": {"path": "notes/PSSolver_v0_2_0rc4_rc445_installed_cpu_closure.json", "sha256": "e455e89d968424cf220a4fbd3b6c6e8f4585334e630871b04a97ed81640d0467"},
+    "rc4_4_7_plan": {"path": "notes/PSSolver_v0_2_0rc4_rc447_h100_qualification_plan.json", "sha256": "30aa7de565b8d69dfff7db418ba5c281b61104f10c9d82e24f2bc2e5c930dd03"},
+    "bounded_operator_recovery": {"path": "notes/PSSolver_v0_2_0rc4_rc447_pressure_bounded_operator_recovery_v11.json", "sha256": "f3caf86c397e0c8a6d7987a9f361977a2505cf2bb1af024314e0c24fa7be2c97"},
+    "qualification_identity": {"path": "notes/PSSolver_v0_2_0rc4_rc447_bounded_operator_qualification_v11.json", "sha256": "b97f8cf2fc5a5041ee3b84a59b6631371b44f1f6689913c0610abaf8da0a1fab"}
+  },
+  "external_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc447_pressure_h100_9520879_0cf55b4_20261013_recovery_v11",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_rc447_pressure_h100_9520879_0cf55b4_20261013_recovery_v11",
+    "manifest_entries": 1534,
+    "manifest_sha256": "69de4b004f178e3d0427227cf5aa83b301899b4cce1ea8f54169eb7ffdbfbaf4",
+    "complete_marker_sha256": "f1f09d2fe98ab316efae067c964e32edf9cf2952e729e101a7e158e7641a63cd",
+    "summary_sha256": "dedfb9f81c00dfdce792c35aa8db8b712ae5139340ae4272cbbcd746bcbdf417",
+    "final_report_sha256": "ac849b92d6ba401b6cfa464390f715daf2f17569409ebbac937699e466be1ead",
+    "source_evidence_manifest_sha256": "9deb2fb5b56bcfe4cb63c0ac4c999d3eb5ab4e5170cd4c6905d5570c36f37cb8",
+    "analysis_sha256": "990bb4336945281e5087e36b17b2c9f469c6363a7593afa94e5f86e64459e7e9",
+    "correctness_report_sha256": "642db955313416754e69ef64c1888d379c78837c3e94ec7b5bf53c5cb8efd973",
+    "cuda_report_sha256": "a394f4b81a034c955bfd74cb8b296db39e3e41255af267011ab9f06acd130ab5",
+    "environment_sha256": "e1c6e24c04f8adff26203a40b58071d78d5913d8f4d06b29a7a087b1d4b4cba3",
+    "slurm_final_sha256": "1a83369a81145c9422de8cba0d6a01828cd2a4fadb4cedf82cad2c19815557e4",
+    "final_worktrees_sha256": "0713ce0252f44d6018be33bf30965e508fab18f22b7bfdaa70dfd957918b950a",
+    "job_complete_sha256": "33540fdc37f33400817528565608ef314b28da476cf5547cfb97d83801b9fddc"
+  },
+  "h100_job": {
+    "job_id": 10878767,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:02:28",
+    "node": "gpu-h100-4-0",
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "requeue": 0,
+    "restarts": 0,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "second_job_submitted": false
+  },
+  "qualification": {
+    "cuda_only_tests_passed": 7,
+    "correctness_gates_passed": 9,
+    "correctness_gates_expected": 9,
+    "profile_count_passed": 12,
+    "profile_count_expected": 12,
+    "profile_completed_steps": 60,
+    "finite": true,
+    "forward_transforms_per_step": 11.0,
+    "inverse_transforms_per_step": 36.0,
+    "graph_breaks": 0,
+    "runtime_fallback_used": false,
+    "compile_fallback_used": false,
+    "tf32_matmul": false,
+    "tf32_cudnn": false
+  },
+  "performance": {
+    "thresholds": {
+      "mean_timestep_ratio_max": 1.05,
+      "median_timestep_ratio_max": 1.05,
+      "every_paired_timestep_ratio_max": 1.10,
+      "peak_allocated_ratio_max": 1.05,
+      "peak_reserved_role": "diagnostic_only"
+    },
+    "R128x20x20": {
+      "mean_candidate_over_baseline": 1.0395890577595956,
+      "median_candidate_over_baseline": 1.029793719003507,
+      "maximum_paired_candidate_over_baseline": 1.0591670898402368,
+      "peak_allocated_candidate_over_baseline": 1.0008513826454162,
+      "peak_reserved_candidate_over_baseline_diagnostic": 1.0
+    },
+    "R512x40x40": {
+      "mean_candidate_over_baseline": 1.026498480095705,
+      "median_candidate_over_baseline": 1.0240459304065144,
+      "maximum_paired_candidate_over_baseline": 1.0351627254575726,
+      "peak_allocated_candidate_over_baseline": 1.004914382246794,
+      "peak_reserved_candidate_over_baseline_diagnostic": 1.0114942528735633
+    }
+  },
+  "claim_boundary": {
+    "B25_scale_robust_pressure_contract_closed": true,
+    "B28_scoped_capability_and_runtime_connection_closed": true,
+    "B29_pressure_policy_and_diagnostics_v2_closed": true,
+    "consumer_gradient_checkpoint_and_negative_gates_qualified": true,
+    "production_default_changed": false,
+    "automatic_merge_authorized": false,
+    "default_promotion_authorized": false
+  },
+  "scope": {
+    "PSSolver_Control_modified_by_closure": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "qualification_complete": true,
+    "rc4_4_7_complete": true,
+    "rc4_4_complete": true,
+    "eligible_for_rc4_5_planning": true,
+    "rc4_5_implementation_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "eligible_for_release": false
+  }
+}

@@ -17,8 +17,8 @@
 
 | 状态 | 数量 | 含义 |
 |---|---:|---|
-| `closed_verified` | 26 | 目标行为已有回归或资格证据 |
-| `partial_residual` | 12 | 主问题部分缓解，但仍有路径或语义缺口 |
+| `closed_verified` | 29 | 目标行为已有回归或资格证据 |
+| `partial_residual` | 9 | 主问题部分缓解，但仍有路径或语义缺口 |
 | `accepted_limitation` | 3 | 已知且明确接受，不作为当前正确性修复 |
 | `deferred_architecture` | 9 | 架构债务，推迟到正确性关闭之后 |
 
@@ -42,11 +42,11 @@
 
 ### rc4.4：压力求解合同
 
-处理 B25、B28、B29。统一 fixed-work 与 tolerance 的优先级、极端尺度归一化、停止后置条件和 public diagnostics。该批次会触及 functional Consumer 的数学合同，需要 PSSolver-Control 重新跑梯度、Taylor、checkpoint 和 H100 门禁。
+处理 B25、B28、B29。该批次已经完成：fixed-work 与 tolerance 的优先级、active-mode RMS 极端尺度归一化、scale-relative breakdown、停止后置条件、diagnostics v2 和 scoped capability/runtime metadata 已在生产、functional 与 transpose 路径连接。PSSolver-Control 的梯度、Taylor、checkpoint、负向门禁以及单次 H100 累计资格均通过；R128×20×20 和 R512×40×40 的性能、显存与 transform-call 门禁通过。权威关闭记录为 `PSSolver_v0_2_0rc4_rc447_h100_closure.json`。
 
 ### rc4.5：跨 runtime 鲁棒性
 
-处理 B7、B9、B11、B13、B15、B17、B21、B24、B27。包括 checkpoint 降级/路径、TF32 全局状态、device 校验、异常类型、diagnostics schema、目录权限与原子发布。
+处理 B7、B9、B11、B13、B15、B17、B21、B24、B27。RC4.5.0 已把它们拆成 checkpoint transactionality、boundary semantics、public validation/observability 和 accelerator global state 四个 cohort，并规定先执行 RC4.5.1 analysis-only 重放。当前只完成规划，不授权实现、Control 修改或 H100。权威规划记录为 `PSSolver_v0_2_0rc4_rc450_cross_runtime_robustness_plan.json`。
 
 ### 0.2 之后的架构去重
 
@@ -58,4 +58,4 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 ## 下一项实现
 
-`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity` 与 `rc4.3_lifting_correctness` 均已完成；B5、B8、B10、B20、B22、N3、N4、N5 和 N6 已转为 `closed_verified`。RC4.4.0 规划、RC4.4.1 analysis-only 裁决与 RC4.4.2 公共合同冻结也已完成：B25 的 active-mode RMS、无下溢 magnitude schema、精确 2 的幂工作缩放和相对尺度 breakdown 已冻结；B28 已冻结 declaration/runtime equality 和组件是否为 runtime、是否连接到 executable runtime 的分层字段；B29 已冻结 fixed-work、tolerance fail-closed、diagnostics schema v2、异常和 warm-start 后置条件。下一步是 RC4.4.3 Provider 实现。B25、B28、B29 仍为 `partial_residual`；当前仍不授权 RC4.4.3、Control 修改、生产默认值、自动 merge、H100 或发布。
+`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity`、`rc4.3_lifting_correctness` 与 `rc4.4_pressure_contract` 均已完成；B25、B28、B29 已随 RC4.4.7 累计 H100 关闭转为 `closed_verified`。RC4.5.0 规划也已完成。下一步是 RC4.5.1 的只读 residual adjudication：先在当前已资格 runtime 上逐项重放九个遗留，再决定哪些需要实现、哪些已被后续改动实质关闭、哪些应冻结公开支持边界。当前仍不授权 RC4.5 源码实现、PSSolver-Control 修改、生产默认值、自动 merge、H100 或发布。

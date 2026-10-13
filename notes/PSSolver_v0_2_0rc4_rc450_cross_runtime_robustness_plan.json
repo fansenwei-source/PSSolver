@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver RC4.5.0 cross-runtime robustness plan",
+  "phase": "RC4.5.0",
+  "status": "planning_complete_analysis_and_implementation_not_authorized",
+  "classification": "READY_RC4_5_1_CROSS_RUNTIME_RESIDUAL_ADJUDICATION_NOT_EXECUTED",
+  "baseline": {
+    "released_rc3_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+    "planning_parent_commit": "51f47e9f06bd3e019d785305bff47c80f5519b10",
+    "qualified_rc4_4_runtime_commit": "95208795a73197c7a822303a911ea1a29a1f2c96",
+    "branch": "fix/v0.2.0rc4-audit",
+    "rc4_4_closure_record": "notes/PSSolver_v0_2_0rc4_rc447_h100_closure.json",
+    "rc4_4_closure_record_sha256": "ee6c81e94e67ba38d280365adc211f8e32ec933fcccaf5474afb511d1b6c0482",
+    "known_issues_record": "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json",
+    "known_issues_record_at_planning_parent_sha256": "059aaf772bcb9c1538f7b89716da0d63fd3edacae5e5dd80f1b5bf96e52fb164",
+    "source_audit_sha256": "140986b3f6f20b0c0c874b21df02b037cf8ee1bb32e43dd11bc2d638cd9b8f76"
+  },
+  "issues": [
+    {
+      "id": "B7",
+      "cohort": "checkpoint_transactionality",
+      "required_disposition": "reject_downgrade_path_filename_and_extra_key_ambiguity_before_payload_exposure",
+      "residual_to_reproduce": "functional v2-to-v1 downgrade and production path or filename edge cases may bypass the intended integrity contract"
+    },
+    {
+      "id": "B9",
+      "cohort": "boundary_semantics",
+      "required_disposition": "accept_director_equivalent_normal_signs_or_document_a_stricter_public_orientation_contract_with_actionable_diagnostics",
+      "residual_to_reproduce": "anchoring is even in the director normal but the helper historically required one outward sign and reported weak diagnostics"
+    },
+    {
+      "id": "B11",
+      "cohort": "accelerator_global_state",
+      "required_disposition": "scope_tf32_policy_without_leaking_caller_global_state_across_success_or_failure",
+      "residual_to_reproduce": "runtime construction mutates torch matmul precision and CUDA or cuDNN TF32 flags globally and coverage differs by runtime family"
+    },
+    {
+      "id": "B13",
+      "cohort": "public_validation_and_observability",
+      "required_disposition": "validate_device_and_pressure_options_consistently_before_output_or_runtime_side_effects",
+      "residual_to_reproduce": "invalid devices and pressure options historically reached different stages in Plane, legacy Channel, Periodic and complete-stress Channel"
+    },
+    {
+      "id": "B15",
+      "cohort": "public_validation_and_observability",
+      "required_disposition": "publish_one_versioned_diagnostics_envelope_while_retaining_family_specific_payloads",
+      "residual_to_reproduce": "diagnostic column names, dtypes and metadata persistence differ among the four public application families"
+    },
+    {
+      "id": "B17",
+      "cohort": "public_validation_and_observability",
+      "required_disposition": "align_catalog_compiler_lowering_and_public_exception_translation",
+      "residual_to_reproduce": "some unsupported combinations remain catalogued or leak SimulationLoweringError, ValueError or TypeError instead of one public compilation failure"
+    },
+    {
+      "id": "B21",
+      "cohort": "boundary_semantics",
+      "required_disposition": "either_support_extreme_symmetric_robin_impedance_or_reject_it_at_a_published_finite_bound",
+      "residual_to_reproduce": "symmetric strong impedance at approximately 1e15 and above can fail root bracketing"
+    },
+    {
+      "id": "B24",
+      "cohort": "checkpoint_transactionality",
+      "required_disposition": "normalize_public_checkpoint_error_classes_without_hiding_the_failure_domain",
+      "residual_to_reproduce": "future format versions and filesystem shape failures can map to different public exception families by runtime"
+    },
+    {
+      "id": "B27",
+      "cohort": "checkpoint_transactionality",
+      "required_disposition": "use_atomic_publication_and_umask_respecting_permissions_for_every_checkpoint_writer",
+      "residual_to_reproduce": "writer atomicity and directory modes differ and hard-coded chmod can override the caller umask policy"
+    }
+  ],
+  "cohorts": [
+    {
+      "id": "checkpoint_transactionality",
+      "issues": ["B7", "B24", "B27"],
+      "invariant": "a failed or rejected save or restore cannot expose a partial target, mutate a restore target, silently downgrade integrity, or invent path semantics"
+    },
+    {
+      "id": "boundary_semantics",
+      "issues": ["B9", "B21"],
+      "invariant": "accepted boundary declarations have explicit mathematical equivalence and finite support bounds, and unsupported inputs reject before operator materialization"
+    },
+    {
+      "id": "public_validation_and_observability",
+      "issues": ["B13", "B15", "B17"],
+      "invariant": "catalogue, compiler, runtime construction, exceptions and persisted diagnostics describe the same supported behavior"
+    },
+    {
+      "id": "accelerator_global_state",
+      "issues": ["B11"],
+      "invariant": "a PSSolver call may apply its requested precision policy during owned execution but restores every caller-owned torch global flag on normal and exceptional exit"
+    }
+  ],
+  "scope": {
+    "application_families": [
+      "plane_legacy_production",
+      "plane_compiled_v2",
+      "periodic_complete_stress",
+      "channel_legacy",
+      "channel_compiled_v2",
+      "channel_complete_stress",
+      "periodic_functional",
+      "channel_functional"
+    ],
+    "checkpoint_families": [
+      "periodic_production",
+      "channel_production",
+      "plane_production",
+      "finite_q_anchoring",
+      "periodic_functional",
+      "channel_functional"
+    ],
+    "diagnostics_compatibility": "retain_existing_family_payloads_and_files_while_adding_a_shared_versioned_envelope",
+    "public_exception_compatibility": "existing_specific_public_subclasses_may_be_retained_but_raw_internal_exceptions_must_not_escape_public_compilation_or_checkpoint_entry_points",
+    "numerical_equations_changed": false,
+    "time_integrator_changed": false,
+    "spectral_transform_algorithm_changed": false,
+    "pressure_algorithm_changed": false,
+    "checkpoint_tensor_layout_changed_by_plan": false,
+    "post_0_2_R1_to_R9_refactor_authorized": false,
+    "new_geometry_or_model_added": false,
+    "PSSolver_Control_modified_by_rc4_5_0": false,
+    "nematics3d_modified": false,
+    "production_default_selection_changed": false
+  },
+  "rc4_5_1_adjudication": {
+    "kind": "analysis_only",
+    "source_changes_allowed": false,
+    "goal": "reproduce each residual against the qualified RC4.4 runtime and separate already-closed behavior from a still-live defect before freezing implementation details",
+    "required_probe_ids": [
+      "C01_functional_checkpoint_downgrade_and_extra_keys",
+      "C02_production_checkpoint_filename_path_and_restore_nonmutation",
+      "C03_all_writer_atomicity_modes_umask_and_failure_cleanup",
+      "C04_checkpoint_public_exception_truth_table",
+      "B01_anchoring_normal_sign_equivalence_and_diagnostics",
+      "B02_robin_symmetric_impedance_scale_sweep_with_independent_reference",
+      "V01_device_and_pressure_validation_side_effect_matrix",
+      "V02_capability_compiler_lowering_exception_truth_table",
+      "V03_four_family_diagnostics_schema_and_persistence_inventory",
+      "T01_tf32_global_state_success_exception_and_nested_call_matrix"
+    ],
+    "required_outcomes_per_issue": [
+      "REPRODUCED_REPAIR_REQUIRED",
+      "ALREADY_CLOSED_WITH_NEW_EVIDENCE",
+      "PUBLIC_BOUND_REQUIRED",
+      "ACCEPTED_LIMITATION_WITH_EXPLICIT_CONTRACT"
+    ],
+    "fail_closed_rules": [
+      "no issue may be marked closed from source inspection alone",
+      "no failed probe may mutate existing checkpoint evidence or production output",
+      "no CUDA observation may be inferred from a login-node CPU result",
+      "no exact implementation or threshold may be frozen before its reproducer and independent oracle are recorded"
+    ]
+  },
+  "checkpoint_contract_to_freeze_in_rc4_5_2": {
+    "integrity_downgrade_requires_explicit_versioned_reader": true,
+    "unregistered_extra_metadata_policy_must_be_explicit": true,
+    "stored_payload_paths_must_be_relative_normalized_and_confined_to_checkpoint_root": true,
+    "canonical_filename_checks_must_be_explicit_where_filename_is_identity": true,
+    "all_validation_before_target_mutation": true,
+    "all_writers_stage_then_atomically_publish": true,
+    "published_modes_follow_creation_mode_and_caller_umask_not_hard_coded_world_readability": true,
+    "failed_publication_leaves_no_target_or_staging_residue": true,
+    "public_error_taxonomy_distinguishes_not_found_exists_integrity_compatibility_and_io": true
+  },
+  "boundary_contract_to_freeze_in_rc4_5_2": {
+    "anchoring_Q_normal_sign_equivalence_must_be_adjudicated": true,
+    "accepted_normal_metadata_and_error_messages_must_name_axis_side_expected_equivalence": true,
+    "robin_extreme_scale_decision": "support_with_stable_oracle_or_publish_and_enforce_a_finite_bound",
+    "robin_root_monotonicity_finiteness_and_residual_required": true,
+    "independent_high_precision_reference_required": true,
+    "existing_qualified_range_byte_identity_required": true
+  },
+  "validation_and_diagnostics_contract_to_freeze_in_rc4_5_2": {
+    "canonical_device_parser_shared_semantics_required": true,
+    "invalid_configuration_rejects_before_output_creation": true,
+    "capability_catalog_and_compiler_truth_table_equal": true,
+    "public_compilation_entry_points_translate_internal_binding_lowering_value_and_type_failures": true,
+    "diagnostics_envelope_fields": [
+      "schema_version",
+      "application_family",
+      "runtime_path",
+      "enabled",
+      "count",
+      "steps",
+      "artifact_paths",
+      "payload_schema",
+      "payload_units"
+    ],
+    "legacy_diagnostic_payload_removal_allowed": false,
+    "legacy_diagnostic_filename_change_allowed": false
+  },
+  "tf32_contract_to_freeze_in_rc4_5_2": {
+    "caller_state_fields": [
+      "torch_float32_matmul_precision",
+      "cuda_matmul_allow_tf32",
+      "cudnn_allow_tf32"
+    ],
+    "record_before_effective_and_restored_values": true,
+    "restore_on_success": true,
+    "restore_on_exception": true,
+    "nested_calls_restore_stack_order": true,
+    "CPU_and_CUDA_paths_both_covered": true,
+    "metadata_reports_requested_and_effective_policy_without_claiming_process_global_ownership": true,
+    "runtime_default_changed": false
+  },
+  "stages": [
+    {"stage": "RC4.5.1", "name": "cross-runtime residual adjudication", "kind": "analysis_only", "issues": ["B7", "B9", "B11", "B13", "B15", "B17", "B21", "B24", "B27"]},
+    {"stage": "RC4.5.2", "name": "public robustness contract freeze", "kind": "contract", "issues": ["B7", "B9", "B11", "B13", "B15", "B17", "B21", "B24", "B27"]},
+    {"stage": "RC4.5.3", "name": "checkpoint transactionality and exception implementation", "kind": "implementation", "issues": ["B7", "B24", "B27"]},
+    {"stage": "RC4.5.4", "name": "boundary semantics and Robin support-bound implementation", "kind": "implementation", "issues": ["B9", "B21"]},
+    {"stage": "RC4.5.5", "name": "public validation capability and diagnostics implementation", "kind": "implementation", "issues": ["B13", "B15", "B17"]},
+    {"stage": "RC4.5.6", "name": "scoped TF32 state implementation", "kind": "implementation", "issues": ["B11"]},
+    {"stage": "RC4.5.7", "name": "installed-wheel CPU cumulative closure and consumer-impact adjudication", "kind": "installed_wheel_qualification", "issues": ["B7", "B9", "B13", "B15", "B17", "B21", "B24", "B27"]},
+    {"stage": "RC4.5.8", "name": "single-H100 TF32 and cumulative non-regression closure", "kind": "single_h100_qualification", "issues": ["B11"]}
+  ],
+  "consumer_contract": {
+    "requalification_decision": "case_by_case_after_rc4_5_1",
+    "requalification_required_if": [
+      "functional checkpoint schema, error taxonomy or restore semantics change",
+      "functional diagnostics public schema changes",
+      "functional runtime identity or declared capability changes",
+      "TF32 policy changes the functional execution boundary observed by the consumer"
+    ],
+    "requalification_not_required_for": [
+      "production-only file permission repair with no shared helper or schema delta",
+      "error-message-only improvement that preserves the public exception class and behavior",
+      "documentation of an unchanged finite Robin support bound"
+    ],
+    "PSSolver_Control_changes_authorized_by_rc4_5_0": false,
+    "consumer_source_commit_must_be_frozen_before_any_consumer_qualification": true
+  },
+  "cpu_and_package_contract": {
+    "targeted_reproducer_before_source_change": true,
+    "full_CPU_suite_required_after_each_implementation_cohort": true,
+    "existing_optional_nematics3d_skip_may_remain": true,
+    "new_skip_xfail_or_unlisted_deselect_forbidden": true,
+    "source_archive_and_wheel_required": true,
+    "installed_wheel_import_outside_source_checkout_required": true,
+    "pip_check_result_must_distinguish_the_preexisting_nematics3d_numpy_metadata_conflict": true,
+    "checkpoint_permission_tests_must_run_under_multiple_umasks": ["0022", "0077"],
+    "failure_injection_and_target_nonmutation_required": true
+  },
+  "h100_contract": {
+    "authorization_required_separately": true,
+    "single_formal_submission": true,
+    "automatic_retry": false,
+    "installed_wheels_only": true,
+    "decomposed_preflight_before_scientific_execution": true,
+    "tf32_before_effective_restored_matrix_required": true,
+    "success_exception_and_nested_restoration_required": true,
+    "all_login_node_cuda_only_tests_run_on_allocated_device": true,
+    "affected_runtime_smoke_and_profile_non_regression_required": true,
+    "thresholds_must_be_preregistered_before_submission": true,
+    "threshold_changes_after_observing_formal_results_forbidden": true,
+    "complete_marker_only_after_manifest_reverification": true
+  },
+  "reviewed_source_sha256": {
+    "pssolver/configuration/execution_device.py": "ed6513cc6c027a80608f3a30f7ef32b86d2378540bf3a0815511f9cd31d22dca",
+    "pssolver/functional/periodic_checkpoint.py": "85d882d1540f0af663b342d89626678538578dd58929c8e955a053b8c13f0c36",
+    "pssolver/functional/channel_checkpoint.py": "1afc80cb7b8978911437f7caf17bc29cf0055872dd38b3a6101f28edb1204fbe",
+    "pssolver/workflows/periodic_checkpoint.py": "e6a2642ff8a787813911cfd3ceb50a195e10cf117ecc899afe737872ed4b4cb6",
+    "pssolver/workflows/channel_checkpoint.py": "cb70a2a570a7c0260825e58a71ee003f71e0d1d666a2727bd88dad34672e9316",
+    "pssolver/workflows/plane_checkpoint.py": "b4b51a0b98a1da5c4ddf501bafcd7a57ff98d1da4c179818da3fb3716e147806",
+    "pssolver/workflows/finite_q_anchoring.py": "7e46875114adaeb1c0e9e120c67287603431b5d03c75f9012bf1fbb68d015902",
+    "pssolver/models/active_nematics/boundaries.py": "ba7d90e66731a7fc69027033809d93345cec9b15eafb731f81306f7503f47786",
+    "pssolver/planning/robin.py": "9dffd7d423e5d37f163ac3717526f2eb7eed7b7488437ce8a1bfedbdfd6c554a",
+    "pssolver/configuration/public_simulation_runner.py": "693da690460f607030235e02b15605f8fc25a918c8f0bff236591b2a05110fb9",
+    "pssolver/configuration/simulation_lowering.py": "e853935785db52dedd9ff30f2d279abea30c129dc53d2491a4f210c50c9f1061",
+    "pssolver/api/capabilities.py": "03bf98c42765869c4013694c85c252670c669386a63c3db1a8ae963e751aced6",
+    "pssolver/workflows/diagnostic_io.py": "ec7aa353b1cd30bb6b02e9832307aa1a69a68bf805be4ac9476d5cfff323cec5",
+    "pssolver/workflows/plane_observation.py": "9977b4998d2ac5840a71137f67e6396288e331233b13453709d90d5eb3f437b2",
+    "pssolver/workflows/channel_observation.py": "fec0e6b28aadb55fe03dd44d273574d33342bd33e72d9948348a0884e0f2b567",
+    "pssolver/workflows/periodic_beris_edwards.py": "aa4537b9ebdee6febdc6060a0906fd57b2d1fef0711ac41c7b98c55915e40cb5",
+    "pssolver/workflows/channel_beris_edwards.py": "7c5aaf239160932e5df31194040d70723fb3aead3607cca46207581b67c4c328"
+  },
+  "authorization": {
+    "planning_complete": true,
+    "rc4_5_1_analysis_authorized": false,
+    "rc4_5_contract_authorized": false,
+    "rc4_5_implementation_authorized": false,
+    "PSSolver_Control_modification_authorized": false,
+    "h100_submission_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}
