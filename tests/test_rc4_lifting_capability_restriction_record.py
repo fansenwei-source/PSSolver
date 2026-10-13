@@ -14,6 +14,7 @@ RECORD = ROOT / (
 RC444 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
 )
+RC454 = ROOT / "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json"
 
 
 def _record() -> dict[str, object]:
@@ -22,6 +23,19 @@ def _record() -> dict[str, object]:
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _resolve_successor_sha256(relative: str, historical: str) -> str:
+    resolved = historical
+    for path in (RC444, RC454):
+        successor = json.loads(path.read_text(encoding="utf-8")).get(
+            "historical_successor_sources", {}
+        ).get(relative)
+        if successor is None:
+            continue
+        if successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+    return resolved
 
 
 def test_rc433_records_the_frozen_restriction_and_parent_contract():
@@ -94,14 +108,7 @@ def test_rc433_sources_are_content_addressed_and_scope_is_narrow():
         if relative in superseded_by_rc434:
             continue
         actual = _sha256(ROOT / relative)
-        if actual == expected:
-            continue
-        successor = json.loads(RC444.read_text(encoding="utf-8"))[
-            "historical_successor_sources"
-        ][relative]
-        assert successor["historical_sha256"] == expected
-        assert successor["current_sha256"] == actual
-        assert successor["introduced_by_phase"] == "RC4.4.4"
+        assert _resolve_successor_sha256(relative, expected) == actual
     scope = record["scope"]
     assert all(value is False for value in scope.values())
     assert record["verification"]["H100_executed"] is False

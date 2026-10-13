@@ -36,6 +36,7 @@ from pssolver.io.checkpoint import (
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
+RC454 = ROOT / "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json"
 
 
 @contextmanager
@@ -309,8 +310,16 @@ def test_rc453_record_binds_contract_sources_and_scope():
         "B24": "closed_verified",
         "B27": "closed_verified",
     }
+    successors = json.loads(RC454.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, expected in record["source_sha256"].items():
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == expected
+        actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+        if actual == expected:
+            continue
+        registration = successors[relative]
+        assert registration["historical_sha256"] == expected
+        assert registration["current_sha256"] == actual
     parent = record["baseline"]["implementation_parent_commit"]
     for relative, registration in record[
         "historical_successor_sources"
@@ -371,7 +380,7 @@ def test_rc453_record_freezes_transaction_and_next_stage_boundary():
     }
 
 
-def test_known_issue_matrix_registers_rc453_without_authorizing_rc454():
+def test_known_issue_matrix_preserves_rc453_and_registers_rc454_successor():
     progress = json.loads(MATRIX.read_text(encoding="utf-8"))["progress"]
     record_hash = hashlib.sha256(RECORD.read_bytes()).hexdigest()
     assert progress["rc4_5_3_implementation_authorized"] is True
@@ -382,4 +391,7 @@ def test_known_issue_matrix_registers_rc453_without_authorizing_rc454():
     assert progress["rc4_5_3_record"] == RECORD.relative_to(ROOT).as_posix()
     assert progress["rc4_5_3_record_sha256"] == record_hash
     assert progress["eligible_for_rc4_5_4_implementation"] is True
-    assert progress["rc4_5_4_implementation_authorized"] is False
+    assert progress["rc4_5_4_implementation_authorized"] is True
+    assert progress["rc4_5_4_complete"] is True
+    assert progress["eligible_for_rc4_5_5_implementation"] is True
+    assert progress["rc4_5_5_implementation_authorized"] is False

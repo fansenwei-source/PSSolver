@@ -164,17 +164,46 @@ def _oriented_face_normal(
     value: object,
     description: str,
 ) -> np.ndarray:
-    normal = _unit_vector(value, description)
     axis, side = face
     if axis >= 3:
         raise ValueError("Q face axis must identify one of three dimensions")
     expected = np.zeros(3, dtype=float)
     expected[axis] = -1.0 if side is BoundarySide.LOWER else 1.0
-    if not np.allclose(normal, expected, rtol=0.0, atol=1.0e-10):
+    try:
+        normal = _unit_vector(value, description)
+    except (TypeError, ValueError) as exc:
+        try:
+            observed: object = tuple(
+                float(item)
+                for item in (
+                    value.detach().cpu().reshape(-1).tolist()
+                    if torch.is_tensor(value)
+                    else np.asarray(value).reshape(-1).tolist()
+                )
+            )
+        except (AttributeError, TypeError, ValueError):
+            observed = repr(value)
         raise ValueError(
-            f"{description} must match the oriented face normal"
+            f"{description} is invalid; axis={axis!r}, side={side.value!r}, "
+            f"expected_outward_normal={tuple(expected)!r}, "
+            f"observed_normal={observed!r}, "
+            "accepted_equivalence='parallel_or_antiparallel'; "
+            f"validation_error={str(exc)!r}"
+        ) from exc
+    parallel = np.allclose(normal, expected, rtol=0.0, atol=1.0e-10)
+    antiparallel = np.allclose(normal, -expected, rtol=0.0, atol=1.0e-10)
+    if not (parallel or antiparallel):
+        raise ValueError(
+            f"{description} must be parallel or antiparallel to the oriented "
+            f"face normal; axis={axis!r}, side={side.value!r}, "
+            f"expected_outward_normal={tuple(expected)!r}, "
+            f"observed_normal={tuple(normal)!r}, "
+            "accepted_equivalence='parallel_or_antiparallel'"
         )
-    return normal
+    # Q is even in its uniaxial director.  Returning the oriented outward
+    # representative prevents signed-zero or input-sign differences from
+    # entering metadata and checkpoint identity.
+    return expected
 
 
 def _full_from_component_tuple(

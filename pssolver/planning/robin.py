@@ -19,6 +19,7 @@ from pssolver.core.domain import GridPlacement
 
 ROBIN_EIGENBASIS_PLAN_SCHEMA_VERSION = 1
 PLANE_ROBIN_SCALAR_LOWERING_SCHEMA_VERSION = 1
+MAX_QUALIFIED_DIMENSIONLESS_ROBIN_IMPEDANCE = 1.0e14
 
 
 def _canonical_sha256(value: object) -> str:
@@ -52,11 +53,43 @@ def _characteristic(value: float, lower: float, upper: float) -> float:
     ) / scale
 
 
+def validate_dimensionless_robin_impedance(
+    value: object,
+    description: str,
+) -> float:
+    """Validate one dimensionless Robin impedance in the qualified domain."""
+
+    if (
+        not isinstance(value, (int, float))
+        or isinstance(value, bool)
+        or not math.isfinite(float(value))
+    ):
+        raise ValueError(
+            f"{description} must be finite and in the closed interval "
+            "[0, 1e14]"
+        )
+    normalized = float(value)
+    if not 0.0 <= normalized <= MAX_QUALIFIED_DIMENSIONLESS_ROBIN_IMPEDANCE:
+        raise ValueError(
+            f"{description}={normalized!r} is outside the qualified closed "
+            "interval [0, 1e14]"
+        )
+    return normalized
+
+
 def _positive_robin_roots(
     count: int,
     lower: float,
     upper: float,
 ) -> tuple[float, ...]:
+    lower = validate_dimensionless_robin_impedance(
+        lower,
+        "lower dimensionless Robin impedance",
+    )
+    upper = validate_dimensionless_robin_impedance(
+        upper,
+        "upper dimensionless Robin impedance",
+    )
     product = lower * upper
     total = lower + upper
     roots: list[float] = []
@@ -387,18 +420,20 @@ def build_cell_centered_robin_eigenbasis_plan(
             raise ValueError(
                 f"P8.5.2 {name} Robin alpha must be non-negative"
             )
+    lower_impedance = validate_dimensionless_robin_impedance(
+        normalized_length * lower.alpha.value / lower.beta.value,
+        "lower dimensionless Robin impedance",
+    )
+    upper_impedance = validate_dimensionless_robin_impedance(
+        normalized_length * upper.alpha.value / upper.beta.value,
+        "upper dimensionless Robin impedance",
+    )
     if (
         lower.alpha.value == 0.0
         and upper.alpha.value == 0.0
     ):
         roots = tuple(index * math.pi for index in range(size))
     else:
-        lower_impedance = (
-            normalized_length * lower.alpha.value / lower.beta.value
-        )
-        upper_impedance = (
-            normalized_length * upper.alpha.value / upper.beta.value
-        )
         roots = _positive_robin_roots(
             size,
             lower_impedance,
@@ -416,7 +451,9 @@ def build_cell_centered_robin_eigenbasis_plan(
 __all__ = [
     "PLANE_ROBIN_SCALAR_LOWERING_SCHEMA_VERSION",
     "ROBIN_EIGENBASIS_PLAN_SCHEMA_VERSION",
+    "MAX_QUALIFIED_DIMENSIONLESS_ROBIN_IMPEDANCE",
     "CellCenteredRobinEigenbasisPlan",
     "PlaneRobinScalarLoweringPlan",
     "build_cell_centered_robin_eigenbasis_plan",
+    "validate_dimensionless_robin_impedance",
 ]

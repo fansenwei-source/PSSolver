@@ -33,6 +33,10 @@ from pssolver.configuration.plane_beris_edwards import (
 from pssolver.configuration.plane_beris_edwards_component_graph import (
     build_plane_beris_edwards_run_components,
 )
+from pssolver.configuration.robin import (
+    RobinImpedanceSupportError,
+    validate_public_robin_impedance_support,
+)
 from pssolver.configuration.simulation import (
     InitialConditionSource,
     SimulationSpec,
@@ -726,6 +730,14 @@ def compile_public_simulation(
 
     if not isinstance(source, SimulationSpec):
         raise TypeError("source must be a SimulationSpec")
+    try:
+        validate_public_robin_impedance_support(source)
+    except RobinImpedanceSupportError as exc:
+        raise PublicSimulationCompilationError(
+            str(exc),
+            code=PublicCompilationRejectionCode.APPLICATION_CONTRACT,
+            context={"robin_impedance": exc.context},
+        ) from exc
     key = (source.equation_system.variant, source.geometry.name)
     registration = _PUBLIC_COMPILER_REGISTRY.get(key)
     if registration is None:

@@ -17,8 +17,10 @@ from pssolver.core.fields import FieldRole
 from pssolver.core.geometry import AxisTopology
 from pssolver.core.numerics import Precision
 from pssolver.planning.robin import (
+    MAX_QUALIFIED_DIMENSIONLESS_ROBIN_IMPEDANCE,
     PlaneRobinScalarLoweringPlan,
     build_cell_centered_robin_eigenbasis_plan,
+    validate_dimensionless_robin_impedance,
 )
 
 
@@ -30,6 +32,65 @@ def _sha256(value: object) -> str:
         sort_keys=True,
     ).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
+
+
+class RobinImpedanceSupportError(ValueError):
+    """Raised before allocation for a Robin law outside the public domain."""
+
+    def __init__(self, message: str, *, context: dict[str, object]) -> None:
+        self.context = dict(context)
+        super().__init__(message)
+
+
+def validate_public_robin_impedance_support(
+    simulation: SimulationSpec,
+) -> None:
+    """Reject public Robin declarations outside the frozen binary64 domain."""
+
+    if not isinstance(simulation, SimulationSpec):
+        raise TypeError("simulation must be a SimulationSpec")
+    lengths = simulation.geometry.domain.lengths
+    for assignment in simulation.boundaries.components:
+        for face in assignment.faces:
+            condition = face.condition
+            if not isinstance(condition, StaticRobinBC):
+                continue
+            coefficients = condition.coefficients
+            axis_length = float(lengths[face.axis])
+            alpha = coefficients.alpha.value
+            beta = coefficients.beta.value
+            context: dict[str, object] = {
+                "component": assignment.component,
+                "axis": face.axis,
+                "side": face.side.value,
+                "axis_length": axis_length,
+                "alpha": alpha,
+                "beta": beta,
+                "qualified_lower_inclusive": 0.0,
+                "qualified_upper_inclusive": (
+                    MAX_QUALIFIED_DIMENSIONLESS_ROBIN_IMPEDANCE
+                ),
+            }
+            if beta <= 0.0:
+                context["dimensionless_impedance"] = "undefined_beta_nonpositive"
+                raise RobinImpedanceSupportError(
+                    "public Robin beta must be positive before operator "
+                    "materialization",
+                    context=context,
+                )
+            impedance = axis_length * alpha / beta
+            context["dimensionless_impedance"] = impedance
+            try:
+                validate_dimensionless_robin_impedance(
+                    impedance,
+                    "public dimensionless Robin impedance",
+                )
+            except ValueError as exc:
+                raise RobinImpedanceSupportError(
+                    "public dimensionless Robin impedance is outside the "
+                    "qualified closed interval [0, 1e14]",
+                    context=context,
+                ) from exc
 
 
 def lower_plane_robin_component_pilot(
@@ -144,6 +205,8 @@ def lower_plane_robin_scalar_pilot(
 
 
 __all__ = [
+    "RobinImpedanceSupportError",
     "lower_plane_robin_component_pilot",
     "lower_plane_robin_scalar_pilot",
+    "validate_public_robin_impedance_support",
 ]

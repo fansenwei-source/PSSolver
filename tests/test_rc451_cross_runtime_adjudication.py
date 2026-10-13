@@ -12,6 +12,7 @@ RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc451_cross_runtime_adjudication.json"
 CONTRACT = ROOT / "notes/PSSolver_v0_2_0rc4_rc452_public_robustness_contract.json"
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
 RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
+RC454 = ROOT / "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -20,6 +21,19 @@ def _read(path: Path) -> dict[str, object]:
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _resolve_successor_sha256(relative: str, historical: str) -> str:
+    resolved = historical
+    for record_path in (RC453, RC454):
+        registration = _read(record_path).get(
+            "historical_successor_sources", {}
+        ).get(relative)
+        if registration is None:
+            continue
+        if registration["historical_sha256"] == resolved:
+            resolved = registration["current_sha256"]
+    return resolved
 
 
 def test_rc451_is_analysis_only_and_runs_all_ten_frozen_probes():
@@ -166,17 +180,12 @@ def test_rc451_record_is_bound_to_every_reviewed_source():
     assert len(provenance["git_head"]) == 40
     assert provenance["torch"]
     assert provenance["numpy"]
-    successors = _read(RC453)["historical_successor_sources"]
     for relative, expected in provenance["source_sha256"].items():
         actual = _sha256(ROOT / relative)
-        if actual == expected:
-            continue
-        registration = successors[relative]
-        assert registration["historical_sha256"] == expected
-        assert registration["current_sha256"] == actual
+        assert _resolve_successor_sha256(relative, expected) == actual
 
 
-def test_known_issue_matrix_registers_rc451_without_premature_closure():
+def test_known_issue_matrix_registers_rc451_and_later_scoped_closures():
     matrix = _read(MATRIX)
     progress = matrix["progress"]
     assert progress["rc4_5_1_analysis_authorized"] is True
@@ -189,6 +198,8 @@ def test_known_issue_matrix_registers_rc451_without_premature_closure():
     assert progress["rc4_5_2_contract_complete"] is True
     assert progress["rc4_5_2_contract_record_sha256"] == _sha256(CONTRACT)
     assert progress["eligible_for_rc4_5_3_implementation"] is True
+    assert progress["rc4_5_4_complete"] is True
+    assert progress["eligible_for_rc4_5_5_implementation"] is True
     assert progress["rc4_5_implementation_authorized"] is False
     issues = {item["id"]: item for item in matrix["items"]}
     assert all(
@@ -196,6 +207,10 @@ def test_known_issue_matrix_registers_rc451_without_premature_closure():
         for issue in ("B7", "B24", "B27")
     )
     assert all(
+        issues[issue]["state"] == "closed_verified"
+        for issue in ("B9", "B21")
+    )
+    assert all(
         issues[issue]["state"] == "partial_residual"
-        for issue in ("B9", "B11", "B13", "B15", "B17", "B21")
+        for issue in ("B11", "B13", "B15", "B17")
     )

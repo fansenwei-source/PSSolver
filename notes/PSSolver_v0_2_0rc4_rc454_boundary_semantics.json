@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 RC4.5.4 boundary semantics implementation",
+  "phase": "RC4.5.4",
+  "classification": "PASS_RC4_5_4_BOUNDARY_SEMANTICS_CPU_CANDIDATE",
+  "status": "implementation_complete_cpu_verified",
+  "baseline": {
+    "implementation_parent_commit": "5a68d34a5350b6db8068e493a0864ccc78765dec",
+    "contract_record": "notes/PSSolver_v0_2_0rc4_rc452_public_robustness_contract.json",
+    "contract_record_sha256": "ca8dbcf7b1b2d4144f28883f6a420331dbaf9af712d452a9d26551affaa9cdaf",
+    "preceding_stage_record": "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json",
+    "preceding_stage_record_sha256": "4716b47e589dac8f13b56458ace00179e4fd0815042f81f2d034e6547edb03b4"
+  },
+  "issues": {
+    "B9": "closed_verified",
+    "B21": "closed_verified"
+  },
+  "finite_q_anchoring": {
+    "director_equivalence": "n_is_equivalent_to_minus_n",
+    "accepted_face_relation": "parallel_or_antiparallel",
+    "canonical_normal": "oriented_outward_face_normal",
+    "canonical_metadata_equal_for_sign_equivalent_inputs": true,
+    "canonical_sha256_equal_for_sign_equivalent_inputs": true,
+    "target_q_bytes_equal_for_sign_equivalent_inputs": true,
+    "existing_outward_target_q_bytes_changed": false,
+    "nonparallel_input_rejected": true,
+    "zero_input_rejected": true,
+    "nonfinite_input_rejected": true,
+    "error_details": [
+      "axis",
+      "side",
+      "expected_outward_normal",
+      "observed_normal",
+      "accepted_equivalence"
+    ]
+  },
+  "robin_support_contract": {
+    "quantity": "dimensionless_lower_and_upper_impedance_after_geometry_scaling",
+    "lower_bound_inclusive": 0.0,
+    "upper_bound_inclusive": 100000000000000.0,
+    "nonfinite_rejected": true,
+    "negative_rejected": true,
+    "above_bound_rejected": true,
+    "public_rejection_before_operator_or_output_materialization": true,
+    "public_exception": "PublicSimulationCompilationError",
+    "public_rejection_code": "application_contract",
+    "internal_root_helper_exception": "ValueError",
+    "root_contract": {
+      "requested_count_returned": true,
+      "finite_positive_strictly_increasing": true,
+      "pure_neumann_mathematical_zero_mode_retained": true,
+      "one_root_per_expected_open_interval": true,
+      "normalized_characteristic_residual_max": 1e-12,
+      "absolute_reference_error_max": 5e-12,
+      "independent_reference_decimal_digits": 80,
+      "reference_impedance_pairs": [
+        [1.0, 1.0],
+        [1000.0, 1000.0],
+        [100000000000000.0, 100000000000000.0],
+        [0.0, 100000000000000.0]
+      ]
+    },
+    "existing_qualified_root_tuple_byte_identical": true,
+    "scientific_boundary_equation_changed": false
+  },
+  "historical_successor_sources": {
+    "pssolver/configuration/public_simulation_runner.py": {
+      "historical_sha256": "693da690460f607030235e02b15605f8fc25a918c8f0bff236591b2a05110fb9",
+      "current_sha256": "5e63316b37cc595a3b842964a7d6b54e268dc0164277c9f6bba6d5667e180d0d",
+      "introduced_by_phase": "RC4.5.4",
+      "reason": "Translate only the frozen out-of-domain Robin impedance failure to the existing public compilation envelope before any application lowering."
+    },
+    "pssolver/configuration/robin.py": {
+      "historical_sha256": "1e1c02c0a262ece97cff6ea98f4485964456d5cc3f33c6aa82d7a661abd20fea",
+      "current_sha256": "5bbeeac0c11f020fac979a8282f365625953db7a700933f7882367a2048ae123",
+      "introduced_by_phase": "RC4.5.4",
+      "reason": "Validate public dimensionless Robin impedances after geometry scaling and retain structured rejection context."
+    },
+    "pssolver/models/active_nematics/boundaries.py": {
+      "historical_sha256": "ba7d90e66731a7fc69027033809d93345cec9b15eafb731f81306f7503f47786",
+      "current_sha256": "2d2e2d7268d4ff714444591465a7584b98c453071959d2eb664a669990c88332",
+      "introduced_by_phase": "RC4.5.4",
+      "reason": "Canonicalize sign-equivalent finite-Q face directors to the outward normal and expose the frozen rejection details."
+    },
+    "pssolver/planning/__init__.py": {
+      "historical_sha256": "500e75292dda39b0c5589be052e74d5b13309faf0b8364f0b096197b87adacaa",
+      "current_sha256": "1a53c45488c172b66084c3aefc8c8eb2ec8ec524e32b791733a7d291c75eb4b4",
+      "introduced_by_phase": "RC4.5.4",
+      "reason": "Expose the versioned Robin support-bound validator through the planning namespace."
+    },
+    "pssolver/planning/robin.py": {
+      "historical_sha256": "9dffd7d423e5d37f163ac3717526f2eb7eed7b7488437ce8a1bfedbdfd6c554a",
+      "current_sha256": "66fe6a46eb63e1268ecacb08396e73f77c61ea5bb704aad03d7a6836b8d81fd6",
+      "introduced_by_phase": "RC4.5.4",
+      "reason": "Enforce the closed dimensionless impedance interval at the internal root boundary without changing roots inside it."
+    },
+    "tests/test_rc453_checkpoint_transactionality.py": {
+      "historical_sha256": "891762ae214ab2396e281b8abce41a6a19568586bd3b10121e33398d383e5478",
+      "current_sha256": "7f59d86d7d95a134fb859364c4c08f941b2105c37d19d1d648aa9878589c5130",
+      "introduced_by_phase": "RC4.5.4",
+      "reason": "Preserve the immutable RC4.5.3 source binding while resolving its deliberately updated current test through this successor record."
+    }
+  },
+  "source_sha256": {
+    "pssolver/configuration/public_simulation_runner.py": "5e63316b37cc595a3b842964a7d6b54e268dc0164277c9f6bba6d5667e180d0d",
+    "pssolver/configuration/robin.py": "5bbeeac0c11f020fac979a8282f365625953db7a700933f7882367a2048ae123",
+    "pssolver/models/active_nematics/boundaries.py": "2d2e2d7268d4ff714444591465a7584b98c453071959d2eb664a669990c88332",
+    "pssolver/planning/__init__.py": "1a53c45488c172b66084c3aefc8c8eb2ec8ec524e32b791733a7d291c75eb4b4",
+    "pssolver/planning/robin.py": "66fe6a46eb63e1268ecacb08396e73f77c61ea5bb704aad03d7a6836b8d81fd6",
+    "tests/test_rc453_checkpoint_transactionality.py": "7f59d86d7d95a134fb859364c4c08f941b2105c37d19d1d648aa9878589c5130",
+    "tests/test_rc454_boundary_semantics.py": "5a86487d5f1ce6a24416262db81cf0af0afaf6a8ab2258fce47e32668fb9921c"
+  },
+  "verification": {
+    "py_compile": "PASS",
+    "focused_boundary_tests": {
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 3295,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 1,
+      "subtests_passed": 8,
+      "deselected_node_ids": [
+        "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+      ]
+    },
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "B13_B15_B17_modified": false,
+    "B11_modified": false,
+    "scientific_model_equations_changed": false,
+    "time_integrator_changed": false,
+    "spectral_transform_algorithm_changed": false,
+    "pressure_algorithm_changed": false,
+    "stable_top_level_public_api_changed": false,
+    "public_Robin_execution_promoted": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "h100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "rc4_5_4_implementation_authorized": true,
+    "rc4_5_4_complete": true,
+    "eligible_for_rc4_5_5_implementation": true,
+    "rc4_5_5_implementation_authorized": false,
+    "PSSolver_Control_modification_authorized": false,
+    "h100_submission_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

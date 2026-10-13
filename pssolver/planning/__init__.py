@@ -16,11 +16,13 @@ from .plan import (
     TransformKind,
 )
 from .robin import (
+    MAX_QUALIFIED_DIMENSIONLESS_ROBIN_IMPEDANCE,
     PLANE_ROBIN_SCALAR_LOWERING_SCHEMA_VERSION,
     ROBIN_EIGENBASIS_PLAN_SCHEMA_VERSION,
     CellCenteredRobinEigenbasisPlan,
     PlaneRobinScalarLoweringPlan,
     build_cell_centered_robin_eigenbasis_plan,
+    validate_dimensionless_robin_impedance,
 )
 
 __all__ = [
@@ -29,6 +31,7 @@ __all__ = [
     "FieldPlan",
     "SPECTRAL_PLAN_SCHEMA_VERSION",
     "ROBIN_EIGENBASIS_PLAN_SCHEMA_VERSION",
+    "MAX_QUALIFIED_DIMENSIONLESS_ROBIN_IMPEDANCE",
     "PLANE_ROBIN_SCALAR_LOWERING_SCHEMA_VERSION",
     "STATIC_LIFTING_PLAN_SCHEMA_VERSION",
     "SpectralPlan",
@@ -40,4 +43,5 @@ __all__ = [
     "CellCenteredRobinEigenbasisPlan",
     "PlaneRobinScalarLoweringPlan",
     "build_cell_centered_robin_eigenbasis_plan",
+    "validate_dimensionless_robin_impedance",
 ]

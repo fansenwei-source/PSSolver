@@ -14,6 +14,7 @@ PLAN = ROOT / "notes/PSSolver_v0_2_0rc4_rc450_cross_runtime_robustness_plan.json
 CONTRACT = ROOT / "notes/PSSolver_v0_2_0rc4_rc452_public_robustness_contract.json"
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
 RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
+RC454 = ROOT / "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -32,6 +33,19 @@ def _git_blob_sha256(commit: str, relative: str) -> str:
         capture_output=True,
     ).stdout
     return hashlib.sha256(payload).hexdigest()
+
+
+def _resolve_successor_sha256(relative: str, historical: str) -> str:
+    resolved = historical
+    for record_path in (RC453, RC454):
+        registration = _read(record_path).get(
+            "historical_successor_sources", {}
+        ).get(relative)
+        if registration is None:
+            continue
+        if registration["historical_sha256"] == resolved:
+            resolved = registration["current_sha256"]
+    return resolved
 
 
 def test_rc447_closure_binds_local_records_and_external_manifest():
@@ -258,20 +272,15 @@ def test_rc450_consumer_and_h100_work_remain_separately_authorized():
 
 
 def test_rc450_reviewed_sources_are_content_addressed():
-    successors = _read(RC453)["historical_successor_sources"]
     for relative, expected in _read(PLAN)["reviewed_source_sha256"].items():
         actual = _sha256(ROOT / relative)
-        if actual == expected:
-            continue
-        registration = successors[relative]
-        assert registration["historical_sha256"] == expected
-        assert registration["current_sha256"] == actual
+        assert _resolve_successor_sha256(relative, expected) == actual
 
 
 def test_known_issue_matrix_advances_only_after_rc44_evidence():
     matrix = _read(MATRIX)
-    assert matrix["summary"]["closed_verified"] == 32
-    assert matrix["summary"]["partial_residual"] == 6
+    assert matrix["summary"]["closed_verified"] == 34
+    assert matrix["summary"]["partial_residual"] == 4
     assert matrix["summary"]["next_implementation_batch"] == (
         "rc4.5_cross_runtime_robustness"
     )
@@ -282,8 +291,12 @@ def test_known_issue_matrix_advances_only_after_rc44_evidence():
         for item in ("B7", "B24", "B27")
     )
     assert all(
+        issues[item]["state"] == "closed_verified"
+        for item in ("B9", "B21")
+    )
+    assert all(
         issues[item]["state"] == "partial_residual"
-        for item in ("B9", "B11", "B13", "B15", "B17", "B21")
+        for item in ("B11", "B13", "B15", "B17")
     )
     progress = matrix["progress"]
     assert progress["rc4_4_complete"] is True
@@ -298,6 +311,8 @@ def test_known_issue_matrix_advances_only_after_rc44_evidence():
     assert progress["rc4_5_2_contract_complete"] is True
     assert progress["rc4_5_2_contract_record_sha256"] == _sha256(CONTRACT)
     assert progress["eligible_for_rc4_5_3_implementation"] is True
+    assert progress["rc4_5_4_complete"] is True
+    assert progress["eligible_for_rc4_5_5_implementation"] is True
     assert progress["rc4_5_implementation_authorized"] is False
 
 
