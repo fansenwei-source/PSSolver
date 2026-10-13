@@ -212,7 +212,11 @@ def test_known_issue_matrix_registers_rc451_and_later_scoped_closures():
         issues[issue]["state"] == "closed_verified"
         for issue in ("B9", "B21")
     )
-    assert issues["B11"]["state"] == "partial_residual"
+    assert issues["B11"]["state"] == "closed_verified"
+    assert progress["rc4_5_8_h100_complete"] is True
+    assert progress["rc4_5_complete"] is True
+    assert progress["rc4_complete"] is True
+    assert progress["eligible_for_rc4_release_preparation"] is True
     assert all(
         issues[issue]["state"] == "closed_verified"
         for issue in ("B13", "B15", "B17")

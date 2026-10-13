@@ -24,6 +24,7 @@ RC457 = ROOT / (
 RC457_RECOVERY = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_recovery.json"
 )
+RC458 = ROOT / "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
 
 
@@ -35,7 +36,7 @@ def _set_state(precision: str, matmul: bool, cudnn: bool) -> None:
 
 def _resolve_rc457_successor(relative: str, historical: str) -> str:
     resolved = historical
-    for record_path in (RC457, RC457_RECOVERY):
+    for record_path in (RC457, RC457_RECOVERY, RC458):
         successor = json.loads(record_path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)
@@ -192,9 +193,10 @@ def test_rc456_record_binds_exact_scope_sources_and_next_stage():
 
     matrix = json.loads(MATRIX.read_text(encoding="utf-8"))
     b11 = next(item for item in matrix["items"] if item["id"] == "B11")
-    assert b11["state"] == "partial_residual"
+    assert b11["state"] == "closed_verified"
     progress = matrix["progress"]
     assert progress["rc4_5_6_complete"] is True
     assert progress["rc4_5_6_record_sha256"] == hashlib.sha256(
         RECORD.read_bytes()
     ).hexdigest()
+    assert progress["rc4_5_8_h100_complete"] is True

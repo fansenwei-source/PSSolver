@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 RC4.5.8 TF32 cumulative H100 closure",
+  "phase": "RC4.5.8",
+  "status": "complete",
+  "classification": "PASS_RC4_5_8_SINGLE_H100_TF32_CUMULATIVE_CLOSURE_WITH_COUNTER_AND_RESERVED_MEMORY_REDUCER_RECOVERY",
+  "qualification_complete": true,
+  "rc4_5_8_complete": true,
+  "identities": {
+    "provider_baseline_commit": "51f47e9f06bd3e019d785305bff47c80f5519b10",
+    "provider_runtime_candidate_commit": "a195bd05992bc6553c72c400587d2b07afe722d0",
+    "qualification_commit": "cffae1f0eb07775dbb76b1548480db3049a04f37",
+    "consumer_qualified_source_commit": "b8539e0ec4c137a6c13746f6832e26e74be24515",
+    "provider_branch": "fix/v0.2.0rc4-audit",
+    "provider_remote_tip_at_registration": "cffae1f0eb07775dbb76b1548480db3049a04f37"
+  },
+  "h100_execution": {
+    "job_id": 10879606,
+    "node": "gpu-h100-4-0",
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "elapsed": "00:18:12",
+    "slurm_state": "FAILED",
+    "exit_code": "1:0",
+    "automatic_retry": false,
+    "scientific_profile_matrix_completed": true,
+    "profile_count": 96,
+    "cuda_only_tests": "7 passed, 0 failed, 0 skipped",
+    "consumer_installed_wheel_h100": "310 passed, 1 allowed skip, 0 failed",
+    "failure_after_scientific_evidence": "external transform-counter analyzer layer mismatch",
+    "scientific_failure": false,
+    "solver_failure": false,
+    "numerical_failure": false,
+    "cuda_failure": false
+  },
+  "evidence_layers": {
+    "h100_recovery_v2": {
+      "control_directory": "/home/fansenwei/pssolver_rc458_tf32_h100_5c286f8_b8539e0_20261013_recovery_v2",
+      "classification_preserved": "FAIL_RC4_5_8_H100_EXTERNAL_TRANSFORM_COUNTER_LAYER_CONTRACT",
+      "checksums_verified": 3371,
+      "checksums_sha256": "73fd2ce700bf6ec9b367074bb240952698b2e3948c616557b997c712ae084880"
+    },
+    "counter_recovery_v3": {
+      "control_directory": "/home/fansenwei/pssolver_rc458_counter_finalization_f8942ff_20261013_v3",
+      "classification_preserved": "FAIL_RC4_5_8_COUNTER_RECOVERY_RESERVED_MEMORY_PAIR_GATE",
+      "checksums_verified": 16,
+      "checksums_sha256": "2e27c5a56c6c5254600e08ead17880f2b39949f89049636c85d20237e8649fd4"
+    },
+    "memory_recovery_v4": {
+      "control_directory": "/home/fansenwei/pssolver_rc458_memory_finalization_cffae1f_20261013_v4",
+      "classification": "PASS_RC4_5_8_SINGLE_H100_TF32_CUMULATIVE_CLOSURE_WITH_COUNTER_AND_RESERVED_MEMORY_REDUCER_RECOVERY",
+      "checksums_verified": 10,
+      "checksums_sha256": "d8e20c6422e5919aae6eee254eb971b60329622d4d473454fb69946b63231249",
+      "complete_present": true,
+      "new_h100_submission_count": 0,
+      "new_scientific_timestep_count": 0
+    }
+  },
+  "cumulative_gates": {
+    "installed_wheel_identity": true,
+    "environment": true,
+    "cuda_only": true,
+    "tf32_scope_and_caller_state_restoration": true,
+    "consumer_installed_wheel_h100": true,
+    "profile_matrix": "96/96",
+    "runtime_groups": "16/16",
+    "transform_counter_layer": "96/96",
+    "finite": true,
+    "runtime_fallback": false,
+    "compile_fallback": false,
+    "graph_breaks": 0,
+    "paired_initial_and_final_state_sha": true,
+    "timestep_performance": "16/16 groups",
+    "peak_allocated": "16/16 groups",
+    "reserved_memory_group_peak": "16/16 groups",
+    "maximum_reserved_memory_group_peak_ratio": 1.0
+  },
+  "contract_recoveries": {
+    "transform_counter": {
+      "raw_channel_forward_calls": 663,
+      "scheduled_refresh_forward_calls": 3,
+      "base_channel_forward_calls": 660,
+      "base_forward_per_step": 11.0,
+      "inverse_per_step": 36.0,
+      "threshold_changed": false
+    },
+    "reserved_memory": {
+      "reducer": "max(candidate_trial_peak_reserved_bytes) / max(baseline_trial_peak_reserved_bytes)",
+      "ratio_limit": 1.03,
+      "threshold_changed": false,
+      "peak_allocated_gate_changed": false,
+      "raw_profiles_modified": false,
+      "trial_multiset_equal_groups": 16
+    }
+  },
+  "historical_successor_sources": {
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "7227dcc23a2e93d3a866285b9fc5157f87d1bfbe9dfb27f0b68a36ba63e8e19f",
+      "current_sha256": "7c1155ce4840dca85e7a223c204fc4f91c97d6fa007e1a6678ac8e593f2cf29c",
+      "introduced_by_phase": "RC4.5.8-finalization",
+      "reason": "Resolve the immutable RC4.5.1 source binding after B11 moved from partial residual to closed verified."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "30fc67b26a92a77ba26b9f9a44c9f37e5f92ec227a2bb03d64142feef3a9c7a9",
+      "current_sha256": "1d4eb362ba7e24df53be5483e4894c2409cc54df2d7a2323dba24b830d9b6dd7",
+      "introduced_by_phase": "RC4.5.8-finalization",
+      "reason": "Extend immutable RC4.5.5 source resolution through the final RC4.5.8 successor record."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "b1e87f9a80ac135f2d881a4b613f05e4c0f0ff0050e4d54509aa45dfece70a31",
+      "current_sha256": "73eebf9c5a9b0d76df61dff0c052989d906a036c86f226d2a8db740443023072",
+      "introduced_by_phase": "RC4.5.8-finalization",
+      "reason": "Extend immutable RC4.5.6 source resolution and recognize the final B11 closure without rewriting RC4.5.6."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "4b729572f0ec5d849814d24a57de5f2f5981dd55c4d5ebc5e80291945a2583a3",
+      "current_sha256": "9954d41827c97250ca10080ed2a4cc226abcfba053078a63fe2215bc1d1ba685",
+      "introduced_by_phase": "RC4.5.8-finalization",
+      "reason": "Preserve the RC4.5.7 stopped record while resolving live source identities through the final closure."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "b491f6a0111fdaa8af9241585b3896e36f0882c141722992b360418b439e7f98",
+      "current_sha256": "80214513a0e7e7bfe08413cb6785d3c5cc6f369c16c45c9a49e061672c4c0fe6",
+      "introduced_by_phase": "RC4.5.8-finalization",
+      "reason": "Extend the RC4.5.7 recovery source resolver through the final RC4.5.8 successor record."
+    },
+    "tests/test_rc3_known_issues_matrix.py": {
+      "historical_sha256": "d507d8a417521913012b3f73264fd4ffd90fd76d47307117a8ac0b6128870526",
+      "current_sha256": "a790b08f1519b6d3615815af5b0f358b29eae8c9146a4d5b5d53c0695695b4db",
+      "introduced_by_phase": "RC4.5.8-finalization",
+      "reason": "Record B11, RC4.5 and RC4 closure while preserving every earlier stage record unchanged."
+    }
+  },
+  "closure": {
+    "b11_closed_verified": true,
+    "rc4_5_complete": true,
+    "rc4_complete": true,
+    "eligible_for_rc4_release_preparation": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false,
+    "functional_api_version_changed": false,
+    "checkpoint_schema_changed": false,
+    "PSSolver_Control_modified_by_registration": false,
+    "nematics3d_modified": false,
+    "tag_created": false,
+    "package_published": false
+  }
+}

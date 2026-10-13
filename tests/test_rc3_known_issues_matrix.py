@@ -26,6 +26,8 @@ def test_matrix_binds_the_released_rc3_baseline_without_claiming_runtime_changes
     assert record["release_boundary"] == {
         "rc3_declared_scope_qualified": True,
         "all_audit_items_closed": False,
+        "rc4_correctness_batches_complete": True,
+        "eligible_for_rc4_release_preparation": True,
         "eligible_for_final_v0_2_0": False,
         "new_features_authorized": False,
         "production_default_changed": False,
@@ -65,17 +67,21 @@ def test_state_counts_match_the_machine_readable_summary():
     counts: dict[str, int] = {}
     for item in record["items"]:
         counts[item["state"]] = counts.get(item["state"], 0) + 1
-    assert counts == {
-        "closed_verified": 37,
-        "partial_residual": 1,
+    normalized_counts = {
+        "closed_verified": 38,
+        "partial_residual": counts.get("partial_residual", 0),
         "accepted_limitation": 3,
         "deferred_architecture": 9,
     }
+    assert counts == {
+        key: value for key, value in normalized_counts.items() if value
+    }
+    assert normalized_counts["partial_residual"] == 0
     assert record["summary"] == {
         "item_count": 50,
-        **counts,
+        **normalized_counts,
         "first_implementation_batch": "rc4.1_plane_nyquist",
-        "next_implementation_batch": "rc4.5_cross_runtime_robustness",
+        "next_implementation_batch": "post_0_2_architecture",
     }
 
 
@@ -123,6 +129,11 @@ def test_release_blockers_and_closed_rc3_regressions_are_not_conflated():
         assert items[identifier]["closure_record"] == (
             "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
         )
+    assert items["B11"]["state"] == "closed_verified"
+    assert items["B11"]["disposition"] == "closed"
+    assert items["B11"]["closure_record"] == (
+        "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
+    )
 
 
 def test_first_batch_is_only_plane_nyquist_and_has_non_regression_gates():
@@ -159,8 +170,9 @@ def test_rc450_progress_records_rc44_closure_and_rc45_planning_boundary():
             "rc4.2_checkpoint_identity",
             "rc4.3_lifting_correctness",
             "rc4.4_pressure_contract",
+            "rc4.5_cross_runtime_robustness",
         ],
-        "next_batch": "rc4.5_cross_runtime_robustness",
+        "next_batch": "post_0_2_architecture",
         "b5_complete": True,
         "b5_closure_record": (
             "notes/PSSolver_v0_2_0rc4_rc412_h100_closure.json"
@@ -401,6 +413,28 @@ def test_rc450_progress_records_rc44_closure_and_rc45_planning_boundary():
         "rc4_5_7_consumer_migration_required": False,
         "rc4_5_7_consumer_migration_complete": True,
         "eligible_for_rc4_5_8_h100_closure": True,
+        "rc4_5_8_h100_complete": True,
+        "rc4_5_8_classification": (
+            "PASS_RC4_5_8_SINGLE_H100_TF32_CUMULATIVE_CLOSURE_"
+            "WITH_COUNTER_AND_RESERVED_MEMORY_REDUCER_RECOVERY"
+        ),
+        "rc4_5_8_record": (
+            "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
+        ),
+        "rc4_5_8_record_sha256": (
+            hashlib.sha256(
+                (
+                    ROOT
+                    / "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
+                ).read_bytes()
+            ).hexdigest()
+        ),
+        "rc4_5_complete": True,
+        "rc4_5_closure_record": (
+            "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
+        ),
+        "rc4_complete": True,
+        "eligible_for_rc4_release_preparation": True,
         "rc4_5_implementation_authorized": True,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,
@@ -430,6 +464,7 @@ def test_rc450_progress_records_rc44_closure_and_rc45_planning_boundary():
         "rc4_5_5",
         "rc4_5_6",
         "rc4_5_7",
+        "rc4_5_8",
     ):
         path = ROOT / progress[f"{stage}_record"]
         assert path.is_file()

@@ -17,12 +17,12 @@
 
 | 状态 | 数量 | 含义 |
 |---|---:|---|
-| `closed_verified` | 29 | 目标行为已有回归或资格证据 |
-| `partial_residual` | 9 | 主问题部分缓解，但仍有路径或语义缺口 |
+| `closed_verified` | 38 | 目标行为已有回归或资格证据 |
+| `partial_residual` | 0 | 当前 RC4 正确性队列中没有残余项 |
 | `accepted_limitation` | 3 | 已知且明确接受，不作为当前正确性修复 |
 | `deferred_architecture` | 9 | 架构债务，推迟到正确性关闭之后 |
 
-由于仍有公开数值路径上的 `partial_residual`，当前不应把 rc3 直接提升为最终 `v0.2.0`。
+RC4 正确性队列现已关闭，但这只授权准备 `v0.2.0rc4`，不等于可直接提升为最终 `v0.2.0`。
 
 ## 修复顺序
 
@@ -46,7 +46,7 @@
 
 ### rc4.5：跨 runtime 鲁棒性
 
-处理 B7、B9、B11、B13、B15、B17、B21、B24、B27。RC4.5.0 已把它们拆成 checkpoint transactionality、boundary semantics、public validation/observability 和 accelerator global state 四个 cohort。RC4.5.1 随后完成十个 analysis-only probe，RC4.5.2 冻结公共合同。RC4.5.3–RC4.5.5 已分别关闭 checkpoint transactionality、boundary semantics 和 public validation/observability 的 CPU 实现门禁，因此 B7、B9、B13、B15、B17、B21、B24、B27 均为 `closed_verified`。RC4.5.6 已把八条生产/functional runtime 的 TF32 设置改为执行期作用域：进入前验证并快照三个 Torch 全局精度状态，成功或异常退出均在 `finally` 中精确恢复，嵌套作用域按 LIFO 恢复。RC4.5.7 随后完成 installed-wheel CPU 与 Consumer 累计关闭：PSSolver-Control 以独立 schema 迁移和 successor 登记提交接受五字段 `tf32_policy`，Provider 6/6、Consumer 310 passed/1 个既有 R5 skip，且没有 source shadow。B11 暂保持 `partial_residual`，仅等待 RC4.5.8 H100 门禁。RC4.5.3–RC4.5.7 的权威记录为同名 `rc453`、`rc454`、`rc455`、`rc456` 与 `rc457` recovery JSON。
+处理 B7、B9、B11、B13、B15、B17、B21、B24、B27。RC4.5.0 已把它们拆成 checkpoint transactionality、boundary semantics、public validation/observability 和 accelerator global state 四个 cohort。RC4.5.1 随后完成十个 analysis-only probe，RC4.5.2 冻结公共合同。RC4.5.3–RC4.5.5 已分别关闭 checkpoint transactionality、boundary semantics 和 public validation/observability 的 CPU 实现门禁，因此 B7、B9、B13、B15、B17、B21、B24、B27 均为 `closed_verified`。RC4.5.6 已把八条生产/functional runtime 的 TF32 设置改为执行期作用域：进入前验证并快照三个 Torch 全局精度状态，成功或异常退出均在 `finally` 中精确恢复，嵌套作用域按 LIFO 恢复。RC4.5.7 随后完成 installed-wheel CPU 与 Consumer 累计关闭。RC4.5.8 的 7 个 CUDA tests、TF32 caller-state、96 份 profiles 和 Consumer H100 suite 均已完成；两层 CPU-only analyzer recovery 在不改门限和原始证据的前提下关闭 counter-layer 与 allocator reducer 归因。B11 现为 `closed_verified`，权威记录为 `PSSolver_v0_2_0rc4_rc458_h100_closure.json`。
 
 ### 0.2 之后的架构去重
 
@@ -58,4 +58,4 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 ## 下一项实现
 
-`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity`、`rc4.3_lifting_correctness` 与 `rc4.4_pressure_contract` 均已完成；B25、B28、B29 已随 RC4.4.7 累计 H100 关闭转为 `closed_verified`。RC4.5.0–RC4.5.7 的规划、裁决、合同、四个 CPU 实现 cohort 以及 installed-wheel Consumer 累计关闭均已完成；除等待 CUDA 关闭的 B11 外，本批其他问题均为 `closed_verified`。RC4.5.7 保留最初的 schema-migration STOPPED 记录，并由单独 recovery 记录关闭：Consumer `b8539e0` 的完整 installed-wheel suite 为 310 passed、1 个既有 R5 skip。下一步是 RC4.5.8 单次 H100 关闭；当前只具备规划资格，尚未获得 H100、push、默认值推广或发布授权。
+`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity`、`rc4.3_lifting_correctness`、`rc4.4_pressure_contract` 与 `rc4.5_cross_runtime_robustness` 均已完成。B11 随 RC4.5.8 累计关闭转为 `closed_verified`，RC4 正确性批次全部结束。下一步是独立的 `v0.2.0rc4` release preparation：冻结 release metadata、构建 source/wheel、隔离安装并执行最终 release smoke；当前尚未 merge、打 tag或发布，也未授权生产默认值变更。
