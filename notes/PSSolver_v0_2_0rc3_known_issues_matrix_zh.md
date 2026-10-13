@@ -58,4 +58,4 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 ## 下一项实现
 
-`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity`、`rc4.3_lifting_correctness` 与 `rc4.4_pressure_contract` 均已完成；B25、B28、B29 已随 RC4.4.7 累计 H100 关闭转为 `closed_verified`。RC4.5.0 规划与 RC4.5.1 residual adjudication 也已完成。下一步是 RC4.5.2 checkpoint transactionality contract：先统一 B7、B24、B27 的 current-schema、public exception、atomic publication、caller-umask 与 cleanup 语义，再进入实现。当前分析结果不自行授权 RC4.5 源码实现、PSSolver-Control 修改、生产默认值、自动 merge、H100 或发布。
+`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity`、`rc4.3_lifting_correctness` 与 `rc4.4_pressure_contract` 均已完成；B25、B28、B29 已随 RC4.4.7 累计 H100 关闭转为 `closed_verified`。RC4.5.0 规划、RC4.5.1 residual adjudication 与 RC4.5.2 public robustness contract 也已完成。RC4.5.2 同时冻结了九项 residual 的 checkpoint transactionality、boundary semantics、public validation/diagnostics 与 scoped TF32 合同；下一步是 RC4.5.3，只实现 B7、B24、B27 的 checkpoint transactionality。合同完成不自行授权 RC4.5 源码实现、PSSolver-Control 修改、生产默认值、自动 merge、H100 或发布。

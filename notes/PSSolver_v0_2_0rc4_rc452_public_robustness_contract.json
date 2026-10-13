@@ -1,0 +1,427 @@
+{
+  "schema_version": 1,
+  "phase": "RC4.5.2",
+  "classification": "PASS_RC4_5_2_PUBLIC_CROSS_RUNTIME_ROBUSTNESS_CONTRACT",
+  "status": "contract_complete_implementation_not_started",
+  "baseline": {
+    "contract_parent_commit": "b396a8a0999d86fc4e7555a4f6aacbef51903014",
+    "plan_record": "notes/PSSolver_v0_2_0rc4_rc450_cross_runtime_robustness_plan.json",
+    "plan_record_sha256": "2e0c122fbf7aa269c8746195c03b2d3f431e2f699c8536dc050b534266ad7c8d",
+    "adjudication_record": "notes/PSSolver_v0_2_0rc4_rc451_cross_runtime_adjudication.json",
+    "adjudication_record_sha256": "0ab513797736922cdda66bfb9c87b1c070323475e4e5b120cedfe6955aa0568d",
+    "known_issues_record_at_contract_parent_sha256": "a4ee9b0aa3dc413e9a22dc8d1939d4f7e0541d440b588c082adc332a0941c2d5"
+  },
+  "issues": {
+    "B7": {
+      "cohort": "checkpoint_transactionality",
+      "decision": "current schemas reject every unregistered key at every level; legacy inputs require an explicit registered reader",
+      "implementation_stage": "RC4.5.3"
+    },
+    "B9": {
+      "cohort": "boundary_semantics",
+      "decision": "finite-Q anchoring treats parallel and antiparallel unit directors as the same physical declaration and canonicalizes both to the oriented face normal",
+      "implementation_stage": "RC4.5.4"
+    },
+    "B11": {
+      "cohort": "accelerator_global_state",
+      "decision": "TF32 policy is dynamically scoped and restores every caller-owned torch flag after success or failure",
+      "implementation_stage": "RC4.5.6"
+    },
+    "B13": {
+      "cohort": "public_validation_and_observability",
+      "decision": "all public application compilers share one device and pressure-option validation contract before output creation",
+      "implementation_stage": "RC4.5.5"
+    },
+    "B15": {
+      "cohort": "public_validation_and_observability",
+      "decision": "all four application families add one diagnostics-envelope schema while retaining existing payload bytes and filenames",
+      "implementation_stage": "RC4.5.5"
+    },
+    "B17": {
+      "cohort": "public_validation_and_observability",
+      "decision": "capability catalogue, normalization, compiler and public exception translation describe one truth table",
+      "implementation_stage": "RC4.5.5"
+    },
+    "B21": {
+      "cohort": "boundary_semantics",
+      "decision": "the public dimensionless Robin impedance interval is closed and finite: 0 <= lower, upper <= 1e14",
+      "implementation_stage": "RC4.5.4"
+    },
+    "B24": {
+      "cohort": "checkpoint_transactionality",
+      "decision": "all checkpoint surfaces expose the same semantic error categories and never leak an unclassified filesystem-shape error",
+      "implementation_stage": "RC4.5.3"
+    },
+    "B27": {
+      "cohort": "checkpoint_transactionality",
+      "decision": "every writer stages on the target filesystem, publishes atomically, respects caller umask and removes all failed staging state",
+      "implementation_stage": "RC4.5.3"
+    }
+  },
+  "checkpoint_contract": {
+    "scope": [
+      "plane_production",
+      "legacy_channel_production",
+      "periodic_production",
+      "channel_complete_stress_production",
+      "finite_q_anchoring",
+      "periodic_functional",
+      "channel_functional"
+    ],
+    "schema": {
+      "current_format_unknown_top_level_keys": "reject",
+      "current_format_unknown_nested_identity_keys": "reject",
+      "current_format_unknown_nested_bridge_keys": "reject",
+      "current_format_unknown_tensor_record_keys": "reject",
+      "extension_policy": "a new key requires a new registered format version or an explicitly versioned extension namespace",
+      "legacy_policy": "only an explicit source-release and format-version reader may accept a legacy schema",
+      "silent_schema_downgrade": false,
+      "functional_origin_marker_required_for_current_functional_formats": true,
+      "integrity_digest_purpose": "detect accidental corruption, incomplete edits and unregistered downgrade",
+      "cryptographic_authentication_claimed": false,
+      "adversarial_resealing_prevented_without_an_external_trust_root": false
+    },
+    "payload_paths": {
+      "stored_form": "single_relative_basename",
+      "absolute_paths_allowed": false,
+      "parent_components_allowed": false,
+      "path_separators_allowed": false,
+      "empty_or_dot_names_allowed": false,
+      "payload_must_be_regular_file": true,
+      "payload_symlink_allowed": false,
+      "resolved_payload_must_remain_within_checkpoint_root": true,
+      "canonical_filename_exact_match_required_when_filename_is_schema_identity": true
+    },
+    "restore_transaction": {
+      "ordered_preflight": [
+        "metadata_presence_and_json_shape",
+        "format_version_and_exact_schema",
+        "metadata_digest_and_functional_origin_marker",
+        "path_and_file_type_confinement",
+        "runtime_scientific_backend_and_state_layout_compatibility",
+        "payload_presence_checksum_shape_dtype_and_finiteness",
+        "fresh_restored_state_construction",
+        "single_target_commit"
+      ],
+      "target_mutation_before_all_preflight_passes": false,
+      "partial_restored_state_visible_on_failure": false,
+      "completed_step_or_workspace_mutation_on_failure": false,
+      "source_checkpoint_mutation": false
+    },
+    "writer_transaction": {
+      "target_overwrite_allowed": false,
+      "staging_location": "unique_sibling_under_target_parent_on_same_filesystem",
+      "publish_operation": "single_atomic_directory_replace_after_all_files_and_metadata_succeed",
+      "partial_target_visible_before_publish": false,
+      "failed_target_exists": false,
+      "failed_staging_residue_exists": false,
+      "directory_creation_mode": "0o777 filtered by caller umask",
+      "regular_file_creation_mode": "0o666 filtered by caller umask",
+      "post_creation_chmod_that_widens_permissions_allowed": false,
+      "existing_parent_permissions_modified": false,
+      "successful_directory_mode_oracle": "mode of a fresh sibling directory created with mode 0o777 under the same caller umask",
+      "minimum_umask_matrix": [
+        "002",
+        "022",
+        "077"
+      ],
+      "failure_injection_points": [
+        "first_payload",
+        "middle_payload",
+        "metadata",
+        "origin_marker",
+        "atomic_publish"
+      ]
+    },
+    "public_error_taxonomy": {
+      "generic_categories": [
+        "CheckpointNotFoundError",
+        "CheckpointExistsError",
+        "CheckpointIntegrityError",
+        "CheckpointCompatibilityError",
+        "CheckpointIOError"
+      ],
+      "functional_compatibility_names_retained": true,
+      "functional_classes_remain_subclasses_of_FunctionalCheckpointError": true,
+      "missing_path_category": "not_found",
+      "preexisting_target_category": "exists",
+      "invalid_json_digest_payload_or_unregistered_key_category": "integrity",
+      "valid_but_unsupported_version_identity_layout_or_runtime_category": "compatibility",
+      "permission_parent_shape_device_full_and_other_os_failures_category": "io",
+      "io_error_must_preserve_original_exception_as_cause": true,
+      "message_text_used_for_classification": false,
+      "machine_metadata_required": [
+        "code",
+        "operation",
+        "failure_domain",
+        "legacy_exception_type"
+      ]
+    }
+  },
+  "boundary_contract": {
+    "finite_q_anchoring": {
+      "director_equivalence": "n_is_equivalent_to_minus_n",
+      "parallel_or_antiparallel_to_oriented_face_normal_accepted": true,
+      "canonical_metadata_normal": "oriented_outward_face_normal",
+      "canonical_identity_equal_for_sign_equivalent_inputs": true,
+      "nonparallel_input_rejected": true,
+      "zero_or_nonfinite_input_rejected": true,
+      "error_details_required": [
+        "axis",
+        "side",
+        "expected_outward_normal",
+        "observed_normal",
+        "accepted_equivalence"
+      ],
+      "existing_outward_input_numerics_changed": false
+    },
+    "robin": {
+      "quantity": "dimensionless_lower_and_upper_impedance_after_public_geometry_scaling",
+      "lower_bound_inclusive": 0.0,
+      "upper_bound_inclusive": 100000000000000.0,
+      "nonfinite_input_rejected": true,
+      "negative_input_rejected": true,
+      "above_bound_rejected_before_operator_or_output_materialization": true,
+      "public_failure": "PublicSimulationCompilationError",
+      "internal_root_helper_failure": "ValueError",
+      "qualified_interval_requirements": [
+        "requested_root_count_returned",
+        "finite_positive_strictly_increasing_roots",
+        "one_root_per_expected_interval",
+        "normalized_characteristic_residual_at_most_1e-12",
+        "absolute_difference_from_80_decimal_digit_reference_at_most_5e-12"
+      ],
+      "independent_reference_precision_decimal_digits": 80,
+      "existing_qualified_inputs_byte_identical": true,
+      "scientific_model_or_boundary_equation_changed": false
+    }
+  },
+  "public_validation_contract": {
+    "device_tokens": {
+      "accepted_requested_tokens": [
+        "auto",
+        "cpu",
+        "cuda",
+        "cuda:N"
+      ],
+      "cuda_index_N": "canonical_nonnegative_base10_integer_without_sign_or_whitespace",
+      "cpu_indexed_tokens_allowed": false,
+      "unknown_tokens_allowed": false,
+      "leading_or_trailing_whitespace_allowed": false,
+      "non_string_tokens_allowed": false,
+      "validation_before_output_creation": true,
+      "validation_before_runtime_or_cuda_allocation": true,
+      "requested_and_resolved_device_both_persisted": true,
+      "allocated_device_identity_verified_after_allocation": true,
+      "shared_across_all_public_application_families": true
+    },
+    "pressure_options": {
+      "applies_to": "application_families_that_declare_an_iterative_pressure_solver",
+      "relative_tolerance": "finite_float_strictly_greater_than_zero",
+      "max_iterations": "positive_non_boolean_integer",
+      "fixed_iterations": "null_or_positive_non_boolean_integer_not_greater_than_max_iterations",
+      "warm_start": "boolean",
+      "unknown_keys": "reject",
+      "not_applicable_declaration": "reject",
+      "validation_before_output_creation": true,
+      "validation_before_solver_construction": true
+    },
+    "capability_truth_table": {
+      "catalogued_supported_combination_must_compile": true,
+      "uncatalogued_combination_must_reject": true,
+      "qualified_equivalent_must_be_explicit_in_catalogue_and_normalization": true,
+      "periodic_no_slip_disposition": "qualified_periodic_equivalent_to_free_slip_because_periodic_geometry_has_no_boundary_faces",
+      "periodic_no_slip_requested_and_effective_policies_persisted": true,
+      "implicit_capability_fallback_allowed": false
+    },
+    "public_compilation_errors": {
+      "public_type": "PublicSimulationCompilationError",
+      "translated_internal_types": [
+        "SimulationBindingError",
+        "SimulationLoweringError",
+        "ValueError",
+        "TypeError"
+      ],
+      "translation_scope": "known_public_binding_lowering_and_option_validation_boundaries_only",
+      "original_exception_preserved_as_cause": true,
+      "machine_rejection_code_required": true,
+      "raw_internal_exception_escape_allowed": false,
+      "output_or_runtime_side_effect_before_rejection_allowed": false
+    }
+  },
+  "diagnostics_contract": {
+    "scope": [
+      "plane_complete_stress",
+      "legacy_channel_active_nematic",
+      "periodic_complete_stress",
+      "channel_complete_stress"
+    ],
+    "metadata_location": "metadata.json::diagnostics",
+    "envelope_schema_version": 1,
+    "required_fields": [
+      "schema_version",
+      "application_family",
+      "runtime_path",
+      "enabled",
+      "count",
+      "steps",
+      "artifact_paths",
+      "payload_schema",
+      "payload_units"
+    ],
+    "artifact_paths_schema": {
+      "npy": "relative_filename_or_null",
+      "csv": "relative_filename_or_null"
+    },
+    "payload_schema_entry_fields": [
+      "name",
+      "dtype"
+    ],
+    "payload_schema_order_matches_structured_array_order": true,
+    "payload_units_covers_every_payload_field_exactly": true,
+    "unit_vocabulary": {
+      "step": "step_index",
+      "iteration_count": "count",
+      "all_other_current_fields": "solver_native_dimensionless"
+    },
+    "disabled_contract": {
+      "enabled": false,
+      "count": 0,
+      "steps": [],
+      "artifacts_are_null": true,
+      "payload_schema_and_units_still_declared": true
+    },
+    "compatibility": {
+      "existing_npy_filename_retained": "diagnostics.npy",
+      "existing_csv_filename_retained": "diagnostics.csv",
+      "existing_payload_field_names_retained": true,
+      "existing_payload_dtypes_retained": true,
+      "existing_payload_bytes_retained_for_identical_run": true,
+      "legacy_npy_and_csv_metadata_aliases_retained_for_0_2_series": true
+    }
+  },
+  "tf32_contract": {
+    "ownership": "caller owns process-global torch precision flags outside a PSSolver-owned execution scope",
+    "caller_state_fields": [
+      "torch_float32_matmul_precision",
+      "cuda_matmul_allow_tf32",
+      "cudnn_allow_tf32"
+    ],
+    "lifecycle": [
+      "validate_requested_policy_without_mutation",
+      "snapshot_all_caller_state",
+      "apply_effective_policy",
+      "execute_owned_region",
+      "restore_exact_snapshot_in_finally"
+    ],
+    "restore_on_success": true,
+    "restore_on_exception": true,
+    "nested_scopes_restore_lifo": true,
+    "construction_only_call_leaves_global_state_unchanged": true,
+    "invalid_policy_leaves_global_state_unchanged": true,
+    "CPU_path_covered": true,
+    "CUDA_path_covered_by_final_h100": true,
+    "runtime_families_covered": [
+      "plane_legacy_production",
+      "plane_compiled_v2",
+      "periodic_complete_stress",
+      "channel_legacy",
+      "channel_compiled_v2",
+      "channel_complete_stress",
+      "periodic_functional",
+      "channel_functional"
+    ],
+    "metadata": {
+      "requested_policy_recorded": true,
+      "effective_policy_recorded": true,
+      "before_effective_and_restored_values_recorded_by_qualification": true,
+      "process_global_ownership_claimed": false
+    },
+    "production_default_changed": false
+  },
+  "implementation_order": [
+    {
+      "stage": "RC4.5.3",
+      "cohort": "checkpoint_transactionality",
+      "issues": [
+        "B7",
+        "B24",
+        "B27"
+      ],
+      "requires_h100": false
+    },
+    {
+      "stage": "RC4.5.4",
+      "cohort": "boundary_semantics",
+      "issues": [
+        "B9",
+        "B21"
+      ],
+      "requires_h100": false
+    },
+    {
+      "stage": "RC4.5.5",
+      "cohort": "public_validation_and_observability",
+      "issues": [
+        "B13",
+        "B15",
+        "B17"
+      ],
+      "requires_h100": false
+    },
+    {
+      "stage": "RC4.5.6",
+      "cohort": "accelerator_global_state",
+      "issues": [
+        "B11"
+      ],
+      "requires_h100": false,
+      "final_cuda_qualification_deferred_to": "RC4.5.8"
+    },
+    {
+      "stage": "RC4.5.7",
+      "cohort": "installed_wheel_cpu_cumulative_closure_and_consumer_impact",
+      "requires_h100": false
+    },
+    {
+      "stage": "RC4.5.8",
+      "cohort": "single_h100_tf32_and_cumulative_non_regression",
+      "requires_separate_user_authorization": true,
+      "automatic_retry": false
+    }
+  ],
+  "consumer_impact": {
+    "PSSolver_Control_source_changes_authorized": false,
+    "future_consumer_requalification_required": true,
+    "triggers": [
+      "functional checkpoint exact-schema and public error taxonomy changes",
+      "functional TF32 execution-scope behavior changes",
+      "functional diagnostics or capability metadata changes if shared by the consumer"
+    ],
+    "production_only_permission_change_without_shared_helper_or_schema_delta_requires_consumer_requalification": false,
+    "consumer_commit_must_be_frozen_before_requalification": true
+  },
+  "scope": {
+    "runtime_source_modified_by_contract_stage": false,
+    "tests_of_current_runtime_behavior_modified_by_contract_stage": false,
+    "checkpoint_tensor_layout_changed": false,
+    "numerical_equations_changed": false,
+    "time_integrator_changed": false,
+    "spectral_transform_algorithm_changed": false,
+    "pressure_algorithm_changed": false,
+    "new_geometry_or_model_added": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "rc4_5_2_contract_complete": true,
+    "eligible_for_rc4_5_3_implementation": true,
+    "rc4_5_implementation_authorized": false,
+    "PSSolver_Control_modification_authorized": false,
+    "h100_submission_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

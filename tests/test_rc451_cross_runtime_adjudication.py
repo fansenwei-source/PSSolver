@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc451_cross_runtime_adjudication.json"
+CONTRACT = ROOT / "notes/PSSolver_v0_2_0rc4_rc452_public_robustness_contract.json"
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
 
 
@@ -178,6 +179,9 @@ def test_known_issue_matrix_registers_rc451_without_premature_closure():
     )
     assert progress["rc4_5_1_analysis_record_sha256"] == _sha256(RECORD)
     assert progress["eligible_for_rc4_5_2_contract"] is True
+    assert progress["rc4_5_2_contract_complete"] is True
+    assert progress["rc4_5_2_contract_record_sha256"] == _sha256(CONTRACT)
+    assert progress["eligible_for_rc4_5_3_implementation"] is True
     assert progress["rc4_5_implementation_authorized"] is False
     issues = {item["id"]: item for item in matrix["items"]}
     assert all(
