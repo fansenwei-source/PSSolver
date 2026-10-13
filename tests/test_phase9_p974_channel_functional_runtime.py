@@ -255,6 +255,35 @@ def test_p974_step_is_input_pure_and_replay_is_bitwise(tmp_path):
     assert runtime._flow_model.q_gradient_cache is None
 
 
+def test_p974_functional_execution_restores_caller_tf32_state(
+    tmp_path,
+    monkeypatch,
+):
+    _, _, runtime = _runtime(tmp_path)
+    state = runtime.initial_state()
+    controls = _control(runtime)
+    original_precision = torch.get_float32_matmul_precision()
+    try:
+        torch.set_float32_matmul_precision("medium")
+        monkeypatch.setattr(torch.backends.cuda.matmul, "allow_tf32", True)
+        monkeypatch.setattr(torch.backends.cudnn, "allow_tf32", False)
+        caller = (
+            torch.get_float32_matmul_precision(),
+            bool(torch.backends.cuda.matmul.allow_tf32),
+            bool(torch.backends.cudnn.allow_tf32),
+        )
+
+        runtime.step_and_observe(state, controls, 0)
+
+        assert (
+            torch.get_float32_matmul_precision(),
+            bool(torch.backends.cuda.matmul.allow_tf32),
+            bool(torch.backends.cudnn.allow_tf32),
+        ) == caller
+    finally:
+        torch.set_float32_matmul_precision(original_precision)
+
+
 def test_p974_projects_injected_anti_hermitian_state_after_each_step(tmp_path):
     _, _, runtime = _runtime(tmp_path)
     physical, spectral = runtime.initial_state()

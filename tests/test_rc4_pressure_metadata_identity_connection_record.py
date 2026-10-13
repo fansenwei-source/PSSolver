@@ -15,6 +15,7 @@ RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 RC455 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
 )
+RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 
 
 def _record() -> dict[str, object]:
@@ -45,7 +46,7 @@ def test_rc444_record_binds_frozen_contract_predecessor_and_current_sources():
         json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ]
-        for path in (RC453, RC455)
+        for path in (RC453, RC455, RC456)
     ]
     for relative, expected in record["source_sha256"].items():
         actual = _sha256(relative)

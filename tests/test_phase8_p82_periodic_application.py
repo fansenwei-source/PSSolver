@@ -269,8 +269,8 @@ def test_periodic_application_applies_and_records_tf32_policy(
         "cuda_matmul_allow_tf32": False,
         "cudnn_allow_tf32": False,
     }
-    assert torch.backends.cuda.matmul.allow_tf32 is False
-    assert torch.backends.cudnn.allow_tf32 is False
+    assert torch.backends.cuda.matmul.allow_tf32 is True
+    assert torch.backends.cudnn.allow_tf32 is True
 
 
 def test_periodic_application_persists_diagnostics_and_metadata(tmp_path):

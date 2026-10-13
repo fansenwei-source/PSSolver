@@ -1,0 +1,265 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 RC4.5.6 dynamically scoped TF32 execution implementation",
+  "phase": "RC4.5.6",
+  "classification": "PASS_RC4_5_6_SCOPED_TF32_CPU_CANDIDATE",
+  "status": "implementation_complete_cpu_verified_cuda_pending",
+  "baseline": {
+    "implementation_parent_commit": "42f85f30fa22d4dca14d3c261e24c57288c52b2e",
+    "contract_record": "notes/PSSolver_v0_2_0rc4_rc452_public_robustness_contract.json",
+    "contract_record_sha256": "ca8dbcf7b1b2d4144f28883f6a420331dbaf9af712d452a9d26551affaa9cdaf",
+    "preceding_stage_record": "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json",
+    "preceding_stage_record_sha256": "5fae30a021f032979039bf2b1fde0edbeec2bfa405a1df14a9c3f4be2b59522b"
+  },
+  "issue": {
+    "id": "B11",
+    "implementation": "complete_cpu_verified",
+    "final_status": "cuda_qualification_pending_rc4_5_8"
+  },
+  "tf32_scope": {
+    "ownership": "caller owns process-global torch precision flags outside a PSSolver-owned execution scope",
+    "caller_state_fields": [
+      "torch_float32_matmul_precision",
+      "cuda_matmul_allow_tf32",
+      "cudnn_allow_tf32"
+    ],
+    "validation_precedes_mutation": true,
+    "exact_snapshot_restored_in_finally": true,
+    "restore_on_success": true,
+    "restore_on_exception": true,
+    "nested_scope_restoration": "strict_lifo",
+    "concurrent_scope_serialization": "process_local_reentrant_lock",
+    "construction_only_mutates_global_state": false,
+    "invalid_policy_mutates_global_state": false,
+    "runtime_metadata_records_requested_and_effective_policy": true,
+    "runtime_metadata_claims_process_global_ownership": false
+  },
+  "runtime_families": {
+    "plane_legacy_production": "scoped_by_plane_application",
+    "plane_compiled_v2": "scoped_by_plane_application",
+    "periodic_complete_stress": "scoped_by_periodic_application",
+    "channel_legacy": "scoped_by_legacy_channel_application_with_frozen_off_policy",
+    "channel_compiled_v2": "scoped_by_legacy_channel_application_with_frozen_off_policy",
+    "channel_complete_stress": "scoped_by_complete_stress_channel_application",
+    "periodic_functional": "scoped_per_public_functional_execution_call",
+    "channel_functional": "scoped_per_public_functional_execution_call"
+  },
+  "consumer_impact": {
+    "functional_runtime_execution_identity_records_tf32_policy": true,
+    "functional_runtime_identity_changed": true,
+    "PSSolver_Control_source_modified": false,
+    "installed_wheel_consumer_requalification_required": true,
+    "adjudication_stage": "RC4.5.7"
+  },
+  "scope": {
+    "scientific_model_equations_changed": false,
+    "time_integrator_changed": false,
+    "spectral_transform_algorithm_changed": false,
+    "pressure_algorithm_changed": false,
+    "checkpoint_tensor_layout_changed": false,
+    "production_default_changed": false,
+    "nematics3d_modified": false,
+    "H100_executed": false
+  },
+  "historical_successor_sources": {
+    "pssolver/applications/channel_active_nematics.py": {
+      "historical_sha256": "072537286ec87fbcd703e5a685cecf0f9f54911249c82d3b104c6c3651c2b5b3",
+      "current_sha256": "5805fba705615bfdc55c6c567ec9e0799bff357d2a6ceef3363375e6d25037d5",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Scope the frozen-off legacy and compiled Channel TF32 policy around owned execution and record effective precision metadata."
+    },
+    "pssolver/applications/channel_beris_edwards.py": {
+      "historical_sha256": "f72646b5faa9fd4ff0c2c02efb61dc2153eabf9c8b74e8133b317d41b411a1f2",
+      "current_sha256": "82eadce73ca291fc478e845631fa09c06ad0ee289eac47cdec5121cf28a4f356",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Scope complete-stress Channel TF32 policy around application-owned execution."
+    },
+    "pssolver/applications/periodic_beris_edwards.py": {
+      "historical_sha256": "394726f813fc2e2522223e8aad9116fd901064b33dfd588d9dae72b0450aeeb0",
+      "current_sha256": "30f1e3ed2983d1cc5104fd19370a0707548a1a533ef6d7c0cc56f149f79a747c",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Scope periodic complete-stress TF32 policy around application-owned execution."
+    },
+    "pssolver/applications/plane_beris_edwards.py": {
+      "historical_sha256": "0c7b2327d1eeef40e37f753c0d0910d7f132f7973b4c7409dd01957836b8d41e",
+      "current_sha256": "53a4425e0d35a96a85e822939a1e599afed18abd16b4b9cf7836268ccfc9077e",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Scope both qualified Plane runtime paths while preserving the single component-graph decomposition."
+    },
+    "pssolver/configuration/execution_device.py": {
+      "historical_sha256": "4e348a5048ba6a9eef8d8819acb9fd4e93f7c753ae6e0dab0de0b50c6a4a1d60",
+      "current_sha256": "244111555d9219317e0ec17aad127d7d2dae049dfdfce77a4b1f2a714879c7c8",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Replace leaking process-global assignment with validated reentrant execution scopes and exact finally restoration."
+    },
+    "pssolver/functional/channel_activity_runtime.py": {
+      "historical_sha256": "fde37ddf207afff0014b4e3a501854d8a0fb3725e185aaff842e25b30b7c1353",
+      "current_sha256": "0744262bf1f4aad104a0ab2cc34139f005cfda6dfc4d74f5982df4ab5e7f7cb2",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Scope Channel functional step and observation calls and record the effective TF32 policy in execution identity."
+    },
+    "pssolver/functional/periodic_activity.py": {
+      "historical_sha256": "e157e28112d889cc3117e277eae4ef199058f17627df92fa0bdf78aff2a3dcff",
+      "current_sha256": "716b974c4326e4c2c778ba1872ec17ee2d0c0af70e792a8864919da4f3f4f4c7",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Scope periodic functional step and observation calls and record the effective TF32 policy in execution identity."
+    },
+    "tests/test_phase2_plane_application_migration.py": {
+      "historical_sha256": "19cf4accfac42903d9342032b849044f2240c28e5de8c9b602e7ffedb1108d19",
+      "current_sha256": "054edd1f011623280e735331df445b086f5ff69808d2f130ee3601ae931bf66d",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Keep the component-graph ownership audit aware of the private scoped execution body."
+    },
+    "tests/test_phase7_p776_h100_closure.py": {
+      "historical_sha256": "e0b81bf4ed458a8964c55c2f07b57b6023596cd3f172404a9567ed0290cdaaf8",
+      "current_sha256": "a273088deb0da1bbaef068e7cb2dd284bd1b52142e36693bffe8184cf18cfafa",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Resolve the immutable P7.7.6 source binding through this successor record."
+    },
+    "tests/test_phase7_p776_production_connection.py": {
+      "historical_sha256": "3784724d1cff78906400a8c20ef9d6a6dad98e4c85187ec3c79bfd222f74fb41",
+      "current_sha256": "34ff1139e3ea14d659761e57a267bfc82d389f94575b4e2f9fa69f3edfe6471d",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Resolve the immutable P7.7.6 application binding without rewriting its historical record."
+    },
+    "tests/test_phase8_p82_periodic_application.py": {
+      "historical_sha256": "487cd09e90e8fe301cf296a61661590250278a98256543e16aca6e3fd9fdd46e",
+      "current_sha256": "1ec1d079f0d76489b08b6beb3e37407355dd93af0e83b30d36160da3924638f0",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Assert caller-state restoration after periodic application execution."
+    },
+    "tests/test_phase8_p83_channel_complete_stress_application.py": {
+      "historical_sha256": "6bfdceebc6b4711ff32e6955419f434e9915b3850579afa595c50b500e317f36",
+      "current_sha256": "65eead2e491dea4aca962990a79c8f14788965791cb206a59c5ab60f28478309",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Assert caller-state restoration after complete-stress Channel execution."
+    },
+    "tests/test_phase9_p92_periodic_functional_runtime.py": {
+      "historical_sha256": "f57762a269a787f9217e234dd600a2a90efadc472f14454858793d86bb8d0386",
+      "current_sha256": "2d1cf7ec8368c315d55771c038edeffb261d8d5a2a73da47655d00c6189eee3c",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Assert periodic functional execution restores all caller-owned TF32 flags."
+    },
+    "tests/test_phase9_p974_channel_functional_runtime.py": {
+      "historical_sha256": "12685e85f935fe031ffed1384569a7e8f86423222f16f15a3264606a19bc9383",
+      "current_sha256": "534a93070fe567d745b7406db127844f6a82e397c619cc21b00177948b8cdd8e",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Assert Channel functional execution restores all caller-owned TF32 flags."
+    },
+    "tests/test_rc3_known_issues_matrix.py": {
+      "historical_sha256": "5347645ef168e93d223af19bb28106c8827c1112d2342265ce68466184168eec",
+      "current_sha256": "1eaaf739ba37542017341ae9c924c0a910dc22e080b3615378382dce6c09f9c8",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Bind the RC4.5.6 completion and RC4.5.7 eligibility fields while retaining CUDA qualification as pending."
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "747c57eaeb8a907987cad99eee386c4d4f9637b6380e1fdedf287db5d949ee8d",
+      "current_sha256": "7227dcc23a2e93d3a866285b9fc5157f87d1bfbe9dfb27f0b68a36ba63e8e19f",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Extend immutable adjudication source resolution through RC4.5.6."
+    },
+    "tests/test_rc452_public_robustness_contract.py": {
+      "historical_sha256": "5dc41a1896754973636f8d7fd8e5b7f104104832820604cb620be7d9129650a6",
+      "current_sha256": "3b1f6c2074e11767df50aabb472d1ed0259608118666b46319d3f135d33c3ac1",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Preserve the RC4.5.2 contract assertions while recognizing the subsequently authorized RC4.5 implementation."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "74102a46e967aecde24173d2c43b28cc28ceba1845ed1524447c58b2c17ced01",
+      "current_sha256": "4fa3d677f0d2bbf00add2f9596ca1d2dfeca90948a86824421be40bc5f93a287",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Resolve RC4.5.5 content addresses through the RC4.5.6 successor without rewriting RC4.5.5."
+    },
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {
+      "historical_sha256": "d990c188775e077496f257cfcba3dca65b7de27c232fc5fc8fc6272102a67fea",
+      "current_sha256": "881b4f69e614e399985261f53ac645c0f27eeab1fb2090b7391d78b46792094c",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Resolve reviewed source identities through RC4.5.6 and assert the next-stage state."
+    },
+    "tests/test_rc4_fresh_initial_conditioning.py": {
+      "historical_sha256": "7c4c699f51ef52e8c5f9a664b4769cd3d7d951633d2c44ba3994bf32ceefd8d8",
+      "current_sha256": "499e60757475eca05cd3abf37eda8ac90045a6d7a0bd7391c1cd5cbe3bc3043a",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Resolve the Plane application source through RC4.5.6 while preserving the RC4.3.4 result."
+    },
+    "tests/test_rc4_functional_checkpoint_identity_record.py": {
+      "historical_sha256": "1087eb79b0961a3d57f5700e851851b9881b6292900e09a855a9ada934430011",
+      "current_sha256": "b3d0c8dc3fdd774aacbb4d5e8a131a9d7504c64d3da2b9b0cc52c2d62521f5a6",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Extend functional identity successor resolution through the scoped TF32 identity delta."
+    },
+    "tests/test_rc4_lifting_capability_restriction_record.py": {
+      "historical_sha256": "8b1cdacdd951a2f419d7837a61c0fdb549a08a5e4af57d9b74d473be62b8f869",
+      "current_sha256": "a30bfaa3e4e329ef9b1efa36885bd71d743441db82c199c739b9f228b4653e33",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Extend lifting-capability source resolution through RC4.5.6."
+    },
+    "tests/test_rc4_lifting_checkpoint_integration_record.py": {
+      "historical_sha256": "16dec3686ee0ebcb49c14036989f3a526c1d768432053904dcf6843da333be29",
+      "current_sha256": "034d271c8e3fdd5a091187a9374a51c6b1e9a1dab0e6601e93b31af06f02563c",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Extend the immutable RC4.3.5 source-resolution chain through the scoped TF32 successor."
+    },
+    "tests/test_rc4_pressure_contract_plan.py": {
+      "historical_sha256": "093fe114537471773b639ffca308704ef6b1ea0d558f3caf78e3f3b350554a3b",
+      "current_sha256": "02e51c6b53514ac6e70eb68ba8a80320d75195c21632a7e1fca160d0b0075240",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Extend pressure-plan source resolution through RC4.5.6."
+    },
+    "tests/test_rc4_pressure_installed_cpu_closure_record.py": {
+      "historical_sha256": "147868aeccf8468ec1ebfb7513155d101e6434afd34718309503666460c9f5af",
+      "current_sha256": "1d98d312ac9ecf70061be84c8a0d41b78beb04fe4cdef5a745b596492e93384a",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Extend the immutable RC4.4.5 qualification-source chain through the scoped TF32 successor."
+    },
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {
+      "historical_sha256": "8752e4b00502808603e8c3b191a6d64967ed70c8d7b5a50a7cbe7c662a614117",
+      "current_sha256": "767837f5a658f86fd8f388a4e6f53ae5ab3c761ef925094f313df923871ca6b8",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Extend pressure identity source resolution through RC4.5.6."
+    },
+    "tests/test_rc4_pressure_public_contract.py": {
+      "historical_sha256": "7ea9903a604085f2a2735112c25b0132ba92df1d9f5caea0cc4e3beed8f3e570",
+      "current_sha256": "13b15687343e1740454ee1f02ce0fe7368f59d62939548f21b056fd9b4ed1fc6",
+      "introduced_by_phase": "RC4.5.6",
+      "reason": "Extend public pressure-contract source resolution through RC4.5.6."
+    }
+  },
+  "source_sha256": {
+    "pssolver/applications/channel_active_nematics.py": "5805fba705615bfdc55c6c567ec9e0799bff357d2a6ceef3363375e6d25037d5",
+    "pssolver/applications/channel_beris_edwards.py": "82eadce73ca291fc478e845631fa09c06ad0ee289eac47cdec5121cf28a4f356",
+    "pssolver/applications/periodic_beris_edwards.py": "30f1e3ed2983d1cc5104fd19370a0707548a1a533ef6d7c0cc56f149f79a747c",
+    "pssolver/applications/plane_beris_edwards.py": "53a4425e0d35a96a85e822939a1e599afed18abd16b4b9cf7836268ccfc9077e",
+    "pssolver/configuration/execution_device.py": "244111555d9219317e0ec17aad127d7d2dae049dfdfce77a4b1f2a714879c7c8",
+    "pssolver/functional/channel_activity_runtime.py": "0744262bf1f4aad104a0ab2cc34139f005cfda6dfc4d74f5982df4ab5e7f7cb2",
+    "pssolver/functional/periodic_activity.py": "716b974c4326e4c2c778ba1872ec17ee2d0c0af70e792a8864919da4f3f4f4c7",
+    "tests/test_rc456_tf32_execution_scope.py": "f70d633fe7dff5e0be6335011fafa8b89975b198f40db76df47c365de3fc7fbd"
+  },
+  "verification": {
+    "py_compile": "PASS",
+    "focused_tf32_and_runtime_tests": {
+      "passed": 226,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 3355,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 1,
+      "subtests_passed": 8,
+      "deselected_node_id": "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+    }
+  },
+  "authorization": {
+    "rc4_5_6_complete": true,
+    "eligible_for_rc4_5_7_installed_cpu_closure": true,
+    "rc4_5_7_executed": false,
+    "rc4_5_8_h100_authorized": false,
+    "push_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

@@ -359,8 +359,22 @@ def test_rc450_progress_records_rc44_closure_and_rc45_planning_boundary():
             ).read_bytes()
         ).hexdigest(),
         "eligible_for_rc4_5_6_implementation": True,
-        "rc4_5_6_implementation_authorized": False,
-        "rc4_5_implementation_authorized": False,
+        "rc4_5_6_implementation_authorized": True,
+        "rc4_5_6_complete": True,
+        "rc4_5_6_classification": (
+            "PASS_RC4_5_6_SCOPED_TF32_CPU_CANDIDATE"
+        ),
+        "rc4_5_6_record": (
+            "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
+        ),
+        "rc4_5_6_record_sha256": hashlib.sha256(
+            (
+                ROOT
+                / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
+            ).read_bytes()
+        ).hexdigest(),
+        "eligible_for_rc4_5_7_installed_cpu_closure": True,
+        "rc4_5_implementation_authorized": True,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,
         "production_default_changed": False,

@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 NOTES = ROOT / "notes" / "architecture_v0_2"
 CLOSURE_PATH = NOTES / "phase_7_p776_h100_closure.json"
 LOCAL_PATH = NOTES / "phase_7_p776_production_connection.json"
@@ -16,6 +17,16 @@ ARCHIVE_BUILDER = NOTES / "build_verbatim_archive_pdf.py"
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def _rc456_successor(relative: str, historical: str) -> str:
+    registration = json.loads(RC456.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is None:
+        return historical
+    assert registration["historical_sha256"] == historical
+    return registration["current_sha256"]
 
 
 def _record() -> dict[str, object]:
@@ -107,7 +118,10 @@ def test_closure_source_hashes_match_local_candidate_sources():
         "pssolver/applications/plane_beris_edwards.py",
         "tests/test_phase7_p776_production_connection.py",
     }
-    assert all(recorded[path] == digest for path, digest in unchanged.items())
+    assert all(
+        _rc456_successor(path, recorded[path]) == digest
+        for path, digest in unchanged.items()
+    )
     # P8.4.4 later connected static Plane lifting through this application.
     assert recorded["pssolver/applications/plane_beris_edwards.py"] != _sha256(
         "pssolver/applications/plane_beris_edwards.py"

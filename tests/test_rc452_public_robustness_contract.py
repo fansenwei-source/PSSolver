@@ -283,4 +283,4 @@ def test_known_issue_matrix_registers_the_contract_without_authorizing_implement
     assert progress["rc4_5_2_contract_record"] == RECORD.relative_to(ROOT).as_posix()
     assert progress["rc4_5_2_contract_record_sha256"] == _sha256(RECORD)
     assert progress["eligible_for_rc4_5_3_implementation"] is True
-    assert progress["rc4_5_implementation_authorized"] is False
+    assert progress["rc4_5_implementation_authorized"] is True

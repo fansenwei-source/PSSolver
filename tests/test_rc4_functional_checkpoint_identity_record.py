@@ -32,6 +32,9 @@ RC453_SUCCESSOR_RECORD = ROOT / (
 RC455_SUCCESSOR_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
 )
+RC456_SUCCESSOR_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -49,6 +52,7 @@ def _registered_successor(relative: str, historical_sha256: str) -> dict[str, ob
         RC444_SUCCESSOR_RECORD,
         RC453_SUCCESSOR_RECORD,
         RC455_SUCCESSOR_RECORD,
+        RC456_SUCCESSOR_RECORD,
     ):
         record = json.loads(path.read_text(encoding="utf-8"))
         registration = record["historical_successor_sources"].get(relative)
@@ -72,6 +76,7 @@ def _assert_successor_chain(
         RC444_SUCCESSOR_RECORD,
         RC453_SUCCESSOR_RECORD,
         RC455_SUCCESSOR_RECORD,
+        RC456_SUCCESSOR_RECORD,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
@@ -115,9 +120,10 @@ def test_rc424_record_binds_parent_plans_and_implementation_files():
                     "RC4.2.6 recovery",
                     "RC4.4.3",
                     "RC4.4.4",
-                    "RC4.5.3",
-                    "RC4.5.5",
-                }
+                        "RC4.5.3",
+                        "RC4.5.5",
+                        "RC4.5.6",
+                    }
 
 
 def test_rc424_record_freezes_four_layer_functional_identity():

@@ -16,6 +16,7 @@ from pssolver.configuration.channel_beris_edwards import (
 from pssolver.configuration.execution_device import (
     configure_tf32_execution,
     resolve_execution_device,
+    scoped_tf32_execution,
 )
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
@@ -75,11 +76,12 @@ def load_channel_initial_q(run_spec: ChannelBerisEdwardsRunSpec):
     )
 
 
-def run_channel_beris_edwards(
+def _run_channel_beris_edwards_owned(
     run_spec: ChannelBerisEdwardsRunSpec,
     *,
     progress: Iterable[int] | None = None,
     emit_metadata: bool = False,
+    tf32_metadata: dict[str, object],
 ):
     """Execute one frozen P8.3 application with no runtime fallback."""
 
@@ -113,11 +115,7 @@ def run_channel_beris_edwards(
         "spectral_dtype": (
             "complex64" if real_dtype == torch.float32 else "complex128"
         ),
-        **configure_tf32_execution(
-            spec.execution.options["tf32"],
-            real_dtype=real_dtype,
-            device=device,
-        ),
+        **tf32_metadata,
     }
     restart = spec.workflow.options["restart_from"]
     if restart is not None:
@@ -157,6 +155,44 @@ def run_channel_beris_edwards(
         metadata,
     )
     return workflow.run(progress=progress)
+
+
+def run_channel_beris_edwards(
+    run_spec: ChannelBerisEdwardsRunSpec,
+    *,
+    progress: Iterable[int] | None = None,
+    emit_metadata: bool = False,
+):
+    """Execute one Channel run inside a dynamically scoped TF32 policy."""
+
+    if not isinstance(run_spec, ChannelBerisEdwardsRunSpec):
+        raise TypeError("run_spec must be ChannelBerisEdwardsRunSpec")
+    spec = run_spec.simulation
+    real_dtype = getattr(torch, spec.numerics.precision.value)
+    requested = spec.execution.options["tf32"]
+    if run_spec.dry_run:
+        return _run_channel_beris_edwards_owned(
+            run_spec,
+            progress=progress,
+            emit_metadata=emit_metadata,
+            tf32_metadata=configure_tf32_execution(
+                requested,
+                real_dtype=real_dtype,
+                device=spec.execution.options["device"],
+            ),
+        )
+    device = resolve_execution_device(spec.execution.options["device"])
+    with scoped_tf32_execution(
+        requested,
+        real_dtype=real_dtype,
+        device=device,
+    ) as tf32_metadata:
+        return _run_channel_beris_edwards_owned(
+            run_spec,
+            progress=progress,
+            emit_metadata=emit_metadata,
+            tf32_metadata=tf32_metadata,
+        )
 
 
 __all__ = ["load_channel_initial_q", "run_channel_beris_edwards"]

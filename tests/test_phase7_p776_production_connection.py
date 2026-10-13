@@ -29,10 +29,21 @@ PLANE_APPLICATION = ROOT / "pssolver/applications/plane_beris_edwards.py"
 CHANNEL_APPLICATION = ROOT / (
     "pssolver/applications/channel_active_nematics.py"
 )
+RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _rc456_successor(relative: str, historical: str) -> str:
+    registration = json.loads(RC456.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is None:
+        return historical
+    assert registration["historical_sha256"] == historical
+    return registration["current_sha256"]
 
 
 def _plane_spec(output: Path, runtime_path: str):
@@ -203,9 +214,11 @@ def test_p776_machine_record_matches_candidate_sources_and_scope():
         "pssolver/applications/channel_active_nematics.py",
         "pssolver/applications/plane_beris_edwards.py",
     }
-    assert record["source_sha256"][
-        "pssolver/applications/channel_active_nematics.py"
-    ] == _sha256(CHANNEL_APPLICATION)
+    relative = "pssolver/applications/channel_active_nematics.py"
+    assert _rc456_successor(
+        relative,
+        record["source_sha256"][relative],
+    ) == _sha256(CHANNEL_APPLICATION)
     # P8.4.4 later connected static Plane lifting through this application.
     assert record["source_sha256"][
         "pssolver/applications/plane_beris_edwards.py"

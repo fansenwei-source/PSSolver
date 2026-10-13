@@ -20,6 +20,10 @@ from pssolver.configuration.public_simulation_runner import (
     PUBLIC_PERIODIC_APPLICATION,
     compile_public_simulation,
 )
+from pssolver.configuration.execution_device import (
+    configure_tf32_execution,
+    scoped_tf32_execution,
+)
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.periodic_beris_edwards import (
@@ -264,6 +268,12 @@ class PeriodicActivityFunctionalRuntime:
         self._state_spec = state_spec
         self._control_specs = controls
         self._observation_specs = observations
+        self._tf32_requested = request.simulation.execution.options["tf32"]
+        self._tf32_real_dtype = getattr(
+            torch,
+            request.simulation.numerics.precision.value,
+        )
+        self._tf32_device = device
         replay_capability = PERIODIC_ACTIVITY_DETERMINISTIC_REPLAY
         self._capabilities = FunctionalCapabilitySet(
             supported_batch_sizes=(1,),
@@ -309,6 +319,11 @@ class PeriodicActivityFunctionalRuntime:
             "fallback_used": False,
             "deterministic_replay": replay_capability,
             "durable_checkpoint_bridge_version": 1,
+            "tf32_policy": configure_tf32_execution(
+                self._tf32_requested,
+                real_dtype=self._tf32_real_dtype,
+                device=self._tf32_device,
+            ),
         }
         self._identity = FunctionalRuntimeIdentity(
             scientific=dict(identities["scientific"]),
@@ -463,29 +478,39 @@ class PeriodicActivityFunctionalRuntime:
         controls: FunctionalControls,
         step_index: int,
     ) -> FunctionalState:
-        self._validate_step_index(step_index)
-        self._validate_state(state)
-        activity = self._activity(controls)
-        _, rhs = self._flow_and_rhs(state, activity, need_rhs=True)
-        if rhs is None:  # pragma: no cover - guarded by need_rhs=True
-            raise AssertionError("functional RHS was not computed")
-        return self._next_state(state, rhs)
+        with scoped_tf32_execution(
+            self._tf32_requested,
+            real_dtype=self._tf32_real_dtype,
+            device=self._tf32_device,
+        ):
+            self._validate_step_index(step_index)
+            self._validate_state(state)
+            activity = self._activity(controls)
+            _, rhs = self._flow_and_rhs(state, activity, need_rhs=True)
+            if rhs is None:  # pragma: no cover - guarded by need_rhs=True
+                raise AssertionError("functional RHS was not computed")
+            return self._next_state(state, rhs)
 
     def observe(
         self,
         state: FunctionalState,
         controls: FunctionalControls | None,
     ) -> FunctionalObservations:
-        self._validate_state(state)
-        if controls is None:
-            return {"Q": state[0]}
-        activity = self._activity(controls)
-        observations, _ = self._flow_and_rhs(
-            state,
-            activity,
-            need_rhs=False,
-        )
-        return observations
+        with scoped_tf32_execution(
+            self._tf32_requested,
+            real_dtype=self._tf32_real_dtype,
+            device=self._tf32_device,
+        ):
+            self._validate_state(state)
+            if controls is None:
+                return {"Q": state[0]}
+            activity = self._activity(controls)
+            observations, _ = self._flow_and_rhs(
+                state,
+                activity,
+                need_rhs=False,
+            )
+            return observations
 
     def step_and_observe(
         self,
@@ -493,17 +518,22 @@ class PeriodicActivityFunctionalRuntime:
         controls: FunctionalControls,
         step_index: int,
     ) -> tuple[FunctionalState, FunctionalObservations]:
-        self._validate_step_index(step_index)
-        self._validate_state(state)
-        activity = self._activity(controls)
-        observations, rhs = self._flow_and_rhs(
-            state,
-            activity,
-            need_rhs=True,
-        )
-        if rhs is None:  # pragma: no cover - guarded by need_rhs=True
-            raise AssertionError("functional RHS was not computed")
-        return self._next_state(state, rhs), observations
+        with scoped_tf32_execution(
+            self._tf32_requested,
+            real_dtype=self._tf32_real_dtype,
+            device=self._tf32_device,
+        ):
+            self._validate_step_index(step_index)
+            self._validate_state(state)
+            activity = self._activity(controls)
+            observations, rhs = self._flow_and_rhs(
+                state,
+                activity,
+                need_rhs=True,
+            )
+            if rhs is None:  # pragma: no cover - guarded by need_rhs=True
+                raise AssertionError("functional RHS was not computed")
+            return self._next_state(state, rhs), observations
 
 
 class PeriodicActivityFunctionalRuntimeFactory:

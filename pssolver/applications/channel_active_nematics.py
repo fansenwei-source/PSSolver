@@ -20,6 +20,7 @@ from pssolver.configuration.active_nematics_simulation_adapters import (
 from pssolver.configuration.channel_active_nematics import (
     ChannelActiveNematicRunSpec,
 )
+from pssolver.configuration.execution_device import scoped_tf32_execution
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
@@ -70,7 +71,11 @@ def _initial_q(run_spec: ChannelActiveNematicRunSpec) -> dict[str, torch.Tensor]
     )
 
 
-def _metadata(run_spec: ChannelActiveNematicRunSpec, device: torch.device) -> dict[str, object]:
+def _metadata(
+    run_spec: ChannelActiveNematicRunSpec,
+    device: torch.device,
+    tf32_metadata: dict[str, object],
+) -> dict[str, object]:
     components = run_spec.components
     material = components.material
     return {
@@ -92,6 +97,11 @@ def _metadata(run_spec: ChannelActiveNematicRunSpec, device: torch.device) -> di
             "dt": run_spec.dt, "steps": run_spec.steps,
             "save_interval": run_spec.save_interval, "real_dtype": run_spec.dtype,
         },
+        "precision": {
+            "real_dtype": run_spec.dtype,
+            "spectral_dtype": "complex64",
+            **tf32_metadata,
+        },
         "model": {
             "name": "active_nematics",
             "variant": "legacy_channel_active_force_stokes",
@@ -108,10 +118,11 @@ def _metadata(run_spec: ChannelActiveNematicRunSpec, device: torch.device) -> di
     }
 
 
-def run_channel_active_nematics(
+def _run_channel_active_nematics_owned(
     run_spec: ChannelActiveNematicRunSpec,
     *,
     progress: Iterable[int] | None = None,
+    tf32_metadata: dict[str, object],
 ) -> ChannelWorkflowResult:
     """Run one validated Channel request through the package-owned workflow."""
 
@@ -125,7 +136,7 @@ def run_channel_active_nematics(
         raise ValueError("P7.5 production output requires batch_size=1")
     device = _resolve_device(run_spec.device)
     initial_q = _initial_q(run_spec)
-    metadata = _metadata(run_spec, device)
+    metadata = _metadata(run_spec, device, tf32_metadata)
     request = ChannelRuntimeBuildRequest(run_spec, metadata, initial_q, device)
     construction = PackageRuntimeConstructionInput(
         plan=plan_package_runtime_construction(
@@ -149,6 +160,28 @@ def run_channel_active_nematics(
     )
     output = prepare_new_run_directory(output)
     return ChannelActiveNematicsWorkflow(adapter, run_spec, output, metadata).run(progress=progress)
+
+
+def run_channel_active_nematics(
+    run_spec: ChannelActiveNematicRunSpec,
+    *,
+    progress: Iterable[int] | None = None,
+) -> ChannelWorkflowResult:
+    """Run Channel with its frozen-off TF32 policy scoped to execution."""
+
+    if not isinstance(run_spec, ChannelActiveNematicRunSpec):
+        raise TypeError("run_spec must be ChannelActiveNematicRunSpec")
+    device = _resolve_device(run_spec.device)
+    with scoped_tf32_execution(
+        "off",
+        real_dtype=torch.float32,
+        device=device,
+    ) as tf32_metadata:
+        return _run_channel_active_nematics_owned(
+            run_spec,
+            progress=progress,
+            tf32_metadata=tf32_metadata,
+        )
 
 
 __all__ = ["run_channel_active_nematics"]

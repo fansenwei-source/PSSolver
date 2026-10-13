@@ -220,6 +220,35 @@ def test_p92_step_is_input_pure_and_combined_observation_uses_input_state(
     assert terminal["Q"] is next_state[0]
 
 
+def test_p92_functional_execution_restores_caller_tf32_state(
+    tmp_path,
+    monkeypatch,
+):
+    _, _, runtime = _runtime(tmp_path)
+    state = runtime.initial_state()
+    controls = _control(runtime)
+    original_precision = torch.get_float32_matmul_precision()
+    try:
+        torch.set_float32_matmul_precision("medium")
+        monkeypatch.setattr(torch.backends.cuda.matmul, "allow_tf32", True)
+        monkeypatch.setattr(torch.backends.cudnn, "allow_tf32", False)
+        caller = (
+            torch.get_float32_matmul_precision(),
+            bool(torch.backends.cuda.matmul.allow_tf32),
+            bool(torch.backends.cudnn.allow_tf32),
+        )
+
+        runtime.step_and_observe(state, controls, 0)
+
+        assert (
+            torch.get_float32_matmul_precision(),
+            bool(torch.backends.cuda.matmul.allow_tf32),
+            bool(torch.backends.cudnn.allow_tf32),
+        ) == caller
+    finally:
+        torch.set_float32_matmul_precision(original_precision)
+
+
 def test_p92_activity_is_a_spatial_product_before_divergence(tmp_path):
     _, _, runtime = _runtime(tmp_path)
     state = runtime.initial_state()

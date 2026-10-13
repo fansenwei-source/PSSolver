@@ -106,18 +106,24 @@ def _run_spec_reads() -> set[str]:
         APPLICATION_PATH.read_text(encoding="utf-8"),
         filename=str(APPLICATION_PATH),
     )
-    function = next(
+    functions = tuple(
         node
         for node in tree.body
         if isinstance(node, ast.FunctionDef)
-        and node.name == "run_plane_beris_edwards"
+        and node.name in {
+            "run_plane_beris_edwards",
+            "_run_plane_beris_edwards_owned",
+        }
     )
     return {
         node.attr
+        for function in functions
         for node in ast.walk(function)
-        if isinstance(node, ast.Attribute)
-        and isinstance(node.value, ast.Name)
-        and node.value.id in {"args", "run_spec"}
+        if (
+            isinstance(node, ast.Attribute)
+            and isinstance(node.value, ast.Name)
+            and node.value.id in {"args", "run_spec"}
+        )
     }
 
 

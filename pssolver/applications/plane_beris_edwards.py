@@ -63,7 +63,10 @@ from pssolver.configuration import (
 from pssolver.configuration.active_nematics_simulation_adapters import (
     compose_plane_beris_edwards_simulation,
 )
-from pssolver.configuration.execution_device import configure_tf32_execution
+from pssolver.configuration.execution_device import (
+    configure_tf32_execution,
+    scoped_tf32_execution,
+)
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.configuration.package_construction import (
@@ -71,6 +74,9 @@ from pssolver.configuration.package_construction import (
 )
 from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
+)
+from pssolver.configuration.plane_beris_edwards_component_graph import (
+    PlaneBerisEdwardsRunComponents,
 )
 from pssolver.runtime.plane_beris_edwards import (
     PlaneRuntimeBuildRequest,
@@ -157,12 +163,14 @@ def tensor_sha256(tensors):
     return digest.hexdigest()
 
 
-def run_plane_beris_edwards(
+def _run_plane_beris_edwards_owned(
     run_spec: PlaneBerisEdwardsRunSpec,
     *,
     progress: Iterable[int] | None = None,
     emit_metadata: bool = False,
     application_simulation: SimulationSpec | None = None,
+    tf32_metadata: dict[str, object],
+    components: PlaneBerisEdwardsRunComponents,
 ) -> PlaneWorkflowResult | None:
     """Execute one validated Plane run through the supported application API.
 
@@ -173,7 +181,6 @@ def run_plane_beris_edwards(
 
     if not isinstance(run_spec, PlaneBerisEdwardsRunSpec):
         raise TypeError("run_spec must be PlaneBerisEdwardsRunSpec")
-    components = decompose_plane_beris_edwards_run_spec(run_spec)
     baseline_simulation = compose_plane_beris_edwards_simulation(components)
     if application_simulation is None:
         application_simulation = baseline_simulation
@@ -242,12 +249,6 @@ def run_plane_beris_edwards(
         "float64": torch.float64,
     }[real_dtype_name]
     spectral_dtype_name = "complex64" if real_dtype == torch.float32 else "complex128"
-    tf32_metadata = configure_tf32_execution(
-        execution.tf32,
-        real_dtype=real_dtype,
-        device=device,
-    )
-
     resolved_torch_device = torch.device(device)
     cuda_device_name = None
     cuda_total_memory_bytes = None
@@ -865,6 +866,60 @@ def run_plane_beris_edwards(
     )
     workflow_result = workflow.run(progress=progress)
     return workflow_result
+
+
+def run_plane_beris_edwards(
+    run_spec: PlaneBerisEdwardsRunSpec,
+    *,
+    progress: Iterable[int] | None = None,
+    emit_metadata: bool = False,
+    application_simulation: SimulationSpec | None = None,
+) -> PlaneWorkflowResult | None:
+    """Execute one Plane run inside a dynamically scoped TF32 policy."""
+
+    if not isinstance(run_spec, PlaneBerisEdwardsRunSpec):
+        raise TypeError("run_spec must be PlaneBerisEdwardsRunSpec")
+    components = decompose_plane_beris_edwards_run_spec(run_spec)
+    execution = components.execution
+    invocation = components.invocation
+    real_dtype = {
+        "float32": torch.float32,
+        "float64": torch.float64,
+    }[components.numerics.precision.value]
+    requested_device = execution.device
+    device = (
+        "cuda"
+        if requested_device == "auto" and torch.cuda.is_available()
+        else "cpu"
+        if requested_device == "auto"
+        else requested_device
+    )
+    if invocation.dry_run:
+        return _run_plane_beris_edwards_owned(
+            run_spec,
+            progress=progress,
+            emit_metadata=emit_metadata,
+            application_simulation=application_simulation,
+            tf32_metadata=configure_tf32_execution(
+                execution.tf32,
+                real_dtype=real_dtype,
+                device=device,
+            ),
+            components=components,
+        )
+    with scoped_tf32_execution(
+        execution.tf32,
+        real_dtype=real_dtype,
+        device=device,
+    ) as tf32_metadata:
+        return _run_plane_beris_edwards_owned(
+            run_spec,
+            progress=progress,
+            emit_metadata=emit_metadata,
+            application_simulation=application_simulation,
+            tf32_metadata=tf32_metadata,
+            components=components,
+        )
 
 
 def _print_workflow_summary(workflow_result: PlaneWorkflowResult) -> None:

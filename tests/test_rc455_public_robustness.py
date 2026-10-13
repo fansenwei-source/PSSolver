@@ -20,6 +20,16 @@ from pssolver.workflows.diagnostic_io import diagnostics_metadata_envelope
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
+RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
+
+
+def _rc456_successor(relative: str, historical: str) -> str:
+    registration = json.loads(RC456.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is None or registration["historical_sha256"] != historical:
+        return historical
+    return registration["current_sha256"]
 
 
 @pytest.mark.parametrize(
@@ -193,12 +203,14 @@ def test_rc455_record_closes_only_b13_b15_b17_and_binds_sources():
         "B17": "closed_verified",
     }
     for relative, expected in record["source_sha256"].items():
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == expected
+        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == (
+            _rc456_successor(relative, expected)
+        )
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
         assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == (
-            registration["current_sha256"]
+            _rc456_successor(relative, registration["current_sha256"])
         )
     assert record["verification"]["focused_public_tests"] == {
         "passed": 200,

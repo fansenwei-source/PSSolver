@@ -23,6 +23,7 @@ RECORD_PATH = ROOT / "notes/PSSolver_v0_2_0rc4_rc434_fresh_conditioning.json"
 CONTRACT_PATH = (
     ROOT / "notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json"
 )
+RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 
 
 def _sha256(path: Path) -> str:
@@ -31,6 +32,15 @@ def _sha256(path: Path) -> str:
 
 def _record() -> dict[str, object]:
     return json.loads(RECORD_PATH.read_text(encoding="utf-8"))
+
+
+def _rc456_successor(relative: str, historical: str) -> str:
+    registration = json.loads(RC456.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is None or registration["historical_sha256"] != historical:
+        return historical
+    return registration["current_sha256"]
 
 
 def test_policy_declarations_are_immutable_and_match_the_frozen_contract():
@@ -118,4 +128,7 @@ def test_rc434_record_binds_sources_scope_and_qualification_boundary():
     for relative, expected in record["source_sha256"].items():
         if relative in superseded_by_rc435:
             continue
-        assert _sha256(ROOT / relative) == expected, relative
+        assert _sha256(ROOT / relative) == _rc456_successor(
+            relative,
+            expected,
+        ), relative
