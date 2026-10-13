@@ -30,6 +30,11 @@ RC447_PERFORMANCE_REPAIR = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_pressure_performance_repair.json"
 )
+RC447_PERFORMANCE_RECOVERY_V10 = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_pressure_performance_recovery_v10.json"
+)
 
 
 def _plan() -> dict[str, object]:
@@ -235,6 +240,9 @@ def test_rc440_reviewed_provider_sources_are_content_addressed():
     performance_repair = json.loads(
         RC447_PERFORMANCE_REPAIR.read_text(encoding="utf-8")
     )["successor_sources"]
+    performance_recovery = json.loads(
+        RC447_PERFORMANCE_RECOVERY_V10.read_text(encoding="utf-8")
+    )["successor_sources"]
     for relative, expected in _plan()["reviewed_source_sha256"].items():
         actual = _sha256(ROOT / relative)
         if actual == expected:
@@ -244,21 +252,29 @@ def test_rc440_reviewed_provider_sources_are_content_addressed():
             assert registration["historical_sha256"] == expected
             assert registration["introduced_by_phase"] == "RC4.4.3"
             continue
-        newest = performance_repair.get(
+        newest = performance_recovery.get(
             relative,
-            latest.get(relative, recovery.get(relative)),
+            performance_repair.get(
+                relative,
+                latest.get(relative, recovery.get(relative)),
+            ),
         )
         assert newest is not None
         predecessor = expected if registration is None else registration[
             "current_sha256"
         ]
-        if relative in performance_repair:
+        if relative in performance_recovery:
+            predecessor = performance_repair[relative]["current_sha256"]
+        elif relative in performance_repair:
             intermediate = latest.get(relative, recovery.get(relative))
             if intermediate is not None:
                 predecessor = intermediate["current_sha256"]
         assert newest["historical_sha256"] == predecessor
         assert newest["current_sha256"] == actual
         expected_phase = (
+            "RC4.4.7-performance-recovery-v10-provider"
+            if relative in performance_recovery
+            else
             "RC4.4.7-performance-repair-v9-provider"
             if relative in performance_repair
             else "RC4.4.4"

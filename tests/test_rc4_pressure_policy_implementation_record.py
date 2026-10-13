@@ -28,6 +28,11 @@ RC447_PERFORMANCE_REPAIR = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_pressure_performance_repair.json"
 )
+RC447_PERFORMANCE_RECOVERY_V10 = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_pressure_performance_recovery_v10.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -59,23 +64,34 @@ def test_rc443_record_binds_parent_contract_and_current_sources():
     performance_repair = json.loads(
         RC447_PERFORMANCE_REPAIR.read_text(encoding="utf-8")
     )["successor_sources"]
+    performance_recovery = json.loads(
+        RC447_PERFORMANCE_RECOVERY_V10.read_text(encoding="utf-8")
+    )["successor_sources"]
     for relative, expected in record["source_sha256"].items():
         actual = _sha256(relative)
         if actual == expected:
             continue
-        successor = performance_repair.get(
+        successor = performance_recovery.get(
             relative,
-            latest.get(relative, recovery.get(relative)),
+            performance_repair.get(
+                relative,
+                latest.get(relative, recovery.get(relative)),
+            ),
         )
         assert successor is not None
         predecessor = expected
-        if relative in performance_repair:
+        if relative in performance_recovery:
+            predecessor = performance_repair[relative]["current_sha256"]
+        elif relative in performance_repair:
             intermediate = latest.get(relative, recovery.get(relative))
             if intermediate is not None:
                 predecessor = intermediate["current_sha256"]
         assert successor["historical_sha256"] == predecessor
         assert successor["current_sha256"] == actual
         expected_phase = (
+            "RC4.4.7-performance-recovery-v10-provider"
+            if relative in performance_recovery
+            else
             "RC4.4.7-performance-repair-v9-provider"
             if relative in performance_repair
             else "RC4.4.4"
@@ -103,24 +119,35 @@ def test_rc443_registers_exact_historical_successors():
     performance_repair = json.loads(
         RC447_PERFORMANCE_REPAIR.read_text(encoding="utf-8")
     )["successor_sources"]
+    performance_recovery = json.loads(
+        RC447_PERFORMANCE_RECOVERY_V10.read_text(encoding="utf-8")
+    )["successor_sources"]
     for relative, registration in successors.items():
         assert registration["introduced_by_phase"] == "RC4.4.3"
         assert registration["historical_sha256"] != registration["current_sha256"]
         actual = _sha256(relative)
         if actual != registration["current_sha256"]:
-            newest = performance_repair.get(
+            newest = performance_recovery.get(
                 relative,
-                latest.get(relative, recovery.get(relative)),
+                performance_repair.get(
+                    relative,
+                    latest.get(relative, recovery.get(relative)),
+                ),
             )
             assert newest is not None
             predecessor = registration["current_sha256"]
-            if relative in performance_repair:
+            if relative in performance_recovery:
+                predecessor = performance_repair[relative]["current_sha256"]
+            elif relative in performance_repair:
                 intermediate = latest.get(relative, recovery.get(relative))
                 if intermediate is not None:
                     predecessor = intermediate["current_sha256"]
             assert newest["historical_sha256"] == predecessor
             assert newest["current_sha256"] == actual
             expected_phase = (
+                "RC4.4.7-performance-recovery-v10-provider"
+                if relative in performance_recovery
+                else
                 "RC4.4.7-performance-repair-v9-provider"
                 if relative in performance_repair
                 else "RC4.4.4"

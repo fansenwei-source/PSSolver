@@ -23,8 +23,10 @@ from pssolver.linear_solvers.stokes import (
     ChannelPressureConvergenceError,
 )
 from pssolver.linear_solvers.stokes.channel_no_slip import (
+    _channel_pressure_operator_breakdown,
     _channel_pressure_working_breakdown,
     _channel_pressure_working_magnitude,
+    _channel_pressure_working_residual_observation,
     channel_pressure_active_rms,
     channel_pressure_relative_breakdown,
     channel_pressure_scale_power_of_two,
@@ -138,6 +140,11 @@ def test_active_rms_encodes_every_frozen_scale_without_mislabeling_zero(
         assert magnitude.representable_as_positive_float64 is False
 
 
+def test_zero_power_of_two_scale_preserves_tensor_identity():
+    value = torch.ones((2, 3), dtype=torch.complex128)
+    assert channel_pressure_scale_power_of_two(value, 0) is value
+
+
 def test_relative_breakdown_is_scale_invariant_and_has_positive_control():
     _, pressure = _solver()
     mask = pressure.pressure_inactive_mask
@@ -188,6 +195,27 @@ def test_working_scale_fast_measurements_match_public_pressure_primitives():
     assert magnitude == channel_pressure_active_rms(left, mask)
     assert breakdown is channel_pressure_relative_breakdown(left, right, mask)
 
+    active_count = int((~mask).sum().item())
+    inner_product = torch.sum(torch.conj(left) * right).real
+    observed, state_finite, residual_breakdown, residual_pair_finite = (
+        _channel_pressure_working_residual_observation(
+            left,
+            right,
+            mask,
+            inner_product=inner_product,
+            active_count=active_count,
+            finite_companions=(right,),
+        )
+    )
+    assert observed == channel_pressure_active_rms(left, mask)
+    assert state_finite is True
+    assert residual_pair_finite is True
+    assert residual_breakdown is channel_pressure_relative_breakdown(
+        left,
+        right,
+        mask,
+    )
+
 
 def test_working_scale_fast_measurements_fail_closed_on_nonfinite_values():
     _, pressure = _solver()
@@ -211,6 +239,108 @@ def test_working_scale_fast_measurements_fail_closed_on_nonfinite_values():
     assert finite is False
     assert breakdown is False
     assert pair_finite is False
+
+    (
+        certified_magnitude,
+        certified_state_finite,
+        certified_breakdown,
+        certified_pair_finite,
+    ) = _channel_pressure_working_residual_observation(
+        left,
+        nonfinite,
+        mask,
+        inner_product=torch.tensor(float("inf"), dtype=torch.float64),
+        active_count=int((~mask).sum().item()),
+        breakdown_certified=True,
+        preconditioner_inverse_max=float("inf"),
+    )
+    assert certified_magnitude == channel_pressure_active_rms(left, mask)
+    assert certified_state_finite is True
+    assert certified_breakdown is False
+    assert certified_pair_finite is False
+
+
+@pytest.mark.parametrize("shape", ((128, 20, 20), (512, 40, 40)))
+def test_float64_channel_breakdown_has_a_margin_certified_spectral_bound(shape):
+    spectral = SpectralSolver(
+        shape,
+        L=(32.0, 5.0, 5.0),
+        device="cpu",
+        dtype=torch.float64,
+    )
+    pressure = ChannelNoSlipModalStokesSolver(
+        spectral.transform_backend,
+        friction=1.0,
+        viscosity=1.0,
+        pressure_relative_tolerance=1.0e-6,
+        pressure_max_iterations=100,
+    )
+
+    floor = 4096.0 * torch.finfo(torch.float64).eps
+    assert pressure._pressure_operator_angle_lower_bound > floor
+    assert pressure._pressure_preconditioner_angle_lower_bound > floor
+    assert pressure._pressure_operator_breakdown_certified is True
+    assert pressure._pressure_preconditioner_breakdown_certified is True
+
+
+def test_breakdown_certificate_fast_path_matches_full_vector_gate_and_solution():
+    spectral, certified = _solver(
+        fixed_iterations=None,
+        relative_tolerance=1.0e-6,
+    )
+    rhs = _pressure_rhs(spectral, certified)
+    fallback = _solver(
+        fixed_iterations=None,
+        relative_tolerance=1.0e-6,
+    )[1]
+    fallback._pressure_operator_breakdown_certified = False
+    fallback._pressure_preconditioner_breakdown_certified = False
+
+    actual = certified._solve_pressure(rhs)
+    expected = fallback._solve_pressure(rhs)
+
+    assert torch.equal(actual, expected)
+    certified_diagnostics = certified.last_pressure_diagnostics
+    fallback_diagnostics = fallback.last_pressure_diagnostics
+    for name in (
+        "achieved_iteration_count",
+        "termination_reason",
+        "postcondition_satisfied",
+        "acceptable",
+    ):
+        assert certified_diagnostics[name] == fallback_diagnostics[name]
+    assert certified_diagnostics["achieved_normalized_residual"] == pytest.approx(
+        fallback_diagnostics["achieved_normalized_residual"],
+        rel=2.0e-15,
+        abs=0.0,
+    )
+
+
+def test_operator_upper_bound_fast_path_matches_full_relative_breakdown_gate():
+    spectral, pressure = _solver()
+    mask = pressure.pressure_inactive_mask
+    generator = torch.Generator().manual_seed(4481)
+    direction = torch.complex(
+        torch.randn(mask.shape, generator=generator, dtype=torch.float64),
+        torch.randn(mask.shape, generator=generator, dtype=torch.float64),
+    ).masked_fill(mask, 0)
+    operator_direction = pressure._pressure_operator(direction)
+    inner_product = torch.sum(torch.conj(direction) * operator_direction)
+
+    breakdown, finite = _channel_pressure_operator_breakdown(
+        direction,
+        operator_direction,
+        mask,
+        inner_product=inner_product,
+        operator_norm_upper_bound=pressure._pressure_operator_norm_upper_bound,
+    )
+
+    assert finite is True
+    assert breakdown is channel_pressure_relative_breakdown(
+        direction,
+        operator_direction,
+        mask,
+    )
 
 
 def test_fixed_work_ignores_loose_tolerance_on_all_three_executable_loops():
@@ -267,6 +397,7 @@ def test_production_pressure_solution_is_power_of_two_scale_covariant():
     rhs = _pressure_rhs(spectral, pressure)
     pressure.pressure_guess = None
     reference = pressure._solve_pressure(rhs)
+    assert pressure.last_pressure_working_scale_binary_exponent == 0
 
     for exponent in (-1000, 1000):
         pressure.pressure_guess = None

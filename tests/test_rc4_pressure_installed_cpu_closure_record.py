@@ -14,6 +14,11 @@ PERFORMANCE_REPAIR = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_pressure_performance_repair.json"
 )
+PERFORMANCE_RECOVERY_V10 = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_pressure_performance_recovery_v10.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -85,16 +90,26 @@ def test_rc445_binds_qualification_sources_and_archive_integrity():
     successors = json.loads(
         PERFORMANCE_REPAIR.read_text(encoding="utf-8")
     )["successor_sources"]
+    v10 = json.loads(
+        PERFORMANCE_RECOVERY_V10.read_text(encoding="utf-8")
+    )["successor_sources"]
     for relative, expected in record["qualification_source_sha256"].items():
         actual = _sha256(ROOT / relative)
         if actual == expected:
             continue
-        successor = successors[relative]
-        assert successor["historical_sha256"] == expected
+        repaired = successors[relative]
+        successor = v10.get(relative, repaired)
+        assert repaired["historical_sha256"] == expected
+        if relative in v10:
+            assert successor["historical_sha256"] == repaired["current_sha256"]
+            assert successor["introduced_by_phase"] == (
+                "RC4.4.7-performance-recovery-v10-provider"
+            )
+        else:
+            assert successor["introduced_by_phase"] == (
+                "RC4.4.7-performance-repair-v9-provider"
+            )
         assert successor["current_sha256"] == actual
-        assert successor["introduced_by_phase"] == (
-            "RC4.4.7-performance-repair-v9-provider"
-        )
     artifacts = record["artifact_identity"]
     assert artifacts["manifest_verification"] == "23/23 PASS"
     assert artifacts["complete_present"] is True

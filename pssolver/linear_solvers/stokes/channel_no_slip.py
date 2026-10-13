@@ -38,6 +38,7 @@ CHANNEL_PRESSURE_BREAKDOWN_DEFINITION = (
     "abs(mean_active(conj(left)*right))"
     "<=eps*active_rms(left)*active_rms(right)"
 )
+_CHANNEL_PRESSURE_BREAKDOWN_CERTIFICATE_EPSILON_MARGIN = 4096.0
 
 
 class ChannelPressureConvergenceError(RuntimeError):
@@ -258,18 +259,22 @@ def _channel_pressure_working_magnitude(
         if active_count <= 0:
             raise ValueError("active pressure degree count must be positive")
         count = active_count
-    rms = torch.linalg.vector_norm(value.reshape(-1)) / math.sqrt(float(count))
-    metrics = [rms]
+    flattened = value.reshape(-1)
+    square_sum = torch.vdot(flattened, flattened).real
+    metrics = [square_sum]
     metrics.extend(
-        torch.isfinite(companion).all().to(dtype=value.real.dtype)
+        torch.maximum(
+            companion.real.abs(),
+            companion.imag.abs(),
+        ).amax()
         for companion in finite_companions
     )
     observed = torch.stack(metrics).tolist()
-    rms_value = float(observed[0])
-    companions_finite = all(item == 1.0 for item in observed[1:])
+    square_sum_value = float(observed[0])
+    companions_finite = all(math.isfinite(item) for item in observed[1:])
     if not companions_finite:
         return _channel_pressure_zero_magnitude(), False
-    if not math.isfinite(rms_value) or rms_value <= 0.0:
+    if not math.isfinite(square_sum_value) or square_sum_value <= 0.0:
         # This branch is intentionally exceptional.  It preserves the public
         # underflow/overflow contract without charging the ordinary CUDA path
         # for a second scalar synchronization on every PCG iteration.
@@ -277,6 +282,7 @@ def _channel_pressure_working_magnitude(
             return channel_pressure_active_rms(value, inactive_mask), True
         except ValueError:
             return _channel_pressure_zero_magnitude(), False
+    rms_value = math.sqrt(square_sum_value / float(count))
     mantissa, exponent = math.frexp(rms_value)
     return _channel_pressure_magnitude_from_binary(mantissa, exponent), True
 
@@ -298,17 +304,15 @@ def _channel_pressure_working_breakdown(
 
     if inner_product is None:
         inner_product = torch.sum(torch.conj(left) * right)
-    paired_square_sum = torch.sum(
-        torch.complex(
-            left.real.square() + left.imag.square(),
-            right.real.square() + right.imag.square(),
-        )
-    )
+    left_flattened = left.reshape(-1)
+    right_flattened = right.reshape(-1)
+    left_square_sum = torch.vdot(left_flattened, left_flattened).real
+    right_square_sum = torch.vdot(right_flattened, right_flattened).real
     observed = torch.stack(
         (
             torch.abs(inner_product),
-            paired_square_sum.real,
-            paired_square_sum.imag,
+            left_square_sum,
+            right_square_sum,
         )
     ).tolist()
     inner_value, left_square_value, right_square_value = (
@@ -327,8 +331,76 @@ def _channel_pressure_working_breakdown(
         except ValueError:
             return False, False
     epsilon = torch.finfo(left.real.dtype).eps
-    threshold = epsilon * math.sqrt(left_square_value * right_square_value)
+    threshold = epsilon * math.sqrt(left_square_value) * math.sqrt(
+        right_square_value
+    )
+    if not math.isfinite(threshold):
+        try:
+            return channel_pressure_relative_breakdown(
+                left,
+                right,
+                inactive_mask,
+            ), True
+        except ValueError:
+            return False, False
     return inner_value <= threshold, True
+
+
+def _channel_pressure_certified_inner_observation(
+    inner_product: torch.Tensor,
+) -> tuple[bool, bool]:
+    """Validate an inner product after a constructor-time spectral proof.
+
+    For a certified positive-definite pair the frozen relative breakdown
+    inequality cannot hold for finite nonzero vectors.  The per-iteration
+    check therefore only needs to reject a non-finite or non-positive inner
+    product.  Callers without that certificate continue to use the full
+    vector-norm definition above.
+    """
+
+    observed = complex(inner_product.item())
+    finite = math.isfinite(observed.real) and math.isfinite(observed.imag)
+    if not finite:
+        return False, False
+    return observed.real <= 0.0, True
+
+
+def _channel_pressure_operator_breakdown(
+    direction: torch.Tensor,
+    operator_direction: torch.Tensor,
+    inactive_mask: torch.Tensor,
+    *,
+    inner_product: torch.Tensor,
+    operator_norm_upper_bound: float,
+) -> tuple[bool, bool]:
+    """Evaluate breakdown with a conservative one-norm early certificate.
+
+    ``||A d|| <= upper_bound * ||d||`` implies that an inner product above
+    ``eps * upper_bound * ||d||**2`` cannot satisfy the frozen relative
+    breakdown predicate.  Only the unresolved boundary case pays for the
+    complete two-vector measurement.
+    """
+
+    flattened = direction.reshape(-1)
+    square_sum = torch.vdot(flattened, flattened).real
+    threshold_factor = (
+        torch.finfo(direction.real.dtype).eps
+        * operator_norm_upper_bound
+    )
+    # A NaN, Inf, zero, negative or unresolved inner product makes this
+    # sufficient-condition comparison false and falls through to the full
+    # fail-closed vector gate below.
+    certified_nonbreakdown = bool(
+        (inner_product.real > threshold_factor * square_sum).item()
+    )
+    if certified_nonbreakdown:
+        return False, True
+    return _channel_pressure_working_breakdown(
+        direction,
+        operator_direction,
+        inactive_mask,
+        inner_product=inner_product,
+    )
 
 
 def _channel_pressure_working_residual_observation(
@@ -339,38 +411,102 @@ def _channel_pressure_working_residual_observation(
     inner_product: torch.Tensor,
     active_count: int,
     finite_companions: tuple[torch.Tensor, ...] = (),
+    breakdown_certified: bool = False,
+    preconditioner_inverse_max: float | None = None,
 ) -> tuple[ChannelPressureMagnitude, bool, bool, bool]:
     """Observe residual magnitude and preconditioned breakdown in one sync."""
 
     if active_count <= 0:
         raise ValueError("active pressure degree count must be positive")
-    residual_square_sum = torch.sum(
-        residual.real.square() + residual.imag.square()
-    )
-    preconditioned_square_sum = torch.sum(
-        preconditioned.real.square() + preconditioned.imag.square()
-    )
-    metrics = [
-        torch.abs(inner_product),
-        residual_square_sum,
-        preconditioned_square_sum,
-    ]
+    if breakdown_certified and not finite_companions:
+        residual_norm_value = float(
+            torch.linalg.vector_norm(residual.reshape(-1)).item()
+        )
+        inverse_max = (
+            float(preconditioner_inverse_max)
+            if preconditioner_inverse_max is not None
+            else math.inf
+        )
+        maximum_safe_residual_norm = (
+            math.sqrt(torch.finfo(residual.real.dtype).max / inverse_max)
+            if math.isfinite(inverse_max) and inverse_max > 0.0
+            else 0.0
+        )
+        if (
+            math.isfinite(residual_norm_value)
+            and residual_norm_value > 0.0
+            and residual_norm_value <= maximum_safe_residual_norm
+        ):
+            # The constructor proves a positive finite diagonal
+            # preconditioner.  Together with this norm bound,
+            # 0 < r^H M^-1 r <= ||r||^2 * ||M^-1|| < finfo.max, so the
+            # frozen relative-breakdown predicate is false without reading a
+            # second CUDA scalar.  Unresolved ranges use the exact fallback.
+            rms_value = residual_norm_value / math.sqrt(active_count)
+            mantissa, exponent = math.frexp(rms_value)
+            return (
+                _channel_pressure_magnitude_from_binary(mantissa, exponent),
+                True,
+                False,
+                True,
+            )
+        magnitude, residual_finite = _channel_pressure_working_magnitude(
+            residual,
+            inactive_mask,
+            active_count=active_count,
+        )
+        if not residual_finite or magnitude.is_zero:
+            return magnitude, residual_finite, magnitude.is_zero, residual_finite
+        breakdown, pair_finite = _channel_pressure_working_breakdown(
+            residual,
+            preconditioned,
+            inactive_mask,
+            inner_product=inner_product,
+        )
+        return magnitude, True, breakdown, pair_finite
+    residual_flattened = residual.reshape(-1)
+    residual_square_sum = torch.vdot(
+        residual_flattened,
+        residual_flattened,
+    ).real
+    metrics = [inner_product.real, residual_square_sum]
+    if not breakdown_certified:
+        preconditioned_flattened = preconditioned.reshape(-1)
+        metrics.append(
+            torch.vdot(
+                preconditioned_flattened,
+                preconditioned_flattened,
+            ).real
+        )
     metrics.extend(
-        torch.isfinite(companion).all().to(dtype=residual.real.dtype)
+        torch.maximum(
+            companion.real.abs(),
+            companion.imag.abs(),
+        ).amax()
         for companion in finite_companions
     )
     observed = torch.stack(metrics).tolist()
-    inner_value, residual_square_value, preconditioned_square_value = (
-        float(item) for item in observed[:3]
+    inner_value = float(observed[0])
+    residual_square_value = float(observed[1])
+    metric_count = 2 if breakdown_certified else 3
+    preconditioned_square_value = (
+        None if breakdown_certified else float(observed[2])
     )
-    companions_finite = all(item == 1.0 for item in observed[3:])
+    companions_finite = all(
+        math.isfinite(item) for item in observed[metric_count:]
+    )
     ordinary = (
         companions_finite
         and math.isfinite(inner_value)
         and math.isfinite(residual_square_value)
         and residual_square_value > 0.0
-        and math.isfinite(preconditioned_square_value)
-        and preconditioned_square_value > 0.0
+        and (
+            breakdown_certified
+            or (
+                math.isfinite(float(preconditioned_square_value))
+                and float(preconditioned_square_value) > 0.0
+            )
+        )
     )
     if not ordinary:
         magnitude, residual_finite = _channel_pressure_working_magnitude(
@@ -389,9 +525,21 @@ def _channel_pressure_working_residual_observation(
     rms_value = math.sqrt(residual_square_value / active_count)
     mantissa, exponent = math.frexp(rms_value)
     magnitude = _channel_pressure_magnitude_from_binary(mantissa, exponent)
-    threshold = torch.finfo(residual.real.dtype).eps * math.sqrt(
-        residual_square_value * preconditioned_square_value
+    if breakdown_certified:
+        return magnitude, True, inner_value <= 0.0, True
+    threshold = (
+        torch.finfo(residual.real.dtype).eps
+        * math.sqrt(residual_square_value)
+        * math.sqrt(float(preconditioned_square_value))
     )
+    if not math.isfinite(threshold):
+        breakdown, pair_finite = _channel_pressure_working_breakdown(
+            residual,
+            preconditioned,
+            inactive_mask,
+            inner_product=inner_product,
+        )
+        return magnitude, True, breakdown, pair_finite
     return magnitude, True, inner_value <= threshold, True
 
 
@@ -403,6 +551,8 @@ def channel_pressure_scale_power_of_two(
 
     if not isinstance(binary_exponent, int) or isinstance(binary_exponent, bool):
         raise TypeError("binary exponent must be an integer")
+    if binary_exponent == 0:
+        return value
 
     def scale_real(component: torch.Tensor) -> torch.Tensor:
         remaining = int(binary_exponent)
@@ -439,6 +589,20 @@ def channel_pressure_working_vector(
         value,
         inactive_mask,
     )
+    return _channel_pressure_working_vector_from_projected(
+        projected,
+        component_amax,
+        active_count,
+    )
+
+
+def _channel_pressure_working_vector_from_projected(
+    projected: torch.Tensor,
+    component_amax: float,
+    active_count: int | torch.Tensor,
+) -> tuple[torch.Tensor, int | None, ChannelPressureMagnitude]:
+    """Scale an already projected pressure vector into its safe range."""
+
     if component_amax == 0.0:
         return projected, None, _channel_pressure_zero_magnitude()
     working_exponent = math.frexp(component_amax)[1] - 1
@@ -715,27 +879,78 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
             nyquist_mask,
             persistent=False,
         )
+        self.register_buffer(
+            "_pressure_inactive_mask",
+            null_mask | nyquist_mask,
+            persistent=False,
+        )
         self._active_pressure_degrees_of_freedom = int(
-            (~(null_mask | nyquist_mask)).sum().item()
+            (~self._pressure_inactive_mask).sum().item()
+        )
+        active = ~self._pressure_inactive_mask
+        active_pressure_q2 = pressure_q2.unsqueeze(0).masked_select(active)
+        active_schur_diag = schur_safe.masked_select(active)
+        operator_angle_lower_bound = (
+            float(active_pressure_q2.amin().item())
+            * float(a_diag.amin().item())
+            / (
+                float(active_pressure_q2.amax().item())
+                * float(a_diag.amax().item())
+            )
+        )
+        preconditioner_angle_lower_bound = (
+            float(active_schur_diag.amin().item())
+            / float(active_schur_diag.amax().item())
+        )
+        certificate_floor = (
+            _CHANNEL_PRESSURE_BREAKDOWN_CERTIFICATE_EPSILON_MARGIN
+            * torch.finfo(real_dtype).eps
+        )
+        self._pressure_operator_angle_lower_bound = (
+            operator_angle_lower_bound
+        )
+        self._pressure_operator_norm_upper_bound = (
+            float(active_pressure_q2.amax().item())
+            / float(a_diag.amin().item())
+        )
+        self._pressure_preconditioner_angle_lower_bound = (
+            preconditioner_angle_lower_bound
+        )
+        self._pressure_preconditioner_inverse_max = (
+            1.0 / float(active_schur_diag.amin().item())
+        )
+        self._pressure_unscaled_rhs_norm_min = (
+            _CHANNEL_PRESSURE_BREAKDOWN_CERTIFICATE_EPSILON_MARGIN
+            * math.sqrt(
+                torch.finfo(real_dtype).tiny
+                * float(active_schur_diag.amax().item())
+            )
+        )
+        self._pressure_unscaled_rhs_norm_max = (
+            math.sqrt(
+                torch.finfo(real_dtype).max
+                / self._pressure_preconditioner_inverse_max
+            )
+            / _CHANNEL_PRESSURE_BREAKDOWN_CERTIFICATE_EPSILON_MARGIN
+        )
+        self._pressure_operator_breakdown_certified = bool(
+            math.isfinite(operator_angle_lower_bound)
+            and operator_angle_lower_bound > certificate_floor
+        )
+        self._pressure_preconditioner_breakdown_certified = bool(
+            math.isfinite(preconditioner_angle_lower_bound)
+            and preconditioner_angle_lower_bound > certificate_floor
         )
         self.pressure_rel_tol = pressure_relative_tolerance
         self.pressure_max_iter = pressure_max_iterations
         self.pressure_fixed_iterations = pressure_fixed_iterations
         self.pressure_guess = None
-        self.last_pressure_iterations = 0
-        self.last_pressure_residual = 0.0
-        self.last_pressure_relative_residual = 0.0
-        self.last_pressure_residual_magnitude = (
-            _channel_pressure_zero_magnitude().to_metadata()
-        )
-        self.last_pressure_termination_reason = "not_run"
-        self.last_pressure_acceptable = False
-        self.last_pressure_working_scale_binary_exponent = None
         self._pressure_solve_sequence_id = 0
-        self.last_pressure_diagnostics = self._pressure_diagnostics_metadata(
-            rhs_norm=_channel_pressure_zero_magnitude(),
-            initial_residual=_channel_pressure_zero_magnitude(),
-            achieved_residual=_channel_pressure_zero_magnitude(),
+        zero = _channel_pressure_zero_magnitude()
+        self._record_pressure_outcome(
+            rhs_norm=zero,
+            initial_residual=zero,
+            residual=zero,
             relative_residual=None,
             iterations=0,
             termination_reason="not_run",
@@ -785,7 +1000,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
 
     @property
     def pressure_inactive_mask(self) -> torch.Tensor:
-        return self.pressure_null_mask | self.nyquist_mask
+        return self._pressure_inactive_mask
 
     def _legacy_magnitude_value(
         self,
@@ -815,23 +1030,45 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         self.last_pressure_relative_residual = (
             None if relative_residual is None else float(relative_residual)
         )
-        self.last_pressure_residual_magnitude = residual.to_metadata()
+        self._last_pressure_residual_magnitude = residual
         self.last_pressure_termination_reason = termination_reason
         self.last_pressure_acceptable = bool(acceptable)
         self.last_pressure_working_scale_binary_exponent = (
             working_scale_binary_exponent
         )
-        self.last_pressure_diagnostics = self._pressure_diagnostics_metadata(
-            rhs_norm=rhs_norm,
-            initial_residual=initial_residual,
-            achieved_residual=residual,
-            relative_residual=relative_residual,
-            iterations=iterations,
-            termination_reason=termination_reason,
-            acceptable=acceptable,
-            working_scale_binary_exponent=working_scale_binary_exponent,
-            solve_phase=solve_phase,
-        )
+        self._last_pressure_rhs_norm = rhs_norm
+        self._last_pressure_initial_residual = initial_residual
+        self._last_pressure_achieved_residual = residual
+        self._last_pressure_solve_phase = solve_phase
+        self._last_pressure_diagnostics_cache = None
+
+    @property
+    def last_pressure_residual_magnitude(self) -> dict[str, object]:
+        """Return the latest scale-safe residual metadata on demand."""
+
+        return self._last_pressure_residual_magnitude.to_metadata()
+
+    @property
+    def last_pressure_diagnostics(self) -> dict[str, object]:
+        """Materialize the public diagnostics outside the pressure hot path."""
+
+        if self._last_pressure_diagnostics_cache is None:
+            self._last_pressure_diagnostics_cache = (
+                self._pressure_diagnostics_metadata(
+                    rhs_norm=self._last_pressure_rhs_norm,
+                    initial_residual=self._last_pressure_initial_residual,
+                    achieved_residual=self._last_pressure_achieved_residual,
+                    relative_residual=self.last_pressure_relative_residual,
+                    iterations=self.last_pressure_iterations,
+                    termination_reason=self.last_pressure_termination_reason,
+                    acceptable=self.last_pressure_acceptable,
+                    working_scale_binary_exponent=(
+                        self.last_pressure_working_scale_binary_exponent
+                    ),
+                    solve_phase=self._last_pressure_solve_phase,
+                )
+            )
+        return self._last_pressure_diagnostics_cache
 
     def _pressure_diagnostics_metadata(
         self,
@@ -1019,7 +1256,67 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
     def _solve_pressure(self, rhs_hat):
         self._pressure_solve_sequence_id += 1
         rhs_hat = self._project_pressure_gauge(rhs_hat)
-        if not bool(torch.isfinite(rhs_hat).all().item()):
+        try:
+            active_count = (
+                self._active_pressure_degrees_of_freedom
+                * rhs_hat.numel()
+                // self._pressure_inactive_mask.numel()
+            )
+            rhs_norm_value = float(
+                torch.linalg.vector_norm(rhs_hat.reshape(-1)).item()
+            )
+            if rhs_norm_value == 0.0:
+                component_amax = float(
+                    torch.maximum(
+                        rhs_hat.real.abs(),
+                        rhs_hat.imag.abs(),
+                    ).amax().item()
+                )
+                if component_amax == 0.0:
+                    working_rhs = rhs_hat
+                    working_exponent = None
+                    rhs_magnitude = _channel_pressure_zero_magnitude()
+                else:
+                    working_rhs, working_exponent, rhs_magnitude = (
+                        _channel_pressure_working_vector_from_projected(
+                            rhs_hat,
+                            component_amax,
+                            active_count,
+                        )
+                    )
+            elif (
+                math.isfinite(rhs_norm_value)
+                and self._pressure_unscaled_rhs_norm_min
+                <= rhs_norm_value
+                <= self._pressure_unscaled_rhs_norm_max
+            ):
+                rhs_rms_value = rhs_norm_value / math.sqrt(active_count)
+                rhs_mantissa, rhs_exponent = math.frexp(rhs_rms_value)
+                working_rhs = rhs_hat
+                working_exponent = 0
+                rhs_magnitude = _channel_pressure_magnitude_from_binary(
+                    rhs_mantissa,
+                    rhs_exponent,
+                )
+            else:
+                component_amax = float(
+                    torch.maximum(
+                        rhs_hat.real.abs(),
+                        rhs_hat.imag.abs(),
+                    ).amax().item()
+                )
+                if not math.isfinite(component_amax):
+                    raise ValueError(
+                        "Channel pressure vector contains NaN or Inf"
+                    )
+                working_rhs, working_exponent, rhs_magnitude = (
+                    _channel_pressure_working_vector_from_projected(
+                        rhs_hat,
+                        component_amax,
+                        active_count,
+                    )
+                )
+        except ValueError as error:
             unavailable = _channel_pressure_zero_magnitude()
             self._record_pressure_outcome(
                 rhs_norm=unavailable,
@@ -1034,13 +1331,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
             raise ChannelPressureConvergenceError(
                 "production Channel pressure input contains NaN or Inf",
                 details=self.last_pressure_diagnostics,
-            )
-        working_rhs, working_exponent, rhs_magnitude = (
-            channel_pressure_working_vector(
-                rhs_hat,
-                self.pressure_inactive_mask,
-            )
-        )
+            ) from error
         zero = _channel_pressure_zero_magnitude()
         if rhs_magnitude.is_zero:
             pressure_hat = torch.zeros_like(rhs_hat)
@@ -1068,14 +1359,9 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     -int(working_exponent),
                 )
             )
-        residual = self._project_pressure_gauge(
-            working_rhs - self._pressure_operator(pressure_work)
-        )
-        active_count = (
-            self._active_pressure_degrees_of_freedom
-            * residual.numel()
-            // self.pressure_inactive_mask.numel()
-        )
+        # Both operands are already in the projected pressure subspace, so a
+        # second mask launch here cannot change any coefficient.
+        residual = working_rhs - self._pressure_operator(pressure_work)
         preconditioned = residual / self.schur_diag_safe
         rz_old = torch.sum(torch.conj(residual) * preconditioned).real
         (
@@ -1089,7 +1375,17 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
             self.pressure_inactive_mask,
             inner_product=rz_old,
             active_count=active_count,
-            finite_companions=(pressure_work,),
+            finite_companions=(
+                ()
+                if self._pressure_preconditioner_breakdown_certified
+                else (pressure_work,)
+            ),
+            breakdown_certified=(
+                self._pressure_preconditioner_breakdown_certified
+            ),
+            preconditioner_inverse_max=(
+                self._pressure_preconditioner_inverse_max
+            ),
         )
         if not initial_state_finite:
             self._raise_pressure_failure(
@@ -1175,14 +1471,24 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
             direction_operator_inner = torch.sum(
                 torch.conj(direction) * operator_direction
             )
-            operator_breakdown, operator_pair_finite = (
-                _channel_pressure_working_breakdown(
-                    direction,
-                    operator_direction,
-                    self.pressure_inactive_mask,
-                    inner_product=direction_operator_inner,
+            if self._pressure_operator_breakdown_certified:
+                operator_breakdown, operator_pair_finite = (
+                    _channel_pressure_certified_inner_observation(
+                        direction_operator_inner
+                    )
                 )
-            )
+            else:
+                operator_breakdown, operator_pair_finite = (
+                    _channel_pressure_operator_breakdown(
+                        direction,
+                        operator_direction,
+                        self.pressure_inactive_mask,
+                        inner_product=direction_operator_inner,
+                        operator_norm_upper_bound=(
+                            self._pressure_operator_norm_upper_bound
+                        ),
+                    )
+                )
             if not operator_pair_finite:
                 termination_reason = "nonfinite_intermediate"
                 break
@@ -1211,7 +1517,17 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 self.pressure_inactive_mask,
                 inner_product=rz_new,
                 active_count=active_count,
-                finite_companions=(pressure_work,),
+                finite_companions=(
+                    ()
+                    if self._pressure_preconditioner_breakdown_certified
+                    else (pressure_work,)
+                ),
+                breakdown_certified=(
+                    self._pressure_preconditioner_breakdown_certified
+                ),
+                preconditioner_inverse_max=(
+                    self._pressure_preconditioner_inverse_max
+                ),
             )
             if not state_finite:
                 termination_reason = "nonfinite_intermediate"

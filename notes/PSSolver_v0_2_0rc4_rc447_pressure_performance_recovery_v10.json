@@ -1,0 +1,115 @@
+{
+  "schema": "pssolver.rc4_4_7.pressure_performance_recovery.v10",
+  "phase": "RC4.4.7-performance-recovery-v10-provider",
+  "status": "LOCAL_PROVIDER_CANDIDATE_H100_NOT_AUTHORIZED",
+  "classification": "LOCAL_CHANNEL_PRESSURE_RELATIVE_BREAKDOWN_CERTIFICATE_REPAIR",
+  "baseline_provider_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+  "failed_v9_candidate_commit": "490274343081c4305d406f5515891dc6bd272aec",
+  "failed_v9_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc447_pressure_h100_4902743_0cf55b4_20261012_recovery_v9",
+    "job_id": "10878267",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:02:31",
+    "node": "gpu-h100-4-0",
+    "checksums_sha256": "630e1d4d13085dbd5a57bc3477c4b0edd18a979f1a238d13cb02336ab99248a9",
+    "checksums_verified": 1743,
+    "cuda_tests_passed": 7,
+    "correctness_gates_passed": 9,
+    "profiles_complete": 12,
+    "R128_mean_candidate_over_baseline": 1.330140316,
+    "R128_median_candidate_over_baseline": 1.290127545,
+    "R512_mean_candidate_over_baseline": 1.255743697,
+    "R512_median_candidate_over_baseline": 1.257548751,
+    "paired_pressure_iteration_histories_equal": true,
+    "paired_initial_states_equal": true,
+    "paired_final_states_equal": true,
+    "scientific_failure": false,
+    "solver_failure": false,
+    "numerical_failure": false,
+    "cuda_failure": false,
+    "performance_failure": true,
+    "automatic_retry": false
+  },
+  "root_cause": {
+    "classification": "repeated_eager_vector_reductions_for_frozen_relative_breakdown_contract",
+    "explanation": "the v9 solve reduced host synchronizations but still launched full left/right square reductions for every operator and preconditioned-residual breakdown decision; those reductions dominated the otherwise faster H100 timestep",
+    "pressure_policy_was_correct": true,
+    "pressure_results_were_correct": true,
+    "qualification_helper_also_used_stale_provider_identity": true
+  },
+  "repair": {
+    "scope": "provider_pressure_runtime_performance_only",
+    "changes": [
+      "cache the immutable inactive pressure mask",
+      "construct spectral positive-definiteness and operator-norm certificates once",
+      "use a global certificate only when its lower bound exceeds a 4096-epsilon margin",
+      "otherwise use a conservative per-direction operator-norm upper bound before falling back to the exact two-vector relative-breakdown definition",
+      "retain the exact public relative-breakdown primitive for every unresolved or non-finite case",
+      "materialize the unchanged public diagnostics schema lazily outside the timed pressure solve",
+      "avoid duplicate projection and duplicate input-finiteness reductions"
+    ],
+    "breakdown_definition_changed": false,
+    "breakdown_threshold_changed": false,
+    "fixed_work_changed": false,
+    "relative_tolerance_changed": false,
+    "pressure_result_update_order_changed": false,
+    "diagnostics_schema_changed": false,
+    "model_equations_changed": false,
+    "production_default_changed": false
+  },
+  "successor_sources": {
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "historical_sha256": "3b052817352e7a4a7c3d175535db22db2169587f220b50c759362ec52142ad94",
+      "current_sha256": "7b7f0c0f27e087ab60c79577adb302ed58b021d00c2afed728ec1efbb338b9e8",
+      "introduced_by_phase": "RC4.4.7-performance-recovery-v10-provider",
+      "reason": "replace repeated exact vector reductions by mathematically sufficient spectral certificates with an exact fail-closed fallback"
+    },
+    "tests/test_rc4_pressure_policy_implementation.py": {
+      "historical_sha256": "7df4ebb88a73bdaff4c9f0c499cf283a8f53f08c0c4980a9ef6694f14029c298",
+      "current_sha256": "407e4178f897ab765d87bd78fcdcedf84401a20ef988d60fbf44b93be6bd228d",
+      "introduced_by_phase": "RC4.4.7-performance-recovery-v10-provider",
+      "reason": "verify certificate bounds, exact fallback agreement, solution identity, non-finite rejection and frozen pressure postconditions"
+    }
+  },
+  "local_validation": {
+    "runtime_targeted_tests": {
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0
+    },
+    "balanced_R128_RTX3060Ti_screen": {
+      "baseline_mean_timestep_seconds": [
+        0.008805917296558618,
+        0.008657595198601485,
+        0.009275419134646655
+      ],
+      "candidate_mean_timestep_seconds": [
+        0.00900544060394168,
+        0.008915198808535934,
+        0.009016655627638101
+      ],
+      "mean_candidate_over_baseline": 1.0074185241600244,
+      "median_candidate_over_baseline": 1.0226578675070042,
+      "paired_candidate_over_baseline": [
+        1.0226578675070042,
+        1.0297546378671136,
+        0.9721022302871479
+      ],
+      "peak_allocated_candidate_over_baseline": 1.0015031265031265,
+      "paired_pressure_iteration_histories_equal": true,
+      "source_shadow_import": false,
+      "qualification_evidence": false
+    },
+    "H100_requalified": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "single_h100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false
+  },
+  "PSSolver_Control_modified": false,
+  "nematics3d_modified": false
+}
