@@ -12,6 +12,9 @@ RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_impact.json"
 )
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
+RECOVERY = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_recovery.json"
+)
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -66,21 +69,32 @@ def test_rc457_freezes_expected_tf32_identity_and_migration_boundary():
     assert migration["functional_api_version_bump_required"] is False
 
 
-def test_rc457_binds_sources_and_blocks_h100_until_recovery():
+def test_rc457_preserves_the_stop_and_resolves_through_the_recovery():
     record = _read(RECORD)
     assert _sha256(ROOT / record["baseline"]["preceding_stage_record"]) == (
         record["baseline"]["preceding_stage_record_sha256"]
     )
+    recovery = _read(RECOVERY)
+    recovery_successors = recovery["historical_successor_sources"]
     for relative, expected in record["source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+        successor = recovery_successors.get(relative)
+        resolved = expected
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        assert _sha256(ROOT / relative) == resolved
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
-        assert _sha256(ROOT / relative) == registration["current_sha256"]
+        resolved = registration["current_sha256"]
+        successor = recovery_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        assert _sha256(ROOT / relative) == resolved
 
     matrix = _read(MATRIX)["progress"]
     assert matrix["rc4_5_7_executed"] is True
-    assert matrix["rc4_5_7_complete"] is False
-    assert matrix["rc4_5_7_consumer_migration_required"] is True
-    assert matrix["eligible_for_rc4_5_8_h100_closure"] is False
-    assert matrix["rc4_5_7_record_sha256"] == _sha256(RECORD)
+    assert matrix["rc4_5_7_initial_record_sha256"] == _sha256(RECORD)
+    assert matrix["rc4_5_7_complete"] is True
+    assert matrix["rc4_5_7_consumer_migration_required"] is False
+    assert matrix["eligible_for_rc4_5_8_h100_closure"] is True
+    assert matrix["rc4_5_7_record_sha256"] == _sha256(RECOVERY)

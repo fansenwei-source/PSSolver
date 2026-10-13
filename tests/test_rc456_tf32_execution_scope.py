@@ -21,6 +21,9 @@ RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 RC457 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_impact.json"
 )
+RC457_RECOVERY = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_recovery.json"
+)
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
 
 
@@ -28,6 +31,17 @@ def _set_state(precision: str, matmul: bool, cudnn: bool) -> None:
     torch.set_float32_matmul_precision(precision)
     torch.backends.cuda.matmul.allow_tf32 = matmul
     torch.backends.cudnn.allow_tf32 = cudnn
+
+
+def _resolve_rc457_successor(relative: str, historical: str) -> str:
+    resolved = historical
+    for record_path in (RC457, RC457_RECOVERY):
+        successor = json.loads(record_path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+    return resolved
 
 
 @pytest.fixture
@@ -160,22 +174,15 @@ def test_rc456_record_binds_exact_scope_sources_and_next_stage():
         "periodic_functional",
         "channel_functional",
     }
-    rc457_successors = json.loads(RC457.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
     for relative, expected in record["source_sha256"].items():
-        resolved = expected
-        successor = rc457_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
+        resolved = _resolve_rc457_successor(relative, expected)
         assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolved
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
-        resolved = registration["current_sha256"]
-        successor = rc457_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
+        resolved = _resolve_rc457_successor(
+            relative, registration["current_sha256"]
+        )
         assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolved
     assert record["scope"]["H100_executed"] is False
     assert record["authorization"]["rc4_5_8_h100_authorized"] is False

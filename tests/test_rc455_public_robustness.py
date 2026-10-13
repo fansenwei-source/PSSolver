@@ -24,11 +24,14 @@ RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 RC457 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_impact.json"
 )
+RC457_RECOVERY = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_recovery.json"
+)
 
 
 def _latest_successor(relative: str, historical: str) -> str:
     resolved = historical
-    for path in (RC456, RC457):
+    for path in (RC456, RC457, RC457_RECOVERY):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)

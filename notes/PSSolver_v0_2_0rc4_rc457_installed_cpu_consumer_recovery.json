@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 RC4.5.7 installed-wheel Consumer identity-schema recovery",
+  "phase": "RC4.5.7",
+  "status": "complete_installed_wheel_cpu_consumer_verified_cuda_pending",
+  "classification": "PASS_RC4_5_7_INSTALLED_WHEEL_CPU_CONSUMER_CLOSURE_WITH_TF32_IDENTITY_MIGRATION",
+  "qualification_complete": true,
+  "baseline": {
+    "provider_commit": "a195bd05992bc6553c72c400587d2b07afe722d0",
+    "provider_branch": "fix/v0.2.0rc4-audit",
+    "initial_record": "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_impact.json",
+    "initial_record_sha256": "9d9c64be564f413b6466063656bb8e1834b02996a62691d8159b9bfb67649523",
+    "initial_classification": "STOPPED_RC4_5_7_CONSUMER_IDENTITY_SCHEMA_MIGRATION_REQUIRED",
+    "initial_record_rewritten": false
+  },
+  "consumer_migration": {
+    "repository": "https://github.com/fansenwei-source/PSSolver-Control",
+    "branch": "migration/pssolver-v0.2.0rc4-rc457-tf32-identity",
+    "base_commit": "c7e7f8631d94c98bd6fa92192e0b806ac25c912c",
+    "commits": [
+      "de669fa97c523405ea8ba86cf4b27859c80fd258",
+      "b8539e0ec4c137a6c13746f6832e26e74be24515"
+    ],
+    "tip_commit": "b8539e0ec4c137a6c13746f6832e26e74be24515",
+    "migration_commit_purpose": "Register the exact five-field Provider TF32 policy in the Periodic identity expectation and add the RC4.5.7 migration record.",
+    "successor_commit_purpose": "Register the changed exact-identity test as a historical successor without rewriting the P9.8.3 record.",
+    "two_commit_split_accepted": true,
+    "source_migration_complete": true,
+    "pushed": false
+  },
+  "artifact_identity": {
+    "control_directory": "/home/fansenwei/pssolver_control_rc457_tf32_identity_20261013_v1",
+    "control_summary_sha256": "afba80d4a44326c12d317e632ea5c9f04034152feb637ede5cfa8e3201fa3c5a",
+    "consumer_migration_record_sha256": "bd4c4c74c2c0f0ce530eb47069a6901e1505d497fa638d07c3e486840358622c",
+    "provider_source_archive_sha256": "ba402d3a725e94a7d17cad23a9a89553b01b07ced53b65b283b6e738d90e9ba4",
+    "provider_wheel": "pssolver-0.2.0rc3-py3-none-any.whl",
+    "provider_wheel_sha256": "54da4ca47f2e84e5da726580535dff258c8c7e79e10005911986a9faf6e0586b",
+    "consumer_source_archive_sha256": "ac756ba41bbd340b09f66248d9415311f8d2036c51ca471c0ff0a49ac51c07ca",
+    "consumer_wheel": "pssolver_control-0.0.1.dev0-py3-none-any.whl",
+    "consumer_wheel_sha256": "c7330f3759e01defc824f2492240974b744abc4872c20060d90ca957b2f35ade",
+    "build": "pip wheel --no-deps --no-build-isolation",
+    "install": "pip install --no-deps"
+  },
+  "environment": {
+    "python": "3.12.13",
+    "torch": "2.6.0+cu126",
+    "numpy": "2.4.3",
+    "scipy": "1.16.0",
+    "pytest": "9.1.1",
+    "cuda_available": true,
+    "gpu": "NVIDIA GeForce RTX 3060 Ti",
+    "nematics3d_installed": false,
+    "qualification_environment": "fresh venv without system site-packages",
+    "pssolver_imported_from_qualification_purelib": true,
+    "pssolver_control_imported_from_qualification_purelib": true
+  },
+  "installed_wheel_gate": {
+    "provider": {
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0
+    },
+    "consumer": {
+      "passed": 310,
+      "failed": 0,
+      "skipped": 1,
+      "xfailed": 0
+    },
+    "consumer_sessions": [
+      {
+        "scope": "all tests except tests/test_warmup_experiments.py",
+        "passed": 307,
+        "failed": 0,
+        "skipped": 0,
+        "imported_module_count": 178
+      },
+      {
+        "scope": "tests/test_warmup_experiments.py",
+        "passed": 3,
+        "failed": 0,
+        "skipped": 1,
+        "imported_module_count": 101
+      }
+    ],
+    "allowed_skip_node_id": "tests/test_warmup_experiments.py::test_r5_benchmark",
+    "allowed_skip_reason": "opt-in R5 CUDA benchmark",
+    "pip_check": "PASS",
+    "source_shadow_import": false,
+    "worktree_paths_in_imported_modules": false,
+    "independent_replay_performed_by_provider_repository": true
+  },
+  "identity": {
+    "path": "provider_identity.execution.functional_runtime.tf32_policy",
+    "tf32_policy": {
+      "tf32_requested": "off",
+      "tf32_effective": false,
+      "float32_matmul_precision": "highest",
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": false
+    },
+    "provider_identity_sha256": "f83d7b368bda23aacdf1c70e77de974df1c05a3e8b0c7886191dd82c14ade416",
+    "provider_identity_sha256_equals_canonical_sha256": true,
+    "adapter_passes_provider_identity_through": true,
+    "functional_api_version": "1.0",
+    "periodic_adapter_version": 2,
+    "channel_adapter_version": 3
+  },
+  "local_repository_verification": {
+    "focused_passed": 58,
+    "focused_failed": 0,
+    "full_passed": 3362,
+    "full_failed": 0,
+    "full_skipped": 0,
+    "full_deselected": 1,
+    "subtests_passed": 8,
+    "deselected_node_id": "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+  },
+  "historical_successor_sources": {
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "f09f06e74bbcf914ed817ce4077faf21a945716cf0d540900b01bb75eed99897",
+      "current_sha256": "30fc67b26a92a77ba26b9f9a44c9f37e5f92ec227a2bb03d64142feef3a9c7a9",
+      "introduced_by_phase": "RC4.5.7-recovery",
+      "reason": "Extend immutable source resolution through the RC4.5.7 recovery record."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "5b295dcf83e58c2d59e5f3fa2a537f0b323952500edb73531c470ffb8f3b5364",
+      "current_sha256": "b1e87f9a80ac135f2d881a4b613f05e4c0f0ff0050e4d54509aa45dfece70a31",
+      "introduced_by_phase": "RC4.5.7-recovery",
+      "reason": "Resolve RC4.5.6 sources through both the stopped adjudication and its recovery successor."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "5e60a6f69d0dfaf287b3c3c408eb5cc08b711513adad8307e02a83644f1f47e2",
+      "current_sha256": "4b729572f0ec5d849814d24a57de5f2f5981dd55c4d5ebc5e80291945a2583a3",
+      "introduced_by_phase": "RC4.5.7-recovery",
+      "reason": "Preserve the original STOPPED classification while resolving the live matrix through the separate recovery record."
+    },
+    "tests/test_rc3_known_issues_matrix.py": {
+      "historical_sha256": "363e92ff7785eb6d10c8f6b066df3f970dae98101de86411a642bf05768b79e2",
+      "current_sha256": "d507d8a417521913012b3f73264fd4ffd90fd76d47307117a8ac0b6128870526",
+      "introduced_by_phase": "RC4.5.7-recovery",
+      "reason": "Mark installed-wheel Consumer closure complete and expose RC4.5.8 as eligible but not authorized."
+    }
+  },
+  "source_sha256": {
+    "tests/test_rc457_installed_consumer_recovery.py": "b491f6a0111fdaa8af9241585b3896e36f0882c141722992b360418b439e7f98"
+  },
+  "scope": {
+    "solver_failure": false,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "control_algorithm_changed": false,
+    "adapter_runtime_behavior_changed": false,
+    "adapter_version_changed": false,
+    "functional_api_version_changed": false,
+    "checkpoint_schema_changed": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "rc4_5_7_complete": true,
+    "eligible_for_rc4_5_8_h100_closure": true,
+    "rc4_5_8_h100_authorized": false,
+    "push_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

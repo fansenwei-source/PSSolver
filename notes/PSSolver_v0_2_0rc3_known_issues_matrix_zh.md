@@ -46,7 +46,7 @@
 
 ### rc4.5：跨 runtime 鲁棒性
 
-处理 B7、B9、B11、B13、B15、B17、B21、B24、B27。RC4.5.0 已把它们拆成 checkpoint transactionality、boundary semantics、public validation/observability 和 accelerator global state 四个 cohort。RC4.5.1 随后完成十个 analysis-only probe，RC4.5.2 冻结公共合同。RC4.5.3–RC4.5.5 已分别关闭 checkpoint transactionality、boundary semantics 和 public validation/observability 的 CPU 实现门禁，因此 B7、B9、B13、B15、B17、B21、B24、B27 均为 `closed_verified`。RC4.5.6 已把八条生产/functional runtime 的 TF32 设置改为执行期作用域：进入前验证并快照三个 Torch 全局精度状态，成功或异常退出均在 `finally` 中精确恢复，嵌套作用域按 LIFO 恢复。B11 暂保持 `partial_residual`，因为 CPU 实现已通过但 CUDA/installed-wheel 关闭仍分别留给 RC4.5.7–RC4.5.8。RC4.5.3–RC4.5.6 的权威记录为同名 `rc453`、`rc454`、`rc455` 与 `rc456` JSON。
+处理 B7、B9、B11、B13、B15、B17、B21、B24、B27。RC4.5.0 已把它们拆成 checkpoint transactionality、boundary semantics、public validation/observability 和 accelerator global state 四个 cohort。RC4.5.1 随后完成十个 analysis-only probe，RC4.5.2 冻结公共合同。RC4.5.3–RC4.5.5 已分别关闭 checkpoint transactionality、boundary semantics 和 public validation/observability 的 CPU 实现门禁，因此 B7、B9、B13、B15、B17、B21、B24、B27 均为 `closed_verified`。RC4.5.6 已把八条生产/functional runtime 的 TF32 设置改为执行期作用域：进入前验证并快照三个 Torch 全局精度状态，成功或异常退出均在 `finally` 中精确恢复，嵌套作用域按 LIFO 恢复。RC4.5.7 随后完成 installed-wheel CPU 与 Consumer 累计关闭：PSSolver-Control 以独立 schema 迁移和 successor 登记提交接受五字段 `tf32_policy`，Provider 6/6、Consumer 310 passed/1 个既有 R5 skip，且没有 source shadow。B11 暂保持 `partial_residual`，仅等待 RC4.5.8 H100 门禁。RC4.5.3–RC4.5.7 的权威记录为同名 `rc453`、`rc454`、`rc455`、`rc456` 与 `rc457` recovery JSON。
 
 ### 0.2 之后的架构去重
 
@@ -58,4 +58,4 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 ## 下一项实现
 
-`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity`、`rc4.3_lifting_correctness` 与 `rc4.4_pressure_contract` 均已完成；B25、B28、B29 已随 RC4.4.7 累计 H100 关闭转为 `closed_verified`。RC4.5.0–RC4.5.6 的规划、裁决、合同和四个 CPU 实现 cohort 也已完成；除等待 CUDA 关闭的 B11 外，本批其他问题均已转为 `closed_verified`。RC4.5.7 installed-wheel Provider 门禁通过，但已资格 Consumer `0cf55b4` 的精确 Periodic identity 测试没有登记新增 `tf32_policy`，因此以 `STOPPED_RC4_5_7_CONSUMER_IDENTITY_SCHEMA_MIGRATION_REQUIRED` 停止。下一步是由 PSSolver-Control 独立迁移该 schema 预期并用冻结的新 Consumer commit 重跑 RC4.5.7；通过前不得进入 RC4.5.8。生产默认值、自动 merge、H100 或发布仍未授权。
+`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity`、`rc4.3_lifting_correctness` 与 `rc4.4_pressure_contract` 均已完成；B25、B28、B29 已随 RC4.4.7 累计 H100 关闭转为 `closed_verified`。RC4.5.0–RC4.5.7 的规划、裁决、合同、四个 CPU 实现 cohort 以及 installed-wheel Consumer 累计关闭均已完成；除等待 CUDA 关闭的 B11 外，本批其他问题均为 `closed_verified`。RC4.5.7 保留最初的 schema-migration STOPPED 记录，并由单独 recovery 记录关闭：Consumer `b8539e0` 的完整 installed-wheel suite 为 310 passed、1 个既有 R5 skip。下一步是 RC4.5.8 单次 H100 关闭；当前只具备规划资格，尚未获得 H100、push、默认值推广或发布授权。

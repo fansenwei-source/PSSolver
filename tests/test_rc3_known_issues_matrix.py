@@ -375,21 +375,32 @@ def test_rc450_progress_records_rc44_closure_and_rc45_planning_boundary():
         ).hexdigest(),
         "eligible_for_rc4_5_7_installed_cpu_closure": True,
         "rc4_5_7_executed": True,
-        "rc4_5_7_complete": False,
+        "rc4_5_7_complete": True,
         "rc4_5_7_classification": (
-            "STOPPED_RC4_5_7_CONSUMER_IDENTITY_SCHEMA_MIGRATION_REQUIRED"
+            "PASS_RC4_5_7_INSTALLED_WHEEL_CPU_CONSUMER_CLOSURE_"
+            "WITH_TF32_IDENTITY_MIGRATION"
         ),
         "rc4_5_7_record": (
-            "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_impact.json"
+            "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_recovery.json"
         ),
         "rc4_5_7_record_sha256": hashlib.sha256(
+            (
+                ROOT
+                / "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_recovery.json"
+            ).read_bytes()
+        ).hexdigest(),
+        "rc4_5_7_initial_record": (
+            "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_impact.json"
+        ),
+        "rc4_5_7_initial_record_sha256": hashlib.sha256(
             (
                 ROOT
                 / "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_impact.json"
             ).read_bytes()
         ).hexdigest(),
-        "rc4_5_7_consumer_migration_required": True,
-        "eligible_for_rc4_5_8_h100_closure": False,
+        "rc4_5_7_consumer_migration_required": False,
+        "rc4_5_7_consumer_migration_complete": True,
+        "eligible_for_rc4_5_8_h100_closure": True,
         "rc4_5_implementation_authorized": True,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,
