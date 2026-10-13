@@ -97,15 +97,23 @@ def _graph_break_count(value: object) -> int:
 
 
 def _pointwise_metadata(adapter) -> dict[str, object]:
-    kernels = getattr(adapter.solver.model.nlmodel, "pointwise_kernels", None)
-    if kernels is None or not hasattr(kernels, "metadata"):
-        return {
-            "requested": "not_exposed",
-            "effective": "not_exposed",
-            "fallback_allowed": None,
-            "fallback_used": None,
-        }
-    return dict(kernels.metadata())
+    model = adapter.solver.model
+    owners = (
+        _pressure_static_model(adapter),
+        getattr(model, "nlmodel", None),
+    )
+    for owner in owners:
+        kernels = getattr(owner, "pointwise_kernels", None)
+        if kernels is not None and hasattr(kernels, "metadata"):
+            return {"applicable": True, **dict(kernels.metadata())}
+    return {
+        "applicable": False,
+        "reason": "legacy_channel_does_not_expose_pointwise_execution",
+        "requested": "not_exposed",
+        "effective": "not_exposed",
+        "fallback_allowed": None,
+        "fallback_reason": None,
+    }
 
 
 def _pressure_static_model(adapter):

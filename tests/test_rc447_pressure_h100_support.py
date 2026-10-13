@@ -24,6 +24,7 @@ from benchmarks.analyze_rc447_pressure_h100 import (
 from benchmarks.profile_rc447_channel_pressure import (
     SCHEMA as PROFILE_SCHEMA,
     _atomic_json as write_profile,
+    _pointwise_metadata,
     _pressure_observation,
 )
 from benchmarks.plan_rc447_pressure_h100 import SUPPORT_FILES, build_plan
@@ -154,12 +155,16 @@ def _profile(role: str, grid: str, trial: int) -> dict[str, object]:
             "peak_reserved_bytes": 120 if role == "baseline" else 124,
         },
         "transform_calls": {
-            "forward_per_step": 11.0,
+            "forward": 553,
+            "forward_per_step": 11.06,
             "inverse_per_step": 36.0,
+            "base_forward_per_step": 11.0,
+            "scheduled_refresh_forward_calls": 3,
         },
         "compiler": {
             "graph_breaks_during_profile": 0,
             "pointwise": {
+                "applicable": True,
                 "requested": "compile",
                 "effective": "compile",
                 "fallback_allowed": False,
@@ -328,6 +333,70 @@ def test_profile_pressure_observation_rejects_unknown_role_and_adapter_shape():
         _pressure_observation(object(), role="unknown")
     with pytest.raises(RuntimeError, match="solver.model.static_model"):
         _pressure_observation(object(), role="baseline")
+
+
+def test_profile_reads_pointwise_identity_from_the_static_channel_model():
+    class Kernels:
+        def metadata(self):
+            return {
+                "requested": "compile",
+                "effective": "compile",
+                "fallback_allowed": False,
+                "fallback_reason": None,
+            }
+
+    class StaticModel:
+        pointwise_kernels = Kernels()
+
+    class Model:
+        static_model = StaticModel()
+        nlmodel = None
+
+    class Solver:
+        model = Model()
+
+    class Adapter:
+        solver = Solver()
+
+    assert _pointwise_metadata(Adapter()) == {
+        "applicable": True,
+        "requested": "compile",
+        "effective": "compile",
+        "fallback_allowed": False,
+        "fallback_reason": None,
+    }
+
+
+def test_profile_and_analyzer_preserve_legacy_pointwise_nonapplicability():
+    class Model:
+        static_model = object()
+        nlmodel = object()
+
+    class Solver:
+        model = Model()
+
+    class Adapter:
+        solver = Solver()
+
+    expected = {
+        "applicable": False,
+        "reason": "legacy_channel_does_not_expose_pointwise_execution",
+        "requested": "not_exposed",
+        "effective": "not_exposed",
+        "fallback_allowed": None,
+        "fallback_reason": None,
+    }
+    assert _pointwise_metadata(Adapter()) == expected
+    baseline = _matrix("baseline")
+    candidate = _matrix("candidate")
+    for report in (*baseline, *candidate):
+        report["compiler"]["pointwise"] = copy.deepcopy(expected)
+    assert analyze(
+        baseline,
+        candidate,
+        _correctness(),
+        _cuda_tests(),
+    )["qualification_complete"] is True
 
 
 def test_analyzer_accepts_complete_matrix_and_preserves_nonclaims():

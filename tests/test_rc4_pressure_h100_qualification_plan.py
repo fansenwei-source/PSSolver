@@ -29,6 +29,11 @@ PROFILE_RECOVERY = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_profile_diagnostics_recovery_v8.json"
 )
+PERFORMANCE_RECOVERY = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_performance_recovery_v9.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -210,6 +215,12 @@ def test_rc447_plan_binds_the_local_qualification_support_by_hash():
             ],
             "external_profile_helper_diagnostics_compatibility_only",
         ),
+        (
+            json.loads(PERFORMANCE_RECOVERY.read_text(encoding="utf-8"))[
+                "qualification_support_successors"
+            ],
+            "external_profile_counter_and_nonapplicability_contract",
+        ),
     ]
     assert support["implementation_scope"] == (
         "qualification_only_no_solver_or_runtime_change"
@@ -271,6 +282,51 @@ def test_rc447_profile_diagnostics_recovery_is_qualification_only_and_fail_close
     assert recovery["provider_runtime_modified"] is False
     assert recovery["PSSolver_Control_modified"] is False
     assert recovery["nematics3d_modified"] is False
+    assert recovery["production_default_changed"] is False
+    assert recovery["authorization"] == {
+        "push_authorized": False,
+        "single_h100_submission_authorized": False,
+        "automatic_retry_authorized": False,
+    }
+
+
+def test_rc447_performance_recovery_binds_runtime_artifact_and_counter_layers():
+    recovery = json.loads(PERFORMANCE_RECOVERY.read_text(encoding="utf-8"))
+
+    assert recovery["phase"] == "RC4.4.7-recovery-v9"
+    assert recovery["candidate_provider_commit"] == (
+        "490274343081c4305d406f5515891dc6bd272aec"
+    )
+    assert recovery["candidate_provider_wheel"]["sha256"] == (
+        "92cbf470157473e4bce16810a5ff8cf1437e22e30fc6d45a3c835a9276e11df6"
+    )
+    assert recovery["candidate_provider_wheel"][
+        "two_independent_local_builds_byte_identical"
+    ] is True
+    assert recovery["failed_v8_evidence"]["job_id"] == "10878190"
+    assert recovery["failed_v8_evidence"]["profiles_complete"] == 12
+    assert recovery["counter_layer_contract"] == {
+        "timed_steps": 50,
+        "base_forward_per_step": 11.0,
+        "scheduled_refresh_forward_calls": 3,
+        "raw_forward_calls": 553,
+        "raw_forward_per_step": 11.06,
+        "inverse_per_step": 36.0,
+        "interpretation": (
+            "the frozen 11-forward steady-state rate excludes three "
+            "explicitly scheduled refresh calls, while raw evidence remains "
+            "exact and independently validated"
+        ),
+    }
+    pointwise = recovery["pointwise_execution_contract"]
+    assert pointwise["legacy_channel_exposes_pointwise_execution"] is False
+    assert pointwise["nonapplicability_is_explicit"] is True
+    assert pointwise["candidate_correctness_compile_fallback_gate_retained"] is True
+    assert pointwise["silent_fallback_allowed"] is False
+    assert recovery["thresholds_changed"] is False
+    assert recovery["profile_matrix_changed"] is False
+    assert recovery["correctness_matrix_changed"] is False
+    assert recovery["scientific_contract_changed"] is False
     assert recovery["production_default_changed"] is False
     assert recovery["authorization"] == {
         "push_authorized": False,

@@ -1,0 +1,109 @@
+{
+  "schema": "pssolver.rc4_4_7.performance_recovery_plan.v9",
+  "phase": "RC4.4.7-recovery-v9",
+  "status": "LOCAL_RUNTIME_AND_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED",
+  "runtime_parent_commit": "650709f764c209f16dc854675edc82ba38783e92",
+  "candidate_provider_commit": "490274343081c4305d406f5515891dc6bd272aec",
+  "baseline_provider_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+  "consumer_source_commit": "0cf55b4fb699ff40433000f5b4efe52b1d33546b",
+  "candidate_source_archive": {
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_rc447_v9_candidate_artifacts_4902743/PSSolver-490274343081c4305d406f5515891dc6bd272aec.tar",
+    "sha256": "d3beb1ad2a03bf905f9753241defa13fe8652c5ca725e873b798eecc57f5af8c",
+    "bytes": 20377600
+  },
+  "candidate_provider_wheel": {
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_rc447_v9_candidate_artifacts_4902743/pssolver-0.2.0rc3-py3-none-any.whl",
+    "sha256": "92cbf470157473e4bce16810a5ff8cf1437e22e30fc6d45a3c835a9276e11df6",
+    "bytes": 1045114,
+    "source_date_epoch": 1791860291,
+    "two_independent_local_builds_byte_identical": true
+  },
+  "failed_v8_evidence": {
+    "job_id": "10878190",
+    "classification": "FAIL_RC4_4_7_PROFILE_ANALYZER_COUNTER_LAYER_AND_PERFORMANCE",
+    "control_directory": "/home/fansenwei/pssolver_rc447_pressure_h100_5b4ee16_0cf55b4_20261012_recovery_v8",
+    "checksums_sha256": "067a8ae82717c29ecc9e622aa26940ba800a709ad9a67e24b44513612e1a0ad3",
+    "checksums_verified": 1514,
+    "cuda_tests_passed": 7,
+    "correctness_gates_passed": 9,
+    "profiles_complete": 12,
+    "automatic_retry": false
+  },
+  "counter_layer_contract": {
+    "timed_steps": 50,
+    "base_forward_per_step": 11.0,
+    "scheduled_refresh_forward_calls": 3,
+    "raw_forward_calls": 553,
+    "raw_forward_per_step": 11.06,
+    "inverse_per_step": 36.0,
+    "interpretation": "the frozen 11-forward steady-state rate excludes three explicitly scheduled refresh calls, while raw evidence remains exact and independently validated"
+  },
+  "pointwise_execution_contract": {
+    "legacy_channel_exposes_pointwise_execution": false,
+    "nonapplicability_is_explicit": true,
+    "requested": "not_exposed",
+    "effective": "not_exposed",
+    "fallback_allowed": null,
+    "fallback_reason": null,
+    "candidate_correctness_compile_fallback_gate_retained": true,
+    "silent_fallback_allowed": false
+  },
+  "qualification_support_successors": {
+    "benchmarks/analyze_rc447_pressure_h100.py": {
+      "historical_sha256": "a971bbe28888671a354eacdc8841419c382cc91a85629f65c332773063c3a2fc",
+      "current_sha256": "e0477a128ec878a764646f502a3b6999facfb589a12cae37f3aea5bb31978d38",
+      "change_scope": "external_profile_counter_and_nonapplicability_contract",
+      "reason": "bind the repaired Provider identity and exact wheel, validate both raw and steady-state transform layers, and fail closed on either applicable pointwise metadata or the exact legacy non-applicability sentinel"
+    },
+    "benchmarks/profile_rc447_channel_pressure.py": {
+      "historical_sha256": "51ac11a0c4ddd63160497839e1b66fab86c1611139e101c4d88c52ba230a8919",
+      "current_sha256": "d8ad31c1b4fc206184d56761d94a7c5665f82ab86d548acda615649f394e1c9d",
+      "change_scope": "external_profile_counter_and_nonapplicability_contract",
+      "reason": "discover public pointwise metadata on the established Channel model owners and otherwise persist an explicit non-applicability contract"
+    },
+    "tests/test_rc447_pressure_h100_support.py": {
+      "historical_sha256": "94a84ebd4f4b7efb9434077fcb0ee0f555b8e6fc24a153616d0bf4e2211bb3db",
+      "current_sha256": "74bedaa1ff452d360200998a90ac84602404b533b891612e9a3c357c8f991658",
+      "change_scope": "external_profile_counter_and_nonapplicability_contract",
+      "reason": "cover exact raw and base transform counts plus applicable and legacy non-applicable pointwise schemas"
+    }
+  },
+  "validation": {
+    "support_py_compile": "PASS",
+    "support_import_smoke": "PASS",
+    "synthetic_support_tests": {
+      "passed": 27,
+      "failed": 0,
+      "skipped": 0
+    },
+    "targeted_CPU": {
+      "passed": 169,
+      "failed": 0,
+      "skipped": 0
+    },
+    "full_CPU": {
+      "passed": 3188,
+      "failed": 0,
+      "skipped": 0,
+      "deselected_cuda_only": 7,
+      "subtests_passed": 8,
+      "seconds": 201.05,
+      "environment": "/home/fansenwei/anaconda3/envs/Nematics3D/bin/python"
+    },
+    "H100_requalified": false
+  },
+  "thresholds_changed": false,
+  "profile_matrix_changed": false,
+  "correctness_matrix_changed": false,
+  "scientific_contract_changed": false,
+  "production_default_changed": false,
+  "PSSolver_Control_modified": false,
+  "nematics3d_modified": false,
+  "qualification_complete": false,
+  "rc4_4_7_complete": false,
+  "authorization": {
+    "push_authorized": false,
+    "single_h100_submission_authorized": false,
+    "automatic_retry_authorized": false
+  }
+}

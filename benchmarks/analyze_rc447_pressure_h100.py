@@ -30,11 +30,11 @@ GRIDS = {
 TRIALS = (1, 2, 3)
 COMMITS = {
     "baseline": "5071d73a00e0d19be62ebd39edf9918818d1267a",
-    "candidate": "5b4ee16c81a3ae452ffcf8992a84a738a76ff629",
+    "candidate": "490274343081c4305d406f5515891dc6bd272aec",
 }
 WHEELS = {
     "baseline": "9c99ebcdc2e03b2c61b5bc3a5d84d97e99775f488409e2e61f5c06e009695e61",
-    "candidate": "6f38996c31586ff7b2a0637de5ff479410bbd01bb53926828071affaf5d4cf26",
+    "candidate": "92cbf470157473e4bce16810a5ff8cf1437e22e30fc6d45a3c835a9276e11df6",
 }
 THRESHOLDS = {
     "mean_timestep_ratio_max": 1.05,
@@ -157,20 +157,54 @@ def _profile_key(report: dict[str, Any], role: str) -> tuple[str, int]:
     _require(report.get("completed_steps") == 60, f"{role} completed steps differ")
     _require(report.get("finite") is True, f"{role} state is non-finite")
     calls = report.get("transform_calls", {})
-    _require(calls.get("forward_per_step") == 11.0, f"{role} forward transform count differs")
-    _require(calls.get("inverse_per_step") == 36.0, f"{role} inverse transform count differs")
+    _require(
+        calls.get("base_forward_per_step") == 11.0,
+        f"{role} base forward transform count differs",
+    )
+    _require(
+        calls.get("scheduled_refresh_forward_calls") == 3,
+        f"{role} scheduled refresh transform count differs",
+    )
+    _require(
+        calls.get("forward") == 553,
+        f"{role} raw forward transform count differs",
+    )
+    _require(
+        calls.get("forward_per_step") == 11.06,
+        f"{role} raw forward transform rate differs",
+    )
+    _require(
+        calls.get("inverse_per_step") == 36.0,
+        f"{role} inverse transform count differs",
+    )
     compiler = report.get("compiler", {})
     _require(compiler.get("graph_breaks_during_profile") == 0, f"{role} graph break")
     pointwise = compiler.get("pointwise", {})
-    _require(
-        pointwise.get("requested") == pointwise.get("effective"),
-        f"{role} pointwise execution fallback",
-    )
-    _require(
-        pointwise.get("fallback_allowed") is False
-        and pointwise.get("fallback_reason") is None,
-        f"{role} compile fallback contract differs",
-    )
+    if pointwise.get("applicable") is True:
+        _require(
+            pointwise.get("requested") == pointwise.get("effective"),
+            f"{role} pointwise execution fallback",
+        )
+        _require(
+            pointwise.get("fallback_allowed") is False
+            and pointwise.get("fallback_reason") is None,
+            f"{role} compile fallback contract differs",
+        )
+    else:
+        _require(
+            pointwise
+            == {
+                "applicable": False,
+                "reason": (
+                    "legacy_channel_does_not_expose_pointwise_execution"
+                ),
+                "requested": "not_exposed",
+                "effective": "not_exposed",
+                "fallback_allowed": None,
+                "fallback_reason": None,
+            },
+            f"{role} pointwise non-applicability contract differs",
+        )
     for name in ("mean_timestep_seconds", "median_timestep_seconds"):
         _number(report.get("timing", {}).get(name), f"{role} {name}", positive=True)
     samples = report.get("timing", {}).get("samples_seconds")
