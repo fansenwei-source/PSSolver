@@ -25,6 +25,7 @@ class RuntimeFamily:
     grids: tuple[str, str]
     forward_transforms_per_step: int
     inverse_transforms_per_step: int
+    dtype: str = "float64"
 
 
 FAMILIES = (
@@ -50,7 +51,7 @@ FAMILIES = (
         "periodic_spectral",
         ("periodic_R128", "periodic_R320"),
         7,
-        32,
+        46,
     ),
     RuntimeFamily(
         "channel_legacy",
@@ -59,6 +60,7 @@ FAMILIES = (
         ("channel_R128x20x20", "channel_R512x40x40"),
         11,
         36,
+        "float32",
     ),
     RuntimeFamily(
         "channel_compiled_v2",
@@ -67,14 +69,15 @@ FAMILIES = (
         ("channel_R128x20x20", "channel_R512x40x40"),
         11,
         36,
+        "float32",
     ),
     RuntimeFamily(
         "channel_complete_stress",
         "channel",
         "channel_complete_stress",
         ("channel_R128x20x20", "channel_R512x40x40"),
-        11,
-        36,
+        15,
+        42,
     ),
     RuntimeFamily(
         "periodic_functional",
@@ -82,15 +85,15 @@ FAMILIES = (
         "periodic_activity_batch_one",
         ("periodic_R128", "periodic_R320"),
         7,
-        32,
+        46,
     ),
     RuntimeFamily(
         "channel_functional",
         "channel_functional",
         "channel_activity_batch_one",
         ("channel_R128x20x20", "channel_R512x40x40"),
-        11,
-        36,
+        15,
+        57,
     ),
 )
 
@@ -165,7 +168,7 @@ def build_profile_matrix() -> list[dict[str, object]]:
                             "warmup_steps": 10,
                             "timed_steps": 60,
                             "device": "cuda",
-                            "dtype": "float64",
+                            "dtype": family.dtype,
                             "tf32": "off",
                             "forward_transforms_per_step": (
                                 family.forward_transforms_per_step

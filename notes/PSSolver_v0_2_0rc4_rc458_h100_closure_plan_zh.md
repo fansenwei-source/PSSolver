@@ -21,6 +21,10 @@ RC4.5.8 只关闭 B11 的 CUDA/accelerator-global-state 剩余门禁，同时对
 
 性能门限冻结为：每个 family/grid 的 mean 与 median B/A 不超过 1.03，任一 paired trial 不超过 1.05，peak allocated/reserved 不超过 1.03；配对初态和终态 SHA 必须相同，transform count 必须精确，不能出现 fallback、graph break、NaN 或 Inf。
 
-本计划只冻结合同。当前 Provider 与 Consumer 分支均未满足远端身份前置条件，且用户尚未授权 push 或 H100 submission，因此不得生成或提交正式 Slurm Job，也不得自动重试。
+Qualification-support 实现前的构造审计修正了初版机器可读矩阵中的 dtype 误写：`channel_legacy` 与 `channel_compiled_v2` 必须沿用已资格化的 P7.3 float32 构造合同；其余六条 family 使用 float64。该修正不改变 family、grid、trial、门限、方程、默认值或数值实现，防止把外部 harness 的统一 dtype 假设误报为 runtime failure。
+
+同一轮 tiny CPU 单步拓扑审计分别在 A `51f47e9` 与 B `a195bd0` 上重放真实 runtime，确认两边计数完全一致：Plane 为 7/32，legacy/compiled Channel 为 11/36，Periodic complete-stress 与 Periodic functional 为 7/46，Channel complete-stress 为 15/42，Channel functional 为 15/57（forward/inverse）。机器可读计划据此冻结各 family 的真实计数，不再把 Plane/legacy Channel 的旧计数套用到其他路径。
+
+本计划只冻结合同。计划提交当时 Provider 与 Consumer 分支均未满足远端身份前置条件；后续 Consumer qualified source `b8539e0` 及 evidence-only tip `0e3895d` 已推送并验证，但 Provider qualification support 尚未 push，用户也尚未授权 H100 submission，因此不得生成或提交正式 Slurm Job，也不得自动重试。
 
 本地计划门禁已通过：7 个 CUDA-only node ID 均可准确收集，6 个定向合同测试通过；完整 PSSolver 套件为 3368 passed、1 个冻结 CUDA-only deselect、8 个 subtests passed，0 failed、0 skipped。

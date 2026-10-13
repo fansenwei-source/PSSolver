@@ -24,7 +24,7 @@
   },
   "qualification_matrix": {
     "schema": "pssolver.rc4_5_8.tf32_h100_plan.v1",
-    "canonical_sha256": "cb0866559a60169c08ef3cbe801aa9aacdbd34a4601030a1c5892349318d506e",
+    "canonical_sha256": "7eb01e99743d09324f867cccb6e4f27a75087f4aa906a966800a8415368812e9",
     "runtime_family_count": 8,
     "grid_count_per_family": 2,
     "trial_count_per_grid": 3,
@@ -53,6 +53,27 @@
     "periodic_functional",
     "channel_functional"
   ],
+  "qualification_harness_contract_correction": {
+    "reason": "P7.3 legacy_channel and compiled_channel_v2 accept only their qualified float32 construction contract; the initial machine-readable RC4.5.8 plan incorrectly assigned float64 to every family",
+    "channel_legacy_dtype": "float32",
+    "channel_compiled_v2_dtype": "float32",
+    "other_runtime_family_dtype": "float64",
+    "transform_calls_by_family": {
+      "plane_legacy_production": [7, 32],
+      "plane_compiled_v2": [7, 32],
+      "periodic_complete_stress": [7, 46],
+      "channel_legacy": [11, 36],
+      "channel_compiled_v2": [11, 36],
+      "channel_complete_stress": [15, 42],
+      "periodic_functional": [7, 46],
+      "channel_functional": [15, 57]
+    },
+    "transform_call_basis": "independent one-step real-runtime replay matched at A 51f47e9 and B a195bd0",
+    "profile_count_changed": false,
+    "threshold_changed": false,
+    "runtime_source_changed": false,
+    "production_default_changed": false
+  },
   "thresholds": {
     "mean_timestep_ratio_max": 1.03,
     "median_timestep_ratio_max": 1.03,
@@ -86,7 +107,7 @@
     "deselected_node_id": "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
   },
   "source_sha256": {
-    "benchmarks/plan_rc458_tf32_h100.py": "03518af57c35fc888b4f2a11746696b83887e24dc6000aa0e6342985ce7aa26f",
+    "benchmarks/plan_rc458_tf32_h100.py": "d7a03e7e608e7b1c2a782a83c9ce9b8a9fbf9d37d5d21883d0f5463db0caf221",
     "tests/test_plan_rc458_tf32_h100.py": "49650a38596101791edad06a384a1e17e880e8c6a000c378d5d21756246343be"
   },
   "scope": {

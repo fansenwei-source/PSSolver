@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 RC4.5.8 single-H100 qualification support",
+  "phase": "RC4.5.8",
+  "status": "qualification_support_complete_waiting_for_push_and_h100_authorization",
+  "classification": "READY_RC4_5_8_H100_QUALIFICATION_SUPPORT",
+  "qualification_complete": false,
+  "provider": {
+    "baseline_commit": "51f47e9f06bd3e019d785305bff47c80f5519b10",
+    "runtime_candidate_commit": "a195bd05992bc6553c72c400587d2b07afe722d0",
+    "qualification_support_parent": "7cd4fe783d6282032f06f196dcacff2cd863f623"
+  },
+  "consumer": {
+    "branch": "migration/pssolver-v0.2.0rc4-rc457-tf32-identity",
+    "qualified_source_commit": "b8539e0ec4c137a6c13746f6832e26e74be24515",
+    "evidence_only_tip": "0e3895d664d1b81925127848b2dfde638f39763d",
+    "record_commit_is_qualified_source": false,
+    "requires_h100_requalification": false,
+    "remote_tip_verified": true
+  },
+  "support": {
+    "profile_schema": "pssolver.rc4_5_8.runtime_family_profile.v1",
+    "profile_count": 96,
+    "group_count": 16,
+    "runtime_family_count": 8,
+    "caller_state_count": 3,
+    "cuda_only_test_count": 7,
+    "isolated_compiler_cache_per_profile": true,
+    "source_shadow_import_rejected": true,
+    "atomic_profile_progress": true,
+    "fail_closed_analyzer": true,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false
+  },
+  "contract_corrections": {
+    "channel_active_runtime_dtype": {
+      "families": ["channel_legacy", "channel_compiled_v2"],
+      "value": "float32",
+      "reason": "preserve the already-qualified P7.3 construction contract"
+    },
+    "other_runtime_family_dtype": "float64",
+    "completed_steps_interpretation": {
+      "completed_profile_steps": 60,
+      "runtime_completed_steps": 70,
+      "warmup_steps": 10
+    },
+    "transform_calls_per_step": {
+      "plane_legacy_production": [7, 32],
+      "plane_compiled_v2": [7, 32],
+      "periodic_complete_stress": [7, 46],
+      "channel_legacy": [11, 36],
+      "channel_compiled_v2": [11, 36],
+      "channel_complete_stress": [15, 42],
+      "periodic_functional": [7, 46],
+      "channel_functional": [15, 57]
+    },
+    "transform_call_replay": {
+      "baseline_commit": "51f47e9f06bd3e019d785305bff47c80f5519b10",
+      "candidate_commit": "a195bd05992bc6553c72c400587d2b07afe722d0",
+      "runtime_family_cases_per_commit": 8,
+      "matched": true,
+      "qualification_claim": false
+    },
+    "profile_count_changed": false,
+    "performance_threshold_changed": false,
+    "numerical_implementation_changed": false,
+    "production_default_changed": false
+  },
+  "package_build_contract": {
+    "command": "python -m build from clean git archives",
+    "provider_historical_description_rewritten": false,
+    "reason": "the RC4.5.7 Control evidence observed python -m build and the RC4.5.8 harness records the actual command rather than copying the older descriptive mismatch"
+  },
+  "local_verification": {
+    "py_compile": "PASS",
+    "targeted_tests_passed": 17,
+    "targeted_tests_failed": 0,
+    "full_cpu_passed": 3374,
+    "full_cpu_failed": 0,
+    "full_cpu_skipped": 0,
+    "full_cpu_xfailed": 0,
+    "full_cpu_deselected": 1,
+    "full_cpu_subtests_passed": 8,
+    "full_cpu_deselected_node_id": "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence",
+    "candidate_tiny_cpu_runtime_families_constructed_and_stepped": 8,
+    "baseline_transform_topology_cases": 8,
+    "candidate_transform_topology_cases": 8,
+    "baseline_candidate_transform_topology_equal": true,
+    "h100_executed": false
+  },
+  "source_sha256": {
+    "benchmarks/plan_rc458_tf32_h100.py": "d7a03e7e608e7b1c2a782a83c9ce9b8a9fbf9d37d5d21883d0f5463db0caf221",
+    "benchmarks/profile_rc458_runtime_family.py": "7eff1d166dd5c30b09f6c2202772ed5b5cf9f0be0bed11bade72571eac3d8152",
+    "benchmarks/run_rc458_profile_matrix.py": "5e3f6f3e0b8327defd7d5ea90e0f677925badf4b1d6b43dd0e778011512a2bdc",
+    "benchmarks/analyze_rc458_tf32_h100.py": "8adb9e3fb5df81d5d2cfa5114ef4d8208a82debf44cc761d18746ce967bce951",
+    "benchmarks/qualify_rc458_tf32_scope.py": "436e1615ef15e0c18730e95a5415e235ef867a0d7efed2c0eb777ce1e571987e",
+    "tests/test_plan_rc458_tf32_h100.py": "49650a38596101791edad06a384a1e17e880e8c6a000c378d5d21756246343be",
+    "tests/test_rc458_qualification_support.py": "1854cd3347b65e29df3fac4d9f5a1677d07ed9025ba0c786e7adb1941e1bbdad",
+    "notes/PSSolver_v0_2_0rc4_rc458_h100_closure_plan.json": "4933f19d5f060f3f27291cbf9672692c48b8d09d6aa54c77edbbff0063546cd5",
+    "notes/PSSolver_v0_2_0rc4_rc458_h100_closure_plan_zh.md": "0361c0dd9195d6fe5a97bb682d5a0af0dd74b74cc2bb831d483a68b4f5f511d6"
+  },
+  "scope": {
+    "PSSolver_runtime_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "numerical_equations_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "production_default_changed": false,
+    "h100_executed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "h100_submission_authorized": false,
+    "automatic_retry": false,
+    "production_default_changed": false
+  }
+}
