@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "release": "0.2.0rc4",
+  "date": "2026-10-13",
+  "status": "release_preparation_source_candidate",
+  "source": {
+    "rc3_tag_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+    "runtime_candidate_commit": "a195bd05992bc6553c72c400587d2b07afe722d0",
+    "qualification_commit": "cffae1f0eb07775dbb76b1548480db3049a04f37",
+    "rc4_closure_registration_commit": "bc5eb408f0d2c9e9dfcf5fb559809bd5fcdaacfd",
+    "rc4_closure_record": "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json",
+    "rc4_closure_record_sha256": "b544b02b079e6adaa4fccbe7e8bca43f8aa5f79eb2e4f3b647099ca4866b4225"
+  },
+  "public_contract": {
+    "package_version": "0.2.0rc4",
+    "functional_api_version": "1.0",
+    "models": 2,
+    "geometries": 3,
+    "boundary_policies": 8,
+    "qualified_combinations": 4,
+    "runtime_paths": 6,
+    "functional_batch_sizes": [
+      1
+    ]
+  },
+  "correctness_batches": {
+    "rc4_1_plane_nyquist": "complete",
+    "rc4_2_checkpoint_identity": "complete",
+    "rc4_3_lifting_correctness": "complete",
+    "rc4_4_pressure_contract": "complete",
+    "rc4_5_cross_runtime_robustness": "complete",
+    "known_issues_closed_verified": 38,
+    "known_issues_partial_residual": 0,
+    "accepted_limitations": 3,
+    "deferred_architecture": 9
+  },
+  "consumer": {
+    "repository": "https://github.com/fansenwei-source/PSSolver-Control",
+    "qualified_source_commit": "b8539e0ec4c137a6c13746f6832e26e74be24515",
+    "evidence_record_commit": "0e3895d664d1b81925127848b2dfde638f39763d",
+    "bundled_into_pssolver": false
+  },
+  "release_boundary": {
+    "production_default_changed": false,
+    "functional_api_version_changed": false,
+    "checkpoint_compatibility_removed": false,
+    "larger_batch_qualified": false,
+    "plane_control_qualified": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false,
+    "nematics3d_modified": false,
+    "pssolver_control_bundled": false
+  },
+  "artifacts": {
+    "final_rc4_source_distribution_built": false,
+    "final_rc4_wheel_built": false,
+    "final_rc4_isolated_install_verified": false,
+    "final_rc4_h100_release_smoke_complete": false,
+    "tag_created": false,
+    "github_prerelease_created": false,
+    "pypi_published": false
+  },
+  "local_verification": {
+    "release_metadata_tests": "22 passed",
+    "complete_cpu_suite": "pending",
+    "source_archive_content": "pending",
+    "wheel_content_and_metadata": "pending",
+    "pip_check": "pending",
+    "source_shadow_import": null,
+    "installed_wheel_version": "pending",
+    "functional_api_version": "1.0",
+    "installed_wheel_cpu_smoke": "pending",
+    "h100_release_smoke": "pending"
+  }
+}

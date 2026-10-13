@@ -1,5 +1,53 @@
 # Changelog
 
+## 0.2.0rc4 — 2026-10-13
+
+Correctness, restart-integrity, boundary-semantics, pressure-contract, and
+cross-runtime robustness follow-up to `v0.2.0rc3`.
+
+### Fixed
+
+- Apply one real-grid Nyquist convention to the Plane free-slip Stokes path
+  so `full_complex` and `hermitian_half` storage produce equivalent physical
+  velocity and pressure on even periodic grids.
+- Make checkpoint reads exact-schema, checksum-verified, identity-bound, and
+  mutation-free on rejection; publish checkpoint directories transactionally.
+- Restrict public lifting capabilities to qualified static Dirichlet data,
+  preserve explicit fresh-state conditioning, and carry lifting identity
+  through runtime construction and restart.
+- Make Channel pressure tolerances and fixed-work policies explicit public
+  contracts, expose stable diagnostics, and retain forward/transpose
+  consistency without changing production pressure warm-start semantics.
+- Validate public device, boundary, pressure, and output policies before
+  tensor allocation; scope TF32 changes to owned execution and restore the
+  caller's exact state afterward.
+
+### Cross-runtime and independent-consumer closure
+
+- Preserve the existing Plane, Periodic, and Channel production defaults;
+  compiled runtimes remain explicit opt-ins.
+- Complete the installed-wheel PSSolver-Control identity migration for the
+  five-field TF32 policy without changing functional API version 1.0 or the
+  adapter versions.
+- Qualify 96 H100 profiles across 16 runtime groups with finite outputs,
+  paired initial/final state identities, no runtime or compile fallback, and
+  zero graph breaks.  Channel transform accounting separates three scheduled
+  refresh calls from the steady-state `11/36` contract.
+- Apply the existing allocator-stable reserved-memory reducer
+  `max(candidate) / max(baseline)` per three-trial group while retaining the
+  original `1.03` bound and the strict per-trial live-allocation gate.
+
+### Release boundary
+
+- The rc3 known-issues matrix now records 38 closed issues, three accepted
+  limitations, nine deferred architecture items, and no partial residuals.
+- Functional API version 1.0, checkpoint compatibility versions, qualified
+  model--geometry combinations, batch-one functional scope, and production
+  defaults are unchanged.
+- This source-preparation commit does not create a tag or publish a package.
+  A clean sdist/wheel build, isolated installed-wheel CPU smoke, and final
+  explicitly authorized H100 release smoke are still required.
+
 ## 0.2.0rc3 — 2026-10-06
 
 Correctness and compatibility follow-up to `v0.2.0rc2`.
