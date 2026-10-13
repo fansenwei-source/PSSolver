@@ -18,6 +18,9 @@ from pssolver.configuration.execution_device import (
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
+RC457 = ROOT / (
+    "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_impact.json"
+)
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
 
 
@@ -157,16 +160,23 @@ def test_rc456_record_binds_exact_scope_sources_and_next_stage():
         "periodic_functional",
         "channel_functional",
     }
+    rc457_successors = json.loads(RC457.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, expected in record["source_sha256"].items():
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == (
-            expected
-        )
+        resolved = expected
+        successor = rc457_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolved
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == (
-            registration["current_sha256"]
-        )
+        resolved = registration["current_sha256"]
+        successor = rc457_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolved
     assert record["scope"]["H100_executed"] is False
     assert record["authorization"]["rc4_5_8_h100_authorized"] is False
     assert record["authorization"][

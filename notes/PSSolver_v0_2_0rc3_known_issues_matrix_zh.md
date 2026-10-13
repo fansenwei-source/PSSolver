@@ -58,4 +58,4 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 ## 下一项实现
 
-`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity`、`rc4.3_lifting_correctness` 与 `rc4.4_pressure_contract` 均已完成；B25、B28、B29 已随 RC4.4.7 累计 H100 关闭转为 `closed_verified`。RC4.5.0–RC4.5.6 的规划、裁决、合同和四个 CPU 实现 cohort 也已完成；除等待 CUDA 关闭的 B11 外，本批其他问题均已转为 `closed_verified`。下一步是 RC4.5.7 installed-wheel CPU/Consumer impact closure，随后才是 RC4.5.8 单次 H100 CUDA 关闭。PSSolver-Control 源码修改、生产默认值、自动 merge、H100 或发布仍未授权。
+`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity`、`rc4.3_lifting_correctness` 与 `rc4.4_pressure_contract` 均已完成；B25、B28、B29 已随 RC4.4.7 累计 H100 关闭转为 `closed_verified`。RC4.5.0–RC4.5.6 的规划、裁决、合同和四个 CPU 实现 cohort 也已完成；除等待 CUDA 关闭的 B11 外，本批其他问题均已转为 `closed_verified`。RC4.5.7 installed-wheel Provider 门禁通过，但已资格 Consumer `0cf55b4` 的精确 Periodic identity 测试没有登记新增 `tf32_policy`，因此以 `STOPPED_RC4_5_7_CONSUMER_IDENTITY_SCHEMA_MIGRATION_REQUIRED` 停止。下一步是由 PSSolver-Control 独立迁移该 schema 预期并用冻结的新 Consumer commit 重跑 RC4.5.7；通过前不得进入 RC4.5.8。生产默认值、自动 merge、H100 或发布仍未授权。

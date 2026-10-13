@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 RC4.5.7 installed-wheel CPU and Consumer-impact adjudication",
+  "phase": "RC4.5.7",
+  "status": "stopped_consumer_migration_required",
+  "classification": "STOPPED_RC4_5_7_CONSUMER_IDENTITY_SCHEMA_MIGRATION_REQUIRED",
+  "qualification_complete": false,
+  "baseline": {
+    "provider_commit": "a195bd05992bc6553c72c400587d2b07afe722d0",
+    "provider_branch": "fix/v0.2.0rc4-audit",
+    "preceding_stage_record": "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json",
+    "preceding_stage_record_sha256": "b91c44b8a426e405797fc03001a6d1f6ab228d8b8a803e50272b6e4a94742e73",
+    "consumer_repository": "https://github.com/fansenwei-source/PSSolver-Control",
+    "consumer_qualified_source_commit": "0cf55b4fb699ff40433000f5b4efe52b1d33546b",
+    "consumer_evidence_record_commit": "c7e7f8631d94c98bd6fa92192e0b806ac25c912c",
+    "consumer_branch": "migration/pssolver-v0.2.0rc4-pressure-v4"
+  },
+  "artifact_identity": {
+    "provider_source_archive_sha256": "ba402d3a725e94a7d17cad23a9a89553b01b07ced53b65b283b6e738d90e9ba4",
+    "provider_wheel": "pssolver-0.2.0rc3-py3-none-any.whl",
+    "provider_wheel_sha256": "551a318ed00dfd0f0dd9198c2915dd78d9cc15674ffbd502214a863dfdf5d3c4",
+    "consumer_source_archive_sha256": "2ecdf84699cfcf71f07579c1bdbdf559a23f370aea4d3cdb2af5a96e42e78545",
+    "consumer_wheel": "pssolver_control-0.0.1.dev0-py3-none-any.whl",
+    "consumer_wheel_sha256": "3676209a379138d8d914d176d2c6dc8f80b57f5d80a8951ca18977b9ff85053e",
+    "build": "pip wheel --no-deps --no-build-isolation",
+    "install": "pip install --no-deps",
+    "pip_check": "PASS"
+  },
+  "environment": {
+    "python": "3.12.13",
+    "torch": "2.6.0+cu126",
+    "numpy": "2.4.6",
+    "scipy": "1.15.1",
+    "pytest": "9.1.1",
+    "cuda_available": true,
+    "nematics3d_installed": false,
+    "qualification_environment": "clean Eva-derived venv plus locally materialized SciPy and pytest",
+    "pssolver_imported_from_qualification_purelib": true,
+    "pssolver_control_imported_from_qualification_purelib": true,
+    "source_shadow_import": false,
+    "preflight_environment_excluded": "the first system-site environment exposed the pre-existing nematics3d 0.9.0b1 / NumPy metadata conflict and was not used as qualification evidence",
+    "nematics3d_modified": false
+  },
+  "provider_installed_wheel_gate": {
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "gates": [
+      "policy description and invalid policy do not mutate caller state",
+      "successful scope restores exact state",
+      "exceptional scope restores exact state",
+      "nested scopes restore in strict LIFO order",
+      "Periodic functional execution restores caller TF32 state",
+      "Channel functional execution restores caller TF32 state"
+    ]
+  },
+  "consumer_selected_gate": {
+    "passed": 73,
+    "failed": 1,
+    "skipped": 0,
+    "coverage": "Periodic and Channel adapters, consumers, checkpoint/adjoint/gradient/Taylor behavior, complex state"
+  },
+  "consumer_installed_wheel_gate": {
+    "passed": 299,
+    "failed": 1,
+    "skipped": 1,
+    "xfailed": 0,
+    "failed_node_id": "tests/test_pssolver_adapter.py::test_identity_carries_the_whole_provider_identity",
+    "failure_kind": "consumer_exact_identity_schema_expectation_missing_tf32_policy",
+    "allowed_skip_node_id": "tests/test_warmup_experiments.py::test_r5_benchmark",
+    "allowed_skip_reason": "opt-in R5 CUDA benchmark",
+    "all_other_consumer_tests_passed": true
+  },
+  "local_repository_verification": {
+    "focused_record_and_successor_tests_passed": 54,
+    "full_cpu_passed": 3358,
+    "full_cpu_failed": 0,
+    "full_cpu_skipped": 0,
+    "full_cpu_deselected": 1,
+    "subtests_passed": 8,
+    "deselected_node_id": "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+  },
+  "identity_delta": {
+    "path": "provider_identity.execution.functional_runtime.tf32_policy",
+    "tf32_policy": {
+      "tf32_requested": "off",
+      "tf32_effective": false,
+      "float32_matmul_precision": "highest",
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": false
+    },
+    "provider_identity_digest_changes_by_design": true,
+    "functional_api_version": "1.0",
+    "runtime_kind_changed": false,
+    "checkpoint_schema_changed": false
+  },
+  "consumer_migration": {
+    "required": true,
+    "PSSolver_Control_source_modified_by_RC4_5_7": false,
+    "adapter_runtime_rejected_provider": false,
+    "consumer_test_contract_rejected_identity_delta": true,
+    "required_change": "register the exact five-field tf32_policy block in the Periodic provider-identity expectation and update Consumer compatibility evidence",
+    "adapter_version_bump_required": false,
+    "functional_api_version_bump_required": false,
+    "numerical_or_control_algorithm_change_required": false,
+    "requalification": "new Consumer commit plus repeated installed-wheel full CPU gate",
+    "consumer_commit_must_be_frozen_before_requalification": true
+  },
+  "consumer_source_identity": {
+    "tests/test_pssolver_adapter.py": "a5cf053bdcefc4a89b049b806a8afc60cc1fe3071ba5a80b43f302d247464892",
+    "src/pssolver_control/adapters/pssolver.py": "126c7b9fefc9c6d308bafd64429285d610572fea6d834b209d4f959e5660c54c",
+    "docs/pssolver_v0_2_0rc4_pressure_v4_migration.json": "3e2e4bbcffeca3761a9511e1d3a15b629b41069cfd650924eb5fcc793727ea58"
+  },
+  "historical_successor_sources": {
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "4fa3d677f0d2bbf00add2f9596ca1d2dfeca90948a86824421be40bc5f93a287",
+      "current_sha256": "f09f06e74bbcf914ed817ce4077faf21a945716cf0d540900b01bb75eed99897",
+      "introduced_by_phase": "RC4.5.7",
+      "reason": "Extend the RC4.5.5 immutable source-resolution chain through the RC4.5.7 Consumer-impact record."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "f70d633fe7dff5e0be6335011fafa8b89975b198f40db76df47c365de3fc7fbd",
+      "current_sha256": "5b295dcf83e58c2d59e5f3fa2a537f0b323952500edb73531c470ffb8f3b5364",
+      "introduced_by_phase": "RC4.5.7",
+      "reason": "Resolve RC4.5.6 historical source identities through the RC4.5.7 successor without rewriting the RC4.5.6 record."
+    },
+    "tests/test_rc3_known_issues_matrix.py": {
+      "historical_sha256": "1eaaf739ba37542017341ae9c924c0a910dc22e080b3615378382dce6c09f9c8",
+      "current_sha256": "363e92ff7785eb6d10c8f6b066df3f970dae98101de86411a642bf05768b79e2",
+      "introduced_by_phase": "RC4.5.7",
+      "reason": "Record the executed-but-stopped Consumer impact gate and block RC4.5.8 until a frozen Consumer migration passes."
+    }
+  },
+  "source_sha256": {
+    "tests/test_rc457_installed_consumer_impact.py": "5e60a6f69d0dfaf287b3c3c408eb5cc08b711513adad8307e02a83644f1f47e2"
+  },
+  "scope": {
+    "solver_failure": false,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "package_build_failure": false,
+    "provider_installed_wheel_failure": false,
+    "consumer_migration_required": true,
+    "PSSolver_runtime_modified_by_RC4_5_7": false,
+    "PSSolver_Control_modified_by_RC4_5_7": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "rc4_5_7_complete": false,
+    "eligible_for_rc4_5_7_recovery": true,
+    "eligible_for_rc4_5_8_h100_closure": false,
+    "rc4_5_8_h100_authorized": false,
+    "push_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}
