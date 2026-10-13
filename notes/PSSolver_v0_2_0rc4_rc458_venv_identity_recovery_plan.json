@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 RC4.5.8 installed-venv identity recovery plan",
+  "phase": "RC4.5.8 recovery v2",
+  "status": "qualification_only_recovery_prepared_waiting_for_push_and_h100_authorization",
+  "classification": "READY_RC4_5_8_VENV_IDENTITY_RECOVERY_V2",
+  "qualification_complete": false,
+  "failed_attempt": {
+    "job_id": 10879343,
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "control_directory": "/home/fansenwei/pssolver_rc458_tf32_h100_5c286f8_b8539e0_20261013_v1",
+    "checksum_entries": 4443,
+    "checksum_failures": 0,
+    "checksum_manifest_sha256": "c31f1ccc06ef815c582d8cd0f784aad2864e3569d710cfa10e8af337e9c3595b",
+    "classification": "FAIL_RC4_5_8_H100_EXTERNAL_VENV_IDENTITY_HARNESS",
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "scientific_failure": false,
+    "solver_failure": false,
+    "profiles_completed": 0,
+    "profiles_expected": 96,
+    "complete_marker_present": false,
+    "archive_read_only": true
+  },
+  "root_cause": {
+    "failed_predicate": "candidate import is not from installed venv",
+    "cause": "the external runner called Path.resolve() on venv/bin/python before deriving the requested venv root",
+    "requested_interpreter_kind": "lexical venv entry point",
+    "resolved_interpreter_kind": "base Conda interpreter target",
+    "installed_import_was_under_requested_venv": true,
+    "failure_domain": "external_qualification_harness",
+    "runtime_source_failure_supported": false
+  },
+  "recovery_contract": {
+    "preserve_lexical_interpreter_path": true,
+    "record_resolved_interpreter_target_separately": true,
+    "require_pyvenv_cfg": true,
+    "require_runtime_prefix_matches_lexical_venv": true,
+    "require_purelib_within_runtime_prefix": true,
+    "require_import_within_purelib": true,
+    "reject_source_shadow_import": true,
+    "validate_candidate_provider_import": true,
+    "validate_consumer_provider_import": true,
+    "validate_consumer_package_import": true,
+    "preserve_baseline_profile_interpreter_path": true,
+    "preserve_candidate_profile_interpreter_path": true,
+    "runtime_numerics_modified": false,
+    "thresholds_modified": false,
+    "production_default_changed": false
+  },
+  "provider": {
+    "baseline_commit": "51f47e9f06bd3e019d785305bff47c80f5519b10",
+    "runtime_candidate_commit": "a195bd05992bc6553c72c400587d2b07afe722d0",
+    "failed_qualification_commit": "5c286f8671151d43bb05674984a0f1de94e431b8",
+    "branch": "fix/v0.2.0rc4-audit"
+  },
+  "consumer": {
+    "qualified_source_commit": "b8539e0ec4c137a6c13746f6832e26e74be24515",
+    "evidence_only_tip": "0e3895d664d1b81925127848b2dfde638f39763d",
+    "bundle_sha256": "a64c091544ee26e09d0d96556b7ca9cc9e7a18b7abb42f70ff855a7cb5071147"
+  },
+  "harness_identity": {
+    "failed_external_runner_sha256": "4c60ad77afcf135435d99c69598337aa52fb6e739cfcd2039c9af3981ce0b07b",
+    "failed_slurm_script_sha256": "967dc4790edd45e5e16acab49390d390fcbf09f8ba4aab971cb1e414d21b92d3",
+    "recovery_external_runner_sha256": "5a4c71cddb5d1b4e6c15ed112168af0edc998990915e2d6a4b82550336392f6c",
+    "recovery_slurm_script_sha256": "b71332cc10e34340f724d43a305bf3b1ba9750e6104c1ebb934c5b997df7fe60",
+    "recovery_control_directory": "/home/fansenwei/pssolver_rc458_tf32_h100_5c286f8_b8539e0_20261013_recovery_v2",
+    "recovery_scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_rc458_tf32_h100_5c286f8_b8539e0_20261013_recovery_v2",
+    "failed_control_directory_reused": false,
+    "failed_scratch_directory_reused": false
+  },
+  "artifact_identity": {
+    "baseline_wheel_sha256": "716a88abd008770b827e0440d629c57107550aa01fa45688e525bbb413451c2f",
+    "candidate_wheel_sha256": "ce7d63e8e8feeb3275db37fd74e7788c7cd5b9e29503e230a5d559b379a356c4",
+    "consumer_wheel_sha256": "0f6d489f7516d8f95753f216509e18bb0424761376894c8eb7c54bbcf3c355a4",
+    "reuse_requires_hash_reverification": true
+  },
+  "source_sha256": {
+    "benchmarks/rc458_venv_identity.py": "0e19b0a136de63f7c8683a93cd4e3e9e9d1cef852ea1900b60d40ce6b46d859a",
+    "benchmarks/run_rc458_profile_matrix_venv_recovery.py": "78afb364e480ae622bfc5b0328c7385b6ff8657e978d88c93d5bf9b76e37eeff",
+    "tests/test_rc458_venv_identity.py": "2e8e342e7001172d38bff8543312d7617892e5e2e173773e4cfd1cd0879b13bf"
+  },
+  "preflight": {
+    "py_compile": "PASS",
+    "slurm_script_syntax": "PASS",
+    "local_targeted_tests_passed": 24,
+    "local_targeted_tests_failed": 0,
+    "failed_archive_checksum_reverification": "4443/4443 PASS",
+    "hpcc_no_gpu_real_venv_identity": "3/3 PASS",
+    "hpcc_candidate_provider_identity_passed": true,
+    "hpcc_consumer_provider_identity_passed": true,
+    "hpcc_consumer_package_identity_passed": true,
+    "hpcc_observed_resolved_interpreter_target": "/home/fansenwei/miniconda3/envs/Nematics3D/bin/python3.10",
+    "h100_executed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "h100_recovery_submission_authorized": false,
+    "automatic_retry": false,
+    "second_recovery_job_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}
