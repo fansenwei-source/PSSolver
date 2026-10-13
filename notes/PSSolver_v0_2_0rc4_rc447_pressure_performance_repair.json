@@ -59,6 +59,12 @@
       "current_sha256": "3b052817352e7a4a7c3d175535db22db2169587f220b50c759362ec52142ad94",
       "introduced_by_phase": "RC4.4.7-performance-repair-v9-provider",
       "reason": "remove redundant CUDA scalar synchronization from the production pressure PCG while preserving the frozen scale-safe pressure policy and diagnostics"
+    },
+    "tests/test_rc4_pressure_policy_implementation.py": {
+      "historical_sha256": "7e634ea7503a4f1939e2cfae15ae446679e2a35701a45797834ffdc10a5a3d40",
+      "current_sha256": "7df4ebb88a73bdaff4c9f0c499cf283a8f53f08c0c4980a9ef6694f14029c298",
+      "introduced_by_phase": "RC4.4.7-performance-repair-v9-provider",
+      "reason": "verify that fused working-scale observations agree with the public scale-safe primitives and fail closed on non-finite inputs"
     }
   },
   "local_validation": {

@@ -21,6 +21,11 @@ RECORD = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_python310_compatibility_recovery.json"
 )
+PERFORMANCE_REPAIR = (
+    ROOT
+    / "notes"
+    / "PSSolver_v0_2_0rc4_rc447_pressure_performance_repair.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -111,8 +116,19 @@ def test_recovery_record_binds_failure_and_exact_successor_sources():
     assert record["failed_h100_classification"] == (
         "FAIL_RC4_4_7_PROVIDER_PYTHON_3_10_MATH_EXP2_COMPATIBILITY"
     )
+    successors = json.loads(
+        PERFORMANCE_REPAIR.read_text(encoding="utf-8")
+    )["successor_sources"]
     for relative, identity in record["successor_sources"].items():
-        assert _sha256(ROOT / relative) == identity["current_sha256"]
+        actual = _sha256(ROOT / relative)
+        if actual == identity["current_sha256"]:
+            continue
+        successor = successors[relative]
+        assert successor["historical_sha256"] == identity["current_sha256"]
+        assert successor["current_sha256"] == actual
+        assert successor["introduced_by_phase"] == (
+            "RC4.4.7-performance-repair-v9-provider"
+        )
     assert record["successor_sources"][
         "pssolver/linear_solvers/stokes/channel_no_slip.py"
     ]["historical_sha256"] == (
