@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 RC4.5.8 reserved-memory reducer recovery",
+  "phase": "RC4.5.8",
+  "status": "ready_for_cpu_only_replay_of_frozen_h100_profiles",
+  "classification": "READY_RC4_5_8_RESERVED_MEMORY_REDUCER_CPU_REPLAY",
+  "qualification_complete": false,
+  "preceding_counter_recovery": {
+    "commit": "f8942ffbc8fd5a2038dc191597183b73ba5d67f0",
+    "control_directory": "/home/fansenwei/pssolver_rc458_counter_finalization_f8942ff_20261013_v3",
+    "checksums_sha256": "2e27c5a56c6c5254600e08ead17880f2b39949f89049636c85d20237e8649fd4",
+    "checksums_verified": 16,
+    "transform_counter_records_passed": 96,
+    "failed_groups": [
+      "channel_complete_stress/channel_R512x40x40",
+      "channel_functional/channel_R512x40x40"
+    ]
+  },
+  "contract_correction": {
+    "reason": "CUDA peak_reserved_bytes measures caching-allocator segments. Independent trial labels do not bind allocator segments, so a paired trial ratio can fail when the same reserved values merely exchange trial order. Existing repository analyzers compare the maximum candidate trial with the maximum baseline trial for this three-trial metric.",
+    "old_reducer": "max(candidate_trial_i / baseline_trial_i)",
+    "corrected_reducer": "max(candidate_trial_peak_reserved_bytes) / max(baseline_trial_peak_reserved_bytes)",
+    "peak_reserved_ratio_max": 1.03,
+    "threshold_changed": false,
+    "peak_allocated_gate_changed": false,
+    "paired_timestep_gate_changed": false,
+    "numerical_identity_gate_changed": false,
+    "transform_counter_gate_changed": false,
+    "raw_profiles_modified": false,
+    "raw_paired_reserved_ratios_role": "diagnostic_only"
+  },
+  "historical_contract_basis": [
+    "benchmarks/analyze_rc4_plane_nyquist_qualification.py",
+    "benchmarks/analyze_periodic_hermitian_profiles.py",
+    "notes/PSSolver_v0_2_0rc4_rc437_h100_qualification_plan_zh.md",
+    "notes/PSSolver_v0_2_0rc4_rc447_h100_qualification_plan_zh.md",
+    "notes/architecture_v0_2/phase_8_p845_corrected_closure_plan.json"
+  ],
+  "observed_failure_adjudication": {
+    "channel_complete_stress_R512": {
+      "baseline_reserved_bytes": [1151336448, 1151336448, 1203765248],
+      "candidate_reserved_bytes": [1151336448, 1203765248, 1151336448],
+      "reserved_trial_multiset_equal": true,
+      "corrected_group_peak_ratio": 1.0,
+      "peak_allocated_ratio": 1.0
+    },
+    "channel_functional_R512": {
+      "baseline_reserved_bytes": [1669332992, 1736441856, 1736441856],
+      "candidate_reserved_bytes": [1736441856, 1669332992, 1736441856],
+      "reserved_trial_multiset_equal": true,
+      "corrected_group_peak_ratio": 1.0,
+      "peak_allocated_ratio": 1.0
+    }
+  },
+  "source_sha256": {
+    "benchmarks/analyze_rc458_reserved_memory_recovery.py": "3d732f5972589fbad3198cb7bc3baf4c93a7a848889a67624a5746e8a2701087",
+    "benchmarks/analyze_rc458_transform_counter_recovery.py": "1e096655363c3824b03911c340964cffd92c52c3393b1d5fd0cbe75af856a319",
+    "benchmarks/analyze_rc458_tf32_h100.py": "8adb9e3fb5df81d5d2cfa5114ef4d8208a82debf44cc761d18746ce967bce951",
+    "benchmarks/plan_rc458_tf32_h100.py": "d7a03e7e608e7b1c2a782a83c9ce9b8a9fbf9d37d5d21883d0f5463db0caf221"
+  },
+  "scope": {
+    "qualification_only": true,
+    "runtime_source_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "raw_h100_evidence_modified": false,
+    "new_scientific_timestep_executed": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "cpu_only_replay_authorized": true,
+    "new_h100_submission_authorized": false,
+    "automatic_retry": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}
