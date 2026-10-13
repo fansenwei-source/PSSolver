@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import math
 from pathlib import Path
+import re
 
 import pytest
 
@@ -18,6 +19,49 @@ def report():
     return diagnostic.run_analysis()
 
 
+_PLATFORM_BYTE_IDENTITIES = {
+    "requested_sha256",
+    "physical_sha256",
+    "raw_h_sha256",
+    "projected_h_sha256",
+    "state_sha256",
+    "simulation_identity",
+}
+_SHA256 = re.compile(r"[0-9a-f]{64}")
+
+
+def _assert_portable_record_equivalence(expected, actual, *, key=""):
+    """Compare the frozen scientific record without binding BLAS bytes."""
+
+    assert type(actual) is type(expected)
+    if isinstance(expected, dict):
+        assert set(actual) == set(expected)
+        for child_key, expected_value in expected.items():
+            _assert_portable_record_equivalence(
+                expected_value,
+                actual[child_key],
+                key=child_key,
+            )
+        return
+    if isinstance(expected, list):
+        assert len(actual) == len(expected)
+        for expected_value, actual_value in zip(expected, actual):
+            _assert_portable_record_equivalence(
+                expected_value,
+                actual_value,
+                key=key,
+            )
+        return
+    if isinstance(expected, float):
+        assert math.isclose(expected, actual, rel_tol=1.0e-9, abs_tol=1.0e-12)
+        return
+    if key in _PLATFORM_BYTE_IDENTITIES:
+        assert _SHA256.fullmatch(expected)
+        assert _SHA256.fullmatch(actual)
+        return
+    assert actual == expected
+
+
 def test_rc431_runs_all_five_frozen_cases_and_selects_one_decision(report):
     assert report["phase"] == "RC4.3.1"
     assert list(report["cases"]) == ["L01", "L02", "L03", "L04", "L05"]
@@ -27,8 +71,13 @@ def test_rc431_runs_all_five_frozen_cases_and_selects_one_decision(report):
     assert report["decision"]["all_arrays_finite"] is True
 
 
-def test_checked_in_record_is_the_reproducible_analysis_output(report):
-    assert json.loads(RECORD.read_text(encoding="utf-8")) == report
+def test_checked_in_record_has_portable_scientific_equivalence(report):
+    expected = json.loads(RECORD.read_text(encoding="utf-8"))
+    _assert_portable_record_equivalence(expected, report)
+    spectral = report["cases"]["L05"]["spectral_request"]
+    physical = report["cases"]["L05"]["physical_request"]
+    for key in ("raw_h_sha256", "projected_h_sha256", "state_sha256"):
+        assert spectral[key] == physical[key]
 
 
 def test_independent_reference_does_not_call_production_constitutive_helpers():
