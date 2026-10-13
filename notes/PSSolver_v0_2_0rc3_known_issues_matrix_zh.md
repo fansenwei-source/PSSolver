@@ -46,7 +46,7 @@
 
 ### rc4.5：跨 runtime 鲁棒性
 
-处理 B7、B9、B11、B13、B15、B17、B21、B24、B27。RC4.5.0 已把它们拆成 checkpoint transactionality、boundary semantics、public validation/observability 和 accelerator global state 四个 cohort，并规定先执行 RC4.5.1 analysis-only 重放。当前只完成规划，不授权实现、Control 修改或 H100。权威规划记录为 `PSSolver_v0_2_0rc4_rc450_cross_runtime_robustness_plan.json`。
+处理 B7、B9、B11、B13、B15、B17、B21、B24、B27。RC4.5.0 已把它们拆成 checkpoint transactionality、boundary semantics、public validation/observability 和 accelerator global state 四个 cohort。RC4.5.1 随后完成十个 analysis-only probe：B7、B9、B11、B13、B15、B17、B24、B27 被黑盒重现并需要修复；B21 在 `1e14` 通过、从 `1e15` 失败，裁决为需要公开有限支持边界。RC4.5.1 未修改运行时、Control、nematics3d 或生产默认值，也没有提交 H100。权威规划与分析记录分别为 `PSSolver_v0_2_0rc4_rc450_cross_runtime_robustness_plan.json` 和 `PSSolver_v0_2_0rc4_rc451_cross_runtime_adjudication.json`。
 
 ### 0.2 之后的架构去重
 
@@ -58,4 +58,4 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 ## 下一项实现
 
-`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity`、`rc4.3_lifting_correctness` 与 `rc4.4_pressure_contract` 均已完成；B25、B28、B29 已随 RC4.4.7 累计 H100 关闭转为 `closed_verified`。RC4.5.0 规划也已完成。下一步是 RC4.5.1 的只读 residual adjudication：先在当前已资格 runtime 上逐项重放九个遗留，再决定哪些需要实现、哪些已被后续改动实质关闭、哪些应冻结公开支持边界。当前仍不授权 RC4.5 源码实现、PSSolver-Control 修改、生产默认值、自动 merge、H100 或发布。
+`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity`、`rc4.3_lifting_correctness` 与 `rc4.4_pressure_contract` 均已完成；B25、B28、B29 已随 RC4.4.7 累计 H100 关闭转为 `closed_verified`。RC4.5.0 规划与 RC4.5.1 residual adjudication 也已完成。下一步是 RC4.5.2 checkpoint transactionality contract：先统一 B7、B24、B27 的 current-schema、public exception、atomic publication、caller-umask 与 cleanup 语义，再进入实现。当前分析结果不自行授权 RC4.5 源码实现、PSSolver-Control 修改、生产默认值、自动 merge、H100 或发布。

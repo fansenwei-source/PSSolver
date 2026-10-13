@@ -278,7 +278,11 @@ def test_known_issue_matrix_advances_only_after_rc44_evidence():
     assert progress["rc4_4_closure_record_sha256"] == _sha256(CLOSURE)
     assert progress["rc4_5_planning_complete"] is True
     assert progress["rc4_5_plan_record_sha256"] == _sha256(PLAN)
-    assert progress["rc4_5_1_analysis_authorized"] is False
+    assert progress["rc4_5_1_analysis_authorized"] is True
+    assert progress["rc4_5_1_analysis_complete"] is True
+    analysis = ROOT / progress["rc4_5_1_analysis_record"]
+    assert progress["rc4_5_1_analysis_record_sha256"] == _sha256(analysis)
+    assert progress["eligible_for_rc4_5_2_contract"] is True
     assert progress["rc4_5_implementation_authorized"] is False
 
 

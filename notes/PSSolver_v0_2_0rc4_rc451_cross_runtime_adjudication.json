@@ -1,0 +1,538 @@
+{
+  "analysis_only": true,
+  "classification": "RC4_5_1_RESIDUAL_ADJUDICATION_COMPLETE",
+  "h100_job_submitted": false,
+  "issue_outcomes": {
+    "B11": {
+      "evidence": [
+        "T01"
+      ],
+      "h100_followup_required": true,
+      "outcome": "REPRODUCED_REPAIR_REQUIRED",
+      "reason": "The successful TF32 policy path does not restore caller global state."
+    },
+    "B13": {
+      "evidence": [
+        "V01"
+      ],
+      "outcome": "REPRODUCED_REPAIR_REQUIRED",
+      "reason": "Both Plane runtimes accept an invalid token and cpu:0 at compile time."
+    },
+    "B15": {
+      "evidence": [
+        "V03"
+      ],
+      "outcome": "REPRODUCED_REPAIR_REQUIRED",
+      "reason": "The four diagnostic families expose different names and dtypes."
+    },
+    "B17": {
+      "evidence": [
+        "V02"
+      ],
+      "outcome": "REPRODUCED_REPAIR_REQUIRED",
+      "reason": "Plane invalid execution options escape as raw ValueError/TypeError while Periodic uses the public compiler error."
+    },
+    "B21": {
+      "evidence": [
+        "B02"
+      ],
+      "outcome": "PUBLIC_BOUND_REQUIRED",
+      "reason": "Symmetric impedance succeeds through 1e14 and fails from 1e15 at binary64 resolution."
+    },
+    "B24": {
+      "evidence": [
+        "C04"
+      ],
+      "outcome": "REPRODUCED_REPAIR_REQUIRED",
+      "reason": "A parent-path filesystem failure escapes the functional checkpoint exception hierarchy."
+    },
+    "B27": {
+      "evidence": [
+        "C03"
+      ],
+      "outcome": "REPRODUCED_REPAIR_REQUIRED",
+      "reason": "Functional Channel publishes mode 0700 while Periodic publishes 0755 under the same umask."
+    },
+    "B7": {
+      "evidence": [
+        "C01"
+      ],
+      "outcome": "REPRODUCED_REPAIR_REQUIRED",
+      "reason": "Resealed unknown top-level checkpoint keys are accepted."
+    },
+    "B9": {
+      "evidence": [
+        "B01"
+      ],
+      "outcome": "REPRODUCED_REPAIR_REQUIRED",
+      "reason": "The sign-equivalent anchoring director is rejected with weak diagnostics."
+    }
+  },
+  "probe_count": 10,
+  "probes": {
+    "B01": {
+      "diagnostic_reports_expected_and_observed_vectors": false,
+      "opposite": {
+        "message": "RC4.5.1 anchoring normal must match the oriented face normal",
+        "module": "builtins",
+        "raised": true,
+        "type": "ValueError"
+      },
+      "outward": {
+        "message": null,
+        "module": null,
+        "raised": false,
+        "type": null
+      },
+      "probe_id": "B01",
+      "q_byte_identical_under_sign_flip": true
+    },
+    "B02": {
+      "largest_passing_scale": 100000000000000.0,
+      "probe_id": "B02",
+      "recommended_public_bound": {
+        "lower": 0.0,
+        "reason": "At 1e15 the finite-Robin correction is at binary64 resolution relative to the Dirichlet-limit roots.",
+        "upper_inclusive": 100000000000000.0
+      },
+      "smallest_failing_scale": 1000000000000000.0,
+      "symmetric_scale_sweep": [
+        {
+          "maximum_distance_from_dirichlet_limit": 3.0510815927757626,
+          "root_count": 8,
+          "scale": 1.0,
+          "status": "PASS"
+        },
+        {
+          "maximum_distance_from_dirichlet_limit": 0.050154656871818304,
+          "root_count": 8,
+          "scale": 1000.0,
+          "status": "PASS"
+        },
+        {
+          "maximum_distance_from_dirichlet_limit": 5.026538191188479e-05,
+          "root_count": 8,
+          "scale": 1000000.0,
+          "status": "PASS"
+        },
+        {
+          "maximum_distance_from_dirichlet_limit": 5.026548066666692e-08,
+          "root_count": 8,
+          "scale": 1000000000.0,
+          "status": "PASS"
+        },
+        {
+          "maximum_distance_from_dirichlet_limit": 5.0260240413990687e-11,
+          "root_count": 8,
+          "scale": 1000000000000.0,
+          "status": "PASS"
+        },
+        {
+          "maximum_distance_from_dirichlet_limit": 5.044853423896711e-13,
+          "root_count": 8,
+          "scale": 100000000000000.0,
+          "status": "PASS"
+        },
+        {
+          "exception_type": "ValueError",
+          "message": "Robin characteristic does not bracket one root in the expected interval 1",
+          "scale": 1000000000000000.0,
+          "status": "FAIL"
+        },
+        {
+          "exception_type": "ValueError",
+          "message": "Robin characteristic does not bracket one root in the expected interval 1",
+          "scale": 1e+16,
+          "status": "FAIL"
+        }
+      ]
+    },
+    "C01": {
+      "families": {
+        "channel": {
+          "exception": {
+            "message": null,
+            "module": null,
+            "raised": false,
+            "type": null
+          },
+          "resealed_unknown_top_level_key_accepted": true
+        },
+        "periodic": {
+          "exception": {
+            "message": null,
+            "module": null,
+            "raised": false,
+            "type": null
+          },
+          "resealed_unknown_top_level_key_accepted": true
+        }
+      },
+      "missing_current_provenance": {
+        "message": "functional checkpoint provenance is missing",
+        "module": "builtins",
+        "raised": true,
+        "type": "ValueError"
+      },
+      "probe_id": "C01"
+    },
+    "C02": {
+      "interpretation": "All production tensor readers reject a non-basename filename before opening a payload; identity-before-mutation remains covered by the RC4 checkpoint suites.",
+      "probe_id": "C02",
+      "production_filename_path_checks": {
+        "legacy_channel": {
+          "message": "probe tensor filename is invalid",
+          "module": "builtins",
+          "raised": true,
+          "type": "ValueError"
+        },
+        "periodic": {
+          "message": "probe tensor filename is invalid",
+          "module": "builtins",
+          "raised": true,
+          "type": "ValueError"
+        },
+        "plane": {
+          "message": "probe tensor filename is invalid",
+          "module": "builtins",
+          "raised": true,
+          "type": "ValueError"
+        }
+      },
+      "target_mutation_before_payload_open": false
+    },
+    "C03": {
+      "cleanup": {
+        "injected_failure": {
+          "message": "rc451 injected writer failure",
+          "module": "builtins",
+          "raised": true,
+          "type": "RuntimeError"
+        },
+        "residual_entries": [],
+        "target_exists": false
+      },
+      "functional_modes": {
+        "channel": "0o700",
+        "periodic": "0o755"
+      },
+      "probe_id": "C03",
+      "umask": "077",
+      "writer_source_inventory": {
+        "legacy_channel_production": {
+          "forces_0755": true,
+          "uses_atomic_replace": true,
+          "uses_staging_directory": true
+        },
+        "periodic_production": {
+          "forces_0755": true,
+          "uses_atomic_replace": true,
+          "uses_staging_directory": true
+        },
+        "plane_production": {
+          "forces_0755": false,
+          "uses_atomic_replace": true,
+          "uses_staging_directory": true
+        }
+      }
+    },
+    "C04": {
+      "expected_public_classes": {
+        "existing_target": "FunctionalCheckpointExistsError",
+        "future_format": "FunctionalCheckpointCompatibilityError",
+        "missing_target": "FunctionalCheckpointNotFoundError",
+        "parent_is_file": "FunctionalCheckpointError",
+        "payload_tamper": "FunctionalCheckpointIntegrityError"
+      },
+      "observed": {
+        "existing_target": {
+          "message": "checkpoint directory already exists: <RC451_TMP>/exception_truth_table/truth_table",
+          "module": "pssolver.functional.errors",
+          "raised": true,
+          "type": "FunctionalCheckpointExistsError"
+        },
+        "future_format": {
+          "message": "unsupported Channel functional checkpoint version",
+          "module": "pssolver.functional.errors",
+          "raised": true,
+          "type": "FunctionalCheckpointCompatibilityError"
+        },
+        "missing_target": {
+          "message": "checkpoint metadata is missing: <RC451_TMP>/exception_truth_table/missing/checkpoint.json",
+          "module": "pssolver.functional.errors",
+          "raised": true,
+          "type": "FunctionalCheckpointNotFoundError"
+        },
+        "parent_is_file": {
+          "message": "[Errno 17] File exists: '<RC451_TMP>/exception_truth_table/parent_is_file'",
+          "module": "builtins",
+          "raised": true,
+          "type": "FileExistsError"
+        },
+        "payload_tamper": {
+          "message": "checkpoint tensor checksum mismatch: <RC451_TMP>/exception_truth_table/tampered/state__q_physical.npy",
+          "module": "pssolver.functional.errors",
+          "raised": true,
+          "type": "FunctionalCheckpointIntegrityError"
+        }
+      },
+      "parent_filesystem_error_translated": false,
+      "probe_id": "C04"
+    },
+    "T01": {
+      "after_success": {
+        "cuda_matmul_allow_tf32": false,
+        "cudnn_allow_tf32": false,
+        "precision": "highest"
+      },
+      "analysis_harness_restored_initial_state": true,
+      "callee_restored_caller_state": false,
+      "caller_owned_state": {
+        "cuda_matmul_allow_tf32": true,
+        "cudnn_allow_tf32": true,
+        "precision": "high"
+      },
+      "cuda_available": true,
+      "cuda_nested_runtime_matrix": "deferred_to_h100",
+      "initial": {
+        "cuda_matmul_allow_tf32": false,
+        "cudnn_allow_tf32": true,
+        "precision": "highest"
+      },
+      "invalid_request": {
+        "message": "TF32 policy must be 'off' or 'on'",
+        "module": "builtins",
+        "raised": true,
+        "type": "ValueError"
+      },
+      "metadata": {
+        "cuda_matmul_allow_tf32": false,
+        "cudnn_allow_tf32": false,
+        "float32_matmul_precision": "highest",
+        "tf32_effective": false,
+        "tf32_requested": "off"
+      },
+      "probe_id": "T01"
+    },
+    "V01": {
+      "indexed_cpu_token_accepted": true,
+      "invalid_device_accepted": true,
+      "output_side_effects": "not_applicable_compile_only",
+      "plane_device_matrix": [
+        {
+          "compile_accepted": true,
+          "device": "banana",
+          "exception": {
+            "message": null,
+            "module": null,
+            "raised": false,
+            "type": null
+          },
+          "family": "plane",
+          "runtime": "legacy_production"
+        },
+        {
+          "compile_accepted": true,
+          "device": "cpu:0",
+          "exception": {
+            "message": null,
+            "module": null,
+            "raised": false,
+            "type": null
+          },
+          "family": "plane",
+          "runtime": "legacy_production"
+        },
+        {
+          "compile_accepted": true,
+          "device": "banana",
+          "exception": {
+            "message": null,
+            "module": null,
+            "raised": false,
+            "type": null
+          },
+          "family": "plane",
+          "runtime": "compiled_v2"
+        },
+        {
+          "compile_accepted": true,
+          "device": "cpu:0",
+          "exception": {
+            "message": null,
+            "module": null,
+            "raised": false,
+            "type": null
+          },
+          "family": "plane",
+          "runtime": "compiled_v2"
+        }
+      ],
+      "probe_id": "V01"
+    },
+    "V02": {
+      "invalid_device_exception": {
+        "message": "application_contract: invalid execution device: 'banana'",
+        "module": "pssolver.configuration.public_simulation_runner",
+        "raised": true,
+        "type": "PublicSimulationCompilationError"
+      },
+      "invalid_device_uses_public_compilation_error": true,
+      "periodic_no_slip_compiles": true,
+      "periodic_no_slip_normalized_to_free_slip": true,
+      "plane_invalid_options_use_public_compilation_error": false,
+      "plane_invalid_pointwise_exception": {
+        "message": "invalid pointwise execution: 'invalid'",
+        "module": "builtins",
+        "raised": true,
+        "type": "ValueError"
+      },
+      "plane_invalid_reuse_exception": {
+        "message": "disable_q_gradient_reuse must be a bool",
+        "module": "builtins",
+        "raised": true,
+        "type": "TypeError"
+      },
+      "probe_id": "V02"
+    },
+    "V03": {
+      "all_field_sets_equal": false,
+      "complete_channel_pressure_iterations_dtype": "int64",
+      "plane_pressure_iterations_dtype": "float64",
+      "probe_id": "V03",
+      "schemas": {
+        "channel_complete_stress": {
+          "field_dtypes": {
+            "divergence_max": "float64",
+            "divergence_rms": "float64",
+            "pressure_iterations": "int64",
+            "pressure_mean": "float64",
+            "pressure_relative_residual": "float64",
+            "step": "int64"
+          },
+          "field_names": [
+            "step",
+            "divergence_max",
+            "divergence_rms",
+            "pressure_mean",
+            "pressure_iterations",
+            "pressure_relative_residual"
+          ],
+          "header": "step,divergence_max,divergence_rms,pressure_mean,pressure_iterations,pressure_relative_residual"
+        },
+        "legacy_channel": {
+          "field_dtypes": {
+            "div_max": "float64",
+            "div_rel": "float64",
+            "div_rms": "float64",
+            "schur_abs_residual": "float64",
+            "schur_iterations": "float64",
+            "schur_rel_residual": "float64",
+            "step": "int64",
+            "wall_normal_momentum_max": "float64",
+            "wall_normal_momentum_rms": "float64"
+          },
+          "field_names": [
+            "step",
+            "div_max",
+            "div_rms",
+            "div_rel",
+            "schur_iterations",
+            "schur_abs_residual",
+            "schur_rel_residual",
+            "wall_normal_momentum_max",
+            "wall_normal_momentum_rms"
+          ],
+          "header": "step,div_max,div_rms,div_rel,schur_iterations,schur_abs_residual,schur_rel_residual,wall_normal_momentum_max,wall_normal_momentum_rms"
+        },
+        "periodic_complete_stress": {
+          "field_dtypes": {
+            "divergence_max": "float64",
+            "divergence_rms": "float64",
+            "pressure_mean": "float64",
+            "step": "int64",
+            "velocity_mean_norm": "float64"
+          },
+          "field_names": [
+            "step",
+            "divergence_max",
+            "divergence_rms",
+            "pressure_mean",
+            "velocity_mean_norm"
+          ],
+          "header": "step,divergence_max,divergence_rms,pressure_mean,velocity_mean_norm"
+        },
+        "plane": {
+          "field_dtypes": {
+            "div_max": "float64",
+            "div_rel": "float64",
+            "div_rms": "float64",
+            "schur_abs_residual": "float64",
+            "schur_iterations": "float64",
+            "schur_rel_residual": "float64",
+            "step": "int64",
+            "wall_normal_momentum_max": "float64",
+            "wall_normal_momentum_rms": "float64"
+          },
+          "field_names": [
+            "step",
+            "div_max",
+            "div_rms",
+            "div_rel",
+            "schur_iterations",
+            "schur_abs_residual",
+            "schur_rel_residual",
+            "wall_normal_momentum_max",
+            "wall_normal_momentum_rms"
+          ],
+          "header": "step,div_max,div_rms,div_rel,schur_iterations,schur_abs_residual,schur_rel_residual,wall_normal_momentum_max,wall_normal_momentum_rms"
+        }
+      }
+    }
+  },
+  "production_default_changed": false,
+  "provenance": {
+    "git_head": "7ac762873d2f4a4bf24f19ee3ea02e7ebcfd2bb3",
+    "numpy": "2.4.3",
+    "python": "3.12.13",
+    "source_sha256": {
+      "benchmarks/diagnose_rc451_cross_runtime_residuals.py": "c214e485f459d31296dc58fd9531cbb444636c7f4cf701d5e15405a3f0141d3c",
+      "pssolver/configuration/execution_device.py": "ed6513cc6c027a80608f3a30f7ef32b86d2378540bf3a0815511f9cd31d22dca",
+      "pssolver/configuration/public_simulation_runner.py": "693da690460f607030235e02b15605f8fc25a918c8f0bff236591b2a05110fb9",
+      "pssolver/functional/channel_checkpoint.py": "1afc80cb7b8978911437f7caf17bc29cf0055872dd38b3a6101f28edb1204fbe",
+      "pssolver/functional/periodic_checkpoint.py": "85d882d1540f0af663b342d89626678538578dd58929c8e955a053b8c13f0c36",
+      "pssolver/io/checkpoint.py": "41351f32122479bc66cde569be400ea5be3f7907a8c94d9810b41465f9466c4f",
+      "pssolver/models/active_nematics/boundaries.py": "ba7d90e66731a7fc69027033809d93345cec9b15eafb731f81306f7503f47786",
+      "pssolver/planning/robin.py": "9dffd7d423e5d37f163ac3717526f2eb7eed7b7488437ce8a1bfedbdfd6c554a",
+      "pssolver/workflows/channel_beris_edwards.py": "7c5aaf239160932e5df31194040d70723fb3aead3607cca46207581b67c4c328",
+      "pssolver/workflows/channel_checkpoint.py": "cb70a2a570a7c0260825e58a71ee003f71e0d1d666a2727bd88dad34672e9316",
+      "pssolver/workflows/channel_observation.py": "fec0e6b28aadb55fe03dd44d273574d33342bd33e72d9948348a0884e0f2b567",
+      "pssolver/workflows/periodic_beris_edwards.py": "aa4537b9ebdee6febdc6060a0906fd57b2d1fef0711ac41c7b98c55915e40cb5",
+      "pssolver/workflows/periodic_checkpoint.py": "e6a2642ff8a787813911cfd3ceb50a195e10cf117ecc899afe737872ed4b4cb6",
+      "pssolver/workflows/plane_checkpoint.py": "b4b51a0b98a1da5c4ddf501bafcd7a57ff98d1da4c179818da3fb3716e147806",
+      "pssolver/workflows/plane_observation.py": "9977b4998d2ac5840a71137f67e6396288e331233b13453709d90d5eb3f437b2"
+    },
+    "torch": "2.6.0"
+  },
+  "runtime_source_modified": false,
+  "schema_version": 1,
+  "stage": "RC4.5.1",
+  "summary": {
+    "accepted_limitation_with_explicit_contract": [],
+    "already_closed_with_new_evidence": [],
+    "next_stage": "RC4.5.2_checkpoint_transactionality",
+    "public_bound_required": [
+      "B21"
+    ],
+    "reproduced_repair_required": [
+      "B11",
+      "B13",
+      "B15",
+      "B17",
+      "B24",
+      "B27",
+      "B7",
+      "B9"
+    ]
+  }
+}

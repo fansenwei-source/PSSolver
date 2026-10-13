@@ -278,7 +278,18 @@ def test_rc450_progress_records_rc44_closure_and_rc45_planning_boundary():
         "rc4_5_plan_record_sha256": (
             "2e0c122fbf7aa269c8746195c03b2d3f431e2f699c8536dc050b534266ad7c8d"
         ),
-        "rc4_5_1_analysis_authorized": False,
+        "rc4_5_1_analysis_authorized": True,
+        "rc4_5_1_analysis_complete": True,
+        "rc4_5_1_classification": (
+            "RC4_5_1_RESIDUAL_ADJUDICATION_COMPLETE"
+        ),
+        "rc4_5_1_analysis_record": (
+            "notes/PSSolver_v0_2_0rc4_rc451_cross_runtime_adjudication.json"
+        ),
+        "rc4_5_1_analysis_record_sha256": (
+            "0ab513797736922cdda66bfb9c87b1c070323475e4e5b120cedfe6955aa0568d"
+        ),
+        "eligible_for_rc4_5_2_contract": True,
         "rc4_5_implementation_authorized": False,
         "eligible_for_automatic_merge": False,
         "eligible_for_default_promotion": False,
@@ -298,7 +309,7 @@ def test_rc450_progress_records_rc44_closure_and_rc45_planning_boundary():
     assert (ROOT / progress["rc4_3_closure_record"]).is_file()
     assert (ROOT / progress["rc4_4_1_analysis_record"]).is_file()
     assert (ROOT / progress["rc4_4_2_contract_record"]).is_file()
-    for stage in ("rc4_4_closure", "rc4_5_plan"):
+    for stage in ("rc4_4_closure", "rc4_5_plan", "rc4_5_1_analysis"):
         path = ROOT / progress[f"{stage}_record"]
         assert path.is_file()
         assert hashlib.sha256(path.read_bytes()).hexdigest() == progress[
