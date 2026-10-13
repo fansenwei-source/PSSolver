@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 RC4.5.8 transform-counter layer recovery",
+  "phase": "RC4.5.8-recovery-v3",
+  "status": "qualification_only_recovery_ready_for_cpu_replay",
+  "classification": "READY_RC4_5_8_TRANSFORM_COUNTER_LAYER_CPU_REPLAY",
+  "qualification_complete": false,
+  "failed_h100_evidence": {
+    "job_id": 10879606,
+    "control_directory": "/home/fansenwei/pssolver_rc458_tf32_h100_5c286f8_b8539e0_20261013_recovery_v2",
+    "checksums_sha256": "73fd2ce700bf6ec9b367074bb240952698b2e3948c616557b997c712ae084880",
+    "checksums_verified": 3371,
+    "profiles_completed": 96,
+    "consumer_passed": 310,
+    "consumer_skipped": 1,
+    "consumer_failed": 0,
+    "automatic_retry": false
+  },
+  "counter_contract": {
+    "families": [
+      "channel_legacy",
+      "channel_compiled_v2"
+    ],
+    "warmup_steps": 10,
+    "timed_steps": 60,
+    "refresh_interval": 20,
+    "dynamic_transform_group_count": 1,
+    "scheduled_refresh_completed_steps": [
+      20,
+      40,
+      60
+    ],
+    "scheduled_refreshes": 3,
+    "raw_forward_calls": 663,
+    "scheduled_refresh_forward_calls": 3,
+    "base_forward_calls": 660,
+    "base_forward_per_step": 11.0,
+    "raw_inverse_calls": 2160,
+    "inverse_per_step": 36.0,
+    "refresh_profile_count": 24,
+    "unaffected_profile_count": 72
+  },
+  "recovery": {
+    "cpu_only_replay": true,
+    "frozen_h100_profiles_modified": false,
+    "original_analyzer_modified": false,
+    "scientific_timestep_executed": false,
+    "performance_threshold_changed": false,
+    "memory_threshold_changed": false,
+    "state_identity_gate_changed": false,
+    "runtime_implementation_changed": false,
+    "production_default_changed": false
+  },
+  "historical_authorities": [
+    "notes/architecture_v0_2/phase_7_p76_transform_call_recovery.md",
+    "notes/architecture_v0_2/phase_7_p76_transform_call_recovery.json",
+    "notes/PSSolver_v0_2_0rc4_rc447_performance_recovery_v9.json"
+  ],
+  "source_sha256": {
+    "benchmarks/analyze_rc458_transform_counter_recovery.py": "1e096655363c3824b03911c340964cffd92c52c3393b1d5fd0cbe75af856a319",
+    "benchmarks/analyze_rc458_tf32_h100.py": "8adb9e3fb5df81d5d2cfa5114ef4d8208a82debf44cc761d18746ce967bce951",
+    "benchmarks/plan_rc458_tf32_h100.py": "d7a03e7e608e7b1c2a782a83c9ce9b8a9fbf9d37d5d21883d0f5463db0caf221",
+    "tests/test_rc458_transform_counter_recovery.py": "01cbc9a4631365e33077d911b57c6e4e6d3a7aa3a50caf9603ee50d569c84bbc",
+    "notes/PSSolver_v0_2_0rc4_rc458_transform_counter_recovery_zh.md": "6e6495306b3c8071625ffeb4d9f91477e874c04c25c4b02e85e9c243ec846ec4",
+    "notes/architecture_v0_2/phase_7_p76_transform_call_recovery.md": "c05afb3f17782af61794fab6a4ef32af75042581dc57268f95a915f837aad910",
+    "notes/architecture_v0_2/phase_7_p76_transform_call_recovery.json": "ba4f85ebc319497893c75dcd5c0c0761d3474fbe53f60735931b184ae4ea0f7e",
+    "notes/PSSolver_v0_2_0rc4_rc447_performance_recovery_v9.json": "2d1f2f036777048ac4335c4693161996399085a20831c8508fe359ae3b7772d1"
+  },
+  "authorization": {
+    "cpu_only_replay_authorized": true,
+    "new_h100_submission_authorized": false,
+    "automatic_retry": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}
