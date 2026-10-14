@@ -39,9 +39,9 @@ RC5_R53 = ROOT / (
 
 
 def _set_state(precision: str, matmul: bool, cudnn: bool) -> None:
-    torch.set_float32_matmul_precision(precision)
     torch.backends.cuda.matmul.allow_tf32 = matmul
     torch.backends.cudnn.allow_tf32 = cudnn
+    torch.set_float32_matmul_precision(precision)
 
 
 def _resolve_rc457_successor(relative: str, historical: str) -> str:
@@ -143,6 +143,53 @@ def test_scope_restores_exact_caller_state_after_exception(
                 "cudnn_allow_tf32": True,
             }
             raise RuntimeError("owned failure")
+
+    assert snapshot_tf32_execution_state() == caller
+
+
+@pytest.mark.parametrize(
+    ("precision", "matmul"),
+    (("highest", False), ("high", True), ("medium", True)),
+)
+@pytest.mark.parametrize("cudnn", (False, True))
+@pytest.mark.parametrize(
+    ("policy", "dtype", "device"),
+    (("off", torch.float32, "cpu"), ("on", torch.float32, "cuda")),
+)
+@pytest.mark.parametrize("raise_inside", (False, True))
+def test_scope_restores_every_reachable_caller_state(
+    restore_tf32_state,
+    precision,
+    matmul,
+    cudnn,
+    policy,
+    dtype,
+    device,
+    raise_inside,
+):
+    _set_state(precision, matmul, cudnn)
+    caller = snapshot_tf32_execution_state()
+    assert caller.to_metadata() == {
+        "torch_float32_matmul_precision": precision,
+        "cuda_matmul_allow_tf32": matmul,
+        "cudnn_allow_tf32": cudnn,
+    }
+
+    if raise_inside:
+        with pytest.raises(RuntimeError, match="matrix failure"):
+            with scoped_tf32_execution(
+                policy,
+                real_dtype=dtype,
+                device=device,
+            ):
+                raise RuntimeError("matrix failure")
+    else:
+        with scoped_tf32_execution(
+            policy,
+            real_dtype=dtype,
+            device=device,
+        ):
+            pass
 
     assert snapshot_tf32_execution_state() == caller
 

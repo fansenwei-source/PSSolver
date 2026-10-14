@@ -110,22 +110,40 @@ GRID_CONTRACTS = {
 
 CALLER_STATES = (
     {
-        "key": "caller_off",
+        "key": "caller_highest_cudnn_off",
         "float32_matmul_precision": "highest",
         "cuda_matmul_allow_tf32": False,
         "cudnn_allow_tf32": False,
     },
     {
-        "key": "caller_on",
+        "key": "caller_highest_cudnn_on",
+        "float32_matmul_precision": "highest",
+        "cuda_matmul_allow_tf32": False,
+        "cudnn_allow_tf32": True,
+    },
+    {
+        "key": "caller_high_cudnn_off",
+        "float32_matmul_precision": "high",
+        "cuda_matmul_allow_tf32": True,
+        "cudnn_allow_tf32": False,
+    },
+    {
+        "key": "caller_high_cudnn_on",
         "float32_matmul_precision": "high",
         "cuda_matmul_allow_tf32": True,
         "cudnn_allow_tf32": True,
     },
     {
-        "key": "caller_mixed",
+        "key": "caller_medium_cudnn_off",
         "float32_matmul_precision": "medium",
         "cuda_matmul_allow_tf32": True,
         "cudnn_allow_tf32": False,
+    },
+    {
+        "key": "caller_medium_cudnn_on",
+        "float32_matmul_precision": "medium",
+        "cuda_matmul_allow_tf32": True,
+        "cudnn_allow_tf32": True,
     },
 )
 

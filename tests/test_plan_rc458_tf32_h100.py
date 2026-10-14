@@ -61,9 +61,12 @@ def test_rc458_tf32_gate_covers_all_families_and_caller_states():
     assert gate["runtime_families"] == [family.key for family in FAMILIES]
     assert gate["caller_states"] == list(CALLER_STATES)
     assert {state["key"] for state in CALLER_STATES} == {
-        "caller_off",
-        "caller_on",
-        "caller_mixed",
+        "caller_highest_cudnn_off",
+        "caller_highest_cudnn_on",
+        "caller_high_cudnn_off",
+        "caller_high_cudnn_on",
+        "caller_medium_cudnn_off",
+        "caller_medium_cudnn_on",
     }
     assert gate["construction_must_not_mutate_caller_state"] is True
     assert gate["successful_execution_must_restore_exact_caller_state"] is True

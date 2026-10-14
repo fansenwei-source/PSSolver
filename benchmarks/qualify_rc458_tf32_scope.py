@@ -32,9 +32,9 @@ def _require(condition: bool, message: str) -> None:
 
 
 def _set_state(value: dict[str, object]) -> None:
-    torch.set_float32_matmul_precision(str(value["float32_matmul_precision"]))
     torch.backends.cuda.matmul.allow_tf32 = bool(value["cuda_matmul_allow_tf32"])
     torch.backends.cudnn.allow_tf32 = bool(value["cudnn_allow_tf32"])
+    torch.set_float32_matmul_precision(str(value["float32_matmul_precision"]))
 
 
 def _metadata() -> dict[str, object]:
@@ -188,7 +188,7 @@ def run_gate(
         "primitive_gates": primitive,
         "runtime_family_gates": families,
         "original_state_restored": _metadata() == original,
-        "passed": len(families) == 24 and all(row["passed"] for row in families),
+        "passed": len(families) == 48 and all(row["passed"] for row in families),
     }
 
 

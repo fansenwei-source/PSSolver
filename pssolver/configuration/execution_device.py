@@ -84,13 +84,18 @@ def _apply_tf32_execution(effective: bool) -> None:
 
 
 def _restore_tf32_execution(state: TF32ExecutionState) -> None:
-    torch.set_float32_matmul_precision(
-        state.torch_float32_matmul_precision
-    )
+    # ``allow_tf32`` and the public matmul-precision policy are coupled by
+    # Torch.  In particular, assigning ``allow_tf32 = True`` rewrites an
+    # existing ``"medium"`` policy to ``"high"``.  Restore the low-level
+    # flags first and the caller-owned public policy last so all reachable
+    # caller states, including ``"medium"``, round-trip exactly.
     torch.backends.cuda.matmul.allow_tf32 = (
         state.cuda_matmul_allow_tf32
     )
     torch.backends.cudnn.allow_tf32 = state.cudnn_allow_tf32
+    torch.set_float32_matmul_precision(
+        state.torch_float32_matmul_precision
+    )
 
 
 def configure_tf32_execution(
