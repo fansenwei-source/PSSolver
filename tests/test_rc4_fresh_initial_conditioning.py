@@ -24,6 +24,7 @@ CONTRACT_PATH = (
     ROOT / "notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json"
 )
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
+RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 
 
 def _sha256(path: Path) -> str:
@@ -35,12 +36,17 @@ def _record() -> dict[str, object]:
 
 
 def _rc456_successor(relative: str, historical: str) -> str:
-    registration = json.loads(RC456.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ].get(relative)
-    if registration is None or registration["historical_sha256"] != historical:
-        return historical
-    return registration["current_sha256"]
+    resolved = historical
+    for path in (RC456, RC5_R57):
+        registration = json.loads(path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if (
+            registration is not None
+            and registration["historical_sha256"] == resolved
+        ):
+            resolved = registration["current_sha256"]
+    return resolved
 
 
 def test_policy_declarations_are_immutable_and_match_the_frozen_contract():

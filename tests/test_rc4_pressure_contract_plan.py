@@ -46,6 +46,7 @@ RC455 = ROOT / (
 )
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 RC5_R56 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
+RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 
 
 def _plan() -> dict[str, object]:
@@ -251,6 +252,7 @@ def test_rc440_reviewed_provider_sources_are_content_addressed():
             RC455,
             RC456,
             RC5_R56,
+            RC5_R57,
         ):
         record = json.loads(path.read_text(encoding="utf-8"))
         successor_records.append(

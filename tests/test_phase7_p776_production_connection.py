@@ -30,6 +30,7 @@ CHANNEL_APPLICATION = ROOT / (
     "pssolver/applications/channel_active_nematics.py"
 )
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
+RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 
 
 def _sha256(path: Path) -> str:
@@ -37,13 +38,17 @@ def _sha256(path: Path) -> str:
 
 
 def _rc456_successor(relative: str, historical: str) -> str:
-    registration = json.loads(RC456.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ].get(relative)
-    if registration is None:
-        return historical
-    assert registration["historical_sha256"] == historical
-    return registration["current_sha256"]
+    resolved = historical
+    for path in (RC456, RC5_R57):
+        registration = json.loads(path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if (
+            registration is not None
+            and registration["historical_sha256"] == resolved
+        ):
+            resolved = registration["current_sha256"]
+    return resolved
 
 
 def _plane_spec(output: Path, runtime_path: str):

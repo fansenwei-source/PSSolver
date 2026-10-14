@@ -20,6 +20,7 @@ RC5_R51 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_1_legacy_functional_checkpoint.jso
 RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
 RC5_R53 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
 RC5_R56 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
+RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 
 
 def _record() -> dict[str, object]:
@@ -58,6 +59,7 @@ def test_rc444_record_binds_frozen_contract_predecessor_and_current_sources():
             RC5_R52,
             RC5_R53,
             RC5_R56,
+            RC5_R57,
         )
     ]
     for relative, expected in record["source_sha256"].items():

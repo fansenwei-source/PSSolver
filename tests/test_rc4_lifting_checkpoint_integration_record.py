@@ -17,6 +17,7 @@ from pssolver.runtime.static_lifting import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc435_runtime_checkpoint_integration.json"
 )
@@ -113,7 +114,7 @@ def test_rc435_record_binds_implementation_and_scope():
         json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ]
-        for path in (RC453, RC455, RC456, RC5_R52)
+        for path in (RC453, RC455, RC456, RC5_R52, RC5_R57)
     ]
     for relative, expected in record["source_sha256"].items():
         actual = _sha256(relative)

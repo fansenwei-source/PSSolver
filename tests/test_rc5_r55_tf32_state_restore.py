@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 R5_6_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
+R5_7_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 
 
 def _record() -> dict[str, object]:
@@ -21,15 +22,17 @@ def _sha256(relative: str) -> str:
 
 
 def _r56_successor(relative: str, historical: str) -> str:
-    registration = json.loads(R5_6_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ].get(relative)
-    if (
-        registration is not None
-        and registration["historical_sha256"] == historical
-    ):
-        return registration["current_sha256"]
-    return historical
+    resolved = historical
+    for path in (R5_6_RECORD, R5_7_RECORD):
+        registration = json.loads(path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if (
+            registration is not None
+            and registration["historical_sha256"] == resolved
+        ):
+            resolved = registration["current_sha256"]
+    return resolved
 
 
 def test_r55_record_binds_issue_and_reachable_state_contract():

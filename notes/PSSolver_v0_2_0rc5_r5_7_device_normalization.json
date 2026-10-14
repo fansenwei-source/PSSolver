@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc5 R5-7 execution-device normalization",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_R5_7_EXECUTION_DEVICE_NORMALIZATION_CPU_CLOSURE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "implementation_commit": "2d67ba27de7e55c39382cbd3eadcfbf0541e3ba5",
+    "qualified_source_commit": "2d67ba27de7e55c39382cbd3eadcfbf0541e3ba5",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issues": {
+    "primary": ["B13", "B23"],
+    "related": ["NEW-13", "NEW-14"],
+    "work_item": "R5-7",
+    "source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc4_consolidated_report.json"
+  },
+  "contract": {
+    "canonical_request_tokens": ["auto", "cpu", "cuda", "cuda:N"],
+    "canonical_index_rule": "N is zero or a base-10 positive integer without leading zeros",
+    "shared_tensor_free_grammar": true,
+    "legacy_plane_uses_shared_grammar": true,
+    "legacy_channel_uses_shared_grammar": true,
+    "public_compilers_use_shared_grammar": true,
+    "functional_auto_matches_public_compiler": true,
+    "functional_tensor_identity_requires_concrete_device": true,
+    "functional_tensor_cpu_colon_zero_rejected_at_construction": true,
+    "runtime_construction_precedes_output_publication": true,
+    "cuda_unavailable_leaves_output_directory_absent": true,
+    "output_metadata_records_requested_and_resolved_device": true,
+    "checkpoint_identity_changed": false,
+    "runtime_scientific_identity_changed": false
+  },
+  "implementation_files": {
+    "pssolver/applications/channel_active_nematics.py": "5d4de8cc1be0c535398dc3ad716e6ae902159918046b92cbcf9e45c539f4812a",
+    "pssolver/applications/channel_beris_edwards.py": "dadab75763f5838310df9b9b68511177f5d3479113018d8437ba4daa6cb887f1",
+    "pssolver/applications/periodic_beris_edwards.py": "fd0c1e6752de4b6401e42afbd0fd015be980b8f4cad7077e1888c250e0e130a9",
+    "pssolver/applications/plane_beris_edwards.py": "8888683e7c69a7620e7ad0818b8e0b6582c56e1b9118fb01f570c66dd41c21a1",
+    "pssolver/configuration/channel_active_nematics_declarations.py": "dca15380610bfa084c8a2c150315d93d40b082e033d5bb8bb8b5750ae3da5336",
+    "pssolver/configuration/device_tokens.py": "4bdee2202d11e005c1c2a3d7b68db5e390ea0e5b386206cccb2d08123f0cd646",
+    "pssolver/configuration/execution_device.py": "9f55a51e05d32fd4d0b62a8a633611e7689b9ffbd879b6ae64127154a0417108",
+    "pssolver/configuration/plane_beris_edwards.py": "8fe3774ffbafd729ac5afb280e23dd294b77f588cc1f02a5ded6c7c7d15800b9",
+    "pssolver/configuration/public_option_validation.py": "33e7b77ea5c46648114295bee64a151ec91682bac736058ac9b694819a9f4871",
+    "pssolver/functional/channel_activity.py": "29fc6bab8848b932be55f6f115fa27563ef21bad4637fd38c174253f8150f73f",
+    "pssolver/functional/contracts.py": "611584925a1ce8a328785b02d51494778d1f460fd240544b16acf4ac8b0de8ee",
+    "pssolver/functional/periodic_activity.py": "260ca7ae4c8f078d6f25287e275f7b55a9f590c58928b0ad23fc0724c410c921"
+  },
+  "regression_tests": {
+    "tests/test_rc5_r57_device_normalization.py": "fc89099fdb0b131e7beac68f06fe56f0ad6479ed593b6af97e4afb5cfa97a06c",
+    "tests/test_rc5_r57_device_normalization_record.py": "418a8fe731e1d6d794933f04fca1d5f45e5d8a3c3c301d277243f5c86774db8e"
+  },
+  "historical_successor_sources": {
+    "pssolver/applications/channel_active_nematics.py": {
+      "historical_sha256": "5805fba705615bfdc55c6c567ec9e0799bff357d2a6ceef3363375e6d25037d5",
+      "current_sha256": "5d4de8cc1be0c535398dc3ad716e6ae902159918046b92cbcf9e45c539f4812a",
+      "reason": "Use the shared resolver and persist requested/resolved device normalization for the legacy Channel application."
+    },
+    "pssolver/applications/channel_beris_edwards.py": {
+      "historical_sha256": "82eadce73ca291fc478e845631fa09c06ad0ee289eac47cdec5121cf28a4f356",
+      "current_sha256": "dadab75763f5838310df9b9b68511177f5d3479113018d8437ba4daa6cb887f1",
+      "reason": "Persist device normalization and publish output only after complete-stress Channel runtime construction succeeds."
+    },
+    "pssolver/applications/periodic_beris_edwards.py": {
+      "historical_sha256": "30f1e3ed2983d1cc5104fd19370a0707548a1a533ef6d7c0cc56f149f79a747c",
+      "current_sha256": "fd0c1e6752de4b6401e42afbd0fd015be980b8f4cad7077e1888c250e0e130a9",
+      "reason": "Persist device normalization and publish output only after Periodic runtime construction succeeds."
+    },
+    "pssolver/applications/plane_beris_edwards.py": {
+      "historical_sha256": "53a4425e0d35a96a85e822939a1e599afed18abd16b4b9cf7836268ccfc9077e",
+      "current_sha256": "8888683e7c69a7620e7ad0818b8e0b6582c56e1b9118fb01f570c66dd41c21a1",
+      "reason": "Use the shared resolver and persist requested/resolved device normalization for Plane output."
+    },
+    "pssolver/configuration/channel_active_nematics_declarations.py": {
+      "historical_sha256": "e27538dda1dab2154db2c7e6780e0342fd228d45823eca80f2ac6ad26a0f8a96",
+      "current_sha256": "dca15380610bfa084c8a2c150315d93d40b082e033d5bb8bb8b5750ae3da5336",
+      "reason": "Apply the tensor-free shared device grammar to historical Channel declarations."
+    },
+    "pssolver/configuration/execution_device.py": {
+      "historical_sha256": "4eaece6a5f250f23dbb67859abf70ed0d775bc82a087b8ab385523fa1412cf43",
+      "current_sha256": "9f55a51e05d32fd4d0b62a8a633611e7689b9ffbd879b6ae64127154a0417108",
+      "reason": "Centralize requested/resolved metadata and allocated-device resolution while re-exporting the frozen grammar."
+    },
+    "pssolver/configuration/plane_beris_edwards.py": {
+      "historical_sha256": "a7f59085544cd6c5c69d64991b71c4ae2e664c5975aa02e8e19e1e92deca2e7d",
+      "current_sha256": "8fe3774ffbafd729ac5afb280e23dd294b77f588cc1f02a5ded6c7c7d15800b9",
+      "reason": "Apply the tensor-free shared device grammar to programmatic and CLI Plane requests."
+    },
+    "pssolver/configuration/public_option_validation.py": {
+      "historical_sha256": "f0d01bbf33ad1b59090996c9d7a55402bb39a5768b007e3fc5cc389990613f59",
+      "current_sha256": "33e7b77ea5c46648114295bee64a151ec91682bac736058ac9b694819a9f4871",
+      "reason": "Delegate public compiler device normalization to the one shared implementation."
+    },
+    "pssolver/functional/channel_activity.py": {
+      "historical_sha256": "2f2e02e3db226eb785f528734d24217fa7c77c60439900319a34050304bc33bc",
+      "current_sha256": "29fc6bab8848b932be55f6f115fa27563ef21bad4637fd38c174253f8150f73f",
+      "reason": "Resolve auto and concrete allocated devices through the shared Channel functional contract."
+    },
+    "pssolver/functional/contracts.py": {
+      "historical_sha256": "4c4877432c28473ed011e9b1a97f7c53749168010197461e04ebcd1492718ef4",
+      "current_sha256": "611584925a1ce8a328785b02d51494778d1f460fd240544b16acf4ac8b0de8ee",
+      "introduced_by_phase": "R5-7",
+      "reason": "Reject auto, cpu:0, and unindexed CUDA while constructing concrete functional tensor identities."
+    },
+    "pssolver/functional/periodic_activity.py": {
+      "historical_sha256": "716b974c4326e4c2c778ba1872ec17ee2d0c0af70e792a8864919da4f3f4f4c7",
+      "current_sha256": "260ca7ae4c8f078d6f25287e275f7b55a9f590c58928b0ad23fc0724c410c921",
+      "reason": "Resolve auto and concrete allocated devices through the shared Periodic functional contract."
+    },
+    "tests/test_phase7_p776_h100_closure.py": {
+      "historical_sha256": "a273088deb0da1bbaef068e7cb2dd284bd1b52142e36693bffe8184cf18cfafa",
+      "current_sha256": "a269830e80091ec68f1e3702928931806d654c80693305e96f86e601ec8ef8a1",
+      "reason": "Resolve immutable P7.7.6 application source identities through R5-7."
+    },
+    "tests/test_phase7_p776_production_connection.py": {
+      "historical_sha256": "34ff1139e3ea14d659761e57a267bfc82d389f94575b4e2f9fa69f3edfe6471d",
+      "current_sha256": "c4fd076ee43b383dbb86518815a209ece6a26def231c57eb9d3c18e2fbfeb9ae",
+      "reason": "Resolve immutable P7.7.6 production source identities through R5-7."
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "ba9dbe80b45b4106ef41fd5f1799e7436735e8084affaf5cfbee91071555d3a2",
+      "current_sha256": "762ea4665ddfb20031aa9b4bb15e37dcb14f9fe31dde102877542b7cdb2692d8",
+      "reason": "Extend the immutable cross-runtime source resolver through R5-7."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "9145ef8321532a10dd1fe5ad060ace54f5d83f9c1e3f383c3c383fbcaf2cc2d9",
+      "current_sha256": "4e611df82262707791c79cf522b995604e794e0f3b6af55d1a4d1a269c8490aa",
+      "reason": "Extend the immutable public-validation source resolver through R5-7."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "68545fe178b0b4d463c925da248fd04ef057dfe9b8f5a6936de86a4503603f1f",
+      "current_sha256": "3b171029609b1e475111bc312c5552e2b7337260b2090fbf72abf79bbb22389c",
+      "reason": "Extend immutable TF32 scope source resolution through R5-7."
+    },
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {
+      "historical_sha256": "4ac365b123cc7eca95342c200883f5a777b2e1f8cf3fa50f69e432d89931e3a4",
+      "current_sha256": "034c8263688b613eba91ec0e0cc3e917cef3680bde4c1ab2c6b5d80f67046bee",
+      "reason": "Extend the frozen cross-runtime plan source resolver through R5-7."
+    },
+    "tests/test_rc4_fresh_initial_conditioning.py": {
+      "historical_sha256": "499e60757475eca05cd3abf37eda8ac90045a6d7a0bd7391c1cd5cbe3bc3043a",
+      "current_sha256": "49beacb371a23be02de23018e1a4a8298246340e734744c4bc14e38fb75067ac",
+      "reason": "Resolve immutable Plane application source identity through R5-7."
+    },
+    "tests/test_rc4_functional_checkpoint_identity_record.py": {
+      "historical_sha256": "3704e0d500d60877492631e633c553abede013201647dd8ce28df1f1d7c9ce24",
+      "current_sha256": "9ad95489ce9916c681191db3b5420c6f3cd053c8ae8a59be6d08149d0c6cdaa6",
+      "reason": "Resolve immutable functional tensor-contract identity through R5-7."
+    },
+    "tests/test_rc4_pressure_contract_plan.py": {
+      "historical_sha256": "26fb9207f86b763bd2c3c76694cb54bff5011b55dd02111716159a24d8c9c01b",
+      "current_sha256": "152507a3eed89bce77a207b4b2830743ede9ab756a10695b9332b9b8150eeb51",
+      "reason": "Resolve immutable Channel declaration identity through R5-7."
+    },
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {
+      "historical_sha256": "8a5a5b299fdb1d697fb19d9c1e76d42569bb983bc1ead6a85b50684c7960c8ed",
+      "current_sha256": "dd1c041e5a5c216711fe075eab2960cf645490fe79256f97b52c5aea04bd1d5f",
+      "reason": "Resolve immutable Channel declaration identity through R5-7."
+    },
+    "tests/test_rc4_pressure_public_contract.py": {
+      "historical_sha256": "4d96da84ca5aa2247112384c69589f5ae875560c4c2e26240404fa982eaa2853",
+      "current_sha256": "11e75e5c4c953f1593b506cd7e6670636ba1e93ce92f4a2d226c4392950a2694",
+      "reason": "Resolve immutable Channel declaration identity through R5-7."
+    },
+    "tests/test_rc5_r54_packaging_record.py": {
+      "historical_sha256": "acc5296b3c4ed73e1a3fe2e72066a6daf871adeaaa047f2663a0cc011dac74e3",
+      "current_sha256": "47f09453473b995e49f8caa0743ff784607fac7cfb9e993d50fe60d2cf718e2c",
+      "reason": "Resolve the immutable Plane configuration packaging identity through R5-7."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "5907018ccabbba99d1e153742f3b2b16a532277307952114bd9347bbba6fa097",
+      "current_sha256": "869974e5e2ba83cd08f8ad5ac0cfd4c0e1a69c11d86227c1b75b14cd6923a5fe",
+      "reason": "Extend immutable execution-device source resolution through R5-7."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "bf89bb1aff418be50e8310665e1ea746d0092f71d9d434a4e428fe5045fcb460",
+      "current_sha256": "f9e80131a00f29fadb1c9ce69d600743a03056d864474bc87f72de81b371a71b",
+      "reason": "Extend immutable RC4.5.7 impact source resolution through R5-7."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "10e20d7b1bf35b312f903f4196b99ed87be7c7775a9bfa5754dec3795e55a116",
+      "current_sha256": "055af81225eb323dce7e8799173cdcedee1b80a15260004a44ad69665a6747b3",
+      "reason": "Extend immutable RC4.5.7 recovery source resolution through R5-7."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "77881d7fa16f76ab85123e97e8e52612ee97d9a107e36c15ff48cc31c9733eeb",
+      "current_sha256": "8193875ab6b3ecbf7d5d08283cf1f43d184c0ad275acea70ba125635ede3c9c4",
+      "reason": "Extend immutable RC4.5.8 closure source resolution through R5-7."
+    },
+    "tests/test_rc4_lifting_checkpoint_integration_record.py": {
+      "historical_sha256": "36a2871345d9601668b230922a59034411b4b35cfa648562a46b782e8aecbe4a",
+      "current_sha256": "923bc60aca4bc139f2133ca01bf4419a049cd888bcca07850336c7660409b62b",
+      "reason": "Resolve immutable Plane application identity through R5-7."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "6945a0a7da765f046ea7ab7b6187df452ecaee99a96888985eeb6b29e3cdc849",
+      "current_sha256": "077c4db4bfa81972d30657c0341e85248838b46d1c649c9b4801beadf84eea6b",
+      "reason": "Extend immutable post-release source resolution through R5-7."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "a739caf7849448d9c9558187796cbe79bade23e42723f4c1c941d6ae30582444",
+      "current_sha256": "864a76b10d85fd49bc743cbca69215da8967340be034f2b8fc440c3567a182a4",
+      "reason": "Extend immutable R5-1 source resolution through R5-7."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "96b9906c646df3f29f67d5000230ba99dd1f8025369f9286c6dc4702d411ee8d",
+      "current_sha256": "fe5fd70c7403c72053983ef1d023e48f59fb775f67e07cc246e938798bca58ac",
+      "reason": "Extend immutable R5-2 source resolution through R5-7."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "839c3604cf4f510be9df20f1d44b1f60d0fca86312ac6b2122f69504405d0156",
+      "current_sha256": "1be5202a15d45d0b21dccfeaa9227ed78d255a15f8b103d1647c7686574ca12f",
+      "reason": "Extend immutable R5-3 source resolution through R5-7."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "303375cae5b78b7fa7f338fa423d120e2f47c69e7846afe5c0419c1829f38480",
+      "current_sha256": "506e6f4e03572272dab819c50dce8182ad449d6b806bdf5ee756656276844aa1",
+      "reason": "Extend immutable R5-6 source resolution through R5-7."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "75c25512426d933f61274e3a982c352ea07f1e9ee651dce5a6389120376b9abe",
+      "current_sha256": "8a44261c7f95f753be899aa445b2213012d046161a5e6190323816df8c048643",
+      "reason": "Extend immutable W1 documentation source resolution through R5-7."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "d03d520c7c389ea6f9f197dbfe9dd87a24a08c69876c99524ac76a6c72522ac4",
+      "current_sha256": "23b15c7209a391ee10b29ae338349ce4c6853e6c4ac604a98a5d1dd7f1ba8cdb",
+      "reason": "Extend immutable v0.2.0rc4 release source resolution through R5-7."
+    }
+  },
+  "validation": {
+    "external_reproducer": "PASS: canonical token behavior aligned; auto functional CPU accepted; cuda-on-CPU leaves no output; all six output metadata files contain requested/resolved",
+    "targeted_cpu": "119 passed, 0 failed",
+    "r5_7_regression_cpu": "23 passed, 0 failed",
+    "historical_successor_cpu": "205 passed, 0 failed",
+    "source_full_cpu": "3546 passed, 7 skipped, 0 failed",
+    "installed_wheel_targeted_cpu": "23 passed, 0 failed",
+    "installed_wheel_applicable_full_cpu": "3539 passed, 7 skipped, 0 failed",
+    "installed_wheel_source_only_exclusion": {
+      "path": "tests/test_phase8_p861_local_cumulative_audit.py",
+      "test_count": 7,
+      "reason": "Existing source-layout cumulative audit; excluded by the established installed-wheel harness contract, not skipped or deselected."
+    }
+  },
+  "installed_wheel_evidence": {
+    "directory": "/home/fansenwei/pssolver_rc5_r57_installed_cpu_2d67ba2_20261014_v1",
+    "source_archive": "package/provider_2d67ba2.tar",
+    "source_archive_sha256": "9ebe1e41f457879cd78400b39ff8d09f5afd6e340e01888cb69d50c49261c403",
+    "wheel": "pssolver-0.2.0rc4-py3-none-any.whl",
+    "wheel_sha256": "e7f0515bae2a2d25e36f38e07ef39a8398b1db57d55c6501f8cdd1c5000fbc65",
+    "python": "3.12.13",
+    "torch": "2.6.0",
+    "numpy": "2.3.2",
+    "scipy": "1.16.0",
+    "pytest": "9.1.1",
+    "pssolver_import": "/home/fansenwei/pssolver_rc5_r57_installed_cpu_2d67ba2_20261014_v1/venv/lib/python3.12/site-packages/pssolver/__init__.py",
+    "pip_check": "PASS",
+    "source_shadow_import": false,
+    "numpy_compatibility_action": "Installed NumPy 2.3.2 only inside the new isolated venv to satisfy existing nematics3d metadata; nematics3d and the base environment were not modified."
+  },
+  "scope": {
+    "scientific_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "checkpoint_schema_changed": false,
+    "runtime_scientific_identity_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "r5_7_cpu_closure_complete": true,
+    "eligible_for_next_work_item": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

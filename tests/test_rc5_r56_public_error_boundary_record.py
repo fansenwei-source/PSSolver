@@ -16,6 +16,7 @@ from pssolver.configuration.public_simulation_runner import (
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
+R5_7_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 
 
 def _record() -> dict[str, object]:
@@ -24,6 +25,18 @@ def _record() -> dict[str, object]:
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def _r57_successor(relative: str, historical: str) -> str:
+    registration = json.loads(R5_7_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if (
+        registration is not None
+        and registration["historical_sha256"] == historical
+    ):
+        return registration["current_sha256"]
+    return historical
 
 
 def test_r56_record_declares_cpu_closure_without_scope_expansion():
@@ -53,14 +66,17 @@ def test_r56_record_binds_every_changed_implementation_and_regression_source():
     record = _record()
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
-            assert _sha256(relative) == expected
+            assert _sha256(relative) == _r57_successor(relative, expected)
 
 
 def test_r56_successor_registrations_bind_historical_and_current_sources():
     successors = _record()["historical_successor_sources"]
     assert len(successors) == 26
     for relative, registration in successors.items():
-        assert _sha256(relative) == registration["current_sha256"]
+        assert _sha256(relative) == _r57_successor(
+            relative,
+            registration["current_sha256"],
+        )
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["reason"]
 

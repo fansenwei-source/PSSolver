@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
+RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 NOTES = ROOT / "notes" / "architecture_v0_2"
 CLOSURE_PATH = NOTES / "phase_7_p776_h100_closure.json"
 LOCAL_PATH = NOTES / "phase_7_p776_production_connection.json"
@@ -20,13 +21,17 @@ def _sha256(relative: str) -> str:
 
 
 def _rc456_successor(relative: str, historical: str) -> str:
-    registration = json.loads(RC456.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ].get(relative)
-    if registration is None:
-        return historical
-    assert registration["historical_sha256"] == historical
-    return registration["current_sha256"]
+    resolved = historical
+    for path in (RC456, RC5_R57):
+        registration = json.loads(path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if (
+            registration is not None
+            and registration["historical_sha256"] == resolved
+        ):
+            resolved = registration["current_sha256"]
+    return resolved
 
 
 def _record() -> dict[str, object]:
