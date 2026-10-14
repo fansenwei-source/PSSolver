@@ -9,6 +9,9 @@ from __future__ import annotations
 
 import torch
 
+from pssolver.configuration.execution_device import (
+    resolve_allocated_execution_device,
+)
 from pssolver.configuration.channel_active_nematics_declarations import (
     channel_pressure_policy_metadata,
 )
@@ -108,19 +111,9 @@ def channel_functional_pressure_identity(
 
 def _allocated_device(value: object) -> str:
     try:
-        requested = torch.device(value)
-    except (TypeError, RuntimeError) as exc:
+        return str(resolve_allocated_execution_device(value))
+    except (TypeError, ValueError) as exc:
         raise ValueError("functional execution device is invalid") from exc
-    if requested.type != "cuda":
-        return requested.type
-    if not torch.cuda.is_available():
-        raise RuntimeError("functional CUDA declaration requires CUDA")
-    index = requested.index
-    if index is None:
-        index = torch.cuda.current_device()
-    if index < 0 or index >= torch.cuda.device_count():
-        raise ValueError("functional CUDA device index is unavailable")
-    return str(torch.device("cuda", index))
 
 
 def _spectral_dtype(real_dtype: str) -> str:

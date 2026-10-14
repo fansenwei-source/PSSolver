@@ -20,7 +20,11 @@ from pssolver.configuration.active_nematics_simulation_adapters import (
 from pssolver.configuration.channel_active_nematics import (
     ChannelActiveNematicRunSpec,
 )
-from pssolver.configuration.execution_device import scoped_tf32_execution
+from pssolver.configuration.execution_device import (
+    execution_device_normalization,
+    resolve_execution_device,
+    scoped_tf32_execution,
+)
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
@@ -45,7 +49,7 @@ from pssolver.workflows.channel_active_nematics import (
 
 
 def _resolve_device(requested: str) -> torch.device:
-    return torch.device("cuda" if requested == "auto" and torch.cuda.is_available() else "cpu" if requested == "auto" else requested)
+    return resolve_execution_device(requested)
 
 
 def _initial_q(run_spec: ChannelActiveNematicRunSpec) -> dict[str, torch.Tensor]:
@@ -84,6 +88,7 @@ def _metadata(
         "script": "Channel.py compatibility contract",
         "configuration": run_spec.identity_metadata(),
         "runtime_selection": run_spec.runtime_selection_metadata(),
+        "normalization": execution_device_normalization(run_spec.device),
         "runtime_environment": {
             "python_version": platform.python_version(),
             "numpy_version": np.__version__,

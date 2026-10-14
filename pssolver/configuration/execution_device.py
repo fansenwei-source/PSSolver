@@ -4,14 +4,12 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from dataclasses import dataclass
-import re
 import threading
 from collections.abc import Iterator
 
 import torch
 
-
-_PUBLIC_DEVICE_PATTERN = re.compile(r"(?:auto|cpu|cuda|cuda:(?:0|[1-9][0-9]*))\Z")
+from pssolver.configuration.device_tokens import validate_execution_device
 _TF32_SCOPE_LOCK = threading.RLock()
 
 
@@ -149,19 +147,6 @@ def scoped_tf32_execution(
             _restore_tf32_execution(before)
 
 
-def validate_execution_device(requested: object) -> str:
-    """Return a validated request without requiring a device allocation."""
-
-    if not isinstance(requested, str) or _PUBLIC_DEVICE_PATTERN.fullmatch(
-        requested
-    ) is None:
-        raise ValueError(
-            "invalid execution device; expected exactly 'auto', 'cpu', "
-            "'cuda', or 'cuda:N' with canonical non-negative N"
-        )
-    return requested
-
-
 def resolve_execution_device(requested: object) -> torch.device:
     """Resolve ``auto`` consistently and return a canonical Torch device."""
 
@@ -171,9 +156,43 @@ def resolve_execution_device(requested: object) -> torch.device:
     return torch.device(validated)
 
 
+def execution_device_normalization(requested: object) -> dict[str, str]:
+    """Return the public request and its host-resolved execution identity."""
+
+    validated = validate_execution_device(requested)
+    return {
+        "requested_execution_device": validated,
+        "resolved_execution_device": str(resolve_execution_device(validated)),
+    }
+
+
+def resolve_allocated_execution_device(requested: object) -> torch.device:
+    """Resolve a public request to one concrete device available now.
+
+    Unlike :func:`resolve_execution_device`, this helper is intended for
+    tensor-explicit declarations.  It binds an unindexed CUDA request to the
+    current allocated device and rejects unavailable devices before a tensor
+    identity is constructed.
+    """
+
+    device = resolve_execution_device(requested)
+    if device.type != "cuda":
+        return device
+    if not torch.cuda.is_available():
+        raise RuntimeError("functional CUDA execution requires CUDA")
+    index = device.index
+    if index is None:
+        index = torch.cuda.current_device()
+    if index < 0 or index >= torch.cuda.device_count():
+        raise ValueError("CUDA execution device index is unavailable")
+    return torch.device("cuda", index)
+
+
 __all__ = [
     "TF32ExecutionState",
     "configure_tf32_execution",
+    "execution_device_normalization",
+    "resolve_allocated_execution_device",
     "resolve_execution_device",
     "scoped_tf32_execution",
     "snapshot_tf32_execution_state",

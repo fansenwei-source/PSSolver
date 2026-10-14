@@ -12,6 +12,7 @@ import torch
 
 from pssolver.configuration.execution_device import (
     configure_tf32_execution,
+    execution_device_normalization,
     resolve_execution_device,
     scoped_tf32_execution,
 )
@@ -113,6 +114,9 @@ def _run_periodic_beris_edwards_owned(
             "fallback_allowed": False,
             "fallback_used": False,
         },
+        "normalization": execution_device_normalization(
+            spec.execution.options["device"]
+        ),
         "pressure_gauge": "zero_mean",
         "tangential_zero_mode_policy": stokes[
             "tangential_zero_mode_policy"
@@ -152,7 +156,6 @@ def _run_periodic_beris_edwards_owned(
     output = run_spec.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise FileExistsError(f"refusing nonempty periodic output: {output}")
-    output.mkdir(parents=True, exist_ok=True)
     request = PeriodicRuntimeBuildRequest(
         run_spec=run_spec,
         initial_values=initial_values,
@@ -163,6 +166,7 @@ def _run_periodic_beris_edwards_owned(
         request=request,
     )
     adapter = build_package_simulation_runtime(construction)
+    output.mkdir(parents=True, exist_ok=True)
     metadata["runtime_construction"] = construction.to_metadata()
     metadata["runtime"] = adapter.to_metadata()
     workflow = PeriodicBerisEdwardsWorkflow(

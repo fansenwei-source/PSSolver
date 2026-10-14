@@ -65,6 +65,7 @@ from pssolver.configuration.active_nematics_simulation_adapters import (
 )
 from pssolver.configuration.execution_device import (
     configure_tf32_execution,
+    execution_device_normalization,
     scoped_tf32_execution,
 )
 from pssolver.configuration.simulation import SimulationSpec
@@ -236,13 +237,8 @@ def _run_plane_beris_edwards_owned(
     dt = time_stepping.dt
     steps = workflow_spec.steps
     requested_device = execution.device
-    device = (
-        "cuda"
-        if requested_device == "auto" and torch.cuda.is_available()
-        else "cpu"
-        if requested_device == "auto"
-        else requested_device
-    )
+    device_normalization = execution_device_normalization(requested_device)
+    device = device_normalization["resolved_execution_device"]
     real_dtype_name = numerics.precision.value
     real_dtype = {
         "float32": torch.float32,
@@ -346,6 +342,7 @@ def _run_plane_beris_edwards_owned(
         "script": "Plane_beris_edwards_stokes.py",
         "configuration": run_spec.identity_metadata(),
         "runtime_selection": run_spec.runtime_selection_metadata(),
+        "normalization": device_normalization,
         "validation_config_sha256": invocation.validation_config_sha256,
         "implementation_provenance": implementation_provenance,
         "runtime_environment": runtime_environment,

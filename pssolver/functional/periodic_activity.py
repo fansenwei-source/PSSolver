@@ -22,6 +22,7 @@ from pssolver.configuration.public_simulation_runner import (
 )
 from pssolver.configuration.execution_device import (
     configure_tf32_execution,
+    resolve_allocated_execution_device,
     scoped_tf32_execution,
 )
 from pssolver.configuration.simulation import SimulationSpec
@@ -61,19 +62,9 @@ PERIODIC_ACTIVITY_DETERMINISTIC_REPLAY = "bitwise"
 
 def _allocated_device(value: object) -> str:
     try:
-        requested = torch.device(value)
-    except (TypeError, RuntimeError) as exc:
+        return str(resolve_allocated_execution_device(value))
+    except (TypeError, ValueError) as exc:
         raise ValueError("functional execution device is invalid") from exc
-    if requested.type != "cuda":
-        return requested.type
-    if not torch.cuda.is_available():
-        raise RuntimeError("functional CUDA construction requires CUDA")
-    index = requested.index
-    if index is None:
-        index = torch.cuda.current_device()
-    if index < 0 or index >= torch.cuda.device_count():
-        raise ValueError("functional CUDA device index is unavailable")
-    return str(torch.device("cuda", index))
 
 
 def _spectral_dtype(real_dtype: str) -> str:

@@ -13,6 +13,8 @@ import math
 from pathlib import Path
 from typing import Sequence
 
+from pssolver.configuration.device_tokens import validate_execution_device
+
 from pssolver.core import (
     BoundarySet,
     DomainSpec,
@@ -195,6 +197,11 @@ class PlaneBerisEdwardsRunSpec:
         if self.restart_from is not None:
             object.__setattr__(self, "restart_from", Path(self.restart_from))
         object.__setattr__(self, "twist_modes", tuple(self.twist_modes))
+        object.__setattr__(
+            self,
+            "device",
+            validate_execution_device(self.device),
+        )
         if not isinstance(self.spectral_refresh, SpectralRefreshSpec):
             raise TypeError("spectral_refresh must be a SpectralRefreshSpec")
         if not isinstance(self.boundaries, PlaneFreeSlipBoundaryConditions):

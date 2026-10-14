@@ -12,6 +12,7 @@ import math
 from numbers import Integral, Real
 from pathlib import Path
 
+from pssolver.configuration.device_tokens import validate_execution_device
 from pssolver.core import NumericsConfig
 from pssolver.geometries import RectangularChannel
 from pssolver.systems.stokes import (
@@ -390,8 +391,11 @@ class ChannelExecutionSpec:
     runtime_path: ChannelRuntimePath
 
     def __post_init__(self) -> None:
-        if not isinstance(self.device, str) or not self.device:
-            raise ValueError("device must be a non-empty string")
+        object.__setattr__(
+            self,
+            "device",
+            validate_execution_device(self.device),
+        )
         if self.dtype not in {"float32", "float64"}:
             raise ValueError("dtype must be float32 or float64")
         object.__setattr__(

@@ -14,6 +14,7 @@ from typing import Protocol, TypeAlias, runtime_checkable
 
 import torch
 
+from pssolver.configuration.device_tokens import validate_execution_device
 from pssolver.configuration.simulation import SimulationSpec
 
 from .errors import FunctionalTypeError, FunctionalValueError
@@ -94,9 +95,14 @@ class FunctionalTensorSpec:
         if self.dtype not in _DTYPES:
             raise FunctionalValueError(f"unsupported functional tensor dtype: {self.dtype!r}")
         try:
-            device = torch.device(self.device)
-        except (TypeError, RuntimeError) as exc:
+            validated_device = validate_execution_device(self.device)
+            device = torch.device(validated_device)
+        except (TypeError, ValueError, RuntimeError) as exc:
             raise FunctionalValueError("functional tensor device is invalid") from exc
+        if validated_device == "auto":
+            raise FunctionalValueError(
+                "functional tensor identity requires a concrete device"
+            )
         if device.type == "cuda" and device.index is None:
             raise FunctionalValueError("CUDA functional tensor identity requires an index")
         if (

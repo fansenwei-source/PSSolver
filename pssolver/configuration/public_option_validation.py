@@ -13,8 +13,7 @@ import math
 from numbers import Integral, Real
 
 from pssolver.configuration.execution_device import (
-    resolve_execution_device,
-    validate_execution_device,
+    execution_device_normalization,
 )
 
 
@@ -32,11 +31,7 @@ ITERATIVE_PRESSURE_OPTION_KEYS = frozenset(
 def validate_public_execution_device(requested: object) -> dict[str, str]:
     """Validate and record one public device request without allocation."""
 
-    validated = validate_execution_device(requested)
-    return {
-        "requested_execution_device": validated,
-        "resolved_execution_device": str(resolve_execution_device(validated)),
-    }
+    return execution_device_normalization(requested)
 
 
 def validate_iterative_pressure_options(
