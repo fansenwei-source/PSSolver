@@ -106,6 +106,48 @@ def test_rc4_release_smoke_did_not_rewrite_the_qualified_source_record():
     assert source_record["artifacts"]["tag_created"] is False
 
 
+def test_rc4_release_smoke_binds_the_annotated_tag_and_github_prerelease():
+    record = _record()
+    release = record["github_prerelease"]
+    assert release["repository"] == "fansenwei-source/PSSolver"
+    assert release["release_id"] == 412257697
+    assert release["url"] == (
+        "https://github.com/fansenwei-source/PSSolver/releases/tag/v0.2.0rc4"
+    )
+    assert release["tag"] == "v0.2.0rc4"
+    assert release["tag_object_sha"] == (
+        "8822ab370e252d76549c6365dc5f5023ec3231c4"
+    )
+    assert release["tag_object_type"] == "tag"
+    assert release["tag_target_commit"] == (
+        "658869456d762c917ca4409b091539c3733df2fb"
+    )
+    assert release["tag_target_type"] == "commit"
+    assert release["draft"] is False
+    assert release["prerelease"] is True
+    assert release["published_at"] == "2026-10-14T01:41:27Z"
+    assert release["assets"] == [
+        {
+            "id": 638851798,
+            "name": "pssolver-0.2.0rc4.tar.gz",
+            "size": 872255,
+            "state": "uploaded",
+            "sha256": (
+                "c7f5f2be2881cd3377cd936f8596ce2faf1b2a35fd96a955e71d92b3a292964c"
+            ),
+        },
+        {
+            "id": 638851799,
+            "name": "pssolver-0.2.0rc4-py3-none-any.whl",
+            "size": 1094307,
+            "state": "uploaded",
+            "sha256": (
+                "1bf31f324180dac58777a23785fb4e1424d3cc589099cf8c6328e2f6c74d8cc5"
+            ),
+        },
+    ]
+
+
 def test_rc4_release_smoke_freezes_submission_accounting_without_overclaim():
     record = _record()
     accounting = record["submission_accounting"]
@@ -121,6 +163,12 @@ def test_rc4_release_smoke_freezes_submission_accounting_without_overclaim():
     assert decision["eligible_for_annotated_tag"] is True
     assert decision["eligible_for_github_prerelease"] is True
     assert decision["eligible_for_pypi_publication"] is False
+    assert decision["tag_created"] is True
+    assert decision["github_prerelease_created"] is True
+    assert decision["github_release_is_draft"] is False
+    assert decision["github_assets_uploaded"] is True
+    assert decision["pypi_published"] is False
+    assert decision["package_published"] is False
     for key in (
         "production_default_changed",
         "functional_api_version_changed",
@@ -131,8 +179,5 @@ def test_rc4_release_smoke_freezes_submission_accounting_without_overclaim():
         "scientific_control_result",
         "PSSolver_Control_modified",
         "nematics3d_modified",
-        "tag_created",
-        "github_prerelease_created",
-        "package_published",
     ):
         assert decision[key] is False

@@ -45,6 +45,35 @@
       "sha256": "1bf31f324180dac58777a23785fb4e1424d3cc589099cf8c6328e2f6c74d8cc5"
     }
   },
+  "github_prerelease": {
+    "repository": "fansenwei-source/PSSolver",
+    "release_id": 412257697,
+    "url": "https://github.com/fansenwei-source/PSSolver/releases/tag/v0.2.0rc4",
+    "tag": "v0.2.0rc4",
+    "tag_object_sha": "8822ab370e252d76549c6365dc5f5023ec3231c4",
+    "tag_object_type": "tag",
+    "tag_target_commit": "658869456d762c917ca4409b091539c3733df2fb",
+    "tag_target_type": "commit",
+    "draft": false,
+    "prerelease": true,
+    "published_at": "2026-10-14T01:41:27Z",
+    "assets": [
+      {
+        "id": 638851798,
+        "name": "pssolver-0.2.0rc4.tar.gz",
+        "size": 872255,
+        "state": "uploaded",
+        "sha256": "c7f5f2be2881cd3377cd936f8596ce2faf1b2a35fd96a955e71d92b3a292964c"
+      },
+      {
+        "id": 638851799,
+        "name": "pssolver-0.2.0rc4-py3-none-any.whl",
+        "size": 1094307,
+        "state": "uploaded",
+        "sha256": "1bf31f324180dac58777a23785fb4e1424d3cc589099cf8c6328e2f6c74d8cc5"
+      }
+    ]
+  },
   "failed_attempt_preserved": {
     "job_id": 10881417,
     "classification": "FAIL_V0_2_0RC4_RELEASE_SMOKE_EXTERNAL_CUDA_TEST_TF32_CHILD_BOOTSTRAP",
@@ -125,8 +154,11 @@
     "scientific_control_result": false,
     "PSSolver_Control_modified": false,
     "nematics3d_modified": false,
-    "tag_created": false,
-    "github_prerelease_created": false,
+    "tag_created": true,
+    "github_prerelease_created": true,
+    "github_release_is_draft": false,
+    "github_assets_uploaded": true,
+    "pypi_published": false,
     "package_published": false
   }
 }

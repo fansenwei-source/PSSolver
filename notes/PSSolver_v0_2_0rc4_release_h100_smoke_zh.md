@@ -6,7 +6,7 @@
 正式 release source 仍是
 `658869456d762c917ca4409b091539c3733df2fb`。最终 source archive、sdist 和
 wheel 都由该提交生成；本记录只是后继证据，不是新的 qualified source，也不要求重跑
-H100。后续 annotated tag 必须明确指向 `6588694`，不能误指向证据登记提交。
+H100。annotated tag 已明确指向 `6588694`，没有误指向证据登记提交。
 
 ## CPU 和 package
 
@@ -36,8 +36,22 @@ timestep，Q、速度和压力均有限、形状正确，并写入运行级 `COM
 归档 checksum 为 895/895 PASS，manifest SHA-256 为
 `636e56b92170e99a3928818a2761f65e3e47a8dd9cebdf490311cd6bbaf1e9bd`。
 
+## GitHub prerelease
+
+annotated tag `v0.2.0rc4` 的 tag object 为 `8822ab370e252d76549c6365dc5f5023ec3231c4`，
+解引用目标精确为 qualified source `658869456d762c917ca4409b091539c3733df2fb`。
+GitHub prerelease 已发布：
+
+```text
+https://github.com/fansenwei-source/PSSolver/releases/tag/v0.2.0rc4
+```
+
+Release 为非 draft 的 prerelease。上传的 sdist 为 872255 bytes，wheel 为 1094307
+bytes；GitHub 返回的两个资产 digest 与资格记录中的 SHA-256 精确一致，状态均为
+`uploaded`。
+
 ## 发布边界
 
-`v0.2.0rc4` 现在具备 annotated tag 和 GitHub prerelease 的技术资格，但本记录没有
-创建 tag、GitHub release 或发布 PyPI 包。生产默认值、functional API 1.0、checkpoint
-兼容范围、batch-one 能力、PSSolver-Control 和 `nematics3d` 均未改变。
+本次只创建 annotated tag 和 GitHub prerelease，没有发布 PyPI 包。生产默认值、
+functional API 1.0、checkpoint 兼容范围、batch-one 能力、PSSolver-Control 和
+`nematics3d` 均未改变。
