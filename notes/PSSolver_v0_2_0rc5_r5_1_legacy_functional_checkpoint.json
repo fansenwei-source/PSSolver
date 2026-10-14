@@ -1,11 +1,14 @@
 {
   "schema_version": 1,
   "record": "PSSolver v0.2.0rc5 R5-1 released functional checkpoint compatibility",
-  "status": "implementation_complete_validation_in_progress",
-  "classification": "PASS_R5_1_REAL_RC1_RC2_RC3_FUNCTIONAL_CHECKPOINT_COMPATIBILITY_CPU_CANDIDATE",
+  "status": "complete",
+  "classification": "PASS_R5_1_REAL_RC1_RC2_RC3_FUNCTIONAL_CHECKPOINT_COMPATIBILITY_CPU_CLOSURE",
   "git_identity": {
     "branch": "fix/v0.2.0rc5",
     "implementation_parent": "f168b8638ccf4cc065f9c6fc02898d19ba3861cd",
+    "implementation_commit": "d6ce61ca3ae86a7d0a1cae0d44d727a1827677ea",
+    "fixture_payload_commit": "0e367a1b3a634a9f9afcbd63820d33fb42b9dd32",
+    "record_commit_is_qualified_source": false,
     "pushed": false
   },
   "issue": {
@@ -161,7 +164,41 @@
     },
     "targeted_cpu": "141 passed",
     "full_source_cpu": "3438 passed, 7 skipped, 8 subtests passed, 0 failed",
-    "installed_wheel_cpu": "pending"
+    "installed_wheel_targeted_cpu": "31 passed, 0 failed",
+    "installed_wheel_applicable_full_cpu": "3431 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_source_only_test": {
+      "path": "tests/test_phase8_p861_local_cumulative_audit.py",
+      "test_count": 7,
+      "reason": "This analyzer requires its primary process to import PSSolver from the source repository while independently probing an installed wheel; it passed inside the full source suite and is structurally inapplicable when the primary process is intentionally pinned to the installed wheel.",
+      "hidden_as_skip_or_xfail": false
+    },
+    "installed_wheel_harness_audit": {
+      "archive_without_git_rejected_as_invalid": true,
+      "temporary_working_directory_rejected_as_invalid": true,
+      "final_repository_material": "clean worktree at 0e367a1b3a634a9f9afcbd63820d33fb42b9dd32",
+      "runtime_import": "/home/fansenwei/pssolver_rc5_r51_installed_cpu_0e367a1_20261014_v1/venv/lib/python3.12/site-packages/pssolver/__init__.py",
+      "source_shadow_import": false
+    }
+  },
+  "installed_wheel_evidence": {
+    "directory": "/home/fansenwei/pssolver_rc5_r51_installed_cpu_0e367a1_20261014_v1",
+    "source_archive_sha256": "2386d0257e3085e89ec2553bfff6e829a6164fecff1f887882e604c6d02b7f1f",
+    "wheel": "pssolver-0.2.0rc4-py3-none-any.whl",
+    "wheel_sha256": "cb087d634577d7e09ec440173489e9ddbed0a6a32a18969d17827830f8078662",
+    "pip_check": "PASS",
+    "python": "3.12.13",
+    "torch": "2.6.0",
+    "torch_cuda_runtime": "12.6",
+    "numpy": "2.3.2",
+    "scipy": "1.16.0",
+    "log_sha256": {
+      "source_full.log": "5c21c0362d176f048b03d14cbcc1283770fb0f80e7d7545265a1b96d8abee79a",
+      "installed_targeted.log": "aea9b7b0c3189bec8f3fcdff01963413063131b9d75bae810f56e8816ae856bd",
+      "installed_applicable_full.log": "e85eeef03320a780bbd292a2994d257ceb1cc87007ab2f870da4be4639d07ef4",
+      "pip_check_after_numpy.log": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    },
+    "nematics3d_modified": false,
+    "venv_local_numpy_reason": "Match the pre-existing nematics3d 0.9.0b1 requirement without modifying the base environment or nematics3d."
   },
   "scope": {
     "H100_required": false,
@@ -171,9 +208,13 @@
     "functional_API_version_changed": false,
     "production_default_changed": false,
     "historical_records_rewritten": false,
+    "tests_relaxed": false,
+    "skip_or_xfail_added": false,
     "tag_or_release_modified": false
   },
   "authorization": {
+    "r5_1_complete": true,
+    "eligible_for_next_rc5_must_item": true,
     "push_authorized": false,
     "H100_authorized": false,
     "eligible_for_rc5_release": false,

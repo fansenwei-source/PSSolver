@@ -1,6 +1,6 @@
 # PSSolver v0.2.0rc5 R5-1 旧版 functional checkpoint 兼容修复
 
-本记录关闭 `B10` 的实现缺陷，但 `rc5_must` 批次仍有其他事项，因此暂不推进发布资格。
+本记录完成并关闭 `B10` 的 R5-1 修复，但 `rc5_must` 批次仍有其他事项，因此暂不推进发布资格。
 
 ## 根因
 
@@ -25,9 +25,16 @@ rc4 reader 使用当前 runtime identity 推导旧 bridge identity，并把真�
 
 ## 当前边界
 
+- source 全量：`3438 passed, 7 skipped, 8 subtests passed, 0 failed`；
+- installed-wheel 定向：`31 passed, 0 failed`；
+- installed-wheel applicable 全量：`3431 passed, 7 skipped, 8 subtests passed, 0 failed`；
+- 唯一未在 installed 主进程重复执行的文件是 `tests/test_phase8_p861_local_cumulative_audit.py`（7 tests）。该文件的合同要求主进程从源码导入 PSSolver、再独立构建 wheel 对照，因此它已在 source 全量中通过，但结构上不适用于“主进程固定从 wheel 导入”的门禁；没有把它伪装成 skip/xfail；
+- wheel 从 clean commit `0e367a1b3a634a9f9afcbd63820d33fb42b9dd32` 构建，PSSolver 从新 venv 的 site-packages 导入，`pip check` 通过且无 source shadow import；
+- disposable venv 内使用 NumPy 2.3.2 来满足既有 `nematics3d 0.9.0b1` 元数据；原环境和 `nematics3d` 均未修改；
+
 - 不修改 `v0.2.0rc4` tag、Release 或历史 closure；
 - 不修改 PSSolver-Control 或 `nematics3d`；
 - 不修改 functional API 版本或生产默认值；
 - 本项不需要 H100；
 - 尚未 push；
-- 完整 source 与 installed-wheel CPU 结果完成后再把记录状态更新为最终 PASS。
+- `R5-1 complete = true`，可继续下一个 `rc5_must` 工作项；整个 `rc5_must` 批次仍未完成。

@@ -21,7 +21,7 @@ def test_r51_record_binds_implementation_fixture_and_regressions():
     record = json.loads(RECORD.read_text(encoding="utf-8"))
     assert record["classification"] == (
         "PASS_R5_1_REAL_RC1_RC2_RC3_FUNCTIONAL_CHECKPOINT_"
-        "COMPATIBILITY_CPU_CANDIDATE"
+        "COMPATIBILITY_CPU_CLOSURE"
     )
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
@@ -52,6 +52,10 @@ def test_r51_scope_does_not_claim_batch_or_release_completion():
     assert record["scope"]["H100_executed"] is False
     assert record["scope"]["PSSolver_Control_modified"] is False
     assert record["scope"]["nematics3d_modified"] is False
+    assert record["scope"]["tests_relaxed"] is False
+    assert record["scope"]["skip_or_xfail_added"] is False
+    assert record["authorization"]["r5_1_complete"] is True
+    assert record["authorization"]["eligible_for_next_rc5_must_item"] is True
     assert record["authorization"]["push_authorized"] is False
     assert record["authorization"]["eligible_for_rc5_release"] is False
     assert record["authorization"]["rc5_must_batch_complete"] is False
