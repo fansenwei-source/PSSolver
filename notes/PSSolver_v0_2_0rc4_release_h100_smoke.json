@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 installed-wheel single-H100 release smoke",
+  "status": "complete",
+  "classification": "PASS_V0_2_0RC4_INSTALLED_WHEEL_SINGLE_H100_RELEASE_SMOKE_WITH_AUTHORIZED_TF32_CHILD_BOOTSTRAP_RECOVERY_V2",
+  "qualification_complete": true,
+  "release": "0.2.0rc4",
+  "qualified_source": {
+    "branch": "fix/v0.2.0rc4-audit",
+    "commit": "658869456d762c917ca4409b091539c3733df2fb",
+    "record_commit_is_qualified_source": false,
+    "evidence_only_successor_requires_h100_requalification": false,
+    "annotated_tag_target_commit": "658869456d762c917ca4409b091539c3733df2fb"
+  },
+  "frozen_release_metadata": {
+    "path": "notes/pssolver_v0_2_0_rc4.json",
+    "sha256": "e2c8c225e360034d6f37f2a869dcaa9f788723378ae0ffd394659b13f03e8287",
+    "rewritten_by_registration": false,
+    "source_preparation_status_preserved": true
+  },
+  "cpu_and_package_preparation": {
+    "control_directory": "/home/fansenwei/pssolver_v0_2_0rc4_release_package_6588694_20261013_v1",
+    "classification": "PASS_V0_2_0RC4_SOURCE_CPU_AND_INSTALLED_WHEEL_RELEASE_PREPARATION_H100_PENDING",
+    "manifest_entries": 30,
+    "manifest_sha256": "43ae08895fd391f17b9c16a4d5200b29bc538a8997b6adee2d02fa2eb4d7c2cf",
+    "targeted_cpu": "134 passed, 0 failed",
+    "full_cpu": "3399 passed, 1 allowed optional skip, 7 CUDA-only deselected, 0 failed",
+    "optional_skip": "tests/test_analytic_periodic_defect_gas_2d.py::test_nematics3d_recovers_requested_defect_count_charges_and_positions",
+    "optional_skip_reason": "nematics3d is an optional dependency and was unavailable",
+    "pip_check": "PASS",
+    "source_shadow_import": false,
+    "installed_wheel_cpu_one_step": "PASS_FINITE_Q_U_P"
+  },
+  "artifacts": {
+    "source_archive": {
+      "name": "PSSolver-0.2.0rc4.tar",
+      "sha256": "6e5f94991b02fcc9d5d437aa348205e5c1eeb79035f371a119ab5844f17fcbdb"
+    },
+    "sdist": {
+      "name": "pssolver-0.2.0rc4.tar.gz",
+      "sha256": "c7f5f2be2881cd3377cd936f8596ce2faf1b2a35fd96a955e71d92b3a292964c"
+    },
+    "wheel": {
+      "name": "pssolver-0.2.0rc4-py3-none-any.whl",
+      "sha256": "1bf31f324180dac58777a23785fb4e1424d3cc589099cf8c6328e2f6c74d8cc5"
+    }
+  },
+  "failed_attempt_preserved": {
+    "job_id": 10881417,
+    "classification": "FAIL_V0_2_0RC4_RELEASE_SMOKE_EXTERNAL_CUDA_TEST_TF32_CHILD_BOOTSTRAP",
+    "control_directory": "/home/fansenwei/pssolver_v0_2_0rc4_release_h100_6588694_20261013_v1",
+    "manifest_entries": 878,
+    "manifest_sha256": "f9668a6056ed59d70e6af88e293e1d4f21c8e50bd05c27a52f57fbb13b11ac2a",
+    "scientific_failure": false,
+    "rewritten": false
+  },
+  "h100_recovery": {
+    "control_directory": "/home/fansenwei/pssolver_v0_2_0rc4_release_h100_6588694_20261013_recovery_v2",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_v0_2_0rc4_release_h100_6588694_20261013_recovery_v2",
+    "job_id": 10881426,
+    "node": "gpu-h100-4-0",
+    "gpu": "NVIDIA H100 PCIe",
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:00:31",
+    "requeue": 0,
+    "restarts": 0,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "second_recovery_job_submitted": false,
+    "manifest_entries": 895,
+    "manifest_sha256": "636e56b92170e99a3928818a2761f65e3e47a8dd9cebdf490311cd6bbaf1e9bd",
+    "complete_present": true
+  },
+  "environment": {
+    "python": "3.10.18",
+    "pytorch": "2.5.1+cu121",
+    "cuda_runtime": "12.1",
+    "gpu": "NVIDIA H100 PCIe",
+    "visible_cuda_devices": 1,
+    "allocated_device": "cuda:0",
+    "source_shadow_import": false,
+    "functional_api_version": "1.0",
+    "tf32_runner_and_pytest_same_process": true,
+    "tf32_policy_applied_before_pytest": true,
+    "tf32_policy_preserved_after_pytest": true,
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "float32_matmul_precision": "highest"
+  },
+  "gates": {
+    "installed_wheel_identity": true,
+    "cuda_only_tests": "7 passed, 0 failed, 0 skipped",
+    "plane_installed_wheel_cuda_one_step": true,
+    "plane_completed_steps": 1,
+    "plane_complete_marker": true,
+    "plane_q_finite": true,
+    "plane_velocity_finite": true,
+    "plane_pressure_finite": true,
+    "plane_q_sha256": "47931660ca41c647dd3673f42aa7482247f1e442b83d700cba485f7bb3c78228",
+    "plane_velocity_sha256": "c8dc451a213e9a16b21c3fe9c0d9ad24dd08cfb69d4885fd960cc964d8b8f94a",
+    "plane_pressure_sha256": "9dd4dcaa329dbc906bb14b8a2e24e40ad4ca5c749cf55c991cacb5c006f5efc5"
+  },
+  "submission_accounting": {
+    "failed_attempt_formal_h100_submission_count": 1,
+    "recovery_v2_formal_h100_submission_count": 1,
+    "release_smoke_formal_h100_submission_count_total": 2,
+    "every_submission_separately_authorized": true,
+    "automatic_retry": false
+  },
+  "release_decision": {
+    "h100_release_smoke_complete": true,
+    "eligible_for_annotated_tag": true,
+    "eligible_for_github_prerelease": true,
+    "eligible_for_pypi_publication": false,
+    "production_default_changed": false,
+    "functional_api_version_changed": false,
+    "checkpoint_compatibility_removed": false,
+    "larger_batch_qualified": false,
+    "plane_control_qualified": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "tag_created": false,
+    "github_prerelease_created": false,
+    "package_published": false
+  }
+}
