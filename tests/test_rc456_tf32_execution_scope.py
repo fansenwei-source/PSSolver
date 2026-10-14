@@ -33,6 +33,9 @@ RC5_R51 = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_1_legacy_functional_checkpoint.json"
 )
 RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
+RC5_R53 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
+)
 
 
 def _set_state(precision: str, matmul: bool, cudnn: bool) -> None:
@@ -52,6 +55,7 @@ def _resolve_rc457_successor(relative: str, historical: str) -> str:
         RC5_W1,
         RC5_R51,
         RC5_R52,
+        RC5_R53,
     ):
         successor = json.loads(record_path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
