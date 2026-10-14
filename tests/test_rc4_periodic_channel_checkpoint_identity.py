@@ -397,28 +397,31 @@ def test_m10_rc1_even_channel_rejects_before_tensor_load(tmp_path, monkeypatch):
         )
 
 
-def test_m11_rc1_odd_channel_upgrades_and_restores(tmp_path):
+def test_m11_rc1_odd_channel_rejects_exact_upgrade_before_tensor_load(
+    tmp_path,
+    monkeypatch,
+):
     run_spec, source = _channel_runtime(_channel_simulation(tmp_path, 7))
-    target_spec, target = _channel_runtime(
-        _channel_simulation(tmp_path, 7, device="auto")
-    )
     source.advance(1)
     directory = tmp_path / "channel_rc1"
     write_channel_beris_edwards_checkpoint(directory, source, run_spec=run_spec)
     _downgrade_channel(directory, run_spec, SourceReleaseGeneration.RC1)
     before = _tree_sha256(directory)
-    upgraded = upgrade_channel_beris_edwards_checkpoint_directory(
-        directory,
-        tmp_path / "channel_v3",
-        source_run_spec=run_spec,
-        source_release_generation=SourceReleaseGeneration.RC1,
+    monkeypatch.setattr(
+        "pssolver.workflows.channel_beris_edwards.np.load",
+        lambda *_args, **_kwargs: pytest.fail("tensor load started"),
     )
 
+    with pytest.raises(ValueError, match="B2 incompressibility dynamics"):
+        upgrade_channel_beris_edwards_checkpoint_directory(
+            directory,
+            tmp_path / "channel_v3",
+            source_run_spec=run_spec,
+            source_release_generation=SourceReleaseGeneration.RC1,
+        )
+
     assert _tree_sha256(directory) == before
-    header = read_channel_beris_edwards_checkpoint_header(upgraded)
-    assert header.format_version == CHANNEL_CHECKPOINT_VERSION
-    assert load_channel_checkpoint(upgraded, target, run_spec=target_spec) == 1
-    _assert_channel_state_equal(source, target)
+    assert not (tmp_path / "channel_v3").exists()
 
 
 @pytest.mark.parametrize(

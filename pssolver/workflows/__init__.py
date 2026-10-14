@@ -58,6 +58,7 @@ from .channel_beris_edwards import (
     upgrade_channel_beris_edwards_checkpoint_directory,
 )
 from .channel_checkpoint import (
+    CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     ChannelCheckpointHeader,
     ChannelWorkflowCheckpoint,
@@ -137,6 +138,7 @@ __all__ = [
     "read_channel_beris_edwards_checkpoint_header",
     "upgrade_channel_beris_edwards_checkpoint_directory",
     "CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
+    "CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "ChannelCheckpointHeader",
     "ChannelWorkflowCheckpoint",
     "capture_channel_checkpoint",

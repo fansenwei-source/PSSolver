@@ -1,0 +1,252 @@
+{
+  "algebraic_components": [
+    "ux",
+    "uy",
+    "uz",
+    "p"
+  ],
+  "backend_restart": {
+    "kind": "legacy_channel_pressure_pcg",
+    "state_keys": [
+      "pressure_guess"
+    ]
+  },
+  "completed_steps": 2,
+  "evolved_components": [
+    "Qxx",
+    "Qxy",
+    "Qxz",
+    "Qyy",
+    "Qyz"
+  ],
+  "format_version": 1,
+  "integrator": {
+    "refresh_count": 0,
+    "spectral_refresh_interval": 20,
+    "step_count": 2
+  },
+  "persistent_algebraic": [
+    "pressure_guess"
+  ],
+  "runtime_identity_sha256": "e6b4806f871f4f47236374c1a94b6e2c0fe5cda97bee24b9612c69e69091b671",
+  "runtime_path": "legacy_channel",
+  "tensor_files": {
+    "algebraic_spatial": {
+      "p": {
+        "dtype": "float32",
+        "file": "algebraic_spatial__p.npy",
+        "sha256": "05de89881163c26939f37fe577f7e73af50daa943d9327d346ad23c2239d33e6",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "ux": {
+        "dtype": "float32",
+        "file": "algebraic_spatial__ux.npy",
+        "sha256": "7bd0547261e65bb0540681fcacfdd76c226050dd778bf56b574bfdd0807f66bf",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "uy": {
+        "dtype": "float32",
+        "file": "algebraic_spatial__uy.npy",
+        "sha256": "43a4c69b862004d6987b1a560fa84582e4c8b616021ad7f69fb4c41eb7e97238",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "uz": {
+        "dtype": "float32",
+        "file": "algebraic_spatial__uz.npy",
+        "sha256": "c0b759eb28e1787a5fcdd9efb992a8a4adc1fde791d15959b6e02f507aabfe38",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      }
+    },
+    "algebraic_spectral": {
+      "p": {
+        "dtype": "complex64",
+        "file": "algebraic_spectral__p.npy",
+        "sha256": "09f341845a72154a210b2d9a92962c8004bd4cb027c448939cce477601dd52f6",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "ux": {
+        "dtype": "complex64",
+        "file": "algebraic_spectral__ux.npy",
+        "sha256": "ed8d3ca2d0fa5812748a2453bc597c68564fe5f3b051b306773b69fe8ca6b3f1",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "uy": {
+        "dtype": "complex64",
+        "file": "algebraic_spectral__uy.npy",
+        "sha256": "386384c728676df9fca66b9675d300fee91da7515226681ba44a8024efa0d65f",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "uz": {
+        "dtype": "complex64",
+        "file": "algebraic_spectral__uz.npy",
+        "sha256": "a2faac39e6b5124d3f7cf21339fdcbef8c62c3ab5e53cdf774469b7fc1d3e511",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      }
+    },
+    "evolved_spatial": {
+      "Qxx": {
+        "dtype": "float32",
+        "file": "evolved_spatial__Qxx.npy",
+        "sha256": "62155bfa7f651eeca70b7ffdd9952e887426833b3b389577fe6685c6adfe4e67",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "Qxy": {
+        "dtype": "float32",
+        "file": "evolved_spatial__Qxy.npy",
+        "sha256": "dda925d9831f6b87bad0e171c5df3d919fd51020c6af609658fae00824b5e8c7",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "Qxz": {
+        "dtype": "float32",
+        "file": "evolved_spatial__Qxz.npy",
+        "sha256": "b4a47703eedb1b8947d3e4b0627f98ae5d8b265750a2e0f61e90bc6c259b7444",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "Qyy": {
+        "dtype": "float32",
+        "file": "evolved_spatial__Qyy.npy",
+        "sha256": "172f497b672dfa12eaf60a36ddf73e0526d539fe453b0f95771907dd1f4c1bba",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "Qyz": {
+        "dtype": "float32",
+        "file": "evolved_spatial__Qyz.npy",
+        "sha256": "82237347b0ba29afa83d959a0afd656ea94e697b68715cfcae3958e5d0d0715b",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      }
+    },
+    "evolved_spectral": {
+      "Qxx": {
+        "dtype": "complex64",
+        "file": "evolved_spectral__Qxx.npy",
+        "sha256": "7c0599cc9b448a382badfe4505d61ee1b8b12389f6da1060549347c57d5a1ff8",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "Qxy": {
+        "dtype": "complex64",
+        "file": "evolved_spectral__Qxy.npy",
+        "sha256": "5102fa84b241758cd5dc6d71adfcd9eb1c7dc7d395e50a316f8da125f0620703",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "Qxz": {
+        "dtype": "complex64",
+        "file": "evolved_spectral__Qxz.npy",
+        "sha256": "3c3a34215ab0b52e0c896d0c0fffe0ec7447e9c1f3a0335cfbaf810711c5e15e",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "Qyy": {
+        "dtype": "complex64",
+        "file": "evolved_spectral__Qyy.npy",
+        "sha256": "e9fccf946dcb4fb50fe0e76c0942d1f4b35eacc59b2fd734926bed23a7340aa2",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      },
+      "Qyz": {
+        "dtype": "complex64",
+        "file": "evolved_spectral__Qyz.npy",
+        "sha256": "f1bc71fcbc783829feb36944be17a820cdb7c7acc439378f565859ace5cd7ecf",
+        "shape": [
+          1,
+          8,
+          6,
+          5
+        ]
+      }
+    },
+    "pressure_guess": {
+      "dtype": "complex64",
+      "file": "persistent__pressure_guess.npy",
+      "sha256": "09f341845a72154a210b2d9a92962c8004bd4cb027c448939cce477601dd52f6",
+      "shape": [
+        1,
+        8,
+        6,
+        5
+      ]
+    }
+  }
+}

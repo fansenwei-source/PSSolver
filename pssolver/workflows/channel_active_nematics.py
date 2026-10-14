@@ -13,6 +13,7 @@ from pssolver.run_metadata import write_run_metadata
 from pssolver.runtime.channel_active_nematics import ChannelRuntimeAdapterProtocol
 
 from .channel_checkpoint import (
+    CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     capture_channel_checkpoint, load_channel_checkpoint,
     restore_channel_checkpoint, write_channel_checkpoint,
@@ -97,12 +98,22 @@ class ChannelActiveNematicsWorkflow:
         start = restore_channel_checkpoint(
             self.adapter, checkpoint,
             runtime_identity_sha256=self.run_spec.runtime_identity_sha256(),
+            pre_rc5_runtime_identity_sha256=(
+                self.run_spec.pre_rc5_runtime_identity_sha256()
+            ),
         )
         self.metadata["restart"] = {
             "kind": "same_runtime_channel_workflow_checkpoint",
             "source": str(Path(source).expanduser().resolve()),
             "source_runtime_path": checkpoint.runtime_path.value,
             "source_runtime_identity_sha256": checkpoint.runtime_identity_sha256,
+            "source_checkpoint_format_version": checkpoint.format_version,
+            "source_identity_contract": (
+                "pre_rc5_nyquist_adjudicated"
+                if checkpoint.format_version
+                == CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+                else "current_forward_dynamics_versioned"
+            ),
             "source_completed_steps": checkpoint.completed_steps,
             "cross_runtime_adapter_used": False,
         }

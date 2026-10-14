@@ -1,0 +1,48 @@
+{
+  "fixture_schema_version": 1,
+  "origin": "/home/fansenwei/pssolver_rc4_post_release_verification_20261013_v1/agent_evidence/state/legacy_ckpts_full",
+  "purpose": "R5-3 legacy Channel forward-Stokes Nyquist compatibility adjudication",
+  "tree_hash_algorithm": "sha256(canonical JSON mapping relative file path to file sha256)",
+  "cases": {
+    "rc1_even": {
+      "source_commit": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1",
+      "source_release_generation": "rc1",
+      "source_relative_path": "rc1_lc/legacy_channel_even8/checkpoint_2",
+      "periodic_axis_length": 8,
+      "expected_disposition": "reject_pre_rc4_1_forward_nyquist",
+      "file_count": 20,
+      "checkpoint_sha256": "794ac8c77b43d78937801b4b2bd3b1d718a1bd2a7aa83b9eae066074d0403a5e",
+      "tree_sha256": "a95b23b827a24f489045b479d4bfa4dbe94a19f7ab91d95be2a802046d05f6e4"
+    },
+    "rc1_odd": {
+      "source_commit": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1",
+      "source_release_generation": "rc1",
+      "source_relative_path": "rc1_lc/legacy_channel_odd7/checkpoint_2",
+      "periodic_axis_length": 7,
+      "expected_disposition": "accept_nyquist_inapplicable",
+      "file_count": 20,
+      "checkpoint_sha256": "c2cde134c8b0cf6c4c29239fec634223ba040880e94c7c27edf191a246705278",
+      "tree_sha256": "b7277be8b7fba15d532a21ec9b2605556da775bc9ee5a60e845acfc7701b30b7"
+    },
+    "rc2_even": {
+      "source_commit": "2bbe21e88fec318787fc31dc0a82bca5a171c024",
+      "source_release_generation": "rc2",
+      "source_relative_path": "rc2/legacy_channel_prod/checkpoint_2",
+      "periodic_axis_length": 8,
+      "expected_disposition": "accept_post_repair_zero_nyquist",
+      "file_count": 20,
+      "checkpoint_sha256": "21a0043d2588221b567674c521437bf42ad660b08d55a8a8fd73d8767269b270",
+      "tree_sha256": "d8d95f3f1049810b95fb717b7b364c54fd55f68dd27d0dbc9b2310093efed2e0"
+    },
+    "rc3_even": {
+      "source_commit": "5071d73a00e0d19be62ebd39edf9918818d1267a",
+      "source_release_generation": "rc3",
+      "source_relative_path": "rc3/legacy_channel_prod/checkpoint_2",
+      "periodic_axis_length": 8,
+      "expected_disposition": "accept_post_repair_zero_nyquist",
+      "file_count": 20,
+      "checkpoint_sha256": "21a0043d2588221b567674c521437bf42ad660b08d55a8a8fd73d8767269b270",
+      "tree_sha256": "d8d95f3f1049810b95fb717b7b364c54fd55f68dd27d0dbc9b2310093efed2e0"
+    }
+  }
+}

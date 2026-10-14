@@ -807,12 +807,14 @@ def _validate_legacy_channel_upgrade_contract(
         )
     )
     periodic_length = source_run_spec.simulation.geometry.domain.shape[0]
-    if (
-        source_release_generation is SourceReleaseGeneration.RC1
-        and periodic_length % 2 == 0
-    ):
+    if source_release_generation is SourceReleaseGeneration.RC1:
+        if periodic_length % 2 == 0:
+            raise ValueError(
+                "rc1 Channel checkpoint has pre-RC4.1 forward Nyquist dynamics"
+            )
         raise ValueError(
-            "rc1 Channel checkpoint has pre-RC4.1 forward Nyquist dynamics"
+            "rc1 Channel checkpoint predates the B2 incompressibility "
+            "dynamics and cannot be upgraded for exact restart"
         )
     return schema, periodic_length
 

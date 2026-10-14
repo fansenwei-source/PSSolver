@@ -36,6 +36,9 @@ from .channel_active_nematics_declarations import (
 
 
 CHANNEL_RUN_SPEC_SCHEMA_VERSION = 1
+CHANNEL_FORWARD_STOKES_NYQUIST_VERSION = (
+    "channel_no_slip.periodic_nyquist_zero.v2"
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -173,13 +176,15 @@ class ChannelActiveNematicRunSpec:
         ).encode("utf-8")
         return hashlib.sha256(payload).hexdigest()
 
-    def runtime_identity_metadata(self) -> dict[str, object]:
-        """Return the numerical identity required for exact same-path restart."""
-
+    def _runtime_identity_metadata(
+        self,
+        *,
+        include_forward_dynamics_version: bool,
+    ) -> dict[str, object]:
         components = self.components.to_metadata()
         execution = dict(components["execution"])
         execution.pop("device")
-        return {
+        metadata = {
             "schema_version": CHANNEL_RUN_SPEC_SCHEMA_VERSION,
             "authority": (
                 "pssolver.configuration.channel_active_nematics."
@@ -195,6 +200,37 @@ class ChannelActiveNematicRunSpec:
             "execution": execution,
             "dt": components["dt"],
         }
+        if include_forward_dynamics_version:
+            metadata["dynamics_versions"] = {
+                "forward_stokes_nyquist": (
+                    CHANNEL_FORWARD_STOKES_NYQUIST_VERSION
+                ),
+            }
+        return metadata
+
+    def runtime_identity_metadata(self) -> dict[str, object]:
+        """Return the numerical identity required for exact same-path restart."""
+
+        return self._runtime_identity_metadata(
+            include_forward_dynamics_version=True,
+        )
+
+    def pre_rc5_runtime_identity_sha256(self) -> str:
+        """Return the released P7 identity before Nyquist versioning.
+
+        This digest exists only to adjudicate format-v1 checkpoints.  New
+        checkpoints must use :meth:`runtime_identity_sha256`.
+        """
+
+        payload = json.dumps(
+            self._runtime_identity_metadata(
+                include_forward_dynamics_version=False,
+            ),
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+        return hashlib.sha256(payload).hexdigest()
 
     def runtime_identity_sha256(self) -> str:
         payload = json.dumps(

@@ -14,6 +14,9 @@ import torch
 from pssolver.configuration.channel_active_nematics_declarations import (
     ChannelRuntimePath,
 )
+from pssolver.configuration.channel_active_nematics import (
+    CHANNEL_FORWARD_STOKES_NYQUIST_VERSION,
+)
 from pssolver.io.checkpoint import (
     CheckpointCompatibilityError,
     CheckpointIntegrityError,
@@ -31,9 +34,10 @@ from pssolver.runtime.channel_active_nematics import (
 from .state_validation import require_finite_tensors
 
 
-CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1
+CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1
+CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 2
 CHANNEL_ALGEBRAIC_COMPONENTS = ("ux", "uy", "uz", "p")
-_CHANNEL_REQUIRED_KEYS = frozenset(
+_CHANNEL_V1_REQUIRED_KEYS = frozenset(
     {
         "format_version",
         "runtime_path",
@@ -46,6 +50,9 @@ _CHANNEL_REQUIRED_KEYS = frozenset(
         "backend_restart",
         "tensor_files",
     }
+)
+_CHANNEL_V2_REQUIRED_KEYS = frozenset(
+    {*_CHANNEL_V1_REQUIRED_KEYS, "dynamics_versions"}
 )
 
 
@@ -94,6 +101,7 @@ def _clone_pressure(value: torch.Tensor) -> torch.Tensor:
 class ChannelCheckpointHeader:
     """Identity-only header used to reject incompatible restarts early."""
 
+    format_version: int
     runtime_path: ChannelRuntimePath
     runtime_identity_sha256: str
     completed_steps: int
@@ -116,9 +124,13 @@ class ChannelWorkflowCheckpoint:
     algebraic_spectral: Mapping[str, torch.Tensor]
     pressure_guess: torch.Tensor
     backend_restart: Mapping[str, object]
+    dynamics_versions: Mapping[str, str] | None = None
 
     def __post_init__(self) -> None:
-        if self.format_version != CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        if self.format_version not in {
+            CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+            CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        }:
             raise ValueError("unsupported Channel checkpoint version")
         if not isinstance(self.runtime_path, ChannelRuntimePath):
             raise TypeError("runtime_path must be a ChannelRuntimePath")
@@ -188,15 +200,39 @@ class ChannelWorkflowCheckpoint:
             raise ValueError(
                 "backend restart metadata is not JSON-compatible"
             ) from exc
+        dynamics = self.dynamics_versions
+        if (
+            self.format_version
+            == CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+        ):
+            if dynamics is not None:
+                raise ValueError(
+                    "legacy Channel checkpoint cannot declare dynamics_versions"
+                )
+        else:
+            expected_dynamics = {
+                "forward_stokes_nyquist": (
+                    CHANNEL_FORWARD_STOKES_NYQUIST_VERSION
+                )
+            }
+            if (
+                not isinstance(dynamics, Mapping)
+                or dict(dynamics) != expected_dynamics
+            ):
+                raise ValueError(
+                    "Channel checkpoint dynamics_versions are incompatible"
+                )
+            dynamics = MappingProxyType(dict(dynamics))
         object.__setattr__(self, "evolved_spatial", spatial)
         object.__setattr__(self, "evolved_spectral", spectral)
         object.__setattr__(self, "algebraic_spatial", algebraic_spatial)
         object.__setattr__(self, "algebraic_spectral", algebraic_spectral)
         object.__setattr__(self, "pressure_guess", pressure)
         object.__setattr__(self, "backend_restart", MappingProxyType(backend))
+        object.__setattr__(self, "dynamics_versions", dynamics)
 
     def to_metadata(self) -> dict[str, object]:
-        return {
+        metadata = {
             "format_version": self.format_version,
             "runtime_path": self.runtime_path.value,
             "runtime_identity_sha256": self.runtime_identity_sha256,
@@ -211,6 +247,9 @@ class ChannelWorkflowCheckpoint:
             "persistent_algebraic": ["pressure_guess"],
             "backend_restart": dict(self.backend_restart),
         }
+        if self.dynamics_versions is not None:
+            metadata["dynamics_versions"] = dict(self.dynamics_versions)
+        return metadata
 
 
 def capture_channel_checkpoint(
@@ -262,7 +301,48 @@ def capture_channel_checkpoint(
         },
         pressure_guess=pressure_guess,
         backend_restart=adapter.backend_restart_metadata(),
+        dynamics_versions={
+            "forward_stokes_nyquist": (
+                CHANNEL_FORWARD_STOKES_NYQUIST_VERSION
+            )
+        },
     )
+
+
+def _validate_legacy_forward_nyquist_state(
+    checkpoint: ChannelWorkflowCheckpoint,
+) -> None:
+    """Reject a pre-repair even-grid algebraic state before target mutation."""
+
+    spectral = tuple(checkpoint.algebraic_spectral.values()) + (
+        checkpoint.pressure_guess,
+    )
+    first = spectral[0]
+    if first.ndim < 2:
+        raise CheckpointCompatibilityError(
+            "legacy Channel spectral state has no periodic axis",
+            operation="legacy_channel_checkpoint_import",
+        )
+    periodic_length = int(first.shape[1])
+    if any(
+        value.ndim < 2 or int(value.shape[1]) != periodic_length
+        for value in spectral
+    ):
+        raise CheckpointCompatibilityError(
+            "legacy Channel spectral state has inconsistent periodic axes",
+            operation="legacy_channel_checkpoint_import",
+        )
+    if periodic_length % 2 != 0:
+        return
+    nyquist_index = periodic_length // 2
+    if any(
+        bool(torch.count_nonzero(value[:, nyquist_index, ...]).item())
+        for value in spectral
+    ):
+        raise CheckpointCompatibilityError(
+            "legacy Channel checkpoint has pre-RC4.1 forward Nyquist dynamics",
+            operation="legacy_channel_checkpoint_import",
+        )
 
 
 def _validated_copy_plan(
@@ -312,6 +392,7 @@ def restore_channel_checkpoint(
     checkpoint: ChannelWorkflowCheckpoint,
     *,
     runtime_identity_sha256: str,
+    pre_rc5_runtime_identity_sha256: str | None = None,
 ) -> int:
     """Restore a fully validated checkpoint on its exact runtime path."""
 
@@ -324,11 +405,32 @@ def restore_channel_checkpoint(
             "cross-runtime Channel checkpoint restart is unsupported",
             operation="legacy_channel_checkpoint_import",
         )
-    if checkpoint.runtime_identity_sha256 != runtime_identity_sha256:
+    _require_sha256(runtime_identity_sha256, "runtime_identity_sha256")
+    if pre_rc5_runtime_identity_sha256 is not None:
+        _require_sha256(
+            pre_rc5_runtime_identity_sha256,
+            "pre_rc5_runtime_identity_sha256",
+        )
+    if checkpoint.format_version == CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        identity_matches = (
+            checkpoint.runtime_identity_sha256 == runtime_identity_sha256
+        )
+    else:
+        identity_matches = (
+            pre_rc5_runtime_identity_sha256 is not None
+            and checkpoint.runtime_identity_sha256
+            == pre_rc5_runtime_identity_sha256
+        )
+    if not identity_matches:
         raise CheckpointCompatibilityError(
             "checkpoint runtime identity does not match target",
             operation="legacy_channel_checkpoint_import",
         )
+    if (
+        checkpoint.format_version
+        == CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+    ):
+        _validate_legacy_forward_nyquist_state(checkpoint)
     if dict(checkpoint.backend_restart) != adapter.backend_restart_metadata():
         raise CheckpointCompatibilityError(
             "checkpoint backend restart contract does not match target",
@@ -417,10 +519,19 @@ def _read_metadata(directory: Path) -> Mapping[str, object]:
         directory / "checkpoint.json",
         operation="legacy_channel_checkpoint_import",
     )
-    if metadata.get("format_version") == CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+    format_version = metadata.get("format_version")
+    if format_version in {
+        CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    }:
         require_exact_checkpoint_keys(
             metadata,
-            required=_CHANNEL_REQUIRED_KEYS,
+            required=(
+                _CHANNEL_V1_REQUIRED_KEYS
+                if format_version
+                == CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+                else _CHANNEL_V2_REQUIRED_KEYS
+            ),
             description="Channel checkpoint metadata",
             operation="legacy_channel_checkpoint_import",
         )
@@ -439,7 +550,11 @@ def read_channel_checkpoint_header(
     """Read only the identity needed for early runtime rejection."""
 
     metadata = _read_metadata(Path(directory).expanduser().resolve())
-    if metadata.get("format_version") != CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+    format_version = metadata.get("format_version")
+    if format_version not in {
+        CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    }:
         raise CheckpointCompatibilityError(
             "unsupported Channel checkpoint version",
             operation="legacy_channel_checkpoint_import",
@@ -458,7 +573,12 @@ def read_channel_checkpoint_header(
     completed = metadata.get("completed_steps")
     if not isinstance(completed, int) or isinstance(completed, bool) or completed < 0:
         raise ValueError("checkpoint completed_steps is invalid")
-    return ChannelCheckpointHeader(runtime_path, identity, completed)
+    return ChannelCheckpointHeader(
+        format_version,
+        runtime_path,
+        identity,
+        completed,
+    )
 
 
 def _load_tensor(
@@ -583,11 +703,13 @@ def load_channel_checkpoint(directory: str | Path) -> ChannelWorkflowCheckpoint:
             "persistent__pressure_guess.npy",
         ),
         backend_restart=backend,
+        dynamics_versions=metadata.get("dynamics_versions"),
     )
 
 
 __all__ = [
     "CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
+    "CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "CHANNEL_ALGEBRAIC_COMPONENTS",
     "ChannelCheckpointHeader",
     "ChannelWorkflowCheckpoint",

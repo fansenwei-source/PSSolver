@@ -31,6 +31,7 @@ from pssolver.runtime import (
     build_channel_active_nematic_runtime,
 )
 from pssolver.workflows import (
+    CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     capture_channel_checkpoint,
     load_channel_checkpoint,
@@ -186,6 +187,18 @@ def test_runtime_identity_excludes_workflow_but_binds_numerics_and_path():
     assert baseline.runtime_identity_sha256() != _spec(
         "compiled_channel_v2"
     ).runtime_identity_sha256()
+    assert baseline.runtime_identity_metadata()["dynamics_versions"] == {
+        "forward_stokes_nyquist": (
+            "channel_no_slip.periodic_nyquist_zero.v2"
+        )
+    }
+    assert baseline.pre_rc5_runtime_identity_sha256() == (
+        "14e578c48897d3595c610d8f6f9dbff3573bb9a7e8fd9b5483e46b1acdc90fec"
+    )
+    assert (
+        baseline.runtime_identity_sha256()
+        != baseline.pre_rc5_runtime_identity_sha256()
+    )
     json.dumps(baseline.identity_metadata(), allow_nan=False, sort_keys=True)
 
 
@@ -310,6 +323,7 @@ def test_checkpoint_disk_round_trip_preserves_q_pressure_and_header(
         CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION
     )
     assert header.runtime_path is spec.runtime_path
+    assert header.format_version == CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION
     assert header.completed_steps == 2
     assert loaded.to_metadata() == checkpoint.to_metadata()
     for name in Q_COMPONENTS:
@@ -353,6 +367,66 @@ def test_same_runtime_split_restart_is_byte_identical(path):
         continuous.capture_pressure_guess(),
         resumed.capture_pressure_guess(),
     )
+
+
+def test_pre_rc5_even_checkpoint_with_repaired_nyquist_state_restores_exactly():
+    spec, source = _build()
+    _, target = _build()
+    source.advance(2)
+    current = capture_channel_checkpoint(
+        source,
+        runtime_identity_sha256=spec.runtime_identity_sha256(),
+    )
+    legacy = dataclasses.replace(
+        current,
+        format_version=CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        runtime_identity_sha256=spec.pre_rc5_runtime_identity_sha256(),
+        dynamics_versions=None,
+    )
+
+    assert restore_channel_checkpoint(
+        target,
+        legacy,
+        runtime_identity_sha256=spec.runtime_identity_sha256(),
+        pre_rc5_runtime_identity_sha256=(
+            spec.pre_rc5_runtime_identity_sha256()
+        ),
+    ) == 2
+    _assert_state_unchanged(target, _state_clone(source))
+
+
+def test_pre_repair_even_nyquist_state_rejects_before_target_mutation():
+    spec, source = _build()
+    _, target = _build()
+    source.advance(2)
+    current = capture_channel_checkpoint(
+        source,
+        runtime_identity_sha256=spec.runtime_identity_sha256(),
+    )
+    algebraic = {
+        name: value.clone()
+        for name, value in current.algebraic_spectral.items()
+    }
+    algebraic["ux"][:, SHAPE[0] // 2, 0, 0] = 1.0
+    legacy = dataclasses.replace(
+        current,
+        format_version=CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        runtime_identity_sha256=spec.pre_rc5_runtime_identity_sha256(),
+        algebraic_spectral=algebraic,
+        dynamics_versions=None,
+    )
+    before = _state_clone(target)
+
+    with pytest.raises(ValueError, match="pre-RC4.1 forward Nyquist dynamics"):
+        restore_channel_checkpoint(
+            target,
+            legacy,
+            runtime_identity_sha256=spec.runtime_identity_sha256(),
+            pre_rc5_runtime_identity_sha256=(
+                spec.pre_rc5_runtime_identity_sha256()
+            ),
+        )
+    _assert_state_unchanged(target, before)
 
 
 def test_cross_runtime_checkpoint_is_rejected_before_mutation():
