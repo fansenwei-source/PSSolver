@@ -5,11 +5,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 import json
 from pathlib import Path
+import math
 import time
 
 import numpy as np
 import torch
 
+from pssolver.api.errors import SimulationStateError
 from pssolver.models.active_nematics import Q_COMPONENTS, VELOCITY_COMPONENTS
 from pssolver.runtime.periodic_beris_edwards import (
     PeriodicRuntimeAdapterProtocol,
@@ -25,6 +27,7 @@ from .diagnostic_io import (
     diagnostics_metadata_envelope,
     write_structured_diagnostics,
 )
+from .state_validation import require_finite_tensors
 
 
 @dataclass(frozen=True, slots=True)
@@ -34,6 +37,34 @@ class PeriodicObservation:
     velocity: np.ndarray
     pressure: np.ndarray
 
+    def __post_init__(self) -> None:
+        if not isinstance(self.step, int) or isinstance(self.step, bool) or self.step < 0:
+            raise ValueError("observation step must be non-negative")
+        expected = (
+            ("Q", self.q, 4, len(Q_COMPONENTS)),
+            ("velocity", self.velocity, 4, len(VELOCITY_COMPONENTS)),
+            ("pressure", self.pressure, 3, None),
+        )
+        for description, value, ndim, components in expected:
+            if not isinstance(value, np.ndarray) or value.ndim != ndim:
+                raise ValueError(f"{description} observation shape is invalid")
+            if components is not None and value.shape[-1] != components:
+                raise ValueError(f"{description} observation component count is invalid")
+            if not np.issubdtype(value.dtype, np.floating):
+                raise TypeError(f"{description} observation must be floating")
+            if not np.isfinite(value).all():
+                raise SimulationStateError(
+                    f"periodic {description} observation is non-finite at step {self.step}",
+                    application_family="periodic_complete_stress",
+                    stage="observation",
+                    step=self.step,
+                    details={"field": description},
+                )
+        if self.velocity.shape[:-1] != self.q.shape[:-1]:
+            raise ValueError("velocity grid does not match Q")
+        if self.pressure.shape != self.q.shape[:-1]:
+            raise ValueError("pressure grid does not match Q")
+
 
 @dataclass(frozen=True, slots=True)
 class PeriodicDiagnostic:
@@ -42,6 +73,17 @@ class PeriodicDiagnostic:
     divergence_rms: float
     pressure_mean: float
     velocity_mean_norm: float
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.step, int) or isinstance(self.step, bool) or self.step < 0:
+            raise ValueError("diagnostic step must be non-negative")
+        if not all(math.isfinite(float(value)) for value in self.as_tuple()[1:]):
+            raise SimulationStateError(
+                f"periodic diagnostic is non-finite at step {self.step}",
+                application_family="periodic_complete_stress",
+                stage="diagnostic",
+                step=self.step,
+            )
 
     def as_tuple(self) -> tuple[int | float, ...]:
         return (
@@ -125,6 +167,17 @@ def _save_observation(directory, observation, *, hydrodynamics):
 
 
 def _write_checkpoint(directory, adapter, *, run_spec):
+    fields = adapter.fields
+    require_finite_tensors(
+        (
+            (f"{name}{suffix}", fields[f"{name}{suffix}"])
+            for suffix in ("", ".hat")
+            for name in Q_COMPONENTS
+        ),
+        application_family="periodic_complete_stress",
+        stage="checkpoint",
+        step=adapter.completed_steps,
+    )
     return write_periodic_checkpoint(
         directory,
         capture_periodic_checkpoint(

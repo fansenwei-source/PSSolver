@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from pssolver.api.errors import SimulationStateError
 from pssolver.models.active_nematics import Q_COMPONENTS, VELOCITY_COMPONENTS
 from pssolver.runtime import (
     PlaneRuntimeAdapterProtocol,
@@ -45,7 +46,13 @@ class PlaneObservation:
             if not np.issubdtype(value.dtype, np.floating):
                 raise TypeError(f"{description} observation must be floating")
             if not np.isfinite(value).all():
-                raise ValueError(f"{description} observation must be finite")
+                raise SimulationStateError(
+                    f"Plane {description} observation is non-finite at step {self.step}",
+                    application_family="plane_complete_stress",
+                    stage="observation",
+                    step=self.step,
+                    details={"field": description},
+                )
         if self.velocity.shape[:-1] != self.q.shape[:-1]:
             raise ValueError("velocity grid does not match Q")
         if self.pressure.shape != self.q.shape[:-1]:
@@ -98,7 +105,12 @@ class PlaneDiagnostic:
             )
         )
         if not all(math.isfinite(value) for value in values):
-            raise ValueError("diagnostic values must be finite")
+            raise SimulationStateError(
+                f"Plane diagnostic is non-finite at step {self.step}",
+                application_family="plane_complete_stress",
+                stage="diagnostic",
+                step=self.step,
+            )
 
     def as_tuple(self) -> tuple[float | int, ...]:
         return (

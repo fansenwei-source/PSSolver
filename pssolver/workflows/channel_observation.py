@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from pssolver.api.errors import SimulationStateError
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.channel_active_nematics import (
     ChannelRuntimeAdapterProtocol,
@@ -34,8 +35,15 @@ class ChannelObservation:
                 raise ValueError("Channel observation shape is invalid")
             if components is not None and value.shape[-1] != components:
                 raise ValueError("Channel observation component count is invalid")
-            if not np.issubdtype(value.dtype, np.floating) or not np.isfinite(value).all():
-                raise ValueError("Channel observations must be finite floating arrays")
+            if not np.issubdtype(value.dtype, np.floating):
+                raise TypeError("Channel observations must be floating arrays")
+            if not np.isfinite(value).all():
+                raise SimulationStateError(
+                    f"legacy Channel observation is non-finite at step {self.step}",
+                    application_family="legacy_channel_active_nematic",
+                    stage="observation",
+                    step=self.step,
+                )
         if self.velocity.shape[:-1] != self.q.shape[:-1] or self.pressure.shape != self.q.shape[:-1]:
             raise ValueError("Channel observation grids differ")
         object.__setattr__(self, "q", np.array(self.q, copy=True))
@@ -59,7 +67,12 @@ class ChannelDiagnostic:
         if not isinstance(self.step, int) or isinstance(self.step, bool) or self.step < 0:
             raise ValueError("diagnostic step must be non-negative")
         if not all(math.isfinite(float(value)) for value in self.as_tuple()[1:]):
-            raise ValueError("diagnostic values must be finite")
+            raise SimulationStateError(
+                f"legacy Channel diagnostic is non-finite at step {self.step}",
+                application_family="legacy_channel_active_nematic",
+                stage="diagnostic",
+                step=self.step,
+            )
 
     def as_tuple(self) -> tuple[float | int, ...]:
         return (

@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 import json
+import math
 from pathlib import Path
 import shutil
 import time
@@ -12,6 +13,7 @@ import time
 import numpy as np
 import torch
 
+from pssolver.api.errors import SimulationStateError
 from pssolver.io.checkpoint import (
     CheckpointCompatibilityError,
     CheckpointIntegrityError,
@@ -48,6 +50,7 @@ from .diagnostic_io import (
     diagnostics_metadata_envelope,
     write_structured_diagnostics,
 )
+from .state_validation import require_finite_tensors
 
 
 CHECKPOINT_VERSION = 3
@@ -73,6 +76,34 @@ class ChannelBerisEdwardsObservation:
     velocity: np.ndarray
     pressure: np.ndarray
 
+    def __post_init__(self) -> None:
+        if not isinstance(self.step, int) or isinstance(self.step, bool) or self.step < 0:
+            raise ValueError("observation step must be non-negative")
+        expected = (
+            ("Q", self.q, 4, len(Q_COMPONENTS)),
+            ("velocity", self.velocity, 4, len(VELOCITY_COMPONENTS)),
+            ("pressure", self.pressure, 3, None),
+        )
+        for description, value, ndim, components in expected:
+            if not isinstance(value, np.ndarray) or value.ndim != ndim:
+                raise ValueError(f"{description} observation shape is invalid")
+            if components is not None and value.shape[-1] != components:
+                raise ValueError(f"{description} observation component count is invalid")
+            if not np.issubdtype(value.dtype, np.floating):
+                raise TypeError(f"{description} observation must be floating")
+            if not np.isfinite(value).all():
+                raise SimulationStateError(
+                    f"Channel {description} observation is non-finite at step {self.step}",
+                    application_family="channel_complete_stress",
+                    stage="observation",
+                    step=self.step,
+                    details={"field": description},
+                )
+        if self.velocity.shape[:-1] != self.q.shape[:-1]:
+            raise ValueError("velocity grid does not match Q")
+        if self.pressure.shape != self.q.shape[:-1]:
+            raise ValueError("pressure grid does not match Q")
+
 
 @dataclass(frozen=True, slots=True)
 class ChannelBerisEdwardsDiagnostic:
@@ -82,6 +113,17 @@ class ChannelBerisEdwardsDiagnostic:
     pressure_mean: float
     pressure_iterations: int
     pressure_relative_residual: float
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.step, int) or isinstance(self.step, bool) or self.step < 0:
+            raise ValueError("diagnostic step must be non-negative")
+        if not all(math.isfinite(float(value)) for value in self.as_tuple()[1:]):
+            raise SimulationStateError(
+                f"Channel diagnostic is non-finite at step {self.step}",
+                application_family="channel_complete_stress",
+                stage="diagnostic",
+                step=self.step,
+            )
 
     def as_tuple(self) -> tuple[int | float, ...]:
         return (
@@ -307,6 +349,24 @@ def write_channel_beris_edwards_checkpoint(
 
     adapter.synchronize_for_observation()
     fields = adapter.fields
+    pressure_guess_tensor = adapter.capture_pressure_guess()
+    state_names = (*Q_COMPONENTS, *VELOCITY_COMPONENTS, "p")
+    require_finite_tensors(
+        (
+            (f"{name}{suffix}", fields[f"{name}{suffix}"])
+            for suffix in ("", ".hat")
+            for name in state_names
+        ),
+        application_family="channel_complete_stress",
+        stage="checkpoint",
+        step=adapter.completed_steps,
+    )
+    require_finite_tensors(
+        (("pressure_guess", pressure_guess_tensor),),
+        application_family="channel_complete_stress",
+        stage="checkpoint",
+        step=adapter.completed_steps,
+    )
     with checkpoint_directory_transaction(
         directory,
         operation="complete_stress_channel_checkpoint_export",
@@ -317,7 +377,7 @@ def write_channel_beris_edwards_checkpoint(
                 values = fields[f"{name}{suffix}"].detach().cpu().numpy()
                 path = staging / f"{kind}__{name}.npy"
                 records[kind][name] = _tensor_record(path, values)
-        pressure_guess = adapter.capture_pressure_guess().cpu().numpy()
+        pressure_guess = pressure_guess_tensor.cpu().numpy()
         pressure_record = _tensor_record(
             staging / "backend__pressure_guess.npy",
             pressure_guess,
@@ -327,7 +387,7 @@ def write_channel_beris_edwards_checkpoint(
         compatibility_identity = build_channel_checkpoint_compatibility_identity(
             run_spec,
             fields=fields,
-            pressure_guess=adapter.capture_pressure_guess(),
+            pressure_guess=pressure_guess_tensor,
             backend_restart=backend_restart,
         )
         metadata = {
