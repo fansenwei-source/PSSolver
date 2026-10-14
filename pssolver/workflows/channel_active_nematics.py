@@ -11,7 +11,6 @@ import time
 from pssolver.configuration.channel_active_nematics import ChannelActiveNematicRunSpec
 from pssolver.run_metadata import write_run_metadata
 from pssolver.runtime.channel_active_nematics import ChannelRuntimeAdapterProtocol
-from pssolver.models.active_nematics import Q_COMPONENTS
 
 from .channel_checkpoint import (
     CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
@@ -25,7 +24,6 @@ from .channel_observation import (
     write_channel_observation,
 )
 from .diagnostic_io import diagnostics_metadata_envelope
-from .state_validation import require_finite_tensors
 
 
 CHANNEL_WORKFLOW_SCHEMA_VERSION = 1
@@ -81,18 +79,6 @@ class ChannelActiveNematicsWorkflow:
         return value
 
     def _checkpoint(self) -> None:
-        fields = self.adapter.fields
-        names = (*Q_COMPONENTS, "ux", "uy", "uz", "p")
-        require_finite_tensors(
-            (
-                (f"{name}{suffix}", fields[f"{name}{suffix}"])
-                for suffix in ("", ".hat")
-                for name in names
-            ),
-            application_family="legacy_channel_active_nematic",
-            stage="checkpoint",
-            step=self.adapter.completed_steps,
-        )
         value = capture_channel_checkpoint(
             self.adapter,
             runtime_identity_sha256=self.run_spec.runtime_identity_sha256(),

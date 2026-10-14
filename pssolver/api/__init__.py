@@ -20,7 +20,7 @@ from .declarations import (
 )
 from .simulation import Simulation
 from .runner import CompiledSimulation, compile_simulation, run_simulation
-from .errors import SimulationExecutionError, SimulationStateError
+from pssolver.workflows.errors import SimulationExecutionError, SimulationStateError
 from .results import (
     SimulationDiagnosticProtocol,
     SimulationObservationProtocol,

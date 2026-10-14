@@ -9,11 +9,11 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from pssolver.api.errors import SimulationStateError
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.channel_active_nematics import (
     ChannelRuntimeAdapterProtocol,
 )
+from .errors import SimulationStateError
 
 
 VELOCITY_COMPONENTS = ("ux", "uy", "uz")

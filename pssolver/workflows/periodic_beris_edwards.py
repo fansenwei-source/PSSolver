@@ -11,7 +11,6 @@ import time
 import numpy as np
 import torch
 
-from pssolver.api.errors import SimulationStateError
 from pssolver.models.active_nematics import Q_COMPONENTS, VELOCITY_COMPONENTS
 from pssolver.runtime.periodic_beris_edwards import (
     PeriodicRuntimeAdapterProtocol,
@@ -27,7 +26,7 @@ from .diagnostic_io import (
     diagnostics_metadata_envelope,
     write_structured_diagnostics,
 )
-from .state_validation import require_finite_tensors
+from .errors import SimulationStateError
 
 
 @dataclass(frozen=True, slots=True)
@@ -167,17 +166,6 @@ def _save_observation(directory, observation, *, hydrodynamics):
 
 
 def _write_checkpoint(directory, adapter, *, run_spec):
-    fields = adapter.fields
-    require_finite_tensors(
-        (
-            (f"{name}{suffix}", fields[f"{name}{suffix}"])
-            for suffix in ("", ".hat")
-            for name in Q_COMPONENTS
-        ),
-        application_family="periodic_complete_stress",
-        stage="checkpoint",
-        step=adapter.completed_steps,
-    )
     return write_periodic_checkpoint(
         directory,
         capture_periodic_checkpoint(

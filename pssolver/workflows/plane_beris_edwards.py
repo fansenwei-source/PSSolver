@@ -32,8 +32,6 @@ from .plane_observation import (
     write_plane_observation,
 )
 from .diagnostic_io import diagnostics_metadata_envelope
-from .state_validation import require_finite_tensors
-from pssolver.models.active_nematics import Q_COMPONENTS
 
 
 PLANE_WORKFLOW_SCHEMA_VERSION = 1
@@ -106,17 +104,6 @@ class PlaneBerisEdwardsWorkflow:
         return observation
 
     def _save_checkpoint(self) -> None:
-        fields = self.adapter.fields
-        require_finite_tensors(
-            (
-                (f"{name}{suffix}", fields[f"{name}{suffix}"])
-                for suffix in ("", ".hat")
-                for name in Q_COMPONENTS
-            ),
-            application_family="plane_complete_stress",
-            stage="checkpoint",
-            step=self.adapter.completed_steps,
-        )
         checkpoint = capture_plane_checkpoint(
             self.adapter,
             run_spec=self.run_spec,

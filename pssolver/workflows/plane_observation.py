@@ -9,12 +9,12 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from pssolver.api.errors import SimulationStateError
 from pssolver.models.active_nematics import Q_COMPONENTS, VELOCITY_COMPONENTS
 from pssolver.runtime import (
     PlaneRuntimeAdapterProtocol,
     plane_physical_component,
 )
+from .errors import SimulationStateError
 
 
 @dataclass(frozen=True, slots=True)

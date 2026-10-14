@@ -40,6 +40,7 @@ from pssolver.io.checkpoint_identity import (
 )
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.periodic_beris_edwards import PeriodicRuntimeAdapterProtocol
+from .state_validation import require_finite_tensors
 
 
 PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_V1 = 1
@@ -436,6 +437,15 @@ def capture_periodic_checkpoint(
     integrator = adapter.solver.integrator
     spatial = {name: fields[name] for name in Q_COMPONENTS}
     spectral = {name: fields[f"{name}.hat"] for name in Q_COMPONENTS}
+    require_finite_tensors(
+        (
+            *((name, value) for name, value in spatial.items()),
+            *((f"{name}.hat", value) for name, value in spectral.items()),
+        ),
+        application_family="periodic_complete_stress",
+        stage="checkpoint",
+        step=adapter.completed_steps,
+    )
     backend = adapter.backend_restart_metadata()
     return PeriodicWorkflowCheckpoint(
         format_version=PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,

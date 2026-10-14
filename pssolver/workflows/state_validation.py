@@ -6,7 +6,7 @@ from collections.abc import Iterable
 
 import torch
 
-from pssolver.api.errors import SimulationStateError
+from .errors import SimulationStateError
 
 
 def require_finite_tensors(

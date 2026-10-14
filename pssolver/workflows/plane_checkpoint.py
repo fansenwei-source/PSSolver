@@ -38,6 +38,7 @@ from pssolver.runtime import (
     plane_lifting_restart_metadata,
     verify_plane_lifting_identity,
 )
+from .state_validation import require_finite_tensors
 
 
 PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1
@@ -479,6 +480,15 @@ def capture_plane_checkpoint(
     integrator = adapter.solver.integrator
     spatial = {name: fields[name] for name in Q_COMPONENTS}
     spectral = {name: fields[f"{name}.hat"] for name in Q_COMPONENTS}
+    require_finite_tensors(
+        (
+            *((name, value) for name, value in spatial.items()),
+            *((f"{name}.hat", value) for name, value in spectral.items()),
+        ),
+        application_family="plane_complete_stress",
+        stage="checkpoint",
+        step=adapter.completed_steps,
+    )
     backend = adapter.backend_restart_metadata()
     lifting = plane_lifting_restart_metadata(adapter)
     compatibility_identity = build_plane_checkpoint_compatibility_identity(

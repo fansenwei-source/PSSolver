@@ -28,6 +28,7 @@ from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.channel_active_nematics import (
     ChannelRuntimeAdapterProtocol,
 )
+from .state_validation import require_finite_tensors
 
 
 CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1
@@ -225,6 +226,21 @@ def capture_channel_checkpoint(
     adapter.synchronize_for_observation()
     fields = adapter.fields
     integrator = adapter.solver.integrator
+    state_names = (*Q_COMPONENTS, *CHANNEL_ALGEBRAIC_COMPONENTS)
+    pressure_guess = adapter.capture_pressure_guess()
+    require_finite_tensors(
+        (
+            *(
+                (f"{name}{suffix}", fields[f"{name}{suffix}"])
+                for suffix in ("", ".hat")
+                for name in state_names
+            ),
+            ("pressure_guess", pressure_guess),
+        ),
+        application_family="legacy_channel_active_nematic",
+        stage="checkpoint",
+        step=adapter.completed_steps,
+    )
     return ChannelWorkflowCheckpoint(
         format_version=CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
         runtime_path=adapter.runtime_path,
@@ -244,7 +260,7 @@ def capture_channel_checkpoint(
             name: fields[f"{name}.hat"]
             for name in CHANNEL_ALGEBRAIC_COMPONENTS
         },
-        pressure_guess=adapter.capture_pressure_guess(),
+        pressure_guess=pressure_guess,
         backend_restart=adapter.backend_restart_metadata(),
     )
 
