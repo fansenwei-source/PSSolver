@@ -29,6 +29,10 @@ def test_matrix_binds_the_released_rc3_baseline_without_claiming_runtime_changes
         "rc4_correctness_batches_complete": True,
         "eligible_for_rc4_release_preparation": True,
         "eligible_for_final_v0_2_0": False,
+        "rc4_post_release_verification_passed": False,
+        "rc4_post_release_classification": "FAIL",
+        "eligible_for_rc5_repair": True,
+        "eligible_for_rc5_release": False,
         "new_features_authorized": False,
         "production_default_changed": False,
         "pssolver_control_change_required_for_this_matrix": False,
@@ -45,6 +49,26 @@ def test_matrix_binds_both_external_audit_documents_by_digest():
         {
             "name": "PSSolver_v0_2_0rc2_fix_verification_zh.pdf",
             "sha256": "140986b3f6f20b0c0c874b21df02b037cf8ee1bb32e43dd11bc2d638cd9b8f76",
+        },
+        {
+            "name": "PSSolver_v0_2_0rc4_post_release_verification.json",
+            "sha256": "24f7e1a1129b72894c634071d8f272dfbd3f1a91017650427550e1f35f5da773",
+            "classification": "FAIL_NEW_REGRESSION",
+        },
+        {
+            "name": "PSSolver_v0_2_0rc4_post_release_verification_codex_draft.json",
+            "sha256": "54e779aee7f622b78580aad1e03d26afea0eeaf6be8bcb07788bc8b53bb2e77b",
+            "classification": "SUPERSEDED_PASS_WITH_DOCUMENTED_LIMITATIONS",
+        },
+        {
+            "name": "PSSolver_v0_2_0rc4_post_release_verification_claude_review.json",
+            "sha256": "e29501ab68088d18ba567058554406e5742cb5c923a8161d928c7e7b7862ac66",
+            "classification": "FAIL",
+        },
+        {
+            "name": "PSSolver_v0_2_0rc4_consolidated_report.json",
+            "sha256": "db3e644bd97bc28ca046d0632aa2eae1b142ad6a208ad10b9dcb82cc42e6e6c6",
+            "classification": "FAIL",
         },
     ]
 
@@ -68,20 +92,23 @@ def test_state_counts_match_the_machine_readable_summary():
     for item in record["items"]:
         counts[item["state"]] = counts.get(item["state"], 0) + 1
     normalized_counts = {
-        "closed_verified": 38,
+        "closed_verified": 28,
         "partial_residual": counts.get("partial_residual", 0),
+        "regressed_after_closure": counts.get("regressed_after_closure", 0),
         "accepted_limitation": 3,
         "deferred_architecture": 9,
     }
     assert counts == {
         key: value for key, value in normalized_counts.items() if value
     }
-    assert normalized_counts["partial_residual"] == 0
+    assert normalized_counts["partial_residual"] == 9
+    assert normalized_counts["regressed_after_closure"] == 1
     assert record["summary"] == {
         "item_count": 50,
         **normalized_counts,
+        "post_release_finding_count": 15,
         "first_implementation_batch": "rc4.1_plane_nyquist",
-        "next_implementation_batch": "post_0_2_architecture",
+        "next_implementation_batch": "rc5_documentation",
     }
 
 
@@ -94,46 +121,68 @@ def test_release_blockers_and_closed_rc3_regressions_are_not_conflated():
     assert items["B5"]["closure_record"] == (
         "notes/PSSolver_v0_2_0rc4_rc412_h100_closure.json"
     )
-    for identifier in ("B10", "B22", "N3", "N5", "N6"):
+    assert items["B10"]["state"] == "regressed_after_closure"
+    assert items["B10"]["historical_closure_record"] == (
+        "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"
+    )
+    for identifier in ("N3", "N6"):
+        assert items[identifier]["state"] == "partial_residual"
+        assert items[identifier]["historical_closure_record"] == (
+            "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"
+        )
+    for identifier in ("B22", "N5"):
         assert items[identifier]["state"] == "closed_verified"
-        assert items[identifier]["disposition"] == "closed"
         assert items[identifier]["closure_record"] == (
             "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"
         )
-    for identifier in ("B8", "B20", "N4"):
-        assert items[identifier]["state"] == "closed_verified"
+    assert items["B8"]["state"] == "closed_verified"
+    assert items["B8"]["physical_lifting_repaired"] is False
+    assert items["N4"]["state"] == "closed_verified"
+    assert items["B20"]["state"] == "partial_residual"
+    for identifier in ("B8", "N4"):
         assert items[identifier]["closure_record"] == (
             "notes/PSSolver_v0_2_0rc4_rc437_h100_closure.json"
         )
+    assert items["B20"]["historical_closure_record"] == (
+        "notes/PSSolver_v0_2_0rc4_rc437_h100_closure.json"
+    )
     for identifier in ("B25", "B28", "B29"):
         assert items[identifier]["state"] == "closed_verified"
         assert items[identifier]["disposition"] == "closed"
         assert items[identifier]["closure_record"] == (
             "notes/PSSolver_v0_2_0rc4_rc447_h100_closure.json"
         )
-    for identifier in ("B7", "B24", "B27"):
-        assert items[identifier]["state"] == "closed_verified"
-        assert items[identifier]["disposition"] == "closed"
-        assert items[identifier]["closure_record"] == (
+    for identifier in ("B7", "B24"):
+        assert items[identifier]["state"] == "partial_residual"
+        assert items[identifier]["historical_closure_record"] == (
             "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
         )
+    assert items["B27"]["state"] == "closed_verified"
+    assert items["B27"]["closure_record"] == (
+        "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
+    )
     for identifier in ("B9", "B21"):
         assert items[identifier]["state"] == "closed_verified"
         assert items[identifier]["disposition"] == "closed"
         assert items[identifier]["closure_record"] == (
             "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json"
         )
-    for identifier in ("B13", "B15", "B17"):
-        assert items[identifier]["state"] == "closed_verified"
-        assert items[identifier]["disposition"] == "closed"
-        assert items[identifier]["closure_record"] == (
+    for identifier in ("B13", "B17"):
+        assert items[identifier]["state"] == "partial_residual"
+        assert items[identifier]["historical_closure_record"] == (
             "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
         )
-    assert items["B11"]["state"] == "closed_verified"
-    assert items["B11"]["disposition"] == "closed"
-    assert items["B11"]["closure_record"] == (
+    assert items["B15"]["state"] == "closed_verified"
+    assert items["B15"]["closure_record"] == (
+        "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
+    )
+    assert items["B11"]["state"] == "partial_residual"
+    assert items["B11"]["historical_closure_record"] == (
         "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
     )
+    assert items["B23"]["state"] == "partial_residual"
+    assert items["B30"]["documentation_complete"] is False
+    assert items["A3"]["target"] == "rc3"
 
 
 def test_first_batch_is_only_plane_nyquist_and_has_non_regression_gates():
@@ -160,6 +209,60 @@ def test_architecture_work_is_deferred_until_correctness_batches_close():
         for item in record["items"]
         if item["id"].startswith("R")
     )
+
+
+def test_post_release_findings_are_registered_without_changing_the_50_item_total():
+    record = _record()
+    findings = record["post_release_findings"]
+    assert [item["id"] for item in findings] == [
+        f"NEW-{index}" for index in range(1, 16)
+    ]
+    assert all(item["state"] == "open" for item in findings)
+    assert len(record["items"]) == 50
+    assert record["post_release"] == {
+        "release": "v0.2.0rc4",
+        "date": "2026-10-14",
+        "classification": "FAIL",
+        "decisive_item": "B10",
+        "evidence_registration": (
+            "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
+        ),
+        "historical_closure_records_rewritten": False,
+        "runtime_changed_by_registration": False,
+        "tag_or_release_mutated": False,
+        "nematics3d_modified": False,
+        "h100_submitted": False,
+    }
+
+
+def test_rc5_work_queue_matches_the_post_release_priority_order():
+    queues = {item["batch"]: item for item in _record()["work_queue"]}
+    assert queues["rc5_documentation"]["items"] == ["B30", "NEW-4", "NEW-5"]
+    assert queues["rc5_must"]["items"] == [
+        "B10", "NEW-1", "N3", "NEW-2", "NEW-3", "B11"
+    ]
+    assert queues["rc5_should"]["items"] == [
+        "B7",
+        "B13",
+        "B17",
+        "B20",
+        "B23",
+        "B24",
+        "N6",
+        "NEW-7",
+        "NEW-8",
+        "NEW-9",
+        "NEW-10",
+        "NEW-11",
+        "NEW-12",
+        "NEW-13",
+        "NEW-14",
+    ]
+    assert queues["rc5_optional"]["items"] == [
+        "B14", "B27", "B28", "N4", "NEW-15"
+    ]
+    assert queues["rc5_release_process"]["items"] == ["NEW-6"]
+    assert queues["rc5_qualification"]["items"] == ["G-1"]
 
 
 def test_rc450_progress_records_rc44_closure_and_rc45_planning_boundary():

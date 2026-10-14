@@ -1,28 +1,37 @@
-# PSSolver v0.2.0rc3 已知问题关闭矩阵
+# PSSolver v0.2.0rc3 已知问题关闭矩阵（含 v0.2.0rc4 发布后 successor）
 
-这份记录以已发布的 `v0.2.0rc3`（`5071d73a00e0d19be62ebd39edf9918818d1267a`）为不可变基线，把 Claude 的 rc1 审计和 rc2 修复复核转换为后续可执行的关闭队列。它不修改运行时代码，也不降低 rc3 已通过的 CPU、installed-wheel 或 H100 资格结论。
+这份记录以已发布的 `v0.2.0rc3`（`5071d73a00e0d19be62ebd39edf9918818d1267a`）为不可变基线，把 Claude 的 rc1 审计和 rc2 修复复核转换为后续可执行的关闭队列。2026-10-14 的 successor 根据 v0.2.0rc4 发布后真实旧版 fixture 复核更新当前状态；它不改写任何历史 closure，也不修改运行时代码、tag 或 Release。
 
 ## 证据边界
 
-两份输入审计的 SHA-256 已写入 JSON。`v0.2.0rc2..v0.2.0rc3` 之间真正影响数值运行时的文件只有：
+原始两份输入审计及 v0.2.0rc4 发布后验证、Codex 草稿、Claude 盲审和合并报告的 SHA-256 均已写入 JSON。`v0.2.0rc2..v0.2.0rc3` 之间真正影响数值运行时的文件只有：
 
 - `pssolver/functional/channel_pressure.py`；
 - `pssolver/functional/pressure_metadata.py`。
 
 因此 N1 能依据 rc3 的新增回归测试和 H100 结果关闭；N2 由独立 PSSolver-Control 迁移和最终 installed-wheel H100 结果关闭。除此之外，rc2 复核中明确留下的缺口仍然适用于 rc3，除非后续用新的复现或实现提交将其关闭。
 
-这并不表示 rc3 发布不合格。rc3 对它声明的 batch-one Periodic/Channel functional API、现有生产默认路径和四个已资格组合是合格的；它不等于整份历史审计清零。
+这并不表示 rc3 发布不合格。rc3 对它声明的 batch-one Periodic/Channel functional API、现有生产默认路径和四个已资格组合是合格的；它不等于整份历史审计清零。v0.2.0rc4 的 fresh-run 资格证据也继续有效，但真实 rc1–rc3 functional checkpoint 的发布后复核推翻了 B10 的关闭状态，因此 rc4 的合并发布后分类为 `FAIL`。
 
 ## 当前统计
 
 | 状态 | 数量 | 含义 |
 |---|---:|---|
-| `closed_verified` | 38 | 目标行为已有回归或资格证据 |
-| `partial_residual` | 0 | 当前 RC4 正确性队列中没有残余项 |
+| `closed_verified` | 28 | 目标行为已有回归或资格证据，且发布后证据未推翻 |
+| `partial_residual` | 9 | B7、B11、B13、B17、B20、B23、B24、N3、N6 仍有可复现残余 |
+| `regressed_after_closure` | 1 | B10 曾关闭，但 rc4 拒绝真实 rc1–rc3 functional checkpoint |
 | `accepted_limitation` | 3 | 已知且明确接受，不作为当前正确性修复 |
 | `deferred_architecture` | 9 | 架构债务，推迟到正确性关闭之后 |
 
-RC4 正确性队列现已关闭，但这只授权准备 `v0.2.0rc4`，不等于可直接提升为最终 `v0.2.0`。
+另登记 NEW-1…NEW-15 共 15 项发布后发现。RC4 历史批次均曾完成，但发布后状态不再允许把正确性队列视为全部关闭；所有修复进入 rc5。
+
+## 发布后决定性回归
+
+B10 的真实旧版 checkpoint fixture 位于：
+
+`/home/fansenwei/pssolver_rc4_post_release_verification_20261013_v1/agent_evidence/state/legacy_ckpts_full/`
+
+已发布 rc4 wheel 对 rc1、rc2、rc3 的 Periodic/Channel functional checkpoint 共六种组合，无论直接 import 还是显式 migration 都拒绝。`1b15bf8` 对 rc3 fixture 的对照仍能读入并逐位恢复，因此这是 `dc8c87a` / `a195bd0` 之后的 released regression，而不是 fixture 损坏。拒绝是 fail-closed，不会静默读错数据。
 
 ## 修复顺序
 
@@ -34,11 +43,11 @@ RC4 正确性队列现已关闭，但这只授权准备 `v0.2.0rc4`，不等于�
 
 ### rc4.2：checkpoint 与动力学身份
 
-处理 B10、B22、N3、N5、N6。该批次已经完成：分层身份表达真实动力学版本，device token 与 fresh-only conditioning 不再错误阻断兼容续跑；legacy 输入按已登记 reader 接受或在 target mutation 前拒绝。installed-wheel CPU 门禁和 X01–X14 双向 CPU/CUDA checkpoint H100 矩阵均通过。权威关闭记录为 `PSSolver_v0_2_0rc4_rc426_h100_closure.json`。
+处理 B10、B22、N3、N5、N6。该批次的历史 installed-wheel CPU 门禁和 X01–X14 双向 CPU/CUDA checkpoint H100 矩阵均曾通过，权威历史记录为 `PSSolver_v0_2_0rc4_rc426_h100_closure.json`。发布后真实 fixture 揭示：B10 已回归；N3 的 legacy Channel identity 仍可静默跨越偶数网格动力学变化；N6 的 full-complex 描述性元数据仍不准确。历史记录保持不变，当前状态分别为一项 `regressed_after_closure` 和两项 `partial_residual`。
 
 ### rc4.3：lifting 正确性
 
-处理 B8、B20、N4。该批次已经完成：RC4.3.1 用真实 solver 与独立参考证明当前 DST remainder 不能支持公开的非零壁面 molecular-field 收敛声明；RC4.3.2–RC4.3.5 随后以 fail-closed restriction、显式 fresh-only conditioning、requested/effective metadata 和分层 checkpoint identity 关闭错误能力声明。RC4.3.6 installed-wheel CPU 门禁及 RC4.3.7 correct-layer CUDA、restart、R128/R320 性能与显存门禁均已通过。权威关闭记录为 `PSSolver_v0_2_0rc4_rc437_h100_closure.json`。这不表示原非收敛路径已被数学修复，也不重新开放 public lifted Plane。
+处理 B8、B20、N4。RC4.3.1 用真实 solver 与独立参考证明当前 DST remainder 不能支持公开的非零壁面 molecular-field 收敛声明；后续以 fail-closed restriction 关闭错误公开能力，原非收敛路径没有被数学修复，也不重新开放 public lifted Plane。B8 保持关闭；B20 因 strict fresh-conditioning 拒绝合同未实现而转为 `partial_residual`。权威历史关闭记录仍为 `PSSolver_v0_2_0rc4_rc437_h100_closure.json`。
 
 ### rc4.4：压力求解合同
 
@@ -46,7 +55,7 @@ RC4 正确性队列现已关闭，但这只授权准备 `v0.2.0rc4`，不等于�
 
 ### rc4.5：跨 runtime 鲁棒性
 
-处理 B7、B9、B11、B13、B15、B17、B21、B24、B27。RC4.5.0 已把它们拆成 checkpoint transactionality、boundary semantics、public validation/observability 和 accelerator global state 四个 cohort。RC4.5.1 随后完成十个 analysis-only probe，RC4.5.2 冻结公共合同。RC4.5.3–RC4.5.5 已分别关闭 checkpoint transactionality、boundary semantics 和 public validation/observability 的 CPU 实现门禁，因此 B7、B9、B13、B15、B17、B21、B24、B27 均为 `closed_verified`。RC4.5.6 已把八条生产/functional runtime 的 TF32 设置改为执行期作用域：进入前验证并快照三个 Torch 全局精度状态，成功或异常退出均在 `finally` 中精确恢复，嵌套作用域按 LIFO 恢复。RC4.5.7 随后完成 installed-wheel CPU 与 Consumer 累计关闭。RC4.5.8 的 7 个 CUDA tests、TF32 caller-state、96 份 profiles 和 Consumer H100 suite 均已完成；两层 CPU-only analyzer recovery 在不改门限和原始证据的前提下关闭 counter-layer 与 allocator reducer 归因。B11 现为 `closed_verified`，权威记录为 `PSSolver_v0_2_0rc4_rc458_h100_closure.json`。
+处理 B7、B9、B11、B13、B15、B17、B21、B24、B27。历史 CPU、installed-wheel、Consumer 和 H100 门禁保持有效；但发布后更宽输入矩阵发现 B7、B11、B13、B17、B24 仍有残余，分别涉及 checkpoint 精确键与 reader 边界、`'medium'` TF32 恢复顺序、历史/functional 设备语法、结构化公开异常和错误分类。B9、B15、B21、B27 保持关闭。权威历史记录不改写，当前 residual 进入 rc5。
 
 ### 0.2 之后的架构去重
 
@@ -56,6 +65,14 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 建立本矩阵不要求修改 PSSolver-Control 或 `nematics3d`。只有 Provider 改动触及 functional API、functional checkpoint identity、Channel pressure mathematics 或 Consumer 使用的公开声明时，才触发 Consumer-owned 迁移和重新资格验证。
 
-## 下一项实现
+## rc5 执行队列
 
-`rc4.1_plane_nyquist`、`rc4.2_checkpoint_identity`、`rc4.3_lifting_correctness`、`rc4.4_pressure_contract` 与 `rc4.5_cross_runtime_robustness` 均已完成。B11 随 RC4.5.8 累计关闭转为 `closed_verified`，RC4 正确性批次全部结束。下一步是独立的 `v0.2.0rc4` release preparation：冻结 release metadata、构建 source/wheel、隔离安装并执行最终 release smoke；当前尚未 merge、打 tag或发布，也未授权生产默认值变更。
+执行顺序固定为：
+
+1. `rc5_documentation`：DOC1、DOC2、NEW-4、NEW-5、B30；
+2. `rc5_must`：B10、NEW-1、N3、NEW-2、NEW-3、B11；
+3. `rc5_should`：其余九项 partial residual 与 NEW-7…NEW-14；
+4. `rc5_optional` 与 release-process 卫生；
+5. rc5 冻结后才执行累计 CPU、installed-wheel、真实旧版 checkpoint、Consumer 和经单独授权的唯一一次 H100 资格。
+
+不得改动 v0.2.0rc4 tag/Release，不修改 `nematics3d`，不放宽阈值或增加 skip/xfail，也不得借文档修正重新开放 lifting。

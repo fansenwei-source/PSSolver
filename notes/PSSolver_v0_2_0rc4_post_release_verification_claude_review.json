@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "record": "Claude blind review of the Codex v0.2.0rc4 post-release verification draft",
+  "date": "2026-10-14",
+  "reviewed_draft": {
+    "markdown": "notes/PSSolver_v0_2_0rc4_post_release_verification_codex_draft_zh.md",
+    "json": "notes/PSSolver_v0_2_0rc4_post_release_verification_codex_draft.json",
+    "draft_classification": "PASS_WITH_DOCUMENTED_LIMITATIONS",
+    "treated_as": "unverified claims"
+  },
+  "independent_evidence": {
+    "claude_verification_record": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc4_post_release_verification.json",
+    "claude_verification_record_sha256": "24f7e1a1129b72894c634071d8f272dfbd3f1a91017650427550e1f35f5da773",
+    "claude_verification_report": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc4_post_release_verification_zh.md",
+    "cumulative_tracker": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_issue_tracking_zh.pdf",
+    "evidence_directory": "/home/fansenwei/pssolver_rc4_post_release_verification_20261013_v1",
+    "note": "The Claude verification was run before the Codex draft was read; this review compares the draft against that evidence and re-checks the points the draft asked about."
+  },
+  "fields": {
+    "classification": "FAIL",
+    "tag_identity_verified": true,
+    "artifact_identity_verified": true,
+    "historical_issue_matrix_verified": false,
+    "closed_verified_count": 28,
+    "accepted_limitation_count": 3,
+    "deferred_architecture_count": 9,
+    "partial_residual_count_found": 9,
+    "regressed_after_closure_count_found": 1,
+    "doc1_confirmed": true,
+    "doc2_confirmed": true,
+    "runtime_regression_found": true,
+    "scientific_or_numerical_failure_found": false,
+    "nematics3d_modified": false,
+    "release_mutation_recommended": false
+  },
+  "field_notes": {
+    "classification": "FAIL because B10 (recorded closed_verified) regressed inside the rc4 delta and nine other closed items retain reproducible residuals; equivalent to FAIL_NEW_REGRESSION in the Claude verification.",
+    "runtime_regression_found": "B10: the released rc4 wheel rejects every functional checkpoint written by the published rc1/rc2/rc3 releases on direct import and on explicit migrate_legacy_checkpoint (6/6). The same script succeeds at 1b15bf8. Regressing commits dc8c87a (Channel) and a195bd0 (Periodic). Fail-closed.",
+    "scientific_or_numerical_failure_found": "false for the qualified fresh-run paths (B1/B5/N1/B2/B25/B29 hold with rc1/rc3 negative controls). Robustness defects that affect scientific use are listed as new issues (Periodic NaN reported COMPLETE; legacy Channel silently resuming rc1 even-grid checkpoints).",
+    "counts": "Independent mapping onto the matrix states: closed_verified 28, partial_residual 9 (B7, B11, B13, B17, B20, B23, B24, N3, N6), regressed_after_closure 1 (B10), accepted_limitation 3 (B30, A2, A5; B30's documentation action is not done), deferred_architecture 9.",
+    "release_mutation_recommended": "Do not move the tag, rewrite the GitHub Release or publish to PyPI; fix in rc5 and record the regression in an evidence-only commit."
+  },
+  "release_identity": {
+    "tag_object": "8822ab370e252d76549c6365dc5f5023ec3231c4",
+    "peeled_commit": "658869456d762c917ca4409b091539c3733df2fb",
+    "remote_tag_matches": true,
+    "github_release": {"is_prerelease": true, "is_draft": false, "target_commitish": "main", "tag_commit_on_origin_main": false},
+    "assets": {
+      "pssolver-0.2.0rc4.tar.gz": {"size": 872255, "sha256": "c7f5f2be2881cd3377cd936f8596ce2faf1b2a35fd96a955e71d92b3a292964c", "verified": true},
+      "pssolver-0.2.0rc4-py3-none-any.whl": {"size": 1094307, "sha256": "1bf31f324180dac58777a23785fb4e1424d3cc589099cf8c6328e2f6c74d8cc5", "verified": true}
+    },
+    "pssolver_py_files_in_tag": 248,
+    "tag_sdist_wheel_source_identical": true,
+    "evidence_successors_not_qualified_source": {"156589b": "notes/tests only", "212518e": "notes/tests only", "branch_tip": "212518e"}
+  },
+  "claims": [
+    {"claim": "No new solver/numerical/Hermitian/pressure-adjoint regression in the declared scope", "verdict": "VERIFIED", "evidence": "B1 7500-step functional and 6000-step production runs, rc1 negative control; B5 independent collocation oracle with rc3 negative control; N1 dense adjoint identity 3.65e-16; B2/B25/B29 reproducers."},
+    {"claim": "No new checkpoint regression", "verdict": "REFUTED", "evidence": "B10 regression reproduced on the installed release wheel with genuine rc1/rc2/rc3 checkpoints; control run at 1b15bf8 accepts rc3."},
+    {"claim": "No new TF32 regression", "verdict": "VERIFIED_WITH_RESIDUAL", "evidence": "No regression versus rc3, but B11 is not closed: configuration/execution_device.py:86-93 restores a caller 'medium' precision as 'high'; tests/test_rc456_tf32_execution_scope.py:32-35 and benchmarks/qualify_rc458_tf32_scope.py:34-37 never construct a true 'medium' caller state."},
+    {"claim": "Matrix 38 closed / 0 partial / 3 accepted / 9 deferred", "verdict": "REFUTED", "evidence": "See field_notes.counts; record-level closure was not re-tested against genuine released artifacts."},
+    {"claim": "Closure grouping by stage", "verdict": "MOSTLY_VERIFIED", "evidence": "37/38 match matrix targets; A3 has target rc3 (closed_breaking_migration), not rc2 direct fix."},
+    {"claim": "Historical fix commits are tag ancestors", "verdict": "VERIFIED", "evidence": "All cited fix commits pass git merge-base --is-ancestor <c> 6588694."},
+    {"claim": "RC4.3 B8/B20/N4 closed by fail-closed public restriction", "verdict": "PARTIALLY_VERIFIED", "evidence": "B8 and N4: correct, physics unrepaired (models/active_nematics/stokes.py unchanged since v0.2.0rc2) and the internal lifted path stays executable. B20 is not a restriction closure: it is the explicit fresh-conditioning policy, and the rc432 strict contract ('reject incompatible fresh data') is not implemented (operators/lifting.py:397-398)."},
+    {"claim": "B30, A2, A5 accepted limitations", "verdict": "VERIFIED_WITH_NOTE", "evidence": "Behaviour matches; B30's recorded disposition 'document' was never carried out (operators/robin.py:306 docstring has no caveat; p852/p853/p855 tests still gate on it)."},
+    {"claim": "R1-R9 deferred", "verdict": "VERIFIED", "evidence": "R2 partly centralized in io/checkpoint.py (still 10 implementations); R3 grew 5,153 -> 7,369 lines; R6 grew 2,626 -> 2,819 lines plus 1,443 lines of publicly unreachable lifting infrastructure."},
+    {"claim": "Clean installed-wheel CPU smoke passes", "verdict": "VERIFIED", "evidence": "Independent venv: pip check PASS, site-packages imports only; Periodic (both storages) and Channel 4-step runs, 2+2 restart byte-identical; PSSolver suite against the wheel 3146 passed with all 260 failures attributable to source-path/git harness; PSSolver-Control b8539e0 310 passed / 1 skipped against the rc4 wheel."}
+  ],
+  "capability_boundary": {
+    "only_four_qualified_combinations": true,
+    "declaration_layer_decoupled": "true, with residual coupling: model-specific initial-condition families, legacy model hard-codes channel_stokes, per-family execution-option schemas",
+    "execution_not_cartesian_product": true,
+    "unregistered_combinations_rejected_before_output_or_timestep": "true for compile-time contract violations (6/6 probes, no output directory); exception: requesting cuda on a GPU-less host compiles, then fails at run time and Periodic/Channel BE leave an empty output directory (B13 residual)",
+    "excluded_from_public_execution": {
+      "arbitrary_model_geometry_combinations": true,
+      "public_nonhomogeneous_neumann": true,
+      "general_public_robin": "true (catalog robin executable=false)",
+      "dynamic_or_trainable_boundary_data": true,
+      "functional_batch_greater_than_one": "true (runtime kinds are *_batch_one only)",
+      "plane_optimal_control": true,
+      "production_optimizer_campaign": true
+    }
+  },
+  "doc1": {
+    "confirmed": true,
+    "location": "notes/pssolver_v0_2_scope.md:33-34 (unchanged since 1c52371, the rc1 preparation commit)",
+    "live_runtime": "prescribed_q, strong_homeotropic_q, strong_planar_q are declarable=true, executable=false, qualified_applications=[] in the installed catalog; rejected before run-spec construction with code unsupported_lifted_wall_molecular_field",
+    "error_is_in": "documentation",
+    "fix": "documentation only",
+    "must_not_reopen_lifting": true,
+    "reason_not_to_reopen": "the wall molecular-field defect is still present (wall H error plateaus ~1.85e-5 for nz=16..256) and the strict fresh-conditioning contract is unimplemented",
+    "same_class_also_in": ["CHANGELOG.md 0.2.0rc4: 'Restrict public lifting capabilities to qualified static Dirichlet data' although none is executable", "README.md limits list does not state that prescribed/strong-anchoring Q lifting is non-executable"]
+  },
+  "doc2": {
+    "confirmed": true,
+    "nature": "documentation/usability gap; fail-closed rejection is the intended contract, not a runtime or API bug",
+    "independent_reproduction": "omitting four execution options gave: periodic execution options must declare every qualified option explicitly; missing=('disable_q_gradient_reuse', 'molecular_field_linear_space', 'pointwise_execution', 'stress_divergence_sum_space'), extra=()",
+    "recommendation": "Add one complete runnable example per qualified combination (or one plus a pointer to the catalog), generated from or checked against capability_catalog(); state explicitly that only catalog combinations execute; list the exact option set per runtime path; import InvocationSpec from its public location.",
+    "additional_readme_defect": "The README 'Historical Plane application' example raises ValueError as written (save_start_step defaults to 5000 > steps=10)."
+  },
+  "test_evidence_review": {
+    "codex_selection": "95 passed, 1 H100-only skipped (targeted, CPU)",
+    "sufficient_for_draft_conclusion": false,
+    "missing": [
+      "cross-release reading of checkpoints written by the published rc1/rc2/rc3 wheels (would have exposed B10); the in-repo tests build 'legacy' bridges from the current identity",
+      "legacy Channel (default production runtime) restart from rc1 even-grid checkpoints (N3 residual)",
+      "TF32 caller state 'medium' (B11 residual)",
+      "non-finite outcome reporting for Periodic runs without checkpoints (NEW-1)",
+      "wheel top-level content inspection (benchmarks package, provenance shim)",
+      "PSSolver-Control compatibility against the released wheel",
+      "full source suite and the PSSolver suite against the installed wheel"
+    ],
+    "h100_name_assertion": "tests/test_rc4_plane_nyquist_cuda.py fails on RTX 3060 Ti only at the hard-coded 'H100' device-name assertion after the storage-equivalence classification passed: qualification harness, not a solver regression (agrees with the draft)",
+    "h100_release_evidence": "Job 10881426 (156589b record): 31-second installed-wheel smoke, 7 CUDA-only tests + Plane one-step; cumulative TF32 closure rc4.5.8 applies to the release package (pssolver/ differs from a195bd0 only in _version.py); CPU<->CUDA checkpoint matrix (job 10874642) predates RC4.3-RC4.5"
+  },
+  "nematics3d": {
+    "local_metadata_conflict_only": true,
+    "observed": "nematics3d 0.9.0b1 has requirement numpy==2.3.2, but numpy 2.4.3 is installed (conda env Nematics3D)",
+    "pssolver_release_dependency": "none: wheel Requires-Dist is numpy>=1.22, scipy>=1.8, torch>=2.5, tqdm>=4.64; the nematics3d adapter is optional",
+    "clean_venv_without_nematics3d_pip_check": "PASS",
+    "modified": false
+  },
+  "new_issues_not_in_draft": [
+    {"id": "B10-REG", "severity": "medium", "summary": "Functional checkpoint cross-release reading regressed (see field_notes)."},
+    {"id": "NEW-1", "severity": "medium", "summary": "Periodic production run without checkpoints reports COMPLETE with non-finite Q/u/p (workflows/periodic_beris_edwards.py:97-230), reproduced on the installed wheel."},
+    {"id": "N3-RES", "severity": "medium", "summary": "legacy_channel runtime identity is identical in rc1 and rc4 (e6b4806f...) while even-grid dynamics differ; rc4 silently resumes an rc1 even-grid checkpoint (installed wheel)."},
+    {"id": "NEW-2", "severity": "medium", "summary": "Wheel installs a top-level 'benchmarks' package (88 modules) into site-packages (setup.py:24 find_packages() without include)."},
+    {"id": "NEW-3", "severity": "low-medium", "summary": "Plane implementation provenance hashes the top-level Plane_beris_edwards_stokes.py shim at parents[2]."},
+    {"id": "B11-RES", "severity": "low", "summary": "TF32 restore turns caller 'medium' into 'high'."},
+    {"id": "NEW-4", "severity": "low", "summary": "README Plane example raises ValueError as written."},
+    {"id": "NEW-5", "severity": "low", "summary": "CHANGELOG retains preparation-time statements and the misleading lifting sentence."},
+    {"id": "NEW-6", "severity": "low", "summary": "Tag commit not on origin/main while the GitHub Release targetCommitish is main."},
+    {"id": "NEW-7..15", "severity": "low/info", "summary": "Robin overflow raw ValueError; pressure tolerance recurrence residual; first-solve exception type; rc1 odd-Nx Channel BE exact upgrade; legacy Channel checkpoint perturbation; CompiledSimulation trust; normalization persistence; functional 'auto'; diff-check hygiene (details in the Claude verification record)."}
+  ],
+  "documents_to_correct": [
+    "notes/pssolver_v0_2_scope.md:33-34 (DOC1)",
+    "CHANGELOG.md 0.2.0rc4 lifting sentence and preparation-time statements",
+    "README.md: complete public Simulation example (DOC2), lifting non-executability in the limits list, fix the Plane example",
+    "operators/robin.py:306 boundary_residual docstring (B30)",
+    "notes/PSSolver_v0_2_0rc3_known_issues_matrix.{json,_zh.md}: B10 regression and nine partial residuals, via an evidence-only commit with test/successor updates"
+  ],
+  "source_changes_needed": {
+    "needed": true,
+    "not_in_this_round": true,
+    "items": ["B10 reader redesign with per-generation frozen identities and released-wheel fixtures", "NEW-1 finiteness gate", "N3 legacy Channel dynamics version or rc1 even-grid rejection", "NEW-2/NEW-3 packaging", "B11 restore order plus test and H100 harness helpers", "lower priority: B17/NEW-7, B13, B23, B24, B7, N6, B20, NEW-8..NEW-11"]
+  },
+  "recommended_next_step": [
+    "Codex re-adjudicates its draft against this review; reclassify from PASS_WITH_DOCUMENTED_LIMITATIONS to FAIL (B10 regression).",
+    "Do not mutate the tag, the GitHub Release or PyPI.",
+    "One evidence-only commit on fix/v0.2.0rc4-audit recording the regression and residuals in the known-issues matrix (schema extension for a regressed state), without touching runtime.",
+    "DOC1/DOC2 documentation fixes may go in the same evidence/documentation commit only if they do not reopen any lifting runtime; otherwise defer to rc5.",
+    "Plan rc5 with the source items above; one authorized single-H100 cumulative run after rc5 is frozen (CPU<->CUDA checkpoint matrix, TF32 'medium' caller state, standard gates)."
+  ],
+  "constraints_honoured": {
+    "pssolver_source_modified": false, "pssolver_control_modified": false, "nematics3d_modified": false,
+    "tag_or_release_modified": false, "commit_merge_or_push": false, "h100_submitted": false,
+    "thresholds_or_contracts_relaxed": false, "files_written": ["notes/PSSolver_v0_2_0rc4_post_release_verification_claude_review_zh.md", "notes/PSSolver_v0_2_0rc4_post_release_verification_claude_review.json"]
+  }
+}

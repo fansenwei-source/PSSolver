@@ -16,11 +16,32 @@
     {
       "name": "PSSolver_v0_2_0rc2_fix_verification_zh.pdf",
       "sha256": "140986b3f6f20b0c0c874b21df02b037cf8ee1bb32e43dd11bc2d638cd9b8f76"
+    },
+    {
+      "name": "PSSolver_v0_2_0rc4_post_release_verification.json",
+      "sha256": "24f7e1a1129b72894c634071d8f272dfbd3f1a91017650427550e1f35f5da773",
+      "classification": "FAIL_NEW_REGRESSION"
+    },
+    {
+      "name": "PSSolver_v0_2_0rc4_post_release_verification_codex_draft.json",
+      "sha256": "54e779aee7f622b78580aad1e03d26afea0eeaf6be8bcb07788bc8b53bb2e77b",
+      "classification": "SUPERSEDED_PASS_WITH_DOCUMENTED_LIMITATIONS"
+    },
+    {
+      "name": "PSSolver_v0_2_0rc4_post_release_verification_claude_review.json",
+      "sha256": "e29501ab68088d18ba567058554406e5742cb5c923a8161d928c7e7b7862ac66",
+      "classification": "FAIL"
+    },
+    {
+      "name": "PSSolver_v0_2_0rc4_consolidated_report.json",
+      "sha256": "db3e644bd97bc28ca046d0632aa2eae1b142ad6a208ad10b9dcb82cc42e6e6c6",
+      "classification": "FAIL"
     }
   ],
   "evidence_policy": {
     "closed_verified": "The defect's intended behavior was exercised by a regression or qualification gate; a later release delta did not invalidate that evidence.",
     "partial_residual": "The primary defect was mitigated or one path was repaired, but the audit documents a remaining path, semantic mismatch, or robustness gap.",
+    "regressed_after_closure": "A later released delta invalidated the previously qualified behavior; the historical closure remains immutable but the item is a release blocker again.",
     "accepted_limitation": "The behavior is intentionally retained or observational and is not scheduled as a correctness repair.",
     "deferred_architecture": "The item is structural debt rather than a release-local numerical defect.",
     "rc2_to_rc3_numerical_runtime_delta": [
@@ -35,6 +56,10 @@
     "rc4_correctness_batches_complete": true,
     "eligible_for_rc4_release_preparation": true,
     "eligible_for_final_v0_2_0": false,
+    "rc4_post_release_verification_passed": false,
+    "rc4_post_release_classification": "FAIL",
+    "eligible_for_rc5_repair": true,
+    "eligible_for_rc5_release": false,
     "new_features_authorized": false,
     "production_default_changed": false,
     "pssolver_control_change_required_for_this_matrix": false,
@@ -42,13 +67,44 @@
   },
   "summary": {
     "item_count": 50,
-    "closed_verified": 38,
-    "partial_residual": 0,
+    "closed_verified": 28,
+    "partial_residual": 9,
+    "regressed_after_closure": 1,
     "accepted_limitation": 3,
     "deferred_architecture": 9,
+    "post_release_finding_count": 15,
     "first_implementation_batch": "rc4.1_plane_nyquist",
-    "next_implementation_batch": "post_0_2_architecture"
+    "next_implementation_batch": "rc5_documentation"
   },
+  "post_release": {
+    "release": "v0.2.0rc4",
+    "date": "2026-10-14",
+    "classification": "FAIL",
+    "decisive_item": "B10",
+    "evidence_registration": "notes/PSSolver_v0_2_0rc4_post_release_findings.json",
+    "historical_closure_records_rewritten": false,
+    "runtime_changed_by_registration": false,
+    "tag_or_release_mutated": false,
+    "nematics3d_modified": false,
+    "h100_submitted": false
+  },
+  "post_release_findings": [
+    {"id": "NEW-1", "severity": "medium", "state": "open", "summary": "Periodic production runs can write COMPLETE after Q, velocity, and pressure become non-finite.", "target": "rc5_must", "requires_h100": false},
+    {"id": "NEW-2", "severity": "medium", "state": "open", "summary": "The wheel and sdist install an unintended top-level benchmarks package containing 88 modules.", "target": "rc5_must", "requires_h100": false},
+    {"id": "NEW-3", "severity": "low-medium", "state": "open", "summary": "Plane implementation provenance depends on a repository-root compatibility shim that is not a package resource.", "target": "rc5_must", "requires_h100": false},
+    {"id": "NEW-4", "severity": "low", "state": "open", "summary": "The README historical Plane example fails because its implicit save_start_step exceeds its requested steps.", "target": "rc5_documentation", "requires_h100": false},
+    {"id": "NEW-5", "severity": "low", "state": "open", "summary": "The rc4 changelog retains preparation-time release statements and implies qualified static lifting although no lifting policy is executable.", "target": "rc5_documentation", "requires_h100": false},
+    {"id": "NEW-6", "severity": "low", "state": "open", "summary": "The rc4 tag is not reachable from origin/main while the GitHub prerelease reports targetCommitish main.", "target": "rc5_release_process", "requires_h100": false},
+    {"id": "NEW-7", "severity": "low", "state": "open", "summary": "Robin impedance overflow escapes as builtins.ValueError instead of the structured public compilation exception.", "target": "rc5_should", "requires_h100": false},
+    {"id": "NEW-8", "severity": "low", "state": "open", "summary": "Channel pressure tolerance postconditions use the PCG recurrence residual and can report unattainable tolerances as met.", "target": "rc5_should", "requires_h100": "only_if_true_residual_enters_hot_path"},
+    {"id": "NEW-9", "severity": "low", "state": "open", "summary": "A first pressure-solve failure is wrapped outside the contracted ChannelPressureConvergenceError boundary.", "target": "rc5_should", "requires_h100": false},
+    {"id": "NEW-10", "severity": "low", "state": "open", "summary": "rc1 odd-Nx Channel BE checkpoints are treated as exact upgrades despite the B2 dynamics change.", "target": "rc5_should", "requires_h100": false},
+    {"id": "NEW-11", "severity": "low", "state": "open", "summary": "Writing a legacy Channel checkpoint performs an extra warm-started pressure solve and perturbs the continuing run.", "target": "rc5_should", "requires_h100": false},
+    {"id": "NEW-12", "severity": "low", "state": "open", "summary": "run_simulation trusts a dataclasses.replace-tampered CompiledSimulation and reports the original provenance.", "target": "rc5_should", "requires_h100": false},
+    {"id": "NEW-13", "severity": "low", "state": "open", "summary": "Requested/resolved device, boundary, and activity normalization is not persisted in run output metadata.", "target": "rc5_should", "requires_h100": false},
+    {"id": "NEW-14", "severity": "info", "state": "open", "summary": "Functional runtimes reject device=auto while public compilers accept it, and TF32 scope does not cover autograd backward.", "target": "rc5_should", "requires_h100": false},
+    {"id": "NEW-15", "severity": "info", "state": "open", "summary": "Legacy v0.1 whitespace and PDF text-attribute hygiene remain outside the clean rc3-to-rc4 delta.", "target": "rc5_optional", "requires_h100": false}
+  ],
   "progress": {
     "completed_batches": ["rc4.1_plane_nyquist", "rc4.2_checkpoint_identity", "rc4.3_lifting_correctness", "rc4.4_pressure_contract", "rc4.5_cross_runtime_robustness"],
     "next_batch": "post_0_2_architecture",
@@ -219,6 +275,48 @@
       "consumer_requalification": "case_by_case"
     },
     {
+      "batch": "rc5_documentation",
+      "items": ["B30", "NEW-4", "NEW-5"],
+      "goal": "Align the public scope, examples, changelog, Robin residual meaning, and fixed-work gradient guidance with the live qualified surface.",
+      "required_gates": ["documentation_contract", "verbatim_public_examples_cpu", "capability_catalog_alignment"],
+      "consumer_requalification": false
+    },
+    {
+      "batch": "rc5_must",
+      "items": ["B10", "NEW-1", "N3", "NEW-2", "NEW-3", "B11"],
+      "goal": "Repair released checkpoint compatibility, finite-run completion semantics, packaging, legacy Channel identity, and exact TF32 caller-state restoration.",
+      "required_gates": ["real_legacy_checkpoint_matrix", "nonfinite_completion_rejection", "installed_wheel_packaging", "tf32_state_matrix", "single_h100_cumulative_closure"],
+      "consumer_requalification": "required_if_provider_identity_or_functional_checkpoint_contract_changes"
+    },
+    {
+      "batch": "rc5_should",
+      "items": ["B7", "B13", "B17", "B20", "B23", "B24", "N6", "NEW-7", "NEW-8", "NEW-9", "NEW-10", "NEW-11", "NEW-12", "NEW-13", "NEW-14"],
+      "goal": "Close the remaining public-error, device-normalization, checkpoint-integrity, pressure, metadata, and provenance residuals.",
+      "required_gates": ["structured_public_errors", "device_token_matrix", "checkpoint_tamper_matrix", "pressure_postconditions", "compiled_simulation_integrity"],
+      "consumer_requalification": "case_by_case"
+    },
+    {
+      "batch": "rc5_optional",
+      "items": ["B14", "B27", "B28", "N4", "NEW-15"],
+      "goal": "Address low-risk hygiene and residual metadata or operational consistency without widening the qualified runtime surface.",
+      "required_gates": ["targeted_cpu_regression", "diff_hygiene"],
+      "consumer_requalification": false
+    },
+    {
+      "batch": "rc5_release_process",
+      "items": ["NEW-6"],
+      "goal": "Ensure the release target and annotated tag identify the same reachable source without rewriting v0.2.0rc4.",
+      "required_gates": ["tag_target_consistency", "release_target_consistency"],
+      "consumer_requalification": false
+    },
+    {
+      "batch": "rc5_qualification",
+      "items": ["G-1"],
+      "goal": "Run the cumulative source, installed-wheel, legacy-checkpoint, Consumer, CPU/CUDA, TF32, memory, performance, and single-H100 qualification after rc5 is frozen.",
+      "required_gates": ["full_cpu", "installed_wheel", "real_legacy_checkpoint_matrix", "consumer", "single_h100_cumulative"],
+      "consumer_requalification": true
+    },
+    {
       "batch": "post_0_2_architecture",
       "items": ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9"],
       "goal": "Reduce drift by consolidating combination registration, checkpoint I/O, stepping, PCG, canonicalization, and import boundaries.",
@@ -233,30 +331,30 @@
     {"id": "B4", "kind": "bug", "severity": "high", "state": "closed_verified", "summary": "Periodic and Channel saved hydrodynamics one step later than Q.", "disposition": "closed", "target": "rc2", "requires_h100": false},
     {"id": "B5", "kind": "bug", "severity": "medium", "state": "closed_verified", "summary": "Plane free-slip Stokes now applies the qualified even-grid Nyquist convention consistently across full-complex and Hermitian-half storage.", "disposition": "closed", "target": "rc4.1_plane_nyquist", "requires_h100": true, "closure_record": "notes/PSSolver_v0_2_0rc4_rc412_h100_closure.json"},
     {"id": "B6", "kind": "bug", "severity": "medium", "state": "closed_verified", "summary": "Unsupported node-centered layouts were silently ignored.", "disposition": "closed", "target": "rc2", "requires_h100": false},
-    {"id": "B7", "kind": "bug", "severity": "medium", "state": "closed_verified", "summary": "Current checkpoint formats now reject unregistered top-level, nested identity, bridge, and tensor-record keys and confine canonical payload basenames before opening tensor data.", "disposition": "closed", "target": "rc4.5_cross_runtime_robustness", "requires_h100": false, "closure_record": "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"},
-    {"id": "B8", "kind": "bug", "severity": "medium", "state": "closed_verified", "summary": "The nonconvergent lifted wall molecular-field path is rejected fail-closed before runtime construction; the retained field-neutral lifting infrastructure passed CPU, installed-wheel, CUDA, restart, performance, and memory gates.", "disposition": "closed_by_public_capability_restriction", "target": "rc4.3_lifting_correctness", "requires_h100": true, "adjudication_record": "notes/PSSolver_v0_2_0rc4_rc431_lifting_correctness_analysis.json", "closure_record": "notes/PSSolver_v0_2_0rc4_rc437_h100_closure.json"},
+    {"id": "B7", "kind": "bug", "severity": "medium", "state": "partial_residual", "summary": "The primary checkpoint transactionality repair remains qualified, but Channel BE still accepts unregistered tensor_files keys, refresh metadata can override the declared policy after resealing, and a downgraded functional v1 checkpoint can cross into the production reader.", "disposition": "rc5_checkpoint_integrity_followup", "target": "rc5_should", "requires_h100": false, "historical_closure_record": "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"},
+    {"id": "B8", "kind": "bug", "severity": "medium", "state": "closed_verified", "summary": "The nonconvergent lifted wall molecular-field path is rejected fail-closed before runtime construction; the wall-basis physics was not repaired and public lifting must remain disabled.", "disposition": "closed_by_public_capability_restriction", "target": "rc4.3_lifting_correctness", "requires_h100": true, "physical_lifting_repaired": false, "adjudication_record": "notes/PSSolver_v0_2_0rc4_rc431_lifting_correctness_analysis.json", "closure_record": "notes/PSSolver_v0_2_0rc4_rc437_h100_closure.json"},
     {"id": "B9", "kind": "bug", "severity": "medium", "state": "closed_verified", "summary": "Finite-Q anchoring accepts parallel and antiparallel unit directors as the same Q declaration, canonicalizes both to the oriented outward face normal, and reports complete face-equivalence diagnostics on rejection.", "disposition": "closed", "target": "rc4.5_cross_runtime_robustness", "requires_h100": false, "closure_record": "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json"},
-    {"id": "B10", "kind": "bug", "severity": "medium", "state": "closed_verified", "summary": "Historical functional identities are independently versioned and current functional checkpoints are portable across allocated CPU/CUDA devices.", "disposition": "closed", "target": "rc4.2_checkpoint_identity", "requires_h100": true, "closure_record": "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"},
-    {"id": "B11", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "All eight production and functional runtime families apply the declared TF32 policy in a scoped context, restore all caller precision flags on success and failure, and passed installed-wheel H100 caller-state and cumulative non-regression gates.", "disposition": "closed", "target": "rc4.5_cross_runtime_robustness", "requires_h100": true, "closure_record": "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"},
+    {"id": "B10", "kind": "bug", "severity": "medium", "state": "regressed_after_closure", "summary": "v0.2.0rc4 rejects every real rc1, rc2, and rc3 functional checkpoint exercised by the post-release matrix because legacy identities are derived from the current payload instead of frozen by release generation.", "disposition": "rc5_release_blocker", "target": "rc5_must", "requires_h100": false, "historical_closure_record": "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json", "post_release_evidence": "notes/PSSolver_v0_2_0rc4_post_release_findings.json"},
+    {"id": "B11", "kind": "bug", "severity": "low", "state": "partial_residual", "summary": "Scoped TF32 execution works for the qualified states, but restoring allow_tf32 after float32_matmul_precision rewrites a real caller state of 'medium' to 'high' on both success and failure paths.", "disposition": "rc5_tf32_restore_order", "target": "rc5_must", "requires_h100": true, "historical_closure_record": "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"},
     {"id": "B12", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Boolean and SHA options were accepted through permissive coercion.", "disposition": "closed", "target": "rc2", "requires_h100": false},
-    {"id": "B13", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "All four public application compilers apply one strict pre-materialization device grammar, both iterative-pressure Channel families share the frozen pressure-option validator, and requested/resolved/allocated device identities remain distinct.", "disposition": "closed", "target": "rc4.5_cross_runtime_robustness", "requires_h100": false, "closure_record": "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"},
+    {"id": "B13", "kind": "bug", "severity": "low", "state": "partial_residual", "summary": "The four public compilers share strict device validation, but historical entry points and functional tensor/device tokens remain inconsistent and cuda requests on CPU can leave empty output directories.", "disposition": "rc5_device_normalization_followup", "target": "rc5_should", "requires_h100": false, "historical_closure_record": "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"},
     {"id": "B14", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Restart save_start_step was compared against added steps instead of absolute progress.", "disposition": "closed", "target": "rc2", "requires_h100": false},
     {"id": "B15", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "All four public application families publish one self-describing diagnostics envelope while retaining family-specific payload fields, dtypes, filenames, bytes, and v0.2 metadata aliases.", "disposition": "closed", "target": "rc4.5_cross_runtime_robustness", "requires_h100": false, "closure_record": "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"},
     {"id": "B16", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Spectral refresh declarations used incompatible disabled representations.", "disposition": "closed", "target": "rc2", "requires_h100": false},
-    {"id": "B17", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "The live compiler registry, capability catalog, explicit Periodic wall-policy equivalence, fail-closed combination dispatch, and structured public exception boundary are aligned.", "disposition": "closed", "target": "rc4.5_cross_runtime_robustness", "requires_h100": false, "closure_record": "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"},
+    {"id": "B17", "kind": "bug", "severity": "low", "state": "partial_residual", "summary": "Capability dispatch remains fail-closed, but the public compilation exception is not exported, some dispatch KeyErrors leak, non-finite context is not JSON-safe, and most rejection paths share an over-broad application_contract code.", "disposition": "rc5_public_error_boundary_followup", "target": "rc5_should", "requires_h100": false, "historical_closure_record": "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"},
     {"id": "B18", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Plane restart generated unrelated fresh-initial-condition artifacts.", "disposition": "closed", "target": "rc2", "requires_h100": false},
     {"id": "B19", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Lifted Plane metadata described the wrong physical and remainder boundary conditions.", "disposition": "closed", "target": "rc2", "requires_h100": false},
-    {"id": "B20", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Fresh lifted-state conditioning is an explicit policy with localized transition semantics and provenance; it is excluded from restart compatibility identity and is not silently applied as a whole-slab taper.", "disposition": "closed_explicit_fresh_only_policy", "target": "rc4.3_lifting_correctness", "requires_h100": false, "adjudication_record": "notes/PSSolver_v0_2_0rc4_rc431_lifting_correctness_analysis.json", "closure_record": "notes/PSSolver_v0_2_0rc4_rc437_h100_closure.json"},
+    {"id": "B20", "kind": "bug", "severity": "low", "state": "partial_residual", "summary": "Fresh conditioning is explicit and localized, but the frozen strict contract requiring rejection of incompatible fresh data is not implemented.", "disposition": "rc5_strict_conditioning_contract", "target": "rc5_should", "requires_h100": false, "adjudication_record": "notes/PSSolver_v0_2_0rc4_rc431_lifting_correctness_analysis.json", "historical_closure_record": "notes/PSSolver_v0_2_0rc4_rc437_h100_closure.json"},
     {"id": "B21", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Dimensionless Robin impedances have an explicit closed qualified interval [0, 1e14], reject unsupported values before materialization, and match frozen 80-digit root references throughout the supported range.", "disposition": "closed", "target": "rc4.5_cross_runtime_robustness", "requires_h100": false, "closure_record": "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json"},
     {"id": "B22", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Plane checkpoint compatibility excludes device provenance and passes bidirectional CPU/CUDA restore qualification.", "disposition": "closed", "target": "rc4.2_checkpoint_identity", "requires_h100": true, "closure_record": "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"},
-    {"id": "B23", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Non-CUDA indexed device tokens were not normalized consistently with allocated tensors.", "disposition": "closed", "target": "rc2", "requires_h100": false},
-    {"id": "B24", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Checkpoint failures expose shared not-found, exists, integrity, compatibility, and I/O categories while retaining the functional checkpoint exception hierarchy and original filesystem causes.", "disposition": "closed", "target": "rc4.5_cross_runtime_robustness", "requires_h100": false, "closure_record": "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"},
+    {"id": "B23", "kind": "bug", "severity": "low", "state": "partial_residual", "summary": "Public compilers normalize non-CUDA indexed tokens, but FunctionalTensorSpec accepts cpu:0 and later rejects ordinary CPU tensors; functional auto support and persisted requested/resolved normalization also remain inconsistent.", "disposition": "rc5_device_token_consistency", "target": "rc5_should", "requires_h100": false},
+    {"id": "B24", "kind": "bug", "severity": "low", "state": "partial_residual", "summary": "Shared checkpoint categories cover the qualified paths, but production readers still expose numerous raw ValueError exits and some tamper paths reach the wrong reader or category.", "disposition": "rc5_checkpoint_error_categories", "target": "rc5_should", "requires_h100": false, "historical_closure_record": "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"},
     {"id": "B25", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Active-mode RMS, scale-safe magnitude metadata, exact power-of-two work scaling, and scale-relative breakdown are implemented across production, functional and transpose pressure paths and passed cumulative installed-wheel and H100 qualification.", "disposition": "closed", "target": "rc4.4_pressure_contract", "requires_h100": true, "adjudication_record": "notes/PSSolver_v0_2_0rc4_rc441_pressure_adjudication.json", "contract_record": "notes/PSSolver_v0_2_0rc4_rc442_pressure_contract.json", "closure_record": "notes/PSSolver_v0_2_0rc4_rc447_h100_closure.json"},
     {"id": "B26", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Functional runtime identities could not be copied, pickled, or replaced safely.", "disposition": "closed", "target": "rc2", "requires_h100": false},
     {"id": "B27", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "All seven checkpoint surfaces publish from same-filesystem sibling staging through one atomic directory operation, preserve caller umask, refuse overwrite, and clean failed staging state.", "disposition": "closed", "target": "rc4.5_cross_runtime_robustness", "requires_h100": false, "closure_record": "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"},
     {"id": "B28", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Declaration/runtime equality and scoped component/runtime-connection metadata are implemented and verified by Provider and Consumer public-identity gates.", "disposition": "closed", "target": "rc4.4_pressure_contract", "requires_h100": false, "adjudication_record": "notes/PSSolver_v0_2_0rc4_rc441_pressure_adjudication.json", "contract_record": "notes/PSSolver_v0_2_0rc4_rc442_pressure_contract.json", "closure_record": "notes/PSSolver_v0_2_0rc4_rc447_h100_closure.json"},
     {"id": "B29", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Exact fixed-work, fail-closed tolerance, diagnostics-v2, public exceptions and warm-start postconditions are implemented and passed correctness, gradient, restart, negative and H100 non-regression gates.", "disposition": "closed", "target": "rc4.4_pressure_contract", "requires_h100": true, "adjudication_record": "notes/PSSolver_v0_2_0rc4_rc441_pressure_adjudication.json", "contract_record": "notes/PSSolver_v0_2_0rc4_rc442_pressure_contract.json", "closure_record": "notes/PSSolver_v0_2_0rc4_rc447_h100_closure.json"},
-    {"id": "B30", "kind": "observation", "severity": "low", "state": "accepted_limitation", "summary": "Robin boundary_residual is constructionally near zero and is not an independent correctness gate.", "disposition": "document", "target": "documentation", "requires_h100": false},
+    {"id": "B30", "kind": "observation", "severity": "low", "state": "accepted_limitation", "summary": "Robin boundary_residual is constructionally near zero and is not an independent correctness gate; the promised public explanation remains pending.", "disposition": "document_in_rc5", "target": "rc5_documentation", "requires_h100": false, "documentation_complete": false},
     {"id": "A1", "kind": "api", "severity": "medium", "state": "closed_verified", "summary": "Unsupported Channel snapshot initialization compiled successfully and failed only at runtime.", "disposition": "closed", "target": "rc2", "requires_h100": false},
     {"id": "A2", "kind": "api", "severity": "low", "state": "accepted_limitation", "summary": "SBDF2 is a valid declaration type but unsupported combinations reject it at compilation.", "disposition": "retain_rejection", "target": "capability_catalog", "requires_h100": false},
     {"id": "A3", "kind": "api", "severity": "medium", "state": "closed_verified", "summary": "Numerical and output defaults differed by entry point; rc2 made them explicit and rc3 completed the independent Consumer migration.", "disposition": "closed_breaking_migration", "target": "rc3", "requires_h100": true},
@@ -264,10 +362,10 @@
     {"id": "A5", "kind": "api", "severity": "low", "state": "accepted_limitation", "summary": "Shendruk activity parameter round-trip differs by one floating-point ulp.", "disposition": "accept", "target": "none", "requires_h100": false},
     {"id": "N1", "kind": "regression", "severity": "high", "state": "closed_verified", "summary": "Even-grid Channel functional pressure transpose omitted production Nyquist projection.", "disposition": "closed", "target": "rc3", "requires_h100": true},
     {"id": "N2", "kind": "regression", "severity": "high", "state": "closed_verified", "summary": "The explicit public declarations introduced in rc2 broke all five PSSolver-Control constructors.", "disposition": "closed_consumer_migration", "target": "rc3", "requires_h100": true},
-    {"id": "N3", "kind": "regression", "severity": "medium", "state": "closed_verified", "summary": "Corrected even-grid Channel dynamics are represented by explicit runtime/checkpoint versions and qualified bidirectionally across CPU/CUDA.", "disposition": "closed", "target": "rc4.2_checkpoint_identity", "requires_h100": true, "closure_record": "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"},
+    {"id": "N3", "kind": "regression", "severity": "medium", "state": "partial_residual", "summary": "The new Channel paths version corrected dynamics, but legacy_channel retains the rc1 identity and silently resumes an even-grid rc1 checkpoint into different rc4 Nyquist dynamics.", "disposition": "rc5_legacy_channel_dynamics_identity", "target": "rc5_must", "requires_h100": true, "historical_closure_record": "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"},
     {"id": "N4", "kind": "regression", "severity": "medium", "state": "closed_verified", "summary": "Requested/effective molecular-field metadata is explicit and the unqualified lifted twisted-flow combinations are rejected before runtime construction; no false spectral/physical execution distinction remains public.", "disposition": "closed_fail_closed_contract", "target": "rc4.3_lifting_correctness", "requires_h100": true, "adjudication_record": "notes/PSSolver_v0_2_0rc4_rc431_lifting_correctness_analysis.json", "closure_record": "notes/PSSolver_v0_2_0rc4_rc437_h100_closure.json"},
     {"id": "N5", "kind": "regression", "severity": "low", "state": "closed_verified", "summary": "Lifted legacy checkpoints are accepted or rejected through explicit lifting-dynamics versions before target mutation.", "disposition": "closed", "target": "rc4.2_checkpoint_identity", "requires_h100": false, "closure_record": "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"},
-    {"id": "N6", "kind": "regression", "severity": "low", "state": "closed_verified", "summary": "Hermitian projection metadata and checkpoint identity now encode the repaired Periodic dynamics and pass CPU/CUDA portability gates.", "disposition": "closed", "target": "rc4.2_checkpoint_identity", "requires_h100": true, "closure_record": "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"},
+    {"id": "N6", "kind": "regression", "severity": "low", "state": "partial_residual", "summary": "Checkpoint identity encodes the repaired Periodic dynamics, but full_complex descriptive metadata still claims self_conjugate_planes_each_step and must be corrected only after legacy identity freezing is repaired.", "disposition": "rc5_metadata_after_identity_freeze", "target": "rc5_should", "requires_h100": false, "historical_closure_record": "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"},
     {"id": "R1", "kind": "architecture", "severity": "structural", "state": "deferred_architecture", "summary": "Each model-geometry combination duplicates an eight-module application stack.", "disposition": "consolidate_registry", "target": "post_0_2_architecture", "requires_h100": true},
     {"id": "R2", "kind": "architecture", "severity": "structural", "state": "deferred_architecture", "summary": "Checkpoint implementations and integrity helpers are duplicated across production and functional paths.", "disposition": "shared_checkpoint_io", "target": "post_0_2_architecture", "requires_h100": true},
     {"id": "R3", "kind": "architecture", "severity": "structural", "state": "deferred_architecture", "summary": "Functional API compatibility, validation, versioning, and exception layers are oversized and overlapping.", "disposition": "reduce_facades", "target": "post_0_2_architecture", "requires_h100": false},

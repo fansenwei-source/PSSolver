@@ -12,6 +12,7 @@ from pssolver.functional.api import functional_protocol_provenance
 
 
 PROJECT_ROOT = Path(__file__).parents[1]
+POST_RELEASE = PROJECT_ROOT / "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
 
 
 def test_release_candidate_version_and_public_metadata_agree():
@@ -80,6 +81,9 @@ def test_release_candidate_registers_exact_portability_successors():
         )
     )
     successors = record["historical_successor_sources"]
+    post_release_successors = json.loads(POST_RELEASE.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert set(successors) == {
         "tests/test_rc447_pressure_bounded_operator_recovery.py",
         "tests/test_rc455_public_robustness.py",
@@ -95,9 +99,14 @@ def test_release_candidate_registers_exact_portability_successors():
     }
     for relative, registration in successors.items():
         assert registration["historical_sha256"] != registration["current_sha256"]
-        assert registration["current_sha256"] == hashlib.sha256(
-            (PROJECT_ROOT / relative).read_bytes()
-        ).hexdigest()
+        resolved = registration["current_sha256"]
+        post_release = post_release_successors.get(relative)
+        if (
+            post_release is not None
+            and post_release["historical_sha256"] == resolved
+        ):
+            resolved = post_release["current_sha256"]
+        assert resolved == hashlib.sha256((PROJECT_ROOT / relative).read_bytes()).hexdigest()
         assert registration["introduced_by_phase"] == (
             "v0.2.0rc4-release-preparation"
         )

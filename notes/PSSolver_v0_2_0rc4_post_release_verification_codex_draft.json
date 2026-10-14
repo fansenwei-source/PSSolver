@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 Codex independent post-release verification draft",
+  "status": "codex_draft_pending_independent_claude_review",
+  "classification": "PASS_WITH_DOCUMENTED_LIMITATIONS",
+  "analysis_only": true,
+  "source_modified": false,
+  "h100_rerun": false,
+  "qualified_identity": {
+    "tag": "v0.2.0rc4",
+    "tag_object_sha": "8822ab370e252d76549c6365dc5f5023ec3231c4",
+    "tag_target_commit": "658869456d762c917ca4409b091539c3733df2fb",
+    "release_url": "https://github.com/fansenwei-source/PSSolver/releases/tag/v0.2.0rc4",
+    "release_id": 412257697,
+    "draft": false,
+    "prerelease": true
+  },
+  "published_artifacts": {
+    "sdist": {
+      "name": "pssolver-0.2.0rc4.tar.gz",
+      "size": 872255,
+      "sha256": "c7f5f2be2881cd3377cd936f8596ce2faf1b2a35fd96a955e71d92b3a292964c",
+      "github_digest_matched": true
+    },
+    "wheel": {
+      "name": "pssolver-0.2.0rc4-py3-none-any.whl",
+      "size": 1094307,
+      "sha256": "1bf31f324180dac58777a23785fb4e1424d3cc589099cf8c6328e2f6c74d8cc5",
+      "github_digest_matched": true
+    },
+    "python_source_files_compared": 248,
+    "sdist_python_files_match_tag": true,
+    "wheel_python_files_match_tag": true
+  },
+  "clean_installed_wheel_audit": {
+    "python": "3.12.13",
+    "torch": "2.6.0+cpu",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "pytest": "9.1.1",
+    "system_site_packages": false,
+    "pip_check": "PASS",
+    "installed_version": "0.2.0rc4",
+    "imported_from_venv_site_packages": true,
+    "source_shadow_import": false,
+    "application": "periodic_complete_stress_beris_edwards",
+    "requested_runtime": "periodic_spectral",
+    "effective_runtime": "periodic_spectral",
+    "fallback_used": false,
+    "completed_steps": 1,
+    "complete_marker": true,
+    "finite_q_u_p": true,
+    "q_sha256": "2cdf599100402ad47c7e094de44872f134b09d5ec29370b77af60141874e8f5d",
+    "velocity_sha256": "d0309e287f331a9181913bd923f7118cdf9cc9203bcc9cae59517f44f31064de",
+    "pressure_sha256": "01494886dc5cb06bbbe90bb5661f4ceeb870069ecc5fb1392cc90dae61f47154"
+  },
+  "targeted_source_regression": {
+    "source": "git archive of v0.2.0rc4",
+    "cpu_result": "95 passed, 1 H100-only skipped",
+    "cpu_elapsed_seconds": 137.82,
+    "covered_areas": [
+      "Periodic long-horizon Hermitian repair",
+      "Plane Nyquist storage equivalence support",
+      "Channel pressure transpose",
+      "Periodic and Channel checkpoint identity",
+      "public lifting fail-closed restriction",
+      "scoped TF32 execution",
+      "public validation and observability",
+      "rc3 known-issues matrix"
+    ],
+    "local_cuda_observation": {
+      "gpu": "NVIDIA GeForce RTX 3060 Ti",
+      "result": "95 passed and one H100 identity assertion failed after the diagnostic itself passed",
+      "solver_regression": false,
+      "diagnostic_classification": "PASS_PLANE_PERIODIC_NYQUIST_STORAGE_EQUIVALENCE",
+      "case_count": 5,
+      "all_finite": true,
+      "maximum_velocity_relative_l2": 4.1323952991199776e-16,
+      "maximum_pressure_relative_l2": 3.461062108555888e-16
+    }
+  },
+  "historical_issue_matrix": {
+    "item_count": 50,
+    "closed_verified": 38,
+    "partial_residual": 0,
+    "accepted_limitation_count": 3,
+    "deferred_architecture_count": 9,
+    "historical_fix_commits_checked_as_tag_ancestors": 34,
+    "rc3_to_rc4_commit_count": 72,
+    "closed_groups": [
+      {
+        "stage": "rc2_direct_fixes",
+        "issues": [
+          "B1",
+          "B2",
+          "B3",
+          "B4",
+          "B6",
+          "B12",
+          "B14",
+          "B16",
+          "B18",
+          "B19",
+          "B23",
+          "B26",
+          "A1",
+          "A3",
+          "A4"
+        ],
+        "state": "CLOSED_VERIFIED"
+      },
+      {
+        "stage": "rc3_consumer_and_pressure_correction",
+        "issues": ["N1", "N2"],
+        "state": "CLOSED_VERIFIED"
+      },
+      {
+        "stage": "rc4.1_plane_nyquist",
+        "issues": ["B5"],
+        "state": "CLOSED_VERIFIED",
+        "closure_record": "notes/PSSolver_v0_2_0rc4_rc412_h100_closure.json"
+      },
+      {
+        "stage": "rc4.2_checkpoint_identity",
+        "issues": ["B10", "B22", "N3", "N5", "N6"],
+        "state": "CLOSED_VERIFIED",
+        "closure_record": "notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"
+      },
+      {
+        "stage": "rc4.3_lifting_correctness",
+        "issues": ["B8", "B20", "N4"],
+        "state": "CLOSED_BY_FAIL_CLOSED_PUBLIC_RESTRICTION",
+        "mathematical_lifting_path_repaired": false,
+        "closure_record": "notes/PSSolver_v0_2_0rc4_rc437_h100_closure.json"
+      },
+      {
+        "stage": "rc4.4_pressure_contract",
+        "issues": ["B25", "B28", "B29"],
+        "state": "CLOSED_VERIFIED",
+        "closure_record": "notes/PSSolver_v0_2_0rc4_rc447_h100_closure.json"
+      },
+      {
+        "stage": "rc4.5_cross_runtime_robustness",
+        "issues": ["B7", "B9", "B11", "B13", "B15", "B17", "B21", "B24", "B27"],
+        "state": "CLOSED_VERIFIED",
+        "closure_record": "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
+      }
+    ],
+    "accepted_limitations": [
+      {
+        "id": "B30",
+        "summary": "Robin boundary_residual is constructionally near zero and is not an independent correctness gate."
+      },
+      {
+        "id": "A2",
+        "summary": "SBDF2 can be declared but unsupported combinations reject at compilation."
+      },
+      {
+        "id": "A5",
+        "summary": "Shendruk activity conversion retains a one-ULP round-trip difference."
+      }
+    ],
+    "deferred_architecture": ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9"]
+  },
+  "public_capability_audit": {
+    "qualified_model_geometry_combinations": 4,
+    "arbitrary_model_geometry_execution": false,
+    "unsupported_combination_rejected_before_output_creation": true,
+    "restricted_public_lifting_policies": [
+      "prescribed_q",
+      "strong_homeotropic_q",
+      "strong_planar_q"
+    ],
+    "restricted_policies_declarable": true,
+    "restricted_policies_executable": false,
+    "general_nonhomogeneous_neumann": false,
+    "general_robin": false,
+    "dynamic_or_trainable_boundaries": false
+  },
+  "new_observations": [
+    {
+      "id": "DOC1",
+      "classification": "DOCUMENTATION_SCOPE_CONTRADICTION",
+      "severity": "medium",
+      "summary": "notes/pssolver_v0_2_scope.md says Plane qualifies static prescribed-Q and strong anchoring, while the live catalog and RC4.3.3 contract correctly mark all three declarations non-executable.",
+      "runtime_failure": false,
+      "recommended_action": "Correct the scope document in the next evidence-only or rc5 documentation commit; do not reopen the unqualified runtime."
+    },
+    {
+      "id": "DOC2",
+      "classification": "PUBLIC_API_EXAMPLE_GAP",
+      "severity": "low",
+      "summary": "README lists the public composition API but has no complete runnable Simulation example and does not enumerate the exact Periodic execution-option set.",
+      "runtime_failure": false,
+      "observed_fail_closed_message": "periodic execution options must declare every qualified option explicitly; missing=('disable_q_gradient_reuse',), extra=()",
+      "recommended_action": "Add one complete, capability-catalog-aligned runnable example without changing defaults."
+    },
+    {
+      "id": "ENV1",
+      "classification": "EXTERNAL_NEMATICS3D_NUMPY_METADATA_CONFLICT",
+      "severity": "environment_only",
+      "summary": "The local Nematics3D environment reports nematics3d 0.9.0b1 requires numpy==2.3.2 while numpy 2.4.3 is installed.",
+      "pssolver_failure": false,
+      "nematics3d_modified": false,
+      "used_as_qualification_evidence": false
+    }
+  ],
+  "release_interpretation": {
+    "previous_correctness_issues_resolved_within_declared_scope": true,
+    "all_historical_audit_items_eliminated": false,
+    "safe_for_qualified_combinations": true,
+    "safe_for_excluded_or_arbitrary_combinations": false,
+    "pypi_publication_recommended_by_this_draft": false,
+    "rc4_tag_or_release_mutation_recommended": false,
+    "claude_independent_review_required": true
+  }
+}

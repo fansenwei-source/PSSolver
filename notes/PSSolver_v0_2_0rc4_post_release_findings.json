@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc4 post-release findings evidence registration",
+  "date": "2026-10-14",
+  "classification": "FAIL",
+  "registration_only": true,
+  "release_identity": {
+    "tag": "v0.2.0rc4",
+    "tag_object_sha": "8822ab370e252d76549c6365dc5f5023ec3231c4",
+    "qualified_source_commit": "658869456d762c917ca4409b091539c3733df2fb",
+    "tag_or_release_mutated": false
+  },
+  "evidence": {
+    "external_root": "/home/fansenwei/pssolver_rc4_post_release_verification_20261013_v1",
+    "external_manifest_verified": true,
+    "post_release_verification": {
+      "path": "PSSolver/notes/PSSolver_v0_2_0rc4_post_release_verification.json",
+      "sha256": "24f7e1a1129b72894c634071d8f272dfbd3f1a91017650427550e1f35f5da773",
+      "classification": "FAIL_NEW_REGRESSION"
+    },
+    "codex_draft": {
+      "path": "notes/PSSolver_v0_2_0rc4_post_release_verification_codex_draft.json",
+      "sha256": "54e779aee7f622b78580aad1e03d26afea0eeaf6be8bcb07788bc8b53bb2e77b",
+      "classification": "SUPERSEDED_PASS_WITH_DOCUMENTED_LIMITATIONS"
+    },
+    "claude_blind_review": {
+      "path": "notes/PSSolver_v0_2_0rc4_post_release_verification_claude_review.json",
+      "sha256": "e29501ab68088d18ba567058554406e5742cb5c923a8161d928c7e7b7862ac66",
+      "classification": "FAIL"
+    },
+    "consolidated_report": {
+      "path": "PSSolver/notes/PSSolver_v0_2_0rc4_consolidated_report.json",
+      "sha256": "db3e644bd97bc28ca046d0632aa2eae1b142ad6a208ad10b9dcb82cc42e6e6c6",
+      "classification": "FAIL"
+    }
+  },
+  "decisive_regression": {
+    "item": "B10",
+    "state": "regressed_after_closure",
+    "fixture_root": "/home/fansenwei/pssolver_rc4_post_release_verification_20261013_v1/agent_evidence/state/legacy_ckpts_full",
+    "log": "/home/fansenwei/pssolver_rc4_post_release_verification_20261013_v1/b10_check/installed_rc4_legacy_functional_read.log",
+    "published_generations": ["rc1", "rc2", "rc3"],
+    "functional_families": ["periodic", "channel"],
+    "fixture_cases": 6,
+    "direct_import_rejected": 6,
+    "explicit_migration_rejected": 6,
+    "wrong_data_accepted": false,
+    "failure_mode": "fail_closed",
+    "historical_closure_record_rewritten": false
+  },
+  "known_issue_transition": {
+    "historical_item_count": 50,
+    "closed_verified": 28,
+    "partial_residual": 9,
+    "regressed_after_closure": 1,
+    "accepted_limitation": 3,
+    "deferred_architecture": 9,
+    "regressed_items": ["B10"],
+    "partial_residual_items": [
+      "B7",
+      "B11",
+      "B13",
+      "B17",
+      "B20",
+      "B23",
+      "B24",
+      "N3",
+      "N6"
+    ],
+    "post_release_findings": [
+      "NEW-1",
+      "NEW-2",
+      "NEW-3",
+      "NEW-4",
+      "NEW-5",
+      "NEW-6",
+      "NEW-7",
+      "NEW-8",
+      "NEW-9",
+      "NEW-10",
+      "NEW-11",
+      "NEW-12",
+      "NEW-13",
+      "NEW-14",
+      "NEW-15"
+    ],
+    "a3_target": "rc3",
+    "b8_physical_lifting_repaired": false,
+    "b30_documentation_complete": false
+  },
+  "rc5_work_order": [
+    "rc5_documentation",
+    "rc5_must",
+    "rc5_should",
+    "rc5_optional",
+    "rc5_release_process",
+    "rc5_qualification",
+    "post_0_2_architecture"
+  ],
+  "historical_successor_sources": {
+    "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json": {
+      "historical_sha256": "4d2feab053dcfb5cd4c5a99d65829b2abd327d42c25a082116f2b01eb5690ee8",
+      "current_sha256": "3add7bff4d14bae4319d9f80b13bfd6a81522860f3067318481beb52b977fa2b",
+      "reason": "Register the post-release B10 regression, nine partial residuals, fifteen new findings, and rc5 work order without rewriting historical closure records."
+    },
+    "notes/PSSolver_v0_2_0rc3_known_issues_matrix_zh.md": {
+      "historical_sha256": "0d7fea57f20b186bfaf0e43a3449ff1f704c8deafcbf07e01effe07b26b54211",
+      "current_sha256": "871bbf2410dce7c9cefc4adbd7c035949e33f0d8b98655e8048949c6037b0270",
+      "reason": "Synchronize the human-readable matrix with the post-release evidence and rc5 queue."
+    },
+    "tests/test_rc3_known_issues_matrix.py": {
+      "historical_sha256": "a790b08f1519b6d3615815af5b0f358b29eae8c9146a4d5b5d53c0695695b4db",
+      "current_sha256": "dfea8312be1b044ee8d3627d14381f8c84f4ff1d47ba5bf384ab9279254af6bb",
+      "reason": "Validate both immutable historical closures and current post-release states."
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "7c1155ce4840dca85e7a223c204fc4f91c97d6fa007e1a6678ac8e593f2cf29c",
+      "current_sha256": "9a1f500d3f47ecae9f13d1250fb308bd3e7ca2b619526dad8f596b19ffc22ce0",
+      "reason": "Preserve the historical RC4.5.1 result while acknowledging later residual evidence."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "c5bd5adb91cbcfc5f699b29b4d8a8239c2758a372913de1c6bf12979e862d860",
+      "current_sha256": "74754c161c280e321de22f09a4e7ebd188864e8a5c4f496d493810c976cc5aa2",
+      "reason": "Resolve the frozen RC4.5.5 source chain through the post-release successor."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "9cc416123d3e3caa97f3fa873b4fd77e7d821a8be15cbe786e988d23860f8958",
+      "current_sha256": "38885dea270b74750b67793fc3b206e360b40d5ba114738b1ff4e2cd6656c651",
+      "reason": "Keep the historical TF32 qualification and register the uncovered medium-state restore residual."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "37e663693c0cc84ebf09cef1501ebada493a77f6014731eb6b4af6c840372693",
+      "current_sha256": "afe3246538886409ee0826012aa6fa5427666e454b66cd0e6fce4188dbf83fa6",
+      "reason": "Extend the installed-Consumer evidence chain to the post-release successor."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "a548371cd1ed55441c52e35cb9b4f0007034c22afa5d9c0b07588d708d930087",
+      "current_sha256": "e3df4df125db65642b7e5abe4acabda0414fa995fd553d4f8fc9c8ab2945202b",
+      "reason": "Extend the Consumer recovery evidence chain without reclassifying its historical result."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "43d6afe59e4cba1487fd1f750d95c7d90b8f4c09b4964de7a993bc5fc239fa8f",
+      "current_sha256": "a3225c7a7e52c236f4233541ef8c5eca22340ae9e21b50d127cd47fe80bdbffe",
+      "reason": "Preserve the completed RC4.5.8 H100 record while resolving later evidence-only source successors."
+    },
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {
+      "historical_sha256": "54696ff4545784c8e833dce689ae20868cb1631e27d8e8160a538b3a9d065840",
+      "current_sha256": "cb5fde1aaa44efdec8a1f63013130ee84e92b87d762515dd95bf65b45f627437",
+      "reason": "Distinguish completed historical RC4.5 work from the current residual matrix."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "aba7be6d037999aa4613936e6fdb47a099c9ab90f84316f7896a50ed52b8e835",
+      "current_sha256": "0ecc7e163a219b3acc97a8405e6a421e571cb1ff8ecee23a90234f1ef3322ba4",
+      "reason": "Resolve immutable release-preparation source bindings through the post-release successor."
+    }
+  },
+  "verification": {
+    "targeted_cpu": {
+      "passed": 101,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_cpu_cuda_hidden": {
+      "passed": 3415,
+      "failed": 0,
+      "skipped": 7,
+      "subtests_passed": 8,
+      "baseline_skip_count_unchanged": true,
+      "new_passing_tests": 15
+    },
+    "git_diff_check_passed": true,
+    "strict_json_parse_passed": true,
+    "cache_residue_count": 0
+  },
+  "scope": {
+    "pssolver_runtime_modified": false,
+    "tests_relaxed": false,
+    "thresholds_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "functional_api_version_changed": false,
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false,
+    "h100_job_submitted": false,
+    "historical_records_rewritten": false
+  },
+  "authorization": {
+    "w0_complete": true,
+    "eligible_for_w1_documentation": true,
+    "rc5_runtime_repair_complete": false,
+    "eligible_for_rc5_release": false,
+    "h100_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false
+  }
+}

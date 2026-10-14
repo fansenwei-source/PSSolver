@@ -19,6 +19,7 @@ RC455 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
 )
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
+POST_RELEASE = ROOT / "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -41,7 +42,7 @@ def _git_blob_sha256(commit: str, relative: str) -> str:
 
 def _resolve_successor_sha256(relative: str, historical: str) -> str:
     resolved = historical
-    for record_path in (RC453, RC454, RC455, RC456):
+    for record_path in (RC453, RC454, RC455, RC456, POST_RELEASE):
         registration = _read(record_path).get(
             "historical_successor_sources", {}
         ).get(relative)
@@ -283,26 +284,30 @@ def test_rc450_reviewed_sources_are_content_addressed():
 
 def test_known_issue_matrix_preserves_rc44_and_tracks_rc45_closure():
     matrix = _read(MATRIX)
-    assert matrix["summary"]["closed_verified"] == 38
-    assert matrix["summary"]["partial_residual"] == 0
+    assert matrix["summary"]["closed_verified"] == 28
+    assert matrix["summary"]["partial_residual"] == 9
+    assert matrix["summary"]["regressed_after_closure"] == 1
     assert matrix["summary"]["next_implementation_batch"] == (
-        "post_0_2_architecture"
+        "rc5_documentation"
     )
     issues = {item["id"]: item for item in matrix["items"]}
     assert all(issues[item]["state"] == "closed_verified" for item in ("B25", "B28", "B29"))
     assert all(
-        issues[item]["state"] == "closed_verified"
-        for item in ("B7", "B24", "B27")
+        issues[item]["state"] == "partial_residual"
+        for item in ("B7", "B24")
     )
+    assert issues["B27"]["state"] == "closed_verified"
     assert all(
         issues[item]["state"] == "closed_verified"
         for item in ("B9", "B21")
     )
     assert all(
-        issues[item]["state"] == "closed_verified"
-        for item in ("B13", "B15", "B17")
+        issues[item]["state"] == "partial_residual"
+        for item in ("B13", "B17")
     )
-    assert issues["B11"]["state"] == "closed_verified"
+    assert issues["B15"]["state"] == "closed_verified"
+    assert issues["B11"]["state"] == "partial_residual"
+    assert matrix["post_release"]["classification"] == "FAIL"
     progress = matrix["progress"]
     assert progress["rc4_4_complete"] is True
     assert progress["rc4_4_closure_record_sha256"] == _sha256(CLOSURE)

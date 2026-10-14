@@ -29,11 +29,12 @@ RC457_RECOVERY = ROOT / (
 )
 RC458 = ROOT / "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
 RELEASE = ROOT / "notes/pssolver_v0_2_0_rc4.json"
+POST_RELEASE = ROOT / "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
 
 
 def _latest_successor(relative: str, historical: str) -> str:
     resolved = historical
-    for path in (RC456, RC457, RC457_RECOVERY, RC458, RELEASE):
+    for path in (RC456, RC457, RC457_RECOVERY, RC458, RELEASE, POST_RELEASE):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)
@@ -256,7 +257,9 @@ def test_rc455_record_closes_only_b13_b15_b17_and_binds_sources():
 
     matrix = json.loads(MATRIX.read_text(encoding="utf-8"))
     issues = {entry["id"]: entry for entry in matrix["items"]}
-    assert all(issues[name]["state"] == "closed_verified" for name in record["issues"])
+    assert issues["B13"]["state"] == "partial_residual"
+    assert issues["B17"]["state"] == "partial_residual"
+    assert issues["B15"]["state"] == "closed_verified"
     progress = matrix["progress"]
     assert progress["rc4_5_5_complete"] is True
     assert progress["rc4_5_5_record_sha256"] == hashlib.sha256(

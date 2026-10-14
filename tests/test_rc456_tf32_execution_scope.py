@@ -27,6 +27,7 @@ RC457_RECOVERY = ROOT / (
 RC458 = ROOT / "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
 RELEASE = ROOT / "notes/pssolver_v0_2_0_rc4.json"
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
+POST_RELEASE = ROOT / "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
 
 
 def _set_state(precision: str, matmul: bool, cudnn: bool) -> None:
@@ -37,7 +38,7 @@ def _set_state(precision: str, matmul: bool, cudnn: bool) -> None:
 
 def _resolve_rc457_successor(relative: str, historical: str) -> str:
     resolved = historical
-    for record_path in (RC457, RC457_RECOVERY, RC458, RELEASE):
+    for record_path in (RC457, RC457_RECOVERY, RC458, RELEASE, POST_RELEASE):
         successor = json.loads(record_path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)
@@ -194,7 +195,10 @@ def test_rc456_record_binds_exact_scope_sources_and_next_stage():
 
     matrix = json.loads(MATRIX.read_text(encoding="utf-8"))
     b11 = next(item for item in matrix["items"] if item["id"] == "B11")
-    assert b11["state"] == "closed_verified"
+    assert b11["state"] == "partial_residual"
+    assert b11["historical_closure_record"] == (
+        "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
+    )
     progress = matrix["progress"]
     assert progress["rc4_5_6_complete"] is True
     assert progress["rc4_5_6_record_sha256"] == hashlib.sha256(
