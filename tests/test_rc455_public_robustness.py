@@ -32,6 +32,7 @@ RELEASE = ROOT / "notes/pssolver_v0_2_0_rc4.json"
 POST_RELEASE = ROOT / "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
 RC5_W1 = ROOT / "notes/PSSolver_v0_2_0rc5_w1_documentation.json"
 RC5_R51 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_1_legacy_functional_checkpoint.json"
+RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
 
 
 def _latest_successor(relative: str, historical: str) -> str:
@@ -45,6 +46,7 @@ def _latest_successor(relative: str, historical: str) -> str:
         POST_RELEASE,
         RC5_W1,
         RC5_R51,
+        RC5_R52,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"

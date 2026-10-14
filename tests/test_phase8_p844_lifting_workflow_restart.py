@@ -751,7 +751,8 @@ def test_p844_record_matches_qualified_sources_and_scope():
         "pssolver/runtime/plane_beris_edwards.py",
         "pssolver/runtime/plane_legacy.py",
         "pssolver/runtime/static_lifting.py",
-        "pssolver/workflows/plane_checkpoint.py",
+            "pssolver/workflows/plane_checkpoint.py",
+            "pssolver/workflows/plane_observation.py",
     }
     for relative, expected in record["source_sha256"].items():
         if relative in superseded_after_p844:

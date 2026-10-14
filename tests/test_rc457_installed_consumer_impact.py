@@ -20,6 +20,7 @@ RELEASE = ROOT / "notes/pssolver_v0_2_0_rc4.json"
 POST_RELEASE = ROOT / "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
 RC5_W1 = ROOT / "notes/PSSolver_v0_2_0rc5_w1_documentation.json"
 RC5_R51 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_1_legacy_functional_checkpoint.json"
+RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -86,6 +87,7 @@ def test_rc457_preserves_the_stop_and_resolves_through_the_recovery():
     post_release_successors = _read(POST_RELEASE)["historical_successor_sources"]
     rc5_w1_successors = _read(RC5_W1)["historical_successor_sources"]
     rc5_r51_successors = _read(RC5_R51)["historical_successor_sources"]
+    rc5_r52_successors = _read(RC5_R52)["historical_successor_sources"]
     for relative, expected in record["source_sha256"].items():
         successor = recovery_successors.get(relative)
         resolved = expected
@@ -104,6 +106,9 @@ def test_rc457_preserves_the_stop_and_resolves_through_the_recovery():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = rc5_r51_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = rc5_r52_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(ROOT / relative) == resolved
@@ -127,6 +132,9 @@ def test_rc457_preserves_the_stop_and_resolves_through_the_recovery():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = rc5_r51_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = rc5_r52_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(ROOT / relative) == resolved

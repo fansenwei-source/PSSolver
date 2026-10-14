@@ -472,9 +472,21 @@ def test_p74_record_binds_runtime_and_checkpoint_sources():
             / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
         ).read_text(encoding="utf-8")
     )
-    assert sha256("pssolver/workflows/channel_checkpoint.py") == successor[
+    historical = successor[
         "source_sha256"
     ]["pssolver/workflows/channel_checkpoint.py"]
+    r5_2 = json.loads(
+        (
+            ROOT
+            / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
+        ).read_text(encoding="utf-8")
+    )["historical_successor_sources"][
+        "pssolver/workflows/channel_checkpoint.py"
+    ]
+    assert r5_2["historical_sha256"] == historical
+    assert sha256("pssolver/workflows/channel_checkpoint.py") == r5_2[
+        "current_sha256"
+    ]
     assert record["authorization"] == {
         "p7_4_complete": True,
         "p7_5_planning_eligible": True,

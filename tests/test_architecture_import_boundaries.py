@@ -78,7 +78,15 @@ ALLOWED_INTERNAL_LAYERS = {
         }
     ),
     "workflows": frozenset(
-        {"configuration", "io", "models", "run_metadata", "runtime", "workflows"}
+        {
+            "configuration",
+            "errors",
+            "io",
+            "models",
+            "run_metadata",
+            "runtime",
+            "workflows",
+        }
     ),
     "io": frozenset({"core", "io", "runtime"}),
     "control": frozenset({"control", "models", "snapshots"}),

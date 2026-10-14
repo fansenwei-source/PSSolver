@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc5 R5-2 finite production workflow state",
+  "status": "implementation_complete_cpu_closure_pending",
+  "classification": "R5_2_IMPLEMENTED_FINITE_STATE_CPU_CLOSURE_PENDING",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "implementation_commit": "a0ea607a500fca15d364595f79d6028ec5ec5c40",
+    "architecture_correction_commit": "a27df6e9f35ec2adbf1afaa8a7e81358cb08bdd0",
+    "import_layer_correction_commit": "8cbf961ef50c5d881fa3f646c1f07157aacd5ef4",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "id": "NEW-1",
+    "work_item": "R5-2",
+    "source": "notes/PSSolver_v0_2_0rc4_consolidated_report.json",
+    "root_cause": "Periodic observations and diagnostics lacked the finite-value invariants already enforced by the Plane and legacy Channel observation contracts, so a divergent run could publish non-finite arrays and a COMPLETE marker."
+  },
+  "contract": {
+    "public_error_base": "SimulationExecutionError",
+    "nonfinite_error": "SimulationStateError",
+    "machine_code": "simulation_state_error",
+    "checked_boundaries": ["observation", "diagnostic", "checkpoint", "final_observation"],
+    "application_families": [
+      "periodic_complete_stress",
+      "channel_complete_stress",
+      "plane_complete_stress",
+      "legacy_channel_active_nematic"
+    ],
+    "functional_nonfinite_contract": "FunctionalValueError (pre-existing and reverified)",
+    "complete_written_after_nonfinite_state": false,
+    "nonfinite_arrays_published": false,
+    "per_timestep_host_synchronization_added": false
+  },
+  "implementation_files": {
+    "pssolver/__init__.py": "51c7e46adae1dc3d21ef6d98ff32147ac395cbb85c23e226c29125ed0e53a0c4",
+    "pssolver/api/__init__.py": "cade6102aae47b9f2bb163e3a2e32e5b07f46ed04cbc8d4ea59f5411355fbbee",
+    "pssolver/errors.py": "8eb72d709eab9d265cb5a5102bee692f46be519a513317c7b27349809e127633",
+    "pssolver/workflows/state_validation.py": "7333a0d5c52d92b8314850a84b6eee99521b8feed6c54df9984465a321c66608",
+    "pssolver/workflows/channel_beris_edwards.py": "96b3df5ccbde9a16d3b8403ef77f9d1775ae58b969a86181681d1c6df1ce04c5",
+    "pssolver/workflows/channel_checkpoint.py": "a1a99fb9888b71dfca64f73a2daee9e9926c1f3636bdd16830800f2e475585db",
+    "pssolver/workflows/channel_observation.py": "21c5fff6b7bd4ec26b278d9e68381bef322c064e4bb5003def9b31781de27547",
+    "pssolver/workflows/periodic_beris_edwards.py": "51eceb6ba8cc54fe309654bfca766a1f3eba76c8abb0bf6a38129c442c34185c",
+    "pssolver/workflows/periodic_checkpoint.py": "642c86a251e8a806dd7b765cebc27f4cae0539b3a37b207aeff121272e4a7d43",
+    "pssolver/workflows/plane_checkpoint.py": "bc8ebc213a256cb6d3d3d39103fb6f086d804a52daff74409282682b01a7fc33",
+    "pssolver/workflows/plane_observation.py": "d13eb0f32ebaef5d2bf5a2db6771f3be22cad4f400ecb81f04cd333040d85e97"
+  },
+  "regression_tests": {
+    "tests/test_rc5_r52_finite_workflow_state.py": "92317c0265a2b6cb319e2733373c3d8b34d52659b21de3b8107b8bdba14fea2f"
+  },
+  "historical_successor_sources": {
+    "pssolver/__init__.py": {"historical_sha256": "ec8aa010d22a8c27ee557119bfd6da85c51af251e316075f7eb0c10364e40b05", "current_sha256": "51c7e46adae1dc3d21ef6d98ff32147ac395cbb85c23e226c29125ed0e53a0c4", "reason": "Export the additive public finite-state execution errors after the frozen Phase 7 surface."},
+    "pssolver/api/__init__.py": {"historical_sha256": "f7a295616733d114f108ad6cb291052aa0e18a85bda5ac1565c6da8cf7504299", "current_sha256": "cade6102aae47b9f2bb163e3a2e32e5b07f46ed04cbc8d4ea59f5411355fbbee", "reason": "Expose stable production execution and state error types without importing the workflow package."},
+    "pssolver/workflows/channel_beris_edwards.py": {"historical_sha256": "d7fe7d546f279fbe60c328fb0e720bc8aa8fbac097d47d2e69f60088b368ce88", "current_sha256": "96b3df5ccbde9a16d3b8403ef77f9d1775ae58b969a86181681d1c6df1ce04c5", "reason": "Reject non-finite complete-stress Channel observations, diagnostics, and checkpoint state before publication."},
+    "pssolver/workflows/channel_checkpoint.py": {"historical_sha256": "1034785e29eebf347c1585b7fd19d269d291c3fc7c690f036cfdc196c830e156", "current_sha256": "a1a99fb9888b71dfca64f73a2daee9e9926c1f3636bdd16830800f2e475585db", "reason": "Apply the public finite-state error at the legacy Channel checkpoint capture boundary."},
+    "pssolver/workflows/channel_observation.py": {"historical_sha256": "fec0e6b28aadb55fe03dd44d273574d33342bd33e72d9948348a0884e0f2b567", "current_sha256": "21c5fff6b7bd4ec26b278d9e68381bef322c064e4bb5003def9b31781de27547", "reason": "Translate legacy Channel non-finite observations and diagnostics to the public state error."},
+    "pssolver/workflows/periodic_beris_edwards.py": {"historical_sha256": "172fd5132de65206e2311159b20d23321a44796f5eed3a2a175e2cdaecb91548", "current_sha256": "51eceb6ba8cc54fe309654bfca766a1f3eba76c8abb0bf6a38129c442c34185c", "reason": "Add the missing Periodic observation and diagnostic finite-state invariants."},
+    "pssolver/workflows/periodic_checkpoint.py": {"historical_sha256": "1bad547e17edf21647c5ded093e9ba8b4d4f8acbf9ecbe8bd53a57ae9c06d8be", "current_sha256": "642c86a251e8a806dd7b765cebc27f4cae0539b3a37b207aeff121272e4a7d43", "reason": "Reject non-finite Periodic state through the public error before checkpoint publication."},
+    "pssolver/workflows/plane_checkpoint.py": {"historical_sha256": "116dd657f8854aa88054c0ca5ea04cfb16cf78eb43dddd5caf80b5fb5ea81564", "current_sha256": "bc8ebc213a256cb6d3d3d39103fb6f086d804a52daff74409282682b01a7fc33", "reason": "Align Plane checkpoint finite-state failure with the public production error contract."},
+    "pssolver/workflows/plane_observation.py": {"historical_sha256": "9977b4998d2ac5840a71137f67e6396288e331233b13453709d90d5eb3f437b2", "current_sha256": "d13eb0f32ebaef5d2bf5a2db6771f3be22cad4f400ecb81f04cd333040d85e97", "reason": "Preserve Plane finite checks while exposing their stable public error type."},
+    "tests/test_phase7_channel_local_closure.py": {"historical_sha256": "0ee22594b6df65f6ab6dfcc435f49a88704ff0017a935bf2583e3b2e66b0cc80", "current_sha256": "2a1d3a6939da414cbe1fd828c16606a4b9597b73e62655f334fcc41c4ff9e654", "reason": "Resolve the immutable P7.5 source binding through the R5-2 successor."},
+    "tests/test_phase8_p844_lifting_workflow_restart.py": {"historical_sha256": "d7eba748ec0abf15a49d49a0bd662568ddec5d8d59fdbdd02b6ea743eddb7b00", "current_sha256": "d344489197fa47dbb71d17dc6fbbca5975e658b6e07cd074932fcfdd08c1b2d6", "reason": "Keep the P8.4.4 Plane observation hash historical after the R5-2 public error successor."},
+    "tests/test_rc451_cross_runtime_adjudication.py": {"historical_sha256": "1bf6b9b38a4c119e8c7ee80ab92859f136f58d118955540780bbc57dc68d5f81", "current_sha256": "8ab6da3fbf947f4f6f5bded3ea5571792647147b87635994cf6d3eaec2c235a7", "reason": "Extend immutable RC4.5.1 successor resolution through R5-2."},
+    "tests/test_rc453_checkpoint_transactionality.py": {"historical_sha256": "884ff053e60665d81d1a4752b3068f6124d5667ace916a8abdba8dc7117032d3", "current_sha256": "bf78e5c7e095de151c40a4c49c64858ef18a0d785d41160b3f324ed12afcb290", "reason": "Extend immutable RC4.5.3 successor resolution through R5-2."},
+    "tests/test_rc455_public_robustness.py": {"historical_sha256": "216fe3c9b72b5f84d359d06b63afe850207ed45801d1d370e23598b95315a93d", "current_sha256": "45aac65a658ce12e66aece71ae3b13e67ab6b9cb438b4e418711654643113f94", "reason": "Extend immutable RC4.5.5 successor resolution through R5-2."},
+    "tests/test_rc4_cross_device_checkpoint_plan.py": {"historical_sha256": "b9f81584a3b9c3cb3c1ee3ddebab78b0f98ea93207bd02b4f1c09899bc11e93c", "current_sha256": "1ce1a77472c76614e0cc53b0c231067a3b21b6f6ee1a0a3c37c8b40ef6c26dac", "reason": "Extend the frozen cross-device successor chain through R5-2."},
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {"historical_sha256": "687bd70b9ae0446f5167659404a0d61c785f1b9b70901552d6e670aa3816e71b", "current_sha256": "d3c0cbf76b5b89055d71965ee0736b53a6c2e549a36382f2e5e7426107f8f5c1", "reason": "Extend the frozen cross-runtime successor chain through R5-2."},
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py": {"historical_sha256": "6221cf56f671052d25c04ef99739a6002416d8181e3d82a7ec8fb9075b2a2f39", "current_sha256": "88cb8ed64364ea06419df2d48433886eb88d3b1e5d8cdc2cb1e8070b6d776b2e", "reason": "Resolve immutable RC4.2.3 source identities through R5-2."},
+    "tests/test_rc4_plane_checkpoint_identity_record.py": {"historical_sha256": "1b3f1aee90b325f3f29afd87c681517bc170ff44b4aaa5975a37eda915198753", "current_sha256": "af65e3efed32c8a003d70c78b216f4375789486dce75e112c4aa4c1eeecd7810", "reason": "Resolve immutable RC4.2.2 source identities through R5-2."},
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {"historical_sha256": "2f3265627bfbafa4e3b1e96cf0cb81f861ace40fa90c7131f26e6a4d5e78fd19", "current_sha256": "23be9ac955490204770ff76a2b7189a7daf03bdfa5e4a3dfb4bc1a1510ff48b1", "reason": "Extend immutable RC4.4.4 successor resolution through R5-2."},
+    "tests/test_rc4_pressure_public_contract.py": {"historical_sha256": "13b15687343e1740454ee1f02ce0fe7368f59d62939548f21b056fd9b4ed1fc6", "current_sha256": "6207553ccf0670cd79881b2132de975664cb7ae83274df64ec55db6d1430fc28", "reason": "Extend the frozen RC4.4.2 successor chain through R5-2."},
+    "tests/test_phase7_channel_runtime_facade.py": {"historical_sha256": "81e57aaff968f1a339d443d7198421ed419030718b2cebe6922f0664bc1ad5da", "current_sha256": "fb10e7f81cdbfa3496db10315923adf08354d7add09bb6f31d59905cd5ab08a0", "reason": "Resolve the historical Channel checkpoint binding through R5-2."},
+    "tests/test_rc456_tf32_execution_scope.py": {"historical_sha256": "f0b56054e1f0e775e8576764bd347034e2a3f8ae032f4fc4f44a640b7fc9d416", "current_sha256": "6e1d596b3c46a9d85af294bc780cca68f52004202fcf1ba61b01ac56e08d7c29", "reason": "Extend the frozen RC4.5.6 successor chain through R5-2."},
+    "tests/test_rc457_installed_consumer_impact.py": {"historical_sha256": "7f2095302f4ed4eeba31a878c625cf97dd83c297bd97caa36716644583451cc9", "current_sha256": "6ef22a7ab30cbbf4f6259de19324420af30ae985590a467f8fa7545cb6659654", "reason": "Extend the frozen RC4.5.7 impact successor chain through R5-2."},
+    "tests/test_rc457_installed_consumer_recovery.py": {"historical_sha256": "440e70df877435999ba110421ca38f3e9a0e9d73b7fd70e49dc4e8f2c20ee030", "current_sha256": "1473bfc0773d3a6c3c5ce8dadadae415b2a9ba1417b1c277a421faff1f0d6ffa", "reason": "Extend the frozen RC4.5.7 recovery successor chain through R5-2."},
+    "tests/test_rc458_h100_closure_record.py": {"historical_sha256": "d75f69da65b460745c267f0e486d6f1b7e1147f993145025c73409958441c407", "current_sha256": "74a8861240a6df668bfd163fde060880aec6504d75f2bf6fb898a30a9415c4c2", "reason": "Extend the immutable RC4.5.8 closure successor resolution through R5-2."},
+    "tests/test_rc4_functional_checkpoint_identity_record.py": {"historical_sha256": "cccbe62c0eebd77e4a941fdae7c3c7fbedd58e3e19b1022bfd15bf3fa0a52ac2", "current_sha256": "3704e0d500d60877492631e633c553abede013201647dd8ce28df1f1d7c9ce24", "reason": "Extend functional checkpoint identity successor resolution through R5-2."},
+    "tests/test_rc4_lifting_checkpoint_integration_record.py": {"historical_sha256": "034d271c8e3fdd5a091187a9374a51c6b1e9a1dab0e6601e93b31af06f02563c", "current_sha256": "36a2871345d9601668b230922a59034411b4b35cfa648562a46b782e8aecbe4a", "reason": "Extend Plane checkpoint successor resolution through R5-2 without reopening lifting."},
+    "tests/test_rc4_post_release_findings.py": {"historical_sha256": "a79db5388deaebbc1d24e61fb030fff6fb32a82205599bc5b4429e2d794c1f1c", "current_sha256": "b1cb44e7f9959f6d03f51c3c2712c4055f791765605570728ff4333fb42646cf", "reason": "Preserve the immutable post-release findings while resolving R5-2 successors."},
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {"historical_sha256": "03e5d808ff832596bf9bd2d1a8ef04fdaace9497c0d26aa2400df00eaf676c31", "current_sha256": "1705ce01b0ea54e4b81c5618d71974c4fb1ca134289ffb1aaded2606eefa79e5", "reason": "Preserve R5-1 closure while allowing the later R5-2 workflow successor."},
+    "tests/test_rc5_w1_documentation.py": {"historical_sha256": "484a68082080153cc4d3b0a1eaadd1ff1f38e20430e06b0e9991d0d43cd57dba", "current_sha256": "24f136d16ee80a6780eedface6a738b448d3ce41f835ea5821efa92fa42d7449", "reason": "Preserve W1 closure while resolving R5-2 successors."},
+    "tests/test_release_v0_2.py": {"historical_sha256": "9fe5d98e5e155e0e4cf462a00de9663d109ebfb9237f93d4947344aee36fa14b", "current_sha256": "4292c921c2bf8a40ac947c22c36acd7ad5e4b62884e16a3d7ed501bbf849e2a5", "reason": "Keep the rc4 release record immutable while resolving later R5-2 successors."},
+    "tests/test_architecture_import_boundaries.py": {"historical_sha256": "35aca5bc6ebbf3821f6272083a1bbccac3858ce816bccadcf4f21215f6f0ffd3", "current_sha256": "db2cebd8d52f9a555252b83b27f949486731336c93e7488a749d969086381075", "reason": "Register the tensor-free public errors leaf as an allowed workflow dependency."}
+  },
+  "validation": {
+    "targeted_cpu": "63 passed, 0 failed",
+    "external_periodic_reproducer": {
+      "diagnostic_boundary": "SimulationStateError at step 10; no COMPLETE; no non-finite arrays",
+      "final_boundary": "SimulationStateError at step 40; no COMPLETE; no non-finite arrays",
+      "checkpoint_boundary": "SimulationStateError at step 10; no COMPLETE; no partial checkpoint"
+    },
+    "functional_nonfinite_probe": "5/5 injected NaN/Inf states rejected with FunctionalValueError",
+    "source_full_cpu": "pending",
+    "installed_wheel_cpu": "pending"
+  },
+  "scope": {
+    "scientific_equations_changed": false,
+    "integrator_changed": false,
+    "transform_algorithm_changed": false,
+    "pressure_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "r5_2_complete": false,
+    "eligible_for_r5_3": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

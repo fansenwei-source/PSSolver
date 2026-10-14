@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_1_legacy_functional_checkpoint.json"
 )
+R5_2_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
 
 
 def _sha256(relative: str) -> str:
@@ -34,13 +35,20 @@ def test_r51_record_binds_implementation_fixture_and_regressions():
 
 def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
     record = json.loads(RECORD.read_text(encoding="utf-8"))
+    r5_2_successors = json.loads(R5_2_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
         assert registration["historical_sha256"] != registration[
             "current_sha256"
         ]
-        assert _sha256(relative) == registration["current_sha256"]
+        resolved = registration["current_sha256"]
+        successor = r5_2_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        assert _sha256(relative) == resolved
     assert record["scope"]["historical_records_rewritten"] is False
     assert record["scope"]["tag_or_release_modified"] is False
 

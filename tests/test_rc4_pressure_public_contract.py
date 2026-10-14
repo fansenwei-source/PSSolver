@@ -44,6 +44,7 @@ RC455 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
 )
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
+RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
 
 
 def _record() -> dict[str, object]:
@@ -388,6 +389,7 @@ def test_rc442_reviewed_sources_are_content_addressed():
         RC453,
         RC455,
         RC456,
+        RC5_R52,
     ):
         record = json.loads(path.read_text(encoding="utf-8"))
         successor_records.append(
