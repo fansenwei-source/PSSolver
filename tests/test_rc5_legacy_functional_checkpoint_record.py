@@ -16,6 +16,7 @@ R5_3_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
 )
 R5_5_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
+R5_6_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 
 
 def _sha256(relative: str) -> str:
@@ -48,6 +49,9 @@ def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
     r5_5_successors = json.loads(R5_5_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    r5_6_successors = json.loads(R5_6_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
@@ -62,6 +66,9 @@ def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = r5_5_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = r5_6_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(relative) == resolved

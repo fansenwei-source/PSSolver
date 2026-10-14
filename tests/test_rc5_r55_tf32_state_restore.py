@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
+R5_6_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 
 
 def _record() -> dict[str, object]:
@@ -17,6 +18,18 @@ def _record() -> dict[str, object]:
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def _r56_successor(relative: str, historical: str) -> str:
+    registration = json.loads(R5_6_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if (
+        registration is not None
+        and registration["historical_sha256"] == historical
+    ):
+        return registration["current_sha256"]
+    return historical
 
 
 def test_r55_record_binds_issue_and_reachable_state_contract():
@@ -57,7 +70,7 @@ def test_r55_record_binds_exact_implementation_and_regression_sources():
     record = _record()
     for section in ("implementation_files", "qualification_files", "regression_tests"):
         for relative, expected in record[section].items():
-            assert _sha256(relative) == expected
+            assert _sha256(relative) == _r56_successor(relative, expected)
 
 
 def test_r55_historical_successors_are_exact_and_forward_only():
@@ -87,7 +100,9 @@ def test_r55_historical_successors_are_exact_and_forward_only():
     for relative, registration in successors.items():
         assert len(registration["historical_sha256"]) == 64
         assert registration["historical_sha256"] != registration["current_sha256"]
-        assert _sha256(relative) == registration["current_sha256"]
+        assert _sha256(relative) == _r56_successor(
+            relative, registration["current_sha256"]
+        )
         assert registration["reason"]
 
 

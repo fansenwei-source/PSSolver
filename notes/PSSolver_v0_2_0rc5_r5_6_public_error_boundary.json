@@ -1,0 +1,245 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc5 R5-6 structured public compilation error boundary",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_R5_6_STRUCTURED_PUBLIC_ERROR_BOUNDARY_CPU_CLOSURE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "implementation_commit": "cf572bcfee0cb397961944eace123fb8fbe25683",
+    "qualified_source_commit": "cf572bcfee0cb397961944eace123fb8fbe25683",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "id": "B17",
+    "related_issue": "NEW-7",
+    "work_item": "R5-6",
+    "source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc4_consolidated_report.json"
+  },
+  "root_cause": "The public compiler exposed its structured exception and code enum only from an internal module, serialized non-finite diagnostic floats through strict JSON unchanged, let malformed application mappings leak KeyError, and assigned the generic application_contract code to almost every contract rejection.",
+  "contract": {
+    "reproducer_case_count": 58,
+    "compile_rejection_count": 48,
+    "structured_compile_rejection_count": 48,
+    "unstructured_compile_rejection_count": 0,
+    "pre_fix_application_contract_count": 45,
+    "post_fix_application_contract_count": 0,
+    "missing_stokes_code": "malformed_application_spec",
+    "robin_nonfinite_context": "positive_infinity",
+    "nonfinite_json_tokens": {
+      "nan": "nan",
+      "positive_infinity": "positive_infinity",
+      "negative_infinity": "negative_infinity"
+    },
+    "public_error_exported_from_pssolver": true,
+    "public_error_exported_from_pssolver_api": true,
+    "public_code_exported_from_pssolver": true,
+    "public_code_exported_from_pssolver_api": true,
+    "malformed_keyerror_preserved_as_cause": true,
+    "tensor_allocation_before_rejection": false,
+    "output_created_before_rejection": false
+  },
+  "implementation_files": {
+    "pssolver/__init__.py": "cc70ae9bd8667936f7b5c78f17f1a718341b1d9f8d4b63f649555380f01a5180",
+    "pssolver/api/__init__.py": "d48fe899a2a6c2b13d47ac2a5c4c07c78b3cdf6dba9074d18a52f71ad443e3c9",
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": "9a891f60010a40c701283033bdb356fd76d69d9e86543e2af38ef41ce92ea3ae",
+    "pssolver/configuration/public_channel_simulation_compiler.py": "7d289e8b329d8783868469d36231a0fb665639dc3616ddca38495bd11062c963",
+    "pssolver/configuration/public_periodic_simulation_compiler.py": "9ce3e040211def2ffcfbaf2fc068f8a4b8f3d5702a6f69c09681238265b4831c",
+    "pssolver/configuration/public_simulation_runner.py": "84cb80025cac3f743bd71a976cfd70022633ecaa0b76b9fff1af621c42774ab1"
+  },
+  "regression_tests": {
+    "tests/test_phase7_p779_public_runner_connection.py": "281c29b6baa252245b595f2b131b16c3dfc71451116f1a89a2b2b53190e0bd67",
+    "tests/test_rc454_boundary_semantics.py": "25c1966ff6d1ad56e05f27ed3d7d3933f1d6732a20fbffa5ae74b04e7fe5d47f",
+    "tests/test_rc5_public_error_boundary.py": "e54103bf4140129e1d510b32188176cc2ef873e1c00bf7d90e492f118985a313",
+    "tests/test_rc5_r56_public_error_boundary_record.py": "303375cae5b78b7fa7f338fa423d120e2f47c69e7846afe5c0419c1829f38480"
+  },
+  "historical_successor_sources": {
+    "pssolver/__init__.py": {
+      "historical_sha256": "51c7e46adae1dc3d21ef6d98ff32147ac395cbb85c23e226c29125ed0e53a0c4",
+      "current_sha256": "cc70ae9bd8667936f7b5c78f17f1a718341b1d9f8d4b63f649555380f01a5180",
+      "reason": "Export the structured public compilation exception and rejection code from the package root."
+    },
+    "pssolver/api/__init__.py": {
+      "historical_sha256": "cade6102aae47b9f2bb163e3a2e32e5b07f46ed04cbc8d4ea59f5411355fbbee",
+      "current_sha256": "d48fe899a2a6c2b13d47ac2a5c4c07c78b3cdf6dba9074d18a52f71ad443e3c9",
+      "reason": "Export the structured public compilation exception and rejection code from pssolver.api."
+    },
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": {
+      "historical_sha256": "e746def5ac25d3482b108e717ca9d2b2bbbea65abfb543ee46ba88ab35b562a1",
+      "current_sha256": "9a891f60010a40c701283033bdb356fd76d69d9e86543e2af38ef41ce92ea3ae",
+      "reason": "Assign domain-specific structured rejection codes to complete-stress Channel declarations."
+    },
+    "pssolver/configuration/public_channel_simulation_compiler.py": {
+      "historical_sha256": "2cfe19766539138fa3a9f1ec90b6c1a132aecd743ac7b571a8831a6ad0f639bf",
+      "current_sha256": "7d289e8b329d8783868469d36231a0fb665639dc3616ddca38495bd11062c963",
+      "reason": "Assign domain-specific structured rejection codes to legacy Channel declarations."
+    },
+    "pssolver/configuration/public_periodic_simulation_compiler.py": {
+      "historical_sha256": "fb8e82901256ea7e2da4757468513d5bc0213de9f8f00ca4d2fd5c87cd9d5b1d",
+      "current_sha256": "9ce3e040211def2ffcfbaf2fc068f8a4b8f3d5702a6f69c09681238265b4831c",
+      "reason": "Assign domain-specific structured rejection codes to Periodic declarations."
+    },
+    "pssolver/configuration/public_simulation_runner.py": {
+      "historical_sha256": "a8ab18173edc535ae596733c23c0374a40d55112829504ee9dbbcd19f9a47e32",
+      "current_sha256": "84cb80025cac3f743bd71a976cfd70022633ecaa0b76b9fff1af621c42774ab1",
+      "reason": "Make public compiler failures JSON-safe, translate malformed mappings, and classify rejection domains before allocation."
+    },
+    "tests/test_phase7_p779_public_runner_connection.py": {
+      "historical_sha256": "dc5d4105dc3404d55dab43d07ae9fcadd806fb55c26ca0b820e30e051bdc11dd",
+      "current_sha256": "281c29b6baa252245b595f2b131b16c3dfc71451116f1a89a2b2b53190e0bd67",
+      "reason": "Update the public runner regression to require the narrower execution-contract code."
+    },
+    "tests/test_rc454_boundary_semantics.py": {
+      "historical_sha256": "68a930108c04b7563336ac5e60a2e48cd778c4066beef571c204815234919525",
+      "current_sha256": "25c1966ff6d1ad56e05f27ed3d7d3933f1d6732a20fbffa5ae74b04e7fe5d47f",
+      "reason": "Update boundary regressions to require the narrower boundary-contract code."
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "0785ae2fe6be244f38ac8278736f2c41446689b62dbd32713745c30efbfacf1e",
+      "current_sha256": "ba9dbe80b45b4106ef41fd5f1799e7436735e8084affaf5cfbee91071555d3a2",
+      "reason": "Extend the immutable RC4.5.1 source resolver through R5-6."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "53a209d171b628bd377186c65360fc1de5f7e905686b0a2e77e7682213368cbf",
+      "current_sha256": "9145ef8321532a10dd1fe5ad060ace54f5d83f9c1e3f383c3c383fbcaf2cc2d9",
+      "reason": "Extend the immutable RC4.5.5 source resolver through R5-6."
+    },
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {
+      "historical_sha256": "bf63bc91026583b7d570e46f6f4d32c48b8122c8d1e6f6deecd851596a56a369",
+      "current_sha256": "4ac365b123cc7eca95342c200883f5a777b2e1f8cf3fa50f69e432d89931e3a4",
+      "reason": "Extend the frozen cross-runtime plan source resolver through R5-6."
+    },
+    "tests/test_rc4_lifting_capability_restriction_record.py": {
+      "historical_sha256": "a30bfaa3e4e329ef9b1efa36885bd71d743441db82c199c739b9f228b4653e33",
+      "current_sha256": "2007078db26c2ac288066f11549c1e3fa98e3e9ad8a0a0e135ca9b3db3ba383b",
+      "reason": "Resolve immutable lifting capability source identities through R5-6."
+    },
+    "tests/test_rc4_pressure_contract_plan.py": {
+      "historical_sha256": "02e51c6b53514ac6e70eb68ba8a80320d75195c21632a7e1fca160d0b0075240",
+      "current_sha256": "26fb9207f86b763bd2c3c76694cb54bff5011b55dd02111716159a24d8c9c01b",
+      "reason": "Resolve immutable pressure plan source identities through R5-6."
+    },
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {
+      "historical_sha256": "9641244a6584a087826a04ad2b53dfc36e9c284af3b93eefc2f72df2f81fbbfd",
+      "current_sha256": "8a5a5b299fdb1d697fb19d9c1e76d42569bb983bc1ead6a85b50684c7960c8ed",
+      "reason": "Resolve immutable pressure metadata source identities through R5-6."
+    },
+    "tests/test_rc4_pressure_public_contract.py": {
+      "historical_sha256": "09767bfcd9dff6d4bf0377e0db0316ed52fcb52c1452461af64e20a46c914e13",
+      "current_sha256": "4d96da84ca5aa2247112384c69589f5ae875560c4c2e26240404fa982eaa2853",
+      "reason": "Resolve immutable public pressure-contract source identities through R5-6."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "bf36619a857cc79624c46bd2d776d465cc5c0e777f1ceb3f20a0038848695417",
+      "current_sha256": "96b9906c646df3f29f67d5000230ba99dd1f8025369f9286c6dc4702d411ee8d",
+      "reason": "Extend the immutable R5-2 successor resolver through R5-6."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "b82f2e79d94a7659eb58efaa306f8aef20fa75766e2e26c21c5ba1f60ed38045",
+      "current_sha256": "68545fe178b0b4d463c925da248fd04ef057dfe9b8f5a6936de86a4503603f1f",
+      "reason": "Resolve immutable TF32 scope source identities through R5-6."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "ed5c3410147aeff456af155fa449f5295af5e60e7c6e01b6fd6f66a2a2766d9e",
+      "current_sha256": "bf89bb1aff418be50e8310665e1ea746d0092f71d9d434a4e428fe5045fcb460",
+      "reason": "Resolve immutable installed-consumer impact sources through R5-6."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "220eaa2e5d9a73edf9ecbefa4a9997427778bb3c7d90198a12fa4ac08f62a7af",
+      "current_sha256": "10e20d7b1bf35b312f903f4196b99ed87be7c7775a9bfa5754dec3795e55a116",
+      "reason": "Resolve immutable installed-consumer recovery sources through R5-6."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "91a64f3460ccc313b710d70ddbe9a27ff0e0a2c974a9e4cf0233dd3627938947",
+      "current_sha256": "77881d7fa16f76ab85123e97e8e52612ee97d9a107e36c15ff48cc31c9733eeb",
+      "reason": "Resolve immutable RC4.5.8 closure sources through R5-6."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "f6ae558d0828f921ced2dac6b6efc0168fe82564bd3aef8f46eea3907ebb7123",
+      "current_sha256": "6945a0a7da765f046ea7ab7b6187df452ecaee99a96888985eeb6b29e3cdc849",
+      "reason": "Resolve immutable post-release findings sources through R5-6."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "b658794a111583bc0f2ca837cc25766ae3f4e0bae4ef279835bda881f38c5038",
+      "current_sha256": "a739caf7849448d9c9558187796cbe79bade23e42723f4c1c941d6ae30582444",
+      "reason": "Resolve immutable R5-1 closure sources through R5-6."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "c764a135e4b4eb53bdb3743c2769cc33e20101ca5511d04e3dc7ca233af2a9c5",
+      "current_sha256": "839c3604cf4f510be9df20f1d44b1f60d0fca86312ac6b2122f69504405d0156",
+      "reason": "Resolve immutable R5-3 closure sources through R5-6."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "c70476ef323a7a7a77f6139b1a88bf0202ff79aafe95ef4afdcf5138d77ee7a6",
+      "current_sha256": "5907018ccabbba99d1e153742f3b2b16a532277307952114bd9347bbba6fa097",
+      "reason": "Resolve immutable R5-5 closure sources through R5-6."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "c3f9edf2e2181cfeede56580eb601fe6acb79cc15eeb9f9c3b578826bca52328",
+      "current_sha256": "75c25512426d933f61274e3a982c352ea07f1e9ee651dce5a6389120376b9abe",
+      "reason": "Resolve immutable rc5 W1 sources through R5-6."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "b7d09b31860d7bd6604fd448d28630ae529253c25da80e90af426ea7b1744890",
+      "current_sha256": "d03d520c7c389ea6f9f197dbfe9dd87a24a08c69876c99524ac76a6c72522ac4",
+      "reason": "Resolve immutable v0.2.0rc4 release sources through R5-6."
+    }
+  },
+  "validation": {
+    "original_external_reproducer": "58 cases; 45 application_contract rejections and one raw KeyError",
+    "corrected_external_reproducer": "58 cases; 48/48 structured compile rejections; 0 application_contract; 0 output paths created",
+    "targeted_cpu": "41 passed, 0 failed",
+    "source_full_cpu": "3516 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_targeted_cpu": "41 passed, 0 failed",
+    "installed_wheel_applicable_full_cpu": "3509 passed, 7 skipped, 8 subtests passed, 0 failed"
+  },
+  "installed_wheel_evidence": {
+    "directory": "/home/fansenwei/pssolver_rc5_r56_installed_cpu_cf572bc_20261014_v1",
+    "source_archive_sha256": "c22b08e6a024245c55a7fb5439599596ad29d6261059eb393ce83691c5fb623e",
+    "wheel": "pssolver-0.2.0rc4-py3-none-any.whl",
+    "wheel_sha256": "d427a3a2cf8aa7a5b92f2018f4d5a28e88eaf0ac23d1336e58bccc1591549666",
+    "pip_check": "PASS",
+    "python": "3.12.13",
+    "torch": "2.6.0",
+    "torch_cuda_runtime": "12.6",
+    "numpy": "2.3.2",
+    "scipy": "1.16.0",
+    "pytest": "9.1.1",
+    "source_shadow_import": false,
+    "nematics3d_modified": false,
+    "checksum_entries": 12,
+    "checksums_sha256": "a8bcc1dd3d52c0c27cd3a86d8ea499c09206a3229880451ba97e15c7b24ff084",
+    "installed_test_harness": "preload the installed pssolver package from venv purelib, then add the read-only worktree for Git, notes, and tests",
+    "source_only_test": {
+      "path": "tests/test_phase8_p861_local_cumulative_audit.py",
+      "test_count": 7,
+      "hidden_as_skip_or_xfail": false
+    },
+    "log_sha256": {
+      "build_wheel_pip.log": "5971c9c7dd4ea76ecfdc6d1c667525d6ce78810fc50acb4749595ca8ef203e2f",
+      "import_identity.log": "b13202b3a2def7dc8ff0dccc2c8f92794a6fd2249e37773eed7ee2df1a96f83f",
+      "installed_targeted_isolated.log": "59ffb9b70f587021bd4e9b6027ad4750e8d04d9fd6c7bc0d4cfe3db07c9be84f",
+      "source_full.log": "e7b98c286b25d7bf309846b5da9d72bde2c5951ff04db244342ee0684ca0e6ba",
+      "installed_applicable_full.log": "dcf63d4f56a52b6cd75f120ef1be8f68a3a4e7b4d0e17fb177aed1834427db48",
+      "pip_check.log": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    }
+  },
+  "scope": {
+    "scientific_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "r5_6_cpu_closure_complete": true,
+    "eligible_for_r5_7_implementation": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}
