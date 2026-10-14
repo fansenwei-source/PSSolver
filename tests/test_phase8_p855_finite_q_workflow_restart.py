@@ -145,6 +145,9 @@ def test_five_component_relaxation_is_finite_oriented_and_explicitly_partial(
     assert after.shape == (6, 5, 6, 5)
     assert torch.isfinite(after).all()
     assert not torch.equal(before, after)
+    # Each component basis enforces its wall law by construction.  These
+    # residuals are diagnostics, while evolution/restart supply independent
+    # runtime evidence.
     for lower, upper in runtime.boundary_residuals().values():
         torch.testing.assert_close(lower, torch.zeros_like(lower), atol=1e-14, rtol=0)
         torch.testing.assert_close(upper, torch.zeros_like(upper), atol=1e-14, rtol=0)

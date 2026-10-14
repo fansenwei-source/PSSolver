@@ -266,6 +266,8 @@ def test_runtime_reconstructs_physical_observation_and_wall_residual():
     assert runtime.state.component_names == ("c",)
     assert runtime.state.physical.shape == (1, *plan.domain_shape)
     assert runtime.state.spectral.shape == (1, *plan.domain_shape)
+    # Construction makes this wall residual near zero; runtime evolution and
+    # Helmholtz roundtrip tests provide the independent correctness evidence.
     lower, upper = runtime.boundary_residual()
     assert lower.shape == plan.domain_shape[:2]
     assert upper.shape == plan.domain_shape[:2]

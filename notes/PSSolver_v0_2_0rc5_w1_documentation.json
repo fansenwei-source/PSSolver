@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc5 W1 public-documentation alignment",
+  "baseline": {
+    "commit": "a31897b18ab9b8d4f334677256801366a7e54af8",
+    "branch": "fix/v0.2.0rc5",
+    "preceding_record": "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
+  },
+  "classification": "PASS_RC5_W1_DOCUMENTATION_ALIGNMENT",
+  "complete": true,
+  "eligible_for_rc5_must": true,
+  "closed_items": ["B30", "NEW-4", "NEW-5"],
+  "next_batch": "rc5_must",
+  "scope": {
+    "runtime_behavior_changed": false,
+    "numerical_implementation_changed": false,
+    "public_capability_widened": false,
+    "lifting_reopened": false,
+    "scientific_threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false,
+    "h100_submitted": false,
+    "tag_or_release_modified": false,
+    "pushed": false
+  },
+  "contracts": {
+    "complete_readme_example_is_cpu_executable": true,
+    "historical_plane_example_save_start_step": 0,
+    "execution_option_ownership_documented": true,
+    "static_q_lifting_declarable": true,
+    "static_q_lifting_executable": false,
+    "lifting_rejection_reason": "unsupported_lifted_wall_molecular_field",
+    "robin_boundary_residual_is_independent_gate": false,
+    "fixed_work_gradient_is_exact_finite_iteration_derivative": true
+  },
+  "verification": {
+    "targeted_cpu": {
+      "passed": 152,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_cpu_cuda_hidden": {
+      "passed": 3422,
+      "failed": 0,
+      "skipped": 7,
+      "xfailed": 0,
+      "baseline_skip_count_unchanged": true
+    },
+    "readme_example": {
+      "executed_verbatim": true,
+      "status": "complete",
+      "final_step": 2
+    }
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {"historical_sha256": "7a8e092d8c4b8507045d2aa898f7802565761a8aedd8c37dca7ccae3b00aaf91", "current_sha256": "d0bd6dc6ec323120bc0a8134368e76b179b4ac2ea34c1ab7e10815e76fe1ac2d", "reason": "Correct rc4 release-time language and document the declaration-only static-Q lifting boundary."},
+    "README.md": {"historical_sha256": "e7837fa7f12f793486c35e4310ce610d2562db9c8a333aeb679678fbb2e52a5c", "current_sha256": "ad1b4f1d53edbbe763f5538676405e11eb5e61896e05ad7964482fafef4e96d5", "reason": "Add an executable composable Simulation example and exact public option ownership."},
+    "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json": {"historical_sha256": "3add7bff4d14bae4319d9f80b13bfd6a81522860f3067318481beb52b977fa2b", "current_sha256": "3f995bf35a5e4e09c8b15b041be5f4dfd37eb6e800b8be130bd2d9217dcfc922", "reason": "Close the W1 documentation items and advance the live queue to rc5_must."},
+    "notes/PSSolver_v0_2_0rc3_known_issues_matrix_zh.md": {"historical_sha256": "871bbf2410dce7c9cefc4adbd7c035949e33f0d8b98655e8048949c6037b0270", "current_sha256": "44d518748c3e4fb1345a964de36fb7aeb6bdbac157d21ecf68d652bb31916b29", "reason": "Describe W1 completion without rewriting historical qualification evidence."},
+    "notes/pssolver_v0_2_scope.md": {"historical_sha256": "524e76253c9daab769555d1315f936c239b8d9ecd769d99c0a73862f32f4b9af", "current_sha256": "03bfcd1bbaa56925fba8a3954f46a1a388210454705b31ddbfe5caac84800ab1", "reason": "Align lifting scope and fixed-work gradient guidance with the live contracts."},
+    "pssolver/operators/robin.py": {"historical_sha256": "15eabe42ff16484dd8721d4477b5ceb076f6c86e490c70993db78daf93ca6285", "current_sha256": "eb25c09fa4cfd0612234947f30b8a3b7c5dbd0625729eb37ea1df6c29e9a989c", "reason": "Document boundary_residual as a construction diagnostic; executable code is unchanged."},
+    "tests/test_phase8_p852_robin_eigenbasis_operator.py": {"historical_sha256": "0cbbc921f4650efc2a9331735141b0eac29368b5e914f2e86ea4e964d7528710", "current_sha256": "4aae3de68ead0f4d7017898ee825eb91c14aab8000c7798f52666c0620d806f5", "reason": "Clarify the evidentiary meaning of the constructed boundary residual."},
+    "tests/test_phase8_p853_robin_scalar_runtime.py": {"historical_sha256": "9bdd98eed83abc760c2be26e53a50a4cc8ca87c0f8b6b8be1759da4ca6faa041", "current_sha256": "2c235fef5fd6a04dbdd3876dd7788307963f864abb1336c6f7006c918e401e37", "reason": "Clarify the evidentiary meaning of the constructed boundary residual."},
+    "tests/test_phase8_p855_finite_q_workflow_restart.py": {"historical_sha256": "9d983c2a2321f208c0db6f4187e018de545593021baf42f8881e1fe87fbd962c", "current_sha256": "22a3f9eb4daca41933dfd1d83e4b7496fd064f966c201f9e61cf1cb84d162f37", "reason": "Clarify the evidentiary meaning of the constructed boundary residual."},
+    "tests/test_rc3_known_issues_matrix.py": {"historical_sha256": "dfea8312be1b044ee8d3627d14381f8c84f4ff1d47ba5bf384ab9279254af6bb", "current_sha256": "bebcb96ec49a982feb41f3fb1ce9dfdd42ddd4ca5ad183f6f7c4d553fa368ddf", "reason": "Verify the live W1 closure state and next-batch transition."},
+    "tests/test_rc451_cross_runtime_adjudication.py": {"historical_sha256": "9a1f500d3f47ecae9f13d1250fb308bd3e7ca2b619526dad8f596b19ffc22ce0", "current_sha256": "ef1910b21630ea827a18a6a0bac05e922b25b1a58a00cfb4ce3f80d60abbb7cb", "reason": "Resolve historical source identity through the W1 successor record."},
+    "tests/test_rc455_public_robustness.py": {"historical_sha256": "74754c161c280e321de22f09a4e7ebd188864e8a5c4f496d493810c976cc5aa2", "current_sha256": "a26ca1efb019a53c832f2fe410ac9f8d05991071358a6ac118395a053e671d39", "reason": "Resolve historical source identity through the W1 successor record."},
+    "tests/test_rc456_tf32_execution_scope.py": {"historical_sha256": "38885dea270b74750b67793fc3b206e360b40d5ba114738b1ff4e2cd6656c651", "current_sha256": "268efe730bdb750ea235dfd467e96c532594c8bb26fdd27937ee35710eed734a", "reason": "Resolve historical source identity through the W1 successor record."},
+    "tests/test_rc457_installed_consumer_impact.py": {"historical_sha256": "afe3246538886409ee0826012aa6fa5427666e454b66cd0e6fce4188dbf83fa6", "current_sha256": "673fc37797de9b66ce68a0ab77e0c0ae8e7f4a43af94d8f5f58fe0414e943e94", "reason": "Resolve historical source identity through the W1 successor record."},
+    "tests/test_rc457_installed_consumer_recovery.py": {"historical_sha256": "e3df4df125db65642b7e5abe4acabda0414fa995fd553d4f8fc9c8ab2945202b", "current_sha256": "bab5d94ba1c66be89eef5f4a6b116286a2ce6ebae1b50668bc450582c66e93c6", "reason": "Resolve historical source identity through the W1 successor record."},
+    "tests/test_rc458_h100_closure_record.py": {"historical_sha256": "a3225c7a7e52c236f4233541ef8c5eca22340ae9e21b50d127cd47fe80bdbffe", "current_sha256": "d4ee44720571c148a5b8afe5f485fcd5951dabff2d4133574ec3cd7619175d63", "reason": "Resolve historical source identity through the W1 successor record."},
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {"historical_sha256": "cb5fde1aaa44efdec8a1f63013130ee84e92b87d762515dd95bf65b45f627437", "current_sha256": "3bb29c74b1ab0fd14c967b8391fab8d805139107ec5242cb602bba0b787f640e", "reason": "Verify that W1 advances the live queue to rc5_must and resolve source identity."},
+    "tests/test_rc4_post_release_findings.py": {"historical_sha256": "fcdebb0a04b2e31231b7498ab0458c50b3f0f237d5565bdc80630a4ade2f3007", "current_sha256": "c7592d13eb0e13c388385e735688b0ca244ce1b31316fd982d8185adbd2ab9fb", "reason": "Preserve W0 evidence while resolving its registered files through W1."},
+    "tests/test_release_v0_2.py": {"historical_sha256": "0ecc7e163a219b3acc97a8405e6a421e571cb1ff8ecee23a90234f1ef3322ba4", "current_sha256": "298d366d2f3741215b6ed8342a1c4215703daaff255352dffa59891fdc34e25e", "reason": "Preserve immutable rc4 release evidence while resolving later W1 successors."}
+  }
+}

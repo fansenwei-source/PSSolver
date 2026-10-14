@@ -20,6 +20,7 @@ RC455 = ROOT / (
 )
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 POST_RELEASE = ROOT / "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
+RC5_W1 = ROOT / "notes/PSSolver_v0_2_0rc5_w1_documentation.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -42,7 +43,7 @@ def _git_blob_sha256(commit: str, relative: str) -> str:
 
 def _resolve_successor_sha256(relative: str, historical: str) -> str:
     resolved = historical
-    for record_path in (RC453, RC454, RC455, RC456, POST_RELEASE):
+    for record_path in (RC453, RC454, RC455, RC456, POST_RELEASE, RC5_W1):
         registration = _read(record_path).get(
             "historical_successor_sources", {}
         ).get(relative)
@@ -287,9 +288,7 @@ def test_known_issue_matrix_preserves_rc44_and_tracks_rc45_closure():
     assert matrix["summary"]["closed_verified"] == 28
     assert matrix["summary"]["partial_residual"] == 9
     assert matrix["summary"]["regressed_after_closure"] == 1
-    assert matrix["summary"]["next_implementation_batch"] == (
-        "rc5_documentation"
-    )
+    assert matrix["summary"]["next_implementation_batch"] == "rc5_must"
     issues = {item["id"]: item for item in matrix["items"]}
     assert all(issues[item]["state"] == "closed_verified" for item in ("B25", "B28", "B29"))
     assert all(

@@ -16,6 +16,7 @@ RC454 = ROOT / "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json"
 RC455 = ROOT / "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 POST_RELEASE = ROOT / "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
+RC5_W1 = ROOT / "notes/PSSolver_v0_2_0rc5_w1_documentation.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -28,7 +29,7 @@ def _sha256(path: Path) -> str:
 
 def _resolve_successor_sha256(relative: str, historical: str) -> str:
     resolved = historical
-    for record_path in (RC453, RC454, RC455, RC456, POST_RELEASE):
+    for record_path in (RC453, RC454, RC455, RC456, POST_RELEASE, RC5_W1):
         registration = _read(record_path).get(
             "historical_successor_sources", {}
         ).get(relative)

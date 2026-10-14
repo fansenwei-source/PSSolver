@@ -12,9 +12,9 @@ cross-runtime robustness follow-up to `v0.2.0rc3`.
   velocity and pressure on even periodic grids.
 - Make checkpoint reads exact-schema, checksum-verified, identity-bound, and
   mutation-free on rejection; publish checkpoint directories transactionally.
-- Restrict public lifting capabilities to qualified static Dirichlet data,
-  preserve explicit fresh-state conditioning, and carry lifting identity
-  through runtime construction and restart.
+- Withdraw unqualified public static-Q lifting execution while retaining its
+  typed declarations for schema compatibility; prescribed, homeotropic, and
+  planar-Q lifting now reject before runtime construction.
 - Make Channel pressure tolerances and fixed-work policies explicit public
   contracts, expose stable diagnostics, and retain forward/transpose
   consistency without changing production pressure warm-start semantics.
@@ -39,14 +39,17 @@ cross-runtime robustness follow-up to `v0.2.0rc3`.
 
 ### Release boundary
 
-- The rc3 known-issues matrix now records 38 closed issues, three accepted
-  limitations, nine deferred architecture items, and no partial residuals.
+- Post-release verification supersedes the source-preparation count: the
+  current matrix records 28 closed issues, nine partial residuals, one issue
+  regressed after closure, three accepted limitations, and nine deferred
+  architecture items.  B10 is the release-blocking regression: rc4 rejects
+  the real rc1--rc3 functional checkpoints exercised by the audit.
 - Functional API version 1.0, checkpoint compatibility versions, qualified
   model--geometry combinations, batch-one functional scope, and production
   defaults are unchanged.
-- This source-preparation commit does not create a tag or publish a package.
-  A clean sdist/wheel build, isolated installed-wheel CPU smoke, and final
-  explicitly authorized H100 release smoke are still required.
+- The annotated `v0.2.0rc4` tag and GitHub prerelease were published on
+  2026-10-13 and remain immutable.  The post-release findings are assigned to
+  rc5; rc4 is not retagged, rewritten, or republished.
 
 ## 0.2.0rc3 — 2026-10-06
 
@@ -221,9 +224,11 @@ release branches, and historical qualification records remain unchanged.
 - Qualified complete-stress Beris--Edwards applications for periodic boxes,
   Plane slabs, and rectangular Channels, plus the retained legacy active-force
   Channel application.
-- Generic static prescribed-Dirichlet declarations, Plane Q lifting, and
-  strong homeotropic/planar Q convenience policies.  The finite-Q Robin work
-  remains an internal qualified pilot rather than a public runtime.
+- Generic static prescribed-Dirichlet declarations and strong
+  homeotropic/planar Q convenience policies are declaration-only in the
+  public catalog: their executable capability is false and compilation
+  rejects them before runtime construction.  The finite-Q Robin work remains
+  an internal qualified pilot rather than a public runtime.
 - Versioned `pssolver.functional.api` protocol 1.0 for independent batch-one
   Periodic and Channel consumers, including replay, observations, diagnostics,
   checkpoint bridges, and differentiable execution.

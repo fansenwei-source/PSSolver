@@ -131,6 +131,8 @@ def test_modal_roundtrip_batching_and_oriented_wall_residual_are_roundoff():
     physical = operator.reconstruct_physical(homogeneous)
     recovered = operator.to_modal(operator.homogeneous_remainder(physical))
     assert torch.max(torch.abs(recovered - coefficients)).item() < 5.0e-15
+    # The lift and homogeneous basis satisfy the wall laws by construction;
+    # this roundoff check is diagnostic, not an independent operator oracle.
     lower, upper = operator.boundary_residual(physical)
     assert torch.max(torch.abs(lower)).item() < 2.0e-13
     assert torch.max(torch.abs(upper)).item() < 2.0e-11
@@ -192,6 +194,8 @@ def _manufactured_error(size: int) -> tuple[float, float, float, float]:
             / torch.linalg.vector_norm(forcing)
         ).item()
     )
+    # Retain the constructed wall-law diagnostic alongside the independent
+    # manufactured-solution and interior-residual convergence checks.
     lower_residual, upper_residual = operator.boundary_residual(actual)
     return (
         relative_error,

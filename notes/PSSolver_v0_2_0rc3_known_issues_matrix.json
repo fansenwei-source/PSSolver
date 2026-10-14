@@ -74,7 +74,7 @@
     "deferred_architecture": 9,
     "post_release_finding_count": 15,
     "first_implementation_batch": "rc4.1_plane_nyquist",
-    "next_implementation_batch": "rc5_documentation"
+    "next_implementation_batch": "rc5_must"
   },
   "post_release": {
     "release": "v0.2.0rc4",
@@ -86,14 +86,16 @@
     "runtime_changed_by_registration": false,
     "tag_or_release_mutated": false,
     "nematics3d_modified": false,
-    "h100_submitted": false
+    "h100_submitted": false,
+    "rc5_documentation_complete": true,
+    "rc5_documentation_record": "notes/PSSolver_v0_2_0rc5_w1_documentation.json"
   },
   "post_release_findings": [
     {"id": "NEW-1", "severity": "medium", "state": "open", "summary": "Periodic production runs can write COMPLETE after Q, velocity, and pressure become non-finite.", "target": "rc5_must", "requires_h100": false},
     {"id": "NEW-2", "severity": "medium", "state": "open", "summary": "The wheel and sdist install an unintended top-level benchmarks package containing 88 modules.", "target": "rc5_must", "requires_h100": false},
     {"id": "NEW-3", "severity": "low-medium", "state": "open", "summary": "Plane implementation provenance depends on a repository-root compatibility shim that is not a package resource.", "target": "rc5_must", "requires_h100": false},
-    {"id": "NEW-4", "severity": "low", "state": "open", "summary": "The README historical Plane example fails because its implicit save_start_step exceeds its requested steps.", "target": "rc5_documentation", "requires_h100": false},
-    {"id": "NEW-5", "severity": "low", "state": "open", "summary": "The rc4 changelog retains preparation-time release statements and implies qualified static lifting although no lifting policy is executable.", "target": "rc5_documentation", "requires_h100": false},
+    {"id": "NEW-4", "severity": "low", "state": "closed_verified", "summary": "The README historical Plane example now declares save_start_step=0 and the new complete composable Simulation example executes verbatim in the CPU documentation gate.", "target": "rc5_documentation", "requires_h100": false, "disposition": "closed", "closure_record": "notes/PSSolver_v0_2_0rc5_w1_documentation.json"},
+    {"id": "NEW-5", "severity": "low", "state": "closed_verified", "summary": "The changelog and public scope now state the immutable rc4 release status and the live fail-closed lifting capability without claiming executable public static-Q lifting.", "target": "rc5_documentation", "requires_h100": false, "disposition": "closed", "closure_record": "notes/PSSolver_v0_2_0rc5_w1_documentation.json"},
     {"id": "NEW-6", "severity": "low", "state": "open", "summary": "The rc4 tag is not reachable from origin/main while the GitHub prerelease reports targetCommitish main.", "target": "rc5_release_process", "requires_h100": false},
     {"id": "NEW-7", "severity": "low", "state": "open", "summary": "Robin impedance overflow escapes as builtins.ValueError instead of the structured public compilation exception.", "target": "rc5_should", "requires_h100": false},
     {"id": "NEW-8", "severity": "low", "state": "open", "summary": "Channel pressure tolerance postconditions use the PCG recurrence residual and can report unattainable tolerances as met.", "target": "rc5_should", "requires_h100": "only_if_true_residual_enters_hot_path"},
@@ -279,7 +281,9 @@
       "items": ["B30", "NEW-4", "NEW-5"],
       "goal": "Align the public scope, examples, changelog, Robin residual meaning, and fixed-work gradient guidance with the live qualified surface.",
       "required_gates": ["documentation_contract", "verbatim_public_examples_cpu", "capability_catalog_alignment"],
-      "consumer_requalification": false
+      "consumer_requalification": false,
+      "status": "completed",
+      "closure_record": "notes/PSSolver_v0_2_0rc5_w1_documentation.json"
     },
     {
       "batch": "rc5_must",
@@ -354,7 +358,7 @@
     {"id": "B27", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "All seven checkpoint surfaces publish from same-filesystem sibling staging through one atomic directory operation, preserve caller umask, refuse overwrite, and clean failed staging state.", "disposition": "closed", "target": "rc4.5_cross_runtime_robustness", "requires_h100": false, "closure_record": "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"},
     {"id": "B28", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Declaration/runtime equality and scoped component/runtime-connection metadata are implemented and verified by Provider and Consumer public-identity gates.", "disposition": "closed", "target": "rc4.4_pressure_contract", "requires_h100": false, "adjudication_record": "notes/PSSolver_v0_2_0rc4_rc441_pressure_adjudication.json", "contract_record": "notes/PSSolver_v0_2_0rc4_rc442_pressure_contract.json", "closure_record": "notes/PSSolver_v0_2_0rc4_rc447_h100_closure.json"},
     {"id": "B29", "kind": "bug", "severity": "low", "state": "closed_verified", "summary": "Exact fixed-work, fail-closed tolerance, diagnostics-v2, public exceptions and warm-start postconditions are implemented and passed correctness, gradient, restart, negative and H100 non-regression gates.", "disposition": "closed", "target": "rc4.4_pressure_contract", "requires_h100": true, "adjudication_record": "notes/PSSolver_v0_2_0rc4_rc441_pressure_adjudication.json", "contract_record": "notes/PSSolver_v0_2_0rc4_rc442_pressure_contract.json", "closure_record": "notes/PSSolver_v0_2_0rc4_rc447_h100_closure.json"},
-    {"id": "B30", "kind": "observation", "severity": "low", "state": "accepted_limitation", "summary": "Robin boundary_residual is constructionally near zero and is not an independent correctness gate; the promised public explanation remains pending.", "disposition": "document_in_rc5", "target": "rc5_documentation", "requires_h100": false, "documentation_complete": false},
+    {"id": "B30", "kind": "observation", "severity": "low", "state": "accepted_limitation", "summary": "Robin boundary_residual is constructionally near zero and is documented as a construction diagnostic rather than an independent interior-operator correctness gate.", "disposition": "documented", "target": "rc5_documentation", "requires_h100": false, "documentation_complete": true, "closure_record": "notes/PSSolver_v0_2_0rc5_w1_documentation.json"},
     {"id": "A1", "kind": "api", "severity": "medium", "state": "closed_verified", "summary": "Unsupported Channel snapshot initialization compiled successfully and failed only at runtime.", "disposition": "closed", "target": "rc2", "requires_h100": false},
     {"id": "A2", "kind": "api", "severity": "low", "state": "accepted_limitation", "summary": "SBDF2 is a valid declaration type but unsupported combinations reject it at compilation.", "disposition": "retain_rejection", "target": "capability_catalog", "requires_h100": false},
     {"id": "A3", "kind": "api", "severity": "medium", "state": "closed_verified", "summary": "Numerical and output defaults differed by entry point; rc2 made them explicit and rc3 completed the independent Consumer migration.", "disposition": "closed_breaking_migration", "target": "rc3", "requires_h100": true},

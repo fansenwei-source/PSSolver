@@ -303,7 +303,13 @@ class CellCenteredRobinEigenbasisOperator:
         self,
         physical_values: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor]:
-        """Return lower and upper outward-normal Robin residuals."""
+        """Return lower and upper outward-normal Robin residuals.
+
+        The affine lift and homogeneous eigenbasis are constructed to satisfy
+        these wall laws, so roundoff-sized values primarily confirm that
+        construction.  They are useful diagnostics, but are not an
+        independent correctness gate for the interior Helmholtz operator.
+        """
 
         coefficients = self.to_modal(
             self.homogeneous_remainder(physical_values)

@@ -23,7 +23,7 @@
 | `accepted_limitation` | 3 | 已知且明确接受，不作为当前正确性修复 |
 | `deferred_architecture` | 9 | 架构债务，推迟到正确性关闭之后 |
 
-另登记 NEW-1…NEW-15 共 15 项发布后发现。RC4 历史批次均曾完成，但发布后状态不再允许把正确性队列视为全部关闭；所有修复进入 rc5。
+另登记 NEW-1…NEW-15 共 15 项发布后发现。RC4 历史批次均曾完成，但发布后状态不再允许把正确性队列视为全部关闭。rc5 的 W1 文档批次已经关闭 NEW-4、NEW-5，并完成 B30 的公开解释；其余修复继续按优先级执行。
 
 ## 发布后决定性回归
 
@@ -69,8 +69,8 @@ R1–R9 不与上述正确性修复混做。优先顺序建议为 R1（组合注
 
 执行顺序固定为：
 
-1. `rc5_documentation`：DOC1、DOC2、NEW-4、NEW-5、B30；
-2. `rc5_must`：B10、NEW-1、N3、NEW-2、NEW-3、B11；
+1. `rc5_documentation`：DOC1、DOC2、NEW-4、NEW-5、B30；已由 `PSSolver_v0_2_0rc5_w1_documentation.json` 完成并关闭；
+2. `rc5_must`：B10、NEW-1、N3、NEW-2、NEW-3、B11；这是当前下一批；
 3. `rc5_should`：其余九项 partial residual 与 NEW-7…NEW-14；
 4. `rc5_optional` 与 release-process 卫生；
 5. rc5 冻结后才执行累计 CPU、installed-wheel、真实旧版 checkpoint、Consumer 和经单独授权的唯一一次 H100 资格。

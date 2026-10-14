@@ -29,9 +29,12 @@ Compiled variants remain explicit opt-ins and retain rollback identities.
 ## Boundary capability
 
 Homogeneous Q Neumann, free-slip velocity, no-slip velocity, and pressure
-compatibility policies are typed field-level declarations.  The Plane
-complete-stress application additionally qualifies static prescribed Q data
-and strong homeotropic/planar Q policies through the static lifting route.
+compatibility policies are typed field-level declarations.  Static prescribed
+Q, strong homeotropic Q, and strong planar Q remain typed declarations for
+schema compatibility, but none is executable in the live capability catalog.
+The public compiler rejects each one before runtime construction with
+`unsupported_lifted_wall_molecular_field`; v0.2 does not claim qualified
+static lifting physics.
 
 Finite-Q Robin relaxation passed internal numerical, restart, conditioning,
 package, and H100 gates, but remains an internal pilot.  General public Robin
@@ -51,6 +54,13 @@ The Periodic runtime projects the half-spectrum self-conjugate planes back to
 the Hermitian subspace every step.  The Channel functional runtime uses a pure
 zero-start pressure solve and its custom implicit pressure adjoint; the
 production Channel path retains its pressure warm start.
+
+For a fixed-work pressure solve, the implicit adjoint differentiates the exact
+finite iteration algorithm, not the fully converged linear-system solution.
+Optimization studies that require convergence-controlled gradients should use
+the relative-tolerance mode and retain its residual, finite-difference, and
+Taylor diagnostics.  Fixed-work remains appropriate when deterministic work
+and exact replay of that finite algorithm are the intended contract.
 
 ## Compatibility
 

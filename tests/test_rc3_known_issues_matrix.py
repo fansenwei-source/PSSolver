@@ -108,7 +108,7 @@ def test_state_counts_match_the_machine_readable_summary():
         **normalized_counts,
         "post_release_finding_count": 15,
         "first_implementation_batch": "rc4.1_plane_nyquist",
-        "next_implementation_batch": "rc5_documentation",
+        "next_implementation_batch": "rc5_must",
     }
 
 
@@ -181,7 +181,11 @@ def test_release_blockers_and_closed_rc3_regressions_are_not_conflated():
         "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
     )
     assert items["B23"]["state"] == "partial_residual"
-    assert items["B30"]["documentation_complete"] is False
+    assert items["B30"]["documentation_complete"] is True
+    assert items["B30"]["disposition"] == "documented"
+    assert items["B30"]["closure_record"] == (
+        "notes/PSSolver_v0_2_0rc5_w1_documentation.json"
+    )
     assert items["A3"]["target"] == "rc3"
 
 
@@ -217,7 +221,14 @@ def test_post_release_findings_are_registered_without_changing_the_50_item_total
     assert [item["id"] for item in findings] == [
         f"NEW-{index}" for index in range(1, 16)
     ]
-    assert all(item["state"] == "open" for item in findings)
+    states = {item["id"]: item["state"] for item in findings}
+    assert states["NEW-4"] == "closed_verified"
+    assert states["NEW-5"] == "closed_verified"
+    assert all(
+        state == "open"
+        for identifier, state in states.items()
+        if identifier not in {"NEW-4", "NEW-5"}
+    )
     assert len(record["items"]) == 50
     assert record["post_release"] == {
         "release": "v0.2.0rc4",
@@ -232,12 +243,20 @@ def test_post_release_findings_are_registered_without_changing_the_50_item_total
         "tag_or_release_mutated": False,
         "nematics3d_modified": False,
         "h100_submitted": False,
+        "rc5_documentation_complete": True,
+        "rc5_documentation_record": (
+            "notes/PSSolver_v0_2_0rc5_w1_documentation.json"
+        ),
     }
 
 
 def test_rc5_work_queue_matches_the_post_release_priority_order():
     queues = {item["batch"]: item for item in _record()["work_queue"]}
     assert queues["rc5_documentation"]["items"] == ["B30", "NEW-4", "NEW-5"]
+    assert queues["rc5_documentation"]["status"] == "completed"
+    assert queues["rc5_documentation"]["closure_record"] == (
+        "notes/PSSolver_v0_2_0rc5_w1_documentation.json"
+    )
     assert queues["rc5_must"]["items"] == [
         "B10", "NEW-1", "N3", "NEW-2", "NEW-3", "B11"
     ]

@@ -1,0 +1,121 @@
+"""Contracts for the rc5 W1 public-documentation alignment."""
+
+from __future__ import annotations
+
+import hashlib
+import inspect
+import json
+import re
+from pathlib import Path
+
+from pssolver import SimulationRunStatus, capability_catalog
+from pssolver.operators.robin import CellCenteredRobinEigenbasisOperator
+
+
+ROOT = Path(__file__).resolve().parents[1]
+RECORD = ROOT / "notes" / "PSSolver_v0_2_0rc5_w1_documentation.json"
+
+
+def _read(path: Path) -> dict[str, object]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _readme_example() -> str:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    match = re.search(
+        r"<!-- rc5-complete-simulation-example:start -->\n"
+        r"```python\n(?P<source>.*?)\n```\n"
+        r"<!-- rc5-complete-simulation-example:end -->",
+        readme,
+        flags=re.DOTALL,
+    )
+    assert match is not None
+    return match.group("source")
+
+
+def test_w1_record_closes_only_the_documentation_batch():
+    record = _read(RECORD)
+    assert record["classification"] == "PASS_RC5_W1_DOCUMENTATION_ALIGNMENT"
+    assert record["closed_items"] == ["B30", "NEW-4", "NEW-5"]
+    assert record["next_batch"] == "rc5_must"
+    assert record["scope"] == {
+        "runtime_behavior_changed": False,
+        "numerical_implementation_changed": False,
+        "public_capability_widened": False,
+        "lifting_reopened": False,
+        "scientific_threshold_changed": False,
+        "skip_or_xfail_added": False,
+        "pssolver_control_modified": False,
+        "nematics3d_modified": False,
+        "h100_submitted": False,
+        "tag_or_release_modified": False,
+        "pushed": False,
+    }
+
+
+def test_live_catalog_keeps_static_q_lifting_declaration_only():
+    policies = {
+        policy.key: policy for policy in capability_catalog().boundary_policies
+    }
+    for key in ("prescribed_q", "strong_homeotropic_q", "strong_planar_q"):
+        assert key in policies
+        assert policies[key].qualified_applications == ()
+
+
+def test_readme_documents_exact_execution_option_ownership():
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    exact_keys = (
+        "`tf32`, `molecular_field_linear_space`, "
+        "`stress_divergence_sum_space`, `pointwise_execution`, "
+        "`disable_q_gradient_reuse`"
+    )
+    assert readme.count(exact_keys) == 3
+    assert "`legacy_channel`, `compiled_channel_v2` | `batch_size`, `dtype`" in readme
+    assert "`pssolver.configuration.simulation`" in readme
+    assert "static prescribed-Q lifting" in readme
+    assert "unsupported_lifted_wall_molecular_field" in readme
+
+
+def test_complete_readme_simulation_example_executes_verbatim(tmp_path, monkeypatch):
+    output = tmp_path / "readme-plane"
+    monkeypatch.setenv("PSSOLVER_EXAMPLE_OUTPUT", str(output))
+    namespace: dict[str, object] = {}
+    exec(compile(_readme_example(), "README.md", "exec"), namespace)
+    result = namespace["result"]
+    assert result.status is SimulationRunStatus.COMPLETE
+    assert result.final_step == 2
+    assert result.output_directory == output
+    assert (output / "COMPLETE").is_file()
+
+
+def test_historical_plane_example_sets_a_compatible_save_start_step():
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    historical = readme.split("## Historical Plane application", 1)[1]
+    assert "save_start_step=0" in historical
+
+
+def test_robin_and_fixed_work_explanations_match_the_live_contract():
+    robin = inspect.getdoc(CellCenteredRobinEigenbasisOperator.boundary_residual)
+    scope = (ROOT / "notes" / "pssolver_v0_2_scope.md").read_text(
+        encoding="utf-8"
+    )
+    assert robin is not None
+    normalized_robin = " ".join(robin.split())
+    normalized_scope = " ".join(scope.split())
+    assert "construction" in normalized_robin
+    assert "not an independent correctness gate" in normalized_robin
+    assert "exact finite iteration algorithm" in normalized_scope
+    assert "relative-tolerance mode" in normalized_scope
+
+
+def test_w1_successor_hashes_match_every_changed_historical_source():
+    successors = _read(RECORD)["historical_successor_sources"]
+    assert successors
+    for relative, registration in successors.items():
+        assert registration["historical_sha256"] != registration["current_sha256"]
+        assert _sha256(ROOT / relative) == registration["current_sha256"]
+        assert registration["reason"]
