@@ -9,6 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
+R5_3_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -19,6 +22,18 @@ def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
 
 
+def _latest_successor(relative: str, historical: str) -> str:
+    registration = json.loads(R5_3_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if (
+        registration is not None
+        and registration["historical_sha256"] == historical
+    ):
+        return registration["current_sha256"]
+    return historical
+
+
 def test_r52_record_binds_implementation_regressions_and_successors():
     record = _record()
     assert record["classification"] == (
@@ -26,14 +41,17 @@ def test_r52_record_binds_implementation_regressions_and_successors():
     )
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
-            assert _sha256(relative) == expected
+            assert _sha256(relative) == _latest_successor(relative, expected)
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
         assert registration["historical_sha256"] != registration[
             "current_sha256"
         ]
-        assert _sha256(relative) == registration["current_sha256"]
+        assert _sha256(relative) == _latest_successor(
+            relative,
+            registration["current_sha256"],
+        )
 
 
 def test_r52_contract_fails_closed_without_a_hot_loop_sync():

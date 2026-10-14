@@ -38,6 +38,9 @@ RC5_R51_SUCCESSOR_RECORD = ROOT / (
 RC5_R52_SUCCESSOR_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
 )
+RC5_R53_SUCCESSOR_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -62,6 +65,7 @@ def test_rc423_record_binds_plan_parent_and_implementation_files():
             RC455_SUCCESSOR_RECORD,
             RC5_R51_SUCCESSOR_RECORD,
             RC5_R52_SUCCESSOR_RECORD,
+            RC5_R53_SUCCESSOR_RECORD,
         )
     ]
     assert record["status"] == "complete"

@@ -558,7 +558,16 @@ def test_p74_record_binds_runtime_and_checkpoint_sources():
         "pssolver/workflows/channel_checkpoint.py"
     ]
     assert r5_2["historical_sha256"] == historical
-    assert sha256("pssolver/workflows/channel_checkpoint.py") == r5_2[
+    r5_3 = json.loads(
+        (
+            ROOT
+            / "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
+        ).read_text(encoding="utf-8")
+    )["historical_successor_sources"][
+        "pssolver/workflows/channel_checkpoint.py"
+    ]
+    assert r5_3["historical_sha256"] == r5_2["current_sha256"]
+    assert sha256("pssolver/workflows/channel_checkpoint.py") == r5_3[
         "current_sha256"
     ]
     assert record["authorization"] == {

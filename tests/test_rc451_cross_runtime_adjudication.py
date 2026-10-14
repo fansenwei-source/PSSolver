@@ -19,6 +19,7 @@ POST_RELEASE = ROOT / "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
 RC5_W1 = ROOT / "notes/PSSolver_v0_2_0rc5_w1_documentation.json"
 RC5_R51 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_1_legacy_functional_checkpoint.json"
 RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
+RC5_R53 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -40,6 +41,7 @@ def _resolve_successor_sha256(relative: str, historical: str) -> str:
         RC5_W1,
         RC5_R51,
         RC5_R52,
+        RC5_R53,
     ):
         registration = _read(record_path).get(
             "historical_successor_sources", {}
