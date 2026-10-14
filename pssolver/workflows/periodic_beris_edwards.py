@@ -26,7 +26,7 @@ from .diagnostic_io import (
     diagnostics_metadata_envelope,
     write_structured_diagnostics,
 )
-from .errors import SimulationStateError
+from pssolver.errors import SimulationStateError
 
 
 @dataclass(frozen=True, slots=True)

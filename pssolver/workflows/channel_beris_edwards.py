@@ -50,7 +50,7 @@ from .diagnostic_io import (
     write_structured_diagnostics,
 )
 from .state_validation import require_finite_tensors
-from .errors import SimulationStateError
+from pssolver.errors import SimulationStateError
 
 
 CHECKPOINT_VERSION = 3

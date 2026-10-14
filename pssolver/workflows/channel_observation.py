@@ -13,7 +13,7 @@ from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.channel_active_nematics import (
     ChannelRuntimeAdapterProtocol,
 )
-from .errors import SimulationStateError
+from pssolver.errors import SimulationStateError
 
 
 VELOCITY_COMPONENTS = ("ux", "uy", "uz")

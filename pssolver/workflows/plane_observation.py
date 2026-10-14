@@ -14,7 +14,7 @@ from pssolver.runtime import (
     PlaneRuntimeAdapterProtocol,
     plane_physical_component,
 )
-from .errors import SimulationStateError
+from pssolver.errors import SimulationStateError
 
 
 @dataclass(frozen=True, slots=True)
