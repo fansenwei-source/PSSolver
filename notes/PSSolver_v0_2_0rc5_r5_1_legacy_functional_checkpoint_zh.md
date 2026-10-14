@@ -31,6 +31,7 @@ rc4 reader 使用当前 runtime identity 推导旧 bridge identity，并把真�
 - 唯一未在 installed 主进程重复执行的文件是 `tests/test_phase8_p861_local_cumulative_audit.py`（7 tests）。该文件的合同要求主进程从源码导入 PSSolver、再独立构建 wheel 对照，因此它已在 source 全量中通过，但结构上不适用于“主进程固定从 wheel 导入”的门禁；没有把它伪装成 skip/xfail；
 - wheel 从 clean commit `0e367a1b3a634a9f9afcbd63820d33fb42b9dd32` 构建，PSSolver 从新 venv 的 site-packages 导入，`pip check` 通过且无 source shadow import；
 - disposable venv 内使用 NumPy 2.3.2 来满足既有 `nematics3d 0.9.0b1` 元数据；原环境和 `nematics3d` 均未修改；
+- PSSolver-Control 会把 Provider 的 public checkpoint bridge 暴露给 Consumer，因此已进行 impact review：以 qualified source `b8539e0`（证据 worktree `0e3895d`）指向 Provider `0e367a1`，Periodic/Channel adapter 与 consumer 定向集合 `68 passed`；Control 不解析 legacy schema、当前 identity 与 functional API 未变，因此不需要迁移，也未修改 Control；
 
 - 不修改 `v0.2.0rc4` tag、Release 或历史 closure；
 - 不修改 PSSolver-Control 或 `nematics3d`；

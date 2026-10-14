@@ -59,3 +59,17 @@ def test_r51_scope_does_not_claim_batch_or_release_completion():
     assert record["authorization"]["push_authorized"] is False
     assert record["authorization"]["eligible_for_rc5_release"] is False
     assert record["authorization"]["rc5_must_batch_complete"] is False
+
+
+def test_r51_consumer_impact_review_uses_the_public_bridge_without_migration():
+    review = json.loads(RECORD.read_text(encoding="utf-8"))[
+        "consumer_impact_review"
+    ]
+    assert review["required"] is True
+    assert review["targeted_cpu"] == "68 passed, 0 failed, 0 skipped"
+    assert review["consumer_parses_legacy_checkpoint_schema"] is False
+    assert review["consumer_forwards_public_checkpoint_bridge"] is True
+    assert review["functional_api_version_changed"] is False
+    assert review["current_runtime_identity_changed"] is False
+    assert review["consumer_migration_required"] is False
+    assert review["PSSolver_Control_modified"] is False

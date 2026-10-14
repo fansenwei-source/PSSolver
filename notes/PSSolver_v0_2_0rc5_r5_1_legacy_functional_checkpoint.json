@@ -200,6 +200,21 @@
     "nematics3d_modified": false,
     "venv_local_numpy_reason": "Match the pre-existing nematics3d 0.9.0b1 requirement without modifying the base environment or nematics3d."
   },
+  "consumer_impact_review": {
+    "required": true,
+    "reason": "PSSolver-Control exposes FunctionalRuntimeProtocol.checkpoint_bridge through its Periodic and Channel adapters.",
+    "consumer_qualified_source_commit": "b8539e0ec4c137a6c13746f6832e26e74be24515",
+    "consumer_evidence_worktree_head": "0e3895d664d1b81925127848b2dfde638f39763d",
+    "provider_commit": "0e367a1b3a634a9f9afcbd63820d33fb42b9dd32",
+    "targeted_cpu": "68 passed, 0 failed, 0 skipped",
+    "consumer_parses_legacy_checkpoint_schema": false,
+    "consumer_forwards_public_checkpoint_bridge": true,
+    "functional_api_version_changed": false,
+    "current_runtime_identity_changed": false,
+    "consumer_migration_required": false,
+    "PSSolver_Control_modified": false,
+    "formal_consumer_evidence_registration": "optional_pending"
+  },
   "scope": {
     "H100_required": false,
     "H100_executed": false,
