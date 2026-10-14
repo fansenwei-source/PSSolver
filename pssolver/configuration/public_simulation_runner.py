@@ -120,6 +120,20 @@ class PublicCompilationRejectionCode(str, Enum):
     """Stable reason a public declaration cannot become an application."""
 
     UNREGISTERED_MODEL_GEOMETRY = "unregistered_model_geometry"
+    MODEL_CONTRACT = "model_contract"
+    GEOMETRY_CONTRACT = "geometry_contract"
+    BOUNDARY_CONTRACT = "boundary_contract"
+    NUMERICS_CONTRACT = "numerics_contract"
+    TIME_INTEGRATION_CONTRACT = "time_integration_contract"
+    INITIAL_CONDITION_CONTRACT = "initial_condition_contract"
+    EXECUTION_CONTRACT = "execution_contract"
+    OUTPUT_CONTRACT = "output_contract"
+    INVOCATION_CONTRACT = "invocation_contract"
+    DISCRETIZATION_CONTRACT = "discretization_contract"
+    LOWERING_CONTRACT = "lowering_contract"
+    MALFORMED_APPLICATION_SPEC = "malformed_application_spec"
+    # Retained for readers of historical 0.2 qualification evidence.  New
+    # rejection sites use the narrower codes above.
     APPLICATION_CONTRACT = "application_contract"
     RUNTIME_BINDING = "runtime_binding"
     UNSUPPORTED_LIFTED_WALL_MOLECULAR_FIELD = (
@@ -151,13 +165,31 @@ class PublicSimulationCompilationError(ValueError):
         }
 
 
-def _reject(message: str) -> None:
-    raise PublicSimulationCompilationError(message)
+def _reject(
+    message: str,
+    *,
+    code: PublicCompilationRejectionCode,
+) -> None:
+    raise PublicSimulationCompilationError(message, code=code)
+
+
+def _json_safe(value: object) -> object:
+    """Return a JSON-compatible copy without hiding non-finite diagnostics."""
+
+    if isinstance(value, float) and not math.isfinite(value):
+        if math.isnan(value):
+            return "nan"
+        return "positive_infinity" if value > 0.0 else "negative_infinity"
+    if isinstance(value, Mapping):
+        return {str(name): _json_safe(item) for name, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    return value
 
 
 def _json_mapping(value: Mapping[str, object]) -> Mapping[str, object]:
     payload = json.dumps(
-        dict(value),
+        _json_safe(dict(value)),
         allow_nan=False,
         separators=(",", ":"),
         sort_keys=True,
@@ -169,6 +201,8 @@ def _require_exact_keys(
     value: Mapping[str, object],
     expected: frozenset[str],
     description: str,
+    *,
+    code: PublicCompilationRejectionCode,
 ) -> dict[str, object]:
     observed = set(value)
     if observed != expected:
@@ -176,7 +210,8 @@ def _require_exact_keys(
         extra = tuple(sorted(observed - expected))
         _reject(
             f"{description} must declare every qualified option explicitly; "
-            f"missing={missing!r}, extra={extra!r}"
+            f"missing={missing!r}, extra={extra!r}",
+            code=code,
         )
     return dict(value)
 
@@ -190,11 +225,15 @@ def _validate_invocation_options(
     if not set(invocation) <= _INVOCATION_KEYS:
         _reject(
             f"{description} may contain only dry_run and "
-            "validation_config_sha256"
+            "validation_config_sha256",
+            code=PublicCompilationRejectionCode.INVOCATION_CONTRACT,
         )
     dry_run = invocation.get("dry_run", False)
     if not isinstance(dry_run, bool):
-        _reject(f"{description} dry_run must be a bool")
+        _reject(
+            f"{description} dry_run must be a bool",
+            code=PublicCompilationRejectionCode.INVOCATION_CONTRACT,
+        )
     digest = invocation.get("validation_config_sha256")
     if digest is not None and (
         not isinstance(digest, str)
@@ -203,7 +242,8 @@ def _validate_invocation_options(
     ):
         _reject(
             f"{description} validation_config_sha256 must be null or exactly "
-            "64 lowercase hexadecimal characters"
+            "64 lowercase hexadecimal characters",
+            code=PublicCompilationRejectionCode.INVOCATION_CONTRACT,
         )
     return invocation
 
@@ -221,7 +261,8 @@ def _require_close(
     ):
         _reject(
             f"{description} changed during the qualified Plane translation: "
-            f"requested={requested!r}, effective={effective!r}"
+            f"requested={requested!r}, effective={effective!r}",
+            code=PublicCompilationRejectionCode.MODEL_CONTRACT,
         )
 
 
@@ -238,7 +279,8 @@ def _refresh_arguments(refresh: Mapping[str, object]) -> dict[str, object]:
         "time refresh must be exactly one of "
         "{'mode': 'disabled'}, "
         "{'mode': 'steps', 'interval_steps': N}, or "
-        "{'mode': 'physical_time', 'interval_time': T}"
+        "{'mode': 'physical_time', 'interval_time': T}",
+        code=PublicCompilationRejectionCode.TIME_INTEGRATION_CONTRACT,
     )
 
 
@@ -344,28 +386,55 @@ def _validate_translation(
     run_spec: PlaneBerisEdwardsRunSpec,
 ) -> None:
     if source.geometry != application.geometry:
-        _reject("public geometry changed during Plane translation")
+        _reject(
+            "public geometry changed during Plane translation",
+            code=PublicCompilationRejectionCode.GEOMETRY_CONTRACT,
+        )
     if _boundary_identity(source) != _boundary_identity(application):
-        _reject("public boundary laws changed during Plane translation")
+        _reject(
+            "public boundary laws changed during Plane translation",
+            code=PublicCompilationRejectionCode.BOUNDARY_CONTRACT,
+        )
     if source.numerics.to_metadata() != application.numerics.to_metadata():
-        _reject("public numerical policy changed during Plane translation")
+        _reject(
+            "public numerical policy changed during Plane translation",
+            code=PublicCompilationRejectionCode.NUMERICS_CONTRACT,
+        )
     if source.time_integration.integrator != application.time_integration.integrator:
-        _reject("public integrator changed during Plane translation")
+        _reject(
+            "public integrator changed during Plane translation",
+            code=PublicCompilationRejectionCode.TIME_INTEGRATION_CONTRACT,
+        )
     if (
         source.initial_condition.to_metadata()
         != application.initial_condition.to_metadata()
     ):
-        _reject("public initial-condition identity changed during Plane translation")
+        _reject(
+            "public initial-condition identity changed during Plane translation",
+            code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
+        )
     if source.execution.backend != application.execution.backend:
-        _reject("public backend changed during Plane translation")
+        _reject(
+            "public backend changed during Plane translation",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
     if source.execution.runtime_path != application.execution.runtime_path:
-        _reject("public runtime path changed during Plane translation")
+        _reject(
+            "public runtime path changed during Plane translation",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
     source_execution = dict(source.execution.options)
     source_execution.pop("fallback_allowed")
     if source_execution != dict(application.execution.options):
-        _reject("public execution controls changed during Plane translation")
+        _reject(
+            "public execution controls changed during Plane translation",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
     if source.workflow.to_metadata() != application.workflow.to_metadata():
-        _reject("public workflow changed during Plane translation")
+        _reject(
+            "public workflow changed during Plane translation",
+            code=PublicCompilationRejectionCode.OUTPUT_CONTRACT,
+        )
 
     parameters = source.equation_system.parameters
     material = parameters["material"]
@@ -484,43 +553,122 @@ def _compile_plane_public_simulation(
     ) != _PLANE_COMPILER_KEY:
         raise AssertionError("Plane compiler received the wrong registry key")
     if source.execution.backend != "torch_spectral":
-        _reject("only the torch_spectral backend is connected")
+        _reject(
+            "only the torch_spectral backend is connected",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
     if source.execution.runtime_path not in {"legacy_production", "compiled_v2"}:
-        _reject("public Plane execution supports legacy_production or compiled_v2")
+        _reject(
+            "public Plane execution supports legacy_production or compiled_v2",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
     if source.time_integration.integrator.scheme is not (
         IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER
     ):
-        _reject("the public Plane runner currently requires projected Euler")
+        _reject(
+            "the public Plane runner currently requires projected Euler",
+            code=PublicCompilationRejectionCode.TIME_INTEGRATION_CONTRACT,
+        )
     if source.initial_condition.source is not InitialConditionSource.GENERATED:
-        _reject("the connected Plane application currently requires a generated initial condition")
+        _reject(
+            "the connected Plane application currently requires a generated "
+            "initial condition",
+            code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
+        )
     if source.initial_condition.family != "extruded_defect_gas":
-        _reject("the connected Plane application requires extruded_defect_gas")
+        _reject(
+            "the connected Plane application requires extruded_defect_gas",
+            code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
+        )
     if source.discretization_parameters:
-        _reject("the connected Plane application accepts no public discretization overrides")
+        _reject(
+            "the connected Plane application accepts no public "
+            "discretization overrides",
+            code=PublicCompilationRejectionCode.DISCRETIZATION_CONTRACT,
+        )
 
     initial = _require_exact_keys(
         source.initial_condition.parameters,
         _INITIAL_KEYS,
         "extruded_defect_gas parameters",
+        code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
     )
     execution = _require_exact_keys(
         source.execution.options,
         _EXECUTION_KEYS,
         "torch_spectral execution options",
+        code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
     )
     if execution["fallback_allowed"] is not False:
-        _reject("runtime fallback must remain disabled")
+        _reject(
+            "runtime fallback must remain disabled",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
+    if execution["molecular_field_linear_space"] not in {
+        "physical",
+        "spectral",
+    }:
+        _reject(
+            "unsupported Plane molecular-field linear space",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
+    if execution["stress_divergence_sum_space"] not in {
+        "physical",
+        "spectral",
+    }:
+        _reject(
+            "unsupported Plane stress-divergence sum space",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
+    if execution["pointwise_execution"] not in {"eager", "compile"}:
+        _reject(
+            "unsupported Plane pointwise execution mode",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
+    if execution["tf32"] not in {"off", "on"}:
+        _reject(
+            "unsupported Plane TF32 policy",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
+    if not isinstance(execution["disable_q_gradient_reuse"], bool):
+        _reject(
+            "Plane Q-gradient reuse flag must be a bool",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
+    twist_modes = initial["twist_modes"]
+    if (
+        isinstance(twist_modes, (str, bytes))
+        or not isinstance(twist_modes, (list, tuple))
+        or any(
+            not isinstance(mode, int) or isinstance(mode, bool)
+            for mode in twist_modes
+        )
+        or len(set(twist_modes)) != len(twist_modes)
+        or any(
+            mode <= 0 or mode >= source.geometry.domain.shape[2]
+            for mode in twist_modes
+        )
+    ):
+        _reject(
+            "Plane twist_modes must be unique integers satisfying "
+            "1 <= mode < nz",
+            code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
+        )
     try:
         device_normalization = validate_public_execution_device(
             execution["device"]
         )
     except ValueError as exc:
-        _reject(str(exc))
+        _reject(
+            str(exc),
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
     _reject_unqualified_static_q_lifting(source, execution)
     workflow = _require_exact_keys(
         source.workflow.options,
         _WORKFLOW_KEYS,
         "output workflow options",
+        code=PublicCompilationRejectionCode.OUTPUT_CONTRACT,
     )
     invocation = _validate_invocation_options(
         source.invocation.options,
@@ -531,15 +679,27 @@ def _compile_plane_public_simulation(
     material = dict(parameters["material"])
     stokes = dict(parameters["stokes"]["parameters"])
     if stokes["pressure_gauge"] != "zero_mean":
-        _reject("the qualified Plane runner requires the zero-mean pressure gauge")
+        _reject(
+            "the qualified Plane runner requires the zero-mean pressure gauge",
+            code=PublicCompilationRejectionCode.MODEL_CONTRACT,
+        )
     if stokes["tangential_zero_mode_policy"] != "zero_mean":
-        _reject("the public model currently connects only zero-mean tangential flow")
+        _reject(
+            "the public model currently connects only zero-mean tangential flow",
+            code=PublicCompilationRejectionCode.MODEL_CONTRACT,
+        )
     if stokes["friction"] != 0.0:
-        _reject("zero-mean public Plane execution requires zero friction")
+        _reject(
+            "zero-mean public Plane execution requires zero friction",
+            code=PublicCompilationRejectionCode.MODEL_CONTRACT,
+        )
 
     activity = float(parameters["activity_amplitude"])
     if not math.isfinite(activity) or activity <= 0.0:
-        _reject("the qualified Plane translation requires positive activity")
+        _reject(
+            "the qualified Plane translation requires positive activity",
+            code=PublicCompilationRejectionCode.MODEL_CONTRACT,
+        )
     ldg_l1 = float(parameters["ldg_l1"])
     try:
         equilibrium_s = positive_equilibrium_S(
@@ -550,7 +710,8 @@ def _compile_plane_public_simulation(
     except ValueError as exc:
         _reject(
             "the qualified Plane translation requires bulk coefficients "
-            f"with a positive real uniaxial equilibrium: {exc}"
+            f"with a positive real uniaxial equilibrium: {exc}",
+            code=PublicCompilationRejectionCode.MODEL_CONTRACT,
         )
     equilibrium_q = 1.5 * equilibrium_s
     frank_k = 2.0 * equilibrium_q**2 * ldg_l1
@@ -631,7 +792,8 @@ def _compile_plane_public_simulation(
         "molecular_field_linear_space"
     ]:
         _reject(
-            "molecular-field linear space changed during Plane translation"
+            "molecular-field linear space changed during Plane translation",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
         )
     lowering_plan = lower_simulation_spec(application_simulation)
     construction_plan = plan_package_runtime_construction(application_simulation)
@@ -748,7 +910,7 @@ def compile_public_simulation(
     except RobinImpedanceSupportError as exc:
         raise PublicSimulationCompilationError(
             str(exc),
-            code=PublicCompilationRejectionCode.APPLICATION_CONTRACT,
+            code=PublicCompilationRejectionCode.BOUNDARY_CONTRACT,
             context={"robin_impedance": exc.context},
         ) from exc
     key = (source.equation_system.variant, source.geometry.name)
@@ -814,17 +976,26 @@ def compile_public_simulation(
         raise PublicSimulationCompilationError(
             "the public declaration has no qualified lowering: "
             f"{rejection['message']}",
-            code=PublicCompilationRejectionCode.APPLICATION_CONTRACT,
+            code=PublicCompilationRejectionCode.LOWERING_CONTRACT,
             context={"lowering_rejection": rejection},
         ) from exc
-    except (ValueError, TypeError) as exc:
+    except (KeyError, ValueError, TypeError) as exc:
+        context: dict[str, object] = {
+            "boundary": "public_compiler_dispatch",
+            "exception_type": type(exc).__name__,
+        }
+        if isinstance(exc, KeyError):
+            context["missing_key"] = (
+                exc.args[0] if len(exc.args) == 1 else list(exc.args)
+            )
         raise PublicSimulationCompilationError(
-            str(exc),
-            code=PublicCompilationRejectionCode.APPLICATION_CONTRACT,
-            context={
-                "boundary": "public_compiler_dispatch",
-                "exception_type": type(exc).__name__,
-            },
+            (
+                "the public application declaration is malformed"
+                if isinstance(exc, KeyError)
+                else str(exc)
+            ),
+            code=PublicCompilationRejectionCode.MALFORMED_APPLICATION_SPEC,
+            context=context,
         ) from exc
 
 

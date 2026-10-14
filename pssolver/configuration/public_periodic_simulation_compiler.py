@@ -49,7 +49,7 @@ _WORKFLOW_KEYS = frozenset(
 )
 
 
-def _exact_keys(value: Mapping[str, object], expected, description):
+def _exact_keys(value: Mapping[str, object], expected, description, *, code):
     from .public_simulation_runner import _reject
 
     observed = set(value)
@@ -57,7 +57,8 @@ def _exact_keys(value: Mapping[str, object], expected, description):
         _reject(
             f"{description} must declare every qualified option explicitly; "
             f"missing={tuple(sorted(expected - observed))!r}, "
-            f"extra={tuple(sorted(observed - expected))!r}"
+            f"extra={tuple(sorted(observed - expected))!r}",
+            code=code,
         )
     return dict(value)
 
@@ -66,6 +67,7 @@ def compile_periodic_public_simulation(source: SimulationSpec, product_type):
     """Compile the single P8.2 periodic application without allocation."""
 
     from .public_simulation_runner import (
+        PublicCompilationRejectionCode as Code,
         _reject,
         _validate_invocation_options,
     )
@@ -76,64 +78,111 @@ def compile_periodic_public_simulation(source: SimulationSpec, product_type):
     ):
         raise AssertionError("periodic compiler received the wrong registry key")
     if source.geometry.domain.grid_placement is not GridPlacement.CELL_CENTERED:
-        _reject("periodic execution currently requires a cell-centered grid")
+        _reject(
+            "periodic execution currently requires a cell-centered grid",
+            code=Code.GEOMETRY_CONTRACT,
+        )
     if source.execution.backend != "torch_spectral":
-        _reject("periodic execution requires the torch_spectral backend")
+        _reject(
+            "periodic execution requires the torch_spectral backend",
+            code=Code.EXECUTION_CONTRACT,
+        )
     if source.execution.runtime_path != PERIODIC_RUNTIME_PATH:
-        _reject("periodic execution requires runtime_path='periodic_spectral'")
+        _reject(
+            "periodic execution requires runtime_path='periodic_spectral'",
+            code=Code.EXECUTION_CONTRACT,
+        )
     if source.time_integration.integrator.scheme is not (
         IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER
     ):
-        _reject("periodic execution currently requires projected Euler")
+        _reject(
+            "periodic execution currently requires projected Euler",
+            code=Code.TIME_INTEGRATION_CONTRACT,
+        )
     if source.initial_condition.source is not InitialConditionSource.SNAPSHOT:
-        _reject("P8.2 periodic execution requires an external Q snapshot")
+        _reject(
+            "P8.2 periodic execution requires an external Q snapshot",
+            code=Code.INITIAL_CONDITION_CONTRACT,
+        )
     if source.initial_condition.family != "external_snapshot":
-        _reject("periodic snapshot family must be external_snapshot")
+        _reject(
+            "periodic snapshot family must be external_snapshot",
+            code=Code.INITIAL_CONDITION_CONTRACT,
+        )
     snapshot = dict(source.initial_condition.parameters)
     if set(snapshot) != {"directory", "step", "mode"}:
-        _reject("periodic snapshot requires directory, step, and mode")
+        _reject(
+            "periodic snapshot requires directory, step, and mode",
+            code=Code.INITIAL_CONDITION_CONTRACT,
+        )
     if snapshot["mode"] != "branch":
-        _reject("P8.2 accepts snapshot mode='branch'; restart uses checkpoints")
+        _reject(
+            "P8.2 accepts snapshot mode='branch'; restart uses checkpoints",
+            code=Code.INITIAL_CONDITION_CONTRACT,
+        )
     execution = _exact_keys(
         source.execution.options,
         _EXECUTION_KEYS,
         "periodic execution options",
+        code=Code.EXECUTION_CONTRACT,
     )
     if execution["fallback_allowed"] is not False:
-        _reject("periodic runtime fallback must remain disabled")
+        _reject(
+            "periodic runtime fallback must remain disabled",
+            code=Code.EXECUTION_CONTRACT,
+        )
     if execution["tf32"] != "off":
-        _reject("P8.2 qualifies strict TF32-off execution only")
+        _reject(
+            "P8.2 qualifies strict TF32-off execution only",
+            code=Code.EXECUTION_CONTRACT,
+        )
     if execution["molecular_field_linear_space"] not in {
         "physical",
         "spectral",
     }:
-        _reject("unsupported periodic molecular-field linear space")
+        _reject(
+            "unsupported periodic molecular-field linear space",
+            code=Code.EXECUTION_CONTRACT,
+        )
     if execution["stress_divergence_sum_space"] not in {
         "physical",
         "spectral",
     }:
-        _reject("unsupported periodic stress-divergence sum space")
+        _reject(
+            "unsupported periodic stress-divergence sum space",
+            code=Code.EXECUTION_CONTRACT,
+        )
     if execution["pointwise_execution"] not in {"eager", "compile"}:
-        _reject("unsupported periodic pointwise execution mode")
+        _reject(
+            "unsupported periodic pointwise execution mode",
+            code=Code.EXECUTION_CONTRACT,
+        )
     try:
         device_normalization = validate_public_execution_device(
             execution["device"]
         )
     except ValueError as exc:
-        _reject(str(exc))
+        _reject(str(exc), code=Code.EXECUTION_CONTRACT)
     if not isinstance(execution["disable_q_gradient_reuse"], bool):
-        _reject("periodic Q-gradient reuse flag must be a bool")
+        _reject(
+            "periodic Q-gradient reuse flag must be a bool",
+            code=Code.EXECUTION_CONTRACT,
+        )
     _exact_keys(
         source.workflow.options,
         _WORKFLOW_KEYS,
         "periodic workflow options",
+        code=Code.OUTPUT_CONTRACT,
     )
     _validate_invocation_options(
         source.invocation.options,
         description="periodic invocation options",
     )
     if source.discretization_parameters:
-        _reject("periodic execution accepts no discretization overrides")
+        _reject(
+            "periodic execution accepts no discretization overrides",
+            code=Code.DISCRETIZATION_CONTRACT,
+        )
     requested_velocity_policy = source.boundaries.declared_policy("velocity")
     if requested_velocity_policy is None:
         requested_velocity_policy = "qualified_periodic_wall_policy_unspecified"
@@ -142,32 +191,51 @@ def compile_periodic_public_simulation(source: SimulationSpec, product_type):
         "no_slip_velocity",
         "qualified_periodic_wall_policy_unspecified",
     }:
-        _reject("periodic velocity boundary declaration is not qualified")
+        _reject(
+            "periodic velocity boundary declaration is not qualified",
+            code=Code.BOUNDARY_CONTRACT,
+        )
     if source.time_integration.refresh != {"mode": "disabled"}:
-        _reject("P8.2 periodic execution requires disabled spectral refresh")
+        _reject(
+            "P8.2 periodic execution requires disabled spectral refresh",
+            code=Code.TIME_INTEGRATION_CONTRACT,
+        )
     if (
         source.numerics.spectral_storage is SpectralStorage.HERMITIAN_HALF
         and source.numerics.hermitian_axis not in source.geometry.periodic_axes
     ):
-        _reject("periodic Hermitian packing must use a periodic axis")
+        _reject(
+            "periodic Hermitian packing must use a periodic axis",
+            code=Code.NUMERICS_CONTRACT,
+        )
     stokes = source.equation_system.parameters["stokes"]["parameters"]
     if stokes["pressure_gauge"] != "zero_mean":
-        _reject("periodic pressure requires the zero-mean gauge")
+        _reject(
+            "periodic pressure requires the zero-mean gauge",
+            code=Code.MODEL_CONTRACT,
+        )
     zero_mode_policy = stokes["tangential_zero_mode_policy"]
     friction = stokes["friction"]
     if zero_mode_policy == "zero_mean":
         if friction != 0.0:
-            _reject("zero-mean periodic velocity requires zero friction")
+            _reject(
+                "zero-mean periodic velocity requires zero friction",
+                code=Code.MODEL_CONTRACT,
+            )
         uniform_mode_action = "remove_all_uniform_velocity_and_force"
     elif zero_mode_policy == "friction":
         if friction <= 0.0:
-            _reject("periodic friction mode requires positive friction")
+            _reject(
+                "periodic friction mode requires positive friction",
+                code=Code.MODEL_CONTRACT,
+            )
         uniform_mode_action = (
             "retain_all_uniform_velocity_resolved_by_friction"
         )
     else:
         _reject(
-            "periodic velocity requires zero_mean or friction zero-mode policy"
+            "periodic velocity requires zero_mean or friction zero-mode policy",
+            code=Code.MODEL_CONTRACT,
         )
 
     run_spec = PeriodicBerisEdwardsRunSpec(source)

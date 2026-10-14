@@ -20,6 +20,10 @@ from .declarations import (
 )
 from .simulation import Simulation
 from .runner import CompiledSimulation, compile_simulation, run_simulation
+from pssolver.configuration.public_simulation_runner import (
+    PublicCompilationRejectionCode,
+    PublicSimulationCompilationError,
+)
 from pssolver.errors import SimulationExecutionError, SimulationStateError
 from .results import (
     SimulationDiagnosticProtocol,
@@ -34,6 +38,8 @@ __all__ = [
     "GeneratedInitialCondition",
     "Output",
     "PublicCapabilityCatalog",
+    "PublicCompilationRejectionCode",
+    "PublicSimulationCompilationError",
     "QualifiedCombination",
     "Simulation",
     "SimulationExecutionError",

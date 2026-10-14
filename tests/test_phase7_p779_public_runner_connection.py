@@ -298,7 +298,7 @@ def test_plane_compiler_wraps_non_nematic_bulk_coefficients():
         compile_simulation(_simulation(model=invalid, boundaries=boundaries))
 
     assert caught.value.code is (
-        PublicCompilationRejectionCode.APPLICATION_CONTRACT
+        PublicCompilationRejectionCode.MODEL_CONTRACT
     )
     assert "positive real uniaxial equilibrium" in str(caught.value)
 
@@ -316,7 +316,9 @@ def test_public_compiler_translates_known_option_boundary_errors(monkeypatch):
     with pytest.raises(PublicSimulationCompilationError) as caught:
         compile_simulation(_simulation())
 
-    assert caught.value.code is PublicCompilationRejectionCode.APPLICATION_CONTRACT
+    assert caught.value.code is (
+        PublicCompilationRejectionCode.MALFORMED_APPLICATION_SPEC
+    )
     assert caught.value.context == {
         "boundary": "public_compiler_dispatch",
         "exception_type": "TypeError",

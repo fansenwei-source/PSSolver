@@ -23,6 +23,7 @@ from pssolver.configuration.public_option_validation import (
 )
 from pssolver.configuration.public_simulation_runner import (
     PUBLIC_CHANNEL_APPLICATION,
+    PublicCompilationRejectionCode,
     PublicSimulationCompilation,
     PublicSimulationCompilationError,
 )
@@ -73,21 +74,28 @@ _COMMON_OUTPUT_KEYS = frozenset(
         "save_start_step",
     }
 )
-def _reject(message: str) -> None:
-    raise PublicSimulationCompilationError(message)
+def _reject(
+    message: str,
+    *,
+    code: PublicCompilationRejectionCode,
+) -> None:
+    raise PublicSimulationCompilationError(message, code=code)
 
 
 def _exact_keys(
     value: Mapping[str, object],
     expected: frozenset[str],
     description: str,
+    *,
+    code: PublicCompilationRejectionCode,
 ) -> dict[str, object]:
     observed = set(value)
     if observed != expected:
         _reject(
             f"{description} must declare every qualified option explicitly; "
             f"missing={tuple(sorted(expected - observed))!r}, "
-            f"extra={tuple(sorted(observed - expected))!r}"
+            f"extra={tuple(sorted(observed - expected))!r}",
+            code=code,
         )
     return dict(value)
 
@@ -156,7 +164,28 @@ def _validate_translation(
     )
     for description, requested, effective in comparisons:
         if requested != effective:
-            _reject(f"public {description} changed during Channel translation")
+            code = {
+                "equation system": PublicCompilationRejectionCode.MODEL_CONTRACT,
+                "geometry": PublicCompilationRejectionCode.GEOMETRY_CONTRACT,
+                "boundary laws": PublicCompilationRejectionCode.BOUNDARY_CONTRACT,
+                "numerical policy": PublicCompilationRejectionCode.NUMERICS_CONTRACT,
+                "time integration": (
+                    PublicCompilationRejectionCode.TIME_INTEGRATION_CONTRACT
+                ),
+                "discretization": (
+                    PublicCompilationRejectionCode.DISCRETIZATION_CONTRACT
+                ),
+                "initial condition": (
+                    PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT
+                ),
+                "execution": PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+                "workflow": PublicCompilationRejectionCode.OUTPUT_CONTRACT,
+                "invocation": PublicCompilationRejectionCode.INVOCATION_CONTRACT,
+            }[description]
+            _reject(
+                f"public {description} changed during Channel translation",
+                code=code,
+            )
 
 
 def _adapt_workflow(
@@ -171,15 +200,20 @@ def _adapt_workflow(
         _reject(
             "Channel workflow options must match either the public Output "
             "contract or the legacy Channel workflow contract; "
-            f"observed={tuple(sorted(observed))!r}"
+            f"observed={tuple(sorted(observed))!r}",
+            code=PublicCompilationRejectionCode.OUTPUT_CONTRACT,
         )
     common = dict(source.options)
     if common["save_start_step"] != 0:
-        _reject("legacy Channel public Output requires save_start_step=0")
+        _reject(
+            "legacy Channel public Output requires save_start_step=0",
+            code=PublicCompilationRejectionCode.OUTPUT_CONTRACT,
+        )
     if common["save_hydrodynamics"] is not True:
         _reject(
             "legacy Channel always saves hydrodynamics; "
-            "save_hydrodynamics must be true"
+            "save_hydrodynamics must be true",
+            code=PublicCompilationRejectionCode.OUTPUT_CONTRACT,
         )
     output_directory = common["output_dir"]
     adapted = {
@@ -215,48 +249,66 @@ def compile_channel_public_simulation(
     ) != ("legacy_active_force_active_nematics", "rectangular_channel"):
         raise AssertionError("Channel compiler received the wrong registry key")
     if source.execution.backend != "torch_spectral":
-        _reject("only the torch_spectral Channel backend is connected")
+        _reject(
+            "only the torch_spectral Channel backend is connected",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
     if source.execution.runtime_path not in {
         "legacy_channel",
         "compiled_channel_v2",
     }:
         _reject(
             "public Channel execution supports legacy_channel or "
-            "compiled_channel_v2"
+            "compiled_channel_v2",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
         )
     if source.time_integration.integrator.scheme is not (
         IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER
     ):
-        _reject("the public Channel compiler currently requires projected Euler")
+        _reject(
+            "the public Channel compiler currently requires projected Euler",
+            code=PublicCompilationRejectionCode.TIME_INTEGRATION_CONTRACT,
+        )
     if source.time_integration.refresh != {"mode": "disabled"}:
         _reject(
-            "the qualified Channel application requires disabled spectral refresh"
+            "the qualified Channel application requires disabled spectral refresh",
+            code=PublicCompilationRejectionCode.TIME_INTEGRATION_CONTRACT,
         )
     if source.invocation.options:
-        _reject("the qualified Channel application accepts no invocation options")
+        _reject(
+            "the qualified Channel application accepts no invocation options",
+            code=PublicCompilationRejectionCode.INVOCATION_CONTRACT,
+        )
 
     initial = _exact_keys(
         source.initial_condition.parameters,
         _INITIAL_KEYS,
         "Channel initial-condition parameters",
+        code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
     )
     generated = _exact_keys(
         initial["generated"],
         _GENERATED_KEYS,
         "Channel generated initial-condition parameters",
+        code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
     )
     snapshot = _exact_keys(
         initial["snapshot"],
         _SNAPSHOT_KEYS,
         "Channel snapshot initial-condition parameters",
+        code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
     )
     mode = initial["mode"]
     if mode not in {"generated", "snapshot"}:
-        _reject("Channel initial-condition mode must be generated or snapshot")
+        _reject(
+            "Channel initial-condition mode must be generated or snapshot",
+            code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
+        )
     if mode == "snapshot":
         _reject(
             "the public legacy Channel application does not implement "
-            "snapshot initial conditions; use a workflow checkpoint to resume"
+            "snapshot initial conditions; use a workflow checkpoint to resume",
+            code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
         )
     expected_source = (
         InitialConditionSource.GENERATED
@@ -269,31 +321,56 @@ def compile_channel_public_simulation(
         else "external_snapshot"
     )
     if source.initial_condition.source is not expected_source:
-        _reject("Channel initial-condition source disagrees with its mode")
+        _reject(
+            "Channel initial-condition source disagrees with its mode",
+            code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
+        )
     if source.initial_condition.family != expected_family:
-        _reject("Channel initial-condition family disagrees with its mode")
+        _reject(
+            "Channel initial-condition family disagrees with its mode",
+            code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
+        )
     if generated["name"] != "aligned_x_smooth_noise":
-        _reject("the qualified Channel generator is aligned_x_smooth_noise")
+        _reject(
+            "the qualified Channel generator is aligned_x_smooth_noise",
+            code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
+        )
 
     execution = _exact_keys(
         source.execution.options,
         _EXECUTION_KEYS,
         "Channel execution options",
+        code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
     )
     if execution["fallback_allowed"] is not False:
-        _reject("runtime fallback must remain disabled")
+        _reject(
+            "runtime fallback must remain disabled",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
     if execution["dtype"] != source.numerics.precision.value:
-        _reject("Channel execution dtype disagrees with numerical precision")
+        _reject(
+            "Channel execution dtype disagrees with numerical precision",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
     if execution["dtype"] != "float32":
-        _reject("the qualified Channel production application requires float32")
+        _reject(
+            "the qualified Channel production application requires float32",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
     if execution["batch_size"] != 1:
-        _reject("the qualified Channel production application requires batch_size=1")
+        _reject(
+            "the qualified Channel production application requires batch_size=1",
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
     try:
         device_normalization = validate_public_execution_device(
             execution["device"]
         )
     except ValueError as exc:
-        _reject(str(exc))
+        _reject(
+            str(exc),
+            code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
+        )
     workflow, effective_workflow, workflow_adapted = _adapt_workflow(
         source.workflow
     )
@@ -301,11 +378,13 @@ def compile_channel_public_simulation(
         source.discretization_parameters,
         frozenset({"pressure_solver"}),
         "Channel discretization",
+        code=PublicCompilationRejectionCode.DISCRETIZATION_CONTRACT,
     )
     pressure = _exact_keys(
         discretization["pressure_solver"],
         ITERATIVE_PRESSURE_OPTION_KEYS,
         "Channel pressure solver",
+        code=PublicCompilationRejectionCode.DISCRETIZATION_CONTRACT,
     )
     try:
         pressure = validate_iterative_pressure_options(
@@ -313,21 +392,34 @@ def compile_channel_public_simulation(
             description="Channel pressure solver",
         )
     except ValueError as exc:
-        _reject(str(exc))
+        _reject(
+            str(exc),
+            code=PublicCompilationRejectionCode.DISCRETIZATION_CONTRACT,
+        )
     if pressure["warm_start"] is not True:
-        _reject("the qualified Channel pressure solver uses a warm start")
+        _reject(
+            "the qualified Channel pressure solver uses a warm start",
+            code=PublicCompilationRejectionCode.DISCRETIZATION_CONTRACT,
+        )
 
     parameters = source.equation_system.parameters
     if parameters["flow_alignment"] != 1.0:
         _reject(
             "the qualified Channel production application requires "
-            "flow_alignment=1"
+            "flow_alignment=1",
+            code=PublicCompilationRejectionCode.MODEL_CONTRACT,
         )
     stokes = dict(parameters["stokes"]["parameters"])
     if stokes["pressure_gauge"] != "zero_mean":
-        _reject("the qualified Channel pressure gauge is zero_mean")
+        _reject(
+            "the qualified Channel pressure gauge is zero_mean",
+            code=PublicCompilationRejectionCode.MODEL_CONTRACT,
+        )
     if stokes["tangential_zero_mode_policy"] != "not_applicable":
-        _reject("Channel tangential zero-mode policy must be not_applicable")
+        _reject(
+            "Channel tangential zero-mode policy must be not_applicable",
+            code=PublicCompilationRejectionCode.MODEL_CONTRACT,
+        )
 
     domain = source.geometry.domain
     numerics = source.numerics

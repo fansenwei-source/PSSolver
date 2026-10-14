@@ -278,7 +278,7 @@ def test_public_above_bound_rejects_before_output_or_root_materialization(
     with pytest.raises(PublicSimulationCompilationError) as caught:
         compile_simulation(_public_simulation(source))
 
-    assert caught.value.code is PublicCompilationRejectionCode.APPLICATION_CONTRACT
+    assert caught.value.code is PublicCompilationRejectionCode.BOUNDARY_CONTRACT
     context = caught.value.context["robin_impedance"]
     assert context["axis"] == 2
     assert context["side"] == "lower"
