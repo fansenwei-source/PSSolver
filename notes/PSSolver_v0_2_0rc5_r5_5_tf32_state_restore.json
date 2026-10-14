@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc5 R5-5 TF32 caller-state restoration",
+  "status": "implementation_complete_cpu_verified_h100_deferred",
+  "classification": "PASS_R5_5_TF32_STATE_RESTORE_CPU_CANDIDATE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "implementation_commit": "abde2f2491a92d1fec4bbd296ba7a029fd191264",
+    "qualified_source_commit": "abde2f2491a92d1fec4bbd296ba7a029fd191264",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "id": "B11",
+    "related_issue": "NEW-14",
+    "work_item": "R5-5",
+    "source": "notes/PSSolver_v0_2_0rc4_consolidated_report.json"
+  },
+  "root_cause": "Torch couples torch.set_float32_matmul_precision() to torch.backends.cuda.matmul.allow_tf32. Restoring the public precision before the low-level CUDA flag allowed a later allow_tf32=True assignment to rewrite a caller-owned medium policy to high. The test and H100 helper repeated the same incorrect construction order and therefore never created an observable medium caller state.",
+  "contract": {
+    "restore_order": [
+      "cuda_matmul_allow_tf32",
+      "cudnn_allow_tf32",
+      "torch_float32_matmul_precision"
+    ],
+    "reachable_precision_cuda_pairs": [
+      ["highest", false],
+      ["high", true],
+      ["medium", true]
+    ],
+    "cudnn_states": [false, true],
+    "caller_state_count": 6,
+    "scope_policy_count": 2,
+    "exit_path_count": 2,
+    "cpu_state_matrix_case_count": 24,
+    "h100_runtime_family_case_count": 48,
+    "success_restores_exact_state": true,
+    "exception_restores_exact_state": true,
+    "nested_scope_restores_lifo": true,
+    "invalid_policy_does_not_mutate": true
+  },
+  "implementation_files": {
+    "pssolver/configuration/execution_device.py": "4eaece6a5f250f23dbb67859abf70ed0d775bc82a087b8ab385523fa1412cf43"
+  },
+  "qualification_files": {
+    "benchmarks/qualify_rc458_tf32_scope.py": "9771c3c1860435240d40dd992ad66e84f88f8bf4fc5ffa1ed1dc1319e3d02e9c",
+    "benchmarks/plan_rc458_tf32_h100.py": "21836fe21422b05cb8dbfa5e27809b814a0cadbed27c9810057b2e5c9291ef33"
+  },
+  "regression_tests": {
+    "tests/test_rc456_tf32_execution_scope.py": "b82f2e79d94a7659eb58efaa306f8aef20fa75766e2e26c21c5ba1f60ed38045",
+    "tests/test_plan_rc458_tf32_h100.py": "4175b75bed6448cf47496ee65ca9c243856665d0fb0c42dc04301732b7770a6e",
+    "tests/test_rc458_qualification_support.py": "45dcca8af7ad4acbf69c7ca6677420e91610d2bb471e462401395fba8fe56e4a",
+    "tests/test_rc458_transform_counter_recovery.py": "4918eec2f23dff0c48b18f81ae990db86fcbe4ee37bce817c58f7f925f4d7b90",
+    "tests/test_rc458_reserved_memory_recovery.py": "16a66c1d77f609c560331aa6f4471dd132b7b17af86b488d3074f20ace65d2b5",
+    "tests/test_rc458_h100_closure_record.py": "91a64f3460ccc313b710d70ddbe9a27ff0e0a2c974a9e4cf0233dd3627938947",
+    "tests/test_rc451_cross_runtime_adjudication.py": "0785ae2fe6be244f38ac8278736f2c41446689b62dbd32713745c30efbfacf1e",
+    "tests/test_rc455_public_robustness.py": "53a209d171b628bd377186c65360fc1de5f7e905686b0a2e77e7682213368cbf",
+    "tests/test_rc457_installed_consumer_impact.py": "ed5c3410147aeff456af155fa449f5295af5e60e7c6e01b6fd6f66a2a2766d9e",
+    "tests/test_rc457_installed_consumer_recovery.py": "220eaa2e5d9a73edf9ecbefa4a9997427778bb3c7d90198a12fa4ac08f62a7af",
+    "tests/test_rc4_cross_runtime_robustness_plan.py": "bf63bc91026583b7d570e46f6f4d32c48b8122c8d1e6f6deecd851596a56a369",
+    "tests/test_rc4_post_release_findings.py": "f6ae558d0828f921ced2dac6b6efc0168fe82564bd3aef8f46eea3907ebb7123",
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": "b658794a111583bc0f2ca837cc25766ae3f4e0bae4ef279835bda881f38c5038",
+    "tests/test_rc5_r52_finite_workflow_record.py": "bf36619a857cc79624c46bd2d776d465cc5c0e777f1ceb3f20a0038848695417",
+    "tests/test_rc5_r53_channel_checkpoint_record.py": "c764a135e4b4eb53bdb3743c2769cc33e20101ca5511d04e3dc7ca233af2a9c5",
+    "tests/test_rc5_w1_documentation.py": "c3f9edf2e2181cfeede56580eb601fe6acb79cc15eeb9f9c3b578826bca52328",
+    "tests/test_release_v0_2.py": "b7d09b31860d7bd6604fd448d28630ae529253c25da80e90af426ea7b1744890",
+    "tests/test_rc5_r55_tf32_state_restore.py": "c70476ef323a7a7a77f6139b1a88bf0202ff79aafe95ef4afdcf5138d77ee7a6"
+  },
+  "historical_successor_sources": {
+    "pssolver/configuration/execution_device.py": {
+      "historical_sha256": "244111555d9219317e0ec17aad127d7d2dae049dfdfce77a4b1f2a714879c7c8",
+      "current_sha256": "4eaece6a5f250f23dbb67859abf70ed0d775bc82a087b8ab385523fa1412cf43",
+      "reason": "Restore low-level TF32 flags before the public matmul precision so medium survives scope exit exactly."
+    },
+    "benchmarks/qualify_rc458_tf32_scope.py": {
+      "historical_sha256": "436e1615ef15e0c18730e95a5415e235ef867a0d7efed2c0eb777ce1e571987e",
+      "current_sha256": "9771c3c1860435240d40dd992ad66e84f88f8bf4fc5ffa1ed1dc1319e3d02e9c",
+      "reason": "Construct caller state in dependency-safe order and require all six reachable H100 caller states."
+    },
+    "benchmarks/plan_rc458_tf32_h100.py": {
+      "historical_sha256": "d7a03e7e608e7b1c2a782a83c9ce9b8a9fbf9d37d5d21883d0f5463db0caf221",
+      "current_sha256": "21836fe21422b05cb8dbfa5e27809b814a0cadbed27c9810057b2e5c9291ef33",
+      "reason": "Expand the caller-state matrix to every reachable precision/CUDA pair and both cuDNN flags."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "4cb9b82cfa1152c74daf8c1164ca6a4e0ae93843c13b9b52f5f1a9de4a7dd2c6",
+      "current_sha256": "b82f2e79d94a7659eb58efaa306f8aef20fa75766e2e26c21c5ba1f60ed38045",
+      "reason": "Construct real medium state and cover every reachable caller state on successful and exceptional exits."
+    },
+    "tests/test_plan_rc458_tf32_h100.py": {
+      "historical_sha256": "49650a38596101791edad06a384a1e17e880e8c6a000c378d5d21756246343be",
+      "current_sha256": "4175b75bed6448cf47496ee65ca9c243856665d0fb0c42dc04301732b7770a6e",
+      "reason": "Bind the expanded six-state cumulative H100 matrix and resolve the immutable RC4.5.8 plan through R5-5."
+    },
+    "tests/test_rc458_qualification_support.py": {
+      "historical_sha256": "1854cd3347b65e29df3fac4d9f5a1677d07ed9025ba0c786e7adb1941e1bbdad",
+      "current_sha256": "45dcca8af7ad4acbf69c7ca6677420e91610d2bb471e462401395fba8fe56e4a",
+      "reason": "Resolve frozen RC4.5.8 qualification-support source identities through the R5-5 successor record."
+    },
+    "tests/test_rc458_transform_counter_recovery.py": {
+      "historical_sha256": "01cbc9a4631365e33077d911b57c6e4e6d3a7aa3a50caf9603ee50d569c84bbc",
+      "current_sha256": "4918eec2f23dff0c48b18f81ae990db86fcbe4ee37bce817c58f7f925f4d7b90",
+      "reason": "Resolve the immutable RC4.5.8 transform-counter plan identity through R5-5."
+    },
+    "tests/test_rc458_reserved_memory_recovery.py": {
+      "historical_sha256": "4df1039f367bcf60af0c472dd3dd4853d4486b38a1297111bd26a9dad7aed86f",
+      "current_sha256": "16a66c1d77f609c560331aa6f4471dd132b7b17af86b488d3074f20ace65d2b5",
+      "reason": "Resolve the immutable RC4.5.8 reserved-memory plan identity through R5-5."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "911548599b6af096fa7a55a3db39201906e86774c194ffd0239852299a19882c",
+      "current_sha256": "91a64f3460ccc313b710d70ddbe9a27ff0e0a2c974a9e4cf0233dd3627938947",
+      "reason": "Preserve the immutable RC4.5.8 closure while resolving its source successors through R5-5."
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "630d9e0cddb67642b56b060a41fe4ca91ba904287599989a6f707da5b5f186fb",
+      "current_sha256": "0785ae2fe6be244f38ac8278736f2c41446689b62dbd32713745c30efbfacf1e",
+      "reason": "Extend the immutable RC4.5.1 source resolver through R5-5."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "e1f8a60e59c13a6129366a732bd718e343246cbd41446d26cd3680f3dfc8266f",
+      "current_sha256": "53a209d171b628bd377186c65360fc1de5f7e905686b0a2e77e7682213368cbf",
+      "reason": "Extend the immutable RC4.5.5 source resolver through R5-5."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "fd311cd05c30753b4166efe59c4bc04a6acb80a69f9bd7736b1de2387b7f9dc2",
+      "current_sha256": "ed5c3410147aeff456af155fa449f5295af5e60e7c6e01b6fd6f66a2a2766d9e",
+      "reason": "Extend the immutable RC4.5.7 impact-record source resolver through R5-5."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "6a76e51c3c11e6f6503e0b097e4a9bcedbc3cde0063d0658cd44a0ac9ef54922",
+      "current_sha256": "220eaa2e5d9a73edf9ecbefa4a9997427778bb3c7d90198a12fa4ac08f62a7af",
+      "reason": "Extend the immutable RC4.5.7 recovery-record source resolver through R5-5."
+    },
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {
+      "historical_sha256": "04dc1d4288a56ea81cd35d90094ab991a14a9a0410fd9041126221252675a2e3",
+      "current_sha256": "bf63bc91026583b7d570e46f6f4d32c48b8122c8d1e6f6deecd851596a56a369",
+      "reason": "Extend the frozen cross-runtime plan source resolver through R5-5."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "9767c6859facabbb2437c0e3247adf57a4bd018a1a2c5a2092eab78d4d5a8218",
+      "current_sha256": "f6ae558d0828f921ced2dac6b6efc0168fe82564bd3aef8f46eea3907ebb7123",
+      "reason": "Extend the immutable post-release source resolver through R5-5."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "b8e329ef6185e452be25b61034d2828ac9ec34f1a5b8ba88f7870780eaa8bb4a",
+      "current_sha256": "b658794a111583bc0f2ca837cc25766ae3f4e0bae4ef279835bda881f38c5038",
+      "reason": "Extend the immutable R5-1 successor resolver through R5-5."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "c65a56d0e2d2c37aa13764d4259b1e1026860eb16127a3fa4f463dd34064b115",
+      "current_sha256": "bf36619a857cc79624c46bd2d776d465cc5c0e777f1ceb3f20a0038848695417",
+      "reason": "Extend the immutable R5-2 successor resolver through R5-5."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "08651909b9dd49208775422213e6c1be4ee4b4950ebeb515e9825fc0757af8c4",
+      "current_sha256": "c764a135e4b4eb53bdb3743c2769cc33e20101ca5511d04e3dc7ca233af2a9c5",
+      "reason": "Preserve the immutable R5-3 record while resolving its changed historical sources through R5-5."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "db8aa6e046a3bbb91be98cb6f2aed9c63c15f1430574f52f43e1e49f56d8cfc9",
+      "current_sha256": "c3f9edf2e2181cfeede56580eb601fe6acb79cc15eeb9f9c3b578826bca52328",
+      "reason": "Extend the immutable rc5 W1 successor resolver through R5-5."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "d845d994ff85e45eac07768241d468b35e262b38b71df531f154b10adcdc9bc8",
+      "current_sha256": "b7d09b31860d7bd6604fd448d28630ae529253c25da80e90af426ea7b1744890",
+      "reason": "Extend the immutable v0.2.0rc4 release-record successor resolver through R5-5."
+    }
+  },
+  "validation": {
+    "pre_fix_reproducer": {
+      "torch": "2.6.0",
+      "case_count": 24,
+      "mismatch_count": 8,
+      "all_mismatches_precision": "medium"
+    },
+    "post_fix_reproducer": {
+      "torch": "2.6.0",
+      "case_count": 24,
+      "mismatch_count": 0
+    },
+    "targeted_cpu": "67 passed, 0 failed",
+    "source_full_cpu": "3504 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_targeted_cpu": "67 passed, 0 failed",
+    "installed_wheel_applicable_full_cpu": "3497 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "h100_tf32_caller_state_matrix": "deferred_to_single_rc5_cumulative_qualification"
+  },
+  "installed_wheel_evidence": {
+    "directory": "/home/fansenwei/pssolver_rc5_r55_installed_cpu_abde2f2_20261014_v1",
+    "source_archive_sha256": "e413947de36eb432b7e82dc16aa985b1f8f450c92869a01d420dfb2ea0798ade",
+    "wheel": "pssolver-0.2.0rc4-py3-none-any.whl",
+    "wheel_sha256": "82352ae3f997cd0314696addc75f75b5b25b1e981f22bf3c5b8934d867121e9a",
+    "pip_check": "PASS",
+    "python": "3.12.13",
+    "torch": "2.6.0",
+    "torch_cuda_runtime": "12.6",
+    "numpy": "2.3.2",
+    "scipy": "1.16.0",
+    "pytest": "9.1.1",
+    "source_shadow_import": false,
+    "nematics3d_modified": false,
+    "checksum_entries": 19,
+    "checksums_sha256": "0c3b97f25077ee96e6c00c9af1363041ec72ce23562435087e254a22e7fb1cff",
+    "installed_test_harness": "preload the installed pssolver package from venv purelib, then add the read-only worktree for Git, scripts, notes, and tests",
+    "source_only_test": {
+      "path": "tests/test_phase8_p861_local_cumulative_audit.py",
+      "test_count": 7,
+      "hidden_as_skip_or_xfail": false
+    },
+    "log_sha256": {
+      "source_full.log": "d778b44b931d220c7e468815469d293a4b91d5323c2b4b8e158651934f315b35",
+      "installed_targeted_isolated.log": "efc918cdbcedb821616ffb7e9cc5c083e3f5985a237d519423b5a16cdca143de",
+      "installed_applicable_worktree_cwd_smoke.log": "6700bb8653d93462b002cef396a87178020b482aae55ef7cbde76cf8a8f8568f",
+      "build_wheel_pip.log": "0341871c0f5777dc6621bac11a8eac1432b9c1c4416b54989863359ba61c07a3",
+      "pip_check.log": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    }
+  },
+  "scope": {
+    "scientific_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "checkpoint_schema_changed": false,
+    "public_api_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": true,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "r5_5_cpu_candidate_complete": true,
+    "h100_tf32_caller_state_matrix": "deferred_to_single_rc5_cumulative_qualification",
+    "eligible_for_r5_6_implementation": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

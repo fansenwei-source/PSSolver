@@ -22,10 +22,20 @@ RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc458_h100_closure_plan.json"
 RC457 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc457_installed_cpu_consumer_recovery.json"
 )
+RC5_R55 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _resolve_r55(relative: str, historical: str) -> str:
+    successor = json.loads(RC5_R55.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if successor is not None and successor["historical_sha256"] == historical:
+        return successor["current_sha256"]
+    return historical
 
 
 def test_rc458_profile_matrix_is_exact_complete_and_unique():
@@ -115,7 +125,7 @@ def test_rc458_record_binds_prerequisite_sources_and_no_authorization():
     assert record["qualification_complete"] is False
     assert record["baseline"]["rc4_5_7_record_sha256"] == _sha256(RC457)
     for relative, expected in record["source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == _resolve_r55(relative, expected)
     assert record["authorization"] == {
         "push_authorized": False,
         "h100_submission_authorized": False,

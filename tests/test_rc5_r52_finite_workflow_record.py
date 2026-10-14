@@ -12,6 +12,7 @@ RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
 R5_3_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
 )
+R5_5_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 
 
 def _record() -> dict[str, object]:
@@ -23,15 +24,17 @@ def _sha256(relative: str) -> str:
 
 
 def _latest_successor(relative: str, historical: str) -> str:
-    registration = json.loads(R5_3_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ].get(relative)
-    if (
-        registration is not None
-        and registration["historical_sha256"] == historical
-    ):
-        return registration["current_sha256"]
-    return historical
+    resolved = historical
+    for record_path in (R5_3_RECORD, R5_5_RECORD):
+        registration = json.loads(record_path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if (
+            registration is not None
+            and registration["historical_sha256"] == resolved
+        ):
+            resolved = registration["current_sha256"]
+    return resolved
 
 
 def test_r52_record_binds_implementation_regressions_and_successors():

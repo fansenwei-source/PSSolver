@@ -22,6 +22,16 @@ from benchmarks.run_rc458_profile_matrix import build_command_plan
 
 ROOT = Path(__file__).resolve().parents[1]
 SUPPORT_RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc458_qualification_support.json"
+RC5_R55 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
+
+
+def _resolve_r55(relative: str, historical: str) -> str:
+    successor = json.loads(RC5_R55.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if successor is not None and successor["historical_sha256"] == historical:
+        return successor["current_sha256"]
+    return historical
 
 
 def test_rc458_per_family_dtype_and_transform_contract_is_explicit():
@@ -225,7 +235,9 @@ def test_rc458_support_record_binds_sources_and_preserves_authorization_boundary
         "0e3895d664d1b81925127848b2dfde638f39763d"
     )
     for relative, expected in record["source_sha256"].items():
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == expected
+        resolved = _resolve_r55(relative, expected)
+        actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+        assert actual == resolved
     assert record["authorization"] == {
         "push_authorized": False,
         "h100_submission_authorized": False,

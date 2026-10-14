@@ -19,6 +19,7 @@ R5_2_RECORD = ROOT / "notes" / "PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.js
 R5_3_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
 )
+R5_5_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -122,6 +123,7 @@ def test_w1_successor_hashes_match_every_changed_historical_source():
     r5_1_successors = _read(R5_1_RECORD)["historical_successor_sources"]
     r5_2_successors = _read(R5_2_RECORD)["historical_successor_sources"]
     r5_3_successors = _read(R5_3_RECORD)["historical_successor_sources"]
+    r5_5_successors = _read(R5_5_RECORD)["historical_successor_sources"]
     assert successors
     for relative, registration in successors.items():
         assert registration["historical_sha256"] != registration["current_sha256"]
@@ -133,6 +135,9 @@ def test_w1_successor_hashes_match_every_changed_historical_source():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = r5_3_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = r5_5_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(ROOT / relative) == resolved

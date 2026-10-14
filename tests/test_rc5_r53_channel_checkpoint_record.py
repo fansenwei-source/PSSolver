@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
 )
+R5_5_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 
 
 def _record() -> dict[str, object]:
@@ -19,6 +20,18 @@ def _record() -> dict[str, object]:
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def _r55_successor(relative: str, historical: str) -> str:
+    registration = json.loads(R5_5_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if (
+        registration is not None
+        and registration["historical_sha256"] == historical
+    ):
+        return registration["current_sha256"]
+    return historical
 
 
 def test_r53_record_binds_candidate_commits_and_exact_sources():
@@ -43,7 +56,7 @@ def test_r53_record_binds_candidate_commits_and_exact_sources():
     }
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
-            assert _sha256(relative) == expected
+            assert _sha256(relative) == _r55_successor(relative, expected)
 
 
 def test_r53_released_fixture_and_disposition_matrix_are_exact():
@@ -83,7 +96,9 @@ def test_r53_successor_registry_matches_every_changed_historical_source():
     assert len(successors) == 26
     for relative, registration in successors.items():
         assert registration["historical_sha256"] != registration["current_sha256"]
-        assert _sha256(relative) == registration["current_sha256"]
+        assert _sha256(relative) == _r55_successor(
+            relative, registration["current_sha256"]
+        )
         assert registration["reason"]
 
 
