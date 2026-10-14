@@ -46,6 +46,7 @@ from .versioning import (
     negotiate_functional_api_version,
     runtime_identity_sha256_for_api_version,
 )
+from .legacy_identity import legacy_runtime_identity_sha256
 
 
 PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 3
@@ -141,6 +142,7 @@ class PeriodicActivityCheckpointBridge:
         api_version: str = FUNCTIONAL_API_VERSION,
         format_version: int | None = None,
         production_runtime_identity_sha256: str | None = None,
+        source_release_generation: str | None = None,
     ) -> dict[str, object]:
         negotiate_functional_api_version(
             api_version,
@@ -156,11 +158,19 @@ class PeriodicActivityCheckpointBridge:
             )
         )
         functional_sha256 = (
-            self._functional_identity_sha256
-            if api_version == FUNCTIONAL_API_VERSION
-            else runtime_identity_sha256_for_api_version(
+            legacy_runtime_identity_sha256(
                 self._functional_identity_metadata,
-                api_version,
+                family="periodic",
+                source_release_generation=source_release_generation,
+            )
+            if source_release_generation is not None
+            else (
+                self._functional_identity_sha256
+                if api_version == FUNCTIONAL_API_VERSION
+                else runtime_identity_sha256_for_api_version(
+                    self._functional_identity_metadata,
+                    api_version,
+                )
             )
         )
         production_sha256 = (
@@ -239,6 +249,12 @@ class PeriodicActivityCheckpointBridge:
         expected = self._bridge_metadata(
             api_version=selection.requested,
             format_version=bridge_version,
+            source_release_generation=(
+                SourceReleaseGeneration.RC2.value
+                if bridge_version
+                == _LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_V2
+                else None
+            ),
         )
         observed = dict(metadata)
         if bridge_version == self.format_version:
@@ -416,15 +432,12 @@ class PeriodicActivityCheckpointBridge:
                 applicability_class="configuration_dependent",
             )
         )
-        api_version = (
-            "0.1-provisional"
-            if generation is SourceReleaseGeneration.RC1
-            else FUNCTIONAL_API_VERSION
-        )
+        api_version = FUNCTIONAL_API_VERSION
         expected_bridge = self._bridge_metadata(
             api_version=api_version,
             format_version=expected_version,
             production_runtime_identity_sha256=header.runtime_identity_sha256,
+            source_release_generation=generation.value,
         )
         if dict(bridge) != expected_bridge:
             raise FunctionalCheckpointCompatibilityError(
@@ -528,11 +541,7 @@ class PeriodicActivityCheckpointBridge:
                 if state_only
                 else "exact_legacy_upgrade"
             ),
-            "source_api_version": (
-                "0.1-provisional"
-                if state_only
-                else FUNCTIONAL_API_VERSION
-            ),
+            "source_api_version": FUNCTIONAL_API_VERSION,
             "source_family": CheckpointFamily.PERIODIC_FUNCTIONAL.value,
             "source_format_version": (
                 _LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION

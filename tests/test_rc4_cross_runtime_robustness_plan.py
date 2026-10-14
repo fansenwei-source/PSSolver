@@ -21,6 +21,7 @@ RC455 = ROOT / (
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 POST_RELEASE = ROOT / "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
 RC5_W1 = ROOT / "notes/PSSolver_v0_2_0rc5_w1_documentation.json"
+RC5_R51 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_1_legacy_functional_checkpoint.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -43,7 +44,15 @@ def _git_blob_sha256(commit: str, relative: str) -> str:
 
 def _resolve_successor_sha256(relative: str, historical: str) -> str:
     resolved = historical
-    for record_path in (RC453, RC454, RC455, RC456, POST_RELEASE, RC5_W1):
+    for record_path in (
+        RC453,
+        RC454,
+        RC455,
+        RC456,
+        POST_RELEASE,
+        RC5_W1,
+        RC5_R51,
+    ):
         registration = _read(record_path).get(
             "historical_successor_sources", {}
         ).get(relative)

@@ -1,0 +1,76 @@
+{
+  "fixture_schema_version": 1,
+  "provenance": {
+    "acquisition": "verbatim copy from the read-only v0.2.0rc4 post-release verification evidence",
+    "original_root": "/home/fansenwei/pssolver_rc4_post_release_verification_20261013_v1/agent_evidence/state/legacy_ckpts_full",
+    "purpose": "R5-1 regression fixtures for released functional checkpoint readers",
+    "source_release_commits": {
+      "rc1": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1",
+      "rc2": "2bbe21e88fec318787fc31dc0a82bca5a171c024",
+      "rc3": "5071d73a00e0d19be62ebd39edf9918818d1267a"
+    }
+  },
+  "snapshots": {
+    "snap_channel_6/Q_0.npy": "a80af91a00480a011675c51b5b0b1ae2823fce3d21d543c48ce8ed8b2ffda6c0",
+    "snap_periodic/Q_0.npy": "080e4062e1a07a049cb35441cb69cda8fd1a7653ecf25286072eeca319b75d48"
+  },
+  "releases": {
+    "rc1": {
+      "info_sha256": "866ab2fc808b6bc147561ebce77c3ed590e08a5d607570d66af1a2150ab6b521",
+      "periodic": {
+        "tree_sha256": "17d2da8499056e02dbb275a29082ca84da14d6fd431d3b6e02cf157a56186805",
+        "file_count": 11,
+        "checkpoint_sha256": "a34b207ee125d29e1885d28c2769c350d6f17a2d369993bbe3d15f5f3523678a",
+        "functional_runtime_identity_sha256": "609c7cc736448b3251b65bfc2859df11dd04b8e73957a36c396a71ccf727d444",
+        "production_runtime_identity_sha256": "c153347cbeda4134ddbfb981e3bbfcdc470c3af9f116dd23b50add19dcb224b0",
+        "state_layout_sha256": "4d6b7c7d0a6fa610042493c5e130754ea52b803b67f6e1419eae2b127700f3c7"
+      },
+      "channel": {
+        "tree_sha256": "56b32ddca782a6046df0d8bb048ee687b64916bf3d97a7f49a0cd2feb7a854a2",
+        "file_count": 3,
+        "checkpoint_sha256": "cdc6466b410cd7dfe9975269e8a4314804031ce7af33f7087229cb03f778aee3",
+        "functional_runtime_identity_sha256": "e1886b6dc34500a4406f96b479395b77d9dfd9f1ea974e6a5ba5a0273fcd4e29",
+        "production_runtime_identity_sha256": "65a5fce7ea6e72751550b689a973ccff330f2099dd3c888228d252763765e1c3",
+        "state_layout_sha256": "8ecb59e69b7ad63d03f530152208a48f5dccc9aa27be103991e7765e5ab41c91"
+      }
+    },
+    "rc2": {
+      "info_sha256": "6a24159d0dcc44125a57baef85266fa554d79d2ebc518b4871e6bfb76766ac21",
+      "periodic": {
+        "tree_sha256": "dcf279efe13dbfa3a8db27b3d52e09c12fc8d8376bbf84cd7d717bfca515a747",
+        "file_count": 12,
+        "checkpoint_sha256": "7e8b5e378f9daa5d7a7b3a6e6d8866878da44923d062e99cfd762b7c5b8cc2a5",
+        "functional_runtime_identity_sha256": "609c7cc736448b3251b65bfc2859df11dd04b8e73957a36c396a71ccf727d444",
+        "production_runtime_identity_sha256": "c153347cbeda4134ddbfb981e3bbfcdc470c3af9f116dd23b50add19dcb224b0",
+        "state_layout_sha256": "4d6b7c7d0a6fa610042493c5e130754ea52b803b67f6e1419eae2b127700f3c7"
+      },
+      "channel": {
+        "tree_sha256": "40be1acfb68f35ab9177b7c0a8a5c40e8f77632c25511431bdc4bbe6e85d1c6c",
+        "file_count": 4,
+        "checkpoint_sha256": "98b4f8c87ddfda306de9202dc7def362c1a458349890f441c4f6f6fe6ca52871",
+        "functional_runtime_identity_sha256": "f32127443f3fbaf7b445ec37960a85f461643328bdc8fb4da11600968d8d4295",
+        "production_runtime_identity_sha256": "65a5fce7ea6e72751550b689a973ccff330f2099dd3c888228d252763765e1c3",
+        "state_layout_sha256": "8ecb59e69b7ad63d03f530152208a48f5dccc9aa27be103991e7765e5ab41c91"
+      }
+    },
+    "rc3": {
+      "info_sha256": "d6139b06afa972ac0b91eb407974530be76db36f88d3e8fa4c51ba365dec3b51",
+      "periodic": {
+        "tree_sha256": "dcf279efe13dbfa3a8db27b3d52e09c12fc8d8376bbf84cd7d717bfca515a747",
+        "file_count": 12,
+        "checkpoint_sha256": "7e8b5e378f9daa5d7a7b3a6e6d8866878da44923d062e99cfd762b7c5b8cc2a5",
+        "functional_runtime_identity_sha256": "609c7cc736448b3251b65bfc2859df11dd04b8e73957a36c396a71ccf727d444",
+        "production_runtime_identity_sha256": "c153347cbeda4134ddbfb981e3bbfcdc470c3af9f116dd23b50add19dcb224b0",
+        "state_layout_sha256": "4d6b7c7d0a6fa610042493c5e130754ea52b803b67f6e1419eae2b127700f3c7"
+      },
+      "channel": {
+        "tree_sha256": "40be1acfb68f35ab9177b7c0a8a5c40e8f77632c25511431bdc4bbe6e85d1c6c",
+        "file_count": 4,
+        "checkpoint_sha256": "98b4f8c87ddfda306de9202dc7def362c1a458349890f441c4f6f6fe6ca52871",
+        "functional_runtime_identity_sha256": "f32127443f3fbaf7b445ec37960a85f461643328bdc8fb4da11600968d8d4295",
+        "production_runtime_identity_sha256": "65a5fce7ea6e72751550b689a973ccff330f2099dd3c888228d252763765e1c3",
+        "state_layout_sha256": "8ecb59e69b7ad63d03f530152208a48f5dccc9aa27be103991e7765e5ab41c91"
+      }
+    }
+  }
+}

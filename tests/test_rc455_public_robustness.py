@@ -31,11 +31,21 @@ RC458 = ROOT / "notes/PSSolver_v0_2_0rc4_rc458_h100_closure.json"
 RELEASE = ROOT / "notes/pssolver_v0_2_0_rc4.json"
 POST_RELEASE = ROOT / "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
 RC5_W1 = ROOT / "notes/PSSolver_v0_2_0rc5_w1_documentation.json"
+RC5_R51 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_1_legacy_functional_checkpoint.json"
 
 
 def _latest_successor(relative: str, historical: str) -> str:
     resolved = historical
-    for path in (RC456, RC457, RC457_RECOVERY, RC458, RELEASE, POST_RELEASE, RC5_W1):
+    for path in (
+        RC456,
+        RC457,
+        RC457_RECOVERY,
+        RC458,
+        RELEASE,
+        POST_RELEASE,
+        RC5_W1,
+        RC5_R51,
+    ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)

@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc5 R5-1 released functional checkpoint compatibility",
+  "status": "implementation_complete_validation_in_progress",
+  "classification": "PASS_R5_1_REAL_RC1_RC2_RC3_FUNCTIONAL_CHECKPOINT_COMPATIBILITY_CPU_CANDIDATE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "implementation_parent": "f168b8638ccf4cc065f9c6fc02898d19ba3861cd",
+    "pushed": false
+  },
+  "issue": {
+    "id": "B10",
+    "source": "notes/PSSolver_v0_2_0rc4_consolidated_report.json",
+    "work_item": "R5-1",
+    "root_cause": "The rc4 readers reconstructed old bridge identities from the current identity and incorrectly modeled rc1 as API 0.1-provisional, although every released fixture uses API 1.0 and release-owned runtime schemas.",
+    "matrix_updated": false,
+    "matrix_update_reason": "The rc5_must batch remains open; the live matrix will be advanced when that batch is closed."
+  },
+  "contract": {
+    "released_api_version": "1.0",
+    "release_generations": ["rc1", "rc2", "rc3"],
+    "current_identity_additions_affect_released_digest": false,
+    "periodic": {
+      "rc1": "explicit_non_in_place_state_only_reprojection",
+      "rc2": "direct_read_and_exact_upgrade",
+      "rc3": "direct_read_and_exact_upgrade"
+    },
+    "channel": {
+      "rc1": "explicit_non_in_place_state_only_migration_on_even_periodic_axis",
+      "rc2": "explicit_non_in_place_state_only_migration_on_even_periodic_axis",
+      "rc3": "explicit_non_in_place_exact_upgrade"
+    },
+    "source_checkpoint_mutated": false,
+    "silent_fallback": false
+  },
+  "implementation_files": {
+    "pssolver/functional/legacy_identity.py": "6000faa530fb0750a88e34f2acc18c6319205cac510f05167ef34559c00d5e0a",
+    "pssolver/functional/periodic_checkpoint.py": "ce9b6ebfbc18afb5b74b94ba29baac803ff9c4d1ebf19f01d128e95d2ebf84ef",
+    "pssolver/functional/channel_checkpoint.py": "4c96a776a04b578c798bf9dd3d0430e09e2cada37f0f7759c823f93e1251b227"
+  },
+  "fixture": {
+    "root": "tests/fixtures/functional_checkpoint_releases_v1",
+    "manifest": "tests/fixtures/functional_checkpoint_releases_v1/manifest.json",
+    "manifest_sha256": "055e8ef3450ad1856b5aefe222389754edd8976cd22d468eb5924f7b0239d508",
+    "checkpoint_families": 6,
+    "release_info_records": 3,
+    "source": "/home/fansenwei/pssolver_rc4_post_release_verification_20261013_v1/agent_evidence/state/legacy_ckpts_full",
+    "verbatim_payload_copy": true
+  },
+  "regression_tests": {
+    "tests/test_rc4_functional_checkpoint_identity.py": "0796d57f7ae55482e58768ab7165c1768fb88f9646b2cf221a8c64bfb9fa0bec",
+    "tests/test_rc5_legacy_functional_checkpoints.py": "7e75470eb30feccc31c7d2d82a503286416dfd48b41b4e8ef5e94d111d10a829"
+  },
+  "historical_successor_sources": {
+    "pssolver/functional/periodic_checkpoint.py": {
+      "historical_sha256": "85d882d1540f0af663b342d89626678538578dd58929c8e955a053b8c13f0c36",
+      "current_sha256": "ce9b6ebfbc18afb5b74b94ba29baac803ff9c4d1ebf19f01d128e95d2ebf84ef",
+      "reason": "Use the frozen rc1-rc3 Periodic functional identity canonicalizer instead of the current runtime identity."
+    },
+    "pssolver/functional/channel_checkpoint.py": {
+      "historical_sha256": "b2b21e92c14d962cdfbee3f0beaf9d67dc29786e0aa50967385e556998ed63ee",
+      "current_sha256": "4c96a776a04b578c798bf9dd3d0430e09e2cada37f0f7759c823f93e1251b227",
+      "reason": "Use the release-generation Channel pressure identity and the real API 1.0 rc1 bridge schema."
+    },
+    "tests/test_rc4_functional_checkpoint_identity.py": {
+      "historical_sha256": "e7aff82c743d0c46d8872e98f53d5e78bdb87a7933910c8f8bb31f3c7f519546",
+      "current_sha256": "0796d57f7ae55482e58768ab7165c1768fb88f9646b2cf221a8c64bfb9fa0bec",
+      "reason": "Replace the synthetic provisional rc1 identity with the released API 1.0 generation schema."
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "ef1910b21630ea827a18a6a0bac05e922b25b1a58a00cfb4ce3f80d60abbb7cb",
+      "current_sha256": "1bf6b9b38a4c119e8c7ee80ab92859f136f58d118955540780bbc57dc68d5f81",
+      "reason": "Resolve the immutable RC4.5.1 evidence chain through the R5-1 checkpoint compatibility successor."
+    },
+    "tests/test_rc453_checkpoint_transactionality.py": {
+      "historical_sha256": "9dbd7d5d3f13192b3cdfc62bc49e017808d51a4489bc1bcbae6a3241ff1a4788",
+      "current_sha256": "884ff053e60665d81d1a4752b3068f6124d5667ace916a8abdba8dc7117032d3",
+      "reason": "Resolve the immutable RC4.5.3 evidence chain through the R5-1 checkpoint compatibility successor."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "a26ca1efb019a53c832f2fe410ac9f8d05991071358a6ac118395a053e671d39",
+      "current_sha256": "216fe3c9b72b5f84d359d06b63afe850207ed45801d1d370e23598b95315a93d",
+      "reason": "Resolve the immutable RC4.5.5 evidence chain through the R5-1 checkpoint compatibility successor."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "673fc37797de9b66ce68a0ab77e0c0ae8e7f4a43af94d8f5f58fe0414e943e94",
+      "current_sha256": "7f2095302f4ed4eeba31a878c625cf97dd83c297bd97caa36716644583451cc9",
+      "reason": "Resolve the immutable RC4.5.7 initial evidence chain through the R5-1 checkpoint compatibility successor."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "bab5d94ba1c66be89eef5f4a6b116286a2ce6ebae1b50668bc450582c66e93c6",
+      "current_sha256": "440e70df877435999ba110421ca38f3e9a0e9d73b7fd70e49dc4e8f2c20ee030",
+      "reason": "Resolve the immutable RC4.5.7 recovery evidence chain through the R5-1 checkpoint compatibility successor."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "d4ee44720571c148a5b8afe5f485fcd5951dabff2d4133574ec3cd7619175d63",
+      "current_sha256": "d75f69da65b460745c267f0e486d6f1b7e1147f993145025c73409958441c407",
+      "reason": "Resolve the immutable RC4.5.8 evidence chain through the R5-1 checkpoint compatibility successor."
+    },
+    "tests/test_rc4_cross_device_checkpoint_plan.py": {
+      "historical_sha256": "8efea56d369c9c1b5202dac1f77705f278e7fc57f77d32c7849ab5d458267969",
+      "current_sha256": "b9f81584a3b9c3cb3c1ee3ddebab78b0f98ea93207bd02b4f1c09899bc11e93c",
+      "reason": "Resolve the frozen RC4.2.6 planning evidence through the R5-1 checkpoint compatibility successor."
+    },
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {
+      "historical_sha256": "3bb29c74b1ab0fd14c967b8391fab8d805139107ec5242cb602bba0b787f640e",
+      "current_sha256": "687bd70b9ae0446f5167659404a0d61c785f1b9b70901552d6e670aa3816e71b",
+      "reason": "Resolve the frozen RC4 cross-runtime evidence through the R5-1 checkpoint compatibility successor."
+    },
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py": {
+      "historical_sha256": "a9dc6484a7b9ce9d69599f3688e220ede34bb957b5b758131db6346c79175e80",
+      "current_sha256": "6221cf56f671052d25c04ef99739a6002416d8181e3d82a7ec8fb9075b2a2f39",
+      "reason": "Resolve the frozen RC4.2.3 identity evidence through the R5-1 checkpoint compatibility successor."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "c7592d13eb0e13c388385e735688b0ca244ce1b31316fd982d8185adbd2ab9fb",
+      "current_sha256": "a79db5388deaebbc1d24e61fb030fff6fb32a82205599bc5b4429e2d794c1f1c",
+      "reason": "Resolve the immutable rc4 post-release finding record through the R5-1 checkpoint compatibility successor."
+    },
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {
+      "historical_sha256": "767837f5a658f86fd8f388a4e6f53ae5ab3c761ef925094f313df923871ca6b8",
+      "current_sha256": "2f3265627bfbafa4e3b1e96cf0cb81f861ace40fa90c7131f26e6a4d5e78fd19",
+      "reason": "Resolve the frozen RC4.4.4 identity evidence through the R5-1 checkpoint compatibility successor."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "daf1fc7107fd20c9e478e21e73e0b75ec845bf3d12843a139f46dbd31bff1f5a",
+      "current_sha256": "484a68082080153cc4d3b0a1eaadd1ff1f38e20430e06b0e9991d0d43cd57dba",
+      "reason": "Preserve the completed W1 record while resolving its changed historical tests through R5-1."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "298d366d2f3741215b6ed8342a1c4215703daaff255352dffa59891fdc34e25e",
+      "current_sha256": "9fe5d98e5e155e0e4cf462a00de9663d109ebfb9237f93d4947344aee36fa14b",
+      "reason": "Resolve the immutable rc4 release record through the R5-1 checkpoint compatibility successor."
+    },
+    "tests/test_rc4_functional_checkpoint_identity_record.py": {
+      "historical_sha256": "b3d0c8dc3fdd774aacbb4d5e8a131a9d7504c64d3da2b9b0cc52c2d62521f5a6",
+      "current_sha256": "cccbe62c0eebd77e4a941fdae7c3c7fbedd58e3e19b1022bfd15bf3fa0a52ac2",
+      "reason": "Extend immutable RC4 successor resolution through the R5-1 repair record."
+    },
+    "tests/test_rc426_functional_checkpoint_recovery_record.py": {
+      "historical_sha256": "38e7e0e9a4392a780a1c8ce4963afb88f495d8d020592435ef00ef993df6a030",
+      "current_sha256": "9e9856c1a998ad2bbb50dcee0b6a3542db9a9925014e8cf3434508552bfbae83",
+      "reason": "Extend the frozen RC4.2.6 successor chain without rewriting its historical evidence."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "268efe730bdb750ea235dfd467e96c532594c8bb26fdd27937ee35710eed734a",
+      "current_sha256": "f0b56054e1f0e775e8576764bd347034e2a3f8ae032f4fc4f44a640b7fc9d416",
+      "reason": "Allow the RC4.5.6 record test to resolve the later functional checkpoint successor."
+    }
+  },
+  "validation": {
+    "synthetic_identity_and_migration_tests": "15 passed",
+    "real_release_fixture_tests": "13 passed",
+    "original_external_reproducer": {
+      "rc1_periodic": "direct_reject_then_state_only_migration_pass",
+      "rc1_channel": "direct_reject_then_migration_pass",
+      "rc2_periodic": "direct_read_and_migration_pass",
+      "rc2_channel": "direct_reject_then_migration_pass",
+      "rc3_periodic": "direct_read_and_migration_pass",
+      "rc3_channel": "direct_reject_then_migration_pass"
+    },
+    "targeted_cpu": "141 passed",
+    "full_source_cpu": "3438 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_cpu": "pending"
+  },
+  "scope": {
+    "H100_required": false,
+    "H100_executed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "functional_API_version_changed": false,
+    "production_default_changed": false,
+    "historical_records_rewritten": false,
+    "tag_or_release_modified": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "H100_authorized": false,
+    "eligible_for_rc5_release": false,
+    "rc5_must_batch_complete": false
+  }
+}

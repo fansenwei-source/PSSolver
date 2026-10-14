@@ -71,6 +71,7 @@ from .versioning import (
     negotiate_functional_api_version,
     runtime_identity_sha256_for_api_version,
 )
+from .legacy_identity import legacy_runtime_identity_sha256
 
 
 CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 3
@@ -184,6 +185,7 @@ class ChannelActivityCheckpointBridge:
         api_version: str = FUNCTIONAL_API_VERSION,
         format_version: int | None = None,
         production_runtime_identity_sha256: str | None = None,
+        source_release_generation: str | None = None,
     ) -> dict[str, object]:
         negotiate_functional_api_version(
             api_version,
@@ -191,11 +193,19 @@ class ChannelActivityCheckpointBridge:
         )
         version = self.format_version if format_version is None else format_version
         functional_sha256 = (
-            self._functional_identity_sha256
-            if api_version == FUNCTIONAL_API_VERSION
-            else runtime_identity_sha256_for_api_version(
+            legacy_runtime_identity_sha256(
                 self._functional_identity_metadata,
-                api_version,
+                family="channel",
+                source_release_generation=source_release_generation,
+            )
+            if source_release_generation is not None
+            else (
+                self._functional_identity_sha256
+                if api_version == FUNCTIONAL_API_VERSION
+                else runtime_identity_sha256_for_api_version(
+                    self._functional_identity_metadata,
+                    api_version,
+                )
             )
         )
         production_sha256 = (
@@ -390,11 +400,7 @@ class ChannelActivityCheckpointBridge:
                 applicability_class="configuration_dependent",
             )
         )
-        api_version = (
-            "0.1-provisional"
-            if generation is SourceReleaseGeneration.RC1
-            else FUNCTIONAL_API_VERSION
-        )
+        api_version = FUNCTIONAL_API_VERSION
         source_production_identity = _require_sha256(
             bridge.get("production_runtime_identity_sha256"),
             "production_runtime_identity_sha256",
@@ -403,6 +409,7 @@ class ChannelActivityCheckpointBridge:
             api_version=api_version,
             format_version=expected_version,
             production_runtime_identity_sha256=source_production_identity,
+            source_release_generation=generation.value,
         )
         if dict(bridge) != expected_bridge:
             raise FunctionalCheckpointCompatibilityError(
@@ -529,11 +536,7 @@ class ChannelActivityCheckpointBridge:
                 else "exact_legacy_upgrade"
             ),
             "periodic_axis_size": periodic_size,
-            "source_api_version": (
-                "0.1-provisional"
-                if generation is SourceReleaseGeneration.RC1
-                else FUNCTIONAL_API_VERSION
-            ),
+            "source_api_version": FUNCTIONAL_API_VERSION,
             "source_family": CheckpointFamily.CHANNEL_FUNCTIONAL.value,
             "source_format_version": (
                 _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION

@@ -26,6 +26,7 @@ RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 RC455 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
 )
+RC5_R51 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_1_legacy_functional_checkpoint.json"
 
 
 def _plan() -> dict[str, object]:
@@ -42,7 +43,7 @@ def test_rc426_plan_binds_rc425_and_reviewed_sources():
         json.loads(path.read_text(encoding="utf-8")).get(
             "historical_successor_sources", {}
         )
-        for path in (RECOVERY, RC435, RC444, RC453, RC455)
+        for path in (RECOVERY, RC435, RC444, RC453, RC455, RC5_R51)
     ]
     assert plan["status"] == "ready_for_implementation"
     assert plan["classification"] == (

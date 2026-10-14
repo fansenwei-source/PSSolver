@@ -19,8 +19,8 @@ from pssolver.functional import (
     build_channel_functional_checkpoint_identity,
     build_periodic_functional_checkpoint_identity,
 )
-from pssolver.functional.versioning import (
-    runtime_identity_sha256_for_api_version,
+from pssolver.functional.legacy_identity import (
+    legacy_runtime_identity_sha256,
 )
 from pssolver.io.checkpoint import (
     FUNCTIONAL_CHECKPOINT_PROVENANCE_FILE,
@@ -63,6 +63,9 @@ def _periodic_identity(state_spec, *, device: str = "cpu"):
             "functional_runtime": {
                 "kind": "periodic_activity_batch_one",
                 "device": device,
+                "pointwise_execution": "eager",
+                "q_gradient_reuse": False,
+                "pressure_solver": "direct_periodic_fourier",
                 "snapshot_sha256": "a" * 64,
                 "fallback_allowed": False,
                 "fallback_used": False,
@@ -70,6 +73,9 @@ def _periodic_identity(state_spec, *, device: str = "cpu"):
                 "hermitian_state_projection": (
                     "self_conjugate_planes_each_step"
                 ),
+                "activity_product_before_divergence": True,
+                "deterministic_replay": "bitwise",
+                "durable_checkpoint_bridge_version": 1,
             }
         },
         state_layout=state_spec.to_metadata(),
@@ -84,14 +90,34 @@ def _channel_identity(state_spec, *, device: str = "cpu"):
             "functional_runtime": {
                 "kind": "channel_activity_batch_one",
                 "device": device,
+                "stage": "P9.7.4",
+                "pointwise_execution": "eager",
+                "q_gradient_reuse": False,
+                "spectral_refresh": "disabled",
+                "activity_product_before_divergence": True,
                 "snapshot_sha256": "b" * 64,
                 "fallback_allowed": False,
                 "fallback_used": False,
                 "pressure_solver": {
                     "kind": "channel_no_slip_modal_stokes_pcg",
+                    "algorithm": "preconditioned_conjugate_gradient",
+                    "relative_tolerance": 1.0e-10,
+                    "max_iterations": 40,
+                    "fixed_iterations": 12,
                     "gradient": "custom_implicit_pressure_adjoint_v1",
                     "initial_guess": "zero_every_call",
                 },
+                "boundary_spaces": {
+                    "Q": ["periodic", "neumann", "neumann"],
+                    "velocity": ["periodic", "dirichlet", "dirichlet"],
+                    "pressure": ["periodic", "neumann", "neumann"],
+                },
+                "deterministic_replay": "bitwise",
+                "durable_checkpoint_bridge_version": 1,
+                "checkpoint_export": "functional_q_state_only",
+                "production_checkpoint_import": (
+                    "q_state_only_after_identity_gate"
+                ),
             }
         },
         state_layout=state_spec.to_metadata(),
@@ -189,7 +215,15 @@ def _tree_sha256(directory: Path) -> dict[str, str]:
     }
 
 
-def _legacy_bridge(identity, current, *, api_version: str, format_version: int):
+def _legacy_bridge(
+    identity,
+    current,
+    *,
+    family: str,
+    generation: str,
+    api_version: str,
+    format_version: int,
+):
     result = dict(current)
     provenance = result.pop("run_provenance")
     result.pop("checkpoint_compatibility_identity")
@@ -199,9 +233,10 @@ def _legacy_bridge(identity, current, *, api_version: str, format_version: int):
             "api_version": api_version,
             "format_version": format_version,
             "functional_runtime_identity_sha256": (
-                runtime_identity_sha256_for_api_version(
+                legacy_runtime_identity_sha256(
                     identity.to_metadata(),
-                    api_version,
+                    family=family,
+                    source_release_generation=generation,
                 )
             ),
             "production_runtime_identity_sha256": provenance[
@@ -228,7 +263,9 @@ def _rewrite_periodic_rc1(directory: Path, identity) -> None:
     metadata["functional_bridge"] = _legacy_bridge(
         identity,
         metadata["functional_bridge"],
-        api_version="0.1-provisional",
+        family="periodic",
+        generation="rc1",
+        api_version="1.0",
         format_version=1,
     )
     metadata.pop("metadata_sha256", None)
@@ -245,6 +282,8 @@ def _rewrite_periodic_v2(directory: Path, identity) -> None:
     metadata["functional_bridge"] = _legacy_bridge(
         identity,
         metadata["functional_bridge"],
+        family="periodic",
+        generation="rc2",
         api_version="1.0",
         format_version=2,
     )
@@ -265,6 +304,7 @@ def _rewrite_channel_legacy(
     directory: Path,
     identity,
     *,
+    generation: str,
     api_version: str,
     format_version: int,
 ) -> None:
@@ -274,6 +314,8 @@ def _rewrite_channel_legacy(
     metadata["functional_bridge"] = _legacy_bridge(
         identity,
         metadata["functional_bridge"],
+        family="channel",
+        generation=generation,
         api_version=api_version,
         format_version=format_version,
     )
@@ -479,7 +521,7 @@ def test_pre_recovery_stale_execution_digest_remains_readable(tmp_path, channel)
     assert restored.completed_steps == 2
 
 
-def test_m14_periodic_provisional_checkpoint_requires_reprojection_migration(
+def test_m14_periodic_rc1_checkpoint_requires_reprojection_migration(
     tmp_path,
     monkeypatch,
 ):
@@ -597,6 +639,7 @@ def test_m13_channel_pre_rc3_even_grid_is_state_only_migration(
     _rewrite_channel_legacy(
         source,
         identity,
+        generation="rc2",
         api_version="1.0",
         format_version=2,
     )
@@ -652,6 +695,7 @@ def test_pre_rc3_channel_odd_periodic_grid_is_exact_legacy_upgrade(tmp_path):
     _rewrite_channel_legacy(
         source,
         identity,
+        generation="rc2",
         api_version="1.0",
         format_version=2,
     )

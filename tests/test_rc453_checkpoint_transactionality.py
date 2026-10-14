@@ -38,6 +38,7 @@ RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
 RC454 = ROOT / "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json"
 RC455 = ROOT / "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
+RC5_R51 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_1_legacy_functional_checkpoint.json"
 
 
 @contextmanager
@@ -316,7 +317,7 @@ def test_rc453_record_binds_contract_sources_and_scope():
         if actual == expected:
             continue
         resolved = expected
-        for successor_path in (RC454, RC455):
+        for successor_path in (RC454, RC455, RC5_R51):
             registration = json.loads(
                 successor_path.read_text(encoding="utf-8")
             )["historical_successor_sources"].get(relative)
@@ -339,11 +340,15 @@ def test_rc453_record_binds_contract_sources_and_scope():
             "historical_sha256"
         ]
         resolved = registration["current_sha256"]
-        successor = json.loads(RC455.read_text(encoding="utf-8"))[
-            "historical_successor_sources"
-        ].get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
+        for successor_path in (RC455, RC5_R51):
+            successor = json.loads(successor_path.read_text(encoding="utf-8"))[
+                "historical_successor_sources"
+            ].get(relative)
+            if (
+                successor is not None
+                and successor["historical_sha256"] == resolved
+            ):
+                resolved = successor["current_sha256"]
         assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolved
     assert record["scope"] == {
         "checkpoint_schema_or_tensor_layout_version_changed": False,

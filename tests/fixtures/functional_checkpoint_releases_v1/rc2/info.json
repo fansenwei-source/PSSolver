@@ -1,0 +1,20 @@
+{
+ "pssolver_file": "/tmp/claude-1000/-home-fansenwei-Desktop-Develop/ee31f8f2-c65f-4248-b588-ac975ecc44bc/scratchpad/rc4pr/agents/state/rc2whl/pssolver/__init__.py",
+ "version": "0.2.0rc2",
+ "periodic_prod": "ok",
+ "periodic_full_prod": "ok",
+ "channel_be_odd_prod": "ok",
+ "channel_be_even_prod": "ok",
+ "plane_legacy_prod": "ok",
+ "legacy_channel_prod": "ok",
+ "periodic_func": {
+  "ok": true,
+  "identity_sha": "609c7cc736448b3251b65bfc2859df11dd04b8e73957a36c396a71ccf727d444",
+  "bridge_format": 2
+ },
+ "channel_func": {
+  "ok": true,
+  "identity_sha": "f32127443f3fbaf7b445ec37960a85f461643328bdc8fb4da11600968d8d4295",
+  "bridge_format": 2
+ }
+}

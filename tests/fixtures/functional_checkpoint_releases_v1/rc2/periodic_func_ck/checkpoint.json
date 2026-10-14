@@ -1,0 +1,191 @@
+{
+  "backend_restart": {
+    "kind": "periodic_stokes_stateless",
+    "state_keys": []
+  },
+  "completed_steps": 2,
+  "format_version": 2,
+  "functional_bridge": {
+    "api_version": "1.0",
+    "format_version": 2,
+    "functional_runtime_identity_sha256": "609c7cc736448b3251b65bfc2859df11dd04b8e73957a36c396a71ccf727d444",
+    "production_runtime_identity_sha256": "c153347cbeda4134ddbfb981e3bbfcdc470c3af9f116dd23b50add19dcb224b0",
+    "runtime_kind": "periodic_activity_batch_one",
+    "state_layout": {
+      "batch_size": 1,
+      "components": [
+        {
+          "batch_axis": 1,
+          "component_names": [
+            "Qxx",
+            "Qxy",
+            "Qxz",
+            "Qyy",
+            "Qyz"
+          ],
+          "device": "cpu",
+          "dtype": "float64",
+          "layout": "component_batch_xyz",
+          "meaning": "physical five-component symmetric-traceless Q state at the current timestep",
+          "name": "q_physical",
+          "shape": [
+            5,
+            1,
+            6,
+            6,
+            4
+          ]
+        },
+        {
+          "batch_axis": 1,
+          "component_names": [
+            "Qxx",
+            "Qxy",
+            "Qxz",
+            "Qyy",
+            "Qyz"
+          ],
+          "device": "cpu",
+          "dtype": "complex128",
+          "layout": "component_batch_native_spectral_xyz",
+          "meaning": "native projected Q spectrum retained as persistent IMEX state",
+          "name": "q_spectral",
+          "shape": [
+            5,
+            1,
+            6,
+            4,
+            4
+          ]
+        }
+      ],
+      "container": "flat_tuple",
+      "layout_version": 1
+    },
+    "state_layout_sha256": "4d6b7c7d0a6fa610042493c5e130754ea52b803b67f6e1419eae2b127700f3c7"
+  },
+  "integrator": {
+    "refresh_count": 0,
+    "spectral_refresh_interval": null,
+    "step_count": 2
+  },
+  "metadata_sha256": "f4ea45fdb3922da84816574cf6d8f8ea2935cd0320c4ea619d255f446f268415",
+  "runtime_identity_sha256": "c153347cbeda4134ddbfb981e3bbfcdc470c3af9f116dd23b50add19dcb224b0",
+  "runtime_path": "periodic_spectral",
+  "tensor_files": {
+    "spatial": {
+      "Qxx": {
+        "dtype": "float64",
+        "file": "spatial__Qxx.npy",
+        "sha256": "a71527295cece5579ce9500a5005b90863d0e01152ca56ff2c821f0deb271740",
+        "shape": [
+          1,
+          6,
+          6,
+          4
+        ]
+      },
+      "Qxy": {
+        "dtype": "float64",
+        "file": "spatial__Qxy.npy",
+        "sha256": "346f4b4e522f7acf4a030be5b4e1f024bbe59a8b1c316c8197c21ab30ac2c6b2",
+        "shape": [
+          1,
+          6,
+          6,
+          4
+        ]
+      },
+      "Qxz": {
+        "dtype": "float64",
+        "file": "spatial__Qxz.npy",
+        "sha256": "3664f00fb2fee616221fc200d4d5306357cb37de7b4d2cff3bc3002a178ba017",
+        "shape": [
+          1,
+          6,
+          6,
+          4
+        ]
+      },
+      "Qyy": {
+        "dtype": "float64",
+        "file": "spatial__Qyy.npy",
+        "sha256": "4929d086b084882d04050ebc306a13fd8ddf4137f5cde601d11dc9823fb46336",
+        "shape": [
+          1,
+          6,
+          6,
+          4
+        ]
+      },
+      "Qyz": {
+        "dtype": "float64",
+        "file": "spatial__Qyz.npy",
+        "sha256": "d17e4acf32ba2b39c6657a2ba6194f3a4b0eeab07c096cb0e5012e8b5309d6f6",
+        "shape": [
+          1,
+          6,
+          6,
+          4
+        ]
+      }
+    },
+    "spectral": {
+      "Qxx": {
+        "dtype": "complex128",
+        "file": "spectral__Qxx.npy",
+        "sha256": "5f63ee79e48dd2adc6975a9f99d8e87ee9559f560b7f4715290a4633dea88ce7",
+        "shape": [
+          1,
+          6,
+          4,
+          4
+        ]
+      },
+      "Qxy": {
+        "dtype": "complex128",
+        "file": "spectral__Qxy.npy",
+        "sha256": "19ef817b59124f6320f8276e7779682ae03d63615efc5aa0544a1dd4a9e06ba8",
+        "shape": [
+          1,
+          6,
+          4,
+          4
+        ]
+      },
+      "Qxz": {
+        "dtype": "complex128",
+        "file": "spectral__Qxz.npy",
+        "sha256": "616181f445914ee6ada03396d2fad39ffdbdd44cf22b44aa3d3c561bfb0cb911",
+        "shape": [
+          1,
+          6,
+          4,
+          4
+        ]
+      },
+      "Qyy": {
+        "dtype": "complex128",
+        "file": "spectral__Qyy.npy",
+        "sha256": "995066dc04c26b2cb9d6066d5311dc1d1b018c838c237bb0f963be78518b16ca",
+        "shape": [
+          1,
+          6,
+          4,
+          4
+        ]
+      },
+      "Qyz": {
+        "dtype": "complex128",
+        "file": "spectral__Qyz.npy",
+        "sha256": "20051d471a4351592e72781c3f28a9750388601c36dbce637b24d967a8b9a550",
+        "shape": [
+          1,
+          6,
+          4,
+          4
+        ]
+      }
+    }
+  }
+}
