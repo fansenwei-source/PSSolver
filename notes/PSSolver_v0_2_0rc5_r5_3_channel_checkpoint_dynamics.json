@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc5 R5-3 Channel checkpoint dynamics identity",
+  "status": "implementation_complete_cpu_verified_h100_deferred",
+  "classification": "PASS_R5_3_CHANNEL_CHECKPOINT_DYNAMICS_CPU_CANDIDATE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "implementation_commit": "6eee28e54b2068ad5946807b779fdc1444fb1254",
+    "fixture_payload_commit": "d0423073db2a8e84a6fe5ced0ec15b60ef1ab666",
+    "initial_qualification_support_commit": "125a3de3e839c614a658a1a75c53c4aab53a2b78",
+    "qualification_support_commit": "b7839b72cc21961e6abaccf77d6f9c2dc054e9cf",
+    "candidate_source_commit": "d0423073db2a8e84a6fe5ced0ec15b60ef1ab666",
+    "record_commit_is_candidate_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "id": "N3",
+    "related_issue": "NEW-10",
+    "work_item": "R5-3",
+    "source": "notes/PSSolver_v0_2_0rc4_consolidated_report.json",
+    "root_cause": "The released P7 Channel runtime identity did not include the forward-Stokes periodic-Nyquist dynamics version. An rc1 even-grid checkpoint therefore had the same opaque identity as post-repair releases and could be resumed into a mixed trajectory."
+  },
+  "contract": {
+    "current_checkpoint_format_version": 2,
+    "legacy_checkpoint_format_version": 1,
+    "forward_stokes_nyquist_identity": "channel_no_slip.periodic_nyquist_zero.v2",
+    "current_runtime_identity_includes_dynamics_version": true,
+    "legacy_identity_is_only_used_for_format_v1_adjudication": true,
+    "new_checkpoint_writes_use_current_identity_only": true,
+    "legacy_even_grid_adjudication": "algebraic velocity, pressure, and persistent pressure-guess Nyquist planes must all be exactly zero",
+    "legacy_odd_grid_adjudication": "periodic Nyquist repair is inapplicable",
+    "rejection_before_target_mutation": true,
+    "legacy_tensor_load_before_dynamics_adjudication": true,
+    "per_timestep_host_synchronization_added": false
+  },
+  "released_checkpoint_matrix": {
+    "p7_legacy_channel_rc1_even": "reject_pre_rc4_1_forward_nyquist",
+    "p7_legacy_channel_rc1_odd": "accept_and_restore_exact_state",
+    "p7_legacy_channel_rc2_even": "accept_post_repair_zero_nyquist_and_restore_exact_state",
+    "p7_legacy_channel_rc3_even": "accept_post_repair_zero_nyquist_and_restore_exact_state",
+    "p7_legacy_channel_rc4": "accept_when_the_post_repair_zero_nyquist_invariant_holds",
+    "complete_stress_channel_rc1_even": "reject_pre_rc4_1_forward_nyquist",
+    "complete_stress_channel_rc1_odd": "reject_exact_restart_because_B2_incompressibility_dynamics_changed",
+    "complete_stress_channel_rc2_rc3": "retain_existing_exact_upgrade_contract",
+    "new_10_adjudication": "rc1 complete-stress Channel checkpoints are not trajectory-equivalent exact restarts; this batch chooses explicit rejection rather than state-only migration"
+  },
+  "implementation_files": {
+    "pssolver/configuration/channel_active_nematics.py": "5cf9adc88d7ad3b6a9431bdeac5b3d65ed84c3eb6b8697d40324e22aaa9b21b8",
+    "pssolver/workflows/__init__.py": "010cb77120434d38c8b1f305c933e8f734978302c0471edf85d0e43b78952634",
+    "pssolver/workflows/channel_active_nematics.py": "83d83ccbd0f86025df535e11037ea194a9fa0e9d2328943e509c588cfe815b0b",
+    "pssolver/workflows/channel_beris_edwards.py": "59dc069d64994e0f503411b780c8956202f25d99cb96832f91f5b71193883a24",
+    "pssolver/workflows/channel_checkpoint.py": "59124c022d88dce73a82278b62bedcfdca1a641e28d2ea9423568462b60ecd6b"
+  },
+  "regression_tests": {
+    "tests/test_phase7_channel_runtime_facade.py": "22fc1cf3a83da9a648904ee353e72a2270d3d142aded506a0193a6e853dd9fc3",
+    "tests/test_rc4_periodic_channel_checkpoint_identity.py": "6fe91a85a26c03120c9f79d94f1470a30a6064d2a9d7f12fee8608227f5360a1",
+    "tests/test_rc5_r53_legacy_channel_checkpoint.py": "9240e35734ac5db9b786f962f04c4fe09fa4b1722da3818e37c8044a6dfc4b12",
+    "tests/test_rc5_r53_channel_checkpoint_record.py": "08651909b9dd49208775422213e6c1be4ee4b4950ebeb515e9825fc0757af8c4"
+  },
+  "released_fixture": {
+    "manifest": "tests/fixtures/legacy_channel_checkpoints_v1/manifest.json",
+    "manifest_sha256": "a6f7e448aab9cad2dc9b0f211f241c3f802fe5121ac09915f7e379e636c6735b",
+    "case_count": 4,
+    "payload_file_count": 80,
+    "origin": "/home/fansenwei/pssolver_rc4_post_release_verification_20261013_v1/agent_evidence/state/legacy_ckpts_full",
+    "original_fixture_modified": false
+  },
+  "historical_successor_sources": {
+    "pssolver/configuration/channel_active_nematics.py": {"historical_sha256": "32ff78faeaa36422ed17563c2861a9997758bf861f5f39e2e36d7e9981099206", "current_sha256": "5cf9adc88d7ad3b6a9431bdeac5b3d65ed84c3eb6b8697d40324e22aaa9b21b8", "reason": "Version the P7 Channel forward-Stokes Nyquist dynamics in the same-runtime restart identity."},
+    "pssolver/workflows/__init__.py": {"historical_sha256": "4d6ab536095aed47dcec00306f5ccc352f08ebf298dc7c05d8e8f90fcb47ca85", "current_sha256": "010cb77120434d38c8b1f305c933e8f734978302c0471edf85d0e43b78952634", "reason": "Export the additive legacy P7 Channel checkpoint version constant."},
+    "pssolver/workflows/channel_active_nematics.py": {"historical_sha256": "d9e8b5d95c2516201294ce3e969e6f10650c95ad20262687b346df7223f68f65", "current_sha256": "83d83ccbd0f86025df535e11037ea194a9fa0e9d2328943e509c588cfe815b0b", "reason": "Route format-v1 P7 checkpoints through the frozen pre-rc5 identity and Nyquist adjudication before restore."},
+    "pssolver/workflows/channel_beris_edwards.py": {"historical_sha256": "96b3df5ccbde9a16d3b8403ef77f9d1775ae58b969a86181681d1c6df1ce04c5", "current_sha256": "59dc069d64994e0f503411b780c8956202f25d99cb96832f91f5b71193883a24", "reason": "Resolve NEW-10 by rejecting rc1 complete-stress Channel exact upgrades after the B2 dynamics change."},
+    "pssolver/workflows/channel_checkpoint.py": {"historical_sha256": "a1a99fb9888b71dfca64f73a2daee9e9926c1f3636bdd16830800f2e475585db", "current_sha256": "59124c022d88dce73a82278b62bedcfdca1a641e28d2ea9423568462b60ecd6b", "reason": "Write dynamics-versioned format v2 checkpoints and adjudicate released format-v1 algebraic Nyquist state before target mutation."},
+    "tests/test_phase7_channel_local_closure.py": {"historical_sha256": "2a1d3a6939da414cbe1fd828c16606a4b9597b73e62655f334fcc41c4ff9e654", "current_sha256": "d2c519570ea40560af30b8aa861ce64422c9bcfcb58dab998d6ff9cef47ee151", "reason": "Extend the immutable P7.5 source chain through R5-3."},
+    "tests/test_phase7_channel_runtime_facade.py": {"historical_sha256": "fb10e7f81cdbfa3496db10315923adf08354d7add09bb6f31d59905cd5ab08a0", "current_sha256": "22fc1cf3a83da9a648904ee353e72a2270d3d142aded506a0193a6e853dd9fc3", "reason": "Test the versioned P7 identity, format-v1 compatibility predicate, and R5-3 successor chain."},
+    "tests/test_phase7_p770_model_geometry_coupling_inventory.py": {"historical_sha256": "c9c6cbda25159c72f35dd6dbaea72d3e7c4331193f11b77fb66bf6d16f0f02d0", "current_sha256": "759faec9072b919ab2a4fd33e5e943d23376a306d229047c0aecc2cca91ead42", "reason": "Classify the Channel run-spec identity as a post-inventory connection."},
+    "tests/test_rc451_cross_runtime_adjudication.py": {"historical_sha256": "8ab6da3fbf947f4f6f5bded3ea5571792647147b87635994cf6d3eaec2c235a7", "current_sha256": "630d9e0cddb67642b56b060a41fe4ca91ba904287599989a6f707da5b5f186fb", "reason": "Extend the immutable RC4.5.1 successor resolver through R5-3."},
+    "tests/test_rc453_checkpoint_transactionality.py": {"historical_sha256": "bf78e5c7e095de151c40a4c49c64858ef18a0d785d41160b3f324ed12afcb290", "current_sha256": "25618f1a7ca64ababcc1c18fac7871c87c85b366cecbb8fb28288e17c23944f9", "reason": "Extend the immutable RC4.5.3 successor resolver through R5-3."},
+    "tests/test_rc455_public_robustness.py": {"historical_sha256": "45aac65a658ce12e66aece71ae3b13e67ab6b9cb438b4e418711654643113f94", "current_sha256": "e1f8a60e59c13a6129366a732bd718e343246cbd41446d26cd3680f3dfc8266f", "reason": "Extend the immutable RC4.5.5 successor resolver through R5-3."},
+    "tests/test_rc4_cross_device_checkpoint_plan.py": {"historical_sha256": "1ce1a77472c76614e0cc53b0c231067a3b21b6f6ee1a0a3c37c8b40ef6c26dac", "current_sha256": "3077ec79db4bc8a51e7898a19d196382342d95041fedc6d047cc787247e02587", "reason": "Extend the frozen cross-device checkpoint source chain through R5-3."},
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {"historical_sha256": "d3c0cbf76b5b89055d71965ee0736b53a6c2e549a36382f2e5e7426107f8f5c1", "current_sha256": "04dc1d4288a56ea81cd35d90094ab991a14a9a0410fd9041126221252675a2e3", "reason": "Extend the frozen cross-runtime source chain through R5-3."},
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py": {"historical_sha256": "88cb8ed64364ea06419df2d48433886eb88d3b1e5d8cdc2cb1e8070b6d776b2e", "current_sha256": "efc2a77e14b94662a4fce3b76ee85dbdd176a3294ef0a85c410faabf8a262657", "reason": "Resolve the immutable RC4.2.3 source identities through R5-3."},
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {"historical_sha256": "23be9ac955490204770ff76a2b7189a7daf03bdfa5e4a3dfb4bc1a1510ff48b1", "current_sha256": "9641244a6584a087826a04ad2b53dfc36e9c284af3b93eefc2f72df2f81fbbfd", "reason": "Extend the immutable RC4.4.4 source chain through R5-3."},
+    "tests/test_rc4_pressure_public_contract.py": {"historical_sha256": "6207553ccf0670cd79881b2132de975664cb7ae83274df64ec55db6d1430fc28", "current_sha256": "09767bfcd9dff6d4bf0377e0db0316ed52fcb52c1452461af64e20a46c914e13", "reason": "Extend the immutable RC4.4.2 source chain through R5-3."},
+    "tests/test_rc5_r52_finite_workflow_record.py": {"historical_sha256": "219737d7eabe30ae79dc10916a8841b58d8e61a4aa0ad4afa36e4fa61dca5cc5", "current_sha256": "c65a56d0e2d2c37aa13764d4259b1e1026860eb16127a3fa4f463dd34064b115", "reason": "Preserve R5-2 closure while resolving the later R5-3 Channel workflow successors."},
+    "tests/test_rc4_periodic_channel_checkpoint_identity.py": {"historical_sha256": "382317b58d270d6425810835243b9cfeb7a2c9c7cb5fac0a35de53502aecc761", "current_sha256": "6fe91a85a26c03120c9f79d94f1470a30a6064d2a9d7f12fee8608227f5360a1", "reason": "Record the NEW-10 decision that rc1 complete-stress Channel exact restart is unsupported on both even and odd grids."},
+    "tests/test_rc456_tf32_execution_scope.py": {"historical_sha256": "6e1d596b3c46a9d85af294bc780cca68f52004202fcf1ba61b01ac56e08d7c29", "current_sha256": "4cb9b82cfa1152c74daf8c1164ca6a4e0ae93843c13b9b52f5f1a9de4a7dd2c6", "reason": "Extend the immutable RC4.5.6 successor resolver through R5-3."},
+    "tests/test_rc457_installed_consumer_impact.py": {"historical_sha256": "6ef22a7ab30cbbf4f6259de19324420af30ae985590a467f8fa7545cb6659654", "current_sha256": "fd311cd05c30753b4166efe59c4bc04a6acb80a69f9bd7736b1de2387b7f9dc2", "reason": "Extend the immutable RC4.5.7 impact-record successor resolver through R5-3."},
+    "tests/test_rc457_installed_consumer_recovery.py": {"historical_sha256": "1473bfc0773d3a6c3c5ce8dadadae415b2a9ba1417b1c277a421faff1f0d6ffa", "current_sha256": "6a76e51c3c11e6f6503e0b097e4a9bcedbc3cde0063d0658cd44a0ac9ef54922", "reason": "Extend the immutable RC4.5.7 recovery-record successor resolver through R5-3."},
+    "tests/test_rc458_h100_closure_record.py": {"historical_sha256": "74a8861240a6df668bfd163fde060880aec6504d75f2bf6fb898a30a9415c4c2", "current_sha256": "911548599b6af096fa7a55a3db39201906e86774c194ffd0239852299a19882c", "reason": "Extend the immutable RC4.5.8 closure-record successor resolver through R5-3."},
+    "tests/test_rc4_post_release_findings.py": {"historical_sha256": "b1cb44e7f9959f6d03f51c3c2712c4055f791765605570728ff4333fb42646cf", "current_sha256": "9767c6859facabbb2437c0e3247adf57a4bd018a1a2c5a2092eab78d4d5a8218", "reason": "Extend the immutable RC4 post-release successor resolver through R5-3."},
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {"historical_sha256": "1705ce01b0ea54e4b81c5618d71974c4fb1ca134289ffb1aaded2606eefa79e5", "current_sha256": "b8e329ef6185e452be25b61034d2828ac9ec34f1a5b8ba88f7870780eaa8bb4a", "reason": "Extend the immutable R5-1 closure successor resolver through R5-3."},
+    "tests/test_rc5_w1_documentation.py": {"historical_sha256": "24f136d16ee80a6780eedface6a738b448d3ce41f835ea5821efa92fa42d7449", "current_sha256": "db8aa6e046a3bbb91be98cb6f2aed9c63c15f1430574f52f43e1e49f56d8cfc9", "reason": "Extend the immutable rc5 W1 successor resolver through R5-3."},
+    "tests/test_release_v0_2.py": {"historical_sha256": "4292c921c2bf8a40ac947c22c36acd7ad5e4b62884e16a3d7ed501bbf849e2a5", "current_sha256": "d845d994ff85e45eac07768241d468b35e262b38b71df531f154b10adcdc9bc8", "reason": "Extend the immutable v0.2.0rc4 release-record successor resolver through R5-3."}
+  },
+  "validation": {
+    "targeted_cpu": "216 passed, 0 failed",
+    "external_reproducer": {
+      "rc1_even": "CheckpointCompatibilityError before target mutation",
+      "rc1_odd": "accepted with matching source shape and completed to step 4",
+      "rc2_even": "accepted and completed to step 4",
+      "rc3_even": "accepted and completed to step 4"
+    },
+    "source_full_cpu": "3467 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_targeted_cpu": "37 passed, 0 failed",
+    "installed_wheel_applicable_full_cpu": "3455 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_source_only_test": {
+      "path": "tests/test_phase8_p861_local_cumulative_audit.py",
+      "test_count": 7,
+      "reason": "The analyzer requires its primary process to import PSSolver from the source repository while independently probing an installed wheel; it passed in the complete source suite and is structurally inapplicable when the primary process is pinned to the installed wheel.",
+      "hidden_as_skip_or_xfail": false
+    },
+    "h100_checkpoint_matrix": "deferred_to_single_rc5_cumulative_qualification"
+  },
+  "installed_wheel_evidence": {
+    "directory": "/home/fansenwei/pssolver_rc5_r53_installed_cpu_d042307_20261014_v1",
+    "candidate_source_commit": "d0423073db2a8e84a6fe5ced0ec15b60ef1ab666",
+    "source_archive_sha256": "b517789278e063ba617ae94fd42f69b778f0cc96dffcd11f22728b0ce9ac210e",
+    "wheel": "pssolver-0.2.0rc4-py3-none-any.whl",
+    "wheel_sha256": "2bd7cf34926ae02101642317ca7a704c7bee4af66615935f3691e708064e1171",
+    "pip_check": "PASS",
+    "python": "3.12.13",
+    "torch": "2.6.0",
+    "torch_cuda_runtime": "12.6",
+    "numpy": "2.3.2",
+    "scipy": "1.16.0",
+    "source_shadow_import": false,
+    "log_sha256": {
+      "source_full.log": "c79b325e10f2d3cd452e926f09533cdb0ec6b43b5eea41fbeb450ecdbee08edc",
+      "installed_targeted.log": "2d065da51274a5354e6e555925c0173fffd6318ea346b55b17ac24e60b034df9",
+      "installed_applicable_full.log": "e65ce752d8085b4e79b0a3e47301b3719b773dc5f9bf5784f1fd8311adf82816",
+      "pip_check.log": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    },
+    "nematics3d_modified": false,
+    "venv_local_numpy_reason": "Match the pre-existing nematics3d 0.9.0b1 requirement without modifying the base environment or nematics3d."
+  },
+  "scope": {
+    "scientific_equations_changed": false,
+    "integrator_changed": false,
+    "transform_algorithm_changed": false,
+    "pressure_algorithm_changed": false,
+    "checkpoint_schema_changed": true,
+    "runtime_identity_changed": true,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": true,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "r5_3_implementation_complete": true,
+    "r5_3_cpu_complete": true,
+    "r5_3_h100_complete": false,
+    "eligible_for_r5_4": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}
