@@ -108,7 +108,7 @@ from pssolver.planning import TransformKind
 from tqdm import trange
 
 
-_PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+_PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 # Physical boundary conditions are declared once as immutable core contracts;
 # legacy strings exist only at the current runtime adapter edge.
@@ -131,9 +131,9 @@ PRESSURE_MODAL_BC = _LEGACY_BOUNDARIES["pressure_modal"]
 # A strict reproduction of the paper's inertial mean-momentum dynamics would
 # require evolving the two tangential mean modes separately. Positive friction
 # is retained as an optional sensitivity model but is not the default.
-# Installed package files whose contents determine the discrete Q/Stokes
-# dynamics.  Keep repository-style ``pssolver/...`` names in metadata so runs
-# made in different checkout or installation locations remain comparable.
+# Local source files whose contents determine the discrete Q/Stokes dynamics.
+# Keep repository-relative names in metadata so runs made in different checkout
+# locations remain directly comparable.
 IMPLEMENTATION_SOURCE_FILES = PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
 
 
@@ -144,28 +144,6 @@ def file_sha256(path):
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
-
-
-def _implementation_source_path(relative_path: str) -> Path:
-    """Resolve one provenance source strictly inside the installed package."""
-
-    relative = Path(relative_path)
-    if (
-        relative.is_absolute()
-        or not relative.parts
-        or relative.parts[0] != "pssolver"
-        or ".." in relative.parts
-    ):
-        raise ValueError(
-            "implementation provenance paths must be package-relative "
-            "pssolver files"
-        )
-    source = (_PACKAGE_ROOT / Path(*relative.parts[1:])).resolve()
-    if not source.is_relative_to(_PACKAGE_ROOT) or not source.is_file():
-        raise FileNotFoundError(
-            f"installed implementation source is unavailable: {relative_path}"
-        )
-    return source
 
 
 def parse_args(argv: Sequence[str] | None = None) -> PlaneBerisEdwardsRunSpec:
@@ -357,7 +335,7 @@ def _run_plane_beris_edwards_owned(
         "schema_version": 1,
         "files": {
             relative_path: file_sha256(
-                _implementation_source_path(relative_path)
+                _PROJECT_ROOT / relative_path
             )
             for relative_path in IMPLEMENTATION_SOURCE_FILES
         },

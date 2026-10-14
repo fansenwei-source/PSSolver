@@ -5,8 +5,6 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-import pytest
-
 from pssolver.applications import plane_beris_edwards as plane_application
 from pssolver.configuration import (
     PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
@@ -55,20 +53,8 @@ def test_plane_implementation_provenance_is_installed_package_internal():
     assert PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
     for relative in PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES:
         assert relative.startswith("pssolver/")
-        source = plane_application._implementation_source_path(relative)
+        source = (plane_application._PROJECT_ROOT / relative).resolve()
         assert source.is_file()
-        assert source.is_relative_to(plane_application._PACKAGE_ROOT)
-
-
-@pytest.mark.parametrize(
-    "relative",
-    (
-        "Plane_beris_edwards_stokes.py",
-        "../Plane_beris_edwards_stokes.py",
-        "/tmp/Plane_beris_edwards_stokes.py",
-        "benchmarks/profile_periodic_functional.py",
-    ),
-)
-def test_plane_implementation_provenance_rejects_nonpackage_paths(relative):
-    with pytest.raises(ValueError, match="package-relative pssolver files"):
-        plane_application._implementation_source_path(relative)
+        assert source.is_relative_to(
+            plane_application._PROJECT_ROOT / "pssolver"
+        )
