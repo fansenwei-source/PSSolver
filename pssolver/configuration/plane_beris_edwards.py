@@ -70,8 +70,10 @@ PlaneFreeSlipBoundaryConditions.__module__ = __name__
 SpectralRefreshSpec.__module__ = __name__
 
 
+# These keys are both repository-relative and installed-package-relative.  The
+# historical top-level CLI shim is deliberately excluded: it delegates to the
+# application but does not determine the numerical implementation.
 PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES = (
-    "Plane_beris_edwards_stokes.py",
     "pssolver/applications/__init__.py",
     "pssolver/applications/plane_beris_edwards.py",
     "pssolver/solver.py",

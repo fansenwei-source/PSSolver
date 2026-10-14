@@ -20,7 +20,10 @@ setup(
     long_description=(PROJECT_ROOT / "README.md").read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
     python_requires=">=3.10",
-    packages=find_packages(),
+    # Only the supported library namespace belongs in the distribution.
+    # Repository-local qualification helpers under ``benchmarks/`` are not a
+    # public import surface and must not shadow a consumer's own package.
+    packages=find_packages(include=["pssolver", "pssolver.*"]),
     py_modules=["Plane_beris_edwards_stokes"],
     install_requires=[
         "numpy>=1.22",

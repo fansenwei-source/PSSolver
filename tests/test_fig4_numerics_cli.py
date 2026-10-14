@@ -158,7 +158,6 @@ class Fig4NumericsCliTests(unittest.TestCase):
         self.assertEqual(
             set(files),
             {
-                "Plane_beris_edwards_stokes.py",
                 "pssolver/applications/__init__.py",
                 "pssolver/applications/plane_beris_edwards.py",
                 "pssolver/solver.py",
