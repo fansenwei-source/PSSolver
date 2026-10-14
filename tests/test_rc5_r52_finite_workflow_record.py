@@ -1,0 +1,88 @@
+"""Static closure record for the R5-2 finite production-state repair."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
+
+
+def _record() -> dict[str, object]:
+    return json.loads(RECORD.read_text(encoding="utf-8"))
+
+
+def _sha256(relative: str) -> str:
+    return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def test_r52_record_binds_implementation_regressions_and_successors():
+    record = _record()
+    assert record["classification"] == (
+        "PASS_R5_2_FINITE_PRODUCTION_WORKFLOW_STATE_CPU_CLOSURE"
+    )
+    for section in ("implementation_files", "regression_tests"):
+        for relative, expected in record[section].items():
+            assert _sha256(relative) == expected
+    for relative, registration in record[
+        "historical_successor_sources"
+    ].items():
+        assert registration["historical_sha256"] != registration[
+            "current_sha256"
+        ]
+        assert _sha256(relative) == registration["current_sha256"]
+
+
+def test_r52_contract_fails_closed_without_a_hot_loop_sync():
+    contract = _record()["contract"]
+    assert contract["public_error_base"] == "SimulationExecutionError"
+    assert contract["nonfinite_error"] == "SimulationStateError"
+    assert contract["machine_code"] == "simulation_state_error"
+    assert contract["checked_boundaries"] == [
+        "observation",
+        "diagnostic",
+        "checkpoint",
+        "final_observation",
+    ]
+    assert contract["complete_written_after_nonfinite_state"] is False
+    assert contract["nonfinite_arrays_published"] is False
+    assert contract["per_timestep_host_synchronization_added"] is False
+
+
+def test_r52_source_and_installed_wheel_cpu_closures_are_exact():
+    validation = _record()["validation"]
+    assert validation["source_full_cpu"] == (
+        "3454 passed, 7 skipped, 8 subtests passed, 0 failed"
+    )
+    assert validation["installed_wheel_targeted_cpu"] == (
+        "73 passed, 0 failed"
+    )
+    assert validation["installed_wheel_applicable_full_cpu"] == (
+        "3447 passed, 7 skipped, 8 subtests passed, 0 failed"
+    )
+    evidence = _record()["installed_wheel_evidence"]
+    assert evidence["source_shadow_import"] is False
+    assert evidence["pip_check"] == "PASS"
+    assert evidence["nematics3d_modified"] is False
+
+
+def test_r52_authorizes_only_the_next_local_rc5_must_item():
+    record = _record()
+    scope = record["scope"]
+    assert scope["scientific_equations_changed"] is False
+    assert scope["production_default_changed"] is False
+    assert scope["PSSolver_Control_modified"] is False
+    assert scope["nematics3d_modified"] is False
+    assert scope["H100_required"] is False
+    assert scope["H100_executed"] is False
+    assert scope["push_executed"] is False
+    assert record["authorization"] == {
+        "r5_2_complete": True,
+        "eligible_for_r5_3": True,
+        "eligible_for_automatic_merge": False,
+        "eligible_for_default_promotion": False,
+        "production_default_changed": False,
+    }

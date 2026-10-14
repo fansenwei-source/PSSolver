@@ -1,13 +1,14 @@
 {
   "schema_version": 1,
   "record": "PSSolver v0.2.0rc5 R5-2 finite production workflow state",
-  "status": "implementation_complete_cpu_closure_pending",
-  "classification": "R5_2_IMPLEMENTED_FINITE_STATE_CPU_CLOSURE_PENDING",
+  "status": "complete",
+  "classification": "PASS_R5_2_FINITE_PRODUCTION_WORKFLOW_STATE_CPU_CLOSURE",
   "git_identity": {
     "branch": "fix/v0.2.0rc5",
     "implementation_commit": "a0ea607a500fca15d364595f79d6028ec5ec5c40",
     "architecture_correction_commit": "a27df6e9f35ec2adbf1afaa8a7e81358cb08bdd0",
     "import_layer_correction_commit": "8cbf961ef50c5d881fa3f646c1f07157aacd5ef4",
+    "qualified_source_commit": "7091ca7cfce8b7372f9e5e064f246a7123f92be5",
     "record_commit_is_qualified_source": false,
     "pushed": false
   },
@@ -47,7 +48,8 @@
     "pssolver/workflows/plane_observation.py": "d13eb0f32ebaef5d2bf5a2db6771f3be22cad4f400ecb81f04cd333040d85e97"
   },
   "regression_tests": {
-    "tests/test_rc5_r52_finite_workflow_state.py": "92317c0265a2b6cb319e2733373c3d8b34d52659b21de3b8107b8bdba14fea2f"
+    "tests/test_rc5_r52_finite_workflow_state.py": "92317c0265a2b6cb319e2733373c3d8b34d52659b21de3b8107b8bdba14fea2f",
+    "tests/test_rc5_r52_finite_workflow_record.py": "219737d7eabe30ae79dc10916a8841b58d8e61a4aa0ad4afa36e4fa61dca5cc5"
   },
   "historical_successor_sources": {
     "pssolver/__init__.py": {"historical_sha256": "ec8aa010d22a8c27ee557119bfd6da85c51af251e316075f7eb0c10364e40b05", "current_sha256": "51c7e46adae1dc3d21ef6d98ff32147ac395cbb85c23e226c29125ed0e53a0c4", "reason": "Export the additive public finite-state execution errors after the frozen Phase 7 surface."},
@@ -91,8 +93,42 @@
       "checkpoint_boundary": "SimulationStateError at step 10; no COMPLETE; no partial checkpoint"
     },
     "functional_nonfinite_probe": "5/5 injected NaN/Inf states rejected with FunctionalValueError",
-    "source_full_cpu": "pending",
-    "installed_wheel_cpu": "pending"
+    "source_full_cpu": "3454 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_targeted_cpu": "73 passed, 0 failed",
+    "installed_wheel_applicable_full_cpu": "3447 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_source_only_test": {
+      "path": "tests/test_phase8_p861_local_cumulative_audit.py",
+      "test_count": 7,
+      "reason": "The analyzer requires its primary process to import PSSolver from the source repository while independently probing an installed wheel; it passed in the complete source suite and is structurally inapplicable when the primary process is pinned to the installed wheel.",
+      "hidden_as_skip_or_xfail": false
+    },
+    "installed_wheel_harness_audit": {
+      "archive_without_git_rejected_as_invalid": true,
+      "temporary_working_directory_rejected_as_invalid": true,
+      "final_repository_material": "clean worktree at 7091ca7cfce8b7372f9e5e064f246a7123f92be5",
+      "runtime_import": "/home/fansenwei/pssolver_rc5_r52_installed_cpu_7091ca7_20261014_v1/venv/lib/python3.12/site-packages/pssolver/__init__.py",
+      "source_shadow_import": false
+    }
+  },
+  "installed_wheel_evidence": {
+    "directory": "/home/fansenwei/pssolver_rc5_r52_installed_cpu_7091ca7_20261014_v1",
+    "source_archive_sha256": "1e35a6bd667877cf6bf7d551e02139490b9da00bcefb2f21c9a7506b1e4f6c6f",
+    "wheel": "pssolver-0.2.0rc4-py3-none-any.whl",
+    "wheel_sha256": "21ac0c4d8dfff332df201735bdb29797c292e00d97d85ac185a2398eb28554f3",
+    "pip_check": "PASS",
+    "python": "3.12.13",
+    "torch": "2.6.0",
+    "torch_cuda_runtime": "12.6",
+    "numpy": "2.3.2",
+    "scipy": "1.16.0",
+    "source_shadow_import": false,
+    "log_sha256": {
+      "installed_targeted.log": "1139517a40b2cc8df6e85ad2558da3d7a4d480aa8a9e0b7f53fe3a5845976ed8",
+      "installed_applicable_full.log": "be3fe7335367e33e50b92832a56fa1823457eb55e3ab4ee28da2b135812cd832",
+      "pip_check.log": "9261363b733079a641c2e4cc9bc46ffa1d8336945a87f807b6cf68847dbc9b09"
+    },
+    "nematics3d_modified": false,
+    "venv_local_numpy_reason": "Match the pre-existing nematics3d 0.9.0b1 requirement without modifying the base environment or nematics3d."
   },
   "scope": {
     "scientific_equations_changed": false,
@@ -108,8 +144,8 @@
     "push_executed": false
   },
   "authorization": {
-    "r5_2_complete": false,
-    "eligible_for_r5_3": false,
+    "r5_2_complete": true,
+    "eligible_for_r5_3": true,
     "eligible_for_automatic_merge": false,
     "eligible_for_default_promotion": false,
     "production_default_changed": false
