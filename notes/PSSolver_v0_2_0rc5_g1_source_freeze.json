@@ -7,7 +7,7 @@
     "branch": "fix/v0.2.0rc5",
     "freeze_parent_commit": "b0356b5c5ef7045aaa7814aab581dea4b5a10890",
     "runtime_implementation_commit": "91c702c3deeb3e973fac80b6029e9dd02925937b",
-    "freeze_commit": null,
+    "freeze_commit": "877348b109e7437024be2505d96ecef25cf0a0ee",
     "pushed": false
   },
   "version_contract": {
@@ -38,7 +38,7 @@
   },
   "new_sources": {
     "notes/pssolver_v0_2_0_rc5.md": "155bdc83b1cd008cf50763cd79c100ab8ba8a91e0fefd458e2dfd715ffae1d15",
-    "notes/pssolver_v0_2_0_rc5.json": "ad0df6451982cf89cd67177b7c40080c9b22fe7bd190672bbbec0ebd8c946b40",
+    "notes/pssolver_v0_2_0_rc5.json": "f6f43ea60c4acf0f1642364655089dbda5ce619928a7cfb1a0a5100e8646f8cb",
     "tests/test_release_v0_2_rc5.py": "33bd98be07779dc6193cd00cf3d6cc8afa3f95b2b473068ec9d62c8e545970a4"
   },
   "historical_successor_sources": {
@@ -56,6 +56,71 @@
       "historical_sha256": "3f95dc4cfc9cdbbcdce819ad66dd8fe7bec9ce46903092b5748a114c69ca6471",
       "current_sha256": "1586dc2b802abe4b1633ce68d00a7f7660983412bc03fa7c39f30351d79deabb",
       "reason": "resolve the forward-only source-freeze successor while preserving the R5-13 record byte for byte"
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "f303220ee10c2dedbb22f97fd0eb4f23782326d1100380044e498d5a0126db90",
+      "current_sha256": "e610b17d5d180c40a953fff950f6cb4195cd84d29f143e0b60dba4679a5f80f1",
+      "reason": "extend the immutable post-release evidence resolver through the G-1 source freeze"
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "07079d1277ee0af345869dff13f90c1b5e290c43c5ee5359198b327ad820ec0d",
+      "current_sha256": "bc3f606757b077ccfb0bbbbfc45c87c5c4d9bb08bcc3e89492283b69d7e4ee79",
+      "reason": "extend the R5-1 evidence resolver through the G-1 source freeze"
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "7ec13eb07c20b7b2f7517a0c1daf3aaf5f36852fbf4a4bbe65a73a1d0d8a56b6",
+      "current_sha256": "2dede44a19bf6bafded823c4ebd4e8c10ae8f86bc9026ed5c97b6fd3ef9e8ff7",
+      "reason": "extend the R5-10 evidence resolver through the G-1 source freeze"
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "11838b0ab0452173c30b0489db56bdcf41bbd1bec6f40e13d7079146dd41d275",
+      "current_sha256": "a6609c2cf54e17c83a781479ed9060ec6b8f1cab1d45ab7d43b2417e5d82958b",
+      "reason": "extend the R5-11 evidence resolver through the G-1 source freeze"
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "81256bd786ec6a5c8ec7465049d86ade2d4b91ab7192597ca50b14612ab13bf6",
+      "current_sha256": "e2cdcbcd38fe8b8849771545d98a485b9d2a9525f1ef4c9db00f66cf6e54402a",
+      "reason": "extend the R5-12 evidence resolver through the G-1 source freeze"
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "fa4eb7747808b0605d4dbb56b6f408b4fa5ae7e84dd12f292a4515bfab1112b5",
+      "current_sha256": "e68edf88e0f9d7ad920e96c997d46acb98ca7cf91aca149ceba11b46c5f28bac",
+      "reason": "extend the R5-2 evidence resolver through the G-1 source freeze"
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "172c3fce41a4a5a5f561fe7adf711154d0f3226ab73c28e6e0dcc4b6731c175b",
+      "current_sha256": "4632d77d1088649c525f43a823eec92da7faa1f783bdf16ee806029e41180c24",
+      "reason": "extend the R5-3 evidence resolver through the G-1 source freeze"
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "06fac72b99e0ff0a63cdc43a779563538331469883fd3a82ad3bbe68202deee2",
+      "current_sha256": "1eb5066fc5b6340a82b5b8f1ebf60d660291ae67f1fbb288d230aac89d29ff6e",
+      "reason": "extend the R5-5 evidence resolver through the G-1 source freeze"
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "952224fd20249502982dd13d7556e6ccaa9c574fa3e076767ac98a1e1088c7b4",
+      "current_sha256": "a298127bde8b5c3656438112cf9fd6401488dbf4b88fe6204b38986207656a19",
+      "reason": "extend the R5-6 evidence resolver through the G-1 source freeze"
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "a46e142d3acf0317872f5529d987a70ab57fd22ae3fef266713dbe5d240cfc0c",
+      "current_sha256": "b9095494e087e548160c03e0dfdcb31a4b76c67b8ca960c1f70716347c57b636",
+      "reason": "extend the R5-7 evidence resolver through the G-1 source freeze"
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "9f5971b5da51945df789c5994f192cf4e04869bbcdcda192915ac097e41cd185",
+      "current_sha256": "46a62b6fea3d1f4b01e89222b4fb39b4dd0177e6466a5b0e2ba682fde451cac8",
+      "reason": "extend the R5-8 evidence resolver through the G-1 source freeze"
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "a4859b23be836ecf8dd47514ce5086ebebf447660aabc314fd64f57322cadd2e",
+      "current_sha256": "ed729cc7abefcc8c148585b896161273b6b5869b452db7da487f04782fc4b80f",
+      "reason": "extend the R5-9 evidence resolver through the G-1 source freeze"
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "09d57988f80c63826a752091af467dd7a05dee8d350130e08e2134cc7de808cb",
+      "current_sha256": "e99602c5328a7e4be2d349c71855e7c80c44520329ac8c781da1be1a42947b52",
+      "reason": "extend the W1 evidence resolver through the G-1 source freeze"
     }
   },
   "gate_order": [

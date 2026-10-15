@@ -10,7 +10,7 @@
     "r5_13_qualified_source_commit": "0bcdd32ccfbabc48c7babedff500882d737ddc5a",
     "immutable_rc4_tag": "v0.2.0rc4",
     "immutable_rc4_tag_commit": "658869456d7622de9dad607fa3d2572e41b58ac3",
-    "freeze_commit": null
+    "freeze_commit": "877348b109e7437024be2505d96ecef25cf0a0ee"
   },
   "public_contract": {
     "package_version": "0.2.0rc5",

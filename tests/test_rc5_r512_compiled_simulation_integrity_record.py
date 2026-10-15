@@ -12,6 +12,7 @@ RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
 )
 R5_13_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
+G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
 
 
 def _sha256(relative: str) -> str:
@@ -23,15 +24,17 @@ def _record() -> dict[str, object]:
 
 
 def _r513(relative: str, historical: str) -> str:
-    registration = json.loads(R5_13_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ].get(relative)
-    if (
-        registration is not None
-        and registration["historical_sha256"] == historical
-    ):
-        return registration["current_sha256"]
-    return historical
+    resolved = historical
+    for path in (R5_13_RECORD, G1_RECORD):
+        registration = json.loads(path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if (
+            registration is not None
+            and registration["historical_sha256"] == resolved
+        ):
+            resolved = registration["current_sha256"]
+    return resolved
 
 
 def test_r512_record_binds_implementation_and_regression_sources():
