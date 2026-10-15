@@ -14,6 +14,9 @@ RECORD = ROOT / (
 R5_3_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
 )
+R5_11_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -26,6 +29,9 @@ def _sha256(relative: str) -> str:
 
 def test_r510_record_binds_implementation_and_exact_sources():
     record = _record()
+    successors = json.loads(R5_11_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert record["git_identity"]["branch"] == "fix/v0.2.0rc5"
     assert record["git_identity"]["implementation_commit"] == (
         "5d8941686ba641d1750ddf5cd5bc9ecdfb35666c"
@@ -34,6 +40,12 @@ def test_r510_record_binds_implementation_and_exact_sources():
     assert record["git_identity"]["pushed"] is False
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
+            registration = successors.get(relative)
+            if (
+                registration is not None
+                and registration["historical_sha256"] == expected
+            ):
+                expected = registration["current_sha256"]
             assert _sha256(relative) == expected
 
 
@@ -74,6 +86,9 @@ def test_r510_checkpoint_observation_contract_is_explicit():
 
 def test_r510_successor_registry_is_forward_only_and_exact():
     successors = _record()["historical_successor_sources"]
+    r5_11_successors = json.loads(R5_11_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert set(successors) == {
         "pssolver/workflows/channel_checkpoint.py",
         "tests/test_phase7_channel_runtime_facade.py",
@@ -99,7 +114,14 @@ def test_r510_successor_registry_is_forward_only_and_exact():
     }
     for relative, registration in successors.items():
         assert registration["historical_sha256"] != registration["current_sha256"]
-        assert _sha256(relative) == registration["current_sha256"]
+        expected = registration["current_sha256"]
+        successor = r5_11_successors.get(relative)
+        if (
+            successor is not None
+            and successor["historical_sha256"] == expected
+        ):
+            expected = successor["current_sha256"]
+        assert _sha256(relative) == expected
         assert registration["introduced_by_phase"] == "R5-10"
         assert registration["reason"]
 

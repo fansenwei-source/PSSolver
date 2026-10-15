@@ -27,6 +27,9 @@ RC5_R59 = PROJECT_ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_e
 RC5_R510 = PROJECT_ROOT / "notes" / (
     "PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
 )
+RC5_R511 = PROJECT_ROOT / "notes" / (
+    "PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
 
 
 def test_release_candidate_version_and_public_metadata_agree():
@@ -128,6 +131,9 @@ def test_release_candidate_registers_exact_portability_successors():
     rc5_r510_successors = json.loads(RC5_R510.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    rc5_r511_successors = json.loads(RC5_R511.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert set(successors) == {
         "tests/test_rc447_pressure_bounded_operator_recovery.py",
         "tests/test_rc455_public_robustness.py",
@@ -180,6 +186,9 @@ def test_release_candidate_registers_exact_portability_successors():
         rc5_r510 = rc5_r510_successors.get(relative)
         if rc5_r510 is not None and rc5_r510["historical_sha256"] == resolved:
             resolved = rc5_r510["current_sha256"]
+        rc5_r511 = rc5_r511_successors.get(relative)
+        if rc5_r511 is not None and rc5_r511["historical_sha256"] == resolved:
+            resolved = rc5_r511["current_sha256"]
         assert resolved == hashlib.sha256((PROJECT_ROOT / relative).read_bytes()).hexdigest()
         assert registration["introduced_by_phase"] == (
             "v0.2.0rc4-release-preparation"

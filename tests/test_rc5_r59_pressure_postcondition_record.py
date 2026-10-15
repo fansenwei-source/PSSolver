@@ -13,6 +13,9 @@ R5_8_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 R5_10_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
 )
+R5_11_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -24,15 +27,17 @@ def _sha256(path: Path) -> str:
 
 
 def _r510_successor(relative: str, historical: str) -> str:
-    registration = json.loads(R5_10_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ].get(relative)
-    if (
-        registration is not None
-        and registration["historical_sha256"] == historical
-    ):
-        return registration["current_sha256"]
-    return historical
+    resolved = historical
+    for path in (R5_10_RECORD, R5_11_RECORD):
+        registration = json.loads(path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if (
+            registration is not None
+            and registration["historical_sha256"] == resolved
+        ):
+            resolved = registration["current_sha256"]
+    return resolved
 
 
 def test_r59_record_binds_implementation_and_exact_sources():

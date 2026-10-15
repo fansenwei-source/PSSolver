@@ -22,6 +22,9 @@ R5_9_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_error
 R5_10_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
 )
+R5_11_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -34,7 +37,13 @@ def _sha256(relative: str) -> str:
 
 def _r57_successor(relative: str, historical: str) -> str:
     resolved = historical
-    for path in (R5_7_RECORD, R5_8_RECORD, R5_9_RECORD, R5_10_RECORD):
+    for path in (
+        R5_7_RECORD,
+        R5_8_RECORD,
+        R5_9_RECORD,
+        R5_10_RECORD,
+        R5_11_RECORD,
+    ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)

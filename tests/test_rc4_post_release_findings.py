@@ -19,6 +19,9 @@ RC5_R59 = ROOT / "notes" / "PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_error
 RC5_R510 = ROOT / "notes" / (
     "PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
 )
+RC5_R511 = ROOT / "notes" / (
+    "PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -186,6 +189,9 @@ def test_historical_successor_sources_match_the_current_files_exactly():
     rc5_r510_successors = json.loads(RC5_R510.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    rc5_r511_successors = json.loads(RC5_R511.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert set(successors) == {
         "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json",
         "notes/PSSolver_v0_2_0rc3_known_issues_matrix_zh.md",
@@ -230,6 +236,9 @@ def test_historical_successor_sources_match_the_current_files_exactly():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = rc5_r510_successors.get(relative_path)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = rc5_r511_successors.get(relative_path)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(ROOT / relative_path) == resolved

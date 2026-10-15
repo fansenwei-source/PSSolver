@@ -29,6 +29,9 @@ RC456 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 )
 RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
+RC5_R511 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -114,7 +117,7 @@ def test_rc435_record_binds_implementation_and_scope():
         json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ]
-        for path in (RC453, RC455, RC456, RC5_R52, RC5_R57)
+        for path in (RC453, RC455, RC456, RC5_R52, RC5_R57, RC5_R511)
     ]
     for relative, expected in record["source_sha256"].items():
         actual = _sha256(relative)

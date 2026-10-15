@@ -44,6 +44,9 @@ RC5_R59 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.js
 RC5_R510 = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
 )
+RC5_R511 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+)
 
 
 def _set_state(precision: str, matmul: bool, cudnn: bool) -> None:
@@ -70,6 +73,7 @@ def _resolve_rc457_successor(relative: str, historical: str) -> str:
         RC5_R58,
         RC5_R59,
         RC5_R510,
+        RC5_R511,
     ):
         successor = json.loads(record_path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
