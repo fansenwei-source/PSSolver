@@ -26,6 +26,9 @@ R5_10_RECORD = ROOT / (
 R5_11_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
 )
+R5_12_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
+)
 
 
 def _sha256(relative: str) -> str:
@@ -44,6 +47,7 @@ def _latest_successor(relative: str, historical: str) -> str:
         R5_9_RECORD,
         R5_10_RECORD,
         R5_11_RECORD,
+        R5_12_RECORD,
     ):
         successor = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
@@ -97,6 +101,9 @@ def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
     r5_11_successors = json.loads(R5_11_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    r5_12_successors = json.loads(R5_12_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
@@ -129,6 +136,9 @@ def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = r5_11_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = r5_12_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(relative) == resolved

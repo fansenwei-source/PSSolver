@@ -47,6 +47,9 @@ RC5_R510 = ROOT / (
 RC5_R511 = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
 )
+RC5_R512 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
+)
 
 
 def _set_state(precision: str, matmul: bool, cudnn: bool) -> None:
@@ -74,6 +77,7 @@ def _resolve_rc457_successor(relative: str, historical: str) -> str:
         RC5_R59,
         RC5_R510,
         RC5_R511,
+        RC5_R512,
     ):
         successor = json.loads(record_path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
