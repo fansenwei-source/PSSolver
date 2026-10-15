@@ -1,0 +1,88 @@
+{
+  "schema": "pssolver.rc5.g1.h100_failure_record.v1",
+  "phase": "G-1.9",
+  "date": "2026-10-15",
+  "classification": "FAIL_RC5_G1_H100_CUDA_ONLY_CHECKPOINT_FILESYSTEM_PORTABILITY",
+  "qualification_complete": false,
+  "g1_complete": false,
+  "eligible_for_rc5_release": false,
+  "provider_candidate_commit": "674a8121779be72c95aa5dc9e2babca0ce7b93a9",
+  "provider_support_commit": "fa8dc94f7b0d4e97999ad36c94491a5b9c84b89c",
+  "evidence_tip_at_submission": "b3558f24e35101a287579926ef3e1eb1c9059923",
+  "consumer_source_commit": "c14e6b56c88081e7f9a5642e65ffd722eec7445b",
+  "job": {
+    "id": "10885517",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:00:41",
+    "node": "gpu-h100-4-0",
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "requeue": 0,
+    "restarts": 0,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "second_job_submitted": false
+  },
+  "stage_results": {
+    "environment": "PASS",
+    "cuda_only": "FAIL_6_PASSED_1_FAILED",
+    "tf32_scope": "NOT_RUN",
+    "checkpoints": "NOT_RUN",
+    "numerical": "NOT_RUN",
+    "profiles": "NOT_RUN",
+    "consumer": "NOT_RUN",
+    "assemble": "NOT_RUN",
+    "analyze": "NOT_RUN"
+  },
+  "environment": {
+    "gpu": "NVIDIA H100 PCIe",
+    "allocated_device": "cuda:0",
+    "visible_device_count": 1,
+    "python": "3.10.18",
+    "torch": "2.5.1+cu121",
+    "torch_cuda_runtime": "12.1",
+    "tf32_matmul": false,
+    "tf32_cudnn": false,
+    "pip_check": "PASS",
+    "source_shadow_import": false
+  },
+  "failure": {
+    "nodeid": "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact",
+    "exception_type": "pssolver.io.checkpoint.CheckpointIOError",
+    "message": "atomic no-replace checkpoint publication is unavailable",
+    "operation": "finite_q_checkpoint_export",
+    "implementation": "pssolver.io.checkpoint._rename_directory_no_replace",
+    "attempted_symbol": "ctypes.CDLL(None, use_errno=True).renameat2",
+    "hpcc_kernel": "3.10.0-862.11.6.el7.x86_64",
+    "hpcc_glibc": "2.17",
+    "renameat2_symbol_present": false,
+    "failure_domain": "provider_checkpoint_filesystem_portability"
+  },
+  "failure_nonclaims": {
+    "external_qualification_harness_failure": false,
+    "scheduler_failure": false,
+    "cuda_failure": false,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "tf32_failure": false,
+    "source_shadow_import": false
+  },
+  "archive": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_h100_674a812_20261015_v1",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_rc5_g1_h100_674a812_20261015_v1",
+    "checksum_entries": 20,
+    "checksum_passed": 20,
+    "checksum_failed": 0,
+    "checksums_sha256": "f2b1ea3e68be47c29ca2fb92d691b8d298c9209daf466bbba2b902ed9acbb2a4",
+    "complete_present": false
+  },
+  "scope": {
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "automatic_retry_performed": false
+  },
+  "next_gate": "implement_and_cpu_validate_a_transactional_no_overwrite_checkpoint_publication_path_compatible_with_hpcc_glibc_2_17_then_request_separate_h100_recovery_authorization"
+}
