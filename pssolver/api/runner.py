@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
+import hashlib
 import json
 from pathlib import Path
 from types import MappingProxyType
@@ -30,6 +31,51 @@ def _frozen_json(value: Mapping[str, object]) -> Mapping[str, object]:
     return MappingProxyType(json.loads(payload))
 
 
+def _canonical_sha256(value: object) -> str:
+    payload = json.dumps(
+        value,
+        allow_nan=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _compiled_simulation_identity(
+    *,
+    source: Simulation,
+    application: str,
+    application_specification: object,
+    lowering_plan: object,
+    construction_plan: object,
+    application_request: object,
+    normalization: Mapping[str, object],
+) -> str:
+    """Bind every executable part of one public compilation product."""
+
+    request_type = (
+        f"{type(application_request).__module__}."
+        f"{type(application_request).__qualname__}"
+    )
+    return _canonical_sha256(
+        {
+            "schema_version": 1,
+            "source_simulation_sha256": source.canonical_sha256(),
+            "application": application,
+            "application_simulation_sha256": (
+                application_specification.canonical_sha256()
+            ),
+            "lowering_plan_sha256": lowering_plan.canonical_sha256(),
+            "construction_plan_sha256": construction_plan.canonical_sha256(),
+            "application_request_type": request_type,
+            "application_request_sha256": (
+                application_request.canonical_sha256()
+            ),
+            "normalization": dict(normalization),
+        }
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class CompiledSimulation:
     """Immutable public evidence for one qualified application connection."""
@@ -41,13 +87,46 @@ class CompiledSimulation:
     construction_plan: PackageRuntimeConstructionPlan
     application_request: object
     normalization: Mapping[str, object]
+    compilation_identity_sha256: str
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "normalization", _frozen_json(self.normalization))
+        if (
+            not isinstance(self.compilation_identity_sha256, str)
+            or len(self.compilation_identity_sha256) != 64
+            or any(
+                value not in "0123456789abcdef"
+                for value in self.compilation_identity_sha256
+            )
+        ):
+            raise ValueError(
+                "compilation identity must be a lowercase SHA-256"
+            )
+
+    def validate_integrity(self) -> None:
+        """Reject a compilation product whose bound fields were replaced."""
+
+        observed = _compiled_simulation_identity(
+            source=self.source,
+            application=self.application,
+            application_specification=self.application_specification,
+            lowering_plan=self.lowering_plan,
+            construction_plan=self.construction_plan,
+            application_request=self.application_request,
+            normalization=self.normalization,
+        )
+        if observed != self.compilation_identity_sha256:
+            raise ValueError(
+                "compiled simulation integrity mismatch: "
+                f"expected={self.compilation_identity_sha256}, "
+                f"observed={observed}"
+            )
 
     def to_metadata(self) -> dict[str, object]:
+        self.validate_integrity()
         return {
             "schema_version": 1,
+            "compilation_identity_sha256": self.compilation_identity_sha256,
             "source_simulation_sha256": self.source.canonical_sha256(),
             "application": self.application,
             "application_simulation_sha256": (
@@ -304,6 +383,15 @@ def compile_simulation(simulation: Simulation) -> CompiledSimulation:
     if not isinstance(simulation, Simulation):
         raise TypeError("simulation must be a public Simulation")
     value = compile_public_simulation(simulation.specification)
+    compilation_identity_sha256 = _compiled_simulation_identity(
+        source=simulation,
+        application=value.application,
+        application_specification=value.application_simulation,
+        lowering_plan=value.lowering_plan,
+        construction_plan=value.construction_plan,
+        application_request=value.run_spec,
+        normalization=value.normalization,
+    )
     return CompiledSimulation(
         source=simulation,
         application=value.application,
@@ -312,6 +400,7 @@ def compile_simulation(simulation: Simulation) -> CompiledSimulation:
         construction_plan=value.construction_plan,
         application_request=value.run_spec,
         normalization=value.normalization,
+        compilation_identity_sha256=compilation_identity_sha256,
     )
 
 
@@ -333,6 +422,7 @@ def run_simulation(
         if isinstance(simulation, CompiledSimulation)
         else compile_simulation(simulation)
     )
+    compiled.validate_integrity()
     registration = _PUBLIC_APPLICATION_RUNNERS.get(compiled.application)
     if registration is None:
         raise RuntimeError(
