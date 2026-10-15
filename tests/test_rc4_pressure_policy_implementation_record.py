@@ -40,6 +40,7 @@ RC447_BOUNDED_OPERATOR_RECOVERY_V11 = (
 )
 RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 RELEASE = ROOT / "notes/pssolver_v0_2_0_rc4.json"
+RC5_R59 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
 
 
 def _record() -> dict[str, object]:
@@ -83,6 +84,9 @@ def test_rc443_record_binds_parent_contract_and_current_sources():
     release = json.loads(RELEASE.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    r5_9 = json.loads(RC5_R59.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, expected in record["source_sha256"].items():
         actual = _sha256(relative)
         if actual == expected:
@@ -97,6 +101,8 @@ def test_rc443_record_binds_parent_contract_and_current_sources():
                 ),
             ),
         ))
+        if successor is None:
+            successor = r5_9.get(relative)
         assert successor is not None
         predecessor = expected
         if relative in rc453:
@@ -112,6 +118,9 @@ def test_rc443_record_binds_parent_contract_and_current_sources():
         assert successor["historical_sha256"] == predecessor
         resolved = successor["current_sha256"]
         expected_phase = (
+            "R5-9"
+            if relative in r5_9 and successor == r5_9[relative]
+            else
             "RC4.5.3"
             if relative in rc453
             else "RC4.4.7-bounded-operator-recovery-v11-provider"
@@ -132,12 +141,17 @@ def test_rc443_record_binds_parent_contract_and_current_sources():
             release_successor is not None
             and release_successor["historical_sha256"] == resolved
         ):
-            assert release_successor["current_sha256"] == actual
+            resolved = release_successor["current_sha256"]
             assert release_successor["introduced_by_phase"] == (
                 "v0.2.0rc4-release-preparation"
             )
-        else:
-            assert resolved == actual
+        latest_successor = r5_9.get(relative)
+        if (
+            latest_successor is not None
+            and latest_successor["historical_sha256"] == resolved
+        ):
+            resolved = latest_successor["current_sha256"]
+        assert resolved == actual
 
 
 def test_rc443_registers_exact_historical_successors():
@@ -168,6 +182,9 @@ def test_rc443_registers_exact_historical_successors():
         "historical_successor_sources"
     ]
     release = json.loads(RELEASE.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
+    r5_9 = json.loads(RC5_R59.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
     for relative, registration in successors.items():
@@ -225,6 +242,12 @@ def test_rc443_registers_exact_historical_successors():
                     "v0.2.0rc4-release-preparation"
                 )
             else:
+                latest_successor = r5_9.get(relative)
+                if (
+                    latest_successor is not None
+                    and latest_successor["historical_sha256"] == resolved
+                ):
+                    resolved = latest_successor["current_sha256"]
                 assert resolved == actual
         else:
             assert actual == registration["current_sha256"]

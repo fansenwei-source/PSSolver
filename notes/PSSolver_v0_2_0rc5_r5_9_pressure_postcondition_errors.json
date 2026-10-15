@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc5 R5-9 Channel pressure postcondition and first-solve error boundary",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_R5_9_PRESSURE_POSTCONDITION_ERROR_CPU_CLOSURE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "implementation_commit": "d9672ea1a3b05340d444d4acb5d7525ab9e8d419",
+    "qualified_source_commit": "d9672ea1a3b05340d444d4acb5d7525ab9e8d419",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "primary": ["NEW-8", "NEW-9"],
+    "work_item": "R5-9",
+    "source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc4_consolidated_report.json",
+    "source_sha256": "db3e644bd97bc28ca046d0632aa2eae1b142ad6a208ad10b9dcb82cc42e6e6c6"
+  },
+  "contract": {
+    "tolerance_mode_floor_definition": "2*finfo(real_dtype).eps",
+    "sub_floor_tolerance_mode_rejected_before_pressure_solve": true,
+    "fixed_work_sub_floor_diagnostic_tolerance_preserved": true,
+    "recurrence_residual_not_claimed_below_supported_roundoff_floor": true,
+    "first_public_pressure_failure_is_channel_pressure_convergence_error": true,
+    "first_functional_pressure_failure_is_functional_convergence_error": true,
+    "functional_convergence_error_is_channel_pressure_convergence_error": true,
+    "machine_readable_failure_details_preserved": true,
+    "legacy_generic_static_model_validation_wrapper_preserved_for_unrelated_errors": true,
+    "pressure_operator_call_added_to_hot_path": false
+  },
+  "implementation_files": {
+    "pssolver/PDEmodel.py": "316e771a40ead9587708922b340f3a50524ee0415ba6e71e32c711f150a5e1f1",
+    "pssolver/__init__.py": "dfc565ce694586dfe58e2288aac19b6d2e469d5568401f453a181238a01d1ad3",
+    "pssolver/functional/errors.py": "bdadb761bf569a4eec95b7911e88daefc676626c5f81b49ee0c5ff1328b44323",
+    "pssolver/linear_solvers/stokes/__init__.py": "be63fceaa7b75447fc06bcabf1a8693ad3519e85ee07439aa8f4cb1518209659",
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": "81efa9d91972707e5cbd1b4211628f64c312173db3fd0a053cc2df71f03caddb",
+    "scripts_channel/calibrate_pure_splay_forward.py": "a934950b1b690184b069bf96b63c505ef068ebfb938f70bb3d909c61b9d11705",
+    "scripts_channel/validate_dal_forward.py": "02e18568aaa41f062adc1065afd169bdbd03fc05f3bc5c5a255424a5d86b5ca1"
+  },
+  "regression_tests": {
+    "tests/test_rc5_r59_pressure_postcondition_errors.py": "85d1885d20900aef7c12c212437f1f72902fba3b9c09d6f631f0cfd27ef2d9dd"
+  },
+  "historical_successor_sources": {
+    "pssolver/PDEmodel.py": {"historical_sha256": "24d3f5d8db978be619b0d9c5ba26b3bc9e0abacdea2844d92bf1ae75074c361b", "current_sha256": "316e771a40ead9587708922b340f3a50524ee0415ba6e71e32c711f150a5e1f1", "reason": "Preserve the structured Channel convergence exception from the first static pressure solve.", "introduced_by_phase": "R5-9"},
+    "pssolver/__init__.py": {"historical_sha256": "cc70ae9bd8667936f7b5c78f17f1a718341b1d9f8d4b63f649555380f01a5180", "current_sha256": "dfc565ce694586dfe58e2288aac19b6d2e469d5568401f453a181238a01d1ad3", "reason": "Append the public ChannelPressureConvergenceError export without reordering the frozen facade prefix.", "introduced_by_phase": "R5-9"},
+    "pssolver/functional/errors.py": {"historical_sha256": "17a9e316171127744e873e5cb13cc6af3a1df04e625b5c47ddc037a9c588b804", "current_sha256": "bdadb761bf569a4eec95b7911e88daefc676626c5f81b49ee0c5ff1328b44323", "reason": "Translate first-solve failures into a dual-hierarchy FunctionalConvergenceError with preserved details.", "introduced_by_phase": "R5-9"},
+    "pssolver/linear_solvers/stokes/__init__.py": {"historical_sha256": "450bd344340515e97a9411725bb69cec90e88464e0acea30ff3c19c2cdf4ef01", "current_sha256": "be63fceaa7b75447fc06bcabf1a8693ad3519e85ee07439aa8f4cb1518209659", "reason": "Publish the dtype-aware Channel pressure tolerance floor helper.", "introduced_by_phase": "R5-9"},
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {"historical_sha256": "75579ee8c9c0f8208816a7546c0e1a18067d865f76cc94be4a2d6de07070b758", "current_sha256": "81efa9d91972707e5cbd1b4211628f64c312173db3fd0a053cc2df71f03caddb", "reason": "Reject tolerance-mode targets below the dtype roundoff floor before execution without adding hot-path work.", "introduced_by_phase": "R5-9"},
+    "scripts_channel/calibrate_pure_splay_forward.py": {"historical_sha256": "d2601753f8fdbafbb0e7359ac793509ca27176937c2120531b24e9862c0d0f12", "current_sha256": "a934950b1b690184b069bf96b63c505ef068ebfb938f70bb3d909c61b9d11705", "reason": "Move the float32 auxiliary CLI default to the supported 1e-6 tolerance.", "introduced_by_phase": "R5-9"},
+    "scripts_channel/validate_dal_forward.py": {"historical_sha256": "d3f558f6893ab2477c19e54fbb762cc0eab5eef883397f9335f7e311fa794183", "current_sha256": "02e18568aaa41f062adc1065afd169bdbd03fc05f3bc5c5a255424a5d86b5ca1", "current_git_blob": "7a48bca4305883fc711f25ceb62d2729b10fa592", "reason": "Move the float32 auxiliary CLI default to the supported 1e-6 tolerance.", "introduced_by_phase": "R5-9"},
+    "tests/test_auxiliary_canonical_metadata.py": {"historical_sha256": "528e90023a07bcb8bdd57fb8e2669215d866950f995e856944ee685817e7aee5", "current_sha256": "c7fb02733f6c706f02f7a7088e2c6a08ddd2e570b5756fb9a92339275edd41dc", "reason": "Exercise auxiliary metadata using an attainable float32 tolerance.", "introduced_by_phase": "R5-9"},
+    "tests/test_channel_dal.py": {"historical_sha256": "2777cc8740d9f7d3cdd926ece78ea9bc9edb9b00826a50d7c8d8b18d5d23aa88", "current_sha256": "b65f084c8338326b478320e1b61ea61c93d55751a6e185ab4ca0087c6d0ac009", "current_git_blob": "53131a13c3aa21df372624035b95e6292b26b85b", "reason": "Exercise Channel DAL using an attainable float32 tolerance.", "introduced_by_phase": "R5-9"},
+    "tests/test_phase7_channel_compiled_v2.py": {"historical_sha256": "540ba9d833295f559cb978eff2e26670a1cebe9f9b371a39cdabb90c0437d25e", "current_sha256": "e7d2fd869f16b1ca8ae88fec99e0658a95c02a7eaf21217efa0c8088be57be59", "reason": "Retain Phase 7 runtime coverage with the supported float32 tolerance.", "introduced_by_phase": "R5-9"},
+    "tests/test_phase7_channel_runtime_facade.py": {"historical_sha256": "22fc1cf3a83da9a648904ee353e72a2270d3d142aded506a0193a6e853dd9fc3", "current_sha256": "84690062d22a25de1322308e14096b30cfffcceab4731c775ddaea01b5fdb05c", "reason": "Use an attainable executable tolerance while separately preserving the frozen pre-rc5 declaration hash.", "introduced_by_phase": "R5-9"},
+    "tests/test_phase7_p774_runtime_construction_binding.py": {"historical_sha256": "f8bac76ec08f096c7f99f89cb49a41175bf3b519d3ce2dba87ee4d761ea91e5c", "current_sha256": "21a0bad67a07e2f7d3252e4942368ca7a05b2ca5ba99634813b662a581a6db28", "reason": "Retain construction binding coverage with the supported float32 tolerance.", "introduced_by_phase": "R5-9"},
+    "tests/test_phase7_p775_package_construction.py": {"historical_sha256": "a7e5a30e38c8e1eb82b1bbb0361ea625d5e3acd6e8940ceb97cbed86cf07b3f4", "current_sha256": "671d7aede3a87b6a9cce80ad128f13860281090d467a4fff7e88ff4ace2395fb", "reason": "Retain package construction coverage with the supported float32 tolerance.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc4_pressure_policy_implementation.py": {"historical_sha256": "260e0d35578c27a1aa5467a350e5bd7d080199471e91ac39a2a33bf2bb06fdd7", "current_sha256": "8d0948427083fe6c3906663c1bcc59af51a888fdf150f57e6320cb31f64fbb60", "reason": "Keep cap-failure tests above the new floor while testing the same one-iteration failure semantics.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc447_pressure_bounded_operator_recovery.py": {"historical_sha256": "cd5e5f65fd1eb6bf498ea75eafcb404b7b6d864a492841c3ce2a2fda92237744", "current_sha256": "189b66ab091941c27d78d59bd66ca90a8ba75ad187eaa90ae413b7646e86ce3f", "reason": "Extend immutable pressure successor resolution through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc447_python310_compatibility.py": {"historical_sha256": "61e27f91094f30ce1dee23b2b15f44f8063598b635402ccdf7f98822ad1ef990", "current_sha256": "2f26f0753e131006695a2fb36c89c3ac8dad85e7a656c5f67c46b666be9ca4c5", "reason": "Extend immutable Python 3.10 pressure successor resolution through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc453_checkpoint_transactionality.py": {"historical_sha256": "bcd763bffd48318c838b5d9359db0afc7677684ab6b30003a86111cf67b2f150", "current_sha256": "97e5d550735a73bceeb6164707656df7ad3c402bc2a298c153073a69f9e52c35", "reason": "Extend immutable checkpoint transactionality successor resolution through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc4_pressure_contract_plan.py": {"historical_sha256": "152507a3eed89bce77a207b4b2830743ede9ab756a10695b9332b9b8150eeb51", "current_sha256": "d5442df0f9cc972e342f99ab8f5701ede6f3b245b61d4c9919abac2fc510db91", "reason": "Extend immutable pressure planning successor resolution through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc4_pressure_installed_cpu_closure_record.py": {"historical_sha256": "778c59e9cc4a5186506dd72d698fe49274a002a52ec62b20f0e76bf61972addb", "current_sha256": "86a2c1ac49b529a4d85692791d9ce31a76430d774cd43b90211c7b0117fe82a9", "reason": "Extend immutable installed pressure closure successor resolution through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc4_pressure_policy_implementation_record.py": {"historical_sha256": "2655923f6d8305783e0017e979af04dd44877f45ccd103bcafb223653cb6fda8", "current_sha256": "4537b11d8916cbaeaf6b7b1477661e48a3725db5d41c52c61b00b754bf4cb737", "reason": "Extend immutable pressure policy successor resolution through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc4_pressure_public_contract.py": {"historical_sha256": "741d6b9353ec45ee6f27fdddcd183091e22c5113dff94518f25734508ff8c055", "current_sha256": "4d5e7f86d1c56c85ee73e221f4740954a7adca55b083e29a844b9d5a380c6367", "reason": "Extend immutable public pressure contract successor resolution through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc5_r52_finite_workflow_record.py": {"historical_sha256": "a9c26bf24b3152bb0b0e6f704460d8b99a2ccafa416d3a77a1c3e19f23256b0a", "current_sha256": "b9ec4d2fe99c10101437aa79833febf9c0f0b2d7fe06c61a6538d53b7425ccd7", "reason": "Extend immutable R5-2 successor resolution through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc5_r56_public_error_boundary_record.py": {"historical_sha256": "840db94c0682b5498a59824b51d950d91dbd1510228e7d2cdf0b96b6413334e4", "current_sha256": "47125373285ac654f78be3c7cf4f195e4d96e9eced2b0d06250b8edc3eec60af", "reason": "Extend immutable R5-6 public-error successor resolution through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {"historical_sha256": "1939bd6af95f8557576a744a6b72334a60030a33b3c85d1f4d3ce5a40e49fbb3", "current_sha256": "e51923cb80e1052af736618c18732c5052fa9e4702715bc94c4101ebfdb97679", "reason": "Extend immutable R5-8 successor resolution through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_release_v0_2.py": {"historical_sha256": "afb4389ab9245efeff8ee396a541d0af004f8a562c89cf64c8b240107dd10acc", "current_sha256": "41b91e463eb96efa4544f5121af825a4cd4b36dc8a4177d465a493c794fae097", "reason": "Extend immutable rc4 release successor resolution through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_phase7_channel_planning.py": {"historical_sha256": "a68482d51014ca3d328e43b075077b9da4ed3e3f1330b81f0557b9ffe233fe87", "current_sha256": "05fa4601f9bb16e3474e5e64896e24f0ac8adededbec1a817b44ea145ea50d05", "reason": "Resolve the frozen Channel oracle test source through the R5-9 successor record.", "introduced_by_phase": "R5-9"},
+    "tests/test_phase9_p90_control_contract_freeze.py": {"historical_sha256": "56be90fed90b1d6043531e6b4f3818db3e6987477eb4b7e28c5df1039841bfc0", "current_sha256": "06ddbbb7f170245ad47971ba941f45b4c7f8589faa182088b439e3d880232658", "reason": "Resolve frozen oracle content and Git-blob identities through R5-9 without rewriting P9.0.", "introduced_by_phase": "R5-9"},
+    "tests/test_phase9_p96_closure_and_p970_plan.py": {"historical_sha256": "3a45041cd3308a97d6538d20b97e2bf321043e399e47fe9cf47315103275d6c4", "current_sha256": "5f5e8ab1a7fadbb17e7a254c7e7ff20b73c230aabe43bedefdee9d625960aafa", "reason": "Resolve the frozen P9.7 oracle test source through R5-9 without rewriting the plan.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc455_public_robustness.py": {"historical_sha256": "e3a72b853fb81661b02aa393116125a505ebbc186eedc61c451a07a4ef1adf3c", "current_sha256": "c29e982ad042c593e92f2dfae5e013c5765eee04709431d19a9fb6e09dfdffd8", "reason": "Extend RC4.5.5 immutable successor resolution through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc456_tf32_execution_scope.py": {"historical_sha256": "6d84cc7656da5629980e1720e02b401950c9b1503f9c2ce25e00295e18ca4a67", "current_sha256": "572a24b3d2f37b1b6ff8efb23deaa625536b01195518155f9d3feed7b9e27830", "reason": "Extend RC4.5.6 immutable successor resolution through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc4_post_release_findings.py": {"historical_sha256": "8dc596554c5b3afd80da156f8d0543724892a622b6fd128ed72baeb124551ff8", "current_sha256": "6f50053f38a136e200b3c07db4eea2883d66f58ba8a9ba8a04ece625e53b5a47", "reason": "Extend the immutable post-release successor chain through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {"historical_sha256": "08e1570a25743ee0fc5820bb9ae46c3a40340b841e10bee5eed2372e2fd32f7f", "current_sha256": "3a91b734d39db009dd32ec36ee42906f9fe5f4bff572aaf6d8fff7102f0b9756", "reason": "Extend the immutable R5-1 successor chain through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {"historical_sha256": "ff3c5a5b72ce44b318a2d761417a82d2cd4e10e577505d24579c76e2633a7b74", "current_sha256": "fca81b85ab49af4c92693d01e13a39e65ea9c1463453f514684a508d05bf678d", "reason": "Extend the immutable R5-3 successor chain through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc5_r55_tf32_state_restore.py": {"historical_sha256": "0803d84edb847033cab663626e47093d3d236e6e0f056d7726f1ce48a941682c", "current_sha256": "3cb1e7e1ecf87e28bd09467c14f32a4c549bc6ac01c52ee21179ccf5a7fc4fe4", "reason": "Extend the immutable R5-5 successor chain through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc5_r57_device_normalization_record.py": {"historical_sha256": "9bfbd7fb473c4c69e1ca7f921989b6eeb41da1a1f625d1e1cad668ea33612df5", "current_sha256": "4e5dd20b0481fc4b1243eb30f5d0d3bb2a403040910d84084db48ce4921a8ca4", "reason": "Extend the immutable R5-7 successor chain through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc5_w1_documentation.py": {"historical_sha256": "ad6daddbac8bb0ed6331ed9fa6f7ea75a6a097683073d4097e03c5ccc9ecc597", "current_sha256": "d2ca260babc189c5593acf714ea8701ea95867a8dcf3b581e899e7cb1aac52a4", "reason": "Extend the immutable W1 successor chain through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc457_installed_consumer_impact.py": {"historical_sha256": "156e48e3e4d7872e06f07235979bec4adf0338b4d48eb78cb581842f7b0606e7", "current_sha256": "2a8c009190c10a1a32da8c57cae88b5d0900616d364abb189c04e068767c3f7b", "reason": "Extend the immutable RC4.5.7 initial adjudication successor chain through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc457_installed_consumer_recovery.py": {"historical_sha256": "7121481ea31e2e73cc982eb966aa2c0134eafd4efc5fdbfc07e5c678069c30bd", "current_sha256": "972bd3ea1a7169327190c1cf486510f07c4d88f54d7ba08ef2d236ccc744939b", "reason": "Extend the immutable RC4.5.7 recovery successor chain through R5-9.", "introduced_by_phase": "R5-9"},
+    "tests/test_rc458_h100_closure_record.py": {"historical_sha256": "e63e418bd7b47fecfa3ce8e4b590232395a4e63365a18205b48f175cc0a8b9d1", "current_sha256": "f3adcfecdf5b6d5f3865b2ec95d5c8ad834207f5256e59e7d6d637ec690cefba", "reason": "Extend the immutable RC4.5.8 closure successor chain through R5-9.", "introduced_by_phase": "R5-9"}
+  },
+  "external_reproducers": {
+    "repro_a4_true_residual.py": "b402b4274d9888ea47b20ec6d8697a643ccfbbf8c29467830dc60034da3a985c",
+    "repro_b29_public.py": "98edad60674f7d65c8dd47c4d830989ed882750c50f44ff7bb031ac7b55bdcb8",
+    "repro_b29_functional.py": "f37dc79a159a43f38796c1af9085070aad062dfdd95a069860f79589d0e8825f"
+  },
+  "external_reproducer_results": {
+    "repro_a4_true_residual": "PASS_EXPECTED_SUB_FLOOR_CONSTRUCTION_REJECTION_AFTER_TRUTHFUL_1E_12_AND_1E_15_SOLVES",
+    "repro_b29_public": "PASS_STRUCTURED_CHANNEL_ERROR_AND_PRE_OUTPUT_REJECTION",
+    "repro_b29_functional": "PASS_DUAL_HIERARCHY_FUNCTIONAL_ERROR_WITH_DETAILS"
+  },
+  "validation": {
+    "targeted_cpu": "75 passed, 0 failed",
+    "affected_execution_cpu": "142 passed, 0 failed",
+    "historical_successor_cpu": "127 passed, 0 failed",
+    "source_full_cpu": "3565 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_targeted_cpu": "5 passed, 0 failed",
+    "installed_wheel_applicable_full_cpu": "3558 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_source_layout_exclusion": "tests/test_phase8_p861_local_cumulative_audit.py (7 tests; excluded, not skipped or deselected)"
+  },
+  "installed_wheel_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_r59_installed_cpu_d9672ea_20261014_v1",
+    "source_archive_sha256": "33ff8f9b41e6fd2425c69ecd74b814ca775d7cc7728eb4a5d5300a2d92227c59",
+    "wheel_sha256": "590d31126daadbb3bc6bc9b7c746a5f5ebcd21d21f1d52d9035440b3d0f1e735",
+    "installed_import": "/home/fansenwei/pssolver_rc5_r59_installed_cpu_d9672ea_20261014_v1/venv/lib/python3.12/site-packages/pssolver/__init__.py",
+    "source_shadow_import": false,
+    "pip_check": "PASS",
+    "python": "3.12.13",
+    "torch": "2.6.0",
+    "numpy": "2.3.2",
+    "scipy": "1.16.0",
+    "checksum_entries": 23,
+    "checksums_sha256": "9cda93cb99ee31913e126a98b0296f47ce25a644c9853864dd6c02a22a7ead34"
+  },
+  "scope": {
+    "scientific_equations_changed": false,
+    "pressure_stopping_contract_changed": true,
+    "public_exception_contract_changed": true,
+    "numerical_hot_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "r5_9_cpu_closure_complete": true,
+    "eligible_for_next_work_item": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 R5_7_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
+R5_9_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
 
 
 def _record() -> dict[str, object]:
@@ -22,6 +23,9 @@ def _sha256(path: Path) -> str:
 
 def test_r58_record_binds_implementation_and_exact_sources():
     record = _record()
+    successors = json.loads(R5_9_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert record["git_identity"] == {
         "branch": "fix/v0.2.0rc5",
         "implementation_commit": "52e57f1f4f406efcd92bb9245c13e9c635ba721c",
@@ -31,10 +35,23 @@ def test_r58_record_binds_implementation_and_exact_sources():
     }
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
+            registration = successors.get(relative)
+            if (
+                registration is not None
+                and registration["historical_sha256"] == expected
+            ):
+                expected = registration["current_sha256"]
             assert _sha256(ROOT / relative) == expected
     for relative, registration in record["historical_successor_sources"].items():
         assert registration["historical_sha256"] != registration["current_sha256"]
-        assert _sha256(ROOT / relative) == registration["current_sha256"]
+        expected = registration["current_sha256"]
+        successor = successors.get(relative)
+        if (
+            successor is not None
+            and successor["historical_sha256"] == expected
+        ):
+            expected = successor["current_sha256"]
+        assert _sha256(ROOT / relative) == expected
         assert registration["reason"]
 
 

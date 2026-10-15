@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 NOTES = ROOT / "notes" / "architecture_v0_2"
+R5_9_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
 
 
 def _json(name: str) -> dict:
@@ -17,6 +18,15 @@ def _json(name: str) -> dict:
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def _latest_sha256(relative: str, historical: str) -> str:
+    successor = json.loads(R5_9_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if successor is not None and successor["historical_sha256"] == historical:
+        return successor["current_sha256"]
+    return historical
 
 
 def test_phase6_closure_records_the_long_run_without_promoting_a_default():
@@ -57,9 +67,9 @@ def test_phase7_inventory_preserves_the_historical_channel_oracle_identities():
         "experimental_beris_edwards_sha256"
     ]
     assert _sha256(assets["stage_g_tests"]) == assets["stage_g_tests_sha256"]
-    assert _sha256(assets["legacy_channel_tests"]) == assets[
-        "legacy_channel_tests_sha256"
-    ]
+    assert _sha256(assets["legacy_channel_tests"]) == _latest_sha256(
+        assets["legacy_channel_tests"], assets["legacy_channel_tests_sha256"]
+    )
 
 
 def test_phase7_boundary_and_pressure_contract_is_geometry_specific():

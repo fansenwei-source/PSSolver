@@ -14,6 +14,7 @@ RECORD = (
     / "PSSolver_v0_2_0rc4_rc447_pressure_bounded_operator_recovery_v11.json"
 )
 RELEASE = ROOT / "notes" / "pssolver_v0_2_0_rc4.json"
+RC5_R59 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
 
 
 def _record() -> dict[str, object]:
@@ -60,6 +61,9 @@ def test_v11_successor_sources_are_exact_and_content_addressed():
     release_successors = json.loads(RELEASE.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    r5_9_successors = json.loads(RC5_R59.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert set(successors) == {
         "pssolver/linear_solvers/stokes/channel_no_slip.py",
         "tests/test_rc4_pressure_policy_implementation.py",
@@ -70,6 +74,9 @@ def test_v11_successor_sources_are_exact_and_content_addressed():
         release = release_successors.get(relative)
         if release is not None and release["historical_sha256"] == resolved:
             resolved = release["current_sha256"]
+        r5_9 = r5_9_successors.get(relative)
+        if r5_9 is not None and r5_9["historical_sha256"] == resolved:
+            resolved = r5_9["current_sha256"]
         assert resolved == _sha256(relative)
         assert registration["introduced_by_phase"] == (
             "RC4.4.7-bounded-operator-recovery-v11-provider"

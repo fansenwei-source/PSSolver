@@ -12,6 +12,7 @@ import pssolver.control as legacy_control
 ROOT = Path(__file__).resolve().parents[1]
 NOTES = ROOT / "notes" / "architecture_v0_2"
 RECORD = NOTES / "phase_9_p90_control_contract_freeze.json"
+R5_9_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
 
 
 def _record() -> dict[str, object]:
@@ -20,6 +21,27 @@ def _record() -> dict[str, object]:
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _latest_sha256(relative: str, historical: str) -> str:
+    successor = json.loads(R5_9_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if successor is not None and successor["historical_sha256"] == historical:
+        return successor["current_sha256"]
+    return historical
+
+
+def _latest_git_blob(relative: str, historical_sha256: str, historical: str) -> str:
+    successor = json.loads(R5_9_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if (
+        successor is not None
+        and successor["historical_sha256"] == historical_sha256
+    ):
+        return successor["current_git_blob"]
+    return historical
 
 
 def _git_blob(path: Path) -> str:
@@ -123,8 +145,10 @@ def test_p90_binds_every_frozen_legacy_oracle_file_by_content() -> None:
     for item in files:
         path = ROOT / item["path"]
         assert path.is_file()
-        assert _sha256(path) == item["sha256"]
-        assert _git_blob(path) == item["git_blob"]
+        assert _sha256(path) == _latest_sha256(item["path"], item["sha256"])
+        assert _git_blob(path) == _latest_git_blob(
+            item["path"], item["sha256"], item["git_blob"]
+        )
 
 
 def test_p90_preserves_the_exact_legacy_public_surface() -> None:

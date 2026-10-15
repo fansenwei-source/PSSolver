@@ -36,6 +36,7 @@ BOUNDED_OPERATOR_RECOVERY_V11 = (
     / "notes"
     / "PSSolver_v0_2_0rc4_rc447_pressure_bounded_operator_recovery_v11.json"
 )
+RC5_R59 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
 
 
 def _sha256(path: Path) -> str:
@@ -135,6 +136,9 @@ def test_recovery_record_binds_failure_and_exact_successor_sources():
     v11 = json.loads(
         BOUNDED_OPERATOR_RECOVERY_V11.read_text(encoding="utf-8")
     )["successor_sources"]
+    r5_9 = json.loads(RC5_R59.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, identity in record["successor_sources"].items():
         actual = _sha256(ROOT / relative)
         if actual == identity["current_sha256"]:
@@ -157,7 +161,11 @@ def test_recovery_record_binds_failure_and_exact_successor_sources():
             assert successor["introduced_by_phase"] == (
                 "RC4.4.7-performance-repair-v9-provider"
             )
-        assert successor["current_sha256"] == actual
+        resolved = successor["current_sha256"]
+        latest = r5_9.get(relative)
+        if latest is not None and latest["historical_sha256"] == resolved:
+            resolved = latest["current_sha256"]
+        assert resolved == actual
     assert record["successor_sources"][
         "pssolver/linear_solvers/stokes/channel_no_slip.py"
     ]["historical_sha256"] == (

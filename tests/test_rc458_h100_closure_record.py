@@ -19,6 +19,7 @@ RC5_R55 = ROOT / "notes" / "PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 RC5_R56 = ROOT / "notes" / "PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 RC5_R57 = ROOT / "notes" / "PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 RC5_R58 = ROOT / "notes" / "PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
+RC5_R59 = ROOT / "notes" / "PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
 
 
 def _record() -> dict[str, object]:
@@ -145,6 +146,9 @@ def test_rc458_closure_registers_exact_historical_source_successors():
     rc5_r58_successors = json.loads(RC5_R58.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    rc5_r59_successors = json.loads(RC5_R59.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert set(successors) == {
         "tests/test_rc451_cross_runtime_adjudication.py",
         "tests/test_rc455_public_robustness.py",
@@ -188,6 +192,9 @@ def test_rc458_closure_registers_exact_historical_source_successors():
         rc5_r58 = rc5_r58_successors.get(relative)
         if rc5_r58 is not None and rc5_r58["historical_sha256"] == resolved:
             resolved = rc5_r58["current_sha256"]
+        rc5_r59 = rc5_r59_successors.get(relative)
+        if rc5_r59 is not None and rc5_r59["historical_sha256"] == resolved:
+            resolved = rc5_r59["current_sha256"]
         assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolved
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["introduced_by_phase"] == "RC4.5.8-finalization"

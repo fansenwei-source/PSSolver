@@ -17,6 +17,7 @@ from pssolver.models.active_nematics.channel_stokes import (
 
 ROOT = Path(__file__).resolve().parents[1]
 NOTES = ROOT / "notes" / "architecture_v0_2"
+R5_9_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
 
 
 def _record(name: str) -> dict[str, object]:
@@ -25,6 +26,15 @@ def _record(name: str) -> dict[str, object]:
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _latest_sha256(relative: str, historical: str) -> str:
+    successor = json.loads(R5_9_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if successor is not None and successor["historical_sha256"] == historical:
+        return successor["current_sha256"]
+    return historical
 
 
 def test_p96_closure_authorizes_planning_but_not_channel_implementation():
@@ -116,7 +126,7 @@ def test_p970_inventory_hashes_bind_the_audited_sources():
         assert len(entry["sha256"]) == 64
         assert len(entry["git_blob"]) == 40
         if entry["change_policy"] == "frozen_oracle":
-            assert _sha256(path) == entry["sha256"]
+            assert _sha256(path) == _latest_sha256(entry["path"], entry["sha256"])
         else:
             assert entry["change_policy"] == "p9_7_subject_to_reviewed_change"
 
