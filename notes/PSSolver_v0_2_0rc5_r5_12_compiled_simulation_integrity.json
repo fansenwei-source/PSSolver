@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "record": "PSSolver v0.2.0rc5 R5-12 CompiledSimulation integrity closure",
-  "status": "implementation_complete_validation_pending",
-  "classification": "PENDING_R5_12_COMPILED_SIMULATION_INTEGRITY_CPU_CLOSURE",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_R5_12_COMPILED_SIMULATION_INTEGRITY_CPU_CLOSURE",
   "git_identity": {
     "branch": "fix/v0.2.0rc5",
     "implementation_commit": "eb8aed1c00ae624a0172667473aae1f189c83e5c",
-    "qualified_source_commit": null,
+    "qualified_source_commit": "3d62328e1b5b6962e9a2325d1a6b0165940b3665",
     "record_commit_is_qualified_source": false,
     "pushed": false
   },
@@ -181,13 +181,42 @@
   },
   "validation": {
     "targeted_cpu": "41 passed, 0 failed",
-    "source_full_cpu_initial": "3594 passed, 7 skipped, 8 subtests passed, 1 historical-record failure",
-    "source_full_cpu": null,
-    "installed_wheel_targeted_cpu": null,
-    "installed_wheel_applicable_full_cpu": null,
+    "historical_record_gate": "275 passed, 0 failed",
+    "source_full_cpu_historical_maintenance_attempts": [
+      "3594 passed, 7 skipped, 8 subtests passed, 1 historical-record failure",
+      "3590 passed, 7 skipped, 8 subtests passed, 9 historical-record failures",
+      "3597 passed, 7 skipped, 8 subtests passed, 2 historical-record failures",
+      "3594 passed, 7 skipped, 8 subtests passed, 5 historical-record failures"
+    ],
+    "source_full_cpu": "3599 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_targeted_cpu": "46 passed, 0 skipped, 0 failed",
+    "installed_wheel_applicable_full_cpu": "3592 passed, 7 skipped, 8 subtests passed, 0 failed",
     "installed_wheel_source_layout_exclusion": "tests/test_phase8_p861_local_cumulative_audit.py (7 source-layout tests; excluded, not skipped or deselected)"
   },
-  "installed_wheel_evidence": null,
+  "installed_wheel_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_r512_installed_cpu_3d62328_20261015_v1",
+    "qualified_source_commit": "3d62328e1b5b6962e9a2325d1a6b0165940b3665",
+    "source_archive": "/home/fansenwei/pssolver_rc5_r512_installed_cpu_3d62328_20261015_v1/package/provider_3d62328.tar",
+    "source_archive_sha256": "2b1c3b092186d53952b0561558824c68acee4d658087fca77fc0dfaf2438378b",
+    "wheel": "/home/fansenwei/pssolver_rc5_r512_installed_cpu_3d62328_20261015_v1/package/dist/pssolver-0.2.0rc4-py3-none-any.whl",
+    "wheel_sha256": "9ad6bd2ee6f542ddfaa99d3b9ed9f4b810bb3ad84f00a1f767a4df273f4d0160",
+    "installed_import": "/home/fansenwei/pssolver_rc5_r512_installed_cpu_3d62328_20261015_v1/venv/lib/python3.12/site-packages/pssolver/__init__.py",
+    "source_shadow_import": false,
+    "pip_check": "PASS",
+    "python": "3.12.13",
+    "torch": "2.6.0",
+    "numpy": "2.3.2",
+    "scipy": "1.16.0",
+    "numpy_compatibility_action": "isolated venv only; global nematics3d was not modified",
+    "targeted_junit_sha256": "41362b55bb7d6c41b34b3cfe6f383d1a10eb2a93aae063e11abb5100f8c9576a",
+    "full_junit_sha256": "d157eb93896370f30492ad77f562f46f2e935f4518b7996c2316bcce6b60ac83",
+    "initial_full_runner_error": "external working-directory mismatch; seven repository-layout reads failed before runner correction",
+    "final_runner_contract": "wheel imported first in isolated mode; repository support path appended; pytest working directory is repository root",
+    "checksum_entries": 9,
+    "checksum_passed": 9,
+    "checksum_failed": 0,
+    "checksums_sha256": "5fffbe3411b1dd17d024bafbdc7c0c973932a406be4814ffaedfd9798724e69f"
+  },
   "scope": {
     "public_compiled_product_contract_changed": true,
     "scientific_equations_changed": false,
@@ -201,8 +230,8 @@
     "push_executed": false
   },
   "authorization": {
-    "r5_12_cpu_closure_complete": false,
-    "eligible_for_next_work_item": false,
+    "r5_12_cpu_closure_complete": true,
+    "eligible_for_next_work_item": true,
     "eligible_for_automatic_merge": false,
     "eligible_for_default_promotion": false,
     "production_default_changed": false
