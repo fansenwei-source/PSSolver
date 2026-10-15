@@ -1,0 +1,113 @@
+{
+  "schema": "pssolver.rc5.g1.hpcc_plan_freeze.v1",
+  "phase": "G-1.8",
+  "date": "2026-10-15",
+  "classification": "READY_RC5_G1_FROZEN_NINE_STAGE_HPCC_PLAN_AWAITING_PUSH_AND_H100_AUTHORIZATION",
+  "qualification_complete": false,
+  "provider_branch": "fix/v0.2.0rc5",
+  "provider_support_commit": "fa8dc94f7b0d4e97999ad36c94491a5b9c84b89c",
+  "provider_baseline_commit": "658869456d762c917ca4409b091539c3733df2fb",
+  "provider_candidate_commit": "674a8121779be72c95aa5dc9e2babca0ce7b93a9",
+  "consumer_source_commit": "c14e6b56c88081e7f9a5642e65ffd722eec7445b",
+  "predecessor_records": {
+    "hpcc_preflight": {
+      "path": "notes/PSSolver_v0_2_0rc5_g1_hpcc_preflight.json",
+      "sha256": "717a834c910fe69a5abc7bca50ecbe93274e4386c7d9f0bf7230d7d2cbab40e6",
+      "historical_failure_classification_preserved": true
+    },
+    "stage_producers": {
+      "path": "notes/PSSolver_v0_2_0rc5_g1_stage_producers.json",
+      "sha256": "2d69ae4525e154a779df4c6d35dd1eabf3ee8ee26786bda562e1267396521dca"
+    }
+  },
+  "hpcc": {
+    "login_host": "hpcc.brandeis.edu",
+    "authenticated_user": "fansenwei",
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_preflight_fa8dc94_20261015_v2",
+    "support_root": "/scratch1/vincent/PSSolver/rc5_g1_preflight_fa8dc94_20261015_v2/support/provider",
+    "consumer_support_root": "/scratch1/vincent/PSSolver/rc5_g1_preflight_fa8dc94_20261015_v2/support/consumer",
+    "candidate_reference_root": "/scratch1/vincent/PSSolver/rc5_g1_preflight_fa8dc94_20261015_v2/reference/provider_candidate",
+    "planned_h100_output_root": "/scratch1/vincent/PSSolver/data_pssolver_rc5_g1_h100_674a812_20261015_v1",
+    "planned_h100_output_root_absent_after_final_preflight": true
+  },
+  "support_archive": {
+    "path": "/scratch1/vincent/PSSolver/rc5_g1_preflight_fa8dc94_20261015_v2/incoming/provider_support_fa8dc94.tar",
+    "sha256": "1d8adb07d92977aad7e61a86340a803351dc75bd54f457e8236eb48a66710657",
+    "source_free": true,
+    "contains_pssolver_package_tree": false
+  },
+  "frozen_stage_plan": {
+    "draft_path": "/home/fansenwei/pssolver_rc5_g1_preflight_fa8dc94_20261015_v2/stage_plan_draft.json",
+    "draft_sha256": "2390a5483f21da11c95ac2b1d944dbde3222e916dd2138cd45105dd2849ebc91",
+    "path": "/home/fansenwei/pssolver_rc5_g1_preflight_fa8dc94_20261015_v2/stage_plan.json",
+    "sha256": "a4293716b6f916aa0a17bacc88df2693638ce34891dea7a00989b1f431111592",
+    "schema": "pssolver.rc5.g1.h100_stage_plan.v1",
+    "stage_count": 9,
+    "stage_order": [
+      "environment",
+      "cuda_only",
+      "tf32_scope",
+      "checkpoints",
+      "numerical",
+      "profiles",
+      "consumer",
+      "assemble",
+      "analyze"
+    ],
+    "each_stage_has_one_hash_bound_python_and_script": true,
+    "inline_python_commands": false,
+    "shell_command_strings": false,
+    "artifact_paths_scoped_to_initially_absent_output_root": true,
+    "preflight_replay": "PASS",
+    "direct_help_import_smoke": "9/9 PASS"
+  },
+  "command_file_sha256": {
+    "jobs/rc5_g1_single_h100.sbatch": "31f99a4906a39bd0361ef3ab3001d76b3507b19a5f6331c92a83019b7915481b",
+    "benchmarks/run_rc5_g1_stage_plan.py": "a633e183a3e4558952fb465712e2fe72a9ddf1d13eba582d7522ef5bfff8b9a5",
+    "benchmarks/run_rc5_g1_environment.py": "6c301733fd9033a53065886448ec57d3c11bd6c7d21f73301b56a66079f70155",
+    "benchmarks/run_rc5_g1_cuda_only.py": "73fe80509ddd3a4f85a7933fbeb79d93542ab981dfc30ee6dafe6cd7372cd5b3",
+    "benchmarks/qualify_rc458_tf32_scope.py": "9771c3c1860435240d40dd992ad66e84f88f8bf4fc5ffa1ed1dc1319e3d02e9c",
+    "benchmarks/run_rc5_g1_checkpoints.py": "7e2d8bdbd30da0dc29725cd8be897ded79b3973e804c96027ef0fca36a8fab85",
+    "benchmarks/run_rc5_g1_numerical.py": "f43e423209023484e00c76f01a3074c4faf070fdab82741860164ed172e3ba39",
+    "benchmarks/run_rc5_g1_profile_matrix.py": "44f9c6b07f3b3f52fc4a51e4d1be0fe1ca91566f6fd531a3ad92426b5f167d43",
+    "benchmarks/run_rc5_g1_consumer.py": "a01b16d4504075427e12ffc610d378f96e97dfd97842e5560b72371972d1e80b",
+    "benchmarks/assemble_rc5_g1_auxiliary.py": "152d8d2883d49b90205bc3f6445daac942a9d7d25a8127927b1c1d4721fec670",
+    "benchmarks/analyze_rc5_g1_h100.py": "b8649c842baff74f092720bd7f2492679df1344fbb3aa4b6e132338c9ec863ef"
+  },
+  "profile_command_plan": {
+    "preflight_path": "/home/fansenwei/pssolver_rc5_g1_preflight_fa8dc94_20261015_v2/profile_command_plan_preflight.json",
+    "sha256": "652ed098ad5d1f73d414e874be2c1e1d29e9ba154d2df8fcd6258749dce32795",
+    "schema": "pssolver.rc5.g1.profile_command_plan.v1",
+    "profile_count": 96,
+    "unique_keys": 96,
+    "sequence": "1-96",
+    "device_cuda": 96,
+    "device_cuda_0": 0,
+    "preexisting_profile_outputs": 0
+  },
+  "reused_installed_wheel_substrate": {
+    "root": "/scratch1/vincent/PSSolver/rc5_g1_preflight_3443f92_20261015_v1",
+    "baseline_wheel_sha256": "1bf31f324180dac58777a23785fb4e1424d3cc589099cf8c6328e2f6c74d8cc5",
+    "candidate_wheel_sha256": "3097b08b08ba7b2d488fd8af348ec48986d69007a640bd806a225ec9963bb65f",
+    "consumer_wheel_sha256": "3f5f359b0c7a7112b66245009a7e67e4479cab0ab6df630428c751dc26848745",
+    "candidate_and_consumer_python_file_sha256": "3a6581c296c41ee6719e7fc10c23b5baadcdca9d1faaaf79a51617a04ba3ddd6",
+    "pip_check": "PASS",
+    "source_shadow_import": false
+  },
+  "authorization": {
+    "provider_branch_pushed": false,
+    "h100_submission_authorized": false,
+    "h100_job_submitted": false,
+    "formal_h100_submission_count": 0,
+    "automatic_retry": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false,
+    "production_runtime_changed": false,
+    "scientific_threshold_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  },
+  "next_gate": "obtain_explicit_push_authorization_for_fix_v0_2_0rc5_and_separate_authorization_for_exactly_one_g1_h100_submission_without_automatic_retry"
+}
