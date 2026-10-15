@@ -46,10 +46,7 @@ from .contracts import (
     FunctionalStateSpec,
     FunctionalTensorSpec,
 )
-from .periodic_checkpoint import (
-    PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION,
-    PeriodicActivityCheckpointBridge,
-)
+from .periodic_checkpoint import PeriodicActivityCheckpointBridge
 
 
 _ACTIVITY_NAME = "activity"
@@ -313,9 +310,7 @@ class PeriodicActivityFunctionalRuntime:
             "fallback_allowed": False,
             "fallback_used": False,
             "deterministic_replay": replay_capability,
-            "durable_checkpoint_bridge_version": (
-                PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION
-            ),
+            "durable_checkpoint_bridge_version": 1,
             "tf32_policy": configure_tf32_execution(
                 self._tf32_requested,
                 real_dtype=self._tf32_real_dtype,

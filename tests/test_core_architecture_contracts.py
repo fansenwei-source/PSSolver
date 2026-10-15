@@ -7,7 +7,7 @@ import json
 
 import pytest
 
-from pssolver import SpectralSolver
+from pssolver import DEFAULT_SPECTRAL_STORAGE, SpectralSolver
 from pssolver.core import (
     AxisTopology,
     BoundaryCondition,
@@ -35,7 +35,6 @@ from pssolver.plane import (
     DEFAULT_PLANE_SPECTRAL_STORAGE,
     PLANE_HERMITIAN_AXIS,
 )
-from pssolver.transforms import DEFAULT_SPECTRAL_STORAGE
 
 
 def _plane_boundaries(normal_condition):

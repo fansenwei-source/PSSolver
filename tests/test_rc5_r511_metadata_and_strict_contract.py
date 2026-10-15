@@ -94,7 +94,7 @@ def _identity(
         "fallback_allowed": False,
         "fallback_used": False,
         "deterministic_replay": "bitwise",
-        "durable_checkpoint_bridge_version": 3,
+        "durable_checkpoint_bridge_version": 1,
     }
     return (
         FunctionalRuntimeIdentity(

@@ -60,6 +60,7 @@ from .transforms import (
     DEFAULT_DEALIAS_RULE,
     DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
     DEFAULT_PERIODIC_TRANSFORM_EXECUTION,
+    DEFAULT_SPECTRAL_STORAGE,
     DEFAULT_TRANSFORM_EXECUTION_ORDER,
     FreeSlipModalStokesSolver,
     TensorProductTransformBackend,
@@ -89,6 +90,7 @@ __all__ = [
     'DEFAULT_DEALIAS_RULE',
     'DEFAULT_PROJECTED_TRANSFORM_EXECUTION',
     'DEFAULT_PERIODIC_TRANSFORM_EXECUTION',
+    'DEFAULT_SPECTRAL_STORAGE',
     'DEFAULT_TRANSFORM_EXECUTION_ORDER',
     'FreeSlipModalStokesSolver',
     'TensorProductTransformBackend',
@@ -134,20 +136,3 @@ __all__ = [
     'capability_catalog',
     'ChannelPressureConvergenceError',
 ]
-
-
-def __getattr__(name):
-    if name == "DEFAULT_SPECTRAL_STORAGE":
-        import warnings
-
-        warnings.warn(
-            "pssolver.DEFAULT_SPECTRAL_STORAGE is deprecated because public "
-            "simulations require an explicit spectral_storage policy; import "
-            "the legacy transform default from pssolver.transforms if needed",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        from .transforms import DEFAULT_SPECTRAL_STORAGE
-
-        return DEFAULT_SPECTRAL_STORAGE
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

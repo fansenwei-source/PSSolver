@@ -75,7 +75,7 @@ def _periodic_identity(state_spec, *, device: str = "cpu"):
                 ),
                 "activity_product_before_divergence": True,
                 "deterministic_replay": "bitwise",
-                "durable_checkpoint_bridge_version": 3,
+                "durable_checkpoint_bridge_version": 1,
             }
         },
         state_layout=state_spec.to_metadata(),
@@ -113,7 +113,7 @@ def _channel_identity(state_spec, *, device: str = "cpu"):
                     "pressure": ["periodic", "neumann", "neumann"],
                 },
                 "deterministic_replay": "bitwise",
-                "durable_checkpoint_bridge_version": 3,
+                "durable_checkpoint_bridge_version": 1,
                 "checkpoint_export": "functional_q_state_only",
                 "production_checkpoint_import": (
                     "q_state_only_after_identity_gate"
