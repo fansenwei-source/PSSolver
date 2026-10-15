@@ -31,6 +31,9 @@ from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.channel_active_nematics import (
     ChannelRuntimeAdapterProtocol,
 )
+from .channel_checkpoint_observation import (
+    capture_synchronized_pressure_guess,
+)
 from .state_validation import require_finite_tensors
 
 
@@ -262,11 +265,10 @@ def capture_channel_checkpoint(
     if not isinstance(adapter, ChannelRuntimeAdapterProtocol):
         raise TypeError("adapter must implement ChannelRuntimeAdapterProtocol")
     _require_sha256(runtime_identity_sha256, "runtime_identity_sha256")
-    adapter.synchronize_for_observation()
+    pressure_guess = capture_synchronized_pressure_guess(adapter)
     fields = adapter.fields
     integrator = adapter.solver.integrator
     state_names = (*Q_COMPONENTS, *CHANNEL_ALGEBRAIC_COMPONENTS)
-    pressure_guess = adapter.capture_pressure_guess()
     require_finite_tensors(
         (
             *(
