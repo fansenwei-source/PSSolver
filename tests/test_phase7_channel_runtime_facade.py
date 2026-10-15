@@ -56,7 +56,7 @@ def _spec(path="legacy_channel", **overrides):
         "save_interval": 1,
         "diagnostic_interval": 1,
         "activity": 0.2,
-        "pressure_relative_tolerance": 1.0e-8,
+        "pressure_relative_tolerance": 1.0e-6,
         "pressure_max_iterations": 100,
         "runtime_path": path,
     }
@@ -175,17 +175,24 @@ def test_runtime_selection_is_explicit_and_legacy_remains_default():
 
 
 def test_runtime_identity_excludes_workflow_but_binds_numerics_and_path():
-    baseline = _spec()
+    # Preserve the frozen pre-rc5 identity even though this historical
+    # tolerance is below the rc5 executable float32 tolerance-mode floor.
+    # This test hashes declarations only; executable fixtures use the rc5-safe
+    # default supplied by ``_spec``.
+    baseline = _spec(pressure_relative_tolerance=1.0e-8)
 
     assert baseline.runtime_identity_sha256() == _spec(
         steps=17,
         generated_output_directory=Path("elsewhere"),
+        pressure_relative_tolerance=1.0e-8,
     ).runtime_identity_sha256()
     assert baseline.runtime_identity_sha256() != _spec(
-        activity=0.3
+        activity=0.3,
+        pressure_relative_tolerance=1.0e-8,
     ).runtime_identity_sha256()
     assert baseline.runtime_identity_sha256() != _spec(
-        "compiled_channel_v2"
+        "compiled_channel_v2",
+        pressure_relative_tolerance=1.0e-8,
     ).runtime_identity_sha256()
     assert baseline.runtime_identity_metadata()["dynamics_versions"] == {
         "forward_stokes_nyquist": (

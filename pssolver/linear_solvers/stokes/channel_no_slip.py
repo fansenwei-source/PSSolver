@@ -41,6 +41,28 @@ CHANNEL_PRESSURE_BREAKDOWN_DEFINITION = (
 _CHANNEL_PRESSURE_BREAKDOWN_CERTIFICATE_EPSILON_MARGIN = 4096.0
 
 
+def channel_pressure_minimum_relative_tolerance(dtype: torch.dtype) -> float:
+    """Return the smallest supported tolerance-mode pressure target.
+
+    The PCG recurrence residual can continue decreasing below the accuracy of
+    the represented solution even though the residual of the returned state
+    has reached its dtype-dependent roundoff floor.  Rejecting targets below
+    the supported roundoff floor keeps ``relative_tolerance_met`` a truthful
+    postcondition without adding a second pressure-operator application to
+    every solve.
+
+    Fixed-work mode does not use the tolerance as a stopping postcondition and
+    therefore deliberately does not apply this floor.
+    """
+
+    # The rc4 reproducer reaches a true-residual floor above one epsilon while
+    # its recurrence residual continues to decrease.  Two epsilons is the
+    # smallest supported target and keeps the known roundoff floor outside the
+    # accepted contract instead of treating one representable ulp as solver
+    # accuracy.
+    return 2.0 * float(torch.finfo(_channel_pressure_real_dtype(dtype)).eps)
+
+
 def _channel_pressure_real_dtype(dtype: torch.dtype) -> torch.dtype:
     """Return the real component dtype without constructing a tensor view."""
 
@@ -964,6 +986,17 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         spectral_dtype = backend.spectral_dtype
         real_dtype = backend.real_dtype
         device = backend.device
+        if pressure_fixed_iterations is None:
+            minimum_relative_tolerance = (
+                channel_pressure_minimum_relative_tolerance(real_dtype)
+            )
+            if pressure_relative_tolerance < minimum_relative_tolerance:
+                raise ValueError(
+                    "pressure_relative_tolerance is below the attainable "
+                    f"{real_dtype} tolerance-mode floor "
+                    f"({minimum_relative_tolerance!r}); use a tolerance at "
+                    "or above that floor, or select fixed-work mode"
+                )
         velocity_metadata = backend.get_metadata(
             CHANNEL_VELOCITY_BOUNDARY_CONDITIONS
         )
@@ -1876,6 +1909,7 @@ __all__ = [
     "CHANNEL_PRESSURE_WORKING_VECTOR_SCALING",
     "CHANNEL_VELOCITY_BOUNDARY_CONDITIONS",
     "ChannelPressureConvergenceError",
+    "channel_pressure_minimum_relative_tolerance",
     "ChannelPressureMagnitude",
     "ChannelNoSlipModalStokesSolver",
     "channel_pressure_active_rms",

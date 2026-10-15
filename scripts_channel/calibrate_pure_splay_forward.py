@@ -59,7 +59,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--auto-mask-relative-threshold", type=float, default=0.2)
     parser.add_argument("--mask-transition-width", type=float, default=1.5)
     parser.add_argument("--core-deficit-threshold", type=float, default=0.2)
-    parser.add_argument("--pressure-rel-tol", type=float, default=1e-7)
+    parser.add_argument("--pressure-rel-tol", type=float, default=1e-6)
     parser.add_argument("--pressure-max-iter", type=int, default=100)
     parser.add_argument("--motion-speed-threshold", type=float, default=1e-3)
     parser.add_argument("--save-snapshots", action="store_true")

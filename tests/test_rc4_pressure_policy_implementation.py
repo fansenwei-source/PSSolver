@@ -547,7 +547,7 @@ def test_fixed_work_ignores_loose_tolerance_on_all_three_executable_loops():
 def test_tolerance_cap_fails_closed_and_preserves_production_warm_start():
     spectral, pressure = _solver(
         fixed_iterations=None,
-        relative_tolerance=1.0e-30,
+        relative_tolerance=1.0e-12,
         max_iterations=1,
     )
     rhs = _pressure_rhs(spectral, pressure)
@@ -586,7 +586,7 @@ def test_production_pressure_solution_is_power_of_two_scale_covariant():
 def test_functional_failure_is_persisted_before_exception_and_zero_start():
     spectral, pressure = _solver(
         fixed_iterations=None,
-        relative_tolerance=1.0e-30,
+        relative_tolerance=1.0e-12,
         max_iterations=1,
     )
     rhs = _pressure_rhs(spectral, pressure)

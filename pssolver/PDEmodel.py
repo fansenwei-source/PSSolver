@@ -186,6 +186,18 @@ class PDEModel:
                 if test_output.shape != expected_shape:
                     raise ValueError(f"Static model output shape {test_output.shape} doesn't match expected {expected_shape}")
             except Exception as e:
+                # A static model may perform its first pressure solve while
+                # the runtime is being built.  Preserve the solver's
+                # structured convergence contract instead of hiding its
+                # machine-readable details behind this generic validation
+                # wrapper.  The local import avoids coupling module import
+                # order to the optional Channel implementation.
+                from .linear_solvers.stokes import (
+                    ChannelPressureConvergenceError,
+                )
+
+                if isinstance(e, ChannelPressureConvergenceError):
+                    raise
                 raise RuntimeError("Error occurred during static model validation.") from e
         
 

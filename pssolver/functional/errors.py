@@ -13,6 +13,7 @@ from pssolver.io.checkpoint import (
     CheckpointIntegrityError,
     CheckpointNotFoundError,
 )
+from pssolver.linear_solvers.stokes import ChannelPressureConvergenceError
 
 
 class FunctionalError(Exception):
@@ -158,7 +159,10 @@ class FunctionalExecutionError(FunctionalError, RuntimeError):
     code = "functional_execution_error"
 
 
-class FunctionalConvergenceError(FunctionalExecutionError):
+class FunctionalConvergenceError(
+    FunctionalExecutionError,
+    ChannelPressureConvergenceError,
+):
     """An inner solve did not satisfy its declared convergence contract."""
 
     code = "functional_convergence_error"
@@ -173,6 +177,12 @@ def translate_functional_exception(
 
     if isinstance(exception, FunctionalError):
         return exception
+    if isinstance(exception, ChannelPressureConvergenceError):
+        return FunctionalConvergenceError(
+            str(exception),
+            operation=operation,
+            details=exception.details,
+        )
     checkpoint_details = (
         {
             **exception.details,

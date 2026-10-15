@@ -39,7 +39,7 @@ def build_channel_problem(num_steps=3, num_masks=1):
         dt=1e-3,
         initial_q=initial_fields,
         device="cpu",
-        pressure_rel_tol=1e-7,
+        pressure_rel_tol=1e-6,
     )
     initial_q = torch.stack([solver.fields[name] for name in Q_COMPONENTS]).detach()
     mask = smooth_box_mask(shape, ((3, 9), (1, 7), (1, 7)), transition_width=0.8)

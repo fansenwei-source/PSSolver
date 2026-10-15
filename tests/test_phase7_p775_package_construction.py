@@ -129,7 +129,7 @@ def _channel_spec(runtime_path: str):
         save_interval=1,
         diagnostic_interval=1,
         activity=0.2,
-        pressure_relative_tolerance=1.0e-8,
+        pressure_relative_tolerance=1.0e-6,
         pressure_max_iterations=100,
         runtime_path=runtime_path,
     )

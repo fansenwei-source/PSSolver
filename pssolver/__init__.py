@@ -8,6 +8,7 @@ from .Field import (
 )
 from .PDEmodel import PDEModel
 from .integrator import SemiImplicitEulerIntegrator
+from .linear_solvers.stokes import ChannelPressureConvergenceError
 from .loop_conventions import (
     CONVENTION_NAME,
     IDEAL_LOOP_MODE_AXES,
@@ -131,4 +132,5 @@ __all__ = [
     'available_geometries',
     'available_models',
     'capability_catalog',
+    'ChannelPressureConvergenceError',
 ]
