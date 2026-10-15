@@ -432,6 +432,7 @@ def verify_checkpoint_metadata(
     metadata: Mapping[str, object],
     *,
     required: bool,
+    operation: str = "checkpoint_import",
 ) -> bool:
     """Validate a canonical metadata digest and report whether one was present."""
 
@@ -440,11 +441,24 @@ def verify_checkpoint_metadata(
     digest = metadata.get(METADATA_SHA256_KEY)
     if digest is None:
         if required:
-            raise ValueError("checkpoint metadata SHA-256 is missing")
+            raise CheckpointIntegrityError(
+                "checkpoint metadata SHA-256 is missing",
+                operation=operation,
+            )
         return False
-    expected = _require_sha256(digest, "checkpoint metadata SHA-256")
+    try:
+        expected = _require_sha256(digest, "checkpoint metadata SHA-256")
+    except ValueError as exc:
+        raise CheckpointIntegrityError(
+            "checkpoint metadata SHA-256 is invalid",
+            operation=operation,
+            legacy_exception_type=type(exc).__name__,
+        ) from exc
     if checkpoint_metadata_sha256(metadata) != expected:
-        raise ValueError("checkpoint metadata checksum mismatch")
+        raise CheckpointIntegrityError(
+            "checkpoint metadata checksum mismatch",
+            operation=operation,
+        )
     return True
 
 
@@ -498,8 +512,9 @@ def verify_functional_checkpoint_provenance(
             )
         return False
     if not isinstance(functional_bridge, Mapping):
-        raise ValueError(
-            "functional checkpoint provenance forbids production-path import"
+        raise CheckpointIntegrityError(
+            "functional checkpoint provenance forbids production-path import",
+            operation="functional_checkpoint_import",
         )
     value = read_checkpoint_json(
         path,

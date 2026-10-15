@@ -31,7 +31,11 @@ from pssolver.boundaries import (
 )
 from pssolver.configuration.simulation import InvocationSpec
 from pssolver.geometries import PeriodicBox, RectangularChannel
-from pssolver.io.checkpoint import seal_checkpoint_metadata
+from pssolver.io.checkpoint import (
+    CheckpointCompatibilityError,
+    CheckpointIntegrityError,
+    seal_checkpoint_metadata,
+)
 from pssolver.io.checkpoint_identity import SourceReleaseGeneration
 from pssolver.models.active_nematics import (
     CompleteStressBerisEdwards,
@@ -297,6 +301,129 @@ def _assert_channel_state_equal(left, right):
         left.capture_pressure_guess(),
         right.capture_pressure_guess(),
     )
+
+
+def _reseal_metadata(directory: Path, mutate) -> None:
+    path = directory / "checkpoint.json"
+    metadata = json.loads(path.read_text(encoding="utf-8"))
+    metadata.pop("metadata_sha256", None)
+    mutate(metadata)
+    path.write_text(
+        json.dumps(seal_checkpoint_metadata(metadata), indent=2, sort_keys=True)
+        + "\n",
+        encoding="utf-8",
+    )
+
+
+def test_channel_v3_rejects_unregistered_manifest_keys_before_payload_load(
+    tmp_path,
+    monkeypatch,
+):
+    run_spec, source = _channel_runtime(_channel_simulation(tmp_path, 7))
+    directory = tmp_path / "channel"
+    write_channel_beris_edwards_checkpoint(directory, source, run_spec=run_spec)
+    _reseal_metadata(
+        directory,
+        lambda metadata: metadata["tensor_files"].__setitem__(
+            "bogus",
+            {"must_not_be_ignored": True},
+        ),
+    )
+    monkeypatch.setattr(
+        "pssolver.workflows.channel_beris_edwards.np.load",
+        lambda *_args, **_kwargs: pytest.fail("tensor load started"),
+    )
+
+    with pytest.raises(CheckpointIntegrityError) as error:
+        read_channel_beris_edwards_checkpoint_header(directory)
+    assert error.value.code == "checkpoint_integrity_error"
+    assert error.value.details["unknown_keys"] == ["bogus"]
+
+
+def test_periodic_refresh_policy_mismatch_rejects_before_target_mutation(tmp_path):
+    run_spec, source = _periodic_runtime(
+        _periodic_simulation(tmp_path, "hermitian_half")
+    )
+    source.advance(2)
+    directory = write_periodic_checkpoint(
+        tmp_path / "periodic",
+        capture_periodic_checkpoint(source, run_spec=run_spec),
+    )
+    _reseal_metadata(
+        directory,
+        lambda metadata: metadata.__setitem__(
+            "integrator",
+            {
+                "spectral_refresh_interval": 1,
+                "step_count": 0,
+                "refresh_count": 2,
+            },
+        ),
+    )
+    checkpoint = load_periodic_checkpoint(directory)
+    target_spec, target = _periodic_runtime(
+        _periodic_simulation(tmp_path, "hermitian_half", device="auto")
+    )
+    before = {
+        f"{name}{suffix}": target.fields[f"{name}{suffix}"].clone()
+        for name in Q_COMPONENTS
+        for suffix in ("", ".hat")
+    }
+
+    with pytest.raises(CheckpointCompatibilityError) as error:
+        restore_periodic_checkpoint(target, checkpoint, run_spec=target_spec)
+    assert error.value.code == "checkpoint_compatibility_error"
+    assert error.value.details == {
+        "checkpoint_interval": 1,
+        "target_interval": None,
+    }
+    assert all(
+        torch.equal(target.fields[name], value)
+        for name, value in before.items()
+    )
+    assert target.completed_steps == 0
+
+
+def test_channel_refresh_policy_mismatch_rejects_before_target_mutation(tmp_path):
+    run_spec, source = _channel_runtime(_channel_simulation(tmp_path, 7))
+    source.advance(2)
+    directory = tmp_path / "channel"
+    write_channel_beris_edwards_checkpoint(directory, source, run_spec=run_spec)
+    _reseal_metadata(
+        directory,
+        lambda metadata: metadata.__setitem__(
+            "integrator",
+            {
+                "spectral_refresh_interval": 1,
+                "step_count": 0,
+                "refresh_count": 2,
+            },
+        ),
+    )
+    target_spec, target = _channel_runtime(
+        _channel_simulation(tmp_path, 7, device="auto")
+    )
+    names = (*Q_COMPONENTS, *VELOCITY_COMPONENTS, "p")
+    before = {
+        f"{name}{suffix}": target.fields[f"{name}{suffix}"].clone()
+        for name in names
+        for suffix in ("", ".hat")
+    }
+    pressure_before = target.capture_pressure_guess().clone()
+
+    with pytest.raises(CheckpointCompatibilityError) as error:
+        load_channel_checkpoint(directory, target, run_spec=target_spec)
+    assert error.value.code == "checkpoint_compatibility_error"
+    assert error.value.details == {
+        "checkpoint_interval": 1,
+        "target_interval": None,
+    }
+    assert all(
+        torch.equal(target.fields[name], value)
+        for name, value in before.items()
+    )
+    assert torch.equal(target.capture_pressure_guess(), pressure_before)
+    assert target.completed_steps == 0
 
 
 def test_m07_rc1_full_complex_rejects_before_periodic_tensor_load(

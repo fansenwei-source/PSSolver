@@ -596,6 +596,18 @@ class PeriodicActivityCheckpointBridge:
                         },
                     )
         header = read_periodic_checkpoint_header(directory)
+        if header.functional_bridge is None and header.format_version == 1:
+            # A released rc1 functional carrier becomes byte-for-byte
+            # indistinguishable from a production-v1 carrier after its bridge
+            # and provenance marker are removed.  Do not let the functional
+            # API silently downgrade such state through a production reader;
+            # rc1 functional state remains available through the explicit,
+            # non-in-place state-only migration entry point.
+            raise FunctionalCheckpointCompatibilityError(
+                "Periodic production-v1 checkpoints are not accepted by "
+                "the functional import API",
+                operation="periodic_checkpoint_import",
+            )
         if dict(header.backend_restart) != self._backend_restart:
             raise FunctionalCheckpointCompatibilityError(
                 "checkpoint backend contract does not match target",
@@ -653,15 +665,6 @@ class PeriodicActivityCheckpointBridge:
                 reader="qualified_periodic_production_v3_reader",
                 exact_current_protocol=False,
             )
-        if header.functional_bridge is None and header.format_version == 1:
-            source_format = _SOURCE_PRODUCTION_V1
-            compatibility = FunctionalCheckpointCompatibility(
-                source_api_version=None,
-                target_api_version=FUNCTIONAL_API_VERSION,
-                reader="qualified_periodic_production_v1_reader",
-                exact_current_protocol=False,
-            )
-
         # Tensor payloads are opened only after all small identity and layout
         # metadata gates above have succeeded.
         checkpoint = load_periodic_checkpoint(directory)

@@ -485,21 +485,30 @@ def _validated_progress(metadata):
         or isinstance(completed_steps, bool)
         or completed_steps < 0
     ):
-        raise ValueError("checkpoint completed_steps is invalid")
+        raise CheckpointIntegrityError(
+            "checkpoint completed_steps is invalid",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     integrator = metadata.get("integrator")
     if not isinstance(integrator, dict) or set(integrator) != {
         "spectral_refresh_interval",
         "step_count",
         "refresh_count",
     }:
-        raise ValueError("checkpoint integrator metadata differs")
+        raise CheckpointIntegrityError(
+            "checkpoint integrator metadata differs",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     interval = integrator["spectral_refresh_interval"]
     if interval is not None and (
         not isinstance(interval, int)
         or isinstance(interval, bool)
         or interval <= 0
     ):
-        raise ValueError("checkpoint spectral refresh interval is invalid")
+        raise CheckpointIntegrityError(
+            "checkpoint spectral refresh interval is invalid",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     for name in ("step_count", "refresh_count"):
         value = integrator[name]
         if (
@@ -507,7 +516,10 @@ def _validated_progress(metadata):
             or isinstance(value, bool)
             or value < 0
         ):
-            raise ValueError(f"checkpoint {name} is invalid")
+            raise CheckpointIntegrityError(
+                f"checkpoint {name} is invalid",
+                operation="complete_stress_channel_checkpoint_import",
+            )
     if interval is None:
         expected_refresh_count = 0
         expected_step_count = completed_steps
@@ -520,7 +532,10 @@ def _validated_progress(metadata):
         integrator["step_count"] != expected_step_count
         or integrator["refresh_count"] != expected_refresh_count
     ):
-        raise ValueError("checkpoint progress counters differ")
+        raise CheckpointIntegrityError(
+            "checkpoint progress counters differ",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     return completed_steps, integrator
 
 
@@ -542,6 +557,7 @@ def _read_channel_checkpoint_metadata(directory: Path) -> dict[str, object]:
     verify_checkpoint_metadata(
         metadata,
         required=format_version in {LEGACY_CHECKPOINT_VERSION, CHECKPOINT_VERSION},
+        operation="complete_stress_channel_checkpoint_import",
     )
     if format_version == CHECKPOINT_VERSION:
         require_exact_checkpoint_keys(
@@ -570,6 +586,25 @@ def _read_channel_checkpoint_metadata(directory: Path) -> dict[str, object]:
             description="complete-stress Channel run provenance",
             operation="complete_stress_channel_checkpoint_import",
         )
+        tensor_files = require_exact_checkpoint_keys(
+            metadata.get("tensor_files"),
+            required={"spatial", "spectral"},
+            description="complete-stress Channel tensor-file manifest",
+            operation="complete_stress_channel_checkpoint_import",
+        )
+        for kind in ("spatial", "spectral"):
+            require_exact_checkpoint_keys(
+                tensor_files.get(kind),
+                required=set(_STATE_COMPONENTS),
+                description=f"complete-stress Channel {kind} manifest",
+                operation="complete_stress_channel_checkpoint_import",
+            )
+        require_exact_checkpoint_keys(
+            metadata.get("backend_files"),
+            required={"pressure_guess"},
+            description="complete-stress Channel backend manifest",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     if metadata.get("runtime_path") != CHANNEL_COMPLETE_STRESS_RUNTIME_PATH:
         raise CheckpointCompatibilityError(
             "checkpoint runtime identity does not match target",
@@ -589,21 +624,42 @@ def read_channel_beris_edwards_checkpoint_header(
     if format_version == CHECKPOINT_VERSION:
         run_provenance = metadata.get("run_provenance")
         if not isinstance(run_provenance, Mapping):
-            raise ValueError("Channel checkpoint run provenance is missing")
+            raise CheckpointIntegrityError(
+                "Channel checkpoint run provenance is missing",
+                operation="complete_stress_channel_checkpoint_import",
+            )
         runtime_identity = run_provenance.get("legacy_runtime_identity_sha256")
-        compatibility_identity = CheckpointCompatibilityIdentity.from_metadata(
-            metadata.get("compatibility_identity")
-        )
+        try:
+            compatibility_identity = (
+                CheckpointCompatibilityIdentity.from_metadata(
+                    metadata.get("compatibility_identity")
+                )
+            )
+        except (TypeError, ValueError) as exc:
+            raise CheckpointIntegrityError(
+                "Channel compatibility identity is invalid",
+                operation="complete_stress_channel_checkpoint_import",
+                legacy_exception_type=type(exc).__name__,
+            ) from exc
         expected = metadata.get("compatibility_identity_sha256")
         if compatibility_identity.canonical_sha256() != expected:
-            raise ValueError("Channel compatibility identity checksum mismatch")
+            raise CheckpointIntegrityError(
+                "Channel compatibility identity checksum mismatch",
+                operation="complete_stress_channel_checkpoint_import",
+            )
         if compatibility_identity.family is not CheckpointFamily.CHANNEL_WORKFLOW:
-            raise ValueError("Channel compatibility identity family differs")
+            raise CheckpointIntegrityError(
+                "Channel compatibility identity family differs",
+                operation="complete_stress_channel_checkpoint_import",
+            )
         if (
             compatibility_identity.runtime_path
             != CHANNEL_COMPLETE_STRESS_RUNTIME_PATH
         ):
-            raise ValueError("Channel compatibility runtime path differs")
+            raise CheckpointIntegrityError(
+                "Channel compatibility runtime path differs",
+                operation="complete_stress_channel_checkpoint_import",
+            )
     else:
         runtime_identity = metadata.get("runtime_identity_sha256")
     if (
@@ -611,7 +667,10 @@ def read_channel_beris_edwards_checkpoint_header(
         or len(runtime_identity) != 64
         or any(value not in "0123456789abcdef" for value in runtime_identity)
     ):
-        raise ValueError("Channel runtime identity must be a lowercase SHA-256")
+        raise CheckpointIntegrityError(
+            "Channel runtime identity must be a lowercase SHA-256",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     return ChannelBerisEdwardsCheckpointHeader(
         format_version=format_version,
         runtime_identity_sha256=runtime_identity,
@@ -625,7 +684,10 @@ def read_channel_beris_edwards_checkpoint_progress(directory):
 
     header = read_channel_beris_edwards_checkpoint_header(directory)
     if header.compatibility_identity is None:
-        raise ValueError("legacy Channel checkpoint requires explicit identity upgrade")
+        raise CheckpointCompatibilityError(
+            "legacy Channel checkpoint requires explicit identity upgrade",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     return header.completed_steps
 
 
@@ -634,18 +696,39 @@ def _load_checkpoint(directory, adapter, *, run_spec):
     metadata = _read_channel_checkpoint_metadata(directory)
     header = read_channel_beris_edwards_checkpoint_header(directory)
     if header.compatibility_identity is None:
-        raise ValueError("legacy Channel checkpoint requires explicit identity upgrade")
+        raise CheckpointCompatibilityError(
+            "legacy Channel checkpoint requires explicit identity upgrade",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     completed_steps, integrator = _validated_progress(metadata)
+    target_refresh_interval = (
+        adapter.solver.integrator.spectral_refresh_interval
+    )
+    if integrator["spectral_refresh_interval"] != target_refresh_interval:
+        raise CheckpointCompatibilityError(
+            "Channel checkpoint spectral refresh policy does not match target",
+            operation="complete_stress_channel_checkpoint_import",
+            details={
+                "checkpoint_interval": integrator["spectral_refresh_interval"],
+                "target_interval": target_refresh_interval,
+            },
+        )
     if header.compatibility_identity.state_layout != (
         _channel_state_layout_identity_from_metadata(metadata)
     ):
-        raise ValueError("Channel state layout identity is inconsistent")
+        raise CheckpointIntegrityError(
+            "Channel state layout identity is inconsistent",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     backend_metadata = metadata.get("backend_restart")
     if not isinstance(backend_metadata, dict) or (
         header.compatibility_identity.backend_restart
         != _channel_backend_restart_identity(backend_metadata)
     ):
-        raise ValueError("Channel backend restart identity is inconsistent")
+        raise CheckpointIntegrityError(
+            "Channel backend restart identity is inconsistent",
+            operation="complete_stress_channel_checkpoint_import",
+        )
 
     fields = adapter.fields
     pressure_guess = adapter.capture_pressure_guess()
@@ -656,13 +739,19 @@ def _load_checkpoint(directory, adapter, *, run_spec):
         backend_restart=adapter.backend_restart_metadata(),
     )
     if header.compatibility_identity != expected_identity:
-        raise ValueError("Channel compatibility identity does not match target")
+        raise CheckpointCompatibilityError(
+            "Channel compatibility identity does not match target",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     pending = []
     manifest = metadata.get("tensor_files", {})
     for kind, suffix in (("spatial", ""), ("spectral", ".hat")):
         records = manifest.get(kind, {})
         if set(records) != set(_STATE_COMPONENTS):
-            raise ValueError("Channel checkpoint tensor manifest is incomplete")
+            raise CheckpointIntegrityError(
+                "Channel checkpoint tensor manifest is incomplete",
+                operation="complete_stress_channel_checkpoint_import",
+            )
         for name in _STATE_COMPONENTS:
             target = fields[f"{name}{suffix}"]
             values = _validated_array(
@@ -714,11 +803,17 @@ def _channel_state_layout_identity_from_metadata(
     if not isinstance(manifest, Mapping) or not isinstance(
         backend_files, Mapping
     ):
-        raise ValueError("Channel checkpoint tensor manifest is missing")
+        raise CheckpointIntegrityError(
+            "Channel checkpoint tensor manifest is missing",
+            operation="complete_stress_channel_checkpoint_import",
+        )
 
     def layout(record: object, description: str) -> dict[str, object]:
         if not isinstance(record, Mapping):
-            raise ValueError(f"{description} tensor record is missing")
+            raise CheckpointIntegrityError(
+                f"{description} tensor record is missing",
+                operation="complete_stress_channel_checkpoint_import",
+            )
         shape = record.get("shape")
         dtype = record.get("dtype")
         if (
@@ -729,7 +824,10 @@ def _channel_state_layout_identity_from_metadata(
             )
             or not isinstance(dtype, str)
         ):
-            raise ValueError(f"{description} tensor layout is invalid")
+            raise CheckpointIntegrityError(
+                f"{description} tensor layout is invalid",
+                operation="complete_stress_channel_checkpoint_import",
+            )
         return {"shape": shape, "dtype": f"torch.{dtype}"}
 
     result: dict[str, object] = {
@@ -743,13 +841,19 @@ def _channel_state_layout_identity_from_metadata(
         if not isinstance(records, Mapping) or set(records) != set(
             _STATE_COMPONENTS
         ):
-            raise ValueError("Channel checkpoint tensor manifest is incomplete")
+            raise CheckpointIntegrityError(
+                "Channel checkpoint tensor manifest is incomplete",
+                operation="complete_stress_channel_checkpoint_import",
+            )
         result[kind] = {
             name: layout(records[name], f"{kind} {name}")
             for name in _STATE_COMPONENTS
         }
     if set(backend_files) != {"pressure_guess"}:
-        raise ValueError("Channel checkpoint backend manifest is incomplete")
+        raise CheckpointIntegrityError(
+            "Channel checkpoint backend manifest is incomplete",
+            operation="complete_stress_channel_checkpoint_import",
+        )
     result["persistent"] = {
         "pressure_guess": layout(
             backend_files["pressure_guess"],

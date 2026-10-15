@@ -30,6 +30,8 @@ from pssolver.io.checkpoint import (
     read_checkpoint_json,
     require_exact_checkpoint_keys,
     resolve_checkpoint_payload,
+    seal_checkpoint_metadata,
+    verify_checkpoint_metadata,
 )
 
 
@@ -80,6 +82,25 @@ def test_generic_checkpoint_error_taxonomy_is_machine_readable():
             "legacy_exception_type": "OSError",
             "details": {},
         }
+
+
+def test_checkpoint_metadata_digest_failures_are_integrity_errors():
+    with pytest.raises(CheckpointIntegrityError) as missing:
+        verify_checkpoint_metadata({}, required=True)
+    assert missing.value.code == "checkpoint_integrity_error"
+
+    sealed = seal_checkpoint_metadata({"value": 1})
+    malformed = dict(sealed)
+    malformed["metadata_sha256"] = "not-a-digest"
+    with pytest.raises(CheckpointIntegrityError) as invalid:
+        verify_checkpoint_metadata(malformed, required=True)
+    assert invalid.value.code == "checkpoint_integrity_error"
+
+    tampered = dict(sealed)
+    tampered["value"] = 2
+    with pytest.raises(CheckpointIntegrityError) as mismatch:
+        verify_checkpoint_metadata(tampered, required=True)
+    assert mismatch.value.code == "checkpoint_integrity_error"
 
 
 def test_functional_checkpoint_categories_retain_both_hierarchies():

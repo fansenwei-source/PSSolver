@@ -409,16 +409,25 @@ def _validate_periodic_embedded_identity(
 ) -> None:
     identity = checkpoint.compatibility_identity
     if identity is None:
-        raise ValueError("periodic compatibility identity is missing")
+        raise CheckpointIntegrityError(
+            "periodic compatibility identity is missing",
+            operation="periodic_checkpoint_import",
+        )
     if identity.state_layout != _periodic_state_layout_identity(
         checkpoint.evolved_spatial,
         checkpoint.evolved_spectral,
     ):
-        raise ValueError("periodic state layout identity is inconsistent")
+        raise CheckpointIntegrityError(
+            "periodic state layout identity is inconsistent",
+            operation="periodic_checkpoint_import",
+        )
     if identity.backend_restart != _periodic_backend_restart_identity(
         checkpoint.backend_restart
     ):
-        raise ValueError("periodic backend restart identity is inconsistent")
+        raise CheckpointIntegrityError(
+            "periodic backend restart identity is inconsistent",
+            operation="periodic_checkpoint_import",
+        )
 
 
 def capture_periodic_checkpoint(
@@ -481,6 +490,18 @@ def restore_periodic_checkpoint(
     if not isinstance(run_spec, PeriodicBerisEdwardsRunSpec):
         raise TypeError("run_spec must be a PeriodicBerisEdwardsRunSpec")
     fields = adapter.fields
+    target_refresh_interval = (
+        adapter.solver.integrator.spectral_refresh_interval
+    )
+    if checkpoint.spectral_refresh_interval != target_refresh_interval:
+        raise CheckpointCompatibilityError(
+            "periodic checkpoint spectral refresh policy does not match target",
+            operation="periodic_checkpoint_import",
+            details={
+                "checkpoint_interval": checkpoint.spectral_refresh_interval,
+                "target_interval": target_refresh_interval,
+            },
+        )
     if checkpoint.format_version == PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
         _validate_periodic_embedded_identity(checkpoint)
         target_spatial = {name: fields[name] for name in Q_COMPONENTS}
@@ -494,8 +515,9 @@ def restore_periodic_checkpoint(
             backend_restart=adapter.backend_restart_metadata(),
         )
         if checkpoint.compatibility_identity != target_identity:
-            raise ValueError(
-                "periodic checkpoint compatibility identity does not match target"
+            raise CheckpointCompatibilityError(
+                "periodic checkpoint compatibility identity does not match target",
+                operation="periodic_checkpoint_import",
             )
     elif (
         checkpoint.format_version
@@ -509,12 +531,19 @@ def restore_periodic_checkpoint(
             checkpoint.runtime_identity_sha256
             != run_spec.runtime_identity_sha256()
         ):
-            raise ValueError("checkpoint scientific/runtime identity does not match")
+            raise CheckpointCompatibilityError(
+                "checkpoint scientific/runtime identity does not match",
+                operation="periodic_checkpoint_import",
+            )
         if dict(checkpoint.backend_restart) != adapter.backend_restart_metadata():
-            raise ValueError("checkpoint backend contract does not match target")
+            raise CheckpointCompatibilityError(
+                "checkpoint backend contract does not match target",
+                operation="periodic_checkpoint_import",
+            )
     else:
-        raise ValueError(
-            "legacy periodic checkpoint requires explicit identity upgrade"
+        raise CheckpointCompatibilityError(
+            "legacy periodic checkpoint requires explicit identity upgrade",
+            operation="periodic_checkpoint_import",
         )
     targets: list[tuple[torch.Tensor, torch.Tensor, str]] = []
     for name in Q_COMPONENTS:
@@ -524,9 +553,15 @@ def restore_periodic_checkpoint(
         ):
             target = fields[f"{name}{suffix}"]
             if target.shape != source.shape:
-                raise ValueError(f"checkpoint tensor shape differs for {name}{suffix}")
+                raise CheckpointCompatibilityError(
+                    f"checkpoint tensor shape differs for {name}{suffix}",
+                    operation="periodic_checkpoint_import",
+                )
             if target.dtype != source.dtype:
-                raise ValueError(f"checkpoint tensor dtype differs for {name}{suffix}")
+                raise CheckpointCompatibilityError(
+                    f"checkpoint tensor dtype differs for {name}{suffix}",
+                    operation="periodic_checkpoint_import",
+                )
             targets.append((target, source, f"{name}{suffix}"))
 
     # Device materialization is part of preflight, before any target mutation.
@@ -624,6 +659,7 @@ def _read_metadata(directory: Path) -> Mapping[str, object]:
             PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
             PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
         },
+        operation="periodic_checkpoint_import",
     )
     bridge = metadata.get("functional_bridge")
     bridge_version = (
@@ -695,44 +731,72 @@ def read_periodic_checkpoint_header(
     if format_version == PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
         run_provenance = metadata.get("run_provenance")
         if not isinstance(run_provenance, Mapping):
-            raise ValueError("periodic checkpoint run provenance is missing")
-        identity = _require_sha256(
-            run_provenance.get("legacy_runtime_identity_sha256"),
-            "legacy_runtime_identity_sha256",
-        )
-        compatibility_identity = (
-            CheckpointCompatibilityIdentity.from_metadata(
-                metadata.get("compatibility_identity")
+            raise CheckpointIntegrityError(
+                "periodic checkpoint run provenance is missing",
+                operation="periodic_checkpoint_import",
             )
-        )
-        expected = _require_sha256(
-            metadata.get("compatibility_identity_sha256"),
-            "compatibility_identity_sha256",
-        )
+        try:
+            identity = _require_sha256(
+                run_provenance.get("legacy_runtime_identity_sha256"),
+                "legacy_runtime_identity_sha256",
+            )
+            compatibility_identity = (
+                CheckpointCompatibilityIdentity.from_metadata(
+                    metadata.get("compatibility_identity")
+                )
+            )
+            expected = _require_sha256(
+                metadata.get("compatibility_identity_sha256"),
+                "compatibility_identity_sha256",
+            )
+        except (TypeError, ValueError) as exc:
+            raise CheckpointIntegrityError(
+                "periodic checkpoint compatibility identity is invalid",
+                operation="periodic_checkpoint_import",
+                legacy_exception_type=type(exc).__name__,
+            ) from exc
         if compatibility_identity.canonical_sha256() != expected:
-            raise ValueError(
-                "periodic checkpoint compatibility identity checksum mismatch"
+            raise CheckpointIntegrityError(
+                "periodic checkpoint compatibility identity checksum mismatch",
+                operation="periodic_checkpoint_import",
             )
     else:
-        identity = _require_sha256(
-            metadata.get("runtime_identity_sha256"),
-            "runtime_identity_sha256",
-        )
+        try:
+            identity = _require_sha256(
+                metadata.get("runtime_identity_sha256"),
+                "runtime_identity_sha256",
+            )
+        except ValueError as exc:
+            raise CheckpointIntegrityError(
+                "periodic checkpoint runtime identity is invalid",
+                operation="periodic_checkpoint_import",
+                legacy_exception_type=type(exc).__name__,
+            ) from exc
     completed = metadata.get("completed_steps")
     integrator = metadata.get("integrator")
     if not isinstance(integrator, Mapping):
-        raise ValueError("checkpoint integrator metadata is missing")
-    return PeriodicCheckpointHeader(
-        format_version=format_version,
-        runtime_identity_sha256=identity,
-        completed_steps=completed,
-        spectral_refresh_interval=integrator.get("spectral_refresh_interval"),
-        integrator_step_count=integrator.get("step_count"),
-        integrator_refresh_count=integrator.get("refresh_count"),
-        backend_restart=metadata.get("backend_restart"),
-        functional_bridge=metadata.get("functional_bridge"),
-        compatibility_identity=compatibility_identity,
-    )
+        raise CheckpointIntegrityError(
+            "checkpoint integrator metadata is missing",
+            operation="periodic_checkpoint_import",
+        )
+    try:
+        return PeriodicCheckpointHeader(
+            format_version=format_version,
+            runtime_identity_sha256=identity,
+            completed_steps=completed,
+            spectral_refresh_interval=integrator.get("spectral_refresh_interval"),
+            integrator_step_count=integrator.get("step_count"),
+            integrator_refresh_count=integrator.get("refresh_count"),
+            backend_restart=metadata.get("backend_restart"),
+            functional_bridge=metadata.get("functional_bridge"),
+            compatibility_identity=compatibility_identity,
+        )
+    except (TypeError, ValueError) as exc:
+        raise CheckpointIntegrityError(
+            "periodic checkpoint header is invalid",
+            operation="periodic_checkpoint_import",
+            legacy_exception_type=type(exc).__name__,
+        ) from exc
 
 
 def _load_tensor(
@@ -755,7 +819,14 @@ def _load_tensor(
         description=f"{description} tensor",
         expected_filename=expected_filename,
     )
-    expected = _require_sha256(record.get("sha256"), "tensor SHA-256")
+    try:
+        expected = _require_sha256(record.get("sha256"), "tensor SHA-256")
+    except ValueError as exc:
+        raise CheckpointIntegrityError(
+            f"{description} tensor SHA-256 is invalid",
+            operation="periodic_checkpoint_import",
+            legacy_exception_type=type(exc).__name__,
+        ) from exc
     if _sha256(path) != expected:
         raise CheckpointIntegrityError(
             f"checkpoint tensor checksum mismatch: {path}",
@@ -809,7 +880,10 @@ def load_periodic_checkpoint(
     for kind in ("spatial", "spectral"):
         records = files.get(kind)
         if not isinstance(records, Mapping) or tuple(records) != Q_COMPONENTS:
-            raise ValueError(f"checkpoint {kind} manifest is incomplete")
+            raise CheckpointIntegrityError(
+                f"checkpoint {kind} manifest is incomplete",
+                operation="periodic_checkpoint_import",
+            )
         loaded[kind] = {
             name: _load_tensor(
                 directory,

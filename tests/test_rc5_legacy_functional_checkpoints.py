@@ -6,6 +6,7 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+import shutil
 
 import numpy as np
 import pytest
@@ -319,6 +320,38 @@ def test_real_periodic_rc1_checkpoint_uses_explicit_state_only_migration(
     )
     assert metadata["migration_provenance"]["trajectory_equivalent"] is False
     assert _tree(source) == before
+
+
+def test_stripped_periodic_rc1_functional_checkpoint_cannot_downgrade(
+    release_runtimes,
+    tmp_path,
+    monkeypatch,
+):
+    periodic, _ = release_runtimes
+    source = _FIXTURE_ROOT / "rc1" / "periodic_func_ck"
+    stripped = tmp_path / "periodic_rc1_stripped"
+    shutil.copytree(source, stripped)
+    metadata_path = stripped / "checkpoint.json"
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    metadata.pop("functional_bridge")
+    metadata_path.write_text(
+        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    marker = stripped / "functional_checkpoint.json"
+    if marker.exists():
+        marker.unlink()
+    monkeypatch.setattr(
+        "pssolver.workflows.periodic_checkpoint._load_tensor",
+        lambda *_args, **_kwargs: pytest.fail("tensor load started"),
+    )
+
+    with pytest.raises(
+        FunctionalCheckpointCompatibilityError,
+        match="production-v1 checkpoints are not accepted",
+    ) as error:
+        periodic.checkpoint_bridge.import_checkpoint(stripped)
+    assert error.value.code == "functional_checkpoint_compatibility_error"
 
 
 @pytest.mark.parametrize(
