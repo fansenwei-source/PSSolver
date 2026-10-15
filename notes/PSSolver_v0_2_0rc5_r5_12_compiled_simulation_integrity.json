@@ -41,7 +41,7 @@
   },
   "regression_tests": {
     "tests/test_rc5_r512_compiled_simulation_integrity.py": "8c1a26b965819abd13a50945f8d90633ca8137bc74f68f7b13da8017a2150196",
-    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": "c6786c267e0aa5eb9c5f92fa5fb704e3b97903c86ff4c0b40c49c825e734f2be"
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": "62403ff82d63f097036e924891b95bd6eaff6b98f55d56745a611a7e40eba27f"
   },
   "historical_successor_sources": {
     "pssolver/api/runner.py": {
@@ -86,10 +86,28 @@
       "reason": "Extend the frozen RC4.5.6 successor chain through R5-12.",
       "introduced_by_phase": "R5-12"
     },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "3a0d607cbc9085e7b8351223c3c0312c677d1f0b2c4a5b0a2a1375b4d9f6f9a2",
+      "current_sha256": "e6c22e7f256d6747eaa4de5153a6fc70de3ff55ea355e00039a8df93244ed450",
+      "reason": "Extend the frozen RC4.5.7 Consumer-impact successor chain through R5-12.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "21105e38a718ad05e373283933e44d014473db274634a7d37a8a0fb9433d10cc",
+      "current_sha256": "f24718013f9053e898f88246ecdb18f65ded6e8409cc8be4de34cde49a7d3485",
+      "reason": "Extend the frozen RC4.5.7 Consumer-recovery successor chain through R5-12.",
+      "introduced_by_phase": "R5-12"
+    },
     "tests/test_rc458_h100_closure_record.py": {
       "historical_sha256": "6672d38dd9d55dce81a32241dc9221465873d2eefb5f36b5e828b63d79e0eb7f",
       "current_sha256": "fc60edb6952a60734b78d66b7f621d7f03e3c07a8f0e595221e4297941cd6682",
       "reason": "Extend the frozen RC4.5.8 closure successor chain through R5-12.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "13d6e02de2e0ec9fca0634d08b29257a721c8fe6dfb64729737f8c7f0dfb9913",
+      "current_sha256": "8e0058b82435d0cad27121e79ac237ea776e830b91bd15df6885d250fc46f74b",
+      "reason": "Extend the frozen post-release findings successor chain through R5-12.",
       "introduced_by_phase": "R5-12"
     },
     "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
@@ -138,6 +156,18 @@
       "historical_sha256": "f2258404ca880802da9bdb086f294aa88faf5eee0bbe0f66b833c0505b38c9c4",
       "current_sha256": "c29bf6a1e98ca1a01f47cff0faeb86aa3ad599d7081e671485ed4741455908dc",
       "reason": "Extend the frozen R5-1 successor chain through R5-12.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "64ecbba44fe0dcf8416e0af522e9ed3c84a5a33ef37db0a3dbac297631223d9d",
+      "current_sha256": "c59b57118b2b2ba0c9a34020a39eeae3dcdc7292c23b774b4573d48cf187709d",
+      "reason": "Extend the frozen W1 documentation successor chain through R5-12.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "47d047e3309592a6d3ac3d1831aa2eca11a7e7965e66edb65a1ed7bd50f2d4af",
+      "current_sha256": "36c0d2ff47c76350b953d4e5f0e38460188e75d0be6c864978aae064f8537c55",
+      "reason": "Extend the frozen v0.2 release-record successor chain through R5-12.",
       "introduced_by_phase": "R5-12"
     }
   },

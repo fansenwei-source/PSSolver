@@ -55,7 +55,10 @@ def test_r512_successor_registry_is_forward_only_and_exact():
         "tests/test_rc4_lifting_checkpoint_integration_record.py",
         "tests/test_rc455_public_robustness.py",
         "tests/test_rc456_tf32_execution_scope.py",
+        "tests/test_rc457_installed_consumer_impact.py",
+        "tests/test_rc457_installed_consumer_recovery.py",
         "tests/test_rc458_h100_closure_record.py",
+        "tests/test_rc4_post_release_findings.py",
         "tests/test_rc5_r510_channel_checkpoint_observation_record.py",
         "tests/test_rc5_r52_finite_workflow_record.py",
         "tests/test_rc5_r53_channel_checkpoint_record.py",
@@ -65,6 +68,8 @@ def test_r512_successor_registry_is_forward_only_and_exact():
         "tests/test_rc5_r58_checkpoint_integrity_record.py",
         "tests/test_rc5_r59_pressure_postcondition_record.py",
         "tests/test_rc5_legacy_functional_checkpoint_record.py",
+        "tests/test_rc5_w1_documentation.py",
+        "tests/test_release_v0_2.py",
         "tests/test_rc5_r511_metadata_strict_record.py",
     }
     for relative, registration in successors.items():
