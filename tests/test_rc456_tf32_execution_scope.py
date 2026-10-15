@@ -39,6 +39,7 @@ RC5_R53 = ROOT / (
 RC5_R55 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 RC5_R56 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
+RC5_R58 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 
 
 def _set_state(precision: str, matmul: bool, cudnn: bool) -> None:
@@ -62,6 +63,7 @@ def _resolve_rc457_successor(relative: str, historical: str) -> str:
         RC5_R55,
         RC5_R56,
         RC5_R57,
+        RC5_R58,
     ):
         successor = json.loads(record_path.read_text(encoding="utf-8"))[
             "historical_successor_sources"

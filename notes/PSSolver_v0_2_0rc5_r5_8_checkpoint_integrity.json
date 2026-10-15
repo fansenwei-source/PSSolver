@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc5 R5-8 checkpoint integrity and compatibility boundaries",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_R5_8_CHECKPOINT_INTEGRITY_CPU_CLOSURE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "implementation_commit": "52e57f1f4f406efcd92bb9245c13e9c635ba721c",
+    "qualified_source_commit": "52e57f1f4f406efcd92bb9245c13e9c635ba721c",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "primary": ["B7", "B24"],
+    "work_item": "R5-8",
+    "source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc4_consolidated_report.json",
+    "source_sha256": "db3e644bd97bc28ca046d0632aa2eae1b142ad6a208ad10b9dcb82cc42e6e6c6"
+  },
+  "contract": {
+    "channel_current_tensor_file_keys_exact": true,
+    "channel_current_backend_file_keys_exact": true,
+    "unknown_manifest_key_is_integrity_error": true,
+    "periodic_refresh_interval_bound_to_target_runtime": true,
+    "channel_refresh_interval_bound_to_target_runtime": true,
+    "refresh_policy_mismatch_is_compatibility_error": true,
+    "refresh_policy_mismatch_rejected_before_target_mutation": true,
+    "periodic_rc1_without_functional_bridge_rejected_by_functional_import": true,
+    "periodic_rc1_functional_explicit_state_only_migration_preserved": true,
+    "periodic_rc2_rc3_functional_direct_read_preserved": true,
+    "metadata_digest_missing_invalid_or_mismatched_is_integrity_error": true,
+    "functional_provenance_downgrade_is_integrity_error": true,
+    "generic_value_error_backward_compatibility_preserved": true
+  },
+  "implementation_files": {
+    "pssolver/functional/periodic_checkpoint.py": "e9bb8ea8e973132678c416eb8d5e91ba6e8731be863bff2201207a654a78e68a",
+    "pssolver/io/checkpoint.py": "17640a01cfce4b40ff375fba60057d02ce924a4cd66d99e1422155c9118fb44f",
+    "pssolver/workflows/channel_beris_edwards.py": "2511af5eb5e9dc9ef6f25246cfd5407fc4f86ed00fd544e03c1a9188b6b3cf56",
+    "pssolver/workflows/periodic_checkpoint.py": "41d8a4c8adac7cd185578a41b7d3f5c0875294b401ad47c7cb7e48c0267b8d27"
+  },
+  "regression_tests": {
+    "tests/test_rc453_checkpoint_transactionality.py": "bcd763bffd48318c838b5d9359db0afc7677684ab6b30003a86111cf67b2f150",
+    "tests/test_rc4_periodic_channel_checkpoint_identity.py": "b048d00a1c3ab4d52c4dd627435ff0d8ff78980a7db8f2c1f44aea23ff926ab0",
+    "tests/test_rc5_legacy_functional_checkpoints.py": "a421bfde2b5a8bb162697e6538b1f54961f1b1741d9b6d3fb73d34c843a20a8c",
+    "tests/test_rc426_functional_checkpoint_recovery_record.py": "2b38a8fde9862cf632bad937d2165aa42e90d18c155d9a7e7f9828f4071b82a8",
+    "tests/test_rc4_cross_device_checkpoint_plan.py": "80e0a19171547f2f4c1784775542cc88e4b5d81fcc9d44f940aca8d566baba3b",
+    "tests/test_rc4_functional_checkpoint_identity_record.py": "6bee37ae20dc67a8789ec732ce1b21a644d0c91476d4eeabd3b5b381ec28a5b0",
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py": "c4bd587c39d05ace63174ef2d10ed3f3f3bafdaca6c07d11b7ba885da8ded007",
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": "08e1570a25743ee0fc5820bb9ae46c3a40340b841e10bee5eed2372e2fd32f7f",
+    "tests/test_rc5_r53_channel_checkpoint_record.py": "ff3c5a5b72ce44b318a2d761417a82d2cd4e10e577505d24579c76e2633a7b74",
+    "tests/test_rc451_cross_runtime_adjudication.py": "7fd4c4f5e0eaeb58d9d1a2d0526146fe0257d3f91b003872dbf0f812c7b35760",
+    "tests/test_rc455_public_robustness.py": "e3a72b853fb81661b02aa393116125a505ebbc186eedc61c451a07a4ef1adf3c",
+    "tests/test_rc456_tf32_execution_scope.py": "6d84cc7656da5629980e1720e02b401950c9b1503f9c2ce25e00295e18ca4a67",
+    "tests/test_rc4_cross_runtime_robustness_plan.py": "f30c18015e2a3105994412da68d21980f5f5f3cf772ef386e4ecff89867f9792",
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": "7c951a807e74dd6f0643ee1c70e824661b0b2dbb8abe805dd05f85eb59702173",
+    "tests/test_rc4_pressure_public_contract.py": "741d6b9353ec45ee6f27fdddcd183091e22c5113dff94518f25734508ff8c055",
+    "tests/test_rc5_r52_finite_workflow_record.py": "a9c26bf24b3152bb0b0e6f704460d8b99a2ccafa416d3a77a1c3e19f23256b0a",
+    "tests/test_rc5_r55_tf32_state_restore.py": "0803d84edb847033cab663626e47093d3d236e6e0f056d7726f1ce48a941682c",
+    "tests/test_rc5_r56_public_error_boundary_record.py": "840db94c0682b5498a59824b51d950d91dbd1510228e7d2cdf0b96b6413334e4",
+    "tests/test_rc5_r57_device_normalization_record.py": "9bfbd7fb473c4c69e1ca7f921989b6eeb41da1a1f625d1e1cad668ea33612df5",
+    "tests/test_rc457_installed_consumer_impact.py": "156e48e3e4d7872e06f07235979bec4adf0338b4d48eb78cb581842f7b0606e7",
+    "tests/test_rc457_installed_consumer_recovery.py": "7121481ea31e2e73cc982eb966aa2c0134eafd4efc5fdbfc07e5c678069c30bd",
+    "tests/test_rc458_h100_closure_record.py": "e63e418bd7b47fecfa3ce8e4b590232395a4e63365a18205b48f175cc0a8b9d1",
+    "tests/test_rc4_post_release_findings.py": "8dc596554c5b3afd80da156f8d0543724892a622b6fd128ed72baeb124551ff8",
+    "tests/test_rc5_w1_documentation.py": "ad6daddbac8bb0ed6331ed9fa6f7ea75a6a097683073d4097e03c5ccc9ecc597",
+    "tests/test_release_v0_2.py": "afb4389ab9245efeff8ee396a541d0af004f8a562c89cf64c8b240107dd10acc"
+  },
+  "external_reproducers": {
+    "checkpoint_tamper.py": "526cb47e582ea6d98d45d0c4281249d302031b4b0b392adc022873b4300ecf12",
+    "channel_be_manifest_extra.py": "89974e4a9c2d75bafca56fc9ede7751f4244dbba2d4c6b6a3f6f86f046d23c68",
+    "refresh_interval_override.py": "9b377dcb1fd2af8d44c74ba26e24f8753b3bae8baf34ecf8f429e6f014f579da",
+    "b7_downgrade_legacy.py": "1772848c35fdeec9cc35135eea2943820141ff7470239f3c4799adf193317bba"
+  },
+  "historical_successor_sources": {
+    "pssolver/functional/periodic_checkpoint.py": {
+      "historical_sha256": "ce9b6ebfbc18afb5b74b94ba29baac803ff9c4d1ebf19f01d128e95d2ebf84ef",
+      "current_sha256": "e9bb8ea8e973132678c416eb8d5e91ba6e8731be863bff2201207a654a78e68a",
+      "reason": "Reject ambiguous bridge-less production-v1 carriers at the functional import boundary while preserving explicit rc1 state-only migration."
+    },
+    "pssolver/io/checkpoint.py": {
+      "historical_sha256": "3977ae6fa5294234f758e8e2c5367e2c565fc085c6d567013d8e4f798fa59df0",
+      "current_sha256": "17640a01cfce4b40ff375fba60057d02ce924a4cd66d99e1422155c9118fb44f",
+      "reason": "Classify metadata digest and functional provenance downgrade failures as checkpoint integrity errors."
+    },
+    "pssolver/workflows/channel_beris_edwards.py": {
+      "historical_sha256": "59dc069d64994e0f503411b780c8956202f25d99cb96832f91f5b71193883a24",
+      "current_sha256": "2511af5eb5e9dc9ef6f25246cfd5407fc4f86ed00fd544e03c1a9188b6b3cf56",
+      "reason": "Require exact current manifests, bind refresh policy to the target runtime, and classify import failures before mutation."
+    },
+    "pssolver/workflows/periodic_checkpoint.py": {
+      "historical_sha256": "642c86a251e8a806dd7b765cebc27f4cae0539b3a37b207aeff121272e4a7d43",
+      "current_sha256": "41d8a4c8adac7cd185578a41b7d3f5c0875294b401ad47c7cb7e48c0267b8d27",
+      "reason": "Bind refresh policy to the target runtime and use integrity or compatibility categories throughout production import gates."
+    },
+    "tests/test_rc453_checkpoint_transactionality.py": {
+      "historical_sha256": "25618f1a7ca64ababcc1c18fac7871c87c85b366cecbb8fb28288e17c23944f9",
+      "current_sha256": "bcd763bffd48318c838b5d9359db0afc7677684ab6b30003a86111cf67b2f150",
+      "reason": "Require classified metadata digest failures and extend the immutable successor chain through R5-8."
+    },
+    "tests/test_rc4_periodic_channel_checkpoint_identity.py": {
+      "historical_sha256": "6fe91a85a26c03120c9f79d94f1470a30a6064d2a9d7f12fee8608227f5360a1",
+      "current_sha256": "b048d00a1c3ab4d52c4dd627435ff0d8ff78980a7db8f2c1f44aea23ff926ab0",
+      "reason": "Freeze exact Channel manifests and pre-mutation Periodic and Channel refresh-policy rejection."
+    },
+    "tests/test_rc5_legacy_functional_checkpoints.py": {
+      "historical_sha256": "7e75470eb30feccc31c7d2d82a503286416dfd48b41b4e8ef5e94d111d10a829",
+      "current_sha256": "a421bfde2b5a8bb162697e6538b1f54961f1b1741d9b6d3fb73d34c843a20a8c",
+      "reason": "Freeze rejection of a stripped rc1 functional carrier before any tensor payload is opened."
+    },
+    "tests/test_rc426_functional_checkpoint_recovery_record.py": {
+      "historical_sha256": "9e9856c1a998ad2bbb50dcee0b6a3542db9a9925014e8cf3434508552bfbae83",
+      "current_sha256": "2b38a8fde9862cf632bad937d2165aa42e90d18c155d9a7e7f9828f4071b82a8",
+      "reason": "Extend the immutable RC4.2.6 successor resolver through the R5-8 checkpoint boundary record."
+    },
+    "tests/test_rc4_cross_device_checkpoint_plan.py": {
+      "historical_sha256": "3077ec79db4bc8a51e7898a19d196382342d95041fedc6d047cc787247e02587",
+      "current_sha256": "80e0a19171547f2f4c1784775542cc88e4b5d81fcc9d44f940aca8d566baba3b",
+      "reason": "Extend the immutable cross-device checkpoint successor resolver through R5-8."
+    },
+    "tests/test_rc4_functional_checkpoint_identity_record.py": {
+      "historical_sha256": "9ad95489ce9916c681191db3b5420c6f3cd053c8ae8a59be6d08149d0c6cdaa6",
+      "current_sha256": "6bee37ae20dc67a8789ec732ce1b21a644d0c91476d4eeabd3b5b381ec28a5b0",
+      "reason": "Extend the immutable functional checkpoint identity successor resolver through R5-8."
+    },
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py": {
+      "historical_sha256": "efc2a77e14b94662a4fce3b76ee85dbdd176a3294ef0a85c410faabf8a262657",
+      "current_sha256": "c4bd587c39d05ace63174ef2d10ed3f3f3bafdaca6c07d11b7ba885da8ded007",
+      "reason": "Extend the immutable Periodic and Channel identity successor resolver through R5-8."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "864a76b10d85fd49bc743cbca69215da8967340be034f2b8fc440c3567a182a4",
+      "current_sha256": "08e1570a25743ee0fc5820bb9ae46c3a40340b841e10bee5eed2372e2fd32f7f",
+      "reason": "Extend the immutable R5-1 legacy functional checkpoint successor resolver through R5-8."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "1be5202a15d45d0b21dccfeaa9227ed78d255a15f8b103d1647c7686574ca12f",
+      "current_sha256": "ff3c5a5b72ce44b318a2d761417a82d2cd4e10e577505d24579c76e2633a7b74",
+      "reason": "Extend the immutable R5-3 Channel checkpoint successor resolver through R5-8."
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "762ea4665ddfb20031aa9b4bb15e37dcb14f9fe31dde102877542b7cdb2692d8",
+      "current_sha256": "7fd4c4f5e0eaeb58d9d1a2d0526146fe0257d3f91b003872dbf0f812c7b35760",
+      "reason": "Extend the immutable RC4.5.1 successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "4e611df82262707791c79cf522b995604e794e0f3b6af55d1a4d1a269c8490aa",
+      "current_sha256": "e3a72b853fb81661b02aa393116125a505ebbc186eedc61c451a07a4ef1adf3c",
+      "reason": "Extend the immutable RC4.5.5 successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "3b171029609b1e475111bc312c5552e2b7337260b2090fbf72abf79bbb22389c",
+      "current_sha256": "6d84cc7656da5629980e1720e02b401950c9b1503f9c2ce25e00295e18ca4a67",
+      "reason": "Extend the immutable RC4.5.6 successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {
+      "historical_sha256": "034c8263688b613eba91ec0e0cc3e917cef3680bde4c1ab2c6b5d80f67046bee",
+      "current_sha256": "f30c18015e2a3105994412da68d21980f5f5f3cf772ef386e4ecff89867f9792",
+      "reason": "Extend the immutable RC4.5.0 successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {
+      "historical_sha256": "dd1c041e5a5c216711fe075eab2960cf645490fe79256f97b52c5aea04bd1d5f",
+      "current_sha256": "7c951a807e74dd6f0643ee1c70e824661b0b2dbb8abe805dd05f85eb59702173",
+      "reason": "Extend the immutable RC4.4.4 successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc4_pressure_public_contract.py": {
+      "historical_sha256": "11e75e5c4c953f1593b506cd7e6670636ba1e93ce92f4a2d226c4392950a2694",
+      "current_sha256": "741d6b9353ec45ee6f27fdddcd183091e22c5113dff94518f25734508ff8c055",
+      "reason": "Extend the immutable RC4.4.2 successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "fe5fd70c7403c72053983ef1d023e48f59fb775f67e07cc246e938798bca58ac",
+      "current_sha256": "a9c26bf24b3152bb0b0e6f704460d8b99a2ccafa416d3a77a1c3e19f23256b0a",
+      "reason": "Extend the immutable R5-2 successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "869974e5e2ba83cd08f8ad5ac0cfd4c0e1a69c11d86227c1b75b14cd6923a5fe",
+      "current_sha256": "0803d84edb847033cab663626e47093d3d236e6e0f056d7726f1ce48a941682c",
+      "reason": "Extend the immutable R5-5 successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "506e6f4e03572272dab819c50dce8182ad449d6b806bdf5ee756656276844aa1",
+      "current_sha256": "840db94c0682b5498a59824b51d950d91dbd1510228e7d2cdf0b96b6413334e4",
+      "reason": "Extend the immutable R5-6 successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "418a8fe731e1d6d794933f04fca1d5f45e5d8a3c3c301d277243f5c86774db8e",
+      "current_sha256": "9bfbd7fb473c4c69e1ca7f921989b6eeb41da1a1f625d1e1cad668ea33612df5",
+      "reason": "Extend the immutable R5-7 successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "f9e80131a00f29fadb1c9ce69d600743a03056d864474bc87f72de81b371a71b",
+      "current_sha256": "156e48e3e4d7872e06f07235979bec4adf0338b4d48eb78cb581842f7b0606e7",
+      "reason": "Extend the immutable RC4.5.7 initial consumer successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "055af81225eb323dce7e8799173cdcedee1b80a15260004a44ad69665a6747b3",
+      "current_sha256": "7121481ea31e2e73cc982eb966aa2c0134eafd4efc5fdbfc07e5c678069c30bd",
+      "reason": "Extend the immutable RC4.5.7 recovery successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "8193875ab6b3ecbf7d5d08283cf1f43d184c0ad275acea70ba125635ede3c9c4",
+      "current_sha256": "e63e418bd7b47fecfa3ce8e4b590232395a4e63365a18205b48f175cc0a8b9d1",
+      "reason": "Extend the immutable RC4.5.8 successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "077c4db4bfa81972d30657c0341e85248838b46d1c649c9b4801beadf84eea6b",
+      "current_sha256": "8dc596554c5b3afd80da156f8d0543724892a622b6fd128ed72baeb124551ff8",
+      "reason": "Extend the immutable RC4 post-release successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "8a44261c7f95f753be899aa445b2213012d046161a5e6190323816df8c048643",
+      "current_sha256": "ad6daddbac8bb0ed6331ed9fa6f7ea75a6a097683073d4097e03c5ccc9ecc597",
+      "reason": "Extend the immutable W1 documentation successor resolver through R5-8 without rewriting the historical record."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "23b15c7209a391ee10b29ae338349ce4c6853e6c4ac604a98a5d1dd7f1ba8cdb",
+      "current_sha256": "afb4389ab9245efeff8ee396a541d0af004f8a562c89cf64c8b240107dd10acc",
+      "reason": "Extend the immutable v0.2.0rc4 release successor resolver through R5-8 without rewriting the historical record."
+    }
+  },
+  "validation": {
+    "external_reproducer": "PASS: exact Channel manifests, target-bound refresh policy, and stripped rc1 functional carrier were rejected with the frozen categories",
+    "targeted_cpu": "61 passed, 0 failed",
+    "checkpoint_regression_cpu": "208 passed, 0 failed",
+    "source_full_cpu": "3555 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_targeted_cpu": "61 passed, 0 failed",
+    "installed_wheel_applicable_full_cpu": "3548 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_source_only_exclusion": {
+      "path": "tests/test_phase8_p861_local_cumulative_audit.py",
+      "test_count": 7
+    }
+  },
+  "installed_wheel_evidence": {
+    "directory": "/home/fansenwei/pssolver_rc5_r58_installed_cpu_52e57f1_20261014_v1",
+    "source_archive": "package/provider_52e57f1.tar",
+    "source_archive_sha256": "e90293c3a8f5ad42bef5baa9fe4e212284855e6b47af3d4077d8a5e62fce3239",
+    "wheel": "package/dist/pssolver-0.2.0rc4-py3-none-any.whl",
+    "wheel_sha256": "93ef0bb2127b7c466cddf679d5978b13199d1a313890c788d04e9f20be7b5c21",
+    "python": "3.12.13",
+    "torch": "2.6.0",
+    "torch_cuda_runtime": "12.6",
+    "numpy": "2.3.2",
+    "scipy": "1.16.0",
+    "pssolver_import": "/home/fansenwei/pssolver_rc5_r58_installed_cpu_52e57f1_20261014_v1/venv/lib/python3.12/site-packages/pssolver/__init__.py",
+    "source_shadow_import": false,
+    "pip_check": "PASS",
+    "nematics3d_modified": false,
+    "qualification_harness_note": "The final installed-wheel runner preloaded the installed package before adding repository-only benchmark and test-support modules; its working directory was then set to the repository root for seven Stage E-K relative-path audits."
+  },
+  "scope": {
+    "scientific_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "checkpoint_file_schema_changed": false,
+    "checkpoint_acceptance_semantics_changed": true,
+    "runtime_scientific_identity_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "r5_8_cpu_closure_complete": true,
+    "eligible_for_next_work_item": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

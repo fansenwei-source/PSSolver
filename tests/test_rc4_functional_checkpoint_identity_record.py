@@ -44,6 +44,9 @@ RC5_R52_SUCCESSOR_RECORD = ROOT / (
 RC5_R57_SUCCESSOR_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 )
+RC5_R58_SUCCESSOR_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -65,6 +68,7 @@ def _registered_successor(relative: str, historical_sha256: str) -> dict[str, ob
         RC5_R51_SUCCESSOR_RECORD,
         RC5_R52_SUCCESSOR_RECORD,
         RC5_R57_SUCCESSOR_RECORD,
+        RC5_R58_SUCCESSOR_RECORD,
     ):
         record = json.loads(path.read_text(encoding="utf-8"))
         registration = record["historical_successor_sources"].get(relative)
@@ -92,6 +96,7 @@ def _assert_successor_chain(
         RC5_R51_SUCCESSOR_RECORD,
         RC5_R52_SUCCESSOR_RECORD,
         RC5_R57_SUCCESSOR_RECORD,
+        RC5_R58_SUCCESSOR_RECORD,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"

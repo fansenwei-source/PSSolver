@@ -17,6 +17,7 @@ from pssolver.configuration.public_simulation_runner import (
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 R5_7_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
+R5_8_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 
 
 def _record() -> dict[str, object]:
@@ -28,15 +29,17 @@ def _sha256(relative: str) -> str:
 
 
 def _r57_successor(relative: str, historical: str) -> str:
-    registration = json.loads(R5_7_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ].get(relative)
-    if (
-        registration is not None
-        and registration["historical_sha256"] == historical
-    ):
-        return registration["current_sha256"]
-    return historical
+    resolved = historical
+    for path in (R5_7_RECORD, R5_8_RECORD):
+        registration = json.loads(path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if (
+            registration is not None
+            and registration["historical_sha256"] == resolved
+        ):
+            resolved = registration["current_sha256"]
+    return resolved
 
 
 def test_r56_record_declares_cpu_closure_without_scope_expansion():

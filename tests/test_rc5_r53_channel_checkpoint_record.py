@@ -14,6 +14,7 @@ RECORD = ROOT / (
 R5_5_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 R5_6_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 R5_7_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
+R5_8_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 
 
 def _record() -> dict[str, object]:
@@ -26,7 +27,7 @@ def _sha256(relative: str) -> str:
 
 def _latest_successor(relative: str, historical: str) -> str:
     resolved = historical
-    for record_path in (R5_5_RECORD, R5_6_RECORD, R5_7_RECORD):
+    for record_path in (R5_5_RECORD, R5_6_RECORD, R5_7_RECORD, R5_8_RECORD):
         registration = json.loads(record_path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)

@@ -20,6 +20,9 @@ RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 RC5_R51 = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_1_legacy_functional_checkpoint.json"
 )
+RC5_R58 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -32,7 +35,7 @@ def _sha256(relative: str) -> str:
 
 def _assert_successor_chain(relative, historical_sha256, current_sha256):
     observed = historical_sha256
-    for path in (RC444, RC453, RC5_R51):
+    for path in (RC444, RC453, RC5_R51, RC5_R58):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)

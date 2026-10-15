@@ -1,0 +1,96 @@
+"""Static closure record for R5-8 checkpoint integrity contracts."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
+R5_7_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
+
+
+def _record() -> dict[str, object]:
+    return json.loads(RECORD.read_text(encoding="utf-8"))
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def test_r58_record_binds_implementation_and_exact_sources():
+    record = _record()
+    assert record["git_identity"] == {
+        "branch": "fix/v0.2.0rc5",
+        "implementation_commit": "52e57f1f4f406efcd92bb9245c13e9c635ba721c",
+        "qualified_source_commit": "52e57f1f4f406efcd92bb9245c13e9c635ba721c",
+        "record_commit_is_qualified_source": False,
+        "pushed": False,
+    }
+    for section in ("implementation_files", "regression_tests"):
+        for relative, expected in record[section].items():
+            assert _sha256(ROOT / relative) == expected
+    for relative, registration in record["historical_successor_sources"].items():
+        assert registration["historical_sha256"] != registration["current_sha256"]
+        assert _sha256(ROOT / relative) == registration["current_sha256"]
+        assert registration["reason"]
+
+
+def test_r58_contract_is_fail_closed_and_pre_mutation():
+    contract = _record()["contract"]
+    for key in (
+        "channel_current_tensor_file_keys_exact",
+        "channel_current_backend_file_keys_exact",
+        "unknown_manifest_key_is_integrity_error",
+        "periodic_refresh_interval_bound_to_target_runtime",
+        "channel_refresh_interval_bound_to_target_runtime",
+        "refresh_policy_mismatch_is_compatibility_error",
+        "refresh_policy_mismatch_rejected_before_target_mutation",
+        "periodic_rc1_without_functional_bridge_rejected_by_functional_import",
+        "periodic_rc1_functional_explicit_state_only_migration_preserved",
+        "periodic_rc2_rc3_functional_direct_read_preserved",
+        "metadata_digest_missing_invalid_or_mismatched_is_integrity_error",
+        "functional_provenance_downgrade_is_integrity_error",
+        "generic_value_error_backward_compatibility_preserved",
+    ):
+        assert contract[key] is True
+
+
+def test_r58_does_not_rewrite_r57_or_claim_out_of_scope_work():
+    record = _record()
+    assert _sha256(R5_7_RECORD) == (
+        "d216a566fb1bc43ae70da88ac0134ab60597c86960423d283a1fb060299251ed"
+    )
+    scope = record["scope"]
+    assert scope["checkpoint_acceptance_semantics_changed"] is True
+    for key in (
+        "scientific_equations_changed",
+        "numerical_algorithms_changed",
+        "checkpoint_file_schema_changed",
+        "runtime_scientific_identity_changed",
+        "production_default_changed",
+        "PSSolver_Control_modified",
+        "nematics3d_modified",
+        "H100_required",
+        "H100_executed",
+        "push_executed",
+    ):
+        assert scope[key] is False
+
+
+def test_r58_final_status_requires_completed_cpu_closure():
+    record = _record()
+    completed = record["status"] == "implementation_complete_cpu_verified"
+    if completed:
+        assert record["classification"] == (
+            "PASS_R5_8_CHECKPOINT_INTEGRITY_CPU_CLOSURE"
+        )
+        assert record["installed_wheel_evidence"] is not None
+        assert record["authorization"]["r5_8_cpu_closure_complete"] is True
+        assert record["authorization"]["eligible_for_next_work_item"] is True
+    else:
+        assert record["status"] == "implementation_complete_validation_pending"
+        assert record["classification"].startswith("PENDING_")
+        assert record["authorization"]["r5_8_cpu_closure_complete"] is False

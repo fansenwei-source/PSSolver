@@ -48,6 +48,7 @@ RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
 RC5_R53 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
 RC5_R56 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
+RC5_R58 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 
 
 def _record() -> dict[str, object]:
@@ -396,6 +397,7 @@ def test_rc442_reviewed_sources_are_content_addressed():
         RC5_R53,
         RC5_R56,
         RC5_R57,
+        RC5_R58,
     ):
         record = json.loads(path.read_text(encoding="utf-8"))
         successor_records.append(

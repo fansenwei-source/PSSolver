@@ -18,10 +18,29 @@ R5_3_RECORD = ROOT / (
 R5_5_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 R5_6_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 R5_7_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
+R5_8_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def _latest_successor(relative: str, historical: str) -> str:
+    resolved = historical
+    for path in (
+        R5_2_RECORD,
+        R5_3_RECORD,
+        R5_5_RECORD,
+        R5_6_RECORD,
+        R5_7_RECORD,
+        R5_8_RECORD,
+    ):
+        successor = json.loads(path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+    return resolved
 
 
 def test_r51_record_binds_implementation_fixture_and_regressions():
@@ -32,7 +51,7 @@ def test_r51_record_binds_implementation_fixture_and_regressions():
     )
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
-            assert _sha256(relative) == expected
+            assert _sha256(relative) == _latest_successor(relative, expected)
     fixture = record["fixture"]
     assert _sha256(fixture["manifest"]) == fixture["manifest_sha256"]
     assert fixture["checkpoint_families"] == 6
@@ -56,6 +75,9 @@ def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
     r5_7_successors = json.loads(R5_7_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    r5_8_successors = json.loads(R5_8_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
@@ -76,6 +98,9 @@ def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = r5_7_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = r5_8_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(relative) == resolved
