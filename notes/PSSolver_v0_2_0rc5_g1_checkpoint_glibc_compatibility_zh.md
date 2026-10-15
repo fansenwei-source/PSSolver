@@ -8,4 +8,6 @@
 
 新增测试覆盖旧 glibc 成功路径、空目录竞态拒绝、内核 `ENOSYS` 和未知架构。核心兼容/事务/历史记录集合为 `65 passed, 2 skipped`；整个非 CUDA checkpoint 集合为 `318 passed, 0 failed`；完整 CPU suite 为 `3716 passed, 1 skipped, 7 deselected, 8 subtests passed, 0 failed`。受影响的 RC4.5.x 与 R5-1 至 R5-13 历史记录保持逐字节不变；各静态门禁只通过新的 forward-only successor record 继续解析当前源码哈希。
 
-本阶段只完成 CPU compatibility candidate。没有运行 H100、没有 push，也没有修改 PSSolver-Control 或 nematics3d。下一步是在 HPCC 登录节点用 fresh installed wheel 执行 glibc 2.17 checkpoint smoke；完成后才能请求新的 push 与单次 H100 recovery 授权。
+随后从提交 `dabeb9a487a82700ddd364c4233941a175808a3a` 的干净 archive 在 HPCC 构建并安装 fresh wheel。`/tmp` 上的真实 glibc 2.17 路径通过 checkpoint 发布、空目标竞态拒绝和 staging 清理；`/home` 与 `/scratch1` 的 NFS 对该 flag 返回 `EINVAL`，实现安全失败而没有退回非原子算法。控制归档位于 `/home/fansenwei/pssolver_rc5_g1_checkpoint_glibc_cpu_dabeb9a_20261015_v1`，校验为 `11/11 PASS`。
+
+本阶段完成的是 installed-wheel CPU compatibility candidate，不是 G-1 H100 closure。没有运行 H100、没有 push，也没有修改 PSSolver-Control 或 nematics3d。下一步需要用户另行明确授权 push 以及一次不得自动重试的 G-1 H100 recovery。

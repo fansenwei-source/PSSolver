@@ -5,6 +5,12 @@
   "classification": "PASS_RC5_G1_CHECKPOINT_GLIBC_2_17_CPU_COMPATIBILITY_CANDIDATE",
   "qualification_complete": false,
   "g1_complete": false,
+  "git_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "qualified_source_commit": "dabeb9a487a82700ddd364c4233941a175808a3a",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
   "trigger": {
     "job_id": "10885517",
     "failure_record": "notes/PSSolver_v0_2_0rc5_g1_h100_failure.json",
@@ -52,6 +58,22 @@
       "deselected": 7,
       "subtests_passed": 8,
       "failed": 0
+    },
+    "installed_wheel_hpcc_cpu": {
+      "classification": "PASS_RC5_G1_GLIBC_2_17_INSTALLED_WHEEL_CPU_SMOKE_WITH_FILESYSTEM_SCOPE",
+      "control_directory": "/home/fansenwei/pssolver_rc5_g1_checkpoint_glibc_cpu_dabeb9a_20261015_v1",
+      "provider_archive_sha256": "c018935355cca3586133dd8cdfa3d7c01efa647e1455d79e77c171a6363635fc",
+      "wheel_sha256": "954072040dc1681529c29e09d80f2fe9112d73442b98932978e1739c90212b22",
+      "glibc": "2.17",
+      "renameat2_wrapper_present": false,
+      "tmp_atomic_publication": "PASS",
+      "tmp_racing_empty_target_rejected": true,
+      "home_nfs": "FAIL_CLOSED_EINVAL",
+      "scratch1_nfs": "FAIL_CLOSED_EINVAL",
+      "source_shadow_import": false,
+      "pip_check": "PASS",
+      "checksum_verification": "11/11 PASS",
+      "checksum_manifest_sha256": "0ed5ebd4761129b5ff772b223e532acf7fecdc5f0ef21f04672cc248607fc9c9"
     },
     "hpcc_raw_syscall_probe": "PASS",
     "git_diff_check": "PASS"
@@ -186,5 +208,5 @@
     "h100_executed_for_this_fix": false,
     "push_executed_for_this_fix": false
   },
-  "next_gate": "build_and_validate_a_fresh_installed_wheel_on_hpcc_cpu_then_request_separate_push_and_single_h100_recovery_authorization"
+  "next_gate": "request_explicit_push_and_single_h100_recovery_authorization_without_automatic_retry"
 }
