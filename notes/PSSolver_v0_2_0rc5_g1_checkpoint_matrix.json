@@ -1,0 +1,105 @@
+{
+  "phase": "G-1.2",
+  "date": "2026-10-15",
+  "status": "checkpoint_matrix_complete_control_migration_required",
+  "classification": "PASS_RC5_G1_RELEASED_CHECKPOINT_MATRIX_WITH_PROVIDER_IDENTITY_MIGRATION_REQUIRED",
+  "qualified_source": {
+    "commit": "674a8121779be72c95aa5dc9e2babca0ce7b93a9",
+    "package_version": "0.2.0rc5",
+    "record_commit_is_qualified_source": false,
+    "requires_checkpoint_matrix_requalification": false
+  },
+  "released_checkpoint_matrix": {
+    "complete": true,
+    "primary_case_count": 13,
+    "external_fixture_crosscheck": {
+      "passed": 10,
+      "failed": 0
+    },
+    "rc1_rc3_installed_wheel_tests": {
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "xml_sha256": "6a01e2cc6f8ce0e8db81c278ff891b8f6068dde44dff5c7ef02ccbe088726e35"
+    },
+    "rc4_writer": {
+      "version": "0.2.0rc4",
+      "published_wheel_sha256": "1bf31f324180dac58777a23785fb4e1424d3cc589099cf8c6328e2f6c74d8cc5",
+      "periodic_functional_exact": true,
+      "channel_functional_exact": true,
+      "legacy_channel_exact": true,
+      "source_checkpoints_unchanged": true
+    },
+    "rc5_self_round_trip": {
+      "periodic_functional_exact": true,
+      "channel_functional_exact": true,
+      "legacy_channel_exact": true,
+      "source_checkpoints_unchanged": true
+    },
+    "fail_closed_dispositions_preserved": {
+      "rc1_periodic_functional": "explicit_state_only_migration",
+      "rc1_channel_functional": "explicit_state_only_migration",
+      "rc2_channel_functional": "explicit_state_only_migration",
+      "rc1_legacy_channel_even": "reject_pre_rc4_1_forward_nyquist_before_mutation"
+    }
+  },
+  "provider_identity_impact": {
+    "review_complete": true,
+    "periodic": {
+      "changed": true,
+      "rc4_sha256": "abd09b19055cfbac809fa67445a5166d4ee3338e9c439d54da08bd99e105428f",
+      "rc5_sha256": "8185c6d4a82d796c9f91857f64d38a9ed7cf6d5641e26423b774c1e561052058",
+      "only_changed_path": "execution.functional_runtime.hermitian_state_projection",
+      "old_value": "self_conjugate_planes_each_step",
+      "new_value": "self_conjugate_stored_planes_projection_each_step.v2"
+    },
+    "channel": {
+      "changed": false,
+      "rc4_sha256": "3bceb9b2cc1793f1ffa777abcad9d91af4eb6e17da41b7507f26d882259ebd12",
+      "rc5_sha256": "3bceb9b2cc1793f1ffa777abcad9d91af4eb6e17da41b7507f26d882259ebd12"
+    }
+  },
+  "consumer_impact": {
+    "qualified_rc4_consumer_wheel_sha256": "c7330f3759e01defc824f2492240974b744abc4872c20060d90ca957b2f35ade",
+    "unrestricted_rc5_cpu_construction_passed": true,
+    "periodic_rc4_identity_pin_rejects_rc5": true,
+    "channel_rc4_identity_pin_accepts_rc5": true,
+    "PSSolver_Control_migration_required": true,
+    "PSSolver_Control_installed_wheel_requalification_required": true
+  },
+  "rejected_harness_preflight": {
+    "classification": "EXTERNAL_HARNESS_DISCRETIZATION_NONE_ERROR",
+    "used_as_qualification_evidence": false,
+    "rc4_and_rc5_failed_identically": true,
+    "corrected_to_empty_mapping": true
+  },
+  "external_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_checkpoint_matrix_674a812_20261015_v1",
+    "final_report_sha256": "28736ad93ed01c5671af5979ae43cbf5a9123684ce767274cb1ef6200097e7ba",
+    "analysis_sha256": "41e29158b5272c091fecd347589144ca7874a623bf96e71ca1e060d5c5e2ecba",
+    "summary_json_sha256": "3637eb7c270171ff7541d66d893ed409d50988f2bb5064aa2790f6ed7c83447e",
+    "summary_csv_sha256": "b6d61ece6b3054620cfed64b7a9ddfd7672d2ce419618868758e32c91fbe26c3",
+    "environment_sha256": "114e184b84cacebd2dc1c2b25a2e37a790cae6cea58b1d82e866f78a721a36cc",
+    "fixture_crosscheck_sha256": "91784f2337f7fe3ed9f37306fb590c7e0fa50f3fc586c10d781466e7e2b17cc2",
+    "control_impact_sha256": "9de3b37805fd3c16a0a3aa641dee0753cc1893480fde936187407573ef54ad7b",
+    "checksum_entries": 123,
+    "checksum_passed": 123,
+    "checksum_failed": 0,
+    "checksums_sha256": "6bc84435b3dab444156a87ba7ddc5981f93989c38098dfa3f9e56d8dcff9d627"
+  },
+  "authorization": {
+    "checkpoint_matrix_complete": true,
+    "provider_identity_impact_review_complete": true,
+    "g1_complete": false,
+    "eligible_for_h100_submission": false,
+    "h100_submission_count": 0,
+    "automatic_retry": false,
+    "push_executed": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false,
+    "production_default_changed": false,
+    "nematics3d_modified": false
+  },
+  "next_gate": "pssolver_control_periodic_identity_migration_and_installed_wheel_qualification"
+}
