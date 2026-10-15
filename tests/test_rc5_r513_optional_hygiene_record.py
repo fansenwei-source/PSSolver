@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
+G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
 
 
 def _record() -> dict[str, object]:
@@ -19,13 +20,20 @@ def _sha256(relative: str) -> str:
 
 def test_r513_record_binds_new_and_successor_sources():
     record = _record()
+    g1_successors = json.loads(G1_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, expected in record["new_sources"].items():
         assert _sha256(relative) == expected
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
         assert registration["historical_sha256"] != registration["current_sha256"]
-        assert _sha256(relative) == registration["current_sha256"]
+        resolved = registration["current_sha256"]
+        successor = g1_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        assert _sha256(relative) == resolved
         assert registration["introduced_by_phase"] == "R5-13"
         assert registration["reason"]
 

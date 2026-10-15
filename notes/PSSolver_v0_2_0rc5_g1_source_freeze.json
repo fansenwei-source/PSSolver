@@ -1,0 +1,104 @@
+{
+  "phase": "G-1.0",
+  "date": "2026-10-15",
+  "status": "source_freeze_prepared",
+  "classification": "READY_FOR_FROZEN_SOURCE_CPU_QUALIFICATION",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "freeze_parent_commit": "b0356b5c5ef7045aaa7814aab581dea4b5a10890",
+    "runtime_implementation_commit": "91c702c3deeb3e973fac80b6029e9dd02925937b",
+    "freeze_commit": null,
+    "pushed": false
+  },
+  "version_contract": {
+    "previous_package_version": "0.2.0rc4",
+    "frozen_candidate_version": "0.2.0rc5",
+    "functional_api_version": "1.0",
+    "functional_api_version_changed": false,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false
+  },
+  "versioned_sources": {
+    "pssolver/_version.py": {
+      "historical_sha256": "402c24acb5d2817b8ad008d4597b32b6d40cd98c093429c1db24febfb6cb21d8",
+      "current_sha256": "64296d8b7c8f246ed8d55eff321ecd65d7c1f0d42d0cac6ae6946014a6063eac"
+    },
+    "README.md": {
+      "historical_sha256": "ad1b4f1d53edbbe763f5538676405e11eb5e61896e05ad7964482fafef4e96d5",
+      "current_sha256": "e00bf2b2f457245a484e68e6afa432d170edfbf5fe504b4f416bb9114f2d2854"
+    },
+    "CHANGELOG.md": {
+      "historical_sha256": "d0bd6dc6ec323120bc0a8134368e76b179b4ac2ea34c1ab7e10815e76fe1ac2d",
+      "current_sha256": "d63c9522c896fca03e2e5d3a494b4f4ba62744ddbe16fd1f7f17cc946947453a"
+    },
+    "MANIFEST.in": {
+      "historical_sha256": "fa9100a8ef0ffdac16c873230498341f5c0376ab85d65d8a0b8d806e199e0169",
+      "current_sha256": "c1e93976ea7d7721aaecf0adcfcd796ec4921b1f04d4a9502bc3223618ad853f"
+    }
+  },
+  "new_sources": {
+    "notes/pssolver_v0_2_0_rc5.md": "155bdc83b1cd008cf50763cd79c100ab8ba8a91e0fefd458e2dfd715ffae1d15",
+    "notes/pssolver_v0_2_0_rc5.json": "ad0df6451982cf89cd67177b7c40080c9b22fe7bd190672bbbec0ebd8c946b40",
+    "tests/test_release_v0_2_rc5.py": "33bd98be07779dc6193cd00cf3d6cc8afa3f95b2b473068ec9d62c8e545970a4"
+  },
+  "historical_successor_sources": {
+    "tests/test_release_v0_1.py": {
+      "historical_sha256": "3456a7feb53a6869cec60a09a68b920cd5050356e8ee9fbabca08502b4e7f33b",
+      "current_sha256": "1ecba774f4dde8364af1ee7b1b8f9cbf5b883acb50b191c572901950b3bb0ac0",
+      "reason": "make the generic release-document smoke follow the current rc5 README without rewriting any historical release record"
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "75692502c3f06a42fd89735743ba9aa596406b40bd0c79c7e9bdc78bdccc0412",
+      "current_sha256": "e8e25ae3f89193adba0a30615dd6f1f993f34814ab7dac8d8584420f27bfdfbe",
+      "reason": "retain rc4 as an immutable historical release contract and move current-version assertions into the rc5 freeze test"
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "3f95dc4cfc9cdbbcdce819ad66dd8fe7bec9ce46903092b5748a114c69ca6471",
+      "current_sha256": "1586dc2b802abe4b1633ce68d00a7f7660983412bc03fa7c39f30351d79deabb",
+      "reason": "resolve the forward-only source-freeze successor while preserving the R5-13 record byte for byte"
+    }
+  },
+  "gate_order": [
+    "frozen_source_full_cpu",
+    "frozen_installed_wheel_cpu",
+    "released_checkpoint_matrix_rc1_through_rc4",
+    "provider_identity_impact_review",
+    "pssolver_control_installed_wheel_qualification_if_required",
+    "single_h100_cumulative_qualification",
+    "post_release_verification"
+  ],
+  "single_h100_scope": {
+    "authorized": false,
+    "required": true,
+    "automatic_retry": false,
+    "required_gates": [
+      "cuda_only_tests",
+      "cpu_cuda_checkpoint_matrix",
+      "released_checkpoint_matrix_rc1_through_rc4",
+      "tf32_caller_state_including_medium",
+      "standard_numerical_non_regression",
+      "memory_non_regression",
+      "performance_non_regression"
+    ]
+  },
+  "scope": {
+    "scientific_equations_changed_by_freeze": false,
+    "production_default_changed": false,
+    "checkpoint_schema_changed": false,
+    "lifting_reopened": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false
+  },
+  "authorization": {
+    "source_freeze_prepared": true,
+    "g1_complete": false,
+    "eligible_for_push": false,
+    "eligible_for_h100_submission": false,
+    "h100_submission_count": 0,
+    "automatic_retry": false
+  }
+}

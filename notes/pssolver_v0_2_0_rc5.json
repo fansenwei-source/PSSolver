@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "release": "0.2.0rc5",
+  "date": "2026-10-15",
+  "status": "source_freeze_preparation",
+  "source": {
+    "branch": "fix/v0.2.0rc5",
+    "freeze_parent_commit": "b0356b5c5ef7045aaa7814aab581dea4b5a10890",
+    "runtime_implementation_commit": "91c702c3deeb3e973fac80b6029e9dd02925937b",
+    "r5_13_qualified_source_commit": "0bcdd32ccfbabc48c7babedff500882d737ddc5a",
+    "immutable_rc4_tag": "v0.2.0rc4",
+    "immutable_rc4_tag_commit": "658869456d7622de9dad607fa3d2572e41b58ac3",
+    "freeze_commit": null
+  },
+  "public_contract": {
+    "package_version": "0.2.0rc5",
+    "functional_api_version": "1.0",
+    "models": 2,
+    "geometries": 3,
+    "boundary_policies": 8,
+    "qualified_combinations": 4,
+    "runtime_paths": 6,
+    "functional_batch_sizes": [1],
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false,
+    "checkpoint_schema_changed_by_freeze": false
+  },
+  "completed_work": {
+    "W0": "evidence_registered",
+    "W1": "documentation_aligned",
+    "R5-1": "released_functional_checkpoint_compatibility_closed",
+    "R5-2": "finite_workflow_completion_closed",
+    "R5-3": "legacy_channel_dynamics_identity_closed",
+    "R5-4": "packaging_surface_closed",
+    "R5-5": "tf32_caller_state_restoration_closed",
+    "R5-6": "public_error_boundary_closed",
+    "R5-7": "device_normalization_closed",
+    "R5-8": "checkpoint_integrity_closed",
+    "R5-9": "pressure_postconditions_closed",
+    "R5-10": "channel_checkpoint_observation_closed",
+    "R5-11": "periodic_metadata_contract_closed",
+    "R5-12": "compiled_simulation_integrity_closed",
+    "R5-13": "optional_hygiene_installed_wheel_cpu_verified"
+  },
+  "work_evidence": {
+    "notes/PSSolver_v0_2_0rc5_w1_documentation.json": "2a25c4ee6298392632d115e017a299f01a14cfb41779a9b8768d2dc8432267ee",
+    "notes/PSSolver_v0_2_0rc5_r5_1_legacy_functional_checkpoint.json": "92daca0d192a885773f73ebc6a48855cc52a4f944626d68dfb7b2f5c4df61567",
+    "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json": "a24742f32fe6365a4aeebc0b468267ca5f1b23553980701c81794d6eac6ac7a1",
+    "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json": "4b63df3f0f2b265b306d876c6c57a523bd8bf9d5fa82b629bf88e8ff2e10f5d9",
+    "notes/PSSolver_v0_2_0rc5_r5_4_packaging_surface.json": "45dc93271c1ca7901e3b501e701a1024ce67b3831b4d4611f71524975efb317d",
+    "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json": "38f7bf5f015322a52972d90bbadef7339d58cf0d6775ce814ac3ec1d94872d62",
+    "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json": "41440643e25da3ea14f18313675fb34496bc1ab60c7933772514c53f7321da39",
+    "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json": "d216a566fb1bc43ae70da88ac0134ab60597c86960423d283a1fb060299251ed",
+    "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json": "a66d8ec0f88d6e173282b25f008a21f2bc98950b56e1fc581caf36dabbe4f1a1",
+    "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json": "76be146ce59e17e12328d89a726883503afb79855ff273be15cf144675799756",
+    "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json": "a9de76fa36bd743c2773a6f5e4cc0de666f5263fa8ef0bb6656934d3786df8a1",
+    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json": "51a56532b3fc1d81afc98600ec749f76ad639e126f4baed06e3b37b615029d04",
+    "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json": "45ee7553a4404d94cda8ba23b0a14816f47a20432c81f00e5e32d6c4556fbdf5",
+    "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json": "b16f46a582d55d017dae213b8d09f372fb6ed7a2c0015a79ea96eb8f3cae0661"
+  },
+  "qualification": {
+    "classification": "READY_FOR_FROZEN_SOURCE_CPU_QUALIFICATION",
+    "g1_complete": false,
+    "frozen_source_full_cpu": "pending",
+    "frozen_installed_wheel_cpu": "pending",
+    "released_checkpoint_matrix_rc1_through_rc4": "pending_on_frozen_source",
+    "pssolver_control_qualification": "pending_identity_impact_review",
+    "single_h100_cumulative": "not_authorized",
+    "post_release_verification": "not_run"
+  },
+  "required_h100_gates": [
+    "cuda_only_tests",
+    "cpu_cuda_checkpoint_matrix",
+    "released_checkpoint_matrix_rc1_through_rc4",
+    "tf32_caller_state_including_medium",
+    "standard_numerical_non_regression",
+    "memory_non_regression",
+    "performance_non_regression"
+  ],
+  "release_boundary": {
+    "branch_pushed": false,
+    "tag_created": false,
+    "github_release_created": false,
+    "pypi_published": false,
+    "production_default_changed": false,
+    "larger_batch_qualified": false,
+    "lifting_reopened": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false,
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false
+  }
+}

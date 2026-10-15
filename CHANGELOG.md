@@ -1,5 +1,48 @@
 # Changelog
 
+## 0.2.0rc5 — 2026-10-15
+
+Compatibility, fail-closed execution, packaging, and public-contract follow-up
+to `v0.2.0rc4`.
+
+### Fixed
+
+- Restore direct, identity-bound loading of the real rc1--rc3 Periodic and
+  Channel functional checkpoints without deriving historical identities from
+  the current provider payload.
+- Stop finite-state workflows before publishing `COMPLETE`; reject incompatible
+  legacy Channel dynamics before target mutation; and preserve exact
+  checkpoint error categories, checksums, and transactional publication.
+- Restore the caller's exact TF32 precision state, including the
+  `"medium"` float32 matmul policy, on normal and exceptional exits.
+- Normalize public execution devices consistently, expose structured public
+  compilation and restart errors, make pressure postconditions truthful, and
+  bind compiled simulations to their executable identity.
+- Remove source-only package imports, include required runtime data, preserve
+  installed Plane provenance, and harden checkpoint publication against
+  no-replace races and non-durable directory updates.
+
+### Compatibility boundary
+
+- Functional API version 1.0, adapter versions, checkpoint schemas, qualified
+  model--geometry combinations, batch-one functional scope, and all production
+  defaults remain unchanged.
+- Existing rc1--rc4 checkpoint readers remain fail-closed.  Lifting remains
+  non-executable and is not reopened by this release candidate.
+- `PSSolver-Control` and `nematics3d` remain independent projects and are not
+  modified or bundled.
+
+### Qualification boundary
+
+- W0/W1 and R5-1 through R5-13 have local source and staged installed-wheel CPU
+  evidence.  This version-freeze commit starts G-1 cumulative qualification;
+  it does not itself claim G-1 completion.
+- A fresh installed-wheel CPU run from the frozen rc5 source, the independent
+  Consumer migration/qualification where required, and one separately
+  authorized cumulative H100 run remain mandatory before release.
+- This preparation does not push a branch, create or move a tag, publish a
+  package, promote a default, or authorize an optimizer campaign.
+
 ## 0.2.0rc4 — 2026-10-13
 
 Correctness, restart-integrity, boundary-semantics, pressure-contract, and

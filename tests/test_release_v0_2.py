@@ -1,4 +1,4 @@
-"""Release-candidate contracts for PSSolver 0.2.0rc4."""
+"""Immutable PSSolver 0.2.0rc4 release-document contracts."""
 
 from __future__ import annotations
 
@@ -6,9 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
-import pssolver
 from pssolver import capability_catalog
-from pssolver.functional.api import functional_protocol_provenance
 
 
 PROJECT_ROOT = Path(__file__).parents[1]
@@ -34,18 +32,20 @@ RC5_R512 = PROJECT_ROOT / "notes" / (
     "PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
 )
 RC5_R513 = PROJECT_ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
+RC5_G1 = PROJECT_ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
 
 
-def test_release_candidate_version_and_public_metadata_agree():
-    assert pssolver.__version__ == "0.2.0rc4"
-    assert functional_protocol_provenance()["package"] == {
-        "name": "pssolver",
-        "version": "0.2.0rc4",
-    }
+def test_rc4_release_record_preserves_historical_package_version():
+    record = json.loads(
+        (PROJECT_ROOT / "notes" / "pssolver_v0_2_0_rc4.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert record["release"] == "0.2.0rc4"
+    assert record["public_contract"]["package_version"] == "0.2.0rc4"
 
 
-def test_release_candidate_documents_and_machine_record_agree():
-    readme = (PROJECT_ROOT / "README.md").read_text(encoding="utf-8")
+def test_rc4_release_documents_and_machine_record_agree():
     changelog = (PROJECT_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
     scope = (PROJECT_ROOT / "notes" / "pssolver_v0_2_scope.md").read_text(
         encoding="utf-8"
@@ -59,11 +59,10 @@ def test_release_candidate_documents_and_machine_record_agree():
         )
     )
 
-    assert "PSSolver 0.2.0rc4" in readme
     assert "## 0.2.0rc4" in changelog
     assert "PSSolver v0.2 support scope" in scope
     assert "PSSolver 0.2.0rc4 release candidate" in release_notes
-    assert record["release"] == pssolver.__version__
+    assert record["release"] == "0.2.0rc4"
     assert record["status"] == "release_preparation_source_candidate"
     assert record["source"]["rc4_closure_registration_commit"] == (
         "bc5eb408f0d2c9e9dfcf5fb559809bd5fcdaacfd"
@@ -144,6 +143,9 @@ def test_release_candidate_registers_exact_portability_successors():
     rc5_r513_successors = json.loads(RC5_R513.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    rc5_g1_successors = json.loads(RC5_G1.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert set(successors) == {
         "tests/test_rc447_pressure_bounded_operator_recovery.py",
         "tests/test_rc455_public_robustness.py",
@@ -205,6 +207,9 @@ def test_release_candidate_registers_exact_portability_successors():
         rc5_r513 = rc5_r513_successors.get(relative)
         if rc5_r513 is not None and rc5_r513["historical_sha256"] == resolved:
             resolved = rc5_r513["current_sha256"]
+        rc5_g1 = rc5_g1_successors.get(relative)
+        if rc5_g1 is not None and rc5_g1["historical_sha256"] == resolved:
+            resolved = rc5_g1["current_sha256"]
         assert resolved == hashlib.sha256((PROJECT_ROOT / relative).read_bytes()).hexdigest()
         assert registration["introduced_by_phase"] == (
             "v0.2.0rc4-release-preparation"
