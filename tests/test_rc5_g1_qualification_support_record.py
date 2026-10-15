@@ -25,9 +25,26 @@ def test_support_record_binds_classification_and_exact_identities():
     assert record["consumer"]["qualified_source_commit"] == "c14e6b56c88081e7f9a5642e65ffd722eec7445b"
 
 
-def test_support_record_registers_every_immutable_source_hash():
-    for relative, expected in _record()["source_sha256"].items():
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == expected
+def test_support_record_registers_historical_hashes_and_exact_successors():
+    record = _record()
+    successors = {
+        row["path"]: row for row in record["historical_successor_sources"]
+    }
+    assert set(successors) == {
+        "benchmarks/run_rc5_g1_stage_plan.py",
+        "tests/test_plan_rc5_g1_h100.py",
+        "tests/test_rc5_g1_qualification_support_record.py",
+    }
+    for relative, expected in record["source_sha256"].items():
+        actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+        if actual == expected:
+            continue
+        successor = successors[relative]
+        assert successor["historical_sha256"] == expected
+        assert successor["current_sha256"] == actual
+        assert successor["requires_h100_requalification"] is False
+        assert successor["production_runtime_changed"] is False
+        assert successor["scientific_threshold_changed"] is False
 
 
 def test_support_record_keeps_periodic_and_unchanged_path_oracles_separate():

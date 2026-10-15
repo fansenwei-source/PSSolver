@@ -108,6 +108,35 @@
     "tests/test_analyze_rc5_g1_h100.py": "60a3472645abf4bab7056cca386a3846730d04f1c553f598fc73c21038bfd300",
     "notes/PSSolver_v0_2_0rc5_g1_single_h100_qualification_plan.json": "b4773d2eb5e8835c82b830a979e969716eced44877f35fdf021896d1e1072e7f"
   },
+  "historical_successor_sources": [
+    {
+      "path": "benchmarks/run_rc5_g1_stage_plan.py",
+      "historical_sha256": "5fd1c5cc3259f6ed7d52f38823ee081945c3a589a904ba40b3be764774db190d",
+      "current_sha256": "a633e183a3e4558952fb465712e2fe72a9ddf1d13eba582d7522ef5bfff8b9a5",
+      "reason": "bind every stage executable and Python helper by SHA-256 and reject inline command strings before H100 submission",
+      "requires_h100_requalification": false,
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    {
+      "path": "tests/test_plan_rc5_g1_h100.py",
+      "historical_sha256": "0692fd7be4642ec19957d9f7e8d7c56270a13ab52cc56324463d8a47e5457566",
+      "current_sha256": "c0eb7e43f4e0e00b8a1eb445399d0aa383527565e669709ed0aefaabcd479056",
+      "reason": "cover hash-bound stage-plan freezing, command drift, and inline Python rejection",
+      "requires_h100_requalification": false,
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    {
+      "path": "tests/test_rc5_g1_qualification_support_record.py",
+      "historical_sha256": "41f379c15435a24991006b11e0f90a2c65ed03411dcf5d6deadc9eab2efb592a",
+      "current_sha256": "c664d5e7dad40c5129f33b682e975c840b877df5ce6b3d2785bebd6b8af52b45",
+      "reason": "verify the exact forward-only successor set without rewriting the historical G-1.5 source hashes",
+      "requires_h100_requalification": false,
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    }
+  ],
   "authorization": {
     "push_executed": false,
     "h100_submission_authorized": false,

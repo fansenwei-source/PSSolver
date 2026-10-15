@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -17,7 +18,13 @@ from benchmarks.plan_rc5_g1_h100 import (
     main as plan_main,
 )
 from benchmarks.run_rc5_g1_profile_matrix import build_command_plan
-from benchmarks.run_rc5_g1_stage_plan import EXPECTED_SCHEMAS, STAGES, validate_plan
+from benchmarks.run_rc5_g1_stage_plan import (
+    DRAFT_SCHEMA,
+    EXPECTED_SCHEMAS,
+    STAGES,
+    freeze_plan,
+    validate_plan,
+)
 
 
 def test_rc5_g1_plan_has_exact_provider_consumer_and_profile_identities():
@@ -112,6 +119,17 @@ def test_rc5_g1_matrix_plan_preserves_venv_paths_and_is_shell_free(tmp_path):
 
 def _stage_plan(tmp_path: Path) -> dict[str, object]:
     output = tmp_path / "h100"
+    runtime = tmp_path / "runtime" / "python"
+    runtime.parent.mkdir(parents=True, exist_ok=True)
+    runtime.write_bytes(b"python\n")
+    executable = tmp_path / "venv" / "bin" / "python"
+    executable.parent.mkdir(parents=True, exist_ok=True)
+    if not executable.exists():
+        executable.symlink_to(runtime)
+    scripts = tmp_path / "support"
+    scripts.mkdir(exist_ok=True)
+    for name in STAGES:
+        (scripts / f"{name}.py").write_text(f"# {name}\n", encoding="utf-8")
     return {
         "schema": "pssolver.rc5.g1.h100_stage_plan.v1",
         "provider_baseline_commit": PROVIDER_BASELINE,
@@ -120,10 +138,28 @@ def _stage_plan(tmp_path: Path) -> dict[str, object]:
         "stages": [
             {
                 "name": name,
-                "command": ["/qualified/venv/bin/python", f"/support/{name}.py"],
+                "command": [str(executable), str(scripts / f"{name}.py")],
                 "artifact": str(output / "results" / f"{name}.json"),
                 "expected_schema": EXPECTED_SCHEMAS[name],
                 "environment": {},
+                "command_file_bindings": [
+                    {
+                        "kind": "python_executable",
+                        "path": str(executable),
+                        "resolved_path": str(executable.resolve()),
+                        "sha256": hashlib.sha256(
+                            executable.read_bytes()
+                        ).hexdigest(),
+                    },
+                    {
+                        "kind": "python_script",
+                        "path": str(scripts / f"{name}.py"),
+                        "resolved_path": str((scripts / f"{name}.py").resolve()),
+                        "sha256": hashlib.sha256(
+                            (scripts / f"{name}.py").read_bytes()
+                        ).hexdigest(),
+                    },
+                ],
             }
             for name in STAGES
         ],
@@ -145,6 +181,49 @@ def test_rc5_g1_stage_plan_is_ordered_shell_free_and_output_scoped(tmp_path):
     broken["stages"][0]["artifact"] = str(tmp_path / "outside.json")
     with pytest.raises(ValueError, match="escapes output root"):
         validate_plan(broken, tmp_path / "h100")
+
+
+def test_rc5_g1_stage_plan_freezer_binds_every_command_file(tmp_path):
+    plan = _stage_plan(tmp_path)
+    draft = dict(plan)
+    draft["schema"] = DRAFT_SCHEMA
+    for row in draft["stages"]:
+        row.pop("command_file_bindings")
+    frozen = freeze_plan(draft, tmp_path / "h100")
+    assert frozen["schema"] == "pssolver.rc5.g1.h100_stage_plan.v1"
+    assert len(frozen["stages"]) == 9
+    executable = Path(frozen["stages"][0]["command"][0])
+    assert executable.is_symlink()
+    assert frozen["stages"][0]["command_file_bindings"][0] == {
+        "kind": "python_executable",
+        "path": str(executable),
+        "resolved_path": str(executable.resolve()),
+        "sha256": hashlib.sha256(executable.read_bytes()).hexdigest(),
+    }
+    assert all(
+        len(row["command_file_bindings"]) == 2 for row in frozen["stages"]
+    )
+    assert validate_plan(frozen, tmp_path / "h100") == frozen["stages"]
+
+
+def test_rc5_g1_stage_plan_rejects_command_drift_and_inline_python(tmp_path):
+    plan = _stage_plan(tmp_path)
+    script = Path(plan["stages"][0]["command"][1])
+    script.write_text("# changed\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="SHA-256 differs"):
+        validate_plan(plan, tmp_path / "h100")
+
+    draft = _stage_plan(tmp_path / "inline")
+    draft["schema"] = DRAFT_SCHEMA
+    draft["stages"][0]["command"] = [
+        draft["stages"][0]["command"][0],
+        "-c",
+        "pass",
+    ]
+    for row in draft["stages"]:
+        row.pop("command_file_bindings")
+    with pytest.raises(ValueError, match="inline Python"):
+        freeze_plan(draft, tmp_path / "inline" / "h100")
 
 
 def test_rc5_g1_slurm_template_is_fixed_to_one_nonrequeued_h100_job():

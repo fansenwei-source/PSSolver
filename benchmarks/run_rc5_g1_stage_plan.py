@@ -20,6 +20,7 @@ from benchmarks.plan_rc5_g1_h100 import (
 
 SCHEMA = "pssolver.rc5.g1.h100_stage_plan.v1"
 COMPLETE_SCHEMA = "pssolver.rc5.g1.h100_stage_plan_complete.v1"
+DRAFT_SCHEMA = "pssolver.rc5.g1.h100_stage_plan_draft.v1"
 STAGES = (
     "environment",
     "cuda_only",
@@ -80,6 +81,64 @@ def _load_plan(path: Path) -> dict[str, object]:
     return value
 
 
+def freeze_plan(
+    draft: dict[str, object], output_root: Path
+) -> dict[str, object]:
+    if draft.get("schema") != DRAFT_SCHEMA:
+        raise ValueError("stage-plan draft schema differs")
+    result = dict(draft)
+    result["schema"] = SCHEMA
+    stages = result.get("stages")
+    if not isinstance(stages, list):
+        raise TypeError("stage-plan draft stages must be a list")
+    frozen_stages: list[dict[str, object]] = []
+    for row in stages:
+        if not isinstance(row, dict):
+            raise TypeError("stage-plan draft stage must be an object")
+        command = row.get("command")
+        if not isinstance(command, list) or not command or not all(
+            isinstance(value, str) and value for value in command
+        ):
+            raise TypeError("stage-plan draft command must be a nonempty argv list")
+        if "-c" in command[1:]:
+            raise ValueError("inline Python command strings are forbidden")
+        paths = [Path(command[0])]
+        paths.extend(
+            Path(value)
+            for value in command[1:]
+            if Path(value).is_absolute() and Path(value).suffix == ".py"
+        )
+        if len(paths) != 2:
+            raise ValueError(
+                "each stage must use one executable and one Python script"
+            )
+        bindings: list[dict[str, str]] = []
+        for index, path in enumerate(paths):
+            if not path.is_absolute():
+                raise ValueError(f"command file must be absolute: {path}")
+            if not path.is_file():
+                raise FileNotFoundError(f"command file must exist: {path}")
+            kind = "python_executable" if index == 0 else "python_script"
+            if kind == "python_script" and path.is_symlink():
+                raise FileNotFoundError(
+                    f"Python helper must be regular and non-symlink: {path}"
+                )
+            bindings.append(
+                {
+                    "kind": kind,
+                    "path": str(path),
+                    "resolved_path": str(path.resolve()),
+                    "sha256": _sha256(path),
+                }
+            )
+        frozen = dict(row)
+        frozen["command_file_bindings"] = bindings
+        frozen_stages.append(frozen)
+    result["stages"] = frozen_stages
+    validate_plan(result, output_root)
+    return result
+
+
 def validate_plan(plan: dict[str, object], output_root: Path) -> list[dict[str, object]]:
     output_root = output_root.expanduser().resolve()
     if plan.get("schema") != SCHEMA:
@@ -106,6 +165,54 @@ def validate_plan(plan: dict[str, object], output_root: Path) -> list[dict[str, 
             raise ValueError(f"{name} executable must be absolute")
         if Path(command[0]).name in {"bash", "sh", "dash", "zsh"} and len(command) > 1 and command[1] == "-c":
             raise ValueError(f"{name} may not use a shell command string")
+        if "-c" in command[1:]:
+            raise ValueError(f"{name} may not use an inline Python command string")
+        bindings = row.get("command_file_bindings")
+        if not isinstance(bindings, list) or not bindings:
+            raise TypeError(f"{name} command file bindings are required")
+        bound_paths: set[str] = set()
+        for binding in bindings:
+            if not isinstance(binding, dict):
+                raise TypeError(f"{name} command file binding must be an object")
+            path = Path(str(binding.get("path", ""))).expanduser()
+            if not path.is_absolute():
+                raise ValueError(f"{name} bound command file must be absolute")
+            kind = binding.get("kind")
+            if kind not in {"python_executable", "python_script"}:
+                raise ValueError(f"{name} bound command kind differs")
+            if not path.is_file():
+                raise FileNotFoundError(f"{name} bound command file is missing: {path}")
+            if kind == "python_script" and path.is_symlink():
+                raise FileNotFoundError(
+                    f"{name} Python helper must be regular and non-symlink: {path}"
+                )
+            if binding.get("resolved_path") != str(path.resolve()):
+                raise ValueError(f"{name} bound command resolved path differs: {path}")
+            expected_sha256 = binding.get("sha256")
+            if not isinstance(expected_sha256, str) or len(expected_sha256) != 64:
+                raise ValueError(f"{name} bound command SHA-256 is invalid")
+            if _sha256(path) != expected_sha256:
+                raise ValueError(f"{name} bound command SHA-256 differs: {path}")
+            bound_paths.add(str(path))
+        if command[0] not in bound_paths:
+            raise ValueError(f"{name} executable is not hash-bound")
+        executable_binding = next(
+            binding for binding in bindings if binding["path"] == command[0]
+        )
+        if executable_binding["kind"] != "python_executable":
+            raise ValueError(f"{name} executable binding kind differs")
+        script_arguments = [
+            value
+            for value in command[1:]
+            if Path(value).is_absolute() and Path(value).suffix == ".py"
+        ]
+        if len(script_arguments) != 1 or script_arguments[0] not in bound_paths:
+            raise ValueError(f"{name} must have exactly one hash-bound Python script")
+        script_binding = next(
+            binding for binding in bindings if binding["path"] == script_arguments[0]
+        )
+        if script_binding["kind"] != "python_script":
+            raise ValueError(f"{name} Python script binding kind differs")
         artifact = Path(str(row.get("artifact", ""))).expanduser().resolve()
         try:
             artifact.relative_to(output_root)
@@ -193,8 +300,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--plan", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--preflight-only", action="store_true")
+    parser.add_argument("--freeze-output", type=Path)
     args = parser.parse_args(argv)
     plan = _load_plan(args.plan.absolute())
+    if args.freeze_output is not None:
+        plan = freeze_plan(plan, args.output_root.absolute())
+        _atomic_json(args.freeze_output, plan)
     if args.preflight_only:
         validate_plan(plan, args.output_root.absolute())
     else:
