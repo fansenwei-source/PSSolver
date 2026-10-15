@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc5 R5-12 CompiledSimulation integrity closure",
+  "status": "implementation_complete_validation_pending",
+  "classification": "PENDING_R5_12_COMPILED_SIMULATION_INTEGRITY_CPU_CLOSURE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "implementation_commit": "eb8aed1c00ae624a0172667473aae1f189c83e5c",
+    "qualified_source_commit": null,
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "finding": "NEW-12",
+    "work_item": "R5-12",
+    "source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc4_consolidated_report.json",
+    "source_sha256": "db3e644bd97bc28ca046d0632aa2eae1b142ad6a208ad10b9dcb82cc42e6e6c6",
+    "original_behavior": "dataclasses.replace could substitute application_request while run_simulation executed it and retained the original source provenance",
+    "acceptance": "a replaced CompiledSimulation is rejected before application dispatch"
+  },
+  "contract": {
+    "identity_schema_version": 1,
+    "bound_components": [
+      "source_simulation_sha256",
+      "application",
+      "application_simulation_sha256",
+      "lowering_plan_sha256",
+      "construction_plan_sha256",
+      "application_request_type",
+      "application_request_sha256",
+      "normalization"
+    ],
+    "validated_before_application_dispatch": true,
+    "validated_before_metadata_emission": true,
+    "recompiles_at_run_time": false,
+    "tampered_product_rejected": true,
+    "integrity_error": "ValueError: compiled simulation integrity mismatch"
+  },
+  "implementation_files": {
+    "pssolver/api/runner.py": "03999ae1460f2bb7cec10e13813000a2dfbd161ec99eaa0c99aaf7c2045ef105"
+  },
+  "regression_tests": {
+    "tests/test_rc5_r512_compiled_simulation_integrity.py": "8c1a26b965819abd13a50945f8d90633ca8137bc74f68f7b13da8017a2150196",
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": "c4859d132dbeda333b30449b1ae156f4745a7ab69e7080582d8be21795903f89"
+  },
+  "historical_successor_sources": {
+    "pssolver/api/runner.py": {
+      "historical_sha256": "0ca883d3a3b139030880e1ee40941d523c6384911295d9638c154ef2c15b2fa4",
+      "current_sha256": "03999ae1460f2bb7cec10e13813000a2dfbd161ec99eaa0c99aaf7c2045ef105",
+      "reason": "Bind every executable component of a compiled public simulation and validate it before dispatch.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_phase8_p844_lifting_workflow_restart.py": {
+      "historical_sha256": "d344489197fa47dbb71d17dc6fbbca5975e658b6e07cd074932fcfdd08c1b2d6",
+      "current_sha256": "c88a65c012defbb326ffe028b8311006054938248dd299493fd585724f8b34bf",
+      "reason": "Keep the P8.4.4 runner hash historical after the forward-only R5-12 public-runner repair.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "fe7d3c62ac590433932ce628f5a7e124285e3d530cf1acf89e8d45fa612874d8",
+      "current_sha256": "3c25b2477411f909a8e9c8fe3228c9e98d5bc6658de95812f3a0bba0415e7a67",
+      "reason": "Extend immutable R5-2 successor resolution through R5-12.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "b60890616002992b77600a4e9f110711d58a414e300a0f76d8978ea8adbd313e",
+      "current_sha256": "87c00641fa8ebc230a4ae56854e58614a66159de20072110fd46472482ce3335",
+      "reason": "Resolve frozen R5-11 source hashes through the forward-only R5-12 registry.",
+      "introduced_by_phase": "R5-12"
+    }
+  },
+  "external_reproducer": {
+    "source": "/home/fansenwei/pssolver_rc4_post_release_verification_20261013_v1/agent_evidence/api/",
+    "pre_fix_classification": "accepted_tampered_compiled_simulation",
+    "post_fix_exception": "ValueError",
+    "post_fix_message_prefix": "compiled simulation integrity mismatch",
+    "application_dispatch_started": false,
+    "output_directory_created": false
+  },
+  "validation": {
+    "targeted_cpu": "41 passed, 0 failed",
+    "source_full_cpu_initial": "3594 passed, 7 skipped, 8 subtests passed, 1 historical-record failure",
+    "source_full_cpu": null,
+    "installed_wheel_targeted_cpu": null,
+    "installed_wheel_applicable_full_cpu": null,
+    "installed_wheel_source_layout_exclusion": "tests/test_phase8_p861_local_cumulative_audit.py (7 source-layout tests; excluded, not skipped or deselected)"
+  },
+  "installed_wheel_evidence": null,
+  "scope": {
+    "public_compiled_product_contract_changed": true,
+    "scientific_equations_changed": false,
+    "numerical_hot_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "r5_12_cpu_closure_complete": false,
+    "eligible_for_next_work_item": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

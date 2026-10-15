@@ -11,6 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
 )
+R5_12_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -21,11 +24,25 @@ def _record() -> dict[str, object]:
     return json.loads(RECORD.read_text(encoding="utf-8"))
 
 
+def _r512_successor(relative: str, historical: str) -> str:
+    registration = json.loads(R5_12_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if (
+        registration is not None
+        and registration["historical_sha256"] == historical
+    ):
+        return registration["current_sha256"]
+    return historical
+
+
 def test_r511_record_binds_implementation_and_regression_sources():
     record = _record()
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
-            assert _sha256(ROOT / relative) == expected, relative
+            assert _sha256(ROOT / relative) == _r512_successor(
+                relative, expected
+            ), relative
 
 
 def test_r511_projection_descriptions_are_exact_and_storage_specific():
@@ -62,7 +79,9 @@ def test_r511_successor_registry_is_forward_only_and_exact():
         "historical_successor_sources"
     ].items():
         assert registration["historical_sha256"] != registration["current_sha256"]
-        assert _sha256(ROOT / relative) == registration["current_sha256"]
+        assert _sha256(ROOT / relative) == _r512_successor(
+            relative, registration["current_sha256"]
+        )
         assert registration["introduced_by_phase"] == "R5-11"
 
 

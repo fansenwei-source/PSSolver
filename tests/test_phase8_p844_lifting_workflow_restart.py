@@ -743,6 +743,7 @@ def test_p844_record_matches_qualified_sources_and_scope():
     # sources. Keep the P8.4.4 hashes as historical evidence instead of
     # rewriting the already qualified record.
     superseded_after_p844 = {
+        "pssolver/api/runner.py",
         "pssolver/applications/plane_beris_edwards.py",
         "pssolver/configuration/public_simulation_runner.py",
         "pssolver/models/active_nematics/beris_edwards.py",
@@ -751,8 +752,8 @@ def test_p844_record_matches_qualified_sources_and_scope():
         "pssolver/runtime/plane_beris_edwards.py",
         "pssolver/runtime/plane_legacy.py",
         "pssolver/runtime/static_lifting.py",
-            "pssolver/workflows/plane_checkpoint.py",
-            "pssolver/workflows/plane_observation.py",
+        "pssolver/workflows/plane_checkpoint.py",
+        "pssolver/workflows/plane_observation.py",
     }
     for relative, expected in record["source_sha256"].items():
         if relative in superseded_after_p844:
