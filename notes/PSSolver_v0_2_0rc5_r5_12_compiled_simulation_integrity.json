@@ -41,7 +41,7 @@
   },
   "regression_tests": {
     "tests/test_rc5_r512_compiled_simulation_integrity.py": "8c1a26b965819abd13a50945f8d90633ca8137bc74f68f7b13da8017a2150196",
-    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": "c4859d132dbeda333b30449b1ae156f4745a7ab69e7080582d8be21795903f89"
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": "f1a8c1673615cd420d9106c1cb6248a60005f2564c3a3cb7dc31e3b03eede61d"
   },
   "historical_successor_sources": {
     "pssolver/api/runner.py": {
@@ -66,6 +66,54 @@
       "historical_sha256": "b60890616002992b77600a4e9f110711d58a414e300a0f76d8978ea8adbd313e",
       "current_sha256": "87c00641fa8ebc230a4ae56854e58614a66159de20072110fd46472482ce3335",
       "reason": "Resolve frozen R5-11 source hashes through the forward-only R5-12 registry.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_rc4_lifting_checkpoint_integration_record.py": {
+      "historical_sha256": "a464baad005a118b01a14ce909fd96da20efdf1b9b5a5f6d87507e4135cde37a",
+      "current_sha256": "fcf85a6bb94fa11621021f205c1d85a84f5405e2d642ba0b9a9b4d37b6685262",
+      "reason": "Extend the frozen RC4.3.5 successor chain through R5-12.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "f288aeb6d99af8bcde40091348b643513d14835772d1fd1dfa48a4c1966bc78a",
+      "current_sha256": "657713d498f9f52e9a2ba9e08245102111febcf3b15a8d62e3547bda54a1b16e",
+      "reason": "Extend the frozen R5-10 successor chain through R5-12.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "7886d9630b48e0aac78db933c81131063c6d2de997b32eaaa1f55a12314e2b99",
+      "current_sha256": "f0884624decbde0deca208ca31eab9867b912958f92d6a846310e27cea7c75fc",
+      "reason": "Extend the frozen R5-3 successor chain through R5-12.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "2035203f6d7901a69ac433391b1f2a80e1ac673adf8ff96f95933e473e73c132",
+      "current_sha256": "ec3397d28a5712420f06d6efe014aa5a9b5b926ee3f84c158900e204e0c7a2b2",
+      "reason": "Extend the frozen R5-5 successor chain through R5-12.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "8bb4ab87976a8ef060b6e0761b1d1ea8a92d200074b82405bf146b5609d6f93e",
+      "current_sha256": "7d6b050273b8dd3f20a341a29215890d5fb72fd5ccec63c5955ae6012ee86806",
+      "reason": "Extend the frozen R5-6 successor chain through R5-12.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "b4129a1229fcac79b44bd2d9306b435090af5e5de35ede9b773470725a5d8e85",
+      "current_sha256": "a6547071983eeb6fc10b04f029bd3c9191a3825756687e56a030758d357f2bb7",
+      "reason": "Extend the frozen R5-7 successor chain through R5-12.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "9e87f4e03f5461d1d3a156b8460ace3f01d96f9a1b2d8b51231f2107965abfcd",
+      "current_sha256": "d831d7fe0aa56cc175c3cdf8986d0aa4b1c4b35981594be68a459d323f72a4eb",
+      "reason": "Extend the frozen R5-8 successor chain through R5-12.",
+      "introduced_by_phase": "R5-12"
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "6faedfd75e1e97bc2013f8510d3509445979f7c8c411e01ce5531f1a3ea52b51",
+      "current_sha256": "c35a1f64fb9c17912e25d786c827f4e3666946eab145847ba9ed3ecbc740a4f9",
+      "reason": "Extend the frozen R5-9 successor chain through R5-12.",
       "introduced_by_phase": "R5-12"
     }
   },

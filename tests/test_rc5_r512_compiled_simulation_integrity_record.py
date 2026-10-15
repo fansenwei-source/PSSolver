@@ -52,7 +52,15 @@ def test_r512_successor_registry_is_forward_only_and_exact():
     assert set(successors) == {
         "pssolver/api/runner.py",
         "tests/test_phase8_p844_lifting_workflow_restart.py",
+        "tests/test_rc4_lifting_checkpoint_integration_record.py",
+        "tests/test_rc5_r510_channel_checkpoint_observation_record.py",
         "tests/test_rc5_r52_finite_workflow_record.py",
+        "tests/test_rc5_r53_channel_checkpoint_record.py",
+        "tests/test_rc5_r55_tf32_state_restore.py",
+        "tests/test_rc5_r56_public_error_boundary_record.py",
+        "tests/test_rc5_r57_device_normalization_record.py",
+        "tests/test_rc5_r58_checkpoint_integrity_record.py",
+        "tests/test_rc5_r59_pressure_postcondition_record.py",
         "tests/test_rc5_r511_metadata_strict_record.py",
     }
     for relative, registration in successors.items():
@@ -92,4 +100,3 @@ def test_r512_scope_and_completion_are_fail_closed():
         assert record["classification"].startswith("PENDING_")
         assert record["installed_wheel_evidence"] is None
         assert record["authorization"]["r5_12_cpu_closure_complete"] is False
-

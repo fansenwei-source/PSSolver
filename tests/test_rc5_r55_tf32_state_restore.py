@@ -19,6 +19,9 @@ R5_10_RECORD = ROOT / (
 R5_11_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
 )
+R5_12_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -38,6 +41,7 @@ def _r56_successor(relative: str, historical: str) -> str:
         R5_9_RECORD,
         R5_10_RECORD,
         R5_11_RECORD,
+        R5_12_RECORD,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"

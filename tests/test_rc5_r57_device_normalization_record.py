@@ -17,6 +17,9 @@ R5_10_RECORD = ROOT / (
 R5_11_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
 )
+R5_12_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -56,6 +59,9 @@ def test_r57_record_binds_implementation_and_regression_sources():
     r5_11_successors = json.loads(R5_11_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    r5_12_successors = json.loads(R5_12_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
             resolved = expected
@@ -83,6 +89,12 @@ def test_r57_record_binds_implementation_and_regression_sources():
                 and r5_11_registration["historical_sha256"] == resolved
             ):
                 resolved = r5_11_registration["current_sha256"]
+            r5_12_registration = r5_12_successors.get(relative)
+            if (
+                r5_12_registration is not None
+                and r5_12_registration["historical_sha256"] == resolved
+            ):
+                resolved = r5_12_registration["current_sha256"]
             assert _sha256(ROOT / relative) == resolved
 
 
@@ -98,6 +110,9 @@ def test_r57_record_binds_every_historical_successor():
         "historical_successor_sources"
     ]
     r5_11_successors = json.loads(R5_11_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
+    r5_12_successors = json.loads(R5_12_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
     assert len(successors) == 35
@@ -127,6 +142,12 @@ def test_r57_record_binds_every_historical_successor():
             and r5_11_registration["historical_sha256"] == resolved
         ):
             resolved = r5_11_registration["current_sha256"]
+        r5_12_registration = r5_12_successors.get(relative)
+        if (
+            r5_12_registration is not None
+            and r5_12_registration["historical_sha256"] == resolved
+        ):
+            resolved = r5_12_registration["current_sha256"]
         assert _sha256(ROOT / relative) == resolved
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["reason"]

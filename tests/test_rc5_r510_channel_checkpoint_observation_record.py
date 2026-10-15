@@ -17,6 +17,9 @@ R5_3_RECORD = ROOT / (
 R5_11_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
 )
+R5_12_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -25,6 +28,18 @@ def _record() -> dict[str, object]:
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def _r512_successor(relative: str, historical: str) -> str:
+    registration = json.loads(R5_12_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if (
+        registration is not None
+        and registration["historical_sha256"] == historical
+    ):
+        return registration["current_sha256"]
+    return historical
 
 
 def test_r510_record_binds_implementation_and_exact_sources():
@@ -46,7 +61,7 @@ def test_r510_record_binds_implementation_and_exact_sources():
                 and registration["historical_sha256"] == expected
             ):
                 expected = registration["current_sha256"]
-            assert _sha256(relative) == expected
+            assert _sha256(relative) == _r512_successor(relative, expected)
 
 
 def test_r510_preserves_the_r53_new10_adjudication():
@@ -121,7 +136,7 @@ def test_r510_successor_registry_is_forward_only_and_exact():
             and successor["historical_sha256"] == expected
         ):
             expected = successor["current_sha256"]
-        assert _sha256(relative) == expected
+        assert _sha256(relative) == _r512_successor(relative, expected)
         assert registration["introduced_by_phase"] == "R5-10"
         assert registration["reason"]
 
