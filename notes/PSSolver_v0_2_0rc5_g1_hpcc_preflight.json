@@ -1,0 +1,87 @@
+{
+  "schema": "pssolver.rc5.g1.hpcc_preflight.v1",
+  "date": "2026-10-15",
+  "classification": "STOPPED_PRE_STAGE_PLAN_MISSING_VERSIONED_PRODUCERS",
+  "qualification_complete": false,
+  "stage_plan_frozen": false,
+  "h100_submission_authorized": false,
+  "h100_job_submitted": false,
+  "formal_h100_submission_count": 0,
+  "automatic_retry": false,
+  "provider_branch_pushed": false,
+  "support_source": {
+    "branch": "fix/v0.2.0rc5",
+    "commit": "3443f923b942e586a221241967823162a302d8ab",
+    "archive_sha256": "87cd60a0562b1a3096194a6ab430a509db8d3d7e4240ee8b4ed6edc6e81e7e19",
+    "stage_runner_sha256": "a633e183a3e4558952fb465712e2fe72a9ddf1d13eba582d7522ef5bfff8b9a5",
+    "slurm_template_sha256": "31f99a4906a39bd0361ef3ab3001d76b3507b19a5f6331c92a83019b7915481b"
+  },
+  "hpcc": {
+    "login_host": "hpcc.brandeis.edu",
+    "authenticated_user": "fansenwei",
+    "preflight_root": "/scratch1/vincent/PSSolver/rc5_g1_preflight_3443f92_20261015_v1",
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_preflight_3443f92_20261015_v1",
+    "planned_h100_output_root": "/scratch1/vincent/PSSolver/data_pssolver_rc5_g1_h100_674a812_20261015_v1",
+    "planned_h100_output_root_absent": true,
+    "python": "3.10.18"
+  },
+  "artifacts": {
+    "provider_baseline_archive_sha256": "6e7800c0b1c9c49072ee3e2c235f3075c4e02f139cd4db9dfce4ce1c408b1c52",
+    "provider_candidate_archive_sha256": "76f0a9190255e6e131e820559b3d30bbb51f0ff633c922dda9a49622ed5bc1ee",
+    "consumer_source_archive_sha256": "3b66240d6de16956c8958268e75b79e3e250efca61f21ff51ec44609ab93728e",
+    "provider_baseline_wheel_sha256": "1bf31f324180dac58777a23785fb4e1424d3cc589099cf8c6328e2f6c74d8cc5",
+    "provider_candidate_wheel_sha256": "3097b08b08ba7b2d488fd8af348ec48986d69007a640bd806a225ec9963bb65f",
+    "consumer_wheel_sha256": "3f5f359b0c7a7112b66245009a7e67e4479cab0ab6df630428c751dc26848745",
+    "remote_sha256_verification": "PASS"
+  },
+  "installed_wheel_venvs": {
+    "baseline": {
+      "root": "/scratch1/vincent/PSSolver/rc5_g1_preflight_3443f92_20261015_v1/venvs/baseline",
+      "pssolver_version": "0.2.0rc4",
+      "imported_from_site_packages": true,
+      "pip_check": "PASS"
+    },
+    "candidate": {
+      "root": "/scratch1/vincent/PSSolver/rc5_g1_preflight_3443f92_20261015_v1/venvs/candidate",
+      "pssolver_version": "0.2.0rc5",
+      "imported_from_site_packages": true,
+      "pip_check": "PASS"
+    },
+    "consumer": {
+      "root": "/scratch1/vincent/PSSolver/rc5_g1_preflight_3443f92_20261015_v1/venvs/consumer",
+      "pssolver_version": "0.2.0rc5",
+      "pssolver_control_version": "0.0.1.dev0",
+      "provider_imported_from_site_packages": true,
+      "consumer_imported_from_site_packages": true,
+      "pip_check": "PASS"
+    }
+  },
+  "support_isolation": {
+    "provider_support_root": "/scratch1/vincent/PSSolver/rc5_g1_preflight_3443f92_20261015_v1/support/provider",
+    "consumer_support_root": "/scratch1/vincent/PSSolver/rc5_g1_preflight_3443f92_20261015_v1/support/consumer",
+    "provider_support_contains_pssolver_source_tree": false,
+    "source_shadow_import": false
+  },
+  "missing_versioned_stage_producers": [
+    "environment",
+    "cuda_only",
+    "checkpoints",
+    "numerical",
+    "consumer"
+  ],
+  "existing_versioned_stage_producers": [
+    "tf32_scope",
+    "profiles",
+    "assemble",
+    "analyze"
+  ],
+  "stop_reason": "The frozen nine-stage executor can validate stage artifacts but support commit 3443f923b942e586a221241967823162a302d8ab does not contain executable producers for five required schemas. Freezing placeholder commands would create a knowingly non-runnable H100 plan.",
+  "next_gate": "implement_and_cpu_validate_the_five_missing_qualification_only_stage_producers_before_regenerating_the_hpcc_support_archive_and_freezing_the_nine_stage_plan",
+  "scope": {
+    "pssolver_runtime_modified": false,
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "scientific_threshold_changed": false
+  }
+}
