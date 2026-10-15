@@ -39,6 +39,7 @@ from pssolver.io.checkpoint_identity import (
     resolve_legacy_identity_schema,
 )
 from pssolver.models.active_nematics import Q_COMPONENTS
+from pssolver.operators.projection import periodic_hermitian_state_projection
 from pssolver.runtime.periodic_beris_edwards import PeriodicRuntimeAdapterProtocol
 from .state_validation import require_finite_tensors
 
@@ -323,10 +324,7 @@ def periodic_forward_dynamics_identity(
     """Return periodic next-step semantics without allocation provenance."""
 
     storage = run_spec.simulation.numerics.spectral_storage.value
-    hermitian_projection = {
-        "full_complex": "complete_conjugate_pair_projection_each_step.v2",
-        "hermitian_half": "self_conjugate_stored_planes_projection_each_step.v2",
-    }[storage]
+    hermitian_projection = periodic_hermitian_state_projection(storage)
     return CheckpointIdentityLayer(
         kind=IdentityLayerKind.FORWARD_DYNAMICS,
         version="periodic.forward.v3",

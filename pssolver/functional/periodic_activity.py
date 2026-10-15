@@ -294,6 +294,7 @@ class PeriodicActivityFunctionalRuntime:
         )
         identities = request.simulation.identity_metadata()
         execution_identity = dict(identities["execution"])
+        production_metadata = adapter.to_metadata()
         execution_identity["functional_runtime"] = {
             "kind": "periodic_activity_batch_one",
             "device": device,
@@ -301,9 +302,9 @@ class PeriodicActivityFunctionalRuntime:
             "q_gradient_reuse": False,
             "pressure_solver": "direct_periodic_fourier",
             "spectral_refresh": "disabled",
-            "hermitian_state_projection": (
-                "self_conjugate_planes_each_step"
-            ),
+            "hermitian_state_projection": production_metadata[
+                "hermitian_state_projection"
+            ],
             "activity_product_before_divergence": True,
             "snapshot_sha256": snapshot_sha256,
             "fallback_allowed": False,

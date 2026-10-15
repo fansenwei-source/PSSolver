@@ -28,7 +28,7 @@ def test_periodic_functional_state_remains_hermitian_through_time_200():
     assert report["failure"] is None
     assert report["completed_time"] == 200.0
     assert report["hermitian_state_projection"] == (
-        "self_conjugate_planes_each_step"
+        "self_conjugate_stored_planes_projection_each_step.v2"
     )
     assert report["samples"]
     assert all(sample["finite"] for sample in report["samples"])
@@ -54,7 +54,7 @@ def test_periodic_full_complex_state_remains_hermitian_past_old_failure():
     assert report["failure"] is None
     assert report["completed_time"] == 100.0
     assert report["hermitian_state_projection"] == (
-        "self_conjugate_planes_each_step"
+        "complete_conjugate_pair_projection_each_step.v2"
     )
     assert report["samples"]
     assert all(sample["finite"] for sample in report["samples"])

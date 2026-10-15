@@ -623,7 +623,7 @@ def test_full_complex_projection_remains_autograd_compatible():
     assert bool(torch.isfinite(spectral.grad).all())
 
 
-def test_hermitian_projection_is_recorded_only_for_packed_storage():
+def test_hermitian_projection_records_the_storage_specific_identity():
     shape = (8, 10, 7)
     half = BasisAwareSpectralProjector(
         SimpleNamespace(
@@ -641,6 +641,8 @@ def test_hermitian_projection_is_recorded_only_for_packed_storage():
     )
 
     assert half.execution_metadata()["hermitian_state_projection"] == (
-        "self_conjugate_planes"
+        "self_conjugate_stored_planes_projection_each_step.v2"
     )
-    assert "hermitian_state_projection" not in full.execution_metadata()
+    assert full.execution_metadata()["hermitian_state_projection"] == (
+        "complete_conjugate_pair_projection_each_step.v2"
+    )

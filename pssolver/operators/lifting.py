@@ -383,7 +383,17 @@ class PlaneStaticLiftingOperator:
         *,
         policy: FreshInitialConditioningPolicy | None = None,
     ) -> torch.Tensor:
-        """Apply an explicit fresh-only policy to a lifted remainder."""
+        """Apply an explicit fresh-only policy to a lifted remainder.
+
+        The supplied tensor contains cell-centre collocation values, not wall
+        samples.  Under the lifted DST representation every finite set of
+        those values defines one homogeneous interpolant whose wall trace is
+        zero.  Consequently the strict policy validates the tensor contract
+        above and preserves the raw remainder exactly; it must not invent a
+        wall trace by applying an unregistered finite-difference extrapolator.
+        Policies that intentionally alter the fresh samples remain explicit
+        branches below and are never used during restart restoration.
+        """
 
         remainder = self.extract_homogeneous_remainder(
             component,

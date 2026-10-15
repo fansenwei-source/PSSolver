@@ -259,15 +259,16 @@ class PeriodicRuntimeAdapter:
 
     def to_metadata(self):
         flow = self._solver.model.static_model
+        projector_metadata = self.projector.execution_metadata()
         return {
             "requested": PERIODIC_RUNTIME_PATH,
             "effective": PERIODIC_RUNTIME_PATH,
             "adapter": type(self).__name__,
             "fallback_used": False,
             "pressure_gauge": "zero_mean",
-            "hermitian_state_projection": (
-                "self_conjugate_planes_each_step"
-            ),
+            "hermitian_state_projection": projector_metadata[
+                "hermitian_state_projection"
+            ],
             "tangential_zero_mode_policy": flow.zero_mode_policy,
             "friction": flow.friction,
             "uniform_velocity_mode_action": (

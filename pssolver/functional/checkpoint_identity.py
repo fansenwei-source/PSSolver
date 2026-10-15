@@ -12,6 +12,7 @@ from pssolver.io.checkpoint_identity import (
     CheckpointIdentityLayer,
     IdentityLayerKind,
 )
+from pssolver.operators.projection import periodic_hermitian_state_projection
 
 from .contracts import FunctionalRuntimeIdentity, FunctionalStateSpec
 
@@ -92,6 +93,38 @@ def normalize_functional_checkpoint_identity(
         if section is None:
             continue
         normalized_payload[name] = _normalized_identity_record(section)
+
+    normalized_derivative = identity.derivative_dynamics
+    if identity.family is CheckpointFamily.PERIODIC_FUNCTIONAL:
+        discretization = normalized_payload.get("discretization")
+        execution = normalized_payload.get("execution")
+        try:
+            storage = discretization["metadata"]["numerics"][
+                "spectral_storage"
+            ]
+        except (KeyError, TypeError):
+            # Some unit-level synthetic identities predate the full public
+            # discretization schema.  They carry no storage claim to repair.
+            storage = None
+        if storage is not None:
+            projection = periodic_hermitian_state_projection(storage)
+            try:
+                functional_runtime = dict(execution["functional_runtime"])
+            except (KeyError, TypeError) as exc:
+                raise ValueError(
+                    "Periodic functional execution metadata is invalid"
+                ) from exc
+            functional_runtime["hermitian_state_projection"] = projection
+            execution["functional_runtime"] = functional_runtime
+
+            derivative_payload = dict(identity.derivative_dynamics.payload)
+            derivative_payload["spectral_state_projection"] = projection
+            normalized_derivative = CheckpointIdentityLayer(
+                kind=identity.derivative_dynamics.kind,
+                version=identity.derivative_dynamics.version,
+                payload=derivative_payload,
+                schema_version=identity.derivative_dynamics.schema_version,
+            )
     normalized_forward = CheckpointIdentityLayer(
         kind=identity.forward_dynamics.kind,
         version=identity.forward_dynamics.version,
@@ -102,7 +135,7 @@ def normalize_functional_checkpoint_identity(
         family=identity.family,
         runtime_path=identity.runtime_path,
         forward_dynamics=normalized_forward,
-        derivative_dynamics=identity.derivative_dynamics,
+        derivative_dynamics=normalized_derivative,
         state_layout=identity.state_layout,
         backend_restart=identity.backend_restart,
         schema_version=identity.schema_version,

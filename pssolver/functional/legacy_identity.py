@@ -68,7 +68,6 @@ def _periodic_runtime_identity(
         "q_gradient_reuse",
         "pressure_solver",
         "spectral_refresh",
-        "hermitian_state_projection",
         "activity_product_before_divergence",
         "snapshot_sha256",
         "fallback_allowed",
@@ -85,6 +84,9 @@ def _periodic_runtime_identity(
             )
             for key in fields
         },
+        # rc1--rc3 all wrote this storage-agnostic description.  Keep the
+        # released literal frozen after R5-11 corrected current metadata.
+        "hermitian_state_projection": "self_conjugate_planes_each_step",
     }
 
 
