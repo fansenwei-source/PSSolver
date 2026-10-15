@@ -1,0 +1,108 @@
+{
+  "phase": "G-1.1",
+  "date": "2026-10-15",
+  "status": "frozen_source_and_installed_wheel_cpu_complete",
+  "classification": "PASS_RC5_G1_FROZEN_SOURCE_AND_INSTALLED_WHEEL_CPU",
+  "qualified_source": {
+    "branch": "fix/v0.2.0rc5",
+    "commit": "674a8121779be72c95aa5dc9e2babca0ce7b93a9",
+    "runtime_implementation_commit": "91c702c3deeb3e973fac80b6029e9dd02925937b",
+    "package_version": "0.2.0rc5",
+    "record_commit_is_qualified_source": false,
+    "requires_cpu_requalification": false
+  },
+  "source_cpu": {
+    "passed": 3623,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "subtests_passed": 8,
+    "seconds": 205.67
+  },
+  "installed_wheel": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_installed_cpu_674a812_20261015_v1",
+    "source_archive": {
+      "relative_path": "package/provider_674a812.tar",
+      "sha256": "76f0a9190255e6e131e820559b3d30bbb51f0ff633c922dda9a49622ed5bc1ee"
+    },
+    "wheel": {
+      "relative_path": "package/dist/pssolver-0.2.0rc5-py3-none-any.whl",
+      "sha256": "3097b08b08ba7b2d488fd8af348ec48986d69007a640bd806a225ec9963bb65f"
+    },
+    "import_path": "/home/fansenwei/pssolver_rc5_g1_installed_cpu_674a812_20261015_v1/venv/lib/python3.12/site-packages/pssolver/__init__.py",
+    "source_shadow_import": false,
+    "pip_check": "PASS",
+    "targeted": {
+      "passed": 178,
+      "failed": 0,
+      "skipped": 0,
+      "xml_sha256": "c2befea2a18f0d89063da7773551e9ad2a24c908dafdae19ce31c0eaa1ef35c0"
+    },
+    "applicable_full": {
+      "passed": 3609,
+      "failed": 0,
+      "skipped": 7,
+      "xfailed": 0,
+      "subtests_passed": 8,
+      "excluded_source_layout_tests": 7,
+      "seconds": 203.49,
+      "xml_sha256": "64d9a81a208e912c259a74ae8bb2b74c9425f7ffd9ee360cb1bc7ac9a216967c"
+    },
+    "allowed_skips": [
+      "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+      "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+      "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+      "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+      "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+      "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact",
+      "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+    ],
+    "excluded_source_layout_file": "tests/test_phase8_p861_local_cumulative_audit.py",
+    "runner_contract": {
+      "python_isolated_mode": true,
+      "pytest_import_mode": "importlib",
+      "installed_package_imported_before_support_path": true,
+      "repository_support_path_appended_after_site_packages": true,
+      "source_shadow_import_asserted_before_pytest": true
+    }
+  },
+  "rejected_harness_attempt": {
+    "classification": "EXTERNAL_INSTALLED_TEST_CWD_BOOTSTRAP_ERROR",
+    "used_as_qualification_evidence": false,
+    "failed_tests": 7,
+    "cause": "repository-relative static audits were invoked with cwd=/tmp",
+    "corrected_contract_preflight": "7 passed"
+  },
+  "evidence": {
+    "final_report_sha256": "9dc60b3fc94dd4702730d29d5509ad9186a70de6ab1b7940ea0c24909e2332b7",
+    "summary_json_sha256": "ef0db4ff4a89bdfe3439a4b1823e24d861f09d8b2a8e6702c94a64c0ece215c0",
+    "summary_csv_sha256": "e27eddfb7ad109657518235e48642bc2c401d5db9de4843cb0154c849169ad80",
+    "environment_sha256": "bf1c93ea8424abc39edca5cc3e4979b8e12d53cd51d2ca3043e1bfa09507cdb6",
+    "runner_contract_sha256": "23f0bd77c299c844f430df0d71e7130d57c0d0fbd34e1fb066e79d54f1a9d711",
+    "checksum_entries": 1712,
+    "checksum_passed": 1712,
+    "checksum_failed": 0,
+    "checksums_sha256": "6a10414a20d3c5f7c12e21e98afb594fe3008be3010388355a16e6fdb9fbe832"
+  },
+  "pending_g1_gates": [
+    "released_checkpoint_matrix_rc1_through_rc4",
+    "provider_identity_impact_review",
+    "pssolver_control_installed_wheel_qualification_if_required",
+    "single_h100_cumulative_qualification",
+    "post_release_verification"
+  ],
+  "authorization": {
+    "source_and_installed_wheel_cpu_complete": true,
+    "g1_complete": false,
+    "eligible_for_push": false,
+    "eligible_for_h100_submission": false,
+    "h100_submission_count": 0,
+    "automatic_retry": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  }
+}
