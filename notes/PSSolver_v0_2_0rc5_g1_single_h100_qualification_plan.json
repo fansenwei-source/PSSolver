@@ -1,0 +1,283 @@
+{
+  "schema": "pssolver.rc5.g1.single_h100_qualification_plan.v1",
+  "phase": "G-1.4",
+  "date": "2026-10-15",
+  "status": "plan_frozen_waiting_for_qualification_support_push_and_authorization",
+  "classification": "READY_RC5_G1_SINGLE_H100_QUALIFICATION_SUPPORT_IMPLEMENTATION",
+  "qualification_complete": false,
+  "provider_identities": {
+    "baseline": {
+      "commit": "658869456d762c917ca4409b091539c3733df2fb",
+      "tag": "v0.2.0rc4",
+      "published_wheel_sha256": "1bf31f324180dac58777a23785fb4e1424d3cc589099cf8c6328e2f6c74d8cc5"
+    },
+    "candidate": {
+      "branch": "fix/v0.2.0rc5",
+      "qualified_source_commit": "674a8121779be72c95aa5dc9e2babca0ce7b93a9",
+      "package_version": "0.2.0rc5",
+      "qualified_wheel_sha256": "3097b08b08ba7b2d488fd8af348ec48986d69007a640bd806a225ec9963bb65f",
+      "evidence_tip_before_plan": "90a814f8c4bf223490f297b4d80dd5b89df4f5e8"
+    }
+  },
+  "consumer_identities": {
+    "branch": "migration/pssolver-v0.2.0rc5-periodic-identity",
+    "base_commit": "0e3895d664d1b81925127848b2dfde638f39763d",
+    "migration_commit": "1377592765d319bcf3fcddc483fc3dba25d94af2",
+    "qualified_source_commit": "c14e6b56c88081e7f9a5642e65ffd722eec7445b",
+    "evidence_only_commit": "2474592fa64d1b3243277c7439a16104f2cdeb9f",
+    "source_archive_sha256": "3b66240d6de16956c8958268e75b79e3e250efca61f21ff51ec44609ab93728e",
+    "wheel_sha256": "3f5f359b0c7a7112b66245009a7e67e4479cab0ab6df630428c751dc26848745",
+    "functional_api_version": "1.0",
+    "periodic_adapter_version": 2,
+    "channel_adapter_version": 3,
+    "remote_branch_present": false
+  },
+  "consumer_cpu_review": {
+    "classification": "PASS_RC5_CONTROL_IDENTITY_MIGRATION_AND_INSTALLED_WHEEL_CPU_REVIEW",
+    "source_runtime_files_changed": false,
+    "historical_rc457_records_unchanged": {
+      "docs/pssolver_v0_2_0rc4_rc457_tf32_identity_migration.json": "bd4c4c74c2c0f0ce530eb47069a6901e1505d497fa638d07c3e486840358622c",
+      "docs/pssolver_v0_2_0rc4_rc457_installed_wheel_closure.json": "e982abfb41dd01d140bf63ac29e85d51fa3d76863147a72a4665798be4cce27f"
+    },
+    "rc5_records": {
+      "docs/pssolver_v0_2_0rc5_periodic_identity_migration.json": "15890c285d30223ecc9343748f00e514369de9f7718b99e3d69117b1fe586608",
+      "docs/pssolver_v0_2_0rc5_installed_wheel_closure.json": "ce9514e82accf35fed805301f3f25dec0e11705d9c4402b750bbef9638dd18e0"
+    },
+    "external_evidence": {
+      "control_directory": "/home/fansenwei/pssolver_control_rc5_periodic_identity_674a812_20261015_v1",
+      "summary_sha256": "2a565b8362c06b442189b1d61ba831aace4509d2976ecbc2fa476d908d3ab4b5",
+      "checksums_sha256": "b99247cc884df4f42fb1e7059e404a28557a57efbb7f6e75fa2adb0a891fa5ee",
+      "checksum_entries": 469,
+      "checksum_passed": 469,
+      "checksum_failed": 0
+    },
+    "independent_targeted_review": {
+      "passed": 36,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "source_cpu": {
+      "targeted_passed": 115,
+      "cuda_visible": "336 passed, 1 allowed skip",
+      "cuda_hidden": "331 passed, 6 allowed skips",
+      "failed": 0,
+      "xfailed": 0
+    },
+    "installed_wheel_cpu": {
+      "targeted_passed": 115,
+      "cuda_visible": "336 passed, 1 allowed skip",
+      "cuda_hidden": "331 passed, 6 allowed skips",
+      "failed": 0,
+      "xfailed": 0,
+      "pip_check": "PASS",
+      "source_shadow_import": false
+    },
+    "provider_contract_discovery": {
+      "path": "FunctionalTensorSpec.device",
+      "rc5_behavior": "construction rejects non-execution token meta with FunctionalValueError",
+      "consumer_disposition": "the different-device adapter test now uses canonical token cuda:0 and separately records the Provider rejection of meta",
+      "adapter_change_required": false,
+      "scientific_or_runtime_behavior_changed": false
+    }
+  },
+  "identity_contract": {
+    "periodic": {
+      "rc4_canonical_sha256": "f83d7b368bda23aacdf1c70e77de974df1c05a3e8b0c7886191dd82c14ade416",
+      "rc5_canonical_sha256": "d85f6540494696fddb4549cd4d431d362fe4a55bc53cb9cfd8158fae7c09530d",
+      "only_changed_path": "provider_identity.execution.functional_runtime.hermitian_state_projection",
+      "old_value": "self_conjugate_planes_each_step",
+      "new_value": "self_conjugate_stored_planes_projection_each_step.v2"
+    },
+    "channel_fixed_iteration_sha256": "b95aa0ce22035df610282f1066cce23b47819807f3d942138b0d5038b727a905",
+    "channel_tolerance_sha256": "b18000feec39cdcdb8e8d371ad80b5037a10ba844c21db0dcddd7b162d324908",
+    "channel_identities_unchanged": true,
+    "old_periodic_pin_rejects_before_mutation": true,
+    "new_periodic_pin_accepts": true,
+    "unrestricted_construction_accepts": true
+  },
+  "pre_submission_conditions": {
+    "provider_branch_remote_tip_equals_qualification_support_commit": false,
+    "consumer_branch_remote_tip_equals_evidence_commit": false,
+    "versioned_rc5_qualification_runner_exists": false,
+    "runner_cpu_synthetic_and_planning_tests_pass": false,
+    "slurm_path_and_environment_preflight_pass": false,
+    "single_h100_submission_authorized": false,
+    "ready": false
+  },
+  "scheduler_contract": {
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "gres": "gpu:H100:1",
+    "cpus_per_task": 8,
+    "memory": "64G",
+    "time_limit": "02:00:00",
+    "requeue": false,
+    "formal_job_count": 1,
+    "automatic_retry": false
+  },
+  "environment_contract": {
+    "python": "3.10.18",
+    "torch": "2.5.1+cu121",
+    "torch_cuda_runtime": "12.1",
+    "numpy": "1.22.3",
+    "scipy": "1.8.1",
+    "gpu_name_contains": "H100",
+    "visible_cuda_device_count": 1,
+    "allocated_device": "cuda:0",
+    "source_shadow_import": false,
+    "pip_check": "PASS",
+    "provider_and_consumer_imported_from_fresh_venv_site_packages": true,
+    "tf32_policy_must_be_persisted_before_and_after_each_gate": true
+  },
+  "execution_order": [
+    "verify frozen Provider/Consumer commits, archives, wheels, CPU records, and checksum manifests",
+    "build a fresh installed-wheel environment and persist the decomposed H100 environment preflight",
+    "run the seven exact Provider CUDA-only tests",
+    "run the six-caller-state by eight-runtime-family TF32 restoration matrix",
+    "run current CPU-to-CUDA and CUDA-to-CPU checkpoint/restart gates",
+    "run the released rc1-through-rc4 checkpoint disposition matrix on the allocated device",
+    "run eight runtime-family numerical execution gates",
+    "run the ninety-six rc4-versus-rc5 performance and memory profiles",
+    "run the full installed PSSolver-Control H100 suite and rc5 identity gates",
+    "run fail-closed aggregate analyzers, verify checksums, and only then write COMPLETE"
+  ],
+  "provider_cuda_only_tests": [
+    "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+    "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+    "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+    "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact",
+    "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+  ],
+  "tf32_matrix": {
+    "caller_states": [
+      {"float32_matmul_precision": "highest", "cuda_matmul_allow_tf32": false, "cudnn_allow_tf32": false},
+      {"float32_matmul_precision": "highest", "cuda_matmul_allow_tf32": false, "cudnn_allow_tf32": true},
+      {"float32_matmul_precision": "high", "cuda_matmul_allow_tf32": true, "cudnn_allow_tf32": false},
+      {"float32_matmul_precision": "high", "cuda_matmul_allow_tf32": true, "cudnn_allow_tf32": true},
+      {"float32_matmul_precision": "medium", "cuda_matmul_allow_tf32": true, "cudnn_allow_tf32": false},
+      {"float32_matmul_precision": "medium", "cuda_matmul_allow_tf32": true, "cudnn_allow_tf32": true}
+    ],
+    "runtime_family_count": 8,
+    "case_count": 48,
+    "success_exit_restores_exact_state": true,
+    "exception_exit_restores_exact_state": true,
+    "nested_scope_restores_lifo": true,
+    "invalid_policy_does_not_mutate": true
+  },
+  "checkpoint_contract": {
+    "current_families": [
+      "periodic_functional",
+      "channel_functional_fixed_iteration",
+      "channel_functional_tolerance",
+      "legacy_channel"
+    ],
+    "directions": ["cpu_to_cuda", "cuda_to_cpu"],
+    "continuous_split_restart_required": true,
+    "restored_state_and_observation_finite": true,
+    "restore_must_be_transactional": true,
+    "tamper_and_identity_mismatch_must_reject_before_mutation": true,
+    "released_matrix_primary_case_count": 13,
+    "released_rc1_through_rc4_dispositions_must_match_cpu_record": true,
+    "source_checkpoints_must_remain_unchanged": true
+  },
+  "profile_matrix": {
+    "baseline_role": "v0.2.0rc4 installed wheel",
+    "candidate_role": "v0.2.0rc5 installed wheel",
+    "runtime_families": [
+      "plane_legacy_production",
+      "plane_compiled_v2",
+      "periodic_complete_stress",
+      "channel_legacy",
+      "channel_compiled_v2",
+      "channel_complete_stress",
+      "periodic_functional",
+      "channel_functional"
+    ],
+    "grid_count_per_family": 2,
+    "trial_count_per_grid": 3,
+    "provider_role_count": 2,
+    "profile_count": 96,
+    "independent_empty_triton_and_torchinductor_cache_per_profile": true,
+    "thresholds": {
+      "mean_timestep_ratio_max": 1.03,
+      "median_timestep_ratio_max": 1.03,
+      "paired_timestep_ratio_max": 1.05,
+      "peak_allocated_ratio_max": 1.03,
+      "peak_reserved_group_ratio_max": 1.03,
+      "initial_state_sha_equal": true,
+      "transform_counts_exact": true,
+      "fallback_allowed": false,
+      "graph_breaks_allowed": 0,
+      "finite_required": true
+    },
+    "numerical_comparison": {
+      "unchanged_plane_and_channel_execution_paths": "require byte identity where the versioned analyzer proves identical semantics",
+      "periodic_repaired_paths": "do not require spectral byte identity with rc4; compare physical Q/u/p with relative-L2 and Linf bounds no looser than 1e-12 and require the rc5 stored-plane Hermitian violation to be exactly zero",
+      "no_global_final_state_sha_equality_assumption": true
+    }
+  },
+  "consumer_h100_contract": {
+    "qualified_source_commit": "c14e6b56c88081e7f9a5642e65ffd722eec7445b",
+    "wheel_sha256": "3f5f359b0c7a7112b66245009a7e67e4479cab0ab6df630428c751dc26848745",
+    "complete_suite_expected_passed": 336,
+    "allowed_skip": "tests/test_warmup_experiments.py::test_r5_benchmark",
+    "allowed_skip_count": 1,
+    "failed_allowed": 0,
+    "xfailed_allowed": 0,
+    "deselected_allowed": 0,
+    "periodic_identity_sha256": "d85f6540494696fddb4549cd4d431d362fe4a55bc53cb9cfd8158fae7c09530d",
+    "channel_fixed_iteration_identity_sha256": "b95aa0ce22035df610282f1066cce23b47819807f3d942138b0d5038b727a905",
+    "channel_tolerance_identity_sha256": "b18000feec39cdcdb8e8d371ad80b5037a10ba844c21db0dcddd7b162d324908",
+    "old_periodic_pin_negative_gate_required": true,
+    "periodic_and_channel_cuda_execution_finite": true,
+    "checkpoint_replay_and_gradient_gates_required": true,
+    "new_control_algorithm_authorized": false,
+    "scientific_control_result_claimed": false
+  },
+  "qualification_support_scope": {
+    "allowed": [
+      "benchmarks/** qualification planners, runners, profilers, and analyzers",
+      "jobs/** rc5 qualification Slurm scripts",
+      "tests/** qualification-support tests",
+      "notes/** forward-only plans and evidence records"
+    ],
+    "forbidden": [
+      "pssolver/** runtime or numerical implementation changes",
+      "PSSolver-Control source changes",
+      "nematics3d changes",
+      "threshold relaxation",
+      "new skip or xfail",
+      "production default changes",
+      "checkpoint schema changes",
+      "functional API or adapter version changes"
+    ]
+  },
+  "success_semantics": {
+    "h100_pass_makes_candidate_eligible_for_release_integration_review": true,
+    "h100_pass_does_not_automatically_merge_or_publish": true,
+    "g1_complete_after_h100_alone": false,
+    "post_release_verification_still_required": true,
+    "automatic_merge": false,
+    "default_promotion": false
+  },
+  "authorization": {
+    "consumer_cpu_review_complete": true,
+    "h100_plan_frozen": true,
+    "qualification_support_implementation_authorized": false,
+    "provider_push_authorized": false,
+    "consumer_push_authorized": false,
+    "single_h100_submission_authorized": false,
+    "automatic_retry": false,
+    "merge_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "pypi_publish_authorized": false,
+    "production_default_changed": false,
+    "nematics3d_modified": false
+  },
+  "next_gate": "implement_and_cpu_validate_versioned_rc5_qualification_support_without_h100_submission"
+}
