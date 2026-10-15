@@ -43,9 +43,9 @@ def test_r513_dispositions_are_explicit_and_compatibility_preserving():
 
 def test_r513_scope_remains_cpu_only_and_fail_closed():
     record = _record()
-    assert record["status"] == "implementation_complete_cpu_verified"
+    assert record["status"] == "installed_wheel_cpu_verified"
     assert record["classification"] == (
-        "PASS_R5_13_OPTIONAL_HYGIENE_CPU_CLOSURE"
+        "PASS_R5_13_OPTIONAL_HYGIENE_INSTALLED_WHEEL_CPU_CLOSURE"
     )
     assert record["authorization"] == {
         "r5_13_complete": True,
@@ -67,3 +67,26 @@ def test_r513_scope_remains_cpu_only_and_fail_closed():
         "push_executed",
     ):
         assert scope[key] is False
+
+
+def test_r513_installed_wheel_evidence_is_exact_and_cpu_only():
+    evidence = _record()["installed_wheel_evidence"]
+    assert evidence["source_archive_sha256"] == (
+        "6d71f6e1ba2170b2bccd5e939b1583044ef26f0f51733b33aa3f543e18769edb"
+    )
+    assert evidence["wheel_sha256"] == (
+        "05b3549c817747365a9c2a2ff614dbaa8648a4ac07435fc3713b209673261fdf"
+    )
+    assert evidence["source_shadow_import"] is False
+    assert evidence["pip_check"] == "PASS"
+    assert evidence["targeted"] == {"passed": 49, "skipped": 0, "failed": 0}
+    assert evidence["applicable_full"] == {
+        "passed": 3601,
+        "skipped": 7,
+        "failed": 0,
+        "subtests_passed": 8,
+        "excluded_source_layout_tests": 7,
+    }
+    assert len(evidence["skip_identity"]) == 7
+    assert evidence["checksums"] == {"passed": 9, "failed": 0}
+    assert evidence["nematics3d_modified"] is False

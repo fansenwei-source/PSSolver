@@ -1,14 +1,15 @@
 {
   "phase": "R5-13",
-  "status": "implementation_complete_cpu_verified",
-  "classification": "PASS_R5_13_OPTIONAL_HYGIENE_CPU_CLOSURE",
+  "status": "installed_wheel_cpu_verified",
+  "classification": "PASS_R5_13_OPTIONAL_HYGIENE_INSTALLED_WHEEL_CPU_CLOSURE",
   "git_identity": {
     "branch": "fix/v0.2.0rc5",
     "implementation_commits": [
       "784525d52bbfe06928be64b46dd886968414ddab",
       "91c702c3deeb3e973fac80b6029e9dd02925937b"
     ],
-    "qualified_source_commit": "91c702c3deeb3e973fac80b6029e9dd02925937b",
+    "qualified_source_commit": "0bcdd32ccfbabc48c7babedff500882d737ddc5a",
+    "runtime_implementation_commit": "91c702c3deeb3e973fac80b6029e9dd02925937b",
     "record_commit_is_qualified_source": false,
     "pushed": false
   },
@@ -120,6 +121,41 @@
       "scipy": "1.16.0",
       "pytest": "9.1.1"
     }
+  },
+  "installed_wheel_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_r513_installed_cpu_0bcdd32_20261015_v1",
+    "source_archive": "/home/fansenwei/pssolver_rc5_r513_installed_cpu_0bcdd32_20261015_v1/package/provider_0bcdd32.tar",
+    "source_archive_sha256": "6d71f6e1ba2170b2bccd5e939b1583044ef26f0f51733b33aa3f543e18769edb",
+    "wheel": "/home/fansenwei/pssolver_rc5_r513_installed_cpu_0bcdd32_20261015_v1/package/dist/pssolver-0.2.0rc4-py3-none-any.whl",
+    "wheel_sha256": "05b3549c817747365a9c2a2ff614dbaa8648a4ac07435fc3713b209673261fdf",
+    "installed_import": "/home/fansenwei/pssolver_rc5_r513_installed_cpu_0bcdd32_20261015_v1/venv/lib/python3.12/site-packages/pssolver/__init__.py",
+    "source_shadow_import": false,
+    "pip_check": "PASS",
+    "targeted": {"passed": 49, "skipped": 0, "failed": 0},
+    "applicable_full": {
+      "passed": 3601,
+      "skipped": 7,
+      "failed": 0,
+      "subtests_passed": 8,
+      "excluded_source_layout_tests": 7
+    },
+    "skip_identity": [
+      "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+      "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+      "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+      "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+      "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+      "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact",
+      "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+    ],
+    "checksums": {"passed": 9, "failed": 0},
+    "checksums_sha256": "8f37cfd06a91bc79a79220e82010ff6c90b660f14feb00476ddd55dd208b403b",
+    "python": "3.12.13",
+    "torch": "2.6.0",
+    "numpy": "2.3.2",
+    "scipy": "1.16.0",
+    "pytest": "9.1.1",
+    "nematics3d_modified": false
   },
   "scope": {
     "scientific_equations_changed": false,

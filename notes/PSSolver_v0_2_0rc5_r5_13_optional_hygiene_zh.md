@@ -21,3 +21,10 @@ R5-13 处理合并审计中剩余的低风险卫生项，但不扩大数值、�
 本地验证结果：定向门禁 252 passed；补充 successor 解析门禁 47 passed；完整 CPU suite
 3615 passed、8 subtests passed、0 failed、0 skipped、0 xfailed。R5-13 不需要 H100，
 没有 push，也没有修改 PSSolver-Control 或 nematics3d。
+
+Fresh installed-wheel CPU closure 也已完成：49 项定向测试通过；适用完整 suite 为
+3601 passed、7 个精确 CUDA-only skip、8 subtests passed、0 failed。源码布局专属的
+7 项审计被明确排除而非伪装成 skip。`pip check` 通过，`pssolver` 从新 venv 的
+`site-packages` 导入，没有 source shadow import。归档位于：
+
+`/home/fansenwei/pssolver_rc5_r513_installed_cpu_0bcdd32_20261015_v1`
