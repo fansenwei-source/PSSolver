@@ -28,6 +28,7 @@ RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 RC5_R511 = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
 )
+RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 
 
 def _sha256(path: Path) -> str:
@@ -40,7 +41,7 @@ def _record() -> dict[str, object]:
 
 def _rc456_successor(relative: str, historical: str) -> str:
     resolved = historical
-    for path in (RC456, RC5_R57, RC5_R511):
+    for path in (RC456, RC5_R57, RC5_R511, RC5_R513):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)

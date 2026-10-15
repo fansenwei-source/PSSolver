@@ -1,0 +1,142 @@
+{
+  "phase": "R5-13",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_R5_13_OPTIONAL_HYGIENE_CPU_CLOSURE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "implementation_commits": [
+      "784525d52bbfe06928be64b46dd886968414ddab",
+      "91c702c3deeb3e973fac80b6029e9dd02925937b"
+    ],
+    "qualified_source_commit": "91c702c3deeb3e973fac80b6029e9dd02925937b",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "dispositions": {
+    "B27": {
+      "status": "closed_hardened",
+      "contract": "checkpoint publication uses Linux renameat2(RENAME_NOREPLACE), fsyncs the staging tree before publication, fsyncs the parent after publication, and the three provisional writers share the generic transaction"
+    },
+    "B14": {
+      "status": "closed_hardened",
+      "contract": "Plane restart rejection uses SimulationRestartError and dry-run validates restart metadata plus the absolute save window before returning"
+    },
+    "H100_test_portability": {
+      "status": "closed_hardened",
+      "contract": "generic CUDA execution no longer requires an H100; PSSOLVER_REQUIRE_H100=1 enables the explicit H100 qualification assertion without adding a skip"
+    },
+    "NEW_15_pdf_text": {
+      "status": "closed_hardened",
+      "contract": "PDF files are declared binary in .gitattributes"
+    },
+    "legacy_whitespace": {
+      "status": "retained_for_provenance",
+      "contract": "historical whitespace is not mechanically rewritten because released source and evidence hashes remain authoritative"
+    },
+    "A3": {
+      "status": "retained_for_compatibility",
+      "contract": "DEFAULT_SPECTRAL_STORAGE remains a frozen v0.1 root export; current public construction still requires explicit numerics storage metadata"
+    },
+    "B28": {
+      "status": "retained_for_compatibility",
+      "contract": "legacy bridge metadata version remains 1 because rc1-rc3 checkpoint identity and direct import depend on that literal; current bridge-format constants remain version 3"
+    },
+    "N4": {
+      "status": "deferred_by_scope",
+      "contract": "effective lifting cannot be observed through a public executable path while lifting remains fail-closed; R5-13 does not reopen lifting"
+    }
+  },
+  "new_sources": {
+    ".gitattributes": "547f59603028195ff9f8a87d04c4651551e8bd0d68f075257dfd549cd846b25b",
+    "tests/test_rc5_r513_optional_hygiene.py": "1c40ed0e5d4c3c927ac8be866eb0d54107abfa278ce611a1dc258c82a0203db8"
+  },
+  "historical_successor_sources": {
+    "pssolver/__init__.py": {"historical_sha256": "dfc565ce694586dfe58e2288aac19b6d2e469d5568401f453a181238a01d1ad3", "current_sha256": "89d3977a696142a649c2240a1768e653a3b5ee00d3316900c421de2294e3829d", "introduced_by_phase": "R5-13", "reason": "export the structured SimulationRestartError without changing the frozen root surface otherwise"},
+    "pssolver/api/__init__.py": {"historical_sha256": "d48fe899a2a6c2b13d47ac2a5c4c07c78b3cdf6dba9074d18a52f71ad443e3c9", "current_sha256": "25776be38b39a3d15ef0fc13794db294b29f9a470ebd9c3036b595eab8c2e949", "introduced_by_phase": "R5-13", "reason": "export the structured SimulationRestartError from the public API"},
+    "pssolver/applications/plane_beris_edwards.py": {"historical_sha256": "8888683e7c69a7620e7ad0818b8e0b6582c56e1b9118fb01f570c66dd41c21a1", "current_sha256": "92ac8c69ea911f2582ecb8d609096c80fe312c85d5345d4e940fb48e1ec4550a", "introduced_by_phase": "R5-13", "reason": "validate Plane restart metadata and save windows before dry-run return"},
+    "pssolver/errors.py": {"historical_sha256": "8eb72d709eab9d265cb5a5102bee692f46be519a513317c7b27349809e127633", "current_sha256": "1b6c653dc010dc6106215a9374f3162e8834bf224bb558909c18c5a68b3667cc", "introduced_by_phase": "R5-13", "reason": "add the structured SimulationRestartError boundary"},
+    "pssolver/experimental/checkpointing.py": {"historical_sha256": "9e7c20dc4ca0ddb368aa80ce8e4d47e841b983043af832a6574933395c3e083c", "current_sha256": "33c0f3dae9d2796ea431fff2807dff046e051bc826bf6e7a23318092832060e6", "introduced_by_phase": "R5-13", "reason": "reuse the hardened generic checkpoint transaction"},
+    "pssolver/experimental/modal_block_checkpoint.py": {"historical_sha256": "82cb1764062e4b86ab638d2009dd09a2dedd09eb4015488c9a61dbcd292cb31f", "current_sha256": "6a301f3b4c29ab6c8dbf4f47f7e4350287f3143716f9ed27d33d03b49cfe51a6", "introduced_by_phase": "R5-13", "reason": "reuse the hardened generic checkpoint transaction"},
+    "pssolver/integrators/reference_checkpoint.py": {"historical_sha256": "981c9c9426c0133442dc67ae41e8df3c1f19e3d11fcfe73eaa3ae20e596e41e8", "current_sha256": "53ac2ffd4e8bd2d820d286372ce443056f9b49ef87eaf7e731a0c4cb2c17c667", "introduced_by_phase": "R5-13", "reason": "reuse the hardened generic checkpoint transaction"},
+    "pssolver/io/checkpoint.py": {"historical_sha256": "17640a01cfce4b40ff375fba60057d02ce924a4cd66d99e1422155c9118fb44f", "current_sha256": "afc2475b8d1933254b50b6588688d18709329d70cf344f94249814b47b87dcb5", "introduced_by_phase": "R5-13", "reason": "close empty-target publication races and add durable checkpoint publication"},
+    "tests/test_architecture_import_boundaries.py": {"historical_sha256": "db2cebd8d52f9a555252b83b27f949486731336c93e7488a749d969086381075", "current_sha256": "8b13632354f7860a61b4f988ee1a55f4becb3de97cdd2c693ad980ad39394ffb", "introduced_by_phase": "R5-13", "reason": "register the reviewed reference-checkpoint to IO import edge"},
+    "tests/test_rc426_functional_checkpoint_recovery_record.py": {"historical_sha256": "3a5b71ce19216e3f604e19df69aedbfed564ef0352c9a1fa32d1503fe9299f2c", "current_sha256": "cabe2f8873a053d1b977843022e91a432caee2894a0608b39cfe850d585888e4", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc451_cross_runtime_adjudication.py": {"historical_sha256": "109f5d15ddb56851795547b9d428e77599ed6f8c3413537e14f90d801584c679", "current_sha256": "4b3fe033d54ae1c88daf6d7a0a581124de1755a787cb590dc07c228608460257", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc453_checkpoint_transactionality.py": {"historical_sha256": "b8f5eaeadb004fdb35434d4b478a49074791a5ac2fd78e5502c17b70f7e9dc94", "current_sha256": "6e3fb1ed100f039676e77d5f6a054c0e9a44a5c1120612b886276d54069c9b5f", "introduced_by_phase": "R5-13", "reason": "verify no-replace racing publication, fsync durability, and successor history"},
+    "tests/test_rc455_public_robustness.py": {"historical_sha256": "797aa76968af59a5750174c84d3426d8c148eeb268762a77db4a7933e28411c1", "current_sha256": "24c99655d627012bc86ab456ceedd9bc9244ecddcbc38be7b47046248d7039f0", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc456_tf32_execution_scope.py": {"historical_sha256": "b49a6ea3863af228a227cfa8a49c796b71bed1b5353ffad3d950bf91331cdfca", "current_sha256": "6ffa23d84a6d1b9c82a42f53ffc56ca8d10ba7acd95c75f441b17689eea0208c", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc4_cross_device_checkpoint_plan.py": {"historical_sha256": "2259dff6fab3a9fee534548be9c401253a3550eb86396200e8b3ec8207f47e75", "current_sha256": "4f45cffc48a12f59fe524ab8e6d216342a39831f0736c6364b17c52accb91bf6", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc4_fresh_initial_conditioning.py": {"historical_sha256": "5d5ab8bee8de717d8bc1133902a2f4fd5a27d06abb940b277a3987dd4275f758", "current_sha256": "3f51dcff870cefe5d267df2cf55f39922c1b3b66fa53fb813bb48eb298c66249", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc4_functional_checkpoint_identity_record.py": {"historical_sha256": "b59b12b0dc4eaa843d1deae6bb165fce5d39f61aa7a4739f40a37af1d16497dc", "current_sha256": "1fd37aae78e47acd1842fece3d9d89300751116b0a2894e3642d92a5f71e168f", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc4_plane_nyquist_cuda.py": {"historical_sha256": "e02a40c24593d4afe310cdb904e41237a9fcfcdcac05ad62d3165f6ad35285ae", "current_sha256": "ac9a06ee265c7b77ffa0bacde0dfe149d7367a14ca804bb1ee0ca3cda61057cd", "introduced_by_phase": "R5-13", "reason": "separate generic CUDA validation from explicit H100 qualification"},
+    "tests/test_rc4_plane_nyquist_qualification_plan.py": {"historical_sha256": "6fb8d06b5126540319fb2e921386bcde7e740828541bbce9cd8871be3c9ee924", "current_sha256": "29dd3c53947e650c5a0a4c4ade5741f32321b01de5a8568c5b2b18909f0b0e4d", "introduced_by_phase": "R5-13", "reason": "resolve the portable CUDA-test successor without rewriting the RC4.1.2 plan"},
+    "tests/test_rc4_pressure_contract_plan.py": {"historical_sha256": "dc42258cbf6a9467ff82820182cde5a0e4329ea1ee346538ea6053e2172f8d69", "current_sha256": "035a49c43b610254e6ac567e4b989f05bfd3ff81979331858f92b3732e13cd64", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {"historical_sha256": "a9fa9b808554bbd87f6578d9fc21f835a0812f274c9bcccdc326d4e326e23cff", "current_sha256": "5b4c656ca92b761eb8d60b7e2e754be12a47f1db3c3eabbd7002810b8c5d1bce", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc4_pressure_public_contract.py": {"historical_sha256": "bdf2579151b3e34f088f9aba00d4a2c9ab17a55fc221dd05de2509ff016b2864", "current_sha256": "62d5936a69237462cdcca1b91751635e5b384bc2f66f5967187a1766816f8bcf", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {"historical_sha256": "c29bf6a1e98ca1a01f47cff0faeb86aa3ad599d7081e671485ed4741455908dc", "current_sha256": "07079d1277ee0af345869dff13f90c1b5e290c43c5ee5359198b327ad820ec0d", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {"historical_sha256": "657713d498f9f52e9a2ba9e08245102111febcf3b15a8d62e3547bda54a1b16e", "current_sha256": "7ec13eb07c20b7b2f7517a0c1daf3aaf5f36852fbf4a4bbe65a73a1d0d8a56b6", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc5_r511_metadata_strict_record.py": {"historical_sha256": "87c00641fa8ebc230a4ae56854e58614a66159de20072110fd46472482ce3335", "current_sha256": "11838b0ab0452173c30b0489db56bdcf41bbd1bec6f40e13d7079146dd41d275", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc5_r52_finite_workflow_record.py": {"historical_sha256": "3c25b2477411f909a8e9c8fe3228c9e98d5bc6658de95812f3a0bba0415e7a67", "current_sha256": "fa4eb7747808b0605d4dbb56b6f408b4fa5ae7e84dd12f292a4515bfab1112b5", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {"historical_sha256": "f0884624decbde0deca208ca31eab9867b912958f92d6a846310e27cea7c75fc", "current_sha256": "172c3fce41a4a5a5f561fe7adf711154d0f3226ab73c28e6e0dcc4b6731c175b", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc5_r56_public_error_boundary_record.py": {"historical_sha256": "7d6b050273b8dd3f20a341a29215890d5fb72fd5ccec63c5955ae6012ee86806", "current_sha256": "952224fd20249502982dd13d7556e6ccaa9c574fa3e076767ac98a1e1088c7b4", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc5_r57_device_normalization_record.py": {"historical_sha256": "a6547071983eeb6fc10b04f029bd3c9191a3825756687e56a030758d357f2bb7", "current_sha256": "a46e142d3acf0317872f5529d987a70ab57fd22ae3fef266713dbe5d240cfc0c", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {"historical_sha256": "d831d7fe0aa56cc175c3cdf8986d0aa4b1c4b35981594be68a459d323f72a4eb", "current_sha256": "9f5971b5da51945df789c5994f192cf4e04869bbcdcda192915ac097e41cd185", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {"historical_sha256": "c35a1f64fb9c17912e25d786c827f4e3666946eab145847ba9ed3ecbc740a4f9", "current_sha256": "a4859b23be836ecf8dd47514ce5086ebebf447660aabc314fd64f57322cadd2e", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc457_installed_consumer_impact.py": {"historical_sha256": "e6c22e7f256d6747eaa4de5153a6fc70de3ff55ea355e00039a8df93244ed450", "current_sha256": "104267f72e5c1c151f924b3f89a37c2bc9c360362dca0a951367634ede1e49ef", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc457_installed_consumer_recovery.py": {"historical_sha256": "f24718013f9053e898f88246ecdb18f65ded6e8409cc8be4de34cde49a7d3485", "current_sha256": "32de483a070b36c0aa1e2eef1bc029aea22e25231c557b7818b56f112700c392", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc458_h100_closure_record.py": {"historical_sha256": "fc60edb6952a60734b78d66b7f621d7f03e3c07a8f0e595221e4297941cd6682", "current_sha256": "a7f73d10b83e1c843a1d3041bc143c08ca03658d1750aae51e0925085bde5083", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc4_lifting_checkpoint_integration_record.py": {"historical_sha256": "fcf85a6bb94fa11621021f205c1d85a84f5405e2d642ba0b9a9b4d37b6685262", "current_sha256": "2de4091fc681133a154a6e26df8b957e524e185c2a16710ecb4e643650074b10", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record without reopening lifting"},
+    "tests/test_rc4_post_release_findings.py": {"historical_sha256": "8e0058b82435d0cad27121e79ac237ea776e830b91bd15df6885d250fc46f74b", "current_sha256": "f303220ee10c2dedbb22f97fd0eb4f23782326d1100380044e498d5a0126db90", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {"historical_sha256": "62403ff82d63f097036e924891b95bd6eaff6b98f55d56745a611a7e40eba27f", "current_sha256": "81256bd786ec6a5c8ec7465049d86ade2d4b91ab7192597ca50b14612ab13bf6", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc5_r55_tf32_state_restore.py": {"historical_sha256": "ec3397d28a5712420f06d6efe014aa5a9b5b926ee3f84c158900e204e0c7a2b2", "current_sha256": "06fac72b99e0ff0a63cdc43a779563538331469883fd3a82ad3bbe68202deee2", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_rc5_w1_documentation.py": {"historical_sha256": "c59b57118b2b2ba0c9a34020a39eeae3dcdc7292c23b774b4573d48cf187709d", "current_sha256": "09d57988f80c63826a752091af467dd7a05dee8d350130e08e2134cc7de808cb", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"},
+    "tests/test_release_v0_2.py": {"historical_sha256": "36c0d2ff47c76350b953d4e5f0e38460188e75d0be6c864978aae064f8537c55", "current_sha256": "75692502c3f06a42fd89735743ba9aa596406b40bd0c79c7e9bdc78bdccc0412", "introduced_by_phase": "R5-13", "reason": "resolve this forward-only R5-13 successor record"}
+  },
+  "test_evidence": {
+    "targeted": {
+      "passed": 252,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "successor_resolution_followup": {
+      "passed": 47,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_cpu": {
+      "passed": 3615,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "subtests_passed": 8,
+      "seconds": 209.17
+    },
+    "environment": {
+      "python": "3.12.13",
+      "torch": "2.6.0",
+      "numpy": "2.3.2",
+      "scipy": "1.16.0",
+      "pytest": "9.1.1"
+    }
+  },
+  "scope": {
+    "scientific_equations_changed": false,
+    "production_default_changed": false,
+    "checkpoint_schema_changed": false,
+    "legacy_checkpoint_identity_changed": false,
+    "lifting_reopened": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "r5_13_complete": true,
+    "eligible_for_next_work_item": true,
+    "eligible_for_push": false,
+    "eligible_for_h100": false
+  }
+}

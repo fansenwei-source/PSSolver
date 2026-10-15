@@ -38,6 +38,7 @@ RC5_R511 = ROOT / (
 RC5_R512 = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
 )
+RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -46,6 +47,13 @@ def _read(path: Path) -> dict[str, object]:
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _r513(relative: str, resolved: str) -> str:
+    successor = _read(RC5_R513)["historical_successor_sources"].get(relative)
+    if successor is not None and successor["historical_sha256"] == resolved:
+        return successor["current_sha256"]
+    return resolved
 
 
 def test_rc457_recovery_freezes_commits_artifacts_and_installed_results():
@@ -165,7 +173,7 @@ def test_rc457_recovery_preserves_initial_failure_and_binds_successors():
         successor = rc5_r512_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
-        assert _sha256(ROOT / relative) == resolved
+        assert _sha256(ROOT / relative) == _r513(relative, resolved)
     for relative, expected in record["source_sha256"].items():
         resolved = expected
         successor = closure_successors.get(relative)
@@ -213,7 +221,7 @@ def test_rc457_recovery_preserves_initial_failure_and_binds_successors():
         successor = rc5_r512_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
-        assert _sha256(ROOT / relative) == resolved
+        assert _sha256(ROOT / relative) == _r513(relative, resolved)
 
 
 def test_rc457_recovery_authorizes_only_the_rc458_h100_closure():

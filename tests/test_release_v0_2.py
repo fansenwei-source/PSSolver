@@ -33,6 +33,7 @@ RC5_R511 = PROJECT_ROOT / "notes" / (
 RC5_R512 = PROJECT_ROOT / "notes" / (
     "PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
 )
+RC5_R513 = PROJECT_ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 
 
 def test_release_candidate_version_and_public_metadata_agree():
@@ -140,6 +141,9 @@ def test_release_candidate_registers_exact_portability_successors():
     rc5_r512_successors = json.loads(RC5_R512.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    rc5_r513_successors = json.loads(RC5_R513.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert set(successors) == {
         "tests/test_rc447_pressure_bounded_operator_recovery.py",
         "tests/test_rc455_public_robustness.py",
@@ -198,6 +202,9 @@ def test_release_candidate_registers_exact_portability_successors():
         rc5_r512 = rc5_r512_successors.get(relative)
         if rc5_r512 is not None and rc5_r512["historical_sha256"] == resolved:
             resolved = rc5_r512["current_sha256"]
+        rc5_r513 = rc5_r513_successors.get(relative)
+        if rc5_r513 is not None and rc5_r513["historical_sha256"] == resolved:
+            resolved = rc5_r513["current_sha256"]
         assert resolved == hashlib.sha256((PROJECT_ROOT / relative).read_bytes()).hexdigest()
         assert registration["introduced_by_phase"] == (
             "v0.2.0rc4-release-preparation"

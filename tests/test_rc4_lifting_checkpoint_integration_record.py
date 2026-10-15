@@ -35,6 +35,7 @@ RC5_R511 = ROOT / (
 RC5_R512 = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
 )
+RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 
 
 def _record() -> dict[str, object]:
@@ -128,6 +129,7 @@ def test_rc435_record_binds_implementation_and_scope():
             RC5_R57,
             RC5_R511,
             RC5_R512,
+            RC5_R513,
         )
     ]
     for relative, expected in record["source_sha256"].items():

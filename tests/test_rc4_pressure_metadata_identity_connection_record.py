@@ -25,6 +25,7 @@ RC5_R58 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 RC5_R511 = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
 )
+RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 
 
 def _record() -> dict[str, object]:
@@ -66,6 +67,7 @@ def test_rc444_record_binds_frozen_contract_predecessor_and_current_sources():
             RC5_R57,
             RC5_R58,
             RC5_R511,
+            RC5_R513,
         )
     ]
     for relative, expected in record["source_sha256"].items():

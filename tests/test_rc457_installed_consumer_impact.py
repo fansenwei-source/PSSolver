@@ -38,6 +38,7 @@ RC5_R511 = ROOT / (
 RC5_R512 = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
 )
+RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -46,6 +47,13 @@ def _read(path: Path) -> dict[str, object]:
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _r513(relative: str, resolved: str) -> str:
+    successor = _read(RC5_R513)["historical_successor_sources"].get(relative)
+    if successor is not None and successor["historical_sha256"] == resolved:
+        return successor["current_sha256"]
+    return resolved
 
 
 def test_rc457_records_provider_pass_and_exact_consumer_stop():
@@ -164,7 +172,7 @@ def test_rc457_preserves_the_stop_and_resolves_through_the_recovery():
         successor = rc5_r512_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
-        assert _sha256(ROOT / relative) == resolved
+        assert _sha256(ROOT / relative) == _r513(relative, resolved)
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
@@ -217,7 +225,7 @@ def test_rc457_preserves_the_stop_and_resolves_through_the_recovery():
         successor = rc5_r512_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
-        assert _sha256(ROOT / relative) == resolved
+        assert _sha256(ROOT / relative) == _r513(relative, resolved)
 
     matrix = _read(MATRIX)["progress"]
     assert matrix["rc4_5_7_executed"] is True

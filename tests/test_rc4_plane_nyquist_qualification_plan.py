@@ -17,6 +17,7 @@ from benchmarks.analyze_rc4_plane_nyquist_qualification import (
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN_PATH = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc412_h100_qualification_plan.json"
+R5_13_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 
 
 def _plan():
@@ -44,11 +45,21 @@ def test_rc412_plan_freezes_runtime_commits_and_scope():
 
 def test_rc412_plan_binds_versioned_support_files():
     support = _plan()["qualification_support"]
+    successors = json.loads(R5_13_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
 
     for name in ("profile_runner", "cuda_diagnostic", "analyzer", "cuda_test"):
         path = ROOT / support[name]
         assert path.is_file()
-        assert _sha256(path) == support[f"{name}_sha256"]
+        expected = support[f"{name}_sha256"]
+        registration = successors.get(support[name])
+        if (
+            registration is not None
+            and registration["historical_sha256"] == expected
+        ):
+            expected = registration["current_sha256"]
+        assert _sha256(path) == expected
 
 
 def test_rc412_plan_freezes_inputs_and_profile_matrix():

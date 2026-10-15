@@ -48,6 +48,7 @@ RC5_R511 = ROOT / (
 RC5_R512 = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
 )
+RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 
 
 def _latest_successor(relative: str, historical: str) -> str:
@@ -71,6 +72,7 @@ def _latest_successor(relative: str, historical: str) -> str:
         RC5_R510,
         RC5_R511,
         RC5_R512,
+        RC5_R513,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"

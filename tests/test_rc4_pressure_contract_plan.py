@@ -51,6 +51,7 @@ RC5_R59 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.js
 RC5_R511 = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
 )
+RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 
 
 def _plan() -> dict[str, object]:
@@ -259,6 +260,7 @@ def test_rc440_reviewed_provider_sources_are_content_addressed():
             RC5_R57,
             RC5_R59,
             RC5_R511,
+            RC5_R513,
         ):
         record = json.loads(path.read_text(encoding="utf-8"))
         successor_records.append(
