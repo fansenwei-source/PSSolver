@@ -1,0 +1,114 @@
+{
+  "phase": "G-1.7",
+  "date": "2026-10-15",
+  "classification": "READY_RC5_G1_NINE_STAGE_PRODUCER_SET_FOR_HPCC_SUPPORT_REGENERATION",
+  "qualification_complete": false,
+  "base_commit": "0d7103d",
+  "producer_contract": {
+    "stage_order": [
+      "environment",
+      "cuda_only",
+      "tf32_scope",
+      "checkpoints",
+      "numerical",
+      "profiles",
+      "consumer",
+      "assemble",
+      "analyze"
+    ],
+    "new_producers": {
+      "environment": {
+        "path": "benchmarks/run_rc5_g1_environment.py",
+        "schema": "pssolver.rc5.g1.environment.v1",
+        "sha256": "6c301733fd9033a53065886448ec57d3c11bd6c7d21f73301b56a66079f70155"
+      },
+      "cuda_only": {
+        "path": "benchmarks/run_rc5_g1_cuda_only.py",
+        "schema": "pssolver.rc5.g1.cuda_only.v1",
+        "sha256": "73fe80509ddd3a4f85a7933fbeb79d93542ab981dfc30ee6dafe6cd7372cd5b3"
+      },
+      "checkpoints": {
+        "path": "benchmarks/run_rc5_g1_checkpoints.py",
+        "schema": "pssolver.rc5.g1.checkpoint_h100.v1",
+        "sha256": "7e2d8bdbd30da0dc29725cd8be897ded79b3973e804c96027ef0fca36a8fab85"
+      },
+      "numerical": {
+        "path": "benchmarks/run_rc5_g1_numerical.py",
+        "schema": "pssolver.rc5.g1.numerical_h100.v1",
+        "sha256": "f43e423209023484e00c76f01a3074c4faf070fdab82741860164ed172e3ba39"
+      },
+      "consumer": {
+        "path": "benchmarks/run_rc5_g1_consumer.py",
+        "schema": "pssolver.rc5.g1.consumer_h100.v1",
+        "sha256": "a01b16d4504075427e12ffc610d378f96e97dfd97842e5560b72371972d1e80b"
+      }
+    },
+    "direct_script_import_bootstrap": true,
+    "shell_command_strings": false,
+    "atomic_json_outputs": true,
+    "refuse_overwrite": true,
+    "installed_wheel_children": true,
+    "source_free_support_root": true
+  },
+  "checkpoint_contract": {
+    "families": [
+      "periodic_functional",
+      "channel_functional_fixed_iteration",
+      "channel_functional_tolerance",
+      "legacy_channel"
+    ],
+    "formal_directions": ["cpu_to_cuda", "cuda_to_cpu"],
+    "local_cpu_to_cpu_smoke_passed": 4,
+    "payload_tamper_rejects_before_mutation": true,
+    "identity_mismatch_rejects_before_mutation": true,
+    "continuous_split_restart_replay_exact": true,
+    "released_cpu_matrix_record_sha256": "a83a8286212d450223278fb8492c69f0a41c0c546aa303da7f55d850d14ce572",
+    "released_primary_case_count": 13
+  },
+  "numerical_contract": {
+    "runtime_family_count": 8,
+    "local_cuda_two_step_smoke_passed": 8,
+    "repaired_periodic_families": [
+      "periodic_complete_stress",
+      "periodic_functional"
+    ],
+    "candidate_periodic_hermitian_violation": {
+      "periodic_complete_stress": 0.0,
+      "periodic_functional": 0.0
+    },
+    "unchanged_families_use_byte_identity": true,
+    "repaired_families_use_physical_q_velocity_pressure_tolerance": true,
+    "parent_process_imports_neither_provider_wheel": true
+  },
+  "validation": {
+    "synthetic_and_existing_targeted_tests": {
+      "passed": 56,
+      "failed": 0
+    },
+    "foundation_producer_tests": {
+      "passed": 27,
+      "failed": 0
+    },
+    "direct_help_bootstrap_scripts": 5,
+    "py_compile": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "source_sha256": {
+    "tests/test_run_rc5_g1_foundation_stages.py": "e8a97efb279cdb06f36dc78bc48198ca9d6cd9244288c754cc786e1aefd4e514"
+  },
+  "authorization": {
+    "push_executed": false,
+    "h100_submission_authorized": false,
+    "h100_submission_count": 0,
+    "automatic_retry": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false,
+    "production_runtime_changed": false,
+    "scientific_threshold_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  },
+  "next_gate": "regenerate_source_free_hpcc_support_and_freeze_the_real_nine_stage_command_plan_without_h100_submission"
+}
