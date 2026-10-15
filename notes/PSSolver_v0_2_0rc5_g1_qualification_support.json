@@ -1,0 +1,132 @@
+{
+  "phase": "G-1.5",
+  "date": "2026-10-15",
+  "status": "versioned_qualification_support_complete_waiting_for_stage_plan_push_and_h100_authorization",
+  "classification": "READY_RC5_G1_VERSIONED_QUALIFICATION_SUPPORT",
+  "qualification_complete": false,
+  "provider": {
+    "baseline_commit": "658869456d762c917ca4409b091539c3733df2fb",
+    "baseline_tag": "v0.2.0rc4",
+    "candidate_qualified_source_commit": "674a8121779be72c95aa5dc9e2babca0ce7b93a9",
+    "candidate_package_version": "0.2.0rc5"
+  },
+  "consumer": {
+    "qualified_source_commit": "c14e6b56c88081e7f9a5642e65ffd722eec7445b",
+    "evidence_only_commit": "2474592fa64d1b3243277c7439a16104f2cdeb9f",
+    "remote_branch_present": false
+  },
+  "implementation": {
+    "profile_matrix_count": 96,
+    "runtime_family_count": 8,
+    "grid_count_per_family": 2,
+    "trial_count_per_grid": 3,
+    "provider_role_count": 2,
+    "tf32_case_count": 48,
+    "cuda_only_test_count": 7,
+    "stage_count": 9,
+    "stage_order": [
+      "environment",
+      "cuda_only",
+      "tf32_scope",
+      "checkpoints",
+      "numerical",
+      "profiles",
+      "consumer",
+      "assemble",
+      "analyze"
+    ],
+    "profile_child_sets_and_restores_tf32_runtime_flags": true,
+    "venv_entry_points_preserved_lexically": true,
+    "profile_children_are_shell_free": true,
+    "compiler_caches_are_isolated_per_profile": true,
+    "stage_commands_are_shell_free": true,
+    "stage_progress_is_atomic_and_incremental": true,
+    "analyzer_is_fail_closed": true
+  },
+  "numerical_semantics": {
+    "global_final_state_sha_equality": false,
+    "byte_identity_families": [
+      "plane_legacy_production",
+      "plane_compiled_v2",
+      "channel_legacy",
+      "channel_compiled_v2",
+      "channel_complete_stress",
+      "channel_functional"
+    ],
+    "repaired_periodic_families": [
+      "periodic_complete_stress",
+      "periodic_functional"
+    ],
+    "repaired_periodic_components": ["Q", "velocity", "pressure"],
+    "physical_relative_l2_max": 1e-12,
+    "physical_linf_max": 1e-12,
+    "candidate_hermitian_violation_max": 0.0,
+    "reason": "rc5 intentionally projects stored self-conjugate Periodic planes, so spectral byte identity with rc4 is not a valid global oracle; physical fields and the exact rc5 Hermitian invariant are the authoritative gate"
+  },
+  "performance_contract": {
+    "mean_timestep_ratio_max": 1.03,
+    "median_timestep_ratio_max": 1.03,
+    "paired_timestep_ratio_max": 1.05,
+    "peak_allocated_group_ratio_max": 1.03,
+    "peak_reserved_group_ratio_max": 1.03,
+    "completed_steps": 60,
+    "graph_breaks": 0,
+    "compile_fallback": false,
+    "runtime_fallback": false
+  },
+  "scheduler_template": {
+    "path": "jobs/rc5_g1_single_h100.sbatch",
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "gres": "gpu:H100:1",
+    "cpus_per_task": 8,
+    "memory": "64G",
+    "time_limit": "02:00:00",
+    "requeue": false,
+    "submits_another_job": false
+  },
+  "cpu_validation": {
+    "py_compile": "PASS",
+    "targeted_tests": 20,
+    "targeted_failures": 0,
+    "targeted_skips": 0,
+    "synthetic_positive_analyzer": "PASS",
+    "synthetic_negative_analyzer": "PASS",
+    "atomic_json_round_trip": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "source_sha256": {
+    "benchmarks/plan_rc5_g1_h100.py": "9ec83c9e38355ed354d97716904e2efeb77ac86f2e5d22ba7a335ccf787ed32b",
+    "benchmarks/profile_rc5_g1_runtime_family.py": "040b04fe92456f083e038a4b9fe593a64f5587759dc799a0bf5c4a286ab38b2c",
+    "benchmarks/run_rc5_g1_profile_matrix.py": "44f9c6b07f3b3f52fc4a51e4d1be0fe1ca91566f6fd531a3ad92426b5f167d43",
+    "benchmarks/assemble_rc5_g1_auxiliary.py": "152d8d2883d49b90205bc3f6445daac942a9d7d25a8127927b1c1d4721fec670",
+    "benchmarks/analyze_rc5_g1_h100.py": "b8649c842baff74f092720bd7f2492679df1344fbb3aa4b6e132338c9ec863ef",
+    "benchmarks/run_rc5_g1_stage_plan.py": "5fd1c5cc3259f6ed7d52f38823ee081945c3a589a904ba40b3be764774db190d",
+    "jobs/rc5_g1_single_h100.sbatch": "31f99a4906a39bd0361ef3ab3001d76b3507b19a5f6331c92a83019b7915481b",
+    "tests/test_plan_rc5_g1_h100.py": "0692fd7be4642ec19957d9f7e8d7c56270a13ab52cc56324463d8a47e5457566",
+    "tests/test_analyze_rc5_g1_h100.py": "60a3472645abf4bab7056cca386a3846730d04f1c553f598fc73c21038bfd300",
+    "notes/PSSolver_v0_2_0rc5_g1_single_h100_qualification_plan.json": "b4773d2eb5e8835c82b830a979e969716eced44877f35fdf021896d1e1072e7f"
+  },
+  "authorization": {
+    "push_executed": false,
+    "h100_submission_authorized": false,
+    "h100_submission_count": 0,
+    "automatic_retry": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false,
+    "production_default_changed": false,
+    "nematics3d_modified": false
+  },
+  "readiness": {
+    "versioned_support_complete": true,
+    "provider_branch_remote_tip_verified": false,
+    "consumer_branch_remote_tip_verified": false,
+    "installed_wheel_stage_command_plan_frozen": false,
+    "slurm_path_and_environment_preflight_passed": false,
+    "single_h100_submission_authorized": false,
+    "eligible_for_h100_submission": false
+  },
+  "next_gate": "freeze_the_installed_wheel_stage_command_plan_then_request_separate_push_and_single_h100_authorization"
+}
