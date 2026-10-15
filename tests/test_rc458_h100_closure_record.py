@@ -30,6 +30,9 @@ RC5_R512 = ROOT / "notes" / (
     "PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
 )
 RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
+RC5_G1_GLIBC = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -171,6 +174,9 @@ def test_rc458_closure_registers_exact_historical_source_successors():
     rc5_r513_successors = json.loads(RC5_R513.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    rc5_g1_glibc_successors = json.loads(
+        RC5_G1_GLIBC.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert set(successors) == {
         "tests/test_rc451_cross_runtime_adjudication.py",
         "tests/test_rc455_public_robustness.py",
@@ -229,6 +235,12 @@ def test_rc458_closure_registers_exact_historical_source_successors():
         rc5_r513 = rc5_r513_successors.get(relative)
         if rc5_r513 is not None and rc5_r513["historical_sha256"] == resolved:
             resolved = rc5_r513["current_sha256"]
+        rc5_g1_glibc = rc5_g1_glibc_successors.get(relative)
+        if (
+            rc5_g1_glibc is not None
+            and rc5_g1_glibc["historical_sha256"] == resolved
+        ):
+            resolved = rc5_g1_glibc["current_sha256"]
         assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolved
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["introduced_by_phase"] == "RC4.5.8-finalization"

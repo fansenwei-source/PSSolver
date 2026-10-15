@@ -31,6 +31,9 @@ RC5_R511 = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
 )
 RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
+RC5_G1_GLIBC = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
+)
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -60,6 +63,7 @@ def _resolve_successor_sha256(relative: str, historical: str) -> str:
         RC5_R510,
         RC5_R511,
         RC5_R513,
+        RC5_G1_GLIBC,
     ):
         registration = _read(record_path).get(
             "historical_successor_sources", {}

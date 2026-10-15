@@ -15,6 +15,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import platform
 import secrets
 import shutil
 import stat
@@ -397,32 +398,69 @@ def _rename_directory_no_replace(
     """Atomically publish a directory without replacing an occupied target."""
 
     if sys.platform.startswith("linux"):
-        try:
-            renameat2 = ctypes.CDLL(None, use_errno=True).renameat2
-        except AttributeError as exc:
-            raise CheckpointIOError(
-                "atomic no-replace checkpoint publication is unavailable",
-                operation=operation,
-                failure_domain="filesystem",
-                legacy_exception_type=type(exc).__name__,
-            ) from exc
-        renameat2.argtypes = [
-            ctypes.c_int,
-            ctypes.c_char_p,
-            ctypes.c_int,
-            ctypes.c_char_p,
-            ctypes.c_uint,
-        ]
-        renameat2.restype = ctypes.c_int
+        libc = ctypes.CDLL(None, use_errno=True)
         at_fdcwd = -100
         rename_noreplace = 1
-        result = renameat2(
-            at_fdcwd,
-            os.fsencode(source),
-            at_fdcwd,
-            os.fsencode(target),
-            rename_noreplace,
-        )
+        source_bytes = os.fsencode(source)
+        target_bytes = os.fsencode(target)
+        try:
+            renameat2 = libc.renameat2
+        except AttributeError as exc:
+            # glibc only exposed the renameat2 wrapper in 2.28.  Enterprise
+            # Linux systems may have the kernel syscall backported while still
+            # using an older glibc (the HPCC qualification host uses 2.17).
+            # Calling the same syscall preserves RENAME_NOREPLACE atomically;
+            # it is not the racy exists-then-rename fallback that this contract
+            # deliberately forbids.  Keep the raw fallback architecture-bound
+            # and fail closed everywhere else.
+            machine = platform.machine().lower()
+            if machine not in {"amd64", "x86_64"}:
+                raise CheckpointIOError(
+                    "atomic no-replace checkpoint publication is unavailable",
+                    operation=operation,
+                    failure_domain="filesystem",
+                    legacy_exception_type=type(exc).__name__,
+                    details={"machine": machine},
+                ) from exc
+            try:
+                syscall = libc.syscall
+            except AttributeError as syscall_error:
+                raise CheckpointIOError(
+                    "atomic no-replace checkpoint publication is unavailable",
+                    operation=operation,
+                    failure_domain="filesystem",
+                    legacy_exception_type=type(syscall_error).__name__,
+                    details={"machine": machine},
+                ) from syscall_error
+            # Linux x86-64 __NR_renameat2.  syscall is variadic, so do not set
+            # argtypes; explicit ctypes values preserve pointer widths.
+            syscall.restype = ctypes.c_long
+            ctypes.set_errno(0)
+            result = syscall(
+                ctypes.c_long(316),
+                ctypes.c_int(at_fdcwd),
+                ctypes.c_char_p(source_bytes),
+                ctypes.c_int(at_fdcwd),
+                ctypes.c_char_p(target_bytes),
+                ctypes.c_uint(rename_noreplace),
+            )
+        else:
+            renameat2.argtypes = [
+                ctypes.c_int,
+                ctypes.c_char_p,
+                ctypes.c_int,
+                ctypes.c_char_p,
+                ctypes.c_uint,
+            ]
+            renameat2.restype = ctypes.c_int
+            ctypes.set_errno(0)
+            result = renameat2(
+                at_fdcwd,
+                source_bytes,
+                at_fdcwd,
+                target_bytes,
+                rename_noreplace,
+            )
         if result == 0:
             return
         error_number = ctypes.get_errno()
@@ -431,6 +469,15 @@ def _rename_directory_no_replace(
                 f"checkpoint directory already exists: {target}",
                 operation=operation,
             )
+        if error_number == errno.ENOSYS:
+            exception = OSError(error_number, os.strerror(error_number), target)
+            raise CheckpointIOError(
+                "atomic no-replace checkpoint publication is unavailable",
+                operation=operation,
+                failure_domain="filesystem",
+                legacy_exception_type=type(exception).__name__,
+                details={"errno": error_number},
+            ) from exception
         exception = OSError(error_number, os.strerror(error_number), target)
         raise _io_error(
             exception,

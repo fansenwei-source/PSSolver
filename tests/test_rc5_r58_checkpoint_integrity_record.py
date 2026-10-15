@@ -22,6 +22,9 @@ R5_12_RECORD = ROOT / (
 )
 R5_13_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
+G1_GLIBC_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -52,6 +55,9 @@ def test_r58_record_binds_implementation_and_exact_sources():
     g1_successors = json.loads(G1_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    g1_glibc_successors = json.loads(
+        G1_GLIBC_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert record["git_identity"] == {
         "branch": "fix/v0.2.0rc5",
         "implementation_commit": "52e57f1f4f406efcd92bb9245c13e9c635ba721c",
@@ -97,6 +103,12 @@ def test_r58_record_binds_implementation_and_exact_sources():
                 and registration["historical_sha256"] == expected
             ):
                 expected = registration["current_sha256"]
+            registration = g1_glibc_successors.get(relative)
+            if (
+                registration is not None
+                and registration["historical_sha256"] == expected
+            ):
+                expected = registration["current_sha256"]
             assert _sha256(ROOT / relative) == expected
     for relative, registration in record["historical_successor_sources"].items():
         assert registration["historical_sha256"] != registration["current_sha256"]
@@ -132,6 +144,12 @@ def test_r58_record_binds_implementation_and_exact_sources():
         ):
             expected = successor["current_sha256"]
         successor = g1_successors.get(relative)
+        if (
+            successor is not None
+            and successor["historical_sha256"] == expected
+        ):
+            expected = successor["current_sha256"]
+        successor = g1_glibc_successors.get(relative)
         if (
             successor is not None
             and successor["historical_sha256"] == expected

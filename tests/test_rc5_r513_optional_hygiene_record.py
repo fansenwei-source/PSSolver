@@ -8,6 +8,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
+G1_GLIBC_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -23,6 +26,9 @@ def test_r513_record_binds_new_and_successor_sources():
     g1_successors = json.loads(G1_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    glibc_successors = json.loads(
+        G1_GLIBC_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     for relative, expected in record["new_sources"].items():
         assert _sha256(relative) == expected
     for relative, registration in record[
@@ -31,6 +37,9 @@ def test_r513_record_binds_new_and_successor_sources():
         assert registration["historical_sha256"] != registration["current_sha256"]
         resolved = registration["current_sha256"]
         successor = g1_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = glibc_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(relative) == resolved

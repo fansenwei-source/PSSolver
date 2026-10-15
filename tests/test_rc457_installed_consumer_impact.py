@@ -39,6 +39,9 @@ RC5_R512 = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
 )
 RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
+RC5_G1_GLIBC = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
+)
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -52,7 +55,12 @@ def _sha256(path: Path) -> str:
 def _r513(relative: str, resolved: str) -> str:
     successor = _read(RC5_R513)["historical_successor_sources"].get(relative)
     if successor is not None and successor["historical_sha256"] == resolved:
-        return successor["current_sha256"]
+        resolved = successor["current_sha256"]
+    successor = _read(RC5_G1_GLIBC)["historical_successor_sources"].get(
+        relative
+    )
+    if successor is not None and successor["historical_sha256"] == resolved:
+        resolved = successor["current_sha256"]
     return resolved
 
 

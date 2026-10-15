@@ -1,0 +1,190 @@
+{
+  "schema": "pssolver.rc5.g1.checkpoint_glibc_compatibility.v1",
+  "phase": "G-1.10",
+  "date": "2026-10-15",
+  "classification": "PASS_RC5_G1_CHECKPOINT_GLIBC_2_17_CPU_COMPATIBILITY_CANDIDATE",
+  "qualification_complete": false,
+  "g1_complete": false,
+  "trigger": {
+    "job_id": "10885517",
+    "failure_record": "notes/PSSolver_v0_2_0rc5_g1_h100_failure.json",
+    "failure_classification": "FAIL_RC5_G1_H100_CUDA_ONLY_CHECKPOINT_FILESYSTEM_PORTABILITY",
+    "kernel": "3.10.0-862.11.6.el7.x86_64",
+    "glibc": "2.17",
+    "libc_wrapper_present": false,
+    "raw_syscall_probe": {
+      "architecture": "x86_64",
+      "syscall_number": 316,
+      "flags": 1,
+      "result": 0,
+      "errno": 0,
+      "source_renamed_to_target": true
+    }
+  },
+  "implementation_contract": {
+    "preferred_backend": "libc.renameat2",
+    "compatibility_backend": "libc.syscall(__NR_renameat2=316)",
+    "compatibility_architectures": ["amd64", "x86_64"],
+    "flags": "RENAME_NOREPLACE",
+    "atomic_no_overwrite_preserved": true,
+    "exists_then_rename_fallback_added": false,
+    "unknown_architecture_fails_closed": true,
+    "kernel_enosys_fails_closed": true,
+    "checkpoint_schema_changed": false,
+    "checkpoint_identity_changed": false,
+    "scientific_state_changed": false
+  },
+  "test_evidence": {
+    "compatibility_and_transactionality": {
+      "passed": 65,
+      "failed": 0,
+      "skipped": 2,
+      "deselected": 0
+    },
+    "checkpoint_non_cuda_broad": {
+      "passed": 318,
+      "failed": 0,
+      "deselected": 3406
+    },
+    "full_cpu": {
+      "passed": 3716,
+      "skipped": 1,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "failed": 0
+    },
+    "hpcc_raw_syscall_probe": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "new_sources": {
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility.py": "6c0adf6e91e984e682728f7a0e9e91241b1dc02499cc340cd6aaf3d6489e2b0f"
+  },
+  "historical_successor_sources": {
+    "pssolver/io/checkpoint.py": {
+      "historical_sha256": "afc2475b8d1933254b50b6588688d18709329d70cf344f94249814b47b87dcb5",
+      "current_sha256": "2077d93f43a4ac71605bd7aa928522c05287012d1fcfd194ee1056789b849056",
+      "reason": "preserve atomic RENAME_NOREPLACE publication on Linux x86-64 systems whose kernel supports renameat2 but whose older glibc does not export the wrapper"
+    },
+    "tests/test_rc453_checkpoint_transactionality.py": {
+      "historical_sha256": "6e3fb1ed100f039676e77d5f6a054c0e9a44a5c1120612b886276d54069c9b5f",
+      "current_sha256": "eecab80f9d11ab521150edf17aa860a5f0ae3b3d44bbc0440ac673578cdb6f7a",
+      "reason": "resolve the forward-only glibc compatibility successor without rewriting the RC4.5.3 record"
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "1586dc2b802abe4b1633ce68d00a7f7660983412bc03fa7c39f30351d79deabb",
+      "current_sha256": "781bdb43671b2ddd290eaf343a2f9ff240cf52d7e652d12d657f7d30d763ae3f",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the R5-13 record byte for byte"
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "bc3f606757b077ccfb0bbbbfc45c87c5c4d9bb08bcc3e89492283b69d7e4ee79",
+      "current_sha256": "f092efccb0f8325b7ffcdcbc415b7fe7c78c06c6ee89883d991a2249da83122a",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the R5-1 record byte for byte"
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "2dede44a19bf6bafded823c4ebd4e8c10ae8f86bc9026ed5c97b6fd3ef9e8ff7",
+      "current_sha256": "baee05ed5067ad98e8d951dc8951805d7a20f4ba1dc82213d4be738753a2b5cc",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the R5-10 record byte for byte"
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "4632d77d1088649c525f43a823eec92da7faa1f783bdf16ee806029e41180c24",
+      "current_sha256": "b021d998accffc11b37c3a8ea16d76db759a2b37189f85cdf78f37566796b85c",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the R5-3 record byte for byte"
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "46a62b6fea3d1f4b01e89222b4fb39b4dd0177e6466a5b0e2ba682fde451cac8",
+      "current_sha256": "aa40f9b752d5551f867765aed2aa62b3c108624a0b4ac6307887ee61fba36e17",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the R5-8 record byte for byte"
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "4b3fe033d54ae1c88daf6d7a0a581124de1755a787cb590dc07c228608460257",
+      "current_sha256": "184739dbb93a307c20f36f1a79dd487653c160535a2cd31d88b4c16fd9003e03",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the RC4.5.1 record byte for byte"
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "24c99655d627012bc86ab456ceedd9bc9244ecddcbc38be7b47046248d7039f0",
+      "current_sha256": "d2e1bfc6a4a4579ce24cd0ff8acb2b2eb842a1309554c4cc549a4296a11b4516",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the RC4.5.5 record byte for byte"
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "a6609c2cf54e17c83a781479ed9060ec6b8f1cab1d45ab7d43b2417e5d82958b",
+      "current_sha256": "883a68597ac435d3e724038a47689edb439a8e7870250b500346b35ff1aa19e5",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the R5-11 record byte for byte"
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "e2cdcbcd38fe8b8849771545d98a485b9d2a9525f1ef4c9db00f66cf6e54402a",
+      "current_sha256": "7eb486efee8a7a999e6eeadc8bafb57c0c95fcad2ea4934299fe8ff1481dac55",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the R5-12 record byte for byte"
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "e68edf88e0f9d7ad920e96c997d46acb98ca7cf91aca149ceba11b46c5f28bac",
+      "current_sha256": "1a00f175283a73957d8d69f5fb47bdf0de2127af50f19352b716e94847e6b626",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the R5-2 record byte for byte"
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "1eb5066fc5b6340a82b5b8f1ebf60d660291ae67f1fbb288d230aac89d29ff6e",
+      "current_sha256": "0ff7a11243653c7e170cd8abb9e5ac36ac955b06f7e1e7d41ceeb6090724f0c7",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the R5-5 record byte for byte"
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "a298127bde8b5c3656438112cf9fd6401488dbf4b88fe6204b38986207656a19",
+      "current_sha256": "89914b05820672196e9f46e4ae0043ded1247c6750edeec997b0d9e584a9a9cd",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the R5-6 record byte for byte"
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "b9095494e087e548160c03e0dfdcb31a4b76c67b8ca960c1f70716347c57b636",
+      "current_sha256": "3bfe895ba79d8dc43d1c6bebb8110115a817cd02823f64e994922271d7d4f984",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the R5-7 record byte for byte"
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "ed729cc7abefcc8c148585b896161273b6b5869b452db7da487f04782fc4b80f",
+      "current_sha256": "60a2301dffb5d31be725619a0662a6a9b43dd8d5947cc5c326468c653b3d1cdf",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the R5-9 record byte for byte"
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "6ffa23d84a6d1b9c82a42f53ffc56ca8d10ba7acd95c75f441b17689eea0208c",
+      "current_sha256": "a916f9cd13ca7e32364dbd00c04a823e021d25b8f9d98ae0280d02e711b32230",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the RC4.5.6 record byte for byte"
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "a7f73d10b83e1c843a1d3041bc143c08ca03658d1750aae51e0925085bde5083",
+      "current_sha256": "ccd1fb93ccd6bcdf0eb0bcf67ebbd79083549add9e604f1f4d82d6ef8977ecbe",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the RC4.5.8 record byte for byte"
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "104267f72e5c1c151f924b3f89a37c2bc9c360362dca0a951367634ede1e49ef",
+      "current_sha256": "a9b2559fce388368e9cdb45305e9ef06f4d0a4c9767bbe0a18fc55bbbb94badb",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the initial RC4.5.7 record byte for byte"
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "32de483a070b36c0aa1e2eef1bc029aea22e25231c557b7818b56f112700c392",
+      "current_sha256": "f7cd02175fdc12a269d378523ac0e16cea49d5974d0046e95006a90f7f580a99",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the RC4.5.7 recovery record byte for byte"
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "e610b17d5d180c40a953fff950f6cb4195cd84d29f143e0b60dba4679a5f80f1",
+      "current_sha256": "bb7c1e5bbe9ca9bd99095200822ea717daeab4534ba79183ffe99ae8862c755b",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the rc4 post-release findings record byte for byte"
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "e99602c5328a7e4be2d349c71855e7c80c44520329ac8c781da1be1a42947b52",
+      "current_sha256": "5dd2dfc24530bd2f3949a3289650d91138ab5a8d4114815e6e6657619fd1b4ee",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the rc5 W1 record byte for byte"
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "e8e25ae3f89193adba0a30615dd6f1f993f34814ab7dac8d8584420f27bfdfbe",
+      "current_sha256": "7bafc16995a5c5ed5dde731ab3c74adbb830d9331b7285d0b41233873b58f0e6",
+      "reason": "resolve the forward-only glibc compatibility successor while preserving the v0.2.0rc4 release record byte for byte"
+    }
+  },
+  "scope": {
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false,
+    "scientific_threshold_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_changed": false,
+    "h100_executed_for_this_fix": false,
+    "push_executed_for_this_fix": false
+  },
+  "next_gate": "build_and_validate_a_fresh_installed_wheel_on_hpcc_cpu_then_request_separate_push_and_single_h100_recovery_authorization"
+}

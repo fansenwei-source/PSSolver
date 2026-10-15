@@ -22,6 +22,9 @@ R5_12_RECORD = ROOT / (
 )
 R5_13_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
+G1_GLIBC_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -70,6 +73,9 @@ def test_r57_record_binds_implementation_and_regression_sources():
     g1_successors = json.loads(G1_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    g1_glibc_successors = json.loads(
+        G1_GLIBC_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
             resolved = expected
@@ -115,6 +121,12 @@ def test_r57_record_binds_implementation_and_regression_sources():
                 and g1_registration["historical_sha256"] == resolved
             ):
                 resolved = g1_registration["current_sha256"]
+            g1_glibc_registration = g1_glibc_successors.get(relative)
+            if (
+                g1_glibc_registration is not None
+                and g1_glibc_registration["historical_sha256"] == resolved
+            ):
+                resolved = g1_glibc_registration["current_sha256"]
             assert _sha256(ROOT / relative) == resolved
 
 
@@ -141,6 +153,9 @@ def test_r57_record_binds_every_historical_successor():
     g1_successors = json.loads(G1_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    g1_glibc_successors = json.loads(
+        G1_GLIBC_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert len(successors) == 35
     for relative, registration in successors.items():
         resolved = registration["current_sha256"]
@@ -186,6 +201,12 @@ def test_r57_record_binds_every_historical_successor():
             and g1_registration["historical_sha256"] == resolved
         ):
             resolved = g1_registration["current_sha256"]
+        g1_glibc_registration = g1_glibc_successors.get(relative)
+        if (
+            g1_glibc_registration is not None
+            and g1_glibc_registration["historical_sha256"] == resolved
+        ):
+            resolved = g1_glibc_registration["current_sha256"]
         assert _sha256(ROOT / relative) == resolved
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["reason"]
