@@ -45,6 +45,9 @@ RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
 RC5_R53 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
 RC5_R58 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 RC5_R59 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
+RC5_R510 = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
+)
 
 
 @contextmanager
@@ -350,6 +353,7 @@ def test_rc453_record_binds_contract_sources_and_scope():
             RC5_R53,
             RC5_R58,
             RC5_R59,
+            RC5_R510,
         ):
             registration = json.loads(
                 successor_path.read_text(encoding="utf-8")
@@ -380,6 +384,7 @@ def test_rc453_record_binds_contract_sources_and_scope():
             RC5_R53,
             RC5_R58,
             RC5_R59,
+            RC5_R510,
         ):
             successor = json.loads(successor_path.read_text(encoding="utf-8"))[
                 "historical_successor_sources"

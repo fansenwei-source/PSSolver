@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc5 R5-10 Channel cross-version and checkpoint-observation closure",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_R5_10_CHANNEL_CHECKPOINT_OBSERVATION_CPU_CLOSURE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "implementation_commit": "5d8941686ba641d1750ddf5cd5bc9ecdfb35666c",
+    "qualified_source_commit": "5d8941686ba641d1750ddf5cd5bc9ecdfb35666c",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "primary": ["NEW-10", "NEW-11"],
+    "work_item": "R5-10",
+    "source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc4_consolidated_report.json",
+    "source_sha256": "db3e644bd97bc28ca046d0632aa2eae1b142ad6a208ad10b9dcb82cc42e6e6c6"
+  },
+  "new_10_disposition": {
+    "source_work_item": "R5-3",
+    "complete_stress_channel_rc1_even": "reject_pre_rc4_1_forward_nyquist",
+    "complete_stress_channel_rc1_odd": "reject_exact_restart_because_B2_incompressibility_dynamics_changed",
+    "state_only_migration_added": false,
+    "new_checkpoint_schema_change": false
+  },
+  "new_11_contract": {
+    "checkpoint_keeps_synchronized_pressure_guess": true,
+    "live_runtime_restores_pre_observation_pressure_guess": true,
+    "restoration_occurs_on_observation_failure": true,
+    "checkpoint_schedule_is_live_trajectory_invariant": true,
+    "legacy_and_compiled_p7_paths_covered": true,
+    "same_runtime_restart_remains_byte_identical": true,
+    "complete_stress_channel_behavior_unchanged": true
+  },
+  "implementation_files": {
+    "pssolver/workflows/channel_checkpoint.py": "b3046f845a3ebd82c1d4c3beb94f1351f494d65a48ddd89f625c30a3103c0432",
+    "pssolver/workflows/channel_checkpoint_observation.py": "ef1a614a93b1d93b45119a48306002d567adc99064f8dcf7ec8934ce2641f40b"
+  },
+  "regression_tests": {
+    "tests/test_rc5_r510_channel_checkpoint_observation.py": "5536cc0fda3dcd3791cd345b63e11df834e7473bc3aeaa588b3750c0dbf3a4ff",
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": "66f7407dd587993cf1e0027b0369f9b02e0a161f0a608f45a18d759a7358241e"
+  },
+  "historical_successor_sources": {
+    "pssolver/workflows/channel_checkpoint.py": {
+      "historical_sha256": "59124c022d88dce73a82278b62bedcfdca1a641e28d2ea9423568462b60ecd6b",
+      "current_sha256": "b3046f845a3ebd82c1d4c3beb94f1351f494d65a48ddd89f625c30a3103c0432",
+      "reason": "Preserve the live pressure warm start while retaining the synchronized checkpoint restart state.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_phase7_channel_runtime_facade.py": {
+      "historical_sha256": "84690062d22a25de1322308e14096b30cfffcceab4731c775ddaea01b5fdb05c",
+      "current_sha256": "a10fd6e8686caacb82c5388656c3542f4bf52f75267027fc09a7d578ba3d56d3",
+      "reason": "Extend the immutable P7.4 Channel checkpoint source chain through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "7fd4c4f5e0eaeb58d9d1a2d0526146fe0257d3f91b003872dbf0f812c7b35760",
+      "current_sha256": "f31661d1c5b3f9edc58b05208c23df36bb0fffd26b56f4e269830a6aba8de5b0",
+      "reason": "Extend immutable RC4.5.1 checkpoint-source resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc453_checkpoint_transactionality.py": {
+      "historical_sha256": "97e5d550735a73bceeb6164707656df7ad3c402bc2a298c153073a69f9e52c35",
+      "current_sha256": "51deaa79687c5fbe7bbd49771548377eb7925ce185174d9cedd7cbcef0a650a9",
+      "reason": "Extend immutable RC4.5.3 checkpoint-source resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "c29e982ad042c593e92f2dfae5e013c5765eee04709431d19a9fb6e09dfdffd8",
+      "current_sha256": "bda0d2fb2ae4b4ea54fdbbb6ec7572b51894862f32eafa9fa995165a72868014",
+      "reason": "Extend immutable RC4.5.5 successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "572a24b3d2f37b1b6ff8efb23deaa625536b01195518155f9d3feed7b9e27830",
+      "current_sha256": "cd53ff80cd26bf0f59824513c898f23b77710cbb4c7d7db85a209d089319d859",
+      "reason": "Extend immutable RC4.5.6 successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "2a8c009190c10a1a32da8c57cae88b5d0900616d364abb189c04e068767c3f7b",
+      "current_sha256": "a6f96967d1b68b65ed5a52afbde643b0bc0ffaebc348b6e6c54a8fef96423327",
+      "reason": "Extend immutable RC4.5.7 impact-record successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "972bd3ea1a7169327190c1cf486510f07c4d88f54d7ba08ef2d236ccc744939b",
+      "current_sha256": "71f7c0c49c71ac558cf49001f39e52ccea647c48e65392b59c2d4d65d3150ebb",
+      "reason": "Extend immutable RC4.5.7 recovery-record successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "f3adcfecdf5b6d5f3865b2ec95d5c8ad834207f5256e59e7d6d637ec690cefba",
+      "current_sha256": "6a8e0ea812d0d514b4aa249ac959c3bb30d00b086666ae30f755031d89eae8db",
+      "reason": "Extend immutable RC4.5.8 closure successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {
+      "historical_sha256": "f30c18015e2a3105994412da68d21980f5f5f3cf772ef386e4ecff89867f9792",
+      "current_sha256": "9b53e411f2c402d1c754e5a744a4f0fe06bf8a047728ab42b05ea62b83d18f14",
+      "reason": "Extend immutable RC4.5 checkpoint-planning source resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "6f50053f38a136e200b3c07db4eea2883d66f58ba8a9ba8a04ece625e53b5a47",
+      "current_sha256": "0c45652685343c2deab2a8bf5ec5711171391963ccaec499ff0b886fa6d227ab",
+      "reason": "Extend immutable RC4 post-release successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "3a91b734d39db009dd32ec36ee42906f9fe5f4bff572aaf6d8fff7102f0b9756",
+      "current_sha256": "981c1150a668459ac5e557911249d73c42a31bce3d9c70cead07be92ac375f4e",
+      "reason": "Extend immutable R5-1 successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "b9ec4d2fe99c10101437aa79833febf9c0f0b2d7fe06c61a6538d53b7425ccd7",
+      "current_sha256": "aee65b9cd69da90549d12f9f4ec04f54e4965c03758ae9c2e8dc490b13e21b6d",
+      "reason": "Extend immutable R5-2 workflow-source resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "fca81b85ab49af4c92693d01e13a39e65ea9c1463453f514684a508d05bf678d",
+      "current_sha256": "df56e840972c4dcdb3a45cacbd03bb35da65f9d4b21561ce307ea0d8ec0ee611",
+      "reason": "Extend the immutable R5-3 Channel dynamics source chain through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "3cb1e7e1ecf87e28bd09467c14f32a4c549bc6ac01c52ee21179ccf5a7fc4fe4",
+      "current_sha256": "465c060e61be8c8ab901a7c7909af9459de875f91512bf64a10cb4975df62273",
+      "reason": "Extend immutable R5-5 successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "47125373285ac654f78be3c7cf4f195e4d96e9eced2b0d06250b8edc3eec60af",
+      "current_sha256": "691015280aab5d6ad7b24c726f3e6b6cf22ae5599aa40afaa956051cb9b06e45",
+      "reason": "Extend immutable R5-6 successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "4e5dd20b0481fc4b1243eb30f5d0d3bb2a403040910d84084db48ce4921a8ca4",
+      "current_sha256": "dc70aab40e03260e4de7755a02f9b650e843ef0e7c909bf6ad4f7b58d738e060",
+      "reason": "Extend immutable R5-7 successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "e51923cb80e1052af736618c18732c5052fa9e4702715bc94c4101ebfdb97679",
+      "current_sha256": "590b01e178fe52c5ae53554f95362f508bdb6ab545054ef7b512f8eeac60b8cb",
+      "reason": "Extend immutable R5-8 successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "f6bf6b58aa55c3ccb639c2b60deab4bed36b48042c232071291bcad2164835c8",
+      "current_sha256": "fc4ae732b774700c6a6ce6c152fe7e9cfb90c5eca089fc3b40565643558b00a0",
+      "reason": "Extend immutable R5-9 successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "d2ca260babc189c5593acf714ea8701ea95867a8dcf3b581e899e7cb1aac52a4",
+      "current_sha256": "d39eadaee2ed2f22240821d3ce5fded0d0a0c7aaa7c87abd2d0f41bd23c6255c",
+      "reason": "Extend immutable W1 documentation successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "41b91e463eb96efa4544f5121af825a4cd4b36dc8a4177d465a493c794fae097",
+      "current_sha256": "3021d9b56890a63814031b9c83b8bfcc373d616616650616d50f95acf6ec302a",
+      "reason": "Extend immutable rc4 release-record successor resolution through R5-10.",
+      "introduced_by_phase": "R5-10"
+    }
+  },
+  "external_reproducers": {
+    "cross_release_state.py": "696011786b68384ea88cc978290edd00bfe06f9a1def7a17a28d1a1d8d62965a",
+    "checkpoint_observer_all.py": "486bf3d7f9b7adc9107ede0e478bee6ce891aadd7f4afdd530155f47abc18acd",
+    "legacy_channel_observer.py": "0dd9b122406400261ad9b5a42cf9e1975dade0f32a3120e8ed8efd6595251ea4",
+    "repro_warm_obs_legacy.py": "cfdb398f464a7986340f28c545358c8c0af03ebac2433401da8236317841fa00"
+  },
+  "external_reproducer_results": {
+    "pre_fix_fixed_12": "checkpointed live Q differed from no-checkpoint Q by 9.313e-10 while restart matched the no-checkpoint run",
+    "post_fix_fixed_12": "legacy_channel and compiled_channel_v2 checkpoint schedules are byte-identical to no-checkpoint Q/u/p"
+  },
+  "validation": {
+    "targeted_cpu": "9 passed, 0 failed",
+    "affected_execution_cpu": "checkpoint/no-checkpoint and same-runtime restart gates PASS",
+    "historical_successor_cpu": "216 passed, 0 failed",
+    "source_full_cpu": "3574 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_targeted_cpu": "9 passed, 0 failed",
+    "installed_wheel_applicable_full_cpu": "3567 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_source_layout_exclusion": "tests/test_phase8_p861_local_cumulative_audit.py (7 tests; excluded, not skipped or deselected)"
+  },
+  "installed_wheel_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_r510_installed_cpu_5d89416_20261015_v1",
+    "source_archive_sha256": "6893510339abb1b6e61745a451ca38d6c07c7c316fd50033598837a6f7d3718f",
+    "wheel_sha256": "876bbbdef10e5f9fbc867f11c7ea2937ad50e98045a7b9d949934b229b546220",
+    "installed_import": "/home/fansenwei/pssolver_rc5_r510_installed_cpu_5d89416_20261015_v1/venv/lib/python3.12/site-packages/pssolver/__init__.py",
+    "source_shadow_import": false,
+    "pip_check": "PASS",
+    "python": "3.12.13",
+    "torch": "2.6.0",
+    "numpy": "2.3.2",
+    "scipy": "1.16.0",
+    "checksum_entries": 17,
+    "checksums_sha256": "a57c2e8fda7000683ed7d8d40d7afd8eb1ca725cbea7bce3f316dad2e2c9b737"
+  },
+  "scope": {
+    "checkpoint_capture_semantics_changed": true,
+    "scientific_equations_changed": false,
+    "pressure_solver_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "r5_10_cpu_closure_complete": true,
+    "eligible_for_next_work_item": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

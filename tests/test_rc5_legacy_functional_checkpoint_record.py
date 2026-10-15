@@ -20,6 +20,9 @@ R5_6_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 R5_7_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 R5_8_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 R5_9_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
+R5_10_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
+)
 
 
 def _sha256(relative: str) -> str:
@@ -36,6 +39,7 @@ def _latest_successor(relative: str, historical: str) -> str:
         R5_7_RECORD,
         R5_8_RECORD,
         R5_9_RECORD,
+        R5_10_RECORD,
     ):
         successor = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
@@ -83,6 +87,9 @@ def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
     r5_9_successors = json.loads(R5_9_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    r5_10_successors = json.loads(R5_10_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
@@ -109,6 +116,9 @@ def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = r5_9_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = r5_10_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(relative) == resolved
