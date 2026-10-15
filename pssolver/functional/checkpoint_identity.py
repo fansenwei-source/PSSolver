@@ -6,13 +6,15 @@ from collections.abc import Mapping
 import hashlib
 import json
 
+from pssolver.core.spectral_identity import (
+    periodic_hermitian_state_projection,
+)
 from pssolver.io.checkpoint_identity import (
     CheckpointCompatibilityIdentity,
     CheckpointFamily,
     CheckpointIdentityLayer,
     IdentityLayerKind,
 )
-from pssolver.operators.projection import periodic_hermitian_state_projection
 
 from .contracts import FunctionalRuntimeIdentity, FunctionalStateSpec
 

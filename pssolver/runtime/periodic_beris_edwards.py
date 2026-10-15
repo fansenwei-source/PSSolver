@@ -13,6 +13,9 @@ from pssolver.configuration.periodic_beris_edwards import (
     PERIODIC_RUNTIME_PATH,
     PeriodicBerisEdwardsRunSpec,
 )
+from pssolver.core.spectral_identity import (
+    periodic_hermitian_state_projection,
+)
 from pssolver.integrators.state_backed import (
     StateBackedProjectedIntegratorMixin,
 )

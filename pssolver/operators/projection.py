@@ -1,5 +1,3 @@
-from types import MappingProxyType
-
 import torch
 import torch.nn.functional as functional
 
@@ -9,23 +7,9 @@ from pssolver.core.numerics import (
     DEFAULT_PROJECTED_TRANSFORM_EXECUTION,
     PROJECTED_TRANSFORM_EXECUTION_MODES,
 )
-
-
-_PERIODIC_HERMITIAN_STATE_PROJECTION = MappingProxyType({
-    "full_complex": "complete_conjugate_pair_projection_each_step.v2",
-    "hermitian_half": (
-        "self_conjugate_stored_planes_projection_each_step.v2"
-    ),
-})
-
-
-def periodic_hermitian_state_projection(spectral_storage):
-    """Return the storage-specific periodic real-spectrum repair identity."""
-
-    try:
-        return _PERIODIC_HERMITIAN_STATE_PROJECTION[spectral_storage]
-    except KeyError as exc:
-        raise ValueError("unsupported periodic spectral storage") from exc
+from pssolver.core.spectral_identity import (
+    periodic_hermitian_state_projection,
+)
 
 
 class BasisAwareSpectralProjector:

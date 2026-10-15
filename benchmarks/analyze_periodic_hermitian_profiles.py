@@ -40,7 +40,9 @@ MEDIAN_RATIO_MAX = 1.03
 MEMORY_RATIO_MAX = 1.05
 PROFILE_CV_MAX = 0.20
 H100_NAME = "NVIDIA H100 PCIe"
-CANDIDATE_PROJECTION = "self_conjugate_planes_each_step"
+CANDIDATE_PROJECTION = (
+    "self_conjugate_stored_planes_projection_each_step.v2"
+)
 PHYSICAL_RELATIVE_L2_MAX = 1.0e-12
 
 

@@ -68,6 +68,9 @@ def test_projected_transform_execution_defaults_to_truncated():
         "spectral_storage": "full_complex",
         "backend_storage_shape_preserved": True,
         "full_spectral_storage_preserved": True,
+        "hermitian_state_projection": (
+            "complete_conjugate_pair_projection_each_step.v2"
+        ),
     }
 
 

@@ -20,11 +20,11 @@ from pssolver.functional.checkpoint_identity import (
 from pssolver.functional.legacy_identity import (
     legacy_runtime_identity_sha256,
 )
+from pssolver.core.spectral_identity import (
+    periodic_hermitian_state_projection,
+)
 from pssolver.io.checkpoint_identity import (
     CheckpointCompatibilityIdentity,
-)
-from pssolver.operators.projection import (
-    periodic_hermitian_state_projection,
 )
 
 

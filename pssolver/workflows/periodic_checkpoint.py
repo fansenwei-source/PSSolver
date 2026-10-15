@@ -39,8 +39,10 @@ from pssolver.io.checkpoint_identity import (
     resolve_legacy_identity_schema,
 )
 from pssolver.models.active_nematics import Q_COMPONENTS
-from pssolver.operators.projection import periodic_hermitian_state_projection
-from pssolver.runtime.periodic_beris_edwards import PeriodicRuntimeAdapterProtocol
+from pssolver.runtime.periodic_beris_edwards import (
+    PeriodicRuntimeAdapterProtocol,
+    periodic_hermitian_state_projection,
+)
 from .state_validation import require_finite_tensors
 
 
