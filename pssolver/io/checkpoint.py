@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from contextlib import contextmanager
+import ctypes
+import errno
 import hashlib
 import json
 import os
@@ -16,6 +18,7 @@ from pathlib import Path
 import secrets
 import shutil
 import stat
+import sys
 from typing import Iterator
 
 import numpy as np
@@ -337,6 +340,127 @@ def _new_staging_directory(target: Path, *, operation: str) -> Path:
     )
 
 
+def _fsync_directory(path: Path, *, operation: str) -> None:
+    flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0)
+    try:
+        descriptor = os.open(path, flags)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+    except OSError as exc:
+        raise _io_error(
+            exc,
+            operation=operation,
+            message=f"checkpoint directory cannot be synchronized: {path}",
+        ) from exc
+
+
+def _fsync_staging_tree(staging: Path, *, operation: str) -> None:
+    """Persist every regular payload and directory before publication."""
+
+    try:
+        directories = [staging]
+        files: list[Path] = []
+        for root, child_directories, child_files in os.walk(staging):
+            root_path = Path(root)
+            directories.extend(root_path / name for name in child_directories)
+            files.extend(root_path / name for name in child_files)
+        for path in files:
+            file_stat = path.lstat()
+            if not stat.S_ISREG(file_stat.st_mode):
+                raise CheckpointIOError(
+                    f"checkpoint staging payload is not a regular file: {path}",
+                    operation=operation,
+                    failure_domain="filesystem",
+                )
+            with path.open("rb") as handle:
+                os.fsync(handle.fileno())
+    except CheckpointError:
+        raise
+    except OSError as exc:
+        raise _io_error(
+            exc,
+            operation=operation,
+            message=f"checkpoint staging payload cannot be synchronized: {staging}",
+        ) from exc
+    for path in reversed(directories):
+        _fsync_directory(path, operation=operation)
+
+
+def _rename_directory_no_replace(
+    source: Path,
+    target: Path,
+    *,
+    operation: str,
+) -> None:
+    """Atomically publish a directory without replacing an occupied target."""
+
+    if sys.platform.startswith("linux"):
+        try:
+            renameat2 = ctypes.CDLL(None, use_errno=True).renameat2
+        except AttributeError as exc:
+            raise CheckpointIOError(
+                "atomic no-replace checkpoint publication is unavailable",
+                operation=operation,
+                failure_domain="filesystem",
+                legacy_exception_type=type(exc).__name__,
+            ) from exc
+        renameat2.argtypes = [
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_uint,
+        ]
+        renameat2.restype = ctypes.c_int
+        at_fdcwd = -100
+        rename_noreplace = 1
+        result = renameat2(
+            at_fdcwd,
+            os.fsencode(source),
+            at_fdcwd,
+            os.fsencode(target),
+            rename_noreplace,
+        )
+        if result == 0:
+            return
+        error_number = ctypes.get_errno()
+        if error_number in {errno.EEXIST, errno.ENOTEMPTY}:
+            raise CheckpointExistsError(
+                f"checkpoint directory already exists: {target}",
+                operation=operation,
+            )
+        exception = OSError(error_number, os.strerror(error_number), target)
+        raise _io_error(
+            exception,
+            operation=operation,
+            message=f"checkpoint cannot be published: {target}",
+        ) from exception
+
+    # Windows rename is non-replacing.  Other non-Linux platforms retain the
+    # immediate occupancy check but cannot provide Linux's renameat2 contract.
+    if target.exists() or target.is_symlink():
+        raise CheckpointExistsError(
+            f"checkpoint directory already exists: {target}",
+            operation=operation,
+        )
+    try:
+        os.rename(source, target)
+    except FileExistsError as exc:
+        raise CheckpointExistsError(
+            f"checkpoint directory already exists: {target}",
+            operation=operation,
+            legacy_exception_type=type(exc).__name__,
+        ) from exc
+    except OSError as exc:
+        raise _io_error(
+            exc,
+            operation=operation,
+            message=f"checkpoint cannot be published: {target}",
+        ) from exc
+
+
 @contextmanager
 def checkpoint_directory_transaction(
     directory: str | Path,
@@ -351,19 +475,13 @@ def checkpoint_directory_transaction(
     staging = _new_staging_directory(target, operation=operation)
     try:
         yield staging, target
-        if target.exists() or target.is_symlink():
-            raise CheckpointExistsError(
-                f"checkpoint directory already exists: {target}",
-                operation=operation,
-            )
-        try:
-            os.replace(staging, target)
-        except OSError as exc:
-            raise _io_error(
-                exc,
-                operation=operation,
-                message=f"checkpoint cannot be published: {target}",
-            ) from exc
+        _fsync_staging_tree(staging, operation=operation)
+        _rename_directory_no_replace(
+            staging,
+            target,
+            operation=operation,
+        )
+        _fsync_directory(target.parent, operation=operation)
     except BaseException as exc:
         if staging.exists() or staging.is_symlink():
             shutil.rmtree(staging, ignore_errors=True)

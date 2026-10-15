@@ -24,7 +24,11 @@ from pssolver.configuration.public_simulation_runner import (
     PublicCompilationRejectionCode,
     PublicSimulationCompilationError,
 )
-from pssolver.errors import SimulationExecutionError, SimulationStateError
+from pssolver.errors import (
+    SimulationExecutionError,
+    SimulationRestartError,
+    SimulationStateError,
+)
 from .results import (
     SimulationDiagnosticProtocol,
     SimulationObservationProtocol,
@@ -43,6 +47,7 @@ __all__ = [
     "QualifiedCombination",
     "Simulation",
     "SimulationExecutionError",
+    "SimulationRestartError",
     "SnapshotInitialCondition",
     "SpectralNumerics",
     "TimeStepping",

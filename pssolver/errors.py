@@ -63,4 +63,14 @@ class SimulationStateError(SimulationExecutionError, ValueError):
     code = "simulation_state_error"
 
 
-__all__ = ["SimulationExecutionError", "SimulationStateError"]
+class SimulationRestartError(SimulationExecutionError, ValueError):
+    """A requested restart is incompatible before timestep execution."""
+
+    code = "simulation_restart_error"
+
+
+__all__ = [
+    "SimulationExecutionError",
+    "SimulationRestartError",
+    "SimulationStateError",
+]

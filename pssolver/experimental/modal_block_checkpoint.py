@@ -4,14 +4,13 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 from pathlib import Path
-import shutil
-import tempfile
 from typing import Any
 
 import numpy as np
 import torch
+
+from pssolver.io import checkpoint_directory_transaction
 
 from pssolver.integrators.history import SBDF2History
 from pssolver.experimental.modal_block_reference import (
@@ -130,14 +129,10 @@ def save_two_component_reference_checkpoint(
     stepper.validate_state(state)
     if state.history is None:
         raise ValueError("P4.5 checkpoints require complete SBDF2 history")
-    target = Path(path)
-    if target.exists():
-        raise FileExistsError(f"checkpoint target already exists: {target}")
-    target.parent.mkdir(parents=True, exist_ok=True)
-    temporary = Path(
-        tempfile.mkdtemp(prefix=f".{target.name}.tmp-", dir=target.parent)
-    )
-    try:
+    with checkpoint_directory_transaction(
+        path,
+        operation="two_component_reference_checkpoint_export",
+    ) as (temporary, _target):
         values = {
             "physical": state.physical,
             "native_spectrum": state.native_spectrum,
@@ -193,11 +188,7 @@ def save_two_component_reference_checkpoint(
             f"manifest_sha256={_sha256_bytes(manifest_bytes)}\n",
             encoding="utf-8",
         )
-        os.replace(temporary, target)
-        return manifest
-    except BaseException:
-        shutil.rmtree(temporary, ignore_errors=True)
-        raise
+    return manifest
 
 
 def _read_manifest(root: Path) -> dict[str, Any]:

@@ -38,7 +38,10 @@ from .channel_activity import (
     channel_activity_functional_request,
     channel_functional_pressure_identity,
 )
-from .channel_checkpoint import ChannelActivityCheckpointBridge
+from .channel_checkpoint import (
+    CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION,
+    ChannelActivityCheckpointBridge,
+)
 from .channel_pressure_adjoint import ChannelImplicitPressureAdjoint
 from .contracts import (
     FUNCTIONAL_API_VERSION,
@@ -140,7 +143,9 @@ class ChannelActivityFunctionalRuntime:
             "fallback_allowed": False,
             "fallback_used": False,
             "deterministic_replay": CHANNEL_ACTIVITY_DETERMINISTIC_REPLAY,
-            "durable_checkpoint_bridge_version": 1,
+            "durable_checkpoint_bridge_version": (
+                CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION
+            ),
             "checkpoint_export": "functional_q_state_only",
             "production_checkpoint_import": "q_state_only_after_identity_gate",
             "tf32_policy": configure_tf32_execution(

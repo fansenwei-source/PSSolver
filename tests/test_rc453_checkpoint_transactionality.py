@@ -13,6 +13,7 @@ import subprocess
 
 import pytest
 
+import pssolver.io.checkpoint as checkpoint_io
 from pssolver.functional.errors import (
     FunctionalCheckpointCompatibilityError,
     FunctionalCheckpointError,
@@ -313,10 +314,14 @@ def test_writer_transaction_removes_staging_after_publish_failure(
 ):
     target = tmp_path / "checkpoint"
 
-    def fail_publish(_source, _target):
+    def fail_publish(_source, _target, *, operation):
         raise OSError(errno.ENOSPC, "injected device-full failure")
 
-    monkeypatch.setattr(os, "replace", fail_publish)
+    monkeypatch.setattr(
+        checkpoint_io,
+        "_rename_directory_no_replace",
+        fail_publish,
+    )
     with pytest.raises(CheckpointIOError) as error:
         with checkpoint_directory_transaction(
             target,
@@ -327,6 +332,56 @@ def test_writer_transaction_removes_staging_after_publish_failure(
     assert error.value.legacy_exception_type == "OSError"
     assert not target.exists()
     assert not list(tmp_path.glob(".checkpoint.tmp-*"))
+
+
+def test_writer_transaction_cannot_replace_a_racing_empty_target(
+    tmp_path,
+    monkeypatch,
+):
+    target = tmp_path / "checkpoint"
+    real_publish = checkpoint_io._rename_directory_no_replace
+
+    def publish_after_competitor(source, occupied, *, operation):
+        occupied.mkdir()
+        real_publish(source, occupied, operation=operation)
+
+    monkeypatch.setattr(
+        checkpoint_io,
+        "_rename_directory_no_replace",
+        publish_after_competitor,
+    )
+    with pytest.raises(CheckpointExistsError):
+        with checkpoint_directory_transaction(
+            target,
+            operation="checkpoint_export",
+        ) as (staging, _published):
+            (staging / "payload.bin").write_bytes(b"complete")
+    assert target.is_dir()
+    assert list(target.iterdir()) == []
+    assert not list(tmp_path.glob(".checkpoint.tmp-*"))
+
+
+def test_writer_transaction_syncs_payload_directory_and_parent(
+    tmp_path,
+    monkeypatch,
+):
+    calls = []
+    real_fsync = checkpoint_io.os.fsync
+
+    def observe_fsync(descriptor):
+        calls.append(descriptor)
+        real_fsync(descriptor)
+
+    monkeypatch.setattr(checkpoint_io.os, "fsync", observe_fsync)
+    target = tmp_path / "checkpoint"
+    with checkpoint_directory_transaction(
+        target,
+        operation="checkpoint_export",
+    ) as (staging, _published):
+        (staging / "payload.bin").write_bytes(b"complete")
+    assert target.is_dir()
+    assert (target / "payload.bin").read_bytes() == b"complete"
+    assert len(calls) >= 3
 
 
 def test_rc453_record_binds_contract_sources_and_scope():

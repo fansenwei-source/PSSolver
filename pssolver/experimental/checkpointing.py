@@ -5,14 +5,13 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 import json
-import os
 from pathlib import Path
-import shutil
-import tempfile
 from types import MappingProxyType
 
 import numpy as np
 import torch
+
+from pssolver.io import checkpoint_directory_transaction
 
 from pssolver.execution import (
     AlgebraicRuntimeRestartState,
@@ -290,17 +289,10 @@ def write_shadow_checkpoint(
 
     if not isinstance(checkpoint, ShadowRunCheckpoint):
         raise TypeError("checkpoint must be a ShadowRunCheckpoint")
-    target = Path(directory).expanduser().resolve()
-    target.parent.mkdir(parents=True, exist_ok=True)
-    if target.exists():
-        raise FileExistsError(f"checkpoint directory already exists: {target}")
-    staging = Path(
-        tempfile.mkdtemp(
-            prefix=f".{target.name}.tmp-",
-            dir=target.parent,
-        )
-    )
-    try:
+    with checkpoint_directory_transaction(
+        directory,
+        operation="shadow_checkpoint_export",
+    ) as (staging, target):
         tensor_files: dict[str, dict[str, dict[str, object]]] = {
             "evolved_spatial": {},
             "evolved_spectral": {},
@@ -332,11 +324,6 @@ def write_shadow_checkpoint(
             json.dumps(metadata, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
-        os.replace(staging, target)
-    except BaseException:
-        if staging.exists():
-            shutil.rmtree(staging)
-        raise
     return target
 
 

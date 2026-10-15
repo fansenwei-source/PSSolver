@@ -9,14 +9,13 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 from pathlib import Path
-import shutil
-import tempfile
 from typing import Any
 
 import numpy as np
 import torch
+
+from pssolver.io import checkpoint_directory_transaction
 
 from pssolver.core.integrators import IntegratorScheme
 from pssolver.integrators.history import SBDF2History
@@ -137,14 +136,10 @@ def save_scalar_reference_checkpoint(
     if not isinstance(stepper, ScalarPeriodicReferenceStepper):
         raise TypeError("stepper must be ScalarPeriodicReferenceStepper")
     stepper.validate_state(state)
-    target = Path(path)
-    if target.exists():
-        raise FileExistsError(f"checkpoint target already exists: {target}")
-    target.parent.mkdir(parents=True, exist_ok=True)
-    temporary = Path(
-        tempfile.mkdtemp(prefix=f".{target.name}.tmp-", dir=target.parent)
-    )
-    try:
+    with checkpoint_directory_transaction(
+        path,
+        operation="scalar_reference_checkpoint_export",
+    ) as (temporary, _target):
         tensors: dict[str, dict[str, object]] = {}
         for name, filename in _CURRENT_TENSORS.items():
             tensors[name] = _write_tensor(
@@ -208,11 +203,7 @@ def save_scalar_reference_checkpoint(
             f"manifest_sha256={manifest_sha256}\n",
             encoding="utf-8",
         )
-        os.replace(temporary, target)
-        return manifest
-    except BaseException:
-        shutil.rmtree(temporary, ignore_errors=True)
-        raise
+    return manifest
 
 
 def _read_manifest(root: Path) -> dict[str, Any]:

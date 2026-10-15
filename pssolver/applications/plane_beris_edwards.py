@@ -70,6 +70,7 @@ from pssolver.configuration.execution_device import (
 )
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
+from pssolver.errors import SimulationRestartError
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
@@ -107,6 +108,22 @@ from pssolver.operators.projection import (
 )
 from pssolver.planning import TransformKind
 from tqdm import trange
+
+
+def _reject_restart(
+    message: str,
+    *,
+    reason: str,
+    step: int = 0,
+    details: dict[str, object] | None = None,
+) -> None:
+    raise SimulationRestartError(
+        message,
+        application_family="plane_complete_stress_beris_edwards",
+        stage="restart_validation",
+        step=step,
+        details={"reason": reason, **(details or {})},
+    )
 
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -656,28 +673,36 @@ def _run_plane_beris_edwards_owned(
             "target_representation": "homogeneous_dirichlet_remainder",
             "applied_to_this_construction": not is_restart,
         }
-    if emit_metadata:
-        print(json.dumps(metadata, indent=2))
-    if invocation.dry_run:
-        return None
-
     # Reject unsupported cross-runtime or numerically incompatible restart before
     # creating an output directory, generating Q, or constructing either solver.
     if is_restart:
         restart_header = read_plane_checkpoint_header(workflow_spec.restart_from)
+        restart_step = getattr(restart_header, "completed_steps", 0)
         if restart_header.runtime_path is not execution.runtime_path:
-            raise ValueError(
-                "cross-runtime Plane checkpoint restart is unsupported"
+            _reject_restart(
+                "cross-runtime Plane checkpoint restart is unsupported",
+                reason="runtime_path_mismatch",
+                step=restart_step,
+                details={
+                    "checkpoint_runtime_path": restart_header.runtime_path.value,
+                    "target_runtime_path": execution.runtime_path.value,
+                },
             )
         if restart_header.format_version == (
             PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION
         ):
-            raise ValueError(
-                "legacy Plane checkpoint requires explicit identity upgrade"
+            _reject_restart(
+                "legacy Plane checkpoint requires explicit identity upgrade",
+                reason="legacy_identity_upgrade_required",
+                step=restart_step,
             )
         checkpoint_identity = restart_header.compatibility_identity
         if checkpoint_identity is None:
-            raise ValueError("checkpoint compatibility identity is missing")
+            _reject_restart(
+                "checkpoint compatibility identity is missing",
+                reason="compatibility_identity_missing",
+                step=restart_step,
+            )
         checkpoint_forward = (
             checkpoint_identity.forward_dynamics.to_metadata()["payload"]
         )
@@ -686,8 +711,10 @@ def _run_plane_beris_edwards_owned(
             run_spec
         ).to_metadata()
         if checkpoint_run_spec != target_run_spec:
-            raise ValueError(
-                "checkpoint forward dynamics does not match target"
+            _reject_restart(
+                "checkpoint forward dynamics does not match target",
+                reason="forward_dynamics_mismatch",
+                step=restart_step,
             )
         checkpoint_lifting = checkpoint_forward.get("lifting_dynamics")
         if lifting_plan is None:
@@ -706,12 +733,20 @@ def _run_plane_beris_edwards_owned(
         else:
             checkpoint_lifting_plan_sha256 = None
         if checkpoint_lifting_plan_sha256 != target_lifting_plan_sha256:
-            raise ValueError(
-                "checkpoint static lifting dynamics does not match target"
+            _reject_restart(
+                "checkpoint static lifting dynamics does not match target",
+                reason="static_lifting_dynamics_mismatch",
+                step=restart_step,
             )
         if save_start_step > restart_header.completed_steps + steps:
-            raise ValueError(
-                "save_start_step must not exceed the absolute final step"
+            _reject_restart(
+                "save_start_step must not exceed the absolute final step",
+                reason="save_start_step_after_final_step",
+                step=restart_step,
+                details={
+                    "save_start_step": save_start_step,
+                    "absolute_final_step": restart_header.completed_steps + steps,
+                },
             )
 
     metadata["initial_condition"]["runtime_construction_only"] = is_restart
@@ -727,6 +762,10 @@ def _run_plane_beris_edwards_owned(
         metadata["initial_condition"]["trajectory_state_source"] = (
             "generated_initial_condition"
         )
+    if emit_metadata:
+        print(json.dumps(metadata, indent=2))
+    if invocation.dry_run:
+        return None
 
     output_dir = workflow_spec.output_dir.resolve()
     if output_dir.exists() and any(output_dir.iterdir()):

@@ -40,6 +40,7 @@ from .contracts import (
     FunctionalTensorSpec,
 )
 from .channel_pressure import CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION
+from .channel_checkpoint import CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION
 from .channel_pressure_adjoint import (
     CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION,
 )
@@ -290,7 +291,9 @@ def channel_activity_functional_declaration(
         "fallback_allowed": False,
         "fallback_used": False,
         "deterministic_replay": "bitwise",
-        "durable_checkpoint_bridge_version": 1,
+        "durable_checkpoint_bridge_version": (
+            CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION
+        ),
     }
     identity = FunctionalRuntimeIdentity(
         scientific=dict(identities["scientific"]),
