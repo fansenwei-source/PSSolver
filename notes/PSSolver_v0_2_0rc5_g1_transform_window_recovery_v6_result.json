@@ -1,0 +1,100 @@
+{
+  "schema": "pssolver.rc5.g1.transform_window_recovery_v6_result.v1",
+  "task": "PSSolver rc5 G-1 transform measurement-window analysis-only recovery v6",
+  "date": "2026-10-16",
+  "classification": "STOPPED_RC5_G1_TRANSFORM_WINDOW_RECOVERY_V6_AT_FROZEN_PROFILE_PERFORMANCE_MEMORY_GATE",
+  "analysis_complete": true,
+  "qualification_complete": false,
+  "g1_complete": false,
+  "implementation_commit": "f733ea2da4711d9c2f59029584e508145e2a001e",
+  "implementation_pushed": false,
+  "execution": {
+    "analysis_only": true,
+    "new_h100_submission_count": 0,
+    "reused_h100_job_id": "10885794",
+    "scientific_timestep_executed": false,
+    "source_profiles_modified": false,
+    "scientific_threshold_changed": false,
+    "production_default_changed": false
+  },
+  "reused_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_h100_dabeb9a_20261015_recovery_v5",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_rc5_g1_h100_dabeb9a_20261015_recovery_v5",
+    "checksum_manifest_sha256": "049f7422b62618416745ca665f82ab2370f6a5f2e662ce296f332f461e3b7f71",
+    "checksum_entries_passed": 26,
+    "checksum_entries_failed": 0,
+    "historical_classification_preserved": true
+  },
+  "transform_measurement_window": {
+    "passed": true,
+    "profiles_passed": 96,
+    "profiles_failed": 0,
+    "scheduled_refresh_profiles": 24,
+    "channel_raw_forward_calls": 663,
+    "channel_scheduled_forward_calls": 3,
+    "channel_steady_forward_calls": 660,
+    "channel_steady_forward_per_step": 11.0,
+    "channel_raw_inverse_calls": 2160,
+    "channel_steady_inverse_per_step": 36.0,
+    "source_profiles_modified": false
+  },
+  "performance_memory_gate": {
+    "passed": false,
+    "group_count": 16,
+    "failed_group_count": 4,
+    "failures": [
+      {
+        "family": "plane_compiled_v2",
+        "grid": "plane_R128",
+        "gate": "paired_timestep_ratio",
+        "observed": 1.0563119777324725,
+        "maximum": 1.05
+      },
+      {
+        "family": "channel_compiled_v2",
+        "grid": "channel_R128x20x20",
+        "gate": "paired_timestep_ratio",
+        "observed": 1.0584790919925313,
+        "maximum": 1.05
+      },
+      {
+        "family": "periodic_functional",
+        "grid": "periodic_R128",
+        "gate": "paired_timestep_ratio",
+        "observed": 1.066582662553552,
+        "maximum": 1.05
+      },
+      {
+        "family": "channel_functional",
+        "grid": "channel_R512x40x40",
+        "gate": "peak_reserved_group_ratio",
+        "observed": 1.0402010050251256,
+        "maximum": 1.03
+      }
+    ]
+  },
+  "archive": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_transform_window_analysis_dabeb9a_20261016_v6",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_rc5_g1_transform_window_analysis_dabeb9a_20261016_v6",
+    "checksum_entries_passed": 15,
+    "checksum_entries_failed": 0,
+    "checksums_sha256": "74ef98002f8bd6b37f0d9e6cc001d17d9653cd6cb274afbd726273bd02eaeac2",
+    "final_report_sha256": "055923bd7b3e746dfc9d68b0dc7272c7dabd678a198168ca783acb0c07414d25",
+    "summary_sha256": "90187dd304f8533c15cb5e2d62476af2fdd8fe35562eba42ecbad49ec92988f1",
+    "transform_window_validation_sha256": "d4421ddd56cee5e0b7147149da61483c065a018d162cf60fd5dadd4c4d32e9a8",
+    "performance_memory_diagnostic_sha256": "7e0f587bb83eaf012f5b659ac06ac4355f2833ed9f1d7ba6ff7d3390bad4171f",
+    "source_evidence_manifest_sha256": "fb5c3a10479a7abfbbd86b9c2024e9b546b89a4bf1aa5b4f28f3f14d1bc13b3d",
+    "complete_present": false,
+    "failed_marker_present": true,
+    "report_generation_recovery_preserved": true
+  },
+  "authorization": {
+    "push_authorized": false,
+    "new_h100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  },
+  "next_gate": "perform an analysis-only adjudication of the three paired-time outliers and one reserved-memory ratio without changing frozen thresholds or submitting H100"
+}
