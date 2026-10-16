@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_qualification_support.json"
+RECOVERY = ROOT / "notes/PSSolver_v0_2_0rc5_g1_consumer_recovery_v5.json"
 
 
 def _record() -> dict[str, object]:
@@ -35,9 +36,17 @@ def test_support_record_registers_historical_hashes_and_exact_successors():
         "tests/test_plan_rc5_g1_h100.py",
         "tests/test_rc5_g1_qualification_support_record.py",
     }
+    recovery_successors = json.loads(RECOVERY.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, expected in record["source_sha256"].items():
         actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
         if actual == expected:
+            continue
+        if relative in recovery_successors:
+            recovery = recovery_successors[relative]
+            assert recovery["historical_sha256"] == expected
+            assert recovery["sha256"] == actual
             continue
         successor = successors[relative]
         assert successor["historical_sha256"] == expected

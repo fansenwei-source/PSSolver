@@ -64,9 +64,40 @@
     },
     "tests/test_run_rc5_g1_foundation_stages.py": {
       "historical_sha256": "e8a97efb279cdb06f36dc78bc48198ca9d6cd9244288c754cc786e1aefd4e514",
-      "sha256": "17ce1a7bbb696e1ec14b62dbfc65c9c3e17036792be562e5ca800554854949b0",
-      "introduced_by_commit": "9a6d56d49c2dc7662e51ed7b74736783724d342b",
-      "reason": "add an AST regression test for the actual installed Consumer error-module path; no scientific test threshold, solver, runtime or production default changed"
+      "sha256": "48bb553fa5849ccb8503c0628f38809c462a48bebb33c141b9befd6b0c1460e9",
+      "introduced_by_commit": "c1056ac9f5515ab07d27154aaaaad89f31d5ced0",
+      "reason": "retain the AST regression test for the actual installed Consumer error-module path and update its synthetic pass population to the recovered Consumer plan; no scientific test threshold, solver, runtime or production default changed",
+      "supersedes": {
+        "sha256": "17ce1a7bbb696e1ec14b62dbfc65c9c3e17036792be562e5ca800554854949b0",
+        "introduced_by_commit": "9a6d56d49c2dc7662e51ed7b74736783724d342b"
+      }
+    },
+    "benchmarks/plan_rc5_g1_h100.py": {
+      "historical_sha256": "9ec83c9e38355ed354d97716904e2efeb77ac86f2e5d22ba7a335ccf787ed32b",
+      "sha256": "30c6ef6d3610390f2ac7175a6e21f774873899735f2f9bbe6a8ba6fc8d506e2b",
+      "introduced_by_commit": "c1056ac9f5515ab07d27154aaaaad89f31d5ced0",
+      "reason": "bind G-1 to the recovered Consumer source, exact dual-wheel artifact, and 342-pass H100 suite while preserving every scientific threshold, solver runtime and production default",
+      "requires_h100_requalification": true
+    },
+    "tests/test_plan_rc5_g1_h100.py": {
+      "historical_sha256": "0692fd7be4642ec19957d9f7e8d7c56270a13ab52cc56324463d8a47e5457566",
+      "sha256": "0cf369ab73242f07d09cd922d000b41c8ec237630dc545959c85734d036c1c94",
+      "introduced_by_commit": "c1056ac9f5515ab07d27154aaaaad89f31d5ced0",
+      "reason": "pin the recovered Consumer source, wheel hash, and pass count in the G-1 plan tests; no scientific threshold, solver runtime or production default changed",
+      "requires_h100_requalification": true,
+      "supersedes": {
+        "sha256": "c0eb7e43f4e0e00b8a1eb445399d0aa383527565e669709ed0aefaabcd479056"
+      }
+    },
+    "tests/test_rc5_g1_qualification_support_record.py": {
+      "historical_sha256": "41f379c15435a24991006b11e0f90a2c65ed03411dcf5d6deadc9eab2efb592a",
+      "sha256": "f00d0c8c6884b47e49584343bb17898415d76e772d3605e3bbbf907c18c3d619",
+      "introduced_by_commit": "c1056ac9f5515ab07d27154aaaaad89f31d5ced0",
+      "reason": "resolve the historical G-1.5 source hashes through this explicit forward-only recovery record; no solver runtime, scientific threshold or production default changed",
+      "requires_h100_requalification": false,
+      "supersedes": {
+        "sha256": "c664d5e7dad40c5129f33b682e975c840b877df5ce6b3d2785bebd6b8af52b45"
+      }
     }
   },
   "historical_records": {

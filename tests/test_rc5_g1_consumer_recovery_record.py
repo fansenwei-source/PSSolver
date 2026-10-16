@@ -49,13 +49,31 @@ def test_recovery_record_registers_exact_historical_successors():
     successors = record["historical_successor_sources"]
     assert set(successors) == {
         "benchmarks/run_rc5_g1_consumer.py",
+        "benchmarks/plan_rc5_g1_h100.py",
+        "tests/test_plan_rc5_g1_h100.py",
+        "tests/test_rc5_g1_qualification_support_record.py",
         "tests/test_run_rc5_g1_foundation_stages.py",
+    }
+    introduced = {
+        "benchmarks/run_rc5_g1_consumer.py": (
+            "9a6d56d49c2dc7662e51ed7b74736783724d342b"
+        ),
+        "benchmarks/plan_rc5_g1_h100.py": (
+            "c1056ac9f5515ab07d27154aaaaad89f31d5ced0"
+        ),
+        "tests/test_plan_rc5_g1_h100.py": (
+            "c1056ac9f5515ab07d27154aaaaad89f31d5ced0"
+        ),
+        "tests/test_rc5_g1_qualification_support_record.py": (
+            "c1056ac9f5515ab07d27154aaaaad89f31d5ced0"
+        ),
+        "tests/test_run_rc5_g1_foundation_stages.py": (
+            "c1056ac9f5515ab07d27154aaaaad89f31d5ced0"
+        ),
     }
     for relative, value in successors.items():
         assert _sha256(ROOT / relative) == value["sha256"]
-        assert value["introduced_by_commit"] == (
-            "9a6d56d49c2dc7662e51ed7b74736783724d342b"
-        )
+        assert value["introduced_by_commit"] == introduced[relative]
         assert value["historical_sha256"] != value["sha256"]
         assert "production default" in value["reason"]
 
