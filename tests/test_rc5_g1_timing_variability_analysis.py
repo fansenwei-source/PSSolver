@@ -80,6 +80,20 @@ def test_analysis_separates_first_sample_contamination_from_residual_variability
     assert result["first_sample_contamination_supported"] is True
     assert result["first_sample_contamination_is_complete_explanation"] is False
     assert result["residual_in_window_variability_supported"] is True
+    assert result["residual_in_window_variability_cause_resolved"] is False
+    assert result["candidate_first_ratio_mean_higher_family_count"] >= 0
+    assert isinstance(
+        result["candidate_first_ratio_mean_higher_in_all_families"], bool
+    )
+    assert result["execution_order_effect_causal"] is False
+    plane = next(
+        family
+        for family in result["families"]
+        if family["family"] == "plane_compiled_v2"
+    )
+    assert plane["baseline_first_full_mean_ratio_mean"] > 0.0
+    assert plane["candidate_first_full_mean_ratio_mean"] > 0.0
+    assert "diagnostic_excluding_first_sample_correlation_median" in plane
     assert result["raw_samples_modified"] is False
     assert result["outlier_removal_performed"] is False
     assert result["trial_replacement_performed"] is False

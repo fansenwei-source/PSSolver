@@ -263,6 +263,28 @@ def analyze(profile_root: Path, profiler_source: Path) -> dict[str, object]:
                     ),
                 }
             )
+        full_correlations = [
+            float(pair["full_sample_correlation"])
+            for pair in pairs
+            if pair["full_sample_correlation"] is not None
+        ]
+        post_first_correlations = [
+            float(pair["diagnostic_excluding_first_sample_correlation"])
+            for pair in pairs
+            if pair["diagnostic_excluding_first_sample_correlation"] is not None
+        ]
+        baseline_first_ratios = [
+            float(pair["full_mean_ratio"])
+            for pair in pairs
+            if pair["execution_order"][0] == "baseline"
+        ]
+        candidate_first_ratios = [
+            float(pair["full_mean_ratio"])
+            for pair in pairs
+            if pair["execution_order"][0] == "candidate"
+        ]
+        baseline_first_mean = statistics.fmean(baseline_first_ratios)
+        candidate_first_mean = statistics.fmean(candidate_first_ratios)
         families.append(
             {
                 "family": family,
@@ -277,6 +299,24 @@ def analyze(profile_root: Path, profiler_source: Path) -> dict[str, object]:
                 "maximum_cv": max(
                     float(record["full_window"]["coefficient_of_variation"])
                     for record in selected
+                ),
+                "full_sample_correlation_median": (
+                    statistics.median(full_correlations)
+                    if full_correlations
+                    else None
+                ),
+                "diagnostic_excluding_first_sample_correlation_median": (
+                    statistics.median(post_first_correlations)
+                    if post_first_correlations
+                    else None
+                ),
+                "baseline_first_full_mean_ratio_mean": baseline_first_mean,
+                "candidate_first_full_mean_ratio_mean": candidate_first_mean,
+                "candidate_first_minus_baseline_first_ratio_mean": (
+                    candidate_first_mean - baseline_first_mean
+                ),
+                "candidate_first_ratio_mean_is_higher": (
+                    candidate_first_mean > baseline_first_mean
                 ),
                 "pairs": pairs,
             }
@@ -295,6 +335,10 @@ def analyze(profile_root: Path, profiler_source: Path) -> dict[str, object]:
         for record in records.values()
     )
     source_audit = _profiler_source_audit(profiler_source)
+    candidate_first_higher_count = sum(
+        bool(family["candidate_first_ratio_mean_is_higher"])
+        for family in families
+    )
     _require(full_failure_count > 0, "input evidence does not contain a CV failure")
     _require(first_overhead_count > 0, "first-sample overhead was not observed")
     _require(residual_failure_count > 0, "no residual in-window variability was observed")
@@ -313,6 +357,14 @@ def analyze(profile_root: Path, profiler_source: Path) -> dict[str, object]:
         "first_sample_contamination_supported": True,
         "first_sample_contamination_is_complete_explanation": False,
         "residual_in_window_variability_supported": True,
+        "residual_in_window_variability_cause_resolved": False,
+        "candidate_first_ratio_mean_higher_family_count": (
+            candidate_first_higher_count
+        ),
+        "candidate_first_ratio_mean_higher_in_all_families": (
+            candidate_first_higher_count == len(families)
+        ),
+        "execution_order_effect_causal": False,
         "profiler_source_audit": source_audit,
         "families": families,
         "profiles": [records[key] for key in sorted(records)],
