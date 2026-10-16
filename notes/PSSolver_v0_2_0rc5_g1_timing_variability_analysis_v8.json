@@ -1,0 +1,139 @@
+{
+  "analysis_complete": true,
+  "analysis_only": true,
+  "analysis_source": {
+    "commit": "5a64129db775ed476997d17d291493105594a0cc",
+    "initial_analyzer_commit": "1807057d371f9350c69fb43ea93ce4ecf7384a79",
+    "qualification_support_archive_sha256": "7f7f2b12ecd562c74071f164bdc047abc661b5501e56062376429fd4a7811ccb",
+    "timing_analysis_sha256": "7e3e45e4f7701ba78398d045427e77443d27681d0bc6aa9ac71bd2f29cf28a75",
+    "unit_tests": "5 passed",
+    "unit_tests_log_sha256": "c45e78d927aa6cc86c3af7ffebe1bb506dc10d7ca7110009debbb589f0b63aac"
+  },
+  "authorization": {
+    "automatic_retry": false,
+    "h100_submission_authorized": false,
+    "profile_threshold_change_authorized": false,
+    "production_default_changed": false,
+    "push_performed": false,
+    "trial_replacement_authorized": false
+  },
+  "classification": "HARNESS_FIRST_SAMPLE_CONTAMINATION_AND_RESIDUAL_IN_WINDOW_VARIABILITY",
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_timing_variability_analysis_dabeb9a_20261016_v8",
+    "profile_count": 48,
+    "source_profile_directory": "/scratch1/vincent/PSSolver/data_pssolver_rc5_g1_focused_performance_dabeb9a_20261016_v7/profile_matrix/profiles",
+    "v7_classification_preserved": "FAIL_RC5_G1_FOCUSED_PERFORMANCE_MEMORY_GATE",
+    "v7_control_checksums": "36/36 PASS",
+    "v7_control_manifest_sha256": "db6c7da0ed06ca5d245cb6945e8c80b7a39edfff90ed73cf97b250c862c3ac45",
+    "v7_scratch_checksums": "1119/1119 PASS",
+    "v7_scratch_manifest_sha256": "6b9396d23fb0df976426ccc8957c46575bef5f4053fcef3bc483b037aa987207"
+  },
+  "execution_order_observation": {
+    "candidate_first_ratio_mean_higher_family_count": 4,
+    "family_count": 4,
+    "causal_conclusion_supported": false,
+    "families": [
+      {
+        "baseline_first_ratio_mean": 0.9953064029748444,
+        "candidate_first_ratio_mean": 1.0056324861984036,
+        "diagnostic_post_first_sample_correlation_median": 0.19039619511761324,
+        "family": "plane_compiled_v2"
+      },
+      {
+        "baseline_first_ratio_mean": 0.9874631481682575,
+        "candidate_first_ratio_mean": 1.0039051542608826,
+        "diagnostic_post_first_sample_correlation_median": 0.11131855285013134,
+        "family": "channel_compiled_v2"
+      },
+      {
+        "baseline_first_ratio_mean": 1.002317550908893,
+        "candidate_first_ratio_mean": 1.0192327008426256,
+        "diagnostic_post_first_sample_correlation_median": 0.18514198469091692,
+        "family": "periodic_functional"
+      },
+      {
+        "baseline_first_ratio_mean": 1.002475317130952,
+        "candidate_first_ratio_mean": 1.0044003963087094,
+        "diagnostic_post_first_sample_correlation_median": -0.06405783776429935,
+        "family": "channel_functional"
+      }
+    ]
+  },
+  "findings": {
+    "coefficient_of_variation_max": 0.05,
+    "diagnostic_excluding_first_sample_cv_failure_count": 21,
+    "first_sample_contamination_is_complete_explanation": false,
+    "first_sample_contamination_supported": true,
+    "full_window_cv_failure_count": 32,
+    "profiles_with_first_sample_overhead": 37,
+    "residual_in_window_variability_cause_resolved": false,
+    "residual_in_window_variability_supported": true,
+    "spike_over_median_diagnostic_ratio": 1.1,
+    "total_diagnostic_spike_count": 132
+  },
+  "formal_state": {
+    "eligible_for_automatic_merge": false,
+    "eligible_for_cumulative_reassembly": false,
+    "eligible_for_default_promotion": false,
+    "g1_complete": false,
+    "new_h100_submission_count": 0,
+    "production_default_changed": false,
+    "qualification_complete": false
+  },
+  "per_family": [
+    {
+      "diagnostic_excluding_first_sample_cv_failure_count": 3,
+      "diagnostic_spike_count": 34,
+      "family": "plane_compiled_v2",
+      "full_window_cv_failure_count": 12,
+      "maximum_cv": 0.23346044630855414,
+      "profile_count": 12,
+      "profiles_with_first_sample_overhead": 12
+    },
+    {
+      "diagnostic_excluding_first_sample_cv_failure_count": 7,
+      "diagnostic_spike_count": 35,
+      "family": "channel_compiled_v2",
+      "full_window_cv_failure_count": 7,
+      "maximum_cv": 0.11927852175664248,
+      "profile_count": 12,
+      "profiles_with_first_sample_overhead": 12
+    },
+    {
+      "diagnostic_excluding_first_sample_cv_failure_count": 2,
+      "diagnostic_spike_count": 27,
+      "family": "periodic_functional",
+      "full_window_cv_failure_count": 3,
+      "maximum_cv": 0.1833462314324288,
+      "profile_count": 12,
+      "profiles_with_first_sample_overhead": 12
+    },
+    {
+      "diagnostic_excluding_first_sample_cv_failure_count": 9,
+      "diagnostic_spike_count": 36,
+      "family": "channel_functional",
+      "full_window_cv_failure_count": 10,
+      "maximum_cv": 0.06277863232858616,
+      "profile_count": 12,
+      "profiles_with_first_sample_overhead": 1
+    }
+  ],
+  "profiler_source_audit": {
+    "first_post_empty_cache_step_is_timed": true,
+    "line_gc_collect": 578,
+    "line_torch_cuda_empty_cache": 579,
+    "line_torch_cuda_reset_peak_memory_stats": 580,
+    "line_timer_reset": 581,
+    "line_timed_steps": 582,
+    "untimed_rewarm_between_empty_cache_and_timing": false
+  },
+  "recommended_next_step": {
+    "description": "pre-register a measurement-window correction that separates post-empty-cache allocation recovery from timed steps, then instrument and validate the remaining sequential-step variability without deleting samples",
+    "h100_submission_authorized": false,
+    "must_preserve_raw_samples": true,
+    "must_preserve_v7_failure": true,
+    "outlier_removal_allowed": false,
+    "threshold_relaxation_authorized": false
+  },
+  "schema": "pssolver.rc5.g1.timing_variability_analysis_record.v1"
+}
