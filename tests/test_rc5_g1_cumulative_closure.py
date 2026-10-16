@@ -10,6 +10,7 @@ import pytest
 
 import benchmarks.analyze_rc5_g1_cumulative_closure as closure
 from benchmarks.verify_rc5_g1_cumulative_archive import main as verify_main
+from benchmarks.rc5_g1_cumulative_evidence import verify_archive
 
 
 def _hash(label: str) -> str:
@@ -201,7 +202,7 @@ def test_archive_verifier_is_fail_closed(tmp_path: Path):
     manifest.write_text(f"{digest}  payload.json\n", encoding="utf-8")
     manifest_digest = hashlib.sha256(manifest.read_bytes()).hexdigest()
 
-    report = closure.verify_archive(
+    report = verify_archive(
         tmp_path,
         expected_entries=1,
         expected_manifest_sha256=manifest_digest,
@@ -211,7 +212,7 @@ def test_archive_verifier_is_fail_closed(tmp_path: Path):
 
     payload.write_text('{"tampered": true}\n', encoding="utf-8")
     with pytest.raises(ValueError, match="checksum mismatch"):
-        closure.verify_archive(
+        verify_archive(
             tmp_path,
             expected_entries=1,
             expected_manifest_sha256=manifest_digest,

@@ -7,10 +7,10 @@ import json
 from pathlib import Path
 
 from benchmarks.analyze_rc5_g1_cumulative_closure import (
-    EXPECTED_ARCHIVES,
     FOCUSED_CELLS,
     PASS_CLASSIFICATION,
 )
+from benchmarks.rc5_g1_cumulative_evidence import EXPECTED_ARCHIVES
 
 
 ROOT = Path(__file__).resolve().parents[1]

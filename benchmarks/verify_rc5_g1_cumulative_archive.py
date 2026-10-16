@@ -6,9 +6,9 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from benchmarks.analyze_rc5_g1_cumulative_closure import (
+from benchmarks.rc5_g1_cumulative_evidence import (
     EXPECTED_ARCHIVES,
-    _atomic_json,
+    atomic_json,
     verify_archive,
 )
 
@@ -40,7 +40,7 @@ def main(argv: list[str] | None = None) -> int:
             expected_entries=int(expected["entries"]),
             expected_manifest_sha256=str(expected["manifest_sha256"]),
         )
-    _atomic_json(arguments.output, reports)
+    atomic_json(arguments.output, reports)
     return 0
 
 
