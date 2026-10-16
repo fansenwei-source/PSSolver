@@ -1,0 +1,120 @@
+{
+  "schema": "pssolver.rc5.g1.balanced_crossover_adoption_record.v1",
+  "date": "2026-10-16",
+  "classification": "READY_FOR_G1_BALANCED_CROSSOVER_H100_AUTHORIZATION",
+  "parent_commit": "bd129703e6bbc585d0b47a6dddc320a7894551ff",
+  "adoption": {
+    "formal_contract_adoption_authorized": true,
+    "proposal_record": "notes/PSSolver_v0_2_0rc5_g1_balanced_crossover_contract_v14.json",
+    "proposal_classification": "ANALYSIS_ONLY_V10_V13_REPLAY_PASSES_PROPOSED_V14_BALANCED_CROSSOVER_CONTRACT",
+    "proposal_archive": "/home/fansenwei/pssolver_rc5_g1_balanced_crossover_replay_dabeb9a_20261016_v15",
+    "proposal_archive_manifest_sha256": "bb139129d5980d9d0fae95ae00275464d7cb0c9551ec49937c2a288a98a9c073",
+    "formal_v10_classification_preserved": "FAIL_RC5_G1_CORRECTED_MEASUREMENT_WINDOW_GATE",
+    "formal_v13_classification_preserved": "FAIL_RC5_G1_PAIRED_BLOCK_PERFORMANCE_MEMORY_GATE",
+    "formal_v13_pass_granted": false,
+    "new_formal_h100_evidence_required": true
+  },
+  "contract": {
+    "profile_count": 48,
+    "focused_cell_count": 4,
+    "trials_per_cell": 6,
+    "samples_per_profile": 60,
+    "fixed_block_size": 10,
+    "fixed_block_count": 6,
+    "profile_center": "median_of_six_fixed_block_means",
+    "trial_ratio": "candidate_profile_center_over_baseline_profile_center",
+    "baseline_then_candidate_trials": [1, 3, 5],
+    "candidate_then_baseline_trials": [2, 4, 6],
+    "all_raw_samples_retained": true,
+    "maximum_single_trial_used_as_standalone_veto": false,
+    "outlier_removal_allowed": false,
+    "sample_deletion_allowed": false,
+    "trial_replacement_allowed": false
+  },
+  "thresholds": {
+    "aggregate_all_sample_mean_ratio_max": 1.03,
+    "median_of_profile_means_ratio_max": 1.03,
+    "median_of_six_trial_ratios_max": 1.03,
+    "baseline_then_candidate_stratum_median_ratio_max": 1.05,
+    "candidate_then_baseline_stratum_median_ratio_max": 1.05,
+    "order_stratum_imbalance_ratio_max": 1.05,
+    "individual_trial_ratio_reference_max": 1.05,
+    "minimum_trials_at_or_below_individual_reference": 4,
+    "peak_allocated_group_ratio_max": 1.03,
+    "peak_reserved_group_ratio_max": 1.03,
+    "numeric_thresholds_changed": false,
+    "estimator_semantics_changed": true
+  },
+  "qualification_support": {
+    "formal_analyzer_uses_full_measurement_window_validation": true,
+    "superseded_maximum_trial_result_is_diagnostic_only": true,
+    "new_progress_schema": "pssolver.rc5.g1.balanced_crossover_progress.v1",
+    "source_bound_authorization_required": true,
+    "authorization_must_bind_exactly_five_source_files": true,
+    "authorization_must_be_regular_non_symlink_file": true,
+    "exactly_one_h100_submission_must_be_separately_authorized": true,
+    "automatic_retry_must_be_false": true,
+    "node_local_rename_noreplace_preflight_required": true,
+    "node_local_pytest_tmpdir_required": true,
+    "global_complete_marker_written_by_job": false
+  },
+  "cpu_validation": {
+    "targeted_balanced_contract_and_qualification_tests": {
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "all_rc5_g1_tests": {
+      "passed": 206,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "formal_analyzer_v13_profile_smoke": {
+      "classification": "PASS_RC5_G1_BALANCED_CROSSOVER_PERFORMANCE_MEMORY_EVIDENCE",
+      "profile_count": 48,
+      "focused_cell_count": 4,
+      "all_cells_passed": true,
+      "temporary_progress_schema_only": true,
+      "formal_qualification_claimed": false
+    },
+    "isolated_planning_smoke": {
+      "schema": "pssolver.rc5.g1.balanced_crossover_command_plan.v1",
+      "profile_count": 48,
+      "execution_authorization": null,
+      "output_root_created": false,
+      "source_shadow_guard_verified": true
+    },
+    "bash_syntax": "PASS",
+    "git_diff_check": "PASS",
+    "cache_count": 0
+  },
+  "source_sha256": {
+    "benchmarks/plan_rc5_g1_balanced_crossover_contract.py": "918223b728835a5a29223217bdacb0c108b18525cfd2d1a0400776d2c0ccd945",
+    "benchmarks/analyze_rc5_g1_balanced_crossover_replay.py": "fbc4671872f23bf352f213d6b280d4b60bf85c8d42c2b91a50660f9802d4e7d9",
+    "benchmarks/plan_rc5_g1_balanced_crossover_qualification.py": "69dedee40b68b3d73cbc8a8b010645391f076c5ea6ca361144e4b1e3f8c7fad5",
+    "benchmarks/analyze_rc5_g1_balanced_crossover_qualification.py": "ab9c1a9bfc829bbe728330d4de07287cdfd8f03c6710d8f4ea1821ee3099b88e",
+    "benchmarks/run_rc5_g1_balanced_crossover_profile_matrix.py": "acaecf9b570a4525f993de3d683a46252ce07b74112ba10ad56e457ddbc70381",
+    "jobs/rc5_g1_balanced_crossover_h100.sbatch": "fe3733acc997a2831e68a15fb4d0518126b0007f4835caec0bc380ffaeb07f34"
+  },
+  "scope": {
+    "production_solver_modified": false,
+    "production_runtime_modified": false,
+    "scientific_equations_modified": false,
+    "production_default_changed": false,
+    "formal_requalification_performed": false,
+    "qualification_complete": false,
+    "g1_complete": false
+  },
+  "authorization": {
+    "formal_contract_adoption_authorized": true,
+    "local_qualification_support_implementation_authorized": true,
+    "local_commit_authorized": true,
+    "push_authorized": false,
+    "h100_submission_authorized": false,
+    "maximum_h100_submissions_without_new_authorization": 0,
+    "automatic_retry_authorized": false
+  },
+  "next_gate": "explicitly_authorize_push_and_one_source_bound_balanced_crossover_h100_submission_without_automatic_retry"
+}
