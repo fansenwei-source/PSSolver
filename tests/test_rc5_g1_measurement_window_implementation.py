@@ -8,7 +8,9 @@ from pathlib import Path
 import statistics
 
 import pytest
+import torch
 
+from benchmarks import profile_rc458_runtime_family as profiler
 from benchmarks.analyze_rc5_g1_measurement_window_h100 import (
     PASS_CLASSIFICATION,
     analyze,
@@ -264,6 +266,154 @@ def test_public_diagnostics_are_normalized_without_inventing_missing_values():
         "source_keys": {},
         "reason": "no_supported_pressure_field_was_exposed",
     }
+
+
+def test_corrected_window_persists_identity_before_releasing_formal_runtime(
+    monkeypatch,
+):
+    configuration_identity = {
+        "canonical_sha256": "configuration-identity",
+        "runtime_path": "compiled_v2",
+    }
+
+    class FakeAllocated:
+        device = torch.device("cuda:0")
+
+    class FakeTimer:
+        def __init__(self, *args, **kwargs):
+            del args, kwargs
+
+        def reset(self):
+            return None
+
+        def summarize(self):
+            return {
+                "transform_forward": {"calls": 14},
+                "transform_inverse": {"calls": 64},
+            }
+
+    class FakeCase:
+        def __init__(self):
+            self.steps = 0
+            self.solver = object()
+            self.runtime_identity = {
+                "requested": "compiled_v2",
+                "effective": "compiled_v2",
+                "fallback_used": False,
+            }
+            self.configuration_identity = configuration_identity
+            self.initial_state_sha256 = "1" * 64
+
+        def step(self):
+            self.steps += 1
+
+        def state(self):
+            return (torch.zeros(1, dtype=torch.float64),)
+
+        def completed_steps(self):
+            return self.steps
+
+    memory = {
+        "allocated_bytes": 10,
+        "reserved_bytes": 20,
+        "active_bytes": 10,
+        "peak_allocated_bytes": 10,
+        "peak_reserved_bytes": 20,
+        "peak_active_bytes": 10,
+    }
+
+    monkeypatch.setattr(profiler.torch.cuda, "is_available", lambda: True)
+    monkeypatch.setattr(profiler.torch, "empty", lambda *args, **kwargs: FakeAllocated())
+    monkeypatch.setattr(profiler.torch.cuda, "manual_seed_all", lambda seed: None)
+    monkeypatch.setattr(profiler.torch.cuda, "synchronize", lambda device=None: None)
+    monkeypatch.setattr(profiler.torch.cuda, "empty_cache", lambda: None)
+    monkeypatch.setattr(
+        profiler.torch.cuda, "reset_peak_memory_stats", lambda device=None: None
+    )
+    monkeypatch.setattr(
+        profiler.torch.cuda,
+        "memory_stats",
+        lambda device=None: {"active_bytes.all.peak": 10},
+    )
+    monkeypatch.setattr(
+        profiler.torch.cuda, "max_memory_allocated", lambda device=None: 10
+    )
+    monkeypatch.setattr(
+        profiler.torch.cuda, "max_memory_reserved", lambda device=None: 20
+    )
+    monkeypatch.setattr(
+        profiler.torch.cuda, "get_device_name", lambda device=None: "Synthetic H100"
+    )
+    monkeypatch.setattr(profiler, "RegionTimer", FakeTimer)
+    monkeypatch.setattr(profiler, "_install_transform_timers", lambda *args: None)
+    monkeypatch.setattr(profiler, "_build_case", lambda root, config: FakeCase())
+    monkeypatch.setattr(profiler, "_dynamo_counter_snapshot", lambda: {})
+    monkeypatch.setattr(
+        profiler, "_counter_delta", lambda after, before: {"graph_breaks": 0}
+    )
+    monkeypatch.setattr(profiler, "_cuda_memory_snapshot", lambda device: dict(memory))
+    monkeypatch.setattr(profiler, "_tensor_sha256", lambda state: "2" * 64)
+    monkeypatch.setattr(profiler, "_finite", lambda state: True)
+    monkeypatch.setattr(
+        profiler,
+        "_pointwise_metadata",
+        lambda solver: {"applicable": False, "fallback_reason": None},
+    )
+    monkeypatch.setattr(
+        profiler,
+        "_nvidia_smi_telemetry",
+        lambda: {"applicable": False, "reason": "synthetic_test"},
+    )
+    monkeypatch.setattr(profiler, "_collect_and_empty_cuda_cache", lambda: None)
+
+    def timed_steps(step, count, device):
+        del device
+        for _ in range(count):
+            step()
+        return [1.0] * count
+
+    def diagnostic_replay(
+        root,
+        config,
+        *,
+        device,
+        expected_initial_sha256,
+        expected_final_sha256,
+    ):
+        del root, config, device
+        assert expected_initial_sha256 == "1" * 64
+        assert expected_final_sha256 == "2" * 64
+        return {
+            "separate_fresh_runtime": True,
+            "used_for_performance_or_memory_adjudication": False,
+            "initial_state_sha256": expected_initial_sha256,
+            "final_state_sha256": expected_final_sha256,
+            "completed_steps": 6,
+            "step_records": [],
+            "finite": True,
+        }
+
+    monkeypatch.setattr(profiler, "_timed_steps", timed_steps)
+    monkeypatch.setattr(profiler, "_diagnostic_replay", diagnostic_replay)
+
+    result = profiler.run_profile(
+        RC458ProfileConfig(
+            family="plane_compiled_v2",
+            provider_role="baseline",
+            provider_commit="a" * 40,
+            provider_wheel_sha256="b" * 64,
+            trial=1,
+            shape=(8, 8, 4),
+            lengths=(2.0, 2.0, 1.0),
+            warmup_steps=1,
+            post_flush_rewarm_steps=3,
+            profile_steps=2,
+        )
+    )
+
+    assert result["configuration_identity"] == configuration_identity
+    assert result["runtime_completed_steps"] == 6
+    assert result["diagnostic_replay"]["separate_fresh_runtime"] is True
 
 
 def test_new_command_plan_adds_rewarm_without_changing_historical_command(tmp_path):

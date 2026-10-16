@@ -1,0 +1,95 @@
+{
+  "schema": "pssolver.rc5.g1.measurement_window_lifecycle_recovery.v1",
+  "task": "PSSolver rc5 G-1 measurement-window qualification-profiler lifecycle recovery v10",
+  "date": "2026-10-16",
+  "classification": "READY_FOR_CPU_PREFLIGHT_NO_H100",
+  "source_failure": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_measurement_window_dabeb9a_20261016_recovery_v9",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_rc5_g1_measurement_window_dabeb9a_20261016_recovery_v9",
+    "job_id": "10885954",
+    "classification": "FAIL_RC5_G1_MEASUREMENT_WINDOW_RECOVERY_V9_QUALIFICATION_HARNESS_LIFECYCLE",
+    "control_manifest_sha256": "5789816db0843d7db62029c2731e2e2eea98360b1824c557fa111da52060234f",
+    "scratch_manifest_sha256": "a159d78ac48e983bf679cc7e60e2cc40c7e2ce6dc2699942aab20e31e67bbd47",
+    "exception_type": "UnboundLocalError",
+    "exception": "local variable 'case' referenced before assignment",
+    "failed_expression": "case.configuration_identity",
+    "profile_json_count": 0,
+    "scientific_failure": false,
+    "solver_failure": false
+  },
+  "predecessor": {
+    "implementation_record": "notes/PSSolver_v0_2_0rc5_g1_measurement_window_implementation_v9.json",
+    "implementation_record_sha256": "7f05b6c86795d9eca83e2f39a53d7f345ca039d7ff53cd69e1e150757e4dc5af",
+    "record_rewritten": false,
+    "failed_profiler_sha256": "6798cc6a1efafac39659a9ea2505dc11d70bee6472dbbebd01958dafcc5aa11a"
+  },
+  "fix": {
+    "scope": "qualification_only_profiler_object_lifecycle",
+    "configuration_identity_snapshotted_before_case_deletion": true,
+    "formal_runtime_still_released_before_diagnostic_replay": true,
+    "result_uses_persisted_configuration_identity": true,
+    "production_solver_modified": false,
+    "production_runtime_modified": false,
+    "scientific_equations_modified": false,
+    "thresholds_modified": false,
+    "measurement_window_modified": false
+  },
+  "historical_successor_sources": {
+    "benchmarks/profile_rc458_runtime_family.py": {
+      "accepted_predecessor_sha256": [
+        "6798cc6a1efafac39659a9ea2505dc11d70bee6472dbbebd01958dafcc5aa11a"
+      ],
+      "current_sha256": "b0d4b3d3efab3248eee3328c7f1eaa31d3bfcf30d365a58ae9186404c6670e04",
+      "reason": "persist configuration identity before releasing the formal runtime used by corrected-window diagnostic replay",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "tests/test_rc5_g1_measurement_window_implementation.py": {
+      "accepted_predecessor_sha256": [
+        "caad91fea424933ecf81072fb6a7431c06c566f3e87ed0edf670d31ab1c1a840"
+      ],
+      "current_sha256": "ccd8194f7ff0bd3a0e96466f7e7eb655efc73cac9841c010a25d64f46abf3ad8",
+      "reason": "execute the corrected-window object lifecycle with a controlled runtime and require persisted configuration identity after case release",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "tests/test_rc5_g1_measurement_window_implementation_record.py": {
+      "accepted_predecessor_sha256": [
+        "23b703d5699e0f3911d0845460213cd04f249a99e65a12e4a1d7b99cc86d2fc6"
+      ],
+      "current_sha256": "1c01244e49b0f316fac6fd61009eec8639c152c884854814be2e35bab4bc00dc",
+      "reason": "resolve v9 qualification-support identities through the forward-only v10 lifecycle successor record",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "tests/test_rc458_qualification_support.py": {
+      "accepted_predecessor_sha256": [
+        "6714dbf0419b64ba7ec65111d6df38f97429a814cbc79bad4ebc6f7748e5aa01"
+      ],
+      "current_sha256": "6093f725b4f3865c0c29a6e3a35bab4e9621b44f42c9c1942e91091a00813615",
+      "reason": "extend the existing forward-only qualification-support resolver with the v10 lifecycle successor",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    }
+  },
+  "cpu_verification": {
+    "source_compile": "PASS",
+    "targeted_tests": "pending",
+    "hpcc_python_3_10_replay": "pending",
+    "h100_executed": false
+  },
+  "formal_state": {
+    "qualification_complete": false,
+    "g1_complete": false,
+    "eligible_for_cumulative_reassembly": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "push_authorized": true,
+    "h100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "threshold_change_authorized": false
+  }
+}

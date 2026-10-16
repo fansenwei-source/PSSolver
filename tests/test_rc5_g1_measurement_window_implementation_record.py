@@ -11,6 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_measurement_window_implementation_v9.json"
 )
+SUCCESSOR = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_measurement_window_lifecycle_recovery_v10.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -21,11 +24,21 @@ def _record() -> dict[str, object]:
     return json.loads(RECORD.read_text(encoding="utf-8"))
 
 
+def _resolve_successor(relative: str, historical: str) -> str:
+    registration = json.loads(SUCCESSOR.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is None:
+        return historical
+    assert historical in registration["accepted_predecessor_sha256"]
+    return registration["current_sha256"]
+
+
 def test_record_binds_every_versioned_implementation_source():
     record = _record()
     assert record["classification"] == "READY_FOR_EXPLICIT_H100_AUTHORIZATION"
     for relative, expected in record["source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == _resolve_successor(relative, expected)
 
 
 def test_record_registers_exact_forward_only_historical_successors():
@@ -40,7 +53,8 @@ def test_record_registers_exact_forward_only_historical_successors():
     }
     for relative, registration in successors.items():
         assert registration["accepted_predecessor_sha256"]
-        assert _sha256(ROOT / relative) == registration["current_sha256"]
+        expected = _resolve_successor(relative, registration["current_sha256"])
+        assert _sha256(ROOT / relative) == expected
         assert registration["production_runtime_changed"] is False
         assert registration["scientific_threshold_changed"] is False
 

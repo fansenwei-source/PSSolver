@@ -26,11 +26,18 @@ RC5_R55 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 RC5_G1_WINDOW_IMPLEMENTATION = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_measurement_window_implementation_v9.json"
 )
+RC5_G1_WINDOW_LIFECYCLE_RECOVERY = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_measurement_window_lifecycle_recovery_v10.json"
+)
 
 
 def _resolve_r55(relative: str, historical: str) -> str:
     current = historical
-    for path in (RC5_R55, RC5_G1_WINDOW_IMPLEMENTATION):
+    for path in (
+        RC5_R55,
+        RC5_G1_WINDOW_IMPLEMENTATION,
+        RC5_G1_WINDOW_LIFECYCLE_RECOVERY,
+    ):
         if not path.is_file():
             continue
         successor = json.loads(path.read_text(encoding="utf-8"))[

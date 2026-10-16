@@ -861,6 +861,7 @@ def run_profile(config: RC458ProfileConfig) -> dict[str, object]:
             finite = _finite(state)
             runtime_completed_steps = case.completed_steps()
             runtime_identity = case.runtime_identity
+            configuration_identity = dict(case.configuration_identity)
             pointwise = _pointwise_metadata(case.solver)
             initial_sha = case.initial_state_sha256
             telemetry_after_formal_window = _nvidia_smi_telemetry()
@@ -908,7 +909,7 @@ def run_profile(config: RC458ProfileConfig) -> dict[str, object]:
             "commit": config.provider_commit,
             "wheel_sha256": config.provider_wheel_sha256,
         },
-        "configuration_identity": case.configuration_identity,
+        "configuration_identity": configuration_identity,
         "runtime_identity": runtime_identity,
         "environment": {
             "python": platform.python_version(),
