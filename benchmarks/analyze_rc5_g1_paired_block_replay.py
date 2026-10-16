@@ -28,6 +28,9 @@ SCHEMA = "pssolver.rc5.g1.paired_block_replay.v1"
 PROFILE_SCHEMA = "pssolver.rc4_5_8.runtime_family_profile.v1"
 PASS_CLASSIFICATION = "ANALYSIS_ONLY_V10_REPLAY_PASSES_PROPOSED_V13_CONTRACT"
 FAIL_CLASSIFICATION = "ANALYSIS_ONLY_V10_REPLAY_FAILS_PROPOSED_V13_CONTRACT"
+FORMAL_PASS_CLASSIFICATION = "PASS_RC5_G1_PAIRED_BLOCK_PERFORMANCE_MEMORY_EVIDENCE"
+FORMAL_FAIL_CLASSIFICATION = "FAIL_RC5_G1_PAIRED_BLOCK_PERFORMANCE_MEMORY_GATE"
+EVIDENCE_MODES = ("post_hoc_v10_replay", "new_pre_registered_evidence")
 _TF32_OFF = {
     "float32_matmul_precision": "highest",
     "cuda_matmul_allow_tf32": False,
@@ -94,6 +97,8 @@ def _validate_progress(
     profile_root: Path,
     progress_root: Path,
     expected: list[dict[str, object]],
+    *,
+    progress_schema: str,
 ) -> None:
     _require(progress_root.is_dir(), "progress root is not a directory")
     expected_names = [f"{index:03d}.json" for index in range(1, len(expected) + 1)]
@@ -113,7 +118,7 @@ def _validate_progress(
         _require(path.is_file() and not path.is_symlink(), f"progress missing: {index}")
         record = _json(path)
         _require(
-            record.get("schema") == "pssolver.rc5.g1.measurement_window_progress.v1",
+            record.get("schema") == progress_schema,
             f"progress {index} schema differs",
         )
         _require(record.get("completed") == completed, f"progress {index} differs")
@@ -162,7 +167,11 @@ def _timing(profile: dict[str, object], key: str) -> dict[str, object]:
 
 
 def _validate_profile(
-    profile: dict[str, object], entry: dict[str, object], plan: dict[str, object]
+    profile: dict[str, object],
+    entry: dict[str, object],
+    plan: dict[str, object],
+    *,
+    strict_measurement_window: bool,
 ) -> dict[str, object]:
     key = str(entry["key"])
     _require(profile.get("schema") == PROFILE_SCHEMA, f"{key} schema differs")
@@ -225,6 +234,12 @@ def _validate_profile(
         == entry["expected_inverse_raw_calls"],
         f"{key} inverse count differs",
     )
+    if strict_measurement_window:
+        from benchmarks.analyze_rc5_g1_focused_performance_h100 import (
+            _validate_measurement_window,
+        )
+
+        _validate_measurement_window(profile, entry, key)
     timing = _timing(profile, key)
     return {
         "key": key,
@@ -245,20 +260,38 @@ def _validate_profile(
     }
 
 
-def analyze(profile_root: Path, progress_root: Path) -> dict[str, object]:
+def analyze(
+    profile_root: Path,
+    progress_root: Path,
+    *,
+    evidence_mode: str = "post_hoc_v10_replay",
+    progress_schema: str = "pssolver.rc5.g1.measurement_window_progress.v1",
+) -> dict[str, object]:
+    _require(evidence_mode in EVIDENCE_MODES, "evidence mode is invalid")
+    strict_measurement_window = evidence_mode == "new_pre_registered_evidence"
     plan = build_plan()
     expected = plan["profile_matrix"]
     _require(profile_root.is_dir(), "profile root is not a directory")
     expected_names = sorted(f"{entry['key']}.json" for entry in expected)
     actual_names = sorted(path.name for path in profile_root.glob("*.json"))
     _require(actual_names == expected_names, "profile file set differs")
-    _validate_progress(profile_root, progress_root, expected)
+    _validate_progress(
+        profile_root,
+        progress_root,
+        expected,
+        progress_schema=progress_schema,
+    )
     records: dict[str, dict[str, object]] = {}
     for entry in expected:
         key = str(entry["key"])
         path = profile_root / f"{key}.json"
         _require(path.is_file() and not path.is_symlink(), f"profile missing: {key}")
-        records[key] = _validate_profile(_json(path), entry, plan)
+        records[key] = _validate_profile(
+            _json(path),
+            entry,
+            plan,
+            strict_measurement_window=strict_measurement_window,
+        )
 
     thresholds = plan["thresholds"]
     groups: list[dict[str, object]] = []
@@ -381,16 +414,24 @@ def analyze(profile_root: Path, progress_root: Path) -> dict[str, object]:
             }
         )
     passed = all(group["passed"] for group in groups)
+    analysis_only = evidence_mode == "post_hoc_v10_replay"
+    if analysis_only:
+        classification = PASS_CLASSIFICATION if passed else FAIL_CLASSIFICATION
+    else:
+        classification = (
+            FORMAL_PASS_CLASSIFICATION if passed else FORMAL_FAIL_CLASSIFICATION
+        )
     return {
         "schema": SCHEMA,
-        "classification": PASS_CLASSIFICATION if passed else FAIL_CLASSIFICATION,
-        "analysis_only": True,
-        "post_hoc_v10_replay": True,
+        "classification": classification,
+        "evidence_mode": evidence_mode,
+        "analysis_only": analysis_only,
+        "post_hoc_v10_replay": analysis_only,
         "proposed_contract_passed": passed,
         "formal_v10_classification_preserved": (
             "FAIL_RC5_G1_CORRECTED_MEASUREMENT_WINDOW_GATE"
         ),
-        "formal_requalification_performed": False,
+        "formal_requalification_performed": not analysis_only,
         "qualification_complete": False,
         "g1_complete": False,
         "profile_count": len(records),
@@ -427,9 +468,26 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--profile-root", type=Path, required=True)
     parser.add_argument("--progress-root", type=Path, required=True)
+    parser.add_argument(
+        "--evidence-mode",
+        choices=EVIDENCE_MODES,
+        default="post_hoc_v10_replay",
+    )
+    parser.add_argument(
+        "--progress-schema",
+        default="pssolver.rc5.g1.measurement_window_progress.v1",
+    )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
-    _atomic_json(args.output, analyze(args.profile_root, args.progress_root))
+    _atomic_json(
+        args.output,
+        analyze(
+            args.profile_root,
+            args.progress_root,
+            evidence_mode=args.evidence_mode,
+            progress_schema=args.progress_schema,
+        ),
+    )
     return 0
 
 

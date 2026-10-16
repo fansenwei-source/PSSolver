@@ -11,6 +11,7 @@ import pytest
 
 from benchmarks.analyze_rc5_g1_paired_block_replay import (
     FAIL_CLASSIFICATION,
+    FORMAL_PASS_CLASSIFICATION,
     PASS_CLASSIFICATION,
     analyze,
     main as analyze_main,
@@ -21,6 +22,13 @@ from benchmarks.plan_rc5_g1_paired_block_contract import (
     CLASSIFICATION,
     build_plan,
     main as plan_main,
+)
+from benchmarks.run_rc5_g1_paired_block_profile_matrix import (
+    AUTHORIZATION_SCHEMA,
+    PROGRESS_SCHEMA,
+    SUPPORT_FILES,
+    build_command_plan,
+    preflight,
 )
 
 
@@ -109,10 +117,68 @@ def _write_matrix(root: Path, *, candidate_factor: float = 1.02) -> tuple[Path, 
             },
             "memory": {
                 "peak_allocated_bytes": 102 if entry["provider_role"] == "candidate" else 100,
+                "peak_active_bytes": 102 if entry["provider_role"] == "candidate" else 100,
                 "peak_reserved_bytes": 102 if entry["provider_role"] == "candidate" else 100,
             },
             "initial_state_sha256": "a" * 64,
             "final_state_sha256": "b" * 64,
+        }
+        memory_value = 102 if entry["provider_role"] == "candidate" else 100
+        profile["measurement_window"] = {
+            "warmup_steps": 10,
+            "post_flush_rewarm_steps": 3,
+            "timed_steps": 60,
+            "steps_after_warmup": 10,
+            "measurement_start_completed_steps": 13,
+            "rewarm_timed": False,
+            "rewarm_in_formal_transform_counters": False,
+            "rewarm_in_formal_compiler_counters": False,
+            "rewarm_in_formal_memory_peaks": False,
+            "formal_memory_semantics": "steady_state_after_allocation_recovery",
+            "memory_snapshots": {
+                name: {
+                    "allocated_bytes": memory_value,
+                    "reserved_bytes": memory_value,
+                    "active_bytes": memory_value,
+                    "peak_allocated_bytes": memory_value,
+                    "peak_reserved_bytes": memory_value,
+                    "peak_active_bytes": memory_value,
+                }
+                for name in (
+                    "after_warmup",
+                    "after_empty_cache",
+                    "after_post_flush_rewarm",
+                    "after_formal_timed_window",
+                )
+            },
+            "cold_recovery_memory": {
+                "allocated_delta_bytes": 0,
+                "reserved_delta_bytes": 0,
+                "active_delta_bytes": 0,
+            },
+            "device_telemetry_after_formal_window": {
+                "applicable": False,
+                "reason": "synthetic_cpu_contract_test",
+            },
+        }
+        profile["diagnostic_replay"] = {
+            "separate_fresh_runtime": True,
+            "used_for_performance_or_memory_adjudication": False,
+            "finite": True,
+            "completed_steps": 73,
+            "initial_state_sha256": "a" * 64,
+            "final_state_sha256": "b" * 64,
+            "step_records": [
+                {
+                    "step_index": index,
+                    "runtime_completed_steps": 13 + index,
+                    "diagnostics": {
+                        "applicable": False,
+                        "reason": "synthetic_cpu_contract_test",
+                    },
+                }
+                for index in range(1, 61)
+            ],
         }
         path = profiles / f"{entry['key']}.json"
         path.write_text(json.dumps(profile, allow_nan=False), encoding="utf-8")
@@ -183,6 +249,36 @@ def test_common_mode_spikes_are_retained_and_do_not_create_a_false_regression(tm
     )
 
 
+def test_new_evidence_mode_requires_full_window_and_emits_formal_gate_result(tmp_path):
+    profiles, progress = _write_matrix(tmp_path)
+    result = analyze(
+        profiles,
+        progress,
+        evidence_mode="new_pre_registered_evidence",
+        progress_schema="pssolver.rc5.g1.measurement_window_progress.v1",
+    )
+    assert result["classification"] == FORMAL_PASS_CLASSIFICATION
+    assert result["analysis_only"] is False
+    assert result["post_hoc_v10_replay"] is False
+    assert result["formal_requalification_performed"] is True
+
+    target = profiles / f"{build_plan()['profile_matrix'][-1]['key']}.json"
+    payload = json.loads(target.read_text(encoding="utf-8"))
+    payload.pop("diagnostic_replay")
+    target.write_text(json.dumps(payload), encoding="utf-8")
+    final_progress = progress / "048.json"
+    progress_payload = json.loads(final_progress.read_text(encoding="utf-8"))
+    progress_payload["completed"][-1]["sha256"] = _sha256(target)
+    final_progress.write_text(json.dumps(progress_payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="diagnostic replay is missing"):
+        analyze(
+            profiles,
+            progress,
+            evidence_mode="new_pre_registered_evidence",
+            progress_schema="pssolver.rc5.g1.measurement_window_progress.v1",
+        )
+
+
 @pytest.mark.parametrize("candidate_factor", [1.031, 1.06])
 def test_real_regressions_are_rejected_without_deleting_samples(tmp_path, candidate_factor):
     profiles, progress = _write_matrix(tmp_path, candidate_factor=candidate_factor)
@@ -248,6 +344,74 @@ def test_clis_are_atomic_and_refuse_overwrite(tmp_path):
                 str(analysis_output),
             ]
         )
+
+
+def _runner_inputs(tmp_path: Path) -> dict[str, Path]:
+    baseline = tmp_path / "baseline" / "bin" / "python"
+    candidate = tmp_path / "candidate" / "bin" / "python"
+    baseline.parent.mkdir(parents=True)
+    candidate.parent.mkdir(parents=True)
+    baseline.write_bytes(b"python\n")
+    candidate.write_bytes(b"python\n")
+    support = tmp_path / "support"
+    for relative in SUPPORT_FILES:
+        path = support / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(f"# {relative}\n", encoding="utf-8")
+    return {"baseline": baseline, "candidate": candidate, "support": support}
+
+
+def test_runner_planning_is_ready_but_execution_requires_bound_authority(tmp_path):
+    inputs = _runner_inputs(tmp_path)
+    arguments = {
+        "baseline_python": inputs["baseline"],
+        "candidate_python": inputs["candidate"],
+        "support_root": inputs["support"],
+        "output_root": tmp_path / "output",
+    }
+    command_plan = build_command_plan(**arguments)
+    preflight(command_plan, for_execution=False)
+    assert command_plan["profile_count"] == 48
+    assert command_plan["progress_schema"] == PROGRESS_SCHEMA
+    assert command_plan["evidence_mode"] == "new_pre_registered_evidence"
+    assert command_plan["execution_authorization"] is None
+    assert not Path(command_plan["output_root"]).exists()
+    with pytest.raises(PermissionError, match="requires an authorization record"):
+        preflight(command_plan, for_execution=True)
+
+    source_sha256 = {
+        relative: _sha256(inputs["support"] / relative)
+        for relative in (
+            "benchmarks/plan_rc5_g1_paired_block_contract.py",
+            "benchmarks/analyze_rc5_g1_paired_block_replay.py",
+        )
+    }
+    authorization = tmp_path / "authorization.json"
+    authorization.write_text(
+        json.dumps(
+            {
+                "schema": AUTHORIZATION_SCHEMA,
+                "formal_contract_adoption_authorized": True,
+                "single_h100_submission_authorized": True,
+                "automatic_retry_authorized": False,
+                "maximum_formal_h100_submissions": 1,
+                "source_sha256": source_sha256,
+            }
+        ),
+        encoding="utf-8",
+    )
+    authorized = build_command_plan(
+        **arguments,
+        authorization_record=authorization,
+    )
+    preflight(authorized, for_execution=True)
+    assert authorized["execution_authorization"]["sha256"] == _sha256(authorization)
+
+    (inputs["support"] / "benchmarks/analyze_rc5_g1_paired_block_replay.py").write_text(
+        "# tampered\n", encoding="utf-8"
+    )
+    with pytest.raises(ValueError, match="source identity differs"):
+        preflight(authorized, for_execution=True)
 
 
 def test_versioned_contract_record_binds_replay_and_requires_new_authority():

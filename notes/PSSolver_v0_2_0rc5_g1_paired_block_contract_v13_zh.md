@@ -49,3 +49,7 @@ v12 的 12 个 instrumented profiles 表明 timing spikes 的位置随 trial 和
 ## 后续门禁
 
 在任何新 H100 submission 前，应先评审并明确授权 v13 estimator 语义。授权后才可准备新的、预注册的 48-profile paired-block measurement run；不得用本次 post-hoc replay 授予资格，也不得自动重试。
+
+qualification-support runner 已在本地实现，但默认只能生成和审计 48 项 command plan。进入执行模式必须提供一个普通文件、非 symlink 的外部授权记录；该记录必须同时：绑定 versioned plan/analyzer SHA-256、明确采用 v13 合同、只授权一次 H100 submission，并规定 `automatic_retry=false`。缺失、篡改或范围不符时会在任何 profile output 创建前拒绝执行。本阶段没有生成该授权记录，也没有运行 H100。
+
+qualification-support 的 HPCC 登录节点 CPU 验证结果为：相关定向集合 `28 passed`，全部 RC5 G-1 测试 `129 passed`，均为 `0 failed / 0 skipped`。环境为 Python 3.10.18、pytest 9.1.1；这些结果不包含且不替代 H100 资格证据。

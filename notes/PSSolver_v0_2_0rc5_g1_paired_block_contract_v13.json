@@ -42,7 +42,7 @@
     "profile_count": 48,
     "progress_record_count": 48,
     "execution_sequence_validated": true,
-    "replay_output_sha256": "09f3ba447ac7a0ec984a999dba3213350e160f54db2a37edaf482ead37679cca",
+    "replay_output_sha256": "eb6fa47bbd19006c4ad79b6b782eb2bfd06c2ab73cf530a4ac2fc33ffd203c52",
     "groups": [
       {
         "family": "plane_compiled_v2",
@@ -101,11 +101,39 @@
     "common_mode_spike_positive_control": "PASS",
     "candidate_1_031_regression_negative_control": "PASS_REJECTED",
     "candidate_1_06_regression_negative_control": "PASS_REJECTED",
-    "missing_nonfinite_and_progress_tamper_negative_controls": "PASS_REJECTED"
+    "missing_nonfinite_and_progress_tamper_negative_controls": "PASS_REJECTED",
+    "qualification_support_targeted": {
+      "passed": 28,
+      "failed": 0,
+      "skipped": 0
+    },
+    "all_rc5_g1_tests": {
+      "passed": 129,
+      "failed": 0,
+      "skipped": 0
+    },
+    "environment": {
+      "host": "HPCC_login_node",
+      "python": "3.10.18",
+      "pytest": "9.1.1",
+      "h100_used": false
+    }
+  },
+  "qualification_support": {
+    "planning_mode_ready": true,
+    "new_evidence_mode": "new_pre_registered_evidence",
+    "full_measurement_window_validation_required": true,
+    "cumulative_progress_sha_chain_required": true,
+    "execution_without_authorization_record_rejected": true,
+    "authorization_record_must_bind_plan_and_analyzer_sha256": true,
+    "exactly_one_h100_submission_must_be_authorized": true,
+    "automatic_retry_must_be_false": true,
+    "h100_executed": false
   },
   "source_sha256": {
     "benchmarks/plan_rc5_g1_paired_block_contract.py": "59e2226c969c5fcaf35378a098e40c5b866bc7f502bf5a0019957738c3fc6a46",
-    "benchmarks/analyze_rc5_g1_paired_block_replay.py": "676460811b3a8b1be40ed032f91ef832c6b273ef973c79779aa39904a7436357"
+    "benchmarks/analyze_rc5_g1_paired_block_replay.py": "3311914dabaebef99464a063babfc104ef4cf3fca88f1eb50766d848540d9c1a",
+    "benchmarks/run_rc5_g1_paired_block_profile_matrix.py": "7ee56adc6959e594a55de7ef02e96d1ccb322bf666a4565ee48457697686a256"
   },
   "scope": {
     "production_solver_modified": false,
