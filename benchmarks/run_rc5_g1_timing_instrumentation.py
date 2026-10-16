@@ -114,7 +114,7 @@ def preflight(command_plan: dict[str, object]) -> None:
     if len({row["key"] for row in rows}) != 12:
         raise RuntimeError("instrumentation command keys are not unique")
     python = Path(str(command_plan["candidate_python"]))
-    if not python.is_file() or python.is_symlink():
+    if not python.is_file():
         raise FileNotFoundError("candidate installed-wheel Python is missing")
     support = Path(str(command_plan["support_root"])).resolve()
     if (support / "pssolver").exists() or (support / "pssolver").is_symlink():

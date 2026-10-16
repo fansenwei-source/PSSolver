@@ -37,6 +37,8 @@
 
 验证覆盖 12 项矩阵、绝对 refresh 相位、GC callback 生命周期、telemetry 解析与设备绑定、installed-wheel command plan、完整 synthetic analyzer matrix，以及原子 JSON no-overwrite。
 
+installed-wheel command preflight 接受解析到普通文件的标准 venv `bin/python` symlink；具体环境身份仍由既有 `lexical_python_path` 合同验证。
+
 ## 授权状态
 
 本轮没有提交 H100 Job，也没有 push。后续若要实际采集 12 项 instrumentation evidence，需要用户另行明确授权一次 analysis-only H100 submission；不得自动重试。

@@ -147,8 +147,10 @@ def test_telemetry_parser_and_visible_device_binding_are_explicit():
 
 
 def test_runner_builds_twelve_isolated_installed_wheel_commands(tmp_path):
+    python_target = tmp_path / "python3.10"
+    python_target.write_text("", encoding="utf-8")
     python = tmp_path / "python"
-    python.write_text("", encoding="utf-8")
+    python.symlink_to(python_target.name)
     support = tmp_path / "support"
     script = support / "benchmarks" / "diagnose_rc5_g1_timing_instrumentation.py"
     script.parent.mkdir(parents=True)
@@ -161,6 +163,7 @@ def test_runner_builds_twelve_isolated_installed_wheel_commands(tmp_path):
         output_root=output,
     )
     preflight(command_plan)
+    assert python.is_symlink()
     assert command_plan["analysis_only"] is True
     assert command_plan["profile_count"] == 12
     assert len({row["compiler_cache"] for row in command_plan["rows"]}) == 12
