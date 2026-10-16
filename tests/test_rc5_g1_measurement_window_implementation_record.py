@@ -23,7 +23,7 @@ def _record() -> dict[str, object]:
 
 def test_record_binds_every_versioned_implementation_source():
     record = _record()
-    assert record["classification"] == "READY_FOR_CPU_PREFLIGHT_NO_H100"
+    assert record["classification"] == "READY_FOR_EXPLICIT_H100_AUTHORIZATION"
     for relative, expected in record["source_sha256"].items():
         assert _sha256(ROOT / relative) == expected
 
@@ -58,3 +58,20 @@ def test_record_preserves_pre_registration_and_h100_boundary():
     assert record["formal_state"]["g1_complete"] is False
     assert record["authorization"]["h100_submission_authorized"] is False
     assert record["authorization"]["automatic_retry_authorized"] is False
+    verification = record["cpu_verification"]
+    assert verification["py_compile"] == "PASS"
+    assert verification["local_targeted_tests"]["passed"] is True
+    hpcc = verification["hpcc_python_3_10_replay"]
+    assert hpcc["python"] == "3.10.18"
+    assert hpcc["commit"] == "593a6d2a0d4e529eb56635f670a0a8336c030d17"
+    assert hpcc["bundle_sha256"] == (
+        "a5f48fde81cbf0a715bd1aa077924d691fa9a5c90e08c47799648afa938b18c9"
+    )
+    assert hpcc["bundle_verify"] == "PASS"
+    assert hpcc["passed"] is True
+    assert hpcc["tracked_untracked_status_count"] == 0
+    assert hpcc["ignored_status_count"] == 0
+    assert hpcc["pycache_count"] == 0
+    assert hpcc["pyc_count"] == 0
+    assert hpcc["pytest_cache_count"] == 0
+    assert verification["h100_executed"] is False

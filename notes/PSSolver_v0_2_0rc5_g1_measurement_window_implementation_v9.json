@@ -2,7 +2,7 @@
   "schema": "pssolver.rc5.g1.measurement_window_implementation_record.v1",
   "task": "PSSolver rc5 G-1 qualification-only measurement-window implementation v9",
   "date": "2026-10-16",
-  "classification": "READY_FOR_CPU_PREFLIGHT_NO_H100",
+  "classification": "READY_FOR_EXPLICIT_H100_AUTHORIZATION",
   "pre_registration": {
     "record": "notes/PSSolver_v0_2_0rc5_g1_measurement_window_recovery_v9.json",
     "record_sha256": "8316bf27cc9479f6fd3410953d73fdb00719ecd83a9f4d7c8923db0519dc2cbd",
@@ -96,8 +96,26 @@
   },
   "cpu_verification": {
     "py_compile": "PASS",
-    "targeted_tests": "pending final replay",
-    "hpcc_python_3_10_replay": "pending",
+    "local_targeted_tests": {
+      "result": "67 passed, 0 failed, 0 skipped, 0 xfailed",
+      "passed": true
+    },
+    "hpcc_python_3_10_replay": {
+      "python": "3.10.18",
+      "commit": "593a6d2a0d4e529eb56635f670a0a8336c030d17",
+      "worktree": "/home/fansenwei/PSSolver_rc5_g1_measurement_window_593a6d2_20261016_v9",
+      "bundle": "/home/fansenwei/PSSolver_rc5_g1_measurement_window_593a6d2.bundle",
+      "bundle_sha256": "a5f48fde81cbf0a715bd1aa077924d691fa9a5c90e08c47799648afa938b18c9",
+      "bundle_verify": "PASS",
+      "result": "67 passed in 9.47s, 0 failed, 0 skipped, 0 xfailed",
+      "detached": true,
+      "tracked_untracked_status_count": 0,
+      "ignored_status_count": 0,
+      "pycache_count": 0,
+      "pyc_count": 0,
+      "pytest_cache_count": 0,
+      "passed": true
+    },
     "h100_executed": false
   },
   "formal_state": {
