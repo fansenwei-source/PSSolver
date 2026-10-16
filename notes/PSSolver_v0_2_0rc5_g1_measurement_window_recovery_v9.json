@@ -1,0 +1,98 @@
+{
+  "schema": "pssolver.rc5.g1.measurement_window_recovery_record.v1",
+  "task": "PSSolver rc5 G-1 measurement-window recovery v9 pre-registration",
+  "date": "2026-10-16",
+  "classification": "READY_FOR_QUALIFICATION_SUPPORT_IMPLEMENTATION",
+  "formal_state": {
+    "analysis_only": true,
+    "qualification_complete": false,
+    "g1_complete": false,
+    "eligible_for_cumulative_reassembly": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false,
+    "new_h100_submission_count": 0
+  },
+  "source_analysis": {
+    "record": "notes/PSSolver_v0_2_0rc5_g1_timing_variability_analysis_v8.json",
+    "record_sha256": "881ebafa6e1f160ebd554faf18fcc08a14099f9ccb58e3520a05405122711b81",
+    "classification": "HARNESS_FIRST_SAMPLE_CONTAMINATION_AND_RESIDUAL_IN_WINDOW_VARIABILITY",
+    "v7_failure_preserved": true,
+    "first_sample_contamination_supported": true,
+    "residual_in_window_variability_supported": true,
+    "residual_cause_resolved": false
+  },
+  "frozen_measurement_window": {
+    "warmup_steps": 10,
+    "gc_collect_before_flush": true,
+    "cuda_empty_cache_before_rewarm": true,
+    "post_flush_rewarm_steps": 3,
+    "post_flush_rewarm_timed": false,
+    "formal_timed_steps": 60,
+    "expected_runtime_completed_steps": 73,
+    "formal_state_window": "steps 14 through 73 inclusive",
+    "formal_transform_counters_reset_after_rewarm": true,
+    "formal_compiler_counters_snapshotted_after_rewarm": true,
+    "formal_memory_peaks_reset_after_rewarm": true,
+    "cold_recovery_memory_preserved_as_diagnostic": true,
+    "baseline_candidate_phase_order_identical": true
+  },
+  "frozen_validity_contract": {
+    "profile_count": 48,
+    "focused_cell_count": 4,
+    "paired_trials_per_cell": 6,
+    "formal_raw_samples_per_profile": 60,
+    "coefficient_of_variation_max": 0.05,
+    "outlier_removal_allowed": false,
+    "first_sample_deletion_allowed": false,
+    "trial_replacement_allowed": false,
+    "reported_summary_must_match_all_raw_samples": true,
+    "invalid_profile_disposition": "fail_closed_stop"
+  },
+  "unchanged_thresholds": {
+    "mean_timestep_ratio_max": 1.03,
+    "median_of_profile_means_ratio_max": 1.03,
+    "every_paired_mean_timestep_ratio_max": 1.05,
+    "peak_allocated_group_ratio_max": 1.03,
+    "peak_reserved_group_ratio_max": 1.03,
+    "graph_breaks": 0,
+    "runtime_fallback": false,
+    "compile_fallback": false,
+    "transform_counts_exact": true
+  },
+  "residual_variability_diagnostics": {
+    "separate_fresh_runtime_replay_required": true,
+    "same_seed_configuration_and_initial_state_sha_required": true,
+    "diagnostic_replay_may_adjudicate_performance": false,
+    "raw_step_samples_preserved": true,
+    "public_pressure_diagnostics_recorded_when_applicable": true,
+    "unavailable_diagnostics_must_be_explicitly_inapplicable": true,
+    "fabricated_numeric_placeholder_allowed": false,
+    "device_telemetry_collected_outside_timed_window": true,
+    "memory_phase_snapshots_required": true
+  },
+  "versioned_support": {
+    "plan": "benchmarks/plan_rc5_g1_measurement_window_recovery.py",
+    "plan_sha256": "03db340027fcec89b3ae0dc86c98708eb45726d3f864c7348df04df423859bec",
+    "tests": "tests/test_rc5_g1_measurement_window_recovery.py",
+    "tests_sha256": "18ea7d632a86b8f37253ff93d77e452229e0afd38e3d79d6fb0702113962d8d4",
+    "test_result": "7 passed",
+    "combined_analysis_and_plan_tests": "12 passed",
+    "qualification_profiler_implementation": "not_started",
+    "qualification_runner_implementation": "not_started",
+    "production_solver_change_required": false,
+    "production_runtime_change_required": false
+  },
+  "authorization": {
+    "plan_commit_and_push_authorized": true,
+    "h100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "profile_threshold_change_authorized": false,
+    "production_default_changed": false
+  },
+  "next_step": {
+    "task": "implement the frozen window in qualification-only profiler, runner, analyzer, and synthetic tests",
+    "h100_submission_part_of_next_step": false,
+    "new_explicit_h100_authorization_required_after_cpu_preflight": true
+  }
+}
