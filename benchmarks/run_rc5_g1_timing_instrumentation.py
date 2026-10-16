@@ -18,6 +18,11 @@ from benchmarks.rc458_venv_identity import lexical_python_path
 SCHEMA = "pssolver.rc5.g1.timing_instrumentation_command_plan.v1"
 PROGRESS_SCHEMA = "pssolver.rc5.g1.timing_instrumentation_progress.v1"
 COMPLETE_SCHEMA = "pssolver.rc5.g1.timing_instrumentation_complete.v1"
+REQUIRED_JOB_SUPPORT_FILES = (
+    "benchmarks/run_rc5_g1_checkpoint_tmp_preflight.py",
+    "benchmarks/run_rc5_g1_environment.py",
+    "benchmarks/diagnose_rc5_g1_timing_instrumentation.py",
+)
 
 
 def _sha256(path: Path) -> str:
@@ -100,6 +105,7 @@ def build_command_plan(
         "profile_count": len(rows),
         "candidate_python": str(candidate_python),
         "support_root": str(support_root),
+        "required_job_support_files": list(REQUIRED_JOB_SUPPORT_FILES),
         "output_root": str(output_root),
         "rows": rows,
     }
@@ -119,9 +125,13 @@ def preflight(command_plan: dict[str, object]) -> None:
     support = Path(str(command_plan["support_root"])).resolve()
     if (support / "pssolver").exists() or (support / "pssolver").is_symlink():
         raise RuntimeError("support root must not contain a PSSolver source package")
-    script = support / "benchmarks" / "diagnose_rc5_g1_timing_instrumentation.py"
-    if not script.is_file() or script.is_symlink():
-        raise FileNotFoundError("instrumentation profile support is missing")
+    required_support = command_plan.get("required_job_support_files")
+    if required_support != list(REQUIRED_JOB_SUPPORT_FILES):
+        raise RuntimeError("required job support inventory differs")
+    for relative in REQUIRED_JOB_SUPPORT_FILES:
+        path = support / relative
+        if not path.is_file() or path.is_symlink():
+            raise FileNotFoundError(f"required job support is missing: {relative}")
     output = Path(str(command_plan["output_root"]))
     if output.exists() or output.is_symlink():
         raise FileExistsError(f"instrumentation output already exists: {output}")

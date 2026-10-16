@@ -31,13 +31,15 @@
 
 在 HPCC 登录节点的 Python 3.10.18、PyTorch 2.5.1+cu121、pytest 9.1.1 环境执行：
 
-- 新测试：8 passed；
-- 新测试及相关既有门禁：44 passed；
+- 新测试：9 passed；
+- 新测试及相关既有门禁：45 passed；
 - 0 failed，0 skipped。
 
 验证覆盖 12 项矩阵、绝对 refresh 相位、GC callback 生命周期、telemetry 解析与设备绑定、installed-wheel command plan、完整 synthetic analyzer matrix，以及原子 JSON no-overwrite。
 
-installed-wheel command preflight 接受解析到普通文件的标准 venv `bin/python` symlink；具体环境身份仍由既有 `lexical_python_path` 合同验证。
+installed-wheel command preflight 接受解析到普通文件的标准 venv `bin/python` symlink；具体环境身份仍由既有 `lexical_python_path` 合同验证。preflight 还会 fail-closed 验证 Job 在输出目录创建之前依赖的 checkpoint `/tmp` helper、environment helper 与 profile helper，缺少任一文件都不得进入 `sbatch`。
+
+`run_rc5_g1_checkpoint_tmp_preflight.py` 以此前 G-1 checkpoint recovery 已执行版本逐字节纳入仓库，SHA-256 为 `ec6b4d2c70f5b4454754120b0f87a8771878ec50787a5590e23759bcc23cf142`。它继续验证 installed-wheel import、独立 node-local `/tmp` 目录、原子 `RENAME_NOREPLACE` publication、并发目标拒绝和 staging residue。
 
 ## 授权状态
 

@@ -1,0 +1,85 @@
+{
+  "schema": "pssolver.rc5.g1.timing_instrumentation_support_recovery.v1",
+  "classification": "READY_FOR_G1_TIMING_INSTRUMENTATION_SUPPORT_RECOVERY_V3",
+  "date": "2026-10-16",
+  "base_commit": "8b52b3c00ad36ee6d86fe85dc17e0877621b6f00",
+  "failed_recovery_v2": {
+    "job_id": "10886063",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:00:00",
+    "node": "gpu-h100-4-0",
+    "classification": "FAIL_G1_TIMING_INSTRUMENTATION_V12_RECOVERY_V2_QUALIFICATION_SUPPORT_PACKAGING",
+    "failure_stage": "job_script_static_file_preflight",
+    "missing_relative_path": "benchmarks/run_rc5_g1_checkpoint_tmp_preflight.py",
+    "scientific_timestep_started": false,
+    "profiles_completed": 0,
+    "profiles_planned": 12,
+    "automatic_retry": false,
+    "second_job_submitted": false,
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_timing_instrumentation_dabeb9a_20261016_recovery_v2",
+    "checksum_manifest_sha256": "1c28f842bb4a9b98e7a804f605ce989e6c859352d21eef6c487003b8a667c595"
+  },
+  "correction": {
+    "helper_versioned": true,
+    "helper_relative_path": "benchmarks/run_rc5_g1_checkpoint_tmp_preflight.py",
+    "helper_sha256": "ec6b4d2c70f5b4454754120b0f87a8771878ec50787a5590e23759bcc23cf142",
+    "helper_verbatim_matches_previously_executed_g1_checkpoint_recovery": true,
+    "plan_only_support_inventory_fail_closed": true,
+    "required_job_support_files": [
+      "benchmarks/run_rc5_g1_checkpoint_tmp_preflight.py",
+      "benchmarks/run_rc5_g1_environment.py",
+      "benchmarks/diagnose_rc5_g1_timing_instrumentation.py"
+    ],
+    "missing_helper_negative_test": true,
+    "source_shadow_rejection_preserved": true,
+    "installed_venv_python_symlink_acceptance_preserved": true
+  },
+  "source_sha256": {
+    "benchmarks/run_rc5_g1_checkpoint_tmp_preflight.py": "ec6b4d2c70f5b4454754120b0f87a8771878ec50787a5590e23759bcc23cf142",
+    "benchmarks/run_rc5_g1_timing_instrumentation.py": "cd07e6efc7ef93d36fcf9676af4a19664e8774537ae308919eccae496f863661",
+    "notes/PSSolver_v0_2_0rc5_g1_timing_instrumentation_v12.json": "92ac5871d5366845a88f62e1d068c5968a166ec37ee83ca47433c90dbd830b61",
+    "notes/PSSolver_v0_2_0rc5_g1_timing_instrumentation_v12.md": "9d1e6a9a3e203db09afde03c8915d4a6e8da9f74bd3735fe0818d4e0e852a929"
+  },
+  "cpu_validation": {
+    "host": "hpcc.brandeis.edu",
+    "python": "3.10.18",
+    "pytorch": "2.5.1+cu121",
+    "new_tests": {
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0
+    },
+    "new_and_related_tests": {
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0
+    },
+    "all_rc5_g1_contract_tests": {
+      "passed": 168,
+      "failed": 0,
+      "skipped": 0
+    },
+    "installed_wheel_plan_only_preflight_passed": true,
+    "profile_count": 12,
+    "output_root_created": false,
+    "support_archive_sha256": "c106e26fcf17df28208ad40aabfa3c55f422c2f6cb91b447e03fe5ea92a5d5c3",
+    "command_plan_sha256": "47140c95baf082886f64c81e77675928a39bf0924ea7fcf96ce2f744c9617111"
+  },
+  "scope": {
+    "production_solver_modified": false,
+    "production_runtime_modified": false,
+    "checkpoint_implementation_modified": false,
+    "thresholds_changed": false,
+    "formal_v10_classification_preserved": "FAIL_RC5_G1_CORRECTED_MEASUREMENT_WINDOW_GATE",
+    "scientific_failure_supported": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "local_recovery_implementation_authorized": true,
+    "push_authorized": false,
+    "new_h100_submission_authorized": false,
+    "automatic_retry_authorized": false
+  },
+  "next_gate": "explicit_user_authorization_to_push_and_for_one_new_analysis_only_h100_recovery_submission"
+}

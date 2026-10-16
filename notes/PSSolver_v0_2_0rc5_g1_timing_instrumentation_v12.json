@@ -51,7 +51,8 @@
     "benchmarks/plan_rc5_g1_timing_instrumentation.py": "3bb2aa4d97d7e1574787eb792bb05f61aca6ec65eb59945d8175df688b36069c",
     "benchmarks/diagnose_rc5_g1_timing_instrumentation.py": "2c5f98d22302a3e03011552a98da2acb4cfec8aeb83191bb1af20963a687bfe1",
     "benchmarks/analyze_rc5_g1_timing_instrumentation.py": "38717184e1c7fe91f46f921eaf5a11a2390f0dea2450d616d6f8e77f1e8c62fc",
-    "benchmarks/run_rc5_g1_timing_instrumentation.py": "02c88404c46d4df608154a2abdf631b16afc0e7bba4d7a58eaf66e527db0d2d6"
+    "benchmarks/run_rc5_g1_timing_instrumentation.py": "cd07e6efc7ef93d36fcf9676af4a19664e8774537ae308919eccae496f863661",
+    "benchmarks/run_rc5_g1_checkpoint_tmp_preflight.py": "ec6b4d2c70f5b4454754120b0f87a8771878ec50787a5590e23759bcc23cf142"
   },
   "cpu_validation": {
     "environment": {
@@ -63,17 +64,18 @@
     },
     "new_test_file": "tests/test_rc5_g1_timing_instrumentation.py",
     "new_tests": {
-      "passed": 8,
+      "passed": 9,
       "failed": 0,
       "skipped": 0
     },
     "targeted_new_and_related_tests": {
-      "passed": 44,
+      "passed": 45,
       "failed": 0,
       "skipped": 0
     },
-    "remote_detached_worktree": "/home/fansenwei/PSSolver_rc5_g1_timing_instrumentation_2dabdf3_20261016_v12",
-    "remote_base_head": "2dabdf3439c2d4d602efc5f2a16ba0c7f1491803"
+    "remote_validation_source_tree": "/scratch1/vincent/PSSolver/rc5_g1_timing_support_recovery_8b52b3c_20261016_v3_final2_source",
+    "remote_base_head": "8b52b3c00ad36ee6d86fe85dc17e0877621b6f00",
+    "remote_source_archive_sha256": "d9408948410cefeb77c956f3bba5f63308ef43a54549f29b3d98eac7ac476d14"
   },
   "interpretation_contract": {
     "instrumentation_changes_execution_timing": true,

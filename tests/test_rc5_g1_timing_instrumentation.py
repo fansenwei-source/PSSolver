@@ -25,9 +25,14 @@ from benchmarks.plan_rc5_g1_timing_instrumentation import (
     build_plan,
 )
 from benchmarks.run_rc5_g1_timing_instrumentation import (
+    REQUIRED_JOB_SUPPORT_FILES,
     _atomic_json,
     build_command_plan,
     preflight,
+)
+from benchmarks.run_rc5_g1_checkpoint_tmp_preflight import (
+    SCHEMA as CHECKPOINT_TMP_PREFLIGHT_SCHEMA,
+    _atomic_json as checkpoint_preflight_atomic_json,
 )
 
 
@@ -152,9 +157,10 @@ def test_runner_builds_twelve_isolated_installed_wheel_commands(tmp_path):
     python = tmp_path / "python"
     python.symlink_to(python_target.name)
     support = tmp_path / "support"
-    script = support / "benchmarks" / "diagnose_rc5_g1_timing_instrumentation.py"
-    script.parent.mkdir(parents=True)
-    script.write_text("# support\n", encoding="utf-8")
+    for relative in REQUIRED_JOB_SUPPORT_FILES:
+        script = support / relative
+        script.parent.mkdir(parents=True, exist_ok=True)
+        script.write_text("# support\n", encoding="utf-8")
     output = tmp_path / "not-created-output"
 
     command_plan = build_command_plan(
@@ -166,6 +172,9 @@ def test_runner_builds_twelve_isolated_installed_wheel_commands(tmp_path):
     assert python.is_symlink()
     assert command_plan["analysis_only"] is True
     assert command_plan["profile_count"] == 12
+    assert command_plan["required_job_support_files"] == list(
+        REQUIRED_JOB_SUPPORT_FILES
+    )
     assert len({row["compiler_cache"] for row in command_plan["rows"]}) == 12
     for row in command_plan["rows"]:
         command = row["command"]
@@ -173,9 +182,43 @@ def test_runner_builds_twelve_isolated_installed_wheel_commands(tmp_path):
         assert command[command.index("--device") + 1] == "cuda"
         assert command[command.index("--profile-steps") + 1] == "60"
 
+    checkpoint_helper = support / REQUIRED_JOB_SUPPORT_FILES[0]
+    checkpoint_helper.unlink()
+    with pytest.raises(
+        FileNotFoundError,
+        match="run_rc5_g1_checkpoint_tmp_preflight.py",
+    ):
+        preflight(command_plan)
+    checkpoint_helper.write_text("# support\n", encoding="utf-8")
+
     (support / "pssolver").mkdir()
     with pytest.raises(RuntimeError, match="must not contain"):
         preflight(command_plan)
+
+
+def test_checkpoint_tmp_preflight_helper_is_versioned_verbatim_and_atomic(
+    tmp_path,
+):
+    root = Path(__file__).resolve().parents[1]
+    helper = root / "benchmarks" / "run_rc5_g1_checkpoint_tmp_preflight.py"
+
+    assert CHECKPOINT_TMP_PREFLIGHT_SCHEMA == (
+        "pssolver.rc5.g1.checkpoint_tmp_preflight.v1"
+    )
+    assert hashlib.sha256(helper.read_bytes()).hexdigest() == (
+        "ec6b4d2c70f5b4454754120b0f87a8771878ec50787a5590e23759bcc23cf142"
+    )
+    output = tmp_path / "preflight.json"
+    checkpoint_preflight_atomic_json(
+        output,
+        {"schema": CHECKPOINT_TMP_PREFLIGHT_SCHEMA, "passed": True},
+    )
+    assert json.loads(output.read_text(encoding="utf-8")) == {
+        "passed": True,
+        "schema": CHECKPOINT_TMP_PREFLIGHT_SCHEMA,
+    }
+    with pytest.raises(FileExistsError, match="refusing to overwrite"):
+        checkpoint_preflight_atomic_json(output, {"passed": False})
 
 
 def _synthetic_window(family: str, *, synchronized: bool) -> dict[str, object]:
@@ -297,5 +340,45 @@ def test_implementation_record_binds_sources_without_authorizing_h100():
     assert record["authorization"]["push_authorized"] is False
     assert record["authorization"]["h100_submission_authorized"] is False
     assert record["authorization"]["automatic_retry_authorized"] is False
+    for relative, expected in record["source_sha256"].items():
+        assert hashlib.sha256((root / relative).read_bytes()).hexdigest() == expected
+
+
+def test_support_recovery_record_preserves_failure_and_requires_new_authority():
+    root = Path(__file__).resolve().parents[1]
+    record = json.loads(
+        (
+            root
+            / "notes"
+            / "PSSolver_v0_2_0rc5_g1_timing_support_recovery_v3.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert record["classification"] == (
+        "READY_FOR_G1_TIMING_INSTRUMENTATION_SUPPORT_RECOVERY_V3"
+    )
+    failure = record["failed_recovery_v2"]
+    assert failure["job_id"] == "10886063"
+    assert failure["profiles_completed"] == 0
+    assert failure["automatic_retry"] is False
+    assert failure["second_job_submitted"] is False
+    assert failure["checksum_manifest_sha256"] == (
+        "1c28f842bb4a9b98e7a804f605ce989e6c859352d21eef6c487003b8a667c595"
+    )
+    correction = record["correction"]
+    assert correction["helper_sha256"] == (
+        "ec6b4d2c70f5b4454754120b0f87a8771878ec50787a5590e23759bcc23cf142"
+    )
+    assert correction["required_job_support_files"] == list(
+        REQUIRED_JOB_SUPPORT_FILES
+    )
+    assert record["scope"]["checkpoint_implementation_modified"] is False
+    assert record["scope"]["production_default_changed"] is False
+    assert record["authorization"] == {
+        "local_recovery_implementation_authorized": True,
+        "push_authorized": False,
+        "new_h100_submission_authorized": False,
+        "automatic_retry_authorized": False,
+    }
     for relative, expected in record["source_sha256"].items():
         assert hashlib.sha256((root / relative).read_bytes()).hexdigest() == expected
