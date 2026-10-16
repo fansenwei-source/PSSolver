@@ -21,6 +21,10 @@ from benchmarks.plan_rc5_g1_focused_performance_h100 import (
     build_plan,
     main as plan_main,
 )
+from benchmarks.run_rc5_g1_focused_profile_matrix import (
+    _preflight,
+    build_command_plan,
+)
 
 
 OFF = {
@@ -300,3 +304,76 @@ def test_focused_analyzer_rejects_missing_or_extra_profile_files(tmp_path):
     (root / "unregistered.json").write_text("{}", encoding="utf-8")
     with pytest.raises(ValueError, match="profile file set differs"):
         analyze(root)
+
+
+def _command_plan(tmp_path: Path) -> dict[str, object]:
+    baseline = tmp_path / "baseline" / "bin" / "python"
+    candidate = tmp_path / "candidate" / "bin" / "python"
+    baseline.parent.mkdir(parents=True)
+    candidate.parent.mkdir(parents=True)
+    baseline.write_bytes(b"python\n")
+    candidate.write_bytes(b"python\n")
+    support = tmp_path / "support"
+    (support / "benchmarks").mkdir(parents=True)
+    (support / "benchmarks/profile_rc5_g1_runtime_family.py").write_text(
+        "# support\n", encoding="utf-8"
+    )
+    return build_command_plan(
+        baseline_python=baseline,
+        candidate_python=candidate,
+        support_root=support,
+        output_root=tmp_path / "output",
+    )
+
+
+def test_focused_runner_command_plan_is_exact_balanced_and_shell_free(tmp_path):
+    plan = _command_plan(tmp_path)
+    rows = plan["rows"]
+    assert plan["profile_count"] == 48
+    assert [row["sequence"] for row in rows] == list(range(1, 49))
+    assert len({row["key"] for row in rows}) == 48
+    assert len({row["compiler_cache"] for row in rows}) == 48
+    assert all(isinstance(row["command"], list) for row in rows)
+    assert all("--device" in row["command"] for row in rows)
+    assert all(
+        row["command"][row["command"].index("--device") + 1] == "cuda"
+        for row in rows
+    )
+    assert all(
+        row["support_script"].endswith("profile_rc5_g1_runtime_family.py")
+        for row in rows
+    )
+    _preflight(plan)
+
+
+def test_focused_runner_preflight_rejects_source_shadow_and_existing_output(tmp_path):
+    plan = _command_plan(tmp_path)
+    support = Path(plan["support_root"])
+    (support / "pssolver").mkdir()
+    with pytest.raises(RuntimeError, match="must not contain"):
+        _preflight(plan)
+
+    (support / "pssolver").rmdir()
+    Path(plan["output_root"]).mkdir()
+    with pytest.raises(FileExistsError, match="already exists"):
+        _preflight(plan)
+
+
+def test_focused_slurm_script_is_single_h100_fail_closed_and_not_g1_complete():
+    root = Path(__file__).resolve().parents[1]
+    source = (root / "jobs/rc5_g1_focused_performance_h100.sbatch").read_text(
+        encoding="utf-8"
+    )
+    assert "#SBATCH --partition=hagan-gpu" in source
+    assert "#SBATCH --account=hagan-lab" in source
+    assert "#SBATCH --qos=medium" in source
+    assert "#SBATCH --gres=gpu:H100:1" in source
+    assert "#SBATCH --no-requeue" in source
+    assert "run_rc5_g1_checkpoint_tmp_preflight.py" in source
+    assert "run_rc5_g1_environment.py" in source
+    assert "run_rc5_g1_focused_profile_matrix.py" in source
+    assert 'touch "${RC5_G1_OUTPUT_ROOT}/FOCUSED_COMPLETE"' in source
+    assert 'touch "${RC5_G1_OUTPUT_ROOT}/COMPLETE"' not in source
+    assert "sbatch" not in "\n".join(
+        line for line in source.splitlines() if not line.startswith("#SBATCH")
+    )

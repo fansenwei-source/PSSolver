@@ -38,4 +38,4 @@ runtime fallback、compile fallback、graph break、初态身份、transform raw
 
 focused analyzer 即使 PASS，也只产生 `PASS_RC5_G1_FOCUSED_PERFORMANCE_MEMORY_EVIDENCE`，并设置 `eligible_for_cumulative_reassembly=true`；它不会直接声明 `qualification_complete` 或 `g1_complete`。随后还必须重新验证 v5/v6 checksum，并由单独的累计 analyzer 将 12 个原已通过 cell 与 4 个新 focused cell 重组后，才可能关闭 G-1。
 
-当前没有 H100 submission 授权，也没有 push 授权。
+用户随后已经明确授权 push `fix/v0.2.0rc5` 和一次 G-1 focused performance/memory recovery v7 H100 submission，并继续禁止自动重试。版本化 runner 只接受 48 个精确 profile，使用独立 compiler cache，逐份持久化 progress；分析失败时写入 `ANALYSIS_FAILED.json`。Slurm 成功时只写 `FOCUSED_COMPLETE`，不会写代表整个 G-1 关闭的 `COMPLETE`。

@@ -70,6 +70,8 @@
   "versioned_support": {
     "plan": "benchmarks/plan_rc5_g1_focused_performance_h100.py",
     "analyzer": "benchmarks/analyze_rc5_g1_focused_performance_h100.py",
+    "runner": "benchmarks/run_rc5_g1_focused_profile_matrix.py",
+    "slurm_script": "jobs/rc5_g1_focused_performance_h100.sbatch",
     "tests": "tests/test_rc5_g1_focused_performance_h100.py",
     "plan_schema": "pssolver.rc5.g1.focused_performance_plan.v1",
     "analysis_schema": "pssolver.rc5.g1.focused_performance_analysis.v1",
@@ -83,8 +85,8 @@
     "production_default_changed": false
   },
   "authorization": {
-    "push_authorized": false,
-    "h100_submission_authorized": false,
+    "push_authorized": true,
+    "h100_submission_authorized": true,
     "automatic_retry_authorized": false,
     "eligible_for_automatic_merge": false,
     "eligible_for_default_promotion": false
