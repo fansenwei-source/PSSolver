@@ -27,6 +27,15 @@ G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
 G1_GLIBC_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
 )
+G1_WINDOW_IMPLEMENTATION_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_measurement_window_implementation_v9.json"
+)
+G1_WINDOW_LIFECYCLE_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_measurement_window_lifecycle_recovery_v10.json"
+)
+G1_HISTORICAL_AUDIT_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_historical_audit_portability_v17.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -50,14 +59,20 @@ def _r56_successor(relative: str, historical: str) -> str:
         R5_13_RECORD,
         G1_RECORD,
         G1_GLIBC_RECORD,
+        G1_WINDOW_IMPLEMENTATION_RECORD,
+        G1_WINDOW_LIFECYCLE_RECORD,
+        G1_HISTORICAL_AUDIT_RECORD,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)
-        if (
-            registration is not None
-            and registration["historical_sha256"] == resolved
-        ):
+        if registration is None:
+            continue
+        accepted = registration.get(
+            "accepted_predecessor_sha256",
+            [registration.get("historical_sha256")],
+        )
+        if resolved in accepted:
             resolved = registration["current_sha256"]
     return resolved
 

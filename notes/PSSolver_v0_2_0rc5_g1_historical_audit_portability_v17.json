@@ -1,0 +1,84 @@
+{
+  "schema": "pssolver.rc5.g1.historical_audit_portability.v1",
+  "date": "2026-10-16",
+  "classification": "PASS_RC5_G1_HISTORICAL_AUDIT_PORTABILITY_RECOVERY",
+  "qualified_source_commit": "8a243fa286657361ca5021cf47c39d81e87964c6",
+  "failure_classification": {
+    "external_harness_only": true,
+    "runtime_failure": false,
+    "numerical_failure": false,
+    "scientific_failure": false,
+    "h100_failure": false
+  },
+  "resolver_recovery": {
+    "missing_forward_records": [
+      "notes/PSSolver_v0_2_0rc5_g1_measurement_window_implementation_v9.json",
+      "notes/PSSolver_v0_2_0rc5_g1_measurement_window_lifecycle_recovery_v10.json"
+    ],
+    "resolved_source": "tests/test_rc458_qualification_support.py",
+    "resolved_sha256": "6093f725b4f3865c0c29a6e3a35bab4e9621b44f42c9c1942e91091a00813615",
+    "historical_records_rewritten": false
+  },
+  "split_host_artifacts": {
+    "r5_6": {
+      "directory": "/home/fansenwei/pssolver_rc5_r56_installed_cpu_cf572bc_20261014_v1",
+      "source_archive_sha256": "c22b08e6a024245c55a7fb5439599596ad29d6261059eb393ce83691c5fb623e",
+      "wheel_sha256": "d427a3a2cf8aa7a5b92f2018f4d5a28e88eaf0ac23d1336e58bccc1591549666",
+      "verified_on_archive_host": true
+    },
+    "r5_7": {
+      "directory": "/home/fansenwei/pssolver_rc5_r57_installed_cpu_2d67ba2_20261014_v1",
+      "source_archive_sha256": "9ebe1e41f457879cd78400b39ff8d09f5afd6e340e01888cb69d50c49261c403",
+      "wheel_sha256": "e7f0515bae2a2d25e36f38e07ef39a8398b1db57d55c6501f8cdd1c5000fbc65",
+      "verified_on_archive_host": true
+    },
+    "copied_to_hpcc": false,
+    "synthetic_hpcc_paths_created": false
+  },
+  "historical_successor_sources": {
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "0ff7a11243653c7e170cd8abb9e5ac36ac955b06f7e1e7d41ceeb6090724f0c7",
+      "current_sha256": "e9014c59dfca0bff33de47178f779cbf91ce008088c05d429549cb65451a476c",
+      "reason": "include the already versioned v9 and v10 measurement-window successor records and this forward-only portability record",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "89914b05820672196e9f46e4ae0043ded1247c6750edeec997b0d9e584a9a9cd",
+      "current_sha256": "e48a394d1d7f5f4762536e9ed3335bf918f1452619a7e300ef062b4021c82d51",
+      "reason": "resolve later historical test successors without changing the immutable R5-6 record",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "3bfe895ba79d8dc43d1c6bebb8110115a817cd02823f64e994922271d7d4f984",
+      "current_sha256": "a69026b224d53977388d6e650dd3ff464312b67a387eea6804f95a8efb76f220",
+      "reason": "resolve later historical test successors without changing the immutable R5-7 record",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    }
+  },
+  "validation": {
+    "hpcc_full_suite_attempt": {
+      "passed": 3833,
+      "failed": 4,
+      "skipped": 1,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "used_as_final_qualification_evidence": false
+    },
+    "corrected_local_record_tests": "19 passed, 0 failed",
+    "local_split_host_artifact_tests": "2 passed, 0 failed",
+    "hpcc_portable_record_tests": "pending"
+  },
+  "scope": {
+    "production_source_modified": false,
+    "runtime_modified": false,
+    "scientific_equations_modified": false,
+    "thresholds_modified": false,
+    "production_default_changed": false,
+    "new_h100_submission_count": 0,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  }
+}

@@ -1,0 +1,64 @@
+"""Fail-closed record checks for the G-1 split-host historical audit."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_historical_audit_portability_v17.json"
+)
+
+
+def _record() -> dict[str, object]:
+    return json.loads(RECORD.read_text(encoding="utf-8"))
+
+
+def _sha256(relative: str) -> str:
+    return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def test_historical_audit_record_binds_only_forward_test_successors():
+    record = _record()
+    assert record["classification"] == (
+        "PASS_RC5_G1_HISTORICAL_AUDIT_PORTABILITY_RECOVERY"
+    )
+    successors = record["historical_successor_sources"]
+    assert set(successors) == {
+        "tests/test_rc5_r55_tf32_state_restore.py",
+        "tests/test_rc5_r56_public_error_boundary_record.py",
+        "tests/test_rc5_r57_device_normalization_record.py",
+    }
+    for relative, registration in successors.items():
+        assert registration["historical_sha256"] != registration["current_sha256"]
+        assert _sha256(relative) == registration["current_sha256"]
+        assert registration["production_runtime_changed"] is False
+        assert registration["scientific_threshold_changed"] is False
+
+
+def test_historical_audit_record_preserves_split_host_and_scope_boundaries():
+    record = _record()
+    split = record["split_host_artifacts"]
+    assert split["r5_6"]["verified_on_archive_host"] is True
+    assert split["r5_7"]["verified_on_archive_host"] is True
+    assert split["copied_to_hpcc"] is False
+    assert split["synthetic_hpcc_paths_created"] is False
+    assert record["validation"]["corrected_local_record_tests"] == (
+        "19 passed, 0 failed"
+    )
+    assert record["validation"]["local_split_host_artifact_tests"] == (
+        "2 passed, 0 failed"
+    )
+    assert record["scope"] == {
+        "production_source_modified": False,
+        "runtime_modified": False,
+        "scientific_equations_modified": False,
+        "thresholds_modified": False,
+        "production_default_changed": False,
+        "new_h100_submission_count": 0,
+        "PSSolver_Control_modified": False,
+        "nematics3d_modified": False,
+    }

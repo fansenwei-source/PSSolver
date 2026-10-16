@@ -25,6 +25,24 @@ G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
 G1_GLIBC_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
 )
+G1_HISTORICAL_AUDIT_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_historical_audit_portability_v17.json"
+)
+
+
+def _resolve_g1_audit_successor(relative: str, resolved: str) -> str:
+    registration = json.loads(
+        G1_HISTORICAL_AUDIT_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"].get(relative)
+    if registration is None:
+        return resolved
+    accepted = registration.get(
+        "accepted_predecessor_sha256",
+        [registration.get("historical_sha256")],
+    )
+    if resolved in accepted:
+        return registration["current_sha256"]
+    return resolved
 
 
 def _record() -> dict[str, object]:
@@ -127,6 +145,7 @@ def test_r57_record_binds_implementation_and_regression_sources():
                 and g1_glibc_registration["historical_sha256"] == resolved
             ):
                 resolved = g1_glibc_registration["current_sha256"]
+            resolved = _resolve_g1_audit_successor(relative, resolved)
             assert _sha256(ROOT / relative) == resolved
 
 
@@ -207,6 +226,7 @@ def test_r57_record_binds_every_historical_successor():
             and g1_glibc_registration["historical_sha256"] == resolved
         ):
             resolved = g1_glibc_registration["current_sha256"]
+        resolved = _resolve_g1_audit_successor(relative, resolved)
         assert _sha256(ROOT / relative) == resolved
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["reason"]
