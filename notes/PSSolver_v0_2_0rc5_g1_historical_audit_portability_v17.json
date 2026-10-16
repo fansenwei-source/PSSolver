@@ -69,7 +69,7 @@
     },
     "corrected_local_record_tests": "19 passed, 0 failed",
     "local_split_host_artifact_tests": "2 passed, 0 failed",
-    "hpcc_portable_record_tests": "pending"
+    "hpcc_portable_record_tests": "19 passed, 2 split-host artifact tests deselected, 0 failed"
   },
   "scope": {
     "production_source_modified": false,
