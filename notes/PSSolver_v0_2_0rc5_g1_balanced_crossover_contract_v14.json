@@ -1,0 +1,181 @@
+{
+  "schema": "pssolver.rc5.g1.balanced_crossover_contract_record.v1",
+  "date": "2026-10-16",
+  "classification": "ANALYSIS_ONLY_V10_V13_REPLAY_PASSES_PROPOSED_V14_BALANCED_CROSSOVER_CONTRACT",
+  "contract_status": "READY_FOR_G1_BALANCED_CROSSOVER_CONTRACT_REVIEW",
+  "parent_commit": "1ee719cf571862ff1f6d371e0b71fcc2bf1c8256",
+  "purpose": "replace the non-repeatable maximum-per-trial veto with a replicated order-balanced crossover estimator while retaining all samples and existing numeric limits",
+  "contract": {
+    "profile_count": 48,
+    "profiles_per_cell": 12,
+    "trials_per_cell": 6,
+    "samples_per_profile": 60,
+    "block_size": 10,
+    "blocks_per_profile": 6,
+    "profile_center": "median_of_six_fixed_block_means",
+    "trial_ratio": "candidate_profile_center_over_baseline_profile_center",
+    "baseline_then_candidate_trials": [1, 3, 5],
+    "candidate_then_baseline_trials": [2, 4, 6],
+    "maximum_single_trial_used_as_standalone_veto": false,
+    "all_samples_retained": true,
+    "outlier_removal_allowed": false,
+    "sample_deletion_allowed": false,
+    "trial_replacement_allowed": false
+  },
+  "thresholds": {
+    "aggregate_all_sample_mean_ratio_max": 1.03,
+    "median_of_profile_means_ratio_max": 1.03,
+    "median_of_six_trial_ratios_max": 1.03,
+    "baseline_then_candidate_stratum_median_ratio_max": 1.05,
+    "candidate_then_baseline_stratum_median_ratio_max": 1.05,
+    "order_stratum_imbalance_ratio_max": 1.05,
+    "individual_trial_ratio_reference_max": 1.05,
+    "minimum_trials_at_or_below_individual_reference": 4,
+    "peak_allocated_group_ratio_max": 1.03,
+    "peak_reserved_group_ratio_max": 1.03,
+    "numeric_thresholds_changed": false,
+    "estimator_semantics_changed": true
+  },
+  "frozen_replay": {
+    "classification": "ANALYSIS_ONLY_V10_V13_REPLAY_PASSES_PROPOSED_V14_BALANCED_CROSSOVER_CONTRACT",
+    "both_runs_passed_proposed_contract": true,
+    "v10": {
+      "formal_classification_preserved": "FAIL_RC5_G1_CORRECTED_MEASUREMENT_WINDOW_GATE",
+      "profile_count": 48,
+      "progress_record_count": 48,
+      "cells": [
+        {
+          "cell": "plane_compiled_v2/plane_R128",
+          "trial_ratios": [0.9979987703060276, 1.010002129421583, 0.999057763878791, 1.0050894237090726, 1.0256872665006322, 1.0098406333379517],
+          "median_trial_ratio": 1.0074650285235123,
+          "baseline_then_candidate_median": 0.999057763878791,
+          "candidate_then_baseline_median": 1.0098406333379517,
+          "order_imbalance": 1.0107930390504116,
+          "individual_trials_passing": 6,
+          "passed": true
+        },
+        {
+          "cell": "channel_compiled_v2/channel_R128x20x20",
+          "trial_ratios": [1.0652882367023775, 1.0081045323374063, 0.9965299781602901, 1.0041034204912729, 0.9808851610787267, 1.0037929711071922],
+          "median_trial_ratio": 1.0039481957992327,
+          "baseline_then_candidate_median": 0.9965299781602901,
+          "candidate_then_baseline_median": 1.0041034204912729,
+          "order_imbalance": 1.0075998138510236,
+          "individual_trials_passing": 5,
+          "passed": true
+        },
+        {
+          "cell": "periodic_functional/periodic_R128",
+          "trial_ratios": [0.9745701759247778, 1.0057793625780553, 0.9674185698291536, 1.0109582335343443, 1.0044579999928058, 0.9765849009855284],
+          "median_trial_ratio": 0.9905214504891671,
+          "baseline_then_candidate_median": 0.9745701759247778,
+          "candidate_then_baseline_median": 1.0057793625780553,
+          "order_imbalance": 1.0320235396323953,
+          "individual_trials_passing": 6,
+          "passed": true
+        },
+        {
+          "cell": "channel_functional/channel_R512x40x40",
+          "trial_ratios": [1.012730126932742, 0.9926380734114784, 1.0143532081659685, 1.0183438128946338, 1.002171752691216, 0.9800801026980126],
+          "median_trial_ratio": 1.0074509398119789,
+          "baseline_then_candidate_median": 1.012730126932742,
+          "candidate_then_baseline_median": 0.9926380734114784,
+          "order_imbalance": 1.0202410667688895,
+          "individual_trials_passing": 6,
+          "passed": true
+        }
+      ]
+    },
+    "v13": {
+      "formal_classification_preserved": "FAIL_RC5_G1_PAIRED_BLOCK_PERFORMANCE_MEMORY_GATE",
+      "profile_count": 48,
+      "progress_record_count": 48,
+      "cells": [
+        {
+          "cell": "plane_compiled_v2/plane_R128",
+          "trial_ratios": [1.0036202306898003, 0.9753829605362166, 1.015161707283048, 0.9497455510395649, 0.9996011684736289, 1.0136164596074257],
+          "median_trial_ratio": 1.0016106995817147,
+          "baseline_then_candidate_median": 1.0036202306898003,
+          "candidate_then_baseline_median": 0.9753829605362166,
+          "order_imbalance": 1.0289499317663497,
+          "individual_trials_passing": 6,
+          "passed": true
+        },
+        {
+          "cell": "channel_compiled_v2/channel_R128x20x20",
+          "trial_ratios": [1.0396776157598313, 0.9931708268749864, 1.0126759835961001, 0.9912386700411123, 0.9925438997874623, 0.9900042831159368],
+          "median_trial_ratio": 0.9928573633312243,
+          "baseline_then_candidate_median": 1.0126759835961001,
+          "candidate_then_baseline_median": 0.9912386700411123,
+          "order_imbalance": 1.0216267930246292,
+          "individual_trials_passing": 6,
+          "passed": true
+        },
+        {
+          "cell": "periodic_functional/periodic_R128",
+          "trial_ratios": [0.9978167701912473, 1.0019388350319274, 1.06324912076101, 0.9581852109081203, 0.9352465154554146, 1.0129295470304098],
+          "median_trial_ratio": 0.9998778026115873,
+          "baseline_then_candidate_median": 0.9978167701912473,
+          "candidate_then_baseline_median": 1.0019388350319274,
+          "order_imbalance": 1.004131083946294,
+          "individual_trials_passing": 5,
+          "passed": true
+        },
+        {
+          "cell": "channel_functional/channel_R512x40x40",
+          "trial_ratios": [0.9908551816534762, 1.0163287453153478, 0.9923707483327746, 1.0098235649141867, 0.9915592357575315, 1.0178720420869567],
+          "median_trial_ratio": 1.0010971566234805,
+          "baseline_then_candidate_median": 0.9915592357575315,
+          "candidate_then_baseline_median": 1.0163287453153478,
+          "order_imbalance": 1.0249803629118466,
+          "individual_trials_passing": 6,
+          "passed": true
+        }
+      ]
+    }
+  },
+  "negative_controls": {
+    "uniform_1_031_rejected": true,
+    "uniform_1_06_rejected": true,
+    "order_bias_rejected": true,
+    "fewer_than_four_individual_trials_rejected": true,
+    "memory_ratio_1_031_rejected": true,
+    "nonfinite_and_nonpositive_values_rejected": true
+  },
+  "hpcc_analysis": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_balanced_crossover_replay_dabeb9a_20261016_v15",
+    "analysis_only": true,
+    "formal_h100_submission_count": 0,
+    "slurm_job_submitted": false,
+    "v10_checksums": "41/41 PASS",
+    "v13_checksums": "1803/1803 PASS",
+    "v10_manifest_sha256": "747609e354ff2cc01c68032b4685b09fb96cc43059c1e6c7817d2c4961bbf7b9",
+    "v13_manifest_sha256": "fb2e9e3cf16fd5a40497b2077fa57436f446cf66baafc87308424305f0d8e60a",
+    "archive_checksums": "19/19 PASS",
+    "checksums_sha256": "bb139129d5980d9d0fae95ae00275464d7cb0c9551ec49937c2a288a98a9c073",
+    "dual_replay_sha256": "7fa23df56a47be1b5a79d283886634f029cbd8a193f756613d9c9d62027324f7",
+    "summary_sha256": "6c931c3821af2d58ae439414c21a16ce86da2c61032779cf8b021ed8bb851fcb",
+    "final_report_sha256": "f34428883a9e8bf1c411e6f18470fe65cbd88da8ad9b6a57f236bc84776821f7",
+    "analysis_complete_marker_present": true
+  },
+  "source_sha256": {
+    "benchmarks/plan_rc5_g1_balanced_crossover_contract.py": "918223b728835a5a29223217bdacb0c108b18525cfd2d1a0400776d2c0ccd945",
+    "benchmarks/analyze_rc5_g1_balanced_crossover_replay.py": "fbc4671872f23bf352f213d6b280d4b60bf85c8d42c2b91a50660f9802d4e7d9"
+  },
+  "scope": {
+    "analysis_only": true,
+    "formal_contract_adoption_authorized": false,
+    "push_authorized": false,
+    "h100_submission_authorized": false,
+    "formal_v10_reclassified": false,
+    "formal_v13_reclassified": false,
+    "formal_v13_pass_granted": false,
+    "formal_requalification_performed": false,
+    "qualification_complete": false,
+    "g1_complete": false,
+    "production_solver_modified": false,
+    "production_runtime_modified": false,
+    "production_default_changed": false
+  },
+  "next_action": "review and explicitly authorize or reject the proposed v14 estimator before implementing a source-bound single-H100 qualification runner"
+}
