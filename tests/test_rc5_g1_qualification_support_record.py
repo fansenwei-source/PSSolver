@@ -10,6 +10,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_qualification_support.json"
 RECOVERY = ROOT / "notes/PSSolver_v0_2_0rc5_g1_consumer_recovery_v5.json"
+WINDOW_RECOVERY = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_transform_window_recovery_v6.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -39,6 +42,9 @@ def test_support_record_registers_historical_hashes_and_exact_successors():
     recovery_successors = json.loads(RECOVERY.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    window_successors = json.loads(WINDOW_RECOVERY.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, expected in record["source_sha256"].items():
         actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
         if actual == expected:
@@ -46,14 +52,23 @@ def test_support_record_registers_historical_hashes_and_exact_successors():
         if relative in recovery_successors:
             recovery = recovery_successors[relative]
             assert recovery["historical_sha256"] == expected
-            assert recovery["sha256"] == actual
+            predecessor = recovery["sha256"]
+        elif relative in successors:
+            successor = successors[relative]
+            assert successor["historical_sha256"] == expected
+            predecessor = successor["current_sha256"]
+            assert successor["requires_h100_requalification"] is False
+            assert successor["production_runtime_changed"] is False
+            assert successor["scientific_threshold_changed"] is False
+        else:
+            predecessor = expected
+        if actual == predecessor:
             continue
-        successor = successors[relative]
-        assert successor["historical_sha256"] == expected
-        assert successor["current_sha256"] == actual
-        assert successor["requires_h100_requalification"] is False
-        assert successor["production_runtime_changed"] is False
-        assert successor["scientific_threshold_changed"] is False
+        window = window_successors[relative]
+        assert predecessor in window["accepted_predecessor_sha256"]
+        assert window["current_sha256"] == actual
+        assert window["production_runtime_changed"] is False
+        assert window["scientific_threshold_changed"] is False
 
 
 def test_support_record_keeps_periodic_and_unchanged_path_oracles_separate():

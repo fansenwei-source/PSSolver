@@ -119,7 +119,7 @@ def _auxiliary() -> dict[str, object]:
             "passed": True,
             "source_commit": CONSUMER_SOURCE,
             "wheel_sha256": CONSUMER_WHEEL_SHA256,
-            "passed_count": 336,
+            "passed_count": plan["consumer_h100_gate"]["expected_passed"],
             "skipped_count": 1,
             "failed_count": 0,
             "xfailed_count": 0,
@@ -186,8 +186,14 @@ def _write_profiles(root: Path) -> None:
                 "peak_reserved_bytes": 101 if role == "candidate" else 100,
             },
             "transform_calls": {
-                "forward_per_step": entry["forward_transforms_per_step"],
-                "inverse_per_step": entry["inverse_transforms_per_step"],
+                "forward": entry["expected_forward_raw_calls"],
+                "inverse": entry["expected_inverse_raw_calls"],
+                "forward_per_step": (
+                    entry["expected_forward_raw_calls"] / entry["timed_steps"]
+                ),
+                "inverse_per_step": (
+                    entry["expected_inverse_raw_calls"] / entry["timed_steps"]
+                ),
             },
             "compiler": {"graph_breaks": 0, "compile_fallback": False},
             "initial_state_sha256": _hash("initial:" + group),
@@ -210,6 +216,20 @@ def test_rc5_analyzer_accepts_periodic_repair_with_physical_gate(tmp_path):
     assert result["profile_count"] == 96
     assert result["group_count"] == 16
     assert result["g1_complete"] is False
+    window = result["transform_measurement_window"]
+    assert window["passed"] is True
+    assert window["profile_count"] == 96
+    assert window["scheduled_refresh_profile_count"] == 24
+    assert len(window["records"]) == 96
+    channel = next(
+        record
+        for record in window["records"]
+        if record["family"] == "channel_legacy"
+    )
+    assert channel["raw_forward_calls"] == 663
+    assert channel["scheduled_forward_calls"] == 3
+    assert channel["steady_forward_calls"] == 660
+    assert channel["steady_forward_per_step"] == 11.0
     repaired = [group for group in result["groups"] if group["family"].startswith("periodic_")]
     assert repaired
     assert {group["final_state_policy"] for group in repaired} == {"physical_tolerance"}
@@ -310,3 +330,45 @@ def test_rc5_analyzer_rejects_performance_and_reserved_memory_regression(tmp_pat
     target.write_text(json.dumps(payload), encoding="utf-8")
     with pytest.raises(ValueError, match="reserved regression"):
         analyze(tmp_path / "profiles2", _auxiliary())
+
+
+@pytest.mark.parametrize(
+    ("raw_forward", "message"),
+    (
+        (662, "raw forward transform count differs"),
+        (664, "raw forward transform count differs"),
+    ),
+)
+def test_rc5_analyzer_rejects_wrong_scheduled_refresh_count(
+    tmp_path, raw_forward, message
+):
+    root = tmp_path / "profiles"
+    _write_profiles(root)
+    target = root / "candidate_channel_legacy_channel_R128x20x20_trial1.json"
+    payload = json.loads(target.read_text(encoding="utf-8"))
+    payload["transform_calls"]["forward"] = raw_forward
+    payload["transform_calls"]["forward_per_step"] = raw_forward / 60
+    target.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match=message):
+        analyze(root, _auxiliary())
+
+
+def test_rc5_analyzer_rejects_raw_rate_or_inverse_tamper(tmp_path):
+    root = tmp_path / "profiles"
+    _write_profiles(root)
+    target = root / "baseline_channel_compiled_v2_channel_R128x20x20_trial1.json"
+    payload = json.loads(target.read_text(encoding="utf-8"))
+    payload["transform_calls"]["forward_per_step"] = 11.0
+    target.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="reported forward rate differs"):
+        analyze(root, _auxiliary())
+
+    second = tmp_path / "profiles2"
+    _write_profiles(second)
+    target = second / "baseline_channel_compiled_v2_channel_R128x20x20_trial1.json"
+    payload = json.loads(target.read_text(encoding="utf-8"))
+    payload["transform_calls"]["inverse"] = 2161
+    payload["transform_calls"]["inverse_per_step"] = 2161 / 60
+    target.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="raw inverse transform count differs"):
+        analyze(second, _auxiliary())

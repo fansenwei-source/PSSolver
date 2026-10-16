@@ -10,6 +10,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_hpcc_plan_freeze.json"
 SUCCESSOR = ROOT / "notes/PSSolver_v0_2_0rc5_g1_consumer_recovery_v5.json"
+WINDOW_RECOVERY = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_transform_window_recovery_v6.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -20,11 +23,19 @@ def _assert_historical_or_successor(relative: str, historical: str) -> None:
     actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
     if actual == historical:
         return
-    successor = json.loads(SUCCESSOR.read_text(encoding="utf-8"))[
+    recovered = json.loads(SUCCESSOR.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    predecessor = historical
+    if recovered is not None and recovered["historical_sha256"] == historical:
+        predecessor = recovered["sha256"]
+        if actual == predecessor:
+            return
+    successor = json.loads(WINDOW_RECOVERY.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ][relative]
-    assert successor["historical_sha256"] == historical
-    assert successor["sha256"] == actual
+    assert predecessor in successor["accepted_predecessor_sha256"]
+    assert successor["current_sha256"] == actual
 
 
 def test_g1_hpcc_plan_freeze_binds_the_exact_nine_stage_order():

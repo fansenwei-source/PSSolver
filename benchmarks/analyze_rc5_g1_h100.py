@@ -23,9 +23,12 @@ from benchmarks.plan_rc5_g1_h100 import (
 from benchmarks.profile_rc458_runtime_family import SCHEMA as PROFILE_SCHEMA
 
 
-SCHEMA = "pssolver.rc5.g1.single_h100_analysis.v1"
+SCHEMA = "pssolver.rc5.g1.single_h100_analysis.v2"
 AUXILIARY_SCHEMA = "pssolver.rc5.g1.h100_auxiliary.v1"
-PASS_CLASSIFICATION = "PASS_RC5_G1_SINGLE_H100_CUMULATIVE_QUALIFICATION"
+PASS_CLASSIFICATION = (
+    "PASS_RC5_G1_CUMULATIVE_QUALIFICATION_WITH_"
+    "TRANSFORM_MEASUREMENT_WINDOW_RECOVERY"
+)
 
 
 def _require(condition: bool, message: str) -> None:
@@ -234,6 +237,7 @@ def analyze(profile_root: Path, auxiliary: dict[str, object]) -> dict[str, objec
     _validate_auxiliary(auxiliary, plan)
     expected = plan["profile_matrix"]
     observed: dict[str, dict[str, object]] = {}
+    transform_window_records: list[dict[str, object]] = []
     off = {
         "float32_matmul_precision": "highest",
         "cuda_matmul_allow_tf32": False,
@@ -277,12 +281,72 @@ def analyze(profile_root: Path, auxiliary: dict[str, object]) -> dict[str, objec
         _require(environment.get("tf32_caller_before") == off, f"{key} TF32 before differs")
         _require(environment.get("tf32_caller_after") == off, f"{key} TF32 after differs")
         _require(profile.get("finite") is True, f"{key} non-finite")
-        _require(profile.get("completed_profile_steps") == 60, f"{key} step count differs")
-        _require(profile.get("runtime_completed_steps") == 70, f"{key} runtime count differs")
+        timed_steps = _integer(
+            profile.get("completed_profile_steps"), f"{key} completed steps"
+        )
+        _require(timed_steps == entry["timed_steps"], f"{key} step count differs")
+        _require(
+            profile.get("runtime_completed_steps")
+            == entry["warmup_steps"] + timed_steps,
+            f"{key} runtime count differs",
+        )
         _require(compiler.get("graph_breaks") == 0, f"{key} graph break")
         _require(compiler.get("compile_fallback") is False, f"{key} compile fallback")
-        _require(transforms.get("forward_per_step") == entry["forward_transforms_per_step"], f"{key} forward transforms")
-        _require(transforms.get("inverse_per_step") == entry["inverse_transforms_per_step"], f"{key} inverse transforms")
+        raw_forward = _integer(transforms.get("forward"), f"{key} raw forward")
+        raw_inverse = _integer(transforms.get("inverse"), f"{key} raw inverse")
+        _require(
+            transforms.get("forward_per_step") == raw_forward / timed_steps,
+            f"{key} reported forward rate differs from raw count",
+        )
+        _require(
+            transforms.get("inverse_per_step") == raw_inverse / timed_steps,
+            f"{key} reported inverse rate differs from raw count",
+        )
+        _require(
+            raw_forward == entry["expected_forward_raw_calls"],
+            f"{key} raw forward transform count differs",
+        )
+        _require(
+            raw_inverse == entry["expected_inverse_raw_calls"],
+            f"{key} raw inverse transform count differs",
+        )
+        scheduled_forward = _integer(
+            entry["scheduled_forward_calls_in_timed_window"],
+            f"{key} scheduled forward calls",
+        )
+        scheduled_inverse = _integer(
+            entry["scheduled_inverse_calls_in_timed_window"],
+            f"{key} scheduled inverse calls",
+        )
+        steady_forward = raw_forward - scheduled_forward
+        steady_inverse = raw_inverse - scheduled_inverse
+        _require(
+            steady_forward == entry["forward_transforms_per_step"] * timed_steps,
+            f"{key} steady-state forward transform count differs",
+        )
+        _require(
+            steady_inverse == entry["inverse_transforms_per_step"] * timed_steps,
+            f"{key} steady-state inverse transform count differs",
+        )
+        transform_window_records.append(
+            {
+                "key": key,
+                "family": entry["family"],
+                "timed_steps": timed_steps,
+                "scheduled_refreshes": entry[
+                    "scheduled_refreshes_in_timed_window"
+                ],
+                "raw_forward_calls": raw_forward,
+                "scheduled_forward_calls": scheduled_forward,
+                "steady_forward_calls": steady_forward,
+                "steady_forward_per_step": steady_forward / timed_steps,
+                "raw_inverse_calls": raw_inverse,
+                "scheduled_inverse_calls": scheduled_inverse,
+                "steady_inverse_calls": steady_inverse,
+                "steady_inverse_per_step": steady_inverse / timed_steps,
+                "passed": True,
+            }
+        )
         samples = timing.get("samples_seconds")
         _require(isinstance(samples, list) and len(samples) == 60, f"{key} timing samples")
         for index, sample in enumerate(samples):
@@ -352,6 +416,16 @@ def analyze(profile_root: Path, auxiliary: dict[str, object]) -> dict[str, objec
         "profile_count": len(observed),
         "group_count": len(groups),
         "groups": groups,
+        "transform_measurement_window": {
+            **plan["transform_measurement_window"],
+            "profile_count": len(transform_window_records),
+            "scheduled_refresh_profile_count": sum(
+                record["scheduled_refreshes"] > 0
+                for record in transform_window_records
+            ),
+            "records": transform_window_records,
+            "passed": True,
+        },
         "auxiliary": auxiliary,
         "eligible_for_release_integration_review": True,
         "g1_complete": False,

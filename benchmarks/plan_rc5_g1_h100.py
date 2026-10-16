@@ -18,14 +18,14 @@ from benchmarks.plan_rc458_tf32_h100 import (
 )
 
 
-SCHEMA = "pssolver.rc5.g1.single_h100_plan.v1"
+SCHEMA = "pssolver.rc5.g1.single_h100_plan.v2"
 PROVIDER_BASELINE = "658869456d762c917ca4409b091539c3733df2fb"
-PROVIDER_CANDIDATE = "674a8121779be72c95aa5dc9e2babca0ce7b93a9"
+PROVIDER_CANDIDATE = "dabeb9a487a82700ddd364c4233941a175808a3a"
 PROVIDER_BASELINE_WHEEL_SHA256 = (
     "1bf31f324180dac58777a23785fb4e1424d3cc589099cf8c6328e2f6c74d8cc5"
 )
 PROVIDER_CANDIDATE_WHEEL_SHA256 = (
-    "3097b08b08ba7b2d488fd8af348ec48986d69007a640bd806a225ec9963bb65f"
+    "954072040dc1681529c29e09d80f2fe9112d73442b98932978e1739c90212b22"
 )
 CONSUMER_SOURCE = "6d3558b1367da9a3e7d6b3f8fbc5584cf384bfe3"
 CONSUMER_WHEEL_SHA256 = (
@@ -35,6 +35,25 @@ REPAIRED_PERIODIC_FAMILIES = (
     "periodic_complete_stress",
     "periodic_functional",
 )
+SCHEDULED_REFRESH_FAMILIES = frozenset(
+    {
+        "channel_legacy",
+        "channel_compiled_v2",
+    }
+)
+SCHEDULED_REFRESH_INTERVAL = 20
+SCHEDULED_REFRESH_FORWARD_CALLS = 1
+
+
+def _scheduled_refreshes(*, family: str, warmup_steps: int, timed_steps: int) -> int:
+    """Count refresh events that fall inside the timed profile window."""
+    if family not in SCHEDULED_REFRESH_FAMILIES:
+        return 0
+    if warmup_steps < 0 or timed_steps <= 0:
+        raise ValueError("profile step counts must define a non-empty timed window")
+    return (warmup_steps + timed_steps) // SCHEDULED_REFRESH_INTERVAL - (
+        warmup_steps // SCHEDULED_REFRESH_INTERVAL
+    )
 
 
 def build_profile_matrix() -> list[dict[str, object]]:
@@ -56,6 +75,16 @@ def build_profile_matrix() -> list[dict[str, object]]:
                     ),
                 ):
                     sequence += 1
+                    warmup_steps = 10
+                    timed_steps = 60
+                    scheduled_refreshes = _scheduled_refreshes(
+                        family=family.key,
+                        warmup_steps=warmup_steps,
+                        timed_steps=timed_steps,
+                    )
+                    scheduled_forward_calls = (
+                        scheduled_refreshes * SCHEDULED_REFRESH_FORWARD_CALLS
+                    )
                     entries.append(
                         {
                             "sequence": sequence,
@@ -68,8 +97,8 @@ def build_profile_matrix() -> list[dict[str, object]]:
                             "runtime_path": family.runtime_path,
                             "grid": grid,
                             "trial": trial,
-                            "warmup_steps": 10,
-                            "timed_steps": 60,
+                            "warmup_steps": warmup_steps,
+                            "timed_steps": timed_steps,
                             "device": "cuda",
                             "dtype": family.dtype,
                             "tf32": "off",
@@ -78,6 +107,20 @@ def build_profile_matrix() -> list[dict[str, object]]:
                             ),
                             "inverse_transforms_per_step": (
                                 family.inverse_transforms_per_step
+                            ),
+                            "scheduled_refreshes_in_timed_window": (
+                                scheduled_refreshes
+                            ),
+                            "scheduled_forward_calls_in_timed_window": (
+                                scheduled_forward_calls
+                            ),
+                            "scheduled_inverse_calls_in_timed_window": 0,
+                            "expected_forward_raw_calls": (
+                                family.forward_transforms_per_step * timed_steps
+                                + scheduled_forward_calls
+                            ),
+                            "expected_inverse_raw_calls": (
+                                family.inverse_transforms_per_step * timed_steps
                             ),
                         }
                     )
@@ -142,6 +185,18 @@ def build_plan() -> dict[str, object]:
         "grid_contracts": GRID_CONTRACTS,
         "profile_matrix": profiles,
         "profile_count": len(profiles),
+        "transform_measurement_window": {
+            "raw_counts_are_authoritative": True,
+            "reported_per_step_is_raw_count_divided_by_timed_steps": True,
+            "steady_state_counts_exclude_scheduled_refresh_calls": True,
+            "scheduled_refresh_families": sorted(SCHEDULED_REFRESH_FAMILIES),
+            "scheduled_refresh_interval": SCHEDULED_REFRESH_INTERVAL,
+            "forward_calls_per_scheduled_refresh": (
+                SCHEDULED_REFRESH_FORWARD_CALLS
+            ),
+            "inverse_calls_per_scheduled_refresh": 0,
+            "source_profiles_are_immutable": True,
+        },
         "thresholds": {
             "completed_steps": 60,
             "finite": True,

@@ -15,6 +15,7 @@ from benchmarks.plan_rc5_g1_h100 import (
     PROVIDER_BASELINE,
     PROVIDER_CANDIDATE,
     REPAIRED_PERIODIC_FAMILIES,
+    SCHEDULED_REFRESH_FAMILIES,
     build_plan,
     main as plan_main,
 )
@@ -30,7 +31,7 @@ from benchmarks.run_rc5_g1_stage_plan import (
 
 def test_rc5_g1_plan_has_exact_provider_consumer_and_profile_identities():
     plan = build_plan()
-    assert plan["schema"] == "pssolver.rc5.g1.single_h100_plan.v1"
+    assert plan["schema"] == "pssolver.rc5.g1.single_h100_plan.v2"
     assert plan["provider"]["baseline_commit"] == PROVIDER_BASELINE
     assert plan["provider"]["candidate_commit"] == PROVIDER_CANDIDATE
     assert plan["consumer"]["qualified_source_commit"] == CONSUMER_SOURCE
@@ -50,6 +51,41 @@ def test_rc5_g1_plan_has_exact_provider_consumer_and_profile_identities():
         PROVIDER_CANDIDATE,
     }
     assert all(entry["device"] == "cuda" for entry in profiles)
+    assert PROVIDER_CANDIDATE == "dabeb9a487a82700ddd364c4233941a175808a3a"
+    assert plan["provider"]["candidate_wheel_sha256"] == (
+        "954072040dc1681529c29e09d80f2fe9112d73442b98932978e1739c90212b22"
+    )
+
+
+def test_rc5_g1_plan_separates_raw_refresh_and_steady_transform_counts():
+    plan = build_plan()
+    contract = plan["transform_measurement_window"]
+    assert contract == {
+        "raw_counts_are_authoritative": True,
+        "reported_per_step_is_raw_count_divided_by_timed_steps": True,
+        "steady_state_counts_exclude_scheduled_refresh_calls": True,
+        "scheduled_refresh_families": sorted(SCHEDULED_REFRESH_FAMILIES),
+        "scheduled_refresh_interval": 20,
+        "forward_calls_per_scheduled_refresh": 1,
+        "inverse_calls_per_scheduled_refresh": 0,
+        "source_profiles_are_immutable": True,
+    }
+    profiles = plan["profile_matrix"]
+    refreshed = [
+        entry for entry in profiles if entry["family"] in SCHEDULED_REFRESH_FAMILIES
+    ]
+    ordinary = [
+        entry for entry in profiles if entry["family"] not in SCHEDULED_REFRESH_FAMILIES
+    ]
+    assert len(refreshed) == 24
+    assert len(ordinary) == 72
+    assert all(entry["scheduled_refreshes_in_timed_window"] == 3 for entry in refreshed)
+    assert all(entry["scheduled_forward_calls_in_timed_window"] == 3 for entry in refreshed)
+    assert all(entry["expected_forward_raw_calls"] == 663 for entry in refreshed)
+    assert all(entry["expected_inverse_raw_calls"] == 2160 for entry in refreshed)
+    assert all(entry["scheduled_refreshes_in_timed_window"] == 0 for entry in ordinary)
+    assert all(entry["scheduled_forward_calls_in_timed_window"] == 0 for entry in ordinary)
+    assert all(entry["scheduled_inverse_calls_in_timed_window"] == 0 for entry in profiles)
 
 
 def test_rc5_g1_plan_does_not_apply_global_state_hash_equality():

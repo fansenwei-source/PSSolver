@@ -41,7 +41,7 @@ EXPECTED_SCHEMAS = {
     "profiles": "pssolver.rc5.g1.profile_matrix_complete.v1",
     "consumer": "pssolver.rc5.g1.consumer_h100.v1",
     "assemble": "pssolver.rc5.g1.h100_auxiliary.v1",
-    "analyze": "pssolver.rc5.g1.single_h100_analysis.v1",
+    "analyze": "pssolver.rc5.g1.single_h100_analysis.v2",
 }
 
 

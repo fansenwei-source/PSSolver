@@ -1,0 +1,158 @@
+{
+  "schema": "pssolver.rc5.g1.transform_window_recovery_v6.v1",
+  "task": "PSSolver rc5 G-1 transform measurement-window analysis-only recovery v6",
+  "date": "2026-10-16",
+  "classification": "READY_RC5_G1_TRANSFORM_MEASUREMENT_WINDOW_ANALYSIS_ONLY_RECOVERY_V6",
+  "qualification_complete": false,
+  "execution_scope": {
+    "analysis_only": true,
+    "h100_submission_authorized": false,
+    "h100_submission_count": 0,
+    "scientific_timestep_executed": false,
+    "source_profile_mutation_authorized": false,
+    "solver_runtime_changed": false,
+    "scientific_threshold_changed": false,
+    "production_default_changed": false
+  },
+  "provider_identity": {
+    "baseline_commit": "658869456d762c917ca4409b091539c3733df2fb",
+    "baseline_wheel_sha256": "1bf31f324180dac58777a23785fb4e1424d3cc589099cf8c6328e2f6c74d8cc5",
+    "candidate_runtime_commit": "dabeb9a487a82700ddd364c4233941a175808a3a",
+    "candidate_wheel_sha256": "954072040dc1681529c29e09d80f2fe9112d73442b98932978e1739c90212b22"
+  },
+  "consumer_identity": {
+    "qualified_source_commit": "6d3558b1367da9a3e7d6b3f8fbc5584cf384bfe3",
+    "wheel_sha256": "4e112df06770a572d3395c71c3e6073b8e4ea458229857243ed91845f2f0bf75",
+    "expected_h100_passed": 342,
+    "expected_h100_skipped": 1
+  },
+  "failed_predecessor": {
+    "classification": "PASS_RC5_G1_CONSUMER_H100_RECOVERY_V5_STOPPED_AT_CUMULATIVE_ANALYZER_TRANSFORM_WINDOW_CONTRACT",
+    "job_id": "10885794",
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_h100_dabeb9a_20261015_recovery_v5",
+    "checksum_manifest_sha256": "049f7422b62618416745ca665f82ab2370f6a5f2e662ce296f332f461e3b7f71",
+    "manifest_entries_passed": 26,
+    "manifest_entries_failed": 0,
+    "historical_classification_preserved": true
+  },
+  "measurement_window_contract": {
+    "profile_count": 96,
+    "timed_steps_per_profile": 60,
+    "raw_counts_are_authoritative": true,
+    "reported_per_step_is_raw_count_divided_by_timed_steps": true,
+    "steady_state_counts_exclude_scheduled_refresh_calls": true,
+    "scheduled_refresh_families": [
+      "channel_compiled_v2",
+      "channel_legacy"
+    ],
+    "scheduled_refresh_interval": 20,
+    "scheduled_refreshes_in_each_timed_window": 3,
+    "forward_calls_per_scheduled_refresh": 1,
+    "profiles_with_scheduled_refreshes": 24,
+    "channel_raw_forward_calls": 663,
+    "channel_steady_forward_calls": 660,
+    "channel_steady_forward_per_step": 11.0,
+    "channel_raw_inverse_calls": 2160,
+    "channel_steady_inverse_per_step": 36.0,
+    "other_profiles_with_extra_calls": 0,
+    "source_profiles_are_immutable": true
+  },
+  "historical_successor_sources": {
+    "benchmarks/analyze_rc5_g1_h100.py": {
+      "accepted_predecessor_sha256": [
+        "b8649c842baff74f092720bd7f2492679df1344fbb3aa4b6e132338c9ec863ef"
+      ],
+      "current_sha256": "6e0453958165ed7239602fefdc7f4c0f23cbdd11efdd1419d14b6b3a8498e994",
+      "reason": "validate immutable raw counters, scheduled refresh calls, and steady-state transform counts as distinct layers",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "benchmarks/plan_rc5_g1_h100.py": {
+      "accepted_predecessor_sha256": [
+        "30c6ef6d3610390f2ac7175a6e21f774873899735f2f9bbe6a8ba6fc8d506e2b"
+      ],
+      "current_sha256": "b498bffcb7196a389c6b3f4c57d07096747a3fd7b3f3877e739931c7f217e9f8",
+      "reason": "bind the actual recovered Provider runtime wheel and declare the explicit transform measurement-window contract",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "benchmarks/run_rc5_g1_stage_plan.py": {
+      "accepted_predecessor_sha256": [
+        "a633e183a3e4558952fb465712e2fe72a9ddf1d13eba582d7522ef5bfff8b9a5"
+      ],
+      "current_sha256": "97923baed48737246f68348be0b78fc4c869c6d1b53b726070f35a3f175563f7",
+      "reason": "bind the analyzer v2 output schema without changing any qualification stage or H100 command",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "tests/test_analyze_rc5_g1_h100.py": {
+      "accepted_predecessor_sha256": [
+        "60a3472645abf4bab7056cca386a3846730d04f1c553f598fc73c21038bfd300"
+      ],
+      "current_sha256": "0a079ab9b432bedb20255ececea55a87ec95feeaf64a1944754fcdf5e7944641",
+      "reason": "cover exact positive and fail-closed negative transform-window cases",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "tests/test_plan_rc5_g1_h100.py": {
+      "accepted_predecessor_sha256": [
+        "0cf369ab73242f07d09cd922d000b41c8ec237630dc545959c85734d036c1c94"
+      ],
+      "current_sha256": "038617a0ee8c112c8e354fc51431de37a8773a04dbd5b2c7ac30ddb43412576d",
+      "reason": "pin the exact recovered Provider identity and raw-refresh-steady transform plan",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "tests/test_rc5_g1_consumer_recovery_record.py": {
+      "accepted_predecessor_sha256": [
+        "b52746fc60ee7a1f27dc1fec2b57f40ea9de3e76bce7e63640f5c71d4333736b"
+      ],
+      "current_sha256": "e2db01c7ca6402b28966476381db4dbb5b0a13be97afd8ea0151c5666af3356b",
+      "reason": "resolve the forward-only transform-window successor without rewriting recovery-v5 evidence",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "tests/test_rc5_g1_hpcc_plan_freeze_record.py": {
+      "accepted_predecessor_sha256": [
+        "fd25909c0a40463e93f32fe6339890f111251ce2f669d48c459178cd84cae65c"
+      ],
+      "current_sha256": "9d76eaae10b319d8942c01af0dcba884a915d2b5b075fd84d4aa8dd971a32969",
+      "reason": "resolve the forward-only analyzer schema successor without rewriting the HPCC freeze",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "tests/test_rc5_g1_qualification_support_record.py": {
+      "accepted_predecessor_sha256": [
+        "f00d0c8c6884b47e49584343bb17898415d76e772d3605e3bbbf907c18c3d619"
+      ],
+      "current_sha256": "72760ad1b038ff6de7b175ea9e2fb88beccf74dcc6e405dd4724855775282015",
+      "reason": "resolve the forward-only measurement-window source successors without rewriting G-1.5 evidence",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    }
+  },
+  "validation": {
+    "py_compile": "PASS",
+    "targeted_tests": 66,
+    "targeted_failures": 0,
+    "full_cpu_suite": {
+      "passed": 3730,
+      "skipped": 1,
+      "deselected": 7,
+      "failed": 0,
+      "xfailed": 0,
+      "subtests_passed": 8
+    },
+    "allowed_skip": "tests/test_analytic_periodic_defect_gas_2d.py::test_nematics3d_recovers_requested_defect_count_charges_and_positions",
+    "frozen_profile_replay_pending": true
+  },
+  "authorization": {
+    "push_authorized": false,
+    "h100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  },
+  "next_gate": "commit the versioned analysis-only contract locally and replay the immutable 96-profile matrix without H100"
+}
