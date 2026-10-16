@@ -1,6 +1,6 @@
 {
   "schema": "pssolver.rc5.g1.paired_block_contract_record.v1",
-  "classification": "READY_FOR_G1_PAIRED_BLOCK_CONTRACT_REVIEW",
+  "classification": "READY_FOR_G1_PAIRED_BLOCK_H100_QUALIFICATION",
   "date": "2026-10-16",
   "base_commit": "6c572e1a99ef61e3306c455618c02156b5493b4a",
   "motivation": {
@@ -131,7 +131,7 @@
     "h100_executed": false
   },
   "source_sha256": {
-    "benchmarks/plan_rc5_g1_paired_block_contract.py": "59e2226c969c5fcaf35378a098e40c5b866bc7f502bf5a0019957738c3fc6a46",
+    "benchmarks/plan_rc5_g1_paired_block_contract.py": "39626b6b46a59bd9a55293b8de05ab41479a527a303e7e0a507d5b66bab03eb8",
     "benchmarks/analyze_rc5_g1_paired_block_replay.py": "3311914dabaebef99464a063babfc104ef4cf3fca88f1eb50766d848540d9c1a",
     "benchmarks/run_rc5_g1_paired_block_profile_matrix.py": "7ee56adc6959e594a55de7ef02e96d1ccb322bf666a4565ee48457697686a256"
   },
@@ -148,10 +148,12 @@
     "cpu_only_contract_implementation_authorized": true,
     "post_hoc_replay_authorized": true,
     "local_commit_authorized": true,
-    "push_authorized": false,
-    "formal_contract_adoption_authorized": false,
-    "h100_submission_authorized": false,
+    "push_authorized": true,
+    "formal_contract_adoption_authorized": true,
+    "h100_submission_authorized": true,
+    "maximum_formal_h100_submissions": 1,
+    "source_bound_execution_authorization_required": true,
     "automatic_retry_authorized": false
   },
-  "next_gate": "explicit_review_and_authorization_of_v13_estimator_semantics_before_any_new_h100_submission"
+  "next_gate": "push_then_source_bound_single_h100_qualification_without_automatic_retry"
 }

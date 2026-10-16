@@ -227,8 +227,11 @@ def test_plan_retains_all_samples_and_all_numeric_thresholds():
     }
     assert plan["timing_diagnostics"]["coefficient_of_variation_reference"] == 0.05
     assert plan["timing_diagnostics"]["standalone_cv_rejection_authorized"] is False
-    assert plan["authorization"]["h100_submission_authorized"] is False
-    assert plan["authorization"]["formal_contract_adoption_authorized"] is False
+    assert plan["authorization"]["h100_submission_authorized"] is True
+    assert plan["authorization"]["formal_contract_adoption_authorized"] is True
+    assert plan["authorization"]["maximum_formal_h100_submissions"] == 1
+    assert plan["authorization"]["source_bound_execution_authorization_required"] is True
+    assert plan["authorization"]["automatic_retry_authorized"] is False
 
 
 def test_common_mode_spikes_are_retained_and_do_not_create_a_false_regression(tmp_path):
@@ -439,8 +442,10 @@ def test_versioned_contract_record_binds_replay_and_requires_new_authority():
     assert record["thresholds"]["estimator_semantics_changed"] is True
     assert record["scope"]["qualification_complete"] is False
     assert record["scope"]["g1_complete"] is False
-    assert record["authorization"]["push_authorized"] is False
-    assert record["authorization"]["h100_submission_authorized"] is False
-    assert record["authorization"]["formal_contract_adoption_authorized"] is False
+    assert record["authorization"]["push_authorized"] is True
+    assert record["authorization"]["h100_submission_authorized"] is True
+    assert record["authorization"]["formal_contract_adoption_authorized"] is True
+    assert record["authorization"]["maximum_formal_h100_submissions"] == 1
+    assert record["authorization"]["automatic_retry_authorized"] is False
     for relative, expected in record["source_sha256"].items():
         assert _sha256(ROOT / relative) == expected

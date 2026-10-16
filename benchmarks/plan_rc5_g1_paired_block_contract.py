@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Pre-register the CPU-only rc5 G-1 paired-block timing contract.
+"""Build the formally adopted rc5 G-1 paired-block timing contract.
 
-The contract is a proposed successor to the per-profile CV validity gate.  It
-does not reclassify the failed v10 run and does not authorize an H100 job.  All
-60 samples remain in the record and are assigned, in order, to six immutable
+The contract is the authorized successor to the per-profile CV validity gate.
+It does not reclassify the failed v10 run.  A separate, source-bound execution
+authorization remains mandatory for the single H100 qualification job.  All 60
+samples remain in the record and are assigned, in order, to six immutable
 ten-sample blocks.
 """
 
@@ -27,7 +28,7 @@ from benchmarks.plan_rc5_g1_measurement_window_recovery import (
 
 
 SCHEMA = "pssolver.rc5.g1.paired_block_measurement_contract.v1"
-CLASSIFICATION = "READY_FOR_G1_PAIRED_BLOCK_CONTRACT_REVIEW"
+CLASSIFICATION = "READY_FOR_G1_PAIRED_BLOCK_H100_QUALIFICATION"
 BLOCK_SIZE = 10
 BLOCK_COUNT = 6
 
@@ -144,9 +145,11 @@ def build_plan() -> dict[str, object]:
         "authorization": {
             "cpu_only_contract_implementation_authorized": True,
             "post_hoc_replay_authorized": True,
-            "formal_contract_adoption_authorized": False,
-            "push_authorized": False,
-            "h100_submission_authorized": False,
+            "formal_contract_adoption_authorized": True,
+            "push_authorized": True,
+            "h100_submission_authorized": True,
+            "maximum_formal_h100_submissions": 1,
+            "source_bound_execution_authorization_required": True,
             "automatic_retry_authorized": False,
         },
     }
