@@ -2,7 +2,9 @@
   "schema": "pssolver.rc5.g1.historical_audit_portability.v1",
   "date": "2026-10-16",
   "classification": "PASS_RC5_G1_HISTORICAL_AUDIT_PORTABILITY_RECOVERY",
-  "qualified_source_commit": "8a243fa286657361ca5021cf47c39d81e87964c6",
+  "runtime_candidate_commit": "dabeb9a487a82700ddd364c4233941a175808a3a",
+  "qualification_tooling_commit": "8a243fa286657361ca5021cf47c39d81e87964c6",
+  "record_commit_is_qualified_source": false,
   "failure_classification": {
     "external_harness_only": true,
     "runtime_failure": false,
