@@ -1,0 +1,92 @@
+{
+  "schema": "pssolver.rc5.g1.timing_instrumentation_implementation_record.v1",
+  "classification": "READY_FOR_ANALYSIS_ONLY_TIMING_INSTRUMENTATION",
+  "date": "2026-10-16",
+  "base_commit": "2dabdf3439c2d4d602efc5f2a16ba0c7f1491803",
+  "scope": {
+    "formal_v10_classification_preserved": "FAIL_RC5_G1_CORRECTED_MEASUREMENT_WINDOW_GATE",
+    "v11_analysis_classification": "MIXED_PHASE_SHIFTED_PERIODIC_AND_POSITION_DRIFTING_TIMING_VARIABILITY",
+    "formal_requalification_performed": false,
+    "h100_execution_performed": false,
+    "production_solver_modified": false,
+    "production_runtime_modified": false,
+    "production_default_changed": false,
+    "thresholds_changed": false,
+    "outlier_removal_allowed": false,
+    "trial_replacement_allowed": false
+  },
+  "source_evidence": {
+    "v10_control_manifest_sha256": "747609e354ff2cc01c68032b4685b09fb96cc43059c1e6c7817d2c4961bbf7b9",
+    "v10_scratch_manifest_sha256": "092950645960bab8f2fd9bbfa02483cd37728461bf31206064b2cb5eeeb05df8",
+    "v11_analysis_manifest_sha256": "82b88089904c3cf54685101d22c0c3f4ddfaf353ee0fa522b29db28a78f6bb2c"
+  },
+  "diagnostic_design": {
+    "candidate_only_profile_count": 12,
+    "families": [
+      "plane_compiled_v2",
+      "channel_compiled_v2",
+      "periodic_functional",
+      "channel_functional"
+    ],
+    "fresh_trials_per_family": 3,
+    "timed_steps_per_window": 60,
+    "windows_per_profile": [
+      "asynchronous_compatibility",
+      "synchronized_attribution_replay"
+    ],
+    "asynchronous_window_preserves_continuous_cuda_event_topology": true,
+    "synchronized_window_is_attribution_only": true,
+    "fresh_runtime_per_window": true,
+    "initial_and_final_state_identity_required_between_windows": true,
+    "python_gc_callbacks_recorded": true,
+    "absolute_host_step_timestamps_recorded": true,
+    "scheduled_refresh_phase_recorded": true,
+    "public_pressure_diagnostics_recorded_when_available": true,
+    "background_nvidia_smi_runs_in_separate_process": true,
+    "background_nvidia_smi_interval_ms": 100,
+    "tf32_child_policy_explicit": true,
+    "isolated_compiler_cache_per_profile": true
+  },
+  "source_sha256": {
+    "benchmarks/plan_rc5_g1_timing_instrumentation.py": "3bb2aa4d97d7e1574787eb792bb05f61aca6ec65eb59945d8175df688b36069c",
+    "benchmarks/diagnose_rc5_g1_timing_instrumentation.py": "2c5f98d22302a3e03011552a98da2acb4cfec8aeb83191bb1af20963a687bfe1",
+    "benchmarks/analyze_rc5_g1_timing_instrumentation.py": "38717184e1c7fe91f46f921eaf5a11a2390f0dea2450d616d6f8e77f1e8c62fc",
+    "benchmarks/run_rc5_g1_timing_instrumentation.py": "f79c079d2d44123118a3eab63e383fd0d13ca8f6ef5b3a7de45bc17ea7159c09"
+  },
+  "cpu_validation": {
+    "environment": {
+      "host": "hpcc.brandeis.edu",
+      "python": "3.10.18",
+      "pytorch": "2.5.1+cu121",
+      "pytest": "9.1.1",
+      "cuda_available": false
+    },
+    "new_test_file": "tests/test_rc5_g1_timing_instrumentation.py",
+    "new_tests": {
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    "targeted_new_and_related_tests": {
+      "passed": 44,
+      "failed": 0,
+      "skipped": 0
+    },
+    "remote_detached_worktree": "/home/fansenwei/PSSolver_rc5_g1_timing_instrumentation_2dabdf3_20261016_v12",
+    "remote_base_head": "2dabdf3439c2d4d602efc5f2a16ba0c7f1491803"
+  },
+  "interpretation_contract": {
+    "instrumentation_changes_execution_timing": true,
+    "correlation_does_not_establish_causality": true,
+    "analyzer_may_report_evidence_complete_but_not_qualification_pass": true,
+    "root_cause_may_remain_unresolved": true
+  },
+  "authorization": {
+    "implementation_and_cpu_tests_authorized": true,
+    "local_commit_authorized": true,
+    "push_authorized": false,
+    "h100_submission_authorized": false,
+    "automatic_retry_authorized": false
+  },
+  "next_gate": "explicit_user_authorization_for_one_analysis_only_H100_submission"
+}
