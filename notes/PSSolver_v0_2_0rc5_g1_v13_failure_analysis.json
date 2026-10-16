@@ -1,0 +1,112 @@
+{
+  "schema": "pssolver.rc5.g1.v13_failure_analysis_record.v1",
+  "classification": "ANALYSIS_ONLY_V13_MAX_TRIAL_FAILURE_CELL_MIGRATION_SUPPORTED",
+  "date": "2026-10-16",
+  "source_commit": "68f56f610e0c216c92581dce40391cb24c65422e",
+  "formal_v13": {
+    "job_id": "10886110",
+    "classification": "FAIL_RC5_G1_PAIRED_BLOCK_PERFORMANCE_MEMORY_GATE",
+    "classification_preserved": true,
+    "pass_granted": false,
+    "qualification_complete": false,
+    "g1_complete": false,
+    "profile_count": 48,
+    "progress_record_count": 48,
+    "failed_cell": "periodic_functional/periodic_R128",
+    "failed_trial": 3,
+    "maximum_trial_median_fixed_block_ratio": 1.0633863358803155,
+    "threshold": 1.05
+  },
+  "cross_run_diagnosis": {
+    "v10_failed_cell": "channel_compiled_v2/channel_R128x20x20",
+    "v10_failed_maximum_trial_median_fixed_block_ratio": 1.0642916340012079,
+    "v10_periodic_maximum_trial_median_fixed_block_ratio": 1.0109350621196627,
+    "v13_failed_cell": "periodic_functional/periodic_R128",
+    "v13_failed_maximum_trial_median_fixed_block_ratio": 1.0633863358803155,
+    "failed_cell_migrated": true,
+    "both_failures_isolated_to_maximum_trial_gate": true,
+    "all_persistent_aggregate_and_memory_gates_passed": true,
+    "persistent_provider_regression_supported_by_current_evidence": false,
+    "paired_block_contract_repeatability_concern_supported": true,
+    "root_cause_resolved": false
+  },
+  "v13_periodic": {
+    "trial_median_fixed_block_ratios": [
+      0.9977281144443686,
+      1.0017715403077303,
+      1.0633863358803155,
+      0.958429565626759,
+      0.9345047325307982,
+      1.0092747220146725
+    ],
+    "trial_median_span": 0.12888160334951726,
+    "baseline_then_candidate_trial_median": 0.9977281144443686,
+    "candidate_then_baseline_trial_median": 1.0017715403077303,
+    "trial3_fixed_block_ratios": [
+      1.0659403372690608,
+      1.0642290123274774,
+      1.0625436594331534,
+      1.0683268119237934,
+      0.8778866894127096,
+      0.994775914093373
+    ],
+    "trial3_blocks_above_threshold": 4,
+    "trial5_fixed_block_ratios": [
+      0.9326291223116029,
+      0.9280643385705132,
+      0.9336282904749439,
+      0.9353811745866526,
+      0.9362949098760027,
+      0.936059976952602
+    ],
+    "trial5_both_profiles_cv_at_or_below_reference": true,
+    "trial5_candidate_faster_in_every_block": true
+  },
+  "prior_diagnostics": {
+    "v11_classification": "MIXED_PHASE_SHIFTED_PERIODIC_AND_POSITION_DRIFTING_TIMING_VARIABILITY",
+    "v12_classification": "NO_SINGLE_GC_REFRESH_OR_PRESSURE_TERMINATION_CAUSE_SUPPORTED",
+    "position_drifting_timing_variability_observed": true,
+    "single_root_cause_resolved": false
+  },
+  "hpcc_analysis": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_paired_block_failure_analysis_dabeb9a_20261016_v14",
+    "analysis_only": true,
+    "formal_h100_submission_count": 0,
+    "slurm_job_submitted": false,
+    "old_archive_checksum_results": {
+      "v10": "41/41 PASS",
+      "v11": "8/8 PASS",
+      "v12": "83/83 PASS",
+      "v13": "1803/1803 PASS"
+    },
+    "old_manifest_sha256": {
+      "v10": "747609e354ff2cc01c68032b4685b09fb96cc43059c1e6c7817d2c4961bbf7b9",
+      "v11": "82b88089904c3cf54685101d22c0c3f4ddfaf353ee0fa522b29db28a78f6bb2c",
+      "v12": "da7ddb92658572b76889123c56f08e7bdb6ef863b009409c42a1ab6379e58ee1",
+      "v13": "fb2e9e3cf16fd5a40497b2077fa57436f446cf66baafc87308424305f0d8e60a"
+    },
+    "archive_checksum_result": "12/12 PASS",
+    "checksums_sha256": "7df3c1685cb893379506a932a52b5371f315cf11214a03f38793a25c77b4bdee",
+    "failure_analysis_sha256": "16a094ea34ecef004f933f65cbdcb2f5bf5d2e807207cbf33c8ba514fc07ea62",
+    "summary_sha256": "9315223924b9cbf2b141149db249494d90571586b18ad5118fa11387e46ec37a",
+    "final_report_sha256": "eecf5a8c16adc0892d115cf65289113cf189cd55272a10b900c3df56431495c5",
+    "analysis_complete_marker_present": true
+  },
+  "source_sha256": {
+    "benchmarks/analyze_rc5_g1_v13_failure.py": "ab70ad554366f433d1c53449e9b7eaec2b2f6c40e8e753108246ea9d59a69f66"
+  },
+  "scope": {
+    "analysis_only": true,
+    "thresholds_changed": false,
+    "samples_deleted": false,
+    "trials_replaced": false,
+    "formal_v13_reclassified": false,
+    "new_h100_job_submitted": false,
+    "production_solver_modified": false,
+    "production_runtime_modified": false,
+    "production_default_changed": false,
+    "qualification_complete": false,
+    "g1_complete": false
+  },
+  "next_action": "review the experimental pairing and maximum-per-trial contract before authorizing another H100 qualification; do not retry v13 unchanged"
+}
