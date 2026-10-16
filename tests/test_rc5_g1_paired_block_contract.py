@@ -449,3 +449,15 @@ def test_versioned_contract_record_binds_replay_and_requires_new_authority():
     assert record["authorization"]["automatic_retry_authorized"] is False
     for relative, expected in record["source_sha256"].items():
         assert _sha256(ROOT / relative) == expected
+
+    job = (ROOT / "jobs" / "rc5_g1_paired_block_h100.sbatch").read_text(
+        encoding="utf-8"
+    )
+    assert "#SBATCH --gres=gpu:H100:1" in job
+    assert "#SBATCH --no-requeue" in job
+    assert "run_rc5_g1_checkpoint_tmp_preflight.py" in job
+    assert "run_rc5_g1_environment.py" in job
+    assert "run_rc5_g1_paired_block_profile_matrix.py" in job
+    assert "--authorization-record" in job
+    assert "PAIRED_BLOCK_COMPLETE" in job
+    assert "touch \"${RC5_G1_OUTPUT_ROOT}/COMPLETE\"" not in job

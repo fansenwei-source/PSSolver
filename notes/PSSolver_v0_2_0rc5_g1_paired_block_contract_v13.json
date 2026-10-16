@@ -133,7 +133,8 @@
   "source_sha256": {
     "benchmarks/plan_rc5_g1_paired_block_contract.py": "39626b6b46a59bd9a55293b8de05ab41479a527a303e7e0a507d5b66bab03eb8",
     "benchmarks/analyze_rc5_g1_paired_block_replay.py": "3311914dabaebef99464a063babfc104ef4cf3fca88f1eb50766d848540d9c1a",
-    "benchmarks/run_rc5_g1_paired_block_profile_matrix.py": "7ee56adc6959e594a55de7ef02e96d1ccb322bf666a4565ee48457697686a256"
+    "benchmarks/run_rc5_g1_paired_block_profile_matrix.py": "7ee56adc6959e594a55de7ef02e96d1ccb322bf666a4565ee48457697686a256",
+    "jobs/rc5_g1_paired_block_h100.sbatch": "fbbd1e440c7c731984dd211534656f089ffdbaad9c324944203971d0f5a8db08"
   },
   "scope": {
     "production_solver_modified": false,
