@@ -9,10 +9,22 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_stage_producers.json"
+SUCCESSOR = ROOT / "notes/PSSolver_v0_2_0rc5_g1_consumer_recovery_v5.json"
 
 
 def _record() -> dict[str, object]:
     return json.loads(RECORD.read_text(encoding="utf-8"))
+
+
+def _assert_historical_or_successor(relative: str, historical: str) -> None:
+    actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+    if actual == historical:
+        return
+    successor = json.loads(SUCCESSOR.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ][relative]
+    assert successor["historical_sha256"] == historical
+    assert successor["sha256"] == actual
 
 
 def test_stage_producer_record_binds_all_five_missing_stages_and_hashes():
@@ -26,8 +38,7 @@ def test_stage_producer_record_binds_all_five_missing_stages_and_hashes():
         "environment", "cuda_only", "checkpoints", "numerical", "consumer"
     }
     for value in producers.values():
-        path = ROOT / value["path"]
-        assert hashlib.sha256(path.read_bytes()).hexdigest() == value["sha256"]
+        _assert_historical_or_successor(value["path"], value["sha256"])
 
 
 def test_checkpoint_and_numerical_contracts_remain_fail_closed():
@@ -48,5 +59,5 @@ def test_stage_producer_record_preserves_authorization_boundary():
     record = _record()
     assert not any(record["authorization"].values())
     for relative, expected in record["source_sha256"].items():
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == expected
+        _assert_historical_or_successor(relative, expected)
     assert record["next_gate"].startswith("regenerate_source_free_hpcc_support")

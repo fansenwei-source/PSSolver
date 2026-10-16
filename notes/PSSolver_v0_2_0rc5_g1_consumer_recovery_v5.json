@@ -1,0 +1,85 @@
+{
+  "schema": "pssolver.rc5.g1.consumer_recovery_v5.v1",
+  "task": "PSSolver rc5 G-1 Consumer guard-order and helper-import recovery v5",
+  "date": "2026-10-15",
+  "classification": "READY_RC5_G1_CONSUMER_GUARD_ORDER_AND_HELPER_IMPORT_RECOVERY_V5",
+  "qualification_complete": false,
+  "failed_predecessor": {
+    "classification": "FAIL_RC5_G1_RECOVERY_V4_CONSUMER_IDENTITY_GUARD_ORDER_AND_EXTERNAL_HELPER_IMPORT",
+    "job_id": "10885604",
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_h100_dabeb9a_20261015_recovery_v4",
+    "checksum_manifest_sha256": "ee42f59bb7b62715a5b74d9071ef9c7f36bce51f264c9af8d59a43f8140f1654",
+    "final_report_sha256": "dc60414101869af971329da32b4f8a1b49dbcb0eff5152a79cb1142821262ff1",
+    "failure_json_sha256": "d06f1900bab25fa7a243f0b31a4921327c9024deca6e60a9b1768399377620ee",
+    "diagnostic_sha256": "f012d5232149d278bb709caaa279984fcbe17f64943f648ee7b53585a9687516",
+    "manifest_entries_passed": 46,
+    "manifest_entries_failed": 0,
+    "historical_failure_classification_preserved": true
+  },
+  "provider_qualification_support": {
+    "runtime_candidate_source_commit": "dabeb9a487a82700ddd364c4233941a175808a3a",
+    "predecessor_record_commit": "a0a34cf7d21170f2d700668e91d5a651016433c7",
+    "helper_fix_commit": "9a6d56d49c2dc7662e51ed7b74736783724d342b",
+    "direct_parent_verified": true,
+    "runtime_package_changed": false,
+    "numerical_implementation_changed": false,
+    "changed_files": [
+      "benchmarks/run_rc5_g1_consumer.py",
+      "tests/test_run_rc5_g1_foundation_stages.py"
+    ],
+    "fix": "import PSSolverIntegrationUnavailable from the installed Consumer's pssolver_control.errors module and pin that module path with an AST regression test"
+  },
+  "consumer": {
+    "previous_qualification_tip": "2474592fa64d1b3243277c7439a16104f2cdeb9f",
+    "guard_order_source_commit": "6d3558b1367da9a3e7d6b3f8fbc5584cf384bfe3",
+    "successor_registration_commit": "7509e9ca43ac393a85946dcbe3d970d4723d90c3",
+    "direct_parent_chain_verified": true,
+    "guard_order_fix": "validate an explicit public Provider identity pin before Python 3.10 runtime-checkable protocol property probing",
+    "stale_pin_rejected_before_state_access": true,
+    "adapter_version_changed": false,
+    "functional_api_version_changed": false,
+    "control_algorithm_changed": false,
+    "production_default_changed": false,
+    "local_cpu": {
+      "passed": 337,
+      "skipped": 6,
+      "failed": 0,
+      "xfailed": 0
+    }
+  },
+  "historical_successor_sources": {
+    "benchmarks/run_rc5_g1_consumer.py": {
+      "historical_sha256": "a01b16d4504075427e12ffc610d378f96e97dfd97842e5560b72371972d1e80b",
+      "sha256": "8e21b78601e9e7a7cd83a4bcc2147f17f59128e293847bbaee0a38298d4952ba",
+      "introduced_by_commit": "9a6d56d49c2dc7662e51ed7b74736783724d342b",
+      "reason": "replace the nonexistent pssolver_control.exceptions import with the installed public pssolver_control.errors module; no solver, runtime, numerical threshold or production default changed"
+    },
+    "tests/test_run_rc5_g1_foundation_stages.py": {
+      "historical_sha256": "e8a97efb279cdb06f36dc78bc48198ca9d6cd9244288c754cc786e1aefd4e514",
+      "sha256": "17ce1a7bbb696e1ec14b62dbfc65c9c3e17036792be562e5ca800554854949b0",
+      "introduced_by_commit": "9a6d56d49c2dc7662e51ed7b74736783724d342b",
+      "reason": "add an AST regression test for the actual installed Consumer error-module path; no scientific test threshold, solver, runtime or production default changed"
+    }
+  },
+  "historical_records": {
+    "stage_producers": {
+      "path": "notes/PSSolver_v0_2_0rc5_g1_stage_producers.json",
+      "sha256": "2d69ae4525e154a779df4c6d35dd1eabf3ee8ee26786bda562e1267396521dca",
+      "rewritten": false
+    },
+    "hpcc_plan_freeze": {
+      "path": "notes/PSSolver_v0_2_0rc5_g1_hpcc_plan_freeze.json",
+      "sha256": "73cfe86cef8f2cc3b568b86161fd35df0fee26aafc3b3a8032578ef38a646325",
+      "rewritten": false
+    }
+  },
+  "authorization": {
+    "push_authorized": false,
+    "h100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "production_default_changed": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false
+  },
+  "next_gate": "build fresh Provider and Consumer artifacts, run installed-wheel CPU recovery preflight, then obtain explicit push and single-H100 authorization"
+}

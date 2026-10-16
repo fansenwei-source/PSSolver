@@ -9,10 +9,22 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_hpcc_plan_freeze.json"
+SUCCESSOR = ROOT / "notes/PSSolver_v0_2_0rc5_g1_consumer_recovery_v5.json"
 
 
 def _record() -> dict[str, object]:
     return json.loads(RECORD.read_text(encoding="utf-8"))
+
+
+def _assert_historical_or_successor(relative: str, historical: str) -> None:
+    actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+    if actual == historical:
+        return
+    successor = json.loads(SUCCESSOR.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ][relative]
+    assert successor["historical_sha256"] == historical
+    assert successor["sha256"] == actual
 
 
 def test_g1_hpcc_plan_freeze_binds_the_exact_nine_stage_order():
@@ -45,8 +57,7 @@ def test_g1_hpcc_plan_freeze_binds_the_exact_nine_stage_order():
 def test_g1_hpcc_plan_freeze_hashes_versioned_command_files():
     record = _record()
     for relative, expected in record["command_file_sha256"].items():
-        actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
-        assert actual == expected
+        _assert_historical_or_successor(relative, expected)
 
 
 def test_g1_hpcc_plan_freeze_binds_the_96_profile_matrix():
