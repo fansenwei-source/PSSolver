@@ -1,0 +1,117 @@
+{
+  "schema": "pssolver.rc5.g1.cumulative_closure_record.v1",
+  "date": "2026-10-16",
+  "classification": "PASS_RC5_G1_CUMULATIVE_CLOSURE_WITH_BALANCED_CROSSOVER_PERFORMANCE_QUALIFICATION",
+  "source_identity": {
+    "branch": "fix/v0.2.0rc5",
+    "runtime_candidate_commit": "dabeb9a487a82700ddd364c4233941a175808a3a",
+    "cumulative_analyzer_commit": "8a243fa286657361ca5021cf47c39d81e87964c6",
+    "record_commit_is_qualified_source": false
+  },
+  "cumulative_evidence": {
+    "frozen_cpu_and_installed_wheel": "PASS_RC5_G1_FROZEN_SOURCE_AND_INSTALLED_WHEEL_CPU",
+    "released_checkpoint_matrix": "PASS",
+    "h100_auxiliary": "PASS_REUSED_V5",
+    "transform_measurement_window": "PASS_REUSED_V6",
+    "performance_memory_cell_count": 16,
+    "reused_v6_cell_count": 12,
+    "requalified_v16_cell_count": 4,
+    "focused_cells": [
+      [
+        "channel_compiled_v2",
+        "channel_R128x20x20"
+      ],
+      [
+        "channel_functional",
+        "channel_R512x40x40"
+      ],
+      [
+        "periodic_functional",
+        "periodic_R128"
+      ],
+      [
+        "plane_compiled_v2",
+        "plane_R128"
+      ]
+    ]
+  },
+  "archive_identities": {
+    "cpu": {
+      "entries": 1712,
+      "checksums_sha256": "6a10414a20d3c5f7c12e21e98afb594fe3008be3010388355a16e6fdb9fbe832"
+    },
+    "checkpoint": {
+      "entries": 123,
+      "checksums_sha256": "6bc84435b3dab444156a87ba7ddc5981f93989c38098dfa3f9e56d8dcff9d627"
+    },
+    "v5": {
+      "entries": 26,
+      "checksums_sha256": "049f7422b62618416745ca665f82ab2370f6a5f2e662ce296f332f461e3b7f71"
+    },
+    "v6": {
+      "entries": 15,
+      "checksums_sha256": "74ef98002f8bd6b37f0d9e6cc001d17d9653cd6cb274afbd726273bd02eaeac2"
+    },
+    "v16": {
+      "entries": 1814,
+      "checksums_sha256": "da50cbda196ace1e7a60c6974dfea40533575493096ed1971a91ef959e002de0"
+    }
+  },
+  "cpu_adjudication": {
+    "frozen_cpu_gate_remains_authoritative": true,
+    "additional_hpcc_full_suite": {
+      "passed": 3833,
+      "failed": 4,
+      "skipped": 1,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "used_as_final_qualification_evidence": false,
+      "classification": "EXCLUDED_SPLIT_HOST_AND_HISTORICAL_AUDIT_HARNESS_ATTEMPT"
+    },
+    "corrected_local_record_tests": "21 passed, 0 failed",
+    "hpcc_portable_record_tests": "19 passed, 2 split-host artifact tests deselected, 0 failed",
+    "runtime_failure": false,
+    "numerical_failure": false,
+    "scientific_failure": false,
+    "h100_failure": false
+  },
+  "closure_archive": {
+    "control_directory": "/home/fansenwei/pssolver_rc5_g1_cumulative_closure_dabeb9a_20261016_v17",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_rc5_g1_cumulative_closure_dabeb9a_20261016_v17",
+    "complete_present": true,
+    "checksum_entries": 30,
+    "checksum_passed": 30,
+    "checksum_failed": 0,
+    "checksums_sha256": "8c586ae80ddad9a49083116287b40cfff4a9ad630090aad3c2b3bd44a33dd4ae",
+    "summary_json_sha256": "32087512a6790f5e6fa0580ddbed44d02f17a92ee3b374c670872b9d6333996a",
+    "summary_csv_sha256": "6104ccb79665d7e07ddf93f62b12f646214ed00127d64f1b310827c772673136",
+    "final_report_sha256": "7cb65e99bcb374fa7ed54987b2ab65449a54ec60a9b0fd9b190b64d13c6434e2",
+    "cumulative_analysis_sha256": "1a4f01d5c09962d8eeaa25d529aee097cb63b2b9bfa0d93b78be4e9ef3251223",
+    "cpu_adjudication_sha256": "009dc0fbea217dea449e43722b93207629b278e49b5bc718e0b393c6d078a69b",
+    "source_evidence_manifest_sha256": "9db817016df0530854db04f5a4b55a04626c31019c35891b96e37c2f34b8e0d2"
+  },
+  "scope": {
+    "new_h100_submission_count": 0,
+    "scientific_timestep_executed": false,
+    "production_source_modified": false,
+    "runtime_modified": false,
+    "scientific_equations_modified": false,
+    "thresholds_modified": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  },
+  "authorization": {
+    "qualification_complete": true,
+    "g1_complete": true,
+    "eligible_for_release_integration_review": true,
+    "post_release_verification_required": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "push_executed": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false,
+    "production_default_changed": false
+  }
+}
