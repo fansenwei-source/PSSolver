@@ -1,0 +1,92 @@
+{
+  "schema": "pssolver.rc5.g1.focused_performance_recovery_record.v1",
+  "task": "PSSolver rc5 G-1 focused performance/memory recovery v7 preparation",
+  "date": "2026-10-16",
+  "classification": "READY_FOR_EXPLICIT_H100_AUTHORIZATION",
+  "source_failure": {
+    "record": "notes/PSSolver_v0_2_0rc5_g1_transform_window_recovery_v6_result.json",
+    "classification": "STOPPED_RC5_G1_TRANSFORM_WINDOW_RECOVERY_V6_AT_FROZEN_PROFILE_PERFORMANCE_MEMORY_GATE",
+    "failed_cell_count": 4,
+    "thresholds_changed": false,
+    "historical_result_reclassified": false
+  },
+  "focused_cells": [
+    {
+      "family": "plane_compiled_v2",
+      "grid": "plane_R128",
+      "failed_gate": "paired_timestep_ratio",
+      "v6_observed": 1.0563119777324725,
+      "diagnostic_disposition": "candidate timing samples contained large spikes; fresh validity-gated evidence required"
+    },
+    {
+      "family": "channel_compiled_v2",
+      "grid": "channel_R128x20x20",
+      "failed_gate": "paired_timestep_ratio",
+      "v6_observed": 1.0584790919925313,
+      "diagnostic_disposition": "mean and median evidence were both stable near 1.059; a real regression remains plausible"
+    },
+    {
+      "family": "periodic_functional",
+      "grid": "periodic_R128",
+      "failed_gate": "paired_timestep_ratio",
+      "v6_observed": 1.066582662553552,
+      "diagnostic_disposition": "candidate timing samples contained large spikes; fresh validity-gated evidence required"
+    },
+    {
+      "family": "channel_functional",
+      "grid": "channel_R512x40x40",
+      "failed_gate": "peak_reserved_group_ratio",
+      "v6_observed": 1.0402010050251256,
+      "diagnostic_disposition": "one candidate trial reserved exactly 64 MiB more; allocated memory and timing passed, but the frozen group-max gate remains unresolved"
+    }
+  ],
+  "new_contract": {
+    "profile_count": 48,
+    "focused_cell_count": 4,
+    "paired_trials_per_cell": 6,
+    "profiles_per_pair": 2,
+    "role_order": "odd trials baseline-to-candidate; even trials candidate-to-baseline",
+    "baseline_first_pairs_per_cell": 3,
+    "candidate_first_pairs_per_cell": 3,
+    "warmup_steps": 10,
+    "timed_steps": 60,
+    "timing_cv_max": 0.05,
+    "outlier_removal_allowed": false,
+    "trial_replacement_allowed": false,
+    "isolated_empty_compiler_caches_per_profile": true,
+    "all_four_cells_must_pass": true
+  },
+  "unchanged_thresholds": {
+    "mean_timestep_ratio_max": 1.03,
+    "median_of_profile_means_ratio_max": 1.03,
+    "every_paired_mean_timestep_ratio_max": 1.05,
+    "peak_allocated_group_ratio_max": 1.03,
+    "peak_reserved_group_ratio_max": 1.03,
+    "graph_breaks": 0,
+    "runtime_fallback": false,
+    "compile_fallback": false,
+    "transform_counts_exact": true
+  },
+  "versioned_support": {
+    "plan": "benchmarks/plan_rc5_g1_focused_performance_h100.py",
+    "analyzer": "benchmarks/analyze_rc5_g1_focused_performance_h100.py",
+    "tests": "tests/test_rc5_g1_focused_performance_h100.py",
+    "plan_schema": "pssolver.rc5.g1.focused_performance_plan.v1",
+    "analysis_schema": "pssolver.rc5.g1.focused_performance_analysis.v1",
+    "pass_classification": "PASS_RC5_G1_FOCUSED_PERFORMANCE_MEMORY_EVIDENCE"
+  },
+  "adjudication_boundary": {
+    "focused_pass_is_g1_complete": false,
+    "focused_pass_only_authorizes_cumulative_reassembly": true,
+    "failed_v6_cells_may_be_replaced_only_by_all_new_focused_evidence": true,
+    "successful_v6_cells_may_be_reused_only_after_checksum_verification": true,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "h100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false
+  }
+}
