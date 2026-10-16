@@ -79,7 +79,7 @@ def _capture_identities(consumer_root: Path, work_root: Path) -> dict[str, objec
     from pssolver_control.adapters.pssolver_channel import (
         build_channel_activity_stepper,
     )
-    from pssolver_control.exceptions import PSSolverIntegrationUnavailable
+    from pssolver_control.errors import PSSolverIntegrationUnavailable
 
     tests = consumer_root / "tests"
     sys.path.insert(0, str(tests))

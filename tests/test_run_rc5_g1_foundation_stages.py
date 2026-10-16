@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import copy
 from pathlib import Path
 
@@ -31,6 +32,22 @@ from benchmarks.run_rc5_g1_numerical import (
     REPAIRED as NUMERICAL_REPAIRED,
     summarize as summarize_numerical,
 )
+
+
+def test_consumer_helper_imports_the_actual_control_error_module():
+    helper = Path(__file__).resolve().parents[1] / "benchmarks/run_rc5_g1_consumer.py"
+    tree = ast.parse(helper.read_text(encoding="utf-8"), filename=str(helper))
+    imports = {
+        (node.module, alias.name)
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom)
+        for alias in node.names
+    }
+    assert (
+        "pssolver_control.errors",
+        "PSSolverIntegrationUnavailable",
+    ) in imports
+    assert not any(module == "pssolver_control.exceptions" for module, _ in imports)
 
 
 def _environment_inputs():
