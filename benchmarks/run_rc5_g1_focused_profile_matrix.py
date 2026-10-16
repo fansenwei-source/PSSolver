@@ -258,7 +258,9 @@ def main(argv: list[str] | None = None) -> int:
         output_root=args.output_root.absolute(),
     )
     _atomic_json(args.command_plan, plan)
-    if not args.plan_only:
+    if args.plan_only:
+        _preflight(plan)
+    else:
         execute(plan)
     return 0
 
