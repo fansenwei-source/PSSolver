@@ -2,7 +2,7 @@
   "schema": "pssolver.rc5.g1.measurement_window_lifecycle_recovery.v1",
   "task": "PSSolver rc5 G-1 measurement-window qualification-profiler lifecycle recovery v10",
   "date": "2026-10-16",
-  "classification": "READY_FOR_CPU_PREFLIGHT_NO_H100",
+  "classification": "READY_FOR_EXPLICIT_H100_AUTHORIZATION",
   "source_failure": {
     "control_directory": "/home/fansenwei/pssolver_rc5_g1_measurement_window_dabeb9a_20261016_recovery_v9",
     "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_rc5_g1_measurement_window_dabeb9a_20261016_recovery_v9",
@@ -74,8 +74,25 @@
   },
   "cpu_verification": {
     "source_compile": "PASS",
-    "targeted_tests": "pending",
-    "hpcc_python_3_10_replay": "pending",
+    "hpcc_python": "3.10.18",
+    "source_commit": "305890013831a9eb79ac1ef671c88e3e5672398c",
+    "bundle": {
+      "path": "/home/fansenwei/PSSolver_rc5_g1_lifecycle_3058900.bundle",
+      "sha256": "075491e4aed66761ac54103fc87de33af543b3afc8dbbf8f9b8c311d36b2efac",
+      "complete_history": true,
+      "verify": "PASS"
+    },
+    "worktree": "/home/fansenwei/PSSolver_rc5_g1_lifecycle_3058900_20261016_v10",
+    "targeted_tests": {
+      "passed": 71,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "elapsed_seconds": 8.04
+    },
+    "worktree_status_count": 0,
+    "ignored_status_count": 0,
+    "cache_count": 0,
     "h100_executed": false
   },
   "formal_state": {

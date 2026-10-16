@@ -57,7 +57,7 @@ def test_lifecycle_record_registers_exact_forward_only_successors():
 
 def test_lifecycle_record_preserves_the_h100_authorization_boundary():
     record = _record()
-    assert record["classification"] == "READY_FOR_CPU_PREFLIGHT_NO_H100"
+    assert record["classification"] == "READY_FOR_EXPLICIT_H100_AUTHORIZATION"
     assert record["fix"] == {
         "scope": "qualification_only_profiler_object_lifecycle",
         "configuration_identity_snapshotted_before_case_deletion": True,
@@ -69,7 +69,23 @@ def test_lifecycle_record_preserves_the_h100_authorization_boundary():
         "thresholds_modified": False,
         "measurement_window_modified": False,
     }
-    assert record["cpu_verification"]["h100_executed"] is False
+    verification = record["cpu_verification"]
+    assert verification["source_compile"] == "PASS"
+    assert verification["hpcc_python"] == "3.10.18"
+    assert verification["source_commit"] == (
+        "305890013831a9eb79ac1ef671c88e3e5672398c"
+    )
+    assert verification["targeted_tests"] == {
+        "passed": 71,
+        "failed": 0,
+        "skipped": 0,
+        "xfailed": 0,
+        "elapsed_seconds": 8.04,
+    }
+    assert verification["worktree_status_count"] == 0
+    assert verification["ignored_status_count"] == 0
+    assert verification["cache_count"] == 0
+    assert verification["h100_executed"] is False
     assert record["formal_state"]["qualification_complete"] is False
     assert record["formal_state"]["g1_complete"] is False
     assert record["authorization"]["h100_submission_authorized"] is False
