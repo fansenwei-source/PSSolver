@@ -22,5 +22,7 @@ unchanged.  Their two changed files are registered as explicit successors in
 `PSSolver_v0_2_0rc5_g1_consumer_recovery_v5.json`.
 
 Local Consumer CPU validation passed with 337 tests and the six pre-existing
-CUDA/benchmark skips.  This record does not authorize a push or H100 job and
-does not claim G-1 qualification completion.
+CUDA/benchmark skips.  The Provider full CPU suite passed 3,724 tests and eight
+subtests with the seven frozen CUDA-only nodes deselected.  This record does
+not authorize a push or H100 job and does not claim G-1 qualification
+completion.

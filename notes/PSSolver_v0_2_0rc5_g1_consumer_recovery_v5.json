@@ -27,7 +27,15 @@
       "benchmarks/run_rc5_g1_consumer.py",
       "tests/test_run_rc5_g1_foundation_stages.py"
     ],
-    "fix": "import PSSolverIntegrationUnavailable from the installed Consumer's pssolver_control.errors module and pin that module path with an AST regression test"
+    "fix": "import PSSolverIntegrationUnavailable from the installed Consumer's pssolver_control.errors module and pin that module path with an AST regression test",
+    "local_cpu": {
+      "passed": 3724,
+      "skipped": 0,
+      "deselected": 7,
+      "failed": 0,
+      "xfailed": 0,
+      "subtests_passed": 8
+    }
   },
   "consumer": {
     "previous_qualification_tip": "2474592fa64d1b3243277c7439a16104f2cdeb9f",

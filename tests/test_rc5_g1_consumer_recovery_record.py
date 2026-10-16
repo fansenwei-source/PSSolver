@@ -32,7 +32,16 @@ def test_recovery_record_binds_the_two_independent_v4_failures():
     consumer = record["consumer"]
     assert consumer["stale_pin_rejected_before_state_access"] is True
     assert consumer["control_algorithm_changed"] is False
-    assert record["provider_qualification_support"]["runtime_package_changed"] is False
+    support = record["provider_qualification_support"]
+    assert support["runtime_package_changed"] is False
+    assert support["local_cpu"] == {
+        "passed": 3724,
+        "skipped": 0,
+        "deselected": 7,
+        "failed": 0,
+        "xfailed": 0,
+        "subtests_passed": 8,
+    }
 
 
 def test_recovery_record_registers_exact_historical_successors():
