@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 
 import benchmarks.analyze_rc5_g1_cumulative_closure as closure
+from benchmarks.verify_rc5_g1_cumulative_archive import main as verify_main
 
 
 def _hash(label: str) -> str:
@@ -214,4 +215,17 @@ def test_archive_verifier_is_fail_closed(tmp_path: Path):
             tmp_path,
             expected_entries=1,
             expected_manifest_sha256=manifest_digest,
+        )
+
+
+def test_versioned_archive_verifier_rejects_unknown_names(tmp_path: Path):
+    with pytest.raises(ValueError, match="unknown archive name"):
+        verify_main(
+            [
+                "--archive",
+                "unknown",
+                str(tmp_path),
+                "--output",
+                str(tmp_path / "result.json"),
+            ]
         )

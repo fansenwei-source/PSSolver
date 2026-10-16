@@ -392,8 +392,13 @@ def analyze(
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repository-root", type=Path, required=True)
-    parser.add_argument("--cpu-control", type=Path, required=True)
-    parser.add_argument("--checkpoint-control", type=Path, required=True)
+    parser.add_argument("--cpu-control", type=Path)
+    parser.add_argument("--checkpoint-control", type=Path)
+    parser.add_argument(
+        "--preverified-local-archives",
+        type=Path,
+        help="atomic verification report for the CPU and checkpoint archives when they live on another host",
+    )
     parser.add_argument("--v5-control", type=Path, required=True)
     parser.add_argument("--v5-scratch", type=Path, required=True)
     parser.add_argument("--v6-control", type=Path, required=True)
@@ -420,21 +425,40 @@ def main(argv: list[str] | None = None) -> int:
         "v16_slurm": arguments.v16_control / "provenance/slurm_final.json",
     }
     loaded = {name: _json(path) for name, path in paths.items()}
+    verification: dict[str, object]
+    if arguments.preverified_local_archives is not None:
+        _require(arguments.cpu_control is None, "CPU control and preverified report are mutually exclusive")
+        _require(arguments.checkpoint_control is None, "checkpoint control and preverified report are mutually exclusive")
+        verification = _json(arguments.preverified_local_archives)
+        _require(set(verification) == {"cpu", "checkpoint"}, "preverified archive set differs")
+    else:
+        _require(arguments.cpu_control is not None, "CPU control directory is required")
+        _require(arguments.checkpoint_control is not None, "checkpoint control directory is required")
+        verification = {
+            "cpu": verify_archive(
+                arguments.cpu_control,
+                expected_entries=int(EXPECTED_ARCHIVES["cpu"]["entries"]),
+                expected_manifest_sha256=str(EXPECTED_ARCHIVES["cpu"]["manifest_sha256"]),
+            ),
+            "checkpoint": verify_archive(
+                arguments.checkpoint_control,
+                expected_entries=int(EXPECTED_ARCHIVES["checkpoint"]["entries"]),
+                expected_manifest_sha256=str(EXPECTED_ARCHIVES["checkpoint"]["manifest_sha256"]),
+            ),
+        }
     archive_roots = {
-        "cpu": arguments.cpu_control,
-        "checkpoint": arguments.checkpoint_control,
         "v5": arguments.v5_control,
         "v6": arguments.v6_control,
         "v16": arguments.v16_control,
     }
-    verification = {
+    verification.update({
         name: verify_archive(
             root,
             expected_entries=int(EXPECTED_ARCHIVES[name]["entries"]),
             expected_manifest_sha256=str(EXPECTED_ARCHIVES[name]["manifest_sha256"]),
         )
         for name, root in archive_roots.items()
-    }
+    })
     profile_sources = verify_v6_profile_sources(loaded.pop("v6_sources"))
     result = analyze(
         **loaded,

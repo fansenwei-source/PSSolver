@@ -85,8 +85,9 @@
     "new_h100_submission_count": 0
   },
   "source_sha256": {
-    "benchmarks/analyze_rc5_g1_cumulative_closure.py": "e668d13252aa9c45a33ebe4e4270210cb7973437541918faa0ef447c1e81f8e0",
-    "tests/test_rc5_g1_cumulative_closure.py": "3f40af3601759c7e689a50e46879b3dc014d86fbae07d26192d52c61815de7ae"
+    "benchmarks/analyze_rc5_g1_cumulative_closure.py": "aa7556899c21fa40dbc4eed11d188ab54a6f24d6abe9a883c5e028c98499ebbc",
+    "benchmarks/verify_rc5_g1_cumulative_archive.py": "6b76df1c206737ae6b7875a8a7780a054a4c8758364c3cfb49539318d20cee0a",
+    "tests/test_rc5_g1_cumulative_closure.py": "3449baa335ee9a9bf029da2583974a1c429ef8bb3452b539585e8fbd11aa1eef"
   },
   "execution_status": {
     "cumulative_analyzer_executed": false,
