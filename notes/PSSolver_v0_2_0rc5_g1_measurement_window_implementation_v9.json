@@ -1,0 +1,117 @@
+{
+  "schema": "pssolver.rc5.g1.measurement_window_implementation_record.v1",
+  "task": "PSSolver rc5 G-1 qualification-only measurement-window implementation v9",
+  "date": "2026-10-16",
+  "classification": "READY_FOR_CPU_PREFLIGHT_NO_H100",
+  "pre_registration": {
+    "record": "notes/PSSolver_v0_2_0rc5_g1_measurement_window_recovery_v9.json",
+    "record_sha256": "8316bf27cc9479f6fd3410953d73fdb00719ecd83a9f4d7c8923db0519dc2cbd",
+    "contract_changed": false,
+    "threshold_changed": false
+  },
+  "implementation": {
+    "historical_profiler_default_post_flush_rewarm_steps": 0,
+    "corrected_plan_post_flush_rewarm_steps": 3,
+    "formal_timed_steps": 60,
+    "expected_runtime_completed_steps": 73,
+    "formal_timing_starts_after_rewarm": true,
+    "formal_transform_counters_start_after_rewarm": true,
+    "formal_compiler_counters_start_after_rewarm": true,
+    "formal_memory_peaks_start_after_rewarm": true,
+    "all_raw_samples_preserved": true,
+    "cold_recovery_memory_preserved": true,
+    "separate_diagnostic_replay": true,
+    "diagnostic_replay_used_for_adjudication": false,
+    "device_telemetry_outside_timed_window": true,
+    "production_solver_modified": false,
+    "production_runtime_modified": false,
+    "scientific_equations_modified": false
+  },
+  "source_sha256": {
+    "benchmarks/profile_rc458_runtime_family.py": "6798cc6a1efafac39659a9ea2505dc11d70bee6472dbbebd01958dafcc5aa11a",
+    "benchmarks/analyze_rc5_g1_focused_performance_h100.py": "1f222957b533d99967234f24d070f5228e823791e3ad3c15f2bc7adb487a2d88",
+    "benchmarks/analyze_rc5_g1_timing_variability.py": "dff31fb7e0445568d743ec5d2bfbc9225303749007da95e915a133deba328763",
+    "benchmarks/run_rc5_g1_focused_profile_matrix.py": "90a62520e26bf0b77db9fda6196e6245031c0c81026bc3c2eb655eb62a00cbbe",
+    "benchmarks/analyze_rc5_g1_measurement_window_h100.py": "22d9c21bbc44782fbcf88b3cca1d9762299c7404e08c4b4bc847f3a1151510bc",
+    "benchmarks/run_rc5_g1_measurement_window_profile_matrix.py": "478cfcc315939141f59bfb743a31a6a62f7d2e625a655a4755a1d0453090417e",
+    "tests/test_rc5_g1_timing_variability_analysis.py": "9a83150031607ef87f1af2c6a2e3146b818c1c7e86486e754cc77748ca58631c",
+    "tests/test_rc458_qualification_support.py": "6714dbf0419b64ba7ec65111d6df38f97429a814cbc79bad4ebc6f7748e5aa01",
+    "tests/test_rc5_g1_measurement_window_implementation.py": "caad91fea424933ecf81072fb6a7431c06c566f3e87ed0edf670d31ab1c1a840"
+  },
+  "historical_successor_sources": {
+    "benchmarks/profile_rc458_runtime_family.py": {
+      "accepted_predecessor_sha256": [
+        "7eff1d166dd5c30b09f6c2202772ed5b5cf9f0be0bed11bade72571eac3d8152"
+      ],
+      "current_sha256": "6798cc6a1efafac39659a9ea2505dc11d70bee6472dbbebd01958dafcc5aa11a",
+      "reason": "add an opt-in post-flush rewarm, formal-window phase snapshots, and non-adjudicating diagnostic replay while retaining a zero-step historical default",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "benchmarks/analyze_rc5_g1_focused_performance_h100.py": {
+      "accepted_predecessor_sha256": [
+        "14dd2d24458fb9e72816049e82587590f96d2d1bac7725aaf12cdaa4194b6ebd"
+      ],
+      "current_sha256": "1f222957b533d99967234f24d070f5228e823791e3ad3c15f2bc7adb487a2d88",
+      "reason": "parameterize the existing fail-closed analyzer and validate the pre-registered corrected window without changing its historical default plan",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "benchmarks/analyze_rc5_g1_timing_variability.py": {
+      "accepted_predecessor_sha256": [
+        "9653c9cc6e3e95999b096a288af7f77590c3ee44a43b9bd9db19ba3bc35d9f9d"
+      ],
+      "current_sha256": "dff31fb7e0445568d743ec5d2bfbc9225303749007da95e915a133deba328763",
+      "reason": "recognize and audit an explicit post-flush rewarm loop while preserving historical no-rewarm source analysis",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "benchmarks/run_rc5_g1_focused_profile_matrix.py": {
+      "accepted_predecessor_sha256": [
+        "0ff5e8467c426ec9c7b954d71bc6574302792d4d0a96596f596a1b04eb7e764a"
+      ],
+      "current_sha256": "90a62520e26bf0b77db9fda6196e6245031c0c81026bc3c2eb655eb62a00cbbe",
+      "reason": "expose parameterized plan and analyzer hooks while preserving the historical runner defaults",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "tests/test_rc5_g1_timing_variability_analysis.py": {
+      "accepted_predecessor_sha256": [
+        "844c8f0156e764c09a4fc3119adedc846aa243824da1fbe2e8687e2a746450be"
+      ],
+      "current_sha256": "9a83150031607ef87f1af2c6a2e3146b818c1c7e86486e754cc77748ca58631c",
+      "reason": "bind historical v8 diagnosis to a historical source fixture and separately test the current corrected source layout",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    },
+    "tests/test_rc458_qualification_support.py": {
+      "accepted_predecessor_sha256": [
+        "45dcca8af7ad4acbf69c7ca6677420e91610d2bb471e462401395fba8fe56e4a"
+      ],
+      "current_sha256": "6714dbf0419b64ba7ec65111d6df38f97429a814cbc79bad4ebc6f7748e5aa01",
+      "reason": "resolve the immutable RC4.5.8 source identity through the forward-only v9 qualification-support successor record",
+      "production_runtime_changed": false,
+      "scientific_threshold_changed": false
+    }
+  },
+  "cpu_verification": {
+    "py_compile": "PASS",
+    "targeted_tests": "pending final replay",
+    "hpcc_python_3_10_replay": "pending",
+    "h100_executed": false
+  },
+  "formal_state": {
+    "qualification_complete": false,
+    "g1_complete": false,
+    "eligible_for_cumulative_reassembly": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "push_authorized": true,
+    "h100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "threshold_change_authorized": false
+  }
+}

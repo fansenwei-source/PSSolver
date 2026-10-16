@@ -18,8 +18,9 @@ import os
 from pathlib import Path
 import platform
 import statistics
+import subprocess
 import tempfile
-from typing import Callable, Iterable
+from typing import Callable, Iterable, Mapping
 
 import numpy as np
 import torch
@@ -119,6 +120,7 @@ class RC458ProfileConfig:
     dtype: str = "float64"
     warmup_steps: int = 10
     profile_steps: int = 60
+    post_flush_rewarm_steps: int = 0
     seed: int = 20261013
 
 
@@ -131,6 +133,7 @@ class _RuntimeCase:
     runtime_identity: dict[str, object]
     configuration_identity: dict[str, object]
     initial_state_sha256: str
+    public_diagnostics: Callable[[], object] | None = None
 
 
 def _require(condition: bool, message: str) -> None:
@@ -168,7 +171,11 @@ def _validate(config: RC458ProfileConfig) -> None:
         raise ValueError(
             f"{config.family} is frozen to the qualified {expected_dtype} contract"
         )
-    if config.warmup_steps < 0 or config.profile_steps <= 0:
+    if (
+        config.warmup_steps < 0
+        or config.profile_steps <= 0
+        or config.post_flush_rewarm_steps < 0
+    ):
         raise ValueError("warmup/profile step counts are invalid")
 
 
@@ -276,9 +283,23 @@ def _complete_simulation(
         ),
         output=Output(
             directory=root / "unused-output",
-            steps=config.warmup_steps + config.profile_steps,
-            save_interval=config.warmup_steps + config.profile_steps + 1,
-            diagnostic_interval=config.warmup_steps + config.profile_steps + 1,
+            steps=(
+                config.warmup_steps
+                + config.post_flush_rewarm_steps
+                + config.profile_steps
+            ),
+            save_interval=(
+                config.warmup_steps
+                + config.post_flush_rewarm_steps
+                + config.profile_steps
+                + 1
+            ),
+            diagnostic_interval=(
+                config.warmup_steps
+                + config.post_flush_rewarm_steps
+                + config.profile_steps
+                + 1
+            ),
             save_start_step=0,
             diagnostics=True,
             save_hydrodynamics=True,
@@ -313,6 +334,7 @@ def _production_case(
         runtime_identity=dict(adapter.to_metadata()),
         configuration_identity=dict(spec.simulation.identity_metadata()),
         initial_state_sha256=initial_sha,
+        public_diagnostics=getattr(adapter, "flow_diagnostics", None),
     )
 
 
@@ -371,6 +393,7 @@ def _functional_case(
         },
         configuration_identity=simulation.identity_metadata(),
         initial_state_sha256=_tensor_sha256(state()),
+        public_diagnostics=getattr(runtime, "diagnostics", None),
     )
 
 
@@ -392,9 +415,21 @@ def _channel_active_case(config: RC458ProfileConfig) -> _RuntimeCase:
         shape=config.shape,
         lengths=config.lengths,
         dt=0.01,
-        steps=config.warmup_steps + config.profile_steps,
-        save_interval=config.warmup_steps + config.profile_steps,
-        diagnostic_interval=config.warmup_steps + config.profile_steps,
+        steps=(
+            config.warmup_steps
+            + config.post_flush_rewarm_steps
+            + config.profile_steps
+        ),
+        save_interval=(
+            config.warmup_steps
+            + config.post_flush_rewarm_steps
+            + config.profile_steps
+        ),
+        diagnostic_interval=(
+            config.warmup_steps
+            + config.post_flush_rewarm_steps
+            + config.profile_steps
+        ),
         activity=5.0,
         device=config.device,
         dtype=config.dtype,
@@ -460,6 +495,7 @@ def _channel_active_case(config: RC458ProfileConfig) -> _RuntimeCase:
         runtime_identity=dict(adapter.to_metadata()),
         configuration_identity=dict(spec.identity_metadata()),
         initial_state_sha256=_tensor_sha256(state()),
+        public_diagnostics=getattr(adapter, "flow_diagnostics", None),
     )
 
 
@@ -477,7 +513,7 @@ def _plane_case(config: RC458ProfileConfig) -> _RuntimeCase:
         device=config.device,
         dtype=config.dtype,
         warmup_steps=config.warmup_steps,
-        profile_steps=config.profile_steps,
+        profile_steps=config.profile_steps + config.post_flush_rewarm_steps,
         seed=config.seed,
         pointwise_execution="compile",
     )
@@ -492,6 +528,7 @@ def _plane_case(config: RC458ProfileConfig) -> _RuntimeCase:
         runtime_identity=dict(adapter.to_metadata()),
         configuration_identity=dict(spec.identity_metadata()),
         initial_state_sha256=_tensor_sha256(state()),
+        public_diagnostics=getattr(adapter, "flow_diagnostics", None),
     )
 
 
@@ -546,6 +583,229 @@ def _timed_steps(
     ]
 
 
+def _cuda_memory_snapshot(device: torch.device) -> dict[str, int]:
+    stats = torch.cuda.memory_stats(device)
+    return {
+        "allocated_bytes": int(torch.cuda.memory_allocated(device)),
+        "reserved_bytes": int(torch.cuda.memory_reserved(device)),
+        "active_bytes": int(stats.get("active_bytes.all.current", 0)),
+        "peak_allocated_bytes": int(torch.cuda.max_memory_allocated(device)),
+        "peak_reserved_bytes": int(torch.cuda.max_memory_reserved(device)),
+        "peak_active_bytes": int(stats.get("active_bytes.all.peak", 0)),
+    }
+
+
+def _find_nested_value(value: object, names: tuple[str, ...]) -> tuple[str, object] | None:
+    if not isinstance(value, Mapping):
+        return None
+    for name in names:
+        if name in value:
+            return name, value[name]
+    for nested in value.values():
+        found = _find_nested_value(nested, names)
+        if found is not None:
+            return found
+    return None
+
+
+def _normalize_public_diagnostics(callback: Callable[[], object] | None) -> dict[str, object]:
+    if callback is None or not callable(callback):
+        return {
+            "applicable": False,
+            "reason": "runtime_does_not_expose_public_diagnostics",
+        }
+    try:
+        raw = callback()
+    except Exception as error:  # diagnostic evidence must not hide the exception
+        return {
+            "applicable": False,
+            "reason": f"public_diagnostics_raised_{type(error).__name__}",
+        }
+    if not isinstance(raw, Mapping):
+        return {
+            "applicable": False,
+            "reason": "public_diagnostics_did_not_return_a_mapping",
+        }
+    aliases = {
+        "pressure_iteration_count": (
+            "last_pressure_iterations",
+            "pressure_iterations",
+            "iterations",
+        ),
+        "pressure_termination_reason": (
+            "last_pressure_termination_reason",
+            "termination_reason",
+        ),
+        "pressure_absolute_residual": (
+            "last_pressure_residual",
+            "absolute_residual",
+            "residual",
+        ),
+        "pressure_relative_residual": (
+            "last_pressure_relative_residual",
+            "relative_residual",
+        ),
+    }
+    normalized: dict[str, object] = {
+        "applicable": False,
+        "observed_fields": [],
+        "source_keys": {},
+    }
+    observed_fields: list[str] = []
+    source_keys: dict[str, str] = {}
+    for destination, names in aliases.items():
+        found = _find_nested_value(raw, names)
+        if found is None:
+            continue
+        source, observed = found
+        if destination == "pressure_iteration_count":
+            if isinstance(observed, bool) or not isinstance(observed, int):
+                continue
+            value: object = int(observed)
+        elif destination == "pressure_termination_reason":
+            if not isinstance(observed, str) or not observed:
+                continue
+            value = observed
+        else:
+            if isinstance(observed, bool) or not isinstance(observed, (int, float)):
+                continue
+            numeric = float(observed)
+            if not math.isfinite(numeric):
+                normalized[f"{destination}_finite"] = False
+                continue
+            normalized[f"{destination}_finite"] = True
+            value = numeric
+        normalized[destination] = value
+        observed_fields.append(destination)
+        source_keys[destination] = source
+    normalized["observed_fields"] = observed_fields
+    normalized["source_keys"] = source_keys
+    normalized["applicable"] = bool(observed_fields)
+    if not observed_fields:
+        normalized["reason"] = "no_supported_pressure_field_was_exposed"
+    return normalized
+
+
+def _nvidia_smi_telemetry() -> dict[str, object]:
+    command = [
+        "nvidia-smi",
+        "--query-gpu=pstate,clocks.current.sm,clocks.current.memory,power.draw,temperature.gpu",
+        "--format=csv,noheader,nounits",
+    ]
+    try:
+        result = subprocess.run(
+            command,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+    except Exception as error:
+        return {
+            "applicable": False,
+            "reason": f"nvidia_smi_raised_{type(error).__name__}",
+            "command": command,
+        }
+    if result.returncode != 0:
+        return {
+            "applicable": False,
+            "reason": "nvidia_smi_returned_nonzero",
+            "returncode": result.returncode,
+            "stderr": result.stderr.strip(),
+            "command": command,
+        }
+    rows: list[dict[str, object]] = []
+    try:
+        for line in result.stdout.splitlines():
+            if not line.strip():
+                continue
+            pstate, sm, memory, power, temperature = (
+                item.strip() for item in line.split(",")
+            )
+            numeric = [float(sm), float(memory), float(power), float(temperature)]
+            if not all(math.isfinite(value) for value in numeric):
+                raise ValueError("non-finite telemetry")
+            rows.append(
+                {
+                    "pstate": pstate,
+                    "sm_clock_mhz": numeric[0],
+                    "memory_clock_mhz": numeric[1],
+                    "power_draw_watts": numeric[2],
+                    "temperature_celsius": numeric[3],
+                }
+            )
+    except Exception as error:
+        return {
+            "applicable": False,
+            "reason": f"nvidia_smi_output_parse_{type(error).__name__}",
+            "stdout": result.stdout.strip(),
+            "command": command,
+        }
+    return {
+        "applicable": bool(rows),
+        "reason": None if rows else "nvidia_smi_returned_no_rows",
+        "rows": rows,
+        "command": command,
+    }
+
+
+def _diagnostic_replay(
+    root: Path,
+    config: RC458ProfileConfig,
+    *,
+    device: torch.device,
+    expected_initial_sha256: str,
+    expected_final_sha256: str,
+) -> dict[str, object]:
+    replay = _build_case(root, config)
+    _require(
+        replay.initial_state_sha256 == expected_initial_sha256,
+        "diagnostic replay initial state differs",
+    )
+    for _ in range(config.warmup_steps):
+        replay.step()
+    torch.cuda.synchronize(device)
+    gc.collect()
+    torch.cuda.empty_cache()
+    for _ in range(config.post_flush_rewarm_steps):
+        replay.step()
+    torch.cuda.synchronize(device)
+    records: list[dict[str, object]] = []
+    for index in range(1, config.profile_steps + 1):
+        replay.step()
+        torch.cuda.synchronize(device)
+        records.append(
+            {
+                "step_index": index,
+                "runtime_completed_steps": replay.completed_steps(),
+                "diagnostics": _normalize_public_diagnostics(
+                    replay.public_diagnostics
+                ),
+            }
+        )
+    replay_state = replay.state()
+    replay_final_sha256 = _tensor_sha256(replay_state)
+    _require(_finite(replay_state), "diagnostic replay state is non-finite")
+    _require(
+        replay_final_sha256 == expected_final_sha256,
+        "diagnostic replay final state differs from formal profile",
+    )
+    return {
+        "separate_fresh_runtime": True,
+        "used_for_performance_or_memory_adjudication": False,
+        "initial_state_sha256": replay.initial_state_sha256,
+        "final_state_sha256": replay_final_sha256,
+        "completed_steps": replay.completed_steps(),
+        "step_records": records,
+        "finite": True,
+    }
+
+
+def _collect_and_empty_cuda_cache() -> None:
+    gc.collect()
+    torch.cuda.empty_cache()
+
+
 def run_profile(config: RC458ProfileConfig) -> dict[str, object]:
     _validate(config)
     if not torch.cuda.is_available():
@@ -575,8 +835,17 @@ def run_profile(config: RC458ProfileConfig) -> dict[str, object]:
                 case.step()
             torch.cuda.synchronize(device)
             counters_after_warmup = _dynamo_counter_snapshot()
+            steps_after_warmup = case.completed_steps()
+            memory_after_warmup = _cuda_memory_snapshot(device)
             gc.collect()
             torch.cuda.empty_cache()
+            memory_after_empty_cache = _cuda_memory_snapshot(device)
+            for _ in range(config.post_flush_rewarm_steps):
+                case.step()
+            torch.cuda.synchronize(device)
+            counters_after_rewarm = _dynamo_counter_snapshot()
+            steps_after_rewarm = case.completed_steps()
+            memory_after_rewarm = _cuda_memory_snapshot(device)
             torch.cuda.reset_peak_memory_stats(device)
             timer.reset()
             samples = _timed_steps(case.step, config.profile_steps, device)
@@ -587,11 +856,27 @@ def run_profile(config: RC458ProfileConfig) -> dict[str, object]:
             memory_stats = torch.cuda.memory_stats(device)
             peak_allocated = int(torch.cuda.max_memory_allocated(device))
             peak_reserved = int(torch.cuda.max_memory_reserved(device))
+            memory_after_profile = _cuda_memory_snapshot(device)
             final_sha = _tensor_sha256(state)
             finite = _finite(state)
             runtime_completed_steps = case.completed_steps()
             runtime_identity = case.runtime_identity
             pointwise = _pointwise_metadata(case.solver)
+            initial_sha = case.initial_state_sha256
+            telemetry_after_formal_window = _nvidia_smi_telemetry()
+            diagnostic_replay: dict[str, object] | None = None
+            if config.post_flush_rewarm_steps:
+                del state
+                del case
+                del timer
+                _collect_and_empty_cuda_cache()
+                diagnostic_replay = _diagnostic_replay(
+                    Path(temporary) / "diagnostic-replay",
+                    config,
+                    device=device,
+                    expected_initial_sha256=initial_sha,
+                    expected_final_sha256=final_sha,
+                )
 
     caller_after = {
         "float32_matmul_precision": torch.get_float32_matmul_precision(),
@@ -603,7 +888,7 @@ def run_profile(config: RC458ProfileConfig) -> dict[str, object]:
         "runtime requested/effective identity differs",
     )
     _require(runtime_identity.get("fallback_used") is False, "runtime fallback used")
-    graph = _counter_delta(counters_after_profile, counters_after_warmup)
+    graph = _counter_delta(counters_after_profile, counters_after_rewarm)
     graph_breaks = graph["graph_breaks"]
     _require(isinstance(graph_breaks, int), "graph-break counter unavailable")
     compile_fallback = bool(
@@ -658,11 +943,48 @@ def run_profile(config: RC458ProfileConfig) -> dict[str, object]:
             "pointwise": pointwise,
             "during_build": _counter_delta(counters_after_build, counters_before),
             "during_warmup": _counter_delta(counters_after_warmup, counters_after_build),
+            "during_post_flush_rewarm": _counter_delta(
+                counters_after_rewarm, counters_after_warmup
+            ),
             "during_profile": graph,
             "graph_breaks": graph_breaks,
             "compile_fallback": compile_fallback,
         },
-        "initial_state_sha256": case.initial_state_sha256,
+        "measurement_window": {
+            "warmup_steps": config.warmup_steps,
+            "post_flush_rewarm_steps": config.post_flush_rewarm_steps,
+            "timed_steps": config.profile_steps,
+            "steps_after_warmup": steps_after_warmup,
+            "measurement_start_completed_steps": steps_after_rewarm,
+            "rewarm_timed": False,
+            "rewarm_in_formal_transform_counters": False,
+            "rewarm_in_formal_compiler_counters": False,
+            "rewarm_in_formal_memory_peaks": False,
+            "formal_memory_semantics": "steady_state_after_allocation_recovery",
+            "memory_snapshots": {
+                "after_warmup": memory_after_warmup,
+                "after_empty_cache": memory_after_empty_cache,
+                "after_post_flush_rewarm": memory_after_rewarm,
+                "after_formal_timed_window": memory_after_profile,
+            },
+            "cold_recovery_memory": {
+                "allocated_delta_bytes": (
+                    memory_after_rewarm["allocated_bytes"]
+                    - memory_after_empty_cache["allocated_bytes"]
+                ),
+                "reserved_delta_bytes": (
+                    memory_after_rewarm["reserved_bytes"]
+                    - memory_after_empty_cache["reserved_bytes"]
+                ),
+                "active_delta_bytes": (
+                    memory_after_rewarm["active_bytes"]
+                    - memory_after_empty_cache["active_bytes"]
+                ),
+            },
+            "device_telemetry_after_formal_window": telemetry_after_formal_window,
+        },
+        "diagnostic_replay": diagnostic_replay,
+        "initial_state_sha256": initial_sha,
         "final_state_sha256": final_sha,
         "completed_profile_steps": config.profile_steps,
         "runtime_completed_steps": runtime_completed_steps,
@@ -710,6 +1032,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dtype", default="float64")
     parser.add_argument("--warmup-steps", type=int, default=10)
     parser.add_argument("--profile-steps", type=int, default=60)
+    parser.add_argument("--post-flush-rewarm-steps", type=int, default=0)
     parser.add_argument("--seed", type=int, default=20261013)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
@@ -726,6 +1049,7 @@ def main(argv: list[str] | None = None) -> int:
             dtype=args.dtype,
             warmup_steps=args.warmup_steps,
             profile_steps=args.profile_steps,
+            post_flush_rewarm_steps=args.post_flush_rewarm_steps,
             seed=args.seed,
         )
     )

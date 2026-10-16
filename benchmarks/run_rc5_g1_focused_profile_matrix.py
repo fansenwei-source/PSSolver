@@ -61,8 +61,10 @@ def build_command_plan(
     candidate_python: Path,
     support_root: Path,
     output_root: Path,
+    plan: dict[str, object] | None = None,
+    command_schema: str = SCHEMA,
 ) -> dict[str, object]:
-    plan = build_plan()
+    plan = build_plan() if plan is None else plan
     script = support_root / "benchmarks" / "profile_rc5_g1_runtime_family.py"
     rows: list[dict[str, object]] = []
     for entry in plan["profile_matrix"]:
@@ -71,8 +73,7 @@ def build_command_plan(
         grid = plan["grid_contracts"][entry["grid"]]
         output = output_root / "profiles" / f"{entry['key']}.json"
         cache = output_root / "compiler_cache" / str(entry["key"])
-        rows.append(
-            {
+        row = {
                 "sequence": entry["sequence"],
                 "cell_sequence": entry["cell_sequence"],
                 "within_pair_order": entry["within_pair_order"],
@@ -112,9 +113,14 @@ def build_command_plan(
                     str(output),
                 ],
             }
-        )
+        if "post_flush_rewarm_steps" in entry:
+            row["command"][-2:-2] = [
+                "--post-flush-rewarm-steps",
+                str(entry["post_flush_rewarm_steps"]),
+            ]
+        rows.append(row)
     return {
-        "schema": SCHEMA,
+        "schema": command_schema,
         "profile_count": len(rows),
         "baseline_python": str(baseline_python),
         "candidate_python": str(candidate_python),
@@ -150,7 +156,15 @@ def _preflight(command_plan: dict[str, object]) -> None:
             raise TypeError("profile command must be a non-empty argument vector")
 
 
-def execute(command_plan: dict[str, object]) -> dict[str, object]:
+def execute(
+    command_plan: dict[str, object],
+    *,
+    analyzer=analyze,
+    progress_schema: str = "pssolver.rc5.g1.focused_profile_progress.v1",
+    failure_schema: str = FAILURE_SCHEMA,
+    failure_classification: str = "FAIL_RC5_G1_FOCUSED_PERFORMANCE_MEMORY_GATE",
+    complete_schema: str = COMPLETE_SCHEMA,
+) -> dict[str, object]:
     _preflight(command_plan)
     output_root = Path(str(command_plan["output_root"])).absolute()
     profiles = output_root / "profiles"
@@ -209,19 +223,19 @@ def execute(command_plan: dict[str, object]) -> dict[str, object]:
         _atomic_json(
             output_root / "progress" / f"{int(row['sequence']):03d}.json",
             {
-                "schema": "pssolver.rc5.g1.focused_profile_progress.v1",
+                "schema": progress_schema,
                 "completed": completed,
             },
         )
 
     try:
-        analysis = analyze(profiles)
+        analysis = analyzer(profiles)
     except Exception as error:
         _atomic_json(
             output_root / "ANALYSIS_FAILED.json",
             {
-                "schema": FAILURE_SCHEMA,
-                "classification": "FAIL_RC5_G1_FOCUSED_PERFORMANCE_MEMORY_GATE",
+                "schema": failure_schema,
+                "classification": failure_classification,
                 "profile_count": len(completed),
                 "error_type": type(error).__name__,
                 "error": str(error),
@@ -231,7 +245,7 @@ def execute(command_plan: dict[str, object]) -> dict[str, object]:
         raise
     _atomic_json(output_root / "analysis.json", analysis)
     result = {
-        "schema": COMPLETE_SCHEMA,
+        "schema": complete_schema,
         "profile_count": len(completed),
         "completed": completed,
         "analysis_classification": analysis["classification"],

@@ -126,6 +126,146 @@ def _timing(profile: dict[str, object], key: str, plan: dict[str, object]) -> di
     }
 
 
+def _validate_measurement_window(
+    profile: dict[str, object], entry: dict[str, object], key: str
+) -> None:
+    if "post_flush_rewarm_steps" not in entry:
+        return
+    window = profile.get("measurement_window")
+    replay = profile.get("diagnostic_replay")
+    _require(isinstance(window, dict), f"{key} measurement window is missing")
+    _require(isinstance(replay, dict), f"{key} diagnostic replay is missing")
+    expected_rewarm = int(entry["post_flush_rewarm_steps"])
+    expected_start = int(entry["measurement_start_completed_steps"])
+    expected_runtime = int(entry["expected_runtime_completed_steps"])
+    _require(window.get("warmup_steps") == entry["warmup_steps"], f"{key} window warmup differs")
+    _require(window.get("post_flush_rewarm_steps") == expected_rewarm, f"{key} window rewarm differs")
+    _require(window.get("timed_steps") == entry["timed_steps"], f"{key} window timed steps differ")
+    _require(window.get("steps_after_warmup") == entry["warmup_steps"], f"{key} warmup clock differs")
+    _require(window.get("measurement_start_completed_steps") == expected_start, f"{key} measurement start differs")
+    for name in (
+        "rewarm_timed",
+        "rewarm_in_formal_transform_counters",
+        "rewarm_in_formal_compiler_counters",
+        "rewarm_in_formal_memory_peaks",
+    ):
+        _require(window.get(name) is False, f"{key} {name} must be false")
+    _require(
+        window.get("formal_memory_semantics")
+        == "steady_state_after_allocation_recovery",
+        f"{key} formal memory semantics differ",
+    )
+    snapshots = window.get("memory_snapshots")
+    _require(isinstance(snapshots, dict), f"{key} memory snapshots are missing")
+    _require(
+        set(snapshots)
+        == {
+            "after_warmup",
+            "after_empty_cache",
+            "after_post_flush_rewarm",
+            "after_formal_timed_window",
+        },
+        f"{key} memory snapshot phases differ",
+    )
+    memory_fields = {
+        "allocated_bytes",
+        "reserved_bytes",
+        "active_bytes",
+        "peak_allocated_bytes",
+        "peak_reserved_bytes",
+        "peak_active_bytes",
+    }
+    for phase, snapshot in snapshots.items():
+        _require(isinstance(snapshot, dict), f"{key} {phase} memory snapshot differs")
+        _require(set(snapshot) == memory_fields, f"{key} {phase} memory fields differ")
+        for field, value in snapshot.items():
+            _require(
+                isinstance(value, int) and not isinstance(value, bool) and value >= 0,
+                f"{key} {phase}.{field} must be a non-negative integer",
+            )
+    cold = window.get("cold_recovery_memory")
+    _require(isinstance(cold, dict), f"{key} cold recovery memory is missing")
+    _require(
+        set(cold)
+        == {
+            "allocated_delta_bytes",
+            "reserved_delta_bytes",
+            "active_delta_bytes",
+        },
+        f"{key} cold recovery memory fields differ",
+    )
+    _require(
+        all(isinstance(value, int) and not isinstance(value, bool) for value in cold.values()),
+        f"{key} cold recovery memory values must be integers",
+    )
+    telemetry = window.get("device_telemetry_after_formal_window")
+    _require(isinstance(telemetry, dict), f"{key} device telemetry is missing")
+    _require(isinstance(telemetry.get("applicable"), bool), f"{key} telemetry applicability differs")
+    if telemetry["applicable"]:
+        rows = telemetry.get("rows")
+        _require(isinstance(rows, list) and rows, f"{key} telemetry rows are missing")
+        for index, row in enumerate(rows):
+            _require(isinstance(row, dict), f"{key} telemetry row {index} differs")
+            _require(isinstance(row.get("pstate"), str) and row["pstate"], f"{key} telemetry pstate differs")
+            for field in (
+                "sm_clock_mhz",
+                "memory_clock_mhz",
+                "power_draw_watts",
+                "temperature_celsius",
+            ):
+                _number(row.get(field), f"{key} telemetry {field}")
+    else:
+        _require(
+            isinstance(telemetry.get("reason"), str) and telemetry["reason"],
+            f"{key} unavailable telemetry reason is missing",
+        )
+
+    _require(replay.get("separate_fresh_runtime") is True, f"{key} replay is not fresh")
+    _require(
+        replay.get("used_for_performance_or_memory_adjudication") is False,
+        f"{key} replay entered formal adjudication",
+    )
+    _require(replay.get("finite") is True, f"{key} replay state is non-finite")
+    _require(replay.get("completed_steps") == expected_runtime, f"{key} replay clock differs")
+    _require(
+        replay.get("initial_state_sha256") == profile.get("initial_state_sha256"),
+        f"{key} replay initial state differs",
+    )
+    _require(
+        replay.get("final_state_sha256") == profile.get("final_state_sha256"),
+        f"{key} replay final state differs",
+    )
+    records = replay.get("step_records")
+    _require(
+        isinstance(records, list) and len(records) == entry["timed_steps"],
+        f"{key} replay step-record count differs",
+    )
+    for index, record in enumerate(records, start=1):
+        _require(isinstance(record, dict), f"{key} replay record {index} differs")
+        _require(record.get("step_index") == index, f"{key} replay step index differs")
+        _require(
+            record.get("runtime_completed_steps") == expected_start + index,
+            f"{key} replay completed-step sequence differs",
+        )
+        diagnostics = record.get("diagnostics")
+        _require(isinstance(diagnostics, dict), f"{key} replay diagnostics are missing")
+        _require(
+            isinstance(diagnostics.get("applicable"), bool),
+            f"{key} replay diagnostics applicability differs",
+        )
+        if diagnostics["applicable"]:
+            observed = diagnostics.get("observed_fields")
+            _require(
+                isinstance(observed, list) and observed,
+                f"{key} applicable diagnostics contain no observed fields",
+            )
+        else:
+            _require(
+                isinstance(diagnostics.get("reason"), str) and diagnostics["reason"],
+                f"{key} unavailable diagnostics reason is missing",
+            )
+
+
 def _validate_profile(
     profile: dict[str, object], entry: dict[str, object], plan: dict[str, object]
 ) -> dict[str, object]:
@@ -163,6 +303,10 @@ def _validate_profile(
         "warmup_steps": entry["warmup_steps"],
         "profile_steps": entry["timed_steps"],
     }
+    if "post_flush_rewarm_steps" in entry:
+        expected_config["post_flush_rewarm_steps"] = entry[
+            "post_flush_rewarm_steps"
+        ]
     for name, expected in expected_config.items():
         _require(config.get(name) == expected, f"{key} config {name} differs")
     _require(provider.get("role") == entry["provider_role"], f"{key} role differs")
@@ -188,11 +332,15 @@ def _validate_profile(
     )
     _require(
         _integer(profile.get("runtime_completed_steps"), f"{key} runtime steps")
-        == entry["warmup_steps"] + entry["timed_steps"],
+        == entry.get(
+            "expected_runtime_completed_steps",
+            entry["warmup_steps"] + entry["timed_steps"],
+        ),
         f"{key} runtime completed steps differ",
     )
     _require(compiler.get("graph_breaks") == 0, f"{key} graph break")
     _require(compiler.get("compile_fallback") is False, f"{key} compile fallback")
+    _validate_measurement_window(profile, entry, key)
 
     raw_forward = _integer(transforms.get("forward"), f"{key} raw forward")
     raw_inverse = _integer(transforms.get("inverse"), f"{key} raw inverse")
@@ -232,9 +380,28 @@ def _validate_profile(
     allocated = _integer(
         memory.get("peak_allocated_bytes"), f"{key} peak allocated", positive=True
     )
+    active = _integer(
+        memory.get("peak_active_bytes"), f"{key} peak active", positive=True
+    )
     reserved = _integer(
         memory.get("peak_reserved_bytes"), f"{key} peak reserved", positive=True
     )
+    if "post_flush_rewarm_steps" in entry:
+        formal_snapshot = profile["measurement_window"]["memory_snapshots"][
+            "after_formal_timed_window"
+        ]
+        _require(
+            formal_snapshot["peak_allocated_bytes"] == allocated,
+            f"{key} formal allocated peak differs from memory gate",
+        )
+        _require(
+            formal_snapshot["peak_active_bytes"] == active,
+            f"{key} formal active peak differs from memory gate",
+        )
+        _require(
+            formal_snapshot["peak_reserved_bytes"] == reserved,
+            f"{key} formal reserved peak differs from memory gate",
+        )
     initial = _sha256(profile.get("initial_state_sha256"), f"{key} initial state")
     final = _sha256(profile.get("final_state_sha256"), f"{key} final state")
     return {
@@ -252,8 +419,13 @@ def _validate_profile(
     }
 
 
-def analyze(profile_root: Path) -> dict[str, object]:
-    plan = build_plan()
+def _analyze_with_plan(
+    profile_root: Path,
+    plan: dict[str, object],
+    *,
+    analysis_schema: str,
+    pass_classification: str,
+) -> dict[str, object]:
     expected = plan["profile_matrix"]
     _require(profile_root.is_dir(), "profile root is not a directory")
     records: dict[str, dict[str, object]] = {}
@@ -370,8 +542,8 @@ def analyze(profile_root: Path) -> dict[str, object]:
             }
         )
     return {
-        "schema": SCHEMA,
-        "classification": PASS_CLASSIFICATION,
+        "schema": analysis_schema,
+        "classification": pass_classification,
         "focused_evidence_complete": True,
         "focused_cell_count": len(groups),
         "profile_count": len(records),
@@ -385,6 +557,15 @@ def analyze(profile_root: Path) -> dict[str, object]:
         "eligible_for_default_promotion": False,
         "production_default_changed": False,
     }
+
+
+def analyze(profile_root: Path) -> dict[str, object]:
+    return _analyze_with_plan(
+        profile_root,
+        build_plan(),
+        analysis_schema=SCHEMA,
+        pass_classification=PASS_CLASSIFICATION,
+    )
 
 
 def _atomic_json(path: Path, value: object) -> None:

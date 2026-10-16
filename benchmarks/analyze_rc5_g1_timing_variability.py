@@ -108,6 +108,18 @@ def _profiler_source_audit(path: Path) -> dict[str, object]:
             calls[name].append(node.lineno)
     for name, lines in calls.items():
         _require(len(lines) == 1, f"expected one {name} call in run_profile")
+    rewarm_lines = [
+        node.lineno
+        for node in ast.walk(function)
+        if isinstance(node, ast.For)
+        and isinstance(node.iter, ast.Call)
+        and ast.unparse(node.iter.func) == "range"
+        and any(
+            ast.unparse(argument) == "config.post_flush_rewarm_steps"
+            for argument in node.iter.args
+        )
+    ]
+    _require(len(rewarm_lines) <= 1, "multiple post-flush rewarm loops found")
     ordered = [
         calls["gc.collect"][0],
         calls["torch.cuda.empty_cache"][0],
@@ -116,12 +128,25 @@ def _profiler_source_audit(path: Path) -> dict[str, object]:
         calls["_timed_steps"][0],
     ]
     _require(ordered == sorted(ordered), "profiler reset/timing call order differs")
+    has_rewarm = bool(rewarm_lines)
+    if has_rewarm:
+        _require(
+            calls["torch.cuda.empty_cache"][0]
+            < rewarm_lines[0]
+            < calls["torch.cuda.reset_peak_memory_stats"][0],
+            "post-flush rewarm is not outside the formal memory window",
+        )
+        _require(
+            rewarm_lines[0] < calls["timer.reset"][0],
+            "post-flush rewarm is not outside the formal transform window",
+        )
     return {
         "path": str(path.resolve()),
         "calls": {name: lines[0] for name, lines in calls.items()},
         "empty_cache_after_warmup_before_timing": True,
-        "untimed_rewarm_between_empty_cache_and_timing": False,
-        "first_post_empty_cache_step_is_timed": True,
+        "post_flush_rewarm_loop": rewarm_lines[0] if has_rewarm else None,
+        "untimed_rewarm_between_empty_cache_and_timing": has_rewarm,
+        "first_post_empty_cache_step_is_timed": not has_rewarm,
     }
 
 

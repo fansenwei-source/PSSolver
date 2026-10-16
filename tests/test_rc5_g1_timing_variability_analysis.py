@@ -21,6 +21,22 @@ ROOT = Path(__file__).resolve().parents[1]
 PROFILER = ROOT / "benchmarks/profile_rc458_runtime_family.py"
 
 
+def _historical_profiler(tmp_path: Path) -> Path:
+    path = tmp_path / "historical_profiler.py"
+    path.write_text(
+        """def run_profile(config):
+    gc.collect()
+    torch.cuda.empty_cache()
+    torch.cuda.reset_peak_memory_stats(device)
+    timer.reset()
+    samples = _timed_steps(case.step, config.profile_steps, device)
+    return samples
+""",
+        encoding="utf-8",
+    )
+    return path
+
+
 def _timing(samples: list[float]) -> dict[str, object]:
     mean = statistics.fmean(samples)
     stdev = statistics.stdev(samples)
@@ -61,8 +77,10 @@ def test_source_audit_proves_empty_cache_precedes_first_timed_step():
     assert calls["torch.cuda.empty_cache"] < calls["_timed_steps"]
     assert calls["torch.cuda.reset_peak_memory_stats"] < calls["_timed_steps"]
     assert audit["empty_cache_after_warmup_before_timing"] is True
-    assert audit["untimed_rewarm_between_empty_cache_and_timing"] is False
-    assert audit["first_post_empty_cache_step_is_timed"] is True
+    assert audit["untimed_rewarm_between_empty_cache_and_timing"] is True
+    assert audit["first_post_empty_cache_step_is_timed"] is False
+    assert calls["torch.cuda.empty_cache"] < audit["post_flush_rewarm_loop"]
+    assert audit["post_flush_rewarm_loop"] < calls["timer.reset"]
 
 
 def test_analysis_separates_first_sample_contamination_from_residual_variability(
@@ -70,7 +88,7 @@ def test_analysis_separates_first_sample_contamination_from_residual_variability
 ):
     profile_root = tmp_path / "profiles"
     _profiles(profile_root)
-    result = analyze(profile_root, PROFILER)
+    result = analyze(profile_root, _historical_profiler(tmp_path))
     assert result["classification"] == CLASSIFICATION
     assert result["analysis_only"] is True
     assert result["profile_count"] == 48
@@ -112,7 +130,7 @@ def test_analysis_rejects_reported_statistic_mismatch(tmp_path):
     payload["timing"]["mean_timestep_seconds"] = 99.0
     path.write_text(json.dumps(payload, allow_nan=False), encoding="utf-8")
     with pytest.raises(ValueError, match="does not match raw samples"):
-        analyze(profile_root, PROFILER)
+        analyze(profile_root, _historical_profiler(tmp_path))
 
 
 def test_analysis_rejects_incomplete_or_extra_file_set(tmp_path):
@@ -120,7 +138,7 @@ def test_analysis_rejects_incomplete_or_extra_file_set(tmp_path):
     _profiles(profile_root)
     (profile_root / "extra.json").write_text("{}\n", encoding="utf-8")
     with pytest.raises(ValueError, match="profile file set differs"):
-        analyze(profile_root, PROFILER)
+        analyze(profile_root, _historical_profiler(tmp_path))
 
 
 def test_cli_writes_strict_atomic_json_without_reclassifying_v7(tmp_path):
@@ -131,7 +149,7 @@ def test_cli_writes_strict_atomic_json_without_reclassifying_v7(tmp_path):
         "--profile-root",
         str(profile_root),
         "--profiler-source",
-        str(PROFILER),
+        str(_historical_profiler(tmp_path)),
         "--output",
         str(output),
     ]

@@ -23,15 +23,28 @@ from benchmarks.run_rc458_profile_matrix import build_command_plan
 ROOT = Path(__file__).resolve().parents[1]
 SUPPORT_RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc458_qualification_support.json"
 RC5_R55 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
+RC5_G1_WINDOW_IMPLEMENTATION = ROOT / (
+    "notes/PSSolver_v0_2_0rc5_g1_measurement_window_implementation_v9.json"
+)
 
 
 def _resolve_r55(relative: str, historical: str) -> str:
-    successor = json.loads(RC5_R55.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ].get(relative)
-    if successor is not None and successor["historical_sha256"] == historical:
-        return successor["current_sha256"]
-    return historical
+    current = historical
+    for path in (RC5_R55, RC5_G1_WINDOW_IMPLEMENTATION):
+        if not path.is_file():
+            continue
+        successor = json.loads(path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative)
+        if successor is None:
+            continue
+        accepted = successor.get(
+            "accepted_predecessor_sha256",
+            [successor.get("historical_sha256")],
+        )
+        if current in accepted:
+            current = successor["current_sha256"]
+    return current
 
 
 def test_rc458_per_family_dtype_and_transform_contract_is_explicit():
