@@ -1,0 +1,97 @@
+{
+  "schema": "pssolver.rc5.g1.cumulative_closure_plan.v1",
+  "date": "2026-10-16",
+  "classification": "READY_FOR_RC5_G1_CPU_ONLY_CUMULATIVE_CLOSURE",
+  "parent_commit": "044fd95cd8351a857bdc87b5b7a626d91fee16d2",
+  "scope": {
+    "analysis_only": true,
+    "cpu_only": true,
+    "new_h100_submission_authorized": false,
+    "new_h100_submission_required": false,
+    "scientific_timestep_authorized": false,
+    "source_runtime_modified": false,
+    "thresholds_modified": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  },
+  "evidence_contract": {
+    "frozen_cpu_and_installed_wheel_closure": "notes/PSSolver_v0_2_0rc5_g1_cpu_closure.json",
+    "released_checkpoint_matrix": "notes/PSSolver_v0_2_0rc5_g1_checkpoint_matrix.json",
+    "h100_auxiliary_source": "recovery_v5",
+    "transform_window_and_non_focused_profiles": "recovery_v6",
+    "focused_balanced_crossover_profiles": "v16",
+    "performance_memory_cell_count": 16,
+    "reused_v6_passed_cells": 12,
+    "requalified_v16_cells": 4,
+    "focused_cell_set": [
+      [
+        "channel_compiled_v2",
+        "channel_R128x20x20"
+      ],
+      [
+        "channel_functional",
+        "channel_R512x40x40"
+      ],
+      [
+        "periodic_functional",
+        "periodic_R128"
+      ],
+      [
+        "plane_compiled_v2",
+        "plane_R128"
+      ]
+    ]
+  },
+  "archive_identities": {
+    "cpu": {
+      "entries": 1712,
+      "checksums_sha256": "6a10414a20d3c5f7c12e21e98afb594fe3008be3010388355a16e6fdb9fbe832"
+    },
+    "checkpoint": {
+      "entries": 123,
+      "checksums_sha256": "6bc84435b3dab444156a87ba7ddc5981f93989c38098dfa3f9e56d8dcff9d627"
+    },
+    "v5": {
+      "entries": 26,
+      "checksums_sha256": "049f7422b62618416745ca665f82ab2370f6a5f2e662ce296f332f461e3b7f71"
+    },
+    "v6": {
+      "entries": 15,
+      "checksums_sha256": "74ef98002f8bd6b37f0d9e6cc001d17d9653cd6cb274afbd726273bd02eaeac2"
+    },
+    "v16": {
+      "entries": 1814,
+      "checksums_sha256": "da50cbda196ace1e7a60c6974dfea40533575493096ed1971a91ef959e002de0"
+    }
+  },
+  "historical_evidence_policy": {
+    "recovery_v5_failure_classification_must_remain_false": true,
+    "recovery_v6_failure_classification_must_remain_false": true,
+    "v16_is_only_a_four_cell_performance_memory_qualification": true,
+    "historical_archives_are_read_only": true,
+    "source_profiles_must_be_rehashed": true,
+    "old_maximum_trial_estimator_remains_diagnostic_only": true
+  },
+  "success_contract": {
+    "classification": "PASS_RC5_G1_CUMULATIVE_CLOSURE_WITH_BALANCED_CROSSOVER_PERFORMANCE_QUALIFICATION",
+    "qualification_complete": true,
+    "g1_complete": true,
+    "eligible_for_release_integration_review": true,
+    "post_release_verification_required": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false,
+    "new_h100_submission_count": 0
+  },
+  "source_sha256": {
+    "benchmarks/analyze_rc5_g1_cumulative_closure.py": "e668d13252aa9c45a33ebe4e4270210cb7973437541918faa0ef447c1e81f8e0",
+    "tests/test_rc5_g1_cumulative_closure.py": "3f40af3601759c7e689a50e46879b3dc014d86fbae07d26192d52c61815de7ae"
+  },
+  "execution_status": {
+    "cumulative_analyzer_executed": false,
+    "closure_archive_created": false,
+    "g1_complete": false
+  },
+  "next_gate": "execute_the_source_bound_cpu_only_cumulative_analyzer_against_the_five_immutable_archives"
+}
