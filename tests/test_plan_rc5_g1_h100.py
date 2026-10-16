@@ -10,6 +10,7 @@ import pytest
 
 from benchmarks.plan_rc5_g1_h100 import (
     CONSUMER_SOURCE,
+    CONSUMER_WHEEL_SHA256,
     FAMILIES,
     PROVIDER_BASELINE,
     PROVIDER_CANDIDATE,
@@ -33,6 +34,12 @@ def test_rc5_g1_plan_has_exact_provider_consumer_and_profile_identities():
     assert plan["provider"]["baseline_commit"] == PROVIDER_BASELINE
     assert plan["provider"]["candidate_commit"] == PROVIDER_CANDIDATE
     assert plan["consumer"]["qualified_source_commit"] == CONSUMER_SOURCE
+    assert CONSUMER_SOURCE == "6d3558b1367da9a3e7d6b3f8fbc5584cf384bfe3"
+    assert plan["consumer"]["wheel_sha256"] == CONSUMER_WHEEL_SHA256
+    assert CONSUMER_WHEEL_SHA256 == (
+        "4e112df06770a572d3395c71c3e6073b8e4ea458229857243ed91845f2f0bf75"
+    )
+    assert plan["consumer_h100_gate"]["expected_passed"] == 342
     profiles = plan["profile_matrix"]
     assert len(FAMILIES) == 8
     assert len(profiles) == 96

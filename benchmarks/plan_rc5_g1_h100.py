@@ -27,9 +27,9 @@ PROVIDER_BASELINE_WHEEL_SHA256 = (
 PROVIDER_CANDIDATE_WHEEL_SHA256 = (
     "3097b08b08ba7b2d488fd8af348ec48986d69007a640bd806a225ec9963bb65f"
 )
-CONSUMER_SOURCE = "c14e6b56c88081e7f9a5642e65ffd722eec7445b"
+CONSUMER_SOURCE = "6d3558b1367da9a3e7d6b3f8fbc5584cf384bfe3"
 CONSUMER_WHEEL_SHA256 = (
-    "3f5f359b0c7a7112b66245009a7e67e4479cab0ab6df630428c751dc26848745"
+    "4e112df06770a572d3395c71c3e6073b8e4ea458229857243ed91845f2f0bf75"
 )
 REPAIRED_PERIODIC_FAMILIES = (
     "periodic_complete_stress",
@@ -167,7 +167,7 @@ def build_plan() -> dict[str, object]:
         },
         "consumer_h100_gate": {
             "source_commit": CONSUMER_SOURCE,
-            "expected_passed": 336,
+            "expected_passed": 342,
             "expected_skipped": 1,
             "allowed_skip": "tests/test_warmup_experiments.py::test_r5_benchmark",
             "failed_allowed": 0,

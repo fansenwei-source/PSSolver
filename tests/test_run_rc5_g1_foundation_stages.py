@@ -199,7 +199,9 @@ def test_cuda_summary_rejects_tf32_policy_failure():
 def _consumer_inputs():
     contract = build_plan()["consumer_h100_gate"]
     outcomes = {
-        "passed": [f"test_{index}" for index in range(336)],
+        "passed": [
+            f"test_{index}" for index in range(contract["expected_passed"])
+        ],
         "failed": [],
         "skipped": [{"nodeid": contract["allowed_skip"]}],
         "xfailed": [],
@@ -219,7 +221,7 @@ def _consumer_inputs():
     return outcomes, identity_report, {"enforcement": {"passed": True}}
 
 
-def test_consumer_summary_accepts_the_exact_336_plus_one_contract():
+def test_consumer_summary_accepts_the_exact_342_plus_one_contract():
     outcomes, identities, policy = _consumer_inputs()
     result = summarize_consumer(
         exit_code=0,
@@ -228,7 +230,7 @@ def test_consumer_summary_accepts_the_exact_336_plus_one_contract():
         tf32_policy=policy,
     )
     assert result["schema"] == "pssolver.rc5.g1.consumer_h100.v1"
-    assert result["passed_count"] == 336
+    assert result["passed_count"] == 342
     assert result["skipped_count"] == 1
     assert result["old_periodic_pin_rejected_before_mutation"] is True
 
