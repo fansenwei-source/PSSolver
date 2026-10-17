@@ -1,0 +1,126 @@
+{
+  "schema": "pssolver.v0_2_0rc5.release_package_preparation_record.v1",
+  "date": "2026-10-16",
+  "classification": "PASS_V0_2_0RC5_SOURCE_AND_INSTALLED_WHEEL_RELEASE_PREPARATION_POST_RELEASE_VERIFICATION_PENDING",
+  "qualification_complete": true,
+  "qualified_source": {
+    "branch": "fix/v0.2.0rc5",
+    "commit": "e2e9d05bfac858d8e1ae1653ac86a2187c9917ef",
+    "remote_tip_matched_at_build": true,
+    "record_commit_is_qualified_source": false,
+    "evidence_only_successor_requires_requalification": false,
+    "annotated_tag_target_candidate": "e2e9d05bfac858d8e1ae1653ac86a2187c9917ef"
+  },
+  "prerequisites": {
+    "release_integration_review": {
+      "path": "notes/PSSolver_v0_2_0rc5_release_integration_review.json",
+      "sha256": "c2c8a984e1dbcfb7c4789a40eb1f223a5e413a39b4b69bdf9ce71bf9e2c41bbd",
+      "classification": "PASS_RC5_RELEASE_INTEGRATION_REVIEW_READY_FOR_FINAL_PACKAGE_PREPARATION"
+    },
+    "g1_cumulative_closure": {
+      "path": "notes/PSSolver_v0_2_0rc5_g1_cumulative_closure_v17.json",
+      "sha256": "ae05254c48c058c9b91cbe9853f8b13ce21d5c269cbf4420d4e57fab6669b3b5",
+      "classification": "PASS_RC5_G1_CUMULATIVE_CLOSURE_WITH_BALANCED_CROSSOVER_PERFORMANCE_QUALIFICATION"
+    }
+  },
+  "official_control_directory": "/scratch1/vincent/PSSolver/pssolver_v0_2_0rc5_release_package_e2e9d05_20261016_v1",
+  "environment": {
+    "host": "HPCC login-node CPU",
+    "python": "3.10.18",
+    "pytorch": "2.5.1+cu121",
+    "torch_cuda_runtime": "12.1",
+    "numpy": "1.22.3",
+    "scipy": "1.8.1",
+    "pytest": "9.1.1",
+    "tqdm": "4.67.1",
+    "nematics3d_installed": false
+  },
+  "artifacts": {
+    "source_archive": {
+      "name": "PSSolver-0.2.0rc5.tar",
+      "bytes": 23173120,
+      "members": 1631,
+      "sha256": "e04d9aef7384dd8d271f59827d3c8b2b9637f50d3050d519c69690496d950299"
+    },
+    "sdist": {
+      "name": "pssolver-0.2.0rc5.tar.gz",
+      "bytes": 1334558,
+      "members": 687,
+      "sha256": "4477b6d8b0fa03b4e97390729623322e2b1d6ff453845004598bce4ed30f63dc"
+    },
+    "wheel": {
+      "name": "pssolver-0.2.0rc5-py3-none-any.whl",
+      "bytes": 794227,
+      "members": 260,
+      "sha256": "29333022f799483e177a49d549a8db41d5741ee3c61c24023929f409c8941c39",
+      "package_files_byte_identical_to_source": true,
+      "authorized_top_level_compatibility_module": "Plane_beris_edwards_stokes.py",
+      "authorized_source_only_document": "pssolver/control/README.md",
+      "unexpected_top_level_packages": 0
+    }
+  },
+  "installed_wheel_cpu": {
+    "pip_check": "PASS",
+    "source_shadow_import": false,
+    "import_path": "/scratch1/vincent/PSSolver/pssolver_v0_2_0rc5_release_package_e2e9d05_20261016_v1/venv/lib/python3.10/site-packages/pssolver/__init__.py",
+    "package_version": "0.2.0rc5",
+    "runtime_path": "periodic_spectral",
+    "completed_steps": 1,
+    "finite": {
+      "Q": true,
+      "velocity": true,
+      "pressure": true
+    },
+    "initial_q_sha256": "1d0d85a5e5b294c0537c67c7bee70109c3cf5e05ff68d22eb4219e35b0318900",
+    "Q_sha256": "d21ef55c898a8b18f134091acb42c2a0e37480ac4a8c977c3544de7ecee039d4",
+    "velocity_sha256": "a8585c82c7da8fd359faf6d5ee9615b6b3cf7f7f5cdbcff2554a43523c3d54f5",
+    "pressure_sha256": "6cddb8e9f97f5d629b3a65f386a4968b4d99fde29dd864c2b8861c7510a7bb2d"
+  },
+  "preserved_external_harness_findings": {
+    "first_smoke": "EXTERNAL_SMOKE_HELPER_MISSING_REQUIRED_PUBLIC_OPTION",
+    "second_smoke": "EXTERNAL_SMOKE_REPORTER_RESULT_FIELD_ERROR",
+    "finalizer": "EXTERNAL_FINALIZER_PACKAGE_SURFACE_ASSUMPTIONS_CORRECTED",
+    "solver_failure": false,
+    "numerical_failure": false,
+    "scientific_failure": false,
+    "wheel_rebuilt_after_smoke_failures": false
+  },
+  "local_workstation_environment_diagnostic": {
+    "classification": "LOCAL_BASE_ENVIRONMENT_NEMATICS3D_NUMPY_METADATA_CONFLICT",
+    "pip_check_message": "nematics3d 0.9.0b1 requires numpy==2.3.2 but the base environment provides numpy 2.4.3",
+    "used_as_release_qualification_evidence": false,
+    "nematics3d_modified": false,
+    "numpy_base_environment_modified": false
+  },
+  "archive": {
+    "checksum_entries": 17,
+    "checksum_passed": 17,
+    "checksum_failed": 0,
+    "checksums_sha256": "e465f50e33aa3bd8415782d587838ed018f978c58d012ae5f580de4a53b36335",
+    "summary_json_sha256": "adfd6a0f0aed4ac3c10ecd6b36d59f0bef92626a1c44e43631d2f1ff1fbd383b",
+    "summary_csv_sha256": "0fcdccf94b69ea1b65904f152bbdb5c38f17af79f14897dcde3527749859c3cd",
+    "final_report_sha256": "150110d765c810c3c26c525f26d442e8ab5e999ac9f9efbeb49a5eefa2523c01",
+    "artifact_inventory_sha256": "37d927208dcad8f4a8ad81baf0b0c36d68d86e08b0bdd0338b4cc8bd2c4d7696",
+    "helper_attempts_sha256": "3a2115e5a4e33103a68eda3bb096481ce63b7279533fc9f5d8761e05b015fb86",
+    "complete_present": true
+  },
+  "release_decision": {
+    "branch_pushed": true,
+    "release_package_preparation_complete": true,
+    "eligible_for_annotated_tag_review": true,
+    "eligible_for_github_prerelease_review": true,
+    "post_release_verification_required": true,
+    "eligible_for_pypi_publication": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "tag_authorized": false,
+    "github_prerelease_authorized": false,
+    "tag_created": false,
+    "github_prerelease_created": false,
+    "pypi_published": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  },
+  "next_gate": "explicitly_authorize_the_annotated_v0_2_0rc5_tag_and_github_prerelease_then_run_the_required_post_release_verification"
+}
