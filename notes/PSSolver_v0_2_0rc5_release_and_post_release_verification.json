@@ -1,0 +1,130 @@
+{
+  "schema": "pssolver.v0_2_0rc5.release_and_post_release_verification.v1",
+  "date": "2026-10-16",
+  "classification": "PASS_V0_2_0RC5_GITHUB_PRERELEASE_POST_RELEASE_VERIFICATION",
+  "release_complete": true,
+  "post_release_verification_complete": true,
+  "qualified_source": {
+    "branch": "fix/v0.2.0rc5",
+    "commit": "e2e9d05bfac858d8e1ae1653ac86a2187c9917ef",
+    "evidence_only_successor": "724686cf890585e059081a289a8dfc6e55f54334",
+    "record_commit_is_qualified_source": false,
+    "evidence_only_successor_requires_requalification": false
+  },
+  "frozen_prerequisites": {
+    "g1_cumulative_closure": {
+      "path": "notes/PSSolver_v0_2_0rc5_g1_cumulative_closure_v17.json",
+      "sha256": "ae05254c48c058c9b91cbe9853f8b13ce21d5c269cbf4420d4e57fab6669b3b5",
+      "classification": "PASS_RC5_G1_CUMULATIVE_CLOSURE_WITH_BALANCED_CROSSOVER_PERFORMANCE_QUALIFICATION"
+    },
+    "release_package_preparation": {
+      "path": "notes/PSSolver_v0_2_0rc5_release_package_preparation.json",
+      "sha256": "e94815dfbe63e5db0ef151bd5cc309eefbd3c9030f3984c46ebb8a6eb931e0d8",
+      "classification": "PASS_V0_2_0RC5_SOURCE_AND_INSTALLED_WHEEL_RELEASE_PREPARATION_POST_RELEASE_VERIFICATION_PENDING",
+      "rewritten_by_release_registration": false
+    }
+  },
+  "annotated_tag": {
+    "name": "v0.2.0rc5",
+    "object_sha": "d11d4f3c26e851baeb034a3995aa821bfe280fb1",
+    "object_type": "tag",
+    "peeled_target_commit": "e2e9d05bfac858d8e1ae1653ac86a2187c9917ef",
+    "peeled_target_type": "commit",
+    "target_matches_qualified_source": true
+  },
+  "github_prerelease": {
+    "repository": "fansenwei-source/PSSolver",
+    "release_id": 415487879,
+    "name": "PSSolver v0.2.0rc5",
+    "url": "https://github.com/fansenwei-source/PSSolver/releases/tag/v0.2.0rc5",
+    "draft": false,
+    "prerelease": true,
+    "created_at": "2026-10-17T00:27:40Z",
+    "published_at": "2026-10-17T00:27:58Z",
+    "target_commitish_metadata": "main",
+    "tag_object_is_authoritative_target_identity": true,
+    "assets": [
+      {
+        "id": 649054506,
+        "name": "pssolver-0.2.0rc5.tar.gz",
+        "bytes": 1334558,
+        "state": "uploaded",
+        "sha256": "4477b6d8b0fa03b4e97390729623322e2b1d6ff453845004598bce4ed30f63dc"
+      },
+      {
+        "id": 649054508,
+        "name": "pssolver-0.2.0rc5-py3-none-any.whl",
+        "bytes": 794227,
+        "state": "uploaded",
+        "sha256": "29333022f799483e177a49d549a8db41d5741ee3c61c24023929f409c8941c39"
+      }
+    ]
+  },
+  "post_release_verification": {
+    "control_directory": "/home/fansenwei/pssolver_v0_2_0rc5_post_release_verification_20261016_v1",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_v0_2_0rc5_post_release_verification_20261016_v1",
+    "classification": "PASS_V0_2_0RC5_GITHUB_PRERELEASE_POST_RELEASE_VERIFICATION",
+    "github_assets_downloaded_fresh": true,
+    "downloaded_asset_hashes_match_release_preparation": true,
+    "package_metadata_versions": {
+      "sdist": "0.2.0rc5",
+      "wheel": "0.2.0rc5",
+      "installed": "0.2.0rc5"
+    },
+    "environment": {
+      "python": "3.10.18",
+      "pytorch": "2.5.1+cu121",
+      "torch_cuda_runtime": "12.1",
+      "numpy": "1.22.3",
+      "scipy": "1.8.1",
+      "pytest": "9.1.1"
+    },
+    "pip_check": "PASS",
+    "source_shadow_import": false,
+    "installed_wheel_cpu_one_step": {
+      "classification": "PASS_V0_2_0RC5_GITHUB_RELEASE_DOWNLOADED_WHEEL_CPU_ONE_STEP",
+      "runtime_path": "periodic_spectral",
+      "completed_steps": 1,
+      "finite": {
+        "Q": true,
+        "velocity": true,
+        "pressure": true
+      },
+      "initial_q_sha256": "1d0d85a5e5b294c0537c67c7bee70109c3cf5e05ff68d22eb4219e35b0318900",
+      "Q_sha256": "d21ef55c898a8b18f134091acb42c2a0e37480ac4a8c977c3544de7ecee039d4",
+      "velocity_sha256": "a8585c82c7da8fd359faf6d5ee9615b6b3cf7f7f5cdbcff2554a43523c3d54f5",
+      "pressure_sha256": "6cddb8e9f97f5d629b3a65f386a4968b4d99fde29dd864c2b8861c7510a7bb2d",
+      "matches_release_preparation_state_oracle": true
+    },
+    "external_harness_attempts_preserved": true,
+    "solver_failure": false,
+    "numerical_failure": false,
+    "scientific_failure": false,
+    "formal_h100_submission_count": 0,
+    "checksum_entries": 38,
+    "checksum_passed": 38,
+    "checksum_failed": 0,
+    "checksums_sha256": "10ca82b9d7c66d0f7cb35680166c9183067ceedb8b543d8c15525858deef78a0",
+    "final_report_sha256": "2721ad03e8ca1ec39c8a01f230f21a536e23251c126340a888d239e254beb228",
+    "summary_json_sha256": "02329e74d1e4c61307af5d42f51b0301635631e2f5e459d200271d692013c185",
+    "complete_present": true
+  },
+  "release_decision": {
+    "release_complete": true,
+    "post_release_verification_complete": true,
+    "tag_created": true,
+    "github_prerelease_created": true,
+    "github_assets_uploaded": true,
+    "eligible_for_pypi_publication": false,
+    "pypi_published": false,
+    "production_default_changed": false,
+    "functional_api_version_changed": false,
+    "checkpoint_compatibility_removed": false,
+    "larger_batch_qualified": false,
+    "plane_control_qualified": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  }
+}
