@@ -6,9 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
-import pssolver
 from pssolver import capability_catalog
-from pssolver.functional.api import functional_protocol_provenance
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,26 +22,22 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def test_rc5_version_and_public_provenance_agree():
-    assert pssolver.__version__ == "0.2.0rc5"
-    assert functional_protocol_provenance()["package"] == {
-        "name": "pssolver",
-        "version": "0.2.0rc5",
-    }
+def test_rc5_record_preserves_the_historical_version():
+    record = _json(RELEASE_RECORD)
+    assert record["release"] == "0.2.0rc5"
+    assert record["public_contract"]["package_version"] == "0.2.0rc5"
 
 
 def test_rc5_documents_and_machine_record_agree():
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
     release_notes = (ROOT / "notes/pssolver_v0_2_0_rc5.md").read_text(
         encoding="utf-8"
     )
     record = _json(RELEASE_RECORD)
 
-    assert "PSSolver 0.2.0rc5" in readme
     assert "## 0.2.0rc5" in changelog
     assert "PSSolver 0.2.0rc5 release candidate" in release_notes
-    assert record["release"] == pssolver.__version__
+    assert record["release"] == "0.2.0rc5"
     assert record["status"] == "source_freeze_preparation"
     assert record["qualification"]["g1_complete"] is False
     assert record["qualification"]["single_h100_cumulative"] == (

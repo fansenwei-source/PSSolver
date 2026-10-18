@@ -17,6 +17,7 @@ RC6_R3 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
 RC6_R4 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
 RC6_R5 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
 RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+RC6_FREEZE = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 
 
 def _record() -> dict[str, object]:
@@ -45,6 +46,9 @@ def test_glibc_compatibility_record_binds_implementation_and_tests():
         "historical_successor_sources"
     ]
     rc6_r6_successors = json.loads(RC6_R6.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
+    rc6_freeze_successors = json.loads(RC6_FREEZE.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
     assert record["classification"] == (
@@ -90,6 +94,12 @@ def test_glibc_compatibility_record_binds_implementation_and_tests():
         ):
             expected = rc6_successor["current_sha256"]
         rc6_successor = rc6_r6_successors.get(relative)
+        if (
+            rc6_successor is not None
+            and rc6_successor["historical_sha256"] == expected
+        ):
+            expected = rc6_successor["current_sha256"]
+        rc6_successor = rc6_freeze_successors.get(relative)
         if (
             rc6_successor is not None
             and rc6_successor["historical_sha256"] == expected

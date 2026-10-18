@@ -1,9 +1,15 @@
 # Changelog
 
-## Unreleased — v0.2.0rc6
+## 0.2.0rc6 — 2026-10-18
+
+Correctness, fail-closed validation, and restart-atomicity follow-up to
+`v0.2.0rc5`.
 
 ### Fixed
 
+- Translate non-finite diagnostics from both Plane runtimes through the same
+  public `SimulationExecutionError` boundary while preserving the original
+  diagnostic payload and exception chaining.
 - Keep a missing restart target directory absent until checkpoint identity,
   integrity, and runtime-compatibility validation succeeds; rejected Periodic,
   Channel, Plane, and legacy-Channel restarts no longer leave empty output
@@ -25,6 +31,19 @@
   dtype epsilons, and reject sub-floor public Channel declarations during
   structured compilation. Fixed-work runs retain their diagnostic-only
   tolerance and are unaffected.
+
+### Compatibility and qualification boundary
+
+- Functional API version 1.0, adapter versions, checkpoint schemas, the four
+  qualified model--geometry combinations, batch-one functional scope, and
+  production defaults remain unchanged.
+- The independent PSSolver-Control guard-order regression is closed at source
+  commit `208edd03e6b26a0e788c07d295fddd7a67237189`; it is not bundled into
+  PSSolver and must be reviewed again after the rc6 Provider identity changes.
+- This source freeze starts cumulative rc6 qualification.  It does not itself
+  claim installed-wheel CPU, released-checkpoint, independent-consumer, or
+  H100 qualification; it does not authorize a push, tag, release, publication,
+  default promotion, or automatic retry.
 
 ## 0.2.0rc5 — 2026-10-15
 

@@ -24,6 +24,7 @@ RC6_R5_RECORD = ROOT / (
 RC6_R6_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 )
+RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 
 
 def _record() -> dict[str, object]:
@@ -60,6 +61,15 @@ def _resolve_rc6_3(relative: str, predecessor: str) -> str:
 
 def _resolve_rc6_6(relative: str, predecessor: str) -> str:
     registration = json.loads(RC6_R6_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == predecessor:
+        return registration["current_sha256"]
+    return predecessor
+
+
+def _resolve_rc6_freeze(relative: str, predecessor: str) -> str:
+    registration = json.loads(RC6_FREEZE_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == predecessor:
@@ -151,7 +161,8 @@ def test_rc6_1_registers_forward_only_historical_successors():
         resolved = _resolve_rc6_3(relative, resolved)
         resolved = _resolve_rc6_4(relative, resolved)
         resolved = _resolve_rc6_5(relative, resolved)
-        assert _sha256(relative) == _resolve_rc6_6(relative, resolved)
+        resolved = _resolve_rc6_6(relative, resolved)
+        assert _sha256(relative) == _resolve_rc6_freeze(relative, resolved)
 
 
 def test_rc6_1_scope_authorizes_only_the_next_local_work_item():

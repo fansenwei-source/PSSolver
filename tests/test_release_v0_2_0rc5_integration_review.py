@@ -6,7 +6,6 @@ import hashlib
 import json
 from pathlib import Path
 
-import pssolver
 from pssolver.functional.api import functional_protocol_provenance
 
 
@@ -84,7 +83,7 @@ def test_rc5_integration_review_records_only_qualification_scope_after_runtime()
 
 def test_rc5_integration_review_keeps_the_public_contract_stable():
     contract = _record()["public_contract"]
-    assert pssolver.__version__ == contract["package_version"] == "0.2.0rc5"
+    assert contract["package_version"] == "0.2.0rc5"
     assert functional_protocol_provenance()["functional_protocol"]["current"] == (
         contract["functional_api_version"]
     )

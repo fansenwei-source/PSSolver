@@ -46,6 +46,7 @@ RC6_R5_RECORD = ROOT / (
 RC6_R6_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 )
+RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 
 
 def _resolve_g1_audit_successor(relative: str, resolved: str) -> str:
@@ -118,6 +119,15 @@ def _resolve_rc6_r5_successor(relative: str, resolved: str) -> str:
 
 def _resolve_rc6_r6_successor(relative: str, resolved: str) -> str:
     registration = json.loads(RC6_R6_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == resolved:
+        return registration["current_sha256"]
+    return resolved
+
+
+def _resolve_rc6_freeze_successor(relative: str, resolved: str) -> str:
+    registration = json.loads(RC6_FREEZE_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == resolved:
@@ -232,6 +242,7 @@ def test_r57_record_binds_implementation_and_regression_sources():
             resolved = _resolve_rc6_r4_successor(relative, resolved)
             resolved = _resolve_rc6_r5_successor(relative, resolved)
             resolved = _resolve_rc6_r6_successor(relative, resolved)
+            resolved = _resolve_rc6_freeze_successor(relative, resolved)
             assert _sha256(ROOT / relative) == resolved
 
 
@@ -319,6 +330,7 @@ def test_r57_record_binds_every_historical_successor():
         resolved = _resolve_rc6_r4_successor(relative, resolved)
         resolved = _resolve_rc6_r5_successor(relative, resolved)
         resolved = _resolve_rc6_r6_successor(relative, resolved)
+        resolved = _resolve_rc6_freeze_successor(relative, resolved)
         assert _sha256(ROOT / relative) == resolved
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["reason"]

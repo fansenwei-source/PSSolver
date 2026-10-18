@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 
 
 def _record() -> dict[str, object]:
@@ -17,6 +18,15 @@ def _record() -> dict[str, object]:
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def _freeze_successor(relative: str, historical: str) -> str:
+    registration = json.loads(RC6_FREEZE_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == historical:
+        return registration["current_sha256"]
+    return historical
 
 
 def test_rc6_6_record_binds_implementation_and_regression_sources():
@@ -67,7 +77,9 @@ def test_rc6_6_registers_exact_forward_only_successors():
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["introduced_by_phase"] == "RC6-6"
         assert registration["reason"]
-        assert _sha256(relative) == registration["current_sha256"]
+        assert _sha256(relative) == _freeze_successor(
+            relative, registration["current_sha256"]
+        )
 
 
 def test_rc6_6_scope_is_local_cpu_only_and_numerically_neutral():

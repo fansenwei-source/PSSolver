@@ -43,6 +43,7 @@ RC6_R5_RECORD = ROOT / (
 RC6_R6_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 )
+RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 
 
 def _record() -> dict[str, object]:
@@ -94,6 +95,9 @@ def test_r58_record_binds_implementation_and_exact_sources():
     rc6_r6_successors = json.loads(RC6_R6_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    rc6_freeze_successors = json.loads(
+        RC6_FREEZE_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert record["git_identity"] == {
         "branch": "fix/v0.2.0rc5",
         "implementation_commit": "52e57f1f4f406efcd92bb9245c13e9c635ba721c",
@@ -186,6 +190,12 @@ def test_r58_record_binds_implementation_and_exact_sources():
                 and registration["historical_sha256"] == expected
             ):
                 expected = registration["current_sha256"]
+            registration = rc6_freeze_successors.get(relative)
+            if (
+                registration is not None
+                and registration["historical_sha256"] == expected
+            ):
+                expected = registration["current_sha256"]
             assert _sha256(ROOT / relative) == expected
     for relative, registration in record["historical_successor_sources"].items():
         assert registration["historical_sha256"] != registration["current_sha256"]
@@ -256,6 +266,9 @@ def test_r58_record_binds_implementation_and_exact_sources():
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
         successor = rc6_r6_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == expected:
+            expected = successor["current_sha256"]
+        successor = rc6_freeze_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
         assert _sha256(ROOT / relative) == expected

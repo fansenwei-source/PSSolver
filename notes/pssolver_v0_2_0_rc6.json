@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "release": "0.2.0rc6",
+  "date": "2026-10-18",
+  "status": "source_freeze_preparation",
+  "source": {
+    "branch": "fix/v0.2.0rc6",
+    "freeze_parent_commit": "de4d5b6aaea91d597a68582eeb6f21ff8870cc52",
+    "latest_runtime_implementation_commit": "80c6e17db5838ef4f142add4955221637efcdf3e",
+    "immutable_rc5_tag": "v0.2.0rc5",
+    "immutable_rc5_tag_commit": "e2e9d05bfac858d8e1ae1653ac86a2187c9917ef",
+    "freeze_commit": null
+  },
+  "public_contract": {
+    "package_version": "0.2.0rc6",
+    "functional_api_version": "1.0",
+    "models": 2,
+    "geometries": 3,
+    "boundary_policies": 8,
+    "qualified_combinations": 4,
+    "runtime_paths": 6,
+    "functional_batch_sizes": [1],
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false,
+    "checkpoint_schema_changed_by_freeze": false,
+    "lifting_reopened": false
+  },
+  "completed_work": {
+    "RC6-1": "plane_public_diagnostic_error_contract_closed",
+    "RC6-2": "channel_pressure_floor_and_residual_contract_closed",
+    "RC6-3": "compile_preflight_contract_closed",
+    "RC6-4": "channel_pressure_and_started_run_failure_contract_closed",
+    "RC6-5": "checkpoint_early_stop_control_flow_closed",
+    "RC6-6": "restart_output_atomicity_closed",
+    "RC6-7": "independent_consumer_periodic_guard_order_closed"
+  },
+  "provider_work_evidence": {
+    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json": "c33455b02eb894d78776096a24e657049a1ebc4f3a5c75d0d9fdee7db429b190",
+    "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json": "cf9fd4a008605b6be6b6a11c72fababbe8dd52fe0d9f103a4d270d9e18402785",
+    "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json": "be082716678d7c948159fac5a4e13434212b426b48382446a3d1922b20f4d415",
+    "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json": "2d9dd723432e8640e148faaf90725590c81799d9d18398861f6e9f07e70bed03",
+    "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json": "45ee7ba921ccb2aba0a896b8e30d4770b9062c1a7685d70a165421e2c16da4a6",
+    "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json": "f0f46d9aa970c75e6415a323f8a2605636a76c8792c70441c03e5c0de29557e2"
+  },
+  "independent_consumer_evidence": {
+    "repository": "PSSolver-Control",
+    "branch": "fix/pssolver-v0.2.0rc6-guard-order",
+    "qualified_source_commit": "79815cb77cf7f542a0da4d303e20c45a929876df",
+    "record_commit": "208edd03e6b26a0e788c07d295fddd7a67237189",
+    "record_path": "docs/pssolver_v0_2_0rc6_periodic_guard_order_regression.json",
+    "record_sha256": "aa02a1332a6f96ccf769f08e51bfadf3fa7769453d6a040c98d0dede24816c60",
+    "runtime_changed": false,
+    "provider_identity_review_pending_after_freeze": true
+  },
+  "qualification": {
+    "classification": "PASS_RC6_SOURCE_FREEZE_AND_FROZEN_SOURCE_CPU_GATE",
+    "source_freeze_complete": true,
+    "frozen_source_full_cpu": "3936 passed, 7 deselected, 8 subtests passed, 0 failed, 0 skipped, 0 xfailed",
+    "frozen_installed_wheel_cpu": "pending",
+    "released_checkpoint_compatibility_and_tamper": "pending",
+    "provider_identity_impact_review": "pending",
+    "pssolver_control_qualification": "pending_identity_impact_review",
+    "single_h100_cumulative": "not_authorized"
+  },
+  "release_boundary": {
+    "branch_pushed": false,
+    "tag_created": false,
+    "github_release_created": false,
+    "pypi_published": false,
+    "production_default_changed": false,
+    "larger_batch_qualified": false,
+    "lifting_reopened": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false,
+    "pssolver_control_modified_by_provider_freeze": false,
+    "nematics3d_modified": false
+  }
+}

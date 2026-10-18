@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "phase": "RC6-8",
+  "date": "2026-10-18",
+  "status": "source_freeze_cpu_verified",
+  "classification": "PASS_RC6_SOURCE_FREEZE_AND_FROZEN_SOURCE_CPU_GATE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc6",
+    "freeze_parent_commit": "de4d5b6aaea91d597a68582eeb6f21ff8870cc52",
+    "latest_runtime_implementation_commit": "80c6e17db5838ef4f142add4955221637efcdf3e",
+    "freeze_commit": null,
+    "pushed": false
+  },
+  "version_contract": {
+    "previous_package_version": "0.2.0rc5",
+    "frozen_candidate_version": "0.2.0rc6",
+    "functional_api_version": "1.0",
+    "functional_api_version_changed": false,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false
+  },
+  "versioned_sources": {
+    "pssolver/_version.py": {
+      "historical_sha256": "64296d8b7c8f246ed8d55eff321ecd65d7c1f0d42d0cac6ae6946014a6063eac",
+      "current_sha256": "86aee03c88d20868096931cd0faa85fd6600a84ac2e8f7609e45d4449bab9a31"
+    },
+    "README.md": {
+      "historical_sha256": "e00bf2b2f457245a484e68e6afa432d170edfbf5fe504b4f416bb9114f2d2854",
+      "current_sha256": "5d416c76707db2540f3aed8530ffbab8a2de8305eb778f23ce9391282f49b10b"
+    },
+    "CHANGELOG.md": {
+      "historical_sha256": "6fbc47566940b0aa1f0a341ffba2c60bf9a297635ca633cd2baadc378d5fa3da",
+      "current_sha256": "b031702917fb6047a2b7d880fd547c9a0aca25d858d5fff1dcb98074352b333d"
+    },
+    "MANIFEST.in": {
+      "historical_sha256": "c1e93976ea7d7721aaecf0adcfcd796ec4921b1f04d4a9502bc3223618ad853f",
+      "current_sha256": "2da151eca095e5c07ea836a6d5191c161af056e5fd8d641ab2e649c91bea8b27"
+    }
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "6fbc47566940b0aa1f0a341ffba2c60bf9a297635ca633cd2baadc378d5fa3da",
+      "current_sha256": "b031702917fb6047a2b7d880fd547c9a0aca25d858d5fff1dcb98074352b333d",
+      "reason": "Publish the accumulated RC6-1 through RC6-7 changes as the rc6 candidate changelog without rewriting any historical closure record."
+    },
+    "tests/test_release_v0_1.py": {
+      "historical_sha256": "1ecba774f4dde8364af1ee7b1b8f9cbf5b883acb50b191c572901950b3bb0ac0",
+      "current_sha256": "79af7dbf0ea08ae36f4732eccd6fb8678c96918a58a59624732d10c50a8afc93",
+      "reason": "Make the generic release-document smoke follow the current rc6 README without rewriting any historical release record."
+    },
+    "tests/test_release_v0_2_rc5.py": {
+      "historical_sha256": "33bd98be07779dc6193cd00cf3d6cc8afa3f95b2b473068ec9d62c8e545970a4",
+      "current_sha256": "a43c30b6c0fd1d05738e08b5015628e4b499ed0aad406d2c427aa86c4761b564",
+      "reason": "Retain rc5 as an immutable historical release contract and move current-version assertions into the rc6 freeze test."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "historical_sha256": "50d52d4290cbf971f668aa05a0c5c05790a5e41151089ea42bb60c051570c846",
+      "current_sha256": "8275c17886e4f22a04b1d48f236e8e16c6e8748fdba3142c0745e9aafbeaf2ec",
+      "reason": "Extend the immutable RC6-2 evidence resolver through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "historical_sha256": "8f2bd2f132b3575c5a4196d9a995952c9acd4d565b403a57d799c0e581f4c451",
+      "current_sha256": "561ba8fce4d2c10fdc16133785c1bc0e0db8d65907627e8867c344e9a966605f",
+      "reason": "Extend the immutable RC6-3 evidence resolver through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc6_4_channel_failure_record.py": {
+      "historical_sha256": "f38754b6a92895bbd88be07aba613006911f96d2d79cbc226a06eafa7c1e2af8",
+      "current_sha256": "61dfbdf5bbb6f69cb3cdd08f942c3bc1eb2ada0a4c826bb4931043c7840f6816",
+      "reason": "Extend the immutable RC6-4 evidence resolver through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc6_5_checkpoint_control_flow_record.py": {
+      "historical_sha256": "9b008b20ff367d88fcad49ce227c730a9a1841de48bc26dd70de4abc18a3a019",
+      "current_sha256": "e16e84e0e4e35c303ce7b25c36d89e882ea53857397c29fceb56c708bd15409c",
+      "reason": "Extend the immutable RC6-5 evidence resolver through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc6_6_restart_output_atomicity_record.py": {
+      "historical_sha256": "b8aacec6c28eedbec461003a625ec72e2f96bbe64b1bdf31126f69e6e30cf452",
+      "current_sha256": "728e3f5f5835c95a675f3a170122c1475ee9e7f4f909390e824b58f0597e7159",
+      "reason": "Extend the immutable RC6-6 evidence resolver through the forward-only rc6 source freeze."
+    },
+    "tests/test_release_v0_2_0rc5_integration_review.py": {
+      "historical_sha256": "02c2bdd50538e91509bed9105c891a350889069840a404f7675b8f44933ecb60",
+      "current_sha256": "4a74f6407318bfc937f11fdd38e8a830a6d0ab32723b92bf8b65d1e72d38debd",
+      "reason": "Keep the rc5 integration review historical after the current package version advances to rc6."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "5ffe79d462766fc5f9cc684cb83a3032953209a793e46f5ee512a3696b299cea",
+      "current_sha256": "bf25bb6f890633433fc3d84d10c3ceae9a21cceb17fe779f225d901f37ccca9a",
+      "reason": "Extend the immutable W1 documentation audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": {
+      "historical_sha256": "04cdd9a3c4ef850744c68d2dc4742f546bc161a2af1dede4c6c5673d75563984",
+      "current_sha256": "3bcfbb354bea65261a73a9fa89c949bd75a909ca5199d6c5a2d93748fe51b12e",
+      "reason": "Extend the immutable G-1 glibc audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_g1_historical_audit_portability.py": {
+      "historical_sha256": "a84fe791bb74b57fb7a218ecd4b3f6997b60b17949781d1f35f5e835463acb6c",
+      "current_sha256": "e64310a09b72c6c2b055b0051d88cb2c42df213ac772bde7cb58bccef8f450c6",
+      "reason": "Extend the immutable G-1 historical portability audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "a2ddc5e0cb187d814af908c34be2cd560c413bf7d1fb8bc1deca226a469a1be1",
+      "current_sha256": "66a821d68680f4ffa82ba98811533f90ea345691665a362c1bc2189b1625e60f",
+      "reason": "Extend the immutable R5-1 audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "cd8e69761ac82065e418c2303cb7ab6658c1cb5b4a0fb0fa45ee8e34473e9741",
+      "current_sha256": "13a173e3b602bfb57a687bd90ec48012f293a46503b1cb09105444f4deed9537",
+      "reason": "Extend the immutable R5-10 audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "6f4c9dae67333b69d5c75e8acc81ae2252f540ede5c71a35b25ad788815b2684",
+      "current_sha256": "61d36577684c8a6783d822da00adf8357ee7bc5a2b59d081be3e5526d6af5ff8",
+      "reason": "Extend the immutable R5-11 audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "dad60782fabb06d2d51ff53bf7dea7b564a5013b0bb745e70ad9f5ed90ffecd0",
+      "current_sha256": "1e7e82aa7f3a94e633ad0a287277e64115bca5a8a9550f2a07ed7e9b178bb0c5",
+      "reason": "Extend the immutable R5-12 audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "442ad722d93eab6db4754b44c374464e5e0ec17b8a22293c1d46a6eea7222b55",
+      "current_sha256": "0ed41867213555a15ecdbf5b5c0eb15fed5b1548d5088a3decc8da6893bae2e5",
+      "reason": "Extend the immutable R5-13 audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "6c01687e77c89dbd3c61f3179c81ecd8efbae5e03577146f837ac18314faf145",
+      "current_sha256": "1589be7b80a883faf2b3e5f1fcc891f17163c2c979bf492420a0b70a2b7236b1",
+      "reason": "Extend the immutable R5-2 audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "f9a6b934a19f5e85f8ebbdf09ededc8001464be4d978f8d37831146918ebdf1f",
+      "current_sha256": "a07629ca5a42c1d73fadc6144bb637b5b92c14ef071ff6912933b1d4f307482c",
+      "reason": "Extend the immutable R5-3 audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "a4cb33a8ba013d6de1e73daa49dad5d6c256dbc33f58a61632b2217953fd83b5",
+      "current_sha256": "83e7b8120b79ec0f6a846e45b815461f26db0e549aa28ad433ac4f20350d803a",
+      "reason": "Extend the immutable R5-5 audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "fa74e64567025285c9325ecffe1352be0803627aa27f12a4c99476e3d403f95c",
+      "current_sha256": "45bde1490931832f9571b936a17d295ad99d909a58d7b38c3a9cc4d38f6aa948",
+      "reason": "Extend the immutable R5-6 audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "4d9933fe6e2ecddf36698acbdc8f67bf1cae38acc63162b84f5739a6c8e9d30a",
+      "current_sha256": "fea8f8ffec69c7b15b7bb54d765dfbd4e0c3c598c74a6eb50828c41f3dd41146",
+      "reason": "Extend the immutable R5-7 audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "b43d8792af0f5d1fb72b72f12ea384c42817ed4226af8125b95f2e1c31c339bb",
+      "current_sha256": "f6a79b9c6aaf62effd50fbf3e460a41c07b83933968fa9a41f5b042dd4b231a3",
+      "reason": "Extend the immutable R5-8 audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "bc333db851e5a9aa44310a5ec571d4ab2415bbc0b5d5056be7c06314e22a1456",
+      "current_sha256": "7e9037a277c3a42e948a621a6607f943ec2d758e7e5d4713a4341be5d54e71fd",
+      "reason": "Extend the immutable R5-9 audit through the forward-only rc6 source freeze."
+    },
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": {
+      "historical_sha256": "32a32b8d91fa92fa4d261705b8745f18477ab6745288ef5bac0c1e9484ba548e",
+      "current_sha256": "b613e2e2d6f43083286f449feb01331eabdab4f991d00914206b5327f852df48",
+      "reason": "Extend the immutable RC6-1 audit through the forward-only rc6 source freeze."
+    }
+  },
+  "gate_order": [
+    "frozen_source_full_cpu",
+    "frozen_installed_wheel_cpu",
+    "released_checkpoint_compatibility_and_tamper",
+    "provider_identity_impact_review",
+    "pssolver_control_migration_and_installed_wheel_qualification_if_required",
+    "single_h100_cumulative_qualification",
+    "independent_post_release_verification"
+  ],
+  "single_h100_scope": {
+    "authorized": false,
+    "required": true,
+    "automatic_retry": false
+  },
+  "cpu_gate": {
+    "python": "3.12.13",
+    "pytorch": "2.6.0",
+    "cuda_visible_devices": "",
+    "pytest_cache_disabled": true,
+    "bytecode_writes_disabled": true,
+    "passed": 3936,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected": 7,
+    "subtests_passed": 8,
+    "deselected_scope": "the seven pre-existing CUDA-only node IDs"
+  },
+  "scope": {
+    "scientific_equations_changed_by_freeze": false,
+    "production_default_changed": false,
+    "checkpoint_schema_changed": false,
+    "lifting_reopened": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false
+  },
+  "authorization": {
+    "source_freeze_prepared": true,
+    "frozen_source_cpu_passed": true,
+    "eligible_for_installed_wheel_cpu": true,
+    "cumulative_qualification_complete": false,
+    "eligible_for_push": false,
+    "eligible_for_h100_submission": false,
+    "h100_submission_count": 0,
+    "automatic_retry": false
+  }
+}

@@ -1,6 +1,6 @@
 # PSSolver
 
-PSSolver 0.2.0rc5 is a research-grade, GPU-first tensor-product spectral
+PSSolver 0.2.0rc6 is a research-grade, GPU-first tensor-product spectral
 solver release candidate.  It introduces a typed public composition layer for
 models, geometries, boundary policies, numerical choices, execution policy,
 and output scheduling while retaining the qualified legacy application entry
@@ -45,7 +45,7 @@ for combination in catalog.qualified_combinations:
     )
 ```
 
-The qualified executable combinations in 0.2.0rc5 are:
+The qualified executable combinations in 0.2.0rc6 are:
 
 | Model | Geometry | Runtime paths |
 | --- | --- | --- |
