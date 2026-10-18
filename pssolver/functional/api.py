@@ -70,10 +70,32 @@ from .versioning import (
 _T = TypeVar("_T")
 
 
+def _is_checkpoint_control_flow_exception(exception: Exception) -> bool:
+    """Recognize PyTorch's non-reentrant checkpoint early-stop sentinel.
+
+    The sentinel is an implementation-private exception, so importing its
+    private class would make this facade fail to import when PyTorch changes
+    that implementation.  Match the exact owning module and qualified class
+    name instead.  Ordinary PyTorch errors, empty-message exceptions, and
+    user exceptions continue through the public functional translation.
+    """
+
+    exception_type = type(exception)
+    return (
+        exception_type.__module__ == "torch.utils.checkpoint"
+        and exception_type.__qualname__ == "_StopRecomputationError"
+    )
+
+
 def _invoke(operation: str, function: Callable[..., _T], *args, **kwargs) -> _T:
     try:
         return function(*args, **kwargs)
     except Exception as exc:
+        # Non-reentrant torch checkpointing intentionally throws this private
+        # sentinel through the recomputed function and catches it in its own
+        # frame.  Translating it here changes the type and breaks early stop.
+        if _is_checkpoint_control_flow_exception(exc):
+            raise
         translated = translate_functional_exception(
             exc,
             operation=operation,
