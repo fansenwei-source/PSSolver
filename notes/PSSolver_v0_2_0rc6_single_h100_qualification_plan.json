@@ -1,0 +1,237 @@
+{
+  "schema": "pssolver.rc6.single_h100_qualification_plan_record.v1",
+  "phase": "RC6-13",
+  "date": "2026-10-18",
+  "status": "plan_frozen_waiting_for_qualification_support_and_authorization",
+  "classification": "READY_RC6_SINGLE_H100_CUMULATIVE_QUALIFICATION_SUPPORT",
+  "qualification_complete": false,
+  "qualified_sources": {
+    "provider_baseline": {
+      "commit": "674a8121779be72c95aa5dc9e2babca0ce7b93a9",
+      "version": "0.2.0rc5",
+      "wheel_sha256": "3097b08b08ba7b2d488fd8af348ec48986d69007a640bd806a225ec9963bb65f"
+    },
+    "provider_candidate": {
+      "branch": "fix/v0.2.0rc6",
+      "commit": "ea801ec08f5b2465661334e1c126133e55b68e96",
+      "version": "0.2.0rc6",
+      "wheel_sha256": "8840ebfaa44a20a828928256c319edfa2aa4a9b8adf4f1bac014c33964ba0dd6"
+    },
+    "consumer_candidate": {
+      "branch": "fix/pssolver-v0.2.0rc6-guard-order",
+      "commit": "208edd03e6b26a0e788c07d295fddd7a67237189",
+      "wheel_sha256": "eca0c2c1e9b39de1f653eb1d0c1dc69a6f49c72736da758eea814205f115be0f",
+      "functional_api_version": "1.0",
+      "identity_migration_required": false
+    }
+  },
+  "prerequisite_records": {
+    "source_freeze": {
+      "path": "notes/PSSolver_v0_2_0rc6_source_freeze.json",
+      "sha256": "2d393b06ae6eaef29012d43b9fc370637da3e4962f2345b7ce82bd09656bca64"
+    },
+    "provider_installed_wheel_cpu": {
+      "path": "notes/PSSolver_v0_2_0rc6_installed_wheel_cpu.json",
+      "sha256": "b18da63ade78adc5fa5bbc5e3e77615facfcb054937ddefdf042257c48108980"
+    },
+    "checkpoint_cpu": {
+      "path": "notes/PSSolver_v0_2_0rc6_checkpoint_cpu.json",
+      "sha256": "ec4bcb911b91f7af1839a323fe255179a5e0bbb51dd84aeb667bac46f8f2763f"
+    },
+    "provider_identity_impact": {
+      "path": "notes/PSSolver_v0_2_0rc6_provider_identity_impact.json",
+      "sha256": "4ec9971a0e08afb2e233659bd284f69ccbc5300132f2d221f697b67d154bb3b4"
+    },
+    "consumer_installed_wheel_cpu": {
+      "path": "notes/PSSolver_v0_2_0rc6_control_installed_wheel_cpu.json",
+      "sha256": "074652cf96796bec138eab52685bc4c91aac0d15656aacf2af12dac171bd9078"
+    }
+  },
+  "rc6_contract_records": {
+    "RC6-1": "c33455b02eb894d78776096a24e657049a1ebc4f3a5c75d0d9fdee7db429b190",
+    "RC6-2": "cf9fd4a008605b6be6b6a11c72fababbe8dd52fe0d9f103a4d270d9e18402785",
+    "RC6-3": "be082716678d7c948159fac5a4e13434212b426b48382446a3d1922b20f4d415",
+    "RC6-4": "2d9dd723432e8640e148faaf90725590c81799d9d18398861f6e9f07e70bed03",
+    "RC6-5": "45ee7ba921ccb2aba0a896b8e30d4770b9062c1a7685d70a165421e2c16da4a6",
+    "RC6-6": "f0f46d9aa970c75e6415a323f8a2605636a76c8792c70441c03e5c0de29557e2",
+    "RC6-7-consumer": "aa02a1332a6f96ccf769f08e51bfadf3fa7769453d6a040c98d0dede24816c60"
+  },
+  "planner": {
+    "path": "benchmarks/plan_rc6_single_h100_qualification.py",
+    "sha256": "9e4cfb0a620c6098ce967c26a90139f7ee81ee761db696e2c1fe22a17220414e",
+    "schema": "pssolver.rc6.single_h100_qualification_plan.v1",
+    "canonical_output_sha256": "65c8bc20e944fdac06d3a82a097630352b871fbfa9d7da85fc36a23cc850b3bd",
+    "atomic_json": true,
+    "refuse_overwrite": true,
+    "output_root_created_during_planning": false
+  },
+  "scheduler_contract": {
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "gres": "gpu:H100:1",
+    "cpus_per_task": 8,
+    "memory": "64G",
+    "time_limit": "02:00:00",
+    "requeue": false,
+    "formal_job_count": 1,
+    "automatic_retry": false
+  },
+  "execution_order": [
+    "node_local_tmp_and_environment",
+    "provider_cuda_only",
+    "rc6_device_applicable_contract_smokes",
+    "tf32_scope",
+    "current_checkpoint_cross_device",
+    "released_checkpoint_matrix",
+    "eight_family_numerical",
+    "balanced_crossover_profiles",
+    "consumer_installed_wheel_h100",
+    "cumulative_analyzer"
+  ],
+  "preflight_contract": {
+    "node_local_tmp_required": true,
+    "rename_noreplace_required_before_qualification": true,
+    "pytest_tmpdir_is_unique_node_local_tmp": true,
+    "decomposed_observations_persisted_before_enforcement": true,
+    "tf32_before_and_after_each_stage_persisted": true,
+    "host_compiler_and_cuda_compile_smokes_required": true,
+    "empty_triton_and_torchinductor_compile_smokes_required": true,
+    "provider_and_consumer_installed_wheels_only": true,
+    "source_shadow_import_forbidden": true
+  },
+  "provider_cuda_only_gate": {
+    "test_count": 7,
+    "all_must_pass": true,
+    "skip_xfail_deselect_allowed": 0
+  },
+  "rc6_device_applicable_contract_gate": {
+    "plane_compiled_nonfinite_public_error_on_cuda": true,
+    "pressure_floor_fixed_and_tolerance_modes_on_cuda": true,
+    "complete_stress_compile_preflight_before_allocation": true,
+    "channel_public_failure_hierarchy_and_metadata": true,
+    "checkpoint_early_stop_not_translated": true,
+    "rejected_restart_does_not_materialize_output": true
+  },
+  "tf32_contract": {
+    "caller_state_count": 6,
+    "runtime_family_count": 8,
+    "case_count": 48,
+    "success_and_exception_restore_exact_state": true,
+    "nested_scope_restores_lifo": true,
+    "invalid_policy_does_not_mutate": true
+  },
+  "checkpoint_contract": {
+    "current_family_count": 4,
+    "directions": ["cpu_to_cuda", "cuda_to_cpu"],
+    "continuous_split_restart_exact": true,
+    "transactional_restore": true,
+    "rejected_restart_output_remains_absent": true,
+    "released_rc1_through_rc5_primary_case_count": 13,
+    "released_dispositions_must_match_cpu_record": true,
+    "source_checkpoints_unchanged": true
+  },
+  "numerical_contract": {
+    "runtime_family_count": 8,
+    "completed_steps": 2,
+    "finite_required": true,
+    "fallback_allowed": false,
+    "physical_relative_l2_max": 1e-12,
+    "physical_linf_max": 1e-12,
+    "candidate_hermitian_violation_max": 0.0
+  },
+  "profile_contract": {
+    "runtime_family_count": 8,
+    "grid_count": 16,
+    "trials_per_cell": 6,
+    "provider_roles": 2,
+    "profile_count": 192,
+    "samples_per_profile": 60,
+    "fixed_block_size": 10,
+    "fixed_block_count": 6,
+    "profile_center": "median_of_six_fixed_block_means",
+    "baseline_then_candidate_trials": [1, 3, 5],
+    "candidate_then_baseline_trials": [2, 4, 6],
+    "all_raw_samples_retained": true,
+    "outlier_removal_allowed": false,
+    "sample_deletion_allowed": false,
+    "trial_replacement_allowed": false,
+    "aggregate_and_median_ratio_max": 1.03,
+    "order_stratum_ratio_max": 1.05,
+    "minimum_individual_trials_at_or_below_1_05": 4,
+    "peak_allocated_and_reserved_ratio_max": 1.03,
+    "transform_counts_exact": true,
+    "graph_breaks_allowed": 0,
+    "fallback_allowed": false
+  },
+  "consumer_h100_contract": {
+    "expected_passed": 344,
+    "expected_skipped": 1,
+    "allowed_skip": "tests/test_warmup_experiments.py::test_r5_benchmark",
+    "failed_allowed": 0,
+    "xfailed_allowed": 0,
+    "deselected_allowed": 0,
+    "guard_order_regression_required": true,
+    "periodic_and_channel_cuda_execution_finite": true,
+    "checkpoint_replay_and_gradient_gates_required": true,
+    "scientific_control_result_claimed": false
+  },
+  "success_contract": {
+    "classification": "PASS_RC6_SINGLE_H100_CUMULATIVE_QUALIFICATION",
+    "qualification_complete": true,
+    "eligible_for_release_integration_review": true,
+    "independent_post_release_verification_required": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  },
+  "qualification_support_scope": {
+    "allowed": [
+      "benchmarks/** RC6 qualification planners, runners, profilers and analyzers",
+      "jobs/** RC6 qualification Slurm scripts",
+      "tests/** qualification-support tests",
+      "notes/** forward-only plans and evidence records"
+    ],
+    "forbidden": [
+      "pssolver/** runtime or numerical implementation changes",
+      "PSSolver-Control runtime source changes",
+      "nematics3d changes",
+      "threshold relaxation",
+      "new skip or xfail",
+      "production default changes",
+      "checkpoint schema changes",
+      "functional API or adapter version changes"
+    ]
+  },
+  "pre_submission_conditions": {
+    "provider_remote_tip_equals_qualification_support_commit": false,
+    "consumer_remote_tip_contains_evidence_commit": false,
+    "versioned_rc6_runner_analyzer_and_slurm_exist": false,
+    "qualification_support_cpu_tests_pass": false,
+    "slurm_path_and_environment_preflight_pass": false,
+    "single_h100_submission_authorized": false,
+    "ready": false
+  },
+  "execution_status": {
+    "plan_frozen": true,
+    "qualification_support_implemented": false,
+    "h100_job_submitted": false,
+    "formal_h100_submission_count": 0,
+    "qualification_complete": false
+  },
+  "authorization": {
+    "local_plan_implementation_complete": true,
+    "qualification_support_implementation_authorized": true,
+    "provider_push_authorized": false,
+    "consumer_push_authorized": false,
+    "single_h100_submission_authorized": false,
+    "automatic_retry": false,
+    "merge_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "pypi_publish_authorized": false,
+    "production_default_changed": false,
+    "nematics3d_modified": false
+  },
+  "next_gate": "implement_and_cpu_validate_source_bound_rc6_qualification_support_without_h100_submission"
+}
