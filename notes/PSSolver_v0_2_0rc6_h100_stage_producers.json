@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "phase": "RC6 H100 stage-producer freeze",
+  "status": "local_stage_producers_complete_h100_not_authorized",
+  "provider": {
+    "qualified_source_commit": "ea801ec08f5b2465661334e1c126133e55b68e96",
+    "qualification_support_parent_commit": "81f3754",
+    "version": "0.2.0rc6"
+  },
+  "scope": {
+    "qualification_only": true,
+    "provider_runtime_modified": false,
+    "public_api_modified": false,
+    "checkpoint_schema_modified": false,
+    "functional_api_version_modified": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  },
+  "stage_contract": {
+    "ordered_stages": [
+      "environment",
+      "cuda_only",
+      "contract_smokes",
+      "tf32_scope",
+      "current_checkpoints",
+      "released_checkpoints",
+      "numerical",
+      "profiles",
+      "consumer",
+      "assemble",
+      "analyze"
+    ],
+    "stage_count": 11,
+    "shell_free_argv": true,
+    "python_executable_and_helper_sha256_frozen_at_plan_creation": true,
+    "fail_fast": true,
+    "atomic_json": true,
+    "temporary_json_residue_allowed": false,
+    "automatic_retry": false
+  },
+  "implemented_gates": {
+    "installed_wheel_environment_and_host_compiler": true,
+    "seven_cuda_only_tests": true,
+    "six_rc6_public_contract_smokes": true,
+    "tf32_scope_matrix": true,
+    "four_current_checkpoint_families_two_directions": true,
+    "released_rc1_through_rc5_checkpoint_fixtures": true,
+    "eight_family_two_step_numerical_identity": true,
+    "one_hundred_ninety_two_profile_matrix": true,
+    "consumer_full_h100_suite": true,
+    "auxiliary_assembly_and_final_analysis": true
+  },
+  "source_sha256": {
+    "benchmarks/run_rc6_environment.py": "3bd2ed41c648e55e71cb11cb250c14eac6f52ee3aaf13393d3db9cafbdb44a49",
+    "benchmarks/run_rc6_cuda_only.py": "70331360e94feb576481459b7908b53d9c9248feda064007051c160d3422055f",
+    "benchmarks/run_rc6_contract_smokes.py": "7f5a4af7d4ee8723f6e69eb4272fd94e44e3e56722bab6ca39b86e15f1780d44",
+    "benchmarks/run_rc6_current_checkpoints.py": "79ba605b2a6778aa311ba6529b7f13ceab1bff94d349b47b021a14befb3341e4",
+    "benchmarks/run_rc6_released_checkpoints.py": "47c43f1a8beb72ce6971398b6775a5f78ed7aba6edca593acac86f70d13d1e13",
+    "benchmarks/run_rc6_numerical.py": "cc9d1eb2021ffa57d67b047f8b487f2358fba26a34d0ca510e8b1203076f56c8",
+    "benchmarks/run_rc6_consumer.py": "84e96f91dc48994ad59ffcd6e5ebc1b998a572a037b5108c350fe66d2c6a3b63",
+    "benchmarks/build_rc6_single_h100_stage_plan.py": "4cd068cc4ff30471b091b76c6f20cf859dcc964c50f7b79b7754c6da53e213cc",
+    "benchmarks/analyze_rc6_single_h100.py": "ca1cf7f2f470d91b0e0e6ca38d20736903c3ee85101dc1d0063e38795f4c32e8",
+    "tests/test_rc6_h100_stage_producers.py": "8f76116109706a3332d16900b51f5c0f9b0c5095ced70a839e3eca84d8e13d0e"
+  },
+  "local_validation": {
+    "py_compile": "PASS",
+    "git_diff_check": "PASS",
+    "focused_tests": {
+      "passed": 62,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 3994,
+      "failed": 0,
+      "skipped": 1,
+      "deselected": 7,
+      "xfailed": 0,
+      "subtests_passed": 8,
+      "seconds": 285.91
+    },
+    "h100_executed": false
+  },
+  "remaining_before_submission": {
+    "build_clean_archives_and_wheels": true,
+    "create_three_fresh_installed_wheel_venvs": true,
+    "materialize_non_shadowing_provider_support": true,
+    "materialize_consumer_support_and_provider_reference": true,
+    "freeze_concrete_stage_plan_against_actual_paths": true,
+    "run_login_node_cpu_preflight": true,
+    "obtain_explicit_push_authorization": true,
+    "obtain_explicit_single_h100_submission_authorization": true
+  },
+  "authorization": {
+    "push_executed": false,
+    "h100_submission_count": 0,
+    "h100_authorized": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false
+  }
+}
