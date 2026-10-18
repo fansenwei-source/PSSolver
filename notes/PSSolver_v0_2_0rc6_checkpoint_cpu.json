@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "phase": "RC6-10",
+  "date": "2026-10-18",
+  "status": "released_checkpoint_compatibility_and_tamper_cpu_verified",
+  "classification": "PASS_RC6_RELEASED_CHECKPOINT_COMPATIBILITY_AND_TAMPER_CPU",
+  "qualified_source": {
+    "branch": "fix/v0.2.0rc6",
+    "commit": "ea801ec08f5b2465661334e1c126133e55b68e96",
+    "latest_runtime_implementation_commit": "80c6e17db5838ef4f142add4955221637efcdf3e",
+    "package_version": "0.2.0rc6",
+    "record_commit_is_qualified_source": false,
+    "requires_cpu_requalification": false
+  },
+  "prerequisite": {
+    "record": "notes/PSSolver_v0_2_0rc6_installed_wheel_cpu.json",
+    "record_sha256": "b18da63ade78adc5fa5bbc5e3e77615facfcb054937ddefdf042257c48108980",
+    "classification": "PASS_RC6_FROZEN_INSTALLED_WHEEL_CPU",
+    "wheel_sha256": "8840ebfaa44a20a828928256c319edfa2aa4a9b8adf4f1bac014c33964ba0dd6",
+    "source_shadow_import": false
+  },
+  "released_checkpoint_matrix": {
+    "historical_record": "notes/PSSolver_v0_2_0rc5_g1_checkpoint_matrix.json",
+    "historical_record_sha256": "a83a8286212d450223278fb8492c69f0a41c0c546aa303da7f55d850d14ce572",
+    "historical_record_rewritten": false,
+    "primary_case_count": 13,
+    "installed_wheel_tests": {
+      "passed": 20,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_sha256": "5c86d52e6eda80bf5917e5606057d44a52847d6e67c7492f967223ff0c5f1f43"
+    },
+    "external_fixture_crosscheck": {
+      "original_root": "/home/fansenwei/pssolver_rc4_post_release_verification_20261013_v1/agent_evidence/state/legacy_ckpts_full",
+      "passed": 10,
+      "failed": 0
+    },
+    "fail_closed_dispositions_preserved": {
+      "rc1_periodic_functional": "explicit_state_only_migration",
+      "rc1_channel_functional": "explicit_state_only_migration",
+      "rc2_channel_functional": "explicit_state_only_migration",
+      "rc1_legacy_channel_even": "reject_pre_rc4_1_forward_nyquist_before_mutation"
+    }
+  },
+  "current_rc6_matrix": {
+    "direction": "cpu_to_cpu",
+    "families": [
+      "periodic_functional",
+      "channel_functional_fixed_iteration",
+      "channel_functional_tolerance",
+      "legacy_channel"
+    ],
+    "family_count": 4,
+    "passed": 4,
+    "failed": 0,
+    "serialized_state_equal": true,
+    "continuous_split_restart_replay_exact": true,
+    "restored_state_and_observation_finite": true,
+    "payload_tamper_rejected_by_integrity_guard": true,
+    "identity_tamper_rejected_by_provenance_or_compatibility_guard": true,
+    "negative_gates_rejected_before_target_mutation": true,
+    "source_checkpoints_unchanged": true,
+    "fallback_used": false
+  },
+  "version_contract": {
+    "checkpoint_schema_changed_in_rc6": false,
+    "functional_api_version": "1.0",
+    "functional_api_version_changed_in_rc6": false,
+    "production_default_changed": false
+  },
+  "runner_contract": {
+    "path": "benchmarks/run_rc6_checkpoint_cpu_qualification.py",
+    "sha256": "3fbd7759caf8c5335a4f3d4e39a6db3db4abd62be8213cf44ffc316ca692ca88",
+    "python_isolated_mode": true,
+    "installed_package_imported_before_support_path": true,
+    "repository_support_appended_after_site_packages": true,
+    "support_sources_pinned_to_qualified_source": true,
+    "pytest_import_mode": "importlib",
+    "atomic_json_outputs": true,
+    "refuse_overwrite": true
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc6_checkpoint_cpu_ea801ec_20261018_v1",
+    "final_report_sha256": "c13e52be7bb46f9aeb6f30c9e8edf90f85ba439c6511639ec5a9b9e3bad48c30",
+    "summary_json_sha256": "44c50a44b0c88a6821f35faa5d1c0f5fef424bcce2718fc5905492ad9431d22c",
+    "summary_csv_sha256": "e99e4dff7f9cfa01297b77595e9a2087811a024881209f504cb369e8db2fa2ee",
+    "current_matrix_sha256": "3b07d902c36fa6998baa29d46a233170706502ed9f57ae5f74ed114dfa4148c7",
+    "source_evidence_manifest_sha256": "4d068c3e5745adf92290a2c05306caa0ecb16b4137d7cf4f8f6e7af135f03071",
+    "installed_identity_sha256": "6e5ca575bbe21466b914b5c4c2346383ab468075e0d20f26736e26d9fc8fdcdb",
+    "checksum_entries": 143,
+    "checksum_passed": 143,
+    "checksum_failed": 0,
+    "checksums_sha256": "5f1235eeb626422842eb129f47bb09164bd67af4ca07f88f02888cbdc449ab46"
+  },
+  "pending_rc6_gates": [
+    "provider_identity_impact_review",
+    "pssolver_control_migration_and_installed_wheel_qualification_if_required",
+    "single_h100_cumulative_qualification",
+    "independent_post_release_verification"
+  ],
+  "authorization": {
+    "released_checkpoint_compatibility_and_tamper_complete": true,
+    "provider_identity_impact_review_complete": false,
+    "rc6_cumulative_qualification_complete": false,
+    "eligible_for_push": false,
+    "eligible_for_h100_submission": false,
+    "h100_submission_count": 0,
+    "automatic_retry": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  }
+}
