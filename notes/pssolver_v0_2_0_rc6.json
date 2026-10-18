@@ -9,7 +9,7 @@
     "latest_runtime_implementation_commit": "80c6e17db5838ef4f142add4955221637efcdf3e",
     "immutable_rc5_tag": "v0.2.0rc5",
     "immutable_rc5_tag_commit": "e2e9d05bfac858d8e1ae1653ac86a2187c9917ef",
-    "freeze_commit": null
+    "freeze_commit": "90ef40f328347c71d8baabeb187e18cd31e4b6bc"
   },
   "public_contract": {
     "package_version": "0.2.0rc6",

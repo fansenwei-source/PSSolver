@@ -8,7 +8,7 @@
     "branch": "fix/v0.2.0rc6",
     "freeze_parent_commit": "de4d5b6aaea91d597a68582eeb6f21ff8870cc52",
     "latest_runtime_implementation_commit": "80c6e17db5838ef4f142add4955221637efcdf3e",
-    "freeze_commit": null,
+    "freeze_commit": "90ef40f328347c71d8baabeb187e18cd31e4b6bc",
     "pushed": false
   },
   "version_contract": {
@@ -36,6 +36,12 @@
       "historical_sha256": "c1e93976ea7d7721aaecf0adcfcd796ec4921b1f04d4a9502bc3223618ad853f",
       "current_sha256": "2da151eca095e5c07ea836a6d5191c161af056e5fd8d641ab2e649c91bea8b27"
     }
+  },
+  "new_sources": {
+    "notes/pssolver_v0_2_0_rc6.md": "e16ca4d8fe5499c5fe93cf8315e9ab677e7b4c36f66671a3800ca2483241a6a2",
+    "notes/pssolver_v0_2_0_rc6.json": "ba5650ce59339c381a4148a573c37399e01267171a8be44ef037e3ea277e2e72",
+    "notes/PSSolver_v0_2_0rc6_source_freeze_zh.md": "20df83a48fa496863a1eb42c5c8b7bbdc764e8c8774e983d8496cc9b23989379",
+    "tests/test_release_v0_2_rc6.py": "793da213c8e6da3745ed0805374ae0587aed10564a90447249d92e477c774e16"
   },
   "historical_successor_sources": {
     "CHANGELOG.md": {

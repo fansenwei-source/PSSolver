@@ -45,6 +45,9 @@ def test_rc6_documents_and_machine_record_agree():
     assert "PSSolver 0.2.0rc6 release candidate" in release_notes
     assert record["release"] == pssolver.__version__
     assert record["status"] == "source_freeze_preparation"
+    assert record["source"]["freeze_commit"] == (
+        "90ef40f328347c71d8baabeb187e18cd31e4b6bc"
+    )
     assert record["qualification"]["source_freeze_complete"] is True
     assert record["qualification"]["single_h100_cumulative"] == "not_authorized"
 
@@ -106,6 +109,9 @@ def test_rc6_freeze_preserves_public_compatibility_boundaries():
 def test_rc6_freeze_plan_is_fail_closed_and_h100_is_not_authorized():
     record = _json(FREEZE_RECORD)
     assert record["phase"] == "RC6-8"
+    assert record["git_identity"]["freeze_commit"] == (
+        "90ef40f328347c71d8baabeb187e18cd31e4b6bc"
+    )
     assert record["classification"] == (
         "PASS_RC6_SOURCE_FREEZE_AND_FROZEN_SOURCE_CPU_GATE"
     )
@@ -146,6 +152,8 @@ def test_rc6_freeze_plan_is_fail_closed_and_h100_is_not_authorized():
 
 def test_rc6_versioned_and_successor_source_hashes_match():
     record = _json(FREEZE_RECORD)
+    for relative, expected in record["new_sources"].items():
+        assert _sha256(ROOT / relative) == expected
     for section in ("versioned_sources", "historical_successor_sources"):
         for relative, identity in record[section].items():
             assert _sha256(ROOT / relative) == identity["current_sha256"]
