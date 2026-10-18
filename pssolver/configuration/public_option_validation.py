@@ -39,6 +39,7 @@ def validate_iterative_pressure_options(
     *,
     description: str,
     required_algorithm: str = "preconditioned_conjugate_gradient",
+    minimum_relative_tolerance: float | None = None,
 ) -> dict[str, object]:
     """Validate the common public iterative-pressure declaration."""
 
@@ -88,6 +89,23 @@ def validate_iterative_pressure_options(
         if int(fixed) > int(maximum):
             raise ValueError(
                 f"{description} fixed_iterations must not exceed max_iterations"
+            )
+    if minimum_relative_tolerance is not None:
+        if (
+            not isinstance(minimum_relative_tolerance, Real)
+            or isinstance(minimum_relative_tolerance, bool)
+            or not math.isfinite(float(minimum_relative_tolerance))
+            or float(minimum_relative_tolerance) <= 0.0
+        ):
+            raise ValueError(
+                "minimum_relative_tolerance must be finite and positive"
+            )
+        if fixed is None and float(tolerance) < float(
+            minimum_relative_tolerance
+        ):
+            raise ValueError(
+                f"{description} relative_tolerance is below the supported "
+                f"tolerance-mode floor ({float(minimum_relative_tolerance)!r})"
             )
     if not isinstance(pressure["warm_start"], bool):
         raise ValueError(f"{description} warm_start must be a bool")

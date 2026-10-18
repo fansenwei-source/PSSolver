@@ -29,7 +29,8 @@ CHANNEL_PRESSURE_BOUNDARY_CONDITIONS = (
 
 CHANNEL_PRESSURE_RHS_NORM_DEFINITION = "active_mode_root_mean_square.v1"
 CHANNEL_PRESSURE_NORMALIZED_RESIDUAL_DEFINITION = (
-    "active_rms(projected_residual)/active_rms(projected_rhs)"
+    "active_rms(projected_pcg_recurrence_residual)/"
+    "active_rms(projected_rhs)"
 )
 CHANNEL_PRESSURE_WORKING_VECTOR_SCALING = (
     "largest_power_of_two_not_greater_than_active_component_amax"
@@ -41,31 +42,45 @@ CHANNEL_PRESSURE_BREAKDOWN_DEFINITION = (
 _CHANNEL_PRESSURE_BREAKDOWN_CERTIFICATE_EPSILON_MARGIN = 4096.0
 
 
-def channel_pressure_minimum_relative_tolerance(dtype: torch.dtype) -> float:
+def channel_pressure_minimum_relative_tolerance(
+    dtype: torch.dtype | str,
+) -> float:
     """Return the smallest supported tolerance-mode pressure target.
 
     The PCG recurrence residual can continue decreasing below the accuracy of
     the represented solution even though the residual of the returned state
-    has reached its dtype-dependent roundoff floor.  Rejecting targets below
-    the supported roundoff floor keeps ``relative_tolerance_met`` a truthful
-    postcondition without adding a second pressure-operator application to
-    every solve.
+    has reached its dtype-dependent roundoff floor.  Rejecting targets below a
+    conservative supported floor excludes the empirically observed region in
+    which those quantities decouple.  ``relative_tolerance_met`` is explicitly
+    a postcondition on the projected PCG recurrence residual; it does not claim
+    that a separately recomputed residual was evaluated on the hot path.
 
     Fixed-work mode does not use the tolerance as a stopping postcondition and
     therefore deliberately does not apply this floor.
     """
 
-    # The rc4 reproducer reaches a true-residual floor above one epsilon while
-    # its recurrence residual continues to decrease.  Two epsilons is the
-    # smallest supported target and keeps the known roundoff floor outside the
-    # accepted contract instead of treating one representable ulp as solver
-    # accuracy.
-    return 2.0 * float(torch.finfo(_channel_pressure_real_dtype(dtype)).eps)
+    # The independent rc5 acceptance matrix found recurrence/represented-state
+    # residual disagreement at two and four epsilons.  Eight epsilons excludes
+    # every observed disagreement while remaining below the qualified float32
+    # default of 1e-6.  The factor is part of the public compilation contract.
+    return 8.0 * float(torch.finfo(_channel_pressure_real_dtype(dtype)).eps)
 
 
-def _channel_pressure_real_dtype(dtype: torch.dtype) -> torch.dtype:
+def _channel_pressure_real_dtype(dtype: torch.dtype | str) -> torch.dtype:
     """Return the real component dtype without constructing a tensor view."""
 
+    if isinstance(dtype, str):
+        try:
+            return {
+                "float32": torch.float32,
+                "float64": torch.float64,
+                "complex64": torch.float32,
+                "complex128": torch.float64,
+            }[dtype]
+        except KeyError as exc:
+            raise TypeError(
+                f"unsupported Channel pressure dtype: {dtype}"
+            ) from exc
     if dtype == torch.complex64:
         return torch.float32
     if dtype == torch.complex128:
@@ -992,7 +1007,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
             )
             if pressure_relative_tolerance < minimum_relative_tolerance:
                 raise ValueError(
-                    "pressure_relative_tolerance is below the attainable "
+                    "pressure_relative_tolerance is below the supported "
                     f"{real_dtype} tolerance-mode floor "
                     f"({minimum_relative_tolerance!r}); use a tolerance at "
                     "or above that floor, or select fixed-work mode"
@@ -1304,8 +1319,8 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
             "zero_rhs_or_exact_zero_residual_or_exact_requested_fixed_work"
             if fixed_work
             else (
-                "zero_rhs_or_exact_zero_residual_or_normalized_residual_not_"
-                "above_requested_relative_tolerance"
+                "zero_rhs_or_exact_zero_residual_or_pcg_recurrence_normalized_"
+                "residual_not_above_requested_relative_tolerance"
             )
         )
         return {

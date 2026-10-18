@@ -27,6 +27,9 @@ from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.core.domain import GridPlacement
 from pssolver.core.integrators import IntegratorScheme
 from pssolver.core.numerics import SpectralStorage
+from pssolver.linear_solvers.stokes.channel_no_slip import (
+    channel_pressure_minimum_relative_tolerance,
+)
 
 
 _EXECUTION_KEYS = frozenset(
@@ -200,6 +203,11 @@ def compile_channel_beris_edwards_public_simulation(
         pressure = validate_iterative_pressure_options(
             pressure,
             description="Channel pressure solver",
+            minimum_relative_tolerance=(
+                channel_pressure_minimum_relative_tolerance(
+                    source.numerics.precision.value
+                )
+            ),
         )
     except ValueError as exc:
         _reject(str(exc), code=Code.DISCRETIZATION_CONTRACT)

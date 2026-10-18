@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased — v0.2.0rc6
+
+### Fixed
+
+- Define Channel tolerance-mode success explicitly against the projected PCG
+  recurrence residual, raise the conservative supported floor to eight real
+  dtype epsilons, and reject sub-floor public Channel declarations during
+  structured compilation. Fixed-work runs retain their diagnostic-only
+  tolerance and are unaffected.
+
 ## 0.2.0rc5 — 2026-10-15
 
 Compatibility, fail-closed execution, packaging, and public-contract follow-up

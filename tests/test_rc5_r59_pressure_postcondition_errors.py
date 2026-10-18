@@ -45,7 +45,7 @@ def test_tolerance_mode_rejects_targets_below_the_dtype_floor(dtype):
     )
     floor = channel_pressure_minimum_relative_tolerance(dtype)
 
-    with pytest.raises(ValueError, match="attainable.*tolerance-mode floor"):
+    with pytest.raises(ValueError, match="supported.*tolerance-mode floor"):
         ChannelNoSlipModalStokesSolver(
             spectral.transform_backend,
             pressure_relative_tolerance=floor / 2.0,

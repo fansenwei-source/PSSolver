@@ -278,8 +278,8 @@ def _pressure_postcondition(
             satisfied = achieved_iteration_count == solver.pressure_fixed_iterations
         return required, bool(satisfied)
     required = (
-        "zero_rhs_or_exact_zero_residual_or_normalized_residual_not_above_"
-        "requested_relative_tolerance"
+        "zero_rhs_or_exact_zero_residual_or_pcg_recurrence_normalized_"
+        "residual_not_above_requested_relative_tolerance"
     )
     satisfied = termination_reason in {"zero_rhs", "exact_zero_residual"}
     if termination_reason == "relative_tolerance_met":
