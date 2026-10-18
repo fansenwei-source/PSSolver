@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "phase": "RC6-11",
+  "date": "2026-10-18",
+  "status": "provider_identity_impact_review_complete",
+  "classification": "PASS_RC6_PROVIDER_IDENTITY_UNCHANGED_NO_CONTROL_IDENTITY_MIGRATION_REQUIRED",
+  "qualified_source": {
+    "branch": "fix/v0.2.0rc6",
+    "commit": "ea801ec08f5b2465661334e1c126133e55b68e96",
+    "package_version": "0.2.0rc6",
+    "wheel_sha256": "8840ebfaa44a20a828928256c319edfa2aa4a9b8adf4f1bac014c33964ba0dd6",
+    "record_commit_is_qualified_source": false,
+    "requires_cpu_requalification": false
+  },
+  "released_baseline": {
+    "commit": "674a8121779be72c95aa5dc9e2babca0ce7b93a9",
+    "package_version": "0.2.0rc5",
+    "wheel_sha256": "3097b08b08ba7b2d488fd8af348ec48986d69007a640bd806a225ec9963bb65f"
+  },
+  "prerequisite": {
+    "checkpoint_record": "notes/PSSolver_v0_2_0rc6_checkpoint_cpu.json",
+    "checkpoint_record_sha256": "ec4bcb911b91f7af1839a323fe255179a5e0bbb51dd84aeb667bac46f8f2763f",
+    "checkpoint_classification": "PASS_RC6_RELEASED_CHECKPOINT_COMPATIBILITY_AND_TAMPER_CPU"
+  },
+  "consumer_fixture": {
+    "qualified_source_commit": "c14e6b56c88081e7f9a5642e65ffd722eec7445b",
+    "archive_sha256": "3b66240d6de16956c8958268e75b79e3e250efca61f21ff51ec44609ab93728e",
+    "periodic_fixture_sha256": "6bc103bb7ab28fe297c5847fa715a5479f2a4aeef2af7c07ea956fa725e3ca79",
+    "channel_fixture_sha256": "15958068d17cf472aa7fc2b323434eb665f1f1e90ead6c7a43d880d2d3d2a8d9",
+    "historical_identity_evidence_sha256": "1198d6b1b870d40a69d4eb379ef83cb2247c718a6fd08ad7fec34822664355ac"
+  },
+  "identity_matrix": {
+    "fixture_count": 3,
+    "changed_fixture_count": 0,
+    "changed_path_count": 0,
+    "full_metadata_equal": true,
+    "canonical_sha256_equal": true,
+    "path_independent": true,
+    "historical_rc5_evidence_reproduced_exactly": true,
+    "fixtures": {
+      "periodic_canonical": {
+        "rc5_canonical_sha256": "d85f6540494696fddb4549cd4d431d362fe4a55bc53cb9cfd8158fae7c09530d",
+        "rc6_canonical_sha256": "d85f6540494696fddb4549cd4d431d362fe4a55bc53cb9cfd8158fae7c09530d",
+        "changed_paths": []
+      },
+      "channel_canonical_fixed_iteration": {
+        "rc5_canonical_sha256": "b95aa0ce22035df610282f1066cce23b47819807f3d942138b0d5038b727a905",
+        "rc6_canonical_sha256": "b95aa0ce22035df610282f1066cce23b47819807f3d942138b0d5038b727a905",
+        "changed_paths": []
+      },
+      "channel_tolerance": {
+        "rc5_canonical_sha256": "b18000feec39cdcdb8e8d371ad80b5037a10ba844c21db0dcddd7b162d324908",
+        "rc6_canonical_sha256": "b18000feec39cdcdb8e8d371ad80b5037a10ba844c21db0dcddd7b162d324908",
+        "changed_paths": []
+      }
+    }
+  },
+  "version_contract": {
+    "functional_api_version": "1.0",
+    "functional_api_version_changed_in_rc6": false,
+    "provider_identity_changed_in_rc6": false,
+    "production_default_changed": false
+  },
+  "consumer_impact": {
+    "provider_identity_migration_required": false,
+    "identity_pin_update_required": false,
+    "guard_order_work_is_separate": true,
+    "guard_order_branch": "fix/pssolver-v0.2.0rc6-guard-order",
+    "guard_order_evidence_commit": "208edd03e6b26a0e788c07d295fddd7a67237189",
+    "guard_order_record_sha256": "aa02a1332a6f96ccf769f08e51bfadf3fa7769453d6a040c98d0dede24816c60",
+    "guard_order_cpu_closure_complete": true,
+    "installed_wheel_cpu_against_frozen_rc6_provider_complete": false,
+    "PSSolver_Control_modified_by_this_review": false
+  },
+  "runner_contract": {
+    "path": "benchmarks/run_rc6_provider_identity_review.py",
+    "sha256": "f0d23d438c17b9db571ce37f5506dd6c103dcd82d6061ec9b0178bbc98f6f2b3",
+    "python_isolated_mode": true,
+    "installed_package_imported_before_fixture": true,
+    "source_shadow_import": false,
+    "two_output_roots_per_fixture": true,
+    "atomic_json_outputs": true,
+    "refuse_overwrite": true
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_rc6_provider_identity_ea801ec_20261018_v1",
+    "analysis_sha256": "03fc01b41c14d9e613d9dd10b5c561f4346a5e3bffb1a11dc92689508c7fb5af",
+    "rc5_capture_sha256": "0d23e660aca1ed3b1c472d698240af0b22a1dd7402b0c5793888c4031842db5e",
+    "rc6_capture_sha256": "0712cebd0fc5d773ae65a104347574e1cab7f700392a18265c844fef98fca2ac",
+    "final_report_sha256": "71caac23b7455c86d70ef075cb45195407413cb6741d5c7f32fc5bc1b1c9a173",
+    "summary_json_sha256": "b77e86a8c79fb136cd208149f0b06bcbee9d9ee25d6df250b0454ae81032be00",
+    "summary_csv_sha256": "7716988bbff9513e7a29f9e7475814f4eb56b313839378641f3f271ef670c138",
+    "source_evidence_manifest_sha256": "d563091e9b8baa725bd70451caa90e639089d5d50fc0bcf1af98874c261dd5d5",
+    "checksum_entries": 19,
+    "checksum_passed": 19,
+    "checksum_failed": 0,
+    "checksums_sha256": "59340714ebeda6cf9ba90503ebee305d79335aebbd653bc18eba1c9f845071a0"
+  },
+  "pending_rc6_gates": [
+    "pssolver_control_guard_order_installed_wheel_cpu_with_frozen_rc6_provider",
+    "single_h100_cumulative_qualification",
+    "independent_post_release_verification"
+  ],
+  "authorization": {
+    "provider_identity_impact_review_complete": true,
+    "provider_identity_migration_required": false,
+    "eligible_for_pssolver_control_installed_wheel_cpu_review": true,
+    "pssolver_control_installed_wheel_cpu_complete": false,
+    "rc6_cumulative_qualification_complete": false,
+    "eligible_for_push": false,
+    "eligible_for_h100_submission": false,
+    "h100_submission_count": 0,
+    "automatic_retry": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  }
+}
