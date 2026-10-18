@@ -1,0 +1,95 @@
+{
+  "schema": "pssolver.rc6.nvcc_bootstrap_recovery.v1",
+  "classification": "READY_RC6_NVCC_BOOTSTRAP_RECOVERY_SUPPORT_H100_NOT_AUTHORIZED",
+  "recorded_on": "2026-10-18",
+  "failed_job": {
+    "job_id": "10900727",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:00:44",
+    "node": "gpu-h100-4-0",
+    "classification": "FAIL_RC6_SINGLE_H100_QUALIFICATION_EXTERNAL_NVCC_BOOTSTRAP",
+    "failed_stage": "environment",
+    "exception": "FileNotFoundError: nvcc is required for CUDA header discovery",
+    "node_local_tmp_preflight_passed": true,
+    "scientific_timestep_started": false,
+    "solver_failure": false,
+    "scientific_failure": false,
+    "checksums_sha256": "847da5e47e645fc20a86cc3690427f21f5a771452cf1452449bd6ad0fbd7555a"
+  },
+  "historical_record": {
+    "path": "notes/PSSolver_v0_2_0rc6_qualification_support.json",
+    "sha256": "b7dbac0acc192b818a15f6f60901c50c1b25ce6bd834dbffa25c58c0550f06d7",
+    "rewritten": false
+  },
+  "historical_successor_sources": {
+    "jobs/rc6_single_h100_qualification.sbatch": {
+      "predecessor_sha256": "36f3a65761fa2667acfb62326109de2a2355ffcbbf3a7b465c7f0265c07cd39c",
+      "successor_sha256": "0fcf703eb4ccbde7db20eda4a1e94ef71dcb9757e77870054bb22e8f87095f53",
+      "reason": "Load the HPCC cuda/12.1 module and persist the CUDA-toolkit identity before any qualification stage; no Provider runtime, numerical implementation, threshold, or production default changed."
+    }
+  },
+  "recovery_sources": {
+    "benchmarks/run_rc6_cuda_toolkit_preflight.py": "d6cd6a4838416d7b9b303e861de4e2a853a95efbdb7df70dfb309f1fb455c216",
+    "jobs/rc6_single_h100_qualification.sbatch": "0fcf703eb4ccbde7db20eda4a1e94ef71dcb9757e77870054bb22e8f87095f53",
+    "tests/test_rc6_cuda_toolkit_preflight.py": "b885677a1b18656f5e38b703ed88026d718af254ec2326340dac5688ed61c5eb",
+    "tests/test_rc6_qualification_support_record.py": "366175b3bade19d66ff18e6f8b1c5d5913af116eed8fee3bec6f2ee0e6a2933f"
+  },
+  "bootstrap_contract": {
+    "lmod_non_login_fallback": "/opt/ohpc/admin/lmod/lmod/init/bash",
+    "lmod_initializer_nounset_disabled_only_while_sourcing": true,
+    "required_module": "cuda/12.1",
+    "required_nvcc_release": "12.1",
+    "required_torch_cuda_runtime": "12.1",
+    "cuda_header_must_be_regular": true,
+    "observation_persisted_before_failure_exit": true,
+    "cuda_toolkit_runs_after_node_local_checkpoint_preflight_and_before_stage_runner": true,
+    "atomic_json": true,
+    "refuse_overwrite": true
+  },
+  "local_validation": {
+    "focused": {
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "pre_successor_registration_full": {
+      "passed": 4001,
+      "failed": 1,
+      "deselected": 7,
+      "failure": "historical qualification-support SHA required explicit successor registration"
+    },
+    "final_full": {
+      "passed": 4005,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 7,
+      "xfailed": 0,
+      "subtests_passed": 8
+    },
+    "py_compile": "PASS",
+    "bash_syntax": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "qualification_only": true,
+    "provider_runtime_modified": false,
+    "public_api_modified": false,
+    "numerical_implementation_modified": false,
+    "threshold_modified": false,
+    "skip_or_xfail_added": false,
+    "checkpoint_schema_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "recovery_h100_submission_authorized": false,
+    "automatic_retry": false,
+    "tag_authorized": false,
+    "release_authorized": false
+  },
+  "next_gate": "push_and_create_recovery_v2_installed_wheel_support_and_stage_plan_after_explicit_push_authorization; submit no H100 job without a new explicit authorization"
+}

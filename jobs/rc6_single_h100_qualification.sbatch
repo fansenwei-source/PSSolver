@@ -21,6 +21,7 @@ set -euo pipefail
 
 test -f "${RC6_DRIVER_PYTHON}"
 test -f "${RC6_SUPPORT_ROOT}/benchmarks/run_rc6_single_h100_stage_plan.py"
+test -f "${RC6_SUPPORT_ROOT}/benchmarks/run_rc6_cuda_toolkit_preflight.py"
 test -f "${RC6_SUPPORT_ROOT}/benchmarks/run_rc5_g1_checkpoint_tmp_preflight.py"
 test -f "${RC6_STAGE_PLAN}"
 test -d "${RC6_CONTROL_ROOT}/logs"
@@ -35,6 +36,16 @@ export PYTHONPATH="${RC6_SUPPORT_ROOT}"
 export CC=/opt/ohpc/pub/compiler/gcc/7.3.0/bin/gcc
 export CXX=/opt/ohpc/pub/compiler/gcc/7.3.0/bin/g++
 
+if ! type module >/dev/null 2>&1; then
+  # HPCC provides Lmod here for non-login batch shells.
+  # Its Bash initializer reads internal variables that may be unset, so keep
+  # nounset disabled only while sourcing the site-owned initialization file.
+  set +u
+  source /opt/ohpc/admin/lmod/lmod/init/bash
+  set -u
+fi
+module load cuda/12.1
+
 node_root="/tmp/pssolver_rc6_${SLURM_JOB_ID}"
 preflight_root="${node_root}/rename_noreplace"
 pytest_tmp="${node_root}/pytest_tmp"
@@ -47,6 +58,12 @@ export TMPDIR="${pytest_tmp}"
   --root "${preflight_root}" \
   --expected-tmpdir "${pytest_tmp}" \
   --output "${RC6_CONTROL_ROOT}/preflight/checkpoint_tmp.json"
+
+"${RC6_DRIVER_PYTHON}" \
+  "${RC6_SUPPORT_ROOT}/benchmarks/run_rc6_cuda_toolkit_preflight.py" \
+  --expected-module cuda/12.1 \
+  --expected-release 12.1 \
+  --output "${RC6_CONTROL_ROOT}/preflight/cuda_toolkit.json"
 
 "${RC6_DRIVER_PYTHON}" \
   "${RC6_SUPPORT_ROOT}/benchmarks/run_rc6_single_h100_stage_plan.py" \

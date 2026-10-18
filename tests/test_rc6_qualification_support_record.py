@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes" / "PSSolver_v0_2_0rc6_qualification_support.json"
+SUCCESSOR_RECORD = ROOT / "notes" / "PSSolver_v0_2_0rc6_nvcc_bootstrap_recovery.json"
 
 
 def _sha256(path: Path) -> str:
@@ -17,12 +18,18 @@ def _sha256(path: Path) -> str:
 
 def test_rc6_qualification_support_record_binds_exact_files_and_scope():
     value = json.loads(RECORD.read_text(encoding="utf-8"))
+    successor = json.loads(SUCCESSOR_RECORD.read_text(encoding="utf-8"))
     assert value["classification"] == "READY_RC6_QUALIFICATION_ONLY_ORCHESTRATION_AND_ANALYSIS"
     assert value["implemented"]["profile_count"] == 192
     assert value["validation"]["pytest_passed"] == 22
     assert value["validation"]["pytest_failed"] == 0
     for relative, expected in value["support_files"].items():
-        assert _sha256(ROOT / relative) == expected
+        actual = _sha256(ROOT / relative)
+        if actual != expected:
+            registration = successor["historical_successor_sources"].get(relative)
+            assert registration is not None
+            assert registration["predecessor_sha256"] == expected
+            assert registration["successor_sha256"] == actual
     remaining = value["remaining_before_submission"]
     assert remaining["stage_producers_implemented"] is False
     assert remaining["stage_producers_frozen"] is False
