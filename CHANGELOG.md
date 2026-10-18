@@ -4,6 +4,10 @@
 
 ### Fixed
 
+- Preserve PyTorch non-reentrant checkpoint early-stop control flow through
+  the stable functional facade, so default checkpoint recomputation works for
+  both Periodic and Channel runtimes without weakening ordinary public error
+  translation.
 - Make Channel pressure convergence failures part of the public
   `SimulationExecutionError` hierarchy, and atomically finalize started Plane
   and legacy-Channel run metadata with `status="failed"` before re-raising a

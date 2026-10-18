@@ -37,6 +37,9 @@ RC6_R3_RECORD = ROOT / (
 RC6_R4_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
 )
+RC6_R5_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -80,6 +83,9 @@ def test_r58_record_binds_implementation_and_exact_sources():
         "historical_successor_sources"
     ]
     rc6_r4_successors = json.loads(RC6_R4_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
+    rc6_r5_successors = json.loads(RC6_R5_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
     assert record["git_identity"] == {
@@ -162,6 +168,12 @@ def test_r58_record_binds_implementation_and_exact_sources():
                 and registration["historical_sha256"] == expected
             ):
                 expected = registration["current_sha256"]
+            registration = rc6_r5_successors.get(relative)
+            if (
+                registration is not None
+                and registration["historical_sha256"] == expected
+            ):
+                expected = registration["current_sha256"]
             assert _sha256(ROOT / relative) == expected
     for relative, registration in record["historical_successor_sources"].items():
         assert registration["historical_sha256"] != registration["current_sha256"]
@@ -226,6 +238,9 @@ def test_r58_record_binds_implementation_and_exact_sources():
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
         successor = rc6_r4_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == expected:
+            expected = successor["current_sha256"]
+        successor = rc6_r5_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
         assert _sha256(ROOT / relative) == expected

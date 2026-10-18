@@ -46,6 +46,7 @@ RC6_R1 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 RC6_R3 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
 RC6_R4 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
+RC6_R5 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -83,6 +84,9 @@ def _r513(relative: str, resolved: str) -> str:
     if successor is not None and successor["historical_sha256"] == resolved:
         resolved = successor["current_sha256"]
     successor = _read(RC6_R4)["historical_successor_sources"].get(relative)
+    if successor is not None and successor["historical_sha256"] == resolved:
+        resolved = successor["current_sha256"]
+    successor = _read(RC6_R5)["historical_successor_sources"].get(relative)
     if successor is not None and successor["historical_sha256"] == resolved:
         resolved = successor["current_sha256"]
     return resolved

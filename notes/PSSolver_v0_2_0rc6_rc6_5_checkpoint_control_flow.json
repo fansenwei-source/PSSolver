@@ -1,0 +1,251 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc6 RC6-5 functional checkpoint control-flow contract",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_RC6_5_FUNCTIONAL_CHECKPOINT_CONTROL_FLOW_CPU_CLOSURE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc6",
+    "rc6_4_record_commit": "e3fcce79a2bfb59b125b88d0d86b31dc4cfaaeef",
+    "implementation_commit": "76989c4c5ddc17a44e1846292f3c3065b2136f3b",
+    "qualified_source_commit": "76989c4c5ddc17a44e1846292f3c3065b2136f3b",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "ids": ["A5-12"],
+    "work_item": "RC6-5",
+    "source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc5_independent_acceptance_claude_zh.md",
+    "source_sha256": "87a39b1c285a4ea47343f7c992f4a98d7a7e525f4a9c204ffb0ad3a25d99e0b5",
+    "machine_source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc5_independent_acceptance_claude.json",
+    "machine_source_sha256": "841f9302a357f9a7f0ffeb9d93e26de9f329bec66fe7e5583af53b4958c0e6dd",
+    "root_cause": "The stable functional facade translated PyTorch non-reentrant checkpointing's intentional early-stop sentinel into FunctionalError. PyTorch could no longer catch its own sentinel, so default early-stop recomputation failed for both Periodic and Channel runtimes."
+  },
+  "contract": {
+    "checkpoint_mode": "torch_non_reentrant_default_early_stop",
+    "control_flow_exception_module": "torch.utils.checkpoint",
+    "control_flow_exception_qualname": "_StopRecomputationError",
+    "control_flow_exception_re_raised_unchanged": true,
+    "private_torch_exception_class_imported": false,
+    "unrecognized_control_flow_exception_fails_closed": true,
+    "ordinary_empty_message_exception_translated": true,
+    "ordinary_error_translation_changed": false,
+    "periodic_checkpoint_gradient_bitwise_equal_to_reference": true,
+    "channel_checkpoint_gradient_bitwise_equal_to_reference": true,
+    "checkpoint_early_stop_disabled": false,
+    "functional_api_version_changed": false,
+    "functional_adapter_versions_changed": false
+  },
+  "implementation_files": {
+    "pssolver/functional/api.py": "117f5a880306b5327ac1afcd233dfc177f751a25684227686621b59653133a52"
+  },
+  "regression_tests": {
+    "tests/test_rc6_rc65_checkpoint_control_flow.py": "324bde66f8323e92fa29e1394df9a038ea34f6349869b676f73013501851d8e9"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "7f0b2cfa1b8f15fdf98a0a931aa62d8e76ce76362627dc67cf3ddf403f812ec5",
+      "current_sha256": "b6eeae69c907396155f2573bfcf62e6757cf3728b3b8ae94494eff41c3c4f105",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Document preservation of non-reentrant checkpoint early-stop control flow through the stable functional facade."
+    },
+    "pssolver/functional/api.py": {
+      "historical_sha256": "8c5b21e0b34fcac6d28b90767ffacfb3bd0d906aa7ca6c451d321bb4a37f9c24",
+      "current_sha256": "117f5a880306b5327ac1afcd233dfc177f751a25684227686621b59653133a52",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Pass through the exact PyTorch non-reentrant checkpoint early-stop sentinel before ordinary stable-facade error translation."
+    },
+    "tests/test_rc4_functional_checkpoint_identity_record.py": {
+      "historical_sha256": "1fd37aae78e47acd1842fece3d9d89300751116b0a2894e3642d92a5f71e168f",
+      "current_sha256": "909c65c3a175f83969c431bd500731ff48683279d796512a2937794b7339adec",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Preserve the immutable RC4.2.4 record while resolving functional/api.py through the forward-only RC6-5 successor."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "b7badb05d946523c55d8f3ed487bb2eacc417348656bf4e99124a5c98cc171be",
+      "current_sha256": "ed6c20ef5236cb84d6fff58abafd9ea49e56947307cbf2038cb216cdbb488500",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable RC4.5.5 audit through the RC6-5 successor."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "59d965ed6a0f0d7655e67a5c27032d1b13b51faa3aaf6929a415d09e1490b38f",
+      "current_sha256": "66a2ff5c07a495051f8b20dc62f99dd6b18347242100a71928b50996b6e3cdfc",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable RC4.5.6 audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "3ac284ab3ea61b79e4330e2ae346d5ce29a08b37e275bc6dc21fa72e1b3381a3",
+      "current_sha256": "82e571a7c6d54d90522f8faa7ea3d05fd114e0875550e2a21e6ce77cc9c4d667",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable R5-1 audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "e692294f4f96790874c1b148e09b198034e3e444a3ec15e63f0297fe7d62293c",
+      "current_sha256": "bfb362fa88828a479bc4ee62bf0185364b8fd1ab9a79e62d7a84d36fee401758",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable R5-11 audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "466496dfae760952b6a470b5965822548ffb3a2a7af787199d9900bf5d53f8d3",
+      "current_sha256": "22fb909a5bc6605f4aab7023d1076d785dd57d2621cc2fdbdf04af1841a28cbb",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable R5-13 audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "ce7ce3b05d01de733b17fa26c6a6f641d37f55bf17f83e487bc88d471f285ebe",
+      "current_sha256": "86cf39ef3fcbc3156bd5eaac18d242f557183428165cf2050a02f160e70bbde5",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable R5-2 audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "62deca4e80d79cb18d83ac7d944b47c66e8b6cef3e4f1c0a0fcc1abb84269552",
+      "current_sha256": "abcea4e21be3d242beabce7b33f78ac8aef660e895e7942aeaa650aca0089761",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable R5-7 audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "4d7c45ceb5131db20683c15cd09fd58ada63c1f90379efedd3ca9acba3ca23ef",
+      "current_sha256": "c610a40f0ab7608a5b8e39ac9c4f6744285123c236bf6ed8612333dbca629a38",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable R5-8 audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "070e05265d635ff343bcb22adb6ded992cd068fd8f8596a268c17d4200cb7766",
+      "current_sha256": "372dfebfe126d6c668e992ef992b6b4a6031e3070c4f7fd3001d35547162c20a",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable W1 documentation audit through the RC6-5 successor."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "historical_sha256": "97760fe54c266d89d4dad16b4c067a4f48d821c790fc80da17223c438e956694",
+      "current_sha256": "41f56b844bca937374fda9d8f8eea940a7f481d352cb77c9d1eb881936f24cb0",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable RC6-2 audit through the RC6-5 successor."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "historical_sha256": "fb1ff22a7ed644f7dead0f52fdf6862ab5f158798167faa24da9ab1dc92f8eb1",
+      "current_sha256": "7946447371758b3155846b6d7d46cea066e451b21ce8ceb7b1e9fa1942abfa72",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable RC6-3 audit through the RC6-5 successor."
+    },
+    "tests/test_rc6_4_channel_failure_record.py": {
+      "historical_sha256": "f6a33fe5f48d4e3ca418ca7c87b6e039c42a15915ebeceb4c497a32c8f5db1b7",
+      "current_sha256": "8350eabbc951c13aee75588bd93290b5d026f409e520b387460be611ea85b2b9",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable RC6-4 audit through the RC6-5 successor."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "027279f338abb58b9e89faf037f8ea268c1d7249709ffcd565e681411e05a596",
+      "current_sha256": "587c87c3a7550b815a7d1935bd50ce4c50d7a391b51784d7612405e163037a89",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable RC4.5.7 stop audit through the RC6-5 successor."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "6f6ef185e87ed5713fd8b109371cbd439d8ba4bcfcbe5b2d060347603b4254ef",
+      "current_sha256": "9641e7615b7b615131ec2bdedc0008905e123ddaa261e70431ba0eda98bc2d56",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable RC4.5.7 recovery audit through the RC6-5 successor."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "096b0b00903b8d2d753553e288e8b6250e6000ecf19b9756a2d7ed0150b34c99",
+      "current_sha256": "0bb2c42655225c016050e8148090af20b327c4a8b9e51492d0c0e5869a4600ff",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable RC4.5.8 H100 closure audit through the RC6-5 successor."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "56fd099cc36d6e9cba930b167d6407bbbf5c5f2c12a5bd439f4179d0fe8b1c83",
+      "current_sha256": "b6dbc23db9340fc04f82a544142f49bb76c928349919fda2f29c27364b21e6b4",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable RC4 post-release findings audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": {
+      "historical_sha256": "a527175603569a61909f082dee59f8c1f5f1dc48f65a98e0578f16cbaf2a54b7",
+      "current_sha256": "8c19ddb65fe646eacd25bae0eb9ad72d371e6d2d919ea9621feafaa6546c57b1",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable G-1 glibc compatibility audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_g1_historical_audit_portability.py": {
+      "historical_sha256": "afd3dc38a9848e52739d1e513c2a24cd77a8f84c4b4af3b9afba67da7df749ad",
+      "current_sha256": "2e25bdf70f2ba0b10c55589a08ef45ebbfe3b644ad5a24af9e1846431a7e74ca",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable G-1 historical portability audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "9ba2f36e6ab804f6fd5cbef62becaebd35397ff12532dbc6d6debc3738f9728f",
+      "current_sha256": "86ff0db36d9f4a42237bf14251d872a6ee7647033cba6eb914bf1c8b06ab2e1c",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable R5-10 audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "71093f7ba31a310859f5ba3e8a6ec3db3bf8446efeadc92b97e9ebb8fced9913",
+      "current_sha256": "3f214ec4a703b2ff832c05c2668c5b3ba2e9b96e1c85d336d2030f4a06209c44",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable R5-12 audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "faace8e086c1b4fdff1f1d04feb005e70b75883ed95ba2a805721e84b500432e",
+      "current_sha256": "7650a3d465bae1733ae39cfac529c5c4dbfd02e95fae659f7d6d73b2a469bbc7",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable R5-3 audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "385b182aaad2a7fcebdbb98d700b79c70cc0904f1ec904ea963e691736a95277",
+      "current_sha256": "76df319e65f718a1f6ac2daf8fef75b6597bf4e303bb033688b9895a110c56a4",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable R5-5 audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "94a1286cc733bc130bcbafe0040cce2b0c0435c004b618b3dc809416d15dae95",
+      "current_sha256": "e733320f2f208e2e4d0d623519b92aca1875198a381feed3f4b63db886a5ea71",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable R5-6 audit through the RC6-5 successor."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "4e1604b453ccd406c5691a15f43d861ca3888cf460bdc68f5755eb6516e96d69",
+      "current_sha256": "0e002fc088a46919aca6baf975e53807609d38a5d0eaa0e77b7ca1022dc992c9",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable R5-9 audit through the RC6-5 successor."
+    },
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": {
+      "historical_sha256": "7146dd0d655ffcac9da9c9d825d34963f7ae96ec0f674a8e09eb372564709712",
+      "current_sha256": "39a5236cbb75fec895e475b0e286164e036c552edfcd604398ee013550bea257",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable RC6-1 audit through the RC6-5 successor."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "aa75cb60ec7fc7dd51044b5cd0a352d73ccd1198ede65b5097f57d337c1f22e8",
+      "current_sha256": "6ffe6534b560eaefc2dcb7d66ce128d864da40a296dbbacc10ba19acc3cfca8f",
+      "introduced_by_phase": "RC6-5",
+      "reason": "Continue the immutable v0.2 release audit through the RC6-5 successor."
+    }
+  },
+  "verification": {
+    "direct_contract_tests": "3 passed",
+    "affected_functional_checkpoint_and_architecture_tests": "78 passed",
+    "pre_record_full_cpu_suite": "3914 passed, 1 skipped, 7 deselected, 8 subtests passed; one expected historical successor audit failure",
+    "final_full_cpu_suite": "3920 passed, 1 skipped, 7 deselected, 8 subtests passed",
+    "only_skip": "optional nematics3d dependency unavailable",
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "checkpoint_control_flow_boundary_changed": true,
+    "ordinary_public_error_translation_changed": false,
+    "scientific_equations_changed": false,
+    "integrator_changed": false,
+    "transform_algorithm_changed": false,
+    "gradient_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "runtime_default_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "rc6_5_complete": true,
+    "eligible_for_rc6_6": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

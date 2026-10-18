@@ -15,6 +15,7 @@ RC6_R1 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 RC6_R3 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
 RC6_R4 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
+RC6_R5 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
 
 
 def _record() -> dict[str, object]:
@@ -48,6 +49,9 @@ def test_historical_audit_record_binds_only_forward_test_successors():
     rc6_r4_successors = json.loads(RC6_R4.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    rc6_r5_successors = json.loads(RC6_R5.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, registration in successors.items():
         assert registration["historical_sha256"] != registration["current_sha256"]
         resolved = registration["current_sha256"]
@@ -69,6 +73,9 @@ def test_historical_audit_record_binds_only_forward_test_successors():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = rc6_r4_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = rc6_r5_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(relative) == resolved
