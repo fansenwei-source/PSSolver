@@ -16,6 +16,7 @@ import numpy as np
 import torch
 
 from pssolver.configuration import PlaneBerisEdwardsRunSpec, PlaneRuntimePath
+from pssolver.errors import SimulationStateError
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.plane_compiled_v2_binding import (
     PlaneCompiledV2BindingPlan,
@@ -237,25 +238,52 @@ class PlaneCompiledV2WorkflowAdapter:
         if not isinstance(value, torch.Tensor):
             raise RuntimeError("compiled normal-force diagnostics are unavailable")
         if not bool(torch.isfinite(value).all().item()):
-            raise RuntimeError("compiled normal-force diagnostics are non-finite")
+            raise SimulationStateError(
+                "Plane diagnostic is non-finite at step "
+                f"{self.completed_steps}",
+                application_family="plane_complete_stress",
+                stage="diagnostic",
+                step=self.completed_steps,
+                details={"nonfinite_fields": ["projected_normal_force"]},
+            )
         return value
 
     def flow_diagnostics(self) -> Mapping[str, object]:
         model = self._binding.operators.stokes_kernel
         if not model.pressure_diagnostics:
             raise RuntimeError("compiled pressure diagnostics are disabled")
-        values = {
-            "last_pressure_iterations": int(model.last_pressure_iterations),
-            "last_pressure_residual": float(model.last_pressure_residual),
-            "last_pressure_relative_residual": float(
+        raw_values = {
+            "last_pressure_iterations": model.last_pressure_iterations,
+            "last_pressure_residual": model.last_pressure_residual,
+            "last_pressure_relative_residual": (
                 model.last_pressure_relative_residual
             ),
         }
-        if not all(
-            math.isfinite(float(value)) for value in values.values()
-        ):
-            raise RuntimeError("compiled pressure diagnostics are non-finite")
-        return values
+        nonfinite_fields = [
+            name
+            for name, value in raw_values.items()
+            if not math.isfinite(float(value))
+        ]
+        if nonfinite_fields:
+            raise SimulationStateError(
+                "Plane diagnostic is non-finite at step "
+                f"{self.completed_steps}",
+                application_family="plane_complete_stress",
+                stage="diagnostic",
+                step=self.completed_steps,
+                details={"nonfinite_fields": nonfinite_fields},
+            )
+        return {
+            "last_pressure_iterations": int(
+                raw_values["last_pressure_iterations"]
+            ),
+            "last_pressure_residual": float(
+                raw_values["last_pressure_residual"]
+            ),
+            "last_pressure_relative_residual": float(
+                raw_values["last_pressure_relative_residual"]
+            ),
+        }
 
     def capture_diagnostic(
         self,

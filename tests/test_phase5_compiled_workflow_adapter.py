@@ -15,6 +15,7 @@ from pssolver.configuration import (
     PlaneRuntimePath,
     create_plane_beris_edwards_run_spec,
 )
+from pssolver.errors import SimulationExecutionError, SimulationStateError
 from pssolver.io.checkpoint_identity import CheckpointIdentityLayer
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.plane_beris_edwards import LegacyPlaneRuntimeAdapter
@@ -238,6 +239,55 @@ def test_disabled_diagnostics_do_not_block_observation_or_checkpoint(tmp_path):
         adapter.projected_normal_force()
     with pytest.raises(RuntimeError, match="pressure diagnostics are disabled"):
         adapter.flow_diagnostics()
+
+
+@pytest.mark.parametrize(
+    ("diagnostic", "expected_fields"),
+    (
+        ("normal_force", ["projected_normal_force"]),
+        (
+            "pressure",
+            ["last_pressure_residual", "last_pressure_relative_residual"],
+        ),
+    ),
+)
+def test_nonfinite_compiled_diagnostics_raise_the_public_state_error(
+    tmp_path,
+    diagnostic,
+    expected_fields,
+):
+    _, _, _, binding, program, adapter = _compiled(
+        tmp_path,
+        f"nonfinite_{diagnostic}",
+    )
+    program.step()
+    stokes = binding.operators.stokes_kernel
+    if diagnostic == "normal_force":
+        stokes.last_projected_normal_force.fill_(float("nan"))
+        operation = adapter.projected_normal_force
+    else:
+        stokes.last_pressure_residual = float("inf")
+        stokes.last_pressure_relative_residual = float("nan")
+        operation = adapter.flow_diagnostics
+
+    with pytest.raises(SimulationStateError) as captured:
+        operation()
+
+    error = captured.value
+    assert isinstance(error, SimulationExecutionError)
+    assert isinstance(error, ValueError)
+    assert error.application_family == "plane_complete_stress"
+    assert error.stage == "diagnostic"
+    assert error.step == 1
+    assert error.details == {"nonfinite_fields": expected_fields}
+    assert error.to_metadata() == {
+        "code": "simulation_state_error",
+        "message": "Plane diagnostic is non-finite at step 1",
+        "application_family": "plane_complete_stress",
+        "stage": "diagnostic",
+        "step": 1,
+        "details": {"nonfinite_fields": expected_fields},
+    }
 
 
 def test_checkpoint_v2_round_trip_persists_layered_identity(tmp_path):
