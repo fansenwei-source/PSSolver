@@ -25,6 +25,9 @@ G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
 G1_GLIBC_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
 )
+RC6_R1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -58,6 +61,9 @@ def test_r58_record_binds_implementation_and_exact_sources():
     g1_glibc_successors = json.loads(
         G1_GLIBC_RECORD.read_text(encoding="utf-8")
     )["historical_successor_sources"]
+    rc6_successors = json.loads(RC6_R1_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert record["git_identity"] == {
         "branch": "fix/v0.2.0rc5",
         "implementation_commit": "52e57f1f4f406efcd92bb9245c13e9c635ba721c",
@@ -109,6 +115,17 @@ def test_r58_record_binds_implementation_and_exact_sources():
                 and registration["historical_sha256"] == expected
             ):
                 expected = registration["current_sha256"]
+            registration = rc6_successors.get(relative)
+            accepted = (
+                []
+                if registration is None
+                else registration.get(
+                    "accepted_predecessor_sha256",
+                    [registration["historical_sha256"]],
+                )
+            )
+            if registration is not None and expected in accepted:
+                expected = registration["current_sha256"]
             assert _sha256(ROOT / relative) == expected
     for relative, registration in record["historical_successor_sources"].items():
         assert registration["historical_sha256"] != registration["current_sha256"]
@@ -154,6 +171,17 @@ def test_r58_record_binds_implementation_and_exact_sources():
             successor is not None
             and successor["historical_sha256"] == expected
         ):
+            expected = successor["current_sha256"]
+        successor = rc6_successors.get(relative)
+        accepted = (
+            []
+            if successor is None
+            else successor.get(
+                "accepted_predecessor_sha256",
+                [successor["historical_sha256"]],
+            )
+        )
+        if successor is not None and expected in accepted:
             expected = successor["current_sha256"]
         assert _sha256(ROOT / relative) == expected
         assert registration["reason"]

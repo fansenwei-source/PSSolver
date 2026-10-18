@@ -54,6 +54,7 @@ RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 RC5_G1_GLIBC = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
 )
+RC6_R1 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 
 
 def _set_state(precision: str, matmul: bool, cudnn: bool) -> None:
@@ -84,11 +85,20 @@ def _resolve_rc457_successor(relative: str, historical: str) -> str:
         RC5_R512,
         RC5_R513,
         RC5_G1_GLIBC,
+        RC6_R1,
     ):
         successor = json.loads(record_path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
+        accepted = (
+            []
+            if successor is None
+            else successor.get(
+                "accepted_predecessor_sha256",
+                [successor["historical_sha256"]],
+            )
+        )
+        if successor is not None and resolved in accepted:
             resolved = successor["current_sha256"]
     return resolved
 

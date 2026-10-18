@@ -256,7 +256,7 @@ def test_nonfinite_compiled_diagnostics_raise_the_public_state_error(
     diagnostic,
     expected_fields,
 ):
-    _, _, _, binding, program, adapter = _compiled(
+    spec, _, _, binding, program, adapter = _compiled(
         tmp_path,
         f"nonfinite_{diagnostic}",
     )
@@ -264,14 +264,16 @@ def test_nonfinite_compiled_diagnostics_raise_the_public_state_error(
     stokes = binding.operators.stokes_kernel
     if diagnostic == "normal_force":
         stokes.last_projected_normal_force.fill_(float("nan"))
-        operation = adapter.projected_normal_force
     else:
         stokes.last_pressure_residual = float("inf")
         stokes.last_pressure_relative_residual = float("nan")
-        operation = adapter.flow_diagnostics
 
     with pytest.raises(SimulationStateError) as captured:
-        operation()
+        adapter.capture_diagnostic(
+            step=1,
+            viscosity=spec.eta,
+            friction=0.0,
+        )
 
     error = captured.value
     assert isinstance(error, SimulationExecutionError)

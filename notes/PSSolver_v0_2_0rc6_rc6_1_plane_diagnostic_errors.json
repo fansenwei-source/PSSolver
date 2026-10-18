@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc6 RC6-1 Plane compiled diagnostic public errors",
+  "status": "complete",
+  "classification": "PASS_RC6_1_PLANE_COMPILED_DIAGNOSTIC_PUBLIC_ERROR_CPU_CLOSURE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc6",
+    "rc5_qualified_base": "e2e9d05bfac858d8e1ae1653ac86a2187c9917ef",
+    "implementation_commit": "17a026650bbbd7382b7dfea0b9ca195985e46f9e",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "id": "A4-14 / A7-02",
+    "work_item": "RC6-1",
+    "source": "PSSolver v0.2.0rc5 independent post-release acceptance",
+    "root_cause": "The Plane compiled_v2 workflow raised bare RuntimeError for non-finite normal-force and pressure diagnostics even though the frozen R5-2 production contract requires SimulationStateError for plane_complete_stress diagnostic boundaries."
+  },
+  "contract": {
+    "application_family": "plane_complete_stress",
+    "stage": "diagnostic",
+    "public_error_base": "SimulationExecutionError",
+    "nonfinite_error": "SimulationStateError",
+    "machine_code": "simulation_state_error",
+    "step_source": "compiled workflow completed_steps",
+    "normal_force_nonfinite_field": "projected_normal_force",
+    "pressure_nonfinite_fields_are_reported_individually": true,
+    "disabled_diagnostic_error_unchanged": "RuntimeError",
+    "unavailable_diagnostic_error_unchanged": "RuntimeError",
+    "fail_closed": true
+  },
+  "implementation_files": {
+    "pssolver/workflows/plane_compiled_v2.py": "02c4eeec9271ee327fc167ab146ec0253581d11320ac1a7e3cb811729877cfc9"
+  },
+  "regression_tests": {
+    "tests/test_phase5_compiled_workflow_adapter.py": "808ad94a5ef83ec15c14320d0a1593a4ce3cc16a744cacf1008104dcb1344f26"
+  },
+  "historical_successor_sources": {
+    "pssolver/workflows/plane_compiled_v2.py": {
+      "historical_sha256": "8c9692826cf8de4db6232da3f10127658a1946fb482b0934f0c99ea8600a1ffc",
+      "current_sha256": "02c4eeec9271ee327fc167ab146ec0253581d11320ac1a7e3cb811729877cfc9",
+      "reason": "Translate compiled Plane non-finite diagnostic state to the stable public SimulationStateError contract without changing numerical execution."
+    },
+    "tests/test_rc4_plane_checkpoint_identity_record.py": {
+      "historical_sha256": "af65e3efed32c8a003d70c78b216f4375789486dce75e112c4aa4c1eeecd7810",
+      "current_sha256": "52fd25607bcefa22d26224c1a46c50ca1ab932ed60c3f4e4c76c7f0666136ba2",
+      "reason": "Resolve the immutable RC4.2.2 source binding through the forward-only RC6-1 successor record."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "1a00f175283a73957d8d69f5fb47bdf0de2127af50f19352b716e94847e6b626",
+      "current_sha256": "289a490b4de719167d970dfb77012d22ec2b3b9443875a0ae940ee6034feb440",
+      "reason": "Preserve the frozen R5-2 contract while resolving its Plane compiled_v2 implementation gap through RC6-1."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "d2e1bfc6a4a4579ce24cd0ff8acb2b2eb842a1309554c4cc549a4296a11b4516",
+      "current_sha256": "8e29b9d854dd276f21d827768b5ccf716aa9a15e60810b7cd56c73f1e07f8f7c",
+      "reason": "Resolve the frozen RC4.5.5 source audit through the forward-only RC6-1 successor record."
+    },
+    "tests/test_rc4_lifting_checkpoint_integration_record.py": {
+      "historical_sha256": "2de4091fc681133a154a6e26df8b957e524e185c2a16710ecb4e643650074b10",
+      "current_sha256": "6a71aff518710adcec17b1ef217586a3fc9d78f98b614402899c81bd2cc897c9",
+      "reason": "Resolve the frozen RC4.3.5 source audit through the forward-only RC6-1 successor record without reopening lifting."
+    },
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": {
+      "historical_sha256": "cd2076902a5d681ad4c47f034cc03bbfeb2cadb06c646ff133a86b8c6f66759b",
+      "current_sha256": "4351dc25fafdbe74d0c3611586a11175ff8500fa35e33278be950c53b066ab7b",
+      "reason": "Preserve G-1 glibc closure while resolving its audited test successor through RC6-1."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "baee05ed5067ad98e8d951dc8951805d7a20f4ba1dc82213d4be738753a2b5cc",
+      "current_sha256": "cbdc44d05f4fdcea82329a44eca48abf26840448ed234e0f341cf7abe6f1050c",
+      "reason": "Preserve R5-10 closure while resolving later audit-test successors through RC6-1."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "883a68597ac435d3e724038a47689edb439a8e7870250b500346b35ff1aa19e5",
+      "current_sha256": "e8ea44c9a05e12f5c4a45619dfcf2dbd750d3b3ffb03f4838b097e0ce44b307e",
+      "reason": "Preserve R5-11 closure while resolving later audit-test successors through RC6-1."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "7eb486efee8a7a999e6eeadc8bafb57c0c95fcad2ea4934299fe8ff1481dac55",
+      "current_sha256": "bf6468d3f273ccd09cc703bdd33ef71839e3e9bc14f030064b19b443a43820fd",
+      "reason": "Preserve R5-12 closure while resolving later audit-test successors through RC6-1."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "781bdb43671b2ddd290eaf343a2f9ff240cf52d7e652d12d657f7d30d763ae3f",
+      "current_sha256": "f0ff4e79a356013d84ab4a9cc676b9dd4673298bc09033c45b42685144e8e892",
+      "reason": "Preserve R5-13 closure while resolving later audit-test successors through RC6-1."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "b021d998accffc11b37c3a8ea16d76db759a2b37189f85cdf78f37566796b85c",
+      "current_sha256": "cdcbb3d82fe6d5ab9663fed59cf2a4426efb57a46ad618760c6c04687638df31",
+      "reason": "Preserve R5-3 closure while resolving later audit-test successors through RC6-1."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "e9014c59dfca0bff33de47178f779cbf91ce008088c05d429549cb65451a476c",
+      "accepted_predecessor_sha256": [
+        "0ff7a11243653c7e170cd8abb9e5ac36ac955b06f7e1e7d41ceeb6090724f0c7",
+        "e9014c59dfca0bff33de47178f779cbf91ce008088c05d429549cb65451a476c"
+      ],
+      "current_sha256": "33d2fe0f33e4081571b279121ceb905156c1f696480a94fd0927f263f2531bd2",
+      "reason": "Preserve R5-5 closure while resolving later audit-test successors through RC6-1."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "e48a394d1d7f5f4762536e9ed3335bf918f1452619a7e300ef062b4021c82d51",
+      "accepted_predecessor_sha256": [
+        "89914b05820672196e9f46e4ae0043ded1247c6750edeec997b0d9e584a9a9cd",
+        "e48a394d1d7f5f4762536e9ed3335bf918f1452619a7e300ef062b4021c82d51"
+      ],
+      "current_sha256": "d7adf51e1aac5aa78395c2bc44230fd5580559439a86d4d1a57caf7b2a715219",
+      "reason": "Preserve R5-6 closure while resolving later audit-test successors through RC6-1."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "a69026b224d53977388d6e650dd3ff464312b67a387eea6804f95a8efb76f220",
+      "accepted_predecessor_sha256": [
+        "3bfe895ba79d8dc43d1c6bebb8110115a817cd02823f64e994922271d7d4f984",
+        "a69026b224d53977388d6e650dd3ff464312b67a387eea6804f95a8efb76f220"
+      ],
+      "current_sha256": "f20a66959f6f4202e354cf909c3014b7c46635b50c9fbbfc47b224559d2465cd",
+      "reason": "Preserve R5-7 closure while resolving later audit-test successors through RC6-1."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "aa40f9b752d5551f867765aed2aa62b3c108624a0b4ac6307887ee61fba36e17",
+      "current_sha256": "1d5d9af435da240c78a8645493ebe1d6a66d6e68e0c09c6e59d4764734763868",
+      "reason": "Preserve R5-8 closure while resolving later audit-test successors through RC6-1."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "60a2301dffb5d31be725619a0662a6a9b43dd8d5947cc5c326468c653b3d1cdf",
+      "current_sha256": "6621e606fddc16cae40dfb76e4fea228aa4c07c2aacd3495f359737d9f87e93a",
+      "reason": "Preserve R5-9 closure while resolving later audit-test successors through RC6-1."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "a916f9cd13ca7e32364dbd00c04a823e021d25b8f9d98ae0280d02e711b32230",
+      "current_sha256": "a9507709528ac295b6a42720d2ab2dfd9b5907e6d4688bba92315df1f58cc2fb",
+      "reason": "Resolve the immutable RC4.5.6 audit chain through the forward-only RC6-1 successor record."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "a9b2559fce388368e9cdb45305e9ef06f4d0a4c9767bbe0a18fc55bbbb94badb",
+      "current_sha256": "729c3eac5b183853a153ab67db243307ca58de74b14bc9aaf3d6e3ba6dd5c7c2",
+      "reason": "Resolve the immutable RC4.5.7 consumer-impact audit chain through RC6-1."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "f7cd02175fdc12a269d378523ac0e16cea49d5974d0046e95006a90f7f580a99",
+      "current_sha256": "8c411b47f7455ee705c433281807e44c66c0862fd1a167454be182b885d20d09",
+      "reason": "Resolve the immutable RC4.5.7 recovery audit chain through RC6-1."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "ccd1fb93ccd6bcdf0eb0bcf67ebbd79083549add9e604f1f4d82d6ef8977ecbe",
+      "current_sha256": "3ff125a6907c9a639f86562ec5c2ae5b01713e6142341548d465e45bca3bc057",
+      "reason": "Preserve the RC4.5.8 H100 closure while resolving its audit chain through RC6-1."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "bb7c1e5bbe9ca9bd99095200822ea717daeab4534ba79183ffe99ae8862c755b",
+      "current_sha256": "727b13bb6f934c456cf5cf0026d762b3b39308921926f278f1241de206c22010",
+      "reason": "Preserve the immutable RC4 post-release findings while resolving their audit chain through RC6-1."
+    },
+    "tests/test_rc5_g1_historical_audit_portability.py": {
+      "historical_sha256": "5fd9b2b7eaafb8b0267d5623df565987aef5cd2fa03bfbc4b8785ba5b4992370",
+      "current_sha256": "c61cc0d303983893e54bfaf93537d42a570495993535116f7866e7eb94759511",
+      "reason": "Preserve G-1 historical audit portability while resolving the RC6-1 successor chain."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "f092efccb0f8325b7ffcdcbc415b7fe7c78c06c6ee89883d991a2249da83122a",
+      "current_sha256": "d0d1ff908eb403cdb4441de6df96c39bd0baf5fbc1a369187ef7d5e64cfa2cc3",
+      "reason": "Preserve the legacy functional checkpoint record while resolving its RC6-1 successor chain."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "5dd2dfc24530bd2f3949a3289650d91138ab5a8d4114815e6e6657619fd1b4ee",
+      "current_sha256": "4bcaaf11b26cd907cc32a25897d6749c5d57d93225434bbd74e2927de8563e02",
+      "reason": "Preserve the W1 documentation closure while resolving its RC6-1 audit successor."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "7bafc16995a5c5ed5dde731ab3c74adbb830d9331b7285d0b41233873b58f0e6",
+      "current_sha256": "0c955d01859d58615d3482f7818c0f4337539ab3cae330d3f00d64db69747650",
+      "reason": "Preserve the v0.2 release audit while resolving its RC6-1 successor chain."
+    }
+  },
+  "validation": {
+    "direct_and_existing_targeted_cpu": "29 passed, 0 failed",
+    "expanded_compiled_and_record_targeted_cpu": "108 passed, 0 failed",
+    "successor_chain_targeted_cpu": "195 passed, 0 failed",
+    "normal_force_metadata_checked": true,
+    "pressure_metadata_checked": true,
+    "disabled_diagnostics_regression_checked": true,
+    "historical_record_successor_resolution_checked": true,
+    "source_full_cpu": "3857 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "installed_wheel_cpu": "not_run_in_rc6_1",
+    "H100": "not_required_for_rc6_1"
+  },
+  "scope": {
+    "scientific_equations_changed": false,
+    "integrator_changed": false,
+    "transform_algorithm_changed": false,
+    "pressure_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "public_exception_behavior_changed": true,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "rc6_1_complete": true,
+    "eligible_for_rc6_2": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

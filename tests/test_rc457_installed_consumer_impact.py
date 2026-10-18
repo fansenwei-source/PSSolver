@@ -42,6 +42,7 @@ RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 RC5_G1_GLIBC = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
 )
+RC6_R1 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -60,6 +61,17 @@ def _r513(relative: str, resolved: str) -> str:
         relative
     )
     if successor is not None and successor["historical_sha256"] == resolved:
+        resolved = successor["current_sha256"]
+    successor = _read(RC6_R1)["historical_successor_sources"].get(relative)
+    accepted = (
+        []
+        if successor is None
+        else successor.get(
+            "accepted_predecessor_sha256",
+            [successor["historical_sha256"]],
+        )
+    )
+    if successor is not None and resolved in accepted:
         resolved = successor["current_sha256"]
     return resolved
 

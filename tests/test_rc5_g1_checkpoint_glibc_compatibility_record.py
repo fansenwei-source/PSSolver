@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
 )
+RC6_R1 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 
 
 def _record() -> dict[str, object]:
@@ -23,13 +24,28 @@ def _sha256(relative: str) -> str:
 
 def test_glibc_compatibility_record_binds_implementation_and_tests():
     record = _record()
+    rc6_successors = json.loads(RC6_R1.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert record["classification"] == (
         "PASS_RC5_G1_CHECKPOINT_GLIBC_2_17_CPU_COMPATIBILITY_CANDIDATE"
     )
     for relative, expected in record["new_sources"].items():
         assert _sha256(relative) == expected
     for relative, successor in record["historical_successor_sources"].items():
-        assert _sha256(relative) == successor["current_sha256"]
+        expected = successor["current_sha256"]
+        rc6_successor = rc6_successors.get(relative)
+        accepted = (
+            []
+            if rc6_successor is None
+            else rc6_successor.get(
+                "accepted_predecessor_sha256",
+                [rc6_successor["historical_sha256"]],
+            )
+        )
+        if rc6_successor is not None and expected in accepted:
+            expected = rc6_successor["current_sha256"]
+        assert _sha256(relative) == expected
         assert successor["historical_sha256"] != successor["current_sha256"]
         assert successor["reason"]
 

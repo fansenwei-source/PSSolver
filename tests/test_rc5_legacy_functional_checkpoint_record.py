@@ -34,6 +34,9 @@ G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
 G1_GLIBC_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
 )
+RC6_R1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
+)
 
 
 def _sha256(relative: str) -> str:
@@ -56,11 +59,20 @@ def _latest_successor(relative: str, historical: str) -> str:
         R5_13_RECORD,
         G1_RECORD,
         G1_GLIBC_RECORD,
+        RC6_R1_RECORD,
     ):
         successor = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
+        accepted = (
+            []
+            if successor is None
+            else successor.get(
+                "accepted_predecessor_sha256",
+                [successor["historical_sha256"]],
+            )
+        )
+        if successor is not None and resolved in accepted:
             resolved = successor["current_sha256"]
     return resolved
 
@@ -121,6 +133,9 @@ def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
     g1_glibc_successors = json.loads(
         G1_GLIBC_RECORD.read_text(encoding="utf-8")
     )["historical_successor_sources"]
+    rc6_successors = json.loads(RC6_R1_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
@@ -166,6 +181,17 @@ def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
             resolved = successor["current_sha256"]
         successor = g1_glibc_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = rc6_successors.get(relative)
+        accepted = (
+            []
+            if successor is None
+            else successor.get(
+                "accepted_predecessor_sha256",
+                [successor["historical_sha256"]],
+            )
+        )
+        if successor is not None and resolved in accepted:
             resolved = successor["current_sha256"]
         assert _sha256(relative) == resolved
     assert record["scope"]["historical_records_rewritten"] is False

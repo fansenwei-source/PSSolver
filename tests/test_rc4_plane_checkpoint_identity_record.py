@@ -17,6 +17,7 @@ RC455 = ROOT / (
     "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
 )
 RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
+RC6_R1 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 
 
 def _record() -> dict[str, object]:
@@ -31,7 +32,7 @@ def test_rc422_record_binds_plan_parent_and_implementation_files():
     record = _record()
     successor_records = tuple(
         json.loads(path.read_text(encoding="utf-8"))["historical_successor_sources"]
-        for path in (RC455, RC5_R52)
+        for path in (RC455, RC5_R52, RC6_R1)
     )
     assert record["status"] == "complete"
     assert record["classification"] == (

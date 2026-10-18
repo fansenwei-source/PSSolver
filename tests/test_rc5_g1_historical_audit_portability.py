@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_historical_audit_portability_v17.json"
 )
+RC6_R1 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 
 
 def _record() -> dict[str, object]:
@@ -32,9 +33,24 @@ def test_historical_audit_record_binds_only_forward_test_successors():
         "tests/test_rc5_r56_public_error_boundary_record.py",
         "tests/test_rc5_r57_device_normalization_record.py",
     }
+    rc6_successors = json.loads(RC6_R1.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, registration in successors.items():
         assert registration["historical_sha256"] != registration["current_sha256"]
-        assert _sha256(relative) == registration["current_sha256"]
+        resolved = registration["current_sha256"]
+        successor = rc6_successors.get(relative)
+        accepted = (
+            []
+            if successor is None
+            else successor.get(
+                "accepted_predecessor_sha256",
+                [successor["historical_sha256"]],
+            )
+        )
+        if successor is not None and resolved in accepted:
+            resolved = successor["current_sha256"]
+        assert _sha256(relative) == resolved
         assert registration["production_runtime_changed"] is False
         assert registration["scientific_threshold_changed"] is False
 

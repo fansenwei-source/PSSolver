@@ -11,6 +11,9 @@ G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
 G1_GLIBC_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
 )
+RC6_R1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -29,6 +32,9 @@ def test_r513_record_binds_new_and_successor_sources():
     glibc_successors = json.loads(
         G1_GLIBC_RECORD.read_text(encoding="utf-8")
     )["historical_successor_sources"]
+    rc6_successors = json.loads(RC6_R1_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, expected in record["new_sources"].items():
         assert _sha256(relative) == expected
     for relative, registration in record[
@@ -41,6 +47,17 @@ def test_r513_record_binds_new_and_successor_sources():
             resolved = successor["current_sha256"]
         successor = glibc_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = rc6_successors.get(relative)
+        accepted = (
+            []
+            if successor is None
+            else successor.get(
+                "accepted_predecessor_sha256",
+                [successor["historical_sha256"]],
+            )
+        )
+        if successor is not None and resolved in accepted:
             resolved = successor["current_sha256"]
         assert _sha256(relative) == resolved
         assert registration["introduced_by_phase"] == "R5-13"

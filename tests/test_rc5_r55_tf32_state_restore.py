@@ -36,6 +36,9 @@ G1_WINDOW_LIFECYCLE_RECORD = ROOT / (
 G1_HISTORICAL_AUDIT_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_historical_audit_portability_v17.json"
 )
+RC6_R1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -62,6 +65,7 @@ def _r56_successor(relative: str, historical: str) -> str:
         G1_WINDOW_IMPLEMENTATION_RECORD,
         G1_WINDOW_LIFECYCLE_RECORD,
         G1_HISTORICAL_AUDIT_RECORD,
+        RC6_R1_RECORD,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"

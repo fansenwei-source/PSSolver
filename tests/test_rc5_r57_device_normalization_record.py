@@ -28,6 +28,9 @@ G1_GLIBC_RECORD = ROOT / (
 G1_HISTORICAL_AUDIT_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_historical_audit_portability_v17.json"
 )
+RC6_R1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
+)
 
 
 def _resolve_g1_audit_successor(relative: str, resolved: str) -> str:
@@ -41,6 +44,23 @@ def _resolve_g1_audit_successor(relative: str, resolved: str) -> str:
         [registration.get("historical_sha256")],
     )
     if resolved in accepted:
+        return registration["current_sha256"]
+    return resolved
+
+
+def _resolve_rc6_r1_successor(relative: str, resolved: str) -> str:
+    registration = json.loads(RC6_R1_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    accepted = (
+        []
+        if registration is None
+        else registration.get(
+            "accepted_predecessor_sha256",
+            [registration["historical_sha256"]],
+        )
+    )
+    if registration is not None and resolved in accepted:
         return registration["current_sha256"]
     return resolved
 
@@ -146,6 +166,7 @@ def test_r57_record_binds_implementation_and_regression_sources():
             ):
                 resolved = g1_glibc_registration["current_sha256"]
             resolved = _resolve_g1_audit_successor(relative, resolved)
+            resolved = _resolve_rc6_r1_successor(relative, resolved)
             assert _sha256(ROOT / relative) == resolved
 
 
@@ -227,6 +248,7 @@ def test_r57_record_binds_every_historical_successor():
         ):
             resolved = g1_glibc_registration["current_sha256"]
         resolved = _resolve_g1_audit_successor(relative, resolved)
+        resolved = _resolve_rc6_r1_successor(relative, resolved)
         assert _sha256(ROOT / relative) == resolved
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["reason"]

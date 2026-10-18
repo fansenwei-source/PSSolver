@@ -24,6 +24,9 @@ G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
 G1_GLIBC_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
 )
+RC6_R1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -43,14 +46,20 @@ def _r510_successor(relative: str, historical: str) -> str:
         R5_13_RECORD,
         G1_RECORD,
         G1_GLIBC_RECORD,
+        RC6_R1_RECORD,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)
-        if (
-            registration is not None
-            and registration["historical_sha256"] == resolved
-        ):
+        accepted = (
+            []
+            if registration is None
+            else registration.get(
+                "accepted_predecessor_sha256",
+                [registration["historical_sha256"]],
+            )
+        )
+        if registration is not None and resolved in accepted:
             resolved = registration["current_sha256"]
     return resolved
 
