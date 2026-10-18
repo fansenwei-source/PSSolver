@@ -1,0 +1,288 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc6 RC6-3 complete-stress compilation preflight contract",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_RC6_3_COMPLETE_STRESS_COMPILE_PREFLIGHT_CPU_CLOSURE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc6",
+    "rc6_2_record_commit": "59bea48",
+    "implementation_commit": "3070d852685326e7efa051bb76ae4ef6e3458962",
+    "qualified_source_commit": "3070d852685326e7efa051bb76ae4ef6e3458962",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "ids": ["S1-08", "A1-06"],
+    "work_item": "RC6-3",
+    "source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc5_independent_acceptance_claude_zh.md",
+    "source_sha256": "87a39b1c285a4ea47343f7c992f4a98d7a7e525f4a9c204ffb0ad3a25d99e0b5",
+    "machine_source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc5_independent_acceptance_claude.json",
+    "machine_source_sha256": "841f9302a357f9a7f0ffeb9d93e26de9f329bec66fe7e5583af53b4958c0e6dd",
+    "root_cause": "Periodic and complete-stress Channel declarations could defer missing complete-stress parameters and incompatible existing Q snapshot shapes until runtime, leaking unstructured KeyError or ValueError exceptions past the public compilation boundary."
+  },
+  "contract": {
+    "covered_application_families": [
+      "periodic_complete_stress_beris_edwards",
+      "channel_complete_stress_beris_edwards"
+    ],
+    "required_runtime_parameters": [
+      "material",
+      "ldg_l1",
+      "activity_amplitude",
+      "stokes"
+    ],
+    "required_material_parameters": [
+      "ldg_a",
+      "ldg_b",
+      "ldg_c",
+      "gamma",
+      "flow_alignment",
+      "beta"
+    ],
+    "required_stokes_parameters": [
+      "parameters",
+      "viscosity",
+      "friction",
+      "pressure_gauge",
+      "tangential_zero_mode_policy"
+    ],
+    "missing_parameter_public_exception": "PublicSimulationCompilationError",
+    "missing_parameter_public_code": "malformed_application_spec",
+    "snapshot_shape_public_exception": "PublicSimulationCompilationError",
+    "snapshot_shape_public_code": "initial_condition_contract",
+    "accepted_existing_q_snapshot_layouts": [
+      "(*grid_shape, 5)",
+      "(5, *grid_shape)"
+    ],
+    "existing_snapshot_header_inspected_without_full_payload_allocation": true,
+    "unavailable_snapshot_remains_valid_for_planning_only_compilation": true,
+    "runtime_dtype_finiteness_and_shape_backstop_preserved": true,
+    "rejection_precedes_runtime_construction_timestep_and_output": true
+  },
+  "implementation_files": {
+    "pssolver/configuration/public_complete_stress_validation.py": "d1e9bff833b729acf3e7b8a91187b4f0b0ce6a5441cf3f874bf213c89b623c3e",
+    "pssolver/configuration/public_periodic_simulation_compiler.py": "af8d5506de9a333febd9fa948211eb21b61173cccf6224823d99062aacddbca6",
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": "73349f0cbaf63eaa53064bf0d0acdc8d618ff2c45f58c30f2fe25d3d11f9df1e"
+  },
+  "regression_tests": {
+    "tests/test_rc6_3_compile_preflight_contract.py": "6636775fea230285ed9965a2feff5afb134bbc4a1d257d9d29ede8e281f0b059"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "f644619087e12c31ba05fdec9f7e9f9ab6a9bae4817922d105619c5cd8607034",
+      "current_sha256": "8140a08a2b55f2be441463cbd2972adee5b1af0e45f8b5f1d8de65c7a0bfd0c9",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Document compile-time complete-stress parameter and staged snapshot-shape validation."
+    },
+    "pssolver/configuration/public_periodic_simulation_compiler.py": {
+      "historical_sha256": "9ce3e040211def2ffcfbaf2fc068f8a4b8f3d5702a6f69c09681238265b4831c",
+      "current_sha256": "af8d5506de9a333febd9fa948211eb21b61173cccf6224823d99062aacddbca6",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Move Periodic complete-stress parameter and staged Q snapshot-shape rejection into the structured compilation boundary."
+    },
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": {
+      "historical_sha256": "ddca3a4877b3617d5973b3acf21392663845916cc8ffe58392f2d20e101043c6",
+      "current_sha256": "73349f0cbaf63eaa53064bf0d0acdc8d618ff2c45f58c30f2fe25d3d11f9df1e",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Move complete-stress Channel parameter and staged Q snapshot-shape rejection into the structured compilation boundary."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "a4e974fbb8bf82b46fa7ac06e6a5ae3f8cfc5a27a1ee4df6f5f522525df491c6",
+      "current_sha256": "87b9f1931e8ac648dc396d36808c4d87c41579084f3fee7d93d3499afcda7c1f",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Resolve the immutable RC4.5.5 audit through the forward-only RC6-3 successor record."
+    },
+    "tests/test_rc4_lifting_capability_restriction_record.py": {
+      "historical_sha256": "99038f6899d02f82d9bda475536a5eceef8d770f8da0acbfd4461d352fa4704d",
+      "current_sha256": "c6d762512a5eff27c3b809ce58a2a195b4a7464185302e268bc2670c4bd2193b",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Preserve RC4.3.3 while resolving the later complete-stress Channel compiler successor."
+    },
+    "tests/test_rc4_pressure_contract_plan.py": {
+      "historical_sha256": "317d9a2a6c747e0dcceffea65dc86926a8f1a2af60884f498083fab31e92c9af",
+      "current_sha256": "209c90756647f40e2b2ee6bbc92def272c59a2754a68937efa0bdba00460e0b8",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Resolve the immutable RC4.4 planning audit through the forward-only RC6-3 record."
+    },
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {
+      "historical_sha256": "724d49d7a7c80f761e23319b0873c6eb22fa17d3b126ba2833a1e41fc6847a81",
+      "current_sha256": "acd28c0373fb662a7038f0e06e65cd85b9994ccfa42bc0fec2183ece983b5b14",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Resolve the immutable RC4.4.4 metadata audit through the forward-only RC6-3 record."
+    },
+    "tests/test_rc4_pressure_public_contract.py": {
+      "historical_sha256": "7636f440623d5e135d3844feb54c46d55478a288f7bf56b0054d9dfce19189aa",
+      "current_sha256": "73b82c1783b373d95915c047d244da1c967f4b8558ecf2121b525752d3294791",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Resolve the immutable RC4.4.2 public contract audit through the forward-only RC6-3 record."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "32de429445ff900553dc266981616bb6aee5277f7137f2085dbf3ef6602e2e8b",
+      "current_sha256": "c988a27dcf51c0e4a8952f4a3a09f89490ac16483e7cb87c96e85678ea318d54",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Preserve R5-6 while resolving its source chain through RC6-3."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "c3fc98ecb9d812c784f44cacd3850418f75b89aeb92e18f0c89ffc985e864c18",
+      "current_sha256": "76b71427f0e6e5a6ab938224bc00379fc9c7604c19b63f6bc095bd9b5db1d7a9",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Preserve W1 documentation closure while resolving its RC6-3 successor chain."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "historical_sha256": "1232bb93f3864c13eb9a50c5c307631d7859a93c440e1300ed2937c92df18c1c",
+      "current_sha256": "308cef57d376033522794a2760afefef941b609ceb2202113a26638f3a615c5d",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Preserve RC6-2 while resolving its Channel compiler and changelog sources through RC6-3."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "c2e5e9a7581c5449541290681500cef06dd9eaf04f11af3fa02bb4cc9361c80d",
+      "current_sha256": "df89c16a56111550943be114d6f52f0e82c4416c5c9703739bd90b95826a7fb4",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable RC4.5.6 source audit through RC6-3."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "f51c8be079f81eb678b0031d21c34d8c8553a1c0dbe793c1857191f956b8e0b4",
+      "current_sha256": "0c4a14410941c8557c780e7545bdb38f8a7871c5c2821ebacfb85999c84dcbd7",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable RC4.5.7 impact audit through RC6-3."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "0ea34858d47773202234d5ad9e7a5e449dcbdaabbbcefe5970c2e8a9e53aca9d",
+      "current_sha256": "e25eb407060b3e2302b1aae4616bdf153988ccb1e04095f9d30638cee45ff3e7",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable RC4.5.7 recovery audit through RC6-3."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "9febf1c557b129afb5f3a2249477a75cdc6ccb91882084376e845ce45715ecff",
+      "current_sha256": "e00998a8fcd10c65c63710fc527ff974a2cfb0f3ac8660ff40970f91ce0b76e4",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable RC4.5.8 H100 closure audit through RC6-3."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "0c6020eed96277e59503527b2532cf6fb97129b07feac1dd705e479518615535",
+      "current_sha256": "ff0efc40a05d2e9dc05c6734787977d943ac37ffb78dc94a617627464d47fbee",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable rc4 post-release audit through RC6-3."
+    },
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": {
+      "historical_sha256": "dc3b51aa813efdb10a820997c7fe4125d8599e82cbf5046ff89b45866bc4e7c3",
+      "current_sha256": "028ffcb47bcb06777e4007ec10920ad11517340b27d76d0cfdf6f9069fa0293e",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable G-1 glibc compatibility audit through RC6-3."
+    },
+    "tests/test_rc5_g1_historical_audit_portability.py": {
+      "historical_sha256": "619f7431832febcbf8018fe461c8957efd25d6dac5f53f13b1919ce12506a2d4",
+      "current_sha256": "49b7fefcfc56b21109738bc074d37f7385742dd84885fdaa0f5285f3cf797d6a",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable G-1 historical-audit portability chain through RC6-3."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "e356e8f8c4cdb907dd6183851488460c72377175b0c5515b65ccf1ac50e25669",
+      "current_sha256": "d45fdb60e447f70a853f721513b03185f5ef284c7678793a6bb1148d1102ff6f",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable R5-1 checkpoint closure audit through RC6-3."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "954c618314dd65c5585ac34e01d4614818c3b98af8a8a81e2e6952d8af9e114a",
+      "current_sha256": "64051eecb81a8027994d207db02f56a57440036471b72e4a2190713cb1eab120",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable R5-10 closure audit through RC6-3."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "5b3880e1ce8129b2d9502049b623b1d7bedfea94d9e94320ef68c3d215c0eea9",
+      "current_sha256": "d830d9654450437dbe347250739744f302e9f8de4cb56a884c52b07b19c11bf2",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable R5-11 metadata audit through RC6-3."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "96a2c376eb24ce7dd2a43970411ab0c617e9543c21ce9f00e1ca0c993584ce43",
+      "current_sha256": "c6e603e27eb21666cd9d7e1875d78879e7d3a65b8a74e4cc74e7dfe5cc980230",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable R5-12 integrity audit through RC6-3."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "1f5e222d135c15ebfae6979c7c40697955a97c833175dbfe3c8b366cb77f5a84",
+      "current_sha256": "089e1d0bff0b5276583ddfdf469846969a60d0c8950a9b2e2b267214a00e413f",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable R5-13 hygiene audit through RC6-3."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "b4e7e7ccffa0c9b99fb16bd3a5510b2fea57266c95c4c0b22f1104055810a91f",
+      "current_sha256": "8db58f8a0f37d2a25720313d7ef832f277c67bfdd3b4e2f46c5a2d155516baf3",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable R5-2 finite-workflow audit through RC6-3."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "61b65d86d09bae2f90ccbdc2ae1c34829fe3ee3fcbbfb8031f0d64784b47543e",
+      "current_sha256": "2e361094068a26d29ff278eecd7435c9a5017fd9d52dd7fa80faec3832b00b04",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable R5-3 Channel checkpoint audit through RC6-3."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "8e42349d3f2cc10629f6d14c6bbc01f34fcbe56810ba693ff64ea7a95e4b090f",
+      "current_sha256": "33016f0ed15631b4ec962cc2768bfc099294c5933b74f31e1e7b440b05da558a",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable R5-5 TF32 restore audit through RC6-3."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "32618734b055d122ba62d72150cb3cb033c236b1c7b711a7688babcffcbe1744",
+      "current_sha256": "b7c979db0a436be982609287d2c802f0e8878d8e3ad553e759cb9aa04a06eec3",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable R5-7 device-normalization audit through RC6-3."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "a98f80ff49795fcc337b57078427dcc7f8a1bf7e8dc5decc71f435c1429acab1",
+      "current_sha256": "114511cf82b97b84c7b602fc7009a466654be34737d70f5301992cb8f256d1bc",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable R5-8 checkpoint-integrity audit through RC6-3."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "ef009bc21e73b659cbed0dd37af4fd67dc99918c70ca903a365c256468a65076",
+      "current_sha256": "aad22a52ff198ce11d31413ea0b8ebafcb49a3b7c9d3d75c78e9c2bd1c9b47b1",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable R5-9 pressure-postcondition audit through RC6-3."
+    },
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": {
+      "historical_sha256": "9fedda31f21cdc469aa7e02cab67a80dd4460e36cf08852ed0498f4334d07eff",
+      "current_sha256": "7b3b95683ff18cc9bfd4f326bf07e7e8fb2ee37cf004f533a584731d4ac729b4",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Preserve RC6-1 while extending its historical audit resolution through RC6-3."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "118f7d1c1ada30f78c301422bdf614ce35beed1cf41773de2c170674ad662c41",
+      "current_sha256": "368c9f116b11cf3054245bbf7f6169ca650bf6addbbca835cd5b456bdee976df",
+      "introduced_by_phase": "RC6-3",
+      "reason": "Continue the immutable rc4 release audit through RC6-3."
+    }
+  },
+  "verification": {
+    "direct_contract_tests": "38 passed",
+    "affected_application_functional_checkpoint_and_rc6_2_tests": "145 passed",
+    "full_cpu_suite": "3910 passed, 1 skipped, 8 subtests passed, 0 failed",
+    "only_skip": "optional nematics3d dependency unavailable",
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "public_compilation_validation_changed": true,
+    "existing_snapshot_header_inspection_added": true,
+    "full_snapshot_payload_allocation_added": false,
+    "scientific_equations_changed": false,
+    "integrator_changed": false,
+    "transform_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "runtime_default_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "rc6_3_complete": true,
+    "eligible_for_rc6_4": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

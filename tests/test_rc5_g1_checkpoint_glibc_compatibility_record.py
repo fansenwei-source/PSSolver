@@ -13,6 +13,7 @@ RECORD = ROOT / (
 )
 RC6_R1 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
+RC6_R3 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
 
 
 def _record() -> dict[str, object]:
@@ -29,6 +30,9 @@ def test_glibc_compatibility_record_binds_implementation_and_tests():
         "historical_successor_sources"
     ]
     rc6_r2_successors = json.loads(RC6_R2.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
+    rc6_r3_successors = json.loads(RC6_R3.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
     assert record["classification"] == (
@@ -50,6 +54,12 @@ def test_glibc_compatibility_record_binds_implementation_and_tests():
         if rc6_successor is not None and expected in accepted:
             expected = rc6_successor["current_sha256"]
         rc6_successor = rc6_r2_successors.get(relative)
+        if (
+            rc6_successor is not None
+            and rc6_successor["historical_sha256"] == expected
+        ):
+            expected = rc6_successor["current_sha256"]
+        rc6_successor = rc6_r3_successors.get(relative)
         if (
             rc6_successor is not None
             and rc6_successor["historical_sha256"] == expected

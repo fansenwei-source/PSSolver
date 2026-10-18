@@ -42,6 +42,9 @@ RC6_R1_RECORD = ROOT / (
 RC6_R2_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 )
+RC6_R3_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -67,6 +70,7 @@ def _r57_successor(relative: str, historical: str) -> str:
         G1_HISTORICAL_AUDIT_RECORD,
         RC6_R1_RECORD,
         RC6_R2_RECORD,
+        RC6_R3_RECORD,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"

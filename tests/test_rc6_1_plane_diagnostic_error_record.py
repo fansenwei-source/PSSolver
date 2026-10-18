@@ -12,6 +12,9 @@ RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 RC6_R2_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 )
+RC6_R3_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -33,6 +36,15 @@ def _resolve_rc6_2(relative: str, predecessor: str) -> str:
         [registration["historical_sha256"]],
     )
     if predecessor in accepted:
+        return registration["current_sha256"]
+    return predecessor
+
+
+def _resolve_rc6_3(relative: str, predecessor: str) -> str:
+    registration = json.loads(RC6_R3_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == predecessor:
         return registration["current_sha256"]
     return predecessor
 
@@ -99,9 +111,8 @@ def test_rc6_1_registers_forward_only_historical_successors():
     }
     for relative, registration in successors.items():
         assert registration["historical_sha256"] != registration["current_sha256"]
-        assert _sha256(relative) == _resolve_rc6_2(
-            relative, registration["current_sha256"]
-        )
+        resolved = _resolve_rc6_2(relative, registration["current_sha256"])
+        assert _sha256(relative) == _resolve_rc6_3(relative, resolved)
 
 
 def test_rc6_1_scope_authorizes_only_the_next_local_work_item():

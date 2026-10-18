@@ -34,6 +34,9 @@ RC6_R1_RECORD = ROOT / (
 RC6_R2_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 )
+RC6_R3_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
+)
 
 
 def _resolve_g1_audit_successor(relative: str, resolved: str) -> str:
@@ -70,6 +73,15 @@ def _resolve_rc6_r1_successor(relative: str, resolved: str) -> str:
 
 def _resolve_rc6_r2_successor(relative: str, resolved: str) -> str:
     registration = json.loads(RC6_R2_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == resolved:
+        return registration["current_sha256"]
+    return resolved
+
+
+def _resolve_rc6_r3_successor(relative: str, resolved: str) -> str:
+    registration = json.loads(RC6_R3_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == resolved:
@@ -180,6 +192,7 @@ def test_r57_record_binds_implementation_and_regression_sources():
             resolved = _resolve_g1_audit_successor(relative, resolved)
             resolved = _resolve_rc6_r1_successor(relative, resolved)
             resolved = _resolve_rc6_r2_successor(relative, resolved)
+            resolved = _resolve_rc6_r3_successor(relative, resolved)
             assert _sha256(ROOT / relative) == resolved
 
 
@@ -263,6 +276,7 @@ def test_r57_record_binds_every_historical_successor():
         resolved = _resolve_g1_audit_successor(relative, resolved)
         resolved = _resolve_rc6_r1_successor(relative, resolved)
         resolved = _resolve_rc6_r2_successor(relative, resolved)
+        resolved = _resolve_rc6_r3_successor(relative, resolved)
         assert _sha256(ROOT / relative) == resolved
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["reason"]

@@ -31,6 +31,9 @@ RC6_R1_RECORD = ROOT / (
 RC6_R2_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 )
+RC6_R3_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -68,6 +71,9 @@ def test_r58_record_binds_implementation_and_exact_sources():
         "historical_successor_sources"
     ]
     rc6_r2_successors = json.loads(RC6_R2_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
+    rc6_r3_successors = json.loads(RC6_R3_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
     assert record["git_identity"] == {
@@ -138,6 +144,12 @@ def test_r58_record_binds_implementation_and_exact_sources():
                 and registration["historical_sha256"] == expected
             ):
                 expected = registration["current_sha256"]
+            registration = rc6_r3_successors.get(relative)
+            if (
+                registration is not None
+                and registration["historical_sha256"] == expected
+            ):
+                expected = registration["current_sha256"]
             assert _sha256(ROOT / relative) == expected
     for relative, registration in record["historical_successor_sources"].items():
         assert registration["historical_sha256"] != registration["current_sha256"]
@@ -196,6 +208,9 @@ def test_r58_record_binds_implementation_and_exact_sources():
         if successor is not None and expected in accepted:
             expected = successor["current_sha256"]
         successor = rc6_r2_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == expected:
+            expected = successor["current_sha256"]
+        successor = rc6_r3_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
         assert _sha256(ROOT / relative) == expected
