@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "phase": "RC6-12",
+  "date": "2026-10-18",
+  "status": "pssolver_control_installed_wheel_cpu_complete",
+  "classification": "PASS_RC6_PSSOLVER_CONTROL_GUARD_ORDER_INSTALLED_WHEEL_CPU",
+  "qualified_provider_source": {
+    "branch": "fix/v0.2.0rc6",
+    "commit": "ea801ec08f5b2465661334e1c126133e55b68e96",
+    "package_version": "0.2.0rc6",
+    "wheel_sha256": "8840ebfaa44a20a828928256c319edfa2aa4a9b8adf4f1bac014c33964ba0dd6",
+    "record_commit_is_qualified_source": false,
+    "requires_cpu_requalification": false
+  },
+  "qualified_consumer_source": {
+    "branch": "fix/pssolver-v0.2.0rc6-guard-order",
+    "commit": "208edd03e6b26a0e788c07d295fddd7a67237189",
+    "runtime_implementation_commit": "6d3558b1367da9a3e7d6b3f8fbc5584cf384bfe3",
+    "regression_test_commit": "79815cb77cf7f542a0da4d303e20c45a929876df",
+    "archive_sha256": "e8b3a3b14c5e51d485d2081bd8b8bbc71adb057884e553ac4726346a35adfe39",
+    "wheel_sha256": "eca0c2c1e9b39de1f653eb1d0c1dc69a6f49c72736da758eea814205f115be0f",
+    "adapter_sha256": "46b1b3a9028d2c16282c69f3ec246fc1571fe9fdf2285ba26107eacc5a80f6ef"
+  },
+  "prerequisites": {
+    "provider_identity_record": "notes/PSSolver_v0_2_0rc6_provider_identity_impact.json",
+    "provider_identity_record_sha256": "4ec9971a0e08afb2e233659bd284f69ccbc5300132f2d221f697b67d154bb3b4",
+    "provider_identity_classification": "PASS_RC6_PROVIDER_IDENTITY_UNCHANGED_NO_CONTROL_IDENTITY_MIGRATION_REQUIRED",
+    "provider_identity_migration_required": false,
+    "control_guard_order_record_sha256": "aa02a1332a6f96ccf769f08e51bfadf3fa7769453d6a040c98d0dede24816c60"
+  },
+  "consumer_evidence_record": {
+    "record_commit": "d30e3d0b43767397ecc13ef3dd2b1eb05e5e74cb",
+    "path": "docs/pssolver_v0_2_0rc6_installed_wheel_cpu_closure.json",
+    "sha256": "3d591b04ab5dc23212bdd9dc8172d1e534dba8f6e17d666aaf8512b99befe98a",
+    "record_commit_is_qualified_source": false,
+    "requires_cpu_requalification": false,
+    "pushed": false
+  },
+  "cpu_matrix": {
+    "source_targeted": {"passed": 87, "failed": 0, "skipped": 0, "xfailed": 0},
+    "source_complete": {"passed": 339, "failed": 0, "skipped": 6, "xfailed": 0},
+    "installed_targeted": {"passed": 87, "failed": 0, "skipped": 0, "xfailed": 0},
+    "installed_complete": {"passed": 339, "failed": 0, "skipped": 6, "xfailed": 0},
+    "source_and_installed_counts_equal": true,
+    "source_and_installed_skip_identities_equal": true,
+    "installed_targeted_import_audit_passed": true,
+    "installed_complete_import_audit_passed": true,
+    "pip_check": "PASS",
+    "source_shadow_import": false
+  },
+  "version_contract": {
+    "functional_api_version": "1.0",
+    "functional_api_version_changed_in_rc6": false,
+    "provider_identity_changed_in_rc6": false,
+    "adapter_version_changed": false,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false
+  },
+  "analyzer_contract": {
+    "path": "benchmarks/analyze_rc6_control_installed_cpu_review.py",
+    "sha256": "0dfdab6db8ffbcd58ab94766fc8f7dde92f797a05c03255a242f073df42a475c",
+    "expected_classification": "PASS_RC6_PSSOLVER_CONTROL_GUARD_ORDER_INSTALLED_WHEEL_CPU",
+    "exact_junit_counts": true,
+    "exact_skip_identities": true,
+    "fail_closed_import_audit": true,
+    "artifact_hash_binding": true,
+    "atomic_output": true,
+    "refuse_overwrite": true
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_control_rc6_installed_cpu_ea801ec_208edd0_20261018_v1",
+    "analysis_sha256": "a5de341eebfc52e69ce27db5d75b450e1378e2e644c2a2e4b60383bd12938228",
+    "final_report_sha256": "2daa1d02bd7c87603a4fb8f270b858135c6b4a16bb4de265589ac470812f8401",
+    "summary_json_sha256": "75a7bf04fe967d4689383a5880b823c702368a79f3a760cea6c2a911a3f8c61e",
+    "summary_csv_sha256": "757ec5c30d6433f5031bcbeacb96f082d8d979e06aadb6bbb4fd313bc4520861",
+    "source_evidence_manifest_sha256": "5312c9041fb1f705febe758ffd7ff09e6272af6b074f488c9df601df252efeca",
+    "checksums_entries": 17,
+    "checksums_passed": 17,
+    "checksums_failed": 0,
+    "checksums_sha256": "2e3d6e058702e193ef6a3ab8876f4420efd5dc58719f9bfb06b02785f186710c"
+  },
+  "pending_rc6_gates": [
+    "single_h100_cumulative_qualification",
+    "independent_post_release_verification"
+  ],
+  "authorization": {
+    "provider_identity_impact_review_complete": true,
+    "provider_identity_migration_required": false,
+    "pssolver_control_installed_wheel_cpu_complete": true,
+    "eligible_for_rc6_cumulative_h100_planning": true,
+    "rc6_cumulative_h100_qualification_complete": false,
+    "eligible_for_push": false,
+    "eligible_for_h100_submission": false,
+    "h100_submission_count": 0,
+    "automatic_retry": false,
+    "automatic_merge": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false,
+    "production_default_changed": false,
+    "PSSolver_modified_by_execution": false,
+    "PSSolver_Control_runtime_modified_by_execution": false,
+    "nematics3d_modified": false
+  }
+}
