@@ -27,8 +27,8 @@ from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.core.domain import GridPlacement
 from pssolver.core.integrators import IntegratorScheme
 from pssolver.core.numerics import SpectralStorage
-from pssolver.linear_solvers.stokes.channel_no_slip import (
-    channel_pressure_minimum_relative_tolerance,
+from pssolver.core.pressure import (
+    channel_pressure_minimum_relative_tolerance_for_precision,
 )
 
 
@@ -204,7 +204,7 @@ def compile_channel_beris_edwards_public_simulation(
             pressure,
             description="Channel pressure solver",
             minimum_relative_tolerance=(
-                channel_pressure_minimum_relative_tolerance(
+                channel_pressure_minimum_relative_tolerance_for_precision(
                     source.numerics.precision.value
                 )
             ),

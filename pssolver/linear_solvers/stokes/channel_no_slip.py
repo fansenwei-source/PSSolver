@@ -15,6 +15,10 @@ from numbers import Integral, Real
 
 import torch
 
+from pssolver.core.pressure import (
+    channel_pressure_minimum_relative_tolerance_for_precision,
+)
+
 
 CHANNEL_VELOCITY_BOUNDARY_CONDITIONS = (
     "periodic",
@@ -63,7 +67,9 @@ def channel_pressure_minimum_relative_tolerance(
     # residual disagreement at two and four epsilons.  Eight epsilons excludes
     # every observed disagreement while remaining below the qualified float32
     # default of 1e-6.  The factor is part of the public compilation contract.
-    return 8.0 * float(torch.finfo(_channel_pressure_real_dtype(dtype)).eps)
+    real_dtype = _channel_pressure_real_dtype(dtype)
+    precision = "float32" if real_dtype == torch.float32 else "float64"
+    return channel_pressure_minimum_relative_tolerance_for_precision(precision)
 
 
 def _channel_pressure_real_dtype(dtype: torch.dtype | str) -> torch.dtype:
