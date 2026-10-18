@@ -1,0 +1,67 @@
+{
+  "schema": "pssolver.rc6.qualification_support_record.v1",
+  "classification": "READY_RC6_QUALIFICATION_ONLY_ORCHESTRATION_AND_ANALYSIS",
+  "recorded_on": "2026-10-18",
+  "support_base_commit": "ad54609c1ec99cd33baa6ad21980ae33e94f118d",
+  "runtime_under_qualification": {
+    "baseline_commit": "674a8121779be72c95aa5dc9e2babca0ce7b93a9",
+    "candidate_commit": "ea801ec08f5b2465661334e1c126133e55b68e96",
+    "consumer_source_commit": "208edd03e6b26a0e788c07d295fddd7a67237189"
+  },
+  "implemented": {
+    "profile_command_planner_and_executor": true,
+    "profile_count": 192,
+    "shell_free_hash_bound_stage_runner": true,
+    "stage_runner_stage_count": 11,
+    "current_and_released_checkpoint_stage_split": true,
+    "fail_closed_auxiliary_assembler": true,
+    "fail_closed_balanced_crossover_analyzer": true,
+    "node_local_tmp_slurm_template": true,
+    "node_local_rename_noreplace_preflight_before_qualification": true,
+    "unique_node_local_pytest_tmpdir": true,
+    "host_compiler_bootstrap": true
+  },
+  "support_files": {
+    "benchmarks/analyze_rc6_single_h100.py": "ca1cf7f2f470d91b0e0e6ca38d20736903c3ee85101dc1d0063e38795f4c32e8",
+    "benchmarks/assemble_rc6_h100_auxiliary.py": "62b24f4d2870c001d3477f30026a5b293e4c495addc02e524cb586c82ddec973",
+    "benchmarks/run_rc6_profile_matrix.py": "60a406d3baf864d0aebb652144938d9d90dc3c6b4e2e6287eac96bdfc1387669",
+    "benchmarks/run_rc6_single_h100_stage_plan.py": "28a4cb97fa5324d9f035596c63149e1352f348772eb18a717f6b23f55e4d6551",
+    "jobs/rc6_single_h100_qualification.sbatch": "36f3a65761fa2667acfb62326109de2a2355ffcbbf3a7b465c7f0265c07cd39c",
+    "tests/test_rc6_qualification_support.py": "4a38d11d317cc42946ec6134c352eb93ca24b9f0ef92fce00a88c751f059ae30"
+  },
+  "validation": {
+    "pytest_command": "PYTHONDONTWRITEBYTECODE=1 /home/fansenwei/anaconda3/envs/Nematics3D/bin/python -m pytest -q -p no:cacheprovider tests/test_rc6_qualification_support.py tests/test_plan_rc6_single_h100_qualification.py tests/test_rc6_single_h100_qualification_plan_record.py",
+    "pytest_passed": 22,
+    "pytest_failed": 0,
+    "profile_plan_only_count": 192,
+    "profile_plan_sequence": "1..192",
+    "profile_plan_unique_keys": 192,
+    "profile_plan_device": "cuda",
+    "profile_plan_created_scientific_output": false,
+    "bash_syntax": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "remaining_before_submission": {
+    "stage_producers_implemented": false,
+    "stage_producers_frozen": false,
+    "installed_wheel_artifacts_rebuilt_for_h100": false,
+    "frozen_stage_plan_created": false,
+    "submission_preflight_completed": false,
+    "explicit_single_h100_authorization_received": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "h100_submission_authorized": false,
+    "automatic_retry_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false
+  },
+  "status": {
+    "qualification_support_complete": true,
+    "qualification_complete": false,
+    "rc6_complete": false,
+    "eligible_for_h100_submission": false,
+    "eligible_for_release": false,
+    "production_default_changed": false
+  }
+}
