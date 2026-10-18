@@ -18,6 +18,7 @@ import torch
 from pssolver.core.pressure import (
     channel_pressure_minimum_relative_tolerance_for_precision,
 )
+from pssolver.core.errors import SimulationExecutionError
 
 
 CHANNEL_VELOCITY_BOUNDARY_CONDITIONS = (
@@ -96,15 +97,29 @@ def _channel_pressure_real_dtype(dtype: torch.dtype | str) -> torch.dtype:
     raise TypeError(f"unsupported Channel pressure dtype: {dtype}")
 
 
-class ChannelPressureConvergenceError(RuntimeError):
-    """Fail-closed production Channel pressure-solve error."""
+class ChannelPressureConvergenceError(SimulationExecutionError):
+    """Fail-closed production Channel pressure-solve error.
+
+    The pressure solver does not own the enclosing workflow clock, so its
+    stable execution-error context names the inner solve and uses step zero.
+    Workflow-level failure metadata separately records the runtime's actual
+    completed-step clock.
+    """
 
     code = "channel_pressure_convergence_error"
 
     def __init__(self, message: str, *, details: dict[str, object]) -> None:
-        super().__init__(message)
-        self.details = dict(details)
-        self.diagnostics = dict(details)
+        super().__init__(
+            message,
+            application_family="channel_pressure",
+            stage="pressure_solve",
+            step=0,
+            details=details,
+        )
+        # Preserve the pre-rc6 public mapping behavior of this established
+        # exception while still inheriting the common execution-error API.
+        self.details = dict(self.details)
+        self.diagnostics = dict(self.details)
 
 
 @dataclass(frozen=True, slots=True)

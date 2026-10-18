@@ -9,6 +9,7 @@ from pathlib import Path
 import time
 
 from pssolver.configuration.channel_active_nematics import ChannelActiveNematicRunSpec
+from pssolver.errors import SimulationExecutionError
 from pssolver.run_metadata import write_run_metadata
 from pssolver.runtime.channel_active_nematics import ChannelRuntimeAdapterProtocol
 
@@ -142,8 +143,52 @@ class ChannelActiveNematicsWorkflow:
             "completion_marker_order": "metadata_then_COMPLETE",
         }
         write_run_metadata(self.output_directory, self.metadata, status="running")
+
+        started = time.time()
+        try:
+            return self._run_started(
+                start_step=start_step,
+                progress=progress,
+                started=started,
+            )
+        except SimulationExecutionError as error:
+            self._record_execution_failure(error, started=started)
+            raise
+
+    def _record_execution_failure(
+        self,
+        error: SimulationExecutionError,
+        *,
+        started: float,
+    ) -> None:
+        """Finalize metadata for a public execution failure."""
+
+        completed_steps = int(self.adapter.completed_steps)
+        self.metadata["completed_steps"] = completed_steps
+        self.metadata["elapsed_seconds"] = time.time() - started
+        self.metadata["workflow"].update(
+            saved_steps=list(self._saved_steps),
+            checkpoint_steps=list(self._checkpoint_steps),
+            failed_step=completed_steps,
+        )
+        self.metadata["failure"] = error.to_metadata()
+        write_run_metadata(
+            self.output_directory,
+            self.metadata,
+            status="failed",
+        )
+
+    def _run_started(
+        self,
+        *,
+        start_step: int,
+        progress: Iterable[int] | None,
+        started: float,
+    ) -> ChannelWorkflowResult:
+        """Execute a Channel workflow whose running metadata is durable."""
+
         iterator = range(self.workflow.steps) if progress is None else progress
-        executed, started = 0, time.time()
+        executed = 0
         for local_step in iterator:
             if local_step != executed:
                 raise ValueError("progress iterator must yield consecutive local steps")
