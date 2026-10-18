@@ -33,6 +33,7 @@ RC5_G1_GLIBC = ROOT / (
 RC6_R1 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 RC6_R3 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
+RC6_R4 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
 
 
 def _record() -> dict[str, object]:
@@ -301,6 +302,11 @@ def test_historical_successor_sources_match_the_current_files_exactly():
             successor is not None
             and successor["historical_sha256"] == resolved
         ):
+            resolved = successor["current_sha256"]
+        successor = json.loads(RC6_R4.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative_path)
+        if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(ROOT / relative_path) == resolved
         assert entry["reason"]

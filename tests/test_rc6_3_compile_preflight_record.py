@@ -9,6 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
+RC6_R4_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -17,6 +20,15 @@ def _record() -> dict[str, object]:
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def _rc6_4_successor(relative: str, historical: str) -> str:
+    registration = json.loads(RC6_R4_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == historical:
+        return registration["current_sha256"]
+    return historical
 
 
 def test_rc6_3_record_binds_implementation_and_regression_sources():
@@ -31,7 +43,7 @@ def test_rc6_3_record_binds_implementation_and_regression_sources():
     assert record["git_identity"]["record_commit_is_qualified_source"] is False
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
-            assert _sha256(relative) == expected
+            assert _sha256(relative) == _rc6_4_successor(relative, expected)
 
 
 def test_rc6_3_contract_is_structured_and_preserves_planning():
@@ -96,7 +108,9 @@ def test_rc6_3_registers_exact_forward_only_successors():
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["introduced_by_phase"] == "RC6-3"
         assert registration["reason"]
-        assert _sha256(relative) == registration["current_sha256"]
+        assert _sha256(relative) == _rc6_4_successor(
+            relative, registration["current_sha256"]
+        )
 
 
 def test_rc6_3_scope_is_cpu_only_and_does_not_claim_release_authority():

@@ -20,6 +20,9 @@ RC6_R2_RECORD = ROOT / (
 RC6_R3_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
 )
+RC6_R4_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -45,6 +48,9 @@ def test_r513_record_binds_new_and_successor_sources():
         "historical_successor_sources"
     ]
     rc6_r3_successors = json.loads(RC6_R3_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
+    rc6_r4_successors = json.loads(RC6_R4_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
     for relative, expected in record["new_sources"].items():
@@ -75,6 +81,9 @@ def test_r513_record_binds_new_and_successor_sources():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = rc6_r3_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = rc6_r4_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(relative) == resolved

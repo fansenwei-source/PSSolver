@@ -12,6 +12,9 @@ RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 RC6_R3_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
 )
+RC6_R4_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -27,7 +30,12 @@ def _rc6_3_successor(relative: str, historical: str) -> str:
         "historical_successor_sources"
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == historical:
-        return registration["current_sha256"]
+        historical = registration["current_sha256"]
+    registration = json.loads(RC6_R4_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == historical:
+        historical = registration["current_sha256"]
     return historical
 
 

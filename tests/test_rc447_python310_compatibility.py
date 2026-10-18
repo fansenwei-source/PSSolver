@@ -38,6 +38,7 @@ BOUNDED_OPERATOR_RECOVERY_V11 = (
 )
 RC5_R59 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
 RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
+RC6_R4 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
 
 
 def _sha256(path: Path) -> str:
@@ -143,6 +144,9 @@ def test_recovery_record_binds_failure_and_exact_successor_sources():
     rc6_r2 = json.loads(RC6_R2.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    rc6_r4 = json.loads(RC6_R4.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, identity in record["successor_sources"].items():
         actual = _sha256(ROOT / relative)
         if actual == identity["current_sha256"]:
@@ -170,6 +174,9 @@ def test_recovery_record_binds_failure_and_exact_successor_sources():
         if latest is not None and latest["historical_sha256"] == resolved:
             resolved = latest["current_sha256"]
         latest = rc6_r2.get(relative)
+        if latest is not None and latest["historical_sha256"] == resolved:
+            resolved = latest["current_sha256"]
+        latest = rc6_r4.get(relative)
         if latest is not None and latest["historical_sha256"] == resolved:
             resolved = latest["current_sha256"]
         assert resolved == actual

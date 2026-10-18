@@ -45,6 +45,9 @@ RC6_R2 = PROJECT_ROOT / (
 RC6_R3 = PROJECT_ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
 )
+RC6_R4 = PROJECT_ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
+)
 
 
 def test_rc4_release_record_preserves_historical_package_version():
@@ -170,6 +173,9 @@ def test_release_candidate_registers_exact_portability_successors():
     rc6_r3_successors = json.loads(RC6_R3.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    rc6_r4_successors = json.loads(RC6_R4.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert set(successors) == {
         "tests/test_rc447_pressure_bounded_operator_recovery.py",
         "tests/test_rc455_public_robustness.py",
@@ -255,6 +261,9 @@ def test_release_candidate_registers_exact_portability_successors():
         if rc6 is not None and rc6["historical_sha256"] == resolved:
             resolved = rc6["current_sha256"]
         rc6 = rc6_r3_successors.get(relative)
+        if rc6 is not None and rc6["historical_sha256"] == resolved:
+            resolved = rc6["current_sha256"]
+        rc6 = rc6_r4_successors.get(relative)
         if rc6 is not None and rc6["historical_sha256"] == resolved:
             resolved = rc6["current_sha256"]
         assert resolved == hashlib.sha256((PROJECT_ROOT / relative).read_bytes()).hexdigest()

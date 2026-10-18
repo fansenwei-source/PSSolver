@@ -37,6 +37,9 @@ RC5_R512 = ROOT / (
 )
 RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 RC6_R1 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
+RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
+RC6_R3 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
+RC6_R4 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
 
 
 def _record() -> dict[str, object]:
@@ -132,6 +135,9 @@ def test_rc435_record_binds_implementation_and_scope():
             RC5_R512,
             RC5_R513,
             RC6_R1,
+            RC6_R2,
+            RC6_R3,
+            RC6_R4,
         )
     ]
     for relative, expected in record["source_sha256"].items():

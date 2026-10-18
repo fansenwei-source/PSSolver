@@ -152,6 +152,7 @@ def test_p75_record_binds_package_workflow_sources():
             "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json",
             "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json",
             "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json",
+            "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json",
         ):
             successor = json.loads((root / relative).read_text(encoding="utf-8"))[
                 "historical_successor_sources"

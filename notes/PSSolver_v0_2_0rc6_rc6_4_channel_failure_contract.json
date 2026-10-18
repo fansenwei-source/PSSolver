@@ -1,0 +1,312 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc6 RC6-4 Channel failure hierarchy and failed-run metadata contract",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_RC6_4_CHANNEL_FAILURE_AND_METADATA_CPU_CLOSURE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc6",
+    "rc6_3_record_commit": "2f28ac4",
+    "implementation_commit": "4660e1d4051102613ce8b1c3df707bac672f4827",
+    "qualified_source_commit": "4660e1d4051102613ce8b1c3df707bac672f4827",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "ids": ["A7-03"],
+    "work_item": "RC6-4",
+    "source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc5_independent_acceptance_claude_zh.md",
+    "source_sha256": "87a39b1c285a4ea47343f7c992f4a98d7a7e525f4a9c204ffb0ad3a25d99e0b5",
+    "machine_source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc5_independent_acceptance_claude.json",
+    "machine_source_sha256": "841f9302a357f9a7f0ffeb9d93e26de9f329bec66fe7e5583af53b4958c0e6dd",
+    "root_cause": "ChannelPressureConvergenceError inherited directly from RuntimeError, while started Plane and legacy-Channel workflows persisted running metadata but did not finalize it when a public execution error stopped the run."
+  },
+  "contract": {
+    "pressure_error_type_preserved": "ChannelPressureConvergenceError",
+    "pressure_error_public_base": "SimulationExecutionError",
+    "pressure_error_code": "channel_pressure_convergence_error",
+    "pressure_error_application_family": "channel_pressure",
+    "pressure_error_stage": "pressure_solve",
+    "inner_solver_step_when_workflow_clock_unavailable": 0,
+    "pressure_details_mapping_compatibility_preserved": true,
+    "functional_convergence_dual_hierarchy_preserved": true,
+    "started_plane_failure_status": "failed",
+    "started_legacy_channel_failure_status": "failed",
+    "failure_metadata_is_structured": true,
+    "workflow_completed_step_clock_persisted": true,
+    "metadata_write_is_atomic": true,
+    "complete_marker_written_on_failure": false,
+    "nonfinite_arrays_published": false
+  },
+  "implementation_files": {
+    "pssolver/core/errors.py": "05f35dd3d45526d8ef92113a211be524d4fbdbfb3fad8b7fefeec164c4dbd69c",
+    "pssolver/errors.py": "1e84907c82e38304d786d2ae99a42b3bf5e8ab0e1c951cebfc5b8121d04505cf",
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": "5400148dd0751207fb7bd4408496af02782f5ccbd94d6dbef9cb4a3885c21bec",
+    "pssolver/workflows/channel_active_nematics.py": "6c128a60afa933395ab728b35644e9d1511adafd9a188e541642bfdc44bd34b5",
+    "pssolver/workflows/plane_beris_edwards.py": "3e513c53db4af70ddda5429aaed9b32c12f6bd54138005d7b03aad35c25c25b4"
+  },
+  "regression_tests": {
+    "tests/test_rc6_rc64_channel_failure_contract.py": "efd87c3858753dc5e438c856f6da4df160ff8b05808e4bac8d3e585b121498e7"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "8140a08a2b55f2be441463cbd2972adee5b1af0e45f8b5f1d8de65c7a0bfd0c9",
+      "current_sha256": "7f0b2cfa1b8f15fdf98a0a931aa62d8e76ce76362627dc67cf3ddf403f812ec5",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Document the public Channel failure hierarchy and failed-run metadata finalization."
+    },
+    "pssolver/errors.py": {
+      "historical_sha256": "1b6c653dc010dc6106215a9374f3162e8834bf224bb558909c18c5a68b3667cc",
+      "current_sha256": "1e84907c82e38304d786d2ae99a42b3bf5e8ab0e1c951cebfc5b8121d04505cf",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Retain the public import path as a compatibility facade over the tensor-free core error definitions."
+    },
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "historical_sha256": "5b6adffa5172177d703944bda74031d2586018e460148e9a755083f7f0ab533a",
+      "current_sha256": "5400148dd0751207fb7bd4408496af02782f5ccbd94d6dbef9cb4a3885c21bec",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Place Channel pressure convergence failures under the stable SimulationExecutionError hierarchy without changing pressure computation."
+    },
+    "pssolver/workflows/channel_active_nematics.py": {
+      "historical_sha256": "83d83ccbd0f86025df535e11037ea194a9fa0e9d2328943e509c588cfe815b0b",
+      "current_sha256": "6c128a60afa933395ab728b35644e9d1511adafd9a188e541642bfdc44bd34b5",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Finalize started legacy-Channel metadata as failed before re-raising a public execution error."
+    },
+    "pssolver/workflows/plane_beris_edwards.py": {
+      "historical_sha256": "8effdd8ea2a67457da49de38a96bb4080eab989d4b55b5498a310ac197e10fd6",
+      "current_sha256": "3e513c53db4af70ddda5429aaed9b32c12f6bd54138005d7b03aad35c25c25b4",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Finalize started Plane metadata as failed before re-raising a public execution error."
+    },
+    "tests/test_phase7_channel_local_closure.py": {
+      "historical_sha256": "d2c519570ea40560af30b8aa861ce64422c9bcfcb58dab998d6ff9cef47ee151",
+      "current_sha256": "fc3fc17535471b7d8a96a13524b1db889f1cbe8920a593e72a6fefa5eb8c34ca",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve the P7.5 record while resolving the Channel workflow through RC6-4."
+    },
+    "tests/test_rc447_pressure_bounded_operator_recovery.py": {
+      "historical_sha256": "808f82aaae7f4365c732d5ff199e0bdea24f855ecce6f1c1b47f09593ce5d758",
+      "current_sha256": "8d40dbf8008d53d8c2345aa24d3a249606c11ef882dbd4b3d82f3a9aab9854ef",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Continue the immutable bounded-operator audit through the RC6-4 pressure-error successor."
+    },
+    "tests/test_rc447_python310_compatibility.py": {
+      "historical_sha256": "804ee509566bfef897bace868dc85df3f40b69ba795a769d2d2aca4f5c8f88a5",
+      "current_sha256": "e8f543d186650cc0e30461da42a0d68a0e1b5d2ec4f3070206a09ef44732e8b5",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Continue the immutable Python 3.10 audit through the RC6-4 pressure-error successor."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "87b9f1931e8ac648dc396d36808c4d87c41579084f3fee7d93d3499afcda7c1f",
+      "current_sha256": "b7badb05d946523c55d8f3ed487bb2eacc417348656bf4e99124a5c98cc171be",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Resolve the immutable RC4.5.5 workflow audit through the forward-only RC6-4 record."
+    },
+    "tests/test_rc4_plane_checkpoint_identity_record.py": {
+      "historical_sha256": "52fd25607bcefa22d26224c1a46c50ca1ab932ed60c3f4e4c76c7f0666136ba2",
+      "current_sha256": "5348587c321c80cb2442fcfd84557b17c2e2eda653b4cfca9ac1ba9464afb28b",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve RC4.2.2 while resolving the Plane workflow through RC6-4."
+    },
+    "tests/test_rc4_pressure_contract_plan.py": {
+      "historical_sha256": "209c90756647f40e2b2ee6bbc92def272c59a2754a68937efa0bdba00460e0b8",
+      "current_sha256": "a702d4c128fdc15e2a09e0aa493c3c57c34a9a1c5623d5af1c918b68bedbfa04",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Resolve the immutable RC4.4 pressure plan through the forward-only RC6-4 record."
+    },
+    "tests/test_rc4_pressure_policy_implementation_record.py": {
+      "historical_sha256": "9ec20feb48bf6f57ed074a46601e7b977e5f6607a5fad604b846a24e3f1d5bb9",
+      "current_sha256": "04718cab77b8dbb8cbe2326d23bb83179a7fc208247e06cc80b611148f7cc054",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve RC4.4.3 while resolving the pressure implementation through RC6-4."
+    },
+    "tests/test_rc4_pressure_public_contract.py": {
+      "historical_sha256": "73b82c1783b373d95915c047d244da1c967f4b8558ecf2121b525752d3294791",
+      "current_sha256": "0b17d03f43813098f8b968851540e696a6d4333b737dc8c47a6e6884d6f2f102",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve RC4.4.2 while resolving the pressure implementation through RC6-4."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "2e361094068a26d29ff278eecd7435c9a5017fd9d52dd7fa80faec3832b00b04",
+      "current_sha256": "faace8e086c1b4fdff1f1d04feb005e70b75883ed95ba2a805721e84b500432e",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve R5-3 while resolving the Channel workflow through RC6-4."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "aad22a52ff198ce11d31413ea0b8ebafcb49a3b7c9d3d75c78e9c2bd1c9b47b1",
+      "current_sha256": "4e1604b453ccd406c5691a15f43d861ca3888cf460bdc68f5755eb6516e96d69",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve R5-9 while resolving the pressure error hierarchy through RC6-4."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "76b71427f0e6e5a6ab938224bc00379fc9c7604c19b63f6bc095bd9b5db1d7a9",
+      "current_sha256": "070e05265d635ff343bcb22adb6ded992cd068fd8f8596a268c17d4200cb7766",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve W1 while resolving its changelog and workflow source chain through RC6-4."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "historical_sha256": "308cef57d376033522794a2760afefef941b609ceb2202113a26638f3a615c5d",
+      "current_sha256": "97760fe54c266d89d4dad16b4c067a4f48d821c790fc80da17223c438e956694",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve RC6-2 while resolving the Channel pressure implementation through RC6-4."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "historical_sha256": "1de1c35527255e8cb72974e07bc356b8609052f8d7820f6ea6e82d25ccec473a",
+      "current_sha256": "fb1ff22a7ed644f7dead0f52fdf6862ab5f158798167faa24da9ab1dc92f8eb1",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve RC6-3 while resolving its changelog and audit sources through RC6-4."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "df89c16a56111550943be114d6f52f0e82c4416c5c9703739bd90b95826a7fb4",
+      "current_sha256": "59d965ed6a0f0d7655e67a5c27032d1b13b51faa3aaf6929a415d09e1490b38f",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve the RC4.5.6 TF32 record while resolving its audited successors through RC6-4."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "0c4a14410941c8557c780e7545bdb38f8a7871c5c2821ebacfb85999c84dcbd7",
+      "current_sha256": "027279f338abb58b9e89faf037f8ea268c1d7249709ffcd565e681411e05a596",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve the RC4.5.7 stop record while resolving its audited successors through RC6-4."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "e25eb407060b3e2302b1aae4616bdf153988ccb1e04095f9d30638cee45ff3e7",
+      "current_sha256": "6f6ef185e87ed5713fd8b109371cbd439d8ba4bcfcbe5b2d060347603b4254ef",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve the RC4.5.7 recovery record while resolving its audited successors through RC6-4."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "e00998a8fcd10c65c63710fc527ff974a2cfb0f3ac8660ff40970f91ce0b76e4",
+      "current_sha256": "096b0b00903b8d2d753553e288e8b6250e6000ecf19b9756a2d7ed0150b34c99",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve the RC4.5.8 H100 closure while resolving its audited successors through RC6-4."
+    },
+    "tests/test_rc4_lifting_checkpoint_integration_record.py": {
+      "historical_sha256": "6a71aff518710adcec17b1ef217586a3fc9d78f98b614402899c81bd2cc897c9",
+      "current_sha256": "aa83b38910c6fba5d95956365ca9aee178f23d0241e347c3e687024f75294919",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve the RC4.3.5 lifting checkpoint record while resolving the Plane workflow through RC6-4."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "ff0efc40a05d2e9dc05c6734787977d943ac37ffb78dc94a617627464d47fbee",
+      "current_sha256": "56fd099cc36d6e9cba930b167d6407bbbf5c5f2c12a5bd439f4179d0fe8b1c83",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve the RC4 post-release findings while resolving their audited successors through RC6-4."
+    },
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": {
+      "historical_sha256": "028ffcb47bcb06777e4007ec10920ad11517340b27d76d0cfdf6f9069fa0293e",
+      "current_sha256": "a527175603569a61909f082dee59f8c1f5f1dc48f65a98e0578f16cbaf2a54b7",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve the G-1 glibc compatibility record while resolving its audited successors through RC6-4."
+    },
+    "tests/test_rc5_g1_historical_audit_portability.py": {
+      "historical_sha256": "49b7fefcfc56b21109738bc074d37f7385742dd84885fdaa0f5285f3cf797d6a",
+      "current_sha256": "afd3dc38a9848e52739d1e513c2a24cd77a8f84c4b4af3b9afba67da7df749ad",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve the G-1 historical portability audit while resolving its audited successors through RC6-4."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "d45fdb60e447f70a853f721513b03185f5ef284c7678793a6bb1148d1102ff6f",
+      "current_sha256": "3ac284ab3ea61b79e4330e2ae346d5ce29a08b37e275bc6dc21fa72e1b3381a3",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve R5-1 while resolving its audited successors through RC6-4."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "64051eecb81a8027994d207db02f56a57440036471b72e4a2190713cb1eab120",
+      "current_sha256": "9ba2f36e6ab804f6fd5cbef62becaebd35397ff12532dbc6d6debc3738f9728f",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve R5-10 while resolving the Channel workflow audit through RC6-4."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "d830d9654450437dbe347250739744f302e9f8de4cb56a884c52b07b19c11bf2",
+      "current_sha256": "e692294f4f96790874c1b148e09b198034e3e444a3ec15e63f0297fe7d62293c",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve R5-11 while resolving its audited successors through RC6-4."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "c6e603e27eb21666cd9d7e1875d78879e7d3a65b8a74e4cc74e7dfe5cc980230",
+      "current_sha256": "71093f7ba31a310859f5ba3e8a6ec3db3bf8446efeadc92b97e9ebb8fced9913",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve R5-12 while resolving its audited successors through RC6-4."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "089e1d0bff0b5276583ddfdf469846969a60d0c8950a9b2e2b267214a00e413f",
+      "current_sha256": "466496dfae760952b6a470b5965822548ffb3a2a7af787199d9900bf5d53f8d3",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve R5-13 while resolving its audited successors through RC6-4."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "8db58f8a0f37d2a25720313d7ef832f277c67bfdd3b4e2f46c5a2d155516baf3",
+      "current_sha256": "ce7ce3b05d01de733b17fa26c6a6f641d37f55bf17f83e487bc88d471f285ebe",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve R5-2 while resolving the workflow metadata audit through RC6-4."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "33016f0ed15631b4ec962cc2768bfc099294c5933b74f31e1e7b440b05da558a",
+      "current_sha256": "385b182aaad2a7fcebdbb98d700b79c70cc0904f1ec904ea963e691736a95277",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve R5-5 while resolving its audited successors through RC6-4."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "c988a27dcf51c0e4a8952f4a3a09f89490ac16483e7cb87c96e85678ea318d54",
+      "current_sha256": "94a1286cc733bc130bcbafe0040cce2b0c0435c004b618b3dc809416d15dae95",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve R5-6 while resolving the public error hierarchy audit through RC6-4."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "b7c979db0a436be982609287d2c802f0e8878d8e3ad553e759cb9aa04a06eec3",
+      "current_sha256": "62deca4e80d79cb18d83ac7d944b47c66e8b6cef3e4f1c0a0fcc1abb84269552",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve R5-7 while resolving its audited successors through RC6-4."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "114511cf82b97b84c7b602fc7009a466654be34737d70f5301992cb8f256d1bc",
+      "current_sha256": "4d7c45ceb5131db20683c15cd09fd58ada63c1f90379efedd3ca9acba3ca23ef",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve R5-8 while resolving its audited successors through RC6-4."
+    },
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": {
+      "historical_sha256": "7b3b95683ff18cc9bfd4f326bf07e7e8fb2ee37cf004f533a584731d4ac729b4",
+      "current_sha256": "7146dd0d655ffcac9da9c9d825d34963f7ae96ec0f674a8e09eb372564709712",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve RC6-1 while resolving its audited successors through RC6-4."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "368c9f116b11cf3054245bbf7f6169ca650bf6addbbca835cd5b456bdee976df",
+      "current_sha256": "aa75cb60ec7fc7dd51044b5cd0a352d73ccd1198ede65b5097f57d337c1f22e8",
+      "introduced_by_phase": "RC6-4",
+      "reason": "Preserve the v0.2 release record while resolving its audited successors through RC6-4."
+    }
+  },
+  "verification": {
+    "direct_contract_tests": "4 passed",
+    "affected_error_workflow_functional_and_pressure_tests": "135 passed",
+    "historical_successor_audit_tests": "121 passed; final cascade check 20 passed",
+    "independent_A7_03_reproducer": "18/18 Channel and Plane variants fail closed; every error is a SimulationExecutionError; started workflow metadata is failed",
+    "full_cpu_suite": "3912 passed, 1 skipped, 7 deselected, 8 subtests passed",
+    "only_skip": "optional nematics3d dependency unavailable",
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "public_error_hierarchy_changed": true,
+    "failed_run_metadata_finalization_added": true,
+    "pressure_algorithm_changed": false,
+    "scientific_equations_changed": false,
+    "integrator_changed": false,
+    "transform_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "runtime_default_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "rc6_4_complete": true,
+    "eligible_for_rc6_5": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

@@ -4,6 +4,10 @@
 
 ### Fixed
 
+- Make Channel pressure convergence failures part of the public
+  `SimulationExecutionError` hierarchy, and atomically finalize started Plane
+  and legacy-Channel run metadata with `status="failed"` before re-raising a
+  public execution error.
 - Validate the complete-stress model parameters consumed by the Periodic and
   Channel runtimes during public compilation, and reject an existing external
   Q snapshot whose component layout does not match the declared geometry

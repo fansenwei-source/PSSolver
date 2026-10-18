@@ -42,6 +42,7 @@ RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 RELEASE = ROOT / "notes/pssolver_v0_2_0_rc4.json"
 RC5_R59 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
 RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
+RC6_R4 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
 
 
 def _record() -> dict[str, object]:
@@ -50,6 +51,15 @@ def _record() -> dict[str, object]:
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def _rc6_r4_successor(relative: str, resolved: str) -> str:
+    registration = json.loads(RC6_R4.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == resolved:
+        return registration["current_sha256"]
+    return resolved
 
 
 def test_rc443_record_binds_parent_contract_and_current_sources():
@@ -100,7 +110,9 @@ def test_rc443_record_binds_parent_contract_and_current_sources():
             direct_rc6_successor is not None
             and direct_rc6_successor["historical_sha256"] == expected
         ):
-            assert direct_rc6_successor["current_sha256"] == actual
+            assert _rc6_r4_successor(
+                relative, direct_rc6_successor["current_sha256"]
+            ) == actual
             assert direct_rc6_successor["introduced_by_phase"] == "RC6-2"
             continue
         successor = rc453.get(relative, bounded_recovery.get(
@@ -169,6 +181,7 @@ def test_rc443_record_binds_parent_contract_and_current_sources():
             and rc6_successor["historical_sha256"] == resolved
         ):
             resolved = rc6_successor["current_sha256"]
+        resolved = _rc6_r4_successor(relative, resolved)
         assert resolved == actual
 
 
@@ -219,7 +232,9 @@ def test_rc443_registers_exact_historical_successors():
                 and direct_rc6_successor["historical_sha256"]
                 == registration["current_sha256"]
             ):
-                assert direct_rc6_successor["current_sha256"] == actual
+                assert _rc6_r4_successor(
+                    relative, direct_rc6_successor["current_sha256"]
+                ) == actual
                 assert direct_rc6_successor["introduced_by_phase"] == "RC6-2"
                 assert registration["reason"]
                 continue
@@ -284,6 +299,7 @@ def test_rc443_registers_exact_historical_successors():
                 and rc6_successor["historical_sha256"] == resolved
             ):
                 resolved = rc6_successor["current_sha256"]
+            resolved = _rc6_r4_successor(relative, resolved)
             assert resolved == actual
         else:
             assert actual == registration["current_sha256"]
