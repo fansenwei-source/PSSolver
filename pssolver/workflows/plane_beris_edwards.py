@@ -69,8 +69,10 @@ class PlaneBerisEdwardsWorkflow:
         if adapter.runtime_path is not components.execution.runtime_path:
             raise ValueError("workflow runtime path differs from run specification")
         directory = Path(output_directory).expanduser().resolve()
-        if not directory.is_dir():
-            raise FileNotFoundError(f"Plane output directory is missing: {directory}")
+        if directory.exists() and not directory.is_dir():
+            raise FileNotFoundError(
+                f"Plane output path is not a directory: {directory}"
+            )
         if not isinstance(metadata, Mapping):
             raise TypeError("metadata must be a mapping")
         self.adapter = adapter
@@ -177,6 +179,9 @@ class PlaneBerisEdwardsWorkflow:
         if (self.output_directory / "COMPLETE").exists():
             raise FileExistsError("Plane output directory is already complete")
         start_step = self._restore_if_requested()
+        # A restart owns its output path only after the checkpoint has passed
+        # integrity, identity, and restore validation.
+        self.output_directory.mkdir(parents=True, exist_ok=True)
         self.metadata["workflow"] = {
             "schema_version": PLANE_WORKFLOW_SCHEMA_VERSION,
             "runtime_path": self.adapter.runtime_path.value,

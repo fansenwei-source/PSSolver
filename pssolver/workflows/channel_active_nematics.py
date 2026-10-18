@@ -51,8 +51,10 @@ class ChannelActiveNematicsWorkflow:
         if adapter.runtime_path is not run_spec.runtime_path:
             raise ValueError("workflow runtime path differs from run specification")
         directory = Path(output_directory).expanduser().resolve()
-        if not directory.is_dir():
-            raise FileNotFoundError(f"Channel output directory is missing: {directory}")
+        if directory.exists() and not directory.is_dir():
+            raise FileNotFoundError(
+                f"Channel output path is not a directory: {directory}"
+            )
         if not isinstance(metadata, Mapping):
             raise TypeError("metadata must be a mapping")
         self.adapter, self.run_spec, self.output_directory = adapter, run_spec, directory
@@ -133,6 +135,9 @@ class ChannelActiveNematicsWorkflow:
         if (self.output_directory / "COMPLETE").exists():
             raise FileExistsError("Channel output directory is already complete")
         start_step = self._restore()
+        # Defer ownership of a restart target until every checkpoint guard has
+        # succeeded.  Fresh runs still arrive with their prepared directory.
+        self.output_directory.mkdir(parents=True, exist_ok=True)
         self.metadata["workflow"] = {
             "schema_version": CHANNEL_WORKFLOW_SCHEMA_VERSION,
             "runtime_path": self.adapter.runtime_path.value,

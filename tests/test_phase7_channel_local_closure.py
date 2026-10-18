@@ -94,6 +94,7 @@ def test_cross_runtime_workflow_restart_fails_without_complete(tmp_path):
 
     with pytest.raises(ValueError, match="cross-runtime"):
         run_channel_active_nematics(_spec(target_dir, "compiled_channel_v2", restart_from=source_dir / "checkpoint_1"))
+    assert not target_dir.exists()
     assert not (target_dir / "COMPLETE").exists()
 
 

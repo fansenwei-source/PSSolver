@@ -527,3 +527,4 @@ def test_periodic_restart_rejects_tensor_tamper_before_advancing(tmp_path):
                 restart_from=checkpoint,
             )
         )
+    assert not (tmp_path / "tamper_target").exists()

@@ -166,7 +166,6 @@ def _run_periodic_beris_edwards_owned(
         request=request,
     )
     adapter = build_package_simulation_runtime(construction)
-    output.mkdir(parents=True, exist_ok=True)
     metadata["runtime_construction"] = construction.to_metadata()
     metadata["runtime"] = adapter.to_metadata()
     workflow = PeriodicBerisEdwardsWorkflow(

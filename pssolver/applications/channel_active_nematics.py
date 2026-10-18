@@ -163,7 +163,8 @@ def _run_channel_active_nematics_owned(
         if run_spec.initialization_mode == "generated"
         else run_spec.snapshot_output_directory
     )
-    output = prepare_new_run_directory(output)
+    if run_spec.components.workflow.restart_from is None or output.exists():
+        output = prepare_new_run_directory(output)
     return ChannelActiveNematicsWorkflow(adapter, run_spec, output, metadata).run(progress=progress)
 
 

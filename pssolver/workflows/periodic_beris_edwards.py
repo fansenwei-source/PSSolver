@@ -214,6 +214,10 @@ class PeriodicBerisEdwardsWorkflow:
             raise ValueError(
                 "save_start_step must not exceed the absolute final step"
             )
+        # A rejected restart must not claim its output path.  In particular,
+        # checkpoint integrity and compatibility are established above before
+        # the first filesystem mutation owned by this run.
+        self.output_directory.mkdir(parents=True, exist_ok=True)
         iterator = range(steps) if progress is None else progress
         started = time.time()
         executed = 0

@@ -1024,6 +1024,9 @@ class ChannelBerisEdwardsWorkflow:
             raise ValueError(
                 "save_start_step must not exceed the absolute final step"
             )
+        # Keep restart rejection free of output-directory side effects.  The
+        # checkpoint has passed every load/identity/restore guard at this point.
+        self.output_directory.mkdir(parents=True, exist_ok=True)
         iterator = range(steps) if progress is None else progress
         started = time.time()
         executed = 0

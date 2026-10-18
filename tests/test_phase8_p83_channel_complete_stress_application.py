@@ -726,6 +726,7 @@ def test_channel_complete_stress_restart_rejects_tamper(tmp_path):
                 restart_from=checkpoint,
             )
         )
+    assert not (tmp_path / "tamper_target").exists()
     metadata = json.loads((checkpoint / "checkpoint.json").read_text())
     assert metadata["backend_restart"]["state_keys"] == ["pressure_guess"]
     assert metadata["backend_restart"]["reconstructed_state_keys"] == [

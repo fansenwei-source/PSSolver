@@ -159,6 +159,37 @@ def test_workflow_uses_one_component_graph_and_only_facade_identity_method(
     assert workflow._components is calls[0][1]
 
 
+def test_restart_integrity_rejection_does_not_create_output(
+    tmp_path,
+    monkeypatch,
+):
+    output = tmp_path / "rejected_restart"
+    spec = _spec(
+        output,
+        restart_from=tmp_path / "tampered_checkpoint",
+    )
+
+    def reject_checkpoint(_source):
+        raise ValueError("checkpoint tensor checksum mismatch")
+
+    monkeypatch.setattr(
+        workflow_module,
+        "load_plane_checkpoint",
+        reject_checkpoint,
+    )
+    workflow = PlaneBerisEdwardsWorkflow(
+        _Adapter(),
+        spec,
+        output,
+        {"initial_condition": {}, "numerics": {}},
+    )
+
+    with pytest.raises(ValueError, match="checksum mismatch"):
+        workflow.run()
+
+    assert not output.exists()
+
+
 @pytest.mark.parametrize(
     ("zero_mode_policy", "friction_mode_fric", "expected_friction"),
     (

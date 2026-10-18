@@ -875,8 +875,8 @@ def _run_plane_beris_edwards_owned(
     metadata["retained_normal_velocity_modes"] = (
         spectral_projector.retained_axis_counts(U_NORMAL_BC)
     )
-    output_dir.mkdir(parents=True, exist_ok=True)
     if not is_restart:
+        output_dir.mkdir(parents=True, exist_ok=True)
         np.save(
             output_dir / "Q2D_initial.npy",
             np.stack(
