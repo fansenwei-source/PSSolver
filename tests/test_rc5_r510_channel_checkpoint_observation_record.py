@@ -40,6 +40,9 @@ RC6_R4_RECORD = ROOT / (
 RC6_R5_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
 )
+RC6_R6_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -62,6 +65,7 @@ def _r512_successor(relative: str, historical: str) -> str:
         RC6_R3_RECORD,
         RC6_R4_RECORD,
         RC6_R5_RECORD,
+        RC6_R6_RECORD,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"

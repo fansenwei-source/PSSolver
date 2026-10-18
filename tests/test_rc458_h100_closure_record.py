@@ -38,6 +38,7 @@ RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 RC6_R3 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
 RC6_R4 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
 RC6_R5 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
+RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 
 
 def _rc6_r1_successor(relative: str, resolved: str) -> str:
@@ -86,6 +87,15 @@ def _rc6_r4_successor(relative: str, resolved: str) -> str:
 
 def _rc6_r5_successor(relative: str, resolved: str) -> str:
     registration = json.loads(RC6_R5.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == resolved:
+        return registration["current_sha256"]
+    return resolved
+
+
+def _rc6_r6_successor(relative: str, resolved: str) -> str:
+    registration = json.loads(RC6_R6.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == resolved:
@@ -304,6 +314,7 @@ def test_rc458_closure_registers_exact_historical_source_successors():
             resolved = _rc6_r3_successor(relative, resolved)
             resolved = _rc6_r4_successor(relative, resolved)
             resolved = _rc6_r5_successor(relative, resolved)
+            resolved = _rc6_r6_successor(relative, resolved)
             assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolved
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["introduced_by_phase"] == "RC4.5.8-finalization"

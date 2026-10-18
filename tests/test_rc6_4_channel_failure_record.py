@@ -9,6 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
+RC6_R6_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+)
 RC6_R5_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
 )
@@ -31,6 +34,15 @@ def _rc6_5_successor(relative: str, historical: str) -> str:
     return historical
 
 
+def _rc6_6_successor(relative: str, historical: str) -> str:
+    registration = json.loads(RC6_R6_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == historical:
+        return registration["current_sha256"]
+    return historical
+
+
 def test_rc6_4_record_binds_implementation_and_regression_sources():
     record = _record()
     assert record["status"] == "implementation_complete_cpu_verified"
@@ -43,7 +55,8 @@ def test_rc6_4_record_binds_implementation_and_regression_sources():
     assert record["git_identity"]["record_commit_is_qualified_source"] is False
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
-            assert _sha256(relative) == _rc6_5_successor(relative, expected)
+            expected = _rc6_5_successor(relative, expected)
+            assert _sha256(relative) == _rc6_6_successor(relative, expected)
 
 
 def test_rc6_4_contract_preserves_types_and_finalizes_started_runs():
@@ -112,9 +125,8 @@ def test_rc6_4_registers_exact_forward_only_successors():
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["introduced_by_phase"] == "RC6-4"
         assert registration["reason"]
-        assert _sha256(relative) == _rc6_5_successor(
-            relative, registration["current_sha256"]
-        )
+        resolved = _rc6_5_successor(relative, registration["current_sha256"])
+        assert _sha256(relative) == _rc6_6_successor(relative, resolved)
 
 
 def test_rc6_4_scope_is_cpu_only_and_preserves_numerical_contracts():

@@ -31,6 +31,7 @@ CHANNEL_APPLICATION = ROOT / (
 )
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
+RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 
 
 def _sha256(path: Path) -> str:
@@ -39,7 +40,7 @@ def _sha256(path: Path) -> str:
 
 def _rc456_successor(relative: str, historical: str) -> str:
     resolved = historical
-    for path in (RC456, RC5_R57):
+    for path in (RC456, RC5_R57, RC6_R6):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)

@@ -1,0 +1,412 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc6 RC6-6 restart output atomicity contract",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_RC6_6_RESTART_OUTPUT_ATOMICITY_CPU_CLOSURE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc6",
+    "rc6_5_record_commit": "2d6ba5b8e343a8e77017135edc82070536fb11b1",
+    "implementation_commit": "80c6e17db5838ef4f142add4955221637efcdf3e",
+    "qualified_source_commit": "80c6e17db5838ef4f142add4955221637efcdf3e",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "ids": [
+      "A2-18"
+    ],
+    "work_item": "RC6-6",
+    "source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc5_independent_acceptance_claude_zh.md",
+    "source_sha256": "87a39b1c285a4ea47343f7c992f4a98d7a7e525f4a9c204ffb0ad3a25d99e0b5",
+    "machine_source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc5_independent_acceptance_claude.json",
+    "machine_source_sha256": "841f9302a357f9a7f0ffeb9d93e26de9f329bec66fe7e5583af53b4958c0e6dd",
+    "root_cause": "Restart applications materialized an otherwise missing target output directory before checkpoint integrity, identity, and runtime-compatibility validation completed, so a rejected restart could leave an empty directory behind."
+  },
+  "contract": {
+    "restart_preflight_precedes_missing_output_materialization": true,
+    "rejected_missing_restart_target_remains_absent": true,
+    "periodic_restart_rejection_covered": true,
+    "channel_complete_stress_restart_rejection_covered": true,
+    "plane_restart_rejection_covered": true,
+    "legacy_channel_restart_rejection_covered": true,
+    "successful_restart_creates_output_before_publication": true,
+    "fresh_run_output_behavior_preserved": true,
+    "preexisting_nonempty_output_rejection_preserved": true,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "runtime_defaults_changed": false
+  },
+  "implementation_files": {
+    "pssolver/applications/channel_active_nematics.py": "de5e25f76fe738bad273676ca39273516ec746097e59e18281f898d707abf923",
+    "pssolver/applications/channel_beris_edwards.py": "b586c46cd77d62396d2efa73dc6193f5a236e2cfe758e8df27f538483365cab3",
+    "pssolver/applications/periodic_beris_edwards.py": "a65df1bcadd1d90518bcd132ff49468a646455599564c05e14f0f74fe02d3466",
+    "pssolver/applications/plane_beris_edwards.py": "2d0f7a8d0f823a57edb2f4acd653bbc6ee1b9ab9b2f720566f111236c33dc3e8",
+    "pssolver/workflows/channel_active_nematics.py": "eeaa93d0ef4858979f5809ba2e9045356bb86c2f22230334d658de554226d3f6",
+    "pssolver/workflows/channel_beris_edwards.py": "81024e79b4703ad443cbe92248f60c22fdc6dfe8e76a7394ae4537801530c45e",
+    "pssolver/workflows/periodic_beris_edwards.py": "addf14f04e891525a0055bb5950f67fa329097735c326daa71bcf78ee2d35b7c",
+    "pssolver/workflows/plane_beris_edwards.py": "983382301c104bca5e5b82b76e9cdcdae20bb9971565c605b803e61df7eda225"
+  },
+  "regression_tests": {
+    "tests/test_phase2_plane_workflow_migration.py": "05519d3d77145ad1d79abc36dccad3c848b3d3a70d58337bbc5ffad4bbecd36d",
+    "tests/test_phase7_channel_local_closure.py": "197f739fe8ef53d676c7134a97746fe071294812c55a04a9925fc7862d01cfe9",
+    "tests/test_phase8_p82_periodic_application.py": "0a5f11181dbaccba37438a58e0a9e0597bca12372022a9dc4310f04228a193f6",
+    "tests/test_phase8_p83_channel_complete_stress_application.py": "2d2bc9375174a710d8c07e045c4d1b1a30757e238d7b2fb1661b12f858319f19"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "b6eeae69c907396155f2573bfcf62e6757cf3728b3b8ae94494eff41c3c4f105",
+      "current_sha256": "6fbc47566940b0aa1f0a341ffba2c60bf9a297635ca633cd2baadc378d5fa3da",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Document the RC6-6 restart output atomicity contract."
+    },
+    "pssolver/applications/channel_active_nematics.py": {
+      "historical_sha256": "5d4de8cc1be0c535398dc3ad716e6ae902159918046b92cbcf9e45c539f4812a",
+      "current_sha256": "de5e25f76fe738bad273676ca39273516ec746097e59e18281f898d707abf923",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Defer missing restart-target output materialization until checkpoint preflight succeeds."
+    },
+    "pssolver/applications/channel_beris_edwards.py": {
+      "historical_sha256": "dadab75763f5838310df9b9b68511177f5d3479113018d8437ba4daa6cb887f1",
+      "current_sha256": "b586c46cd77d62396d2efa73dc6193f5a236e2cfe758e8df27f538483365cab3",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Defer missing restart-target output materialization until checkpoint preflight succeeds."
+    },
+    "pssolver/applications/periodic_beris_edwards.py": {
+      "historical_sha256": "fd0c1e6752de4b6401e42afbd0fd015be980b8f4cad7077e1888c250e0e130a9",
+      "current_sha256": "a65df1bcadd1d90518bcd132ff49468a646455599564c05e14f0f74fe02d3466",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Defer missing restart-target output materialization until checkpoint preflight succeeds."
+    },
+    "pssolver/applications/plane_beris_edwards.py": {
+      "historical_sha256": "92ac8c69ea911f2582ecb8d609096c80fe312c85d5345d4e940fb48e1ec4550a",
+      "current_sha256": "2d0f7a8d0f823a57edb2f4acd653bbc6ee1b9ab9b2f720566f111236c33dc3e8",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Defer missing restart-target output materialization until checkpoint preflight succeeds."
+    },
+    "pssolver/workflows/channel_active_nematics.py": {
+      "historical_sha256": "6c128a60afa933395ab728b35644e9d1511adafd9a188e541642bfdc44bd34b5",
+      "current_sha256": "eeaa93d0ef4858979f5809ba2e9045356bb86c2f22230334d658de554226d3f6",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Defer missing restart-target output materialization until checkpoint preflight succeeds."
+    },
+    "pssolver/workflows/channel_beris_edwards.py": {
+      "historical_sha256": "2511af5eb5e9dc9ef6f25246cfd5407fc4f86ed00fd544e03c1a9188b6b3cf56",
+      "current_sha256": "81024e79b4703ad443cbe92248f60c22fdc6dfe8e76a7394ae4537801530c45e",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Defer missing restart-target output materialization until checkpoint preflight succeeds."
+    },
+    "pssolver/workflows/periodic_beris_edwards.py": {
+      "historical_sha256": "51eceb6ba8cc54fe309654bfca766a1f3eba76c8abb0bf6a38129c442c34185c",
+      "current_sha256": "addf14f04e891525a0055bb5950f67fa329097735c326daa71bcf78ee2d35b7c",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Defer missing restart-target output materialization until checkpoint preflight succeeds."
+    },
+    "pssolver/workflows/plane_beris_edwards.py": {
+      "historical_sha256": "3e513c53db4af70ddda5429aaed9b32c12f6bd54138005d7b03aad35c25c25b4",
+      "current_sha256": "983382301c104bca5e5b82b76e9cdcdae20bb9971565c605b803e61df7eda225",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Defer missing restart-target output materialization until checkpoint preflight succeeds."
+    },
+    "tests/test_phase2_plane_workflow_migration.py": {
+      "historical_sha256": "5e86e7005e7f23df30115700ae3d5a1bf0cdf5471d4efae0d5bbd0039afb9560",
+      "current_sha256": "05519d3d77145ad1d79abc36dccad3c848b3d3a70d58337bbc5ffad4bbecd36d",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Freeze rejection of an invalid restart without creating its missing target directory."
+    },
+    "tests/test_phase7_channel_local_closure.py": {
+      "historical_sha256": "fc3fc17535471b7d8a96a13524b1db889f1cbe8920a593e72a6fefa5eb8c34ca",
+      "current_sha256": "197f739fe8ef53d676c7134a97746fe071294812c55a04a9925fc7862d01cfe9",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Freeze rejection of an invalid restart without creating its missing target directory."
+    },
+    "tests/test_phase7_p776_h100_closure.py": {
+      "historical_sha256": "a269830e80091ec68f1e3702928931806d654c80693305e96f86e601ec8ef8a1",
+      "current_sha256": "3ba55991f01327c94051d6c21ed03b47ef8502556ddc79644a629e0bde3d326c",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_phase7_p776_production_connection.py": {
+      "historical_sha256": "c4fd076ee43b383dbb86518815a209ece6a26def231c57eb9d3c18e2fbfeb9ae",
+      "current_sha256": "1e3cf8c54beaa579769e185619fc905851d41c8f7cdf2186fe0cf0ef226edadd",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_phase8_p82_periodic_application.py": {
+      "historical_sha256": "1ec1d079f0d76489b08b6beb3e37407355dd93af0e83b30d36160da3924638f0",
+      "current_sha256": "0a5f11181dbaccba37438a58e0a9e0597bca12372022a9dc4310f04228a193f6",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Freeze rejection of an invalid restart without creating its missing target directory."
+    },
+    "tests/test_phase8_p83_channel_complete_stress_application.py": {
+      "historical_sha256": "65eead2e491dea4aca962990a79c8f14788965791cb206a59c5ab60f28478309",
+      "current_sha256": "2d2bc9375174a710d8c07e045c4d1b1a30757e238d7b2fb1661b12f858319f19",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Freeze rejection of an invalid restart without creating its missing target directory."
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "184739dbb93a307c20f36f1a79dd487653c160535a2cd31d88b4c16fd9003e03",
+      "current_sha256": "b14982994494f73cd2072c9f3d046240500a7e94cf4eb6c539cf045e08964dff",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc453_checkpoint_transactionality.py": {
+      "historical_sha256": "eecab80f9d11ab521150edf17aa860a5f0ae3b3d44bbc0440ac673578cdb6f7a",
+      "current_sha256": "a4d1425ca46aca272e4003c29ccef8eecc146a790466f6f7972a174d5ef6d7ca",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "ed6c20ef5236cb84d6fff58abafd9ea49e56947307cbf2038cb216cdbb488500",
+      "current_sha256": "cd0374a8dd72caa24a61eb2ea8d06958bb399ca6734e30090beb0ef2a2a8afc9",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "66a2ff5c07a495051f8b20dc62f99dd6b18347242100a71928b50996b6e3cdfc",
+      "current_sha256": "523a0819cc95f37b82a9204120bd25314711f6e435a2d62d34db48757b016f00",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "587c87c3a7550b815a7d1935bd50ce4c50d7a391b51784d7612405e163037a89",
+      "current_sha256": "3b122ed9ec5b31da8aa1ab95cc18afa45ccaff900a06f6502cb9c322ee6d9296",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "9641e7615b7b615131ec2bdedc0008905e123ddaa261e70431ba0eda98bc2d56",
+      "current_sha256": "f479b81653e70b2f4899e5e82ae7ea06929f3e0f5768b9c8cb06e9ffe8a67057",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "0bb2c42655225c016050e8148090af20b327c4a8b9e51492d0c0e5869a4600ff",
+      "current_sha256": "3f3448568d782805e4cff90a577204661a8b1d0f68eb520b9387d2edc99f6a64",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc4_cross_device_checkpoint_plan.py": {
+      "historical_sha256": "4f45cffc48a12f59fe524ab8e6d216342a39831f0736c6364b17c52accb91bf6",
+      "current_sha256": "f0521392dc5cb88fe6361fb4895879f7c352fa56117d5757cd7712202e9ff3b9",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {
+      "historical_sha256": "2b9041e2a428525c286826496882df9f067b3cc99bd931d1e9ac8f88b02f7ab6",
+      "current_sha256": "2dcd2af8ba38972fa8ed62b669effa2fbfa882de8e86df9efa569c3ac726d201",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc4_fresh_initial_conditioning.py": {
+      "historical_sha256": "3f51dcff870cefe5d267df2cf55f39922c1b3b66fa53fb813bb48eb298c66249",
+      "current_sha256": "0c5e6ba6fc57a9656cd77b55b8c29dec1bdc9e8ae7fb6a1acd2dd0d8ff87a8f7",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc4_functional_checkpoint_identity_record.py": {
+      "historical_sha256": "909c65c3a175f83969c431bd500731ff48683279d796512a2937794b7339adec",
+      "current_sha256": "ba88daf3eef13f88ae6a1d9fa504ce28bf74e6fd301f01083317934dff8b1494",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc4_lifting_capability_restriction_record.py": {
+      "historical_sha256": "c6d762512a5eff27c3b809ce58a2a195b4a7464185302e268bc2670c4bd2193b",
+      "current_sha256": "7f5cdf2fbd0508bcadf11bdcd36d145f6b72822bc754cf67aaadfd4c09fe6d0a",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc4_lifting_checkpoint_integration_record.py": {
+      "historical_sha256": "aa83b38910c6fba5d95956365ca9aee178f23d0241e347c3e687024f75294919",
+      "current_sha256": "75c15bb32a7b057b27472317c314709e91ec08472bb6a3c9d60fe0b9bb3de3db",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py": {
+      "historical_sha256": "1be543a44f1d2c3d579bef080ef599df5666d383c02a1d10bb0a2cbda5f01a0b",
+      "current_sha256": "47443c8de1def2002f8524a116915e9fd72160c47bce610810e1a9388860949e",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc4_plane_checkpoint_identity_record.py": {
+      "historical_sha256": "5348587c321c80cb2442fcfd84557b17c2e2eda653b4cfca9ac1ba9464afb28b",
+      "current_sha256": "2069dd1456ad8608f95f62b7a7bf9334ccab35e6d28ed7c678374a3e384f72dd",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "b6dbc23db9340fc04f82a544142f49bb76c928349919fda2f29c27364b21e6b4",
+      "current_sha256": "e9b85fee2f55d7133cfcde33756376dd22c94dec0b5df76d27d41e2e67d4926b",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {
+      "historical_sha256": "acd28c0373fb662a7038f0e06e65cd85b9994ccfa42bc0fec2183ece983b5b14",
+      "current_sha256": "67527e4bccf5d78785a2253a762c2788f7d021e3768c287bb6556aead26e47e7",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc4_pressure_public_contract.py": {
+      "historical_sha256": "0b17d03f43813098f8b968851540e696a6d4333b737dc8c47a6e6884d6f2f102",
+      "current_sha256": "20e9dad7a51e66f4dad7202c7bbf57870be03a3787d19d156c43fce331d77938",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": {
+      "historical_sha256": "8c19ddb65fe646eacd25bae0eb9ad72d371e6d2d919ea9621feafaa6546c57b1",
+      "current_sha256": "04cdd9a3c4ef850744c68d2dc4742f546bc161a2af1dede4c6c5673d75563984",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_g1_historical_audit_portability.py": {
+      "historical_sha256": "2e25bdf70f2ba0b10c55589a08ef45ebbfe3b644ad5a24af9e1846431a7e74ca",
+      "current_sha256": "a84fe791bb74b57fb7a218ecd4b3f6997b60b17949781d1f35f5e835463acb6c",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "82e571a7c6d54d90522f8faa7ea3d05fd114e0875550e2a21e6ce77cc9c4d667",
+      "current_sha256": "a2ddc5e0cb187d814af908c34be2cd560c413bf7d1fb8bc1deca226a469a1be1",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "86ff0db36d9f4a42237bf14251d872a6ee7647033cba6eb914bf1c8b06ab2e1c",
+      "current_sha256": "cd8e69761ac82065e418c2303cb7ab6658c1cb5b4a0fb0fa45ee8e34473e9741",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "bfb362fa88828a479bc4ee62bf0185364b8fd1ab9a79e62d7a84d36fee401758",
+      "current_sha256": "6f4c9dae67333b69d5c75e8acc81ae2252f540ede5c71a35b25ad788815b2684",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "3f214ec4a703b2ff832c05c2668c5b3ba2e9b96e1c85d336d2030f4a06209c44",
+      "current_sha256": "dad60782fabb06d2d51ff53bf7dea7b564a5013b0bb745e70ad9f5ed90ffecd0",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "22fb909a5bc6605f4aab7023d1076d785dd57d2621cc2fdbdf04af1841a28cbb",
+      "current_sha256": "442ad722d93eab6db4754b44c374464e5e0ec17b8a22293c1d46a6eea7222b55",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "86cf39ef3fcbc3156bd5eaac18d242f557183428165cf2050a02f160e70bbde5",
+      "current_sha256": "6c01687e77c89dbd3c61f3179c81ecd8efbae5e03577146f837ac18314faf145",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "7650a3d465bae1733ae39cfac529c5c4dbfd02e95fae659f7d6d73b2a469bbc7",
+      "current_sha256": "f9a6b934a19f5e85f8ebbdf09ededc8001464be4d978f8d37831146918ebdf1f",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "76df319e65f718a1f6ac2daf8fef75b6597bf4e303bb033688b9895a110c56a4",
+      "current_sha256": "a4cb33a8ba013d6de1e73daa49dad5d6c256dbc33f58a61632b2217953fd83b5",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "e733320f2f208e2e4d0d623519b92aca1875198a381feed3f4b63db886a5ea71",
+      "current_sha256": "fa74e64567025285c9325ecffe1352be0803627aa27f12a4c99476e3d403f95c",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "abcea4e21be3d242beabce7b33f78ac8aef660e895e7942aeaa650aca0089761",
+      "current_sha256": "4d9933fe6e2ecddf36698acbdc8f67bf1cae38acc63162b84f5739a6c8e9d30a",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "c610a40f0ab7608a5b8e39ac9c4f6744285123c236bf6ed8612333dbca629a38",
+      "current_sha256": "b43d8792af0f5d1fb72b72f12ea384c42817ed4226af8125b95f2e1c31c339bb",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "0e002fc088a46919aca6baf975e53807609d38a5d0eaa0e77b7ca1022dc992c9",
+      "current_sha256": "bc333db851e5a9aa44310a5ec571d4ab2415bbc0b5d5056be7c06314e22a1456",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "372dfebfe126d6c668e992ef992b6b4a6031e3070c4f7fd3001d35547162c20a",
+      "current_sha256": "5ffe79d462766fc5f9cc684cb83a3032953209a793e46f5ee512a3696b299cea",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": {
+      "historical_sha256": "39a5236cbb75fec895e475b0e286164e036c552edfcd604398ee013550bea257",
+      "current_sha256": "32a32b8d91fa92fa4d261705b8745f18477ab6745288ef5bac0c1e9484ba548e",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "historical_sha256": "41f56b844bca937374fda9d8f8eea940a7f481d352cb77c9d1eb881936f24cb0",
+      "current_sha256": "50d52d4290cbf971f668aa05a0c5c05790a5e41151089ea42bb60c051570c846",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "historical_sha256": "7946447371758b3155846b6d7d46cea066e451b21ce8ceb7b1e9fa1942abfa72",
+      "current_sha256": "8f2bd2f132b3575c5a4196d9a995952c9acd4d565b403a57d799c0e581f4c451",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc6_4_channel_failure_record.py": {
+      "historical_sha256": "8350eabbc951c13aee75588bd93290b5d026f409e520b387460be611ea85b2b9",
+      "current_sha256": "f38754b6a92895bbd88be07aba613006911f96d2d79cbc226a06eafa7c1e2af8",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_rc6_5_checkpoint_control_flow_record.py": {
+      "historical_sha256": "ba12df7f392653bfd340c3ce60b7f4b20e572aa4c0c821b02cc55e54ce618d0f",
+      "current_sha256": "9b008b20ff367d88fcad49ce227c730a9a1841de48bc26dd70de4abc18a3a019",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "6ffe6534b560eaefc2dcb7d66ce128d864da40a296dbbacc10ba19acc3cfca8f",
+      "current_sha256": "6c3de45669f2e7847a7556329dda302517af1a4c471da3cd49e757966492cc81",
+      "introduced_by_phase": "RC6-6",
+      "reason": "Continue the immutable historical audit through the forward-only RC6-6 successor."
+    }
+  },
+  "verification": {
+    "direct_rejection_tests": "4 passed",
+    "affected_non_record_tests": "62 passed, 7 deselected",
+    "pre_record_full_cpu_suite": "3897 passed, 1 skipped, 7 deselected, 8 subtests passed; 24 expected historical successor audit failures",
+    "historical_record_audit_subset": "1044 passed",
+    "final_full_cpu_suite": "3926 passed, 1 skipped, 7 deselected, 8 subtests passed",
+    "only_skip": "optional nematics3d dependency unavailable",
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "restart_output_materialization_order_changed": true,
+    "scientific_equations_changed": false,
+    "integrator_changed": false,
+    "transform_algorithm_changed": false,
+    "gradient_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "runtime_default_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "rc6_6_complete": true,
+    "eligible_for_rc6_7": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

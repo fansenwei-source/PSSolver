@@ -56,6 +56,7 @@ RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 RC5_G1_GLIBC = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
 )
+RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 
 
 @contextmanager
@@ -419,6 +420,7 @@ def test_rc453_record_binds_contract_sources_and_scope():
             RC5_R511,
             RC5_R513,
             RC5_G1_GLIBC,
+            RC6_R6,
         ):
             registration = json.loads(
                 successor_path.read_text(encoding="utf-8")
@@ -453,6 +455,7 @@ def test_rc453_record_binds_contract_sources_and_scope():
                 RC5_R511,
                 RC5_R513,
                 RC5_G1_GLIBC,
+                RC6_R6,
             ):
             successor = json.loads(successor_path.read_text(encoding="utf-8"))[
                 "historical_successor_sources"

@@ -47,6 +47,9 @@ RC5_R58_SUCCESSOR_RECORD = ROOT / (
 RC5_R511_SUCCESSOR_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
 )
+RC6_R6_SUCCESSOR_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -74,6 +77,7 @@ def test_rc423_record_binds_plan_parent_and_implementation_files():
             RC5_R53_SUCCESSOR_RECORD,
             RC5_R58_SUCCESSOR_RECORD,
             RC5_R511_SUCCESSOR_RECORD,
+            RC6_R6_SUCCESSOR_RECORD,
         )
     ]
     assert record["status"] == "complete"

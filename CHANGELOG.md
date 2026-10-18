@@ -4,6 +4,10 @@
 
 ### Fixed
 
+- Keep a missing restart target directory absent until checkpoint identity,
+  integrity, and runtime-compatibility validation succeeds; rejected Periodic,
+  Channel, Plane, and legacy-Channel restarts no longer leave empty output
+  directories behind.
 - Preserve PyTorch non-reentrant checkpoint early-stop control flow through
   the stable functional facade, so default checkpoint recomputation works for
   both Periodic and Channel runtimes without weakening ordinary public error
