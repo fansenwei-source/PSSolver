@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "phase": "RC6-9",
+  "date": "2026-10-18",
+  "status": "frozen_installed_wheel_cpu_verified",
+  "classification": "PASS_RC6_FROZEN_INSTALLED_WHEEL_CPU",
+  "qualified_source": {
+    "branch": "fix/v0.2.0rc6",
+    "commit": "ea801ec08f5b2465661334e1c126133e55b68e96",
+    "latest_runtime_implementation_commit": "80c6e17db5838ef4f142add4955221637efcdf3e",
+    "package_version": "0.2.0rc6",
+    "record_commit_is_qualified_source": false,
+    "requires_cpu_requalification": false
+  },
+  "source_cpu_reused": {
+    "record": "notes/PSSolver_v0_2_0rc6_source_freeze.json",
+    "record_sha256": "2d393b06ae6eaef29012d43b9fc370637da3e4962f2345b7ce82bd09656bca64",
+    "classification": "PASS_RC6_SOURCE_FREEZE_AND_FROZEN_SOURCE_CPU_GATE",
+    "passed": 3936,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected": 7,
+    "subtests_passed": 8
+  },
+  "installed_wheel": {
+    "control_directory": "/home/fansenwei/pssolver_rc6_installed_cpu_ea801ec_20261018_v1",
+    "source_archive": {
+      "relative_path": "package/provider_ea801ec.tar",
+      "sha256": "60fcd0d591e68b4b66b3da8428f354e4f3f02135f6407bd9256c64340bb6f7ff"
+    },
+    "sdist": {
+      "relative_path": "package/dist/pssolver-0.2.0rc6.tar.gz",
+      "sha256": "77b19c10523f9aae70c292ec5c7e3db86ca4479960705851181d8b4c0c819be4"
+    },
+    "wheel": {
+      "relative_path": "package/dist/pssolver-0.2.0rc6-py3-none-any.whl",
+      "sha256": "8840ebfaa44a20a828928256c319edfa2aa4a9b8adf4f1bac014c33964ba0dd6",
+      "installed_with_no_deps": true
+    },
+    "import_path": "/home/fansenwei/pssolver_rc6_installed_cpu_ea801ec_20261018_v1/venv/lib/python3.12/site-packages/pssolver/__init__.py",
+    "source_shadow_import": false,
+    "pip_check": "PASS",
+    "targeted": {
+      "passed": 166,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.71,
+      "xml_sha256": "5b822a9f83f169644a9eae3300be5f6ad1bd391d7e16d21c7d88eeaecae2d457"
+    },
+    "applicable_full": {
+      "passed": 3929,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 7,
+      "xfailed": 0,
+      "subtests_passed": 8,
+      "excluded_source_layout_tests": 7,
+      "seconds": 217.49,
+      "xml_sha256": "a5a4465d747d08ac03b0fe530890bc4350bae5c38b620c6267183641d40295c9"
+    },
+    "allowed_skips": [
+      "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+      "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+      "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+      "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+      "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+      "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact",
+      "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+    ],
+    "excluded_source_layout_file": "tests/test_phase8_p861_local_cumulative_audit.py",
+    "runner_contract": {
+      "python_isolated_mode": true,
+      "pytest_import_mode": "importlib",
+      "installed_package_imported_before_support_path": true,
+      "repository_support_path_appended_after_site_packages": true,
+      "source_shadow_import_asserted_before_pytest": true
+    },
+    "environment": {
+      "python": "3.12.13",
+      "torch": "2.6.0",
+      "torch_cuda_runtime": "12.6",
+      "numpy": "2.3.2",
+      "scipy": "1.16.0",
+      "pytest": "9.1.1",
+      "nematics3d": "0.9.0b1",
+      "nematics3d_modified": false
+    }
+  },
+  "rejected_harness_attempts": [
+    {
+      "classification": "EXTERNAL_ARCHIVE_SUPPORT_ROOT_GIT_METADATA_ERROR",
+      "used_as_qualification_evidence": false,
+      "passed": 3890,
+      "failed": 34,
+      "errors": 5,
+      "skipped": 7,
+      "correction": "Use the clean exact-HEAD Git worktree only as support after the installed package is authenticated and imported."
+    },
+    {
+      "classification": "EXTERNAL_FRESH_VENV_NUMPY_METADATA_MISMATCH",
+      "used_as_qualification_evidence": false,
+      "pip_check": "FAIL before venv-local numpy pin",
+      "correction": "Install numpy==2.3.2 only inside the fresh venv, require pip check PASS, and rerun both suites from scratch."
+    }
+  ],
+  "evidence": {
+    "final_report_sha256": "3680f5dd7c74ce9fe0ca00046796b2a7328a0c4a596c4bd058372599ab263b55",
+    "summary_json_sha256": "12bb1c283bf54f8c919b34d4561b9fefbbfe3cb22166d45416c782e4d983ef2e",
+    "summary_csv_sha256": "713d138f29db3750c23994752d0841265e34723632a6a7804fa7abc5b49f3061",
+    "environment_sha256": "a85b54d1091114cf4df14a842d9d3d00986d2888e724e973f4bb98863a1fd460",
+    "runner_contract_sha256": "fba47d21b514a5b31a4c698d660bffde25ecf6ac4ffbb468ca35b88bd9d84d64",
+    "artifact_identity_sha256": "af9122dfaeb386c2ab15d3e4da7b604335b82611063e7a6b624dd2809a4562e0",
+    "checksum_entries": 1898,
+    "checksum_passed": 1898,
+    "checksum_failed": 0,
+    "checksums_sha256": "e05b1d9d26a898a58e7634505045642c41dee1a6f1ac18a5062d33dba48db6c4"
+  },
+  "pending_rc6_gates": [
+    "released_checkpoint_compatibility_and_tamper",
+    "provider_identity_impact_review",
+    "pssolver_control_migration_and_installed_wheel_qualification_if_required",
+    "single_h100_cumulative_qualification",
+    "independent_post_release_verification"
+  ],
+  "authorization": {
+    "source_and_installed_wheel_cpu_complete": true,
+    "rc6_cumulative_qualification_complete": false,
+    "eligible_for_push": false,
+    "eligible_for_h100_submission": false,
+    "h100_submission_count": 0,
+    "automatic_retry": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  }
+}
