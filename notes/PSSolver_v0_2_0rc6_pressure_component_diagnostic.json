@@ -1,0 +1,108 @@
+{
+  "schema": "pssolver.rc6.pressure_component_diagnostic_support.v1",
+  "classification": "READY_RC6_PRESSURE_COMPONENT_DIAGNOSTIC_H100_NOT_AUTHORIZED",
+  "recorded_on": "2026-10-18",
+  "failed_qualification": {
+    "job_id": "10900775",
+    "classification": "FAIL_RC6_SINGLE_H100_QUALIFICATION_PRESSURE_CONTRACT_SMOKE",
+    "failed_stage": "contract_smokes",
+    "failed_gate": "pressure_floor_fixed_and_tolerance_modes_on_cuda",
+    "contract_pytests_passed": 36,
+    "cuda_only_tests_passed": 7,
+    "environment_gate_passed": true,
+    "formal_profiles_generated": 0,
+    "root_cause_attribution": "UNRESOLVED_REQUIRES_COMPONENT_RESOLVED_PRESSURE_CONTRACT_DIAGNOSTIC",
+    "control_directory": "/home/fansenwei/pssolver_rc6_h100_ea801ec_208edd0_20261018_recovery_v2",
+    "checksums_sha256": "8e30fbffe7a4b58acf65fb27e5d1208169accf593a1f45ca692e9f0e4a111c59"
+  },
+  "diagnostic_contract": {
+    "analysis_only": true,
+    "provider_candidate_commit": "ea801ec08f5b2465661334e1c126133e55b68e96",
+    "provider_wheel_sha256": "8840ebfaa44a20a828928256c319edfa2aa4a9b8adf4f1bac014c33964ba0dd6",
+    "device": "cuda:0",
+    "gpu_name_contains": "H100",
+    "tf32_matmul": false,
+    "tf32_cudnn": false,
+    "shape": [8, 6, 4],
+    "lengths": [8.0, 6.0, 4.0],
+    "seed": 9,
+    "friction": 0.2,
+    "viscosity": 0.73,
+    "dtypes": ["float32", "float64"],
+    "tolerance_mode": {
+      "relative_tolerance": "channel_pressure_minimum_relative_tolerance(dtype)",
+      "max_iterations": 2000,
+      "fixed_iterations": null,
+      "predicates": [
+        "termination_reason == relative_tolerance_met",
+        "recorded_relative_residual is finite",
+        "recorded_relative_residual <= floor",
+        "recomputed_relative_residual is finite",
+        "recomputed_relative_residual <= floor"
+      ]
+    },
+    "fixed_mode": {
+      "relative_tolerance": "floor / 8",
+      "max_iterations": 4,
+      "fixed_iterations": 4,
+      "predicates": [
+        "termination_reason == fixed_iterations_completed",
+        "pressure is finite"
+      ]
+    },
+    "same_as_failed_smoke": true,
+    "threshold_relaxed": false,
+    "solver_path_changed": false
+  },
+  "persistence_contract": {
+    "environment_written_before_components": true,
+    "one_atomic_json_per_dtype_and_mode": true,
+    "component_count": 4,
+    "exception_persisted_before_nonzero_exit": true,
+    "completed_gate_failure_process_exit": 0,
+    "incomplete_diagnostic_process_exit": 1,
+    "summary_is_analysis_only": true,
+    "refuse_overwrite": true,
+    "allow_nan": false
+  },
+  "source_sha256": {
+    "benchmarks/diagnose_rc6_pressure_floor_h100.py": "24405fba16ffcc4c85b9ae6d558fddc91b8dd94f890a0e28954001727cf0c6e6",
+    "jobs/rc6_pressure_component_diagnostic_h100.sbatch": "5ed11f36a4ec762ab8e2b8322128f45e26ca0830d80f636b2c75744421fb01c3",
+    "tests/test_diagnose_rc6_pressure_floor_h100.py": "e960d913c903319647e3affa13da824c62e285dd21557fcc2d8da441feb70017"
+  },
+  "local_validation": {
+    "py_compile": "PASS",
+    "synthetic_tests_passed": 12,
+    "focused_tests_passed": 16,
+    "synthetic_tests_failed": 0,
+    "synthetic_tests_skipped": 0,
+    "synthetic_tests_xfailed": 0,
+    "full_cpu_tests_passed": 4021,
+    "full_cpu_tests_failed": 0,
+    "full_cpu_tests_skipped": 0,
+    "full_cpu_tests_xfailed": 0,
+    "full_cpu_tests_deselected": 7,
+    "full_cpu_subtests_passed": 8
+  },
+  "scope": {
+    "qualification_support_only": true,
+    "PSSolver_runtime_modified": false,
+    "public_api_modified": false,
+    "numerical_implementation_modified": false,
+    "pressure_policy_modified": false,
+    "threshold_modified": false,
+    "skip_or_xfail_added": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "analysis_only_h100_submission_authorized": false,
+    "automatic_retry": false,
+    "qualification_rerun_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false
+  },
+  "next_gate": "prepare isolated analysis-only support after local CPU closure; push and one H100 diagnostic both require new explicit authorization"
+}
