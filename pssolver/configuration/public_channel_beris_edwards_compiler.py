@@ -14,6 +14,10 @@ from pssolver.configuration.channel_active_nematics_declarations import (
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
+from pssolver.configuration.public_complete_stress_validation import (
+    validate_complete_stress_runtime_parameters,
+    validate_existing_q_snapshot_shape,
+)
 from pssolver.configuration.public_option_validation import (
     ITERATIVE_PRESSURE_OPTION_KEYS,
     validate_iterative_pressure_options,
@@ -30,6 +34,7 @@ from pssolver.core.numerics import SpectralStorage
 from pssolver.core.pressure import (
     channel_pressure_minimum_relative_tolerance_for_precision,
 )
+from pssolver.models.active_nematics.fields import Q_COMPONENTS
 
 
 _EXECUTION_KEYS = frozenset(
@@ -130,6 +135,14 @@ def compile_channel_beris_edwards_public_simulation(
             "P8.3 accepts snapshot mode='branch'; restart uses checkpoints",
             code=Code.INITIAL_CONDITION_CONTRACT,
         )
+    try:
+        validate_existing_q_snapshot_shape(
+            snapshot,
+            tuple(source.geometry.domain.shape),
+            component_count=len(Q_COMPONENTS),
+        )
+    except (KeyError, TypeError, ValueError) as exc:
+        _reject(str(exc), code=Code.INITIAL_CONDITION_CONTRACT)
 
     execution = _exact_keys(
         source.execution.options,
@@ -227,6 +240,9 @@ def compile_channel_beris_edwards_public_simulation(
             code=Code.NUMERICS_CONTRACT,
         )
 
+    validate_complete_stress_runtime_parameters(
+        source.equation_system.parameters
+    )
     stokes = source.equation_system.parameters["stokes"]["parameters"]
     if stokes["pressure_gauge"] != "zero_mean":
         _reject(

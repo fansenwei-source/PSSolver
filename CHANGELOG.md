@@ -4,6 +4,10 @@
 
 ### Fixed
 
+- Validate the complete-stress model parameters consumed by the Periodic and
+  Channel runtimes during public compilation, and reject an existing external
+  Q snapshot whose component layout does not match the declared geometry
+  before runtime construction or output materialization.
 - Define Channel tolerance-mode success explicitly against the projected PCG
   recurrence residual, raise the conservative supported floor to eight real
   dtype epsilons, and reject sub-floor public Channel declarations during
