@@ -55,6 +55,7 @@ RC5_G1_GLIBC = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
 )
 RC6_R1 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
+RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 
 
 def _set_state(precision: str, matmul: bool, cudnn: bool) -> None:
@@ -86,6 +87,7 @@ def _resolve_rc457_successor(relative: str, historical: str) -> str:
         RC5_R513,
         RC5_G1_GLIBC,
         RC6_R1,
+        RC6_R2,
     ):
         successor = json.loads(record_path.read_text(encoding="utf-8"))[
             "historical_successor_sources"

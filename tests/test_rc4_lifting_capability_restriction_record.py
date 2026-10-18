@@ -20,6 +20,7 @@ RC455 = ROOT / (
 )
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 RC5_R56 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
+RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 
 
 def _record() -> dict[str, object]:
@@ -32,7 +33,7 @@ def _sha256(path: Path) -> str:
 
 def _resolve_successor_sha256(relative: str, historical: str) -> str:
     resolved = historical
-    for path in (RC444, RC454, RC455, RC456, RC5_R56):
+    for path in (RC444, RC454, RC455, RC456, RC5_R56, RC6_R2):
         successor = json.loads(path.read_text(encoding="utf-8")).get(
             "historical_successor_sources", {}
         ).get(relative)

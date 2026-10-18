@@ -1,0 +1,312 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc6 RC6-2 Channel pressure tolerance-floor contract",
+  "status": "implementation_complete_cpu_verified",
+  "classification": "PASS_RC6_2_CHANNEL_PRESSURE_FLOOR_CPU_CLOSURE",
+  "git_identity": {
+    "branch": "fix/v0.2.0rc6",
+    "rc6_1_record_commit": "fd02314",
+    "contract_implementation_commit": "d0690cce467d91f1b5fa5194af5f892a4678850b",
+    "architecture_followup_commit": "a134658d04c9a6c0aa2cffd786982548e00f18f7",
+    "implementation_commit": "a134658d04c9a6c0aa2cffd786982548e00f18f7",
+    "qualified_source_commit": "a134658d04c9a6c0aa2cffd786982548e00f18f7",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue": {
+    "ids": ["S2-02", "S2-04"],
+    "work_item": "RC6-2",
+    "source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc5_independent_acceptance_claude_zh.md",
+    "source_sha256": "87a39b1c285a4ea47343f7c992f4a98d7a7e525f4a9c204ffb0ad3a25d99e0b5",
+    "machine_source": "/home/fansenwei/Desktop/Develop/PSSolver/notes/PSSolver_v0_2_0rc5_independent_acceptance_claude.json",
+    "machine_source_sha256": "841f9302a357f9a7f0ffeb9d93e26de9f329bec66fe7e5583af53b4958c0e6dd",
+    "root_cause": "The two-epsilon runtime-only floor did not conservatively exclude every observed recurrence-versus-returned-state roundoff mismatch and public Channel declarations below the supported floor were not rejected by structured compilation."
+  },
+  "contract": {
+    "tolerance_mode_floor_definition": "8*finfo(real_dtype).eps",
+    "normalized_residual_definition": "active_rms(projected_pcg_recurrence_residual)/active_rms(projected_rhs)",
+    "relative_tolerance_met_is_recurrence_postcondition": true,
+    "independently_recomputed_residual_claimed": false,
+    "second_pressure_operator_application_added_to_hot_path": false,
+    "legacy_channel_public_compiler_rejects_sub_floor": true,
+    "complete_stress_channel_public_compiler_rejects_sub_floor": true,
+    "public_rejection_code": "discretization_contract",
+    "rejection_precedes_runtime_construction_and_output": true,
+    "exact_floor_accepted": true,
+    "fixed_work_sub_floor_diagnostic_tolerance_preserved": true,
+    "float32_qualified_default_preserved": "1e-6",
+    "supported_dtype_tokens": ["float32", "float64", "complex64", "complex128"]
+  },
+  "implementation_files": {
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": "ddca3a4877b3617d5973b3acf21392663845916cc8ffe58392f2d20e101043c6",
+    "pssolver/configuration/public_channel_simulation_compiler.py": "faf126324a9ddf5f36e9254d7a7ee3565a2aece17073b38d34d0b806f9a7188e",
+    "pssolver/configuration/public_option_validation.py": "72d2160e9ef3459c25f6b7c159b2270b8ec11715971a1cb64070c3caae559d00",
+    "pssolver/core/pressure.py": "adffd22a72c976b0c972127da5f93f7335aac3fed9dfd156cdd2dfa565305935",
+    "pssolver/functional/pressure_metadata.py": "d89bc9d00b1bf16cb2775aac3e64e681eb783b2a417a2d3084dadee9102358d5",
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": "5b6adffa5172177d703944bda74031d2586018e460148e9a755083f7f0ab533a"
+  },
+  "regression_tests": {
+    "tests/test_rc5_r59_pressure_postcondition_errors.py": "ad96a86ed59df50bbaa8777d614a5b7412524d847949184664883ec8e3546fd9",
+    "tests/test_rc6_2_pressure_floor_contract.py": "1b862e98c66edcfc62d7e15418dfeca880073c0f328a370468cba767dd1131a8"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "d63c9522c896fca03e2e5d3a494b4f4ba62744ddbe16fd1f7f17cc946947453a",
+      "current_sha256": "f644619087e12c31ba05fdec9f7e9f9ab6a9bae4817922d105619c5cd8607034",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Document the RC6 Channel pressure recurrence semantics, conservative floor, compile-time rejection, and fixed-work exception."
+    },
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": {
+      "historical_sha256": "9a891f60010a40c701283033bdb356fd76d69d9e86543e2af38ef41ce92ea3ae",
+      "current_sha256": "ddca3a4877b3617d5973b3acf21392663845916cc8ffe58392f2d20e101043c6",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Reject sub-floor complete-stress Channel tolerance mode through the structured public compilation boundary."
+    },
+    "pssolver/configuration/public_channel_simulation_compiler.py": {
+      "historical_sha256": "7d289e8b329d8783868469d36231a0fb665639dc3616ddca38495bd11062c963",
+      "current_sha256": "faf126324a9ddf5f36e9254d7a7ee3565a2aece17073b38d34d0b806f9a7188e",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Reject sub-floor legacy Channel tolerance mode through the structured public compilation boundary."
+    },
+    "pssolver/configuration/public_option_validation.py": {
+      "historical_sha256": "33e7b77ea5c46648114295bee64a151ec91682bac736058ac9b694819a9f4871",
+      "current_sha256": "72d2160e9ef3459c25f6b7c159b2270b8ec11715971a1cb64070c3caae559d00",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Add a common optional tolerance-mode floor gate while leaving fixed-work declarations unchanged."
+    },
+    "pssolver/functional/pressure_metadata.py": {
+      "historical_sha256": "99a351ca4e5df7acd25bd6a0524f142ef1874a80c435779eb7537d39dd2da566",
+      "current_sha256": "d89bc9d00b1bf16cb2775aac3e64e681eb783b2a417a2d3084dadee9102358d5",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Name the functional tolerance success postcondition as the PCG recurrence residual contract."
+    },
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "historical_sha256": "81efa9d91972707e5cbd1b4211628f64c312173db3fd0a053cc2df71f03caddb",
+      "current_sha256": "5b6adffa5172177d703944bda74031d2586018e460148e9a755083f7f0ab533a",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Define the explicit recurrence residual postcondition and raise the supported floor from two to eight real-dtype epsilons without adding hot-path work."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_errors.py": {
+      "historical_sha256": "85d1885d20900aef7c12c212437f1f72902fba3b9c09d6f631f0cfd27ef2d9dd",
+      "current_sha256": "ad96a86ed59df50bbaa8777d614a5b7412524d847949184664883ec8e3546fd9",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Keep the R5-9 runtime backstop assertion aligned with the supported-floor wording."
+    },
+    "tests/test_rc447_pressure_bounded_operator_recovery.py": {
+      "historical_sha256": "189b66ab091941c27d78d59bd66ca90a8ba75ad187eaa90ae413b7646e86ce3f",
+      "current_sha256": "808f82aaae7f4365c732d5ff199e0bdea24f855ecce6f1c1b47f09593ce5d758",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Resolve the immutable RC4.4.7 bounded-operator audit through the forward-only RC6-2 record."
+    },
+    "tests/test_rc4_pressure_contract_plan.py": {
+      "historical_sha256": "035a49c43b610254e6ac567e4b989f05bfd3ff81979331858f92b3732e13cd64",
+      "current_sha256": "317d9a2a6c747e0dcceffea65dc86926a8f1a2af60884f498083fab31e92c9af",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Resolve the immutable RC4.4 planning audit through the forward-only RC6-2 record."
+    },
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {
+      "historical_sha256": "5b4c656ca92b761eb8d60b7e2e754be12a47f1db3c3eabbd7002810b8c5d1bce",
+      "current_sha256": "724d49d7a7c80f761e23319b0873c6eb22fa17d3b126ba2833a1e41fc6847a81",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Resolve the immutable RC4.4.4 metadata audit through the forward-only RC6-2 record."
+    },
+    "tests/test_rc4_pressure_policy_implementation_record.py": {
+      "historical_sha256": "4537b11d8916cbaeaf6b7b1477661e48a3725db5d41c52c61b00b754bf4cb737",
+      "current_sha256": "9ec20feb48bf6f57ed074a46601e7b977e5f6607a5fad604b846a24e3f1d5bb9",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Resolve the immutable RC4.4.3 pressure policy audit through the forward-only RC6-2 record."
+    },
+    "tests/test_rc4_pressure_public_contract.py": {
+      "historical_sha256": "62d5936a69237462cdcca1b91751635e5b384bc2f66f5967187a1766816f8bcf",
+      "current_sha256": "7636f440623d5e135d3844feb54c46d55478a288f7bf56b0054d9dfce19189aa",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Resolve the immutable RC4.4.2 public contract audit through the forward-only RC6-2 record."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "6621e606fddc16cae40dfb76e4fea228aa4c07c2aacd3495f359737d9f87e93a",
+      "current_sha256": "ef009bc21e73b659cbed0dd37af4fd67dc99918c70ca903a365c256468a65076",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve the immutable R5-9 record while resolving its implementation and regression sources through RC6-2."
+    },
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": {
+      "historical_sha256": "807ad414eb32f8c58ea7c456d35b15521b75c7890e374fc4260d7322c6a19999",
+      "current_sha256": "9fedda31f21cdc469aa7e02cab67a80dd4460e36cf08852ed0498f4334d07eff",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve RC6-1 closure while allowing its audited R5-9 test successor to resolve through RC6-2."
+    },
+    "tests/test_rc447_python310_compatibility.py": {
+      "historical_sha256": "2f26f0753e131006695a2fb36c89c3ac8dad85e7a656c5f67c46b666be9ca4c5",
+      "current_sha256": "804ee509566bfef897bace868dc85df3f40b69ba795a769d2d2aca4f5c8f88a5",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Resolve the immutable RC4.4.7 Python 3.10 audit through the forward-only RC6-2 record."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "8e29b9d854dd276f21d827768b5ccf716aa9a15e60810b7cd56c73f1e07f8f7c",
+      "current_sha256": "a4e974fbb8bf82b46fa7ac06e6a5ae3f8cfc5a27a1ee4df6f5f522525df491c6",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Resolve the immutable RC4.5.5 source audit through the forward-only RC6-2 record."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "a9507709528ac295b6a42720d2ab2dfd9b5907e6d4688bba92315df1f58cc2fb",
+      "current_sha256": "c2e5e9a7581c5449541290681500cef06dd9eaf04f11af3fa02bb4cc9361c80d",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Resolve the immutable RC4.5.6 source audit through the forward-only RC6-2 record."
+    },
+    "tests/test_rc4_lifting_capability_restriction_record.py": {
+      "historical_sha256": "2007078db26c2ac288066f11549c1e3fa98e3e9ad8a0a0e135ca9b3db3ba383b",
+      "current_sha256": "99038f6899d02f82d9bda475536a5eceef8d770f8da0acbfd4461d352fa4704d",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve the RC4.3.3 lifting restriction while resolving a later Channel compiler successor through RC6-2."
+    },
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": {
+      "historical_sha256": "4351dc25fafdbe74d0c3611586a11175ff8500fa35e33278be950c53b066ab7b",
+      "current_sha256": "dc3b51aa813efdb10a820997c7fe4125d8599e82cbf5046ff89b45866bc4e7c3",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve the G-1 glibc closure while resolving its audited test successor through RC6-2."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "d0d1ff908eb403cdb4441de6df96c39bd0baf5fbc1a369187ef7d5e64cfa2cc3",
+      "current_sha256": "e356e8f8c4cdb907dd6183851488460c72377175b0c5515b65ccf1ac50e25669",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve released checkpoint closure while resolving its RC6-2 audit successors."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "cbdc44d05f4fdcea82329a44eca48abf26840448ed234e0f341cf7abe6f1050c",
+      "current_sha256": "954c618314dd65c5585ac34e01d4614818c3b98af8a8a81e2e6952d8af9e114a",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve R5-10 closure while resolving later pressure audit successors through RC6-2."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "e8ea44c9a05e12f5c4a45619dfcf2dbd750d3b3ffb03f4838b097e0ce44b307e",
+      "current_sha256": "5b3880e1ce8129b2d9502049b623b1d7bedfea94d9e94320ef68c3d215c0eea9",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve R5-11 closure while resolving later pressure audit successors through RC6-2."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "bf6468d3f273ccd09cc703bdd33ef71839e3e9bc14f030064b19b443a43820fd",
+      "current_sha256": "96a2c376eb24ce7dd2a43970411ab0c617e9543c21ce9f00e1ca0c993584ce43",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve R5-12 closure while resolving later pressure audit successors through RC6-2."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "f0ff4e79a356013d84ab4a9cc676b9dd4673298bc09033c45b42685144e8e892",
+      "current_sha256": "1f5e222d135c15ebfae6979c7c40697955a97c833175dbfe3c8b366cb77f5a84",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve R5-13 closure while resolving later pressure audit successors through RC6-2."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "289a490b4de719167d970dfb77012d22ec2b3b9443875a0ae940ee6034feb440",
+      "current_sha256": "b4e7e7ccffa0c9b99fb16bd3a5510b2fea57266c95c4c0b22f1104055810a91f",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve R5-2 closure while resolving later pressure audit successors through RC6-2."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "cdcbb3d82fe6d5ab9663fed59cf2a4426efb57a46ad618760c6c04687638df31",
+      "current_sha256": "61b65d86d09bae2f90ccbdc2ae1c34829fe3ee3fcbbfb8031f0d64784b47543e",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve R5-3 closure while resolving later pressure audit successors through RC6-2."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "d7adf51e1aac5aa78395c2bc44230fd5580559439a86d4d1a57caf7b2a715219",
+      "current_sha256": "32de429445ff900553dc266981616bb6aee5277f7137f2085dbf3ef6602e2e8b",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve R5-6 closure while resolving later pressure audit successors through RC6-2."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "f20a66959f6f4202e354cf909c3014b7c46635b50c9fbbfc47b224559d2465cd",
+      "current_sha256": "32618734b055d122ba62d72150cb3cb033c236b1c7b711a7688babcffcbe1744",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve R5-7 closure while resolving later pressure audit successors through RC6-2."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "1d5d9af435da240c78a8645493ebe1d6a66d6e68e0c09c6e59d4764734763868",
+      "current_sha256": "a98f80ff49795fcc337b57078427dcc7f8a1bf7e8dc5decc71f435c1429acab1",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve R5-8 closure while resolving later pressure audit successors through RC6-2."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "4bcaaf11b26cd907cc32a25897d6749c5d57d93225434bbd74e2927de8563e02",
+      "current_sha256": "c3fc98ecb9d812c784f44cacd3850418f75b89aeb92e18f0c89ffc985e864c18",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve W1 documentation closure while resolving its RC6-2 successor chain."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "0c955d01859d58615d3482f7818c0f4337539ab3cae330d3f00d64db69747650",
+      "current_sha256": "118f7d1c1ada30f78c301422bdf614ce35beed1cf41773de2c170674ad662c41",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve the rc4 release audit while resolving its RC6-2 successor chain."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "729c3eac5b183853a153ab67db243307ca58de74b14bc9aaf3d6e3ba6dd5c7c2",
+      "current_sha256": "f51c8be079f81eb678b0031d21c34d8c8553a1c0dbe793c1857191f956b8e0b4",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve the RC4.5.7 impact record while resolving its RC6-2 audit successors."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "8c411b47f7455ee705c433281807e44c66c0862fd1a167454be182b885d20d09",
+      "current_sha256": "0ea34858d47773202234d5ad9e7a5e449dcbdaabbbcefe5970c2e8a9e53aca9d",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve the RC4.5.7 recovery record while resolving its RC6-2 audit successors."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "3ff125a6907c9a639f86562ec5c2ae5b01713e6142341548d465e45bca3bc057",
+      "current_sha256": "9febf1c557b129afb5f3a2249477a75cdc6ccb91882084376e845ce45715ecff",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve the RC4.5.8 H100 closure while resolving its RC6-2 audit successors."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "727b13bb6f934c456cf5cf0026d762b3b39308921926f278f1241de206c22010",
+      "current_sha256": "0c6020eed96277e59503527b2532cf6fb97129b07feac1dd705e479518615535",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve the immutable RC4 post-release findings while resolving their RC6-2 audit chain."
+    },
+    "tests/test_rc5_g1_historical_audit_portability.py": {
+      "historical_sha256": "c61cc0d303983893e54bfaf93537d42a570495993535116f7866e7eb94759511",
+      "current_sha256": "619f7431832febcbf8018fe461c8957efd25d6dac5f53f13b1919ce12506a2d4",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve G-1 historical audit portability while resolving the RC6-2 successor chain."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "33d2fe0f33e4081571b279121ceb905156c1f696480a94fd0927f263f2531bd2",
+      "current_sha256": "8e42349d3f2cc10629f6d14c6bbc01f34fcbe56810ba693ff64ea7a95e4b090f",
+      "introduced_by_phase": "RC6-2",
+      "reason": "Preserve R5-5 closure while resolving later audit-test successors through RC6-2."
+    }
+  },
+  "validation": {
+    "direct_contract_cpu": "10 passed, 0 failed",
+    "affected_behavior_cpu": "158 passed, 0 failed",
+    "historical_audit_cpu_batches": [
+      "212 passed, 0 failed",
+      "30 passed, 0 failed"
+    ],
+    "architecture_import_boundary": "PASS",
+    "source_full_cpu": "3871 passed, 7 skipped, 8 subtests passed, 0 failed",
+    "source_full_cpu_skip_scope": "six pre-existing CUDA-only skips plus the optional nematics3d dependency skip",
+    "installed_wheel_cpu": "not_required_for_rc6_2",
+    "H100": "not_required_for_rc6_2"
+  },
+  "scope": {
+    "scientific_equations_changed": false,
+    "integrator_changed": false,
+    "transform_algorithm_changed": false,
+    "pressure_algorithm_changed": false,
+    "pressure_hot_path_changed": false,
+    "pressure_tolerance_contract_changed": true,
+    "public_compilation_validation_changed": true,
+    "checkpoint_schema_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_required": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "rc6_2_complete": true,
+    "eligible_for_rc6_3": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false
+  }
+}

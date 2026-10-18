@@ -39,6 +39,9 @@ RC5_G1_GLIBC = PROJECT_ROOT / (
 RC6_R1 = PROJECT_ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 )
+RC6_R2 = PROJECT_ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
+)
 
 
 def test_rc4_release_record_preserves_historical_package_version():
@@ -158,6 +161,9 @@ def test_release_candidate_registers_exact_portability_successors():
     rc6_successors = json.loads(RC6_R1.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    rc6_r2_successors = json.loads(RC6_R2.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert set(successors) == {
         "tests/test_rc447_pressure_bounded_operator_recovery.py",
         "tests/test_rc455_public_robustness.py",
@@ -238,6 +244,9 @@ def test_release_candidate_registers_exact_portability_successors():
             )
         )
         if rc6 is not None and resolved in accepted:
+            resolved = rc6["current_sha256"]
+        rc6 = rc6_r2_successors.get(relative)
+        if rc6 is not None and rc6["historical_sha256"] == resolved:
             resolved = rc6["current_sha256"]
         assert resolved == hashlib.sha256((PROJECT_ROOT / relative).read_bytes()).hexdigest()
         assert registration["introduced_by_phase"] == (

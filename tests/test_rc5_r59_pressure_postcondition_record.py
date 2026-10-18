@@ -27,6 +27,9 @@ G1_GLIBC_RECORD = ROOT / (
 RC6_R1_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
 )
+RC6_R2_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -47,6 +50,7 @@ def _r510_successor(relative: str, historical: str) -> str:
         G1_RECORD,
         G1_GLIBC_RECORD,
         RC6_R1_RECORD,
+        RC6_R2_RECORD,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
