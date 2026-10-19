@@ -1,0 +1,172 @@
+{
+  "schema": "pssolver.rc6.consumer_execution_rebind_correction.v1",
+  "classification": "READY_RC6_CONSUMER_EXECUTION_REBIND_CORRECTION_H100_NOT_AUTHORIZED",
+  "recorded_on": "2026-10-18",
+  "failure_evidence": {
+    "job_id": "10901131",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:38:14",
+    "node": "gpu-h100-4-0",
+    "classification": "FAIL_RC6_CHECKPOINT_WORK_ROOT_RECOVERY_V4_EXTERNAL_CONSUMER_EXECUTION_REBIND_HELPER",
+    "completed_stage_count": 8,
+    "planned_stage_count": 11,
+    "failed_stage": "consumer",
+    "checkpoint_work_root_correction_passed": true,
+    "current_checkpoint_cells_passed": 8,
+    "released_checkpoint_tests_passed": 20,
+    "numerical_family_count": 8,
+    "profile_count": 192,
+    "consumer_cpu_passed": 344,
+    "consumer_cpu_skipped": 1,
+    "consumer_cuda_smoke_runtime_constructed": false,
+    "scientific_timestep_started": false,
+    "qualification_complete": false,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "second_job_submitted": false,
+    "control_directory": "/home/fansenwei/pssolver_rc6_h100_ea801ec_208edd0_20261018_recovery_v4",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_rc6_h100_ea801ec_208edd0_20261018_recovery_v4",
+    "control_checksums_sha256": "6aa0cfcd9f71081edd2a4b804f2a7f4a51282fa28569c42133a24c6f2c9dec16",
+    "scratch_checksums_sha256": "0f59c0208dc64879820ca655d4713b998111c950623ad3284e843f4b3c13b0b2"
+  },
+  "root_cause": {
+    "failing_helper": "benchmarks/run_rc6_consumer.py::_cuda_finite_smokes",
+    "failing_expression": "dataclasses.replace(simulation.execution, device='cuda')",
+    "exception_type": "TypeError",
+    "exception_message": "TorchSpectralExecution.__init__() got an unexpected keyword argument 'backend'",
+    "cause": "dataclasses.replace replayed inherited ExecutionSpec fields into the narrower public TorchSpectralExecution constructor",
+    "failure_domain": "external_qualification_harness_consumer_execution_rebind",
+    "provider_failure": false,
+    "consumer_failure": false,
+    "solver_failure": false,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "performance_failure": false,
+    "memory_failure": false,
+    "checkpoint_failure": false,
+    "cuda_failure": false
+  },
+  "correction": {
+    "public_execution_type": "TorchSpectralExecution",
+    "rebuilds_through_public_constructor": true,
+    "removes_constructor_owned_options": [
+      "device",
+      "fallback_allowed"
+    ],
+    "validates_backend": "torch_spectral",
+    "validates_source_device": true,
+    "validates_fallback_allowed_is_false": true,
+    "metadata_difference": [
+      "execution.options.device"
+    ],
+    "source_execution_unchanged": true,
+    "fallback_remains_prohibited": true,
+    "uses_private_provider_api": false,
+    "runtime_or_solver_modified": false,
+    "public_api_modified": false,
+    "checkpoint_schema_modified": false,
+    "threshold_modified": false
+  },
+  "real_consumer_fixture_smoke": {
+    "consumer_source_commit": "208edd03e6b26a0e788c07d295fddd7a67237189",
+    "periodic_runtime": {
+      "backend": "torch_spectral",
+      "runtime_path": "periodic_spectral",
+      "source_device": "cpu",
+      "target_device": "cuda",
+      "source_unchanged": true,
+      "metadata_only_device_changed": true,
+      "fallback_allowed": false
+    },
+    "channel_runtime": {
+      "backend": "torch_spectral",
+      "runtime_path": "channel_complete_stress",
+      "source_device": "cpu",
+      "target_device": "cuda",
+      "source_unchanged": true,
+      "metadata_only_device_changed": true,
+      "fallback_allowed": false
+    }
+  },
+  "historical_records": {
+    "notes/PSSolver_v0_2_0rc6_h100_stage_producers.json": {
+      "sha256": "f14ca3dc8837b6fff2acfa45215c1d82aeb854e853caf13feadf10a9cc07e367",
+      "rewritten": false
+    },
+    "notes/PSSolver_v0_2_0rc6_pressure_smoke_contract_correction.json": {
+      "sha256": "dc47116dbf965c0dd7de2d76da1a9699f14095b43fa51a1d279db3fa959c9d41",
+      "rewritten": false
+    },
+    "notes/PSSolver_v0_2_0rc6_checkpoint_work_root_correction.json": {
+      "sha256": "892c3b23cbce3553f313d69619233bba213d47f093e0ec887c2257f6e229dbf7",
+      "rewritten": false
+    }
+  },
+  "historical_successor_sources": {
+    "benchmarks/run_rc6_consumer.py": {
+      "predecessor_sha256": "84e96f91dc48994ad59ffcd6e5ebc1b998a572a037b5108c350fe66d2c6a3b63",
+      "successor_sha256": "30f3f1b9325c4937f983a5c40a79029ec7cbd6c07878191a4e6a46f642704f5a",
+      "reason": "Replace the qualification-only dataclasses.replace call with fail-closed reconstruction through the public TorchSpectralExecution constructor; no Provider or Consumer runtime changed."
+    },
+    "tests/test_rc6_h100_stage_producers.py": {
+      "predecessor_sha256": "60f5f0a04d1526ad9429282ae822c79552145c0ab2d92144ab4553851a5dd404",
+      "successor_sha256": "2981d89c32ac54f159fb0f10de9f546959f61958a497146ee10a5c67a8dde640",
+      "reason": "Add synthetic coverage for public-constructor device rebinding, source immutability, metadata equivalence, and forbidden fallback."
+    },
+    "tests/test_rc6_h100_stage_producer_record.py": {
+      "predecessor_sha256": "06a99330f7dd656725669c9f44b996396c3cdd292c7646f2915e6d6a62717f3a",
+      "successor_sha256": "1cd46cd0a86b1a8522e9b00303bd5243539cf954e5926fccbc3a55f43da148a2",
+      "reason": "Extend the forward-only qualification-support audit with the Consumer execution-rebind successor record."
+    },
+    "tests/test_rc6_pressure_smoke_contract_correction_record.py": {
+      "predecessor_sha256": "6f6627025ce53d841565aacc69f2ee47dc6386bf869f8b01d155684224f2b2af",
+      "successor_sha256": "1ea80214985b3dd0079716f51880505780a0cf36641a6ab0fd087f22ff88aa70",
+      "reason": "Continue the strict forward-only source chain through the Consumer execution-rebind correction without rewriting the pressure-smoke record."
+    },
+    "tests/test_rc6_checkpoint_work_root_correction_record.py": {
+      "predecessor_sha256": "ff01fc581cc04f8fe6bfc1963af5d6c33a960b5fe8cce81df257ef0d8d0010d4",
+      "successor_sha256": "c83a1ff3cd7644942b8c6af42149aebfcab7cb5173119af1c7032b8ab272f634",
+      "reason": "Continue the strict forward-only source chain through the Consumer execution-rebind correction without rewriting the checkpoint work-root record."
+    }
+  },
+  "source_sha256": {
+    "benchmarks/run_rc6_consumer.py": "30f3f1b9325c4937f983a5c40a79029ec7cbd6c07878191a4e6a46f642704f5a",
+    "tests/test_rc6_h100_stage_producers.py": "2981d89c32ac54f159fb0f10de9f546959f61958a497146ee10a5c67a8dde640",
+    "tests/test_rc6_h100_stage_producer_record.py": "1cd46cd0a86b1a8522e9b00303bd5243539cf954e5926fccbc3a55f43da148a2",
+    "tests/test_rc6_pressure_smoke_contract_correction_record.py": "1ea80214985b3dd0079716f51880505780a0cf36641a6ab0fd087f22ff88aa70",
+    "tests/test_rc6_checkpoint_work_root_correction_record.py": "c83a1ff3cd7644942b8c6af42149aebfcab7cb5173119af1c7032b8ab272f634",
+    "tests/test_rc6_consumer_execution_rebind_correction_record.py": "483287867230bdd2aebd97374113aa3517dc22054e6af92c7087693ce9999fa0"
+  },
+  "local_validation": {
+    "py_compile": "PASS",
+    "real_consumer_fixture_smoke": "PASS for periodic_runtime and channel_runtime",
+    "focused_tests": "156 passed, 0 failed, 0 skipped, 0 xfailed",
+    "full_cpu_suite": "4038 passed, 7 deselected, 8 subtests passed, 0 failed, 0 skipped, 0 xfailed",
+    "full_cpu_exit_code": 0,
+    "collection": "4038/4045 tests collected, 7 deselected",
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "qualification_support_only": true,
+    "provider_runtime_modified": false,
+    "consumer_source_modified": false,
+    "public_api_modified": false,
+    "numerical_implementation_modified": false,
+    "checkpoint_schema_modified": false,
+    "checkpoint_integrity_guard_modified": false,
+    "threshold_modified": false,
+    "skip_or_xfail_added": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "formal_h100_qualification_rerun_authorized": false,
+    "automatic_retry": false,
+    "tag_authorized": false,
+    "release_authorized": false
+  },
+  "next_gate": "complete local CPU validation and prepare a new hash-frozen support bundle and stage plan without pushing or submitting H100"
+}

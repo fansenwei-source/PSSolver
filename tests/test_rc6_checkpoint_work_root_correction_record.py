@@ -9,6 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_checkpoint_work_root_correction.json"
+CONSUMER_REBIND_SUCCESSOR_RECORD = (
+    ROOT / "notes/PSSolver_v0_2_0rc6_consumer_execution_rebind_correction.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -17,6 +20,16 @@ def _sha256(path: Path) -> str:
 
 def _record() -> dict[str, object]:
     return json.loads(RECORD.read_text(encoding="utf-8"))
+
+
+def _current_sha256(relative: str, expected: str) -> str:
+    registration = json.loads(
+        CONSUMER_REBIND_SUCCESSOR_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"].get(relative)
+    if registration is None:
+        return expected
+    assert registration["predecessor_sha256"] == expected
+    return registration["successor_sha256"]
 
 
 def test_record_binds_the_failed_h100_attempt_without_reclassifying_it():
@@ -45,14 +58,17 @@ def test_record_registers_exact_forward_successors_and_preserves_history():
         "tests/test_rc6_h100_stage_producer_record.py",
     }
     for relative, registration in successors.items():
-        assert registration["successor_sha256"] == _sha256(ROOT / relative)
+        assert _current_sha256(
+            relative,
+            registration["successor_sha256"],
+        ) == _sha256(ROOT / relative)
         assert registration["predecessor_sha256"] != registration["successor_sha256"]
 
 
 def test_record_binds_sources_and_the_node_local_policy():
     record = _record()
     for relative, expected in record["source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == _current_sha256(relative, expected)
     correction = record["correction"]
     assert correction["checkpoint_work_root_policy"] == "node_local_tmpdir"
     assert correction["scratch_contains_transient_checkpoint_cells"] is False

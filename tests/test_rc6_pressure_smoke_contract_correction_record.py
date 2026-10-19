@@ -12,6 +12,9 @@ RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_pressure_smoke_contract_correction.jso
 CHECKPOINT_SUCCESSOR_RECORD = (
     ROOT / "notes/PSSolver_v0_2_0rc6_checkpoint_work_root_correction.json"
 )
+CONSUMER_REBIND_SUCCESSOR_RECORD = (
+    ROOT / "notes/PSSolver_v0_2_0rc6_consumer_execution_rebind_correction.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -58,16 +61,19 @@ def test_record_preserves_history_and_registers_the_exact_helper_successor():
 
 def test_record_binds_exact_sources_and_authoritative_label():
     record = _record()
-    successors = json.loads(
-        CHECKPOINT_SUCCESSOR_RECORD.read_text(encoding="utf-8")
-    )["historical_successor_sources"]
     for relative, expected in record["source_sha256"].items():
-        actual = _sha256(ROOT / relative)
-        if actual != expected:
-            registration = successors.get(relative)
-            assert registration is not None
-            assert registration["predecessor_sha256"] == expected
-            assert registration["successor_sha256"] == actual
+        registered_sha256 = expected
+        for path in (
+            CHECKPOINT_SUCCESSOR_RECORD,
+            CONSUMER_REBIND_SUCCESSOR_RECORD,
+        ):
+            registration = json.loads(path.read_text(encoding="utf-8"))[
+                "historical_successor_sources"
+            ].get(relative)
+            if registration is not None:
+                assert registration["predecessor_sha256"] == registered_sha256
+                registered_sha256 = registration["successor_sha256"]
+        assert _sha256(ROOT / relative) == registered_sha256
     correction = record["correction"]
     assert correction["old_value"] == "fixed_iterations_completed"
     assert correction["new_value"] == "fixed_work_completed"

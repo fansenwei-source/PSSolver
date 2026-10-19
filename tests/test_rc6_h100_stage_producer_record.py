@@ -15,6 +15,9 @@ SUCCESSOR_RECORD = (
 CHECKPOINT_SUCCESSOR_RECORD = (
     ROOT / "notes/PSSolver_v0_2_0rc6_checkpoint_work_root_correction.json"
 )
+CONSUMER_REBIND_SUCCESSOR_RECORD = (
+    ROOT / "notes/PSSolver_v0_2_0rc6_consumer_execution_rebind_correction.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -27,26 +30,22 @@ def _sha256(path: Path) -> str:
 
 def test_stage_producer_record_binds_every_qualification_source():
     record = _record()
-    successors: dict[str, object] = {}
-    for path in (SUCCESSOR_RECORD, CHECKPOINT_SUCCESSOR_RECORD):
-        registered = json.loads(path.read_text(encoding="utf-8"))[
-            "historical_successor_sources"
-        ]
-        for relative, registration in registered.items():
-            previous = successors.get(relative)
-            if previous is not None:
-                assert registration["predecessor_sha256"] == previous[
-                    "successor_sha256"
-                ]
-            successors[relative] = registration
+    successor_records = (
+        SUCCESSOR_RECORD,
+        CHECKPOINT_SUCCESSOR_RECORD,
+        CONSUMER_REBIND_SUCCESSOR_RECORD,
+    )
     assert record["status"] == "local_stage_producers_complete_h100_not_authorized"
     for relative, expected in record["source_sha256"].items():
-        actual = _sha256(ROOT / relative)
-        if actual != expected:
-            registration = successors.get(relative)
-            assert registration is not None
-            assert registration["predecessor_sha256"] == expected
-            assert registration["successor_sha256"] == actual
+        registered_sha256 = expected
+        for path in successor_records:
+            registration = json.loads(path.read_text(encoding="utf-8"))[
+                "historical_successor_sources"
+            ].get(relative)
+            if registration is not None:
+                assert registration["predecessor_sha256"] == registered_sha256
+                registered_sha256 = registration["successor_sha256"]
+        assert _sha256(ROOT / relative) == registered_sha256
 
 
 def test_stage_producer_record_freezes_exact_order_and_fail_closed_execution():

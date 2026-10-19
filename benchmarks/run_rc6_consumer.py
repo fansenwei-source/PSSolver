@@ -33,6 +33,48 @@ REQUIRED_NODES = (
 )
 
 
+def _execution_on_device(execution: object, device: str):
+    """Rebuild a public Torch execution request for one concrete device.
+
+    ``TorchSpectralExecution`` has a deliberately narrower public constructor
+    than its ``ExecutionSpec`` dataclass base.  In particular, replaying the
+    inherited dataclass fields with ``dataclasses.replace`` passes ``backend``
+    to that constructor and fails before the Consumer runtime is built.
+    """
+    from pssolver import TorchSpectralExecution
+
+    if not isinstance(execution, TorchSpectralExecution):
+        raise TypeError("Consumer execution must be TorchSpectralExecution")
+    if execution.backend != "torch_spectral":
+        raise ValueError("Consumer execution backend differs")
+    if not isinstance(device, str) or not device:
+        raise ValueError("target device must be a non-empty string")
+
+    source_metadata = execution.to_metadata()
+    options = dict(execution.options)
+    source_device = options.pop("device", None)
+    fallback_allowed = options.pop("fallback_allowed", None)
+    if not isinstance(source_device, str) or not source_device:
+        raise ValueError("Consumer execution source device is missing")
+    if fallback_allowed is not False:
+        raise ValueError("Consumer execution must prohibit fallback")
+
+    rebound = TorchSpectralExecution(
+        runtime_path=execution.runtime_path,
+        device=device,
+        options=options,
+    )
+    expected_metadata = dict(source_metadata)
+    expected_options = dict(source_metadata["options"])
+    expected_options["device"] = device
+    expected_metadata["options"] = expected_options
+    if rebound.to_metadata() != expected_metadata:
+        raise RuntimeError("Consumer execution device rebind changed metadata")
+    if execution.to_metadata() != source_metadata:
+        raise RuntimeError("Consumer execution source was mutated")
+    return rebound
+
+
 def _cuda_finite_smokes(consumer_root: Path, work_root: Path) -> dict[str, bool]:
     from dataclasses import replace
     import torch
@@ -53,7 +95,7 @@ def _cuda_finite_smokes(consumer_root: Path, work_root: Path) -> dict[str, bool]
             simulation = module.simulation(work_root / name)
             simulation = replace(
                 simulation,
-                execution=replace(simulation.execution, device="cuda"),
+                execution=_execution_on_device(simulation.execution, "cuda"),
             )
             stepper = builder(simulation.specification)
             state = stepper.initial_state()
