@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc6 installed-wheel single-H100 release smoke",
+  "date": "2026-10-19",
+  "status": "complete",
+  "classification": "PASS_RC6_INSTALLED_WHEEL_SINGLE_H100_RELEASE_SMOKE",
+  "qualification_complete": true,
+  "release": "0.2.0rc6",
+  "qualified_source": {
+    "branch": "fix/v0.2.0rc6",
+    "package_source_commit": "fd7323d5e9ef87c537ed07476f8bd50b982af443",
+    "evidence_tip_at_submission": "dbb7f8f6f1d1132c71e82734ebefb74b55b7172c",
+    "record_commit_is_package_source": false,
+    "evidence_only_successor_requires_h100_requalification": false,
+    "prospective_annotated_tag_target_commit": "fd7323d5e9ef87c537ed07476f8bd50b982af443"
+  },
+  "frozen_package_preparation": {
+    "path": "notes/PSSolver_v0_2_0rc6_final_package_preparation.json",
+    "sha256": "b1aacd1f11bd04fa191f8e236ea244f564c5312fa48c4e68165e1f3f02a6a0c1",
+    "rewritten_by_registration": false,
+    "pending_h100_fields_preserved": true
+  },
+  "artifacts": {
+    "source_archive": {
+      "name": "PSSolver-0.2.0rc6-fd7323d.tar",
+      "size": 24002560,
+      "sha256": "c2f3be60f09c47b0aa45064e9ec36a7ad76fde666f207d8595f622057d5b804c"
+    },
+    "sdist": {
+      "name": "pssolver-0.2.0rc6.tar.gz",
+      "size": 1383734,
+      "sha256": "e6f2013d7d16c3f265759017bae8b5c8d0c1f6a43b54ff52476c9da5c296b907"
+    },
+    "wheel": {
+      "name": "pssolver-0.2.0rc6-py3-none-any.whl",
+      "size": 799354,
+      "sha256": "9fe8bd47fc2cd194a0263bb9e45cc37e4a29fffec329fd5356f39296b2efdad5"
+    },
+    "qualification_support": {
+      "name": "qualification-support-fd7323d.tar",
+      "sha256": "6953ec4d36e49b8c177534fb60f92a7d421a963beaad251933e1f0bea1b06277",
+      "contains_pssolver_package": false
+    }
+  },
+  "h100_job": {
+    "control_directory": "/home/fansenwei/pssolver_v0_2_0rc6_release_h100_fd7323d_20261019_v1",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_v0_2_0rc6_release_h100_fd7323d_20261019_v1",
+    "job_id": 10901816,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:00:26",
+    "submit": "2026-10-19T17:07:55",
+    "start": "2026-10-19T17:08:04",
+    "end": "2026-10-19T17:08:30",
+    "node": "gpu-h100-4-0",
+    "account": "hagan-lab",
+    "partition": "hagan-gpu",
+    "qos": "medium",
+    "requeue": 0,
+    "restarts": 0,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "second_job_submitted": false,
+    "helper_sha256": "93ca93b988c36e0876100738c0d4f0ea324984638ee04aaeede92dbf65ee4ff3",
+    "job_script_sha256": "adcfe4689ffcb910ac721227b3280272cda541c2b0f5ebc2b8132101a7ce749d",
+    "result_sha256": "5dc252592fec4a00717147392f0efff635102f5d616d4bb7a238593525f08b9d",
+    "stdout_sha256": "98c2b027ba57f33e912023ecc79262557bc4e33911e3ed0709165531bf2aa7fa",
+    "stderr_sha256": "cc8a43eb14747717e8627e41af7b1ac3d6cc10e43921b44c918192a80baebf5a"
+  },
+  "archive_integrity": {
+    "control_manifest_entries": 716,
+    "control_manifest_passed": 716,
+    "control_manifest_sha256": "f7e39759c6e1d62990d6eeeaf9fc18c8d68979889a17f1c5c0580996566bdda6",
+    "control_complete_present": true,
+    "scratch_manifest_entries": 14,
+    "scratch_manifest_passed": 14,
+    "scratch_manifest_sha256": "1f9bd052266d794f9eef23785bc88ebb76c82301324702d5937b3e60c18acb2f",
+    "scratch_complete_present": true
+  },
+  "environment": {
+    "python": "3.10.18",
+    "pytorch": "2.5.1+cu121",
+    "cuda_runtime": "12.1",
+    "numpy": "1.22.3",
+    "scipy": "1.8.1",
+    "gpu": "NVIDIA H100 PCIe",
+    "visible_cuda_devices": 1,
+    "allocated_device": "cuda:0",
+    "source_shadow_import": false,
+    "functional_api_version": "1.0",
+    "tf32_runner_and_pytest_same_process": true,
+    "tf32_before_policy": "highest/false/true",
+    "tf32_before_pytest": "highest/false/false",
+    "tf32_after_pytest": "highest/false/false",
+    "tf32_after_plane": "highest/false/false"
+  },
+  "gates": {
+    "installed_wheel_identity": true,
+    "cuda_only_tests": "7 passed, 0 failed, 0 skipped, 0 xfailed",
+    "cuda_only_junit_sha256": "93c634e8c05d6fc2c491a8aaf95d589164b4c7b5e57a06b7ca983940023e7377",
+    "plane_installed_wheel_cuda_one_step": true,
+    "plane_runtime_path": "legacy_production",
+    "plane_pointwise_execution": "eager",
+    "plane_runtime_fallback_used": false,
+    "plane_completed_steps": 1,
+    "plane_complete_marker": true,
+    "plane_q_finite": true,
+    "plane_velocity_finite": true,
+    "plane_pressure_finite": true,
+    "plane_q_sha256": "341f8ea54ebcfd46bc0fd39dbc7be2b24b309b9d3345ea3effb628977d3714a2",
+    "plane_velocity_sha256": "1bac294e51c829e89af53e32a55e177503127df8696d015acceb5197ef523d30",
+    "plane_pressure_sha256": "4ca098b55f3bc0ebc6d8488970a0c0aafd2f364bcd71aba3d9cb6ba1a409ad9a"
+  },
+  "post_registration_cpu": {
+    "passed": 4080,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected": 7,
+    "subtests_passed": 8,
+    "deselected_cuda_tests_ran_on_h100": true
+  },
+  "release_decision": {
+    "h100_release_smoke_complete": true,
+    "eligible_for_annotated_tag_review": true,
+    "eligible_for_github_prerelease_review": true,
+    "eligible_for_pypi_publication": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "production_default_changed": false,
+    "functional_api_version_changed": false,
+    "checkpoint_compatibility_removed": false,
+    "larger_batch_qualified": false,
+    "plane_control_qualified": false,
+    "optimizer_campaign_authorized": false,
+    "scientific_control_result": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "tag_authorized": false,
+    "github_prerelease_authorized": false,
+    "pypi_publication_authorized": false,
+    "tag_created": false,
+    "github_prerelease_created": false,
+    "pypi_published": false,
+    "package_published": false
+  }
+}
