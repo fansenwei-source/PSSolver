@@ -22,6 +22,10 @@ from benchmarks.plan_rc6_single_h100_qualification import (
     build_plan,
 )
 from benchmarks.run_rc6_profile_matrix import build_command_plan
+from benchmarks.run_rc6_profile_matrix import _validate_tf32_bootstrap
+from benchmarks.run_rc6_profile_child import SCHEMA as TF32_BOOTSTRAP_SCHEMA
+from benchmarks.run_rc6_profile_child import TF32_OFF as CHILD_TF32_OFF
+from benchmarks import run_rc6_profile_child
 from benchmarks.run_rc6_single_h100_stage_plan import (
     DRAFT_SCHEMA,
     EXPECTED_SCHEMAS,
@@ -238,11 +242,71 @@ def test_rc6_profile_command_plan_is_complete_order_balanced_and_shell_free(tmp_
     assert [row["sequence"] for row in command["rows"]] == list(range(1, 193))
     assert len({row["key"] for row in command["rows"]}) == 192
     assert len({row["compiler_cache"] for row in command["rows"]}) == 192
+    assert len({row["tf32_bootstrap_output"] for row in command["rows"]}) == 192
     assert all(isinstance(row["command"], list) and "-c" not in row["command"] for row in command["rows"])
     plan = build_plan()
     for entry, row in zip(plan["profile_matrix"], command["rows"]):
         assert row["provider_role"] == entry["provider_role"]
         assert row["command"][row["command"].index("--device") + 1] == "cuda"
+        assert row["command"][1].endswith("run_rc6_profile_child.py")
+        assert row["command"][row["command"].index("--profile-script") + 1].endswith(
+            "profile_rc458_runtime_family.py"
+        )
+
+
+def test_rc6_profile_child_persists_tf32_policy_before_profiler(tmp_path, monkeypatch):
+    bootstrap = tmp_path / "bootstrap.json"
+    called: list[list[str]] = []
+    before = run_rc6_profile_child._capture_tf32()
+    monkeypatch.setattr(
+        run_rc6_profile_child.profile,
+        "main",
+        lambda argv: called.append(list(argv)) or 0,
+    )
+    try:
+        result = run_rc6_profile_child.main(
+            [
+                "--tf32-bootstrap-output", str(bootstrap),
+                "--profile-script", str(Path(run_rc6_profile_child.profile.__file__)),
+                "--family", "plane_legacy_production",
+            ]
+        )
+        assert result == 0
+        assert called == [["--family", "plane_legacy_production"]]
+        value = json.loads(bootstrap.read_text(encoding="utf-8"))
+        assert value["schema"] == TF32_BOOTSTRAP_SCHEMA
+        assert value["policy"] == CHILD_TF32_OFF
+        assert value["after"] == CHILD_TF32_OFF
+        assert value["assignment_errors"] == []
+        assert value["passed"] is True
+        assert value["profile_start_authorized_after_persisted_enforcement"] is True
+        assert _validate_tf32_bootstrap(
+            bootstrap, Path(run_rc6_profile_child.profile.__file__)
+        ) == value
+    finally:
+        torch = run_rc6_profile_child.torch
+        torch.set_float32_matmul_precision(str(before["float32_matmul_precision"]))
+        torch.backends.cuda.matmul.allow_tf32 = bool(before["cuda_matmul_allow_tf32"])
+        torch.backends.cudnn.allow_tf32 = bool(before["cudnn_allow_tf32"])
+
+
+def test_rc6_profile_child_validator_rejects_tf32_drift(tmp_path):
+    profile_script = Path(run_rc6_profile_child.profile.__file__).resolve()
+    report = {
+        "schema": TF32_BOOTSTRAP_SCHEMA,
+        "profile_script": str(profile_script),
+        "profile_script_sha256": hashlib.sha256(profile_script.read_bytes()).hexdigest(),
+        "policy": CHILD_TF32_OFF,
+        "before": CHILD_TF32_OFF,
+        "after": {**CHILD_TF32_OFF, "cudnn_allow_tf32": True},
+        "assignment_errors": [],
+        "passed": True,
+        "profile_start_authorized_after_persisted_enforcement": True,
+    }
+    output = tmp_path / "bootstrap.json"
+    output.write_text(json.dumps(report), encoding="utf-8")
+    with pytest.raises(ValueError, match="enforced state"):
+        _validate_tf32_bootstrap(output, profile_script)
 
 
 def test_rc6_auxiliary_assembler_accepts_exact_reports_and_rejects_drift():

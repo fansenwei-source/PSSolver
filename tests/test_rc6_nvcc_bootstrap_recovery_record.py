@@ -10,6 +10,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_nvcc_bootstrap_recovery.json"
 HISTORICAL = ROOT / "notes/PSSolver_v0_2_0rc6_qualification_support.json"
+PROFILE_TF32_RECOVERY = (
+    ROOT / "notes/PSSolver_v0_2_0rc6_profile_child_tf32_recovery.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -35,8 +38,16 @@ def test_recovery_record_preserves_history_and_binds_exact_successor_sources():
     historical = record["historical_record"]
     assert historical["rewritten"] is False
     assert _sha256(HISTORICAL) == historical["sha256"]
+    profile_successors = json.loads(
+        PROFILE_TF32_RECOVERY.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     for relative, expected in record["recovery_sources"].items():
-        assert _sha256(ROOT / relative) == expected
+        actual = _sha256(ROOT / relative)
+        if actual != expected:
+            registration = profile_successors.get(relative)
+            assert registration is not None
+            assert registration["predecessor_sha256"] == expected
+            assert registration["successor_sha256"] == actual
     successors = record["historical_successor_sources"]
     assert set(successors) == {"jobs/rc6_single_h100_qualification.sbatch"}
     registration = successors["jobs/rc6_single_h100_qualification.sbatch"]

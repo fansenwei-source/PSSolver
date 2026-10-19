@@ -16,7 +16,13 @@ from benchmarks.rc458_venv_identity import lexical_python_path
 
 SCHEMA = "pssolver.rc6.profile_command_plan.v1"
 COMPLETE_SCHEMA = "pssolver.rc6.profile_matrix_complete.v1"
+TF32_BOOTSTRAP_SCHEMA = "pssolver.rc6.profile_child_tf32_bootstrap.v1"
 PROFILE_COUNT = 192
+TF32_OFF = {
+    "float32_matmul_precision": "highest",
+    "cuda_matmul_allow_tf32": False,
+    "cudnn_allow_tf32": False,
+}
 
 
 def _sha256(path: Path) -> str:
@@ -60,16 +66,20 @@ def build_command_plan(
     output_root: Path,
 ) -> dict[str, object]:
     plan = build_plan()
-    script = support_root / "benchmarks" / "profile_rc458_runtime_family.py"
+    child_script = support_root / "benchmarks" / "run_rc6_profile_child.py"
+    profile_script = support_root / "benchmarks" / "profile_rc458_runtime_family.py"
     rows: list[dict[str, object]] = []
     for entry in plan["profile_matrix"]:
         role = str(entry["provider_role"])
         python = baseline_python if role == "baseline" else candidate_python
         grid = plan["grid_contracts"][entry["grid"]]
         output = output_root / "profiles" / f"{entry['key']}.json"
+        tf32_bootstrap = output_root / "tf32_bootstrap" / f"{entry['key']}.json"
         cache = output_root / "compiler_cache" / str(entry["key"])
         command = [
-            str(python), str(script),
+            str(python), str(child_script),
+            "--tf32-bootstrap-output", str(tf32_bootstrap),
+            "--profile-script", str(profile_script),
             "--family", str(entry["family"]),
             "--provider-role", role,
             "--provider-commit", str(entry["provider_commit"]),
@@ -90,8 +100,10 @@ def build_command_plan(
                 "provider_role": role,
                 "python": str(python),
                 "provider_wheel_sha256": entry["provider_wheel_sha256"],
-                "support_script": str(script),
+                "support_script": str(child_script),
+                "profile_script": str(profile_script),
                 "output": str(output),
+                "tf32_bootstrap_output": str(tf32_bootstrap),
                 "compiler_cache": str(cache),
                 "command": command,
             }
@@ -123,16 +135,35 @@ def _preflight(command_plan: dict[str, object]) -> None:
     support = Path(str(command_plan["support_root"])).resolve()
     if (support / "pssolver").exists() or (support / "pssolver").is_symlink():
         raise RuntimeError("support root must not contain a PSSolver source tree")
-    script = support / "benchmarks" / "profile_rc458_runtime_family.py"
-    if not script.is_file() or script.is_symlink():
-        raise FileNotFoundError(f"regular profile support script required: {script}")
+    for name in ("run_rc6_profile_child.py", "profile_rc458_runtime_family.py"):
+        script = support / "benchmarks" / name
+        if not script.is_file() or script.is_symlink():
+            raise FileNotFoundError(f"regular profile support script required: {script}")
     output_root = Path(str(command_plan["output_root"])).absolute()
+    child_script = (support / "benchmarks" / "run_rc6_profile_child.py").resolve()
+    profile_script = (
+        support / "benchmarks" / "profile_rc458_runtime_family.py"
+    ).resolve()
     for row in rows:
         _validate_sha256(str(row["provider_wheel_sha256"]), "wheel identity")
         command = row.get("command")
         if not isinstance(command, list) or "-c" in command:
             raise ValueError(f"profile command must be shell-free argv: {row['key']}")
-        for name in ("output", "compiler_cache"):
+        if len(command) < 6 or command[:2] != [str(row["python"]), str(child_script)]:
+            raise ValueError(f"profile child command identity differs: {row['key']}")
+        if Path(str(row["support_script"])).resolve() != child_script:
+            raise ValueError(f"profile child support path differs: {row['key']}")
+        if Path(str(row["profile_script"])).resolve() != profile_script:
+            raise ValueError(f"profile implementation path differs: {row['key']}")
+        expected_arguments = {
+            "--tf32-bootstrap-output": str(row["tf32_bootstrap_output"]),
+            "--profile-script": str(profile_script),
+            "--output": str(row["output"]),
+        }
+        for flag, expected in expected_arguments.items():
+            if flag not in command or command[command.index(flag) + 1] != expected:
+                raise ValueError(f"{flag} binding differs: {row['key']}")
+        for name in ("output", "tf32_bootstrap_output", "compiler_cache"):
             path = Path(str(row[name])).absolute()
             try:
                 path.relative_to(output_root)
@@ -142,10 +173,31 @@ def _preflight(command_plan: dict[str, object]) -> None:
                 raise FileExistsError(f"{name} already exists: {path}")
 
 
+def _validate_tf32_bootstrap(path: Path, profile_script: Path) -> dict[str, object]:
+    if not path.is_file() or path.is_symlink():
+        raise FileNotFoundError(f"regular TF32 bootstrap report required: {path}")
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if value.get("schema") != TF32_BOOTSTRAP_SCHEMA:
+        raise ValueError("TF32 bootstrap schema differs")
+    if value.get("policy") != TF32_OFF or value.get("after") != TF32_OFF:
+        raise ValueError("TF32 bootstrap enforced state differs")
+    if value.get("assignment_errors") != [] or value.get("passed") is not True:
+        raise ValueError("TF32 bootstrap did not pass")
+    if value.get("profile_start_authorized_after_persisted_enforcement") is not True:
+        raise ValueError("TF32 bootstrap/profile ordering differs")
+    expected_script = profile_script.resolve()
+    if value.get("profile_script") != str(expected_script):
+        raise ValueError("TF32 bootstrap profile path differs")
+    if value.get("profile_script_sha256") != _sha256(expected_script):
+        raise ValueError("TF32 bootstrap profile SHA-256 differs")
+    return value
+
+
 def execute(command_plan: dict[str, object]) -> dict[str, object]:
     _preflight(command_plan)
     output_root = Path(str(command_plan["output_root"])).absolute()
     (output_root / "profiles").mkdir(parents=True, exist_ok=False)
+    (output_root / "tf32_bootstrap").mkdir()
     logs = output_root / "logs"
     logs.mkdir()
     completed: list[dict[str, object]] = []
@@ -172,8 +224,16 @@ def execute(command_plan: dict[str, object]) -> dict[str, object]:
         )
         (logs / f"{row['key']}.stdout").write_text(result.stdout, encoding="utf-8")
         (logs / f"{row['key']}.stderr").write_text(result.stderr, encoding="utf-8")
+        bootstrap_path = Path(str(row["tf32_bootstrap_output"]))
+        if bootstrap_path.exists() or bootstrap_path.is_symlink():
+            _validate_tf32_bootstrap(
+                bootstrap_path, Path(str(row["profile_script"]))
+            )
         if result.returncode != 0:
             raise RuntimeError(f"profile {row['key']} failed with {result.returncode}")
+        _validate_tf32_bootstrap(
+            bootstrap_path, Path(str(row["profile_script"]))
+        )
         path = Path(str(row["output"]))
         if not path.is_file() or path.is_symlink():
             raise FileNotFoundError(f"profile did not create a regular result: {path}")
@@ -181,7 +241,12 @@ def execute(command_plan: dict[str, object]) -> dict[str, object]:
         if payload.get("config", {}).get("family") not in str(row["key"]):
             raise RuntimeError(f"profile identity differs: {row['key']}")
         completed.append(
-            {"sequence": row["sequence"], "key": row["key"], "sha256": _sha256(path)}
+            {
+                "sequence": row["sequence"],
+                "key": row["key"],
+                "sha256": _sha256(path),
+                "tf32_bootstrap_sha256": _sha256(bootstrap_path),
+            }
         )
         _atomic_json(
             output_root / "progress" / f"{int(row['sequence']):03d}.json",
@@ -190,6 +255,8 @@ def execute(command_plan: dict[str, object]) -> dict[str, object]:
     result = {
         "schema": COMPLETE_SCHEMA,
         "profile_count": len(completed),
+        "tf32_bootstrap_count": len(completed),
+        "tf32_bootstrap_all_passed": len(completed) == PROFILE_COUNT,
         "completed": completed,
         "passed": len(completed) == PROFILE_COUNT,
     }

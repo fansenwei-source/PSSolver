@@ -1,0 +1,130 @@
+{
+  "schema": "pssolver.rc6.profile_child_tf32_recovery.v1",
+  "classification": "READY_RC6_RECOVERY_V7_PROFILE_CHILD_TF32_BOOTSTRAP_H100_NOT_AUTHORIZED",
+  "recorded_date": "2026-10-19",
+  "provider_branch": "fix/v0.2.0rc6",
+  "provider_parent_commit": "b4797dac9d7b249d757cc19d2a775a72f4065923",
+  "failure_evidence": {
+    "archive": "/home/fansenwei/pssolver_rc6_h100_ea801ec_208edd0_20261019_recovery_v6",
+    "job_id": "10901220",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:41:11",
+    "node": "gpu-h100-4-0",
+    "classification": "FAIL_RC6_RECOVERY_V6_PROFILE_CHILD_TF32_BOOTSTRAP_CONTRACT",
+    "failed_stage": "analyze",
+    "completed_stage_count": 10,
+    "planned_stage_count": 11,
+    "profile_count": 192,
+    "profile_finite_count": 192,
+    "consumer_passed_count": 344,
+    "consumer_skipped_count": 1,
+    "consumer_failed_count": 0,
+    "profile_tf32_observed": {
+      "float32_matmul_precision": "highest",
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": true
+    },
+    "profile_tf32_required": {
+      "float32_matmul_precision": "highest",
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": false
+    },
+    "control_checksum_entries_passed": 23,
+    "control_checksum_entries_failed": 0,
+    "control_checksums_sha256": "2a53bee4a62cbf624e2d45ed335e25c3fbac06b9bb97d77647383ae69f1dc3ce",
+    "formal_checksum_entries_passed": 4567,
+    "formal_checksum_entries_failed": 0,
+    "formal_checksums_sha256": "347d57124428dde20b7fe72a6c5e07788b2507200dd45d7c7e1b03911ad41c6f",
+    "qualification_complete": false,
+    "solver_failure": false,
+    "scientific_failure": false,
+    "automatic_retry": false,
+    "second_job_submitted": false,
+    "historical_classification_rewritten": false
+  },
+  "root_cause": {
+    "job_level_tf32_policy_passed": true,
+    "tf32_scope_stage_passed": true,
+    "profile_children_only_inherited_nvidia_tf32_override": true,
+    "profile_children_explicitly_set_python_tf32_flags": false,
+    "profile_implementation_correctly_recorded_caller_state": true,
+    "provider_runtime_or_science_implicated": false
+  },
+  "correction": {
+    "profile_child_count": 192,
+    "python_tf32_policy": {
+      "float32_matmul_precision": "highest",
+      "cuda_matmul_allow_tf32": false,
+      "cudnn_allow_tf32": false
+    },
+    "one_bootstrap_report_per_profile_child": true,
+    "bootstrap_report_persisted_before_profile_start": true,
+    "bootstrap_report_atomic_and_refuses_overwrite": true,
+    "bootstrap_report_binds_profile_path_and_sha256": true,
+    "matrix_runner_validates_all_bootstrap_reports": true,
+    "matrix_progress_binds_profile_and_bootstrap_sha256": true,
+    "matrix_complete_requires_192_profile_and_192_bootstrap_reports": true,
+    "profile_implementation_modified": false,
+    "analyzer_threshold_modified": false
+  },
+  "historical_successor_sources": {
+    "benchmarks/run_rc6_profile_matrix.py": {
+      "predecessor_sha256": "60a406d3baf864d0aebb652144938d9d90dc3c6b4e2e6287eac96bdfc1387669",
+      "successor_sha256": "dd361415d8f51ed02c67cd828cdf7074173bb0616f948abed016d12eb5175a58",
+      "reason": "Route each RC6 profile through an explicit Python TF32 bootstrap and fail closed on its atomic evidence before accepting the profile; no profiler, runtime, numerical implementation, threshold, or production default changed."
+    },
+    "tests/test_rc6_qualification_support.py": {
+      "predecessor_sha256": "4a38d11d317cc42946ec6134c352eb93ca24b9f0ef92fce00a88c751f059ae30",
+      "successor_sha256": "7f8bec4b1da42b3937e89cfe52de377b155f2ecf6df186766dfad3ab6db81829",
+      "reason": "Add synthetic coverage for the RC6 profile-child TF32 bootstrap and its fail-closed validator."
+    },
+    "tests/test_rc6_qualification_support_record.py": {
+      "predecessor_sha256": "366175b3bade19d66ff18e6f8b1c5d5913af116eed8fee3bec6f2ee0e6a2933f",
+      "successor_sha256": "3d771ac2f470d706151e0b89388d719bc1b117ecbd658bbf959a10d945629222",
+      "reason": "Teach the frozen RC6 qualification-support audit to resolve this forward-only qualification successor without rewriting the historical record."
+    }
+  },
+  "source_sha256": {
+    "benchmarks/run_rc6_profile_child.py": "e7967f5e7e6055e40de5124199924580cd8e83baa68509b12b16f9810bf26951",
+    "benchmarks/run_rc6_profile_matrix.py": "dd361415d8f51ed02c67cd828cdf7074173bb0616f948abed016d12eb5175a58",
+    "jobs/rc6_profile_tf32_recovery_v7.sbatch": "70be1c50533d5dbd37853284ad66ac613310f1872e37f1cef02317081924d5e5",
+    "tests/test_rc6_qualification_support.py": "7f8bec4b1da42b3937e89cfe52de377b155f2ecf6df186766dfad3ab6db81829",
+    "tests/test_rc6_qualification_support_record.py": "3d771ac2f470d706151e0b89388d719bc1b117ecbd658bbf959a10d945629222",
+    "tests/test_rc6_profile_child_tf32_recovery_record.py": "1c80fe3061c3da1102658f16af67c99173f4d6d29cd21161e07a7e8c8a73087e",
+    "tests/test_rc6_nvcc_bootstrap_recovery_record.py": "4d47f3270306109e2d021f41aab7f40dea0d36ff91fbb7740c2758761db63260"
+  },
+  "validation": {
+    "py_compile": "PASS",
+    "focused_tests": "20 passed, 0 failed, 0 skipped, 0 xfailed",
+    "full_tests": "4054 passed, 7 deselected, 8 subtests passed, 0 failed, 0 skipped, 0 xfailed",
+    "deselected_scope": "the seven pre-existing CUDA-only node IDs",
+    "plan_only_profile_count": 192,
+    "plan_only_unique_profile_keys": 192,
+    "plan_only_unique_tf32_bootstrap_paths": 192,
+    "plan_only_wrapper_count": 192,
+    "plan_only_inline_python_count": 0,
+    "bash_syntax": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "qualification_support_only": true,
+    "solver_implementation_modified": false,
+    "numerical_algorithm_modified": false,
+    "profile_implementation_modified": false,
+    "public_api_modified": false,
+    "checkpoint_schema_modified": false,
+    "consumer_source_modified": false,
+    "threshold_modified": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "h100_submission_authorized": false,
+    "automatic_retry_authorized": false
+  },
+  "next_gate": "complete local validation, create a qualification-only recovery commit, freeze and validate the HPCC recovery_v7 support without submitting H100, then request explicit push and one-H100 authorization"
+}
