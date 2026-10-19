@@ -17,10 +17,13 @@ from benchmarks.plan_rc6_single_h100_qualification import (
 from benchmarks.run_rc5_g1_checkpoints import CELL_SCHEMA, DIRECTIONS, FAMILIES
 from benchmarks.run_rc5_g1_numerical import CHILD_SCHEMA, FAMILIES as NUMERICAL_FAMILIES
 from benchmarks.run_rc6_consumer import GUARD_NODE, REQUIRED_NODES, summarize as summarize_consumer
-from benchmarks.run_rc6_current_checkpoints import summarize as summarize_current
+from benchmarks import run_rc6_current_checkpoints as current_checkpoints
 from benchmarks.run_rc6_numerical import summarize as summarize_numerical
 from benchmarks.run_rc6_released_checkpoints import summarize as summarize_released
 from benchmarks.run_rc6_single_h100_stage_plan import DRAFT_SCHEMA, STAGES
+
+
+summarize_current = current_checkpoints.summarize
 
 
 def _cell(family: str, source: str, target: str) -> dict[str, object]:
@@ -49,6 +52,36 @@ def test_current_checkpoint_summary_requires_all_cells_and_negative_gates():
         summarize_current(broken, True)
     with pytest.raises(ValueError, match="materialized output"):
         summarize_current(cells, False)
+
+
+def test_current_checkpoint_work_root_requires_the_allocated_node_local_tmpdir(
+    tmp_path,
+    monkeypatch,
+):
+    monkeypatch.setattr(current_checkpoints, "NODE_LOCAL_TMP_ROOT", tmp_path)
+    node_root = tmp_path / "pssolver_rc6_123"
+    tmpdir = node_root / "pytest_tmp"
+    tmpdir.mkdir(parents=True)
+    good = {"SLURM_JOB_ID": "123", "TMPDIR": str(tmpdir)}
+    assert current_checkpoints._node_local_tmpdir(good) == tmpdir
+    with current_checkpoints._checkpoint_work_root(good) as (observed_tmpdir, root):
+        assert observed_tmpdir == tmpdir
+        assert root.parent == tmpdir
+        assert root.name.startswith("rc6_current_checkpoints_")
+        marker = root / "marker"
+        marker.write_text("qualification-only", encoding="utf-8")
+    assert not root.exists()
+
+    with pytest.raises(RuntimeError, match="SLURM_JOB_ID"):
+        current_checkpoints._node_local_tmpdir({"TMPDIR": str(tmpdir)})
+    with pytest.raises(RuntimeError, match="does not match"):
+        current_checkpoints._node_local_tmpdir(
+            {"SLURM_JOB_ID": "123", "TMPDIR": str(tmp_path / "wrong")},
+        )
+    with pytest.raises(RuntimeError, match="ordinary directory"):
+        current_checkpoints._node_local_tmpdir(
+            {"SLURM_JOB_ID": "124", "TMPDIR": str(tmp_path / "pssolver_rc6_124" / "pytest_tmp")},
+        )
 
 
 def test_released_checkpoint_summary_requires_twenty_clean_tests_and_immutable_sources():
@@ -142,6 +175,11 @@ def test_stage_plan_builder_emits_exact_shell_free_stage_order(tmp_path):
     assert [row["name"] for row in draft["stages"]] == list(STAGES)
     assert all("-c" not in row["command"] for row in draft["stages"])
     assert all(Path(row["command"][0]).is_absolute() for row in draft["stages"])
+    current = next(row for row in draft["stages"] if row["name"] == "current_checkpoints")
+    assert "--output-root" not in current["command"]
+    policy = current["command"].index("--checkpoint-work-root-policy")
+    assert current["command"][policy + 1] == "node_local_tmpdir"
+    assert str(paths["output_root"] / "current_checkpoints") not in current["command"]
     wrong = argparse.Namespace(**paths, candidate_wheel_sha256="0" * 64)
     with pytest.raises(ValueError, match="wheel SHA-256"):
         build_draft(wrong)

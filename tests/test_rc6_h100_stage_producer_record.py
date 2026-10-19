@@ -12,6 +12,9 @@ RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_h100_stage_producers.json"
 SUCCESSOR_RECORD = (
     ROOT / "notes/PSSolver_v0_2_0rc6_pressure_smoke_contract_correction.json"
 )
+CHECKPOINT_SUCCESSOR_RECORD = (
+    ROOT / "notes/PSSolver_v0_2_0rc6_checkpoint_work_root_correction.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -24,9 +27,18 @@ def _sha256(path: Path) -> str:
 
 def test_stage_producer_record_binds_every_qualification_source():
     record = _record()
-    successors = json.loads(
-        SUCCESSOR_RECORD.read_text(encoding="utf-8")
-    )["historical_successor_sources"]
+    successors: dict[str, object] = {}
+    for path in (SUCCESSOR_RECORD, CHECKPOINT_SUCCESSOR_RECORD):
+        registered = json.loads(path.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ]
+        for relative, registration in registered.items():
+            previous = successors.get(relative)
+            if previous is not None:
+                assert registration["predecessor_sha256"] == previous[
+                    "successor_sha256"
+                ]
+            successors[relative] = registration
     assert record["status"] == "local_stage_producers_complete_h100_not_authorized"
     for relative, expected in record["source_sha256"].items():
         actual = _sha256(ROOT / relative)

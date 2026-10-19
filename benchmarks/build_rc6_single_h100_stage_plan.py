@@ -65,7 +65,8 @@ def build_draft(args: argparse.Namespace) -> dict[str, object]:
             "--output", str(results / "tf32_scope.json"),
         ], results / "tf32_scope.json"),
         _stage("current_checkpoints", candidate, scripts / "run_rc6_current_checkpoints.py", [
-            "--test-root", str(support), "--output-root", str(output / "current_checkpoints"),
+            "--test-root", str(support),
+            "--checkpoint-work-root-policy", "node_local_tmpdir",
             "--output", str(results / "current_checkpoints.json"),
         ], results / "current_checkpoints.json"),
         _stage("released_checkpoints", candidate, scripts / "run_rc6_released_checkpoints.py", [

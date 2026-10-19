@@ -4,10 +4,13 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import json
 import os
 from pathlib import Path
 import sys
+import tempfile
+from collections.abc import Iterator, Mapping
 
 if not __package__:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -20,6 +23,8 @@ from benchmarks import run_rc5_g1_checkpoints as rc5
 
 
 SCHEMA = "pssolver.rc6.current_checkpoint_h100.v1"
+CHECKPOINT_WORK_ROOT_POLICY = "node_local_tmpdir"
+NODE_LOCAL_TMP_ROOT = Path("/tmp")
 
 
 def _atomic_json(path: Path, value: object) -> None:
@@ -89,7 +94,52 @@ def summarize(cells: list[dict[str, object]], restart_output_absent: bool) -> di
     }
 
 
-def execute(test_root: Path, output_root: Path, output: Path) -> dict[str, object]:
+def _node_local_tmpdir(environment: Mapping[str, str] | None = None) -> Path:
+    values = os.environ if environment is None else environment
+    job_id = values.get("SLURM_JOB_ID", "").strip()
+    if not job_id or not job_id.isdecimal():
+        raise RuntimeError("numeric SLURM_JOB_ID is required")
+    raw_tmpdir = values.get("TMPDIR", "").strip()
+    if not raw_tmpdir:
+        raise RuntimeError("TMPDIR is required")
+    tmpdir = Path(raw_tmpdir)
+    if not tmpdir.is_absolute():
+        raise RuntimeError("TMPDIR must be absolute")
+    expected = NODE_LOCAL_TMP_ROOT / f"pssolver_rc6_{job_id}" / "pytest_tmp"
+    if tmpdir != expected:
+        raise RuntimeError("TMPDIR does not match the allocated RC6 node-local path")
+    if not tmpdir.is_dir() or tmpdir.is_symlink():
+        raise RuntimeError("TMPDIR must be an existing ordinary directory")
+    if tmpdir.resolve() != expected.resolve():
+        raise RuntimeError("TMPDIR resolves outside the allocated RC6 node-local path")
+    return tmpdir
+
+
+@contextmanager
+def _checkpoint_work_root(
+    environment: Mapping[str, str] | None = None,
+) -> Iterator[tuple[Path, Path]]:
+    tmpdir = _node_local_tmpdir(environment)
+    root: Path | None = None
+    try:
+        with tempfile.TemporaryDirectory(
+            prefix="rc6_current_checkpoints_",
+            dir=tmpdir,
+        ) as temporary_root:
+            root = Path(temporary_root)
+            if root.parent != tmpdir or root.is_symlink():
+                raise RuntimeError("checkpoint work root escaped node-local TMPDIR")
+            yield tmpdir, root
+    finally:
+        if root is not None and root.exists():
+            raise RuntimeError("checkpoint work root was not removed")
+
+
+def execute(
+    test_root: Path,
+    output: Path,
+    checkpoint_work_root_policy: str,
+) -> dict[str, object]:
     import importlib.metadata
     import torch
 
@@ -102,45 +152,56 @@ def execute(test_root: Path, output_root: Path, output: Path) -> dict[str, objec
         raise RuntimeError("allocated GPU is not H100")
     if importlib.metadata.version("pssolver") != "0.2.0rc6":
         raise RuntimeError("candidate package version differs")
-    root = output_root.expanduser().resolve()
-    root.mkdir(parents=True, exist_ok=False)
-    cells: list[dict[str, object]] = []
-    for family in rc5.FAMILIES:
-        for source, target in rc5.DIRECTIONS:
-            cell_root = root / "cells" / f"{family}_{source}_to_{target}"
-            cell_root.mkdir(parents=True)
-            cell = (
-                rc5._legacy_cell(cell_root, source, target)
-                if family == "legacy_channel"
-                else rc5._functional_cell(cell_root, family, source, target)
-            )
-            _atomic_json(root / "reports" / f"{family}_{source}_to_{target}.json", cell)
-            cells.append(cell)
+    if checkpoint_work_root_policy != CHECKPOINT_WORK_ROOT_POLICY:
+        raise ValueError("checkpoint work-root policy differs")
+    with _checkpoint_work_root() as (tmpdir, root):
+        cells: list[dict[str, object]] = []
+        for family in rc5.FAMILIES:
+            for source, target in rc5.DIRECTIONS:
+                cell_root = root / "cells" / f"{family}_{source}_to_{target}"
+                cell_root.mkdir(parents=True)
+                cell = (
+                    rc5._legacy_cell(cell_root, source, target)
+                    if family == "legacy_channel"
+                    else rc5._functional_cell(cell_root, family, source, target)
+                )
+                _atomic_json(
+                    root / "reports" / f"{family}_{source}_to_{target}.json",
+                    cell,
+                )
+                cells.append(cell)
 
-    import pytest
-    from benchmarks.run_rc426_cuda_tests import Results
+        import pytest
+        from benchmarks.run_rc426_cuda_tests import Results
 
-    support = test_root.expanduser().resolve()
-    if not support.is_dir() or support.is_symlink() or (support / "pssolver").exists():
-        raise RuntimeError("ordinary non-shadowing test root required")
-    collector = Results()
-    previous = Path.cwd()
-    try:
-        os.chdir(support)
-        exit_code = int(
-            pytest.main(
-                [
-                    "-q", "-p", "no:cacheprovider", "--import-mode=importlib",
-                    "tests/test_phase2_plane_workflow_migration.py::test_restart_integrity_rejection_does_not_create_output",
-                ],
-                plugins=[collector],
+        support = test_root.expanduser().resolve()
+        if not support.is_dir() or support.is_symlink() or (support / "pssolver").exists():
+            raise RuntimeError("ordinary non-shadowing test root required")
+        collector = Results()
+        previous = Path.cwd()
+        try:
+            os.chdir(support)
+            exit_code = int(
+                pytest.main(
+                    [
+                        "-q", "-p", "no:cacheprovider", "--import-mode=importlib",
+                        "tests/test_phase2_plane_workflow_migration.py::test_restart_integrity_rejection_does_not_create_output",
+                    ],
+                    plugins=[collector],
+                )
             )
-        )
-    finally:
-        os.chdir(previous)
-    outcomes = collector.metadata()
-    restart_output_absent = exit_code == 0 and len(outcomes["passed"]) == 1
-    result = summarize(cells, restart_output_absent)
+        finally:
+            os.chdir(previous)
+        outcomes = collector.metadata()
+        restart_output_absent = exit_code == 0 and len(outcomes["passed"]) == 1
+        result = summarize(cells, restart_output_absent)
+        result["checkpoint_work_root"] = {
+            "policy": CHECKPOINT_WORK_ROOT_POLICY,
+            "tmpdir": str(tmpdir),
+            "temporary_root": str(root),
+            "temporary_root_parent_matches_tmpdir": root.parent == tmpdir,
+        }
+    result["checkpoint_work_root"]["removed_after_stage"] = True
     _atomic_json(output, result)
     return result
 
@@ -148,10 +209,14 @@ def execute(test_root: Path, output_root: Path, output: Path) -> dict[str, objec
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--test-root", type=Path, required=True)
-    parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument(
+        "--checkpoint-work-root-policy",
+        choices=(CHECKPOINT_WORK_ROOT_POLICY,),
+        required=True,
+    )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
-    execute(args.test_root, args.output_root, args.output)
+    execute(args.test_root, args.output, args.checkpoint_work_root_policy)
     return 0
 
 

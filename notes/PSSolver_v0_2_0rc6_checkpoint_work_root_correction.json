@@ -1,0 +1,122 @@
+{
+  "schema": "pssolver.rc6.checkpoint_work_root_correction.v1",
+  "classification": "READY_RC6_CHECKPOINT_WORK_ROOT_CORRECTION_H100_NOT_AUTHORIZED",
+  "recorded_on": "2026-10-18",
+  "failure_evidence": {
+    "job_id": "10901114",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:01:22",
+    "node": "gpu-h100-4-0",
+    "classification": "FAIL_RC6_FIXED_WORK_SMOKE_RECOVERY_V3_EXTERNAL_CURRENT_CHECKPOINT_WORK_ROOT",
+    "completed_stage_count": 4,
+    "planned_stage_count": 11,
+    "failed_stage": "current_checkpoints",
+    "pressure_smoke_contract_correction_passed": true,
+    "qualification_complete": false,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "second_job_submitted": false,
+    "control_directory": "/home/fansenwei/pssolver_rc6_h100_ea801ec_208edd0_20261018_recovery_v3",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_rc6_h100_ea801ec_208edd0_20261018_recovery_v3",
+    "checksums_sha256": "b6d9ea69e88dc9b63b62f4fe3f460dfd8a66170db91d483615500266d871c905"
+  },
+  "root_cause": {
+    "node_local_tmp_rename_noreplace_preflight_passed": true,
+    "pytest_tmpdir_was_node_local": true,
+    "current_checkpoint_stage_used_tmpdir": false,
+    "current_checkpoint_stage_work_root": "formal scratch output root",
+    "scratch_rename_noreplace_errno": 22,
+    "published_checkpoint_exists": false,
+    "staging_residue_exists": false,
+    "failure_domain": "external_qualification_harness_checkpoint_work_root_placement",
+    "solver_failure": false,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "cuda_failure": false,
+    "pressure_smoke_failure": false
+  },
+  "correction": {
+    "checkpoint_work_root_policy": "node_local_tmpdir",
+    "required_tmpdir_pattern": "/tmp/pssolver_rc6_<SLURM_JOB_ID>/pytest_tmp",
+    "stage_plan_uses_dynamic_shell_expansion": false,
+    "stage_plan_passes_explicit_policy_token": true,
+    "helper_validates_numeric_slurm_job_id": true,
+    "helper_validates_exact_tmpdir_identity": true,
+    "helper_rejects_symlink_tmpdir": true,
+    "temporary_directory_is_child_of_tmpdir": true,
+    "temporary_root_removed_after_stage": true,
+    "scratch_contains_transient_checkpoint_cells": false,
+    "scratch_contains_final_json_report": true,
+    "runtime_or_solver_modified": false,
+    "checkpoint_schema_modified": false,
+    "checkpoint_integrity_guard_modified": false,
+    "threshold_modified": false
+  },
+  "historical_records": {
+    "notes/PSSolver_v0_2_0rc6_h100_stage_producers.json": {
+      "sha256": "f14ca3dc8837b6fff2acfa45215c1d82aeb854e853caf13feadf10a9cc07e367",
+      "rewritten": false
+    },
+    "notes/PSSolver_v0_2_0rc6_pressure_smoke_contract_correction.json": {
+      "sha256": "dc47116dbf965c0dd7de2d76da1a9699f14095b43fa51a1d279db3fa959c9d41",
+      "rewritten": false
+    }
+  },
+  "historical_successor_sources": {
+    "benchmarks/run_rc6_current_checkpoints.py": {
+      "predecessor_sha256": "79ba605b2a6778aa311ba6529b7f13ceab1bff94d349b47b021a14befb3341e4",
+      "successor_sha256": "eee75e678fc770c53b87f8a4d3cf4d7dfddda7d8559e4f58f8d4f79f1bb5e71f",
+      "reason": "Move qualification-only transient checkpoint cells from scratch into the already validated job-specific node-local TMPDIR; no runtime, solver, checkpoint schema, integrity guard, threshold, or production default changed."
+    },
+    "benchmarks/build_rc6_single_h100_stage_plan.py": {
+      "predecessor_sha256": "4cd068cc4ff30471b091b76c6f20cf859dcc964c50f7b79b7754c6da53e213cc",
+      "successor_sha256": "1732c639efcf36bf3d46b759e4eaef9c189f6ecdcaedddb2d8b380600dbce2e3",
+      "reason": "Freeze the node_local_tmpdir policy token instead of a scratch checkpoint work-root path; only the final current-checkpoint JSON artifact remains output-scoped."
+    },
+    "tests/test_rc6_h100_stage_producers.py": {
+      "predecessor_sha256": "8f76116109706a3332d16900b51f5c0f9b0c5095ced70a839e3eca84d8e13d0e",
+      "successor_sha256": "60f5f0a04d1526ad9429282ae822c79552145c0ab2d92144ab4553851a5dd404",
+      "reason": "Add fail-closed synthetic coverage for exact Slurm TMPDIR identity, transient-root cleanup, and the shell-free stage-plan policy token."
+    },
+    "tests/test_rc6_h100_stage_producer_record.py": {
+      "predecessor_sha256": "7f5a7e9b4e093223b6f0af03951578c813a12e99506039d8345352813b11df90",
+      "successor_sha256": "06a99330f7dd656725669c9f44b996396c3cdd292c7646f2915e6d6a62717f3a",
+      "reason": "Extend the historical audit with this explicit non-overlapping successor record while preserving the original stage-producer and pressure-correction records."
+    }
+  },
+  "source_sha256": {
+    "benchmarks/run_rc6_current_checkpoints.py": "eee75e678fc770c53b87f8a4d3cf4d7dfddda7d8559e4f58f8d4f79f1bb5e71f",
+    "benchmarks/build_rc6_single_h100_stage_plan.py": "1732c639efcf36bf3d46b759e4eaef9c189f6ecdcaedddb2d8b380600dbce2e3",
+    "tests/test_rc6_h100_stage_producers.py": "60f5f0a04d1526ad9429282ae822c79552145c0ab2d92144ab4553851a5dd404",
+    "tests/test_rc6_h100_stage_producer_record.py": "06a99330f7dd656725669c9f44b996396c3cdd292c7646f2915e6d6a62717f3a",
+    "tests/test_rc6_pressure_smoke_contract_correction_record.py": "6f6627025ce53d841565aacc69f2ee47dc6386bf869f8b01d155684224f2b2af",
+    "tests/test_rc6_checkpoint_work_root_correction_record.py": "ff01fc581cc04f8fe6bfc1963af5d6c33a960b5fe8cce81df257ef0d8d0010d4"
+  },
+  "local_validation": {
+    "focused_tests": "30 passed, 0 failed, 0 skipped, 0 xfailed",
+    "full_cpu_suite": "4033 passed, 7 deselected, 8 subtests passed, 0 failed, 0 skipped, 0 xfailed",
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "qualification_support_only": true,
+    "provider_runtime_modified": false,
+    "public_api_modified": false,
+    "numerical_implementation_modified": false,
+    "checkpoint_schema_modified": false,
+    "checkpoint_integrity_guard_modified": false,
+    "threshold_modified": false,
+    "skip_or_xfail_added": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "formal_h100_qualification_rerun_authorized": false,
+    "automatic_retry": false,
+    "tag_authorized": false,
+    "release_authorized": false
+  },
+  "next_gate": "complete local CPU validation and prepare a new hash-frozen support bundle and stage plan without submitting H100"
+}

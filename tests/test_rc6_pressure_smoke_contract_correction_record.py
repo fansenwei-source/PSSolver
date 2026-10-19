@@ -9,6 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_pressure_smoke_contract_correction.json"
+CHECKPOINT_SUCCESSOR_RECORD = (
+    ROOT / "notes/PSSolver_v0_2_0rc6_checkpoint_work_root_correction.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -55,8 +58,16 @@ def test_record_preserves_history_and_registers_the_exact_helper_successor():
 
 def test_record_binds_exact_sources_and_authoritative_label():
     record = _record()
+    successors = json.loads(
+        CHECKPOINT_SUCCESSOR_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     for relative, expected in record["source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+        actual = _sha256(ROOT / relative)
+        if actual != expected:
+            registration = successors.get(relative)
+            assert registration is not None
+            assert registration["predecessor_sha256"] == expected
+            assert registration["successor_sha256"] == actual
     correction = record["correction"]
     assert correction["old_value"] == "fixed_iterations_completed"
     assert correction["new_value"] == "fixed_work_completed"
