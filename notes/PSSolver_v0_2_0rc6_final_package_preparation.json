@@ -1,0 +1,120 @@
+{
+  "schema": "pssolver.v0_2_0rc6.final_package_preparation.v1",
+  "date": "2026-10-19",
+  "classification": "PASS_RC6_FINAL_SDIST_WHEEL_AND_INSTALLED_CPU_RELEASE_PREPARATION",
+  "source_identity": {
+    "branch": "fix/v0.2.0rc6",
+    "source_commit": "fd7323d5e9ef87c537ed07476f8bd50b982af443",
+    "remote_tip_at_build": "fd7323d5e9ef87c537ed07476f8bd50b982af443",
+    "release_integration_review_commit": "fd7323d5e9ef87c537ed07476f8bd50b982af443",
+    "record_commit_is_package_source": false,
+    "source_exported_with_git_archive": true,
+    "archive_embedded_commit": "fd7323d5e9ef87c537ed07476f8bd50b982af443"
+  },
+  "release_integration_review": {
+    "path": "notes/PSSolver_v0_2_0rc6_release_integration_review.json",
+    "sha256": "9fa10f487ec7eb9bfa1f127527c9c56a7101d49e0b972c030bd4bb926114e978",
+    "classification": "PASS_RC6_RELEASE_INTEGRATION_REVIEW_READY_FOR_FINAL_PACKAGE_PREPARATION",
+    "release_integration_review_complete": true,
+    "eligible_for_final_release_package_preparation": true
+  },
+  "control_directory": "/home/fansenwei/pssolver_v0_2_0rc6_release_package_fd7323d_20261019_v1",
+  "build": {
+    "command": "python -m build --sdist --wheel",
+    "build_frontend_version": "1.6.1",
+    "build_isolation": true,
+    "clean_source_export": true,
+    "source_shadow_import": false
+  },
+  "artifacts": {
+    "source_archive": {
+      "name": "PSSolver-0.2.0rc6-fd7323d.tar",
+      "size": 24002560,
+      "sha256": "c2f3be60f09c47b0aa45064e9ec36a7ad76fde666f207d8595f622057d5b804c",
+      "archive_integrity": "PASS"
+    },
+    "sdist": {
+      "name": "pssolver-0.2.0rc6.tar.gz",
+      "size": 1383734,
+      "sha256": "e6f2013d7d16c3f265759017bae8b5c8d0c1f6a43b54ff52476c9da5c296b907",
+      "archive_integrity": "PASS"
+    },
+    "wheel": {
+      "name": "pssolver-0.2.0rc6-py3-none-any.whl",
+      "size": 799354,
+      "sha256": "9fe8bd47fc2cd194a0263bb9e45cc37e4a29fffec329fd5356f39296b2efdad5",
+      "archive_integrity": "PASS",
+      "metadata_version": "0.2.0rc6",
+      "top_level_entries": [
+        "Plane_beris_edwards_stokes.py",
+        "pssolver",
+        "pssolver-0.2.0rc6.dist-info"
+      ]
+    }
+  },
+  "installed_wheel_cpu_smoke": {
+    "venv": "/home/fansenwei/pssolver_v0_2_0rc6_release_package_fd7323d_20261019_v1/installed_venv",
+    "installed_with_no_deps": true,
+    "venv_local_numpy_version": "2.3.2",
+    "pip_check": "PASS",
+    "import_path": "/home/fansenwei/pssolver_v0_2_0rc6_release_package_fd7323d_20261019_v1/installed_venv/lib/python3.12/site-packages/pssolver/__init__.py",
+    "source_shadow_import": false,
+    "package_version": "0.2.0rc6",
+    "functional_api_version": "1.0",
+    "console_entry_point_help": "PASS",
+    "real_cpu_smokes": {
+      "plane_public_one_step": "PASS",
+      "periodic_continuous_and_restart": "PASS",
+      "channel_continuous_and_restart": "PASS",
+      "pytest": "3 passed, 0 failed, 0 skipped, 0 xfailed"
+    },
+    "environment": {
+      "python": "3.12.13",
+      "numpy": "2.3.2",
+      "scipy": "1.16.0",
+      "torch": "2.6.0",
+      "torch_cuda_runtime": "12.6",
+      "tqdm": "4.67.3",
+      "pytest": "9.1.1",
+      "nematics3d": "0.9.0b1",
+      "nematics3d_modified": false
+    }
+  },
+  "rejected_environment_attempt": {
+    "used_as_qualification_evidence": false,
+    "classification": "EXTERNAL_FRESH_VENV_NUMPY_METADATA_MISMATCH",
+    "observed_host_numpy": "2.4.3",
+    "nematics3d_required_numpy": "2.3.2",
+    "correction": "install numpy==2.3.2 only inside the fresh release-smoke venv and rerun pip check and the complete installed-wheel smoke",
+    "nematics3d_modified": false
+  },
+  "public_contract": {
+    "package_version": "0.2.0rc6",
+    "functional_api_version": "1.0",
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false,
+    "checkpoint_schema_changed": false,
+    "functional_batch_sizes": [
+      1
+    ],
+    "PSSolver_Control_bundled": false,
+    "nematics3d_modified": false
+  },
+  "release_decision": {
+    "final_package_preparation_complete": true,
+    "final_package_source_commit": "fd7323d5e9ef87c537ed07476f8bd50b982af443",
+    "eligible_for_single_h100_release_smoke": true,
+    "single_h100_release_smoke_authorized": false,
+    "single_h100_release_smoke_complete": false,
+    "eligible_for_annotated_tag": false,
+    "eligible_for_github_prerelease": false,
+    "eligible_for_pypi_publication": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "tag_created": false,
+    "github_prerelease_created": false,
+    "pypi_published": false,
+    "production_default_changed": false
+  },
+  "next_gate": "obtain explicit authorization for one installed-wheel RC6 single-H100 release-smoke submission with no automatic retry"
+}
