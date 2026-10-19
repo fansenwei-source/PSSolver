@@ -1,0 +1,118 @@
+{
+  "schema": "pssolver.v0_2_0rc6.release_integration_review.v1",
+  "date": "2026-10-19",
+  "classification": "PASS_RC6_RELEASE_INTEGRATION_REVIEW_READY_FOR_FINAL_PACKAGE_PREPARATION",
+  "source_identity": {
+    "branch": "fix/v0.2.0rc6",
+    "immutable_baseline_tag": "v0.2.0rc5",
+    "immutable_baseline_commit": "e2e9d05bfac858d8e1ae1653ac86a2187c9917ef",
+    "qualified_runtime_candidate_commit": "ea801ec08f5b2465661334e1c126133e55b68e96",
+    "qualification_support_commit": "3228d3d723393818ee6149e9cf56021ffaaed411",
+    "cumulative_closure_record_commit": "5fbf556c142a29896fe41d7cd991dc65a8149e1e",
+    "reviewed_parent_commit": "5fbf556c142a29896fe41d7cd991dc65a8149e1e",
+    "record_commit_is_reviewed_source": false,
+    "runtime_candidate_is_ancestor_of_reviewed_parent": true,
+    "qualification_support_is_ancestor_of_reviewed_parent": true
+  },
+  "frozen_release_metadata": {
+    "machine_record": {
+      "path": "notes/pssolver_v0_2_0_rc6.json",
+      "sha256": "ba5650ce59339c381a4148a573c37399e01267171a8be44ef037e3ea277e2e72"
+    },
+    "release_notes": {
+      "path": "notes/pssolver_v0_2_0_rc6.md",
+      "sha256": "e16ca4d8fe5499c5fe93cf8315e9ab677e7b4c36f66671a3800ca2483241a6a2"
+    },
+    "source_freeze": {
+      "path": "notes/PSSolver_v0_2_0rc6_source_freeze.json",
+      "sha256": "2d393b06ae6eaef29012d43b9fc370637da3e4962f2345b7ce82bd09656bca64"
+    },
+    "historical_source_freeze_record_rewritten": false,
+    "historical_pending_fields_preserved": true
+  },
+  "cumulative_h100_closure": {
+    "path": "notes/PSSolver_v0_2_0rc6_cumulative_h100_closure_v7.json",
+    "sha256": "937e0ad8ef1883a65d0971c97a28cf62f0315fc19d15578e5b83978097313cec",
+    "classification": "PASS_RC6_SINGLE_H100_CUMULATIVE_QUALIFICATION",
+    "qualification_complete": true,
+    "rc6_complete": true,
+    "job_id": "10901236",
+    "completed_stages": 11,
+    "planned_stages": 11,
+    "profile_count": 192,
+    "profile_child_tf32_bootstrap_passed": 192,
+    "performance_memory_groups_passed": 16,
+    "performance_memory_groups_expected": 16,
+    "consumer_passed": 344,
+    "consumer_skipped": 1,
+    "consumer_failed": 0,
+    "control_checksum_passed": 24,
+    "control_checksum_expected": 24,
+    "control_manifest_sha256": "26c99535fc92b1c33d0a8fe6adc5c2fab05d0332034eb7464657a4e047ecbb40",
+    "formal_checksum_passed": 4763,
+    "formal_checksum_expected": 4763,
+    "formal_manifest_sha256": "160a4960da3de7ea518ff2187393a6d7bb6e563a9611be1057ecb6c437ad894c"
+  },
+  "post_runtime_candidate_scope": {
+    "range": "ea801ec08f5b2465661334e1c126133e55b68e96..5fbf556c142a29896fe41d7cd991dc65a8149e1e",
+    "changed_file_count": 77,
+    "top_level_counts": {
+      "benchmarks": 21,
+      "jobs": 4,
+      "notes": 30,
+      "tests": 22
+    },
+    "allowed_top_level_paths": [
+      "benchmarks",
+      "jobs",
+      "notes",
+      "tests"
+    ],
+    "pssolver_package_changed": false,
+    "setup_py_changed": false,
+    "pyproject_toml_changed": false,
+    "manifest_in_changed": false,
+    "version_changed_after_runtime_candidate": false,
+    "runtime_or_numerical_implementation_changed": false,
+    "qualification_or_evidence_only": true
+  },
+  "public_contract": {
+    "package_version": "0.2.0rc6",
+    "functional_api_version": "1.0",
+    "models": 2,
+    "geometries": 3,
+    "boundary_policies": 8,
+    "qualified_combinations": 4,
+    "runtime_paths": 6,
+    "functional_batch_sizes": [
+      1
+    ],
+    "production_default_changed": false,
+    "compiled_runtime_promoted": false,
+    "checkpoint_schema_changed": false,
+    "lifting_reopened": false,
+    "PSSolver_Control_bundled": false,
+    "nematics3d_modified": false
+  },
+  "integration_decision": {
+    "release_integration_review_complete": true,
+    "eligible_for_branch_push": true,
+    "eligible_for_final_release_package_preparation": true,
+    "final_tag_target_commit": null,
+    "final_sdist_sha256": null,
+    "final_wheel_sha256": null,
+    "final_installed_wheel_cpu_smoke": "pending",
+    "independent_post_release_verification_required": true,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "tag_authorized": false,
+    "github_prerelease_authorized": false,
+    "pypi_publication_authorized": false,
+    "closure_record_push_executed": false,
+    "integration_review_push_executed": false,
+    "tag_created": false,
+    "github_prerelease_created": false,
+    "pypi_published": false
+  },
+  "next_gate": "explicitly_authorize_branch_push_then_build_and_verify_final_rc6_sdist_and_wheel_from_the_pushed_reviewed_source"
+}
