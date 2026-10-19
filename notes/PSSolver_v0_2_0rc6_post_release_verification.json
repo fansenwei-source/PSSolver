@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc6 independent post-release CPU verification",
+  "date": "2026-10-19",
+  "classification": "PASS_RC6_INDEPENDENT_POST_RELEASE_CPU_VERIFICATION",
+  "verification_complete": true,
+  "registration_only": true,
+  "qualified_source": {
+    "branch": "fix/v0.2.0rc6",
+    "package_source_commit": "fd7323d5e9ef87c537ed07476f8bd50b982af443",
+    "release_evidence_parent_commit": "b0acc757a38cb254d463438b8a1e0d4d5c39f555",
+    "record_commit_is_package_source": false,
+    "evidence_only_successor_requires_h100_requalification": false
+  },
+  "release_identity": {
+    "repository": "fansenwei-source/PSSolver",
+    "release_id": 417781605,
+    "url": "https://github.com/fansenwei-source/PSSolver/releases/tag/v0.2.0rc6",
+    "tag": "v0.2.0rc6",
+    "tag_object_sha": "533e3fb4254319d1a6a9a9a0e463447339c18b36",
+    "tag_object_type": "tag",
+    "tag_target_commit": "fd7323d5e9ef87c537ed07476f8bd50b982af443",
+    "tag_target_type": "commit",
+    "draft": false,
+    "prerelease": true,
+    "created_at": "2026-10-19T21:36:40Z",
+    "published_at": "2026-10-19T21:36:42Z"
+  },
+  "published_artifacts": {
+    "sdist": {
+      "asset_id": 657502345,
+      "name": "pssolver-0.2.0rc6.tar.gz",
+      "size": 1383734,
+      "state": "uploaded",
+      "sha256": "e6f2013d7d16c3f265759017bae8b5c8d0c1f6a43b54ff52476c9da5c296b907",
+      "github_digest_matched": true
+    },
+    "wheel": {
+      "asset_id": 657502344,
+      "name": "pssolver-0.2.0rc6-py3-none-any.whl",
+      "size": 799354,
+      "state": "uploaded",
+      "sha256": "9fe8bd47fc2cd194a0263bb9e45cc37e4a29fffec329fd5356f39296b2efdad5",
+      "github_digest_matched": true
+    }
+  },
+  "release_h100_smoke": {
+    "path": "notes/PSSolver_v0_2_0rc6_release_h100_smoke.json",
+    "sha256": "e2942b8faacd083f0e6b67b7230fe6e09aadb31b7df0ca02a564f3cd628e11f1",
+    "classification": "PASS_RC6_INSTALLED_WHEEL_SINGLE_H100_RELEASE_SMOKE",
+    "job_id": 10901816,
+    "rewritten_by_registration": false
+  },
+  "external_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_v0_2_0rc6_post_release_verification_20261019_v1",
+    "summary_sha256": "9dac824350fd123260df60e86d87604b15ebaa203ae1571a9411389d37512c28",
+    "final_report_sha256": "8ef2bf18e86db9e4bffd49276226bb9afc1ff1e3a0ad2c3baaa758aefb10478c",
+    "manifest_entries": 10258,
+    "manifest_passed": 10258,
+    "manifest_sha256": "a539e735a520b18b6f6328ce0ac366ccca2831cc80ab8f9ea8492f39d4f2261e",
+    "complete_present": true
+  },
+  "content_identity": {
+    "fresh_github_download": true,
+    "local_build_artifacts_reused": false,
+    "python_source_files_compared": 258,
+    "sdist_python_files_match_tag": true,
+    "wheel_python_files_match_tag": true,
+    "sdist_compileall": "PASS",
+    "wheel_compileall": "PASS",
+    "wheel_metadata_version": "0.2.0rc6",
+    "wheel_top_level_entries": [
+      "Plane_beris_edwards_stokes.py",
+      "pssolver",
+      "pssolver-0.2.0rc6.dist-info"
+    ]
+  },
+  "fresh_installation": {
+    "wheel": {
+      "install_no_deps": true,
+      "pip_check": "PASS",
+      "package_version": "0.2.0rc6",
+      "functional_api_version": "1.0",
+      "source_shadow_import": false,
+      "console_entry_point_help": "PASS"
+    },
+    "sdist": {
+      "build_and_install": "PASS",
+      "install_no_deps": true,
+      "pip_check": "PASS",
+      "package_version": "0.2.0rc6",
+      "functional_api_version": "1.0",
+      "source_shadow_import": false
+    },
+    "environment": {
+      "python": "3.12.13",
+      "pytorch": "2.6.0",
+      "torch_cuda_runtime": "12.6",
+      "numpy": "2.3.2",
+      "scipy": "1.16.0",
+      "pytest": "9.1.1",
+      "system_site_packages": true,
+      "numpy_pinned_inside_fresh_venvs_only": true,
+      "nematics3d_modified": false
+    }
+  },
+  "installed_runtime_smoke": {
+    "classification": "PASS_RC6_POST_RELEASE_INSTALLED_WHEEL_CPU_SMOKE",
+    "periodic": {
+      "runtime": "periodic_spectral",
+      "completed_steps": 1,
+      "complete_present": true,
+      "finite_q_u_p": true
+    },
+    "channel": {
+      "runtime": "channel_complete_stress",
+      "completed_steps": 1,
+      "complete_present": true,
+      "finite_q_u_p": true
+    }
+  },
+  "source_cpu_suite": {
+    "source": "clean detached worktree at v0.2.0rc6",
+    "head": "fd7323d5e9ef87c537ed07476f8bd50b982af443",
+    "detached": true,
+    "clean": true,
+    "passed": 4068,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected": 7,
+    "subtests_passed": 8,
+    "deselected_cuda_tests_already_passed_in_release_h100_smoke": true
+  },
+  "discarded_archive_only_suite_attempt": {
+    "used_as_product_qualification_evidence": false,
+    "classification": "EXTERNAL_TEST_HARNESS_MISSING_GIT_PROVENANCE",
+    "passed": 4029,
+    "failed": 34,
+    "errors": 5,
+    "deselected": 7,
+    "root_cause": "git archive omits .git history required by provenance tests",
+    "runtime_smoke_failure": false,
+    "corrected_by": "rerun unchanged tag source in a clean detached Git worktree"
+  },
+  "registration_verification": {
+    "targeted_contracts": "19 passed, 0 failed",
+    "full_cpu_passed": 4087,
+    "full_cpu_failed": 0,
+    "full_cpu_skipped": 0,
+    "full_cpu_xfailed": 0,
+    "full_cpu_deselected": 7,
+    "subtests_passed": 8,
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "tag_or_release_modified_by_verification": false,
+    "pssolver_runtime_modified": false,
+    "tests_relaxed": false,
+    "thresholds_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "functional_api_version_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "h100_job_submitted": false,
+    "pypi_published": false
+  },
+  "decision": {
+    "post_release_cpu_verification_passed": true,
+    "release_remains_prerelease": true,
+    "eligible_for_independent_second_party_review": true,
+    "independent_second_party_review_complete": false,
+    "eligible_for_pypi_publication": false,
+    "eligible_for_automatic_merge": false,
+    "eligible_for_default_promotion": false,
+    "release_mutation_recommended": false
+  }
+}
