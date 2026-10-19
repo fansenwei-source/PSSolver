@@ -1,0 +1,106 @@
+{
+  "schema": "pssolver.rc6.recovery_bootstrap_root_separation.v1",
+  "classification": "READY_RC6_RECOVERY_V6_BOOTSTRAP_ROOT_SEPARATION_H100_NOT_AUTHORIZED",
+  "recorded_date": "2026-10-19",
+  "provider_branch": "fix/v0.2.0rc6",
+  "provider_parent_commit": "06edaaeb26e0134c8f58cc8c3a9764fe19ac68fc",
+  "failure_evidence": {
+    "archive": "/home/fansenwei/pssolver_rc6_h100_ea801ec_208edd0_20261018_recovery_v5",
+    "archive_checksum_entries_passed": 23,
+    "archive_checksum_entries_failed": 0,
+    "checksums_sha256": "4c64b290ffd012bc0d320f703a6070469c324fc2f50dc2f191daed4ac2fac301",
+    "summary_sha256": "395a28e8c91999c7a7029bc1c67a890d224e0a237b2706a49e24838a93f92b27",
+    "failure_sha256": "4854f8b284cb44d00a76d7e5865ad8ffa7de3d238d713a96488a307cb1678bb8",
+    "slurm_final_sha256": "5730a7a3153b963126be3f98af027ef5d630d05395bb227de97bd0fe92d05b9d",
+    "job_id": "10901181",
+    "state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed": "00:00:06",
+    "node": "gpu-h100-4-0",
+    "requeue": 0,
+    "restarts": 0,
+    "failed_predicate": "P08",
+    "classification": "FAIL_RC6_CONSUMER_EXECUTION_REBIND_RECOVERY_V5_EXTERNAL_JOB_BOOTSTRAP_SUPPORT_ROOT_CONTRACT",
+    "failure_kind": "job_bootstrap_support_root_contract_conflict",
+    "preflight_started": false,
+    "completed_stage_count": 0,
+    "planned_stage_count": 11,
+    "scientific_execution_started": false,
+    "solver_failure": false,
+    "scientific_failure": false,
+    "automatic_retry": false,
+    "second_job_submitted": false,
+    "historical_classification_rewritten": false
+  },
+  "root_cause": {
+    "single_root_contract_was_unsatisfiable": true,
+    "script_requirement": "qualification scripts must be available under benchmarks/",
+    "import_requirement": "the Python import root must not expose a source pssolver package",
+    "v5_actual": "the full provider archive supplied both benchmarks/ and pssolver/ under one root",
+    "candidate_runtime_or_science_implicated": false
+  },
+  "correction": {
+    "strategy": "distinct_source_free_script_root_and_benchmarks_path_shim",
+    "script_root": {
+      "contains": [
+        "benchmarks",
+        "jobs",
+        "notes",
+        "tests"
+      ],
+      "pssolver_source_allowed": false,
+      "symbolic_link_allowed": false
+    },
+    "import_root": {
+      "contains_exactly": [
+        "benchmarks"
+      ],
+      "benchmarks_initializer_sets_path_to": "<script_root>/benchmarks",
+      "pssolver_source_allowed": false,
+      "symbolic_link_allowed": false
+    },
+    "pythonpath": "<import_root>",
+    "pssolver_import_must_resolve_under_driver_purelib": true,
+    "all_stage_scripts_must_resolve_under_script_root_benchmarks": true,
+    "all_stage_script_hashes_must_match_frozen_plan": true,
+    "bootstrap_observations_persist_before_enforcement": true,
+    "formal_output_must_be_absent_before_bootstrap": true,
+    "node_local_tmp_and_existing_rc6_preflights_preserved": true,
+    "historical_job_script_modified": false
+  },
+  "source_sha256": {
+    "benchmarks/prepare_rc6_recovery_bootstrap.py": "f755b735055c2b1647009107f6d0b1c37da8aebcdfcfbfea39e4b395c020220b",
+    "benchmarks/validate_rc6_recovery_bootstrap.py": "b28675f1152b36d169701d59376f6d04368831da344458ab8d9797b4b3523dd4",
+    "jobs/rc6_consumer_rebind_recovery_v6.sbatch": "4410fa972b5cec93a867128ed43fcca358410dcaf97ace5a0271c35bd49b26d2",
+    "tests/test_rc6_recovery_bootstrap.py": "f26be342c5e400702dc0d6f91f1685d738202dfee4fce9b35136270e8079d027"
+  },
+  "validation": {
+    "py_compile": "PASS",
+    "bash_n": "PASS",
+    "focused_tests": "5 passed",
+    "predicate_count": 18,
+    "stage_count": 11,
+    "failed_observation_is_persisted_before_nonzero_exit": true,
+    "overwrite_is_rejected": true
+  },
+  "scope": {
+    "qualification_support_only": true,
+    "solver_implementation_modified": false,
+    "numerical_algorithm_modified": false,
+    "runtime_api_modified": false,
+    "checkpoint_schema_modified": false,
+    "checkpoint_integrity_guard_modified": false,
+    "consumer_source_modified": false,
+    "threshold_modified": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "h100_submission_authorized": false,
+    "automatic_retry_authorized": false
+  },
+  "next_gate": "freeze and validate the distinct source-free roots and stage plan on HPCC without submitting a job, then request explicit push and one-H100 recovery_v6 authorization"
+}
