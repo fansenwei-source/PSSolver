@@ -21,6 +21,8 @@ from benchmarks.run_rc426_cuda_tests import Results, _enforce_tf32_policy
 
 
 SCHEMA = "pssolver.rc6.contract_smokes.v1"
+RELATIVE_TOLERANCE_TERMINATION_REASON = "relative_tolerance_met"
+FIXED_WORK_TERMINATION_REASON = "fixed_work_completed"
 
 
 def _atomic_json(path: Path, value: object) -> None:
@@ -124,7 +126,10 @@ def _pressure_cuda() -> bool:
             channel_pressure_active_rms(residual, solver.pressure_inactive_mask).float64_value
             / channel_pressure_active_rms(rhs, solver.pressure_inactive_mask).float64_value
         )
-        if solver.last_pressure_termination_reason != "relative_tolerance_met":
+        if (
+            solver.last_pressure_termination_reason
+            != RELATIVE_TOLERANCE_TERMINATION_REASON
+        ):
             return False
         if solver.last_pressure_relative_residual > floor or recomputed > floor:
             return False
@@ -134,7 +139,7 @@ def _pressure_cuda() -> bool:
             pressure_fixed_iterations=4,
         )
         fixed_pressure = fixed._solve_pressure(rhs.clone())
-        if fixed.last_pressure_termination_reason != "fixed_iterations_completed":
+        if fixed.last_pressure_termination_reason != FIXED_WORK_TERMINATION_REASON:
             return False
         if not bool(torch.isfinite(fixed_pressure).all().item()):
             return False

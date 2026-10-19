@@ -9,6 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_h100_stage_producers.json"
+SUCCESSOR_RECORD = (
+    ROOT / "notes/PSSolver_v0_2_0rc6_pressure_smoke_contract_correction.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -21,9 +24,17 @@ def _sha256(path: Path) -> str:
 
 def test_stage_producer_record_binds_every_qualification_source():
     record = _record()
+    successors = json.loads(
+        SUCCESSOR_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert record["status"] == "local_stage_producers_complete_h100_not_authorized"
     for relative, expected in record["source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+        actual = _sha256(ROOT / relative)
+        if actual != expected:
+            registration = successors.get(relative)
+            assert registration is not None
+            assert registration["predecessor_sha256"] == expected
+            assert registration["successor_sha256"] == actual
 
 
 def test_stage_producer_record_freezes_exact_order_and_fail_closed_execution():

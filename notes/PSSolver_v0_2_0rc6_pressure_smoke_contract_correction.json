@@ -1,0 +1,112 @@
+{
+  "schema": "pssolver.rc6.pressure_smoke_contract_correction.v1",
+  "classification": "READY_RC6_PRESSURE_SMOKE_CONTRACT_CORRECTION_H100_NOT_AUTHORIZED",
+  "recorded_on": "2026-10-18",
+  "diagnostic_evidence": {
+    "job_id": "10901090",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:00:28",
+    "node": "gpu-h100-4-0",
+    "classification": "DIAGNOSIS_RC6_PRESSURE_SMOKE_STALE_FIXED_WORK_TERMINATION_LABEL",
+    "analysis_complete": true,
+    "qualification_complete": false,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "control_directory": "/home/fansenwei/pssolver_rc6_pressure_diagnostic_ea801ec_20261018_v1",
+    "diagnostic_output": "/scratch1/vincent/PSSolver/data_pssolver_rc6_pressure_diagnostic_ea801ec_20261018_v1",
+    "checksums_sha256": "91370b63514a753f58e54deba94d2e71a1f04bcf34970c692bf8bb83068aaabf",
+    "raw_summary_sha256": "8b70f77a3da203448db2b13e7e95e2a70e069796d074512be8b30f052aa1b6fc"
+  },
+  "root_cause": {
+    "frozen_helper_value": "fixed_iterations_completed",
+    "authoritative_public_value": "fixed_work_completed",
+    "float32_tolerance_passed": true,
+    "float64_tolerance_passed": true,
+    "float32_fixed_pressure_finite": true,
+    "float64_fixed_pressure_finite": true,
+    "float32_fixed_iterations": 4,
+    "float64_fixed_iterations": 4,
+    "failed_predicate": "termination_reason_is_fixed_iterations_completed",
+    "failure_domain": "qualification_support_contract_label",
+    "solver_failure": false,
+    "scientific_failure": false,
+    "numerical_failure": false,
+    "cuda_failure": false,
+    "pressure_floor_failure": false
+  },
+  "correction": {
+    "file": "benchmarks/run_rc6_contract_smokes.py",
+    "old_value": "fixed_iterations_completed",
+    "new_value": "fixed_work_completed",
+    "centralized_constant": "FIXED_WORK_TERMINATION_REASON",
+    "relative_tolerance_constant": "RELATIVE_TOLERANCE_TERMINATION_REASON",
+    "runtime_or_solver_modified": false,
+    "threshold_modified": false,
+    "fixed_iteration_count_modified": false,
+    "diagnostic_history_rewritten": false
+  },
+  "historical_records": {
+    "notes/PSSolver_v0_2_0rc6_h100_stage_producers.json": {
+      "sha256": "f14ca3dc8837b6fff2acfa45215c1d82aeb854e853caf13feadf10a9cc07e367",
+      "rewritten": false
+    },
+    "notes/PSSolver_v0_2_0rc6_pressure_component_diagnostic.json": {
+      "sha256": "d567655f658166af4d5ce1e460295c441b45b34883b976924ede0537848fd658",
+      "rewritten": false
+    }
+  },
+  "historical_successor_sources": {
+    "benchmarks/run_rc6_contract_smokes.py": {
+      "predecessor_sha256": "7f5a4af7d4ee8723f6e69eb4272fd94e44e3e56722bab6ca39b86e15f1780d44",
+      "successor_sha256": "e11fd8ad8ffdf74ae8062c1f1631fb958431de7ebf219ee6827891d0f830b2dd",
+      "reason": "Replace a qualification-only stale fixed-work termination label with the authoritative public value already emitted by the RC6 installed wheel; no runtime, solver, threshold, policy, or production default changed."
+    },
+    "tests/test_rc6_h100_stage_producer_record.py": {
+      "predecessor_sha256": "888d20fe00fae5d1ac0cc4cb3672620335369d73b3b4329ad637d55e0753feda",
+      "successor_sha256": "7f5a7e9b4e093223b6f0af03951578c813a12e99506039d8345352813b11df90",
+      "reason": "Teach the historical stage-producer audit to resolve only explicitly registered forward successors while preserving the original record and all unrelated source hashes."
+    }
+  },
+  "source_sha256": {
+    "benchmarks/run_rc6_contract_smokes.py": "e11fd8ad8ffdf74ae8062c1f1631fb958431de7ebf219ee6827891d0f830b2dd",
+    "tests/test_rc6_pressure_smoke_contract_correction.py": "d1b60df4a61257e4a04763ef216d01d017924c349d364b7b7af4b149fc383663",
+    "tests/test_rc6_h100_stage_producer_record.py": "7f5a7e9b4e093223b6f0af03951578c813a12e99506039d8345352813b11df90"
+  },
+  "local_validation": {
+    "focused_tests_passed": 27,
+    "focused_tests_failed": 0,
+    "focused_tests_skipped": 0,
+    "focused_tests_xfailed": 0,
+    "full_cpu_suite": {
+      "passed": 4028,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 7,
+      "xfailed": 0,
+      "subtests_passed": 8,
+      "seconds": 208.89
+    },
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "qualification_support_only": true,
+    "provider_runtime_modified": false,
+    "public_api_modified": false,
+    "numerical_implementation_modified": false,
+    "pressure_policy_modified": false,
+    "threshold_modified": false,
+    "skip_or_xfail_added": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "formal_h100_qualification_rerun_authorized": false,
+    "automatic_retry": false,
+    "tag_authorized": false,
+    "release_authorized": false
+  },
+  "next_gate": "complete the local CPU gate and prepare a new hash-frozen support bundle and stage plan without submitting H100"
+}
