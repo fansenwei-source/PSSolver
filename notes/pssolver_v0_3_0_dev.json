@@ -25,6 +25,16 @@
     "production_default_changed_by_line_creation": false,
     "v0_2_0_tag_or_assets_modified": false
   },
+  "development_test_environment": {
+    "compile_dependent_research_tests": [
+      "tests/test_v3_initialization_protocol.py",
+      "tests/test_plane_beris_edwards_navier_stokes.py::test_tiny_v1_run_advances_velocity_and_preserves_incompressibility"
+    ],
+    "policy": "Run these six execution tests only when an isolated CPU torch.compile/Inductor probe succeeds; otherwise skip them with an explicit environment-capability reason.",
+    "production_execution_policy_changed": false,
+    "research_runner_execution_policy_changed": false,
+    "eager_execution_forced": false
+  },
   "historical_successor_sources": {
     "pssolver/_version.py": {
       "historical_sha256": "c9b360ae0c00d85a554cd64fee23fabb4e800fba339fc57704e40e22868ee2dd",

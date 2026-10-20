@@ -40,7 +40,9 @@ def _base_command(output: Path) -> list[str]:
     ]
 
 
-def test_v3_mother_runs_z_independent_and_saves_q2d(tmp_path):
+def test_v3_mother_runs_z_independent_and_saves_q2d(
+    tmp_path, require_working_cpu_inductor
+):
     output = tmp_path / "mother"
     result = subprocess.run(
         [
@@ -65,7 +67,9 @@ def test_v3_mother_runs_z_independent_and_saves_q2d(tmp_path):
     assert not list(output.glob("Q_*.npy"))
 
 
-def test_v3_mother_is_height_independent_for_the_same_k_and_zeta(tmp_path):
+def test_v3_mother_is_height_independent_for_the_same_k_and_zeta(
+    tmp_path, require_working_cpu_inductor
+):
     outputs = []
     for height, nz in ((10.0, 4), (20.0, 8)):
         output = tmp_path / f"mother_H{height:g}"
@@ -97,7 +101,9 @@ def test_v3_mother_is_height_independent_for_the_same_k_and_zeta(tmp_path):
     np.testing.assert_allclose(outputs[0], outputs[1], rtol=2e-12, atol=2e-14)
 
 
-def test_v3_mother_output_is_consumable_by_conservative_qualifier(tmp_path):
+def test_v3_mother_output_is_consumable_by_conservative_qualifier(
+    tmp_path, require_working_cpu_inductor
+):
     output = tmp_path / "mother_for_qualification"
     command = _base_command(output)
     steps_index = command.index("--steps") + 1
@@ -127,7 +133,9 @@ def test_v3_mother_output_is_consumable_by_conservative_qualifier(tmp_path):
     assert report["recommended_checkpoint"] is None
 
 
-def test_v3_mother_continuation_preserves_absolute_steps_and_restart_input(tmp_path):
+def test_v3_mother_continuation_preserves_absolute_steps_and_restart_input(
+    tmp_path, require_working_cpu_inductor
+):
     first = tmp_path / "mother_first"
     first_result = subprocess.run(
         [*_base_command(first), "--initialization-protocol", "v3-mother"],
@@ -183,7 +191,9 @@ def test_v3_mother_continuation_preserves_absolute_steps_and_restart_input(tmp_p
     assert len(joint_report["continuation_overlap_checks"]) == 1
 
 
-def test_v3_extruded_requires_and_binds_target_matched_manifest(tmp_path):
+def test_v3_extruded_requires_and_binds_target_matched_manifest(
+    tmp_path, require_working_cpu_inductor
+):
     source = aligned_x_band_limited_noise_2d(
         (8, 8),
         S_initial=1.0 / 3.0,

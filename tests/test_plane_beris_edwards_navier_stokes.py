@@ -110,7 +110,9 @@ def test_invalid_density_and_friction_are_rejected(tmp_path):
     assert "--fric" in bad_friction.stderr
 
 
-def test_tiny_v1_run_advances_velocity_and_preserves_incompressibility(tmp_path):
+def test_tiny_v1_run_advances_velocity_and_preserves_incompressibility(
+    tmp_path, require_working_cpu_inductor
+):
     output = tmp_path / "tiny"
     result = _run(
         *_base_arguments(output),
