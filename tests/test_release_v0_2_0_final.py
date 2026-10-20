@@ -155,7 +155,8 @@ def test_v020_p5_successor_classifies_frozen_and_control_path_impact():
     record = _record()
     n1 = record["n1"]
     assert n1["affects_v0_2_frozen"] is True
-    assert n1["affects_control_paths"] is False
+    assert n1["affects_control_paths"] is True
+    assert n1["exercised_by_current_control_research"] is False
 
     expected = {
         "C1-05": True,
@@ -186,6 +187,22 @@ def test_v020_p5_successor_classifies_frozen_and_control_path_impact():
         "requires_h100_requalification",
     ):
         assert successor[key] is False
+
+    control_successor = record["control_path_tracking_successor"]
+    assert control_successor["source_record_commit"] == (
+        "269cdf1c8f8258311fb63f8031611430345353e9"
+    )
+    assert control_successor["historical_record_sha256"] == (
+        "7a0c85ada69f05504989ec243d49fe67bb6b12e32106ce739c10380ea94b7600"
+    )
+    for key in (
+        "record_commit_is_release_source",
+        "release_tag_rewritten",
+        "release_assets_replaced",
+        "runtime_changed",
+        "requires_h100_requalification",
+    ):
+        assert control_successor[key] is False
 
 
 def test_v020_successor_record_matches_every_registered_source():
