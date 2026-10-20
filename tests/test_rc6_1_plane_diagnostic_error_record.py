@@ -26,6 +26,9 @@ RC6_R6_RECORD = ROOT / (
 )
 RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
+V021_N1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -76,6 +79,11 @@ def _resolve_rc6_freeze(relative: str, predecessor: str) -> str:
     if registration is not None and registration["historical_sha256"] == predecessor:
         predecessor = registration["current_sha256"]
     registration = json.loads(FINAL_RELEASE_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == predecessor:
+        predecessor = registration["current_sha256"]
+    registration = json.loads(V021_N1_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == predecessor:

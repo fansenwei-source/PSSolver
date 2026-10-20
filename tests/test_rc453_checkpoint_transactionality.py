@@ -57,6 +57,7 @@ RC5_G1_GLIBC = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
 )
 RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+V021_N1 = ROOT / "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
 
 
 @contextmanager
@@ -421,6 +422,7 @@ def test_rc453_record_binds_contract_sources_and_scope():
             RC5_R513,
             RC5_G1_GLIBC,
             RC6_R6,
+            V021_N1,
         ):
             registration = json.loads(
                 successor_path.read_text(encoding="utf-8")
@@ -456,6 +458,7 @@ def test_rc453_record_binds_contract_sources_and_scope():
                 RC5_R513,
                 RC5_G1_GLIBC,
                 RC6_R6,
+                V021_N1,
             ):
             successor = json.loads(successor_path.read_text(encoding="utf-8"))[
                 "historical_successor_sources"

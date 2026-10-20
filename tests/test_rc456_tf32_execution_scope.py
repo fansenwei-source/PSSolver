@@ -60,6 +60,7 @@ RC6_R3 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
 RC6_R4 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
 RC6_R5 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
 RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+V021_N1 = ROOT / "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
 
 
 def _set_state(precision: str, matmul: bool, cudnn: bool) -> None:
@@ -96,6 +97,7 @@ def _resolve_rc457_successor(relative: str, historical: str) -> str:
         RC6_R4,
         RC6_R5,
         RC6_R6,
+        V021_N1,
     ):
         successor = json.loads(record_path.read_text(encoding="utf-8"))[
             "historical_successor_sources"

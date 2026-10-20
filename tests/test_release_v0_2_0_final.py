@@ -12,6 +12,9 @@ from pssolver.functional.api import functional_protocol_provenance
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/pssolver_v0_2_0.json"
+V021_N1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -199,6 +202,9 @@ def test_v020_p5_successor_classifies_frozen_and_control_path_impact():
 
 def test_v020_successor_record_matches_every_registered_source():
     successors = _record()["historical_successor_sources"]
+    n1_successors = json.loads(V021_N1_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert set(successors) == {
         "CHANGELOG.md",
         "README.md",
@@ -229,7 +235,11 @@ def test_v020_successor_record_matches_every_registered_source():
     }
     for relative, identity in successors.items():
         assert identity["historical_sha256"] != identity["current_sha256"]
-        assert _sha256(ROOT / relative) == identity["current_sha256"]
+        expected = identity["current_sha256"]
+        registration = n1_successors.get(relative)
+        if registration is not None and registration["historical_sha256"] == expected:
+            expected = registration["current_sha256"]
+        assert _sha256(ROOT / relative) == expected
         assert identity["reason"]
 
 

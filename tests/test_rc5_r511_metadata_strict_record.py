@@ -39,6 +39,9 @@ RC6_R6_RECORD = ROOT / (
 )
 RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
+V021_N1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -64,6 +67,7 @@ def _r512_successor(relative: str, historical: str) -> str:
         RC6_R6_RECORD,
         RC6_FREEZE_RECORD,
         FINAL_RELEASE_RECORD,
+        V021_N1_RECORD,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
