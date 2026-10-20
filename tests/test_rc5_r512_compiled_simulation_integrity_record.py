@@ -35,6 +35,7 @@ RC6_R6_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 )
 RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
+FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
 
 
 def _sha256(relative: str) -> str:
@@ -58,6 +59,7 @@ def _r513(relative: str, historical: str) -> str:
         RC6_R5_RECORD,
         RC6_R6_RECORD,
         RC6_FREEZE_RECORD,
+        FINAL_RELEASE_RECORD,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"

@@ -24,11 +24,11 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def test_rc6_version_and_public_provenance_agree():
-    assert pssolver.__version__ == "0.2.0rc6"
+def test_final_version_and_public_provenance_agree():
+    assert pssolver.__version__ == "0.2.0"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.2.0rc6",
+        "version": "0.2.0",
     }
 
 
@@ -40,10 +40,11 @@ def test_rc6_documents_and_machine_record_agree():
     )
     record = _json(RELEASE_RECORD)
 
-    assert "PSSolver 0.2.0rc6" in readme
+    assert "PSSolver 0.2.0" in readme
     assert "## 0.2.0rc6" in changelog
+    assert "## 0.2.0 — 2026-10-19" in changelog
     assert "PSSolver 0.2.0rc6 release candidate" in release_notes
-    assert record["release"] == pssolver.__version__
+    assert record["release"] == "0.2.0rc6"
     assert record["status"] == "source_freeze_preparation"
     assert record["source"]["freeze_commit"] == (
         "90ef40f328347c71d8baabeb187e18cd31e4b6bc"
@@ -150,13 +151,47 @@ def test_rc6_freeze_plan_is_fail_closed_and_h100_is_not_authorized():
     ]
 
 
-def test_rc6_versioned_and_successor_source_hashes_match():
+def test_rc6_frozen_hashes_only_change_at_the_final_release_boundary():
     record = _json(FREEZE_RECORD)
     for relative, expected in record["new_sources"].items():
-        assert _sha256(ROOT / relative) == expected
+        if relative == "tests/test_release_v0_2_rc6.py":
+            assert _sha256(ROOT / relative) != expected
+        else:
+            assert _sha256(ROOT / relative) == expected
+    allowed_final_release_successors = {
+        "CHANGELOG.md",
+        "README.md",
+        "pssolver/_version.py",
+        "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py",
+        "tests/test_rc5_g1_historical_audit_portability.py",
+        "tests/test_rc5_legacy_functional_checkpoint_record.py",
+        "tests/test_rc5_r510_channel_checkpoint_observation_record.py",
+        "tests/test_rc5_r511_metadata_strict_record.py",
+        "tests/test_rc5_r512_compiled_simulation_integrity_record.py",
+        "tests/test_rc5_r513_optional_hygiene_record.py",
+        "tests/test_rc5_r52_finite_workflow_record.py",
+        "tests/test_rc5_r53_channel_checkpoint_record.py",
+        "tests/test_rc5_r55_tf32_state_restore.py",
+        "tests/test_rc5_r56_public_error_boundary_record.py",
+        "tests/test_rc5_r57_device_normalization_record.py",
+        "tests/test_rc5_r58_checkpoint_integrity_record.py",
+        "tests/test_rc5_r59_pressure_postcondition_record.py",
+        "tests/test_rc5_w1_documentation.py",
+        "tests/test_rc6_1_plane_diagnostic_error_record.py",
+        "tests/test_rc6_2_pressure_floor_record.py",
+        "tests/test_rc6_3_compile_preflight_record.py",
+        "tests/test_rc6_4_channel_failure_record.py",
+        "tests/test_rc6_5_checkpoint_control_flow_record.py",
+        "tests/test_rc6_6_restart_output_atomicity_record.py",
+        "tests/test_release_v0_1.py",
+    }
     for section in ("versioned_sources", "historical_successor_sources"):
         for relative, identity in record[section].items():
-            assert _sha256(ROOT / relative) == identity["current_sha256"]
+            current = _sha256(ROOT / relative)
+            if relative in allowed_final_release_successors:
+                assert current != identity["current_sha256"]
+            else:
+                assert current == identity["current_sha256"]
 
 
 def test_rc6_release_documents_are_in_source_manifest():

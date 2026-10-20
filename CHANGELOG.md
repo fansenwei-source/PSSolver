@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.2.0 — 2026-10-19
+
+Stable release of the source and numerical behavior qualified as
+`v0.2.0rc6`.  Relative to that release candidate, this release changes only
+the public package version and release documentation; it does not change the
+solver implementation, numerical algorithms, checkpoint schemas, functional
+API version 1.0, adapter versions, qualified model--geometry combinations, or
+production defaults.
+
+### Known limitation
+
+- Checkpoint publication uses a fail-closed no-replace operation.  The NFS
+  filesystems mounted at the qualified HPCC site's shared `$HOME` and
+  `/scratch1` paths reject that operation, so PSSolver 0.2.0 cannot publish a
+  checkpoint directly to those shared paths.  It does not overwrite an
+  existing checkpoint or report an incomplete checkpoint as successful, and
+  ordinary simulation output is unaffected.  Until the v0.2.1 portability
+  fix, an HPCC job can write the checkpoint on node-local `/tmp` and copy the
+  completed checkpoint to shared storage after successful publication.  This
+  is an operational workaround, not a PSSolver public API.
+
+### Maintenance policy
+
+- The v0.2.x patch line accepts narrowly scoped compatibility fixes for a
+  released feature that is unavailable on a supported target cluster, even
+  when the failure is fail-closed and produces neither an incorrect result nor
+  data loss.  The first such planned fix is NFS-compatible no-clobber
+  checkpoint publication in v0.2.1.
+- The tolerance-floor rationale, public error metadata, interruption metadata,
+  read-only checkpoint-upgrade cleanup, and pressure-error serialization
+  observations tracked as C1-05, C1-10, C1-11, C2-17, and C2-18 remain
+  follow-up work for v0.2.x or v0.3; none changes this release's qualified
+  numerical results.
+
 ## 0.2.0rc6 — 2026-10-18
 
 Correctness, fail-closed validation, and restart-atomicity follow-up to

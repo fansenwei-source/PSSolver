@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "release": "0.2.0",
+  "date": "2026-10-19",
+  "status": "local_release_preparation",
+  "classification": "PASS_V0_2_0_RELEASE_SOURCE_PREPARATION_PENDING_REMOTE_AUTHORIZATION",
+  "source": {
+    "qualified_release_candidate": "v0.2.0rc6",
+    "qualified_release_candidate_commit": "fd7323d5e9ef87c537ed07476f8bd50b982af443",
+    "release_branch": "release/pssolver-v0.2.0",
+    "runtime_delta": [
+      "pssolver/_version.py: 0.2.0rc6 -> 0.2.0"
+    ],
+    "solver_implementation_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "adapter_version_changed": false,
+    "production_default_changed": false
+  },
+  "release_documentation": {
+    "changelog_date": "2026-10-19",
+    "readme_version_synchronized": true,
+    "n1_known_limitation_documented": true,
+    "node_local_tmp_workaround_is_public_api": false,
+    "v0_2_x_target_cluster_unavailability_fix_policy_documented": true
+  },
+  "n1": {
+    "blocks_v0_2_0": false,
+    "target_release": "0.2.1",
+    "maintenance_branch": "maint/v0.2",
+    "reason": "The unsupported NFS publication path fails closed, produces no incorrect checkpoint or data loss, predates rc6, and is not used by the current Control research workflow."
+  },
+  "deferred": {
+    "C1-05": "0.2.x/0.3",
+    "C1-10": "0.2.x/0.3",
+    "C1-11": "0.2.x/0.3",
+    "C2-17": "0.2.x/0.3",
+    "C2-18": "0.2.x/0.3"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "b031702917fb6047a2b7d880fd547c9a0aca25d858d5fff1dcb98074352b333d",
+      "current_sha256": "0325420bafc4a4293dcb54ceb946fff7ed58ed50f8a0e28e11170e8c4f11adc1",
+      "reason": "Add the final 0.2.0 release date, N-1 known limitation, temporary HPCC workflow, patch policy, and deferred-issue boundary."
+    },
+    "README.md": {
+      "historical_sha256": "5d416c76707db2540f3aed8530ffbab8a2de8305eb778f23ce9391282f49b10b",
+      "current_sha256": "7c30cf3961fabc89db0f7689b56d52f31fb093e168dc88d839f8e5d6c337ffd1",
+      "reason": "Synchronize the user-facing release name from 0.2.0rc6 to 0.2.0."
+    },
+    "pssolver/_version.py": {
+      "historical_sha256": "86aee03c88d20868096931cd0faa85fd6600a84ac2e8f7609e45d4449bab9a31",
+      "current_sha256": "c9b360ae0c00d85a554cd64fee23fabb4e800fba339fc57704e40e22868ee2dd",
+      "reason": "Promote only the public package version from 0.2.0rc6 to 0.2.0."
+    },
+    "tests/test_release_v0_1.py": {
+      "historical_sha256": "79af7dbf0ea08ae36f4732eccd6fb8678c96918a58a59624732d10c50a8afc93",
+      "current_sha256": "6abb669cd4172c44efad5ace6532b15640fee4bbc537f9c5c9c28b32a9556ae4",
+      "reason": "Bind the historical packaging contract to the final README version."
+    },
+    "tests/test_release_v0_2_rc6.py": {
+      "historical_sha256": "793da213c8e6da3745ed0805374ae0587aed10564a90447249d92e477c774e16",
+      "current_sha256": "9311253e9b516b1250b35a6354b790ab669a4160fbbcdc534f45c5703035763e",
+      "reason": "Preserve the rc6 freeze record while recognizing its exact final-release successors."
+    },
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": {
+      "historical_sha256": "3bcfbb354bea65261a73a9fa89c949bd75a909ca5199d6c5a2d93748fe51b12e",
+      "current_sha256": "6249ceb4325c3be13e1cdb567a62ba3269d70d94d84cfb6bfeb8fbe8865746cd",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_g1_historical_audit_portability.py": {
+      "historical_sha256": "e64310a09b72c6c2b055b0051d88cb2c42df213ac772bde7cb58bccef8f450c6",
+      "current_sha256": "6891b4106ee42c9e05f5c0c23492be669698746ba2f873e423e173ad920f8d1e",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "66a821d68680f4ffa82ba98811533f90ea345691665a362c1bc2189b1625e60f",
+      "current_sha256": "ada613658a887e91fd3347852b5a8fa00f70b4ab5b4a250221e622ac4953f6fc",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "13a173e3b602bfb57a687bd90ec48012f293a46503b1cb09105444f4deed9537",
+      "current_sha256": "27a63b001ed1072411d3dc7061c09ac4ca7f3a3fccd36da992f5044b6ed28f9a",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "61d36577684c8a6783d822da00adf8357ee7bc5a2b59d081be3e5526d6af5ff8",
+      "current_sha256": "cabd8d9085c8905a087aa13e9429798f00be8928a625364e8a2869d7e13f2cbf",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "1e7e82aa7f3a94e633ad0a287277e64115bca5a8a9550f2a07ed7e9b178bb0c5",
+      "current_sha256": "b5fd62e52d5ce6ed1a5ec4d07e2a1f5b5fe3b836588face8a5b01410bacdf671",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "0ed41867213555a15ecdbf5b5c0eb15fed5b1548d5088a3decc8da6893bae2e5",
+      "current_sha256": "d0114b6003f4f75143eaae747e1dd0c5416746511dccea8faa837150d3d1b98d",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "1589be7b80a883faf2b3e5f1fcc891f17163c2c979bf492420a0b70a2b7236b1",
+      "current_sha256": "8a5397509966020374aad560c75a86cc0ba1d53fc98cdef3f4d4ac819b77c506",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "a07629ca5a42c1d73fadc6144bb637b5b92c14ef071ff6912933b1d4f307482c",
+      "current_sha256": "f2e7d528352d61840366f77368fa5678186e4e102ae02a97ea7af37eedaec657",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "83e7b8120b79ec0f6a846e45b815461f26db0e549aa28ad433ac4f20350d803a",
+      "current_sha256": "411837d1e31e714fa42a64744559ec38c3e5618ecf42d45c7e299e27de6b739d",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "45bde1490931832f9571b936a17d295ad99d909a58d7b38c3a9cc4d38f6aa948",
+      "current_sha256": "21693d1244487b620d42f99f81e2dd5e17f4dafc91a1ae38b52d8b7c0e9e3d6c",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "fea8f8ffec69c7b15b7bb54d765dfbd4e0c3c598c74a6eb50828c41f3dd41146",
+      "current_sha256": "12fa8d83d42d763ba21bef978f9ef278d1bcd04e44b3785905b05ad496168460",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "f6a79b9c6aaf62effd50fbf3e460a41c07b83933968fa9a41f5b042dd4b231a3",
+      "current_sha256": "a216c237a0f2d23a4e90a0691ad47a9fb82b60a01242397bc7b3221ec72a6bca",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "7e9037a277c3a42e948a621a6607f943ec2d758e7e5d4713a4341be5d54e71fd",
+      "current_sha256": "139b49c4939a0e65440d5285ff83c457ea81b521fe1b3d344304aa13d9c9a1d0",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "bf25bb6f890633433fc3d84d10c3ceae9a21cceb17fe779f225d901f37ccca9a",
+      "current_sha256": "dcffce18e8d2403fc8e2531639e886d95d5f3809c1663287dee22326d5040af8",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": {
+      "historical_sha256": "b613e2e2d6f43083286f449feb01331eabdab4f991d00914206b5327f852df48",
+      "current_sha256": "ce9199604edd0619b7143dc171243b6369bcdc2650b977193efcba812063d174",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "historical_sha256": "8275c17886e4f22a04b1d48f236e8e16c6e8748fdba3142c0745e9aafbeaf2ec",
+      "current_sha256": "aef5bbc0d1f884bd426069dbbc34a2f6657a81db04213802ea3f861c5739e991",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "historical_sha256": "561ba8fce4d2c10fdc16133785c1bc0e0db8d65907627e8867c344e9a966605f",
+      "current_sha256": "c7569b9ab74856c3ad057acc12a88bc3914df8c72e58bdc2a7aa783d889cac5a",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc6_4_channel_failure_record.py": {
+      "historical_sha256": "61dfbdf5bbb6f69cb3cdd08f942c3bc1eb2ada0a4c826bb4931043c7840f6816",
+      "current_sha256": "694a177f271e0684590f15a2229c0dc23183b62b19f30bd2767c2828d54e0565",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc6_5_checkpoint_control_flow_record.py": {
+      "historical_sha256": "e16e84e0e4e35c303ce7b25c36d89e882ea53857397c29fceb56c708bd15409c",
+      "current_sha256": "17d2e0dec7d340822e2263b8993adaa1ad9d8021a861d59a5b8713aba8d8d3f3",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    },
+    "tests/test_rc6_6_restart_output_atomicity_record.py": {
+      "historical_sha256": "728e3f5f5835c95a675f3a170122c1475ee9e7f4f909390e824b58f0597e7159",
+      "current_sha256": "81470ef7921674b83af69d81ef7badfdbb62d293e55b246f5ec1473383ffaa2c",
+      "reason": "Extend the forward-only evidence chain through the final release record."
+    }
+  },
+  "authorization": {
+    "local_preparation_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "github_release_authorized": false,
+    "pypi_publication_authorized": false,
+    "h100_rerun_authorized": false
+  }
+}
