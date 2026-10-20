@@ -2,8 +2,8 @@
   "schema_version": 1,
   "release": "0.2.0",
   "date": "2026-10-19",
-  "status": "local_release_preparation",
-  "classification": "PASS_V0_2_0_RELEASE_SOURCE_PREPARATION_PENDING_REMOTE_AUTHORIZATION",
+  "status": "released_and_independently_verified",
+  "classification": "PASS_V0_2_0_RELEASE_EQUALS_RC6_PLUS_VERSION",
   "source": {
     "qualified_release_candidate": "v0.2.0rc6",
     "qualified_release_candidate_commit": "fd7323d5e9ef87c537ed07476f8bd50b982af443",
@@ -17,6 +17,84 @@
     "functional_api_version_changed": false,
     "adapter_version_changed": false,
     "production_default_changed": false
+  },
+  "record_scope": {
+    "release_source_commit": "6d2934e73b543f6652d112733657775333e0f396",
+    "record_commit_is_release_source": false,
+    "release_tag_rewritten": false,
+    "release_assets_replaced": false,
+    "requires_h100_requalification": false,
+    "reason": "This post-tag successor records publication and independent read-only acceptance evidence; it does not change the released source or artifacts."
+  },
+  "release_publication": {
+    "annotated_tag": "v0.2.0",
+    "tag_object": "5ef13697b618689b34d3353d3968632ed92086f3",
+    "tag_target": "6d2934e73b543f6652d112733657775333e0f396",
+    "github_release_id": 417912386,
+    "github_release_url": "https://github.com/fansenwei-source/PSSolver/releases/tag/v0.2.0",
+    "draft": false,
+    "prerelease": false,
+    "target_commitish": "main",
+    "target_commitish_observation": "The release API reports main, while the immutable annotated tag resolves to the release source commit outside origin/main; artifact and tag identities are authoritative and verified.",
+    "assets": {
+      "pssolver-0.2.0-py3-none-any.whl": {
+        "asset_id": 657941454,
+        "size_bytes": 799309,
+        "sha256": "ab4beef1a347568e8ad4162291feb62e94e179849853ca1417583634649a1151"
+      },
+      "pssolver-0.2.0.tar.gz": {
+        "asset_id": 657941456,
+        "size_bytes": 1385808,
+        "sha256": "3cb3f3a9c2d0d95412ee78db4183872ccedb8e4b51562042215db65feeb01c82"
+      }
+    },
+    "pypi_published": false,
+    "h100_rerun_performed": false
+  },
+  "independent_post_release_acceptance": {
+    "classification": "PASS_V0_2_0_RELEASE_EQUALS_RC6_PLUS_VERSION",
+    "date": "2026-10-19",
+    "executor": "Claude read-only CPU-first second-party review",
+    "archive": "/home/fansenwei/pssolver_v0_2_0_claude_release_check_20261019_v1",
+    "archive_complete_present": true,
+    "checksum_entry_count": 4642,
+    "checksums_sha256": "6f666f4a7e5bf65540eedfd65c42fa77f09ff4fa91ad214e75cade856e7e9099",
+    "checksum_verification": {
+      "passed": 4642,
+      "failed": 0
+    },
+    "report_files": {
+      "PSSolver_v0_2_0_release_check_claude.json": "1fe0c1a691fb5f9913d4332003ba28c5d5d35e00ce8e09b43f040436a340a4b9",
+      "PSSolver_v0_2_0_release_check_claude_zh.md": "8f5890d862b32d584a9146c1b0de048a1526637081efd83473abf6255e368680",
+      "PSSolver_v0_2_0_release_check_claude_zh.pdf": "5adb6837b50565d395b881b43123bcca18d0403d87f1ca88f38067f8bb31d0ff",
+      "PSSolver_v0_2_0_release_check_claude_zh.tex": "7d751bcab32431286ce7b649aafff2ea596db8afd47c2cba0333a621abccb907"
+    },
+    "checks": {
+      "tag_release_identity": true,
+      "rc6_to_v0_2_0_source_delta": true,
+      "artifact_content_identity": true,
+      "clean_wheel_install": true,
+      "periodic_and_channel_smoke_bitwise_equal_to_rc6": true,
+      "provider_identity_unchanged": true,
+      "tag_worktree_cpu_suite": true
+    },
+    "cpu_suite": {
+      "passed": 4075,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "nematics3d_installed": true
+    },
+    "provider_identity_sha256": {
+      "periodic": "d85f6540494696fddb4549cd4d431d362fe4a55bc53cb9cfd8158fae7c09530d",
+      "channel_fixed_iteration": "b95aa0ce22035df610282f1066cce23b47819807f3d942138b0d5038b727a905",
+      "channel_tolerance": "b18000feec39cdcdb8e8d371ad80b5037a10ba844c21db0dcddd7b162d324908"
+    },
+    "control_identity_migration_needed": false,
+    "h100_rerun_needed": false
   },
   "release_documentation": {
     "changelog_date": "2026-10-19",
@@ -172,10 +250,11 @@
   },
   "authorization": {
     "local_preparation_authorized": true,
-    "push_authorized": false,
-    "tag_authorized": false,
-    "github_release_authorized": false,
+    "push_authorized": true,
+    "tag_authorized": true,
+    "github_release_authorized": true,
     "pypi_publication_authorized": false,
-    "h100_rerun_authorized": false
+    "h100_rerun_authorized": false,
+    "post_release_registration_authorized": true
   }
 }
