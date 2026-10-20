@@ -11,8 +11,10 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 from pathlib import Path
+import platform
 import sys
 
 import numpy as np
@@ -101,6 +103,8 @@ RELEASE_COMMIT = "6d2934e73b543f6652d112733657775333e0f396"
 PUBLISHED_WHEEL_SHA256 = (
     "ab4beef1a347568e8ad4162291feb62e94e179849853ca1417583634649a1151"
 )
+CONTINUATION_ORACLE_SCHEMA_VERSION = 1
+CONTINUATION_TOLERANCE_EPS_MULTIPLIER = 8.0
 PERIODIC_SHAPE = (6, 6, 4)
 CHANNEL_SHAPE = (7, 6, 6)
 PLANE_SHAPE = (7, 7, 6)
@@ -129,11 +133,47 @@ def _tree_sha256(directory: Path) -> str:
 
 
 def _tensor_record(value: torch.Tensor) -> dict[str, object]:
-    array = value.detach().to(device="cpu").contiguous().numpy()
+    array = _tensor_array(value)
+    return _array_record(array)
+
+
+def _tensor_array(value: torch.Tensor) -> np.ndarray:
+    return value.detach().to(device="cpu").contiguous().numpy().copy()
+
+
+def _array_record(array: np.ndarray) -> dict[str, object]:
     return {
         "shape": list(array.shape),
         "dtype": str(array.dtype),
         "sha256": hashlib.sha256(array.tobytes(order="C")).hexdigest(),
+    }
+
+
+def numerical_build_fingerprint() -> dict[str, object]:
+    """Identify the numerical build that controls exact FFT continuation."""
+
+    torch_configuration = torch.__config__.show()
+    numpy_configuration = io.StringIO()
+    old_stdout = sys.stdout
+    try:
+        sys.stdout = numpy_configuration
+        np.show_config()
+    finally:
+        sys.stdout = old_stdout
+    numpy_build = numpy_configuration.getvalue()
+    return {
+        "python_implementation": platform.python_implementation(),
+        "python_version": platform.python_version(),
+        "torch_version": torch.__version__,
+        "torch_cuda_version": torch.version.cuda,
+        "torch_configuration_sha256": hashlib.sha256(
+            torch_configuration.encode("utf-8")
+        ).hexdigest(),
+        "numpy_version": np.__version__,
+        "numpy_configuration_sha256": hashlib.sha256(
+            numpy_build.encode("utf-8")
+        ).hexdigest(),
+        "scipy_version": scipy.__version__,
     }
 
 
@@ -449,6 +489,16 @@ def _field_records(adapter, components: tuple[str, ...]) -> dict[str, object]:
     return records
 
 
+def _field_arrays(
+    adapter, components: tuple[str, ...]
+) -> dict[str, np.ndarray]:
+    arrays = {}
+    for name in components:
+        arrays[name] = _tensor_array(adapter.fields[name])
+        arrays[f"{name}.hat"] = _tensor_array(adapter.fields[f"{name}.hat"])
+    return arrays
+
+
 def functional_continuation_records(state) -> dict[str, object]:
     return {
         "q_physical": _tensor_record(state[0]),
@@ -457,8 +507,19 @@ def functional_continuation_records(state) -> dict[str, object]:
     }
 
 
+def functional_continuation_arrays(state) -> dict[str, np.ndarray]:
+    return {
+        "q_physical": _tensor_array(state[0]),
+        "q_spectral": _tensor_array(state[1]),
+    }
+
+
 def periodic_continuation_records(adapter) -> dict[str, object]:
     return _field_records(adapter, tuple(Q_COMPONENTS))
+
+
+def periodic_continuation_arrays(adapter) -> dict[str, np.ndarray]:
+    return _field_arrays(adapter, tuple(Q_COMPONENTS))
 
 
 def channel_complete_continuation_records(adapter) -> dict[str, object]:
@@ -470,8 +531,21 @@ def channel_complete_continuation_records(adapter) -> dict[str, object]:
     return records
 
 
+def channel_complete_continuation_arrays(adapter) -> dict[str, np.ndarray]:
+    arrays = _field_arrays(
+        adapter,
+        (*tuple(Q_COMPONENTS), *tuple(VELOCITY_COMPONENTS), "p"),
+    )
+    arrays["pressure_guess"] = _tensor_array(adapter.capture_pressure_guess())
+    return arrays
+
+
 def plane_continuation_records(adapter) -> dict[str, object]:
     return _field_records(adapter, tuple(Q_COMPONENTS))
+
+
+def plane_continuation_arrays(adapter) -> dict[str, np.ndarray]:
+    return _field_arrays(adapter, tuple(Q_COMPONENTS))
 
 
 def legacy_channel_continuation_records(adapter) -> dict[str, object]:
@@ -481,6 +555,15 @@ def legacy_channel_continuation_records(adapter) -> dict[str, object]:
     )
     records["pressure_guess"] = _tensor_record(adapter.capture_pressure_guess())
     return records
+
+
+def legacy_channel_continuation_arrays(adapter) -> dict[str, np.ndarray]:
+    arrays = _field_arrays(
+        adapter,
+        (*tuple(Q_COMPONENTS), *tuple(VELOCITY_COMPONENTS), "p"),
+    )
+    arrays["pressure_guess"] = _tensor_array(adapter.capture_pressure_guess())
+    return arrays
 
 
 def _case_record(directory: Path, continuation: dict[str, object]) -> dict[str, object]:
@@ -625,44 +708,162 @@ def _assert_records(actual: dict[str, object], expected: dict[str, object]) -> N
         raise AssertionError("continued checkpoint state differs from v0.2.0")
 
 
-def replay_case(case: str, fixture_root: Path, work_root: Path) -> None:
-    manifest = json.loads((fixture_root / "manifest.json").read_text())
-    expected = manifest["cases"][case]["continuation"]
+def _assert_exact_payload(
+    directory: Path,
+    restored: dict[str, torch.Tensor | np.ndarray],
+) -> dict[str, object]:
+    payloads = sorted(directory.glob("*.npy"))
+    expected_names = {path.name for path in payloads}
+    if set(restored) != expected_names:
+        raise AssertionError(
+            f"restored payload names differ: {set(restored)!r} != "
+            f"{expected_names!r}"
+        )
+    records = {}
+    for path in payloads:
+        expected = np.load(path, allow_pickle=False)
+        value = restored[path.name]
+        actual = _tensor_array(value) if isinstance(value, torch.Tensor) else value
+        if actual.dtype != expected.dtype or actual.shape != expected.shape:
+            raise AssertionError(f"restored payload layout differs for {path.name}")
+        if not np.array_equal(actual, expected):
+            raise AssertionError(f"restored payload bytes differ for {path.name}")
+        records[path.name] = _array_record(actual)
+    return {
+        "equivalence": "bitwise",
+        "payload_count": len(records),
+        "payloads": records,
+    }
+
+
+def _component_payloads(
+    *,
+    spatial: dict[str, torch.Tensor],
+    spectral: dict[str, torch.Tensor],
+    spatial_prefix: str,
+    spectral_prefix: str,
+    extra: dict[str, torch.Tensor] | None = None,
+) -> dict[str, torch.Tensor]:
+    payloads = {
+        f"{spatial_prefix}__{name}.npy": value
+        for name, value in spatial.items()
+    }
+    payloads.update(
+        {
+            f"{spectral_prefix}__{name}.npy": value
+            for name, value in spectral.items()
+        }
+    )
+    if extra:
+        payloads.update(extra)
+    return payloads
+
+
+def _run_replay_case(
+    case: str, fixture_root: Path, work_root: Path
+) -> tuple[dict[str, object], dict[str, np.ndarray], dict[str, object]]:
     directory = fixture_root / case
     if case == "functional_periodic":
         runtime = build_periodic_functional(work_root)
         restored = runtime.checkpoint_bridge.import_checkpoint(directory)
-        actual = functional_continuation_records(
-            runtime.step(restored.state, _control(runtime), 1)
-        )
+        payloads = {}
+        for index, name in enumerate(Q_COMPONENTS):
+            payloads[f"spatial__{name}.npy"] = restored.state[0][index]
+            payloads[f"spectral__{name}.npy"] = restored.state[1][index]
+        payload_report = _assert_exact_payload(directory, payloads)
+        continued = runtime.step(restored.state, _control(runtime), 1)
+        actual = functional_continuation_records(continued)
+        arrays = functional_continuation_arrays(continued)
     elif case == "functional_channel":
         runtime = build_channel_functional(work_root)
         restored = runtime.checkpoint_bridge.import_checkpoint(directory)
-        actual = functional_continuation_records(
-            runtime.step(restored.state, _control(runtime), 1)
+        payload_report = _assert_exact_payload(
+            directory,
+            {
+                "state__q_physical.npy": restored.state[0],
+                "state__q_spectral.npy": restored.state[1],
+            },
         )
+        continued = runtime.step(restored.state, _control(runtime), 1)
+        actual = functional_continuation_records(continued)
+        arrays = functional_continuation_arrays(continued)
     elif case == "production_periodic":
         run_spec, adapter = build_periodic_production(work_root)
         checkpoint = load_periodic_checkpoint(directory)
+        payload_report = _assert_exact_payload(
+            directory,
+            _component_payloads(
+                spatial=dict(checkpoint.evolved_spatial),
+                spectral=dict(checkpoint.evolved_spectral),
+                spatial_prefix="spatial",
+                spectral_prefix="spectral",
+            ),
+        )
         restore_periodic_checkpoint(adapter, checkpoint, run_spec=run_spec)
         adapter.advance(1)
         actual = periodic_continuation_records(adapter)
+        arrays = periodic_continuation_arrays(adapter)
     elif case == "production_channel_complete_stress":
         run_spec, adapter = build_channel_complete_stress(work_root)
         load_channel_complete_stress_checkpoint(
             directory, adapter, run_spec=run_spec
         )
+        fields = adapter.fields
+        components = (*tuple(Q_COMPONENTS), *tuple(VELOCITY_COMPONENTS), "p")
+        payload_report = _assert_exact_payload(
+            directory,
+            _component_payloads(
+                spatial={name: fields[name] for name in components},
+                spectral={name: fields[f"{name}.hat"] for name in components},
+                spatial_prefix="spatial",
+                spectral_prefix="spectral",
+                extra={
+                    "backend__pressure_guess.npy": adapter.capture_pressure_guess()
+                },
+            ),
+        )
         adapter.advance(1)
         actual = channel_complete_continuation_records(adapter)
+        arrays = channel_complete_continuation_arrays(adapter)
     elif case == "production_plane_legacy":
         run_spec, adapter = build_plane_legacy(work_root)
         checkpoint = load_plane_checkpoint(directory)
+        payload_report = _assert_exact_payload(
+            directory,
+            _component_payloads(
+                spatial=dict(checkpoint.evolved_spatial),
+                spectral=dict(checkpoint.evolved_spectral),
+                spatial_prefix="evolved_spatial",
+                spectral_prefix="evolved_spectral",
+            ),
+        )
         restore_plane_checkpoint(adapter, checkpoint, run_spec=run_spec)
         adapter.advance(1)
         actual = plane_continuation_records(adapter)
+        arrays = plane_continuation_arrays(adapter)
     elif case == "production_legacy_channel":
         run_spec, adapter = build_legacy_channel(work_root)
         checkpoint = load_channel_checkpoint(directory)
+        payload_report = _assert_exact_payload(
+            directory,
+            _component_payloads(
+                spatial=dict(checkpoint.evolved_spatial),
+                spectral=dict(checkpoint.evolved_spectral),
+                spatial_prefix="evolved_spatial",
+                spectral_prefix="evolved_spectral",
+                extra={
+                    **{
+                        f"algebraic_spatial__{name}.npy": value
+                        for name, value in checkpoint.algebraic_spatial.items()
+                    },
+                    **{
+                        f"algebraic_spectral__{name}.npy": value
+                        for name, value in checkpoint.algebraic_spectral.items()
+                    },
+                    "persistent__pressure_guess.npy": checkpoint.pressure_guess,
+                },
+            ),
+        )
         restore_channel_checkpoint(
             adapter,
             checkpoint,
@@ -670,20 +871,207 @@ def replay_case(case: str, fixture_root: Path, work_root: Path) -> None:
         )
         adapter.advance(1)
         actual = legacy_channel_continuation_records(adapter)
+        arrays = legacy_channel_continuation_arrays(adapter)
     else:
         raise ValueError(f"unknown fixture case: {case}")
-    _assert_records(actual, expected)
+    return actual, arrays, payload_report
+
+
+def _oracle_array_filename(name: str) -> str:
+    return name.replace(".", "__") + ".npy"
+
+
+def generate_continuation_oracle(
+    fixture_root: Path, output: Path
+) -> dict[str, object]:
+    """Write reference continuations separately from the immutable checkpoints."""
+
+    if output.exists():
+        raise FileExistsError(f"continuation oracle already exists: {output}")
+    fixture_manifest = json.loads(
+        (fixture_root / "manifest.json").read_text(encoding="utf-8")
+    )
+    output.mkdir(parents=True)
+    work = output / ".generation_work"
+    work.mkdir()
+    cases = {}
+    for case in sorted(fixture_manifest["cases"]):
+        actual, arrays, payload_report = _run_replay_case(
+            case, fixture_root, work / case
+        )
+        expected = fixture_manifest["cases"][case]["continuation"]
+        _assert_records(actual, expected)
+        case_directory = output / case
+        case_directory.mkdir()
+        array_records = {}
+        for name, array in sorted(arrays.items()):
+            filename = _oracle_array_filename(name)
+            path = case_directory / filename
+            np.save(path, array, allow_pickle=False)
+            array_records[name] = {
+                **_array_record(array),
+                "file": f"{case}/{filename}",
+                "file_sha256": _sha256(path),
+            }
+        cases[case] = {
+            "arrays": array_records,
+            "payload_validation": payload_report,
+        }
+    import shutil
+
+    shutil.rmtree(work)
+    manifest = {
+        "oracle_schema_version": CONTINUATION_ORACLE_SCHEMA_VERSION,
+        "checkpoint_fixture_tree_sha256": _tree_sha256(fixture_root),
+        "numerical_build_fingerprint": numerical_build_fingerprint(),
+        "tolerance_policy": {
+            "matching_build": "bitwise",
+            "other_builds": "dtype_epsilon",
+            "epsilon_multiplier": CONTINUATION_TOLERANCE_EPS_MULTIPLIER,
+        },
+        "cases": cases,
+    }
+    (output / "manifest.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return manifest
+
+
+def _real_dtype(dtype: np.dtype) -> np.dtype:
+    return np.empty((), dtype=dtype).real.dtype
+
+
+def _compare_continuation(
+    actual_records: dict[str, object],
+    actual_arrays: dict[str, np.ndarray],
+    expected_records: dict[str, object],
+    oracle_root: Path,
+    case: str,
+) -> dict[str, object]:
+    oracle_manifest = json.loads(
+        (oracle_root / "manifest.json").read_text(encoding="utf-8")
+    )
+    reference_fingerprint = oracle_manifest["numerical_build_fingerprint"]
+    observed_fingerprint = numerical_build_fingerprint()
+    matching_build = observed_fingerprint == reference_fingerprint
+    mode = "bitwise" if matching_build else "dtype_epsilon"
+    oracle_case = oracle_manifest["cases"][case]["arrays"]
+    if set(actual_arrays) != set(oracle_case):
+        raise AssertionError("continuation array names differ from the oracle")
+
+    comparisons = {}
+    for name, actual in sorted(actual_arrays.items()):
+        record = oracle_case[name]
+        path = oracle_root / record["file"]
+        if _sha256(path) != record["file_sha256"]:
+            raise AssertionError(f"continuation oracle checksum differs for {name}")
+        expected = np.load(path, allow_pickle=False)
+        if actual.shape != expected.shape or actual.dtype != expected.dtype:
+            raise AssertionError(f"continuation layout differs for {name}")
+        if not np.isfinite(actual).all():
+            raise AssertionError(f"continuation is non-finite for {name}")
+        epsilon = float(np.finfo(_real_dtype(actual.dtype)).eps)
+        tolerance = CONTINUATION_TOLERANCE_EPS_MULTIPLIER * epsilon
+        difference = np.abs(actual - expected)
+        max_abs = float(difference.max(initial=0.0))
+        if matching_build:
+            passed = np.array_equal(actual, expected)
+        else:
+            passed = np.allclose(
+                actual,
+                expected,
+                rtol=tolerance,
+                atol=tolerance,
+                equal_nan=False,
+            )
+        if not passed:
+            raise AssertionError(
+                f"continued checkpoint state differs for {name}: "
+                f"mode={mode}, max_abs={max_abs}, tolerance={tolerance}"
+            )
+        expected_layout = expected_records[name]
+        if expected_layout["shape"] != list(actual.shape) or (
+            expected_layout["dtype"] != str(actual.dtype)
+        ):
+            raise AssertionError(f"continuation manifest layout differs for {name}")
+        if matching_build and actual_records[name] != expected_layout:
+            raise AssertionError(
+                f"matching-build continuation digest differs for {name}"
+            )
+        comparisons[name] = {
+            "dtype": str(actual.dtype),
+            "epsilon": epsilon,
+            "rtol": 0.0 if matching_build else tolerance,
+            "atol": 0.0 if matching_build else tolerance,
+            "max_abs_error": max_abs,
+            "passed": True,
+        }
+
+    scalar_keys = set(expected_records) - set(actual_arrays)
+    if set(actual_records) - set(actual_arrays) != scalar_keys:
+        raise AssertionError("continuation scalar record names differ")
+    for name in scalar_keys:
+        if actual_records[name] != expected_records[name]:
+            raise AssertionError(f"continuation scalar differs for {name}")
+    return {
+        "mode": mode,
+        "matching_numerical_build": matching_build,
+        "reference_build": reference_fingerprint,
+        "observed_build": observed_fingerprint,
+        "arrays": comparisons,
+    }
+
+
+def replay_case(
+    case: str,
+    fixture_root: Path,
+    work_root: Path,
+    oracle_root: Path | None = None,
+) -> dict[str, object]:
+    manifest = json.loads(
+        (fixture_root / "manifest.json").read_text(encoding="utf-8")
+    )
+    expected = manifest["cases"][case]["continuation"]
+    actual, arrays, payload_report = _run_replay_case(
+        case, fixture_root, work_root
+    )
+    if oracle_root is None:
+        oracle_root = (
+            fixture_root.parent.parent
+            / "oracles"
+            / "v0_2_0_checkpoint_continuations_v1"
+        )
+    continuation_report = _compare_continuation(
+        actual, arrays, expected, oracle_root, case
+    )
+    return {
+        "case": case,
+        "payload": payload_report,
+        "continuation": continuation_report,
+    }
 
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--fixture-root", type=Path)
+    parser.add_argument("--continuation-oracle", action="store_true")
     return parser.parse_args()
 
 
 def main() -> int:
     args = _parse_args()
-    manifest = generate(args.output.resolve())
+    if args.continuation_oracle:
+        if args.fixture_root is None:
+            raise SystemExit("--fixture-root is required for a continuation oracle")
+        manifest = generate_continuation_oracle(
+            args.fixture_root.resolve(), args.output.resolve()
+        )
+    else:
+        if args.fixture_root is not None:
+            raise SystemExit("--fixture-root requires --continuation-oracle")
+        manifest = generate(args.output.resolve())
     print(json.dumps(manifest, indent=2, sort_keys=True))
     return 0
 

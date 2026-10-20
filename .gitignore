@@ -22,4 +22,6 @@ data_plane*/
 /Untitled.ipynb
 *.npy
 *.npz
+!tests/fixtures/v0_2_0_checkpoints_v1/**/*.npy
+!tests/oracles/v0_2_0_checkpoint_continuations_v1/**/*.npy
 *.mp4
