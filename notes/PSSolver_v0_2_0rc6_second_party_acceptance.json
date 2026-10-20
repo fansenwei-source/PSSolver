@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "record": "PSSolver v0.2.0rc6 independent second-party post-release acceptance",
+  "date": "2026-10-19",
+  "classification": "PASS_RC6_INDEPENDENT_SECOND_PARTY_POST_RELEASE_ACCEPTANCE",
+  "acceptance_complete": true,
+  "registration_only": true,
+  "qualified_source": {
+    "package_source_commit": "fd7323d5e9ef87c537ed07476f8bd50b982af443",
+    "record_commit_is_package_source": false,
+    "requires_h100_requalification": false
+  },
+  "release_identity": {
+    "release_id": 417781605,
+    "tag": "v0.2.0rc6",
+    "tag_object_sha": "533e3fb4254319d1a6a9a9a0e463447339c18b36",
+    "tag_target_commit": "fd7323d5e9ef87c537ed07476f8bd50b982af443",
+    "draft": false,
+    "prerelease": true,
+    "wheel_sha256": "9fe8bd47fc2cd194a0263bb9e45cc37e4a29fffec329fd5356f39296b2efdad5",
+    "sdist_sha256": "e6f2013d7d16c3f265759017bae8b5c8d0c1f6a43b54ff52476c9da5c296b907"
+  },
+  "external_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_v0_2_0rc6_claude_acceptance_20261019_v1",
+    "manifest_entries": 34198,
+    "manifest_passed": 34198,
+    "manifest_sha256": "8e3f190aca37113d54414e833ed7e3695b7703040e2a4662e9edde133353ceaa",
+    "complete_present": true,
+    "independent_results_seal": "a7/independent_results_seal.json",
+    "sealed_before_codex_records_were_read": true,
+    "source_report_json_sha256": "7a789e8ef57c36be96502f7ad51dfe087a3b1fbc0205ff52385c7d0c8c1a393c",
+    "source_report_markdown_sha256": "aba519eeb03e2777762668ffb2d99a3f42a21b8fa5ef4d1401011d75648e0b5d"
+  },
+  "acceptance_stages": {
+    "A0_git_and_release_identity": "PASS",
+    "A1_artifact_content_identity": "PASS",
+    "A2_fresh_wheel_install": "PASS",
+    "A3_fresh_sdist_install": "PASS",
+    "A4_installed_wheel_public_smoke": "PASS",
+    "A5_tag_worktree_cpu_suite": "PASS",
+    "A5_archive_only_failure_attribution": "PASS",
+    "A6_h100_evidence_read_only_rehash": "PASS",
+    "A7_codex_cross_check": "PASS"
+  },
+  "source_cpu_suite": {
+    "passed": 4068,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected": 7,
+    "subtests_passed": 8
+  },
+  "h100_evidence": {
+    "independently_rehashed": true,
+    "release_smoke_job_id": 10901816,
+    "release_smoke_state": "COMPLETED",
+    "release_smoke_exit_code": "0:0",
+    "control_manifest": "716/716 PASS",
+    "control_manifest_sha256": "f7e39759c6e1d62990d6eeeaf9fc18c8d68979889a17f1c5c0580996566bdda6",
+    "scratch_manifest": "14/14 PASS",
+    "scratch_manifest_sha256": "1f9bd052266d794f9eef23785bc88ebb76c82301324702d5937b3e60c18acb2f"
+  },
+  "closeout": {
+    "E1_no_release_blocker": "PASS",
+    "E2_no_regression_vs_rc5": "PASS",
+    "E3_rc6_claims_independently_verified": "PASS",
+    "E4_h100_cross_device_checkpoint": "PASS_BY_PRIOR_EVIDENCE",
+    "E5_control_suite_on_rc6_wheel": "PASS",
+    "release_blockers": [],
+    "regressions": []
+  },
+  "release_decision": {
+    "keep_rc6_prerelease_unchanged": true,
+    "open_rc7": false,
+    "v0_2_0_source_is_rc6_plus_version_and_changelog_only": true,
+    "n1_target_release": "v0.2.1",
+    "n1_blocks_v0_2_0": false,
+    "reason": "N-1 is fail-closed, produces no incorrect result or data loss, predates rc6, and does not affect the current Control research workflow."
+  },
+  "known_follow_up": {
+    "N-1": "v0.2.1: NFS-compatible no-clobber checkpoint publication",
+    "C1-05": "0.2.x/0.3",
+    "C1-10": "0.2.x/0.3",
+    "C1-11": "0.2.x/0.3",
+    "C2-17": "0.2.x/0.3",
+    "C2-18": "0.2.x/0.3"
+  },
+  "scope": {
+    "tag_or_release_modified": false,
+    "runtime_modified": false,
+    "checkpoint_schema_modified": false,
+    "production_default_changed": false,
+    "functional_api_version_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "h100_submitted": false,
+    "push_performed": false,
+    "pypi_published": false
+  }
+}
