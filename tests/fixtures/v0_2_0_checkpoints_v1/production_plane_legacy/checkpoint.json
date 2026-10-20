@@ -1,0 +1,449 @@
+{
+  "backend_restart": {
+    "kind": "legacy_plane_stateless",
+    "state_keys": []
+  },
+  "compatibility_identity": {
+    "backend_restart": {
+      "kind": "backend_restart",
+      "payload": {
+        "kind": "legacy_plane_stateless",
+        "state_keys": []
+      },
+      "schema_version": 1,
+      "version": "plane.backend.v1"
+    },
+    "derivative_dynamics": null,
+    "family": "plane_workflow",
+    "forward_dynamics": {
+      "kind": "forward_dynamics",
+      "payload": {
+        "lifting_dynamics": null,
+        "lifting_equation_version": "none",
+        "run_spec_dynamics": {
+          "kind": "forward_dynamics",
+          "payload": {
+            "dynamics_versions": {
+              "q_evolution": "complete_stress_beris_edwards.v1",
+              "spectral_refresh": "semi_implicit_euler_refresh.v1",
+              "stokes_nyquist": "plane_free_slip.periodic_nyquist_zero.v2"
+            },
+            "run_spec": {
+              "boundaries": {
+                "distortion_odd_z": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "dirichlet"
+                  }
+                ],
+                "normal_velocity": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "dirichlet"
+                  }
+                ],
+                "pressure_modal": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "neumann"
+                  }
+                ],
+                "q": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "neumann"
+                  }
+                ],
+                "tangential_velocity": [
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "periodic"
+                  },
+                  {
+                    "is_homogeneous": true,
+                    "kind": "neumann"
+                  }
+                ],
+                "wall_normal_axis": 2
+              },
+              "dt": 0.005,
+              "geometry": {
+                "axis_topologies": [
+                  "periodic",
+                  "periodic",
+                  "bounded"
+                ],
+                "bounded_axes": [
+                  2
+                ],
+                "domain": {
+                  "axis_names": [
+                    "x",
+                    "y",
+                    "z"
+                  ],
+                  "grid_placement": "cell_centered",
+                  "lengths": [
+                    8.0,
+                    9.0,
+                    20.0
+                  ],
+                  "shape": [
+                    7,
+                    7,
+                    6
+                  ]
+                },
+                "name": "plane_slab",
+                "periodic_axes": [
+                  0,
+                  1
+                ]
+              },
+              "model": {
+                "beta": -1.0,
+                "eta": 0.6666666666666666,
+                "flow_alignment": 0.3,
+                "gamma": 2.94,
+                "ldg_a": 0.0,
+                "ldg_b": -0.3,
+                "ldg_c": 0.3,
+                "molecular_field_linear_space": "spectral",
+                "pointwise_execution": "eager",
+                "stress_divergence_sum_space": "spectral"
+              },
+              "numerics": {
+                "dealias_rule": "cubic_half",
+                "hermitian_axis": 1,
+                "precision": "float64",
+                "projected_transform_execution": "truncated",
+                "spectral_storage": "hermitian_half",
+                "transform_execution_order": "real_first"
+              },
+              "preset": {
+                "activity_number": 18.0,
+                "activity_ratio_zeta_over_k": 0.81,
+                "equilibrium_q_amplitude": 0.5,
+                "equilibrium_s": 0.33333333333333337,
+                "frank_k": 0.012345679012345678,
+                "height": 20.0,
+                "ldg_a": 0.0,
+                "ldg_a_over_gamma": 0.0,
+                "ldg_b": -0.3,
+                "ldg_b_over_gamma": -0.10204081632653061,
+                "ldg_c": 0.3,
+                "ldg_c_over_gamma": 0.10204081632653061,
+                "ldg_l1": 0.024691358024691357,
+                "ldg_l1_over_gamma": 0.008398421096833794,
+                "parameterization": "paper-window",
+                "rotational_viscosity": 2.94,
+                "zeta": 0.01
+              },
+              "runtime_controls": {
+                "disable_q_gradient_reuse": false,
+                "tf32": "off"
+              },
+              "schema_version": 1,
+              "spectral_refresh": {
+                "effective_interval_steps": 3,
+                "effective_interval_time": 0.015,
+                "mode": "steps",
+                "requested_interval_steps": 3,
+                "requested_interval_time": null
+              },
+              "zero_mode": {
+                "friction_mode_fric": 0.1,
+                "policy": "zero_mean"
+              }
+            }
+          },
+          "schema_version": 1,
+          "version": "plane.run_spec_dynamics.v2"
+        }
+      },
+      "schema_version": 1,
+      "version": "plane.forward.v2"
+    },
+    "runtime_path": "legacy_production",
+    "schema_version": 1,
+    "state_layout": {
+      "kind": "state_layout",
+      "payload": {
+        "component_order": [
+          "Qxx",
+          "Qxy",
+          "Qxz",
+          "Qyy",
+          "Qyz"
+        ],
+        "spatial": {
+          "Qxx": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              7,
+              6
+            ]
+          },
+          "Qxy": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              7,
+              6
+            ]
+          },
+          "Qxz": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              7,
+              6
+            ]
+          },
+          "Qyy": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              7,
+              6
+            ]
+          },
+          "Qyz": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              7,
+              6
+            ]
+          }
+        },
+        "spectral": {
+          "Qxx": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              4,
+              6
+            ]
+          },
+          "Qxy": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              4,
+              6
+            ]
+          },
+          "Qxz": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              4,
+              6
+            ]
+          },
+          "Qyy": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              4,
+              6
+            ]
+          },
+          "Qyz": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              4,
+              6
+            ]
+          }
+        }
+      },
+      "schema_version": 1,
+      "version": "plane.state.v2"
+    }
+  },
+  "compatibility_identity_sha256": "d3b874e92e8d65f890a5ea66e44a0aca647ae91fafdb68ae7a0dffef4935665c",
+  "completed_steps": 1,
+  "evolved_components": [
+    "Qxx",
+    "Qxy",
+    "Qxz",
+    "Qyy",
+    "Qyz"
+  ],
+  "format_version": 2,
+  "integrator": {
+    "refresh_count": 0,
+    "spectral_refresh_interval": 3,
+    "step_count": 1
+  },
+  "run_provenance": {
+    "legacy_runtime_identity_sha256": "5d841d61158d3935bab4de86bcaeb8d6e0458ff680f19cd4a128a253d657b633"
+  },
+  "runtime_path": "legacy_production",
+  "tensor_files": {
+    "evolved_spatial": {
+      "Qxx": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qxx.npy",
+        "sha256": "8321fd890bd817593d28166de0aa6225cdd1068269f25176009b39e5069d9354",
+        "shape": [
+          1,
+          7,
+          7,
+          6
+        ]
+      },
+      "Qxy": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qxy.npy",
+        "sha256": "979cf4225686bf52e1bb9b6259a3a8e86f77acba108355e1bf3cbcff66122bcc",
+        "shape": [
+          1,
+          7,
+          7,
+          6
+        ]
+      },
+      "Qxz": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qxz.npy",
+        "sha256": "198316917a19ac76515963e3d7238930fd4bd33060eeb8548ee08702a029dbaf",
+        "shape": [
+          1,
+          7,
+          7,
+          6
+        ]
+      },
+      "Qyy": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qyy.npy",
+        "sha256": "f710a0c5522657709e3ec87d0657808f0b87c304450a1633490fbec6f9663f91",
+        "shape": [
+          1,
+          7,
+          7,
+          6
+        ]
+      },
+      "Qyz": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qyz.npy",
+        "sha256": "e7ab1c66c98021e28b889a1784e5badd4285ea13d5c71cd07d7608a3b8dbdfba",
+        "shape": [
+          1,
+          7,
+          7,
+          6
+        ]
+      }
+    },
+    "evolved_spectral": {
+      "Qxx": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qxx.npy",
+        "sha256": "75bbc89c6dbb7758d4d6da6a12e7cbd159eef4d2893900ebfd960ebcb228a972",
+        "shape": [
+          1,
+          7,
+          4,
+          6
+        ]
+      },
+      "Qxy": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qxy.npy",
+        "sha256": "9a3fc8eb8abbad3f199e4b14849f3ef067315c746d0dbada42728e2ff55b0d5b",
+        "shape": [
+          1,
+          7,
+          4,
+          6
+        ]
+      },
+      "Qxz": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qxz.npy",
+        "sha256": "34f3b17bd570d62b999183f0282777073fce6178245edd50fd2ca56d59d94615",
+        "shape": [
+          1,
+          7,
+          4,
+          6
+        ]
+      },
+      "Qyy": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qyy.npy",
+        "sha256": "6e62f3fc573b30f1264992d82be8d30305a118cbb1d6761288c50d57f65f3acf",
+        "shape": [
+          1,
+          7,
+          4,
+          6
+        ]
+      },
+      "Qyz": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qyz.npy",
+        "sha256": "3ef2d385f0fac96a1fc18ac1ad08ea81c38e4dc0a7560375458047516de9b8e6",
+        "shape": [
+          1,
+          7,
+          4,
+          6
+        ]
+      }
+    }
+  }
+}
