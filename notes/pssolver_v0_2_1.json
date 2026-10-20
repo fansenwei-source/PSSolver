@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "release": "0.2.1",
+  "date": "2026-10-20",
+  "status": "local_release_preparation_pending_remote_authorization",
+  "classification": "PASS_V0_2_1_RELEASE_SOURCE_PREPARATION",
+  "source": {
+    "base_release": "v0.2.0",
+    "base_release_commit": "6d2934e73b543f6652d112733657775333e0f396",
+    "base_release_tag_object": "5ef13697b618689b34d3353d3968632ed92086f3",
+    "maintenance_branch": "maint/v0.2",
+    "release_branch": "release/pssolver-v0.2.1",
+    "release_preparation_parent": "98f9a7d8579c23a7b86cf7011ce0a45bb7328193",
+    "qualified_runtime_source": "15670eb264a44c6707aeb1695b74e6cdbb34f611",
+    "n1_implementation_commit": "927dc89aa63bcee9b03248f52662389bc947c47a",
+    "cpu_evidence_commit": "80cac090dadc1b205a7ecaf655d0bf027caf0b1d",
+    "h100_evidence_commit": "98f9a7d8579c23a7b86cf7011ce0a45bb7328193",
+    "record_commit_is_release_source": true,
+    "runtime_delta_from_v0_2_0": [
+      "pssolver/io/checkpoint.py: NFS-compatible fail-closed no-clobber checkpoint publication",
+      "pssolver/_version.py: 0.2.0 -> 0.2.1"
+    ],
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "provider_identity_changed": false,
+    "production_default_changed": false,
+    "v0_2_0_tag_rewritten": false,
+    "v0_2_0_assets_replaced": false
+  },
+  "qualification": {
+    "implementation_record": "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json",
+    "implementation_record_sha256": "8d84221555cfc4d982f681c07ed83ad3b630747d5cac633e1b140e71bd5b577f",
+    "cpu_record": "notes/PSSolver_v0_2_1_n1_real_nfs_cpu_qualification.json",
+    "cpu_record_sha256": "52f98d88c0a18b24db8ea14cf004e280216d17269f0d76a79039ce8d9363eafa",
+    "h100_record": "notes/PSSolver_v0_2_1_n1_h100_qualification.json",
+    "h100_record_sha256": "b93fc05759fc83b1d04db5a1134ec72763361381d27fd6a7b48c940f89c84321",
+    "classification": "PASS_V0_2_1_N1_CUMULATIVE_QUALIFICATION",
+    "h100_job_id": 10902665,
+    "h100_state": "COMPLETED",
+    "h100_exit_code": "0:0",
+    "control_manifest_sha256": "694043a8a8f01dba5506482d32273d1cc65ef2ad9fc4290a446d6002f1b26e0c",
+    "scratch_manifest_sha256": "2ec118f3c089a25377cbccad3da8d363bbb30d0cee61f42049d250f1076e6742",
+    "h100_rerun_required_for_version_only_release_step": false
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "0325420bafc4a4293dcb54ceb946fff7ed58ed50f8a0e28e11170e8c4f11adc1",
+      "current_sha256": "524d9007c0e3ffb222aaf498bbe7bbf1738a802197516606f996f164b87f99f9",
+      "reason": "Add the 0.2.1 maintenance-release scope and cumulative N-1 qualification evidence without rewriting the v0.2.0 release record."
+    },
+    "README.md": {
+      "historical_sha256": "7c30cf3961fabc89db0f7689b56d52f31fb093e168dc88d839f8e5d6c337ffd1",
+      "current_sha256": "2efd8c4cc13af769b3377a9a6c051ddc4754e34c0f7008202004ee4089a1aef3",
+      "reason": "Synchronize the user-facing package version from 0.2.0 to 0.2.1."
+    },
+    "pssolver/_version.py": {
+      "historical_sha256": "c9b360ae0c00d85a554cd64fee23fabb4e800fba339fc57704e40e22868ee2dd",
+      "current_sha256": "77519f2a5272ae55dcb0a179c2cf6779cee1d1d7a06da0cb3a471394b017b2e0",
+      "reason": "Promote only the public patch version from 0.2.0 to 0.2.1 after N-1 qualification."
+    },
+    "tests/test_release_v0_1.py": {
+      "historical_sha256": "6abb669cd4172c44efad5ace6532b15640fee4bbc537f9c5c9c28b32a9556ae4",
+      "current_sha256": "3e4cc530a6250022a8dbd4349de9819ea5842837a942bc62185a2fc81d7afa1f",
+      "reason": "Advance the historical packaging contract to the registered 0.2.1 README successor."
+    },
+    "tests/test_release_v0_2_rc6.py": {
+      "historical_sha256": "9311253e9b516b1250b35a6354b790ab669a4160fbbcdc534f45c5703035763e",
+      "current_sha256": "0de48b50b64205c2d6af7639ce027d59fc90cf62096a9832927fb5eecb546c9f",
+      "reason": "Preserve the immutable rc6 evidence while recognizing the qualified 0.2.1 patch successor."
+    },
+    "tests/test_release_v0_2_0_final.py": {
+      "historical_sha256": "fdf8f56093f1beac4d77003b343987bd0138b8be46966b1c31a5dca2c561aafb",
+      "current_sha256": "9d68216ae8b558f7588872951ef87e5e193a268ec1c4aa3be00dd81349bd5a04",
+      "reason": "Extend the forward-only v0.2.0 evidence chain through the registered 0.2.1 patch release."
+    },
+    "tests/test_v0_2_1_n1_checkpoint_nfs_record.py": {
+      "historical_sha256": "800f8d39a12621feafa82993ac67acb646cc7ddcd12b183eb08a38268ae4ac89",
+      "current_sha256": "738dbe2afb93c765270f05c81e4ee814c8a03f9975fdefdc81a25712f459fb5e",
+      "reason": "Extend the N-1 implementation evidence chain through the 0.2.1 release record without rewriting the historical record."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "f6164def4090079bf3da2fb8ed80139fd2f0e498a09a03f9b682f3751acb7d85",
+      "current_sha256": "bac73cbe618931d6e362b4e18185d83e247ebb906f8ffedcfb2f9125f1926a36",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the R5-1 record."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "599668b95b4b671cea61fa63e95b1643cb2de5ccc9a5cc82600c0ab66b1fbb86",
+      "current_sha256": "139c37c3b91722247de4f3601596e9652be965e177df3eaaa6c486fa6f2cd45c",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the R5-10 record."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "0dfcc271e7a3b1722d92058f3c99194bc40349d4a1871f2a0209541926d08daa",
+      "current_sha256": "f53cdd525a468afb2423bdfd221678ec3e0f05d22db9981fe0d5d09266798477",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the R5-11 record."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "c04416cc6d86d957b25e2a44ff5adfdba179885351269a159fd8cf4b480f5dbd",
+      "current_sha256": "fa4069bed6140662811c7a230ed8752c1bb5bc934ff6133c8ce1c686f89d11d3",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the R5-12 record."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "277250b996b45dd3f1efe9c30dfed546dad70349790c68502b5bc1cfaa9fa733",
+      "current_sha256": "af07d5d1f2f7560621afc9835a80d50b9e08a97ad2950804862dc62c56146630",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the R5-13 record."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "1c2e0e2aebd8b7e57b6ca26fd3b8cbfc169505084f495f0794777f9e9461a5a7",
+      "current_sha256": "a9f30ec21d7d2c8f0624830e434807d6015fd849c0228ad46b64d7d4523e2c0d",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the R5-2 record."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "696fec964dc8bef2e30dedc4eb236fe4b95211120ee0f3123e99ecea87ec791a",
+      "current_sha256": "96179311db933161c2f0f24332012cfa6a425cfb96641821c4604b275ae29031",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the R5-3 record."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "ab6b8a401a29f310a981e6a74955ae723521a63afca18d31163bf8e63a86efe9",
+      "current_sha256": "c433462466928895ce9fcbd35a69213851215ef221ba4dc1bd719c5a99e56ae0",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the R5-5 record."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "6fd6b8ed2e5971a35cf4b909472902d191419cc30a5c9746d4c3c3f3a33d5687",
+      "current_sha256": "be61d1da905893c1d82d11b0525a233a5f5b1cfdab3b5ae7ba6da7b001ff2902",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the R5-6 record."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "72eb423b40295c429b7e238a2fc74e1fbb2fe568de0b0eee2fb3b88c589409d9",
+      "current_sha256": "ea82923e336feaf05c5e671c1746c4bd5b005a572ab51c60b1ff353db6c79b4c",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the R5-7 record."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "b1a4c2daa4934e7abef82fb5aa956aa47fa0f9ffb909b1939c1186cf6dbd490a",
+      "current_sha256": "d85dde4fb93256757b816a3b33840ead600126ee393d218a2eddc03793c36b4e",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the R5-8 record."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "afab4a859b9391a75032d735c73a1ec7498ba072b86324193593ee4273687414",
+      "current_sha256": "df0fed2b31128c8d8a016424e5eea52ef3251cc3c13fc2b8c4f0ffd5778329f4",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the R5-9 record."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "4e247a988b873baa52fa180a1874ca8da282d0042ac8ce623b1ccd2b421b4bc2",
+      "current_sha256": "8ccd80c366af8b3fd04a11f9015e7ab564effbdec39a85556bd464d6dd3dde59",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the W1 record."
+    },
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": {
+      "historical_sha256": "b0b0980f2f85dd23a6b68fcb498ebc7bf1fe11bd21d68aa130c909c097514f72",
+      "current_sha256": "95dd92ad1815d11f10ad796408b223963f4ca20f70578e4f6038b1e4f370767c",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the RC6-1 record."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "historical_sha256": "e9383380857972194ffb59c6587daeb069c435dc1bc455fcab03ea1cd8e4a868",
+      "current_sha256": "0a9cc85f2f7a9b2fd4d10352a325144b14cbe5b8a3808ac01bfb45cfe8b2382d",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the RC6-2 record."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "historical_sha256": "7c0418072c18f365ce3ad82a3b93697976747e4ef30345ead16e35429b594794",
+      "current_sha256": "5e332686c2ca4402a42f0239ea60f609b90dfae1b2c9ad5cfc44a7c63c8abe19",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the RC6-3 record."
+    },
+    "tests/test_rc6_4_channel_failure_record.py": {
+      "historical_sha256": "e97a7b29f32c66be8049ad35dc7dbbd25cbc5474489e635a23bed5abe4e9b0ae",
+      "current_sha256": "d493b764d6f4610434c6aafa0856fdd953cfaf06ec4a4582fae7af4819b05c59",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the RC6-4 record."
+    },
+    "tests/test_rc6_5_checkpoint_control_flow_record.py": {
+      "historical_sha256": "76e352f94c52f242cb6180db40c7c27cfc8f35e644a9aaf898bf7e4e8fdc1657",
+      "current_sha256": "9ad7750ec9299ce971bcae152707377a4a9296362bd74b320e735b45fd4075a1",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the RC6-5 record."
+    },
+    "tests/test_rc6_6_restart_output_atomicity_record.py": {
+      "historical_sha256": "1aff0cedd2413e9e3d45706972fa72ad52427d7b40be425996b066d23d0fa3fd",
+      "current_sha256": "bea5c3fd3848d62f49b2c7a3a6f631abcc42d70d8e31057f2ac0d620af4a03ce",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the RC6-6 record."
+    },
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": {
+      "historical_sha256": "9ee16496e4c0afaa799e80f5cdc5d9919b1aee78ea2fb32f7dba21e446c51c85",
+      "current_sha256": "1d1d9555ccb1605ccff8ee3926f05b5a71b3c0e13651582a994b343ceb88ec25",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the G-1 glibc record."
+    },
+    "tests/test_rc5_g1_historical_audit_portability.py": {
+      "historical_sha256": "96a113b8e326d50b1402096bd5829eda13473aa7e897e3ecd608120b45caa78c",
+      "current_sha256": "ab72341ff68c012a4818f1256d8674f3ad73a5b1e1fb55ac77ac57024bddfbfb",
+      "reason": "Teach the historical validator to resolve the final v0.2.1 release successor without rewriting the G-1 portability record."
+    }
+  },
+  "release_artifacts": {
+    "source_archive": "pending_clean_build",
+    "sdist": "pending_clean_build",
+    "wheel": "pending_clean_build",
+    "pypi_published": false
+  },
+  "authorization": {
+    "local_release_preparation_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "github_release_authorized": false,
+    "pypi_authorized": false,
+    "h100_rerun_authorized": false
+  }
+}

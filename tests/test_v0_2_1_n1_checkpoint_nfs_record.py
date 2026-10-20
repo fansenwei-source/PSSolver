@@ -10,6 +10,7 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
 
 
 def _record() -> dict[str, object]:
@@ -52,6 +53,9 @@ def test_n1_record_binds_the_implementation_commit_and_sources():
 
 def test_n1_record_is_a_forward_only_historical_successor():
     record = _record()
+    release_successors = json.loads(
+        RELEASE_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     parent = record["git_identity"]["implementation_parent"]
     for relative, successor in record["historical_successor_sources"].items():
         historical = subprocess.run(
@@ -63,7 +67,11 @@ def test_n1_record_is_a_forward_only_historical_successor():
         assert hashlib.sha256(historical).hexdigest() == successor[
             "historical_sha256"
         ]
-        assert _sha256(relative) == successor["current_sha256"]
+        expected = successor["current_sha256"]
+        registration = release_successors.get(relative)
+        if registration is not None and registration["historical_sha256"] == expected:
+            expected = registration["current_sha256"]
+        assert _sha256(relative) == expected
         assert successor["reason"]
 
 

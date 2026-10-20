@@ -54,6 +54,7 @@ FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
 V021_N1_RECORD = ROOT / (
     "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
 )
+V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
 
 
 def _record() -> dict[str, object]:
@@ -88,6 +89,7 @@ def _latest_successor(relative: str, historical: str) -> str:
         RC6_FREEZE_RECORD,
         FINAL_RELEASE_RECORD,
         V021_N1_RECORD,
+        V021_RELEASE_RECORD,
     ):
         registration = json.loads(record_path.read_text(encoding="utf-8"))[
             "historical_successor_sources"

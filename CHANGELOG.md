@@ -1,5 +1,43 @@
 # Changelog
 
+## 0.2.1 — 2026-10-20
+
+Maintenance release over `v0.2.0` containing only the N-1 checkpoint
+publication portability fix and release metadata.  Solver equations, numerical
+algorithms, checkpoint bytes and schemas, Functional API version 1.0, provider
+identity, qualified model--geometry combinations, and production defaults are
+unchanged.
+
+### Fixed
+
+- Preserve the existing `renameat2(RENAME_NOREPLACE)` fast path on supported
+  filesystems while providing a fail-closed no-clobber publication path for
+  NFS filesystems that reject that operation with a positively identified
+  unsupported-operation result.
+- Claim the final NFS name with an atomic inaccessible empty directory and
+  replace only that publisher-owned placeholder with the completed,
+  same-filesystem staging tree.  Existing destinations are never removed,
+  truncated, merged, or overwritten.
+- Verify the complete published checkpoint after a possibly successful rename
+  whose acknowledgement was lost; ambiguous outcomes remain fail-closed and
+  are preserved for diagnosis.
+
+### Qualification
+
+- Local CPU fault-injection, installed-wheel, real `$HOME` and `/scratch1` NFS,
+  directory-fsync, and two-client collision gates passed.
+- H100 Job `10902665` completed successfully.  Periodic and Channel functional
+  runtimes produced byte-identical state, Q, velocity, and pressure between
+  four continuous steps and `2 + checkpoint + restart + 2` on shared NFS.
+- The fast and NFS publication paths write byte-identical checkpoint trees;
+  the selected backend is not serialized into the checkpoint and provider
+  identity remains unchanged.
+
+### Deferred work
+
+- C1-05, C1-10, C1-11, C2-17, and C2-18 remain assigned to later v0.2.x or
+  v0.3 work.  They are outside this narrowly scoped maintenance release.
+
 ## 0.2.0 — 2026-10-19
 
 Stable release of the source and numerical behavior qualified as

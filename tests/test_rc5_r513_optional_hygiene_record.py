@@ -34,6 +34,7 @@ FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
 V021_N1_RECORD = ROOT / (
     "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
 )
+V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
 
 
 def _record() -> dict[str, object]:
@@ -79,6 +80,9 @@ def test_r513_record_binds_new_and_successor_sources():
     n1_successors = json.loads(V021_N1_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    release_successors = json.loads(
+        V021_RELEASE_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     for relative, expected in record["new_sources"].items():
         assert _sha256(relative) == expected
     for relative, registration in record[
@@ -125,6 +129,9 @@ def test_r513_record_binds_new_and_successor_sources():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = n1_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = release_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(relative) == resolved
