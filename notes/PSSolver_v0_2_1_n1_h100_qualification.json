@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-20",
+  "release": "0.2.1",
+  "issue": "N-1",
+  "classification": "PASS_V0_2_1_N1_CUMULATIVE_QUALIFICATION",
+  "status": "cpu_real_nfs_and_small_h100_complete_pending_release_finalization",
+  "qualified_source": {
+    "branch": "maint/v0.2",
+    "commit": "15670eb264a44c6707aeb1695b74e6cdbb34f611",
+    "implementation_commit": "927dc89aa63bcee9b03248f52662389bc947c47a",
+    "cpu_evidence_commit": "80cac090dadc1b205a7ecaf655d0bf027caf0b1d",
+    "package_version_during_qualification": "0.2.0",
+    "record_commit_is_qualified_source": false,
+    "requires_h100_requalification": false
+  },
+  "reused_cpu_qualification": {
+    "record": "notes/PSSolver_v0_2_1_n1_real_nfs_cpu_qualification.json",
+    "record_sha256": "52f98d88c0a18b24db8ea14cf004e280216d17269f0d76a79039ce8d9363eafa",
+    "classification": "PASS_V0_2_1_N1_REAL_NFS_CPU_QUALIFICATION",
+    "control_checksums": "29/29 PASS",
+    "control_manifest_sha256": "9748645f3690e9681d2ba5ea7cf0f85d81aadce4ca92a80aca3d3cd19213822b",
+    "scratch_checksums": "7/7 PASS",
+    "scratch_manifest_sha256": "5c06f84993367c856f9f72d7979494315fc0efbc1f3e4160606dcfdce303d031",
+    "rewritten": false
+  },
+  "installed_wheel": {
+    "sha256": "8068a1d916a8c7939068b53bb496fe768e7e150f58a8c2d3d367b85ecf77849f",
+    "python": "3.10.18",
+    "torch": "2.5.1+cu121",
+    "torch_cuda_runtime": "12.1",
+    "pip_check": "PASS",
+    "source_shadow_import": false
+  },
+  "h100_job": {
+    "job_id": 10902665,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:00:27",
+    "start": "2026-10-20T03:21:55",
+    "end": "2026-10-20T03:22:22",
+    "node": "gpu-h100-4-0",
+    "partition": "hagan-gpu",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "gpu": "NVIDIA H100 PCIe",
+    "visible_cuda_device_count": 1,
+    "allocated_device": "cuda:0",
+    "driver": "550.54.14",
+    "requeue": 0,
+    "restarts": 0,
+    "formal_h100_submission_count": 1,
+    "automatic_retry": false,
+    "second_job_submitted": false
+  },
+  "environment_gate": {
+    "tf32_matmul": false,
+    "tf32_cudnn": false,
+    "source_shadow_import": false,
+    "workspace_filesystem_type": "0x6969",
+    "environment_report_sha256": "ec1844132ea3453e377d25fe67bcbc5386f123499b58b80ef71e4d946686931f"
+  },
+  "checkpoint_restart_gates": {
+    "periodic": {
+      "classification": "PASS_V0_2_1_N1_H100_CHECKPOINT_RESTART",
+      "continuous_steps": 4,
+      "split": "2+checkpoint+restart+2",
+      "checkpoint_import_exact": true,
+      "state_byte_identical": true,
+      "q_velocity_pressure_byte_identical": true,
+      "finite": true,
+      "collision_rejected": true,
+      "provider_identity_unchanged": true,
+      "temporary_residue_count": 0,
+      "report_sha256": "7263b707f5c7067dfc9ded8428acad01beb2e6fb4f390568ca6a2cd7a4e3efbe"
+    },
+    "channel": {
+      "classification": "PASS_V0_2_1_N1_H100_CHECKPOINT_RESTART",
+      "continuous_steps": 4,
+      "split": "2+checkpoint+restart+2",
+      "checkpoint_import_exact": true,
+      "state_byte_identical": true,
+      "q_velocity_pressure_byte_identical": true,
+      "finite": true,
+      "collision_rejected": true,
+      "provider_identity_unchanged": true,
+      "temporary_residue_count": 0,
+      "report_sha256": "edc6349afc38debae2659b7ec49c51dbfd22702ebfbec48a5e6f0dc401fd4f9b"
+    }
+  },
+  "external_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_v021_n1_h100_15670eb_20261020_v1",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_v021_n1_h100_15670eb_20261020_v1",
+    "result_sha256": "97fcbddcbfeb97f9ef378cf3fbde338d778fa7b85a4ec307f9465f294f3ca37f",
+    "summary_sha256": "ddddecac501a39abd9dfaa421a42c52389b5d0a3bbcf48c9386ccaa66775a042",
+    "final_report_sha256": "4b5fde30f7d45e1edc50ee5254043b358bebf8425f64a25ef318958f2566858a",
+    "slurm_final_sha256": "78f36aacb1e8c32bfbdd3b64b32590aa1a1d19e203356b09e21c4453eb6e2d06",
+    "final_worktree_sha256": "f3eadb60269f7644bbe0a6e766bbaa0aa4b0f926fc2d8ffa90fd9cdf95bd29e9",
+    "source_evidence_manifest_sha256": "bbcec77df3285b0450877fcde86aefd7feb8ef126dad80279283bd14556c3148",
+    "complete_sha256": "fa0aabdebf4847d99b5447d07cf286c2c6db075b5798ccecccf50ca29698d864",
+    "control_manifest_entries": 25,
+    "control_manifest_passed": 25,
+    "control_manifest_sha256": "694043a8a8f01dba5506482d32273d1cc65ef2ad9fc4290a446d6002f1b26e0c",
+    "scratch_manifest_entries": 18,
+    "scratch_manifest_passed": 18,
+    "scratch_manifest_sha256": "2ec118f3c089a25377cbccad3da8d363bbb30d0cee61f42049d250f1076e6742"
+  },
+  "scope": {
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "provider_identity_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "scientific_failure": false
+  },
+  "authorization": {
+    "qualification_complete": true,
+    "n1_complete": true,
+    "eligible_for_v0_2_1_finalization": true,
+    "eligible_for_push": false,
+    "version_bumped_to_0_2_1": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false
+  },
+  "pending": [
+    "evidence-only record push authorization",
+    "v0.2.1 version bump and release packaging",
+    "tag and GitHub Release authorization"
+  ]
+}
