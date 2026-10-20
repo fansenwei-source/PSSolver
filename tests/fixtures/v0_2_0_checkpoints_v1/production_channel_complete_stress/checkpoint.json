@@ -1,0 +1,1475 @@
+{
+  "backend_files": {
+    "pressure_guess": {
+      "dtype": "complex128",
+      "file": "backend__pressure_guess.npy",
+      "sha256": "d35153f073a3b86389d1d16e55d9f429dd77bad5c2570a50d814baaad505a46e",
+      "shape": [
+        1,
+        7,
+        6,
+        6
+      ]
+    }
+  },
+  "backend_restart": {
+    "kind": "channel_complete_stress_pressure_pcg",
+    "reconstructed_state_keys": [
+      "q_gradient_cache"
+    ],
+    "state_keys": [
+      "pressure_guess"
+    ]
+  },
+  "compatibility_identity": {
+    "backend_restart": {
+      "kind": "backend_restart",
+      "payload": {
+        "kind": "channel_complete_stress_pressure_pcg",
+        "reconstructed_state_keys": [
+          "q_gradient_cache"
+        ],
+        "state_keys": [
+          "pressure_guess"
+        ]
+      },
+      "schema_version": 1,
+      "version": "channel.production.backend.v1"
+    },
+    "derivative_dynamics": null,
+    "family": "channel_workflow",
+    "forward_dynamics": {
+      "kind": "forward_dynamics",
+      "payload": {
+        "dynamics_versions": {
+          "forward_stokes_nyquist": "channel_no_slip.periodic_nyquist_zero.v2",
+          "pressure_policy": "channel_pressure_policy.v1",
+          "pressure_warm_start": "pcg_persistent_guess.v2",
+          "q_evolution": "complete_stress_beris_edwards.v1",
+          "spectral_refresh": "projected_euler_refresh.v1"
+        },
+        "pressure_convergence_schema_version": 2,
+        "pressure_solver_policy": {
+          "authoritative_iteration_limit": 12,
+          "authoritative_iteration_limit_source": "fixed_iterations",
+          "breakdown_definition": "abs(mean_active(conj(left)*right))<=eps*active_rms(left)*active_rms(right)",
+          "convergence_mode": "fixed_work",
+          "initial_guess_policy": "persistent_production_warm_start",
+          "max_iterations_role": "inactive_compatibility_field",
+          "relative_tolerance_role": "diagnostic_only_not_early_exit",
+          "rhs_norm_definition": "active_mode_root_mean_square.v1",
+          "schema_version": 1,
+          "working_vector_scaling": "largest_power_of_two_not_greater_than_active_component_amax"
+        },
+        "run_spec_dynamics": {
+          "discretization": {
+            "grid": {
+              "grid_placement": "cell_centered",
+              "shape": [
+                7,
+                6,
+                6
+              ]
+            },
+            "numerics": {
+              "dealias_rule": "cubic_half",
+              "hermitian_axis": null,
+              "precision": "float64",
+              "projected_transform_execution": "truncated",
+              "spectral_storage": "full_complex",
+              "transform_execution_order": "real_first"
+            },
+            "parameters": {
+              "pressure_solver": {
+                "algorithm": "preconditioned_conjugate_gradient",
+                "fixed_iterations": 12,
+                "max_iterations": 40,
+                "relative_tolerance": 1e-10,
+                "warm_start": true
+              }
+            },
+            "time_integration": {
+              "integrator": {
+                "constant_step": true,
+                "dt": 0.001,
+                "formal_order": 1,
+                "history_depth": 0,
+                "schema_version": 1,
+                "scheme": "projected_semi_implicit_euler",
+                "startup_scheme": null
+              },
+              "refresh": {
+                "mode": "disabled"
+              }
+            }
+          },
+          "execution": {
+            "backend": "torch_spectral",
+            "options": {
+              "disable_q_gradient_reuse": false,
+              "fallback_allowed": false,
+              "molecular_field_linear_space": "spectral",
+              "pointwise_execution": "eager",
+              "stress_divergence_sum_space": "physical",
+              "tf32": "off"
+            },
+            "runtime_path": "channel_complete_stress"
+          },
+          "scientific": {
+            "boundaries": {
+              "components": [
+                {
+                  "component": "Qxx",
+                  "faces": [
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "upper"
+                    }
+                  ],
+                  "semantic": "physical"
+                },
+                {
+                  "component": "Qxy",
+                  "faces": [
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "upper"
+                    }
+                  ],
+                  "semantic": "physical"
+                },
+                {
+                  "component": "Qxz",
+                  "faces": [
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "upper"
+                    }
+                  ],
+                  "semantic": "physical"
+                },
+                {
+                  "component": "Qyy",
+                  "faces": [
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "upper"
+                    }
+                  ],
+                  "semantic": "physical"
+                },
+                {
+                  "component": "Qyz",
+                  "faces": [
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "upper"
+                    }
+                  ],
+                  "semantic": "physical"
+                },
+                {
+                  "component": "p",
+                  "faces": [
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "neumann"
+                      },
+                      "side": "upper"
+                    }
+                  ],
+                  "semantic": "algebraic_compatibility"
+                },
+                {
+                  "component": "ux",
+                  "faces": [
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "dirichlet"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "dirichlet"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "dirichlet"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "dirichlet"
+                      },
+                      "side": "upper"
+                    }
+                  ],
+                  "semantic": "physical"
+                },
+                {
+                  "component": "uy",
+                  "faces": [
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "dirichlet"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "dirichlet"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "dirichlet"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "dirichlet"
+                      },
+                      "side": "upper"
+                    }
+                  ],
+                  "semantic": "physical"
+                },
+                {
+                  "component": "uz",
+                  "faces": [
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 0,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "periodic"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "dirichlet"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 1,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "dirichlet"
+                      },
+                      "side": "upper"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "dirichlet"
+                      },
+                      "side": "lower"
+                    },
+                    {
+                      "axis": 2,
+                      "condition": {
+                        "is_homogeneous": true,
+                        "kind": "dirichlet"
+                      },
+                      "side": "upper"
+                    }
+                  ],
+                  "semantic": "physical"
+                }
+              ],
+              "ndim": 3
+            },
+            "equation_system": {
+              "algebraic_systems": [
+                {
+                  "capability": "incompressible_stokes",
+                  "dependencies": [
+                    "force_x",
+                    "force_y",
+                    "force_z"
+                  ],
+                  "name": "flow",
+                  "output_components": [
+                    "ux",
+                    "uy",
+                    "uz",
+                    "p"
+                  ],
+                  "parameters": {
+                    "friction": 0.0,
+                    "pressure_gauge": "zero_mean",
+                    "tangential_zero_mode_policy": "zero_mean",
+                    "viscosity": 0.6666666666666666
+                  },
+                  "update_phase": "pre_explicit_rhs"
+                }
+              ],
+              "constitutive_laws": [
+                {
+                  "capability": "beris_edwards_q_gradient",
+                  "dependencies": [
+                    "Qxx",
+                    "Qxy",
+                    "Qxz",
+                    "Qyy",
+                    "Qyz"
+                  ],
+                  "name": "q_gradient",
+                  "output_components": [
+                    "dQxx_dx",
+                    "dQxy_dx",
+                    "dQxz_dx",
+                    "dQyy_dx",
+                    "dQyz_dx",
+                    "dQxx_dy",
+                    "dQxy_dy",
+                    "dQxz_dy",
+                    "dQyy_dy",
+                    "dQyz_dy",
+                    "dQxx_dz",
+                    "dQxy_dz",
+                    "dQxz_dz",
+                    "dQyy_dz",
+                    "dQyz_dz"
+                  ],
+                  "parameters": {}
+                },
+                {
+                  "capability": "beris_edwards_velocity_gradient",
+                  "dependencies": [
+                    "ux",
+                    "uy",
+                    "uz"
+                  ],
+                  "name": "velocity_gradient",
+                  "output_components": [
+                    "dux_dx",
+                    "duy_dx",
+                    "duz_dx",
+                    "dux_dy",
+                    "duy_dy",
+                    "duz_dy",
+                    "dux_dz",
+                    "duy_dz",
+                    "duz_dz"
+                  ],
+                  "parameters": {}
+                },
+                {
+                  "capability": "beris_edwards_molecular_field",
+                  "dependencies": [
+                    "Qxx",
+                    "Qxy",
+                    "Qxz",
+                    "Qyy",
+                    "Qyz"
+                  ],
+                  "name": "molecular_field",
+                  "output_components": [
+                    "Hxx",
+                    "Hxy",
+                    "Hxz",
+                    "Hyy",
+                    "Hyz"
+                  ],
+                  "parameters": {
+                    "ldg_a": 0.0,
+                    "ldg_b": -0.3,
+                    "ldg_c": 0.3,
+                    "ldg_l1": 0.012345679012345678
+                  }
+                },
+                {
+                  "capability": "beris_edwards_stress",
+                  "dependencies": [
+                    "Qxx",
+                    "Qxy",
+                    "Qxz",
+                    "Qyy",
+                    "Qyz",
+                    "Hxx",
+                    "Hxy",
+                    "Hxz",
+                    "Hyy",
+                    "Hyz",
+                    "dQxx_dx",
+                    "dQxy_dx",
+                    "dQxz_dx",
+                    "dQyy_dx",
+                    "dQyz_dx",
+                    "dQxx_dy",
+                    "dQxy_dy",
+                    "dQxz_dy",
+                    "dQyy_dy",
+                    "dQyz_dy",
+                    "dQxx_dz",
+                    "dQxy_dz",
+                    "dQxz_dz",
+                    "dQyy_dz",
+                    "dQyz_dz"
+                  ],
+                  "name": "nematic_stress",
+                  "output_components": [
+                    "stress_algebraic_xx",
+                    "stress_algebraic_xy",
+                    "stress_algebraic_xz",
+                    "stress_algebraic_yx",
+                    "stress_algebraic_yy",
+                    "stress_algebraic_yz",
+                    "stress_algebraic_zx",
+                    "stress_algebraic_zy",
+                    "stress_algebraic_zz",
+                    "stress_distortion_xx",
+                    "stress_distortion_xy",
+                    "stress_distortion_xz",
+                    "stress_distortion_yx",
+                    "stress_distortion_yy",
+                    "stress_distortion_yz",
+                    "stress_distortion_zx",
+                    "stress_distortion_zy",
+                    "stress_distortion_zz"
+                  ],
+                  "parameters": {
+                    "active_amplitude": 0.01,
+                    "active_prefactor": -0.01,
+                    "beta": -1.0,
+                    "flow_alignment": 0.3,
+                    "ldg_l1": 0.012345679012345678
+                  }
+                },
+                {
+                  "capability": "beris_edwards_force",
+                  "dependencies": [
+                    "stress_algebraic_xx",
+                    "stress_algebraic_xy",
+                    "stress_algebraic_xz",
+                    "stress_algebraic_yx",
+                    "stress_algebraic_yy",
+                    "stress_algebraic_yz",
+                    "stress_algebraic_zx",
+                    "stress_algebraic_zy",
+                    "stress_algebraic_zz",
+                    "stress_distortion_xx",
+                    "stress_distortion_xy",
+                    "stress_distortion_xz",
+                    "stress_distortion_yx",
+                    "stress_distortion_yy",
+                    "stress_distortion_yz",
+                    "stress_distortion_zx",
+                    "stress_distortion_zy",
+                    "stress_distortion_zz"
+                  ],
+                  "name": "nematic_force",
+                  "output_components": [
+                    "force_x",
+                    "force_y",
+                    "force_z"
+                  ],
+                  "parameters": {}
+                }
+              ],
+              "diagnostics": [
+                "q_invariants",
+                "stokes_incompressibility",
+                "nematic_force_decomposition"
+              ],
+              "evolution_laws": [
+                {
+                  "capability": "beris_edwards_q_evolution",
+                  "dependencies": [
+                    "Qxx",
+                    "Qxy",
+                    "Qxz",
+                    "Qyy",
+                    "Qyz",
+                    "ux",
+                    "uy",
+                    "uz",
+                    "dQxx_dx",
+                    "dQxy_dx",
+                    "dQxz_dx",
+                    "dQyy_dx",
+                    "dQyz_dx",
+                    "dQxx_dy",
+                    "dQxy_dy",
+                    "dQxz_dy",
+                    "dQyy_dy",
+                    "dQyz_dy",
+                    "dQxx_dz",
+                    "dQxy_dz",
+                    "dQxz_dz",
+                    "dQyy_dz",
+                    "dQyz_dz",
+                    "dux_dx",
+                    "duy_dx",
+                    "duz_dx",
+                    "dux_dy",
+                    "duy_dy",
+                    "duz_dy",
+                    "dux_dz",
+                    "duy_dz",
+                    "duz_dz"
+                  ],
+                  "name": "q_evolution",
+                  "output_components": [
+                    "Qxx",
+                    "Qxy",
+                    "Qxz",
+                    "Qyy",
+                    "Qyz"
+                  ],
+                  "parameters": {
+                    "explicit_terms": [
+                      "bulk_b_c",
+                      "material_advection",
+                      "flow_alignment",
+                      "co_rotation"
+                    ],
+                    "flow_alignment": 0.3,
+                    "implicit_terms": [
+                      "bulk_a",
+                      "one_constant_l1_laplacian"
+                    ],
+                    "ldg_a": 0.0,
+                    "ldg_b": -0.3,
+                    "ldg_c": 0.3,
+                    "ldg_l1": 0.012345679012345678,
+                    "rotational_viscosity": 2.94
+                  }
+                }
+              ],
+              "fields": [
+                {
+                  "components": [
+                    "Qxx",
+                    "Qxy",
+                    "Qxz",
+                    "Qyy",
+                    "Qyz"
+                  ],
+                  "name": "Q",
+                  "role": "evolved"
+                },
+                {
+                  "components": [
+                    "dQxx_dx",
+                    "dQxy_dx",
+                    "dQxz_dx",
+                    "dQyy_dx",
+                    "dQyz_dx",
+                    "dQxx_dy",
+                    "dQxy_dy",
+                    "dQxz_dy",
+                    "dQyy_dy",
+                    "dQyz_dy",
+                    "dQxx_dz",
+                    "dQxy_dz",
+                    "dQxz_dz",
+                    "dQyy_dz",
+                    "dQyz_dz"
+                  ],
+                  "name": "q_gradient",
+                  "role": "transient"
+                },
+                {
+                  "components": [
+                    "dux_dx",
+                    "duy_dx",
+                    "duz_dx",
+                    "dux_dy",
+                    "duy_dy",
+                    "duz_dy",
+                    "dux_dz",
+                    "duy_dz",
+                    "duz_dz"
+                  ],
+                  "name": "velocity_gradient",
+                  "role": "transient"
+                },
+                {
+                  "components": [
+                    "Hxx",
+                    "Hxy",
+                    "Hxz",
+                    "Hyy",
+                    "Hyz"
+                  ],
+                  "name": "molecular_field",
+                  "role": "transient"
+                },
+                {
+                  "components": [
+                    "stress_algebraic_xx",
+                    "stress_algebraic_xy",
+                    "stress_algebraic_xz",
+                    "stress_algebraic_yx",
+                    "stress_algebraic_yy",
+                    "stress_algebraic_yz",
+                    "stress_algebraic_zx",
+                    "stress_algebraic_zy",
+                    "stress_algebraic_zz"
+                  ],
+                  "name": "algebraic_stress",
+                  "role": "transient"
+                },
+                {
+                  "components": [
+                    "stress_distortion_xx",
+                    "stress_distortion_xy",
+                    "stress_distortion_xz",
+                    "stress_distortion_yx",
+                    "stress_distortion_yy",
+                    "stress_distortion_yz",
+                    "stress_distortion_zx",
+                    "stress_distortion_zy",
+                    "stress_distortion_zz"
+                  ],
+                  "name": "distortion_stress",
+                  "role": "transient"
+                },
+                {
+                  "components": [
+                    "force_x",
+                    "force_y",
+                    "force_z"
+                  ],
+                  "name": "nematic_force",
+                  "role": "transient"
+                },
+                {
+                  "components": [
+                    "ux",
+                    "uy",
+                    "uz"
+                  ],
+                  "name": "velocity",
+                  "role": "algebraic"
+                },
+                {
+                  "components": [
+                    "p"
+                  ],
+                  "name": "pressure",
+                  "role": "algebraic"
+                }
+              ],
+              "initial_condition_families": [
+                "extruded_defect_gas"
+              ],
+              "name": "active_nematics",
+              "parameters": {
+                "active_prefactor": -0.01,
+                "activity_amplitude": 0.01,
+                "force_law": "complete_one_constant_nematic_stress",
+                "ldg_l1": 0.012345679012345678,
+                "material": {
+                  "beta": -1.0,
+                  "flow_alignment": 0.3,
+                  "gamma": 2.94,
+                  "ldg_a": 0.0,
+                  "ldg_b": -0.3,
+                  "ldg_c": 0.3
+                },
+                "q_convention": "Q=(3S/2)(nn-I/3)",
+                "stokes": {
+                  "capability": "incompressible_stokes",
+                  "dependencies": [
+                    "force_x",
+                    "force_y",
+                    "force_z"
+                  ],
+                  "name": "flow",
+                  "output_components": [
+                    "ux",
+                    "uy",
+                    "uz",
+                    "p"
+                  ],
+                  "parameters": {
+                    "friction": 0.0,
+                    "pressure_gauge": "zero_mean",
+                    "tangential_zero_mode_policy": "zero_mean",
+                    "viscosity": 0.6666666666666666
+                  },
+                  "update_phase": "pre_explicit_rhs"
+                }
+              },
+              "required_capabilities": [
+                "beris_edwards_q_evolution",
+                "beris_edwards_q_gradient",
+                "beris_edwards_velocity_gradient",
+                "beris_edwards_molecular_field",
+                "beris_edwards_stress",
+                "beris_edwards_force",
+                "incompressible_stokes"
+              ],
+              "variant": "complete_stress_beris_edwards"
+            },
+            "geometry": {
+              "axis_names": [
+                "x",
+                "y",
+                "z"
+              ],
+              "axis_topologies": [
+                "periodic",
+                "bounded",
+                "bounded"
+              ],
+              "lengths": [
+                7.0,
+                6.0,
+                6.0
+              ],
+              "name": "rectangular_channel"
+            }
+          }
+        }
+      },
+      "schema_version": 1,
+      "version": "channel.production.forward.v4"
+    },
+    "runtime_path": "channel_complete_stress",
+    "schema_version": 1,
+    "state_layout": {
+      "kind": "state_layout",
+      "payload": {
+        "component_order": [
+          "Qxx",
+          "Qxy",
+          "Qxz",
+          "Qyy",
+          "Qyz",
+          "ux",
+          "uy",
+          "uz",
+          "p"
+        ],
+        "persistent": {
+          "pressure_guess": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          }
+        },
+        "spatial": {
+          "Qxx": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "Qxy": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "Qxz": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "Qyy": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "Qyz": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "p": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "ux": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "uy": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "uz": {
+            "dtype": "torch.float64",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          }
+        },
+        "spectral": {
+          "Qxx": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "Qxy": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "Qxz": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "Qyy": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "Qyz": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "p": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "ux": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "uy": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          },
+          "uz": {
+            "dtype": "torch.complex128",
+            "shape": [
+              1,
+              7,
+              6,
+              6
+            ]
+          }
+        }
+      },
+      "schema_version": 1,
+      "version": "channel.production.state.v3"
+    }
+  },
+  "compatibility_identity_sha256": "54d67a0a29e2549f2b25ccb9fcb48834a0dc2a95c8a97ff8860b9b6cf1e1c3e0",
+  "completed_steps": 1,
+  "format_version": 3,
+  "integrator": {
+    "refresh_count": 0,
+    "spectral_refresh_interval": null,
+    "step_count": 1
+  },
+  "metadata_sha256": "aeae0cb6285c5fa5ef7758c8341e6731c9151e31a91169c1190062d4e6343d9f",
+  "run_provenance": {
+    "legacy_runtime_identity_sha256": "c64cca2372ff35190f4dd2bf16d0c041d3c0e076b595683f1de079ce46996342"
+  },
+  "runtime_path": "channel_complete_stress",
+  "tensor_files": {
+    "spatial": {
+      "Qxx": {
+        "dtype": "float64",
+        "file": "spatial__Qxx.npy",
+        "sha256": "14891683f3aac7427681e7d9abf4b3b0538fbd69f58dd2e4890e38eb61a56490",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "Qxy": {
+        "dtype": "float64",
+        "file": "spatial__Qxy.npy",
+        "sha256": "21fa30ad16e0394bb6a0d0da52d600f1bb7b0d82475b59050a2803102077160c",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "Qxz": {
+        "dtype": "float64",
+        "file": "spatial__Qxz.npy",
+        "sha256": "d6c63d892957ead2cdaaf9c048444ea95150c91c54f8fbe192122affa94ae12c",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "Qyy": {
+        "dtype": "float64",
+        "file": "spatial__Qyy.npy",
+        "sha256": "87854e283d18f9dc1ef305e1e0da9e6dce8e565f78cbec22a731b2f3b1ee79b8",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "Qyz": {
+        "dtype": "float64",
+        "file": "spatial__Qyz.npy",
+        "sha256": "33dda5426fcd9744ea18a63c3f886fe4727e59617e496738e743b21e95601bf3",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "p": {
+        "dtype": "float64",
+        "file": "spatial__p.npy",
+        "sha256": "0612b329ab03a8e18e0acdca3ae1d67642c83216a56e52b118e0fb127edbac97",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "ux": {
+        "dtype": "float64",
+        "file": "spatial__ux.npy",
+        "sha256": "be1511fea7abf3fdc0846ade3605a45e63c5222274cc960b04db7802ea84eae9",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "uy": {
+        "dtype": "float64",
+        "file": "spatial__uy.npy",
+        "sha256": "da27637e8374c87f1cd696f848664bd073df72b5292b0f9de2c22bd95825adc5",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "uz": {
+        "dtype": "float64",
+        "file": "spatial__uz.npy",
+        "sha256": "80019e739dbe0b0c25a23a0c593d8a228a6a15318ab6c0e984d489c7c594f4a9",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      }
+    },
+    "spectral": {
+      "Qxx": {
+        "dtype": "complex128",
+        "file": "spectral__Qxx.npy",
+        "sha256": "0726291475bca15382333f7c90af66056e7efdfe14ee73747b5743fa6711a164",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "Qxy": {
+        "dtype": "complex128",
+        "file": "spectral__Qxy.npy",
+        "sha256": "ad6a76f465c6be1f14a5fde44a80ea5f04320f1f31681704006d16e1aacb3e23",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "Qxz": {
+        "dtype": "complex128",
+        "file": "spectral__Qxz.npy",
+        "sha256": "89d63d4ad69f1f5ed523d89c4e9b4c5aff301f17f4eeb8ca127ac9a1ef63d2c4",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "Qyy": {
+        "dtype": "complex128",
+        "file": "spectral__Qyy.npy",
+        "sha256": "2c0a16f387c9a49bff9fad64a6beccdc9975de983eeb99a75cb5c9743aa9632d",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "Qyz": {
+        "dtype": "complex128",
+        "file": "spectral__Qyz.npy",
+        "sha256": "428ee2f8900f1bd06b9c6066c44fb010823ca5b1723c4b6038741c3135ab3166",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "p": {
+        "dtype": "complex128",
+        "file": "spectral__p.npy",
+        "sha256": "d35153f073a3b86389d1d16e55d9f429dd77bad5c2570a50d814baaad505a46e",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "ux": {
+        "dtype": "complex128",
+        "file": "spectral__ux.npy",
+        "sha256": "0d1a6b431adc3211f670c9cf8acfe7382e06677749348781038c8a295f8b4dfb",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "uy": {
+        "dtype": "complex128",
+        "file": "spectral__uy.npy",
+        "sha256": "baa58c1e1eda3fac950b88ed83fcf83cb383d6575d147183a4213e9d18b11b87",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      },
+      "uz": {
+        "dtype": "complex128",
+        "file": "spectral__uz.npy",
+        "sha256": "888743b8543901e2129268494c866e596c6d16a950f0eafea413e4d1b4f5239a",
+        "shape": [
+          1,
+          7,
+          6,
+          6
+        ]
+      }
+    }
+  }
+}
