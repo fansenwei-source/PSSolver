@@ -6,13 +6,18 @@ import hashlib
 import json
 from pathlib import Path
 
+import numpy as np
 import pytest
 
+import benchmarks.v0_2_0_checkpoint_fixtures as compatibility
 from benchmarks.v0_2_0_checkpoint_fixtures import replay_case
 
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures" / "v0_2_0_checkpoints_v1"
+ORACLE = (
+    ROOT / "tests" / "oracles" / "v0_2_0_checkpoint_continuations_v1"
+)
 CASES = (
     "functional_periodic",
     "functional_channel",
@@ -84,9 +89,116 @@ def test_v020_checkpoint_tree_is_provenance_bound(case):
 
 
 @pytest.mark.parametrize("case", CASES)
-def test_v020_checkpoint_direct_import_and_bitwise_continuation(
+def test_v020_checkpoint_direct_import_and_build_aware_continuation(
     case, tmp_path
 ):
     before = _tree(FIXTURES / case)
-    replay_case(case, FIXTURES, tmp_path / case)
+    report = replay_case(case, FIXTURES, tmp_path / case, ORACLE)
+    assert report["payload"]["equivalence"] == "bitwise"
+    assert report["payload"]["payload_count"] > 0
+    assert report["continuation"]["mode"] in {
+        "bitwise",
+        "dtype_epsilon",
+    }
+    assert all(
+        item["passed"]
+        for item in report["continuation"]["arrays"].values()
+    )
     assert _tree(FIXTURES / case) == before
+
+
+def test_v020_continuation_oracle_is_separate_and_provenance_bound():
+    manifest = json.loads(
+        (ORACLE / "manifest.json").read_text(encoding="utf-8")
+    )
+    assert manifest["oracle_schema_version"] == 1
+    assert manifest["checkpoint_fixture_tree_sha256"] == _tree_sha256(FIXTURES)
+    assert manifest["tolerance_policy"] == {
+        "matching_build": "bitwise",
+        "other_builds": "dtype_epsilon",
+        "epsilon_multiplier": 8.0,
+    }
+    assert set(manifest["cases"]) == set(CASES)
+    for case in CASES:
+        for record in manifest["cases"][case]["arrays"].values():
+            path = ORACLE / record["file"]
+            assert _sha256(path) == record["file_sha256"]
+
+
+def _synthetic_oracle(tmp_path, reference, fingerprint):
+    directory = tmp_path / "oracle" / "case"
+    directory.mkdir(parents=True)
+    path = directory / "value.npy"
+    np.save(path, reference, allow_pickle=False)
+    manifest = {
+        "numerical_build_fingerprint": fingerprint,
+        "cases": {
+            "case": {
+                "arrays": {
+                    "value": {
+                        "file": "case/value.npy",
+                        "file_sha256": _sha256(path),
+                    }
+                }
+            }
+        },
+    }
+    (directory.parent / "manifest.json").write_text(json.dumps(manifest))
+    return directory.parent
+
+
+def test_build_aware_continuation_requires_bits_for_matching_build(
+    tmp_path, monkeypatch
+):
+    fingerprint = {"build": "reference"}
+    reference = np.array([1.0], dtype=np.float64)
+    oracle = _synthetic_oracle(tmp_path, reference, fingerprint)
+    actual = np.nextafter(reference, np.inf)
+    record = compatibility._array_record(actual)
+    monkeypatch.setattr(
+        compatibility, "numerical_build_fingerprint", lambda: fingerprint
+    )
+    with pytest.raises(AssertionError, match="continued checkpoint state"):
+        compatibility._compare_continuation(
+            {"value": record},
+            {"value": actual},
+            {"value": compatibility._array_record(reference)},
+            oracle,
+            "case",
+        )
+
+
+def test_build_aware_continuation_uses_dtype_epsilon_for_other_build(
+    tmp_path, monkeypatch
+):
+    reference_fingerprint = {"build": "reference"}
+    observed_fingerprint = {"build": "other"}
+    reference = np.array([1.0], dtype=np.float32)
+    oracle = _synthetic_oracle(tmp_path, reference, reference_fingerprint)
+    epsilon = np.finfo(np.float32).eps
+    actual = reference + np.float32(2.0 * epsilon)
+    record = compatibility._array_record(actual)
+    monkeypatch.setattr(
+        compatibility,
+        "numerical_build_fingerprint",
+        lambda: observed_fingerprint,
+    )
+    report = compatibility._compare_continuation(
+        {"value": record},
+        {"value": actual},
+        {"value": compatibility._array_record(reference)},
+        oracle,
+        "case",
+    )
+    assert report["mode"] == "dtype_epsilon"
+    assert report["arrays"]["value"]["atol"] == 8.0 * epsilon
+
+    outside_tolerance = reference + np.float32(32.0 * epsilon)
+    with pytest.raises(AssertionError, match="continued checkpoint state"):
+        compatibility._compare_continuation(
+            {"value": compatibility._array_record(outside_tolerance)},
+            {"value": outside_tolerance},
+            {"value": compatibility._array_record(reference)},
+            oracle,
+            "case",
+        )
