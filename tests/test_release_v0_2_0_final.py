@@ -151,6 +151,43 @@ def test_v020_independent_acceptance_is_bound_without_requalifying_h100():
     assert acceptance["h100_rerun_needed"] is False
 
 
+def test_v020_p5_successor_classifies_frozen_and_control_path_impact():
+    record = _record()
+    n1 = record["n1"]
+    assert n1["affects_v0_2_frozen"] is True
+    assert n1["affects_control_paths"] is False
+
+    expected = {
+        "C1-05": True,
+        "C1-10": True,
+        "C1-11": True,
+        "C2-17": False,
+        "C2-18": True,
+    }
+    assert set(record["deferred"]) == set(expected)
+    for issue, affects_control in expected.items():
+        item = record["deferred"][issue]
+        assert item["target_release"] == "0.2.x/0.3"
+        assert item["affects_v0_2_frozen"] is True
+        assert item["affects_control_paths"] is affects_control
+
+    successor = record["freeze_tracking_successor"]
+    assert successor["source_record_commit"] == (
+        "96f93d016e86604eb25e4bd71183c74f0132cb7d"
+    )
+    assert successor["historical_record_sha256"] == (
+        "3a4ea320f2a53aca397008099ae2b332f6b8af74650e4bd5888db1bcb0f735ec"
+    )
+    for key in (
+        "record_commit_is_release_source",
+        "release_tag_rewritten",
+        "release_assets_replaced",
+        "runtime_changed",
+        "requires_h100_requalification",
+    ):
+        assert successor[key] is False
+
+
 def test_v020_successor_record_matches_every_registered_source():
     successors = _record()["historical_successor_sources"]
     development_successors = json.loads(

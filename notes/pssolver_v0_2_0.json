@@ -107,14 +107,46 @@
     "blocks_v0_2_0": false,
     "target_release": "0.2.1",
     "maintenance_branch": "maint/v0.2",
+    "affects_v0_2_frozen": true,
+    "affects_control_paths": false,
     "reason": "The unsupported NFS publication path fails closed, produces no incorrect checkpoint or data loss, predates rc6, and is not used by the current Control research workflow."
   },
   "deferred": {
-    "C1-05": "0.2.x/0.3",
-    "C1-10": "0.2.x/0.3",
-    "C1-11": "0.2.x/0.3",
-    "C2-17": "0.2.x/0.3",
-    "C2-18": "0.2.x/0.3"
+    "C1-05": {
+      "target_release": "0.2.x/0.3",
+      "affects_v0_2_frozen": true,
+      "affects_control_paths": true
+    },
+    "C1-10": {
+      "target_release": "0.2.x/0.3",
+      "affects_v0_2_frozen": true,
+      "affects_control_paths": true
+    },
+    "C1-11": {
+      "target_release": "0.2.x/0.3",
+      "affects_v0_2_frozen": true,
+      "affects_control_paths": true
+    },
+    "C2-17": {
+      "target_release": "0.2.x/0.3",
+      "affects_v0_2_frozen": true,
+      "affects_control_paths": false
+    },
+    "C2-18": {
+      "target_release": "0.2.x/0.3",
+      "affects_v0_2_frozen": true,
+      "affects_control_paths": true
+    }
+  },
+  "freeze_tracking_successor": {
+    "source_record_commit": "96f93d016e86604eb25e4bd71183c74f0132cb7d",
+    "historical_record_sha256": "3a4ea320f2a53aca397008099ae2b332f6b8af74650e4bd5888db1bcb0f735ec",
+    "record_commit_is_release_source": false,
+    "release_tag_rewritten": false,
+    "release_assets_replaced": false,
+    "runtime_changed": false,
+    "requires_h100_requalification": false,
+    "reason": "Post-release P5 successor that classifies the frozen-release and Control-path impact of N-1 and the independently observed deferred findings without rewriting their historical evidence."
   },
   "historical_successor_sources": {
     "CHANGELOG.md": {
