@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "release": "0.2.1",
+  "date": "2026-10-20",
+  "status": "released",
+  "classification": "PASS_V0_2_1_FORMAL_GITHUB_RELEASE",
+  "source": {
+    "branch": "release/pssolver-v0.2.1",
+    "release_source_commit": "ca9c6729670f07639e7877881c777d1653f4a592",
+    "release_source_parent": "98f9a7d8579c23a7b86cf7011ce0a45bb7328193",
+    "package_preparation_commit": "c88f5d533a3477160211b3c62fd4f1e8e1edea3e",
+    "record_commit_is_release_source": false,
+    "runtime_delta_from_h100_qualified_source": [
+      "pssolver/_version.py: 0.2.0 -> 0.2.1"
+    ],
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "provider_identity_changed": false,
+    "production_default_changed": false
+  },
+  "publication": {
+    "annotated_tag": "v0.2.1",
+    "tag_object": "daf1270b1f046ac767045cbbe536fd185599d83f",
+    "tag_target": "ca9c6729670f07639e7877881c777d1653f4a592",
+    "github_release_id": 418261343,
+    "github_release_url": "https://github.com/fansenwei-source/PSSolver/releases/tag/v0.2.1",
+    "draft": false,
+    "prerelease": false,
+    "target_commitish": "main",
+    "target_commitish_contains_tag_target_at_publication": false,
+    "target_commitish_observation": "The GitHub Release API reports main, while the immutable annotated tag resolves to the release source on release/pssolver-v0.2.1; the tag identity is authoritative.",
+    "published_at": "2026-10-20T10:13:49Z",
+    "assets": {
+      "pssolver-0.2.1-py3-none-any.whl": {
+        "asset_id": 658969850,
+        "size_bytes": 801264,
+        "sha256": "0f0f1c43a920582d3d707d285fe06502ff1852e6cca24f37872b06669201da8a"
+      },
+      "pssolver-0.2.1.tar.gz": {
+        "asset_id": 658969846,
+        "size_bytes": 1399709,
+        "sha256": "cf795a976494dd552f3db843ba88185f77a0b9510ef3e60d4a9b9582413b6eba"
+      }
+    },
+    "pypi_published": false,
+    "h100_rerun_performed": false
+  },
+  "qualification": {
+    "package_preparation_record": "notes/pssolver_v0_2_1_package_preparation.json",
+    "package_preparation_record_sha256": "a41aaeb94c74f0762688bdb248d7affe9ef616a1adcd64c5143bbf7d9f616a39",
+    "cpu_suite": {
+      "passed": 4134,
+      "failed": 0,
+      "skipped": 1,
+      "xfailed": 0,
+      "deselected": 7,
+      "subtests_passed": 8
+    },
+    "installed_wheel_n1_checkpoint_tests": {
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "h100_job_id": 10902665,
+    "h100_rerun_required": false,
+    "nematics3d_modified": false
+  },
+  "scope": {
+    "release_tag_rewritten": false,
+    "release_assets_replaced": false,
+    "pypi_modified": false,
+    "additional_h100_job_submitted": false,
+    "record_is_evidence_only": true
+  },
+  "authorization": {
+    "push_authorized": true,
+    "tag_authorized": true,
+    "github_release_authorized": true,
+    "post_release_registration_authorized": true,
+    "pypi_publication_authorized": false,
+    "additional_h100_authorized": false
+  }
+}
