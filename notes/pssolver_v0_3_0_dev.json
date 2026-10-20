@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "line": "dev/0.3",
+  "version": "0.3.0.dev0",
+  "status": "local_development_line_not_pushed",
+  "base_release": "v0.2.0",
+  "base_release_commit": "6d2934e73b543f6652d112733657775333e0f396",
+  "base_release_evidence_commit": "96f93d016e86604eb25e4bd71183c74f0132cb7d",
+  "integrated_develop": {
+    "tip": "f647523ee55a9eed2f52c28a774566e2239800af",
+    "merge_base": "57cf8b72ca4e74c019860ae8687bf97009b7c4e8",
+    "unique_commits": [
+      "c20748175f6c9ce21f32f9f5c466a7acc7e4a6e4",
+      "c12e256e5d4e3e431c57cc31bd389e669a25f1a8",
+      "48fb3b884d1d03d3dca27dae0bb30d73e108a3d7",
+      "f647523ee55a9eed2f52c28a774566e2239800af"
+    ],
+    "conflict_resolution": {
+      "path": "Plane_beris_edwards_stokes.py",
+      "policy": "retain the v0.2.0 production compatibility entry point and preserve the historical V3 implementation as scripts_plane/v3_plane_beris_edwards_stokes.py"
+    }
+  },
+  "public_contract": {
+    "functional_api_version": "1.0",
+    "production_default_changed_by_line_creation": false,
+    "v0_2_0_tag_or_assets_modified": false
+  },
+  "historical_successor_sources": {
+    "pssolver/_version.py": {
+      "historical_sha256": "c9b360ae0c00d85a554cd64fee23fabb4e800fba339fc57704e40e22868ee2dd",
+      "current_sha256": "73aebd88cf4ee0d4b9abd865b6bbfbb62f1c43e102a6cdc9c12ba3c79faa4328",
+      "reason": "Open the post-v0.2.0 development line at version 0.3.0.dev0."
+    },
+    "tests/test_release_v0_2_rc6.py": {
+      "historical_sha256": "9311253e9b516b1250b35a6354b790ab669a4160fbbcdc534f45c5703035763e",
+      "current_sha256": "73246a7b23bc8219551dde62703492ab91bbf5d4dac3e94cd15b30af0a0942b8",
+      "reason": "Preserve the rc6 evidence checks while binding live package provenance to the explicit 0.3 development record."
+    }
+  },
+  "authorization": {
+    "remote_push_authorized": false,
+    "h100_authorized": false
+  }
+}

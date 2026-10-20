@@ -24,11 +24,13 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def test_final_version_and_public_provenance_agree():
-    assert pssolver.__version__ == "0.2.0"
+def test_development_version_and_public_provenance_agree():
+    development = _json(ROOT / "notes/pssolver_v0_3_0_dev.json")
+    assert development["base_release"] == "v0.2.0"
+    assert pssolver.__version__ == development["version"] == "0.3.0.dev0"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.2.0",
+        "version": "0.3.0.dev0",
     }
 
 

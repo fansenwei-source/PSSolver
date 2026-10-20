@@ -22,11 +22,19 @@ def _record() -> dict[str, object]:
     return json.loads(RECORD.read_text(encoding="utf-8"))
 
 
-def test_v020_has_the_final_public_version():
-    assert pssolver.__version__ == "0.2.0"
+def test_dev_line_identifies_its_v020_release_base_and_current_version():
+    development = json.loads(
+        (ROOT / "notes/pssolver_v0_3_0_dev.json").read_text(encoding="utf-8")
+    )
+    assert development["base_release"] == "v0.2.0"
+    assert development["base_release_commit"] == (
+        "6d2934e73b543f6652d112733657775333e0f396"
+    )
+    assert development["version"] == "0.3.0.dev0"
+    assert pssolver.__version__ == "0.3.0.dev0"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.2.0",
+        "version": "0.3.0.dev0",
     }
 
 
@@ -145,6 +153,9 @@ def test_v020_independent_acceptance_is_bound_without_requalifying_h100():
 
 def test_v020_successor_record_matches_every_registered_source():
     successors = _record()["historical_successor_sources"]
+    development_successors = json.loads(
+        (ROOT / "notes/pssolver_v0_3_0_dev.json").read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert set(successors) == {
         "CHANGELOG.md",
         "README.md",
@@ -175,7 +186,13 @@ def test_v020_successor_record_matches_every_registered_source():
     }
     for relative, identity in successors.items():
         assert identity["historical_sha256"] != identity["current_sha256"]
-        assert _sha256(ROOT / relative) == identity["current_sha256"]
+        actual = _sha256(ROOT / relative)
+        if actual != identity["current_sha256"]:
+            development = development_successors[relative]
+            assert development["historical_sha256"] == identity["current_sha256"]
+            assert actual == development["current_sha256"]
+        else:
+            assert actual == identity["current_sha256"]
         assert identity["reason"]
 
 
