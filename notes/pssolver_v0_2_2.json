@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "release": "0.2.2",
+  "date": "2026-10-20",
+  "status": "local_release_source_prepared_pending_artifacts_and_real_nfs_retest",
+  "classification": "PASS_V0_2_2_LOCAL_RELEASE_SOURCE_PREPARATION",
+  "source": {
+    "base_release": "v0.2.1",
+    "base_release_commit": "ca9c6729670f07639e7877881c777d1653f4a592",
+    "base_release_tag_object": "daf1270b1f046ac767045cbbe536fd185599d83f",
+    "maintenance_branch": "maint/v0.2",
+    "release_branch": "release/pssolver-v0.2.2",
+    "release_preparation_parent": "701991a0af6cab1cf0952f76e16c430f2c2613ac",
+    "v17_implementation_commit": "611d167d1b2c2d634222f608f4c9cd4dc671636d",
+    "v17_candidate_record_commit": "6bd8e491dde4a72dd1dc29035c2310d565990070",
+    "r0002_import_commit": "701991a0af6cab1cf0952f76e16c430f2c2613ac",
+    "record_commit_is_release_source": true,
+    "runtime_delta_from_v0_2_1": [
+      "pssolver/io/checkpoint.py: follow the immediate destination-parent symlink for filesystem identity",
+      "pssolver/_version.py: 0.2.1 -> 0.2.2"
+    ],
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "checkpoint_bytes_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "provider_identity_changed": false,
+    "production_default_changed": false,
+    "v0_2_1_tag_rewritten": false,
+    "v0_2_1_assets_replaced": false
+  },
+  "qualification": {
+    "v17_candidate_record": "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json",
+    "v17_candidate_record_sha256": "41688fb0536dfc1398494336aa4faa453d0d112b69d0b0df56dd3cc5baa90c57",
+    "r0002_import_record": "notes/PSSolver_v0_2_2_v17_r0002_import.json",
+    "r0002_import_record_sha256": "36784bc2c010ba7da22d21e447d15ea28bed1c8d2d4ff251e62ea4a6d7592cd6",
+    "sync_result": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0002.result.json",
+    "sync_result_sha256": "8837d79a34997a762cca26f967df3396ea87b5208afc39a744fe2c6f9f32c93d",
+    "independent_classification": "PASS",
+    "independent_archive": "/home/fansenwei/pssolver_v0_2_2_v17_claude_review_20261020_v1",
+    "independent_archive_checksums": 32253,
+    "independent_archive_manifest_sha256": "418f298d2dfcc81f99c0d3574f7c9c5d153a6c4483cc6f1732c050365980b9a8",
+    "independent_archive_complete": true,
+    "release_source_cpu_gate": {
+      "passed": 4179,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "deselected": 7,
+      "warnings": 6,
+      "subtests_passed": 8,
+      "cuda_visible_devices": "",
+      "pytest_cache_disabled": true,
+      "bytecode_writes_disabled": true
+    },
+    "installed_wheel_release_gate": "pending",
+    "real_nfs_login_node_retest": "pending_separate_authorization",
+    "h100_rerun_required": false
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "524d9007c0e3ffb222aaf498bbe7bbf1738a802197516606f996f164b87f99f9",
+      "current_sha256": "781f39a9351ff3274cfd942f60843c64fdd827b70da6270e0094ebdb542b03b3",
+      "reason": "Add the narrowly scoped 0.2.2 V-17 release entry without rewriting the v0.2.1 record."
+    },
+    "README.md": {
+      "historical_sha256": "2efd8c4cc13af769b3377a9a6c051ddc4754e34c0f7008202004ee4089a1aef3",
+      "current_sha256": "bfce935b882fff13d4c99d42778668b2c5e5141005b294879de11fd6d0c15bd3",
+      "reason": "Advance the user-facing patch version from 0.2.1 to 0.2.2."
+    },
+    "pssolver/_version.py": {
+      "historical_sha256": "77519f2a5272ae55dcb0a179c2cf6779cee1d1d7a06da0cb3a471394b017b2e0",
+      "current_sha256": "e0d6a406969cecca1f92674eb3107bc2fd93f68041425c1fa9484907f3042f54",
+      "reason": "Advance only the public patch version from 0.2.1 to 0.2.2 after independent V-17 verification."
+    },
+    "tests/test_release_v0_1.py": {
+      "historical_sha256": "3e4cc530a6250022a8dbd4349de9819ea5842837a942bc62185a2fc81d7afa1f",
+      "current_sha256": "49eb789ba6f49490cf1fd3acf94352580e39863c8d0a361fd36d470b633c2a65",
+      "reason": "Recognize the registered 0.2.2 README successor while preserving the historical packaging contract."
+    },
+    "tests/test_release_v0_2_rc6.py": {
+      "historical_sha256": "0de48b50b64205c2d6af7639ce027d59fc90cf62096a9832927fb5eecb546c9f",
+      "current_sha256": "82cdf127d848c5e33193f2a9ba7bb3953be5bb6537ca685eb5c132b9a8ed290d",
+      "reason": "Preserve immutable rc6 evidence while recognizing the 0.2.2 patch successor."
+    },
+    "tests/test_release_v0_2_0_final.py": {
+      "historical_sha256": "24d5b4c8c260cc79ad5a4db3e7582a538192287060415d2aa58202215acc0937",
+      "current_sha256": "d78fcceacc9b00c5c86223953c81d4b0dc28db8e17aa439b21d284216ebea8d3",
+      "reason": "Extend the forward-only release chain through the registered 0.2.2 successor."
+    },
+    "tests/test_release_v0_2_1.py": {
+      "historical_sha256": "0f66a74e92fa1142139831d222d80bc828b295a3811bdb225f4c0c11c9d4ce4e",
+      "current_sha256": "e80b09a499b37a129602994e093f90d999da4d1f5c68186e54a01fb14e611ecf",
+      "reason": "Register 0.2.2 as the forward-only v0.2.1 version successor without rewriting v0.2.1 evidence."
+    },
+    "tests/test_v0_2_2_v17_checkpoint_symlink_parent_record.py": {
+      "historical_sha256": "5cf4239b3490d569c7997e8bcdf900c8cccbc768376ae52e17426f525dbb11f0",
+      "current_sha256": "2196567120dc41b422abf0daf97f78341ab579e5778da613c6e4162759adbff2",
+      "reason": "Resolve release-time forward successors without changing the frozen V-17 candidate record."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "554d6a563e1b05a3b49ee467db5a37908d15f0e04cc40235ba4f071016bbb751",
+      "current_sha256": "a1b4180116b11900ef220e40a0ff239ff895d4f2dd9c064beecd02a0006a33ad",
+      "reason": "Resolve release-time forward successors without rewriting the independent R-0002 import record."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "e1aca4d74b09db4b48ed3fb77f9d641a303836dea49a7086dc956e172b449278",
+      "current_sha256": "4dfe1becb87427d495cea82711e06ca70ba10ead0291df05834f3d2d9915c055",
+      "reason": "Extend the documentation evidence chain through the registered 0.2.2 release successor."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "historical_sha256": "e774f325487c53d6d77aec799b5aedfb3115e68e11502910a3889fdc215e5f04",
+      "current_sha256": "3a4276b162bb757466ca9f5445e55f97e5bb4013ab83cde5b2615e067d716a60",
+      "reason": "Extend the RC6-2 forward-only evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "historical_sha256": "059afa846c9b987a8763096daf55f8f1bad816c93ee73cbc9e986ab81b0a7908",
+      "current_sha256": "30cad62cf42d4d81cefe85dedbb5a30d93053e9a6a480f21febb978587385931",
+      "reason": "Extend the RC6-3 forward-only evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc6_4_channel_failure_record.py": {
+      "historical_sha256": "be02a1b9f0559760da8bdab0ed569bb11380d7da1bb84f1949fbe08dd3491bc8",
+      "current_sha256": "2ae2410c90ec2b4eacecc234dca15f51de6e61075b57c5c8217b87d440475433",
+      "reason": "Extend the RC6-4 forward-only evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc6_5_checkpoint_control_flow_record.py": {
+      "historical_sha256": "efceef6b1696ea17adb396fd0cb0aa7ce0fe605409960fe5f3856cafc4aedbb9",
+      "current_sha256": "5b722df4277576fd8332b8ab20eb63416f343146f8ff7e542879b8c5b2bea4c9",
+      "reason": "Extend the RC6-5 forward-only evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc6_6_restart_output_atomicity_record.py": {
+      "historical_sha256": "4701f278fe6b5c3d56d791e4baaf85576a565046a138dc46b54b32b8f4dfc567",
+      "current_sha256": "fa1a2beb6d94995ad6e7cbb7942e0d5283b183630e3a48fcdf616afea98eef2d",
+      "reason": "Extend the RC6-6 forward-only evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_v0_2_1_n1_checkpoint_nfs_record.py": {
+      "historical_sha256": "635ea97e1afed775ac588689ad4f4fa978efd11561e048f3a21d2c2599717f70",
+      "current_sha256": "5e603bb41e785c7da0d9336f9d909de26ca3d0db2fccb76934e617d7c7c0c81d",
+      "reason": "Extend the v0.2.1 N-1 forward-only evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": {
+      "historical_sha256": "38988b5039a058037befc864da1ad817a7438770323276c5192cf8367201c761",
+      "current_sha256": "d44e3d4c09460067f7b236a5c97b522231f9d0e009ac02dbf6783f7f81691fcc",
+      "reason": "Extend the RC5 G-1 glibc evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "c59c043b0331d657ad7a9b648e15b76d774f24b0cc5878dbb2542014c56329c6",
+      "current_sha256": "eee1d01c3b34944ab842afe19aff98f0a1a4a3e02291877848463e9b73b1a695",
+      "reason": "Extend the legacy functional checkpoint evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "667da971f76a613bbacf32e6f54a2fba9dd7d6e54bff075fd6827513e26093ca",
+      "current_sha256": "4a995ed5342596881de1814a589b906b8216b3fda9a34bd07903fbc8b18058ef",
+      "reason": "Extend the R5-10 evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "4f23282308a7aed19ba462affdb2baa72f321db0202b3149320af10064c1cba9",
+      "current_sha256": "b1729ebe8814f3c6d5c8f0338d9803e2f91f9f4be4c5e6052d771bf3801e661a",
+      "reason": "Extend the R5-11 evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "f5daadfc80581a14d6944e2c0805d59ad0eccc396f3fd5dd37f6230515b44c79",
+      "current_sha256": "05889798067aa66dd6f1ed788874bd75f0fcbcd5bd53061b9e5fee75fa256fde",
+      "reason": "Extend the R5-12 evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "8f588f38cb41b265cc30aa5ba45ec1117bd1d6f4808a25f0e1e50c348c5ed88c",
+      "current_sha256": "506c9e86f2a145bc01e3640da0390321e7510f5e4d4d380034b830fa1b52bb20",
+      "reason": "Extend the R5-13 evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "3b64336f6d3c54ef6f23ecdd52c3944814fff36172927cacdccdf55f43846d6f",
+      "current_sha256": "8f8ca41fb3d0053a353d13723d813f0c0ae66fd79ca01fe376ae8c61c8367489",
+      "reason": "Extend the R5-2 evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "9aa7790911e245fad9ed44554201133b79b04553a1cec0e4d6f5615641b05ba3",
+      "current_sha256": "755a3d104da973e68284cdb2346db16b592d5d53f3a08aeef02b849a461fc4f0",
+      "reason": "Extend the R5-3 evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "760cfab74a6584925084aea9b4344fd92297fa81d9b6d409b6d285dc86d13fb1",
+      "current_sha256": "c7be5ce85345f38fb31ae707d49b7a7d9f0044dcb3f04f61c5faf15d28c3fc82",
+      "reason": "Extend the R5-5 evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "1eb4409506813566329f3886c805fa23a767c06755f0050fdfc7d9ebd76ab25b",
+      "current_sha256": "63cb99948ef5ea1f8355fe650c2da96961e7cbce34741d153b567e0b22dea549",
+      "reason": "Extend the R5-6 evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "0965e5286ce5faa383af04bcdb6f0aeaab77f148b083c5a02012525861fd6f2e",
+      "current_sha256": "c2883999f167f9ddaa2dbbeb62b3178119937a127a2a7f54662ad1adde3a0d60",
+      "reason": "Extend the R5-7 evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "94a3c7cfe3d281e3109738273a476cab46ddf25ce6bf59f34c820765ac68ad3a",
+      "current_sha256": "124f5ba6e68d8dc992e2d9d9f9bc9079ce751b56b450e3a6a647ac70ec126ffa",
+      "reason": "Extend the R5-8 evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "c7b70a688917e71945764ce288ff53a15851e970c751e467fb45115dae72304c",
+      "current_sha256": "86911911f51f9d4d2f5883ff1e50563256a6392b36dbcb9f910454fecf35875e",
+      "reason": "Extend the R5-9 evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": {
+      "historical_sha256": "868eece671c437baa2fd4494e91544c7280437fcfe355afca90c2e3943a52fe3",
+      "current_sha256": "6b989de5d93f5fbf4268aa0abd4d7d15021fed3925a68fd63689b5c9fbfb6fce",
+      "reason": "Extend the RC6-1 evidence chain through the 0.2.2 release record."
+    },
+    "tests/test_rc5_g1_historical_audit_portability.py": {
+      "historical_sha256": "b7b5a66deb4b4fbd58c1c5e494c5f35180aebb4284bdef7957eea966f01258dd",
+      "current_sha256": "15669fc9c70648fb4318031d8aa79dd2307b5180e6c1a6cf826e2842740bdfe8",
+      "reason": "Extend the RC5 G-1 historical audit evidence chain through the 0.2.2 release record."
+    }
+  },
+  "known_deferred_findings": {
+    "V-22": "registered for later 0.2.x work",
+    "V-23": "registered for later 0.2.x work"
+  },
+  "release_artifacts": {
+    "source_archive": "pending_clean_build",
+    "sdist": "pending_clean_build",
+    "wheel": "pending_clean_build",
+    "pypi_published": false
+  },
+  "authorization": {
+    "local_release_preparation_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "github_release_authorized": false,
+    "pypi_authorized": false,
+    "hpcc_test_directory_authorized": false,
+    "slurm_or_h100_authorized": false
+  }
+}

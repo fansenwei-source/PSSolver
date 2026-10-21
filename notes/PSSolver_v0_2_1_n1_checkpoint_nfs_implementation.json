@@ -1,0 +1,275 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-20",
+  "release": "0.2.1",
+  "issue": "N-1",
+  "classification": "PASS_V0_2_1_N1_NFS_CHECKPOINT_PUBLICATION_LOCAL_CPU_CANDIDATE",
+  "status": "implementation_complete_local_cpu_verified_pending_real_nfs",
+  "git_identity": {
+    "branch": "maint/v0.2",
+    "implementation_commit": "927dc89aa63bcee9b03248f52662389bc947c47a",
+    "implementation_parent": "e3d04f773723234b609bd51d5d0b6efb154bdd8b",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "frozen_plan": {
+    "json": "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_plan.json",
+    "json_sha256": "d758dd33aa3b03b277facbf4f523b9bf0ef7b238f3e8ff63d044e9de1dbb29f2",
+    "zh": "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_plan_zh.md",
+    "zh_sha256": "b8f29e07544c6ee0de757410ef1974e4103f8febd7c62364592dc296fb822439"
+  },
+  "implementation": {
+    "fast_path": "renameat2(RENAME_NOREPLACE)",
+    "fallback_trigger": "EINVAL or EOPNOTSUPP from renameat2 plus statfs f_type 0x6969",
+    "fallback_name_claim": "atomic mkdir with mode 000 at the final destination",
+    "fallback_publish": "rename the same-filesystem staging tree over only the publisher-owned empty placeholder",
+    "lost_acknowledgement": "verify the complete published tree digest before reporting success",
+    "ambiguous_result": "fail closed and preserve the unconfirmed final destination",
+    "checkpoint_backend_marker_serialized": false,
+    "checkpoint_schema_changed": false,
+    "public_api_changed": false
+  },
+  "contract_results": {
+    "base_contract_items": 18,
+    "supplemental_contract_items": 8,
+    "non_capability_errors_fallback": false,
+    "same_filesystem_required": true,
+    "preexisting_destination_modified": false,
+    "concurrent_success_count": 1,
+    "lost_ack_readback_required": true,
+    "ambiguous_destination_deleted": false,
+    "fast_and_fallback_tree_bytes_equal": true,
+    "fallback_marker_in_checkpoint": false,
+    "real_nfs_directory_fsync_characterized": false,
+    "real_nfs_cross_client_concurrency_complete": false
+  },
+  "source_sha256": {
+    "pssolver/io/checkpoint.py": "a9ebc6a8077d5f454e6774a2bb3c31b4320ac79b91dec6c044f2b497ab1a926d",
+    "tests/test_v0_2_1_n1_checkpoint_nfs.py": "de89f1d9933462dc4647fc9ebfda9871ec35d9aa4e328aa47aa58ca5b5813888"
+  },
+  "historical_successor_sources": {
+    "pssolver/io/checkpoint.py": {
+      "historical_sha256": "2077d93f43a4ac71605bd7aa928522c05287012d1fcfd194ee1056789b849056",
+      "current_sha256": "a9ebc6a8077d5f454e6774a2bb3c31b4320ac79b91dec6c044f2b497ab1a926d",
+      "reason": "Add the frozen v0.2.1 N-1 NFS no-clobber compatibility path without changing checkpoint bytes or schema."
+    },
+    "tests/test_rc453_checkpoint_transactionality.py": {
+      "historical_sha256": "a4d1425ca46aca272e4003c29ccef8eecc146a790466f6f7972a174d5ef6d7ca",
+      "current_sha256": "36c838fd06bf7846a1bb45d745d95fc8f2acb2292a1b4a795e805d0d1fee478a",
+      "reason": "Resolve the forward-only N-1 successor while leaving the RC4.5.3 evidence record byte-for-byte unchanged."
+    },
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": {
+      "historical_sha256": "6249ceb4325c3be13e1cdb567a62ba3269d70d94d84cfb6bfeb8fbe8865746cd",
+      "current_sha256": "9ee16496e4c0afaa799e80f5cdc5d9919b1aee78ea2fb32f7dba21e446c51c85",
+      "reason": "Resolve the forward-only N-1 checkpoint implementation successor without rewriting the G-1 glibc record."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "ada613658a887e91fd3347852b5a8fa00f70b4ab5b4a250221e622ac4953f6fc",
+      "current_sha256": "f6164def4090079bf3da2fb8ed80139fd2f0e498a09a03f9b682f3751acb7d85",
+      "reason": "Resolve the forward-only N-1 successor while preserving the R5-1 record and released fixtures."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "27a63b001ed1072411d3dc7061c09ac4ca7f3a3fccd36da992f5044b6ed28f9a",
+      "current_sha256": "599668b95b4b671cea61fa63e95b1643cb2de5ccc9a5cc82600c0ab66b1fbb86",
+      "reason": "Resolve the forward-only N-1 successor without rewriting the R5-10 observation record."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "f2e7d528352d61840366f77368fa5678186e4e102ae02a97ea7af37eedaec657",
+      "current_sha256": "696fec964dc8bef2e30dedc4eb236fe4b95211120ee0f3123e99ecea87ec791a",
+      "reason": "Resolve the forward-only N-1 successor without rewriting the R5-3 Channel record."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "a216c237a0f2d23a4e90a0691ad47a9fb82b60a01242397bc7b3221ec72a6bca",
+      "current_sha256": "b1a4c2daa4934e7abef82fb5aa956aa47fa0f9ffb909b1939c1186cf6dbd490a",
+      "reason": "Resolve the forward-only N-1 successor while preserving the R5-8 integrity record byte for byte."
+    },
+    "tests/test_rc6_6_restart_output_atomicity_record.py": {
+      "historical_sha256": "81470ef7921674b83af69d81ef7badfdbb62d293e55b246f5ec1473383ffaa2c",
+      "current_sha256": "1aff0cedd2413e9e3d45706972fa72ad52427d7b40be425996b066d23d0fa3fd",
+      "reason": "Resolve the forward-only N-1 successor without rewriting the RC6-6 atomicity record."
+    },
+    "tests/test_rc6_5_checkpoint_control_flow_record.py": {
+      "historical_sha256": "17d2e0dec7d340822e2263b8993adaa1ad9d8021a861d59a5b8713aba8d8d3f3",
+      "current_sha256": "76e352f94c52f242cb6180db40c7c27cfc8f35e644a9aaf898bf7e4e8fdc1657",
+      "reason": "Resolve N-1 successors referenced by the RC6-5 forward-only registry without rewriting its historical record."
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "b14982994494f73cd2072c9f3d046240500a7e94cf4eb6c539cf045e08964dff",
+      "current_sha256": "460a7868386234772c1e118ec0920a12ef38afbf85e5e5b243df450c81034ffd",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the RC4.5.1 adjudication record."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "cd0374a8dd72caa24a61eb2ea8d06958bb399ca6734e30090beb0ef2a2a8afc9",
+      "current_sha256": "2ed2e2b84e473e739dfae50c963fa47386c8285b7dec68ea82c239d6d3771ac0",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the RC4.5.5 robustness record."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "cabd8d9085c8905a087aa13e9429798f00be8928a625364e8a2869d7e13f2cbf",
+      "current_sha256": "0dfcc271e7a3b1722d92058f3c99194bc40349d4a1871f2a0209541926d08daa",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the R5-11 strict-metadata record."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "b5fd62e52d5ce6ed1a5ec4d07e2a1f5b5fe3b836588face8a5b01410bacdf671",
+      "current_sha256": "c04416cc6d86d957b25e2a44ff5adfdba179885351269a159fd8cf4b480f5dbd",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the R5-12 compiled-simulation record."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "d0114b6003f4f75143eaae747e1dd0c5416746511dccea8faa837150d3d1b98d",
+      "current_sha256": "277250b996b45dd3f1efe9c30dfed546dad70349790c68502b5bc1cfaa9fa733",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the R5-13 optional-hygiene record."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "8a5397509966020374aad560c75a86cc0ba1d53fc98cdef3f4d4ac819b77c506",
+      "current_sha256": "1c2e0e2aebd8b7e57b6ca26fd3b8cbfc169505084f495f0794777f9e9461a5a7",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the R5-2 finite-workflow record."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "411837d1e31e714fa42a64744559ec38c3e5618ecf42d45c7e299e27de6b739d",
+      "current_sha256": "ab6b8a401a29f310a981e6a74955ae723521a63afca18d31163bf8e63a86efe9",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the R5-5 TF32 restoration record."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "21693d1244487b620d42f99f81e2dd5e17f4dafc91a1ae38b52d8b7c0e9e3d6c",
+      "current_sha256": "6fd6b8ed2e5971a35cf4b909472902d191419cc30a5c9746d4c3c3f3a33d5687",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the R5-6 public-error record."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "12fa8d83d42d763ba21bef978f9ef278d1bcd04e44b3785905b05ad496168460",
+      "current_sha256": "72eb423b40295c429b7e238a2fc74e1fbb2fe568de0b0eee2fb3b88c589409d9",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the R5-7 device-normalization record."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "139b49c4939a0e65440d5285ff83c457ea81b521fe1b3d344304aa13d9c9a1d0",
+      "current_sha256": "afab4a859b9391a75032d735c73a1ec7498ba072b86324193593ee4273687414",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the R5-9 pressure-postcondition record."
+    },
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": {
+      "historical_sha256": "ce9199604edd0619b7143dc171243b6369bcdc2650b977193efcba812063d174",
+      "current_sha256": "b0b0980f2f85dd23a6b68fcb498ebc7bf1fe11bd21d68aa130c909c097514f72",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the RC6-1 record."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "historical_sha256": "aef5bbc0d1f884bd426069dbbc34a2f6657a81db04213802ea3f861c5739e991",
+      "current_sha256": "e9383380857972194ffb59c6587daeb069c435dc1bc455fcab03ea1cd8e4a868",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the RC6-2 record."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "historical_sha256": "c7569b9ab74856c3ad057acc12a88bc3914df8c72e58bdc2a7aa783d889cac5a",
+      "current_sha256": "7c0418072c18f365ce3ad82a3b93697976747e4ef30345ead16e35429b594794",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the RC6-3 record."
+    },
+    "tests/test_rc6_4_channel_failure_record.py": {
+      "historical_sha256": "694a177f271e0684590f15a2229c0dc23183b62b19f30bd2767c2828d54e0565",
+      "current_sha256": "e97a7b29f32c66be8049ad35dc7dbbd25cbc5474489e635a23bed5abe4e9b0ae",
+      "reason": "Resolve the forward-only N-1 checkpoint successor without rewriting the RC6-4 record."
+    },
+    "tests/test_release_v0_2_0_final.py": {
+      "historical_sha256": "e7b265dbd4e7fa357d9515c0d0f48ecd9a7b8ab5fbaf057c5e69c63e023289fd",
+      "current_sha256": "fdf8f56093f1beac4d77003b343987bd0138b8be46966b1c31a5dca2c561aafb",
+      "reason": "Resolve forward-only v0.2.1 N-1 successors while preserving the immutable v0.2.0 final-release record."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "523a0819cc95f37b82a9204120bd25314711f6e435a2d62d34db48757b016f00",
+      "current_sha256": "455a4046bad852dd1bd9367999f8f999e3eeff179153f43983979763a7ccd4a6",
+      "reason": "Resolve the forward-only N-1 successor without rewriting the RC4.5.6 TF32 record."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "3b122ed9ec5b31da8aa1ab95cc18afa45ccaff900a06f6502cb9c322ee6d9296",
+      "current_sha256": "96243f6744f9fa12a039ec2ba2bdbd305b701419c736905e7a6ebf0d3471d83f",
+      "reason": "Resolve the forward-only N-1 successor without rewriting the RC4.5.7 Consumer-impact record."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "f479b81653e70b2f4899e5e82ae7ea06929f3e0f5768b9c8cb06e9ffe8a67057",
+      "current_sha256": "d947de1ed599fca7bf609897e95cece3db1c9b0da63c9efc16afbd9616ae5d92",
+      "reason": "Resolve the forward-only N-1 successor without rewriting the RC4.5.7 recovery record."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "3f3448568d782805e4cff90a577204661a8b1d0f68eb520b9387d2edc99f6a64",
+      "current_sha256": "50b2ac83c44c42b1f5582cef811a6933a9eeff53f1ff1b39c4ff02bb15cdafdf",
+      "reason": "Resolve the forward-only N-1 successor without rewriting the RC4.5.8 H100 record."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "e9b85fee2f55d7133cfcde33756376dd22c94dec0b5df76d27d41e2e67d4926b",
+      "current_sha256": "7670512b961ade6bcab30ed3d4cf6b4a134c2c9a67e8c3df3f638986105c9c05",
+      "reason": "Resolve forward-only N-1 successors without rewriting the RC4 post-release findings."
+    },
+    "tests/test_rc5_g1_historical_audit_portability.py": {
+      "historical_sha256": "6891b4106ee42c9e05f5c0c23492be669698746ba2f873e423e173ad920f8d1e",
+      "current_sha256": "96a113b8e326d50b1402096bd5829eda13473aa7e897e3ecd608120b45caa78c",
+      "reason": "Resolve forward-only N-1 successors without rewriting the G-1 portability record."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "dcffce18e8d2403fc8e2531639e886d95d5f3809c1663287dee22326d5040af8",
+      "current_sha256": "4e247a988b873baa52fa180a1874ca8da282d0042ac8ce623b1ccd2b421b4bc2",
+      "reason": "Resolve forward-only N-1 successors without rewriting the RC5 W1 documentation record."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "6c3de45669f2e7847a7556329dda302517af1a4c471da3cd49e757966492cc81",
+      "current_sha256": "7b26ba38b9b0ad1d1443cc67571aa02dc87cabbab40e31c530dc0e360e5c9b5a",
+      "reason": "Resolve forward-only N-1 successors without rewriting the immutable RC4 release record."
+    }
+  },
+  "test_evidence": {
+    "n1_fault_injection": {
+      "passed": 13,
+      "failed": 0
+    },
+    "checkpoint_and_restart_broad": {
+      "passed": 350,
+      "failed": 0,
+      "warnings": 6
+    },
+    "historical_successor_targeted": {
+      "passed": 185,
+      "failed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 4114,
+      "failed": 0,
+      "skipped": 1,
+      "xfailed": 0,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "warnings": 6,
+      "skip_identity": "tests/test_analytic_periodic_defect_gas_2d.py::test_nematics3d_recovers_requested_defect_count_charges_and_positions",
+      "skip_reason": "optional nematics3d dependency is not installed in the test environment"
+    },
+    "local_statfs_probe": {
+      "filesystem_type": "0xef53",
+      "nfs_fallback_selected": false
+    },
+    "installed_wheel": "pending",
+    "real_home_nfs": "pending",
+    "real_scratch1_nfs": "pending",
+    "cross_client_nfs": "pending",
+    "h100": "not_authorized"
+  },
+  "provider_identity": {
+    "reference_record": "notes/PSSolver_v0_2_0rc6_provider_identity_impact.json",
+    "reference_record_sha256": "4ec9971a0e08afb2e233659bd284f69ccbc5300132f2d221f697b67d154bb3b4",
+    "periodic_canonical_sha256": "d85f6540494696fddb4549cd4d431d362fe4a55bc53cb9cfd8158fae7c09530d",
+    "channel_fixed_canonical_sha256": "b95aa0ce22035df610282f1066cce23b47819807f3d942138b0d5038b727a905",
+    "channel_tolerance_canonical_sha256": "b18000feec39cdcdb8e8d371ad80b5037a10ba844c21db0dcddd7b162d324908",
+    "identity_source_files_changed": false,
+    "provider_identity_changed": false
+  },
+  "scope": {
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "provider_identity_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  },
+  "authorization": {
+    "implementation_complete": true,
+    "eligible_for_real_nfs_cpu_qualification": true,
+    "push_authorized": false,
+    "h100_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "automatic_retry": false
+  }
+}

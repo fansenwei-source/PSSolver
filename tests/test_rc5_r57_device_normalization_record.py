@@ -48,6 +48,14 @@ RC6_R6_RECORD = ROOT / (
 )
 RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
+V021_N1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+)
+V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
+V022_V17_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+)
+V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
 def _resolve_g1_audit_successor(relative: str, resolved: str) -> str:
@@ -134,6 +142,26 @@ def _resolve_rc6_freeze_successor(relative: str, resolved: str) -> str:
     if registration is not None and registration["historical_sha256"] == resolved:
         resolved = registration["current_sha256"]
     registration = json.loads(FINAL_RELEASE_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == resolved:
+        resolved = registration["current_sha256"]
+    registration = json.loads(V021_N1_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == resolved:
+        resolved = registration["current_sha256"]
+    registration = json.loads(V021_RELEASE_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == resolved:
+        resolved = registration["current_sha256"]
+    registration = json.loads(V022_V17_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == resolved:
+        resolved = registration["current_sha256"]
+    registration = json.loads(V022_RELEASE_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == resolved:

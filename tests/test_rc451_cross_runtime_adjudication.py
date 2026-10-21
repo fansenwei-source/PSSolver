@@ -35,6 +35,8 @@ RC5_G1_GLIBC = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
 )
 RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
+V021_N1 = ROOT / "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+V022_V17 = ROOT / "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -66,6 +68,8 @@ def _resolve_successor_sha256(relative: str, historical: str) -> str:
         RC5_R513,
         RC5_G1_GLIBC,
         RC6_R6,
+        V021_N1,
+        V022_V17,
     ):
         registration = _read(record_path).get(
             "historical_successor_sources", {}

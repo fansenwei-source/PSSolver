@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "classification": "PASS_R0003_V0_2_2_CANDIDATE_ACCEPTANCE_IMPORT",
+  "status": "evidence_import_complete",
+  "git_identity": {
+    "branch": "release/pssolver-v0.2.2",
+    "evidence_parent": "d0a23a46bb77c9cc9b47e5df4e3f646ab7169d73",
+    "candidate_source_commit": "d0a23a46bb77c9cc9b47e5df4e3f646ab7169d73",
+    "sync_result_commit": "a72fb4a01e9047ee2f5167954c2a286d59bc1f4a",
+    "record_commit_is_release_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0003",
+    "request_path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/requests/R-0003.json",
+    "request_sha256": "4c2f435820acf7cc47166343d878ec80f6abdae09ae14d976e282a4117e725c4",
+    "result_path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0003.result.json",
+    "result_sha256": "0f68e73a6d3cd130d44a2f41dfca9867702570049ec2c5f670a70dc13a03c91a",
+    "classification": "PASS",
+    "release_blockers": [],
+    "registry_updates": [],
+    "new_findings": []
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_v0_2_2_claude_candidate_acceptance_20261020_v1",
+    "checksums_entries": 32515,
+    "checksums_sha256": "a8f649d5d6a4354028a87ff690dc1325d5306ceca3395332ff1db9ef0813a6c6",
+    "complete_present": true,
+    "final_report_sha256": "96dbad417b401692ea3ba37ad634c517a084899284588817e5163aa2748aef4c",
+    "summary_sha256": "cdcccd1bcb072c343835647312c0befe5945881d57e313e046eb1b4e66efb121"
+  },
+  "candidate_acceptance": {
+    "target_branch": "release/pssolver-v0.2.2",
+    "target_commit": "d0a23a46bb77c9cc9b47e5df4e3f646ab7169d73",
+    "baseline_tag": "v0.2.1",
+    "baseline_tag_object": "daf1270b1f046ac767045cbbe536fd185599d83f",
+    "baseline_commit": "ca9c6729670f07639e7877881c777d1653f4a592",
+    "artifacts": {
+      "pssolver-0.2.2-py3-none-any.whl": {
+        "size": 801349,
+        "sha256": "a7e94585e62785c69522d6cc194fd479b5af55577444926d1bb661ed073cc00e"
+      },
+      "pssolver-0.2.2.tar.gz": {
+        "size": 1410291,
+        "sha256": "ad8237e67478f7328c5152981ea4d888f1df64e1af7227f07ba0a0f070b02b39"
+      }
+    },
+    "verdicts": {
+      "V022-C1": "PASS",
+      "V022-C2": "PASS",
+      "V022-C3": "PASS",
+      "V022-C4": "COVERED_BY_EVIDENCE",
+      "V022-C5": "PASS",
+      "full-cpu-suite": "PASS",
+      "evidence-records": "PASS",
+      "h100": "NOT_RUN"
+    },
+    "full_cpu_suite": {
+      "passed": 4191,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "deselected": 7,
+      "subtests_passed": 8
+    },
+    "runtime_delta_is_v17_plus_version_only": true,
+    "checkpoint_trees_byte_identical_to_v0_2_1": true,
+    "provider_identity_unchanged": true,
+    "control_provider_pins_accepted": true,
+    "installed_wheel_gate_passed": true,
+    "real_nfs_gate_covered_by_existing_evidence": true,
+    "h100_required": false,
+    "eligible_for_separately_authorized_release_actions": true
+  },
+  "cross_checked_codex_evidence": {
+    "path": "/home/fansenwei/pssolver_v0_2_2_release_package_2a1d0f7_20261020_v1",
+    "checksums_entries": 11,
+    "checksums_sha256": "62bdd3cbb0acb9ba2bfb62b0ca920d730fa0b7f420240b3fa4a1bdc5bc4f2731",
+    "complete_present": false
+  },
+  "registry": {
+    "path": "notes/pssolver_v0_2_x_open_issues.json",
+    "sha256": "ffdd4fe41ddc140857081febf634b28bed4e1d3345f9e434982ef11ec2f67cc2",
+    "issue_count": 28,
+    "modified_by_import": false,
+    "updates_imported": 0,
+    "new_findings_imported": 0
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "registry_changed": false,
+    "tests_relaxed": false,
+    "historical_records_rewritten": false,
+    "tag_modified": false,
+    "release_modified": false,
+    "assets_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "HPCC_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "tag_authorized": false,
+    "github_release_authorized": false,
+    "pypi_authorized": false,
+    "hpcc_authorized": false,
+    "h100_authorized": false
+  },
+  "next_sync_id": "R-0004"
+}

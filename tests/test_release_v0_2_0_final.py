@@ -12,6 +12,14 @@ from pssolver.functional.api import functional_protocol_provenance
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/pssolver_v0_2_0.json"
+V021_N1_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+)
+V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
+V022_V17_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+)
+V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
 def _sha256(path: Path) -> str:
@@ -36,6 +44,10 @@ def test_dev_line_identifies_its_v020_release_base_and_current_version():
         "name": "pssolver",
         "version": "0.3.0.dev0",
     }
+    successor = json.loads(V021_RELEASE_RECORD.read_text(encoding="utf-8"))
+    assert successor["source"]["base_release"] == "v0.2.0"
+    assert successor["source"]["v0_2_0_tag_rewritten"] is False
+    assert successor["source"]["v0_2_0_assets_replaced"] is False
 
 
 def test_v020_changelog_records_the_rc6_source_boundary():
@@ -58,10 +70,10 @@ def test_v020_documents_nfs_checkpoint_limit_and_patch_policy():
     assert "NFS-compatible no-clobber\n  checkpoint publication in v0.2.1" in changelog
 
 
-def test_v020_readme_uses_the_final_version():
+def test_v020_readme_has_the_registered_patch_successor():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    assert "PSSolver 0.2.0 is" in readme
-    assert "qualified executable combinations in 0.2.0 are" in readme
+    assert "PSSolver 0.2.2 is" in readme
+    assert "qualified executable combinations in 0.2.2 are" in readme
     assert "0.2.0rc6 is" not in readme
 
 
@@ -210,6 +222,18 @@ def test_v020_successor_record_matches_every_registered_source():
     development_successors = json.loads(
         (ROOT / "notes/pssolver_v0_3_0_dev.json").read_text(encoding="utf-8")
     )["historical_successor_sources"]
+    n1_successors = json.loads(V021_N1_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
+    release_successors = json.loads(
+        V021_RELEASE_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
+    v17_successors = json.loads(
+        V022_V17_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
+    v022_release_successors = json.loads(
+        V022_RELEASE_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert set(successors) == {
         "CHANGELOG.md",
         "README.md",
@@ -241,12 +265,29 @@ def test_v020_successor_record_matches_every_registered_source():
     for relative, identity in successors.items():
         assert identity["historical_sha256"] != identity["current_sha256"]
         actual = _sha256(ROOT / relative)
-        if actual != identity["current_sha256"]:
-            development = development_successors[relative]
-            assert development["historical_sha256"] == identity["current_sha256"]
-            assert actual == development["current_sha256"]
-        else:
-            assert actual == identity["current_sha256"]
+        expected = identity["current_sha256"]
+        release_expected = expected
+        for registrations in (
+            n1_successors,
+            release_successors,
+            v17_successors,
+            v022_release_successors,
+        ):
+            registration = registrations.get(relative)
+            if (
+                registration is not None
+                and registration["historical_sha256"] == release_expected
+            ):
+                release_expected = registration["current_sha256"]
+
+        accepted = {release_expected}
+        development = development_successors.get(relative)
+        if (
+            development is not None
+            and development["historical_sha256"] == expected
+        ):
+            accepted.add(development["current_sha256"])
+        assert actual in accepted
         assert identity["reason"]
 
 

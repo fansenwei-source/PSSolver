@@ -19,6 +19,10 @@ RC6_R5 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
 RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 RC6_FREEZE = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 FINAL_RELEASE = ROOT / "notes/pssolver_v0_2_0.json"
+V021_N1 = ROOT / "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+V021_RELEASE = ROOT / "notes/pssolver_v0_2_1.json"
+V022_V17 = ROOT / "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+V022_RELEASE = ROOT / "notes/pssolver_v0_2_2.json"
 
 
 def _record() -> dict[str, object]:
@@ -55,6 +59,18 @@ def test_glibc_compatibility_record_binds_implementation_and_tests():
     final_release_successors = json.loads(FINAL_RELEASE.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    n1_successors = json.loads(V021_N1.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
+    release_successors = json.loads(V021_RELEASE.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
+    v17_successors = json.loads(V022_V17.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
+    v022_release_successors = json.loads(
+        V022_RELEASE.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert record["classification"] == (
         "PASS_RC5_G1_CHECKPOINT_GLIBC_2_17_CPU_COMPATIBILITY_CANDIDATE"
     )
@@ -115,6 +131,30 @@ def test_glibc_compatibility_record_binds_implementation_and_tests():
             and final_successor["historical_sha256"] == expected
         ):
             expected = final_successor["current_sha256"]
+        n1_successor = n1_successors.get(relative)
+        if (
+            n1_successor is not None
+            and n1_successor["historical_sha256"] == expected
+        ):
+            expected = n1_successor["current_sha256"]
+        release_successor = release_successors.get(relative)
+        if (
+            release_successor is not None
+            and release_successor["historical_sha256"] == expected
+        ):
+            expected = release_successor["current_sha256"]
+        v17_successor = v17_successors.get(relative)
+        if (
+            v17_successor is not None
+            and v17_successor["historical_sha256"] == expected
+        ):
+            expected = v17_successor["current_sha256"]
+        release_successor = v022_release_successors.get(relative)
+        if (
+            release_successor is not None
+            and release_successor["historical_sha256"] == expected
+        ):
+            expected = release_successor["current_sha256"]
         assert _sha256(relative) == expected
         assert successor["historical_sha256"] != successor["current_sha256"]
         assert successor["reason"]

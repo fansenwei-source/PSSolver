@@ -23,10 +23,11 @@
       "rewritten": false
     }
   },
-  "issue_count": 26,
+  "issue_count": 28,
   "status_counts": {
-    "open": 2,
-    "registered": 18,
+    "open": 1,
+    "registered": 20,
+    "verified": 1,
     "deferred": 2,
     "accepted": 1,
     "coverage_gap": 3
@@ -112,9 +113,39 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "open",
+      "status": "verified",
+      "fixed_in": "611d167d1b2c2d634222f608f4c9cd4dc671636d",
+      "verified_by": "R-0002",
       "target_release": "0.2.x priority",
-      "notes": "target.parent.lstat().st_dev observes the symlink rather than the destination; use stat() or resolve the parent. HPCC reproduced for Periodic and Channel functional export_checkpoint; production output directories are unaffected."
+      "notes": "Fixed by following the immediate checkpoint-parent symlink for destination-device identity. R-0002 independently verified Periodic and Channel functional export_checkpoint with a real cross-filesystem parent symlink, forced fallback, installed wheel, true cross-filesystem rejection, and the complete CPU suite."
+    },
+    {
+      "id": "V-22",
+      "title": "Mid-transaction parent-symlink retarget can leave staging in the original target",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0002.result.json",
+      "first_found": "V-17 independent review R-0002; behavior present since v0.2.0",
+      "affects_v0_2_0": true,
+      "affects_v0_2_1": true,
+      "affects_control_paths": true,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.2.x",
+      "notes": "Repro: retarget the immediate parent symlink inside checkpoint_directory_transaction before publication; the transaction fails closed and preserves the new target, but cleanup through the retargeted path leaves .<name>.tmp-* in the original directory. Suggested fix: resolve the parent once at transaction start or retain a directory fd and clean up through that stable identity."
+    },
+    {
+      "id": "V-23",
+      "title": "An unsearchable checkpoint parent exposes raw PermissionError",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0002.result.json",
+      "first_found": "V-17 independent review R-0002; behavior present since v0.2.0",
+      "affects_v0_2_0": true,
+      "affects_v0_2_1": true,
+      "affects_control_paths": true,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.2.x",
+      "notes": "Repro: chmod the immediate checkpoint parent to 000, then call functional export_checkpoint; the initial existence/lstat probe raises PermissionError instead of the public checkpoint error hierarchy. Suggested fix: classify that initial OSError through the same CheckpointIOError mapping used by staging creation."
     },
     {
       "id": "V-16",
@@ -309,6 +340,7 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "accepted",
+      "decision": "D-0007",
       "target_release": "none",
       "notes": "Accepted design limitation; retained for visibility."
     },
@@ -337,6 +369,7 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "deferred",
+      "decision": "D-0007",
       "target_release": "before lifting is reopened",
       "notes": "Includes non-convergent DST wall projection and complex-to-real truncation before validation."
     },
@@ -351,6 +384,7 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "deferred",
+      "decision": "D-0007",
       "target_release": "after 0.3",
       "notes": "Nine architecture-cleanup items are intentionally grouped and remain outside the v0.2 maintenance line."
     },

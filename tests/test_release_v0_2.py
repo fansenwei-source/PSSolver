@@ -54,6 +54,12 @@ RC6_R5 = PROJECT_ROOT / (
 RC6_R6 = PROJECT_ROOT / (
     "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 )
+V021_N1 = PROJECT_ROOT / (
+    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+)
+V022_V17 = PROJECT_ROOT / (
+    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+)
 
 
 def test_rc4_release_record_preserves_historical_package_version():
@@ -188,6 +194,12 @@ def test_release_candidate_registers_exact_portability_successors():
     rc6_r6_successors = json.loads(RC6_R6.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    n1_successors = json.loads(V021_N1.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
+    v17_successors = json.loads(V022_V17.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     assert set(successors) == {
         "tests/test_rc447_pressure_bounded_operator_recovery.py",
         "tests/test_rc455_public_robustness.py",
@@ -281,10 +293,16 @@ def test_release_candidate_registers_exact_portability_successors():
         rc6 = rc6_r5_successors.get(relative)
         if rc6 is not None and rc6["historical_sha256"] == resolved:
             resolved = rc6["current_sha256"]
-        rc6 = rc6_r6_successors.get(relative)
-        if rc6 is not None and rc6["historical_sha256"] == resolved:
-            resolved = rc6["current_sha256"]
-        assert resolved == hashlib.sha256((PROJECT_ROOT / relative).read_bytes()).hexdigest()
+            rc6 = rc6_r6_successors.get(relative)
+            if rc6 is not None and rc6["historical_sha256"] == resolved:
+                resolved = rc6["current_sha256"]
+            n1 = n1_successors.get(relative)
+            if n1 is not None and n1["historical_sha256"] == resolved:
+                resolved = n1["current_sha256"]
+            v17 = v17_successors.get(relative)
+            if v17 is not None and v17["historical_sha256"] == resolved:
+                resolved = v17["current_sha256"]
+            assert resolved == hashlib.sha256((PROJECT_ROOT / relative).read_bytes()).hexdigest()
         assert registration["introduced_by_phase"] == (
             "v0.2.0rc4-release-preparation"
         )

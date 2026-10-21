@@ -1,0 +1,267 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-20",
+  "release_target": "0.2.x",
+  "issue": "V-17",
+  "classification": "PASS_V0_2_2_V17_CHECKPOINT_PARENT_SYMLINK_LOCAL_CPU_CANDIDATE",
+  "status": "implementation_complete_full_cpu_verified",
+  "git_identity": {
+    "branch": "fix/v0.2.2-v17",
+    "implementation_commit": "611d167d1b2c2d634222f608f4c9cd4dc671636d",
+    "implementation_parent": "c0934ed20af3b33ad19c8872d1b3a520a1e9e245",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue_registration": {
+    "path": "notes/pssolver_v0_2_x_open_issues.json",
+    "id": "V-17",
+    "severity": "medium-low",
+    "status_before_qualification": "open",
+    "affects_control_paths": true,
+    "exercised_by_current_control_research": false
+  },
+  "contract": {
+    "staging_device_source": "lstat(source).st_dev",
+    "destination_device_source": "stat(target.parent).st_dev",
+    "parent_symlink_followed_for_device_identity": true,
+    "same_resolved_filesystem_required": true,
+    "distinct_resolved_filesystems_rejected": true,
+    "periodic_functional_export_covered": true,
+    "channel_functional_export_covered": true,
+    "requested_absolute_return_path_preserved": true,
+    "checkpoint_round_trip_bitwise_equal": true,
+    "staging_residue_allowed": false
+  },
+  "source_sha256": {
+    "pssolver/io/checkpoint.py": "1a90fe8edb640310c439d6b553f7de02237eccca368455b059565d2038bec0df",
+    "tests/test_v0_2_2_v17_checkpoint_symlink_parent.py": "6dd9d200862469fdd90089f0e7c32afa9ac22319585f001c0e832f11d9e23f9a"
+  },
+  "historical_successor_sources": {
+    "pssolver/io/checkpoint.py": {
+      "historical_sha256": "a9ebc6a8077d5f454e6774a2bb3c31b4320ac79b91dec6c044f2b497ab1a926d",
+      "current_sha256": "1a90fe8edb640310c439d6b553f7de02237eccca368455b059565d2038bec0df",
+      "reason": "Follow an immediate checkpoint-parent symlink when comparing the destination filesystem, without changing checkpoint bytes, schema, or publication semantics."
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "460a7868386234772c1e118ec0920a12ef38afbf85e5e5b243df450c81034ffd",
+      "current_sha256": "a36bac2dc2379d658e91e0893fa27d6338cffe005a516e145662b9618ed4e9ff",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC4.5.1 evidence record."
+    },
+    "tests/test_rc453_checkpoint_transactionality.py": {
+      "historical_sha256": "36c838fd06bf7846a1bb45d745d95fc8f2acb2292a1b4a795e805d0d1fee478a",
+      "current_sha256": "4f8a31c61908427f6ba8f6fd2caf457f2e727f0605fefe06812c3bb020b78d24",
+      "reason": "Resolve the forward-only V-17 source successor while preserving the RC4.5.3 evidence record byte for byte."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "2ed2e2b84e473e739dfae50c963fa47386c8285b7dec68ea82c239d6d3771ac0",
+      "current_sha256": "023ceadd202981e35ae1686f4c9eb17d40494cafebcf3186bb95b60b38c79421",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC4.5.5 evidence record."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "455a4046bad852dd1bd9367999f8f999e3eeff179153f43983979763a7ccd4a6",
+      "current_sha256": "cb6256b66f00327320458982a409d930b376bf1a4e38f28ee0f03e081812260e",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC4.5.6 evidence record."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "96243f6744f9fa12a039ec2ba2bdbd305b701419c736905e7a6ebf0d3471d83f",
+      "current_sha256": "122ffbc3edf0df66139125b103737f8b493eff72f599c003b475d46ea91b0cdf",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the initial RC4.5.7 consumer evidence record."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "d947de1ed599fca7bf609897e95cece3db1c9b0da63c9efc16afbd9616ae5d92",
+      "current_sha256": "ca68f3fba72dad2952fec6356927fbc07fa31a85012f2a233d4d28269a406e41",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC4.5.7 recovery record."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "50b2ac83c44c42b1f5582cef811a6933a9eeff53f1ff1b39c4ff02bb15cdafdf",
+      "current_sha256": "8325b1799a93955f3504dc6f2f09909e26cc131e1e2b40420e964155ed51af5c",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC4.5.8 H100 closure record."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "7670512b961ade6bcab30ed3d4cf6b4a134c2c9a67e8c3df3f638986105c9c05",
+      "current_sha256": "9eec3cca8d86372ddc82af8d338f2a01a802f05e576de05de8ecfecf095fd722",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC4 post-release findings."
+    },
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": {
+      "historical_sha256": "1d1d9555ccb1605ccff8ee3926f05b5a71b3c0e13651582a994b343ceb88ec25",
+      "current_sha256": "38988b5039a058037befc864da1ad817a7438770323276c5192cf8367201c761",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC5 G-1 glibc compatibility record."
+    },
+    "tests/test_rc5_g1_historical_audit_portability.py": {
+      "historical_sha256": "ab72341ff68c012a4818f1256d8674f3ad73a5b1e1fb55ac77ac57024bddfbfb",
+      "current_sha256": "b7b5a66deb4b4fbd58c1c5e494c5f35180aebb4284bdef7957eea966f01258dd",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC5 G-1 historical audit record."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "bac73cbe618931d6e362b4e18185d83e247ebb906f8ffedcfb2f9125f1926a36",
+      "current_sha256": "c59c043b0331d657ad7a9b648e15b76d774f24b0cc5878dbb2542014c56329c6",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the legacy functional checkpoint record."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "139c37c3b91722247de4f3601596e9652be965e177df3eaaa6c486fa6f2cd45c",
+      "current_sha256": "667da971f76a613bbacf32e6f54a2fba9dd7d6e54bff075fd6827513e26093ca",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the R5-10 checkpoint observation record."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "f53cdd525a468afb2423bdfd221678ec3e0f05d22db9981fe0d5d09266798477",
+      "current_sha256": "4f23282308a7aed19ba462affdb2baa72f321db0202b3149320af10064c1cba9",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the R5-11 metadata record."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "fa4069bed6140662811c7a230ed8752c1bb5bc934ff6133c8ce1c686f89d11d3",
+      "current_sha256": "f5daadfc80581a14d6944e2c0805d59ad0eccc396f3fd5dd37f6230515b44c79",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the R5-12 compiled simulation record."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "af07d5d1f2f7560621afc9835a80d50b9e08a97ad2950804862dc62c56146630",
+      "current_sha256": "8f588f38cb41b265cc30aa5ba45ec1117bd1d6f4808a25f0e1e50c348c5ed88c",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the R5-13 hygiene record."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "a9f30ec21d7d2c8f0624830e434807d6015fd849c0228ad46b64d7d4523e2c0d",
+      "current_sha256": "3b64336f6d3c54ef6f23ecdd52c3944814fff36172927cacdccdf55f43846d6f",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the R5-2 workflow record."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "96179311db933161c2f0f24332012cfa6a425cfb96641821c4604b275ae29031",
+      "current_sha256": "9aa7790911e245fad9ed44554201133b79b04553a1cec0e4d6f5615641b05ba3",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the R5-3 Channel checkpoint record."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "c433462466928895ce9fcbd35a69213851215ef221ba4dc1bd719c5a99e56ae0",
+      "current_sha256": "760cfab74a6584925084aea9b4344fd92297fa81d9b6d409b6d285dc86d13fb1",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the R5-5 TF32 state record."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "be61d1da905893c1d82d11b0525a233a5f5b1cfdab3b5ae7ba6da7b001ff2902",
+      "current_sha256": "1eb4409506813566329f3886c805fa23a767c06755f0050fdfc7d9ebd76ab25b",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the R5-6 public error record."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "ea82923e336feaf05c5e671c1746c4bd5b005a572ab51c60b1ff353db6c79b4c",
+      "current_sha256": "0965e5286ce5faa383af04bcdb6f0aeaab77f148b083c5a02012525861fd6f2e",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the R5-7 device normalization record."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "d85dde4fb93256757b816a3b33840ead600126ee393d218a2eddc03793c36b4e",
+      "current_sha256": "94a3c7cfe3d281e3109738273a476cab46ddf25ce6bf59f34c820765ac68ad3a",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the R5-8 checkpoint integrity record."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "df0fed2b31128c8d8a016424e5eea52ef3251cc3c13fc2b8c4f0ffd5778329f4",
+      "current_sha256": "c7b70a688917e71945764ce288ff53a15851e970c751e467fb45115dae72304c",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the R5-9 pressure record."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "8ccd80c366af8b3fd04a11f9015e7ab564effbdec39a85556bd464d6dd3dde59",
+      "current_sha256": "e1aca4d74b09db4b48ed3fb77f9d641a303836dea49a7086dc956e172b449278",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC5 W1 documentation record."
+    },
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": {
+      "historical_sha256": "95dd92ad1815d11f10ad796408b223963f4ca20f70578e4f6038b1e4f370767c",
+      "current_sha256": "868eece671c437baa2fd4494e91544c7280437fcfe355afca90c2e3943a52fe3",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC6-1 record."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "historical_sha256": "0a9cc85f2f7a9b2fd4d10352a325144b14cbe5b8a3808ac01bfb45cfe8b2382d",
+      "current_sha256": "e774f325487c53d6d77aec799b5aedfb3115e68e11502910a3889fdc215e5f04",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC6-2 record."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "historical_sha256": "5e332686c2ca4402a42f0239ea60f609b90dfae1b2c9ad5cfc44a7c63c8abe19",
+      "current_sha256": "059afa846c9b987a8763096daf55f8f1bad816c93ee73cbc9e986ab81b0a7908",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC6-3 record."
+    },
+    "tests/test_rc6_4_channel_failure_record.py": {
+      "historical_sha256": "d493b764d6f4610434c6aafa0856fdd953cfaf06ec4a4582fae7af4819b05c59",
+      "current_sha256": "be02a1b9f0559760da8bdab0ed569bb11380d7da1bb84f1949fbe08dd3491bc8",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC6-4 record."
+    },
+    "tests/test_rc6_5_checkpoint_control_flow_record.py": {
+      "historical_sha256": "9ad7750ec9299ce971bcae152707377a4a9296362bd74b320e735b45fd4075a1",
+      "current_sha256": "efceef6b1696ea17adb396fd0cb0aa7ce0fe605409960fe5f3856cafc4aedbb9",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC6-5 record."
+    },
+    "tests/test_rc6_6_restart_output_atomicity_record.py": {
+      "historical_sha256": "bea5c3fd3848d62f49b2c7a3a6f631abcc42d70d8e31057f2ac0d620af4a03ce",
+      "current_sha256": "4701f278fe6b5c3d56d791e4baaf85576a565046a138dc46b54b32b8f4dfc567",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the RC6-6 restart atomicity record."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "7b26ba38b9b0ad1d1443cc67571aa02dc87cabbab40e31c530dc0e360e5c9b5a",
+      "current_sha256": "cd492d4bf9733a8386b541d1cf467132f5455a88864719de40f01652648e3747",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the v0.2 release-candidate record."
+    },
+    "tests/test_release_v0_2_0_final.py": {
+      "historical_sha256": "9d68216ae8b558f7588872951ef87e5e193a268ec1c4aa3be00dd81349bd5a04",
+      "current_sha256": "24d5b4c8c260cc79ad5a4db3e7582a538192287060415d2aa58202215acc0937",
+      "reason": "Resolve the forward-only V-17 source successor without rewriting the v0.2.0 release record."
+    },
+    "tests/test_release_v0_2_1.py": {
+      "historical_sha256": "fc80008d9f1b837434ed307a1e8d4d1c0fb24fc1b8901425e4b4fb5b37db4e55",
+      "current_sha256": "0f66a74e92fa1142139831d222d80bc828b295a3811bdb225f4c0c11c9d4ce4e",
+      "reason": "Resolve the forward-only V-17 successors without rewriting the v0.2.1 release record."
+    },
+    "tests/test_v0_2_1_n1_checkpoint_nfs_record.py": {
+      "historical_sha256": "738dbe2afb93c765270f05c81e4ee814c8a03f9975fdefdc81a25712f459fb5e",
+      "current_sha256": "635ea97e1afed775ac588689ad4f4fa978efd11561e048f3a21d2c2599717f70",
+      "reason": "Resolve the forward-only V-17 successor without rewriting the v0.2.1 N-1 implementation record."
+    }
+  },
+  "test_evidence": {
+    "pre_fix_regression": {
+      "passed": 1,
+      "failed": 2,
+      "failed_paths": [
+        "periodic_functional_export",
+        "channel_functional_export"
+      ]
+    },
+    "v17_and_n1_targeted": {
+      "passed": 16,
+      "failed": 0
+    },
+    "checkpoint_functional_broad": {
+      "passed": 96,
+      "failed": 0
+    },
+    "historical_successor_records": {
+      "registered_sources": 34,
+      "registered_test_sources": 33,
+      "targeted_passed": 144,
+      "targeted_failed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 4168,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "deselected": 7,
+      "warnings": 6,
+      "subtests_passed": 8
+    }
+  },
+  "scope": {
+    "checkpoint_parent_device_guard_changed": true,
+    "checkpoint_publication_algorithm_changed": false,
+    "checkpoint_bytes_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "provider_identity_changed": false,
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  },
+  "authorization": {
+    "implementation_complete": true,
+    "broad_cpu_qualification_complete": true,
+    "eligible_for_external_qualification": true,
+    "push_authorized": false,
+    "h100_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "automatic_retry": false
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-20",
+  "release": "0.2.1",
+  "issue": "N-1",
+  "classification": "PASS_V0_2_1_N1_REAL_NFS_CPU_QUALIFICATION",
+  "status": "installed_wheel_and_real_nfs_cpu_verified_pending_small_h100",
+  "qualified_source": {
+    "branch": "maint/v0.2",
+    "commit": "15670eb264a44c6707aeb1695b74e6cdbb34f611",
+    "implementation_commit": "927dc89aa63bcee9b03248f52662389bc947c47a",
+    "package_version_during_qualification": "0.2.0",
+    "record_commit_is_qualified_source": false,
+    "requires_cpu_requalification": false
+  },
+  "predecessor_record": {
+    "path": "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json",
+    "sha256": "8d84221555cfc4d982f681c07ed83ad3b630747d5cac633e1b140e71bd5b577f",
+    "classification": "PASS_V0_2_1_N1_NFS_CHECKPOINT_PUBLICATION_LOCAL_CPU_CANDIDATE",
+    "rewritten": false
+  },
+  "installed_wheel": {
+    "source_archive_sha256": "a349d61791770cc62caee0dd08f28292dd81fc0f35003c57eed909ff4303e68f",
+    "wheel_sha256": "8068a1d916a8c7939068b53bb496fe768e7e150f58a8c2d3d367b85ecf77849f",
+    "installed_with_no_deps": true,
+    "pip_check": "PASS",
+    "source_shadow_import": false,
+    "python": "3.10.18",
+    "torch": "2.5.1+cu121",
+    "torch_cuda_runtime": "12.1",
+    "numpy": "1.22.3",
+    "scipy": "1.8.1",
+    "n1_fault_injection": {
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0
+    },
+    "candidate_version_note": "The maintenance implementation was qualified before the final v0.2.1 version bump."
+  },
+  "real_nfs_single_client": {
+    "home": {
+      "classification": "PASS_V0_2_1_N1_REAL_NFS_SINGLE_CLIENT",
+      "filesystem_type": "0x6969",
+      "raw_rename_noreplace_errno": 22,
+      "directory_fsync_passed": true,
+      "functional_checkpoint_exact_restore": true,
+      "collision_rejected_without_modification": true,
+      "fast_fallback_tree_bytes_equal": true,
+      "report_sha256": "c5f20a5eae5cd9280cac9dd2929a7081d25b8d7984335de116119776fa5149e6"
+    },
+    "scratch1": {
+      "classification": "PASS_V0_2_1_N1_REAL_NFS_SINGLE_CLIENT",
+      "filesystem_type": "0x6969",
+      "raw_rename_noreplace_errno": 22,
+      "directory_fsync_passed": true,
+      "functional_checkpoint_exact_restore": true,
+      "collision_rejected_without_modification": true,
+      "fast_fallback_tree_bytes_equal": true,
+      "report_sha256": "c4447e5ea51d19c5bfe7c475eca714461130a2a60d697f0fe40e037a6a516d93"
+    },
+    "provider_identity": {
+      "canonical_sha256": "2d36ab290d053f4580ccd4c93974db6794ec709575179d62c002e32fb5b499e9",
+      "unchanged_on_home": true,
+      "unchanged_on_scratch1": true
+    },
+    "temporary_residue_count": 0
+  },
+  "real_nfs_cross_client": {
+    "classification": "PASS_V0_2_1_N1_REAL_NFS_CROSS_CLIENT",
+    "slurm_job_id": 10902631,
+    "partition": "hagan-compute",
+    "account": "hagan-lab",
+    "qos": "medium",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:00:57",
+    "nodes": [
+      "compute-9-0",
+      "compute-9-1"
+    ],
+    "success_count": 1,
+    "collision_count": 1,
+    "winner": 1,
+    "collision_exception": "CheckpointExistsError",
+    "temporary_residue_count": 0,
+    "report_sha256": "ed92cdc66afb22f498f7ddaaf25cab3f8a7c044748c24c2d961462d040ca76a8"
+  },
+  "external_evidence": {
+    "control_directory": "/home/fansenwei/pssolver_v021_n1_nfs_cpu_15670eb_20261020_v1",
+    "scratch_directory": "/scratch1/vincent/PSSolver/data_pssolver_v021_n1_nfs_cpu_15670eb_20261020_v1",
+    "summary_sha256": "c5df16570cdfb8e0f3915d6ceec45213f5d46c36e6f87a2f44bf7f0559e1269e",
+    "final_report_sha256": "53250bdce06ed3ece00bc9f10f53bd1c5e237809659308984aac2ec8ea97c95d",
+    "slurm_final_sha256": "0eb425140c87e582ef95ca73523cd30b7a0e0485f53e0e3d65d39aed443663da",
+    "final_worktree_sha256": "f3eadb60269f7644bbe0a6e766bbaa0aa4b0f926fc2d8ffa90fd9cdf95bd29e9",
+    "cpu_complete_sha256": "edd42d0820114ba6ec7b7851c950f2690156e3eda7d445c877b7a3de57f80c34",
+    "control_manifest_entries": 29,
+    "control_manifest_passed": 29,
+    "control_manifest_sha256": "9748645f3690e9681d2ba5ea7cf0f85d81aadce4ca92a80aca3d3cd19213822b",
+    "scratch_manifest_entries": 7,
+    "scratch_manifest_passed": 7,
+    "scratch_manifest_sha256": "5c06f84993367c856f9f72d7979494315fc0efbc1f3e4160606dcfdce303d031"
+  },
+  "worktree": {
+    "path": "/home/fansenwei/PSSolver_v021_n1_15670eb_20261020_v1",
+    "head": "15670eb264a44c6707aeb1695b74e6cdbb34f611",
+    "detached": true,
+    "clean": true,
+    "ignored_status_lines": 0,
+    "pyc_count": 0,
+    "cache_directory_count": 0
+  },
+  "scope": {
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "provider_identity_changed": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "scientific_failure": false
+  },
+  "authorization": {
+    "installed_wheel_and_real_nfs_cpu_complete": true,
+    "n1_complete": false,
+    "eligible_for_small_h100_checkpoint_qualification": true,
+    "formal_h100_submission_count": 0,
+    "h100_authorized": false,
+    "h100_submitted": false,
+    "automatic_retry": false,
+    "eligible_for_push": false,
+    "version_bumped_to_0_2_1": false,
+    "tag_created": false,
+    "release_created": false,
+    "pypi_published": false
+  },
+  "pending": [
+    "small installed-wheel H100 checkpoint/restart qualification under separate authorization",
+    "final v0.2.1 version bump, release packaging, tag, and release authorization"
+  ]
+}

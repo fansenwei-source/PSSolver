@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-19",
+  "release": "0.2.1",
+  "issue": "N-1",
+  "classification": "PLAN_V0_2_1_N1_NFS_CHECKPOINT_PUBLICATION_FROZEN",
+  "status": "planning_only",
+  "source": {
+    "branch": "maint/v0.2",
+    "v0_2_0_release_preparation_commit": "6d2934e73b543f6652d112733657775333e0f396",
+    "qualified_rc6_source_commit": "fd7323d5e9ef87c537ed07476f8bd50b982af443"
+  },
+  "scope": {
+    "only_issue": "NFS-compatible no-clobber checkpoint publication",
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "checkpoint_schema_changed": false,
+    "public_api_changed": false,
+    "functional_api_version_changed": false,
+    "provider_identity_changed": false,
+    "production_default_changed": false,
+    "nematics3d_modified": false
+  },
+  "base_contract": [
+    "Keep the existing renameat2(RENAME_NOREPLACE) fast path unchanged on filesystems that support it.",
+    "Enter the compatibility path only after the no-replace operation reports a positively identified unsupported-filesystem condition.",
+    "Propagate permission, I/O, quota, path, corruption, and all other non-capability errors without fallback.",
+    "Create staging content on the destination filesystem so publication cannot become a cross-device copy.",
+    "Write every checkpoint payload and metadata file completely before publication begins.",
+    "Flush and fsync every checkpoint file before publication begins.",
+    "Fsync the completed staging directory before publication begins.",
+    "Never remove, truncate, merge with, or otherwise modify a pre-existing destination.",
+    "Resolve concurrent writers with exactly one successful publisher and fail all losers closed.",
+    "Never expose a partially populated directory at the final destination name.",
+    "Do not report success until the final destination is durably published.",
+    "Fsync the destination parent directory wherever the filesystem exposes a supported directory-fsync operation.",
+    "Treat an unsupported directory fsync separately from publication failure and record the exact observed behavior.",
+    "Clean the caller's staging path after confirmed success and after every recoverable pre-publication failure.",
+    "Do not delete an ambiguous final destination after a transport error or lost acknowledgement.",
+    "Keep checkpoint bytes, metadata, schema versions, and checksums identical across publication backends.",
+    "Keep restart, tamper rejection, legacy-checkpoint loading, and cross-device identity behavior unchanged.",
+    "Cover success, collision, crash boundary, permission failure, I/O failure, and concurrency behavior with deterministic tests."
+  ],
+  "supplemental_contract": [
+    "Use atomic mkdir as the compatibility-path name claim, then rename over only the empty placeholder created by that publisher.",
+    "For a non-idempotent retransmission after a possibly successful publish, read the published checkpoint back and verify it; if success cannot be confirmed, fail closed.",
+    "Measure and persist the actual NFS directory-fsync behavior on the target cluster.",
+    "Do not serialize the selected publication backend or fallback marker into checkpoint content.",
+    "Require byte-for-byte identical checkpoint trees from the fast path and compatibility path for identical input state.",
+    "Identify unsupported operation using both errno and statfs filesystem evidence, including the raw syscall(316) renameat2 path.",
+    "Run a cross-client concurrency test against the same NFS destination.",
+    "Require provider identity digests to remain unchanged."
+  ],
+  "qualification": {
+    "cpu": [
+      "unit and fault-injection matrix",
+      "local supported-filesystem fast path",
+      "simulated unsupported-filesystem compatibility path",
+      "installed-wheel checkpoint and restart tests"
+    ],
+    "hpcc_nfs": [
+      "real $HOME NFS publication",
+      "real /scratch1 NFS publication",
+      "directory fsync characterization",
+      "cross-client collision and lost-acknowledgement recovery"
+    ],
+    "h100": "one small checkpoint/restart job only after separate user authorization"
+  },
+  "authorization": {
+    "plan_freeze_authorized": true,
+    "implementation_started": false,
+    "push_authorized": false,
+    "h100_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false
+  }
+}
