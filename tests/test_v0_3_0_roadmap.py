@@ -1,4 +1,4 @@
-"""Bindings for the S-02 v0.3.0 goals and completion-contract draft."""
+"""Bindings for the confirmed S-02 v0.3.0 completion-contract candidate."""
 
 from __future__ import annotations
 
@@ -23,10 +23,13 @@ def _sha256(path: Path) -> str:
 def test_s02_draft_binds_the_registry_and_confirmed_execution_order() -> None:
     draft = _read(ROADMAP)
     registry = _read(REGISTRY)
-    assert draft["classification"] == "DRAFT_V0_3_0_GOALS_AND_COMPLETION_CONTRACT"
-    assert draft["status"] == "draft_pending_user_decisions"
+    assert draft["classification"] == (
+        "CONFIRMED_V0_3_0_GOALS_AND_COMPLETION_CONTRACT_CANDIDATE"
+    )
+    assert draft["status"] == "confirmed_pending_independent_review"
     assert draft["plan_step"] == "S-02"
     assert draft["governing_decision"] == "D-0010"
+    assert draft["confirmed_decision"] == "D-0011"
     assert draft["execution_policy"]["ordered_steps"] == [
         "S-03",
         "S-04",
@@ -104,6 +107,8 @@ def test_s02_questions_have_recommended_mutually_named_options() -> None:
     assert draft["recommended_answers"] == {
         question_id: "A" for question_id in questions
     }
+    assert draft["selected_answers"] == draft["recommended_answers"]
+    assert "all selected A" in draft["user_confirmation"]
     for question in questions.values():
         assert question["recommended_option"] == "A"
         assert set(question["options"]) == {"A", "B", "C"}
@@ -148,4 +153,7 @@ def test_s02_draft_is_planning_only_and_has_no_external_authority() -> None:
         for key, value in draft["scope"].items()
         if key != "planning_only"
     )
-    assert "R-0007" in draft["next_action"]
+    assert draft["next_action"] == (
+        "Create R-0007 with plan_step S-02 for Claude consistency review before "
+        "any push."
+    )

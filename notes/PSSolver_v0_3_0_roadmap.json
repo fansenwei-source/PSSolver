@@ -1,10 +1,11 @@
 {
   "schema_version": 1,
   "date": "2026-10-21",
-  "classification": "DRAFT_V0_3_0_GOALS_AND_COMPLETION_CONTRACT",
-  "status": "draft_pending_user_decisions",
+  "classification": "CONFIRMED_V0_3_0_GOALS_AND_COMPLETION_CONTRACT_CANDIDATE",
+  "status": "confirmed_pending_independent_review",
   "plan_step": "S-02",
   "governing_decision": "D-0010",
+  "confirmed_decision": "D-0011",
   "branch": "dev/0.3",
   "parent_commit": "334577bd985cbec396d08768fe4f0d6c59899429",
   "version": "0.3.0.dev0",
@@ -233,6 +234,16 @@
     "Q-06": "A",
     "Q-07": "A"
   },
+  "selected_answers": {
+    "Q-01": "A",
+    "Q-02": "A",
+    "Q-03": "A",
+    "Q-04": "A",
+    "Q-05": "A",
+    "Q-06": "A",
+    "Q-07": "A"
+  },
+  "user_confirmation": "Codex chat 2026-10-21: Q-01 through Q-07 all selected A.",
   "draft_validation_environment": {
     "policy": "D-0008 baseline-only hard-link clone",
     "baseline_venv_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
@@ -267,5 +278,5 @@
     "H100_executed": false,
     "push_authorized": false
   },
-  "next_action": "User selects Q-01 through Q-07. Codex then records the confirmed S-02 contract and creates R-0007 with plan_step S-02 for Claude consistency review."
+  "next_action": "Create R-0007 with plan_step S-02 for Claude consistency review before any push."
 }
