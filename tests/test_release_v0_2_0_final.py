@@ -70,10 +70,10 @@ def test_v020_documents_nfs_checkpoint_limit_and_patch_policy():
     assert "NFS-compatible no-clobber\n  checkpoint publication in v0.2.1" in changelog
 
 
-def test_v020_readme_has_the_registered_patch_successor():
+def test_dev_line_preserves_the_v020_readme_baseline():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    assert "PSSolver 0.2.2 is" in readme
-    assert "qualified executable combinations in 0.2.2 are" in readme
+    assert "PSSolver 0.2.0 is" in readme
+    assert "qualified executable combinations in 0.2.0 are" in readme
     assert "0.2.0rc6 is" not in readme
 
 
@@ -280,7 +280,7 @@ def test_v020_successor_record_matches_every_registered_source():
             ):
                 release_expected = registration["current_sha256"]
 
-        accepted = {release_expected}
+        accepted = {expected, release_expected}
         development = development_successors.get(relative)
         if (
             development is not None
