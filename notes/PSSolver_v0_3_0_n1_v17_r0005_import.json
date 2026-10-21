@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "classification": "PASS_R0005_DEV03_N1_V17_INDEPENDENT_REVIEW_IMPORT",
+  "status": "evidence_import_complete",
+  "git_identity": {
+    "branch": "dev/0.3",
+    "evidence_parent": "f45518ca34b7901d64c5ee43e2e739067fae8451",
+    "qualified_source_commit": "f45518ca34b7901d64c5ee43e2e739067fae8451",
+    "remote_baseline": "d3cc409ed1b54b95616c6db5a232ac67a90caf2d",
+    "sync_result_commit": "06f290e7f609367579838b96f0da37b48edd2a30",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0005",
+    "request_path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/requests/R-0005.json",
+    "result_path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0005.result.json",
+    "result_sha256": "5c5f01b5904fb6f80be678d819bdebd28e67d2014fe84cbbd083f07b2d1a76a8",
+    "classification": "PASS",
+    "release_blockers": [],
+    "registry_updates": [],
+    "new_findings": []
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_dev03_claude_review_20261021_v1",
+    "checksums_entries": 2984,
+    "checksums_sha256": "2a9509ea1b096f656130cbf863b295cfea58c9c65f1e2f460954261021825a07",
+    "complete_present": true,
+    "final_report_sha256": "6dc8d79af0b45d8ac415011fd2b2a46e417ec1ce1344cea6bdf682388237e94b",
+    "summary_sha256": "cfa014a092cc93e4539aab455dcb7471c32249335df285f674ded13121955e03"
+  },
+  "review": {
+    "verdicts": {
+      "V03-CKPT-1": "PASS",
+      "V03-CKPT-2": "PASS",
+      "V03-CKPT-3": "PASS",
+      "V03-CKPT-4": "PASS",
+      "V03-CKPT-5": "PASS",
+      "V03-PLAN-1": "PASS"
+    },
+    "eligible_for_non_force_push": true,
+    "runtime_sha256": {
+      "pssolver/io/checkpoint.py": "1a90fe8edb640310c439d6b553f7de02237eccca368455b059565d2038bec0df"
+    },
+    "version": "0.3.0.dev0",
+    "full_cpu_suite": {
+      "passed": 4239,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 7,
+      "subtests_passed": 8
+    },
+    "codex_archive_cross_check": {
+      "path": "/home/fansenwei/pssolver_dev03_n1_v17_integration_f45518c_20261021_v1",
+      "checksums_entries": 13,
+      "checksums_sha256": "d62670ec8232bd3c652c0689d1efd6e5ce7a848cc96e298f1a50f16d7ffac832",
+      "complete_present": true
+    },
+    "provider_identity_unchanged": true,
+    "checkpoint_schema_unchanged": true,
+    "solver_equations_unchanged": true,
+    "numerical_algorithms_unchanged": true,
+    "production_defaults_unchanged": true,
+    "history_rewritten": false
+  },
+  "registry": {
+    "path": "notes/pssolver_v0_2_x_open_issues.json",
+    "sha256": "ffdd4fe41ddc140857081febf634b28bed4e1d3345f9e434982ef11ec2f67cc2",
+    "issue_count": 28,
+    "modified_by_import": false,
+    "updates_imported": 0,
+    "new_findings_imported": 0
+  },
+  "follow_up_tracking": {
+    "next_registry_successor": "align the remaining v0.2.x low/info target_release fields with the 0.3 plan and assign NEW-14 to the separately authorized 0.3 GPU validation",
+    "request_created_at_policy": "use the system clock at request creation time",
+    "applied_by_this_import": false
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "registry_changed": false,
+    "tests_relaxed": false,
+    "historical_records_rewritten": false,
+    "tag_modified": false,
+    "release_modified": false,
+    "assets_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "main_fast_forward_authorized": false,
+    "maint_v0_2_fast_forward_authorized": false,
+    "tag_authorized": false,
+    "github_release_authorized": false,
+    "pypi_authorized": false,
+    "hpcc_authorized": false,
+    "gpu_authorized": false,
+    "h100_authorized": false
+  },
+  "next_sync_id": "R-0006"
+}
