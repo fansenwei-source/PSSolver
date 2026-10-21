@@ -185,11 +185,16 @@ def test_v022_keeps_new_low_severity_findings_deferred() -> None:
         "V-22": "registered for later 0.2.x work",
         "V-23": "registered for later 0.2.x work",
     }
-    expected_status = {"V-22": "registered", "V-23": "verified"}
+    # The release record remains historical.  Later successor layers may advance
+    # these issues without rewriting the v0.2.2 evidence.
+    expected_status = {"V-22": "claimed_fixed", "V-23": "verified"}
     for issue_id in record["known_deferred_findings"]:
         assert issues[issue_id]["status"] == expected_status[issue_id]
         assert issues[issue_id]["severity"] == "low"
     assert issues["V-23"]["verified_by"] == "R-0008"
+    assert issues["V-22"]["fixed_in"] == (
+        "468e06742a2a45ea36c970a5de789310ad47c8a1"
+    )
 
 
 def test_v022_remote_and_hpcc_actions_remain_unauthorized() -> None:

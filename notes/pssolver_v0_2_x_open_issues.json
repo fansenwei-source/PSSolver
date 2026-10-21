@@ -32,7 +32,8 @@
   "issue_count": 29,
   "status_counts": {
     "open": 1,
-    "registered": 14,
+    "registered": 9,
+    "claimed_fixed": 5,
     "verified": 8,
     "deferred": 2,
     "accepted": 1,
@@ -95,7 +96,8 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "468e06742a2a45ea36c970a5de789310ad47c8a1",
       "target_release": "0.3",
       "notes": "Present since rc5; limited to the explicit production upgrade path."
     },
@@ -139,7 +141,8 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "468e06742a2a45ea36c970a5de789310ad47c8a1",
       "target_release": "0.3",
       "notes": "Repro: retarget the immediate parent symlink inside checkpoint_directory_transaction before publication; the transaction fails closed and preserves the new target, but cleanup through the retargeted path leaves .<name>.tmp-* in the original directory. Suggested fix: resolve the parent once at transaction start or retain a directory fd and clean up through that stable identity."
     },
@@ -169,7 +172,8 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "468e06742a2a45ea36c970a5de789310ad47c8a1",
       "target_release": "0.3",
       "notes": "A post-rename parent-directory fsync error reports failure after publication. Real HPCC NFS directory fsync returned zero."
     },
@@ -183,7 +187,8 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "468e06742a2a45ea36c970a5de789310ad47c8a1",
       "target_release": "0.3",
       "notes": "The operation fails closed but the empty placeholder requires manual removal."
     },
@@ -197,7 +202,8 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "468e06742a2a45ea36c970a5de789310ad47c8a1",
       "target_release": "0.3",
       "notes": "Ownership uses only (st_dev, st_ino), and the rename-failure path can attempt placeholder removal twice."
     },

@@ -65,10 +65,11 @@ def test_r0009_import_applies_exactly_three_verified_updates() -> None:
 def test_r0009_import_is_a_forward_only_successor_layer() -> None:
     record = _read(RECORD)
     for relative, successor in record["historical_successor_sources"].items():
-        assert resolve_s03_successor(relative, successor["historical_sha256"]) == (
-            successor["current_sha256"]
-        )
-        assert _sha256(ROOT / relative) == successor["current_sha256"]
+        # R-0009 remains an immutable historical layer; the resolver may carry
+        # its current hash through later, explicitly registered successors.
+        assert resolve_s03_successor(
+            relative, successor["historical_sha256"]
+        ) == _sha256(ROOT / relative)
 
 
 def test_r0009_import_is_evidence_only_and_authorizes_no_external_action() -> None:

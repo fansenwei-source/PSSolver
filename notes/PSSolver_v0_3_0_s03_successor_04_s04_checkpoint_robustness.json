@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "stage": "S-04",
+  "classification": "PASS_LOCAL_V0_3_S04_CHECKPOINT_ROBUSTNESS_PENDING_REAL_NFS",
+  "git_identity": {
+    "branch": "fix/v0.3-s04-checkpoint-robustness",
+    "implementation_parent": "48ebbd62e21a26d3e1e659eb6a63fd62ceff55b0",
+    "implementation_commit": "468e06742a2a45ea36c970a5de789310ad47c8a1",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "roadmap": {
+    "decision": "D-0010",
+    "plan_step": "S-04",
+    "issue_ids": ["V-22", "V-16", "V-13", "V-14", "C2-17"]
+  },
+  "contract": {
+    "transaction_parent_is_pinned_for_publication_and_cleanup": true,
+    "mid_transaction_parent_retarget_fails_closed": true,
+    "lost_placeholder_mkdir_reply_is_recoverable_without_residue": true,
+    "placeholder_ownership_uses_an_open_descriptor_and_single_cleanup": true,
+    "post_publish_parent_fsync_has_a_distinct_public_error": true,
+    "read_only_channel_upgrade_does_not_mutate_its_source": true,
+    "n1_simulation_matrix_must_not_regress": true,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false
+  },
+  "issue_status_after_implementation": {
+    "V-22": "claimed_fixed",
+    "V-16": "claimed_fixed",
+    "V-13": "claimed_fixed",
+    "V-14": "claimed_fixed",
+    "C2-17": "claimed_fixed"
+  },
+  "new_sources_sha256": {
+    "tests/test_v0_3_s04_checkpoint_robustness.py": "5363c5b4080796e759ab2f46f255756fe7b739a3c0a6c7d0834bff8e8d3b5b27"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "941c304b8262ccd3d0a7a5c45189d1963607f264f6dfa1a64983261749300dae",
+      "current_sha256": "2ef5bfada6fdb6135d53ae71f2803f1dbeab176afc0038b3b8cd1983dc7b23ad",
+      "reason": "Document the S-04 checkpoint robustness and durability error contract."
+    },
+    "pssolver/functional/__init__.py": {
+      "historical_sha256": "abe179a9e9d011711a80107a31bc58a1597606e918ffc55c0809d46bf083ac73",
+      "current_sha256": "4a6729b7e51dcdc7bdc122d3854914ae1791054cdf556ed216ddffbf47750585",
+      "reason": "Export the Functional checkpoint durability category through the compatibility facade."
+    },
+    "pssolver/functional/channel_checkpoint.py": {
+      "historical_sha256": "4c96a776a04b578c798bf9dd3d0430e09e2cada37f0f7759c823f93e1251b227",
+      "current_sha256": "7ab20e0bdf0e5027174737ca9466a695b6e5bd8bcd30f26c355d5216a0da0998",
+      "reason": "Preserve the distinct durability classification across Channel Functional export."
+    },
+    "pssolver/functional/errors.py": {
+      "historical_sha256": "68bd2965fdeb5394d75f8944c00559c368a433fbdb06eeb2ed0ab2efe8f8abd5",
+      "current_sha256": "a216e2d0a82c03aba1ce37dcddb9bf849939445df404aacccf5a6af87bf2d6eb",
+      "reason": "Define and translate the Functional checkpoint durability error."
+    },
+    "pssolver/io/__init__.py": {
+      "historical_sha256": "c23542a087d868a6c1e6d9c60954ee53aafb56ec75b22302314481fcfddde7b3",
+      "current_sha256": "43408e99b50347ae514f72d07fe81ee50b607ff4c5ce6537f8e9bfcdd54f226e",
+      "reason": "Export the public checkpoint durability error."
+    },
+    "pssolver/io/checkpoint.py": {
+      "historical_sha256": "05594c49d155a6106e54037fb124f9dc03a32434fecb2feac808be8e55a2f11e",
+      "current_sha256": "bffbf6f5278c58e99d38469ad5a6b57aba063780315a33e330746a0f6555348d",
+      "reason": "Pin parent identity, harden NFS placeholder ownership, classify durability, and clean read-only staging."
+    },
+    "pssolver/workflows/channel_beris_edwards.py": {
+      "historical_sha256": "ce0071d874f52304d30376718c961541e2853ee95277b63bd7b9bd33cdbbc6e3",
+      "current_sha256": "9d683272f4ff3efc474d3d813ef70f92711c87c44b4f3e010fdac38befeeac3e",
+      "reason": "Make only the private migration copy writable for explicit read-only Channel upgrades."
+    },
+    "tests/test_rc4_periodic_channel_checkpoint_identity.py": {
+      "historical_sha256": "b048d00a1c3ab4d52c4dd627435ff0d8ff78980a7db8f2c1f44aea23ff926ab0",
+      "current_sha256": "7e81dd47a44c72b2d5cbdb14d6e3f1127ca6898f567c61ab6593d26304286595",
+      "reason": "Add explicit read-only Channel migration success and cleanup regressions."
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "19be12b76600ed264fe822b70c97f1f6668734a1119ace06e622472f4f9e7d12",
+      "current_sha256": "15073c32cba19d7892718bf96cc87b4643ad468ad51932d6399f509c44e947b5",
+      "reason": "Move the five S-04 issues to claimed_fixed at the implementation commit."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "db055ca925734b7caed68efc5e30a611d4934d1e987f049858dea8d04be1bfc1",
+      "current_sha256": "e924a92f0df89b8f762456653ae7ba6f7981c97c727af216f97ee78ebbf9f3a4",
+      "reason": "Bind the S-04 claimed_fixed states and implementation commit."
+    },
+    "tests/test_release_v0_2_2.py": {
+      "historical_sha256": "1b8038d8bf7ae84bb0da5f239484a72e4b6d512df730b6b2c0abd9b69b77d947",
+      "current_sha256": "1b11a5a66a386015e2770e7edede47da1a3fe46c6354688d2f4f1d4b1129893b",
+      "reason": "Preserve the v0.2.2 finding record while recognizing the later S-04 V-22 claim."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "4a6fe87fa42b8fb0d85837ac6055c8be6bf201053dada0c54a44dc76ed56ee27",
+      "current_sha256": "5b8ec5ad224adaeeae7eebe99edd156b69f58812be69b51d7485af3028aaa0b6",
+      "reason": "Carry the R-0002 registry count assertions through the five S-04 claimed fixes."
+    },
+    "tests/test_v0_3_s01_registry_migration.py": {
+      "historical_sha256": "9b8c07fa586affa0d3ca5d1aa2315bcd937ac4d52cd6fbefd6cbed3e0f2f017a",
+      "current_sha256": "804d1f4f360e7c87a55d4575d68a08f3c5ab26721d295f4f893e943e5e6b5385",
+      "reason": "Preserve the S-01 target migration while recognizing the S-04 claimed states."
+    },
+    "tests/test_v0_3_s03_r0009_import.py": {
+      "historical_sha256": "d8213d4170bff7a968abbd64202bb12fe491268fec9b5a3119c23233d76fecb7",
+      "current_sha256": "4ec99ed34a52a47ffa1e168d4731b44e5789508d18b058e26ec71cad6bef998d",
+      "reason": "Resolve immutable R-0009 evidence through later registered successor layers."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "35427bb84c2ffb8c47514ea765d4fb2da564d5d39356a150c22c85348ea6ff9f",
+      "current_sha256": "ab98fc39b6364462af334ab262a2a1aa066e9c990e4c42e35a63b37926ed4e13",
+      "reason": "Preserve the S-03 verified fixes while recognizing the separate S-04 claims."
+    }
+  },
+  "validation": {
+    "status": "pass_local_pending_real_nfs",
+    "targeted_cpu": {
+      "passed": 41,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 4340,
+      "failed": 0,
+      "skipped": 1,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "allowed_skip": "optional nematics3d dependency"
+    },
+    "n1_matrix": {
+      "selection_cases": 528,
+      "selection_mismatches": 0,
+      "fallback_semantics_variants": 5,
+      "byte_identity_umasks": 3,
+      "all_byte_identity_variants_passed": true,
+      "qualification_helper_is_archive_only": true,
+      "original_helper_sha256": "054b49703bb081926c88ebcbf08c1cf64a1519e4cce1ac65d37ff0aa42cc8c8e"
+    },
+    "hpcc_real_nfs": "requires_separate_user_authorization",
+    "d0008_environment_recorded": true,
+    "archive_path": "/home/fansenwei/pssolver_v0_3_s04_checkpoint_robustness_20261021_v1",
+    "archive_complete": true
+  },
+  "scope": {
+    "runtime_changed": true,
+    "nfs_fallback_changed": true,
+    "checkpoint_schema_changed": false,
+    "checkpoint_bytes_changed": false,
+    "provider_identity_changed": false,
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "test_thresholds_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "local_work_authorized": true,
+    "external_review_requested": false,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "hpcc_authorized": false,
+    "gpu_authorized": false,
+    "h100_authorized": false
+  },
+  "next_request": "R-0010"
+}
