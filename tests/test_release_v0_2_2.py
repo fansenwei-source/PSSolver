@@ -17,6 +17,7 @@ ISSUES = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 DEV_INTEGRATION_RECORD = ROOT / (
     "notes/PSSolver_v0_3_0_n1_v17_checkpoint_integration.json"
 )
+S01_RECORD = ROOT / "notes/PSSolver_v0_3_0_s01_registry_migration.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -150,6 +151,7 @@ def test_v022_forward_successors_match_every_changed_historical_source() -> None
     development_successors = _read(DEV_INTEGRATION_RECORD)[
         "historical_successor_sources"
     ]
+    s01_successors = _read(S01_RECORD)["historical_successor_sources"]
     assert set(successors) == expected_paths
     for relative, identity in successors.items():
         historical = subprocess.run(
@@ -163,6 +165,9 @@ def test_v022_forward_successors_match_every_changed_historical_source() -> None
         ]
         expected = identity["current_sha256"]
         successor = development_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == expected:
+            expected = successor["current_sha256"]
+        successor = s01_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
         assert _sha256(ROOT / relative) == expected

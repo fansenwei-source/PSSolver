@@ -15,6 +15,7 @@ REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 DEV_INTEGRATION_RECORD = ROOT / (
     "notes/PSSolver_v0_3_0_n1_v17_checkpoint_integration.json"
 )
+S01_RECORD = ROOT / "notes/PSSolver_v0_3_0_s01_registry_migration.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -55,6 +56,7 @@ def test_r0002_import_is_a_forward_only_successor() -> None:
     development_successors = _read(DEV_INTEGRATION_RECORD)[
         "historical_successor_sources"
     ]
+    s01_successors = _read(S01_RECORD)["historical_successor_sources"]
     parent = record["git_identity"]["evidence_parent"]
     assert parent == "6bd8e491dde4a72dd1dc29035c2310d565990070"
     for relative, registration in record[
@@ -76,12 +78,16 @@ def test_r0002_import_is_a_forward_only_successor() -> None:
         successor = development_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
+        successor = s01_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == expected:
+            expected = successor["current_sha256"]
         assert _sha256(relative) == expected
         assert registration["reason"]
 
 
 def test_r0002_registry_updates_are_exact() -> None:
     record = _read(RECORD)["registry_import"]
+    s01 = _read(S01_RECORD)["registry"]
     registry = _read(REGISTRY)
     issues = _issues()
     assert registry["issue_count"] == record["issue_count"] == 28
@@ -93,7 +99,13 @@ def test_r0002_registry_updates_are_exact() -> None:
     for expected in record["new_findings"]:
         actual = issues[expected["id"]]
         for key, value in expected.items():
-            assert actual[key] == value
+            if key == "target_release" and expected["id"] in set(
+                s01["changed_target_ids"]
+            ):
+                assert value == "0.2.x"
+                assert actual[key] == "0.3"
+            else:
+                assert actual[key] == value
     for issue_id, decision in record["decision_bindings"].items():
         assert issues[issue_id]["decision"] == decision == "D-0007"
 

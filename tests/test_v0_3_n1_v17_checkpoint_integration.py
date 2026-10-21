@@ -12,6 +12,7 @@ import pssolver
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_n1_v17_checkpoint_integration.json"
+S01_RECORD = ROOT / "notes/PSSolver_v0_3_0_s01_registry_migration.json"
 
 
 def _read() -> dict[str, object]:
@@ -73,6 +74,9 @@ def test_integration_binds_the_original_and_development_commits() -> None:
 
 def test_integration_binds_runtime_tests_and_forward_successors() -> None:
     record = _read()
+    s01_successors = json.loads(S01_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ]
     for relative, expected in record["regression_tests"].items():
         assert _sha256(ROOT / relative) == expected
     release_tip = record["source"]["v0_2_2_evidence_tip"]
@@ -81,7 +85,14 @@ def test_integration_binds_runtime_tests_and_forward_successors() -> None:
         assert hashlib.sha256(historical).hexdigest() == successor[
             "historical_sha256"
         ]
-        assert _sha256(ROOT / relative) == successor["current_sha256"]
+        expected = successor["current_sha256"]
+        s01_successor = s01_successors.get(relative)
+        if (
+            s01_successor is not None
+            and s01_successor["historical_sha256"] == expected
+        ):
+            expected = s01_successor["current_sha256"]
+        assert _sha256(ROOT / relative) == expected
         assert successor["reason"]
 
 

@@ -82,6 +82,53 @@
       "tests/test_v0_3_n1_v17_r0005_import.py"
     ]
   },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "ffdd4fe41ddc140857081febf634b28bed4e1d3345f9e434982ef11ec2f67cc2",
+      "current_sha256": "18a769b757a9c4325d69e8a9e86751c19642e66804141cda678dde408fed9eb3",
+      "reason": "Move the active registry target assignments to the confirmed 0.3 roadmap without rewriting historical records."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "9e9989034027d8472968c90ea2482e026da747eb25ab496e85b27561d3f8e6b9",
+      "current_sha256": "14ed08e9072d59d86ff878cda97d3e7a13e9bb2539390d825a39fad8d4bb2bba",
+      "reason": "Document dev/0.3 as the active registry line and the D-0010 roadmap assignments."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "c683f89f1616f4c93e62d91355e8ec1e1dd4fd6501a05ce07af57e49a944fd38",
+      "current_sha256": "432b548899549f5c5085b5f9c7d81552fb557b2c72da6054035520bd75dcf9d8",
+      "reason": "Bind the exact S-01 target assignments while preserving V-17 and historical boundaries."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "c59be86a9635d3d3010d2c088d04442bab0e78d6be5c33f2eab45ada0b38c19b",
+      "current_sha256": "12a29352de7113bbb5b129e3faec2e8daf50ca96b8be32c25475cb4d054a84f7",
+      "reason": "Allow the historical R-0002 import assertions to follow the forward-only S-01 registry successor."
+    },
+    "tests/test_release_v0_2_2.py": {
+      "historical_sha256": "70ef04a227c64de6e137dfc4247c25419f8b2aafeddd41fa2802cdf096826574",
+      "current_sha256": "388593faed7d450d253206af5667bf9c83658faf78868c6c273b8dc6a85e656e",
+      "reason": "Allow the frozen v0.2.2 release test to follow the forward-only S-01 successor chain."
+    },
+    "tests/test_v0_3_n1_v17_checkpoint_integration.py": {
+      "historical_sha256": "6f9f84bf3bc9d18c0d04588e10055b49f2dc1295c86965a9d56b97003e46fb29",
+      "current_sha256": "b83c8b0e500e6ebfa5c80a2ffbf16986a51ae110bccd05b5827c596783cbb563",
+      "reason": "Allow the accepted development integration record to follow the S-01 evidence-only successor."
+    },
+    "tests/test_v0_2_2_r0003_import.py": {
+      "historical_sha256": "582c2fc509b131d9d87f8207ec77536d161bad64b6b02d158301d20e6ceae565",
+      "current_sha256": "d933438daa9de4b90aba9681ebbeec0a4f99bc0c903c041260a0ea9efaf9ed52",
+      "reason": "Keep the R-0003 historical registry hash bound to its record instead of the living successor."
+    },
+    "tests/test_v0_2_2_r0004_import.py": {
+      "historical_sha256": "ccd02b5946f5820a24ca48361aa3d391663886440a78c635094496a964de4ec6",
+      "current_sha256": "52fcf2790bbdaf3e66e6f50d88078b458ad1250b943b88346845ce4cd67b38c3",
+      "reason": "Keep the R-0004 historical registry hash bound to its record instead of the living successor."
+    },
+    "tests/test_v0_3_n1_v17_r0005_import.py": {
+      "historical_sha256": "82af2606fea48d77c52536014820ae9849d2402332f8904a4fd2df3718db389c",
+      "current_sha256": "66bfd23b0730e3bd3e75d09ae72e0e54f789bf3f9436b577d432519401b2e45b",
+      "reason": "Keep the R-0005 historical registry hash bound to its record instead of the living successor."
+    }
+  },
   "scope": {
     "evidence_only": true,
     "runtime_changed": false,

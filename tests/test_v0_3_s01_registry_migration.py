@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -91,6 +92,23 @@ def test_s01_preserves_historical_registry_hashes_without_rewriting_records() ->
         "tests/test_v0_2_2_r0004_import.py",
         "tests/test_v0_3_n1_v17_r0005_import.py",
     }
+
+
+def test_s01_historical_successors_bind_the_parent_and_current_files() -> None:
+    record = _read(RECORD)
+    parent = record["git_identity"]["parent_commit"]
+    for relative, successor in record["historical_successor_sources"].items():
+        historical = subprocess.run(
+            ["git", "show", f"{parent}:{relative}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+        assert hashlib.sha256(historical).hexdigest() == successor[
+            "historical_sha256"
+        ]
+        assert _sha256(ROOT / relative) == successor["current_sha256"]
+        assert successor["reason"]
 
 
 def test_s01_does_not_modify_runtime_or_authorize_external_actions() -> None:
