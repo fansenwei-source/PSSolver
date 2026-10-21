@@ -63,6 +63,7 @@ V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
 V022_V17_RECORD = ROOT / (
     "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
 )
+V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
 def _record() -> dict[str, object]:
@@ -100,6 +101,7 @@ def _r56_successor(relative: str, historical: str) -> str:
         V021_N1_RECORD,
         V021_RELEASE_RECORD,
         V022_V17_RECORD,
+        V022_RELEASE_RECORD,
     ):
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"

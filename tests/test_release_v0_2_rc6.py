@@ -25,10 +25,10 @@ def _sha256(path: Path) -> str:
 
 
 def test_current_patch_version_and_public_provenance_agree():
-    assert pssolver.__version__ == "0.2.1"
+    assert pssolver.__version__ == "0.2.2"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.2.1",
+        "version": "0.2.2",
     }
 
 
@@ -40,7 +40,8 @@ def test_rc6_documents_and_machine_record_agree():
     )
     record = _json(RELEASE_RECORD)
 
-    assert "PSSolver 0.2.1" in readme
+    assert "PSSolver 0.2.2" in readme
+    assert "## 0.2.2 — 2026-10-20" in changelog
     assert "## 0.2.1 — 2026-10-20" in changelog
     assert "## 0.2.0rc6" in changelog
     assert "## 0.2.0 — 2026-10-19" in changelog

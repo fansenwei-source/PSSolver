@@ -10,6 +10,7 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 ISSUES = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 
 
@@ -52,6 +53,7 @@ def test_v17_record_binds_the_minimal_implementation_commit() -> None:
 
 def test_v17_record_binds_current_and_historical_source_bytes() -> None:
     record = _read(RECORD)
+    release_successors = _read(RELEASE_RECORD)["historical_successor_sources"]
     for relative, expected in record["source_sha256"].items():
         assert _sha256(relative) == expected
     parent = record["git_identity"]["implementation_parent"]
@@ -67,7 +69,11 @@ def test_v17_record_binds_current_and_historical_source_bytes() -> None:
         assert hashlib.sha256(historical).hexdigest() == registration[
             "historical_sha256"
         ]
-        assert _sha256(relative) == registration["current_sha256"]
+        expected = registration["current_sha256"]
+        successor = release_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == expected:
+            expected = successor["current_sha256"]
+        assert _sha256(relative) == expected
         assert registration["reason"]
 
 

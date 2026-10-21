@@ -1,5 +1,43 @@
 # Changelog
 
+## 0.2.2 — 2026-10-20
+
+Maintenance release over `v0.2.1` containing only the verified V-17
+checkpoint-parent symlink correction and release metadata. Solver equations,
+numerical algorithms, checkpoint bytes and schemas, Functional API version
+1.0, provider identity, qualified model--geometry combinations, and
+production defaults are unchanged.
+
+### Fixed
+
+- Follow an immediate checkpoint-parent symlink when comparing the staging
+  and destination filesystem identities in the NFS-compatible no-clobber
+  publication path. Periodic and Channel functional checkpoint export can
+  therefore publish through a parent symlink whose link inode and resolved
+  directory reside on different filesystems.
+- Preserve fail-closed rejection when the staging directory and resolved
+  destination genuinely reside on different filesystems. The requested
+  absolute return path, checkpoint bytes, checkpoint schema, restart state,
+  and fast-path behavior remain unchanged.
+
+### Qualification status
+
+- The implementation and its installed wheel passed independent second-party
+  CPU review under sync result `R-0002`, including real ext4-to-tmpfs parent
+  symlinks, forced fallback publication, Periodic and Channel round trips,
+  cross-filesystem negative gates, the v0.2.1 N-1 matrix, and the complete CPU
+  suite.
+- The release candidate still requires clean artifact construction,
+  installed-wheel release checks, and an authorized small real-NFS login-node
+  retest before tag or GitHub Release authorization. No H100 rerun is required
+  for this path-resolution-only maintenance fix.
+
+### Deferred work
+
+- V-22 and V-23 are pre-existing low-severity checkpoint edge cases registered
+  for later v0.2.x work. They do not change the V-17 verdict and are not folded
+  into this narrowly scoped release.
+
 ## 0.2.1 — 2026-10-20
 
 Maintenance release over `v0.2.0` containing only the N-1 checkpoint

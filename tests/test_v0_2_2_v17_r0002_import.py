@@ -10,6 +10,7 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_2_v17_r0002_import.json"
+RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 
 
@@ -47,6 +48,7 @@ def test_r0002_import_binds_result_and_independent_archive() -> None:
 
 def test_r0002_import_is_a_forward_only_successor() -> None:
     record = _read(RECORD)
+    release_successors = _read(RELEASE_RECORD)["historical_successor_sources"]
     parent = record["git_identity"]["evidence_parent"]
     assert parent == "6bd8e491dde4a72dd1dc29035c2310d565990070"
     for relative, registration in record[
@@ -61,7 +63,11 @@ def test_r0002_import_is_a_forward_only_successor() -> None:
         assert hashlib.sha256(historical).hexdigest() == registration[
             "historical_sha256"
         ]
-        assert _sha256(relative) == registration["current_sha256"]
+        expected = registration["current_sha256"]
+        successor = release_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == expected:
+            expected = successor["current_sha256"]
+        assert _sha256(relative) == expected
         assert registration["reason"]
 
 

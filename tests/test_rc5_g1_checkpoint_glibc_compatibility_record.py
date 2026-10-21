@@ -22,6 +22,7 @@ FINAL_RELEASE = ROOT / "notes/pssolver_v0_2_0.json"
 V021_N1 = ROOT / "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
 V021_RELEASE = ROOT / "notes/pssolver_v0_2_1.json"
 V022_V17 = ROOT / "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+V022_RELEASE = ROOT / "notes/pssolver_v0_2_2.json"
 
 
 def _record() -> dict[str, object]:
@@ -67,6 +68,9 @@ def test_glibc_compatibility_record_binds_implementation_and_tests():
     v17_successors = json.loads(V022_V17.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ]
+    v022_release_successors = json.loads(
+        V022_RELEASE.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert record["classification"] == (
         "PASS_RC5_G1_CHECKPOINT_GLIBC_2_17_CPU_COMPATIBILITY_CANDIDATE"
     )
@@ -145,6 +149,12 @@ def test_glibc_compatibility_record_binds_implementation_and_tests():
             and v17_successor["historical_sha256"] == expected
         ):
             expected = v17_successor["current_sha256"]
+        release_successor = v022_release_successors.get(relative)
+        if (
+            release_successor is not None
+            and release_successor["historical_sha256"] == expected
+        ):
+            expected = release_successor["current_sha256"]
         assert _sha256(relative) == expected
         assert successor["historical_sha256"] != successor["current_sha256"]
         assert successor["reason"]

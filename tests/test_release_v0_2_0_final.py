@@ -19,6 +19,7 @@ V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
 V022_V17_RECORD = ROOT / (
     "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
 )
+V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
 def _sha256(path: Path) -> str:
@@ -30,10 +31,10 @@ def _record() -> dict[str, object]:
 
 
 def test_v020_has_a_registered_v021_version_successor():
-    assert pssolver.__version__ == "0.2.1"
+    assert pssolver.__version__ == "0.2.2"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.2.1",
+        "version": "0.2.2",
     }
     successor = json.loads(V021_RELEASE_RECORD.read_text(encoding="utf-8"))
     assert successor["source"]["base_release"] == "v0.2.0"
@@ -63,8 +64,8 @@ def test_v020_documents_nfs_checkpoint_limit_and_patch_policy():
 
 def test_v020_readme_has_the_registered_patch_successor():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    assert "PSSolver 0.2.1 is" in readme
-    assert "qualified executable combinations in 0.2.1 are" in readme
+    assert "PSSolver 0.2.2 is" in readme
+    assert "qualified executable combinations in 0.2.2 are" in readme
     assert "0.2.0rc6 is" not in readme
 
 
@@ -219,6 +220,9 @@ def test_v020_successor_record_matches_every_registered_source():
     v17_successors = json.loads(
         V022_V17_RECORD.read_text(encoding="utf-8")
     )["historical_successor_sources"]
+    v022_release_successors = json.loads(
+        V022_RELEASE_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert set(successors) == {
         "CHANGELOG.md",
         "README.md",
@@ -257,6 +261,9 @@ def test_v020_successor_record_matches_every_registered_source():
         if registration is not None and registration["historical_sha256"] == expected:
             expected = registration["current_sha256"]
         registration = v17_successors.get(relative)
+        if registration is not None and registration["historical_sha256"] == expected:
+            expected = registration["current_sha256"]
+        registration = v022_release_successors.get(relative)
         if registration is not None and registration["historical_sha256"] == expected:
             expected = registration["current_sha256"]
         assert _sha256(ROOT / relative) == expected

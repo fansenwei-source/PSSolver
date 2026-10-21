@@ -12,6 +12,7 @@ from pssolver.functional.api import functional_protocol_provenance
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/pssolver_v0_2_1.json"
+V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 V022_V17_RECORD = ROOT / (
     "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
 )
@@ -25,19 +26,24 @@ def _record() -> dict[str, object]:
     return json.loads(RECORD.read_text(encoding="utf-8"))
 
 
-def test_v021_public_version_and_provenance_agree():
-    assert pssolver.__version__ == "0.2.1"
+def test_v021_has_a_registered_v022_version_successor():
+    assert pssolver.__version__ == "0.2.2"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.2.1",
+        "version": "0.2.2",
     }
+    successor = json.loads(V022_RELEASE_RECORD.read_text(encoding="utf-8"))
+    assert successor["source"]["base_release"] == "v0.2.1"
+    assert successor["source"]["v0_2_1_tag_rewritten"] is False
+    assert successor["source"]["v0_2_1_assets_replaced"] is False
 
 
 def test_v021_release_documents_describe_the_narrow_patch_scope():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-    assert "PSSolver 0.2.1 is" in readme
-    assert "qualified executable combinations in 0.2.1 are" in readme
+    assert "PSSolver 0.2.2 is" in readme
+    assert "qualified executable combinations in 0.2.2 are" in readme
+    assert "## 0.2.2 — 2026-10-20" in changelog
     assert "## 0.2.1 — 2026-10-20" in changelog
     assert "only the N-1 checkpoint" in changelog
     assert "Functional API version 1.0" in changelog
@@ -107,6 +113,9 @@ def test_v021_forward_successors_match_every_changed_historical_source():
     v17_successors = json.loads(
         V022_V17_RECORD.read_text(encoding="utf-8")
     )["historical_successor_sources"]
+    release_successors = json.loads(
+        V022_RELEASE_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert set(successors) == {
         "CHANGELOG.md",
         "README.md",
@@ -141,6 +150,9 @@ def test_v021_forward_successors_match_every_changed_historical_source():
         assert identity["historical_sha256"] != identity["current_sha256"]
         expected = identity["current_sha256"]
         successor = v17_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == expected:
+            expected = successor["current_sha256"]
+        successor = release_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
         assert _sha256(ROOT / relative) == expected
