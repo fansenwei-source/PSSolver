@@ -1,0 +1,271 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "classification": "DRAFT_V0_3_0_GOALS_AND_COMPLETION_CONTRACT",
+  "status": "draft_pending_user_decisions",
+  "plan_step": "S-02",
+  "governing_decision": "D-0010",
+  "branch": "dev/0.3",
+  "parent_commit": "334577bd985cbec396d08768fe4f0d6c59899429",
+  "version": "0.3.0.dev0",
+  "objective": "Resolve as many known issues as practical before v0.3.0 while preserving scientific correctness, backward-readable checkpoints, stable public contracts, Control interoperability, and fail-closed behavior.",
+  "execution_policy": {
+    "recommended": "issue_first",
+    "ordered_steps": [
+      "S-03",
+      "S-04",
+      "S-05",
+      "S-06",
+      "S-07",
+      "S-08",
+      "S-09",
+      "S-10"
+    ],
+    "new_feature_rule": "Do not expand public geometry, boundary, lifting, or model combinations before S-03 through S-09 are closed, except for work strictly required to fix a registered issue.",
+    "threshold_rule": "Do not relax a numerical, scientific, restart, memory, or performance threshold and do not add skip or xfail to obtain closure.",
+    "new_finding_rule": "Every finding discovered before freeze must be fixed, verified, accepted by a confirmed decision, or explicitly deferred by a confirmed decision. No untriaged finding may remain."
+  },
+  "known_issue_scope": {
+    "registry_path": "notes/pssolver_v0_2_x_open_issues.json",
+    "registry_sha256": "18a769b757a9c4325d69e8a9e86751c19642e66804141cda678dde408fed9eb3",
+    "registry_issue_count": 28,
+    "already_verified": [
+      "V-17"
+    ],
+    "required_by_step": {
+      "S-03": [
+        "C1-10",
+        "C1-11",
+        "A2-24/C1-15",
+        "C1-08",
+        "V-23",
+        "V-21"
+      ],
+      "S-04": [
+        "V-22",
+        "V-16",
+        "V-13",
+        "V-14",
+        "C2-17"
+      ],
+      "S-05": [
+        "A2-21/S2-12"
+      ],
+      "S-06": [
+        "C1-05",
+        "C2-18",
+        "S2-17"
+      ],
+      "S-07": [
+        "A1-07",
+        "S1-15/NEW-13",
+        "S1-04",
+        "OBS-4",
+        "B30"
+      ],
+      "S-08": [
+        "A2-25",
+        "N5"
+      ],
+      "S-09": [
+        "A3-18",
+        "NEW-14"
+      ]
+    },
+    "user_decision_at_s10": [
+      "B8/S2-07",
+      "R1-R9",
+      "A2-11"
+    ]
+  },
+  "control_sync_contract": {
+    "release_gate_recommended": true,
+    "requirements": [
+      "PSSolver-Control uses only documented public PSSolver APIs.",
+      "Any provider-identity or metadata change has an explicit migration record.",
+      "Periodic and Channel installed-wheel CPU consumer suites pass.",
+      "The consolidated S-09 GPU/H100 qualification covers the Control paths affected by v0.3 changes.",
+      "No production default or functional API version changes implicitly."
+    ],
+    "scientific_control_result_required": false,
+    "optimizer_campaign_required": false
+  },
+  "compatibility_contract": {
+    "read_released_v0_2_checkpoints": true,
+    "read_existing_v0_3_development_checkpoints_when_schema_compatible": true,
+    "new_checkpoint_schema_may_be_written_only_after_s05_design_approval": true,
+    "legacy_checkpoint_reads_must_not_rewrite_sources": true,
+    "restart_equivalence_required": true,
+    "provider_identity_changes_require_explicit_migration": true
+  },
+  "completion_gates": [
+    {
+      "id": "G-01",
+      "title": "Registry closure",
+      "criterion": "All S-03 through S-09 issue IDs are verified or closed by independent evidence; S-10 items have a confirmed user decision; no untriaged issue remains."
+    },
+    {
+      "id": "G-02",
+      "title": "Public error and metadata contract",
+      "criterion": "Public execution, restart, checkpoint, and convergence failures use documented exception families and finite serializable metadata without stale running state."
+    },
+    {
+      "id": "G-03",
+      "title": "Checkpoint compatibility and integrity",
+      "criterion": "Released v0.2 fixtures remain readable; continuous/restart equivalence passes; NFS fallback, concurrency, tamper, permission, and failure-injection gates pass without residue or partial publication."
+    },
+    {
+      "id": "G-04",
+      "title": "Numerical and scientific correctness",
+      "criterion": "Finite-state, pressure residual, transform-count, Hermitian, gradient, Taylor, restart, and deterministic replay gates pass without relaxed thresholds."
+    },
+    {
+      "id": "G-05",
+      "title": "CPU and packaging closure",
+      "criterion": "Clean source and installed-wheel CPU suites pass; wheel/sdist contents, public imports, console entry points, fixture identities, and documentation bindings are verified."
+    },
+    {
+      "id": "G-06",
+      "title": "Performance and memory non-regression",
+      "criterion": "A pre-registered paired qualification on representative Plane, Periodic, and Channel paths passes the last accepted platform-specific runtime and memory limits."
+    },
+    {
+      "id": "G-07",
+      "title": "Control interoperability",
+      "criterion": "The independently versioned Control consumer passes installed-wheel CPU qualification and the affected GPU/H100 paths without private imports, hidden fallback, or identity ambiguity."
+    },
+    {
+      "id": "G-08",
+      "title": "Consolidated GPU/H100 qualification",
+      "criterion": "S-09 covers CUDA t>=200 Hermitian consistency, TF32 backward scope, CUDA-only tests, checkpoint/restart, gradients, memory, and non-regression in one pre-registered campaign, subject to user authorization."
+    },
+    {
+      "id": "G-09",
+      "title": "Independent acceptance and release",
+      "criterion": "A release candidate passes independent read-only acceptance, online asset identity checks, and post-release verification before v0.3.0 is declared complete."
+    }
+  ],
+  "decision_questions": [
+    {
+      "id": "Q-01",
+      "question": "Should known-issue closure take priority over new public features until S-09 is complete?",
+      "recommended_option": "A",
+      "recommendation": "Choose A. It minimizes moving interfaces while correctness, checkpoint, and compatibility debt is being removed.",
+      "options": {
+        "A": "Issue-first: no unrelated public features before S-09.",
+        "B": "Allow narrowly scoped new features after S-04 when they do not change the active qualification surface.",
+        "C": "Develop new features in parallel with all issue batches."
+      }
+    },
+    {
+      "id": "Q-02",
+      "question": "Should S-05 introduce a digest-protected checkpoint schema in v0.3.0?",
+      "recommended_option": "A",
+      "recommendation": "Choose A. Coordinated progress tampering cannot be fixed without authenticated progress metadata, and 0.3 is the appropriate compatibility boundary.",
+      "options": {
+        "A": "Yes: write the new digest-protected schema while retaining explicit read-only compatibility for released v0.2 checkpoints.",
+        "B": "Add an opt-in upgraded schema but keep the old schema as the default writer for 0.3.0.",
+        "C": "Defer the format change beyond 0.3.0."
+      }
+    },
+    {
+      "id": "Q-03",
+      "question": "How strict should v0.3.0 performance and memory qualification be?",
+      "recommended_option": "A",
+      "recommendation": "Choose A. Reusing accepted platform-specific limits prevents silent regressions without inventing stricter thresholds after implementation.",
+      "options": {
+        "A": "Pre-register and reuse the last accepted representative-path runtime and memory limits; changes require a separate scientific justification and user decision.",
+        "B": "Require byte-identical performance metrics or no measurable slowdown.",
+        "C": "Treat performance and memory as informational only."
+      }
+    },
+    {
+      "id": "Q-04",
+      "question": "Should PSSolver-Control compatibility be a v0.3.0 release gate?",
+      "recommended_option": "A",
+      "recommendation": "Choose A. Control is an independent consumer of the stable functional API, so it is the strongest practical boundary test without coupling the repositories.",
+      "options": {
+        "A": "Yes: require installed-wheel CPU and affected S-09 GPU/H100 consumer qualification.",
+        "B": "Require installed-wheel CPU qualification only; defer GPU consumer qualification.",
+        "C": "Do not gate PSSolver v0.3.0 on the independent Control consumer."
+      }
+    },
+    {
+      "id": "Q-05",
+      "question": "What backward-compatibility promise should v0.3.0 make for checkpoints and provider identity?",
+      "recommended_option": "A",
+      "recommendation": "Choose A. It protects existing simulation data while allowing a safer v0.3 writer and keeps identity changes auditable.",
+      "options": {
+        "A": "Read all authenticated released v0.2 fixtures, never mutate sources, require restart equivalence, and require explicit migrations for identity changes.",
+        "B": "Support only v0.2.2 fixtures and later.",
+        "C": "Make v0.3 checkpoints intentionally incompatible with v0.2."
+      }
+    },
+    {
+      "id": "Q-06",
+      "question": "What default position should S-10 take on the three D-0007 items?",
+      "recommended_option": "A",
+      "recommendation": "Choose A. It addresses architectural debt when the correctness surface is stable, without reopening unqualified lifting physics or redesigning an accepted label contract prematurely.",
+      "options": {
+        "A": "After S-09, scope R1-R9 into a final 0.3 cleanup step if independently testable; keep B8/S2-07 deferred until lifting is deliberately reopened; keep A2-11 accepted.",
+        "B": "Resolve R1-R9, B8/S2-07, and A2-11 all within v0.3.0.",
+        "C": "Preserve D-0007 unchanged and leave all three outside v0.3.0."
+      }
+    },
+    {
+      "id": "Q-07",
+      "question": "What release sequence should close v0.3.0?",
+      "recommended_option": "A",
+      "recommendation": "Choose A. One frozen release candidate plus independent acceptance gives a clear evidence boundary while avoiding an unnecessary series of candidates.",
+      "options": {
+        "A": "Freeze v0.3.0rc1 after S-03 through S-10, run independent acceptance, then publish v0.3.0 only if no release-blocking finding appears.",
+        "B": "Publish v0.3.0 directly after the internal qualification campaign.",
+        "C": "Plan multiple release candidates regardless of findings."
+      }
+    }
+  ],
+  "recommended_answers": {
+    "Q-01": "A",
+    "Q-02": "A",
+    "Q-03": "A",
+    "Q-04": "A",
+    "Q-05": "A",
+    "Q-06": "A",
+    "Q-07": "A"
+  },
+  "draft_validation_environment": {
+    "policy": "D-0008 baseline-only hard-link clone",
+    "baseline_venv_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "clone_method": "cp -al",
+    "clone_path": "/home/fansenwei/.pssolver_s02_env.IGNQIs/venv",
+    "python_executable": "/home/fansenwei/.pssolver_s02_env.IGNQIs/venv/bin/python",
+    "sys_prefix": "/home/fansenwei/.pssolver_s02_env.IGNQIs/venv",
+    "sys_path": [
+      "",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python312.zip",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12/lib-dynload",
+      "/home/fansenwei/.pssolver_s02_env.IGNQIs/venv/lib/python3.12/site-packages"
+    ],
+    "pytest_import": "/home/fansenwei/.pssolver_s02_env.IGNQIs/venv/lib/python3.12/site-packages/pytest/__init__.py",
+    "clone_pruned_after_validation": true
+  },
+  "scope": {
+    "planning_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "registry_changed": false,
+    "roadmap_order_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "tag_modified": false,
+    "release_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false,
+    "push_authorized": false
+  },
+  "next_action": "User selects Q-01 through Q-07. Codex then records the confirmed S-02 contract and creates R-0007 with plan_step S-02 for Claude consistency review."
+}
