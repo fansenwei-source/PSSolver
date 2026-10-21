@@ -18,7 +18,7 @@
   },
   "integration_strategy": {
     "kind": "targeted_cherry_picks_plus_evidence_merge",
-    "reason": "The development checkpoint source exactly matched the N-1 implementation parent, so the two runtime commits were cherry-picked without conflict. The already accepted v0.2.2 evidence tip was then merged so the N-1 and V-17 records remain ancestors instead of being copied or rewritten. Development-only version and documentation state was preserved explicitly.",
+    "reason": "The development checkpoint source exactly matched the N-1 implementation parent, so the two runtime commits were cherry-picked without conflict. The already accepted v0.2.2 evidence tip was then merged so the N-1 and V-17 records remain ancestors instead of being copied or rewritten. The development-only package version was preserved while the latest patch-release documentation remained available on the development line.",
     "release_history_rewritten": false,
     "development_history_rewritten": false,
     "merge_commit_used": true
@@ -31,16 +31,6 @@
     "tests/test_v0_2_2_v17_checkpoint_symlink_parent.py": "6dd9d200862469fdd90089f0e7c32afa9ac22319585f001c0e832f11d9e23f9a"
   },
   "historical_successor_sources": {
-    "CHANGELOG.md": {
-      "historical_sha256": "781f39a9351ff3274cfd942f60843c64fdd827b70da6270e0094ebdb542b03b3",
-      "current_sha256": "0325420bafc4a4293dcb54ceb946fff7ed58ed50f8a0e28e11170e8c4f11adc1",
-      "reason": "Preserve the existing 0.3 development documentation baseline while merging v0.2.2 checkpoint evidence."
-    },
-    "README.md": {
-      "historical_sha256": "bfce935b882fff13d4c99d42778668b2c5e5141005b294879de11fd6d0c15bd3",
-      "current_sha256": "7c30cf3961fabc89db0f7689b56d52f31fb093e168dc88d839f8e5d6c337ffd1",
-      "reason": "Preserve the existing 0.3 development documentation baseline while merging v0.2.2 checkpoint evidence."
-    },
     "pssolver/_version.py": {
       "historical_sha256": "e0d6a406969cecca1f92674eb3107bc2fd93f68041425c1fa9484907f3042f54",
       "current_sha256": "73aebd88cf4ee0d4b9abd865b6bbfbb62f1c43e102a6cdc9c12ba3c79faa4328",
@@ -48,22 +38,22 @@
     },
     "tests/test_release_v0_2_0_final.py": {
       "historical_sha256": "d78fcceacc9b00c5c86223953c81d4b0dc28db8e17aa439b21d284216ebea8d3",
-      "current_sha256": "d1a4683e0c069a11815e12911a305497c8785b8d2488268fcdece7cf52a0498f",
+      "current_sha256": "f2f28b0abc4e8edd73f5ec82d8adf1407dd5cac1406fb45f2d81f97760ab5786",
       "reason": "Resolve both the immutable v0.2 successor chain and the 0.3 development successor without rewriting either historical record."
     },
     "tests/test_release_v0_2_rc6.py": {
       "historical_sha256": "82cdf127d848c5e33193f2a9ba7bb3953be5bb6537ca685eb5c132b9a8ed290d",
-      "current_sha256": "73246a7b23bc8219551dde62703492ab91bbf5d4dac3e94cd15b30af0a0942b8",
+      "current_sha256": "8f0920eb75c60ccbfd82548b0530b7aa99314006d4b5162321942c138d0e381f",
       "reason": "Retain the existing 0.3 development version assertion."
     },
     "tests/test_release_v0_2_1.py": {
       "historical_sha256": "e80b09a499b37a129602994e093f90d999da4d1f5c68186e54a01fb14e611ecf",
-      "current_sha256": "0acc900e907e178eadbb95b2d78911df521a028e1f7d47d1ded270350988f11c",
+      "current_sha256": "cdab565aa7950d406eac483f4f69d740898315cb2b2f7ac4519f8d0063b0ffa9",
       "reason": "Bind the immutable v0.2.1 record while checking its 0.3 development successor."
     },
     "tests/test_release_v0_2_2.py": {
       "historical_sha256": "216d6947c9a43b0865c3fdcdf601b3bc77de7cfd79ee64214dad2236ca83c0d3",
-      "current_sha256": "54299c040793bc59b2d6f01e226f55bcad3a8dd1cbc8dc47d68a9df48e83138f",
+      "current_sha256": "70ef04a227c64de6e137dfc4247c25419f8b2aafeddd41fa2802cdf096826574",
       "reason": "Bind the immutable v0.2.2 record while checking its 0.3 development successor."
     },
     "tests/test_v0_2_1_n1_checkpoint_nfs_record.py": {
@@ -80,41 +70,6 @@
       "historical_sha256": "a1b4180116b11900ef220e40a0ff239ff895d4f2dd9c064beecd02a0006a33ad",
       "current_sha256": "c59be86a9635d3d3010d2c088d04442bab0e78d6be5c33f2eab45ada0b38c19b",
       "reason": "Allow the imported R-0002 evidence to follow the development integration successor without rewriting the review result."
-    },
-    "tests/test_rc5_w1_documentation.py": {
-      "historical_sha256": "4dfe1becb87427d495cea82711e06ca70ba10ead0291df05834f3d2d9915c055",
-      "current_sha256": "efb683257739740f5cab56e15de1a2aa8caf19fd67e7b8d6b6c585b7d27bcb42",
-      "reason": "Extend the historical documentation hash chain through the registered v0.3 development successor."
-    },
-    "tests/test_rc6_2_pressure_floor_record.py": {
-      "historical_sha256": "3a4276b162bb757466ca9f5445e55f97e5bb4013ab83cde5b2615e067d716a60",
-      "current_sha256": "df1d417091a4edb83363fe049e766e7d42f50614180885fb666e088ea72593c1",
-      "reason": "Extend the immutable RC6-2 successor resolver through the registered v0.3 development successor."
-    },
-    "tests/test_rc6_3_compile_preflight_record.py": {
-      "historical_sha256": "30cad62cf42d4d81cefe85dedbb5a30d93053e9a6a480f21febb978587385931",
-      "current_sha256": "ae811acbdfad5aec9d4631e12c5c16bf3a28acd9f8d3c6402b485ab2e443b7eb",
-      "reason": "Extend the immutable RC6-3 successor resolver through the registered v0.3 development successor."
-    },
-    "tests/test_rc6_4_channel_failure_record.py": {
-      "historical_sha256": "2ae2410c90ec2b4eacecc234dca15f51de6e61075b57c5c8217b87d440475433",
-      "current_sha256": "2d6089781c6cfd379f8be678efcb2b940760ebd080874c986b707624314fe9e1",
-      "reason": "Extend the immutable RC6-4 successor resolver through the registered v0.3 development successor."
-    },
-    "tests/test_rc6_5_checkpoint_control_flow_record.py": {
-      "historical_sha256": "5b722df4277576fd8332b8ab20eb63416f343146f8ff7e542879b8c5b2bea4c9",
-      "current_sha256": "3a4768d1442dd368e3bc9e4c1431f572f1e4db289a5caae63694a6b096daa1b5",
-      "reason": "Extend the immutable RC6-5 successor resolver through the registered v0.3 development successor."
-    },
-    "tests/test_rc6_6_restart_output_atomicity_record.py": {
-      "historical_sha256": "fa1a2beb6d94995ad6e7cbb7942e0d5283b183630e3a48fcdf616afea98eef2d",
-      "current_sha256": "6a837f4836c4b52cc9785ddaebdd4094f28522b8b9c66015fb117e9bf500e808",
-      "reason": "Extend the immutable RC6-6 successor resolver through the registered v0.3 development successor."
-    },
-    "tests/test_release_v0_1.py": {
-      "historical_sha256": "49eb789ba6f49490cf1fd3acf94352580e39863c8d0a361fd36d470b633c2a65",
-      "current_sha256": "617a9782cc1ac83cbca2e4c51b6d5373b61418e62654a7eb9a59a84223870747",
-      "reason": "Preserve the historical packaging checks while binding their README expectation to the registered v0.3 development line."
     }
   },
   "scope": {

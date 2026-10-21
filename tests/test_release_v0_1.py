@@ -3,16 +3,12 @@
 from __future__ import annotations
 
 import ast
-import json
 from pathlib import Path
 
 import pssolver
 
 
 PROJECT_ROOT = Path(__file__).parents[1]
-DEV_INTEGRATION_RECORD = (
-    PROJECT_ROOT / "notes/PSSolver_v0_3_0_n1_v17_checkpoint_integration.json"
-)
 
 
 def test_public_version_is_exported():
@@ -48,10 +44,7 @@ def test_standard_build_metadata_and_release_documents_exist():
         PROJECT_ROOT / "notes" / "pssolver_v0_1_2.md"
     ).read_text(encoding="utf-8")
 
-    development = json.loads(DEV_INTEGRATION_RECORD.read_text(encoding="utf-8"))
-    assert development["line"] == "dev/0.3"
-    assert development["version"] == "0.3.0.dev0"
-    assert "PSSolver 0.2.0" in readme
+    assert "PSSolver 0.2.2" in readme
     assert "## 0.1.2" in changelog
     assert "## 0.1.1" in changelog
     assert "## 0.1.0" in changelog

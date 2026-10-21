@@ -42,7 +42,9 @@ def test_rc6_documents_and_machine_record_agree():
     )
     record = _json(RELEASE_RECORD)
 
-    assert "PSSolver 0.2.0" in readme
+    assert "PSSolver 0.2.2" in readme
+    assert "## 0.2.2 — 2026-10-20" in changelog
+    assert "## 0.2.1 — 2026-10-20" in changelog
     assert "## 0.2.0rc6" in changelog
     assert "## 0.2.0 — 2026-10-19" in changelog
     assert "PSSolver 0.2.0rc6 release candidate" in release_notes

@@ -35,9 +35,10 @@ def test_v022_has_a_registered_v03_development_successor() -> None:
     }
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-    assert "PSSolver 0.2.0 is" in readme
-    assert "qualified executable combinations in 0.2.0 are" in readme
-    assert "## 0.2.0 — 2026-10-19" in changelog
+    assert "PSSolver 0.2.2 is" in readme
+    assert "qualified executable combinations in 0.2.2 are" in readme
+    assert "## 0.2.2 — 2026-10-20" in changelog
+    assert "only the verified V-17" in changelog
     integration = _read(DEV_INTEGRATION_RECORD)
     assert integration["source"]["v0_2_2_release_source"] == (
         "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70"

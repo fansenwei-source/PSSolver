@@ -19,9 +19,6 @@ V022_V17_RECORD = ROOT / (
     "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
 )
 V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
-V03_INTEGRATION_RECORD = ROOT / (
-    "notes/PSSolver_v0_3_0_n1_v17_checkpoint_integration.json"
-)
 
 
 def _record() -> dict[str, object]:
@@ -59,11 +56,6 @@ def _freeze_successor(relative: str, historical: str) -> str:
     if registration is not None and registration["historical_sha256"] == historical:
         historical = registration["current_sha256"]
     registration = json.loads(V022_RELEASE_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ].get(relative)
-    if registration is not None and registration["historical_sha256"] == historical:
-        historical = registration["current_sha256"]
-    registration = json.loads(V03_INTEGRATION_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == historical:
