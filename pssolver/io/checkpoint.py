@@ -592,7 +592,10 @@ def _publish_directory_over_owned_placeholder(
 
     try:
         source_device = source.lstat().st_dev
-        parent_device = target.parent.lstat().st_dev
+        # The staging directory is created through ``target.parent``.  Follow
+        # a parent symlink so this compares the filesystems that will actually
+        # contain the staging and published directories, not the link inode.
+        parent_device = target.parent.stat().st_dev
     except OSError as exc:
         raise _io_error(
             exc,
