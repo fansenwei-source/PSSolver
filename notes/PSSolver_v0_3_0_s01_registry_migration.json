@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "classification": "S01_REGISTRY_MIGRATED_TO_DEV_0_3_CANDIDATE",
+  "plan_step": "S-01",
+  "decision": "D-0010",
+  "git_identity": {
+    "branch": "dev/0.3",
+    "parent_commit": "7301bd4bf0b49b27e1c07d248ea3ca3f483dc147",
+    "runtime_qualification_source": "f45518ca34b7901d64c5ee43e2e739067fae8451",
+    "record_commit_is_runtime_qualification_source": false,
+    "pushed": false
+  },
+  "registry": {
+    "path": "notes/pssolver_v0_2_x_open_issues.json",
+    "historical_sha256": "ffdd4fe41ddc140857081febf634b28bed4e1d3345f9e434982ef11ec2f67cc2",
+    "successor_sha256": "18a769b757a9c4325d69e8a9e86751c19642e66804141cda678dde408fed9eb3",
+    "primary_ref": "dev/0.3",
+    "issue_count": 28,
+    "registered_target": "0.3",
+    "registered_ids": [
+      "C1-05",
+      "C1-10",
+      "C1-11",
+      "C2-17",
+      "C2-18",
+      "V-22",
+      "V-23",
+      "V-16",
+      "V-13",
+      "V-14",
+      "V-21",
+      "OBS-4",
+      "A2-21/S2-12",
+      "A2-24/C1-15",
+      "C1-08",
+      "S1-15/NEW-13",
+      "S2-17",
+      "A1-07",
+      "B30",
+      "S1-04"
+    ],
+    "changed_target_ids": [
+      "C1-05",
+      "C1-10",
+      "C1-11",
+      "C2-17",
+      "C2-18",
+      "V-22",
+      "V-23",
+      "V-16",
+      "V-13",
+      "V-14",
+      "V-21",
+      "OBS-4",
+      "A2-21/S2-12",
+      "A2-24/C1-15",
+      "C1-08",
+      "S2-17",
+      "B30"
+    ],
+    "already_targeted_to_0_3": [
+      "S1-15/NEW-13",
+      "A1-07",
+      "S1-04"
+    ],
+    "new_14_target": "0.3 GPU verification",
+    "b30_plan_step": "S-07",
+    "v17_preserved": {
+      "status": "verified",
+      "fixed_in": "611d167d1b2c2d634222f608f4c9cd4dc671636d",
+      "verified_by": "R-0002",
+      "target_release": "0.2.x priority"
+    }
+  },
+  "historical_import_contracts": {
+    "records_rewritten": false,
+    "historical_registry_sha256": "ffdd4fe41ddc140857081febf634b28bed4e1d3345f9e434982ef11ec2f67cc2",
+    "tests_now_bind_the_recorded_historical_hash_instead_of_the_live_successor": [
+      "tests/test_v0_2_2_r0003_import.py",
+      "tests/test_v0_2_2_r0004_import.py",
+      "tests/test_v0_3_n1_v17_r0005_import.py"
+    ]
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "numerics_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "production_default_changed": false,
+    "historical_records_rewritten": false,
+    "tests_relaxed": false,
+    "tag_modified": false,
+    "release_modified": false,
+    "assets_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_registry_update_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "hpcc_authorized": false,
+    "gpu_authorized": false,
+    "h100_authorized": false
+  },
+  "next_step": "Create R-0006 with plan_step S-01 and obtain independent Claude review before any push."
+}

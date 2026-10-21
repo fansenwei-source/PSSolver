@@ -117,8 +117,8 @@ def test_v021_limitations_preserve_version_and_control_boundaries():
         assert issues[issue_id]["affects_control_paths"] is True
         assert issues[issue_id]["exercised_by_current_control_research"] is False
     assert issues["V-22"]["status"] == issues["V-23"]["status"] == "registered"
-    assert issues["V-22"]["target_release"] == "0.2.x"
-    assert issues["V-23"]["target_release"] == "0.2.x"
+    assert issues["V-22"]["target_release"] == "0.3"
+    assert issues["V-23"]["target_release"] == "0.3"
     assert "retarget" in issues["V-22"]["notes"]
     assert "PermissionError" in issues["V-23"]["notes"]
 
@@ -139,10 +139,35 @@ def test_rc5_rc6_residuals_are_registered_without_claiming_fixes():
     assert issues["A2-11"]["status"] == "accepted"
     assert issues["NEW-14"]["status"] == "open"
     assert issues["NEW-14"]["affects_control_paths"] is True
+    assert issues["NEW-14"]["target_release"] == "0.3 GPU verification"
     assert all(
         issues[issue_id]["exercised_by_current_control_research"] is False
         for issue_id in registered | {"A2-11", "NEW-14"}
     )
+
+
+def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
+    record = _read(RECORD)
+    issues = _issues()
+    assert record["primary_ref"] == "dev/0.3"
+    assert record["roadmap"] == {
+        "decision": "D-0010",
+        "path": "PSSolver_sync/plan/roadmap.json",
+        "step": "S-01",
+    }
+    registered = {
+        issue_id for issue_id, item in issues.items() if item["status"] == "registered"
+    }
+    assert len(registered) == 20
+    assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in registered)
+    assert issues["A2-21/S2-12"]["target_release"] == "0.3"
+    assert "S-07" in issues["B30"]["notes"]
+    assert issues["V-17"]["status"] == "verified"
+    assert issues["V-17"]["fixed_in"] == (
+        "611d167d1b2c2d634222f608f4c9cd4dc671636d"
+    )
+    assert issues["V-17"]["verified_by"] == "R-0002"
+    assert issues["V-17"]["target_release"] == "0.2.x priority"
 
 
 def test_deferred_and_coverage_items_match_the_frozen_boundary():

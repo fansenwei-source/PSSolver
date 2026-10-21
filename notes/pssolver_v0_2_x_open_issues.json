@@ -1,7 +1,13 @@
 {
   "schema_version": 1,
   "registry": "PSSolver v0.2.x forward-maintained open-issue registry",
-  "date": "2026-10-20",
+  "date": "2026-10-21",
+  "primary_ref": "dev/0.3",
+  "roadmap": {
+    "decision": "D-0010",
+    "path": "PSSolver_sync/plan/roadmap.json",
+    "step": "S-01"
+  },
   "base_commit": "e099db2af62af3dc84e63a1631dc6b0c43d9a3b9",
   "record_scope": {
     "evidence_only": true,
@@ -44,7 +50,7 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x/0.3",
+      "target_release": "0.3",
       "notes": "Returned residual can exceed the requested tolerance by about 1.033x at the floor."
     },
     {
@@ -58,7 +64,7 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x/0.3",
+      "target_release": "0.3",
       "notes": "application_family, stage, and step are absent; SimulationExecutionError.to_metadata raises AttributeError."
     },
     {
@@ -72,7 +78,7 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x/0.3",
+      "target_release": "0.3",
       "notes": "CPCE details also require JSON-finite values."
     },
     {
@@ -86,7 +92,7 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x/0.3",
+      "target_release": "0.3",
       "notes": "Present since rc5; limited to the explicit production upgrade path."
     },
     {
@@ -100,7 +106,7 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x/0.3",
+      "target_release": "0.3",
       "notes": "Present since rc5."
     },
     {
@@ -130,7 +136,7 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x",
+      "target_release": "0.3",
       "notes": "Repro: retarget the immediate parent symlink inside checkpoint_directory_transaction before publication; the transaction fails closed and preserves the new target, but cleanup through the retargeted path leaves .<name>.tmp-* in the original directory. Suggested fix: resolve the parent once at transaction start or retain a directory fd and clean up through that stable identity."
     },
     {
@@ -144,7 +150,7 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x",
+      "target_release": "0.3",
       "notes": "Repro: chmod the immediate checkpoint parent to 000, then call functional export_checkpoint; the initial existence/lstat probe raises PermissionError instead of the public checkpoint error hierarchy. Suggested fix: classify that initial OSError through the same CheckpointIOError mapping used by staging creation."
     },
     {
@@ -158,7 +164,7 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x",
+      "target_release": "0.3",
       "notes": "A post-rename parent-directory fsync error reports failure after publication. Real HPCC NFS directory fsync returned zero."
     },
     {
@@ -172,7 +178,7 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x",
+      "target_release": "0.3",
       "notes": "The operation fails closed but the empty placeholder requires manual removal."
     },
     {
@@ -186,7 +192,7 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x",
+      "target_release": "0.3",
       "notes": "Ownership uses only (st_dev, st_ino), and the rename-failure path can attempt placeholder removal twice."
     },
     {
@@ -200,7 +206,7 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x",
+      "target_release": "0.3",
       "notes": "The fail-closed reader exception is not mapped to the public checkpoint-error family."
     },
     {
@@ -214,7 +220,7 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x",
+      "target_release": "0.3",
       "notes": "Observability only; the fallback marker must not become checkpoint identity."
     },
     {
@@ -228,7 +234,7 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x/0.3",
+      "target_release": "0.3",
       "notes": "Includes Plane format-2 checkpoint.json; this is not a regression."
     },
     {
@@ -242,7 +248,7 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x/0.3",
+      "target_release": "0.3",
       "notes": "Includes Plane compatibility-identity tampering and Periodic save_start beyond the final step."
     },
     {
@@ -256,7 +262,7 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x/0.3",
+      "target_release": "0.3",
       "notes": "Failures occur before tensor computation and produce no output."
     },
     {
@@ -284,7 +290,7 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.2.x/0.3",
+      "target_release": "0.3",
       "notes": "Observed when fixed work substantially exceeds the iterations required for convergence."
     },
     {
@@ -312,8 +318,8 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "before Robin becomes publicly executable",
-      "notes": "Documentation debt; Robin is not currently publicly executable."
+      "target_release": "0.3",
+      "notes": "Documentation debt; Robin is not currently publicly executable. Roadmap step S-07 will document the residual behavior as an independent gate without reopening Robin execution."
     },
     {
       "id": "S1-04",
@@ -355,7 +361,7 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "open",
-      "target_release": "0.2.x verification",
+      "target_release": "0.3 GPU verification",
       "notes": "Functional device=auto was resolved; backward TF32 scope has not been independently verified."
     },
     {

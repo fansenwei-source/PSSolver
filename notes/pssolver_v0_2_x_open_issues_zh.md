@@ -1,8 +1,9 @@
 # PSSolver v0.2.x 未解决问题统一登记表
 
-日期：2026-10-20
+日期：2026-10-21
 
-本登记表是可持续维护的 evidence-only successor。历史发布记录保持逐字节不变；
+本登记表是可持续维护的 evidence-only successor，自 `D-0010` / `S-01` 起以
+`dev/0.3` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
 当前共登记 28 条：
@@ -19,7 +20,8 @@
 1. `V-17` 已由提交 `611d167d1b2c2d634222f608f4c9cd4dc671636d` 修复，并经
    `R-0002` 独立验证为 `verified`。验证覆盖真实跨文件系统父目录 symlink、Periodic/Channel
    functional export、forced fallback、installed wheel、真跨文件系统拒绝与完整 CPU suite。
-2. `NEW-14`：核实 TF32 policy scope 是否覆盖 backward；目前只登记，不宣称存在数值错误。
+2. `NEW-14`：在 `0.3 GPU verification` 中核实 TF32 policy scope 是否覆盖 backward；
+   目前只登记，不宣称存在数值错误。
 3. `V-22`、`V-23`：`R-0002` 新登记的两个低严重度、既有 checkpoint I/O 边界问题；
    分别涉及事务中途改指父 symlink 后的旧目录 staging 残留，以及不可搜索父目录暴露原始
    `PermissionError`。两者均 fail-closed 或不产生错误结果，不阻塞 V-17。
@@ -30,6 +32,13 @@
 以及 `V-17`、`V-22`、`V-23`、`V-16`、`V-13`、`V-14`、`V-21`、`OBS-4` 会触及 Control
 依赖或暴露的路径。当前 Control 研究没有执行这些已登记的 checkpoint 限制路径，所有条目的
 `exercised_by_current_control_research` 均为 false。
+
+## 0.3 路线图
+
+20 个仍为 `registered` 的 low/info 或明确指定条目统一以 `0.3` 为目标，
+`A2-21/S2-12` 归入设计先行的 `S-05`，`B30` 归入文档批次 `S-07`。
+`V-17` 已验证身份不变，不重新打开。路线图顺序以同步仓库中用户确认的
+`D-0010` 与 `plan/roadmap.json` 为准。
 
 ## 延期与覆盖缺口
 

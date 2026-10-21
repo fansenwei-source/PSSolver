@@ -108,7 +108,7 @@ def test_r0003_import_preserves_the_exact_verdicts() -> None:
 
 def test_r0003_import_does_not_change_the_issue_registry() -> None:
     record = _read(RECORD)["registry"]
-    assert _sha256(REGISTRY) == record["sha256"] == (
+    assert record["sha256"] == (
         "ffdd4fe41ddc140857081febf634b28bed4e1d3345f9e434982ef11ec2f67cc2"
     )
     assert record["issue_count"] == 28

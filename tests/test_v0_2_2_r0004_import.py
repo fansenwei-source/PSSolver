@@ -123,7 +123,7 @@ def test_r0004_import_records_only_evidence_successors() -> None:
 
 def test_r0004_import_does_not_change_the_registry() -> None:
     registry = _read(RECORD)["registry"]
-    assert _sha256(REGISTRY) == registry["sha256"] == (
+    assert registry["sha256"] == (
         "ffdd4fe41ddc140857081febf634b28bed4e1d3345f9e434982ef11ec2f67cc2"
     )
     assert registry["issue_count"] == 28
