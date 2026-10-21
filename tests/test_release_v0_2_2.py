@@ -14,6 +14,9 @@ from pssolver.functional.api import functional_protocol_provenance
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 ISSUES = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
+DEV_INTEGRATION_RECORD = ROOT / (
+    "notes/PSSolver_v0_3_0_n1_v17_checkpoint_integration.json"
+)
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -24,18 +27,21 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def test_v022_public_version_and_release_documents_agree() -> None:
-    assert pssolver.__version__ == "0.2.2"
+def test_v022_has_a_registered_v03_development_successor() -> None:
+    assert pssolver.__version__ == "0.3.0.dev0"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.2.2",
+        "version": "0.3.0.dev0",
     }
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-    assert "PSSolver 0.2.2 is" in readme
-    assert "qualified executable combinations in 0.2.2 are" in readme
-    assert "## 0.2.2 — 2026-10-20" in changelog
-    assert "only the verified V-17" in changelog
+    assert "PSSolver 0.2.0 is" in readme
+    assert "qualified executable combinations in 0.2.0 are" in readme
+    assert "## 0.2.0 — 2026-10-19" in changelog
+    integration = _read(DEV_INTEGRATION_RECORD)
+    assert integration["source"]["v0_2_2_release_source"] == (
+        "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70"
+    )
 
 
 def test_v022_record_binds_the_exact_linear_source_chain() -> None:
@@ -140,6 +146,9 @@ def test_v022_forward_successors_match_every_changed_historical_source() -> None
         "tests/test_rc5_g1_historical_audit_portability.py",
     }
     successors = record["historical_successor_sources"]
+    development_successors = _read(DEV_INTEGRATION_RECORD)[
+        "historical_successor_sources"
+    ]
     assert set(successors) == expected_paths
     for relative, identity in successors.items():
         historical = subprocess.run(
@@ -151,7 +160,11 @@ def test_v022_forward_successors_match_every_changed_historical_source() -> None
         assert hashlib.sha256(historical).hexdigest() == identity[
             "historical_sha256"
         ]
-        assert _sha256(ROOT / relative) == identity["current_sha256"]
+        expected = identity["current_sha256"]
+        successor = development_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == expected:
+            expected = successor["current_sha256"]
+        assert _sha256(ROOT / relative) == expected
         assert identity["reason"]
 
 

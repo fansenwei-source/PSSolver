@@ -20,6 +20,9 @@ V022_V17_RECORD = ROOT / (
     "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
 )
 V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
+DEV_INTEGRATION_RECORD = ROOT / (
+    "notes/PSSolver_v0_3_0_n1_v17_checkpoint_integration.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -234,6 +237,9 @@ def test_v020_successor_record_matches_every_registered_source():
     v022_release_successors = json.loads(
         V022_RELEASE_RECORD.read_text(encoding="utf-8")
     )["historical_successor_sources"]
+    integration_successors = json.loads(
+        DEV_INTEGRATION_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert set(successors) == {
         "CHANGELOG.md",
         "README.md",
@@ -281,6 +287,12 @@ def test_v020_successor_record_matches_every_registered_source():
                 release_expected = registration["current_sha256"]
 
         accepted = {expected, release_expected}
+        integration = integration_successors.get(relative)
+        if (
+            integration is not None
+            and integration["historical_sha256"] == release_expected
+        ):
+            accepted.add(integration["current_sha256"])
         development = development_successors.get(relative)
         if (
             development is not None
