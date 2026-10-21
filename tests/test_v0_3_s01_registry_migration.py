@@ -57,10 +57,13 @@ def test_s01_assigns_every_registered_item_to_0_3_exactly() -> None:
         "C1-11",
         "V-23",
         "V-21",
-    }
-    assert {issue_id for issue_id in tracked if issues[issue_id]["status"] == "claimed_fixed"} == {
         "A2-24/C1-15",
         "C1-08",
+    }
+    assert not {
+        issue_id
+        for issue_id in tracked
+        if issues[issue_id]["status"] == "claimed_fixed"
     }
     assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in tracked)
     assert set(record["changed_target_ids"]) | set(
@@ -69,7 +72,8 @@ def test_s01_assigns_every_registered_item_to_0_3_exactly() -> None:
     assert set(record["changed_target_ids"]).isdisjoint(
         record["already_targeted_to_0_3"]
     )
-    assert issues["V-24"]["status"] == "claimed_fixed"
+    assert issues["V-24"]["status"] == "verified"
+    assert issues["V-24"]["verified_by"] == "R-0009"
     assert issues["V-24"]["target_release"] == "0.3"
 
 

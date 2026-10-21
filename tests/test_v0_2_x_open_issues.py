@@ -50,8 +50,7 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
         "registered": 14,
-        "claimed_fixed": 3,
-        "verified": 5,
+        "verified": 8,
         "deferred": 2,
         "accepted": 1,
         "coverage_gap": 3,
@@ -149,21 +148,23 @@ def test_rc5_rc6_residuals_are_registered_without_claiming_fixes():
         "B30",
         "S1-04",
     }
-    claimed = {"A2-24/C1-15", "C1-08"}
+    verified = {"A2-24/C1-15", "C1-08"}
     assert all(
         issues[issue_id]["status"]
-        == ("claimed_fixed" if issue_id in claimed else "registered")
+        == ("verified" if issue_id in verified else "registered")
         for issue_id in registered
     )
     assert all(
         issues[issue_id]["fixed_in"]
         == "a10785853736b2458eec80680b9ced72a495775f"
-        for issue_id in claimed
+        for issue_id in verified
     )
-    assert issues["V-24"]["status"] == "claimed_fixed"
+    assert all(issues[issue_id]["verified_by"] == "R-0009" for issue_id in verified)
+    assert issues["V-24"]["status"] == "verified"
     assert issues["V-24"]["fixed_in"] == (
         "a10785853736b2458eec80680b9ced72a495775f"
     )
+    assert issues["V-24"]["verified_by"] == "R-0009"
     assert issues["A2-11"]["status"] == "accepted"
     assert issues["NEW-14"]["status"] == "open"
     assert issues["NEW-14"]["affects_control_paths"] is True

@@ -70,11 +70,13 @@ def test_s03_registry_reflects_the_r0008_independent_verdicts() -> None:
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["verified_by"] == "R-0008"
     for issue_id in review["reopened_issue_ids"]:
-        assert issues[issue_id]["status"] == "claimed_fixed"
+        assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == _read(REWORK)["git_identity"][
             "implementation_commit"
         ]
-    assert issues["V-24"]["status"] == "claimed_fixed"
+        assert issues[issue_id]["verified_by"] == "R-0009"
+    assert issues["V-24"]["status"] == "verified"
+    assert issues["V-24"]["verified_by"] == "R-0009"
 
 
 def test_s03_successors_bind_exact_parent_and_current_bytes() -> None:

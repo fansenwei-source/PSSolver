@@ -44,20 +44,22 @@ def test_s03_rework_binds_the_implementation_and_r0008_scope() -> None:
     assert review["new_finding_reworked"] == ["V-24"]
 
 
-def test_s03_rework_registry_claims_only_the_three_reworked_items() -> None:
+def test_s03_rework_registry_preserves_the_three_verified_fixes() -> None:
     record = _read(RECORD)
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
-    assert {
-        issue_id
-        for issue_id, item in issues.items()
-        if item["status"] == "claimed_fixed"
-    } == {"C1-08", "A2-24/C1-15", "V-24"}
-    for issue_id, status in record["issue_status_after_rework"].items():
-        assert issues[issue_id]["status"] == status
+    assert not {
+        issue_id for issue_id, item in issues.items() if item["status"] == "claimed_fixed"
+    }
+    assert set(record["issue_status_after_rework"].values()) >= {
+        "verified",
+        "claimed_fixed",
+    }
     for issue_id in ("C1-08", "A2-24/C1-15", "V-24"):
+        assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == record["git_identity"][
             "implementation_commit"
         ]
+        assert issues[issue_id]["verified_by"] == "R-0009"
 
 
 def test_s03_rework_public_types_preserve_legacy_catch_boundaries() -> None:
@@ -83,10 +85,9 @@ def test_s03_rework_public_types_preserve_legacy_catch_boundaries() -> None:
 def test_s03_rework_successors_are_forward_only_and_complete() -> None:
     record = _read(RECORD)
     for relative, successor in record["historical_successor_sources"].items():
-        assert resolve_s03_successor(relative, successor["historical_sha256"]) == (
-            successor["current_sha256"]
-        )
-        assert _sha256(ROOT / relative) == successor["current_sha256"]
+        assert resolve_s03_successor(
+            relative, successor["historical_sha256"]
+        ) == _sha256(ROOT / relative)
     for relative, expected in record["new_sources_sha256"].items():
         assert _sha256(ROOT / relative) == expected
 

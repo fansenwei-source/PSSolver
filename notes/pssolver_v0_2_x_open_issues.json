@@ -33,8 +33,7 @@
   "status_counts": {
     "open": 1,
     "registered": 14,
-    "claimed_fixed": 3,
-    "verified": 5,
+    "verified": 8,
     "deferred": 2,
     "accepted": 1,
     "coverage_gap": 3
@@ -228,8 +227,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "a10785853736b2458eec80680b9ced72a495775f",
+      "verified_by": "R-0009",
       "target_release": "0.3",
       "notes": "Periodic functional export_checkpoint exposed core CheckpointIOError for filesystem failures while Channel exposed FunctionalCheckpointIOError. The S-03 rework routes Periodic export through translate_functional_exception, matching Channel and Periodic import."
     },
@@ -271,8 +271,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "a10785853736b2458eec80680b9ced72a495775f",
+      "verified_by": "R-0009",
       "target_release": "0.3",
       "notes": "Includes Plane compatibility-identity tampering and Periodic save_start beyond the final step. R-0008 reopened the first S-03 attempt because it converted public CheckpointError subclasses into ValueError-only SimulationRestartError instances; the rework preserves the original CheckpointError object."
     },
@@ -286,8 +287,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "a10785853736b2458eec80680b9ced72a495775f",
+      "verified_by": "R-0009",
       "target_release": "0.3",
       "notes": "Failures occur before tensor computation and produce no output. R-0008 reopened the first S-03 attempt because missing or unreadable snapshots no longer remained OSError-compatible; the rework uses dual-hierarchy public input errors."
     },

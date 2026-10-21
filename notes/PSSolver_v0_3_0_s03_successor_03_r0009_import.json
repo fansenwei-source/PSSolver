@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "stage": "S-03",
+  "sequence": 3,
+  "classification": "PASS_R0009_S03_REWORK_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "372ffa080084a8abbcb4e9dfe1700c237bc32953",
+    "implementation_commit": "a10785853736b2458eec80680b9ced72a495775f",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0009",
+    "commit": "34c26d5a386f49e34814d6521c758fb490302a84",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0009.result.json",
+    "sha256": "1a2ae6297d4ca55cb61674611c4be1f7e278cbba86b83bb195df523fb10e89fe",
+    "classification": "PASS",
+    "release_blockers": [],
+    "new_findings": []
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s03rw_claude_review_20261021_v1",
+    "checksums_entries": 2413,
+    "checksums_sha256": "9afa823c8c668e35dcfe21c8bf2a9b1f9564c21083c83615c9692c6b31c97ff8",
+    "complete_present": true,
+    "final_report_sha256": "c54c65f5adf910450d4c4487425a9ae476d544b056cb2b6c73ddf3a556d69af2",
+    "summary_sha256": "6adc78bc405eb7eeb8776020eb7033c2846efd407d1b1517c2f0c3e45d057862"
+  },
+  "registry_updates": {
+    "verified_by_R_0009": ["C1-08", "A2-24/C1-15", "V-24"],
+    "fixed_in": "a10785853736b2458eec80680b9ced72a495775f",
+    "preserved_verified_by_R_0008": ["C1-10", "C1-11", "V-23", "V-21"],
+    "new_findings_registered": []
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "17b9b55b3a79e7186623b774f55dc1c5d5caee9b05d47456c9f7c6aa731052e5",
+      "current_sha256": "19be12b76600ed264fe822b70c97f1f6668734a1119ace06e622472f4f9e7d12",
+      "reason": "Mechanically import the three R-0009 verified registry updates without changing their implementation commit."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "1a51209fd2fade56abb408d7634e5be29902227f2b305a9060e4f484990fe95f",
+      "current_sha256": "4a6fe87fa42b8fb0d85837ac6055c8be6bf201053dada0c54a44dc76ed56ee27",
+      "reason": "Bind the forward registry counts after the R-0009 verification."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "a0855ab8dd277216d33fdc14763f74bbef869994998de8cf5d4a01edb3141f7d",
+      "current_sha256": "db055ca925734b7caed68efc5e30a611d4934d1e987f049858dea8d04be1bfc1",
+      "reason": "Require the exact R-0009 verification status, fixed commit and verifier for all three issues."
+    },
+    "tests/test_v0_3_s01_registry_migration.py": {
+      "historical_sha256": "b8853b56afc295de98de5aca6ca19207077e52d6eb3b646877ca603d7787b413",
+      "current_sha256": "9b8c07fa586affa0d3ca5d1aa2315bcd937ac4d52cd6fbefd6cbed3e0f2f017a",
+      "reason": "Preserve the S-01 assignment while recognizing the later R-0009 verification."
+    },
+    "tests/test_v0_3_s03_public_errors_metadata_record.py": {
+      "historical_sha256": "99e3fc0726665c106deb5455798102e5127c9189ad27377fe1dfc09fbb628418",
+      "current_sha256": "2c83f6ba06c94479de339d0f4c787971ffd3a245263a8449d6727d21fa8a88af",
+      "reason": "Bind the original S-03 record through the R-0008 rework and R-0009 verification chain."
+    },
+    "tests/test_v0_3_s03_r0008_import.py": {
+      "historical_sha256": "4a5832d598954021b1959a2588f8af697983124396cabbb484fe6f10b6fa84ca",
+      "current_sha256": "1d052ca314c9524b059389af44ad9bd05cf2bba5945a9ea8af4cc595736bd003",
+      "reason": "Keep the R-0008 verdict immutable while requiring the later R-0009 verification."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "6d4c2ced0446f3178e0c58edceaf89ab166b2652b7042ba0851f1f9c9f69d16b",
+      "current_sha256": "35427bb84c2ffb8c47514ea765d4fb2da564d5d39356a150c22c85348ea6ff9f",
+      "reason": "Require the three reworked issues to retain their implementation commit after R-0009 verification."
+    }
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "production_default_changed": false,
+    "historical_records_rewritten": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_import_authorized": true,
+    "push_authorized": false,
+    "dev_fast_forward_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "hpcc_authorized": false,
+    "gpu_authorized": false,
+    "h100_authorized": false
+  },
+  "next_step": "Separately authorize a non-force fast-forward integration into dev/0.3; then remove the temporary fix/v0.3-s03-errors-metadata registry ref and proceed to S-04."
+}
