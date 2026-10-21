@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "release": "0.2.2",
+  "date": "2026-10-20",
+  "classification": "PASS_V0_2_2_V17_INSTALLED_WHEEL_AND_REAL_NFS_QUALIFICATION",
+  "qualification_complete": true,
+  "source": {
+    "release_branch": "release/pssolver-v0.2.2",
+    "release_source_commit": "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70",
+    "package_record_commit": "d607c31eda2de4662c5d775ca5fb233721c17d82",
+    "record_commit_is_release_source": false,
+    "package_record": "notes/pssolver_v0_2_2_package_preparation.json",
+    "package_record_sha256": "f2577a76b20f27342620a34673c4350d576be0dcd24ca9097daa6567e9a27870"
+  },
+  "installed_wheel": {
+    "path": "/home/fansenwei/pssolver_v0_2_2_release_package_2a1d0f7_20261020_v1/package/dist/pssolver-0.2.2-py3-none-any.whl",
+    "sha256": "a7e94585e62785c69522d6cc194fd479b5af55577444926d1bb661ed073cc00e",
+    "size_bytes": 801349,
+    "version": "0.2.2",
+    "functional_api_version": "1.0",
+    "source_shadow_import": false
+  },
+  "hpcc_login_node": {
+    "host": "hpcc.brandeis.edu",
+    "python": "3.10.18",
+    "torch": "2.5.1+cu121",
+    "torch_cuda_runtime": "12.1",
+    "numpy": "1.22.3",
+    "home_filesystem_type": "0x6969",
+    "scratch_filesystem_type": "0x6969",
+    "link_lstat_device": 62,
+    "link_stat_device": 41,
+    "cross_filesystem_parent_symlink": true,
+    "fallback_forced": false,
+    "formal_test_execution_count": 1,
+    "automatic_retry": false,
+    "slurm_submission_count": 0,
+    "formal_h100_submission_count": 0
+  },
+  "periodic": {
+    "fallback_calls": 1,
+    "completed_steps": 1,
+    "checkpoint_import_byte_identical": true,
+    "one_step_restart_byte_identical": true,
+    "written_path_preserves_symlink_spelling": true,
+    "temporary_residue": [],
+    "checkpoint_tree_sha256": "0f0ca34f66edda0941c66909fca29a0f08f7ccb483a0eeab48e7862d5c59a933"
+  },
+  "channel": {
+    "fallback_calls": 1,
+    "completed_steps": 1,
+    "checkpoint_import_byte_identical": true,
+    "one_step_restart_byte_identical": true,
+    "written_path_preserves_symlink_spelling": true,
+    "temporary_residue": [],
+    "checkpoint_tree_sha256": "2df39a90a05227142ae6dc47a539285933b152dedd580ae23f45fcc55c430aa7"
+  },
+  "evidence": {
+    "control_directory": "/home/fansenwei/pssolver_v0_2_2_release_package_2a1d0f7_20261020_v1",
+    "result": "hpcc_real_nfs_result.json",
+    "result_sha256": "02e143018c5a54c2bedf3769f5a650df219220c8dd1a0893da9ab7b144309b0e",
+    "helper": "hpcc_v17_real_nfs.py",
+    "helper_sha256": "65e545e697a81f6d61aba8c7b73d3d9a3ce35da298a6f622abafbe395108cda1",
+    "fixture_builder_sha256": "67f90f13e3ce007ee464827d91e895465a6261c65057c18854e2da5557253c76",
+    "helper_exit_status": 0,
+    "checksum_manifest": "checksums.sha256",
+    "checksum_entries": 11,
+    "checksum_passed": 11,
+    "checksum_failed": 0,
+    "checksum_manifest_sha256": "62bdd3cbb0acb9ba2bfb62b0ca920d730fa0b7f420240b3fa4a1bdc5bc4f2731"
+  },
+  "cleanup": {
+    "home_test_directory": "/home/fansenwei/pssolver_v0_2_2_v17_nfs_retest_2a1d0f7_20261020_v1",
+    "scratch_test_directory": "/scratch1/vincent/PSSolver/pssolver_v0_2_2_v17_nfs_retest_2a1d0f7_20261020_v1",
+    "home_test_directory_removed": true,
+    "scratch_test_directory_removed": true
+  },
+  "scope": {
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "checkpoint_bytes_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "provider_identity_changed": false,
+    "production_default_changed": false,
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false,
+    "h100_rerun_required": false
+  },
+  "authorization": {
+    "eligible_for_release_integration_review": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "github_release_authorized": false,
+    "pypi_authorized": false,
+    "additional_hpcc_write_authorized": false,
+    "slurm_or_h100_authorized": false
+  }
+}
