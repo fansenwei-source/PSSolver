@@ -345,12 +345,21 @@ class PeriodicActivityCheckpointBridge:
     ) -> Path:
         """Write an atomic functional checkpoint in the v2 tensor carrier."""
 
-        return self._write_state_checkpoint(
-            directory,
-            state,
-            completed_steps=completed_steps,
-            migration_provenance=None,
-        )
+        try:
+            return self._write_state_checkpoint(
+                directory,
+                state,
+                completed_steps=completed_steps,
+                migration_provenance=None,
+            )
+        except Exception as exc:
+            translated = translate_functional_exception(
+                exc,
+                operation="checkpoint_export",
+            )
+            if translated is exc:
+                raise
+            raise translated from exc
 
     def _write_state_checkpoint(
         self,

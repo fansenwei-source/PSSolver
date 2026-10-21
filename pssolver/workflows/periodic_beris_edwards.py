@@ -27,6 +27,7 @@ from .diagnostic_io import (
     write_structured_diagnostics,
 )
 from pssolver.errors import SimulationRestartError, SimulationStateError
+from pssolver.io.checkpoint import CheckpointError
 
 
 @dataclass(frozen=True, slots=True)
@@ -214,6 +215,8 @@ class PeriodicBerisEdwardsWorkflow:
                     run_spec=self.run_spec,
                 )
             except SimulationRestartError:
+                raise
+            except CheckpointError:
                 raise
             except Exception as exc:
                 raise SimulationRestartError(

@@ -10,6 +10,7 @@ import time
 
 from pssolver.configuration.channel_active_nematics import ChannelActiveNematicRunSpec
 from pssolver.errors import SimulationExecutionError, SimulationRestartError
+from pssolver.io.checkpoint import CheckpointError
 from pssolver.run_metadata import write_run_metadata
 from pssolver.runtime.channel_active_nematics import ChannelRuntimeAdapterProtocol
 
@@ -107,6 +108,8 @@ class ChannelActiveNematicsWorkflow:
                 ),
             )
         except SimulationRestartError:
+            raise
+        except CheckpointError:
             raise
         except Exception as exc:
             raise SimulationRestartError(

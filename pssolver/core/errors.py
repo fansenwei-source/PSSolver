@@ -90,9 +90,22 @@ class SimulationInputError(SimulationExecutionError, ValueError):
     code = "simulation_input_error"
 
 
+class SimulationInputIOError(SimulationInputError, OSError):
+    """A declared runtime input artifact cannot be read or authenticated."""
+
+
+class SimulationInputFileNotFoundError(
+    SimulationInputIOError,
+    FileNotFoundError,
+):
+    """A declared runtime input artifact does not exist."""
+
+
 __all__ = [
     "SimulationExecutionError",
     "SimulationInputError",
+    "SimulationInputFileNotFoundError",
+    "SimulationInputIOError",
     "SimulationRestartError",
     "SimulationStateError",
 ]

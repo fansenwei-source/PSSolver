@@ -10,7 +10,12 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from pssolver.errors import SimulationInputError, SimulationRestartError
+from pssolver.errors import (
+    SimulationInputError,
+    SimulationInputFileNotFoundError,
+    SimulationInputIOError,
+    SimulationRestartError,
+)
 from pssolver.io.checkpoint import CheckpointError
 
 from pssolver.configuration.execution_device import (
@@ -56,7 +61,14 @@ def _reject_input(
     reason: str,
     exception: Exception | None = None,
 ) -> None:
-    error = SimulationInputError(
+    error_type = (
+        SimulationInputFileNotFoundError
+        if isinstance(exception, FileNotFoundError)
+        else SimulationInputIOError
+        if isinstance(exception, (OSError, ValueError))
+        else SimulationInputError
+    )
+    error = error_type(
         message,
         application_family="periodic_complete_stress_beris_edwards",
         stage="initial_condition",
@@ -215,7 +227,9 @@ def _run_periodic_beris_edwards_owned(
     if restart is not None:
         try:
             start = read_periodic_checkpoint_header(restart).completed_steps
-        except (CheckpointError, OSError, TypeError, ValueError) as exc:
+        except CheckpointError:
+            raise
+        except (OSError, TypeError, ValueError) as exc:
             _reject_restart(
                 str(exc) or "periodic checkpoint preflight failed",
                 reason="checkpoint_preflight_failed",

@@ -32,7 +32,11 @@ from pssolver.configuration.public_simulation_runner import (
 )
 from pssolver.core import GridPlacement
 from pssolver.geometries import RectangularChannel
-from pssolver.io.checkpoint import seal_checkpoint_metadata
+from pssolver.io.checkpoint import (
+    CheckpointError,
+    CheckpointIntegrityError,
+    seal_checkpoint_metadata,
+)
 from pssolver.models.active_nematics import (
     BerisEdwardsQGradientCache,
     CompleteStressBerisEdwards,
@@ -724,7 +728,7 @@ def test_channel_complete_stress_restart_rejects_tamper(tmp_path):
     payload[-1] ^= 1
     tensor.write_bytes(payload)
 
-    with pytest.raises(SimulationRestartError, match="checksum mismatch"):
+    with pytest.raises(CheckpointIntegrityError, match="checksum mismatch") as caught:
         run_simulation(
             _simulation(
                 tmp_path,
@@ -733,6 +737,8 @@ def test_channel_complete_stress_restart_rejects_tamper(tmp_path):
                 restart_from=checkpoint,
             )
         )
+    assert isinstance(caught.value, CheckpointError)
+    assert isinstance(caught.value, ValueError)
     assert not (tmp_path / "tamper_target").exists()
     metadata = json.loads((checkpoint / "checkpoint.json").read_text())
     assert metadata["backend_restart"]["state_keys"] == ["pressure_guess"]

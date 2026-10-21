@@ -13,6 +13,7 @@ from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
 from pssolver.errors import SimulationExecutionError, SimulationRestartError
+from pssolver.io.checkpoint import CheckpointError
 from pssolver.run_metadata import write_run_metadata
 from pssolver.runtime import PlaneRuntimeAdapterProtocol
 
@@ -132,6 +133,8 @@ class PlaneBerisEdwardsWorkflow:
                 run_spec=self.run_spec,
             )
         except SimulationRestartError:
+            raise
+        except CheckpointError:
             raise
         except Exception as exc:
             raise SimulationRestartError(

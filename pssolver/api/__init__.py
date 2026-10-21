@@ -27,6 +27,8 @@ from pssolver.configuration.public_simulation_runner import (
 from pssolver.errors import (
     SimulationExecutionError,
     SimulationInputError,
+    SimulationInputFileNotFoundError,
+    SimulationInputIOError,
     SimulationRestartError,
     SimulationStateError,
 )
@@ -49,6 +51,8 @@ __all__ = [
     "Simulation",
     "SimulationExecutionError",
     "SimulationInputError",
+    "SimulationInputFileNotFoundError",
+    "SimulationInputIOError",
     "SimulationRestartError",
     "SnapshotInitialCondition",
     "SpectralNumerics",

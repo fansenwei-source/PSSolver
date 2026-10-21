@@ -51,6 +51,7 @@ from .diagnostic_io import (
 )
 from .state_validation import require_finite_tensors
 from pssolver.errors import SimulationRestartError, SimulationStateError
+from pssolver.io.checkpoint import CheckpointError
 
 
 CHECKPOINT_VERSION = 3
@@ -1024,6 +1025,8 @@ class ChannelBerisEdwardsWorkflow:
                     run_spec=self.run_spec,
                 )
             except SimulationRestartError:
+                raise
+            except CheckpointError:
                 raise
             except Exception as exc:
                 raise SimulationRestartError(

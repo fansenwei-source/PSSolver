@@ -355,4 +355,7 @@ def test_runtime_snapshot_failures_use_public_input_error(
         "nonfinite": "snapshot_nonfinite",
     }[kind]
     assert error.to_metadata()["code"] == "simulation_input_error"
+    if kind == "missing":
+        assert isinstance(error, OSError)
+        assert isinstance(error, FileNotFoundError)
     assert not (tmp_path / f"{family}_output").exists()

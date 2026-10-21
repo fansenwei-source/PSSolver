@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.0.dev0 — unreleased
+
+### Public error compatibility
+
+- Snapshot read failures use public `SimulationInputError` subclasses while
+  preserving the established `OSError` contract; a missing snapshot is also
+  a `FileNotFoundError`. Semantic snapshot validation remains a plain
+  `SimulationInputError`.
+- Production restart paths re-raise existing public `CheckpointError`
+  subclasses unchanged. Other preflight or restore failures continue to use
+  `SimulationRestartError`, so callers do not lose an established
+  `CheckpointError`, `OSError`, `FileNotFoundError`, or `ValueError`
+  catch boundary.
+- Periodic Functional checkpoint export now applies the same stable
+  functional-exception translation used by its import path and the Channel
+  bridge.
+
 ## 0.2.2 — 2026-10-20
 
 Maintenance release over `v0.2.1` containing only the verified V-17

@@ -71,6 +71,7 @@ from pssolver.configuration.execution_device import (
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.errors import SimulationRestartError
+from pssolver.io.checkpoint import CheckpointError
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
@@ -685,6 +686,8 @@ def _run_plane_beris_edwards_owned(
                 workflow_spec.restart_from
             )
         except SimulationRestartError:
+            raise
+        except CheckpointError:
             raise
         except Exception as exc:
             _reject_restart(
