@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "release": "0.2.2",
+  "date": "2026-10-20",
+  "status": "local_package_preparation_complete_pending_real_nfs_and_remote_authorization",
+  "classification": "PASS_V0_2_2_LOCAL_PACKAGE_PREPARATION",
+  "source": {
+    "branch": "release/pssolver-v0.2.2",
+    "release_source_commit": "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70",
+    "release_source_parent": "701991a0af6cab1cf0952f76e16c430f2c2613ac",
+    "release_source_record": "notes/pssolver_v0_2_2.json",
+    "release_source_record_sha256": "93c7a5cb5e1fff908ce53f81c35270ebd6c40b29b101f5c9bc7e214c33d185a0",
+    "record_commit_is_release_source": false,
+    "source_worktree_clean_before_and_after_build": true,
+    "git_diff_check_passed": true,
+    "runtime_delta_from_v0_2_1": [
+      "pssolver/io/checkpoint.py: follow the immediate destination-parent symlink for filesystem identity",
+      "pssolver/_version.py: 0.2.1 -> 0.2.2"
+    ],
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "checkpoint_bytes_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "provider_identity_changed": false,
+    "production_default_changed": false
+  },
+  "cpu_gate": {
+    "passed": 4179,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "deselected": 7,
+    "warnings": 6,
+    "subtests_passed": 8,
+    "cuda_only_deselects": [
+      "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence",
+      "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+      "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+      "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+      "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+      "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+      "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact"
+    ]
+  },
+  "build": {
+    "control_directory": "/home/fansenwei/pssolver_v0_2_2_release_package_2a1d0f7_20261020_v1",
+    "source_archive": {
+      "path": "package/PSSolver-0.2.2.tar",
+      "sha256": "b441ba1a1a943899da81fb294a67c8e2e69e00117aebc2a26af9d72efa5e41db",
+      "size_bytes": 25098240,
+      "prefix": "PSSolver-0.2.2/"
+    },
+    "sdist": {
+      "path": "package/dist/pssolver-0.2.2.tar.gz",
+      "sha256": "ad8237e67478f7328c5152981ea4d888f1df64e1af7227f07ba0a0f070b02b39",
+      "size_bytes": 1410291
+    },
+    "wheel": {
+      "path": "package/dist/pssolver-0.2.2-py3-none-any.whl",
+      "sha256": "a7e94585e62785c69522d6cc194fd479b5af55577444926d1bb661ed073cc00e",
+      "size_bytes": 801349
+    },
+    "builder": "python -m build 1.6.1 with isolated setuptools 84.2.1 and wheel 0.48.0",
+    "sdist_rebuilt_wheel_sha256": "6c0f00c6a11a79f141f9bb452a00c7ac56079a4e219944ebcd25268b3ec4387b",
+    "sdist_rebuilt_wheel_size_bytes": 801349,
+    "wheel_member_count": 263,
+    "python_file_count": 258,
+    "sdist_rebuilt_wheel_member_content_identical": true,
+    "wheel_python_content_matches_clean_archive": true
+  },
+  "installed_wheel_gate": {
+    "venv": "/home/fansenwei/pssolver_v0_2_2_release_package_2a1d0f7_20261020_v1/venv_isolated",
+    "system_site_packages": false,
+    "dependency_baseline": "hard-link clone of the immutable v0.2.1 qualified dependency environment; PSSolver was uninstalled and reinstalled only in the new v0.2.2 environment",
+    "old_qualification_environment_unchanged": true,
+    "install_mode": "--no-deps",
+    "pip_check": "PASS",
+    "python": "3.12.13",
+    "torch": "2.6.0+cu124",
+    "torch_cuda_runtime": "12.4",
+    "numpy": "2.4.3",
+    "scipy": "1.16.0",
+    "pytest": "9.1.1",
+    "tqdm": "4.70.1",
+    "pssolver_version": "0.2.2",
+    "functional_api_version": "1.0",
+    "source_shadow_import": false,
+    "console_help": "PASS",
+    "checkpoint_tests": {
+      "n1_passed": 13,
+      "v17_passed": 3,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "nematics3d_installed": false,
+    "nematics3d_modified": false
+  },
+  "qualification": {
+    "v17_candidate_record": "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json",
+    "v17_candidate_record_sha256": "41688fb0536dfc1398494336aa4faa453d0d112b69d0b0df56dd3cc5baa90c57",
+    "r0002_import_record": "notes/PSSolver_v0_2_2_v17_r0002_import.json",
+    "r0002_import_record_sha256": "36784bc2c010ba7da22d21e447d15ea28bed1c8d2d4ff251e62ea4a6d7592cd6",
+    "independent_classification": "PASS",
+    "real_nfs_login_node_retest": "pending_separate_authorization",
+    "h100_rerun_required": false,
+    "reason_h100_not_required": "V-17 changes only the host-filesystem identity check in checkpoint publication and is covered by CPU, installed-wheel, and real-NFS gates."
+  },
+  "authorization": {
+    "eligible_for_real_nfs_retest": true,
+    "eligible_for_release_review_after_real_nfs_retest": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "github_release_authorized": false,
+    "pypi_authorized": false,
+    "hpcc_test_directory_authorized": false,
+    "slurm_or_h100_authorized": false
+  }
+}
