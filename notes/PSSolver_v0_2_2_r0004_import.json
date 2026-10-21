@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "classification": "PASS_R0004_V0_2_2_POST_RELEASE_ACCEPTANCE_IMPORT",
+  "status": "evidence_import_complete",
+  "git_identity": {
+    "branch": "release/pssolver-v0.2.2",
+    "evidence_parent": "9bfa78e3e5d8a140627a151c2e8305019dab0e2e",
+    "release_source_commit": "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70",
+    "sync_result_commit": "22e605a507fcb3c1be64876a3304c232dd862b13",
+    "record_commit_is_release_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0004",
+    "request_path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/requests/R-0004.json",
+    "result_path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0004.result.json",
+    "result_sha256": "a51174da348ce6e0e434ed81ce36535fb323116894616bcf0295ecf6b4b3af2a",
+    "classification": "PASS",
+    "release_blockers": [],
+    "registry_updates": [],
+    "new_findings": []
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_v0_2_2_claude_post_release_acceptance_20261021_v1",
+    "checksums_entries": 2086,
+    "checksums_sha256": "c0aea7f24fd92f6ef5cc22a8874759812ab9194f6cb9448a5b08553d12f479a7",
+    "complete_present": true,
+    "final_report_sha256": "48e08e51e5032f2d2de0431d471912783bd44e52f3394de525723c1ad2cefc65",
+    "summary_sha256": "5ae77ce3bdc1c901df5ef098b8c861c0c2aa5d23126de4ac70ade0adbbd59559"
+  },
+  "release_acceptance": {
+    "tag": "v0.2.2",
+    "tag_object": "283fc61091c3cf90871ebb2a10e405e22b399a6f",
+    "tag_commit": "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70",
+    "release_id": 419183819,
+    "draft": false,
+    "prerelease": false,
+    "remain_published_unchanged": true,
+    "assets": {
+      "pssolver-0.2.2-py3-none-any.whl": {
+        "asset_id": 661436530,
+        "size": 801349,
+        "sha256": "a7e94585e62785c69522d6cc194fd479b5af55577444926d1bb661ed073cc00e"
+      },
+      "pssolver-0.2.2.tar.gz": {
+        "asset_id": 661436527,
+        "size": 1410291,
+        "sha256": "ad8237e67478f7328c5152981ea4d888f1df64e1af7227f07ba0a0f070b02b39"
+      }
+    },
+    "verdicts": {
+      "V022-PR1": "PASS",
+      "V022-PR2": "PASS",
+      "V022-PR3": "PASS",
+      "V022-PR4": "PASS",
+      "V022-PR5": "PASS",
+      "V022-PR6": "PASS",
+      "h100": "NOT_RUN"
+    },
+    "focused_installed_wheel_tests": {
+      "passed": 16,
+      "failed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 4179,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 7,
+      "subtests_passed": 8
+    },
+    "online_assets_byte_identical_to_qualified_assets": true,
+    "tag_source_sdist_wheel_checkpoint_bytes_identical": true,
+    "checkpoint_trees_identical_to_v0_2_1": true,
+    "provider_identity_unchanged": true,
+    "h100_required": false
+  },
+  "release_branch": {
+    "remote_head_at_acceptance": "9bfa78e3e5d8a140627a151c2e8305019dab0e2e",
+    "evidence_only_successors_after_release_source": [
+      "d607c31eda2de4662c5d775ca5fb233721c17d82",
+      "d0a23a46bb77c9cc9b47e5df4e3f646ab7169d73",
+      "9bfa78e3e5d8a140627a151c2e8305019dab0e2e"
+    ],
+    "runtime_or_packaging_files_changed_by_successors": false
+  },
+  "registry": {
+    "path": "notes/pssolver_v0_2_x_open_issues.json",
+    "sha256": "ffdd4fe41ddc140857081febf634b28bed4e1d3345f9e434982ef11ec2f67cc2",
+    "issue_count": 28,
+    "modified_by_import": false,
+    "updates_imported": 0,
+    "new_findings_imported": 0
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "registry_changed": false,
+    "tests_relaxed": false,
+    "historical_records_rewritten": false,
+    "tag_modified": false,
+    "release_modified": false,
+    "assets_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "PyPI_executed": false,
+    "HPCC_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "main_fast_forward_authorized": false,
+    "maint_v0_2_fast_forward_authorized": false,
+    "tag_authorized": false,
+    "github_release_authorized": false,
+    "pypi_authorized": false,
+    "hpcc_authorized": false,
+    "h100_authorized": false
+  },
+  "next_sync_id": "R-0005"
+}
