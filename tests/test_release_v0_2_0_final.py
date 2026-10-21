@@ -16,6 +16,9 @@ V021_N1_RECORD = ROOT / (
     "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
 )
 V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
+V022_V17_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -213,6 +216,9 @@ def test_v020_successor_record_matches_every_registered_source():
     release_successors = json.loads(
         V021_RELEASE_RECORD.read_text(encoding="utf-8")
     )["historical_successor_sources"]
+    v17_successors = json.loads(
+        V022_V17_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert set(successors) == {
         "CHANGELOG.md",
         "README.md",
@@ -248,6 +254,9 @@ def test_v020_successor_record_matches_every_registered_source():
         if registration is not None and registration["historical_sha256"] == expected:
             expected = registration["current_sha256"]
         registration = release_successors.get(relative)
+        if registration is not None and registration["historical_sha256"] == expected:
+            expected = registration["current_sha256"]
+        registration = v17_successors.get(relative)
         if registration is not None and registration["historical_sha256"] == expected:
             expected = registration["current_sha256"]
         assert _sha256(ROOT / relative) == expected

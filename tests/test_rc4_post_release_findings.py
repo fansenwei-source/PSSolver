@@ -37,6 +37,7 @@ RC6_R4 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
 RC6_R5 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
 RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 V021_N1 = ROOT / "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+V022_V17 = ROOT / "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
 
 
 def _record() -> dict[str, object]:
@@ -322,6 +323,11 @@ def test_historical_successor_sources_match_the_current_files_exactly():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = json.loads(V021_N1.read_text(encoding="utf-8"))[
+            "historical_successor_sources"
+        ].get(relative_path)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = json.loads(V022_V17.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative_path)
         if successor is not None and successor["historical_sha256"] == resolved:

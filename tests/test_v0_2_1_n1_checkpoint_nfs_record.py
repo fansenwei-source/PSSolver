@@ -11,6 +11,7 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
 RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
+V022_V17 = ROOT / "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
 
 
 def _record() -> dict[str, object]:
@@ -19,6 +20,15 @@ def _record() -> dict[str, object]:
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+
+
+def _v17_successor(relative: str, historical: str) -> str:
+    registration = json.loads(V022_V17.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == historical:
+        return registration["current_sha256"]
+    return historical
 
 
 def test_n1_record_binds_the_implementation_commit_and_sources():
@@ -48,7 +58,7 @@ def test_n1_record_binds_the_implementation_commit_and_sources():
         "tests/test_v0_2_1_n1_checkpoint_nfs.py",
     ]
     for relative, expected in record["source_sha256"].items():
-        assert _sha256(relative) == expected
+        assert _sha256(relative) == _v17_successor(relative, expected)
 
 
 def test_n1_record_is_a_forward_only_historical_successor():
@@ -71,7 +81,7 @@ def test_n1_record_is_a_forward_only_historical_successor():
         registration = release_successors.get(relative)
         if registration is not None and registration["historical_sha256"] == expected:
             expected = registration["current_sha256"]
-        assert _sha256(relative) == expected
+        assert _sha256(relative) == _v17_successor(relative, expected)
         assert successor["reason"]
 
 

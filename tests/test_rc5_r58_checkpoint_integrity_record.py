@@ -49,6 +49,9 @@ V021_N1_RECORD = ROOT / (
     "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
 )
 V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
+V022_V17_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+)
 
 
 def _record() -> dict[str, object]:
@@ -111,6 +114,9 @@ def test_r58_record_binds_implementation_and_exact_sources():
     ]
     release_successors = json.loads(
         V021_RELEASE_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
+    v17_successors = json.loads(
+        V022_V17_RECORD.read_text(encoding="utf-8")
     )["historical_successor_sources"]
     assert record["git_identity"] == {
         "branch": "fix/v0.2.0rc5",
@@ -228,6 +234,12 @@ def test_r58_record_binds_implementation_and_exact_sources():
                 and registration["historical_sha256"] == expected
             ):
                 expected = registration["current_sha256"]
+            registration = v17_successors.get(relative)
+            if (
+                registration is not None
+                and registration["historical_sha256"] == expected
+            ):
+                expected = registration["current_sha256"]
             assert _sha256(ROOT / relative) == expected
     for relative, registration in record["historical_successor_sources"].items():
         assert registration["historical_sha256"] != registration["current_sha256"]
@@ -310,6 +322,9 @@ def test_r58_record_binds_implementation_and_exact_sources():
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
         successor = release_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == expected:
+            expected = successor["current_sha256"]
+        successor = v17_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
         assert _sha256(ROOT / relative) == expected

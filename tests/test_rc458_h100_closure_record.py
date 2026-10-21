@@ -40,6 +40,7 @@ RC6_R4 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
 RC6_R5 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
 RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 V021_N1 = ROOT / "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
+V022_V17 = ROOT / "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
 
 
 def _v021_n1_successor(relative: str, resolved: str) -> str:
@@ -47,7 +48,12 @@ def _v021_n1_successor(relative: str, resolved: str) -> str:
         "historical_successor_sources"
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == resolved:
-        return registration["current_sha256"]
+        resolved = registration["current_sha256"]
+    registration = json.loads(V022_V17.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
+    if registration is not None and registration["historical_sha256"] == resolved:
+        resolved = registration["current_sha256"]
     return resolved
 
 

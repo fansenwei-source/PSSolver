@@ -58,6 +58,9 @@ V021_N1_RECORD = ROOT / (
     "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
 )
 V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
+V022_V17_RECORD = ROOT / (
+    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
+)
 
 
 def _sha256(relative: str) -> str:
@@ -90,6 +93,7 @@ def _latest_successor(relative: str, historical: str) -> str:
         FINAL_RELEASE_RECORD,
         V021_N1_RECORD,
         V021_RELEASE_RECORD,
+        V022_V17_RECORD,
     ):
         successor = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
@@ -193,6 +197,9 @@ def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
     release_successors = json.loads(
         V021_RELEASE_RECORD.read_text(encoding="utf-8")
     )["historical_successor_sources"]
+    v17_successors = json.loads(
+        V022_V17_RECORD.read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
@@ -275,6 +282,9 @@ def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         successor = release_successors.get(relative)
+        if successor is not None and successor["historical_sha256"] == resolved:
+            resolved = successor["current_sha256"]
+        successor = v17_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
         assert _sha256(relative) == resolved
