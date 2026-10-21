@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pssolver.core.errors import (
     SimulationExecutionError,
+    SimulationInputError,
     SimulationRestartError,
     SimulationStateError,
 )
@@ -11,6 +12,7 @@ from pssolver.core.errors import (
 
 __all__ = [
     "SimulationExecutionError",
+    "SimulationInputError",
     "SimulationRestartError",
     "SimulationStateError",
 ]

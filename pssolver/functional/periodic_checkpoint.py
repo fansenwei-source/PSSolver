@@ -13,6 +13,10 @@ from pssolver.configuration.periodic_beris_edwards import (
     PERIODIC_RUNTIME_PATH,
 )
 from pssolver.models.active_nematics import Q_COMPONENTS
+from pssolver.io.checkpoint import (
+    CheckpointNotFoundError,
+    read_checkpoint_json,
+)
 from pssolver.io.checkpoint_identity import (
     CheckpointCompatibilityIdentity,
     CheckpointFamily,
@@ -37,7 +41,10 @@ from .contracts import (
     FunctionalState,
     FunctionalStateSpec,
 )
-from .errors import FunctionalCheckpointCompatibilityError
+from .errors import (
+    FunctionalCheckpointCompatibilityError,
+    translate_functional_exception,
+)
 from .checkpoint_identity import (
     build_periodic_functional_checkpoint_identity,
     normalize_functional_checkpoint_identity,
@@ -572,29 +579,35 @@ class PeriodicActivityCheckpointBridge:
         directory = Path(directory).expanduser().resolve()
         metadata_path = directory / "checkpoint.json"
         migration_provenance = None
-        if metadata_path.is_file():
-            try:
-                raw_metadata = json.loads(
-                    metadata_path.read_text(encoding="utf-8")
+        try:
+            raw_metadata = read_checkpoint_json(
+                metadata_path,
+                operation="periodic_checkpoint_import",
+            )
+        except CheckpointNotFoundError:
+            raw_metadata = None
+        except Exception as exc:
+            translated = translate_functional_exception(
+                exc,
+                operation="checkpoint_import",
+            )
+            raise translated from exc
+        if isinstance(raw_metadata, Mapping):
+            migration_provenance = raw_metadata.get("migration_provenance")
+            runtime_path = raw_metadata.get("runtime_path")
+            format_kind = raw_metadata.get("format_kind")
+            if (
+                runtime_path is not None
+                and runtime_path != PERIODIC_RUNTIME_PATH
+            ) or format_kind is not None:
+                raise FunctionalCheckpointCompatibilityError(
+                    "checkpoint belongs to a non-periodic runtime schema",
+                    operation="periodic_checkpoint_import",
+                    details={
+                        "runtime_path": runtime_path,
+                        "format_kind": format_kind,
+                    },
                 )
-            except json.JSONDecodeError:
-                raw_metadata = None
-            if isinstance(raw_metadata, Mapping):
-                migration_provenance = raw_metadata.get("migration_provenance")
-                runtime_path = raw_metadata.get("runtime_path")
-                format_kind = raw_metadata.get("format_kind")
-                if (
-                    runtime_path is not None
-                    and runtime_path != PERIODIC_RUNTIME_PATH
-                ) or format_kind is not None:
-                    raise FunctionalCheckpointCompatibilityError(
-                        "checkpoint belongs to a non-periodic runtime schema",
-                        operation="periodic_checkpoint_import",
-                        details={
-                            "runtime_path": runtime_path,
-                            "format_kind": format_kind,
-                        },
-                    )
         header = read_periodic_checkpoint_header(directory)
         if header.functional_bridge is None and header.format_version == 1:
             # A released rc1 functional carrier becomes byte-for-byte

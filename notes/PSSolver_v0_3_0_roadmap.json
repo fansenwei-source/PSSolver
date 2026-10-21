@@ -118,7 +118,7 @@
     {
       "id": "G-04",
       "title": "Numerical and scientific correctness",
-      "criterion": "Finite-state, pressure residual, transform-count, Hermitian, gradient, Taylor, restart, and deterministic replay gates pass without relaxed thresholds."
+      "criterion": "Finite-state, pressure residual, transform-count, Hermitian, gradient, Taylor, restart, and deterministic replay gates pass without relaxed thresholds. Standard Plane, Periodic, and Channel cases are compared against released v0.2.2: unchanged code paths must be byte-identical, while changed paths must pass tolerances registered before qualification."
     },
     {
       "id": "G-05",

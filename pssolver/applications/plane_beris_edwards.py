@@ -116,14 +116,18 @@ def _reject_restart(
     reason: str,
     step: int = 0,
     details: dict[str, object] | None = None,
+    exception: Exception | None = None,
 ) -> None:
-    raise SimulationRestartError(
+    error = SimulationRestartError(
         message,
         application_family="plane_complete_stress_beris_edwards",
         stage="restart_validation",
         step=step,
         details={"reason": reason, **(details or {})},
     )
+    if exception is None:
+        raise error
+    raise error from exception
 
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -676,7 +680,19 @@ def _run_plane_beris_edwards_owned(
     # Reject unsupported cross-runtime or numerically incompatible restart before
     # creating an output directory, generating Q, or constructing either solver.
     if is_restart:
-        restart_header = read_plane_checkpoint_header(workflow_spec.restart_from)
+        try:
+            restart_header = read_plane_checkpoint_header(
+                workflow_spec.restart_from
+            )
+        except SimulationRestartError:
+            raise
+        except Exception as exc:
+            _reject_restart(
+                str(exc) or "Plane checkpoint preflight failed",
+                reason="checkpoint_preflight_failed",
+                details={"legacy_exception_type": type(exc).__name__},
+                exception=exc,
+            )
         restart_step = getattr(restart_header, "completed_steps", 0)
         if restart_header.runtime_path is not execution.runtime_path:
             _reject_restart(

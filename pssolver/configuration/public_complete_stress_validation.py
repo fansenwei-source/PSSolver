@@ -8,6 +8,8 @@ pre-runtime checks here so the two application adapters cannot drift.
 from __future__ import annotations
 
 from collections.abc import Mapping
+import math
+from numbers import Real
 from pathlib import Path
 
 import numpy as np
@@ -35,6 +37,31 @@ _STOKES_PARAMETER_KEYS = (
 )
 
 
+def _finite_real(
+    value: object,
+    description: str,
+    *,
+    positive: bool = False,
+    non_negative: bool = False,
+) -> float:
+    if (
+        not isinstance(value, Real)
+        or isinstance(value, bool)
+        or not math.isfinite(float(value))
+        or (positive and float(value) <= 0.0)
+        or (non_negative and float(value) < 0.0)
+    ):
+        qualifier = (
+            "positive and finite"
+            if positive
+            else "non-negative and finite"
+            if non_negative
+            else "finite"
+        )
+        raise ValueError(f"{description} must be a {qualifier} real number")
+    return float(value)
+
+
 def validate_complete_stress_runtime_parameters(
     parameters: Mapping[str, object],
 ) -> None:
@@ -55,7 +82,21 @@ def validate_complete_stress_runtime_parameters(
     if not isinstance(material, Mapping):
         raise TypeError("complete-stress material must be a mapping")
     for name in _MATERIAL_PARAMETER_KEYS:
-        material[name]
+        _finite_real(
+            material[name],
+            f"complete-stress material {name}",
+            positive=name == "gamma",
+        )
+
+    _finite_real(
+        parameters["ldg_l1"],
+        "complete-stress ldg_l1",
+        positive=True,
+    )
+    _finite_real(
+        parameters["activity_amplitude"],
+        "complete-stress activity_amplitude",
+    )
 
     stokes = parameters["stokes"]
     if not isinstance(stokes, Mapping):
@@ -67,6 +108,19 @@ def validate_complete_stress_runtime_parameters(
         )
     for name in _STOKES_PARAMETER_KEYS:
         stokes_parameters[name]
+    _finite_real(
+        stokes_parameters["viscosity"],
+        "complete-stress viscosity",
+        positive=True,
+    )
+    _finite_real(
+        stokes_parameters["friction"],
+        "complete-stress friction",
+        non_negative=True,
+    )
+    for name in ("pressure_gauge", "tangential_zero_mode_policy"):
+        if not isinstance(stokes_parameters[name], str):
+            raise TypeError(f"complete-stress {name} must be a string")
 
 
 def validate_existing_q_snapshot_shape(

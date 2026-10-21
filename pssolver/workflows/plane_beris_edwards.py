@@ -12,7 +12,7 @@ from pssolver.configuration import PlaneBerisEdwardsRunSpec
 from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
-from pssolver.errors import SimulationExecutionError
+from pssolver.errors import SimulationExecutionError, SimulationRestartError
 from pssolver.run_metadata import write_run_metadata
 from pssolver.runtime import PlaneRuntimeAdapterProtocol
 
@@ -124,12 +124,26 @@ class PlaneBerisEdwardsWorkflow:
                 raise ValueError("new Plane workflow requires an unadvanced runtime")
             self.metadata["restart"] = {"kind": "fresh"}
             return 0
-        checkpoint = load_plane_checkpoint(source)
-        start = restore_plane_checkpoint(
-            self.adapter,
-            checkpoint,
-            run_spec=self.run_spec,
-        )
+        try:
+            checkpoint = load_plane_checkpoint(source)
+            start = restore_plane_checkpoint(
+                self.adapter,
+                checkpoint,
+                run_spec=self.run_spec,
+            )
+        except SimulationRestartError:
+            raise
+        except Exception as exc:
+            raise SimulationRestartError(
+                str(exc) or "Plane checkpoint restore failed",
+                application_family="plane_complete_stress_beris_edwards",
+                stage="restart_restore",
+                step=int(self.adapter.completed_steps),
+                details={
+                    "reason": "checkpoint_restore_failed",
+                    "legacy_exception_type": type(exc).__name__,
+                },
+            ) from exc
         self.metadata["restart"] = {
             "kind": "same_backend_plane_workflow_checkpoint",
             "source": str(Path(source).expanduser().resolve()),
@@ -206,8 +220,19 @@ class PlaneBerisEdwardsWorkflow:
                 progress=progress,
                 started=started,
             )
-        except SimulationExecutionError as error:
-            self._record_execution_failure(error, started=started)
+        except BaseException as error:
+            public_error = (
+                error
+                if isinstance(error, SimulationExecutionError)
+                else SimulationExecutionError(
+                    str(error) or type(error).__name__,
+                    application_family="plane_complete_stress_beris_edwards",
+                    stage="workflow_execution",
+                    step=int(self.adapter.completed_steps),
+                    details={"legacy_exception_type": type(error).__name__},
+                )
+            )
+            self._record_execution_failure(public_error, started=started)
             raise
 
     def _record_execution_failure(

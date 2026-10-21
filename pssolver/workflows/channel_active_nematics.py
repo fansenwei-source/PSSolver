@@ -9,7 +9,7 @@ from pathlib import Path
 import time
 
 from pssolver.configuration.channel_active_nematics import ChannelActiveNematicRunSpec
-from pssolver.errors import SimulationExecutionError
+from pssolver.errors import SimulationExecutionError, SimulationRestartError
 from pssolver.run_metadata import write_run_metadata
 from pssolver.runtime.channel_active_nematics import ChannelRuntimeAdapterProtocol
 
@@ -97,14 +97,28 @@ class ChannelActiveNematicsWorkflow:
                 raise ValueError("new Channel workflow requires an unadvanced runtime")
             self.metadata["restart"] = {"kind": "fresh"}
             return 0
-        checkpoint = load_channel_checkpoint(source)
-        start = restore_channel_checkpoint(
-            self.adapter, checkpoint,
-            runtime_identity_sha256=self.run_spec.runtime_identity_sha256(),
-            pre_rc5_runtime_identity_sha256=(
-                self.run_spec.pre_rc5_runtime_identity_sha256()
-            ),
-        )
+        try:
+            checkpoint = load_channel_checkpoint(source)
+            start = restore_channel_checkpoint(
+                self.adapter, checkpoint,
+                runtime_identity_sha256=self.run_spec.runtime_identity_sha256(),
+                pre_rc5_runtime_identity_sha256=(
+                    self.run_spec.pre_rc5_runtime_identity_sha256()
+                ),
+            )
+        except SimulationRestartError:
+            raise
+        except Exception as exc:
+            raise SimulationRestartError(
+                str(exc) or "Channel checkpoint restore failed",
+                application_family="legacy_channel_active_nematic",
+                stage="restart_restore",
+                step=int(self.adapter.completed_steps),
+                details={
+                    "reason": "checkpoint_restore_failed",
+                    "legacy_exception_type": type(exc).__name__,
+                },
+            ) from exc
         self.metadata["restart"] = {
             "kind": "same_runtime_channel_workflow_checkpoint",
             "source": str(Path(source).expanduser().resolve()),
@@ -156,8 +170,19 @@ class ChannelActiveNematicsWorkflow:
                 progress=progress,
                 started=started,
             )
-        except SimulationExecutionError as error:
-            self._record_execution_failure(error, started=started)
+        except BaseException as error:
+            public_error = (
+                error
+                if isinstance(error, SimulationExecutionError)
+                else SimulationExecutionError(
+                    str(error) or type(error).__name__,
+                    application_family="legacy_channel_active_nematic",
+                    stage="workflow_execution",
+                    step=int(self.adapter.completed_steps),
+                    details={"legacy_exception_type": type(error).__name__},
+                )
+            )
+            self._record_execution_failure(public_error, started=started)
             raise
 
     def _record_execution_failure(

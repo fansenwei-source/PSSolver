@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 import json
+import math
 
 from pssolver.io.checkpoint import (
     CheckpointCompatibilityError,
@@ -167,6 +168,45 @@ class FunctionalConvergenceError(
 
     code = "functional_convergence_error"
 
+    def __init__(
+        self,
+        message: str,
+        *,
+        operation: str | None = None,
+        details: Mapping[str, object] | None = None,
+        application_family: str = "channel_pressure",
+        stage: str = "pressure_solve",
+        step: int = 0,
+    ) -> None:
+        normalized = _json_copy(details or {})
+        # Initialize both public contracts explicitly.  Their cooperative MRO
+        # cannot do this because FunctionalError intentionally initializes the
+        # common builtin base directly for checkpoint dual-hierarchy classes.
+        ChannelPressureConvergenceError.__init__(
+            self,
+            message,
+            details=dict(normalized),
+        )
+        self.application_family = application_family
+        self.stage = stage
+        self.step = step
+        FunctionalError.__init__(
+            self,
+            message,
+            operation=operation,
+            details=normalized,
+        )
+        self.diagnostics = dict(self.details)
+
+    def to_metadata(self) -> dict[str, object]:
+        metadata = FunctionalError.to_metadata(self)
+        metadata.update(
+            application_family=self.application_family,
+            stage=self.stage,
+            step=self.step,
+        )
+        return metadata
+
 
 def translate_functional_exception(
     exception: Exception,
@@ -182,6 +222,9 @@ def translate_functional_exception(
             str(exception),
             operation=operation,
             details=exception.details,
+            application_family=exception.application_family,
+            stage=exception.stage,
+            step=exception.step,
         )
     checkpoint_details = (
         {
@@ -256,10 +299,21 @@ def translate_functional_exception(
 
 
 def _json_copy(value: Mapping[str, object]) -> Mapping[str, object]:
+    def safe(item: object) -> object:
+        if isinstance(item, float) and not math.isfinite(item):
+            if math.isnan(item):
+                return "nan"
+            return "positive_infinity" if item > 0.0 else "negative_infinity"
+        if isinstance(item, Mapping):
+            return {str(name): safe(child) for name, child in item.items()}
+        if isinstance(item, (list, tuple)):
+            return [safe(child) for child in item]
+        return item
+
     try:
         return json.loads(
             json.dumps(
-                dict(value),
+                safe(value),
                 allow_nan=False,
                 separators=(",", ":"),
                 sort_keys=True,

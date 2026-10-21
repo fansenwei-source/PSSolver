@@ -26,6 +26,7 @@ from pssolver.configuration.public_simulation_runner import (
 )
 from pssolver.errors import (
     SimulationExecutionError,
+    SimulationInputError,
     SimulationRestartError,
     SimulationStateError,
 )
@@ -47,6 +48,7 @@ __all__ = [
     "QualifiedCombination",
     "Simulation",
     "SimulationExecutionError",
+    "SimulationInputError",
     "SimulationRestartError",
     "SnapshotInitialCondition",
     "SpectralNumerics",

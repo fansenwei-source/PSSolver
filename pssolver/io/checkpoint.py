@@ -349,7 +349,17 @@ def _new_staging_directory(target: Path, *, operation: str) -> Path:
             operation=operation,
             message=f"checkpoint parent cannot be created: {target.parent}",
         ) from exc
-    if target.exists() or target.is_symlink():
+    try:
+        target.lstat()
+    except FileNotFoundError:
+        pass
+    except OSError as exc:
+        raise _io_error(
+            exc,
+            operation=operation,
+            message=f"checkpoint target cannot be inspected: {target}",
+        ) from exc
+    else:
         raise CheckpointExistsError(
             f"checkpoint directory already exists: {target}",
             operation=operation,

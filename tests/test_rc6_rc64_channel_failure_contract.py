@@ -160,6 +160,34 @@ def test_functional_pressure_translation_retains_both_public_hierarchies():
     assert translated.details == {"acceptable": False}
 
 
+def test_functional_convergence_error_has_complete_finite_execution_metadata():
+    error = FunctionalConvergenceError(
+        "pressure solve failed",
+        operation="step",
+        details={
+            "residual": float("nan"),
+            "bounds": [float("-inf"), float("inf")],
+        },
+    )
+
+    assert isinstance(error, SimulationExecutionError)
+    assert error.application_family == "channel_pressure"
+    assert error.stage == "pressure_solve"
+    assert error.step == 0
+    assert error.details == {
+        "bounds": ["negative_infinity", "positive_infinity"],
+        "residual": "nan",
+    }
+    metadata = error.to_metadata()
+    assert metadata["application_family"] == "channel_pressure"
+    assert metadata["stage"] == "pressure_solve"
+    assert metadata["step"] == 0
+    assert SimulationExecutionError.to_metadata(error)["details"] == dict(
+        error.details
+    )
+    json.dumps(metadata, allow_nan=False, sort_keys=True)
+
+
 def test_plane_execution_error_finalizes_running_metadata(tmp_path):
     error = SimulationStateError(
         "Plane diagnostic is non-finite at step 0",
@@ -219,3 +247,64 @@ def test_legacy_channel_pressure_error_finalizes_running_metadata(tmp_path):
     assert metadata["failure"] == error.to_metadata()
     assert not (tmp_path / "metadata.json.tmp").exists()
     assert not (tmp_path / "COMPLETE").exists()
+
+
+@pytest.mark.parametrize(
+    ("workflow_factory", "adapter_factory", "application_family"),
+    (
+        (
+            lambda adapter, spec, path: PlaneBerisEdwardsWorkflow(
+                adapter,
+                spec,
+                path,
+                {"initial_condition": {}, "numerics": {}},
+            ),
+            _FailingPlaneAdapter,
+            "plane_complete_stress_beris_edwards",
+        ),
+        (
+            lambda adapter, spec, path: ChannelActiveNematicsWorkflow(
+                adapter,
+                spec,
+                path,
+                {},
+            ),
+            _FailingChannelAdapter,
+            "legacy_channel_active_nematic",
+        ),
+    ),
+)
+def test_unexpected_workflow_failure_cannot_leave_running_metadata(
+    tmp_path,
+    workflow_factory,
+    adapter_factory,
+    application_family,
+):
+    error = RuntimeError("unexpected execution failure")
+    if application_family.startswith("plane"):
+        spec = _plane_spec(tmp_path)
+    else:
+        spec = ChannelActiveNematicRunSpec(
+            shape=(8, 6, 5),
+            lengths=(8.0, 6.0, 5.0),
+            steps=1,
+            save_interval=1,
+            diagnostic_interval=1,
+            runtime_path=ChannelRuntimePath.LEGACY_CHANNEL,
+        )
+    workflow = workflow_factory(adapter_factory(error), spec, tmp_path)
+
+    with pytest.raises(RuntimeError) as captured:
+        workflow.run()
+
+    assert captured.value is error
+    metadata = json.loads((tmp_path / "metadata.json").read_text())
+    assert metadata["status"] == "failed"
+    assert metadata["failure"] == {
+        "code": "simulation_execution_error",
+        "message": "unexpected execution failure",
+        "application_family": application_family,
+        "stage": "workflow_execution",
+        "step": 0,
+        "details": {"legacy_exception_type": "RuntimeError"},
+    }

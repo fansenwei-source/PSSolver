@@ -97,6 +97,36 @@ def test_plane_dry_run_validates_absolute_restart_save_window(
     assert not spec.output_dir.exists()
 
 
+def test_plane_checkpoint_preflight_value_error_is_public_restart_error(
+    tmp_path,
+    monkeypatch,
+):
+    spec = _plane_spec(
+        tmp_path,
+        restart_from=tmp_path / "checkpoint",
+        dry_run=True,
+    )
+
+    def reject(_path):
+        raise ValueError("checkpoint compatibility identity checksum mismatch")
+
+    monkeypatch.setattr(
+        plane_application,
+        "read_plane_checkpoint_header",
+        reject,
+    )
+
+    with pytest.raises(SimulationRestartError, match="checksum mismatch") as captured:
+        plane_application.run_plane_beris_edwards(spec)
+
+    assert captured.value.details == {
+        "legacy_exception_type": "ValueError",
+        "reason": "checkpoint_preflight_failed",
+    }
+    assert isinstance(captured.value.__cause__, ValueError)
+    assert not spec.output_dir.exists()
+
+
 def test_provisional_writers_use_the_shared_checkpoint_transaction():
     for relative in (
         "pssolver/experimental/checkpointing.py",

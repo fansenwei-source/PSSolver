@@ -4,13 +4,28 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 import json
+import math
 from types import MappingProxyType
+
+
+def _json_safe(value: object) -> object:
+    """Preserve diagnostic meaning without emitting non-finite JSON tokens."""
+
+    if isinstance(value, float) and not math.isfinite(value):
+        if math.isnan(value):
+            return "nan"
+        return "positive_infinity" if value > 0.0 else "negative_infinity"
+    if isinstance(value, Mapping):
+        return {str(name): _json_safe(item) for name, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    return value
 
 
 def _frozen_details(value: Mapping[str, object]) -> Mapping[str, object]:
     try:
         payload = json.dumps(
-            dict(value),
+            _json_safe(value),
             allow_nan=False,
             separators=(",", ":"),
             sort_keys=True,
@@ -69,8 +84,15 @@ class SimulationRestartError(SimulationExecutionError, ValueError):
     code = "simulation_restart_error"
 
 
+class SimulationInputError(SimulationExecutionError, ValueError):
+    """A runtime input artifact is invalid before tensor computation starts."""
+
+    code = "simulation_input_error"
+
+
 __all__ = [
     "SimulationExecutionError",
+    "SimulationInputError",
     "SimulationRestartError",
     "SimulationStateError",
 ]

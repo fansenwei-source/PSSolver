@@ -26,7 +26,7 @@ from .diagnostic_io import (
     diagnostics_metadata_envelope,
     write_structured_diagnostics,
 )
-from pssolver.errors import SimulationStateError
+from pssolver.errors import SimulationRestartError, SimulationStateError
 
 
 @dataclass(frozen=True, slots=True)
@@ -204,11 +204,30 @@ class PeriodicBerisEdwardsWorkflow:
 
     def run(self, *, progress=None):
         restart = self.options["restart_from"]
-        start = 0 if restart is None else _load_checkpoint(
-            restart,
-            self.adapter,
-            run_spec=self.run_spec,
-        )
+        if restart is None:
+            start = 0
+        else:
+            try:
+                start = _load_checkpoint(
+                    restart,
+                    self.adapter,
+                    run_spec=self.run_spec,
+                )
+            except SimulationRestartError:
+                raise
+            except Exception as exc:
+                raise SimulationRestartError(
+                    str(exc) or "periodic checkpoint restore failed",
+                    application_family=(
+                        "periodic_complete_stress_beris_edwards"
+                    ),
+                    stage="restart_restore",
+                    step=int(self.adapter.completed_steps),
+                    details={
+                        "reason": "checkpoint_restore_failed",
+                        "legacy_exception_type": type(exc).__name__,
+                    },
+                ) from exc
         steps = self.run_spec.simulation.workflow.steps
         if self.options["save_start_step"] > start + steps:
             raise ValueError(

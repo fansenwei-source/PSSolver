@@ -35,7 +35,8 @@ v0.3.0 应尽可能解决当前已登记的已知问题，同时保持科学正�
 - v0.2 正式 fixture 可只读加载且续算符合冻结合同；新格式不会改写旧源；NFS、并发、
   tamper、权限和故障注入全部 fail-closed 且无残留。
 - 数值有限性、压力残差、transform count、Hermitian、梯度/Taylor、restart 和确定性
-  门禁不放宽。
+  门禁不放宽；标准 Plane、Periodic、Channel 算例必须与已发布 v0.2.2 做数值非退化
+  比较：代码路径未变处逐位相同，变化处使用资格验证前已登记的容差。
 - 源码与 installed-wheel CPU suite、wheel/sdist 内容、公开导入、命令行入口、fixture
   身份和文档绑定全部通过。
 - 使用预注册的既有平台门限完成 Plane、Periodic、Channel 的配对性能/显存非回退。

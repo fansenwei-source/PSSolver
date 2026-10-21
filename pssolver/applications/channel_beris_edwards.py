@@ -10,6 +10,9 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from pssolver.errors import SimulationInputError, SimulationRestartError
+from pssolver.io.checkpoint import CheckpointError
+
 from pssolver.configuration.channel_beris_edwards import (
     ChannelBerisEdwardsRunSpec,
 )
@@ -44,6 +47,51 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _reject_input(
+    message: str,
+    *,
+    path: Path,
+    reason: str,
+    exception: Exception | None = None,
+) -> None:
+    error = SimulationInputError(
+        message,
+        application_family="channel_complete_stress_beris_edwards",
+        stage="initial_condition",
+        step=0,
+        details={
+            "path": str(path),
+            "reason": reason,
+            "legacy_exception_type": (
+                None if exception is None else type(exception).__name__
+            ),
+        },
+    )
+    if exception is None:
+        raise error
+    raise error from exception
+
+
+def _reject_restart(
+    message: str,
+    *,
+    reason: str,
+    step: int = 0,
+    details: dict[str, object] | None = None,
+    exception: Exception | None = None,
+) -> None:
+    error = SimulationRestartError(
+        message,
+        application_family="channel_complete_stress_beris_edwards",
+        stage="restart_validation",
+        step=step,
+        details={"reason": reason, **(details or {})},
+    )
+    if exception is None:
+        raise error
+    raise error from exception
+
+
 def load_channel_initial_q(run_spec: ChannelBerisEdwardsRunSpec):
     """Load the canonical Channel Q snapshot without constructing a runtime."""
 
@@ -54,26 +102,51 @@ def load_channel_initial_q(run_spec: ChannelBerisEdwardsRunSpec):
     path = Path(snapshot["directory"]).expanduser().resolve() / (
         f"Q_{snapshot['step']}.npy"
     )
-    values = np.load(path, allow_pickle=False)
+    try:
+        values = np.load(path, allow_pickle=False)
+    except (OSError, ValueError) as exc:
+        _reject_input(
+            "Channel Q snapshot could not be read",
+            path=path,
+            reason="snapshot_unreadable",
+            exception=exc,
+        )
     shape = tuple(spec.geometry.domain.shape)
     if values.shape == (*shape, len(Q_COMPONENTS)):
         values = np.moveaxis(values, -1, 0)
     elif values.shape != (len(Q_COMPONENTS), *shape):
-        raise ValueError(
-            "Channel Q snapshot must have shape (*grid, 5) or (5, *grid)"
+        _reject_input(
+            "Channel Q snapshot must have shape (*grid, 5) or (5, *grid)",
+            path=path,
+            reason="snapshot_shape_mismatch",
         )
     expected_dtype = spec.numerics.precision.value
     if str(values.dtype) != expected_dtype:
-        raise ValueError(
-            f"Channel Q snapshot dtype must be {expected_dtype}, got {values.dtype}"
+        _reject_input(
+            f"Channel Q snapshot dtype must be {expected_dtype}, got {values.dtype}",
+            path=path,
+            reason="snapshot_dtype_mismatch",
         )
     if not np.isfinite(values).all():
-        raise ValueError("Channel Q snapshot contains NaN or Inf")
+        _reject_input(
+            "Channel Q snapshot contains NaN or Inf",
+            path=path,
+            reason="snapshot_nonfinite",
+        )
     tensors = torch.from_numpy(np.array(values, copy=True))
+    try:
+        snapshot_sha256 = _sha256(path)
+    except OSError as exc:
+        _reject_input(
+            "Channel Q snapshot could not be hashed",
+            path=path,
+            reason="snapshot_unreadable",
+            exception=exc,
+        )
     return (
         {name: tensors[index] for index, name in enumerate(Q_COMPONENTS)},
         path,
-        _sha256(path),
+        snapshot_sha256,
     )
 
 
@@ -123,10 +196,24 @@ def _run_channel_beris_edwards_owned(
     }
     restart = spec.workflow.options["restart_from"]
     if restart is not None:
-        start = read_channel_beris_edwards_checkpoint_progress(restart)
+        try:
+            start = read_channel_beris_edwards_checkpoint_progress(restart)
+        except (CheckpointError, OSError, TypeError, ValueError) as exc:
+            _reject_restart(
+                str(exc) or "Channel checkpoint preflight failed",
+                reason="checkpoint_preflight_failed",
+                details={"legacy_exception_type": type(exc).__name__},
+                exception=exc,
+            )
         if spec.workflow.options["save_start_step"] > start + spec.workflow.steps:
-            raise ValueError(
-                "save_start_step must not exceed the absolute final step"
+            _reject_restart(
+                "save_start_step must not exceed the absolute final step",
+                reason="save_start_step_after_final_step",
+                step=start,
+                details={
+                    "save_start_step": spec.workflow.options["save_start_step"],
+                    "absolute_final_step": start + spec.workflow.steps,
+                },
             )
     initial_values, snapshot_path, snapshot_sha256 = load_channel_initial_q(
         run_spec

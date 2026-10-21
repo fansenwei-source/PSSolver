@@ -12,6 +12,7 @@ import torch
 from pssolver import (
     Output,
     Simulation,
+    SimulationRestartError,
     SnapshotInitialCondition,
     SpectralNumerics,
     TimeStepping,
@@ -434,7 +435,10 @@ def test_periodic_restart_rejects_save_start_after_absolute_final_step(tmp_path)
         )
     )
 
-    with pytest.raises(ValueError, match="absolute final step"):
+    with pytest.raises(
+        SimulationRestartError,
+        match="absolute final step",
+    ) as captured:
         run_simulation(
             _simulation(
                 tmp_path,
@@ -445,6 +449,9 @@ def test_periodic_restart_rejects_save_start_after_absolute_final_step(tmp_path)
             )
         )
 
+    assert captured.value.details["reason"] == (
+        "save_start_step_after_final_step"
+    )
     assert not (tmp_path / "invalid_save_target").exists()
 
 

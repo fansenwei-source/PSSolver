@@ -11,11 +11,13 @@ import pytest
 from pssolver import (
     Output,
     Simulation,
+    SimulationInputError,
     SnapshotInitialCondition,
     SpectralNumerics,
     TimeStepping,
     TorchSpectralExecution,
     compile_simulation,
+    run_simulation,
 )
 from pssolver.boundaries import (
     assign_boundaries,
@@ -275,4 +277,82 @@ def test_unstaged_snapshot_remains_valid_for_allocation_free_planning(
     )
 
     assert compiled.application.endswith("complete_stress_beris_edwards")
+    assert not (tmp_path / f"{family}_output").exists()
+
+
+@pytest.mark.parametrize("family", ("periodic", "channel"))
+@pytest.mark.parametrize(
+    ("parameter_path", "invalid"),
+    (
+        (("material", "gamma"), "not-a-number"),
+        (("material", "gamma"), -1.0),
+        (("ldg_l1",), 0.0),
+        (("activity_amplitude",), []),
+        (("stokes", "parameters", "viscosity"), -1.0),
+    ),
+)
+def test_invalid_runtime_parameter_values_are_compile_rejections(
+    tmp_path,
+    family,
+    parameter_path,
+    invalid,
+):
+    simulation = _simulation(tmp_path, family)
+    parameters = dict(simulation.model.parameters)
+    cursor = parameters
+    for name in parameter_path[:-1]:
+        child = dict(cursor[name])
+        cursor[name] = child
+        cursor = child
+    cursor[parameter_path[-1]] = invalid
+    malformed = replace(
+        simulation,
+        model=replace(simulation.model, parameters=parameters),
+    )
+
+    with pytest.raises(PublicSimulationCompilationError) as captured:
+        compile_simulation(malformed)
+
+    assert captured.value.code is (
+        PublicCompilationRejectionCode.MALFORMED_APPLICATION_SPEC
+    )
+    assert captured.value.context["exception_type"] in {"TypeError", "ValueError"}
+    assert not (tmp_path / f"{family}_output").exists()
+
+
+@pytest.mark.parametrize("family", ("periodic", "channel"))
+@pytest.mark.parametrize("kind", ("missing", "dtype", "nonfinite"))
+def test_runtime_snapshot_failures_use_public_input_error(
+    tmp_path,
+    family,
+    kind,
+):
+    simulation = _simulation(tmp_path, family, snapshot_shape=None)
+    snapshot = Path(simulation.initial_condition.parameters["directory"])
+    path = snapshot / "Q_0.npy"
+    if kind == "dtype":
+        np.save(path, np.zeros((*_GRID_SHAPE, 5), dtype=np.float32))
+    elif kind == "nonfinite":
+        values = np.zeros((*_GRID_SHAPE, 5), dtype=np.float64)
+        values[0, 0, 0, 0] = np.nan
+        np.save(path, values)
+    compiled = compile_simulation(simulation)
+
+    with pytest.raises(SimulationInputError) as captured:
+        run_simulation(compiled)
+
+    error = captured.value
+    assert error.application_family == (
+        "periodic_complete_stress_beris_edwards"
+        if family == "periodic"
+        else "channel_complete_stress_beris_edwards"
+    )
+    assert error.stage == "initial_condition"
+    assert error.step == 0
+    assert error.details["reason"] == {
+        "missing": "snapshot_unreadable",
+        "dtype": "snapshot_dtype_mismatch",
+        "nonfinite": "snapshot_nonfinite",
+    }[kind]
+    assert error.to_metadata()["code"] == "simulation_input_error"
     assert not (tmp_path / f"{family}_output").exists()
