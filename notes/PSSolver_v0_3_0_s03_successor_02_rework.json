@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "stage": "S-03",
+  "sequence": 2,
+  "classification": "PASS_LOCAL_V0_3_S03_EXCEPTION_COMPATIBILITY_REWORK_CANDIDATE",
+  "git_identity": {
+    "branch": "fix/v0.3-s03-errors-metadata",
+    "rework_parent": "268824e569279e198a10736bef685fb96c412e11",
+    "implementation_commit": "a10785853736b2458eec80680b9ced72a495775f",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "governing_review": {
+    "id": "R-0008",
+    "classification": "REWORK_REQUIRED",
+    "verified_preserved": ["C1-10", "C1-11", "V-23", "V-21"],
+    "reworked": ["C1-08", "A2-24/C1-15"],
+    "new_finding_reworked": ["V-24"]
+  },
+  "contract": {
+    "public_checkpoint_errors_are_rethrown_unchanged": true,
+    "missing_snapshots_are_simulation_input_and_file_not_found_errors": true,
+    "unreadable_snapshots_are_simulation_input_and_os_errors": true,
+    "semantic_snapshot_failures_remain_simulation_input_errors": true,
+    "periodic_functional_export_uses_stable_exception_translation": true,
+    "each_changed_raise_site_has_isinstance_compatibility_coverage": true,
+    "public_error_contract_is_documented_in_changelog": true
+  },
+  "issue_status_after_rework": {
+    "C1-10": "verified",
+    "C1-11": "verified",
+    "V-23": "verified",
+    "V-21": "verified",
+    "C1-08": "claimed_fixed",
+    "A2-24/C1-15": "claimed_fixed",
+    "V-24": "claimed_fixed"
+  },
+  "new_sources_sha256": {
+    "tests/test_v0_3_s03_exception_compatibility.py": "579a518f25274d61a7e3a9b3204b8974dd2e14ee10045f526cd3cc7e5f5245e2"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "781f39a9351ff3274cfd942f60843c64fdd827b70da6270e0094ebdb542b03b3",
+      "current_sha256": "941c304b8262ccd3d0a7a5c45189d1963607f264f6dfa1a64983261749300dae",
+      "reason": "Document the v0.3 public exception-compatibility contract."
+    },
+    "notes/PSSolver_v0_3_0_roadmap.json": {
+      "historical_sha256": "798dc69de53adada2a1657af6f5ca4a1f3ef5a9c31a1af539805b8725d23de50",
+      "current_sha256": "8f2475b1ae5dc992c5a1ad205aecee3d0237885f0a0b3c55a87d44572c40aedc",
+      "reason": "Add R-0008 finding V-24 to S-03 and account for the 29th registry item."
+    },
+    "notes/PSSolver_v0_3_0_roadmap.md": {
+      "historical_sha256": "9606b62bf2f4b4774eb54213c8d80f89b88760760fccddd0bada69701da184b2",
+      "current_sha256": "42b04ab1582abe0dc29a11771700b7cd94f6621fcab0853bede9dcb677d467d5",
+      "reason": "Describe the Periodic and Channel Functional export-error alignment in S-03."
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "70d3380440113508c9e4d636a474f4827691500e50e0795035ca4353930793d6",
+      "current_sha256": "17b9b55b3a79e7186623b774f55dc1c5d5caee9b05d47456c9f7c6aa731052e5",
+      "reason": "Claim the R-0008 reopened items and V-24 only at the dedicated rework implementation commit."
+    },
+    "pssolver/__init__.py": {
+      "historical_sha256": "514a166294697862071f0f1080f3c284353efb80d4cbf4625cbdb973e2059c8b",
+      "current_sha256": "390492fa0fb20e9b4e01366ec784219c4469e266921635df3746cd03297c1f7d",
+      "reason": "Export the dual-hierarchy public snapshot I/O errors."
+    },
+    "pssolver/api/__init__.py": {
+      "historical_sha256": "acf726782707fdb3d887869cab34b763a163b3b78de1fad9fe8118b5a5dd8250",
+      "current_sha256": "1d0132aabf4c7507986fa9b23c01cb77ce8ab1758270d73bd7149b98f1af745d",
+      "reason": "Expose the snapshot I/O compatibility classes through the public declaration API."
+    },
+    "pssolver/applications/channel_beris_edwards.py": {
+      "historical_sha256": "4f29e3455d6e46b40a775e9d0ace8ac2dfad1243e951aaf690cff1b23439ae8f",
+      "current_sha256": "8459581da942d6fdcdfef47b60c816f678f9eee2e1c11bf1ae9fd97955102f6a",
+      "reason": "Preserve snapshot OSError categories and Channel CheckpointError preflight identity."
+    },
+    "pssolver/applications/periodic_beris_edwards.py": {
+      "historical_sha256": "4ebebb10fb73d8e4262736478eb0a1ce07ef24535c4346b0e7d79aa2f6308f5e",
+      "current_sha256": "b55c2f0724831bdeba294abc5fc550b8c585912ad9307921f023a4ffd3dc305d",
+      "reason": "Preserve snapshot OSError categories and Periodic CheckpointError preflight identity."
+    },
+    "pssolver/applications/plane_beris_edwards.py": {
+      "historical_sha256": "5c3e7b8a82d6751e804bebd86598459f4b15be18c5949bca3c6f4bbf1b575688",
+      "current_sha256": "19359bb96dc3f9d8142ebc0da93e417ba3d60eac5849b2fb4f0f630496484a09",
+      "reason": "Preserve Plane CheckpointError preflight identity."
+    },
+    "pssolver/core/errors.py": {
+      "historical_sha256": "e4057b0f19e24af5d199ed3a70b6b6e0e01193aeca86c8aa8ad28516ed63af57",
+      "current_sha256": "a6cd487222d39fe7360060979471a3ff855dec951c92303e85888f8c1b9408c6",
+      "reason": "Define public input errors that retain OSError and FileNotFoundError compatibility."
+    },
+    "pssolver/errors.py": {
+      "historical_sha256": "f3e270b99a04dae7965bcf0ca6e0dd5340ab16dd61e0657daf71f7aa42034652",
+      "current_sha256": "1900fcbe302e9b55a747abe73f8b40a2bfeee520bcf265c44be6281a742d4606",
+      "reason": "Expose the new public input I/O error classes through the compatibility facade."
+    },
+    "pssolver/functional/periodic_checkpoint.py": {
+      "historical_sha256": "8f1229c4657bcfe740c13eec2f6bc701b3a4426726c2e6679d50e0784abd9681",
+      "current_sha256": "47c418d44307ae7bbdf943e78e5035860d928cfb8825a6b371aeba9d1ba893ea",
+      "reason": "Route direct Periodic Functional exports through translate_functional_exception."
+    },
+    "pssolver/workflows/channel_active_nematics.py": {
+      "historical_sha256": "ebc2dc3777e25b8e235a5e7a5de635509d30ccfb1fd0720f4c68f4482cab05c5",
+      "current_sha256": "c14d88325c8978464040e65055989d8b6bad70b486899d6d21e44437986c0743",
+      "reason": "Re-raise legacy Channel CheckpointError instances unchanged."
+    },
+    "pssolver/workflows/channel_beris_edwards.py": {
+      "historical_sha256": "d660bbd1caabf842313d672090621e87d4d1b2e4970562c122b93cba3c2d03aa",
+      "current_sha256": "ce0071d874f52304d30376718c961541e2853ee95277b63bd7b9bd33cdbbc6e3",
+      "reason": "Re-raise complete-stress Channel CheckpointError instances unchanged."
+    },
+    "pssolver/workflows/periodic_beris_edwards.py": {
+      "historical_sha256": "fe40c5050724200690a1c4fe80cce3eec3cb08114b9a2c8090275107d1042d38",
+      "current_sha256": "bb7cf6d287314f659b2f1b2d25a3519e78a5ac5942346a7507c3ed0d58c6c957",
+      "reason": "Re-raise Periodic CheckpointError instances unchanged."
+    },
+    "pssolver/workflows/plane_beris_edwards.py": {
+      "historical_sha256": "52e4d479dac9bba9419939276e4a29eb1a84b4225e328e73f5e65a478b2d8e2b",
+      "current_sha256": "570d33dd731547547efba7bf37e0bb36620666b055b82529758f8d4fb78a20cc",
+      "reason": "Re-raise Plane CheckpointError instances unchanged."
+    },
+    "tests/test_phase8_p83_channel_complete_stress_application.py": {
+      "historical_sha256": "51f32f059ea281f276cbe95a8e5ccc257fa14df4f5184b7f95fd99c891ff553f",
+      "current_sha256": "60ad61bcf6b3dcdfd799cccb3967111517fac7987b2b4d039220e5c089807413",
+      "reason": "Assert the restored CheckpointIntegrityError and ValueError compatibility contract."
+    },
+    "tests/test_rc6_3_compile_preflight_contract.py": {
+      "historical_sha256": "c24bb2120dbe82c351c2e025b841e750a11859211aeaf02babc5e5282f5b7adc",
+      "current_sha256": "3a16e1a7fb60702d71fb2b4dc0f9f5054d51ee9e3fa03086a2d01a7eb15ba269",
+      "reason": "Assert that missing public snapshots remain FileNotFoundError and OSError compatible."
+    },
+    "tests/test_release_v0_2_2.py": {
+      "historical_sha256": "8a6f8bd238ce470916d856cc4794108af83eeacd6e27a9f2ab8d4b963253e66f",
+      "current_sha256": "1b8038d8bf7ae84bb0da5f239484a72e4b6d512df730b6b2c0abd9b69b77d947",
+      "reason": "Preserve the v0.2.2 historical deferral while recognizing R-0008 verification of V-23."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "2933f4ecf09573231208dc9c6e70435378b2930d23600bd12a0daafeef0c231b",
+      "current_sha256": "1a51209fd2fade56abb408d7634e5be29902227f2b305a9060e4f484990fe95f",
+      "reason": "Keep R-0002 historical counts immutable while binding the current 29-item registry and R-0008 status successor."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "b8ad17ec3702f27d1b72f77214429c1b9fbe573677e1c8089b20b9b33b11e3b1",
+      "current_sha256": "a0855ab8dd277216d33fdc14763f74bbef869994998de8cf5d4a01edb3141f7d",
+      "reason": "Bind the 29-item registry and R-0008/rework statuses."
+    },
+    "tests/test_v0_3_0_roadmap.py": {
+      "historical_sha256": "7b18277eda97798b450ef4467a1eda5e5ada86538ff064a3786d263de142961c",
+      "current_sha256": "7275001f8fb5e3770679cddc7fed173e01f63f7331a57acd461d5ed56a83c597",
+      "reason": "Require the roadmap to account for all 29 registry entries."
+    },
+    "tests/test_v0_3_s01_registry_migration.py": {
+      "historical_sha256": "e4c86018a0ed9f72443309f8edf5c9c650a62ae55936be8851917fcf58a0565c",
+      "current_sha256": "b8853b56afc295de98de5aca6ca19207077e52d6eb3b646877ca603d7787b413",
+      "reason": "Preserve the S-01 assignment while reflecting later verified and reworked states."
+    },
+    "tests/test_v0_3_s03_public_errors_metadata_record.py": {
+      "historical_sha256": "bbebc9aedd652c7c61bf6d123d7c43df358629bde0b938242eebd30c642ce4c9",
+      "current_sha256": "99e3fc0726665c106deb5455798102e5127c9189ad27377fe1dfc09fbb628418",
+      "reason": "Bind the original S-03 record to the R-0008 verification and its rework successor."
+    },
+    "tests/test_v0_3_s03_r0008_import.py": {
+      "historical_sha256": "016f202c68f15c264e92388db435f55bc609e155195617de293e99d657e45ab2",
+      "current_sha256": "4a5832d598954021b1959a2588f8af697983124396cabbb484fe6f10b6fa84ca",
+      "reason": "Preserve the imported R-0008 verdict while requiring the reopened issues to advance through the rework commit."
+    }
+  },
+  "validation": {
+    "targeted_cpu": {
+      "passed": 139,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 4323,
+      "failed": 0,
+      "skipped": 1,
+      "xfailed": 0,
+      "deselected": 7,
+      "warnings": 6,
+      "subtests_passed": 8,
+      "allowed_skip": "tests/test_analytic_periodic_defect_gas_2d.py::test_nematics3d_recovers_requested_defect_count_charges_and_positions"
+    },
+    "d0008_environment_recorded": true,
+    "archive_path": "/home/fansenwei/pssolver_v0_3_s03_rework_20261021_v2",
+    "archive_complete": true
+  },
+  "scope": {
+    "runtime_changed": true,
+    "public_error_contract_changed": true,
+    "checkpoint_schema_changed": false,
+    "checkpoint_bytes_changed": false,
+    "provider_identity_changed": false,
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "test_thresholds_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "authorization": {
+    "local_rework_authorized": true,
+    "external_review_requested": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "hpcc_authorized": false,
+    "gpu_authorized": false,
+    "h100_authorized": false
+  },
+  "next_request": "R-0009"
+}

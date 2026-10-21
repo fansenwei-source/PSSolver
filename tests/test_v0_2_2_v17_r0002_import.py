@@ -92,7 +92,8 @@ def test_r0002_registry_updates_are_exact() -> None:
     s01 = _read(S01_RECORD)["registry"]
     registry = _read(REGISTRY)
     issues = _issues()
-    assert registry["issue_count"] == record["issue_count"] == 28
+    assert record["issue_count"] == 28
+    assert registry["issue_count"] == 29
     assert record["status_counts"] == {
         "open": 1,
         "registered": 20,
@@ -104,8 +105,8 @@ def test_r0002_registry_updates_are_exact() -> None:
     assert registry["status_counts"] == {
         "open": 1,
         "registered": 14,
-        "claimed_fixed": 6,
-        "verified": 1,
+        "claimed_fixed": 3,
+        "verified": 5,
         "deferred": 2,
         "accepted": 1,
         "coverage_gap": 3,
@@ -124,10 +125,11 @@ def test_r0002_registry_updates_are_exact() -> None:
                 assert actual[key] == "0.3"
             elif key == "status" and expected["id"] == "V-23":
                 assert value == "registered"
-                assert actual[key] == "claimed_fixed"
+                assert actual[key] == "verified"
                 assert actual["fixed_in"] == (
                     "a654e1c1d97fa364ac32b6ccbf93070056066d21"
                 )
+                assert actual["verified_by"] == "R-0008"
             else:
                 assert actual[key] == value
     for issue_id, decision in record["decision_bindings"].items():

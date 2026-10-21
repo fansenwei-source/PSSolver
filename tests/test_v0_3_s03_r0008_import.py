@@ -11,6 +11,7 @@ from tests.v0_3_s03_successor import resolve_s03_successor
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_01_r0008_import.json"
+REWORK = ROOT / "notes/PSSolver_v0_3_0_s03_successor_02_rework.json"
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 
 
@@ -48,19 +49,21 @@ def test_r0008_import_applies_the_exact_registry_verdicts() -> None:
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["verified_by"] == "R-0008"
     for issue_id in record["reopened_issue_ids"]:
-        assert issues[issue_id]["status"] == "reopened"
+        assert issues[issue_id]["status"] == "claimed_fixed"
+        assert issues[issue_id]["fixed_in"] == _read(REWORK)["git_identity"][
+            "implementation_commit"
+        ]
     assert record["new_finding_ids"] == ["V-24"]
-    assert issues["V-24"]["status"] == "registered"
+    assert issues["V-24"]["status"] == "claimed_fixed"
     assert issues["V-24"]["affects_control_paths"] is True
 
 
 def test_r0008_import_is_one_forward_only_successor_layer() -> None:
     record = _read(RECORD)
     for relative, successor in record["historical_successor_sources"].items():
-        assert resolve_s03_successor(relative, successor["historical_sha256"]) == (
-            successor["current_sha256"]
-        )
-        assert _sha256(ROOT / relative) == successor["current_sha256"]
+        assert resolve_s03_successor(
+            relative, successor["historical_sha256"]
+        ) == _sha256(ROOT / relative)
 
 
 def test_r0008_import_authorizes_no_external_or_release_action() -> None:

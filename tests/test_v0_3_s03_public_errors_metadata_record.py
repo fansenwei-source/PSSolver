@@ -14,6 +14,7 @@ from tests.v0_3_s03_successor import resolve_s03_successor
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_public_errors_metadata.json"
 R0008_IMPORT = ROOT / "notes/PSSolver_v0_3_0_s03_successor_01_r0008_import.json"
+REWORK = ROOT / "notes/PSSolver_v0_3_0_s03_successor_02_rework.json"
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 ROADMAP = ROOT / "notes/PSSolver_v0_3_0_roadmap.json"
 
@@ -69,8 +70,11 @@ def test_s03_registry_reflects_the_r0008_independent_verdicts() -> None:
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["verified_by"] == "R-0008"
     for issue_id in review["reopened_issue_ids"]:
-        assert issues[issue_id]["status"] == "reopened"
-    assert issues["V-24"]["status"] == "registered"
+        assert issues[issue_id]["status"] == "claimed_fixed"
+        assert issues[issue_id]["fixed_in"] == _read(REWORK)["git_identity"][
+            "implementation_commit"
+        ]
+    assert issues["V-24"]["status"] == "claimed_fixed"
 
 
 def test_s03_successors_bind_exact_parent_and_current_bytes() -> None:

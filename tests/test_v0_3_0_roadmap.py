@@ -49,7 +49,7 @@ def test_s02_draft_binds_the_registry_and_confirmed_execution_order() -> None:
     assert _sha256(REGISTRY) == resolve_s03_successor(
         "notes/pssolver_v0_2_x_open_issues.json", scope["registry_sha256"]
     )
-    assert scope["registry_issue_count"] == registry["issue_count"] == 28
+    assert scope["registry_issue_count"] == registry["issue_count"] == 29
 
 
 def test_s02_accounts_for_every_registry_issue_exactly_once() -> None:
