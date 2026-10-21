@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "release": "0.2.1",
+  "date": "2026-10-20",
+  "status": "independently_accepted_with_documented_limitations",
+  "classification": "PASS_V0_2_1_INDEPENDENT_POST_RELEASE_ACCEPTANCE_WITH_DOCUMENTED_LIMITATIONS",
+  "record_scope": {
+    "base_commit": "e099db2af62af3dc84e63a1631dc6b0c43d9a3b9",
+    "record_commit_is_release_source": false,
+    "requires_h100_requalification": false,
+    "runtime_changed": false,
+    "tag_or_release_modified": false,
+    "release_assets_replaced": false,
+    "pypi_modified": false,
+    "pssolver_control_modified": false,
+    "nematics3d_modified": false,
+    "historical_records_rewritten": false
+  },
+  "release_identity": {
+    "annotated_tag": "v0.2.1",
+    "tag_object": "daf1270b1f046ac767045cbbe536fd185599d83f",
+    "tag_target": "ca9c6729670f07639e7877881c777d1653f4a592",
+    "tag_target_parent": "98f9a7d8579c23a7b86cf7011ce0a45bb7328193",
+    "github_release_id": 418261343,
+    "wheel_sha256": "0f0f1c43a920582d3d707d285fe06502ff1852e6cca24f37872b06669201da8a",
+    "sdist_sha256": "cf795a976494dd552f3db843ba88185f77a0b9510ef3e60d4a9b9582413b6eba",
+    "runtime_delta_from_v0_2_0": [
+      "pssolver/io/checkpoint.py",
+      "pssolver/_version.py"
+    ]
+  },
+  "independent_archive": {
+    "executor": "Claude read-only CPU-first second-party review",
+    "path": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1",
+    "complete_present": true,
+    "complete_sha256": "75d9b114d2cb1311bfaf127a7fdd48a9097999246fa244187b45f996248c421f",
+    "checksum_entry_count": 10102,
+    "checksums_sha256": "332543391e608dd9dc778d3b163d025e0d42c36ed2b2290b5097b73cc3190b70",
+    "checksum_verification": {
+      "passed": 10102,
+      "failed": 0
+    },
+    "excluded_file_count": 1,
+    "excluded_file": "a4/work/n1_matrix_v021/C/rename_lost_reply_ETIMEDOUT_readback_unreadable/ckpt/payload.bin",
+    "exclusion_reason": "deliberately unreadable evidence file, explicitly recorded by COMPLETE",
+    "summary_sha256": "2524579b5128e55768e86f6ad3fe9a1a0c48d3943094df05c7bff171343afb6c",
+    "final_report_sha256": "eb9dbc5997c720ba8ebd8fad2f2ffef142ced2d53cfe3f27ed7e73e88a092781",
+    "independent_results_seal_sha256": "1a0873aa8c35e4ece82923eedce7cd62aeea8922b7a055e8e254dcc15573bdd6"
+  },
+  "external_reports": {
+    "source_root": "/home/fansenwei/Desktop/Develop/PSSolver/notes",
+    "files": {
+      "PSSolver_v0_2_1_post_release_acceptance_claude.json": "8aa5a1549b1071ad7d3756a8e429f657c5988f95d3b4c2c0da88ba566204e3eb",
+      "PSSolver_v0_2_1_post_release_acceptance_claude_zh.md": "eb9dbc5997c720ba8ebd8fad2f2ffef142ced2d53cfe3f27ed7e73e88a092781",
+      "PSSolver_v0_2_1_post_release_acceptance_claude_zh.pdf": "1d0a1e685cfa0f0d5a75bf46b7f551f959f8574e2574bbf4c7877e2171a33dde",
+      "PSSolver_v0_2_1_post_release_acceptance_claude_zh.tex": "36b5199bd576cf35888bbfacc5e4e4d507a6c957942e780906c1a63537d8ff6b"
+    },
+    "json_semantically_matches_archive_summary": true,
+    "markdown_byte_identical_to_archive_final_report": true,
+    "external_files_modified": false
+  },
+  "acceptance_results": {
+    "blockers": 0,
+    "regressions_relative_to_v0_2_0": 0,
+    "cpu_suite": {
+      "passed": 4135,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 7,
+      "subtests_passed": 8
+    },
+    "local_n1_contract": {
+      "finding_count": 23,
+      "passed": 17,
+      "documented_limitations": 5,
+      "completed_by_real_machine_evidence": 1
+    },
+    "hpcc_real_nfs": {
+      "v0_2_0_negative_control_failed_closed": true,
+      "v0_2_1_publication_succeeded": true,
+      "republication_and_existing_target_rejected": true,
+      "six_process_race_winner_count": 1,
+      "directory_fsync_returned_zero": true,
+      "restart_bitwise_identical": true,
+      "nfs_and_node_local_checkpoint_bytes_identical": true,
+      "test_directories_removed": true
+    },
+    "codex_archive_crosscheck": {
+      "nfs_cpu_and_h100_conclusions_consistent": true,
+      "jobs_completed": [10902631, 10902665],
+      "new_h100_job_submitted": false
+    },
+    "control_recheck": {
+      "provider_results_bitwise_identical": true,
+      "identity_matches_pin": true,
+      "identity_prefix": "b0a08eee",
+      "current_research_exercises_durable_checkpoint_path": false
+    }
+  },
+  "documented_limitations": [
+    "V-17",
+    "V-16",
+    "V-13",
+    "V-14",
+    "V-21",
+    "OBS-4"
+  ],
+  "registration_validation": {
+    "environment": {
+      "python": "3.12.13",
+      "torch": "2.6.0",
+      "numpy": "2.4.3",
+      "scipy": "1.16.0",
+      "pytest": "9.1.1",
+      "matplotlib": "3.10.8",
+      "nematics3d_installed": true
+    },
+    "targeted_tests": {
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "complete_cpu_suite": {
+      "passed": 4160,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "warnings": 6
+    },
+    "cuda_only_deselects": [
+      "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence",
+      "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+      "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+      "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+      "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+      "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+      "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact"
+    ],
+    "git_diff_check_passed": true,
+    "pssolver_runtime_changed_file_count": 0
+  },
+  "successor_records": {
+    "v0_2_1_release_record": {
+      "path": "notes/pssolver_v0_2_1_release.json",
+      "sha256": "e45ed54f4c3885f91f67348077748a95e7792f672b7d3b6fb7774de8e188ca9f",
+      "rewritten": false
+    },
+    "v0_2_x_open_issues": {
+      "path": "notes/pssolver_v0_2_x_open_issues.json",
+      "purpose": "single forward-maintained registry for unresolved v0.2.x issues"
+    }
+  },
+  "authorization": {
+    "local_evidence_registration_authorized": true,
+    "push_authorized": false,
+    "main_fast_forward_authorized": false,
+    "maint_fast_forward_authorized": false,
+    "dev_cherry_pick_authorized": false,
+    "runtime_fix_authorized": false,
+    "h100_authorized": false
+  }
+}
