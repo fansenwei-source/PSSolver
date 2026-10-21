@@ -42,13 +42,15 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "target_release",
         "notes",
     }
-    assert len(entries) == record["issue_count"] == 26
-    assert len({entry["id"] for entry in entries}) == 26
-    assert all(set(entry) == required for entry in entries)
+    optional = {"decision", "fixed_in", "verified_by"}
+    assert len(entries) == record["issue_count"] == 28
+    assert len({entry["id"] for entry in entries}) == 28
+    assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     assert dict(counts) == record["status_counts"] == {
-        "open": 2,
-        "registered": 18,
+        "open": 1,
+        "registered": 20,
+        "verified": 1,
         "deferred": 2,
         "accepted": 1,
         "coverage_gap": 3,
@@ -90,17 +92,35 @@ def test_five_v020_deferred_items_are_migrated_with_control_classification():
 
 def test_v021_limitations_preserve_version_and_control_boundaries():
     issues = _issues()
-    assert issues["V-17"]["status"] == "open"
+    assert issues["V-17"]["status"] == "verified"
+    assert issues["V-17"]["fixed_in"] == (
+        "611d167d1b2c2d634222f608f4c9cd4dc671636d"
+    )
+    assert issues["V-17"]["verified_by"] == "R-0002"
     assert issues["V-17"]["target_release"] == "0.2.x priority"
     for issue_id in ("V-17", "V-13", "V-14", "OBS-4"):
         assert issues[issue_id]["affects_v0_2_0"] is False
         assert issues[issue_id]["affects_v0_2_1"] is True
-    for issue_id in ("V-16", "V-21"):
+    for issue_id in ("V-16", "V-21", "V-22", "V-23"):
         assert issues[issue_id]["affects_v0_2_0"] is True
         assert issues[issue_id]["affects_v0_2_1"] is True
-    for issue_id in ("V-17", "V-16", "V-13", "V-14", "V-21", "OBS-4"):
+    for issue_id in (
+        "V-17",
+        "V-16",
+        "V-13",
+        "V-14",
+        "V-21",
+        "V-22",
+        "V-23",
+        "OBS-4",
+    ):
         assert issues[issue_id]["affects_control_paths"] is True
         assert issues[issue_id]["exercised_by_current_control_research"] is False
+    assert issues["V-22"]["status"] == issues["V-23"]["status"] == "registered"
+    assert issues["V-22"]["target_release"] == "0.2.x"
+    assert issues["V-23"]["target_release"] == "0.2.x"
+    assert "retarget" in issues["V-22"]["notes"]
+    assert "PermissionError" in issues["V-23"]["notes"]
 
 
 def test_rc5_rc6_residuals_are_registered_without_claiming_fixes():
@@ -136,6 +156,9 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == {"A2-25", "A3-18", "N5"}
     assert issues["B8/S2-07"]["target_release"] == "before lifting is reopened"
     assert issues["R1-R9"]["target_release"] == "after 0.3"
+    assert issues["B8/S2-07"]["decision"] == "D-0007"
+    assert issues["R1-R9"]["decision"] == "D-0007"
+    assert issues["A2-11"]["decision"] == "D-0007"
     assert issues["A3-18"]["affects_control_paths"] is True
 
 

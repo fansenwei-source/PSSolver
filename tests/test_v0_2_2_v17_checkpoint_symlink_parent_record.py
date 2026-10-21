@@ -131,12 +131,17 @@ def test_v17_scope_is_narrow_and_does_not_claim_external_qualification() -> None
     }
 
 
-def test_v17_remains_open_until_external_qualification() -> None:
+def test_v17_record_preserves_the_prequalification_status_and_current_verdict() -> None:
     issue = {
         item["id"]: item for item in _read(ISSUES)["issues"]
     }["V-17"]
     registration = _read(RECORD)["issue_registration"]
-    assert issue["status"] == registration["status_before_qualification"] == "open"
+    assert registration["status_before_qualification"] == "open"
+    assert issue["status"] == "verified"
+    assert issue["fixed_in"] == (
+        "611d167d1b2c2d634222f608f4c9cd4dc671636d"
+    )
+    assert issue["verified_by"] == "R-0002"
     assert issue["severity"] == registration["severity"] == "medium-low"
     assert issue["affects_control_paths"] is True
     assert issue["exercised_by_current_control_research"] is False

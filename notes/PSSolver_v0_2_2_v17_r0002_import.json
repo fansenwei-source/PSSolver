@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-20",
+  "classification": "PASS_R0002_V17_INDEPENDENT_REVIEW_IMPORT",
+  "status": "evidence_import_complete",
+  "git_identity": {
+    "branch": "fix/v0.2.2-v17",
+    "evidence_parent": "6bd8e491dde4a72dd1dc29035c2310d565990070",
+    "implementation_commit": "611d167d1b2c2d634222f608f4c9cd4dc671636d",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0002",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0002.result.json",
+    "sha256": "8837d79a34997a762cca26f967df3396ea87b5208afc39a744fe2c6f9f32c93d",
+    "classification": "PASS"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_v0_2_2_v17_claude_review_20261020_v1",
+    "checksums_entries": 32253,
+    "checksums_sha256": "418f298d2dfcc81f99c0d3574f7c9c5d153a6c4483cc6f1732c050365980b9a8",
+    "complete_present": true,
+    "final_report_sha256": "92a48c99d17432eec313fab538fc6f2cc4fd06ea51328d3ba1b54efb3676619b",
+    "summary_sha256": "857b0749cf19fe48cd76706108845fa83d00c7834a4d6aa9890605e3c16ee0ac"
+  },
+  "registry_import": {
+    "decision_bindings": {
+      "A2-11": "D-0007",
+      "B8/S2-07": "D-0007",
+      "R1-R9": "D-0007"
+    },
+    "verified": {
+      "id": "V-17",
+      "status": "verified",
+      "fixed_in": "611d167d1b2c2d634222f608f4c9cd4dc671636d",
+      "verified_by": "R-0002"
+    },
+    "new_findings": [
+      {
+        "id": "V-22",
+        "status": "registered",
+        "target_release": "0.2.x",
+        "affects_control_paths": true,
+        "exercised_by_current_control_research": false
+      },
+      {
+        "id": "V-23",
+        "status": "registered",
+        "target_release": "0.2.x",
+        "affects_control_paths": true,
+        "exercised_by_current_control_research": false
+      }
+    ],
+    "issue_count": 28,
+    "status_counts": {
+      "open": 1,
+      "registered": 20,
+      "verified": 1,
+      "deferred": 2,
+      "accepted": 1,
+      "coverage_gap": 3
+    },
+    "pending_before": 8,
+    "pending_after": 0
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "551e2fffe6d2f5b3e4da9f95396da4619fb8075760b1a00f4023a77575858184",
+      "current_sha256": "ffdd4fe41ddc140857081febf634b28bed4e1d3345f9e434982ef11ec2f67cc2",
+      "reason": "Import R-0002 registry updates and findings while preserving all existing entries."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "295ffd444a07c3f5d8585fe6e545e6931dd6ce7a308330cb552d5e6b884c5826",
+      "current_sha256": "9e9989034027d8472968c90ea2482e026da747eb25ab496e85b27561d3f8e6b9",
+      "reason": "Render the R-0002 verified status, findings, and confirmed decisions in the human-readable registry summary."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "21b29fa812e018fabdb022e9e0ea14f7f2359352f217a00c850428e0da474f2e",
+      "current_sha256": "c683f89f1616f4c93e62d91355e8ec1e1dd4fd6501a05ce07af57e49a944fd38",
+      "reason": "Bind the expanded registry, verified V-17 identity, new findings, and D-0007 decisions."
+    },
+    "tests/test_v0_2_2_v17_checkpoint_symlink_parent_record.py": {
+      "historical_sha256": "4f8ccee3bfa9e87d4bcd42eac1fc3cb81d9ce1d57433819f2346377a86f90b1f",
+      "current_sha256": "5cf4239b3490d569c7997e8bcdf900c8cccbc768376ae52e17426f525dbb11f0",
+      "reason": "Preserve the original prequalification status while accepting the forward R-0002 verified registry verdict."
+    }
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "tests_relaxed": false,
+    "historical_records_rewritten": false,
+    "tag_modified": false,
+    "release_modified": false,
+    "assets_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "main_or_maint_fast_forward_authorized": false,
+    "dev_cherry_pick_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "h100_authorized": false
+  }
+}
