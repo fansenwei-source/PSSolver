@@ -80,6 +80,41 @@
       "historical_sha256": "a1b4180116b11900ef220e40a0ff239ff895d4f2dd9c064beecd02a0006a33ad",
       "current_sha256": "c59be86a9635d3d3010d2c088d04442bab0e78d6be5c33f2eab45ada0b38c19b",
       "reason": "Allow the imported R-0002 evidence to follow the development integration successor without rewriting the review result."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "4dfe1becb87427d495cea82711e06ca70ba10ead0291df05834f3d2d9915c055",
+      "current_sha256": "efb683257739740f5cab56e15de1a2aa8caf19fd67e7b8d6b6c585b7d27bcb42",
+      "reason": "Extend the historical documentation hash chain through the registered v0.3 development successor."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "historical_sha256": "3a4276b162bb757466ca9f5445e55f97e5bb4013ab83cde5b2615e067d716a60",
+      "current_sha256": "df1d417091a4edb83363fe049e766e7d42f50614180885fb666e088ea72593c1",
+      "reason": "Extend the immutable RC6-2 successor resolver through the registered v0.3 development successor."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "historical_sha256": "30cad62cf42d4d81cefe85dedbb5a30d93053e9a6a480f21febb978587385931",
+      "current_sha256": "ae811acbdfad5aec9d4631e12c5c16bf3a28acd9f8d3c6402b485ab2e443b7eb",
+      "reason": "Extend the immutable RC6-3 successor resolver through the registered v0.3 development successor."
+    },
+    "tests/test_rc6_4_channel_failure_record.py": {
+      "historical_sha256": "2ae2410c90ec2b4eacecc234dca15f51de6e61075b57c5c8217b87d440475433",
+      "current_sha256": "2d6089781c6cfd379f8be678efcb2b940760ebd080874c986b707624314fe9e1",
+      "reason": "Extend the immutable RC6-4 successor resolver through the registered v0.3 development successor."
+    },
+    "tests/test_rc6_5_checkpoint_control_flow_record.py": {
+      "historical_sha256": "5b722df4277576fd8332b8ab20eb63416f343146f8ff7e542879b8c5b2bea4c9",
+      "current_sha256": "3a4768d1442dd368e3bc9e4c1431f572f1e4db289a5caae63694a6b096daa1b5",
+      "reason": "Extend the immutable RC6-5 successor resolver through the registered v0.3 development successor."
+    },
+    "tests/test_rc6_6_restart_output_atomicity_record.py": {
+      "historical_sha256": "fa1a2beb6d94995ad6e7cbb7942e0d5283b183630e3a48fcdf616afea98eef2d",
+      "current_sha256": "6a837f4836c4b52cc9785ddaebdd4094f28522b8b9c66015fb117e9bf500e808",
+      "reason": "Extend the immutable RC6-6 successor resolver through the registered v0.3 development successor."
+    },
+    "tests/test_release_v0_1.py": {
+      "historical_sha256": "49eb789ba6f49490cf1fd3acf94352580e39863c8d0a361fd36d470b633c2a65",
+      "current_sha256": "617a9782cc1ac83cbca2e4c51b6d5373b61418e62654a7eb9a59a84223870747",
+      "reason": "Preserve the historical packaging checks while binding their README expectation to the registered v0.3 development line."
     }
   },
   "scope": {
