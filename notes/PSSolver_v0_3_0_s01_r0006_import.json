@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "classification": "PASS_R0006_S01_REGISTRY_MIGRATION_REVIEW_IMPORT",
+  "status": "evidence_import_complete",
+  "plan_step": "S-01",
+  "decision": "D-0010",
+  "git_identity": {
+    "branch": "dev/0.3",
+    "evidence_parent": "2b3d6c49dae53bdec19c96c39cfbaaaf71692262",
+    "qualified_source_commit": "2b3d6c49dae53bdec19c96c39cfbaaaf71692262",
+    "remote_baseline": "7301bd4bf0b49b27e1c07d248ea3ca3f483dc147",
+    "sync_result_commit": "4be9c56c3ee46d44eda3bb5388e5c458a575f54f",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0006",
+    "request_path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/requests/R-0006.json",
+    "result_path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0006.result.json",
+    "result_sha256": "b323748c7b2c1ed6d215df066904764a92f19856958774cae192fced8bc6edc4",
+    "classification": "PASS",
+    "release_blockers": [],
+    "registry_updates": [],
+    "new_findings": []
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s01_claude_review_20261021_v1",
+    "checksums_entries": 1922,
+    "checksums_sha256": "fbaecc57045fb4cbabeb91d91ebdbd5044a587b55c09478f592f2559f42a0598",
+    "complete_present": true,
+    "final_report_sha256": "cb01e21fb292a029bbb19cc8a7070a078ee2281a9f424f0f618d3c9e2cb0560e",
+    "summary_sha256": "b5ecedad16ae0a8b74c67ad7791e98b46cfd5e8f10ceb3dfe2d244d2441618ce"
+  },
+  "review": {
+    "verdicts": {
+      "S01-REGISTRY-1": "PASS",
+      "S01-REGISTRY-2": "PASS",
+      "S01-REGISTRY-3": "PASS",
+      "S01-REGISTRY-4": "PASS",
+      "S01-REGISTRY-5": "PASS"
+    },
+    "eligible_for_non_force_push": true,
+    "full_cpu_suite": {
+      "passed": 4252,
+      "failed": 0,
+      "skipped": 0,
+      "deselected": 7,
+      "subtests_passed": 8
+    },
+    "registry_primary_ref": "dev/0.3",
+    "registered_issue_count": 20,
+    "registered_issue_target": "0.3",
+    "new_14_target": "0.3 GPU verification",
+    "b30_plan_step": "S-07",
+    "v17_preserved": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "historical_records_rewritten": false
+  },
+  "registry": {
+    "path": "notes/pssolver_v0_2_x_open_issues.json",
+    "sha256": "18a769b757a9c4325d69e8a9e86751c19642e66804141cda678dde408fed9eb3",
+    "issue_count": 28,
+    "modified_by_import": false,
+    "updates_imported": 0,
+    "new_findings_imported": 0
+  },
+  "test_environment": {
+    "policy": "D-0008 baseline-only hard-link clone",
+    "baseline_venv_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "clone_method": "cp -al",
+    "clone_path": "/home/fansenwei/.pssolver_r0006_env.PRxaYS/venv",
+    "python_executable": "/home/fansenwei/.pssolver_r0006_env.PRxaYS/venv/bin/python",
+    "sys_prefix": "/home/fansenwei/.pssolver_r0006_env.PRxaYS/venv",
+    "sys_path": [
+      "",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python312.zip",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12/lib-dynload",
+      "/home/fansenwei/.pssolver_r0006_env.PRxaYS/venv/lib/python3.12/site-packages"
+    ],
+    "pytest_import": "/home/fansenwei/.pssolver_r0006_env.PRxaYS/venv/lib/python3.12/site-packages/pytest/__init__.py",
+    "clone_pruned_after_tests": true,
+    "future_environment_contract": {
+      "allowed_sources": "only the baseline venvs enumerated by D-0008",
+      "required_environment_fields": [
+        "baseline_venv_source",
+        "sys_path"
+      ],
+      "hard_link_clone_required": true,
+      "prune_after_use": true
+    }
+  },
+  "prior_environment_observation": {
+    "applies_to": "the original Codex S-01 qualification run, not this import test run",
+    "source_was_not_a_D_0008_baseline": true,
+    "clone_was_not_fully_isolated": true,
+    "independent_review_effect": "informational only; R-0006 remains PASS"
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "registry_changed": false,
+    "numerics_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "production_default_changed": false,
+    "tests_relaxed": false,
+    "historical_records_rewritten": false,
+    "tag_modified": false,
+    "release_modified": false,
+    "assets_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "main_fast_forward_authorized": false,
+    "maint_v0_2_fast_forward_authorized": false,
+    "tag_authorized": false,
+    "github_release_authorized": false,
+    "pypi_authorized": false,
+    "hpcc_authorized": false,
+    "gpu_authorized": false,
+    "h100_authorized": false
+  },
+  "roadmap_next": "S-02",
+  "next_sync_id": "R-0007"
+}
