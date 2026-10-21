@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "stage": "S-03",
+  "sequence": 1,
+  "classification": "REWORK_REQUIRED_R0008_REVIEW_IMPORTED",
+  "git_identity": {
+    "branch": "fix/v0.3-s03-errors-metadata",
+    "reviewed_candidate": "b16b609e043bf5eddbe875359da94b645a9b1b14",
+    "reviewed_implementation": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
+    "sync_result_commit": "027fa65",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0008",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0008.result.json",
+    "sha256": "1c56f6f59de0996c42a76ddf7ab03f448d3f884c8e03defca2fa1a2b4418211c",
+    "classification": "REWORK_REQUIRED",
+    "release_blockers": []
+  },
+  "reviewed_issue_ids": [
+    "C1-10",
+    "C1-11",
+    "A2-24/C1-15",
+    "C1-08",
+    "V-23",
+    "V-21"
+  ],
+  "verified_issue_ids": ["C1-10", "C1-11", "V-23", "V-21"],
+  "reopened_issue_ids": ["C1-08", "A2-24/C1-15"],
+  "new_finding_ids": ["V-24"],
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s03_claude_review_20261021_v1",
+    "checksums_entries": 4893,
+    "checksums_sha256": "957b3de79bc71780990714ec47e3c4d8961369a4fdb433cfa0b0f15fa1c43c0a",
+    "complete_present": true,
+    "final_report_sha256": "80a67149f88e6a2cb9f81e86e0edbc99817f2f8479f557a44a15be44d49add42",
+    "summary_sha256": "c192cbe72024d9c92155692f1dfed6a3d71008b6910a9952110973d90f0f7573"
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "807953fa5e0efd8350e27ca185b164050844e374037729ab7336bc76ea73aa52",
+      "current_sha256": "70d3380440113508c9e4d636a474f4827691500e50e0795035ca4353930793d6",
+      "reason": "Mechanically import the R-0008 registry updates and V-24 without rewriting the reviewed S-03 record."
+    },
+    "tests/v0_3_s03_successor.py": {
+      "historical_sha256": "289be156430907650091970a99efa3701b50cd953381d4904e13dd246134aa7f",
+      "current_sha256": "62f2f01975c1d1a4b7382f3a427a6c0a374ff9fdfc68e423015efe224576e86c",
+      "reason": "Resolve later S-03 evidence as an ordered successor chain rather than rewriting prior hash bindings."
+    },
+    "tests/test_v0_3_s03_public_errors_metadata_record.py": {
+      "historical_sha256": "f8f0e5269391e358d8a8f5c96d7415a587684574f81ce5ec886f77a3eda51dfe",
+      "current_sha256": "bbebc9aedd652c7c61bf6d123d7c43df358629bde0b938242eebd30c642ce4c9",
+      "reason": "Bind the original candidate record to the independent R-0008 split verdict."
+    },
+    "tests/test_v0_3_s01_registry_migration.py": {
+      "historical_sha256": "c78ddbd5ac6e64061a173c87030f6d13a106cb639e11b09bb41176347a4a3a1c",
+      "current_sha256": "e4c86018a0ed9f72443309f8edf5c9c650a62ae55936be8851917fcf58a0565c",
+      "reason": "Keep the S-01 assignment invariant while accepting the later R-0008 verified, reopened, and newly registered statuses."
+    }
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "tag_modified": false,
+    "release_modified": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "push_authorized": false,
+    "tag_authorized": false,
+    "github_release_authorized": false,
+    "pypi_authorized": false,
+    "hpcc_authorized": false,
+    "gpu_authorized": false,
+    "h100_authorized": false
+  },
+  "next_request": "R-0009"
+}

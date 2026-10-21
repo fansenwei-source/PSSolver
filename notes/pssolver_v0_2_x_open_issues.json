@@ -29,12 +29,13 @@
       "rewritten": false
     }
   },
-  "issue_count": 28,
+  "issue_count": 29,
   "status_counts": {
     "open": 1,
-    "registered": 14,
-    "claimed_fixed": 6,
-    "verified": 1,
+    "registered": 15,
+    "claimed_fixed": 0,
+    "verified": 5,
+    "reopened": 2,
     "deferred": 2,
     "accepted": 1,
     "coverage_gap": 3
@@ -64,8 +65,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
+      "verified_by": "R-0008",
       "target_release": "0.3",
       "notes": "application_family, stage, and step are absent; SimulationExecutionError.to_metadata raises AttributeError."
     },
@@ -79,8 +81,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
+      "verified_by": "R-0008",
       "target_release": "0.3",
       "notes": "CPCE details also require JSON-finite values."
     },
@@ -152,8 +155,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
+      "verified_by": "R-0008",
       "target_release": "0.3",
       "notes": "Repro: chmod the immediate checkpoint parent to 000, then call functional export_checkpoint; the initial existence/lstat probe raises PermissionError instead of the public checkpoint error hierarchy. Suggested fix: classify that initial OSError through the same CheckpointIOError mapping used by staging creation."
     },
@@ -209,10 +213,25 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
+      "verified_by": "R-0008",
       "target_release": "0.3",
       "notes": "The fail-closed reader exception is not mapped to the public checkpoint-error family."
+    },
+    {
+      "id": "V-24",
+      "title": "Periodic functional checkpoint export bypasses the functional checkpoint error family",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0008.result.json",
+      "first_found": "S-03 independent review R-0008; behavior observed in v0.2.1, v0.2.2, and dev/0.3@b16b609",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": true,
+      "affects_control_paths": true,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3",
+      "notes": "Periodic functional export_checkpoint exposes core CheckpointIOError for filesystem failures while Channel exposes FunctionalCheckpointIOError. Repro: chmod the parent to 000 and export a Periodic functional checkpoint. Suggested fix: route Periodic export through translate_functional_exception, matching Channel and Periodic import."
     },
     {
       "id": "OBS-4",
@@ -252,10 +271,10 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "reopened",
       "fixed_in": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
       "target_release": "0.3",
-      "notes": "Includes Plane compatibility-identity tampering and Periodic save_start beyond the final step."
+      "notes": "Includes Plane compatibility-identity tampering and Periodic save_start beyond the final step. Reopened by R-0008 because the first S-03 attempt converted public CheckpointError subclasses into ValueError-only SimulationRestartError instances and broke except-clause compatibility."
     },
     {
       "id": "C1-08",
@@ -267,10 +286,10 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "reopened",
       "fixed_in": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
       "target_release": "0.3",
-      "notes": "Failures occur before tensor computation and produce no output."
+      "notes": "Failures occur before tensor computation and produce no output. Reopened by R-0008 because missing or unreadable snapshots no longer remained OSError-compatible after the first S-03 attempt."
     },
     {
       "id": "S1-15/NEW-13",

@@ -51,31 +51,26 @@ def test_s01_record_binds_the_registry_successor_and_roadmap() -> None:
 def test_s01_assigns_every_registered_item_to_0_3_exactly() -> None:
     record = _read(RECORD)["registry"]
     issues = _issues()
-    registered = {
-        issue_id for issue_id, item in issues.items() if item["status"] == "registered"
-    }
-    claimed = {
-        issue_id
-        for issue_id, item in issues.items()
-        if item["status"] == "claimed_fixed"
-    }
-    assert registered | claimed == set(record["registered_ids"])
-    assert len(registered) == 14
-    assert claimed == {
+    tracked = set(record["registered_ids"])
+    assert {issue_id for issue_id in tracked if issues[issue_id]["status"] == "verified"} == {
         "C1-10",
         "C1-11",
-        "A2-24/C1-15",
-        "C1-08",
         "V-23",
         "V-21",
     }
-    assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in registered)
+    assert {issue_id for issue_id in tracked if issues[issue_id]["status"] == "reopened"} == {
+        "A2-24/C1-15",
+        "C1-08",
+    }
+    assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in tracked)
     assert set(record["changed_target_ids"]) | set(
         record["already_targeted_to_0_3"]
-    ) == registered | claimed
+    ) == tracked
     assert set(record["changed_target_ids"]).isdisjoint(
         record["already_targeted_to_0_3"]
     )
+    assert issues["V-24"]["status"] == "registered"
+    assert issues["V-24"]["target_release"] == "0.3"
 
 
 def test_s01_preserves_v17_and_schedules_new14_and_b30() -> None:

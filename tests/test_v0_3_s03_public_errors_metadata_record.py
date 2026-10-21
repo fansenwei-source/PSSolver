@@ -8,10 +8,12 @@ from pathlib import Path
 import subprocess
 
 import pssolver
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_public_errors_metadata.json"
+R0008_IMPORT = ROOT / "notes/PSSolver_v0_3_0_s03_successor_01_r0008_import.json"
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 ROADMAP = ROOT / "notes/PSSolver_v0_3_0_roadmap.json"
 
@@ -58,15 +60,17 @@ def test_s03_record_binds_the_implementation_commit_and_issue_set() -> None:
     }
 
 
-def test_s03_registry_claims_only_the_six_implemented_issues() -> None:
+def test_s03_registry_reflects_the_r0008_independent_verdicts() -> None:
     record = _read(RECORD)
+    review = _read(R0008_IMPORT)
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
-    claimed = {key for key, item in issues.items() if item["status"] == "claimed_fixed"}
-    assert claimed == set(record["issue_ids"])
-    for issue_id in record["issue_ids"]:
-        assert issues[issue_id]["fixed_in"] == record["git_identity"][
-            "implementation_commit"
-        ]
+    assert set(record["issue_ids"]) == set(review["reviewed_issue_ids"])
+    for issue_id in review["verified_issue_ids"]:
+        assert issues[issue_id]["status"] == "verified"
+        assert issues[issue_id]["verified_by"] == "R-0008"
+    for issue_id in review["reopened_issue_ids"]:
+        assert issues[issue_id]["status"] == "reopened"
+    assert issues["V-24"]["status"] == "registered"
 
 
 def test_s03_successors_bind_exact_parent_and_current_bytes() -> None:
@@ -78,7 +82,9 @@ def test_s03_successors_bind_exact_parent_and_current_bytes() -> None:
         assert _git_sha256(parent, relative) == registration[
             "historical_sha256"
         ]
-        assert _sha256(relative) == registration["current_sha256"]
+        assert _sha256(relative) == resolve_s03_successor(
+            relative, registration["current_sha256"]
+        )
         assert registration["historical_sha256"] != registration[
             "current_sha256"
         ]
@@ -135,7 +141,7 @@ def test_s03_registers_the_g04_v022_non_regression_gate() -> None:
 
 def test_s03_new_sources_are_content_addressed() -> None:
     for relative, expected in _read(RECORD)["new_sources_sha256"].items():
-        assert _sha256(relative) == expected
+        assert _sha256(relative) == resolve_s03_successor(relative, expected)
 
 
 def test_s03_records_the_final_cpu_gate_without_new_skips() -> None:
