@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
@@ -108,7 +110,7 @@ def _resolve_rc6_freeze(relative: str, predecessor: str) -> str:
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == predecessor:
         predecessor = registration["current_sha256"]
-    return predecessor
+    return resolve_s03_successor(relative, predecessor)
 
 
 def _resolve_rc6_4(relative: str, predecessor: str) -> str:

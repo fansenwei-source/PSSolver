@@ -4,6 +4,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
@@ -94,7 +96,7 @@ def test_r513_record_binds_new_and_successor_sources():
         V022_RELEASE_RECORD.read_text(encoding="utf-8")
     )["historical_successor_sources"]
     for relative, expected in record["new_sources"].items():
-        assert _sha256(relative) == expected
+        assert _sha256(relative) == resolve_s03_successor(relative, expected)
     for relative, registration in record[
         "historical_successor_sources"
     ].items():
@@ -150,7 +152,7 @@ def test_r513_record_binds_new_and_successor_sources():
         successor = v022_release_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
-        assert _sha256(relative) == resolved
+        assert _sha256(relative) == resolve_s03_successor(relative, resolved)
         assert registration["introduced_by_phase"] == "R5-13"
         assert registration["reason"]
 

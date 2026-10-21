@@ -1,0 +1,488 @@
+{
+  "schema_version": 1,
+  "stage": "S-03",
+  "classification": "PASS_LOCAL_V0_3_S03_PUBLIC_ERROR_AND_METADATA_CANDIDATE",
+  "git_identity": {
+    "branch": "fix/v0.3-s03-errors-metadata",
+    "development_parent": "19dcd0be83c86e8cace6abff714d3a9f55234c0b",
+    "implementation_commit": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "issue_ids": [
+    "C1-10",
+    "C1-11",
+    "A2-24/C1-15",
+    "C1-08",
+    "V-23",
+    "V-21"
+  ],
+  "contract": {
+    "functional_convergence_error_has_complete_public_metadata": true,
+    "nonfinite_error_details_are_strict_json_safe": true,
+    "started_workflows_finalize_failure_metadata_for_base_exceptions": true,
+    "restart_rejections_use_public_restart_errors": true,
+    "invalid_parameter_values_reject_during_compilation": true,
+    "invalid_or_unreadable_snapshots_use_public_input_errors": true,
+    "checkpoint_parent_permission_errors_use_public_checkpoint_errors": true,
+    "periodic_placeholder_permission_errors_use_functional_checkpoint_errors": true,
+    "g04_v0_2_2_non_regression_requirement_registered": true
+  },
+  "scope": {
+    "public_error_contract_changed": true,
+    "failure_metadata_contract_changed": true,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "test_thresholds_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false,
+    "push_executed": false
+  },
+  "new_sources_sha256": {
+    "tests/test_v0_3_s03_checkpoint_permission_errors.py": "b73ef2b159e2701f1772fb1a2fab45ff9747a2fcbf5c83098625a1cba531f46c",
+    "tests/v0_3_s03_successor.py": "289be156430907650091970a99efa3701b50cd953381d4904e13dd246134aa7f"
+  },
+  "historical_successor_sources": {
+    "notes/PSSolver_v0_3_0_roadmap.json": {
+      "historical_sha256": "c410add715331e83bb8270c07e30f9d8814a85dcecc6f8d8ec0ffe591e5d1f97",
+      "current_sha256": "798dc69de53adada2a1657af6f5ca4a1f3ef5a9c31a1af539805b8725d23de50",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "notes/PSSolver_v0_3_0_roadmap.md": {
+      "historical_sha256": "ad19977f85c55c18ac05fba7237d792624fc3ac9a99d57792d0d8d8883d8c3f6",
+      "current_sha256": "9606b62bf2f4b4774eb54213c8d80f89b88760760fccddd0bada69701da184b2",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "18a769b757a9c4325d69e8a9e86751c19642e66804141cda678dde408fed9eb3",
+      "current_sha256": "807953fa5e0efd8350e27ca185b164050844e374037729ab7336bc76ea73aa52",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/__init__.py": {
+      "historical_sha256": "89d3977a696142a649c2240a1768e653a3b5ee00d3316900c421de2294e3829d",
+      "current_sha256": "514a166294697862071f0f1080f3c284353efb80d4cbf4625cbdb973e2059c8b",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/api/__init__.py": {
+      "historical_sha256": "25776be38b39a3d15ef0fc13794db294b29f9a470ebd9c3036b595eab8c2e949",
+      "current_sha256": "acf726782707fdb3d887869cab34b763a163b3b78de1fad9fe8118b5a5dd8250",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/applications/channel_beris_edwards.py": {
+      "historical_sha256": "b586c46cd77d62396d2efa73dc6193f5a236e2cfe758e8df27f538483365cab3",
+      "current_sha256": "4f29e3455d6e46b40a775e9d0ace8ac2dfad1243e951aaf690cff1b23439ae8f",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/applications/periodic_beris_edwards.py": {
+      "historical_sha256": "a65df1bcadd1d90518bcd132ff49468a646455599564c05e14f0f74fe02d3466",
+      "current_sha256": "4ebebb10fb73d8e4262736478eb0a1ce07ef24535c4346b0e7d79aa2f6308f5e",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/applications/plane_beris_edwards.py": {
+      "historical_sha256": "2d0f7a8d0f823a57edb2f4acd653bbc6ee1b9ab9b2f720566f111236c33dc3e8",
+      "current_sha256": "5c3e7b8a82d6751e804bebd86598459f4b15be18c5949bca3c6f4bbf1b575688",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/configuration/public_complete_stress_validation.py": {
+      "historical_sha256": "d1e9bff833b729acf3e7b8a91187b4f0b0ce6a5441cf3f874bf213c89b623c3e",
+      "current_sha256": "6af909eb8b668a182bb753ad255a73dedf2d74f7bd3463fad389d538cae30000",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/core/errors.py": {
+      "historical_sha256": "05f35dd3d45526d8ef92113a211be524d4fbdbfb3fad8b7fefeec164c4dbd69c",
+      "current_sha256": "e4057b0f19e24af5d199ed3a70b6b6e0e01193aeca86c8aa8ad28516ed63af57",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/errors.py": {
+      "historical_sha256": "1e84907c82e38304d786d2ae99a42b3bf5e8ab0e1c951cebfc5b8121d04505cf",
+      "current_sha256": "f3e270b99a04dae7965bcf0ca6e0dd5340ab16dd61e0657daf71f7aa42034652",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/functional/errors.py": {
+      "historical_sha256": "bdadb761bf569a4eec95b7911e88daefc676626c5f81b49ee0c5ff1328b44323",
+      "current_sha256": "68bd2965fdeb5394d75f8944c00559c368a433fbdb06eeb2ed0ab2efe8f8abd5",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/functional/periodic_checkpoint.py": {
+      "historical_sha256": "e9bb8ea8e973132678c416eb8d5e91ba6e8731be863bff2201207a654a78e68a",
+      "current_sha256": "8f1229c4657bcfe740c13eec2f6bc701b3a4426726c2e6679d50e0784abd9681",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/io/checkpoint.py": {
+      "historical_sha256": "1a90fe8edb640310c439d6b553f7de02237eccca368455b059565d2038bec0df",
+      "current_sha256": "05594c49d155a6106e54037fb124f9dc03a32434fecb2feac808be8e55a2f11e",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/workflows/channel_active_nematics.py": {
+      "historical_sha256": "eeaa93d0ef4858979f5809ba2e9045356bb86c2f22230334d658de554226d3f6",
+      "current_sha256": "ebc2dc3777e25b8e235a5e7a5de635509d30ccfb1fd0720f4c68f4482cab05c5",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/workflows/channel_beris_edwards.py": {
+      "historical_sha256": "81024e79b4703ad443cbe92248f60c22fdc6dfe8e76a7394ae4537801530c45e",
+      "current_sha256": "d660bbd1caabf842313d672090621e87d4d1b2e4970562c122b93cba3c2d03aa",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/workflows/periodic_beris_edwards.py": {
+      "historical_sha256": "addf14f04e891525a0055bb5950f67fa329097735c326daa71bcf78ee2d35b7c",
+      "current_sha256": "fe40c5050724200690a1c4fe80cce3eec3cb08114b9a2c8090275107d1042d38",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "pssolver/workflows/plane_beris_edwards.py": {
+      "historical_sha256": "983382301c104bca5e5b82b76e9cdcdae20bb9971565c605b803e61df7eda225",
+      "current_sha256": "52e4d479dac9bba9419939276e4a29eb1a84b4225e328e73f5e65a478b2d8e2b",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_phase7_channel_local_closure.py": {
+      "historical_sha256": "197f739fe8ef53d676c7134a97746fe071294812c55a04a9925fc7862d01cfe9",
+      "current_sha256": "16b71c205ad8927d4aaa9501448ac30150522b9b1a7a4ae2216ee5bdf8e730cb",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_phase8_p82_periodic_application.py": {
+      "historical_sha256": "0a5f11181dbaccba37438a58e0a9e0597bca12372022a9dc4310f04228a193f6",
+      "current_sha256": "a178c0f756fbd2f883e20ed21fa0709cb0300398fdb72d823ea60f47c26842d2",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_phase8_p83_channel_complete_stress_application.py": {
+      "historical_sha256": "2d2bc9375174a710d8c07e045c4d1b1a30757e238d7b2fb1661b12f858319f19",
+      "current_sha256": "51f32f059ea281f276cbe95a8e5ccc257fa14df4f5184b7f95fd99c891ff553f",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_phase9_p971_channel_functional_declarations.py": {
+      "historical_sha256": "9bab68a1529af8241383fde159f1d951e32e58b187a029578981ee05879ff7fd",
+      "current_sha256": "21651e0c4c0d48449fd5b17050ac5f8b080f003679c1a6acf0444d1392152f2c",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc426_functional_checkpoint_recovery_record.py": {
+      "historical_sha256": "cabe2f8873a053d1b977843022e91a432caee2894a0608b39cfe850d585888e4",
+      "current_sha256": "55db17083f92cd4bc239d4a596e039a990a25157e96a166952531e63c666735f",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "historical_sha256": "a36bac2dc2379d658e91e0893fa27d6338cffe005a516e145662b9618ed4e9ff",
+      "current_sha256": "54b446e8798aacd77bb40edcd8be157cbb24427c5d01f33222fe98305c5082a8",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc453_checkpoint_transactionality.py": {
+      "historical_sha256": "4f8a31c61908427f6ba8f6fd2caf457f2e727f0605fefe06812c3bb020b78d24",
+      "current_sha256": "9b2bc0806ebd3d8db4a0bb1d4b97ae61aa4e79617f195a26be27eeaa3132e77b",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "historical_sha256": "023ceadd202981e35ae1686f4c9eb17d40494cafebcf3186bb95b60b38c79421",
+      "current_sha256": "4e9b5009953a1b2a494a242b6de50484645dab2c6b91e200c8dd98b3e3af6c32",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "historical_sha256": "cb6256b66f00327320458982a409d930b376bf1a4e38f28ee0f03e081812260e",
+      "current_sha256": "ac86aea306f12a95d879e07fdd10db19a4520366ba00d976472cb04e8458b8ba",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc457_installed_consumer_impact.py": {
+      "historical_sha256": "122ffbc3edf0df66139125b103737f8b493eff72f599c003b475d46ea91b0cdf",
+      "current_sha256": "abd91eaf1fe6a450f054814e040860beacfe20a05f4015d0dae7284df1dc6179",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc457_installed_consumer_recovery.py": {
+      "historical_sha256": "ca68f3fba72dad2952fec6356927fbc07fa31a85012f2a233d4d28269a406e41",
+      "current_sha256": "7f912fc3ba7a72b882553f27bd53e6a741d9a7eeb79bfdfa8247258566ebc5e4",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc458_h100_closure_record.py": {
+      "historical_sha256": "8325b1799a93955f3504dc6f2f09909e26cc131e1e2b40420e964155ed51af5c",
+      "current_sha256": "d07290b633d3de0dabf428c1a950cd52add57e35f3758c88cb6eba181e67e513",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc4_cross_device_checkpoint_plan.py": {
+      "historical_sha256": "f0521392dc5cb88fe6361fb4895879f7c352fa56117d5757cd7712202e9ff3b9",
+      "current_sha256": "4af6597c98ba1b9cc50b77644e46755f2fbca97c0c8b6d3a80b9f0dbd7470137",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {
+      "historical_sha256": "2dcd2af8ba38972fa8ed62b669effa2fbfa882de8e86df9efa569c3ac726d201",
+      "current_sha256": "5b7df4fb42e32202556ed119c9294ddc7351833d5d8db52f3d452b2a04469af4",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc4_fresh_initial_conditioning.py": {
+      "historical_sha256": "0c5e6ba6fc57a9656cd77b55b8c29dec1bdc9e8ae7fb6a1acd2dd0d8ff87a8f7",
+      "current_sha256": "badd4ffc5cc257a4b1a84aa9dfb522d98f12e7e43587f34ef104a7ae2d42b322",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc4_functional_checkpoint_identity_record.py": {
+      "historical_sha256": "ba88daf3eef13f88ae6a1d9fa504ce28bf74e6fd301f01083317934dff8b1494",
+      "current_sha256": "913e3632d3da01df7d1d9fd1853620914c3ba1c68cc5849ee869556fb11b2802",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc4_lifting_capability_restriction_record.py": {
+      "historical_sha256": "7f5cdf2fbd0508bcadf11bdcd36d145f6b72822bc754cf67aaadfd4c09fe6d0a",
+      "current_sha256": "e92a741bf9a374897f140268a7b1a7d47c30d1cfec82f4e6526f4d34f1010d05",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc4_lifting_checkpoint_integration_record.py": {
+      "historical_sha256": "75c15bb32a7b057b27472317c314709e91ec08472bb6a3c9d60fe0b9bb3de3db",
+      "current_sha256": "5cf4eadbb756612c255cb183f3f08a15ba3a62ba222766ae64dcdea53ce043f7",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc4_periodic_channel_checkpoint_identity_record.py": {
+      "historical_sha256": "47443c8de1def2002f8524a116915e9fd72160c47bce610810e1a9388860949e",
+      "current_sha256": "f9c76ce2bf5ad4964285be4eeec47b22898cedd9c7fb8d983343256574250c61",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc4_plane_checkpoint_identity_record.py": {
+      "historical_sha256": "2069dd1456ad8608f95f62b7a7bf9334ccab35e6d28ed7c678374a3e384f72dd",
+      "current_sha256": "87ba133df94f7f3239609cb1b484b63edac21b5ab4ef1a9e2536b329d05c0e44",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc4_post_release_findings.py": {
+      "historical_sha256": "9eec3cca8d86372ddc82af8d338f2a01a802f05e576de05de8ecfecf095fd722",
+      "current_sha256": "41f545e562ecc49b997e97712fcdb6d049e483e2388dcfc1d5ca7275e660233a",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {
+      "historical_sha256": "67527e4bccf5d78785a2253a762c2788f7d021e3768c287bb6556aead26e47e7",
+      "current_sha256": "fd6181ca6d124d772b1b60888e68f44b0eee78aa46fc3bdde6d6e80314337d7b",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc4_pressure_public_contract.py": {
+      "historical_sha256": "20e9dad7a51e66f4dad7202c7bbf57870be03a3787d19d156c43fce331d77938",
+      "current_sha256": "98ebbb4b2a2f0703c5935aeb5a4e5ce8390250295ab44bea7f6036d8f5308cda",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py": {
+      "historical_sha256": "d44e3d4c09460067f7b236a5c97b522231f9d0e009ac02dbf6783f7f81691fcc",
+      "current_sha256": "2b073974bf4fb505c0bbd1c89f28e4334c0d4d148a66572cc39008016ee001f7",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_g1_historical_audit_portability.py": {
+      "historical_sha256": "15669fc9c70648fb4318031d8aa79dd2307b5180e6c1a6cf826e2842740bdfe8",
+      "current_sha256": "8cd05c1b7a06eed7b6b64389d0ab68e0e9d9e11cd5697aa420cc8851dcfd43ff",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_legacy_functional_checkpoint_record.py": {
+      "historical_sha256": "eee1d01c3b34944ab842afe19aff98f0a1a4a3e02291877848463e9b73b1a695",
+      "current_sha256": "0dd3828123dfb001134cb66fba6adde95a63cd76c8ed2602cf6d47ed8b77d380",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "historical_sha256": "4a995ed5342596881de1814a589b906b8216b3fda9a34bd07903fbc8b18058ef",
+      "current_sha256": "e3b6cebc475de679db0074a42aed91db09908df9b43cc474bf0171e9023c5c22",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_r511_metadata_strict_record.py": {
+      "historical_sha256": "b1729ebe8814f3c6d5c8f0338d9803e2f91f9f4be4c5e6052d771bf3801e661a",
+      "current_sha256": "e02cc96e894f417bff0b3c320f48ad143cd513b852a212013b0c6a9caf88fcb9",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_r512_compiled_simulation_integrity_record.py": {
+      "historical_sha256": "05889798067aa66dd6f1ed788874bd75f0fcbcd5bd53061b9e5fee75fa256fde",
+      "current_sha256": "16bb8b1a6ccf65cfe981bad22750dd874503845b506312d577f678bcfe58c79f",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_r513_optional_hygiene.py": {
+      "historical_sha256": "1c40ed0e5d4c3c927ac8be866eb0d54107abfa278ce611a1dc258c82a0203db8",
+      "current_sha256": "3b0552929812c501d2ebd4b9314eabed257b5abb888f3f5e5ffc22d31f1614ca",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "historical_sha256": "506c9e86f2a145bc01e3640da0390321e7510f5e4d4d380034b830fa1b52bb20",
+      "current_sha256": "fcabf84a693f473ca37b96a739bf38c77ef8cdcf16760e68e8bfac3bbde3e32a",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "historical_sha256": "8f8ca41fb3d0053a353d13723d813f0c0ae66fd79ca01fe376ae8c61c8367489",
+      "current_sha256": "85d0a3c6915276005a20a466e0e56389f47e94b8674f4d23306002856ed93b5d",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "historical_sha256": "755a3d104da973e68284cdb2346db16b592d5d53f3a08aeef02b849a461fc4f0",
+      "current_sha256": "5a571ba049bbd4e17204d88b2928aecccd60ba0327c336a3f90aaa020da40d58",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_r55_tf32_state_restore.py": {
+      "historical_sha256": "c7be5ce85345f38fb31ae707d49b7a7d9f0044dcb3f04f61c5faf15d28c3fc82",
+      "current_sha256": "e07972e48ac2fdfdb0ba51850d063d1e6c6b17b11b20d7b6478d06d683ba71ba",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "historical_sha256": "63cb99948ef5ea1f8355fe650c2da96961e7cbce34741d153b567e0b22dea549",
+      "current_sha256": "38b10169eca4362e22a547f13dc020befd2d0dec8d059e244d14e00dbac581d2",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "historical_sha256": "c2883999f167f9ddaa2dbbeb62b3178119937a127a2a7f54662ad1adde3a0d60",
+      "current_sha256": "92f374a9129e1cdf30a216239409c197e39b5f64daf90e1e32f237ea3f776d8b",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_r58_checkpoint_integrity_record.py": {
+      "historical_sha256": "124f5ba6e68d8dc992e2d9d9f9bc9079ce751b56b450e3a6a647ac70ec126ffa",
+      "current_sha256": "44c5974b90608ac62c926448e9f2dd049a42f3fa65395124acbaef4509624b8d",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "86911911f51f9d4d2f5883ff1e50563256a6392b36dbcb9f910454fecf35875e",
+      "current_sha256": "3b6745b89521e8a61546d70bc93c613a5331f510e7d956b33ecfd7ba81e2cb48",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc5_w1_documentation.py": {
+      "historical_sha256": "4dfe1becb87427d495cea82711e06ca70ba10ead0291df05834f3d2d9915c055",
+      "current_sha256": "e84dea4df3c27da5bf2fe2599d26a1187718d4fb7d94d718786aa9f11bcd551d",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": {
+      "historical_sha256": "6b989de5d93f5fbf4268aa0abd4d7d15021fed3925a68fd63689b5c9fbfb6fce",
+      "current_sha256": "287f53bb41c84110bf09364754901a7da6e7703473bec0eda311328eaff2c0f7",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "historical_sha256": "3a4276b162bb757466ca9f5445e55f97e5bb4013ab83cde5b2615e067d716a60",
+      "current_sha256": "7818f3ab9198612ea3f0adbe0af8555c2a9ffc3e4527f437124fd265d0c234c0",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc6_3_compile_preflight_contract.py": {
+      "historical_sha256": "6636775fea230285ed9965a2feff5afb134bbc4a1d257d9d29ede8e281f0b059",
+      "current_sha256": "c24bb2120dbe82c351c2e025b841e750a11859211aeaf02babc5e5282f5b7adc",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "historical_sha256": "30cad62cf42d4d81cefe85dedbb5a30d93053e9a6a480f21febb978587385931",
+      "current_sha256": "7afaf332af3dc21012882510fc649174a65898b01719d08c613e805812a38f5f",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc6_4_channel_failure_record.py": {
+      "historical_sha256": "2ae2410c90ec2b4eacecc234dca15f51de6e61075b57c5c8217b87d440475433",
+      "current_sha256": "3d772a9e67a3cd2cb6081b052d0549640025ac661e66b354098a79a0da65e0c8",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc6_5_checkpoint_control_flow_record.py": {
+      "historical_sha256": "5b722df4277576fd8332b8ab20eb63416f343146f8ff7e542879b8c5b2bea4c9",
+      "current_sha256": "ecafe317bb946f738307cd0b06ee68761fc91ce5bb2b7011695cfef03dba455d",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc6_6_restart_output_atomicity_record.py": {
+      "historical_sha256": "fa1a2beb6d94995ad6e7cbb7942e0d5283b183630e3a48fcdf616afea98eef2d",
+      "current_sha256": "c39f471f3091a67d4e812c042f59381260d387b5867d66d46c819cb7f62ffd87",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_rc6_rc64_channel_failure_contract.py": {
+      "historical_sha256": "efd87c3858753dc5e438c856f6da4df160ff8b05808e4bac8d3e585b121498e7",
+      "current_sha256": "d008929b56693c01d8b7d29b4f84121dae133c889c6baeef43148788f3f0fc39",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_release_v0_2.py": {
+      "historical_sha256": "cd492d4bf9733a8386b541d1cf467132f5455a88864719de40f01652648e3747",
+      "current_sha256": "84c136d171ef97b64e076ffe298db1a7ca5ee867c8c869a1521dc24116090207",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_release_v0_2_0_final.py": {
+      "historical_sha256": "f2f28b0abc4e8edd73f5ec82d8adf1407dd5cac1406fb45f2d81f97760ab5786",
+      "current_sha256": "e2370e2ace5a2a6076f7f8a89c78326301eecd6f14d2971ca922abe2178a4995",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_release_v0_2_1.py": {
+      "historical_sha256": "cdab565aa7950d406eac483f4f69d740898315cb2b2f7ac4519f8d0063b0ffa9",
+      "current_sha256": "f1fbcc48503a65ac2acad9b1e4f5039222e714dfebd608152db8b09a8ae22d31",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_release_v0_2_2.py": {
+      "historical_sha256": "388593faed7d450d253206af5667bf9c83658faf78868c6c273b8dc6a85e656e",
+      "current_sha256": "8a6f8bd238ce470916d856cc4794108af83eeacd6e27a9f2ab8d4b963253e66f",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_v0_2_1_n1_checkpoint_nfs_record.py": {
+      "historical_sha256": "e32bd662a555d15de2bae33b4335c6004fb1d194f9b2b95da02144f1fdb4c9aa",
+      "current_sha256": "e2f826a68d271ae367a4f2223eae7981358f742f1af7172d7d47798f6e84887b",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_v0_2_2_v17_checkpoint_symlink_parent_record.py": {
+      "historical_sha256": "c95fc315e611e09f3ba07b4349415e7e50d7e184a095a05863116318f160fce0",
+      "current_sha256": "99c76fa41e3447a86ae4d01cd5153bc9559addb8623c2121da3707556214e63d",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "12a29352de7113bbb5b129e3faec2e8daf50ca96b8be32c25475cb4d054a84f7",
+      "current_sha256": "2933f4ecf09573231208dc9c6e70435378b2930d23600bd12a0daafeef0c231b",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "432b548899549f5c5085b5f9c7d81552fb557b2c72da6054035520bd75dcf9d8",
+      "current_sha256": "b8ad17ec3702f27d1b72f77214429c1b9fbe573677e1c8089b20b9b33b11e3b1",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_v0_3_0_roadmap.py": {
+      "historical_sha256": "6942385310792f348673ead53ceccb9067dfced2ce3a49032b073b9e28809ef0",
+      "current_sha256": "7b18277eda97798b450ef4467a1eda5e5ada86538ff064a3786d263de142961c",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_v0_3_n1_v17_checkpoint_integration.py": {
+      "historical_sha256": "b83c8b0e500e6ebfa5c80a2ffbf16986a51ae110bccd05b5827c596783cbb563",
+      "current_sha256": "7f4febba561efa66852fd4764a5ef259e9c880c96656420772c4179087c1c1b6",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_v0_3_n1_v17_r0005_import.py": {
+      "historical_sha256": "66bfd23b0730e3bd3e75d09ae72e0e54f789bf3f9436b577d432519401b2e45b",
+      "current_sha256": "5e4512017179b1bb8f22284c677a43e352bd7636abb9cf0db64d83cb172bab62",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_v0_3_s01_r0006_import.py": {
+      "historical_sha256": "0622776d4d757e3a42f25568ce2933426aeea9c395618fa973297a278f303ac4",
+      "current_sha256": "bbd1d2415c43e891ea70f85f419c8afbd752cec84d470d8d4b2c4200eaf048f1",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_v0_3_s01_registry_migration.py": {
+      "historical_sha256": "2cf7c92d8fe6120f5ff5c209b1063741dd57fb8988f6976733d2361a9f34b796",
+      "current_sha256": "c78ddbd5ac6e64061a173c87030f6d13a106cb639e11b09bb41176347a4a3a1c",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    },
+    "tests/test_v0_3_s02_r0007_import.py": {
+      "historical_sha256": "0761cacbcece93cb7932705597d287bff2d9bb4d4aae9c6d2683fa39ea617b29",
+      "current_sha256": "8622c17814fdf6932450c51cff47d6b93004552a2496e99ad4c7c629f14efb25",
+      "reason": "Advance the immutable historical source through the v0.3 S-03 public-error and metadata-contract successor without rewriting its original evidence."
+    }
+  },
+  "validation": {
+    "targeted": {
+      "passed": 105,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "related_regressions": {
+      "passed": 198,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "historical_successor_layers": {
+      "first_layer_passed": 275,
+      "second_layer_passed": 137,
+      "failed": 0
+    },
+    "full_cpu_suite": {
+      "passed": 4299,
+      "failed": 0,
+      "skipped": 1,
+      "xfailed": 0,
+      "deselected": 7,
+      "warnings": 6,
+      "subtests_passed": 8,
+      "allowed_skip": "tests/test_analytic_periodic_defect_gas_2d.py::test_nematics3d_recovers_requested_defect_count_charges_and_positions"
+    }
+  },
+  "authorization": {
+    "local_implementation_authorized": true,
+    "external_review_requested": true,
+    "push_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false
+  }
+}

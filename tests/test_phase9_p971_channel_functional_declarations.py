@@ -14,6 +14,7 @@ import pssolver
 from pssolver import (
     Output,
     Simulation,
+    SimulationInputError,
     SnapshotInitialCondition,
     SpectralNumerics,
     TimeStepping,
@@ -229,8 +230,16 @@ def test_p971_declaration_does_not_allocate_execute_or_write_output(tmp_path):
 
     assert declaration.executable is True
     assert not output.exists()
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(
+        SimulationInputError,
+        match="snapshot could not be read",
+    ) as caught:
         build_channel_activity_functional_runtime(declaration.request)
+    assert caught.value.application_family == (
+        "channel_complete_stress_beris_edwards"
+    )
+    assert caught.value.stage == "initial_condition"
+    assert caught.value.step == 0
     with pytest.raises(ValueError, match="periodic"):
         build_functional_runtime(declaration.request)
     assert not output.exists()

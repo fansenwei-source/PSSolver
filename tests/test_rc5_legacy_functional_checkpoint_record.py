@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
@@ -110,7 +112,7 @@ def _latest_successor(relative: str, historical: str) -> str:
         )
         if successor is not None and resolved in accepted:
             resolved = successor["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 def test_r51_record_binds_implementation_fixture_and_regressions():
@@ -295,7 +297,7 @@ def test_r51_successors_are_exact_and_do_not_rewrite_historical_records():
         successor = v022_release_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
-        assert _sha256(relative) == resolved
+        assert _sha256(relative) == resolve_s03_successor(relative, resolved)
     assert record["scope"]["historical_records_rewritten"] is False
     assert record["scope"]["tag_or_release_modified"] is False
 

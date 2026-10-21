@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
@@ -277,7 +279,9 @@ def test_r57_record_binds_implementation_and_regression_sources():
             resolved = _resolve_rc6_r5_successor(relative, resolved)
             resolved = _resolve_rc6_r6_successor(relative, resolved)
             resolved = _resolve_rc6_freeze_successor(relative, resolved)
-            assert _sha256(ROOT / relative) == resolved
+            assert _sha256(ROOT / relative) == resolve_s03_successor(
+                relative, resolved
+            )
 
 
 def test_r57_record_binds_every_historical_successor():
@@ -365,7 +369,9 @@ def test_r57_record_binds_every_historical_successor():
         resolved = _resolve_rc6_r5_successor(relative, resolved)
         resolved = _resolve_rc6_r6_successor(relative, resolved)
         resolved = _resolve_rc6_freeze_successor(relative, resolved)
-        assert _sha256(ROOT / relative) == resolved
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative, resolved
+        )
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["reason"]
 

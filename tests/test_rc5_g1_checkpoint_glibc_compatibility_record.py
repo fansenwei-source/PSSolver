@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
@@ -75,7 +77,7 @@ def test_glibc_compatibility_record_binds_implementation_and_tests():
         "PASS_RC5_G1_CHECKPOINT_GLIBC_2_17_CPU_COMPATIBILITY_CANDIDATE"
     )
     for relative, expected in record["new_sources"].items():
-        assert _sha256(relative) == expected
+        assert _sha256(relative) == resolve_s03_successor(relative, expected)
     for relative, successor in record["historical_successor_sources"].items():
         expected = successor["current_sha256"]
         rc6_successor = rc6_successors.get(relative)
@@ -155,7 +157,7 @@ def test_glibc_compatibility_record_binds_implementation_and_tests():
             and release_successor["historical_sha256"] == expected
         ):
             expected = release_successor["current_sha256"]
-        assert _sha256(relative) == expected
+        assert _sha256(relative) == resolve_s03_successor(relative, expected)
         assert successor["historical_sha256"] != successor["current_sha256"]
         assert successor["reason"]
 

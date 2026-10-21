@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
@@ -86,7 +88,7 @@ def test_rc444_record_binds_frozen_contract_predecessor_and_current_sources():
                 and registration["historical_sha256"] == resolved
             ):
                 resolved = registration["current_sha256"]
-        assert resolved == actual
+        assert resolve_s03_successor(relative, resolved) == actual
 
 
 def test_rc444_connects_policy_diagnostics_and_truthful_capabilities():

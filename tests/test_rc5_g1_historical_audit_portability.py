@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
@@ -127,7 +129,7 @@ def test_historical_audit_record_binds_only_forward_test_successors():
         successor = v022_release_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
-        assert _sha256(relative) == resolved
+        assert _sha256(relative) == resolve_s03_successor(relative, resolved)
         assert registration["production_runtime_changed"] is False
         assert registration["scientific_threshold_changed"] is False
 

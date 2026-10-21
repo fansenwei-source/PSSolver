@@ -49,7 +49,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts = Counter(entry["status"] for entry in entries)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 20,
+        "registered": 14,
+        "claimed_fixed": 6,
         "verified": 1,
         "deferred": 2,
         "accepted": 1,
@@ -81,9 +82,16 @@ def test_five_v020_deferred_items_are_migrated_with_control_classification():
         "C2-17": False,
         "C2-18": True,
     }
+    claimed = {"C1-10", "C1-11"}
     for issue_id, affects_control in expected.items():
         item = issues[issue_id]
-        assert item["status"] == "registered"
+        assert item["status"] == (
+            "claimed_fixed" if issue_id in claimed else "registered"
+        )
+        if issue_id in claimed:
+            assert item["fixed_in"] == (
+                "a654e1c1d97fa364ac32b6ccbf93070056066d21"
+            )
         assert item["affects_v0_2_0"] is True
         assert item["affects_v0_2_1"] is True
         assert item["affects_control_paths"] is affects_control
@@ -116,7 +124,11 @@ def test_v021_limitations_preserve_version_and_control_boundaries():
     ):
         assert issues[issue_id]["affects_control_paths"] is True
         assert issues[issue_id]["exercised_by_current_control_research"] is False
-    assert issues["V-22"]["status"] == issues["V-23"]["status"] == "registered"
+    assert issues["V-22"]["status"] == "registered"
+    assert issues["V-23"]["status"] == "claimed_fixed"
+    assert issues["V-23"]["fixed_in"] == (
+        "a654e1c1d97fa364ac32b6ccbf93070056066d21"
+    )
     assert issues["V-22"]["target_release"] == "0.3"
     assert issues["V-23"]["target_release"] == "0.3"
     assert "retarget" in issues["V-22"]["notes"]
@@ -135,7 +147,17 @@ def test_rc5_rc6_residuals_are_registered_without_claiming_fixes():
         "B30",
         "S1-04",
     }
-    assert all(issues[issue_id]["status"] == "registered" for issue_id in registered)
+    claimed = {"A2-24/C1-15", "C1-08"}
+    assert all(
+        issues[issue_id]["status"]
+        == ("claimed_fixed" if issue_id in claimed else "registered")
+        for issue_id in registered
+    )
+    assert all(
+        issues[issue_id]["fixed_in"]
+        == "a654e1c1d97fa364ac32b6ccbf93070056066d21"
+        for issue_id in claimed
+    )
     assert issues["A2-11"]["status"] == "accepted"
     assert issues["NEW-14"]["status"] == "open"
     assert issues["NEW-14"]["affects_control_paths"] is True
@@ -158,7 +180,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     registered = {
         issue_id for issue_id, item in issues.items() if item["status"] == "registered"
     }
-    assert len(registered) == 20
+    assert len(registered) == 14
     assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in registered)
     assert issues["A2-21/S2-12"]["target_release"] == "0.3"
     assert "S-07" in issues["B30"]["notes"]

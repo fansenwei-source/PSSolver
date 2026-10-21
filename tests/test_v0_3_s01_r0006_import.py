@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s01_r0006_import.json"
@@ -72,8 +74,11 @@ def test_r0006_import_preserves_all_s01_verdicts() -> None:
 
 def test_r0006_import_does_not_change_the_reviewed_registry() -> None:
     registry = _read(RECORD)["registry"]
-    assert registry["sha256"] == _sha256(REGISTRY) == (
+    assert registry["sha256"] == (
         "18a769b757a9c4325d69e8a9e86751c19642e66804141cda678dde408fed9eb3"
+    )
+    assert _sha256(REGISTRY) == resolve_s03_successor(
+        "notes/pssolver_v0_2_x_open_issues.json", registry["sha256"]
     )
     assert registry["issue_count"] == 28
     assert registry["modified_by_import"] is False

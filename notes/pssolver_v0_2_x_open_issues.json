@@ -32,7 +32,8 @@
   "issue_count": 28,
   "status_counts": {
     "open": 1,
-    "registered": 20,
+    "registered": 14,
+    "claimed_fixed": 6,
     "verified": 1,
     "deferred": 2,
     "accepted": 1,
@@ -63,7 +64,8 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
       "target_release": "0.3",
       "notes": "application_family, stage, and step are absent; SimulationExecutionError.to_metadata raises AttributeError."
     },
@@ -77,7 +79,8 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
       "target_release": "0.3",
       "notes": "CPCE details also require JSON-finite values."
     },
@@ -149,7 +152,8 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
       "target_release": "0.3",
       "notes": "Repro: chmod the immediate checkpoint parent to 000, then call functional export_checkpoint; the initial existence/lstat probe raises PermissionError instead of the public checkpoint error hierarchy. Suggested fix: classify that initial OSError through the same CheckpointIOError mapping used by staging creation."
     },
@@ -205,7 +209,8 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
       "target_release": "0.3",
       "notes": "The fail-closed reader exception is not mapped to the public checkpoint-error family."
     },
@@ -247,7 +252,8 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
       "target_release": "0.3",
       "notes": "Includes Plane compatibility-identity tampering and Periodic save_start beyond the final step."
     },
@@ -261,7 +267,8 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
       "target_release": "0.3",
       "notes": "Failures occur before tensor computation and produce no output."
     },

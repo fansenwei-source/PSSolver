@@ -9,6 +9,8 @@ from pathlib import Path
 import pytest
 import torch
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 from pssolver.configuration.execution_device import (
     configure_tf32_execution,
     scoped_tf32_execution,
@@ -114,7 +116,7 @@ def _resolve_rc457_successor(relative: str, historical: str) -> str:
         )
         if successor is not None and resolved in accepted:
             resolved = successor["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 @pytest.fixture

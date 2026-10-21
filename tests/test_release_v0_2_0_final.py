@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 import pssolver
 from pssolver.functional.api import functional_protocol_provenance
 
@@ -299,6 +301,10 @@ def test_v020_successor_record_matches_every_registered_source():
             and development["historical_sha256"] == expected
         ):
             accepted.add(development["current_sha256"])
+        accepted.update(
+            resolve_s03_successor(relative, value)
+            for value in tuple(accepted)
+        )
         assert actual in accepted
         assert identity["reason"]
 

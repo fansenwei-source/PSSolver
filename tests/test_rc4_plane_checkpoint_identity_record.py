@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = (
@@ -64,7 +66,7 @@ def test_rc422_record_binds_plan_parent_and_implementation_files():
             successor = successors.get(relative)
             if successor is not None and successor["historical_sha256"] == resolved:
                 resolved = successor["current_sha256"]
-        assert resolved == actual
+        assert resolve_s03_successor(relative, resolved) == actual
 
 
 def test_rc422_record_freezes_v2_and_legacy_upgrade_contracts():

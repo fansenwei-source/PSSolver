@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 import subprocess
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_2_v17_r0002_import.json"
@@ -81,7 +83,7 @@ def test_r0002_import_is_a_forward_only_successor() -> None:
         successor = s01_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
-        assert _sha256(relative) == expected
+        assert _sha256(relative) == resolve_s03_successor(relative, expected)
         assert registration["reason"]
 
 
@@ -91,7 +93,23 @@ def test_r0002_registry_updates_are_exact() -> None:
     registry = _read(REGISTRY)
     issues = _issues()
     assert registry["issue_count"] == record["issue_count"] == 28
-    assert registry["status_counts"] == record["status_counts"]
+    assert record["status_counts"] == {
+        "open": 1,
+        "registered": 20,
+        "verified": 1,
+        "deferred": 2,
+        "accepted": 1,
+        "coverage_gap": 3,
+    }
+    assert registry["status_counts"] == {
+        "open": 1,
+        "registered": 14,
+        "claimed_fixed": 6,
+        "verified": 1,
+        "deferred": 2,
+        "accepted": 1,
+        "coverage_gap": 3,
+    }
     verified = record["verified"]
     assert issues["V-17"]["status"] == verified["status"] == "verified"
     assert issues["V-17"]["fixed_in"] == verified["fixed_in"]
@@ -104,6 +122,12 @@ def test_r0002_registry_updates_are_exact() -> None:
             ):
                 assert value == "0.2.x"
                 assert actual[key] == "0.3"
+            elif key == "status" and expected["id"] == "V-23":
+                assert value == "registered"
+                assert actual[key] == "claimed_fixed"
+                assert actual["fixed_in"] == (
+                    "a654e1c1d97fa364ac32b6ccbf93070056066d21"
+                )
             else:
                 assert actual[key] == value
     for issue_id, decision in record["decision_bindings"].items():

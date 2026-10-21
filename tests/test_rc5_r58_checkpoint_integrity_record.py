@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
@@ -250,7 +252,9 @@ def test_r58_record_binds_implementation_and_exact_sources():
                 and registration["historical_sha256"] == expected
             ):
                 expected = registration["current_sha256"]
-            assert _sha256(ROOT / relative) == expected
+            assert _sha256(ROOT / relative) == resolve_s03_successor(
+                relative, expected
+            )
     for relative, registration in record["historical_successor_sources"].items():
         assert registration["historical_sha256"] != registration["current_sha256"]
         expected = registration["current_sha256"]
@@ -340,7 +344,9 @@ def test_r58_record_binds_implementation_and_exact_sources():
         successor = v022_release_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative, expected
+        )
         assert registration["reason"]
 
 

@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
@@ -101,7 +103,7 @@ def _r513(relative: str, resolved: str) -> str:
     successor = _read(V022_V17)["historical_successor_sources"].get(relative)
     if successor is not None and successor["historical_sha256"] == resolved:
         resolved = successor["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 def test_rc457_records_provider_pass_and_exact_consumer_stop():

@@ -9,6 +9,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 from pssolver.operators import (
     FreshInitialConditioningPolicy,
     legacy_whole_slab_sine_conditioning,
@@ -51,7 +53,7 @@ def _rc456_successor(relative: str, historical: str) -> str:
             and registration["historical_sha256"] == resolved
         ):
             resolved = registration["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 def test_policy_declarations_are_immutable_and_match_the_frozen_contract():

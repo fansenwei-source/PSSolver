@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 from pssolver.workflows.plane_checkpoint import (
     PLANE_FORWARD_DYNAMICS_IDENTITY_VERSION,
     PLANE_STATIC_LIFTING_RESTART_SCHEMA_VERSION,
@@ -152,7 +154,7 @@ def test_rc435_record_binds_implementation_and_scope():
                 and registration["historical_sha256"] == resolved
             ):
                 resolved = registration["current_sha256"]
-        assert resolved == actual
+        assert resolve_s03_successor(relative, resolved) == actual
 
     scope = record["scope"]
     assert scope["runtime_metadata_modified"] is True

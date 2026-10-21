@@ -8,6 +8,8 @@ import json
 import re
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 from pssolver import SimulationRunStatus, capability_catalog
 from pssolver.operators.robin import CellCenteredRobinEigenbasisOperator
 
@@ -298,5 +300,7 @@ def test_w1_successor_hashes_match_every_changed_historical_source():
         successor = v022_release_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
-        assert _sha256(ROOT / relative) == resolved
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative, resolved
+        )
         assert registration["reason"]

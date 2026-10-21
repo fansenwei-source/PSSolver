@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
@@ -52,7 +54,7 @@ def _resolve_successor_sha256(relative: str, historical: str) -> str:
             continue
         if successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 def test_rc433_records_the_frozen_restriction_and_parent_contract():

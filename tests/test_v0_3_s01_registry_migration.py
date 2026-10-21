@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 import subprocess
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s01_registry_migration.json"
@@ -34,7 +36,10 @@ def test_s01_record_binds_the_registry_successor_and_roadmap() -> None:
     assert record["git_identity"]["parent_commit"] == (
         "7301bd4bf0b49b27e1c07d248ea3ca3f483dc147"
     )
-    assert record["registry"]["successor_sha256"] == _sha256(REGISTRY)
+    assert _sha256(REGISTRY) == resolve_s03_successor(
+        "notes/pssolver_v0_2_x_open_issues.json",
+        record["registry"]["successor_sha256"],
+    )
     assert registry["primary_ref"] == "dev/0.3"
     assert registry["roadmap"] == {
         "decision": "D-0010",
@@ -49,12 +54,25 @@ def test_s01_assigns_every_registered_item_to_0_3_exactly() -> None:
     registered = {
         issue_id for issue_id, item in issues.items() if item["status"] == "registered"
     }
-    assert registered == set(record["registered_ids"])
-    assert len(registered) == 20
+    claimed = {
+        issue_id
+        for issue_id, item in issues.items()
+        if item["status"] == "claimed_fixed"
+    }
+    assert registered | claimed == set(record["registered_ids"])
+    assert len(registered) == 14
+    assert claimed == {
+        "C1-10",
+        "C1-11",
+        "A2-24/C1-15",
+        "C1-08",
+        "V-23",
+        "V-21",
+    }
     assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in registered)
     assert set(record["changed_target_ids"]) | set(
         record["already_targeted_to_0_3"]
-    ) == registered
+    ) == registered | claimed
     assert set(record["changed_target_ids"]).isdisjoint(
         record["already_targeted_to_0_3"]
     )
@@ -107,7 +125,9 @@ def test_s01_historical_successors_bind_the_parent_and_current_files() -> None:
         assert hashlib.sha256(historical).hexdigest() == successor[
             "historical_sha256"
         ]
-        assert _sha256(ROOT / relative) == successor["current_sha256"]
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative, successor["current_sha256"]
+        )
         assert successor["reason"]
 
 

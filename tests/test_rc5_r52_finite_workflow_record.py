@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
@@ -105,7 +107,7 @@ def _latest_successor(relative: str, historical: str) -> str:
             and registration["historical_sha256"] == resolved
         ):
             resolved = registration["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 def test_r52_record_binds_implementation_regressions_and_successors():

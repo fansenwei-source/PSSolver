@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc426_cross_device_checkpoint_plan.json"
@@ -85,7 +87,7 @@ def test_rc426_plan_binds_rc425_and_reviewed_sources():
                 and registration["historical_sha256"] == resolved
             ):
                 resolved = registration["current_sha256"]
-        assert resolved == actual
+        assert resolve_s03_successor(relative, resolved) == actual
 
 
 def test_rc426_matrix_is_complete_ordered_and_bidirectional():

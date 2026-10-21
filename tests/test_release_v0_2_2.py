@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+
+from tests.v0_3_s03_successor import resolve_s03_successor
 import subprocess
 
 import pssolver
@@ -170,7 +172,9 @@ def test_v022_forward_successors_match_every_changed_historical_source() -> None
         successor = s01_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative, expected
+        )
         assert identity["reason"]
 
 
@@ -181,8 +185,9 @@ def test_v022_keeps_new_low_severity_findings_deferred() -> None:
         "V-22": "registered for later 0.2.x work",
         "V-23": "registered for later 0.2.x work",
     }
+    expected_status = {"V-22": "registered", "V-23": "claimed_fixed"}
     for issue_id in record["known_deferred_findings"]:
-        assert issues[issue_id]["status"] == "registered"
+        assert issues[issue_id]["status"] == expected_status[issue_id]
         assert issues[issue_id]["severity"] == "low"
 
 

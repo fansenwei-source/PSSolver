@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 import subprocess
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 import pssolver
 
 
@@ -45,9 +47,11 @@ def test_integration_keeps_the_v03_version_and_exact_runtime_scope() -> None:
         "tests/test_v0_2_1_n1_checkpoint_nfs.py",
         "tests/test_v0_2_2_v17_checkpoint_symlink_parent.py",
     ]
-    assert _sha256(ROOT / "pssolver/io/checkpoint.py") == record[
-        "runtime_sources"
-    ]["pssolver/io/checkpoint.py"]
+    relative = "pssolver/io/checkpoint.py"
+    expected = record["runtime_sources"][relative]
+    assert _sha256(ROOT / relative) == resolve_s03_successor(
+        relative, expected
+    )
 
 
 def test_integration_binds_the_original_and_development_commits() -> None:
@@ -78,7 +82,9 @@ def test_integration_binds_runtime_tests_and_forward_successors() -> None:
         "historical_successor_sources"
     ]
     for relative, expected in record["regression_tests"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative, expected
+        )
     release_tip = record["source"]["v0_2_2_evidence_tip"]
     for relative, successor in record["historical_successor_sources"].items():
         historical = _git_bytes(release_tip, relative)
@@ -92,7 +98,9 @@ def test_integration_binds_runtime_tests_and_forward_successors() -> None:
             and s01_successor["historical_sha256"] == expected
         ):
             expected = s01_successor["current_sha256"]
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative, expected
+        )
         assert successor["reason"]
 
 

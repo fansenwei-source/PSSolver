@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 import pssolver
 import pssolver.api
 from pssolver.configuration.public_simulation_runner import (
@@ -113,7 +115,7 @@ def _r57_successor(relative: str, historical: str) -> str:
         )
         if registration is not None and resolved in accepted:
             resolved = registration["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 def test_r56_record_declares_cpu_closure_without_scope_expansion():

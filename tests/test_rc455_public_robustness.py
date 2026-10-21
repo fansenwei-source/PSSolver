@@ -9,6 +9,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 from pssolver.configuration.execution_device import validate_execution_device
 from pssolver.configuration.public_option_validation import (
     validate_iterative_pressure_options,
@@ -102,7 +104,7 @@ def _latest_successor(relative: str, historical: str) -> str:
             and registration["historical_sha256"] == resolved
         ):
             resolved = registration["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 @pytest.mark.parametrize(

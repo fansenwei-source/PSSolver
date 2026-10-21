@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc458_h100_closure.json"
@@ -54,7 +56,7 @@ def _v021_n1_successor(relative: str, resolved: str) -> str:
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == resolved:
         resolved = registration["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 def _rc6_r1_successor(relative: str, resolved: str) -> str:
@@ -116,7 +118,7 @@ def _rc6_r6_successor(relative: str, resolved: str) -> str:
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == resolved:
         return registration["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 def _record() -> dict[str, object]:

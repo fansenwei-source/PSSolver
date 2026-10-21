@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 import subprocess
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 CLOSURE = ROOT / "notes/PSSolver_v0_2_0rc4_rc447_h100_closure.json"
@@ -82,7 +84,7 @@ def _resolve_successor_sha256(relative: str, historical: str) -> str:
             continue
         if registration["historical_sha256"] == resolved:
             resolved = registration["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 def test_rc447_closure_binds_local_records_and_external_manifest():

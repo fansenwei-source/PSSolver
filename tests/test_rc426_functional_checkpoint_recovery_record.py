@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = (
@@ -48,6 +50,9 @@ def _assert_successor_chain(relative, historical_sha256, current_sha256):
         observed = registration["current_sha256"]
         if observed == current_sha256:
             return
+    observed = resolve_s03_successor(relative, observed)
+    if observed == current_sha256:
+        return
     raise AssertionError(f"successor chain for {relative} stops at {observed}")
 
 

@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 import subprocess
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
@@ -42,7 +44,7 @@ def _v17_successor(relative: str, historical: str) -> str:
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == historical:
         historical = registration["current_sha256"]
-    return historical
+    return resolve_s03_successor(relative, historical)
 
 
 def test_n1_record_binds_the_implementation_commit_and_sources():

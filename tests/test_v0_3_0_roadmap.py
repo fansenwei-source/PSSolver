@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 ROADMAP = ROOT / "notes/PSSolver_v0_3_0_roadmap.json"
@@ -41,8 +43,11 @@ def test_s02_draft_binds_the_registry_and_confirmed_execution_order() -> None:
         "S-10",
     ]
     scope = draft["known_issue_scope"]
-    assert scope["registry_sha256"] == _sha256(REGISTRY) == (
+    assert scope["registry_sha256"] == (
         "18a769b757a9c4325d69e8a9e86751c19642e66804141cda678dde408fed9eb3"
+    )
+    assert _sha256(REGISTRY) == resolve_s03_successor(
+        "notes/pssolver_v0_2_x_open_issues.json", scope["registry_sha256"]
     )
     assert scope["registry_issue_count"] == registry["issue_count"] == 28
 

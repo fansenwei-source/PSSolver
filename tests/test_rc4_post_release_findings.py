@@ -4,6 +4,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes" / "PSSolver_v0_2_0rc4_post_release_findings.json"
@@ -332,7 +334,9 @@ def test_historical_successor_sources_match_the_current_files_exactly():
         ].get(relative_path)
         if successor is not None and successor["historical_sha256"] == resolved:
             resolved = successor["current_sha256"]
-        assert _sha256(ROOT / relative_path) == resolved
+        assert _sha256(ROOT / relative_path) == resolve_s03_successor(
+            relative_path, resolved
+        )
         assert entry["reason"]
 
 

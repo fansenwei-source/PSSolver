@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 from pssolver import capability_catalog
 
 
@@ -302,7 +304,9 @@ def test_release_candidate_registers_exact_portability_successors():
             v17 = v17_successors.get(relative)
             if v17 is not None and v17["historical_sha256"] == resolved:
                 resolved = v17["current_sha256"]
-            assert resolved == hashlib.sha256((PROJECT_ROOT / relative).read_bytes()).hexdigest()
+            assert resolve_s03_successor(relative, resolved) == hashlib.sha256(
+                (PROJECT_ROOT / relative).read_bytes()
+            ).hexdigest()
         assert registration["introduced_by_phase"] == (
             "v0.2.0rc4-release-preparation"
         )

@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 import subprocess
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
@@ -61,7 +63,7 @@ def test_v17_record_binds_current_and_historical_source_bytes() -> None:
         "historical_successor_sources"
     ]
     for relative, expected in record["source_sha256"].items():
-        assert _sha256(relative) == expected
+        assert _sha256(relative) == resolve_s03_successor(relative, expected)
     parent = record["git_identity"]["implementation_parent"]
     for relative, registration in record[
         "historical_successor_sources"
@@ -82,7 +84,7 @@ def test_v17_record_binds_current_and_historical_source_bytes() -> None:
         successor = development_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
-        assert _sha256(relative) == expected
+        assert _sha256(relative) == resolve_s03_successor(relative, expected)
         assert registration["reason"]
 
 

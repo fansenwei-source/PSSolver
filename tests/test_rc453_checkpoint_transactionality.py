@@ -13,6 +13,8 @@ import subprocess
 
 import pytest
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 import pssolver.io.checkpoint as checkpoint_io
 from pssolver.functional.errors import (
     FunctionalCheckpointCompatibilityError,
@@ -433,7 +435,7 @@ def test_rc453_record_binds_contract_sources_and_scope():
                 continue
             if registration["historical_sha256"] == resolved:
                 resolved = registration["current_sha256"]
-        assert resolved == actual
+        assert resolve_s03_successor(relative, resolved) == actual
     parent = record["baseline"]["implementation_parent_commit"]
     for relative, registration in record[
         "historical_successor_sources"
@@ -471,7 +473,9 @@ def test_rc453_record_binds_contract_sources_and_scope():
                 and successor["historical_sha256"] == resolved
             ):
                 resolved = successor["current_sha256"]
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == resolved
+        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == (
+            resolve_s03_successor(relative, resolved)
+        )
     assert record["scope"] == {
         "checkpoint_schema_or_tensor_layout_version_changed": False,
         "scientific_model_changed": False,

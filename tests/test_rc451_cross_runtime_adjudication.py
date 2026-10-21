@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc451_cross_runtime_adjudication.json"
@@ -78,7 +80,7 @@ def _resolve_successor_sha256(relative: str, historical: str) -> str:
             continue
         if registration["historical_sha256"] == resolved:
             resolved = registration["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 def test_rc451_is_analysis_only_and_runs_all_ten_frozen_probes():

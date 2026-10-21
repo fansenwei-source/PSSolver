@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
@@ -60,7 +62,7 @@ def _freeze_successor(relative: str, historical: str) -> str:
     ].get(relative)
     if registration is not None and registration["historical_sha256"] == historical:
         historical = registration["current_sha256"]
-    return historical
+    return resolve_s03_successor(relative, historical)
 
 
 def test_rc6_6_record_binds_implementation_and_regression_sources():
@@ -75,7 +77,9 @@ def test_rc6_6_record_binds_implementation_and_regression_sources():
     assert record["git_identity"]["record_commit_is_qualified_source"] is False
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
-            assert _sha256(relative) == expected
+            assert _sha256(relative) == resolve_s03_successor(
+                relative, expected
+            )
 
 
 def test_rc6_6_contract_covers_all_public_restart_workflows():

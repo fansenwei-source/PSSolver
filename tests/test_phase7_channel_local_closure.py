@@ -8,6 +8,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 from pssolver.applications.channel_active_nematics import run_channel_active_nematics
 from pssolver.configuration.channel_active_nematics import ChannelActiveNematicRunSpec
 from pssolver.workflows import load_channel_checkpoint
@@ -161,6 +163,6 @@ def test_p75_record_binds_package_workflow_sources():
             ].get(implementation[name])
             if successor is not None and successor["historical_sha256"] == resolved:
                 resolved = successor["current_sha256"]
-        assert resolved == actual
+        assert resolve_s03_successor(implementation[name], resolved) == actual
     assert record["authorization"]["p7_5_complete"] is True
     assert record["authorization"]["p7_6_h100_authorized"] is False

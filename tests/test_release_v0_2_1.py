@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 import pssolver
 from pssolver.functional.api import functional_protocol_provenance
 
@@ -164,7 +166,9 @@ def test_v021_forward_successors_match_every_changed_historical_source():
         successor = development_successors.get(relative)
         if successor is not None and successor["historical_sha256"] == expected:
             expected = successor["current_sha256"]
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative, expected
+        )
         assert identity["reason"]
 
 
