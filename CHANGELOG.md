@@ -17,6 +17,21 @@
   functional-exception translation used by its import path and the Channel
   bridge.
 
+### Checkpoint robustness
+
+- Pin the resolved checkpoint parent for the lifetime of a transaction, so a
+  concurrent parent-symlink retarget fails closed and cleanup still removes
+  staging from the original directory.
+- Harden the NFS-compatible no-clobber fallback against lost `mkdir` replies
+  and placeholder inode replacement by holding one descriptor-backed,
+  advisory-locked claim and cleaning it up at most once.
+- Classify a parent-directory sync failure after publication as the public
+  `CheckpointDurabilityError` (and functional counterpart), with metadata that
+  explicitly records that publication completed but durability was not
+  confirmed.
+- Permit explicit legacy Channel checkpoint upgrades from read-only sources
+  without mutating the source, and remove read-only staging after failure.
+
 ## 0.2.2 — 2026-10-20
 
 Maintenance release over `v0.2.1` containing only the verified V-17

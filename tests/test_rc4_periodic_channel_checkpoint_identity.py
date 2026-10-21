@@ -6,6 +6,7 @@ from dataclasses import replace
 import hashlib
 import json
 from pathlib import Path
+import stat
 
 import numpy as np
 import pytest
@@ -570,6 +571,78 @@ def test_m12_post_nyquist_channel_checkpoint_upgrades(generation, tmp_path):
     assert metadata["migration_provenance"][
         "forward_nyquist_applicability"
     ] == "source_is_post_nyquist_repair"
+
+
+def _set_tree_read_only(directory: Path) -> dict[Path, int]:
+    modes = {
+        path: stat.S_IMODE(path.lstat().st_mode)
+        for path in (directory, *directory.rglob("*"))
+        if not path.is_symlink()
+    }
+    for path in sorted(modes, key=lambda item: len(item.parts), reverse=True):
+        path.chmod(0o555 if path.is_dir() else 0o444)
+    return modes
+
+
+def _restore_tree_modes(modes: dict[Path, int]) -> None:
+    for path in sorted(modes, key=lambda item: len(item.parts)):
+        if path.exists() and not path.is_symlink():
+            path.chmod(modes[path])
+
+
+def test_c2_17_read_only_channel_upgrade_succeeds_without_mutating_source(
+    tmp_path,
+):
+    run_spec, source = _channel_runtime(_channel_simulation(tmp_path, 6))
+    directory = tmp_path / "legacy_read_only"
+    write_channel_beris_edwards_checkpoint(directory, source, run_spec=run_spec)
+    _downgrade_channel(directory, run_spec, SourceReleaseGeneration.RC2)
+    before = _tree_sha256(directory)
+    modes = _set_tree_read_only(directory)
+    try:
+        upgraded = upgrade_channel_beris_edwards_checkpoint_directory(
+            directory,
+            tmp_path / "upgraded_read_only",
+            source_run_spec=run_spec,
+            source_release_generation=SourceReleaseGeneration.RC2,
+        )
+        assert _tree_sha256(directory) == before
+        metadata = json.loads((upgraded / "checkpoint.json").read_text())
+        assert metadata["format_version"] == CHANNEL_CHECKPOINT_VERSION
+    finally:
+        _restore_tree_modes(modes)
+
+
+def test_c2_17_failed_read_only_channel_upgrade_leaves_no_staging(
+    tmp_path,
+    monkeypatch,
+):
+    run_spec, source = _channel_runtime(_channel_simulation(tmp_path, 6))
+    directory = tmp_path / "legacy_read_only_failure"
+    write_channel_beris_edwards_checkpoint(directory, source, run_spec=run_spec)
+    _downgrade_channel(directory, run_spec, SourceReleaseGeneration.RC2)
+    before = _tree_sha256(directory)
+    modes = _set_tree_read_only(directory)
+    target = tmp_path / "upgrade_must_fail"
+    monkeypatch.setattr(
+        "pssolver.workflows.channel_beris_edwards.seal_checkpoint_metadata",
+        lambda _metadata: (_ for _ in ()).throw(
+            RuntimeError("injected migration metadata failure")
+        ),
+    )
+    try:
+        with pytest.raises(RuntimeError, match="injected migration metadata failure"):
+            upgrade_channel_beris_edwards_checkpoint_directory(
+                directory,
+                target,
+                source_run_spec=run_spec,
+                source_release_generation=SourceReleaseGeneration.RC2,
+            )
+        assert _tree_sha256(directory) == before
+        assert not target.exists()
+        assert not list(tmp_path.glob(f".{target.name}.tmp-*"))
+    finally:
+        _restore_tree_modes(modes)
 
 
 def test_unknown_periodic_and_channel_versions_reject_before_tensor_load(

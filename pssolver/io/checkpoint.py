@@ -100,6 +100,12 @@ class CheckpointIOError(CheckpointError, OSError):
     code = "checkpoint_io_error"
 
 
+class CheckpointDurabilityError(CheckpointIOError):
+    """Publication completed, but its parent-directory sync did not."""
+
+    code = "checkpoint_durability_error"
+
+
 class _RenameNoReplaceUnsupported(CheckpointIOError):
     """Internal signal for a positively identified NFS capability gap."""
 
@@ -350,14 +356,23 @@ def _new_staging_directory(target: Path, *, operation: str) -> Path:
             message=f"checkpoint parent cannot be created: {target.parent}",
         ) from exc
     try:
-        target.lstat()
+        stable_parent = target.parent.resolve(strict=True)
+    except OSError as exc:
+        raise _io_error(
+            exc,
+            operation=operation,
+            message=f"checkpoint parent cannot be resolved: {target.parent}",
+        ) from exc
+    stable_target = stable_parent / target.name
+    try:
+        stable_target.lstat()
     except FileNotFoundError:
         pass
     except OSError as exc:
         raise _io_error(
             exc,
             operation=operation,
-            message=f"checkpoint target cannot be inspected: {target}",
+            message=f"checkpoint target cannot be inspected: {stable_target}",
         ) from exc
     else:
         raise CheckpointExistsError(
@@ -365,7 +380,7 @@ def _new_staging_directory(target: Path, *, operation: str) -> Path:
             operation=operation,
         )
     for _attempt in range(128):
-        staging = target.parent / (
+        staging = stable_parent / (
             f".{target.name}.tmp-{secrets.token_hex(12)}"
         )
         try:
@@ -384,6 +399,86 @@ def _new_staging_directory(target: Path, *, operation: str) -> Path:
         operation=operation,
         failure_domain="filesystem",
     )
+
+
+def _directory_identity(path: Path, *, operation: str) -> tuple[int, int]:
+    try:
+        path_stat = path.stat()
+    except OSError as exc:
+        raise _io_error(
+            exc,
+            operation=operation,
+            message=f"checkpoint parent cannot be inspected: {path}",
+        ) from exc
+    if not stat.S_ISDIR(path_stat.st_mode):
+        raise CheckpointIOError(
+            f"checkpoint parent is not a directory: {path}",
+            operation=operation,
+            failure_domain="filesystem",
+        )
+    return path_stat.st_dev, path_stat.st_ino
+
+
+def _require_stable_requested_parent(
+    requested_parent: Path,
+    expected_identity: tuple[int, int],
+    *,
+    operation: str,
+) -> None:
+    observed_identity = _directory_identity(requested_parent, operation=operation)
+    if observed_identity != expected_identity:
+        raise CheckpointIOError(
+            "checkpoint parent changed during the transaction",
+            operation=operation,
+            failure_domain="filesystem",
+            details={
+                "expected_parent_device": expected_identity[0],
+                "expected_parent_inode": expected_identity[1],
+                "observed_parent_device": observed_identity[0],
+                "observed_parent_inode": observed_identity[1],
+            },
+        )
+
+
+def _remove_staging_tree(staging: Path, *, operation: str) -> None:
+    """Remove a staging tree even when a copied source made it read-only."""
+
+    try:
+        if staging.is_symlink():
+            staging.unlink()
+            return
+        if not staging.exists():
+            return
+        for root, directories, files in os.walk(staging, topdown=False):
+            root_path = Path(root)
+            for name in files:
+                path = root_path / name
+                if not path.is_symlink():
+                    path.chmod(path.lstat().st_mode | stat.S_IWUSR)
+            for name in directories:
+                path = root_path / name
+                if not path.is_symlink():
+                    path.chmod(
+                        path.lstat().st_mode
+                        | stat.S_IRUSR
+                        | stat.S_IWUSR
+                        | stat.S_IXUSR
+                    )
+        staging.chmod(
+            staging.lstat().st_mode
+            | stat.S_IRUSR
+            | stat.S_IWUSR
+            | stat.S_IXUSR
+        )
+        shutil.rmtree(staging)
+    except FileNotFoundError:
+        return
+    except OSError as exc:
+        raise _io_error(
+            exc,
+            operation=operation,
+            message=f"checkpoint staging directory cannot be removed: {staging}",
+        ) from exc
 
 
 def _fsync_directory(path: Path, *, operation: str) -> None:
@@ -560,36 +655,109 @@ def _checkpoint_tree_digest(directory: Path, *, operation: str) -> str:
     return digest.hexdigest()
 
 
-def _placeholder_identity(path: Path) -> tuple[int, int] | None:
+_PLACEHOLDER_OWNER_MARKER = ".pssolver-placeholder-owner"
+
+
+class _OwnedPlaceholder:
+    """One empty publication claim pinned by an open directory descriptor."""
+
+    def __init__(self, target: Path, descriptor: int) -> None:
+        self.target = target
+        self.descriptor = descriptor
+        path_stat = os.fstat(descriptor)
+        self.identity = (path_stat.st_dev, path_stat.st_ino)
+        self.closed = False
+
+    def matches_path(self) -> bool:
+        try:
+            path_stat = self.target.lstat()
+        except FileNotFoundError:
+            return False
+        return (
+            stat.S_ISDIR(path_stat.st_mode)
+            and not stat.S_ISLNK(path_stat.st_mode)
+            and (path_stat.st_dev, path_stat.st_ino) == self.identity
+        )
+
+    def close(self) -> None:
+        if not self.closed:
+            os.close(self.descriptor)
+            self.closed = True
+
+    def remove_if_owned(self, *, operation: str) -> None:
+        """Remove the claim at most once and never touch a replacement inode."""
+
+        try:
+            if self.matches_path():
+                os.rmdir(self.target)
+        except FileNotFoundError:
+            pass
+        except OSError as exc:
+            raise _io_error(
+                exc,
+                operation=operation,
+                message=(
+                    "checkpoint publication placeholder cannot be removed: "
+                    f"{self.target}"
+                ),
+            ) from exc
+        finally:
+            self.close()
+
+
+def _claim_placeholder(target: Path, *, operation: str) -> _OwnedPlaceholder:
+    """Elect one owner and make its empty claim inaccessible before rename."""
+
+    import fcntl
+
+    flags = (
+        os.O_RDONLY
+        | getattr(os, "O_DIRECTORY", 0)
+        | getattr(os, "O_NOFOLLOW", 0)
+    )
+    descriptor: int | None = None
+    marker_descriptor: int | None = None
+    ownership_transferred = False
     try:
-        path_stat = path.lstat()
-    except FileNotFoundError:
-        return None
-    if stat.S_ISLNK(path_stat.st_mode) or not stat.S_ISDIR(path_stat.st_mode):
-        return None
-    return path_stat.st_dev, path_stat.st_ino
-
-
-def _remove_owned_placeholder(
-    target: Path,
-    identity: tuple[int, int],
-    *,
-    operation: str,
-) -> None:
-    """Remove only the exact empty placeholder claimed by this publisher."""
-
-    if _placeholder_identity(target) != identity:
-        return
-    try:
-        os.rmdir(target)
-    except FileNotFoundError:
-        return
+        descriptor = os.open(target, flags)
+        marker_descriptor = os.open(
+            _PLACEHOLDER_OWNER_MARKER,
+            os.O_WRONLY | os.O_CREAT | os.O_EXCL,
+            0o600,
+            dir_fd=descriptor,
+        )
+        token = secrets.token_hex(24).encode("ascii")
+        os.write(marker_descriptor, token)
+        os.fsync(marker_descriptor)
+        os.close(marker_descriptor)
+        marker_descriptor = None
+        fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        os.unlink(_PLACEHOLDER_OWNER_MARKER, dir_fd=descriptor)
+        os.fchmod(descriptor, 0)
+        claim = _OwnedPlaceholder(target, descriptor)
+        ownership_transferred = True
+        return claim
+    except FileExistsError as exc:
+        raise CheckpointExistsError(
+            f"checkpoint publication name is already claimed: {target}",
+            operation=operation,
+            legacy_exception_type=type(exc).__name__,
+        ) from exc
     except OSError as exc:
         raise _io_error(
             exc,
             operation=operation,
-            message=f"checkpoint publication placeholder cannot be removed: {target}",
+            message=f"checkpoint publication name cannot be claimed: {target}",
         ) from exc
+    finally:
+        if marker_descriptor is not None:
+            os.close(marker_descriptor)
+        if descriptor is not None and not ownership_transferred:
+            try:
+                os.unlink(_PLACEHOLDER_OWNER_MARKER, dir_fd=descriptor)
+            except OSError:
+                pass
+            os.close(descriptor)
 
 
 def _publish_directory_over_owned_placeholder(
@@ -623,8 +791,11 @@ def _publish_directory_over_owned_placeholder(
             },
         )
     expected_digest = _checkpoint_tree_digest(source, operation=operation)
+    mkdir_error: OSError | None = None
     try:
-        os.mkdir(target, 0)
+        # Keep the new directory searchable only long enough to install the
+        # one-shot ownership marker.  The claim is mode 000 at rename time.
+        os.mkdir(target, 0o700)
     except FileExistsError as exc:
         raise CheckpointExistsError(
             f"checkpoint directory already exists: {target}",
@@ -632,24 +803,34 @@ def _publish_directory_over_owned_placeholder(
             legacy_exception_type=type(exc).__name__,
         ) from exc
     except OSError as exc:
-        raise _io_error(
-            exc,
-            operation=operation,
-            message=f"checkpoint publication name cannot be claimed: {target}",
-        ) from exc
+        # A non-idempotent NFS mkdir can succeed while its reply is lost.  The
+        # marker election below either proves one owner or fails closed.
+        mkdir_error = exc
 
-    identity = _placeholder_identity(target)
-    if identity is None:
+    try:
+        claim = _claim_placeholder(target, operation=operation)
+    except CheckpointError as exc:
+        if mkdir_error is None:
+            try:
+                os.rmdir(target)
+            except OSError:
+                pass
+            raise
         raise _AmbiguousCheckpointPublication(
-            "checkpoint publication placeholder identity is ambiguous",
+            "checkpoint publication placeholder creation cannot be confirmed",
             operation=operation,
             failure_domain="filesystem",
-            details={"publication_outcome": "ambiguous"},
-        )
+            legacy_exception_type=type(mkdir_error).__name__,
+            details={
+                "publication_outcome": "ambiguous",
+                "mkdir_errno": mkdir_error.errno,
+                "claim_error": type(exc).__name__,
+            },
+        ) from mkdir_error
 
     published = False
     try:
-        if _placeholder_identity(target) != identity:
+        if not claim.matches_path():
             raise _AmbiguousCheckpointPublication(
                 "checkpoint publication placeholder ownership changed",
                 operation=operation,
@@ -659,12 +840,7 @@ def _publish_directory_over_owned_placeholder(
         try:
             os.rename(source, target)
         except OSError as exc:
-            if _placeholder_identity(target) == identity:
-                _remove_owned_placeholder(
-                    target,
-                    identity,
-                    operation=operation,
-                )
+            if claim.matches_path():
                 raise _io_error(
                     exc,
                     operation=operation,
@@ -706,14 +882,12 @@ def _publish_directory_over_owned_placeholder(
                 ) from exc
         published = True
     finally:
-        if not published:
-            _remove_owned_placeholder(
-                target,
-                identity,
-                operation=operation,
-            )
+        if published:
+            claim.close()
+        else:
+            claim.remove_if_owned(operation=operation)
     if source.exists() or source.is_symlink():
-        shutil.rmtree(source, ignore_errors=True)
+        _remove_staging_tree(source, operation=operation)
 
 
 def _publish_checkpoint_directory(
@@ -862,21 +1036,68 @@ def checkpoint_directory_transaction(
     # symlink; a dangling symlink is still an occupied no-overwrite target.
     target = Path(os.path.abspath(Path(directory).expanduser()))
     staging = _new_staging_directory(target, operation=operation)
+    stable_parent = staging.parent
+    stable_target = stable_parent / target.name
+    requested_parent_identity = _directory_identity(
+        stable_parent,
+        operation=operation,
+    )
     try:
-        yield staging, target
-        _fsync_staging_tree(staging, operation=operation)
-        _publish_checkpoint_directory(
-            staging,
-            target,
+        _require_stable_requested_parent(
+            target.parent,
+            requested_parent_identity,
             operation=operation,
         )
-        _fsync_directory(target.parent, operation=operation)
+        yield staging, target
+        _fsync_staging_tree(staging, operation=operation)
+        _require_stable_requested_parent(
+            target.parent,
+            requested_parent_identity,
+            operation=operation,
+        )
+        _publish_checkpoint_directory(
+            staging,
+            stable_target,
+            operation=operation,
+        )
+        try:
+            _fsync_directory(stable_parent, operation=operation)
+        except CheckpointIOError as exc:
+            raise CheckpointDurabilityError(
+                "checkpoint was published but its parent directory could not be synchronized",
+                operation=operation,
+                failure_domain="filesystem",
+                legacy_exception_type=exc.legacy_exception_type,
+                details={
+                    **exc.details,
+                    "publication_outcome": "published",
+                    "durability_stage": "parent_directory_fsync",
+                    "published_path": str(stable_target),
+                },
+            ) from exc
+        try:
+            _require_stable_requested_parent(
+                target.parent,
+                requested_parent_identity,
+                operation=operation,
+            )
+        except CheckpointIOError as exc:
+            raise _AmbiguousCheckpointPublication(
+                "checkpoint parent changed after publication",
+                operation=operation,
+                failure_domain="filesystem",
+                details={
+                    **exc.details,
+                    "publication_outcome": "published_at_pinned_parent",
+                    "published_path": str(stable_target),
+                },
+            ) from exc
     except BaseException as exc:
         if (
             not isinstance(exc, _AmbiguousCheckpointPublication)
             and (staging.exists() or staging.is_symlink())
         ):
-            shutil.rmtree(staging, ignore_errors=True)
+            _remove_staging_tree(staging, operation=operation)
         if isinstance(exc, OSError) and not isinstance(exc, CheckpointError):
             raise _io_error(
                 exc,
@@ -1051,6 +1272,7 @@ def verify_functional_checkpoint_provenance(
 
 __all__ = [
     "CheckpointCompatibilityError",
+    "CheckpointDurabilityError",
     "CheckpointError",
     "CheckpointExistsError",
     "CheckpointIOError",

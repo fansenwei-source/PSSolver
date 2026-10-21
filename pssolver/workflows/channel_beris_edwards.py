@@ -6,8 +6,10 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 import json
 import math
+import os
 from pathlib import Path
 import shutil
+import stat
 import time
 
 import numpy as np
@@ -962,6 +964,28 @@ def upgrade_channel_beris_edwards_checkpoint_directory(
         operation="complete_stress_channel_checkpoint_migration",
     ) as (staging, target):
         shutil.copytree(source, staging, dirs_exist_ok=True)
+        # A migration owns its private staging copy.  Make only that copy
+        # writable so a read-only legacy source remains untouched while its
+        # metadata can be upgraded and any failed transaction can be removed.
+        for root, directories, files in os.walk(staging):
+            root_path = Path(root)
+            root_path.chmod(
+                root_path.lstat().st_mode
+                | stat.S_IRUSR
+                | stat.S_IWUSR
+                | stat.S_IXUSR
+            )
+            for name in directories:
+                path = root_path / name
+                path.chmod(
+                    path.lstat().st_mode
+                    | stat.S_IRUSR
+                    | stat.S_IWUSR
+                    | stat.S_IXUSR
+                )
+            for name in files:
+                path = root_path / name
+                path.chmod(path.lstat().st_mode | stat.S_IRUSR | stat.S_IWUSR)
         upgraded = dict(metadata)
         upgraded.pop("metadata_sha256", None)
         upgraded.pop("runtime_identity_sha256", None)

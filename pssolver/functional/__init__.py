@@ -68,6 +68,7 @@ from .contracts import (
 )
 from .errors import (
     FunctionalCheckpointCompatibilityError,
+    FunctionalCheckpointDurabilityError,
     FunctionalCheckpointError,
     FunctionalCheckpointExistsError,
     FunctionalCheckpointIntegrityError,
@@ -145,6 +146,7 @@ __all__ = [
     "FunctionalCheckpointBridgeProtocol",
     "FunctionalCheckpointCompatibility",
     "FunctionalCheckpointCompatibilityError",
+    "FunctionalCheckpointDurabilityError",
     "FunctionalCheckpointError",
     "FunctionalCheckpointExistsError",
     "FunctionalCheckpointIntegrityError",

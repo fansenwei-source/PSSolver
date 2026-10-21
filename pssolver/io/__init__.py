@@ -2,6 +2,7 @@
 
 from .checkpoint import (
     CheckpointCompatibilityError,
+    CheckpointDurabilityError,
     CheckpointError,
     CheckpointExistsError,
     CheckpointIOError,
@@ -23,6 +24,7 @@ from .checkpoint import (
 
 __all__ = [
     "CheckpointCompatibilityError",
+    "CheckpointDurabilityError",
     "CheckpointError",
     "CheckpointExistsError",
     "CheckpointIOError",

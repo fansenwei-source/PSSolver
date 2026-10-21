@@ -19,6 +19,7 @@ import numpy as np
 import torch
 
 from pssolver.io.checkpoint import (
+    CheckpointDurabilityError,
     CheckpointExistsError,
     checkpoint_file_sha256,
     CheckpointIOError,
@@ -57,6 +58,7 @@ from .contracts import (
 )
 from .errors import (
     FunctionalCheckpointCompatibilityError,
+    FunctionalCheckpointDurabilityError,
     FunctionalCheckpointExistsError,
     FunctionalCheckpointIntegrityError,
     FunctionalCheckpointIOError,
@@ -328,6 +330,12 @@ class ChannelActivityCheckpointBridge:
                 )
         except CheckpointExistsError as exc:
             raise FunctionalCheckpointExistsError(
+                str(exc),
+                operation="channel_checkpoint_export",
+                details=exc.to_metadata(),
+            ) from exc
+        except CheckpointDurabilityError as exc:
+            raise FunctionalCheckpointDurabilityError(
                 str(exc),
                 operation="channel_checkpoint_export",
                 details=exc.to_metadata(),

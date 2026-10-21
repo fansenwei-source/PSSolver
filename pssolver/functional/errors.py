@@ -8,6 +8,7 @@ import math
 
 from pssolver.io.checkpoint import (
     CheckpointCompatibilityError,
+    CheckpointDurabilityError,
     CheckpointError,
     CheckpointExistsError,
     CheckpointIOError,
@@ -154,6 +155,15 @@ class FunctionalCheckpointIOError(
     code = "functional_checkpoint_io_error"
 
 
+class FunctionalCheckpointDurabilityError(
+    FunctionalCheckpointError,
+    CheckpointDurabilityError,
+):
+    """Publication completed but durable directory sync was not confirmed."""
+
+    code = "functional_checkpoint_durability_error"
+
+
 class FunctionalExecutionError(FunctionalError, RuntimeError):
     """Functional execution failed after its inputs passed validation."""
 
@@ -251,6 +261,10 @@ def translate_functional_exception(
         return FunctionalCheckpointIntegrityError(
             str(exception), operation=operation, details=checkpoint_details
         )
+    if isinstance(exception, CheckpointDurabilityError):
+        return FunctionalCheckpointDurabilityError(
+            str(exception), operation=operation, details=checkpoint_details
+        )
     if isinstance(exception, CheckpointIOError):
         return FunctionalCheckpointIOError(
             str(exception), operation=operation, details=checkpoint_details
@@ -325,6 +339,7 @@ def _json_copy(value: Mapping[str, object]) -> Mapping[str, object]:
 
 __all__ = [
     "FunctionalCheckpointCompatibilityError",
+    "FunctionalCheckpointDurabilityError",
     "FunctionalCheckpointError",
     "FunctionalCheckpointExistsError",
     "FunctionalCheckpointIntegrityError",
