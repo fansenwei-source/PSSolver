@@ -47,7 +47,7 @@ def test_r0010_import_binds_the_rework_result_and_complete_archive() -> None:
     assert archive["complete_present"] is True
 
 
-def test_r0010_registers_only_v25_and_preserves_the_five_claims() -> None:
+def test_r0010_historical_claims_advance_only_after_r0012() -> None:
     record = _read(RECORD)["review_import"]
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert set(record["preserved_claimed_fixed"]) == {
@@ -58,19 +58,20 @@ def test_r0010_registers_only_v25_and_preserves_the_five_claims() -> None:
         "C2-17",
     }
     for issue_id in record["preserved_claimed_fixed"]:
-        assert issues[issue_id]["status"] == "claimed_fixed"
+        assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (
             "468e06710e1b4881a557f0228dcb16be38791094"
         )
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["verified_by"] == "R-0012"
     assert record["registered_new_findings"] == ["V-25"]
     # The immutable R-0010 import records the initial registered state; the
-    # later S-04 V-25 successor may advance it to claimed_fixed.
+    # Later S-04 successors advanced it through claimed_fixed to verified.
     assert record["V-25"]["status"] == "registered"
-    assert issues["V-25"]["status"] == "claimed_fixed"
+    assert issues["V-25"]["status"] == "verified"
     assert issues["V-25"]["fixed_in"] == (
         "44a6fc3d88d94ccf939e78e23be3ffbac542def5"
     )
+    assert issues["V-25"]["verified_by"] == "R-0012"
     assert issues["V-25"]["target_release"] == "0.3"
 
 

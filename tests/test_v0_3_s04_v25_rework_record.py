@@ -45,20 +45,20 @@ def test_v25_record_binds_the_runtime_rework_and_s04_scope() -> None:
     }
 
 
-def test_v25_is_claimed_by_the_rework_without_changing_prior_fix_ids() -> None:
+def test_v25_and_prior_s04_fixes_are_verified_without_identity_changes() -> None:
     record = _read(RECORD)
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
-    assert issues["V-25"]["status"] == "claimed_fixed"
+    assert issues["V-25"]["status"] == "verified"
     assert issues["V-25"]["fixed_in"] == record["git_identity"][
         "implementation_commit"
     ]
-    assert "verified_by" not in issues["V-25"]
+    assert issues["V-25"]["verified_by"] == "R-0012"
     for issue_id in record["preserved_prior_claims"]:
-        assert issues[issue_id]["status"] == "claimed_fixed"
+        assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (
             "468e06710e1b4881a557f0228dcb16be38791094"
         )
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["verified_by"] == "R-0012"
 
 
 def test_v25_successors_are_forward_only_and_complete() -> None:
@@ -68,7 +68,7 @@ def test_v25_successors_are_forward_only_and_complete() -> None:
             relative, successor["historical_sha256"]
         ) == _sha256(ROOT / relative)
     for relative, expected in record["new_sources_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(relative, expected)
 
 
 def test_v25_contract_is_fail_closed_and_does_not_expand_scope() -> None:

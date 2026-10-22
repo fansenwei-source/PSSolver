@@ -43,14 +43,14 @@ def test_r0011_import_binds_the_interim_result_and_complete_archive() -> None:
     assert archive["complete_present"] is True
 
 
-def test_r0011_keeps_all_six_s04_issues_claimed_fixed() -> None:
+def test_r0011_historical_claims_advance_only_after_r0012() -> None:
     record = _read(RECORD)["review_import"]
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     expected = {"V-22", "V-16", "V-13", "V-14", "C2-17", "V-25"}
     assert set(record["preserved_claimed_fixed"]) == expected
     for issue_id in expected:
-        assert issues[issue_id]["status"] == "claimed_fixed"
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["status"] == "verified"
+        assert issues[issue_id]["verified_by"] == "R-0012"
     assert issues["V-25"]["fixed_in"] == (
         "44a6fc3d88d94ccf939e78e23be3ffbac542def5"
     )

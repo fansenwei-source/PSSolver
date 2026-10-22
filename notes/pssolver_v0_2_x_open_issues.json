@@ -33,8 +33,7 @@
   "status_counts": {
     "open": 1,
     "registered": 9,
-    "claimed_fixed": 6,
-    "verified": 8,
+    "verified": 14,
     "deferred": 2,
     "accepted": 1,
     "coverage_gap": 3
@@ -96,8 +95,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "468e06710e1b4881a557f0228dcb16be38791094",
+      "verified_by": "R-0012",
       "target_release": "0.3",
       "notes": "Present since rc5; limited to the explicit production upgrade path."
     },
@@ -141,8 +141,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "468e06710e1b4881a557f0228dcb16be38791094",
+      "verified_by": "R-0012",
       "target_release": "0.3",
       "notes": "Repro: retarget the immediate parent symlink inside checkpoint_directory_transaction before publication; the transaction fails closed and preserves the new target, but cleanup through the retargeted path leaves .<name>.tmp-* in the original directory. Suggested fix: resolve the parent once at transaction start or retain a directory fd and clean up through that stable identity."
     },
@@ -172,8 +173,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "468e06710e1b4881a557f0228dcb16be38791094",
+      "verified_by": "R-0012",
       "target_release": "0.3",
       "notes": "A post-rename parent-directory fsync error reports failure after publication. Real HPCC NFS directory fsync returned zero."
     },
@@ -187,8 +189,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "468e06710e1b4881a557f0228dcb16be38791094",
+      "verified_by": "R-0012",
       "target_release": "0.3",
       "notes": "The operation fails closed but the empty placeholder requires manual removal."
     },
@@ -202,8 +205,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "468e06710e1b4881a557f0228dcb16be38791094",
+      "verified_by": "R-0012",
       "target_release": "0.3",
       "notes": "Ownership uses only (st_dev, st_ino), and the rename-failure path can attempt placeholder removal twice."
     },
@@ -217,8 +221,9 @@
       "affects_v0_2_1": false,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "44a6fc3d88d94ccf939e78e23be3ffbac542def5",
+      "verified_by": "R-0012",
       "target_release": "0.3",
       "notes": "Repro: force the NFS fallback and make os.mkdir(target) raise ENOSPC without creating the target; the candidate reports an ambiguous outcome and preserves a checkpoint-sized staging tree. After a failed claim, lstat the target: if absent, raise a definite CheckpointIOError and remove staging; retain the ambiguous path only when the target exists but cannot be claimed. Cover ENOSPC, EDQUOT, EROFS, EACCES, and EIO."
     },

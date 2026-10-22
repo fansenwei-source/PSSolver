@@ -10,8 +10,8 @@
 
 - `open`：1；
 - `registered`：9；
-- `claimed_fixed`：6；
-- `verified`：8；
+- `claimed_fixed`：0；
+- `verified`：14；
 - `deferred`：2；
 - `accepted`：1；
 - `coverage_gap`：3。
@@ -23,10 +23,9 @@
    functional export、forced fallback、installed wheel、真跨文件系统拒绝与完整 CPU suite。
 2. `NEW-14`：在 `0.3 GPU verification` 中核实 TF32 policy scope 是否覆盖 backward；
    目前只登记，不宣称存在数值错误。
-3. `V-25`：`R-0010` 在 S-04 预审中发现的 medium-low 回退；明确的 NFS 占位目录
-   `mkdir` 失败被误判为模糊状态并保留完整 staging。本条已纳入 S-04 返工；此前五项
-   S-04 修复仍保持 `claimed_fixed`；V-25 已由提交 `44a6fc3` 返工并同样标记为
-   `claimed_fixed`，六项一起等待 R-0011 短复核和真实 NFS 复测。
+3. S-04 的六项 checkpoint 健壮性问题已经完成：V-22、V-16、V-13、V-14 与 C2-17
+   由提交 `468e067` 修复，V-25 由提交 `44a6fc3` 修复；本地复核和 HPCC 真实 NFS
+   门禁均通过，并由 `R-0012` 独立验证为 `verified`。
 
 ## Control 路径
 

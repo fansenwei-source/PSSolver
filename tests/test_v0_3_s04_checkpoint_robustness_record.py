@@ -44,7 +44,7 @@ def test_s04_record_binds_the_implementation_and_issue_scope() -> None:
     }
 
 
-def test_s04_registry_claims_only_the_five_review_targets() -> None:
+def test_s04_registry_preserves_fix_ids_after_r0012_verification() -> None:
     record = _read(RECORD)
     registry = _read(REGISTRY)
     issues = {item["id"]: item for item in registry["issues"]}
@@ -54,16 +54,18 @@ def test_s04_registry_claims_only_the_five_review_targets() -> None:
         if item["status"] == "claimed_fixed"
     }
     historical_claims = set(record["roadmap"]["issue_ids"])
-    assert claimed == historical_claims | {"V-25"}
+    assert claimed == set()
     for issue_id in historical_claims:
+        assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == record["git_identity"][
             "implementation_commit"
         ]
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["verified_by"] == "R-0012"
+    assert issues["V-25"]["status"] == "verified"
     assert issues["V-25"]["fixed_in"] == (
         "44a6fc3d88d94ccf939e78e23be3ffbac542def5"
     )
-    assert "verified_by" not in issues["V-25"]
+    assert issues["V-25"]["verified_by"] == "R-0012"
 
 
 def test_s04_durability_error_preserves_the_public_io_hierarchy() -> None:

@@ -50,8 +50,7 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
         "registered": 9,
-        "claimed_fixed": 6,
-        "verified": 8,
+        "verified": 14,
         "deferred": 2,
         "accepted": 1,
         "coverage_gap": 3,
@@ -82,22 +81,23 @@ def test_five_v020_deferred_items_are_migrated_with_control_classification():
         "C2-17": False,
         "C2-18": True,
     }
-    verified = {"C1-10", "C1-11"}
-    claimed = {"C2-17"}
+    verified = {"C1-10", "C1-11", "C2-17"}
     for issue_id, affects_control in expected.items():
         item = issues[issue_id]
         assert item["status"] == (
             "verified"
             if issue_id in verified
-            else "claimed_fixed"
-            if issue_id in claimed
             else "registered"
         )
         if issue_id in verified:
-            assert item["fixed_in"] == (
-                "a654e1c1d97fa364ac32b6ccbf93070056066d21"
+            expected_fix = (
+                "468e06710e1b4881a557f0228dcb16be38791094"
+                if issue_id == "C2-17"
+                else "a654e1c1d97fa364ac32b6ccbf93070056066d21"
             )
-            assert item["verified_by"] == "R-0008"
+            expected_review = "R-0012" if issue_id == "C2-17" else "R-0008"
+            assert item["fixed_in"] == expected_fix
+            assert item["verified_by"] == expected_review
         assert item["affects_v0_2_0"] is True
         assert item["affects_v0_2_1"] is True
         assert item["affects_control_paths"] is affects_control
@@ -130,7 +130,8 @@ def test_v021_limitations_preserve_version_and_control_boundaries():
     ):
         assert issues[issue_id]["affects_control_paths"] is True
         assert issues[issue_id]["exercised_by_current_control_research"] is False
-    assert issues["V-22"]["status"] == "claimed_fixed"
+    assert issues["V-22"]["status"] == "verified"
+    assert issues["V-22"]["verified_by"] == "R-0012"
     assert issues["V-23"]["status"] == "verified"
     assert issues["V-23"]["fixed_in"] == (
         "a654e1c1d97fa364ac32b6ccbf93070056066d21"
@@ -142,21 +143,21 @@ def test_v021_limitations_preserve_version_and_control_boundaries():
     assert "PermissionError" in issues["V-23"]["notes"]
 
 
-def test_s04_checkpoint_robustness_items_are_claimed_by_one_commit():
+def test_s04_checkpoint_robustness_items_are_verified_by_r0012():
     issues = _issues()
     implementation = "468e06710e1b4881a557f0228dcb16be38791094"
     for issue_id in ("V-22", "V-16", "V-13", "V-14", "C2-17"):
-        assert issues[issue_id]["status"] == "claimed_fixed"
+        assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == implementation
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["verified_by"] == "R-0012"
 
 
-def test_v25_rework_is_claimed_without_reopening_the_five_s04_claims():
+def test_v25_rework_is_verified_without_changing_its_fix_identity():
     issues = _issues()
     v25 = issues["V-25"]
-    assert v25["status"] == "claimed_fixed"
+    assert v25["status"] == "verified"
     assert v25["fixed_in"] == "44a6fc3d88d94ccf939e78e23be3ffbac542def5"
-    assert "verified_by" not in v25
+    assert v25["verified_by"] == "R-0012"
     assert v25["severity"] == "medium-low"
     assert v25["source_report"] == "PSSolver_sync/results/R-0010.result.json"
     assert v25["affects_control_paths"] is True

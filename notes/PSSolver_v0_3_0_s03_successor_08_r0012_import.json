@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "stage": "S-04",
+  "classification": "PASS_R0012_S04_FINAL_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "91455e99d718beb38004344c4a290b1e148c2a22",
+    "runtime_commit": "44a6fc3d88d94ccf939e78e23be3ffbac542def5",
+    "result_commit": "63c8eb6ce96a4a1d6d615bd270d436b5132ab4a8",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0012",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0012.result.json",
+    "sha256": "6b32eb48d782540c96995eb5791f84f2197b4b8f7f0bb833190c88f2cc67e609",
+    "classification": "PASS",
+    "new_findings": []
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s04final_claude_review_20261021_v1",
+    "checksums_entries": 32,
+    "checksums_sha256": "633ce4b9c215bd8f3a96e4560ee9aaea2c4e7e4ed6af1e66e165d9c5cb56d472",
+    "complete_present": true,
+    "final_report_sha256": "880c479646a942db86c2cbdf91cc51651cb58c2d0b4ac40db532371416696feb",
+    "summary_sha256": "79e34bb424cf1a737ff702ef27641d622d9f2842d587dc2139053f712fdec1ea"
+  },
+  "qualified_hpcc_evidence": {
+    "path": "/scratch1/vincent/PSSolver/pssolver_v0_3_s04_real_nfs_44a6fc3_20261021_v2",
+    "checksums_entries": 25,
+    "checksums_sha256": "afd7e2d7d45d68935c23ed4110ca65fbc1ec96791ef98b4dbefe9254097af3ce",
+    "complete_present": true,
+    "classification": "PASS_V0_3_S04_REAL_NFS_LOGIN_NODE_QUALIFICATION",
+    "helper_execution_count": 1,
+    "automatic_retry": false,
+    "slurm_used": false,
+    "gpu_used": false,
+    "h100_used": false
+  },
+  "registry_import": {
+    "verified_by": "R-0012",
+    "fixed_at_468e067": [
+      "V-22",
+      "V-16",
+      "V-13",
+      "V-14",
+      "C2-17"
+    ],
+    "fixed_at_44a6fc3": [
+      "V-25"
+    ],
+    "status": "verified",
+    "s04_complete": true,
+    "eligible_for_d0009_integration_draft": true
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "e49974ac4dbe4b950550a83e78352ffc040ccff89137c14005257a0b4b67f14b",
+      "current_sha256": "cfcea94fccd7f6661b343bfedc56c330c20d44a21a1ae6586eb8c249dadadf64",
+      "reason": "Apply the six exact R-0012 verified registry updates without changing their fix identities."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "95b109bb5e3728650f0d0f7f453e55e815d609e942e7fcdd667326f595f22adc",
+      "current_sha256": "6705debaca17c81cdcd593f56ea9b531f5d8a12e4a89eb91e0dbd931a7dc9269",
+      "reason": "Describe the completed R-0012 S-04 verification in the human-readable registry."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "b5ea0f3900be706c8927a6c662bd2067a72295d2d1212c0ad7890e24a49f0fdf",
+      "current_sha256": "bb3dc8f53a84641a304ffa968dcb5ab3e89f983e3572cfdc7a55a8f45441a454",
+      "reason": "Bind the six verified statuses, fixed_in values and R-0012 review identity."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "b0b88d2b068270d8d2718b051f1101aa4cb2cd95577dbe71b04eced212cec4fd",
+      "current_sha256": "117ac8d1266ab0355a4b8c5c4c565f411887d5ce7ff68dfaf34e0deea33ea1dd",
+      "reason": "Advance V-22 beyond its historical R-0002 registration through the verified successor chain."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "historical_sha256": "e167fdc73103d5fb4553b14a7e5f115a3be5e6ecec990e8506100801de04df87",
+      "current_sha256": "399befe1d812c8da582b92c97ede2c126b85766822b0bd10aa150876e74a76f0",
+      "reason": "Preserve the original S-04 fix identities while recognizing R-0012 verification."
+    },
+    "tests/test_v0_3_s04_v25_rework_record.py": {
+      "historical_sha256": "cfb8e9e7145456ec608ab391b0c19592cc1a40205dbd7b487fe83a1f2cd1fd63",
+      "current_sha256": "717003f622cae962f76f66a6815086d319fd6beefb35b30d982f3a61a87e81f8",
+      "reason": "Recognize R-0012 verification and resolve the test's own historical hash through successors."
+    },
+    "tests/test_v0_3_s04_r0010_import.py": {
+      "historical_sha256": "ba33a848473c676fb13b0aba47de24d306c9afb99a5e85cf8bf97baf6981c582",
+      "current_sha256": "e4ab7a5f310189a4903fad0db491d74f1ce66f3024d63ff6191082464adf8292",
+      "reason": "Keep the immutable R-0010 historical state while recognizing the later verified status."
+    },
+    "tests/test_v0_3_s04_r0011_import.py": {
+      "historical_sha256": "4de1465634ccd895333b90b0bbde9d99afa2e03131f2ec295041fc7025f5fb85",
+      "current_sha256": "becb0871ac0d8aa9b3c6bc14cfe30002bf23a397cdd2d86319b325645baf9cc3",
+      "reason": "Keep the immutable R-0011 interim claim while recognizing the later R-0012 verification."
+    }
+  },
+  "validation": {
+    "environment_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "environment_clone_path": "/home/fansenwei/pssolver-r0012-import-venv-0g3yc0/venv",
+    "environment_clone_pruned": true,
+    "python_executable": "/home/fansenwei/pssolver-r0012-import-venv-0g3yc0/venv/bin/python",
+    "sys_path": [
+      "",
+      "/home/fansenwei/Desktop/Develop/PSSolver_dev_0_3",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python312.zip",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12/lib-dynload",
+      "/home/fansenwei/pssolver-r0012-import-venv-0g3yc0/venv/lib/python3.12/site-packages"
+    ],
+    "focused_pytest": "55 passed",
+    "junit_sha256": "627a26c90813704b2e442a2687bf842fe835fcd7ec7198dff38ff9c2d3320e3f"
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "thresholds_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_import_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  },
+  "next_request": "R-0013"
+}
