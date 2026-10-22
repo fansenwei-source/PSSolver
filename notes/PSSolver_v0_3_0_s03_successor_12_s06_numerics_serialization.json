@@ -179,17 +179,35 @@
     "tests/test_v0_3_s06_pressure_and_pickle.py"
   ],
   "validation": {
-    "archive": null,
-    "archive_checksums_entries": null,
-    "archive_checksums_sha256": null,
-    "archive_complete_present": false,
+    "archive": "/home/fansenwei/pssolver_v0_3_s06_pressure_serialization_bbb7077_20261022_v1",
+    "archive_checksums_entries": 23,
+    "archive_checksums_sha256": "ef20d7d4be841d6821fb2932ae1355c7ebbfd397919640e8ad673df4e553f13b",
+    "archive_complete_present": true,
     "environment_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
     "environment_clone_method": "cp -al",
-    "environment_clone_pruned": false,
-    "focused_pytest": null,
-    "full_cpu_suite": null,
-    "qualification_complete": false,
-    "eligible_for_independent_review": false
+    "environment_clone_pruned": true,
+    "focused_pytest": {
+      "passed": 128,
+      "failed": 0,
+      "skipped": 0
+    },
+    "full_cpu_suite": {
+      "passed": 4448,
+      "failed": 0,
+      "skipped": 1,
+      "deselected": 7,
+      "subtests_passed": 8
+    },
+    "installed_wheel": {
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "pip_check": "PASS",
+      "source_shadow_import": false,
+      "wheel_sha256": "575569cf5f90a0798695152d5e68c9f12c561eebe79cf180322c7e403c40e64b"
+    },
+    "qualification_complete": true,
+    "eligible_for_independent_review": true
   },
   "scope": {
     "runtime_changed": true,

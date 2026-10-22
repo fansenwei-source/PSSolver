@@ -89,3 +89,34 @@ def test_s06_candidate_authorizes_no_external_action() -> None:
     )
     assert record["authorization"]["local_implementation_authorized"] is True
     assert record["roadmap"]["next_request"] == "R-0014"
+
+
+def test_s06_local_qualification_is_bound_for_independent_review() -> None:
+    validation = _read(RECORD)["validation"]
+    assert validation["archive"] == (
+        "/home/fansenwei/"
+        "pssolver_v0_3_s06_pressure_serialization_bbb7077_20261022_v1"
+    )
+    assert validation["archive_complete_present"] is True
+    assert validation["archive_checksums_entries"] == 23
+    assert validation["archive_checksums_sha256"] == (
+        "ef20d7d4be841d6821fb2932ae1355c7ebbfd397919640e8ad673df4e553f13b"
+    )
+    assert validation["environment_clone_pruned"] is True
+    assert validation["focused_pytest"] == {
+        "passed": 128,
+        "failed": 0,
+        "skipped": 0,
+    }
+    assert validation["full_cpu_suite"] == {
+        "passed": 4448,
+        "failed": 0,
+        "skipped": 1,
+        "deselected": 7,
+        "subtests_passed": 8,
+    }
+    assert validation["installed_wheel"]["passed"] == 8
+    assert validation["installed_wheel"]["pip_check"] == "PASS"
+    assert validation["installed_wheel"]["source_shadow_import"] is False
+    assert validation["qualification_complete"] is True
+    assert validation["eligible_for_independent_review"] is True
