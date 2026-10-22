@@ -50,32 +50,27 @@ def test_s06_rework_binds_runtime_and_option_b() -> None:
         )
 
 
-def test_s06_rework_claims_only_pending_items_at_exact_fix_sources() -> None:
+def test_s06_rework_items_are_verified_at_exact_fix_sources() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     claimed = {
         issue_id
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == {
-        "C1-05",
-        "C2-18",
-        "S2-17",
-        "V-27",
-        "V-28",
-        "V-29",
-    }
+    assert claimed == set()
     for issue_id in ("S2-17", "V-28", "V-29"):
         assert issues[issue_id]["fixed_in"] == (
             "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
         )
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["status"] == "verified"
+        assert issues[issue_id]["verified_by"] == "R-0016"
         assert "R-0016" in issues[issue_id]["notes"]
     for issue_id in ("C1-05", "C2-18", "V-27"):
         assert issues[issue_id]["fixed_in"] == (
             "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a"
         )
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["status"] == "verified"
+        assert issues[issue_id]["verified_by"] == "R-0016"
 
 
 def test_s06_rework_successors_are_forward_only_and_complete() -> None:

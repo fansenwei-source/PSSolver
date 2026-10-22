@@ -52,18 +52,19 @@ def test_r0015_registers_v29_without_verifying_s06_claims() -> None:
         "plan_step": "S-06",
     }
     v29 = issues["V-29"]
-    assert v29["status"] == "claimed_fixed"
+    assert v29["status"] == "verified"
     assert v29["fixed_in"] == (
         "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
     )
     assert v29["severity"] == "low"
     assert v29["target_release"] == "0.3"
+    assert v29["verified_by"] == "R-0016"
     assert imported["verified_by_r0015"] == []
     assert set(imported["passed_claims"]) == {"C1-05", "C2-18", "V-27", "V-28"}
     assert imported["s06_complete"] is False
     for issue_id in imported["kept_claimed_fixed"]:
-        assert issues[issue_id]["status"] == "claimed_fixed"
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["status"] == "verified"
+        assert issues[issue_id]["verified_by"] == "R-0016"
 
 
 def test_r0015_rework_contract_is_exact() -> None:

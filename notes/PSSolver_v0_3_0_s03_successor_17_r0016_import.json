@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-06",
+  "classification": "PASS_R0016_S06_FINAL_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "0c2889f092ea25f9aa2b6f67ebc6c82cd51a76a9",
+    "qualified_runtime_source": "f6da20f71ed2b7ae63ab07b19103eb6c29a95829",
+    "result_commit": "98acf811498bfd0fe9ef7331322a44d69a0c22fc",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0016",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0016.result.json",
+    "sha256": "9c09af359166bf6f688a138c5ae2e0efbaf30b97fe61b53964bcf92502b888ba",
+    "classification": "PASS",
+    "new_findings": []
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s06final_claude_review_20261022_v1",
+    "checksums_entries": 44,
+    "checksums_sha256": "be701ad8e16e6405ebaab5b276fd51e09fb918de26a568c0217cf573d02e6db8",
+    "complete_present": true,
+    "final_report_sha256": "83aab3c94173e596a2aa344e6a1709e5b4661da6a9ee9a8321ecb3bc6af6e1c9",
+    "summary_sha256": "bef7523128d58e65b259b3e67c3c722bbab93dd8081125058aa0553f1bf67f64"
+  },
+  "registry_import": {
+    "verified_by": "R-0016",
+    "fixed_at_bbb7077": [
+      "C1-05",
+      "C2-18",
+      "V-27"
+    ],
+    "fixed_at_f6da20f": [
+      "S2-17",
+      "V-28",
+      "V-29"
+    ],
+    "status": "verified",
+    "s06_complete": true,
+    "eligible_for_d0009_integration_draft": true
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "2b2fb8d2501921cbd08cf8fe7a1ede91c2b548aca61b355649481b3c2015d563",
+      "current_sha256": "7fe809a566046c7e659c07c687ef90be61c96abcda32409d9beca529b0d0613d",
+      "reason": "Apply the six exact R-0016 verified registry updates without changing either runtime fix identity."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "ff0381e34b6e943a72e6ed93da529c4101d26e737adb0513308d460ae974e4ec",
+      "current_sha256": "6d6b31fecb3c5700b080c9bb778812acf74452ec9b3491a958cce61d65a36269",
+      "reason": "Describe the completed R-0016 S-06 verification in the human-readable registry."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "64e8b76215f3a55fb5f728b81c6bb0a87e342f1df21af8a8b576d3b7e8acb000",
+      "current_sha256": "96f863de67d359e9dacecf17f61befb40524f4ecefead5a1e8787b808beccf78",
+      "reason": "Recognize current registry counts without rewriting the historical R-0002 record."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "49bdef149248d2f94a9f15f484dbb0dce01e95146b76754766d9915ef7072428",
+      "current_sha256": "7bfb37310cca4d6f65145bf9b08ae3758ff4caf69f527ebaf7ec2a43c5f0c33e",
+      "reason": "Bind the six verified statuses, exact fix sources, and R-0016 review identity."
+    },
+    "tests/test_v0_3_s01_registry_migration.py": {
+      "historical_sha256": "b8e14bd343db1bbbbad81ce783a3b17c7fb7b3657bce51bc96a1a1a82d378113",
+      "current_sha256": "5e6d68b66d14c87e622f535fbcd1944e08b90adb64230c287f25aa4b33d7e2a2",
+      "reason": "Preserve the S-01 tracked set while recognizing later S-06 verification."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "8fb79d48dc6e886f7790203f5877a7a300367780a09d32f552109154a82386cd",
+      "current_sha256": "d00d0e0728a054779dde3bf406acdb7698e02c49012f7651cee1fba3a9521e59",
+      "reason": "Preserve S-03 verification while recognizing the completed S-06 successor."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "historical_sha256": "ef55ed7515ebc341f8e56a68c5815c2dc37dc3f64cc9737ec987bf0b4b0187f0",
+      "current_sha256": "52dd26af6a1e48f2aff45f54a58ee4126deef6e0e8da66054056449b90661384",
+      "reason": "Preserve S-04 verification while recognizing the completed S-06 successor."
+    },
+    "tests/test_v0_3_s05_r0013_import.py": {
+      "historical_sha256": "5d45caf9a1e45e03c03a1df52d006df3576e896573fcc9eadcc53a3d43338849",
+      "current_sha256": "76ed2bc8b42cfb54cc1861c5757cfd259ef7e318500f8c7dc4337a7c79dd954e",
+      "reason": "Keep the immutable R-0013 finding registration while recognizing V-27 verification by R-0016."
+    },
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {
+      "historical_sha256": "88a1cd389598340e15ca24a71b537e907173290d8d627b7087decd10b3f474a2",
+      "current_sha256": "d1262326592595532d1443a9280be2a635b12e8088a197b7968741933e793a3b",
+      "reason": "Keep the historical rework contract while advancing all six issues to verified."
+    },
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {
+      "historical_sha256": "737af94111192d5afc14bb3201f9d5ae63c0fb9d0ef6d65b179573e95cfc82b9",
+      "current_sha256": "dcf5a725ec8890d87d2a764f254669fcdd8969251f4a95541e6761c01088a515",
+      "reason": "Keep the qualified runtime record historical while recognizing R-0016 verification."
+    },
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {
+      "historical_sha256": "91c8005ce2b91b69ea637d7745e0f55653c5529216e18d4ec5934c1b2c3d64de",
+      "current_sha256": "bfd93b71600f1266ffe2fd4419165d8bb7dde98e20e222c11a79bccfa4a4e7c9",
+      "reason": "Keep the initial S-06 candidate historical while recognizing the final R-0016 review."
+    },
+    "tests/test_v0_3_s06_r0014_import.py": {
+      "historical_sha256": "e66eecbf14e902f2701aeb3c62398fec48996a95ac7cc127eaa6eadff5ce92b9",
+      "current_sha256": "5829b027aa509be7187690d84199b9c20cb3a7d6abadda4d375a14a88205da72",
+      "reason": "Keep the immutable R-0014 rework decision while recognizing later R-0016 verification."
+    },
+    "tests/test_v0_3_s06_r0015_import.py": {
+      "historical_sha256": "e2d195064e2846e507e4acc554ead8320d7695f3dfc72be7880a40d1a8de973b",
+      "current_sha256": "ba45143bfbbfe3fa40220317f31edecfe056333aa86f2b58a62ec78eba6577f3",
+      "reason": "Keep the immutable R-0015 rework decision while recognizing later R-0016 verification."
+    }
+  },
+  "validation": {
+    "environment_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "environment_clone_path": "/home/fansenwei/pssolver-r0016-import-final2-venv-jFoXFO/venv",
+    "environment_clone_method": "cp -al",
+    "environment_clone_pruned": true,
+    "python": "3.12.13",
+    "torch": "2.6.0+cu126",
+    "numpy": "2.4.3",
+    "sys_path": [
+      "",
+      "/home/fansenwei/Desktop/Develop/PSSolver_dev_0_3",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python312.zip",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12/lib-dynload",
+      "/home/fansenwei/pssolver-r0016-import-final2-venv-jFoXFO/venv/lib/python3.12/site-packages"
+    ],
+    "focused_pytest": {
+      "passed": 71,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "f6502ed6d18c9e71a729a9a26dd8c75723a636a122cbd601c15d3feb5babce39",
+      "junit_sha256": "108880d9b42a2f21c42f7db9baad43cedafbc4e3233857a1bf16f98878df786c"
+    },
+    "git_diff_check": "PASS",
+    "archive": "/home/fansenwei/pssolver_v0_3_s06_r0016_import_20261022_v1",
+    "archive_checksums_entries": 5,
+    "archive_checksums_sha256": "54338166862fcef36068f502eabe467922ed4cc39fca911ebf87e97f656fc862",
+    "archive_complete_present": true
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "thresholds_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_import_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  },
+  "next_plan_step": "S-07",
+  "next_request": "R-0017"
+}

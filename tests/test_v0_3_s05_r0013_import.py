@@ -78,15 +78,16 @@ def test_r0013_import_verifies_s05_and_registers_both_findings() -> None:
         assert issue["severity"] == finding["severity"]
         if finding["id"] == "V-27":
             assert finding["status"] == "registered"
-            assert issue["status"] == "claimed_fixed"
+            assert issue["status"] == "verified"
             assert issue["fixed_in"] == (
                 "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a"
             )
+            assert issue["verified_by"] == "R-0016"
         else:
             assert issue["status"] == finding["status"]
         assert issue["target_release"] == finding["target_release"]
         if finding["id"] == "V-27":
-            assert "R-0014" in issue["notes"]
+            assert "R-0016" in issue["notes"]
         else:
             assert finding["plan_step"] in issue["notes"]
 

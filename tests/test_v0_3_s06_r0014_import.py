@@ -53,15 +53,16 @@ def test_r0014_registers_v28_without_verifying_s06_claims() -> None:
     }
     v28 = issues["V-28"]
     assert v28["severity"] == "medium"
-    assert v28["status"] == "claimed_fixed"
+    assert v28["status"] == "verified"
     assert v28["fixed_in"] == "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
     assert v28["target_release"] == "0.3"
     assert "recurrence-minimum" in v28["notes"]
+    assert v28["verified_by"] == "R-0016"
     assert imported["verified_by_r0014"] == []
     assert imported["s06_complete"] is False
     for issue_id in imported["kept_claimed_fixed"]:
-        assert issues[issue_id]["status"] == "claimed_fixed"
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["status"] == "verified"
+        assert issues[issue_id]["verified_by"] == "R-0016"
 
 
 def test_r0014_successors_are_forward_only_and_complete() -> None:

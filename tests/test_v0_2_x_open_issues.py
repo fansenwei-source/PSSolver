@@ -47,11 +47,12 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     assert len({entry["id"] for entry in entries}) == 34
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
+    counts.setdefault("claimed_fixed", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
         "registered": 6,
-        "claimed_fixed": 6,
-        "verified": 15,
+        "claimed_fixed": 0,
+        "verified": 21,
         "deferred": 2,
         "accepted": 1,
         "coverage_gap": 3,
@@ -82,31 +83,32 @@ def test_five_v020_deferred_items_are_migrated_with_control_classification():
         "C2-17": False,
         "C2-18": True,
     }
-    claimed = {"C1-05", "C2-18"}
-    verified = {"C1-10", "C1-11", "C2-17"}
+    verified = set(expected)
     for issue_id, affects_control in expected.items():
         item = issues[issue_id]
         expected_status = (
             "verified"
             if issue_id in verified
-            else "claimed_fixed"
-            if issue_id in claimed
             else "registered"
         )
         assert item["status"] == expected_status
         if issue_id in verified:
-            expected_fix = (
-                "468e06710e1b4881a557f0228dcb16be38791094"
-                if issue_id == "C2-17"
-                else "a654e1c1d97fa364ac32b6ccbf93070056066d21"
-            )
-            expected_review = "R-0012" if issue_id == "C2-17" else "R-0008"
+            expected_fix = {
+                "C1-05": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
+                "C1-10": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
+                "C1-11": "a654e1c1d97fa364ac32b6ccbf93070056066d21",
+                "C2-17": "468e06710e1b4881a557f0228dcb16be38791094",
+                "C2-18": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
+            }[issue_id]
+            expected_review = {
+                "C1-05": "R-0016",
+                "C1-10": "R-0008",
+                "C1-11": "R-0008",
+                "C2-17": "R-0012",
+                "C2-18": "R-0016",
+            }[issue_id]
             assert item["fixed_in"] == expected_fix
             assert item["verified_by"] == expected_review
-        if issue_id in claimed:
-            assert item["fixed_in"] == (
-                "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a"
-            )
         assert item["affects_v0_2_0"] is True
         assert item["affects_v0_2_1"] is True
         assert item["affects_control_paths"] is affects_control
@@ -176,7 +178,7 @@ def test_v25_rework_is_verified_without_changing_its_fix_identity():
     assert "EDQUOT" in v25["notes"]
 
 
-def test_rc5_rc6_residuals_track_verified_and_s06_claimed_fixes():
+def test_rc5_rc6_residuals_track_verified_s06_fixes():
     issues = _issues()
     registered = {
         "A2-24/C1-15",
@@ -188,14 +190,12 @@ def test_rc5_rc6_residuals_track_verified_and_s06_claimed_fixes():
         "S1-04",
     }
     verified = {"A2-24/C1-15", "C1-08"}
-    claimed = {"S2-17"}
+    s06_verified = {"S2-17"}
     assert all(
         issues[issue_id]["status"]
         == (
             "verified"
-            if issue_id in verified
-            else "claimed_fixed"
-            if issue_id in claimed
+            if issue_id in verified | s06_verified
             else "registered"
         )
         for issue_id in registered
@@ -209,6 +209,7 @@ def test_rc5_rc6_residuals_track_verified_and_s06_claimed_fixes():
     assert issues["S2-17"]["fixed_in"] == (
         "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
     )
+    assert issues["S2-17"]["verified_by"] == "R-0016"
     assert issues["V-24"]["status"] == "verified"
     assert issues["V-24"]["fixed_in"] == (
         "a10785853736b2458eec80680b9ced72a495775f"
@@ -247,13 +248,14 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     assert issues["A2-21/S2-12"]["target_release"] == "0.3"
     assert issues["V-26"]["target_release"] == "0.3"
     assert "S-07" in issues["V-26"]["notes"]
-    assert issues["V-27"]["status"] == "claimed_fixed"
+    assert issues["V-27"]["status"] == "verified"
     assert issues["V-27"]["fixed_in"] == (
         "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a"
     )
     assert issues["V-27"]["target_release"] == "0.3"
+    assert issues["V-27"]["verified_by"] == "R-0016"
     assert "R-0016" in issues["V-27"]["notes"]
-    assert issues["V-28"]["status"] == "claimed_fixed"
+    assert issues["V-28"]["status"] == "verified"
     assert issues["V-28"]["fixed_in"] == (
         "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
     )
@@ -265,10 +267,11 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     assert issues["V-28"]["affects_control_paths"] is True
     assert issues["V-28"]["exercised_by_current_control_research"] is False
     assert "recurrence-minimum" in issues["V-28"]["notes"]
+    assert issues["V-28"]["verified_by"] == "R-0016"
     assert issues["S2-17"]["fixed_in"] == (
         "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
     )
-    assert issues["V-29"]["status"] == "claimed_fixed"
+    assert issues["V-29"]["status"] == "verified"
     assert issues["V-29"]["fixed_in"] == (
         "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
     )
@@ -282,6 +285,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     assert issues["V-29"]["affects_control_paths"] is True
     assert issues["V-29"]["exercised_by_current_control_research"] is False
     assert "R-0016" in issues["V-29"]["notes"]
+    assert issues["V-29"]["verified_by"] == "R-0016"
     assert "S-07" in issues["B30"]["notes"]
     assert issues["V-17"]["status"] == "verified"
     assert issues["V-17"]["fixed_in"] == (

@@ -40,22 +40,23 @@ def test_s06_record_binds_the_roadmap_and_runtime_sources() -> None:
         assert _sha256(ROOT / relative) == resolve_s03_successor(relative, expected)
 
 
-def test_s06_registry_claims_only_the_four_review_items() -> None:
+def test_s06_registry_advances_all_review_items_through_r0016() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     claimed = {
         issue_id
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == ISSUES | {"V-28", "V-29"}
-    for issue_id in ISSUES:
+    assert claimed == set()
+    for issue_id in ISSUES | {"V-28", "V-29"}:
         expected = (
             "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
-            if issue_id == "S2-17"
+            if issue_id in {"S2-17", "V-28", "V-29"}
             else IMPLEMENTATION
         )
         assert issues[issue_id]["fixed_in"] == expected
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["status"] == "verified"
+        assert issues[issue_id]["verified_by"] == "R-0016"
         assert issues[issue_id]["target_release"] == "0.3"
         assert "R-0016" in issues[issue_id]["notes"]
 

@@ -53,10 +53,14 @@ def test_s06_minimum_floor_runtime_and_registry_are_bound() -> None:
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == set(record["roadmap"]["claimed_issue_ids"])
+    assert claimed == set()
+    assert set(record["roadmap"]["claimed_issue_ids"]) == {
+        "C1-05", "C2-18", "S2-17", "V-27", "V-28", "V-29"
+    }
     for issue_id in ("S2-17", "V-28", "V-29"):
         assert issues[issue_id]["fixed_in"] == IMPLEMENTATION
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["status"] == "verified"
+        assert issues[issue_id]["verified_by"] == "R-0016"
 
 
 def test_s06_minimum_floor_scans_record_fail_closed_counts() -> None:
