@@ -32,8 +32,8 @@
   "issue_count": 34,
   "status_counts": {
     "open": 1,
-    "registered": 7,
-    "claimed_fixed": 5,
+    "registered": 6,
+    "claimed_fixed": 6,
     "verified": 15,
     "deferred": 2,
     "accepted": 1,
@@ -53,7 +53,7 @@
       "status": "claimed_fixed",
       "fixed_in": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
       "target_release": "0.3",
-      "notes": "S-06 recomputes the represented-state residual before accepting tolerance mode at the unchanged eight-epsilon floor. R-0014 and R-0015 passed this claim, but the item remains claimed_fixed until the combined S-06 R-0016 re-review."
+      "notes": "S-06 recomputes the represented-state residual before accepting tolerance mode at the unchanged eight-epsilon floor. R-0014 and R-0015 passed this claim; it remains claimed_fixed pending the combined R-0016 review of runtime commit f6da20f."
     },
     {
       "id": "C1-10",
@@ -116,7 +116,7 @@
       "status": "claimed_fixed",
       "fixed_in": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
       "target_release": "0.3",
-      "notes": "S-06 preserves the exact public Channel/Functional convergence-error subclass, args, metadata, details, diagnostics and operation across pickle protocols. R-0014 and R-0015 passed this claim, but the item remains claimed_fixed until the combined S-06 R-0016 re-review."
+      "notes": "S-06 preserves the exact public Channel/Functional convergence-error subclass, args, metadata, details, diagnostics and operation across pickle protocols. R-0014 and R-0015 passed this claim; it remains claimed_fixed pending the combined R-0016 review."
     },
     {
       "id": "V-17",
@@ -319,7 +319,7 @@
       "status": "claimed_fixed",
       "fixed_in": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
       "target_release": "0.3",
-      "notes": "S-06 compares the two historical validation sys.path entries with their recorded literal instead of the current checkout root. R-0014 and R-0015 passed this claim, but the item remains claimed_fixed until the combined S-06 R-0016 re-review."
+      "notes": "S-06 compares the two historical validation sys.path entries with their recorded literal instead of the current checkout root. R-0014 and R-0015 passed this claim; it remains claimed_fixed pending the combined R-0016 review."
     },
     {
       "id": "V-28",
@@ -332,9 +332,9 @@
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
       "status": "claimed_fixed",
-      "fixed_in": "4c3a2d8bca191b6aa361c37920826e63582a4774",
+      "fixed_in": "f6da20f71ed2b7ae63ab07b19103eb6c29a95829",
       "target_release": "0.3",
-      "notes": "R-0015 confirmed that 4c3a2d8 prevents acceptable diverged returns, but found that retaining the latest at-or-below-floor iterate leaves avoidable fail-closed outcomes. Revised option B must instead retain the recurrence-minimum state at or below the floor, revalidate represented residual after an actual rollback, and keep V-28 claimed_fixed pending R-0016."
+      "notes": "Runtime f6da20f retains the recurrence-minimum state at or below the floor and strictly revalidates the represented residual after rollback. The required 2160-run scan has zero fail-closed outcomes and zero acceptable represented residuals above the floor; V-28 remains claimed_fixed pending R-0016."
     },
     {
       "id": "V-29",
@@ -346,9 +346,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "f6da20f71ed2b7ae63ab07b19103eb6c29a95829",
       "target_release": "0.3",
-      "notes": "Roadmap S-06 rework. A normal fixed-work completion that reaches the recurrence floor on its last iteration must retain the pre-S-06 acceptance behavior instead of being newly failed by the strict rollback postcondition. Exact repro: float64 shape (12,7,6), seed 9, friction 0.2, viscosity 0.73, default lengths, 25 fixed iterations. Keep all five earlier S-06 issues claimed_fixed pending R-0016."
+      "notes": "Runtime f6da20f preserves a normally completed fixed-work result within a two-floor represented-residual margin, after first preferring a saved floor candidate that passes the strict rollback postcondition. The exact float64 shape (12,7,6), seed 9, fixed-25 repro and the 360-run floor-crossing scan pass with zero fail-closed outcomes; pending R-0016."
     },
     {
       "id": "A2-24/C1-15",
@@ -407,9 +408,9 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "claimed_fixed",
-      "fixed_in": "4c3a2d8bca191b6aa361c37920826e63582a4774",
+      "fixed_in": "f6da20f71ed2b7ae63ab07b19103eb6c29a95829",
       "target_release": "0.3",
-      "notes": "R-0015 confirmed that 4c3a2d8 prevents acceptable diverged returns but still fails closed for some excess-work cases because the latest floor state is not the best one. S-06 must retain the recurrence-minimum state at or below the floor and validate only actual rollback candidates strictly; keep claimed_fixed pending R-0016."
+      "notes": "Runtime f6da20f retains the recurrence-minimum state at or below the floor. The required 2160-run pressure scan has zero fail-closed outcomes while preserving strict represented-residual validation for actual rollback candidates; pending R-0016."
     },
     {
       "id": "A1-07",

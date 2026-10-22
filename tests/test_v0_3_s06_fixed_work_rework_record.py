@@ -45,7 +45,9 @@ def test_s06_rework_binds_runtime_and_option_b() -> None:
     }
     assert contract["regression_budgets"] == [200, 250, 300, 400]
     for relative, expected in record["runtime_sources"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative, expected
+        )
 
 
 def test_s06_rework_claims_only_pending_items_at_exact_fix_sources() -> None:
@@ -55,9 +57,18 @@ def test_s06_rework_claims_only_pending_items_at_exact_fix_sources() -> None:
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == {"C1-05", "C2-18", "S2-17", "V-27", "V-28"}
-    for issue_id in ("S2-17", "V-28"):
-        assert issues[issue_id]["fixed_in"] == IMPLEMENTATION
+    assert claimed == {
+        "C1-05",
+        "C2-18",
+        "S2-17",
+        "V-27",
+        "V-28",
+        "V-29",
+    }
+    for issue_id in ("S2-17", "V-28", "V-29"):
+        assert issues[issue_id]["fixed_in"] == (
+            "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
+        )
         assert "verified_by" not in issues[issue_id]
         assert "R-0016" in issues[issue_id]["notes"]
     for issue_id in ("C1-05", "C2-18", "V-27"):

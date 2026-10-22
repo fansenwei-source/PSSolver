@@ -52,7 +52,10 @@ def test_r0015_registers_v29_without_verifying_s06_claims() -> None:
         "plan_step": "S-06",
     }
     v29 = issues["V-29"]
-    assert v29["status"] == "registered"
+    assert v29["status"] == "claimed_fixed"
+    assert v29["fixed_in"] == (
+        "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
+    )
     assert v29["severity"] == "low"
     assert v29["target_release"] == "0.3"
     assert imported["verified_by_r0015"] == []

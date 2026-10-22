@@ -54,9 +54,9 @@ def test_r0014_registers_v28_without_verifying_s06_claims() -> None:
     v28 = issues["V-28"]
     assert v28["severity"] == "medium"
     assert v28["status"] == "claimed_fixed"
-    assert v28["fixed_in"] == "4c3a2d8bca191b6aa361c37920826e63582a4774"
+    assert v28["fixed_in"] == "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
     assert v28["target_release"] == "0.3"
-    assert "option B" in v28["notes"]
+    assert "recurrence-minimum" in v28["notes"]
     assert imported["verified_by_r0014"] == []
     assert imported["s06_complete"] is False
     for issue_id in imported["kept_claimed_fixed"]:

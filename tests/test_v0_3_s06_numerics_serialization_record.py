@@ -47,10 +47,10 @@ def test_s06_registry_claims_only_the_four_review_items() -> None:
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == ISSUES | {"V-28"}
+    assert claimed == ISSUES | {"V-28", "V-29"}
     for issue_id in ISSUES:
         expected = (
-            "4c3a2d8bca191b6aa361c37920826e63582a4774"
+            "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
             if issue_id == "S2-17"
             else IMPLEMENTATION
         )

@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-06",
+  "classification": "V0_3_S06_MINIMUM_FLOOR_ROLLBACK_QUALIFICATION_CANDIDATE",
+  "git_identity": {
+    "implementation_commit": "f6da20f71ed2b7ae63ab07b19103eb6c29a95829",
+    "implementation_parent": "a5efd037a72058ce5703175ed625f2ac402badd7",
+    "branch": "fix/v0.3-s06-numerics-serialization",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "roadmap": {
+    "decision": "D-0010",
+    "plan_step": "S-06",
+    "review_source": "R-0015",
+    "claimed_issue_ids": [
+      "C1-05",
+      "C2-18",
+      "S2-17",
+      "V-27",
+      "V-28",
+      "V-29"
+    ],
+    "next_request": "R-0016"
+  },
+  "contract": {
+    "rollback_candidate": "minimum_recurrence_residual_at_or_below_floor",
+    "actual_rollback_requires_strict_represented_residual_postcondition": true,
+    "normal_completion_preserves_pre_s06_acceptance": true,
+    "normal_completion_maximum_represented_floor_multiple": 2.0,
+    "saved_strict_candidate_preferred_before_completion_margin": true,
+    "option_a_stop_at_first_floor_crossing_used": false,
+    "unchanged_floor_real_dtype_epsilons": 8,
+    "paths": [
+      "production",
+      "functional_transpose",
+      "implicit_primal",
+      "unrolled_oracle"
+    ]
+  },
+  "required_regressions": {
+    "v29": {
+      "dtype": "float64",
+      "shape": [12, 7, 6],
+      "seed": 9,
+      "friction": 0.2,
+      "viscosity": 0.73,
+      "length_scale": "1 + 0.37*n",
+      "fixed_iterations": 25
+    },
+    "transpose": {
+      "dtype": "float32",
+      "shape": [12, 8, 32],
+      "seed": 0,
+      "friction": 0.001,
+      "viscosity": 0.73,
+      "length_scale": 8.0,
+      "fixed_iterations": 200
+    },
+    "production": {
+      "dtype": "float32",
+      "shape": [24, 20, 16],
+      "seed": 1,
+      "friction": 0.001,
+      "viscosity": 20.0,
+      "length_scale": 1.0,
+      "fixed_iterations": 400
+    }
+  },
+  "runtime_sources": {
+    "pssolver/functional/channel_pressure.py": "7f8dd33023d62a9aa70514b23a3ddc1cdcbf69009b229c975d7f8496678c0a6c",
+    "pssolver/functional/channel_pressure_adjoint.py": "884e8d48071271dae45ad01245f2dee45d5f7a0aad4d6c5114989490f7fe4ec8",
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": "c539275fa2a4992d67aeadd0ddfac3bebd53d73bf6af478a3f93d963d54d4bf4"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "f200401f66e559a9347315dc99db70c0e5422c95e9c4998d1c329766adb199d2",
+      "current_sha256": "ae6fd678911db6545066060f6f25f9c26c028cd44ef592db2f4c248de3c778c6",
+      "reason": "Document minimum-floor-state rollback, strict rollback postvalidation, and the bounded normal-completion margin."
+    },
+    "pssolver/functional/channel_pressure.py": {
+      "historical_sha256": "8df94d1c5fbd2b7558d1a8a4d87d7050b67ca9f4c567626730af964bf071ff16",
+      "current_sha256": "7f8dd33023d62a9aa70514b23a3ddc1cdcbf69009b229c975d7f8496678c0a6c",
+      "reason": "Retain the recurrence-minimum floor state and preserve bounded non-rollback completion for functional transpose solves."
+    },
+    "pssolver/functional/channel_pressure_adjoint.py": {
+      "historical_sha256": "ca648c8595e508bf8e4cbd8362d16e35e17ef3d104f1f3361ea91a590c4a9988",
+      "current_sha256": "884e8d48071271dae45ad01245f2dee45d5f7a0aad4d6c5114989490f7fe4ec8",
+      "reason": "Apply recurrence-minimum rollback and bounded normal completion to implicit and oracle paths."
+    },
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "historical_sha256": "71a6f12034ecdbfe1a1fca02acd70fb5b61908dc864069f99d247da6cfb110a9",
+      "current_sha256": "c539275fa2a4992d67aeadd0ddfac3bebd53d73bf6af478a3f93d963d54d4bf4",
+      "reason": "Apply recurrence-minimum rollback and bounded normal completion to production pressure solves."
+    },
+    "tests/test_v0_3_s06_pressure_and_pickle.py": {
+      "historical_sha256": "0d5d865b11c78c32d7d95c7e8387b1741800a7796273717fec2ecdc7c410ee40",
+      "current_sha256": "cad25c982d42bb20cadfa1986d8b9b719b7e31602e6b5bf5e66927ca0ed69190",
+      "reason": "Add exact V-29, transpose-200, and production-400 regression cases."
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "95d32d0215442d2b50309e3a1eb9c673aabece03b3693d7476b01bff00e058d4",
+      "current_sha256": "2b2fb8d2501921cbd08cf8fe7a1ede91c2b548aca61b355649481b3c2015d563",
+      "reason": "Claim the S2-17, V-28, and V-29 fixes at f6da20f pending R-0016."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "7f8afe351b75d962536f633cd5ce69527dcf03d4f5c8045f1bd7af451decd64f",
+      "current_sha256": "ff0381e34b6e943a72e6ed93da529c4101d26e737adb0513308d460ae974e4ec",
+      "reason": "Describe the minimum-state rollback evidence and keep all six S-06 issues pending R-0016."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "13d0e71f537389939c0a5f5b1edf6462723efd32d8f9b9c3f515c4dc1a043482",
+      "current_sha256": "49bdef149248d2f94a9f15f484dbb0dce01e95146b76754766d9915ef7072428",
+      "reason": "Bind six claimed fixes and the f6da20f runtime identity."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "d974d179fd2af0c717b6c6b85fcf180f41f0b80ea53bef537cc3920a9d3f9983",
+      "current_sha256": "64e8b76215f3a55fb5f728b81c6bb0a87e342f1df21af8a8b576d3b7e8acb000",
+      "reason": "Recognize current registry counts without rewriting R-0002."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "27bdac578227e5015f71bccda9db073417e7c733c022b53e96af263976af8156",
+      "current_sha256": "8fb79d48dc6e886f7790203f5877a7a300367780a09d32f552109154a82386cd",
+      "reason": "Preserve S-03 verification while recognizing the V-29 S-06 claim."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "historical_sha256": "6638977363809c4b4510cc8c07a241c49bf17ad47437ec220a1a15943e6fe2e1",
+      "current_sha256": "ef55ed7515ebc341f8e56a68c5815c2dc37dc3f64cc9737ec987bf0b4b0187f0",
+      "reason": "Preserve S-04 verification while recognizing the V-29 S-06 claim."
+    },
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {
+      "historical_sha256": "bab962f29e3d3bdb1c73ea94e57e9d10c0d34d56e39c139bc8414a511805bd0d",
+      "current_sha256": "91c8005ce2b91b69ea637d7745e0f55653c5529216e18d4ec5934c1b2c3d64de",
+      "reason": "Keep the original S-06 record historical while resolving later minimum-state fixes."
+    },
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {
+      "historical_sha256": "8619e523f307c6ec3f3ce1f658d461d263c8751cfa6d288e27be6bf45e61089c",
+      "current_sha256": "88a1cd389598340e15ca24a71b537e907173290d8d627b7087decd10b3f474a2",
+      "reason": "Keep the first option-B record historical while binding the refined fix sources."
+    },
+    "tests/test_v0_3_s06_r0014_import.py": {
+      "historical_sha256": "b858ca72fb6bddc01db60bd81bed40ba26a09ca54d9173349d16be974e0707e0",
+      "current_sha256": "e66eecbf14e902f2701aeb3c62398fec48996a95ac7cc127eaa6eadff5ce92b9",
+      "reason": "Preserve the R-0014 finding while resolving V-28 through f6da20f."
+    },
+    "tests/test_v0_3_s06_r0015_import.py": {
+      "historical_sha256": "12d3184727f1a71eef31e5640faf8ce10bff7aaa1d6d71f5a1c99aa64842eddb",
+      "current_sha256": "e2d195064e2846e507e4acc554ead8320d7695f3dfc72be7880a40d1a8de973b",
+      "reason": "Preserve V-29's registered import state while binding its current claimed fix."
+    }
+  },
+  "new_sources": [
+    "notes/PSSolver_v0_3_0_s03_successor_16_s06_minimum_floor_rollback.json",
+    "notes/PSSolver_v0_3_0_s03_successor_16_s06_minimum_floor_rollback_zh.md",
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py"
+  ],
+  "validation": {
+    "status": "PENDING_LOCAL_QUALIFICATION",
+    "pressure_scan": {
+      "runs": 2160,
+      "fail_closed": 0,
+      "acceptable_represented_residual_above_floor": 0,
+      "maximum_acceptable_represented_residual": 6.569913125891941e-7,
+      "precision_floor": 9.5367431640625e-7
+    },
+    "floor_crossing_probe": {
+      "runs": 360,
+      "fail_closed": 0,
+      "maximum_accepted_floor_multiple": 1.0053485113310139
+    },
+    "qualification_complete": false,
+    "eligible_for_independent_review": false
+  },
+  "scope": {
+    "runtime_changed": true,
+    "fixed_work_acceptance_contract_changed": true,
+    "public_minimum_tolerance_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "functional_api_version_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_implementation_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  }
+}

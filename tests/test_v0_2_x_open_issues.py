@@ -49,8 +49,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts = Counter(entry["status"] for entry in entries)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 7,
-        "claimed_fixed": 5,
+        "registered": 6,
+        "claimed_fixed": 6,
         "verified": 15,
         "deferred": 2,
         "accepted": 1,
@@ -207,7 +207,7 @@ def test_rc5_rc6_residuals_track_verified_and_s06_claimed_fixes():
     )
     assert all(issues[issue_id]["verified_by"] == "R-0009" for issue_id in verified)
     assert issues["S2-17"]["fixed_in"] == (
-        "4c3a2d8bca191b6aa361c37920826e63582a4774"
+        "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
     )
     assert issues["V-24"]["status"] == "verified"
     assert issues["V-24"]["fixed_in"] == (
@@ -242,7 +242,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     registered = {
         issue_id for issue_id, item in issues.items() if item["status"] == "registered"
     }
-    assert len(registered) == 7
+    assert len(registered) == 6
     assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in registered)
     assert issues["A2-21/S2-12"]["target_release"] == "0.3"
     assert issues["V-26"]["target_release"] == "0.3"
@@ -255,7 +255,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     assert "R-0016" in issues["V-27"]["notes"]
     assert issues["V-28"]["status"] == "claimed_fixed"
     assert issues["V-28"]["fixed_in"] == (
-        "4c3a2d8bca191b6aa361c37920826e63582a4774"
+        "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
     )
     assert issues["V-28"]["severity"] == "medium"
     assert issues["V-28"]["source_report"] == (
@@ -264,11 +264,14 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     assert issues["V-28"]["target_release"] == "0.3"
     assert issues["V-28"]["affects_control_paths"] is True
     assert issues["V-28"]["exercised_by_current_control_research"] is False
-    assert "option B" in issues["V-28"]["notes"]
+    assert "recurrence-minimum" in issues["V-28"]["notes"]
     assert issues["S2-17"]["fixed_in"] == (
-        "4c3a2d8bca191b6aa361c37920826e63582a4774"
+        "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
     )
-    assert issues["V-29"]["status"] == "registered"
+    assert issues["V-29"]["status"] == "claimed_fixed"
+    assert issues["V-29"]["fixed_in"] == (
+        "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
+    )
     assert issues["V-29"]["severity"] == "low"
     assert issues["V-29"]["source_report"] == (
         "PSSolver_sync/results/R-0015.result.json"
