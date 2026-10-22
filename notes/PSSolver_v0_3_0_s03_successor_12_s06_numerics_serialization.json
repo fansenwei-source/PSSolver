@@ -165,6 +165,11 @@
       "historical_sha256": "3d772a9e67a3cd2cb6081b052d0549640025ac661e66b354098a79a0da65e0c8",
       "current_sha256": "724836c0d191f100282bc4e2e3a1f46749d00c159b5fb41b77456e0bb133f5e2",
       "reason": "Resolve later pressure-source successors through the maintained forward-only chain."
+    },
+    "tests/test_v0_3_s05_r0013_import.py": {
+      "historical_sha256": "61aa06c1d6c9d47cc1d579c10a8cde81b3e43872b41f3ad2512e4ce45d300c14",
+      "current_sha256": "5d45caf9a1e45e03c03a1df52d006df3576e896573fcc9eadcc53a3d43338849",
+      "reason": "Preserve the historical R-0013 registration while recognizing that V-27 is now claimed in S-06."
     }
   },
   "new_sources": [

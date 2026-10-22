@@ -76,9 +76,19 @@ def test_r0013_import_verifies_s05_and_registers_both_findings() -> None:
     for finding in imported["new_findings"]:
         issue = issues[finding["id"]]
         assert issue["severity"] == finding["severity"]
-        assert issue["status"] == finding["status"]
+        if finding["id"] == "V-27":
+            assert finding["status"] == "registered"
+            assert issue["status"] == "claimed_fixed"
+            assert issue["fixed_in"] == (
+                "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a"
+            )
+        else:
+            assert issue["status"] == finding["status"]
         assert issue["target_release"] == finding["target_release"]
-        assert finding["plan_step"] in issue["notes"]
+        if finding["id"] == "V-27":
+            assert "R-0014" in issue["notes"]
+        else:
+            assert finding["plan_step"] in issue["notes"]
 
 
 def test_r0013_successors_are_forward_only_and_complete() -> None:
