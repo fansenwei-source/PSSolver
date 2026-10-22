@@ -29,10 +29,10 @@
       "rewritten": false
     }
   },
-  "issue_count": 32,
+  "issue_count": 33,
   "status_counts": {
     "open": 1,
-    "registered": 6,
+    "registered": 7,
     "claimed_fixed": 4,
     "verified": 15,
     "deferred": 2,
@@ -53,7 +53,7 @@
       "status": "claimed_fixed",
       "fixed_in": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
       "target_release": "0.3",
-      "notes": "S-06 recomputes the represented-state residual before accepting tolerance mode at the unchanged eight-epsilon floor; pending independent R-0014 review."
+      "notes": "S-06 recomputes the represented-state residual before accepting tolerance mode at the unchanged eight-epsilon floor. R-0014 passed this claim, but the item remains claimed_fixed until the combined S-06 R-0015 re-review."
     },
     {
       "id": "C1-10",
@@ -116,7 +116,7 @@
       "status": "claimed_fixed",
       "fixed_in": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
       "target_release": "0.3",
-      "notes": "S-06 preserves the exact public Channel/Functional convergence-error subclass, args, metadata, details, diagnostics and operation across pickle protocols; pending independent R-0014 review."
+      "notes": "S-06 preserves the exact public Channel/Functional convergence-error subclass, args, metadata, details, diagnostics and operation across pickle protocols. R-0014 passed this claim, but the item remains claimed_fixed until the combined S-06 R-0015 re-review."
     },
     {
       "id": "V-17",
@@ -319,7 +319,21 @@
       "status": "claimed_fixed",
       "fixed_in": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
       "target_release": "0.3",
-      "notes": "S-06 compares the two historical validation sys.path entries with their recorded literal instead of the current checkout root; pending independent R-0014 review."
+      "notes": "S-06 compares the two historical validation sys.path entries with their recorded literal instead of the current checkout root. R-0014 passed this claim, but the item remains claimed_fixed until the combined S-06 R-0015 re-review."
+    },
+    {
+      "id": "V-28",
+      "title": "Excess float32 fixed-work pressure solves can diverge after convergence and return the diverged pressure as acceptable",
+      "severity": "medium",
+      "source_report": "PSSolver_sync/results/R-0014.result.json",
+      "first_found": "S-06 independent review R-0014; behavior predates v0.2.0 and is present on the S-06 candidate",
+      "affects_v0_2_0": true,
+      "affects_v0_2_1": true,
+      "affects_control_paths": true,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3",
+      "notes": "Roadmap S-06 rework with S2-17. In float32 fixed-work PCG, the recurrence may pass below its precision floor and later diverge without breakdown; pre-rework runs can still end fixed_work_completed with an unacceptable represented residual. Implement user-authorized option B: preserve the latest at-or-below-floor iterate, roll back on a later rise, breakdown, or nonfinite state, and accept saturation only after the represented residual of the returned state is at or below the floor. Repro: R-0014 scripts/s217_divergence_probe.py and scripts/s217_silent_divergence.py."
     },
     {
       "id": "A2-24/C1-15",
@@ -380,7 +394,7 @@
       "status": "claimed_fixed",
       "fixed_in": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
       "target_release": "0.3",
-      "notes": "S-06 preserves ordinary fixed work and records fixed_work_roundoff_saturation when a float32 recurrence already below the supported precision floor would otherwise break down or become non-finite; pending independent R-0014 review."
+      "notes": "R-0014 found that the first S-06 implementation handled breakdown/nonfinite states but not a recurrence that rises and diverges after reaching the floor. Rework together with V-28 under option B; keep claimed_fixed pending R-0015."
     },
     {
       "id": "A1-07",

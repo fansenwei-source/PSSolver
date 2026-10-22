@@ -43,13 +43,13 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 32
-    assert len({entry["id"] for entry in entries}) == 32
+    assert len(entries) == record["issue_count"] == 33
+    assert len({entry["id"] for entry in entries}) == 33
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 6,
+        "registered": 7,
         "claimed_fixed": 4,
         "verified": 15,
         "deferred": 2,
@@ -242,7 +242,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     registered = {
         issue_id for issue_id, item in issues.items() if item["status"] == "registered"
     }
-    assert len(registered) == 6
+    assert len(registered) == 7
     assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in registered)
     assert issues["A2-21/S2-12"]["target_release"] == "0.3"
     assert issues["V-26"]["target_release"] == "0.3"
@@ -252,7 +252,16 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a"
     )
     assert issues["V-27"]["target_release"] == "0.3"
-    assert "R-0014" in issues["V-27"]["notes"]
+    assert "R-0015" in issues["V-27"]["notes"]
+    assert issues["V-28"]["status"] == "registered"
+    assert issues["V-28"]["severity"] == "medium"
+    assert issues["V-28"]["source_report"] == (
+        "PSSolver_sync/results/R-0014.result.json"
+    )
+    assert issues["V-28"]["target_release"] == "0.3"
+    assert issues["V-28"]["affects_control_paths"] is True
+    assert issues["V-28"]["exercised_by_current_control_research"] is False
+    assert "option B" in issues["V-28"]["notes"]
     assert "S-07" in issues["B30"]["notes"]
     assert issues["V-17"]["status"] == "verified"
     assert issues["V-17"]["fixed_in"] == (

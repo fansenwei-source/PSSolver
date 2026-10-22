@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-06",
+  "classification": "REWORK_REQUIRED_R0014_S06_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "f8aa9f104f5f7b632774cb91158c1b9c302d5660",
+    "result_commit": "8d08f640ce6b85663eec2db3d945fa4916f5e4b0",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0014",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0014.result.json",
+    "sha256": "19166e4eb6addae653598e953a3da544e040f11a14ccebdcc525d8231f6493e6",
+    "classification": "REWORK_REQUIRED"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s06_claude_review_20261022_v1",
+    "checksums_entries": 56,
+    "checksums_sha256": "2a8d810290e7fa4f371980dffc810847599b550b65fcbaa8e4aee40f190c2006",
+    "complete_present": true,
+    "final_report_sha256": "bbfdb7ef973cc3eae01ba85c485428dc0909ae033468489e88b5188c264cbfeb",
+    "summary_sha256": "1caacc043b9c64a4034b66e73e45cbcaae4fd4cf2b4af54c6ec1868a63dd4ee4"
+  },
+  "registry_import": {
+    "new_finding": {
+      "id": "V-28",
+      "severity": "medium",
+      "status": "registered",
+      "target_release": "0.3",
+      "plan_step": "S-06"
+    },
+    "kept_claimed_fixed": [
+      "C1-05",
+      "C2-18",
+      "S2-17",
+      "V-27"
+    ],
+    "verified_by_r0014": [],
+    "s06_complete": false,
+    "rework_required": true,
+    "next_request": "R-0015"
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "1ed4cb69f22c5aceb840d2166f6c9c36628a53d7f01dedea22bbc987ad7e005c",
+      "current_sha256": "6dda498a9bd59bcd4da75b90dcfd931f051e7ba0f89058c574b7e4a7bb202b9c",
+      "reason": "Register V-28 and retain all four S-06 claims pending the combined R-0015 re-review."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "2f5be5f3860f33a5a46fa0185ee1661eda7a63fece62995cc65d8b2c1e2d1b3d",
+      "current_sha256": "84d5bd55b522c557b9f8df7d0d5f0a443cdee8bb4bf45ac91a937135d833842d",
+      "reason": "Describe the R-0014 rework classification and the authorized option-B repair boundary."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "3140f7a3345fd326df0fad57dfa0a93a45a44ec8cfe5b8b9abd4b43f9666da31",
+      "current_sha256": "a89969276d9b5d398667ffc20164357a1659d0fbd9ce2512433fe51af1909fc2",
+      "reason": "Bind the 33-item registry, V-28 properties and the pending R-0015 review state."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "b90565b6ac74ac46aad17fb4533a190c82f3429f30b04b41d8598da03d463b23",
+      "current_sha256": "3e483bc55e682062bdbf9995b7382e03496970810b49f6856bf6e7b6560ae2b4",
+      "reason": "Recognize current registry counts without rewriting the historical R-0002 record."
+    },
+    "tests/test_v0_3_0_roadmap.py": {
+      "historical_sha256": "97b57656772b8abb98f46ddb134df5ab24580a17a51218585af89a77a1e0bb8c",
+      "current_sha256": "bfa9ca1defb6fcbf4acaa0bbbb2afb1505d800456a5e96930c32887847e05e6f",
+      "reason": "Account for V-28 as a post-S-02 finding assigned to S-06."
+    },
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {
+      "historical_sha256": "7b6feaeda0d6a40322326a50b625752f98dd4d9ba40802e31bd293739f7b467a",
+      "current_sha256": "59ef87922ea27783ad916ee9aa0a2f7432d2322e7f0c0eb6006cba880e3a161a",
+      "reason": "Keep the original candidate record historical while pointing its pending claims to R-0015."
+    }
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "thresholds_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_import_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  },
+  "next_plan_step": "S-06",
+  "next_request": "R-0015"
+}

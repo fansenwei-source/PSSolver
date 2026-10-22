@@ -52,7 +52,7 @@ def test_s06_registry_claims_only_the_four_review_items() -> None:
         assert issues[issue_id]["fixed_in"] == IMPLEMENTATION
         assert "verified_by" not in issues[issue_id]
         assert issues[issue_id]["target_release"] == "0.3"
-        assert "R-0014" in issues[issue_id]["notes"]
+        assert "R-0015" in issues[issue_id]["notes"]
 
 
 def test_s06_contract_preserves_compatibility_boundaries() -> None:
