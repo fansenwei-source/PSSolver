@@ -9,8 +9,8 @@
 当前共登记 30 条：
 
 - `open`：1；
-- `registered`：10；
-- `claimed_fixed`：5；
+- `registered`：9；
+- `claimed_fixed`：6；
 - `verified`：8；
 - `deferred`：2；
 - `accepted`：1；
@@ -25,7 +25,8 @@
    目前只登记，不宣称存在数值错误。
 3. `V-25`：`R-0010` 在 S-04 预审中发现的 medium-low 回退；明确的 NFS 占位目录
    `mkdir` 失败被误判为模糊状态并保留完整 staging。本条已纳入 S-04 返工；此前五项
-   S-04 修复仍保持 `claimed_fixed`，等待 V-25 短复核和真实 NFS 复测。
+   S-04 修复仍保持 `claimed_fixed`；V-25 已由提交 `44a6fc3` 返工并同样标记为
+   `claimed_fixed`，六项一起等待 R-0011 短复核和真实 NFS 复测。
 
 ## Control 路径
 
@@ -36,7 +37,7 @@
 
 ## 0.3 路线图
 
-10 个仍为 `registered` 的 low/info 或明确指定条目统一以 `0.3` 为目标，
+9 个仍为 `registered` 的 low/info 或明确指定条目统一以 `0.3` 为目标，
 `A2-21/S2-12` 归入设计先行的 `S-05`，`B30` 归入文档批次 `S-07`。
 `V-17` 已验证身份不变，不重新打开。路线图顺序以同步仓库中用户确认的
 `D-0010` 与 `plan/roadmap.json` 为准。

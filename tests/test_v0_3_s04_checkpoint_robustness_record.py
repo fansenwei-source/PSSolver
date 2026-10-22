@@ -53,12 +53,17 @@ def test_s04_registry_claims_only_the_five_review_targets() -> None:
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == set(record["roadmap"]["issue_ids"])
-    for issue_id in claimed:
+    historical_claims = set(record["roadmap"]["issue_ids"])
+    assert claimed == historical_claims | {"V-25"}
+    for issue_id in historical_claims:
         assert issues[issue_id]["fixed_in"] == record["git_identity"][
             "implementation_commit"
         ]
         assert "verified_by" not in issues[issue_id]
+    assert issues["V-25"]["fixed_in"] == (
+        "44a6fc3d88d94ccf939e78e23be3ffbac542def5"
+    )
+    assert "verified_by" not in issues["V-25"]
 
 
 def test_s04_durability_error_preserves_the_public_io_hierarchy() -> None:
@@ -79,7 +84,7 @@ def test_s04_successors_are_forward_only_and_complete() -> None:
             successor["historical_sha256"],
         ) == _sha256(ROOT / relative)
     for relative, expected in record["new_sources_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(relative, expected)
 
 
 def test_s04_scope_and_authorization_are_fail_closed() -> None:

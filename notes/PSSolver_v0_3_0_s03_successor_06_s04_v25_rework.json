@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "stage": "S-04",
+  "classification": "PASS_LOCAL_V0_3_S04_V25_REWORK_PENDING_SHORT_REVIEW_AND_REAL_NFS",
+  "git_identity": {
+    "branch": "fix/v0.3-s04-checkpoint-robustness",
+    "implementation_parent": "279a4aaec1f165122d140d7f1e53c96119292516",
+    "implementation_commit": "44a6fc3d88d94ccf939e78e23be3ffbac542def5",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "roadmap": {
+    "decision": "D-0010",
+    "plan_step": "S-04",
+    "issue_ids": ["V-22", "V-16", "V-13", "V-14", "C2-17", "V-25"]
+  },
+  "preserved_prior_claims": ["V-22", "V-16", "V-13", "V-14", "C2-17"],
+  "contract": {
+    "absent_target_after_failed_claim_is_definite": true,
+    "definite_failure_removes_staging": true,
+    "existing_unclaimable_target_remains_ambiguous": true,
+    "ambiguous_error_names_preserved_staging": true,
+    "covered_mkdir_errnos": ["ENOSPC", "EDQUOT", "EROFS", "EACCES", "EIO"],
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false
+  },
+  "new_sources_sha256": {
+    "tests/test_v0_3_s04_v25_rework_record.py": "cfb8e9e7145456ec608ab391b0c19592cc1a40205dbd7b487fe83a1f2cd1fd63"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "2ef5bfada6fdb6135d53ae71f2803f1dbeab176afc0038b3b8cd1983dc7b23ad",
+      "current_sha256": "793f39a5f4e83966b5f273599da611415e827e1063932451057e0bbff893522b",
+      "reason": "Document the definite-versus-ambiguous placeholder publication contract."
+    },
+    "pssolver/io/checkpoint.py": {
+      "historical_sha256": "bffbf6f5278c58e99d38469ad5a6b57aba063780315a33e330746a0f6555348d",
+      "current_sha256": "1b690d50c85cb1ee3934908494f7fd4a6cc4df4f557f5c2663be4f374bb6bbec",
+      "reason": "Classify an absent target after failed placeholder claim as definite and remove staging."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness.py": {
+      "historical_sha256": "5363c5b4080796e759ab2f46f255756fe7b739a3c0a6c7d0834bff8e8d3b5b27",
+      "current_sha256": "e9b8e95358cf38908863722f174401bd01c7fdab28ca9d00836749f9df80d5f5",
+      "reason": "Cover ENOSPC, EDQUOT, EROFS, EACCES and EIO with exact no-residue assertions."
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "976367a18b922ebc1f81855efc10c689aec0e753d4fcf3404de55537c78951c2",
+      "current_sha256": "e49974ac4dbe4b950550a83e78352ffc040ccff89137c14005257a0b4b67f14b",
+      "reason": "Advance V-25 from registered to claimed_fixed at the runtime implementation commit."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "b27815cc4b7177576cb2ac8fd758a402f13c1354564986fcd0aea6e28e5f7552",
+      "current_sha256": "95b109bb5e3728650f0d0f7f453e55e815d609e942e7fcdd667326f595f22adc",
+      "reason": "Describe the six S-04 claimed fixes pending R-0011 and real-NFS qualification."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "49fa71ceab2e3c8783b0a708615cb4665632a30cc28bb2946bac2eea61249fa1",
+      "current_sha256": "b5ea0f3900be706c8927a6c662bd2067a72295d2d1212c0ad7890e24a49f0fdf",
+      "reason": "Bind the V-25 claimed state and preserve the prior five claims."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "ed47ddf713d8e561591fae4931a531af547a4995c640a88033baa42baf87040c",
+      "current_sha256": "b0b88d2b068270d8d2718b051f1101aa4cb2cd95577dbe71b04eced212cec4fd",
+      "reason": "Carry immutable R-0002 evidence through the sixth S-04 claimed fix."
+    },
+    "tests/test_v0_3_s04_r0010_import.py": {
+      "historical_sha256": "0fe7fb3dd07a143ff44d8b7a8c56c8b299789204524f35e5e45fef0b1f23bb94",
+      "current_sha256": "ba33a848473c676fb13b0aba47de24d306c9afb99a5e85cf8bf97baf6981c582",
+      "reason": "Preserve the immutable initial V-25 registration while recognizing its later claimed fix."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "historical_sha256": "fa8bcdb8949d2c724cb44ae3b08deb78b7ba2954bd1d312956fbc31f9903c368",
+      "current_sha256": "e167fdc73103d5fb4553b14a7e5f115a3be5e6ecec990e8506100801de04df87",
+      "reason": "Keep the original five-item evidence immutable while accepting the registered V-25 successor."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "ab98fc39b6364462af334ab262a2a1aa066e9c990e4c42e35a63b37926ed4e13",
+      "current_sha256": "37e9a885bcaf87648d92214c3844538a360ba39cfa381f1bb913f8af3a1bbf6f",
+      "reason": "Preserve the independently verified S-03 fixes while recognizing the later V-25 claim."
+    }
+  },
+  "validation": {
+    "status": "pass_local_pending_R_0011_and_real_NFS",
+    "runtime_targeted": {"passed": 40, "failed": 0, "skipped": 0},
+    "v25_errno_cases": {"passed": 5, "failed": 0, "staging_residue": 0},
+    "n1_matrix": {
+      "selection_cases": 528,
+      "selection_mismatches": 0,
+      "all_byte_identity_variants_passed": true,
+      "umasks": ["022", "077", "002"]
+    },
+    "full_cpu_suite": {
+      "passed": 4356,
+      "failed": 0,
+      "skipped": 1,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "allowed_skip": "optional nematics3d dependency"
+    },
+    "wheel_sha256": "f6c2fbfdc20b0b02e743542d36ab4ce0e7bb08829d4fc7feb2ce952e4d53fa81",
+    "archive_path": "/home/fansenwei/pssolver_v0_3_s04_v25_rework_20261021_v2",
+    "short_review": "requires_R_0011",
+    "HPCC_real_NFS": "requires_separate_post_R_0011_authorization"
+  },
+  "scope": {
+    "runtime_changed": true,
+    "nfs_fallback_changed": true,
+    "checkpoint_schema_changed": false,
+    "checkpoint_bytes_changed": false,
+    "provider_identity_changed": false,
+    "solver_equations_changed": false,
+    "numerical_algorithms_changed": false,
+    "test_thresholds_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_rework_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  },
+  "next_request": "R-0011"
+}

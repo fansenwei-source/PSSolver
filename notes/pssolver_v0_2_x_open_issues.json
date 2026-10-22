@@ -32,8 +32,8 @@
   "issue_count": 30,
   "status_counts": {
     "open": 1,
-    "registered": 10,
-    "claimed_fixed": 5,
+    "registered": 9,
+    "claimed_fixed": 6,
     "verified": 8,
     "deferred": 2,
     "accepted": 1,
@@ -217,7 +217,8 @@
       "affects_v0_2_1": false,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "44a6fc3d88d94ccf939e78e23be3ffbac542def5",
       "target_release": "0.3",
       "notes": "Repro: force the NFS fallback and make os.mkdir(target) raise ENOSPC without creating the target; the candidate reports an ambiguous outcome and preserves a checkpoint-sized staging tree. After a failed claim, lstat the target: if absent, raise a definite CheckpointIOError and remove staging; retain the ambiguous path only when the target exists but cannot be claimed. Cover ENOSPC, EDQUOT, EROFS, EACCES, and EIO."
     },

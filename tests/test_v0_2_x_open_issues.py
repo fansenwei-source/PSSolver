@@ -49,8 +49,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts = Counter(entry["status"] for entry in entries)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 10,
-        "claimed_fixed": 5,
+        "registered": 9,
+        "claimed_fixed": 6,
         "verified": 8,
         "deferred": 2,
         "accepted": 1,
@@ -151,10 +151,12 @@ def test_s04_checkpoint_robustness_items_are_claimed_by_one_commit():
         assert "verified_by" not in issues[issue_id]
 
 
-def test_r0010_registers_v25_without_reopening_the_five_s04_claims():
+def test_v25_rework_is_claimed_without_reopening_the_five_s04_claims():
     issues = _issues()
     v25 = issues["V-25"]
-    assert v25["status"] == "registered"
+    assert v25["status"] == "claimed_fixed"
+    assert v25["fixed_in"] == "44a6fc3d88d94ccf939e78e23be3ffbac542def5"
+    assert "verified_by" not in v25
     assert v25["severity"] == "medium-low"
     assert v25["source_report"] == "PSSolver_sync/results/R-0010.result.json"
     assert v25["affects_control_paths"] is True
@@ -215,7 +217,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     registered = {
         issue_id for issue_id, item in issues.items() if item["status"] == "registered"
     }
-    assert len(registered) == 10
+    assert len(registered) == 9
     assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in registered)
     assert issues["A2-21/S2-12"]["target_release"] == "0.3"
     assert "S-07" in issues["B30"]["notes"]
