@@ -30,6 +30,8 @@ from pssolver.runtime.robin_scalar import (
 FINITE_Q_ANCHORING_RUNTIME_SCHEMA_VERSION = 1
 FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION = 1
 FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION = 2
+_CHECKPOINT_INTEGRITY_SEALED_SHA256 = "sealed_sha256"
+_CHECKPOINT_INTEGRITY_UNSEALED_LEGACY = "unsealed_legacy"
 
 
 def _canonical_json(value: object, description: str) -> str:
@@ -135,15 +137,10 @@ class PlaneFiniteQAnchoringCheckpoint:
 
     @property
     def integrity_status(self) -> str:
-        from pssolver.io.checkpoint import (
-            CHECKPOINT_INTEGRITY_SEALED_SHA256,
-            CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
-        )
-
         return (
-            CHECKPOINT_INTEGRITY_SEALED_SHA256
+            _CHECKPOINT_INTEGRITY_SEALED_SHA256
             if self.format_version == FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION
-            else CHECKPOINT_INTEGRITY_UNSEALED_LEGACY
+            else _CHECKPOINT_INTEGRITY_UNSEALED_LEGACY
         )
 
 
