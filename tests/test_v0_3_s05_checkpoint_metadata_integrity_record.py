@@ -147,6 +147,11 @@ def test_s05_candidate_successors_bind_the_current_tree():
 
 def test_s05_candidate_records_the_complete_local_qualification():
     validation = _read(CANDIDATE_RECORD)["validation"]
+    assert validation["archive_checksums_entries"] == 67
+    assert validation["archive_checksums_sha256"] == (
+        "98574514a422d9d8b9184ee964d0f8b2f8a3c91a85d45861a569918cad95dbde"
+    )
+    assert validation["archive_complete_present"] is True
     assert validation["installed_wheel"] == {
         "filename": "pssolver-0.3.0.dev0-py3-none-any.whl",
         "sha256": "d8d52ff229600aee45c8d319e6e7ddd78af35378bd342137e3736d17a87c4bd3",

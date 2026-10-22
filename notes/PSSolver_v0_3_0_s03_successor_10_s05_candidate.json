@@ -78,6 +78,9 @@
   ],
   "validation": {
     "archive": "/home/fansenwei/pssolver_v0_3_s05_checkpoint_metadata_integrity_65ef108_20261022_v1",
+    "archive_checksums_entries": 67,
+    "archive_checksums_sha256": "98574514a422d9d8b9184ee964d0f8b2f8a3c91a85d45861a569918cad95dbde",
+    "archive_complete_present": true,
     "environment_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
     "environment_clone_method": "cp -al",
     "installed_wheel": {
