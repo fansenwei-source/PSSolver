@@ -43,15 +43,14 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 30
-    assert len({entry["id"] for entry in entries}) == 30
+    assert len(entries) == record["issue_count"] == 32
+    assert len({entry["id"] for entry in entries}) == 32
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 8,
-        "claimed_fixed": 1,
-        "verified": 14,
+        "registered": 10,
+        "verified": 15,
         "deferred": 2,
         "accepted": 1,
         "coverage_gap": 3,
@@ -196,10 +195,11 @@ def test_rc5_rc6_residuals_are_registered_without_claiming_fixes():
         "a10785853736b2458eec80680b9ced72a495775f"
     )
     assert issues["V-24"]["verified_by"] == "R-0009"
-    assert issues["A2-21/S2-12"]["status"] == "claimed_fixed"
+    assert issues["A2-21/S2-12"]["status"] == "verified"
     assert issues["A2-21/S2-12"]["fixed_in"] == (
         "65ef1080cb0215131efe90143863de7014fe4b5b"
     )
+    assert issues["A2-21/S2-12"]["verified_by"] == "R-0013"
     assert "not a MAC or signature" in issues["A2-21/S2-12"]["notes"]
     assert issues["A2-11"]["status"] == "accepted"
     assert issues["NEW-14"]["status"] == "open"
@@ -223,9 +223,13 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     registered = {
         issue_id for issue_id, item in issues.items() if item["status"] == "registered"
     }
-    assert len(registered) == 8
+    assert len(registered) == 10
     assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in registered)
     assert issues["A2-21/S2-12"]["target_release"] == "0.3"
+    assert issues["V-26"]["target_release"] == "0.3"
+    assert "S-07" in issues["V-26"]["notes"]
+    assert issues["V-27"]["target_release"] == "0.3"
+    assert "S-06" in issues["V-27"]["notes"]
     assert "S-07" in issues["B30"]["notes"]
     assert issues["V-17"]["status"] == "verified"
     assert issues["V-17"]["fixed_in"] == (

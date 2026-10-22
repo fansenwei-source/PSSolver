@@ -103,19 +103,19 @@ def test_s05_record_preserves_the_selected_contract_and_scope():
     assert scope["nematics3d_modified"] is False
 
 
-def test_s05_registry_claim_is_pending_independent_review():
+def test_s05_registry_claim_is_independently_verified():
     issue = next(
         item
         for item in _read(REGISTRY)["issues"]
         if item["id"] == "A2-21/S2-12"
     )
-    assert issue["status"] == "claimed_fixed"
+    assert issue["status"] == "verified"
     assert issue["fixed_in"] == (
         "65ef1080cb0215131efe90143863de7014fe4b5b"
     )
     assert "not a MAC or signature" in issue["notes"]
-    assert "Independent verification is pending" in issue["notes"]
-    assert "verified_by" not in issue
+    assert "Independently verified by R-0013" in issue["notes"]
+    assert issue["verified_by"] == "R-0013"
 
 
 def test_s05_record_does_not_authorize_external_actions():

@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-05",
+  "classification": "PASS_R0013_S05_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "c9b5839692d8e5ac6638fe02f4e29e793de81bea",
+    "qualified_runtime_source": "65ef1080cb0215131efe90143863de7014fe4b5b",
+    "result_commit": "44b3e2d78f291764e207b26375878540607975d1",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0013",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0013.result.json",
+    "sha256": "4eed1d24794a6918db9c474f9f9877e57d69a657ec1a1153cd5e5b22a42fd222",
+    "classification": "PASS",
+    "release_blockers": []
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s05_claude_review_20261022_v1",
+    "checksums_entries": 27,
+    "checksums_sha256": "a386dcc7c3580979ecc0b342453774fa840213aa67e577d9ba4a89365de6e8b2",
+    "complete_present": true,
+    "final_report_sha256": "6ffe928a0deb883d282a49935b806087fd973d496f444f5a624dbecb69a0ae31",
+    "summary_sha256": "4035ae6d3861c3eb7b2d6113f037451257f3db702b8d1092c4715e4d870ec130"
+  },
+  "registry_import": {
+    "verified": {
+      "id": "A2-21/S2-12",
+      "status": "verified",
+      "fixed_in": "65ef1080cb0215131efe90143863de7014fe4b5b",
+      "verified_by": "R-0013"
+    },
+    "new_findings": [
+      {
+        "id": "V-26",
+        "severity": "low",
+        "status": "registered",
+        "target_release": "0.3",
+        "plan_step": "S-07"
+      },
+      {
+        "id": "V-27",
+        "severity": "low",
+        "status": "registered",
+        "target_release": "0.3",
+        "plan_step": "S-06"
+      }
+    ],
+    "s05_complete": true,
+    "eligible_for_d0009_integration_draft": true
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "17a9776d6f52fd24a50a2e9cced772f023ba86c1cf2b776a1cdc6191c400e681",
+      "current_sha256": "432cc7340e528b69deb80fcc7237b710203af09f37480efaac94cb8cccbdc0b4",
+      "reason": "Apply the exact R-0013 verification and register V-26 for S-07 and V-27 for S-06."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "6564914cf5ed0404a94809e571db7422984370441ee990a37088cdc7414e411b",
+      "current_sha256": "4387e2283cf558ec9ec2784518b899cf316cd84b957c7196930df9e4b8859918",
+      "reason": "Describe the completed S-05 review and the two routed low-severity findings."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "5b95f5e7dfb58fbc8f1e5067005e8421d4f192e56bdff5bc06638ac8acc7763c",
+      "current_sha256": "a66a2d14d50f269f434104d42f347dfd065cd1b9a2968c0c424b143588fbbd83",
+      "reason": "Recognize the current registry counts without rewriting the R-0002 historical record."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "1428d86e785647e560c1fd8b807310ef223a018447c22f5f58cba02bfdd19592",
+      "current_sha256": "ed96257c13c44c191398aae079a9b928abc6b3ba586099849ffe46a5319434cb",
+      "reason": "Bind the verified S-05 fix and both new registered findings."
+    },
+    "tests/test_v0_3_0_roadmap.py": {
+      "historical_sha256": "66689180c1d61abeebb87721cef264eaf5abbb0d751f0196e81573bbf584e2a7",
+      "current_sha256": "97b57656772b8abb98f46ddb134df5ab24580a17a51218585af89a77a1e0bb8c",
+      "reason": "Preserve the historical 30-item S-02 scope while accounting for V-26 and V-27 as later findings."
+    },
+    "tests/test_v0_3_s01_registry_migration.py": {
+      "historical_sha256": "6203a34f84f0f7db9543c7d4b8b4baaa6c7514e22aa9a220199ac0cb3e5aaa5c",
+      "current_sha256": "21b5474f00b2353c7f4ab13043922f80a8a12a80b82788f455dba07e0bb2ff8a",
+      "reason": "Advance A2-21/S2-12 from its historical S-01 tracked state to verified."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "84551459d2f30bc2478b6693ba97c03a16451bd660d0c533537f8236b34cb222",
+      "current_sha256": "9fec415a07adcdf1bb67b02b7348a3072c6ec329e6d1cc475b0cdcde8dd33d27",
+      "reason": "Preserve S-03 verification while recognizing the independently verified S-05 successor."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "historical_sha256": "1123dd3279bc9df9a3640c9add3d1dfdf2f9906e3304870ea49959db1ec3b6d1",
+      "current_sha256": "682b7667d7a1cc4d184cc18808a2582f45b5e57f97c376e298238b257413e6c3",
+      "reason": "Preserve S-04 verification while recognizing that no claimed-fixed item remains after R-0013."
+    },
+    "tests/test_v0_3_s05_checkpoint_metadata_integrity_record.py": {
+      "historical_sha256": "84118d2c2b9d4e748a4d44005e64603276019ad5526e15f44feac58d01ebd479",
+      "current_sha256": "eddcc240457a65edaf182b9400cd4d5da23c52b580bf4b2408c8c68342774b36",
+      "reason": "Advance the S-05 registry assertion from pending review to R-0013 verification."
+    }
+  },
+  "validation": {
+    "archive": "/home/fansenwei/pssolver_v0_3_s05_r0013_import_20261022_v1",
+    "archive_checksums_entries": 9,
+    "archive_checksums_sha256": "b3612c8084f70846afef32cd69553567752548f7d5dc2fbea91a4ba11a5ad88f",
+    "archive_complete_present": true,
+    "environment_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "environment_clone_method": "cp -al",
+    "environment_clone_path": "/home/fansenwei/.pssolver_r0013_import_env.qi4fEc/venv",
+    "environment_clone_pruned": true,
+    "python_executable": "/home/fansenwei/.pssolver_r0013_import_env.qi4fEc/venv/bin/python",
+    "sys_path": [
+      "",
+      "/home/fansenwei/Desktop/Develop/PSSolver_dev_0_3",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python312.zip",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12/lib-dynload",
+      "/home/fansenwei/.pssolver_r0013_import_env.qi4fEc/venv/lib/python3.12/site-packages"
+    ],
+    "focused_pytest": {
+      "passed": 49,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "9d77933eafd04b1a450b1aee10e443062aeaf38be439d8055279dc730b25007b",
+      "junit_sha256": "9f3d3f8af648205e231831a227d6f3680159fc6b9ae3b922985ec267958d9a94"
+    },
+    "full_cpu_suite": {
+      "passed": 4435,
+      "failed": 0,
+      "skipped": 1,
+      "xfailed": 0,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "allowed_skip": "optional nematics3d dependency",
+      "log_sha256": "5130d32ad50763b7167e14b5064ef94adb11a552c5b85224e95029d737a03e02",
+      "junit_sha256": "2193c2a194c35bda4c0536fc0958b47397a0b71afda0d64fd65cac4bc6db7a79"
+    }
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "thresholds_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_import_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  },
+  "next_plan_step": "S-06",
+  "next_request": "R-0014"
+}

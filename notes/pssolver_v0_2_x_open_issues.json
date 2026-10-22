@@ -29,12 +29,11 @@
       "rewritten": false
     }
   },
-  "issue_count": 30,
+  "issue_count": 32,
   "status_counts": {
     "open": 1,
-    "registered": 8,
-    "claimed_fixed": 1,
-    "verified": 14,
+    "registered": 10,
+    "verified": 15,
     "deferred": 2,
     "accepted": 1,
     "coverage_gap": 3
@@ -284,10 +283,39 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "65ef1080cb0215131efe90143863de7014fe4b5b",
+      "verified_by": "R-0013",
       "target_release": "0.3",
-      "notes": "S-05 seals Plane format 3, legacy Channel format 3, finite-Q format 2 and experimental shadow format 2 while retaining exact read-only v0.2 branches. The SHA-256 is an integrity checksum, not a MAC or signature, and deliberate digest recomputation remains outside the v0.3 threat model. Independent verification is pending."
+      "notes": "S-05 seals Plane format 3, legacy Channel format 3, finite-Q format 2 and experimental shadow format 2 while retaining exact read-only v0.2 branches. The SHA-256 is an integrity checksum, not a MAC or signature, and deliberate digest recomputation remains outside the v0.3 threat model. Independently verified by R-0013."
+    },
+    {
+      "id": "V-26",
+      "title": "A sealed checkpoint can be downgraded to an accepted unsealed legacy format by removing the seal and lowering the format version",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0013.result.json",
+      "first_found": "S-05 independent review R-0013; applies to the dev/0.3 S-05 candidate",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3",
+      "notes": "Roadmap S-07. This follows from retaining exact legacy read branches: consumers that require sealed integrity must require integrity_status == 'sealed_sha256'. Clarify the CHANGELOG/design wording and consider recording integrity_status on resume or adding an opt-in require_sealed policy. Repro: R-0013 out/s05_downgrade_probe.json."
+    },
+    {
+      "id": "V-27",
+      "title": "Two S-04 import-record tests bind a recorded sys.path entry to the current checkout path",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0013.result.json",
+      "first_found": "S-05 independent review R-0013; introduced on dev/0.3 by the S-04 evidence imports",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3",
+      "notes": "Roadmap S-06. tests/test_v0_3_s04_r0011_import.py and tests/test_v0_3_s04_r0012_import.py fail in checkouts outside the recorded PSSolver_dev_0_3 path. Compare against the recorded literal or a stable path suffix, never the current ROOT."
     },
     {
       "id": "A2-24/C1-15",
