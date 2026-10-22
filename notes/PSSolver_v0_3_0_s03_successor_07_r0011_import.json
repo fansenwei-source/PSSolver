@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "stage": "S-04",
+  "classification": "INTERIM_PASS_ELIGIBLE_FOR_REAL_NFS_R0011_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "906fff58960b041d047cc98842d9a0b39b36b8b9",
+    "runtime_commit": "44a6fc3d88d94ccf939e78e23be3ffbac542def5",
+    "result_commit": "645b4e687b4e56e6ed7c78c74595ecc28705b782",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0011",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0011.result.json",
+    "sha256": "0707d33de8748139b40a5c211dcf98ad4a1205c798287f514f9e8c7312a0ad5a",
+    "classification": "INTERIM_PASS_ELIGIBLE_FOR_REAL_NFS",
+    "release_blockers": [],
+    "registry_updates": [],
+    "new_findings": []
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s04v25_claude_review_20261021_v1",
+    "checksums_entries": 4512,
+    "checksums_sha256": "d2d4b97dffda0b8a2e21b8793077c1018b8b3fcd53c7deb57b9f5911aa538cc4",
+    "complete_present": true,
+    "final_report_sha256": "29d2cfc6b018c34ec5c22531d4e6a659dfa4dbe8e8f106b9d19d0fcc0d9b0552",
+    "summary_sha256": "65ec9e94c3756d207e31b971303300f8bebe7901686dc6a351178f91c1632e5b"
+  },
+  "review_import": {
+    "preserved_claimed_fixed": [
+      "V-22",
+      "V-16",
+      "V-13",
+      "V-14",
+      "C2-17",
+      "V-25"
+    ],
+    "eligible_for_one_separately_authorized_real_nfs_run": true,
+    "s04_complete": false,
+    "integration_or_push_authorized": false
+  },
+  "hpcc_binding": {
+    "runtime_commit": "44a6fc3d88d94ccf939e78e23be3ffbac542def5",
+    "checkpoint_py_sha256": "1b690d50c85cb1ee3934908494f7fd4a6cc4df4f557f5c2663be4f374bb6bbec",
+    "provider_archive_name": "provider_44a6fc3.tar",
+    "provider_archive_sha256": "b765e1b8d687af96223d4cf7eda75bc20eede727cadee7a11ab20428ec3d8760",
+    "helper_sha256": "900947f4104a7f1907d968ccad562bfe6b5bccc8c015517b1312906bbedf56f5",
+    "rejected_stale_helper_sha256_prefix": "a16cc566",
+    "s04_archive_root_sha256": "4d938881c8950ee854ddef84c358e5481d1fc328804c19e16e268eb5c9d042f9",
+    "fixture_builders_sha256": "67f90f13e3ce007ee464827d91e895465a6261c65057c18854e2da5557253c76"
+  },
+  "historical_successor_sources": {},
+  "validation": {
+    "environment_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "environment_clone_path": "/home/fansenwei/pssolver-r0011-import-venv-42zsGk/venv",
+    "environment_clone_pruned": true,
+    "python_executable": "/home/fansenwei/pssolver-r0011-import-venv-42zsGk/venv/bin/python",
+    "sys_path": [
+      "",
+      "/home/fansenwei/Desktop/Develop/PSSolver_dev_0_3",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python312.zip",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12/lib-dynload",
+      "/home/fansenwei/pssolver-r0011-import-venv-42zsGk/venv/lib/python3.12/site-packages"
+    ],
+    "focused_pytest": "18 passed",
+    "junit_sha256": "f382b133ccd132694e39f97e4262bd850b23ae208965e7aa414382ed79b13d4d"
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "thresholds_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_import_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  },
+  "next_request": "R-0012"
+}
