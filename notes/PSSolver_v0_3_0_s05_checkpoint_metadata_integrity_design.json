@@ -1,0 +1,264 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-21T23:13:04-04:00",
+  "classification": "DRAFT_V0_3_S05_CHECKPOINT_METADATA_INTEGRITY_DESIGN",
+  "status": "pending_user_confirmation",
+  "plan_step": "S-05",
+  "issue_ids": [
+    "A2-21/S2-12"
+  ],
+  "governing_decisions": [
+    "D-0010",
+    "D-0011"
+  ],
+  "git_identity": {
+    "branch": "fix/v0.3-s05-checkpoint-digest-design",
+    "development_parent": "d337a690f6892c551ab0eacd3299ba0c9e9ada45",
+    "runtime_implementation_started": false
+  },
+  "already_confirmed": {
+    "introduce_digest_protected_writer_in_v0_3": true,
+    "retain_released_v0_2_read_compatibility": true,
+    "legacy_sources_are_read_only": true,
+    "restart_equivalence_required": true,
+    "source": "D-0011 Q-02 and Q-05"
+  },
+  "terminology": {
+    "metadata_seal": "A canonical SHA-256 over the complete checkpoint metadata object, excluding only metadata_sha256 itself.",
+    "integrity_not_authenticity": "The seal detects accidental, incomplete, or coordinated metadata edits when the digest is not recomputed. It is not a MAC or signature and does not establish the author or truth of a checkpoint against an adversary able to recompute SHA-256.",
+    "progress_coverage": "completed_steps, integrator counters, tensor records, restart metadata, compatibility identity, migration provenance, and every other registered metadata field are covered together."
+  },
+  "inventory": [
+    {
+      "family": "plane_workflow",
+      "current_format": 2,
+      "current_integrity": "tensor_sha256_only",
+      "progress_covered_by_aggregate_digest": false,
+      "proposed_format": 3,
+      "proposed_action": "seal current writes and require the seal before any payload read"
+    },
+    {
+      "family": "legacy_channel_workflow",
+      "current_format": 2,
+      "current_integrity": "tensor_sha256_only",
+      "progress_covered_by_aggregate_digest": false,
+      "proposed_format": 3,
+      "proposed_action": "seal current writes and require the seal before any payload read"
+    },
+    {
+      "family": "finite_q_anchoring_workflow",
+      "current_format": 1,
+      "current_integrity": "identity_and_tensor_sha256_only",
+      "progress_covered_by_aggregate_digest": false,
+      "proposed_format": 2,
+      "proposed_action": "seal current writes and require the seal before any payload read"
+    },
+    {
+      "family": "experimental_shadow_checkpoint",
+      "current_format": 1,
+      "current_integrity": "tensor_sha256_only",
+      "progress_covered_by_aggregate_digest": false,
+      "proposed_format": 2,
+      "proposed_action": "seal current writes and require the seal before any payload read"
+    },
+    {
+      "family": "periodic_workflow_and_functional_carrier",
+      "current_format": "2/3",
+      "current_integrity": "metadata_sha256_and_tensor_sha256",
+      "progress_covered_by_aggregate_digest": true,
+      "proposed_format": "unchanged",
+      "proposed_action": "regression tests only"
+    },
+    {
+      "family": "complete_stress_channel_and_functional_channel",
+      "current_format": 3,
+      "current_integrity": "metadata_sha256_and_tensor_sha256",
+      "progress_covered_by_aggregate_digest": true,
+      "proposed_format": "unchanged",
+      "proposed_action": "regression tests only"
+    },
+    {
+      "family": "reference_and_modal_block_manifests",
+      "current_format": 1,
+      "current_integrity": "manifest_sha256_bound_by_COMPLETE",
+      "progress_covered_by_aggregate_digest": true,
+      "proposed_format": "unchanged",
+      "proposed_action": "regression tests only"
+    }
+  ],
+  "proposed_contract": {
+    "canonical_digest_primitive": "reuse pssolver.io.checkpoint.seal_checkpoint_metadata and verify_checkpoint_metadata",
+    "new_writes": [
+      "Every affected public writer emits only its newest sealed format.",
+      "The seal is computed after tensor-file records and every progress/restart field are final.",
+      "The published JSON contains exactly one lowercase metadata_sha256 value.",
+      "No solver state, equations, timestep order, tensor bytes, provider identity, production default, or Functional API version changes."
+    ],
+    "new_reads": [
+      "Read format_version first through strict JSON parsing, then choose one exact version schema.",
+      "For a new format, verify metadata_sha256 before opening a tensor payload or mutating a target runtime.",
+      "A missing, malformed, or mismatched required seal raises CheckpointIntegrityError.",
+      "Unknown or missing keys remain fail-closed.",
+      "Tensor SHA-256, shape, dtype, finiteness, compatibility identity, and progress-consistency checks remain mandatory after the metadata seal passes."
+    ],
+    "legacy_reads": [
+      "Released and already-supported v0.2 formats remain accepted by explicit version-specific read branches.",
+      "Legacy sources are never rewritten in place.",
+      "An unsealed legacy read cannot retroactively establish metadata integrity and must be reported as unsealed_legacy.",
+      "All frozen v0.2 fixtures must preserve their original tree hashes and pass state and one-step restart equivalence."
+    ],
+    "writer_boundary": [
+      "The public writer rejects an object whose format_version is not the newest format.",
+      "Legacy bytes may be produced only by frozen fixtures or test-only helpers, not by a v0.3 production writer.",
+      "Explicit upgrades write a different target directory and never modify the source."
+    ],
+    "identity_boundary": [
+      "Carrier format versions change; scientific and compatibility identities do not.",
+      "Provider identity and the Functional API version remain unchanged unless implementation evidence proves an unavoidable identity delta, in which case work stops for a separate decision.",
+      "The selected publication backend and integrity-observation status are not serialized into compatibility identity."
+    ]
+  },
+  "proposed_upgrade_surface": {
+    "plane_format_2_to_3": "non-in-place exact carrier upgrade after all existing v2 identity, progress, and tensor checks pass",
+    "legacy_channel_format_2_to_3": "non-in-place exact carrier upgrade after all existing v2 dynamics, progress, and tensor checks pass",
+    "finite_q_format_1_to_2": "non-in-place exact carrier upgrade after aggregate identity, component progress, and tensor checks pass",
+    "shadow_format_1_to_2": "non-in-place experimental carrier upgrade after runtime, algebraic restart, progress, and tensor checks pass",
+    "integrity_claim": "An upgrade seals the bytes and metadata it validated; it does not claim the unsigned source was historically authentic or untampered."
+  },
+  "tamper_gate": {
+    "required_current_format_mutations": [
+      "completed_steps_only",
+      "integrator_step_count_only",
+      "integrator_refresh_count_only",
+      "coordinated_logically_consistent_progress_fields",
+      "tensor_record_shape_dtype_sha256_or_filename",
+      "backend_restart_or_persistent_state_metadata",
+      "compatibility_identity_or_identity_digest",
+      "remove_metadata_sha256",
+      "malformed_metadata_sha256",
+      "unknown_or_missing_metadata_key"
+    ],
+    "required_result": "Each mutation is rejected as CheckpointIntegrityError before payload loading, target mutation, timestep execution, or output-directory creation.",
+    "negative_control": "A pristine sealed checkpoint loads, restores, and advances identically to a continuous run.",
+    "legacy_control": "A frozen unsealed fixture remains readable under its exact legacy schema but is never described as digest verified."
+  },
+  "qualification_plan": {
+    "cpu": [
+      "focused positive and negative tests for every affected family",
+      "all released v0.2 fixture and continuation-oracle tests",
+      "all existing checkpoint identity, migration, publication, NFS fault-injection, and restart tests",
+      "full CPU suite with no new skip or xfail",
+      "installed-wheel checkpoint smoke"
+    ],
+    "gpu": "No standalone H100 run is required for metadata-only logic; cross-device checkpoint/restart coverage is retained for the consolidated S-09 campaign.",
+    "performance": "No timestep-path code changes. Checkpoint I/O may hash one small JSON object once per write/read; this is outside timestep profiling."
+  },
+  "decision_questions": [
+    {
+      "id": "S05-Q01",
+      "question": "Which currently unsealed checkpoint.json writers should S-05 cover?",
+      "recommended_option": "A",
+      "recommendation": "Choose A so A2-21 closes without leaving the same defect in a public pilot or packaged experimental writer.",
+      "options": {
+        "A": "Cover Plane, legacy Channel, finite-Q anchoring, and experimental shadow checkpoints.",
+        "B": "Cover only public workflow writers: Plane, legacy Channel, and finite-Q; defer experimental shadow to S-07.",
+        "C": "Cover only the two originally observed production writers: Plane and legacy Channel."
+      }
+    },
+    {
+      "id": "S05-Q02",
+      "question": "May a v0.3 public writer emit an older unsealed format when passed a legacy checkpoint object?",
+      "recommended_option": "A",
+      "recommendation": "Choose A so every new v0.3 production write has the promised integrity seal.",
+      "options": {
+        "A": "No. Public writers accept only the newest sealed format; legacy generation is fixture/test-only.",
+        "B": "Yes, but only through an explicit legacy=True option.",
+        "C": "Yes, preserve the current low-level writer behavior unchanged."
+      }
+    },
+    {
+      "id": "S05-Q03",
+      "question": "How should released unsealed v0.2 checkpoints be read?",
+      "recommended_option": "A",
+      "recommendation": "Choose A to honor D-0011 without silently reinterpreting or rewriting old data.",
+      "options": {
+        "A": "Automatically dispatch by exact frozen format version, keep the source read-only, and label integrity as unsealed_legacy.",
+        "B": "Require an allow_unsealed_legacy=True argument at every load call.",
+        "C": "Require an explicit migration before any state can be read."
+      }
+    },
+    {
+      "id": "S05-Q04",
+      "question": "How should callers observe whether checkpoint metadata was sealed?",
+      "recommended_option": "A",
+      "recommendation": "Choose A because a stable value is auditable without warning spam or compatibility-identity drift.",
+      "options": {
+        "A": "Expose a stable read-only sealed_sha256 or unsealed_legacy integrity status on loaded headers/checkpoints, outside compatibility identity.",
+        "B": "Document the distinction only; add no programmatic status.",
+        "C": "Emit a runtime warning for every legacy load."
+      }
+    },
+    {
+      "id": "S05-Q05",
+      "question": "Should S-05 provide non-in-place carrier upgrade helpers?",
+      "recommended_option": "A",
+      "recommendation": "Choose A so users can deliberately convert validated legacy carriers while preserving the original bytes and honest provenance.",
+      "options": {
+        "A": "Provide explicit source-to-new-target upgrades for every affected family.",
+        "B": "Provide upgrades only for Plane and legacy Channel.",
+        "C": "Do not provide upgrades; users must restore and create a later checkpoint."
+      }
+    }
+  ],
+  "recommended_answers": {
+    "S05-Q01": "A",
+    "S05-Q02": "A",
+    "S05-Q03": "A",
+    "S05-Q04": "A",
+    "S05-Q05": "A"
+  },
+  "selected_answers": {},
+  "implementation_gate": "Do not edit checkpoint runtime code until the user confirms S05-Q01 through S05-Q05.",
+  "design_validation": {
+    "environment_policy": "D-0008 baseline-only hard-link clone",
+    "baseline_venv_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "clone_method": "cp -al",
+    "clone_path": "/home/fansenwei/.pssolver_s05_design_env.NcmHiA/venv",
+    "python_executable": "/home/fansenwei/.pssolver_s05_design_env.NcmHiA/venv/bin/python",
+    "sys_prefix": "/home/fansenwei/.pssolver_s05_design_env.NcmHiA/venv",
+    "sys_path": [
+      "",
+      "/home/fansenwei/Desktop/Develop/PSSolver_dev_0_3",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python312.zip",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12/lib-dynload",
+      "/home/fansenwei/.pssolver_s05_design_env.NcmHiA/venv/lib/python3.12/site-packages"
+    ],
+    "pytest_import": "/home/fansenwei/.pssolver_s05_design_env.NcmHiA/venv/lib/python3.12/site-packages/pytest/__init__.py",
+    "targeted_tests": {
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "xfailed": 0
+    },
+    "clone_pruned_after_validation": true
+  },
+  "scope": {
+    "design_only": true,
+    "runtime_changed": false,
+    "checkpoint_schema_changed": false,
+    "checkpoint_bytes_changed": false,
+    "provider_identity_changed": false,
+    "functional_api_version_changed": false,
+    "numerical_implementation_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "pushed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  }
+}
