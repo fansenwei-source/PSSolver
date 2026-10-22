@@ -29,7 +29,7 @@
   "known_issue_scope": {
     "registry_path": "notes/pssolver_v0_2_x_open_issues.json",
     "registry_sha256": "18a769b757a9c4325d69e8a9e86751c19642e66804141cda678dde408fed9eb3",
-    "registry_issue_count": 29,
+    "registry_issue_count": 30,
     "already_verified": [
       "V-17"
     ],
@@ -48,7 +48,8 @@
         "V-16",
         "V-13",
         "V-14",
-        "C2-17"
+        "C2-17",
+        "V-25"
       ],
       "S-05": [
         "A2-21/S2-12"

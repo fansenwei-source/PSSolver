@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-21",
+  "stage": "S-04",
+  "classification": "REWORK_REQUIRED_R0010_S04_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "7197f1a0dafc8877834926c340a9982755c23ebc",
+    "result_commit": "d91f0204541b743be9c8b1e66ff91de0d25293c2",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0010",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0010.result.json",
+    "sha256": "6dba6baa3dc234a19a6b392010f1e8b837ae92125287918f2186d9a14bd8c004",
+    "classification": "REWORK_REQUIRED",
+    "release_blockers": [],
+    "registry_updates": []
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s04_claude_review_20261021_v1",
+    "checksums_entries": 7248,
+    "checksums_sha256": "9dce922447a605c94c7e82a75267c21cd5dba13a9ce784569fd61dff7a322e8b",
+    "complete_present": true,
+    "final_report_sha256": "5bdc76a2e9f08fb9ebc963e3f90d9cf39ca5cdb761107fbd3b7ce37864342a95",
+    "summary_sha256": "39c28e3032ffbdbb35ec07afb7f977a9924d73d6e2d82751e396601efd682c96"
+  },
+  "review_import": {
+    "preserved_claimed_fixed": ["V-22", "V-16", "V-13", "V-14", "C2-17"],
+    "registered_new_findings": ["V-25"],
+    "V-25": {
+      "status": "registered",
+      "target_release": "0.3",
+      "severity": "medium-low",
+      "affects_control_paths": true,
+      "exercised_by_current_control_research": false
+    }
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "944e1d5b84eeeda2b787251de1bb448d15586843ad05d200b2e132c1914a4aab",
+      "current_sha256": "976367a18b922ebc1f81855efc10c689aec0e753d4fcf3404de55537c78951c2",
+      "reason": "Import R-0010 by registering V-25 while preserving the five S-04 claimed fixes."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "14ed08e9072d59d86ff878cda97d3e7a13e9bb2539390d825a39fad8d4bb2bba",
+      "current_sha256": "b27815cc4b7177576cb2ac8fd758a402f13c1354564986fcd0aea6e28e5f7552",
+      "reason": "Describe the R-0010 V-25 finding and current S-04 review state."
+    },
+    "notes/PSSolver_v0_3_0_roadmap.json": {
+      "historical_sha256": "8f2475b1ae5dc992c5a1ad205aecee3d0237885f0a0b3c55a87d44572c40aedc",
+      "current_sha256": "ced365de802ecce61b55215c5b991753c5590e9d1b489316079b5f4e811e7efc",
+      "reason": "Add V-25 to the S-04 issue scope without changing the confirmed step order or gates."
+    },
+    "notes/PSSolver_v0_3_0_roadmap.md": {
+      "historical_sha256": "42b04ab1582abe0dc29a11771700b7cd94f6621fcab0853bede9dcb677d467d5",
+      "current_sha256": "2afd2a0e139fcdb7031966459476adb5445ffac4f9e1dd8ef56d8a3ae14e73fa",
+      "reason": "Name the V-25 rework in the human-readable S-04 roadmap."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "5a0f5cf973f8e1f473a5d01f03f443e3615961b54a9b1877659bba22bb0daf66",
+      "current_sha256": "49fa71ceab2e3c8783b0a708615cb4665632a30cc28bb2946bac2eea61249fa1",
+      "reason": "Bind V-25 registration and preserve all five S-04 claimed-fixed states."
+    },
+    "tests/test_v0_3_0_roadmap.py": {
+      "historical_sha256": "7275001f8fb5e3770679cddc7fed173e01f63f7331a57acd461d5ed56a83c597",
+      "current_sha256": "66689180c1d61abeebb87721cef264eaf5abbb0d751f0196e81573bbf584e2a7",
+      "reason": "Require V-25 to remain assigned to S-04."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "52ae13c76ce14828a2f52584290eeb0807695895913f3fd766b9c8fc62ceaea7",
+      "current_sha256": "ed47ddf713d8e561591fae4931a531af547a4995c640a88033baa42baf87040c",
+      "reason": "Carry the immutable R-0002 evidence through the later V-25 registry addition."
+    }
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "thresholds_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_import_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  },
+  "next_request": "R-0011"
+}

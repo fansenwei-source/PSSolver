@@ -6,11 +6,12 @@
 `dev/0.3` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 28 条：
+当前共登记 30 条：
 
 - `open`：1；
-- `registered`：20；
-- `verified`：1；
+- `registered`：10；
+- `claimed_fixed`：5；
+- `verified`：8；
 - `deferred`：2；
 - `accepted`：1；
 - `coverage_gap`：3。
@@ -22,20 +23,20 @@
    functional export、forced fallback、installed wheel、真跨文件系统拒绝与完整 CPU suite。
 2. `NEW-14`：在 `0.3 GPU verification` 中核实 TF32 policy scope 是否覆盖 backward；
    目前只登记，不宣称存在数值错误。
-3. `V-22`、`V-23`：`R-0002` 新登记的两个低严重度、既有 checkpoint I/O 边界问题；
-   分别涉及事务中途改指父 symlink 后的旧目录 staging 残留，以及不可搜索父目录暴露原始
-   `PermissionError`。两者均 fail-closed 或不产生错误结果，不阻塞 V-17。
+3. `V-25`：`R-0010` 在 S-04 预审中发现的 medium-low 回退；明确的 NFS 占位目录
+   `mkdir` 失败被误判为模糊状态并保留完整 staging。本条已纳入 S-04 返工；此前五项
+   S-04 修复仍保持 `claimed_fixed`，等待 V-25 短复核和真实 NFS 复测。
 
 ## Control 路径
 
 `C1-05`、`C1-10`、`C1-11`、`C2-18`、`C1-08`、`NEW-14`、`A3-18`
-以及 `V-17`、`V-22`、`V-23`、`V-16`、`V-13`、`V-14`、`V-21`、`OBS-4` 会触及 Control
+以及 `V-17`、`V-22`、`V-23`、`V-16`、`V-13`、`V-14`、`V-25`、`V-21`、`OBS-4` 会触及 Control
 依赖或暴露的路径。当前 Control 研究没有执行这些已登记的 checkpoint 限制路径，所有条目的
 `exercised_by_current_control_research` 均为 false。
 
 ## 0.3 路线图
 
-20 个仍为 `registered` 的 low/info 或明确指定条目统一以 `0.3` 为目标，
+10 个仍为 `registered` 的 low/info 或明确指定条目统一以 `0.3` 为目标，
 `A2-21/S2-12` 归入设计先行的 `S-05`，`B30` 归入文档批次 `S-07`。
 `V-17` 已验证身份不变，不重新打开。路线图顺序以同步仓库中用户确认的
 `D-0010` 与 `plan/roadmap.json` 为准。

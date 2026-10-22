@@ -29,10 +29,10 @@
       "rewritten": false
     }
   },
-  "issue_count": 29,
+  "issue_count": 30,
   "status_counts": {
     "open": 1,
-    "registered": 9,
+    "registered": 10,
     "claimed_fixed": 5,
     "verified": 8,
     "deferred": 2,
@@ -206,6 +206,20 @@
       "fixed_in": "468e06710e1b4881a557f0228dcb16be38791094",
       "target_release": "0.3",
       "notes": "Ownership uses only (st_dev, st_ino), and the rename-failure path can attempt placeholder removal twice."
+    },
+    {
+      "id": "V-25",
+      "title": "A definite placeholder-mkdir failure on the NFS-compatible path leaves staging and is reported as ambiguous",
+      "severity": "medium-low",
+      "source_report": "PSSolver_sync/results/R-0010.result.json",
+      "first_found": "S-04 independent pre-real-NFS review R-0010; introduced by the dev/0.3 S-04 candidate",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": true,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3",
+      "notes": "Repro: force the NFS fallback and make os.mkdir(target) raise ENOSPC without creating the target; the candidate reports an ambiguous outcome and preserves a checkpoint-sized staging tree. After a failed claim, lstat the target: if absent, raise a definite CheckpointIOError and remove staging; retain the ambiguous path only when the target exists but cannot be claimed. Cover ENOSPC, EDQUOT, EROFS, EACCES, and EIO."
     },
     {
       "id": "V-21",

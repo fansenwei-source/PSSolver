@@ -18,7 +18,8 @@ v0.3.0 应尽可能解决当前已登记的已知问题，同时保持科学正�
 ## 实施顺序
 
 1. S-03：统一公共异常和 metadata 状态，并统一 Periodic/Channel Functional checkpoint 导出的异常翻译；
-2. S-04：修复 checkpoint/NFS/权限/清理竞态，并重跑 N-1 矩阵和真实 NFS；
+2. S-04：修复 checkpoint/NFS/权限/清理竞态，包括 R-0010 新登记的
+   V-25 明确 `mkdir` 失败残留，并重跑 N-1 矩阵和真实 NFS；
 3. S-05：设计并实现带摘要的 checkpoint 进度完整性，同时兼容读取 v0.2；
 4. S-06：修复压力容差、异常 pickle 和 float32 fixed-work；
 5. S-07：清理 wheel、补齐规范化 metadata、诊断与文档；

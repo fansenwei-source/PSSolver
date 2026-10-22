@@ -43,13 +43,13 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 29
-    assert len({entry["id"] for entry in entries}) == 29
+    assert len(entries) == record["issue_count"] == 30
+    assert len({entry["id"] for entry in entries}) == 30
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 9,
+        "registered": 10,
         "claimed_fixed": 5,
         "verified": 8,
         "deferred": 2,
@@ -151,6 +151,19 @@ def test_s04_checkpoint_robustness_items_are_claimed_by_one_commit():
         assert "verified_by" not in issues[issue_id]
 
 
+def test_r0010_registers_v25_without_reopening_the_five_s04_claims():
+    issues = _issues()
+    v25 = issues["V-25"]
+    assert v25["status"] == "registered"
+    assert v25["severity"] == "medium-low"
+    assert v25["source_report"] == "PSSolver_sync/results/R-0010.result.json"
+    assert v25["affects_control_paths"] is True
+    assert v25["exercised_by_current_control_research"] is False
+    assert v25["target_release"] == "0.3"
+    assert "ENOSPC" in v25["notes"]
+    assert "EDQUOT" in v25["notes"]
+
+
 def test_rc5_rc6_residuals_are_registered_without_claiming_fixes():
     issues = _issues()
     registered = {
@@ -202,7 +215,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     registered = {
         issue_id for issue_id, item in issues.items() if item["status"] == "registered"
     }
-    assert len(registered) == 9
+    assert len(registered) == 10
     assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in registered)
     assert issues["A2-21/S2-12"]["target_release"] == "0.3"
     assert "S-07" in issues["B30"]["notes"]
