@@ -9,8 +9,8 @@
 当前共登记 30 条：
 
 - `open`：1；
-- `registered`：9；
-- `claimed_fixed`：0；
+- `registered`：8；
+- `claimed_fixed`：1；
 - `verified`：14；
 - `deferred`：2；
 - `accepted`：1；
@@ -26,6 +26,12 @@
 3. S-04 的六项 checkpoint 健壮性问题已经完成：V-22、V-16、V-13、V-14 与 C2-17
    由提交 `468e067` 修复，V-25 由提交 `44a6fc3` 修复；本地复核和 HPCC 真实 NFS
    门禁均通过，并由 `R-0012` 独立验证为 `verified`。
+4. `A2-21/S2-12` 已由 S-05 运行时提交
+   `65ef1080cb0215131efe90143863de7014fe4b5b`（包含 `af7c121…` 的实现）标记为
+   `claimed_fixed`，等待独立复核。
+   新写出的 Plane 3、legacy Channel 3、finite-Q 2 与 experimental shadow 2 格式均对完整元数据
+   加 SHA-256 seal；旧 v0.2 格式保持只读。该摘要不是 MAC 或签名，蓄意重算摘要不在 v0.3
+   威胁模型内。
 
 ## Control 路径
 
@@ -36,8 +42,8 @@
 
 ## 0.3 路线图
 
-9 个仍为 `registered` 的 low/info 或明确指定条目统一以 `0.3` 为目标，
-`A2-21/S2-12` 归入设计先行的 `S-05`，`B30` 归入文档批次 `S-07`。
+8 个仍为 `registered` 的 low/info 或明确指定条目统一以 `0.3` 为目标；
+`A2-21/S2-12` 已进入设计先行的 `S-05` 独立复核，`B30` 归入文档批次 `S-07`。
 `V-17` 已验证身份不变，不重新打开。路线图顺序以同步仓库中用户确认的
 `D-0010` 与 `plan/roadmap.json` 为准。
 

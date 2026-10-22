@@ -131,6 +131,15 @@ def _resolve_rc6_5(relative: str, predecessor: str) -> str:
     return predecessor
 
 
+def _resolve_from_rc6_1(relative: str, predecessor: str) -> str:
+    resolved = _resolve_rc6_2(relative, predecessor)
+    resolved = _resolve_rc6_3(relative, resolved)
+    resolved = _resolve_rc6_4(relative, resolved)
+    resolved = _resolve_rc6_5(relative, resolved)
+    resolved = _resolve_rc6_6(relative, resolved)
+    return _resolve_rc6_freeze(relative, resolved)
+
+
 def test_rc6_1_record_binds_the_implementation_and_regression_test():
     record = _record()
     assert record["status"] == "complete"
@@ -142,7 +151,9 @@ def test_rc6_1_record_binds_the_implementation_and_regression_test():
     )
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
-            assert _sha256(relative) == expected
+            assert _sha256(relative) == _resolve_from_rc6_1(
+                relative, expected
+            )
 
 
 def test_rc6_1_contract_is_the_stable_public_state_error():
@@ -193,12 +204,9 @@ def test_rc6_1_registers_forward_only_historical_successors():
     }
     for relative, registration in successors.items():
         assert registration["historical_sha256"] != registration["current_sha256"]
-        resolved = _resolve_rc6_2(relative, registration["current_sha256"])
-        resolved = _resolve_rc6_3(relative, resolved)
-        resolved = _resolve_rc6_4(relative, resolved)
-        resolved = _resolve_rc6_5(relative, resolved)
-        resolved = _resolve_rc6_6(relative, resolved)
-        assert _sha256(relative) == _resolve_rc6_freeze(relative, resolved)
+        assert _sha256(relative) == _resolve_from_rc6_1(
+            relative, registration["current_sha256"]
+        )
 
 
 def test_rc6_1_scope_authorizes_only_the_next_local_work_item():

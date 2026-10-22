@@ -32,7 +32,8 @@
   "issue_count": 30,
   "status_counts": {
     "open": 1,
-    "registered": 9,
+    "registered": 8,
+    "claimed_fixed": 1,
     "verified": 14,
     "deferred": 2,
     "accepted": 1,
@@ -283,9 +284,10 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "65ef1080cb0215131efe90143863de7014fe4b5b",
       "target_release": "0.3",
-      "notes": "Includes Plane format-2 checkpoint.json; this is not a regression."
+      "notes": "S-05 seals Plane format 3, legacy Channel format 3, finite-Q format 2 and experimental shadow format 2 while retaining exact read-only v0.2 branches. The SHA-256 is an integrity checksum, not a MAC or signature, and deliberate digest recomputation remains outside the v0.3 threat model. Independent verification is pending."
     },
     {
       "id": "A2-24/C1-15",

@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-05",
+  "classification": "V0_3_S05_CHECKPOINT_METADATA_INTEGRITY_CPU_CANDIDATE",
+  "git_identity": {
+    "implementation_commit": "af7c1217b4599f7e870b42a9c0fc92f5b3c90c61",
+    "implementation_parent": "26216537ee38c2258e06f32ce9b095d17a9dbc40",
+    "branch": "fix/v0.3-s05-checkpoint-digest-design",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "contract": {
+    "selected_answers": {
+      "S05-Q01": "A",
+      "S05-Q02": "A",
+      "S05-Q03": "A",
+      "S05-Q04": "A",
+      "S05-Q05": "A"
+    },
+    "new_formats": {
+      "plane_workflow": 3,
+      "legacy_channel_workflow": 3,
+      "finite_q_anchoring_workflow": 2,
+      "experimental_shadow_checkpoint": 2
+    },
+    "legacy_policy": "exact read-only version branches with unsealed_legacy status",
+    "upgrade_policy": "non-in-place; source tree SHA-256 recorded; historical source integrity is explicitly unauthenticated",
+    "digest_boundary": "integrity checksum only; not a MAC or signature; deliberate digest recomputation is outside the v0.3 threat model",
+    "v0_2_2_forward_compatibility": "all four new formats must fail closed with explicit incompatibility errors"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "793f39a5f4e83966b5f273599da611415e827e1063932451057e0bbff893522b",
+      "current_sha256": "9a3306382a951482f0115bb790124e013bef03832de5716527f59aba0b31e2bb",
+      "reason": "Document S-05 formats, forward incompatibility, honest upgrade provenance and the SHA-256 security boundary."
+    },
+    "notes/PSSolver_v0_3_0_s05_checkpoint_metadata_integrity_design.json": {
+      "historical_sha256": "d249aaa48457b8e32886c0fcddff09fdd8baf7a0a3d8f96b1207b7e2edc8d8cd",
+      "current_sha256": "27bed4270d983ece29b98248681e56c66e31dca5894ef0cadac3408d9c84e25c",
+      "reason": "Record the user's five A selections and three additional S-05 requirements."
+    },
+    "notes/PSSolver_v0_3_0_s05_checkpoint_metadata_integrity_design_zh.md": {
+      "historical_sha256": "efebb608ce0ed92952e24889740a07291473467ce9bce04e7e6ea3992022e835",
+      "current_sha256": "acde235dbfd32a76ed60b354b2c3407d417484f375c811082a9d91f3e66d62ad",
+      "reason": "Record the confirmed Chinese S-05 design summary."
+    },
+    "pssolver/experimental/__init__.py": {
+      "historical_sha256": "56e9a1f42eb35ba25346bdab583b760388007586ea73942e52164eb899670722",
+      "current_sha256": "9a798b31d041ed0c8f9120aac1c996243495d872ac4d36dc2447d5467704cf30",
+      "reason": "Export the shadow legacy version and non-in-place upgrade helper."
+    },
+    "pssolver/experimental/_shadow_support.py": {
+      "historical_sha256": "8c57fee1413ff4d43786c45a3131d3796b1d58c152202a274a4fb0f568a72c04",
+      "current_sha256": "dc78e7ea61fc1fb5f623eb093605e4cb13532ee24007807ae172c6e0133e5f42",
+      "reason": "Advance the shadow carrier from format 1 to sealed format 2."
+    },
+    "pssolver/experimental/checkpointing.py": {
+      "historical_sha256": "33c0f3dae9d2796ea431fff2807dff046e051bc826bf6e7a23318092832060e6",
+      "current_sha256": "99b288e6f48c8a2400e8ff4ce4e45772d960c3976cf1b97bf9acd3cac5ca86a2",
+      "reason": "Implement sealed shadow writes, exact legacy reads, integrity status and non-in-place upgrades."
+    },
+    "pssolver/io/__init__.py": {
+      "historical_sha256": "43408e99b50347ae514f72d07fe81ee50b607ff4c5ce6537f8e9bfcdd54f226e",
+      "current_sha256": "cb030cf4b345f3fa5f3edc53683fe9543e1d50561bf747b0ab81052a9d0b1831",
+      "reason": "Export shared metadata-integrity and upgrade-provenance primitives."
+    },
+    "pssolver/io/checkpoint.py": {
+      "historical_sha256": "1b690d50c85cb1ee3934908494f7fd4a6cc4df4f557f5c2663be4f374bb6bbec",
+      "current_sha256": "84c7d2c1d0b6aa20c5db4df63b9a7490bd85d423a2139d69134bd8497f4e334e",
+      "reason": "Add stable integrity status, public tree hashing and honest sealed-upgrade provenance validation."
+    },
+    "pssolver/runtime/__init__.py": {
+      "historical_sha256": "5ff947035e5d2447373ee04f569f1b764971b8c0c094cdc87aa8a34ab37f8e35",
+      "current_sha256": "7c8d87db01e7e5c6dd5db6f552a20c5dc11661c9bef612873cabad39c55674e3",
+      "reason": "Export the finite-Q legacy checkpoint version."
+    },
+    "pssolver/runtime/finite_q_anchoring.py": {
+      "historical_sha256": "768cd3a23e3f44b9ea8ef6998907d00b42681714895ab47e3161cf29f59b085f",
+      "current_sha256": "7e4cecddd8e30c74f93bc9d9a8c100b530649308abf9c10c7fd90824fbae7df0",
+      "reason": "Advance finite-Q to format 2 and expose integrity and migration provenance."
+    },
+    "pssolver/workflows/__init__.py": {
+      "historical_sha256": "010cb77120434d38c8b1f305c933e8f734978302c0471edf85d0e43b78952634",
+      "current_sha256": "50ad31987a4ea5f04be2468799b88ebf32a65bc0c868874be9adaf387b60f788",
+      "reason": "Export the four selected S-05 upgrade surfaces and legacy versions."
+    },
+    "pssolver/workflows/channel_checkpoint.py": {
+      "historical_sha256": "b3046f845a3ebd82c1d4c3beb94f1351f494d65a48ddd89f625c30a3103c0432",
+      "current_sha256": "66aeb1bc1241432806f3e608c8f6acd4851c2cfd50715254f0fcdb62159d3609",
+      "reason": "Implement legacy Channel format 3 metadata seals and format-2 read/upgrade compatibility."
+    },
+    "pssolver/workflows/finite_q_anchoring.py": {
+      "historical_sha256": "5f619cf3fe8aa9bcc05c4f72f1c8e943e1fecd5fc3ceff1947d07eb7fd931b94",
+      "current_sha256": "1efdb2970d66fb8a015ad5cb4a7e18803dd2b1f673804cb8e303e87e0cd34148",
+      "reason": "Implement finite-Q format 2 metadata seals and format-1 read/upgrade compatibility."
+    },
+    "pssolver/workflows/plane_checkpoint.py": {
+      "historical_sha256": "bc8ebc213a256cb6d3d3d39103fb6f086d804a52daff74409282682b01a7fc33",
+      "current_sha256": "2718688b3567d58d9a1f48f59889e33bf463ec221d137544d3ea04c88349a8d2",
+      "reason": "Implement Plane format 3 metadata seals and exact format-1/2 read and upgrade compatibility."
+    },
+    "pssolver/workflows/plane_compiled_v2.py": {
+      "historical_sha256": "02c4eeec9271ee327fc167ab146ec0253581d11320ac1a7e3cb811729877cfc9",
+      "current_sha256": "abc35e0146b02f31982428cb8c4ddcc9cc527f7c5254cef16573ba4535bb737b",
+      "reason": "Accept both read-only Plane format 2 and current sealed format 3 in the compiled workflow."
+    },
+    "tests/test_architecture_stage_k.py": {
+      "historical_sha256": "47b9746703b4da52d50fb5f66834a8af1e894a72eff8dbbb7a7b4b26b2c14cab",
+      "current_sha256": "f266ab8c3d25ecd23e6b8865dccd575b05392a4dec661fbb66018ea16cb1c154",
+      "reason": "Bind the shadow workflow test to the current format constant."
+    },
+    "tests/test_phase3_legacy_connection.py": {
+      "historical_sha256": "c09bad5159101f8f8a8180cb69db69a1f6dd73ad3232f3f61bb83b1f66220956",
+      "current_sha256": "499b3ecbe2f4330550c9ad7806cdd39552dd805fc23f9610f60524c83481cd0f",
+      "reason": "Bind legacy Plane workflow coverage to sealed format 3."
+    },
+    "tests/test_phase5_compiled_workflow_adapter.py": {
+      "historical_sha256": "808ad94a5ef83ec15c14320d0a1593a4ce3cc16a744cacf1008104dcb1344f26",
+      "current_sha256": "d603ea6a2f8cd4affdf1ab07426d2222b8707eb9682ec0c5573aff73d14a801e",
+      "reason": "Bind compiled Plane checkpoint tests and metadata to format 3."
+    },
+    "tests/test_phase7_channel_runtime_facade.py": {
+      "historical_sha256": "a10fd6e8686caacb82c5388656c3542f4bf52f75267027fc09a7d578ba3d56d3",
+      "current_sha256": "583c8e4b5a22b70d80d587d697b7ae12385a09a8c7f4b02d0d77467b8bf86c98",
+      "reason": "Resolve the new Channel checkpoint source through the maintained successor chain."
+    },
+    "tests/test_phase8_p844_lifting_workflow_restart.py": {
+      "historical_sha256": "c88a65c012defbb326ffe028b8311006054938248dd299493fd585724f8b34bf",
+      "current_sha256": "e3f8566dfb8e651b349327df1f469fb0490eeb9406ae834ed7bc0c65a376d00b",
+      "reason": "Re-seal deliberate compatibility-identity mutations so their intended post-integrity gates remain covered."
+    },
+    "tests/test_phase8_p855_finite_q_workflow_restart.py": {
+      "historical_sha256": "22a3f9eb4daca41933dfd1d83e4b7496fd064f966c201f9e61cf1cb84d162f37",
+      "current_sha256": "ac46ca5fbb47408f2b89dce3c3cd50fb1ac1a6d1da5ac7531dbc3d190117475d",
+      "reason": "Expect the new metadata-integrity gate to reject finite-Q record tampering first."
+    },
+    "tests/test_rc4_lifting_checkpoint_integration_record.py": {
+      "historical_sha256": "5cf4eadbb756612c255cb183f3f08a15ba3a62ba222766ae64dcdea53ce043f7",
+      "current_sha256": "bc34ed7b7b20bad9c2311e3f624ee59ff2b5dec304dfe06d8b7d601f58763385",
+      "reason": "Preserve the historical format-2 record while recognizing current format 3 through successors."
+    },
+    "tests/test_rc4_plane_checkpoint_identity.py": {
+      "historical_sha256": "8bde20dddb552b6e1db4d56ea2ed46daf873b22c72b0c6b6b867c7bbd85b807e",
+      "current_sha256": "2478eb3c099473950a23a9f1eef9f95cc1771ac23f3a7f28cd9fcde4c5e77157",
+      "reason": "Retain fixture-only legacy Plane writes and validate current sealed carriers."
+    },
+    "tests/test_v0_3_s05_checkpoint_metadata_integrity_design.py": {
+      "historical_sha256": "bd2d7c10632661f681bece7442165b8a8dc6df20b2d7cfba4436407d0594aafc",
+      "current_sha256": "f34b3121e465d29b4462a1dc78ccbc36ff016bc4950995c159b907a50ca71222",
+      "reason": "Bind the confirmed S-05 choices and implementation authorization."
+    }
+  },
+  "scope": {
+    "runtime_changed": true,
+    "checkpoint_schema_changed": true,
+    "checkpoint_tensor_bytes_changed": false,
+    "numerical_implementation_changed": false,
+    "provider_identity_changed": false,
+    "functional_api_version_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_implementation_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  }
+}

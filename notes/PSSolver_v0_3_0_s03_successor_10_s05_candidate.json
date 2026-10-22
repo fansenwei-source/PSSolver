@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-05",
+  "classification": "V0_3_S05_CHECKPOINT_METADATA_INTEGRITY_QUALIFICATION_CANDIDATE",
+  "git_identity": {
+    "implementation_commit": "af7c1217b4599f7e870b42a9c0fc92f5b3c90c61",
+    "qualified_source_candidate": "65ef1080cb0215131efe90143863de7014fe4b5b",
+    "qualified_source_parent": "af7c1217b4599f7e870b42a9c0fc92f5b3c90c61",
+    "branch": "fix/v0.3-s05-checkpoint-digest-design",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "qualification_correction": {
+    "reason": "Keep the runtime layer independent of pssolver.io while exposing the same stable integrity-status strings.",
+    "runtime_behavior_changed": false,
+    "checkpoint_bytes_changed": false,
+    "checkpoint_schema_changed": false
+  },
+  "historical_successor_sources": {
+    "pssolver/runtime/finite_q_anchoring.py": {
+      "historical_sha256": "7e4cecddd8e30c74f93bc9d9a8c100b530649308abf9c10c7fd90824fbae7df0",
+      "current_sha256": "e32d507062c51de95e0aa257064eaaadf0dc17cbb0f06ed6575a1bb00dea8d38",
+      "reason": "Remove a forbidden runtime-to-I/O import without changing the integrity-status contract."
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "cfcea94fccd7f6661b343bfedc56c330c20d44a21a1ae6586eb8c249dadadf64",
+      "current_sha256": "17a9776d6f52fd24a50a2e9cced772f023ba86c1cf2b776a1cdc6191c400e681",
+      "reason": "Mark A2-21/S2-12 claimed_fixed at the complete S-05 runtime candidate pending independent review."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "6705debaca17c81cdcd593f56ea9b531f5d8a12e4a89eb91e0dbd931a7dc9269",
+      "current_sha256": "6564914cf5ed0404a94809e571db7422984370441ee990a37088cdc7414e411b",
+      "reason": "Describe the S-05 claim and digest boundary in the human-readable registry."
+    },
+    "tests/test_rc6_1_plane_diagnostic_error_record.py": {
+      "historical_sha256": "287f53bb41c84110bf09364754901a7da6e7703473bec0eda311328eaff2c0f7",
+      "current_sha256": "d46dfa4f95559d5f3e2864c37932bd6efe2aa970e329b65a3a990403b780804d",
+      "reason": "Resolve the Plane compiled workflow source through the maintained forward-only successor chain."
+    },
+    "tests/test_release_v0_2_2.py": {
+      "historical_sha256": "83fdcfa9824e59ab61fe6aa019abe93c3496751ca3e51b1be13ab99f1b2727f3",
+      "current_sha256": "2c7a8c903c760deb844622b005efdfcf088e1e810335c388bcc4631c4042a79e",
+      "reason": "Recognize the already verified R-0012 V-22 status without rewriting the v0.2.2 release record."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "117ac8d1266ab0355a4b8c5c4c565f411887d5ce7ff68dfaf34e0deea33ea1dd",
+      "current_sha256": "5b95f5e7dfb58fbc8f1e5067005e8421d4f192e56bdff5bc06638ac8acc7763c",
+      "reason": "Recognize the current registry status counts after the S-05 claim."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "bb3dc8f53a84641a304ffa968dcb5ab3e89f983e3572cfdc7a55a8f45441a454",
+      "current_sha256": "1428d86e785647e560c1fd8b807310ef223a018447c22f5f58cba02bfdd19592",
+      "reason": "Bind the A2-21/S2-12 claimed_fixed status and S-05 candidate."
+    },
+    "tests/test_v0_3_s01_registry_migration.py": {
+      "historical_sha256": "804d1f4f360e7c87a55d4575d68a08f3c5ab26721d295f4f893e943e5e6b5385",
+      "current_sha256": "6203a34f84f0f7db9543c7d4b8b4baaa6c7514e22aa9a220199ac0cb3e5aaa5c",
+      "reason": "Preserve the historical S-01 set while accepting verified S-04 and claimed S-05 successors."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "37e9a885bcaf87648d92214c3844538a360ba39cfa381f1bb913f8af3a1bbf6f",
+      "current_sha256": "84551459d2f30bc2478b6693ba97c03a16451bd660d0c533537f8236b34cb222",
+      "reason": "Preserve S-03 verification while recognizing later S-04 verification and the S-05 claim."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "historical_sha256": "399befe1d812c8da582b92c97ede2c126b85766822b0bd10aa150876e74a76f0",
+      "current_sha256": "1123dd3279bc9df9a3640c9add3d1dfdf2f9906e3304870ea49959db1ec3b6d1",
+      "reason": "Keep all S-04 issues verified while recognizing the independent S-05 claim."
+    }
+  },
+  "new_sources": [
+    "benchmarks/qualify_v022_checkpoint_forward_compat.py",
+    "notes/PSSolver_v0_3_0_s03_successor_09_s05_metadata_integrity.json",
+    "notes/PSSolver_v0_3_0_s05_checkpoint_metadata_integrity_implementation_zh.md",
+    "tests/test_v0_3_s05_checkpoint_metadata_integrity.py",
+    "tests/test_v0_3_s05_checkpoint_metadata_integrity_record.py"
+  ],
+  "validation": {
+    "archive": "/home/fansenwei/pssolver_v0_3_s05_checkpoint_metadata_integrity_65ef108_20261022_v1",
+    "environment_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "environment_clone_method": "cp -al",
+    "installed_wheel": {
+      "filename": "pssolver-0.3.0.dev0-py3-none-any.whl",
+      "sha256": "d8d52ff229600aee45c8d319e6e7ddd78af35378bd342137e3736d17a87c4bd3",
+      "source_shadow_import": false,
+      "pip_check": "PASS",
+      "s05_tests_passed": 53,
+      "failed": 0,
+      "skipped": 0
+    },
+    "released_v0_2_2_forward_rejection": {
+      "wheel_sha256": "a7e94585e62785c69522d6cc194fd479b5af55577444926d1bb661ed073cc00e",
+      "accepted_count": 0,
+      "explicit_rejection_count": 4,
+      "classification": "PASS_V0_3_S05_V022_FORWARD_REJECTION"
+    },
+    "full_cpu_suite": {
+      "passed": 4430,
+      "failed": 0,
+      "skipped": 1,
+      "xfailed": 0,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "optional_skip": "tests/test_analytic_periodic_defect_gas_2d.py::test_nematics3d_recovers_requested_defect_count_charges_and_positions"
+    },
+    "qualification_complete": true,
+    "eligible_for_independent_review": true
+  },
+  "scope": {
+    "runtime_changed": true,
+    "checkpoint_schema_changed": true,
+    "numerical_implementation_changed": false,
+    "provider_identity_changed": false,
+    "functional_api_version_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  }
+}

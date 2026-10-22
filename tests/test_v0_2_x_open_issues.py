@@ -49,7 +49,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts = Counter(entry["status"] for entry in entries)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 9,
+        "registered": 8,
+        "claimed_fixed": 1,
         "verified": 14,
         "deferred": 2,
         "accepted": 1,
@@ -170,7 +171,6 @@ def test_v25_rework_is_verified_without_changing_its_fix_identity():
 def test_rc5_rc6_residuals_are_registered_without_claiming_fixes():
     issues = _issues()
     registered = {
-        "A2-21/S2-12",
         "A2-24/C1-15",
         "C1-08",
         "S1-15/NEW-13",
@@ -196,6 +196,11 @@ def test_rc5_rc6_residuals_are_registered_without_claiming_fixes():
         "a10785853736b2458eec80680b9ced72a495775f"
     )
     assert issues["V-24"]["verified_by"] == "R-0009"
+    assert issues["A2-21/S2-12"]["status"] == "claimed_fixed"
+    assert issues["A2-21/S2-12"]["fixed_in"] == (
+        "65ef1080cb0215131efe90143863de7014fe4b5b"
+    )
+    assert "not a MAC or signature" in issues["A2-21/S2-12"]["notes"]
     assert issues["A2-11"]["status"] == "accepted"
     assert issues["NEW-14"]["status"] == "open"
     assert issues["NEW-14"]["affects_control_paths"] is True
@@ -218,7 +223,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     registered = {
         issue_id for issue_id, item in issues.items() if item["status"] == "registered"
     }
-    assert len(registered) == 9
+    assert len(registered) == 8
     assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in registered)
     assert issues["A2-21/S2-12"]["target_release"] == "0.3"
     assert "S-07" in issues["B30"]["notes"]
