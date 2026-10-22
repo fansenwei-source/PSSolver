@@ -180,8 +180,9 @@ def test_rc6_2_registers_exact_forward_only_successors():
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["introduced_by_phase"] == "RC6-2"
         assert registration["reason"]
-        assert _sha256(relative) == _rc6_3_successor(
-            relative, registration["current_sha256"]
+        assert _sha256(relative) == resolve_s03_successor(
+            relative,
+            _rc6_3_successor(relative, registration["current_sha256"]),
         )
 
 

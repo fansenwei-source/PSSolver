@@ -168,7 +168,10 @@ def test_rc6_4_registers_exact_forward_only_successors():
         assert registration["introduced_by_phase"] == "RC6-4"
         assert registration["reason"]
         resolved = _rc6_5_successor(relative, registration["current_sha256"])
-        assert _sha256(relative) == _rc6_6_successor(relative, resolved)
+        assert _sha256(relative) == resolve_s03_successor(
+            relative,
+            _rc6_6_successor(relative, resolved),
+        )
 
 
 def test_rc6_4_scope_is_cpu_only_and_preserves_numerical_contracts():

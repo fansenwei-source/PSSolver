@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = (
@@ -91,7 +93,7 @@ def test_v11_successor_sources_are_exact_and_content_addressed():
         rc6_r4 = rc6_r4_successors.get(relative)
         if rc6_r4 is not None and rc6_r4["historical_sha256"] == resolved:
             resolved = rc6_r4["current_sha256"]
-        assert resolved == _sha256(relative)
+        assert resolve_s03_successor(relative, resolved) == _sha256(relative)
         assert registration["introduced_by_phase"] == (
             "RC4.4.7-bounded-operator-recovery-v11-provider"
         )

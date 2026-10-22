@@ -9,7 +9,8 @@
 当前共登记 32 条：
 
 - `open`：1；
-- `registered`：10；
+- `registered`：6；
+- `claimed_fixed`：4；
 - `verified`：15；
 - `deferred`：2；
 - `accepted`：1；
@@ -31,6 +32,11 @@
    新写出的 Plane 3、legacy Channel 3、finite-Q 2 与 experimental shadow 2 格式均对完整元数据
    加 SHA-256 seal；旧 v0.2 格式保持只读。该摘要不是 MAC 或签名，蓄意重算摘要不在 v0.3
    威胁模型内。
+5. S-06 已在运行时提交 `bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a`
+   声称修复 `C1-05`、`C2-18`、`S2-17` 与 `V-27`：保持八 epsilon
+   公共门限但复核返回状态残差；在 fixed-work 达到精度底后以显式原因安全停止；
+   完整保留压力异常的 pickle 公共契约；两条历史记录测试改与记录字面路径比较。
+   四项均保持 `claimed_fixed`，等待 `R-0014` 独立复核。
 
 ## Control 路径
 
@@ -41,7 +47,7 @@
 
 ## 0.3 路线图
 
-10 个仍为 `registered` 的 low/info 或明确指定条目统一以 `0.3` 为目标；
+6 个仍为 `registered` 的 low/info 或明确指定条目统一以 `0.3` 为目标；
 `A2-21/S2-12` 已完成 `S-05` 独立复核。`V-27` 归入 `S-06`，`V-26` 与
 `B30` 归入文档批次 `S-07`。
 `V-17` 已验证身份不变，不重新打开。路线图顺序以同步仓库中用户确认的

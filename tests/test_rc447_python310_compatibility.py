@@ -9,6 +9,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 from pssolver.linear_solvers.stokes.channel_no_slip import (
     ChannelPressureMagnitude,
     channel_pressure_magnitude_ratio,
@@ -179,7 +181,7 @@ def test_recovery_record_binds_failure_and_exact_successor_sources():
         latest = rc6_r4.get(relative)
         if latest is not None and latest["historical_sha256"] == resolved:
             resolved = latest["current_sha256"]
-        assert resolved == actual
+        assert resolve_s03_successor(relative, resolved) == actual
     assert record["successor_sources"][
         "pssolver/linear_solvers/stokes/channel_no_slip.py"
     ]["historical_sha256"] == (

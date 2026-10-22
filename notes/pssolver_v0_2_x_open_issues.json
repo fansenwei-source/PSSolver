@@ -32,7 +32,8 @@
   "issue_count": 32,
   "status_counts": {
     "open": 1,
-    "registered": 10,
+    "registered": 6,
+    "claimed_fixed": 4,
     "verified": 15,
     "deferred": 2,
     "accepted": 1,
@@ -49,9 +50,10 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
       "target_release": "0.3",
-      "notes": "Returned residual can exceed the requested tolerance by about 1.033x at the floor."
+      "notes": "S-06 recomputes the represented-state residual before accepting tolerance mode at the unchanged eight-epsilon floor; pending independent R-0014 review."
     },
     {
       "id": "C1-10",
@@ -111,9 +113,10 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
       "target_release": "0.3",
-      "notes": "Present since rc5."
+      "notes": "S-06 preserves the exact public Channel/Functional convergence-error subclass, args, metadata, details, diagnostics and operation across pickle protocols; pending independent R-0014 review."
     },
     {
       "id": "V-17",
@@ -313,9 +316,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
       "target_release": "0.3",
-      "notes": "Roadmap S-06. tests/test_v0_3_s04_r0011_import.py and tests/test_v0_3_s04_r0012_import.py fail in checkouts outside the recorded PSSolver_dev_0_3 path. Compare against the recorded literal or a stable path suffix, never the current ROOT."
+      "notes": "S-06 compares the two historical validation sys.path entries with their recorded literal instead of the current checkout root; pending independent R-0014 review."
     },
     {
       "id": "A2-24/C1-15",
@@ -373,9 +377,10 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
       "target_release": "0.3",
-      "notes": "Observed when fixed work substantially exceeds the iterations required for convergence."
+      "notes": "S-06 preserves ordinary fixed work and records fixed_work_roundoff_saturation when a float32 recurrence already below the supported precision floor would otherwise break down or become non-finite; pending independent R-0014 review."
     },
     {
       "id": "A1-07",

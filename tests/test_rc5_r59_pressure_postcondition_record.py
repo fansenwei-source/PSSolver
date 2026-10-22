@@ -112,8 +112,8 @@ def test_r59_record_binds_implementation_and_exact_sources():
     assert record["git_identity"]["pushed"] is False
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
-            assert _sha256(ROOT / relative) == _r510_successor(
-                relative, expected
+            assert _sha256(ROOT / relative) == resolve_s03_successor(
+                relative, _r510_successor(relative, expected)
             )
 
 
@@ -122,8 +122,9 @@ def test_r59_registers_exact_historical_successors():
     assert successors
     for relative, registration in successors.items():
         assert registration["historical_sha256"] != registration["current_sha256"]
-        assert _sha256(ROOT / relative) == _r510_successor(
-            relative, registration["current_sha256"]
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative,
+            _r510_successor(relative, registration["current_sha256"]),
         )
         assert registration["introduced_by_phase"] == "R5-9"
         assert registration["reason"]

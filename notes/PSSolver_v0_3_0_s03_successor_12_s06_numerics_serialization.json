@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-06",
+  "classification": "V0_3_S06_NUMERICS_SERIALIZATION_QUALIFICATION_CANDIDATE",
+  "git_identity": {
+    "implementation_commit": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
+    "implementation_parent": "05f55d1a65a2939e7aaab0060bf203a821053895",
+    "branch": "fix/v0.3-s06-numerics-serialization",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "roadmap": {
+    "decision": "D-0010",
+    "plan_step": "S-06",
+    "issue_ids": [
+      "C1-05",
+      "C2-18",
+      "S2-17",
+      "V-27"
+    ],
+    "next_request": "R-0014"
+  },
+  "claims": {
+    "C1-05": {
+      "public_floor_real_dtype_epsilons": 8,
+      "represented_state_residual_verified_before_tolerance_acceptance": true,
+      "recurrence_restarted_when_represented_residual_exceeds_request": true
+    },
+    "C2-18": {
+      "exact_public_subclass_preserved": true,
+      "args_and_message_preserved": true,
+      "machine_metadata_preserved": true,
+      "functional_operation_preserved": true,
+      "pickle_protocols_tested": [
+        4,
+        5
+      ]
+    },
+    "S2-17": {
+      "ordinary_fixed_work_unchanged": true,
+      "new_termination_reason": "fixed_work_roundoff_saturation",
+      "acceptance_requires_residual_at_or_below_precision_floor": true,
+      "breakdown_above_floor_remains_fail_closed": true,
+      "production_and_functional_paths_covered": true
+    },
+    "V-27": {
+      "recorded_sys_path_literal": "/home/fansenwei/Desktop/Develop/PSSolver_dev_0_3",
+      "current_checkout_root_comparison_removed": true
+    }
+  },
+  "runtime_sources": {
+    "pssolver/functional/channel_pressure.py": "deac56d0bd02466d494c0589ad3286c3c2cde492502d48ac35d2054f9b45e42a",
+    "pssolver/functional/channel_pressure_adjoint.py": "e408f8e81a7be591da9852cae7e64516a3d9fe7c11b7f1eb0241accda7e32967",
+    "pssolver/functional/pressure_metadata.py": "c5905ccbc8a08ee93f707f87f93b81ea278f12e068a2fb52c725e751a7d89429",
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": "2a17f0c815027e66a3868f96ac2c6e326ddc00f1d2f18bd7ba60b63ebcb1e4ac"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "9a3306382a951482f0115bb790124e013bef03832de5716527f59aba0b31e2bb",
+      "current_sha256": "e48dc738e2e0265e2a80c462bc28bdbf1e4832cc255845cbb42d2be99620a2a6",
+      "reason": "Document the S-06 represented-residual, roundoff-saturation and exception-serialization contracts."
+    },
+    "pssolver/functional/channel_pressure.py": {
+      "historical_sha256": "70c58620370105e842fab1480b029e56eaa9c9cf1dea1c65964d7d6526852adf",
+      "current_sha256": "deac56d0bd02466d494c0589ad3286c3c2cde492502d48ac35d2054f9b45e42a",
+      "reason": "Verify represented-state transpose residuals and accept fixed-work roundoff saturation only below the precision floor."
+    },
+    "pssolver/functional/channel_pressure_adjoint.py": {
+      "historical_sha256": "5b5176ded83bb3ff2b9e58de52d93f0da6e1c35337d94882dfaa464b9ee079e0",
+      "current_sha256": "e408f8e81a7be591da9852cae7e64516a3d9fe7c11b7f1eb0241accda7e32967",
+      "reason": "Apply the same represented-residual and fixed-work saturation contract to the implicit primal, transpose and oracle paths."
+    },
+    "pssolver/functional/pressure_metadata.py": {
+      "historical_sha256": "d89bc9d00b1bf16cb2775aac3e64e681eb783b2a417a2d3084dadee9102358d5",
+      "current_sha256": "c5905ccbc8a08ee93f707f87f93b81ea278f12e068a2fb52c725e751a7d89429",
+      "reason": "Expose the explicit precision-floor saturation outcome in stable pressure diagnostics."
+    },
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "historical_sha256": "5400148dd0751207fb7bd4408496af02782f5ccbd94d6dbef9cb4a3885c21bec",
+      "current_sha256": "2a17f0c815027e66a3868f96ac2c6e326ddc00f1d2f18bd7ba60b63ebcb1e4ac",
+      "reason": "Verify represented tolerance residuals, preserve finite fixed-work results at roundoff saturation and make public pressure errors pickleable."
+    },
+    "tests/test_v0_3_s04_r0011_import.py": {
+      "historical_sha256": "becb0871ac0d8aa9b3c6bc14cfe30002bf23a397cdd2d86319b325645baf9cc3",
+      "current_sha256": "4617b2cbc1c3c8fac8658056a568a3678cd2cb5f57f6b17f8541f2168d37528f",
+      "reason": "Compare the recorded validation sys.path with its literal historical value instead of the current checkout root."
+    },
+    "tests/test_v0_3_s04_r0012_import.py": {
+      "historical_sha256": "9d79ffa141973daeb2897cd0160274976344fd1fda1674dc28fac0b0754a4c56",
+      "current_sha256": "389926fcb0a4c0f0432b07174a742abd79f61f7caced1860f880b8624e8179e6",
+      "reason": "Compare the recorded validation sys.path with its literal historical value instead of the current checkout root."
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "432cc7340e528b69deb80fcc7237b710203af09f37480efaac94cb8cccbdc0b4",
+      "current_sha256": "1ed4cb69f22c5aceb840d2166f6c9c36628a53d7f01dedea22bbc987ad7e005c",
+      "reason": "Mark all four S-06 items claimed_fixed at the implementation commit pending independent review."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "4387e2283cf558ec9ec2784518b899cf316cd84b957c7196930df9e4b8859918",
+      "current_sha256": "2f5be5f3860f33a5a46fa0185ee1661eda7a63fece62995cc65d8b2c1e2d1b3d",
+      "reason": "Describe the S-06 claims and keep them pending R-0014 verification."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "ed96257c13c44c191398aae079a9b928abc6b3ba586099849ffe46a5319434cb",
+      "current_sha256": "3140f7a3345fd326df0fad57dfa0a93a45a44ec8cfe5b8b9abd4b43f9666da31",
+      "reason": "Bind the four claimed-fixed S-06 registry entries and updated status counts."
+    },
+    "tests/test_v0_3_s01_registry_migration.py": {
+      "historical_sha256": "21b5474f00b2353c7f4ab13043922f80a8a12a80b82788f455dba07e0bb2ff8a",
+      "current_sha256": "b8e14bd343db1bbbbad81ce783a3b17c7fb7b3657bce51bc96a1a1a82d378113",
+      "reason": "Preserve the historical S-01 scope while recognizing the three original registry items now claimed in S-06."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "9fec415a07adcdf1bb67b02b7348a3072c6ec329e6d1cc475b0cdcde8dd33d27",
+      "current_sha256": "db8e03720c45f4694b4b4922739aad78d5890a9bfa329e8c85992316c92f8297",
+      "reason": "Preserve S-03 verification while recognizing the four later S-06 claims."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "historical_sha256": "682b7667d7a1cc4d184cc18808a2582f45b5e57f97c376e298238b257413e6c3",
+      "current_sha256": "c26b277a4f5c71cbf78d905dda116a6763cd48dc95f1b56103c48752addf1435",
+      "reason": "Preserve S-04 verification while recognizing the four later S-06 claims."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "a66a2d14d50f269f434104d42f347dfd065cd1b9a2968c0c424b143588fbbd83",
+      "current_sha256": "b90565b6ac74ac46aad17fb4533a190c82f3429f30b04b41d8598da03d463b23",
+      "reason": "Recognize the current registry status counts without rewriting the historical R-0002 record."
+    },
+    "tests/test_rc447_pressure_bounded_operator_recovery.py": {
+      "historical_sha256": "8d40dbf8008d53d8c2345aa24d3a249606c11ef882dbd4b3d82f3a9aab9854ef",
+      "current_sha256": "5a9ac95438f0a70c37cdb4f52a87775bfbf6851fe3450587131f5a39010d5914",
+      "reason": "Resolve later pressure-source successors through the maintained forward-only chain."
+    },
+    "tests/test_rc447_python310_compatibility.py": {
+      "historical_sha256": "e8f543d186650cc0e30461da42a0d68a0e1b5d2ec4f3070206a09ef44732e8b5",
+      "current_sha256": "750623e750912c62c1024f4fe3330ee43b956ff69a9ff3e853bc95c92b389bd5",
+      "reason": "Resolve later pressure-source successors through the maintained forward-only chain."
+    },
+    "tests/test_rc4_pressure_contract_plan.py": {
+      "historical_sha256": "a702d4c128fdc15e2a09e0aa493c3c57c34a9a1c5623d5af1c918b68bedbfa04",
+      "current_sha256": "04b25edafcd77a85e48db4474a9f7faadb48dc2b4682b3f1b4d01a14d856487a",
+      "reason": "Resolve later pressure-source successors through the maintained forward-only chain."
+    },
+    "tests/test_rc4_pressure_policy_implementation_record.py": {
+      "historical_sha256": "04718cab77b8dbb8cbe2326d23bb83179a7fc208247e06cc80b611148f7cc054",
+      "current_sha256": "f1153bacd939c8d6d579e7542b3a7138141e5c7edcaa10d83756c994c64a3822",
+      "reason": "Resolve later pressure-source successors through the maintained forward-only chain."
+    },
+    "tests/test_rc5_r59_pressure_postcondition_record.py": {
+      "historical_sha256": "3b6745b89521e8a61546d70bc93c613a5331f510e7d956b33ecfd7ba81e2cb48",
+      "current_sha256": "d0165e4f356e5b7c8c20bd5e1a499ec1d394a42732867ea0fb74c45818196a2d",
+      "reason": "Resolve later pressure-source successors through the maintained forward-only chain."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "historical_sha256": "7818f3ab9198612ea3f0adbe0af8555c2a9ffc3e4527f437124fd265d0c234c0",
+      "current_sha256": "be7ca62131f595afecd24fecc29b4820ec0c509d581b420bb6762a0851e981c5",
+      "reason": "Resolve later pressure-source successors through the maintained forward-only chain."
+    },
+    "tests/test_rc6_3_compile_preflight_record.py": {
+      "historical_sha256": "7afaf332af3dc21012882510fc649174a65898b01719d08c613e805812a38f5f",
+      "current_sha256": "605148c39f133f1f3f0ff3ace47d90c812d51a95754f75ba0beab8d50ee58afb",
+      "reason": "Resolve later pressure-source successors through the maintained forward-only chain."
+    },
+    "tests/test_rc6_4_channel_failure_record.py": {
+      "historical_sha256": "3d772a9e67a3cd2cb6081b052d0549640025ac661e66b354098a79a0da65e0c8",
+      "current_sha256": "724836c0d191f100282bc4e2e3a1f46749d00c159b5fb41b77456e0bb133f5e2",
+      "reason": "Resolve later pressure-source successors through the maintained forward-only chain."
+    }
+  },
+  "new_sources": [
+    "notes/PSSolver_v0_3_0_s03_successor_12_s06_numerics_serialization.json",
+    "notes/PSSolver_v0_3_0_s03_successor_12_s06_numerics_serialization_zh.md",
+    "tests/test_v0_3_s06_numerics_serialization_record.py",
+    "tests/test_v0_3_s06_pressure_and_pickle.py"
+  ],
+  "validation": {
+    "archive": null,
+    "archive_checksums_entries": null,
+    "archive_checksums_sha256": null,
+    "archive_complete_present": false,
+    "environment_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "environment_clone_method": "cp -al",
+    "environment_clone_pruned": false,
+    "focused_pytest": null,
+    "full_cpu_suite": null,
+    "qualification_complete": false,
+    "eligible_for_independent_review": false
+  },
+  "scope": {
+    "runtime_changed": true,
+    "pressure_acceptance_contract_changed": true,
+    "public_minimum_tolerance_changed": false,
+    "ordinary_fixed_work_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "functional_api_version_changed": false,
+    "threshold_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_implementation_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  }
+}
