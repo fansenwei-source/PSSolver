@@ -94,3 +94,19 @@ def test_s06_minimum_floor_authorizes_no_external_action() -> None:
         for key, value in record["authorization"].items()
         if key != "local_implementation_authorized"
     )
+    validation = record["validation"]
+    assert validation["status"] == (
+        "PASS_V0_3_S06_MINIMUM_FLOOR_ROLLBACK_LOCAL_QUALIFICATION"
+    )
+    assert validation["archive_checksums_entries"] == 28
+    assert validation["archive_checksums_sha256"] == (
+        "fbaf4db2d57c8269fb150501398f7e0bd26bb3d0434b72be8c3b3750ab11a573"
+    )
+    assert validation["archive_complete_present"] is True
+    assert validation["environment_clone_method"] == "cp -al"
+    assert validation["environment_clones_pruned"] is True
+    assert validation["focused_pytest"]["passed"] == 154
+    assert validation["full_cpu_suite"]["passed"] == 4502
+    assert validation["installed_wheel"]["passed"] == 43
+    assert validation["qualification_complete"] is True
+    assert validation["eligible_for_independent_review"] is True

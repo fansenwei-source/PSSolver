@@ -156,7 +156,41 @@
     "tests/test_v0_3_s06_minimum_floor_rollback_record.py"
   ],
   "validation": {
-    "status": "PENDING_LOCAL_QUALIFICATION",
+    "status": "PASS_V0_3_S06_MINIMUM_FLOOR_ROLLBACK_LOCAL_QUALIFICATION",
+    "archive": "/home/fansenwei/pssolver_v0_3_s06_minimum_floor_f6da20f_20261022_v3",
+    "archive_checksums_entries": 28,
+    "archive_checksums_sha256": "fbaf4db2d57c8269fb150501398f7e0bd26bb3d0434b72be8c3b3750ab11a573",
+    "archive_complete_present": true,
+    "environment_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "environment_clone_method": "cp -al",
+    "environment_clones_pruned": true,
+    "focused_pytest": {
+      "passed": 154,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "0b1081205c48435b47d10fbadabe3eae43eee25e19acc2ac76e15e1a45e0e79d",
+      "junit_sha256": "3bb368f57ce383d4632a4c44aff619342d0aa7fabbe6f26857057334adc93191"
+    },
+    "full_cpu_suite": {
+      "passed": 4502,
+      "failed": 0,
+      "skipped": 1,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "log_sha256": "73d29445206573c76309d331abd7fc30e87e0d94e798adf9a80c651c13c36af4",
+      "junit_sha256": "05f1416f178912170c81bfb7918cd69e22beb4ca50e0281b31d705d8b9ac49ee"
+    },
+    "installed_wheel": {
+      "passed": 43,
+      "failed": 0,
+      "skipped": 0,
+      "pip_check": "PASS",
+      "source_shadow_import": false,
+      "wheel_sha256": "9a512932d29f88f6ed29318a0e49b04fbb37f6f3bb1512d416701fb20331dadf",
+      "record_sha256": "e0be95f3388edd28b4882018fa9c32af10ca3e2c272cb78da8f502f242bb5d2e",
+      "log_sha256": "07776c757a4ea562ce03deaca37092c08fe15428479a7666fbd196a4a600c2ab",
+      "junit_sha256": "f6b2dc0d58b6f36489d283a6a6afab816bac1bc5587b68be7b17727b1f152375"
+    },
     "pressure_scan": {
       "runs": 2160,
       "fail_closed": 0,
@@ -169,8 +203,10 @@
       "fail_closed": 0,
       "maximum_accepted_floor_multiple": 1.0053485113310139
     },
-    "qualification_complete": false,
-    "eligible_for_independent_review": false
+    "pressure_scan_sha256": "7fb2eeae2d8f7fe337a29fd714fce071aa673578c312294bc056702ae003695d",
+    "floor_crossing_probe_sha256": "c6408fd98181a4a068a9c4aac16b6a05ff9d49ae3d0fa329904707a21b3926a8",
+    "qualification_complete": true,
+    "eligible_for_independent_review": true
   },
   "scope": {
     "runtime_changed": true,
