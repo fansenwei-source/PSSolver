@@ -316,19 +316,30 @@ class ChannelPressureTransposeOperator:
         iteration_limit = self._solver.pressure_iteration_limit
         termination_reason = "iteration_limit_reached_without_postcondition"
         acceptable = False
+        fixed_work_floor_pressure = None
+        fixed_work_floor_iterations = None
+        saturation_failure_reason = (
+            "iteration_limit_reached_without_postcondition"
+        )
+        if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
+            relative_residual,
+            residual.dtype,
+        ):
+            fixed_work_floor_pressure = pressure_hat.clone()
+            fixed_work_floor_iterations = 0
         while iterations < iteration_limit:
             operator_direction = self.apply_pressure_operator_transpose(
                 direction
             )
             if not bool(torch.isfinite(operator_direction).all().item()):
-                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
-                    relative_residual,
-                    residual.dtype,
-                ):
+                if fixed_work and fixed_work_floor_pressure is not None:
+                    pressure_hat = fixed_work_floor_pressure
+                    iterations = fixed_work_floor_iterations
                     termination_reason = (
                         CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
                     )
                     acceptable = True
+                    saturation_failure_reason = "nonfinite_intermediate"
                 else:
                     termination_reason = "nonfinite_intermediate"
                 break
@@ -337,14 +348,14 @@ class ChannelPressureTransposeOperator:
                 operator_direction,
                 self._solver.pressure_inactive_mask,
             ):
-                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
-                    relative_residual,
-                    residual.dtype,
-                ):
+                if fixed_work and fixed_work_floor_pressure is not None:
+                    pressure_hat = fixed_work_floor_pressure
+                    iterations = fixed_work_floor_iterations
                     termination_reason = (
                         CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
                     )
                     acceptable = True
+                    saturation_failure_reason = "operator_breakdown"
                 else:
                     termination_reason = "operator_breakdown"
                 break
@@ -352,7 +363,6 @@ class ChannelPressureTransposeOperator:
                 torch.conj(direction) * operator_direction
             ).real
             step = rz_old / denominator
-            previous_pressure_hat = pressure_hat
             pressure_hat = self._project_gauge(pressure_hat + step * direction)
             residual = self._project_gauge(
                 residual - step * operator_direction
@@ -362,16 +372,14 @@ class ChannelPressureTransposeOperator:
                 torch.isfinite(pressure_hat).all().item()
                 and torch.isfinite(residual).all().item()
             ):
-                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
-                    relative_residual,
-                    residual.dtype,
-                ):
-                    pressure_hat = previous_pressure_hat
-                    iterations -= 1
+                if fixed_work and fixed_work_floor_pressure is not None:
+                    pressure_hat = fixed_work_floor_pressure
+                    iterations = fixed_work_floor_iterations
                     termination_reason = (
                         CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
                     )
                     acceptable = True
+                    saturation_failure_reason = "nonfinite_intermediate"
                 else:
                     termination_reason = "nonfinite_intermediate"
                 break
@@ -390,6 +398,24 @@ class ChannelPressureTransposeOperator:
                 termination_reason = "exact_zero_residual"
                 acceptable = True
                 break
+            if fixed_work:
+                if channel_pressure_fixed_work_roundoff_saturated(
+                    relative_residual,
+                    residual.dtype,
+                ):
+                    fixed_work_floor_pressure = pressure_hat.clone()
+                    fixed_work_floor_iterations = iterations
+                elif fixed_work_floor_pressure is not None:
+                    pressure_hat = fixed_work_floor_pressure
+                    iterations = fixed_work_floor_iterations
+                    termination_reason = (
+                        CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
+                    )
+                    acceptable = True
+                    saturation_failure_reason = (
+                        "iteration_limit_reached_without_postcondition"
+                    )
+                    break
             if not fixed_work and (
                 relative_residual <= self._solver.pressure_rel_tol
             ):
@@ -442,14 +468,14 @@ class ChannelPressureTransposeOperator:
                 break
             preconditioned = residual / self._solver.schur_diag_safe
             if not bool(torch.isfinite(preconditioned).all().item()):
-                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
-                    relative_residual,
-                    residual.dtype,
-                ):
+                if fixed_work and fixed_work_floor_pressure is not None:
+                    pressure_hat = fixed_work_floor_pressure
+                    iterations = fixed_work_floor_iterations
                     termination_reason = (
                         CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
                     )
                     acceptable = True
+                    saturation_failure_reason = "nonfinite_intermediate"
                 else:
                     termination_reason = "nonfinite_intermediate"
                 break
@@ -458,20 +484,62 @@ class ChannelPressureTransposeOperator:
                 preconditioned,
                 self._solver.pressure_inactive_mask,
             ):
-                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
-                    relative_residual,
-                    residual.dtype,
-                ):
+                if fixed_work and fixed_work_floor_pressure is not None:
+                    pressure_hat = fixed_work_floor_pressure
+                    iterations = fixed_work_floor_iterations
                     termination_reason = (
                         CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
                     )
                     acceptable = True
+                    saturation_failure_reason = (
+                        "preconditioned_residual_breakdown"
+                    )
                 else:
                     termination_reason = "preconditioned_residual_breakdown"
                 break
             rz_new = torch.sum(torch.conj(residual) * preconditioned).real
             direction = preconditioned + (rz_new / rz_old) * direction
             rz_old = rz_new
+        if (
+            acceptable
+            and fixed_work_floor_pressure is not None
+            and termination_reason
+            in {
+                "fixed_work_completed",
+                CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION,
+            }
+        ):
+            try:
+                residual = self._project_gauge(
+                    working_rhs
+                    - self.apply_pressure_operator_transpose(pressure_hat)
+                )
+                residual_work_magnitude = channel_pressure_active_rms(
+                    residual,
+                    self._solver.pressure_inactive_mask,
+                )
+                residual_magnitude = residual_work_magnitude.shifted(
+                    int(working_exponent)
+                )
+                relative_residual = channel_pressure_magnitude_ratio(
+                    residual_work_magnitude,
+                    rhs_work_magnitude,
+                )
+            except ValueError:
+                acceptable = False
+                termination_reason = "nonfinite_intermediate"
+            else:
+                if not channel_pressure_fixed_work_roundoff_saturated(
+                    relative_residual,
+                    residual.dtype,
+                ):
+                    acceptable = False
+                    termination_reason = (
+                        saturation_failure_reason
+                        if termination_reason
+                        == CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
+                        else "iteration_limit_reached_without_postcondition"
+                    )
         if not acceptable:
             return self._fail_transpose_solve(
                 sequence=sequence,

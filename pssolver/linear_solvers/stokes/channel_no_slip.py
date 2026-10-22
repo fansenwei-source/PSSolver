@@ -1811,6 +1811,17 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         iteration_limit = self.pressure_iteration_limit
         termination_reason = "iteration_limit_reached_without_postcondition"
         acceptable = False
+        fixed_work_floor_pressure = None
+        fixed_work_floor_iterations = None
+        saturation_failure_reason = (
+            "iteration_limit_reached_without_postcondition"
+        )
+        if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
+            relative_residual,
+            residual.dtype,
+        ):
+            fixed_work_floor_pressure = pressure_work.clone()
+            fixed_work_floor_iterations = 0
         while iterations < iteration_limit:
             operator_direction = self._pressure_operator(direction)
             direction_operator_inner = torch.sum(
@@ -1863,32 +1874,31 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     )
                 )
             if not operator_pair_finite:
-                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
-                    relative_residual,
-                    residual.dtype,
-                ):
+                if fixed_work and fixed_work_floor_pressure is not None:
+                    pressure_work = fixed_work_floor_pressure
+                    iterations = fixed_work_floor_iterations
                     termination_reason = (
                         CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
                     )
                     acceptable = True
+                    saturation_failure_reason = "nonfinite_intermediate"
                 else:
                     termination_reason = "nonfinite_intermediate"
                 break
             if operator_breakdown:
-                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
-                    relative_residual,
-                    residual.dtype,
-                ):
+                if fixed_work and fixed_work_floor_pressure is not None:
+                    pressure_work = fixed_work_floor_pressure
+                    iterations = fixed_work_floor_iterations
                     termination_reason = (
                         CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
                     )
                     acceptable = True
+                    saturation_failure_reason = "operator_breakdown"
                 else:
                     termination_reason = "operator_breakdown"
                 break
             denominator = direction_operator_inner.real
             step = rz_old / denominator
-            previous_pressure_work = pressure_work
             pressure_work = self._project_pressure_gauge(
                 pressure_work + step * direction
             )
@@ -1922,16 +1932,14 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 ),
             )
             if not state_finite:
-                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
-                    relative_residual,
-                    residual.dtype,
-                ):
-                    pressure_work = previous_pressure_work
-                    iterations -= 1
+                if fixed_work and fixed_work_floor_pressure is not None:
+                    pressure_work = fixed_work_floor_pressure
+                    iterations = fixed_work_floor_iterations
                     termination_reason = (
                         CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
                     )
                     acceptable = True
+                    saturation_failure_reason = "nonfinite_intermediate"
                 else:
                     termination_reason = "nonfinite_intermediate"
                 break
@@ -1946,6 +1954,27 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 termination_reason = "exact_zero_residual"
                 acceptable = True
                 break
+            if fixed_work:
+                if channel_pressure_fixed_work_roundoff_saturated(
+                    relative_residual,
+                    residual.dtype,
+                ):
+                    # Option B: fixed work remains exact while the recurrence
+                    # stays at its dtype floor.  Preserve the latest such
+                    # iterate so later roundoff growth can be rolled back.
+                    fixed_work_floor_pressure = pressure_work.clone()
+                    fixed_work_floor_iterations = iterations
+                elif fixed_work_floor_pressure is not None:
+                    pressure_work = fixed_work_floor_pressure
+                    iterations = fixed_work_floor_iterations
+                    termination_reason = (
+                        CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
+                    )
+                    acceptable = True
+                    saturation_failure_reason = (
+                        "iteration_limit_reached_without_postcondition"
+                    )
+                    break
             if not fixed_work and relative_residual <= self.pressure_rel_tol:
                 # A recursively updated PCG residual can differ slightly from
                 # the residual of the represented pressure.  Recompute from
@@ -2021,26 +2050,28 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     acceptable = True
                 break
             if not preconditioned_pair_finite:
-                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
-                    relative_residual,
-                    residual.dtype,
-                ):
+                if fixed_work and fixed_work_floor_pressure is not None:
+                    pressure_work = fixed_work_floor_pressure
+                    iterations = fixed_work_floor_iterations
                     termination_reason = (
                         CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
                     )
                     acceptable = True
+                    saturation_failure_reason = "nonfinite_intermediate"
                 else:
                     termination_reason = "nonfinite_intermediate"
                 break
             if preconditioned_breakdown:
-                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
-                    relative_residual,
-                    residual.dtype,
-                ):
+                if fixed_work and fixed_work_floor_pressure is not None:
+                    pressure_work = fixed_work_floor_pressure
+                    iterations = fixed_work_floor_iterations
                     termination_reason = (
                         CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
                     )
                     acceptable = True
+                    saturation_failure_reason = (
+                        "preconditioned_residual_breakdown"
+                    )
                 else:
                     termination_reason = "preconditioned_residual_breakdown"
                 break
@@ -2067,6 +2098,48 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
             residual_rms_interval = next_residual_rms_interval
             direction = preconditioned + (rz_new / rz_old) * direction
             rz_old = rz_new
+        if (
+            acceptable
+            and fixed_work_floor_pressure is not None
+            and termination_reason
+            in {
+                "fixed_work_completed",
+                CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION,
+            }
+        ):
+            # The recursive PCG residual is only a trigger.  Saturation is a
+            # public postcondition on the represented state that is actually
+            # returned, so recompute that residual after rollback.
+            try:
+                residual = self._project_pressure_gauge(
+                    working_rhs - self._pressure_operator(pressure_work)
+                )
+                residual_work_magnitude = channel_pressure_active_rms(
+                    residual,
+                    self.pressure_inactive_mask,
+                )
+                residual_magnitude = residual_work_magnitude.shifted(
+                    int(working_exponent)
+                )
+                relative_residual = channel_pressure_magnitude_ratio(
+                    residual_work_magnitude,
+                    rhs_work_magnitude,
+                )
+            except ValueError:
+                acceptable = False
+                termination_reason = "nonfinite_intermediate"
+            else:
+                if not channel_pressure_fixed_work_roundoff_saturated(
+                    relative_residual,
+                    residual.dtype,
+                ):
+                    acceptable = False
+                    termination_reason = (
+                        saturation_failure_reason
+                        if termination_reason
+                        == CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
+                        else "iteration_limit_reached_without_postcondition"
+                    )
         if not acceptable:
             self._raise_pressure_failure(
                 rhs_norm=rhs_magnitude,

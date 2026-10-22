@@ -9,12 +9,17 @@
   accepting it.  Independent acceptance found that the recursive residual at
   that floor could understate the represented-state residual by about 3.3
   percent.
-- Keep ordinary fixed-work solves exact, but accept an explicit
-  `fixed_work_roundoff_saturation` early outcome if the current recurrence is
-  already below the supported precision floor and the next update would
-  break down or become non-finite.  This prevents excessive float32 work from
-  turning a converged finite pressure into a false convergence failure while
-  preserving the existing result for normal fixed-work budgets.
+- Keep ordinary fixed-work solves exact while their recurrence remains
+  numerically resolved.  Once the recurrence reaches the supported precision
+  floor, retain the latest at-or-below-floor iterate.  If later roundoff makes
+  the recurrence rise above the floor, break down, or become non-finite, roll
+  back to that iterate and report `fixed_work_roundoff_saturation`.  Before
+  accepting either a rollback or a fixed-work result that reached the floor,
+  recompute the residual of the represented return value and require it to be
+  at or below the floor; otherwise fail closed.  This prevents excessive
+  float32 work from silently returning a pressure that diverged after it had
+  converged, without adopting the result-changing alternative of stopping as
+  soon as the floor is first reached.
 - Make `ChannelPressureConvergenceError` and its functional dual-hierarchy
   subclass pickleable without losing their public type or machine metadata.
 
