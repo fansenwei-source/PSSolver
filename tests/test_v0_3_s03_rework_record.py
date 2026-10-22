@@ -49,7 +49,7 @@ def test_s03_rework_registry_preserves_the_three_verified_fixes() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert {
         issue_id for issue_id, item in issues.items() if item["status"] == "claimed_fixed"
-    } == {"C1-05", "C2-18", "S2-17", "V-27"}
+    } == {"C1-05", "C2-18", "S2-17", "V-27", "V-28"}
     assert issues["A2-21/S2-12"]["status"] == "verified"
     assert issues["A2-21/S2-12"]["verified_by"] == "R-0013"
     assert all(

@@ -37,7 +37,7 @@ def test_s06_record_binds_the_roadmap_and_runtime_sources() -> None:
     assert record["roadmap"]["plan_step"] == "S-06"
     assert set(record["roadmap"]["issue_ids"]) == ISSUES
     for relative, expected in record["runtime_sources"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(relative, expected)
 
 
 def test_s06_registry_claims_only_the_four_review_items() -> None:
@@ -47,9 +47,14 @@ def test_s06_registry_claims_only_the_four_review_items() -> None:
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == ISSUES
+    assert claimed == ISSUES | {"V-28"}
     for issue_id in ISSUES:
-        assert issues[issue_id]["fixed_in"] == IMPLEMENTATION
+        expected = (
+            "4c3a2d8bca191b6aa361c37920826e63582a4774"
+            if issue_id == "S2-17"
+            else IMPLEMENTATION
+        )
+        assert issues[issue_id]["fixed_in"] == expected
         assert "verified_by" not in issues[issue_id]
         assert issues[issue_id]["target_release"] == "0.3"
         assert "R-0015" in issues[issue_id]["notes"]

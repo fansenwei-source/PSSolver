@@ -53,7 +53,8 @@ def test_r0014_registers_v28_without_verifying_s06_claims() -> None:
     }
     v28 = issues["V-28"]
     assert v28["severity"] == "medium"
-    assert v28["status"] == "registered"
+    assert v28["status"] == "claimed_fixed"
+    assert v28["fixed_in"] == "4c3a2d8bca191b6aa361c37920826e63582a4774"
     assert v28["target_release"] == "0.3"
     assert "option B" in v28["notes"]
     assert imported["verified_by_r0014"] == []

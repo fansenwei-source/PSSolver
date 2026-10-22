@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-06",
+  "classification": "V0_3_S06_FIXED_WORK_REWORK_QUALIFICATION_CANDIDATE",
+  "git_identity": {
+    "implementation_commit": "4c3a2d8bca191b6aa361c37920826e63582a4774",
+    "implementation_parent": "1b6321af74cd2c234a14cc345f11c0a102d60c0e",
+    "branch": "fix/v0.3-s06-numerics-serialization",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "roadmap": {
+    "decision": "D-0010",
+    "plan_step": "S-06",
+    "reworked_issue_ids": [
+      "S2-17",
+      "V-28"
+    ],
+    "preserved_claimed_issue_ids": [
+      "C1-05",
+      "C2-18",
+      "V-27"
+    ],
+    "next_request": "R-0015"
+  },
+  "contract": {
+    "selected_option": "B",
+    "latest_at_or_below_floor_state_preserved": true,
+    "rollback_triggers": [
+      "recurrence_rises_above_floor",
+      "operator_breakdown",
+      "preconditioned_residual_breakdown",
+      "nonfinite_state"
+    ],
+    "rollback_termination_reason": "fixed_work_roundoff_saturation",
+    "represented_return_residual_recomputed": true,
+    "represented_return_residual_must_not_exceed_floor": true,
+    "failure_closed_when_postcondition_is_not_met": true,
+    "option_a_stop_at_first_floor_crossing_used": false,
+    "unchanged_floor_real_dtype_epsilons": 8,
+    "paths": [
+      "production",
+      "functional_transpose",
+      "implicit_primal",
+      "unrolled_oracle"
+    ],
+    "regression_budgets": [
+      200,
+      250,
+      300,
+      400
+    ]
+  },
+  "regression_cases": [
+    {
+      "shape": [8, 6, 4],
+      "friction": 0.2,
+      "viscosity": 20.0,
+      "length_scale": 8.0,
+      "seed": 0
+    },
+    {
+      "shape": [12, 8, 32],
+      "friction": 0.001,
+      "viscosity": 0.73,
+      "length_scale": 8.0,
+      "seed": 2
+    }
+  ],
+  "runtime_sources": {
+    "pssolver/functional/channel_pressure.py": "8df94d1c5fbd2b7558d1a8a4d87d7050b67ca9f4c567626730af964bf071ff16",
+    "pssolver/functional/channel_pressure_adjoint.py": "ca648c8595e508bf8e4cbd8362d16e35e17ef3d104f1f3361ea91a590c4a9988",
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": "71a6f12034ecdbfe1a1fca02acd70fb5b61908dc864069f99d247da6cfb110a9"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "e48dc738e2e0265e2a80c462bc28bdbf1e4832cc255845cbb42d2be99620a2a6",
+      "current_sha256": "f200401f66e559a9347315dc99db70c0e5422c95e9c4998d1c329766adb199d2",
+      "reason": "Document option B, represented-return postvalidation and the explicit rejection of stop-at-first-floor-crossing option A."
+    },
+    "pssolver/functional/channel_pressure.py": {
+      "historical_sha256": "deac56d0bd02466d494c0589ad3286c3c2cde492502d48ac35d2054f9b45e42a",
+      "current_sha256": "8df94d1c5fbd2b7558d1a8a4d87d7050b67ca9f4c567626730af964bf071ff16",
+      "reason": "Preserve and validate the latest floor-state across transpose recurrence growth, breakdown and nonfinite outcomes."
+    },
+    "pssolver/functional/channel_pressure_adjoint.py": {
+      "historical_sha256": "e408f8e81a7be591da9852cae7e64516a3d9fe7c11b7f1eb0241accda7e32967",
+      "current_sha256": "ca648c8595e508bf8e4cbd8362d16e35e17ef3d104f1f3361ea91a590c4a9988",
+      "reason": "Apply option B and represented-return postvalidation to implicit primal and unrolled oracle paths."
+    },
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "historical_sha256": "2a17f0c815027e66a3868f96ac2c6e326ddc00f1d2f18bd7ba60b63ebcb1e4ac",
+      "current_sha256": "71a6f12034ecdbfe1a1fca02acd70fb5b61908dc864069f99d247da6cfb110a9",
+      "reason": "Apply option B and represented-return postvalidation to the production pressure solver."
+    },
+    "tests/test_v0_3_s06_pressure_and_pickle.py": {
+      "historical_sha256": "2ec2b73efb962db712576458d4e99ccacd77cca7b54c21d046f3e09914035595",
+      "current_sha256": "0d5d865b11c78c32d7d95c7e8387b1741800a7796273717fec2ecdc7c410ee40",
+      "reason": "Exercise both exact R-0014 divergence cases at four budgets over all four pressure paths."
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "6dda498a9bd59bcd4da75b90dcfd931f051e7ba0f89058c574b7e4a7bb202b9c",
+      "current_sha256": "007b11b91bdd91f377c7f92fcc9d59748c03002175360d464028fd7704bde8ca",
+      "reason": "Claim the option-B S2-17 and V-28 repairs at their runtime implementation commit pending R-0015."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "84d5bd55b522c557b9f8df7d0d5f0a443cdee8bb4bf45ac91a937135d833842d",
+      "current_sha256": "216fe71c09da40c360db10be6a5b26a1257a15ec281df53abbf5ea06fd934e53",
+      "reason": "Describe the option-B implementation and retain all S-06 claims pending R-0015."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "a89969276d9b5d398667ffc20164357a1659d0fbd9ce2512433fe51af1909fc2",
+      "current_sha256": "6b8d922f5f1c1a045f0b9eb0d95a86b4f395cac468857f14fe6dcf31ebab261a",
+      "reason": "Bind the five current claimed fixes and the option-B implementation identity."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "3e483bc55e682062bdbf9995b7382e03496970810b49f6856bf6e7b6560ae2b4",
+      "current_sha256": "916b02ee5a0b7b6532fffc14aeb0f8d283e1e06005480ead68449764cc37ea63",
+      "reason": "Recognize current registry counts without rewriting the historical R-0002 record."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "db8e03720c45f4694b4b4922739aad78d5890a9bfa329e8c85992316c92f8297",
+      "current_sha256": "27bdac578227e5015f71bccda9db073417e7c733c022b53e96af263976af8156",
+      "reason": "Preserve S-03 verification while recognizing the later V-28 S-06 claim."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "historical_sha256": "c26b277a4f5c71cbf78d905dda116a6763cd48dc95f1b56103c48752addf1435",
+      "current_sha256": "6638977363809c4b4510cc8c07a241c49bf17ad47437ec220a1a15943e6fe2e1",
+      "reason": "Preserve S-04 verification while recognizing the later V-28 S-06 claim."
+    },
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {
+      "historical_sha256": "59ef87922ea27783ad916ee9aa0a2f7432d2322e7f0c0eb6006cba880e3a161a",
+      "current_sha256": "17ae791dd64d545ab19c60200f2961630a9c030f1a69ad7e3730b8d4de47aa49",
+      "reason": "Keep the first S-06 candidate historical while resolving its runtime hashes through the rework successor."
+    },
+    "tests/test_v0_3_s06_r0014_import.py": {
+      "historical_sha256": "5240aaacf6755a60daec5a62c1ec1f9ea57f054ecaee071cbdbfaef15ed05ea2",
+      "current_sha256": "b858ca72fb6bddc01db60bd81bed40ba26a09ca54d9173349d16be974e0707e0",
+      "reason": "Preserve the R-0014 registration while recognizing that V-28 is now claimed pending R-0015."
+    }
+  },
+  "new_sources": [
+    "notes/PSSolver_v0_3_0_s03_successor_14_s06_fixed_work_rework.json",
+    "notes/PSSolver_v0_3_0_s03_successor_14_s06_fixed_work_rework_zh.md",
+    "tests/test_v0_3_s06_fixed_work_rework_record.py"
+  ],
+  "validation": {
+    "status": "PASS_V0_3_S06_FIXED_WORK_OPTION_B_LOCAL_QUALIFICATION",
+    "archive": "/home/fansenwei/pssolver_v0_3_s06_fixed_work_rework_4c3a2d8_20261022_v2",
+    "archive_checksums_entries": 17,
+    "archive_checksums_sha256": "5f2a2deba478bd0759fd587b3f393c8860112132c03b67195af3a832ac4019a0",
+    "archive_complete_present": true,
+    "environment_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "environment_clone_method": "cp -al",
+    "environment_clones_pruned": true,
+    "focused_pytest": {
+      "passed": 101,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "dec97f0553b2e18eea8e31c1466a6d8c341f80068af71c24e329bbd4a9871b94",
+      "junit_sha256": "d4102e3720b8bbc6ed02b354f6290957c034554567cbaaff1e9babcb66ffc14b"
+    },
+    "full_cpu_suite": {
+      "passed": 4489,
+      "failed": 0,
+      "skipped": 1,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "log_sha256": "1c16dd13828b15fbf6fa943786ed18a3b725b0bef802f1404b826fa9facbb4b7",
+      "junit_sha256": "082524be2688e4bdb5c9652cf340a57aca664f65c2854084e93cbcc8a6138a76"
+    },
+    "installed_wheel": {
+      "passed": 40,
+      "failed": 0,
+      "skipped": 0,
+      "pip_check": "PASS",
+      "source_shadow_import": false,
+      "wheel_sha256": "a403f93bf7573103be7bbd96329dc34fbc589ae9adbecd71b08b7f8ba52597a8",
+      "log_sha256": "b175cb1951bfff2364083c27fab29a1735fb9904206c55091b1843c8d9aa5eac",
+      "junit_sha256": "c82fd3d4ac8eee0f8e8cbe232d1a8788a2354872e5d7259b287c7cf6c8e54eff"
+    },
+    "stress_scan": {
+      "groups": 12,
+      "silent_acceptable_represented_residual_above_1e_3": 0,
+      "maximum_acceptable_represented_residual": 9.509943213242217e-7,
+      "precision_floor": 9.5367431640625e-7,
+      "sha256": "da49bc06102c9743804785820b149c168b77ab3c767d449c83fef54d8bee8b9d"
+    },
+    "qualification_complete": true,
+    "eligible_for_independent_review": true
+  },
+  "scope": {
+    "runtime_changed": true,
+    "fixed_work_acceptance_contract_changed": true,
+    "public_minimum_tolerance_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "functional_api_version_changed": false,
+    "threshold_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_implementation_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  }
+}

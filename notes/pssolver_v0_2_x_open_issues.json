@@ -32,8 +32,8 @@
   "issue_count": 33,
   "status_counts": {
     "open": 1,
-    "registered": 7,
-    "claimed_fixed": 4,
+    "registered": 6,
+    "claimed_fixed": 5,
     "verified": 15,
     "deferred": 2,
     "accepted": 1,
@@ -331,9 +331,10 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "4c3a2d8bca191b6aa361c37920826e63582a4774",
       "target_release": "0.3",
-      "notes": "Roadmap S-06 rework with S2-17. In float32 fixed-work PCG, the recurrence may pass below its precision floor and later diverge without breakdown; pre-rework runs can still end fixed_work_completed with an unacceptable represented residual. Implement user-authorized option B: preserve the latest at-or-below-floor iterate, roll back on a later rise, breakdown, or nonfinite state, and accept saturation only after the represented residual of the returned state is at or below the floor. Repro: R-0014 scripts/s217_divergence_probe.py and scripts/s217_silent_divergence.py."
+      "notes": "S-06 option B at 4c3a2d8 preserves the latest at-or-below-floor iterate, rolls back on a later rise, breakdown or nonfinite state, and accepts saturation only after recomputing the represented residual of the returned state at or below the unchanged floor. The exact R-0014 divergence cases and budgets cover production, functional transpose, implicit and oracle paths. Keep claimed_fixed pending R-0015."
     },
     {
       "id": "A2-24/C1-15",
@@ -392,9 +393,9 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "claimed_fixed",
-      "fixed_in": "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a",
+      "fixed_in": "4c3a2d8bca191b6aa361c37920826e63582a4774",
       "target_release": "0.3",
-      "notes": "R-0014 found that the first S-06 implementation handled breakdown/nonfinite states but not a recurrence that rises and diverges after reaching the floor. Rework together with V-28 under option B; keep claimed_fixed pending R-0015."
+      "notes": "S-06 option B at 4c3a2d8 keeps the latest recurrence state at or below the precision floor, rolls back after later recurrence growth, breakdown or nonfinite state, and validates the represented return residual before acceptance. Ordinary fixed work that never reaches the floor is unchanged. Keep claimed_fixed pending R-0015."
     },
     {
       "id": "A1-07",
