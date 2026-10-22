@@ -31,6 +31,7 @@ def _solver(
     friction=0.2,
     viscosity=0.73,
     length_scale=1.0,
+    dtype=torch.float32,
 ):
     spectral = SpectralSolver(
         shape,
@@ -38,7 +39,7 @@ def _solver(
             length_scale * (1.0 + 0.37 * value) for value in shape
         ),
         device="cpu",
-        dtype=torch.float32,
+        dtype=dtype,
     )
     solver = ChannelNoSlipModalStokesSolver(
         spectral.transform_backend,
@@ -51,14 +52,15 @@ def _solver(
     return solver
 
 
-def _rhs(solver, shape, seed):
+def _rhs(solver, shape, seed, *, dtype=torch.float32):
     generator = torch.Generator().manual_seed(seed)
     real = torch.randn((1, *shape), generator=generator, dtype=torch.float64)
     imag = torch.randn((1, *shape), generator=generator, dtype=torch.float64)
     operator = ChannelPressureTransposeOperator(solver)
-    return operator._project_gauge(
-        torch.complex(real, imag).to(torch.complex64)
+    complex_dtype = (
+        torch.complex128 if dtype == torch.float64 else torch.complex64
     )
+    return operator._project_gauge(torch.complex(real, imag).to(complex_dtype))
 
 
 def _represented_relative_residual(solver, rhs, pressure, action):
@@ -231,6 +233,80 @@ def test_excess_float32_fixed_work_never_accepts_a_diverged_return_state(
     )
     floor = channel_pressure_minimum_relative_tolerance(torch.float32)
     assert not acceptable or represented <= floor
+
+
+def test_fixed_work_completion_keeps_the_v29_roundoff_margin():
+    shape = (12, 7, 6)
+    solver = _solver(
+        shape,
+        fixed_iterations=25,
+        friction=0.2,
+        viscosity=0.73,
+        dtype=torch.float64,
+    )
+    rhs = _rhs(solver, shape, 9, dtype=torch.float64)
+
+    pressure = solver._solve_pressure(rhs)
+
+    represented = _represented_relative_residual(
+        solver,
+        rhs,
+        pressure,
+        ChannelPressureTransposeOperator(solver).apply_pressure_operator,
+    )
+    floor = channel_pressure_minimum_relative_tolerance(torch.float64)
+    assert solver.last_pressure_acceptable is True
+    assert solver.last_pressure_termination_reason == "fixed_work_completed"
+    assert represented <= 2.0 * floor
+
+
+def test_transpose_fixed_work_uses_the_minimum_floor_state():
+    shape = (12, 8, 32)
+    solver = _solver(
+        shape,
+        fixed_iterations=200,
+        friction=1.0e-3,
+        viscosity=0.73,
+        length_scale=8.0,
+    )
+    rhs = _rhs(solver, shape, 0)
+    operator = ChannelPressureTransposeOperator(solver)
+
+    pressure = operator.solve_pressure_transpose(rhs)
+
+    represented = _represented_relative_residual(
+        solver,
+        rhs,
+        pressure,
+        operator.apply_pressure_operator_transpose,
+    )
+    floor = channel_pressure_minimum_relative_tolerance(torch.float32)
+    assert operator.last_transpose_diagnostics.acceptable is True
+    assert represented <= floor
+
+
+def test_production_fixed_work_uses_the_minimum_floor_state():
+    shape = (24, 20, 16)
+    solver = _solver(
+        shape,
+        fixed_iterations=400,
+        friction=1.0e-3,
+        viscosity=20.0,
+        length_scale=1.0,
+    )
+    rhs = _rhs(solver, shape, 1)
+
+    pressure = solver._solve_pressure(rhs)
+
+    represented = _represented_relative_residual(
+        solver,
+        rhs,
+        pressure,
+        ChannelPressureTransposeOperator(solver).apply_pressure_operator,
+    )
+    floor = channel_pressure_minimum_relative_tolerance(torch.float32)
+    assert solver.last_pressure_acceptable is True
+    assert represented <= floor
 
 
 @pytest.mark.parametrize("protocol", (4, pickle.HIGHEST_PROTOCOL))

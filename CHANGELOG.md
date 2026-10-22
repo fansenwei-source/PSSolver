@@ -11,12 +11,16 @@
   percent.
 - Keep ordinary fixed-work solves exact while their recurrence remains
   numerically resolved.  Once the recurrence reaches the supported precision
-  floor, retain the latest at-or-below-floor iterate.  If later roundoff makes
-  the recurrence rise above the floor, break down, or become non-finite, roll
-  back to that iterate and report `fixed_work_roundoff_saturation`.  Before
-  accepting either a rollback or a fixed-work result that reached the floor,
-  recompute the residual of the represented return value and require it to be
-  at or below the floor; otherwise fail closed.  This prevents excessive
+  floor, retain the at-or-below-floor iterate having the smallest recursive
+  residual.  If later roundoff makes the recurrence rise above the floor,
+  break down, or become non-finite, roll back to that iterate and report
+  `fixed_work_roundoff_saturation`.  A rollback is accepted only after the
+  residual of its represented return value is independently recomputed and
+  found at or below the floor.  A normally completed fixed-work solve retains
+  its historical result when its represented residual is within two floors;
+  before using that margin, the solver first prefers a saved floor iterate
+  that satisfies the strict represented-residual postcondition.  This avoids
+  rejecting a correct final floor crossing while preventing excessive
   float32 work from silently returning a pressure that diverged after it had
   converged, without adopting the result-changing alternative of stopping as
   soon as the floor is first reached.
