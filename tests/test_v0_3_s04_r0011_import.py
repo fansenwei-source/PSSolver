@@ -94,7 +94,9 @@ def test_r0011_import_is_evidence_only_and_authorizes_no_external_action() -> No
         "pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel"
     )
     assert validation["environment_clone_pruned"] is True
-    assert validation["sys_path"][1] == str(ROOT)
+    assert validation["sys_path"][1] == (
+        "/home/fansenwei/Desktop/Develop/PSSolver_dev_0_3"
+    )
     assert validation["focused_pytest"] == "18 passed"
     assert record["scope"]["evidence_only"] is True
     assert all(

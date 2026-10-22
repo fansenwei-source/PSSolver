@@ -2,6 +2,22 @@
 
 ## 0.3.0.dev0 — unreleased
 
+### Channel pressure robustness
+
+- Keep the public tolerance-mode floor at eight real-dtype epsilons, but
+  independently recompute the residual of the represented return value before
+  accepting it.  Independent acceptance found that the recursive residual at
+  that floor could understate the represented-state residual by about 3.3
+  percent.
+- Keep ordinary fixed-work solves exact, but accept an explicit
+  `fixed_work_roundoff_saturation` early outcome if the current recurrence is
+  already below the supported precision floor and the next update would
+  break down or become non-finite.  This prevents excessive float32 work from
+  turning a converged finite pressure into a false convergence failure while
+  preserving the existing result for normal fixed-work budgets.
+- Make `ChannelPressureConvergenceError` and its functional dual-hierarchy
+  subclass pickleable without losing their public type or machine metadata.
+
 ### Public error compatibility
 
 - Snapshot read failures use public `SimulationInputError` subclasses while

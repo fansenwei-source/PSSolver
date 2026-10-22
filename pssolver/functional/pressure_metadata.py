@@ -5,6 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 import math
 
+import torch
+
+from pssolver.core.pressure import (
+    channel_pressure_minimum_relative_tolerance_for_precision,
+)
+
 from pssolver.linear_solvers.stokes.channel_no_slip import (
     CHANNEL_PRESSURE_BREAKDOWN_DEFINITION,
     CHANNEL_PRESSURE_NORMALIZED_RESIDUAL_DEFINITION,
@@ -34,6 +40,7 @@ _TERMINATION_REASONS = {
     "zero_rhs",
     "exact_zero_residual",
     "fixed_work_completed",
+    "fixed_work_roundoff_saturation",
     "relative_tolerance_met",
     "iteration_limit_reached_without_postcondition",
     "operator_breakdown",
@@ -271,11 +278,22 @@ def _pressure_postcondition(
 ) -> tuple[str, bool]:
     if solver.pressure_fixed_iterations is not None:
         required = (
-            "zero_rhs_or_exact_zero_residual_or_exact_requested_fixed_work"
+            "zero_rhs_or_exact_zero_residual_or_exact_requested_fixed_work_or_"
+            "fixed_work_roundoff_saturation"
         )
         satisfied = termination_reason in {"zero_rhs", "exact_zero_residual"}
         if termination_reason == "fixed_work_completed":
             satisfied = achieved_iteration_count == solver.pressure_fixed_iterations
+        if termination_reason == "fixed_work_roundoff_saturation":
+            satisfied = bool(
+                achieved_normalized_residual is not None
+                and achieved_normalized_residual
+                <= channel_pressure_minimum_relative_tolerance_for_precision(
+                    "float32"
+                    if solver.ikx.dtype == torch.complex64
+                    else "float64"
+                )
+            )
         return required, bool(satisfied)
     required = (
         "zero_rhs_or_exact_zero_residual_or_pcg_recurrence_normalized_"

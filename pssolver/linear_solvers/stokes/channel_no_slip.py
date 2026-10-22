@@ -45,6 +45,9 @@ CHANNEL_PRESSURE_BREAKDOWN_DEFINITION = (
     "<=eps*active_rms(left)*active_rms(right)"
 )
 _CHANNEL_PRESSURE_BREAKDOWN_CERTIFICATE_EPSILON_MARGIN = 4096.0
+CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION = (
+    "fixed_work_roundoff_saturation"
+)
 
 
 def channel_pressure_minimum_relative_tolerance(
@@ -65,9 +68,9 @@ def channel_pressure_minimum_relative_tolerance(
     """
 
     # The independent rc5 acceptance matrix found recurrence/represented-state
-    # residual disagreement at two and four epsilons.  Eight epsilons excludes
-    # every observed disagreement while remaining below the qualified float32
-    # default of 1e-6.  The factor is part of the public compilation contract.
+    # residual disagreement at two and four epsilons.  Eight epsilons remains
+    # the public floor; tolerance-mode solves independently verify the
+    # residual of the represented return value before accepting it.
     real_dtype = _channel_pressure_real_dtype(dtype)
     precision = "float32" if real_dtype == torch.float32 else "float64"
     return channel_pressure_minimum_relative_tolerance_for_precision(precision)
@@ -120,6 +123,80 @@ class ChannelPressureConvergenceError(SimulationExecutionError):
         # exception while still inheriting the common execution-error API.
         self.details = dict(self.details)
         self.diagnostics = dict(self.details)
+
+    def __reduce__(self):
+        """Preserve the public exception contract across pickle protocols."""
+
+        extra_state = {
+            name: value
+            for name, value in self.__dict__.items()
+            if name
+            not in {
+                "application_family",
+                "stage",
+                "step",
+                "details",
+                "diagnostics",
+            }
+        }
+        return (
+            _restore_channel_pressure_convergence_error,
+            (
+                type(self),
+                str(self),
+                self.application_family,
+                self.stage,
+                self.step,
+                dict(self.details),
+                dict(self.diagnostics),
+                extra_state,
+            ),
+        )
+
+
+def _restore_channel_pressure_convergence_error(
+    error_type,
+    message: str,
+    application_family: str,
+    stage: str,
+    step: int,
+    details: dict[str, object],
+    diagnostics: dict[str, object],
+    extra_state: dict[str, object],
+):
+    """Rebuild Channel pressure errors without narrowing subclass identity."""
+
+    error = error_type.__new__(error_type)
+    SimulationExecutionError.__init__(
+        error,
+        message,
+        application_family=application_family,
+        stage=stage,
+        step=step,
+        details=details,
+    )
+    # Match ChannelPressureConvergenceError's established mutable mapping
+    # projections and restore FunctionalConvergenceError.operation when the
+    # dual-hierarchy subclass is pickled.
+    error.details = dict(error.details)
+    error.diagnostics = dict(diagnostics)
+    for name, value in extra_state.items():
+        setattr(error, name, value)
+    return error
+
+
+def channel_pressure_fixed_work_roundoff_saturated(
+    relative_residual: float | None,
+    dtype: torch.dtype | str,
+) -> bool:
+    """Return whether fixed-work PCG reached its represented precision floor."""
+
+    return bool(
+        relative_residual is not None
+        and math.isfinite(float(relative_residual))
+        and float(relative_residual)
+        <= channel_pressure_minimum_relative_tolerance(dtype)
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -973,9 +1050,10 @@ def _positive_integer(value: object, description: str) -> int:
 class ChannelNoSlipModalStokesSolver(torch.nn.Module):
     """Matrix-free mixed FFT/DST/DCT Channel Stokes/Brinkman solve.
 
-    ``pressure_fixed_iterations`` selects exact fixed work.  In that mode
+    ``pressure_fixed_iterations`` selects fixed work.  In that mode
     ``pressure_max_iterations`` is inactive and relative tolerance is
-    diagnostic-only; only an exact zero residual may terminate early.
+    diagnostic-only.  Exact zero or a certified represented-precision floor
+    reached immediately before breakdown may terminate early.
     """
 
     def __init__(
@@ -1337,7 +1415,8 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         policy = self.pressure_convergence_policy()
         fixed_work = self.pressure_fixed_iterations is not None
         required_postcondition = (
-            "zero_rhs_or_exact_zero_residual_or_exact_requested_fixed_work"
+            "zero_rhs_or_exact_zero_residual_or_exact_requested_fixed_work_or_"
+            "fixed_work_roundoff_saturation"
             if fixed_work
             else (
                 "zero_rhs_or_exact_zero_residual_or_pcg_recurrence_normalized_"
@@ -1784,13 +1863,32 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                     )
                 )
             if not operator_pair_finite:
-                termination_reason = "nonfinite_intermediate"
+                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
+                    relative_residual,
+                    residual.dtype,
+                ):
+                    termination_reason = (
+                        CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
+                    )
+                    acceptable = True
+                else:
+                    termination_reason = "nonfinite_intermediate"
                 break
             if operator_breakdown:
-                termination_reason = "operator_breakdown"
+                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
+                    relative_residual,
+                    residual.dtype,
+                ):
+                    termination_reason = (
+                        CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
+                    )
+                    acceptable = True
+                else:
+                    termination_reason = "operator_breakdown"
                 break
             denominator = direction_operator_inner.real
             step = rz_old / denominator
+            previous_pressure_work = pressure_work
             pressure_work = self._project_pressure_gauge(
                 pressure_work + step * direction
             )
@@ -1824,7 +1922,18 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 ),
             )
             if not state_finite:
-                termination_reason = "nonfinite_intermediate"
+                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
+                    relative_residual,
+                    residual.dtype,
+                ):
+                    pressure_work = previous_pressure_work
+                    iterations -= 1
+                    termination_reason = (
+                        CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
+                    )
+                    acceptable = True
+                else:
+                    termination_reason = "nonfinite_intermediate"
                 break
             residual_magnitude = residual_work_magnitude.shifted(
                 int(working_exponent)
@@ -1838,19 +1947,102 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 acceptable = True
                 break
             if not fixed_work and relative_residual <= self.pressure_rel_tol:
-                termination_reason = "relative_tolerance_met"
-                acceptable = True
-                break
+                # A recursively updated PCG residual can differ slightly from
+                # the residual of the represented pressure.  Recompute from
+                # the actual return candidate before accepting the public
+                # tolerance contract.  If it is not yet sufficient, restart
+                # the recurrence from that represented residual.
+                residual = self._project_pressure_gauge(
+                    working_rhs - self._pressure_operator(pressure_work)
+                )
+                preconditioned = residual / self.schur_diag_safe
+                rz_new = torch.sum(torch.conj(residual) * preconditioned).real
+                (
+                    residual_work_magnitude,
+                    state_finite,
+                    preconditioned_breakdown,
+                    preconditioned_pair_finite,
+                ) = _channel_pressure_working_residual_observation(
+                    residual,
+                    preconditioned,
+                    self.pressure_inactive_mask,
+                    inner_product=rz_new,
+                    active_count=active_count,
+                    finite_companions=(pressure_work,),
+                    breakdown_certified=(
+                        self._pressure_preconditioner_breakdown_certified
+                    ),
+                    preconditioner_inverse_max=(
+                        self._pressure_preconditioner_inverse_max
+                    ),
+                )
+                residual_magnitude = residual_work_magnitude.shifted(
+                    int(working_exponent)
+                )
+                relative_residual = channel_pressure_magnitude_ratio(
+                    residual_work_magnitude,
+                    rhs_work_magnitude,
+                )
+                if not state_finite or not preconditioned_pair_finite:
+                    termination_reason = "nonfinite_intermediate"
+                    break
+                if residual_work_magnitude.is_zero:
+                    termination_reason = "exact_zero_residual"
+                    acceptable = True
+                    break
+                if relative_residual <= self.pressure_rel_tol:
+                    termination_reason = "relative_tolerance_met"
+                    acceptable = True
+                    break
+                if preconditioned_breakdown:
+                    termination_reason = "preconditioned_residual_breakdown"
+                    break
+                residual_rms_interval = _channel_pressure_rms_interval(
+                    residual_work_magnitude,
+                    real_dtype=_channel_pressure_real_dtype(residual.dtype),
+                )
+                direction_rms_upper_bound = (
+                    _channel_pressure_initial_direction_rms_upper_bound(
+                        residual_rms_interval,
+                        preconditioner_inverse_max=(
+                            self._pressure_preconditioner_inverse_max
+                        ),
+                        real_dtype=_channel_pressure_real_dtype(residual.dtype),
+                    )
+                    if self._pressure_preconditioner_breakdown_certified
+                    else None
+                )
+                direction = preconditioned.clone()
+                rz_old = rz_new
+                continue
             if iterations == iteration_limit:
                 if fixed_work:
                     termination_reason = "fixed_work_completed"
                     acceptable = True
                 break
             if not preconditioned_pair_finite:
-                termination_reason = "nonfinite_intermediate"
+                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
+                    relative_residual,
+                    residual.dtype,
+                ):
+                    termination_reason = (
+                        CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
+                    )
+                    acceptable = True
+                else:
+                    termination_reason = "nonfinite_intermediate"
                 break
             if preconditioned_breakdown:
-                termination_reason = "preconditioned_residual_breakdown"
+                if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
+                    relative_residual,
+                    residual.dtype,
+                ):
+                    termination_reason = (
+                        CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
+                    )
+                    acceptable = True
+                else:
+                    termination_reason = "preconditioned_residual_breakdown"
                 break
             next_residual_rms_interval = _channel_pressure_rms_interval(
                 residual_work_magnitude,
@@ -1943,12 +2135,14 @@ __all__ = [
     "CHANNEL_PRESSURE_NORMALIZED_RESIDUAL_DEFINITION",
     "CHANNEL_PRESSURE_RHS_NORM_DEFINITION",
     "CHANNEL_PRESSURE_WORKING_VECTOR_SCALING",
+    "CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION",
     "CHANNEL_VELOCITY_BOUNDARY_CONDITIONS",
     "ChannelPressureConvergenceError",
     "channel_pressure_minimum_relative_tolerance",
     "ChannelPressureMagnitude",
     "ChannelNoSlipModalStokesSolver",
     "channel_pressure_active_rms",
+    "channel_pressure_fixed_work_roundoff_saturated",
     "channel_pressure_magnitude_ratio",
     "channel_pressure_relative_breakdown",
     "channel_pressure_scale_power_of_two",
