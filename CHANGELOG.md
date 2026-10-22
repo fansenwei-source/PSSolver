@@ -36,6 +36,31 @@
 - Permit explicit legacy Channel checkpoint upgrades from read-only sources
   without mutating the source, and remove read-only staging after failure.
 
+### Checkpoint metadata integrity
+
+- Seal the complete metadata of newly written Plane format 3, legacy Channel
+  format 3, finite-Q format 2, and experimental shadow format 2 checkpoints
+  with a canonical SHA-256 digest.  Metadata validation precedes tensor reads
+  and target-runtime mutation.  All formally released v0.2 checkpoint formats
+  remain available through exact, read-only legacy branches and are reported
+  as `unsealed_legacy`; new sealed carriers report `sealed_sha256` without
+  changing compatibility or provider identity.
+- The four new carrier versions are intentionally not forward-readable by
+  PSSolver v0.2.x.  A checkpoint written in any of these v0.3 formats cannot
+  be resumed by v0.2.x; the released v0.2.2 wheel rejects each format with an
+  explicit schema/version incompatibility error instead of treating it as an
+  older checkpoint.
+- Non-in-place upgrades record `source_integrity_status=unsealed_legacy`, the
+  source directory tree SHA-256 observed at upgrade time, and
+  `source_historical_integrity_authenticated=false` inside the sealed
+  migration record.  This proves which bytes were upgraded without claiming
+  that an unsealed source was never changed earlier in its history.
+- The metadata SHA-256 detects accidental edits, partial edits, corruption,
+  and coordinated field edits for which the digest was not recomputed.  It is
+  an integrity checksum, not a MAC or digital signature: a deliberate actor
+  who can rewrite both metadata and its digest is outside the v0.3 threat
+  model.
+
 ## 0.2.2 — 2026-10-20
 
 Maintenance release over `v0.2.1` containing only the verified V-17

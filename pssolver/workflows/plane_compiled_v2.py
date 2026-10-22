@@ -29,6 +29,7 @@ from pssolver.runtime.plane_compiled_v2_step import (
 from pssolver.runtime.plane_legacy import build_legacy_plane_runtime
 from pssolver.workflows.plane_checkpoint import (
     PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PlaneWorkflowCheckpoint,
     _validate_plane_checkpoint_embedded_identity,
@@ -388,7 +389,10 @@ class PlaneCompiledV2WorkflowAdapter:
             raise ValueError(
                 "legacy Plane checkpoint requires explicit identity upgrade"
             )
-        if checkpoint.format_version != PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        if checkpoint.format_version not in {
+            PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+            PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        }:
             raise ValueError("unsupported Plane workflow checkpoint version")
         if checkpoint.runtime_path is not _CHECKPOINT_PATH_CARRIER:
             raise ValueError("cross-runtime Plane checkpoint restart is unsupported")

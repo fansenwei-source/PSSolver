@@ -325,7 +325,7 @@ def test_file_payload_and_file_record_tampering_are_rejected(tmp_path):
         "shape"
     ][0] += 1
     metadata_path.write_text(json.dumps(metadata, sort_keys=True))
-    with pytest.raises(ValueError, match="shape metadata"):
+    with pytest.raises(ValueError, match="metadata checksum mismatch"):
         load_finite_q_anchoring_checkpoint(record_case)
 
 

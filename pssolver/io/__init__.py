@@ -1,6 +1,8 @@
 """Shared, tensor-free I/O primitives."""
 
 from .checkpoint import (
+    CHECKPOINT_INTEGRITY_SEALED_SHA256,
+    CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
     CheckpointCompatibilityError,
     CheckpointDurabilityError,
     CheckpointError,
@@ -10,11 +12,13 @@ from .checkpoint import (
     CheckpointNotFoundError,
     FUNCTIONAL_CHECKPOINT_PROVENANCE_FILE,
     checkpoint_file_sha256,
+    checkpoint_directory_tree_sha256,
     checkpoint_directory_transaction,
     checkpoint_metadata_sha256,
     load_checkpoint_numpy,
     read_checkpoint_json,
     require_exact_checkpoint_keys,
+    require_sealed_upgrade_provenance,
     resolve_checkpoint_payload,
     seal_checkpoint_metadata,
     verify_checkpoint_metadata,
@@ -23,6 +27,8 @@ from .checkpoint import (
 )
 
 __all__ = [
+    "CHECKPOINT_INTEGRITY_SEALED_SHA256",
+    "CHECKPOINT_INTEGRITY_UNSEALED_LEGACY",
     "CheckpointCompatibilityError",
     "CheckpointDurabilityError",
     "CheckpointError",
@@ -32,11 +38,13 @@ __all__ = [
     "CheckpointNotFoundError",
     "FUNCTIONAL_CHECKPOINT_PROVENANCE_FILE",
     "checkpoint_file_sha256",
+    "checkpoint_directory_tree_sha256",
     "checkpoint_directory_transaction",
     "checkpoint_metadata_sha256",
     "load_checkpoint_numpy",
     "read_checkpoint_json",
     "require_exact_checkpoint_keys",
+    "require_sealed_upgrade_provenance",
     "resolve_checkpoint_payload",
     "seal_checkpoint_metadata",
     "verify_checkpoint_metadata",

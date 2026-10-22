@@ -16,6 +16,7 @@ from pssolver.runtime import (
 )
 from pssolver.runtime import plane_legacy
 from pssolver.workflows import (
+    PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     capture_plane_checkpoint,
     restore_plane_checkpoint,
 )
@@ -266,4 +267,6 @@ def test_p35_checkpoint_v2_restarts_in_both_integrator_directions(
     old_target.advance(2)
     _assert_storage_equal(old_source, new_target)
     _assert_storage_equal(new_source, old_target)
-    assert old_checkpoint.format_version == new_checkpoint.format_version == 2
+    assert old_checkpoint.format_version == new_checkpoint.format_version == (
+        PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+    )

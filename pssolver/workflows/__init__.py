@@ -8,6 +8,7 @@ from .plane_beris_edwards import (
 from .plane_checkpoint import (
     PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PlaneCheckpointHeader,
     PlaneWorkflowCheckpoint,
     build_plane_checkpoint_compatibility_identity,
@@ -18,7 +19,9 @@ from .plane_checkpoint import (
     read_plane_checkpoint_header,
     restore_plane_checkpoint,
     upgrade_plane_checkpoint_directory_v1,
+    upgrade_plane_checkpoint_directory_v2,
     upgrade_plane_checkpoint_v1,
+    upgrade_plane_checkpoint_v2,
     write_plane_checkpoint,
 )
 from .plane_observation import (
@@ -60,12 +63,14 @@ from .channel_beris_edwards import (
 from .channel_checkpoint import (
     CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    CHANNEL_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     ChannelCheckpointHeader,
     ChannelWorkflowCheckpoint,
     capture_channel_checkpoint,
     load_channel_checkpoint,
     read_channel_checkpoint_header,
     restore_channel_checkpoint,
+    upgrade_channel_checkpoint_directory,
     write_channel_checkpoint,
 )
 from .channel_active_nematics import (
@@ -86,6 +91,7 @@ from .finite_q_anchoring import (
     PlaneFiniteQAnchoringWorkflow,
     PlaneFiniteQAnchoringWorkflowResult,
     load_finite_q_anchoring_checkpoint,
+    upgrade_finite_q_anchoring_checkpoint_directory,
     write_finite_q_anchoring_checkpoint,
 )
 
@@ -94,6 +100,7 @@ __all__ = [
     "DIAGNOSTIC_HEADER",
     "PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
+    "PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "PLANE_WORKFLOW_SCHEMA_VERSION",
     "PlaneBerisEdwardsWorkflow",
     "PlaneCheckpointHeader",
@@ -111,7 +118,9 @@ __all__ = [
     "read_plane_checkpoint_header",
     "restore_plane_checkpoint",
     "upgrade_plane_checkpoint_directory_v1",
+    "upgrade_plane_checkpoint_directory_v2",
     "upgrade_plane_checkpoint_v1",
+    "upgrade_plane_checkpoint_v2",
     "write_plane_checkpoint",
     "write_plane_diagnostics",
     "write_plane_observation",
@@ -138,6 +147,7 @@ __all__ = [
     "read_channel_beris_edwards_checkpoint_header",
     "upgrade_channel_beris_edwards_checkpoint_directory",
     "CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
+    "CHANNEL_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "ChannelCheckpointHeader",
     "ChannelWorkflowCheckpoint",
@@ -145,6 +155,7 @@ __all__ = [
     "load_channel_checkpoint",
     "read_channel_checkpoint_header",
     "restore_channel_checkpoint",
+    "upgrade_channel_checkpoint_directory",
     "write_channel_checkpoint",
     "CHANNEL_WORKFLOW_SCHEMA_VERSION",
     "ChannelActiveNematicsWorkflow",
@@ -159,5 +170,6 @@ __all__ = [
     "PlaneFiniteQAnchoringWorkflow",
     "PlaneFiniteQAnchoringWorkflowResult",
     "load_finite_q_anchoring_checkpoint",
+    "upgrade_finite_q_anchoring_checkpoint_directory",
     "write_finite_q_anchoring_checkpoint",
 ]

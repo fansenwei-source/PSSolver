@@ -292,7 +292,7 @@ def test_nonfinite_compiled_diagnostics_raise_the_public_state_error(
     }
 
 
-def test_checkpoint_v2_round_trip_persists_layered_identity(tmp_path):
+def test_current_checkpoint_round_trip_persists_layered_identity(tmp_path):
     _, _, _, _, program, adapter = _compiled(tmp_path, "checkpoint")
     _advance(program, 3)
     checkpoint = adapter.capture_checkpoint()
@@ -304,7 +304,7 @@ def test_checkpoint_v2_round_trip_persists_layered_identity(tmp_path):
         (directory / "checkpoint.json").read_text(encoding="utf-8")
     )
 
-    assert loaded.format_version == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION == 2
+    assert loaded.format_version == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION == 3
     assert loaded.runtime_path is PlaneRuntimePath.COMPILED_V2
     assert loaded.backend_restart["kind"] == "compiled_v2_plane_stateless"
     assert set(metadata) == {
@@ -315,6 +315,7 @@ def test_checkpoint_v2_round_trip_persists_layered_identity(tmp_path):
         "evolved_components",
         "format_version",
         "integrator",
+        "metadata_sha256",
         "run_provenance",
         "runtime_path",
         "tensor_files",
@@ -486,7 +487,7 @@ def test_adapter_metadata_records_compiled_v2_identity_contract(tmp_path):
     assert metadata["connected_runtime"] is None
     assert metadata["output_views"]["zero_copy"] is True
     assert metadata["checkpoint"] == {
-        "format_version": 2,
+        "format_version": PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
         "runtime_path_carrier": "compiled_v2",
         "backend_identity_enforced": True,
         "preflight_before_mutation": True,

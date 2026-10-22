@@ -5,6 +5,7 @@ Nothing in this package is imported by the production solver entry points.
 
 from ._shadow_support import (
     SHADOW_CHECKPOINT_FORMAT_VERSION,
+    SHADOW_LEGACY_CHECKPOINT_FORMAT_VERSION,
     SHADOW_RUN_SCHEMA_VERSION,
     SHADOW_SCRIPT_ID,
     shadow_runtime_identity_sha256,
@@ -20,6 +21,7 @@ from .checkpointing import (
     capture_shadow_checkpoint,
     load_shadow_checkpoint,
     restore_shadow_checkpoint,
+    upgrade_shadow_checkpoint_directory,
     write_shadow_checkpoint,
 )
 from .legacy_assembly import (
@@ -223,6 +225,7 @@ __all__ = [
     "BatchedPhysicalMaterialization",
     "ResolvedAlgebraicSystem",
     "SHADOW_CHECKPOINT_FORMAT_VERSION",
+    "SHADOW_LEGACY_CHECKPOINT_FORMAT_VERSION",
     "SHADOW_RUN_SCHEMA_VERSION",
     "SHADOW_SCRIPT_ID",
     "ShadowMetadataComparison",
@@ -259,6 +262,7 @@ __all__ = [
     "plane_beris_edwards_saved_shadow_signature",
     "plane_beris_edwards_shadow_signature",
     "restore_shadow_checkpoint",
+    "upgrade_shadow_checkpoint_directory",
     "run_plane_shadow_from_production_reference",
     "shadow_runtime_identity_sha256",
     "write_shadow_checkpoint",

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import json
 from pathlib import Path
 from types import MappingProxyType
@@ -13,14 +13,20 @@ import torch
 
 from pssolver.configuration import PlaneBerisEdwardsRunSpec, PlaneRuntimePath
 from pssolver.io.checkpoint import (
+    CHECKPOINT_INTEGRITY_SEALED_SHA256,
+    CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
     CheckpointCompatibilityError,
     CheckpointIntegrityError,
+    checkpoint_directory_tree_sha256,
     checkpoint_file_sha256,
     checkpoint_directory_transaction,
     load_checkpoint_numpy,
     read_checkpoint_json,
     require_exact_checkpoint_keys,
+    require_sealed_upgrade_provenance,
     resolve_checkpoint_payload,
+    seal_checkpoint_metadata,
+    verify_checkpoint_metadata,
 )
 from pssolver.io.checkpoint_identity import (
     CheckpointCompatibilityIdentity,
@@ -42,7 +48,8 @@ from .state_validation import require_finite_tensors
 
 
 PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1
-PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 2
+PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 2
+PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 3
 PLANE_FORWARD_DYNAMICS_IDENTITY_VERSION = "plane.forward.v2"
 PLANE_STATIC_LIFTING_RESTART_SCHEMA_VERSION = 1
 _PLANE_V2_REQUIRED_KEYS = frozenset(
@@ -61,6 +68,9 @@ _PLANE_V2_REQUIRED_KEYS = frozenset(
 )
 _PLANE_V2_OPTIONAL_KEYS = frozenset(
     {"lifting_restart", "migration_provenance"}
+)
+_PLANE_V3_REQUIRED_KEYS = frozenset(
+    {*_PLANE_V2_REQUIRED_KEYS, "metadata_sha256"}
 )
 
 
@@ -109,6 +119,14 @@ class PlaneCheckpointHeader:
         identity = self.compatibility_identity
         return None if identity is None else identity.canonical_sha256()
 
+    @property
+    def integrity_status(self) -> str:
+        return (
+            CHECKPOINT_INTEGRITY_SEALED_SHA256
+            if self.format_version == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+            else CHECKPOINT_INTEGRITY_UNSEALED_LEGACY
+        )
+
 
 @dataclass(frozen=True, slots=True)
 class PlaneWorkflowCheckpoint:
@@ -132,6 +150,7 @@ class PlaneWorkflowCheckpoint:
     def __post_init__(self) -> None:
         if self.format_version not in {
             PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+            PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
             PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
         }:
             raise ValueError("unsupported Plane workflow checkpoint version")
@@ -299,6 +318,14 @@ class PlaneWorkflowCheckpoint:
                 self.migration_provenance
             )
         return metadata
+
+    @property
+    def integrity_status(self) -> str:
+        return (
+            CHECKPOINT_INTEGRITY_SEALED_SHA256
+            if self.format_version == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+            else CHECKPOINT_INTEGRITY_UNSEALED_LEGACY
+        )
 
 
 def _plane_run_spec_dynamics(
@@ -682,14 +709,33 @@ def _write_tensor(path: Path, value: torch.Tensor) -> dict[str, object]:
     }
 
 
-def write_plane_checkpoint(
+def _write_plane_checkpoint(
     directory: str | Path,
     checkpoint: PlaneWorkflowCheckpoint,
+    *,
+    allow_unsealed_legacy: bool,
 ) -> Path:
     """Atomically write a new checkpoint directory without pickle."""
 
     if not isinstance(checkpoint, PlaneWorkflowCheckpoint):
         raise TypeError("checkpoint must be PlaneWorkflowCheckpoint")
+    if (
+        checkpoint.format_version != PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+        and not allow_unsealed_legacy
+    ):
+        raise CheckpointCompatibilityError(
+            "v0.3 can only write Plane checkpoint format version 3; "
+            "legacy formats are read-only",
+            operation="plane_checkpoint_export",
+        )
+    if (
+        checkpoint.format_version == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+        and checkpoint.migration_provenance is not None
+    ):
+        require_sealed_upgrade_provenance(
+            checkpoint.migration_provenance,
+            operation="plane_checkpoint_export",
+        )
     with checkpoint_directory_transaction(
         directory,
         operation="plane_checkpoint_export",
@@ -706,6 +752,8 @@ def write_plane_checkpoint(
                 )
         metadata = checkpoint.to_metadata()
         metadata["tensor_files"] = files
+        if checkpoint.format_version == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+            metadata = seal_checkpoint_metadata(metadata)
         (staging / "checkpoint.json").write_text(
             json.dumps(metadata, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
@@ -713,15 +761,42 @@ def write_plane_checkpoint(
     return target
 
 
+def write_plane_checkpoint(
+    directory: str | Path,
+    checkpoint: PlaneWorkflowCheckpoint,
+) -> Path:
+    """Write the current sealed Plane checkpoint format."""
+
+    return _write_plane_checkpoint(
+        directory,
+        checkpoint,
+        allow_unsealed_legacy=False,
+    )
+
+
 def _read_metadata(directory: Path) -> Mapping[str, object]:
     metadata = read_checkpoint_json(
         directory / "checkpoint.json",
         operation="plane_checkpoint_import",
     )
-    if metadata.get("format_version") == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+    format_version = metadata.get("format_version")
+    if format_version == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        verify_checkpoint_metadata(
+            metadata,
+            required=True,
+            operation="plane_checkpoint_import",
+        )
+    if format_version in {
+        PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    }:
         require_exact_checkpoint_keys(
             metadata,
-            required=_PLANE_V2_REQUIRED_KEYS,
+            required=(
+                _PLANE_V3_REQUIRED_KEYS
+                if format_version == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+                else _PLANE_V2_REQUIRED_KEYS
+            ),
             optional=_PLANE_V2_OPTIONAL_KEYS,
             description="Plane checkpoint metadata",
             operation="plane_checkpoint_import",
@@ -749,6 +824,7 @@ def read_plane_checkpoint_header(directory: str | Path) -> PlaneCheckpointHeader
     format_version = metadata.get("format_version")
     if format_version not in {
         PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
         PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     }:
         raise CheckpointCompatibilityError(
@@ -973,7 +1049,7 @@ def upgrade_plane_checkpoint_v1(
     source_run_spec: PlaneBerisEdwardsRunSpec,
     source_release_generation: SourceReleaseGeneration,
 ) -> PlaneWorkflowCheckpoint:
-    """Create a v2 checkpoint after explicit legacy dynamics adjudication."""
+    """Create a current checkpoint after explicit v1 dynamics adjudication."""
 
     if not isinstance(checkpoint, PlaneWorkflowCheckpoint):
         raise TypeError("checkpoint must be a PlaneWorkflowCheckpoint")
@@ -1008,7 +1084,7 @@ def upgrade_plane_checkpoint_v1(
         lifting_restart=checkpoint.lifting_restart,
         compatibility_identity=identity,
         migration_provenance={
-            "kind": "plane_checkpoint_identity_upgrade_v1_to_v2",
+            "kind": "plane_checkpoint_identity_and_metadata_upgrade_v1_to_v3",
             "source_release_generation": source_release_generation.value,
             "source_commit": schema.source_commit,
             "legacy_schema_id": schema.schema_id,
@@ -1020,6 +1096,28 @@ def upgrade_plane_checkpoint_v1(
             "rc4_1_nyquist_applicability_basis": (
                 "both_periodic_axis_lengths_are_odd"
             ),
+            "source_checkpoint_mutated": False,
+        },
+    )
+
+
+def upgrade_plane_checkpoint_v2(
+    checkpoint: PlaneWorkflowCheckpoint,
+) -> PlaneWorkflowCheckpoint:
+    """Copy an unsealed format-2 checkpoint into the current carrier."""
+
+    if not isinstance(checkpoint, PlaneWorkflowCheckpoint):
+        raise TypeError("checkpoint must be a PlaneWorkflowCheckpoint")
+    if checkpoint.format_version != PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        raise ValueError("only Plane checkpoint format v2 can use this upgrade")
+    return replace(
+        checkpoint,
+        format_version=PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        migration_provenance={
+            "kind": "plane_checkpoint_metadata_seal_v2_to_v3",
+            "source_format_version": 2,
+            "source_integrity_status": "unsealed_legacy",
+            "source_historical_integrity_authenticated": False,
             "source_checkpoint_mutated": False,
         },
     )
@@ -1054,31 +1152,70 @@ def upgrade_plane_checkpoint_directory_v1(
         source_run_spec=source_run_spec,
         source_release_generation=source_release_generation,
     )
-    source_hashes = {
-        path.relative_to(source).as_posix(): _sha256(path)
-        for path in sorted(source.rglob("*"))
-        if path.is_file()
-    }
+    source_tree_sha256 = checkpoint_directory_tree_sha256(
+        source,
+        operation="plane_checkpoint_upgrade",
+    )
     checkpoint = load_plane_checkpoint(source)
     upgraded = upgrade_plane_checkpoint_v1(
         checkpoint,
         source_run_spec=source_run_spec,
         source_release_generation=source_release_generation,
     )
+    upgraded = replace(
+        upgraded,
+        migration_provenance={
+            **dict(upgraded.migration_provenance or {}),
+            "source_integrity_status": "unsealed_legacy",
+            "source_tree_sha256": source_tree_sha256,
+            "source_historical_integrity_authenticated": False,
+        },
+    )
     target = write_plane_checkpoint(target_directory, upgraded)
-    final_hashes = {
-        path.relative_to(source).as_posix(): _sha256(path)
-        for path in sorted(source.rglob("*"))
-        if path.is_file()
-    }
-    if source_hashes != final_hashes:
+    if checkpoint_directory_tree_sha256(
+        source,
+        operation="plane_checkpoint_upgrade",
+    ) != source_tree_sha256:
         raise RuntimeError("legacy source checkpoint changed during upgrade")
     return target
+
+
+def upgrade_plane_checkpoint_directory_v2(
+    source_directory: str | Path,
+    target_directory: str | Path,
+) -> Path:
+    """Write a sealed format-3 copy without modifying the format-2 source."""
+
+    source = Path(source_directory).expanduser().resolve()
+    target = Path(target_directory).expanduser().resolve()
+    if target == source or source in target.parents:
+        raise ValueError("checkpoint upgrade target must be outside the source")
+    source_tree_sha256 = checkpoint_directory_tree_sha256(
+        source,
+        operation="plane_checkpoint_upgrade",
+    )
+    checkpoint = load_plane_checkpoint(source)
+    upgraded = upgrade_plane_checkpoint_v2(checkpoint)
+    upgraded = replace(
+        upgraded,
+        migration_provenance={
+            **dict(upgraded.migration_provenance or {}),
+            "source_tree_sha256": source_tree_sha256,
+        },
+    )
+    written = write_plane_checkpoint(target, upgraded)
+    if checkpoint_directory_tree_sha256(
+        source,
+        operation="plane_checkpoint_upgrade",
+    ) != source_tree_sha256:
+        raise RuntimeError("legacy source checkpoint changed during upgrade")
+    return written
 
 
 __all__ = [
     "PLANE_FORWARD_DYNAMICS_IDENTITY_VERSION",
     "PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
+    "PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "PLANE_STATIC_LIFTING_RESTART_SCHEMA_VERSION",
     "PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "PlaneCheckpointHeader",
@@ -1091,6 +1228,8 @@ __all__ = [
     "read_plane_checkpoint_header",
     "restore_plane_checkpoint",
     "upgrade_plane_checkpoint_directory_v1",
+    "upgrade_plane_checkpoint_directory_v2",
     "upgrade_plane_checkpoint_v1",
+    "upgrade_plane_checkpoint_v2",
     "write_plane_checkpoint",
 ]

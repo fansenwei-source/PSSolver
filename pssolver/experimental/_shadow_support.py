@@ -16,7 +16,8 @@ from pssolver.models.active_nematics import BerisEdwardsPlaneCoupledModel
 from .model_execution import ExperimentalModelRuntime
 
 
-SHADOW_CHECKPOINT_FORMAT_VERSION = 1
+SHADOW_LEGACY_CHECKPOINT_FORMAT_VERSION = 1
+SHADOW_CHECKPOINT_FORMAT_VERSION = 2
 SHADOW_RUN_SCHEMA_VERSION = 1
 SHADOW_SCRIPT_ID = "experimental_plane_beris_edwards_shadow"
 
@@ -123,6 +124,7 @@ def shadow_runtime_identity_sha256(
 
 __all__ = [
     "SHADOW_CHECKPOINT_FORMAT_VERSION",
+    "SHADOW_LEGACY_CHECKPOINT_FORMAT_VERSION",
     "SHADOW_RUN_SCHEMA_VERSION",
     "SHADOW_SCRIPT_ID",
     "completed_steps",

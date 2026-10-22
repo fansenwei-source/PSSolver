@@ -12,6 +12,7 @@ from dataclasses import dataclass
 import hashlib
 import json
 import math
+from types import MappingProxyType
 
 import torch
 
@@ -27,7 +28,8 @@ from pssolver.runtime.robin_scalar import (
 
 
 FINITE_Q_ANCHORING_RUNTIME_SCHEMA_VERSION = 1
-FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION = 1
+FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION = 1
+FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION = 2
 
 
 def _canonical_json(value: object, description: str) -> str:
@@ -56,6 +58,8 @@ class PlaneFiniteQAnchoringCheckpoint:
 
     identity_json: str
     components: tuple[tuple[str, PlaneRobinScalarCheckpoint], ...]
+    format_version: int = FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION
+    migration_provenance: Mapping[str, object] | None = None
 
     def __post_init__(self) -> None:
         try:
@@ -65,6 +69,11 @@ class PlaneFiniteQAnchoringCheckpoint:
         if self.identity_json != _canonical_json(identity, "identity"):
             raise ValueError("identity_json must use canonical JSON")
         components = tuple(self.components)
+        if self.format_version not in {
+            FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION,
+            FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION,
+        }:
+            raise ValueError("unsupported finite-Q checkpoint version")
         if tuple(name for name, _value in components) != Q_COMPONENTS:
             raise ValueError("finite-Q checkpoint component order is invalid")
         if not all(
@@ -73,6 +82,21 @@ class PlaneFiniteQAnchoringCheckpoint:
         ):
             raise TypeError("finite-Q checkpoint values must be scalar snapshots")
         object.__setattr__(self, "components", components)
+        migration = self.migration_provenance
+        if migration is not None:
+            if not isinstance(migration, Mapping):
+                raise TypeError(
+                    "migration_provenance must be a mapping or None"
+                )
+            try:
+                canonical = _canonical_json(migration, "migration provenance")
+            except ValueError:
+                raise
+            object.__setattr__(
+                self,
+                "migration_provenance",
+                MappingProxyType(json.loads(canonical)),
+            )
 
     @property
     def completed_steps(self) -> int:
@@ -92,7 +116,7 @@ class PlaneFiniteQAnchoringCheckpoint:
 
     def to_metadata(self) -> dict[str, object]:
         return {
-            "schema_version": FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION,
+            "schema_version": self.format_version,
             "identity": json.loads(self.identity_json),
             "identity_sha256": hashlib.sha256(
                 self.identity_json.encode("utf-8")
@@ -102,7 +126,25 @@ class PlaneFiniteQAnchoringCheckpoint:
             "components": {
                 name: value.to_metadata() for name, value in self.components
             },
+            **(
+                {"migration_provenance": dict(self.migration_provenance)}
+                if self.migration_provenance is not None
+                else {}
+            ),
         }
+
+    @property
+    def integrity_status(self) -> str:
+        from pssolver.io.checkpoint import (
+            CHECKPOINT_INTEGRITY_SEALED_SHA256,
+            CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
+        )
+
+        return (
+            CHECKPOINT_INTEGRITY_SEALED_SHA256
+            if self.format_version == FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION
+            else CHECKPOINT_INTEGRITY_UNSEALED_LEGACY
+        )
 
 
 class PlaneFiniteQAnchoringRuntime:
@@ -351,6 +393,7 @@ class PlaneFiniteQAnchoringRuntime:
 
 __all__ = [
     "FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION",
+    "FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION",
     "FINITE_Q_ANCHORING_RUNTIME_SCHEMA_VERSION",
     "PlaneFiniteQAnchoringCheckpoint",
     "PlaneFiniteQAnchoringRuntime",

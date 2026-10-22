@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import json
 from pathlib import Path
 from types import MappingProxyType
@@ -18,14 +18,20 @@ from pssolver.configuration.channel_active_nematics import (
     CHANNEL_FORWARD_STOKES_NYQUIST_VERSION,
 )
 from pssolver.io.checkpoint import (
+    CHECKPOINT_INTEGRITY_SEALED_SHA256,
+    CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
     CheckpointCompatibilityError,
     CheckpointIntegrityError,
+    checkpoint_directory_tree_sha256,
     checkpoint_file_sha256,
     checkpoint_directory_transaction,
     load_checkpoint_numpy,
     read_checkpoint_json,
     require_exact_checkpoint_keys,
+    require_sealed_upgrade_provenance,
     resolve_checkpoint_payload,
+    seal_checkpoint_metadata,
+    verify_checkpoint_metadata,
 )
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime.channel_active_nematics import (
@@ -38,7 +44,8 @@ from .state_validation import require_finite_tensors
 
 
 CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 1
-CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 2
+CHANNEL_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 2
+CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION = 3
 CHANNEL_ALGEBRAIC_COMPONENTS = ("ux", "uy", "uz", "p")
 _CHANNEL_V1_REQUIRED_KEYS = frozenset(
     {
@@ -57,6 +64,10 @@ _CHANNEL_V1_REQUIRED_KEYS = frozenset(
 _CHANNEL_V2_REQUIRED_KEYS = frozenset(
     {*_CHANNEL_V1_REQUIRED_KEYS, "dynamics_versions"}
 )
+_CHANNEL_V3_REQUIRED_KEYS = frozenset(
+    {*_CHANNEL_V2_REQUIRED_KEYS, "metadata_sha256"}
+)
+_CHANNEL_V2_OPTIONAL_KEYS = frozenset({"migration_provenance"})
 
 
 def _sha256(path: Path) -> str:
@@ -109,6 +120,14 @@ class ChannelCheckpointHeader:
     runtime_identity_sha256: str
     completed_steps: int
 
+    @property
+    def integrity_status(self) -> str:
+        return (
+            CHECKPOINT_INTEGRITY_SEALED_SHA256
+            if self.format_version == CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+            else CHECKPOINT_INTEGRITY_UNSEALED_LEGACY
+        )
+
 
 @dataclass(frozen=True, slots=True)
 class ChannelWorkflowCheckpoint:
@@ -128,10 +147,12 @@ class ChannelWorkflowCheckpoint:
     pressure_guess: torch.Tensor
     backend_restart: Mapping[str, object]
     dynamics_versions: Mapping[str, str] | None = None
+    migration_provenance: Mapping[str, object] | None = None
 
     def __post_init__(self) -> None:
         if self.format_version not in {
             CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+            CHANNEL_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
             CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
         }:
             raise ValueError("unsupported Channel checkpoint version")
@@ -204,10 +225,7 @@ class ChannelWorkflowCheckpoint:
                 "backend restart metadata is not JSON-compatible"
             ) from exc
         dynamics = self.dynamics_versions
-        if (
-            self.format_version
-            == CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION
-        ):
+        if self.format_version == CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
             if dynamics is not None:
                 raise ValueError(
                     "legacy Channel checkpoint cannot declare dynamics_versions"
@@ -233,6 +251,26 @@ class ChannelWorkflowCheckpoint:
         object.__setattr__(self, "pressure_guess", pressure)
         object.__setattr__(self, "backend_restart", MappingProxyType(backend))
         object.__setattr__(self, "dynamics_versions", dynamics)
+        migration = self.migration_provenance
+        if migration is not None:
+            if not isinstance(migration, Mapping):
+                raise TypeError("migration_provenance must be a mapping or None")
+            try:
+                encoded = json.dumps(
+                    dict(migration),
+                    allow_nan=False,
+                    separators=(",", ":"),
+                    sort_keys=True,
+                )
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    "migration provenance is not JSON-compatible"
+                ) from exc
+            object.__setattr__(
+                self,
+                "migration_provenance",
+                MappingProxyType(json.loads(encoded)),
+            )
 
     def to_metadata(self) -> dict[str, object]:
         metadata = {
@@ -252,7 +290,17 @@ class ChannelWorkflowCheckpoint:
         }
         if self.dynamics_versions is not None:
             metadata["dynamics_versions"] = dict(self.dynamics_versions)
+        if self.migration_provenance is not None:
+            metadata["migration_provenance"] = dict(self.migration_provenance)
         return metadata
+
+    @property
+    def integrity_status(self) -> str:
+        return (
+            CHECKPOINT_INTEGRITY_SEALED_SHA256
+            if self.format_version == CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+            else CHECKPOINT_INTEGRITY_UNSEALED_LEGACY
+        )
 
 
 def capture_channel_checkpoint(
@@ -413,7 +461,7 @@ def restore_channel_checkpoint(
             pre_rc5_runtime_identity_sha256,
             "pre_rc5_runtime_identity_sha256",
         )
-    if checkpoint.format_version == CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+    if checkpoint.format_version != CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
         identity_matches = (
             checkpoint.runtime_identity_sha256 == runtime_identity_sha256
         )
@@ -482,6 +530,17 @@ def write_channel_checkpoint(
 
     if not isinstance(checkpoint, ChannelWorkflowCheckpoint):
         raise TypeError("checkpoint must be ChannelWorkflowCheckpoint")
+    if checkpoint.format_version != CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        raise CheckpointCompatibilityError(
+            "v0.3 can only write Channel checkpoint format version 3; "
+            "legacy formats are read-only",
+            operation="legacy_channel_checkpoint_export",
+        )
+    if checkpoint.migration_provenance is not None:
+        require_sealed_upgrade_provenance(
+            checkpoint.migration_provenance,
+            operation="legacy_channel_checkpoint_export",
+        )
     with checkpoint_directory_transaction(
         directory,
         operation="legacy_channel_checkpoint_export",
@@ -509,6 +568,7 @@ def write_channel_checkpoint(
         )
         metadata = checkpoint.to_metadata()
         metadata["tensor_files"] = files
+        metadata = seal_checkpoint_metadata(metadata)
         (staging / "checkpoint.json").write_text(
             json.dumps(metadata, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
@@ -522,17 +582,32 @@ def _read_metadata(directory: Path) -> Mapping[str, object]:
         operation="legacy_channel_checkpoint_import",
     )
     format_version = metadata.get("format_version")
+    if format_version == CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        verify_checkpoint_metadata(
+            metadata,
+            required=True,
+            operation="legacy_channel_checkpoint_import",
+        )
     if format_version in {
         CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        CHANNEL_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
         CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     }:
         require_exact_checkpoint_keys(
             metadata,
             required=(
                 _CHANNEL_V1_REQUIRED_KEYS
-                if format_version
-                == CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION
-                else _CHANNEL_V2_REQUIRED_KEYS
+                if format_version == CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+                else (
+                    _CHANNEL_V3_REQUIRED_KEYS
+                    if format_version == CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+                    else _CHANNEL_V2_REQUIRED_KEYS
+                )
+            ),
+            optional=(
+                _CHANNEL_V2_OPTIONAL_KEYS
+                if format_version == CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION
+                else ()
             ),
             description="Channel checkpoint metadata",
             operation="legacy_channel_checkpoint_import",
@@ -555,6 +630,7 @@ def read_channel_checkpoint_header(
     format_version = metadata.get("format_version")
     if format_version not in {
         CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        CHANNEL_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
         CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     }:
         raise CheckpointCompatibilityError(
@@ -706,11 +782,54 @@ def load_channel_checkpoint(directory: str | Path) -> ChannelWorkflowCheckpoint:
         ),
         backend_restart=backend,
         dynamics_versions=metadata.get("dynamics_versions"),
+        migration_provenance=metadata.get("migration_provenance"),
     )
+
+
+def upgrade_channel_checkpoint_directory(
+    source_directory: str | Path,
+    target_directory: str | Path,
+) -> Path:
+    """Seal a validated format-2 Channel checkpoint without source mutation."""
+
+    source = Path(source_directory).expanduser().resolve()
+    target = Path(target_directory).expanduser().resolve()
+    if target == source or source in target.parents:
+        raise ValueError("checkpoint upgrade target must be outside the source")
+    source_tree_sha256 = checkpoint_directory_tree_sha256(
+        source,
+        operation="legacy_channel_checkpoint_upgrade",
+    )
+    checkpoint = load_channel_checkpoint(source)
+    if checkpoint.format_version != CHANNEL_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION:
+        raise CheckpointCompatibilityError(
+            "only Channel checkpoint format version 2 can be upgraded",
+            operation="legacy_channel_checkpoint_upgrade",
+        )
+    upgraded = replace(
+        checkpoint,
+        format_version=CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+        migration_provenance={
+            "kind": "legacy_channel_checkpoint_metadata_seal_v2_to_v3",
+            "source_format_version": 2,
+            "source_integrity_status": "unsealed_legacy",
+            "source_tree_sha256": source_tree_sha256,
+            "source_historical_integrity_authenticated": False,
+            "source_checkpoint_mutated": False,
+        },
+    )
+    written = write_channel_checkpoint(target, upgraded)
+    if checkpoint_directory_tree_sha256(
+        source,
+        operation="legacy_channel_checkpoint_upgrade",
+    ) != source_tree_sha256:
+        raise RuntimeError("legacy source checkpoint changed during upgrade")
+    return written
 
 
 __all__ = [
     "CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
+    "CHANNEL_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
     "CHANNEL_ALGEBRAIC_COMPONENTS",
     "ChannelCheckpointHeader",
@@ -719,5 +838,6 @@ __all__ = [
     "load_channel_checkpoint",
     "read_channel_checkpoint_header",
     "restore_channel_checkpoint",
+    "upgrade_channel_checkpoint_directory",
     "write_channel_checkpoint",
 ]

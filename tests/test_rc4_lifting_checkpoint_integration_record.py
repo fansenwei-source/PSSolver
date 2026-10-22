@@ -60,9 +60,8 @@ def test_rc435_versions_fresh_provenance_without_dynamics_bump():
     assert record["classification"] == (
         "PASS_RC4_3_5_LIFTING_RUNTIME_CHECKPOINT_INTEGRATION_CPU_CANDIDATE"
     )
-    assert versions["plane_workflow_checkpoint_format_version"] == (
-        PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION
-    )
+    assert versions["plane_workflow_checkpoint_format_version"] == 2
+    assert PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION == 3
     assert versions["plane_forward_dynamics_identity_version"] == (
         PLANE_FORWARD_DYNAMICS_IDENTITY_VERSION
     )

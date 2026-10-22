@@ -46,6 +46,7 @@ from .robin_scalar import (
 )
 from .finite_q_anchoring import (
     FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION,
+    FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION,
     FINITE_Q_ANCHORING_RUNTIME_SCHEMA_VERSION,
     PlaneFiniteQAnchoringCheckpoint,
     PlaneFiniteQAnchoringRuntime,
@@ -81,6 +82,7 @@ __all__ = [
     "PlaneRobinScalarCheckpoint",
     "PlaneRobinScalarRuntime",
     "FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION",
+    "FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION",
     "FINITE_Q_ANCHORING_RUNTIME_SCHEMA_VERSION",
     "PlaneFiniteQAnchoringCheckpoint",
     "PlaneFiniteQAnchoringRuntime",

@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "created_at": "2026-10-21T23:13:04-04:00",
-  "classification": "DRAFT_V0_3_S05_CHECKPOINT_METADATA_INTEGRITY_DESIGN",
-  "status": "pending_user_confirmation",
+  "classification": "CONFIRMED_V0_3_S05_CHECKPOINT_METADATA_INTEGRITY_DESIGN",
+  "status": "confirmed_for_implementation",
   "plan_step": "S-05",
   "issue_ids": [
     "A2-21/S2-12"
@@ -217,8 +217,20 @@
     "S05-Q04": "A",
     "S05-Q05": "A"
   },
-  "selected_answers": {},
-  "implementation_gate": "Do not edit checkpoint runtime code until the user confirms S05-Q01 through S05-Q05.",
+  "selected_answers": {
+    "S05-Q01": "A",
+    "S05-Q02": "A",
+    "S05-Q03": "A",
+    "S05-Q04": "A",
+    "S05-Q05": "A"
+  },
+  "selection_provenance": "User confirmed all five A options in Codex chat on 2026-10-22.",
+  "additional_requirements": {
+    "v0_2_2_forward_rejection": "The released v0.2.2 wheel must reject Plane 3, legacy Channel 3, finite-Q 2, and experimental shadow 2 with explicit format/schema incompatibility errors.",
+    "honest_upgrade_source": "Every non-in-place upgrade must seal source_integrity_status=unsealed_legacy, source_tree_sha256, and source_historical_integrity_authenticated=false into migration provenance.",
+    "digest_security_boundary": "SHA-256 detects corruption and edits without digest recomputation; it is not a MAC or signature and does not protect against deliberate digest recomputation."
+  },
+  "implementation_gate": "Satisfied by the 2026-10-22 user confirmation; implementation may proceed under the selected A options and additional requirements.",
   "design_validation": {
     "environment_policy": "D-0008 baseline-only hard-link clone",
     "baseline_venv_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",

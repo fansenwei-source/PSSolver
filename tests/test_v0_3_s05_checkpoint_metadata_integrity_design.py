@@ -1,4 +1,4 @@
-"""Contract checks for the S-05 design before implementation begins."""
+"""Contract checks for the confirmed S-05 metadata-integrity design."""
 
 from __future__ import annotations
 
@@ -14,16 +14,18 @@ def _read() -> dict[str, object]:
     return json.loads(DESIGN.read_text(encoding="utf-8"))
 
 
-def test_s05_design_is_pending_user_confirmation_and_changes_no_runtime() -> None:
+def test_s05_design_is_confirmed_and_the_record_itself_changes_no_runtime() -> None:
     design = _read()
     assert design["classification"] == (
-        "DRAFT_V0_3_S05_CHECKPOINT_METADATA_INTEGRITY_DESIGN"
+        "CONFIRMED_V0_3_S05_CHECKPOINT_METADATA_INTEGRITY_DESIGN"
     )
-    assert design["status"] == "pending_user_confirmation"
+    assert design["status"] == "confirmed_for_implementation"
     assert design["plan_step"] == "S-05"
     assert design["issue_ids"] == ["A2-21/S2-12"]
     assert design["governing_decisions"] == ["D-0010", "D-0011"]
-    assert design["selected_answers"] == {}
+    assert design["selected_answers"] == {
+        f"S05-Q{number:02d}": "A" for number in range(1, 6)
+    }
     scope = design["scope"]
     assert scope["design_only"] is True
     assert all(
@@ -107,7 +109,7 @@ def test_s05_questions_are_explicit_and_recommend_the_complete_contract() -> Non
         assert question["recommended_option"] == "A"
         assert set(question["options"]) == {"A", "B", "C"}
         assert question["recommendation"].startswith("Choose A")
-    assert design["implementation_gate"].startswith("Do not edit checkpoint")
+    assert design["implementation_gate"].startswith("Satisfied by")
 
 
 def test_s05_design_records_the_d0008_baseline_environment() -> None:

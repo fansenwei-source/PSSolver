@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import json
 from pathlib import Path
 from types import MappingProxyType
@@ -11,7 +11,18 @@ from types import MappingProxyType
 import numpy as np
 import torch
 
-from pssolver.io import checkpoint_directory_transaction
+from pssolver.io import (
+    CHECKPOINT_INTEGRITY_SEALED_SHA256,
+    CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
+    CheckpointCompatibilityError,
+    checkpoint_directory_tree_sha256,
+    checkpoint_directory_transaction,
+    read_checkpoint_json,
+    require_exact_checkpoint_keys,
+    require_sealed_upgrade_provenance,
+    seal_checkpoint_metadata,
+    verify_checkpoint_metadata,
+)
 
 from pssolver.execution import (
     AlgebraicRuntimeRestartState,
@@ -20,6 +31,7 @@ from pssolver.execution import (
 
 from ._shadow_support import (
     SHADOW_CHECKPOINT_FORMAT_VERSION,
+    SHADOW_LEGACY_CHECKPOINT_FORMAT_VERSION,
     completed_steps,
     evolved_names,
     file_sha256,
@@ -71,9 +83,13 @@ class ShadowRunCheckpoint:
     evolved_spatial: Mapping[str, torch.Tensor]
     evolved_spectral: Mapping[str, torch.Tensor]
     algebraic_restart: AlgebraicRuntimeRestartState
+    migration_provenance: Mapping[str, object] | None = None
 
     def __post_init__(self) -> None:
-        if self.format_version != SHADOW_CHECKPOINT_FORMAT_VERSION:
+        if self.format_version not in {
+            SHADOW_LEGACY_CHECKPOINT_FORMAT_VERSION,
+            SHADOW_CHECKPOINT_FORMAT_VERSION,
+        }:
             raise ValueError("unsupported shadow checkpoint format version")
         require_sha256(
             self.runtime_identity_sha256,
@@ -133,6 +149,26 @@ class ShadowRunCheckpoint:
             )
         object.__setattr__(self, "evolved_spatial", spatial)
         object.__setattr__(self, "evolved_spectral", spectral)
+        migration = self.migration_provenance
+        if migration is not None:
+            if not isinstance(migration, Mapping):
+                raise TypeError("migration_provenance must be a mapping or None")
+            try:
+                encoded = json.dumps(
+                    dict(migration),
+                    allow_nan=False,
+                    separators=(",", ":"),
+                    sort_keys=True,
+                )
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    "migration provenance is not JSON-compatible"
+                ) from exc
+            object.__setattr__(
+                self,
+                "migration_provenance",
+                MappingProxyType(json.loads(encoded)),
+            )
 
     def to_metadata(self) -> dict[str, object]:
         return {
@@ -154,7 +190,20 @@ class ShadowRunCheckpoint:
                 for name, value in self.evolved_spectral.items()
             },
             "algebraic_restart": self.algebraic_restart.to_metadata(),
+            **(
+                {"migration_provenance": dict(self.migration_provenance)}
+                if self.migration_provenance is not None
+                else {}
+            ),
         }
+
+    @property
+    def integrity_status(self) -> str:
+        return (
+            CHECKPOINT_INTEGRITY_SEALED_SHA256
+            if self.format_version == SHADOW_CHECKPOINT_FORMAT_VERSION
+            else CHECKPOINT_INTEGRITY_UNSEALED_LEGACY
+        )
 
 
 def capture_shadow_checkpoint(
@@ -289,6 +338,17 @@ def write_shadow_checkpoint(
 
     if not isinstance(checkpoint, ShadowRunCheckpoint):
         raise TypeError("checkpoint must be a ShadowRunCheckpoint")
+    if checkpoint.format_version != SHADOW_CHECKPOINT_FORMAT_VERSION:
+        raise CheckpointCompatibilityError(
+            "v0.3 can only write shadow checkpoint format version 2; "
+            "legacy format 1 is read-only",
+            operation="shadow_checkpoint_export",
+        )
+    if checkpoint.migration_provenance is not None:
+        require_sealed_upgrade_provenance(
+            checkpoint.migration_provenance,
+            operation="shadow_checkpoint_export",
+        )
     with checkpoint_directory_transaction(
         directory,
         operation="shadow_checkpoint_export",
@@ -320,6 +380,7 @@ def write_shadow_checkpoint(
                 )
         metadata = checkpoint.to_metadata()
         metadata["tensor_files"] = tensor_files
+        metadata = seal_checkpoint_metadata(metadata)
         (staging / "checkpoint.json").write_text(
             json.dumps(metadata, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
@@ -360,15 +421,50 @@ def load_shadow_checkpoint(directory: str | Path) -> ShadowRunCheckpoint:
     """Load and checksum-validate a shadow checkpoint without pickle."""
 
     directory = Path(directory).expanduser().resolve()
-    metadata_path = directory / "checkpoint.json"
-    if not metadata_path.is_file():
-        raise FileNotFoundError(f"checkpoint metadata is missing: {metadata_path}")
-    try:
-        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        raise ValueError("checkpoint metadata is not valid JSON") from exc
-    if not isinstance(metadata, Mapping):
-        raise TypeError("checkpoint metadata must be a mapping")
+    metadata = read_checkpoint_json(
+        directory / "checkpoint.json",
+        operation="shadow_checkpoint_import",
+    )
+    format_version = metadata.get("format_version")
+    if format_version not in {
+        SHADOW_LEGACY_CHECKPOINT_FORMAT_VERSION,
+        SHADOW_CHECKPOINT_FORMAT_VERSION,
+    }:
+        raise CheckpointCompatibilityError(
+            "unsupported shadow checkpoint format version",
+            operation="shadow_checkpoint_import",
+        )
+    verify_checkpoint_metadata(
+        metadata,
+        required=(format_version == SHADOW_CHECKPOINT_FORMAT_VERSION),
+        operation="shadow_checkpoint_import",
+    )
+    require_exact_checkpoint_keys(
+        metadata,
+        required={
+            "format_version",
+            "runtime_identity_sha256",
+            "completed_steps",
+            "integrator",
+            "evolved_components",
+            "evolved_spatial",
+            "evolved_spectral",
+            "algebraic_restart",
+            "tensor_files",
+            *(
+                {"metadata_sha256"}
+                if format_version == SHADOW_CHECKPOINT_FORMAT_VERSION
+                else set()
+            ),
+        },
+        optional=(
+            {"migration_provenance"}
+            if format_version == SHADOW_CHECKPOINT_FORMAT_VERSION
+            else ()
+        ),
+        description="shadow checkpoint metadata",
+        operation="shadow_checkpoint_import",
+    )
     files = metadata.get("tensor_files")
     if not isinstance(files, Mapping):
         raise ValueError("checkpoint tensor-file manifest is missing")
@@ -447,7 +543,49 @@ def load_shadow_checkpoint(directory: str | Path) -> ShadowRunCheckpoint:
             restart_metadata.get("format_version"),
             tuple(systems),
         ),
+        migration_provenance=metadata.get("migration_provenance"),
     )
+
+
+def upgrade_shadow_checkpoint_directory(
+    source_directory: str | Path,
+    target_directory: str | Path,
+) -> Path:
+    """Seal a validated format-1 shadow checkpoint into a new directory."""
+
+    source = Path(source_directory).expanduser().resolve()
+    target = Path(target_directory).expanduser().resolve()
+    if target == source or source in target.parents:
+        raise ValueError("checkpoint upgrade target must be outside the source")
+    source_tree_sha256 = checkpoint_directory_tree_sha256(
+        source,
+        operation="shadow_checkpoint_upgrade",
+    )
+    checkpoint = load_shadow_checkpoint(source)
+    if checkpoint.format_version != SHADOW_LEGACY_CHECKPOINT_FORMAT_VERSION:
+        raise CheckpointCompatibilityError(
+            "only shadow checkpoint format version 1 can be upgraded",
+            operation="shadow_checkpoint_upgrade",
+        )
+    upgraded = replace(
+        checkpoint,
+        format_version=SHADOW_CHECKPOINT_FORMAT_VERSION,
+        migration_provenance={
+            "kind": "shadow_checkpoint_metadata_seal_v1_to_v2",
+            "source_format_version": 1,
+            "source_integrity_status": "unsealed_legacy",
+            "source_tree_sha256": source_tree_sha256,
+            "source_historical_integrity_authenticated": False,
+            "source_checkpoint_mutated": False,
+        },
+    )
+    written = write_shadow_checkpoint(target, upgraded)
+    if checkpoint_directory_tree_sha256(
+        source,
+        operation="shadow_checkpoint_upgrade",
+    ) != source_tree_sha256:
+        raise RuntimeError("legacy source checkpoint changed during upgrade")
+    return written
 
 
 __all__ = [
@@ -455,5 +593,6 @@ __all__ = [
     "capture_shadow_checkpoint",
     "load_shadow_checkpoint",
     "restore_shadow_checkpoint",
+    "upgrade_shadow_checkpoint_directory",
     "write_shadow_checkpoint",
 ]

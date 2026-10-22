@@ -26,6 +26,8 @@ import numpy as np
 
 
 METADATA_SHA256_KEY = "metadata_sha256"
+CHECKPOINT_INTEGRITY_SEALED_SHA256 = "sealed_sha256"
+CHECKPOINT_INTEGRITY_UNSEALED_LEGACY = "unsealed_legacy"
 FUNCTIONAL_CHECKPOINT_PROVENANCE_FILE = "functional_checkpoint.json"
 _FUNCTIONAL_PROVENANCE_KIND = "pssolver_functional_checkpoint"
 _FUNCTIONAL_PROVENANCE_VERSION = 1
@@ -655,6 +657,17 @@ def _checkpoint_tree_digest(directory: Path, *, operation: str) -> str:
     return digest.hexdigest()
 
 
+def checkpoint_directory_tree_sha256(
+    directory: str | Path,
+    *,
+    operation: str = "checkpoint_tree_digest",
+) -> str:
+    """Return a path-independent digest of a regular-file checkpoint tree."""
+
+    source = Path(directory).expanduser().resolve()
+    return _checkpoint_tree_digest(source, operation=operation)
+
+
 _PLACEHOLDER_OWNER_MARKER = ".pssolver-placeholder-owner"
 
 
@@ -1244,6 +1257,68 @@ def verify_checkpoint_metadata(
     return True
 
 
+def require_sealed_upgrade_provenance(
+    value: object,
+    *,
+    operation: str,
+) -> Mapping[str, object]:
+    """Require an honest legacy-source statement before sealing an upgrade."""
+
+    if not isinstance(value, Mapping):
+        raise CheckpointCompatibilityError(
+            "checkpoint migration provenance must be a mapping",
+            operation=operation,
+        )
+    required = {
+        "kind",
+        "source_integrity_status",
+        "source_tree_sha256",
+        "source_historical_integrity_authenticated",
+        "source_checkpoint_mutated",
+    }
+    missing = required - set(value)
+    if missing:
+        raise CheckpointCompatibilityError(
+            "checkpoint migration provenance is incomplete",
+            operation=operation,
+            details={"missing_keys": sorted(missing)},
+        )
+    if not isinstance(value.get("kind"), str) or not value["kind"]:
+        raise CheckpointCompatibilityError(
+            "checkpoint migration provenance kind is invalid",
+            operation=operation,
+        )
+    if value.get("source_integrity_status") != (
+        CHECKPOINT_INTEGRITY_UNSEALED_LEGACY
+    ):
+        raise CheckpointCompatibilityError(
+            "checkpoint upgrade source must be marked unsealed_legacy",
+            operation=operation,
+        )
+    try:
+        _require_sha256(
+            value.get("source_tree_sha256"),
+            "checkpoint upgrade source tree SHA-256",
+        )
+    except ValueError as exc:
+        raise CheckpointCompatibilityError(
+            "checkpoint upgrade source tree SHA-256 is invalid",
+            operation=operation,
+            legacy_exception_type=type(exc).__name__,
+        ) from exc
+    if value.get("source_historical_integrity_authenticated") is not False:
+        raise CheckpointCompatibilityError(
+            "checkpoint upgrade cannot authenticate legacy source history",
+            operation=operation,
+        )
+    if value.get("source_checkpoint_mutated") is not False:
+        raise CheckpointCompatibilityError(
+            "checkpoint upgrade must preserve its legacy source",
+            operation=operation,
+        )
+    return value
+
+
 def _functional_provenance(
     metadata: Mapping[str, object],
     functional_bridge: Mapping[str, object],
@@ -1322,6 +1397,8 @@ def verify_functional_checkpoint_provenance(
 
 
 __all__ = [
+    "CHECKPOINT_INTEGRITY_SEALED_SHA256",
+    "CHECKPOINT_INTEGRITY_UNSEALED_LEGACY",
     "CheckpointCompatibilityError",
     "CheckpointDurabilityError",
     "CheckpointError",
@@ -1331,11 +1408,13 @@ __all__ = [
     "CheckpointNotFoundError",
     "FUNCTIONAL_CHECKPOINT_PROVENANCE_FILE",
     "checkpoint_file_sha256",
+    "checkpoint_directory_tree_sha256",
     "checkpoint_directory_transaction",
     "checkpoint_metadata_sha256",
     "load_checkpoint_numpy",
     "read_checkpoint_json",
     "require_exact_checkpoint_keys",
+    "require_sealed_upgrade_provenance",
     "resolve_checkpoint_payload",
     "seal_checkpoint_metadata",
     "verify_checkpoint_metadata",

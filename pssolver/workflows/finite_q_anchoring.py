@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import hashlib
 import json
 import os
@@ -14,17 +14,22 @@ import torch
 from pssolver.io.checkpoint import (
     CheckpointCompatibilityError,
     CheckpointIntegrityError,
+    checkpoint_directory_tree_sha256,
     checkpoint_file_sha256,
     checkpoint_directory_transaction,
     load_checkpoint_numpy,
     read_checkpoint_json,
     require_exact_checkpoint_keys,
+    require_sealed_upgrade_provenance,
     resolve_checkpoint_payload,
+    seal_checkpoint_metadata,
+    verify_checkpoint_metadata,
 )
 
 from pssolver.models.active_nematics.fields import Q_COMPONENTS
 from pssolver.runtime.finite_q_anchoring import (
     FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION,
+    FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION,
     PlaneFiniteQAnchoringCheckpoint,
     PlaneFiniteQAnchoringRuntime,
 )
@@ -73,17 +78,28 @@ def _tensor_record(path: Path, value: torch.Tensor) -> dict[str, object]:
 def write_finite_q_anchoring_checkpoint(
     directory: str | Path,
     checkpoint: PlaneFiniteQAnchoringCheckpoint,
-) -> None:
+) -> Path:
     """Atomically create a complete, pickle-free checkpoint directory."""
 
     if not isinstance(checkpoint, PlaneFiniteQAnchoringCheckpoint):
         raise TypeError(
             "checkpoint must be a PlaneFiniteQAnchoringCheckpoint"
         )
+    if checkpoint.format_version != FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION:
+        raise CheckpointCompatibilityError(
+            "v0.3 can only write finite-Q checkpoint format version 2; "
+            "legacy format 1 is read-only",
+            operation="finite_q_checkpoint_export",
+        )
+    if checkpoint.migration_provenance is not None:
+        require_sealed_upgrade_provenance(
+            checkpoint.migration_provenance,
+            operation="finite_q_checkpoint_export",
+        )
     with checkpoint_directory_transaction(
         directory,
         operation="finite_q_checkpoint_export",
-    ) as (staging, _target):
+    ) as (staging, target):
         metadata = checkpoint.to_metadata()
         for component, scalar in checkpoint.components:
             tensors = metadata["components"][component]["tensors"]
@@ -96,7 +112,11 @@ def write_finite_q_anchoring_checkpoint(
                     staging / filename,
                     tensor,
                 )
-        _atomic_json(staging / "checkpoint.json", metadata)
+        _atomic_json(
+            staging / "checkpoint.json",
+            seal_checkpoint_metadata(metadata),
+        )
+    return target
 
 
 def _load_tensor(
@@ -166,6 +186,20 @@ def load_finite_q_anchoring_checkpoint(
         source / "checkpoint.json",
         operation="finite_q_checkpoint_import",
     )
+    format_version = metadata.get("schema_version")
+    if format_version not in {
+        FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION,
+        FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION,
+    }:
+        raise CheckpointCompatibilityError(
+            "unsupported finite-Q checkpoint version",
+            operation="finite_q_checkpoint_import",
+        )
+    verify_checkpoint_metadata(
+        metadata,
+        required=(format_version == FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION),
+        operation="finite_q_checkpoint_import",
+    )
     require_exact_checkpoint_keys(
         metadata,
         required={
@@ -175,17 +209,20 @@ def load_finite_q_anchoring_checkpoint(
             "component_order",
             "completed_steps",
             "components",
+            *(
+                {"metadata_sha256"}
+                if format_version == FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION
+                else set()
+            ),
         },
+        optional=(
+            {"migration_provenance"}
+            if format_version == FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION
+            else ()
+        ),
         description="finite-Q checkpoint metadata",
         operation="finite_q_checkpoint_import",
     )
-    if metadata.get("schema_version") != (
-        FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION
-    ):
-        raise CheckpointCompatibilityError(
-            "unsupported finite-Q checkpoint version",
-            operation="finite_q_checkpoint_import",
-        )
     if metadata.get("component_order") != list(Q_COMPONENTS):
         raise ValueError("checkpoint component order differs")
     identity = metadata.get("identity")
@@ -291,10 +328,55 @@ def load_finite_q_anchoring_checkpoint(
     checkpoint = PlaneFiniteQAnchoringCheckpoint(
         identity_json=identity_json,
         components=tuple(snapshots),
+        format_version=format_version,
+        migration_provenance=metadata.get("migration_provenance"),
     )
     if checkpoint.completed_steps != metadata.get("completed_steps"):
         raise ValueError("checkpoint aggregate clock metadata differs")
     return checkpoint
+
+
+def upgrade_finite_q_anchoring_checkpoint_directory(
+    source_directory: str | Path,
+    target_directory: str | Path,
+    *,
+    device: str | torch.device = "cpu",
+) -> Path:
+    """Seal a validated format-1 checkpoint into a new format-2 directory."""
+
+    source = Path(source_directory).expanduser().resolve()
+    target = Path(target_directory).expanduser().resolve()
+    if target == source or source in target.parents:
+        raise ValueError("checkpoint upgrade target must be outside the source")
+    source_tree_sha256 = checkpoint_directory_tree_sha256(
+        source,
+        operation="finite_q_checkpoint_upgrade",
+    )
+    checkpoint = load_finite_q_anchoring_checkpoint(source, device=device)
+    if checkpoint.format_version != FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION:
+        raise CheckpointCompatibilityError(
+            "only finite-Q checkpoint format version 1 can be upgraded",
+            operation="finite_q_checkpoint_upgrade",
+        )
+    upgraded = replace(
+        checkpoint,
+        format_version=FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION,
+        migration_provenance={
+            "kind": "finite_q_checkpoint_metadata_seal_v1_to_v2",
+            "source_format_version": 1,
+            "source_integrity_status": "unsealed_legacy",
+            "source_tree_sha256": source_tree_sha256,
+            "source_historical_integrity_authenticated": False,
+            "source_checkpoint_mutated": False,
+        },
+    )
+    written = write_finite_q_anchoring_checkpoint(target, upgraded)
+    if checkpoint_directory_tree_sha256(
+        source,
+        operation="finite_q_checkpoint_upgrade",
+    ) != source_tree_sha256:
+        raise RuntimeError("legacy source checkpoint changed during upgrade")
+    return written
 
 
 @dataclass(frozen=True, slots=True)
@@ -418,5 +500,6 @@ __all__ = [
     "PlaneFiniteQAnchoringWorkflow",
     "PlaneFiniteQAnchoringWorkflowResult",
     "load_finite_q_anchoring_checkpoint",
+    "upgrade_finite_q_anchoring_checkpoint_directory",
     "write_finite_q_anchoring_checkpoint",
 ]

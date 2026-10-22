@@ -162,6 +162,16 @@ def _legacy_checkpoint(runtime, spec):
     )
 
 
+def _write_legacy_checkpoint(directory, checkpoint):
+    """Test-only writer for frozen, read-only legacy carrier fixtures."""
+
+    return checkpoint_module._write_plane_checkpoint(
+        directory,
+        checkpoint,
+        allow_unsealed_legacy=True,
+    )
+
+
 def test_m01_device_token_is_provenance_not_restart_compatibility(tmp_path):
     source_spec = _spec(tmp_path, "source", device="cpu")
     target_spec = _spec(tmp_path, "target", device="auto")
@@ -302,7 +312,7 @@ def test_m05_even_grid_legacy_checkpoint_rejects_before_tensor_load(
     spec = _spec(tmp_path, generation.value, nx=8, ny=7)
     runtime = _runtime(spec)
     legacy = _legacy_checkpoint(runtime, spec)
-    source = write_plane_checkpoint(tmp_path / "legacy", legacy)
+    source = _write_legacy_checkpoint(tmp_path / "legacy", legacy)
     target = tmp_path / "upgraded"
     monkeypatch.setattr(
         checkpoint_module,
@@ -331,7 +341,7 @@ def test_m06_odd_grid_legacy_checkpoint_upgrades_without_source_mutation(
     target_runtime = _runtime(spec)
     source_runtime.advance(2)
     legacy = _legacy_checkpoint(source_runtime, spec)
-    source = write_plane_checkpoint(
+    source = _write_legacy_checkpoint(
         tmp_path / f"legacy_{generation.value}",
         legacy,
     )
@@ -368,7 +378,7 @@ def test_legacy_opaque_identity_mismatch_rejects_before_tensor_load(
     wrong_spec = _spec(tmp_path, "wrong", nx=7, ny=7, dt=0.004)
     runtime = _runtime(source_spec)
     legacy = _legacy_checkpoint(runtime, source_spec)
-    source = write_plane_checkpoint(tmp_path / "legacy", legacy)
+    source = _write_legacy_checkpoint(tmp_path / "legacy", legacy)
     monkeypatch.setattr(
         checkpoint_module,
         "_load_tensor",
@@ -387,7 +397,7 @@ def test_legacy_opaque_identity_mismatch_rejects_before_tensor_load(
 def test_legacy_upgrade_target_cannot_mutate_source_tree(tmp_path):
     spec = _spec(tmp_path, "source", nx=7, ny=7)
     legacy = _legacy_checkpoint(_runtime(spec), spec)
-    source = write_plane_checkpoint(tmp_path / "legacy", legacy)
+    source = _write_legacy_checkpoint(tmp_path / "legacy", legacy)
     before = _tree_sha256(source)
 
     with pytest.raises(ValueError, match="outside the source"):
@@ -401,7 +411,7 @@ def test_legacy_upgrade_target_cannot_mutate_source_tree(tmp_path):
     assert _tree_sha256(source) == before
 
 
-def test_v2_header_rejects_identity_digest_tamper_without_tensor_load(
+def test_current_header_rejects_metadata_tamper_without_tensor_load(
     tmp_path,
     monkeypatch,
 ):
@@ -421,7 +431,7 @@ def test_v2_header_rejects_identity_digest_tamper_without_tensor_load(
         lambda *_args, **_kwargs: pytest.fail("tensor load started"),
     )
 
-    with pytest.raises(ValueError, match="identity checksum mismatch"):
+    with pytest.raises(ValueError, match="metadata checksum mismatch"):
         load_plane_checkpoint(directory)
 
 

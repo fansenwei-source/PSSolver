@@ -13,6 +13,8 @@ import subprocess
 import pytest
 import torch
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 from pssolver.channel import Q_COMPONENTS, build_active_nematic_channel
 from pssolver.configuration.channel_active_nematics import (
     ChannelActiveNematicRunSpec,
@@ -583,9 +585,12 @@ def test_p74_record_binds_runtime_and_checkpoint_sources():
         "pssolver/workflows/channel_checkpoint.py"
     ]
     assert r5_10["historical_sha256"] == r5_3["current_sha256"]
-    assert sha256("pssolver/workflows/channel_checkpoint.py") == r5_10[
-        "current_sha256"
-    ]
+    assert sha256("pssolver/workflows/channel_checkpoint.py") == (
+        resolve_s03_successor(
+            "pssolver/workflows/channel_checkpoint.py",
+            r5_10["current_sha256"],
+        )
+    )
     assert record["authorization"] == {
         "p7_4_complete": True,
         "p7_5_planning_eligible": True,

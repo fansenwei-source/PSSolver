@@ -1,6 +1,6 @@
 # PSSolver v0.3.0 S-05 checkpoint metadata 完整性设计草案
 
-状态：`pending_user_confirmation`
+状态：`confirmed_for_implementation`
 
 本草案只做设计，不修改 runtime、checkpoint 字节、schema、provider identity、数值实现或
 生产默认值。路线图的总体选择已经由 `D-0011` 确认：v0.3 默认写带摘要的新格式，继续只读
@@ -75,4 +75,7 @@ Channel、当前两个 Functional carrier 已使用 `metadata_sha256`；referenc
 - B：只给 Plane 与 legacy Channel 提供 upgrade。
 - C：不提供 upgrade，用户只能恢复后在未来步骤重新写 checkpoint。
 
-建议五项均选 A。用户确认前不开始实现，也不创建 Claude review request。
+用户已于 2026-10-22 确认五项均选 A，并补充三条实施要求：v0.2.2
+必须明确拒绝四个新格式；升级记录必须密封 `unsealed_legacy`、源目录 tree hash
+和“不认证历史完整性”的声明；SHA-256 只作为完整性摘要，不宣称具备 MAC 或签名的
+抗蓄意重算能力。

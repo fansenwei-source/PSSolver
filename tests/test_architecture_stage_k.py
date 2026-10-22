@@ -29,6 +29,7 @@ from pssolver.execution import IncompressibleStokesSystemSpec
 from pssolver.experimental import (
     ExperimentalPlaneShadowRun,
     PlaneBerisEdwardsSolverOptions,
+    SHADOW_CHECKPOINT_FORMAT_VERSION,
     build_experimental_model_runtime,
     capture_shadow_checkpoint,
     compare_shadow_to_production_metadata,
@@ -359,7 +360,7 @@ def test_shadow_run_injects_initial_q_and_writes_production_layout(tmp_path):
         running_metadata["initial_condition"]["projected_q_sha256"]
     ) == 64
     assert running_metadata["checkpointing"] == {
-        "complete_checkpoint_format_version": 1,
+        "complete_checkpoint_format_version": SHADOW_CHECKPOINT_FORMAT_VERSION,
         "observation_layout": "Q/u/p production filenames",
         "transient_fields_checkpointed": False,
         "stored_algebraic_fields_checkpointed": False,

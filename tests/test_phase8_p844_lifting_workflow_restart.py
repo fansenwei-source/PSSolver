@@ -11,6 +11,8 @@ import numpy as np
 import pytest
 import torch
 
+from pssolver.io import seal_checkpoint_metadata
+
 from pssolver import (
     GeneratedInitialCondition,
     Output,
@@ -525,6 +527,8 @@ def test_unknown_lifting_restart_schema_rejects_before_tensor_load(
     metadata["compatibility_identity_sha256"] = (
         changed_identity.canonical_sha256()
     )
+    metadata.pop("metadata_sha256")
+    metadata = seal_checkpoint_metadata(metadata)
     metadata_path.write_text(
         json.dumps(metadata, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -560,6 +564,8 @@ def test_unknown_forward_dynamics_version_rejects_before_tensor_load(
     metadata["compatibility_identity_sha256"] = (
         changed_identity.canonical_sha256()
     )
+    metadata.pop("metadata_sha256")
+    metadata = seal_checkpoint_metadata(metadata)
     metadata_path.write_text(
         json.dumps(metadata, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
