@@ -95,6 +95,53 @@ def test_v13_lost_placeholder_mkdir_reply_is_recovered_without_residue(
     assert not (target / checkpoint_io._PLACEHOLDER_OWNER_MARKER).exists()
 
 
+@pytest.mark.parametrize(
+    "mkdir_errno",
+    [errno.ENOSPC, errno.EDQUOT, errno.EROFS, errno.EACCES, errno.EIO],
+    ids=["ENOSPC", "EDQUOT", "EROFS", "EACCES", "EIO"],
+)
+def test_v25_definite_placeholder_mkdir_failure_removes_staging(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    mkdir_errno: int,
+) -> None:
+    _force_nfs_fallback(monkeypatch)
+    target = tmp_path / "checkpoint"
+    real_mkdir = checkpoint_io.os.mkdir
+    staged: Path | None = None
+
+    def fail_target_mkdir(path, mode=0o777, *, dir_fd=None):
+        if Path(path) == target and dir_fd is None:
+            raise OSError(mkdir_errno, "injected definite mkdir failure")
+        return real_mkdir(path, mode, dir_fd=dir_fd)
+
+    with pytest.raises(
+        CheckpointIOError,
+        match="placeholder was not created",
+    ) as captured:
+        with checkpoint_io.checkpoint_directory_transaction(
+            target,
+            operation="checkpoint_export",
+        ) as (staging, _published):
+            staged = staging
+            _write_payload(staging)
+            monkeypatch.setattr(checkpoint_io.os, "mkdir", fail_target_mkdir)
+
+    error = captured.value
+    assert not isinstance(error, checkpoint_io._AmbiguousCheckpointPublication)
+    assert error.details == {
+        "publication_outcome": "not_published",
+        "mkdir_errno": mkdir_errno,
+        "claim_error": "CheckpointIOError",
+        "target_state": "absent",
+        "staging_removed": True,
+    }
+    assert staged is not None
+    assert not staged.exists()
+    assert not target.exists()
+    assert not list(tmp_path.glob(".checkpoint.tmp-*"))
+
+
 def test_v14_replaced_placeholder_is_never_removed_by_the_losing_writer(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -119,6 +166,8 @@ def test_v14_replaced_placeholder_is_never_removed_by_the_losing_writer(
             _write_payload(staging)
 
     assert captured.value.details["publication_outcome"] == "ambiguous"
+    assert captured.value.details["staging_path"]
+    assert captured.value.details["target_state"] == "present"
     assert (target / "competitor").read_bytes() == b"keep"
     preserved = list(tmp_path.glob(".checkpoint.tmp-*"))
     assert len(preserved) == 1

@@ -25,6 +25,10 @@
 - Harden the NFS-compatible no-clobber fallback against lost `mkdir` replies
   and placeholder inode replacement by holding one descriptor-backed,
   advisory-locked claim and cleaning it up at most once.
+- Distinguish a definite placeholder-`mkdir` failure from a lost reply: if the
+  final name is absent after claim failure, report `CheckpointIOError` and
+  remove the full staging tree. Ambiguous outcomes are reserved for a final
+  name that exists but cannot be claimed.
 - Classify a parent-directory sync failure after publication as the public
   `CheckpointDurabilityError` (and functional counterpart), with metadata that
   explicitly records that publication completed but durability was not

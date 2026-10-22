@@ -816,6 +816,47 @@ def _publish_directory_over_owned_placeholder(
             except OSError:
                 pass
             raise
+        try:
+            target.lstat()
+        except FileNotFoundError:
+            # The mkdir definitely did not create a placeholder.  No rename
+            # was attempted, so this is a normal publication failure rather
+            # than an ambiguous outcome and the complete staging tree is safe
+            # to remove immediately.
+            _remove_staging_tree(source, operation=operation)
+            raise CheckpointIOError(
+                "checkpoint publication placeholder was not created",
+                operation=operation,
+                failure_domain="filesystem",
+                legacy_exception_type=type(mkdir_error).__name__,
+                details={
+                    "publication_outcome": "not_published",
+                    "mkdir_errno": mkdir_error.errno,
+                    "claim_error": type(exc).__name__,
+                    "target_state": "absent",
+                    "staging_removed": True,
+                },
+            ) from mkdir_error
+        except OSError as target_error:
+            # Failure to inspect the name does not prove that mkdir created a
+            # placeholder.  Publication itself has not started, so discard
+            # staging and report the inspection failure without claiming an
+            # ambiguous published checkpoint.
+            _remove_staging_tree(source, operation=operation)
+            raise CheckpointIOError(
+                "checkpoint publication placeholder state cannot be inspected",
+                operation=operation,
+                failure_domain="filesystem",
+                legacy_exception_type=type(target_error).__name__,
+                details={
+                    "publication_outcome": "not_published",
+                    "mkdir_errno": mkdir_error.errno,
+                    "claim_error": type(exc).__name__,
+                    "target_lstat_errno": target_error.errno,
+                    "target_state": "unconfirmed",
+                    "staging_removed": True,
+                },
+            ) from target_error
         raise _AmbiguousCheckpointPublication(
             "checkpoint publication placeholder creation cannot be confirmed",
             operation=operation,
@@ -825,6 +866,8 @@ def _publish_directory_over_owned_placeholder(
                 "publication_outcome": "ambiguous",
                 "mkdir_errno": mkdir_error.errno,
                 "claim_error": type(exc).__name__,
+                "staging_path": str(source),
+                "target_state": "present",
             },
         ) from mkdir_error
 
@@ -835,7 +878,11 @@ def _publish_directory_over_owned_placeholder(
                 "checkpoint publication placeholder ownership changed",
                 operation=operation,
                 failure_domain="filesystem",
-                details={"publication_outcome": "ambiguous"},
+                details={
+                    "publication_outcome": "ambiguous",
+                    "staging_path": str(source),
+                    "target_state": "present",
+                },
             )
         try:
             os.rename(source, target)
@@ -865,6 +912,8 @@ def _publish_directory_over_owned_placeholder(
                         "publication_outcome": "ambiguous",
                         "rename_errno": exc.errno,
                         "verification_error": type(verification_error).__name__,
+                        "staging_path": str(source),
+                        "target_state": "present",
                     },
                 ) from exc
             if observed_digest != expected_digest:
@@ -878,6 +927,8 @@ def _publish_directory_over_owned_placeholder(
                         "rename_errno": exc.errno,
                         "expected_tree_sha256": expected_digest,
                         "observed_tree_sha256": observed_digest,
+                        "staging_path": str(source),
+                        "target_state": "present",
                     },
                 ) from exc
         published = True
