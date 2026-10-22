@@ -1,7 +1,7 @@
 # PSSolver v0.3.0 S-04 checkpoint 健壮性候选
 
 本地分支 `fix/v0.3-s04-checkpoint-robustness` 已在实现提交
-`468e06742a2a45ea36c970a5de789310ad47c8a1` 中处理 V-22、V-16、V-13、
+`468e06710e1b4881a557f0228dcb16be38791094` 中处理 V-22、V-16、V-13、
 V-14 和 C2-17。
 
 核心约束是：固定事务开始时的真实父目录；NFS 回退以打开的目录描述符和

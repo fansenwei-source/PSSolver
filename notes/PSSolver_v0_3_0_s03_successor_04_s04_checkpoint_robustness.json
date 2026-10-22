@@ -6,7 +6,7 @@
   "git_identity": {
     "branch": "fix/v0.3-s04-checkpoint-robustness",
     "implementation_parent": "48ebbd62e21a26d3e1e659eb6a63fd62ceff55b0",
-    "implementation_commit": "468e06742a2a45ea36c970a5de789310ad47c8a1",
+    "implementation_commit": "468e06710e1b4881a557f0228dcb16be38791094",
     "record_commit_is_qualified_source": false,
     "pushed": false
   },
@@ -79,22 +79,22 @@
     },
     "notes/pssolver_v0_2_x_open_issues.json": {
       "historical_sha256": "19be12b76600ed264fe822b70c97f1f6668734a1119ace06e622472f4f9e7d12",
-      "current_sha256": "15073c32cba19d7892718bf96cc87b4643ad468ad51932d6399f509c44e947b5",
+      "current_sha256": "944e1d5b84eeeda2b787251de1bb448d15586843ad05d200b2e132c1914a4aab",
       "reason": "Move the five S-04 issues to claimed_fixed at the implementation commit."
     },
     "tests/test_v0_2_x_open_issues.py": {
       "historical_sha256": "db055ca925734b7caed68efc5e30a611d4934d1e987f049858dea8d04be1bfc1",
-      "current_sha256": "e924a92f0df89b8f762456653ae7ba6f7981c97c727af216f97ee78ebbf9f3a4",
+      "current_sha256": "5a0f5cf973f8e1f473a5d01f03f443e3615961b54a9b1877659bba22bb0daf66",
       "reason": "Bind the S-04 claimed_fixed states and implementation commit."
     },
     "tests/test_release_v0_2_2.py": {
       "historical_sha256": "1b8038d8bf7ae84bb0da5f239484a72e4b6d512df730b6b2c0abd9b69b77d947",
-      "current_sha256": "1b11a5a66a386015e2770e7edede47da1a3fe46c6354688d2f4f1d4b1129893b",
+      "current_sha256": "83fdcfa9824e59ab61fe6aa019abe93c3496751ca3e51b1be13ab99f1b2727f3",
       "reason": "Preserve the v0.2.2 finding record while recognizing the later S-04 V-22 claim."
     },
     "tests/test_v0_2_2_v17_r0002_import.py": {
       "historical_sha256": "4a6fe87fa42b8fb0d85837ac6055c8be6bf201053dada0c54a44dc76ed56ee27",
-      "current_sha256": "5b8ec5ad224adaeeae7eebe99edd156b69f58812be69b51d7485af3028aaa0b6",
+      "current_sha256": "52ae13c76ce14828a2f52584290eeb0807695895913f3fd766b9c8fc62ceaea7",
       "reason": "Carry the R-0002 registry count assertions through the five S-04 claimed fixes."
     },
     "tests/test_v0_3_s01_registry_migration.py": {

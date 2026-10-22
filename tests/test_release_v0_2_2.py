@@ -193,7 +193,7 @@ def test_v022_keeps_new_low_severity_findings_deferred() -> None:
         assert issues[issue_id]["severity"] == "low"
     assert issues["V-23"]["verified_by"] == "R-0008"
     assert issues["V-22"]["fixed_in"] == (
-        "468e06742a2a45ea36c970a5de789310ad47c8a1"
+        "468e06710e1b4881a557f0228dcb16be38791094"
     )
 
 

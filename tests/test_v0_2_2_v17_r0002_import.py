@@ -134,7 +134,7 @@ def test_r0002_registry_updates_are_exact() -> None:
                 assert value == "registered"
                 assert actual[key] == "claimed_fixed"
                 assert actual["fixed_in"] == (
-                    "468e06742a2a45ea36c970a5de789310ad47c8a1"
+                    "468e06710e1b4881a557f0228dcb16be38791094"
                 )
             else:
                 assert actual[key] == value

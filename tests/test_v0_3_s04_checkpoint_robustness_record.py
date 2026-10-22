@@ -31,7 +31,7 @@ def _sha256(path: Path) -> str:
 def test_s04_record_binds_the_implementation_and_issue_scope() -> None:
     record = _read(RECORD)
     assert record["git_identity"]["implementation_commit"] == (
-        "468e06742a2a45ea36c970a5de789310ad47c8a1"
+        "468e06710e1b4881a557f0228dcb16be38791094"
     )
     assert record["roadmap"]["decision"] == "D-0010"
     assert record["roadmap"]["plan_step"] == "S-04"

@@ -144,7 +144,7 @@ def test_v021_limitations_preserve_version_and_control_boundaries():
 
 def test_s04_checkpoint_robustness_items_are_claimed_by_one_commit():
     issues = _issues()
-    implementation = "468e06742a2a45ea36c970a5de789310ad47c8a1"
+    implementation = "468e06710e1b4881a557f0228dcb16be38791094"
     for issue_id in ("V-22", "V-16", "V-13", "V-14", "C2-17"):
         assert issues[issue_id]["status"] == "claimed_fixed"
         assert issues[issue_id]["fixed_in"] == implementation
