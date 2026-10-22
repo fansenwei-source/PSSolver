@@ -59,7 +59,7 @@ def test_s06_rework_claims_only_pending_items_at_exact_fix_sources() -> None:
     for issue_id in ("S2-17", "V-28"):
         assert issues[issue_id]["fixed_in"] == IMPLEMENTATION
         assert "verified_by" not in issues[issue_id]
-        assert "R-0015" in issues[issue_id]["notes"]
+        assert "R-0016" in issues[issue_id]["notes"]
     for issue_id in ("C1-05", "C2-18", "V-27"):
         assert issues[issue_id]["fixed_in"] == (
             "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a"

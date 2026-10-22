@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-06",
+  "classification": "REWORK_REQUIRED_R0015_S06_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "f699c57fd5de9c231818c6e8dabfd2165cc9f97b",
+    "result_commit": "d2f7850af12a3119a5b2e83253c29e4852e9d7db",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0015",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0015.result.json",
+    "sha256": "ce54a688fc5ffd0427544be1b404379db84a6a0049f873f5a39d1624c6a0945a",
+    "classification": "REWORK_REQUIRED"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s06rw_claude_review_20261022_v1",
+    "checksums_entries": 41,
+    "checksums_sha256": "de58e0900b4169f77f65a83c510e290a222fe3d8afeb22a922fa78dfd8cb9d8b",
+    "complete_present": true,
+    "final_report_sha256": "d2f78eb14bc6b5d9836e38029911a35f006c1c1ce4937b5cdaffa7ba1b29d5d2",
+    "summary_sha256": "4165de03ac9eab98b9f4f5c8b19d38045d442fed209cfa60ba26cfc2e71c5f2f"
+  },
+  "registry_import": {
+    "new_finding": {
+      "id": "V-29",
+      "severity": "low",
+      "status": "registered",
+      "target_release": "0.3",
+      "plan_step": "S-06"
+    },
+    "kept_claimed_fixed": [
+      "C1-05",
+      "C2-18",
+      "S2-17",
+      "V-27",
+      "V-28"
+    ],
+    "verified_by_r0015": [],
+    "passed_claims": [
+      "C1-05",
+      "C2-18",
+      "V-27",
+      "V-28"
+    ],
+    "s06_complete": false,
+    "rework_required": true,
+    "next_request": "R-0016"
+  },
+  "rework_contract": {
+    "rollback_candidate": "minimum_recurrence_residual_at_or_below_floor",
+    "actual_rollback_requires_strict_represented_residual_postcondition": true,
+    "normal_completion_preserves_pre_s06_acceptance": true,
+    "scan_fail_closed_count_must_be_reported": true
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "007b11b91bdd91f377c7f92fcc9d59748c03002175360d464028fd7704bde8ca",
+      "current_sha256": "95d32d0215442d2b50309e3a1eb9c673aabece03b3693d7476b01bff00e058d4",
+      "reason": "Register V-29 and retain all five prior S-06 claims pending the combined R-0016 re-review."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "216fe71c09da40c360db10be6a5b26a1257a15ec281df53abbf5ea06fd934e53",
+      "current_sha256": "7f8afe351b75d962536f633cd5ce69527dcf03d4f5c8045f1bd7af451decd64f",
+      "reason": "Describe the R-0015 rework classification, V-29 and the minimum-recurrence rollback requirement."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "6b8d922f5f1c1a045f0b9eb0d95a86b4f395cac468857f14fe6dcf31ebab261a",
+      "current_sha256": "13d0e71f537389939c0a5f5b1edf6462723efd32d8f9b9c3f515c4dc1a043482",
+      "reason": "Bind the 34-item registry, V-29 properties and the pending R-0016 state."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "916b02ee5a0b7b6532fffc14aeb0f8d283e1e06005480ead68449764cc37ea63",
+      "current_sha256": "d974d179fd2af0c717b6c6b85fcf180f41f0b80ea53bef537cc3920a9d3f9983",
+      "reason": "Recognize current registry counts without rewriting the historical R-0002 record."
+    },
+    "tests/test_v0_3_0_roadmap.py": {
+      "historical_sha256": "bfa9ca1defb6fcbf4acaa0bbbb2afb1505d800456a5e96930c32887847e05e6f",
+      "current_sha256": "10cdcfd46ff6f5ef33401b4fc28d552da49e5d78766d86760892f8515df95ec4",
+      "reason": "Account for V-29 as a post-S-02 finding assigned to S-06."
+    },
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {
+      "historical_sha256": "17ae791dd64d545ab19c60200f2961630a9c030f1a69ad7e3730b8d4de47aa49",
+      "current_sha256": "bab962f29e3d3bdb1c73ea94e57e9d10c0d34d56e39c139bc8414a511805bd0d",
+      "reason": "Keep the first S-06 candidate historical while pointing all pending claims to R-0016."
+    },
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {
+      "historical_sha256": "feb40f90fd9aa3870c5f4bc4fb0fb92d05db314027fad81e3851ae4b5af22dbb",
+      "current_sha256": "8619e523f307c6ec3f3ce1f658d461d263c8751cfa6d288e27be6bf45e61089c",
+      "reason": "Keep the R-0015 candidate historical while pointing its pending repair claims to R-0016."
+    }
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "thresholds_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_import_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  },
+  "next_plan_step": "S-06",
+  "next_request": "R-0016"
+}
