@@ -1,0 +1,75 @@
+{
+  "schema": "pssolver.v0_3.s09.r0023_candidate.v1",
+  "date": "2026-10-23",
+  "plan_step": "S-09",
+  "classification": "READY_R0023_S09_FINAL_LOCAL_REVIEW",
+  "git_identity": {
+    "provider_runtime_commit": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+    "provider_qualification_support_commit": "9dd83cf2bec1a01bde5fc4e7b5e3a4afbd1ad3ad",
+    "record_parent": "90ca4269ff949a6e030b9fd097aa4d46fe342dfb",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "consumer_identity": {
+    "base_commit": "208edd03e6b26a0e788c07d295fddd7a67237189",
+    "runtime_commit": "48dd4d3a9a101f8b24d8311c57ed67fab46ceea0",
+    "evidence_commit": "97d3c06450c4a7a6d72e0fe07a7a157ef095c133",
+    "existing_research_checkout_modified": false,
+    "pushed": false
+  },
+  "rework": {
+    "V-35": {
+      "implementation_commit": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "invalid_legacy_migration_cases": 18,
+      "accepted": 0,
+      "payload_read_before_rejection": false,
+      "registry_status": "registered"
+    },
+    "V-36": {
+      "implementation_commit": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "authentic_v0_2_2_fixture_passed": true,
+      "disposition": "state_only_migration",
+      "registry_status": "registered"
+    }
+  },
+  "cpu_gates": {
+    "conda": {"passed": 4696, "skipped": 0, "deselected": 7, "failed": 0},
+    "pip": {"passed": 4695, "skipped": 1, "deselected": 7, "failed": 0},
+    "provider_installed": {"passed": 7, "skipped": 0, "failed": 0},
+    "consumer_installed": {"passed": 351, "skipped": 6, "failed": 0},
+    "pip_check": "PASS",
+    "source_shadow_import": false
+  },
+  "artifacts": {
+    "root": "/home/fansenwei/pssolver_v0_3_s09_candidate_artifacts_85ba3ae_48dd4d3_20261023_v3",
+    "manifest_sha256": "f64fcf5dc1edd79932e49f79f4b2aeee7c337d179de28437afc85678f01a1f45",
+    "checksum_entries": 4506,
+    "checksums_sha256": "25059cbeba10c380321c65dd6999da6ba626415dad55d03ff955d55a73397419",
+    "complete": true
+  },
+  "local_evidence": {
+    "root": "/home/fansenwei/pssolver_v0_3_s09_local_recovery_85ba3ae_48dd4d3_20261023_v2",
+    "checksum_entries": 33,
+    "checksums_sha256": "cc4cb8d364903455c0058ac5a2371bd64f424365c501a0e1dbbe4986ed884329",
+    "complete": true
+  },
+  "h100_draft": {
+    "plan_sha256": "1ad29c4887a8e79610227a84e1e7e6b6846da246df8ce1f805aadb3ff336c620",
+    "job_script_sha256": "4c0757bf13ee031b42407c105ffaf203b4571fe5fe51b60bd7de3834476f92f5",
+    "draft_sha256": "f89d1efe2938e6d2faadd5209e596075bf57844e435e5655e692ae81b7a93577",
+    "performance_rules_match_analyzer": true,
+    "all_S09_environment_values_bound": true,
+    "output_root_must_initially_not_exist": true,
+    "api_1_1_v0_2_x_incompatibility_documented": true,
+    "review_before_user_authorization_required": true
+  },
+  "authorization": {
+    "push": false,
+    "HPCC": false,
+    "Slurm": false,
+    "GPU": false,
+    "H100": false,
+    "automatic_retry": false
+  },
+  "next_request": "R-0023"
+}
