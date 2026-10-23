@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "source_runtime": {
+    "release": "v0.2.2",
+    "commit": "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70",
+    "git_archive_sha256": "b441ba1a1a943899da81fb294a67c8e2e69e00117aebc2a26af9d72efa5e41db"
+  },
+  "generation": {
+    "source_fixture": "tests/fixtures/functional_checkpoint_releases_v1/rc1/channel_func_ck",
+    "operation": "v0.2.2 ChannelActivityCheckpointBridge.migrate_legacy_checkpoint",
+    "source_release_generation": "rc1",
+    "copied_from_independent_archive": "/home/fansenwei/pssolver_s09_claude_review_20261023_v1/y2/lt_v022/rc1_channel_original_mig"
+  },
+  "fixture": {
+    "path": "v0_2_2_migrated_rc1_channel_even",
+    "tree_sha256": "04aca84f344c9f13166666041d3accdebbfbb93ac4da170dd578db3cc20619cf",
+    "files": {
+      "checkpoint.json": "08b57ed70d42d13e465b0bff4767604f8f65b2b1ed573f80634c3f37b0acbac6",
+      "functional_checkpoint.json": "b8d31ce4f7bd9fd2187bbb82025c0370dcdd0b831b1d1d52811e67cc34c921ac",
+      "state__q_physical.npy": "7fa1711203aee523bbb78fd00a0bfed5fc99e855e25e264220dd97810ce289f7",
+      "state__q_spectral.npy": "e4ac9c1d8be63fdfd3f4824f163399fe322dcff2d6847579b143566e87c65839"
+    }
+  }
+}

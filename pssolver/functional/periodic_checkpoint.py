@@ -256,6 +256,15 @@ class PeriodicActivityCheckpointBridge:
                 operation="periodic_checkpoint_import",
             )
         api_version = metadata.get("api_version")
+        if (
+            bridge_version
+            == _LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_V2
+            and api_version != _LEGACY_FUNCTIONAL_API_VERSION
+        ):
+            raise FunctionalCheckpointCompatibilityError(
+                "legacy Periodic functional API version must be 1.0",
+                operation="periodic_checkpoint_import",
+            )
         selection = negotiate_functional_api_version(
             api_version,
             purpose="checkpoint_read",
@@ -467,7 +476,12 @@ class PeriodicActivityCheckpointBridge:
                 applicability_class="configuration_dependent",
             )
         )
-        api_version = bridge.get("api_version")
+        if bridge.get("api_version") != _LEGACY_FUNCTIONAL_API_VERSION:
+            raise FunctionalCheckpointCompatibilityError(
+                "legacy Periodic functional API version must be 1.0",
+                operation="periodic_checkpoint_migration",
+            )
+        api_version = _LEGACY_FUNCTIONAL_API_VERSION
         expected_bridge = self._bridge_metadata(
             api_version=api_version,
             format_version=expected_version,

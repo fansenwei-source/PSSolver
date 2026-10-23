@@ -13,11 +13,17 @@
   change because they include the API version; checkpoint forward-
   compatibility identities do not. Current-format API-1.0 functional
   checkpoints remain readable through an explicit read-only compatibility
-  path and are reported as non-exact protocol restores.
+  path and are reported as non-exact protocol restores. The compatibility is
+  intentionally one-way: functional checkpoints written with API 1.1 cannot
+  be read by PSSolver v0.2.x and fail there with an explicit unsupported-API
+  or unsupported-format error.
 - Preserve the frozen API-1.0 identity and migration-provenance schemas when
   an API-1.1 runtime reads or explicitly upgrades released functional
   checkpoints. Historical release records remain historical literals rather
-  than being compared to the live protocol version.
+  than being compared to the live protocol version. Legacy migration and the
+  Periodic v2 bridge require the literal API version `1.0` before opening any
+  tensor payload; a relabelled provisional, current, or future API value is
+  rejected rather than copied into migration provenance.
 
 ### Packaging, provenance, and documented capability boundaries
 
@@ -161,6 +167,12 @@
   are now rejected with a dedicated compatibility error: resume from the
   original rc1 checkpoint and repeat the current state-only migration.  The
   old exact label cannot be repaired safely without that original source.
+- Accept the equivalent v0.2.x spelling
+  `pre_rc3_pressure_transpose_nyquist` on an already migrated rc1 even-axis
+  Channel checkpoint when its full provenance still declares
+  `state_only_migration` and `trajectory_equivalent=false`. This historical
+  spelling has the same conservative disposition as the expanded v0.3 label;
+  an authentic fixture produced by the v0.2.2 migration path binds it.
 - Bind a real rc1 static-lifting Plane checkpoint and verify that its pre-B8
   lifting dynamics are rejected before tensor payloads are opened.  The
   fixture closes the historical rejection-coverage gap without reopening the

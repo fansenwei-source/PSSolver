@@ -448,7 +448,12 @@ class ChannelActivityCheckpointBridge:
                 applicability_class="configuration_dependent",
             )
         )
-        api_version = bridge.get("api_version")
+        if bridge.get("api_version") != _LEGACY_FUNCTIONAL_API_VERSION:
+            raise FunctionalCheckpointCompatibilityError(
+                "legacy Channel functional API version must be 1.0",
+                operation="channel_checkpoint_migration",
+            )
+        api_version = _LEGACY_FUNCTIONAL_API_VERSION
         source_production_identity = _require_sha256(
             bridge.get("production_runtime_identity_sha256"),
             "production_runtime_identity_sha256",
@@ -585,6 +590,21 @@ class ChannelActivityCheckpointBridge:
             "trajectory_equivalent": not state_only,
         }
         if dict(provenance) != expected:
+            earlier_rc1_even_state_only = {
+                **expected,
+                "derivative_dynamics_change": (
+                    "pre_rc3_pressure_transpose_nyquist"
+                ),
+            }
+            if (
+                generation is SourceReleaseGeneration.RC1
+                and periodic_size % 2 == 0
+                and dict(provenance) == earlier_rc1_even_state_only
+            ):
+                # v0.2.x used the pre-rc3-only spelling before S-08 made the
+                # pre-B2 rc1 dynamics boundary explicit.  Both records have
+                # the same state-only disposition and are equally safe.
+                return provenance
             earlier_rc1_odd_exact = {
                 "derivative_dynamics_change": (
                     "proven_inapplicable_or_already_repaired"
