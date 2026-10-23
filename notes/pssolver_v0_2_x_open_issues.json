@@ -33,8 +33,8 @@
   "status_counts": {
     "open": 1,
     "registered": 0,
-    "claimed_fixed": 7,
-    "verified": 21,
+    "claimed_fixed": 0,
+    "verified": 28,
     "deferred": 2,
     "accepted": 1,
     "coverage_gap": 3
@@ -274,8 +274,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "b7cf4ca02095e8b41ed720809880628d2375cfbb",
+      "verified_by": "R-0018",
       "target_release": "0.3",
       "notes": "Observability only; the fallback marker must not become checkpoint identity."
     },
@@ -305,8 +306,9 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "b7cf4ca02095e8b41ed720809880628d2375cfbb",
+      "verified_by": "R-0018",
       "target_release": "0.3",
       "notes": "Roadmap S-07. This follows from retaining exact legacy read branches: consumers that require sealed integrity must require integrity_status == 'sealed_sha256'. Clarify the CHANGELOG/design wording and consider recording integrity_status on resume or adding an opt-in require_sealed policy. Repro: R-0013 out/s05_downgrade_probe.json."
     },
@@ -320,10 +322,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "8aceaab446e57a13866090ec06ecdf30e33ef490",
+      "verified_by": "R-0018",
       "target_release": "0.3",
-      "notes": "Roadmap S-07. R-0017 found that setup.py excluded pssolver.control while the retained pssolver.channel imported pssolver.control.active_force, so installed wheels could not build either Channel runtime. Runtime 8aceaab moves the shared implementation into the packaged active-nematics model namespace, retains a compatibility re-export in the source-only control module, and adds real public dry-run provenance plus best-effort checkpoint diagnostic logging. Installed-wheel module-import and runtime gates pass locally; independent R-0018 verification remains pending."
+      "notes": "Roadmap S-07. R-0017 found that setup.py excluded pssolver.control while the retained pssolver.channel imported pssolver.control.active_force, so installed wheels could not build either Channel runtime. Runtime 8aceaab moves the shared implementation into the packaged active-nematics model namespace, retains a compatibility re-export in the source-only control module, and adds real public dry-run provenance plus best-effort checkpoint diagnostic logging. R-0018 independently verified the installed-wheel module-import, runtime, public dry-run, diagnostic, full CPU, and historical-successor gates."
     },
     {
       "id": "V-27",
@@ -415,8 +418,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "b7cf4ca02095e8b41ed720809880628d2375cfbb",
+      "verified_by": "R-0018",
       "target_release": "0.3",
       "notes": "Other normalized values and compilation_identity are not persisted."
     },
@@ -446,8 +450,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "b7cf4ca02095e8b41ed720809880628d2375cfbb",
+      "verified_by": "R-0018",
       "target_release": "0.3",
       "notes": "Packaging cleanup only; do not confuse the legacy module with PSSolver-Control."
     },
@@ -461,8 +466,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "b7cf4ca02095e8b41ed720809880628d2375cfbb",
+      "verified_by": "R-0018",
       "target_release": "0.3",
       "notes": "Documentation debt; Robin is not currently publicly executable. Roadmap step S-07 will document the residual behavior as an independent gate without reopening Robin execution."
     },
@@ -476,8 +482,9 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "b7cf4ca02095e8b41ed720809880628d2375cfbb",
+      "verified_by": "R-0018",
       "target_release": "0.3",
       "notes": "Cosmetic metadata debt."
     },

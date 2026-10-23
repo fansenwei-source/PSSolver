@@ -54,18 +54,20 @@ def test_s07_successors_are_forward_only_and_complete():
         ) == _sha256(ROOT / relative)
 
 
-def test_s07_registry_claims_are_review_pending():
+def test_s07_registry_claims_are_verified_by_r0018():
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     claimed = {
         issue_id for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == ISSUES | {"V-30"}
+    assert claimed == set()
     for issue_id in ISSUES:
+        assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == IMPLEMENTATION
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["verified_by"] == "R-0018"
+    assert issues["V-30"]["status"] == "verified"
     assert issues["V-30"]["fixed_in"] == V30_IMPLEMENTATION
-    assert "verified_by" not in issues["V-30"]
+    assert issues["V-30"]["verified_by"] == "R-0018"
 
 
 def test_s07_candidate_authorizes_no_external_action():

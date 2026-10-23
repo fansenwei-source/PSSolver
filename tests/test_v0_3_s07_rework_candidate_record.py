@@ -55,11 +55,12 @@ def test_s07_rework_successors_are_forward_only() -> None:
         ) == _sha256(ROOT / relative)
 
 
-def test_s07_rework_claims_v30_without_premature_verification() -> None:
+def test_s07_rework_is_later_verified_by_r0018() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
-    assert {key for key, item in issues.items() if item["status"] == "claimed_fixed"} == CLAIMS
+    assert {key for key, item in issues.items() if item["status"] == "claimed_fixed"} == set()
+    assert all(issues[issue_id]["status"] == "verified" for issue_id in CLAIMS)
+    assert all(issues[issue_id]["verified_by"] == "R-0018" for issue_id in CLAIMS)
     assert issues["V-30"]["fixed_in"] == IMPLEMENTATION
-    assert "verified_by" not in issues["V-30"]
     assert _read(RECORD)["validation"]["independent_review_pending"] is True
 
 

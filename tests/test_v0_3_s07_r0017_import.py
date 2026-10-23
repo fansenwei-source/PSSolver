@@ -41,15 +41,16 @@ def test_r0017_import_binds_the_exact_independent_review() -> None:
     assert archive["checksums_entries"] == 35
 
 
-def test_r0017_registry_import_is_exact_and_does_not_close_s07() -> None:
+def test_r0017_registry_import_remains_historical_after_r0018_closure() -> None:
     record = _read(RECORD)["registry_import"]
     assert set(record["kept_claimed_fixed"]) == CLAIMS
     assert record["registered"] == ["V-30"]
     assert record["s07_complete"] is False
     assert record["eligible_for_push_draft"] is False
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
-    assert {key for key, item in issues.items() if item["status"] == "claimed_fixed"} == CLAIMS | {"V-30"}
-    assert issues["V-30"]["status"] == "claimed_fixed"
+    assert {key for key, item in issues.items() if item["status"] == "claimed_fixed"} == set()
+    assert all(issues[issue_id]["status"] == "verified" for issue_id in CLAIMS | {"V-30"})
+    assert all(issues[issue_id]["verified_by"] == "R-0018" for issue_id in CLAIMS | {"V-30"})
     assert issues["V-30"]["fixed_in"] == (
         "8aceaab446e57a13866090ec06ecdf30e33ef490"
     )

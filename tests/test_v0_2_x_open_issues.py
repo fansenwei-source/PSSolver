@@ -52,8 +52,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
         "registered": 0,
-        "claimed_fixed": 7,
-        "verified": 21,
+        "claimed_fixed": 0,
+        "verified": 28,
         "deferred": 2,
         "accepted": 1,
         "coverage_gap": 3,
@@ -192,12 +192,12 @@ def test_rc5_rc6_residuals_track_verified_s06_fixes():
     }
     verified = {"A2-24/C1-15", "C1-08"}
     s06_verified = {"S2-17"}
-    s07_claimed = {"S1-15/NEW-13", "A1-07", "B30", "S1-04"}
+    s07_verified = {"S1-15/NEW-13", "A1-07", "B30", "S1-04"}
     assert all(
         issues[issue_id]["status"]
         == (
             "verified"
-            if issue_id in verified | s06_verified
+            if issue_id in verified | s06_verified | s07_verified
             else "claimed_fixed"
         )
         for issue_id in tracked
@@ -231,10 +231,11 @@ def test_rc5_rc6_residuals_track_verified_s06_fixes():
         issues[issue_id]["exercised_by_current_control_research"] is False
         for issue_id in tracked | {"A2-11", "NEW-14"}
     )
-    for issue_id in s07_claimed:
+    for issue_id in s07_verified:
         assert issues[issue_id]["fixed_in"] == (
             "b7cf4ca02095e8b41ed720809880628d2375cfbb"
         )
+        assert issues[issue_id]["verified_by"] == "R-0018"
 
 
 def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
@@ -251,15 +252,17 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == {
+    assert claimed == set()
+    s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
-    assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in claimed)
+    assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in s07_verified)
     assert all(
         issues[issue_id]["fixed_in"]
         == "b7cf4ca02095e8b41ed720809880628d2375cfbb"
-        for issue_id in claimed - {"V-30"}
+        for issue_id in s07_verified - {"V-30"}
     )
+    assert all(issues[issue_id]["verified_by"] == "R-0018" for issue_id in s07_verified)
     assert issues["A2-21/S2-12"]["target_release"] == "0.3"
     assert issues["V-26"]["target_release"] == "0.3"
     assert "S-07" in issues["V-26"]["notes"]
@@ -279,8 +282,9 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "affects_v0_2_1": False,
         "affects_control_paths": False,
         "exercised_by_current_control_research": False,
-        "status": "claimed_fixed",
+        "status": "verified",
         "fixed_in": "8aceaab446e57a13866090ec06ecdf30e33ef490",
+        "verified_by": "R-0018",
         "target_release": "0.3",
         "notes": issues["V-30"]["notes"],
     }

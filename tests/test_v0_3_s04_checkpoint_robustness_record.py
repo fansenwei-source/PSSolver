@@ -54,7 +54,7 @@ def test_s04_registry_preserves_fix_ids_after_r0012_verification() -> None:
         if item["status"] == "claimed_fixed"
     }
     historical_claims = set(record["roadmap"]["issue_ids"])
-    assert claimed == {"A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"}
+    assert claimed == set()
     assert issues["A2-21/S2-12"]["status"] == "verified"
     assert issues["A2-21/S2-12"]["verified_by"] == "R-0013"
     for issue_id in historical_claims:
@@ -71,6 +71,9 @@ def test_s04_registry_preserves_fix_ids_after_r0012_verification() -> None:
     for issue_id in ("C1-05", "C2-18", "S2-17", "V-27", "V-28", "V-29"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["verified_by"] == "R-0016"
+    for issue_id in ("A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"):
+        assert issues[issue_id]["status"] == "verified"
+        assert issues[issue_id]["verified_by"] == "R-0018"
 
 
 def test_s04_durability_error_preserves_the_public_io_hierarchy() -> None:

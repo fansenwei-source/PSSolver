@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-07",
+  "classification": "PASS_R0018_S07_FINAL_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "d86f2f647b53819702751d70c3798f441021d33b",
+    "qualified_s07_source": "b7cf4ca02095e8b41ed720809880628d2375cfbb",
+    "qualified_v30_source": "8aceaab446e57a13866090ec06ecdf30e33ef490",
+    "result_commit": "cac2ea4c1a86e6e6acd3ef94701e4d5973d75490",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0018",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0018.result.json",
+    "sha256": "28d3efe579bfd7bc3f0bc392a2afddce73e1c37580b224e7d5a4d6479b88baff",
+    "classification": "PASS",
+    "new_findings": []
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s07rw_claude_review_20261023_v1",
+    "checksums_entries": 40,
+    "checksums_sha256": "58a6b7a584b62f3c11f0a368016c4385ef59a420ada2d2bde8714b06ac85394d",
+    "complete_present": true,
+    "final_report_sha256": "b55d9afaf756c96d35ee7a463602c8b3f8505077c49a6471409dd1548ea4774c",
+    "summary_sha256": "c04feaa97254ec8eee814a2001e7366fec451ab825b98925d5b1421541659e8f"
+  },
+  "registry_import": {
+    "verified_by": "R-0018",
+    "fixed_at_b7cf4ca": [
+      "A1-07",
+      "S1-15/NEW-13",
+      "S1-04",
+      "OBS-4",
+      "B30",
+      "V-26"
+    ],
+    "fixed_at_8aceaab": [
+      "V-30"
+    ],
+    "status": "verified",
+    "s07_complete": true,
+    "eligible_for_d0009_integration_draft": true
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "d20b00793b90179f89bd2bf04ff6745d62b83215a7cd00c087478beb593b4df4",
+      "current_sha256": "8d949dcb4209b0a669dc52faacb5711e70135fb4c5195d154467f9185499775b",
+      "reason": "Apply the seven exact R-0018 verified registry updates without changing either runtime fix identity."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "aee9991ed175b15462b1f06e382d00017a9062f20e3a0c97febdf8f751e79dba",
+      "current_sha256": "f9578d1003a07a70b46c3d31b1c68da75aadae1ad9ba9ca2429c8e7e9f702cff",
+      "reason": "Describe the completed R-0018 S-07 verification and the S-08 handoff."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "e4621610e706c9106f0675490e97b039d34d139e05488f602e45f630e0f35149",
+      "current_sha256": "8b899b7bcc164b7d321e96b328ab91f5b8b4b7ae60eedd741e00bec2ac10fc4c",
+      "reason": "Recognize current registry counts without rewriting the historical R-0002 record."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "70c58af425f17ff19578c1a5782982b7958d7e1dd0e4dc63f7670c8bd5bc219e",
+      "current_sha256": "75b03c06bd067282322989d461f4b7d68e14811af52fd4b9f6651a2a53e06245",
+      "reason": "Bind the seven verified statuses, exact fix sources, and R-0018 review identity."
+    },
+    "tests/test_v0_3_s01_registry_migration.py": {
+      "historical_sha256": "bbcc3b8dbb243b6d5bd40f7693157d543533581850f473bccb19bb6e5b9aaa83",
+      "current_sha256": "fd1759f4a3661192f8909b7534768c8791c5cf019784c8f92aa840813747477c",
+      "reason": "Preserve the S-01 tracked set while recognizing later S-07 verification."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "a23f0f0daa8fe2e7c1335c38c4bea7917aa013abd1a0e7fd514d3772cef5e452",
+      "current_sha256": "4fc728384337f6a4263dee83edcc4e8b72e2bfe5d5237de021fb846770db6723",
+      "reason": "Preserve S-03 verification while recognizing the completed S-07 successor."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "historical_sha256": "e80bcfa6fb271670290b4f09da2b051d4135c42ae8c4f72cec462c92bb7db7b4",
+      "current_sha256": "b8757c0db9b7224226e9a8e04698ade44398743e8db96897804e4f58bce9c155",
+      "reason": "Preserve S-04 verification while recognizing the completed S-07 successor."
+    },
+    "tests/test_v0_3_s05_r0013_import.py": {
+      "historical_sha256": "b93629a9445838d53854fcbba37ba3009bc3917ab5dd8ba5db4adde7e780a448",
+      "current_sha256": "f4fd2c653ba54b9c9189dbbe50ad38a51ae337c3d9df5566fae06e931e041363",
+      "reason": "Keep the immutable R-0013 finding registration while recognizing V-26 verification by R-0018."
+    },
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {
+      "historical_sha256": "10dd2c11a6eabdf6a51f770663166df2c09b6af23d8dd78c634ee2713c352fe8",
+      "current_sha256": "b1dd95befe8c58b4b76876ec05f12dd2cbd39aada5de5335cf23708ea7da4fea",
+      "reason": "Keep the historical S-06 rework contract while recognizing R-0018 verification."
+    },
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {
+      "historical_sha256": "18c0f5fda786275ac1b9f1b294e4aa86f371b0b4cc5908a69a1cb70d563c609a",
+      "current_sha256": "dcf5a725ec8890d87d2a764f254669fcdd8969251f4a95541e6761c01088a515",
+      "reason": "Keep the qualified S-06 runtime record historical while recognizing R-0018 verification."
+    },
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {
+      "historical_sha256": "afa31d62bc09924852f2e2549bee90199686f3bc6d1cbda00f249873f8945560",
+      "current_sha256": "bfd93b71600f1266ffe2fd4419165d8bb7dde98e20e222c11a79bccfa4a4e7c9",
+      "reason": "Keep the initial S-06 candidate historical while recognizing R-0018 verification."
+    },
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {
+      "historical_sha256": "2c9a471c509ed0f732a27b70893f7ebc57085ecffc76bc076c7e18e278642ed4",
+      "current_sha256": "aef90fbf5e21db54a63c6ca3952426477d27e094dc2dc7ad699b3ccfba83a8be",
+      "reason": "Preserve the S-07 implementation contract while advancing its issues to verified."
+    },
+    "tests/test_v0_3_s07_r0017_import.py": {
+      "historical_sha256": "d0222691c3115f08e60ced3a232459cd85100a0996c7578cfb512a81d02dafca",
+      "current_sha256": "d4f4429c11674ae965c5ab1094a0a172e20fdd9b59becef9749d10ef53ae027b",
+      "reason": "Keep the immutable R-0017 rework decision while recognizing later R-0018 closure."
+    },
+    "tests/test_v0_3_s07_rework_candidate_record.py": {
+      "historical_sha256": "1904fe990f1741e089721d4ddfe6cff564d2131bf6b4e7ea51472665140584c3",
+      "current_sha256": "8f330714c0c2e79a3b7025872b57291e14ed90b6a5daa81bd9a13e10191be55d",
+      "reason": "Keep the qualified V-30 runtime record historical while recognizing R-0018 verification."
+    }
+  },
+  "validation": {
+    "environment_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "environment_clone_path": "/tmp/pssolver-r0018-import-final-venv/venv",
+    "environment_clone_method": "cp -al",
+    "environment_clone_pruned": true,
+    "python": "3.12.13",
+    "torch": "2.6.0+cu126",
+    "numpy": "2.4.3",
+    "pytest": "9.1.1",
+    "cuda_visible_devices": "",
+    "sys_path": [
+      "",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python312.zip",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12",
+      "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12/lib-dynload",
+      "/tmp/pssolver-r0018-import-final-venv/venv/lib/python3.12/site-packages"
+    ],
+    "focused_pytest": {
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "4e6ffca2fcbae6dc7168a0fa66f841054dd349c7042fd3dbc6e9585a88748ca1",
+      "junit_sha256": "d7f835b3fc1ec36cf65bc257280468854afa3547bd889085b10f05af05aee708"
+    },
+    "git_diff_check": "PASS",
+    "archive": "/home/fansenwei/pssolver_v0_3_s07_r0018_import_20261022_v1",
+    "archive_checksums_entries": 9,
+    "archive_checksums_sha256": "6f305f9ec7ca72684676f228bf475b428a508c9c2f4d77ce8710d66624021b89",
+    "archive_complete_present": true
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "thresholds_relaxed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_import_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  },
+  "next_plan_step": "S-08",
+  "next_request": "R-0019"
+}
