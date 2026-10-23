@@ -123,6 +123,17 @@
   who can rewrite both metadata and its digest is outside the v0.3 threat
   model.
 
+### Historical checkpoint coverage
+
+- Bind real rc1 and rc2 Channel functional checkpoints whose periodic axis is
+  odd.  The rc2 checkpoint is an exact legacy upgrade and continues byte for
+  byte; rc1 predates the B2 incompressibility repair and is therefore an
+  explicit state-only migration even when no periodic Nyquist plane exists.
+- Bind a real rc1 static-lifting Plane checkpoint and verify that its pre-B8
+  lifting dynamics are rejected before tensor payloads are opened.  The
+  fixture closes the historical rejection-coverage gap without reopening the
+  public lifting runtime.
+
 ## 0.2.2 — 2026-10-20
 
 Maintenance release over `v0.2.1` containing only the verified V-17

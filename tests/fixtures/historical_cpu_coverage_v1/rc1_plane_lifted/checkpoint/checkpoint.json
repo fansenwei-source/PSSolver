@@ -1,0 +1,241 @@
+{
+  "backend_restart": {
+    "kind": "legacy_plane_stateless",
+    "state_keys": []
+  },
+  "completed_steps": 1,
+  "evolved_components": [
+    "Qxx",
+    "Qxy",
+    "Qxz",
+    "Qyy",
+    "Qyz"
+  ],
+  "format_version": 1,
+  "integrator": {
+    "refresh_count": 0,
+    "spectral_refresh_interval": 3,
+    "step_count": 1
+  },
+  "lifting_restart": {
+    "convention": {
+      "S_definition": "S=lambda_max(Q)",
+      "definition": "Q=(3S/2)(nn-I/3)",
+      "id": "de_gennes_S_lambda_max_v1",
+      "uniaxial_eigenvalues": [
+        "S",
+        "-S/2",
+        "-S/2"
+      ],
+      "version": 1
+    },
+    "lifting": {
+      "affine_laplacian_explicit": true,
+      "allocation_lifetime": "construction_owned_static",
+      "component_order": [
+        "Qxx",
+        "Qxy",
+        "Qxz",
+        "Qyy",
+        "Qyz"
+      ],
+      "device": "cpu",
+      "dtype": "torch.float64",
+      "materialized_lift_sha256": "ba8aa1002229f1de5e2a5a4d4015deb88ed2da4c738f61edbfb0d19c90779a67",
+      "plan_sha256": "54f3add143a4213a56eff3d6a3e0ddd5e79ca5d918d2616b36bca533ffe9093f",
+      "shape": [
+        7,
+        7,
+        6
+      ]
+    },
+    "linear_corrections": [
+      {
+        "component": "Qxx",
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "operator_name": "beris_edwards_linear_lift",
+        "shape": [
+          7,
+          7,
+          6
+        ],
+        "source_lift_sha256": "1a748445b5135a1c8928aa647a0626d29e840c3ad4ad7872106795039a72b7a7",
+        "values_sha256": "ac08afeedc8f8f47ee8be4cc7c20ce22bb2dfb7a4d6e3ea9d1c28345ba83472c"
+      },
+      {
+        "component": "Qxy",
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "operator_name": "beris_edwards_linear_lift",
+        "shape": [
+          7,
+          7,
+          6
+        ],
+        "source_lift_sha256": "ac08afeedc8f8f47ee8be4cc7c20ce22bb2dfb7a4d6e3ea9d1c28345ba83472c",
+        "values_sha256": "551d19a08477c0725a3a675e645f51bcd8c482f98e16a420dbd6c064bf96c953"
+      },
+      {
+        "component": "Qxz",
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "operator_name": "beris_edwards_linear_lift",
+        "shape": [
+          7,
+          7,
+          6
+        ],
+        "source_lift_sha256": "ac08afeedc8f8f47ee8be4cc7c20ce22bb2dfb7a4d6e3ea9d1c28345ba83472c",
+        "values_sha256": "551d19a08477c0725a3a675e645f51bcd8c482f98e16a420dbd6c064bf96c953"
+      },
+      {
+        "component": "Qyy",
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "operator_name": "beris_edwards_linear_lift",
+        "shape": [
+          7,
+          7,
+          6
+        ],
+        "source_lift_sha256": "1a748445b5135a1c8928aa647a0626d29e840c3ad4ad7872106795039a72b7a7",
+        "values_sha256": "ac08afeedc8f8f47ee8be4cc7c20ce22bb2dfb7a4d6e3ea9d1c28345ba83472c"
+      },
+      {
+        "component": "Qyz",
+        "device": "cpu",
+        "dtype": "torch.float64",
+        "operator_name": "beris_edwards_linear_lift",
+        "shape": [
+          7,
+          7,
+          6
+        ],
+        "source_lift_sha256": "ac08afeedc8f8f47ee8be4cc7c20ce22bb2dfb7a4d6e3ea9d1c28345ba83472c",
+        "values_sha256": "551d19a08477c0725a3a675e645f51bcd8c482f98e16a420dbd6c064bf96c953"
+      }
+    ],
+    "physical_reconstruction": "homogeneous_remainder_plus_lift",
+    "representation": "homogeneous_remainder",
+    "schema_version": 1
+  },
+  "runtime_identity_sha256": "5d841d61158d3935bab4de86bcaeb8d6e0458ff680f19cd4a128a253d657b633",
+  "runtime_path": "legacy_production",
+  "tensor_files": {
+    "evolved_spatial": {
+      "Qxx": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qxx.npy",
+        "sha256": "980e46034d252ac3d902a07de51a17e0ad9a74e593f68376a42f5fb5150cfb21",
+        "shape": [
+          1,
+          7,
+          7,
+          6
+        ]
+      },
+      "Qxy": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qxy.npy",
+        "sha256": "1a28e6c76d74de3687dafb84b89d4040f04d84ec1fab649c5dd8ee938c4d70a4",
+        "shape": [
+          1,
+          7,
+          7,
+          6
+        ]
+      },
+      "Qxz": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qxz.npy",
+        "sha256": "efd6a63b7a6a17c425d844b6b46638722391bb05220bf0716b630d88b603be78",
+        "shape": [
+          1,
+          7,
+          7,
+          6
+        ]
+      },
+      "Qyy": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qyy.npy",
+        "sha256": "2f07c766d4361db78fc70d4636910096a2fa8cc46a077710b5331f15c8dd5a2e",
+        "shape": [
+          1,
+          7,
+          7,
+          6
+        ]
+      },
+      "Qyz": {
+        "dtype": "float64",
+        "file": "evolved_spatial__Qyz.npy",
+        "sha256": "72bb3cd0e98e9d9c628560b7e90934d63bb8e2a416692b7545360706998e0109",
+        "shape": [
+          1,
+          7,
+          7,
+          6
+        ]
+      }
+    },
+    "evolved_spectral": {
+      "Qxx": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qxx.npy",
+        "sha256": "d8129219a67559ae7b8de69ef4c2e6965221bc36cb9b5cf5ef4b434e25572591",
+        "shape": [
+          1,
+          7,
+          4,
+          6
+        ]
+      },
+      "Qxy": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qxy.npy",
+        "sha256": "073006e2b1c5560e74d530fde2ac6640cbee316f456753b4d26ec05fbdbf5bdd",
+        "shape": [
+          1,
+          7,
+          4,
+          6
+        ]
+      },
+      "Qxz": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qxz.npy",
+        "sha256": "dc516ea6b587ee0c5395567d8fe9846064b6a45f4dde33a9f8c934c521a432d3",
+        "shape": [
+          1,
+          7,
+          4,
+          6
+        ]
+      },
+      "Qyy": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qyy.npy",
+        "sha256": "26ce2c2fcf9b7f6779a0d5b057f86ed35f0f3da3f203cd66e4fbe08bd0451607",
+        "shape": [
+          1,
+          7,
+          4,
+          6
+        ]
+      },
+      "Qyz": {
+        "dtype": "complex128",
+        "file": "evolved_spectral__Qyz.npy",
+        "sha256": "f1d65df17a3f6027d39407bb39912e4cc5c8250528b4d61d112df16cf7268141",
+        "shape": [
+          1,
+          7,
+          4,
+          6
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "completed_steps": 1,
+  "format_kind": "channel_activity_functional_checkpoint",
+  "format_version": 1,
+  "functional_bridge": {
+    "api_version": "1.0",
+    "format_version": 1,
+    "functional_runtime_identity_sha256": "d0bd91c051c0f72b2f108e55804518c101930faa213bd95463e7fd6c66fbd25c",
+    "pressure_warm_start": "absent_functional_zero_start",
+    "production_runtime_identity_sha256": "c64cca2372ff35190f4dd2bf16d0c041d3c0e076b595683f1de079ce46996342",
+    "runtime_kind": "channel_activity_batch_one",
+    "state_layout": {
+      "batch_size": 1,
+      "components": [
+        {
+          "batch_axis": 1,
+          "component_names": [
+            "Qxx",
+            "Qxy",
+            "Qxz",
+            "Qyy",
+            "Qyz"
+          ],
+          "device": "cpu",
+          "dtype": "float64",
+          "layout": "component_batch_xyz",
+          "meaning": "physical five-component symmetric-traceless Channel Q state at the current timestep",
+          "name": "q_physical",
+          "shape": [
+            5,
+            1,
+            7,
+            6,
+            6
+          ]
+        },
+        {
+          "batch_axis": 1,
+          "component_names": [
+            "Qxx",
+            "Qxy",
+            "Qxz",
+            "Qyy",
+            "Qyz"
+          ],
+          "device": "cpu",
+          "dtype": "complex128",
+          "layout": "component_batch_periodic_x_neumann_y_neumann_z",
+          "meaning": "full-complex native Channel Q spectrum retained as persistent projected-Euler state",
+          "name": "q_spectral",
+          "shape": [
+            5,
+            1,
+            7,
+            6,
+            6
+          ]
+        }
+      ],
+      "container": "flat_tuple",
+      "layout_version": 1
+    },
+    "state_layout_sha256": "b0fdcd7ddf26cf073dba3b752d63c5b4c6074d0a848165622a7d7fcf1234f7dc"
+  },
+  "tensor_files": {
+    "q_physical": {
+      "dtype": "float64",
+      "file": "state__q_physical.npy",
+      "sha256": "15c2bb84de1e2238d1165866631648e372ca54935bbce82511453c8359a7e1a6",
+      "shape": [
+        5,
+        1,
+        7,
+        6,
+        6
+      ]
+    },
+    "q_spectral": {
+      "dtype": "complex128",
+      "file": "state__q_spectral.npy",
+      "sha256": "438dfdb3ef6f4559aee273704e0b9d3cffc749d5fb07115a6a07f9c90e9f7b89",
+      "shape": [
+        5,
+        1,
+        7,
+        6,
+        6
+      ]
+    }
+  }
+}

@@ -110,6 +110,34 @@ def _integrity_status(metadata: Mapping[str, object]) -> str:
     )
 
 
+def _legacy_migration_disposition(
+    generation: SourceReleaseGeneration,
+    periodic_size: int,
+) -> tuple[bool, str]:
+    """Classify released Channel functional dynamics without guessing.
+
+    rc1 predates the B2 incompressibility repair, so its Q state is never an
+    exact continuation point for the current runtime.  rc1 and rc2 also
+    predate the rc3 pressure-transpose Nyquist repair when the periodic axis
+    is even.  An odd rc2 axis is the sole pre-rc3 exact-upgrade case.
+    """
+
+    if generation is SourceReleaseGeneration.RC1:
+        if periodic_size % 2 == 0:
+            return (
+                True,
+                "rc1_pre_b2_incompressibility_and_pre_rc3_"
+                "pressure_transpose_nyquist",
+            )
+        return True, "rc1_pre_b2_incompressibility_dynamics"
+    if (
+        generation is SourceReleaseGeneration.RC2
+        and periodic_size % 2 == 0
+    ):
+        return True, "pre_rc3_pressure_transpose_nyquist"
+    return False, "proven_inapplicable_or_already_repaired"
+
+
 def _sha256(path: Path) -> str:
     return checkpoint_file_sha256(
         path,
@@ -461,10 +489,9 @@ class ChannelActivityCheckpointBridge:
         # The derivative applicability decision is made from the target's
         # already-validated state contract, before opening either payload.
         periodic_size = self._state_spec.components[0].shape[-3]
-        state_only = (
-            generation
-            in {SourceReleaseGeneration.RC1, SourceReleaseGeneration.RC2}
-            and periodic_size % 2 == 0
+        state_only, dynamics_change = _legacy_migration_disposition(
+            generation,
+            periodic_size,
         )
         values = tuple(
             self._load_tensor(
@@ -489,11 +516,7 @@ class ChannelActivityCheckpointBridge:
             state,
             completed_steps=completed,
             migration_provenance={
-                "derivative_dynamics_change": (
-                    "pre_rc3_pressure_transpose_nyquist"
-                    if state_only
-                    else "proven_inapplicable_or_already_repaired"
-                ),
+                "derivative_dynamics_change": dynamics_change,
                 "migration_kind": (
                     "state_only_migration"
                     if state_only
@@ -538,17 +561,12 @@ class ChannelActivityCheckpointBridge:
                 operation="channel_checkpoint_import",
             ) from exc
         periodic_size = self._state_spec.components[0].shape[-3]
-        state_only = (
-            generation
-            in {SourceReleaseGeneration.RC1, SourceReleaseGeneration.RC2}
-            and periodic_size % 2 == 0
+        state_only, dynamics_change = _legacy_migration_disposition(
+            generation,
+            periodic_size,
         )
         expected = {
-            "derivative_dynamics_change": (
-                "pre_rc3_pressure_transpose_nyquist"
-                if state_only
-                else "proven_inapplicable_or_already_repaired"
-            ),
+            "derivative_dynamics_change": dynamics_change,
             "migration_kind": (
                 "state_only_migration"
                 if state_only

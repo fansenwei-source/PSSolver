@@ -1,0 +1,20 @@
+{
+  "case": "plane_rc1_static_lifting",
+  "checkpoint_tree_sha256": "459c148b2616078725862dc28eb4aa9e3771aec9fb65016aef41f2b199b64925",
+  "completed_steps": 1,
+  "lifting_restart_present": true,
+  "runtime_identity_sha256": "5d841d61158d3935bab4de86bcaeb8d6e0458ff680f19cd4a128a253d657b633",
+  "shape": [
+    7,
+    7,
+    6
+  ],
+  "source": {
+    "commit": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1",
+    "numpy": "2.4.3",
+    "pssolver_import": "/home/fansenwei/Desktop/Develop/PSSolver_release_v0_2_0_rc1/pssolver/__init__.py",
+    "pssolver_version": "0.2.0rc1",
+    "python": "3.12.13 | packaged by conda-forge | (main, Mar  5 2026, 16:50:00) [GCC 14.3.0]",
+    "torch": "2.6.0+cu124"
+  }
+}

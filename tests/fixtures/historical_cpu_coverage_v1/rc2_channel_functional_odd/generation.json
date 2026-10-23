@@ -1,0 +1,23 @@
+{
+  "case": "channel_functional_odd_periodic_axis",
+  "checkpoint_tree_sha256": "d7d163637b82649916bd74b03aba8157f598e511e37f5a0f4e352d30ac97927c",
+  "completed_steps": 1,
+  "continuation_oracle_step": 2,
+  "continuation_tree_sha256": "ac2a64ea183f18bda6674ebafb1501c6cbc8dbfbe6ea05549dc6df6076acc6de",
+  "periodic_axis": 0,
+  "periodic_axis_size": 7,
+  "shape": [
+    7,
+    6,
+    6
+  ],
+  "snapshot_sha256": "3450e4f3f5d2fcdc54cb8c9d381aba20f8e26452b8417fac078c0d9cfa4483ef",
+  "source": {
+    "commit": "2bbe21e88fec318787fc31dc0a82bca5a171c024",
+    "numpy": "2.4.3",
+    "pssolver_import": "/home/fansenwei/Desktop/Develop/PSSolver_v0_2_0_rc2_release/pssolver/__init__.py",
+    "pssolver_version": "0.2.0rc2",
+    "python": "3.12.13 | packaged by conda-forge | (main, Mar  5 2026, 16:50:00) [GCC 14.3.0]",
+    "torch": "2.6.0+cu124"
+  }
+}

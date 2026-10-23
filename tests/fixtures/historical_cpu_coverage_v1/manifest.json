@@ -1,0 +1,55 @@
+{
+  "fixture_schema_version": 1,
+  "purpose": "S-08 authentic released CPU checkpoint coverage for A2-25 and N5",
+  "generator": {
+    "path": "tests/fixtures/historical_cpu_coverage_v1/generate_fixtures.py",
+    "sha256": "344ea581a5bfb3ddcecc5b9b4cb81c3eac4327d3466c4017023d5c14271c9f87"
+  },
+  "generation_environment": {
+    "baseline_venv": "/home/fansenwei/pssolver_v0_2_2_release_package_2a1d0f7_20261020_v1/venv_isolated",
+    "clone_method": "cp -al hard-link clone",
+    "python": "3.12.13",
+    "torch": "2.6.0+cu124",
+    "numpy": "2.4.3"
+  },
+  "released_sources": {
+    "rc1": {
+      "commit": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1",
+      "version": "0.2.0rc1",
+      "git_archive_sha256": "5c2bf8805297d1863a523c0fcea3c3682d1625ebd4e0140fdb1ac215f11c937c"
+    },
+    "rc2": {
+      "commit": "2bbe21e88fec318787fc31dc0a82bca5a171c024",
+      "version": "0.2.0rc2",
+      "git_archive_sha256": "989bf6d30dff098009a04ae7d5b7f64500969572a7b3b54c5a824bef07230046"
+    }
+  },
+  "cases": {
+    "rc1_channel_functional_odd": {
+      "issue": "A2-25",
+      "source_release": "rc1",
+      "file_count": 7,
+      "tree_sha256": "7f185608df2c01522b88769b2a9be170153e525e4863c8d92455dd673a4dea71",
+      "checkpoint_tree_sha256": "c33930ac57cd078eb165e9a3a2458762f516c14e9027ae0a7b6d4fe14a147c65",
+      "continuation_tree_sha256": "2ba384ec3a0065e4c33955af114ab6e765f4b6ec6d0921fa3a12afa942a09b00",
+      "expected_disposition": "state_only_migration_pre_b2_incompressibility"
+    },
+    "rc2_channel_functional_odd": {
+      "issue": "A2-25",
+      "source_release": "rc2",
+      "file_count": 8,
+      "tree_sha256": "a7e3b729a543d5a17e1130ab2088f8a1827f48cfdfbf1f88faa21adc5312811c",
+      "checkpoint_tree_sha256": "d7d163637b82649916bd74b03aba8157f598e511e37f5a0f4e352d30ac97927c",
+      "continuation_tree_sha256": "ac2a64ea183f18bda6674ebafb1501c6cbc8dbfbe6ea05549dc6df6076acc6de",
+      "expected_disposition": "exact_legacy_upgrade"
+    },
+    "rc1_plane_lifted": {
+      "issue": "N5",
+      "source_release": "rc1",
+      "file_count": 12,
+      "tree_sha256": "b0e54b2f983674da0057dd2f6bb39193519d6a6b01a417a6c32af9ba9ac66275",
+      "checkpoint_tree_sha256": "459c148b2616078725862dc28eb4aa9e3771aec9fb65016aef41f2b199b64925",
+      "expected_disposition": "reject_rc1_pre_b8_lifting_dynamics_before_tensor_load"
+    }
+  }
+}
