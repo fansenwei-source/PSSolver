@@ -8,8 +8,8 @@
 #SBATCH --mem=64G
 #SBATCH --time=03:00:00
 #SBATCH --no-requeue
-#SBATCH --output=/home/fansenwei/pssolver_v0_3_s09_h100_2573dec_48dd4d3_20261023_v1/logs/slurm_%j.out
-#SBATCH --error=/home/fansenwei/pssolver_v0_3_s09_h100_2573dec_48dd4d3_20261023_v1/logs/slurm_%j.err
+#SBATCH --output=/home/fansenwei/pssolver_v0_3_s09_h100_dc12dc6_48dd4d3_20261023_v1/logs/slurm_%j.out
+#SBATCH --error=/home/fansenwei/pssolver_v0_3_s09_h100_dc12dc6_48dd4d3_20261023_v1/logs/slurm_%j.err
 
 set -euo pipefail
 
