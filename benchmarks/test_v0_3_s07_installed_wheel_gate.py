@@ -12,6 +12,7 @@ import importlib
 import importlib.metadata
 import json
 from pathlib import Path
+import sysconfig
 
 import numpy as np
 import pytest
@@ -263,7 +264,9 @@ def _module_names() -> list[str]:
 
 
 def test_every_shipped_python_module_imports() -> None:
-    assert Path(pssolver.__file__).resolve().is_relative_to(Path(torch.__file__).parents[1])
+    assert Path(pssolver.__file__).resolve().is_relative_to(
+        Path(sysconfig.get_paths()["purelib"]).resolve()
+    )
     allowed_optional_failure = []
     for name in _module_names():
         try:
@@ -309,7 +312,15 @@ def test_installed_wheel_builds_both_channel_runtimes(runtime_path, builder) -> 
         sigma_z=spec.smoothing_sigma[2],
         dtype=torch.float32,
     )
-    request = ChannelRuntimeBuildRequest(spec, {}, initial_q, torch.device("cpu"))
+    request = ChannelRuntimeBuildRequest(
+        spec,
+        {
+            "configuration": spec.identity_metadata(),
+            "runtime_selection": spec.runtime_selection_metadata(),
+        },
+        initial_q,
+        torch.device("cpu"),
+    )
     assert builder(request) is not None
 
 
