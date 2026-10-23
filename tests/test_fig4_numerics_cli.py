@@ -92,7 +92,11 @@ class Fig4NumericsCliTests(unittest.TestCase):
         metadata = json.loads(result.stdout)
         model = metadata["model"]
         parameters = model["parameters"]
-        self.assertEqual(metadata["script"], "Plane_beris_edwards_stokes.py")
+        self.assertEqual(
+            metadata["application"],
+            "plane_complete_stress_beris_edwards",
+        )
+        self.assertNotIn("script", metadata)
         runtime = metadata["runtime_environment"]
         self.assertEqual(runtime["device_type"], "cpu")
         self.assertEqual(runtime["resolved_device"], "cpu")

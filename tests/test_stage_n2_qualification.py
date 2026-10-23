@@ -6,9 +6,9 @@ import json
 
 import pytest
 
-from pssolver.experimental import (
+from pssolver.experimental.stage_n2_plan import build_stage_n2_h100_plan
+from pssolver.experimental.stage_n2_qualification import (
     analyze_stage_n2_qualification,
-    build_stage_n2_h100_plan,
 )
 
 

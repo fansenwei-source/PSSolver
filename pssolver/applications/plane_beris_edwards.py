@@ -194,6 +194,7 @@ def _run_plane_beris_edwards_owned(
     application_simulation: SimulationSpec | None = None,
     tf32_metadata: dict[str, object],
     components: PlaneBerisEdwardsRunComponents,
+    public_compilation_metadata: dict[str, object] | None = None,
 ) -> PlaneWorkflowResult | None:
     """Execute one validated Plane run through the supported application API.
 
@@ -360,8 +361,8 @@ def _run_plane_beris_edwards_owned(
     }
 
     metadata = {
-        "schema_version": 1,
-        "script": "Plane_beris_edwards_stokes.py",
+        "schema_version": 2,
+        "application": "plane_complete_stress_beris_edwards",
         "configuration": run_spec.identity_metadata(),
         "runtime_selection": run_spec.runtime_selection_metadata(),
         "normalization": device_normalization,
@@ -662,6 +663,8 @@ def _run_plane_beris_edwards_owned(
             ),
         ],
     }
+    if public_compilation_metadata is not None:
+        metadata["public_compilation"] = dict(public_compilation_metadata)
     if lifting_plan is not None:
         metadata["static_lifting"] = {
             "plan": lifting_plan.to_metadata(),
@@ -929,6 +932,7 @@ def run_plane_beris_edwards(
     progress: Iterable[int] | None = None,
     emit_metadata: bool = False,
     application_simulation: SimulationSpec | None = None,
+    public_compilation_metadata: dict[str, object] | None = None,
 ) -> PlaneWorkflowResult | None:
     """Execute one Plane run inside a dynamically scoped TF32 policy."""
 
@@ -961,6 +965,7 @@ def run_plane_beris_edwards(
                 device=device,
             ),
             components=components,
+            public_compilation_metadata=public_compilation_metadata,
         )
     with scoped_tf32_execution(
         execution.tf32,
@@ -974,6 +979,7 @@ def run_plane_beris_edwards(
             application_simulation=application_simulation,
             tf32_metadata=tf32_metadata,
             components=components,
+            public_compilation_metadata=public_compilation_metadata,
         )
 
 

@@ -487,10 +487,19 @@ def _select_plan_run(
 def _metadata_contract(
     metadata: dict[str, Any],
 ) -> tuple[int, tuple[int, int, int], np.dtype[Any], int, int, int]:
-    if metadata.get("schema_version") != 1:
-        raise ValueError("metadata.schema_version must equal 1")
-    if metadata.get("script") != "Plane_beris_edwards_stokes.py":
-        raise ValueError("metadata.script is not Plane_beris_edwards_stokes.py")
+    if metadata.get("schema_version") not in {1, 2}:
+        raise ValueError("metadata.schema_version must equal 1 or 2")
+    application = metadata.get("application")
+    legacy_script = metadata.get("script")
+    if application is None:
+        if legacy_script != "Plane_beris_edwards_stokes.py":
+            raise ValueError(
+                "metadata does not identify the Plane Beris-Edwards application"
+            )
+    elif application != "plane_complete_stress_beris_edwards":
+        raise ValueError(
+            "metadata.application is not plane_complete_stress_beris_edwards"
+        )
     if metadata.get("status") != "complete":
         raise ValueError("metadata.status must equal 'complete'")
 

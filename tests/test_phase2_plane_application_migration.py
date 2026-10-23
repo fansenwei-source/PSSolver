@@ -176,7 +176,9 @@ def test_dry_run_emits_metadata_before_allocation_and_creates_no_output(
         spec,
         emit_metadata=True,
     ) is None
-    assert '"script": "Plane_beris_edwards_stokes.py"' in capsys.readouterr().out
+    emitted = capsys.readouterr().out
+    assert '"application": "plane_complete_stress_beris_edwards"' in emitted
+    assert '"script"' not in emitted
     assert not spec.output_dir.exists()
 
 

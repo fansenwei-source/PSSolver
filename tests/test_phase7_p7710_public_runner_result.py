@@ -107,8 +107,17 @@ def test_run_simulation_dispatches_channel_once_and_returns_public_result(
     observed = {}
     fake = ModuleType("pssolver.applications.channel_active_nematics")
 
-    def run_channel_active_nematics(run_spec, *, progress):
-        observed.update(run_spec=run_spec, progress=progress)
+    def run_channel_active_nematics(
+        run_spec,
+        *,
+        progress,
+        public_compilation_metadata,
+    ):
+        observed.update(
+            run_spec=run_spec,
+            progress=progress,
+            public_compilation_metadata=public_compilation_metadata,
+        )
         return _application_result()
 
     fake.run_channel_active_nematics = run_channel_active_nematics
@@ -140,6 +149,22 @@ def test_run_simulation_dispatches_channel_once_and_returns_public_result(
     assert observed == {
         "run_spec": compiled.application_request,
         "progress": progress,
+        "public_compilation_metadata": {
+            "schema_version": 1,
+            "compilation_identity_sha256": (
+                compiled.compilation_identity_sha256
+            ),
+            "source_simulation_sha256": compiled.source.canonical_sha256(),
+            "application": compiled.application,
+            "application_simulation_sha256": (
+                compiled.application_specification.canonical_sha256()
+            ),
+            "application_request_sha256": (
+                compiled.application_request.canonical_sha256()
+            ),
+            "normalization": dict(compiled.normalization),
+            "fallback_allowed": False,
+        },
     }
     metadata = result.to_metadata()
     assert metadata["final_observation"]["q_shape"] == [16, 8, 8, 5]
@@ -156,8 +181,13 @@ def test_run_simulation_compiles_public_declaration_before_dispatch(
     fake = ModuleType("pssolver.applications.channel_active_nematics")
     calls = []
 
-    def run_channel_active_nematics(run_spec, *, progress):
-        calls.append((run_spec, progress))
+    def run_channel_active_nematics(
+        run_spec,
+        *,
+        progress,
+        public_compilation_metadata,
+    ):
+        calls.append((run_spec, progress, public_compilation_metadata))
         return _application_result()
 
     fake.run_channel_active_nematics = run_channel_active_nematics
@@ -173,6 +203,7 @@ def test_run_simulation_compiles_public_declaration_before_dispatch(
     assert len(calls) == 1
     assert calls[0][0].runtime_path.value == "compiled_channel_v2"
     assert calls[0][1] is None
+    assert calls[0][2]["normalization"]
 
 
 def test_public_runner_rejects_incomplete_application_result(
@@ -181,7 +212,7 @@ def test_public_runner_rejects_incomplete_application_result(
 ):
     compiled = compile_simulation(_channel_simulation(tmp_path))
     fake = ModuleType("pssolver.applications.channel_active_nematics")
-    fake.run_channel_active_nematics = lambda run_spec, *, progress: object()
+    fake.run_channel_active_nematics = lambda run_spec, **_kwargs: object()
     monkeypatch.setitem(
         sys.modules,
         "pssolver.applications.channel_active_nematics",

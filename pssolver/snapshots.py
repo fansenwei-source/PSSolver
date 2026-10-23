@@ -63,7 +63,7 @@ class SimulationSnapshot:
 
 
 _CONTINUATION_SIGNATURE_FIELDS = (
-    "script",
+    "application",
     "solver",
     "model",
     "boundary_conditions",
@@ -71,14 +71,31 @@ _CONTINUATION_SIGNATURE_FIELDS = (
 )
 
 
+_LEGACY_PLANE_SCRIPT_APPLICATIONS = {
+    "Plane_beris_edwards_stokes.py": "plane_complete_stress_beris_edwards",
+}
+
+
+def _run_application_identity(metadata: Mapping[str, Any]) -> str:
+    """Normalize the v0.2 script label into the v0.3 application identity."""
+
+    application = metadata.get("application")
+    if isinstance(application, str) and application:
+        return application
+    script = metadata.get("script")
+    if isinstance(script, str) and script:
+        return _LEGACY_PLANE_SCRIPT_APPLICATIONS.get(script, script)
+    raise ValueError(
+        "resume metadata is missing a nonempty application identity"
+    )
+
+
 def _continuation_signature(metadata: Mapping[str, Any]) -> dict[str, Any]:
     """Extract trajectory-defining metadata for a metadata-compatible resume."""
     if not isinstance(metadata, Mapping):
         raise ValueError("run metadata must be a mapping")
 
-    script = metadata.get("script")
-    if not isinstance(script, str) or not script:
-        raise ValueError("resume metadata is missing a nonempty script")
+    application = _run_application_identity(metadata)
 
     solver_metadata = metadata.get("solver")
     if not isinstance(solver_metadata, Mapping):
@@ -99,7 +116,7 @@ def _continuation_signature(metadata: Mapping[str, Any]) -> dict[str, Any]:
         model_signature[name] = model_metadata[name]
 
     signature = {
-        "script": script,
+        "application": application,
         "solver": solver_signature,
         "model": model_signature,
     }
@@ -124,7 +141,7 @@ def validate_resume_compatibility(
 
     Final step count, save cadence, diagnostics, status, and initial-condition
     provenance may differ. Shape, lengths, dt, model parameters, boundary
-    conditions, numerical mode, and script identity may not. Use a branch when
+    conditions, numerical mode, and application identity may not. Use a branch when
     any of those trajectory-defining values changes.
     """
     try:
@@ -150,7 +167,7 @@ def validate_resume_compatibility(
         raise ValueError(
             "trajectory-defining metadata differs for "
             f"{differing}; use mode='branch' when parameters, dt, boundary "
-            "conditions, numerical mode, or script changed."
+            "conditions, numerical mode, or application changed."
         )
 
 
@@ -192,9 +209,9 @@ def validate_active_nematic_q_source(
     if not isinstance(metadata, dict):
         raise ValueError(f"{metadata_path} must contain a JSON object.")
 
-    if metadata.get("schema_version") != 1:
+    if metadata.get("schema_version") not in {1, 2}:
         raise ValueError(
-            f"{metadata_path} must declare schema_version=1."
+            f"{metadata_path} must declare supported schema_version 1 or 2."
         )
 
     model = metadata.get("model")

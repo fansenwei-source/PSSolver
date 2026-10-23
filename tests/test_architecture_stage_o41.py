@@ -10,9 +10,9 @@ import sys
 import pytest
 
 from pssolver.diagnostics import cuda_memory_snapshot, cuda_memory_window
-from pssolver.experimental import (
+from pssolver.experimental.stage_o41_plan import build_stage_o41_h100_plan
+from pssolver.experimental.stage_o41_qualification import (
     analyze_stage_o41_qualification,
-    build_stage_o41_h100_plan,
 )
 
 

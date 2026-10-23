@@ -59,7 +59,8 @@ from .shadow_run import ExperimentalPlaneShadowRun
 from .stokes import PlaneStokesSolverOptions
 
 
-_PRODUCTION_SCRIPT = "Plane_beris_edwards_stokes.py"
+_PRODUCTION_APPLICATION = "plane_complete_stress_beris_edwards"
+_LEGACY_PRODUCTION_SCRIPT = "Plane_beris_edwards_stokes.py"
 _PRODUCTION_MODEL = "beris_edwards_complete_nematic_stress_stokes"
 
 
@@ -95,8 +96,12 @@ def _require_common_shadow_production_metadata(
     """Validate the production contract shared by shadow qualifications."""
 
     try:
-        if metadata["script"] != _PRODUCTION_SCRIPT:
-            raise ValueError("production script identity is incompatible")
+        application = metadata.get("application")
+        if application is None:
+            if metadata.get("script") != _LEGACY_PRODUCTION_SCRIPT:
+                raise ValueError("production application identity is incompatible")
+        elif application != _PRODUCTION_APPLICATION:
+            raise ValueError("production application identity is incompatible")
         if metadata["status"] != "complete":
             raise ValueError("production reference metadata is not complete")
         model = metadata["model"]

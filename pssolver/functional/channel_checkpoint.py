@@ -19,6 +19,9 @@ import numpy as np
 import torch
 
 from pssolver.io.checkpoint import (
+    CHECKPOINT_INTEGRITY_SEALED_SHA256,
+    CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
+    METADATA_SHA256_KEY,
     CheckpointDurabilityError,
     CheckpointExistsError,
     checkpoint_file_sha256,
@@ -97,6 +100,14 @@ def _canonical_sha256(value: object) -> str:
         sort_keys=True,
     ).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def _integrity_status(metadata: Mapping[str, object]) -> str:
+    return (
+        CHECKPOINT_INTEGRITY_SEALED_SHA256
+        if METADATA_SHA256_KEY in metadata
+        else CHECKPOINT_INTEGRITY_UNSEALED_LEGACY
+    )
 
 
 def _sha256(path: Path) -> str:
@@ -829,6 +840,7 @@ class ChannelActivityCheckpointBridge:
             state,
             completed,
             source,
+            _integrity_status(metadata),
             FunctionalCheckpointCompatibility(
                 source_api_version=(
                     migration.get("source_api_version")
@@ -1041,6 +1053,7 @@ class ChannelActivityCheckpointBridge:
                     else _SOURCE_PRODUCTION_V1
                 )
             ),
+            _integrity_status(metadata),
             FunctionalCheckpointCompatibility(
                 source_api_version=None,
                 target_api_version=FUNCTIONAL_API_VERSION,
@@ -1062,6 +1075,7 @@ class ChannelActivityCheckpointBridge:
         state: FunctionalState,
         completed_steps: int,
         source_format: str,
+        integrity_status: str,
         compatibility: FunctionalCheckpointCompatibility,
     ) -> FunctionalCheckpointState:
         self._state_spec.validate(state)
@@ -1071,6 +1085,7 @@ class ChannelActivityCheckpointBridge:
             state=state,
             completed_steps=completed_steps,
             source_format=source_format,
+            integrity_status=integrity_status,
             compatibility=compatibility,
         )
 

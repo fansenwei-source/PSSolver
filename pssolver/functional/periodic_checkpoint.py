@@ -14,6 +14,9 @@ from pssolver.configuration.periodic_beris_edwards import (
 )
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.io.checkpoint import (
+    CHECKPOINT_INTEGRITY_SEALED_SHA256,
+    CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
+    METADATA_SHA256_KEY,
     CheckpointNotFoundError,
     read_checkpoint_json,
 )
@@ -62,6 +65,14 @@ _LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_V2 = 2
 _SOURCE_PRODUCTION_V1 = "periodic_production_v1"
 _SOURCE_PRODUCTION_V2 = "periodic_production_v2"
 _SOURCE_PRODUCTION_V3 = "periodic_production_v3"
+
+
+def _integrity_status(metadata: Mapping[str, object] | None) -> str:
+    return (
+        CHECKPOINT_INTEGRITY_SEALED_SHA256
+        if isinstance(metadata, Mapping) and METADATA_SHA256_KEY in metadata
+        else CHECKPOINT_INTEGRITY_UNSEALED_LEGACY
+    )
 _SOURCE_FUNCTIONAL_V1 = "periodic_functional_bridge_v1"
 _SOURCE_FUNCTIONAL_V2 = "periodic_functional_bridge_v2"
 _SOURCE_FUNCTIONAL_V3 = "periodic_functional_bridge_v3"
@@ -713,6 +724,7 @@ class PeriodicActivityCheckpointBridge:
             state=state,
             completed_steps=checkpoint.completed_steps,
             source_format=source_format,
+            integrity_status=_integrity_status(raw_metadata),
             compatibility=compatibility,
         )
 

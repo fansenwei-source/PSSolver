@@ -16,6 +16,10 @@ import torch
 
 from pssolver.configuration.device_tokens import validate_execution_device
 from pssolver.configuration.simulation import SimulationSpec
+from pssolver.io.checkpoint import (
+    CHECKPOINT_INTEGRITY_SEALED_SHA256,
+    CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
+)
 
 from .errors import FunctionalTypeError, FunctionalValueError
 from .versioning import (
@@ -505,6 +509,7 @@ class FunctionalCheckpointState:
     completed_steps: int
     source_format: str
     compatibility: FunctionalCheckpointCompatibility | None = None
+    integrity_status: str = CHECKPOINT_INTEGRITY_UNSEALED_LEGACY
 
     def __post_init__(self) -> None:
         if not isinstance(self.state, tuple) or any(
@@ -518,6 +523,13 @@ class FunctionalCheckpointState:
         ):
             raise FunctionalValueError("completed_steps must be non-negative")
         _nonempty(self.source_format, "source_format")
+        if self.integrity_status not in {
+            CHECKPOINT_INTEGRITY_SEALED_SHA256,
+            CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
+        }:
+            raise FunctionalValueError(
+                "integrity_status must be sealed_sha256 or unsealed_legacy"
+            )
         if self.compatibility is not None and not isinstance(
             self.compatibility,
             FunctionalCheckpointCompatibility,

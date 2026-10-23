@@ -79,10 +79,11 @@ def _metadata(
     run_spec: ChannelActiveNematicRunSpec,
     device: torch.device,
     tf32_metadata: dict[str, object],
+    public_compilation_metadata: dict[str, object] | None = None,
 ) -> dict[str, object]:
     components = run_spec.components
     material = components.material
-    return {
+    metadata = {
         "schema_version": 1,
         "application": "pssolver.applications.channel_active_nematics",
         "script": "Channel.py compatibility contract",
@@ -121,6 +122,9 @@ def _metadata(
         "numerics": components.numerics.to_metadata(),
         "initial_condition": components.initial_condition.to_metadata(),
     }
+    if public_compilation_metadata is not None:
+        metadata["public_compilation"] = dict(public_compilation_metadata)
+    return metadata
 
 
 def _run_channel_active_nematics_owned(
@@ -128,6 +132,7 @@ def _run_channel_active_nematics_owned(
     *,
     progress: Iterable[int] | None = None,
     tf32_metadata: dict[str, object],
+    public_compilation_metadata: dict[str, object] | None = None,
 ) -> ChannelWorkflowResult:
     """Run one validated Channel request through the package-owned workflow."""
 
@@ -141,7 +146,12 @@ def _run_channel_active_nematics_owned(
         raise ValueError("P7.5 production output requires batch_size=1")
     device = _resolve_device(run_spec.device)
     initial_q = _initial_q(run_spec)
-    metadata = _metadata(run_spec, device, tf32_metadata)
+    metadata = _metadata(
+        run_spec,
+        device,
+        tf32_metadata,
+        public_compilation_metadata,
+    )
     request = ChannelRuntimeBuildRequest(run_spec, metadata, initial_q, device)
     construction = PackageRuntimeConstructionInput(
         plan=plan_package_runtime_construction(
@@ -172,6 +182,7 @@ def run_channel_active_nematics(
     run_spec: ChannelActiveNematicRunSpec,
     *,
     progress: Iterable[int] | None = None,
+    public_compilation_metadata: dict[str, object] | None = None,
 ) -> ChannelWorkflowResult:
     """Run Channel with its frozen-off TF32 policy scoped to execution."""
 
@@ -187,6 +198,7 @@ def run_channel_active_nematics(
             run_spec,
             progress=progress,
             tf32_metadata=tf32_metadata,
+            public_compilation_metadata=public_compilation_metadata,
         )
 
 

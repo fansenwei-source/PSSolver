@@ -118,7 +118,8 @@ def test_main_accepts_explicit_argv_and_returns_status(tmp_path, capsys):
 
     assert status == 0
     metadata = json.loads(captured.out)
-    assert metadata["script"] == "Plane_beris_edwards_stokes.py"
+    assert metadata["application"] == "plane_complete_stress_beris_edwards"
+    assert "script" not in metadata
     assert metadata["configuration"]["authority"].endswith(
         "PlaneBerisEdwardsRunSpec"
     )
@@ -150,7 +151,9 @@ def test_callable_api_and_compatibility_cli_preserve_one_step_trajectory(tmp_pat
 
     api_metadata = json.loads((api_output / "metadata.json").read_text())
     cli_metadata = json.loads((cli_output / "metadata.json").read_text())
-    assert api_metadata["script"] == cli_metadata["script"]
+    assert api_metadata["application"] == cli_metadata["application"]
+    assert "script" not in api_metadata
+    assert "script" not in cli_metadata
     assert (
         api_metadata["runtime_selection"]
         == cli_metadata["runtime_selection"]

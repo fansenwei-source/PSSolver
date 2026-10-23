@@ -12,7 +12,7 @@ import pssolver
 from pssolver.configuration import (
     PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES,
 )
-from pssolver.experimental import (
+from pssolver.experimental.stage_o_migration import (
     MigrationDisposition,
     PlaneRuntimePath,
     StageOMigrationDesign,

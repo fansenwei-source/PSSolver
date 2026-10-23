@@ -339,11 +339,18 @@ def test_run_simulation_dispatches_once_to_existing_application(monkeypatch):
     observed = {}
     fake = ModuleType("pssolver.applications.plane_beris_edwards")
 
-    def run_plane_beris_edwards(run_spec, *, progress, emit_metadata):
+    def run_plane_beris_edwards(
+        run_spec,
+        *,
+        progress,
+        emit_metadata,
+        public_compilation_metadata,
+    ):
         observed.update(
             run_spec=run_spec,
             progress=progress,
             emit_metadata=emit_metadata,
+            public_compilation_metadata=public_compilation_metadata,
         )
         return SimpleNamespace(
             start_step=0,
@@ -381,6 +388,22 @@ def test_run_simulation_dispatches_once_to_existing_application(monkeypatch):
         "run_spec": compiled.application_request,
         "progress": progress,
         "emit_metadata": True,
+        "public_compilation_metadata": {
+            "schema_version": 1,
+            "compilation_identity_sha256": (
+                compiled.compilation_identity_sha256
+            ),
+            "source_simulation_sha256": compiled.source.canonical_sha256(),
+            "application": compiled.application,
+            "application_simulation_sha256": (
+                compiled.application_specification.canonical_sha256()
+            ),
+            "application_request_sha256": (
+                compiled.application_request.canonical_sha256()
+            ),
+            "normalization": dict(compiled.normalization),
+            "fallback_allowed": False,
+        },
     }
 
 
@@ -395,10 +418,14 @@ def test_run_simulation_represents_plane_dry_run_without_false_outputs(
         *,
         progress,
         emit_metadata,
+        public_compilation_metadata,
     ):
         assert run_spec is compiled.application_request
         assert progress is None
         assert emit_metadata is False
+        assert public_compilation_metadata["normalization"] == dict(
+            compiled.normalization
+        )
         return None
 
     fake.run_plane_beris_edwards = run_plane_beris_edwards
@@ -415,6 +442,27 @@ def test_run_simulation_represents_plane_dry_run_without_false_outputs(
     assert result.output_directory is None
     assert result.final_observation is None
     assert result.saved_steps == ()
+
+
+def test_public_plane_dry_run_emits_complete_compilation_provenance(capsys):
+    source = _simulation()
+    compiled = compile_simulation(source)
+
+    result = run_simulation(compiled, emit_metadata=True)
+
+    assert result.status.value == "dry_run"
+    metadata = json.loads(capsys.readouterr().out)
+    public = metadata["public_compilation"]
+    assert public["compilation_identity_sha256"] == (
+        compiled.compilation_identity_sha256
+    )
+    assert public["source_simulation_sha256"] == source.canonical_sha256()
+    assert public["application"] == compiled.application
+    assert public["normalization"] == dict(compiled.normalization)
+    assert public["fallback_allowed"] is False
+    assert metadata["schema_version"] == 2
+    assert metadata["application"] == "plane_complete_stress_beris_edwards"
+    assert "script" not in metadata
 
 
 def test_public_runner_has_no_top_level_application_or_runtime_import():

@@ -41,6 +41,12 @@ package, and H100 gates, but remains an internal pilot.  General public Robin
 execution, nonhomogeneous Neumann lifting, dynamic boundary data, trainable
 boundary data, and arbitrary-field lifting are not claimed.
 
+The pilot's lower and upper Robin residuals form an independent wall-law gate,
+not an independent correctness gate for the full operator. Since the lift and
+homogeneous basis satisfy the wall laws by construction, qualification also
+requires a separate interior Helmholtz apply/solve, evolution, and restart
+gate.
+
 ## Stable functional boundary
 
 `pssolver.functional.api` protocol 1.0 is the supported independent-consumer

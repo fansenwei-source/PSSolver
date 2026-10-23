@@ -275,12 +275,12 @@ class SnapshotTests(unittest.TestCase):
 
         metadata.pop("schema_version")
         metadata_path.write_text(json.dumps(metadata))
-        with self.assertRaisesRegex(ValueError, "schema_version=1"):
+        with self.assertRaisesRegex(ValueError, "schema_version 1 or 2"):
             load_snapshot(self.snapshot_directory, 7)
 
-        metadata["schema_version"] = 2
+        metadata["schema_version"] = 3
         metadata_path.write_text(json.dumps(metadata))
-        with self.assertRaisesRegex(ValueError, "schema_version=1"):
+        with self.assertRaisesRegex(ValueError, "schema_version 1 or 2"):
             load_snapshot(self.snapshot_directory, 7)
 
     def test_load_snapshot_rejects_wrong_model_and_convention(self):

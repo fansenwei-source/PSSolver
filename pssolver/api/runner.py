@@ -176,6 +176,7 @@ def _run_plane_application(
         compiled.application_request,
         progress=progress,
         emit_metadata=emit_metadata,
+        public_compilation_metadata=_public_compilation_run_metadata(compiled),
         **kwargs,
     )
     return result, compiled.application_request.output_dir
@@ -195,6 +196,7 @@ def _run_channel_application(
     result = run_channel_active_nematics(
         compiled.application_request,
         progress=progress,
+        public_compilation_metadata=_public_compilation_run_metadata(compiled),
     )
     request = compiled.application_request
     output = (
@@ -218,6 +220,7 @@ def _run_periodic_application(
         compiled.application_request,
         progress=progress,
         emit_metadata=emit_metadata,
+        public_compilation_metadata=_public_compilation_run_metadata(compiled),
     )
     output = None if result is None else compiled.application_request.output_dir
     return result, output
@@ -236,6 +239,7 @@ def _run_channel_beris_edwards_application(
         compiled.application_request,
         progress=progress,
         emit_metadata=emit_metadata,
+        public_compilation_metadata=_public_compilation_run_metadata(compiled),
     )
     output = None if result is None else compiled.application_request.output_dir
     return result, output
@@ -290,6 +294,30 @@ _PUBLIC_APPLICATION_RUNNERS = MappingProxyType(
 def _runtime_path(compiled: CompiledSimulation) -> str:
     value = compiled.application_request.runtime_path
     return value.value if hasattr(value, "value") else str(value)
+
+
+def _public_compilation_run_metadata(
+    compiled: CompiledSimulation,
+) -> dict[str, object]:
+    """Return the compilation fields that belong in run provenance."""
+
+    compiled.validate_integrity()
+    return {
+        "schema_version": 1,
+        "compilation_identity_sha256": (
+            compiled.compilation_identity_sha256
+        ),
+        "source_simulation_sha256": compiled.source.canonical_sha256(),
+        "application": compiled.application,
+        "application_simulation_sha256": (
+            compiled.application_specification.canonical_sha256()
+        ),
+        "application_request_sha256": (
+            compiled.application_request.canonical_sha256()
+        ),
+        "normalization": dict(compiled.normalization),
+        "fallback_allowed": False,
+    }
 
 
 def _result_provenance(compiled: CompiledSimulation) -> dict[str, object]:

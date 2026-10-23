@@ -10,9 +10,11 @@ from __future__ import annotations
 from collections.abc import Mapping
 from contextlib import contextmanager
 import ctypes
+from dataclasses import dataclass
 import errno
 import hashlib
 import json
+import logging
 import os
 from pathlib import Path
 import platform
@@ -32,6 +34,7 @@ FUNCTIONAL_CHECKPOINT_PROVENANCE_FILE = "functional_checkpoint.json"
 _FUNCTIONAL_PROVENANCE_KIND = "pssolver_functional_checkpoint"
 _FUNCTIONAL_PROVENANCE_VERSION = 1
 _LINUX_NFS_SUPER_MAGIC = 0x6969
+_LOGGER = logging.getLogger(__name__)
 _RENAME_NOREPLACE_FILESYSTEM_ERRNOS = frozenset(
     {
         errno.EINVAL,
@@ -133,6 +136,46 @@ class _LinuxStatFs(ctypes.Structure):
         ("f_flags", ctypes.c_long),
         ("f_spare", ctypes.c_long * 4),
     ]
+
+
+@dataclass(frozen=True, slots=True)
+class CheckpointPublicationDiagnostic:
+    """Non-identity evidence describing one successful publication path."""
+
+    operation: str
+    target: str
+    backend: str
+    durability_confirmed: bool = True
+
+    def to_metadata(self) -> dict[str, object]:
+        return {
+            "schema_version": 1,
+            "operation": self.operation,
+            "target": self.target,
+            "backend": self.backend,
+            "durability_confirmed": self.durability_confirmed,
+            "checkpoint_identity_member": False,
+        }
+
+
+def _emit_publication_diagnostic(
+    target: Path,
+    *,
+    operation: str,
+    backend: str,
+) -> None:
+    diagnostic = CheckpointPublicationDiagnostic(
+        operation=operation,
+        target=str(target),
+        backend=backend,
+    )
+    metadata = diagnostic.to_metadata()
+    _LOGGER.info(
+        "checkpoint publication completed via %s: %s",
+        backend,
+        target,
+        extra={"checkpoint_publication": metadata},
+    )
 
 
 def _io_error(
@@ -959,7 +1002,7 @@ def _publish_checkpoint_directory(
     target: Path,
     *,
     operation: str,
-) -> None:
+) -> str:
     try:
         _rename_directory_no_replace(source, target, operation=operation)
     except _RenameNoReplaceUnsupported:
@@ -968,6 +1011,8 @@ def _publish_checkpoint_directory(
             target,
             operation=operation,
         )
+        return "owned_placeholder_nfs_compatibility"
+    return "rename_noreplace"
 
 
 def _rename_directory_no_replace(
@@ -1119,7 +1164,7 @@ def checkpoint_directory_transaction(
             requested_parent_identity,
             operation=operation,
         )
-        _publish_checkpoint_directory(
+        publication_backend = _publish_checkpoint_directory(
             staging,
             stable_target,
             operation=operation,
@@ -1156,6 +1201,11 @@ def checkpoint_directory_transaction(
                     "published_path": str(stable_target),
                 },
             ) from exc
+        _emit_publication_diagnostic(
+            target,
+            operation=operation,
+            backend=publication_backend,
+        )
     except BaseException as exc:
         if (
             not isinstance(exc, _AmbiguousCheckpointPublication)

@@ -247,3 +247,16 @@ compatibility but have `executable=false` in the live catalog and are rejected
 before runtime construction with
 `unsupported_lifted_wall_molecular_field`.  `nematics3d` remains an optional
 analysis dependency and is not modified or bundled.
+
+The internal Robin pilot reports its lower and upper wall-law residuals as an
+independent boundary-contract gate. Because the lift and homogeneous basis
+satisfy those laws by construction, that gate does not replace the separate
+interior Helmholtz apply/solve, evolution, and restart gates. Robin remains
+unavailable through the public `Simulation` capability catalog.
+
+Checkpoint publication emits a structured diagnostic identifying the atomic
+`rename_noreplace` fast path or the owned-placeholder NFS compatibility path.
+That operational observation is not checkpoint or provider identity.
+Functional checkpoint imports expose `integrity_status`; consumers that
+require sealed provenance must require `sealed_sha256` rather than accepting
+the explicitly supported `unsealed_legacy` compatibility path.

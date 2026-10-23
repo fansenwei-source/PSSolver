@@ -136,6 +136,13 @@ PROJECTED_STATE = "projected_q0"
 FINAL_STATE = "final"
 LEGACY_BENCHMARK_SCRIPT = "Plane_fig4_benchmark.py"
 BERIS_EDWARDS_BENCHMARK_SCRIPT = "Plane_beris_edwards_stokes.py"
+BERIS_EDWARDS_APPLICATION = "plane_complete_stress_beris_edwards"
+
+
+def _benchmark_script_identity(metadata: Mapping[str, Any]) -> object:
+    if metadata.get("application") == BERIS_EDWARDS_APPLICATION:
+        return BERIS_EDWARDS_BENCHMARK_SCRIPT
+    return metadata.get("script")
 BERIS_EDWARDS_MODEL_VARIANT = "beris_edwards_complete_nematic_stress_stokes"
 REQUIRED_BERIS_EDWARDS_IMPLEMENTATION_FILES = frozenset(
     PLANE_BERIS_EDWARDS_IMPLEMENTATION_SOURCE_FILES
@@ -502,7 +509,7 @@ def _metadata_close(value: Any, expected: float) -> bool:
 
 def _resolved_core_physics(metadata: Mapping[str, Any]) -> dict[str, float]:
     """Resolve raw physical coefficients without conflating K and L1/gamma."""
-    script = metadata.get("script")
+    script = _benchmark_script_identity(metadata)
     ldg = metadata.get("ldg_coefficients")
     if not isinstance(ldg, Mapping):
         raise ValueError("metadata is missing ldg_coefficients")
@@ -652,7 +659,7 @@ def validate_task_contract(runs: Sequence[CoreRun], mode: str) -> None:
             )
         except ValueError as error:
             errors.append(str(error))
-        script = metadata.get("script")
+        script = _benchmark_script_identity(metadata)
         if tuple(run.lengths) != (100.0, 100.0, 20.0):
             errors.append(f"{prefix}: physical box must be 100x100x20")
         if not math.isclose(run.artifact.final_time, 1.0, rel_tol=0.0, abs_tol=2.0e-14):

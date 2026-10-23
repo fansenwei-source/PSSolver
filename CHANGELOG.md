@@ -2,6 +2,34 @@
 
 ## 0.3.0.dev0 — unreleased
 
+### Packaging, provenance, and documented capability boundaries
+
+- Exclude the obsolete in-package `pssolver.control` namespace and repository-
+  only `pssolver.experimental.stage_*`/H100 qualification helpers from built
+  distributions. The separately versioned PSSolver-Control project remains
+  the supported consumer package; core experimental runtime components needed
+  by PSSolver itself remain packaged.
+- Persist the public compilation identity and complete normalization record in
+  application run metadata. New Plane metadata uses the stable
+  `plane_complete_stress_beris_edwards` application identity instead of the
+  historical `Plane_beris_edwards_stokes.py` compatibility-script label;
+  readers continue to normalize the old label for resume compatibility.
+- Report each successful checkpoint publication backend as a structured
+  diagnostic (`rename_noreplace` or `owned_placeholder_nfs_compatibility`)
+  after durability is confirmed. This observation is deliberately excluded
+  from checkpoint and provider identity. Functional checkpoint imports also
+  expose `integrity_status` so continuation policy can distinguish sealed
+  carriers from explicitly supported unsealed legacy formats.
+- Keep the Robin wall-law residual as an independently reported boundary
+  gate, while requiring separate apply/solve, evolution, and restart evidence
+  for the interior Helmholtz operator. Robin execution remains unavailable
+  through the public `Simulation` API.
+- A sealed checkpoint is protected only when it is consumed as a sealed
+  format. Readers that require integrity evidence must require
+  `integrity_status == "sealed_sha256"`; accepting an explicitly supported
+  legacy carrier means accepting `unsealed_legacy`. The digest remains an
+  integrity checksum rather than authentication.
+
 ### Channel pressure robustness
 
 - Keep the public tolerance-mode floor at eight real-dtype epsilons, but

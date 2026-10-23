@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 import pssolver
-from pssolver.experimental import (
+from pssolver.experimental.stage_o_closure import (
     StageOClosureDecision,
     StageOPathDisposition,
     build_stage_o_closure_decision,

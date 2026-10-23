@@ -10,9 +10,9 @@ import sys
 import numpy as np
 import pytest
 
-from pssolver.experimental import (
+from pssolver.experimental.stage_o4_plan import build_stage_o4_h100_plan
+from pssolver.experimental.stage_o4_qualification import (
     analyze_stage_o4_qualification,
-    build_stage_o4_h100_plan,
     compare_plane_stage_o4_workflows,
 )
 

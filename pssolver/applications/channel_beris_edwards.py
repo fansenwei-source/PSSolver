@@ -168,6 +168,7 @@ def _run_channel_beris_edwards_owned(
     progress: Iterable[int] | None = None,
     emit_metadata: bool = False,
     tf32_metadata: dict[str, object],
+    public_compilation_metadata: dict[str, object] | None = None,
 ):
     """Execute one frozen P8.3 application with no runtime fallback."""
 
@@ -192,6 +193,8 @@ def _run_channel_beris_edwards_owned(
         "pressure_gauge": "zero_mean",
         "velocity_nullspace": "absent_due_to_two_bounded_no_slip_axes",
     }
+    if public_compilation_metadata is not None:
+        metadata["public_compilation"] = dict(public_compilation_metadata)
     if emit_metadata:
         print(json.dumps(metadata, indent=2, sort_keys=True))
     if run_spec.dry_run:
@@ -266,6 +269,7 @@ def run_channel_beris_edwards(
     *,
     progress: Iterable[int] | None = None,
     emit_metadata: bool = False,
+    public_compilation_metadata: dict[str, object] | None = None,
 ):
     """Execute one Channel run inside a dynamically scoped TF32 policy."""
 
@@ -284,6 +288,7 @@ def run_channel_beris_edwards(
                 real_dtype=real_dtype,
                 device=spec.execution.options["device"],
             ),
+            public_compilation_metadata=public_compilation_metadata,
         )
     device = resolve_execution_device(spec.execution.options["device"])
     with scoped_tf32_execution(
@@ -296,6 +301,7 @@ def run_channel_beris_edwards(
             progress=progress,
             emit_metadata=emit_metadata,
             tf32_metadata=tf32_metadata,
+            public_compilation_metadata=public_compilation_metadata,
         )
 
 

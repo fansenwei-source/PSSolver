@@ -64,6 +64,16 @@ SUPPORTED_RUN_IDENTITIES = {
         "beris_edwards_complete_nematic_stress_stokes"
     ),
 }
+PLANE_BERIS_EDWARDS_APPLICATION = "plane_complete_stress_beris_edwards"
+
+
+def _benchmark_script_identity(metadata: Mapping[str, Any]) -> object:
+    """Return the historical analyzer identity for v1 and v2 metadata."""
+
+    application = metadata.get("application")
+    if application == PLANE_BERIS_EDWARDS_APPLICATION:
+        return "Plane_beris_edwards_stokes.py"
+    return metadata.get("script")
 DEALIAS_RULE_FRACTIONS = {
     "none": None,
     "two_thirds": 2.0 / 3.0,
@@ -161,7 +171,7 @@ def validate_run_identity(
     legacy and complete-stress models remain non-comparable because ``script``
     and ``model.variant`` stay in the strict comparison signature.
     """
-    script = metadata.get("script")
+    script = _benchmark_script_identity(metadata)
     if script not in SUPPORTED_RUN_IDENTITIES:
         supported = ", ".join(sorted(SUPPORTED_RUN_IDENTITIES))
         raise ValueError(
@@ -283,8 +293,13 @@ def load_run(directory: str | Path) -> RunArtifact:
     if not metadata_path.is_file():
         raise FileNotFoundError(f"Missing benchmark metadata: {metadata_path}")
     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-    if not isinstance(metadata, dict) or metadata.get("schema_version") != 1:
-        raise ValueError(f"{metadata_path} must contain schema_version=1 metadata")
+    if (
+        not isinstance(metadata, dict)
+        or metadata.get("schema_version") not in {1, 2}
+    ):
+        raise ValueError(
+            f"{metadata_path} must contain supported schema_version 1 or 2 metadata"
+        )
     if metadata.get("status") != "complete":
         raise ValueError(f"{metadata_path} must declare status='complete'")
     validate_run_identity(metadata, path=metadata_path)
