@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-23",
+  "stage": "S-08",
+  "classification": "REWORK_REQUIRED_R0020_RECORD_CORRECTIONS_APPLIED",
+  "git_identity": {
+    "reviewed_candidate": "36d59da633d165ffeb225bd95383fc437d357f37",
+    "result_commit": "cf8ac6f456bdd223c77ac2088b62f7bb09f6d97b",
+    "branch": "fix/v0.3-s08-cpu-coverage",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "roadmap": {
+    "decision": "D-0010",
+    "plan_step": "S-08",
+    "kept_claimed_fixed": ["A2-25", "N5", "V-31", "V-32"],
+    "registered": ["V-33", "V-34"],
+    "next_request": "R-0021",
+    "independent_review_pending": true
+  },
+  "review_result": {
+    "id": "R-0020",
+    "classification": "REWORK_REQUIRED",
+    "result_sha256": "9b047c42c3132680b0b52af99024e911dd93af36dfefc76ce4a720641c48e1df",
+    "archive": "/home/fansenwei/pssolver_s08rw_claude_review_20261023_v1",
+    "archive_checksums_entries": 37,
+    "archive_checksums_sha256": "1cc40cde8df8dbd060696f21dfe308709de41cd002b2a3c860940f9f0625229b",
+    "complete_present": true,
+    "numerical_behavior_passed": true,
+    "records_only_rework": true
+  },
+  "commit_identity_corrections": {
+    "0684e61145270b9527267007c9043ff423257b52": "0684e61b30f8a29fc4fe822df8c68602d7b8bf6e",
+    "18f255fa771663149198c495033f6c42b893bc98": "18f255fef74721c3d6c62725d32af096e4bdb2c7",
+    "1b6321af74cd2c234a14cc345f11c0a102d60c0e": "1b6321a9d0e43a49077974f13a7a5989cae20ea0",
+    "1cbb8160d440963371826198e368476ed04aa5c0": "1cbb8167dc9fbbaa57cad5b118766618d8ebb3bb",
+    "573daafd2a3e33b5c218a3ad337c11a5f685e56e": "573daaf1e2d4ad7e54c6c084a6fbb04126fd4966",
+    "658869456d7622de9dad607fa3d2572e41b58ac3": "658869456d762c917ca4409b091539c3733df2fb",
+    "7dbdd395b7665782c17d8cf2cb1362a693f06882": "7dbdd399225fd861c70ec5f5bde425b5ddefb14d",
+    "a192edb3ca245d25b662718731b9088885381c47": "a192edba32747e00c86c2f7dbf7df48399ff8cf2",
+    "b5464f19d38f04259b951265a8222f37d16dd07f": "b5464f1ba9667ee50587e9f814ac95184dd9f6fb",
+    "c0858b64a5d014f77db68f36e3a26620bf77803d": "c0858b698d8058b41a48a6304530f4aa98380cc9",
+    "e2343d16a146cfc9fc362e3fb556d589480c404c": "e2343d19301de146ca632a1a12f7c9659e598f73",
+    "f4a5aa332f973e38778792342cbaba67dc86c88b": "f4a5aa344a98eec40ff8e3be2194cd7ba6098ccb"
+  },
+  "forward_successor_corrections": {
+    "1b6321af74cd2c234a14cc345f11c0a102d60c0e": {
+      "record": "notes/PSSolver_v0_3_0_s03_successor_14_s06_fixed_work_rework.json",
+      "field": "git_identity.implementation_parent",
+      "authoritative_commit": "1b6321a9d0e43a49077974f13a7a5989cae20ea0"
+    },
+    "e2343d16a146cfc9fc362e3fb556d589480c404c": {
+      "record": "notes/PSSolver_v0_3_0_s03_successor_25_s08_rework_candidate.json",
+      "fields": ["git_identity.implementation_commit", "issue_state.fixed_in.V-31", "issue_state.fixed_in.V-32"],
+      "authoritative_commit": "e2343d19301de146ca632a1a12f7c9659e598f73"
+    }
+  },
+  "historical_record_errata": [
+    {"wrong_hash": "0684e61145270b9527267007c9043ff423257b52", "real_commit": "0684e61b30f8a29fc4fe822df8c68602d7b8bf6e", "files": ["notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"]},
+    {"wrong_hash": "18f255fa771663149198c495033f6c42b893bc98", "real_commit": "18f255fef74721c3d6c62725d32af096e4bdb2c7", "files": ["notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"]},
+    {"wrong_hash": "1cbb8160d440963371826198e368476ed04aa5c0", "real_commit": "1cbb8167dc9fbbaa57cad5b118766618d8ebb3bb", "files": ["notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"]},
+    {"wrong_hash": "573daafd2a3e33b5c218a3ad337c11a5f685e56e", "real_commit": "573daaf1e2d4ad7e54c6c084a6fbb04126fd4966", "files": ["notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"]},
+    {"wrong_hash": "658869456d7622de9dad607fa3d2572e41b58ac3", "real_commit": "658869456d762c917ca4409b091539c3733df2fb", "files": ["notes/pssolver_v0_2_0_rc5.json"]},
+    {"wrong_hash": "7dbdd395b7665782c17d8cf2cb1362a693f06882", "real_commit": "7dbdd399225fd861c70ec5f5bde425b5ddefb14d", "files": ["notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json", "tests/test_rc4_lifting_capability_contract.py"]},
+    {"wrong_hash": "a192edb3ca245d25b662718731b9088885381c47", "real_commit": "a192edba32747e00c86c2f7dbf7df48399ff8cf2", "files": ["notes/architecture_v0_2/phase_2_run_spec_decomposition.md", "notes/architecture_v0_2/phase_2_run_spec_inventory.json"]},
+    {"wrong_hash": "b5464f19d38f04259b951265a8222f37d16dd07f", "real_commit": "b5464f1ba9667ee50587e9f814ac95184dd9f6fb", "files": ["notes/architecture_v0_2/phase_2_run_spec_decomposition.md", "notes/architecture_v0_2/phase_2_run_spec_inventory.json"]},
+    {"wrong_hash": "c0858b64a5d014f77db68f36e3a26620bf77803d", "real_commit": "c0858b698d8058b41a48a6304530f4aa98380cc9", "files": ["notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"]},
+    {"wrong_hash": "f4a5aa332f973e38778792342cbaba67dc86c88b", "real_commit": "f4a5aa344a98eec40ff8e3be2194cd7ba6098ccb", "files": ["notes/PSSolver_v0_2_0rc4_rc426_h100_closure.json"]}
+  ],
+  "external_git_identity_fields": {
+    "result_commit": {
+      "repository": "PSSolver_sync",
+      "reason": "The result commit records the independent review object, not a PSSolver source commit."
+    }
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {"historical_sha256": "3d5f9a5da486198c6d2484dbcf30f7d8afa7b8ed84dd812228bb87697b44c2c0", "current_sha256": "14e7a9e868fb1fb6becb16b368ecb63828814f6d97cbfc097f76e4ed6688c75e", "reason": "Correct the two S-08 fix identities and register V-33 and V-34 without advancing any claim to verified."},
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "39d6f13c12c8dc810a062f527534bf0c9dbee99d524dfcccc6f55de1e0503f10", "current_sha256": "d2ac1b757455019335ad161bc10b4ed3f1b8746a081ee511489b778076e50ed9", "reason": "Document the authoritative S-08 commit and the R-0020 records-only findings."},
+    "tests/test_v0_2_x_open_issues.py": {"historical_sha256": "9980188db9566b96d8b99b32b1ba93c6a9f79f7f6696a42b8cbc00dd993e7cc3", "current_sha256": "db377fd7544c4a9c8fc8292a9ff32c660f7a7f1167b04cc38684ed43d8b1bcfa", "reason": "Bind the corrected commit and both newly registered findings."},
+    "tests/test_v0_3_s08_r0019_import.py": {"historical_sha256": "6967bbe4621cebe6e224afd3b564e8e0e4f0a8e9ee17ae816834dd449a7072da", "current_sha256": "ef4fbf75a6cf781c6de728478269fc005b3bbf04cea4573dfe0c44213fc4a4d2", "reason": "Correct the authoritative S-08 rework identity without rewriting the R-0019 import record."},
+    "tests/test_v0_2_2_v17_r0002_import.py": {"historical_sha256": "7c85a2cad962f383b875ea3205339134cc0122112ea94f0fbee7108e6680b4e6", "current_sha256": "44a6e6806c91abd48ef3ab2643e1274c9116f156e3e922186d06b21992784076", "reason": "Recognize two registered record-integrity findings while preserving R-0002."},
+    "tests/test_v0_3_0_roadmap.py": {"historical_sha256": "530e9da063075e2ae34ff7120a7f2a57d63e1d77f5a9054143f89d59e528eb5f", "current_sha256": "130eafa9fb74ba4947bd12f151c2abdee06c30d534992ce41a20f44d688890de", "reason": "Account for V-33 at S-10 and V-34 at S-08 without rewriting the confirmed roadmap."},
+    "tests/test_v0_3_s07_r0018_import.py": {"historical_sha256": "6c48bbeab582a61ba7b282135d3309e66680d4fab2cbe6483a64657cdf6677e1", "current_sha256": "d2cfa2fcd3176d2ed965c8fc6ce376159a37c59f663c51b1fe65b99f4eda67f9", "reason": "Preserve R-0018 while recognizing the current registered count."},
+    "tests/test_v0_3_s08_historical_cpu_coverage_record.py": {"historical_sha256": "ccfa601dc4d0ab0634175c039b8059dbe4d8358602e82e3d33fa2e3346152382", "current_sha256": "6b91fa1b98db961b92db39cbf5ca0800359157028acb25c0c7a1e1cb9ca81b8f", "reason": "Resolve successor 25 through this forward correction rather than rewriting it."}
+  },
+  "new_sources": [
+    "notes/PSSolver_v0_3_0_s03_successor_26_s08_commit_identity_corrections.json",
+    "notes/PSSolver_v0_3_0_s03_successor_26_s08_commit_identity_corrections_zh.md",
+    "tests/test_v0_3_s08_commit_identity_corrections.py"
+  ],
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  }
+}

@@ -43,15 +43,15 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 37
-    assert len({entry["id"] for entry in entries}) == 37
+    assert len(entries) == record["issue_count"] == 39
+    assert len({entry["id"] for entry in entries}) == 39
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     counts.setdefault("registered", 0)
     counts.setdefault("claimed_fixed", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 0,
+        "registered": 2,
         "claimed_fixed": 4,
         "verified": 28,
         "deferred": 2,
@@ -367,7 +367,7 @@ def test_r0019_findings_are_registered_without_advancing_s08_claims():
         item = issues[issue_id]
         assert item["status"] == "claimed_fixed"
         assert item["fixed_in"] == (
-            "e2343d16a146cfc9fc362e3fb556d589480c404c"
+            "e2343d19301de146ca632a1a12f7c9659e598f73"
         )
         assert "verified_by" not in item
         assert item["severity"] == "low"
@@ -385,6 +385,12 @@ def test_r0019_findings_are_registered_without_advancing_s08_claims():
         and "verified_by" not in issues[issue_id]
         for issue_id in ("A2-25", "N5")
     )
+    assert issues["V-33"]["status"] == "registered"
+    assert issues["V-33"]["target_release"] == "0.3"
+    assert "S-10" in issues["V-33"]["notes"]
+    assert issues["V-34"]["status"] == "registered"
+    assert issues["V-34"]["target_release"] == "0.3"
+    assert "S-08" in issues["V-34"]["notes"]
 
 
 def test_registry_does_not_authorize_implementation_or_external_actions():

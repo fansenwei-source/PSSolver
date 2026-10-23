@@ -61,10 +61,13 @@
     与跨构建容差合同不完整；`V-32` 为旧版本误标 rc1 奇数轴迁移被拒绝时缺少专门、可操作的
     错误说明。两项均登记到 S-08，`A2-25` 与 `N5` 保持 `claimed_fixed`。
 12. `V-31` 与 `V-32` 已由返工提交
-    `e2343d16a146cfc9fc362e3fb556d589480c404c` 修复并推进为 `claimed_fixed`：fixture
+    `e2343d19301de146ca632a1a12f7c9659e598f73` 修复并推进为 `claimed_fixed`：fixture
     记录完整数值构建指纹，rc2 同构建逐位、跨构建使用 `8·eps`，rc1 差异必须至少高于舍入
     容差一千倍；旧版误标的 rc1 奇数轴 checkpoint 会收到要求从原始 rc1 checkpoint 重新执行
-    state-only migration 的专门错误。四项 S-08 claim 均等待 `R-0020` 独立复核。
+    state-only migration 的专门错误。`R-0020` 确认全部数值行为通过，但发现记录层仍需返工：
+    `V-33`（low，S-10）登记 CUDA 可见性会改变数值构建指纹、使 CPU 门禁未覆盖同构建逐位分支；
+    `V-34`（low，S-08）登记历史记录中由短哈希错误手工补全出的完整提交号。四项 S-08
+    claim 保持 `claimed_fixed`，等待记录勘误后的 `R-0021` 复核。
 
 ## Control 路径
 

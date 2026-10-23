@@ -61,7 +61,7 @@ def test_r0019_registers_findings_without_advancing_original_claims() -> None:
     assert all(
         issues[key]["status"] == "claimed_fixed"
         and issues[key]["fixed_in"]
-        == "e2343d16a146cfc9fc362e3fb556d589480c404c"
+        == "e2343d19301de146ca632a1a12f7c9659e598f73"
         and "verified_by" not in issues[key]
         for key in imported["registered"]
     )

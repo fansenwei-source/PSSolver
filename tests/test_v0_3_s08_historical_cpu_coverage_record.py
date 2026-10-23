@@ -12,6 +12,7 @@ from tests.v0_3_s03_successor import resolve_s03_successor
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_23_s08_historical_cpu_coverage.json"
 REWORK_RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_25_s08_rework_candidate.json"
+CORRECTION_RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_26_s08_commit_identity_corrections.json"
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 MANIFEST = ROOT / "tests/fixtures/historical_cpu_coverage_v1/manifest.json"
 
@@ -27,6 +28,7 @@ def _sha256(path: Path) -> str:
 def test_s08_record_binds_exact_release_sources_and_fixture_trees() -> None:
     record = _read(RECORD)
     rework = _read(REWORK_RECORD)
+    corrections = _read(CORRECTION_RECORD)["commit_identity_corrections"]
     manifest = _read(MANIFEST)
     assert record["classification"] == "PASS_V0_3_S08_LOCAL_CPU_COVERAGE_CANDIDATE"
     assert record["git_identity"]["implementation_commit"] == (
@@ -80,6 +82,7 @@ def test_s08_record_states_the_rc1_boundary_without_reopening_lifting() -> None:
 def test_s08_registry_claims_only_the_two_cpu_coverage_items() -> None:
     record = _read(RECORD)
     rework = _read(REWORK_RECORD)
+    corrections = _read(CORRECTION_RECORD)["commit_identity_corrections"]
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert record["issue_state"]["claimed_fixed"] == ["A2-25", "N5"]
     assert rework["issue_state"]["claimed_fixed"] == [
@@ -90,13 +93,14 @@ def test_s08_registry_claims_only_the_two_cpu_coverage_items() -> None:
     ]
     for issue_id in rework["issue_state"]["claimed_fixed"]:
         assert issues[issue_id]["status"] == "claimed_fixed"
-        assert issues[issue_id]["fixed_in"] == rework["issue_state"]["fixed_in"][issue_id]
+        recorded = rework["issue_state"]["fixed_in"][issue_id]
+        assert issues[issue_id]["fixed_in"] == corrections.get(recorded, recorded)
         assert "verified_by" not in issues[issue_id]
     assert issues["A3-18"]["status"] == "coverage_gap"
 
 
 def test_s08_successors_are_forward_only_and_complete() -> None:
-    for source in (RECORD, REWORK_RECORD):
+    for source in (RECORD, REWORK_RECORD, CORRECTION_RECORD):
         for relative, successor in _read(source)["historical_successor_sources"].items():
             assert resolve_s03_successor(
                 relative, successor["historical_sha256"]

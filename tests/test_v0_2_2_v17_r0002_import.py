@@ -93,7 +93,7 @@ def test_r0002_registry_updates_are_exact() -> None:
     registry = _read(REGISTRY)
     issues = _issues()
     assert record["issue_count"] == 28
-    assert registry["issue_count"] == 37
+    assert registry["issue_count"] == 39
     assert record["status_counts"] == {
         "open": 1,
         "registered": 20,
@@ -104,7 +104,7 @@ def test_r0002_registry_updates_are_exact() -> None:
     }
     assert registry["status_counts"] == {
         "open": 1,
-        "registered": 0,
+        "registered": 2,
             "claimed_fixed": 4,
         "verified": 28,
         "deferred": 2,
