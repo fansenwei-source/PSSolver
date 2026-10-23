@@ -46,7 +46,10 @@ def test_s06_minimum_floor_contract_is_exact() -> None:
 def test_s06_minimum_floor_runtime_and_registry_are_bound() -> None:
     record = _read(RECORD)
     for relative, expected in record["runtime_sources"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative,
+            expected,
+        )
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     claimed = {
         issue_id

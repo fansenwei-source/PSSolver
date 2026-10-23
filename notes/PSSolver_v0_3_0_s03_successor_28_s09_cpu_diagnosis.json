@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-23",
+  "stage": "S-09",
+  "classification": "STOPPED_S09_AFTER_OPTIMIZATION_AT_BOUND_FIXED_WORK_TIMING_SAMPLE",
+  "git_identity": {
+    "optimization_commit": "2573dec5ca4c0c3248ac3a20db8448e9ab515df4",
+    "optimization_parent": "922ceb3a8385eb66fa1e6837d56cb545b04de0a8",
+    "branch": "fix/v0.3-s09-gpu-qualification",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "roadmap": {
+    "decision": "D-0010",
+    "plan_step": "S-09",
+    "next_request": "R-0022",
+    "request_created": false,
+    "h100_preparation_allowed": false
+  },
+  "measurement_contract": {
+    "shape": [128, 20, 20],
+    "lengths": [40.0, 6.0, 6.0],
+    "families": [
+      "channel_legacy",
+      "channel_compiled_v2",
+      "channel_complete_stress",
+      "channel_functional"
+    ],
+    "modes": ["relative_tolerance", "fixed_work"],
+    "paired_trials": 5,
+    "warmup_steps": 3,
+    "measured_steps": 30,
+    "median_time_ratio_max": 1.03,
+    "paired_time_ratio_max": 1.05,
+    "peak_rss_ratio_max": 1.03,
+    "all_samples_retained": true,
+    "thresholds_relaxed": false
+  },
+  "noise_controls": {
+    "v0_2_2_self_control_runs": 2,
+    "single_ratio_above_1_05": false,
+    "first_maximum_ratio": 1.0397184640642116,
+    "second_maximum_ratio": 1.0377294550802965,
+    "six_trial_sixty_step_contract_activated": false
+  },
+  "s06_before_after": {
+    "baseline": "05f55d1a65a2939e7aaab0060bf203a821053895",
+    "candidate": "98742b6517ab43f519ff45663e6524bc96a41cd2",
+    "passed": true,
+    "tolerance_median_ratios": {
+      "channel_legacy": 1.0209049479840402,
+      "channel_compiled_v2": 1.0195056664007711,
+      "channel_complete_stress": 1.0111024328316895,
+      "channel_functional": 1.0204665279298997
+    },
+    "fixed_work_median_min": 0.9985087118557879,
+    "fixed_work_median_max": 1.0097994075376326
+  },
+  "causal_diagnosis": {
+    "variant": "98742b6_with_only_acceptance_recompute_removed",
+    "tolerance_median_ratios_with_recompute_over_without": {
+      "channel_legacy": 1.0118056860810531,
+      "channel_compiled_v2": 1.028113206606818,
+      "channel_complete_stress": 1.019307346621924,
+      "channel_functional": 1.003576616918159
+    },
+    "conclusion": "C1-05 represented-residual recomputation accounts for the stable production tolerance overhead"
+  },
+  "optimization": {
+    "kind": "reuse_verified_pressure_operator_action_for_next_production_warm_start",
+    "caller_replacement_invalidates": true,
+    "in_place_mutation_invalidates": true,
+    "power_of_two_rescaling_is_byte_identical": true,
+    "functional_zero_start_hidden_cache_added": false,
+    "fixed_work_uses_cache": false,
+    "focused_pytest_passed": 150,
+    "focused_pytest_failed": 0
+  },
+  "final_bound_matrix": {
+    "passed": false,
+    "failed_cells": 1,
+    "failed_family": "channel_legacy",
+    "failed_mode": "fixed_work",
+    "failed_trial": 2,
+    "failed_paired_ratio": 1.0822582930338371,
+    "failed_cell_median_ratio": 0.9960502674578665,
+    "optimization_path_active_for_failure": false,
+    "memory_passed": true,
+    "stop_required": true
+  },
+  "runtime_sources": {
+    "pssolver/functional/api.py": "9666a9d0e587c02f1fa9fce90270e8cf1e6672b96e644606c9f3528a45cd27aa",
+    "pssolver/functional/channel_activity_runtime.py": "a5cb43e59467172271b4db393a022da9aec07593aca6d8d6f357dbce692b9365",
+    "pssolver/functional/channel_checkpoint.py": "dcc724de734aa7be1b58c5af2fb3657296fa771af0b13455385fa39b5a397334",
+    "pssolver/functional/contracts.py": "1cd901427eb86388237b78b3ea1136e486ead6954864e9629d1aed7633435707",
+    "pssolver/functional/periodic_activity.py": "ada4c53ffb38e24843ad1a2f74c2f5dec99e59196d0b57d916faaff62b14b0cd",
+    "pssolver/functional/periodic_checkpoint.py": "cf83ae39ded7c56c858db1196745b08bb86e1ae1ab057fc4b17b5693e0206fe2",
+    "pssolver/functional/versioning.py": "2a8f52ed6cdfe92d4ebfe50739d813072c0b7aab48a22eccbe2fe7ed6d1114bf",
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": "c2c72b571e34b3232f413c969e6c618263a1b53026425d931c8e5ab633d2e1ae"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "fca15ce639257fc9ebef91176b1c94e38e387ed3aac6fa555380e05171537582",
+      "accepted_predecessor_sha256": [
+        "39e52aac1a1b5db16e51c51b71a1fc6c4b150bdf0b49b11012ec91b71b6cd16a",
+        "fca15ce639257fc9ebef91176b1c94e38e387ed3aac6fa555380e05171537582"
+      ],
+      "current_sha256": "462fbc1acc06f34f0906b4f7ba7fc699e8e65e5924be241fa9e55214f6f90f76",
+      "reason": "Document the exact production warm-action reuse and its caller-controlled invalidation boundary."
+    },
+    "README.md": {
+      "historical_sha256": "ca96d14c8cc92d68155c472a6ff7e61c7f93321816b5a2a1d2476a396f04e016",
+      "current_sha256": "b2324dc6df70117e6c4422353e20d4aae3985ffc5498b0e4e5be6de1c7b419f3",
+      "reason": "Document the public execution scope and its outside-scope caller TF32 boundary."
+    },
+    "pssolver/functional/api.py": {
+      "historical_sha256": "117f5a880306b5327ac1afcd233dfc177f751a25684227686621b59653133a52",
+      "current_sha256": "9666a9d0e587c02f1fa9fce90270e8cf1e6672b96e644606c9f3528a45cd27aa",
+      "reason": "Expose the stable execution_scope method through the public functional runtime wrapper."
+    },
+    "pssolver/functional/channel_activity_runtime.py": {
+      "historical_sha256": "0744262bf1f4aad104a0ab2cc34139f005cfda6dfc4d74f5982df4ab5e7f7cb2",
+      "current_sha256": "a5cb43e59467172271b4db393a022da9aec07593aca6d8d6f357dbce692b9365",
+      "reason": "Implement the Channel functional execution scope without changing the numerical map."
+    },
+    "pssolver/functional/channel_checkpoint.py": {
+      "historical_sha256": "86318d73ffa115f66fc3e2d811f629fac19960afb667aca9e4ec2b547385a764",
+      "current_sha256": "dcc724de734aa7be1b58c5af2fb3657296fa771af0b13455385fa39b5a397334",
+      "reason": "Read current-format API-1.0 Channel checkpoints through an explicit read-only compatibility path."
+    },
+    "pssolver/functional/contracts.py": {
+      "historical_sha256": "9a6663ed9b7db8119ad7cb4b7f748a96eba483375df916df3c4645e837816e63",
+      "current_sha256": "1cd901427eb86388237b78b3ea1136e486ead6954864e9629d1aed7633435707",
+      "reason": "Declare execution_scope on the public FunctionalRuntimeProtocol."
+    },
+    "pssolver/functional/periodic_activity.py": {
+      "historical_sha256": "b605157d72d53bbf6009e6d4e67ea4a981a47b56c1fb81d41e66486c8f96df0d",
+      "current_sha256": "ada4c53ffb38e24843ad1a2f74c2f5dec99e59196d0b57d916faaff62b14b0cd",
+      "reason": "Implement the Periodic functional execution scope without changing the numerical map."
+    },
+    "pssolver/functional/periodic_checkpoint.py": {
+      "historical_sha256": "137c555785e994fe963a1421bec412425365c30a36613ba1cfd29f329dcb0991",
+      "current_sha256": "cf83ae39ded7c56c858db1196745b08bb86e1ae1ab057fc4b17b5693e0206fe2",
+      "reason": "Read current-format API-1.0 Periodic checkpoints through an explicit read-only compatibility path."
+    },
+    "pssolver/functional/versioning.py": {
+      "historical_sha256": "cdb12d80984da344128e2307747b419408deeda5fbc404be248bef0c25d234c5",
+      "current_sha256": "2a8f52ed6cdfe92d4ebfe50739d813072c0b7aab48a22eccbe2fe7ed6d1114bf",
+      "reason": "Advance the stable functional API to 1.1 for the new public execution scope."
+    },
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "historical_sha256": "c539275fa2a4992d67aeadd0ddfac3bebd53d73bf6af478a3f93d963d54d4bf4",
+      "current_sha256": "c2c72b571e34b3232f413c969e6c618263a1b53026425d931c8e5ab633d2e1ae",
+      "reason": "Reuse the already verified A-p action for an unchanged production pressure warm start while invalidating on replacement or mutation."
+    },
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {
+      "historical_sha256": "dcf5a725ec8890d87d2a764f254669fcdd8969251f4a95541e6761c01088a515",
+      "current_sha256": "4e807b8c41f8134422bbd20cf4b7a9137ce0a78d60b005e69239843f495c1bf2",
+      "reason": "Keep the qualified S-06 runtime hash historical while resolving later S-09 successors."
+    }
+  },
+  "new_sources": [
+    "notes/PSSolver_v0_3_0_s03_successor_28_s09_cpu_diagnosis.json",
+    "notes/PSSolver_v0_3_0_s03_successor_28_s09_cpu_diagnosis_zh.md",
+    "tests/test_v0_3_s09_cpu_diagnosis_record.py",
+    "tests/test_v0_3_s09_pressure_operator_cache.py"
+  ],
+  "evidence": {
+    "archive": "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2",
+    "checksums_entries": 458,
+    "checksums_sha256": "679ba7adaceddceaebe55769b1d2bc81a7c4c47c680525465a9884ea482aa02d",
+    "complete_present": true,
+    "baseline_venv_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "runner_sha256": "ee331bcedece7cc8ff4af46cd65b5a9b2b954a7ef3bf9a1bd57f1f8cac7dffc8",
+    "self_control_first_matrix_sha256": "c4cc3dc2892b7002e707fb93067e87ed61f6dcd0811dc22e2a4b22317c640fc3",
+    "self_control_second_matrix_sha256": "1492a54abe3842d0af74c4bad70c46d894ba2f5373fd38d207167a7f74326299",
+    "s06_before_after_matrix_sha256": "b551b9d8a5ff344106996647d6fe324a41764877a2293db9a9bc34fab156b5b2",
+    "causal_matrix_sha256": "ecf2638b45ab5e4febd61d0b5c25fa2f13936aace40085704dbf078777506ea2",
+    "optimized_exploratory_matrix_sha256": "3f9bc9ab30efe70c997731dfb3adbbcb2356e1c8e79455a505187d5b4ccc8a17",
+    "optimized_bound_matrix_sha256": "f050556410905a56b53d53fa218b90a43d8cf63ef81e9c867cb6cf2636802953",
+    "focused_pytest_log_sha256": "164b87ca7c7182142fd133cc9983be1bf3141cea8bbe1b3f824b17b51d5ed8d6",
+    "focused_pytest_junit_sha256": "c19794904cf3a555004031d244aa5c61fb55320db99f5a19dc8c1b56e6363195"
+  },
+  "authorization": {
+    "push_performed": false,
+    "r0022_created": false,
+    "hpcc_executed": false,
+    "slurm_submitted": false,
+    "gpu_executed": false,
+    "h100_submitted": false,
+    "automatic_retry": false,
+    "threshold_change": false,
+    "production_default_changed": false
+  }
+}
