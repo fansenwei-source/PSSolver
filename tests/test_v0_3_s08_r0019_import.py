@@ -54,15 +54,15 @@ def test_r0019_registers_findings_without_advancing_original_claims() -> None:
         "eligible_for_push_draft": False,
         "next_request": "R-0020",
     }
-    assert all(issues[key]["status"] == "claimed_fixed" for key in imported["kept_claimed_fixed"])
-    assert all("verified_by" not in issues[key] for key in imported["kept_claimed_fixed"])
+    assert all(issues[key]["status"] == "verified" for key in imported["kept_claimed_fixed"])
+    assert all(issues[key]["verified_by"] == "R-0021" for key in imported["kept_claimed_fixed"])
     # R-0019 records the initial registered state.  The S-08 rework successor
-    # advances both findings to claimed_fixed pending R-0020 review.
+    # advances both findings through R-0021 verification.
     assert all(
-        issues[key]["status"] == "claimed_fixed"
+        issues[key]["status"] == "verified"
         and issues[key]["fixed_in"]
         == "e2343d19301de146ca632a1a12f7c9659e598f73"
-        and "verified_by" not in issues[key]
+        and issues[key]["verified_by"] == "R-0021"
         for key in imported["registered"]
     )
 

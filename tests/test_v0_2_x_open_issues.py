@@ -51,9 +51,9 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("claimed_fixed", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 2,
-        "claimed_fixed": 4,
-        "verified": 28,
+        "registered": 1,
+        "claimed_fixed": 0,
+        "verified": 33,
         "deferred": 2,
         "accepted": 1,
         "coverage_gap": 1,
@@ -252,7 +252,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == {"A2-25", "N5", "V-31", "V-32"}
+    assert claimed == set()
     s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
@@ -348,11 +348,13 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == {"A3-18"}
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == {"A2-25", "N5", "V-31", "V-32"}
+    } == set()
     for issue_id in ("A2-25", "N5"):
+        assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (
             "8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851"
         )
+        assert issues[issue_id]["verified_by"] == "R-0021"
     assert issues["B8/S2-07"]["target_release"] == "before lifting is reopened"
     assert issues["R1-R9"]["target_release"] == "after 0.3"
     assert issues["B8/S2-07"]["decision"] == "D-0007"
@@ -361,15 +363,15 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     assert issues["A3-18"]["affects_control_paths"] is True
 
 
-def test_r0019_findings_are_registered_without_advancing_s08_claims():
+def test_r0021_verifies_s08_claims_and_leaves_v33_for_s10():
     issues = _issues()
     for issue_id in ("V-31", "V-32"):
         item = issues[issue_id]
-        assert item["status"] == "claimed_fixed"
+        assert item["status"] == "verified"
         assert item["fixed_in"] == (
             "e2343d19301de146ca632a1a12f7c9659e598f73"
         )
-        assert "verified_by" not in item
+        assert item["verified_by"] == "R-0021"
         assert item["severity"] == "low"
         assert item["source_report"] == "PSSolver_sync/results/R-0019.result.json"
         assert item["target_release"] == "0.3"
@@ -380,15 +382,16 @@ def test_r0019_findings_are_registered_without_advancing_s08_claims():
     assert "fingerprint" in issues["V-31"]["notes"]
     assert "8*eps" in issues["V-31"]["notes"]
     assert "re-migrate" in issues["V-32"]["notes"]
-    assert all(
-        issues[issue_id]["status"] == "claimed_fixed"
-        and "verified_by" not in issues[issue_id]
-        for issue_id in ("A2-25", "N5")
-    )
+    assert all(issues[issue_id]["status"] == "verified" for issue_id in ("A2-25", "N5"))
+    assert all(issues[issue_id]["verified_by"] == "R-0021" for issue_id in ("A2-25", "N5"))
     assert issues["V-33"]["status"] == "registered"
     assert issues["V-33"]["target_release"] == "0.3"
     assert "S-10" in issues["V-33"]["notes"]
-    assert issues["V-34"]["status"] == "registered"
+    assert issues["V-34"]["status"] == "verified"
+    assert issues["V-34"]["fixed_in"] == (
+        "dea728f1a926284420e6b1a17edb56eb56ea3db1"
+    )
+    assert issues["V-34"]["verified_by"] == "R-0021"
     assert issues["V-34"]["target_release"] == "0.3"
     assert "S-08" in issues["V-34"]["notes"]
 

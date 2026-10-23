@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-23",
+  "stage": "S-08",
+  "classification": "PASS_R0021_S08_FINAL_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "dea728f1a926284420e6b1a17edb56eb56ea3db1",
+    "result_commit": "712e5e457a5f2392a622372ea4fe45f20a516e85",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0021",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0021.result.json",
+    "sha256": "5f46e5991639f9c014ccff3cf8c43dabad8dcf59b426ec68dbd2b0add30c98f5",
+    "classification": "PASS",
+    "new_findings": []
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s08rec_claude_review_20261023_v1",
+    "checksums_entries": 13,
+    "checksums_sha256": "7543c806fc4e898ae37eb1a5d91fa8b9753c038ecaf79820950357723dc0ba2c",
+    "complete_present": true,
+    "final_report_sha256": "d26514de94e66111b11b12e401cda99cce89374e6fcbded520a5470ff18b0db0",
+    "summary_sha256": "3c5b8ee7300627bca3ec2958ddbb97c9c09846b87ffca874bc0263d97d2c535c"
+  },
+  "registry_import": {
+    "verified": {
+      "A2-25": "8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851",
+      "N5": "8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851",
+      "V-31": "e2343d19301de146ca632a1a12f7c9659e598f73",
+      "V-32": "e2343d19301de146ca632a1a12f7c9659e598f73",
+      "V-34": "dea728f1a926284420e6b1a17edb56eb56ea3db1"
+    },
+    "verified_by": "R-0021",
+    "kept_registered": ["V-33"],
+    "s08_complete": true,
+    "eligible_for_d0009_integration_draft": true
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {"historical_sha256": "14e7a9e868fb1fb6becb16b368ecb63828814f6d97cbfc097f76e4ed6688c75e", "current_sha256": "b8e1046c1e6c5eccd10aeb60c0afb0973dc39d98c7cf4960a54c73f692eaa0be", "reason": "Apply the five exact R-0021 verified updates while keeping V-33 registered for S-10."},
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "d2ac1b757455019335ad161bc10b4ed3f1b8746a081ee511489b778076e50ed9", "current_sha256": "34f402a90258bb90f38f12f1dd37c63063e78b525ad7dd948c6764033f8282a2", "reason": "Document R-0021 closure of S-08 and the S-09 handoff."},
+    "tests/test_v0_2_2_v17_r0002_import.py": {"historical_sha256": "44a6e6806c91abd48ef3ab2643e1274c9116f156e3e922186d06b21992784076", "current_sha256": "4ccd880ec98d90852293cdf022707d27c8e5d0a210ab047d916a708cd625bfda", "reason": "Recognize the current registry counts without rewriting R-0002."},
+    "tests/test_v0_2_x_open_issues.py": {"historical_sha256": "db377fd7544c4a9c8fc8292a9ff32c660f7a7f1167b04cc38684ed43d8b1bcfa", "current_sha256": "48acd0b6f7e02a3afba2a4ed1cb9edba5beb23eb5e756d25b5aa8a2a5c3c8f60", "reason": "Bind the five verified S-08 items, exact fix commits, R-0021 identity and V-33 deferral."},
+    "tests/test_v0_3_s03_rework_record.py": {"historical_sha256": "a8c805d38f1c5633962d09dbd3140c7b3af575919416fdb1b0531ee761324bdb", "current_sha256": "4fc728384337f6a4263dee83edcc4e8b72e2bfe5d5237de021fb846770db6723", "reason": "Preserve S-03 while recognizing completed S-08 verification."},
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {"historical_sha256": "a2f3e420b3b05864a268d632336a1fa78464eae5fb33fb5089ca91a30b8fef2e", "current_sha256": "b8757c0db9b7224226e9a8e04698ade44398743e8db96897804e4f58bce9c155", "reason": "Preserve S-04 while recognizing completed S-08 verification."},
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {"historical_sha256": "71bd8030bf3cf6ff53fcb8b199d5ee9e90ea8e0681941b313430835541625fea", "current_sha256": "b1dd95befe8c58b4b76876ec05f12dd2cbd39aada5de5335cf23708ea7da4fea", "reason": "Preserve the S-06 rework record while recognizing completed S-08 verification."},
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {"historical_sha256": "0d3e6881b4bfe00152395045c72a6a6f16e20adadfda8663a00fb62db6bab298", "current_sha256": "dcf5a725ec8890d87d2a764f254669fcdd8969251f4a95541e6761c01088a515", "reason": "Preserve the final S-06 runtime record while recognizing completed S-08 verification."},
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {"historical_sha256": "d2d32329f477b4691456139c3136048c73ff2d964c1124e4b3961f00b10ec628", "current_sha256": "bfd93b71600f1266ffe2fd4419165d8bb7dde98e20e222c11a79bccfa4a4e7c9", "reason": "Preserve the initial S-06 record while recognizing completed S-08 verification."},
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {"historical_sha256": "d6bcf1091e2b823ec23db506b425c8d43672c9b9cc24a3c9b743dbbddb85a953", "current_sha256": "aef90fbf5e21db54a63c6ca3952426477d27e094dc2dc7ad699b3ccfba83a8be", "reason": "Preserve S-07 while recognizing completed S-08 verification."},
+    "tests/test_v0_3_s07_r0017_import.py": {"historical_sha256": "ca6aca511a30eec8fe459c2effc8e13febb41a92f7e5c0abbc4c176510bb90b0", "current_sha256": "f95af038751700816abc41fe2bae6732df5e19a60e2d0acbd3cc301be7db70b7", "reason": "Keep the immutable R-0017 import while recognizing completed S-08 verification."},
+    "tests/test_v0_3_s07_r0018_import.py": {"historical_sha256": "d2cfa2fcd3176d2ed965c8fc6ce376159a37c59f663c51b1fe65b99f4eda67f9", "current_sha256": "e73a1565d0a3fb1d3350e928e773dc9a56390ea1fab3fd4bbe42e449052675d1", "reason": "Keep the immutable R-0018 import while recognizing completed S-08 verification."},
+    "tests/test_v0_3_s07_rework_candidate_record.py": {"historical_sha256": "c14bd9223889a8209eece6772d797a23e4bcb49f5571b80e95f439e2fb567397", "current_sha256": "a03905becd729e2f3a414297dc930e590898232b9ad14519a55823528229a380", "reason": "Preserve the S-07 rework candidate while recognizing completed S-08 verification."},
+    "tests/test_v0_3_s08_commit_identity_corrections.py": {"historical_sha256": "7aece294e4b81e5e4c8ab0b989bbaa249002234ed7026d473fac86d8f7a4c85a", "current_sha256": "44bcc5d2e392cc5c1154ff75958e85c1577b09fa4a452eb9c366a83a9ebf3f69", "reason": "Advance V-34 from registered to verified without rewriting successor 26."},
+    "tests/test_v0_3_s08_historical_cpu_coverage_record.py": {"historical_sha256": "6b91fa1b98db961b92db39cbf5ca0800359157028acb25c0c7a1e1cb9ca81b8f", "current_sha256": "7fe3a884bcbba8988c6ab9e5f5e5a184139394644f9ef35affe764c5e215fadc", "reason": "Recognize R-0021 verification while preserving the historical S-08 claim records."},
+    "tests/test_v0_3_s08_r0019_import.py": {"historical_sha256": "ef4fbf75a6cf781c6de728478269fc005b3bbf04cea4573dfe0c44213fc4a4d2", "current_sha256": "134a99d0516e1207263169b36cfce82d3bd15e2f63926554c76686e7b0d63446", "reason": "Preserve R-0019 while recognizing final R-0021 verification."}
+  },
+  "new_sources": [
+    "notes/PSSolver_v0_3_0_s03_successor_27_r0021_import.json",
+    "notes/PSSolver_v0_3_0_s03_successor_27_r0021_import_zh.md",
+    "tests/test_v0_3_s08_r0021_import.py"
+  ],
+  "validation": {
+    "environment_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "environment_clone_path": "/home/fansenwei/pssolver_v0_3_s08_r0021_venv_7M3CNt/venv",
+    "environment_clone_method": "cp -al",
+    "environment_clone_pruned": true,
+    "python": "3.12.13",
+    "torch": "2.6.0+cu126",
+    "numpy": "2.4.3",
+    "pytest": "9.1.1",
+    "cuda_visible_devices": "",
+    "sys_path_site_packages": "/home/fansenwei/pssolver_v0_3_s08_r0021_venv_7M3CNt/venv/lib/python3.12/site-packages",
+    "focused_pytest": {
+      "passed": 88,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "edb7545d7599d3a4c3f16ed6d065f9c98eed8cc8c63bc61468b32d4ac9dd23c2",
+      "junit_sha256": "8a832d637bc144e0889dd11a7b484d064880bf709e43779631aef16c91d7e657"
+    },
+    "git_diff_check": "PASS"
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_import_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  },
+  "next_plan_step": "S-09",
+  "next_request": "R-0022"
+}

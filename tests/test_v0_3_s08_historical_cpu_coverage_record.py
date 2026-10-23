@@ -92,10 +92,10 @@ def test_s08_registry_claims_only_the_two_cpu_coverage_items() -> None:
         "V-32",
     ]
     for issue_id in rework["issue_state"]["claimed_fixed"]:
-        assert issues[issue_id]["status"] == "claimed_fixed"
+        assert issues[issue_id]["status"] == "verified"
         recorded = rework["issue_state"]["fixed_in"][issue_id]
         assert issues[issue_id]["fixed_in"] == corrections.get(recorded, recorded)
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["verified_by"] == "R-0021"
     assert issues["A3-18"]["status"] == "coverage_gap"
 
 

@@ -32,9 +32,9 @@
   "issue_count": 39,
   "status_counts": {
     "open": 1,
-    "registered": 2,
-    "claimed_fixed": 4,
-    "verified": 28,
+    "registered": 1,
+    "claimed_fixed": 0,
+    "verified": 33,
     "deferred": 2,
     "accepted": 1,
     "coverage_gap": 1
@@ -557,10 +557,11 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851",
+      "verified_by": "R-0021",
       "target_release": "before 0.3.0 complete acceptance",
-      "notes": "S-08 binds authentic rc1/rc2 odd-periodic Channel functional fixtures. The rc2 continuation is byte-exact; the real rc1 continuation proves the pre-B2 runtime is state-only rather than trajectory-equivalent. Independent review is pending."
+      "notes": "R-0021 independently verified the S-08 authentic rc1/rc2 odd-periodic Channel functional fixtures. The rc2 continuation is build-aware; the real rc1 continuation proves the pre-B2 runtime is state-only rather than trajectory-equivalent."
     },
     {
       "id": "A3-18",
@@ -586,10 +587,11 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851",
+      "verified_by": "R-0021",
       "target_release": "before 0.3.0 complete acceptance",
-      "notes": "S-08 binds an authentic rc1 lifted Plane format-1 checkpoint and verifies pre-B8 lifting rejection before tensor payload loading. Public lifting remains closed; independent review is pending."
+      "notes": "R-0021 independently verified the authentic rc1 lifted Plane format-1 checkpoint and pre-B8 lifting rejection before tensor payload loading. Public lifting remains closed."
     },
     {
       "id": "V-31",
@@ -601,10 +603,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "e2343d19301de146ca632a1a12f7c9659e598f73",
+      "verified_by": "R-0021",
       "target_release": "0.3",
-      "notes": "The rc2 odd-axis continuation is bitwise under the generating pip/MKL build but differs by 0.6 epsilon under the Nematics3D conda build; rc1 merely asserted non-bitwise inequality. S-08 must bind the generation fingerprint, use 8*eps across builds, and prove the rc1 dynamics difference is far above roundoff."
+      "notes": "R-0021 independently verified the build-aware rc2 continuation oracle: matching numerical build fingerprints require byte identity, other builds use 8*eps, and the rc1 state-only difference remains far above roundoff."
     },
     {
       "id": "V-32",
@@ -616,10 +619,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "e2343d19301de146ca632a1a12f7c9659e598f73",
+      "verified_by": "R-0021",
       "target_release": "0.3",
-      "notes": "Earlier releases incorrectly labelled rc1 odd-axis migrations exact_legacy_upgrade. The candidate rejects them correctly but needs a dedicated error directing users to re-migrate the original rc1 checkpoint as state-only and a CHANGELOG compatibility note."
+      "notes": "R-0021 independently verified the dedicated rejection for historically mislabelled rc1 odd-axis migrations and the actionable instruction to re-migrate the original rc1 checkpoint with state-only migration."
     },
     {
       "id": "V-33",
@@ -645,9 +649,11 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "verified",
+      "fixed_in": "dea728f1a926284420e6b1a17edb56eb56ea3db1",
+      "verified_by": "R-0021",
       "target_release": "0.3",
-      "notes": "S-08 records-only repair: preserve released records, add a forward erratum for all twelve nonexistent hashes, and enforce Git-object resolution for current registry and successor identities."
+      "notes": "R-0021 independently verified the S-08 forward errata for all twelve nonexistent hashes and the Git-object resolution guard; released historical records remain unchanged."
     }
   ],
   "authorization": {
