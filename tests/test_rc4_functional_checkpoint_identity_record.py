@@ -95,6 +95,13 @@ def _registered_successor(relative: str, historical_sha256: str) -> dict[str, ob
             and registration["historical_sha256"] == historical_sha256
         ):
             return registration
+    resolved = resolve_s03_successor(relative, historical_sha256)
+    if resolved != historical_sha256:
+        return {
+            "historical_sha256": historical_sha256,
+            "current_sha256": resolved,
+            "introduced_by_phase": "v0.3-S03-forward-successor",
+        }
     raise AssertionError(f"no registered successor for {relative}")
 
 
@@ -169,9 +176,10 @@ def test_rc424_record_binds_parent_plans_and_implementation_files():
                             "RC4.5.5",
                             "RC6-6",
                             "RC4.5.6",
-                            "R5-7",
-                            "RC6-5",
-                        }
+                        "R5-7",
+                        "RC6-5",
+                        "v0.3-S03-forward-successor",
+                    }
 
 
 def test_rc424_record_freezes_four_layer_functional_identity():

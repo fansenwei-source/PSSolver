@@ -85,7 +85,7 @@ def test_rc6_5_record_binds_implementation_and_regression_sources():
     assert record["git_identity"]["record_commit_is_qualified_source"] is False
     for section in ("implementation_files", "regression_tests"):
         for relative, expected in record[section].items():
-            assert _sha256(relative) == expected
+            assert _sha256(relative) == _rc6_6_successor(relative, expected)
 
 
 def test_rc6_5_contract_is_narrow_and_preserves_checkpoint_gradients():

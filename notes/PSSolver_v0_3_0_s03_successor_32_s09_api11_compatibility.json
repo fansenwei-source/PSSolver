@@ -1,0 +1,97 @@
+{
+  "schema": "pssolver.v0_3.s03.historical_successor.v1",
+  "created_at": "2026-10-23T07:44:57-04:00",
+  "plan_step": "S-09",
+  "classification": "PASS_S09_API_1_1_LEGACY_CHECKPOINT_COMPATIBILITY_REPAIR",
+  "git_identity": {
+    "branch": "fix/v0.3-s09-gpu-qualification",
+    "runtime_commit": "dc12dc6fbf984fb1a98e1de672903e51750742f3",
+    "qualification_support_commit": "acc9b43f52ded8aa88fa66022c98b404ad54fe28",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "contract": {
+    "current_functional_api_version": "1.1",
+    "released_checkpoint_api_version": "1.0",
+    "released_identity_schema_frozen": true,
+    "released_migration_provenance_frozen": true,
+    "api_1_0_checkpoint_reader_retained": true,
+    "historical_records_rewritten": false
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "462fbc1acc06f34f0906b4f7ba7fc699e8e65e5924be241fa9e55214f6f90f76",
+      "current_sha256": "982aae4605b4dd66cc62672b5b76dc3eb440329fb8d6898200420dc0a43c4510",
+      "reason": "document the frozen API-1.0 checkpoint identity under API 1.1"
+    },
+    "pssolver/functional/channel_checkpoint.py": {
+      "historical_sha256": "dcc724de734aa7be1b58c5af2fb3657296fa771af0b13455385fa39b5a397334",
+      "current_sha256": "fc8b001bc22ca07d1b07d565cb8e16121a5cbb047d53e1835713730e27a9d2e2",
+      "reason": "validate and persist the source checkpoint API literal during legacy migration"
+    },
+    "pssolver/functional/legacy_identity.py": {
+      "historical_sha256": "006145f0aab597a4bce41aea2f1ad4a585a44ff2e8c2e596c5e502f2ea8abf47",
+      "current_sha256": "7cda648285e53d831de76257bf477afa972481bbcc0ccbe5554d4630302ec697",
+      "reason": "project qualified API-1.1 runtime metadata onto the frozen API-1.0 identity schema"
+    },
+    "pssolver/functional/periodic_checkpoint.py": {
+      "historical_sha256": "cf83ae39ded7c56c858db1196745b08bb86e1ae1ab057fc4b17b5693e0206fe2",
+      "current_sha256": "3206864720b15dcc94dab2b5e74dc0c5b3428e599a99637f096b9be71e115c91",
+      "reason": "preserve the released Periodic reader and source migration provenance under API 1.1"
+    },
+    "tests/test_phase9_p981_public_api_surface_inventory.py": {
+      "historical_sha256": "092d9e17d6600233cb7f2fd8a491d33aa2f9e393a4c9a1e7c44bdec1663b3260",
+      "current_sha256": "aa1697e0dcf97a042f03f88b052a9f59e78b771c4b64e4b5f1ae35cea4a88a53",
+      "reason": "keep the historical inventory literal separate from the live API version"
+    },
+    "tests/test_phase9_p982_stable_functional_api.py": {
+      "historical_sha256": "1ae5f16e444ba9eb07b4f6ee669228ba49bed39a26b2ec3da13252fcb9186a9a",
+      "current_sha256": "c14e240dab18e0721b35a3afe9366bf7b3d8a4302b616fe9fe9ce1e2c94e5f98",
+      "reason": "qualify the public execution scope and API-1.1 negotiation"
+    },
+    "tests/test_phase9_p983_consumer_migration.py": {
+      "historical_sha256": "296c6d295cb56673d1b0c58bf2c928e70a44c4a6dd1285845d6d8d1133ac5a15",
+      "current_sha256": "fa419936b2305432cf01e1f13a9e5542ca7d7d726157ee23d3b751b1da132cf9",
+      "reason": "assert the immutable historical API-1.0 record and current compatibility reader separately"
+    },
+    "tests/test_phase9_p984_local_cumulative_closure.py": {
+      "historical_sha256": "21d312cccd4ccdadcdbff71bff3cc5794592bcfcf2baf34a0a2f780bb9cde5a0",
+      "current_sha256": "9497c0a79d0777d964432a7c0b5b3eee1276c96e29d2cf2efa2e945479a052a4",
+      "reason": "preserve the historical installed identity literal after the live API advance"
+    },
+    "tests/test_rc4_functional_checkpoint_identity_record.py": {
+      "historical_sha256": "913e3632d3da01df7d1d9fd1853620914c3ba1c68cc5849ee869556fb11b2802",
+      "current_sha256": "f0a824769723f4daddc786082dca76f255e4c96cdfedcb347b89efcaf75f3099",
+      "reason": "allow the historical RC4 binding test to consume the generic forward-only S-03 successor chain"
+    },
+    "tests/test_rc5_r511_metadata_and_strict_contract.py": {
+      "historical_sha256": "caf4979d8d1bbcbfc5d7c8906fa2d55e3fa6e3862cdbcece4d5f36ca09037809",
+      "current_sha256": "3a7686aa670bedc53af0939daa943d8400d93eedbb5ca45a697b97eaec91b402",
+      "reason": "cover API-1.1 to API-1.0 identity projection and fail closed on unqualified future protocols"
+    },
+    "tests/test_rc6_5_checkpoint_control_flow_record.py": {
+      "historical_sha256": "ecafe317bb946f738307cd0b06ee68761fc91ce5bb2b7011695cfef03dba455d",
+      "current_sha256": "e65fe89ea885237958fbe44088d87d3d01deb2299817fc56c42a3bca7fc4c4e4",
+      "reason": "resolve forward-only successor hashes instead of rewriting the RC6-5 record"
+    },
+    "tests/test_release_v0_2_0rc5_integration_review.py": {
+      "historical_sha256": "4a74f6407318bfc937f11fdd38e8a830a6d0ab32723b92bf8b65d1e72d38debd",
+      "current_sha256": "e0065c0b140083aeff0d3de9c5c5e6237b3ec434164c12c2f95ec65f1f1fd1d6",
+      "reason": "keep the rc5 API-1.0 contract historical while asserting it remains readable"
+    },
+    "tests/test_release_v0_2_0rc6_integration_review.py": {
+      "historical_sha256": "edf5982eb6f12fd2d6b2be91cdef118f4ddf887779da450bfb556c5968168ee3",
+      "current_sha256": "096195dcde454d63ddc6317bf6bb4ac4b5ffdcfc07c97bb7220b22ee75083f1f",
+      "reason": "keep the rc6 API-1.0 contract historical while asserting it remains readable"
+    }
+  },
+  "authorization": {
+    "push_performed": false,
+    "hpcc_executed": false,
+    "slurm_submitted": false,
+    "gpu_executed": false,
+    "h100_submitted": false,
+    "threshold_change": false,
+    "production_default_changed": false
+  }
+}
