@@ -1,0 +1,89 @@
+{
+  "schema": "pssolver.v0_3.s09.transient_telemetry_preregistration.v1",
+  "created_at": "2026-10-23T07:08:00-04:00",
+  "plan_step": "S-09",
+  "classification": "PREREGISTERED_S09_ONE_SHOT_TRANSIENT_TELEMETRY",
+  "decision": {
+    "id": "Q-S09-PERF-03",
+    "selected": "A",
+    "one_execution_only": true
+  },
+  "scope": {
+    "family": "channel_functional",
+    "mode": "relative_tolerance",
+    "baseline_commit": "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70",
+    "candidate_commit": "2573dec5ca4c0c3248ac3a20db8448e9ab515df4",
+    "trials": 6,
+    "warmup_steps": 3,
+    "measured_steps": 60,
+    "block_size": 10,
+    "alternating_pair_order": true,
+    "all_samples_retained": true,
+    "cpu_affinity": [8]
+  },
+  "idle_gate": {
+    "load_average": [0.16, 0.14, 0.36],
+    "logical_cpu_count": 24,
+    "two_second_average_idle_percent": 99.79,
+    "python_or_pytest_processes": 0,
+    "control_research_computation_processes": 0,
+    "claude_test_processes": 0,
+    "claude_log_monitors_present": true,
+    "control_process_paused": false,
+    "reason": "Only low-CPU tail/grep log monitors were present; no Python research computation was running."
+  },
+  "telemetry": {
+    "per_step": [
+      "wall time",
+      "process user and system CPU time",
+      "voluntary and involuntary context switches",
+      "minor and major page faults",
+      "CPU frequency before and after",
+      "load average before and after",
+      "execution CPU"
+    ],
+    "whole_window": [
+      "load average",
+      "CPU frequency",
+      "system context switches",
+      "process creation",
+      "runnable and blocked process counts"
+    ]
+  },
+  "runner": {
+    "path": "benchmarks/diagnose_v0_3_s09_functional_transient.py",
+    "sha256": "84c4ef8bd5630ac37a559938f4b02f77228776f1c093ed280464c65c7463574a"
+  },
+  "adjudication": {
+    "median_time_ratio_max": 1.03,
+    "paired_time_ratio_max": 1.05,
+    "frequency_event_ratio_max": 0.95,
+    "unattributed_wall_explanation_fraction": 0.5,
+    "environmental_interference": "For every pair above 1.05, require at least one preregistered event: process-CPU ratio at or below 1.05; a candidate major-fault excess; an involuntary-context-switch excess whose extra unscheduled time explains at least half the wall excess; or candidate median frequency below 0.95 of baseline.",
+    "candidate_warmup": "A pair above 1.05 without environmental evidence whose first three block ratios average above 1.05 and last three average at or below 1.03.",
+    "continue_local_gates": "Continue only when the frozen eight-cell median ratios and focused median are at or below 1.03, and classification is NO_PAIRED_LIMIT_EXCEEDANCE or ENVIRONMENTAL_INTERFERENCE_SUPPORTED.",
+    "fix_before_h100": "Stop for diagnosis if classification is CANDIDATE_WARMUP_OR_FIRST_CALL_OVERHEAD_SUPPORTED or CAUSE_UNRESOLVED."
+  },
+  "preserved_evidence": {
+    "five_by_thirty_archive": "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2",
+    "six_by_sixty_archive": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_2573dec_20261023_v3",
+    "analysis_archive": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_failure_analysis_87f6bfe_20261023_v4",
+    "failed_samples_deleted": false,
+    "prior_verdicts_rewritten": false
+  },
+  "formal_h100_contract": {
+    "median_time_ratio_max": 1.03,
+    "paired_time_ratio_max": 1.05,
+    "all_samples_retained": true,
+    "changed": false
+  },
+  "authorization": {
+    "local_cpu_analysis": true,
+    "push": false,
+    "hpcc": false,
+    "slurm": false,
+    "gpu": false,
+    "h100": false,
+    "automatic_retry": false
+  }
+}
