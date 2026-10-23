@@ -17,6 +17,9 @@ from benchmarks.plan_v0_3_s09_h100 import (
     CONSUMER_EVIDENCE_COMMIT,
     CONSUMER_RUNTIME_COMMIT,
     CONSUMER_WHEEL_SHA256,
+    H100_BASE_ENV,
+    H100_CONTROL_ROOT,
+    H100_OUTPUT_ROOT,
     PLANNING_PARENT,
     build_plan,
 )
@@ -193,6 +196,49 @@ def test_plan_does_not_relax_accepted_numerical_or_profile_limits() -> None:
     assert cpu["frozen_function_tolerance_median_ratio"] <= 1.03
     assert cpu["maximum_paired_ratio"] <= 1.05
     assert cpu["candidate_optimization_required"] is False
+
+
+def test_plan_states_the_exact_performance_adjudication_without_overclaiming() -> None:
+    rules = _record()["performance_adjudication"]
+    assert rules == {
+        "aggregate_all_sample_mean_ratio_max": 1.03,
+        "all_samples_retained": True,
+        "baseline_then_candidate_order_stratum_median_ratio_max": 1.05,
+        "between_order_strata_imbalance_ratio_max": 1.05,
+        "candidate_then_baseline_order_stratum_median_ratio_max": 1.05,
+        "every_individual_trial_must_be_at_or_below_1_05": False,
+        "median_of_profile_means_ratio_max": 1.03,
+        "median_of_six_trial_ratios_max": 1.03,
+        "peak_allocated_group_ratio_max": 1.03,
+        "peak_reserved_group_ratio_max": 1.03,
+        "per_cell_minimum_trials_at_or_below_1_05": "at least 4 of 6",
+    }
+
+
+def test_plan_freezes_upload_roots_venv_origin_and_every_job_variable() -> None:
+    deployment = _record()["deployment"]
+    assert deployment["upload_root"] == H100_CONTROL_ROOT
+    assert deployment["control_root"] == H100_CONTROL_ROOT
+    assert deployment["output_root"] == H100_OUTPUT_ROOT
+    assert deployment["output_root_must_initially_not_exist"] is True
+    assert deployment["python_environment_source"] == H100_BASE_ENV
+    variables = deployment["variables"]
+    assert set(variables) == {
+        "S09_BASELINE_PYTHON",
+        "S09_CANDIDATE_PYTHON",
+        "S09_CONSUMER_PYTHON",
+        "S09_BASELINE_WHEEL",
+        "S09_CANDIDATE_WHEEL",
+        "S09_CONSUMER_WHEEL",
+        "S09_PROVIDER_SUPPORT",
+        "S09_CONSUMER_SUPPORT",
+        "S09_PROVIDER_REFERENCE",
+        "S09_CONTROL_ROOT",
+        "S09_OUTPUT_ROOT",
+    }
+    assert variables["S09_CONTROL_ROOT"] == H100_CONTROL_ROOT
+    assert variables["S09_OUTPUT_ROOT"] == H100_OUTPUT_ROOT
+    assert all(value.startswith("/") for value in variables.values())
 
 
 def test_atomic_writer_refuses_overwrite_and_round_trips(tmp_path) -> None:

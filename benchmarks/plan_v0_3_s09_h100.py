@@ -26,12 +26,12 @@ BASELINE_WHEEL_SHA256 = (
 )
 PLANNING_PARENT = "7b796679925020a869fe59cfb56e0a771ef6d47e"
 CONSUMER_BASE = "208edd03e6b26a0e788c07d295fddd7a67237189"
-CANDIDATE_COMMIT = "dc12dc6fbf984fb1a98e1de672903e51750742f3"
+CANDIDATE_COMMIT = "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
 CANDIDATE_ARCHIVE_SHA256 = (
-    "876fcf4b6234892fb2d6f6f3fe895d83b74d8cb0b4a9a752760aa34efe01b2d2"
+    "bff21905eb7d4c5e8313b10c871f40d8b96b411975260fdb0edb75b16a99a3b9"
 )
 CANDIDATE_WHEEL_SHA256 = (
-    "b3cb41689e5ac180b7dc8b900d84e2357b731976d40e01bedfd742e8688415b1"
+    "4003645025da6d81317eeb7261ccf606aef7f60f20d072518f8baacf56cd4aa8"
 )
 CONSUMER_RUNTIME_COMMIT = "48dd4d3a9a101f8b24d8311c57ed67fab46ceea0"
 CONSUMER_EVIDENCE_COMMIT = "97d3c06450c4a7a6d72e0fe07a7a157ef095c133"
@@ -42,8 +42,18 @@ CONSUMER_SUPPORT_ARCHIVE_SHA256 = (
     "2243f14cbdad1a58cb8a1ff73e2bb550752d97f5edf2190302005d9d69ff66a1"
 )
 CONSUMER_WHEEL_SHA256 = (
-    "40ba784811ca1e9f3da2a2a2768b44d752a5972aa40217a9ef36f30dcbea1ace"
+    "f7ae4c1f5f3c73e0be540b5e4ec5e05a9eef662867a149325462835820ae94ef"
 )
+
+H100_CONTROL_ROOT = (
+    "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1"
+)
+H100_OUTPUT_ROOT = (
+    "/scratch1/vincent/PSSolver/"
+    "data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1"
+)
+H100_VENV_ROOT = "/scratch1/vincent/PSSolver/venvs"
+H100_BASE_ENV = "/home/fansenwei/miniconda3/envs/Nematics3D"
 
 CUDA_ONLY_NODE_IDS = (
     "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
@@ -360,6 +370,49 @@ def build_plan() -> dict[str, object]:
             "source_shadow_import": False,
             "pip_check": "PASS",
         },
+        "deployment": {
+            "upload_root": H100_CONTROL_ROOT,
+            "control_root": H100_CONTROL_ROOT,
+            "output_root": H100_OUTPUT_ROOT,
+            "output_root_must_initially_not_exist": True,
+            "python_environment_source": H100_BASE_ENV,
+            "python_environment_construction": (
+                "fresh hard-link clone of the pinned source environment, followed "
+                "by --no-deps installation of exactly one role-specific wheel set"
+            ),
+            "variables": {
+                "S09_BASELINE_PYTHON": (
+                    f"{H100_VENV_ROOT}/pssolver_v03_s09_85ba3ae_baseline/bin/python"
+                ),
+                "S09_CANDIDATE_PYTHON": (
+                    f"{H100_VENV_ROOT}/pssolver_v03_s09_85ba3ae_candidate/bin/python"
+                ),
+                "S09_CONSUMER_PYTHON": (
+                    f"{H100_VENV_ROOT}/pssolver_v03_s09_85ba3ae_consumer/bin/python"
+                ),
+                "S09_BASELINE_WHEEL": (
+                    f"{H100_CONTROL_ROOT}/artifacts/pssolver-0.2.2-py3-none-any.whl"
+                ),
+                "S09_CANDIDATE_WHEEL": (
+                    f"{H100_CONTROL_ROOT}/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl"
+                ),
+                "S09_CONSUMER_WHEEL": (
+                    f"{H100_CONTROL_ROOT}/artifacts/"
+                    "pssolver_control-0.0.1.dev0-py3-none-any.whl"
+                ),
+                "S09_PROVIDER_SUPPORT": (
+                    f"{H100_CONTROL_ROOT}/provider_support"
+                ),
+                "S09_CONSUMER_SUPPORT": (
+                    f"{H100_CONTROL_ROOT}/consumer_support"
+                ),
+                "S09_PROVIDER_REFERENCE": (
+                    f"{H100_CONTROL_ROOT}/provider_85ba3ae"
+                ),
+                "S09_CONTROL_ROOT": H100_CONTROL_ROOT,
+                "S09_OUTPUT_ROOT": H100_OUTPUT_ROOT,
+            },
+        },
         "pre_h100_gates": [
             "confirmed answers to S09-Q01 through S09-Q04",
             "Provider backward-scope implementation and complete CPU suite",
@@ -509,6 +562,19 @@ def build_plan() -> dict[str, object]:
             "runtime_fallback": False,
             "finite_required": True,
             "paired_initial_sha_equal": True,
+        },
+        "performance_adjudication": {
+            "per_cell_minimum_trials_at_or_below_1_05": "at least 4 of 6",
+            "baseline_then_candidate_order_stratum_median_ratio_max": 1.05,
+            "candidate_then_baseline_order_stratum_median_ratio_max": 1.05,
+            "between_order_strata_imbalance_ratio_max": 1.05,
+            "aggregate_all_sample_mean_ratio_max": 1.03,
+            "median_of_profile_means_ratio_max": 1.03,
+            "median_of_six_trial_ratios_max": 1.03,
+            "peak_allocated_group_ratio_max": 1.03,
+            "peak_reserved_group_ratio_max": 1.03,
+            "every_individual_trial_must_be_at_or_below_1_05": False,
+            "all_samples_retained": True,
         },
         "submission": {
             "formal_h100_submission_count": 1,
