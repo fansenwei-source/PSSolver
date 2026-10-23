@@ -1,0 +1,88 @@
+{
+  "schema": "pssolver.v0_3.s09.cpu_6x60_preregistration.v1",
+  "created_at": "2026-10-23T06:26:26-04:00",
+  "plan_step": "S-09",
+  "classification": "PREREGISTERED_S09_CPU_6X60_MEASUREMENT_CONTRACT",
+  "decision": {
+    "id": "Q-S09-PERF-02",
+    "selected": "B",
+    "source": "user instruction in the active Codex thread",
+    "one_execution_only": true
+  },
+  "git_identity": {
+    "branch": "fix/v0.3-s09-gpu-qualification",
+    "preregistration_parent": "d66b6fbe8c560f1efeabecd811f40e139f6aa4d4",
+    "baseline_runtime_commit": "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70",
+    "candidate_runtime_commit": "2573dec5ca4c0c3248ac3a20db8448e9ab515df4",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "scope": {
+    "families": [
+      "channel_legacy",
+      "channel_compiled_v2",
+      "channel_complete_stress",
+      "channel_functional"
+    ],
+    "modes": [
+      "relative_tolerance",
+      "fixed_work"
+    ],
+    "shape": [128, 20, 20],
+    "lengths": [40.0, 6.0, 6.0],
+    "warmup_steps": 3
+  },
+  "estimator": {
+    "trials_per_cell": 6,
+    "samples_per_profile": 60,
+    "fixed_block_count": 6,
+    "fixed_block_size": 10,
+    "profile_center": "median_of_six_fixed_block_means",
+    "alternating_pair_order": true,
+    "all_samples_retained": true,
+    "trial_replacement_allowed": false,
+    "outlier_removal_allowed": false
+  },
+  "thresholds": {
+    "median_time_ratio_max": 1.03,
+    "paired_time_ratio_max": 1.05,
+    "median_peak_rss_ratio_max": 1.03,
+    "paired_peak_rss_ratio_max": 1.03,
+    "relaxed": false
+  },
+  "execution_order": [
+    "v0.2.2 versus v0.2.2 self-control noise reference",
+    "v0.2.2 versus candidate runtime bound matrix"
+  ],
+  "qualification_runner": {
+    "path": "benchmarks/benchmark_v0_3_s09_channel_cpu_frozen.py",
+    "sha256": "1057edb3c12e1f63647a635d405a609c5dd1b058f8f09151f6002dad773db322"
+  },
+  "stop_contract": {
+    "matrix_runs_per_role_pair": 1,
+    "rerun_until_pass_allowed": false,
+    "stop_on_any_failed_cell": true,
+    "continue_remaining_local_s09_gates_only_after_both_matrices_pass": true,
+    "create_r0022_only_after_all_local_s09_gates_pass": true,
+    "h100_requires_separate_user_authorization": true
+  },
+  "historical_evidence_retained": {
+    "archive": "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2",
+    "checksums_sha256": "679ba7adaceddceaebe55769b1d2bc81a7c4c47c680525465a9884ea482aa02d",
+    "five_by_thirty_results_retained": true,
+    "failed_ratio": 1.0822582930338371,
+    "failed_sample_seconds": 0.10759581700000001,
+    "failure_explanation": "The candidate trial contained a retained 107.6 ms timestep spike; the sample and failed verdict remain historical evidence."
+  },
+  "authorization": {
+    "local_cpu_execution": true,
+    "push": false,
+    "hpcc": false,
+    "slurm": false,
+    "gpu": false,
+    "h100": false,
+    "automatic_retry": false,
+    "threshold_change": false,
+    "sample_deletion": false
+  }
+}
