@@ -21,6 +21,7 @@ from pssolver.configuration.channel_active_nematics import (
     ChannelActiveNematicRunSpec,
 )
 from pssolver.configuration.execution_device import (
+    configure_tf32_execution,
     execution_device_normalization,
     resolve_execution_device,
     scoped_tf32_execution,
@@ -131,9 +132,11 @@ def _run_channel_active_nematics_owned(
     run_spec: ChannelActiveNematicRunSpec,
     *,
     progress: Iterable[int] | None = None,
+    emit_metadata: bool = False,
+    dry_run: bool = False,
     tf32_metadata: dict[str, object],
     public_compilation_metadata: dict[str, object] | None = None,
-) -> ChannelWorkflowResult:
+) -> ChannelWorkflowResult | None:
     """Run one validated Channel request through the package-owned workflow."""
 
     if not isinstance(run_spec, ChannelActiveNematicRunSpec):
@@ -145,13 +148,19 @@ def _run_channel_active_nematics_owned(
     if run_spec.batch_size != 1:
         raise ValueError("P7.5 production output requires batch_size=1")
     device = _resolve_device(run_spec.device)
-    initial_q = _initial_q(run_spec)
     metadata = _metadata(
         run_spec,
         device,
         tf32_metadata,
         public_compilation_metadata,
     )
+    if emit_metadata:
+        import json
+
+        print(json.dumps(metadata, indent=2, sort_keys=True))
+    if dry_run:
+        return None
+    initial_q = _initial_q(run_spec)
     request = ChannelRuntimeBuildRequest(run_spec, metadata, initial_q, device)
     construction = PackageRuntimeConstructionInput(
         plan=plan_package_runtime_construction(
@@ -182,12 +191,29 @@ def run_channel_active_nematics(
     run_spec: ChannelActiveNematicRunSpec,
     *,
     progress: Iterable[int] | None = None,
+    emit_metadata: bool = False,
+    dry_run: bool = False,
     public_compilation_metadata: dict[str, object] | None = None,
-) -> ChannelWorkflowResult:
+) -> ChannelWorkflowResult | None:
     """Run Channel with its frozen-off TF32 policy scoped to execution."""
 
     if not isinstance(run_spec, ChannelActiveNematicRunSpec):
         raise TypeError("run_spec must be ChannelActiveNematicRunSpec")
+    if not isinstance(dry_run, bool):
+        raise TypeError("dry_run must be a bool")
+    if dry_run:
+        return _run_channel_active_nematics_owned(
+            run_spec,
+            progress=progress,
+            emit_metadata=emit_metadata,
+            dry_run=True,
+            tf32_metadata=configure_tf32_execution(
+                "off",
+                real_dtype=torch.float32,
+                device=run_spec.device,
+            ),
+            public_compilation_metadata=public_compilation_metadata,
+        )
     device = _resolve_device(run_spec.device)
     with scoped_tf32_execution(
         "off",
@@ -197,6 +223,8 @@ def run_channel_active_nematics(
         return _run_channel_active_nematics_owned(
             run_spec,
             progress=progress,
+            emit_metadata=emit_metadata,
+            dry_run=False,
             tf32_metadata=tf32_metadata,
             public_compilation_metadata=public_compilation_metadata,
         )

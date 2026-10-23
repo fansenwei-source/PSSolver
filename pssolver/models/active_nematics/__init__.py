@@ -1,5 +1,7 @@
 """Public building blocks for the active-nematic PDE model."""
 
+from .active_force import active_force_divergence
+
 from .beris_edwards import (
     BerisEdwardsQGradientCache,
     BerisEdwardsQNonlinearModel,
@@ -152,6 +154,7 @@ __all__ = [
     "eigenframe_from_Q",
     "q_field_object_from_Q",
     "aligned_x_smooth_noise",
+    "active_force_divergence",
     "aligned_x_band_limited_noise_2d",
     "analytic_periodic_defect_gas_2d",
     "available_initial_conditions",

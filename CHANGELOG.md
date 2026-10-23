@@ -8,18 +8,27 @@
   only `pssolver.experimental.stage_*`/H100 qualification helpers from built
   distributions. The separately versioned PSSolver-Control project remains
   the supported consumer package; core experimental runtime components needed
-  by PSSolver itself remain packaged.
+  by PSSolver itself remain packaged. The legacy Channel active-force helper
+  now lives in the packaged active-nematics model namespace; the excluded
+  `pssolver.control.active_force` source module is only a compatibility
+  forwarding layer. Installed-wheel qualification imports every shipped
+  module and constructs both legacy and compiled-v2 Channel runtimes.
 - Persist the public compilation identity and complete normalization record in
   application run metadata. New Plane metadata uses the stable
   `plane_complete_stress_beris_edwards` application identity instead of the
   historical `Plane_beris_edwards_stokes.py` compatibility-script label;
   readers continue to normalize the old label for resume compatibility.
+  Periodic, legacy Channel, complete-stress Channel, and Plane expose the same
+  real public dry-run provenance contract; a dry-run performs compilation and
+  validation without constructing a runtime or writing an output directory.
 - Report each successful checkpoint publication backend as a structured
   diagnostic (`rename_noreplace` or `owned_placeholder_nfs_compatibility`)
   after durability is confirmed. This observation is deliberately excluded
   from checkpoint and provider identity. Functional checkpoint imports also
   expose `integrity_status` so continuation policy can distinguish sealed
-  carriers from explicitly supported unsealed legacy formats.
+  carriers from explicitly supported unsealed legacy formats. Diagnostic
+  logging is best-effort: a user logging filter or handler cannot turn an
+  already durable publication into an apparent checkpoint failure.
 - Keep the Robin wall-law residual as an independently reported boundary
   gate, while requiring separate apply/solve, evolution, and restart evidence
   for the interior Helmholtz operator. Robin execution remains unavailable

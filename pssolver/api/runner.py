@@ -191,12 +191,19 @@ def _run_channel_application(
         run_channel_active_nematics,
     )
 
-    if emit_metadata:
-        print(json.dumps(compiled.to_metadata(), indent=2, sort_keys=True))
+    invocation = compiled.application_specification.invocation.options
+    dry_run = invocation.get("dry_run", False)
+    invocation_options = {}
+    if emit_metadata or dry_run:
+        invocation_options = {
+            "emit_metadata": emit_metadata,
+            "dry_run": dry_run,
+        }
     result = run_channel_active_nematics(
         compiled.application_request,
         progress=progress,
         public_compilation_metadata=_public_compilation_run_metadata(compiled),
+        **invocation_options,
     )
     request = compiled.application_request
     output = (
@@ -204,7 +211,7 @@ def _run_channel_application(
         if request.initialization_mode == "generated"
         else request.snapshot_output_directory
     )
-    return result, output
+    return result, None if dry_run else output
 
 
 def _run_periodic_application(
@@ -349,18 +356,27 @@ def _public_result(
         "provenance": _result_provenance(compiled),
     }
     if application_result is None:
+        requested_dry_run = getattr(
+            compiled.application_request,
+            "dry_run",
+            compiled.application_specification.invocation.options.get(
+                "dry_run",
+                False,
+            ),
+        )
         if (
             compiled.application
             not in {
                 "plane_complete_stress_beris_edwards",
+                "channel_legacy_active_force_active_nematics",
                 "periodic_complete_stress_beris_edwards",
                 "channel_complete_stress_beris_edwards",
             }
-            or compiled.application_request.dry_run is not True
+            or requested_dry_run is not True
         ):
             raise RuntimeError(
                 "application returned no workflow result outside a qualified "
-                "Plane dry-run"
+                "public dry-run"
             )
         return SimulationResult(
             status=SimulationRunStatus.DRY_RUN,

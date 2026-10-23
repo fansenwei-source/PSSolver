@@ -170,12 +170,18 @@ def _emit_publication_diagnostic(
         backend=backend,
     )
     metadata = diagnostic.to_metadata()
-    _LOGGER.info(
-        "checkpoint publication completed via %s: %s",
-        backend,
-        target,
-        extra={"checkpoint_publication": metadata},
-    )
+    try:
+        _LOGGER.info(
+            "checkpoint publication completed via %s: %s",
+            backend,
+            target,
+            extra={"checkpoint_publication": metadata},
+        )
+    except Exception:
+        # Publication diagnostics are best-effort and run only after the
+        # durability boundary.  A user logging filter or handler must never
+        # turn a successful, durable publication into an apparent failure.
+        return
 
 
 def _io_error(

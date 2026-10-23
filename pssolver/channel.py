@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import torch
 
-from .control.active_force import active_force_divergence
+from .models.active_nematics.active_force import active_force_divergence
 from .linear_solvers.stokes.channel_no_slip import (
     ChannelNoSlipModalStokesSolver,
 )

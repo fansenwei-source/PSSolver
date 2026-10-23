@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from dataclasses import replace
 
 from pssolver.configuration.active_nematics_simulation_adapters import (
     compose_channel_active_nematics_simulation,
@@ -277,9 +278,16 @@ def compile_channel_public_simulation(
             "the qualified Channel application requires disabled spectral refresh",
             code=PublicCompilationRejectionCode.TIME_INTEGRATION_CONTRACT,
         )
-    if source.invocation.options:
+    invocation = dict(source.invocation.options)
+    if set(invocation) - {"dry_run"}:
         _reject(
-            "the qualified Channel application accepts no invocation options",
+            "the qualified Channel application accepts only the dry_run "
+            "invocation option",
+            code=PublicCompilationRejectionCode.INVOCATION_CONTRACT,
+        )
+    if "dry_run" in invocation and not isinstance(invocation["dry_run"], bool):
+        _reject(
+            "Channel dry_run must be a bool",
             code=PublicCompilationRejectionCode.INVOCATION_CONTRACT,
         )
 
@@ -476,6 +484,10 @@ def compile_channel_public_simulation(
     )
     application_simulation = compose_channel_active_nematics_simulation(
         run_spec.components
+    )
+    application_simulation = replace(
+        application_simulation,
+        invocation=source.invocation,
     )
     _validate_translation(
         source,
