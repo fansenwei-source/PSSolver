@@ -70,8 +70,12 @@ def capture(args: argparse.Namespace) -> dict[str, object]:
     record = Path(distribution.locate_file("pssolver-0.3.0.dev0.dist-info/RECORD")).resolve()
     tracked = (
         root / "pssolver/functional/api.py",
-        root / "pssolver/functional/periodic_runtime.py",
-        root / "pssolver/functional/channel_runtime.py",
+        root / "pssolver/functional/channel_activity_runtime.py",
+        root / "pssolver/functional/channel_checkpoint.py",
+        root / "pssolver/functional/contracts.py",
+        root / "pssolver/functional/periodic_activity.py",
+        root / "pssolver/functional/periodic_checkpoint.py",
+        root / "pssolver/functional/versioning.py",
         root / "pssolver/linear_solvers/stokes/channel_no_slip.py",
     )
     usage = shutil.disk_usage(root)
