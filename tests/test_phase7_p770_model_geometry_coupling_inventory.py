@@ -19,6 +19,7 @@ from pssolver.configuration.plane_beris_edwards import (
 from pssolver.configuration.plane_beris_edwards_component_graph import (
     PlaneBerisEdwardsRunComponents,
 )
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -94,7 +95,9 @@ def test_p770_source_identities_bind_the_audited_baseline() -> None:
         if relative_path in subsequently_connected:
             assert _sha256(path) != expected, relative_path
         else:
-            assert _sha256(path) == expected, relative_path
+            assert _sha256(path) == resolve_s03_successor(
+                relative_path, expected
+            ), relative_path
 
 
 def test_p770_plane_facade_ownership_is_complete_and_disjoint() -> None:

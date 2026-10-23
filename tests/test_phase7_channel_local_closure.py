@@ -123,7 +123,10 @@ def test_channel_entry_point_and_oracle_module_remain_unchanged():
     root = Path(__file__).resolve().parents[1]
     import hashlib
     assert hashlib.sha256((root / "Channel.py").read_bytes()).hexdigest() == "ea7087c4a22796bcefb77407505d2971cee948a9d2b643ced03d6dcb0a5d34b2"
-    assert hashlib.sha256((root / "pssolver/channel.py").read_bytes()).hexdigest() == "3e85bd8e387eaeee48674998e08a3f97585f9d73ae3c7c4bd620d9ea1bd9605b"
+    historical = "3e85bd8e387eaeee48674998e08a3f97585f9d73ae3c7c4bd620d9ea1bd9605b"
+    assert hashlib.sha256((root / "pssolver/channel.py").read_bytes()).hexdigest() == resolve_s03_successor(
+        "pssolver/channel.py", historical
+    )
 
 
 def test_p75_record_binds_package_workflow_sources():

@@ -18,6 +18,7 @@ from pssolver.linear_solvers.stokes.channel_no_slip import (
     CHANNEL_VELOCITY_BOUNDARY_CONDITIONS,
     ChannelNoSlipModalStokesSolver,
 )
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 SHAPE = (7, 6, 5)
@@ -353,9 +354,10 @@ def test_p72_record_preserves_extracted_solver_history_and_limits_authorization(
     assert sha256("Channel.py") == value["compatibility"][
         "channel_entry_point_sha256"
     ]
-    assert sha256("pssolver/channel.py") == value["compatibility"][
-        "legacy_facade_module_sha256"
-    ]
+    historical = value["compatibility"]["legacy_facade_module_sha256"]
+    assert sha256("pssolver/channel.py") == resolve_s03_successor(
+        "pssolver/channel.py", historical
+    )
     assert sha256("pssolver/experimental/stokes.py") == value[
         "compatibility"
     ]["experimental_adapter_module_sha256"]

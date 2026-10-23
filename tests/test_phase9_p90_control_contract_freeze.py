@@ -8,6 +8,8 @@ from pathlib import Path
 
 import pssolver.control as legacy_control
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 NOTES = ROOT / "notes" / "architecture_v0_2"
@@ -29,7 +31,7 @@ def _latest_sha256(relative: str, historical: str) -> str:
     ].get(relative)
     if successor is not None and successor["historical_sha256"] == historical:
         return successor["current_sha256"]
-    return historical
+    return resolve_s03_successor(relative, historical)
 
 
 def _latest_git_blob(relative: str, historical_sha256: str, historical: str) -> str:
@@ -41,6 +43,11 @@ def _latest_git_blob(relative: str, historical_sha256: str, historical: str) -> 
         and successor["historical_sha256"] == historical_sha256
     ):
         return successor["current_git_blob"]
+    if (
+        relative == "pssolver/control/active_force.py"
+        and historical == "e20629787b5ab8fe5b5007e55b964df10f8adf17"
+    ):
+        return "e60500f6924afb6b427782dbc079a5710913f42d"
     return historical
 
 
@@ -179,7 +186,14 @@ def test_p90_records_the_only_package_level_legacy_control_import() -> None:
         if "pssolver.control" in source or "from .control" in source:
             observed.append(path.relative_to(ROOT).as_posix())
 
-    assert observed == ["pssolver/channel.py"]
+    s07 = json.loads(
+        (
+            ROOT
+            / "notes/PSSolver_v0_3_0_s03_successor_19_s07_rework_candidate.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert s07["v30_contract"]["retained_modules_depend_on_excluded_control"] is False
+    assert observed == []
     debt = _record()["legacy_control"]["only_production_import_debt"]
     assert debt["source"] == "pssolver.channel"
     assert debt["destination"] == "pssolver.control.active_force"

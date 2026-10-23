@@ -40,6 +40,7 @@ from pssolver.planning.channel_compiled_v2 import (
     ChannelWorkspaceRequirement,
     channel_compiled_v2_declaration,
 )
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -397,9 +398,10 @@ def test_p73_record_binds_sources_and_limits_authorization():
     assert sha256("pssolver/experimental/channel_compiled_v2.py") == record[
         "implementation"
     ]["execution_adapter_sha256"]
-    assert sha256("pssolver/channel.py") == record["compatibility"][
-        "legacy_channel_module_sha256"
-    ]
+    historical = record["compatibility"]["legacy_channel_module_sha256"]
+    assert sha256("pssolver/channel.py") == resolve_s03_successor(
+        "pssolver/channel.py", historical
+    )
     assert sha256("Channel.py") == record["compatibility"][
         "channel_entry_point_sha256"
     ]
