@@ -9,8 +9,8 @@
 当前共登记 35 条：
 
 - `open`：1；
-- `registered`：1；
-- `claimed_fixed`：6；
+- `registered`：0；
+- `claimed_fixed`：7；
 - `verified`：21；
 - `deferred`：2；
 - `accepted`：1；
@@ -47,9 +47,10 @@
    `claimed_fixed`。`R-0017` 对这六项逐项复核通过，但发现候选 wheel 排除了
    `pssolver.control` 后，保留的 `pssolver.channel` 仍导入该包，导致两条 Channel
    installed-wheel runtime 均无法构建。
-9. 上述候选回归登记为 `V-30`（high、`registered`、路线图 `S-07`）。返工必须把共享
-   active-force 实现移入实际打包模块，同时保留源码兼容转发，并加入 wheel 全模块导入、
-   两条 Channel runtime 构建及四条公开应用真实 dry-run 门禁。
+9. 上述候选回归 `V-30`（high）已由运行时提交 `8aceaab` 声明修复，现为
+   `claimed_fixed`：共享 active-force 实现已移入实际打包模块，同时保留源码兼容转发；
+   wheel 全模块导入、两条 Channel runtime 构建及四条公开应用真实 dry-run 门禁已在本地通过，
+   等待 `R-0018` 独立复核。
 
 ## Control 路径
 
@@ -60,8 +61,8 @@
 
 ## 0.3 路线图
 
-S-07 的 6 个 low/info 条目已经进入 `claimed_fixed`，候选回归 `V-30` 已登记并必须在
-`R-0018` 前修复；
+S-07 的 6 个 low/info 条目与候选回归 `V-30` 均已进入 `claimed_fixed`，等待
+`R-0018` 独立复核；
 `A2-21/S2-12` 已完成 `S-05` 独立复核。`V-27` 归入 `S-06`，`V-26` 与
 `B30` 归入文档批次 `S-07`。
 `V-17` 已验证身份不变，不重新打开。路线图顺序以同步仓库中用户确认的

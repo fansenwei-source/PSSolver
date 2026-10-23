@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-07",
+  "classification": "PASS_V0_3_S07_REWORK_LOCAL_CANDIDATE_PENDING_R0018",
+  "git_identity": {
+    "implementation_commit": "8aceaab446e57a13866090ec06ecdf30e33ef490",
+    "qualification_support_commit": "c927164366da525753b7528d11ba8e6a2c587152",
+    "branch": "fix/v0.3-s07-packaging-metadata-docs",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "roadmap": {
+    "decision": "D-0010",
+    "plan_step": "S-07",
+    "claimed_issue_ids": [
+      "A1-07",
+      "S1-15/NEW-13",
+      "S1-04",
+      "OBS-4",
+      "B30",
+      "V-26",
+      "V-30"
+    ],
+    "next_request": "R-0018"
+  },
+  "v30_contract": {
+    "shared_implementation": "pssolver.models.active_nematics.active_force.active_force_divergence",
+    "source_compatibility_reexport": "pssolver.control.active_force.active_force_divergence",
+    "compatibility_reexport_is_same_object": true,
+    "retained_modules_depend_on_excluded_control": false,
+    "installed_module_import_inventory_required": true,
+    "only_optional_import_failure": "pssolver.visualizer without pygame",
+    "channel_runtime_builds": ["legacy", "compiled_v2"],
+    "public_dry_run_families": [
+      "plane",
+      "periodic",
+      "legacy_channel",
+      "complete_stress_channel"
+    ],
+    "public_compilation_fields": [
+      "schema_version",
+      "compilation_identity_sha256",
+      "source_simulation_sha256",
+      "application",
+      "application_simulation_sha256",
+      "application_request_sha256",
+      "normalization",
+      "fallback_allowed"
+    ]
+  },
+  "obs4_hardening": {
+    "publication_diagnostic_is_best_effort": true,
+    "logging_filter_failure_cannot_mask_successful_publication": true,
+    "checkpoint_identity_changed": false
+  },
+  "runtime_sources": {
+    "pssolver/api/runner.py": "1a503cf502c313d51374e388437cf78176232f456a7112cfd6a42a627e37d29b",
+    "pssolver/applications/channel_active_nematics.py": "77e2d74a21da73cc2e37ddbdc93ef084b8cc21159828a18ed92c97fd1fb33171",
+    "pssolver/channel.py": "dbb466c529bddfa5df125b9fb3c94a3ea6bf30c8df2d09cfcc0265632b6c951c",
+    "pssolver/configuration/public_channel_simulation_compiler.py": "6c961e23304a64c88f59a168e35f0071a3559156ed24e3c7ba557c722c88c20b",
+    "pssolver/control/active_force.py": "2833b04015a3c5933fd8db2342391454e77c7763f7384c74a9e7b5ebcb2e9e9f",
+    "pssolver/io/checkpoint.py": "f82b3114406a9fc5dc14ad9eea2af59da8a7d7c9ef54fe7350821027ef106433",
+    "pssolver/models/active_nematics/__init__.py": "b28375c93a5449de4a4f7aa4350d0d03448f7d19191dfe8a3fa76596883ad1f1",
+    "pssolver/models/active_nematics/active_force.py": "01d9405febc89d91d3b74ad204e1ccc88dc677b4cbf9295161de7f27d4f447eb"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {"historical_sha256": "b08c767f9e4b2eeba5a2af07b3ea6c1ff1be2a8a4f9a07ff9c66890de7dc6c54", "current_sha256": "31e58a000005713a408c0639b71a0c2cbd102cf8e71463a8cec63d313785c8b6", "reason": "Document the S-07 wheel closure and public dry-run contracts."},
+    "pssolver/api/runner.py": {"historical_sha256": "47570a0c3af23be64374cad6cd0306bc9afe67087a10d7515d40fe993cff1aeb", "current_sha256": "1a503cf502c313d51374e388437cf78176232f456a7112cfd6a42a627e37d29b", "reason": "Return legacy Channel dry-run results through the public result protocol."},
+    "pssolver/applications/channel_active_nematics.py": {"historical_sha256": "f86e389d525592107f847fa629da6c0d4325ae8241f69d604d3c674d7978861e", "current_sha256": "77e2d74a21da73cc2e37ddbdc93ef084b8cc21159828a18ed92c97fd1fb33171", "reason": "Expose a real legacy Channel dry-run without constructing a runtime."},
+    "pssolver/channel.py": {"historical_sha256": "3e85bd8e387eaeee48674998e08a3f97585f9d73ae3c7c4bd620d9ea1bd9605b", "current_sha256": "dbb466c529bddfa5df125b9fb3c94a3ea6bf30c8df2d09cfcc0265632b6c951c", "reason": "Import the active-force helper from a retained packaged module."},
+    "pssolver/configuration/public_channel_simulation_compiler.py": {"historical_sha256": "faf126324a9ddf5f36e9254d7a7ee3565a2aece17073b38d34d0b806f9a7188e", "current_sha256": "6c961e23304a64c88f59a168e35f0071a3559156ed24e3c7ba557c722c88c20b", "reason": "Preserve an explicitly requested legacy Channel dry-run through compilation."},
+    "pssolver/control/active_force.py": {"historical_sha256": "98211072b92e1555a0597397541f7e9163ebe61672a285571d4a2a5485edea2f", "current_sha256": "2833b04015a3c5933fd8db2342391454e77c7763f7384c74a9e7b5ebcb2e9e9f", "reason": "Retain a source compatibility re-export of the packaged helper."},
+    "pssolver/io/checkpoint.py": {"historical_sha256": "2d29a9d4e577aa321db27edc3812ef4083cd154fa57d34ba111a1934bdae88fe", "current_sha256": "f82b3114406a9fc5dc14ad9eea2af59da8a7d7c9ef54fe7350821027ef106433", "reason": "Make the post-publication diagnostic best effort."},
+    "pssolver/models/active_nematics/__init__.py": {"historical_sha256": "98dd54ad544083060dd4d02e5cf5f6ce1c14a9f4288af093119bdc8b8e83580d", "current_sha256": "b28375c93a5449de4a4f7aa4350d0d03448f7d19191dfe8a3fa76596883ad1f1", "reason": "Export the packaged active-force helper."},
+    "tests/test_v0_3_s07_packaging_metadata_docs.py": {"historical_sha256": "50b556cdc47d1fb70a0d7694043b12c95e449a3639d4ea00ddfe24e65b334741", "current_sha256": "c640968749b1ce606e2293f627933f9ed0fe2eb47cdbec705d62652bc98efb4d", "reason": "Cover the wheel import closure and diagnostic hardening."},
+    "notes/pssolver_v0_2_x_open_issues.json": {"historical_sha256": "7fcce22b73259e8212844cf0063c5b6e5d9dd47ffea128a74bee022f328049fe", "current_sha256": "d20b00793b90179f89bd2bf04ff6745d62b83215a7cd00c087478beb593b4df4", "reason": "Claim V-30 at the runtime fix pending R-0018."},
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "53848470dbdd9e56ff339ca59ff106e859500767742b3231cb6fec2d2e1cc29a", "current_sha256": "aee9991ed175b15462b1f06e382d00017a9062f20e3a0c97febdf8f751e79dba", "reason": "Describe the V-30 candidate fix and pending review."},
+    "tests/test_v0_2_2_v17_r0002_import.py": {"historical_sha256": "65f638a12105ce452f6463bbd973c16851c9292f0d477e54ab84096762417023", "current_sha256": "e4621610e706c9106f0675490e97b039d34d139e05488f602e45f630e0f35149", "reason": "Preserve historical assertions with seven current S-07 claims."},
+    "tests/test_v0_2_x_open_issues.py": {"historical_sha256": "5bd49121981232b5af92b99e4ac1183c160523d81a1a3db0f4316e9790803315", "current_sha256": "70c58af425f17ff19578c1a5782982b7958d7e1dd0e4dc63f7670c8bd5bc219e", "reason": "Bind V-30 and the exact registry status counts."},
+    "tests/test_v0_3_s03_rework_record.py": {"historical_sha256": "5df9830eb3d28939714327c74b2c34cd2f3b6465dcf4e5823770743c56369181", "current_sha256": "a23f0f0daa8fe2e7c1335c38c4bea7917aa013abd1a0e7fd514d3772cef5e452", "reason": "Preserve S-03 assertions with seven current S-07 claims."},
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {"historical_sha256": "4157a5322959fc212f4876f1df75642dda710e536f0570cf62fff2b8efbd853f", "current_sha256": "e80bcfa6fb271670290b4f09da2b051d4135c42ae8c4f72cec462c92bb7db7b4", "reason": "Preserve S-04 assertions with seven current S-07 claims."},
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {"historical_sha256": "2c260c0fcff050132177a1bf5b230f96916f9400c95ba776c7896acc187dfbc9", "current_sha256": "10dd2c11a6eabdf6a51f770663166df2c09b6af23d8dd78c634ee2713c352fe8", "reason": "Preserve S-06 assertions with seven current S-07 claims."},
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {"historical_sha256": "36d400b477bc02250df8a62e321f89f7f310a9ce8a7cf4505de106265e2ecbfd", "current_sha256": "18c0f5fda786275ac1b9f1b294e4aa86f371b0b4cc5908a69a1cb70d563c609a", "reason": "Preserve S-06 rollback assertions with seven current S-07 claims."},
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {"historical_sha256": "64fdc876f5ba051a01c895b9df6a333044b89e8ba16897e5cdc059d553c0d8b5", "current_sha256": "afa31d62bc09924852f2e2549bee90199686f3bc6d1cbda00f249873f8945560", "reason": "Preserve S-06 serialization assertions with seven current S-07 claims."},
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {"historical_sha256": "b2a0cbe4e9e73f81f2d6d87c7a72d0cc6af7fbece62cb38d5456cd3268391b1b", "current_sha256": "2c9a471c509ed0f732a27b70893f7ebc57085ecffc76bc076c7e18e278642ed4", "reason": "Resolve historical runtime hashes through the successor chain and bind V-30."},
+    "tests/test_v0_3_s07_r0017_import.py": {"historical_sha256": "2d344f0aa9426a0290088b79461d614dd1d5016202229f3ba6cc6d9b9913d20b", "current_sha256": "d0222691c3115f08e60ced3a232459cd85100a0996c7578cfb512a81d02dafca", "reason": "Keep the historical R-0017 result while recognizing V-30 as claimed fixed."}
+  },
+  "new_sources": [
+    "pssolver/models/active_nematics/active_force.py",
+    "benchmarks/test_v0_3_s07_installed_wheel_gate.py",
+    "tests/test_v0_3_s07_public_compilation_real_paths.py",
+    "notes/PSSolver_v0_3_0_s03_successor_19_s07_rework_candidate.json",
+    "notes/PSSolver_v0_3_0_s03_successor_19_s07_rework_candidate_zh.md",
+    "tests/test_v0_3_s07_rework_candidate_record.py"
+  ],
+  "validation": {
+    "status": "LOCAL_GATES_PASS_FULL_CPU_PENDING",
+    "focused_source_pytest": {"passed": 64, "failed": 0, "skipped": 0},
+    "installed_wheel_pytest": {"passed": 7, "failed": 0, "skipped": 0},
+    "source_archive_sha256": "82c50136d5d0b9a74c5659d9cc42a86518fd14329ee45b7356769899596c94de",
+    "wheel_sha256": "51a82570926c20725d3bef6da7516981b3bcc62625cf75e507ea9342b4ef19ee",
+    "source_shadow_import": false,
+    "pip_check": "PASS",
+    "independent_review_pending": true
+  },
+  "scope": {
+    "runtime_changed": true,
+    "packaging_surface_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "numerical_algorithm_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  }
+}

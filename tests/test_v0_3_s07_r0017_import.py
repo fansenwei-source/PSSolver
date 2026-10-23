@@ -48,8 +48,11 @@ def test_r0017_registry_import_is_exact_and_does_not_close_s07() -> None:
     assert record["s07_complete"] is False
     assert record["eligible_for_push_draft"] is False
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
-    assert {key for key, item in issues.items() if item["status"] == "claimed_fixed"} == CLAIMS
-    assert issues["V-30"]["status"] == "registered"
+    assert {key for key, item in issues.items() if item["status"] == "claimed_fixed"} == CLAIMS | {"V-30"}
+    assert issues["V-30"]["status"] == "claimed_fixed"
+    assert issues["V-30"]["fixed_in"] == (
+        "8aceaab446e57a13866090ec06ecdf30e33ef490"
+    )
     assert issues["V-30"]["severity"] == "high"
 
 

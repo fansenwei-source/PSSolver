@@ -51,8 +51,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("claimed_fixed", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 1,
-        "claimed_fixed": 6,
+        "registered": 0,
+        "claimed_fixed": 7,
         "verified": 21,
         "deferred": 2,
         "accepted": 1,
@@ -252,13 +252,13 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         if item["status"] == "claimed_fixed"
     }
     assert claimed == {
-        "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26"
+        "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
     assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in claimed)
     assert all(
         issues[issue_id]["fixed_in"]
         == "b7cf4ca02095e8b41ed720809880628d2375cfbb"
-        for issue_id in claimed
+        for issue_id in claimed - {"V-30"}
     )
     assert issues["A2-21/S2-12"]["target_release"] == "0.3"
     assert issues["V-26"]["target_release"] == "0.3"
@@ -279,7 +279,8 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "affects_v0_2_1": False,
         "affects_control_paths": False,
         "exercised_by_current_control_research": False,
-        "status": "registered",
+        "status": "claimed_fixed",
+        "fixed_in": "8aceaab446e57a13866090ec06ecdf30e33ef490",
         "target_release": "0.3",
         "notes": issues["V-30"]["notes"],
     }

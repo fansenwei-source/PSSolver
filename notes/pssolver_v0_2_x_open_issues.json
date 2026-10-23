@@ -32,8 +32,8 @@
   "issue_count": 35,
   "status_counts": {
     "open": 1,
-    "registered": 1,
-    "claimed_fixed": 6,
+    "registered": 0,
+    "claimed_fixed": 7,
     "verified": 21,
     "deferred": 2,
     "accepted": 1,
@@ -320,9 +320,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "8aceaab446e57a13866090ec06ecdf30e33ef490",
       "target_release": "0.3",
-      "notes": "Roadmap S-07. setup.py excludes pssolver.control while the retained pssolver.channel imported pssolver.control.active_force; installed wheels therefore could not import pssolver.channel or build either legacy or compiled_v2 Channel runtime. Reproduce with the R-0017 installed-wheel import and Channel-builder probes. Fix by moving the shared force implementation into a packaged module while preserving the source compatibility re-export, then require an exhaustive installed-wheel module-import and public runtime smoke gate."
+      "notes": "Roadmap S-07. R-0017 found that setup.py excluded pssolver.control while the retained pssolver.channel imported pssolver.control.active_force, so installed wheels could not build either Channel runtime. Runtime 8aceaab moves the shared implementation into the packaged active-nematics model namespace, retains a compatibility re-export in the source-only control module, and adds real public dry-run provenance plus best-effort checkpoint diagnostic logging. Installed-wheel module-import and runtime gates pass locally; independent R-0018 verification remains pending."
     },
     {
       "id": "V-27",

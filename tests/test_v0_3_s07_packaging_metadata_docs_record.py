@@ -16,6 +16,7 @@ RECORD = ROOT / (
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 IMPLEMENTATION = "b7cf4ca02095e8b41ed720809880628d2375cfbb"
 ISSUES = {"A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26"}
+V30_IMPLEMENTATION = "8aceaab446e57a13866090ec06ecdf30e33ef490"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -41,7 +42,7 @@ def test_s07_contract_and_runtime_sources_are_exact():
     assert contract["digest_is_authentication"] is False
     assert contract["robin_public_execution_enabled"] is False
     for relative, expected in record["runtime_sources"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert resolve_s03_successor(relative, expected) == _sha256(ROOT / relative)
 
 
 def test_s07_successors_are_forward_only_and_complete():
@@ -59,10 +60,12 @@ def test_s07_registry_claims_are_review_pending():
         issue_id for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == ISSUES
+    assert claimed == ISSUES | {"V-30"}
     for issue_id in ISSUES:
         assert issues[issue_id]["fixed_in"] == IMPLEMENTATION
         assert "verified_by" not in issues[issue_id]
+    assert issues["V-30"]["fixed_in"] == V30_IMPLEMENTATION
+    assert "verified_by" not in issues["V-30"]
 
 
 def test_s07_candidate_authorizes_no_external_action():
