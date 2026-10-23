@@ -188,6 +188,8 @@ def test_rc6_frozen_hashes_only_change_at_the_final_release_boundary():
         "tests/test_rc6_5_checkpoint_control_flow_record.py",
         "tests/test_rc6_6_restart_output_atomicity_record.py",
         "tests/test_release_v0_1.py",
+        "tests/test_release_v0_2_0rc5_integration_review.py",
+        "tests/test_release_v0_2_0rc6_integration_review.py",
     }
     for section in ("versioned_sources", "historical_successor_sources"):
         for relative, identity in record[section].items():

@@ -62,15 +62,18 @@ def test_s09_bound_failure_is_preserved_without_sample_deletion():
 def test_s09_optimization_sources_are_content_addressed():
     record = _record()
     for relative, expected in record["runtime_sources"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative,
+            expected,
+        )
     for relative, successor in record[
         "historical_successor_sources"
     ].items():
-        assert resolve_s03_successor(
+        assert successor["current_sha256"] != successor["historical_sha256"]
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
             relative,
             successor["historical_sha256"],
-        ) == successor["current_sha256"]
-        assert _sha256(ROOT / relative) == successor["current_sha256"]
+        )
 
 
 def test_s09_evidence_binds_every_measured_matrix():

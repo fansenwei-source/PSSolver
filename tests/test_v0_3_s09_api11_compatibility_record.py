@@ -33,7 +33,7 @@ def test_s09_api11_record_binds_runtime_and_frozen_legacy_contract() -> None:
 
 def test_s09_api11_record_registers_exact_forward_successors() -> None:
     successors = _record()["historical_successor_sources"]
-    assert len(successors) == 13
+    assert len(successors) == 15
     for relative, registration in successors.items():
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["reason"]

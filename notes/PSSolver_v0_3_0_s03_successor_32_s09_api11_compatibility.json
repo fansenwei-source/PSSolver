@@ -83,6 +83,16 @@
       "historical_sha256": "edf5982eb6f12fd2d6b2be91cdef118f4ddf887779da450bfb556c5968168ee3",
       "current_sha256": "096195dcde454d63ddc6317bf6bb4ac4b5ffdcfc07c97bb7220b22ee75083f1f",
       "reason": "keep the rc6 API-1.0 contract historical while asserting it remains readable"
+    },
+    "tests/test_release_v0_2_rc6.py": {
+      "historical_sha256": "8f0920eb75c60ccbfd82548b0530b7aa99314006d4b5162321942c138d0e381f",
+      "current_sha256": "76bde75ff397281aa23b2f647d2b1600515808b079e36eb96e143270a5ae9ff6",
+      "reason": "recognize the API-1.1 historical integration-review successors without rewriting the rc6 freeze"
+    },
+    "tests/test_v0_3_s09_cpu_diagnosis_record.py": {
+      "historical_sha256": "eb22d100aba9ac345d30182070ecb49849b79646a91dd42fc777ae3a49b6aed0",
+      "current_sha256": "8d9c3d0e242955823a66a8956e04bfe1dabae1af5f24377bcf8087fddda94e61",
+      "reason": "preserve the stopped CPU diagnosis while resolving later checkpoint-compatibility successors"
     }
   },
   "authorization": {
