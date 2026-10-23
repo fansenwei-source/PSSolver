@@ -1,0 +1,86 @@
+{
+  "schema": "pssolver.v0_3.s03.historical_successor.v1",
+  "created_at": "2026-10-23T07:15:19-04:00",
+  "plan_step": "S-09",
+  "classification": "PASS_S09_CPU_REFERENCE_PREFLIGHT_AFTER_ONE_SHOT_TRANSIENT_TELEMETRY",
+  "git_identity": {
+    "branch": "fix/v0.3-s09-gpu-qualification",
+    "preregistration_commit": "d56803912caccfb60b878e6483e66603f2d3d67e",
+    "baseline_runtime_commit": "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70",
+    "candidate_runtime_commit": "2573dec5ca4c0c3248ac3a20db8448e9ab515df4",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "result": {
+    "execution_count": 1,
+    "profiles_completed": 12,
+    "all_samples_retained": true,
+    "classification": "NO_PAIRED_LIMIT_EXCEEDANCE",
+    "paired_wall_ratios": [
+      1.0119971538926715,
+      1.0122167200508372,
+      1.015305541459963,
+      1.019608843377747,
+      1.0213293381953248,
+      1.0122566267308273
+    ],
+    "maximum_paired_wall_ratio": 1.0213293381953248,
+    "focused_median_ratio": 1.0137810840953951,
+    "frozen_functional_tolerance_median_ratio": 1.0168360838379518,
+    "candidate_warmup_or_first_call_overhead_supported": false,
+    "candidate_fix_required_before_h100": false,
+    "cpu_preflight_reference_estimate_passed": true
+  },
+  "idle_and_telemetry": {
+    "preflight_two_second_average_idle_percent": 99.79,
+    "control_research_compute_processes": 0,
+    "control_process_paused": false,
+    "system_samples": 619,
+    "load1_min": 0.6572265625,
+    "load1_median": 0.935546875,
+    "load1_max": 0.9833984375,
+    "frequency_khz_min": 800000,
+    "frequency_khz_median": 5300000,
+    "frequency_khz_max": 5400000
+  },
+  "preserved_failures": {
+    "five_by_thirty_archive": "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2",
+    "six_by_sixty_archive": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_2573dec_20261023_v3",
+    "analysis_archive": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_failure_analysis_87f6bfe_20261023_v4",
+    "samples_deleted": false,
+    "verdicts_rewritten": false
+  },
+  "formal_h100_contract": {
+    "median_time_ratio_max": 1.03,
+    "paired_time_ratio_max": 1.05,
+    "all_samples_retained": true,
+    "changed": false
+  },
+  "runtime_sources": {
+    "benchmarks/diagnose_v0_3_s09_functional_transient.py": "84c4ef8bd5630ac37a559938f4b02f77228776f1c093ed280464c65c7463574a",
+    "notes/PSSolver_v0_3_0_s09_transient_telemetry_preregistration.json": "060bdec114509879ba50e567a18888affee71d0950652da699c526486baaa92b"
+  },
+  "historical_successor_sources": {},
+  "evidence": {
+    "archive": "/home/fansenwei/pssolver_v0_3_s09_cpu_transient_telemetry_d568039_20261023_v5",
+    "checksums_entries": 29,
+    "checksums_sha256": "ca878706bb87c5f14b6956a289d06a523241e82d78147cf6eb1a070f4ef25291",
+    "complete_present": true
+  },
+  "roadmap": {
+    "s09_complete": false,
+    "remaining_local_gates_authorized": true,
+    "r0022_created": false,
+    "h100_submission_authorized": false
+  },
+  "authorization": {
+    "push_performed": false,
+    "hpcc_executed": false,
+    "slurm_submitted": false,
+    "gpu_executed": false,
+    "h100_submitted": false,
+    "automatic_retry": false,
+    "threshold_change": false,
+    "production_default_changed": false
+  }
+}
