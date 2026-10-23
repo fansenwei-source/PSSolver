@@ -1,0 +1,143 @@
+"""Frozen local checks for the pre-authorization v0.3 S-09 plan."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+
+from benchmarks.plan_v0_3_s09_h100 import (
+    BASELINE_COMMIT,
+    BASELINE_WHEEL_SHA256,
+    CLASSIFICATION,
+    CONSUMER_BASE,
+    PLANNING_PARENT,
+    build_plan,
+)
+
+
+ROOT = Path(__file__).resolve().parents[1]
+RECORD = ROOT / "notes/PSSolver_v0_3_0_s09_h100_plan.json"
+
+
+def _record() -> dict[str, object]:
+    return json.loads(RECORD.read_text(encoding="utf-8"))
+
+
+def test_plan_record_is_generated_from_the_versioned_builder() -> None:
+    assert _record() == build_plan()
+
+
+def test_plan_binds_released_baseline_and_pending_candidate() -> None:
+    plan = _record()
+    assert plan["classification"] == CLASSIFICATION
+    assert plan["plan_step"] == "S-09"
+    assert plan["issues"] == ["A3-18", "NEW-14"]
+    provider = plan["provider"]
+    assert provider["baseline_commit"] == BASELINE_COMMIT
+    assert provider["baseline_wheel_sha256"] == BASELINE_WHEEL_SHA256
+    assert provider["candidate_planning_parent"] == PLANNING_PARENT
+    assert provider["candidate_implementation_commit"] is None
+    assert provider["candidate_wheel_sha256"] is None
+    assert plan["consumer"]["stable_qualification_base_commit"] == CONSUMER_BASE
+    assert plan["consumer"]["migration_commit"] is None
+
+
+def test_new14_gap_blocks_h100_until_a_contract_is_selected() -> None:
+    plan = _record()
+    diagnosis = plan["diagnosis"]
+    assert diagnosis == {
+        "channel_backward_observed_caller_tf32_on": True,
+        "current_runtime_owns_forward_calls_only": True,
+        "h100_must_not_be_submitted_before_resolution": True,
+        "new_14_is_a_confirmed_scope_gap": True,
+        "periodic_backward_observed_caller_tf32_on": True,
+    }
+    assert plan["selected_answers"] == {}
+    questions = {value["id"]: value for value in plan["decision_questions"]}
+    assert set(questions) == {"S09-Q01", "S09-Q02", "S09-Q03", "S09-Q04"}
+    assert all(value["recommended"] == "A" for value in questions.values())
+    assert plan["authorization"]["h100_submission_authorized"] is False
+
+
+def test_plan_freezes_long_horizon_tf32_and_single_job_boundaries() -> None:
+    plan = _record()
+    assert plan["long_horizon"]["cases"] == [
+        {"case": "loop3d", "horizon": 200.0, "storage": "hermitian_half"},
+        {"case": "loop3d", "horizon": 200.0, "storage": "full_complex"},
+        {"case": "r1", "horizon": 200.0, "storage": "hermitian_half"},
+    ]
+    assert plan["long_horizon"]["tolerance_factor"] == 64.0
+    assert plan["tf32_backward"]["functional_families"] == [
+        "periodic_functional",
+        "channel_functional",
+    ]
+    assert len(plan["tf32_backward"]["caller_states"]) == 6
+    assert plan["submission"] == {
+        "automatic_retry": False,
+        "complete_only_after_all_gates_and_checksums": True,
+        "fail_fast": True,
+        "formal_h100_submission_count": 1,
+    }
+
+
+def test_plan_reuses_the_full_accepted_paired_profile_contract() -> None:
+    plan = _record()
+    profiles = plan["profile_matrix"]
+    assert len(profiles) == 192
+    assert [value["sequence"] for value in profiles] == list(range(1, 193))
+    assert len({value["key"] for value in profiles}) == 192
+    assert {value["provider_role"] for value in profiles} == {
+        "baseline",
+        "candidate",
+    }
+    assert {value["device"] for value in profiles} == {"cuda"}
+    assert {value["samples_per_profile"] for value in profiles} == {60}
+    contract = plan["profile_contract"]
+    assert contract["runtime_families"] == [
+        "plane_legacy_production",
+        "plane_compiled_v2",
+        "periodic_complete_stress",
+        "channel_legacy",
+        "channel_compiled_v2",
+        "channel_complete_stress",
+        "periodic_functional",
+        "channel_functional",
+    ]
+    assert contract["profile_count"] == 192
+    assert contract["outlier_removal_allowed"] is False
+    assert contract["trial_replacement_allowed"] is False
+
+
+def test_plan_does_not_relax_accepted_numerical_or_profile_limits() -> None:
+    plan = _record()
+    assert plan["thresholds"] == {
+        "aggregate_and_median_runtime_ratio_max": 1.03,
+        "compile_fallback": False,
+        "finite_required": True,
+        "graph_breaks": 0,
+        "minimum_trials_at_or_below_individual_reference": 4,
+        "order_stratum_and_individual_reference_ratio_max": 1.05,
+        "peak_allocated_group_ratio_max": 1.03,
+        "peak_reserved_group_ratio_max": 1.03,
+        "runtime_fallback": False,
+        "transform_counts_exact": True,
+    }
+    numerical = plan["numerical"]
+    assert numerical["changed_float64_paths_relative_l2_max"] == 1.0e-12
+    assert numerical["changed_float64_paths_linf_max"] == 1.0e-12
+    assert numerical["gradient_relative_l2_max"] == 2.0e-5
+    assert numerical["finite_difference_relative_error_max"] == 2.0e-5
+    assert numerical["threshold_relaxation_allowed"] is False
+
+
+def test_atomic_writer_refuses_overwrite_and_round_trips(tmp_path) -> None:
+    from benchmarks.plan_v0_3_s09_h100 import _atomic_json
+
+    output = tmp_path / "plan.json"
+    value = build_plan()
+    _atomic_json(output, value)
+    assert json.loads(output.read_text(encoding="utf-8")) == value
+    with pytest.raises(FileExistsError, match="overwrite"):
+        _atomic_json(output, value)
