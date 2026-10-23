@@ -32,8 +32,8 @@
   "issue_count": 37,
   "status_counts": {
     "open": 1,
-    "registered": 2,
-    "claimed_fixed": 2,
+    "registered": 0,
+    "claimed_fixed": 4,
     "verified": 28,
     "deferred": 2,
     "accepted": 1,
@@ -601,7 +601,8 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "e2343d16a146cfc9fc362e3fb556d589480c404c",
       "target_release": "0.3",
       "notes": "The rc2 odd-axis continuation is bitwise under the generating pip/MKL build but differs by 0.6 epsilon under the Nematics3D conda build; rc1 merely asserted non-bitwise inequality. S-08 must bind the generation fingerprint, use 8*eps across builds, and prove the rc1 dynamics difference is far above roundoff."
     },
@@ -615,7 +616,8 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "e2343d16a146cfc9fc362e3fb556d589480c404c",
       "target_release": "0.3",
       "notes": "Earlier releases incorrectly labelled rc1 odd-axis migrations exact_legacy_upgrade. The candidate rejects them correctly but needs a dedicated error directing users to re-migrate the original rc1 checkpoint as state-only and a CHANGELOG compatibility note."
     }

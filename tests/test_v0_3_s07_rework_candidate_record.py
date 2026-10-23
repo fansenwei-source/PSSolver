@@ -59,7 +59,7 @@ def test_s07_rework_is_later_verified_by_r0018() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == {"A2-25", "N5"}
+    } == {"A2-25", "N5", "V-31", "V-32"}
     assert all(issues[issue_id]["status"] == "verified" for issue_id in CLAIMS)
     assert all(issues[issue_id]["verified_by"] == "R-0018" for issue_id in CLAIMS)
     assert issues["V-30"]["fixed_in"] == IMPLEMENTATION

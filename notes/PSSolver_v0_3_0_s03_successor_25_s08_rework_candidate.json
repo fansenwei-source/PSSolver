@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-23",
+  "stage": "S-08",
+  "classification": "PASS_V0_3_S08_REWORK_LOCAL_CPU_CANDIDATE",
+  "git_identity": {
+    "parent": "596f37c",
+    "implementation_commit": "e2343d16a146cfc9fc362e3fb556d589480c404c",
+    "branch": "fix/v0.3-s08-cpu-coverage",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "roadmap": {
+    "decision": "D-0010",
+    "plan_step": "S-08",
+    "issues": ["A2-25", "N5", "V-31", "V-32"],
+    "next_request": "R-0020",
+    "independent_review_pending": true
+  },
+  "fixture_identity": {
+    "root": "tests/fixtures/historical_cpu_coverage_v1",
+    "generator_sha256": "d40b81f834493491733974d2f897fb2462f98a2b96857bba7e5a2a58936308f5",
+    "manifest_sha256": "81487fcee86d447ea30bcb41c267f2906804320b308e7d9086c2af6480aa6457",
+    "numerical_build_fingerprint": {
+      "numpy_configuration_sha256": "fdaee81454e99db7d5bc2e8e6ed1a006aee64180839cbbdcae1c1b0f42784351",
+      "numpy_version": "2.4.3",
+      "python_implementation": "CPython",
+      "python_version": "3.12.13",
+      "scipy_version": "1.16.0",
+      "torch_configuration_sha256": "21384f8f1c659b4321e330a41be8b8362971158a0bcaed2e27f3210ee52992d0",
+      "torch_cuda_version": "12.4",
+      "torch_version": "2.6.0+cu124"
+    },
+    "tolerance_policy": {
+      "matching_build": "bitwise",
+      "other_builds": "dtype_epsilon",
+      "epsilon_multiplier": 8.0,
+      "rc1_minimum_roundoff_multiple": 1000.0
+    },
+    "released_sources": {
+      "rc1": {
+        "commit": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1",
+        "version": "0.2.0rc1",
+        "git_archive_sha256": "5c2bf8805297d1863a523c0fcea3c3682d1625ebd4e0140fdb1ac215f11c937c"
+      },
+      "rc2": {
+        "commit": "2bbe21e88fec318787fc31dc0a82bca5a171c024",
+        "version": "0.2.0rc2",
+        "git_archive_sha256": "989bf6d30dff098009a04ae7d5b7f64500969572a7b3b54c5a824bef07230046"
+      }
+    },
+    "cases": {
+      "rc1_channel_functional_odd": {
+        "tree_sha256": "280ccc94310937acb214281648e4fdf2233e4b1ba8ece892ff33130290f0c127",
+        "checkpoint_tree_sha256": "c33930ac57cd078eb165e9a3a2458762f516c14e9027ae0a7b6d4fe14a147c65",
+        "continuation_tree_sha256": "2ba384ec3a0065e4c33955af114ab6e765f4b6ec6d0921fa3a12afa942a09b00"
+      },
+      "rc2_channel_functional_odd": {
+        "tree_sha256": "5d40881f42ce6aaf600c0c73822ae0d08bef274bffda5554b29a977c669a7ea1",
+        "checkpoint_tree_sha256": "d7d163637b82649916bd74b03aba8157f598e511e37f5a0f4e352d30ac97927c",
+        "continuation_tree_sha256": "ac2a64ea183f18bda6674ebafb1501c6cbc8dbfbe6ea05549dc6df6076acc6de"
+      },
+      "rc1_plane_lifted": {
+        "tree_sha256": "81168e80feedab06b084ee83c9861e826870540bc03f35bed452a96161a9a042",
+        "checkpoint_tree_sha256": "459c148b2616078725862dc28eb4aa9e3771aec9fb65016aef41f2b199b64925"
+      }
+    }
+  },
+  "adjudication": {
+    "V-31": {
+      "matching_generation_build": "bitwise continuation identity",
+      "different_numerical_build": "rtol=atol=8*dtype_epsilon",
+      "rc1_boundary": "difference must exceed 1000 times the effective roundoff tolerance"
+    },
+    "V-32": {
+      "legacy_false_claim": "rc1 odd-periodic-axis exact_legacy_upgrade",
+      "disposition": "reject with a dedicated FunctionalCheckpointCompatibilityError",
+      "recovery": "re-migrate the original rc1 checkpoint using state-only migration"
+    }
+  },
+  "issue_state": {
+    "claimed_fixed": ["A2-25", "N5", "V-31", "V-32"],
+    "fixed_in": {
+      "A2-25": "8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851",
+      "N5": "8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851",
+      "V-31": "e2343d16a146cfc9fc362e3fb556d589480c404c",
+      "V-32": "e2343d16a146cfc9fc362e3fb556d589480c404c"
+    },
+    "verified": [],
+    "independent_review_required": true
+  },
+  "validation": {
+    "pip_torch_targeted": {"passed": 5, "failed": 0},
+    "nematics3d_conda_targeted": {"passed": 5, "failed": 0},
+    "full_cpu_suites_pending": true
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {"historical_sha256": "d48cdc2ea12f91fd62f1dad9377876a1311bd864c667b6e7cf8ba344c41147ea", "current_sha256": "39e52aac1a1b5db16e51c51b71a1fc6c4b150bdf0b49b11012ec91b71b6cd16a", "reason": "Document the build-aware rc2 oracle and the actionable rc1 migration rejection."},
+    "pssolver/functional/channel_checkpoint.py": {"historical_sha256": "9823ef41277a7de053b0ecbb554fb1bfb226f88e680905846c55ffd5ba5112d3", "current_sha256": "86318d73ffa115f66fc3e2d811f629fac19960afb667aca9e4ec2b547385a764", "reason": "Reject historically mislabelled rc1 odd-axis upgrades with a dedicated compatibility error."},
+    "notes/pssolver_v0_2_x_open_issues.json": {"historical_sha256": "81e71f90aeba686ed26fa65b4926e7e19af2f4d19fa3c998a1b5c1e2dd421ecf", "current_sha256": "3d5f9a5da486198c6d2484dbcf30f7d8afa7b8ed84dd812228bb87697b44c2c0", "reason": "Advance V-31 and V-32 to claimed_fixed while R-0020 remains pending."},
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "57d181ec3e6aa62eac7906a5387f5b3b5b21a9ebe99b22705f56ab7309ca5cde", "current_sha256": "39d6f13c12c8dc810a062f527534bf0c9dbee99d524dfcccc6f55de1e0503f10", "reason": "Describe the two S-08 rework fixes and pending R-0020 review."},
+    "tests/test_v0_2_x_open_issues.py": {"historical_sha256": "fe3fd1da0ff37e29ba21ed381da94dfcb5d1236fef62ae121b900525e687ecd7", "current_sha256": "9980188db9566b96d8b99b32b1ba93c6a9f79f7f6696a42b8cbc00dd993e7cc3", "reason": "Bind both new claimed fixes and the updated registry counts."},
+    "tests/test_v0_3_s03_rework_record.py": {"historical_sha256": "ce14723e5d7dfe69566f436119a2ce575fc63d32add90eb73874ccf15a45cd17", "current_sha256": "a8c805d38f1c5633962d09dbd3140c7b3af575919416fdb1b0531ee761324bdb", "reason": "Preserve S-03 verification while recognizing the later S-08 rework claims."},
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {"historical_sha256": "6b1e474b0bd60e025ce6a7f90d18ed7652f96deec3571ede96280b43d8c8f3de", "current_sha256": "a2f3e420b3b05864a268d632336a1fa78464eae5fb33fb5089ca91a30b8fef2e", "reason": "Preserve S-04 verification while recognizing the later S-08 rework claims."},
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {"historical_sha256": "83777bf38ecd5c0456fd88e4bc2b05e3145b616999c7e30e9a54de7fcd807d4d", "current_sha256": "71bd8030bf3cf6ff53fcb8b199d5ee9e90ea8e0681941b313430835541625fea", "reason": "Preserve S-06 verification while recognizing the later S-08 rework claims."},
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {"historical_sha256": "6e33e5c2621276c8ab7e5b045d1819fc2e1efb45fc4145e9f5928ecbe116c8db", "current_sha256": "0d3e6881b4bfe00152395045c72a6a6f16e20adadfda8663a00fb62db6bab298", "reason": "Preserve S-06 rollback verification while recognizing the later S-08 rework claims."},
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {"historical_sha256": "1b68b9044f02a68c34a98aaaff85a4480db73e65078ed03d088100f3b92529ae", "current_sha256": "d2d32329f477b4691456139c3136048c73ff2d964c1124e4b3961f00b10ec628", "reason": "Preserve S-06 closure while recognizing the later S-08 rework claims."},
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {"historical_sha256": "75a57056cdd48f7d36ddf105972e3db7d73e3b04191e7738db178be3da783ff6", "current_sha256": "d6bcf1091e2b823ec23db506b425c8d43672c9b9cc24a3c9b743dbbddb85a953", "reason": "Preserve S-07 verification while recognizing the later S-08 rework claims."},
+    "tests/test_v0_3_s07_r0017_import.py": {"historical_sha256": "697bb91147eb3ab5cb369caab02264ce0ebbd4deaa892c803a3de4cd8cbe79d0", "current_sha256": "ca6aca511a30eec8fe459c2effc8e13febb41a92f7e5c0abbc4c176510bb90b0", "reason": "Keep the historical R-0017 import fixed while recognizing later S-08 claims."},
+    "tests/test_v0_3_s07_rework_candidate_record.py": {"historical_sha256": "35ab0ff7f4af2f77146df390b570b78455e9ef0121e45a2fc20ffb75854c000f", "current_sha256": "c14bd9223889a8209eece6772d797a23e4bcb49f5571b80e95f439e2fb567397", "reason": "Keep the S-07 rework record fixed while recognizing later S-08 claims."},
+    "tests/test_v0_3_s08_historical_cpu_coverage_record.py": {"historical_sha256": "a5d317670b77bbedb780e855233919f36da5c730985a4ca580712d10a1304f7a", "current_sha256": "ccfa601dc4d0ab0634175c039b8059dbe4d8358602e82e3d33fa2e3346152382", "reason": "Keep successor 23 immutable and bind the current build-aware rework evidence."},
+    "tests/test_v0_3_s08_r0019_import.py": {"historical_sha256": "f92b586d2fde02d66a28ffe182d9c4859a1a3ff6122386a40e53cd377b7274e8", "current_sha256": "6967bbe4621cebe6e224afd3b564e8e0e4f0a8e9ee17ae816834dd449a7072da", "reason": "Keep R-0019 immutable while recognizing its findings as later claimed fixes."},
+    "tests/fixtures/historical_cpu_coverage_v1/generate_fixtures.py": {"historical_sha256": "344ea581a5bfb3ddcecc5b9b4cb81c3eac4327d3466c4017023d5c14271c9f87", "current_sha256": "d40b81f834493491733974d2f897fb2462f98a2b96857bba7e5a2a58936308f5", "reason": "Persist the numerical build fingerprint with generated fixtures."},
+    "tests/fixtures/historical_cpu_coverage_v1/manifest.json": {"historical_sha256": "444867eb21e28adb4a3593deda97cba6e4a06808b131602c4a35d08af7c95f73", "current_sha256": "81487fcee86d447ea30bcb41c267f2906804320b308e7d9086c2af6480aa6457", "reason": "Bind the build-aware comparison policy and regenerated metadata tree hashes."},
+    "tests/fixtures/historical_cpu_coverage_v1/README.md": {"historical_sha256": "7c59ffc306c9ea3de6ce02f4b625715e1c80ba659a0e48d868ffb14f99803a38", "current_sha256": "de78c6631d77ef3a3623f863da8b6f11f6f82ed3835c3a2dd6c880eea562c33a", "reason": "Document the build-aware oracle contract."},
+    "tests/fixtures/historical_cpu_coverage_v1/rc1_channel_functional_odd/generation.json": {"historical_sha256": "c8825316ee54e06d72e03d221727a2f7d44508f8cee987eb1f88dbc7f8fb6263", "current_sha256": "4efb52c395e02da0a3a46d4535de3dca0bd59403782b0633115dea7fa0a5872f", "reason": "Persist the generating numerical build fingerprint."},
+    "tests/fixtures/historical_cpu_coverage_v1/rc2_channel_functional_odd/generation.json": {"historical_sha256": "b60862d80015d2c7f862a81146b496490271e4dcf356fc2466a81d9b53f6778d", "current_sha256": "51196660f99e589a019e13fa3036d6a8b07a56bb33a9111f497c9b79506b4c87", "reason": "Persist the generating numerical build fingerprint."},
+    "tests/fixtures/historical_cpu_coverage_v1/rc1_plane_lifted/generation.json": {"historical_sha256": "434851c2a52537f1e62f058ab676ea539043fd315040480bdb3ee134567030de", "current_sha256": "12c7b6de3d1abb8af384d799e2f7e7517d86f82543ee60ee7caaff112ce765b4", "reason": "Persist the generating numerical build fingerprint."},
+    "tests/test_v0_3_s08_historical_cpu_coverage.py": {"historical_sha256": "520e9c186f4bdaf40d3b601da372f264f80ba1537054fab59f0e9ac05895f6a4", "current_sha256": "7b915416960e9c8190b8b845694aa94df361cfbc99bacf41103f71aa09f65fa4", "reason": "Apply bitwise identity only to matching numerical builds and reject the old false exact-upgrade claim."}
+  },
+  "scope": {
+    "checkpoint_payload_modified": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "numerical_algorithm_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_s08_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  }
+}
