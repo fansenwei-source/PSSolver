@@ -584,6 +584,33 @@ class ChannelActivityCheckpointBridge:
             "trajectory_equivalent": not state_only,
         }
         if dict(provenance) != expected:
+            earlier_rc1_odd_exact = {
+                "derivative_dynamics_change": (
+                    "proven_inapplicable_or_already_repaired"
+                ),
+                "migration_kind": "exact_legacy_upgrade",
+                "periodic_axis_size": periodic_size,
+                "source_api_version": FUNCTIONAL_API_VERSION,
+                "source_family": CheckpointFamily.CHANNEL_FUNCTIONAL.value,
+                "source_format_version": (
+                    _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION
+                ),
+                "source_release_generation": (
+                    SourceReleaseGeneration.RC1.value
+                ),
+                "trajectory_equivalent": True,
+            }
+            if (
+                periodic_size % 2 == 1
+                and dict(provenance) == earlier_rc1_odd_exact
+            ):
+                raise FunctionalCheckpointCompatibilityError(
+                    "an earlier PSSolver release mislabelled this rc1 "
+                    "odd-periodic-axis migration as exact_legacy_upgrade; "
+                    "re-migrate the original rc1 checkpoint using the "
+                    "current state-only migration",
+                    operation="channel_checkpoint_import",
+                )
             raise FunctionalCheckpointCompatibilityError(
                 "Channel migration provenance is inconsistent",
                 operation="channel_checkpoint_import",

@@ -15,4 +15,8 @@ rewritten copies.
 `manifest.json` binds the generator, release commits, reproducible git
 archives, generation environment, and every case tree.  Regeneration must use
 an exact released source tree first on `PYTHONPATH`; generated checkpoints are
-immutable test evidence.
+immutable test evidence.  The generation environment includes the same
+`numerical_build_fingerprint` used by the v0.2.0 continuation corpus.  A
+matching build requires bitwise rc2 continuation; another build must remain
+within `8 * dtype epsilon`.  The rc1 state-only difference must exceed that
+roundoff allowance by at least a factor of one thousand.

@@ -10,11 +10,15 @@ from __future__ import annotations
 import argparse
 from dataclasses import replace
 import hashlib
+import io
 import json
 from pathlib import Path
+import platform
+import sys
 
 import numpy as np
 import pssolver
+import scipy
 import torch
 
 from pssolver import (
@@ -89,6 +93,33 @@ def _write_json(path: Path, payload: object) -> None:
         json.dumps(payload, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
+
+
+def numerical_build_fingerprint() -> dict[str, object]:
+    """Identify the numerical build that controls exact FFT continuation."""
+
+    torch_configuration = torch.__config__.show()
+    numpy_configuration = io.StringIO()
+    old_stdout = sys.stdout
+    try:
+        sys.stdout = numpy_configuration
+        np.show_config()
+    finally:
+        sys.stdout = old_stdout
+    return {
+        "python_implementation": platform.python_implementation(),
+        "python_version": platform.python_version(),
+        "torch_version": torch.__version__,
+        "torch_cuda_version": torch.version.cuda,
+        "torch_configuration_sha256": hashlib.sha256(
+            torch_configuration.encode("utf-8")
+        ).hexdigest(),
+        "numpy_version": np.__version__,
+        "numpy_configuration_sha256": hashlib.sha256(
+            numpy_configuration.getvalue().encode("utf-8")
+        ).hexdigest(),
+        "scipy_version": scipy.__version__,
+    }
 
 
 def _model() -> CompleteStressBerisEdwards:
@@ -317,6 +348,7 @@ def main() -> None:
         "python": __import__("sys").version,
         "torch": torch.__version__,
         "numpy": np.__version__,
+        "numerical_build_fingerprint": numerical_build_fingerprint(),
     }
     _write_json(output / "generation.json", payload)
 

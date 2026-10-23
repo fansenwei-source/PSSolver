@@ -126,9 +126,18 @@
 ### Historical checkpoint coverage
 
 - Bind real rc1 and rc2 Channel functional checkpoints whose periodic axis is
-  odd.  The rc2 checkpoint is an exact legacy upgrade and continues byte for
-  byte; rc1 predates the B2 incompressibility repair and is therefore an
-  explicit state-only migration even when no periodic Nyquist plane exists.
+  odd.  The rc2 checkpoint is an exact legacy upgrade: its continuation must
+  be byte-for-byte identical on the recorded numerical build, while other
+  numerical builds use a fail-closed eight-real-dtype-epsilon comparison.
+  rc1 predates the B2 incompressibility repair and is therefore an explicit
+  state-only migration even when no periodic Nyquist plane exists; its
+  measured continuation difference is required to remain at least one
+  thousand times above that roundoff allowance.
+- Earlier PSSolver versions incorrectly labelled rc1 odd-periodic-axis
+  migrations as `exact_legacy_upgrade`.  Those already-migrated checkpoints
+  are now rejected with a dedicated compatibility error: resume from the
+  original rc1 checkpoint and repeat the current state-only migration.  The
+  old exact label cannot be repaired safely without that original source.
 - Bind a real rc1 static-lifting Plane checkpoint and verify that its pre-B8
   lifting dynamics are rejected before tensor payloads are opened.  The
   fixture closes the historical rejection-coverage gap without reopening the

@@ -15,6 +15,16 @@
   "source": {
     "commit": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1",
     "numpy": "2.4.3",
+    "numerical_build_fingerprint": {
+      "numpy_configuration_sha256": "fdaee81454e99db7d5bc2e8e6ed1a006aee64180839cbbdcae1c1b0f42784351",
+      "numpy_version": "2.4.3",
+      "python_implementation": "CPython",
+      "python_version": "3.12.13",
+      "scipy_version": "1.16.0",
+      "torch_configuration_sha256": "21384f8f1c659b4321e330a41be8b8362971158a0bcaed2e27f3210ee52992d0",
+      "torch_cuda_version": "12.4",
+      "torch_version": "2.6.0+cu124"
+    },
     "pssolver_import": "/home/fansenwei/Desktop/Develop/PSSolver_release_v0_2_0_rc1/pssolver/__init__.py",
     "pssolver_version": "0.2.0rc1",
     "python": "3.12.13 | packaged by conda-forge | (main, Mar  5 2026, 16:50:00) [GCC 14.3.0]",

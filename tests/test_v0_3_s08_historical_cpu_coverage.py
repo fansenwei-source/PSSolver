@@ -10,6 +10,8 @@ import numpy as np
 import pytest
 import torch
 
+from benchmarks.v0_2_0_checkpoint_fixtures import numerical_build_fingerprint
+
 from pssolver import (
     Output,
     Simulation,
@@ -37,6 +39,7 @@ from pssolver.workflows import plane_checkpoint as plane_checkpoint_module
 from pssolver.workflows.plane_checkpoint import (
     upgrade_plane_checkpoint_directory_v1,
 )
+import pssolver.functional.channel_checkpoint as channel_checkpoint_module
 
 
 FIXTURES = Path(__file__).parent / "fixtures" / "historical_cpu_coverage_v1"
@@ -175,13 +178,16 @@ def test_s08_fixture_manifest_binds_exact_release_outputs():
         release = MANIFEST["released_sources"][record["source_release"]]
         assert generation["source"]["commit"] == release["commit"]
         assert generation["source"]["pssolver_version"] == release["version"]
+        assert generation["source"]["numerical_build_fingerprint"] == MANIFEST[
+            "generation_environment"
+        ]["numerical_build_fingerprint"]
 
 
 @pytest.mark.parametrize(
-    ("generation", "migration_kind", "trajectory_equivalent", "continuation_exact"),
+    ("generation", "migration_kind", "trajectory_equivalent"),
     (
-        ("rc1", "state_only_migration", False, False),
-        ("rc2", "exact_legacy_upgrade", True, True),
+        ("rc1", "state_only_migration", False),
+        ("rc2", "exact_legacy_upgrade", True),
     ),
 )
 def test_authentic_odd_channel_functional_checkpoint_has_honest_disposition(
@@ -189,7 +195,6 @@ def test_authentic_odd_channel_functional_checkpoint_has_honest_disposition(
     generation,
     migration_kind,
     trajectory_equivalent,
-    continuation_exact,
 ):
     fixture = FIXTURES / f"{generation}_channel_functional_odd"
     runtime = _channel_runtime(tmp_path / generation, fixture)
@@ -227,11 +232,37 @@ def test_authentic_odd_channel_functional_checkpoint_has_honest_disposition(
         torch.from_numpy(np.load(oracle / "q_physical_step_2.npy")),
         torch.from_numpy(np.load(oracle / "q_spectral_step_2.npy")),
     )
-    observed_exact = all(
-        torch.equal(left, right)
-        for left, right in zip(continued, expected, strict=True)
-    )
-    assert observed_exact is continuation_exact
+    policy = MANIFEST["continuation_tolerance_policy"]
+    matching_build = numerical_build_fingerprint() == MANIFEST[
+        "generation_environment"
+    ]["numerical_build_fingerprint"]
+    roundoff_multiples = []
+    for observed, reference in zip(continued, expected, strict=True):
+        epsilon = float(torch.finfo(observed.real.dtype).eps)
+        tolerance = float(policy["epsilon_multiplier"]) * epsilon
+        maximum_difference = float((observed - reference).abs().max())
+        effective_tolerance = tolerance * (
+            1.0 + float(reference.abs().max())
+        )
+        if generation == "rc2":
+            if matching_build:
+                assert torch.equal(observed, reference)
+            else:
+                assert torch.allclose(
+                    observed,
+                    reference,
+                    rtol=tolerance,
+                    atol=tolerance,
+                )
+        else:
+            assert not torch.equal(observed, reference)
+            roundoff_multiples.append(
+                maximum_difference / effective_tolerance
+            )
+    if generation == "rc1":
+        assert min(roundoff_multiples) > float(
+            policy["rc1_minimum_roundoff_multiple"]
+        )
 
 
 def test_authentic_rc1_lifted_plane_rejects_before_tensor_load(
@@ -261,3 +292,41 @@ def test_authentic_rc1_lifted_plane_rejects_before_tensor_load(
         )
     assert not target.exists()
     assert _tree(source) == before
+
+
+def test_earlier_rc1_odd_exact_migration_has_actionable_rejection(
+    tmp_path,
+    monkeypatch,
+):
+    fixture = FIXTURES / "rc1_channel_functional_odd"
+    runtime = _channel_runtime(tmp_path / "runtime", fixture)
+    source = fixture / "checkpoint"
+    target = tmp_path / "earlier_mislabeled_upgrade"
+    with monkeypatch.context() as context:
+        context.setattr(
+            channel_checkpoint_module,
+            "_legacy_migration_disposition",
+            lambda _generation, _periodic_size: (
+                False,
+                "proven_inapplicable_or_already_repaired",
+            ),
+        )
+        runtime.checkpoint_bridge.migrate_legacy_checkpoint(
+            source,
+            target,
+            source_release_generation="rc1",
+        )
+
+    metadata = json.loads((target / "checkpoint.json").read_text())
+    assert metadata["migration_provenance"]["migration_kind"] == (
+        "exact_legacy_upgrade"
+    )
+    assert metadata["migration_provenance"]["trajectory_equivalent"] is True
+    with pytest.raises(
+        FunctionalCheckpointCompatibilityError,
+        match=(
+            "earlier PSSolver release mislabelled.*rc1.*"
+            "re-migrate the original rc1 checkpoint.*state-only"
+        ),
+    ):
+        runtime.checkpoint_bridge.import_checkpoint(target)
