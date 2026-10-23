@@ -73,7 +73,7 @@ def test_s01_assigns_every_registered_item_to_0_3_exactly() -> None:
         issue_id
         for issue_id in tracked
         if issues[issue_id]["status"] == "claimed_fixed"
-    } == set()
+    } == {"A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30"}
     assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in tracked)
     assert set(record["changed_target_ids"]) | set(
         record["already_targeted_to_0_3"]

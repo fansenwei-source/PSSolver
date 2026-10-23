@@ -83,6 +83,13 @@ def test_r0013_import_verifies_s05_and_registers_both_findings() -> None:
                 "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a"
             )
             assert issue["verified_by"] == "R-0016"
+        elif finding["id"] == "V-26":
+            assert finding["status"] == "registered"
+            assert issue["status"] == "claimed_fixed"
+            assert issue["fixed_in"] == (
+                "b7cf4ca02095e8b41ed720809880628d2375cfbb"
+            )
+            assert "S-07" in issue["notes"]
         else:
             assert issue["status"] == finding["status"]
         assert issue["target_release"] == finding["target_release"]
