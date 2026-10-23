@@ -18,7 +18,7 @@ from typing import Iterable
 
 
 SCHEMA = "pssolver.v0_3.s09.single_h100_plan.v1"
-CLASSIFICATION = "S09_PLAN_READY_DECISIONS_AND_IMPLEMENTATION_PENDING"
+CLASSIFICATION = "S09_DECISIONS_CONFIRMED_IMPLEMENTATION_IN_PROGRESS"
 
 BASELINE_COMMIT = "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70"
 BASELINE_WHEEL_SHA256 = (
@@ -232,7 +232,33 @@ def build_plan() -> dict[str, object]:
                 },
             },
         ],
-        "selected_answers": {},
+        "selected_answers": {
+            "S09-Q01": "A",
+            "S09-Q02": "A",
+            "S09-Q03": "A",
+            "S09-Q04": "A",
+        },
+        "user_requirements": {
+            "control_base_commit": CONSUMER_BASE,
+            "control_dedicated_branch_and_worktree": True,
+            "control_existing_checkout_must_remain_untouched": (
+                "/home/fansenwei/Desktop/Develop/PSSolver-Control"
+            ),
+            "control_push_requires_separate_authorization": True,
+            "control_gate_precedes_profile_matrix": True,
+            "s06_cpu_timing_and_memory_preflight_required": True,
+            "stop_if_cpu_preflight_predicts_threshold_failure": True,
+            "threshold_relaxation_allowed": False,
+        },
+        "functional_api_impact": {
+            "version_before": "1.0",
+            "version_after": "1.1",
+            "version_changed": True,
+            "provider_identity_changed": True,
+            "checkpoint_forward_compatibility_identity_changed": False,
+            "api_1_0_current_format_checkpoint_reader_required": True,
+            "outside_execution_scope_backward_uses_caller_tf32_state": True,
+        },
         "provider": {
             "baseline_commit": BASELINE_COMMIT,
             "baseline_version": "0.2.2",
@@ -286,10 +312,30 @@ def build_plan() -> dict[str, object]:
             "tf32_forward_backward_scope",
             "checkpoint_restart_and_released_fixture_matrix",
             "numerical_gradient_taylor_and_replay",
-            "paired_performance_memory_profiles",
             "independent_control_consumer",
+            "paired_performance_memory_profiles",
             "cumulative_analyzer_and_checksums",
         ],
+        "s06_cpu_preflight": {
+            "runtime_families": [
+                "channel_legacy",
+                "channel_compiled_v2",
+                "channel_complete_stress",
+                "channel_functional",
+            ],
+            "modes": ["tolerance", "fixed_work"],
+            "measurements": [
+                "single_step_wall_time",
+                "peak_process_memory",
+                "pressure_iteration_count",
+                "termination_reason",
+            ],
+            "paired_baseline": BASELINE_COMMIT,
+            "runtime_ratio_warning": 1.03,
+            "runtime_ratio_stop": 1.05,
+            "memory_ratio_stop": 1.03,
+            "threshold_relaxation_allowed": False,
+        },
         "long_horizon": {
             "cases": [
                 {"case": "loop3d", "storage": "hermitian_half", "horizon": 200.0},

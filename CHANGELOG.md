@@ -2,6 +2,19 @@
 
 ## 0.3.0.dev0 — unreleased
 
+### Stable functional execution ownership
+
+- Add public `FunctionalRuntimeProtocol.execution_scope()` so an independent
+  consumer can keep the runtime's declared TF32 policy active across forward,
+  checkpointed replay, and autograd backward, with exact nested and
+  exceptional restoration. A backward pass performed after leaving the scope
+  continues to use the caller's TF32 settings.
+- Advance the functional API from 1.0 to 1.1. Runtime provider identities
+  change because they include the API version; checkpoint forward-
+  compatibility identities do not. Current-format API-1.0 functional
+  checkpoints remain readable through an explicit read-only compatibility
+  path and are reported as non-exact protocol restores.
+
 ### Packaging, provenance, and documented capability boundaries
 
 - Exclude the obsolete in-package `pssolver.control` namespace and repository-

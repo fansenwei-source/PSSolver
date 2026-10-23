@@ -10,7 +10,7 @@
     "release_authorized": false,
     "tag_authorized": false
   },
-  "classification": "S09_PLAN_READY_DECISIONS_AND_IMPLEMENTATION_PENDING",
+  "classification": "S09_DECISIONS_CONFIRMED_IMPLEMENTATION_IN_PROGRESS",
   "consumer": {
     "functional_api_version": "1.0",
     "migration_commit": null,
@@ -79,6 +79,15 @@
     "torch_cuda_runtime": "12.1",
     "visible_cuda_device_count": 1
   },
+  "functional_api_impact": {
+    "api_1_0_current_format_checkpoint_reader_required": true,
+    "checkpoint_forward_compatibility_identity_changed": false,
+    "outside_execution_scope_backward_uses_caller_tf32_state": true,
+    "provider_identity_changed": true,
+    "version_after": "1.1",
+    "version_before": "1.0",
+    "version_changed": true
+  },
   "issues": [
     "A3-18",
     "NEW-14"
@@ -90,8 +99,8 @@
     "tf32_forward_backward_scope",
     "checkpoint_restart_and_released_fixture_matrix",
     "numerical_gradient_taylor_and_replay",
-    "paired_performance_memory_profiles",
     "independent_control_consumer",
+    "paired_performance_memory_profiles",
     "cumulative_analyzer_and_checksums"
   ],
   "long_horizon": {
@@ -4014,6 +4023,29 @@
     "candidate_wheel_sha256": null,
     "installed_wheels_only": true
   },
+  "s06_cpu_preflight": {
+    "measurements": [
+      "single_step_wall_time",
+      "peak_process_memory",
+      "pressure_iteration_count",
+      "termination_reason"
+    ],
+    "memory_ratio_stop": 1.03,
+    "modes": [
+      "tolerance",
+      "fixed_work"
+    ],
+    "paired_baseline": "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70",
+    "runtime_families": [
+      "channel_legacy",
+      "channel_compiled_v2",
+      "channel_complete_stress",
+      "channel_functional"
+    ],
+    "runtime_ratio_stop": 1.05,
+    "runtime_ratio_warning": 1.03,
+    "threshold_relaxation_allowed": false
+  },
   "scheduler": {
     "account": "hagan-lab",
     "cpus_per_task": 8,
@@ -4025,7 +4057,12 @@
     "time_limit": "03:00:00"
   },
   "schema": "pssolver.v0_3.s09.single_h100_plan.v1",
-  "selected_answers": {},
+  "selected_answers": {
+    "S09-Q01": "A",
+    "S09-Q02": "A",
+    "S09-Q03": "A",
+    "S09-Q04": "A"
+  },
   "submission": {
     "automatic_retry": false,
     "complete_only_after_all_gates_and_checksums": true,
@@ -4086,5 +4123,15 @@
     "peak_reserved_group_ratio_max": 1.03,
     "runtime_fallback": false,
     "transform_counts_exact": true
+  },
+  "user_requirements": {
+    "control_base_commit": "208edd03e6b26a0e788c07d295fddd7a67237189",
+    "control_dedicated_branch_and_worktree": true,
+    "control_existing_checkout_must_remain_untouched": "/home/fansenwei/Desktop/Develop/PSSolver-Control",
+    "control_gate_precedes_profile_matrix": true,
+    "control_push_requires_separate_authorization": true,
+    "s06_cpu_timing_and_memory_preflight_required": true,
+    "stop_if_cpu_preflight_predicts_threshold_failure": true,
+    "threshold_relaxation_allowed": false
   }
 }

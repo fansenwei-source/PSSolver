@@ -12,14 +12,17 @@ from pssolver._version import __version__ as PSSOLVER_PACKAGE_VERSION
 from .errors import FunctionalVersionError
 
 
-FUNCTIONAL_API_VERSION = "1.0"
-FUNCTIONAL_LEGACY_CHECKPOINT_API_VERSIONS = ("0.1-provisional",)
+FUNCTIONAL_API_VERSION = "1.1"
+FUNCTIONAL_LEGACY_CHECKPOINT_API_VERSIONS = (
+    "1.0",
+    "0.1-provisional",
+)
 FUNCTIONAL_CONSTRUCTION_API_VERSIONS = (FUNCTIONAL_API_VERSION,)
 FUNCTIONAL_CHECKPOINT_READ_API_VERSIONS = (
     FUNCTIONAL_API_VERSION,
     *FUNCTIONAL_LEGACY_CHECKPOINT_API_VERSIONS,
 )
-FUNCTIONAL_COMPATIBILITY_POLICY_VERSION = 3
+FUNCTIONAL_COMPATIBILITY_POLICY_VERSION = 4
 
 FunctionalVersionPurpose = Literal["construction", "checkpoint_read"]
 
@@ -175,6 +178,9 @@ def functional_protocol_provenance() -> dict[str, object]:
         },
         "compatibility_policy": {
             "version": FUNCTIONAL_COMPATIBILITY_POLICY_VERSION,
+            "api_1_0_checkpoint_reader": (
+                "forward_compatible_current_format_read_only"
+            ),
             "legacy_checkpoint_schema_repair": True,
             "periodic_bridge_current_format_version": 3,
             "channel_bridge_current_format_version": 3,

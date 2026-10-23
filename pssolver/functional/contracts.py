@@ -10,7 +10,7 @@ import math
 from numbers import Real
 from pathlib import Path
 from types import MappingProxyType
-from typing import Protocol, TypeAlias, runtime_checkable
+from typing import ContextManager, Protocol, TypeAlias, runtime_checkable
 
 import torch
 
@@ -731,6 +731,10 @@ class FunctionalRuntimeProtocol(Protocol):
     def identity(self) -> FunctionalRuntimeIdentity: ...
 
     def initial_state(self) -> FunctionalState: ...
+
+    def execution_scope(self) -> ContextManager[Mapping[str, object]]:
+        """Own the declared execution policy across forward and backward."""
+        ...
 
     def step(
         self,

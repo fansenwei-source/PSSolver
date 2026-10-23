@@ -376,6 +376,15 @@ class PeriodicActivityFunctionalRuntime:
     def initial_state(self) -> FunctionalState:
         return tuple(value.clone() for value in self._initial_state)
 
+    def execution_scope(self):
+        """Own TF32 policy across an explicit forward/backward region."""
+
+        return scoped_tf32_execution(
+            self._tf32_requested,
+            real_dtype=self._tf32_real_dtype,
+            device=self._tf32_device,
+        )
+
     @staticmethod
     def _validate_step_index(step_index: int) -> None:
         if not isinstance(step_index, int) or isinstance(step_index, bool):

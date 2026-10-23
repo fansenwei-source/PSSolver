@@ -54,11 +54,25 @@ def test_new14_gap_blocks_h100_until_a_contract_is_selected() -> None:
         "new_14_is_a_confirmed_scope_gap": True,
         "periodic_backward_observed_caller_tf32_on": True,
     }
-    assert plan["selected_answers"] == {}
+    assert plan["selected_answers"] == {
+        "S09-Q01": "A",
+        "S09-Q02": "A",
+        "S09-Q03": "A",
+        "S09-Q04": "A",
+    }
     questions = {value["id"]: value for value in plan["decision_questions"]}
     assert set(questions) == {"S09-Q01", "S09-Q02", "S09-Q03", "S09-Q04"}
     assert all(value["recommended"] == "A" for value in questions.values())
     assert plan["authorization"]["h100_submission_authorized"] is False
+    assert plan["functional_api_impact"] == {
+        "api_1_0_current_format_checkpoint_reader_required": True,
+        "checkpoint_forward_compatibility_identity_changed": False,
+        "outside_execution_scope_backward_uses_caller_tf32_state": True,
+        "provider_identity_changed": True,
+        "version_after": "1.1",
+        "version_before": "1.0",
+        "version_changed": True,
+    }
 
 
 def test_plan_freezes_long_horizon_tf32_and_single_job_boundaries() -> None:
@@ -74,6 +88,11 @@ def test_plan_freezes_long_horizon_tf32_and_single_job_boundaries() -> None:
         "channel_functional",
     ]
     assert len(plan["tf32_backward"]["caller_states"]) == 6
+    assert plan["job_stage_order"].index(
+        "independent_control_consumer"
+    ) < plan["job_stage_order"].index(
+        "paired_performance_memory_profiles"
+    )
     assert plan["submission"] == {
         "automatic_retry": False,
         "complete_only_after_all_gates_and_checksums": True,

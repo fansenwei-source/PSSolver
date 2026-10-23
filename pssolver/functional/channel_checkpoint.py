@@ -844,7 +844,7 @@ class ChannelActivityCheckpointBridge:
                 operation="channel_checkpoint_import",
                 details={"source_api_version": selection.requested},
             )
-        if selection.legacy:
+        if selection.requested == "0.1-provisional":
             raise FunctionalCheckpointCompatibilityError(
                 "legacy Channel functional API requires explicit migration",
                 operation="channel_checkpoint_import",
@@ -898,11 +898,18 @@ class ChannelActivityCheckpointBridge:
                     "channel_state_only_migration_v3_reader"
                     if migration is not None
                     and migration.get("migration_kind") == "state_only_migration"
-                    else "current_channel_functional_bridge_v3_reader"
+                    else (
+                        selection.compatibility_reader
+                        or "current_channel_functional_bridge_v3_reader"
+                    )
                 ),
                 exact_current_protocol=(
-                    migration is None
-                    or migration.get("migration_kind") != "state_only_migration"
+                    not selection.legacy
+                    and (
+                        migration is None
+                        or migration.get("migration_kind")
+                        != "state_only_migration"
+                    )
                 ),
             ),
         )

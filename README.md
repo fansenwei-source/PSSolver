@@ -202,10 +202,17 @@ print(result.final_step, result.output_directory)
 ## Stable functional API
 
 `pssolver.functional.api` is the versioned functional interface for independent
-consumers.  Protocol version 1.0 qualifies batch-one Periodic and rectangular-
+consumers. Protocol version 1.1 qualifies batch-one Periodic and rectangular-
 Channel activity runtimes, deterministic replay, checkpoint bridges,
-observations, diagnostics, and differentiable execution.  PSSolver-Control is
-an independent consumer and is not bundled into this distribution.
+observations, diagnostics, and differentiable execution. Its public
+`runtime.execution_scope()` context owns the declared TF32 policy across a
+consumer's forward, replay, and backward calls, including exact restoration
+on nested and exceptional exits. A backward pass executed outside that scope
+uses the caller's TF32 settings. The additive method changes the functional
+API version and runtime provider identity; the API-1.0 current-format
+checkpoint reader preserves forward-compatible state restart without
+claiming exact API-1.1 identity. PSSolver-Control is an independent consumer
+and is not bundled into this distribution.
 
 ## Historical Plane application
 

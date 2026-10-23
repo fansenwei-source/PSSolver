@@ -259,7 +259,7 @@ class PeriodicActivityCheckpointBridge:
             api_version,
             purpose="checkpoint_read",
         )
-        if selection.legacy:
+        if selection.requested == "0.1-provisional":
             raise FunctionalCheckpointCompatibilityError(
                 "provisional Periodic checkpoint requires explicit state migration",
                 operation="periodic_checkpoint_import",
@@ -325,7 +325,9 @@ class PeriodicActivityCheckpointBridge:
                 operation="periodic_checkpoint_import",
                 details={"source_api_version": selection.requested},
             )
-        current = bridge_version == self.format_version
+        current = (
+            bridge_version == self.format_version and not selection.legacy
+        )
         return (
             (
                 _SOURCE_FUNCTIONAL_V3

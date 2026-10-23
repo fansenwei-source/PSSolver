@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections.abc import Callable
 import json
 from pathlib import Path
+from typing import ContextManager, Mapping
 from typing import TypeVar
 
 from . import channel_activity as _channel_declarations
@@ -229,6 +230,16 @@ class _StableFunctionalRuntime:
 
     def initial_state(self) -> FunctionalState:
         return _invoke("initial_state", self._delegate.initial_state)
+
+    def execution_scope(self) -> ContextManager[Mapping[str, object]]:
+        """Return the public scope for forward, replay, and backward execution.
+
+        Calls made outside this context retain their historical per-call
+        forward scoping.  A backward pass executed after the context exits
+        therefore uses the caller's restored TF32 settings.
+        """
+
+        return _invoke("execution_scope", self._delegate.execution_scope)
 
     def step(
         self,

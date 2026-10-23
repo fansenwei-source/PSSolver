@@ -191,7 +191,7 @@ def _rewrite_current_checkpoint_metadata(directory, metadata):
 
 def test_stable_surface_is_exactly_the_machine_readable_contract():
     record = _record()
-    assert stable.FUNCTIONAL_API_VERSION == "1.0"
+    assert stable.FUNCTIONAL_API_VERSION == "1.1"
     assert list(stable.__all__) == record["stable_module"]["exports"]
     assert "FunctionalCapabilities" not in stable.__all__
     assert compatibility.FunctionalCapabilities is stable.FunctionalCapabilitySet
@@ -199,31 +199,87 @@ def test_stable_surface_is_exactly_the_machine_readable_contract():
 
 def test_version_negotiation_is_exact_and_legacy_is_read_only():
     current = stable.negotiate_functional_api_version(
-        "1.0", purpose="construction"
+        "1.1", purpose="construction"
     )
     assert current.to_metadata() == {
-        "requested": "1.0",
-        "effective": "1.0",
+        "requested": "1.1",
+        "effective": "1.1",
         "purpose": "construction",
         "legacy": False,
         "compatibility_reader": None,
     }
+    api_1_0 = stable.negotiate_functional_api_version(
+        "1.0", purpose="checkpoint_read"
+    )
+    assert api_1_0.legacy is True
+    assert api_1_0.effective == "1.1"
+    assert api_1_0.compatibility_reader
     legacy = stable.negotiate_functional_api_version(
         "0.1-provisional", purpose="checkpoint_read"
     )
     assert legacy.legacy is True
-    assert legacy.effective == "1.0"
+    assert legacy.effective == "1.1"
     assert legacy.compatibility_reader
     with pytest.raises(stable.FunctionalVersionError) as error:
         stable.negotiate_functional_api_version(
             "0.1-provisional", purpose="construction"
         )
     assert error.value.code == "functional_version_error"
-    assert error.value.to_metadata()["details"]["supported"] == ["1.0"]
+    assert error.value.to_metadata()["details"]["supported"] == ["1.1"]
     with pytest.raises(stable.FunctionalVersionError):
         stable.negotiate_functional_api_version(
             "2.0", purpose="checkpoint_read"
         )
+
+
+@pytest.mark.parametrize("family", ("periodic", "channel"))
+def test_api_1_0_current_format_checkpoint_is_forward_compatible(
+    tmp_path,
+    family,
+):
+    state_spec, channel_identity, state = _state_contract()
+    if family == "periodic":
+        from pssolver.functional import PeriodicActivityCheckpointBridge
+
+        bridge = PeriodicActivityCheckpointBridge(
+            state_spec=state_spec,
+            functional_identity=_periodic_identity(state_spec),
+            production_runtime_identity_sha256="b" * 64,
+            backend_restart={},
+        )
+    else:
+        from pssolver.functional import ChannelActivityCheckpointBridge
+
+        bridge = ChannelActivityCheckpointBridge(
+            state_spec=state_spec,
+            functional_identity=channel_identity,
+            production_runtime_identity_sha256="c" * 64,
+            production_backend_restart={},
+        )
+
+    directory = bridge.export_checkpoint(
+        tmp_path / family,
+        state,
+        completed_steps=7,
+    )
+    path = directory / "checkpoint.json"
+    metadata = json.loads(path.read_text(encoding="utf-8"))
+    metadata["functional_bridge"]["api_version"] = "1.0"
+    _rewrite_current_checkpoint_metadata(directory, metadata)
+
+    restored = bridge.import_checkpoint(directory)
+    assert restored.completed_steps == 7
+    assert all(
+        torch.equal(left, right)
+        for left, right in zip(restored.state, state, strict=True)
+    )
+    assert restored.compatibility is not None
+    assert restored.compatibility.to_metadata() == {
+        "source_api_version": "1.0",
+        "target_api_version": "1.1",
+        "reader": "qualified_v1_exact_schema_reader_for_1_0",
+        "exact_current_protocol": False,
+    }
 
 
 def test_protocol_provenance_records_package_and_two_minor_alias_window():
@@ -233,15 +289,19 @@ def test_protocol_provenance_records_package_and_two_minor_alias_window():
         "version": PSSOLVER_PACKAGE_VERSION,
     }
     protocol = metadata["functional_protocol"]
-    assert protocol["current"] == "1.0"
-    assert protocol["construction_versions"] == ["1.0"]
+    assert protocol["current"] == "1.1"
+    assert protocol["construction_versions"] == ["1.1"]
     assert protocol["checkpoint_read_versions"] == [
+        "1.1",
         "1.0",
         "0.1-provisional",
     ]
     assert protocol["silent_fallback"] is False
     policy = metadata["compatibility_policy"]
-    assert policy["version"] == 3
+    assert policy["version"] == 4
+    assert policy["api_1_0_checkpoint_reader"] == (
+        "forward_compatible_current_format_read_only"
+    )
     assert policy["legacy_checkpoint_schema_repair"] is True
     assert policy["periodic_bridge_current_format_version"] == 3
     assert policy["channel_bridge_current_format_version"] == 3
