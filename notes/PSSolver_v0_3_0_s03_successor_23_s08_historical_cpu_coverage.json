@@ -1,0 +1,249 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-08",
+  "classification": "PASS_V0_3_S08_LOCAL_CPU_COVERAGE_CANDIDATE",
+  "git_identity": {
+    "parent": "d1f6ab1b1f13979445a3593e11c7a508d71bb85b",
+    "implementation_commit": "8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851",
+    "branch": "fix/v0.3-s08-cpu-coverage",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "roadmap": {
+    "decision": "D-0010",
+    "plan_step": "S-08",
+    "issues": ["A2-25", "N5"],
+    "next_request": "R-0019",
+    "independent_review_pending": true
+  },
+  "fixture_identity": {
+    "root": "tests/fixtures/historical_cpu_coverage_v1",
+    "generator_sha256": "344ea581a5bfb3ddcecc5b9b4cb81c3eac4327d3466c4017023d5c14271c9f87",
+    "released_sources": {
+      "rc1": {
+        "version": "0.2.0rc1",
+        "commit": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1",
+        "git_archive_sha256": "5c2bf8805297d1863a523c0fcea3c3682d1625ebd4e0140fdb1ac215f11c937c"
+      },
+      "rc2": {
+        "version": "0.2.0rc2",
+        "commit": "2bbe21e88fec318787fc31dc0a82bca5a171c024",
+        "git_archive_sha256": "989bf6d30dff098009a04ae7d5b7f64500969572a7b3b54c5a824bef07230046"
+      }
+    },
+    "cases": {
+      "rc1_channel_functional_odd": {
+        "tree_sha256": "7f185608df2c01522b88769b2a9be170153e525e4863c8d92455dd673a4dea71",
+        "checkpoint_tree_sha256": "c33930ac57cd078eb165e9a3a2458762f516c14e9027ae0a7b6d4fe14a147c65",
+        "continuation_tree_sha256": "2ba384ec3a0065e4c33955af114ab6e765f4b6ec6d0921fa3a12afa942a09b00"
+      },
+      "rc2_channel_functional_odd": {
+        "tree_sha256": "a7e3b729a543d5a17e1130ab2088f8a1827f48cfdfbf1f88faa21adc5312811c",
+        "checkpoint_tree_sha256": "d7d163637b82649916bd74b03aba8157f598e511e37f5a0f4e352d30ac97927c",
+        "continuation_tree_sha256": "ac2a64ea183f18bda6674ebafb1501c6cbc8dbfbe6ea05549dc6df6076acc6de"
+      },
+      "rc1_plane_lifted": {
+        "tree_sha256": "b0e54b2f983674da0057dd2f6bb39193519d6a6b01a417a6c32af9ba9ac66275",
+        "checkpoint_tree_sha256": "459c148b2616078725862dc28eb4aa9e3771aec9fb65016aef41f2b199b64925"
+      }
+    }
+  },
+  "adjudication": {
+    "A2-25": {
+      "rc1": {
+        "migration_kind": "state_only_migration",
+        "trajectory_equivalent": false,
+        "reason": "rc1_pre_b2_incompressibility_dynamics",
+        "continuation_exact": false,
+        "physical_max_abs_difference": 1.9204354495538922e-09,
+        "physical_relative_l2": 1.4270752029527016e-08,
+        "spectral_max_abs_difference": 1.491070899600445e-08,
+        "spectral_relative_l2": 3.775686081565273e-08
+      },
+      "rc2": {
+        "migration_kind": "exact_legacy_upgrade",
+        "trajectory_equivalent": true,
+        "continuation_exact": true
+      }
+    },
+    "N5": {
+      "disposition": "reject_rc1_pre_b8_lifting_dynamics_before_tensor_load",
+      "source_unchanged": true,
+      "target_absent": true,
+      "public_lifting_reopened": false
+    }
+  },
+  "issue_state": {
+    "claimed_fixed": ["A2-25", "N5"],
+    "fixed_in": "8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851",
+    "verified": [],
+    "independent_review_required": true
+  },
+  "validation": {
+    "fixture_generation_environment": {
+      "baseline_clone_source": "/home/fansenwei/pssolver_v0_2_2_release_package_2a1d0f7_20261020_v1/venv_isolated",
+      "clone_path": "/home/fansenwei/Desktop/Develop/.s08_fixture_env.VtvrI2/venv",
+      "clone_method": "cp -al hard-link clone",
+      "python": "3.12.13",
+      "torch": "2.6.0+cu124",
+      "numpy": "2.4.3",
+      "pruned": true
+    },
+    "final_cpu_environment": {
+      "baseline_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+      "clone_path": "/home/fansenwei/Desktop/Develop/.s08_full_env/venv",
+      "clone_method": "cp -al hard-link clone",
+      "python": "3.12.13",
+      "torch": "2.6.0+cu126",
+      "numpy": "2.4.3",
+      "scipy": "1.16.0",
+      "matplotlib": "3.10.8",
+      "pytest": "9.1.1",
+      "cuda_visible_devices": "",
+      "sys_path": [
+        "",
+        "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python312.zip",
+        "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12",
+        "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12/lib-dynload",
+        "/home/fansenwei/Desktop/Develop/.s08_full_env/venv/lib/python3.12/site-packages"
+      ],
+      "pruned": true
+    },
+    "targeted_pytest": {
+      "passed": 60,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "33c35c4b866e0c61c7084b83e1eb87d7397342482aefe058ece8ddad9b0c93dc",
+      "junit_sha256": "e31ca380bc4009e9b2f6e708e185644b968036fa5788482adf8772b4d797c4dc"
+    },
+    "full_cpu_suite": {
+      "passed": 4552,
+      "failed": 0,
+      "skipped": 1,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "allowed_skip": "tests/test_analytic_periodic_defect_gas_2d.py::test_nematics3d_recovers_requested_defect_count_charges_and_positions",
+      "log_sha256": "fc47e408bebadae95fc49c9bff9035c43f71b74bf3f0ef50ed286b456bf558da",
+      "junit_sha256": "c1151fef8074ce88392319bc42b36330b8a28a01a39a1a5f27cd4a516239f716"
+    },
+    "preliminary_environment_attempt": {
+      "classification": "ENVIRONMENT_DEPENDENCY_INCOMPLETE_NOT_PRODUCT_FAILURE",
+      "reason": "The approved v0.2.2 isolated baseline does not contain matplotlib required by existing stationarity tests.",
+      "passed": 4541,
+      "failed": 11,
+      "skipped": 1,
+      "deselected": 7,
+      "product_failures": 0,
+      "log_sha256": "ee7e36224abaa95045539e84d146d23a15713f377fe7bbdb870967b8b6e42a61",
+      "junit_sha256": "3026bb7a9f8b1bffcdbb866023823f9bbfbc653987aec439ad4e681742aa1604"
+    },
+    "git_diff_check": "PASS",
+    "archive": "/home/fansenwei/pssolver_v0_3_s08_cpu_coverage_8bf898f_20261022_v1",
+    "qualification_complete": true,
+    "eligible_for_independent_review": true
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "31e58a000005713a408c0639b71a0c2cbd102cf8e71463a8cec63d313785c8b6",
+      "current_sha256": "d48cdc2ea12f91fd62f1dad9377876a1311bd864c667b6e7cf8ba344c41147ea",
+      "reason": "Document authentic odd-axis and lifted historical checkpoint coverage without changing a release record."
+    },
+    "pssolver/functional/channel_checkpoint.py": {
+      "historical_sha256": "b5189d28ef9097865106a273e147f97e8ddcd0b22660ec9a1483800f3e1db11b",
+      "current_sha256": "9823ef41277a7de053b0ecbb554fb1bfb226f88e680905846c55ffd5ba5112d3",
+      "reason": "Use the authentic release generation and odd-axis evidence to state the legacy migration disposition honestly."
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "8d949dcb4209b0a669dc52faacb5711e70135fb4c5195d154467f9185499775b",
+      "current_sha256": "5967a8996507ffcb9944e798cf7afc42c9d74b43ecc46314cade3fd5598dad04",
+      "reason": "Move A2-25 and N5 from coverage_gap to claimed_fixed pending R-0019."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "f9578d1003a07a70b46c3d31b1c68da75aadae1ad9ba9ca2429c8e7e9f702cff",
+      "current_sha256": "4367857914ffc78ecd369f7129ee5c803cf47f7228674e70f93183f8cf28e2a1",
+      "reason": "Describe the S-08 candidate, its rc1 boundary, and the R-0019 handoff."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "75b03c06bd067282322989d461f4b7d68e14811af52fd4b9f6651a2a53e06245",
+      "current_sha256": "78ccf53a1a91a2e51dbd34b8d4603ed6022e9f257de154888f1c2db028b8e8ad",
+      "reason": "Bind the two claimed fixes and retain A3-18 as the only remaining coverage gap."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "8b899b7bcc164b7d321e96b328ab91f5b8b4b7ae60eedd741e00bec2ac10fc4c",
+      "current_sha256": "b40ce2fa86edda19c23831a41094088db4f2b3a1f968668867841b1085d96372",
+      "reason": "Keep the historical R-0002 import fixed while recognizing the current S-08 registry counts."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "4fc728384337f6a4263dee83edcc4e8b72e2bfe5d5237de021fb846770db6723",
+      "current_sha256": "ce14723e5d7dfe69566f436119a2ce575fc63d32add90eb73874ccf15a45cd17",
+      "reason": "Preserve S-03 verification while recognizing the later S-08 pending claims."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "historical_sha256": "b8757c0db9b7224226e9a8e04698ade44398743e8db96897804e4f58bce9c155",
+      "current_sha256": "6b1e474b0bd60e025ce6a7f90d18ed7652f96deec3571ede96280b43d8c8f3de",
+      "reason": "Preserve S-04 verification while recognizing the later S-08 pending claims."
+    },
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {
+      "historical_sha256": "b1dd95befe8c58b4b76876ec05f12dd2cbd39aada5de5335cf23708ea7da4fea",
+      "current_sha256": "83777bf38ecd5c0456fd88e4bc2b05e3145b616999c7e30e9a54de7fcd807d4d",
+      "reason": "Preserve S-06 verification while recognizing the later S-08 pending claims."
+    },
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {
+      "historical_sha256": "dcf5a725ec8890d87d2a764f254669fcdd8969251f4a95541e6761c01088a515",
+      "current_sha256": "6e33e5c2621276c8ab7e5b045d1819fc2e1efb45fc4145e9f5928ecbe116c8db",
+      "reason": "Preserve the minimum-floor runtime record while recognizing S-08 pending claims."
+    },
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {
+      "historical_sha256": "bfd93b71600f1266ffe2fd4419165d8bb7dde98e20e222c11a79bccfa4a4e7c9",
+      "current_sha256": "1b68b9044f02a68c34a98aaaff85a4480db73e65078ed03d088100f3b92529ae",
+      "reason": "Preserve the S-06 qualification record while recognizing S-08 pending claims."
+    },
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {
+      "historical_sha256": "aef90fbf5e21db54a63c6ca3952426477d27e094dc2dc7ad699b3ccfba83a8be",
+      "current_sha256": "75a57056cdd48f7d36ddf105972e3db7d73e3b04191e7738db178be3da783ff6",
+      "reason": "Preserve S-07 verification while recognizing the later S-08 pending claims."
+    },
+    "tests/test_v0_3_s07_r0017_import.py": {
+      "historical_sha256": "d4f4429c11674ae965c5ab1094a0a172e20fdd9b59becef9749d10ef53ae027b",
+      "current_sha256": "697bb91147eb3ab5cb369caab02264ce0ebbd4deaa892c803a3de4cd8cbe79d0",
+      "reason": "Keep the historical R-0017 rework result fixed while recognizing S-08 pending claims."
+    },
+    "tests/test_v0_3_s07_r0018_import.py": {
+      "historical_sha256": "8365b9a3833702e15820bfff63aa094165dc161ba2f0a0121bcea567b2e207af",
+      "current_sha256": "760ba38b26166a39d7b580a6e93c6d4e67f75b370ac38461ea4ef1675f3cc01e",
+      "reason": "Keep the historical R-0018 closure fixed while recognizing the current S-08 registry counts."
+    },
+    "tests/test_v0_3_s07_rework_candidate_record.py": {
+      "historical_sha256": "8f330714c0c2e79a3b7025872b57291e14ed90b6a5daa81bd9a13e10191be55d",
+      "current_sha256": "35ab0ff7f4af2f77146df390b570b78455e9ef0121e45a2fc20ffb75854c000f",
+      "reason": "Preserve the S-07 rework record while recognizing the later S-08 pending claims."
+    }
+  },
+  "scope": {
+    "checkpoint_payload_modified": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "functional_api_version_changed": false,
+    "numerical_algorithm_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "public_lifting_reopened": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_s08_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  }
+}

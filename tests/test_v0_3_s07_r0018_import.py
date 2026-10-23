@@ -67,11 +67,11 @@ def test_r0018_verifies_all_s07_items_at_exact_fix_sources() -> None:
     assert registry["status_counts"] == {
         "open": 1,
         "registered": 0,
-        "claimed_fixed": 0,
+            "claimed_fixed": 2,
         "verified": 28,
         "deferred": 2,
         "accepted": 1,
-        "coverage_gap": 3,
+            "coverage_gap": 1,
     }
     assert imported["s07_complete"] is True
 

@@ -105,11 +105,11 @@ def test_r0002_registry_updates_are_exact() -> None:
     assert registry["status_counts"] == {
         "open": 1,
         "registered": 0,
-        "claimed_fixed": 0,
+            "claimed_fixed": 2,
         "verified": 28,
         "deferred": 2,
         "accepted": 1,
-        "coverage_gap": 3,
+            "coverage_gap": 1,
     }
     verified = record["verified"]
     assert issues["V-17"]["status"] == verified["status"] == "verified"

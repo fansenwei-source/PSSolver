@@ -33,11 +33,11 @@
   "status_counts": {
     "open": 1,
     "registered": 0,
-    "claimed_fixed": 0,
+    "claimed_fixed": 2,
     "verified": 28,
     "deferred": 2,
     "accepted": 1,
-    "coverage_gap": 3
+    "coverage_gap": 1
   },
   "issues": [
     {
@@ -557,9 +557,10 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "coverage_gap",
+      "status": "claimed_fixed",
+      "fixed_in": "8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851",
       "target_release": "before 0.3.0 complete acceptance",
-      "notes": "The branch remains NOT_RUN because no historical fixture exists."
+      "notes": "S-08 binds authentic rc1/rc2 odd-periodic Channel functional fixtures. The rc2 continuation is byte-exact; the real rc1 continuation proves the pre-B2 runtime is state-only rather than trajectory-equivalent. Independent review is pending."
     },
     {
       "id": "A3-18",
@@ -585,9 +586,10 @@
       "affects_v0_2_1": true,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "coverage_gap",
+      "status": "claimed_fixed",
+      "fixed_in": "8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851",
       "target_release": "before 0.3.0 complete acceptance",
-      "notes": "Lifting is not publicly executable, but historical rejection semantics cannot be fully validated without a real fixture."
+      "notes": "S-08 binds an authentic rc1 lifted Plane format-1 checkpoint and verifies pre-B8 lifting rejection before tensor payload loading. Public lifting remains closed; independent review is pending."
     }
   ],
   "authorization": {

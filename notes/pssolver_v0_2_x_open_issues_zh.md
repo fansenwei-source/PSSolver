@@ -10,11 +10,11 @@
 
 - `open`：1；
 - `registered`：0；
-- `claimed_fixed`：0；
+- `claimed_fixed`：2；
 - `verified`：28；
 - `deferred`：2；
 - `accepted`：1；
-- `coverage_gap`：3。
+- `coverage_gap`：1。
 
 ## 当前优先项
 
@@ -51,6 +51,11 @@
    `R-0018` 独立验证为 `verified`：共享 active-force 实现已移入实际打包模块，同时保留源码
    兼容转发；wheel 全模块导入、两条 Channel runtime 构建、四条公开应用真实 dry-run、完整
    CPU suite 与历史 successor 门禁均通过。
+10. S-08 已由实现提交 `8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851` 补入真实历史
+    CPU fixture：rc1/rc2 Channel functional 奇数周期轴 checkpoint 以及 rc1 Plane lifting
+    checkpoint。rc2 奇数轴可精确续算；rc1 因 B2 之前的不可压缩动力学只能安全执行
+    `state_only` 迁移，不能虚假声明精确续算；真实 lifted checkpoint 在读取 tensor payload 前
+    明确拒绝，且不重开 lifting。`A2-25` 与 `N5` 暂为 `claimed_fixed`，等待 `R-0019` 独立复核。
 
 ## Control 路径
 
@@ -73,8 +78,9 @@ S-07 的 6 个 low/info 条目与候选回归 `V-30` 均已由 `R-0018` 独立�
 - lifting：`B8/S2-07`，按已确认决定 `D-0007` 在重新开放 lifting 前处理；
 - 架构整理：`R1-R9`，按 `D-0007` 推迟至 0.3 之后；
 - `A2-11`：按 `D-0007` 接受为设计限制；
-- 覆盖缺口：`A2-25`、`A3-18`、`N5`，在 0.3.0 完整验收前补齐。
+- 已完成待独立复核：`A2-25`、`N5`；
+- 剩余覆盖缺口：`A3-18`，在 0.3.0 完整验收前补齐。
 
 机器可读的逐项标题、严重度、来源、版本影响、Control 影响、状态、目标版本和说明均在
-`notes/pssolver_v0_2_x_open_issues.json` 中。下一步为路线图 S-08：补齐 CPU 覆盖缺口
-`A2-25` 与 `N5`。
+`notes/pssolver_v0_2_x_open_issues.json` 中。当前正在创建路线图 S-08 的独立复核请求
+`R-0019`；复核通过后进入 S-09 GPU 覆盖。
