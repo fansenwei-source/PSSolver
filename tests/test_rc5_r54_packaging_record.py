@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_4_packaging_surface.json"
@@ -28,8 +30,8 @@ def _r57_successor(relative: str, historical: str) -> str:
         registration is not None
         and registration["historical_sha256"] == historical
     ):
-        return registration["current_sha256"]
-    return historical
+        return resolve_s03_successor(relative, registration["current_sha256"])
+    return resolve_s03_successor(relative, historical)
 
 
 def test_r54_record_binds_candidate_and_exact_sources():

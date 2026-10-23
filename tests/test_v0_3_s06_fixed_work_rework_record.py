@@ -57,7 +57,7 @@ def test_s06_rework_items_are_verified_at_exact_fix_sources() -> None:
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == set()
+    assert claimed == {"A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26"}
     for issue_id in ("S2-17", "V-28", "V-29"):
         assert issues[issue_id]["fixed_in"] == (
             "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"

@@ -54,7 +54,7 @@ def test_s04_registry_preserves_fix_ids_after_r0012_verification() -> None:
         if item["status"] == "claimed_fixed"
     }
     historical_claims = set(record["roadmap"]["issue_ids"])
-    assert claimed == set()
+    assert claimed == {"A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26"}
     assert issues["A2-21/S2-12"]["status"] == "verified"
     assert issues["A2-21/S2-12"]["verified_by"] == "R-0013"
     for issue_id in historical_claims:

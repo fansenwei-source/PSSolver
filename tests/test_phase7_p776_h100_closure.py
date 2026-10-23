@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
@@ -32,7 +34,7 @@ def _rc456_successor(relative: str, historical: str) -> str:
             and registration["historical_sha256"] == resolved
         ):
             resolved = registration["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 def _record() -> dict[str, object]:

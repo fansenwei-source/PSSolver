@@ -8,6 +8,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 from pssolver.applications import channel_active_nematics as channel_application
 from pssolver.applications import plane_beris_edwards as plane_application
 from pssolver.configuration.channel_active_nematics import (
@@ -49,7 +51,7 @@ def _rc456_successor(relative: str, historical: str) -> str:
             and registration["historical_sha256"] == resolved
         ):
             resolved = registration["current_sha256"]
-    return resolved
+    return resolve_s03_successor(relative, resolved)
 
 
 def _plane_spec(output: Path, runtime_path: str):

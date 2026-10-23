@@ -47,11 +47,12 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     assert len({entry["id"] for entry in entries}) == 34
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
+    counts.setdefault("registered", 0)
     counts.setdefault("claimed_fixed", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 6,
-        "claimed_fixed": 0,
+        "registered": 0,
+        "claimed_fixed": 6,
         "verified": 21,
         "deferred": 2,
         "accepted": 1,
@@ -180,7 +181,7 @@ def test_v25_rework_is_verified_without_changing_its_fix_identity():
 
 def test_rc5_rc6_residuals_track_verified_s06_fixes():
     issues = _issues()
-    registered = {
+    tracked = {
         "A2-24/C1-15",
         "C1-08",
         "S1-15/NEW-13",
@@ -191,14 +192,15 @@ def test_rc5_rc6_residuals_track_verified_s06_fixes():
     }
     verified = {"A2-24/C1-15", "C1-08"}
     s06_verified = {"S2-17"}
+    s07_claimed = {"S1-15/NEW-13", "A1-07", "B30", "S1-04"}
     assert all(
         issues[issue_id]["status"]
         == (
             "verified"
             if issue_id in verified | s06_verified
-            else "registered"
+            else "claimed_fixed"
         )
-        for issue_id in registered
+        for issue_id in tracked
     )
     assert all(
         issues[issue_id]["fixed_in"]
@@ -227,8 +229,12 @@ def test_rc5_rc6_residuals_track_verified_s06_fixes():
     assert issues["NEW-14"]["target_release"] == "0.3 GPU verification"
     assert all(
         issues[issue_id]["exercised_by_current_control_research"] is False
-        for issue_id in registered | {"A2-11", "NEW-14"}
+        for issue_id in tracked | {"A2-11", "NEW-14"}
     )
+    for issue_id in s07_claimed:
+        assert issues[issue_id]["fixed_in"] == (
+            "b7cf4ca02095e8b41ed720809880628d2375cfbb"
+        )
 
 
 def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
@@ -240,11 +246,20 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "path": "PSSolver_sync/plan/roadmap.json",
         "step": "S-01",
     }
-    registered = {
-        issue_id for issue_id, item in issues.items() if item["status"] == "registered"
+    claimed = {
+        issue_id
+        for issue_id, item in issues.items()
+        if item["status"] == "claimed_fixed"
     }
-    assert len(registered) == 6
-    assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in registered)
+    assert claimed == {
+        "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26"
+    }
+    assert all(issues[issue_id]["target_release"] == "0.3" for issue_id in claimed)
+    assert all(
+        issues[issue_id]["fixed_in"]
+        == "b7cf4ca02095e8b41ed720809880628d2375cfbb"
+        for issue_id in claimed
+    )
     assert issues["A2-21/S2-12"]["target_release"] == "0.3"
     assert issues["V-26"]["target_release"] == "0.3"
     assert "S-07" in issues["V-26"]["notes"]
