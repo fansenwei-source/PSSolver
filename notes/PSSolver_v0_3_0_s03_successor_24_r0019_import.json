@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-23",
+  "stage": "S-08",
+  "classification": "REWORK_REQUIRED_R0019_S08_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "4fbe33b004b31448618bf36fa0430d38da51c460",
+    "implementation_source": "8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851",
+    "result_commit": "f900024f924a74c1d5300af5f8b48449eb36e0e3",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0019",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0019.result.json",
+    "sha256": "1432f7437b5eb9654b11c2292b441cd19449b31ac362172a7fcccbd4af71fa82",
+    "classification": "REWORK_REQUIRED",
+    "passed_claims": [
+      "S08-AUTHENTIC-RELEASE-FIXTURES",
+      "S08-RC1-STATE-ONLY-BOUNDARY",
+      "S08-AUTHENTIC-LIFTED-REJECTION",
+      "S08-REGISTRY-AND-SUCCESSOR-INTEGRITY",
+      "S08-LOCAL-CPU-QUALIFICATION"
+    ],
+    "rework_claims": ["S08-RC2-ODD-AXIS-EXACT"],
+    "new_findings": ["V-31", "V-32"]
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s08_claude_review_20261023_v1",
+    "checksums_entries": 34,
+    "checksums_sha256": "f2cc238a6ef4599fac62252e34a1954552f487831b610b5467b7f4221b297681",
+    "complete_present": true,
+    "final_report_sha256": "5a25daf4a3281559252fb67ba2c4832e6145ff1f63726cd38b1dcf7b3a3d969d",
+    "summary_sha256": "4a6f44e33a663ff9bf6834e4f00d8c4f5c2e33db438817cdee3ce0e40c223966"
+  },
+  "registry_import": {
+    "kept_claimed_fixed": ["A2-25", "N5"],
+    "registered": ["V-31", "V-32"],
+    "s08_complete": false,
+    "eligible_for_push_draft": false,
+    "next_request": "R-0020"
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "5967a8996507ffcb9944e798cf7afc42c9d74b43ecc46314cade3fd5598dad04",
+      "current_sha256": "81e71f90aeba686ed26fa65b4926e7e19af2f4d19fa3c998a1b5c1e2dd421ecf",
+      "reason": "Register the exact R-0019 findings V-31 and V-32 while keeping A2-25 and N5 claimed_fixed."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "4367857914ffc78ecd369f7129ee5c803cf47f7228674e70f93183f8cf28e2a1",
+      "current_sha256": "57d181ec3e6aa62eac7906a5387f5b3b5b21a9ebe99b22705f56ab7309ca5cde",
+      "reason": "Describe the R-0019 rework boundary and both registered S-08 findings."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "78ccf53a1a91a2e51dbd34b8d4603ed6022e9f257de154888f1c2db028b8e8ad",
+      "current_sha256": "fe3fd1da0ff37e29ba21ed381da94dfcb5d1236fef62ae121b900525e687ecd7",
+      "reason": "Bind the two findings, updated registry counts, and unchanged S-08 claims."
+    }
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "numerical_algorithm_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  }
+}

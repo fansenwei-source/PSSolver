@@ -43,15 +43,15 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 35
-    assert len({entry["id"] for entry in entries}) == 35
+    assert len(entries) == record["issue_count"] == 37
+    assert len({entry["id"] for entry in entries}) == 37
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     counts.setdefault("registered", 0)
     counts.setdefault("claimed_fixed", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 0,
+        "registered": 2,
         "claimed_fixed": 2,
         "verified": 28,
         "deferred": 2,
@@ -359,6 +359,28 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     assert issues["R1-R9"]["decision"] == "D-0007"
     assert issues["A2-11"]["decision"] == "D-0007"
     assert issues["A3-18"]["affects_control_paths"] is True
+
+
+def test_r0019_findings_are_registered_without_advancing_s08_claims():
+    issues = _issues()
+    for issue_id in ("V-31", "V-32"):
+        item = issues[issue_id]
+        assert item["status"] == "registered"
+        assert item["severity"] == "low"
+        assert item["source_report"] == "PSSolver_sync/results/R-0019.result.json"
+        assert item["target_release"] == "0.3"
+        assert item["affects_v0_2_0"] is False
+        assert item["affects_v0_2_1"] is False
+        assert item["affects_control_paths"] is False
+        assert item["exercised_by_current_control_research"] is False
+    assert "fingerprint" in issues["V-31"]["notes"]
+    assert "8*eps" in issues["V-31"]["notes"]
+    assert "re-migrate" in issues["V-32"]["notes"]
+    assert all(
+        issues[issue_id]["status"] == "claimed_fixed"
+        and "verified_by" not in issues[issue_id]
+        for issue_id in ("A2-25", "N5")
+    )
 
 
 def test_registry_does_not_authorize_implementation_or_external_actions():

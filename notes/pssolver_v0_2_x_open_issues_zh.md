@@ -6,10 +6,10 @@
 `dev/0.3` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 35 条：
+当前共登记 37 条：
 
 - `open`：1；
-- `registered`：0；
+- `registered`：2；
 - `claimed_fixed`：2；
 - `verified`：28；
 - `deferred`：2；
@@ -56,6 +56,10 @@
     checkpoint。rc2 奇数轴可精确续算；rc1 因 B2 之前的不可压缩动力学只能安全执行
     `state_only` 迁移，不能虚假声明精确续算；真实 lifted checkpoint 在读取 tensor payload 前
     明确拒绝，且不重开 lifting。`A2-25` 与 `N5` 暂为 `claimed_fixed`，等待 `R-0019` 独立复核。
+11. `R-0019` 独立复核确认 fixture 可逐字节重新生成、rc1 的 state-only 改判正确、N5
+    真实负向门正确，但要求返工两项低风险候选问题：`V-31` 为 continuation oracle 的构建指纹
+    与跨构建容差合同不完整；`V-32` 为旧版本误标 rc1 奇数轴迁移被拒绝时缺少专门、可操作的
+    错误说明。两项均登记到 S-08，`A2-25` 与 `N5` 保持 `claimed_fixed`。
 
 ## Control 路径
 

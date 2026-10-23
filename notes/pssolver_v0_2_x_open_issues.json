@@ -29,10 +29,10 @@
       "rewritten": false
     }
   },
-  "issue_count": 35,
+  "issue_count": 37,
   "status_counts": {
     "open": 1,
-    "registered": 0,
+    "registered": 2,
     "claimed_fixed": 2,
     "verified": 28,
     "deferred": 2,
@@ -590,6 +590,34 @@
       "fixed_in": "8bf898f5b10056c0b70e1d3acbeaad2c0d8c3851",
       "target_release": "before 0.3.0 complete acceptance",
       "notes": "S-08 binds an authentic rc1 lifted Plane format-1 checkpoint and verifies pre-B8 lifting rejection before tensor payload loading. Public lifting remains closed; independent review is pending."
+    },
+    {
+      "id": "V-31",
+      "title": "S-08 continuation-oracle assertions are not numerical-build aware",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0019.result.json",
+      "first_found": "S-08 candidate independent review",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3",
+      "notes": "The rc2 odd-axis continuation is bitwise under the generating pip/MKL build but differs by 0.6 epsilon under the Nematics3D conda build; rc1 merely asserted non-bitwise inequality. S-08 must bind the generation fingerprint, use 8*eps across builds, and prove the rc1 dynamics difference is far above roundoff."
+    },
+    {
+      "id": "V-32",
+      "title": "Earlier mislabelled rc1 odd-axis migrations fail without actionable guidance",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0019.result.json",
+      "first_found": "S-08 candidate independent review",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3",
+      "notes": "Earlier releases incorrectly labelled rc1 odd-axis migrations exact_legacy_upgrade. The candidate rejects them correctly but needs a dedicated error directing users to re-migrate the original rc1 checkpoint as state-only and a CHANGELOG compatibility note."
     }
   ],
   "authorization": {
