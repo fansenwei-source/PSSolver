@@ -1,0 +1,63 @@
+{
+  "schema": "pssolver.v0_3.s03.historical_successor.v1",
+  "created_at": "2026-10-23T06:57:41-04:00",
+  "plan_step": "S-09",
+  "classification": "TRANSIENT_PROFILE_SLOWDOWN_SUPPORTED_CAUSE_UNRESOLVED",
+  "git_identity": {
+    "branch": "fix/v0.3-s09-gpu-qualification",
+    "analysis_commit": "87f6bfe55e476225523e989d94e4b9eaa228d2b3",
+    "analysis_parent": "85d46b3edf15350ee0cc0107aa38d49e74b6e9c8",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "inputs": {
+    "self_control_matrix_sha256": "5f652cdc9c79093bbae4862fc3080a839cec7c6969e0e3b4bc76d7c4c0a710d2",
+    "candidate_bound_matrix_sha256": "f4e42828e2c5dc1caad9729fb1b2b005d08a4f53cc4b3e82274dae436ae71085",
+    "prior_causal_matrix_sha256": "ecf2638b45ab5e4febd61d0b5c25fa2f13936aace40085704dbf078777506ea2"
+  },
+  "findings": {
+    "new_profile_execution_count": 0,
+    "baseline_pressure_iterations": 27,
+    "candidate_pressure_iterations": 27,
+    "failed_profile_first_half_ratio": 1.1222359498624996,
+    "failed_profile_second_half_ratio": 1.0227196350173136,
+    "remaining_five_trial_ratios_all_below_1_05": true,
+    "stable_acceptance_recompute_median_ratio": 1.003576616918159,
+    "stable_acceptance_recompute_maximum_ratio": 1.0213855366949542,
+    "stable_acceptance_recompute_sufficient_to_explain_failure": false,
+    "single_outlier_explanation_supported": false,
+    "transient_first_half_slowdown_supported": true,
+    "unique_runtime_root_cause_supported": false,
+    "new_instrumented_measurement_required": true
+  },
+  "adjudication": {
+    "qualification_failure_remains_binding": true,
+    "s09_complete": false,
+    "r0022_created": false,
+    "h100_preparation_allowed": false,
+    "next_action_requires_user_decision": true
+  },
+  "runtime_sources": {
+    "benchmarks/analyze_v0_3_s09_cpu_6x60_stop.py": "fc0d1e767ffc96a9e3cba4d13031c737428952f9825d61cec1d6cc325378eaec"
+  },
+  "historical_successor_sources": {},
+  "evidence": {
+    "archive": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_failure_analysis_87f6bfe_20261023_v4",
+    "checksums_entries": 12,
+    "checksums_sha256": "b35113dfc0bb6b0acd3cc58b402a0ac460c85850957a7a9c3451e6734c6c71d8",
+    "analysis_sha256": "d0d5b00ca1b670d747826b9b122c8d38557a1e3a70512404895e9a2653221abe",
+    "pytest_log_sha256": "cf0c2cc2867610db68ff0a051d55d0e206ddaa505c66c6ee68075be937872047",
+    "pytest_junit_sha256": "f1431e7daacff3820c009244d861115dc563b44b5659e96c6407bcd5485dd553",
+    "complete_present": true
+  },
+  "authorization": {
+    "push_performed": false,
+    "hpcc_executed": false,
+    "slurm_submitted": false,
+    "gpu_executed": false,
+    "h100_submitted": false,
+    "qualification_rerun": false,
+    "threshold_change": false,
+    "production_default_changed": false
+  }
+}
