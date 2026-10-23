@@ -1,7 +1,8 @@
 # S-09 checkpoint 兼容返工候选
 
 运行时提交 `85ba3aef75548d549d9db453ca4a5ab604b17a9d` 修复 R-0022 登记的
-`V-35` 与 `V-36`，两项现为 `claimed_fixed`，仍须由 `R-0023` 独立复核。
+`V-35` 与 `V-36`。依照 R-0022 的明确要求，两项在登记表中仍保持 `registered`；
+实现候选须由 `R-0023` 独立复核后再决定状态迁移。
 
 - 旧 rc1/rc2/rc3 migration 与 Periodic v2 bridge 固定要求 API `1.0`；`1.1`、
   `0.1-provisional` 和未来版本均在 tensor payload 读取前拒绝。迁移记录写固定的发布版本，

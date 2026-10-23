@@ -11,7 +11,7 @@
   },
   "claims": {
     "V-35": {
-      "status": "claimed_fixed",
+      "status": "implemented_pending_independent_review",
       "legacy_api_literal": "1.0",
       "rejected_literals": ["1.1", "0.1-provisional", "9.9"],
       "negative_migration_cases": 18,
@@ -20,7 +20,7 @@
       "migration_record_uses_constant": true
     },
     "V-36": {
-      "status": "claimed_fixed",
+      "status": "implemented_pending_independent_review",
       "historical_label": "pre_rc3_pressure_transpose_nyquist",
       "current_label": "rc1_pre_b2_incompressibility_and_pre_rc3_pressure_transpose_nyquist",
       "shared_disposition": "state_only_migration",
@@ -47,35 +47,20 @@
     "independent_review_pending": "R-0023"
   },
   "historical_successor_sources": {
-    "notes/pssolver_v0_2_x_open_issues.json": {
-      "historical_sha256": "c60408bc33b9ffa586da6c5c3d9ddec53a81cf38a1aa888504ab71721ff6414b",
-      "current_sha256": "117aa7f27052f4062d80518b33c9944605fb2a082530323c578d4ca4e1ef43d4",
-      "reason": "Advance V-35 and V-36 from registered to claimed_fixed at the exact runtime implementation commit."
+    "CHANGELOG.md": {
+      "historical_sha256": "982aae4605b4dd66cc62672b5b76dc3eb440329fb8d6898200420dc0a43c4510",
+      "current_sha256": "824f8d6a9f355dd5392b028a3919fdcd95238a951ad2cc28ba2d6d910cd3de61",
+      "reason": "Document strict API 1.0 legacy migration, historical rc1 label compatibility, and the one-way API 1.1 checkpoint boundary."
     },
-    "notes/pssolver_v0_2_x_open_issues_zh.md": {
-      "historical_sha256": "7c142fec862b001423d7739c1f7b95bbf0fc2498ee300ef37940615f503cf00e",
-      "current_sha256": "b28ff5e03ce8c4271b6149952fbd641fdaa233191c7abc41d5ad75afa45f0b13",
-      "reason": "Describe the two claimed S-09 fixes and their R-0023 verification boundary."
+    "pssolver/functional/channel_checkpoint.py": {
+      "historical_sha256": "fc8b001bc22ca07d1b07d565cb8e16121a5cbb047d53e1835713730e27a9d2e2",
+      "current_sha256": "65ed9518089e5b3dbfabfba7991ad84f41ffe2a0aa09c84ab7e15c73fcb44653",
+      "reason": "Require the frozen API 1.0 literal before payload access and accept the equivalent v0.2.x rc1 even-axis migration label."
     },
-    "tests/test_v0_2_x_open_issues.py": {
-      "historical_sha256": "f6c83c996c3d399b1c3ce437a6135fe82e85b3afe73ecd36a53a7687c07dc98a",
-      "current_sha256": "98d76a73262b96ad6c619cf28dc65c33b7c75179bfec8328773b00c8ee037cf3",
-      "reason": "Bind both claimed fixes and their exact implementation identity."
-    },
-    "tests/test_v0_2_2_v17_r0002_import.py": {
-      "historical_sha256": "90a08e80b02527be1a948ffa1aae1394d11d1209dc511800f40006e2b016b0d6",
-      "current_sha256": "362b3f37dff482387b880e363eef77177f6be13faf843e99e64f52e29cd3302e",
-      "reason": "Preserve R-0002 while recognizing the current forward registry statuses."
-    },
-    "tests/test_v0_3_s07_r0018_import.py": {
-      "historical_sha256": "38d09f1330c18850085a32baaf7d1b102a3bad841e10539cb7bcc3b4ba618a26",
-      "current_sha256": "5b01f08cddb4ae3ed28cef56e8077e6edcb3ece2e50c1d8b6ad8b3d1ceaf7b27",
-      "reason": "Preserve completed S-07 verification while recognizing the current registry statuses."
-    },
-    "tests/test_v0_3_s09_r0022_import.py": {
-      "historical_sha256": "5a916bf0323d4160556b981f7d8d6a79c62f6495a6c36adb4008809818623f7d",
-      "current_sha256": "6ebad9d5de6473690ce3b72d49f5f764f039e595c2c6af3b5847a02a3a4a24ab",
-      "reason": "Keep the immutable R-0022 registration claim while recognizing its forward claimed-fix successor."
+    "pssolver/functional/periodic_checkpoint.py": {
+      "historical_sha256": "3206864720b15dcc94dab2b5e74dc0c5b3428e599a99637f096b9be71e115c91",
+      "current_sha256": "9124d1c8d2789b932d059a6feb533828bbaaf520c41c192e36582a0f0e1a9abf",
+      "reason": "Require the frozen API 1.0 literal before direct v2 or legacy migration payload access."
     }
   },
   "scope": {

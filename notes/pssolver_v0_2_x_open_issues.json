@@ -32,8 +32,8 @@
   "issue_count": 41,
   "status_counts": {
     "open": 1,
-    "registered": 1,
-    "claimed_fixed": 2,
+    "registered": 3,
+    "claimed_fixed": 0,
     "verified": 33,
     "deferred": 2,
     "accepted": 1,
@@ -665,8 +665,7 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
-      "fixed_in": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "status": "registered",
       "target_release": "0.3",
       "notes": "S-09: require the frozen API literal 1.0 before reading tensors in rc1/rc2/rc3 legacy migration and v2 bridge validation, and record that constant rather than a source-controlled label. Reject 1.1, 0.1-provisional, and future literals."
     },
@@ -680,8 +679,7 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
-      "fixed_in": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "status": "registered",
       "target_release": "0.3",
       "notes": "S-09: recognize the v0.2.x migration label pre_rc3_pressure_transpose_nyquist as an equivalent historical spelling for rc1 even-axis state_only Channel records, with the same disposition as the current label and an authentic v0.2.2-migrated fixture gate."
     }

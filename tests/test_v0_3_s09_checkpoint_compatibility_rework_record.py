@@ -42,13 +42,11 @@ def test_s09_checkpoint_rework_binds_exact_runtime_and_fixture() -> None:
     )
 
 
-def test_v35_v36_are_claimed_at_the_exact_runtime_commit() -> None:
+def test_v35_v36_remain_registered_until_r0023_reviews_the_runtime() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     for issue_id in ("V-35", "V-36"):
-        assert issues[issue_id]["status"] == "claimed_fixed"
-        assert issues[issue_id]["fixed_in"] == (
-            "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
-        )
+        assert issues[issue_id]["status"] == "registered"
+        assert "fixed_in" not in issues[issue_id]
         assert "verified_by" not in issues[issue_id]
     assert issues["A3-18"]["status"] == "coverage_gap"
     assert issues["NEW-14"]["status"] == "open"
