@@ -29,10 +29,10 @@
       "rewritten": false
     }
   },
-  "issue_count": 34,
+  "issue_count": 35,
   "status_counts": {
     "open": 1,
-    "registered": 0,
+    "registered": 1,
     "claimed_fixed": 6,
     "verified": 21,
     "deferred": 2,
@@ -309,6 +309,20 @@
       "fixed_in": "b7cf4ca02095e8b41ed720809880628d2375cfbb",
       "target_release": "0.3",
       "notes": "Roadmap S-07. This follows from retaining exact legacy read branches: consumers that require sealed integrity must require integrity_status == 'sealed_sha256'. Clarify the CHANGELOG/design wording and consider recording integrity_status on resume or adding an opt-in require_sealed policy. Repro: R-0013 out/s05_downgrade_probe.json."
+    },
+    {
+      "id": "V-30",
+      "title": "The S-07 wheel cannot build either Channel runtime because retained pssolver.channel imports the excluded pssolver.control package",
+      "severity": "high",
+      "source_report": "PSSolver_sync/results/R-0017.result.json",
+      "first_found": "S-07 independent review R-0017; regression introduced by the dev/0.3 S-07 candidate b7cf4ca",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3",
+      "notes": "Roadmap S-07. setup.py excludes pssolver.control while the retained pssolver.channel imported pssolver.control.active_force; installed wheels therefore could not import pssolver.channel or build either legacy or compiled_v2 Channel runtime. Reproduce with the R-0017 installed-wheel import and Channel-builder probes. Fix by moving the shared force implementation into a packaged module while preserving the source compatibility re-export, then require an exhaustive installed-wheel module-import and public runtime smoke gate."
     },
     {
       "id": "V-27",

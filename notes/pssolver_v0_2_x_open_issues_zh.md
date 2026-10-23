@@ -6,10 +6,10 @@
 `dev/0.3` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 34 条：
+当前共登记 35 条：
 
 - `open`：1；
-- `registered`：0；
+- `registered`：1；
 - `claimed_fixed`：6；
 - `verified`：21；
 - `deferred`：2；
@@ -44,7 +44,12 @@
    复核通过。
 8. S-07 的六项 `A1-07`、`S1-15/NEW-13`、`S1-04`、`OBS-4`、`B30`、`V-26`
    已由本地实现提交 `b7cf4ca02095e8b41ed720809880628d2375cfbb` 声明修复，状态为
-   `claimed_fixed`，等待 `R-0017` 独立复核后再决定是否改为 `verified`。
+   `claimed_fixed`。`R-0017` 对这六项逐项复核通过，但发现候选 wheel 排除了
+   `pssolver.control` 后，保留的 `pssolver.channel` 仍导入该包，导致两条 Channel
+   installed-wheel runtime 均无法构建。
+9. 上述候选回归登记为 `V-30`（high、`registered`、路线图 `S-07`）。返工必须把共享
+   active-force 实现移入实际打包模块，同时保留源码兼容转发，并加入 wheel 全模块导入、
+   两条 Channel runtime 构建及四条公开应用真实 dry-run 门禁。
 
 ## Control 路径
 
@@ -55,7 +60,8 @@
 
 ## 0.3 路线图
 
-S-07 的 6 个 low/info 条目已经进入 `claimed_fixed`；
+S-07 的 6 个 low/info 条目已经进入 `claimed_fixed`，候选回归 `V-30` 已登记并必须在
+`R-0018` 前修复；
 `A2-21/S2-12` 已完成 `S-05` 独立复核。`V-27` 归入 `S-06`，`V-26` 与
 `B30` 归入文档批次 `S-07`。
 `V-17` 已验证身份不变，不重新打开。路线图顺序以同步仓库中用户确认的
@@ -69,4 +75,4 @@ S-07 的 6 个 low/info 条目已经进入 `claimed_fixed`；
 - 覆盖缺口：`A2-25`、`A3-18`、`N5`，在 0.3.0 完整验收前补齐。
 
 机器可读的逐项标题、严重度、来源、版本影响、Control 影响、状态、目标版本和说明均在
-`notes/pssolver_v0_2_x_open_issues.json` 中。S-07 的状态仍等待独立复核。
+`notes/pssolver_v0_2_x_open_issues.json` 中。S-07 正在按 `R-0017` 的结论返工。

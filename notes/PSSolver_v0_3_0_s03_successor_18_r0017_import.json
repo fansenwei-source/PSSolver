@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-07",
+  "classification": "REWORK_REQUIRED_R0017_S07_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "2de78bc4becdc8d9b279b25d0a533306dc302149",
+    "qualified_runtime_source": null,
+    "result_commit": "6d73d0e",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0017",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0017.result.json",
+    "sha256": "459b2a5e0f1ea580210242134323c30b72afb9a25684c712bf0574dfdec2f6db",
+    "classification": "REWORK_REQUIRED",
+    "new_findings": ["V-30"]
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s07_claude_review_20261023_v1",
+    "checksums_entries": 35,
+    "checksums_sha256": "c7a7251d28f129b89bddbad4cb7057d020b9f512a0d306ae340f1c031baa5e74",
+    "complete_present": true,
+    "final_report_sha256": "4c6bcd97a80403e0f6526beb97a30758dc6e9005065cae3c95047956bb57fdb7",
+    "summary_sha256": "9905fc44af1d9534b4d30ceac45184b5ef79988bb5c4e14be300acfc497c0b49"
+  },
+  "registry_import": {
+    "kept_claimed_fixed": [
+      "A1-07",
+      "S1-15/NEW-13",
+      "S1-04",
+      "OBS-4",
+      "B30",
+      "V-26"
+    ],
+    "registered": ["V-30"],
+    "s07_complete": false,
+    "eligible_for_push_draft": false,
+    "next_request": "R-0018"
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "7d90086c0da6ab24015235c2cc8f95b74f601ef67b7bf41b12bdb4cee5f9a910",
+      "current_sha256": "7fcce22b73259e8212844cf0063c5b6e5d9dd47ffea128a74bee022f328049fe",
+      "reason": "Register the R-0017 wheel regression V-30 while retaining all six S-07 claims pending rework."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "2e5fbc4485de407cb1c77ac1a88fbdbd1dd7ac7715415745355e844bd3fa178a",
+      "current_sha256": "53848470dbdd9e56ff339ca59ff106e859500767742b3231cb6fec2d2e1cc29a",
+      "reason": "Describe the R-0017 rework boundary and the registered V-30 regression."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "935ccbabb7035cedf4c17be174adc8f11086609c5d91166ba126b03ef42c7895",
+      "current_sha256": "5bd49121981232b5af92b99e4ac1183c160523d81a1a3db0f4316e9790803315",
+      "reason": "Bind the exact V-30 finding and updated registry counts."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "33d546ee8576942c3bab3a4d264a0e2726e95607907e5063edd4ef44735b3f00",
+      "current_sha256": "65f638a12105ce452f6463bbd973c16851c9292f0d477e54ab84096762417023",
+      "reason": "Preserve the R-0002 historical import while recognizing the added registered S-07 regression."
+    },
+    "tests/test_v0_3_0_roadmap.py": {
+      "historical_sha256": "10cdcfd46ff6f5ef33401b4fc28d552da49e5d78766d86760892f8515df95ec4",
+      "current_sha256": "0a4c6060c36845f6d9a2ccf2547d0427191b04100ae8e951c25ef54d5481dffd",
+      "reason": "Bind the roadmap coverage check to the registry containing V-30 in S-07."
+    }
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "production_default_changed": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  }
+}

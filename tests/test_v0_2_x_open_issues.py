@@ -43,15 +43,15 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 34
-    assert len({entry["id"] for entry in entries}) == 34
+    assert len(entries) == record["issue_count"] == 35
+    assert len({entry["id"] for entry in entries}) == 35
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     counts.setdefault("registered", 0)
     counts.setdefault("claimed_fixed", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 0,
+        "registered": 1,
         "claimed_fixed": 6,
         "verified": 21,
         "deferred": 2,
@@ -263,6 +263,28 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     assert issues["A2-21/S2-12"]["target_release"] == "0.3"
     assert issues["V-26"]["target_release"] == "0.3"
     assert "S-07" in issues["V-26"]["notes"]
+    assert issues["V-30"] == {
+        "id": "V-30",
+        "title": (
+            "The S-07 wheel cannot build either Channel runtime because retained "
+            "pssolver.channel imports the excluded pssolver.control package"
+        ),
+        "severity": "high",
+        "source_report": "PSSolver_sync/results/R-0017.result.json",
+        "first_found": (
+            "S-07 independent review R-0017; regression introduced by the dev/0.3 "
+            "S-07 candidate b7cf4ca"
+        ),
+        "affects_v0_2_0": False,
+        "affects_v0_2_1": False,
+        "affects_control_paths": False,
+        "exercised_by_current_control_research": False,
+        "status": "registered",
+        "target_release": "0.3",
+        "notes": issues["V-30"]["notes"],
+    }
+    assert "S-07" in issues["V-30"]["notes"]
+    assert "installed wheels" in issues["V-30"]["notes"]
     assert issues["V-27"]["status"] == "verified"
     assert issues["V-27"]["fixed_in"] == (
         "bbb7077fa0f0cc7206a0939f6bff34ddc1ff823a"
