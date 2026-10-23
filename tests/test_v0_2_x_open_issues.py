@@ -51,8 +51,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("claimed_fixed", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 3,
-        "claimed_fixed": 0,
+        "registered": 1,
+        "claimed_fixed": 2,
         "verified": 33,
         "deferred": 2,
         "accepted": 1,
@@ -252,7 +252,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == set()
+    assert claimed == {"V-35", "V-36"}
     s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
@@ -267,7 +267,10 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     assert issues["V-26"]["target_release"] == "0.3"
     assert "S-07" in issues["V-26"]["notes"]
     for issue_id in ("V-35", "V-36"):
-        assert issues[issue_id]["status"] == "registered"
+        assert issues[issue_id]["status"] == "claimed_fixed"
+        assert issues[issue_id]["fixed_in"] == (
+            "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
+        )
         assert issues[issue_id]["target_release"] == "0.3"
         assert issues[issue_id]["source_report"] == (
             "PSSolver_sync/results/R-0022.result.json"
@@ -356,7 +359,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == {"A3-18"}
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == set()
+    } == {"V-35", "V-36"}
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (

@@ -104,8 +104,8 @@ def test_r0002_registry_updates_are_exact() -> None:
     }
     assert registry["status_counts"] == {
         "open": 1,
-        "registered": 3,
-        "claimed_fixed": 0,
+        "registered": 1,
+        "claimed_fixed": 2,
         "verified": 33,
         "deferred": 2,
         "accepted": 1,
