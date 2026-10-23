@@ -19,5 +19,18 @@ identity。Functional checkpoint import 结果显式携带 `sealed_sha256` 或
 Robin 上下壁残差是独立的 wall-law boundary gate，但不是完整算子的独立 correctness
 gate；内部 Helmholtz、evolution 和 restart 仍有各自门禁，Robin 公共执行没有重开。
 
-本记录尚待最终本地 full CPU 与 installed-wheel 资格收口，随后创建 `R-0017` 交由
-Claude 独立复核。未执行 push、HPCC、Slurm、GPU 或 H100。
+本地资格已通过：重点集合 `201 passed`；完整 CPU suite 为 `4518 passed`、允许的
+optional nematics3d `1 skipped`、精确 CUDA-only `7 deselected`；installed-wheel
+公共合同为 `5 passed`，`pip check` 通过且没有源码遮蔽。wheel 不含旧 control 或仓库
+qualification helper，并保留所需 experimental runtime。
+
+第一次完整 suite 的三个失败只来自历史记录测试仍假定当前没有待验收条目；它们已改为
+精确识别本批六个 `claimed_fixed`，首次日志保留在证据归档中。运行时资格源仍是
+`b7cf4ca02095e8b41ed720809880628d2375cfbb`。下一步封存本地证据并创建 `R-0017`
+交 Claude 独立复核。未执行 push、HPCC、Slurm、GPU 或 H100。
+
+证据归档为
+`/home/fansenwei/pssolver_v0_3_s07_local_qualification_20261022_v1`，清单共
+`2225` 项，`checksums.sha256` 自身 SHA-256 为
+`89e6b4d69964ea75e09c3f38223d50ff2839c24cc4d2d1ea4c4a9ed8f6a060ac`。
+两个 D-0008 硬链接环境克隆已删除，来源、导入路径与 `sys.path` 保存在归档中。
