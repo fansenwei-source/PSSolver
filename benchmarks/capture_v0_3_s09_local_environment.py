@@ -54,7 +54,7 @@ def capture(args: argparse.Namespace) -> dict[str, object]:
     python = args.python.expanduser().absolute()
     clone = args.baseline_clone.expanduser().resolve()
     wheel = args.wheel.expanduser().resolve()
-    if Path(sys.executable) != python.resolve():
+    if Path(sys.executable).absolute() != python:
         raise RuntimeError("reported Python executable differs")
     if not clone.is_dir() or not wheel.is_file() or wheel.is_symlink():
         raise FileNotFoundError("ordinary baseline clone and candidate wheel required")
