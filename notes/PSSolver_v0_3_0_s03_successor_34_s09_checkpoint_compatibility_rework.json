@@ -61,6 +61,16 @@
       "historical_sha256": "3206864720b15dcc94dab2b5e74dc0c5b3428e599a99637f096b9be71e115c91",
       "current_sha256": "9124d1c8d2789b932d059a6feb533828bbaaf520c41c192e36582a0f0e1a9abf",
       "reason": "Require the frozen API 1.0 literal before direct v2 or legacy migration payload access."
+    },
+    "tests/test_v0_3_s08_commit_identity_corrections.py": {
+      "historical_sha256": "44bcc5d2e392cc5c1154ff75958e85c1577b09fa4a452eb9c366a83a9ebf3f69",
+      "current_sha256": "0b1ce3f059f6206bb15cfe164faf7b2c29d171811c9ffd2eba535857514d184f",
+      "reason": "Keep the R-0021 claims exact while recognizing the later R-0022 registered S-09 items."
+    },
+    "tests/test_v0_3_s09_api11_compatibility_record.py": {
+      "historical_sha256": "ab42e647f11c840d10ff0d86e5482d529d3b57ea2a26bb88f9030a6d916a78ec",
+      "current_sha256": "ce052521c4e48f46e7c322e414d22a7f9c14292757117d229b4bdf9c85c5a6b0",
+      "reason": "Preserve the historical API 1.1 record while resolving its explicitly registered forward successors."
     }
   },
   "scope": {

@@ -4,6 +4,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_32_s09_api11_compatibility.json"
@@ -38,7 +40,9 @@ def test_s09_api11_record_registers_exact_forward_successors() -> None:
         assert registration["historical_sha256"] != registration["current_sha256"]
         assert registration["reason"]
         actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
-        assert actual == registration["current_sha256"]
+        assert actual == resolve_s03_successor(
+            relative, registration["current_sha256"]
+        )
 
 
 def test_s09_api11_record_does_not_authorize_external_actions() -> None:
