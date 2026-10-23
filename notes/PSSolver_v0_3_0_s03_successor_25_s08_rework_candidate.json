@@ -90,9 +90,69 @@
     "independent_review_required": true
   },
   "validation": {
-    "pip_torch_targeted": {"passed": 5, "failed": 0},
-    "nematics3d_conda_targeted": {"passed": 5, "failed": 0},
-    "full_cpu_suites_pending": true
+    "tested_source_commit": "8078ba13ff1afee047e96fe24a4b91bdafd8831e",
+    "pip_torch_environment": {
+      "baseline_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+      "clone_path": "/home/fansenwei/Desktop/Develop/.s08rw_full_pip_env/venv",
+      "clone_method": "cp -al hard-link clone",
+      "python": "3.12.13",
+      "torch": "2.6.0+cu126",
+      "torch_cuda": "12.6",
+      "numpy": "2.4.3",
+      "scipy": "1.16.0",
+      "pytest": "9.1.1",
+      "sys_path_site_packages": "/home/fansenwei/Desktop/Develop/.s08rw_full_pip_env/venv/lib/python3.12/site-packages"
+    },
+    "nematics3d_conda_environment": {
+      "baseline": "/home/fansenwei/anaconda3/envs/Nematics3D",
+      "clone_method": "retained D-0008 environment used in place",
+      "python": "3.12.13",
+      "torch": "2.6.0",
+      "torch_cuda": "12.6",
+      "numpy": "2.4.3",
+      "scipy": "1.16.0",
+      "pytest": "9.1.1",
+      "python_no_user_site": true,
+      "sys_path_site_packages": "/home/fansenwei/anaconda3/envs/Nematics3D/lib/python3.12/site-packages"
+    },
+    "pip_torch_targeted": {
+      "passed": 449,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "3a727e5aa12112dbf0e9c3056264d61b16b63b09620a682d927e0e725572d356",
+      "junit_sha256": "c4cf8a135e2a1f0b518e9e1fbda26b99855288f1a1f5a5e3d71726575f4d21b3"
+    },
+    "nematics3d_conda_targeted": {
+      "passed": 449,
+      "failed": 0,
+      "skipped": 0,
+      "log_sha256": "125071cd939b6724671092cfc45443fe109f3078030811845bc79ff29b2cc556",
+      "junit_sha256": "dba03cc62c94a1c37dcb0d512d95c0ae060a848b360950e362809f0bcbd61007"
+    },
+    "pip_torch_full_cpu": {
+      "passed": 4558,
+      "failed": 0,
+      "skipped": 1,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "allowed_skip": "tests/test_analytic_periodic_defect_gas_2d.py::test_nematics3d_recovers_requested_defect_count_charges_and_positions",
+      "log_sha256": "94a4f2eafbaef38c70fc7160ed825a72e6f64e0993ea8e8dee2fb5c8e5eec7bd",
+      "junit_sha256": "55b03fde1e4813220a5a36a2ee099689bccb43f736042d85e4c2b40461038014"
+    },
+    "nematics3d_conda_full_cpu": {
+      "passed": 4553,
+      "failed": 0,
+      "skipped": 6,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "skip_reason": "six pre-existing tests require a usable CPU torch.compile/Inductor toolchain",
+      "log_sha256": "bc4aa6e50aa86638e0ddcd5fb228437d69c36dbf5e69676d7a0a8a56e2d94c5c",
+      "junit_sha256": "88d0076b63dd66d7b0213bfeb0b4072e0ab59385e794a2d1c773869db851f926"
+    },
+    "archive": "/home/fansenwei/pssolver_v0_3_s08_rework_c6c64c1_20261023_v2",
+    "full_cpu_suites_pending": false,
+    "qualification_complete": true,
+    "eligible_for_independent_review": true
   },
   "historical_successor_sources": {
     "CHANGELOG.md": {"historical_sha256": "d48cdc2ea12f91fd62f1dad9377876a1311bd864c667b6e7cf8ba344c41147ea", "current_sha256": "39e52aac1a1b5db16e51c51b71a1fc6c4b150bdf0b49b11012ec91b71b6cd16a", "reason": "Document the build-aware rc2 oracle and the actionable rc1 migration rejection."},
