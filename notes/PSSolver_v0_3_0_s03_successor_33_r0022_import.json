@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-23",
+  "stage": "S-09",
+  "classification": "REWORK_REQUIRED_R0022_S09_PRE_H100_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "6b659b1ad45855877310ccc3e3a1718a1109ca84",
+    "result_commit": "78f4fd0d724e78d3c03a446f3a9863c7b4a28d76",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0022",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0022.result.json",
+    "sha256": "9522b71a0b944319b377a205d528546b3bed7589230cee7eb06bde3ea2b3901a",
+    "classification": "REWORK_REQUIRED",
+    "new_findings": ["V-35", "V-36"]
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s09_claude_review_20261023_v1",
+    "checksums_entries": 14880,
+    "checksums_sha256": "ea1cbbedb5d952ac9881d57d1b01a7e629f3769953b2b20b17df3bb8a556cb30",
+    "complete_present": true,
+    "final_report_sha256": "9818a66ecf67f951c375a0ae7d71ba7914801b87e21b352ea4e8e6b9be3e90ce",
+    "summary_sha256": "f395eb70e4ecb48f7eca8217c485f811e8978e5da7897e14eb942257f1706843"
+  },
+  "registry_import": {
+    "registered": ["V-35", "V-36"],
+    "kept_unchanged": {
+      "A3-18": "coverage_gap",
+      "NEW-14": "open"
+    },
+    "s09_complete": false,
+    "next_request": "R-0023"
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "b8e1046c1e6c5eccd10aeb60c0afb0973dc39d98c7cf4960a54c73f692eaa0be",
+      "current_sha256": "c60408bc33b9ffa586da6c5c3d9ddec53a81cf38a1aa888504ab71721ff6414b",
+      "reason": "Register the two exact R-0022 S-09 findings without changing A3-18 or NEW-14."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "34f402a90258bb90f38f12f1dd37c63063e78b525ad7dd948c6764033f8282a2",
+      "current_sha256": "7c142fec862b001423d7739c1f7b95bbf0fc2498ee300ef37940615f503cf00e",
+      "reason": "Document the R-0022 pre-H100 rework boundary and the two registered findings."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "48acd0b6f7e02a3afba2a4ed1cb9edba5beb23eb5e756d25b5aa8a2a5c3c8f60",
+      "current_sha256": "f6c83c996c3d399b1c3ce437a6135fe82e85b3afe73ecd36a53a7687c07dc98a",
+      "reason": "Bind V-35 and V-36 and the updated exact registry counts."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "4ccd880ec98d90852293cdf022707d27c8e5d0a210ab047d916a708cd625bfda",
+      "current_sha256": "90a08e80b02527be1a948ffa1aae1394d11d1209dc511800f40006e2b016b0d6",
+      "reason": "Preserve R-0002 while recognizing the current forward registry counts."
+    },
+    "tests/test_v0_3_0_roadmap.py": {
+      "historical_sha256": "130eafa9fb74ba4947bd12f151c2abdee06c30d534992ce41a20f44d688890de",
+      "current_sha256": "36ddd2a276f3c413f0814acebb86aae9332561dd12672a0bf5b67ea5a7c59f35",
+      "reason": "Account for V-35 and V-36 inside S-09 without rewriting the confirmed roadmap."
+    },
+    "tests/test_v0_3_s07_r0018_import.py": {
+      "historical_sha256": "e73a1565d0a3fb1d3350e928e773dc9a56390ea1fab3fd4bbe42e449052675d1",
+      "current_sha256": "38d09f1330c18850085a32baaf7d1b102a3bad841e10539cb7bcc3b4ba618a26",
+      "reason": "Preserve the completed S-07 result while recognizing the current registry counts."
+    }
+  },
+  "new_sources": [
+    "notes/PSSolver_v0_3_0_s03_successor_33_r0022_import.json",
+    "notes/PSSolver_v0_3_0_s03_successor_33_r0022_import_zh.md",
+    "tests/test_v0_3_s09_r0022_import.py"
+  ],
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_import_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  },
+  "next_plan_step": "S-09",
+  "next_request": "R-0023"
+}

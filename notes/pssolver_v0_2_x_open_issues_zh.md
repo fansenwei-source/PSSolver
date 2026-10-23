@@ -6,10 +6,10 @@
 `dev/0.3` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 39 条：
+当前共登记 41 条：
 
 - `open`：1；
-- `registered`：1；
+- `registered`：3；
 - `claimed_fixed`：0；
 - `verified`：33；
 - `deferred`：2；
@@ -73,6 +73,10 @@
     `e2343d19301de146ca632a1a12f7c9659e598f73` 修复，`V-34` 在
     `dea728f1a926284420e6b1a17edb56eb56ea3db1` 修复，五项均为 `verified` 且
     `verified_by=R-0021`。`V-33` 继续保持 `registered`，在 S-10 处理。S-08 完成。
+14. `R-0022` 的 S-09 H100 前独立复核要求两项小范围返工：`V-35` 固定旧格式迁移与
+    v2 bridge 的 API 版本为发布时的 `1.0`，并在读取张量前拒绝伪造或未来版本；`V-36`
+    兼容 v0.2.x 对 rc1 偶数轴 Channel state-only 迁移使用的历史标签。两项登记为
+    `registered`，均在 S-09 唯一 H100 作业前完成；A3-18 与 NEW-14 状态不变。
 
 ## Control 路径
 

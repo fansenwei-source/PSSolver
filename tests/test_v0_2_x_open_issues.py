@@ -43,15 +43,15 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 39
-    assert len({entry["id"] for entry in entries}) == 39
+    assert len(entries) == record["issue_count"] == 41
+    assert len({entry["id"] for entry in entries}) == 41
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     counts.setdefault("registered", 0)
     counts.setdefault("claimed_fixed", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 1,
+        "registered": 3,
         "claimed_fixed": 0,
         "verified": 33,
         "deferred": 2,
@@ -266,6 +266,14 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     assert issues["A2-21/S2-12"]["target_release"] == "0.3"
     assert issues["V-26"]["target_release"] == "0.3"
     assert "S-07" in issues["V-26"]["notes"]
+    for issue_id in ("V-35", "V-36"):
+        assert issues[issue_id]["status"] == "registered"
+        assert issues[issue_id]["target_release"] == "0.3"
+        assert issues[issue_id]["source_report"] == (
+            "PSSolver_sync/results/R-0022.result.json"
+        )
+        assert issues[issue_id]["affects_control_paths"] is False
+        assert issues[issue_id]["exercised_by_current_control_research"] is False
     assert issues["V-30"] == {
         "id": "V-30",
         "title": (
