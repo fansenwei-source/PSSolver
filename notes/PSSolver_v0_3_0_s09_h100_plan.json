@@ -4024,6 +4024,14 @@
     "installed_wheels_only": true
   },
   "s06_cpu_preflight": {
+    "alternating_pair_order": true,
+    "grid": "channel_R128x20x20",
+    "lengths": [
+      40.0,
+      6.0,
+      6.0
+    ],
+    "measured_steps_per_trial": 30,
     "measurements": [
       "single_step_wall_time",
       "peak_process_memory",
@@ -4036,6 +4044,8 @@
       "fixed_work"
     ],
     "paired_baseline": "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70",
+    "paired_trials": 5,
+    "provider_process_isolation": true,
     "runtime_families": [
       "channel_legacy",
       "channel_compiled_v2",
@@ -4044,7 +4054,13 @@
     ],
     "runtime_ratio_stop": 1.05,
     "runtime_ratio_warning": 1.03,
-    "threshold_relaxation_allowed": false
+    "shape": [
+      128,
+      20,
+      20
+    ],
+    "threshold_relaxation_allowed": false,
+    "warmup_steps": 3
   },
   "scheduler": {
     "account": "hagan-lab",

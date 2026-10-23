@@ -62,6 +62,11 @@ complete-stress 和 functional 路径的 tolerance/fixed-work 模式做单步耗
 会超过已冻结的 `1.03/1.05` 耗时或 `1.03` 内存门限，必须在 H100
 授权前停止报告，不得放宽门限。
 
+CPU 预检冻结为 Channel `R128×20×20`（长度 `40×6×6`）、5 个交替
+baseline/candidate 配对 trial；每个隔离子进程先 warmup 3 步，再计时
+30 个 timestep，并在同一窗口采样进程 RSS。构建、导入和子进程启动
+时间不计入 timestep；所有配对样本保留，不删除或替换离群值。
+
 任何阶段失败都立即停止。不得自动重试；不得在同一授权下提交第二个作业。
 
 ## 边界

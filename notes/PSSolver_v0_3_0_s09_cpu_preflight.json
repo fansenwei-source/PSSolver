@@ -1,0 +1,154 @@
+{
+  "schema": "pssolver.v0_3.s09.channel_cpu_preflight_record.v1",
+  "plan_step": "S-09",
+  "date": "2026-10-23",
+  "classification": "STOPPED_S09_AT_S06_CPU_PERFORMANCE_PREFLIGHT",
+  "qualification_complete": false,
+  "eligible_for_r0022": false,
+  "eligible_for_h100_authorization": false,
+  "baseline": {
+    "commit": "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70",
+    "version": "0.2.2"
+  },
+  "candidate": {
+    "runtime_commit": "f94b9be22fd767fee432caf30f0e5c47aad8e9c3",
+    "functional_api_version": "1.1"
+  },
+  "contract": {
+    "families": [
+      "channel_legacy",
+      "channel_compiled_v2",
+      "channel_complete_stress",
+      "channel_functional"
+    ],
+    "modes": [
+      "relative_tolerance",
+      "fixed_work"
+    ],
+    "shape": [128, 20, 20],
+    "lengths": [40.0, 6.0, 6.0],
+    "paired_trials": 5,
+    "warmup_steps": 3,
+    "measured_steps_per_trial": 30,
+    "provider_process_isolation": true,
+    "alternating_pair_order": true,
+    "all_samples_retained": true,
+    "median_time_ratio_max": 1.03,
+    "paired_time_ratio_max": 1.05,
+    "peak_rss_ratio_max": 1.03,
+    "threshold_relaxation_allowed": false
+  },
+  "results": [
+    {
+      "family": "channel_legacy",
+      "mode": "relative_tolerance",
+      "paired_time_ratios": [1.026526, 1.036701, 1.043649, 1.033022, 1.021426],
+      "median_time_ratio": 1.033022,
+      "maximum_time_ratio": 1.043649,
+      "median_peak_rss_ratio": 0.953252,
+      "maximum_peak_rss_ratio": 0.954285,
+      "passed": false
+    },
+    {
+      "family": "channel_legacy",
+      "mode": "fixed_work",
+      "paired_time_ratios": [1.064108, 1.086032, 1.024556, 0.999433, 1.005771],
+      "median_time_ratio": 1.024556,
+      "maximum_time_ratio": 1.086032,
+      "median_peak_rss_ratio": 0.954663,
+      "maximum_peak_rss_ratio": 0.955584,
+      "passed": false
+    },
+    {
+      "family": "channel_compiled_v2",
+      "mode": "relative_tolerance",
+      "paired_time_ratios": [1.050017, 1.027146, 1.024610, 1.037238, 1.030973],
+      "median_time_ratio": 1.030973,
+      "maximum_time_ratio": 1.050017,
+      "median_peak_rss_ratio": 0.954452,
+      "maximum_peak_rss_ratio": 0.957230,
+      "passed": false
+    },
+    {
+      "family": "channel_compiled_v2",
+      "mode": "fixed_work",
+      "paired_time_ratios": [1.023639, 1.004312, 0.997569, 1.024619, 0.999405],
+      "median_time_ratio": 1.004312,
+      "maximum_time_ratio": 1.024619,
+      "median_peak_rss_ratio": 0.954784,
+      "maximum_peak_rss_ratio": 0.955554,
+      "passed": true
+    },
+    {
+      "family": "channel_complete_stress",
+      "mode": "relative_tolerance",
+      "paired_time_ratios": [1.137853, 1.056144, 1.007060, 1.035583, 1.050255],
+      "median_time_ratio": 1.050255,
+      "maximum_time_ratio": 1.137853,
+      "median_peak_rss_ratio": 0.965661,
+      "maximum_peak_rss_ratio": 0.968149,
+      "passed": false
+    },
+    {
+      "family": "channel_complete_stress",
+      "mode": "fixed_work",
+      "paired_time_ratios": [0.970801, 0.990262, 0.940253, 0.980776, 1.040837],
+      "median_time_ratio": 0.980776,
+      "maximum_time_ratio": 1.040837,
+      "median_peak_rss_ratio": 0.966271,
+      "maximum_peak_rss_ratio": 0.967990,
+      "passed": true
+    },
+    {
+      "family": "channel_functional",
+      "mode": "relative_tolerance",
+      "paired_time_ratios": [1.010315, 1.019002, 1.029588, 1.026949, 0.989943],
+      "median_time_ratio": 1.019002,
+      "maximum_time_ratio": 1.029588,
+      "median_peak_rss_ratio": 0.967322,
+      "maximum_peak_rss_ratio": 0.983349,
+      "passed": true
+    },
+    {
+      "family": "channel_functional",
+      "mode": "fixed_work",
+      "paired_time_ratios": [1.036430, 0.973452, 1.000431, 0.983720, 0.988615],
+      "median_time_ratio": 0.988615,
+      "maximum_time_ratio": 1.036430,
+      "median_peak_rss_ratio": 0.972976,
+      "maximum_peak_rss_ratio": 0.987071,
+      "passed": true
+    }
+  ],
+  "verdict": {
+    "timing_passed": false,
+    "memory_passed": true,
+    "stop_required": true,
+    "thresholds_relaxed": false,
+    "h100_preparation_continued": false
+  },
+  "environment": {
+    "baseline_venv_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+    "test_venv_clone": "/home/fansenwei/Desktop/Develop/.codex_test_envs/s09_provider_unit",
+    "python": "3.12.13",
+    "torch": "2.6.0+cu126",
+    "numpy": "2.4.3",
+    "torch_num_threads": 1,
+    "torch_num_interop_threads": 1,
+    "sys_path_persisted_per_cell": true
+  },
+  "evidence": {
+    "local_root": "/home/fansenwei/pssolver_v0_3_s09_cpu_preflight_f94b9be_20261023_v1",
+    "matrix_sha256": "0a0a79dd2b3b256247b9150b5e9b5f8f9d07163a23ebba5c2e57095d0ee23360",
+    "stdout_sha256": "78efdc9ffd157390ac8e43e8935d2bdcd075b83bea28c5d794a5414e8ae615b5",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "runner_sha256": "ee331bcedece7cc8ff4af46cd65b5a9b2b954a7ef3bf9a1bd57f1f8cac7dffc8"
+  },
+  "authorization": {
+    "push_performed": false,
+    "h100_submitted": false,
+    "automatic_retry": false,
+    "threshold_change_authorized": false,
+    "production_default_changed": false
+  }
+}

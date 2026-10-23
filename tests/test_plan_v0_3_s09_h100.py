@@ -150,6 +150,16 @@ def test_plan_does_not_relax_accepted_numerical_or_profile_limits() -> None:
     assert numerical["finite_difference_relative_error_max"] == 2.0e-5
     assert numerical["threshold_relaxation_allowed"] is False
 
+    cpu = plan["s06_cpu_preflight"]
+    assert cpu["grid"] == "channel_R128x20x20"
+    assert cpu["shape"] == [128, 20, 20]
+    assert cpu["lengths"] == [40.0, 6.0, 6.0]
+    assert cpu["paired_trials"] == 5
+    assert cpu["warmup_steps"] == 3
+    assert cpu["measured_steps_per_trial"] == 30
+    assert cpu["provider_process_isolation"] is True
+    assert cpu["alternating_pair_order"] is True
+
 
 def test_atomic_writer_refuses_overwrite_and_round_trips(tmp_path) -> None:
     from benchmarks.plan_v0_3_s09_h100 import _atomic_json
