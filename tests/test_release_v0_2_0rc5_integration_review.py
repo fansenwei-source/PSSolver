@@ -84,9 +84,10 @@ def test_rc5_integration_review_records_only_qualification_scope_after_runtime()
 def test_rc5_integration_review_keeps_the_public_contract_stable():
     contract = _record()["public_contract"]
     assert contract["package_version"] == "0.2.0rc5"
-    assert functional_protocol_provenance()["functional_protocol"]["current"] == (
-        contract["functional_api_version"]
-    )
+    assert contract["functional_api_version"] == "1.0"
+    protocol = functional_protocol_provenance()["functional_protocol"]
+    assert protocol["current"] == "1.1"
+    assert contract["functional_api_version"] in protocol["checkpoint_read_versions"]
     assert contract["functional_batch_sizes"] == [1]
     for key in (
         "production_default_changed",

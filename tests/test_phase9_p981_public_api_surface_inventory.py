@@ -93,7 +93,9 @@ def test_inventory_matches_the_exact_functional_export_surface():
     assert set(exported) <= set(functional.__all__)
     assert len(exported) == len(set(exported))
     assert record["module"]["api_version"] == "0.1-provisional"
-    assert FUNCTIONAL_API_VERSION == "1.0"
+    # This is a historical P9.8.1 inventory for the provisional surface.
+    # The live construction protocol advanced in S-09 without rewriting it.
+    assert FUNCTIONAL_API_VERSION == "1.1"
     assert record["module"]["package_root_reexported"] is False
     assert not set(exported) & set(pssolver.__all__)
 

@@ -62,6 +62,7 @@ from .legacy_identity import legacy_runtime_identity_sha256
 PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 3
 _LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 1
 _LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_V2 = 2
+_LEGACY_FUNCTIONAL_API_VERSION = "1.0"
 _SOURCE_PRODUCTION_V1 = "periodic_production_v1"
 _SOURCE_PRODUCTION_V2 = "periodic_production_v2"
 _SOURCE_PRODUCTION_V3 = "periodic_production_v3"
@@ -338,7 +339,12 @@ class PeriodicActivityCheckpointBridge:
                 source_api_version=selection.requested,
                 target_api_version=selection.effective,
                 reader=(
-                    selection.compatibility_reader
+                    (
+                        "qualified_periodic_functional_bridge_v2_reader"
+                        if bridge_version
+                        == _LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_V2
+                        else selection.compatibility_reader
+                    )
                     or (
                         "current_periodic_functional_bridge_v3_reader"
                         if current
@@ -461,7 +467,7 @@ class PeriodicActivityCheckpointBridge:
                 applicability_class="configuration_dependent",
             )
         )
-        api_version = FUNCTIONAL_API_VERSION
+        api_version = bridge.get("api_version")
         expected_bridge = self._bridge_metadata(
             api_version=api_version,
             format_version=expected_version,
@@ -570,7 +576,7 @@ class PeriodicActivityCheckpointBridge:
                 if state_only
                 else "exact_legacy_upgrade"
             ),
-            "source_api_version": FUNCTIONAL_API_VERSION,
+            "source_api_version": _LEGACY_FUNCTIONAL_API_VERSION,
             "source_family": CheckpointFamily.PERIODIC_FUNCTIONAL.value,
             "source_format_version": (
                 _LEGACY_PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION

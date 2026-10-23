@@ -40,12 +40,13 @@ def test_p984_binds_clean_source_archives_and_installed_wheels():
         assert len(record[section]["wheel_sha256"]) == 64
     assert record["installed_identity"] == {
         "stable_module": "pssolver.functional.api",
-        "functional_api_version": stable.FUNCTIONAL_API_VERSION,
+        "functional_api_version": "1.0",
         "source_shadow_import": False,
         "provider_console_help": "pass",
         "periodic_consumer": "pass",
         "channel_consumer": "pass",
     }
+    assert stable.FUNCTIONAL_API_VERSION == "1.1"
 
 
 def test_p984_records_cumulative_cpu_restart_gradient_and_boundary_gates():

@@ -164,6 +164,7 @@ def test_released_periodic_identity_literal_stays_frozen(generation):
     )
     current = current.to_metadata()
     historical = copy.deepcopy(current)
+    historical["api_version"] = "1.0"
     historical["execution"]["functional_runtime"][
         "hermitian_state_projection"
     ] = "self_conjugate_planes_each_step"
@@ -177,6 +178,22 @@ def test_released_periodic_identity_literal_stays_frozen(generation):
         family="periodic",
         source_release_generation=generation,
     )
+
+
+def test_legacy_identity_projection_rejects_an_unqualified_future_protocol():
+    current, _state_spec = _identity(
+        "hermitian_half",
+        periodic_hermitian_state_projection("hermitian_half"),
+    )
+    future = current.to_metadata()
+    future["api_version"] = "2.0"
+
+    with pytest.raises(ValueError, match="cannot be projected"):
+        legacy_runtime_identity_sha256(
+            future,
+            family="periodic",
+            source_release_generation="rc3",
+        )
 
 
 def test_unknown_periodic_storage_is_rejected():

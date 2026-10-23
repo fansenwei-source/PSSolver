@@ -36,9 +36,8 @@ def test_p983_binds_stable_provider_and_two_independent_consumers():
         "1ebafc22c6ed75ea5ba70a508724eddd8a090ef2"
     )
     assert provider["module"] == "pssolver.functional.api"
-    assert provider["construction_protocol_version"] == (
-        stable.FUNCTIONAL_API_VERSION
-    )
+    assert provider["construction_protocol_version"] == "1.0"
+    assert stable.FUNCTIONAL_API_VERSION == "1.1"
     adapters = record["consumer"]["adapters"]
     assert set(adapters) == {"periodic", "channel"}
     assert {entry["adapter_version"] for entry in adapters.values()} == {2}
@@ -51,8 +50,14 @@ def test_p983_preserves_old_evidence_and_provider_owned_checkpoint_readers():
     assert history["relabelled_as_stable_installed_wheel_evidence"] is False
     checkpoint = record["checkpoint_compatibility"]
     assert checkpoint["new_construction_accepts_legacy_protocol"] is False
-    assert checkpoint["stable_checkpoint_read_versions"] == list(
-        stable.FUNCTIONAL_CHECKPOINT_READ_API_VERSIONS
+    assert checkpoint["stable_checkpoint_read_versions"] == [
+        "1.0",
+        "0.1-provisional",
+    ]
+    assert stable.FUNCTIONAL_CHECKPOINT_READ_API_VERSIONS == (
+        "1.1",
+        "1.0",
+        "0.1-provisional",
     )
     assert checkpoint["compatibility_reader_owned_by"] == "PSSolver"
     assert checkpoint["consumer_schema_repair"] is False

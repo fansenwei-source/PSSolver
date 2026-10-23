@@ -25,7 +25,8 @@ LegacyFunctionalFamily = Literal["periodic", "channel"]
 LegacyReleaseGeneration = Literal["rc1", "rc2", "rc3"]
 
 _RELEASE_GENERATIONS = frozenset({"rc1", "rc2", "rc3"})
-_FUNCTIONAL_API_VERSION = "1.0"
+_LEGACY_FUNCTIONAL_API_VERSION = "1.0"
+_CURRENT_FUNCTIONAL_API_VERSION = "1.1"
 
 
 def _json_copy(value: object, description: str) -> object:
@@ -203,8 +204,14 @@ def legacy_runtime_identity_metadata(
         "state_layout",
     }:
         raise ValueError("functional runtime identity top-level schema is invalid")
-    if payload["api_version"] != _FUNCTIONAL_API_VERSION:
-        raise ValueError("legacy released functional API version must be 1.0")
+    if payload["api_version"] not in {
+        _LEGACY_FUNCTIONAL_API_VERSION,
+        _CURRENT_FUNCTIONAL_API_VERSION,
+    }:
+        raise ValueError(
+            "functional API version cannot be projected to the released "
+            "1.0 identity schema"
+        )
     execution = _mapping(payload["execution"], "functional execution identity")
     runtime = _mapping(
         _required(execution, "functional_runtime", "functional execution identity"),
@@ -216,7 +223,7 @@ def legacy_runtime_identity_metadata(
         else _channel_runtime_identity(runtime, source_release_generation)
     )
     return {
-        "api_version": _FUNCTIONAL_API_VERSION,
+        "api_version": _LEGACY_FUNCTIONAL_API_VERSION,
         "scientific": payload["scientific"],
         "discretization": payload["discretization"],
         "execution": execution,

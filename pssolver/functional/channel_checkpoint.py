@@ -82,6 +82,7 @@ from .legacy_identity import legacy_runtime_identity_sha256
 CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 3
 _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION = 1
 _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_V2 = 2
+_LEGACY_FUNCTIONAL_API_VERSION = "1.0"
 _FORMAT_KIND = "channel_activity_functional_checkpoint"
 _SOURCE_FUNCTIONAL_V1 = "channel_functional_bridge_v1"
 _SOURCE_FUNCTIONAL_V2 = "channel_functional_bridge_v2"
@@ -447,7 +448,7 @@ class ChannelActivityCheckpointBridge:
                 applicability_class="configuration_dependent",
             )
         )
-        api_version = FUNCTIONAL_API_VERSION
+        api_version = bridge.get("api_version")
         source_production_identity = _require_sha256(
             bridge.get("production_runtime_identity_sha256"),
             "production_runtime_identity_sha256",
@@ -573,7 +574,7 @@ class ChannelActivityCheckpointBridge:
                 else "exact_legacy_upgrade"
             ),
             "periodic_axis_size": periodic_size,
-            "source_api_version": FUNCTIONAL_API_VERSION,
+            "source_api_version": _LEGACY_FUNCTIONAL_API_VERSION,
             "source_family": CheckpointFamily.CHANNEL_FUNCTIONAL.value,
             "source_format_version": (
                 _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION
@@ -590,7 +591,7 @@ class ChannelActivityCheckpointBridge:
                 ),
                 "migration_kind": "exact_legacy_upgrade",
                 "periodic_axis_size": periodic_size,
-                "source_api_version": FUNCTIONAL_API_VERSION,
+                "source_api_version": _LEGACY_FUNCTIONAL_API_VERSION,
                 "source_family": CheckpointFamily.CHANNEL_FUNCTIONAL.value,
                 "source_format_version": (
                     _LEGACY_CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION

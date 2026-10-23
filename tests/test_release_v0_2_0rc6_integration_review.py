@@ -128,9 +128,10 @@ def test_rc6_integration_review_keeps_the_public_contract_stable():
         "lifting_reopened",
     ):
         assert contract[key] == machine[key]
-    assert functional_protocol_provenance()["functional_protocol"]["current"] == (
-        contract["functional_api_version"]
-    )
+    assert contract["functional_api_version"] == "1.0"
+    protocol = functional_protocol_provenance()["functional_protocol"]
+    assert protocol["current"] == "1.1"
+    assert contract["functional_api_version"] in protocol["checkpoint_read_versions"]
     assert contract["functional_batch_sizes"] == [1]
     for key in (
         "production_default_changed",

@@ -14,6 +14,10 @@
   compatibility identities do not. Current-format API-1.0 functional
   checkpoints remain readable through an explicit read-only compatibility
   path and are reported as non-exact protocol restores.
+- Preserve the frozen API-1.0 identity and migration-provenance schemas when
+  an API-1.1 runtime reads or explicitly upgrades released functional
+  checkpoints. Historical release records remain historical literals rather
+  than being compared to the live protocol version.
 
 ### Packaging, provenance, and documented capability boundaries
 
