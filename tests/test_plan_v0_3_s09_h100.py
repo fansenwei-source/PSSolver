@@ -27,6 +27,7 @@ from benchmarks.plan_v0_3_s09_h100 import (
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s09_h100_plan.json"
+DRAFT = ROOT / "notes/PSSolver_v0_3_0_s09_h100_submission_draft_zh.md"
 
 
 def _record() -> dict[str, object]:
@@ -239,6 +240,19 @@ def test_plan_freezes_upload_roots_venv_origin_and_every_job_variable() -> None:
     assert variables["S09_CONTROL_ROOT"] == H100_CONTROL_ROOT
     assert variables["S09_OUTPUT_ROOT"] == H100_OUTPUT_ROOT
     assert all(value.startswith("/") for value in variables.values())
+
+
+def test_submission_draft_matches_the_frozen_paths_and_performance_rules() -> None:
+    text = DRAFT.read_text(encoding="utf-8")
+    for value in _record()["deployment"]["variables"].values():
+        assert value in text
+    assert H100_BASE_ENV in text
+    assert "至少 4 个 `<= 1.05`" in text
+    assert "不要求 6/6 全部 `<= 1.05`" in text
+    assert "全部样本均值比 `<= 1.03`" in text
+    assert "两个顺序层中位数的较大值/较小值 `<= 1.05`" in text
+    assert "API 1.1 checkpoint 不能由 v0.2.x 读取" in text
+    assert "每个 paired ratio 必须 `<= 1.05`" not in text
 
 
 def test_atomic_writer_refuses_overwrite_and_round_trips(tmp_path) -> None:
