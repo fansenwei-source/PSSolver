@@ -1,0 +1,99 @@
+{
+  "schema": "pssolver.v0_3.s03.historical_successor.v1",
+  "created_at": "2026-10-23T06:50:52-04:00",
+  "plan_step": "S-09",
+  "classification": "STOPPED_S09_CPU_6X60_AT_CHANNEL_FUNCTIONAL_TOLERANCE_PAIRED_LIMIT",
+  "git_identity": {
+    "branch": "fix/v0.3-s09-gpu-qualification",
+    "preregistration_commit": "49ee7881b0a4ea2342fc1acd5f6fbb30e5fde18d",
+    "preregistration_parent": "d66b6fbe8c560f1efeabecd811f40e139f6aa4d4",
+    "baseline_runtime_commit": "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70",
+    "candidate_runtime_commit": "2573dec5ca4c0c3248ac3a20db8448e9ab515df4",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "measurement_contract": {
+    "trials_per_cell": 6,
+    "samples_per_profile": 60,
+    "fixed_block_count": 6,
+    "fixed_block_size": 10,
+    "profile_center": "median_of_six_fixed_block_means",
+    "alternating_pair_order": true,
+    "all_samples_retained": true,
+    "trial_replacement_allowed": false,
+    "outlier_removal_allowed": false,
+    "median_time_ratio_max": 1.03,
+    "paired_time_ratio_max": 1.05,
+    "median_peak_rss_ratio_max": 1.03,
+    "paired_peak_rss_ratio_max": 1.03,
+    "thresholds_relaxed": false
+  },
+  "execution": {
+    "self_control_runs": 1,
+    "candidate_bound_runs": 1,
+    "automatic_retry": false,
+    "self_control_passed": true,
+    "candidate_bound_passed": false,
+    "remaining_local_gates_executed": false,
+    "r0022_created": false,
+    "h100_preparation_executed": false
+  },
+  "self_control": {
+    "passed_cells": 8,
+    "failed_cells": 0,
+    "maximum_paired_time_ratio": 1.0362746377805299,
+    "maximum_paired_peak_rss_ratio": 1.010159830646653
+  },
+  "candidate_failure": {
+    "passed_cells": 7,
+    "failed_cells": 1,
+    "family": "channel_functional",
+    "mode": "relative_tolerance",
+    "trial": 1,
+    "paired_time_ratio": 1.07077124954486,
+    "cell_median_time_ratio": 1.0168360838379518,
+    "candidate_profile_center_seconds": 0.19696449120000004,
+    "baseline_profile_center_seconds": 0.18394637630000002,
+    "candidate_max_sample_seconds": 0.26512092200000004,
+    "candidate_max_sample_index_zero_based": 2,
+    "optimization_cache_active_for_functional_path": false,
+    "verdict": "FAIL_PAIRED_TIME_RATIO_LIMIT"
+  },
+  "historical_5x30_evidence": {
+    "retained": true,
+    "archive": "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2",
+    "checksums_sha256": "679ba7adaceddceaebe55769b1d2bc81a7c4c47c680525465a9884ea482aa02d",
+    "failed_paired_time_ratio": 1.0822582930338371,
+    "retained_spike_seconds": 0.10759581700000001
+  },
+  "runtime_sources": {
+    "benchmarks/benchmark_v0_3_s09_channel_cpu_frozen.py": "1057edb3c12e1f63647a635d405a609c5dd1b058f8f09151f6002dad773db322",
+    "notes/PSSolver_v0_3_0_s09_cpu_6x60_preregistration.json": "c7a3c57ac297554184dd7dcd48fb82d9a12e9efa96ecd12aebc03a41432ca26f"
+  },
+  "historical_successor_sources": {},
+  "evidence": {
+    "archive": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_2573dec_20261023_v3",
+    "checksums_entries": 214,
+    "checksums_sha256": "8311695d7dc3031b7aed0574a0239354b35efad70c4b6d2a3223f8795accf1ac",
+    "complete_present": true,
+    "self_control_matrix_sha256": "5f652cdc9c79093bbae4862fc3080a839cec7c6969e0e3b4bc76d7c4c0a710d2",
+    "candidate_bound_matrix_sha256": "f4e42828e2c5dc1caad9729fb1b2b005d08a4f53cc4b3e82274dae436ae71085",
+    "environment_sha256": "67bb50ef59002e4834e6ac2fbfaec3631e1e8d3581d88a18c77cef252fa44f4b"
+  },
+  "roadmap": {
+    "s09_complete": false,
+    "request_created": false,
+    "future_r0022_must_bind_both_5x30_and_6x60_evidence": true,
+    "h100_submission_draft_allowed": false
+  },
+  "authorization": {
+    "push_performed": false,
+    "hpcc_executed": false,
+    "slurm_submitted": false,
+    "gpu_executed": false,
+    "h100_submitted": false,
+    "threshold_change": false,
+    "sample_deletion": false,
+    "production_default_changed": false
+  }
+}
