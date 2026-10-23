@@ -10,8 +10,13 @@ import pytest
 from benchmarks.plan_v0_3_s09_h100 import (
     BASELINE_COMMIT,
     BASELINE_WHEEL_SHA256,
+    CANDIDATE_COMMIT,
+    CANDIDATE_WHEEL_SHA256,
     CLASSIFICATION,
     CONSUMER_BASE,
+    CONSUMER_EVIDENCE_COMMIT,
+    CONSUMER_RUNTIME_COMMIT,
+    CONSUMER_WHEEL_SHA256,
     PLANNING_PARENT,
     build_plan,
 )
@@ -38,10 +43,13 @@ def test_plan_binds_released_baseline_and_pending_candidate() -> None:
     assert provider["baseline_commit"] == BASELINE_COMMIT
     assert provider["baseline_wheel_sha256"] == BASELINE_WHEEL_SHA256
     assert provider["candidate_planning_parent"] == PLANNING_PARENT
-    assert provider["candidate_implementation_commit"] is None
-    assert provider["candidate_wheel_sha256"] is None
+    assert provider["candidate_implementation_commit"] == CANDIDATE_COMMIT
+    assert provider["candidate_wheel_sha256"] == CANDIDATE_WHEEL_SHA256
     assert plan["consumer"]["stable_qualification_base_commit"] == CONSUMER_BASE
-    assert plan["consumer"]["migration_commit"] is None
+    assert plan["consumer"]["migration_commit"] == CONSUMER_RUNTIME_COMMIT
+    assert plan["consumer"]["evidence_commit"] == CONSUMER_EVIDENCE_COMMIT
+    assert plan["consumer"]["wheel_sha256"] == CONSUMER_WHEEL_SHA256
+    assert plan["consumer"]["functional_api_version"] == "1.1"
 
 
 def test_new14_gap_blocks_h100_until_a_contract_is_selected() -> None:
@@ -132,18 +140,36 @@ def test_plan_reuses_the_full_accepted_paired_profile_contract() -> None:
 def test_plan_does_not_relax_accepted_numerical_or_profile_limits() -> None:
     plan = _record()
     assert plan["thresholds"] == {
-        "aggregate_and_median_runtime_ratio_max": 1.03,
+        "aggregate_all_sample_mean_ratio_max": 1.03,
+        "median_of_profile_means_ratio_max": 1.03,
+        "median_of_six_trial_ratios_max": 1.03,
+        "baseline_then_candidate_stratum_median_ratio_max": 1.05,
+        "candidate_then_baseline_stratum_median_ratio_max": 1.05,
+        "order_stratum_imbalance_ratio_max": 1.05,
+        "individual_trial_ratio_reference_max": 1.05,
         "compile_fallback": False,
         "finite_required": True,
         "graph_breaks": 0,
         "minimum_trials_at_or_below_individual_reference": 4,
-        "order_stratum_and_individual_reference_ratio_max": 1.05,
+        "paired_initial_sha_equal": True,
         "peak_allocated_group_ratio_max": 1.03,
         "peak_reserved_group_ratio_max": 1.03,
         "runtime_fallback": False,
         "transform_counts_exact": True,
     }
     numerical = plan["numerical"]
+    assert numerical["unchanged_runtime_families"] == [
+        "plane_legacy_production",
+        "plane_compiled_v2",
+        "periodic_complete_stress",
+        "periodic_functional",
+    ]
+    assert numerical["changed_runtime_families"] == [
+        "channel_legacy",
+        "channel_compiled_v2",
+        "channel_complete_stress",
+        "channel_functional",
+    ]
     assert numerical["changed_float64_paths_relative_l2_max"] == 1.0e-12
     assert numerical["changed_float64_paths_linf_max"] == 1.0e-12
     assert numerical["gradient_relative_l2_max"] == 2.0e-5
@@ -154,11 +180,19 @@ def test_plan_does_not_relax_accepted_numerical_or_profile_limits() -> None:
     assert cpu["grid"] == "channel_R128x20x20"
     assert cpu["shape"] == [128, 20, 20]
     assert cpu["lengths"] == [40.0, 6.0, 6.0]
-    assert cpu["paired_trials"] == 5
-    assert cpu["warmup_steps"] == 3
-    assert cpu["measured_steps_per_trial"] == 30
+    assert cpu["paired_trials"] == 6
+    assert cpu["warmup_steps"] == 10
+    assert cpu["measured_steps_per_trial"] == 60
+    assert cpu["fixed_block_size"] == 10
+    assert cpu["fixed_block_count"] == 6
+    assert cpu["center"] == "median_of_six_fixed_block_means"
     assert cpu["provider_process_isolation"] is True
     assert cpu["alternating_pair_order"] is True
+    assert cpu["telemetry_classification"] == "NO_PAIRED_LIMIT_EXCEEDANCE"
+    assert cpu["focused_median_ratio"] <= 1.03
+    assert cpu["frozen_function_tolerance_median_ratio"] <= 1.03
+    assert cpu["maximum_paired_ratio"] <= 1.05
+    assert cpu["candidate_optimization_required"] is False
 
 
 def test_atomic_writer_refuses_overwrite_and_round_trips(tmp_path) -> None:

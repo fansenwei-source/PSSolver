@@ -17,8 +17,8 @@ import tempfile
 from typing import Iterable
 
 
-SCHEMA = "pssolver.v0_3.s09.single_h100_plan.v1"
-CLASSIFICATION = "S09_DECISIONS_CONFIRMED_IMPLEMENTATION_IN_PROGRESS"
+SCHEMA = "pssolver.v0_3.s09.single_h100_plan.v2"
+CLASSIFICATION = "READY_S09_SINGLE_H100_PLAN_FOR_INDEPENDENT_REVIEW"
 
 BASELINE_COMMIT = "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70"
 BASELINE_WHEEL_SHA256 = (
@@ -26,6 +26,37 @@ BASELINE_WHEEL_SHA256 = (
 )
 PLANNING_PARENT = "7b796679925020a869fe59cfb56e0a771ef6d47e"
 CONSUMER_BASE = "208edd03e6b26a0e788c07d295fddd7a67237189"
+CANDIDATE_COMMIT = "2573dec5ca4c0c3248ac3a20db8448e9ab515df4"
+CANDIDATE_ARCHIVE_SHA256 = (
+    "213651b398b2167438587b35985026a21a4d7ee21160bb43bd4c96c14bdc43a9"
+)
+CANDIDATE_WHEEL_SHA256 = (
+    "db103ac0ce45b6fa4074e1521cfd94f70089f8587a4b50892aeb04a85a1768ea"
+)
+CONSUMER_RUNTIME_COMMIT = "48dd4d3a9a101f8b24d8311c57ed67fab46ceea0"
+CONSUMER_EVIDENCE_COMMIT = "97d3c06450c4a7a6d72e0fe07a7a157ef095c133"
+CONSUMER_ARCHIVE_SHA256 = (
+    "02f3e8249bc02cbb0484636d9f8bf46cc8a6815d90e13f8286f7aaf8291157fd"
+)
+CONSUMER_SUPPORT_ARCHIVE_SHA256 = (
+    "2243f14cbdad1a58cb8a1ff73e2bb550752d97f5edf2190302005d9d69ff66a1"
+)
+CONSUMER_WHEEL_SHA256 = (
+    "40ba784811ca1e9f3da2a2a2768b44d752a5972aa40217a9ef36f30dcbea1ace"
+)
+
+CUDA_ONLY_NODE_IDS = (
+    "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+    "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+    "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+    "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+    "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact",
+    "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence",
+)
+
+SCHEDULED_REFRESH_FAMILIES = frozenset(("channel_legacy", "channel_compiled_v2"))
+SCHEDULED_REFRESH_INTERVAL = 20
 
 CALLER_STATES = (
     {
@@ -149,6 +180,14 @@ def build_profile_matrix() -> list[dict[str, object]]:
             for trial in range(1, 7):
                 for position, role in enumerate(_profile_order(trial), start=1):
                     sequence += 1
+                    warmup_steps = 10
+                    timed_steps = 60
+                    refreshes = 0
+                    if family["key"] in SCHEDULED_REFRESH_FAMILIES:
+                        refreshes = (
+                            (warmup_steps + timed_steps) // SCHEDULED_REFRESH_INTERVAL
+                            - warmup_steps // SCHEDULED_REFRESH_INTERVAL
+                        )
                     entries.append(
                         {
                             "sequence": sequence,
@@ -158,15 +197,28 @@ def build_profile_matrix() -> list[dict[str, object]]:
                             "trial": trial,
                             "order_position": position,
                             "provider_role": role,
+                            "provider_commit": (
+                                BASELINE_COMMIT if role == "baseline" else CANDIDATE_COMMIT
+                            ),
+                            "provider_wheel_sha256": (
+                                BASELINE_WHEEL_SHA256
+                                if role == "baseline"
+                                else CANDIDATE_WHEEL_SHA256
+                            ),
                             "device": "cuda",
                             "dtype": family["dtype"],
-                            "warmup_steps": 10,
-                            "timed_steps": 60,
+                            "warmup_steps": warmup_steps,
+                            "timed_steps": timed_steps,
                             "samples_per_profile": 60,
                             "fixed_block_size": 10,
                             "fixed_block_count": 6,
                             "steady_forward_transforms_per_step": family["forward"],
                             "steady_inverse_transforms_per_step": family["inverse"],
+                            "scheduled_refreshes_in_timed_window": refreshes,
+                            "expected_forward_raw_calls": (
+                                family["forward"] * timed_steps + refreshes
+                            ),
+                            "expected_inverse_raw_calls": family["inverse"] * timed_steps,
                             "isolated_empty_triton_cache": True,
                             "isolated_empty_torchinductor_cache": True,
                         }
@@ -264,15 +316,26 @@ def build_plan() -> dict[str, object]:
             "baseline_version": "0.2.2",
             "baseline_wheel_sha256": BASELINE_WHEEL_SHA256,
             "candidate_planning_parent": PLANNING_PARENT,
-            "candidate_implementation_commit": None,
-            "candidate_wheel_sha256": None,
+            "candidate_implementation_commit": CANDIDATE_COMMIT,
+            "candidate_source_archive_sha256": CANDIDATE_ARCHIVE_SHA256,
+            "candidate_wheel_sha256": CANDIDATE_WHEEL_SHA256,
             "installed_wheels_only": True,
         },
         "consumer": {
             "stable_qualification_base_commit": CONSUMER_BASE,
-            "migration_commit": None,
-            "wheel_sha256": None,
-            "functional_api_version": "1.0",
+            "migration_commit": CONSUMER_RUNTIME_COMMIT,
+            "evidence_commit": CONSUMER_EVIDENCE_COMMIT,
+            "source_archive_sha256": CONSUMER_ARCHIVE_SHA256,
+            "support_archive_sha256": CONSUMER_SUPPORT_ARCHIVE_SHA256,
+            "wheel_sha256": CONSUMER_WHEEL_SHA256,
+            "functional_api_version": "1.1",
+            "installed_cpu": {
+                "provider_gate_passed": 7,
+                "consumer_passed": 351,
+                "consumer_skipped": 6,
+                "consumer_failed": 0,
+                "source_shadow_import": False,
+            },
             "scientific_control_result_claimed": False,
         },
         "scheduler": {
@@ -305,6 +368,7 @@ def build_plan() -> dict[str, object]:
             "qualification helper compile/import/synthetic negative gates",
             "all artifact and source hashes frozen before sbatch",
         ],
+        "cuda_only_tests": list(CUDA_ONLY_NODE_IDS),
         "job_stage_order": [
             "node_local_tmp_environment_and_host_compiler",
             "installed_wheel_cuda_only_tests",
@@ -334,15 +398,26 @@ def build_plan() -> dict[str, object]:
             "grid": "channel_R128x20x20",
             "shape": GRIDS["channel_R128x20x20"]["shape"],
             "lengths": GRIDS["channel_R128x20x20"]["lengths"],
-            "paired_trials": 5,
-            "warmup_steps": 3,
-            "measured_steps_per_trial": 30,
+            "paired_trials": 6,
+            "warmup_steps": 10,
+            "measured_steps_per_trial": 60,
+            "fixed_block_size": 10,
+            "fixed_block_count": 6,
+            "center": "median_of_six_fixed_block_means",
             "provider_process_isolation": True,
             "alternating_pair_order": True,
             "runtime_ratio_warning": 1.03,
             "runtime_ratio_stop": 1.05,
             "memory_ratio_stop": 1.03,
             "threshold_relaxation_allowed": False,
+            "all_samples_retained": True,
+            "single_execution_only": True,
+            "telemetry_classification": "NO_PAIRED_LIMIT_EXCEEDANCE",
+            "focused_median_ratio": 1.0137810840953951,
+            "frozen_function_tolerance_median_ratio": 1.0168360838379518,
+            "maximum_paired_ratio": 1.0213293381953248,
+            "candidate_optimization_required": False,
+            "formal_performance_decision_remains_h100": True,
         },
         "long_horizon": {
             "cases": [
@@ -364,8 +439,32 @@ def build_plan() -> dict[str, object]:
             "nested_scope_restores_lifo": True,
             "control_consumer_uses_public_scope_only": True,
         },
+        "consumer_h100_gate": {
+            "expected_passed": 356,
+            "expected_skipped": 1,
+            "allowed_skip": "tests/test_warmup_experiments.py::test_r5_benchmark",
+            "failed_allowed": 0,
+            "xfailed_allowed": 0,
+            "deselected_allowed": 0,
+            "periodic_identity_sha256": "316df489836b7698f5afa9e828ac42348a2ca8c9527fb92c5ac75719b01fee71",
+            "channel_fixed_identity_sha256": "f364a1407f731e7f98268a0aeee4d82119c2d4d7c4f11ae1db5b41007b45eb10",
+            "channel_tolerance_identity_sha256": "1f8f27e875fa32357d1b312dd559f6dbfaadde63a6982c640f7b56370e3aa418",
+            "scientific_control_result_claimed": False,
+        },
         "numerical": {
             "standard_families": ["plane", "periodic", "channel"],
+            "unchanged_runtime_families": [
+                "plane_legacy_production",
+                "plane_compiled_v2",
+                "periodic_complete_stress",
+                "periodic_functional",
+            ],
+            "changed_runtime_families": [
+                "channel_legacy",
+                "channel_compiled_v2",
+                "channel_complete_stress",
+                "channel_functional",
+            ],
             "unchanged_paths_byte_identical_to_v0_2_2": True,
             "changed_float64_paths_relative_l2_max": 1.0e-12,
             "changed_float64_paths_linf_max": 1.0e-12,
@@ -375,6 +474,7 @@ def build_plan() -> dict[str, object]:
             "finite_difference_relative_error_max": 2.0e-5,
             "threshold_relaxation_allowed": False,
         },
+        "grid_contracts": GRIDS,
         "profile_matrix": profiles,
         "profile_contract": {
             "runtime_families": families,
@@ -384,13 +484,22 @@ def build_plan() -> dict[str, object]:
             "profile_count": len(profiles),
             "samples_per_profile": 60,
             "profile_center": "median_of_six_fixed_block_means",
+            "trial_ratio": "candidate_profile_center_over_baseline_profile_center",
+            "baseline_then_candidate_trials": [1, 3, 5],
+            "candidate_then_baseline_trials": [2, 4, 6],
             "all_samples_retained": True,
             "outlier_removal_allowed": False,
+            "sample_deletion_allowed": False,
             "trial_replacement_allowed": False,
         },
         "thresholds": {
-            "aggregate_and_median_runtime_ratio_max": 1.03,
-            "order_stratum_and_individual_reference_ratio_max": 1.05,
+            "aggregate_all_sample_mean_ratio_max": 1.03,
+            "median_of_profile_means_ratio_max": 1.03,
+            "median_of_six_trial_ratios_max": 1.03,
+            "baseline_then_candidate_stratum_median_ratio_max": 1.05,
+            "candidate_then_baseline_stratum_median_ratio_max": 1.05,
+            "order_stratum_imbalance_ratio_max": 1.05,
+            "individual_trial_ratio_reference_max": 1.05,
             "minimum_trials_at_or_below_individual_reference": 4,
             "peak_allocated_group_ratio_max": 1.03,
             "peak_reserved_group_ratio_max": 1.03,
@@ -399,6 +508,7 @@ def build_plan() -> dict[str, object]:
             "compile_fallback": False,
             "runtime_fallback": False,
             "finite_required": True,
+            "paired_initial_sha_equal": True,
         },
         "submission": {
             "formal_h100_submission_count": 1,
