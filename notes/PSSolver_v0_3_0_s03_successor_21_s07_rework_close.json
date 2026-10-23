@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-22",
+  "stage": "S-07",
+  "classification": "PASS_V0_3_S07_REWORK_LOCAL_QUALIFICATION",
+  "git_identity": {
+    "runtime_source": "8aceaab446e57a13866090ec06ecdf30e33ef490",
+    "qualification_support_source": "b93037a966da65d1fba3ec6ab1f226c2d71a1ed8",
+    "pre_close_candidate": "d7e1fb1",
+    "branch": "fix/v0.3-s07-packaging-metadata-docs",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "roadmap": {
+    "decision": "D-0010",
+    "plan_step": "S-07",
+    "next_request": "R-0018",
+    "s07_local_complete": true,
+    "independent_review_pending": true
+  },
+  "issue_state": {
+    "claimed_fixed": [
+      "A1-07",
+      "S1-15/NEW-13",
+      "S1-04",
+      "OBS-4",
+      "B30",
+      "V-26",
+      "V-30"
+    ],
+    "verified": [],
+    "v30_fixed_in": "8aceaab446e57a13866090ec06ecdf30e33ef490"
+  },
+  "validation": {
+    "environment": {
+      "baseline_clone_source": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+      "clone": "/tmp/pssolver_s07_venv_8aceaab",
+      "clone_method": "hardlink",
+      "python": "3.12.13",
+      "torch": "2.6.0+cu126",
+      "torch_cuda_runtime": "12.6",
+      "numpy": "2.4.3",
+      "scipy": "1.16.0",
+      "pytest": "9.1.1",
+      "cuda_visible_devices": ""
+    },
+    "source_archive": {
+      "path": "package/provider_8aceaab.tar",
+      "sha256": "82c50136d5d0b9a74c5659d9cc42a86518fd14329ee45b7356769899596c94de"
+    },
+    "wheel": {
+      "path": "package/dist/pssolver-0.3.0.dev0-py3-none-any.whl",
+      "sha256": "51a82570926c20725d3bef6da7516981b3bcc62625cf75e507ea9342b4ef19ee",
+      "members": 221,
+      "record_sha256": "3ae6805f55f419a19b75fa50e8b396d3cf3fb88abc4106f28121a2c6aa7ef551",
+      "pip_check": "PASS",
+      "source_shadow_import": false
+    },
+    "focused_source_pytest": {"passed": 32, "failed": 0, "skipped": 0},
+    "installed_wheel_pytest": {"passed": 7, "failed": 0, "skipped": 0},
+    "full_cpu_suite": {
+      "passed": 4536,
+      "failed": 0,
+      "skipped": 1,
+      "deselected": 7,
+      "allowed_skip": "tests/test_analytic_periodic_defect_gas_2d.py::test_nematics3d_recovers_requested_defect_count_charges_and_positions",
+      "environment_is_hardlink_clone": true
+    },
+    "preliminary_attempts_preserved": true,
+    "qualification_complete": true,
+    "eligible_for_independent_review": true
+  },
+  "historical_successor_sources": {},
+  "scope": {
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "functional_api_version_changed": false,
+    "numerical_algorithm_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  }
+}
