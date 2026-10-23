@@ -59,6 +59,12 @@
   accepting it.  Independent acceptance found that the recursive residual at
   that floor could understate the represented-state residual by about 3.3
   percent.
+- Reuse that verified pressure-operator action for the next production warm
+  start.  The reuse is exact under the solver's power-of-two working scaling
+  and is discarded when a caller replaces or mutates the warm-start tensor;
+  it therefore removes the extra steady-state operator application without
+  changing any returned tensor or convergence diagnostic.  Functional
+  zero-start maps retain no hidden pressure cache.
 - Keep ordinary fixed-work solves exact while their recurrence remains
   numerically resolved.  Once the recurrence reaches the supported precision
   floor, retain the at-or-below-floor iterate having the smallest recursive

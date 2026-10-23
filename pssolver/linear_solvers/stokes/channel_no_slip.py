@@ -1274,6 +1274,10 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         self.pressure_max_iter = pressure_max_iterations
         self.pressure_fixed_iterations = pressure_fixed_iterations
         self.pressure_guess = None
+        self._pressure_guess_operator_action = None
+        self._pressure_guess_operator_action_guess = None
+        self._pressure_guess_operator_action_guess_version = None
+        self._pressure_guess_operator_action_working_exponent = None
         self._pressure_solve_sequence_id = 0
         zero = _channel_pressure_zero_magnitude()
         self._record_pressure_outcome(
@@ -1326,6 +1330,68 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         if self.pressure_fixed_iterations is not None:
             return int(self.pressure_fixed_iterations)
         return int(self.pressure_max_iter)
+
+    def _clear_pressure_guess_operator_action(self) -> None:
+        self._pressure_guess_operator_action = None
+        self._pressure_guess_operator_action_guess = None
+        self._pressure_guess_operator_action_guess_version = None
+        self._pressure_guess_operator_action_working_exponent = None
+
+    def _store_pressure_guess(
+        self,
+        pressure_hat: torch.Tensor,
+        *,
+        operator_action: torch.Tensor | None = None,
+        working_exponent: int | None = None,
+    ) -> None:
+        """Store the warm start and an optional exact operator evaluation."""
+
+        pressure_guess = pressure_hat.detach()
+        self.pressure_guess = pressure_guess
+        self._clear_pressure_guess_operator_action()
+        if operator_action is None or working_exponent is None:
+            return
+        version = getattr(pressure_guess, "_version", None)
+        if version is None:
+            return
+        self._pressure_guess_operator_action = operator_action.detach()
+        self._pressure_guess_operator_action_guess = pressure_guess
+        self._pressure_guess_operator_action_guess_version = int(version)
+        self._pressure_guess_operator_action_working_exponent = int(
+            working_exponent
+        )
+
+    def _cached_pressure_operator_action(
+        self,
+        pressure_guess: torch.Tensor,
+        pressure_work: torch.Tensor,
+        working_exponent: int,
+    ) -> torch.Tensor | None:
+        """Return the exact cached ``A @ pressure_work`` when still valid."""
+
+        cached = self._pressure_guess_operator_action
+        version = getattr(pressure_guess, "_version", None)
+        valid = bool(
+            cached is not None
+            and self._pressure_guess_operator_action_guess is pressure_guess
+            and version is not None
+            and int(version)
+            == self._pressure_guess_operator_action_guess_version
+            and cached.shape == pressure_work.shape
+            and cached.dtype == pressure_work.dtype
+            and cached.device == pressure_work.device
+            and self._pressure_guess_operator_action_working_exponent
+            is not None
+        )
+        if not valid:
+            self._clear_pressure_guess_operator_action()
+            return None
+        exponent_delta = int(
+            self._pressure_guess_operator_action_working_exponent
+        ) - int(working_exponent)
+        return self._project_pressure_gauge(
+            channel_pressure_scale_power_of_two(cached, exponent_delta)
+        )
 
     @property
     def pressure_inactive_mask(self) -> torch.Tensor:
@@ -1665,7 +1731,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         zero = _channel_pressure_zero_magnitude()
         if rhs_magnitude.is_zero:
             pressure_hat = torch.zeros_like(rhs_hat)
-            self.pressure_guess = pressure_hat.detach()
+            self._store_pressure_guess(pressure_hat)
             self._record_pressure_outcome(
                 rhs_norm=rhs_magnitude,
                 initial_residual=zero,
@@ -1677,21 +1743,33 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 working_scale_binary_exponent=None,
             )
             return pressure_hat
-        if self.pressure_guess is None or self.pressure_guess.shape != rhs_hat.shape:
+        pressure_guess = self.pressure_guess
+        if pressure_guess is None or pressure_guess.shape != rhs_hat.shape:
+            self._clear_pressure_guess_operator_action()
             pressure_work = torch.zeros_like(working_rhs)
+            pressure_operator_action = self._pressure_operator(pressure_work)
         else:
             pressure_work = self._project_pressure_gauge(
                 channel_pressure_scale_power_of_two(
-                    self.pressure_guess.to(
+                    pressure_guess.to(
                         device=rhs_hat.device,
                         dtype=rhs_hat.dtype,
                     ),
                     -int(working_exponent),
                 )
             )
+            pressure_operator_action = self._cached_pressure_operator_action(
+                pressure_guess,
+                pressure_work,
+                int(working_exponent),
+            )
+            if pressure_operator_action is None:
+                pressure_operator_action = self._pressure_operator(
+                    pressure_work
+                )
         # Both operands are already in the projected pressure subspace, so a
         # second mask launch here cannot change any coefficient.
-        residual = working_rhs - self._pressure_operator(pressure_work)
+        residual = working_rhs - pressure_operator_action
         preconditioned = residual / self.schur_diag_safe
         rz_old = torch.sum(torch.conj(residual) * preconditioned).real
         (
@@ -1756,7 +1834,11 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 pressure_work,
                 int(working_exponent),
             )
-            self.pressure_guess = pressure_hat.detach()
+            self._store_pressure_guess(
+                pressure_hat,
+                operator_action=pressure_operator_action,
+                working_exponent=working_exponent,
+            )
             self._record_pressure_outcome(
                 rhs_norm=rhs_magnitude,
                 initial_residual=initial_residual,
@@ -1774,7 +1856,11 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 pressure_work,
                 int(working_exponent),
             )
-            self.pressure_guess = pressure_hat.detach()
+            self._store_pressure_guess(
+                pressure_hat,
+                operator_action=pressure_operator_action,
+                working_exponent=working_exponent,
+            )
             self._record_pressure_outcome(
                 rhs_norm=rhs_magnitude,
                 initial_residual=initial_residual,
@@ -1811,6 +1897,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
         iteration_limit = self.pressure_iteration_limit
         termination_reason = "iteration_limit_reached_without_postcondition"
         acceptable = False
+        accepted_pressure_operator_action = None
         fixed_work_floor_pressure = None
         fixed_work_floor_iterations = None
         fixed_work_floor_relative_residual = None
@@ -1904,6 +1991,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
             pressure_work = self._project_pressure_gauge(
                 pressure_work + step * direction
             )
+            accepted_pressure_operator_action = None
             residual = self._project_pressure_gauge(
                 residual - step * operator_direction
             )
@@ -1993,8 +2081,11 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 # the actual return candidate before accepting the public
                 # tolerance contract.  If it is not yet sufficient, restart
                 # the recurrence from that represented residual.
+                accepted_pressure_operator_action = self._pressure_operator(
+                    pressure_work
+                )
                 residual = self._project_pressure_gauge(
-                    working_rhs - self._pressure_operator(pressure_work)
+                    working_rhs - accepted_pressure_operator_action
                 )
                 preconditioned = residual / self.schur_diag_safe
                 rz_new = torch.sum(torch.conj(residual) * preconditioned).real
@@ -2055,6 +2146,7 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 )
                 direction = preconditioned.clone()
                 rz_old = rz_new
+                accepted_pressure_operator_action = None
                 continue
             if iterations == iteration_limit:
                 if fixed_work:
@@ -2262,7 +2354,11 @@ class ChannelNoSlipModalStokesSolver(torch.nn.Module):
                 termination_reason="nonfinite_intermediate",
                 working_scale_binary_exponent=working_exponent,
             )
-        self.pressure_guess = pressure_hat.detach()
+        self._store_pressure_guess(
+            pressure_hat,
+            operator_action=accepted_pressure_operator_action,
+            working_exponent=working_exponent,
+        )
         self._record_pressure_outcome(
             rhs_norm=rhs_magnitude,
             initial_residual=initial_residual,
