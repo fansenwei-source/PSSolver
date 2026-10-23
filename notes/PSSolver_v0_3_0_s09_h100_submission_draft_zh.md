@@ -5,7 +5,7 @@
 ## 绑定身份
 
 - Provider 运行时资格源：`dc12dc6fbf984fb1a98e1de672903e51750742f3`
-- Provider qualification-support 源：以 R-0022 验收的最终本地分支头为准；不得改变上述运行时资格源
+- Provider qualification-support 源：`591a13edc11f6c64d44685a052d4e1a212352c24`；R-0022 的目标分支头若在其后，只能增加记录，不得改变上述运行时或 support archive
 - Consumer 稳定基线：`208edd03e6b26a0e788c07d295fddd7a67237189`
 - Consumer migration：`48dd4d3a9a101f8b24d8311c57ed67fab46ceea0`
 - Consumer evidence：`97d3c06450c4a7a6d72e0fe07a7a157ef095c133`
@@ -13,6 +13,7 @@
 - Provider candidate wheel：`b3cb41689e5ac180b7dc8b900d84e2357b731976d40e01bedfd742e8688415b1`
 - Consumer candidate wheel：`40ba784811ca1e9f3da2a2a2768b44d752a5972aa40217a9ef36f30dcbea1ace`
 - Provider source archive：`876fcf4b6234892fb2d6f6f3fe895d83b74d8cb0b4a9a752760aa34efe01b2d2`
+- non-shadowing Provider support archive：`35101b06e003307a4a62f749c1f17e1f3bb21e1683022e5aaed0855c4324fb3d`
 - Consumer source archive：`02f3e8249bc02cbb0484636d9f8bf46cc8a6815d90e13f8286f7aaf8291157fd`
 - Consumer support archive：`2243f14cbdad1a58cb8a1ff73e2bb550752d97f5edf2190302005d9d69ff66a1`
 - 冻结 H100 plan SHA-256：`80e8c7f159e6cef1ea7a82937844e0a9795fdd880c8b684ea46c9a7ad1aee7d7`
