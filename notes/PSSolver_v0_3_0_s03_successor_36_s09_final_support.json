@@ -46,7 +46,53 @@
     "A3-18": "coverage_gap",
     "NEW-14": "open"
   },
-  "historical_successor_sources": {},
+  "historical_successor_sources": {
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "4fc728384337f6a4263dee83edcc4e8b72e2bfe5d5237de021fb846770db6723",
+      "current_sha256": "a9b6925ad1beda3cbd1fbad8cffc00a146b6b1a0119bce9cbfa1ba1702d27e74",
+      "reason": "Preserve the verified S-03 claims while recognizing the exact V-35/V-36 S-09 review boundary."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "historical_sha256": "b8757c0db9b7224226e9a8e04698ade44398743e8db96897804e4f58bce9c155",
+      "current_sha256": "4989a609e72a13cb057cea65ee2f7c343786f1aa6b3703372fe3d92619955764",
+      "reason": "Preserve the verified S-04 claims while recognizing the exact V-35/V-36 S-09 review boundary."
+    },
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {
+      "historical_sha256": "b1dd95befe8c58b4b76876ec05f12dd2cbd39aada5de5335cf23708ea7da4fea",
+      "current_sha256": "c3460b20f8a6501a5d4a13e74012bd5afffca5ed65336025ccf0c878a35bdc1f",
+      "reason": "Preserve the verified S-06 claims while recognizing the exact V-35/V-36 S-09 review boundary."
+    },
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {
+      "historical_sha256": "4e807b8c41f8134422bbd20cf4b7a9137ce0a78d60b005e69239843f495c1bf2",
+      "current_sha256": "ef366bc49b06d4f1fa317ada999301ba57a78bccdb8c0a0bc267c988046814c8",
+      "reason": "Preserve the verified S-06 rollback claims while recognizing the exact V-35/V-36 S-09 review boundary."
+    },
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {
+      "historical_sha256": "bfd93b71600f1266ffe2fd4419165d8bb7dde98e20e222c11a79bccfa4a4e7c9",
+      "current_sha256": "945645fa60451b403b609dfb6e60a65f81d26a63a9bb36358cfc97bf1b28b1fb",
+      "reason": "Preserve the verified S-06 numerical claims while recognizing the exact V-35/V-36 S-09 review boundary."
+    },
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {
+      "historical_sha256": "aef90fbf5e21db54a63c6ca3952426477d27e094dc2dc7ad699b3ccfba83a8be",
+      "current_sha256": "d2020ee309fe1751a4eb72653f507869fcb176cd638c6c07311e56b01fef924e",
+      "reason": "Preserve the verified S-07 claims while recognizing the exact V-35/V-36 S-09 review boundary."
+    },
+    "tests/test_v0_3_s07_r0017_import.py": {
+      "historical_sha256": "f95af038751700816abc41fe2bae6732df5e19a60e2d0acbd3cc301be7db70b7",
+      "current_sha256": "a1c067785e0bdcf4ba228185766039cbb7543054c0a8755f294c6150ff8e1753",
+      "reason": "Preserve the historical R-0017 boundary while recognizing the exact V-35/V-36 S-09 review boundary."
+    },
+    "tests/test_v0_3_s07_rework_candidate_record.py": {
+      "historical_sha256": "a03905becd729e2f3a414297dc930e590898232b9ad14519a55823528229a380",
+      "current_sha256": "579bc492c0cb2e5a13e1654f51b87b9a5123c20096f456393b980baba8a10860",
+      "reason": "Preserve the historical S-07 rework boundary while recognizing the exact V-35/V-36 S-09 review boundary."
+    },
+    "tests/test_v0_3_s08_r0021_import.py": {
+      "historical_sha256": "3001b6a83f22cce8096b46f4a47ce106558047085c2b362203014e5493d01551",
+      "current_sha256": "78d5bd071cfcc0c491b94d10f6e4c615ee7aeff4f17331d95dc6c8f281df2242",
+      "reason": "Preserve the verified S-08 claims while recognizing the exact V-35/V-36 S-09 review boundary."
+    }
+  },
   "scope": {
     "runtime_changed_after_85ba3ae": false,
     "provider_wheel_rebuild_required": false,

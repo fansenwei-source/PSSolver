@@ -50,7 +50,7 @@ def test_r0017_registry_import_remains_historical_after_r0018_closure() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == set()
+    } == {"V-35", "V-36"}
     assert all(issues[issue_id]["status"] == "verified" for issue_id in CLAIMS | {"V-30"})
     assert all(issues[issue_id]["verified_by"] == "R-0018" for issue_id in CLAIMS | {"V-30"})
     assert issues["V-30"]["fixed_in"] == (

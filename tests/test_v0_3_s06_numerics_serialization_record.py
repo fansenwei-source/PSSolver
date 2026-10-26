@@ -47,7 +47,7 @@ def test_s06_registry_advances_all_review_items_through_r0016() -> None:
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == set()
+    assert claimed == {"V-35", "V-36"}
     for issue_id in ISSUES | {"V-28", "V-29"}:
         expected = (
             "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"
