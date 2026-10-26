@@ -1,0 +1,198 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+import subprocess
+
+import torch
+
+from benchmarks.analyze_v0_3_s09_ap_cache_diagnostic import analyze
+from benchmarks.plan_v0_3_s09_ap_cache_diagnostic import (
+    BASELINE_COMMIT,
+    BASELINE_WHEEL_SHA256,
+    CANDIDATE_COMMIT,
+    CANDIDATE_WHEEL_SHA256,
+    build_plan,
+    build_profile_matrix,
+)
+from benchmarks.profile_v0_3_s09_ap_cache_diagnostic import (
+    disable_operator_action_cache,
+)
+from pssolver.linear_solvers.stokes.channel_no_slip import (
+    ChannelNoSlipModalStokesSolver,
+)
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_h100_plan_has_balanced_72_profile_diagnostic_contract() -> None:
+    plan = build_plan(mode="h100")
+    profiles = plan["profiles"]
+    assert len(profiles) == 72
+    assert [item["sequence"] for item in profiles] == list(range(1, 73))
+    assert {item["diagnostic_role"] for item in profiles} == {
+        "baseline",
+        "candidate_cache_on",
+        "candidate_cache_off",
+    }
+    assert {item["family"] for item in profiles} == {
+        "channel_legacy",
+        "channel_compiled_v2",
+    }
+    assert {item["grid"] for item in profiles} == {
+        "channel_R128x20x20",
+        "channel_R512x40x40",
+    }
+    assert all(item["timed_steps"] == 60 for item in profiles)
+    assert all(item["samples_per_profile"] == 60 for item in profiles)
+    assert all(item["isolated_subprocess"] is True for item in profiles)
+    assert all(item["isolated_empty_triton_cache"] is True for item in profiles)
+    assert all(item["isolated_empty_torchinductor_cache"] is True for item in profiles)
+    assert plan["diagnostic_only"] is True
+    assert plan["qualification_complete"] is False
+    assert plan["s09_complete"] is False
+
+
+def test_roles_rotate_and_bind_exact_provider_identities() -> None:
+    rows = build_profile_matrix(mode="h100")
+    for family in ("channel_legacy", "channel_compiled_v2"):
+        for grid in ("channel_R128x20x20", "channel_R512x40x40"):
+            group = [row for row in rows if row["family"] == family and row["grid"] == grid]
+            for trial in range(1, 7):
+                current = [row for row in group if row["trial"] == trial]
+                assert sorted(row["order_position"] for row in current) == [1, 2, 3]
+                assert {row["diagnostic_role"] for row in current} == {
+                    "baseline",
+                    "candidate_cache_on",
+                    "candidate_cache_off",
+                }
+                for row in current:
+                    if row["diagnostic_role"] == "baseline":
+                        assert row["provider_commit"] == BASELINE_COMMIT
+                        assert row["provider_wheel_sha256"] == BASELINE_WHEEL_SHA256
+                    else:
+                        assert row["provider_commit"] == CANDIDATE_COMMIT
+                        assert row["provider_wheel_sha256"] == CANDIDATE_WHEEL_SHA256
+
+
+def test_cpu_rehearsal_preserves_full_role_matrix_but_is_not_measurement() -> None:
+    plan = build_plan(mode="cpu_rehearsal")
+    assert len(plan["profiles"]) == 72
+    assert all(item["device"] == "cpu" for item in plan["profiles"])
+    assert all(item["timed_steps"] == 2 for item in plan["profiles"])
+    assert plan["measurement_contract"]["formal_samples_per_profile"] == 60
+    assert plan["diagnostic_only"] is True
+
+
+def test_cache_off_harness_retains_warm_start_and_suppresses_operator_cache() -> None:
+    solver = object.__new__(ChannelNoSlipModalStokesSolver)
+    torch.nn.Module.__init__(solver)
+    solver.pressure_guess = None
+    solver._pressure_guess_operator_action = None
+    solver._pressure_guess_operator_action_guess = None
+    solver._pressure_guess_operator_action_guess_version = None
+    solver._pressure_guess_operator_action_working_exponent = None
+    pressure = torch.ones((1, 2, 2, 2), dtype=torch.complex64)
+    action = torch.full_like(pressure, 2.0)
+    with disable_operator_action_cache("candidate_cache_off") as proof:
+        solver._store_pressure_guess(
+            pressure,
+            operator_action=action,
+            working_exponent=3,
+        )
+        assert solver.pressure_guess is not None
+        assert torch.equal(solver.pressure_guess, pressure)
+        assert solver._pressure_guess_operator_action is None
+        assert solver._cached_pressure_operator_action(
+            solver.pressure_guess,
+            pressure,
+            3,
+        ) is None
+    assert proof["patch_applied"] is True
+    assert proof["lookup_calls"] == 1
+    assert proof["suppressed_operator_action_stores"] == 1
+    assert proof["cache_fields_nonempty_after_store"] == 0
+    assert proof["proved_disabled"] is True
+
+
+def test_analyzer_is_descriptive_and_requires_all_cache_proofs(tmp_path: Path) -> None:
+    plan = build_plan(mode="cpu_rehearsal")
+    plan_path = tmp_path / "plan.json"
+    plan_path.write_text(json.dumps(plan), encoding="utf-8")
+    manifest_rows = []
+    for row in plan["profiles"]:
+        role = row["diagnostic_role"]
+        trial = int(row["trial"])
+        role_scale = {
+            "baseline": 1.0,
+            "candidate_cache_on": 1.01,
+            "candidate_cache_off": 1.02,
+        }[role]
+        output = tmp_path / f"{row['key']}.json"
+        state_key = f"{row['family']}-{row['grid']}-{trial}"
+        value = {
+            "diagnostic_role": role,
+            "config": {
+                "family": row["family"],
+                "trial": trial,
+            },
+            "timing": {
+                "samples_seconds": [role_scale, role_scale],
+            },
+            "memory": {
+                "peak_allocated_bytes": int(1000 * role_scale),
+                "peak_reserved_bytes": int(2000 * role_scale),
+            },
+            "initial_state_sha256": state_key,
+            "final_state_sha256": state_key,
+            "cache_control": {
+                "proved_disabled": role == "candidate_cache_off",
+            },
+            "finite": True,
+        }
+        output.write_text(json.dumps(value), encoding="utf-8")
+        manifest_rows.append({"key": row["key"], "result": str(output)})
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(
+        json.dumps({"plan": str(plan_path), "profiles": manifest_rows}),
+        encoding="utf-8",
+    )
+    result = analyze(manifest_path)
+    assert result["classification"] == "S09_AP_CACHE_DIAGNOSTIC_DATA_COMPLETE"
+    assert result["diagnostic_only"] is True
+    assert result["qualification_complete"] is False
+    assert result["s09_complete"] is False
+    assert result["decision_made"] is False
+    assert result["profile_count"] == 72
+    assert result["all_cache_off_proofs_passed"] is True
+    assert result["candidate_cache_on_off_state_byte_identity"] is True
+    assert len(result["groups"]) == 4
+
+
+def test_job_is_single_gpu_diagnostic_without_qualification_claims() -> None:
+    job = (ROOT / "jobs/v0_3_s09_ap_cache_diagnostic_h100.sbatch").read_text(
+        encoding="utf-8"
+    )
+    assert "#SBATCH --gres=gpu:H100:1" in job
+    assert "#SBATCH --no-requeue" in job
+    assert "S09_DIAG_OUTPUT_ROOT" in job
+    assert "profile_count" in job
+    assert 'assert value["qualification_complete"] is False' in job
+    assert 'assert value["s09_complete"] is False' in job
+    assert "sbatch" not in job
+
+
+def test_diagnostic_support_compiles() -> None:
+    paths = [
+        ROOT / "benchmarks/plan_v0_3_s09_ap_cache_diagnostic.py",
+        ROOT / "benchmarks/profile_v0_3_s09_ap_cache_diagnostic.py",
+        ROOT / "benchmarks/run_v0_3_s09_ap_cache_diagnostic_child.py",
+        ROOT / "benchmarks/run_v0_3_s09_ap_cache_diagnostic.py",
+        ROOT / "benchmarks/analyze_v0_3_s09_ap_cache_diagnostic.py",
+    ]
+    subprocess.run(
+        ["python3", "-m", "py_compile", *(str(path) for path in paths)],
+        check=True,
+        cwd=ROOT,
+    )
