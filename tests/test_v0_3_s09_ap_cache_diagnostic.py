@@ -6,6 +6,7 @@ import hashlib
 import itertools
 from pathlib import Path
 import subprocess
+import sys
 
 import torch
 
@@ -327,3 +328,15 @@ def test_diagnostic_support_compiles() -> None:
         check=True,
         cwd=ROOT,
     )
+    for script in (
+        ROOT / "benchmarks/analyze_v0_3_s09_ap_cache_diagnostic.py",
+        ROOT / "benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py",
+        ROOT / "benchmarks/run_v0_3_s09_ap_cache_cpu_memory_probe.py",
+    ):
+        subprocess.run(
+            [sys.executable, str(script), "--help"],
+            check=True,
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )

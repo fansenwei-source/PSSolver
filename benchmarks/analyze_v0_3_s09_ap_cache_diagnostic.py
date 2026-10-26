@@ -10,6 +10,11 @@ import os
 from pathlib import Path
 import statistics
 
+if not __package__:
+    import sys
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from benchmarks.analyze_v0_3_s09_h100 import _profile_center
 
 
