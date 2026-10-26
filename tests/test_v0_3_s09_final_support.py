@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_36_s09_final_support.json"
@@ -34,15 +36,18 @@ def test_final_support_binds_fixture_payloads_and_unchanged_runtime() -> None:
 
 def test_final_support_binds_plan_job_and_excluded_draft() -> None:
     draft = _read(RECORD)["h100_draft"]
-    assert _sha256(ROOT / "notes/PSSolver_v0_3_0_s09_h100_plan.json") == draft[
-        "plan_sha256"
-    ]
-    assert _sha256(ROOT / "jobs/v0_3_s09_single_h100.sbatch") == draft[
-        "job_script_sha256"
-    ]
+    assert _sha256(ROOT / "notes/PSSolver_v0_3_0_s09_h100_plan.json") == resolve_s03_successor(
+        "notes/PSSolver_v0_3_0_s09_h100_plan.json", draft["plan_sha256"]
+    )
+    assert _sha256(ROOT / "jobs/v0_3_s09_single_h100.sbatch") == resolve_s03_successor(
+        "jobs/v0_3_s09_single_h100.sbatch", draft["job_script_sha256"]
+    )
     assert _sha256(
         ROOT / "notes/PSSolver_v0_3_0_s09_h100_submission_draft_zh.md"
-    ) == draft["draft_sha256"]
+    ) == resolve_s03_successor(
+        "notes/PSSolver_v0_3_0_s09_h100_submission_draft_zh.md",
+        draft["draft_sha256"],
+    )
     assert all(
         draft[key] is True
         for key in (

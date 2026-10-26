@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s09_r0023_candidate.json"
@@ -70,15 +72,18 @@ def test_r0023_candidate_is_preserved_while_final_support_moves_forward() -> Non
     assert historical["plan_sha256"] == (
         "1ad29c4887a8e79610227a84e1e7e6b6846da246df8ce1f805aadb3ff336c620"
     )
-    assert _sha256(ROOT / "notes/PSSolver_v0_3_0_s09_h100_plan.json") == current[
-        "plan_sha256"
-    ]
-    assert _sha256(ROOT / "jobs/v0_3_s09_single_h100.sbatch") == current[
-        "job_script_sha256"
-    ]
+    assert _sha256(ROOT / "notes/PSSolver_v0_3_0_s09_h100_plan.json") == resolve_s03_successor(
+        "notes/PSSolver_v0_3_0_s09_h100_plan.json", current["plan_sha256"]
+    )
+    assert _sha256(ROOT / "jobs/v0_3_s09_single_h100.sbatch") == resolve_s03_successor(
+        "jobs/v0_3_s09_single_h100.sbatch", current["job_script_sha256"]
+    )
     assert _sha256(
         ROOT / "notes/PSSolver_v0_3_0_s09_h100_submission_draft_zh.md"
-    ) == current["draft_sha256"]
+    ) == resolve_s03_successor(
+        "notes/PSSolver_v0_3_0_s09_h100_submission_draft_zh.md",
+        current["draft_sha256"],
+    )
     assert all(
         historical[key] is True
         for key in (

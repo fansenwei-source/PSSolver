@@ -60,7 +60,7 @@ def test_s07_registry_claims_are_verified_by_r0018():
         issue_id for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == set()
+    assert claimed == {"V-39", "V-40"}
     for issue_id in ISSUES:
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == IMPLEMENTATION

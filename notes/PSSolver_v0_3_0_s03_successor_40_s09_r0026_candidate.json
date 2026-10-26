@@ -72,9 +72,35 @@
     },
     "notes/PSSolver_v0_3_0_s09_h100_submission_draft_zh.md": {
       "historical_sha256": "acfab97516dc3fb2fd64dbe4dfc465ca51a39a8a5a59ad8c2d3998c1b45a6e19",
+      "accepted_predecessor_sha256": [
+        "bb908866978eb00d8829792f1cb2869b6e1617eb1a88e6b10bbadd24d0293a45",
+        "acfab97516dc3fb2fd64dbe4dfc465ca51a39a8a5a59ad8c2d3998c1b45a6e19"
+      ],
       "current_sha256": "558422475a553c9f19b72d339eb1cc2f1f15cdc1a6e55207f82f0f603d55f1be",
       "reason": "Bind the final recovery support archive and immutable plan/job hashes."
-    }
+    },
+    "notes/PSSolver_v0_3_0_s09_h100_plan.json": {
+      "historical_sha256": "d123e8cf6e529e4780d8be49478628c4e1553d655ae244acf9860845cd65f55e",
+      "current_sha256": "4abd4da59a920aae5fd1bdb3c7e6e390b53b6c8476689024d8a013a41274f575",
+      "reason": "Move the recovery to fresh control, scratch and venv paths without changing the frozen matrix or thresholds."
+    },
+    "jobs/v0_3_s09_single_h100.sbatch": {
+      "historical_sha256": "34ed9a7e6d43acdcaa344218b396e71a439ca21da7b9073843eb1b7587fde855",
+      "current_sha256": "f9431b8b6d64536f2ed29afaa3894404eb743a91dbb053d69e62a8c5ab3f7098",
+      "reason": "Move Slurm stdout and stderr to the fresh recovery control root."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {"historical_sha256": "4fc728384337f6a4263dee83edcc4e8b72e2bfe5d5237de021fb846770db6723", "current_sha256": "429668d8f6f8845a2e159c81207959ee4a2041178d168898b79ff8c9ab775792", "reason": "Preserve the historical stage boundary across the forward S-09 recovery."},
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {"historical_sha256": "b8757c0db9b7224226e9a8e04698ade44398743e8db96897804e4f58bce9c155", "current_sha256": "a2a74b77c8f20b99b983f0f160ec2832253fd1f54618d4237a6388a9e3919c46", "reason": "Preserve the historical stage boundary across the forward S-09 recovery."},
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {"historical_sha256": "b1dd95befe8c58b4b76876ec05f12dd2cbd39aada5de5335cf23708ea7da4fea", "current_sha256": "e5d0073d9fd4030117c66677878e0d5610dd7df4d7573eee590de4456c6a8c97", "reason": "Preserve the historical stage boundary across the forward S-09 recovery."},
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {"historical_sha256": "4e807b8c41f8134422bbd20cf4b7a9137ce0a78d60b005e69239843f495c1bf2", "current_sha256": "a6a3bf09f30016af636d922f87fe1cfd04d894c42fefe96a8817e8fbb27ae7cb", "reason": "Preserve the historical stage boundary across the forward S-09 recovery."},
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {"historical_sha256": "bfd93b71600f1266ffe2fd4419165d8bb7dde98e20e222c11a79bccfa4a4e7c9", "current_sha256": "6457d22a588b7cf91962a9ed7f87e2c8e69ee79d465bc49ea9a1c08f7da3e70c", "reason": "Preserve the historical stage boundary across the forward S-09 recovery."},
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {"historical_sha256": "aef90fbf5e21db54a63c6ca3952426477d27e094dc2dc7ad699b3ccfba83a8be", "current_sha256": "a9775d8d76dbd447cc86a95a48a701daca965f59817f9f4fa3cfcd7fc38448c9", "reason": "Preserve the historical stage boundary across the forward S-09 recovery."},
+    "tests/test_v0_3_s07_r0017_import.py": {"historical_sha256": "f95af038751700816abc41fe2bae6732df5e19a60e2d0acbd3cc301be7db70b7", "current_sha256": "adc9fe97e3cdeb4c857383dbae0b28e0ac90777b9d526d991f9c8a9a7388dbe8", "reason": "Preserve the historical stage boundary across the forward S-09 recovery."},
+    "tests/test_v0_3_s07_rework_candidate_record.py": {"historical_sha256": "a03905becd729e2f3a414297dc930e590898232b9ad14519a55823528229a380", "current_sha256": "a2b82156ff70a9ab187dd449b1e74d9b1b02411050a6d7a7e8ee4cf211ac5721", "reason": "Preserve the historical stage boundary across the forward S-09 recovery."},
+    "tests/test_v0_3_s08_commit_identity_corrections.py": {"historical_sha256": "54b4f4f861169caa9c9b84c943f80ca8a9eb05341e45b32931ff6cae0495e087", "current_sha256": "fd65733bb382bf9187f99df62f7477172430cfdb26300b6c9eb7c105e7fbf451", "reason": "Preserve the historical stage boundary across the forward S-09 recovery."},
+    "tests/test_v0_3_s08_r0021_import.py": {"historical_sha256": "fbb2ab03aba281af8cde5b7ccf069ae259827b9efc185493365fa55fe63ab1fd", "current_sha256": "de93f627b0467fe97e1bf23c80e90c193e3907e9601871a1767f4a38991afd36", "reason": "Preserve the historical stage boundary across the forward S-09 recovery."},
+    "tests/test_v0_3_s09_final_support.py": {"historical_sha256": "9350dfcccd3b21e7795c20305215f573741af7a928c27ee300fdeab1f4a2dced", "current_sha256": "9c4f5987cbae72d12976c4afc30aa265e60e1d0dbae4c5536b0db5477f520f53", "reason": "Resolve historical plan, job and draft hashes through the recovery successor."},
+    "tests/test_v0_3_s09_r0023_candidate.py": {"historical_sha256": "d1e839a0f5775a02a254207459d08d5112180450f9130c69b8940110a261371b", "current_sha256": "a4472f116310bd7f8dd1ce6881262ab873966447a071fab2664e14673b412b4d", "reason": "Resolve historical plan, job and draft hashes through the recovery successor."}
   },
   "authorization": {
     "local_rework": true,

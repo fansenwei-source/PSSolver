@@ -79,11 +79,10 @@ def test_r0021_verifies_v34_and_allows_forward_s09_status_updates() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert {key for key, item in issues.items() if item["status"] == "registered"} == {
         "V-33",
-        "V-38",
     }
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == set()
+    } == {"V-39", "V-40"}
     assert issues["V-33"]["target_release"] == "0.3"
     assert "S-10" in issues["V-33"]["notes"]
     for issue_id in ("V-35", "V-36"):
