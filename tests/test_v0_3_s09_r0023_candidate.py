@@ -53,7 +53,10 @@ def test_r0023_candidate_record_is_preserved_after_result_import() -> None:
             "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
         )
         assert _read(RECORD)["rework"][issue_id]["registry_status"] == "registered"
-    assert issues["V-37"]["status"] == "registered"
+    assert issues["V-37"]["status"] == "claimed_fixed"
+    assert issues["V-37"]["fixed_in"] == (
+        "87cf34cf4e17096a701f5cc5bc81076d14a9d237"
+    )
     assert issues["A3-18"]["status"] == "coverage_gap"
     assert issues["NEW-14"]["status"] == "open"
 

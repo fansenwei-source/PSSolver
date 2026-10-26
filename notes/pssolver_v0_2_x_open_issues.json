@@ -32,8 +32,8 @@
   "issue_count": 42,
   "status_counts": {
     "open": 1,
-    "registered": 2,
-    "claimed_fixed": 2,
+    "registered": 1,
+    "claimed_fixed": 3,
     "verified": 33,
     "deferred": 2,
     "accepted": 1,
@@ -695,9 +695,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "87cf34cf4e17096a701f5cc5bc81076d14a9d237",
       "target_release": "0.3",
-      "notes": "S-09: the two authentic v0.2.2-migrated rc1 even-axis Channel fixture payloads matched the manifest locally but were excluded by the global *.npy ignore rule. Commit the payloads with hashes 7fa17112... and e4ac9c1d..., require every manifest-listed fixture file to be Git-tracked, and rerun both full suites from clean detached worktrees before the only H100 job."
+      "notes": "S-09: commit 87cf34c adds explicit fixture ignore exceptions, tracks the two authentic v0.2.2-migrated rc1 even-axis Channel payloads with the exact manifest hashes, and requires every manifest-listed fixture file to be Git-tracked. Both full suites passed from a clean detached worktree; the item remains claimed_fixed pending R-0024 independent review."
     }
   ],
   "authorization": {

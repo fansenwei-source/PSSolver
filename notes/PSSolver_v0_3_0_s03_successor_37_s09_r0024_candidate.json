@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-25",
+  "stage": "S-09",
+  "classification": "READY_FOR_R0024_INDEPENDENT_PRE_H100_REVIEW",
+  "git_identity": {
+    "runtime_commit": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+    "v37_fix_commit": "87cf34cf4e17096a701f5cc5bc81076d14a9d237",
+    "local_qualification_parent": "aadb584ca7e259902f068cd47c561b43c26ff0bc",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "registry_boundary": {
+    "claimed_fixed": {
+      "V-35": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "V-36": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "V-37": "87cf34cf4e17096a701f5cc5bc81076d14a9d237"
+    },
+    "unchanged": {
+      "A3-18": "coverage_gap",
+      "NEW-14": "open"
+    }
+  },
+  "qualification": {
+    "conda_full": "4707 passed, 7 deselected, 0 failed/skipped, 8 subtests passed",
+    "pip_full": "4706 passed, 1 environment-capability skip, 7 deselected, 0 failed, 8 subtests passed",
+    "installed_provider": "7 passed, 0 failed/skipped",
+    "installed_consumer": "351 passed, 6 authorized skips, 0 failed, source_shadow_import=false",
+    "provider_wheel_sha256": "4003645025da6d81317eeb7261ccf606aef7f60f20d072518f8baacf56cd4aa8",
+    "consumer_wheel_sha256": "f7ae4c1f5f3c73e0be540b5e4ec5e05a9eef662867a149325462835820ae94ef",
+    "provider_support_sha256": "87e0fa9614822e03a7b1850519cd6811babed1c999e50e234e1734e5bb46e7b9"
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {"historical_sha256": "4c7ae4a2bd4fa9df52c9f59267835cab5c6681705f519ebce8c000a01b65e6b9", "current_sha256": "20746b054e0cf9344beef1e72ba71ef4f60e90bb982bb9474655cbaf9b0758c9", "reason": "Advance V-37 to claimed_fixed at its exact Git fix while preserving the reviewed S-09 boundary."},
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "351acb21272c28d83e38e1943543267a13f20eddced76c0e55570a350a900f5f", "current_sha256": "eec383f3c4972ac1b654201725879cd6e3289c2e796eb1d1be5ffbd3fceee729", "reason": "Document the exact V-37 fix and clean detached qualification."},
+    "tests/test_v0_2_x_open_issues.py": {"historical_sha256": "fa209ee2585f54851100676cb142399c2e0bc42810a021bbdd063d579a6bb8b7", "current_sha256": "0952e0f722fd2438a0852f837ff6bce0517ed0453e3360c370c26f3b1ba6ed44", "reason": "Bind the exact three-item S-09 claimed_fixed set."},
+    "tests/test_v0_3_s03_rework_record.py": {"historical_sha256": "a9b6925ad1beda3cbd1fbad8cffc00a146b6b1a0119bce9cbfa1ba1702d27e74", "current_sha256": "0b74bd097fc589e312efdb7f612c145b2d6d30024188c7a3dd10614e0f282d35", "reason": "Recognize the forward V-37 review claim without rewriting S-03."},
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {"historical_sha256": "4989a609e72a13cb057cea65ee2f7c343786f1aa6b3703372fe3d92619955764", "current_sha256": "7ee9c0ebfb72b59effa4e7df0499d252c4f943bf3de77823000e8a98873e4e77", "reason": "Recognize the forward V-37 review claim without rewriting S-04."},
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {"historical_sha256": "c3460b20f8a6501a5d4a13e74012bd5afffca5ed65336025ccf0c878a35bdc1f", "current_sha256": "9d2e96cf3dd7685e51103c8254df9d11cbd663d04aa855b85920897ff3a472d0", "reason": "Recognize the forward V-37 review claim without rewriting S-06."},
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {"historical_sha256": "ef366bc49b06d4f1fa317ada999301ba57a78bccdb8c0a0bc267c988046814c8", "current_sha256": "c34ae3a0f44c640dacf30c40e814e5054a94b327950849261f02360f9622bd05", "reason": "Recognize the forward V-37 review claim without rewriting S-06."},
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {"historical_sha256": "945645fa60451b403b609dfb6e60a65f81d26a63a9bb36358cfc97bf1b28b1fb", "current_sha256": "86529a500728cea09abc5b450a224691b4fd711ceb181e339e32ee7d6900a845", "reason": "Recognize the forward V-37 review claim without rewriting S-06."},
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {"historical_sha256": "d2020ee309fe1751a4eb72653f507869fcb176cd638c6c07311e56b01fef924e", "current_sha256": "d9e641fdadc202191d270a01deb143956bb9f098233dfd3a46ba5e2a9dca7741", "reason": "Recognize the forward V-37 review claim without rewriting S-07."},
+    "tests/test_v0_3_s07_r0017_import.py": {"historical_sha256": "a1c067785e0bdcf4ba228185766039cbb7543054c0a8755f294c6150ff8e1753", "current_sha256": "63d8342e57518fb412e161b5905ffb08d13a1b6d8bfcab37a7803ec1aa4b4b95", "reason": "Recognize the forward V-37 review claim without rewriting R-0017."},
+    "tests/test_v0_3_s07_rework_candidate_record.py": {"historical_sha256": "579bc492c0cb2e5a13e1654f51b87b9a5123c20096f456393b980baba8a10860", "current_sha256": "e2fb9950837386a7939e3e161ea0b7f1738fb73985becaa32c10dd9809581bf5", "reason": "Recognize the forward V-37 review claim without rewriting S-07."},
+    "tests/test_v0_3_s08_commit_identity_corrections.py": {"historical_sha256": "6c6aa5f272e57fc0bae64f26da0f9e4bbde6242aa931c5f5286ee105bcecae60", "current_sha256": "47e8336df47c021ee47a4d030ec8e04ccd28a3401d729a1c189f17082dc14de1", "reason": "Recognize V-37 as the current S-09 claim while preserving S-08 identity corrections."},
+    "tests/test_v0_3_s08_r0021_import.py": {"historical_sha256": "78d5bd071cfcc0c491b94d10f6e4c615ee7aeff4f17331d95dc6c8f281df2242", "current_sha256": "bf3cea4869871a8320541c8ca0a2d7728ad682c43ccafd483b4e4b761a88bc02", "reason": "Recognize the forward V-37 review claim without rewriting R-0021."},
+    "tests/test_v0_3_s09_checkpoint_compatibility_rework_record.py": {"historical_sha256": "62ffca94e7bf3ca722857f68ceeca342c9464f69123b82d614418b7abf6d6ee0", "current_sha256": "8614b24f7b25b3e3ea8f0ea0697be6387d72e4e465bd89235315dea8add945eb", "reason": "Advance the V-37 fixture claim after the clean-worktree repair."},
+    "tests/test_v0_3_s09_final_support.py": {"historical_sha256": "10bc0454435f429a1b03e571357789eaa539a2044195780ac9f2132956181cb8", "current_sha256": "912c3cc767989ebe37cd82b8a9d4c2d0aa7552b42308af99b3a80da56b139a85", "reason": "Preserve the frozen pre-claim support boundary and validate its forward V-37 successor."},
+    "tests/test_v0_3_s09_r0022_import.py": {"historical_sha256": "464c9a6586d496ac07f1e0ade38c9ca8fe4972a235d9a86d68bac7d34472c6da", "current_sha256": "c5903b0be1b3c71ee055d5fa9121905d988801e6d5e4677f58f0fa36bf59fd90", "reason": "Preserve R-0022 while recognizing the later V-37 claim."},
+    "tests/test_v0_3_s09_r0023_candidate.py": {"historical_sha256": "d11fe1d93eea302a004154968ed8de372d367c67cb9b57e0699a4402455858b1", "current_sha256": "2ac3eb57eb2077a9ee6081b500cf5f32338ceaf5c5e300c57719df1691deb09c", "reason": "Preserve the R-0023 candidate while recognizing the later V-37 claim."},
+    "tests/test_v0_3_s09_r0023_import.py": {"historical_sha256": "3038c1af058ce2e6b4f228f36ebdf7c55d0239f263029f66913deb94d214e620", "current_sha256": "eae1c110ed155220704814f37d2e9d8a6db5a90a47001814e9d07f1a7e2e6f34", "reason": "Preserve the R-0023 registration boundary while recognizing the later V-37 claim."}
+  },
+  "scope": {
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "push_executed": false,
+    "h100_executed": false
+  },
+  "next_request": "R-0024"
+}

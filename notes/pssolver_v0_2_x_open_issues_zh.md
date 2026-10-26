@@ -82,6 +82,10 @@
     `V-37`：V-36 的两个 `.npy` payload 被全局 ignore 规则排除，导致干净 detached worktree
     各有一个 fixture 测试失败。V-37 登记在 S-09，须提交精确 payload、增加 Git 跟踪守卫并在
     干净 worktree 重跑两套完整测试；A3-18 与 NEW-14 状态不变。
+16. `V-37` 已由 `87cf34cf4e17096a701f5cc5bc81076d14a9d237` 修复：两个 payload
+    已按 manifest 的精确哈希纳入 Git，并新增 manifest 全文件跟踪守卫；Nematics3D 与 pip-torch
+    两套完整 suite 均已从干净 detached worktree 通过。该项推进为 `claimed_fixed`，等待
+    `R-0024` 独立复核；`V-35`、`V-36` 仍保持 `claimed_fixed`，A3-18 与 NEW-14 不变。
 
 ## Control 路径
 

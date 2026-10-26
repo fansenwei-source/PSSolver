@@ -55,7 +55,10 @@ def test_r0022_record_is_preserved_while_s09_status_moves_forward() -> None:
         )
         assert issue["target_release"] == "0.3"
         assert issue["source_report"] == "PSSolver_sync/results/R-0022.result.json"
-    assert issues["V-37"]["status"] == "registered"
+    assert issues["V-37"]["status"] == "claimed_fixed"
+    assert issues["V-37"]["fixed_in"] == (
+        "87cf34cf4e17096a701f5cc5bc81076d14a9d237"
+    )
     assert issues["A3-18"]["status"] == "coverage_gap"
     assert issues["NEW-14"]["status"] == "open"
 
