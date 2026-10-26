@@ -49,16 +49,18 @@ def test_r0022_record_is_preserved_while_s09_status_moves_forward() -> None:
     assert record["registry_import"]["registered"] == ["V-35", "V-36"]
     for issue_id in ("V-35", "V-36"):
         issue = issues[issue_id]
-        assert issue["status"] == "claimed_fixed"
+        assert issue["status"] == "verified"
         assert issue["fixed_in"] == (
             "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
         )
         assert issue["target_release"] == "0.3"
         assert issue["source_report"] == "PSSolver_sync/results/R-0022.result.json"
-    assert issues["V-37"]["status"] == "claimed_fixed"
+        assert issue["verified_by"] == "R-0024"
+    assert issues["V-37"]["status"] == "verified"
     assert issues["V-37"]["fixed_in"] == (
         "87cf34cf4e17096a701f5cc5bc81076d14a9d237"
     )
+    assert issues["V-37"]["verified_by"] == "R-0024"
     assert issues["A3-18"]["status"] == "coverage_gap"
     assert issues["NEW-14"]["status"] == "open"
 

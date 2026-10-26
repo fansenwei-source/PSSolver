@@ -75,7 +75,7 @@ def test_r0021_registry_updates_are_exact_and_v33_stays_registered() -> None:
     assert record["registry_import"]["kept_registered"] == ["V-33"]
     assert {
         item["id"] for item in issues.values() if item["status"] == "claimed_fixed"
-    } == {"V-35", "V-36", "V-37"}
+    } == set()
 
 
 def test_r0021_import_is_a_forward_only_complete_successor() -> None:

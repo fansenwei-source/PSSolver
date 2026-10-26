@@ -29,12 +29,12 @@
       "rewritten": false
     }
   },
-  "issue_count": 42,
+  "issue_count": 43,
   "status_counts": {
     "open": 1,
-    "registered": 1,
-    "claimed_fixed": 3,
-    "verified": 33,
+    "registered": 2,
+    "claimed_fixed": 0,
+    "verified": 36,
     "deferred": 2,
     "accepted": 1,
     "coverage_gap": 1
@@ -665,10 +665,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "verified_by": "R-0024",
       "target_release": "0.3",
-      "notes": "R-0023 independently verified the S-09 implementation at 85ba3ae: rc1/rc2/rc3 legacy migration and Periodic v2 bridge validation require the frozen API literal 1.0 before reading tensors, record that constant, and reject 1.1, 0.1-provisional and future literals. It remains claimed_fixed until the final S-09 rework review."
+      "notes": "R-0024 independently verified the S-09 implementation at 85ba3ae: rc1/rc2/rc3 legacy migration and Periodic v2 bridge validation require the frozen API literal 1.0 before reading tensors, record that constant, and reject 1.1, 0.1-provisional and future literals."
     },
     {
       "id": "V-36",
@@ -680,10 +681,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "verified_by": "R-0024",
       "target_release": "0.3",
-      "notes": "R-0023 independently verified the runtime behavior at 85ba3ae: the v0.2.x label pre_rc3_pressure_transpose_nyquist is accepted only as an equivalent historical spelling for rc1 even-axis state_only Channel records when every migration semantic matches. It remains claimed_fixed until the committed authentic fixture is repaired and reviewed."
+      "notes": "R-0024 independently verified the runtime behavior at 85ba3ae: the v0.2.x label pre_rc3_pressure_transpose_nyquist is accepted only as an equivalent historical spelling for rc1 even-axis state_only Channel records when every migration semantic matches."
     },
     {
       "id": "V-37",
@@ -695,10 +697,25 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "87cf34cf4e17096a701f5cc5bc81076d14a9d237",
+      "verified_by": "R-0024",
       "target_release": "0.3",
-      "notes": "S-09: commit 87cf34c adds explicit fixture ignore exceptions, tracks the two authentic v0.2.2-migrated rc1 even-axis Channel payloads with the exact manifest hashes, and requires every manifest-listed fixture file to be Git-tracked. Both full suites passed from a clean detached worktree; the item remains claimed_fixed pending R-0024 independent review."
+      "notes": "R-0024 independently verified commit 87cf34c: explicit fixture ignore exceptions track both authentic v0.2.2-migrated rc1 even-axis Channel payloads at their manifest hashes, the Git-tracking guard is effective, and both complete CPU suites pass from a clean detached worktree."
+    },
+    {
+      "id": "V-38",
+      "title": "Historical import tests pin live registry counts and fail after forward S-09 status changes",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0024.result.json",
+      "first_found": "S-09 final pre-H100 independent review R-0024",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3",
+      "notes": "S-09 record-only issue: two historical import tests asserted live registry status counts and therefore failed after valid forward status transitions. The R-0024 import changes them to bind their own immutable historical snapshots; runtime, wheels, frozen H100 plan and job are unaffected."
     }
   ],
   "authorization": {

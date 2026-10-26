@@ -6,12 +6,12 @@
 `dev/0.3` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 42 条：
+当前共登记 43 条：
 
 - `open`：1；
 - `registered`：2；
-- `claimed_fixed`：2；
-- `verified`：33；
+- `claimed_fixed`：0；
+- `verified`：36；
 - `deferred`：2；
 - `accepted`：1；
 - `coverage_gap`：1。
@@ -86,6 +86,11 @@
     已按 manifest 的精确哈希纳入 Git，并新增 manifest 全文件跟踪守卫；Nematics3D 与 pip-torch
     两套完整 suite 均已从干净 detached worktree 通过。该项推进为 `claimed_fixed`，等待
     `R-0024` 独立复核；`V-35`、`V-36` 仍保持 `claimed_fixed`，A3-18 与 NEW-14 不变。
+17. `R-0024` 已独立验证 `V-35`、`V-36`（修复身份 `85ba3ae…`）和 `V-37`
+    （修复身份 `87cf34c…`），三项均推进为 `verified`、`verified_by=R-0024`。
+    复核同时登记了纯记录问题 `V-38`（low）：两个历史导入测试错误地锁定活登记表的状态计数，
+    在合法的向前状态变化后失败。本次 R-0024 导入把它们改为核对各自不可变的历史快照；
+    不影响运行时、wheel、冻结的 H100 plan/job，A3-18 与 NEW-14 保持不变。
 
 ## Control 路径
 

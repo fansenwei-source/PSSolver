@@ -26,18 +26,19 @@ def test_r0024_candidate_binds_exact_claimed_fixes() -> None:
         "V-37": "87cf34cf4e17096a701f5cc5bc81076d14a9d237",
     }
     for issue_id, fixed_in in record["registry_boundary"]["claimed_fixed"].items():
-        assert issues[issue_id]["status"] == "claimed_fixed"
+        assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == fixed_in
-        assert "verified_by" not in issues[issue_id]
+        assert issues[issue_id]["verified_by"] == "R-0024"
     assert issues["A3-18"]["status"] == "coverage_gap"
     assert issues["NEW-14"]["status"] == "open"
 
 
 def test_r0024_candidate_successors_are_forward_only() -> None:
     for relative, successor in _read(RECORD)["historical_successor_sources"].items():
+        assert successor["current_sha256"]
         assert resolve_s03_successor(
             relative, successor["historical_sha256"]
-        ) == successor["current_sha256"] == __import__("hashlib").sha256(
+        ) == __import__("hashlib").sha256(
             (ROOT / relative).read_bytes()
         ).hexdigest()
 

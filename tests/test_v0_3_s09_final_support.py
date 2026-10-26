@@ -57,13 +57,28 @@ def test_final_support_binds_plan_job_and_excluded_draft() -> None:
 def test_final_support_preserves_the_review_boundary_and_authorizes_nothing() -> None:
     record = _read(RECORD)
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
+    assert record["registry_boundary"] == {
+        "V-35": "claimed_fixed",
+        "V-36": "claimed_fixed",
+        "V-37": "registered",
+        "A3-18": "coverage_gap",
+        "NEW-14": "open",
+    }
     current = {key: issues[key]["status"] for key in record["registry_boundary"]}
     assert current == {
-        **record["registry_boundary"],
-        "V-37": "claimed_fixed",
+        "V-35": "verified",
+        "V-36": "verified",
+        "V-37": "verified",
+        "A3-18": "coverage_gap",
+        "NEW-14": "open",
     }
     assert issues["V-37"]["fixed_in"] == (
         "87cf34cf4e17096a701f5cc5bc81076d14a9d237"
+    )
+    assert issues["V-37"]["status"] == "verified"
+    assert all(
+        issues[key]["verified_by"] == "R-0024"
+        for key in ("V-35", "V-36", "V-37")
     )
     assert not any(record["scope"].values())
     assert record["next_request"] == "R-0024"

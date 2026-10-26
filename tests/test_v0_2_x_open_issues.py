@@ -43,17 +43,17 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 42
-    assert len({entry["id"] for entry in entries}) == 42
+    assert len(entries) == record["issue_count"] == 43
+    assert len({entry["id"] for entry in entries}) == 43
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     counts.setdefault("registered", 0)
     counts.setdefault("claimed_fixed", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 1,
-        "claimed_fixed": 3,
-        "verified": 33,
+        "registered": 2,
+        "claimed_fixed": 0,
+        "verified": 36,
         "deferred": 2,
         "accepted": 1,
         "coverage_gap": 1,
@@ -252,7 +252,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == {"V-35", "V-36", "V-37"}
+    assert claimed == set()
     s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
@@ -267,7 +267,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     assert issues["V-26"]["target_release"] == "0.3"
     assert "S-07" in issues["V-26"]["notes"]
     for issue_id in ("V-35", "V-36"):
-        assert issues[issue_id]["status"] == "claimed_fixed"
+        assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (
             "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
         )
@@ -277,8 +277,8 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         )
         assert issues[issue_id]["affects_control_paths"] is False
         assert issues[issue_id]["exercised_by_current_control_research"] is False
-        assert "verified_by" not in issues[issue_id]
-    assert issues["V-37"]["status"] == "claimed_fixed"
+        assert issues[issue_id]["verified_by"] == "R-0024"
+    assert issues["V-37"]["status"] == "verified"
     assert issues["V-37"]["fixed_in"] == (
         "87cf34cf4e17096a701f5cc5bc81076d14a9d237"
     )
@@ -287,7 +287,26 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "PSSolver_sync/results/R-0023.result.json"
     )
     assert issues["V-37"]["target_release"] == "0.3"
+    assert issues["V-37"]["verified_by"] == "R-0024"
     assert "R-0024" in issues["V-37"]["notes"]
+    assert issues["V-38"] == {
+        "id": "V-38",
+        "title": (
+            "Historical import tests pin live registry counts and fail after "
+            "forward S-09 status changes"
+        ),
+        "severity": "low",
+        "source_report": "PSSolver_sync/results/R-0024.result.json",
+        "first_found": "S-09 final pre-H100 independent review R-0024",
+        "affects_v0_2_0": False,
+        "affects_v0_2_1": False,
+        "affects_control_paths": False,
+        "exercised_by_current_control_research": False,
+        "status": "registered",
+        "target_release": "0.3",
+        "notes": issues["V-38"]["notes"],
+    }
+    assert "historical snapshots" in issues["V-38"]["notes"]
     assert issues["V-30"] == {
         "id": "V-30",
         "title": (
@@ -370,7 +389,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == {"A3-18"}
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == {"V-35", "V-36", "V-37"}
+    } == set()
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (

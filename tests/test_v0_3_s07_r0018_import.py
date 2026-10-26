@@ -64,15 +64,9 @@ def test_r0018_verifies_all_s07_items_at_exact_fix_sources() -> None:
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == fixed_in
         assert issues[issue_id]["verified_by"] == "R-0018"
-    assert registry["status_counts"] == {
-        "open": 1,
-        "registered": 2,
-        "claimed_fixed": 2,
-        "verified": 33,
-        "deferred": 2,
-        "accepted": 1,
-        "coverage_gap": 1,
-    }
+    # The exact S-07 identities above are the historical snapshot.  Live
+    # aggregate counts are intentionally allowed to advance in successors.
+    assert imported["status"] == "verified"
     assert imported["s07_complete"] is True
 
 

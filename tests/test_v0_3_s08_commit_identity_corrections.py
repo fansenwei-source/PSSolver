@@ -79,21 +79,24 @@ def test_r0021_verifies_v34_and_allows_forward_s09_status_updates() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert {key for key, item in issues.items() if item["status"] == "registered"} == {
         "V-33",
+        "V-38",
     }
-    assert {key for key, item in issues.items() if item["status"] == "claimed_fixed"} == {
-        "V-35",
-        "V-36",
-        "V-37",
-    }
+    assert {
+        key for key, item in issues.items() if item["status"] == "claimed_fixed"
+    } == set()
     assert issues["V-33"]["target_release"] == "0.3"
     assert "S-10" in issues["V-33"]["notes"]
     for issue_id in ("V-35", "V-36"):
+        assert issues[issue_id]["status"] == "verified"
+        assert issues[issue_id]["verified_by"] == "R-0024"
         assert issues[issue_id]["fixed_in"] == (
             "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
         )
         assert issues[issue_id]["source_report"] == (
             "PSSolver_sync/results/R-0022.result.json"
         )
+    assert issues["V-37"]["status"] == "verified"
+    assert issues["V-37"]["verified_by"] == "R-0024"
     assert issues["V-34"]["status"] == "verified"
     assert issues["V-34"]["fixed_in"] == (
         "dea728f1a926284420e6b1a17edb56eb56ea3db1"

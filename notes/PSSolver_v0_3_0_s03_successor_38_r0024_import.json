@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-25",
+  "stage": "S-09",
+  "classification": "PASS_R0024_S09_FINAL_PRE_H100_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "f01f591a570f3c827e0e199aaf905e0efd0c5af0",
+    "provider_runtime_commit": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+    "provider_support_commit": "c66fd9ededb62950b601e3f9ddf038a54c37bbf7",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0024",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0024.result.json",
+    "sha256": "2b172299be82ac1141badd4bbf099b8865a467926122cabb2a330d564037f968",
+    "classification": "PASS",
+    "new_findings": ["V-38"]
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s09final_claude_review_20261025_v1",
+    "checksums_entries": 3787,
+    "checksums_sha256": "ec2aea1e573ed077047576cff091ede8fb7a4c6849c6399d434558f97c634a1f",
+    "complete_present": true,
+    "final_report_sha256": "fd57bb99ba8a8dae87bb6a9ce86f310c7910c4e889d2f798bcde1ffe38e0ce3b",
+    "summary_sha256": "26047e9279f3f54f0aaa472cd45f46f8a8931b3dd3aba0fe41245bb683d408a1"
+  },
+  "registry_import": {
+    "verified": {
+      "V-35": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "V-36": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "V-37": "87cf34cf4e17096a701f5cc5bc81076d14a9d237"
+    },
+    "verified_by": "R-0024",
+    "registered": ["V-38"],
+    "kept_unchanged": {
+      "A3-18": "coverage_gap",
+      "NEW-14": "open"
+    },
+    "s09_local_review_complete": true,
+    "h100_executed": false
+  },
+  "frozen_h100_inputs": {
+    "baseline_wheel_sha256": "a7e94585e62785c69522d6cc194fd479b5af55577444926d1bb661ed073cc00e",
+    "candidate_wheel_sha256": "4003645025da6d81317eeb7261ccf606aef7f60f20d072518f8baacf56cd4aa8",
+    "consumer_wheel_sha256": "f7ae4c1f5f3c73e0be540b5e4ec5e05a9eef662867a149325462835820ae94ef",
+    "plan_sha256": "d123e8cf6e529e4780d8be49478628c4e1553d655ae244acf9860845cd65f55e",
+    "job_script_sha256": "34ed9a7e6d43acdcaa344218b396e71a439ca21da7b9073843eb1b7587fde855",
+    "draft_sha256": "bb908866978eb00d8829792f1cb2869b6e1617eb1a88e6b10bbadd24d0293a45"
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {"historical_sha256": "20746b054e0cf9344beef1e72ba71ef4f60e90bb982bb9474655cbaf9b0758c9", "current_sha256": "a25cfdaf89f70c2e90119f0a04c20e26f5f44de236c173740d8e9df16f374f87", "reason": "Import the exact R-0024 registry updates and register V-38 without changing A3-18 or NEW-14."},
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "eec383f3c4972ac1b654201725879cd6e3289c2e796eb1d1be5ffbd3fceee729", "current_sha256": "48cbe97bdd3a672270c3efca49d045ca60639e98abf7da2343c610fb8b9a5234", "reason": "Document R-0024 verification and the record-only V-38 finding."},
+    "tests/test_v0_2_2_v17_r0002_import.py": {"historical_sha256": "f6b5b905c9e1bc11536feb663de613e2b61965c86cf6e8b5f7ec08f1c7864dee", "current_sha256": "48de62d7a5f69545178ef9383810370ebe0ef296188bdf5ceef90e05521d8849", "reason": "Bind the R-0002 historical status snapshot instead of live forward registry counts."},
+    "tests/test_v0_2_x_open_issues.py": {"historical_sha256": "0952e0f722fd2438a0852f837ff6bce0517ed0453e3360c370c26f3b1ba6ed44", "current_sha256": "173dfd0ac2bc982f631cd8eeb63215bd556ca553999a5e54393e8c7cf886622b", "reason": "Bind the exact R-0024 registry boundary and V-38 registration."},
+    "tests/test_v0_3_0_roadmap.py": {"historical_sha256": "7af871abe306acef37f431604bb34d50fd559b8820639369724614da4e0b897e", "current_sha256": "b445709787e72b34755a28a7fd3cd5ac5eb11e9db0710d312912cc181f8ce1a0", "reason": "Account for V-38 in the existing S-09 roadmap step."},
+    "tests/test_v0_3_s03_rework_record.py": {"historical_sha256": "0b74bd097fc589e312efdb7f612c145b2d6d30024188c7a3dd10614e0f282d35", "current_sha256": "4fc728384337f6a4263dee83edcc4e8b72e2bfe5d5237de021fb846770db6723", "reason": "Recognize the forward R-0024 verification boundary without rewriting S-03."},
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {"historical_sha256": "7ee9c0ebfb72b59effa4e7df0499d252c4f943bf3de77823000e8a98873e4e77", "current_sha256": "b8757c0db9b7224226e9a8e04698ade44398743e8db96897804e4f58bce9c155", "reason": "Recognize the forward R-0024 verification boundary without rewriting S-04."},
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {"historical_sha256": "9d2e96cf3dd7685e51103c8254df9d11cbd663d04aa855b85920897ff3a472d0", "current_sha256": "b1dd95befe8c58b4b76876ec05f12dd2cbd39aada5de5335cf23708ea7da4fea", "reason": "Recognize the forward R-0024 verification boundary without rewriting S-06."},
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {"historical_sha256": "c34ae3a0f44c640dacf30c40e814e5054a94b327950849261f02360f9622bd05", "current_sha256": "4e807b8c41f8134422bbd20cf4b7a9137ce0a78d60b005e69239843f495c1bf2", "reason": "Recognize the forward R-0024 verification boundary without rewriting S-06."},
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {"historical_sha256": "86529a500728cea09abc5b450a224691b4fd711ceb181e339e32ee7d6900a845", "current_sha256": "bfd93b71600f1266ffe2fd4419165d8bb7dde98e20e222c11a79bccfa4a4e7c9", "reason": "Recognize the forward R-0024 verification boundary without rewriting S-06."},
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {"historical_sha256": "d9e641fdadc202191d270a01deb143956bb9f098233dfd3a46ba5e2a9dca7741", "current_sha256": "aef90fbf5e21db54a63c6ca3952426477d27e094dc2dc7ad699b3ccfba83a8be", "reason": "Recognize the forward R-0024 verification boundary without rewriting S-07."},
+    "tests/test_v0_3_s07_r0017_import.py": {"historical_sha256": "63d8342e57518fb412e161b5905ffb08d13a1b6d8bfcab37a7803ec1aa4b4b95", "current_sha256": "f95af038751700816abc41fe2bae6732df5e19a60e2d0acbd3cc301be7db70b7", "reason": "Recognize the forward R-0024 verification boundary without rewriting R-0017."},
+    "tests/test_v0_3_s07_r0018_import.py": {"historical_sha256": "e49fcce334b67a1e1ddedec7a1939004333a1aab7ad84c0bdcdd7b369bb87959", "current_sha256": "e6e4e55c5e0c7b177dc49139cd831631cb8fadbace56d2e5498d7b05a4e812cf", "reason": "Bind the immutable R-0018 historical snapshot instead of live forward registry counts."},
+    "tests/test_v0_3_s07_rework_candidate_record.py": {"historical_sha256": "e2fb9950837386a7939e3e161ea0b7f1738fb73985becaa32c10dd9809581bf5", "current_sha256": "a03905becd729e2f3a414297dc930e590898232b9ad14519a55823528229a380", "reason": "Recognize the forward R-0024 verification boundary without rewriting S-07."},
+    "tests/test_v0_3_s08_commit_identity_corrections.py": {"historical_sha256": "47e8336df47c021ee47a4d030ec8e04ccd28a3401d729a1c189f17082dc14de1", "current_sha256": "54b4f4f861169caa9c9b84c943f80ca8a9eb05341e45b32931ff6cae0495e087", "reason": "Recognize V-38 and the R-0024 verification boundary while preserving S-08 corrections."},
+    "tests/test_v0_3_s08_r0021_import.py": {"historical_sha256": "bf3cea4869871a8320541c8ca0a2d7728ad682c43ccafd483b4e4b761a88bc02", "current_sha256": "fbb2ab03aba281af8cde5b7ccf069ae259827b9efc185493365fa55fe63ab1fd", "reason": "Recognize the forward R-0024 verification boundary without rewriting R-0021."},
+    "tests/test_v0_3_s09_checkpoint_compatibility_rework_record.py": {"historical_sha256": "8614b24f7b25b3e3ea8f0ea0697be6387d72e4e465bd89235315dea8add945eb", "current_sha256": "65f5590272b3a66caa1edfefd9452109e866b8ca5e5d8a861e3ebd0cd39014aa", "reason": "Advance V-35, V-36 and V-37 to the exact R-0024 verified boundary."},
+    "tests/test_v0_3_s09_final_support.py": {"historical_sha256": "912c3cc767989ebe37cd82b8a9d4c2d0aa7552b42308af99b3a80da56b139a85", "current_sha256": "98b551a71e5818e3ddb0de08da7050efd3bf134a2847e8fd05a7358e3b5fbe3e", "reason": "Preserve the frozen pre-review boundary and validate its R-0024 successor."},
+    "tests/test_v0_3_s09_r0022_import.py": {"historical_sha256": "c5903b0be1b3c71ee055d5fa9121905d988801e6d5e4677f58f0fa36bf59fd90", "current_sha256": "7b273a576e0df4ec97afb12e2407297ed24c24aa67b6e0700c0c6737ff66e9b6", "reason": "Preserve R-0022 while recognizing the R-0024 verified successor."},
+    "tests/test_v0_3_s09_r0023_candidate.py": {"historical_sha256": "2ac3eb57eb2077a9ee6081b500cf5f32338ceaf5c5e300c57719df1691deb09c", "current_sha256": "80ffb3a3677ebe9a33b19018e1fc4ab228e2476f6cdad8c026901a21dbc61e5c", "reason": "Preserve the R-0023 candidate while recognizing the R-0024 verified successor."},
+    "tests/test_v0_3_s09_r0023_import.py": {"historical_sha256": "eae1c110ed155220704814f37d2e9d8a6db5a90a47001814e9d07f1a7e2e6f34", "current_sha256": "ef02b00abbcd4376fcb916c7493f77848576106a036035ea6c4f31b19e25238f", "reason": "Preserve the R-0023 historical claim while recognizing R-0024 verification."},
+    "tests/test_v0_3_s09_r0024_candidate.py": {"historical_sha256": "8634857d223be4275a46f267a53e9468d88d9a2dff72f2110b1b836aa549ee7d", "current_sha256": "98086945ddd968c04db763695635cef7cea84bf5d2fc36e69c5e9b5f6eca82f2", "reason": "Preserve the final pre-review candidate and validate its R-0024 verified successor."}
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_import_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  },
+  "next_plan_step": "S-09",
+  "next_action": "Claude review of the one-click H100 authorization draft before user authorization",
+  "next_request": "R-0025"
+}
