@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import subprocess
 
 import numpy as np
 import pytest
@@ -195,3 +196,24 @@ def test_v022_migrated_rc1_even_channel_fixture_is_authentic_and_readable(
     }
     stepped = runtimes["channel"].step(imported.state, controls, 2)
     assert all(bool(torch.isfinite(value).all()) for value in stepped)
+
+
+def test_s09_fixture_manifest_files_are_all_tracked_by_git() -> None:
+    manifest = json.loads((FIXTURE_ROOT / "manifest.json").read_text())
+    fixture = FIXTURE_ROOT / manifest["fixture"]["path"]
+    tracked = {
+        line
+        for line in subprocess.run(
+            ["git", "ls-files", "--", str(FIXTURE_ROOT.relative_to(ROOT))],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+        if line
+    }
+    expected = {
+        (fixture / relative).relative_to(ROOT).as_posix()
+        for relative in manifest["fixture"]["files"]
+    }
+    assert expected <= tracked
