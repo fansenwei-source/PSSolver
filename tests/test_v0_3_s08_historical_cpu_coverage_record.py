@@ -96,7 +96,8 @@ def test_s08_registry_claims_only_the_two_cpu_coverage_items() -> None:
         recorded = rework["issue_state"]["fixed_in"][issue_id]
         assert issues[issue_id]["fixed_in"] == corrections.get(recorded, recorded)
         assert issues[issue_id]["verified_by"] == "R-0021"
-    assert issues["A3-18"]["status"] == "coverage_gap"
+    assert issues["A3-18"]["status"] == "verified"
+    assert issues["A3-18"]["verified_by"] == "R-0025"
 
 
 def test_s08_successors_are_forward_only_and_complete() -> None:

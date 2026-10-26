@@ -43,20 +43,21 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 43
-    assert len({entry["id"] for entry in entries}) == 43
+    assert len(entries) == record["issue_count"] == 45
+    assert len({entry["id"] for entry in entries}) == 45
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     counts.setdefault("registered", 0)
     counts.setdefault("claimed_fixed", 0)
+    counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 2,
+        "registered": 3,
         "claimed_fixed": 0,
-        "verified": 36,
+        "verified": 38,
         "deferred": 2,
         "accepted": 1,
-        "coverage_gap": 1,
+        "coverage_gap": 0,
     }
 
 
@@ -302,11 +303,20 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "affects_v0_2_1": False,
         "affects_control_paths": False,
         "exercised_by_current_control_research": False,
-        "status": "registered",
+        "status": "verified",
+        "fixed_in": "07b0ea69af08f20f2183262b39fde8a356cff029",
+        "verified_by": "R-0025",
         "target_release": "0.3",
         "notes": issues["V-38"]["notes"],
     }
-    assert "historical snapshots" in issues["V-38"]["notes"]
+    assert "immutable snapshots" in issues["V-38"]["notes"]
+    for issue_id in ("V-39", "V-40"):
+        issue = issues[issue_id]
+        assert issue["status"] == "registered"
+        assert issue["source_report"] == "PSSolver_sync/results/R-0025.result.json"
+        assert issue["target_release"] == "0.3.0 (S-09 recovery)"
+        assert issue["affects_control_paths"] is False
+        assert issue["exercised_by_current_control_research"] is False
     assert issues["V-30"] == {
         "id": "V-30",
         "title": (
@@ -386,7 +396,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     }
     assert {
         key for key, item in issues.items() if item["status"] == "coverage_gap"
-    } == {"A3-18"}
+    } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
     } == set()
@@ -402,6 +412,11 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     assert issues["R1-R9"]["decision"] == "D-0007"
     assert issues["A2-11"]["decision"] == "D-0007"
     assert issues["A3-18"]["affects_control_paths"] is True
+    assert issues["A3-18"]["status"] == "verified"
+    assert issues["A3-18"]["fixed_in"] == (
+        "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
+    )
+    assert issues["A3-18"]["verified_by"] == "R-0025"
 
 
 def test_r0021_verifies_s08_claims_and_leaves_v33_for_s10():

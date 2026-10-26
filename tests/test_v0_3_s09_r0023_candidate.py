@@ -59,7 +59,8 @@ def test_r0023_candidate_record_is_preserved_after_result_import() -> None:
         "87cf34cf4e17096a701f5cc5bc81076d14a9d237"
     )
     assert issues["V-37"]["verified_by"] == "R-0024"
-    assert issues["A3-18"]["status"] == "coverage_gap"
+    assert issues["A3-18"]["status"] == "verified"
+    assert issues["A3-18"]["verified_by"] == "R-0025"
     assert issues["NEW-14"]["status"] == "open"
 
 

@@ -29,15 +29,15 @@
       "rewritten": false
     }
   },
-  "issue_count": 43,
+  "issue_count": 45,
   "status_counts": {
     "open": 1,
-    "registered": 2,
+    "registered": 3,
     "claimed_fixed": 0,
-    "verified": 36,
+    "verified": 38,
     "deferred": 2,
     "accepted": 1,
-    "coverage_gap": 1
+    "coverage_gap": 0
   },
   "issues": [
     {
@@ -573,9 +573,11 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "coverage_gap",
+      "status": "verified",
+      "fixed_in": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "verified_by": "R-0025",
       "target_release": "before 0.3.0 complete acceptance",
-      "notes": "The long-horizon audit has been performed on CPU but not CUDA."
+      "notes": "R-0025 independently verified the R-0024-bound installed candidate wheel on H100 job 10911504: loop3d hermitian-half, loop3d full-complex, and r1 hermitian-half each completed 10,000 CUDA steps to t=200, remained finite, and stayed within the Hermitian bound."
     },
     {
       "id": "N5",
@@ -713,9 +715,39 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "verified",
+      "fixed_in": "07b0ea69af08f20f2183262b39fde8a356cff029",
+      "verified_by": "R-0025",
       "target_release": "0.3",
-      "notes": "S-09 record-only issue: two historical import tests asserted live registry status counts and therefore failed after valid forward status transitions. The R-0024 import changes them to bind their own immutable historical snapshots; runtime, wheels, frozen H100 plan and job are unaffected."
+      "notes": "R-0025 independently verified the R-0024 import fix: the affected historical tests bind immutable snapshots rather than live forward registry counts, and both clean CPU suites at 07b0ea6 pass. Runtime, wheels, and scientific contracts are unchanged."
+    },
+    {
+      "id": "V-39",
+      "title": "S-09 TF32-backward helper passes an absent work root to the Periodic fixture",
+      "severity": "medium-low",
+      "source_report": "PSSolver_sync/results/R-0025.result.json",
+      "first_found": "S-09 single-H100 review R-0025",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3.0 (S-09 recovery)",
+      "notes": "Qualification-support-only defect: run_v0_3_s09_tf32_backward.py passed an absent per-case parent to a fixture whose public constructor creates functional_source directly below it, stopping H100 job 10911504 before any runtime or backward execution. S-09 must create each case root explicitly and cover the path with an installed-wheel CPU rehearsal."
+    },
+    {
+      "id": "V-40",
+      "title": "S-09 Consumer H100 smoke conflates CPU identity pins with CUDA finite-gradient execution",
+      "severity": "medium-low",
+      "source_report": "PSSolver_sync/results/R-0025.result.json",
+      "first_found": "S-09 single-H100 review R-0025",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3.0 (S-09 recovery)",
+      "notes": "Qualification-support-only defect cluster: controls lacked requires_grad, the spectral loss was complex, the Channel smoke used fixed-work defaults while comparing the tolerance pin, and device-bearing CUDA identities were compared with CPU pins. S-09 must split default-device identity validation from CUDA finite/real-gradient smokes, matching all three pinned configurations."
     }
   ],
   "authorization": {

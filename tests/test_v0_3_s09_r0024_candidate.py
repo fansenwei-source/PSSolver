@@ -29,7 +29,8 @@ def test_r0024_candidate_binds_exact_claimed_fixes() -> None:
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == fixed_in
         assert issues[issue_id]["verified_by"] == "R-0024"
-    assert issues["A3-18"]["status"] == "coverage_gap"
+    assert issues["A3-18"]["status"] == "verified"
+    assert issues["A3-18"]["verified_by"] == "R-0025"
     assert issues["NEW-14"]["status"] == "open"
 
 

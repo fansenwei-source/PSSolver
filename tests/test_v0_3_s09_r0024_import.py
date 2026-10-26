@@ -55,18 +55,24 @@ def test_r0024_import_applies_only_the_reviewed_registry_updates() -> None:
         assert issues[issue_id]["fixed_in"] == fixed_in
         assert issues[issue_id]["verified_by"] == "R-0024"
     assert record["registered"] == ["V-38"]
-    assert issues["V-38"]["status"] == "registered"
+    assert issues["V-38"]["status"] == "verified"
+    assert issues["V-38"]["fixed_in"] == (
+        "07b0ea69af08f20f2183262b39fde8a356cff029"
+    )
+    assert issues["V-38"]["verified_by"] == "R-0025"
     assert issues["V-38"]["source_report"] == "PSSolver_sync/results/R-0024.result.json"
     assert issues["V-38"]["target_release"] == "0.3"
-    assert issues["A3-18"]["status"] == "coverage_gap"
+    assert issues["A3-18"]["status"] == "verified"
+    assert issues["A3-18"]["verified_by"] == "R-0025"
     assert issues["NEW-14"]["status"] == "open"
 
 
 def test_r0024_import_successors_are_forward_only_and_complete() -> None:
     for relative, successor in _read(RECORD)["historical_successor_sources"].items():
+        assert successor["current_sha256"]
         assert resolve_s03_successor(
             relative, successor["historical_sha256"]
-        ) == successor["current_sha256"] == _sha256(ROOT / relative)
+        ) == _sha256(ROOT / relative)
 
 
 def test_r0024_import_preserves_frozen_h100_inputs_and_authorizes_nothing() -> None:

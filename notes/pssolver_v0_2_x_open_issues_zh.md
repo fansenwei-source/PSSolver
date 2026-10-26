@@ -6,15 +6,15 @@
 `dev/0.3` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 43 条：
+当前共登记 45 条：
 
 - `open`：1；
-- `registered`：2；
+- `registered`：3；
 - `claimed_fixed`：0；
-- `verified`：36；
+- `verified`：38；
 - `deferred`：2；
 - `accepted`：1；
-- `coverage_gap`：1。
+- `coverage_gap`：0。
 
 ## 当前优先项
 
@@ -91,6 +91,15 @@
     复核同时登记了纯记录问题 `V-38`（low）：两个历史导入测试错误地锁定活登记表的状态计数，
     在合法的向前状态变化后失败。本次 R-0024 导入把它们改为核对各自不可变的历史快照；
     不影响运行时、wheel、冻结的 H100 plan/job，A3-18 与 NEW-14 保持不变。
+18. `R-0025` 已独立复核唯一一次 S-09 H100 作业 `10911504`。七项 CUDA-only
+    测试通过；loop3d half/full 与 r1 half 三个 CUDA 长时程均完成 10,000 步到 `t=200`，
+    因此 `A3-18` 在运行时 `85ba3ae…`、`V-38` 在纯记录提交 `07b0ea6…` 上推进为
+    `verified`、`verified_by=R-0025`。累计 S-09 尚未完成：作业在 TF32-backward
+    qualification helper 构造首个 runtime 前停止。
+19. `R-0025` 新登记两个 qualification-support-only 问题：`V-39`（medium-low）要求
+    TF32-backward helper 在调用 fixture 前显式创建各 case root；`V-40`（medium-low）要求把
+    默认设备的三项 Consumer identity pin 核对与 CUDA finite/real-gradient smoke 分离。
+    `NEW-14` 仍为 `open`，两项返工完成并经 CPU 全阶段演练后才可申请新的 H100 作业。
 
 ## Control 路径
 
@@ -104,7 +113,8 @@
 S-07 的 6 个 low/info 条目与候选回归 `V-30` 均已由 `R-0018` 独立验证为
 `verified`，S-07 完成；S-08 的 `A2-25`、`N5`、`V-31`、`V-32`、`V-34`
 均已由 `R-0021` 独立验证，S-08 完成；`V-33` 留待 S-10。
-`A2-21/S2-12` 已完成 `S-05` 独立复核。`V-27` 归入 `S-06`，`V-26` 与
+`A2-21/S2-12` 已完成 `S-05` 独立复核。`A3-18` 已由 `R-0025` 的真实 H100 长时程
+门禁验证；`NEW-14`、`V-39` 与 `V-40` 留在 S-09 recovery。`V-27` 归入 `S-06`，`V-26` 与
 `B30` 归入文档批次 `S-07`。
 `V-17` 已验证身份不变，不重新打开。路线图顺序以同步仓库中用户确认的
 `D-0010` 与 `plan/roadmap.json` 为准。
@@ -114,7 +124,8 @@ S-07 的 6 个 low/info 条目与候选回归 `V-30` 均已由 `R-0018` 独立�
 - lifting：`B8/S2-07`，按已确认决定 `D-0007` 在重新开放 lifting 前处理；
 - 架构整理：`R1-R9`，按 `D-0007` 推迟至 0.3 之后；
 - `A2-11`：按 `D-0007` 接受为设计限制；
-- 剩余覆盖缺口：`A3-18`，在 0.3.0 完整验收前补齐。
+- CUDA 长时程覆盖缺口 `A3-18` 已由 `R-0025` 关闭；`NEW-14` 仍须在 S-09 recovery
+  中完成 backward TF32 资格验证。
 
 机器可读的逐项标题、严重度、来源、版本影响、Control 影响、状态、目标版本和说明均在
 `notes/pssolver_v0_2_x_open_issues.json` 中。路线图 S-08 已完成，下一步进入 S-09

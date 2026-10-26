@@ -50,7 +50,7 @@ def test_s02_draft_binds_the_registry_and_confirmed_execution_order() -> None:
         "notes/pssolver_v0_2_x_open_issues.json", scope["registry_sha256"]
     )
     assert scope["registry_issue_count"] == 30
-    assert registry["issue_count"] == 43
+    assert registry["issue_count"] == 45
     assert "V-25" in scope["required_by_step"]["S-04"]
 
 
@@ -85,6 +85,8 @@ def test_s02_accounts_for_every_registry_issue_exactly_once() -> None:
         "V-36",
         "V-37",
         "V-38",
+        "V-39",
+        "V-40",
     } == registry_ids
     assert len(planned_sequence) == len(planned)
     assert set(scope["already_verified"]).isdisjoint(planned)

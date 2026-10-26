@@ -1,0 +1,58 @@
+{
+  "schema": "pssolver.v0_3.s03_successor_record.v1",
+  "classification": "REWORK_REQUIRED_R0025_S09_H100_FAILURE_REVIEW_IMPORTED",
+  "plan_step": "S-09",
+  "record_scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "qualification_support_changed": false,
+    "external_action_authorized": false
+  },
+  "sync_result": {
+    "id": "R-0025",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0025.result.json",
+    "sha256": "fffe1689735b9a197bb0c8703fcfbfac3a1426c9a180cc97e2de7e6803e620f5",
+    "classification": "REWORK_REQUIRED",
+    "new_findings": ["V-39", "V-40"]
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s09h100_claude_review_20261026_v1",
+    "checksums_entries": 5846,
+    "checksums_sha256": "9a2fed5fcc2153d0f77d4910341695ed134000670f02a34b13c20fbbfbe11413",
+    "complete_present": true,
+    "final_report_sha256": "529ca7a2a6640f1ecddf088074c0c4f6468ee18d42e0c5f3e5cb52f9c2b69ade",
+    "summary_sha256": "3b39c0a65c36da70f43fcf3a5e6d934dfa46918fcac4d2b7b9f3f2ba6b74a7e2"
+  },
+  "registry_import": {
+    "verified": {
+      "A3-18": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "V-38": "07b0ea69af08f20f2183262b39fde8a356cff029"
+    },
+    "verified_by": "R-0025",
+    "registered": ["V-39", "V-40"],
+    "kept_unchanged": {"NEW-14": "open"},
+    "s09_complete": false,
+    "h100_resubmission_authorized": false
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {"historical_sha256": "a25cfdaf89f70c2e90119f0a04c20e26f5f44de236c173740d8e9df16f374f87", "current_sha256": "3756e1bcd8fdfc429769e52d626c5dc9e3491a60c5044d739a0fda2253e1215b", "reason": "Import the exact R-0025 registry updates and findings."},
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "48cbe97bdd3a672270c3efca49d045ca60639e98abf7da2343c610fb8b9a5234", "current_sha256": "81ad1c2015b9c10847507903e10ab9defe41fdab988411a35209c9440f97c8a0", "reason": "Document the R-0025 review boundary."},
+    "tests/test_v0_2_x_open_issues.py": {"historical_sha256": "173dfd0ac2bc982f631cd8eeb63215bd556ca553999a5e54393e8c7cf886622b", "current_sha256": "eef7a668ce9dd6aad4bf33f154948439a54c1776c7a963f8f0b4d76b2064976d", "reason": "Bind the exact R-0025 registry state."},
+    "tests/test_v0_3_0_roadmap.py": {"historical_sha256": "b445709787e72b34755a28a7fd3cd5ac5eb11e9db0710d312912cc181f8ce1a0", "current_sha256": "8003fff967f08978fd3ebdb874813ff82869627689ca01d89328da2771256fe6", "reason": "Account for V-39 and V-40 in S-09."},
+    "tests/test_v0_3_s08_historical_cpu_coverage_record.py": {"historical_sha256": "7fe3a884bcbba8988c6ab9e5f5e5a184139394644f9ef35affe764c5e215fadc", "current_sha256": "027ac09266d7f7a7fa74f5041dd90a28779f9129c42eb53448ee2dd2c25c0577", "reason": "Recognize the forward A3-18 verification."},
+    "tests/test_v0_3_s09_checkpoint_compatibility_rework_record.py": {"historical_sha256": "65f5590272b3a66caa1edfefd9452109e866b8ca5e5d8a861e3ebd0cd39014aa", "current_sha256": "20adf6d7082ff61e64c38b77da1c37efa1ce2267eb112de11dc974d7c32a9747", "reason": "Recognize the forward A3-18 verification."},
+    "tests/test_v0_3_s09_final_support.py": {"historical_sha256": "98b551a71e5818e3ddb0de08da7050efd3bf134a2847e8fd05a7358e3b5fbe3e", "current_sha256": "9350dfcccd3b21e7795c20305215f573741af7a928c27ee300fdeab1f4a2dced", "reason": "Preserve the historical boundary and recognize R-0025."},
+    "tests/test_v0_3_s09_r0022_import.py": {"historical_sha256": "7b273a576e0df4ec97afb12e2407297ed24c24aa67b6e0700c0c6737ff66e9b6", "current_sha256": "b83636b0afc0173254fe2e5e81ca0cb34848b9f3c2cd80d9af9896279ebe7e1b", "reason": "Preserve R-0022 and recognize R-0025."},
+    "tests/test_v0_3_s09_r0023_candidate.py": {"historical_sha256": "80ffb3a3677ebe9a33b19018e1fc4ab228e2476f6cdad8c026901a21dbc61e5c", "current_sha256": "d1e839a0f5775a02a254207459d08d5112180450f9130c69b8940110a261371b", "reason": "Preserve R-0023 and recognize R-0025."},
+    "tests/test_v0_3_s09_r0023_import.py": {"historical_sha256": "ef02b00abbcd4376fcb916c7493f77848576106a036035ea6c4f31b19e25238f", "current_sha256": "a691ac3bde8c86f915a7eb2989ef6eb3a75b4aec71d093e4ae67d676133a286d", "reason": "Preserve R-0023 and recognize R-0025."},
+    "tests/test_v0_3_s09_r0024_candidate.py": {"historical_sha256": "98086945ddd968c04db763695635cef7cea84bf5d2fc36e69c5e9b5f6eca82f2", "current_sha256": "aa51fefec8889c4638dcd66a094ec327877c691cb50fb720a66f3ffa62d8e630", "reason": "Preserve R-0024 and recognize R-0025."},
+    "tests/test_v0_3_s09_r0024_import.py": {"historical_sha256": "b403b0a157f1474946690b96f0d30beaa1d337921bfd216498d4a668e4c26146", "current_sha256": "7b6faa4dd32da5b2a0ce3c42b98e9caf9013e306210dfd65f8974292c18a4dca", "reason": "Preserve R-0024 and recognize R-0025."}
+  },
+  "authorization": {
+    "local_evidence_import": true,
+    "runtime_fix": false,
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false
+  }
+}
