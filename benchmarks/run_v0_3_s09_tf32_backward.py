@@ -49,7 +49,7 @@ def _set_state(torch, value: dict[str, object]) -> None:
     torch.backends.cudnn.allow_tf32 = bool(value["cudnn_allow_tf32"])
 
 
-def run(support_root: Path) -> dict[str, object]:
+def run(support_root: Path, *, device: str = "cuda") -> dict[str, object]:
     import pssolver
     import torch
     import pssolver.functional.api as stable
@@ -58,7 +58,11 @@ def run(support_root: Path) -> dict[str, object]:
     provider_import = Path(pssolver.__file__).resolve()
     if "site-packages" not in str(provider_import):
         raise RuntimeError("S-09 TF32 gate requires an installed Provider wheel")
-    if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
+    if device not in {"cpu", "cuda"}:
+        raise ValueError("S-09 TF32 gate device must be cpu or cuda")
+    if device == "cuda" and (
+        not torch.cuda.is_available() or torch.cuda.device_count() != 1
+    ):
         raise RuntimeError("S-09 TF32 gate requires one visible CUDA device")
     support_root = support_root.expanduser().resolve()
     sys.path.insert(0, str(support_root))
@@ -75,13 +79,16 @@ def run(support_root: Path) -> dict[str, object]:
         sys.path.remove(str(support_root))
 
     def build(family: str, root: Path):
+        # The public fixture writes ``root/functional_source`` directly.  Each
+        # qualification case owns a distinct, initially absent parent.
+        root.mkdir(parents=True, exist_ok=False)
         if family == "periodic":
-            simulation = periodic_simulation(root, device="cuda")
+            simulation = periodic_simulation(root, device=device)
             request = stable.periodic_activity_functional_request(simulation.specification)
             runtime = stable.build_functional_runtime(request)
             controls = periodic_control(runtime, requires_grad=True)
         else:
-            simulation = channel_simulation(root, device="cuda")
+            simulation = channel_simulation(root, device=device)
             request = stable.channel_activity_functional_request(simulation.specification)
             runtime = stable.build_channel_activity_functional_runtime(request)
             controls = channel_control(runtime, requires_grad=True)
@@ -185,6 +192,7 @@ def run(support_root: Path) -> dict[str, object]:
         "name": "tf32_forward_backward_scope",
         "provider_candidate_commit": CANDIDATE_COMMIT,
         "candidate_wheel_sha256": CANDIDATE_WHEEL_SHA256,
+        "execution_device": device,
         "caller_state_count": 6,
         "functional_case_count": 12,
         "forward_observed_policy": True,
@@ -201,9 +209,10 @@ def run(support_root: Path) -> dict[str, object]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--support-root", type=Path, required=True)
+    parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
-    _atomic_json(args.output, run(args.support_root))
+    _atomic_json(args.output, run(args.support_root, device=args.device))
     return 0
 
 

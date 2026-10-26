@@ -511,8 +511,23 @@ def build_plan() -> dict[str, object]:
             "Control minimal migration and installed-wheel CPU suite",
             "clean source archives and reproducible installed wheels",
             "qualification helper compile/import/synthetic negative gates",
+            "installed-wheel CPU rehearsal of every stage except CUDA identity, cross-device cells, and formal profiles",
+            "wheel RECORD summaries persisted for all three installed environments",
             "all artifact and source hashes frozen before sbatch",
         ],
+        "cpu_rehearsal": {
+            "runner": "benchmarks/run_v0_3_s09_cpu_rehearsal.py",
+            "installed_wheels_only": True,
+            "stage_order_preserved": True,
+            "required_skips": [
+                "CUDA device identity assertions",
+                "CUDA-only test execution",
+                "cross-device checkpoint cells",
+                "formal 192-profile execution",
+            ],
+            "wheel_record_summaries_required": True,
+            "formal_thresholds_changed": False,
+        },
         "cuda_only_tests": list(CUDA_ONLY_NODE_IDS),
         "job_stage_order": [
             "node_local_tmp_environment_and_host_compiler",

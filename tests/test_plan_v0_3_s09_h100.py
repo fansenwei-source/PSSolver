@@ -111,6 +111,19 @@ def test_plan_freezes_long_horizon_tf32_and_single_job_boundaries() -> None:
         "fail_fast": True,
         "formal_h100_submission_count": 1,
     }
+    assert plan["cpu_rehearsal"] == {
+        "runner": "benchmarks/run_v0_3_s09_cpu_rehearsal.py",
+        "installed_wheels_only": True,
+        "stage_order_preserved": True,
+        "required_skips": [
+            "CUDA device identity assertions",
+            "CUDA-only test execution",
+            "cross-device checkpoint cells",
+            "formal 192-profile execution",
+        ],
+        "wheel_record_summaries_required": True,
+        "formal_thresholds_changed": False,
+    }
 
 
 def test_plan_reuses_the_full_accepted_paired_profile_contract() -> None:

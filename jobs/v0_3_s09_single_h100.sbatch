@@ -88,6 +88,7 @@ mkdir -p "${S09_OUTPUT_ROOT}/results" "${S09_OUTPUT_ROOT}/logs"
   --test-root "${S09_PROVIDER_SUPPORT}" \
   --detail-output "${S09_OUTPUT_ROOT}/results/cuda_detail.json" \
   --policy-output "${S09_OUTPUT_ROOT}/results/cuda_tf32.json" \
+  --junit "${S09_OUTPUT_ROOT}/logs/cuda_only.junit.xml" \
   --output "${S09_OUTPUT_ROOT}/results/cuda.json"
 
 "${S09_CANDIDATE_PYTHON}" \

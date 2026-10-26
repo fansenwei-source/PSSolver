@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+from dataclasses import replace
 
 import numpy as np
 
@@ -95,18 +96,24 @@ def _child(args: argparse.Namespace) -> None:
     import torch
 
     _tf32_off()
-    if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
+    if args.device == "cuda" and (
+        not torch.cuda.is_available() or torch.cuda.device_count() != 1
+    ):
         raise RuntimeError("exactly one visible CUDA device is required")
-    if str(torch.empty((), device="cuda").device) != "cuda:0":
+    if args.device == "cuda" and str(torch.empty((), device="cuda").device) != "cuda:0":
         raise RuntimeError("allocated CUDA device differs")
-    if "H100" not in torch.cuda.get_device_name(0):
+    if args.device == "cuda" and "H100" not in torch.cuda.get_device_name(0):
         raise RuntimeError("allocated device is not an H100")
-    config = _config(args.family, args.role, args.commit, args.wheel_sha256)
+    config = replace(
+        _config(args.family, args.role, args.commit, args.wheel_sha256),
+        device=args.device,
+    )
     case = _build_case(args.output.parent / f"{args.role}_{args.family}_work", config)
     initial = case.initial_state_sha256
     for _ in range(2):
         case.step()
-    torch.cuda.synchronize()
+    if args.device == "cuda":
+        torch.cuda.synchronize()
     state = case.state()
     arrays = [
         _atomic_array(
@@ -128,6 +135,7 @@ def _child(args: argparse.Namespace) -> None:
         "completed_steps": 2,
         "finite": _finite(state) and all(row["finite"] for row in arrays),
         "fallback_used": bool(case.runtime_identity.get("fallback_used")),
+        "execution_device": args.device,
         "arrays": arrays,
     }
     _atomic_json(args.output, report)
@@ -245,7 +253,7 @@ def _parent(args: argparse.Namespace) -> None:
                 environment.pop(name, None)
             environment.update({"PYTHONNOUSERSITE": "1", "PYTHONDONTWRITEBYTECODE": "1", "NVIDIA_TF32_OVERRIDE": "0"})
             completed = subprocess.run(
-                [str(python), str(Path(__file__).resolve()), "--internal-child", "--family", family, "--role", role, "--commit", commit, "--wheel-sha256", wheel, "--output", str(output)],
+                [str(python), str(Path(__file__).resolve()), "--internal-child", "--family", family, "--role", role, "--commit", commit, "--wheel-sha256", wheel, "--device", args.device, "--output", str(output)],
                 cwd=support, env=environment, check=False, capture_output=True, text=True,
             )
             (root / f"{role}_{family}.stdout").write_text(completed.stdout, encoding="utf-8")
@@ -263,6 +271,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--role", choices=("baseline", "candidate"))
     parser.add_argument("--commit")
     parser.add_argument("--wheel-sha256")
+    parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
     parser.add_argument("--baseline-python", type=Path)
     parser.add_argument("--candidate-python", type=Path)
     parser.add_argument("--support-root", type=Path)

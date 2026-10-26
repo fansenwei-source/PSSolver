@@ -65,6 +65,10 @@ def _internal_observation(role: str) -> dict[str, object]:
     import scipy
     import torch
 
+    provider_distribution = importlib.metadata.distribution("pssolver")
+    provider_record = Path(provider_distribution._path) / "RECORD"  # type: ignore[attr-defined]
+    if not provider_record.is_file() or provider_record.is_symlink():
+        raise FileNotFoundError(f"ordinary Provider RECORD required: {provider_record}")
     result: dict[str, object] = {
         "role": role,
         "python": platform.python_version(),
@@ -77,14 +81,30 @@ def _internal_observation(role: str) -> dict[str, object]:
         "scipy": scipy.__version__,
         "pssolver_version": importlib.metadata.version("pssolver"),
         "pssolver_import": str(Path(pssolver.__file__).resolve()),
+        "pssolver_record": {
+            "path": str(provider_record.resolve()),
+            "sha256": _sha256(provider_record),
+            "entry_count": sum(1 for _ in provider_record.open(encoding="utf-8")),
+        },
     }
     if role == "consumer":
         import pssolver_control
+        consumer_distribution = importlib.metadata.distribution("pssolver-control")
+        consumer_record = Path(consumer_distribution._path) / "RECORD"  # type: ignore[attr-defined]
+        if not consumer_record.is_file() or consumer_record.is_symlink():
+            raise FileNotFoundError(f"ordinary Consumer RECORD required: {consumer_record}")
 
         result.update(
             {
                 "pssolver_control_version": importlib.metadata.version("pssolver-control"),
                 "pssolver_control_import": str(Path(pssolver_control.__file__).resolve()),
+                "pssolver_control_record": {
+                    "path": str(consumer_record.resolve()),
+                    "sha256": _sha256(consumer_record),
+                    "entry_count": sum(
+                        1 for _ in consumer_record.open(encoding="utf-8")
+                    ),
+                },
             }
         )
     return result

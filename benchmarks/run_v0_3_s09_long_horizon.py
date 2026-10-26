@@ -39,7 +39,9 @@ def _atomic_json(path: Path, value: object) -> None:
         temporary.unlink(missing_ok=True)
 
 
-def summarize(reports: list[dict[str, object]]) -> dict[str, object]:
+def summarize(
+    reports: list[dict[str, object]], *, device: str = "cuda", horizon: float = 200.0
+) -> dict[str, object]:
     if len(reports) != len(CASES):
         raise ValueError("long-horizon report count differs")
     frozen: list[dict[str, object]] = []
@@ -51,9 +53,9 @@ def summarize(reports: list[dict[str, object]]) -> dict[str, object]:
             raise TypeError("long-horizon config missing")
         if config.get("case") != case or config.get("spectral_storage") != storage:
             raise ValueError("long-horizon case identity differs")
-        if config.get("horizon") != 200.0 or config.get("device") != "cuda":
+        if config.get("horizon") != horizon or config.get("device") != device:
             raise ValueError("long-horizon execution contract differs")
-        if report.get("completed_time") != 200.0 or report.get("passed") is not True:
+        if report.get("completed_time") != horizon or report.get("passed") is not True:
             raise ValueError(f"long-horizon case failed: {case}/{storage}")
         samples = report.get("samples")
         if not isinstance(samples, list) or not samples:
@@ -66,7 +68,7 @@ def summarize(reports: list[dict[str, object]]) -> dict[str, object]:
         )
         all_finite = all_finite and finite
         all_within = all_within and within
-        frozen.append({"case": case, "storage": storage, "horizon": 200.0})
+        frozen.append({"case": case, "storage": storage, "horizon": horizon})
     if not all_finite or not all_within:
         raise ValueError("long-horizon finite/Hermitian gate failed")
     return {
@@ -74,6 +76,9 @@ def summarize(reports: list[dict[str, object]]) -> dict[str, object]:
         "name": "cuda_long_horizon_hermitian",
         "provider_candidate_commit": CANDIDATE_COMMIT,
         "candidate_wheel_sha256": CANDIDATE_WHEEL_SHA256,
+        "execution_device": device,
+        "qualification_horizon": horizon,
+        "formal_h100_contract": device == "cuda" and horizon == 200.0,
         "cases": frozen,
         "all_finite": all_finite,
         "all_within_bound": all_within,
@@ -93,8 +98,8 @@ def _child(args: argparse.Namespace) -> int:
         [
             "--case", args.case,
             "--spectral-storage", args.storage,
-            "--device", "cuda",
-            "--horizon", "200.0",
+            "--device", args.device,
+            "--horizon", str(args.horizon),
             "--tolerance-factor", "64.0",
             "--output", str(args.output),
         ]
@@ -136,7 +141,9 @@ def _parent(args: argparse.Namespace) -> int:
         if completed.returncode != 0:
             raise RuntimeError(f"long-horizon child failed: {case}/{storage}")
         reports.append(json.loads(output.read_text(encoding="utf-8")))
-    _atomic_json(args.output, summarize(reports))
+    _atomic_json(
+        args.output, summarize(reports, device=args.device, horizon=args.horizon)
+    )
     return 0
 
 
@@ -145,6 +152,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--internal-child", action="store_true")
     parser.add_argument("--case", choices=("loop3d", "r1"))
     parser.add_argument("--storage", choices=("hermitian_half", "full_complex"))
+    parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
+    parser.add_argument("--horizon", type=float, default=200.0)
     parser.add_argument("--python", type=Path)
     parser.add_argument("--support-root", type=Path)
     parser.add_argument("--case-root", type=Path)
@@ -156,6 +165,8 @@ def main(argv: list[str] | None = None) -> int:
         return _child(args)
     if args.python is None or args.support_root is None or args.case_root is None:
         raise ValueError("long-horizon parent arguments are incomplete")
+    if args.horizon <= 0.0:
+        raise ValueError("long-horizon horizon must be positive")
     return _parent(args)
 
 

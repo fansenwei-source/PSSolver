@@ -65,7 +65,14 @@ def _cross_device(root: Path) -> list[dict[str, object]]:
     return cells
 
 
-def execute(test_root: Path, junit: Path, output: Path) -> dict[str, object]:
+def execute(
+    test_root: Path,
+    junit: Path,
+    output: Path,
+    *,
+    device: str = "cuda",
+    include_cross_device: bool = True,
+) -> dict[str, object]:
     import importlib.metadata
     import pssolver
     import pytest
@@ -76,9 +83,14 @@ def execute(test_root: Path, junit: Path, output: Path) -> dict[str, object]:
         raise RuntimeError("candidate package version differs")
     if "site-packages" not in str(Path(pssolver.__file__).resolve()):
         raise RuntimeError("candidate is not imported from an installed wheel")
-    if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
+    if device == "cuda" and (
+        not torch.cuda.is_available() or torch.cuda.device_count() != 1
+    ):
         raise RuntimeError("exactly one visible CUDA device is required")
-    if str(torch.empty((), device="cuda").device) != "cuda:0" or "H100" not in torch.cuda.get_device_name(0):
+    if device == "cuda" and (
+        str(torch.empty((), device="cuda").device) != "cuda:0"
+        or "H100" not in torch.cuda.get_device_name(0)
+    ):
         raise RuntimeError("allocated device is not cuda:0 H100")
     support = test_root.expanduser().resolve()
     if not support.is_dir() or support.is_symlink() or (support / "pssolver").exists():
@@ -102,9 +114,11 @@ def execute(test_root: Path, junit: Path, output: Path) -> dict[str, object]:
     tmpdir = Path(os.environ.get("TMPDIR", ""))
     if not tmpdir.is_absolute() or not tmpdir.is_dir() or tmpdir.is_symlink() or tmpdir.parent.parent != Path("/tmp"):
         raise RuntimeError("checkpoint TMPDIR is not an allocated node-local directory")
-    with tempfile.TemporaryDirectory(prefix="pssolver-s09-checkpoints-", dir=tmpdir) as temporary:
-        cells = _cross_device(Path(temporary))
-    if len(cells) != 8:
+    cells: list[dict[str, object]] = []
+    if include_cross_device:
+        with tempfile.TemporaryDirectory(prefix="pssolver-s09-checkpoints-", dir=tmpdir) as temporary:
+            cells = _cross_device(Path(temporary))
+    if include_cross_device and len(cells) != 8:
         raise RuntimeError("cross-device checkpoint cell count differs")
     result = {
         "schema": SCHEMA,
@@ -113,6 +127,8 @@ def execute(test_root: Path, junit: Path, output: Path) -> dict[str, object]:
         "candidate_wheel_sha256": CANDIDATE_WHEEL_SHA256,
         "current_matrix": True,
         "released_fixtures": True,
+        "execution_device": device,
+        "cross_device_executed": include_cross_device,
         "restart_exact": all(row["continuous_split_restart_equal"] is True for row in cells),
         "negative_gates": all(
             row[name]["rejected"] is True and row[name]["target_unchanged"] is True
@@ -131,9 +147,17 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--test-root", type=Path, required=True)
     parser.add_argument("--junit", type=Path, required=True)
+    parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
+    parser.add_argument("--skip-cross-device", action="store_true")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
-    execute(args.test_root, args.junit, args.output)
+    execute(
+        args.test_root,
+        args.junit,
+        args.output,
+        device=args.device,
+        include_cross_device=not args.skip_cross_device,
+    )
     return 0
 
 

@@ -36,6 +36,7 @@ def test_job_orders_correctness_and_consumer_before_profiles() -> None:
     assert "sha256sum --check checksums.sha256" in text
     assert text.index("sha256sum --check checksums.sha256") < text.index("> COMPLETE")
     assert "trap 'rm -rf \"${node_root}\"' EXIT" in text
+    assert '--junit "${S09_OUTPUT_ROOT}/logs/cuda_only.junit.xml"' in text
 
 
 def test_long_horizon_summary_is_fail_closed() -> None:

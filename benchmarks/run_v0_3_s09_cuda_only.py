@@ -84,6 +84,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--test-root", type=Path, required=True)
     parser.add_argument("--detail-output", type=Path, required=True)
     parser.add_argument("--policy-output", type=Path, required=True)
+    parser.add_argument("--junit", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
     root = args.test_root.expanduser().resolve()
@@ -100,8 +101,23 @@ def main(argv: list[str] | None = None) -> int:
         command: list[str] = []
         for node in build_plan()["cuda_only_tests"]:
             command.extend(("--node", str(node)))
-        command.extend(("--expected", "7", "--output", str(outputs[0]), "--policy-output", str(outputs[1])))
-        cuda_main(command)
+        command.extend(
+            (
+                "--expected", "7", "--output", str(outputs[0]),
+                "--policy-output", str(outputs[1]),
+            )
+        )
+        previous_pytest_addopts = os.environ.get("PYTEST_ADDOPTS")
+        os.environ["PYTEST_ADDOPTS"] = (
+            f"--junitxml={args.junit.expanduser().absolute()}"
+        )
+        try:
+            cuda_main(command)
+        finally:
+            if previous_pytest_addopts is None:
+                os.environ.pop("PYTEST_ADDOPTS", None)
+            else:
+                os.environ["PYTEST_ADDOPTS"] = previous_pytest_addopts
     finally:
         os.chdir(previous)
     detail = json.loads(outputs[0].read_text(encoding="utf-8"))

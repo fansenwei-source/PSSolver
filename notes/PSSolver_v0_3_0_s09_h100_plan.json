@@ -40,6 +40,19 @@
     "scientific_control_result_claimed": false,
     "xfailed_allowed": 0
   },
+  "cpu_rehearsal": {
+    "formal_thresholds_changed": false,
+    "installed_wheels_only": true,
+    "required_skips": [
+      "CUDA device identity assertions",
+      "CUDA-only test execution",
+      "cross-device checkpoint cells",
+      "formal 192-profile execution"
+    ],
+    "runner": "benchmarks/run_v0_3_s09_cpu_rehearsal.py",
+    "stage_order_preserved": true,
+    "wheel_record_summaries_required": true
+  },
   "cuda_only_tests": [
     "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
     "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
@@ -403,6 +416,8 @@
     "Control minimal migration and installed-wheel CPU suite",
     "clean source archives and reproducible installed wheels",
     "qualification helper compile/import/synthetic negative gates",
+    "installed-wheel CPU rehearsal of every stage except CUDA identity, cross-device cells, and formal profiles",
+    "wheel RECORD summaries persisted for all three installed environments",
     "all artifact and source hashes frozen before sbatch"
   ],
   "profile_contract": {
