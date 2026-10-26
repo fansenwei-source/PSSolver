@@ -1,0 +1,86 @@
+{
+  "schema": "pssolver.v0_3.s03_successor_record.v1",
+  "classification": "READY_FOR_R0026_S09_RECOVERY_REVIEW",
+  "plan_step": "S-09",
+  "record_scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "qualification_support_changed": true,
+    "external_action_authorized": false
+  },
+  "git_identity": {
+    "provider_runtime_commit": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+    "v39_v40_fix_commit": "72286694c43ee15e5859c0658c989431404fe505",
+    "cpu_rehearsal_child_fix_commit": "eba9560f7c9ee73064f8b64a6448038984d22f47",
+    "qualification_support_commit": "719ae76069ba97b88a893ccf7404ddf18239fcc6"
+  },
+  "registry_claims": {
+    "claimed_fixed": {
+      "V-39": "72286694c43ee15e5859c0658c989431404fe505",
+      "V-40": "72286694c43ee15e5859c0658c989431404fe505"
+    },
+    "kept_unchanged": {
+      "NEW-14": "open",
+      "A3-18": "verified",
+      "V-38": "verified"
+    },
+    "verified_by": null
+  },
+  "cpu_rehearsal": {
+    "classification": "PASS_S09_INSTALLED_WHEEL_CPU_REHEARSAL",
+    "path": "/home/fansenwei/.pssolver_s09_r0026_local/rehearsal_v3/cpu_rehearsal.json",
+    "sha256": "a1bcf41e50dc1064e0772baadd048119ec4a4515f8c106c27914a43ca8353d2c",
+    "installed_wheel_environments": 3,
+    "consumer_result": "351 passed, 6 skipped, 0 failed",
+    "profile_matrix_planned": 192,
+    "formal_profiles_executed": 0,
+    "cuda_assertions_executed": false,
+    "cross_device_checkpoint_cells_executed": false
+  },
+  "frozen_inputs": {
+    "baseline_wheel_sha256": "a7e94585e62785c69522d6cc194fd479b5af55577444926d1bb661ed073cc00e",
+    "candidate_wheel_sha256": "4003645025da6d81317eeb7261ccf606aef7f60f20d072518f8baacf56cd4aa8",
+    "consumer_wheel_sha256": "f7ae4c1f5f3c73e0be540b5e4ec5e05a9eef662867a149325462835820ae94ef",
+    "provider_source_archive_sha256": "bff21905eb7d4c5e8313b10c871f40d8b96b411975260fdb0edb75b16a99a3b9",
+    "provider_support_archive_sha256": "7500e889a01733d998ae08c121f12de00bf1d5a831f9eefdcc14fd763843b3cd",
+    "consumer_source_archive_sha256": "02f3e8249bc02cbb0484636d9f8bf46cc8a6815d90e13f8286f7aaf8291157fd",
+    "consumer_support_archive_sha256": "2243f14cbdad1a58cb8a1ff73e2bb550752d97f5edf2190302005d9d69ff66a1",
+    "plan_sha256": "4abd4da59a920aae5fd1bdb3c7e6e390b53b6c8476689024d8a013a41274f575",
+    "job_script_sha256": "f9431b8b6d64536f2ed29afaa3894404eb743a91dbb053d69e62a8c5ab3f7098",
+    "submission_draft_sha256": "558422475a553c9f19b72d339eb1cc2f1f15cdc1a6e55207f82f0f603d55f1be"
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "3756e1bcd8fdfc429769e52d626c5dc9e3491a60c5044d739a0fda2253e1215b",
+      "current_sha256": "62e69947a963658b373219baa0a02cca364d96956d8530b5612e94570b5743cf",
+      "reason": "Advance V-39 and V-40 to claimed_fixed without changing NEW-14."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "81ad1c2015b9c10847507903e10ab9defe41fdab988411a35209c9440f97c8a0",
+      "current_sha256": "77c3c06cee54d12fc8c5a6b394b9dbfe8b4fb8ac52fa67d69d88fb2207e5b43c",
+      "reason": "Document the local S-09 recovery boundary."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "eef7a668ce9dd6aad4bf33f154948439a54c1776c7a963f8f0b4d76b2064976d",
+      "current_sha256": "d774124e6ac4e5bbc012a53e5f3906edc0982c8308d011a0d769ad9c601d4934",
+      "reason": "Bind the claimed-fixed S-09 registry state."
+    },
+    "tests/test_v0_3_s09_r0025_import.py": {
+      "historical_sha256": "0cbd92a899c7a64fb30620f4ded8f0db14f747aa62de195169b1a3cd3af086e7",
+      "current_sha256": "5075cc728e54cc74a6e65b2209438166818c8a2a1a5b220a1baf37387f828a27",
+      "reason": "Preserve the immutable R-0025 registration while allowing forward status transitions."
+    },
+    "notes/PSSolver_v0_3_0_s09_h100_submission_draft_zh.md": {
+      "historical_sha256": "acfab97516dc3fb2fd64dbe4dfc465ca51a39a8a5a59ad8c2d3998c1b45a6e19",
+      "current_sha256": "558422475a553c9f19b72d339eb1cc2f1f15cdc1a6e55207f82f0f603d55f1be",
+      "reason": "Bind the final recovery support archive and immutable plan/job hashes."
+    }
+  },
+  "authorization": {
+    "local_rework": true,
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false
+  }
+}

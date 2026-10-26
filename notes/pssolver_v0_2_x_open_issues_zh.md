@@ -9,8 +9,8 @@
 当前共登记 45 条：
 
 - `open`：1；
-- `registered`：3；
-- `claimed_fixed`：0；
+- `registered`：1；
+- `claimed_fixed`：2；
 - `verified`：38；
 - `deferred`：2；
 - `accepted`：1；
@@ -100,6 +100,10 @@
     TF32-backward helper 在调用 fixture 前显式创建各 case root；`V-40`（medium-low）要求把
     默认设备的三项 Consumer identity pin 核对与 CUDA finite/real-gradient smoke 分离。
     `NEW-14` 仍为 `open`，两项返工完成并经 CPU 全阶段演练后才可申请新的 H100 作业。
+20. `V-39` 与 `V-40` 已由 qualification-support 提交
+    `72286694c43ee15e5859c0658c989431404fe505` 修复并推进为 `claimed_fixed`。最终支持归档上的
+    installed-wheel CPU 演练从环境身份、短时程、TF32、checkpoint、数值对照到独立 Consumer
+    和 192 项 profile 规划全部通过；两项等待 `R-0026` 独立复核，`NEW-14` 仍保持 `open`。
 
 ## Control 路径
 
@@ -114,7 +118,8 @@ S-07 的 6 个 low/info 条目与候选回归 `V-30` 均已由 `R-0018` 独立�
 `verified`，S-07 完成；S-08 的 `A2-25`、`N5`、`V-31`、`V-32`、`V-34`
 均已由 `R-0021` 独立验证，S-08 完成；`V-33` 留待 S-10。
 `A2-21/S2-12` 已完成 `S-05` 独立复核。`A3-18` 已由 `R-0025` 的真实 H100 长时程
-门禁验证；`NEW-14`、`V-39` 与 `V-40` 留在 S-09 recovery。`V-27` 归入 `S-06`，`V-26` 与
+门禁验证；`V-39` 与 `V-40` 已完成本地 recovery 并等待 `R-0026`，`NEW-14` 仍留在
+S-09 H100 recovery。`V-27` 归入 `S-06`，`V-26` 与
 `B30` 归入文档批次 `S-07`。
 `V-17` 已验证身份不变，不重新打开。路线图顺序以同步仓库中用户确认的
 `D-0010` 与 `plan/roadmap.json` 为准。

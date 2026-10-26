@@ -32,8 +32,8 @@
   "issue_count": 45,
   "status_counts": {
     "open": 1,
-    "registered": 3,
-    "claimed_fixed": 0,
+    "registered": 1,
+    "claimed_fixed": 2,
     "verified": 38,
     "deferred": 2,
     "accepted": 1,
@@ -731,9 +731,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "72286694c43ee15e5859c0658c989431404fe505",
       "target_release": "0.3.0 (S-09 recovery)",
-      "notes": "Qualification-support-only defect: run_v0_3_s09_tf32_backward.py passed an absent per-case parent to a fixture whose public constructor creates functional_source directly below it, stopping H100 job 10911504 before any runtime or backward execution. S-09 must create each case root explicitly and cover the path with an installed-wheel CPU rehearsal."
+      "notes": "Qualification-support-only defect: run_v0_3_s09_tf32_backward.py passed an absent per-case parent to a fixture whose public constructor creates functional_source directly below it, stopping H100 job 10911504 before any runtime or backward execution. The S-09 recovery explicitly creates every case root and the final installed-wheel CPU rehearsal passed; independent R-0026 review is pending."
     },
     {
       "id": "V-40",
@@ -745,9 +746,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "72286694c43ee15e5859c0658c989431404fe505",
       "target_release": "0.3.0 (S-09 recovery)",
-      "notes": "Qualification-support-only defect cluster: controls lacked requires_grad, the spectral loss was complex, the Channel smoke used fixed-work defaults while comparing the tolerance pin, and device-bearing CUDA identities were compared with CPU pins. S-09 must split default-device identity validation from CUDA finite/real-gradient smokes, matching all three pinned configurations."
+      "notes": "Qualification-support-only defect cluster: controls lacked requires_grad, the spectral loss was complex, the Channel smoke used fixed-work defaults while comparing the tolerance pin, and device-bearing CUDA identities were compared with CPU pins. The recovery now validates all three pins with default-device steppers, records CUDA identities without comparing them to CPU pins, and requires finite real gradients; independent R-0026 review is pending."
     }
   ],
   "authorization": {

@@ -44,7 +44,10 @@ def test_r0025_registry_updates_are_exact() -> None:
         assert issues[issue_id]["fixed_in"] == fixed_in
         assert issues[issue_id]["verified_by"] == "R-0025"
     assert record["registered"] == ["V-39", "V-40"]
-    assert all(issues[issue_id]["status"] == "registered" for issue_id in record["registered"])
+    assert all(
+        issues[issue_id]["status"] in {"registered", "claimed_fixed", "verified"}
+        for issue_id in record["registered"]
+    )
     assert issues["NEW-14"]["status"] == "open"
     assert record["s09_complete"] is False
     assert record["h100_resubmission_authorized"] is False
@@ -52,9 +55,9 @@ def test_r0025_registry_updates_are_exact() -> None:
 
 def test_r0025_successors_are_forward_only_and_complete() -> None:
     for relative, successor in _read(RECORD)["historical_successor_sources"].items():
-        assert resolve_s03_successor(relative, successor["historical_sha256"]) == (
-            successor["current_sha256"]
-        ) == _sha256(ROOT / relative)
+        live = _sha256(ROOT / relative)
+        assert resolve_s03_successor(relative, successor["historical_sha256"]) == live
+        assert resolve_s03_successor(relative, successor["current_sha256"]) == live
 
 
 def test_r0025_import_authorizes_no_external_action() -> None:

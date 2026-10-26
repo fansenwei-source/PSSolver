@@ -52,8 +52,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 1,
-        "registered": 3,
-        "claimed_fixed": 0,
+        "registered": 1,
+        "claimed_fixed": 2,
         "verified": 38,
         "deferred": 2,
         "accepted": 1,
@@ -253,7 +253,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == set()
+    assert claimed == {"V-39", "V-40"}
     s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
@@ -312,7 +312,10 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     assert "immutable snapshots" in issues["V-38"]["notes"]
     for issue_id in ("V-39", "V-40"):
         issue = issues[issue_id]
-        assert issue["status"] == "registered"
+        assert issue["status"] == "claimed_fixed"
+        assert issue["fixed_in"] == (
+            "72286694c43ee15e5859c0658c989431404fe505"
+        )
         assert issue["source_report"] == "PSSolver_sync/results/R-0025.result.json"
         assert issue["target_release"] == "0.3.0 (S-09 recovery)"
         assert issue["affects_control_paths"] is False
@@ -399,7 +402,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == set()
+    } == {"V-39", "V-40"}
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (
