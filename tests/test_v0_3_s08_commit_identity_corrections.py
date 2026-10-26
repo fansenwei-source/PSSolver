@@ -75,18 +75,22 @@ def test_all_historical_errata_bind_nonexistent_values_to_real_git_commits() -> 
         assert item["wrong_hash"][:7] == item["real_commit"][:7]
 
 
-def test_r0021_verifies_v34_and_preserves_later_registered_s09_items() -> None:
+def test_r0021_verifies_v34_and_allows_forward_s09_status_updates() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert {key for key, item in issues.items() if item["status"] == "registered"} == {
         "V-33",
+        "V-37",
+    }
+    assert {key for key, item in issues.items() if item["status"] == "claimed_fixed"} == {
         "V-35",
         "V-36",
     }
-    assert not {key for key, item in issues.items() if item["status"] == "claimed_fixed"}
     assert issues["V-33"]["target_release"] == "0.3"
     assert "S-10" in issues["V-33"]["notes"]
     for issue_id in ("V-35", "V-36"):
-        assert "S-09" in issues[issue_id]["notes"]
+        assert issues[issue_id]["fixed_in"] == (
+            "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
+        )
         assert issues[issue_id]["source_report"] == (
             "PSSolver_sync/results/R-0022.result.json"
         )

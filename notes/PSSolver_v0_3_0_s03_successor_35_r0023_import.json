@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-25",
+  "stage": "S-09",
+  "classification": "REWORK_REQUIRED_R0023_S09_FINAL_PRE_H100_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "ee1f9e0107373fdee92b357a9ffc0518bab8435c",
+    "result_commit": "30ad331",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0023",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0023.result.json",
+    "sha256": "4570f85423eb0c6008eeaa141889afcb78e751f9cad003f887c222ae121ca3fc",
+    "classification": "REWORK_REQUIRED",
+    "new_findings": ["V-37"]
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s09rw_claude_review_20261025_v1",
+    "checksums_entries": 10557,
+    "checksums_sha256": "61bdb8b81535917ce344b48189e35fe7fd4cf6d11155e5fda02428d65c2f417c",
+    "complete_present": true,
+    "final_report_sha256": "58dcf7a4766dc07ea8ee68014043ac9cb24a889e48ba692bd55f74d9aa84ae9d",
+    "summary_sha256": "1f56a55bf10b3fc4f8d0dc02a0b090172cf3a26069082ac583428e950d473caa"
+  },
+  "registry_import": {
+    "claimed_fixed": {
+      "V-35": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "V-36": "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
+    },
+    "registered": ["V-37"],
+    "kept_unchanged": {
+      "A3-18": "coverage_gap",
+      "NEW-14": "open"
+    },
+    "s09_complete": false,
+    "next_request": "R-0024"
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "c60408bc33b9ffa586da6c5c3d9ddec53a81cf38a1aa888504ab71721ff6414b",
+      "current_sha256": "4c7ae4a2bd4fa9df52c9f59267835cab5c6681705f519ebce8c000a01b65e6b9",
+      "reason": "Import the exact R-0023 status boundary and register V-37 without changing A3-18 or NEW-14."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "7c142fec862b001423d7739c1f7b95bbf0fc2498ee300ef37940615f503cf00e",
+      "current_sha256": "351acb21272c28d83e38e1943543267a13f20eddced76c0e55570a350a900f5f",
+      "reason": "Document the R-0023 runtime passes, the V-37 clean-checkout defect, and the remaining S-09 review boundary."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "f6c83c996c3d399b1c3ce437a6135fe82e85b3afe73ecd36a53a7687c07dc98a",
+      "current_sha256": "fa209ee2585f54851100676cb142399c2e0bc42810a021bbdd063d579a6bb8b7",
+      "reason": "Bind the exact registry status counts and V-35/V-36/V-37 identities."
+    },
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "90a08e80b02527be1a948ffa1aae1394d11d1209dc511800f40006e2b016b0d6",
+      "current_sha256": "f6b5b905c9e1bc11536feb663de613e2b61965c86cf6e8b5f7ec08f1c7864dee",
+      "reason": "Preserve R-0002 while recognizing the current forward registry counts."
+    },
+    "tests/test_v0_3_0_roadmap.py": {
+      "historical_sha256": "36ddd2a276f3c413f0814acebb86aae9332561dd12672a0bf5b67ea5a7c59f35",
+      "current_sha256": "7af871abe306acef37f431604bb34d50fd559b8820639369724614da4e0b897e",
+      "reason": "Account for V-37 inside the existing S-09 step without rewriting the confirmed roadmap."
+    },
+    "tests/test_v0_3_s07_r0018_import.py": {
+      "historical_sha256": "38d09f1330c18850085a32baaf7d1b102a3bad841e10539cb7bcc3b4ba618a26",
+      "current_sha256": "e49fcce334b67a1e1ddedec7a1939004333a1aab7ad84c0bdcdd7b369bb87959",
+      "reason": "Preserve the completed S-07 result while recognizing current forward registry counts."
+    },
+    "tests/test_v0_3_s08_commit_identity_corrections.py": {
+      "historical_sha256": "0b1ce3f059f6206bb15cfe164faf7b2c29d171811c9ffd2eba535857514d184f",
+      "current_sha256": "6c6aa5f272e57fc0bae64f26da0f9e4bbde6242aa931c5f5286ee105bcecae60",
+      "reason": "Preserve R-0021 while recognizing later S-09 status progression and V-37."
+    },
+    "tests/test_v0_3_s09_r0022_import.py": {
+      "historical_sha256": "5a916bf0323d4160556b981f7d8d6a79c62f6495a6c36adb4008809818623f7d",
+      "current_sha256": "464c9a6586d496ac07f1e0ade38c9ca8fe4972a235d9a86d68bac7d34472c6da",
+      "reason": "Preserve the R-0022 registration record while recognizing the reviewed forward status."
+    },
+    "tests/test_v0_3_s09_checkpoint_compatibility_rework_record.py": {
+      "historical_sha256": "16dd1a7b4396abcb4504597c41bc16797a3c93de1cd71de61ce6a5624194c91a",
+      "current_sha256": "62ffca94e7bf3ca722857f68ceeca342c9464f69123b82d614418b7abf6d6ee0",
+      "reason": "Preserve the runtime candidate record while recognizing the R-0023 adjudication."
+    },
+    "tests/test_v0_3_s09_r0023_candidate.py": {
+      "historical_sha256": "f1314dedd89a82b9e1e2e071ab538fd28053efa5a318b8cdb751bd8b86dd690c",
+      "current_sha256": "64067918f2d6dc4efe4f3c34d672cf290f12d2da39d3d37b9c820325b7395dd8",
+      "reason": "Preserve the pre-result candidate record while recognizing the imported review outcome."
+    }
+  },
+  "new_sources": [
+    "notes/PSSolver_v0_3_0_s03_successor_35_r0023_import.json",
+    "notes/PSSolver_v0_3_0_s03_successor_35_r0023_import_zh.md",
+    "tests/test_v0_3_s09_r0023_import.py"
+  ],
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "authorization": {
+    "local_import_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "release_authorized": false,
+    "HPCC_authorized": false,
+    "GPU_authorized": false,
+    "H100_authorized": false
+  },
+  "next_plan_step": "S-09",
+  "next_request": "R-0024"
+}

@@ -6,11 +6,11 @@
 `dev/0.3` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 41 条：
+当前共登记 42 条：
 
 - `open`：1；
-- `registered`：3；
-- `claimed_fixed`：0；
+- `registered`：2；
+- `claimed_fixed`：2；
 - `verified`：33；
 - `deferred`：2；
 - `accepted`：1；
@@ -77,6 +77,11 @@
     v2 bridge 的 API 版本为发布时的 `1.0`，并在读取张量前拒绝伪造或未来版本；`V-36`
     兼容 v0.2.x 对 rc1 偶数轴 Channel state-only 迁移使用的历史标签。两项登记为
     `registered`，均在 S-09 唯一 H100 作业前完成；A3-18 与 NEW-14 状态不变。
+15. `R-0023` 已独立验证 `V-35`、`V-36` 的运行时实现，二者在
+    `85ba3aef75548d549d9db453ca4a5ab604b17a9d` 推进为 `claimed_fixed`。复核同时发现
+    `V-37`：V-36 的两个 `.npy` payload 被全局 ignore 规则排除，导致干净 detached worktree
+    各有一个 fixture 测试失败。V-37 登记在 S-09，须提交精确 payload、增加 Git 跟踪守卫并在
+    干净 worktree 重跑两套完整测试；A3-18 与 NEW-14 状态不变。
 
 ## Control 路径
 

@@ -29,11 +29,11 @@
       "rewritten": false
     }
   },
-  "issue_count": 41,
+  "issue_count": 42,
   "status_counts": {
     "open": 1,
-    "registered": 3,
-    "claimed_fixed": 0,
+    "registered": 2,
+    "claimed_fixed": 2,
     "verified": 33,
     "deferred": 2,
     "accepted": 1,
@@ -665,9 +665,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
       "target_release": "0.3",
-      "notes": "S-09: require the frozen API literal 1.0 before reading tensors in rc1/rc2/rc3 legacy migration and v2 bridge validation, and record that constant rather than a source-controlled label. Reject 1.1, 0.1-provisional, and future literals."
+      "notes": "R-0023 independently verified the S-09 implementation at 85ba3ae: rc1/rc2/rc3 legacy migration and Periodic v2 bridge validation require the frozen API literal 1.0 before reading tensors, record that constant, and reject 1.1, 0.1-provisional and future literals. It remains claimed_fixed until the final S-09 rework review."
     },
     {
       "id": "V-36",
@@ -679,9 +680,24 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
+      "status": "claimed_fixed",
+      "fixed_in": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "target_release": "0.3",
+      "notes": "R-0023 independently verified the runtime behavior at 85ba3ae: the v0.2.x label pre_rc3_pressure_transpose_nyquist is accepted only as an equivalent historical spelling for rc1 even-axis state_only Channel records when every migration semantic matches. It remains claimed_fixed until the committed authentic fixture is repaired and reviewed."
+    },
+    {
+      "id": "V-37",
+      "title": "The V-36 fixture tensor payloads are ignored and absent from clean Git checkouts",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0023.result.json",
+      "first_found": "S-09 checkpoint compatibility rework review",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
       "status": "registered",
       "target_release": "0.3",
-      "notes": "S-09: recognize the v0.2.x migration label pre_rc3_pressure_transpose_nyquist as an equivalent historical spelling for rc1 even-axis state_only Channel records, with the same disposition as the current label and an authentic v0.2.2-migrated fixture gate."
+      "notes": "S-09: the two authentic v0.2.2-migrated rc1 even-axis Channel fixture payloads matched the manifest locally but were excluded by the global *.npy ignore rule. Commit the payloads with hashes 7fa17112... and e4ac9c1d..., require every manifest-listed fixture file to be Git-tracked, and rerun both full suites from clean detached worktrees before the only H100 job."
     }
   ],
   "authorization": {
