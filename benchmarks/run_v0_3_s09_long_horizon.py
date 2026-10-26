@@ -128,6 +128,7 @@ def _parent(args: argparse.Namespace) -> int:
             [
                 str(args.python.expanduser().absolute()), str(script),
                 "--internal-child", "--case", case, "--storage", storage,
+                "--device", args.device, "--horizon", str(args.horizon),
                 "--output", str(output),
             ],
             cwd=root,
