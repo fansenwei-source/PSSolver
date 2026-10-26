@@ -5,7 +5,7 @@
 ## 绑定身份
 
 - Provider 运行时资格源：`85ba3aef75548d549d9db453ca4a5ab604b17a9d`
-- Provider qualification-support 源：`9dd83cf2bec1a01bde5fc4e7b5e3a4afbd1ad3ad`
+- Provider qualification-support 源：`c66fd9ededb62950b601e3f9ddf038a54c37bbf7`
 - Consumer 稳定基线：`208edd03e6b26a0e788c07d295fddd7a67237189`
 - Consumer migration：`48dd4d3a9a101f8b24d8311c57ed67fab46ceea0`
 - Consumer evidence：`97d3c06450c4a7a6d72e0fe07a7a157ef095c133`
@@ -13,7 +13,7 @@
 - Provider candidate wheel：`4003645025da6d81317eeb7261ccf606aef7f60f20d072518f8baacf56cd4aa8`
 - Consumer candidate wheel：`f7ae4c1f5f3c73e0be540b5e4ec5e05a9eef662867a149325462835820ae94ef`
 - Provider source archive：`bff21905eb7d4c5e8313b10c871f40d8b96b411975260fdb0edb75b16a99a3b9`
-- non-shadowing Provider support archive：`TO_BE_BOUND_AFTER_R0024_SUPPORT_COMMIT`
+- non-shadowing Provider support archive：`87e0fa9614822e03a7b1850519cd6811babed1c999e50e234e1734e5bb46e7b9`
 - Consumer source archive：`02f3e8249bc02cbb0484636d9f8bf46cc8a6815d90e13f8286f7aaf8291157fd`
 - Consumer support archive：`2243f14cbdad1a58cb8a1ff73e2bb550752d97f5edf2190302005d9d69ff66a1`
 - 冻结 H100 plan SHA-256：`d123e8cf6e529e4780d8be49478628c4e1553d655ae244acf9860845cd65f55e`
