@@ -4,6 +4,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s09_ap_cache_diagnostic_r0028_candidate.json"
@@ -50,7 +52,8 @@ def test_r0028_support_hashes_match_checked_in_files() -> None:
         / "notes/PSSolver_v0_3_0_s09_ap_cache_diagnostic_authorization_draft_zh.md",
     }
     assert {name: _sha256(path) for name, path in paths.items()} == {
-        name: hashes[name] for name in paths
+        name: resolve_s03_successor(str(paths[name].relative_to(ROOT)), hashes[name])
+        for name in paths
     }
 
 
