@@ -105,87 +105,87 @@
     }
   ],
   "deployment": {
-    "control_root": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1",
+    "control_root": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2",
     "created_directories": [
       {
         "created": "before submission",
         "disposition": "retain as the immutable control and provenance archive",
-        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1"
+        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2"
       },
       {
         "created": "before submission",
         "disposition": "retain inside the control archive",
-        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts"
+        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts"
       },
       {
         "created": "before submission",
         "disposition": "retain inside the control archive",
-        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/provider_85ba3ae"
+        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/provider_85ba3ae"
       },
       {
         "created": "before submission",
         "disposition": "retain inside the control archive",
-        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/provider_support"
+        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/provider_support"
       },
       {
         "created": "before submission",
         "disposition": "retain inside the control archive",
-        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/consumer_support"
+        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/consumer_support"
       },
       {
         "created": "before submission",
         "disposition": "retain inside the control archive",
-        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/jobs"
+        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/jobs"
       },
       {
         "created": "before submission",
         "disposition": "retain inside the control archive",
-        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/logs"
+        "path": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/logs"
       },
       {
         "created": "before submission",
         "disposition": "delete only after evidence retrieval and checksum verification; record each deletion in control-root PRUNED.txt",
-        "path": "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_baseline"
+        "path": "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_baseline"
       },
       {
         "created": "before submission",
         "disposition": "delete only after evidence retrieval and checksum verification; record each deletion in control-root PRUNED.txt",
-        "path": "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_candidate"
+        "path": "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_candidate"
       },
       {
         "created": "before submission",
         "disposition": "delete only after evidence retrieval and checksum verification; record each deletion in control-root PRUNED.txt",
-        "path": "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_consumer"
+        "path": "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_consumer"
       },
       {
         "created": "inside the allocated job after all initial-absence checks",
         "disposition": "retain as the checksummed scratch evidence archive",
-        "path": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1"
+        "path": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2"
       },
       {
         "created": "inside the allocated job",
         "disposition": "retain as part of the checksummed scratch evidence",
-        "path": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/results"
+        "path": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/results"
       },
       {
         "created": "inside the allocated job",
         "disposition": "retain as part of the checksummed scratch evidence",
-        "path": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/logs"
+        "path": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/logs"
       },
       {
         "created": "inside the allocated job",
         "disposition": "retain as part of the checksummed scratch evidence",
-        "path": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/compiler_preflight"
+        "path": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/compiler_preflight"
       },
       {
         "created": "inside the allocated job",
         "disposition": "retain as part of the checksummed scratch evidence",
-        "path": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/long_horizon_cases"
+        "path": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/long_horizon_cases"
       },
       {
         "created": "inside the allocated job",
         "disposition": "retain as part of the checksummed scratch evidence",
-        "path": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/profile_matrix"
+        "path": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/profile_matrix"
       },
       {
         "created": "inside the allocated job",
@@ -193,39 +193,39 @@
         "path": "/tmp/pssolver_v03_s09_${SLURM_JOB_ID}"
       }
     ],
-    "output_root": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1",
+    "output_root": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2",
     "output_root_must_initially_not_exist": true,
     "pre_submission_commands": [
-      "test ! -e /scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1",
-      "mkdir -p /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/logs"
+      "test ! -e /scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2",
+      "mkdir -p /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/logs"
     ],
     "python_environment_commands": [
-      "test ! -e /scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_baseline",
-      "/home/fansenwei/miniconda3/envs/Nematics3D/bin/python -m venv --system-site-packages /scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_baseline",
-      "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_baseline/bin/python -m pip install --no-deps --no-cache-dir /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.2.2-py3-none-any.whl",
-      "test ! -e /scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_candidate",
-      "/home/fansenwei/miniconda3/envs/Nematics3D/bin/python -m venv --system-site-packages /scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_candidate",
-      "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_candidate/bin/python -m pip install --no-deps --no-cache-dir /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl",
-      "test ! -e /scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_consumer",
-      "/home/fansenwei/miniconda3/envs/Nematics3D/bin/python -m venv --system-site-packages /scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_consumer",
-      "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_consumer/bin/python -m pip install --no-deps --no-cache-dir /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver_control-0.0.1.dev0-py3-none-any.whl"
+      "test ! -e /scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_baseline",
+      "/home/fansenwei/miniconda3/envs/Nematics3D/bin/python -m venv --system-site-packages /scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_baseline",
+      "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_baseline/bin/python -m pip install --no-deps --no-cache-dir /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver-0.2.2-py3-none-any.whl",
+      "test ! -e /scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_candidate",
+      "/home/fansenwei/miniconda3/envs/Nematics3D/bin/python -m venv --system-site-packages /scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_candidate",
+      "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_candidate/bin/python -m pip install --no-deps --no-cache-dir /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl",
+      "test ! -e /scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_consumer",
+      "/home/fansenwei/miniconda3/envs/Nematics3D/bin/python -m venv --system-site-packages /scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_consumer",
+      "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_consumer/bin/python -m pip install --no-deps --no-cache-dir /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver_control-0.0.1.dev0-py3-none-any.whl"
     ],
     "python_environment_construction": "create each scratch environment with the pinned base interpreter using -m venv --system-site-packages, then install the exact role-specific wheel set with --no-deps --no-cache-dir; import-origin, sys.prefix, purelib, RECORD and source-shadow gates enforce identity",
     "python_environment_source": "/home/fansenwei/miniconda3/envs/Nematics3D",
-    "sbatch_command": "sbatch --export=ALL,S09_BASELINE_PYTHON,S09_CANDIDATE_PYTHON,S09_CONSUMER_PYTHON,S09_BASELINE_WHEEL,S09_CANDIDATE_WHEEL,S09_CONSUMER_WHEEL,S09_PROVIDER_SUPPORT,S09_CONSUMER_SUPPORT,S09_PROVIDER_REFERENCE,S09_CONTROL_ROOT,S09_OUTPUT_ROOT /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/jobs/v0_3_s09_single_h100.sbatch",
-    "upload_root": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1",
+    "sbatch_command": "sbatch --export=ALL,S09_BASELINE_PYTHON,S09_CANDIDATE_PYTHON,S09_CONSUMER_PYTHON,S09_BASELINE_WHEEL,S09_CANDIDATE_WHEEL,S09_CONSUMER_WHEEL,S09_PROVIDER_SUPPORT,S09_CONSUMER_SUPPORT,S09_PROVIDER_REFERENCE,S09_CONTROL_ROOT,S09_OUTPUT_ROOT /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/jobs/v0_3_s09_single_h100.sbatch",
+    "upload_root": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2",
     "variables": {
-      "S09_BASELINE_PYTHON": "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_baseline/bin/python",
-      "S09_BASELINE_WHEEL": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.2.2-py3-none-any.whl",
-      "S09_CANDIDATE_PYTHON": "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_candidate/bin/python",
-      "S09_CANDIDATE_WHEEL": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl",
-      "S09_CONSUMER_PYTHON": "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_consumer/bin/python",
-      "S09_CONSUMER_SUPPORT": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/consumer_support",
-      "S09_CONSUMER_WHEEL": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver_control-0.0.1.dev0-py3-none-any.whl",
-      "S09_CONTROL_ROOT": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1",
-      "S09_OUTPUT_ROOT": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1",
-      "S09_PROVIDER_REFERENCE": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/provider_85ba3ae",
-      "S09_PROVIDER_SUPPORT": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/provider_support"
+      "S09_BASELINE_PYTHON": "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_baseline/bin/python",
+      "S09_BASELINE_WHEEL": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver-0.2.2-py3-none-any.whl",
+      "S09_CANDIDATE_PYTHON": "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_candidate/bin/python",
+      "S09_CANDIDATE_WHEEL": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl",
+      "S09_CONSUMER_PYTHON": "/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_consumer/bin/python",
+      "S09_CONSUMER_SUPPORT": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/consumer_support",
+      "S09_CONSUMER_WHEEL": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver_control-0.0.1.dev0-py3-none-any.whl",
+      "S09_CONTROL_ROOT": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2",
+      "S09_OUTPUT_ROOT": "/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2",
+      "S09_PROVIDER_REFERENCE": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/provider_85ba3ae",
+      "S09_PROVIDER_SUPPORT": "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/provider_support"
     }
   },
   "diagnosis": {

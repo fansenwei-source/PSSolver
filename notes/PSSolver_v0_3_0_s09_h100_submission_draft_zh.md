@@ -1,11 +1,11 @@
-# PSSolver v0.3 S-09 single-H100 提交授权草稿（待 R-0024 复核）
+# PSSolver v0.3 S-09 recovery_v2 single-H100 提交授权草稿（待 R-0026 复核）
 
-本文件不是授权，也不表示已经提交 H100。只有 R-0024 返回 PASS 后，才能依据 D-0009 把下列内容转成给用户的一键授权文本。
+本文件不是授权，也不表示已经提交 H100。只有 R-0026 返回 PASS 后，才能依据 D-0009 把下列内容转成给用户的一键授权文本。
 
 ## 绑定身份
 
 - Provider 运行时资格源：`85ba3aef75548d549d9db453ca4a5ab604b17a9d`
-- Provider qualification-support 源：`c66fd9ededb62950b601e3f9ddf038a54c37bbf7`
+- Provider qualification-support 源：`PENDING_R0026_SUPPORT_COMMIT`
 - Consumer 稳定基线：`208edd03e6b26a0e788c07d295fddd7a67237189`
 - Consumer migration：`48dd4d3a9a101f8b24d8311c57ed67fab46ceea0`
 - Consumer evidence：`97d3c06450c4a7a6d72e0fe07a7a157ef095c133`
@@ -13,11 +13,11 @@
 - Provider candidate wheel：`4003645025da6d81317eeb7261ccf606aef7f60f20d072518f8baacf56cd4aa8`
 - Consumer candidate wheel：`f7ae4c1f5f3c73e0be540b5e4ec5e05a9eef662867a149325462835820ae94ef`
 - Provider source archive：`bff21905eb7d4c5e8313b10c871f40d8b96b411975260fdb0edb75b16a99a3b9`
-- non-shadowing Provider support archive：`87e0fa9614822e03a7b1850519cd6811babed1c999e50e234e1734e5bb46e7b9`
+- non-shadowing Provider support archive：`PENDING_R0026_SUPPORT_ARCHIVE_SHA256`
 - Consumer source archive：`02f3e8249bc02cbb0484636d9f8bf46cc8a6815d90e13f8286f7aaf8291157fd`
 - Consumer support archive：`2243f14cbdad1a58cb8a1ff73e2bb550752d97f5edf2190302005d9d69ff66a1`
-- 冻结 H100 plan SHA-256：`d123e8cf6e529e4780d8be49478628c4e1553d655ae244acf9860845cd65f55e`
-- Slurm script SHA-256：`34ed9a7e6d43acdcaa344218b396e71a439ca21da7b9073843eb1b7587fde855`
+- 冻结 H100 plan SHA-256：`PENDING_R0026_PLAN_SHA256`
+- Slurm script SHA-256：`PENDING_R0026_JOB_SHA256`
 
 Provider support archive 从上述 support 源的 `benchmarks/`、`jobs/`、`tests/` 和
 `notes/` 构建，但明确排除本授权草稿自身，避免 archive 哈希与草稿内哈希形成自引用；
@@ -27,36 +27,43 @@ archive 不含 `pssolver/`，不能遮蔽 installed wheel。
 
 全部上传输入、只读 archive、wheel、support tree、job script、日志和最终控制证据放在：
 
-`/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1`
+`/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2`
 
 `S09_OUTPUT_ROOT` 固定为下列路径，而且在提交前必须不存在：
 
-`/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1`
+`/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2`
+
+上传前控制目录必须不存在。上传后、创建 venv 前，必须在 HPCC 登录节点重新计算并核对
+本节绑定的全部 wheel、源码 archive、support archive、plan 和 job script SHA-256；任一不符立即
+停止，不得创建 venv 或提交作业。`provider_85ba3ae/`、`provider_support/` 和
+`consumer_support/` 只能从已核对哈希的 tar 包解出；Provider 源码 archive 解包时去掉单层
+`provider/` 前缀。解包后必须确认两个 support 目录都不含 `pssolver/` 或
+`pssolver_control/` 包目录。
 
 HPCC 的 `/home` 与 `/scratch1` 是不同挂载点，禁止跨挂载使用 hard-link clone。三个
 installed-wheel 环境必须按 rc5/rc6 已验证的方式，用固定基线解释器创建：
 
 ```bash
 BASE_ENV=/home/fansenwei/miniconda3/envs/Nematics3D
-BASELINE_ENV=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_baseline
-CANDIDATE_ENV=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_candidate
-CONSUMER_ENV=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_consumer
+BASELINE_ENV=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_baseline
+CANDIDATE_ENV=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_candidate
+CONSUMER_ENV=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_consumer
 
 test ! -e "${BASELINE_ENV}"
 "${BASE_ENV}/bin/python" -m venv --system-site-packages "${BASELINE_ENV}"
 "${BASELINE_ENV}/bin/python" -m pip install --no-deps --no-cache-dir \
-  /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.2.2-py3-none-any.whl
+  /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver-0.2.2-py3-none-any.whl
 
 test ! -e "${CANDIDATE_ENV}"
 "${BASE_ENV}/bin/python" -m venv --system-site-packages "${CANDIDATE_ENV}"
 "${CANDIDATE_ENV}/bin/python" -m pip install --no-deps --no-cache-dir \
-  /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl
+  /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl
 
 test ! -e "${CONSUMER_ENV}"
 "${BASE_ENV}/bin/python" -m venv --system-site-packages "${CONSUMER_ENV}"
 "${CONSUMER_ENV}/bin/python" -m pip install --no-deps --no-cache-dir \
-  /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl \
-  /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver_control-0.0.1.dev0-py3-none-any.whl
+  /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl \
+  /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver_control-0.0.1.dev0-py3-none-any.whl
 ```
 
 三个环境不得包含 editable install。资格 helper 必须用 `sys.prefix`、purelib、导入来源、
@@ -64,40 +71,46 @@ wheel `RECORD` 摘要、`pip check` 和 source-shadow audit 共同把关，不�
 固定变量如下：
 
 ```text
-S09_BASELINE_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_baseline/bin/python
-S09_CANDIDATE_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_candidate/bin/python
-S09_CONSUMER_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_consumer/bin/python
-S09_BASELINE_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.2.2-py3-none-any.whl
-S09_CANDIDATE_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl
-S09_CONSUMER_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver_control-0.0.1.dev0-py3-none-any.whl
-S09_PROVIDER_SUPPORT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/provider_support
-S09_CONSUMER_SUPPORT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/consumer_support
-S09_PROVIDER_REFERENCE=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/provider_85ba3ae
-S09_CONTROL_ROOT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1
-S09_OUTPUT_ROOT=/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1
+S09_BASELINE_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_baseline/bin/python
+S09_CANDIDATE_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_candidate/bin/python
+S09_CONSUMER_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_consumer/bin/python
+S09_BASELINE_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver-0.2.2-py3-none-any.whl
+S09_CANDIDATE_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl
+S09_CONSUMER_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver_control-0.0.1.dev0-py3-none-any.whl
+S09_PROVIDER_SUPPORT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/provider_support
+S09_CONSUMER_SUPPORT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/consumer_support
+S09_PROVIDER_REFERENCE=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/provider_85ba3ae
+S09_CONTROL_ROOT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2
+S09_OUTPUT_ROOT=/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2
 ```
 
 三个环境均须记录基线解释器来源与 venv 创建命令、Python 3.10.18、PyTorch 2.5.1+cu121、CUDA runtime 12.1、NumPy 1.22.3、SciPy 1.8.1、`sys.path`、导入路径、wheel/RECORD 摘要、`pip check` 和 source-shadow 判定。
+在 `sbatch` 前，还必须分别用三个 venv 的 `python -I` 独立确认 `pssolver`（Consumer 环境还包括
+`pssolver_control`）的 `__file__` 位于该 venv 自己的 `site-packages`，版本与角色相符，
+`pip check` 通过，并把每个 wheel 的 RECORD 路径、SHA-256 和条目数持久化。任何一项失败都不得
+提交作业。
 
 ## 提交前目录与完整 sbatch 命令
 
 提交前必须保证 `S09_OUTPUT_ROOT` 原本不存在，并先建立 Slurm stdout/stderr 使用的日志目录：
 
 ```bash
-export S09_BASELINE_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_baseline/bin/python
-export S09_CANDIDATE_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_candidate/bin/python
-export S09_CONSUMER_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_consumer/bin/python
-export S09_BASELINE_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.2.2-py3-none-any.whl
-export S09_CANDIDATE_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl
-export S09_CONSUMER_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver_control-0.0.1.dev0-py3-none-any.whl
-export S09_PROVIDER_SUPPORT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/provider_support
-export S09_CONSUMER_SUPPORT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/consumer_support
-export S09_PROVIDER_REFERENCE=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/provider_85ba3ae
-export S09_CONTROL_ROOT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1
-export S09_OUTPUT_ROOT=/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1
+export S09_BASELINE_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_baseline/bin/python
+export S09_CANDIDATE_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_candidate/bin/python
+export S09_CONSUMER_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_consumer/bin/python
+export S09_BASELINE_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver-0.2.2-py3-none-any.whl
+export S09_CANDIDATE_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl
+export S09_CONSUMER_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/artifacts/pssolver_control-0.0.1.dev0-py3-none-any.whl
+export S09_PROVIDER_SUPPORT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/provider_support
+export S09_CONSUMER_SUPPORT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/consumer_support
+export S09_PROVIDER_REFERENCE=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2/provider_85ba3ae
+export S09_CONTROL_ROOT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2
+export S09_OUTPUT_ROOT=/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2
 
 test ! -e "${S09_OUTPUT_ROOT}"
 mkdir -p "${S09_CONTROL_ROOT}/logs"
+
+# 在登录节点原样重放 job script 开头的全部 test 检查；任一失败不得调用 sbatch。
 
 sbatch --export=ALL,S09_BASELINE_PYTHON,S09_CANDIDATE_PYTHON,S09_CONSUMER_PYTHON,S09_BASELINE_WHEEL,S09_CANDIDATE_WHEEL,S09_CONSUMER_WHEEL,S09_PROVIDER_SUPPORT,S09_CONSUMER_SUPPORT,S09_PROVIDER_REFERENCE,S09_CONTROL_ROOT,S09_OUTPUT_ROOT \
   "${S09_CONTROL_ROOT}/jobs/v0_3_s09_single_h100.sbatch"
@@ -107,13 +120,13 @@ sbatch --export=ALL,S09_BASELINE_PYTHON,S09_CANDIDATE_PYTHON,S09_CONSUMER_PYTHON
 
 ## HPCC 新建目录及处置
 
-- `/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1`：控制归档；永久保留。
+- `/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2`：控制归档；永久保留。
 - 控制归档下的 `artifacts/`、`provider_85ba3ae/`、`provider_support/`、
   `consumer_support/`、`jobs/`、`logs/`：提交前创建；与控制归档一起保留。
-- `/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_baseline`、
+- `/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_r0026_baseline`、
   `..._candidate`、`..._consumer`：提交前创建；证据取回并完成 checksum 复核后删除，删除结果写入
   控制归档的 `PRUNED.txt`。
-- `/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1`：
+- `/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2`：
   作业在确认原本不存在后创建；作为 checksummed scratch 证据保留。其 `results/`、`logs/`、
   `compiler_preflight/`、`long_horizon_cases/`、`profile_matrix/` 及 profile matrix 动态子目录均随
   scratch 证据保留。
@@ -122,6 +135,8 @@ sbatch --export=ALL,S09_BASELINE_PYTHON,S09_CANDIDATE_PYTHON,S09_CONSUMER_PYTHON
 
 证据取回只复制归档，不改写原文件；先验证控制归档和 scratch 清单，再删除三个 scratch venv。
 失败也必须保留控制日志与已经持久化的 scratch 证据，且不得写成功 `COMPLETE`。
+HPCC 写入和唯一一次 Slurm 提交必须分别按 D-0008 写入 action 记录；上一轮 A-0030 至 A-0032
+遗漏三条附加授权条件的事实已经由 A-0033 更正，后续 action 必须引用完整授权原文。
 
 ## 拟授权范围
 

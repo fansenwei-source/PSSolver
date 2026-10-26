@@ -46,17 +46,17 @@ CONSUMER_WHEEL_SHA256 = (
 )
 
 H100_CONTROL_ROOT = (
-    "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1"
+    "/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2"
 )
 H100_OUTPUT_ROOT = (
     "/scratch1/vincent/PSSolver/"
-    "data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1"
+    "data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261026_recovery_v2"
 )
 H100_VENV_ROOT = "/scratch1/vincent/PSSolver/venvs"
 H100_BASE_ENV = "/home/fansenwei/miniconda3/envs/Nematics3D"
-H100_BASELINE_ENV = f"{H100_VENV_ROOT}/pssolver_v03_s09_85ba3ae_baseline"
-H100_CANDIDATE_ENV = f"{H100_VENV_ROOT}/pssolver_v03_s09_85ba3ae_candidate"
-H100_CONSUMER_ENV = f"{H100_VENV_ROOT}/pssolver_v03_s09_85ba3ae_consumer"
+H100_BASELINE_ENV = f"{H100_VENV_ROOT}/pssolver_v03_s09_r0026_baseline"
+H100_CANDIDATE_ENV = f"{H100_VENV_ROOT}/pssolver_v03_s09_r0026_candidate"
+H100_CONSUMER_ENV = f"{H100_VENV_ROOT}/pssolver_v03_s09_r0026_consumer"
 
 CUDA_ONLY_NODE_IDS = (
     "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
