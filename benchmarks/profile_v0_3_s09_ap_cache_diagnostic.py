@@ -24,6 +24,7 @@ if not __package__:
 
 from benchmarks import profile_rc458_runtime_family as frozen
 from benchmarks.plan_v0_3_s09_ap_cache_diagnostic import ROLES
+from benchmarks.v0_3_s09_revert_pressure_proxy import use_revert_pressure_proxy
 from pssolver.linear_solvers.stokes.channel_no_slip import (
     ChannelNoSlipModalStokesSolver,
 )
@@ -227,14 +228,17 @@ def run_diagnostic(
     expected_provider_role = "baseline" if diagnostic_role == "baseline" else "candidate"
     if config.provider_role != expected_provider_role:
         raise ValueError("diagnostic role and provider role disagree")
-    with disable_operator_action_cache(diagnostic_role) as proof:
+    with use_revert_pressure_proxy(diagnostic_role) as proof:
         result = (
             frozen.run_profile(config)
             if config.device == "cuda"
             else _run_cpu_rehearsal(config)
         )
-    if diagnostic_role == "candidate_cache_off" and not proof["proved_disabled"]:
-        raise RuntimeError(f"A-p cache disable proof failed: {proof!r}")
+    if (
+        diagnostic_role == "candidate_revert_proxy"
+        and not proof["proved_revert_proxy"]
+    ):
+        raise RuntimeError(f"f94b9be revert-proxy proof failed: {proof!r}")
     result = dict(result)
     result.update(
         {

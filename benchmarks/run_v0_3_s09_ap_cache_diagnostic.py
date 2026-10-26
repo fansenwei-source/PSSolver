@@ -131,10 +131,11 @@ def execute(
         raise ValueError("diagnostic plan must contain exactly 72 profiles")
     child = support_root / "benchmarks/run_v0_3_s09_ap_cache_diagnostic_child.py"
     profile = support_root / "benchmarks/profile_v0_3_s09_ap_cache_diagnostic.py"
+    revert_proxy = support_root / "benchmarks/v0_3_s09_revert_pressure_proxy.py"
     for python in (baseline_python, candidate_python):
         if not python.is_file():
             raise FileNotFoundError(f"working venv Python required: {python}")
-    for path in (child, profile):
+    for path in (child, profile, revert_proxy):
         if not path.is_file() or path.is_symlink():
             raise FileNotFoundError(f"regular diagnostic support file required: {path}")
 
@@ -149,7 +150,7 @@ def execute(
         "support_root": str(support_root),
         "support_files": {
             str(path.relative_to(support_root)): _sha256(path)
-            for path in (child, profile)
+            for path in (child, profile, revert_proxy)
         },
     }
     _atomic_replace_json(output_root / "environment.json", environment)
@@ -216,8 +217,11 @@ def execute(
         result = json.loads(output.read_text(encoding="utf-8"))
         if result.get("diagnostic_role") != role or result.get("finite") is not True:
             raise RuntimeError(f"invalid diagnostic result for {key}")
-        if role == "candidate_cache_off" and not result["cache_control"]["proved_disabled"]:
-            raise RuntimeError(f"cache disable proof missing for {key}")
+        if (
+            role == "candidate_revert_proxy"
+            and not result["cache_control"]["proved_revert_proxy"]
+        ):
+            raise RuntimeError(f"revert-proxy proof missing for {key}")
         completed_rows.append(
             {
                 "sequence": expected_sequence,

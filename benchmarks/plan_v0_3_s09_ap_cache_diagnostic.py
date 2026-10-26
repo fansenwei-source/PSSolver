@@ -9,13 +9,14 @@ by V-41.  It deliberately has no qualification verdict or promotion authority.
 from __future__ import annotations
 
 import argparse
+import itertools
 import json
 import os
 from pathlib import Path
 
 
 SCHEMA = "pssolver.v0_3.s09.ap_cache_diagnostic_plan.v1"
-CLASSIFICATION = "READY_S09_AP_CACHE_DIAGNOSTIC_FOR_R0028_REVIEW"
+CLASSIFICATION = "READY_S09_AP_REVERT_PROXY_DIAGNOSTIC_FOR_R0029_REVIEW"
 
 BASELINE_COMMIT = "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70"
 BASELINE_WHEEL_SHA256 = (
@@ -26,7 +27,8 @@ CANDIDATE_WHEEL_SHA256 = (
     "4003645025da6d81317eeb7261ccf606aef7f60f20d072518f8baacf56cd4aa8"
 )
 
-ROLES = ("baseline", "candidate_cache_on", "candidate_cache_off")
+ROLES = ("baseline", "candidate_cache_on", "candidate_revert_proxy")
+ROLE_ORDERS = tuple(itertools.permutations(ROLES))
 FAMILIES = ("channel_legacy", "channel_compiled_v2")
 H100_GRIDS = {
     "channel_R128x20x20": {
@@ -51,8 +53,9 @@ CPU_REHEARSAL_GRIDS = {
 
 
 def _role_order(trial: int) -> tuple[str, str, str]:
-    offset = (trial - 1) % len(ROLES)
-    return ROLES[offset:] + ROLES[:offset]
+    if trial not in range(1, 7):
+        raise ValueError("trial must be in 1..6")
+    return ROLE_ORDERS[trial - 1]
 
 
 def build_profile_matrix(*, mode: str = "h100") -> list[dict[str, object]]:
@@ -105,8 +108,8 @@ def build_profile_matrix(*, mode: str = "h100") -> list[dict[str, object]]:
                             "isolated_empty_triton_cache": True,
                             "isolated_empty_torchinductor_cache": True,
                             "cache_mode": (
-                                "diagnostic_harness_disabled"
-                                if role == "candidate_cache_off"
+                                "f94b9be_revert_proxy"
+                                if role == "candidate_revert_proxy"
                                 else "runtime_default"
                             ),
                         }
@@ -122,7 +125,7 @@ def build_plan(*, mode: str = "h100") -> dict[str, object]:
         "classification": CLASSIFICATION,
         "plan_step": "S-09",
         "decision": "D-0012",
-        "review_request": "R-0028",
+        "review_request": "R-0029",
         "mode": mode,
         "diagnostic_only": True,
         "qualification_complete": False,
@@ -131,7 +134,8 @@ def build_plan(*, mode: str = "h100") -> dict[str, object]:
         "changes_frozen_plan_or_thresholds": False,
         "purpose": (
             "Measure timing and peak CUDA memory with the candidate Channel "
-            "A-p warm-start cache enabled and disabled before deciding V-41."
+            "the candidate and an exact f94b9be pressure-solve revert proxy "
+            "before deciding V-41."
         ),
         "identities": {
             "baseline_commit": BASELINE_COMMIT,
@@ -147,7 +151,9 @@ def build_plan(*, mode: str = "h100") -> dict[str, object]:
             "profiles": 72,
             "formal_samples_per_profile": 60,
             "all_samples_retained": True,
-            "balanced_cyclic_role_order": True,
+            "all_six_role_permutations": True,
+            "each_pair_precedes_three_times_each_way": True,
+            "each_role_occupies_each_position_twice": True,
             "independent_profile_subprocesses": True,
             "empty_compile_cache_per_profile": True,
             "frozen_reference_thresholds_reported_not_adjudicated": {
@@ -156,14 +162,29 @@ def build_plan(*, mode: str = "h100") -> dict[str, object]:
                 "peak_memory_ratio": 1.03,
             },
         },
-        "cache_off_contract": {
+        "revert_proxy_contract": {
             "implemented_only_in_diagnostic_harness": True,
             "runtime_and_wheel_unchanged": True,
-            "cached_operator_action_lookup_always_misses": True,
-            "operator_action_is_never_stored": True,
+            "historical_commit": "f94b9be22fd767fee432caf30f0e5c47aad8e9c3",
+            "historical_source_path": "pssolver/linear_solvers/stokes/channel_no_slip.py",
+            "historical_source_file_sha256": "c539275fa2a4992d67aeadd0ddfac3bebd53d73bf6af478a3f93d963d54d4bf4",
+            "historical_method_sha256": "2ffb5673ebdb92525b8959ee014aa3178b91cdf37789bdbd03d3cf2a5654e8f3",
+            "compiled_in_candidate_module_namespace": True,
             "pressure_warm_start_remains_enabled": True,
-            "proof_requires_suppressed_store_and_lookup_counts": True,
-            "proof_requires_cache_fields_none_after_every_store": True,
+            "proof_requires_exact_method_sha256": True,
+            "proof_requires_cache_fields_none_after_every_call": True,
+        },
+        "auxiliary_cuda_memory_snapshots": {
+            "timed_profile_statistics_affected": False,
+            "family": "channel_legacy",
+            "grid": "channel_R512x40x40",
+            "roles": ["candidate_cache_on", "candidate_revert_proxy"],
+            "runs_per_role": 1,
+            "api": [
+                "torch.cuda.memory._record_memory_history",
+                "torch.cuda.memory._dump_snapshot",
+            ],
+            "cpu_rehearsal": "exercise_flow_and_skip_snapshot",
         },
         "profiles": build_profile_matrix(mode=mode),
     }

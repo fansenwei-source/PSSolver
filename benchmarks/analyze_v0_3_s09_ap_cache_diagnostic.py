@@ -10,9 +10,11 @@ import os
 from pathlib import Path
 import statistics
 
+from benchmarks.analyze_v0_3_s09_h100 import _profile_center
+
 
 SCHEMA = "pssolver.v0_3.s09.ap_cache_diagnostic_analysis.v1"
-ROLES = ("baseline", "candidate_cache_on", "candidate_cache_off")
+ROLES = ("baseline", "candidate_cache_on", "candidate_revert_proxy")
 
 
 def _atomic_json(path: Path, value: object) -> None:
@@ -56,8 +58,8 @@ def _ratio_summary(
     for trial in range(1, 7):
         baseline = by_trial_reference[trial]
         candidate = by_trial_observed[trial]
-        ratio = _positive_number(candidate["mean"], "candidate mean") / _positive_number(
-            baseline["mean"], "baseline mean"
+        ratio = _positive_number(candidate["center"], "candidate profile center") / _positive_number(
+            baseline["center"], "baseline profile center"
         )
         trial_ratios.append(ratio)
         if int(baseline["position"]) < int(candidate["position"]):
@@ -108,6 +110,8 @@ def analyze(manifest_path: Path) -> dict[str, object]:
     entries = manifest.get("profiles")
     if not isinstance(entries, list) or len(entries) != 72:
         raise ValueError("complete 72-profile matrix manifest required")
+    plan = json.loads(Path(manifest["plan"]).read_text(encoding="utf-8"))
+    plan_rows = {str(item["key"]): item for item in plan["profiles"]}
     rows: list[dict[str, object]] = []
     for entry in entries:
         result_path = Path(str(entry["result"]))
@@ -117,6 +121,10 @@ def analyze(manifest_path: Path) -> dict[str, object]:
             _positive_number(value, "timing sample")
             for value in result["timing"]["samples_seconds"]
         ]
+        plan_row = plan_rows[str(entry["key"])]
+        block_size = plan_row["fixed_block_size"]
+        if block_size is None:
+            block_size = 1
         rows.append(
             {
                 "key": entry["key"],
@@ -124,15 +132,10 @@ def analyze(manifest_path: Path) -> dict[str, object]:
                 "family": config["family"],
                 "grid": str(entry["key"]).split(f"{config['family']}_", 1)[1].rsplit("_trial", 1)[0],
                 "trial": int(config["trial"]),
-                "position": int(
-                    next(
-                        item["order_position"]
-                        for item in json.loads(Path(manifest["plan"]).read_text(encoding="utf-8"))["profiles"]
-                        if item["key"] == entry["key"]
-                    )
-                ),
+                "position": int(plan_row["order_position"]),
                 "samples": samples,
                 "mean": statistics.fmean(samples),
+                "center": _profile_center(samples, int(block_size)),
                 "peak_allocated": int(result["memory"]["peak_allocated_bytes"]),
                 "peak_reserved": int(result["memory"]["peak_reserved_bytes"]),
                 "initial_state_sha256": result["initial_state_sha256"],
@@ -141,7 +144,6 @@ def analyze(manifest_path: Path) -> dict[str, object]:
                 "finite": result["finite"],
             }
         )
-    plan = json.loads(Path(manifest["plan"]).read_text(encoding="utf-8"))
     groups: list[dict[str, object]] = []
     for family in ("channel_legacy", "channel_compiled_v2"):
         for grid in ("channel_R128x20x20", "channel_R512x40x40"):
@@ -155,12 +157,12 @@ def analyze(manifest_path: Path) -> dict[str, object]:
             state_pairs = []
             for trial in range(1, 7):
                 on = next(row for row in roles["candidate_cache_on"] if row["trial"] == trial)
-                off = next(row for row in roles["candidate_cache_off"] if row["trial"] == trial)
+                proxy = next(row for row in roles["candidate_revert_proxy"] if row["trial"] == trial)
                 state_pairs.append(
                     {
                         "trial": trial,
-                        "initial_equal": on["initial_state_sha256"] == off["initial_state_sha256"],
-                        "final_equal": on["final_state_sha256"] == off["final_state_sha256"],
+                        "initial_equal": on["initial_state_sha256"] == proxy["initial_state_sha256"],
+                        "final_equal": on["final_state_sha256"] == proxy["final_state_sha256"],
                     }
                 )
             groups.append(
@@ -170,22 +172,25 @@ def analyze(manifest_path: Path) -> dict[str, object]:
                     "cache_on_vs_baseline": _ratio_summary(
                         roles["baseline"], roles["candidate_cache_on"]
                     ),
-                    "cache_off_vs_baseline": _ratio_summary(
-                        roles["baseline"], roles["candidate_cache_off"]
+                    "revert_proxy_vs_baseline": _ratio_summary(
+                        roles["baseline"], roles["candidate_revert_proxy"]
                     ),
-                    "cache_off_vs_cache_on": _ratio_summary(
-                        roles["candidate_cache_on"], roles["candidate_cache_off"]
+                    "revert_proxy_vs_cache_on": _ratio_summary(
+                        roles["candidate_cache_on"], roles["candidate_revert_proxy"]
                     ),
-                    "candidate_on_off_state_identity": state_pairs,
+                    "candidate_on_revert_proxy_state_identity": state_pairs,
                 }
             )
-    all_off = [row for row in rows if row["role"] == "candidate_cache_off"]
+    all_proxy = [row for row in rows if row["role"] == "candidate_revert_proxy"]
     state_identity = all(
         pair["initial_equal"] and pair["final_equal"]
         for group in groups
-        for pair in group["candidate_on_off_state_identity"]
+        for pair in group["candidate_on_revert_proxy_state_identity"]
     )
-    proofs = all(row["cache_proof"]["proved_disabled"] is True for row in all_off)
+    proofs = all(
+        row["cache_proof"]["proved_revert_proxy"] is True
+        for row in all_proxy
+    )
     return {
         "schema": SCHEMA,
         "classification": "S09_AP_CACHE_DIAGNOSTIC_DATA_COMPLETE",
@@ -197,8 +202,9 @@ def analyze(manifest_path: Path) -> dict[str, object]:
         "mode": plan["mode"],
         "profile_count": len(rows),
         "all_profiles_finite": all(row["finite"] is True for row in rows),
-        "all_cache_off_proofs_passed": proofs,
-        "candidate_cache_on_off_state_byte_identity": state_identity,
+        "all_revert_proxy_proofs_passed": proofs,
+        "candidate_cache_on_revert_proxy_state_byte_identity": state_identity,
+        "trial_ratio_estimator": "frozen_profile_center_six_fixed_block_means_median",
         "frozen_thresholds_unchanged_and_not_used_for_verdict": True,
         "groups": groups,
     }
