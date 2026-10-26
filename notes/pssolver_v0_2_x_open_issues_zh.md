@@ -6,12 +6,12 @@
 `dev/0.3` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 45 条：
+当前共登记 46 条：
 
-- `open`：1；
-- `registered`：1；
-- `claimed_fixed`：2；
-- `verified`：38；
+- `open`：0；
+- `registered`：2；
+- `claimed_fixed`：0；
+- `verified`：41；
 - `deferred`：2；
 - `accepted`：1；
 - `coverage_gap`：0。
@@ -21,8 +21,9 @@
 1. `V-17` 已由提交 `611d167d1b2c2d634222f608f4c9cd4dc671636d` 修复，并经
    `R-0002` 独立验证为 `verified`。验证覆盖真实跨文件系统父目录 symlink、Periodic/Channel
    functional export、forced fallback、installed wheel、真跨文件系统拒绝与完整 CPU suite。
-2. `NEW-14`：在 `0.3 GPU verification` 中核实 TF32 policy scope 是否覆盖 backward；
-   目前只登记，不宣称存在数值错误。
+2. `NEW-14` 已由 `R-0027` 在 H100 上验证：Periodic / Channel × 六种 caller policy
+   的 forward 与 backward hook 均观察到作用域内策略，成功、异常及嵌套作用域后都精确恢复，
+   作用域外保持调用者策略；修复身份为 `85ba3ae…`。
 3. S-04 的六项 checkpoint 健壮性问题已经完成：V-22、V-16、V-13、V-14 与 C2-17
    由提交 `468e067` 修复，V-25 由提交 `44a6fc3` 修复；本地复核和 HPCC 真实 NFS
    门禁均通过，并由 `R-0012` 独立验证为 `verified`。
@@ -109,6 +110,12 @@
     identity、可微 controls、实数损失和有限梯度边界均符合合同。两项在
     `72286694c43ee15e5859c0658c989431404fe505` 推进为 `verified`、
     `verified_by=R-0026`；`NEW-14` 仍为 `open`，S-09 须等待恢复 H100 作业验收后完成。
+22. `R-0027` 已独立复核恢复作业 `10911538`：全部 H100 正确性阶段通过，`NEW-14` 在
+    `85ba3aef75548d549d9db453ca4a5ab604b17a9d` 推进为 `verified`、
+    `verified_by=R-0027`。S-09 仍未完成，因为 `channel_legacy` 与
+    `channel_compiled_v2` 的 R512 单元 peak-reserved 比值为 `1.0307692307692307`，高于
+    冻结上限 `1.03`。该问题登记为 `V-41`；用户已通过 `D-0012` 选择先做不作为资格的
+    A·p 缓存开/关 H100 诊断，再决定是否撤回缓存并重跑完整作业，或另行裁决显存例外。
 
 ## Control 路径
 
@@ -123,7 +130,8 @@ S-07 的 6 个 low/info 条目与候选回归 `V-30` 均已由 `R-0018` 独立�
 `verified`，S-07 完成；S-08 的 `A2-25`、`N5`、`V-31`、`V-32`、`V-34`
 均已由 `R-0021` 独立验证，S-08 完成；`V-33` 留待 S-10。
 `A2-21/S2-12` 已完成 `S-05` 独立复核。`A3-18` 已由 `R-0025` 的真实 H100 长时程
-门禁验证；`V-39` 与 `V-40` 已由 `R-0026` 验证，`NEW-14` 仍留在 S-09 H100 recovery。
+门禁验证；`V-39` 与 `V-40` 已由 `R-0026` 验证，`NEW-14` 已由 `R-0027` 验证。
+S-09 当前只剩 `V-41`，按 `D-0012` 先执行不作为资格的缓存开/关诊断。
 `V-27` 归入 `S-06`，`V-26` 与
 `B30` 归入文档批次 `S-07`。
 `V-17` 已验证身份不变，不重新打开。路线图顺序以同步仓库中用户确认的
@@ -135,7 +143,8 @@ S-07 的 6 个 low/info 条目与候选回归 `V-30` 均已由 `R-0018` 独立�
 - 架构整理：`R1-R9`，按 `D-0007` 推迟至 0.3 之后；
 - `A2-11`：按 `D-0007` 接受为设计限制；
 - CUDA 长时程覆盖缺口 `A3-18` 已由 `R-0025` 关闭；qualification-support 问题 `V-39`、
-  `V-40` 已由 `R-0026` 关闭；`NEW-14` 仍须在 S-09 recovery 中完成 backward TF32 资格验证。
+  `V-40` 已由 `R-0026` 关闭；`NEW-14` 已由 `R-0027` 完成 backward TF32 资格验证。
+  `V-41` 按 `D-0012` 留在 S-09 做不作为资格的缓存开/关诊断。
 
 机器可读的逐项标题、严重度、来源、版本影响、Control 影响、状态、目标版本和说明均在
 `notes/pssolver_v0_2_x_open_issues.json` 中。路线图 S-08 已完成，下一步进入 S-09

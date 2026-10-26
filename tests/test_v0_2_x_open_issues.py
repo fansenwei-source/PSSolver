@@ -43,18 +43,19 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 45
-    assert len({entry["id"] for entry in entries}) == 45
+    assert len(entries) == record["issue_count"] == 46
+    assert len({entry["id"] for entry in entries}) == 46
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
+    counts.setdefault("open", 0)
     counts.setdefault("registered", 0)
     counts.setdefault("claimed_fixed", 0)
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
-        "open": 1,
-        "registered": 1,
+        "open": 0,
+        "registered": 2,
         "claimed_fixed": 0,
-        "verified": 40,
+        "verified": 41,
         "deferred": 2,
         "accepted": 1,
         "coverage_gap": 0,
@@ -225,7 +226,11 @@ def test_rc5_rc6_residuals_track_verified_s06_fixes():
     assert issues["A2-21/S2-12"]["verified_by"] == "R-0013"
     assert "not a MAC or signature" in issues["A2-21/S2-12"]["notes"]
     assert issues["A2-11"]["status"] == "accepted"
-    assert issues["NEW-14"]["status"] == "open"
+    assert issues["NEW-14"]["status"] == "verified"
+    assert issues["NEW-14"]["fixed_in"] == (
+        "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
+    )
+    assert issues["NEW-14"]["verified_by"] == "R-0027"
     assert issues["NEW-14"]["affects_control_paths"] is True
     assert issues["NEW-14"]["target_release"] == "0.3 GPU verification"
     assert all(
@@ -321,6 +326,25 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         assert issue["target_release"] == "0.3.0 (S-09 recovery)"
         assert issue["affects_control_paths"] is False
         assert issue["exercised_by_current_control_research"] is False
+    assert issues["V-41"] == {
+        "id": "V-41",
+        "title": (
+            "Channel production warm-start A.p cache retains one pressure field "
+            "and exceeds the frozen peak-reserved gate at R512"
+        ),
+        "severity": "medium-low",
+        "source_report": "PSSolver_sync/results/R-0027.result.json",
+        "first_found": "S-09 recovery_v2 independent review R-0027",
+        "affects_v0_2_0": False,
+        "affects_v0_2_1": False,
+        "affects_control_paths": False,
+        "exercised_by_current_control_research": False,
+        "status": "registered",
+        "target_release": "0.3.0 (S-09; D-0012 diagnostic decision)",
+        "notes": issues["V-41"]["notes"],
+    }
+    assert "1.0307692307692307" in issues["V-41"]["notes"]
+    assert "D-0012" in issues["V-41"]["notes"]
     assert issues["V-30"] == {
         "id": "V-30",
         "title": (

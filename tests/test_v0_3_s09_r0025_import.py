@@ -48,7 +48,9 @@ def test_r0025_registry_updates_are_exact() -> None:
         issues[issue_id]["status"] in {"registered", "claimed_fixed", "verified"}
         for issue_id in record["registered"]
     )
-    assert issues["NEW-14"]["status"] == "open"
+    assert issues["NEW-14"]["status"] == "verified"
+    assert issues["NEW-14"]["fixed_in"] == "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
+    assert issues["NEW-14"]["verified_by"] == "R-0027"
     assert record["s09_complete"] is False
     assert record["h100_resubmission_authorized"] is False
 

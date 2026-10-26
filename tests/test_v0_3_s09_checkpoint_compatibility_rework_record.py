@@ -52,7 +52,9 @@ def test_v35_v36_advance_only_after_r0023_reviews_the_runtime() -> None:
         assert issues[issue_id]["verified_by"] == "R-0024"
     assert issues["A3-18"]["status"] == "verified"
     assert issues["A3-18"]["verified_by"] == "R-0025"
-    assert issues["NEW-14"]["status"] == "open"
+    assert issues["NEW-14"]["status"] == "verified"
+    assert issues["NEW-14"]["fixed_in"] == "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
+    assert issues["NEW-14"]["verified_by"] == "R-0027"
     assert issues["V-33"]["status"] == "registered"
     assert issues["V-37"]["status"] == "verified"
     assert issues["V-37"]["fixed_in"] == (

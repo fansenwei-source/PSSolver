@@ -64,7 +64,9 @@ def test_r0024_import_applies_only_the_reviewed_registry_updates() -> None:
     assert issues["V-38"]["target_release"] == "0.3"
     assert issues["A3-18"]["status"] == "verified"
     assert issues["A3-18"]["verified_by"] == "R-0025"
-    assert issues["NEW-14"]["status"] == "open"
+    assert issues["NEW-14"]["status"] == "verified"
+    assert issues["NEW-14"]["fixed_in"] == "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
+    assert issues["NEW-14"]["verified_by"] == "R-0027"
 
 
 def test_r0024_import_successors_are_forward_only_and_complete() -> None:

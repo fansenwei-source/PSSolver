@@ -55,7 +55,9 @@ def test_r0023_import_advances_only_the_reviewed_registry_boundary() -> None:
     assert issues["V-37"]["verified_by"] == "R-0024"
     assert issues["A3-18"]["status"] == "verified"
     assert issues["A3-18"]["verified_by"] == "R-0025"
-    assert issues["NEW-14"]["status"] == "open"
+    assert issues["NEW-14"]["status"] == "verified"
+    assert issues["NEW-14"]["fixed_in"] == "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
+    assert issues["NEW-14"]["verified_by"] == "R-0027"
 
 
 def test_r0023_import_is_evidence_only_and_authorizes_no_external_action() -> None:

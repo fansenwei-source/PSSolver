@@ -29,12 +29,12 @@
       "rewritten": false
     }
   },
-  "issue_count": 45,
+  "issue_count": 46,
   "status_counts": {
-    "open": 1,
-    "registered": 1,
+    "open": 0,
+    "registered": 2,
     "claimed_fixed": 0,
-    "verified": 40,
+    "verified": 41,
     "deferred": 2,
     "accepted": 1,
     "coverage_gap": 0
@@ -513,9 +513,11 @@
       "affects_v0_2_1": true,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "open",
+      "status": "verified",
+      "fixed_in": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+      "verified_by": "R-0027",
       "target_release": "0.3 GPU verification",
-      "notes": "Functional device=auto was resolved; backward TF32 scope has not been independently verified."
+      "notes": "R-0027 independently verified the installed candidate wheel on H100: six caller policy states across Periodic and Channel observed the declared TF32 policy in forward and backward execution_scope hooks, restored exact caller state after success and failure, preserved nested LIFO behavior, and left caller policy unchanged outside the scope."
     },
     {
       "id": "B8/S2-07",
@@ -752,6 +754,20 @@
       "verified_by": "R-0026",
       "target_release": "0.3.0 (S-09 recovery)",
       "notes": "R-0026 independently verified the qualification-support fix: all three default-device identity pins use their pinned configurations, CUDA execution identities are informational, and finite smokes use differentiable controls, real losses, and finite gradients. Runtime, wheels, and scientific contracts are unchanged."
+    },
+    {
+      "id": "V-41",
+      "title": "Channel production warm-start A.p cache retains one pressure field and exceeds the frozen peak-reserved gate at R512",
+      "severity": "medium-low",
+      "source_report": "PSSolver_sync/results/R-0027.result.json",
+      "first_found": "S-09 recovery_v2 independent review R-0027",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3.0 (S-09; D-0012 diagnostic decision)",
+      "notes": "Runtime 85ba3ae includes the 2573dec production Channel warm-start A.p cache. H100 job 10911538 found channel_legacy and channel_compiled_v2 at R512 reserved 562036736 versus baseline 545259520 bytes (ratio 1.0307692307692307 > the unchanged 1.03 limit), while all timing, numerical and scientific gates passed. D-0012 requires a non-qualifying cache-on/cache-off H100 diagnostic before choosing whether to withdraw the cache and rerun cumulative qualification or make a separate user decision; no exception is accepted yet."
     }
   ],
   "authorization": {

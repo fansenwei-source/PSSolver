@@ -43,7 +43,9 @@ def test_r0026_registry_updates_are_exact() -> None:
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == fixed_in
         assert issues[issue_id]["verified_by"] == "R-0026"
-    assert issues["NEW-14"]["status"] == "open"
+    assert issues["NEW-14"]["status"] == "verified"
+    assert issues["NEW-14"]["fixed_in"] == "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
+    assert issues["NEW-14"]["verified_by"] == "R-0027"
     assert imported["s09_complete"] is False
     assert imported["recovery_h100_submission_authorized"] is False
 

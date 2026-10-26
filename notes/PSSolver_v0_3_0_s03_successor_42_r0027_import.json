@@ -1,0 +1,62 @@
+{
+  "schema": "pssolver.v0_3.s03_successor_record.v1",
+  "classification": "PASS_R0027_H100_CORRECTNESS_AND_FAILURE_REVIEW_IMPORTED",
+  "plan_step": "S-09",
+  "record_scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "qualification_support_changed": false,
+    "external_action_authorized": false
+  },
+  "sync_result": {
+    "id": "R-0027",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0027.result.json",
+    "sha256": "abf7ec135a9ab5b91c71929d3ab89049e254149fba16ee9ba66e62ac6ef01dbd",
+    "classification": "REWORK_REQUIRED"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s09h100rv2_claude_review_20261026_v1",
+    "checksums_entries": 4056,
+    "checksums_sha256": "81081de4155932d5adcb54c585fa2ec0de5060330c98cc785cf5979096ec1819",
+    "complete_present": true,
+    "final_report_sha256": "88cb4dacca208e65a322adc2cc5ff94584ece0b345918bb0f2b7ee1ae1524bec",
+    "summary_sha256": "62a9eb4e99442f2b9ba40ae12333a2a40ec6561879485831c6f4a5d4c2c489a4"
+  },
+  "registry_import": {
+    "verified": {
+      "NEW-14": "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
+    },
+    "verified_by": "R-0027",
+    "registered": ["V-41"],
+    "s09_complete": false
+  },
+  "decision": {
+    "id": "D-0012",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/decisions/D-0012.json",
+    "sha256": "fabffcace193d72dabc322b22e05aecbb7489fb3a5da833246a228b4e86d1936",
+    "choice": "Q-S09-MEM-01 option 1: non-qualifying cache-on/cache-off H100 diagnostic before selecting a remedy",
+    "diagnostic_h100_authorized": false
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {"historical_sha256": "31a698dcd7c3d6bd35cf50bb3fac864d9f2e7f0e58676c78781408231951bca7", "current_sha256": "fe3966ac1524ff0c5e59487abe68b11b6bd91756cc0e59de2a1c9f36ddea5285", "reason": "Import the exact R-0027 NEW-14 verification and register V-41 without claiming S-09 completion."},
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "b5ff817b351eef3be044bfce86e7f8957b7bbdc72500ecf4d9ee683d8f085663", "current_sha256": "661ee432f079bcfe5ab7f88db9b41f492f9e63ff8d6138fd8f3c7770309c9335", "reason": "Document the R-0027 H100 correctness result, V-41 failure and D-0012 diagnostic decision."},
+    "tests/test_v0_2_x_open_issues.py": {"historical_sha256": "27f4a760a1f663347b22342ea905c3effbd426a9306c3ac7e23e88c51c9621d7", "current_sha256": "9d6c78daa32358b159abdd5ed06df7d6d9885ed29a5a5e31f8d78834af2b31c5", "reason": "Bind the exact forward registry state after R-0027."},
+    "tests/test_v0_3_s09_checkpoint_compatibility_rework_record.py": {"historical_sha256": "20adf6d7082ff61e64c38b77da1c37efa1ce2267eb112de11dc974d7c32a9747", "current_sha256": "6ba022be54bb03d90a2ccae3fd386777e3d4dc64e8ccc6e0871df8965ffa8984", "reason": "Recognize the forward R-0027 NEW-14 verification."},
+    "tests/test_v0_3_s09_r0022_import.py": {"historical_sha256": "b83636b0afc0173254fe2e5e81ca0cb34848b9f3c2cd80d9af9896279ebe7e1b", "current_sha256": "7747f5de90cdfbe3e6f80835095a248b233e46e8bf9e92c0910fcd6cae05966a", "reason": "Recognize the forward R-0027 NEW-14 verification."},
+    "tests/test_v0_3_s09_r0023_candidate.py": {"historical_sha256": "a4472f116310bd7f8dd1ce6881262ab873966447a071fab2664e14673b412b4d", "current_sha256": "63be4e780ebd92f34385d2f7ef98c31f1e00abc2949977a5f7372b4aad447c97", "reason": "Recognize the forward R-0027 NEW-14 verification."},
+    "tests/test_v0_3_s09_r0023_import.py": {"historical_sha256": "a691ac3bde8c86f915a7eb2989ef6eb3a75b4aec71d093e4ae67d676133a286d", "current_sha256": "333f4ea14bd070006963ab9dc5d661c8f719a7e89f1f4d5c6e0a4c08a73e6707", "reason": "Recognize the forward R-0027 NEW-14 verification."},
+    "tests/test_v0_3_s09_r0024_candidate.py": {"historical_sha256": "aa51fefec8889c4638dcd66a094ec327877c691cb50fb720a66f3ffa62d8e630", "current_sha256": "06c9a0d37cb7600bf2f200a02decfb65e7e05d4c3502d288200560b2626aee1b", "reason": "Recognize the forward R-0027 NEW-14 verification."},
+    "tests/test_v0_3_s09_r0024_import.py": {"historical_sha256": "7b6faa4dd32da5b2a0ce3c42b98e9caf9013e306210dfd65f8974292c18a4dca", "current_sha256": "a430fb7d665c13b32d2a3fd35afc06299783af60b6bd0a2a95e689eaee63158e", "reason": "Recognize the forward R-0027 NEW-14 verification."},
+    "tests/test_v0_3_s09_r0025_import.py": {"historical_sha256": "5075cc728e54cc74a6e65b2209438166818c8a2a1a5b220a1baf37387f828a27", "current_sha256": "eda2e7c00ab972170b46ee908cf44c845e0453170ead04c436b391a6972fa67f", "reason": "Recognize the forward R-0027 NEW-14 verification."},
+    "tests/test_v0_3_s09_r0026_candidate.py": {"historical_sha256": "2b0a605c88b4de0966fdf7a905f12471743949ed43491706a4d904cd28a40c58", "current_sha256": "8efaaf8b97c661f523a17ceb241e280b8b8cca1cd1232565d080cd48cb0c1e37", "reason": "Recognize the forward R-0027 NEW-14 verification."},
+    "tests/test_v0_3_s09_r0026_import.py": {"historical_sha256": "d5d9b7593c4956ff9e3698510e7d61305be4added6c893cf7ad5601b04edcddd", "current_sha256": "6b6f2e47b0a5272d8efc47324fd07c0f2c3fd6a9633e0f0854d56a2efa0c5bc7", "reason": "Recognize the forward R-0027 NEW-14 verification."}
+  },
+  "authorization": {
+    "local_evidence_import": true,
+    "local_diagnostic_support": true,
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false
+  }
+}
