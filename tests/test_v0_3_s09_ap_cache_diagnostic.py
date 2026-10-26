@@ -183,6 +183,14 @@ def test_job_is_single_gpu_diagnostic_without_qualification_claims() -> None:
     assert "sbatch" not in job
 
 
+def test_runner_accepts_normal_venv_python_symlinks_but_support_is_regular() -> None:
+    runner = (ROOT / "benchmarks/run_v0_3_s09_ap_cache_diagnostic.py").read_text(
+        encoding="utf-8"
+    )
+    assert "if not python.is_file():" in runner
+    assert "if not path.is_file() or path.is_symlink():" in runner
+
+
 def test_diagnostic_support_compiles() -> None:
     paths = [
         ROOT / "benchmarks/plan_v0_3_s09_ap_cache_diagnostic.py",

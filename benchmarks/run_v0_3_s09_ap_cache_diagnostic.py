@@ -131,9 +131,12 @@ def execute(
         raise ValueError("diagnostic plan must contain exactly 72 profiles")
     child = support_root / "benchmarks/run_v0_3_s09_ap_cache_diagnostic_child.py"
     profile = support_root / "benchmarks/profile_v0_3_s09_ap_cache_diagnostic.py"
-    for path in (baseline_python, candidate_python, child, profile):
+    for python in (baseline_python, candidate_python):
+        if not python.is_file():
+            raise FileNotFoundError(f"working venv Python required: {python}")
+    for path in (child, profile):
         if not path.is_file() or path.is_symlink():
-            raise FileNotFoundError(f"regular diagnostic input required: {path}")
+            raise FileNotFoundError(f"regular diagnostic support file required: {path}")
 
     output_root.mkdir(parents=True)
     (output_root / "profiles").mkdir()
