@@ -104,6 +104,11 @@
     `72286694c43ee15e5859c0658c989431404fe505` 修复并推进为 `claimed_fixed`。最终支持归档上的
     installed-wheel CPU 演练从环境身份、短时程、TF32、checkpoint、数值对照到独立 Consumer
     和 192 项 profile 规划全部通过；两项等待 `R-0026` 独立复核，`NEW-14` 仍保持 `open`。
+21. `R-0026` 已独立重跑安装版 CPU 演练并验证 qualification-support 修复：`V-39` 的 12 个
+    TF32 case 均在 fixture 构造前创建目录；`V-40` 的三项默认设备 identity pin、CUDA 信息性
+    identity、可微 controls、实数损失和有限梯度边界均符合合同。两项在
+    `72286694c43ee15e5859c0658c989431404fe505` 推进为 `verified`、
+    `verified_by=R-0026`；`NEW-14` 仍为 `open`，S-09 须等待恢复 H100 作业验收后完成。
 
 ## Control 路径
 
@@ -118,8 +123,8 @@ S-07 的 6 个 low/info 条目与候选回归 `V-30` 均已由 `R-0018` 独立�
 `verified`，S-07 完成；S-08 的 `A2-25`、`N5`、`V-31`、`V-32`、`V-34`
 均已由 `R-0021` 独立验证，S-08 完成；`V-33` 留待 S-10。
 `A2-21/S2-12` 已完成 `S-05` 独立复核。`A3-18` 已由 `R-0025` 的真实 H100 长时程
-门禁验证；`V-39` 与 `V-40` 已完成本地 recovery 并等待 `R-0026`，`NEW-14` 仍留在
-S-09 H100 recovery。`V-27` 归入 `S-06`，`V-26` 与
+门禁验证；`V-39` 与 `V-40` 已由 `R-0026` 验证，`NEW-14` 仍留在 S-09 H100 recovery。
+`V-27` 归入 `S-06`，`V-26` 与
 `B30` 归入文档批次 `S-07`。
 `V-17` 已验证身份不变，不重新打开。路线图顺序以同步仓库中用户确认的
 `D-0010` 与 `plan/roadmap.json` 为准。
@@ -129,8 +134,8 @@ S-09 H100 recovery。`V-27` 归入 `S-06`，`V-26` 与
 - lifting：`B8/S2-07`，按已确认决定 `D-0007` 在重新开放 lifting 前处理；
 - 架构整理：`R1-R9`，按 `D-0007` 推迟至 0.3 之后；
 - `A2-11`：按 `D-0007` 接受为设计限制；
-- CUDA 长时程覆盖缺口 `A3-18` 已由 `R-0025` 关闭；`NEW-14` 仍须在 S-09 recovery
-  中完成 backward TF32 资格验证。
+- CUDA 长时程覆盖缺口 `A3-18` 已由 `R-0025` 关闭；qualification-support 问题 `V-39`、
+  `V-40` 已由 `R-0026` 关闭；`NEW-14` 仍须在 S-09 recovery 中完成 backward TF32 资格验证。
 
 机器可读的逐项标题、严重度、来源、版本影响、Control 影响、状态、目标版本和说明均在
 `notes/pssolver_v0_2_x_open_issues.json` 中。路线图 S-08 已完成，下一步进入 S-09

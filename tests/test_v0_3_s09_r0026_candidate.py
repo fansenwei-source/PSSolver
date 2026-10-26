@@ -44,9 +44,10 @@ def test_r0026_candidate_claims_exactly_v39_and_v40() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert set(record["registry_claims"]["claimed_fixed"]) == {"V-39", "V-40"}
     for issue_id, fixed_in in record["registry_claims"]["claimed_fixed"].items():
-        assert issues[issue_id]["status"] == "claimed_fixed"
+        assert issues[issue_id]["status"] in {"claimed_fixed", "verified"}
         assert issues[issue_id]["fixed_in"] == fixed_in
-        assert "verified_by" not in issues[issue_id]
+        if issues[issue_id]["status"] == "verified":
+            assert issues[issue_id]["verified_by"] == "R-0026"
     assert issues["NEW-14"]["status"] == "open"
 
 
@@ -65,9 +66,9 @@ def test_r0026_candidate_binds_final_archive_plan_job_and_rehearsal() -> None:
 
 def test_r0026_candidate_successors_are_forward_only() -> None:
     for relative, successor in _read(RECORD)["historical_successor_sources"].items():
-        assert resolve_s03_successor(relative, successor["historical_sha256"]) == (
-            successor["current_sha256"]
-        ) == _sha256(ROOT / relative)
+        live = _sha256(ROOT / relative)
+        assert resolve_s03_successor(relative, successor["historical_sha256"]) == live
+        assert resolve_s03_successor(relative, successor["current_sha256"]) == live
 
 
 def test_r0026_candidate_authorizes_no_external_action() -> None:

@@ -1,0 +1,78 @@
+{
+  "schema": "pssolver.v0_3.s03_successor_record.v1",
+  "classification": "PASS_R0026_S09_RECOVERY_REVIEW_IMPORTED",
+  "plan_step": "S-09",
+  "record_scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "qualification_support_changed": false,
+    "external_action_authorized": false
+  },
+  "sync_result": {
+    "id": "R-0026",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0026.result.json",
+    "sha256": "9bc8bfa136c96e217ec731b812a512c96c72e76e4e0f163caa7b217c9cc34732",
+    "classification": "PASS",
+    "new_findings": []
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s09recov_claude_review_20261026_v1",
+    "checksums_entries": 7658,
+    "checksums_sha256": "495b2978649b6dcb158992ca0769e95385cbde5bcfb95281f2b7fab52bd062c8",
+    "complete_present": true,
+    "final_report_sha256": "be5b063016d3a0925361109354c55dca2b4bd0e39398a3b7b8feda310c7d90b0",
+    "summary_sha256": "f80e7c1c9f7ffb69e21b3bfcd782dde65867d5d6a23e62306df776a14a7870f2"
+  },
+  "registry_import": {
+    "verified": {
+      "V-39": "72286694c43ee15e5859c0658c989431404fe505",
+      "V-40": "72286694c43ee15e5859c0658c989431404fe505"
+    },
+    "verified_by": "R-0026",
+    "kept_unchanged": {
+      "NEW-14": "open"
+    },
+    "s09_complete": false,
+    "recovery_h100_submission_authorized": false
+  },
+  "h100_authorization_inputs": {
+    "provider_runtime": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+    "provider_support": "719ae76069ba97b88a893ccf7404ddf18239fcc6",
+    "consumer_base": "208edd03e6b26a0e788c07d295fddd7a67237189",
+    "consumer_migration": "48dd4d3a9a101f8b24d8311c57ed67fab46ceea0",
+    "consumer_evidence": "97d3c06450c4a7a6d72e0fe07a7a157ef095c133",
+    "baseline_wheel": "a7e94585e62785c69522d6cc194fd479b5af55577444926d1bb661ed073cc00e",
+    "candidate_wheel": "4003645025da6d81317eeb7261ccf606aef7f60f20d072518f8baacf56cd4aa8",
+    "consumer_wheel": "f7ae4c1f5f3c73e0be540b5e4ec5e05a9eef662867a149325462835820ae94ef",
+    "provider_source_archive": "bff21905eb7d4c5e8313b10c871f40d8b96b411975260fdb0edb75b16a99a3b9",
+    "provider_support_archive": "7500e889a01733d998ae08c121f12de00bf1d5a831f9eefdcc14fd763843b3cd",
+    "consumer_source_archive": "02f3e8249bc02cbb0484636d9f8bf46cc8a6815d90e13f8286f7aaf8291157fd",
+    "consumer_support_archive": "2243f14cbdad1a58cb8a1ff73e2bb550752d97f5edf2190302005d9d69ff66a1",
+    "plan": "4abd4da59a920aae5fd1bdb3c7e6e390b53b6c8476689024d8a013a41274f575",
+    "job_script": "f9431b8b6d64536f2ed29afaa3894404eb743a91dbb053d69e62a8c5ab3f7098",
+    "draft": "558422475a553c9f19b72d339eb1cc2f1f15cdc1a6e55207f82f0f603d55f1be"
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {"historical_sha256": "62e69947a963658b373219baa0a02cca364d96956d8530b5612e94570b5743cf", "current_sha256": "31a698dcd7c3d6bd35cf50bb3fac864d9f2e7f0e58676c78781408231951bca7", "reason": "Import the exact R-0026 verification updates while keeping NEW-14 open."},
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "77c3c06cee54d12fc8c5a6b394b9dbfe8b4fb8ac52fa67d69d88fb2207e5b43c", "current_sha256": "b5ff817b351eef3be044bfce86e7f8957b7bbdc72500ecf4d9ee683d8f085663", "reason": "Document the R-0026 verification and remaining S-09 H100 boundary."},
+    "tests/test_v0_2_x_open_issues.py": {"historical_sha256": "d774124e6ac4e5bbc012a53e5f3906edc0982c8308d011a0d769ad9c601d4934", "current_sha256": "27f4a760a1f663347b22342ea905c3effbd426a9306c3ac7e23e88c51c9621d7", "reason": "Bind the exact forward registry status and R-0026 verifier."},
+    "tests/test_v0_3_s09_r0026_candidate.py": {"historical_sha256": "849e7d966f0b04851242487876e3e74e7b50a8129daa28cd5166dcbf8c3083e9", "current_sha256": "2b0a605c88b4de0966fdf7a905f12471743949ed43491706a4d904cd28a40c58", "reason": "Preserve the immutable candidate claim while accepting its verified successor."},
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {"historical_sha256": "6457d22a588b7cf91962a9ed7f87e2c8e69ee79d465bc49ea9a1c08f7da3e70c", "current_sha256": "bfd93b71600f1266ffe2fd4419165d8bb7dde98e20e222c11a79bccfa4a4e7c9", "reason": "Recognize the forward R-0026 verification."},
+    "tests/test_v0_3_s03_rework_record.py": {"historical_sha256": "429668d8f6f8845a2e159c81207959ee4a2041178d168898b79ff8c9ab775792", "current_sha256": "4fc728384337f6a4263dee83edcc4e8b72e2bfe5d5237de021fb846770db6723", "reason": "Recognize the forward R-0026 verification."},
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {"historical_sha256": "a2a74b77c8f20b99b983f0f160ec2832253fd1f54618d4237a6388a9e3919c46", "current_sha256": "b8757c0db9b7224226e9a8e04698ade44398743e8db96897804e4f58bce9c155", "reason": "Recognize the forward R-0026 verification."},
+    "tests/test_v0_3_s07_r0017_import.py": {"historical_sha256": "adc9fe97e3cdeb4c857383dbae0b28e0ac90777b9d526d991f9c8a9a7388dbe8", "current_sha256": "f95af038751700816abc41fe2bae6732df5e19a60e2d0acbd3cc301be7db70b7", "reason": "Recognize the forward R-0026 verification."},
+    "tests/test_v0_3_s07_rework_candidate_record.py": {"historical_sha256": "a2b82156ff70a9ab187dd449b1e74d9b1b02411050a6d7a7e8ee4cf211ac5721", "current_sha256": "a03905becd729e2f3a414297dc930e590898232b9ad14519a55823528229a380", "reason": "Recognize the forward R-0026 verification."},
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {"historical_sha256": "a9775d8d76dbd447cc86a95a48a701daca965f59817f9f4fa3cfcd7fc38448c9", "current_sha256": "aef90fbf5e21db54a63c6ca3952426477d27e094dc2dc7ad699b3ccfba83a8be", "reason": "Recognize the forward R-0026 verification."},
+    "tests/test_v0_3_s08_commit_identity_corrections.py": {"historical_sha256": "fd65733bb382bf9187f99df62f7477172430cfdb26300b6c9eb7c105e7fbf451", "current_sha256": "2080c3e8863e5b806e1c721f746eab9cb8d21fd6f052a2a421280030c5f74670", "reason": "Recognize the forward R-0026 verification."},
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {"historical_sha256": "a6a3bf09f30016af636d922f87fe1cfd04d894c42fefe96a8817e8fbb27ae7cb", "current_sha256": "4e807b8c41f8134422bbd20cf4b7a9137ce0a78d60b005e69239843f495c1bf2", "reason": "Recognize the forward R-0026 verification."},
+    "tests/test_v0_3_s08_r0021_import.py": {"historical_sha256": "de93f627b0467fe97e1bf23c80e90c193e3907e9601871a1767f4a38991afd36", "current_sha256": "fbb2ab03aba281af8cde5b7ccf069ae259827b9efc185493365fa55fe63ab1fd", "reason": "Recognize the forward R-0026 verification."},
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {"historical_sha256": "e5d0073d9fd4030117c66677878e0d5610dd7df4d7573eee590de4456c6a8c97", "current_sha256": "b1dd95befe8c58b4b76876ec05f12dd2cbd39aada5de5335cf23708ea7da4fea", "reason": "Recognize the forward R-0026 verification."}
+  },
+  "authorization": {
+    "local_evidence_import": true,
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false
+  }
+}

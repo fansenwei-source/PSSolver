@@ -33,8 +33,8 @@
   "status_counts": {
     "open": 1,
     "registered": 1,
-    "claimed_fixed": 2,
-    "verified": 38,
+    "claimed_fixed": 0,
+    "verified": 40,
     "deferred": 2,
     "accepted": 1,
     "coverage_gap": 0
@@ -731,10 +731,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "72286694c43ee15e5859c0658c989431404fe505",
+      "verified_by": "R-0026",
       "target_release": "0.3.0 (S-09 recovery)",
-      "notes": "Qualification-support-only defect: run_v0_3_s09_tf32_backward.py passed an absent per-case parent to a fixture whose public constructor creates functional_source directly below it, stopping H100 job 10911504 before any runtime or backward execution. The S-09 recovery explicitly creates every case root and the final installed-wheel CPU rehearsal passed; independent R-0026 review is pending."
+      "notes": "R-0026 independently verified the qualification-support fix: run_v0_3_s09_tf32_backward.py now creates every per-case root before fixture construction, and the installed-wheel CPU rehearsal completed all 12 TF32 cases. Runtime, wheels, and scientific contracts are unchanged."
     },
     {
       "id": "V-40",
@@ -746,10 +747,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "72286694c43ee15e5859c0658c989431404fe505",
+      "verified_by": "R-0026",
       "target_release": "0.3.0 (S-09 recovery)",
-      "notes": "Qualification-support-only defect cluster: controls lacked requires_grad, the spectral loss was complex, the Channel smoke used fixed-work defaults while comparing the tolerance pin, and device-bearing CUDA identities were compared with CPU pins. The recovery now validates all three pins with default-device steppers, records CUDA identities without comparing them to CPU pins, and requires finite real gradients; independent R-0026 review is pending."
+      "notes": "R-0026 independently verified the qualification-support fix: all three default-device identity pins use their pinned configurations, CUDA execution identities are informational, and finite smokes use differentiable controls, real losses, and finite gradients. Runtime, wheels, and scientific contracts are unchanged."
     }
   ],
   "authorization": {

@@ -82,7 +82,7 @@ def test_r0021_verifies_v34_and_allows_forward_s09_status_updates() -> None:
     }
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == {"V-39", "V-40"}
+    } == set()
     assert issues["V-33"]["target_release"] == "0.3"
     assert "S-10" in issues["V-33"]["notes"]
     for issue_id in ("V-35", "V-36"):
