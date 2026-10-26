@@ -223,6 +223,36 @@ def test_plan_freezes_upload_roots_venv_origin_and_every_job_variable() -> None:
     assert deployment["output_root"] == H100_OUTPUT_ROOT
     assert deployment["output_root_must_initially_not_exist"] is True
     assert deployment["python_environment_source"] == H100_BASE_ENV
+    assert "venv --system-site-packages" in deployment[
+        "python_environment_construction"
+    ]
+    assert "--no-deps --no-cache-dir" in deployment[
+        "python_environment_construction"
+    ]
+    assert all(
+        "cp -al" not in command and "hard-link" not in command
+        for command in deployment["python_environment_commands"]
+    )
+    assert all(
+        any(token in " ".join(deployment["python_environment_commands"]) for token in (path,))
+        for path in (
+            deployment["variables"]["S09_BASELINE_PYTHON"].removesuffix("/bin/python"),
+            deployment["variables"]["S09_CANDIDATE_PYTHON"].removesuffix("/bin/python"),
+            deployment["variables"]["S09_CONSUMER_PYTHON"].removesuffix("/bin/python"),
+        )
+    )
+    assert deployment["pre_submission_commands"] == [
+        f"test ! -e {H100_OUTPUT_ROOT}",
+        f"mkdir -p {H100_CONTROL_ROOT}/logs",
+    ]
+    assert deployment["sbatch_command"].startswith("sbatch --export=ALL,S09_")
+    assert deployment["sbatch_command"].endswith(
+        f"{H100_CONTROL_ROOT}/jobs/v0_3_s09_single_h100.sbatch"
+    )
+    directory_paths = {item["path"] for item in deployment["created_directories"]}
+    assert H100_CONTROL_ROOT in directory_paths
+    assert H100_OUTPUT_ROOT in directory_paths
+    assert "/tmp/pssolver_v03_s09_${SLURM_JOB_ID}" in directory_paths
     variables = deployment["variables"]
     assert set(variables) == {
         "S09_BASELINE_PYTHON",
@@ -252,6 +282,11 @@ def test_submission_draft_matches_the_frozen_paths_and_performance_rules() -> No
     assert "全部样本均值比 `<= 1.03`" in text
     assert "两个顺序层中位数的较大值/较小值 `<= 1.05`" in text
     assert "API 1.1 checkpoint 不能由 v0.2.x 读取" in text
+    assert "venv --system-site-packages" in text
+    assert "--no-deps --no-cache-dir" in text
+    assert "mkdir -p \"${S09_CONTROL_ROOT}/logs\"" in text
+    assert "sbatch --export=ALL,S09_BASELINE_PYTHON" in text
+    assert "新建独立 hard-link clone" not in text
     assert "每个 paired ratio 必须 `<= 1.05`" not in text
 
 

@@ -54,6 +54,9 @@ H100_OUTPUT_ROOT = (
 )
 H100_VENV_ROOT = "/scratch1/vincent/PSSolver/venvs"
 H100_BASE_ENV = "/home/fansenwei/miniconda3/envs/Nematics3D"
+H100_BASELINE_ENV = f"{H100_VENV_ROOT}/pssolver_v03_s09_85ba3ae_baseline"
+H100_CANDIDATE_ENV = f"{H100_VENV_ROOT}/pssolver_v03_s09_85ba3ae_candidate"
+H100_CONSUMER_ENV = f"{H100_VENV_ROOT}/pssolver_v03_s09_85ba3ae_consumer"
 
 CUDA_ONLY_NODE_IDS = (
     "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
@@ -377,18 +380,107 @@ def build_plan() -> dict[str, object]:
             "output_root_must_initially_not_exist": True,
             "python_environment_source": H100_BASE_ENV,
             "python_environment_construction": (
-                "fresh hard-link clone of the pinned source environment, followed "
-                "by --no-deps installation of exactly one role-specific wheel set"
+                "create each scratch environment with the pinned base interpreter "
+                "using -m venv --system-site-packages, then install the exact "
+                "role-specific wheel set with --no-deps --no-cache-dir; import-origin, "
+                "sys.prefix, purelib, RECORD and source-shadow gates enforce identity"
             ),
+            "python_environment_commands": [
+                f"test ! -e {H100_BASELINE_ENV}",
+                f"{H100_BASE_ENV}/bin/python -m venv --system-site-packages {H100_BASELINE_ENV}",
+                f"{H100_BASELINE_ENV}/bin/python -m pip install --no-deps --no-cache-dir "
+                f"{H100_CONTROL_ROOT}/artifacts/pssolver-0.2.2-py3-none-any.whl",
+                f"test ! -e {H100_CANDIDATE_ENV}",
+                f"{H100_BASE_ENV}/bin/python -m venv --system-site-packages {H100_CANDIDATE_ENV}",
+                f"{H100_CANDIDATE_ENV}/bin/python -m pip install --no-deps --no-cache-dir "
+                f"{H100_CONTROL_ROOT}/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl",
+                f"test ! -e {H100_CONSUMER_ENV}",
+                f"{H100_BASE_ENV}/bin/python -m venv --system-site-packages {H100_CONSUMER_ENV}",
+                f"{H100_CONSUMER_ENV}/bin/python -m pip install --no-deps --no-cache-dir "
+                f"{H100_CONTROL_ROOT}/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl "
+                f"{H100_CONTROL_ROOT}/artifacts/pssolver_control-0.0.1.dev0-py3-none-any.whl",
+            ],
+            "pre_submission_commands": [
+                f"test ! -e {H100_OUTPUT_ROOT}",
+                f"mkdir -p {H100_CONTROL_ROOT}/logs",
+            ],
+            "sbatch_command": (
+                "sbatch --export=ALL,S09_BASELINE_PYTHON,S09_CANDIDATE_PYTHON,"
+                "S09_CONSUMER_PYTHON,S09_BASELINE_WHEEL,S09_CANDIDATE_WHEEL,"
+                "S09_CONSUMER_WHEEL,S09_PROVIDER_SUPPORT,S09_CONSUMER_SUPPORT,"
+                "S09_PROVIDER_REFERENCE,S09_CONTROL_ROOT,S09_OUTPUT_ROOT "
+                f"{H100_CONTROL_ROOT}/jobs/v0_3_s09_single_h100.sbatch"
+            ),
+            "created_directories": [
+                {
+                    "path": H100_CONTROL_ROOT,
+                    "created": "before submission",
+                    "disposition": "retain as the immutable control and provenance archive",
+                },
+                *[
+                    {
+                        "path": f"{H100_CONTROL_ROOT}/{name}",
+                        "created": "before submission",
+                        "disposition": "retain inside the control archive",
+                    }
+                    for name in (
+                        "artifacts",
+                        "provider_85ba3ae",
+                        "provider_support",
+                        "consumer_support",
+                        "jobs",
+                        "logs",
+                    )
+                ],
+                *[
+                    {
+                        "path": path,
+                        "created": "before submission",
+                        "disposition": (
+                            "delete only after evidence retrieval and checksum verification; "
+                            "record each deletion in control-root PRUNED.txt"
+                        ),
+                    }
+                    for path in (
+                        H100_BASELINE_ENV,
+                        H100_CANDIDATE_ENV,
+                        H100_CONSUMER_ENV,
+                    )
+                ],
+                {
+                    "path": H100_OUTPUT_ROOT,
+                    "created": "inside the allocated job after all initial-absence checks",
+                    "disposition": "retain as the checksummed scratch evidence archive",
+                },
+                *[
+                    {
+                        "path": f"{H100_OUTPUT_ROOT}/{name}",
+                        "created": "inside the allocated job",
+                        "disposition": "retain as part of the checksummed scratch evidence",
+                    }
+                    for name in (
+                        "results",
+                        "logs",
+                        "compiler_preflight",
+                        "long_horizon_cases",
+                        "profile_matrix",
+                    )
+                ],
+                {
+                    "path": "/tmp/pssolver_v03_s09_${SLURM_JOB_ID}",
+                    "created": "inside the allocated job",
+                    "disposition": "delete through an EXIT trap on success or failure",
+                },
+            ],
             "variables": {
                 "S09_BASELINE_PYTHON": (
-                    f"{H100_VENV_ROOT}/pssolver_v03_s09_85ba3ae_baseline/bin/python"
+                    f"{H100_BASELINE_ENV}/bin/python"
                 ),
                 "S09_CANDIDATE_PYTHON": (
-                    f"{H100_VENV_ROOT}/pssolver_v03_s09_85ba3ae_candidate/bin/python"
+                    f"{H100_CANDIDATE_ENV}/bin/python"
                 ),
                 "S09_CONSUMER_PYTHON": (
-                    f"{H100_VENV_ROOT}/pssolver_v03_s09_85ba3ae_consumer/bin/python"
+                    f"{H100_CONSUMER_ENV}/bin/python"
                 ),
                 "S09_BASELINE_WHEEL": (
                     f"{H100_CONTROL_ROOT}/artifacts/pssolver-0.2.2-py3-none-any.whl"

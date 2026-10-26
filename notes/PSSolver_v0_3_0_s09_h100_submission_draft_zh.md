@@ -1,6 +1,6 @@
-# PSSolver v0.3 S-09 single-H100 提交授权草稿（待 R-0023 复核）
+# PSSolver v0.3 S-09 single-H100 提交授权草稿（待 R-0024 复核）
 
-本文件不是授权，也不表示已经提交 H100。只有 R-0023 返回 PASS 后，才能依据 D-0009 把下列内容转成给用户的一键授权文本。
+本文件不是授权，也不表示已经提交 H100。只有 R-0024 返回 PASS 后，才能依据 D-0009 把下列内容转成给用户的一键授权文本。
 
 ## 绑定身份
 
@@ -13,11 +13,11 @@
 - Provider candidate wheel：`4003645025da6d81317eeb7261ccf606aef7f60f20d072518f8baacf56cd4aa8`
 - Consumer candidate wheel：`f7ae4c1f5f3c73e0be540b5e4ec5e05a9eef662867a149325462835820ae94ef`
 - Provider source archive：`bff21905eb7d4c5e8313b10c871f40d8b96b411975260fdb0edb75b16a99a3b9`
-- non-shadowing Provider support archive：`2810f1d033bb012354712c3f351f1113ac36348db0a176e1a3ea488de43990c9`
+- non-shadowing Provider support archive：`TO_BE_BOUND_AFTER_R0024_SUPPORT_COMMIT`
 - Consumer source archive：`02f3e8249bc02cbb0484636d9f8bf46cc8a6815d90e13f8286f7aaf8291157fd`
 - Consumer support archive：`2243f14cbdad1a58cb8a1ff73e2bb550752d97f5edf2190302005d9d69ff66a1`
-- 冻结 H100 plan SHA-256：`1ad29c4887a8e79610227a84e1e7e6b6846da246df8ce1f805aadb3ff336c620`
-- Slurm script SHA-256：`4c0757bf13ee031b42407c105ffaf203b4571fe5fe51b60bd7de3834476f92f5`
+- 冻结 H100 plan SHA-256：`d123e8cf6e529e4780d8be49478628c4e1553d655ae244acf9860845cd65f55e`
+- Slurm script SHA-256：`34ed9a7e6d43acdcaa344218b396e71a439ca21da7b9073843eb1b7587fde855`
 
 Provider support archive 从上述 support 源的 `benchmarks/`、`jobs/`、`tests/` 和
 `notes/` 构建，但明确排除本授权草稿自身，避免 archive 哈希与草稿内哈希形成自引用；
@@ -33,7 +33,35 @@ archive 不含 `pssolver/`，不能遮蔽 installed wheel。
 
 `/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1`
 
-三个 installed-wheel Python 环境都必须从固定基线 `/home/fansenwei/miniconda3/envs/Nematics3D` 新建独立 hard-link clone，再分别使用 `--no-deps` 安装对应 wheel；不得复用含源代码 editable install 的环境。固定变量如下：
+HPCC 的 `/home` 与 `/scratch1` 是不同挂载点，禁止跨挂载使用 hard-link clone。三个
+installed-wheel 环境必须按 rc5/rc6 已验证的方式，用固定基线解释器创建：
+
+```bash
+BASE_ENV=/home/fansenwei/miniconda3/envs/Nematics3D
+BASELINE_ENV=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_baseline
+CANDIDATE_ENV=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_candidate
+CONSUMER_ENV=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_consumer
+
+test ! -e "${BASELINE_ENV}"
+"${BASE_ENV}/bin/python" -m venv --system-site-packages "${BASELINE_ENV}"
+"${BASELINE_ENV}/bin/python" -m pip install --no-deps --no-cache-dir \
+  /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.2.2-py3-none-any.whl
+
+test ! -e "${CANDIDATE_ENV}"
+"${BASE_ENV}/bin/python" -m venv --system-site-packages "${CANDIDATE_ENV}"
+"${CANDIDATE_ENV}/bin/python" -m pip install --no-deps --no-cache-dir \
+  /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl
+
+test ! -e "${CONSUMER_ENV}"
+"${BASE_ENV}/bin/python" -m venv --system-site-packages "${CONSUMER_ENV}"
+"${CONSUMER_ENV}/bin/python" -m pip install --no-deps --no-cache-dir \
+  /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl \
+  /home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver_control-0.0.1.dev0-py3-none-any.whl
+```
+
+三个环境不得包含 editable install。资格 helper 必须用 `sys.prefix`、purelib、导入来源、
+wheel `RECORD` 摘要、`pip check` 和 source-shadow audit 共同把关，不能仅凭创建命令声称身份。
+固定变量如下：
 
 ```text
 S09_BASELINE_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_baseline/bin/python
@@ -49,7 +77,51 @@ S09_CONTROL_ROOT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023
 S09_OUTPUT_ROOT=/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1
 ```
 
-三个环境均须记录克隆来源、Python 3.10.18、PyTorch 2.5.1+cu121、CUDA runtime 12.1、NumPy 1.22.3、SciPy 1.8.1、`sys.path`、导入路径、wheel/RECORD 摘要、`pip check` 和 source-shadow 判定。
+三个环境均须记录基线解释器来源与 venv 创建命令、Python 3.10.18、PyTorch 2.5.1+cu121、CUDA runtime 12.1、NumPy 1.22.3、SciPy 1.8.1、`sys.path`、导入路径、wheel/RECORD 摘要、`pip check` 和 source-shadow 判定。
+
+## 提交前目录与完整 sbatch 命令
+
+提交前必须保证 `S09_OUTPUT_ROOT` 原本不存在，并先建立 Slurm stdout/stderr 使用的日志目录：
+
+```bash
+export S09_BASELINE_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_baseline/bin/python
+export S09_CANDIDATE_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_candidate/bin/python
+export S09_CONSUMER_PYTHON=/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_consumer/bin/python
+export S09_BASELINE_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.2.2-py3-none-any.whl
+export S09_CANDIDATE_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl
+export S09_CONSUMER_WHEEL=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/artifacts/pssolver_control-0.0.1.dev0-py3-none-any.whl
+export S09_PROVIDER_SUPPORT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/provider_support
+export S09_CONSUMER_SUPPORT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/consumer_support
+export S09_PROVIDER_REFERENCE=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1/provider_85ba3ae
+export S09_CONTROL_ROOT=/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1
+export S09_OUTPUT_ROOT=/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1
+
+test ! -e "${S09_OUTPUT_ROOT}"
+mkdir -p "${S09_CONTROL_ROOT}/logs"
+
+sbatch --export=ALL,S09_BASELINE_PYTHON,S09_CANDIDATE_PYTHON,S09_CONSUMER_PYTHON,S09_BASELINE_WHEEL,S09_CANDIDATE_WHEEL,S09_CONSUMER_WHEEL,S09_PROVIDER_SUPPORT,S09_CONSUMER_SUPPORT,S09_PROVIDER_REFERENCE,S09_CONTROL_ROOT,S09_OUTPUT_ROOT \
+  "${S09_CONTROL_ROOT}/jobs/v0_3_s09_single_h100.sbatch"
+```
+
+禁止省略任何一个 `S09_*`，不得依赖交互 shell 中未持久化的隐式值。
+
+## HPCC 新建目录及处置
+
+- `/home/fansenwei/pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1`：控制归档；永久保留。
+- 控制归档下的 `artifacts/`、`provider_85ba3ae/`、`provider_support/`、
+  `consumer_support/`、`jobs/`、`logs/`：提交前创建；与控制归档一起保留。
+- `/scratch1/vincent/PSSolver/venvs/pssolver_v03_s09_85ba3ae_baseline`、
+  `..._candidate`、`..._consumer`：提交前创建；证据取回并完成 checksum 复核后删除，删除结果写入
+  控制归档的 `PRUNED.txt`。
+- `/scratch1/vincent/PSSolver/data_pssolver_v0_3_s09_h100_85ba3ae_48dd4d3_20261023_v1`：
+  作业在确认原本不存在后创建；作为 checksummed scratch 证据保留。其 `results/`、`logs/`、
+  `compiler_preflight/`、`long_horizon_cases/`、`profile_matrix/` 及 profile matrix 动态子目录均随
+  scratch 证据保留。
+- `/tmp/pssolver_v03_s09_${SLURM_JOB_ID}` 及其 `pytest_tmp/`、`rename_noreplace/`：仅在分配节点
+  上创建，作业脚本通过 `EXIT` trap 在成功或失败时删除。
+
+证据取回只复制归档，不改写原文件；先验证控制归档和 scratch 清单，再删除三个 scratch venv。
+失败也必须保留控制日志与已经持久化的 scratch 证据，且不得写成功 `COMPLETE`。
 
 ## 拟授权范围
 

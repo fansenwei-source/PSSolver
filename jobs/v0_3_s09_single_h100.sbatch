@@ -59,6 +59,7 @@ node_root="/tmp/pssolver_v03_s09_${SLURM_JOB_ID}"
 pytest_tmp="${node_root}/pytest_tmp"
 rename_root="${node_root}/rename_noreplace"
 test ! -e "${node_root}"
+trap 'rm -rf "${node_root}"' EXIT
 mkdir -p "${pytest_tmp}"
 export TMPDIR="${pytest_tmp}"
 mkdir -p "${S09_OUTPUT_ROOT}/results" "${S09_OUTPUT_ROOT}/logs"
@@ -156,5 +157,3 @@ mkdir -p "${S09_OUTPUT_ROOT}/results" "${S09_OUTPUT_ROOT}/logs"
   sha256sum --check checksums.sha256
   printf '%s\n' PASS_V0_3_S09_SINGLE_H100_CUMULATIVE_QUALIFICATION > COMPLETE
 )
-
-rm -rf "${node_root}"
