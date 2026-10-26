@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-25",
+  "stage": "S-09",
+  "classification": "READY_R0024_S09_FINAL_LOCAL_SUPPORT",
+  "git_identity": {
+    "provider_runtime_commit": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+    "fixture_repair_commit": "87cf34cf4e17096a701f5cc5bc81076d14a9d237",
+    "provider_qualification_support_commit": "c66fd9ededb62950b601e3f9ddf038a54c37bbf7",
+    "draft_binding_commit": "4358ea61d7e29f8c69208e050abcd3285caffeb1",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "fixture": {
+    "root": "tests/fixtures/s09_legacy_compatibility_v1/v0_2_2_migrated_rc1_channel_even",
+    "tree_sha256": "04aca84f344c9f13166666041d3accdebbfbb93ac4da170dd578db3cc20619cf",
+    "payloads": {
+      "state__q_physical.npy": "7fa1711203aee523bbb78fd00a0bfed5fc99e855e25e264220dd97810ce289f7",
+      "state__q_spectral.npy": "e4ac9c1d8be63fdfd3f4824f163399fe322dcff2d6847579b143566e87c65839"
+    },
+    "all_manifest_files_git_tracked": true,
+    "runtime_changed": false
+  },
+  "artifacts": {
+    "provider_source_archive_sha256": "bff21905eb7d4c5e8313b10c871f40d8b96b411975260fdb0edb75b16a99a3b9",
+    "provider_wheel_sha256": "4003645025da6d81317eeb7261ccf606aef7f60f20d072518f8baacf56cd4aa8",
+    "provider_support_archive_sha256": "87e0fa9614822e03a7b1850519cd6811babed1c999e50e234e1734e5bb46e7b9",
+    "consumer_source_archive_sha256": "02f3e8249bc02cbb0484636d9f8bf46cc8a6815d90e13f8286f7aaf8291157fd",
+    "consumer_support_archive_sha256": "2243f14cbdad1a58cb8a1ff73e2bb550752d97f5edf2190302005d9d69ff66a1",
+    "consumer_wheel_sha256": "f7ae4c1f5f3c73e0be540b5e4ec5e05a9eef662867a149325462835820ae94ef"
+  },
+  "h100_draft": {
+    "plan_sha256": "d123e8cf6e529e4780d8be49478628c4e1553d655ae244acf9860845cd65f55e",
+    "job_script_sha256": "34ed9a7e6d43acdcaa344218b396e71a439ca21da7b9073843eb1b7587fde855",
+    "draft_sha256": "bb908866978eb00d8829792f1cb2869b6e1617eb1a88e6b10bbadd24d0293a45",
+    "venv_construction": "python -m venv --system-site-packages plus pip install --no-deps --no-cache-dir",
+    "control_logs_created_before_sbatch": true,
+    "complete_sbatch_command_recorded": true,
+    "all_created_directories_and_dispositions_recorded": true,
+    "output_root_must_initially_not_exist": true
+  },
+  "registry_boundary": {
+    "V-35": "claimed_fixed",
+    "V-36": "claimed_fixed",
+    "V-37": "registered",
+    "A3-18": "coverage_gap",
+    "NEW-14": "open"
+  },
+  "scope": {
+    "runtime_changed_after_85ba3ae": false,
+    "provider_wheel_rebuild_required": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed_after_85ba3ae": false,
+    "threshold_changed": false,
+    "sample_removed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "push_executed": false,
+    "HPCC_executed": false,
+    "GPU_executed": false,
+    "H100_executed": false
+  },
+  "next_request": "R-0024"
+}

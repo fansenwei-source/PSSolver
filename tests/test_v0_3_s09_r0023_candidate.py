@@ -9,6 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s09_r0023_candidate.json"
+FINAL_RECORD = (
+    ROOT / "notes/PSSolver_v0_3_0_s03_successor_36_s09_final_support.json"
+)
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 
 
@@ -55,19 +58,23 @@ def test_r0023_candidate_record_is_preserved_after_result_import() -> None:
     assert issues["NEW-14"]["status"] == "open"
 
 
-def test_r0023_candidate_binds_frozen_plan_job_and_draft() -> None:
-    record = _read(RECORD)["h100_draft"]
-    assert _sha256(ROOT / "notes/PSSolver_v0_3_0_s09_h100_plan.json") == record[
+def test_r0023_candidate_is_preserved_while_final_support_moves_forward() -> None:
+    historical = _read(RECORD)["h100_draft"]
+    current = _read(FINAL_RECORD)["h100_draft"]
+    assert historical["plan_sha256"] == (
+        "1ad29c4887a8e79610227a84e1e7e6b6846da246df8ce1f805aadb3ff336c620"
+    )
+    assert _sha256(ROOT / "notes/PSSolver_v0_3_0_s09_h100_plan.json") == current[
         "plan_sha256"
     ]
-    assert _sha256(ROOT / "jobs/v0_3_s09_single_h100.sbatch") == record[
+    assert _sha256(ROOT / "jobs/v0_3_s09_single_h100.sbatch") == current[
         "job_script_sha256"
     ]
     assert _sha256(
         ROOT / "notes/PSSolver_v0_3_0_s09_h100_submission_draft_zh.md"
-    ) == record["draft_sha256"]
+    ) == current["draft_sha256"]
     assert all(
-        record[key] is True
+        historical[key] is True
         for key in (
             "performance_rules_match_analyzer",
             "all_S09_environment_values_bound",
