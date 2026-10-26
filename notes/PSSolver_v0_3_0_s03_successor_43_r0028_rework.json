@@ -12,7 +12,11 @@
   "git_identity": {
     "runtime_commit": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
     "r0028_candidate_commit": "2d8d724602c05a5e09f9aca7b966c2ea32316bfa",
-    "rework_support_commit": "98a3e26eb3d3ac0567079b1e0ee1e5c22b998ad2",
+    "rework_support_commit": "b0314216d1943c5131097f80d0ec164fe1b06bd2",
+    "rework_support_commits": [
+      "98a3e26eb3d3ac0567079b1e0ee1e5c22b998ad2",
+      "b0314216d1943c5131097f80d0ec164fe1b06bd2"
+    ],
     "rework_support_parent": "2d8d724602c05a5e09f9aca7b966c2ea32316bfa"
   },
   "sync_result": {
@@ -47,7 +51,7 @@
     "benchmarks/v0_3_s09_revert_pressure_proxy.py": "6a93d88ad3b1682d65ddce6182ede0e741e66b7d3c01166361b7c43f80f8c276"
   },
   "historical_successor_sources": {
-    "benchmarks/analyze_v0_3_s09_ap_cache_diagnostic.py": {"historical_sha256": "a727b3b90fd86b66c35a0248a434512d893d3dace4ea1cbf04e1b5ea9383ec53", "current_sha256": "7a5c5331e882f5ef05f6a555a6f008412898d12bc903b8e78f35f977a686cad3", "reason": "Use the frozen _profile_center estimator for every single-trial ratio and compare the exact revert proxy."},
+    "benchmarks/analyze_v0_3_s09_ap_cache_diagnostic.py": {"historical_sha256": "a727b3b90fd86b66c35a0248a434512d893d3dace4ea1cbf04e1b5ea9383ec53", "current_sha256": "de94902c6df186963c696446b4b4a60e26152205bd9a0eb40a3859fc304798c3", "reason": "Use the frozen _profile_center estimator for every single-trial ratio, compare the exact revert proxy and bootstrap direct-script imports."},
     "benchmarks/plan_v0_3_s09_ap_cache_diagnostic.py": {"historical_sha256": "413029d25e226780abcfcc6d1e7638101d4e937657fd0a80023ec7f565796923", "current_sha256": "031ec88724030ac65d5325286ae849458dfab5cda1004392f3b681fb2451021d", "reason": "Replace cache-off with the exact revert proxy and use all six role permutations."},
     "benchmarks/profile_v0_3_s09_ap_cache_diagnostic.py": {"historical_sha256": "bb097c0a554ec38a8f66aae93bd865ed4e7a0aa86c83ee70cced2fa34ed95aff", "current_sha256": "80028c5ef960d2cf612163d2a1dc0918bfc36422d19abf0fdbc497080aed98b9", "reason": "Apply and persist the exact f94b9be pressure-solve proxy proof."},
     "benchmarks/run_v0_3_s09_ap_cache_diagnostic.py": {"historical_sha256": "ada1e94a3f2408183f92dbb35aa8196084cce0ec98ad11e30a576b3003018c7d", "current_sha256": "b856328eb320766372e97628ed641b9baf99e63badeaa305712b1585af1d1200", "reason": "Validate exact revert-proxy results and bind its support module."},
@@ -56,7 +60,7 @@
     "notes/PSSolver_v0_3_0_s09_ap_cache_diagnostic_plan_zh.md": {"historical_sha256": "11a57a986f3c216bb125a39bcae0552b2665354fbcff9cd7a2aa8af522c4dbf4", "current_sha256": "e6bc4342022b6f6a6ec6a025f380ab64e4ea84ed21d938f617860ff4bf783451", "reason": "Document the exact revert proxy, frozen center estimator, balanced order and untimed snapshots."},
     "notes/pssolver_v0_2_x_open_issues.json": {"historical_sha256": "fe3966ac1524ff0c5e59487abe68b11b6bd91756cc0e59de2a1c9f36ddea5285", "current_sha256": "fb765d98ab8fe68514b415ba283a9f6bdd2a0de1ee688ad181de1dfa9115acd1", "reason": "Refine V-41 attribution without changing its status or requested decision."},
     "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "661ee432f079bcfe5ab7f88db9b41f492f9e63ff8d6138fd8f3c7770309c9335", "current_sha256": "14df9c64a34ada63f8b5c2c737f4febeeb10dab672283918ac057208b0d5eebc", "reason": "Document the R-0028 CPU memory-lifetime finding."},
-    "tests/test_v0_3_s09_ap_cache_diagnostic.py": {"historical_sha256": "c8141d1de45b156000a7e1a4d88734ad6cfa2e47ccc703e6cb6a0f8707b58419", "current_sha256": "850c67ba73fe78233acfc05ae6ea5e30c71f7572a26795e97fccb668830fc58b", "reason": "Bind exact source reconstruction, all role permutations, frozen center parity and CPU snapshot flow."},
+    "tests/test_v0_3_s09_ap_cache_diagnostic.py": {"historical_sha256": "c8141d1de45b156000a7e1a4d88734ad6cfa2e47ccc703e6cb6a0f8707b58419", "current_sha256": "c7a116a002cea3c5c500b1806a28ee3817658d1c89f9d6b101b17893e72721a2", "reason": "Bind exact source reconstruction, all role permutations, frozen center parity, CPU snapshot flow and direct-script bootstrap."},
     "tests/test_v0_3_s09_r0028_candidate.py": {"historical_sha256": "42f97914db66379dc647fc85f52cb2a33a204e7565e7e10ce25d512c3df9a4f6", "current_sha256": "9c2ad8ed1dcfe5dca3e00e08b7048e077317cbaaf4dcb8185f260afd01ab5253", "reason": "Preserve R-0028 historical bindings through the forward successor chain."}
   },
   "authorization": {
