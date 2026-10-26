@@ -1,0 +1,101 @@
+{
+  "schema": "pssolver.v0_3.s09.ap_cache_diagnostic_candidate.v1",
+  "classification": "READY_R0028_S09_AP_CACHE_DIAGNOSTIC_REVIEW",
+  "plan_step": "S-09",
+  "decision": "D-0012",
+  "review_request": "R-0028",
+  "git_identity": {
+    "runtime_commit": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+    "qualification_support_commit": "b8df25e56ed092cc732ef1dbfba591c2af776d1a",
+    "baseline_commit": "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70",
+    "support_changes_runtime": false
+  },
+  "artifacts": {
+    "baseline_wheel_sha256": "a7e94585e62785c69522d6cc194fd479b5af55577444926d1bb661ed073cc00e",
+    "candidate_wheel_sha256": "4003645025da6d81317eeb7261ccf606aef7f60f20d072518f8baacf56cd4aa8",
+    "support_archive_sha256": "5033276c2ed2cc8fa7afe9ffce2d558edad826cf8b9ae71b798a3e48ba880fd4",
+    "support_archive_excludes_pssolver": true,
+    "support_archive_excludes_pssolver_control": true
+  },
+  "support_hashes": {
+    "plan_source": "413029d25e226780abcfcc6d1e7638101d4e937657fd0a80023ec7f565796923",
+    "generated_h100_plan": "8d709078d453c6df7078cb8fbf7af8ec0921a0f47353502d1c0372f131970352",
+    "profile": "bb097c0a554ec38a8f66aae93bd865ed4e7a0aa86c83ee70cced2fa34ed95aff",
+    "child": "3bc0cd6ef325ae481f59ab81fefed4292fb4f6174c3899fd50fcbb62a208c716",
+    "runner": "ada1e94a3f2408183f92dbb35aa8196084cce0ec98ad11e30a576b3003018c7d",
+    "analyzer": "a727b3b90fd86b66c35a0248a434512d893d3dace4ea1cbf04e1b5ea9383ec53",
+    "job": "18534cf63142abc62962dcc24a6a9d84283aa4968e54f146bda000ae59a2c7a6",
+    "plan_document": "11a57a986f3c216bb125a39bcae0552b2665354fbcff9cd7a2aa8af522c4dbf4",
+    "authorization_draft": "e104a97a9a6a63c0240b158122307f4e4159ef751a3fa39347345b0ae38bc641"
+  },
+  "diagnostic_contract": {
+    "families": [
+      "channel_legacy",
+      "channel_compiled_v2"
+    ],
+    "grids": [
+      "channel_R128x20x20",
+      "channel_R512x40x40"
+    ],
+    "roles": [
+      "baseline",
+      "candidate_cache_on",
+      "candidate_cache_off"
+    ],
+    "trials_per_cell": 6,
+    "formal_samples_per_profile": 60,
+    "profile_count": 72,
+    "all_samples_retained": true,
+    "balanced_role_rotation": true,
+    "independent_process_per_profile": true,
+    "empty_compile_caches_per_profile": true,
+    "thresholds_unchanged": true,
+    "thresholds_used_for_qualification": false,
+    "qualification_complete": false,
+    "s09_complete": false
+  },
+  "cache_off": {
+    "harness_only": true,
+    "wheel_modified": false,
+    "runtime_modified": false,
+    "pressure_warm_start_preserved": true,
+    "operator_action_store_suppressed": true,
+    "operator_action_lookup_forced_to_miss": true,
+    "proof_is_persisted_per_profile": true
+  },
+  "installed_wheel_cpu_rehearsal": {
+    "evidence_root": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_r0028_local_dabb4d6_20261026_v1",
+    "baseline_environment_source": "/home/fansenwei/pssolver_v0_2_2_release_package_2a1d0f7_20261020_v1/venv_isolated",
+    "clone_method": "cp -al hard-link clone",
+    "baseline_version": "0.2.2",
+    "candidate_version": "0.3.0.dev0",
+    "source_shadow_import": false,
+    "profile_count": 72,
+    "all_profiles_finite": true,
+    "all_cache_off_proofs_passed": true,
+    "candidate_cache_on_off_initial_state_byte_identical": true,
+    "candidate_cache_on_off_final_state_byte_identical": true,
+    "performance_interpretation": "none; CPU rehearsal timing is not diagnostic evidence",
+    "targeted_pytest": {
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0,
+      "junit_present": true
+    }
+  },
+  "harness_recovery": {
+    "first_attempt_started_profiles": 0,
+    "first_attempt_failure": "runner rejected a normal venv bin/python symlink before any profile",
+    "fixed_in_support_commit": "b8df25e56ed092cc732ef1dbfba591c2af776d1a",
+    "failed_attempt_preserved_in_evidence": true,
+    "successful_matrix_rerun_count": 1
+  },
+  "authorization": {
+    "push": false,
+    "hpcc": false,
+    "slurm": false,
+    "h100": false,
+    "automatic_retry": false,
+    "production_default_changed": false
+  }
+}
