@@ -46,6 +46,7 @@
     "A3-18": "coverage_gap",
     "NEW-14": "open"
   },
+  "historical_successor_sources": {},
   "scope": {
     "runtime_changed_after_85ba3ae": false,
     "provider_wheel_rebuild_required": false,
