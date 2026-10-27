@@ -41,13 +41,18 @@ def test_r0033_candidate_binds_exact_local_implementation() -> None:
 
 
 def test_r0033_candidate_claims_v33_and_v43_without_closing_them() -> None:
+    record = _read(RECORD)
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     for issue_id in ("V-33", "V-43"):
-        assert issues[issue_id]["status"] == "claimed_fixed"
+        assert record["claims"][issue_id] == "claimed_fixed"
+        assert issues[issue_id]["status"] in {"claimed_fixed", "verified"}
         assert issues[issue_id]["fixed_in"] == (
             "61838af7910d955b27268abd4a79e4d32f235f58"
         )
-        assert "verified_by" not in issues[issue_id]
+        if issues[issue_id]["status"] == "verified":
+            assert issues[issue_id]["verified_by"] == "R-0033"
+        else:
+            assert "verified_by" not in issues[issue_id]
 
 
 def test_r0033_candidate_binds_authentic_per_oracle_builds() -> None:

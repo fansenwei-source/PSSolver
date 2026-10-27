@@ -1,0 +1,77 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.r0033_import.v1",
+  "created_at": "2026-10-27T02:14:04-04:00",
+  "plan_step": "S-10",
+  "classification": "PASS_R0033_S10_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "c70ea9790af4532241f8e7342fcc17436d1cb6b0",
+    "implementation_commit": "61838af7910d955b27268abd4a79e4d32f235f58",
+    "candidate_record_parent": "18588b1be7faaa09c1e1fdb0828c1861e4e69757",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0033",
+    "path": "PSSolver_sync/results/R-0033.result.json",
+    "sha256": "8b0f709dc37c1bb631b4efb9f82f47353fc2e06485e7b6c6ee7613536988bd49",
+    "sync_commit": "805c580d6ed0cac7d06fdabedf175c5ace71c034",
+    "classification": "PASS"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s10rw_claude_review_20261027_v1",
+    "checksums_entries": 37,
+    "checksums_sha256": "3e063a04821dbf75464137fa146d46cc1caf78b7f5a1c39347e33c9c58abc2ee",
+    "complete_present": true,
+    "final_report_sha256": "8806bdf5b3385efde70eaf27b3182dedecdb894a29cd0759177e39618f66f550",
+    "summary_sha256": "10fb50725de7d7fa07c9f3eb527dafa998b46caf3fbc31339f01408a2036f770"
+  },
+  "registry_import": {
+    "verified": {
+      "V-33": "61838af7910d955b27268abd4a79e4d32f235f58",
+      "V-43": "61838af7910d955b27268abd4a79e4d32f235f58"
+    },
+    "verified_by": "R-0033",
+    "new_findings": []
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "6fce852a416ff4469e313c2480f3bb23af28a568e9514d6a23ed62f01b58f64b",
+      "current_sha256": "0daafb3578ac53648423321b27c6b5d8dc04f267899a8de874aae8c6bcbc6f54",
+      "reason": "Import the R-0033 verification of V-33 and V-43 without changing S-09 state."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "6522df0e6e71be93f7bb07309329e602645b0eb0185970b35ed16d27028a4e24",
+      "current_sha256": "843bcd145e3d4aa94386e54fe329c27361638bb0bde42d258e8b21292d15d06e",
+      "reason": "Summarize the R-0033 PASS and preserve the S-09/R-0031 decision boundary."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "30e43fc3ebb21bdb6cf33e6088ed20d46fc4689dd2dfacad154e55d402c76487",
+      "current_sha256": "fb9aca52315927ab720f0de85c86ed1061269ca1bded13391678b230992092a0",
+      "reason": "Bind the two verified states and the resulting forward registry totals."
+    },
+    "tests/test_v0_3_s10_r0033_candidate.py": {
+      "historical_sha256": "9f1509f7fcb3a114043b33b400fe55e1debee346488b810716de0bc5b98dbe95",
+      "current_sha256": "d3d3595a01037359eb3fda975ff6666d6e37156861ecf2be9fb9db4a17c45176",
+      "reason": "Bind the candidate's immutable claimed_fixed snapshot while allowing its verified forward state."
+    }
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "oracle_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "S09_branch_modified": false,
+    "S10_merged_into_S09": false
+  },
+  "authorization": {
+    "local_evidence_import": true,
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false,
+    "S09_merge": false
+  },
+  "next_request": "R-0034",
+  "reserved_request": "R-0031"
+}

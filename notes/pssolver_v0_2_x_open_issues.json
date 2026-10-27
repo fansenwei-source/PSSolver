@@ -33,8 +33,8 @@
   "status_counts": {
     "open": 0,
     "registered": 2,
-    "claimed_fixed": 2,
-    "verified": 41,
+    "claimed_fixed": 0,
+    "verified": 43,
     "deferred": 2,
     "accepted": 1,
     "coverage_gap": 0
@@ -639,10 +639,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "61838af7910d955b27268abd4a79e4d32f235f58",
+      "verified_by": "R-0033",
       "target_release": "0.3",
-      "notes": "R-0032 found that S-10's first schema-2 implementation filtered only pip-build CUDA probe lines, used a NumPy configuration API unavailable in the declared NumPy 1.22 minimum, and gave the v0.2.0 oracle a hybrid fingerprint that matched no real generation environment. V-33 remains claimed_fixed while S-10 is reworked for build-format-independent Torch identity, NumPy 1.22 fallback, authentic per-oracle generation fingerprints, and explicit evidence that both matching-build continuations take the bitwise branch. Awaiting R-0033 independent verification."
+      "notes": "R-0032 found that S-10's first schema-2 implementation filtered only pip-build CUDA probe lines, used a NumPy configuration API unavailable in the declared NumPy 1.22 minimum, and gave the v0.2.0 oracle a hybrid fingerprint that matched no real generation environment. The 61838af rework uses build-format-independent Torch identity, NumPy 1.22 fallback, authentic per-oracle generation fingerprints, and explicit evidence that both matching-build continuations take the bitwise branch. R-0033 independently verified CUDA-visibility invariance in both conda-forge and pip builds, authentic generation-environment fingerprints, unchanged payloads, and all seven matching-build bitwise continuation cases."
     },
     {
       "id": "V-34",
@@ -794,10 +795,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "61838af7910d955b27268abd4a79e4d32f235f58",
+      "verified_by": "R-0033",
       "target_release": "0.3.0 (S-10 rework)",
-      "notes": "S-10 e75ef77 called np.__config__.show(mode='dicts'), but NumPy 1.22.3 accepts no mode argument and raises TypeError. The 61838af rework falls back to captured show() text, records whether mode_dicts or show_text supplied the configuration, and exercises the legacy signature. Awaiting R-0033 independent verification."
+      "notes": "S-10 e75ef77 called np.__config__.show(mode='dicts'), but NumPy 1.22.3 accepts no mode argument and raises TypeError. The 61838af rework falls back to captured show() text, records whether mode_dicts or show_text supplied the configuration, and exercises the legacy signature. R-0033 independently verified the show_text fallback with Python 3.10, NumPy 1.22.3 and torch 2.5.1, including the S-09 checkpoint-stage tests and the failing 1cd484f negative control."
     }
   ],
   "authorization": {
