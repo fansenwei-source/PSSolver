@@ -1,0 +1,78 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.r0032_import.v1",
+  "created_at": "2026-10-27T01:09:00-04:00",
+  "plan_step": "S-10",
+  "classification": "REWORK_REQUIRED_R0032_S10_REVIEW_IMPORTED",
+  "git_identity": {
+    "reviewed_candidate": "1cd484f56816ea0a2532b8ebfa8010a0a60b74e3",
+    "base_commit": "f3620b87581de5f29356ed1da89673cf08ffc8a7",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0032",
+    "path": "PSSolver_sync/results/R-0032.result.json",
+    "sha256": "ce87ee51b3f423f6fb3cb1ddb56f7b09dca96dd3d608bf797e50bd58f9e5aa4e",
+    "classification": "REWORK_REQUIRED"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s10_claude_review_20261027_v1",
+    "checksums_entries": 39,
+    "checksums_sha256": "590745fce1134890888a33106d718a7adf6df36424765b5fce581e7b9497c569",
+    "complete_present": true,
+    "final_report_sha256": "0654a57b1ce96e84260ca95343daca25fb83215ab8ea27809a46d59da24f4bdd",
+    "summary_sha256": "c33db1d03bb869c3eb6ddf0ef2588fb4a06f8ae70fe87e4e4398ca63cb6f3f0d"
+  },
+  "verdict": {
+    "passed": [
+      "S10-R7-PARTIAL",
+      "S10-R9-PARTIAL",
+      "S10-D0011-BOUNDARY",
+      "S10-S09-SEPARATION"
+    ],
+    "rework_required": [
+      "S10-V33-FINGERPRINT-SCHEMA-2",
+      "S10-V33-PAYLOAD-INVARIANCE",
+      "S10-CPU-QUALIFICATION"
+    ],
+    "new_findings": ["V-43"]
+  },
+  "registry_import": {
+    "V-33": "claimed_fixed",
+    "V-43": "registered",
+    "next_review": "R-0033"
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "c4cb888fec4c7efe5f8580f6fac2e1f68b3a1a0814a556310fdbfc05e2226ed4",
+      "current_sha256": "5774d472e64491c0f500fc882d9a78b8721dc8070efbed91f04d509421b6c196",
+      "reason": "Keep V-33 claimed, register V-43, and bind the R-0033 rework boundary."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "a50acd5b0e9a1804d96f4835276f9e2ac6f77c09942593d98d0d27fcf6e28566",
+      "current_sha256": "9f97a10040d00712190eef44867b10eda0d0db422c1a477ad755aff3a95f1c5f",
+      "reason": "Document the R-0032 pass/rework split and V-43."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "67cc7394f114e00664e7f2722e538139df783c703a1279a1fb1b3fb0154527d3",
+      "current_sha256": "f45fdeec13be5f5ba8bbde2b56be7df1b2b0346984579046c697cff52742d04d",
+      "reason": "Bind V-43 and the forward registry totals without changing runtime tests."
+    }
+  },
+  "scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "oracle_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "S09_branch_modified": false
+  },
+  "authorization": {
+    "local_rework": true,
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false
+  },
+  "next_request": "R-0033"
+}

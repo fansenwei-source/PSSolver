@@ -139,6 +139,11 @@
     说明（R9 partial）。其余部分保持 `deferred`：R1/R2/R3 会改变构造、checkpoint 或独立
     Consumer 公共边界；R4/R5 触及数值和已资格化 hot path；R6 需要弃用与 lifting 决策；
     R8 涉及证据保留政策；其余 R7/R9 需要更广泛迁移。登记决定改为 `D-0011`。
+27. `R-0032` 对 S-10 的 R7、R9 部分清理和 D-0011 延期边界判定通过，但要求返工
+    `V-33`：第一版只过滤 pip Torch 的 CUDA 探测行，v0.2.0 oracle 又混合了两个环境的
+    指纹，因此不能证明真实 matching-build 分支。另登记 `V-43`（low）：NumPy 1.22.3
+    不支持 `np.__config__.show(mode="dicts")`，而它仍是公开依赖下限和 HPCC 资格环境。
+    `V-33` 保持 `claimed_fixed`、`V-43` 保持 `registered`，两项等待 R-0033。
 
 ## Control 路径
 
