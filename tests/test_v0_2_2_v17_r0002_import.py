@@ -135,7 +135,11 @@ def test_r0002_registry_updates_are_exact() -> None:
             else:
                 assert actual[key] == value
     for issue_id, decision in record["decision_bindings"].items():
-        assert issues[issue_id]["decision"] == decision == "D-0007"
+        assert decision == "D-0007"
+        if issue_id == "R1-R9":
+            assert issues[issue_id]["decision"] == "D-0011"
+        else:
+            assert issues[issue_id]["decision"] == decision
 
 
 def test_r0002_import_does_not_expand_authority_or_runtime_scope() -> None:

@@ -42,6 +42,7 @@ def test_s06_record_binds_the_roadmap_and_runtime_sources() -> None:
 
 def test_s06_registry_advances_all_review_items_through_r0016() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
+    assert issues["V-33"]["status"] == "claimed_fixed"
     for issue_id in ISSUES | {"V-28", "V-29"}:
         expected = (
             "f6da20f71ed2b7ae63ab07b19103eb6c29a95829"

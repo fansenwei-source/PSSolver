@@ -45,7 +45,9 @@ def test_s07_rework_binds_the_runtime_and_v30_contract() -> None:
         "normalization", "fallback_allowed"
     }
     for relative, expected in record["runtime_sources"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative, expected
+        )
 
 
 def test_s07_rework_successors_are_forward_only() -> None:
@@ -57,6 +59,7 @@ def test_s07_rework_successors_are_forward_only() -> None:
 
 def test_s07_rework_is_later_verified_by_r0018() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
+    assert issues["V-33"]["status"] == "claimed_fixed"
     assert all(issues[issue_id]["status"] == "verified" for issue_id in CLAIMS)
     assert all(issues[issue_id]["verified_by"] == "R-0018" for issue_id in CLAIMS)
     assert issues["V-30"]["fixed_in"] == IMPLEMENTATION

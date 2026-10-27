@@ -1,0 +1,98 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.s10_prequalification_rework.v1",
+  "created_at": "2026-10-27T00:23:33-04:00",
+  "plan_step": "S-10",
+  "classification": "PASS_LOCAL_S10_HISTORICAL_TEST_FORWARD_COMPATIBILITY_REWORK",
+  "cause": "The first clean full-CPU qualification found eleven failures in historical evidence tests that pinned evolving live registry states or bypassed the forward successor chain. No runtime, numerical, threshold, or scientific test failed.",
+  "git_identity": {
+    "branch": "fix/v0.3-s10-final-cleanup",
+    "base_record_commit": "dc955c5db5f0b67949115062577a46d22776083e",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "initial_gate": {
+    "environment": "D-0008 conda baseline hard-link clone",
+    "passed": 4772,
+    "skipped": 1,
+    "deselected": 7,
+    "subtests_passed": 8,
+    "failed": 11,
+    "failure_domain": "historical evidence-test forward compatibility",
+    "log_preserved": true,
+    "junit_preserved": true
+  },
+  "rework_contract": {
+    "historical_records_unchanged": true,
+    "historical_snapshots_remain_exact": true,
+    "live_registry_may_advance_through_successors": true,
+    "payload_hashes_remain_exact": true,
+    "runtime_changed": false,
+    "numerical_threshold_changed": false,
+    "skip_or_xfail_added": false
+  },
+  "historical_successor_sources": {
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "48de62d7a5f69545178ef9383810370ebe0ef296188bdf5ceef90e05521d8849",
+      "current_sha256": "55024f01495fa390072653d5f044aea3d97a0e0e2974a33f0914ad3907e9254c",
+      "reason": "Keep R-0002's D-0007 decision historical while allowing the live R1-R9 deferral to advance under D-0011."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "4fc728384337f6a4263dee83edcc4e8b72e2bfe5d5237de021fb846770db6723",
+      "current_sha256": "cf4856df19de66eebc3f4f2c949f27e95b4091f3c67c9c2ee552552db2a07ce5",
+      "reason": "Check the legitimate V-33 claimed state instead of globally prohibiting forward claimed fixes."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "historical_sha256": "b8757c0db9b7224226e9a8e04698ade44398743e8db96897804e4f58bce9c155",
+      "current_sha256": "a46e7b3fd709c484b8a987ebcd93167613cdb4e80b52b19deff9e6456f3371d6",
+      "reason": "Check the legitimate V-33 claimed state instead of globally prohibiting forward claimed fixes."
+    },
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {
+      "historical_sha256": "b1dd95befe8c58b4b76876ec05f12dd2cbd39aada5de5335cf23708ea7da4fea",
+      "current_sha256": "f2ca85ff81b9410c3dd014b13769d5b1bc92097158fa77f7b1af6765a4036396",
+      "reason": "Check the legitimate V-33 claimed state instead of globally prohibiting forward claimed fixes."
+    },
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {
+      "historical_sha256": "4e807b8c41f8134422bbd20cf4b7a9137ce0a78d60b005e69239843f495c1bf2",
+      "current_sha256": "abc64ee1be6df0d30353922772b351e99771dc4e4dfcaff1439fda0b1c141004",
+      "reason": "Check the legitimate V-33 claimed state instead of globally prohibiting forward claimed fixes."
+    },
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {
+      "historical_sha256": "bfd93b71600f1266ffe2fd4419165d8bb7dde98e20e222c11a79bccfa4a4e7c9",
+      "current_sha256": "bd8d252b02d585b064634ee0379a77f711b03277b99e68b804fa11f54f3b1a99",
+      "reason": "Check the legitimate V-33 claimed state instead of globally prohibiting forward claimed fixes."
+    },
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {
+      "historical_sha256": "aef90fbf5e21db54a63c6ca3952426477d27e094dc2dc7ad699b3ccfba83a8be",
+      "current_sha256": "3682c6d5eb342643cde07c2c8941b1bdd0fcff7b09676a6f2758e1def4532091",
+      "reason": "Check the legitimate V-33 claimed state instead of globally prohibiting forward claimed fixes."
+    },
+    "tests/test_v0_3_s07_r0017_import.py": {
+      "historical_sha256": "f95af038751700816abc41fe2bae6732df5e19a60e2d0acbd3cc301be7db70b7",
+      "current_sha256": "1f4934a08ab6f36a7b3fa0d5e883d9649341891921cf2ae7cc3438e79391af99",
+      "reason": "Check the legitimate V-33 claimed state instead of globally prohibiting forward claimed fixes."
+    },
+    "tests/test_v0_3_s07_rework_candidate_record.py": {
+      "historical_sha256": "a03905becd729e2f3a414297dc930e590898232b9ad14519a55823528229a380",
+      "current_sha256": "d7347c58ce44ff3f3ab087a78267f516ae69521d7ca318f079992ebf44c44e4a",
+      "reason": "Resolve the public compiler through the formal successor chain and preserve the historical candidate hash."
+    },
+    "tests/test_v0_3_s08_historical_cpu_coverage_record.py": {
+      "historical_sha256": "027ac09266d7f7a7fa74f5041dd90a28779f9129c42eb53448ee2dd2c25c0577",
+      "current_sha256": "70dee64c6c015411a0cd5cfeb1e9b4eed12b0c80788c9bb0ba5374238eb7e2ea",
+      "reason": "Preserve the S-08 schema-1 metadata snapshot while allowing schema-2 metadata to advance; checkpoint and continuation payload hashes remain exact."
+    }
+  },
+  "new_sources": [
+    "notes/PSSolver_v0_3_0_s03_successor_47_s10_prequalification_rework.json",
+    "notes/PSSolver_v0_3_0_s10_prequalification_rework_zh.md",
+    "tests/test_v0_3_s10_prequalification_rework.py"
+  ],
+  "authorization": {
+    "local_rework": true,
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false
+  },
+  "next_request": "R-0032"
+}

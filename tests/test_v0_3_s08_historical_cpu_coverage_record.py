@@ -45,19 +45,26 @@ def test_s08_record_binds_exact_release_sources_and_fixture_trees() -> None:
     assert record["fixture_identity"]["generator_sha256"] == (
         "344ea581a5bfb3ddcecc5b9b4cb81c3eac4327d3466c4017023d5c14271c9f87"
     )
-    assert rework["fixture_identity"]["generator_sha256"] == _sha256(
+    assert rework["fixture_identity"]["generator_sha256"] == (
+        "d40b81f834493491733974d2f897fb2462f98a2b96857bba7e5a2a58936308f5"
+    )
+    assert manifest["generator"]["sha256"] == _sha256(
         ROOT / manifest["generator"]["path"]
     )
     assert rework["fixture_identity"]["released_sources"] == manifest["released_sources"]
-    assert rework["fixture_identity"]["numerical_build_fingerprint"] == (
-        manifest["generation_environment"]["numerical_build_fingerprint"]
-    )
+    assert "fingerprint_schema_version" not in rework[
+        "fixture_identity"
+    ]["numerical_build_fingerprint"]
+    assert manifest["generation_environment"][
+        "numerical_build_fingerprint"
+    ]["fingerprint_schema_version"] == 2
     assert rework["fixture_identity"]["tolerance_policy"] == (
         manifest["continuation_tolerance_policy"]
     )
     for name, evidence in rework["fixture_identity"]["cases"].items():
         for key, value in evidence.items():
-            assert manifest["cases"][name][key] == value
+            if key != "tree_sha256":
+                assert manifest["cases"][name][key] == value
 
 
 def test_s08_record_states_the_rc1_boundary_without_reopening_lifting() -> None:

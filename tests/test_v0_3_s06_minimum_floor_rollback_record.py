@@ -51,6 +51,7 @@ def test_s06_minimum_floor_runtime_and_registry_are_bound() -> None:
             expected,
         )
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
+    assert issues["V-33"]["status"] == "claimed_fixed"
     assert set(record["roadmap"]["claimed_issue_ids"]) == {
         "C1-05", "C2-18", "S2-17", "V-27", "V-28", "V-29"
     }
