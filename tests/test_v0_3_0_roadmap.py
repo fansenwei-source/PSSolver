@@ -140,6 +140,17 @@ def test_s02_requires_backward_compatibility_and_control_independence() -> None:
     assert control["optimizer_campaign_required"] is False
 
 
+def test_s10_resolution_applies_the_confirmed_q06_boundary() -> None:
+    resolution = _read(ROADMAP)["known_issue_scope"]["s10_resolution"]
+    assert resolution["decision"] == "D-0011"
+    assert resolution["selection"] == "Q-06 option A"
+    assert "R7 and R9" in resolution["R1-R9"]
+    assert "defer" in resolution["R1-R9"]
+    assert "lifting" in resolution["B8/S2-07"]
+    assert "accepted" in resolution["A2-11"]
+    assert "CUDA-visibility-invariant" in resolution["V-33"]
+
+
 def test_s02_records_the_d0008_baseline_clone_and_sys_path() -> None:
     environment = _read(ROADMAP)["draft_validation_environment"]
     assert environment["policy"] == "D-0008 baseline-only hard-link clone"

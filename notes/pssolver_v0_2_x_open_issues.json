@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry": "PSSolver v0.2.x forward-maintained open-issue registry",
-  "date": "2026-10-21",
+  "date": "2026-10-27",
   "primary_ref": "dev/0.3",
   "roadmap": {
     "decision": "D-0010",
@@ -29,14 +29,14 @@
       "rewritten": false
     }
   },
-  "issue_count": 49,
+  "issue_count": 47,
   "status_counts": {
     "open": 0,
     "registered": 2,
-    "claimed_fixed": 0,
-    "verified": 43,
+    "claimed_fixed": 1,
+    "verified": 41,
     "deferred": 2,
-    "accepted": 2,
+    "accepted": 1,
     "coverage_gap": 0
   },
   "issues": [
@@ -545,9 +545,9 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "deferred",
-      "decision": "D-0007",
-      "target_release": "after 0.3",
-      "notes": "Nine architecture-cleanup items are intentionally grouped and remain outside the v0.2 maintenance line."
+      "decision": "D-0011",
+      "target_release": "S-10 partial; remaining work after 0.3",
+      "notes": "D-0011 brings only independently testable cleanup into S-10. S-10 centralizes the exact-key validation mechanic used by the three public compilers (R7 partial) and adds api, boundaries, diagnostics, and functional to the executable import-boundary ratchet while correcting its charter inventory (R9 partial). R1 registry unification would change construction dispatch across applications; R2 remaining checkpoint consolidation crosses released schemas and compatibility readers; R3 facade/contract reduction changes the stable functional surface and independent Consumer boundary; R4 integrator and R5 PCG consolidation touch numerical and qualified hot paths; R6 removal of shipped pilot/lifting surfaces requires deprecation and lifting decisions; R8 qualification-history pruning changes the evidence-retention policy; the remaining R7 helpers and R9 exact legacy edges require broader migrations. Those portions remain deferred after 0.3 rather than being mixed into the S-09-qualified runtime."
     },
     {
       "id": "A2-25",
@@ -639,9 +639,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "e75ef77c2dc03237db1ddae8b275f9c8055fe06b",
       "target_release": "0.3",
-      "notes": "S-10: torch.__config__.show() changes with CUDA visibility, so CUDA-hidden CPU qualification uses the cross-build 8*eps branch instead of the matching-build bitwise branch. Normalize the fingerprint or generate and compare with CUDA hidden."
+      "notes": "S-10 fingerprint schema 2 removes only CUDA visibility probe summaries from torch.__config__.show(), retains the build-settings line, and hashes NumPy's structured configuration. The v0.2.0 and S-08 oracle fingerprints were advanced without changing checkpoint or continuation payloads. Actual visible/hidden checks in both D-0008 baseline environments produce identical fingerprints; the v0.2.2 environment now exercises the S-08 matching-build bitwise branch under CUDA-hidden CPU qualification. Awaiting R-0032 independent verification."
     },
     {
       "id": "V-34",
@@ -765,10 +766,9 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "accepted",
-      "decision": "D-0013",
-      "target_release": "0.3.0 (S-09 bounded memory exception)",
-      "notes": "D-0013 accepts one exhaustive, bounded exception for runtime 85ba3ae: only channel_legacy and channel_compiled_v2 at channel_R512x40x40, float32, may retain the observed peak_reserved_group_ratio 1.0307692307692307 (562036736 / 545259520) from job 10911538. The same cells retain every other frozen gate unchanged: peak_allocated_group_ratio is 1.0150638559607594 and all timing statistics pass. No other family, grid, dtype, runtime or future version is covered. Job 10912583 and R-0031 allocator snapshots show that the persistent accepted A.p cache retains one pressure field through the compute_nonlinear allocation peak, rather than the excess coming from solve-local A.p lifetime extension. R-0027 binds the cumulative correctness and 192-profile evidence; R-0031 binds the diagnostic mechanism and exact-revert timing trade-off. Analyzer code, thresholds, cases, samples and production defaults are unchanged."
+      "status": "registered",
+      "target_release": "0.3.0 (S-09; D-0012 diagnostic decision)",
+      "notes": "Runtime 85ba3ae includes the 2573dec production Channel warm-start A.p cache. H100 job 10911538 found channel_legacy and channel_compiled_v2 at R512 reserved 562036736 versus baseline 545259520 bytes (ratio 1.0307692307692307 > the unchanged 1.03 limit), while all timing, numerical and scientific gates passed. The excess magnitude is one pressure field and its introduction by 2573dec is unchanged. R-0029 withdrew the earlier CPU torch.profiler mechanism claim because identical repeated runs varied by one or two pressure fields: those live-memory peaks are reference-only and cannot distinguish persistent-cache retention from an extended solve-local A.p lifetime on the CUDA peak path. The two untimed H100 allocator snapshots will decide that mechanism. Exact-revert proxy fidelity instead rests on byte-identical f94b9be method source (SHA-256 2ffb5673...), compilation in the candidate module namespace, empty cache fields, 78 pressure-operator calls matching direct f94b9be, and byte-identical terminal states. D-0012 requires a non-qualifying baseline/cache-on/exact-revert-proxy H100 diagnostic before choosing whether to withdraw the cache and rerun cumulative qualification or make a separate user decision; no exception is accepted yet."
     },
     {
       "id": "V-42",
@@ -780,41 +780,9 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "verified",
-      "fixed_in": "f3620b87581de5f29356ed1da89673cf08ffc8a7",
-      "verified_by": "R-0031",
-      "target_release": "0.3.0 (S-09, R-0030 import)",
-      "notes": "R-0030 found four evidence-only tests that either pinned the live registry to its pre-V-41 count/status set or required an originally added source to retain its first hash after a valid successor. The R-0030 import changes those tests to bind each historical record's immutable snapshot and to resolve forward successors explicitly. R-0031 independently verified the clean full-suite result and closes V-42 at f3620b87581de5f29356ed1da89673cf08ffc8a7. No skip or xfail is added; runtime, wheels, diagnostic support, frozen plan, job, cases, and thresholds are unchanged."
-    },
-    {
-      "id": "V-44",
-      "title": "The sealed S-09 diagnostic summary records a nonexistent manually completed support commit",
-      "severity": "low",
-      "source_report": "PSSolver_sync/results/R-0031.result.json",
-      "first_found": "S-09 A.p cache diagnostic independent review R-0031",
-      "affects_v0_2_0": false,
-      "affects_v0_2_1": false,
-      "affects_control_paths": false,
-      "exercised_by_current_control_research": false,
       "status": "registered",
-      "target_release": "0.3.0 (S-09 evidence erratum)",
-      "notes": "The sealed diagnostic summary.json records identity.support_commit as nonexistent 616bc453a38b8f1459b1c278b76596f9e83e8687. Git rev-parse resolves the actual support commit to 616bc453d50040b20d1ef448cf2647358aeee1cc. The sealed archive remains unchanged; the S-09 closure successor records this forward erratum. Future full commit identities must come from git rev-parse rather than manually extending an abbreviation."
-    },
-    {
-      "id": "V-45",
-      "title": "S-09 closure noninterrupting recompute was bound to the runtime-tree plan instead of the job's frozen support plan",
-      "severity": "low",
-      "source_report": "PSSolver_sync/results/R-0034.result.json",
-      "first_found": "S-09 D-0013 closure independent review R-0034",
-      "affects_v0_2_0": false,
-      "affects_v0_2_1": false,
-      "affects_control_paths": false,
-      "exercised_by_current_control_research": false,
-      "status": "verified",
-      "fixed_in": "e052f5b87e1424fbd8d9bd097a893469f9c72658",
-      "verified_by": "R-0035",
-      "target_release": "0.3.0 (S-09 closure rework)",
-      "notes": "R-0034 found that the local v1 closure wrapper used the runtime-tree plan 8bc4fb8d... rather than job 10911538's frozen support plan a21b211b..., so it recorded 210 requirements while incorrectly declaring every non-exempt check passed. The v2 closure keeps v1 immutable, consumes job 10911538's correct frozen support plan a21b211b..., and fails closed unless the recorded failures are exactly the two D-0013-covered R512 float32 Channel peak_reserved messages. R-0035 independently reproduced the v2 recompute byte-for-byte (1757374241e0...), confirmed all five negative controls fail closed, and verified the actual fix at e052f5b87e1424fbd8d9bd097a893469f9c72658."
+      "target_release": "0.3.0 (S-09, R-0030 import)",
+      "notes": "R-0030 found four evidence-only tests that either pinned the live registry to its pre-V-41 count/status set or required an originally added source to retain its first hash after a valid successor. The R-0030 import changes those tests to bind each historical record's immutable snapshot and to resolve forward successors explicitly. No skip or xfail is added; runtime, wheels, diagnostic support, frozen plan, job, cases, and thresholds are unchanged. Claude will verify V-42 with the diagnostic result in R-0031."
     }
   ],
   "authorization": {

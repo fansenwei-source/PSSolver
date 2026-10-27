@@ -79,7 +79,15 @@
       "B8/S2-07",
       "R1-R9",
       "A2-11"
-    ]
+    ],
+    "s10_resolution": {
+      "decision": "D-0011",
+      "selection": "Q-06 option A",
+      "R1-R9": "Complete independently testable R7 and R9 subsets in S-10; defer the enumerated compatibility-, numerical-, performance-, deprecation-, and evidence-policy-sensitive remainder.",
+      "B8/S2-07": "Remain deferred until lifting is deliberately reopened.",
+      "A2-11": "Remain an accepted design limitation.",
+      "V-33": "Advance both continuation-oracle numerical fingerprints to CUDA-visibility-invariant schema 2."
+    }
   },
   "control_sync_contract": {
     "release_gate_recommended": true,

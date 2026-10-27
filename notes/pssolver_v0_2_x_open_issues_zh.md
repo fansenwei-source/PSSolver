@@ -1,19 +1,19 @@
 # PSSolver v0.2.x 未解决问题统一登记表
 
-日期：2026-10-23
+日期：2026-10-27
 
 本登记表是可持续维护的 evidence-only successor，自 `D-0010` / `S-01` 起以
 `dev/0.3` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 49 条：
+当前共登记 47 条：
 
 - `open`：0；
 - `registered`：2；
-- `claimed_fixed`：0；
-- `verified`：43；
+- `claimed_fixed`：1；
+- `verified`：41；
 - `deferred`：2；
-- `accepted`：2；
+- `accepted`：1；
 - `coverage_gap`：0。
 
 ## 当前优先项
@@ -126,20 +126,19 @@
     （low）：四个历史证据测试错误地锁定活登记表在 V-41 之前的条数或状态集合，或者拒绝
     已由正式 successor 登记的源码哈希。本次导入改为只核对各历史记录自己的不可变快照，
     并显式解析向前 successor；不增加 skip/xfail，不改运行时、wheel、诊断 helper、冻结
-    plan/job、案例或门限。`R-0031` 已将 V-42 验证为 `verified`，修复身份为 `f3620b8…`。
-25. 用户通过 `D-0013` 选择有界例外并完成 S-09 裁决：例外只覆盖 `channel_legacy` 与
-    `channel_compiled_v2` 的 `channel_R512x40x40`、float32、`peak_reserved_group_ratio`
-    一项，接受作业 10911538 的 `1.0307692307692307`（562036736 / 545259520）；同一单元
-    `peak_allocated=1.0150638559607594` 且全部计时门禁仍通过，其他单元和门限均不变。
-    作业 10912583 与 `R-0031` 的 allocator snapshot 证明，一个 accepted A·p 持久缓存跨越
-    `compute_nonlinear` 峰值存活。V-41 因而以设计取舍改为 `accepted`。同时登记记录勘误
-    V-44：封存 summary 中不存在的 `616bc453a38b8f14…` 对应 Git 真实提交
-    `616bc453d50040b20d1ef448cf2647358aeee1cc`；原归档不改写。
-26. `R-0034` 发现本地 v1 结案重算错误绑定运行时树中的 plan `8bc4fb8d…`，而不是作业
-    10911538 实际使用的 support plan `a21b211b…`，因此记录了 210 条 requirement failure 却
-    错误声明非豁免门禁全部通过。该证据缺陷登记为 `V-45`（low）。v2 保留 v1 不动，改用
-    正确 support 来源 `719ae760…`，并在失败消息不恰好等于两个 R512 float32 Channel
-    `peak_reserved` 失败时立即失败关闭；数值结论不变，等待 `R-0035` 独立复核。
+    plan/job、案例或门限。V-42 保持 `registered`，等待 R-0031 随真实 H100 诊断一并复核。
+25. S-10 已在独立于排队中 S-09 作业的分支上完成可独立验证的最后清理。`V-33` 的数值
+    构建指纹升级为 schema 2：去掉仅随 CUDA 可见性出现或消失的四条 Torch 探测摘要，保留
+    完整 build-settings 行，并改为哈希 NumPy 的结构化配置；v0.2.0 与 S-08 两份 oracle 的
+    数值 payload 未改变。两套 D-0008 基线环境中，CUDA 可见/隐藏指纹均完全一致；v0.2.2
+    环境在隐藏 CUDA 时会真实进入 S-08 的 matching-build 逐位门禁。`V-33` 推进为
+    `claimed_fixed`，修复身份 `e75ef77…`，等待 `R-0032`。
+26. `R1-R9` 按 `D-0011` 只完成两项可独立验证的子集：三套 public compiler 的 exact-key
+    验证机制统一到标准库-only core helper（R7 partial）；`api`、`boundaries`、`diagnostics`
+    与 `functional` 四层纳入 executable import-boundary ratchet，并纠正 charter 的债务数量
+    说明（R9 partial）。其余部分保持 `deferred`：R1/R2/R3 会改变构造、checkpoint 或独立
+    Consumer 公共边界；R4/R5 触及数值和已资格化 hot path；R6 需要弃用与 lifting 决策；
+    R8 涉及证据保留政策；其余 R7/R9 需要更广泛迁移。登记决定改为 `D-0011`。
 
 ## Control 路径
 
@@ -155,9 +154,8 @@ S-07 的 6 个 low/info 条目与候选回归 `V-30` 均已由 `R-0018` 独立�
 均已由 `R-0021` 独立验证，S-08 完成；`V-33` 留待 S-10。
 `A2-21/S2-12` 已完成 `S-05` 独立复核。`A3-18` 已由 `R-0025` 的真实 H100 长时程
 门禁验证；`V-39` 与 `V-40` 已由 `R-0026` 验证，`NEW-14` 已由 `R-0027` 验证。
-S-09 的运行时裁决项 `V-41` 已按 `D-0013` 作为窄范围设计取舍接受；纯记录项 `V-42`
-已由 `R-0031` 验证。V-44 只登记封存证据的向前勘误；V-45 记录 v1 结案重算的 plan
-绑定缺陷，v2 已声称修复并等待 `R-0035`，不改任何运行时或旧归档。
+S-09 当前只剩运行时裁决项 `V-41`；纯记录项 `V-42` 已在 R-0030 导入中修正并等待
+R-0031 复核。按 `D-0012` 先执行不作为资格的缓存开/关/精确撤回代理诊断。
 `V-27` 归入 `S-06`，`V-26` 与
 `B30` 归入文档批次 `S-07`。
 `V-17` 已验证身份不变，不重新打开。路线图顺序以同步仓库中用户确认的
@@ -170,11 +168,9 @@ S-09 的运行时裁决项 `V-41` 已按 `D-0013` 作为窄范围设计取舍接
 - `A2-11`：按 `D-0007` 接受为设计限制；
 - CUDA 长时程覆盖缺口 `A3-18` 已由 `R-0025` 关闭；qualification-support 问题 `V-39`、
   `V-40` 已由 `R-0026` 关闭；`NEW-14` 已由 `R-0027` 完成 backward TF32 资格验证。
-  `V-41` 已按 `D-0013` 改为 `accepted`；`V-42` 已由 `R-0031` 验证；`V-44` 作为
-  记录勘误保留在 0.3；`V-45` 已由 `R-0035` 独立复核为 `verified`，实际修复身份为
-  `e052f5b87e1424fbd8d9bd097a893469f9c72658`。v2 重算逐字节复现，只记录 D-0013
-  覆盖的两条 R512 float32 Channel `peak_reserved` 失败，五个负向控制均失败关闭。
+  `V-41` 按 `D-0012` 留在 S-09 做不作为资格的缓存诊断；`V-42` 是 R-0030 新发现的
+  纯记录测试问题，修正后等待 R-0031 验证。
 
 机器可读的逐项标题、严重度、来源、版本影响、Control 影响、状态、目标版本和说明均在
-`notes/pssolver_v0_2_x_open_issues.json` 中。S-09 正按 `D-0013` 进入结案复核；本记录不授权
-任何 GPU、Slurm、H100 或远端操作。
+`notes/pssolver_v0_2_x_open_issues.json` 中。路线图 S-08 已完成，下一步进入 S-09
+GPU / H100 集中资格任务；任何 GPU、Slurm 或 H100 执行仍需用户单独授权。

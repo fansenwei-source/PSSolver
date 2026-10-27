@@ -1,0 +1,106 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.s10_final_cleanup.v1",
+  "created_at": "2026-10-27T00:13:18-04:00",
+  "plan_step": "S-10",
+  "classification": "CANDIDATE_S10_INDEPENDENTLY_TESTABLE_ARCHITECTURE_AND_FINGERPRINT_CLEANUP",
+  "governing_decisions": ["D-0010", "D-0011"],
+  "git_identity": {
+    "branch": "fix/v0.3-s10-final-cleanup",
+    "base_commit": "f3620b87581de5f29356ed1da89673cf08ffc8a7",
+    "implementation_commit": "e75ef77c2dc03237db1ddae8b275f9c8055fe06b",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "v33": {
+    "status": "claimed_fixed_pending_r0032",
+    "fingerprint_schema_version": 2,
+    "torch_policy": "exclude only CUDA Runtime, NVCC architecture flags, CuDNN and Magma probe-summary lines; retain the Build settings line",
+    "numpy_policy": "hash the canonical JSON encoding of numpy.__config__.show(mode='dicts')",
+    "v0_2_0_oracle_advanced": true,
+    "s08_oracle_advanced": true,
+    "checkpoint_payloads_changed": false,
+    "continuation_payloads_changed": false,
+    "d0008_visible_hidden_checks": {
+      "torch_2_6_0_cu126": "59dcaebcae9fbaa402c4e346219207f43ce05a55e1eb2d717f6b88e89ee49210",
+      "torch_2_6_0_cu124": "51bcbe59eb176362dc969b0341d85ca88416e37bd0f10de4b19350d07898e330",
+      "visible_equals_hidden": true
+    },
+    "s08_cuda_hidden_matching_build_exercised": true
+  },
+  "r1_r9_disposition": {
+    "decision": "D-0011",
+    "registry_status": "deferred",
+    "completed_in_s10": {
+      "R7": "Centralize the exact-key validation mechanic for the three public compilers in a standard-library-only core helper while retaining caller-owned public errors and rejection codes.",
+      "R9": "Add api, boundaries, diagnostics and functional to the executable import-layer ratchet and correct the architecture charter's debt inventory."
+    },
+    "remaining_deferred": {
+      "R1": "Registry unification changes construction dispatch across applications and needs broader API/runtime qualification.",
+      "R2": "Remaining checkpoint consolidation crosses released schemas and compatibility readers.",
+      "R3": "Facade and contract reduction changes the stable functional surface and independent Consumer boundary.",
+      "R4": "Integrator consolidation changes qualified numerical paths.",
+      "R5": "PCG consolidation changes qualified numerical and performance hot paths.",
+      "R6": "Removing shipped pilot or lifting surfaces requires explicit deprecation and lifting decisions.",
+      "R7": "Validation helpers beyond exact-key mechanics span error-policy owners and require separate migrations.",
+      "R8": "Qualification-history pruning changes the evidence-retention policy.",
+      "R9": "Removing the remaining exact legacy edges requires broader runtime migrations."
+    }
+  },
+  "roadmap_resolution": {
+    "R1-R9": "partial S-10 completion with enumerated remainder deferred",
+    "B8/S2-07": "deferred until lifting is deliberately reopened",
+    "A2-11": "accepted design limitation",
+    "V-33": "claimed_fixed pending R-0032"
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {"historical_sha256": "824f8d6a9f355dd5392b028a3919fdcd95238a951ad2cc28ba2d6d910cd3de61", "current_sha256": "b3b85a3c9035ef13b3ff9e0ba5bd909b52f11e6381b91191336beb1321076fed", "reason": "Document the S-10 fingerprint, validation and ratchet changes without rewriting prior release notes."},
+    "benchmarks/v0_2_0_checkpoint_fixtures.py": {"historical_sha256": "67f90f13e3ce007ee464827d91e895465a6261c65057c18854e2da5557253c76", "current_sha256": "ef60ea6e7f66e2e28378a22a4ffffb027f3498f1c7b1327b61a4baf06d22e02f", "reason": "Make numerical-build fingerprints invariant to CUDA visibility and NumPy presentation formatting."},
+    "notes/PSSolver_v0_3_0_roadmap.json": {"historical_sha256": "ced365de802ecce61b55215c5b991753c5590e9d1b489316079b5f4e811e7efc", "current_sha256": "e2278fde6c2f5d3753e9e9f40943cfadbf04e025e9923c5011a639382cacdbd7", "reason": "Apply the confirmed D-0011 S-10 decision without changing roadmap order or gates."},
+    "notes/PSSolver_v0_3_0_roadmap.md": {"historical_sha256": "2afd2a0e139fcdb7031966459476adb5445ffac4f9e1dd8ef56d8a3ae14e73fa", "current_sha256": "f1b0cb8e771772e51c418e8ce7616dacaf77153c552c3cb908253d3e4a739d23", "reason": "Document the confirmed S-10 boundary in prose."},
+    "notes/architecture_v0_2/charter.md": {"historical_sha256": "8284040e6c495c8f5207814bf9d7b31027fd1e30293a610431629ea7af6a6b5e", "current_sha256": "43e38cea1f3b32874d358c19abb09eb5b915e0f1a82ae20e179a758e6d49466e", "reason": "Correct the current exact-debt count and record the four newly governed layers."},
+    "notes/pssolver_v0_2_x_open_issues.json": {"historical_sha256": "38eeacc62107a89beedf91b2630f37f1b012e6662b0209c875dc3adcd8f8e77b", "current_sha256": "c4cb888fec4c7efe5f8580f6fac2e1f68b3a1a0814a556310fdbfc05e2226ed4", "reason": "Advance V-33 to claimed_fixed and apply D-0011 to the partial R1-R9 disposition."},
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "64e9baa3b576526b5779675f47c7274d7ea69f63f306a4c6f3f464f956dbafe7", "current_sha256": "a50acd5b0e9a1804d96f4835276f9e2ac6f77c09942593d98d0d27fcf6e28566", "reason": "Document the S-10 candidate and exact deferral reasons."},
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": {"historical_sha256": "73349f0cbaf63eaa53064bf0d0acdc8d618ff2c45f58c30f2fe25d3d11f9df1e", "current_sha256": "4e52c540858787a4c313cb71db1aac0abbe024748d72acb2aa55f0bf938ec2ac", "reason": "Delegate exact-key mechanics while preserving public rejection policy."},
+    "pssolver/configuration/public_channel_simulation_compiler.py": {"historical_sha256": "6c961e23304a64c88f59a168e35f0071a3559156ed24e3c7ba557c722c88c20b", "current_sha256": "017b453bff3f0c79a151f8cb0cc03bde5f0047ec121efbe61a6d7912fa7622b4", "reason": "Delegate exact-key mechanics while preserving public rejection policy."},
+    "pssolver/configuration/public_periodic_simulation_compiler.py": {"historical_sha256": "af8d5506de9a333febd9fa948211eb21b61173cccf6224823d99062aacddbca6", "current_sha256": "21726cbcfe4b7ba761ddbc46916983b3fa6dcfaa3db97be878c4ae6970a834fc", "reason": "Delegate exact-key mechanics while preserving public rejection policy."},
+    "tests/fixtures/historical_cpu_coverage_v1/README.md": {"historical_sha256": "de78c6631d77ef3a3623f863da8b6f11f6f82ed3835c3a2dd6c880eea562c33a", "current_sha256": "4f9b21f6fba306a23f23c672255ffee030f3888a1dd3a09173f06c78443f7330", "reason": "Describe fingerprint schema 2 and unchanged numerical payloads."},
+    "tests/fixtures/historical_cpu_coverage_v1/generate_fixtures.py": {"historical_sha256": "d40b81f834493491733974d2f897fb2462f98a2b96857bba7e5a2a58936308f5", "current_sha256": "af5fac5e8d775fa075b2ecc6a2b45b2cfab87d32f5dd723129911e6d45ef7416", "reason": "Generate visibility-invariant schema-2 build fingerprints from historical source trees."},
+    "tests/fixtures/historical_cpu_coverage_v1/manifest.json": {"historical_sha256": "81487fcee86d447ea30bcb41c267f2906804320b308e7d9086c2af6480aa6457", "current_sha256": "1d070c244caf518cc5bcd10b739373be073f4b1c83c74a7baf1c003e1285a9e7", "reason": "Advance only generation fingerprint metadata and the resulting metadata tree hashes."},
+    "tests/fixtures/historical_cpu_coverage_v1/rc1_channel_functional_odd/generation.json": {"historical_sha256": "4efb52c395e02da0a3a46d4535de3dca0bd59403782b0633115dea7fa0a5872f", "current_sha256": "121845b5f2d07d9f1981f2deec8c5ef5112a382a65b5c60ca32ec37cc79ce8df", "reason": "Advance generation fingerprint metadata without changing checkpoint or oracle payloads."},
+    "tests/fixtures/historical_cpu_coverage_v1/rc1_plane_lifted/generation.json": {"historical_sha256": "12c7b6de3d1abb8af384d799e2f7e7517d86f82543ee60ee7caaff112ce765b4", "current_sha256": "7d27e50b428fb3bf848c4cb18ffb2b519a0a4eabecdcf25cca5d584bad128952", "reason": "Advance generation fingerprint metadata without changing checkpoint payloads."},
+    "tests/fixtures/historical_cpu_coverage_v1/rc2_channel_functional_odd/generation.json": {"historical_sha256": "51196660f99e589a019e13fa3036d6a8b07a56bb33a9111f497c9b79506b4c87", "current_sha256": "41551ee72ee8a07568ca5f8a3b4743ce738cceb43c526ca15553e9fa1ed6d4ee", "reason": "Advance generation fingerprint metadata without changing checkpoint or oracle payloads."},
+    "tests/oracles/v0_2_0_checkpoint_continuations_v1/manifest.json": {"historical_sha256": "de1076a6e0cfa032cb87f1af18e14cda8376491b2e5d94254d855342eb61e49b", "current_sha256": "340ec3b68e23681624eb148a4a9887e7da1c0d4e3550e567486abbe32d405912", "reason": "Advance the v0.2.0 continuation oracle to fingerprint schema 2 without changing arrays."},
+    "tests/test_architecture_import_boundaries.py": {"historical_sha256": "8b13632354f7860a61b4f988ee1a55f4becb3de97cdd2c693ad980ad39394ffb", "current_sha256": "3a256560cfcc2f662a8e4facf8c64d19da2dd8526e2eb3798a1ef28a8eb39cee", "reason": "Govern api, boundaries, diagnostics and functional dependencies under the existing ratchet."},
+    "tests/test_v0_2_0_checkpoint_fixtures.py": {"historical_sha256": "d90e0f585d61e122e3ce99f7711750a450593151eb8d3a97956035a8e6dc0425", "current_sha256": "299a0341e2dbd97108af372c56157d1c699a09feeab3163bd8788604435710bb", "reason": "Bind schema 2 and its visibility invariance for the v0.2.0 oracle."},
+    "tests/test_v0_2_x_open_issues.py": {"historical_sha256": "a36e3e30138b8e863a1a4912340c0a7e2622079175aad63e5b65bb7c49c36682", "current_sha256": "67cc7394f114e00664e7f2722e538139df783c703a1279a1fb1b3fb0154527d3", "reason": "Bind the S-10 candidate registry state and D-0011 deferral boundary."},
+    "tests/test_v0_3_0_roadmap.py": {"historical_sha256": "f045de7c1083e1e17d1ad6904b0185f64aa5871e55e3597bda1eefa2a4a07ba9", "current_sha256": "3dd374c05d2ab2a9342a756d6c1d1e7877ac5bf24a327c9d5fc1db2c078f6ffb", "reason": "Bind the confirmed Q-06 S-10 resolution."},
+    "tests/test_v0_3_s08_historical_cpu_coverage.py": {"historical_sha256": "7b915416960e9c8190b8b845694aa94df361cfbc99bacf41103f71aa09f65fa4", "current_sha256": "e3955e6d54407b3e32745549fd595305b278af41e1fd87f1e8b27389c7d3713c", "reason": "Bind schema 2 and exercise the S-08 matching-build branch under CUDA-hidden CPU qualification."},
+    "tests/test_v0_3_s08_r0021_import.py": {"historical_sha256": "fbb2ab03aba281af8cde5b7ccf069ae259827b9efc185493365fa55fe63ab1fd", "current_sha256": "507158be4efd91014b3e1ef4709bc770fdc34c9166dfba69048adf131abbecbe", "reason": "Keep R-0021's V-33 state historical instead of pinning the evolving live registry."},
+    "tests/test_v0_3_s09_checkpoint_compatibility_rework_record.py": {"historical_sha256": "6ba022be54bb03d90a2ccae3fd386777e3d4dc64e8ccc6e0871df8965ffa8984", "current_sha256": "0cb8aed1792c452e08ab22468ce4c515705f15aa6ea8bc7dca47623a1caeecd9", "reason": "Stop an S-09 historical record from pinning V-33's live status."}
+  },
+  "new_sources": [
+    "pssolver/core/_validation.py",
+    "tests/test_core_validation.py",
+    "notes/PSSolver_v0_3_0_s03_successor_46_s10_final_cleanup.json",
+    "notes/PSSolver_v0_3_0_s10_final_cleanup_zh.md",
+    "tests/test_v0_3_s10_final_cleanup.py"
+  ],
+  "scope": {
+    "local_only": true,
+    "s09_branch_modified": false,
+    "provider_identity_changed": false,
+    "checkpoint_schema_changed": false,
+    "numerical_threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "PSSolver_Control_modified": false,
+    "nematics3d_modified": false
+  },
+  "authorization": {
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false
+  },
+  "next_request": "R-0032"
+}

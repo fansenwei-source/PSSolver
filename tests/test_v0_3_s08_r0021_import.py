@@ -54,7 +54,7 @@ def test_r0021_result_and_independent_archive_are_exact() -> None:
     }
 
 
-def test_r0021_registry_updates_are_exact_and_v33_stays_registered() -> None:
+def test_r0021_registry_updates_are_exact_and_preserve_historical_v33() -> None:
     record = _read(RECORD)
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     expected = {
@@ -69,10 +69,8 @@ def test_r0021_registry_updates_are_exact_and_v33_stays_registered() -> None:
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == fixed_in
         assert issues[issue_id]["verified_by"] == "R-0021"
-    assert issues["V-33"]["status"] == "registered"
-    assert "fixed_in" not in issues["V-33"]
-    assert "verified_by" not in issues["V-33"]
     assert record["registry_import"]["kept_registered"] == ["V-33"]
+    assert "R-0021" in issues["V-31"]["notes"]
 
 
 def test_r0021_import_is_a_forward_only_complete_successor() -> None:
