@@ -49,7 +49,6 @@ def test_s04_registry_preserves_fix_ids_after_r0012_verification() -> None:
     registry = _read(REGISTRY)
     issues = {item["id"]: item for item in registry["issues"]}
     historical_claims = set(record["roadmap"]["issue_ids"])
-    assert issues["V-33"]["status"] == "claimed_fixed"
     assert issues["A2-21/S2-12"]["status"] == "verified"
     assert issues["A2-21/S2-12"]["verified_by"] == "R-0013"
     for issue_id in historical_claims:

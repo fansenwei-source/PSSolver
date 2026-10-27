@@ -18,12 +18,14 @@
     "numerical_build_fingerprint": {
       "fingerprint_schema_version": 2,
       "numpy_configuration_sha256": "b0c4a85c98a00af3927bc1b32ef3b6be6e23aa80c5c9a0f27c1930197a135ad0",
+      "numpy_configuration_source": "mode_dicts",
       "numpy_version": "2.4.3",
       "python_implementation": "CPython",
       "python_version": "3.12.13",
       "scipy_version": "1.16.0",
-      "torch_configuration_sha256": "51bcbe59eb176362dc969b0341d85ca88416e37bd0f10de4b19350d07898e330",
+      "torch_build_settings_sha256": "9b33c4879b84819e8ef782befd9761153b28ed525716ad34c02b81fbe26bb923",
       "torch_cuda_version": "12.4",
+      "torch_git_version": "2236df1770800ffea5697b11b0bb0d910b2e59e1",
       "torch_version": "2.6.0+cu124"
     },
     "pssolver_import": "/home/fansenwei/Desktop/Develop/PSSolver_v0_2_0_rc2_release/pssolver/__init__.py",

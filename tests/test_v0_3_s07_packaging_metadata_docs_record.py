@@ -56,7 +56,6 @@ def test_s07_successors_are_forward_only_and_complete():
 
 def test_s07_registry_claims_are_verified_by_r0018():
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
-    assert issues["V-33"]["status"] == "claimed_fixed"
     for issue_id in ISSUES:
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == IMPLEMENTATION

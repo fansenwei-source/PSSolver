@@ -21,8 +21,10 @@ matching build requires bitwise rc2 continuation; another build must remain
 within `8 * dtype epsilon`.  The rc1 state-only difference must exceed that
 roundoff allowance by at least a factor of one thousand.
 
-S-10 advances that fingerprint to schema 2. Torch's retained build settings
-remain hashed, but CUDA visibility probe summaries are removed before hashing;
-NumPy's structured build dictionary is hashed instead of `show_config()`
-presentation text. The checkpoint, snapshot, and continuation payloads remain
-unchanged.
+S-10 advances that fingerprint to schema 2. Torch binds its explicit version,
+CUDA version, git version, and sole `Build settings:` payload, without relying
+on visibility-dependent CUDA/CuDNN probe lines or their presentation format.
+NumPy uses the structured build dictionary when available and a captured
+legacy `show()` representation on NumPy versions that lack `mode="dicts"`;
+the selected source is recorded. The checkpoint, snapshot, and continuation
+payloads remain unchanged.

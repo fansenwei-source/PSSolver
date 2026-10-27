@@ -10,7 +10,9 @@ the source tree and never modify the frozen checkpoint directories.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
+import io
 import json
 from pathlib import Path
 import platform
@@ -149,43 +151,47 @@ def _array_record(array: np.ndarray) -> dict[str, object]:
     }
 
 
-_CUDA_VISIBILITY_ONLY_TORCH_CONFIG_PREFIXES = (
-    "- CUDA Runtime",
-    "- NVCC architecture flags",
-    "- CuDNN",
-    "- Magma",
-)
+def _torch_build_settings(value: str) -> str:
+    """Extract Torch's stable build-settings payload.
 
-
-def _visibility_invariant_torch_configuration(value: str) -> str:
-    """Remove probe-only lines whose presence depends on CUDA visibility.
-
-    The retained build-settings line still records whether Torch was built
-    with CUDA, its CUDA/CuDNN versions, compiler, BLAS, MKL and CPU features.
-    Only the four human-readable probe summaries disappear when no GPU is
-    visible, so they cannot decide whether a CPU continuation is bitwise.
+    Human-readable CUDA/CuDNN probe lines vary with device visibility and
+    between pip and conda-forge builds.  The single ``Build settings:`` line
+    is the build contract; explicit version fields below bind the remaining
+    Torch identity without depending on the presentation of ``show()``.
     """
 
-    lines = [
-        line
+    settings = [
+        line.split("Build settings:", 1)[1].strip()
         for line in value.splitlines()
-        if not line.strip().startswith(
-            _CUDA_VISIBILITY_ONLY_TORCH_CONFIG_PREFIXES
-        )
+        if "Build settings:" in line
     ]
-    normalized = "\n".join(lines)
-    if value.endswith("\n"):
-        normalized += "\n"
-    return normalized
+    if len(settings) != 1 or not settings[0]:
+        raise RuntimeError(
+            "torch configuration must contain exactly one Build settings line"
+        )
+    return settings[0]
+
+
+def _numpy_build_configuration() -> tuple[str, object]:
+    """Return NumPy build metadata across the supported NumPy API range."""
+
+    try:
+        return "mode_dicts", np.__config__.show(mode="dicts")
+    except TypeError:
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            np.__config__.show()
+        value = stream.getvalue().strip()
+        if not value:
+            raise RuntimeError("NumPy configuration output is empty")
+        return "show_text", value
 
 
 def numerical_build_fingerprint() -> dict[str, object]:
     """Identify the numerical build that controls exact FFT continuation."""
 
-    torch_configuration = _visibility_invariant_torch_configuration(
-        torch.__config__.show()
-    )
-    numpy_build = np.__config__.show(mode="dicts")
+    torch_build_settings = _torch_build_settings(torch.__config__.show())
+    numpy_source, numpy_build = _numpy_build_configuration()
     return {
         "fingerprint_schema_version": (
             NUMERICAL_BUILD_FINGERPRINT_SCHEMA_VERSION
@@ -194,10 +200,12 @@ def numerical_build_fingerprint() -> dict[str, object]:
         "python_version": platform.python_version(),
         "torch_version": torch.__version__,
         "torch_cuda_version": torch.version.cuda,
-        "torch_configuration_sha256": hashlib.sha256(
-            torch_configuration.encode("utf-8")
+        "torch_git_version": torch.version.git_version,
+        "torch_build_settings_sha256": hashlib.sha256(
+            torch_build_settings.encode("utf-8")
         ).hexdigest(),
         "numpy_version": np.__version__,
+        "numpy_configuration_source": numpy_source,
         "numpy_configuration_sha256": hashlib.sha256(
             json.dumps(
                 numpy_build, separators=(",", ":"), sort_keys=True

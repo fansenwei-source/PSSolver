@@ -12,6 +12,13 @@ builds use the recorded arrays with the fail-closed `8 * dtype epsilon`
 absolute and relative tolerance.  The selected mode and both build
 fingerprints are returned by `replay_case`.
 
+The reference fingerprint is measured in the actual Nematics3D conda-forge
+environment that generated this oracle.  Schema 2 binds Torch's explicit
+version, CUDA version, git version, and sole `Build settings:` payload; it does
+not hash visibility-dependent CUDA/CuDNN probe lines.  NumPy records whether
+its structured `mode="dicts"` API or the captured legacy `show()` text supplied
+the build configuration.
+
 The oracle was generated without modifying the checkpoint corpus:
 
 ```text

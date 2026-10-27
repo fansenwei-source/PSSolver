@@ -3,7 +3,7 @@
   "purpose": "S-08 authentic released CPU checkpoint coverage for A2-25 and N5",
   "generator": {
     "path": "tests/fixtures/historical_cpu_coverage_v1/generate_fixtures.py",
-    "sha256": "af5fac5e8d775fa075b2ecc6a2b45b2cfab87d32f5dd723129911e6d45ef7416"
+    "sha256": "6a09efd0a03d59ca9f217f1caa7c64e0372c499e18c5653d8011d0f37b69972a"
   },
   "generation_environment": {
     "baseline_venv": "/home/fansenwei/pssolver_v0_2_2_release_package_2a1d0f7_20261020_v1/venv_isolated",
@@ -14,12 +14,14 @@
     "numerical_build_fingerprint": {
       "fingerprint_schema_version": 2,
       "numpy_configuration_sha256": "b0c4a85c98a00af3927bc1b32ef3b6be6e23aa80c5c9a0f27c1930197a135ad0",
+      "numpy_configuration_source": "mode_dicts",
       "numpy_version": "2.4.3",
       "python_implementation": "CPython",
       "python_version": "3.12.13",
       "scipy_version": "1.16.0",
-      "torch_configuration_sha256": "51bcbe59eb176362dc969b0341d85ca88416e37bd0f10de4b19350d07898e330",
+      "torch_build_settings_sha256": "9b33c4879b84819e8ef782befd9761153b28ed525716ad34c02b81fbe26bb923",
       "torch_cuda_version": "12.4",
+      "torch_git_version": "2236df1770800ffea5697b11b0bb0d910b2e59e1",
       "torch_version": "2.6.0+cu124"
     }
   },
@@ -46,7 +48,7 @@
       "issue": "A2-25",
       "source_release": "rc1",
       "file_count": 7,
-      "tree_sha256": "9f155cfd044ead4d3e4b19d3b67f13786b557c80a5b9a8a1982ffa0a0c60cf45",
+      "tree_sha256": "9d000bc1a0f6e7d71dac816598c440e1517e5b8787de47c9c0d4529d1f984e07",
       "checkpoint_tree_sha256": "c33930ac57cd078eb165e9a3a2458762f516c14e9027ae0a7b6d4fe14a147c65",
       "continuation_tree_sha256": "2ba384ec3a0065e4c33955af114ab6e765f4b6ec6d0921fa3a12afa942a09b00",
       "expected_disposition": "state_only_migration_pre_b2_incompressibility"
@@ -55,7 +57,7 @@
       "issue": "A2-25",
       "source_release": "rc2",
       "file_count": 8,
-      "tree_sha256": "6e8ac7d2d355da15722f22ceae6bd7b55ccacec49d6325f2fb35f28eaf419005",
+      "tree_sha256": "d068c8df4564c49495253f90ab59ea4fee1ea308efcb3e71b8ea3248e723c274",
       "checkpoint_tree_sha256": "d7d163637b82649916bd74b03aba8157f598e511e37f5a0f4e352d30ac97927c",
       "continuation_tree_sha256": "ac2a64ea183f18bda6674ebafb1501c6cbc8dbfbe6ea05549dc6df6076acc6de",
       "expected_disposition": "exact_legacy_upgrade"
@@ -64,7 +66,7 @@
       "issue": "N5",
       "source_release": "rc1",
       "file_count": 12,
-      "tree_sha256": "420474cd0aa6102dee2ff49c9aa9f5bd996780fc99bdafea80eed4a71acc7920",
+      "tree_sha256": "ae34815109c6050301ab1aad105d46bb26e6bb7447e2699ac221916b7ba90bf9",
       "checkpoint_tree_sha256": "459c148b2616078725862dc28eb4aa9e3771aec9fb65016aef41f2b199b64925",
       "expected_disposition": "reject_rc1_pre_b8_lifting_dynamics_before_tensor_load"
     }

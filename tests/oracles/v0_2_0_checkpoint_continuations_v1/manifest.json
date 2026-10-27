@@ -1514,13 +1514,15 @@
   "checkpoint_fixture_tree_sha256": "46ae5eb1079a64cdb0999aeb188c2cfaf9c75b073497866c78abe00279fe55c8",
   "numerical_build_fingerprint": {
     "fingerprint_schema_version": 2,
-    "numpy_configuration_sha256": "b0c4a85c98a00af3927bc1b32ef3b6be6e23aa80c5c9a0f27c1930197a135ad0",
+    "numpy_configuration_sha256": "67da50f1059658f452f80a56e8dded80a7e84ad719c44552a1e743503a5c581e",
+    "numpy_configuration_source": "mode_dicts",
     "numpy_version": "2.4.3",
     "python_implementation": "CPython",
     "python_version": "3.12.13",
     "scipy_version": "1.16.0",
-    "torch_configuration_sha256": "59dcaebcae9fbaa402c4e346219207f43ce05a55e1eb2d717f6b88e89ee49210",
+    "torch_build_settings_sha256": "7492e251b254a90f8935ebdc53f6b63b8f200968b6f4f69155332a4fa7d4f458",
     "torch_cuda_version": "12.6",
+    "torch_git_version": "Unknown",
     "torch_version": "2.6.0"
   },
   "oracle_schema_version": 1,

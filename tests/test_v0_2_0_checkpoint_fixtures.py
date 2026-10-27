@@ -207,24 +207,39 @@ def test_build_aware_continuation_uses_dtype_epsilon_for_other_build(
         )
 
 
-def test_torch_build_fingerprint_ignores_cuda_visibility_probe_lines():
-    common = """PyTorch built with:\n  - GCC 11\n  - CPU capability usage: AVX2\n"""
-    visible = common + (
+def test_torch_build_fingerprint_uses_only_the_build_settings_payload():
+    visible = """PyTorch built with:\n  - GCC 11\n""" + (
         "  - CUDA Runtime 12.4\n"
+        "  - Built with CUDA Runtime 12.4\n"
         "  - NVCC architecture flags: sm_90\n"
         "  - CuDNN 90.1\n"
+        "    - Built with CuDNN 90.0\n"
         "  - Magma 2.6.1\n"
         "  - Build settings: CUDA_VERSION=12.4, USE_CUDA=ON, USE_MKL=ON\n"
     )
-    hidden = common + (
+    hidden = """PyTorch built with:\n  - GCC 13\n""" + (
         "  - Build settings: CUDA_VERSION=12.4, USE_CUDA=ON, USE_MKL=ON\n"
     )
-    assert compatibility._visibility_invariant_torch_configuration(
+    assert compatibility._torch_build_settings(
         visible
-    ) == compatibility._visibility_invariant_torch_configuration(hidden)
-    assert "Build settings" in (
-        compatibility._visibility_invariant_torch_configuration(visible)
+    ) == compatibility._torch_build_settings(hidden)
+    assert compatibility._torch_build_settings(visible) == (
+        "CUDA_VERSION=12.4, USE_CUDA=ON, USE_MKL=ON"
     )
+
+
+def test_numpy_build_fingerprint_supports_the_numpy_1_22_show_signature(
+    monkeypatch,
+):
+    def legacy_show(*args, **kwargs):
+        if args or kwargs:
+            raise TypeError("show() got an unexpected keyword argument 'mode'")
+        print("blas:\n  library: legacy")
+
+    monkeypatch.setattr(compatibility.np.__config__, "show", legacy_show)
+    source, value = compatibility._numpy_build_configuration()
+    assert source == "show_text"
+    assert value == "blas:\n  library: legacy"
 
 
 def test_live_numerical_fingerprint_uses_visibility_invariant_schema():
@@ -233,18 +248,20 @@ def test_live_numerical_fingerprint_uses_visibility_invariant_schema():
     assert set(fingerprint) == {
         "fingerprint_schema_version",
         "numpy_configuration_sha256",
+        "numpy_configuration_source",
         "numpy_version",
         "python_implementation",
         "python_version",
         "scipy_version",
-        "torch_configuration_sha256",
+        "torch_build_settings_sha256",
         "torch_cuda_version",
+        "torch_git_version",
         "torch_version",
     }
     assert all(
         len(fingerprint[key]) == 64
         for key in (
             "numpy_configuration_sha256",
-            "torch_configuration_sha256",
+            "torch_build_settings_sha256",
         )
     )
