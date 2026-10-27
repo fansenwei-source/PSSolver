@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#SBATCH --job-name=pssolver-v03-s09-apdiag
 #SBATCH --partition=hagan-gpu
 #SBATCH --account=hagan-lab
 #SBATCH --qos=medium
@@ -7,6 +8,8 @@
 #SBATCH --mem=64G
 #SBATCH --time=02:00:00
 #SBATCH --no-requeue
+#SBATCH --output=/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261026_v1/logs/slurm_%j.out
+#SBATCH --error=/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261026_v1/logs/slurm_%j.err
 
 set -euo pipefail
 
@@ -23,6 +26,8 @@ set -euo pipefail
 : "${S09_DIAG_ANALYZER_SHA256:?}"
 : "${S09_DIAG_REVERT_PROXY_SHA256:?}"
 : "${S09_DIAG_SNAPSHOT_SHA256:?}"
+: "${S09_DIAG_PREFLIGHT_SHA256:?}"
+: "${S09_DIAG_MAIN_ENVIRONMENT_SHA256:?}"
 
 test -d "${S09_DIAG_CONTROL_ROOT}"
 test ! -e "${S09_DIAG_OUTPUT_ROOT}"
@@ -35,6 +40,8 @@ test -f "${S09_DIAG_SUPPORT_ROOT}/benchmarks/run_v0_3_s09_ap_cache_diagnostic_ch
 test -f "${S09_DIAG_SUPPORT_ROOT}/benchmarks/analyze_v0_3_s09_ap_cache_diagnostic.py"
 test -f "${S09_DIAG_SUPPORT_ROOT}/benchmarks/v0_3_s09_revert_pressure_proxy.py"
 test -f "${S09_DIAG_SUPPORT_ROOT}/benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py"
+test -f "${S09_DIAG_SUPPORT_ROOT}/benchmarks/run_v0_3_s09_ap_cache_diagnostic_preflight.py"
+test -f "${S09_DIAG_SUPPORT_ROOT}/benchmarks/run_v0_3_s09_environment.py"
 
 test "$(sha256sum "${S09_DIAG_PLAN}" | awk '{print $1}')" = "${S09_DIAG_PLAN_SHA256}"
 test "$(sha256sum "${S09_DIAG_SUPPORT_ROOT}/benchmarks/run_v0_3_s09_ap_cache_diagnostic.py" | awk '{print $1}')" = "${S09_DIAG_RUNNER_SHA256}"
@@ -43,19 +50,51 @@ test "$(sha256sum "${S09_DIAG_SUPPORT_ROOT}/benchmarks/run_v0_3_s09_ap_cache_dia
 test "$(sha256sum "${S09_DIAG_SUPPORT_ROOT}/benchmarks/analyze_v0_3_s09_ap_cache_diagnostic.py" | awk '{print $1}')" = "${S09_DIAG_ANALYZER_SHA256}"
 test "$(sha256sum "${S09_DIAG_SUPPORT_ROOT}/benchmarks/v0_3_s09_revert_pressure_proxy.py" | awk '{print $1}')" = "${S09_DIAG_REVERT_PROXY_SHA256}"
 test "$(sha256sum "${S09_DIAG_SUPPORT_ROOT}/benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py" | awk '{print $1}')" = "${S09_DIAG_SNAPSHOT_SHA256}"
+test "$(sha256sum "${S09_DIAG_SUPPORT_ROOT}/benchmarks/run_v0_3_s09_ap_cache_diagnostic_preflight.py" | awk '{print $1}')" = "${S09_DIAG_PREFLIGHT_SHA256}"
+test "$(sha256sum "${S09_DIAG_SUPPORT_ROOT}/benchmarks/run_v0_3_s09_environment.py" | awk '{print $1}')" = "${S09_DIAG_MAIN_ENVIRONMENT_SHA256}"
 
 mkdir -p "${S09_DIAG_OUTPUT_ROOT}"
 test -z "$(find "${S09_DIAG_OUTPUT_ROOT}" -mindepth 1 -maxdepth 1 -print -quit)"
+test -d "${S09_DIAG_CONTROL_ROOT}/logs"
 
+unset LD_LIBRARY_PATH
 export PYTHONNOUSERSITE=1
 export PYTHONDONTWRITEBYTECODE=1
 export NVIDIA_TF32_OVERRIDE=0
 export PYTHONPATH="${S09_DIAG_SUPPORT_ROOT}"
+export CC=/opt/ohpc/pub/compiler/gcc/7.3.0/bin/gcc
+export CXX=/opt/ohpc/pub/compiler/gcc/7.3.0/bin/g++
+
+if ! type module >/dev/null 2>&1; then
+  set +u
+  source /opt/ohpc/admin/lmod/lmod/init/bash
+  set -u
+fi
+module load cuda/12.1
+
+node_root="/tmp/pssolver_v03_s09_apdiag_${SLURM_JOB_ID}"
+pytest_tmp="${node_root}/pytest_tmp"
+test ! -e "${node_root}"
+trap 'rm -rf "${node_root}"' EXIT
+mkdir -p "${pytest_tmp}"
+export TMPDIR="${pytest_tmp}"
+
+mkdir -p "${S09_DIAG_OUTPUT_ROOT}/environment"
+"${CC}" --version > "${S09_DIAG_OUTPUT_ROOT}/environment/cc-version.txt" 2>&1
+module list > "${S09_DIAG_OUTPUT_ROOT}/environment/module-list.txt" 2>&1
+nvcc --version > "${S09_DIAG_OUTPUT_ROOT}/environment/nvcc-version.txt" 2>&1
 
 nvidia-smi -q > "${S09_DIAG_OUTPUT_ROOT}/nvidia-smi-q.txt"
 nvidia-smi --query-gpu=name,uuid,driver_version,memory.total --format=csv,noheader \
   > "${S09_DIAG_OUTPUT_ROOT}/nvidia-smi-summary.txt"
 scontrol show job "${SLURM_JOB_ID}" > "${S09_DIAG_OUTPUT_ROOT}/scontrol-running.txt"
+
+# Reuse the cumulative S-09 GCC/CUDA/Triton/TorchInductor preflight before
+# starting any of the 36 channel_compiled_v2 diagnostic profiles.
+"${S09_DIAG_CANDIDATE_ENV}/bin/python" \
+  "${S09_DIAG_SUPPORT_ROOT}/benchmarks/run_v0_3_s09_ap_cache_diagnostic_preflight.py" \
+  --work-root "${node_root}/compiler_preflight" \
+  --output "${S09_DIAG_OUTPUT_ROOT}/environment/compiler_preflight.json"
 
 "${S09_DIAG_CANDIDATE_ENV}/bin/python" \
   "${S09_DIAG_SUPPORT_ROOT}/benchmarks/run_v0_3_s09_ap_cache_diagnostic.py" \

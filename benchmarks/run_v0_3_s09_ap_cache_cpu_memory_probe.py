@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Measure CPU live-tensor memory for cache-on, revert proxy, or f94 source."""
+"""Collect reference-only CPU memory traces for the three diagnostic roles.
+
+Repeated identical runs vary by one or two pressure-field allocations, so this
+probe cannot prove parity or identify the source of a one-field CUDA peak.
+"""
 
 from __future__ import annotations
 
@@ -29,6 +33,13 @@ from pssolver.linear_solvers.stokes.channel_no_slip import (
 
 SCHEMA = "pssolver.v0_3.s09.ap_cache_cpu_memory_probe.v1"
 ROLES = ("candidate_cache_on", "candidate_revert_proxy", "historical_source")
+MEMORY_INTERPRETATION = {
+    "reference_only": True,
+    "reproducible_at_one_pressure_field_resolution": False,
+    "used_as_revert_proxy_fidelity_proof": False,
+    "used_for_qualification_or_v41_attribution": False,
+    "decisive_evidence": "untimed H100 CUDA allocator snapshots",
+}
 
 
 def _sha256(path: Path) -> str:
@@ -133,6 +144,7 @@ def run_probe(
         "warmup_steps": 3,
         "profiled_steps": 3,
         "peak_live_bytes": max(totals),
+        "memory_interpretation": dict(MEMORY_INTERPRETATION),
         "pressure_operator_calls_in_profiled_steps": operator_calls,
         "final_state_sha256": final_state_sha256,
         "revert_proxy": proof,

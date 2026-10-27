@@ -16,7 +16,7 @@ from pathlib import Path
 
 
 SCHEMA = "pssolver.v0_3.s09.ap_cache_diagnostic_plan.v1"
-CLASSIFICATION = "READY_S09_AP_REVERT_PROXY_DIAGNOSTIC_FOR_R0029_REVIEW"
+CLASSIFICATION = "READY_S09_AP_REVERT_PROXY_DIAGNOSTIC_FOR_R0030_REVIEW"
 
 BASELINE_COMMIT = "2a1d0f7e9e4b1ecf8fc26ef8eda5c2efb1290e70"
 BASELINE_WHEEL_SHA256 = (
@@ -125,7 +125,7 @@ def build_plan(*, mode: str = "h100") -> dict[str, object]:
         "classification": CLASSIFICATION,
         "plan_step": "S-09",
         "decision": "D-0012",
-        "review_request": "R-0029",
+        "review_request": "R-0030",
         "mode": mode,
         "diagnostic_only": True,
         "qualification_complete": False,
@@ -137,6 +137,19 @@ def build_plan(*, mode: str = "h100") -> dict[str, object]:
             "the candidate and an exact f94b9be pressure-solve revert proxy "
             "before deciding V-41."
         ),
+        "job_environment_contract": {
+            "unset_ld_library_path": True,
+            "host_compiler": {
+                "cc": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/gcc",
+                "cxx": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/g++",
+            },
+            "cuda_module": "cuda/12.1",
+            "node_local_tmpdir": True,
+            "exit_trap_removes_node_local_tmpdir": True,
+            "compiler_versions_persisted_before_matrix": True,
+            "main_s09_compiler_preflight_reused_before_matrix": True,
+            "torch_compile_cuda_smoke_before_matrix": True,
+        },
         "identities": {
             "baseline_commit": BASELINE_COMMIT,
             "baseline_wheel_sha256": BASELINE_WHEEL_SHA256,
