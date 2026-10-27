@@ -1513,12 +1513,13 @@
   },
   "checkpoint_fixture_tree_sha256": "46ae5eb1079a64cdb0999aeb188c2cfaf9c75b073497866c78abe00279fe55c8",
   "numerical_build_fingerprint": {
-    "numpy_configuration_sha256": "dfc433710f061f6bed90f5c31f678f85ad8bff439b034237395eccccabc0bdca",
+    "fingerprint_schema_version": 2,
+    "numpy_configuration_sha256": "b0c4a85c98a00af3927bc1b32ef3b6be6e23aa80c5c9a0f27c1930197a135ad0",
     "numpy_version": "2.4.3",
     "python_implementation": "CPython",
     "python_version": "3.12.13",
     "scipy_version": "1.16.0",
-    "torch_configuration_sha256": "3e45b28a670b38f8c5fd303bc77b95082854107759645485b3d20703aea1ae7b",
+    "torch_configuration_sha256": "59dcaebcae9fbaa402c4e346219207f43ce05a55e1eb2d717f6b88e89ee49210",
     "torch_cuda_version": "12.6",
     "torch_version": "2.6.0"
   },

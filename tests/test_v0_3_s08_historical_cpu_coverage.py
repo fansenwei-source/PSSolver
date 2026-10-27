@@ -168,6 +168,9 @@ def test_s08_fixture_manifest_binds_exact_release_outputs():
     assert _sha256(FIXTURES / "generate_fixtures.py") == MANIFEST[
         "generator"
     ]["sha256"]
+    assert MANIFEST["generation_environment"][
+        "numerical_build_fingerprint"
+    ]["fingerprint_schema_version"] == 2
     for name, record in MANIFEST["cases"].items():
         directory = FIXTURES / name
         assert len(_tree(directory)) == record["file_count"]

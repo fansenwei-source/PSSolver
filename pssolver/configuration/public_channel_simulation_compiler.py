@@ -38,6 +38,7 @@ from pssolver.core.integrators import IntegratorScheme
 from pssolver.core.pressure import (
     channel_pressure_minimum_relative_tolerance_for_precision,
 )
+from pssolver.core._validation import require_exact_keys
 
 
 _INITIAL_KEYS = frozenset({"generated", "mode", "snapshot"})
@@ -93,15 +94,12 @@ def _exact_keys(
     *,
     code: PublicCompilationRejectionCode,
 ) -> dict[str, object]:
-    observed = set(value)
-    if observed != expected:
-        _reject(
-            f"{description} must declare every qualified option explicitly; "
-            f"missing={tuple(sorted(expected - observed))!r}, "
-            f"extra={tuple(sorted(observed - expected))!r}",
-            code=code,
-        )
-    return dict(value)
+    return require_exact_keys(
+        value,
+        expected,
+        description,
+        reject=lambda message: _reject(message, code=code),
+    )
 
 
 def _validate_translation(

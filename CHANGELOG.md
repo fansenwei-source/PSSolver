@@ -2,6 +2,22 @@
 
 ## 0.3.0.dev0 — unreleased
 
+### Final architecture and compatibility cleanup
+
+- Make checkpoint continuation build fingerprints invariant to whether CUDA
+  devices are visible during a CPU qualification run. The fingerprint still
+  binds the Torch build-settings line (including CUDA, compiler, BLAS, MKL,
+  and CPU features), but excludes four probe-summary lines that disappear
+  when `CUDA_VISIBLE_DEVICES` is empty. NumPy build configuration is hashed
+  from its structured dictionary rather than presentation text.
+- Centralize the exact-key validation mechanic shared by the three public
+  application compilers while preserving each compiler's public exception
+  type and rejection code. Extend the executable architecture dependency
+  ratchet to the `api`, `boundaries`, `diagnostics`, and `functional` layers.
+  Larger runtime, checkpoint, solver, qualification-history, and package-
+  surface consolidations remain separately deferred because they require
+  numerical, compatibility, performance, or deprecation qualification.
+
 ### Stable functional execution ownership
 
 - Add public `FunctionalRuntimeProtocol.execution_scope()` so an independent

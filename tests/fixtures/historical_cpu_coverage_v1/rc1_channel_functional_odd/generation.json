@@ -16,12 +16,13 @@
     "commit": "1c5237194c5e4f696bb5d3d01d2caa2c4bdd27a1",
     "numpy": "2.4.3",
     "numerical_build_fingerprint": {
-      "numpy_configuration_sha256": "fdaee81454e99db7d5bc2e8e6ed1a006aee64180839cbbdcae1c1b0f42784351",
+      "fingerprint_schema_version": 2,
+      "numpy_configuration_sha256": "b0c4a85c98a00af3927bc1b32ef3b6be6e23aa80c5c9a0f27c1930197a135ad0",
       "numpy_version": "2.4.3",
       "python_implementation": "CPython",
       "python_version": "3.12.13",
       "scipy_version": "1.16.0",
-      "torch_configuration_sha256": "21384f8f1c659b4321e330a41be8b8362971158a0bcaed2e27f3210ee52992d0",
+      "torch_configuration_sha256": "51bcbe59eb176362dc969b0341d85ca88416e37bd0f10de4b19350d07898e330",
       "torch_cuda_version": "12.4",
       "torch_version": "2.6.0+cu124"
     },

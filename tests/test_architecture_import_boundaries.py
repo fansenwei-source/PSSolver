@@ -90,6 +90,36 @@ ALLOWED_INTERNAL_LAYERS = {
     ),
     "io": frozenset({"core", "io", "runtime"}),
     "control": frozenset({"control", "models", "snapshots"}),
+    # S-10 brings the post-Phase-9 public and functional layers under the
+    # executable ratchet.  These sets freeze the dependencies that exist at
+    # the S-10 baseline; adding a new layer edge now requires explicit review.
+    "api": frozenset(
+        {
+            "api",
+            "applications",
+            "configuration",
+            "core",
+            "errors",
+            "planning",
+            "systems",
+        }
+    ),
+    "boundaries": frozenset({"boundaries", "core", "systems"}),
+    "diagnostics": frozenset({"diagnostics"}),
+    "functional": frozenset(
+        {
+            "_version",
+            "applications",
+            "configuration",
+            "core",
+            "functional",
+            "io",
+            "linear_solvers",
+            "models",
+            "runtime",
+            "workflows",
+        }
+    ),
     # The historical facade is allowed to re-export the canonical Phase 1
     # implementations, but canonical modules never depend on the facade.
     "transforms": frozenset({"backends", "linear_solvers", "operators"}),

@@ -10,11 +10,9 @@ from __future__ import annotations
 import argparse
 from dataclasses import replace
 import hashlib
-import io
 import json
 from pathlib import Path
 import platform
-import sys
 
 import numpy as np
 import pssolver
@@ -95,18 +93,33 @@ def _write_json(path: Path, payload: object) -> None:
     )
 
 
-def numerical_build_fingerprint() -> dict[str, object]:
-    """Identify the numerical build that controls exact FFT continuation."""
+def _visibility_invariant_torch_configuration(value: str) -> str:
+    prefixes = (
+        "- CUDA Runtime",
+        "- NVCC architecture flags",
+        "- CuDNN",
+        "- Magma",
+    )
+    lines = [
+        line
+        for line in value.splitlines()
+        if not line.strip().startswith(prefixes)
+    ]
+    normalized = "\n".join(lines)
+    if value.endswith("\n"):
+        normalized += "\n"
+    return normalized
 
-    torch_configuration = torch.__config__.show()
-    numpy_configuration = io.StringIO()
-    old_stdout = sys.stdout
-    try:
-        sys.stdout = numpy_configuration
-        np.show_config()
-    finally:
-        sys.stdout = old_stdout
+
+def numerical_build_fingerprint() -> dict[str, object]:
+    """Identify the numerical build without CUDA-visibility probe lines."""
+
+    torch_configuration = _visibility_invariant_torch_configuration(
+        torch.__config__.show()
+    )
+    numpy_build = np.__config__.show(mode="dicts")
     return {
+        "fingerprint_schema_version": 2,
         "python_implementation": platform.python_implementation(),
         "python_version": platform.python_version(),
         "torch_version": torch.__version__,
@@ -116,7 +129,9 @@ def numerical_build_fingerprint() -> dict[str, object]:
         ).hexdigest(),
         "numpy_version": np.__version__,
         "numpy_configuration_sha256": hashlib.sha256(
-            numpy_configuration.getvalue().encode("utf-8")
+            json.dumps(
+                numpy_build, separators=(",", ":"), sort_keys=True
+            ).encode("utf-8")
         ).hexdigest(),
         "scipy_version": scipy.__version__,
     }

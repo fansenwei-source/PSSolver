@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-
 from pssolver.configuration.channel_beris_edwards import (
     CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
     ChannelBerisEdwardsRunSpec,
@@ -31,6 +29,7 @@ from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.core.domain import GridPlacement
 from pssolver.core.integrators import IntegratorScheme
 from pssolver.core.numerics import SpectralStorage
+from pssolver.core._validation import require_exact_keys
 from pssolver.core.pressure import (
     channel_pressure_minimum_relative_tolerance_for_precision,
 )
@@ -60,18 +59,15 @@ _WORKFLOW_KEYS = frozenset(
         "save_start_step",
     }
 )
-def _exact_keys(value: Mapping[str, object], expected, description, *, code):
+def _exact_keys(value, expected, description, *, code):
     from .public_simulation_runner import _reject
 
-    observed = set(value)
-    if observed != expected:
-        _reject(
-            f"{description} must declare every qualified option explicitly; "
-            f"missing={tuple(sorted(expected - observed))!r}, "
-            f"extra={tuple(sorted(observed - expected))!r}",
-            code=code,
-        )
-    return dict(value)
+    return require_exact_keys(
+        value,
+        expected,
+        description,
+        reject=lambda message: _reject(message, code=code),
+    )
 
 
 def compile_channel_beris_edwards_public_simulation(

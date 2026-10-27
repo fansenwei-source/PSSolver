@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import io
 import json
 from pathlib import Path
 import platform
@@ -105,6 +104,7 @@ PUBLISHED_WHEEL_SHA256 = (
 )
 CONTINUATION_ORACLE_SCHEMA_VERSION = 1
 CONTINUATION_TOLERANCE_EPS_MULTIPLIER = 8.0
+NUMERICAL_BUILD_FINGERPRINT_SCHEMA_VERSION = 2
 PERIODIC_SHAPE = (6, 6, 4)
 CHANNEL_SHAPE = (7, 6, 6)
 PLANE_SHAPE = (7, 7, 6)
@@ -149,19 +149,47 @@ def _array_record(array: np.ndarray) -> dict[str, object]:
     }
 
 
+_CUDA_VISIBILITY_ONLY_TORCH_CONFIG_PREFIXES = (
+    "- CUDA Runtime",
+    "- NVCC architecture flags",
+    "- CuDNN",
+    "- Magma",
+)
+
+
+def _visibility_invariant_torch_configuration(value: str) -> str:
+    """Remove probe-only lines whose presence depends on CUDA visibility.
+
+    The retained build-settings line still records whether Torch was built
+    with CUDA, its CUDA/CuDNN versions, compiler, BLAS, MKL and CPU features.
+    Only the four human-readable probe summaries disappear when no GPU is
+    visible, so they cannot decide whether a CPU continuation is bitwise.
+    """
+
+    lines = [
+        line
+        for line in value.splitlines()
+        if not line.strip().startswith(
+            _CUDA_VISIBILITY_ONLY_TORCH_CONFIG_PREFIXES
+        )
+    ]
+    normalized = "\n".join(lines)
+    if value.endswith("\n"):
+        normalized += "\n"
+    return normalized
+
+
 def numerical_build_fingerprint() -> dict[str, object]:
     """Identify the numerical build that controls exact FFT continuation."""
 
-    torch_configuration = torch.__config__.show()
-    numpy_configuration = io.StringIO()
-    old_stdout = sys.stdout
-    try:
-        sys.stdout = numpy_configuration
-        np.show_config()
-    finally:
-        sys.stdout = old_stdout
-    numpy_build = numpy_configuration.getvalue()
+    torch_configuration = _visibility_invariant_torch_configuration(
+        torch.__config__.show()
+    )
+    numpy_build = np.__config__.show(mode="dicts")
     return {
+        "fingerprint_schema_version": (
+            NUMERICAL_BUILD_FINGERPRINT_SCHEMA_VERSION
+        ),
         "python_implementation": platform.python_implementation(),
         "python_version": platform.python_version(),
         "torch_version": torch.__version__,
@@ -171,7 +199,9 @@ def numerical_build_fingerprint() -> dict[str, object]:
         ).hexdigest(),
         "numpy_version": np.__version__,
         "numpy_configuration_sha256": hashlib.sha256(
-            numpy_build.encode("utf-8")
+            json.dumps(
+                numpy_build, separators=(",", ":"), sort_keys=True
+            ).encode("utf-8")
         ).hexdigest(),
         "scipy_version": scipy.__version__,
     }

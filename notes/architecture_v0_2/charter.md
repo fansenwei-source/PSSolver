@@ -131,10 +131,15 @@ core
 ```
 
 The executable subset of this rule is in
-`tests/test_architecture_import_boundaries.py`.  The table records all eight
-original v0.1.2 debts.  Phase 1, P2.5.1, and P2.6 have retired four, leaving
-four exact exceptions in the current ratchet.  Broad layer exemptions are
-forbidden.
+`tests/test_architecture_import_boundaries.py`.  The table records the eight
+original v0.1.2 debts.  Later application and runtime migrations introduced
+three additional, narrowly named compatibility edges.  Phase 1, P2.5.1, and
+P2.6 retired four original debts; the current ratchet therefore contains the
+four remaining original debts plus those three reviewed compatibility edges.
+Broad layer exemptions are forbidden.  S-10 also places the post-Phase-9
+`api`, `boundaries`, `diagnostics`, and `functional` packages under the same
+executable layer ratchet, freezing their current layer dependencies rather
+than leaving them ungoverned.
 
 `pssolver.systems` is the narrow tensor-free declaration layer for generic
 algebraic requests and physical subsystems such as incompressible Stokes.  It

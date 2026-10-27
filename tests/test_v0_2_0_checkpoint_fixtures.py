@@ -118,6 +118,9 @@ def test_v020_continuation_oracle_is_separate_and_provenance_bound():
         "other_builds": "dtype_epsilon",
         "epsilon_multiplier": 8.0,
     }
+    assert manifest["numerical_build_fingerprint"][
+        "fingerprint_schema_version"
+    ] == 2
     assert set(manifest["cases"]) == set(CASES)
     for case in CASES:
         for record in manifest["cases"][case]["arrays"].values():
@@ -202,3 +205,46 @@ def test_build_aware_continuation_uses_dtype_epsilon_for_other_build(
             oracle,
             "case",
         )
+
+
+def test_torch_build_fingerprint_ignores_cuda_visibility_probe_lines():
+    common = """PyTorch built with:\n  - GCC 11\n  - CPU capability usage: AVX2\n"""
+    visible = common + (
+        "  - CUDA Runtime 12.4\n"
+        "  - NVCC architecture flags: sm_90\n"
+        "  - CuDNN 90.1\n"
+        "  - Magma 2.6.1\n"
+        "  - Build settings: CUDA_VERSION=12.4, USE_CUDA=ON, USE_MKL=ON\n"
+    )
+    hidden = common + (
+        "  - Build settings: CUDA_VERSION=12.4, USE_CUDA=ON, USE_MKL=ON\n"
+    )
+    assert compatibility._visibility_invariant_torch_configuration(
+        visible
+    ) == compatibility._visibility_invariant_torch_configuration(hidden)
+    assert "Build settings" in (
+        compatibility._visibility_invariant_torch_configuration(visible)
+    )
+
+
+def test_live_numerical_fingerprint_uses_visibility_invariant_schema():
+    fingerprint = compatibility.numerical_build_fingerprint()
+    assert fingerprint["fingerprint_schema_version"] == 2
+    assert set(fingerprint) == {
+        "fingerprint_schema_version",
+        "numpy_configuration_sha256",
+        "numpy_version",
+        "python_implementation",
+        "python_version",
+        "scipy_version",
+        "torch_configuration_sha256",
+        "torch_cuda_version",
+        "torch_version",
+    }
+    assert all(
+        len(fingerprint[key]) == 64
+        for key in (
+            "numpy_configuration_sha256",
+            "torch_configuration_sha256",
+        )
+    )
