@@ -345,6 +345,9 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     }
     assert "1.0307692307692307" in issues["V-41"]["notes"]
     assert "D-0012" in issues["V-41"]["notes"]
+    assert "reference-only" in issues["V-41"]["notes"]
+    assert "H100 allocator snapshots" in issues["V-41"]["notes"]
+    assert "comes from 2573dec extending" not in issues["V-41"]["notes"]
     assert issues["V-30"] == {
         "id": "V-30",
         "title": (

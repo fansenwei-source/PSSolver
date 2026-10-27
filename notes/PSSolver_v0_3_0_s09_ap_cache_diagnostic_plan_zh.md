@@ -1,7 +1,8 @@
 # PSSolver v0.3.0 S-09 A·p 撤回代理诊断计划
 
-状态：`READY_FOR_R0029_REVIEW`。本计划依据 D-0012，并按 R-0028 的返工意见
-修订；它只解释 V-41 的 H100 显存增量，不是资格测试，不能将 S-09 判为通过。
+状态：`READY_FOR_R0030_REVIEW`。本计划依据 D-0012，并按 R-0028、R-0029 的
+返工意见修订；它只解释 V-41 的 H100 显存增量，不是资格测试，不能将 S-09
+判为通过。
 
 ## 固定范围
 
@@ -24,17 +25,20 @@
 
 ## revert-proxy 实现边界
 
-R-0028 证明仅禁用持久缓存不能代表撤回：在 R512 CPU 活跃张量时间线中，cache-on
-和原 cache-off 都是 316,339,328 bytes，而真正的 `f94b9be` 是 309,785,728
-bytes。增量来自 2573dec 延长了单次 `_solve_pressure` 内局部 A·p 的生命周期，
-而不是持久缓存字段本身。
+仅禁用持久缓存不能代表撤回，因为 `2573dec` 还改变了 `_solve_pressure` 内局部
+A·p 张量的生命周期。R-0029 进一步证明，CPU `torch.profiler` 的活跃峰值在完全
+相同的重复运行之间也会变化一至两个压力场，因此该探针只能保留为参考数据，
+不能证明代理内存与历史源码相同，也不能裁决峰值究竟来自持久缓存还是局部 A·p
+生命周期。H100 allocator snapshot 才是该机制的决定性证据。
 
 新 harness 从候选 wheel 的 `_solve_pressure` 源码出发，使用 fail-closed 的精确
 逆补丁重建 `f94b9be22fd767fee432caf30f0e5c47aad8e9c3` 的 691 行历史方法。重建前
 必须匹配候选方法 SHA-256 `43316e0c…`，重建后必须匹配历史方法 SHA-256
 `2ffb5673…`；历史完整源文件 SHA-256 为 `c539275f…`。方法只在候选 wheel 的
 `channel_no_slip` 模块命名空间中临时编译，在独立子进程结束前恢复。每个代理
-profile 必须证明方法实际执行，且四个 A·p cache 字段始终为空。
+profile 必须证明方法实际执行，且四个 A·p cache 字段始终为空。代理可信度只
+依据：历史方法源码逐字相同、在候选模块命名空间编译、缓存字段为空、三步产生
+与直接 `f94b9be` 相同的 78 次压力算子调用，以及终态逐位相同。
 
 Provider wheel、runtime、冻结计划和阈值均不修改。R-0028 的 persistent-cache-off
 实现保留为附加诊断工具，但不进入 72 项正式计时矩阵，也不加入未经授权的第四
@@ -47,16 +51,22 @@ Provider wheel、runtime、冻结计划和阈值均不修改。R-0028 的 persis
 与 2 步正式执行，仅验证编排、隔离、身份、撤回代理证明和状态一致性，不产生
 性能结论。candidate cache-on/revert-proxy 的初态与末态摘要必须逐字节相同。
 
-另用 R512 `channel_legacy` 做 CPU `torch.profiler` 活跃张量时间线：候选代理的
-终态必须与 cache-on 和直接检出的 `f94b9be` 源码逐字节相同，且代理峰值必须与
-直接源码峰值一致。CUDA snapshot helper 也在 CPU 上走完同一流程，但明确跳过
-CUDA snapshot 文件。
+另用 R512 `channel_legacy` 做 CPU `torch.profiler` 活跃张量时间线，但只作为
+不可复现的参考探针：不要求代理与历史源码峰值相同，也不从单次差值推断 V-41
+机制。候选代理的终态仍必须与 cache-on 和直接检出的 `f94b9be` 源码逐字节相同，
+代理与直接源码的压力算子调用次数必须同为 78。CUDA snapshot helper 也在 CPU
+上走完同一流程，但明确跳过 CUDA snapshot 文件。
 
 本地证据必须包含环境、`sys.path`、wheel 哈希或 RECORD 摘要、pytest 日志、
 JUnit、rehearsal 日志、内存时间线摘要、结果、`checksums.sha256`、`COMPLETE`
 和清理 venv 后的 `PRUNED.txt`。
 
 ## H100 附加快照
+
+作业在矩阵开始前复用主 S-09 作业的环境合同：清除 `LD_LIBRARY_PATH`，固定
+GCC/G++ 7.3.0，初始化 lmod 并加载 `cuda/12.1`，使用带 EXIT trap 的节点本地
+`TMPDIR`，持久化编译器/module/nvcc 版本，并以空 Triton/TorchInductor cache
+完成最小 CUDA `torch.compile` 预检。任一预检失败都不得启动矩阵。
 
 72 项计时矩阵之外，对 R512 `channel_legacy` 的 candidate cache-on 和
 candidate revert-proxy 各运行一次不计时的独立进程。进程调用
@@ -67,6 +77,6 @@ snapshot，用于定位 CUDA 峰值增量的分配位置。两次运行不进入
 ## 结果解释
 
 结果只比较候选与真实撤回代理的计时、peak allocated/reserved 和 allocator
-分配时间线。它不判定 S-09 通过。R-0029 独立复核 PASS 后，才起草一次诊断
+分配时间线。它不判定 S-09 通过。R-0030 独立复核 PASS 后，才起草一次诊断
 H100 授权；实际数据仍只用于决定撤回缓存后重跑完整 S-09，或由用户另行决定
 是否接受例外。D-0012 本身不接受例外。

@@ -1,0 +1,76 @@
+{
+  "schema": "pssolver.v0_3.s03_successor_record.v1",
+  "classification": "R0029_REWORK_IMPORTED_AND_DIAGNOSTIC_ENVIRONMENT_HARDENED",
+  "plan_step": "S-09",
+  "record_scope": {
+    "evidence_only_import": true,
+    "qualification_support_changed": true,
+    "runtime_changed": false,
+    "wheel_changed": false,
+    "external_action_authorized": false
+  },
+  "git_identity": {
+    "runtime_commit": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+    "r0029_candidate_commit": "ef58b768b6e1ebc664e4751dcd29e378d7f590c0",
+    "rework_support_commit": "616bc453d50040b20d1ef448cf2647358aeee1cc",
+    "rework_support_parent": "ef58b768b6e1ebc664e4751dcd29e378d7f590c0"
+  },
+  "sync_result": {
+    "id": "R-0029",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0029.result.json",
+    "sha256": "58d21c9e27fb1680b952a7171bf8eeb5884c7b6e3b6a37da67223030689ec2de",
+    "classification": "REWORK_REQUIRED"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s09diagrw_claude_review_20261026_v1",
+    "checksums_entries": 2157,
+    "checksums_sha256": "dc69004bd8160efeef035b5cefe27f3029845b0c111710f62b9c1b10d86eb52f",
+    "complete_present": true,
+    "final_report_sha256": "0829d01f5bc6648eede443d972a09ef1d4c1eadd7d69d398c349ce6367a80fc9",
+    "summary_sha256": "5d8aa672d9ee0a21364385d794ccefc51cf684e903e16d7090d92a9e8f57006e"
+  },
+  "accepted_from_r0029": {
+    "runtime_and_wheels": true,
+    "exact_revert_proxy": true,
+    "six_balanced_role_permutations": true,
+    "frozen_profile_center_estimator": true,
+    "installed_wheel_cpu_rehearsal": true,
+    "diagnostic_only_boundary": true
+  },
+  "rework": {
+    "R1": "Copy the cumulative S-09 GCC/CUDA/node-local-TMP environment contract into the diagnostic job and run its CUDA TorchInductor compiler preflight before the matrix.",
+    "R2": "Withdraw the non-reproducible CPU live-memory parity proof and leave V-41 mechanism attribution to the untimed H100 allocator snapshots.",
+    "cpu_memory_probe": "reference_only_nonreproducible_at_one_pressure_field_resolution",
+    "proxy_fidelity_basis": [
+      "f94b9be method source SHA-256 2ffb5673ebdb92525b8959ee014aa3178b91cdf37789bdbd03d3cf2a5654e8f3",
+      "compiled in candidate module namespace",
+      "cache fields empty",
+      "78 pressure-operator calls matching direct f94b9be",
+      "byte-identical terminal states"
+    ],
+    "v41_status": "registered",
+    "s09_complete": false
+  },
+  "added_sources": {
+    "benchmarks/run_v0_3_s09_ap_cache_diagnostic_preflight.py": "fdec5c617d3a00836d8bb8676ffe746aa3ffc679e7caf14c25e138d1b5c37676"
+  },
+  "historical_successor_sources": {
+    "benchmarks/plan_v0_3_s09_ap_cache_diagnostic.py": {"historical_sha256": "031ec88724030ac65d5325286ae849458dfab5cda1004392f3b681fb2451021d", "current_sha256": "88bf509c2785e7efa08a6bfadbaf2fc2bba5c79ae0f172183df66c7978ce231e", "reason": "Bind R-0030 and the hardened diagnostic job environment contract."},
+    "benchmarks/run_v0_3_s09_ap_cache_cpu_memory_probe.py": {"historical_sha256": "76977f5558e5621959a676d7d76ade67da4e969e8b87b37ad3fde108292ac7e0", "current_sha256": "697267a42521e5599799399d1556ef1073b083fcc77a48335bd7f66e704cb793", "reason": "Mark every CPU live-memory observation as reference-only and non-adjudicative."},
+    "jobs/v0_3_s09_ap_cache_diagnostic_h100.sbatch": {"historical_sha256": "a04a44578e15efb634ab563b17d4bff756392242562c942bcdd323d790a534ef", "current_sha256": "2483755f7a783e8c97eb6da533e0817d8ee63e5a299c0bdecb771426e675a964", "reason": "Reuse the cumulative S-09 compiler/CUDA/TMPDIR environment contract before the diagnostic matrix."},
+    "notes/PSSolver_v0_3_0_s09_ap_cache_diagnostic_authorization_draft_zh.md": {"historical_sha256": "f7137699d0a205be3ac13d172dc411704c83af5af9ffaef219665a562802dac6", "current_sha256": "073619daa7ea7c6c5f87c5ee5438c27b10501c97ea70c42bdb35723f5c445c41", "reason": "Move the unauthorized draft to R-0030 and require the hardened environment preflight."},
+    "notes/PSSolver_v0_3_0_s09_ap_cache_diagnostic_plan_zh.md": {"historical_sha256": "e6bc4342022b6f6a6ec6a025f380ab64e4ea84ed21d938f617860ff4bf783451", "current_sha256": "644b4d71a78a78903f157cfaccc8b19c7ca0169d769c689436ab451906ca5c61", "reason": "Withdraw CPU peak parity and document the R-0030 environment and allocator-snapshot contracts."},
+    "notes/pssolver_v0_2_x_open_issues.json": {"historical_sha256": "fb765d98ab8fe68514b415ba283a9f6bdd2a0de1ee688ad181de1dfa9115acd1", "current_sha256": "4e242921a79c08521f2ceb2591e10039537f17786f9a3371238cf0f7e08f7034", "reason": "Correct V-41 mechanism attribution while keeping it registered."},
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "14df9c64a34ada63f8b5c2c737f4febeeb10dab672283918ac057208b0d5eebc", "current_sha256": "648efcf721ec9d7f63a205432232e8217ea22180ef93ec6639a35e44601129e7", "reason": "Document withdrawal of the single-run CPU mechanism claim."},
+    "tests/test_v0_2_x_open_issues.py": {"historical_sha256": "9d6c78daa32358b159abdd5ed06df7d6d9885ed29a5a5e31f8d78834af2b31c5", "current_sha256": "aa19a7290cb2dab7ec9cbcc4ee24929b815e93acb0ef71c8ffe891a735ea4e32", "reason": "Bind the corrected V-41 boundary."},
+    "tests/test_v0_3_s09_ap_cache_diagnostic.py": {"historical_sha256": "c7a116a002cea3c5c500b1806a28ee3817658d1c89f9d6b101b17893e72721a2", "current_sha256": "839d0c2a71244fcecb432139a545fe21b8993e70d5d0f5033c4a7f434bcecc67", "reason": "Bind the environment preflight and reference-only CPU memory contract."},
+    "tests/test_v0_3_s09_r0029_candidate.py": {"historical_sha256": "67f1862a40d4a904ed2107e7d36a1b98ecd657459ee0c3a29c6d1d395720077e", "current_sha256": "9276d9ea02212521dc8f9f4868a54e36af51ca015a6966bd7b378252eaea11a3", "reason": "Preserve R-0029 bindings through successors without asserting non-reproducible peak numbers."}
+  },
+  "authorization": {
+    "local_rework": true,
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false
+  }
+}

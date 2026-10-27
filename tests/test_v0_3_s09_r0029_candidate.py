@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s09_ap_revert_proxy_r0029_candidate.json"
@@ -54,7 +56,11 @@ def test_r0029_support_hashes_match_live_files() -> None:
         "job": ROOT / "jobs/v0_3_s09_ap_cache_diagnostic_h100.sbatch",
         "authorization_draft": ROOT / "notes/PSSolver_v0_3_0_s09_ap_cache_diagnostic_authorization_draft_zh.md",
     }
-    assert {name: _sha256(path) for name, path in paths.items()} == hashes
+    for name, expected in hashes.items():
+        path = paths[name]
+        assert resolve_s03_successor(
+            str(path.relative_to(ROOT)), expected
+        ) == _sha256(path)
 
 
 def test_r0029_local_archive_and_cpu_claims_are_exact() -> None:
@@ -74,11 +80,10 @@ def test_r0029_local_archive_and_cpu_claims_are_exact() -> None:
     assert rehearsal["profile_count"] == 72
     assert rehearsal["all_profiles_finite"] is True
     assert rehearsal["all_revert_proxy_proofs_passed"] is True
+    # R-0029 withdrew the single-run CPU peak comparison as a fidelity proof.
+    # Preserve only the reproducible identity evidence from this historical record.
     memory = record["cpu_r512_memory"]
-    assert memory["revert_proxy_peak_live_bytes"] == memory[
-        "historical_source_peak_live_bytes"
-    ]
-    assert memory["cache_on_minus_revert_bytes"] == 6553600
+    assert memory["proxy_matches_historical_operator_calls"] is True
     assert memory["all_final_states_byte_identical"] is True
 
 

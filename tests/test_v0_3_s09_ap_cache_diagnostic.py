@@ -25,6 +25,9 @@ from benchmarks.profile_v0_3_s09_ap_cache_diagnostic import (
     disable_operator_action_cache,
 )
 from benchmarks.run_v0_3_s09_ap_cache_memory_snapshot import run_snapshot
+from benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe import (
+    MEMORY_INTERPRETATION,
+)
 from benchmarks.v0_3_s09_revert_pressure_proxy import (
     REVERT_COMMIT,
     REVERT_METHOD_SHA256,
@@ -117,6 +120,25 @@ def test_cpu_rehearsal_preserves_full_role_matrix_but_is_not_measurement() -> No
     assert all(item["timed_steps"] == 2 for item in plan["profiles"])
     assert plan["measurement_contract"]["formal_samples_per_profile"] == 60
     assert plan["diagnostic_only"] is True
+    environment = plan["job_environment_contract"]
+    assert environment["unset_ld_library_path"] is True
+    assert environment["host_compiler"] == {
+        "cc": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/gcc",
+        "cxx": "/opt/ohpc/pub/compiler/gcc/7.3.0/bin/g++",
+    }
+    assert environment["cuda_module"] == "cuda/12.1"
+    assert environment["node_local_tmpdir"] is True
+    assert environment["torch_compile_cuda_smoke_before_matrix"] is True
+
+
+def test_cpu_memory_probe_is_reference_only_not_a_proxy_fidelity_proof() -> None:
+    assert MEMORY_INTERPRETATION == {
+        "reference_only": True,
+        "reproducible_at_one_pressure_field_resolution": False,
+        "used_as_revert_proxy_fidelity_proof": False,
+        "used_for_qualification_or_v41_attribution": False,
+        "decisive_evidence": "untimed H100 CUDA allocator snapshots",
+    }
 
 
 def test_cache_off_harness_retains_warm_start_and_suppresses_operator_cache() -> None:
@@ -293,6 +315,8 @@ def test_job_is_single_gpu_diagnostic_without_qualification_claims() -> None:
         encoding="utf-8"
     )
     assert "#SBATCH --gres=gpu:H100:1" in job
+    assert "#SBATCH --job-name=pssolver-v03-s09-apdiag" in job
+    assert "pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261026_v1/logs" in job
     assert "#SBATCH --no-requeue" in job
     assert "S09_DIAG_OUTPUT_ROOT" in job
     assert "profile_count" in job
@@ -302,6 +326,21 @@ def test_job_is_single_gpu_diagnostic_without_qualification_claims() -> None:
     assert "run_v0_3_s09_ap_cache_memory_snapshot.py" in job
     assert "candidate_revert_proxy.pickle" not in job
     assert "for role in candidate_cache_on candidate_revert_proxy" in job
+    assert "unset LD_LIBRARY_PATH" in job
+    assert "export CC=/opt/ohpc/pub/compiler/gcc/7.3.0/bin/gcc" in job
+    assert "export CXX=/opt/ohpc/pub/compiler/gcc/7.3.0/bin/g++" in job
+    assert "source /opt/ohpc/admin/lmod/lmod/init/bash" in job
+    assert "module load cuda/12.1" in job
+    assert 'trap \'rm -rf "${node_root}"\' EXIT' in job
+    assert 'export TMPDIR="${pytest_tmp}"' in job
+    assert "cc-version.txt" in job
+    assert "module-list.txt" in job
+    assert "nvcc-version.txt" in job
+    preflight = "run_v0_3_s09_ap_cache_diagnostic_preflight.py"
+    matrix = "run_v0_3_s09_ap_cache_diagnostic.py"
+    assert job.index(preflight, job.index("# Reuse the cumulative")) < job.index(
+        matrix, job.index("# Reuse the cumulative")
+    )
     assert "sbatch" not in job
 
 
@@ -322,6 +361,7 @@ def test_diagnostic_support_compiles() -> None:
         ROOT / "benchmarks/analyze_v0_3_s09_ap_cache_diagnostic.py",
         ROOT / "benchmarks/v0_3_s09_revert_pressure_proxy.py",
         ROOT / "benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py",
+        ROOT / "benchmarks/run_v0_3_s09_ap_cache_diagnostic_preflight.py",
     ]
     subprocess.run(
         ["python3", "-m", "py_compile", *(str(path) for path in paths)],
