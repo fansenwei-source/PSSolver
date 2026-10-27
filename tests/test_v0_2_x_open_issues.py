@@ -381,7 +381,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "affects_control_paths": False,
         "exercised_by_current_control_research": False,
         "status": "claimed_fixed",
-        "fixed_in": "61838af50928e5577d8c9312c4614e04d0bcc131",
+        "fixed_in": "61838af7910d955b27268abd4a79e4d32f235f58",
         "target_release": "0.3.0 (S-10 rework)",
         "notes": issues["V-43"]["notes"],
     }
@@ -516,7 +516,7 @@ def test_r0021_verifies_s08_claims_and_leaves_v33_for_s10():
     assert all(issues[issue_id]["verified_by"] == "R-0021" for issue_id in ("A2-25", "N5"))
     assert issues["V-33"]["status"] == "claimed_fixed"
     assert issues["V-33"]["fixed_in"] == (
-        "61838af50928e5577d8c9312c4614e04d0bcc131"
+        "61838af7910d955b27268abd4a79e4d32f235f58"
     )
     assert issues["V-33"]["target_release"] == "0.3"
     assert "S-10" in issues["V-33"]["notes"]

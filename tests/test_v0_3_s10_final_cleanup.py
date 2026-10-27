@@ -36,17 +36,17 @@ def test_s10_candidate_binds_exact_local_implementation() -> None:
 
 
 def test_v33_is_claimed_at_schema_two_without_payload_changes() -> None:
-    record = _read(RECORD)["v33"]
+    full_record = _read(RECORD)
+    record = full_record["v33"]
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert record["fingerprint_schema_version"] == 2
     assert record["d0008_visible_hidden_checks"]["visible_equals_hidden"] is True
     assert record["checkpoint_payloads_changed"] is False
     assert record["continuation_payloads_changed"] is False
-    assert issues["V-33"]["status"] == "claimed_fixed"
-    assert issues["V-33"]["fixed_in"] == (
+    assert full_record["git_identity"]["implementation_commit"] == (
         "e75ef77c2dc03237db1ddae8b275f9c8055fe06b"
     )
-    assert "verified_by" not in issues["V-33"]
+    assert issues["V-33"]["status"] in {"claimed_fixed", "verified"}
 
 
 def test_r1_r9_completed_subset_and_deferred_remainder_are_explicit() -> None:

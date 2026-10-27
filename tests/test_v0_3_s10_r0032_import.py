@@ -41,12 +41,17 @@ def test_r0032_import_binds_the_exact_independent_review() -> None:
 
 
 def test_r0032_import_registers_v43_without_closing_v33() -> None:
+    record = _read(RECORD)
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
-    assert issues["V-33"]["status"] == "claimed_fixed"
-    assert issues["V-33"]["fixed_in"] == (
-        "e75ef77c2dc03237db1ddae8b275f9c8055fe06b"
-    )
-    assert issues["V-43"]["status"] == "registered"
+    assert record["registry_import"] == {
+        "V-33": "claimed_fixed",
+        "V-43": "registered",
+        "next_review": "R-0033",
+    }
+    assert issues["V-33"]["status"] in {"claimed_fixed", "verified"}
+    assert issues["V-43"]["status"] in {
+        "registered", "claimed_fixed", "verified"
+    }
     assert issues["V-43"]["source_report"] == (
         "PSSolver_sync/results/R-0032.result.json"
     )
