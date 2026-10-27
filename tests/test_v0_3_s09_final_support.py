@@ -75,7 +75,7 @@ def test_final_support_preserves_the_review_boundary_and_authorizes_nothing() ->
         "V-36": "verified",
         "V-37": "verified",
         "A3-18": "verified",
-        "NEW-14": "open",
+        "NEW-14": "verified",
     }
     assert issues["V-37"]["fixed_in"] == (
         "87cf34cf4e17096a701f5cc5bc81076d14a9d237"

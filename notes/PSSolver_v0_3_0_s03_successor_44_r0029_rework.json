@@ -64,6 +64,7 @@
     "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "14df9c64a34ada63f8b5c2c737f4febeeb10dab672283918ac057208b0d5eebc", "current_sha256": "648efcf721ec9d7f63a205432232e8217ea22180ef93ec6639a35e44601129e7", "reason": "Document withdrawal of the single-run CPU mechanism claim."},
     "tests/test_v0_2_x_open_issues.py": {"historical_sha256": "9d6c78daa32358b159abdd5ed06df7d6d9885ed29a5a5e31f8d78834af2b31c5", "current_sha256": "aa19a7290cb2dab7ec9cbcc4ee24929b815e93acb0ef71c8ffe891a735ea4e32", "reason": "Bind the corrected V-41 boundary."},
     "tests/test_v0_3_s09_ap_cache_diagnostic.py": {"historical_sha256": "c7a116a002cea3c5c500b1806a28ee3817658d1c89f9d6b101b17893e72721a2", "current_sha256": "839d0c2a71244fcecb432139a545fe21b8993e70d5d0f5033c4a7f434bcecc67", "reason": "Bind the environment preflight and reference-only CPU memory contract."},
+    "tests/test_v0_3_s09_final_support.py": {"historical_sha256": "9c4f5987cbae72d12976c4afc30aa265e60e1d0dbae4c5536b0db5477f520f53", "current_sha256": "ea8e4ec249b867dad6a946c1252c49b2d7de326595af47ed7272ad777ccb0515", "reason": "Recognize the already-verified R-0027 NEW-14 registry state in this historical support test."},
     "tests/test_v0_3_s09_r0029_candidate.py": {"historical_sha256": "67f1862a40d4a904ed2107e7d36a1b98ecd657459ee0c3a29c6d1d395720077e", "current_sha256": "9276d9ea02212521dc8f9f4868a54e36af51ca015a6966bd7b378252eaea11a3", "reason": "Preserve R-0029 bindings through successors without asserting non-reproducible peak numbers."}
   },
   "authorization": {
