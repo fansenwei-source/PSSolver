@@ -39,7 +39,7 @@ def test_r0028_rework_result_and_archive_are_bound() -> None:
 def test_r0028_rework_sources_and_forward_successors_are_exact() -> None:
     record = _read(RECORD)
     for relative, expected in record["added_sources"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert resolve_s03_successor(relative, expected) == _sha256(ROOT / relative)
     for relative, successor in record["historical_successor_sources"].items():
         live = _sha256(ROOT / relative)
         assert resolve_s03_successor(relative, successor["historical_sha256"]) == live

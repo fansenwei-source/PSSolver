@@ -1,0 +1,110 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.r0030_import.v1",
+  "classification": "PASS_R0030_DIAGNOSTIC_ENVIRONMENT_REVIEW_IMPORTED",
+  "plan_step": "S-09",
+  "record_scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "wheel_changed": false,
+    "qualification_support_changed": false,
+    "plan_or_job_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "push_executed": false,
+    "hpcc_write_executed": false,
+    "slurm_or_h100_executed": false
+  },
+  "git_identity": {
+    "reviewed_candidate": "7288bb240a156ace764755043d6b8f127a80bbb9",
+    "runtime_commit": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+    "support_commit": "616bc453d50040b20d1ef448cf2647358aeee1cc",
+    "support_tar_source_commit": "658bacad30308125c72025c16c36b4b63eea29bb",
+    "result_commit": "1af0c9287d6f0adac8154dbc61cb28a514244c53",
+    "record_commit_is_qualified_source": false
+  },
+  "sync_result": {
+    "id": "R-0030",
+    "path": "PSSolver_sync/results/R-0030.result.json",
+    "sha256": "6685b4cfede76b5d36ea48fbdcc05e6ae6f1d6673c84749f5cb547e5b6a8474d",
+    "classification": "PASS"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s09diagrw2_claude_review_20261026_v1",
+    "checksums_entries": 410,
+    "checksums_sha256": "78b2192d2b866ac0e7acb875f9be364deccfb09c34bb79d031788485eca25bb6",
+    "complete_present": true,
+    "final_report_sha256": "0717987e56edc601333e2fbd23b84a227b0449b09f3afbb714d16b462c1104e5",
+    "summary_sha256": "0b0fadc77a59ead5da6d703e234950ce4bfbff708966a76d8470c0a6922206c0"
+  },
+  "registry_import": {
+    "registered": [
+      "V-42"
+    ],
+    "v41_status": "registered",
+    "v42_status": "registered",
+    "v42_review_target": "R-0031",
+    "s09_complete": false
+  },
+  "citable_identities": {
+    "runtime": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+    "support_commit": "616bc453d50040b20d1ef448cf2647358aeee1cc",
+    "support_tar_source_commit": "658bacad30308125c72025c16c36b4b63eea29bb",
+    "record_commit": "7288bb240a156ace764755043d6b8f127a80bbb9",
+    "baseline_wheel": "a7e94585e62785c69522d6cc194fd479b5af55577444926d1bb661ed073cc00e",
+    "candidate_wheel": "4003645025da6d81317eeb7261ccf606aef7f60f20d072518f8baacf56cd4aa8",
+    "support_tar": "d3fb444eb5ba627a5e9b41b241c40a7c14ef799eed04bfb5e45611a55fa6f561",
+    "f94b9be_tar_hash_check_only": "0e31ef0bd9b1ff5283b23c1fbd4237975ebebf5be9460d9c4bef3fc365cfaa07",
+    "h100_plan": "57a5bdbf255f7e63376f633401050619db9df21057d6a3aa51fb0466540094aa",
+    "job": "2483755f7a783e8c97eb6da533e0817d8ee63e5a299c0bdecb771426e675a964",
+    "runner": "b856328eb320766372e97628ed641b9baf99e63badeaa305712b1585af1d1200",
+    "profile": "80028c5ef960d2cf612163d2a1dc0918bfc36422d19abf0fdbc497080aed98b9",
+    "child": "3bc0cd6ef325ae481f59ab81fefed4292fb4f6174c3899fd50fcbb62a208c716",
+    "analyzer": "de94902c6df186963c696446b4b4a60e26152205bd9a0eb40a3859fc304798c3",
+    "revert_proxy": "6a93d88ad3b1682d65ddce6182ede0e741e66b7d3c01166361b7c43f80f8c276",
+    "snapshot_helper": "0b8a1244cf0d07262540ce9ff70e2d7fd5419677d4bf905ee596f33ef7e6a744",
+    "diagnostic_preflight": "fdec5c617d3a00836d8bb8676ffe746aa3ffc679e7caf14c25e138d1b5c37676",
+    "main_environment_helper": "97077ae1067b90de1ac29279e5351eff6af240a49ecd00ec16a4cc2b1ff3dab0",
+    "plan_generator": "88bf509c2785e7efa08a6bfadbaf2fc2bba5c79ae0f172183df66c7978ce231e",
+    "draft_template": "073619daa7ea7c6c5f87c5ee5438c27b10501c97ea70c42bdb35723f5c445c41"
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "4e242921a79c08521f2ceb2591e10039537f17786f9a3371238cf0f7e08f7034",
+      "current_sha256": "38eeacc62107a89beedf91b2630f37f1b012e6662b0209c875dc3adcd8f8e77b",
+      "reason": "Register V-42 without changing V-41 or any qualification claim."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "648efcf721ec9d7f63a205432232e8217ea22180ef93ec6639a35e44601129e7",
+      "current_sha256": "64e9baa3b576526b5779675f47c7274d7ea69f63f306a4c6f3f464f956dbafe7",
+      "reason": "Document the passing R-0030 review and the records-only V-42 finding."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "aa19a7290cb2dab7ec9cbcc4ee24929b815e93acb0ef71c8ffe891a735ea4e32",
+      "current_sha256": "a36e3e30138b8e863a1a4912340c0a7e2622079175aad63e5b65bb7c49c36682",
+      "reason": "Bind the new V-42 registry entry and live registry totals."
+    },
+    "tests/test_v0_3_0_roadmap.py": {
+      "historical_sha256": "8003fff967f08978fd3ebdb874813ff82869627689ca01d89328da2771256fe6",
+      "current_sha256": "f045de7c1083e1e17d1ad6904b0185f64aa5871e55e3597bda1eefa2a4a07ba9",
+      "reason": "Bind the S-02 historical issue snapshot rather than the evolving live registry."
+    },
+    "tests/test_v0_3_s08_commit_identity_corrections.py": {
+      "historical_sha256": "2080c3e8863e5b806e1c721f746eab9cb8d21fd6f052a2a421280030c5f74670",
+      "current_sha256": "3a0d43c2ab9cd81a6a0804125d1a05cbf8bea7b486ac6fa5b76762a5df79f48a",
+      "reason": "Bind R-0021's own historical statuses without pinning the forward registry."
+    },
+    "tests/test_v0_3_s09_r0028_rework.py": {
+      "historical_sha256": "b53908952a9ff665cdcf24d9df3489de1913d3ff4c7159dcab5d8af4f779d68e",
+      "current_sha256": "996eac2695a2f827ef998d90d8bd1dcbb7448e407d9ff5b563dfe9d6d3947684",
+      "reason": "Resolve an R-0028 added source through the formal forward successor chain."
+    }
+  },
+  "authorization": {
+    "local_evidence_import": true,
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false
+  },
+  "next_request": "R-0031"
+}

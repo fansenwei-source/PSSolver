@@ -29,10 +29,10 @@
       "rewritten": false
     }
   },
-  "issue_count": 46,
+  "issue_count": 47,
   "status_counts": {
     "open": 0,
-    "registered": 2,
+    "registered": 3,
     "claimed_fixed": 0,
     "verified": 41,
     "deferred": 2,
@@ -768,6 +768,20 @@
       "status": "registered",
       "target_release": "0.3.0 (S-09; D-0012 diagnostic decision)",
       "notes": "Runtime 85ba3ae includes the 2573dec production Channel warm-start A.p cache. H100 job 10911538 found channel_legacy and channel_compiled_v2 at R512 reserved 562036736 versus baseline 545259520 bytes (ratio 1.0307692307692307 > the unchanged 1.03 limit), while all timing, numerical and scientific gates passed. The excess magnitude is one pressure field and its introduction by 2573dec is unchanged. R-0029 withdrew the earlier CPU torch.profiler mechanism claim because identical repeated runs varied by one or two pressure fields: those live-memory peaks are reference-only and cannot distinguish persistent-cache retention from an extended solve-local A.p lifetime on the CUDA peak path. The two untimed H100 allocator snapshots will decide that mechanism. Exact-revert proxy fidelity instead rests on byte-identical f94b9be method source (SHA-256 2ffb5673...), compilation in the candidate module namespace, empty cache fields, 78 pressure-operator calls matching direct f94b9be, and byte-identical terminal states. D-0012 requires a non-qualifying baseline/cache-on/exact-revert-proxy H100 diagnostic before choosing whether to withdraw the cache and rerun cumulative qualification or make a separate user decision; no exception is accepted yet."
+    },
+    {
+      "id": "V-42",
+      "title": "Historical records tests pin the pre-V-41 registry or reject forward successors",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0030.result.json",
+      "first_found": "S-09 diagnostic environment rework review R-0030",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3.0 (S-09, R-0030 import)",
+      "notes": "R-0030 found four evidence-only tests that either pinned the live registry to its pre-V-41 count/status set or required an originally added source to retain its first hash after a valid successor. The R-0030 import changes those tests to bind each historical record's immutable snapshot and to resolve forward successors explicitly. No skip or xfail is added; runtime, wheels, diagnostic support, frozen plan, job, cases, and thresholds are unchanged. Claude will verify V-42 with the diagnostic result in R-0031."
     }
   ],
   "authorization": {

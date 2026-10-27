@@ -76,13 +76,15 @@ def test_all_historical_errata_bind_nonexistent_values_to_real_git_commits() -> 
 
 
 def test_r0021_verifies_v34_and_allows_forward_s09_status_updates() -> None:
+    record = _read(RECORD)
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
-    assert {key for key, item in issues.items() if item["status"] == "registered"} == {
-        "V-33",
-    }
-    assert {
-        key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == set()
+    assert record["roadmap"]["registered"] == ["V-33", "V-34"]
+    assert record["roadmap"]["kept_claimed_fixed"] == [
+        "A2-25",
+        "N5",
+        "V-31",
+        "V-32",
+    ]
     assert issues["V-33"]["target_release"] == "0.3"
     assert "S-10" in issues["V-33"]["notes"]
     for issue_id in ("V-35", "V-36"):

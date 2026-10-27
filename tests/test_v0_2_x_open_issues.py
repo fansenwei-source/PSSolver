@@ -43,8 +43,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 46
-    assert len({entry["id"] for entry in entries}) == 46
+    assert len(entries) == record["issue_count"] == 47
+    assert len({entry["id"] for entry in entries}) == 47
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     counts.setdefault("open", 0)
@@ -53,7 +53,7 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
-        "registered": 2,
+        "registered": 3,
         "claimed_fixed": 0,
         "verified": 41,
         "deferred": 2,
@@ -348,6 +348,25 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
     assert "reference-only" in issues["V-41"]["notes"]
     assert "H100 allocator snapshots" in issues["V-41"]["notes"]
     assert "comes from 2573dec extending" not in issues["V-41"]["notes"]
+    assert issues["V-42"] == {
+        "id": "V-42",
+        "title": (
+            "Historical records tests pin the pre-V-41 registry or reject "
+            "forward successors"
+        ),
+        "severity": "low",
+        "source_report": "PSSolver_sync/results/R-0030.result.json",
+        "first_found": "S-09 diagnostic environment rework review R-0030",
+        "affects_v0_2_0": False,
+        "affects_v0_2_1": False,
+        "affects_control_paths": False,
+        "exercised_by_current_control_research": False,
+        "status": "registered",
+        "target_release": "0.3.0 (S-09, R-0030 import)",
+        "notes": issues["V-42"]["notes"],
+    }
+    assert "immutable snapshot" in issues["V-42"]["notes"]
+    assert "skip" in issues["V-42"]["notes"]
     assert issues["V-30"] == {
         "id": "V-30",
         "title": (
