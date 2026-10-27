@@ -240,6 +240,9 @@ def test_numpy_build_fingerprint_supports_the_numpy_1_22_show_signature(
     source, value = compatibility._numpy_build_configuration()
     assert source == "show_text"
     assert value == "blas:\n  library: legacy"
+    fingerprint = compatibility.numerical_build_fingerprint()
+    assert fingerprint["numpy_configuration_source"] == "show_text"
+    assert len(fingerprint["numpy_configuration_sha256"]) == 64
 
 
 def test_live_numerical_fingerprint_uses_visibility_invariant_schema():

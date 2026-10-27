@@ -32,8 +32,8 @@
   "issue_count": 48,
   "status_counts": {
     "open": 0,
-    "registered": 3,
-    "claimed_fixed": 1,
+    "registered": 2,
+    "claimed_fixed": 2,
     "verified": 41,
     "deferred": 2,
     "accepted": 1,
@@ -640,7 +640,7 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "claimed_fixed",
-      "fixed_in": "e75ef77c2dc03237db1ddae8b275f9c8055fe06b",
+      "fixed_in": "61838af50928e5577d8c9312c4614e04d0bcc131",
       "target_release": "0.3",
       "notes": "R-0032 found that S-10's first schema-2 implementation filtered only pip-build CUDA probe lines, used a NumPy configuration API unavailable in the declared NumPy 1.22 minimum, and gave the v0.2.0 oracle a hybrid fingerprint that matched no real generation environment. V-33 remains claimed_fixed while S-10 is reworked for build-format-independent Torch identity, NumPy 1.22 fallback, authentic per-oracle generation fingerprints, and explicit evidence that both matching-build continuations take the bitwise branch. Awaiting R-0033 independent verification."
     },
@@ -794,9 +794,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "61838af50928e5577d8c9312c4614e04d0bcc131",
       "target_release": "0.3.0 (S-10 rework)",
-      "notes": "S-10 e75ef77 calls np.__config__.show(mode='dicts'), but NumPy 1.22.3 accepts no mode argument and raises TypeError. setup.py declares numpy>=1.22 and the S-09 HPCC environment uses NumPy 1.22.3, so S-10 must fall back to a captured show-config text representation, record which source was used, and exercise the old signature before R-0033."
+      "notes": "S-10 e75ef77 called np.__config__.show(mode='dicts'), but NumPy 1.22.3 accepts no mode argument and raises TypeError. The 61838af rework falls back to captured show() text, records whether mode_dicts or show_text supplied the configuration, and exercises the legacy signature. Awaiting R-0033 independent verification."
     }
   ],
   "authorization": {

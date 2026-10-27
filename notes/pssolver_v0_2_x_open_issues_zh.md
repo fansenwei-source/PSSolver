@@ -143,7 +143,9 @@
     `V-33`：第一版只过滤 pip Torch 的 CUDA 探测行，v0.2.0 oracle 又混合了两个环境的
     指纹，因此不能证明真实 matching-build 分支。另登记 `V-43`（low）：NumPy 1.22.3
     不支持 `np.__config__.show(mode="dicts")`，而它仍是公开依赖下限和 HPCC 资格环境。
-    `V-33` 保持 `claimed_fixed`、`V-43` 保持 `registered`，两项等待 R-0033。
+    `61838af…` 改为只绑定 Torch 的唯一 build-settings payload 和显式版本身份，并为旧
+    NumPy `show()` 签名加入带来源字段的 fallback；两套真实生成环境都已显式进入 bitwise
+    分支。`V-33`、`V-43` 现均为 `claimed_fixed`，等待 R-0033。
 
 ## Control 路径
 

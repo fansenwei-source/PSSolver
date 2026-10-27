@@ -53,8 +53,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
-        "registered": 3,
-        "claimed_fixed": 1,
+        "registered": 2,
+        "claimed_fixed": 2,
         "verified": 41,
         "deferred": 2,
         "accepted": 1,
@@ -258,7 +258,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == {"V-33"}
+    assert claimed == {"V-33", "V-43"}
     s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
@@ -380,7 +380,8 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "affects_v0_2_1": False,
         "affects_control_paths": False,
         "exercised_by_current_control_research": False,
-        "status": "registered",
+        "status": "claimed_fixed",
+        "fixed_in": "61838af50928e5577d8c9312c4614e04d0bcc131",
         "target_release": "0.3.0 (S-10 rework)",
         "notes": issues["V-43"]["notes"],
     }
@@ -468,7 +469,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == {"V-33"}
+    } == {"V-33", "V-43"}
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (
@@ -515,7 +516,7 @@ def test_r0021_verifies_s08_claims_and_leaves_v33_for_s10():
     assert all(issues[issue_id]["verified_by"] == "R-0021" for issue_id in ("A2-25", "N5"))
     assert issues["V-33"]["status"] == "claimed_fixed"
     assert issues["V-33"]["fixed_in"] == (
-        "e75ef77c2dc03237db1ddae8b275f9c8055fe06b"
+        "61838af50928e5577d8c9312c4614e04d0bcc131"
     )
     assert issues["V-33"]["target_release"] == "0.3"
     assert "S-10" in issues["V-33"]["notes"]
