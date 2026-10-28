@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_63_r0039_import.json"
@@ -67,7 +69,7 @@ def test_first_publication_directory_is_only_the_release_body_source() -> None:
 
 def test_r0039_leaves_the_rc1_source_records_unchanged() -> None:
     for relative, expected in _read(RECORD)["immutable_source_records"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(relative, expected)
 
 
 def test_r0039_closes_only_s11_and_authorizes_no_external_action() -> None:

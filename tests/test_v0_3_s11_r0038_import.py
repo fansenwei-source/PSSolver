@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_62_r0038_import.json"
@@ -81,7 +83,9 @@ def test_r0038_leaves_the_frozen_source_records_unchanged() -> None:
 
 def test_successor_62_binds_every_changed_historical_source() -> None:
     for relative, identity in _read(RECORD)["historical_successor_sources"].items():
-        assert _sha256(ROOT / relative) == identity["current_sha256"]
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative, identity["current_sha256"]
+        )
         assert identity["historical_sha256"] != identity["current_sha256"]
 
 

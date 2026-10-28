@@ -32,10 +32,10 @@ def _record() -> dict[str, object]:
 
 
 def test_v021_has_a_registered_v03_development_successor():
-    assert pssolver.__version__ == "0.3.0rc1"
+    assert pssolver.__version__ == "0.3.0"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.3.0rc1",
+        "version": "0.3.0",
     }
     successor = json.loads(V022_RELEASE_RECORD.read_text(encoding="utf-8"))
     assert successor["source"]["base_release"] == "v0.2.1"
@@ -46,8 +46,8 @@ def test_v021_has_a_registered_v03_development_successor():
 def test_v021_release_documents_describe_the_narrow_patch_scope():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-    assert "PSSolver 0.3.0rc1 is" in readme
-    assert "qualified executable combinations in 0.3.0rc1 are" in readme
+    assert "PSSolver 0.3.0 is" in readme
+    assert "qualified executable combinations in 0.3.0 are" in readme
     assert "## 0.2.2 — 2026-10-20" in changelog
     assert "## 0.2.1 — 2026-10-20" in changelog
     assert "only the N-1 checkpoint" in changelog

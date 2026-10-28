@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "release": "0.3.0",
+  "date": "2026-10-28",
+  "status": "local_final_source_freeze_pending_artifacts_and_independent_acceptance",
+  "classification": "PASS_V0_3_0_LOCAL_FINAL_SOURCE_FREEZE_CANDIDATE",
+  "plan_step": "S-12",
+  "governing_decisions": [
+    "D-0010",
+    "D-0011",
+    "D-0013"
+  ],
+  "source": {
+    "branch": "release/pssolver-v0.3.0",
+    "source_parent": "72813d753dc9ca52e39240a643781c22605fd187",
+    "rc1_release_source": "c031cdae646edc5b202b05238db1eb513b255805",
+    "rc1_evidence_tip": "72813d753dc9ca52e39240a643781c22605fd187",
+    "version": "0.3.0",
+    "runtime_delta_from_rc1_release_source": [
+      "pssolver/_version.py: 0.3.0rc1 -> 0.3.0"
+    ],
+    "evidence_delta_from_rc1_release_source": [
+      "CHANGELOG.md and README.md: identify the final release",
+      "R-0038 and R-0039 records: bind independent candidate and post-release acceptance",
+      "final release-source record and binding tests"
+    ],
+    "solver_equations_changed_by_freeze": false,
+    "numerical_algorithms_changed_by_freeze": false,
+    "checkpoint_schema_changed_by_freeze": false,
+    "functional_api_version": "1.1",
+    "functional_api_version_changed_by_freeze": false,
+    "provider_identity_changed_by_freeze": false,
+    "production_default_changed_by_freeze": false,
+    "threshold_changed_by_freeze": false,
+    "skip_or_xfail_added_by_freeze": false,
+    "record_commit_is_release_source": true
+  },
+  "registry": {
+    "path": "notes/pssolver_v0_2_x_open_issues.json",
+    "issue_count": 51,
+    "status_counts_at_freeze": {
+      "open": 0,
+      "registered": 0,
+      "claimed_fixed": 0,
+      "verified": 47,
+      "deferred": 2,
+      "accepted": 2,
+      "coverage_gap": 0
+    },
+    "confirmed_deferred": {
+      "B8/S2-07": "D-0007",
+      "R1-R9": "D-0011"
+    },
+    "confirmed_accepted": {
+      "A2-11": "D-0007",
+      "V-41": "D-0013"
+    },
+    "untriaged": []
+  },
+  "completion_gates": {
+    "G-01_through_G-08": "PASS_WITH_D-0013_BOUNDED_EXCEPTION_FOR_G-06",
+    "G-09_rc1_candidate_acceptance": "PASS_R0038",
+    "G-09_rc1_post_release_acceptance": "PASS_R0039",
+    "G-09_final_candidate_acceptance": "pending_R0040",
+    "G-09_final_post_release_acceptance": "not_started"
+  },
+  "release_artifacts": {
+    "source_archive": "pending_clean_build",
+    "sdist": "pending_clean_build",
+    "wheel": "pending_clean_build",
+    "pypi_published": false
+  },
+  "authorization": {
+    "local_source_freeze_authorized": true,
+    "local_artifact_build_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "github_release_authorized": false,
+    "pypi_authorized": false,
+    "hpcc_test_directory_authorized": false,
+    "slurm_or_h100_authorized": false
+  }
+}

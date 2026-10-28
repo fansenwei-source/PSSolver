@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.0 — 2026-10-28
+
+This final release promotes the independently accepted `v0.3.0rc1` source
+without changing a solver equation, numerical algorithm, checkpoint schema,
+Functional API 1.1 contract, provider identity, production default, threshold,
+skip, or xfail.  Relative to the accepted release candidate, the only runtime
+change is the package version from `0.3.0rc1` to `0.3.0`; the final source also
+records the completed candidate and post-release acceptance evidence.
+
+The detailed feature, compatibility, checkpoint, numerical, packaging, and
+known-boundary notes below are the unchanged `v0.3.0rc1` release-candidate
+contract promoted by this release.
+
 ## 0.3.0rc1 — 2026-10-28
 
 This release candidate freezes the independently reviewed S-03 through S-10

@@ -1,12 +1,12 @@
 # PSSolver
 
-PSSolver 0.3.0rc1 is a research-grade, GPU-first tensor-product spectral solver.
+PSSolver 0.3.0 is a research-grade, GPU-first tensor-product spectral solver.
 It introduces a typed public composition layer for
 models, geometries, boundary policies, numerical choices, execution policy,
 and output scheduling while retaining the qualified legacy application entry
 points.
 
-The release candidate does not claim arbitrary PDE or geometry support.
+The release does not claim arbitrary PDE or geometry support.
 Executable combinations are discovered from the public capability catalog and
 unsupported combinations fail before tensor allocation.  See
 `notes/pssolver_v0_2_scope.md` for the precise public, numerical, and
@@ -45,7 +45,7 @@ for combination in catalog.qualified_combinations:
     )
 ```
 
-The qualified executable combinations in 0.3.0rc1 are:
+The qualified executable combinations in 0.3.0 are:
 
 | Model | Geometry | Runtime paths |
 | --- | --- | --- |
@@ -244,7 +244,7 @@ installed-wheel, restart, checkpoint, gradient, Taylor, memory, negative-gate,
 and long-horizon Hermitian evidence is summarized in `CHANGELOG.md` and the
 versioned closure records under `notes/architecture_v0_2/`.
 
-The following remain outside this release candidate: arbitrary model--geometry
+The following remain outside this release: arbitrary model--geometry
 execution, nonhomogeneous Neumann lifting, dynamic or trainable boundary data,
 public finite-Q Robin execution, static prescribed-Q lifting, strong
 homeotropic/planar-Q lifting, functional batches larger than one, Plane optimal

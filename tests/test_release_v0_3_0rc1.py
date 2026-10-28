@@ -18,19 +18,20 @@ def _read(path: Path) -> dict[str, object]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def test_rc1_version_and_public_provenance_are_frozen() -> None:
-    assert pssolver.__version__ == "0.3.0rc1"
+def test_rc1_record_is_frozen_while_the_live_package_can_advance() -> None:
+    assert pssolver.__version__ == "0.3.0"
     assert FUNCTIONAL_API_VERSION == "1.1"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.3.0rc1",
+        "version": "0.3.0",
     }
     assert "## 0.3.0rc1 — 2026-10-28" in (ROOT / "CHANGELOG.md").read_text(
         encoding="utf-8"
     )
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    assert "PSSolver 0.3.0rc1 is" in readme
-    assert "qualified executable combinations in 0.3.0rc1 are" in readme
+    assert "PSSolver 0.3.0 is" in readme
+    assert "qualified executable combinations in 0.3.0 are" in readme
+    assert _read(RECORD)["release"] == "0.3.0rc1"
 
 
 def test_rc1_source_freeze_is_a_linear_successor_of_dev03() -> None:

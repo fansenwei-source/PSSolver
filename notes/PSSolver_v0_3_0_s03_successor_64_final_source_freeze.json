@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-28",
+  "classification": "PASS_V0_3_0_FORWARD_FINAL_SOURCE_FREEZE_REGISTRATION",
+  "plan_step": "S-12",
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "3fc4af6c947c8c0e515d4317868c375869133878759b01d32e35ebaa30324a99",
+      "current_sha256": "a0627f94496319509b2d6fa392bc60f649e4dd23732c2e2ca501c84f3197fbec",
+      "reason": "Promote the independently accepted v0.3.0rc1 contract to final v0.3.0 without changing a numerical or qualification threshold."
+    },
+    "README.md": {
+      "historical_sha256": "f541a8a6ca0b593f4bde720e09813dc50d815343f5a597eaa525c3f63d4c8168",
+      "current_sha256": "84d980b7e60f1d5bc02f984b52a251550b6763ae54cdfb4f431fb5927eab8d20",
+      "reason": "Identify the final v0.3.0 release and its unchanged qualified executable combinations."
+    },
+    "pssolver/_version.py": {
+      "historical_sha256": "d540d30660c24dfa0d1a0b5ac41013bb185aba3673c7a7d6ca805f38ee030a46",
+      "current_sha256": "44044235f8cbb67fe868b95fd42a7009cfcbe76e3a21ee9c81fc05106a9dc8fe",
+      "reason": "Advance only the package version from the accepted 0.3.0rc1 source to final 0.3.0."
+    },
+    "tests/test_release_v0_1.py": {
+      "historical_sha256": "5146bc6fb110bcf75b78daea29d8f512f4ba802dfe6be6dc10511acf962595ec",
+      "current_sha256": "0ea7e0869a2b9a15baa308f78a2d11d4b37ddf2e568ac2e2bea42412b24edcb8",
+      "reason": "Recognize the forward final README successor without changing the retained v0.1 contract."
+    },
+    "tests/test_release_v0_2_0_final.py": {
+      "historical_sha256": "33ca0b615fed06dbbd73d50b6f510c4d018a93d5bc8adf56a843a5def076e7fe",
+      "current_sha256": "7f0a4c536cba57ebafeb574de4bcb84ff3dfb881934643a36ad6a3290b7169e2",
+      "reason": "Recognize the final live package and README successor without changing v0.2.0 evidence."
+    },
+    "tests/test_release_v0_2_1.py": {
+      "historical_sha256": "7c49df43fba34038a552f6fb91ebf1e5997f94dcdcd082961857fbeca1fcff66",
+      "current_sha256": "ef1ad143fa79e9b1e91dbd545ed7a348d92c79e34c1687010d5ca5082da23f65",
+      "reason": "Recognize the final live package and README successor without changing v0.2.1 evidence."
+    },
+    "tests/test_release_v0_2_2.py": {
+      "historical_sha256": "a11c4651ea266fec5d8910e00a77d9914894126d573762986a4039297091d907",
+      "current_sha256": "20cc5ef1132bbd90d6775dedcc79652257f06ebd5639df02b1bde55b71f1e39c",
+      "reason": "Recognize the final live package and README successor without changing v0.2.2 evidence."
+    },
+    "tests/test_release_v0_2_rc6.py": {
+      "historical_sha256": "3eb38025cf9320f9ee26f9ff283ea9672f5a15ccc99470bb00db6e789f8b48d1",
+      "current_sha256": "3297ce154caab21f5d2219e030eccef90a6c6834415f5f34c1e3c65785799568",
+      "reason": "Recognize the final live package and README successor without changing rc6 evidence."
+    },
+    "tests/test_release_v0_3_0rc1.py": {
+      "historical_sha256": "2e24ec22a4adfb0252253673e3b3e85c42ea899a3304db8274adf8bf1ee97816",
+      "current_sha256": "67e03c1745cc4d67e885235d5ba3ba80c695599b8b0a56813d87b1f1611eef08",
+      "reason": "Keep the immutable rc1 source-freeze snapshot while allowing the live package version and README to advance to final."
+    },
+    "tests/test_v0_3_n1_v17_checkpoint_integration.py": {
+      "historical_sha256": "02d618d4d6f1a3976574fdd8d26c4197710809ac13f864e24db42a15437d3e64",
+      "current_sha256": "10524b1d36abfda1e6abb7a492f49a205dcbc163b7a168c95cce656210633bf2",
+      "reason": "Preserve the historical dev0 record while recognizing the final live package successor."
+    },
+    "tests/test_v0_3_n1_v17_r0005_import.py": {
+      "historical_sha256": "fe094661cd06062d190d1483b180f80a3eb8b28ac6ad0f91068071068556bf61",
+      "current_sha256": "3fb2914cf612987457bf5b3ef432269d5c5bf2ae3de928c03885144f402da7fd",
+      "reason": "Keep the R-0005 historical version literal separate from the final live package version."
+    },
+    "tests/test_v0_3_s11_r0038_import.py": {
+      "historical_sha256": "fb84138964de10987ec3149e233d2c827a5ecefb9bcc8fdf2f2a0c8c58beb226",
+      "current_sha256": "8760f5de0a2dc553445ef94a70c865f3ba111427a07febdf09a860dcd9b74420",
+      "reason": "Keep successor 62 bound to its own historical snapshot while allowing explicitly registered forward source successors."
+    },
+    "tests/test_v0_3_s11_r0039_import.py": {
+      "historical_sha256": "864a2b8aedd60d20faaeb58aaab6ae615b8c3233d33be49f2313e19258e70586",
+      "current_sha256": "d5a614eb741f8dc18c561b7f77c65dfacc20685c88ce779c0b0e84fbf4247cdf",
+      "reason": "Keep the R-0039 immutable-source snapshot exact while allowing the separately registered final-source successors."
+    }
+  },
+  "new_sources": [
+    "notes/pssolver_v0_3_0.json",
+    "notes/pssolver_v0_3_0.md",
+    "notes/PSSolver_v0_3_0_s03_successor_64_final_source_freeze.json",
+    "notes/PSSolver_v0_3_0_s03_successor_64_final_source_freeze_zh.md",
+    "tests/test_release_v0_3_0.py"
+  ],
+  "scope": {
+    "runtime_delta": [
+      "pssolver/_version.py"
+    ],
+    "solver_implementation_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "tag_or_release_modified": false
+  },
+  "authorization": {
+    "local_source_freeze": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc_or_slurm": false
+  }
+}
