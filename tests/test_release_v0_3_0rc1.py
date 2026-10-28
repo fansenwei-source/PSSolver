@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-from collections import Counter
 from pathlib import Path
 import subprocess
 
@@ -13,7 +12,6 @@ from pssolver.functional.api import FUNCTIONAL_API_VERSION, functional_protocol_
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/pssolver_v0_3_0rc1.json"
-REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -66,20 +64,33 @@ def test_rc1_source_freeze_is_a_linear_successor_of_dev03() -> None:
 
 
 def test_rc1_registry_has_no_untriaged_or_registered_finding() -> None:
-    record = _read(RECORD)
-    issues = _read(REGISTRY)["issues"]
-    counts = Counter(item["status"] for item in issues)
-    for status in ("open", "registered", "claimed_fixed", "coverage_gap"):
-        counts.setdefault(status, 0)
-    assert len(issues) == 51
-    assert dict(counts) == record["registry"]["status_counts_at_freeze"]
-    assert counts["open"] == counts["registered"] == counts["coverage_gap"] == 0
-    assert {item["id"] for item in issues if item["status"] == "claimed_fixed"} == {
-        "V-44"
+    snapshot = _read(RECORD)["registry"]
+    assert snapshot == {
+        "path": "notes/pssolver_v0_2_x_open_issues.json",
+        "issue_count": 51,
+        "status_counts_at_freeze": {
+            "open": 0,
+            "registered": 0,
+            "claimed_fixed": 1,
+            "verified": 46,
+            "deferred": 2,
+            "accepted": 2,
+            "coverage_gap": 0,
+        },
+        "claimed_fixed_pending_independent_acceptance": {
+            "V-44": {
+                "fixed_in": "4baa26c8c67d5e01c7615fa1dae29679f450645b",
+                "claim": (
+                    "The immutable S-09 diagnostic summary's invalid manually "
+                    "completed support commit is corrected by an explicit forward "
+                    "erratum; the sealed archive is not rewritten."
+                ),
+            }
+        },
+        "confirmed_deferred": {"B8/S2-07": "D-0007", "R1-R9": "D-0011"},
+        "confirmed_accepted": {"A2-11": "D-0007", "V-41": "D-0013"},
+        "untriaged": [],
     }
-    v44 = next(item for item in issues if item["id"] == "V-44")
-    assert v44["fixed_in"] == "4baa26c8c67d5e01c7615fa1dae29679f450645b"
-    assert "R-0038" in v44["notes"]
 
 
 def test_rc1_cumulative_gates_stop_at_local_artifacts_and_independent_acceptance() -> None:

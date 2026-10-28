@@ -1,0 +1,108 @@
+{
+  "schema": "pssolver.v0_3.s11.r0038_import.v1",
+  "created_at": "2026-10-28T16:12:24-04:00",
+  "plan_step": "S-11",
+  "classification": "PASS_R0038_V0_3_0RC1_INDEPENDENT_CANDIDATE_ACCEPTANCE",
+  "git_identity": {
+    "candidate_target": "d612c9a4df4bbb8c724b6865b90fca9a9286dbc2",
+    "release_source": "c031cdae646edc5b202b05238db1eb513b255805",
+    "development_base": "0e96ee5d05193b0ddae189f6171ba387a8a96b6b",
+    "record_commit_is_release_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0038",
+    "path": "PSSolver_sync/results/R-0038.result.json",
+    "sha256": "5522be286445d49c2935d60d5e5dca3486edd9e817968f4990cfc26ae6f763d4",
+    "sync_commit": "47c81b885383350703b7bcb1c2b0e3a7e921e36b",
+    "classification": "PASS"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_v0_3_0rc1_claude_acceptance_20261028_v1",
+    "checksums_entries": 76,
+    "checksums_sha256": "f930ef864dbffdbe1db4de509fc33ff42210ab56c28615f55c8e5a0ed4e50f95",
+    "complete_present": true,
+    "final_report_sha256": "66d42f423fc30dd79b8c1e06dd25447b5beaba36703d4e4fb386d83e1a41f3d1",
+    "summary_sha256": "ccf1f841f9bd5f4281283f11d7b3b9aa62c2b70c870e4fc68d155784b42f3f2e"
+  },
+  "registry_import": {
+    "V-44": {
+      "status": "verified",
+      "fixed_in": "4baa26c8c67d5e01c7615fa1dae29679f450645b",
+      "verified_by": "R-0038",
+      "sealed_archive_rewritten": false
+    }
+  },
+  "completion_gates": {
+    "G-01": "PASS",
+    "G-05": "PASS",
+    "G-09": "rc1 independent acceptance PASS; online asset and post-release verification pending"
+  },
+  "immutable_source_records": {
+    "notes/pssolver_v0_3_0rc1.json": "83cc53e5ef75d0e366b82f34c1c72c2283629c986138e014c54394f143f4d06f",
+    "notes/PSSolver_v0_3_0_s03_successor_61_rc1_source_freeze.json": "0d53cb9f1f79ad5030eeffe7d1aa3ab5b1e9f39ed190f7bbc6d4c9be351939cf",
+    "notes/pssolver_v0_3_0rc1_package_preparation.json": "bcae192c0e4ea37794d9264d343898ef96343464c3684ed557610341b667f284"
+  },
+  "release_artifacts": {
+    "source_archive": {
+      "name": "PSSolver-0.3.0rc1.tar",
+      "sha256": "a8f2c049ef1f46349b30f47bbe917f9382bd4cfccbb8ddbf3261d9191f39b95c",
+      "size_bytes": 27842560
+    },
+    "wheel": {
+      "name": "pssolver-0.3.0rc1-py3-none-any.whl",
+      "sha256": "3e52204593c8e09c7f88cbe54488b977800955f285d90fa1f126bd4dc21c6578",
+      "size_bytes": 646957
+    },
+    "sdist": {
+      "name": "pssolver-0.3.0rc1.tar.gz",
+      "sha256": "ab9d5f83408e3591063d08e90df1117fe9f95360ff6a6f646148b2f99e8f367a",
+      "size_bytes": 1407808
+    }
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "aaa67bd720c66dccad114b8dd68d03142ef3b48a02f63d7bf4ac06c95baaa109",
+      "current_sha256": "7da70b2ff1ed926da94b47ee61085b42e6e21a79d2e94c0bab97b60582f62dbe",
+      "reason": "Import R-0038 by advancing V-44 from the rc1 claim to independently verified while preserving the sealed diagnostic archive."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "ebb8033b6ba4248dc1abbd39678e68b173008d48a74f2e976425e66cdcd21ccb",
+      "current_sha256": "5159ff7ea8a99074cf747f0b46a19eb44f527c36cda7c9ca20ded863015593d7",
+      "reason": "Record R-0038 PASS, the verified V-44 erratum, and the remaining online G-09 boundary."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "a74af66df7506d95c5feb8d065212e3ce5960c3405234ff808cd59e61f191e07",
+      "current_sha256": "affaec840935b0f77c9468904ada0905d61d489397ef197c65c36f6ade4d686e",
+      "reason": "Bind V-44 at its independently verified terminal state and the exact forward registry counts."
+    },
+    "tests/test_release_v0_3_0rc1.py": {
+      "historical_sha256": "20e3735720d9fff7fd58599de7a8369052f675d2714fb1f35c77da517d205351",
+      "current_sha256": "2e24ec22a4adfb0252253673e3b3e85c42ea899a3304db8274adf8bf1ee97816",
+      "reason": "Make the source-freeze test inspect only the immutable rc1 registry snapshot; live registry state remains owned by the registry contract."
+    }
+  },
+  "new_sources": [
+    "notes/PSSolver_v0_3_0_s03_successor_62_r0038_import.json",
+    "notes/PSSolver_v0_3_0_s03_successor_62_r0038_import_zh.md",
+    "tests/test_v0_3_s11_r0038_import.py"
+  ],
+  "scope": {
+    "records_and_tests_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "tag_or_release_modified": false
+  },
+  "authorization": {
+    "local_import": true,
+    "push": false,
+    "tag": false,
+    "github_release": false,
+    "pypi": false,
+    "hpcc_or_slurm": false
+  },
+  "next_plan_step": "S-12"
+}

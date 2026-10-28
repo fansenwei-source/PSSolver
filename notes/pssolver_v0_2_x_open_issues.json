@@ -33,8 +33,8 @@
   "status_counts": {
     "open": 0,
     "registered": 0,
-    "claimed_fixed": 1,
-    "verified": 46,
+    "claimed_fixed": 0,
+    "verified": 47,
     "deferred": 2,
     "accepted": 2,
     "coverage_gap": 0
@@ -814,10 +814,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "4baa26c8c67d5e01c7615fa1dae29679f450645b",
+      "verified_by": "R-0038",
       "target_release": "0.3.0 (S-09 evidence erratum)",
-      "notes": "The sealed diagnostic summary.json records identity.support_commit as nonexistent 616bc453a38b8f1459b1c278b76596f9e83e8687. Git rev-parse resolves the actual support commit to 616bc453d50040b20d1ef448cf2647358aeee1cc. The sealed archive remains unchanged; the S-09 closure successor at 4baa26c8c67d5e01c7615fa1dae29679f450645b records this forward erratum. The rc1 freeze claims that evidence-only correction for independent verification in R-0038. Future full commit identities must come from git rev-parse rather than manually extending an abbreviation."
+      "notes": "The sealed diagnostic summary.json records identity.support_commit as nonexistent 616bc453a38b8f1459b1c278b76596f9e83e8687. Git rev-parse resolves the actual support commit to 616bc453d50040b20d1ef448cf2647358aeee1cc. The sealed archive remains unchanged; the S-09 closure successor at 4baa26c8c67d5e01c7615fa1dae29679f450645b records this forward erratum. R-0038 independently verified the reachable correction and byte-for-byte support-tree identity without rewriting the sealed archive. Future full commit identities must come from git rev-parse rather than manually extending an abbreviation."
     },
     {
       "id": "V-45",
