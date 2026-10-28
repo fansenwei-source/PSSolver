@@ -29,11 +29,11 @@
       "rewritten": false
     }
   },
-  "issue_count": 48,
+  "issue_count": 49,
   "status_counts": {
     "open": 0,
     "registered": 2,
-    "claimed_fixed": 0,
+    "claimed_fixed": 1,
     "verified": 42,
     "deferred": 2,
     "accepted": 2,
@@ -799,6 +799,21 @@
       "status": "registered",
       "target_release": "0.3.0 (S-09 evidence erratum)",
       "notes": "The sealed diagnostic summary.json records identity.support_commit as nonexistent 616bc453a38b8f1459b1c278b76596f9e83e8687. Git rev-parse resolves the actual support commit to 616bc453d50040b20d1ef448cf2647358aeee1cc. The sealed archive remains unchanged; the S-09 closure successor records this forward erratum. Future full commit identities must come from git rev-parse rather than manually extending an abbreviation."
+    },
+    {
+      "id": "V-45",
+      "title": "S-09 closure noninterrupting recompute was bound to the runtime-tree plan instead of the job's frozen support plan",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0034.result.json",
+      "first_found": "S-09 D-0013 closure independent review R-0034",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "claimed_fixed",
+      "fixed_in": "719ae76069ba97b88a893ccf7404ddf18239fcc6",
+      "target_release": "0.3.0 (S-09 closure rework)",
+      "notes": "R-0034 found that the local v1 closure wrapper used the runtime-tree plan 8bc4fb8d... rather than job 10911538's frozen support plan a21b211b..., so it recorded 210 requirements while incorrectly declaring every non-exempt check passed. The v2 closure keeps v1 immutable, consumes the correct support source 719ae76069ba97b88a893ccf7404ddf18239fcc6, and fails closed unless the recorded failures are exactly the two D-0013-covered R512 float32 Channel peak_reserved messages. The numerical conclusion is unchanged; V-45 awaits R-0035 verification."
     }
   ],
   "authorization": {

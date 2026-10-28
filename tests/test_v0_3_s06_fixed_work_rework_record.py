@@ -52,12 +52,6 @@ def test_s06_rework_binds_runtime_and_option_b() -> None:
 
 def test_s06_rework_items_are_verified_at_exact_fix_sources() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
-    claimed = {
-        issue_id
-        for issue_id, item in issues.items()
-        if item["status"] == "claimed_fixed"
-    }
-    assert claimed == set()
     for issue_id in ("A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["verified_by"] == "R-0018"

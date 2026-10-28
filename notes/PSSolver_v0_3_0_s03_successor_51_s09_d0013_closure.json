@@ -1,5 +1,5 @@
 {
-  "schema": "pssolver.v0_3.s09.d0013_closure_record.v1",
+  "schema": "pssolver.v0_3.s09.d0013_closure_record.v2",
   "date": "2026-10-27",
   "plan_step": "S-09",
   "classification": "PASS_V0_3_S09_CUMULATIVE_QUALIFICATION_WITH_D0013_BOUNDED_MEMORY_EXCEPTION",
@@ -27,14 +27,21 @@
     "R-0033": {
       "classification": "PASS",
       "sha256": "8b0f709dc37c1bb631b4efb9f82f47353fc2e06485e7b6c6ee7613536988bd49"
+    },
+    "R-0034": {
+      "classification": "REWORK_REQUIRED",
+      "sha256": "0d242ae40dc8a0d5f5a67214995654d47ae4dfeb184fecfd25c0a7db45b57d30"
     }
   },
   "closure_evidence": {
-    "path": "/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v1",
-    "noninterrupting_recompute_sha256": "5bdb2dff8f623f9ede97af9f7ce9080932d6c1a0326fedd2c0662df184008f58",
-    "closure_adjudication_sha256": "c7f61972a02d3f6dbc8cbcb7aef35d9827e7e6ebaf7f14ca4783529da0fb9c30",
-    "source_evidence_manifest_sha256": "9581161ba6b392ed6df8f5ca83d7ea248042971acc19a7de5e90bf2046b4b7a9",
-    "final_report_sha256": "fa52d0236cd9c4e849d1a91667044ed65f1482a307645aa386abb0628dde11a6"
+    "path": "/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v2",
+    "v1_path": "/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v1",
+    "v1_preserved": true,
+    "noninterrupting_recompute_sha256": "1757374241e033c77a5fbe0b31df29e6f33a0dcae3e777c4ae45754d5927df01",
+    "closure_adjudication_sha256": "4969cdc062d6cab301f3e3b5f0c411da02a37f997195eeaf6316b6c13c6e032f",
+    "source_evidence_manifest_sha256": "d2531f615091baa35b93a6182baf1b127bdd8da2ff5a6249968dfb4adaecedfe",
+    "final_report_sha256": "f0b987337f84699c1e84ba4d7c2bd2e15a7dccf8fc9e05cda4721fd6c47717d6",
+    "frozen_plan_sha256": "a21b211b0c47ef0e83dd95de3f56bdb164fc109d1ccc58fd548afd919aac67d2"
   },
   "cumulative_job": {
     "job_id": "10911538",
@@ -42,6 +49,8 @@
     "group_count": 16,
     "correctness_stages_passed": true,
     "noninterrupting_frozen_analyzer_recomputed": true,
+    "fail_fast_analyzer_stopped_at": "channel_legacy/channel_R512x40x40/float32/peak_reserved",
+    "second_failure_discovered_by_noninterrupting_recompute": "channel_compiled_v2/channel_R512x40x40/float32/peak_reserved",
     "failed_checks": [
       "channel_legacy/channel_R512x40x40/float32/peak_reserved",
       "channel_compiled_v2/channel_R512x40x40/float32/peak_reserved"
@@ -81,6 +90,11 @@
       "incorrect_support_commit": "616bc453a38b8f1459b1c278b76596f9e83e8687",
       "correct_support_commit": "616bc453d50040b20d1ef448cf2647358aeee1cc",
       "sealed_archive_modified": false
+    },
+    "V-45": {
+      "status": "claimed_fixed",
+      "fixed_in": "719ae76069ba97b88a893ccf7404ddf18239fcc6",
+      "review_pending": "R-0035"
     }
   },
   "s10_carry_forward": {
@@ -103,18 +117,18 @@
   "historical_successor_sources": {
     "notes/pssolver_v0_2_x_open_issues.json": {
       "historical_sha256": "38eeacc62107a89beedf91b2630f37f1b012e6662b0209c875dc3adcd8f8e77b",
-      "current_sha256": "135e59366e220e9206cb5fdcb063318d934898ad1f93e39aa96b52f6ea9e5371",
-      "reason": "Import R-0031, accept V-41 under D-0013, verify V-42 and register the V-44 erratum."
+      "current_sha256": "f07cb78437001354eb6cf10398a61002dd1d6ca04b781c1ec1c08b0c37dd6609",
+      "reason": "Import R-0031 and R-0034: accept V-41 under D-0013, verify V-42, register V-44 and claim the V-45 evidence fix."
     },
     "notes/pssolver_v0_2_x_open_issues_zh.md": {
       "historical_sha256": "64e9baa3b576526b5779675f47c7274d7ea69f63f306a4c6f3f464f956dbafe7",
-      "current_sha256": "0e11548897947ab8e333b832a92ba8f4b3a0c4356d40de411927d847c15a8378",
-      "reason": "Document the bounded exception, diagnostic mechanism, verification and forward erratum."
+      "current_sha256": "cc7463941f9db488a3a90c0d88e472d145a22c7e80bd0b87ccca525f4bb1af0c",
+      "reason": "Document the bounded exception, diagnostic mechanism, forward erratum and V-45 plan-binding correction."
     },
     "tests/test_v0_2_x_open_issues.py": {
       "historical_sha256": "a36e3e30138b8e863a1a4912340c0a7e2622079175aad63e5b65bb7c49c36682",
-      "current_sha256": "757da273862b7c239198402c9771a59f62b9148e2e9feaabd051fa936e97fa52",
-      "reason": "Bind the exact forward registry state and narrow D-0013 exception."
+      "current_sha256": "ace0a52e78ddc8736c16ead3d6dab51f4c81af82fafe2fc3e6d49230f46da9fb",
+      "reason": "Bind the exact forward registry state, narrow D-0013 exception and V-45 claimed fix."
     },
     "tests/test_v0_3_s09_r0030_import.py": {
       "historical_sha256": "090e6f4ecd3045a424d5645ae4357a066acd9f91e7ee425c69ad45c856aa8187",
@@ -125,6 +139,51 @@
       "historical_sha256": "33ffa95ef7105f018bbe31333b1cfdfcc4fc215595bb05e6f4b673df8a198857",
       "current_sha256": "cc549df6c4b425f6122e058db1f0383831ebee8736a963fa9231629f49ebd49b",
       "reason": "Keep the R-0027 snapshot exact while permitting the user-adjudicated forward V-41 state."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "historical_sha256": "4fc728384337f6a4263dee83edcc4e8b72e2bfe5d5237de021fb846770db6723",
+      "current_sha256": "dc1bd055e59dab849062fd0fd5064fef56d4148d640e76abea435447cfaffe65",
+      "reason": "Keep the S-03 record scoped to its own historical issues rather than pinning all future claimed fixes."
+    },
+    "tests/test_v0_3_s04_checkpoint_robustness_record.py": {
+      "historical_sha256": "b8757c0db9b7224226e9a8e04698ade44398743e8db96897804e4f58bce9c155",
+      "current_sha256": "255b9a074056be003aaf394bc2169d45ecccbc527a27a8d204452b80e823de95",
+      "reason": "Keep the S-04 record scoped to its own historical issues rather than pinning all future claimed fixes."
+    },
+    "tests/test_v0_3_s06_fixed_work_rework_record.py": {
+      "historical_sha256": "b1dd95befe8c58b4b76876ec05f12dd2cbd39aada5de5335cf23708ea7da4fea",
+      "current_sha256": "0654454d447175978011f82d1ad957dfd7460ba1572cecd60bc3bfa67a0c146e",
+      "reason": "Keep the S-06 rework record scoped to its own historical issues rather than pinning all future claimed fixes."
+    },
+    "tests/test_v0_3_s06_minimum_floor_rollback_record.py": {
+      "historical_sha256": "4e807b8c41f8134422bbd20cf4b7a9137ce0a78d60b005e69239843f495c1bf2",
+      "current_sha256": "01320e3f959da38e57f982964299c366da067ade19c960d120b302a7ceb3d8d1",
+      "reason": "Keep the S-06 floor record scoped to its own historical issues rather than pinning all future claimed fixes."
+    },
+    "tests/test_v0_3_s06_numerics_serialization_record.py": {
+      "historical_sha256": "bfd93b71600f1266ffe2fd4419165d8bb7dde98e20e222c11a79bccfa4a4e7c9",
+      "current_sha256": "ab3599a817f586ee03f823a207336b22c3f6202071be13c34f3a3663a5e187cf",
+      "reason": "Keep the S-06 closure record scoped to its own historical issues rather than pinning all future claimed fixes."
+    },
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {
+      "historical_sha256": "aef90fbf5e21db54a63c6ca3952426477d27e094dc2dc7ad699b3ccfba83a8be",
+      "current_sha256": "8470b89dfb1dbdd9eb66a2011d5d862f8415860c7e1640e3c7d166bfbf8628de",
+      "reason": "Keep the S-07 record scoped to its own historical issues rather than pinning all future claimed fixes."
+    },
+    "tests/test_v0_3_s07_r0017_import.py": {
+      "historical_sha256": "f95af038751700816abc41fe2bae6732df5e19a60e2d0acbd3cc301be7db70b7",
+      "current_sha256": "d3e15e2fc66632cd1ea0c155ba12225801df9ba1337bb8a3bce43717b4c3af51",
+      "reason": "Keep the R-0017 import scoped to its immutable snapshot rather than pinning all future claimed fixes."
+    },
+    "tests/test_v0_3_s07_rework_candidate_record.py": {
+      "historical_sha256": "a03905becd729e2f3a414297dc930e590898232b9ad14519a55823528229a380",
+      "current_sha256": "b3982983b427f887124eb7cdda1cd869ed866e82a1e2faa8b51b04ef1dbb8716",
+      "reason": "Keep the S-07 rework record scoped to its own historical issues rather than pinning all future claimed fixes."
+    },
+    "tests/test_v0_3_s08_r0021_import.py": {
+      "historical_sha256": "fbb2ab03aba281af8cde5b7ccf069ae259827b9efc185493365fa55fe63ab1fd",
+      "current_sha256": "130c9619996dadf4ca9e95f69310ecc4c3b66315a5918b95a49e46d59c6e80b9",
+      "reason": "Keep the R-0021 import scoped to its immutable snapshot rather than pinning all future claimed fixes."
     }
   },
   "authorization": {
@@ -134,5 +193,5 @@
     "slurm_or_h100": false,
     "tag_or_release": false
   },
-  "next_request": "R-0034"
+  "next_request": "R-0035"
 }

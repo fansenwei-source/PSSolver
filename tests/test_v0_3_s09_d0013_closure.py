@@ -18,7 +18,9 @@ DECISION = SYNC / "decisions/D-0013.json"
 R0031 = SYNC / "results/R-0031.result.json"
 R0032 = SYNC / "results/R-0032.result.json"
 R0033 = SYNC / "results/R-0033.result.json"
-CLOSURE = Path("/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v1")
+R0034 = SYNC / "results/R-0034.result.json"
+CLOSURE = Path("/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v2")
+V1_CLOSURE = Path("/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v1")
 
 
 def _read(path: Path) -> dict[str, object]:
@@ -41,6 +43,7 @@ def test_d0013_and_independent_reviews_are_exactly_bound() -> None:
         "R-0031": (R0031, "INTERIM_PASS_AWAITING_USER_DECISION"),
         "R-0032": (R0032, "REWORK_REQUIRED"),
         "R-0033": (R0033, "PASS"),
+        "R-0034": (R0034, "REWORK_REQUIRED"),
     }
     for review, (path, classification) in expected.items():
         assert _sha256(path) == record["reviews"][review]["sha256"]
@@ -60,6 +63,30 @@ def test_noninterrupting_recompute_proves_the_exception_is_exhaustive() -> None:
     assert recompute["all_non_exempt_checks_passed"] is True
     assert recompute["analyzer_modified"] is False
     assert recompute["thresholds_modified"] is False
+    assert recompute["frozen_support_sha256"] == {
+        "analyzer": "0cb2a751d7c1752cf5a3bc561226fa543da203155f430ae09bd2ce022145fcdd",
+        "plan": "a21b211b0c47ef0e83dd95de3f56bdb164fc109d1ccc58fd548afd919aac67d2",
+    }
+    expected_require_failures = [
+        (
+            "channel_legacy/channel_R512x40x40 performance or memory gate failed: "
+            "{'aggregate_all_sample_mean': True, 'median_of_profile_means': True, "
+            "'median_of_six_trial_ratios': True, 'baseline_then_candidate_stratum': "
+            "True, 'candidate_then_baseline_stratum': True, "
+            "'order_stratum_imbalance': True, 'minimum_reference_trials': True, "
+            "'peak_allocated': True, 'peak_reserved': False}"
+        ),
+        (
+            "channel_compiled_v2/channel_R512x40x40 performance or memory gate "
+            "failed: {'aggregate_all_sample_mean': True, "
+            "'median_of_profile_means': True, 'median_of_six_trial_ratios': True, "
+            "'baseline_then_candidate_stratum': True, "
+            "'candidate_then_baseline_stratum': True, "
+            "'order_stratum_imbalance': True, 'minimum_reference_trials': True, "
+            "'peak_allocated': True, 'peak_reserved': False}"
+        ),
+    ]
+    assert recompute["recorded_require_failures"] == expected_require_failures
     failures = {
         (group["family"], group["grid"]): group
         for group in recompute["groups"]
@@ -76,6 +103,18 @@ def test_noninterrupting_recompute_proves_the_exception_is_exhaustive() -> None:
         assert group["trials_at_or_below_individual_reference"] == 6
 
 
+def test_v1_archive_is_preserved_while_v2_binds_the_real_job_plan() -> None:
+    record = _read(RECORD)
+    assert record["closure_evidence"]["v1_preserved"] is True
+    assert record["closure_evidence"]["v1_path"] == str(V1_CLOSURE)
+    assert _sha256(V1_CLOSURE / "checksums.sha256") == (
+        "0860fe21b2be56744592aea9633f9fda5b4dfcfa45d1b0460908f76414500b3c"
+    )
+    assert record["closure_evidence"]["frozen_plan_sha256"] == (
+        "a21b211b0c47ef0e83dd95de3f56bdb164fc109d1ccc58fd548afd919aac67d2"
+    )
+
+
 def test_closure_adjudication_changes_no_analyzer_threshold_or_scope() -> None:
     record = _read(RECORD)
     path = CLOSURE / "analysis/closure_adjudication.json"
@@ -90,6 +129,16 @@ def test_closure_adjudication_changes_no_analyzer_threshold_or_scope() -> None:
     assert adjudication["diagnostic_job"]["job_id"] == "10912583"
     assert adjudication["frozen_analyzer_recompute"]["analyzer_code_modified"] is False
     assert adjudication["frozen_analyzer_recompute"]["thresholds_modified"] is False
+    assert adjudication["frozen_analyzer_recompute"]["plan_sha256"] == (
+        "a21b211b0c47ef0e83dd95de3f56bdb164fc109d1ccc58fd548afd919aac67d2"
+    )
+    assert adjudication["frozen_analyzer_recompute"][
+        "recorded_require_failures_must_match_exactly"
+    ] is True
+    assert "stopped at the first" in adjudication["cumulative_job"]["interpretation"]
+    assert "noninterrupting recompute found the second" in adjudication[
+        "cumulative_job"
+    ]["interpretation"]
     exception = adjudication["bounded_exception"]
     assert exception["decision"] == "D-0013"
     assert exception["scope_is_exhaustive"] is True
@@ -104,7 +153,7 @@ def test_closure_adjudication_changes_no_analyzer_threshold_or_scope() -> None:
     assert exception["applies_to_future_versions"] is False
 
 
-def test_v41_v42_and_v44_match_the_d0013_boundary() -> None:
+def test_v41_v42_v44_and_v45_match_the_d0013_boundary() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert issues["V-41"]["status"] == "accepted"
     assert issues["V-41"]["decision"] == "D-0013"
@@ -123,6 +172,13 @@ def test_v41_v42_and_v44_match_the_d0013_boundary() -> None:
         ["git", "cat-file", "-e", f"{correct}^{{commit}}"],
         cwd=ROOT,
         check=True,
+    )
+    assert issues["V-45"]["status"] == "claimed_fixed"
+    assert issues["V-45"]["fixed_in"] == (
+        "719ae76069ba97b88a893ccf7404ddf18239fcc6"
+    )
+    assert issues["V-45"]["source_report"] == (
+        "PSSolver_sync/results/R-0034.result.json"
     )
 
 
