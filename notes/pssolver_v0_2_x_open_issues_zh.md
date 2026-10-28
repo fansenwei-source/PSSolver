@@ -6,12 +6,12 @@
 `dev/0.3` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 48 条：
+当前共登记 49 条：
 
 - `open`：0；
 - `registered`：2；
 - `claimed_fixed`：0；
-- `verified`：42；
+- `verified`：43；
 - `deferred`：2；
 - `accepted`：2；
 - `coverage_gap`：0。
@@ -171,7 +171,9 @@ S-09 的运行时裁决项 `V-41` 已按 `D-0013` 作为窄范围设计取舍接
 - CUDA 长时程覆盖缺口 `A3-18` 已由 `R-0025` 关闭；qualification-support 问题 `V-39`、
   `V-40` 已由 `R-0026` 关闭；`NEW-14` 已由 `R-0027` 完成 backward TF32 资格验证。
   `V-41` 已按 `D-0013` 改为 `accepted`；`V-42` 已由 `R-0031` 验证；`V-44` 作为
-  记录勘误保留在 0.3；`V-45` 由 S-09 v2 结案证据声称修复并等待 `R-0035`。
+  记录勘误保留在 0.3；`V-45` 已由 `R-0035` 独立复核为 `verified`，实际修复身份为
+  `e052f5b87e1424fbd8d9bd097a893469f9c72658`。v2 重算逐字节复现，只记录 D-0013
+  覆盖的两条 R512 float32 Channel `peak_reserved` 失败，五个负向控制均失败关闭。
 
 机器可读的逐项标题、严重度、来源、版本影响、Control 影响、状态、目标版本和说明均在
 `notes/pssolver_v0_2_x_open_issues.json` 中。S-09 正按 `D-0013` 进入结案复核；本记录不授权

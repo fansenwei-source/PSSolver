@@ -173,8 +173,9 @@ def test_v41_v42_v44_and_v45_match_the_d0013_boundary() -> None:
         cwd=ROOT,
         check=True,
     )
-    assert issues["V-45"]["status"] == "claimed_fixed"
-    assert issues["V-45"]["fixed_in"] == (
+    historical = _read(RECORD)["registry_import"]["V-45"]
+    assert historical["status"] == "claimed_fixed"
+    assert historical["fixed_in"] == (
         "719ae76069ba97b88a893ccf7404ddf18239fcc6"
     )
     assert issues["V-45"]["source_report"] == (

@@ -33,8 +33,8 @@
   "status_counts": {
     "open": 0,
     "registered": 2,
-    "claimed_fixed": 1,
-    "verified": 42,
+    "claimed_fixed": 0,
+    "verified": 43,
     "deferred": 2,
     "accepted": 2,
     "coverage_gap": 0
@@ -810,10 +810,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
-      "fixed_in": "719ae76069ba97b88a893ccf7404ddf18239fcc6",
+      "status": "verified",
+      "fixed_in": "e052f5b87e1424fbd8d9bd097a893469f9c72658",
+      "verified_by": "R-0035",
       "target_release": "0.3.0 (S-09 closure rework)",
-      "notes": "R-0034 found that the local v1 closure wrapper used the runtime-tree plan 8bc4fb8d... rather than job 10911538's frozen support plan a21b211b..., so it recorded 210 requirements while incorrectly declaring every non-exempt check passed. The v2 closure keeps v1 immutable, consumes the correct support source 719ae76069ba97b88a893ccf7404ddf18239fcc6, and fails closed unless the recorded failures are exactly the two D-0013-covered R512 float32 Channel peak_reserved messages. The numerical conclusion is unchanged; V-45 awaits R-0035 verification."
+      "notes": "R-0034 found that the local v1 closure wrapper used the runtime-tree plan 8bc4fb8d... rather than job 10911538's frozen support plan a21b211b..., so it recorded 210 requirements while incorrectly declaring every non-exempt check passed. The v2 closure keeps v1 immutable, consumes job 10911538's correct frozen support plan a21b211b..., and fails closed unless the recorded failures are exactly the two D-0013-covered R512 float32 Channel peak_reserved messages. R-0035 independently reproduced the v2 recompute byte-for-byte (1757374241e0...), confirmed all five negative controls fail closed, and verified the actual fix at e052f5b87e1424fbd8d9bd097a893469f9c72658."
     }
   ],
   "authorization": {

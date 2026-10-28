@@ -1,0 +1,87 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.r0035_import.v1",
+  "date": "2026-10-27",
+  "classification": "PASS_R0035_S09_CLOSURE_REVIEW_IMPORTED",
+  "plan_step": "S-09",
+  "record_scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "qualification_support_changed": false,
+    "plan_or_job_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "push_executed": false,
+    "hpcc_write_executed": false,
+    "slurm_or_h100_executed": false
+  },
+  "git_identity": {
+    "reviewed_candidate": "e052f5b87e1424fbd8d9bd097a893469f9c72658",
+    "runtime_qualified_source": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+    "support_source": "f3620b87581de5f29356ed1da89673cf08ffc8a7",
+    "result_commit": "4c11185bf4ebc11c69ed289b112c1c166bb151fb",
+    "record_commit_is_qualified_source": false
+  },
+  "sync_result": {
+    "id": "R-0035",
+    "path": "PSSolver_sync/results/R-0035.result.json",
+    "sha256": "f6f94781b4681b7ed1ee2ddf33cfc259aa220666372c3f082ece32da49043c3c",
+    "classification": "PASS"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s09closure_rw_claude_review_20261028_v1",
+    "checksums_entries": 50,
+    "checksums_sha256": "998317f64ac3aa184ed112b740a838a51acaf454e34848c88c13c86828317327",
+    "complete_present": true,
+    "final_report_sha256": "baa1421b9bafeee9503a3e50d307a6cfc4169da872c652b1052c5d29f2975207",
+    "summary_sha256": "a62b2680859f85692551ca561483727d5173fdfbbcd3c2723998d5404e1b033b"
+  },
+  "reviewed_conclusion": {
+    "s09_complete": true,
+    "noninterrupting_recompute_sha256": "1757374241e033c77a5fbe0b31df29e6f33a0dcae3e777c4ae45754d5927df01",
+    "recorded_failures": [
+      "channel_legacy/channel_R512x40x40/float32/peak_reserved",
+      "channel_compiled_v2/channel_R512x40x40/float32/peak_reserved"
+    ],
+    "fail_fast_stopped_at_first_failure": true,
+    "five_negative_controls_failed_closed": true,
+    "bounded_exception_decision": "D-0013"
+  },
+  "registry_import": {
+    "V-45": {
+      "status": "verified",
+      "fixed_in": "e052f5b87e1424fbd8d9bd097a893469f9c72658",
+      "verified_by": "R-0035"
+    }
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "f07cb78437001354eb6cf10398a61002dd1d6ca04b781c1ec1c08b0c37dd6609",
+      "current_sha256": "7626ab143a3d7707735bf3b9aebad305a198ef8f57521225b0a2950e133dedf0",
+      "reason": "Import the exact R-0035 V-45 registry transition and actual fix identity."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "cc7463941f9db488a3a90c0d88e472d145a22c7e80bd0b87ccca525f4bb1af0c",
+      "current_sha256": "eba3f3122025eb5a892438bfd295d8eed76dcdac778b8ffbd28a09d39926d189",
+      "reason": "Document the independently verified S-09 v2 closure and V-45 fix identity."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "ace0a52e78ddc8736c16ead3d6dab51f4c81af82fafe2fc3e6d49230f46da9fb",
+      "current_sha256": "6ec86fa31a09f2e78dcb7f9703ce4cff42c8af2d6a31f1b3b2d746f6298e04f6",
+      "reason": "Bind the authoritative verified V-45 entry and current registry totals."
+    },
+    "tests/test_v0_3_s09_d0013_closure.py": {
+      "historical_sha256": "039a8f5e048b9d2f25c1a0cca95b0844c77b071075df640cdad2391f7dba9a20",
+      "current_sha256": "6f3b572fc05e20f09927680bea6c4d180a19a6f32ac8a84f703a4ee142c83ea9",
+      "reason": "Keep the S-09 closure record bound to its immutable V-45 claimed-fix snapshot instead of pinning the evolving live registry."
+    }
+  },
+  "authorization": {
+    "local_evidence_import": true,
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false
+  },
+  "next_step": "Request user authorization for a non-force dev/0.3 fast-forward; do not push S-10."
+}
