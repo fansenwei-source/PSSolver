@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "release": "0.3.0",
+  "date": "2026-10-28",
+  "status": "local_package_preparation_complete_pending_independent_acceptance",
+  "classification": "PASS_V0_3_0_LOCAL_PACKAGE_PREPARATION",
+  "plan_step": "S-12",
+  "source": {
+    "branch": "release/pssolver-v0.3.0",
+    "release_source_commit": "47473880534a66f6da940db82122c79cda48a86b",
+    "release_source_parent": "72813d753dc9ca52e39240a643781c22605fd187",
+    "rc1_release_source": "c031cdae646edc5b202b05238db1eb513b255805",
+    "source_record": "notes/pssolver_v0_3_0.json",
+    "source_record_sha256": "d6739121f5f98524e35e91aaa6d9d9b39bccf577a1413c3c21ac49a4ed14e8bd",
+    "source_successor_record": "notes/PSSolver_v0_3_0_s03_successor_64_final_source_freeze.json",
+    "source_successor_record_sha256": "0aacf7d621192ad44ee6be3dbe357fbe13a8934906056dbd158d770d92d18087",
+    "record_commit_is_release_source": false,
+    "source_worktree_clean_before_and_after_build": true,
+    "git_diff_check_passed": true,
+    "runtime_delta_from_rc1_release_source": [
+      "pssolver/_version.py: 0.3.0rc1 -> 0.3.0"
+    ],
+    "solver_equations_changed_by_freeze": false,
+    "numerical_algorithms_changed_by_freeze": false,
+    "checkpoint_schema_changed_by_freeze": false,
+    "functional_api_version": "1.1",
+    "functional_api_version_changed_by_freeze": false,
+    "provider_identity_changed_by_freeze": false,
+    "production_default_changed_by_freeze": false,
+    "threshold_changed_by_freeze": false,
+    "skip_or_xfail_added_by_freeze": false
+  },
+  "cpu_gates": {
+    "common": {
+      "passed": 4851,
+      "failed": 0,
+      "skipped": 1,
+      "xfailed": 0,
+      "deselected": 7,
+      "subtests_passed": 8,
+      "optional_skip": "tests/test_analytic_periodic_defect_gas_2d.py::test_nematics3d_recovers_requested_defect_count_charges_and_positions",
+      "optional_skip_reason": "optional nematics3d dependency unavailable in both D-0008 baseline clones"
+    },
+    "a2_clone": {
+      "baseline": "/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel",
+      "clone_method": "cp -al hard-link clone",
+      "python": "3.12.13",
+      "torch": "2.6.0+cu126",
+      "numpy": "2.4.3",
+      "log_sha256": "b8fddb0c742266e0475d656f6105178f3cf87cdd7bf32f063c840655dc5a0695",
+      "junit_sha256": "cf96a8b7fea6266f785d3c3cb75f779c3cd24e4ddf7291b5982d40b122ee40ca"
+    },
+    "v0_2_2_clone": {
+      "baseline": "/home/fansenwei/pssolver_v0_2_2_release_package_2a1d0f7_20261020_v1/venv_isolated",
+      "clone_method": "cp -al hard-link clone",
+      "python": "3.12.13",
+      "torch": "2.6.0+cu124",
+      "numpy": "2.4.3",
+      "test_dependency_supplement": "matplotlib 3.10.8 and its missing runtime dependencies were installed only into the hard-link clone; the initial incomplete supplement failure is retained in the evidence archive",
+      "log_sha256": "3e7f139cfb38240abf56ee2be8e25db7cd36d1e4c4cefa4ddf78dbe6331459c0",
+      "junit_sha256": "3bfc57f1538b6649435bea9357d9091c6ea9b9bb5a2b4cd255526584fa2dd424"
+    },
+    "cuda_only_deselects": [
+      "tests/test_rc4_plane_nyquist_cuda.py::test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence",
+      "tests/test_bounded_axis_execution_plan.py::test_cuda_plan_key_uses_the_allocated_device_identity",
+      "tests/test_benchmark_bounded_axis_applicability.py::test_cuda_smoke_records_actual_device_and_memory",
+      "tests/test_phase4_combined_sbdf2_modal_block.py::test_cuda_canary_binds_concrete_device_and_remains_finite",
+      "tests/test_phase8_p845_h100_qualification.py::test_unindexed_cuda_request_binds_lifting_to_allocated_device_identity",
+      "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_runtime_matches_cpu_and_binds_allocated_device",
+      "tests/test_phase8_p856_finite_q_h100_qualification.py::test_cuda_continuous_split_and_file_restart_are_exact"
+    ]
+  },
+  "build": {
+    "control_directory": "/home/fansenwei/pssolver_v0_3_0_package_4747388_20261028_v3",
+    "source_archive": {
+      "path": "package/PSSolver-0.3.0.tar",
+      "sha256": "78fbe5e646b16015bfa2874dc072df93db64cd238757e646460069f5bac6f873",
+      "size_bytes": 27904000,
+      "prefix": "PSSolver-0.3.0/"
+    },
+    "sdist": {
+      "path": "package/dist/pssolver-0.3.0.tar.gz",
+      "sha256": "ec46471f5c35fc56089255155508b8a23a6d71ee81488d6b4aec933faed4d68d",
+      "size_bytes": 1411145
+    },
+    "wheel": {
+      "path": "package/dist/pssolver-0.3.0-py3-none-any.whl",
+      "sha256": "8e2bd0c7941220f6c7c9b4cba80d9802e1495db626ad1b330a2e1681645187d5",
+      "size_bytes": 646909
+    },
+    "builder": "python -m build 1.6.1 with isolated setuptools 84.2.1 and wheel 0.48.0",
+    "sdist_rebuilt_wheel_sha256": "df13152aea0294c04d68014edbdd5d64fa9160fc61d19e6d2b7f2c612bb0ff10",
+    "sdist_rebuilt_wheel_size_bytes": 646909,
+    "wheel_member_count": 222,
+    "wheel_python_file_count": 217,
+    "sdist_rebuilt_wheel_member_content_identical": true,
+    "wheel_python_content_matches_clean_archive": true,
+    "excluded_source_python_file_count": 43,
+    "excluded_source_modules_are_the_registered_control_and_experimental_qualification_surface": true,
+    "rc1_normalized_member_names_identical": true,
+    "rc1_changed_members": [
+      "pssolver-0.3.0.dist-info/METADATA",
+      "pssolver-0.3.0.dist-info/RECORD",
+      "pssolver/_version.py"
+    ]
+  },
+  "installed_wheel_gate": {
+    "baseline": "/home/fansenwei/pssolver_v0_2_2_release_package_2a1d0f7_20261020_v1/venv_isolated",
+    "clone_method": "cp -al followed by uninstalling the old PSSolver before --no-deps installation",
+    "install_mode": "--no-deps --no-cache-dir",
+    "pip_check": "PASS",
+    "python": "3.12.13",
+    "torch": "2.6.0+cu124",
+    "torch_cuda_runtime": "12.4",
+    "numpy": "2.4.3",
+    "scipy": "1.16.0",
+    "pytest": "9.1.1",
+    "pssolver_version": "0.3.0",
+    "functional_api_version": "1.1",
+    "source_shadow_import": false,
+    "record_sha256": "6f43a1c13f60b7a6358b2f02edcd88b9afe56c7221c8ee3d4f2ade9e4e081d80",
+    "qualification_helper_sha256": "03967ee4444e29a82eba6bb87eed873507abbee5d2527488616bb8b02b2ee21f",
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "all_shipped_modules_imported": true,
+    "optional_pygame_failure_allowed": true,
+    "legacy_and_compiled_v2_channel_runtimes_built": true,
+    "plane_periodic_legacy_channel_and_complete_stress_channel_public_compilation_dry_runs_passed": true,
+    "console_help": "PASS"
+  },
+  "cumulative_gates": {
+    "G-01": "PASS",
+    "G-02": "PASS",
+    "G-03": "PASS",
+    "G-04": "PASS",
+    "G-05": "PASS",
+    "G-06": "PASS_WITH_D-0013_BOUNDED_EXCEPTION",
+    "G-07": "PASS",
+    "G-08": "PASS",
+    "G-09_rc1_candidate_acceptance": "PASS_R0038",
+    "G-09_rc1_post_release_acceptance": "PASS_R0039",
+    "G-09_final_candidate_acceptance": "pending_R0040",
+    "G-09_final_post_release_acceptance": "not_started"
+  },
+  "authorization": {
+    "eligible_for_R0040_independent_acceptance": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "github_release_authorized": false,
+    "pypi_authorized": false,
+    "hpcc_test_directory_authorized": false,
+    "slurm_or_h100_authorized": false
+  }
+}
