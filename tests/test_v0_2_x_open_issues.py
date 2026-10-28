@@ -42,7 +42,7 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "target_release",
         "notes",
     }
-    optional = {"decision", "fixed_in", "fix_commit", "verified_by"}
+    optional = {"decision", "fixed_in", "verified_by"}
     assert len(entries) == record["issue_count"] == 51
     assert len({entry["id"] for entry in entries}) == 51
     assert all(required <= set(entry) <= required | optional for entry in entries)
@@ -54,8 +54,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
         "registered": 1,
-        "claimed_fixed": 1,
-        "verified": 45,
+        "claimed_fixed": 0,
+        "verified": 46,
         "deferred": 2,
         "accepted": 2,
         "coverage_gap": 0,
@@ -258,7 +258,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == {"V-46"}
+    assert claimed == set()
     s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
@@ -426,8 +426,9 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "affects_v0_2_1": False,
         "affects_control_paths": False,
         "exercised_by_current_control_research": False,
-        "status": "claimed_fixed",
-        "fix_commit": "R-0037 target commit (the amended S-09/S-10 integration record)",
+        "status": "verified",
+        "fixed_in": "5254ff32af5d68471f90f5fa8055d040598090f0",
+        "verified_by": "R-0037",
         "target_release": "0.3.0 (S-10 integration)",
         "notes": issues["V-46"]["notes"],
     }
@@ -536,7 +537,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == {"V-46"}
+    } == set()
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (

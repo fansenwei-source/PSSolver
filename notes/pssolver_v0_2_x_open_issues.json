@@ -33,8 +33,8 @@
   "status_counts": {
     "open": 0,
     "registered": 1,
-    "claimed_fixed": 1,
-    "verified": 45,
+    "claimed_fixed": 0,
+    "verified": 46,
     "deferred": 2,
     "accepted": 2,
     "coverage_gap": 0
@@ -844,10 +844,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
-      "fix_commit": "R-0037 target commit (the amended S-09/S-10 integration record)",
+      "status": "verified",
+      "fixed_in": "5254ff32af5d68471f90f5fa8055d040598090f0",
+      "verified_by": "R-0037",
       "target_release": "0.3.0 (S-10 integration)",
-      "notes": "R-0036 found that the first S-09/S-10 integration record still used the ten original S-10 commits as live identities after their linear replay. Those objects survived only through the local reflog, so a fresh --no-local single-branch clone failed four identity and integration tests even though the runtime tree was correct. The records-only R-0036 rework changes V-33/V-43 fixed_in to reachable replay a54074013e5f0fb9bfe278baf944f805bf86eef4, treats successor 58's complete original-to-replayed map as the explicit forward correction, and makes the integration guards depend only on reachable replay commits and the recorded pssolver tree. The original S-10 head remains preserved locally at refs/archive/s10-pre-integration for historical inspection and is not pushed."
+      "notes": "R-0036 found that the first S-09/S-10 integration record still used the ten original S-10 commits as live identities after their linear replay. Those objects survived only through the local reflog, so a fresh --no-local single-branch clone failed four identity and integration tests even though the runtime tree was correct. The records-only R-0036 rework changes V-33/V-43 fixed_in to reachable replay a54074013e5f0fb9bfe278baf944f805bf86eef4, treats successor 58's complete original-to-replayed map as the explicit forward correction, and makes the integration guards depend only on reachable replay commits and the recorded pssolver tree. The original S-10 head remains preserved locally at refs/archive/s10-pre-integration for historical inspection and is not pushed. R-0037 independently verified the remediation in a reachable-only fresh clone and fixed this issue at the amended records-only integration commit 5254ff32af5d68471f90f5fa8055d040598090f0."
     }
   ],
   "authorization": {

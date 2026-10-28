@@ -1,0 +1,111 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.r0037_import.v1",
+  "created_at": "2026-10-28T11:27:06-04:00",
+  "plan_step": "S-10",
+  "classification": "PASS_R0037_S10_REACHABLE_ONLY_INTEGRATION",
+  "git_identity": {
+    "integration_base": "ff70b4c3be4c41830ced0316d5d28ef9ef6ce4df",
+    "verified_candidate": "5254ff32af5d68471f90f5fa8055d040598090f0",
+    "qualified_s10_runtime_source": "a54074013e5f0fb9bfe278baf944f805bf86eef4",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "runtime_identity": {
+    "verified_candidate_tree": "35747a9adbc8fb2551b080b18fa677915d0bc31d",
+    "qualified_pssolver_tree": "d1de8fb8a9a7e637a2eca339a5aee30db959ec6c"
+  },
+  "sync_result": {
+    "id": "R-0037",
+    "path": "PSSolver_sync/results/R-0037.result.json",
+    "sha256": "878feb76d315a9292ebbb1883a3c4699771ffa354d585a444c0ac2b7bfa57c95",
+    "sync_commit": "dfe96f327ee7e8c944885f5b5da534a8a26a3fa6",
+    "classification": "PASS"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s10reach_claude_review_20261028_v1",
+    "checksums_entries": 51,
+    "checksums_sha256": "687b0a77a6aac5a5058a90f8d6eb877dbcc3a7917b3270c5c1c068d13b0d423c",
+    "complete_present": true,
+    "final_report_sha256": "ed0deeba504a15336f4d1dd5c1f9b260c0e53b0beda6b6155590b2c91b3b1dd0",
+    "summary_sha256": "b162433e52bbeea8a255a214e8a2ca6dcf62e0c570d4510cdc6e7e6c0e33b88d"
+  },
+  "registry_import": {
+    "V-46": {
+      "status": "verified",
+      "fixed_in": "5254ff32af5d68471f90f5fa8055d040598090f0",
+      "verified_by": "R-0037",
+      "fix_commit_removed": true
+    }
+  },
+  "forward_durable_guards": {
+    "first_parent_prefix": [
+      "c6d4b5e989435472e983bce30938f2003751aa3b",
+      "da8356ae0c9d35821b44ed2c9eb44ef70ba13449",
+      "55fa5b0e829d477acea31efc78b29478813a9dcd",
+      "26a51777651eb70cb09bef65164fb18c5a18a4e4",
+      "a54074013e5f0fb9bfe278baf944f805bf86eef4",
+      "98fb4a150f24cf8a1e40eedce15c1251452d7f78",
+      "f08eb63e9827d24087c9603f0788d6fec491a035",
+      "ce1874c4470fe575e6e8d6acd5930a3eb5d14006",
+      "79b4e84945f12f155614ac2094aba6128055f8b8",
+      "5254ff32af5d68471f90f5fa8055d040598090f0"
+    ],
+    "prefix_only": true,
+    "runtime_tree_pinned_to_verified_candidate": true,
+    "historical_registry_boundaries_are_immutable_snapshots": true,
+    "live_registry_status_is_not_pinned_by_historical_tests": true
+  },
+  "local_archive_refs": {
+    "refs/archive/s10-pre-integration": "b0a203430b1b5a6bc03bfcb377e6e459a28dbbc9",
+    "refs/archive/s10-r0036-candidate": "0048f15913127fb90868b6271623a72371a78ad7",
+    "must_not_be_pushed": true
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "bab0bbf2cbf98dd231599ad2479b90ed37506c8acac3e34021793654214c1121",
+      "current_sha256": "2431f2d36584263342ecf360942156e1239bb92e1d73bc6e1c8f93adcc0a5f3d",
+      "reason": "Import R-0037 by verifying V-46 at the reachable records-only integration commit and removing the provisional fix_commit field."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "5b91bd0508284328f0b900a69d0edb7adbf029d36f8a3ef67ae70eeb2fd05a01",
+      "current_sha256": "ec7d8090ac9b6ddf3d54952df6c9d65a571220ee446b2e1c6b4d62ecc80bb2b1",
+      "reason": "Summarize R-0037 PASS and the completed S-10 boundary."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "3c18aa5e8fd60a376d5b88e22a8fef530dec4172d9e98b238a9c4b5fb6aaade7",
+      "current_sha256": "4eedca014851052cdf48e75513f8f69d5948d6285edf095ca9a4cda1e0582bfe",
+      "reason": "Bind the verified V-46 registry entry and remove the no-longer-used provisional fix_commit field."
+    },
+    "tests/test_v0_3_s09_s10_integration.py": {
+      "historical_sha256": "587dfb4cdc8e8e6a91b20d61988c4d90f08e1551597f6b19917e49aa791dc761",
+      "current_sha256": "4b6c28eaea19000e3383058315779a455b1ead08c611c7800f02a7d559f44006",
+      "reason": "Make the reviewed integration prefix and runtime-tree guards durable across forward records-only and future runtime commits."
+    },
+    "tests/test_v0_3_s10_r0036_rework.py": {
+      "historical_sha256": "417785332ae8d339cc2a989e04d15a229b77de41b4e1cbedb1bcc0c5a5458d2d",
+      "current_sha256": "94287f8942772985cd3cfe1f18f55eb947d46fb356f38056fb1972d36a1465dd",
+      "reason": "Verify the immutable R-0036 registry snapshot without pinning the live registry to a pre-verification state."
+    }
+  },
+  "new_sources": [
+    "notes/PSSolver_v0_3_0_s03_successor_60_r0037_import.json",
+    "notes/PSSolver_v0_3_0_s03_successor_60_r0037_import_zh.md",
+    "tests/test_v0_3_s10_r0037_import.py"
+  ],
+  "scope": {
+    "records_and_tests_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "local_import": true,
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false
+  },
+  "next_plan_step": "S-11"
+}
