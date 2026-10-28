@@ -43,8 +43,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 47
-    assert len({entry["id"] for entry in entries}) == 47
+    assert len(entries) == record["issue_count"] == 48
+    assert len({entry["id"] for entry in entries}) == 48
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     counts.setdefault("open", 0)
@@ -53,11 +53,11 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
-        "registered": 3,
+        "registered": 2,
         "claimed_fixed": 0,
-        "verified": 41,
+        "verified": 42,
         "deferred": 2,
-        "accepted": 1,
+        "accepted": 2,
         "coverage_gap": 0,
     }
 
@@ -339,15 +339,17 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "affects_v0_2_1": False,
         "affects_control_paths": False,
         "exercised_by_current_control_research": False,
-        "status": "registered",
-        "target_release": "0.3.0 (S-09; D-0012 diagnostic decision)",
+        "status": "accepted",
+        "decision": "D-0013",
+        "target_release": "0.3.0 (S-09 bounded memory exception)",
         "notes": issues["V-41"]["notes"],
     }
     assert "1.0307692307692307" in issues["V-41"]["notes"]
-    assert "D-0012" in issues["V-41"]["notes"]
-    assert "reference-only" in issues["V-41"]["notes"]
-    assert "H100 allocator snapshots" in issues["V-41"]["notes"]
-    assert "comes from 2573dec extending" not in issues["V-41"]["notes"]
+    assert "562036736 / 545259520" in issues["V-41"]["notes"]
+    assert "1.0150638559607594" in issues["V-41"]["notes"]
+    assert "D-0013" in issues["V-41"]["notes"]
+    assert "compute_nonlinear" in issues["V-41"]["notes"]
+    assert "No other family, grid, dtype, runtime or future version" in issues["V-41"]["notes"]
     assert issues["V-42"] == {
         "id": "V-42",
         "title": (
@@ -361,12 +363,33 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "affects_v0_2_1": False,
         "affects_control_paths": False,
         "exercised_by_current_control_research": False,
-        "status": "registered",
+        "status": "verified",
+        "fixed_in": "f3620b87581de5f29356ed1da89673cf08ffc8a7",
+        "verified_by": "R-0031",
         "target_release": "0.3.0 (S-09, R-0030 import)",
         "notes": issues["V-42"]["notes"],
     }
     assert "immutable snapshot" in issues["V-42"]["notes"]
     assert "skip" in issues["V-42"]["notes"]
+    assert issues["V-44"] == {
+        "id": "V-44",
+        "title": (
+            "The sealed S-09 diagnostic summary records a nonexistent manually "
+            "completed support commit"
+        ),
+        "severity": "low",
+        "source_report": "PSSolver_sync/results/R-0031.result.json",
+        "first_found": "S-09 A.p cache diagnostic independent review R-0031",
+        "affects_v0_2_0": False,
+        "affects_v0_2_1": False,
+        "affects_control_paths": False,
+        "exercised_by_current_control_research": False,
+        "status": "registered",
+        "target_release": "0.3.0 (S-09 evidence erratum)",
+        "notes": issues["V-44"]["notes"],
+    }
+    assert "616bc453a38b8f1459b1c278b76596f9e83e8687" in issues["V-44"]["notes"]
+    assert "616bc453d50040b20d1ef448cf2647358aeee1cc" in issues["V-44"]["notes"]
     assert issues["V-30"] == {
         "id": "V-30",
         "title": (

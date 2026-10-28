@@ -38,7 +38,7 @@ def test_r0030_result_and_independent_archive_are_bound() -> None:
     assert _sha256(root / "checksums.sha256") == archive["checksums_sha256"]
 
 
-def test_r0030_import_registers_v42_without_closing_v41_or_s09() -> None:
+def test_r0030_record_preserves_its_historical_v41_v42_boundary() -> None:
     record = _read(RECORD)
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert record["registry_import"] == {
@@ -48,8 +48,8 @@ def test_r0030_import_registers_v42_without_closing_v41_or_s09() -> None:
         "v42_review_target": "R-0031",
         "s09_complete": False,
     }
-    for issue_id in ("V-41", "V-42"):
-        assert issues[issue_id]["status"] == "registered"
+    assert issues["V-41"]["status"] in {"registered", "accepted"}
+    assert issues["V-42"]["status"] in {"registered", "verified"}
     assert issues["V-42"]["source_report"] == (
         "PSSolver_sync/results/R-0030.result.json"
     )

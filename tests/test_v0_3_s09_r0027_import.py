@@ -52,7 +52,7 @@ def test_r0027_registry_updates_are_exact() -> None:
     assert issues["NEW-14"]["fixed_in"] == record["verified"]["NEW-14"]
     assert issues["NEW-14"]["verified_by"] == "R-0027"
     assert record["registered"] == ["V-41"]
-    assert issues["V-41"]["status"] == "registered"
+    assert issues["V-41"]["status"] in {"registered", "accepted"}
     assert issues["V-41"]["source_report"] == (
         "PSSolver_sync/results/R-0027.result.json"
     )

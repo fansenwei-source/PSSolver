@@ -29,14 +29,14 @@
       "rewritten": false
     }
   },
-  "issue_count": 47,
+  "issue_count": 48,
   "status_counts": {
     "open": 0,
-    "registered": 3,
+    "registered": 2,
     "claimed_fixed": 0,
-    "verified": 41,
+    "verified": 42,
     "deferred": 2,
-    "accepted": 1,
+    "accepted": 2,
     "coverage_gap": 0
   },
   "issues": [
@@ -765,9 +765,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
-      "target_release": "0.3.0 (S-09; D-0012 diagnostic decision)",
-      "notes": "Runtime 85ba3ae includes the 2573dec production Channel warm-start A.p cache. H100 job 10911538 found channel_legacy and channel_compiled_v2 at R512 reserved 562036736 versus baseline 545259520 bytes (ratio 1.0307692307692307 > the unchanged 1.03 limit), while all timing, numerical and scientific gates passed. The excess magnitude is one pressure field and its introduction by 2573dec is unchanged. R-0029 withdrew the earlier CPU torch.profiler mechanism claim because identical repeated runs varied by one or two pressure fields: those live-memory peaks are reference-only and cannot distinguish persistent-cache retention from an extended solve-local A.p lifetime on the CUDA peak path. The two untimed H100 allocator snapshots will decide that mechanism. Exact-revert proxy fidelity instead rests on byte-identical f94b9be method source (SHA-256 2ffb5673...), compilation in the candidate module namespace, empty cache fields, 78 pressure-operator calls matching direct f94b9be, and byte-identical terminal states. D-0012 requires a non-qualifying baseline/cache-on/exact-revert-proxy H100 diagnostic before choosing whether to withdraw the cache and rerun cumulative qualification or make a separate user decision; no exception is accepted yet."
+      "status": "accepted",
+      "decision": "D-0013",
+      "target_release": "0.3.0 (S-09 bounded memory exception)",
+      "notes": "D-0013 accepts one exhaustive, bounded exception for runtime 85ba3ae: only channel_legacy and channel_compiled_v2 at channel_R512x40x40, float32, may retain the observed peak_reserved_group_ratio 1.0307692307692307 (562036736 / 545259520) from job 10911538. The same cells retain every other frozen gate unchanged: peak_allocated_group_ratio is 1.0150638559607594 and all timing statistics pass. No other family, grid, dtype, runtime or future version is covered. Job 10912583 and R-0031 allocator snapshots show that the persistent accepted A.p cache retains one pressure field through the compute_nonlinear allocation peak, rather than the excess coming from solve-local A.p lifetime extension. R-0027 binds the cumulative correctness and 192-profile evidence; R-0031 binds the diagnostic mechanism and exact-revert timing trade-off. Analyzer code, thresholds, cases, samples and production defaults are unchanged."
     },
     {
       "id": "V-42",
@@ -779,9 +780,25 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "verified",
+      "fixed_in": "f3620b87581de5f29356ed1da89673cf08ffc8a7",
+      "verified_by": "R-0031",
       "target_release": "0.3.0 (S-09, R-0030 import)",
-      "notes": "R-0030 found four evidence-only tests that either pinned the live registry to its pre-V-41 count/status set or required an originally added source to retain its first hash after a valid successor. The R-0030 import changes those tests to bind each historical record's immutable snapshot and to resolve forward successors explicitly. No skip or xfail is added; runtime, wheels, diagnostic support, frozen plan, job, cases, and thresholds are unchanged. Claude will verify V-42 with the diagnostic result in R-0031."
+      "notes": "R-0030 found four evidence-only tests that either pinned the live registry to its pre-V-41 count/status set or required an originally added source to retain its first hash after a valid successor. The R-0030 import changes those tests to bind each historical record's immutable snapshot and to resolve forward successors explicitly. R-0031 independently verified the clean full-suite result and closes V-42 at f3620b87581de5f29356ed1da89673cf08ffc8a7. No skip or xfail is added; runtime, wheels, diagnostic support, frozen plan, job, cases, and thresholds are unchanged."
+    },
+    {
+      "id": "V-44",
+      "title": "The sealed S-09 diagnostic summary records a nonexistent manually completed support commit",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0031.result.json",
+      "first_found": "S-09 A.p cache diagnostic independent review R-0031",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3.0 (S-09 evidence erratum)",
+      "notes": "The sealed diagnostic summary.json records identity.support_commit as nonexistent 616bc453a38b8f1459b1c278b76596f9e83e8687. Git rev-parse resolves the actual support commit to 616bc453d50040b20d1ef448cf2647358aeee1cc. The sealed archive remains unchanged; the S-09 closure successor records this forward erratum. Future full commit identities must come from git rev-parse rather than manually extending an abbreviation."
     }
   ],
   "authorization": {

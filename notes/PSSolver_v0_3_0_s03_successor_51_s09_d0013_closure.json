@@ -1,0 +1,138 @@
+{
+  "schema": "pssolver.v0_3.s09.d0013_closure_record.v1",
+  "date": "2026-10-27",
+  "plan_step": "S-09",
+  "classification": "PASS_V0_3_S09_CUMULATIVE_QUALIFICATION_WITH_D0013_BOUNDED_MEMORY_EXCEPTION",
+  "qualification_complete": true,
+  "s09_complete": true,
+  "runtime_qualified_source": "85ba3aef75548d549d9db453ca4a5ab604b17a9d",
+  "support_source": "f3620b87581de5f29356ed1da89673cf08ffc8a7",
+  "record_commit_is_qualified_source": false,
+  "requires_h100_requalification": false,
+  "decision": {
+    "id": "D-0013",
+    "status": "confirmed",
+    "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/decisions/D-0013.json",
+    "sha256": "6ecd1b92a19fae5c0e66895b9b3216996a2a58d1c6d37fe8358331c8a6fd6f1f"
+  },
+  "reviews": {
+    "R-0031": {
+      "classification": "INTERIM_PASS_AWAITING_USER_DECISION",
+      "sha256": "68135c2c6014a3b25e2e04bd43e78e4244e8ecf2b8f8ff0d997a9cb63705bff8"
+    },
+    "R-0032": {
+      "classification": "REWORK_REQUIRED",
+      "sha256": "ce87ee51b3f423f6fb3cb1ddb56f7b09dca96dd3d608bf797e50bd58f9e5aa4e"
+    },
+    "R-0033": {
+      "classification": "PASS",
+      "sha256": "8b0f709dc37c1bb631b4efb9f82f47353fc2e06485e7b6c6ee7613536988bd49"
+    }
+  },
+  "closure_evidence": {
+    "path": "/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v1",
+    "noninterrupting_recompute_sha256": "5bdb2dff8f623f9ede97af9f7ce9080932d6c1a0326fedd2c0662df184008f58",
+    "closure_adjudication_sha256": "c7f61972a02d3f6dbc8cbcb7aef35d9827e7e6ebaf7f14ca4783529da0fb9c30",
+    "source_evidence_manifest_sha256": "9581161ba6b392ed6df8f5ca83d7ea248042971acc19a7de5e90bf2046b4b7a9",
+    "final_report_sha256": "fa52d0236cd9c4e849d1a91667044ed65f1482a307645aa386abb0628dde11a6"
+  },
+  "cumulative_job": {
+    "job_id": "10911538",
+    "profile_count": 192,
+    "group_count": 16,
+    "correctness_stages_passed": true,
+    "noninterrupting_frozen_analyzer_recomputed": true,
+    "failed_checks": [
+      "channel_legacy/channel_R512x40x40/float32/peak_reserved",
+      "channel_compiled_v2/channel_R512x40x40/float32/peak_reserved"
+    ],
+    "all_other_checks_passed": true
+  },
+  "bounded_exception": {
+    "decision": "D-0013",
+    "peak_reserved_group_ratio": 1.0307692307692307,
+    "candidate_peak_reserved_bytes": 562036736,
+    "baseline_peak_reserved_bytes": 545259520,
+    "peak_allocated_group_ratio": 1.0150638559607594,
+    "timing_checks_passed": true,
+    "scope_expansion_allowed": false,
+    "analyzer_changed": false,
+    "threshold_changed": false
+  },
+  "diagnostic_job": {
+    "job_id": "10912583",
+    "review": "R-0031",
+    "classification": "S09_AP_CACHE_DIAGNOSTIC_DATA_COMPLETE",
+    "profiles": 72,
+    "mechanism": "The persistent accepted A.p cache retains one pressure field through the compute_nonlinear allocation peak."
+  },
+  "registry_import": {
+    "V-41": {
+      "status": "accepted",
+      "decision": "D-0013"
+    },
+    "V-42": {
+      "status": "verified",
+      "fixed_in": "f3620b87581de5f29356ed1da89673cf08ffc8a7",
+      "verified_by": "R-0031"
+    },
+    "V-44": {
+      "status": "registered",
+      "incorrect_support_commit": "616bc453a38b8f1459b1c278b76596f9e83e8687",
+      "correct_support_commit": "616bc453d50040b20d1ef448cf2647358aeee1cc",
+      "sealed_archive_modified": false
+    }
+  },
+  "s10_carry_forward": {
+    "decision": "D-0013",
+    "reviews": [
+      "R-0032",
+      "R-0033"
+    ],
+    "h100_rerun_required": false,
+    "basis": "R-0033 passed S-10 in the HPCC-mirror Python 3.10, NumPy 1.22.3, torch 2.5.1 environment after R-0032 identified the fingerprint rework."
+  },
+  "record_scope": {
+    "evidence_only": true,
+    "runtime_changed": false,
+    "analyzer_changed": false,
+    "thresholds_changed": false,
+    "profiles_changed": false,
+    "production_default_changed": false
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "38eeacc62107a89beedf91b2630f37f1b012e6662b0209c875dc3adcd8f8e77b",
+      "current_sha256": "135e59366e220e9206cb5fdcb063318d934898ad1f93e39aa96b52f6ea9e5371",
+      "reason": "Import R-0031, accept V-41 under D-0013, verify V-42 and register the V-44 erratum."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "64e9baa3b576526b5779675f47c7274d7ea69f63f306a4c6f3f464f956dbafe7",
+      "current_sha256": "0e11548897947ab8e333b832a92ba8f4b3a0c4356d40de411927d847c15a8378",
+      "reason": "Document the bounded exception, diagnostic mechanism, verification and forward erratum."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "a36e3e30138b8e863a1a4912340c0a7e2622079175aad63e5b65bb7c49c36682",
+      "current_sha256": "757da273862b7c239198402c9771a59f62b9148e2e9feaabd051fa936e97fa52",
+      "reason": "Bind the exact forward registry state and narrow D-0013 exception."
+    },
+    "tests/test_v0_3_s09_r0030_import.py": {
+      "historical_sha256": "090e6f4ecd3045a424d5645ae4357a066acd9f91e7ee425c69ad45c856aa8187",
+      "current_sha256": "ba2f22b8a9a1d16519418814eaacfd08c54c489ba6a183a2e65f6fc5041a7d17",
+      "reason": "Keep the R-0030 snapshot exact while permitting the independently reviewed forward V-41/V-42 states."
+    },
+    "tests/test_v0_3_s09_r0027_import.py": {
+      "historical_sha256": "33ffa95ef7105f018bbe31333b1cfdfcc4fc215595bb05e6f4b673df8a198857",
+      "current_sha256": "cc549df6c4b425f6122e058db1f0383831ebee8736a963fa9231629f49ebd49b",
+      "reason": "Keep the R-0027 snapshot exact while permitting the user-adjudicated forward V-41 state."
+    }
+  },
+  "authorization": {
+    "local_evidence_import": true,
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false
+  },
+  "next_request": "R-0034"
+}
