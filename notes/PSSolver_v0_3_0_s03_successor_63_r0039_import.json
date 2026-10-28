@@ -1,0 +1,83 @@
+{
+  "schema": "pssolver.v0_3.s11.r0039_import.v1",
+  "created_at": "2026-10-28T17:48:14-04:00",
+  "plan_step": "S-11",
+  "classification": "PASS_R0039_V0_3_0RC1_INDEPENDENT_POST_RELEASE_ACCEPTANCE",
+  "git_identity": {
+    "release_source": "c031cdae646edc5b202b05238db1eb513b255805",
+    "candidate_acceptance_target": "d612c9a4df4bbb8c724b6865b90fca9a9286dbc2",
+    "published_evidence_tip": "41cb4feb9316d1fd7d7661951646ae4448b0f6b3",
+    "record_commit_is_release_source": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0039",
+    "path": "PSSolver_sync/results/R-0039.result.json",
+    "sha256": "c2b09bce66f67e9cea3cc2830b00d70e2a388148b08130db978ace01f38f939a",
+    "sync_commit": "4ded6ead72ebcaee1b5b3b7923dc5363e83b2a82",
+    "classification": "PASS"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_v0_3_0rc1_claude_post_release_acceptance_20261028_v1",
+    "checksums_entries": 76,
+    "checksums_sha256": "7ae463d728156195fb92d1750a39a0c89c36d8e9378a62f12c3ca7077e3b0612",
+    "complete_present": true,
+    "final_report_sha256": "7837206cb54ae85bf65691b8c3162fe66b9ff70d950843527685838861fa0382",
+    "summary_sha256": "3f32f12ab23b4fc8cc361f27cf0635f900a91ba46039f1f2639eb91f0e54e5a1"
+  },
+  "release_identity": {
+    "release_id": 427202656,
+    "tag": "v0.3.0rc1",
+    "tag_object": "3fb935027c3e308e3d41593161e9486e5c736b34",
+    "tag_commit": "c031cdae646edc5b202b05238db1eb513b255805",
+    "published_at": "2026-10-28T21:19:11Z",
+    "prerelease": true,
+    "draft": false,
+    "asset_ids": [
+      686374469,
+      686374464
+    ],
+    "keep_published_unchanged": true
+  },
+  "first_publication_directory": {
+    "path": "/home/fansenwei/pssolver_v0_3_0rc1_publication_c031cda_20261028_v1",
+    "release_notes_path": "/home/fansenwei/pssolver_v0_3_0rc1_publication_c031cda_20261028_v1/release_notes.md",
+    "release_notes_sha256": "3ec58dc33449677f20857ac4c2c11c097703a3916e40ec586ffaac7eda7e436c",
+    "role": "source of the GitHub Release body",
+    "preserve_unchanged": true,
+    "success_evidence": false,
+    "reason": "The directory is unsealed and contains the original release body source together with empty outputs from the first unsupported gh release view field request. It is retained as provenance, not rewritten or promoted into successful publication evidence."
+  },
+  "completion_gates": {
+    "S-11": "PASS",
+    "G-09_rc1_candidate_acceptance": "PASS_R0038",
+    "G-09_rc1_post_release_acceptance": "PASS_R0039",
+    "final_v0_3_0_S-12": "not_started"
+  },
+  "immutable_source_records": {
+    "notes/pssolver_v0_3_0rc1.json": "83cc53e5ef75d0e366b82f34c1c72c2283629c986138e014c54394f143f4d06f",
+    "notes/PSSolver_v0_3_0_s03_successor_62_r0038_import.json": "98047349d65358d698b22ca784fa01478d0eeb410661a59e7fdc98766c25e017",
+    "tests/test_v0_3_s11_r0038_import.py": "fb84138964de10987ec3149e233d2c827a5ecefb9bcc8fdf2f2a0c8c58beb226"
+  },
+  "historical_successor_sources": {},
+  "registry_updates": [],
+  "new_findings": [],
+  "scope": {
+    "records_and_tests_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "tag_or_release_modified": false
+  },
+  "authorization": {
+    "local_import": true,
+    "push": false,
+    "tag": false,
+    "github_release": false,
+    "pypi": false,
+    "hpcc_or_slurm": false
+  },
+  "next_plan_step": "S-12"
+}
