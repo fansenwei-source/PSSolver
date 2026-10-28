@@ -42,9 +42,9 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "target_release",
         "notes",
     }
-    optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 48
-    assert len({entry["id"] for entry in entries}) == 48
+    optional = {"decision", "fixed_in", "fix_commit", "verified_by"}
+    assert len(entries) == record["issue_count"] == 51
+    assert len({entry["id"] for entry in entries}) == 51
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     counts.setdefault("open", 0)
@@ -53,11 +53,11 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
-        "registered": 2,
-        "claimed_fixed": 0,
-        "verified": 43,
+        "registered": 1,
+        "claimed_fixed": 1,
+        "verified": 45,
         "deferred": 2,
-        "accepted": 1,
+        "accepted": 2,
         "coverage_gap": 0,
     }
 
@@ -258,7 +258,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == set()
+    assert claimed == {"V-46"}
     s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
@@ -339,15 +339,17 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "affects_v0_2_1": False,
         "affects_control_paths": False,
         "exercised_by_current_control_research": False,
-        "status": "registered",
-        "target_release": "0.3.0 (S-09; D-0012 diagnostic decision)",
+        "status": "accepted",
+        "decision": "D-0013",
+        "target_release": "0.3.0 (S-09 bounded memory exception)",
         "notes": issues["V-41"]["notes"],
     }
     assert "1.0307692307692307" in issues["V-41"]["notes"]
-    assert "D-0012" in issues["V-41"]["notes"]
-    assert "reference-only" in issues["V-41"]["notes"]
-    assert "H100 allocator snapshots" in issues["V-41"]["notes"]
-    assert "comes from 2573dec extending" not in issues["V-41"]["notes"]
+    assert "562036736 / 545259520" in issues["V-41"]["notes"]
+    assert "1.0150638559607594" in issues["V-41"]["notes"]
+    assert "D-0013" in issues["V-41"]["notes"]
+    assert "compute_nonlinear" in issues["V-41"]["notes"]
+    assert "No other family, grid, dtype, runtime or future version" in issues["V-41"]["notes"]
     assert issues["V-42"] == {
         "id": "V-42",
         "title": (
@@ -361,12 +363,76 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "affects_v0_2_1": False,
         "affects_control_paths": False,
         "exercised_by_current_control_research": False,
-        "status": "registered",
+        "status": "verified",
+        "fixed_in": "f3620b87581de5f29356ed1da89673cf08ffc8a7",
+        "verified_by": "R-0031",
         "target_release": "0.3.0 (S-09, R-0030 import)",
         "notes": issues["V-42"]["notes"],
     }
     assert "immutable snapshot" in issues["V-42"]["notes"]
     assert "skip" in issues["V-42"]["notes"]
+    assert issues["V-44"] == {
+        "id": "V-44",
+        "title": (
+            "The sealed S-09 diagnostic summary records a nonexistent manually "
+            "completed support commit"
+        ),
+        "severity": "low",
+        "source_report": "PSSolver_sync/results/R-0031.result.json",
+        "first_found": "S-09 A.p cache diagnostic independent review R-0031",
+        "affects_v0_2_0": False,
+        "affects_v0_2_1": False,
+        "affects_control_paths": False,
+        "exercised_by_current_control_research": False,
+        "status": "registered",
+        "target_release": "0.3.0 (S-09 evidence erratum)",
+        "notes": issues["V-44"]["notes"],
+    }
+    assert "616bc453a38b8f1459b1c278b76596f9e83e8687" in issues["V-44"]["notes"]
+    assert "616bc453d50040b20d1ef448cf2647358aeee1cc" in issues["V-44"]["notes"]
+    assert issues["V-45"] == {
+        "id": "V-45",
+        "title": (
+            "S-09 closure noninterrupting recompute was bound to the runtime-tree "
+            "plan instead of the job's frozen support plan"
+        ),
+        "severity": "low",
+        "source_report": "PSSolver_sync/results/R-0034.result.json",
+        "first_found": "S-09 D-0013 closure independent review R-0034",
+        "affects_v0_2_0": False,
+        "affects_v0_2_1": False,
+        "affects_control_paths": False,
+        "exercised_by_current_control_research": False,
+        "status": "verified",
+        "fixed_in": "e052f5b87e1424fbd8d9bd097a893469f9c72658",
+        "verified_by": "R-0035",
+        "target_release": "0.3.0 (S-09 closure rework)",
+        "notes": issues["V-45"]["notes"],
+    }
+    assert "210 requirements" in issues["V-45"]["notes"]
+    assert "a21b211b" in issues["V-45"]["notes"]
+    assert "R-0035" in issues["V-45"]["notes"]
+    assert "1757374241e0" in issues["V-45"]["notes"]
+    assert issues["V-46"] == {
+        "id": "V-46",
+        "title": (
+            "S-10 replay leaves registry, successor records and integration tests "
+            "bound to original commits that are unreachable from the integrated branch"
+        ),
+        "severity": "low",
+        "source_report": "PSSolver_sync/results/R-0036.result.json",
+        "first_found": "S-09/S-10 integration independent review R-0036",
+        "affects_v0_2_0": False,
+        "affects_v0_2_1": False,
+        "affects_control_paths": False,
+        "exercised_by_current_control_research": False,
+        "status": "claimed_fixed",
+        "fix_commit": "R-0037 target commit (the amended S-09/S-10 integration record)",
+        "target_release": "0.3.0 (S-10 integration)",
+        "notes": issues["V-46"]["notes"],
+    }
+    assert "a54074013e5f0fb9bfe278baf944f805bf86eef4" in issues["V-46"]["notes"]
+    assert "refs/archive/s10-pre-integration" in issues["V-46"]["notes"]
     assert issues["V-43"] == {
         "id": "V-43",
         "title": (
@@ -381,7 +447,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "affects_control_paths": False,
         "exercised_by_current_control_research": False,
         "status": "verified",
-        "fixed_in": "61838af7910d955b27268abd4a79e4d32f235f58",
+        "fixed_in": "a54074013e5f0fb9bfe278baf944f805bf86eef4",
         "verified_by": "R-0033",
         "target_release": "0.3.0 (S-10 rework)",
         "notes": issues["V-43"]["notes"],
@@ -470,7 +536,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == set()
+    } == {"V-46"}
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (
@@ -517,7 +583,7 @@ def test_r0021_verifies_s08_claims_and_leaves_v33_for_s10():
     assert all(issues[issue_id]["verified_by"] == "R-0021" for issue_id in ("A2-25", "N5"))
     assert issues["V-33"]["status"] == "verified"
     assert issues["V-33"]["fixed_in"] == (
-        "61838af7910d955b27268abd4a79e4d32f235f58"
+        "a54074013e5f0fb9bfe278baf944f805bf86eef4"
     )
     assert issues["V-33"]["target_release"] == "0.3"
     assert issues["V-33"]["verified_by"] == "R-0033"

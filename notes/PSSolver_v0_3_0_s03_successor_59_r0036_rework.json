@@ -1,0 +1,131 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.r0036_rework.v1",
+  "created_at": "2026-10-28T01:55:10-04:00",
+  "plan_step": "S-10",
+  "classification": "REWORK_R0036_UNREACHABLE_S10_IDENTITIES",
+  "review_boundary": {
+    "reviewed_candidate": "0048f15913127fb90868b6271623a72371a78ad7",
+    "result": "R-0036",
+    "note": "The reviewed candidate is an immutable result boundary, not a live Git identity after the integration commit is amended."
+  },
+  "git_identity": {
+    "integration_base": "ff70b4c3be4c41830ced0316d5d28ef9ef6ce4df",
+    "reachable_qualified_runtime_source": "a54074013e5f0fb9bfe278baf944f805bf86eef4",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "runtime_identity": {
+    "reachable_pssolver_tree": "d1de8fb8a9a7e637a2eca339a5aee30db959ec6c"
+  },
+  "sync_result": {
+    "id": "R-0036",
+    "path": "PSSolver_sync/results/R-0036.result.json",
+    "sha256": "d7572772516ba1d6adbe0e34359cb1a8d9778425cdac47dcf75977964288580e",
+    "sync_commit": "57c8dce915dc033480e49ceebed3ad09f19a9322",
+    "classification": "REWORK_REQUIRED"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_s10integ_claude_review_20261028_v1",
+    "checksums_entries": 57,
+    "checksums_sha256": "206988e0774664d5e49a9ae3838c0fbd5ddf2173726d3470a77505a448616445",
+    "complete_present": true,
+    "final_report_sha256": "2bf77da47d4067cdbfdd2d4c07411eba951cbd406fdd9d013b055d25d6338acb",
+    "summary_sha256": "83f285b10e52ed0f9ca8cdbd6388e5d5576b7e141d475640b01a06f46e82fc8c"
+  },
+  "registry_import": {
+    "V-33": {
+      "status": "verified",
+      "verified_by": "R-0033",
+      "reviewed_original": "61838af7910d955b27268abd4a79e4d32f235f58",
+      "fixed_in": "a54074013e5f0fb9bfe278baf944f805bf86eef4"
+    },
+    "V-43": {
+      "status": "verified",
+      "verified_by": "R-0033",
+      "reviewed_original": "61838af7910d955b27268abd4a79e4d32f235f58",
+      "fixed_in": "a54074013e5f0fb9bfe278baf944f805bf86eef4"
+    },
+    "V-46": {
+      "status": "claimed_fixed",
+      "source_report": "PSSolver_sync/results/R-0036.result.json",
+      "target_release": "0.3.0 (S-10 integration)"
+    }
+  },
+  "replay_identity_correction": {
+    "source": "notes/PSSolver_v0_3_0_s03_successor_58_s09_s10_integration.json",
+    "expected_mapping_entries": 10,
+    "original_head_local_archive_ref": "refs/archive/s10-pre-integration",
+    "original_head_local_archive_target": "b0a203430b1b5a6bc03bfcb377e6e459a28dbbc9",
+    "archive_ref_must_not_be_pushed": true,
+    "fresh_clone_gate_required_after_replay_rebase_or_amend": true
+  },
+  "historical_successor_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_58_s09_s10_integration.json": {
+      "historical_sha256": "342242af72e30f0f22be3302d3fd6b6a68a3541455623858b726ee71bf65be4b",
+      "current_sha256": "91a2c9275da2ef46d1278e60dfd83ca4d082ce7753ff5efca934afae23244750",
+      "reason": "Bind the reachable replayed runtime identity, complete the ten-entry forward correction map and advance the next review to R-0037."
+    },
+    "notes/PSSolver_v0_3_0_s09_s10_integration_zh.md": {
+      "historical_sha256": "03025be6c5a14a022ce165cd18f54f320f892f2c10601f4545884f2f22fff4ec",
+      "current_sha256": "34ce37a3cbf99ecdd6da391f23a1df72b7e12f7935a631cf8446d41c4e288707",
+      "reason": "Document the R-0036 reachable-only clone finding and records-only remediation."
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "fe4646e460bb97f33baa601fa89239bc4da3aadf93968aa66fd1679ece2eedb4",
+      "current_sha256": "bab0bbf2cbf98dd231599ad2479b90ed37506c8acac3e34021793654214c1121",
+      "reason": "Apply the R-0036 V-33/V-43 reachable fixed_in corrections and register V-46 as claimed_fixed."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "3656b4ac19b2e61e15d751ef9df61c0b2c98a5c866455a15c8e82cbe0e7dc46e",
+      "current_sha256": "5b91bd0508284328f0b900a69d0edb7adbf029d36f8a3ef67ae70eeb2fd05a01",
+      "reason": "Summarize the reachable replay identities and V-46 rework boundary."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "79dc401cfdd6c0986a604281ab70122ba5487b59f45434eff0b55b48e68954a0",
+      "current_sha256": "3c18aa5e8fd60a376d5b88e22a8fef530dec4172d9e98b238a9c4b5fb6aaade7",
+      "reason": "Bind the forward registry state without resolving any unreachable commit."
+    },
+    "tests/test_v0_3_s08_commit_identity_corrections.py": {
+      "historical_sha256": "3a0d43c2ab9cd81a6a0804125d1a05cbf8bea7b486ac6fa5b76762a5df79f48a",
+      "current_sha256": "6e54ccc2b4340885855741814d79db979479098e6706b0b298c71a6a09582056",
+      "reason": "Require every original S-10 identity to use successor 58's explicit forward replay mapping."
+    },
+    "tests/test_v0_3_s09_s10_integration.py": {
+      "historical_sha256": "aedb9d1e8efbef27e253ac723f05b796049db3f55628db7a8f0d24a5bc60c118",
+      "current_sha256": "587dfb4cdc8e8e6a91b20d61988c4d90f08e1551597f6b19917e49aa791dc761",
+      "reason": "Use reachable tree identity and the exact ten-commit integration sequence instead of unreachable-object ancestry."
+    },
+    "tests/test_v0_3_s10_r0033_candidate.py": {
+      "historical_sha256": "33e04927551638d36c61d2cf27aa963e4cab5311b745f6cf9d782900e5c4b696",
+      "current_sha256": "960edbdba6fc033401f1b4722b7e850a0a77bf4cb2b157b10af09bdb68be72b8",
+      "reason": "Keep the immutable R-0033 record at 61838af while allowing the live registry to bind reachable replay a540740."
+    },
+    "tests/test_v0_3_s10_r0033_import.py": {
+      "historical_sha256": "684114a0d290573c0256260b95c8f591192366cb31a9aa7988abd2869c817bc5",
+      "current_sha256": "4511c866db8c74e433aca3336f354045cc5a9ff5a02bf7383dce296c458b2f66",
+      "reason": "Preserve the immutable R-0033 reviewed identity while allowing its exact replay as the live fixed_in identity."
+    }
+  },
+  "new_sources": [
+    "notes/PSSolver_v0_3_0_s03_successor_59_r0036_rework.json",
+    "notes/PSSolver_v0_3_0_s03_successor_59_r0036_rework_zh.md",
+    "tests/test_v0_3_s10_r0036_rework.py"
+  ],
+  "scope": {
+    "records_and_tests_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "replay_commits_rewritten": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "local_rework": true,
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false
+  },
+  "next_request": "R-0037"
+}

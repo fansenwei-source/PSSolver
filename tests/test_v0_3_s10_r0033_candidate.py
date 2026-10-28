@@ -11,7 +11,7 @@ from tests.v0_3_s03_successor import resolve_s03_successor
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = (
-    ROOT / "notes/PSSolver_v0_3_0_s03_successor_49_s10_r0033_candidate.json"
+    ROOT / "notes/PSSolver_v0_3_0_s03_successor_56_s10_r0033_candidate.json"
 )
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 V020_ORACLE = (
@@ -47,7 +47,10 @@ def test_r0033_candidate_claims_v33_and_v43_without_closing_them() -> None:
         assert record["claims"][issue_id] == "claimed_fixed"
         assert issues[issue_id]["status"] in {"claimed_fixed", "verified"}
         assert issues[issue_id]["fixed_in"] == (
-            "61838af7910d955b27268abd4a79e4d32f235f58"
+            "a54074013e5f0fb9bfe278baf944f805bf86eef4"
+        )
+        assert "61838af7910d955b27268abd4a79e4d32f235f58" in (
+            issues[issue_id]["notes"]
         )
         if issues[issue_id]["status"] == "verified":
             assert issues[issue_id]["verified_by"] == "R-0033"

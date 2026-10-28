@@ -1,0 +1,134 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.s09_s10_integration.v1",
+  "created_at": "2026-10-28T00:56:56-04:00",
+  "plan_step": "S-10",
+  "classification": "READY_FOR_R0036_S09_S10_INTEGRATION_REVIEW",
+  "git_identity": {
+    "branch": "fix/v0.3-s10-final-cleanup",
+    "integration_base": "ff70b4c3be4c41830ced0316d5d28ef9ef6ce4df",
+    "replayed_s10_head": "79b4e84945f12f155614ac2094aba6128055f8b8",
+    "original_s10_head": "b0a203430b1b5a6bc03bfcb377e6e459a28dbbc9",
+    "reviewed_original_s10_runtime_source": "61838af7910d955b27268abd4a79e4d32f235f58",
+    "qualified_s10_runtime_source": "a54074013e5f0fb9bfe278baf944f805bf86eef4",
+    "record_commit_is_qualified_source": false,
+    "pushed": false
+  },
+  "replay": {
+    "reason": "S-10 originally forked before the final S-09 closure. Replay the nine unique S-10 commits on the reviewed S-09 tip, omit the duplicate R-0031 import, and preserve both reviewed histories without a merge commit.",
+    "original_to_replayed": {
+      "e75ef77c2dc03237db1ddae8b275f9c8055fe06b": "c6d4b5e989435472e983bce30938f2003751aa3b",
+      "dc955c5db5f0b67949115062577a46d22776083e": "da8356ae0c9d35821b44ed2c9eb44ef70ba13449",
+      "1cd484f56816ea0a2532b8ebfa8010a0a60b74e3": "55fa5b0e829d477acea31efc78b29478813a9dcd",
+      "28ba3bc3c9c930b0a100bf2d926c11dca8b100d3": "26a51777651eb70cb09bef65164fb18c5a18a4e4",
+      "61838af7910d955b27268abd4a79e4d32f235f58": "a54074013e5f0fb9bfe278baf944f805bf86eef4",
+      "c37991ba37819d88525dd774fb063ae6234cdce2": "98fb4a150f24cf8a1e40eedce15c1251452d7f78",
+      "c70ea9790af4532241f8e7342fcc17436d1cb6b0": "f08eb63e9827d24087c9603f0788d6fec491a035",
+      "18588b1be7faaa09c1e1fdb0828c1861e4e69757": "ce1874c4470fe575e6e8d6acd5930a3eb5d14006",
+      "e915111b2f640739ca9f04601dd0147a923c451c": "79b4e84945f12f155614ac2094aba6128055f8b8",
+      "b0a203430b1b5a6bc03bfcb377e6e459a28dbbc9": "79b4e84945f12f155614ac2094aba6128055f8b8"
+    },
+    "omitted_duplicate_commit": "b0a203430b1b5a6bc03bfcb377e6e459a28dbbc9",
+    "omitted_duplicate_subject": "Import the R-0031 S-09 diagnostic review",
+    "successor_renumbering": {
+      "46": 53,
+      "47": 54,
+      "48": 55,
+      "49": 56,
+      "50": 57
+    }
+  },
+  "registry_boundary": {
+    "V-33": {"status": "verified", "verified_by": "R-0033"},
+    "V-41": {"status": "accepted", "decision": "D-0013"},
+    "V-42": {"status": "verified", "verified_by": "R-0031"},
+    "V-43": {"status": "verified", "verified_by": "R-0033"},
+    "V-44": {"status": "registered"},
+    "V-45": {"status": "verified", "verified_by": "R-0035"},
+    "V-46": {"status": "claimed_fixed"}
+  },
+  "runtime_boundary": {
+    "reviewed_original_source": "61838af7910d955b27268abd4a79e4d32f235f58",
+    "qualified_source": "a54074013e5f0fb9bfe278baf944f805bf86eef4",
+    "qualified_source_pssolver_tree": "d1de8fb8a9a7e637a2eca339a5aee30db959ec6c",
+    "pssolver_tree_preserved_from_qualified_source": true,
+    "new_runtime_change_after_r0033": false,
+    "h100_requalification_required": false,
+    "basis": ["R-0033", "R-0035", "D-0013"]
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "7626ab143a3d7707735bf3b9aebad305a198ef8f57521225b0a2950e133dedf0",
+      "accepted_predecessor_sha256": ["7626ab143a3d7707735bf3b9aebad305a198ef8f57521225b0a2950e133dedf0", "0daafb3578ac53648423321b27c6b5d8dc04f267899a8de874aae8c6bcbc6f54"],
+      "current_sha256": "fe4646e460bb97f33baa601fa89239bc4da3aadf93968aa66fd1679ece2eedb4",
+      "reason": "Merge the independently reviewed S-09 and S-10 registry transitions without reverting either boundary."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "eba3f3122025eb5a892438bfd295d8eed76dcdac778b8ffbd28a09d39926d189",
+      "accepted_predecessor_sha256": ["eba3f3122025eb5a892438bfd295d8eed76dcdac778b8ffbd28a09d39926d189", "843bcd145e3d4aa94386e54fe329c27361638bb0bde42d258e8b21292d15d06e"],
+      "current_sha256": "3656b4ac19b2e61e15d751ef9df61c0b2c98a5c866455a15c8e82cbe0e7dc46e",
+      "reason": "Document the final S-09 boundary together with the R-0033 S-10 result."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "6ec86fa31a09f2e78dcb7f9703ce4cff42c8af2d6a31f1b3b2d746f6298e04f6",
+      "accepted_predecessor_sha256": ["6ec86fa31a09f2e78dcb7f9703ce4cff42c8af2d6a31f1b3b2d746f6298e04f6", "fb9aca52315927ab720f0de85c86ed1061269ca1bded13391678b230992092a0"],
+      "current_sha256": "79dc401cfdd6c0986a604281ab70122ba5487b59f45434eff0b55b48e68954a0",
+      "reason": "Bind the union registry without reverting S-09 or S-10 verified states."
+    },
+    "tests/test_v0_3_s07_rework_candidate_record.py": {
+      "historical_sha256": "b3982983b427f887124eb7cdda1cd869ed866e82a1e2faa8b51b04ef1dbb8716",
+      "current_sha256": "466dac31f7a40cb05f56da77233fde62edd6b2e66515d5b4196c8a38b6ec8a76",
+      "reason": "Retain the R-0030 forward-successor repair replayed by S-10."
+    },
+    "tests/test_v0_3_s08_r0021_import.py": {
+      "historical_sha256": "130c9619996dadf4ca9e95f69310ecc4c3b66315a5918b95a49e46d59c6e80b9",
+      "current_sha256": "507158be4efd91014b3e1ef4709bc770fdc34c9166dfba69048adf131abbecbe",
+      "reason": "Retain the R-0030 forward-successor repair replayed by S-10."
+    },
+    "tests/test_v0_3_s09_r0023_candidate.py": {
+      "historical_sha256": "64067918f2d6dc4efe4f3c34d672cf290f12d2da39d3d37b9c820325b7395dd8",
+      "current_sha256": "63be4e780ebd92f34385d2f7ef98c31f1e00abc2949977a5f7372b4aad447c97",
+      "reason": "Retain the S-10 historical-test compatibility repair."
+    },
+    "tests/test_v0_3_s10_final_cleanup.py": {
+      "historical_sha256": "2c4c2da4a0285217850067a4901559ecdc760a85e355fbd72c7406167f6af510",
+      "current_sha256": "f3d48bfcf592f02c833749c3f0bdbb87206e1e4ea7b1add4f479985a5cf30931",
+      "reason": "Renumber the S-10 successor after the final S-09 records."
+    },
+    "tests/test_v0_3_s10_r0032_import.py": {
+      "historical_sha256": "69b51cd85fa81347da88faf9046f85f7646278034b05bb94fa1a9306264e9927",
+      "current_sha256": "8d58e8076a5132b90de83def8f13abef9164f977c5b1cf67a96486ab121fd4a2",
+      "reason": "Renumber the S-10 successor after the final S-09 records."
+    },
+    "tests/test_v0_3_s10_r0033_candidate.py": {
+      "historical_sha256": "d3d3595a01037359eb3fda975ff6666d6e37156861ecf2be9fb9db4a17c45176",
+      "current_sha256": "33e04927551638d36c61d2cf27aa963e4cab5311b745f6cf9d782900e5c4b696",
+      "reason": "Renumber the S-10 successor after the final S-09 records."
+    },
+    "tests/test_v0_3_s10_r0033_import.py": {
+      "historical_sha256": "d59c30fd79ee1a86b4b57afce66987ab655d2c7c9fe196337d007d8c019110b8",
+      "current_sha256": "684114a0d290573c0256260b95c8f591192366cb31a9aa7988abd2869c817bc5",
+      "reason": "Renumber the successor and stop pinning the live V-41/V-42 states to R-0033."
+    }
+  },
+  "new_sources": [
+    "notes/PSSolver_v0_3_0_s03_successor_58_s09_s10_integration.json",
+    "notes/PSSolver_v0_3_0_s09_s10_integration_zh.md",
+    "tests/test_v0_3_s09_s10_integration.py"
+  ],
+  "scope": {
+    "local_only": true,
+    "runtime_changed_after_reviewed_s10": false,
+    "duplicate_r0031_imported": false,
+    "checkpoint_schema_changed": false,
+    "numerical_threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "push": false,
+    "hpcc_write": false,
+    "slurm_or_h100": false,
+    "tag_or_release": false
+  },
+  "next_request": "R-0037"
+}

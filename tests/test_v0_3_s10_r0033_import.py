@@ -10,7 +10,7 @@ from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_50_r0033_import.json"
+RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_57_r0033_import.json"
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 RESULT = Path("/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0033.result.json")
 
@@ -56,10 +56,15 @@ def test_r0033_import_verifies_only_v33_and_v43() -> None:
     assert record["registry_import"]["new_findings"] == []
     for issue_id, fix in expected.items():
         assert issues[issue_id]["status"] == "verified"
-        assert issues[issue_id]["fixed_in"] == fix
+        assert issues[issue_id]["fixed_in"] == (
+            "a54074013e5f0fb9bfe278baf944f805bf86eef4"
+        )
+        assert fix in issues[issue_id]["notes"]
         assert issues[issue_id]["verified_by"] == "R-0033"
-    assert issues["V-41"]["status"] == "registered"
-    assert issues["V-42"]["status"] == "registered"
+    # The review record preserves the immutable R-0033 boundary.  The live
+    # registry is intentionally allowed to advance through the later S-09
+    # closure rather than being pinned to the pre-R-0031 state here.
+    assert record["registry_import"]["verified_by"] == "R-0033"
 
 
 def test_r0033_import_is_a_forward_only_complete_successor() -> None:

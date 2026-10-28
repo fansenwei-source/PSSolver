@@ -10,7 +10,7 @@ from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_48_r0032_import.json"
+RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_55_r0032_import.json"
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 
 

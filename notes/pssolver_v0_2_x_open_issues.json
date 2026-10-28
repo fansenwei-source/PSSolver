@@ -29,14 +29,14 @@
       "rewritten": false
     }
   },
-  "issue_count": 48,
+  "issue_count": 51,
   "status_counts": {
     "open": 0,
-    "registered": 2,
-    "claimed_fixed": 0,
-    "verified": 43,
+    "registered": 1,
+    "claimed_fixed": 1,
+    "verified": 45,
     "deferred": 2,
-    "accepted": 1,
+    "accepted": 2,
     "coverage_gap": 0
   },
   "issues": [
@@ -640,10 +640,10 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "verified",
-      "fixed_in": "61838af7910d955b27268abd4a79e4d32f235f58",
+      "fixed_in": "a54074013e5f0fb9bfe278baf944f805bf86eef4",
       "verified_by": "R-0033",
       "target_release": "0.3",
-      "notes": "R-0032 found that S-10's first schema-2 implementation filtered only pip-build CUDA probe lines, used a NumPy configuration API unavailable in the declared NumPy 1.22 minimum, and gave the v0.2.0 oracle a hybrid fingerprint that matched no real generation environment. The 61838af rework uses build-format-independent Torch identity, NumPy 1.22 fallback, authentic per-oracle generation fingerprints, and explicit evidence that both matching-build continuations take the bitwise branch. R-0033 independently verified CUDA-visibility invariance in both conda-forge and pip builds, authentic generation-environment fingerprints, unchanged payloads, and all seven matching-build bitwise continuation cases."
+      "notes": "R-0032 found that S-10's first schema-2 implementation filtered only pip-build CUDA probe lines, used a NumPy configuration API unavailable in the declared NumPy 1.22 minimum, and gave the v0.2.0 oracle a hybrid fingerprint that matched no real generation environment. R-0033 reviewed the original implementation commit 61838af7910d955b27268abd4a79e4d32f235f58 and independently verified CUDA-visibility invariance in both conda-forge and pip builds, authentic generation-environment fingerprints, unchanged payloads, and all seven matching-build bitwise continuation cases. The final S-09/S-10 linear integration replays that exact patch and identical pssolver tree at reachable commit a54074013e5f0fb9bfe278baf944f805bf86eef4; R-0036 requires this reachable replay identity as fixed_in."
     },
     {
       "id": "V-34",
@@ -767,9 +767,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
-      "target_release": "0.3.0 (S-09; D-0012 diagnostic decision)",
-      "notes": "Runtime 85ba3ae includes the 2573dec production Channel warm-start A.p cache. H100 job 10911538 found channel_legacy and channel_compiled_v2 at R512 reserved 562036736 versus baseline 545259520 bytes (ratio 1.0307692307692307 > the unchanged 1.03 limit), while all timing, numerical and scientific gates passed. The excess magnitude is one pressure field and its introduction by 2573dec is unchanged. R-0029 withdrew the earlier CPU torch.profiler mechanism claim because identical repeated runs varied by one or two pressure fields: those live-memory peaks are reference-only and cannot distinguish persistent-cache retention from an extended solve-local A.p lifetime on the CUDA peak path. The two untimed H100 allocator snapshots will decide that mechanism. Exact-revert proxy fidelity instead rests on byte-identical f94b9be method source (SHA-256 2ffb5673...), compilation in the candidate module namespace, empty cache fields, 78 pressure-operator calls matching direct f94b9be, and byte-identical terminal states. D-0012 requires a non-qualifying baseline/cache-on/exact-revert-proxy H100 diagnostic before choosing whether to withdraw the cache and rerun cumulative qualification or make a separate user decision; no exception is accepted yet."
+      "status": "accepted",
+      "decision": "D-0013",
+      "target_release": "0.3.0 (S-09 bounded memory exception)",
+      "notes": "D-0013 accepts one exhaustive, bounded exception for runtime 85ba3ae: only channel_legacy and channel_compiled_v2 at channel_R512x40x40, float32, may retain the observed peak_reserved_group_ratio 1.0307692307692307 (562036736 / 545259520) from job 10911538. The same cells retain every other frozen gate unchanged: peak_allocated_group_ratio is 1.0150638559607594 and all timing statistics pass. No other family, grid, dtype, runtime or future version is covered. Job 10912583 and R-0031 allocator snapshots show that the persistent accepted A.p cache retains one pressure field through the compute_nonlinear allocation peak, rather than the excess coming from solve-local A.p lifetime extension. R-0027 binds the cumulative correctness and 192-profile evidence; R-0031 binds the diagnostic mechanism and exact-revert timing trade-off. Analyzer code, thresholds, cases, samples and production defaults are unchanged."
     },
     {
       "id": "V-42",
@@ -781,9 +782,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "verified",
+      "fixed_in": "f3620b87581de5f29356ed1da89673cf08ffc8a7",
+      "verified_by": "R-0031",
       "target_release": "0.3.0 (S-09, R-0030 import)",
-      "notes": "R-0030 found four evidence-only tests that either pinned the live registry to its pre-V-41 count/status set or required an originally added source to retain its first hash after a valid successor. The R-0030 import changes those tests to bind each historical record's immutable snapshot and to resolve forward successors explicitly. No skip or xfail is added; runtime, wheels, diagnostic support, frozen plan, job, cases, and thresholds are unchanged. Claude will verify V-42 with the diagnostic result in R-0031."
+      "notes": "R-0030 found four evidence-only tests that either pinned the live registry to its pre-V-41 count/status set or required an originally added source to retain its first hash after a valid successor. The R-0030 import changes those tests to bind each historical record's immutable snapshot and to resolve forward successors explicitly. R-0031 independently verified the clean full-suite result and closes V-42 at f3620b87581de5f29356ed1da89673cf08ffc8a7. No skip or xfail is added; runtime, wheels, diagnostic support, frozen plan, job, cases, and thresholds are unchanged."
     },
     {
       "id": "V-43",
@@ -796,10 +799,55 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "verified",
-      "fixed_in": "61838af7910d955b27268abd4a79e4d32f235f58",
+      "fixed_in": "a54074013e5f0fb9bfe278baf944f805bf86eef4",
       "verified_by": "R-0033",
       "target_release": "0.3.0 (S-10 rework)",
-      "notes": "S-10 e75ef77 called np.__config__.show(mode='dicts'), but NumPy 1.22.3 accepts no mode argument and raises TypeError. The 61838af rework falls back to captured show() text, records whether mode_dicts or show_text supplied the configuration, and exercises the legacy signature. R-0033 independently verified the show_text fallback with Python 3.10, NumPy 1.22.3 and torch 2.5.1, including the S-09 checkpoint-stage tests and the failing 1cd484f negative control."
+      "notes": "S-10 e75ef77 called np.__config__.show(mode='dicts'), but NumPy 1.22.3 accepts no mode argument and raises TypeError. R-0033 reviewed the original rework commit 61838af7910d955b27268abd4a79e4d32f235f58 and independently verified its show_text fallback with Python 3.10, NumPy 1.22.3 and torch 2.5.1, including the S-09 checkpoint-stage tests and the failing 1cd484f negative control. The final S-09/S-10 linear integration replays the same patch and identical pssolver tree at reachable commit a54074013e5f0fb9bfe278baf944f805bf86eef4; R-0036 requires this reachable replay identity as fixed_in."
+    },
+    {
+      "id": "V-44",
+      "title": "The sealed S-09 diagnostic summary records a nonexistent manually completed support commit",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0031.result.json",
+      "first_found": "S-09 A.p cache diagnostic independent review R-0031",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.3.0 (S-09 evidence erratum)",
+      "notes": "The sealed diagnostic summary.json records identity.support_commit as nonexistent 616bc453a38b8f1459b1c278b76596f9e83e8687. Git rev-parse resolves the actual support commit to 616bc453d50040b20d1ef448cf2647358aeee1cc. The sealed archive remains unchanged; the S-09 closure successor records this forward erratum. Future full commit identities must come from git rev-parse rather than manually extending an abbreviation."
+    },
+    {
+      "id": "V-45",
+      "title": "S-09 closure noninterrupting recompute was bound to the runtime-tree plan instead of the job's frozen support plan",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0034.result.json",
+      "first_found": "S-09 D-0013 closure independent review R-0034",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "verified",
+      "fixed_in": "e052f5b87e1424fbd8d9bd097a893469f9c72658",
+      "verified_by": "R-0035",
+      "target_release": "0.3.0 (S-09 closure rework)",
+      "notes": "R-0034 found that the local v1 closure wrapper used the runtime-tree plan 8bc4fb8d... rather than job 10911538's frozen support plan a21b211b..., so it recorded 210 requirements while incorrectly declaring every non-exempt check passed. The v2 closure keeps v1 immutable, consumes job 10911538's correct frozen support plan a21b211b..., and fails closed unless the recorded failures are exactly the two D-0013-covered R512 float32 Channel peak_reserved messages. R-0035 independently reproduced the v2 recompute byte-for-byte (1757374241e0...), confirmed all five negative controls fail closed, and verified the actual fix at e052f5b87e1424fbd8d9bd097a893469f9c72658."
+    },
+    {
+      "id": "V-46",
+      "title": "S-10 replay leaves registry, successor records and integration tests bound to original commits that are unreachable from the integrated branch",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0036.result.json",
+      "first_found": "S-09/S-10 integration independent review R-0036",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "claimed_fixed",
+      "fix_commit": "R-0037 target commit (the amended S-09/S-10 integration record)",
+      "target_release": "0.3.0 (S-10 integration)",
+      "notes": "R-0036 found that the first S-09/S-10 integration record still used the ten original S-10 commits as live identities after their linear replay. Those objects survived only through the local reflog, so a fresh --no-local single-branch clone failed four identity and integration tests even though the runtime tree was correct. The records-only R-0036 rework changes V-33/V-43 fixed_in to reachable replay a54074013e5f0fb9bfe278baf944f805bf86eef4, treats successor 58's complete original-to-replayed map as the explicit forward correction, and makes the integration guards depend only on reachable replay commits and the recorded pssolver tree. The original S-10 head remains preserved locally at refs/archive/s10-pre-integration for historical inspection and is not pushed."
     }
   ],
   "authorization": {

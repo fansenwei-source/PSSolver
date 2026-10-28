@@ -11,6 +11,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_26_s08_commit_identity_corrections.json"
+REPLAY_RECORD = (
+    ROOT / "notes/PSSolver_v0_3_0_s03_successor_58_s09_s10_integration.json"
+)
 SUCCESSORS = ROOT / "notes"
 FULL_COMMIT = re.compile(r"[0-9a-f]{40}")
 
@@ -49,8 +52,10 @@ def test_current_registry_fixed_in_values_are_real_pssolver_commits() -> None:
 def test_successor_git_identities_resolve_or_have_an_explicit_forward_correction() -> None:
     correction = _read(RECORD)
     mappings = correction["commit_identity_corrections"]
+    replay_mappings = _read(REPLAY_RECORD)["replay"]["original_to_replayed"]
     exceptions = correction["external_git_identity_fields"]
     encountered_corrections: set[str] = set()
+    encountered_replay_corrections: set[str] = set()
     for path in sorted(SUCCESSORS.glob("PSSolver_v0_3_0_s03_successor_*.json")):
         for field, value in _read(path).get("git_identity", {}).items():
             if not isinstance(value, str) or FULL_COMMIT.fullmatch(value) is None:
@@ -58,12 +63,26 @@ def test_successor_git_identities_resolve_or_have_an_explicit_forward_correction
             if field in exceptions:
                 assert exceptions[field]["repository"] == "PSSolver_sync"
                 continue
-            authoritative = mappings.get(value, value)
+            authoritative = mappings.get(value, replay_mappings.get(value, value))
             assert _resolve_commit(authoritative) == authoritative
             if authoritative != value:
-                encountered_corrections.add(value)
-                assert _does_not_resolve(value)
+                if value in mappings:
+                    encountered_corrections.add(value)
+                    assert _does_not_resolve(value)
+                else:
+                    encountered_replay_corrections.add(value)
     assert encountered_corrections == set(correction["forward_successor_corrections"])
+    assert encountered_replay_corrections == {
+        "e75ef77c2dc03237db1ddae8b275f9c8055fe06b",
+        "dc955c5db5f0b67949115062577a46d22776083e",
+        "1cd484f56816ea0a2532b8ebfa8010a0a60b74e3",
+        "28ba3bc3c9c930b0a100bf2d926c11dca8b100d3",
+        "61838af7910d955b27268abd4a79e4d32f235f58",
+        "c37991ba37819d88525dd774fb063ae6234cdce2",
+        "c70ea9790af4532241f8e7342fcc17436d1cb6b0",
+        "18588b1be7faaa09c1e1fdb0828c1861e4e69757",
+        "b0a203430b1b5a6bc03bfcb377e6e459a28dbbc9",
+    }
 
 
 def test_all_historical_errata_bind_nonexistent_values_to_real_git_commits() -> None:
