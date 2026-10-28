@@ -36,7 +36,8 @@ def _git_bytes(commit: str, relative: str) -> bytes:
 
 def test_integration_keeps_the_v03_version_and_exact_runtime_scope() -> None:
     record = _read()
-    assert pssolver.__version__ == record["version"] == "0.3.0.dev0"
+    assert record["version"] == "0.3.0.dev0"
+    assert pssolver.__version__ == "0.3.0rc1"
     assert record["classification"] == (
         "PASS_LOCAL_V0_3_N1_V17_CHECKPOINT_INTEGRATION_CANDIDATE"
     )

@@ -53,8 +53,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
-        "registered": 1,
-        "claimed_fixed": 0,
+        "registered": 0,
+        "claimed_fixed": 1,
         "verified": 46,
         "deferred": 2,
         "accepted": 2,
@@ -258,7 +258,7 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == set()
+    assert claimed == {"V-44"}
     s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
@@ -384,12 +384,14 @@ def test_remaining_registered_items_are_assigned_to_the_0_3_roadmap():
         "affects_v0_2_1": False,
         "affects_control_paths": False,
         "exercised_by_current_control_research": False,
-        "status": "registered",
+        "status": "claimed_fixed",
+        "fixed_in": "4baa26c8c67d5e01c7615fa1dae29679f450645b",
         "target_release": "0.3.0 (S-09 evidence erratum)",
         "notes": issues["V-44"]["notes"],
     }
     assert "616bc453a38b8f1459b1c278b76596f9e83e8687" in issues["V-44"]["notes"]
     assert "616bc453d50040b20d1ef448cf2647358aeee1cc" in issues["V-44"]["notes"]
+    assert "R-0038" in issues["V-44"]["notes"]
     assert issues["V-45"] == {
         "id": "V-45",
         "title": (
@@ -537,7 +539,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == set()
+    } == {"V-44"}
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (

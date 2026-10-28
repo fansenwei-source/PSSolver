@@ -162,7 +162,7 @@ def test_v41_v42_v44_and_v45_match_the_d0013_boundary() -> None:
         "f3620b87581de5f29356ed1da89673cf08ffc8a7"
     )
     assert issues["V-42"]["verified_by"] == "R-0031"
-    assert issues["V-44"]["status"] == "registered"
+    assert issues["V-44"]["status"] in {"registered", "claimed_fixed", "verified"}
     assert "616bc453a38b8f1459b1c278b76596f9e83e8687" in issues["V-44"][
         "notes"
     ]

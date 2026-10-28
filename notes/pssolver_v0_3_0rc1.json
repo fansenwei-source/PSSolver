@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "release": "0.3.0rc1",
+  "date": "2026-10-28",
+  "status": "local_source_freeze_candidate_pending_artifacts_and_independent_acceptance",
+  "classification": "PASS_V0_3_0RC1_LOCAL_SOURCE_FREEZE_CANDIDATE",
+  "plan_step": "S-11",
+  "governing_decisions": [
+    "D-0010",
+    "D-0011",
+    "D-0013"
+  ],
+  "source": {
+    "branch": "release/pssolver-v0.3.0rc1",
+    "development_tip": "0e96ee5d05193b0ddae189f6171ba387a8a96b6b",
+    "development_ref": "dev/0.3",
+    "version": "0.3.0rc1",
+    "runtime_delta_from_development_tip": [
+      "pssolver/_version.py: 0.3.0.dev0 -> 0.3.0rc1"
+    ],
+    "evidence_delta_from_development_tip": [
+      "CHANGELOG.md and README.md: identify the frozen rc1 candidate",
+      "notes/pssolver_v0_2_x_open_issues.json: claim the already recorded V-44 evidence erratum for independent verification",
+      "release-source record and binding tests"
+    ],
+    "solver_equations_changed_by_freeze": false,
+    "numerical_algorithms_changed_by_freeze": false,
+    "checkpoint_schema_changed_by_freeze": false,
+    "functional_api_version": "1.1",
+    "functional_api_version_changed_by_freeze": false,
+    "provider_identity_changed_by_freeze": false,
+    "production_default_changed_by_freeze": false,
+    "threshold_changed_by_freeze": false,
+    "skip_or_xfail_added_by_freeze": false,
+    "record_commit_is_release_source": true
+  },
+  "registry": {
+    "path": "notes/pssolver_v0_2_x_open_issues.json",
+    "issue_count": 51,
+    "status_counts_at_freeze": {
+      "open": 0,
+      "registered": 0,
+      "claimed_fixed": 1,
+      "verified": 46,
+      "deferred": 2,
+      "accepted": 2,
+      "coverage_gap": 0
+    },
+    "claimed_fixed_pending_independent_acceptance": {
+      "V-44": {
+        "fixed_in": "4baa26c8c67d5e01c7615fa1dae29679f450645b",
+        "claim": "The immutable S-09 diagnostic summary's invalid manually completed support commit is corrected by an explicit forward erratum; the sealed archive is not rewritten."
+      }
+    },
+    "confirmed_deferred": {
+      "B8/S2-07": "D-0007",
+      "R1-R9": "D-0011"
+    },
+    "confirmed_accepted": {
+      "A2-11": "D-0007",
+      "V-41": "D-0013"
+    },
+    "untriaged": []
+  },
+  "completion_gates": {
+    "G-01": {
+      "status": "candidate_pending_R-0038_only_for_V-44",
+      "evidence": ["R-0037", "notes/pssolver_v0_2_x_open_issues.json"]
+    },
+    "G-02": {
+      "status": "PASS",
+      "evidence": ["R-0009", "notes/PSSolver_v0_3_0_s03_successor_03_r0009_import.json"]
+    },
+    "G-03": {
+      "status": "PASS",
+      "evidence": ["R-0012", "R-0013", "notes/PSSolver_v0_3_0_s03_successor_08_r0012_import.json", "notes/PSSolver_v0_3_0_s03_successor_11_r0013_import.json"]
+    },
+    "G-04": {
+      "status": "PASS",
+      "evidence": ["R-0016", "R-0021", "R-0025", "R-0035"]
+    },
+    "G-05": {
+      "status": "pending_clean_artifact_and_installed_wheel_gate",
+      "evidence": []
+    },
+    "G-06": {
+      "status": "PASS_WITH_D-0013_BOUNDED_EXCEPTION",
+      "evidence": ["R-0031", "R-0035", "D-0013"]
+    },
+    "G-07": {
+      "status": "PASS",
+      "evidence": ["R-0024", "R-0026", "R-0035"]
+    },
+    "G-08": {
+      "status": "PASS",
+      "evidence": ["R-0025", "R-0026", "R-0035"]
+    },
+    "G-09": {
+      "status": "pending_R-0038_independent_candidate_acceptance",
+      "evidence": []
+    }
+  },
+  "release_artifacts": {
+    "source_archive": "pending_clean_build",
+    "sdist": "pending_clean_build",
+    "wheel": "pending_clean_build",
+    "pypi_published": false
+  },
+  "authorization": {
+    "local_source_freeze_authorized": true,
+    "local_artifact_build_authorized": true,
+    "push_authorized": false,
+    "tag_authorized": false,
+    "github_release_authorized": false,
+    "pypi_authorized": false,
+    "hpcc_test_directory_authorized": false,
+    "slurm_or_h100_authorized": false
+  }
+}

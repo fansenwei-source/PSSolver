@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-28",
+  "classification": "PASS_V0_3_0RC1_FORWARD_SOURCE_FREEZE_REGISTRATION",
+  "plan_step": "S-11",
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "b3b85a3c9035ef13b3ff9e0ba5bd909b52f11e6381b91191336beb1321076fed",
+      "current_sha256": "3fc4af6c947c8c0e515d4317868c375869133878759b01d32e35ebaa30324a99",
+      "reason": "Freeze the reviewed v0.3 development history as v0.3.0rc1 without changing a numerical or qualification threshold."
+    },
+    "README.md": {
+      "historical_sha256": "b2324dc6df70117e6c4422353e20d4aae3985ffc5498b0e4e5be6de1c7b419f3",
+      "current_sha256": "f541a8a6ca0b593f4bde720e09813dc50d815343f5a597eaa525c3f63d4c8168",
+      "reason": "Identify the local v0.3.0rc1 candidate and its unchanged qualified application combinations."
+    },
+    "pssolver/_version.py": {
+      "historical_sha256": "73aebd88cf4ee0d4b9abd865b6bbfbb62f1c43e102a6cdc9c12ba3c79faa4328",
+      "current_sha256": "d540d30660c24dfa0d1a0b5ac41013bb185aba3673c7a7d6ca805f38ee030a46",
+      "reason": "Advance only the package version from 0.3.0.dev0 to the frozen 0.3.0rc1 candidate."
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "2431f2d36584263342ecf360942156e1239bb92e1d73bc6e1c8f93adcc0a5f3d",
+      "current_sha256": "aaa67bd720c66dccad114b8dd68d03142ef3b48a02f63d7bf4ac06c95baaa109",
+      "reason": "Claim the existing V-44 forward erratum for independent rc1 verification without rewriting the sealed S-09 archive."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "ec7d8090ac9b6ddf3d54952df6c9d65a571220ee446b2e1c6b4d62ecc80bb2b1",
+      "current_sha256": "ebb8033b6ba4248dc1abbd39678e68b173008d48a74f2e976425e66cdcd21ccb",
+      "reason": "Synchronize the Chinese registry narrative with the V-44 rc1 verification claim."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "4eedca014851052cdf48e75513f8f69d5948d6285edf095ca9a4cda1e0582bfe",
+      "current_sha256": "a74af66df7506d95c5feb8d065212e3ce5960c3405234ff808cd59e61f191e07",
+      "reason": "Bind the exact rc1 registry counts and V-44 claim while retaining forward status transitions."
+    },
+    "tests/test_v0_3_s09_d0013_closure.py": {
+      "historical_sha256": "6f3b572fc05e20f09927680bea6c4d180a19a6f32ac8a84f703a4ee142c83ea9",
+      "current_sha256": "084df508d972d5ecbc56fce1e2afef10c1bbb9e6b281a6263e9be1f00d482f7b",
+      "reason": "Allow the already recorded V-44 erratum to advance from registered through independent verification."
+    },
+    "tests/test_v0_3_n1_v17_checkpoint_integration.py": {
+      "historical_sha256": "7f4febba561efa66852fd4764a5ef259e9c880c96656420772c4179087c1c1b6",
+      "current_sha256": "02d618d4d6f1a3976574fdd8d26c4197710809ac13f864e24db42a15437d3e64",
+      "reason": "Preserve the historical dev0 record while recognizing the rc1 live package successor."
+    },
+    "tests/test_v0_3_n1_v17_r0005_import.py": {
+      "historical_sha256": "5e4512017179b1bb8f22284c677a43e352bd7636abb9cf0db64d83cb172bab62",
+      "current_sha256": "fe094661cd06062d190d1483b180f80a3eb8b28ac6ad0f91068071068556bf61",
+      "reason": "Keep the R-0005 historical version literal separate from the live rc1 package version."
+    },
+    "tests/test_release_v0_1.py": {
+      "historical_sha256": "49eb789ba6f49490cf1fd3acf94352580e39863c8d0a361fd36d470b633c2a65",
+      "current_sha256": "5146bc6fb110bcf75b78daea29d8f512f4ba802dfe6be6dc10511acf962595ec",
+      "reason": "Recognize the forward rc1 README successor without changing the retained v0.1 release-document contract."
+    },
+    "tests/test_release_v0_2_0_final.py": {
+      "historical_sha256": "e2370e2ace5a2a6076f7f8a89c78326301eecd6f14d2971ca922abe2178a4995",
+      "current_sha256": "33ca0b615fed06dbbd73d50b6f510c4d018a93d5bc8adf56a843a5def076e7fe",
+      "reason": "Recognize the forward rc1 package and README successor without changing v0.2.0 evidence."
+    },
+    "tests/test_release_v0_2_1.py": {
+      "historical_sha256": "f1fbcc48503a65ac2acad9b1e4f5039222e714dfebd608152db8b09a8ae22d31",
+      "current_sha256": "7c49df43fba34038a552f6fb91ebf1e5997f94dcdcd082961857fbeca1fcff66",
+      "reason": "Recognize the forward rc1 package and README successor without changing v0.2.1 evidence."
+    },
+    "tests/test_release_v0_2_2.py": {
+      "historical_sha256": "2c7a8c903c760deb844622b005efdfcf088e1e810335c388bcc4631c4042a79e",
+      "current_sha256": "a11c4651ea266fec5d8910e00a77d9914894126d573762986a4039297091d907",
+      "reason": "Recognize the forward rc1 package and README successor without changing v0.2.2 evidence."
+    },
+    "tests/test_release_v0_2_rc6.py": {
+      "historical_sha256": "76bde75ff397281aa23b2f647d2b1600515808b079e36eb96e143270a5ae9ff6",
+      "current_sha256": "3eb38025cf9320f9ee26f9ff283ea9672f5a15ccc99470bb00db6e789f8b48d1",
+      "reason": "Recognize the forward rc1 package and README successor without changing rc6 evidence."
+    }
+  },
+  "scope": {
+    "runtime_delta": ["pssolver/_version.py"],
+    "solver_implementation_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "functional_api_version_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "tag_or_release_modified": false
+  },
+  "authorization": {
+    "local_source_freeze": true,
+    "push": false,
+    "tag_or_release": false,
+    "hpcc_or_slurm": false
+  }
+}

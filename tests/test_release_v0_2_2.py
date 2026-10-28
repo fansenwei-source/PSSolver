@@ -31,15 +31,15 @@ def _sha256(path: Path) -> str:
 
 
 def test_v022_has_a_registered_v03_development_successor() -> None:
-    assert pssolver.__version__ == "0.3.0.dev0"
+    assert pssolver.__version__ == "0.3.0rc1"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.3.0.dev0",
+        "version": "0.3.0rc1",
     }
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-    assert "PSSolver 0.2.2 is" in readme
-    assert "qualified executable combinations in 0.2.2 are" in readme
+    assert "PSSolver 0.3.0rc1 is" in readme
+    assert "qualified executable combinations in 0.3.0rc1 are" in readme
     assert "## 0.2.2 — 2026-10-20" in changelog
     assert "only the verified V-17" in changelog
     integration = _read(DEV_INTEGRATION_RECORD)

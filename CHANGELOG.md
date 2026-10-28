@@ -1,6 +1,13 @@
 # Changelog
 
-## 0.3.0.dev0 — unreleased
+## 0.3.0rc1 — 2026-10-28
+
+This release candidate freezes the independently reviewed S-03 through S-10
+work for final candidate acceptance.  It does not relax any numerical,
+scientific, performance, memory, restart, or packaging threshold.  The only
+remaining non-final registry item is the forward erratum for the sealed S-09
+diagnostic record (V-44), which is claimed fixed here and must be independently
+verified by the rc1 acceptance review before a final v0.3.0 release.
 
 ### Final architecture and compatibility cleanup
 
