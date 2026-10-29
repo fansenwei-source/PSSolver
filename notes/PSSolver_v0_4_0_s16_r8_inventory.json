@@ -1,0 +1,98 @@
+{
+  "schema": "pssolver.v0_4.s16.r8_inventory.v1",
+  "date": "2026-10-29",
+  "classification": "R8_INVENTORY_COMPLETE_AWAITING_D0015",
+  "scope": {
+    "implementation_changed": false,
+    "historical_record_rewritten": false,
+    "skip_or_xfail_added": false,
+    "external_action_authorized": false
+  },
+  "summary": {
+    "tests_with_live_absolute_dependencies": 18,
+    "sync_files_read": 19,
+    "non_sync_resources_read": 17,
+    "observed_live_resource_bytes_including_sync_repository_once": 377510142,
+    "fresh_github_clone_is_self_contained": false
+  },
+  "tests": {
+    "tests/test_analyze_v0_3_s09_cpu_6x60_stop.py": ["cpu_6x60_v3", "cpu_diagnosis_v2"],
+    "tests/test_v0_3_s08_r0021_import.py": ["sync:R-0021"],
+    "tests/test_v0_3_s09_d0013_closure.py": ["sync:D-0013", "sync:R-0031", "sync:R-0032", "sync:R-0033", "sync:R-0034", "s09_closure_v2", "s09_closure_v1"],
+    "tests/test_v0_3_s09_r0022_import.py": ["sync:R-0022"],
+    "tests/test_v0_3_s09_r0023_import.py": ["sync:R-0023"],
+    "tests/test_v0_3_s09_r0024_import.py": ["sync:R-0024"],
+    "tests/test_v0_3_s09_r0025_import.py": ["sync:R-0025", "claude_r0025"],
+    "tests/test_v0_3_s09_r0026_candidate.py": ["r0026_rehearsal", "r0026_support_tar"],
+    "tests/test_v0_3_s09_r0026_import.py": ["sync:R-0026", "claude_r0026"],
+    "tests/test_v0_3_s09_r0027_import.py": ["sync:R-0027", "sync:D-0012", "claude_r0027"],
+    "tests/test_v0_3_s09_r0028_rework.py": ["sync:R-0028", "claude_r0028"],
+    "tests/test_v0_3_s09_r0029_rework.py": ["sync:R-0029", "claude_r0029"],
+    "tests/test_v0_3_s09_r0030_import.py": ["sync:R-0030", "claude_r0030"],
+    "tests/test_v0_3_s09_r0035_import.py": ["sync:R-0035", "claude_r0035"],
+    "tests/test_v0_3_s10_r0033_import.py": ["sync:R-0033", "claude_r0033"],
+    "tests/test_v0_3_s10_r0036_rework.py": ["sync:R-0036", "claude_r0036"],
+    "tests/test_v0_3_s10_r0037_import.py": ["sync:R-0037", "claude_r0037"],
+    "tests/test_v0_4_s13_s14_correction_source.py": ["s13_cleanup"]
+  },
+  "sync_files": {
+    "root": "/home/fansenwei/Desktop/Develop/PSSolver_sync",
+    "root_size_bytes": 2134703,
+    "files": {
+      "results/R-0021.result.json": [7444, "5f46e5991639f9c014ccff3cf8c43dabad8dcf59b426ec68dbd2b0add30c98f5"],
+      "results/R-0022.result.json": [15574, "9522b71a0b944319b377a205d528546b3bed7589230cee7eb06bde3ea2b3901a"],
+      "results/R-0023.result.json": [11586, "4570f85423eb0c6008eeaa141889afcb78e751f9cad003f887c222ae121ca3fc"],
+      "results/R-0024.result.json": [12682, "2b172299be82ac1141badd4bbf099b8865a467926122cabb2a330d564037f968"],
+      "results/R-0025.result.json": [11940, "fffe1689735b9a197bb0c8703fcfbfac3a1426c9a180cc97e2de7e6803e620f5"],
+      "results/R-0026.result.json": [11197, "9bc8bfa136c96e217ec731b812a512c96c72e76e4e0f163caa7b217c9cc34732"],
+      "results/R-0027.result.json": [10557, "abf7ec135a9ab5b91c71929d3ab89049e254149fba16ee9ba66e62ac6ef01dbd"],
+      "results/R-0028.result.json": [6953, "de2a2ea63f3ed2dbda06f70d580372af4a513b4e6e1efe77916aec525bb27bd3"],
+      "results/R-0029.result.json": [9665, "58d21c9e27fb1680b952a7171bf8eeb5884c7b6e3b6a37da67223030689ec2de"],
+      "results/R-0030.result.json": [12401, "6685b4cfede76b5d36ea48fbdcc05e6ae6f1d6673c84749f5cb547e5b6a8474d"],
+      "results/R-0031.result.json": [12036, "68135c2c6014a3b25e2e04bd43e78e4244e8ecf2b8f8ff0d997a9cb63705bff8"],
+      "results/R-0032.result.json": [10140, "ce87ee51b3f423f6fb3cb1ddb56f7b09dca96dd3d608bf797e50bd58f9e5aa4e"],
+      "results/R-0033.result.json": [8499, "8b0f709dc37c1bb631b4efb9f82f47353fc2e06485e7b6c6ee7613536988bd49"],
+      "results/R-0034.result.json": [9485, "0d242ae40dc8a0d5f5a67214995654d47ae4dfeb184fecfd25c0a7db45b57d30"],
+      "results/R-0035.result.json": [9536, "f6f94781b4681b7ed1ee2ddf33cfc259aa220666372c3f082ece32da49043c3c"],
+      "results/R-0036.result.json": [10311, "d7572772516ba1d6adbe0e34359cb1a8d9778425cdac47dcf75977964288580e"],
+      "results/R-0037.result.json": [10016, "878feb76d315a9292ebbb1883a3c4699771ffa354d585a444c0ac2b7bfa57c95"],
+      "decisions/D-0012.json": [1939, "fabffcace193d72dabc322b22e05aecbb7489fb3a5da833246a228b4e86d1936"],
+      "decisions/D-0013.json": [3356, "6ecd1b92a19fae5c0e66895b9b3216996a2a58d1c6d37fe8358331c8a6fd6f1f"]
+    }
+  },
+  "non_sync_resources": {
+    "cpu_6x60_v3": ["/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_2573dec_20261023_v3", 2631310, 215],
+    "cpu_diagnosis_v2": ["/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2", 4898880, 459],
+    "s09_closure_v2": ["/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v2", 4563400, 34],
+    "s09_closure_v1": ["/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v1", 2321408, 25],
+    "r0026_support_tar": ["/home/fansenwei/.pssolver_s09_r0026_local/provider_support_719ae76.tar", 21463040, "7500e889a01733d998ae08c121f12de00bf1d5a831f9eefdcc14fd763843b3cd"],
+    "r0026_rehearsal": ["/home/fansenwei/.pssolver_s09_r0026_local/rehearsal_v3/cpu_rehearsal.json", 12355, "a1bcf41e50dc1064e0772baadd048119ec4a4515f8c106c27914a43ca8353d2c"],
+    "claude_r0025": ["/home/fansenwei/pssolver_s09h100_claude_review_20261026_v1", 102946980, 7972],
+    "claude_r0026": ["/home/fansenwei/pssolver_s09recov_claude_review_20261026_v1", 126512811, 9974],
+    "claude_r0027": ["/home/fansenwei/pssolver_s09h100rv2_claude_review_20261026_v1", 54626954, 4058],
+    "claude_r0028": ["/home/fansenwei/pssolver_s09diag_claude_review_20261026_v1", 16615909, 1259],
+    "claude_r0029": ["/home/fansenwei/pssolver_s09diagrw_claude_review_20261026_v1", 24764567, 2159],
+    "claude_r0030": ["/home/fansenwei/pssolver_s09diagrw2_claude_review_20261026_v1", 6173493, 412],
+    "claude_r0035": ["/home/fansenwei/pssolver_s09closure_rw_claude_review_20261028_v1", 1654222, 51],
+    "claude_r0033": ["/home/fansenwei/pssolver_s10rw_claude_review_20261027_v1", 1608745, 39],
+    "claude_r0036": ["/home/fansenwei/pssolver_s10integ_claude_review_20261028_v1", 2730872, 58],
+    "claude_r0037": ["/home/fansenwei/pssolver_s10reach_claude_review_20261028_v1", 1641736, 52],
+    "s13_cleanup": ["/home/fansenwei/pssolver_v0_4_s13_workspace_cleanup_20261029_v1", 208757, 15]
+  },
+  "record_literal_only_resources": {
+    "description": "These paths are frozen record values but the current tests do not dereference them.",
+    "resources": {
+      "r0021_review": ["/home/fansenwei/pssolver_s08rec_claude_review_20261023_v1", 26380881],
+      "r0022_review": ["/home/fansenwei/pssolver_s09_claude_review_20261023_v1", 252143912],
+      "r0023_review": ["/home/fansenwei/pssolver_s09rw_claude_review_20261025_v1", 156124266],
+      "r0024_review": ["/home/fansenwei/pssolver_s09final_claude_review_20261025_v1", 96139759],
+      "d0008_a2_baseline": ["/home/fansenwei/pssolver_v0_2_1_claude_acceptance_20261020_v1/a2/venv_wheel", 5496661299]
+    }
+  },
+  "r8_effect": {
+    "historical_records": "remain byte-for-byte unchanged and retain their original absolute paths as historical facts",
+    "tests": "replace live absolute reads with repository-relative immutable evidence capsules or another user-confirmed self-contained source",
+    "large_archives": "remain external and content-addressed; a fresh clone must not require their local mount paths",
+    "successor_records": "forward-bind each changed test and the chosen capsule manifest without rewriting earlier records"
+  }
+}

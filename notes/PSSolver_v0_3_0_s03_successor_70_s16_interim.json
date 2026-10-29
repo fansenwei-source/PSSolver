@@ -1,0 +1,122 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 70,
+  "date": "2026-10-29",
+  "classification": "S16_R7_R9_COMPLETE_R8_INVENTORIED_AWAITING_D0015",
+  "git_identity": {
+    "baseline": "26c6602f42a3947243315805826a7392aa91b0c7",
+    "implementation": "38262ecd066003821ef954a46d12fe7c23bfe4f5",
+    "implementation_parent": "26c6602f42a3947243315805826a7392aa91b0c7",
+    "baseline_tree": "f1e784449bcf588b573b38fd5278b0774430d407",
+    "implementation_tree": "2f6fc1a146c84c72e675d9000cd89142e1f071a0"
+  },
+  "r7": {
+    "status": "implemented_pending_independent_review",
+    "canonical_helper_consumers": 22,
+    "identifier_helper_consumers": 9,
+    "mechanics": [
+      "compact finite key-sorted canonical JSON",
+      "canonical JSON SHA-256",
+      "single and dotted Python identifiers"
+    ],
+    "caller_owned_contracts_preserved": [
+      "public exception type",
+      "public exception message",
+      "identity JSON bytes",
+      "identity SHA-256"
+    ],
+    "excluded_by_design": [
+      "pretty-printed checkpoint documents",
+      "file and tensor byte digests",
+      "format-specific JSON normalization"
+    ]
+  },
+  "r9": {
+    "status": "implemented_pending_independent_review",
+    "newly_governed_source_layers": ["_root", "applications", "experimental"],
+    "all_internal_source_layers_governed": true,
+    "legacy_exception_count_before": 7,
+    "legacy_exception_count_after": 6,
+    "retired_edge": "pssolver.models.active_nematics.stokes -> pssolver.transforms",
+    "retired_edge_replacement": [
+      "pssolver.linear_solvers.stokes.plane_free_slip",
+      "pssolver.operators.tensor_divergence"
+    ],
+    "runtime_builder_identity_changed": false,
+    "gpu_specific_path_changed": false
+  },
+  "r8": {
+    "status": "inventory_complete_implementation_blocked_on_user_decision",
+    "inventory": {
+      "path": "notes/PSSolver_v0_4_0_s16_r8_inventory.json",
+      "sha256": "be0b0ca2923f88bd43909bf43e5d86f175271c0b35eadd2a61c7f79239879758",
+      "tests_with_live_absolute_dependencies": 18
+    },
+    "decision": {
+      "id": "D-0015",
+      "status": "proposed",
+      "sync_commit": "73b3db9694edb93acb379a45632dae52a4135d38",
+      "sha256": "46966d5a38b227740daf039b3703a0f4e4530da48435a77bb2f7f95b2f0abfa0",
+      "recommended_option": "A: repository-relative content-addressed minimal evidence capsules"
+    }
+  },
+  "historical_successor_sources": {
+    "pssolver/api/capabilities.py": ["a47759ae302350cc7743e837a4273c37fc3c1833dcb0e949f8901f6b258eed53", "88401f9e4e328c29863cf045f180f46131222b59414be12572a79733cbe430a5"],
+    "pssolver/api/runner.py": ["1a503cf502c313d51374e388437cf78176232f456a7112cfd6a42a627e37d29b", "51bf19762396d5c18a4aa20ca7560205ae1534c04c044eae06743045cff8d4c1"],
+    "pssolver/configuration/finite_q_anchoring.py": ["85544bea0d8858ecff4645a1caa3ae488ea193bb548f166855538aca8673e767", "a930207c069d3a490eb6433aeb72fcc39051ba904dce440f10e33faa8f175fa3"],
+    "pssolver/configuration/lifting.py": ["48689c4687ce8a61e4c4f10de4ae4f7356116cbc3c4e2edcb25d4e03bc420381", "bbe843ec58d2e1b4ed5bf3861ca119b2cb36623a816654284e0817c0b18248d1"],
+    "pssolver/configuration/plane_beris_edwards_schema_v1.py": ["c31ecb04659f7cdc18bcc43db81ddc1db2f695bfd07ed8bed08d4a9af80440d6", "36de74a3b2c44bb4e6fa35074f412e82fe528cfffbd8a65245e0f3bb6a24e731"],
+    "pssolver/configuration/robin.py": ["5bbeeac0c11f020fac979a8282f365625953db7a700933f7882367a2048ae123", "7f1ccb7154b01d353088ebc7449c0d1b8d8d69319382962db9158c31115c8630"],
+    "pssolver/configuration/simulation.py": ["e36d2ab3c0b9c99483c41afd6e69d82e5302f3d00012bd8c1919b9a378696319", "c0f695d0e0a5f66eb11a8d20c82a2da073f217e8d94768316d2744e7ab622e81"],
+    "pssolver/configuration/simulation_lowering.py": ["e853935785db52dedd9ff30f2d279abea30c129dc53d2491a4f210c50c9f1061", "6af45c88db7a85d4ad29a92f7dfda65ae226be8ff57290923c5e67db63329106"],
+    "pssolver/diagnostics/tensor_inventory.py": ["a1e811816337a228de06bf64bffbcbf8c8fd7c3650a299633261eb80804dad55", "a137890360e1a9c40615d5144ad0ed321ede522dcb65228498f23c273cd2fb1b"],
+    "pssolver/execution/dispatch.py": ["2e8552c850713469a4b291eb8d06ec3bb532dc8a8be2b175f4d6e16fdac0b435", "eb06eb1c9418de14a8e01a6d8926f0ba80ea555e25f808a124ecdf4943bbad51"],
+    "pssolver/experimental/_shadow_support.py": ["dc78e7ea61fc1fb5f623eb093605e4cb13532ee24007807ae172c6e0133e5f42", "be6ddb9ae402c4d624d0543e229745990a81f9fc7cf1fab20e1ce3a2eae1e527"],
+    "pssolver/functional/channel_checkpoint.py": ["65ed9518089e5b3dbfabfba7991ad84f41ffe2a0aa09c84ab7e15c73fcb44653", "c42d5bdf5af557b30fc2561696a131d886c16ef93ea13a0dacd61456ad3733e7"],
+    "pssolver/functional/checkpoint_identity.py": ["879c7fc60c8ef865e5f6b51808ffe9149668693c7dfb6695d561a448cfafaa68", "500e3a1a716be803345a897c5ec564c06a78572052ff1f1331be58d7dfca94ad"],
+    "pssolver/functional/contracts.py": ["1cd901427eb86388237b78b3ea1136e486ead6954864e9629d1aed7633435707", "9a4f22fe8f8e516057736356c3ae69380df25f25487c57553cefc10edbd0f895"],
+    "pssolver/functional/periodic_checkpoint.py": ["9124d1c8d2789b932d059a6feb533828bbaaf520c41c192e36582a0f0e1a9abf", "63fee29b16e9ec1b3b51b788add877b356df7325b7555d436a3161882aa38be2"],
+    "pssolver/io/checkpoint.py": ["f82b3114406a9fc5dc14ad9eea2af59da8a7d7c9ef54fe7350821027ef106433", "b62f9105b45b42fc7c2be1f12bcff178f79075bf17720bdde8fa3a75e8158e22"],
+    "pssolver/models/active_nematics/boundaries.py": ["2d2e2d7268d4ff714444591465a7584b98c453071959d2eb664a669990c88332", "a4f48a76bcc603dd2d3b928c500603776964117840b19a3398973f8dd056ec9d"],
+    "pssolver/models/active_nematics/stokes.py": ["38d327ab829a23ad472a9406c340deced99296cc1f3243b0397e3e9be8ac69fd", "6db242f7ba5a7105c604a65cb3ad22279aac2630e5d9b232d365194440600c87"],
+    "pssolver/planning/channel_compiled_v2.py": ["475ffed9716962e2fbc4db90e6ed745115221e21ad9b0f6a4e2d200701daa15f", "4f339f48517179b87b134c8416a425c12107685a9b79a95e1628bfe639a0649b"],
+    "pssolver/planning/construction.py": ["a63da8d8d7c3d182675713e75df77c0d65c08e8e5e0d42ad5dad61743c2cdc26", "510128d1f80c67a621331d45f756874424502d6b70f130de2feeb519450519e5"],
+    "pssolver/planning/lifting.py": ["0805518ea81c8ca13859dedc7af911d32b5efbe6f2f9b7908e0720823dbcc33c", "d1c64d649734d4a59d1a8a2fbafc41c971cc0043cf984ae80380f5aa7ca5d01b"],
+    "pssolver/planning/package_construction.py": ["e3c1cf32b7853aec9a1c5bccd613d1b734150415f343bdbdef2bef01e57a2f6e", "74a2560559cac05388609bffbc4ef555cb38fde796f4b6a9e812c67a0e6a4490"],
+    "pssolver/planning/robin.py": ["66fe6a46eb63e1268ecacb08396e73f77c61ea5bb704aad03d7a6836b8d81fd6", "8b624203e498bca32831a7d5a4c7b72416180e9414e94af9d4105f4a611c1db1"],
+    "pssolver/planning/simulation.py": ["903b5f1ea744d2e70b4f02b659c3294c8da289ffaa6d2e45da9c15471f641722", "f190003e93602559824b1e1baa783b595e594403f924c9cb3aeae3637f757854"],
+    "pssolver/runtime/finite_q_anchoring.py": ["e32d507062c51de95e0aa257064eaaadf0dc17cbb0f06ed6575a1bb00dea8d38", "db4eb4fd703b8e5c4b005024ee4695dd4a8f476af700df073b9742ad71520cc7"],
+    "pssolver/runtime/robin_scalar.py": ["dc69be26283b1d1e53848a1d186fae450de45bba127f773ef7e9c764e7c14a7e", "f8de4773cd77a352d6f5803466d7612b4945dc0a3cce3dcfc90e8bdeed240fe2"],
+    "pssolver/systems/equations.py": ["30ffb54cc197495f0cc01d8716923aaa5cc8ad3ae95fe7a1bd1796fbc53d3cd6", "3db06b762290f80c855548d1542ac3278eef94fb51ccebdf5ade8c7a811a3862"],
+    "tests/test_architecture_import_boundaries.py": ["3a256560cfcc2f662a8e4facf8c64d19da2dd8526e2eb3798a1ef28a8eb39cee", "d514af85967ce8910a9d576da09edcbcff43ee4684690038908fb8a61c0a80b4"]
+  },
+  "introduced_sources": {
+    "pssolver/core/_canonical.py": "3b7aa73da02cd3984d6d602262b62c181f9cb98ced824043a9bf6b0bf2c49505",
+    "pssolver/core/_identifiers.py": "07497218c97724917d4174a4207f36b068d0a274fe9c9d3d55f7957e161a07c2",
+    "tests/test_core_canonical_helpers.py": "f5f1782ab8cf2a906a28c92222f44ccec35939f83df1940c3a54fd404ff2c1f9"
+  },
+  "new_inventory_sources": {
+    "notes/PSSolver_v0_4_0_s16_r8_inventory.json": "be0b0ca2923f88bd43909bf43e5d86f175271c0b35eadd2a61c7f79239879758",
+    "notes/PSSolver_v0_4_0_s16_r8_inventory_zh.md": "426a8957594aaa1dd0a91cf45ed56df9b6269a9d65ff63240fb868a75edfa562",
+    "tests/test_v0_4_s16_r8_inventory.py": "e9cb4e23f2a2799d98e2d510fd1502990f8f5fe408eca0defb82bafb28087f45"
+  },
+  "scope": {
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false,
+    "r8_implementation_started": false
+  },
+  "authorization": {
+    "local_commits": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
