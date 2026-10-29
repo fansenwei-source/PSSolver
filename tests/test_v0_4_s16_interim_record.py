@@ -31,6 +31,16 @@ def test_s16_r7_r9_implementation_identity_and_sources_are_exact():
         cwd=ROOT,
         text=True,
     ).strip() == identity["implementation_parent"]
+    assert subprocess.check_output(
+        ["git", "rev-parse", f"{identity['baseline']}^{{tree}}"],
+        cwd=ROOT,
+        text=True,
+    ).strip() == record["tree_identity"]["baseline_tree"]
+    assert subprocess.check_output(
+        ["git", "rev-parse", f"{identity['implementation']}^{{tree}}"],
+        cwd=ROOT,
+        text=True,
+    ).strip() == record["tree_identity"]["implementation_tree"]
     for relative, successor in record["historical_successor_sources"].items():
         assert _sha256(
             subprocess.check_output(

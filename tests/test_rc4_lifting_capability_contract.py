@@ -216,8 +216,11 @@ def test_rc432_stages_stop_before_implementation_and_h100():
 def test_rc432_reviewed_sources_are_content_addressed():
     superseded_by_implementation = {
         "pssolver/api/capabilities.py",
+        "pssolver/configuration/simulation_lowering.py",
         "pssolver/configuration/public_simulation_runner.py",
+        "pssolver/models/active_nematics/stokes.py",
         "pssolver/operators/lifting.py",
+        "pssolver/planning/lifting.py",
         "pssolver/runtime/static_lifting.py",
         "pssolver/runtime/plane_legacy.py",
         "pssolver/applications/plane_beris_edwards.py",

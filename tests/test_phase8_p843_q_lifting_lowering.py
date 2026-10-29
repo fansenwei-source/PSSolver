@@ -329,6 +329,8 @@ def test_p843_record_freezes_lowering_only_scope():
         "pssolver/api/capabilities.py",
         "pssolver/configuration/simulation_binding.py",
         "pssolver/configuration/simulation_lowering.py",
+        "pssolver/configuration/simulation.py",
+        "pssolver/planning/simulation.py",
         "pssolver/models/active_nematics/__init__.py",
         "pssolver/models/active_nematics/boundaries.py",
     }

@@ -6,7 +6,9 @@
   "git_identity": {
     "baseline": "26c6602f42a3947243315805826a7392aa91b0c7",
     "implementation": "38262ecd066003821ef954a46d12fe7c23bfe4f5",
-    "implementation_parent": "26c6602f42a3947243315805826a7392aa91b0c7",
+    "implementation_parent": "26c6602f42a3947243315805826a7392aa91b0c7"
+  },
+  "tree_identity": {
     "baseline_tree": "f1e784449bcf588b573b38fd5278b0774430d407",
     "implementation_tree": "2f6fc1a146c84c72e675d9000cd89142e1f071a0"
   },
