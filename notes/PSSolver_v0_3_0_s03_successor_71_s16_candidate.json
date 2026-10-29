@@ -1,0 +1,96 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 71,
+  "date": "2026-10-29",
+  "classification": "S16_R7_R9_AND_NUMERICAL_EQUIVALENCE_CANDIDATE_PENDING_R0043",
+  "git_identity": {
+    "v0_3_0_release_source": "47473880534a66f6da940db82122c79cda48a86b",
+    "v0_4_contract": "26c6602f42a3947243315805826a7392aa91b0c7",
+    "r7_r9_implementation": "38262ecd066003821ef954a46d12fe7c23bfe4f5",
+    "numerical_support": "9e1b9561f858f85b50c4478fd2193064f7965b46",
+    "candidate_correction": "7574d41f28f50e45f36b63215ba85f1d98f1f9fb",
+    "candidate_correction_parent": "9e1b9561f858f85b50c4478fd2193064f7965b46"
+  },
+  "tree_identity": {
+    "v0_3_0_pssolver_tree": "48dc5b0c3a691566b9ce4dda18ea394dbf401f67",
+    "candidate_pssolver_tree": "e3afefcd312d1b6f7f1ed27f36465e50d7319004"
+  },
+  "candidate_correction": {
+    "reason": "The first reachable-only full-suite gate found that the shared identifier import violated the frozen tensor-free declaration boundary and that five immutable historical-record tests did not recognize the S-16 successor sources.",
+    "tensor_free_declaration_restored": true,
+    "channel_compiled_v2_matches_v0_3_0_bytes": true,
+    "historical_records_rewritten": false,
+    "historical_tests_advance_via_successor_70": true,
+    "first_full_gate_failures_preserved_in_external_evidence": 7,
+    "targeted_rework_gate": {
+      "passed": 83,
+      "failed": 0
+    }
+  },
+  "numerical_equivalence": {
+    "support": "benchmarks/verify_v0_4_s16_numerical_equivalence.py",
+    "support_sha256": "d4d7b05e56fcf42d51514255a02182d3a6a381aeec657dc467c8a2a9e47faf27",
+    "support_test": "tests/test_verify_v0_4_s16_numerical_equivalence.py",
+    "support_test_sha256": "4a86c1a5aa2214538f3db96996020704a6db5480bb44ccef2c4a329f2f9226c7",
+    "baseline": "v0.3.0",
+    "applications": ["Plane", "Periodic", "Channel"],
+    "runtime_families": 8,
+    "steps_per_family": 2,
+    "required_result": "initial and final tensors byte-identical",
+    "status": "passed_locally_pending_independent_review"
+  },
+  "r8": {
+    "implementation_started": false,
+    "inventory": "notes/PSSolver_v0_4_0_s16_r8_inventory.json",
+    "decision": "D-0015",
+    "decision_status": "proposed",
+    "recommended_option": "A"
+  },
+  "historical_successor_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_70_s16_interim.json": {
+      "historical_sha256": "435dcd453b75d0cfb019e8f11b7ff56412c26469af4455b1e0a8601c5a2afa7e",
+      "current_sha256": "51546e5ba97c89a246fb05da76e28f7e8c4cfb0b88277cd1ba0e238918fb2ab4"
+    },
+    "pssolver/planning/channel_compiled_v2.py": {
+      "historical_sha256": "4f339f48517179b87b134c8416a425c12107685a9b79a95e1628bfe639a0649b",
+      "current_sha256": "475ffed9716962e2fbc4db90e6ed745115221e21ad9b0f6a4e2d200701daa15f"
+    },
+    "tests/test_phase8_p842_plane_static_lifting.py": {
+      "historical_sha256": "d35a5f92996ab84361e39111abf33c430b63e42437c291046206e0a216f1cf21",
+      "current_sha256": "685dca44ca52ba177947afa0d84290c55338adfa42e35c412acde71a5797c38b"
+    },
+    "tests/test_phase8_p843_q_lifting_lowering.py": {
+      "historical_sha256": "a9795bd230f1a6f91fc0dd6af3732febb80d08929872741af802b46eed087fe1",
+      "current_sha256": "2247590d6ae43cd357b46d258823e5c9ade45cb039fdf049c06ebf2c91ed9ac8"
+    },
+    "tests/test_rc4_lifting_capability_contract.py": {
+      "historical_sha256": "b609f78cb7043a696b28f6caefa9beb0b1ffebe52d13b513ab06c3a887630da5",
+      "current_sha256": "faa5b3492b7b31bc703989c0ab6f737fc7a29142a49c4b4dec945691b8944803"
+    },
+    "tests/test_rc4_lifting_correctness_plan.py": {
+      "historical_sha256": "06edac1f1680f2f23899ee58bc155968b449c20bc9b54af85d66fd36f4ec15b5",
+      "current_sha256": "39414fe2b3000e681ed84d6ede94bf06455a749fac374c4b7d581b3a98f30b2a"
+    },
+    "tests/test_v0_4_s16_interim_record.py": {
+      "historical_sha256": "a0b475d296b123fd4748027fa66b4bcc1cf454e4f306e13d36e576f3b857c8b9",
+      "current_sha256": "e0e4ec5098096f1e329ef0103c1f42a281da31a47dcc3a94bfcbfc59b8ecae1f"
+    }
+  },
+  "scope": {
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "r8_implementation_started": false
+  },
+  "authorization": {
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
