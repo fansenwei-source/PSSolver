@@ -11,15 +11,18 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 
+from pssolver.core._identifiers import require_python_identifier
+
 
 CHANNEL_COMPILED_V2_IDENTITY = "compiled_channel_v2"
 CHANNEL_COMPILED_V2_SCHEMA_VERSION = 1
 
 
 def _identifier(value: object, description: str) -> str:
-    if not isinstance(value, str) or not value.isidentifier():
-        raise ValueError(f"{description} must be a Python identifier")
-    return value
+    return require_python_identifier(
+        value,
+        error=ValueError(f"{description} must be a Python identifier"),
+    )
 
 
 def _identifiers(values: object, description: str) -> tuple[str, ...]:

@@ -20,7 +20,9 @@ from pssolver.core.boundary import (
     BoundaryKind,
     BoundarySemantic,
 )
+from pssolver.core._canonical import canonical_json, canonical_sha256
 from pssolver.core.fields import FieldRole
+from pssolver.core._identifiers import require_python_identifier
 from pssolver.core.geometry import AxisTopology, GeometrySpec
 from pssolver.core.integrators import IntegratorSpec
 from pssolver.core.numerics import NumericsConfig
@@ -28,9 +30,10 @@ from pssolver.systems.equations import EquationSystemSpec
 
 
 def _identifier(value: object, description: str) -> str:
-    if not isinstance(value, str) or not value.isidentifier():
-        raise ValueError(f"{description} must be a Python identifier")
-    return value
+    return require_python_identifier(
+        value,
+        error=ValueError(f"{description} must be a Python identifier"),
+    )
 
 
 def _json_mapping(value: object, description: str) -> Mapping[str, object]:
@@ -41,39 +44,16 @@ def _json_mapping(value: object, description: str) -> Mapping[str, object]:
         for name in value
     ):
         raise ValueError(f"{description} keys must be Python identifiers")
-    try:
-        encoded = json.dumps(
-            dict(value),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
-    except (TypeError, ValueError) as exc:
-        raise ValueError(
-            f"{description} must be finite and JSON-compatible"
-        ) from exc
+    encoded = canonical_json(dict(value), description=description)
     return MappingProxyType(json.loads(encoded))
 
 
 def _mapping_metadata(value: Mapping[str, object]) -> dict[str, object]:
-    return json.loads(
-        json.dumps(
-            dict(value),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
-    )
+    return json.loads(canonical_json(dict(value)))
 
 
 def _sha256(value: Mapping[str, object]) -> str:
-    payload = json.dumps(
-        dict(value),
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()
+    return canonical_sha256(dict(value))
 
 
 class InitialConditionSource(str, Enum):

@@ -17,14 +17,17 @@ import json
 from types import MappingProxyType
 
 from pssolver.core.fields import FieldRole
+from pssolver.core._canonical import canonical_json
+from pssolver.core._identifiers import require_python_identifier
 
 from .algebraic import AlgebraicSystemSpec
 
 
 def _identifier(value: object, description: str) -> str:
-    if not isinstance(value, str) or not value.isidentifier():
-        raise ValueError(f"{description} must be a Python identifier")
-    return value
+    return require_python_identifier(
+        value,
+        error=ValueError(f"{description} must be a Python identifier"),
+    )
 
 
 def _identifiers(
@@ -59,17 +62,7 @@ def _json_mapping(
         for name in value
     ):
         raise ValueError(f"{description} keys must be Python identifiers")
-    try:
-        encoded = json.dumps(
-            dict(value),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
-    except (TypeError, ValueError) as exc:
-        raise ValueError(
-            f"{description} must be finite and JSON-compatible"
-        ) from exc
+    encoded = canonical_json(dict(value), description=description)
     normalized = json.loads(encoded)
     return MappingProxyType(normalized), encoded
 

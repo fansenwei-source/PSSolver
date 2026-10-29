@@ -6,6 +6,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 from pssolver.core import GeometrySpec
+from pssolver.core._identifiers import require_python_identifier
 
 from .algebraic import (
     AlgebraicSolverContext,
@@ -30,9 +31,10 @@ ExplicitRHSExecutorFactory = Callable[
 
 
 def _identifier(value: object, description: str) -> str:
-    if not isinstance(value, str) or not value.isidentifier():
-        raise ValueError(f"{description} must be a Python identifier")
-    return value
+    return require_python_identifier(
+        value,
+        error=ValueError(f"{description} must be a Python identifier"),
+    )
 
 
 @dataclass(frozen=True, slots=True)

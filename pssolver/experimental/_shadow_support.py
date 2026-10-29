@@ -10,6 +10,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from pssolver.core._canonical import canonical_sha256
 from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics import BerisEdwardsPlaneCoupledModel
 
@@ -23,13 +24,7 @@ SHADOW_SCRIPT_ID = "experimental_plane_beris_edwards_shadow"
 
 
 def canonical_json_sha256(value: Mapping[str, object]) -> str:
-    payload = json.dumps(
-        dict(value),
-        allow_nan=False,
-        sort_keys=True,
-        separators=(",", ":"),
-    ).encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()
+    return canonical_sha256(dict(value))
 
 
 def file_sha256(path: str | Path) -> str:

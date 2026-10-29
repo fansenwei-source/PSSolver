@@ -18,6 +18,8 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from pssolver.core._canonical import canonical_sha256
+
 from pssolver.io.checkpoint import (
     CHECKPOINT_INTEGRITY_SEALED_SHA256,
     CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
@@ -94,13 +96,7 @@ _PRODUCTION_STATE_COMPONENTS = (*Q_COMPONENTS, *VELOCITY_COMPONENTS, "p")
 
 
 def _canonical_sha256(value: object) -> str:
-    encoded = json.dumps(
-        value,
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
-    return hashlib.sha256(encoded).hexdigest()
+    return canonical_sha256(value)
 
 
 def _integrity_status(metadata: Mapping[str, object]) -> str:

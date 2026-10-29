@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from pssolver.core._identifiers import require_python_identifier
+
 
 _VALID_DECLARATION_KINDS = frozenset(
     {"model", "geometry", "boundary_policy"}
@@ -15,9 +17,10 @@ _VALID_DECLARATION_KINDS = frozenset(
 
 
 def _identifier(value: object, description: str) -> str:
-    if not isinstance(value, str) or not value.isidentifier():
-        raise ValueError(f"{description} must be a Python identifier")
-    return value
+    return require_python_identifier(
+        value,
+        error=ValueError(f"{description} must be a Python identifier"),
+    )
 
 
 @dataclass(frozen=True, slots=True)

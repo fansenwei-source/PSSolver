@@ -10,6 +10,8 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Callable
 
+from pssolver.core._canonical import canonical_sha256
+
 from .results import SimulationResult, SimulationRunStatus
 from .simulation import Simulation
 
@@ -32,13 +34,7 @@ def _frozen_json(value: Mapping[str, object]) -> Mapping[str, object]:
 
 
 def _canonical_sha256(value: object) -> str:
-    payload = json.dumps(
-        value,
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()
+    return canonical_sha256(value)
 
 
 def _compiled_simulation_identity(

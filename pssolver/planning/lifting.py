@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from enum import Enum
 import hashlib
 import json
+
+from pssolver.core._canonical import canonical_sha256
 import math
 from numbers import Real
 
@@ -20,13 +22,7 @@ STATIC_LIFTING_PLAN_SCHEMA_VERSION = 1
 
 
 def _canonical_sha256(value: object) -> str:
-    payload = json.dumps(
-        value,
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()
+    return canonical_sha256(value)
 
 
 def _digest(value: object, description: str) -> str:

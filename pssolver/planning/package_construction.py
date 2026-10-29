@@ -11,6 +11,9 @@ from dataclasses import dataclass
 import hashlib
 import json
 
+from pssolver.core._identifiers import require_dotted_python_identifier
+from pssolver.core._canonical import canonical_sha256
+
 from .construction import RuntimeConstructionKind
 
 
@@ -18,11 +21,13 @@ PACKAGE_RUNTIME_CONSTRUCTION_PLAN_SCHEMA_VERSION = 1
 
 
 def _qualified_name(value: object, description: str) -> str:
-    if not isinstance(value, str) or not value:
-        raise ValueError(f"{description} must be a non-empty string")
-    if any(not part.isidentifier() for part in value.split(".")):
-        raise ValueError(f"{description} must be a dotted Python identifier")
-    return value
+    return require_dotted_python_identifier(
+        value,
+        empty_error=ValueError(f"{description} must be a non-empty string"),
+        component_error=ValueError(
+            f"{description} must be a dotted Python identifier"
+        ),
+    )
 
 
 def _sha256(value: object, description: str) -> str:
@@ -81,13 +86,7 @@ class PackageRuntimeConstructionPlan:
         }
 
     def canonical_sha256(self) -> str:
-        payload = json.dumps(
-            self.to_metadata(),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
-        return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+        return canonical_sha256(self.to_metadata())
 
 
 __all__ = [

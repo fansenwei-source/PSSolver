@@ -18,6 +18,8 @@ import hashlib
 import json
 from typing import TYPE_CHECKING
 
+from pssolver.core._canonical import canonical_sha256
+
 from .plane_beris_edwards_declarations import DEFAULT_PLANE_RUNTIME_PATH
 
 if TYPE_CHECKING:
@@ -190,13 +192,7 @@ class PlaneBerisEdwardsSchemaV1CompatibilitySerializer:
 
 
 def _canonical_sha256(value: object) -> str:
-    encoded = json.dumps(
-        value,
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
-    return hashlib.sha256(encoded).hexdigest()
+    return canonical_sha256(value)
 
 
 PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER = (

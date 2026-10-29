@@ -16,6 +16,7 @@ import torch
 
 from pssolver.configuration.device_tokens import validate_execution_device
 from pssolver.configuration.simulation import SimulationSpec
+from pssolver.core._identifiers import require_python_identifier
 from pssolver.io.checkpoint import (
     CHECKPOINT_INTEGRITY_SEALED_SHA256,
     CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
@@ -42,9 +43,12 @@ _DTYPES = {
 
 
 def _identifier(value: object, description: str) -> str:
-    if not isinstance(value, str) or not value.isidentifier():
-        raise FunctionalValueError(f"{description} must be a Python identifier")
-    return value
+    return require_python_identifier(
+        value,
+        error=FunctionalValueError(
+            f"{description} must be a Python identifier"
+        ),
+    )
 
 
 def _nonempty(value: object, description: str) -> str:

@@ -14,6 +14,8 @@ import math
 
 import torch
 
+from pssolver.core._canonical import canonical_json, canonical_sha256
+
 from pssolver.execution.state import (
     IntegratorProgress,
     RepresentationLedger,
@@ -27,23 +29,11 @@ from pssolver.planning.robin import PlaneRobinScalarLoweringPlan
 
 
 def _canonical_json(value: object, description: str) -> str:
-    try:
-        return json.dumps(
-            value,
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
-    except (TypeError, ValueError) as exc:
-        raise ValueError(
-            f"{description} must be finite and JSON-compatible"
-        ) from exc
+    return canonical_json(value, description=description)
 
 
 def _sha256_json(value: object) -> str:
-    return hashlib.sha256(
-        _canonical_json(value, "identity").encode("utf-8")
-    ).hexdigest()
+    return canonical_sha256(value, description="identity")
 
 
 def _tensor_sha256(value: torch.Tensor) -> str:

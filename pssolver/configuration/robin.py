@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 import json
 
+from pssolver.core._canonical import canonical_sha256
+
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.core.boundary import (
     BoundaryKind,
@@ -25,13 +27,7 @@ from pssolver.planning.robin import (
 
 
 def _sha256(value: object) -> str:
-    payload = json.dumps(
-        value,
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()
+    return canonical_sha256(value)
 
 
 class RobinImpedanceSupportError(ValueError):

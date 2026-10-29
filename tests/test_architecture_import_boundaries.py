@@ -28,6 +28,35 @@ class ImportEdge:
 # Allowed internal dependency layers for packages governed in Phase 0.
 # Applications are composition roots and are checked separately below.
 ALLOWED_INTERNAL_LAYERS = {
+    # Top-level modules are compatibility facades and composition roots.  S-16
+    # brings them under the same layer ratchet instead of silently skipping
+    # every dependency whose source did not have a package subdirectory.
+    "_root": frozenset(
+        {
+            "_root",
+            "adapters",
+            "api",
+            "applications",
+            "backends",
+            "boundaries",
+            "configuration",
+            "control",
+            "core",
+            "diagnostics",
+            "execution",
+            "experimental",
+            "functional",
+            "geometries",
+            "io",
+            "linear_solvers",
+            "models",
+            "operators",
+            "planning",
+            "presets",
+            "runtime",
+            "workflows",
+        }
+    ),
     "core": frozenset({"core"}),
     "systems": frozenset({"core", "systems"}),
     "geometries": frozenset({"core", "geometries"}),
@@ -49,7 +78,9 @@ ALLOWED_INTERNAL_LAYERS = {
         {"backends", "core", "linear_solvers", "operators", "planning"}
     ),
     "integrators": frozenset({"core", "execution", "integrators", "planning"}),
-    "models": frozenset({"core", "execution", "models"}),
+    "models": frozenset(
+        {"core", "execution", "linear_solvers", "models", "operators"}
+    ),
     "adapters": frozenset({"adapters", "core", "planning"}),
     "presets": frozenset({"models", "presets"}),
     "configuration": frozenset(
@@ -79,36 +110,66 @@ ALLOWED_INTERNAL_LAYERS = {
     ),
     "workflows": frozenset(
         {
+            "_root",
             "configuration",
-            "errors",
             "io",
             "models",
-            "run_metadata",
             "runtime",
             "workflows",
         }
     ),
     "io": frozenset({"core", "io", "runtime"}),
-    "control": frozenset({"control", "models", "snapshots"}),
+    "control": frozenset({"_root", "control", "models"}),
+    "applications": frozenset(
+        {
+            "_root",
+            "applications",
+            "configuration",
+            "io",
+            "models",
+            "operators",
+            "planning",
+            "runtime",
+            "workflows",
+        }
+    ),
+    "experimental": frozenset(
+        {
+            "_root",
+            "adapters",
+            "configuration",
+            "core",
+            "diagnostics",
+            "execution",
+            "experimental",
+            "geometries",
+            "integrators",
+            "io",
+            "linear_solvers",
+            "models",
+            "operators",
+            "planning",
+        }
+    ),
     # S-10 brings the post-Phase-9 public and functional layers under the
     # executable ratchet.  These sets freeze the dependencies that exist at
     # the S-10 baseline; adding a new layer edge now requires explicit review.
     "api": frozenset(
         {
+            "_root",
             "api",
             "applications",
             "configuration",
             "core",
-            "errors",
             "planning",
             "systems",
         }
     ),
     "boundaries": frozenset({"boundaries", "core", "systems"}),
-    "diagnostics": frozenset({"diagnostics"}),
+    "diagnostics": frozenset({"core", "diagnostics"}),
     "functional": frozenset(
         {
-            "_version",
+            "_root",
             "applications",
             "configuration",
             "core",
@@ -134,7 +195,6 @@ EXPECTED_LEGACY_EXCEPTIONS = {
         "pssolver.runtime.channel_application_bridge",
         "pssolver.channel",
     ),
-    ImportEdge("pssolver.models.active_nematics.stokes", "pssolver.transforms"),
     ImportEdge("pssolver.runtime.plane_legacy", "pssolver.integrator"),
     ImportEdge("pssolver.runtime.plane_legacy", "pssolver.solver"),
     ImportEdge(
@@ -324,6 +384,10 @@ def _known_internal_modules() -> frozenset[str]:
 
 
 KNOWN_INTERNAL_MODULES = _known_internal_modules()
+PACKAGE_LAYERS = frozenset(
+    path.parent.name
+    for path in PACKAGE_ROOT.glob("*/__init__.py")
+)
 
 
 def _from_import_targets(path: Path, node: ast.ImportFrom) -> set[str]:
@@ -381,7 +445,18 @@ def _layer(module: str) -> str:
     parts = module.split(".")
     if len(parts) < 2 or parts[0] != "pssolver":
         return ""
+    if parts[1] not in PACKAGE_LAYERS:
+        return "_root"
     return parts[1]
+
+
+def test_every_internal_source_layer_is_governed_by_the_ratchet():
+    observed = {
+        _layer(_module_name(path))
+        for path in PACKAGE_ROOT.rglob("*.py")
+    }
+    observed.discard("")
+    assert observed <= set(ALLOWED_INTERNAL_LAYERS)
 
 
 def _all_edges() -> set[ImportEdge]:

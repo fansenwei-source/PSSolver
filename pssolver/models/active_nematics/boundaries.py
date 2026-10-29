@@ -12,6 +12,8 @@ from dataclasses import dataclass
 import hashlib
 import json
 import math
+
+from pssolver.core._canonical import canonical_sha256
 from numbers import Real
 from typing import Any
 
@@ -45,13 +47,7 @@ Q_COMPONENT_METRIC = (
 
 
 def _canonical_sha256(value: object) -> str:
-    payload = json.dumps(
-        value,
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()
+    return canonical_sha256(value)
 
 
 def _side(value: BoundarySide | str) -> BoundarySide:

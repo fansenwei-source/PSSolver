@@ -4,8 +4,10 @@ import math
 
 import torch
 
-from pssolver.transforms import (
+from pssolver.linear_solvers.stokes.plane_free_slip import (
     FreeSlipModalStokesSolver,
+)
+from pssolver.operators.tensor_divergence import (
     projected_common_basis_stress_divergence,
     projected_distortion_stress_divergence,
 )

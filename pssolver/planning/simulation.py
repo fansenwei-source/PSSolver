@@ -17,6 +17,11 @@ import math
 from pssolver.core.boundary import BoundaryKind
 from pssolver.core.fields import FieldRole
 from pssolver.core.geometry import AxisTopology
+from pssolver.core._canonical import canonical_json
+from pssolver.core._identifiers import (
+    require_dotted_python_identifier,
+    require_python_identifier,
+)
 
 from .plan import TransformKind
 from .lifting import StaticLiftingPlan
@@ -26,19 +31,20 @@ SIMULATION_LOWERING_PLAN_SCHEMA_VERSION = 1
 
 
 def _identifier(value: object, description: str) -> str:
-    if not isinstance(value, str) or not value.isidentifier():
-        raise ValueError(f"{description} must be a Python identifier")
-    return value
+    return require_python_identifier(
+        value,
+        error=ValueError(f"{description} must be a Python identifier"),
+    )
 
 
 def _qualified_name(value: object, description: str) -> str:
-    if not isinstance(value, str) or not value:
-        raise ValueError(f"{description} must be a non-empty string")
-    if any(not part.isidentifier() for part in value.split(".")):
-        raise ValueError(
+    return require_dotted_python_identifier(
+        value,
+        empty_error=ValueError(f"{description} must be a non-empty string"),
+        component_error=ValueError(
             f"{description} must be a dotted Python identifier"
-        )
-    return value
+        ),
+    )
 
 
 def _string_tuple(values: object, description: str) -> tuple[str, ...]:
@@ -61,17 +67,7 @@ def _string_tuple(values: object, description: str) -> tuple[str, ...]:
 
 
 def _canonical_json(value: object, description: str) -> str:
-    try:
-        return json.dumps(
-            value,
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
-    except (TypeError, ValueError) as exc:
-        raise ValueError(
-            f"{description} must be finite and JSON-compatible"
-        ) from exc
+    return canonical_json(value, description=description)
 
 
 class BasisProvenance(str, Enum):

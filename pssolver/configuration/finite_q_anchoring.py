@@ -7,6 +7,8 @@ import hashlib
 import json
 import math
 
+from pssolver.core._canonical import canonical_json, canonical_sha256
+
 from pssolver.configuration.robin import lower_plane_robin_component_pilot
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.core.boundary import (
@@ -29,16 +31,11 @@ from pssolver.planning.robin import PlaneRobinScalarLoweringPlan
 
 
 def _canonical_json(value: object) -> str:
-    return json.dumps(
-        value,
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    )
+    return canonical_json(value)
 
 
 def _sha256(value: object) -> str:
-    return hashlib.sha256(_canonical_json(value).encode("utf-8")).hexdigest()
+    return canonical_sha256(value)
 
 
 def _require_free_slip_pressure_boundaries(simulation: SimulationSpec) -> None:

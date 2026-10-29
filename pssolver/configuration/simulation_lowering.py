@@ -13,6 +13,8 @@ from enum import Enum
 import json
 from typing import NoReturn
 
+from pssolver.core._canonical import canonical_json
+
 from pssolver.core.boundary import (
     BoundaryKind,
     BoundarySemantic,
@@ -175,12 +177,7 @@ def _reject(
 
 
 def _canonical_json(value: object) -> str:
-    return json.dumps(
-        value,
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    )
+    return canonical_json(value)
 
 
 def _field_lookup(simulation: SimulationSpec):
