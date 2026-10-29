@@ -33,8 +33,8 @@
   "status_counts": {
     "open": 0,
     "registered": 0,
-    "claimed_fixed": 3,
-    "verified": 47,
+    "claimed_fixed": 0,
+    "verified": 50,
     "deferred": 2,
     "accepted": 2,
     "coverage_gap": 0
@@ -862,8 +862,9 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "eee4487658eada196ce3916cb08bd646da4993c6",
+      "verified_by": "R-0042",
       "target_release": "0.4 S-14",
       "notes": "The live changelog said no memory threshold was relaxed, but D-0013 accepted one bounded peak-reserved exception for the two Channel R512x40x40 float32 cells. S-14 corrects the live changelog without changing the immutable v0.3.0rc1 or v0.3.0 tag content, Release text, assets, thresholds, or qualification evidence."
     },
@@ -877,8 +878,9 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "eee4487658eada196ce3916cb08bd646da4993c6",
+      "verified_by": "R-0042",
       "target_release": "0.4 S-14",
       "notes": "The R1-R9 entry still said S-10 integration awaited a decision after R-0031. D-0013 resolved that boundary, R-0037 verified S-10, A-0044 integrated it, and D-0014 schedules the remaining work in S-16 through S-18. The deferred status and D-0011 decision remain unchanged."
     },
@@ -892,8 +894,9 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "eee4487658eada196ce3916cb08bd646da4993c6",
+      "verified_by": "R-0042",
       "target_release": "0.4 S-14",
       "notes": "Successor 66 compresses G-01 through G-08 to PASS even though G-06 passed with the narrow D-0013 bounded peak-reserved exception. S-14 adds a forward correction and does not rewrite successor 66, the frozen analyzer, any threshold, or any published artifact."
     }

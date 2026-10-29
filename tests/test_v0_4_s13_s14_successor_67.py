@@ -73,10 +73,22 @@ def test_successor_67_records_only_the_three_claims_and_two_forward_corrections(
 def test_successor_67_advances_every_existing_changed_source_forward_only() -> None:
     record = _read(RECORD)
     for relative, registration in record["historical_successor_sources"].items():
-        assert _sha256(ROOT / relative) == registration["current_sha256"]
-        assert resolve_s03_successor(relative, registration["historical_sha256"]) == (
-            registration["current_sha256"]
-        )
+        assert resolve_s03_successor(
+            relative, registration["historical_sha256"]
+        ) == _sha256(ROOT / relative)
+        recorded_current = subprocess.run(
+            [
+                "git",
+                "show",
+                f"0cbc7994ae7daf8c32d9cf845a634da6798e89e5:{relative}",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+        assert hashlib.sha256(recorded_current).hexdigest() == registration[
+            "current_sha256"
+        ]
         historical = subprocess.run(
             ["git", "show", f"9f2874458d9293f972ab89c78097db2fd55e5dc8:{relative}"],
             cwd=ROOT,

@@ -2,16 +2,16 @@
 
 日期：2026-10-27
 
-本登记表是可持续维护的 evidence-only successor，自 `D-0010` / `S-01` 起以
-`dev/0.3` 为主副本。历史发布记录保持逐字节不变；
+本登记表是可持续维护的 evidence-only successor，自 `D-0014` / `S-14` 起以
+`dev/0.4` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 51 条：
+当前共登记 54 条：
 
 - `open`：0；
 - `registered`：0；
 - `claimed_fixed`：0；
-- `verified`：47；
+- `verified`：50；
 - `deferred`：2；
 - `accepted`：2；
 - `coverage_gap`：0。
@@ -192,7 +192,8 @@
     G-06 含 `D-0013` 的窄范围有界例外。S-14 只做向前更正，不改写 successor 66。
 
 上述 `V-47`、`V-48`、`V-49` 的更正源均为 `eee4487658eada196ce3916cb08bd646da4993c6`，
-当前状态为 `claimed_fixed`，等待 R-0042 独立复核。
+并已由 `R-0042` 独立验证为 `verified`。S-13 已完成；S-14 只剩单独授权的
+`dev/0.4` 非强制推送。
 
 ## Control 路径
 

@@ -1,0 +1,116 @@
+{
+  "schema": "pssolver.v0_4.s14.r0042_import.v1",
+  "created_at": "2026-10-29T15:36:30-04:00",
+  "plan_steps": [
+    "S-13",
+    "S-14"
+  ],
+  "classification": "PASS_R0042_S13_S14_REVIEW",
+  "git_identity": {
+    "reviewed_candidate": "0cbc7994ae7daf8c32d9cf845a634da6798e89e5",
+    "correction_source": "eee4487658eada196ce3916cb08bd646da4993c6",
+    "branch": "dev/0.4",
+    "record_commit_is_reviewed_candidate": false,
+    "pushed": false
+  },
+  "sync_result": {
+    "id": "R-0042",
+    "path": "PSSolver_sync/results/R-0042.result.json",
+    "sha256": "754cac81578be9fe61fdda745eff9e03d106b4ac1e65ef3722b2bc82db052616",
+    "sync_commit": "ca9e168edc45c2d8d4c8104ec375363fe065ef24",
+    "classification": "PASS"
+  },
+  "independent_archive": {
+    "path": "/home/fansenwei/pssolver_v0_4_claude_s13_s14_review_20261029_v1",
+    "checksums_entries": 38,
+    "checksums_sha256": "248f43c488e47358e7718d5166b21083d0d685ae355b9d82d2e8138e4e23621c",
+    "complete_present": true,
+    "final_report_sha256": "abc5686c358dd39f77345e46ecdbf3da4af0e0ea0920fa0c9eb778090dac5286",
+    "summary_sha256": "9d39fbdc9b5386d7f94085fcbb8b56edcd8ad04e6372b23f6631341237564c4e"
+  },
+  "review_outcome": {
+    "release_blockers": [],
+    "new_findings": [],
+    "S-13": "PASS_AND_MARKED_DONE",
+    "S-14": "PASS_AWAITING_SEPARATELY_AUTHORIZED_PUSH"
+  },
+  "registry_updates": {
+    "V-47": {
+      "status": "verified",
+      "fixed_in": "eee4487658eada196ce3916cb08bd646da4993c6",
+      "verified_by": "R-0042"
+    },
+    "V-48": {
+      "status": "verified",
+      "fixed_in": "eee4487658eada196ce3916cb08bd646da4993c6",
+      "verified_by": "R-0042"
+    },
+    "V-49": {
+      "status": "verified",
+      "fixed_in": "eee4487658eada196ce3916cb08bd646da4993c6",
+      "verified_by": "R-0042"
+    }
+  },
+  "immutable_predecessor": {
+    "path": "notes/PSSolver_v0_3_0_s03_successor_67_s13_s14_corrections.json",
+    "sha256": "51f9519060cd228172a7ff7cd5ae600e73315d1e5030910d9eb2b8a42c58c62c",
+    "rewritten": false
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "5597d4c4babf7406dc73ac74172d24c524252ee4cdb4121aee99e693908f8610",
+      "accepted_predecessor_sha256": [
+        "5597d4c4babf7406dc73ac74172d24c524252ee4cdb4121aee99e693908f8610"
+      ],
+      "current_sha256": "6aa7f8d1d057817744cbfcd9f54c58f24c0a91c71c31d69f63c063a89c26c4e0",
+      "reason": "Import the exact R-0042 registry updates for V-47, V-48 and V-49 without changing their correction source."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "3dd13c4a9b7de1f46c934644abfef731e2b55d390b0e897661124357cdfab258",
+      "accepted_predecessor_sha256": [
+        "3dd13c4a9b7de1f46c934644abfef731e2b55d390b0e897661124357cdfab258"
+      ],
+      "current_sha256": "9953a1054dee84d4fd2ad647f32ffdf48017343135ccbe1e5bdef9fa4fc9a995",
+      "reason": "Synchronize the live Chinese registry count, primary ref and R-0042 verification outcome."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "1f3fa75e81f4b110948fc50df9b67e75aacdbc7a945306f6a599ca268df8af68",
+      "accepted_predecessor_sha256": [
+        "1f3fa75e81f4b110948fc50df9b67e75aacdbc7a945306f6a599ca268df8af68"
+      ],
+      "current_sha256": "ad557b4cda24c208ed31264adb9a6ebf53ea2a513aab0203d40eec3249232e6a",
+      "reason": "Bind the terminal 50-verified registry status counts after R-0042."
+    },
+    "tests/test_v0_4_s13_s14_successor_67.py": {
+      "historical_sha256": "366059bba46f586c1c78dd8d20f1c2ca00b36f738f2fd1aed2f8b566745514da",
+      "accepted_predecessor_sha256": [
+        "366059bba46f586c1c78dd8d20f1c2ca00b36f738f2fd1aed2f8b566745514da"
+      ],
+      "current_sha256": "f218e624dc99f098aa4077de3ae69d7eb33115d4ef69ddcdd5a60285c68cfb9e",
+      "reason": "Keep successor 67 historical while resolving its registered sources through later forward successors."
+    }
+  },
+  "new_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_68_r0042_import_zh.md": "d6a4253cffabd13bf8ebad6b30daf2c900b0cd410b25cb89a6f89f1b4231cd1e",
+    "tests/test_v0_4_s14_r0042_import.py": "692a1da5f0497b655c0e983bb439598e433a6478584cdf6d417c3a2950f4f798"
+  },
+  "scope": {
+    "records_and_tests_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "version_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_import": true,
+    "push": false,
+    "tag": false,
+    "github_release": false,
+    "pypi": false,
+    "hpcc_or_slurm": false
+  },
+  "next_action": "separately_authorized_dev_0_4_push"
+}

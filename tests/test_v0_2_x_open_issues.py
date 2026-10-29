@@ -54,8 +54,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
         "registered": 0,
-        "claimed_fixed": 3,
-        "verified": 47,
+        "claimed_fixed": 0,
+        "verified": 50,
         "deferred": 2,
         "accepted": 2,
         "coverage_gap": 0,
@@ -258,7 +258,7 @@ def test_live_registry_tracks_the_current_development_line():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == {"V-47", "V-48", "V-49"}
+    assert claimed == set()
     s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
@@ -540,7 +540,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == {"V-47", "V-48", "V-49"}
+    } == set()
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (
@@ -566,11 +566,11 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     assert issues["A3-18"]["verified_by"] == "R-0025"
 
 
-def test_s14_corrections_are_claimed_at_the_exact_source_commit():
+def test_s14_corrections_are_verified_at_the_exact_source_commit():
     issues = _issues()
     for issue_id in ("V-47", "V-48", "V-49"):
         item = issues[issue_id]
-        assert item["status"] == "claimed_fixed"
+        assert item["status"] == "verified"
         assert item["fixed_in"] == (
             "eee4487658eada196ce3916cb08bd646da4993c6"
         )
@@ -582,6 +582,7 @@ def test_s14_corrections_are_claimed_at_the_exact_source_commit():
         assert item["source_report"] == (
             "PSSolver_sync/plan/roadmap.json S-14 (D-0014)"
         )
+        assert item["verified_by"] == "R-0042"
     assert "D-0013" in issues["V-47"]["notes"]
     assert "D-0014" in issues["V-48"]["notes"]
     assert "successor 66" in issues["V-49"]["notes"]
