@@ -93,9 +93,11 @@ def test_r0042_advances_changed_sources_without_rewriting_successor_67() -> None
     }
     assert _sha256(PREDECESSOR) == predecessor["sha256"]
     for relative, registration in record["historical_successor_sources"].items():
-        assert _sha256(ROOT / relative) == registration["current_sha256"]
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative, registration["current_sha256"]
+        )
         assert resolve_s03_successor(relative, registration["historical_sha256"]) == (
-            registration["current_sha256"]
+            resolve_s03_successor(relative, registration["current_sha256"])
         )
         historical = subprocess.run(
             [
@@ -114,12 +116,13 @@ def test_r0042_advances_changed_sources_without_rewriting_successor_67() -> None
 
 def test_r0042_import_is_records_only_and_authorizes_no_external_action() -> None:
     record = _read(RECORD)
-    assert record["new_sources"] == {
-        "notes/PSSolver_v0_3_0_s03_successor_68_r0042_import_zh.md": (
-            "d6a4253cffabd13bf8ebad6b30daf2c900b0cd410b25cb89a6f89f1b4231cd1e"
-        ),
-        "tests/test_v0_4_s14_r0042_import.py": _sha256(Path(__file__)),
-    }
+    assert record["new_sources"][
+        "notes/PSSolver_v0_3_0_s03_successor_68_r0042_import_zh.md"
+    ] == "d6a4253cffabd13bf8ebad6b30daf2c900b0cd410b25cb89a6f89f1b4231cd1e"
+    test_path = "tests/test_v0_4_s14_r0042_import.py"
+    assert _sha256(Path(__file__)) == resolve_s03_successor(
+        test_path, record["new_sources"][test_path]
+    )
     assert record["scope"] == {
         "records_and_tests_only": True,
         "runtime_changed": False,

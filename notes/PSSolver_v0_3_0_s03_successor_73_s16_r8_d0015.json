@@ -67,6 +67,7 @@
     "tests/test_v0_3_s10_r0036_rework.py": {"historical_sha256": "94287f8942772985cd3cfe1f18f55eb947d46fb356f38056fb1972d36a1465dd", "current_sha256": "b5b935d91da394dfd01cab09e67ae90c260f2c78d15801667c727058d2acf747"},
     "tests/test_v0_3_s10_r0037_import.py": {"historical_sha256": "8f3c429d57f167ff84bf1ce2acd3c8f73627f48ab5de5edecb2fb37ae2cbb4d7", "current_sha256": "6ada096a26625947fb58a8c9d27e29f0d92749f8bd778e183415890d2917af96"},
     "tests/test_v0_4_s13_s14_correction_source.py": {"historical_sha256": "f6fc4c42be4913756c52cb81ea96f204fb74499b330215dc1075a80fb50ab00c", "current_sha256": "a9389699fca86eaa9d79102242c64a311e609bb5bfbc0492ab5aa0774f338be1"},
+    "tests/test_v0_4_s14_r0042_import.py": {"historical_sha256": "692a1da5f0497b655c0e983bb439598e433a6478584cdf6d417c3a2950f4f798", "current_sha256": "12d37e693509ee3fad0734cdd00ad185dd6a5119a7d256edadea17df32fcab45"},
     "notes/pssolver_v0_2_x_open_issues.json": {"historical_sha256": "d874c6fd45d63dbbda752fcdc6898613ddb80235d605a89cce6cb3df84834d4c", "current_sha256": "43388851a4d0c6375815180c5e713435f5e098c11df2d64db3698d74cf5c296b"},
     "notes/pssolver_v0_2_x_open_issues_zh.md": {"historical_sha256": "bba8240dd603a72d20ce94e0e69560865ca8c065d495da4b677e3903ea516650", "current_sha256": "363c08f567c12e39c5cbd1046ace21b48e4b06c8219c26d577a2160015e89f0f"},
     "tests/test_v0_2_x_open_issues.py": {"historical_sha256": "44d8452f13cdc4b5ead689bf9f03c6751542c16de0745db554f17e8ff284bd2c", "current_sha256": "25bef4e1c7899f861368efc967220da1b6c385acd1a242a35dc21a84b2aea2da"},
