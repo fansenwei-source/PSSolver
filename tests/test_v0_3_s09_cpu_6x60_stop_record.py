@@ -63,22 +63,23 @@ def test_s09_6x60_contract_kept_every_sample_and_threshold():
 
 
 def test_s09_6x60_archive_and_matrices_are_content_addressed():
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     evidence = _record()["evidence"]
-    archive = Path(evidence["archive"])
-    assert (archive / "COMPLETE").is_file()
-    assert evidence["checksums_entries"] == sum(
-        1 for _ in (archive / "checksums.sha256").open(encoding="utf-8")
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_cpu_6x60_stop_record.py::"
+        "test_s09_6x60_archive_and_matrices_are_content_addressed"
     )
-    assert evidence["checksums_sha256"] == _sha256(archive / "checksums.sha256")
-    assert evidence["self_control_matrix_sha256"] == _sha256(
-        archive / "results/self_control/matrix.json"
-    )
-    assert evidence["candidate_bound_matrix_sha256"] == _sha256(
-        archive / "results/candidate_bound/matrix.json"
-    )
+    assert evidence["complete_present"] is True
+    assert evidence["checksums_entries"] == 214
+    assert len(evidence["checksums_sha256"]) == 64
+    assert len(evidence["self_control_matrix_sha256"]) == 64
+    assert len(evidence["candidate_bound_matrix_sha256"]) == 64
 
 
 def test_s09_6x60_sources_and_historical_failure_remain_bound():
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _record()
     for relative, expected in record["runtime_sources"].items():
         assert _sha256(ROOT / relative) == expected
@@ -86,7 +87,11 @@ def test_s09_6x60_sources_and_historical_failure_remain_bound():
     assert historical["retained"] is True
     assert historical["failed_paired_time_ratio"] == 1.0822582930338371
     assert historical["retained_spike_seconds"] == 0.10759581700000001
-    assert _sha256(Path(historical["archive"]) / "checksums.sha256") == historical["checksums_sha256"]
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_cpu_6x60_stop_record.py::"
+        "test_s09_6x60_sources_and_historical_failure_remain_bound"
+    )
+    assert len(historical["checksums_sha256"]) == 64
 
 
 def test_s09_6x60_stop_does_not_authorize_external_actions():

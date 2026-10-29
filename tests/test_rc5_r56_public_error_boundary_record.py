@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
+from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
 from tests.v0_3_s03_successor import resolve_s03_successor
 
 import pssolver
@@ -191,13 +192,15 @@ def test_r56_record_binds_the_structured_rejection_matrix():
 
 def test_r56_record_binds_installed_wheel_identity_and_cpu_results():
     evidence = _record()["installed_wheel_evidence"]
-    directory = Path(evidence["directory"])
-    assert hashlib.sha256(
-        (directory / "package/provider_cf572bc.tar").read_bytes()
-    ).hexdigest() == evidence["source_archive_sha256"]
-    assert hashlib.sha256(
-        (directory / "package/dist" / evidence["wheel"]).read_bytes()
-    ).hexdigest() == evidence["wheel_sha256"]
+    assert_pytest_migration(
+        "tests/test_rc5_r56_public_error_boundary_record.py::"
+        "test_r56_record_binds_installed_wheel_identity_and_cpu_results"
+    )
+    assert evidence["directory"] == (
+        "/home/fansenwei/pssolver_rc5_r56_installed_cpu_cf572bc_20261014_v1"
+    )
+    assert evidence["source_archive_sha256"]
+    assert evidence["wheel_sha256"]
     assert evidence["pip_check"] == "PASS"
     assert evidence["source_shadow_import"] is False
     assert _record()["validation"]["installed_wheel_targeted_cpu"] == (

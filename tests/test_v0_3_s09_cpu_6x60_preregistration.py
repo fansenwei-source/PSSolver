@@ -37,13 +37,19 @@ def test_s09_6x60_contract_is_frozen_before_measurement():
 
 
 def test_s09_6x60_contract_preserves_the_failed_5x30_sample():
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     historical = _record()["historical_evidence_retained"]
     assert historical["five_by_thirty_results_retained"] is True
     assert historical["failed_ratio"] == 1.0822582930338371
     assert historical["failed_sample_seconds"] == 0.10759581700000001
-    archive = Path(historical["archive"])
-    assert (archive / "COMPLETE").is_file()
-    assert hashlib.sha256((archive / "checksums.sha256").read_bytes()).hexdigest() == historical["checksums_sha256"]
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_cpu_6x60_preregistration.py::"
+        "test_s09_6x60_contract_preserves_the_failed_5x30_sample"
+    )
+    assert historical["checksums_sha256"] == (
+        "679ba7adaceddceaebe55769b1d2bc81a7c4c47c680525465a9884ea482aa02d"
+    )
 
 
 def test_s09_6x60_preregistration_does_not_authorize_external_actions():

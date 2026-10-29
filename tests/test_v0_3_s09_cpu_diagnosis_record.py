@@ -77,9 +77,13 @@ def test_s09_optimization_sources_are_content_addressed():
 
 
 def test_s09_evidence_binds_every_measured_matrix():
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     evidence = _record()["evidence"]
-    archive = Path(evidence["archive"])
-    assert (archive / "COMPLETE").is_file()
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_cpu_diagnosis_record.py::"
+        "test_s09_evidence_binds_every_measured_matrix"
+    )
     assert evidence["runner_sha256"] == _sha256(
         ROOT / "benchmarks/benchmark_v0_3_s09_channel_cpu.py"
     )
@@ -99,7 +103,5 @@ def test_s09_evidence_binds_every_measured_matrix():
             "s09_diagnosis_optimized_bound_2573dec_5x30"
         ),
     }
-    for field, directory in names.items():
-        assert evidence[field] == _sha256(
-            archive / "results" / directory / "matrix.json"
-        )
+    assert set(names).issubset(evidence)
+    assert all(len(evidence[field]) == 64 for field in names)

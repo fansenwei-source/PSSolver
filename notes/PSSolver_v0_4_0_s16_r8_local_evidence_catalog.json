@@ -1,0 +1,1091 @@
+{
+  "checks": {
+    "C001": {
+      "kind": "file",
+      "path": "/home/fansenwei/.pssolver_s09_r0026_local/provider_support_719ae76.tar",
+      "sha256": "7500e889a01733d998ae08c121f12de00bf1d5a831f9eefdcc14fd763843b3cd",
+      "size": 21463040
+    },
+    "C002": {
+      "kind": "file",
+      "path": "/home/fansenwei/.pssolver_s09_r0026_local/rehearsal_v3/cpu_rehearsal.json",
+      "sha256": "a1bcf41e50dc1064e0772baadd048119ec4a4515f8c106c27914a43ca8353d2c",
+      "size": 12355
+    },
+    "C003": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/decisions/D-0012.json",
+      "sha256": "fabffcace193d72dabc322b22e05aecbb7489fb3a5da833246a228b4e86d1936",
+      "size": 1939
+    },
+    "C004": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/decisions/D-0013.json",
+      "sha256": "6ecd1b92a19fae5c0e66895b9b3216996a2a58d1c6d37fe8358331c8a6fd6f1f",
+      "size": 3356
+    },
+    "C005": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/decisions/D-0015.json",
+      "sha256": "69eaded6bff3a9ddcea173f1924f3d272199e00893b8fa483936bd3be3af56b6",
+      "size": 3429
+    },
+    "C006": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0021.result.json",
+      "sha256": "5f46e5991639f9c014ccff3cf8c43dabad8dcf59b426ec68dbd2b0add30c98f5",
+      "size": 7444
+    },
+    "C007": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0022.result.json",
+      "sha256": "9522b71a0b944319b377a205d528546b3bed7589230cee7eb06bde3ea2b3901a",
+      "size": 15574
+    },
+    "C008": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0023.result.json",
+      "sha256": "4570f85423eb0c6008eeaa141889afcb78e751f9cad003f887c222ae121ca3fc",
+      "size": 11586
+    },
+    "C009": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0024.result.json",
+      "sha256": "2b172299be82ac1141badd4bbf099b8865a467926122cabb2a330d564037f968",
+      "size": 12682
+    },
+    "C010": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0025.result.json",
+      "sha256": "fffe1689735b9a197bb0c8703fcfbfac3a1426c9a180cc97e2de7e6803e620f5",
+      "size": 11940
+    },
+    "C011": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0026.result.json",
+      "sha256": "9bc8bfa136c96e217ec731b812a512c96c72e76e4e0f163caa7b217c9cc34732",
+      "size": 11197
+    },
+    "C012": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0027.result.json",
+      "sha256": "abf7ec135a9ab5b91c71929d3ab89049e254149fba16ee9ba66e62ac6ef01dbd",
+      "size": 10557
+    },
+    "C013": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0028.result.json",
+      "sha256": "de2a2ea63f3ed2dbda06f70d580372af4a513b4e6e1efe77916aec525bb27bd3",
+      "size": 6953
+    },
+    "C014": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0029.result.json",
+      "sha256": "58d21c9e27fb1680b952a7171bf8eeb5884c7b6e3b6a37da67223030689ec2de",
+      "size": 9665
+    },
+    "C015": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0030.result.json",
+      "sha256": "6685b4cfede76b5d36ea48fbdcc05e6ae6f1d6673c84749f5cb547e5b6a8474d",
+      "size": 12401
+    },
+    "C016": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0031.result.json",
+      "sha256": "68135c2c6014a3b25e2e04bd43e78e4244e8ecf2b8f8ff0d997a9cb63705bff8",
+      "size": 12036
+    },
+    "C017": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0032.result.json",
+      "sha256": "ce87ee51b3f423f6fb3cb1ddb56f7b09dca96dd3d608bf797e50bd58f9e5aa4e",
+      "size": 10140
+    },
+    "C018": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0033.result.json",
+      "sha256": "8b0f709dc37c1bb631b4efb9f82f47353fc2e06485e7b6c6ee7613536988bd49",
+      "size": 8499
+    },
+    "C019": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0034.result.json",
+      "sha256": "0d242ae40dc8a0d5f5a67214995654d47ae4dfeb184fecfd25c0a7db45b57d30",
+      "size": 9485
+    },
+    "C020": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0035.result.json",
+      "sha256": "f6f94781b4681b7ed1ee2ddf33cfc259aa220666372c3f082ece32da49043c3c",
+      "size": 9536
+    },
+    "C021": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0036.result.json",
+      "sha256": "d7572772516ba1d6adbe0e34359cb1a8d9778425cdac47dcf75977964288580e",
+      "size": 10311
+    },
+    "C022": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0037.result.json",
+      "sha256": "878feb76d315a9292ebbb1883a3c4699771ffa354d585a444c0ac2b7bfa57c95",
+      "size": 10016
+    },
+    "C023": {
+      "kind": "file",
+      "path": "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0043.result.json",
+      "sha256": "c2524ea963cb4c6d6a91d80e197e16dc8899613e42c01bb66e1b3468b90671ef",
+      "size": 14210
+    },
+    "C024": {
+      "entries": 12,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_rc5_r56_installed_cpu_cf572bc_20261014_v1/checksums.sha256",
+      "sha256": "a8bcc1dd3d52c0c27cd3a86d8ea499c09206a3229880451ba97e15c7b24ff084",
+      "size": 1112
+    },
+    "C025": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_rc5_r56_installed_cpu_cf572bc_20261014_v1/package/dist/pssolver-0.2.0rc4-py3-none-any.whl",
+      "sha256": "d427a3a2cf8aa7a5b92f2018f4d5a28e88eaf0ac23d1336e58bccc1591549666",
+      "size": 787958
+    },
+    "C026": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_rc5_r56_installed_cpu_cf572bc_20261014_v1/package/provider_cf572bc.tar",
+      "sha256": "c22b08e6a024245c55a7fb5439599596ad29d6261059eb393ce83691c5fb623e",
+      "size": 21821440
+    },
+    "C027": {
+      "entries": 5,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_rc5_r57_installed_cpu_2d67ba2_20261014_v1/checksums.sha256",
+      "sha256": "17def36096bca45194e35b1d47ef132874dde85a66e5a25f32251777bba79c6f",
+      "size": 453
+    },
+    "C028": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_rc5_r57_installed_cpu_2d67ba2_20261014_v1/package/dist/pssolver-0.2.0rc4-py3-none-any.whl",
+      "sha256": "e7f0515bae2a2d25e36f38e07ef39a8398b1db57d55c6501f8cdd1c5000fbc65",
+      "size": 788670
+    },
+    "C029": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_rc5_r57_installed_cpu_2d67ba2_20261014_v1/package/provider_2d67ba2.tar",
+      "sha256": "9ebe1e41f457879cd78400b39ff8d09f5afd6e340e01888cb69d50c49261c403",
+      "size": 21862400
+    },
+    "C030": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_rc5_r57_installed_cpu_2d67ba2_20261014_v1/venv/lib/python3.12/site-packages/pssolver/__init__.py",
+      "sha256": "cc70ae9bd8667936f7b5c78f17f1a718341b1d9f8d4b63f649555380f01a5180",
+      "size": 3837
+    },
+    "C031": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_s09closure_rw_claude_review_20261028_v1/COMPLETE",
+      "sha256": "a2ad0543eff6f83d2347f877637e0132d892c5ee7a75aadab5107c60e3a5c651",
+      "size": 91
+    },
+    "C032": {
+      "entries": 50,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_s09closure_rw_claude_review_20261028_v1/checksums.sha256",
+      "sha256": "998317f64ac3aa184ed112b740a838a51acaf454e34848c88c13c86828317327",
+      "size": 4717
+    },
+    "C033": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_s09closure_rw_claude_review_20261028_v1/final_report.md",
+      "sha256": "baa1421b9bafeee9503a3e50d307a6cfc4169da872c652b1052c5d29f2975207",
+      "size": 9749
+    },
+    "C034": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_s09closure_rw_claude_review_20261028_v1/summary.json",
+      "sha256": "a62b2680859f85692551ca561483727d5173fdfbbcd3c2723998d5404e1b033b",
+      "size": 1297
+    },
+    "C035": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_s09diag_claude_review_20261026_v1/COMPLETE",
+      "sha256": "9703db443343ac9515f2265cfaa76ff48e07d3ca3acfa54b0dfc08acf28039f8",
+      "size": 136
+    },
+    "C036": {
+      "entries": 1257,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_s09diag_claude_review_20261026_v1/checksums.sha256",
+      "sha256": "cebf6521dd8102c93b24a1eee7a8ac1685bd452831c4afaf786b895023a85a5f",
+      "size": 163446
+    },
+    "C037": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_s09diagrw2_claude_review_20261026_v1/COMPLETE",
+      "sha256": "acce1f35abc6159d0c48cac5c224bc71f03dbc65597e3502af44dc054e406efe",
+      "size": 169
+    },
+    "C038": {
+      "entries": 410,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_s09diagrw2_claude_review_20261026_v1/checksums.sha256",
+      "sha256": "78b2192d2b866ac0e7acb875f9be364deccfb09c34bb79d031788485eca25bb6",
+      "size": 53751
+    },
+    "C039": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_s09diagrw_claude_review_20261026_v1/COMPLETE",
+      "sha256": "c294a6fcae74a6e5e4656354ac9a192c2ac8fb7421816d2185c25aeab20214ce",
+      "size": 128
+    },
+    "C040": {
+      "entries": 2157,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_s09diagrw_claude_review_20261026_v1/checksums.sha256",
+      "sha256": "dc69004bd8160efeef035b5cefe27f3029845b0c111710f62b9c1b10d86eb52f",
+      "size": 290161
+    },
+    "C041": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_s09h100_claude_review_20261026_v1/COMPLETE",
+      "sha256": "dbf4bfb1adf77fde0ada765ddb77e5fd4b2b273927d40577d5cdd1f5d3d5ff3b",
+      "size": 205
+    },
+    "C042": {
+      "entries": 5846,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_s09h100_claude_review_20261026_v1/checksums.sha256",
+      "sha256": "9a2fed5fcc2153d0f77d4910341695ed134000670f02a34b13c20fbbfbe11413",
+      "size": 762956
+    },
+    "C043": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_s09h100rv2_claude_review_20261026_v1/COMPLETE",
+      "sha256": "6218cda8d30082419c50929f7c1716c481d0176600756cb7f1641dd8449ab4e8",
+      "size": 136
+    },
+    "C044": {
+      "entries": 4056,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_s09h100rv2_claude_review_20261026_v1/checksums.sha256",
+      "sha256": "81081de4155932d5adcb54c585fa2ec0de5060330c98cc785cf5979096ec1819",
+      "size": 524665
+    },
+    "C045": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_s09recov_claude_review_20261026_v1/COMPLETE",
+      "sha256": "9d615b361e094dbecf9acc4e1c8008a23de691556f6c3b5ec4965d426d1e7e74",
+      "size": 194
+    },
+    "C046": {
+      "entries": 7658,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_s09recov_claude_review_20261026_v1/checksums.sha256",
+      "sha256": "495b2978649b6dcb158992ca0769e95385cbde5bcfb95281f2b7fab52bd062c8",
+      "size": 1077783
+    },
+    "C047": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_s10integ_claude_review_20261028_v1/COMPLETE",
+      "sha256": "2ef85eb3e702d6e908fe9a90e7d68cc03316757ed5022b2e66f28a5a1f468ff4",
+      "size": 120
+    },
+    "C048": {
+      "entries": 57,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_s10integ_claude_review_20261028_v1/checksums.sha256",
+      "sha256": "206988e0774664d5e49a9ae3838c0fbd5ddf2173726d3470a77505a448616445",
+      "size": 5393
+    },
+    "C049": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_s10integ_claude_review_20261028_v1/final_report.md",
+      "sha256": "2bf77da47d4067cdbfdd2d4c07411eba951cbd406fdd9d013b055d25d6338acb",
+      "size": 9221
+    },
+    "C050": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_s10integ_claude_review_20261028_v1/summary.json",
+      "sha256": "83f285b10e52ed0f9ca8cdbd6388e5d5576b7e141d475640b01a06f46e82fc8c",
+      "size": 1139
+    },
+    "C051": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_s10reach_claude_review_20261028_v1/COMPLETE",
+      "sha256": "5740b1b3e5354c5d0453611f7f91d8d548f4ecd00f01a408fdf8f4b1326b4ec4",
+      "size": 96
+    },
+    "C052": {
+      "entries": 51,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_s10reach_claude_review_20261028_v1/checksums.sha256",
+      "sha256": "687b0a77a6aac5a5058a90f8d6eb877dbcc3a7917b3270c5c1c068d13b0d423c",
+      "size": 4862
+    },
+    "C053": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_s10reach_claude_review_20261028_v1/final_report.md",
+      "sha256": "ed0deeba504a15336f4d1dd5c1f9b260c0e53b0beda6b6155590b2c91b3b1dd0",
+      "size": 14562
+    },
+    "C054": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_s10reach_claude_review_20261028_v1/summary.json",
+      "sha256": "b162433e52bbeea8a255a214e8a2ca6dcf62e0c570d4510cdc6e7e6c0e33b88d",
+      "size": 2585
+    },
+    "C055": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_s10rw_claude_review_20261027_v1/COMPLETE",
+      "sha256": "e9c13586e1ec77b4873e61bfc364f5fbf195728f996fa4df520b2a0478385fad",
+      "size": 116
+    },
+    "C056": {
+      "entries": 37,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_s10rw_claude_review_20261027_v1/checksums.sha256",
+      "sha256": "3e063a04821dbf75464137fa146d46cc1caf78b7f5a1c39347e33c9c58abc2ee",
+      "size": 3476
+    },
+    "C057": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_s10rw_claude_review_20261027_v1/final_report.md",
+      "sha256": "8806bdf5b3385efde70eaf27b3182dedecdb894a29cd0759177e39618f66f550",
+      "size": 7188
+    },
+    "C058": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_s10rw_claude_review_20261027_v1/summary.json",
+      "sha256": "10fb50725de7d7fa07c9f3eb527dafa998b46caf3fbc31339f01408a2036f770",
+      "size": 1622
+    },
+    "C059": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0029_local_b031421_20261026_v2/COMPLETE",
+      "sha256": "044e858fed1ed6c24679f97452c766ea77c4ee6f3c11de2da47e2446ca8f18c2",
+      "size": 234
+    },
+    "C060": {
+      "entries": 331,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0029_local_b031421_20261026_v2/checksums.sha256",
+      "sha256": "fe9c9ba3742c297ea7091d4733d1a0d94a74efc496450288a3d0b65e068eab69",
+      "size": 52638
+    },
+    "C061": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0029_local_b031421_20261026_v2/final_report.md",
+      "sha256": "406c52abb2ab72d2dd3c2a007647a7792e40a728376219a4649d01498a8920d9",
+      "size": 4245
+    },
+    "C062": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0029_local_b031421_20261026_v2/results/cpu_memory_comparison.json",
+      "sha256": "51fc407ff68055025fddad92f5645895e199ed05559e12b4059055221b1b99ee",
+      "size": 1216
+    },
+    "C063": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0029_local_b031421_20261026_v2/summary.json",
+      "sha256": "989f2d97aa113b9934eacf72721b545cd518f78737b8bff8fa97ac54ca3fc47f",
+      "size": 1737
+    },
+    "C064": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0030_local_658baca_20261026_v1/COMPLETE",
+      "sha256": "aa6ef2bdd45a4ddba8bfd36432c9299908638d185b2561a39b6eecf5a15d0f72",
+      "size": 188
+    },
+    "C065": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0030_local_658baca_20261026_v1/artifacts/provider_f94b9be.tar",
+      "sha256": "0e31ef0bd9b1ff5283b23c1fbd4237975ebebf5be9460d9c4bef3fc365cfaa07",
+      "size": 26767360
+    },
+    "C066": {
+      "forbidden_tar_fragments": [
+        "/pssolver/",
+        "/pssolver_control/"
+      ],
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0030_local_658baca_20261026_v1/artifacts/provider_support_658baca.tar",
+      "sha256": "d3fb444eb5ba627a5e9b41b241c40a7c14ef799eed04bfb5e45611a55fa6f561",
+      "size": 2457600
+    },
+    "C067": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0030_local_658baca_20261026_v1/artifacts/pssolver-0.2.2-py3-none-any.whl",
+      "sha256": "a7e94585e62785c69522d6cc194fd479b5af55577444926d1bb661ed073cc00e",
+      "size": 801349
+    },
+    "C068": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0030_local_658baca_20261026_v1/artifacts/pssolver-0.3.0.dev0-py3-none-any.whl",
+      "sha256": "4003645025da6d81317eeb7261ccf606aef7f60f20d072518f8baacf56cd4aa8",
+      "size": 646534
+    },
+    "C069": {
+      "entries": 28,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0030_local_658baca_20261026_v1/checksums.sha256",
+      "sha256": "839498706d15bbad2c41fa607159bb242d66cea862743f632da003c7f88815a3",
+      "size": 2773
+    },
+    "C070": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0030_local_658baca_20261026_v1/plans/cpu_rehearsal_plan.json",
+      "sha256": "6a8a81115d20c4242191da475cf8506cc716fb2c0071a001e46963509c6f80a9",
+      "size": 82807
+    },
+    "C071": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0030_local_658baca_20261026_v1/plans/h100_plan.json",
+      "sha256": "57a5bdbf255f7e63376f633401050619db9df21057d6a3aa51fb0466540094aa",
+      "size": 82978
+    },
+    "C072": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v1/COMPLETE",
+      "sha256": "6670588e5138effa8a0812f2b0d19a40db7ebd92279283e71c516e9c3ad8c2ee",
+      "size": 75
+    },
+    "C073": {
+      "entries": 24,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v1/checksums.sha256",
+      "sha256": "0860fe21b2be56744592aea9633f9fda5b4dfcfa45d1b0460908f76414500b3c",
+      "size": 2289
+    },
+    "C074": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v2/COMPLETE",
+      "sha256": "b5b7b1f438485c544dee914af6f5201b1d46f45a8761cfaa9d427317b4e6418e",
+      "size": 226
+    },
+    "C075": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v2/analysis/closure_adjudication.json",
+      "sha256": "4969cdc062d6cab301f3e3b5f0c411da02a37f997195eeaf6316b6c13c6e032f",
+      "size": 2995
+    },
+    "C076": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v2/analysis/noninterrupting_recompute.json",
+      "sha256": "1757374241e033c77a5fbe0b31df29e6f33a0dcae3e777c4ae45754d5927df01",
+      "size": 14965
+    },
+    "C077": {
+      "entries": 33,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v2/checksums.sha256",
+      "sha256": "0212cf6b98eb06d4f64aa6c5509209714b3c0b5aab5fa2ab51368ce519d80895",
+      "size": 3171
+    },
+    "C078": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_2573dec_20261023_v3/COMPLETE",
+      "sha256": "78b251e2ee0355819b0edc2a961352e83d40b23a3a29aab0f54b31ca2921f424",
+      "size": 133
+    },
+    "C079": {
+      "entries": 214,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_2573dec_20261023_v3/checksums.sha256",
+      "sha256": "8311695d7dc3031b7aed0574a0239354b35efad70c4b6d2a3223f8795accf1ac",
+      "size": 45859
+    },
+    "C080": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_2573dec_20261023_v3/results/candidate_bound/matrix.json",
+      "sha256": "f4e42828e2c5dc1caad9729fb1b2b005d08a4f53cc4b3e82274dae436ae71085",
+      "size": 684760
+    },
+    "C081": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_2573dec_20261023_v3/results/self_control/matrix.json",
+      "sha256": "5f652cdc9c79093bbae4862fc3080a839cec7c6969e0e3b4bc76d7c4c0a710d2",
+      "size": 682756
+    },
+    "C082": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_failure_analysis_87f6bfe_20261023_v4/COMPLETE",
+      "sha256": "911ee93fa7daad7cc555de8f2a1168da3a2d823d34c43019e24ca8cfd35e41e8",
+      "size": 121
+    },
+    "C083": {
+      "entries": 12,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_failure_analysis_87f6bfe_20261023_v4/checksums.sha256",
+      "sha256": "b35113dfc0bb6b0acd3cc58b402a0ac460c85850957a7a9c3451e6734c6c71d8",
+      "size": 2007
+    },
+    "C084": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_failure_analysis_87f6bfe_20261023_v4/logs/pytest.junit.xml",
+      "sha256": "f1431e7daacff3820c009244d861115dc563b44b5659e96c6407bcd5485dd553",
+      "size": 817
+    },
+    "C085": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_failure_analysis_87f6bfe_20261023_v4/logs/pytest.log",
+      "sha256": "cf0c2cc2867610db68ff0a051d55d0e206ddaa505c66c6ee68075be937872047",
+      "size": 98
+    },
+    "C086": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_failure_analysis_87f6bfe_20261023_v4/results/analysis.json",
+      "sha256": "d0d5b00ca1b670d747826b9b122c8d38557a1e3a70512404895e9a2653221abe",
+      "size": 2727
+    },
+    "C087": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2/COMPLETE",
+      "sha256": "f448526454b1ac79b110c6238d81295c7fff03416ba356e89a0ee8d92e3e1b10",
+      "size": 92
+    },
+    "C088": {
+      "entries": 458,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2/checksums.sha256",
+      "sha256": "679ba7adaceddceaebe55769b1d2bc81a7c4c47c680525465a9884ea482aa02d",
+      "size": 111191
+    },
+    "C089": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2/results/s09_diagnosis_c105_cost_5x30/matrix.json",
+      "sha256": "ecf2638b45ab5e4febd61d0b5c25fa2f13936aace40085704dbf078777506ea2",
+      "size": 245166
+    },
+    "C090": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2/results/s09_diagnosis_optimized_bound_2573dec_5x30/matrix.json",
+      "sha256": "f050556410905a56b53d53fa218b90a43d8cf63ef81e9c867cb6cf2636802953",
+      "size": 483945
+    },
+    "C091": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2/results/s09_diagnosis_optimized_final_5x30/matrix.json",
+      "sha256": "3f9bc9ab30efe70c997731dfb3adbbcb2356e1c8e79455a505187d5b4ccc8a17",
+      "size": 483699
+    },
+    "C092": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2/results/s09_diagnosis_s06_pre_post_5x30/matrix.json",
+      "sha256": "b551b9d8a5ff344106996647d6fe324a41764877a2293db9a9bc34fab156b5b2",
+      "size": 486665
+    },
+    "C093": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2/results/s09_diagnosis_v022_self_5x30/matrix.json",
+      "sha256": "c4cc3dc2892b7002e707fb93067e87ed61f6dcd0811dc22e2a4b22317c640fc3",
+      "size": 484014
+    },
+    "C094": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2/results/s09_diagnosis_v022_self_repeat_5x30/matrix.json",
+      "sha256": "1492a54abe3842d0af74c4bad70c46d894ba2f5373fd38d207167a7f74326299",
+      "size": 484741
+    },
+    "C095": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_transient_telemetry_d568039_20261023_v5/COMPLETE",
+      "sha256": "5860465addbcb45f2236e7910cc10d514484dacb59ac3997a2e78b948dcf5f17",
+      "size": 145
+    },
+    "C096": {
+      "entries": 29,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_v0_3_s09_cpu_transient_telemetry_d568039_20261023_v5/checksums.sha256",
+      "sha256": "ca878706bb87c5f14b6956a289d06a523241e82d78147cf6eb1a070f4ef25291",
+      "size": 3115
+    },
+    "C097": {
+      "kind": "complete",
+      "path": "/home/fansenwei/pssolver_v0_4_s13_workspace_cleanup_20261029_v1/COMPLETE",
+      "sha256": "bf5077c63d3a1c94618f6a5489302fedc19455bac772a9af58a6ceabf900f987",
+      "size": 240
+    },
+    "C098": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_4_s13_workspace_cleanup_20261029_v1/PRUNED.txt",
+      "sha256": "13bb65414c8f40172da876e034f961a8cd0f8b9c7039c52b655fdb606033ce88",
+      "size": 2627
+    },
+    "C099": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_4_s13_workspace_cleanup_20261029_v1/STOPPED_PRE_DELETION.md",
+      "sha256": "24cd863ef3eeb47245e19e9ef61fd9a02e3cf379d97dff8c614ba548a1c6aa1c",
+      "size": 1049
+    },
+    "C100": {
+      "entries": 13,
+      "kind": "manifest",
+      "path": "/home/fansenwei/pssolver_v0_4_s13_workspace_cleanup_20261029_v1/checksums.sha256",
+      "sha256": "261108f0a2a473e89de0fb76bd49fb670e14d56be4b1d4ad4893cef5e37ae269",
+      "size": 1152
+    },
+    "C101": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_4_s13_workspace_cleanup_20261029_v1/post_cleanup.json",
+      "sha256": "7f9ea6eebd97a122589af2400a736dc972f72de9131ac8128e2d96acea3f1ec7",
+      "size": 1301
+    },
+    "C102": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_4_s13_workspace_cleanup_20261029_v1/pre_deletion_inventory.json",
+      "sha256": "3d80c339667a63a69d0b3fae3e64b34b590d428546b0141acf74f14522e7101d",
+      "size": 116868
+    },
+    "C103": {
+      "kind": "file",
+      "path": "/home/fansenwei/pssolver_v0_4_s13_workspace_cleanup_20261029_v1/worktree_inventory.json",
+      "sha256": "94472051c796928e9109a48bbaf9973ce91e6665e7357cf38156faa4839f54a1",
+      "size": 16497
+    }
+  },
+  "date": "2026-10-29",
+  "decision": {
+    "commit": "3477e9f3ee1d8f51a86300cd7153903d142fa869",
+    "id": "D-0015",
+    "selection": "option C plus mandatory local verifier",
+    "sha256": "69eaded6bff3a9ddcea173f1924f3d272199e00893b8fa483936bd3be3af56b6"
+  },
+  "policy": {
+    "external_content_copied_into_repository": false,
+    "historical_records_rewritten": false,
+    "missing_or_mismatched_evidence_is_failure": true,
+    "pytest_external_path_reads": false,
+    "standard_library_only": true
+  },
+  "pytest_migrations": {
+    "tests/test_analyze_v0_3_s09_cpu_6x60_stop.py::test_s09_stop_analysis_does_not_overclaim_unique_cause": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C078",
+        "C079",
+        "C080",
+        "C081",
+        "C087",
+        "C088",
+        "C089"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false,
+      "semantic_check_ids": [
+        "S09_STOP_ANALYSIS"
+      ]
+    },
+    "tests/test_analyze_v0_3_s09_cpu_6x60_stop.py::test_s09_stop_analysis_preserves_failure_and_uses_no_new_profiles": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C078",
+        "C079",
+        "C080",
+        "C081",
+        "C087",
+        "C088",
+        "C089"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false,
+      "semantic_check_ids": [
+        "S09_STOP_ANALYSIS"
+      ]
+    },
+    "tests/test_analyze_v0_3_s09_cpu_6x60_stop.py::test_s09_stop_analysis_separates_transient_from_iteration_count": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C078",
+        "C079",
+        "C080",
+        "C081",
+        "C087",
+        "C088",
+        "C089"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false,
+      "semantic_check_ids": [
+        "S09_STOP_ANALYSIS"
+      ]
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py::test_r56_record_binds_installed_wheel_identity_and_cpu_results": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C024",
+        "C025",
+        "C026"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_rc5_r57_device_normalization_record.py::test_r57_record_binds_installed_wheel_artifacts_and_identity": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C027",
+        "C028",
+        "C029",
+        "C030"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s08_r0021_import.py::test_r0021_result_and_independent_archive_are_exact": {
+      "check_ids": [
+        "C005",
+        "C006",
+        "C023"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_cpu_6x60_preregistration.py::test_s09_6x60_contract_preserves_the_failed_5x30_sample": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C087",
+        "C088"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_cpu_6x60_stop_record.py::test_s09_6x60_archive_and_matrices_are_content_addressed": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C078",
+        "C079",
+        "C080",
+        "C081"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_cpu_6x60_stop_record.py::test_s09_6x60_sources_and_historical_failure_remain_bound": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C087",
+        "C088"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_cpu_diagnosis_record.py::test_s09_evidence_binds_every_measured_matrix": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C087",
+        "C088",
+        "C089",
+        "C090",
+        "C091",
+        "C092",
+        "C093",
+        "C094"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_d0013_closure.py::test_closure_adjudication_changes_no_analyzer_threshold_or_scope": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C074",
+        "C075",
+        "C077"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_d0013_closure.py::test_d0013_and_independent_reviews_are_exactly_bound": {
+      "check_ids": [
+        "C004",
+        "C005",
+        "C016",
+        "C017",
+        "C018",
+        "C019",
+        "C023"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_d0013_closure.py::test_noninterrupting_recompute_proves_the_exception_is_exhaustive": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C074",
+        "C076",
+        "C077"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_d0013_closure.py::test_v1_archive_is_preserved_while_v2_binds_the_real_job_plan": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C072",
+        "C073"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_failure_analysis_record.py::test_s09_failure_analysis_archive_is_content_addressed": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C082",
+        "C083",
+        "C084",
+        "C085",
+        "C086"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0022_import.py::test_r0022_import_binds_the_rework_result_and_archive": {
+      "check_ids": [
+        "C005",
+        "C007",
+        "C023"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0023_import.py::test_r0023_import_binds_the_exact_review_result": {
+      "check_ids": [
+        "C005",
+        "C008",
+        "C023"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0024_import.py::test_r0024_import_binds_the_exact_passing_result_and_archive": {
+      "check_ids": [
+        "C005",
+        "C009",
+        "C023"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0025_import.py::test_r0025_result_and_archive_are_bound": {
+      "check_ids": [
+        "C005",
+        "C010",
+        "C023",
+        "C041",
+        "C042"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0026_candidate.py::test_r0026_candidate_binds_final_archive_plan_job_and_rehearsal": {
+      "check_ids": [
+        "C001",
+        "C002",
+        "C005",
+        "C023"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0026_import.py::test_r0026_h100_citations_are_exact": {
+      "check_ids": [
+        "C005",
+        "C011",
+        "C023"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0026_import.py::test_r0026_result_and_archive_are_bound": {
+      "check_ids": [
+        "C005",
+        "C011",
+        "C023",
+        "C045",
+        "C046"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0027_import.py::test_r0027_result_archive_and_decision_are_bound": {
+      "check_ids": [
+        "C003",
+        "C005",
+        "C012",
+        "C023",
+        "C043",
+        "C044"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0028_rework.py::test_r0028_rework_result_and_archive_are_bound": {
+      "check_ids": [
+        "C005",
+        "C013",
+        "C023",
+        "C035",
+        "C036"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0029_candidate.py::test_r0029_local_archive_and_cpu_claims_are_exact": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C059",
+        "C060",
+        "C061",
+        "C062",
+        "C063"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0029_rework.py::test_r0029_result_and_independent_archive_are_bound": {
+      "check_ids": [
+        "C005",
+        "C014",
+        "C023",
+        "C039",
+        "C040"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0030_candidate.py::test_r0030_artifacts_and_archive_are_exact": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C064",
+        "C065",
+        "C066",
+        "C067",
+        "C068",
+        "C069",
+        "C070",
+        "C071"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0030_import.py::test_r0030_citable_identities_match_the_passing_result": {
+      "check_ids": [
+        "C005",
+        "C015",
+        "C023"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0030_import.py::test_r0030_result_and_independent_archive_are_bound": {
+      "check_ids": [
+        "C005",
+        "C015",
+        "C023",
+        "C037",
+        "C038"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_r0035_import.py::test_r0035_result_and_independent_archive_are_bound": {
+      "check_ids": [
+        "C005",
+        "C020",
+        "C023",
+        "C031",
+        "C032",
+        "C033",
+        "C034"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s09_transient_telemetry_record.py::test_transient_telemetry_archive_and_sources_are_content_addressed": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C095",
+        "C096"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s10_r0033_import.py::test_r0033_import_binds_the_exact_independent_review": {
+      "check_ids": [
+        "C005",
+        "C018",
+        "C023",
+        "C055",
+        "C056",
+        "C057",
+        "C058"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s10_r0036_rework.py::test_r0036_rework_binds_the_exact_independent_review": {
+      "check_ids": [
+        "C005",
+        "C021",
+        "C023",
+        "C047",
+        "C048",
+        "C049",
+        "C050"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_3_s10_r0037_import.py::test_r0037_import_binds_the_exact_independent_pass": {
+      "check_ids": [
+        "C005",
+        "C022",
+        "C023",
+        "C051",
+        "C052",
+        "C053",
+        "C054"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    },
+    "tests/test_v0_4_s13_s14_correction_source.py::test_s13_archive_is_complete_and_content_addressed": {
+      "check_ids": [
+        "C005",
+        "C023",
+        "C097",
+        "C098",
+        "C099",
+        "C100",
+        "C101",
+        "C102",
+        "C103"
+      ],
+      "moved_check": "Exact local file identity and archive integrity are enforced by the D-0015 verifier; pytest retains only repository-side field, structure, and content-address contracts.",
+      "pytest_reads_external_paths": false
+    }
+  },
+  "schema": "pssolver.v0_4.s16.r8.local_evidence_catalog.v1",
+  "source_inventory": {
+    "failing_tests": 35,
+    "first_blocking_roots": 13,
+    "note": "The v2 block audit recorded the first missing root per failing test. This catalog follows each original check to all subsequently accessed local files.",
+    "path": "notes/PSSolver_v0_4_0_s16_r8_inventory_v2.json",
+    "test_files": 27
+  }
+}

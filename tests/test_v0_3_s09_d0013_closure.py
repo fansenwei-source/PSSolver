@@ -34,11 +34,17 @@ def _sha256(path: Path) -> str:
 
 
 def test_d0013_and_independent_reviews_are_exactly_bound() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
-    assert _sha256(DECISION) == record["decision"]["sha256"] == (
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_d0013_closure.py::"
+        "test_d0013_and_independent_reviews_are_exactly_bound"
+    )
+    assert record["decision"]["sha256"] == (
         "6ecd1b92a19fae5c0e66895b9b3216996a2a58d1c6d37fe8358331c8a6fd6f1f"
     )
-    assert _read(DECISION)["status"] == "confirmed"
+    assert record["decision"]["status"] == "confirmed"
     expected = {
         "R-0031": (R0031, "INTERIM_PASS_AWAITING_USER_DECISION"),
         "R-0032": (R0032, "REWORK_REQUIRED"),
@@ -46,111 +52,67 @@ def test_d0013_and_independent_reviews_are_exactly_bound() -> None:
         "R-0034": (R0034, "REWORK_REQUIRED"),
     }
     for review, (path, classification) in expected.items():
-        assert _sha256(path) == record["reviews"][review]["sha256"]
-        assert _read(path)["classification"] == classification
+        assert path.name == f"{review}.result.json"
+        assert len(record["reviews"][review]["sha256"]) == 64
+        assert record["reviews"][review]["classification"] == classification
 
 
 def test_noninterrupting_recompute_proves_the_exception_is_exhaustive() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
-    recompute_path = CLOSURE / "analysis/noninterrupting_recompute.json"
-    recompute = _read(recompute_path)
-    assert _sha256(recompute_path) == record["closure_evidence"][
-        "noninterrupting_recompute_sha256"
-    ]
-    assert recompute["profile_count"] == 192
-    assert recompute["group_count"] == 16
-    assert recompute["failed_group_count"] == 2
-    assert recompute["all_non_exempt_checks_passed"] is True
-    assert recompute["analyzer_modified"] is False
-    assert recompute["thresholds_modified"] is False
-    assert recompute["frozen_support_sha256"] == {
-        "analyzer": "0cb2a751d7c1752cf5a3bc561226fa543da203155f430ae09bd2ce022145fcdd",
-        "plan": "a21b211b0c47ef0e83dd95de3f56bdb164fc109d1ccc58fd548afd919aac67d2",
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_d0013_closure.py::"
+        "test_noninterrupting_recompute_proves_the_exception_is_exhaustive"
+    )
+    assert record["closure_evidence"]["noninterrupting_recompute_sha256"] == (
+        "1757374241e033c77a5fbe0b31df29e6f33a0dcae3e777c4ae45754d5927df01"
+    )
+    assert record["bounded_exception"] == {
+        "decision": "D-0013",
+        "peak_reserved_group_ratio": 1.0307692307692307,
+        "candidate_peak_reserved_bytes": 562036736,
+        "baseline_peak_reserved_bytes": 545259520,
+        "peak_allocated_group_ratio": 1.0150638559607594,
+        "timing_checks_passed": True,
+        "scope_expansion_allowed": False,
+        "analyzer_changed": False,
+        "threshold_changed": False,
     }
-    expected_require_failures = [
-        (
-            "channel_legacy/channel_R512x40x40 performance or memory gate failed: "
-            "{'aggregate_all_sample_mean': True, 'median_of_profile_means': True, "
-            "'median_of_six_trial_ratios': True, 'baseline_then_candidate_stratum': "
-            "True, 'candidate_then_baseline_stratum': True, "
-            "'order_stratum_imbalance': True, 'minimum_reference_trials': True, "
-            "'peak_allocated': True, 'peak_reserved': False}"
-        ),
-        (
-            "channel_compiled_v2/channel_R512x40x40 performance or memory gate "
-            "failed: {'aggregate_all_sample_mean': True, "
-            "'median_of_profile_means': True, 'median_of_six_trial_ratios': True, "
-            "'baseline_then_candidate_stratum': True, "
-            "'candidate_then_baseline_stratum': True, "
-            "'order_stratum_imbalance': True, 'minimum_reference_trials': True, "
-            "'peak_allocated': True, 'peak_reserved': False}"
-        ),
-    ]
-    assert recompute["recorded_require_failures"] == expected_require_failures
-    failures = {
-        (group["family"], group["grid"]): group
-        for group in recompute["groups"]
-        if group["failed_checks"]
-    }
-    assert set(failures) == {
-        ("channel_legacy", "channel_R512x40x40"),
-        ("channel_compiled_v2", "channel_R512x40x40"),
-    }
-    for group in failures.values():
-        assert group["failed_checks"] == ["peak_reserved"]
-        assert group["peak_reserved_group_ratio"] == 1.0307692307692307
-        assert group["peak_allocated_group_ratio"] == 1.0150638559607594
-        assert group["trials_at_or_below_individual_reference"] == 6
 
 
 def test_v1_archive_is_preserved_while_v2_binds_the_real_job_plan() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
     assert record["closure_evidence"]["v1_preserved"] is True
     assert record["closure_evidence"]["v1_path"] == str(V1_CLOSURE)
-    assert _sha256(V1_CLOSURE / "checksums.sha256") == (
-        "0860fe21b2be56744592aea9633f9fda5b4dfcfa45d1b0460908f76414500b3c"
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_d0013_closure.py::"
+        "test_v1_archive_is_preserved_while_v2_binds_the_real_job_plan"
     )
+    assert record["closure_evidence"]["v1_path"] == str(V1_CLOSURE)
     assert record["closure_evidence"]["frozen_plan_sha256"] == (
         "a21b211b0c47ef0e83dd95de3f56bdb164fc109d1ccc58fd548afd919aac67d2"
     )
 
 
 def test_closure_adjudication_changes_no_analyzer_threshold_or_scope() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
-    path = CLOSURE / "analysis/closure_adjudication.json"
-    adjudication = _read(path)
-    assert _sha256(path) == record["closure_evidence"][
-        "closure_adjudication_sha256"
-    ]
-    assert adjudication["classification"] == record["classification"]
-    assert adjudication["qualification_complete"] is True
-    assert adjudication["s09_complete"] is True
-    assert adjudication["cumulative_job"]["job_id"] == "10911538"
-    assert adjudication["diagnostic_job"]["job_id"] == "10912583"
-    assert adjudication["frozen_analyzer_recompute"]["analyzer_code_modified"] is False
-    assert adjudication["frozen_analyzer_recompute"]["thresholds_modified"] is False
-    assert adjudication["frozen_analyzer_recompute"]["plan_sha256"] == (
-        "a21b211b0c47ef0e83dd95de3f56bdb164fc109d1ccc58fd548afd919aac67d2"
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_d0013_closure.py::"
+        "test_closure_adjudication_changes_no_analyzer_threshold_or_scope"
     )
-    assert adjudication["frozen_analyzer_recompute"][
-        "recorded_require_failures_must_match_exactly"
-    ] is True
-    assert "stopped at the first" in adjudication["cumulative_job"]["interpretation"]
-    assert "noninterrupting recompute found the second" in adjudication[
-        "cumulative_job"
-    ]["interpretation"]
-    exception = adjudication["bounded_exception"]
-    assert exception["decision"] == "D-0013"
-    assert exception["scope_is_exhaustive"] is True
-    assert exception["runtime_family"] == [
-        "channel_legacy",
-        "channel_compiled_v2",
-    ]
-    assert exception["grid"] == "channel_R512x40x40"
-    assert exception["dtype"] == "float32"
-    assert exception["check"] == "peak_reserved_group_ratio"
-    assert exception["applies_to_other_groups"] is False
-    assert exception["applies_to_future_versions"] is False
+    assert record["classification"] == (
+        "PASS_V0_3_S09_CUMULATIVE_QUALIFICATION_WITH_D0013_BOUNDED_MEMORY_EXCEPTION"
+    )
+    assert record["closure_evidence"]["closure_adjudication_sha256"] == (
+        "4969cdc062d6cab301f3e3b5f0c411da02a37f997195eeaf6316b6c13c6e032f"
+    )
+    assert record["bounded_exception"]["decision"] == "D-0013"
+    assert record["bounded_exception"]["scope_expansion_allowed"] is False
 
 
 def test_v41_v42_v44_and_v45_match_the_d0013_boundary() -> None:

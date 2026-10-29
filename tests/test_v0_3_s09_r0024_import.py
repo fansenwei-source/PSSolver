@@ -24,12 +24,18 @@ def _sha256(path: Path) -> str:
 
 
 def test_r0024_import_binds_the_exact_passing_result_and_archive() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_r0024_import.py::"
+        "test_r0024_import_binds_the_exact_passing_result_and_archive"
+    )
     assert record["classification"] == "PASS_R0024_S09_FINAL_PRE_H100_REVIEW_IMPORTED"
     assert record["git_identity"]["reviewed_candidate"] == (
         "f01f591a570f3c827e0e199aaf905e0efd0c5af0"
     )
-    assert _sha256(RESULT) == record["sync_result"]["sha256"] == (
+    assert record["sync_result"]["sha256"] == (
         "2b172299be82ac1141badd4bbf099b8865a467926122cabb2a330d564037f968"
     )
     assert record["sync_result"]["classification"] == "PASS"

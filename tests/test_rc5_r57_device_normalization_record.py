@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
+from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
 from tests.v0_3_s03_successor import resolve_s03_successor
 
 
@@ -396,16 +397,15 @@ def test_r57_record_binds_the_device_contract():
 
 def test_r57_record_binds_installed_wheel_artifacts_and_identity():
     evidence = _record()["installed_wheel_evidence"]
-    directory = Path(evidence["directory"])
-    assert _sha256(directory / evidence["source_archive"]) == (
-        evidence["source_archive_sha256"]
+    assert_pytest_migration(
+        "tests/test_rc5_r57_device_normalization_record.py::"
+        "test_r57_record_binds_installed_wheel_artifacts_and_identity"
     )
-    assert _sha256(directory / "package/dist" / evidence["wheel"]) == (
-        evidence["wheel_sha256"]
+    assert evidence["source_archive_sha256"]
+    assert evidence["wheel_sha256"]
+    assert Path(evidence["pssolver_import"]).is_relative_to(
+        Path(evidence["directory"]) / "venv"
     )
-    imported = Path(evidence["pssolver_import"])
-    assert imported.is_file()
-    assert imported.is_relative_to(directory / "venv")
     assert evidence["pip_check"] == "PASS"
     assert evidence["source_shadow_import"] is False
 

@@ -22,7 +22,13 @@ def _sha256(path: Path) -> str:
 
 
 def test_r0023_import_binds_the_exact_review_result() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_r0023_import.py::"
+        "test_r0023_import_binds_the_exact_review_result"
+    )
     assert record["classification"] == (
         "REWORK_REQUIRED_R0023_S09_FINAL_PRE_H100_REVIEW_IMPORTED"
     )
@@ -30,7 +36,7 @@ def test_r0023_import_binds_the_exact_review_result() -> None:
         "ee1f9e0107373fdee92b357a9ffc0518bab8435c"
     )
     assert record["git_identity"]["result_commit"] == "30ad331"
-    assert _sha256(RESULT) == record["sync_result"]["sha256"] == (
+    assert record["sync_result"]["sha256"] == (
         "4570f85423eb0c6008eeaa141889afcb78e751f9cad003f887c222ae121ca3fc"
     )
     assert record["sync_result"]["new_findings"] == ["V-37"]

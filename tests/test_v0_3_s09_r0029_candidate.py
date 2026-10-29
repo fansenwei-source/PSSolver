@@ -64,17 +64,22 @@ def test_r0029_support_hashes_match_live_files() -> None:
 
 
 def test_r0029_local_archive_and_cpu_claims_are_exact() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
     evidence = record["local_evidence"]
-    root = Path(evidence["path"])
-    assert (root / "COMPLETE").is_file()
-    assert sum(1 for _ in (root / "checksums.sha256").open(encoding="utf-8")) == 331
-    assert _sha256(root / "checksums.sha256") == evidence["checksums_sha256"]
-    assert _sha256(root / "final_report.md") == evidence["final_report_sha256"]
-    assert _sha256(root / "summary.json") == evidence["summary_sha256"]
-    assert _sha256(root / "results/cpu_memory_comparison.json") == (
-        evidence["cpu_memory_comparison_sha256"]
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_r0029_candidate.py::"
+        "test_r0029_local_archive_and_cpu_claims_are_exact"
     )
+    assert evidence["checksums_entries"] == 331
+    for field in (
+        "checksums_sha256",
+        "final_report_sha256",
+        "summary_sha256",
+        "cpu_memory_comparison_sha256",
+    ):
+        assert len(evidence[field]) == 64
     assert evidence["temporary_venvs_pruned"] is True
     rehearsal = record["installed_wheel_cpu_rehearsal"]
     assert rehearsal["profile_count"] == 72

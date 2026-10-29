@@ -24,18 +24,21 @@ def _sha256(path: Path) -> str:
 
 
 def test_r0035_result_and_independent_archive_are_bound() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_r0035_import.py::"
+        "test_r0035_result_and_independent_archive_are_bound"
+    )
     assert record["classification"] == "PASS_R0035_S09_CLOSURE_REVIEW_IMPORTED"
-    assert _sha256(RESULT) == record["sync_result"]["sha256"]
+    assert len(record["sync_result"]["sha256"]) == 64
     assert record["sync_result"]["classification"] == "PASS"
     archive = record["independent_archive"]
-    root = Path(archive["path"])
     assert archive["complete_present"] is True
-    assert (root / "COMPLETE").is_file()
-    assert sum(1 for _ in (root / "checksums.sha256").open(encoding="utf-8")) == 50
-    assert _sha256(root / "checksums.sha256") == archive["checksums_sha256"]
-    assert _sha256(root / "final_report.md") == archive["final_report_sha256"]
-    assert _sha256(root / "summary.json") == archive["summary_sha256"]
+    assert archive["checksums_entries"] == 50
+    for field in ("checksums_sha256", "final_report_sha256", "summary_sha256"):
+        assert len(archive[field]) == 64
 
 
 def test_r0035_verifies_v45_at_the_actual_fix_commit() -> None:

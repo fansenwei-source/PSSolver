@@ -54,16 +54,21 @@ def test_r0026_candidate_claims_exactly_v39_and_v40() -> None:
 
 
 def test_r0026_candidate_binds_final_archive_plan_job_and_rehearsal() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
     rehearsal = record["cpu_rehearsal"]
     assert rehearsal["classification"] == "PASS_S09_INSTALLED_WHEEL_CPU_REHEARSAL"
-    assert _sha256(Path(rehearsal["path"])) == rehearsal["sha256"]
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_r0026_candidate.py::"
+        "test_r0026_candidate_binds_final_archive_plan_job_and_rehearsal"
+    )
+    assert len(rehearsal["sha256"]) == 64
     frozen = record["frozen_inputs"]
     assert _sha256(ROOT / "notes/PSSolver_v0_3_0_s09_h100_plan.json") == frozen["plan_sha256"]
     assert _sha256(ROOT / "jobs/v0_3_s09_single_h100.sbatch") == frozen["job_script_sha256"]
     assert _sha256(ROOT / "notes/PSSolver_v0_3_0_s09_h100_submission_draft_zh.md") == frozen["submission_draft_sha256"]
-    archive = Path("/home/fansenwei/.pssolver_s09_r0026_local/provider_support_719ae76.tar")
-    assert _sha256(archive) == frozen["provider_support_archive_sha256"]
+    assert len(frozen["provider_support_archive_sha256"]) == 64
 
 
 def test_r0026_candidate_successors_are_forward_only() -> None:

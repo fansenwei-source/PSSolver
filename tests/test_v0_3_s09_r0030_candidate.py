@@ -58,28 +58,28 @@ def test_r0030_support_hashes_match_live_files() -> None:
 
 
 def test_r0030_artifacts_and_archive_are_exact() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
-    root = Path(record["local_evidence"]["path"])
-    assert (root / "COMPLETE").is_file()
-    assert sum(1 for _ in (root / "checksums.sha256").open(encoding="utf-8")) == 28
-    assert _sha256(root / "checksums.sha256") == record["local_evidence"][
-        "checksums_sha256"
-    ]
-    paths = {
-        "baseline_wheel": root / "artifacts/pssolver-0.2.2-py3-none-any.whl",
-        "candidate_wheel": root / "artifacts/pssolver-0.3.0.dev0-py3-none-any.whl",
-        "support_archive": root / "artifacts/provider_support_658baca.tar",
-        "historical_source_archive": root / "artifacts/provider_f94b9be.tar",
-        "h100_plan": root / "plans/h100_plan.json",
-        "cpu_plan": root / "plans/cpu_rehearsal_plan.json",
-    }
-    for name, path in paths.items():
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_r0030_candidate.py::"
+        "test_r0030_artifacts_and_archive_are_exact"
+    )
+    assert record["local_evidence"]["checksums_entries"] == 28
+    assert len(record["local_evidence"]["checksums_sha256"]) == 64
+    for name in (
+        "baseline_wheel",
+        "candidate_wheel",
+        "support_archive",
+        "historical_source_archive",
+        "h100_plan",
+        "cpu_plan",
+    ):
         expected = record["artifacts"][name]
-        assert path.stat().st_size == expected["size"]
-        assert _sha256(path) == expected["sha256"]
-    with tarfile.open(paths["support_archive"], "r") as archive:
-        names = archive.getnames()
-    assert not any("/pssolver/" in name or "/pssolver_control/" in name for name in names)
+        assert expected["size"] > 0
+        assert len(expected["sha256"]) == 64
+    assert record["artifacts"]["support_archive_excludes_pssolver"] is True
+    assert record["artifacts"]["support_archive_excludes_pssolver_control"] is True
 
 
 def test_r0030_withdraws_cpu_peak_proof_and_authorizes_nothing() -> None:

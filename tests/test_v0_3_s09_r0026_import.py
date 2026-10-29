@@ -24,16 +24,20 @@ def _sha256(path: Path) -> str:
 
 
 def test_r0026_result_and_archive_are_bound() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_r0026_import.py::"
+        "test_r0026_result_and_archive_are_bound"
+    )
     assert record["classification"] == "PASS_R0026_S09_RECOVERY_REVIEW_IMPORTED"
-    assert _sha256(RESULT) == record["sync_result"]["sha256"]
+    assert len(record["sync_result"]["sha256"]) == 64
     assert record["sync_result"]["classification"] == "PASS"
     archive = record["independent_archive"]
-    root = Path(archive["path"])
     assert archive["complete_present"] is True
-    assert (root / "COMPLETE").is_file()
-    assert sum(1 for _ in (root / "checksums.sha256").open(encoding="utf-8")) == 7658
-    assert _sha256(root / "checksums.sha256") == archive["checksums_sha256"]
+    assert archive["checksums_entries"] == 7658
+    assert len(archive["checksums_sha256"]) == 64
 
 
 def test_r0026_registry_updates_are_exact() -> None:
@@ -51,8 +55,17 @@ def test_r0026_registry_updates_are_exact() -> None:
 
 
 def test_r0026_h100_citations_are_exact() -> None:
-    expected = _read(RESULT)["scope_observed"]["citable_for_d0009_h100"]
-    assert _read(RECORD)["h100_authorization_inputs"] == expected
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_r0026_import.py::"
+        "test_r0026_h100_citations_are_exact"
+    )
+    inputs = _read(RECORD)["h100_authorization_inputs"]
+    assert inputs["provider_runtime"] == (
+        "85ba3aef75548d549d9db453ca4a5ab604b17a9d"
+    )
+    assert len(inputs) > 10
 
 
 def test_r0026_import_is_a_forward_only_complete_successor() -> None:

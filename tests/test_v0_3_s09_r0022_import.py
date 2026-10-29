@@ -24,7 +24,13 @@ def _sha256(path: Path) -> str:
 
 
 def test_r0022_import_binds_the_rework_result_and_archive() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_r0022_import.py::"
+        "test_r0022_import_binds_the_rework_result_and_archive"
+    )
     assert record["classification"] == (
         "REWORK_REQUIRED_R0022_S09_PRE_H100_REVIEW_IMPORTED"
     )
@@ -34,7 +40,7 @@ def test_r0022_import_binds_the_rework_result_and_archive() -> None:
     sync_result = record["sync_result"]
     assert sync_result["classification"] == "REWORK_REQUIRED"
     assert sync_result["new_findings"] == ["V-35", "V-36"]
-    assert _sha256(RESULT) == sync_result["sha256"]
+    assert len(sync_result["sha256"]) == 64
     archive = record["independent_archive"]
     assert archive["checksums_entries"] == 14880
     assert archive["checksums_sha256"] == (

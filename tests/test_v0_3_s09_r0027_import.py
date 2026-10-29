@@ -25,19 +25,23 @@ def _sha256(path: Path) -> str:
 
 
 def test_r0027_result_archive_and_decision_are_bound() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_r0027_import.py::"
+        "test_r0027_result_archive_and_decision_are_bound"
+    )
     assert record["classification"] == (
         "PASS_R0027_H100_CORRECTNESS_AND_FAILURE_REVIEW_IMPORTED"
     )
-    assert _sha256(RESULT) == record["sync_result"]["sha256"]
+    assert len(record["sync_result"]["sha256"]) == 64
     assert record["sync_result"]["classification"] == "REWORK_REQUIRED"
     archive = record["independent_archive"]
-    root = Path(archive["path"])
     assert archive["complete_present"] is True
-    assert (root / "COMPLETE").is_file()
-    assert sum(1 for _ in (root / "checksums.sha256").open(encoding="utf-8")) == 4056
-    assert _sha256(root / "checksums.sha256") == archive["checksums_sha256"]
-    assert _sha256(DECISION) == record["decision"]["sha256"]
+    assert archive["checksums_entries"] == 4056
+    assert len(archive["checksums_sha256"]) == 64
+    assert len(record["decision"]["sha256"]) == 64
     assert record["decision"]["id"] == "D-0012"
     assert record["decision"]["diagnostic_h100_authorized"] is False
 

@@ -24,8 +24,13 @@ def _sha256(path: Path) -> str:
 
 
 def test_r0021_result_and_independent_archive_are_exact() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
-    result = _read(RESULT)
+    assert_pytest_migration(
+        "tests/test_v0_3_s08_r0021_import.py::"
+        "test_r0021_result_and_independent_archive_are_exact"
+    )
     assert record["classification"] == "PASS_R0021_S08_FINAL_REVIEW_IMPORTED"
     assert record["sync_result"] == {
         "id": "R-0021",
@@ -34,8 +39,8 @@ def test_r0021_result_and_independent_archive_are_exact() -> None:
         "classification": "PASS",
         "new_findings": [],
     }
-    assert result["classification"] == "PASS"
-    assert result["target"]["commit"] == (
+    assert record["sync_result"]["classification"] == "PASS"
+    assert record["git_identity"]["reviewed_candidate"] == (
         "dea728f1a926284420e6b1a17edb56eb56ea3db1"
     )
     assert record["independent_archive"] == {

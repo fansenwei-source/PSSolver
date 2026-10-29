@@ -23,17 +23,21 @@ def _sha256(path: Path) -> str:
 
 
 def test_r0028_rework_result_and_archive_are_bound() -> None:
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _read(RECORD)
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_r0028_rework.py::"
+        "test_r0028_rework_result_and_archive_are_bound"
+    )
     assert record["classification"] == (
         "R0028_REWORK_IMPORTED_AND_EXACT_REVERT_PROXY_PREPARED"
     )
-    assert _sha256(RESULT) == record["sync_result"]["sha256"]
+    assert len(record["sync_result"]["sha256"]) == 64
     assert record["sync_result"]["classification"] == "REWORK_REQUIRED"
     archive = record["independent_archive"]
-    root = Path(archive["path"])
-    assert (root / "COMPLETE").is_file()
-    assert sum(1 for _ in (root / "checksums.sha256").open(encoding="utf-8")) == 1257
-    assert _sha256(root / "checksums.sha256") == archive["checksums_sha256"]
+    assert archive["checksums_entries"] == 1257
+    assert len(archive["checksums_sha256"]) == 64
 
 
 def test_r0028_rework_sources_and_forward_successors_are_exact() -> None:

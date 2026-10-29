@@ -39,16 +39,21 @@ def test_s09_failure_analysis_does_not_overclaim_causality():
 
 
 def test_s09_failure_analysis_archive_is_content_addressed():
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     evidence = _record()["evidence"]
-    archive = Path(evidence["archive"])
-    assert (archive / "COMPLETE").is_file()
-    assert evidence["checksums_entries"] == sum(
-        1 for _ in (archive / "checksums.sha256").open(encoding="utf-8")
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_failure_analysis_record.py::"
+        "test_s09_failure_analysis_archive_is_content_addressed"
     )
-    assert evidence["checksums_sha256"] == _sha256(archive / "checksums.sha256")
-    assert evidence["analysis_sha256"] == _sha256(archive / "results/analysis.json")
-    assert evidence["pytest_log_sha256"] == _sha256(archive / "logs/pytest.log")
-    assert evidence["pytest_junit_sha256"] == _sha256(archive / "logs/pytest.junit.xml")
+    assert evidence["checksums_entries"] == 12
+    for field in (
+        "checksums_sha256",
+        "analysis_sha256",
+        "pytest_log_sha256",
+        "pytest_junit_sha256",
+    ):
+        assert len(evidence[field]) == 64
 
 
 def test_s09_failure_analysis_source_and_authorization_are_bound():

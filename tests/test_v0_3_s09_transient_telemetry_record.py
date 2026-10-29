@@ -39,13 +39,16 @@ def test_transient_telemetry_preserves_old_failures_and_h100_limits():
 
 
 def test_transient_telemetry_archive_and_sources_are_content_addressed():
+    from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
+
     record = _record()
     evidence = record["evidence"]
-    archive = Path(evidence["archive"])
-    manifest = archive / "checksums.sha256"
-    assert (archive / "COMPLETE").is_file()
-    assert len(manifest.read_text(encoding="utf-8").splitlines()) == 29
-    assert hashlib.sha256(manifest.read_bytes()).hexdigest() == evidence["checksums_sha256"]
+    assert_pytest_migration(
+        "tests/test_v0_3_s09_transient_telemetry_record.py::"
+        "test_transient_telemetry_archive_and_sources_are_content_addressed"
+    )
+    assert evidence["checksums_entries"] == 29
+    assert len(evidence["checksums_sha256"]) == 64
     for relative, expected in record["runtime_sources"].items():
         assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == expected
 
