@@ -28,10 +28,10 @@ def test_development_version_and_public_provenance_agree():
     development = _json(ROOT / "notes/pssolver_v0_3_0_dev.json")
     assert development["base_release"] == "v0.2.0"
     assert development["version"] == "0.3.0.dev0"
-    assert pssolver.__version__ == "0.3.0"
+    assert pssolver.__version__ == "0.4.0.dev0"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.3.0",
+        "version": "0.4.0.dev0",
     }
 
 

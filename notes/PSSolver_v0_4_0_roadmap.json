@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-29",
+  "classification": "V0_4_0_DEVELOPMENT_TARGET_AND_COMPLETION_CONTRACT",
+  "status": "confirmed_by_D_0014",
+  "plan_step": "S-16",
+  "governance": {
+    "decision": "D-0014",
+    "decision_sha256": "b01e70f81a0e8dcfff851203aa2a56cf459f42f2ef4431d606c2a7358480bcd2",
+    "inherits": "D-0011",
+    "inherits_sha256": "cc9e71723afb00eda4df2602e0c38e30b96f2a2fdc445dd46402decba38abff1"
+  },
+  "source": {
+    "branch": "dev/0.4",
+    "source_parent": "3ea68b5e288e670fe0a6af1e690cbcdf784d8a17",
+    "v0_3_0_release_source": "47473880534a66f6da940db82122c79cda48a86b",
+    "comparison_baseline": "v0.3.0",
+    "version": "0.4.0.dev0",
+    "functional_api_version_at_start": "1.1"
+  },
+  "objective": "Complete the remaining R1-R9 architecture work on the 0.4 development line without weakening released compatibility, scientific behavior, or qualification contracts.",
+  "ordered_steps": [
+    "S-16",
+    "S-17",
+    "S-18",
+    "S-19",
+    "S-20"
+  ],
+  "execution_policy": {
+    "threshold_rule": "Do not relax a numerical, scientific, performance, memory, restart, or packaging threshold and do not add skip or xfail.",
+    "s16_s17_numerical_rule": "Numerical outputs must remain byte-identical to v0.3.0 and these steps do not run H100 qualification.",
+    "gpu_path_rule": "If S-16 or S-17 must change a GPU-only path, stop and move that work into S-19 before implementation.",
+    "s18_numerical_rule": "S-18 should remain byte-identical; any unavoidable difference requires a pre-registered tolerance, a scientific explanation, and a separate user decision before implementation.",
+    "s19_budget": "One pre-registered H100 qualification campaign at S-09 scale; after a qualification failure, at most one separately authorized diagnostic job.",
+    "d0013_exception": "The bounded v0.3.0 D-0013 memory exception does not extend to v0.4.0."
+  },
+  "compatibility_contract": {
+    "read_all_released_v0_2_x_checkpoints": true,
+    "read_released_v0_3_0_checkpoints": true,
+    "published_checkpoint_sources_are_read_only": true,
+    "restart_equivalence_required": true,
+    "provider_identity_changes_require_explicit_migration": true
+  },
+  "completion_gates": [
+    {
+      "id": "G-01",
+      "title": "Scope and registry closure",
+      "criterion": "Every S-16 through S-18 item is independently verified, accepted by a confirmed decision, or explicitly deferred by a confirmed decision; no untriaged finding remains."
+    },
+    {
+      "id": "G-02",
+      "title": "Internal sharing without public drift",
+      "criterion": "R7 and R9 helper and import-boundary cleanup is complete, public interfaces are unchanged unless pre-authorized in S-17, and S-16 outputs are byte-identical to v0.3.0."
+    },
+    {
+      "id": "G-03",
+      "title": "Qualification infrastructure and evidence retention",
+      "criterion": "R8 uses the user-confirmed evidence-retention policy, preserves immutable historical records, and makes a fresh GitHub clone independently testable without skip or xfail."
+    },
+    {
+      "id": "G-04",
+      "title": "Control and public-surface interoperability",
+      "criterion": "PSSolver-Control main is independently qualified against v0.3.0 before R3/R6 work; S-17 preserves byte-identical numerical outputs and follows separately confirmed deprecation and experimental-surface decisions."
+    },
+    {
+      "id": "G-05",
+      "title": "Released checkpoint compatibility",
+      "criterion": "Every released v0.2.x and v0.3.0 checkpoint fixture remains readable without source mutation and passes the registered restart-equivalence gates."
+    },
+    {
+      "id": "G-06",
+      "title": "Numerical and scientific non-regression",
+      "criterion": "S-16 and S-17 are byte-identical to v0.3.0; S-18 is byte-identical unless a tolerance is registered and approved before implementation; no numerical or scientific threshold is relaxed."
+    },
+    {
+      "id": "G-07",
+      "title": "CPU, packaging, and public import closure",
+      "criterion": "Clean-source and installed-wheel CPU suites pass in the registered environments; packaging, public imports, console entry points, documentation bindings, and provider identities are verified without new skip or xfail."
+    },
+    {
+      "id": "G-08",
+      "title": "Consolidated GPU/H100 qualification",
+      "criterion": "One pre-registered S-09-scale campaign covers the S-18 numerical paths and any authorized GPU-path change, using v0.3.0 as baseline and the accepted thresholds without the D-0013 memory exception; a failure permits at most one separately authorized diagnostic job."
+    },
+    {
+      "id": "G-09",
+      "title": "Independent candidate, release, and post-release acceptance",
+      "criterion": "The v0.4.0 candidate, assets, online release, and post-release state pass independent read-only acceptance before the line is declared complete."
+    }
+  ],
+  "scope": {
+    "version_changed_to_development_line": true,
+    "functional_api_changed_by_this_record": false,
+    "checkpoint_schema_changed_by_this_record": false,
+    "numerical_algorithm_changed_by_this_record": false,
+    "production_default_changed_by_this_record": false,
+    "threshold_changed_by_this_record": false,
+    "skip_or_xfail_added_by_this_record": false
+  },
+  "authorization": {
+    "local_s16_work": true,
+    "push": false,
+    "tag": false,
+    "github_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

@@ -19,11 +19,11 @@ def _read(path: Path) -> dict[str, object]:
 
 
 def test_rc1_record_is_frozen_while_the_live_package_can_advance() -> None:
-    assert pssolver.__version__ == "0.3.0"
+    assert pssolver.__version__ == "0.4.0.dev0"
     assert FUNCTIONAL_API_VERSION == "1.1"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.3.0",
+        "version": "0.4.0.dev0",
     }
     assert "## 0.3.0rc1 — 2026-10-28" in (ROOT / "CHANGELOG.md").read_text(
         encoding="utf-8"

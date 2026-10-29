@@ -75,7 +75,7 @@ def test_r0005_import_preserves_every_claim_verdict() -> None:
 def test_r0005_import_binds_the_qualified_runtime_without_changing_it() -> None:
     record = _read(RECORD)
     assert record["review"]["version"] == "0.3.0.dev0"
-    assert pssolver.__version__ == "0.3.0"
+    assert pssolver.__version__ == "0.4.0.dev0"
     expected = record["review"]["runtime_sha256"]["pssolver/io/checkpoint.py"]
     assert expected == (
         "1a90fe8edb640310c439d6b553f7de02237eccca368455b059565d2038bec0df"

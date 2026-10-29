@@ -1,0 +1,125 @@
+{
+  "schema": "pssolver.v0_4.s16.development_contract.v1",
+  "created_at": "2026-10-29T17:05:00-04:00",
+  "plan_step": "S-16",
+  "classification": "V0_4_0_DEVELOPMENT_VERSION_AND_COMPLETION_CONTRACT",
+  "git_identity": {
+    "branch": "dev/0.4",
+    "source_parent": "3ea68b5e288e670fe0a6af1e690cbcdf784d8a17",
+    "record_commit_is_v0_3_0_release_source": false,
+    "pushed": false
+  },
+  "governing_decisions": [
+    "D-0011",
+    "D-0014"
+  ],
+  "development_transition": {
+    "from": "0.3.0",
+    "to": "0.4.0.dev0",
+    "functional_api_version": "1.1",
+    "version_only_runtime_change": true,
+    "numerical_output_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "production_default_changed": false
+  },
+  "historical_successor_sources": {
+    "pssolver/_version.py": {
+      "historical_sha256": "44044235f8cbb67fe868b95fd42a7009cfcbe76e3a21ee9c81fc05106a9dc8fe",
+      "accepted_predecessor_sha256": [
+        "44044235f8cbb67fe868b95fd42a7009cfcbe76e3a21ee9c81fc05106a9dc8fe"
+      ],
+      "current_sha256": "404a7d506a81eef9c8cce55334f74efa686627a3005f3bdae19f7fd1bf14a98a",
+      "reason": "Open the confirmed v0.4 development line at 0.4.0.dev0 without changing the functional API or numerical implementation."
+    },
+    "tests/test_release_v0_2_0_final.py": {
+      "historical_sha256": "7f0a4c536cba57ebafeb574de4bcb84ff3dfb881934643a36ad6a3290b7169e2",
+      "accepted_predecessor_sha256": [
+        "7f0a4c536cba57ebafeb574de4bcb84ff3dfb881934643a36ad6a3290b7169e2"
+      ],
+      "current_sha256": "1b984d98a87b4f2f12d093f1abc9831885563fabe67166db8cc468b657b15c90",
+      "reason": "Keep the immutable v0.2.0 record while allowing the live package version to advance to dev/0.4."
+    },
+    "tests/test_release_v0_2_1.py": {
+      "historical_sha256": "ef1ad143fa79e9b1e91dbd545ed7a348d92c79e34c1687010d5ca5082da23f65",
+      "accepted_predecessor_sha256": [
+        "ef1ad143fa79e9b1e91dbd545ed7a348d92c79e34c1687010d5ca5082da23f65"
+      ],
+      "current_sha256": "a6b0793dce86be216d5db059577457f61c108037f83e5093397262a2ac90a436",
+      "reason": "Keep the immutable v0.2.1 record while allowing the live package version to advance to dev/0.4."
+    },
+    "tests/test_release_v0_2_2.py": {
+      "historical_sha256": "20cc5ef1132bbd90d6775dedcc79652257f06ebd5639df02b1bde55b71f1e39c",
+      "accepted_predecessor_sha256": [
+        "20cc5ef1132bbd90d6775dedcc79652257f06ebd5639df02b1bde55b71f1e39c"
+      ],
+      "current_sha256": "3500a521ba6784ee7cc85c3be1988dc364d591304b51765a0b35c0e3e6413cc5",
+      "reason": "Keep the immutable v0.2.2 record while allowing the live package version to advance to dev/0.4."
+    },
+    "tests/test_release_v0_2_rc6.py": {
+      "historical_sha256": "3297ce154caab21f5d2219e030eccef90a6c6834415f5f34c1e3c65785799568",
+      "accepted_predecessor_sha256": [
+        "3297ce154caab21f5d2219e030eccef90a6c6834415f5f34c1e3c65785799568"
+      ],
+      "current_sha256": "55782004c8fc79f231a269743d61fd70b08da698476a663e3b538a5556bd3c13",
+      "reason": "Keep the immutable rc6 record while allowing the live package version to advance to dev/0.4."
+    },
+    "tests/test_release_v0_3_0.py": {
+      "historical_sha256": "5441898493e8179784a0b764a693f1c7f13ae80bbf0ab783563012195487623b",
+      "accepted_predecessor_sha256": [
+        "5441898493e8179784a0b764a693f1c7f13ae80bbf0ab783563012195487623b"
+      ],
+      "current_sha256": "f0cb9d043fb22be7beb97c93cbd1473b0a3109e9b13584d187fc1c4d6aa76351",
+      "reason": "Keep the immutable v0.3.0 release record while checking the live dev/0.4 package identity separately."
+    },
+    "tests/test_release_v0_3_0rc1.py": {
+      "historical_sha256": "67e03c1745cc4d67e885235d5ba3ba80c695599b8b0a56813d87b1f1611eef08",
+      "accepted_predecessor_sha256": [
+        "67e03c1745cc4d67e885235d5ba3ba80c695599b8b0a56813d87b1f1611eef08"
+      ],
+      "current_sha256": "7273f2a8852bc488d1a212a782f74b271468d50291335416708c0a7e98c18d54",
+      "reason": "Keep the immutable v0.3.0rc1 record while checking the live dev/0.4 package identity separately."
+    },
+    "tests/test_v0_3_n1_v17_checkpoint_integration.py": {
+      "historical_sha256": "10524b1d36abfda1e6abb7a492f49a205dcbc163b7a168c95cce656210633bf2",
+      "accepted_predecessor_sha256": [
+        "10524b1d36abfda1e6abb7a492f49a205dcbc163b7a168c95cce656210633bf2"
+      ],
+      "current_sha256": "392411317cc70bf8cb2ee2b257eb7f46a61bd89b218997ff4352584d7d04b5ab",
+      "reason": "Preserve the v0.3 checkpoint-integration evidence while allowing the live package version to advance."
+    },
+    "tests/test_v0_3_n1_v17_r0005_import.py": {
+      "historical_sha256": "3fb2914cf612987457bf5b3ef432269d5c5bf2ae3de928c03885144f402da7fd",
+      "accepted_predecessor_sha256": [
+        "3fb2914cf612987457bf5b3ef432269d5c5bf2ae3de928c03885144f402da7fd"
+      ],
+      "current_sha256": "1c8f1a6e47d1f0a3f6518f3c7622e2d7dcacfae5311efdd046c7711abfe236ca",
+      "reason": "Preserve the R-0005 evidence boundary while allowing the live package version to advance."
+    }
+  },
+  "new_sources": {
+    "notes/PSSolver_v0_4_0_roadmap.json": "462e5a6de6f969c5ead5817860faecafad0c3dbc7b3fb77fb7c0d7b90b489913",
+    "notes/PSSolver_v0_4_0_roadmap_zh.md": "3ec6ea376dd6a5fae1be7340d37dd28d1cb3f5c006a450fbb1ee6649f85b2b7b",
+    "tests/test_v0_4_0_roadmap.py": "502b382b777bcef18c0a98e947d2aba8c6d1a7864f1e23eb3d56da1c84200787"
+  },
+  "scope": {
+    "local_only": true,
+    "version_changed": true,
+    "functional_api_changed": false,
+    "checkpoint_schema_changed": false,
+    "numerical_algorithm_changed": false,
+    "packaging_configuration_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "local_s16_work": true,
+    "push": false,
+    "tag": false,
+    "github_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

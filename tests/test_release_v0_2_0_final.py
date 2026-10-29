@@ -44,10 +44,10 @@ def test_dev_line_identifies_its_v020_release_base_and_current_version():
         "6d2934e73b543f6652d112733657775333e0f396"
     )
     assert development["version"] == "0.3.0.dev0"
-    assert pssolver.__version__ == "0.3.0"
+    assert pssolver.__version__ == "0.4.0.dev0"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.3.0",
+        "version": "0.4.0.dev0",
     }
     successor = json.loads(V021_RELEASE_RECORD.read_text(encoding="utf-8"))
     assert successor["source"]["base_release"] == "v0.2.0"

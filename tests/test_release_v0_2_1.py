@@ -32,10 +32,10 @@ def _record() -> dict[str, object]:
 
 
 def test_v021_has_a_registered_v03_development_successor():
-    assert pssolver.__version__ == "0.3.0"
+    assert pssolver.__version__ == "0.4.0.dev0"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.3.0",
+        "version": "0.4.0.dev0",
     }
     successor = json.loads(V022_RELEASE_RECORD.read_text(encoding="utf-8"))
     assert successor["source"]["base_release"] == "v0.2.1"

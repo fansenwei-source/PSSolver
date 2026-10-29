@@ -18,12 +18,12 @@ def _read(path: Path) -> dict[str, object]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def test_final_version_and_public_provenance_are_frozen() -> None:
-    assert pssolver.__version__ == "0.3.0"
+def test_final_record_is_frozen_while_the_live_package_can_advance() -> None:
+    assert pssolver.__version__ == "0.4.0.dev0"
     assert FUNCTIONAL_API_VERSION == "1.1"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.3.0",
+        "version": "0.4.0.dev0",
     }
     assert "## 0.3.0 — 2026-10-28" in (ROOT / "CHANGELOG.md").read_text(
         encoding="utf-8"
