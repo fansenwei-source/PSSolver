@@ -1,0 +1,201 @@
+{
+  "schema": "pssolver.v0_4.s16.r8_inventory.v2",
+  "date": "2026-10-29",
+  "classification": "R8_EXECUTION_INVENTORY_CORRECTED_IMPLEMENTATION_NOT_STARTED",
+  "supersedes_for_live_counts": {
+    "path": "notes/PSSolver_v0_4_0_s16_r8_inventory.json",
+    "sha256": "be0b0ca2923f88bd43909bf43e5d86f175271c0b35eadd2a61c7f79239879758",
+    "rewritten": false,
+    "reason": "R-0043 V-51 found dependencies reached indirectly through record JSON fields"
+  },
+  "execution_audit": {
+    "audited_commit": "7e9871ca1f2ce1b83f296c3a482e99bda78f1bee",
+    "method": "reachable-only no-local single-branch clone with origin removed; audit-hook block mode made every /home/fansenwei path outside the clone, Python baseline, and audit plugin appear absent",
+    "cuda_only_nodes_deselected": 7,
+    "passed": 4869,
+    "failed": 35,
+    "failing_test_files": 27,
+    "subtests_passed": 8,
+    "outcome": "expected inventory failure",
+    "independent_match": "exactly matches R-0043 out/r8_fresh_machine_failures.json"
+  },
+  "summary": {
+    "tests_with_live_absolute_dependencies": 27,
+    "failing_tests": 35,
+    "external_roots": 13,
+    "observed_root_bytes_lstat_sum": 496619097,
+    "fresh_github_clone_is_self_contained": false,
+    "r8_implemented": false
+  },
+  "failing_tests": {
+    "tests/test_analyze_v0_3_s09_cpu_6x60_stop.py": [
+      "test_s09_stop_analysis_preserves_failure_and_uses_no_new_profiles",
+      "test_s09_stop_analysis_separates_transient_from_iteration_count",
+      "test_s09_stop_analysis_does_not_overclaim_unique_cause"
+    ],
+    "tests/test_rc5_r56_public_error_boundary_record.py": [
+      "test_r56_record_binds_installed_wheel_identity_and_cpu_results"
+    ],
+    "tests/test_rc5_r57_device_normalization_record.py": [
+      "test_r57_record_binds_installed_wheel_artifacts_and_identity"
+    ],
+    "tests/test_v0_3_s08_r0021_import.py": [
+      "test_r0021_result_and_independent_archive_are_exact"
+    ],
+    "tests/test_v0_3_s09_cpu_6x60_preregistration.py": [
+      "test_s09_6x60_contract_preserves_the_failed_5x30_sample"
+    ],
+    "tests/test_v0_3_s09_cpu_6x60_stop_record.py": [
+      "test_s09_6x60_archive_and_matrices_are_content_addressed",
+      "test_s09_6x60_sources_and_historical_failure_remain_bound"
+    ],
+    "tests/test_v0_3_s09_cpu_diagnosis_record.py": [
+      "test_s09_evidence_binds_every_measured_matrix"
+    ],
+    "tests/test_v0_3_s09_d0013_closure.py": [
+      "test_d0013_and_independent_reviews_are_exactly_bound",
+      "test_noninterrupting_recompute_proves_the_exception_is_exhaustive",
+      "test_v1_archive_is_preserved_while_v2_binds_the_real_job_plan",
+      "test_closure_adjudication_changes_no_analyzer_threshold_or_scope"
+    ],
+    "tests/test_v0_3_s09_failure_analysis_record.py": [
+      "test_s09_failure_analysis_archive_is_content_addressed"
+    ],
+    "tests/test_v0_3_s09_r0022_import.py": [
+      "test_r0022_import_binds_the_rework_result_and_archive"
+    ],
+    "tests/test_v0_3_s09_r0023_import.py": [
+      "test_r0023_import_binds_the_exact_review_result"
+    ],
+    "tests/test_v0_3_s09_r0024_import.py": [
+      "test_r0024_import_binds_the_exact_passing_result_and_archive"
+    ],
+    "tests/test_v0_3_s09_r0025_import.py": [
+      "test_r0025_result_and_archive_are_bound"
+    ],
+    "tests/test_v0_3_s09_r0026_candidate.py": [
+      "test_r0026_candidate_binds_final_archive_plan_job_and_rehearsal"
+    ],
+    "tests/test_v0_3_s09_r0026_import.py": [
+      "test_r0026_result_and_archive_are_bound",
+      "test_r0026_h100_citations_are_exact"
+    ],
+    "tests/test_v0_3_s09_r0027_import.py": [
+      "test_r0027_result_archive_and_decision_are_bound"
+    ],
+    "tests/test_v0_3_s09_r0028_rework.py": [
+      "test_r0028_rework_result_and_archive_are_bound"
+    ],
+    "tests/test_v0_3_s09_r0029_candidate.py": [
+      "test_r0029_local_archive_and_cpu_claims_are_exact"
+    ],
+    "tests/test_v0_3_s09_r0029_rework.py": [
+      "test_r0029_result_and_independent_archive_are_bound"
+    ],
+    "tests/test_v0_3_s09_r0030_candidate.py": [
+      "test_r0030_artifacts_and_archive_are_exact"
+    ],
+    "tests/test_v0_3_s09_r0030_import.py": [
+      "test_r0030_result_and_independent_archive_are_bound",
+      "test_r0030_citable_identities_match_the_passing_result"
+    ],
+    "tests/test_v0_3_s09_r0035_import.py": [
+      "test_r0035_result_and_independent_archive_are_bound"
+    ],
+    "tests/test_v0_3_s09_transient_telemetry_record.py": [
+      "test_transient_telemetry_archive_and_sources_are_content_addressed"
+    ],
+    "tests/test_v0_3_s10_r0033_import.py": [
+      "test_r0033_import_binds_the_exact_independent_review"
+    ],
+    "tests/test_v0_3_s10_r0036_rework.py": [
+      "test_r0036_rework_binds_the_exact_independent_review"
+    ],
+    "tests/test_v0_3_s10_r0037_import.py": [
+      "test_r0037_import_binds_the_exact_independent_pass"
+    ],
+    "tests/test_v0_4_s13_s14_correction_source.py": [
+      "test_s13_archive_is_complete_and_content_addressed"
+    ]
+  },
+  "external_roots": {
+    "/home/fansenwei/.pssolver_s09_r0026_local": {
+      "bytes": 127420973,
+      "files": 5476,
+      "directories": 229
+    },
+    "/home/fansenwei/pssolver_rc5_r56_installed_cpu_cf572bc_20261014_v1": {
+      "bytes": 134305486,
+      "files": 4365,
+      "directories": 394
+    },
+    "/home/fansenwei/pssolver_rc5_r57_installed_cpu_2d67ba2_20261014_v1": {
+      "bytes": 134377379,
+      "files": 4364,
+      "directories": 394
+    },
+    "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0029_local_b031421_20261026_v2": {
+      "bytes": 51317300,
+      "files": 333,
+      "directories": 230
+    },
+    "/home/fansenwei/pssolver_v0_3_s09_ap_revert_proxy_r0030_local_658baca_20261026_v1": {
+      "bytes": 30892705,
+      "files": 30,
+      "directories": 7
+    },
+    "/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v1": {
+      "bytes": 2321408,
+      "files": 25,
+      "directories": 5
+    },
+    "/home/fansenwei/pssolver_v0_3_s09_closure_f3620b8_20261027_v2": {
+      "bytes": 4563400,
+      "files": 34,
+      "directories": 5
+    },
+    "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_2573dec_20261023_v3": {
+      "bytes": 2631310,
+      "files": 215,
+      "directories": 8
+    },
+    "/home/fansenwei/pssolver_v0_3_s09_cpu_6x60_failure_analysis_87f6bfe_20261023_v4": {
+      "bytes": 23903,
+      "files": 13,
+      "directories": 4
+    },
+    "/home/fansenwei/pssolver_v0_3_s09_cpu_diagnosis_2573dec_20261023_v2": {
+      "bytes": 4898880,
+      "files": 459,
+      "directories": 16
+    },
+    "/home/fansenwei/pssolver_v0_3_s09_cpu_transient_telemetry_d568039_20261023_v5": {
+      "bytes": 1435803,
+      "files": 31,
+      "directories": 6
+    },
+    "/home/fansenwei/pssolver_v0_4_s13_workspace_cleanup_20261029_v1": {
+      "bytes": 208757,
+      "files": 15,
+      "directories": 1
+    },
+    "/home/fansenwei/Desktop/Develop/PSSolver_sync": {
+      "bytes": 2221793,
+      "files": 1016,
+      "directories": 268
+    }
+  },
+  "r8_effect": {
+    "historical_records": "remain byte-for-byte unchanged and retain their absolute paths as historical facts",
+    "pytest": "must stop dereferencing all external roots after the user separately authorizes one D-0015 strategy",
+    "local_verifier": "not implemented in this inventory-only correction",
+    "successor": "must forward-bind every changed test and new verifier source"
+  },
+  "scope": {
+    "inventory_only": true,
+    "r8_implementation_changed": false,
+    "historical_record_rewritten": false,
+    "skip_or_xfail_added": false,
+    "external_action_authorized": false
+  }
+}
