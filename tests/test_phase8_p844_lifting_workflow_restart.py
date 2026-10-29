@@ -735,6 +735,12 @@ def test_public_runner_rejects_historical_lifted_capability_before_output(
 
 def test_p844_record_matches_qualified_sources_and_scope():
     record = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
+    s16_successor = json.loads(
+        (
+            ROOT
+            / "notes/PSSolver_v0_3_0_s03_successor_72_s16_r0043_rework.json"
+        ).read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     assert record["classification"] == (
         "PASS_P8_4_4_PLANE_STATIC_LIFTING_WORKFLOW_RESTART"
     )
@@ -763,6 +769,14 @@ def test_p844_record_matches_qualified_sources_and_scope():
     }
     for relative, expected in record["source_sha256"].items():
         if relative in superseded_after_p844:
+            continue
+        if relative in s16_successor:
+            identity = s16_successor[relative]
+            assert identity["historical_sha256"] == expected, relative
+            assert (
+                hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+                == identity["current_sha256"]
+            ), relative
             continue
         actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
         assert actual == expected, relative

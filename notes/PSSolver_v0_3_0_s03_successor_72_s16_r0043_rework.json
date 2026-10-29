@@ -1,0 +1,277 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 72,
+  "date": "2026-10-29",
+  "classification": "S16_R0043_REWORK_CLAIMED_FIXED_R8_IMPLEMENTATION_PENDING",
+  "plan_step": "S-16",
+  "git_identity": {
+    "reviewed_candidate": "7e9871ca1f2ce1b83f296c3a482e99bda78f1bee",
+    "r7_r9_rework": "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992",
+    "r8_inventory_correction": "835ee25c2a30067a8899e3d61dee0c7adc935f98",
+    "record_commit_is_qualified_source": false
+  },
+  "r0043": {
+    "result_path": "PSSolver_sync/results/R-0043.result.json",
+    "result_sha256": "c2524ea963cb4c6d6a91d80e197e16dc8899613e42c01bb66e1b3468b90671ef",
+    "classification": "REWORK_REQUIRED",
+    "archive": "/home/fansenwei/pssolver_v0_4_claude_s16_interim_review_20261029_v1",
+    "archive_checksums_entries": 122,
+    "archive_checksums_sha256": "be02fb97d01426a239d32e629b5f687e957b811a00375edb7e507bc113176ec1"
+  },
+  "forward_corrections": {
+    "successor_70_overclaim": {
+      "immutable": true,
+      "old_classification": "S16_R7_R9_COMPLETE_R8_INVENTORIED_AWAITING_D0015",
+      "corrected_status": "R7 and R9 claimed fixed after R-0043 rework; R8 inventory corrected but implementation remains pending"
+    },
+    "V-50": {
+      "status": "claimed_fixed",
+      "fixed_in": "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992"
+    },
+    "V-51": {
+      "status": "claimed_fixed",
+      "fixed_in": "835ee25c2a30067a8899e3d61dee0c7adc935f98"
+    },
+    "V-52": {
+      "status": "claimed_fixed",
+      "fixed_in": "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992"
+    }
+  },
+  "r7": {
+    "exact_sites_found_by_r0043": 56,
+    "converted_to_shared_helper": 55,
+    "justified_exact_local_encoders": {
+      "pssolver/io/checkpoint_identity.py": "schema-independent primitive module is guarded against importing any pssolver module"
+    },
+    "distinct_noncanonical_wire_formats": [
+      "pssolver/operators/lifting.py::_tensor_sha256",
+      "pssolver/operators/robin.py::_tensor_sha256"
+    ],
+    "status": "claimed_fixed_pending_final_S16_review"
+  },
+  "r9": {
+    "top_level_modules_keep_distinct_names": true,
+    "v030_top_level_relations_not_widened": true,
+    "transforms_facade_rule_restored": true,
+    "model_stokes_edges_exact": 2,
+    "status": "claimed_fixed_pending_final_S16_review"
+  },
+  "r8_inventory": {
+    "v1_rewritten": false,
+    "v2_path": "notes/PSSolver_v0_4_0_s16_r8_inventory_v2.json",
+    "test_files": 27,
+    "failing_tests": 35,
+    "external_roots": 13,
+    "execution_observed": true,
+    "implementation_started": false
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "6aa7f8d1d057817744cbfcd9f54c58f24c0a91c71c31d69f63c063a89c26c4e0",
+      "current_sha256": "d874c6fd45d63dbbda752fcdc6898613ddb80235d605a89cce6cb3df84834d4c"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "9953a1054dee84d4fd2ad647f32ffdf48017343135ccbe1e5bdef9fa4fc9a995",
+      "current_sha256": "bba8240dd603a72d20ce94e0e69560865ca8c065d495da4b677e3903ea516650"
+    },
+    "pssolver/api/results.py": {
+      "historical_sha256": "8ed89056f2c3b53c94d9947fda8fb048ce26a40636f9e732181f5e2f63b262a2",
+      "current_sha256": "b2d5584aa4f6eab652a1e6dee300047caed6bcc70b80ffe4a85ae82ae13e6b47"
+    },
+    "pssolver/api/runner.py": {
+      "historical_sha256": "51bf19762396d5c18a4aa20ca7560205ae1534c04c044eae06743045cff8d4c1",
+      "current_sha256": "a0ab33ce509862ebdcc018890274992b2087d83eb4d0622152610597a420067b"
+    },
+    "pssolver/boundaries/prescribed.py": {
+      "historical_sha256": "2789aa3f1ab74b7a2be3cc7001085af297e77f62be1d5b241359aace8000b5f7",
+      "current_sha256": "115062358101b1b49343a4061f56b21472284ec23cde2d842af84899bbbe9fbd"
+    },
+    "pssolver/boundaries/robin.py": {
+      "historical_sha256": "d23c5848b1fadd417845673186e5fb26c572566fb0aa4071ee889bbc2f48c6ab",
+      "current_sha256": "1b9c1d6c8ae21cdff2a546f8d8ea6f77b7c7a13f2a9b82192994a0aa11cd66df"
+    },
+    "pssolver/configuration/channel_active_nematics.py": {
+      "historical_sha256": "5cf9adc88d7ad3b6a9431bdeac5b3d65ed84c3eb6b8697d40324e22aaa9b21b8",
+      "current_sha256": "c0e7064de9db68006a525cd69be429c47af48991ce56ec9e55e631ce54456204"
+    },
+    "pssolver/configuration/channel_beris_edwards.py": {
+      "historical_sha256": "4a3c92fcfac6da71e869240a88fb17511857be9d37d1e73fdfef4b3181a7c456",
+      "current_sha256": "dfce402e58961d3dedc6b81d14b7312076ef51dd83d9893392b176bff97f0487"
+    },
+    "pssolver/configuration/periodic_beris_edwards.py": {
+      "historical_sha256": "b4b70ba694c12a387bee99ebf57d5060788457e81074ecf69d7fd3b168051998",
+      "current_sha256": "91c47962edab27edf35d777a6df54cfbd767bdbd6e231fe384b9b19704186a02"
+    },
+    "pssolver/configuration/public_simulation_runner.py": {
+      "historical_sha256": "84cb80025cac3f743bd71a976cfd70022633ecaa0b76b9fff1af621c42774ab1",
+      "current_sha256": "9f8a3e21333708c44a9a0aff27ff7ec0d8b48fd042889264e8fd3046f0d98631"
+    },
+    "pssolver/configuration/simulation_binding.py": {
+      "historical_sha256": "c91c214ed98f4f49c7c861e01c9ebfee6dde21d5de019d7cd2e9a2d8174be386",
+      "current_sha256": "378031e91dd0ff432dc75124099f7c6969faeafe3eacbfbaf18e0dec66e8b91a"
+    },
+    "pssolver/configuration/simulation_lowering.py": {
+      "historical_sha256": "6af45c88db7a85d4ad29a92f7dfda65ae226be8ff57290923c5e67db63329106",
+      "current_sha256": "a6ceeb52420b899b84c9d1a461f6492c1ed488c004c223ae2add766f4ab5facf"
+    },
+    "pssolver/core/boundary.py": {
+      "historical_sha256": "5547d2c12403a93d66aa2c56f193f760b6afd5255eac4d74e24402880e155243",
+      "current_sha256": "6b1ee0e250ef100a95955bb6bc83f3677f5ee30eeec765b7729509152bb6b00b"
+    },
+    "pssolver/core/errors.py": {
+      "historical_sha256": "a6cd487222d39fe7360060979471a3ff855dec951c92303e85888f8c1b9408c6",
+      "current_sha256": "a50ed583752578f12c17112c5306b7f5e73a74b45697ee26ec5e67c85633cabe"
+    },
+    "pssolver/core/problem.py": {
+      "historical_sha256": "6ce1b9fb5853da8c2c92c52cd69554c49ec787c577352c7f9e1fc0decfb210a6",
+      "current_sha256": "474aa9388b44f791462606d7837a0fefb8590d24ec295740bd36e8ded1e5eae2"
+    },
+    "pssolver/diagnostics/tensor_inventory.py": {
+      "historical_sha256": "a137890360e1a9c40615d5144ad0ed321ede522dcb65228498f23c273cd2fb1b",
+      "current_sha256": "49221240655d0ec5e9645af5a16f904956a27e4286030fc8b4a341994744c310"
+    },
+    "pssolver/experimental/checkpointing.py": {
+      "historical_sha256": "99b288e6f48c8a2400e8ff4ce4e45772d960c3976cf1b97bf9acd3cac5ca86a2",
+      "current_sha256": "b1f1a0dee3b17f26026d54f3bdfce21368ccbe8a6b5e7c18006b0563cb3244cd"
+    },
+    "pssolver/experimental/model_execution.py": {
+      "historical_sha256": "1bb14c72652d3023dc6a1679ac3e9ea8ef0ef923d8f0a543f97204f8d08306b2",
+      "current_sha256": "e5967486ac744b89f4dfad6d67b311b572d353785cfc9bbe8e2e75fb428a3d8f"
+    },
+    "pssolver/experimental/stage_o_closure.py": {
+      "historical_sha256": "23d551a902d21198f176954d90b6d521375294146ddbb04dfa3d7c457bf847c4",
+      "current_sha256": "c6bc940213c8a38a26144434dd3c8cce54319f4abe96ae3966066352bfb47746"
+    },
+    "pssolver/experimental/stage_q61_design.py": {
+      "historical_sha256": "3df32243e4b8f1ee36a7923c20557e42ea079c4e8ae84da9166fcc826c759559",
+      "current_sha256": "70aa7ec7efdabef7f5ab038f688fc068c41eed21c69b1db59e04dd6b04d57220"
+    },
+    "pssolver/experimental/stage_q6_diagnostics.py": {
+      "historical_sha256": "7b993e74649a2617e77926f9f6af952c1e81b0c881bc4840ca04c9b472a5ce95",
+      "current_sha256": "1db11842914e260eb1d0a34c2ae88e998ac6d58bfde7b3ab2e35916168a0994a"
+    },
+    "pssolver/functional/api.py": {
+      "historical_sha256": "9666a9d0e587c02f1fa9fce90270e8cf1e6672b96e644606c9f3528a45cd27aa",
+      "current_sha256": "2ad38703e059d0f6e720854148dfd7a9aeb5785db580537dde4d3610dc675809"
+    },
+    "pssolver/functional/channel_checkpoint.py": {
+      "historical_sha256": "c42d5bdf5af557b30fc2561696a131d886c16ef93ea13a0dacd61456ad3733e7",
+      "current_sha256": "4a6cdab67eb7b68538a47374b7bb37bf7fac0ff34a13f445e035709513cc627a"
+    },
+    "pssolver/functional/contracts.py": {
+      "historical_sha256": "9a4f22fe8f8e516057736356c3ae69380df25f25487c57553cefc10edbd0f895",
+      "current_sha256": "0b11a4a84f8a236918e794e6899fafe8b90ec645f9ae36fcd57ceddf19b8a974"
+    },
+    "pssolver/functional/errors.py": {
+      "historical_sha256": "a216e2d0a82c03aba1ce37dcddb9bf849939445df404aacccf5a6af87bf2d6eb",
+      "current_sha256": "df26ab674e0f0872b914c9ae9c28eff973e0561265551eaecc67fd844938f0c5"
+    },
+    "pssolver/functional/legacy_identity.py": {
+      "historical_sha256": "7cda648285e53d831de76257bf477afa972481bbcc0ccbe5554d4630302ec697",
+      "current_sha256": "7645da0b8d2f36267006e601a3032afb98b389884b00040c3f54e34a0c98e88d"
+    },
+    "pssolver/functional/periodic_checkpoint.py": {
+      "historical_sha256": "63fee29b16e9ec1b3b51b788add877b356df7325b7555d436a3161882aa38be2",
+      "current_sha256": "ed7a19b7915df7819d475d23a8ac538054838754ef729a1b311281b1e5b6c0b6"
+    },
+    "pssolver/functional/versioning.py": {
+      "historical_sha256": "2a8f52ed6cdfe92d4ebfe50739d813072c0b7aab48a22eccbe2fe7ed6d1114bf",
+      "current_sha256": "94454d6db452ecbf294c9419b347c6cc9a3e18c8701631a1118149cde0665445"
+    },
+    "pssolver/io/checkpoint.py": {
+      "historical_sha256": "b62f9105b45b42fc7c2be1f12bcff178f79075bf17720bdde8fa3a75e8158e22",
+      "current_sha256": "7f686380c65c0e2975f3965c764c12f0c1e231c3f9f872872a854ce6b7c04dfd"
+    },
+    "pssolver/io/checkpoint_identity.py": {
+      "historical_sha256": "22949e1f786931e98d4c1c2c86893ba4c52a6c33a839e2ec2d4f67dd11f05ef5",
+      "current_sha256": "b45f33766084bf371838907039654592d15bebe00ed6065e4451277fef659a55"
+    },
+    "pssolver/planning/assembler.py": {
+      "historical_sha256": "9e51fb6451d7cac2649d3cb781ed31ad49bc26bd7fb1b895972987338c2c4461",
+      "current_sha256": "4125875e024f43492ddf9339ea5e18a1d725508388b7064c2dd5fb7735e5412b"
+    },
+    "pssolver/planning/simulation.py": {
+      "historical_sha256": "f190003e93602559824b1e1baa783b595e594403f924c9cb3aeae3637f757854",
+      "current_sha256": "57ca93a454db8e5abc4f641f26881bc2f898f69b89c594ba3d02756f1590d9ce"
+    },
+    "pssolver/runtime/plane_beris_edwards.py": {
+      "historical_sha256": "e8b56669bc9c315db67a1536bcc73040fda8a3b1ad36083f2d060321e50ff030",
+      "current_sha256": "21b257fc88e41205888135131a0356058ffd4b963e350c0752efd37df8aed625"
+    },
+    "pssolver/runtime/static_lifting.py": {
+      "historical_sha256": "108a59b4c730788767aab403fed47928d6b8f3df981613fa1815663ebc5c6a16",
+      "current_sha256": "285b67d049219e52da3c35994389ec9293c1e4249043bcc1df3ff0be4f0166e4"
+    },
+    "pssolver/systems/algebraic.py": {
+      "historical_sha256": "a5feae26f29b90c4df7acfda9219adbdea3250f3a219b0ce3fc1e632fa2ee299",
+      "current_sha256": "9bab80479c920dcc82736fcb71950f98919b06e117e10b08070ac878a24467d6"
+    },
+    "pssolver/systems/equations.py": {
+      "historical_sha256": "3db06b762290f80c855548d1542ac3278eef94fb51ccebdf5ade8c7a811a3862",
+      "current_sha256": "60ed25159707fdd6b9bc0c07ba0b1732457f2b008115a928ed7e390f13b719c2"
+    },
+    "pssolver/workflows/channel_beris_edwards.py": {
+      "historical_sha256": "9d683272f4ff3efc474d3d813ef70f92711c87c44b4f3e010fdac38befeeac3e",
+      "current_sha256": "38d94f94cf4cdadea06e97a0bd6608a7310a99da8e9e865c47cac2868b1dfc74"
+    },
+    "pssolver/workflows/channel_checkpoint.py": {
+      "historical_sha256": "66aeb1bc1241432806f3e608c8f6acd4851c2cfd50715254f0fcdb62159d3609",
+      "current_sha256": "a24cabd5f28eae361b1555bd1dd985d5e8cb30650091a4305c44e00c2a7e800d"
+    },
+    "pssolver/workflows/finite_q_anchoring.py": {
+      "historical_sha256": "1efdb2970d66fb8a015ad5cb4a7e18803dd2b1f673804cb8e303e87e0cd34148",
+      "current_sha256": "51f587db088e3c45600f222ad8329306af050adcfb819bfc514c5715c288fdc9"
+    },
+    "pssolver/workflows/periodic_checkpoint.py": {
+      "historical_sha256": "b70b5d7698de8c3dfe64c1ba3f62a566d7924bd9484dd13084eddedf600af846",
+      "current_sha256": "ea4bc0d4b997efaae4e9e68e990b67577ffb348913a2f660c887dc2d5c245001"
+    },
+    "pssolver/workflows/plane_checkpoint.py": {
+      "historical_sha256": "2718688b3567d58d9a1f48f59889e33bf463ec221d137544d3ea04c88349a8d2",
+      "current_sha256": "7458f6bf5c937d2ed233604b898b13bfc3c0d139c0a5364266f8b1de41cad8ab"
+    },
+    "tests/test_architecture_import_boundaries.py": {
+      "historical_sha256": "d514af85967ce8910a9d576da09edcbcff43ee4684690038908fb8a61c0a80b4",
+      "current_sha256": "1a1dba5ccf116416c14a78576866bff5a192a9f52bd6f5daa48ace97288f7840"
+    },
+    "tests/test_phase8_p844_lifting_workflow_restart.py": {
+      "historical_sha256": "e3f8566dfb8e651b349327df1f469fb0490eeb9406ae834ed7bc0c65a376d00b",
+      "current_sha256": "a362f8e7bd17fcaf8ba1a1852e886e6f3c3a5e11b4aed31ff951bfbbda4fed6d"
+    },
+    "tests/test_rc4_lifting_capability_contract.py": {
+      "historical_sha256": "faa5b3492b7b31bc703989c0ab6f737fc7a29142a49c4b4dec945691b8944803",
+      "current_sha256": "772d9748f7950b000c0ad096bb660693e77d6da0a084ce180eb5bf8b615d2d78"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "ad557b4cda24c208ed31264adb9a6ebf53ea2a513aab0203d40eec3249232e6a",
+      "current_sha256": "44d8452f13cdc4b5ead689bf9f03c6751542c16de0745db554f17e8ff284bd2c"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_4_0_s16_r8_inventory_v2.json": "0a6674737db81973087ef6fdb487ddc1175ba076d20e6d38224681630e9bdac5",
+    "notes/PSSolver_v0_4_0_s16_r8_inventory_v2_zh.md": "b45007d1bf50121a6aae484f1944f95779acade5a50bce6cab7d38ef3c10c4a8",
+    "tests/test_v0_4_s16_r0043_rework.py": "296749ea27ef038a34da26407d3df4f83957803529cb1eda0d01785615872067",
+    "tests/test_v0_4_s16_r7_canonical_completion.py": "d78f6bc7ac77b2e81f843942595549875c57da70ae902599082e0fcac4ce4a77",
+    "tests/test_v0_4_s16_r8_inventory_v2.py": "5ecd9e4a3b669354012dbadcc84ecc16182c70a459dbacf25b4215dabbcfc8e1"
+  },
+  "scope": {
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false,
+    "r8_implementation_started": false
+  },
+  "authorization": {
+    "local_commits": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  },
+  "next_action": "wait for the user to notify Codex of the confirmed R8 retention strategy before implementing R8; then create R-0044 after final S-16 gates"
+}

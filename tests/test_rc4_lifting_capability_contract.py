@@ -214,6 +214,12 @@ def test_rc432_stages_stop_before_implementation_and_h100():
 
 
 def test_rc432_reviewed_sources_are_content_addressed():
+    s16_successor = json.loads(
+        (
+            ROOT
+            / "notes/PSSolver_v0_3_0_s03_successor_72_s16_r0043_rework.json"
+        ).read_text(encoding="utf-8")
+    )["historical_successor_sources"]
     superseded_by_implementation = {
         "pssolver/api/capabilities.py",
         "pssolver/configuration/simulation_lowering.py",
@@ -232,6 +238,11 @@ def test_rc432_reviewed_sources_are_content_addressed():
         # implement its frozen slices and content-address successor sources in
         # their own implementation records.
         if relative in superseded_by_implementation:
+            continue
+        if relative in s16_successor:
+            identity = s16_successor[relative]
+            assert identity["historical_sha256"] == expected, relative
+            assert _sha256(ROOT / relative) == identity["current_sha256"], relative
             continue
         assert _sha256(ROOT / relative) == expected, relative
 

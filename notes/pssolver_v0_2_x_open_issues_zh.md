@@ -6,11 +6,11 @@
 `dev/0.4` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 54 条：
+当前共登记 57 条：
 
 - `open`：0；
 - `registered`：0；
-- `claimed_fixed`：0；
+- `claimed_fixed`：3；
 - `verified`：50；
 - `deferred`：2；
 - `accepted`：2；
@@ -194,6 +194,17 @@
 上述 `V-47`、`V-48`、`V-49` 的更正源均为 `eee4487658eada196ce3916cb08bd646da4993c6`，
 并已由 `R-0042` 独立验证为 `verified`。S-13 已完成；S-14 只剩单独授权的
 `dev/0.4` 非强制推送。
+
+36. `R-0043` 对 S-16 中间候选要求三项返工。`V-50`（medium-low）指出 `_root`
+    折叠放宽了顶层模块导入棘轮；`V-52`（low）指出仍有 56 个完全相同的 canonical JSON
+    编码点未完成共享化；二者由 `80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992`
+    修复并推进为 `claimed_fixed`。顶层模块现在逐个冻结，models 只保留两条精确 stokes 边；
+    55 个等价编码点改用共享 helper，`io/checkpoint_identity.py` 因禁止导入任何
+    `pssolver` 模块而保留唯一、明确登记的本地实现。
+37. `V-51`（low）指出第一版 R8 字面量盘点漏掉了从记录 JSON 间接读取路径的测试。
+    `835ee25c2a30067a8899e3d61dee0c7adc935f98` 新增执行式 v2 盘点：在只含可达对象的
+    新克隆中屏蔽全部外部 home 路径，得到恰好 27 个测试文件、35 个失败和 13 个外部根，
+    与 `R-0043` 逐项相同。该提交只修正盘点，R8 的 pytest 自包含迁移和本机核对工具尚未实施。
 
 ## Control 路径
 

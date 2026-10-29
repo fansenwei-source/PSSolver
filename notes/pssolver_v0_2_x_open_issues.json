@@ -29,11 +29,11 @@
       "rewritten": false
     }
   },
-  "issue_count": 54,
+  "issue_count": 57,
   "status_counts": {
     "open": 0,
     "registered": 0,
-    "claimed_fixed": 0,
+    "claimed_fixed": 3,
     "verified": 50,
     "deferred": 2,
     "accepted": 2,
@@ -899,6 +899,51 @@
       "verified_by": "R-0042",
       "target_release": "0.4 S-14",
       "notes": "Successor 66 compresses G-01 through G-08 to PASS even though G-06 passed with the narrow D-0013 bounded peak-reserved exception. S-14 adds a forward correction and does not rewrite successor 66, the frozen analyzer, any threshold, or any published artifact."
+    },
+    {
+      "id": "V-50",
+      "title": "S-16 R9 maps every top-level module to one root layer and loosens the import ratchet",
+      "severity": "medium-low",
+      "source_report": "PSSolver_sync/results/R-0043.result.json",
+      "first_found": "S-16 intermediate review R-0043",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "claimed_fixed",
+      "fixed_in": "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992",
+      "target_release": "0.4 S-16",
+      "notes": "R-0043 found that the first S-16 ratchet mapped every top-level module to _root, widened the v0.3.0 api, functional, workflows and control facade allowances, made the transforms facade rule unreachable, and allowed whole linear_solvers/operators layers from models for two stokes edges. The rework preserves each top-level module name, freezes every top-level source separately, restores the four exact v0.3.0 target sets, restores the transforms rule, and permits only the two reviewed stokes implementation edges. A regression test proves that no v0.3.0 source-layer to top-level-target relation becomes wider."
+    },
+    {
+      "id": "V-51",
+      "title": "S-16 R8 inventory misses indirect absolute-path dependencies read from records",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0043.result.json",
+      "first_found": "S-16 intermediate review R-0043",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "claimed_fixed",
+      "fixed_in": "835ee25c2a30067a8899e3d61dee0c7adc935f98",
+      "target_release": "0.4 S-16",
+      "notes": "The literal-path inventory listed 18 test files but missed dependencies loaded indirectly from record JSON fields. A reachable-only execution audit that made every external /home/fansenwei path absent found exactly 35 failing tests in 27 files, matching R-0043, and records all 13 external roots and their measured sizes in the v2 inventory. This fixes only the inventory; the R8 self-contained pytest migration and local verifier are not yet implemented."
+    },
+    {
+      "id": "V-52",
+      "title": "S-16 R7 canonical JSON consolidation is recorded complete while 56 equivalent sites remain local",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0043.result.json",
+      "first_found": "S-16 intermediate review R-0043",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "claimed_fixed",
+      "fixed_in": "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992",
+      "target_release": "0.4 S-16",
+      "notes": "The rework converts 55 of the 56 exact compact finite key-sorted json.dumps sites to core._canonical and removes imports made unused by the conversion. io/checkpoint_identity.py intentionally retains its one local encoder because its published primitive boundary is schema-independent and is guarded against importing any pssolver module. The two tensor-header digests use a distinct format and remain local. Executable guards freeze the one justified exact exclusion and both non-equivalent wire formats. Successor 70 remains immutable and its overbroad completion claim is corrected forward."
     }
   ],
   "authorization": {
