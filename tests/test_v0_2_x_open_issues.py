@@ -263,7 +263,7 @@ def test_live_registry_tracks_the_current_development_line():
         "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992"
     )
     assert issues["V-51"]["fixed_in"] == (
-        "835ee25c2a30067a8899e3d61dee0c7adc935f98"
+        "d5c604a780f9e60c52f00135f163e207a0a0140a"
     )
     assert issues["V-52"]["fixed_in"] == (
         "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992"

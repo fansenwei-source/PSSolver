@@ -926,9 +926,9 @@
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
       "status": "claimed_fixed",
-      "fixed_in": "835ee25c2a30067a8899e3d61dee0c7adc935f98",
+      "fixed_in": "d5c604a780f9e60c52f00135f163e207a0a0140a",
       "target_release": "0.4 S-16",
-      "notes": "The literal-path inventory listed 18 test files but missed dependencies loaded indirectly from record JSON fields. A reachable-only execution audit that made every external /home/fansenwei path absent found exactly 35 failing tests in 27 files, matching R-0043, and records all 13 external roots and their measured sizes in the v2 inventory. This fixes only the inventory; the R8 self-contained pytest migration and local verifier are not yet implemented."
+      "notes": "The literal-path inventory listed 18 test files but missed dependencies loaded indirectly from record JSON fields. A reachable-only execution audit that made every external /home/fansenwei path absent found exactly 35 failing tests in 27 files, matching R-0043. The final D-0015 option-C implementation makes those pytest checks repository-self-contained and binds only fixed hashes, sizes, fields and structures. A standard-library, read-only local verifier preserves all displaced checks across 103 exact file, manifest and COMPLETE checks, fails closed on missing or inconsistent evidence, and emits a machine-readable report. The crosswalk maps every migrated pytest check to its verifier item. No archive or PSSolver_sync content was copied, moved, deleted or rewritten."
     },
     {
       "id": "V-52",
