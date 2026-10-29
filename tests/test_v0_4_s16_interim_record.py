@@ -31,21 +31,19 @@ def test_s16_r7_r9_implementation_identity_and_sources_are_exact():
         cwd=ROOT,
         text=True,
     ).strip() == identity["implementation_parent"]
-    for relative, (historical, current) in record[
-        "historical_successor_sources"
-    ].items():
+    for relative, successor in record["historical_successor_sources"].items():
         assert _sha256(
             subprocess.check_output(
                 ["git", "show", f"{identity['baseline']}:{relative}"],
                 cwd=ROOT,
             )
-        ) == historical
+        ) == successor["historical_sha256"]
         assert _sha256(
             subprocess.check_output(
                 ["git", "show", f"{identity['implementation']}:{relative}"],
                 cwd=ROOT,
             )
-        ) == current
+        ) == successor["current_sha256"]
     for relative, expected in record["introduced_sources"].items():
         assert _sha256(
             subprocess.check_output(
