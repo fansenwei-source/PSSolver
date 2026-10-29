@@ -1,0 +1,120 @@
+{
+  "schema": "pssolver.v0_4.s14.successor_67.v1",
+  "created_at": "2026-10-29T12:27:41-04:00",
+  "plan_step": "S-14",
+  "decision": "D-0014",
+  "classification": "S13_COMPLETE_S14_CORRECTIONS_CLAIMED",
+  "git_identity": {
+    "base_commit": "9f2874458d9293f972ab89c78097db2fd55e5dc8",
+    "correction_source_commit": "eee4487658eada196ce3916cb08bd646da4993c6",
+    "branch": "dev/0.4",
+    "record_commit_is_correction_source": false,
+    "pushed": false
+  },
+  "s13_archive": {
+    "path": "/home/fansenwei/pssolver_v0_4_s13_workspace_cleanup_20261029_v1",
+    "classification": "PASS_S13_WORKSPACE_CLEANUP",
+    "checksums_entries": 13,
+    "checksums_sha256": "261108f0a2a473e89de0fb76bd49fb670e14d56be4b1d4ad4893cef5e37ae269",
+    "pruned_sha256": "13bb65414c8f40172da876e034f961a8cd0f8b9c7039c52b655fdb606033ce88",
+    "complete_present": true
+  },
+  "registry_claims": {
+    "V-47": {
+      "status": "claimed_fixed",
+      "fixed_in": "eee4487658eada196ce3916cb08bd646da4993c6"
+    },
+    "V-48": {
+      "status": "claimed_fixed",
+      "fixed_in": "eee4487658eada196ce3916cb08bd646da4993c6"
+    },
+    "V-49": {
+      "status": "claimed_fixed",
+      "fixed_in": "eee4487658eada196ce3916cb08bd646da4993c6"
+    }
+  },
+  "forward_corrections": {
+    "successor_65": {
+      "path": "notes/PSSolver_v0_3_0_s03_successor_65_r0040_import.json",
+      "sha256": "cb6b4a3ebf5dcafe8b2447138fd704869765e2e8f3265919c73db5ddd963fe05",
+      "rewritten": false,
+      "s13_pruning_recorded": true,
+      "correction": "The two superseded attempt records remain historical, while the exact test_worktrees and transient build directories listed by S-13 were pruned after local archive refs and a complete pre-deletion inventory were created."
+    },
+    "successor_66": {
+      "path": "notes/PSSolver_v0_3_0_s03_successor_66_r0041_import.json",
+      "sha256": "6db6fbd7d90bdf364e0908bdd7ce26e312e6f7377e667e31f8ea1dba278c312d",
+      "rewritten": false,
+      "G-01_through_G-08": "PASS_WITH_D-0013_BOUNDED_EXCEPTION_FOR_G-06"
+    }
+  },
+  "historical_successor_sources": {
+    "CHANGELOG.md": {
+      "historical_sha256": "a0627f94496319509b2d6fa392bc60f649e4dd23732c2e2ca501c84f3197fbec",
+      "accepted_predecessor_sha256": [
+        "a0627f94496319509b2d6fa392bc60f649e4dd23732c2e2ca501c84f3197fbec"
+      ],
+      "current_sha256": "27c4a929a9b55d2fafe117d9de34180f50f79fdb68753166e36ec467f3d32dd5",
+      "reason": "Correct the live rc1 changelog for the D-0013 bounded memory exception without changing either published tag."
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "7da70b2ff1ed926da94b47ee61085b42e6e21a79d2e94c0bab97b60582f62dbe",
+      "accepted_predecessor_sha256": [
+        "7da70b2ff1ed926da94b47ee61085b42e6e21a79d2e94c0bab97b60582f62dbe",
+        "0f8ea1528ce9b3cabf98ddc5d20b8d8f7040106b1d3908e5dab921d2ae77cdb6"
+      ],
+      "current_sha256": "5597d4c4babf7406dc73ac74172d24c524252ee4cdb4121aee99e693908f8610",
+      "reason": "Move the primary registry to dev/0.4, update R1-R9 under D-0014, and claim V-47 through V-49 at the exact correction source."
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "5159ff7ea8a99074cf747f0b46a19eb44f527c36cda7c9ca20ded863015593d7",
+      "accepted_predecessor_sha256": [
+        "5159ff7ea8a99074cf747f0b46a19eb44f527c36cda7c9ca20ded863015593d7",
+        "61ef18e165f74f96666295aee1e8204c5e719a4130bcf9c20962aeb4af3624af"
+      ],
+      "current_sha256": "3dd13c4a9b7de1f46c934644abfef731e2b55d390b0e897661124357cdfab258",
+      "reason": "Synchronize the Chinese registry narrative and the three S-14 claims."
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "affaec840935b0f77c9468904ada0905d61d489397ef197c65c36f6ade4d686e",
+      "accepted_predecessor_sha256": [
+        "affaec840935b0f77c9468904ada0905d61d489397ef197c65c36f6ade4d686e",
+        "9bf600b02ae48e69cc053b082c47ae5cdf8a19e72f9eb1d869e5e81c6aed2d85"
+      ],
+      "current_sha256": "1f3fa75e81f4b110948fc50df9b67e75aacdbc7a945306f6a599ca268df8af68",
+      "reason": "Bind the 54-entry registry and exact claimed S-14 correction source."
+    },
+    "tests/test_v0_3_s01_registry_migration.py": {
+      "historical_sha256": "fd1759f4a3661192f8909b7534768c8791c5cf019784c8f92aa840813747477c",
+      "accepted_predecessor_sha256": [
+        "fd1759f4a3661192f8909b7534768c8791c5cf019784c8f92aa840813747477c"
+      ],
+      "current_sha256": "da2f1e33b962e23c5844e8d7c28b4caacf3ec35ef8b4f0ebf7e8cc3035348eac",
+      "reason": "Keep the S-01 dev/0.3 migration snapshot historical while allowing the live registry to advance to dev/0.4."
+    }
+  },
+  "new_and_forward_sources": {
+    "notes/PSSolver_v0_4_0_s13_s14_correction_source.json": "873d96ea9e9f06c0b73bd6bc81f9335f6cba0b3766f0553c01dd20856757c3a9",
+    "notes/PSSolver_v0_4_0_s13_s14_correction_source_zh.md": "181acd561bc6243a8406c91e60a19607e14fe8ca49c7c31941d63b61da06db63",
+    "tests/test_v0_4_s13_s14_correction_source.py": "f6fc4c42be4913756c52cb81ea96f204fb74499b330215dc1075a80fb50ab00c",
+    "tests/test_v0_4_s13_s14_successor_67.py": "366059bba46f586c1c78dd8d20f1c2ca00b36f738f2fd1aed2f8b566745514da"
+  },
+  "scope": {
+    "records_and_documentation_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "version_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "external_authorization": {
+    "push": false,
+    "tag": false,
+    "github_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

@@ -53,8 +53,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
-        "registered": 3,
-        "claimed_fixed": 0,
+        "registered": 0,
+        "claimed_fixed": 3,
         "verified": 47,
         "deferred": 2,
         "accepted": 2,
@@ -258,7 +258,7 @@ def test_live_registry_tracks_the_current_development_line():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == set()
+    assert claimed == {"V-47", "V-48", "V-49"}
     s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
@@ -540,7 +540,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == set()
+    } == {"V-47", "V-48", "V-49"}
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (
@@ -566,11 +566,14 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     assert issues["A3-18"]["verified_by"] == "R-0025"
 
 
-def test_s14_corrections_are_registered_without_changing_runtime_scope():
+def test_s14_corrections_are_claimed_at_the_exact_source_commit():
     issues = _issues()
     for issue_id in ("V-47", "V-48", "V-49"):
         item = issues[issue_id]
-        assert item["status"] == "registered"
+        assert item["status"] == "claimed_fixed"
+        assert item["fixed_in"] == (
+            "eee4487658eada196ce3916cb08bd646da4993c6"
+        )
         assert item["target_release"] == "0.4 S-14"
         assert item["affects_v0_2_0"] is False
         assert item["affects_v0_2_1"] is False

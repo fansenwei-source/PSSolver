@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -50,7 +51,13 @@ def test_s13_archive_is_complete_and_content_addressed() -> None:
 def test_s14_source_hashes_and_historical_records_are_exact() -> None:
     record = _read(RECORD)
     for relative, expected in record["source_hashes"].items():
-        assert _sha256(ROOT / relative) == expected
+        historical = subprocess.run(
+            ["git", "show", f"eee4487658eada196ce3916cb08bd646da4993c6:{relative}"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout
+        assert hashlib.sha256(historical).hexdigest() == expected
     for item in record["superseded_record_corrections"].values():
         assert item["rewritten"] is False
         assert _sha256(ROOT / item["path"]) == item["sha256"]
