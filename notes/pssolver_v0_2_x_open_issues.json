@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "registry": "PSSolver v0.2.x forward-maintained open-issue registry",
-  "date": "2026-10-28",
-  "primary_ref": "dev/0.3",
+  "date": "2026-10-29",
+  "primary_ref": "dev/0.4",
   "roadmap": {
     "decision": "D-0010",
     "path": "PSSolver_sync/plan/roadmap.json",
@@ -29,10 +29,10 @@
       "rewritten": false
     }
   },
-  "issue_count": 51,
+  "issue_count": 54,
   "status_counts": {
     "open": 0,
-    "registered": 0,
+    "registered": 3,
     "claimed_fixed": 0,
     "verified": 47,
     "deferred": 2,
@@ -547,7 +547,7 @@
       "status": "deferred",
       "decision": "D-0011",
       "target_release": "S-10 partial; remaining work after 0.3",
-      "notes": "D-0011 brings only independently testable cleanup into S-10. S-10 centralizes the exact-key validation mechanic used by the three public compilers (R7 partial) and adds api, boundaries, diagnostics, and functional to the executable import-boundary ratchet while correcting its charter inventory (R9 partial). R1 registry unification would change construction dispatch across applications; R2 remaining checkpoint consolidation crosses released schemas and compatibility readers; R3 facade/contract reduction changes the stable functional surface and independent Consumer boundary; R4 integrator and R5 PCG consolidation touch numerical and qualified hot paths; R6 removal of shipped pilot/lifting surfaces requires deprecation and lifting decisions; R8 qualification-history pruning changes the evidence-retention policy; the remaining R7 helpers and R9 exact legacy edges require broader migrations. Those portions remain deferred after 0.3. S-10 itself changes core validation and three compiler modules, remains on an independent branch, and is not part of the runtime currently bound to the queued S-09 diagnostic; whether it joins a later final S-09 rerun requires a separate user decision after R-0031."
+      "notes": "D-0011 brings only independently testable cleanup into S-10. S-10 centralizes the exact-key validation mechanic used by the three public compilers (R7 partial) and adds api, boundaries, diagnostics, and functional to the executable import-boundary ratchet while correcting its charter inventory (R9 partial). R1 registry unification would change construction dispatch across applications; R2 remaining checkpoint consolidation crosses released schemas and compatibility readers; R3 facade/contract reduction changes the stable functional surface and independent Consumer boundary; R4 integrator and R5 PCG consolidation touch numerical and qualified hot paths; R6 removal of shipped pilot/lifting surfaces requires deprecation and lifting decisions; R8 qualification-history pruning changes the evidence-retention policy; the remaining R7 helpers and R9 exact legacy edges require broader migrations. Those portions remain deferred after 0.3. Under D-0013, S-10 does not join any S-09 rerun and receives no additional H100 run (R-0032 and R-0033). R-0037 accepted S-10, A-0044 integrated it into dev/0.3, and it shipped in v0.3.0rc1 and v0.3.0. D-0014 schedules the remaining work on the 0.4 development line in S-16 through S-18."
     },
     {
       "id": "A2-25",
@@ -851,6 +851,48 @@
       "verified_by": "R-0037",
       "target_release": "0.3.0 (S-10 integration)",
       "notes": "R-0036 found that the first S-09/S-10 integration record still used the ten original S-10 commits as live identities after their linear replay. Those objects survived only through the local reflog, so a fresh --no-local single-branch clone failed four identity and integration tests even though the runtime tree was correct. The records-only R-0036 rework changes V-33/V-43 fixed_in to reachable replay a54074013e5f0fb9bfe278baf944f805bf86eef4, treats successor 58's complete original-to-replayed map as the explicit forward correction, and makes the integration guards depend only on reachable replay commits and the recorded pssolver tree. The original S-10 head remains preserved locally at refs/archive/s10-pre-integration for historical inspection and is not pushed. R-0037 independently verified the remediation in a reachable-only fresh clone and fixed this issue at the amended records-only integration commit 5254ff32af5d68471f90f5fa8055d040598090f0."
+    },
+    {
+      "id": "V-47",
+      "title": "The v0.3.0rc1 changelog overstates the absence of a memory-threshold exception",
+      "severity": "low",
+      "source_report": "PSSolver_sync/plan/roadmap.json S-14 (D-0014)",
+      "first_found": "post-v0.3.0 workspace closeout",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.4 S-14",
+      "notes": "The live changelog said no memory threshold was relaxed, but D-0013 accepted one bounded peak-reserved exception for the two Channel R512x40x40 float32 cells. S-14 corrects the live changelog without changing the immutable v0.3.0rc1 or v0.3.0 tag content, Release text, assets, thresholds, or qualification evidence."
+    },
+    {
+      "id": "V-48",
+      "title": "The R1-R9 registry note retains a superseded pre-R-0031 S-09/S-10 decision boundary",
+      "severity": "info",
+      "source_report": "PSSolver_sync/plan/roadmap.json S-14 (D-0014)",
+      "first_found": "post-v0.3.0 workspace closeout",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.4 S-14",
+      "notes": "The R1-R9 entry still said S-10 integration awaited a decision after R-0031. D-0013 resolved that boundary, R-0037 verified S-10, A-0044 integrated it, and D-0014 schedules the remaining work in S-16 through S-18. The deferred status and D-0011 decision remain unchanged."
+    },
+    {
+      "id": "V-49",
+      "title": "The R-0041 successor reports G-06 as an unqualified PASS",
+      "severity": "info",
+      "source_report": "PSSolver_sync/plan/roadmap.json S-14 (D-0014)",
+      "first_found": "post-v0.3.0 workspace closeout",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.4 S-14",
+      "notes": "Successor 66 compresses G-01 through G-08 to PASS even though G-06 passed with the narrow D-0013 bounded peak-reserved exception. S-14 adds a forward correction and does not rewrite successor 66, the frozen analyzer, any threshold, or any published artifact."
     }
   ],
   "authorization": {

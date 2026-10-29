@@ -1,0 +1,88 @@
+{
+  "schema": "pssolver.v0_4.s13_s14.correction_source.v1",
+  "created_at": "2026-10-29T12:26:04-04:00",
+  "plan_steps": [
+    "S-13",
+    "S-14"
+  ],
+  "decision": "D-0014",
+  "base_commit": "9f2874458d9293f972ab89c78097db2fd55e5dc8",
+  "branch": "dev/0.4",
+  "classification": "S13_COMPLETE_S14_CORRECTION_SOURCE_READY",
+  "s13_workspace_cleanup": {
+    "archive": "/home/fansenwei/pssolver_v0_4_s13_workspace_cleanup_20261029_v1",
+    "classification": "PASS_S13_WORKSPACE_CLEANUP",
+    "checksums_entries": 13,
+    "checksums_sha256": "261108f0a2a473e89de0fb76bd49fb670e14d56be4b1d4ad4893cef5e37ae269",
+    "pruned_sha256": "13bb65414c8f40172da876e034f961a8cd0f8b9c7039c52b655fdb606033ce88",
+    "stopped_pre_deletion_sha256": "24cd863ef3eeb47245e19e9ef61fd9a02e3cf379d97dff8c614ba548a1c6aa1c",
+    "pre_deletion_inventory_sha256": "3d80c339667a63a69d0b3fae3e64b34b590d428546b0141acf74f14522e7101d",
+    "worktree_inventory_sha256": "94472051c796928e9109a48bbaf9973ce91e6665e7357cf38156faa4839f54a1",
+    "post_cleanup_sha256": "7f9ea6eebd97a122589af2400a736dc972f72de9131ac8128e2d96acea3f1ec7",
+    "complete_sha256": "bf5077c63d3a1c94618f6a5489302fedc19455bac772a9af58a6ceabf900f987",
+    "local_archive_refs": {
+      "refs/archive/v030-attempt-d9d346f": "d9d346f9db3ae0fde92c4bb8271e652d960348b1",
+      "refs/archive/v030-attempt-f8977a0": "f8977a02cd97302e6c7c0542c6c072e1e6690760",
+      "refs/archive/r0041-attempt-00e007d": "00e007d7170fbb18894fceffe1fb312ca5b76037"
+    },
+    "deleted": {
+      "named_non_trash_targets": 11,
+      "trash_pairs": 81,
+      "trash_name_set_sha256": "cca10934378013af23c1bb7d40bff7ab295e350740951c0e00bf94d2c67682c0"
+    },
+    "retained": {
+      "superseded_attempt_logs_package_environment_results": true,
+      "r0041_attempt_directory": true,
+      "worktrees_inventoried": 60,
+      "worktrees_deleted": 0,
+      "a2_record_sha256": "2fef42fc02ec42a5e4f9a75917d66a82431c4126150bd2db272214feadc77d63",
+      "a2_record_hashed_entries": 266,
+      "v0_2_2_distribution_count": 34,
+      "v0_2_2_record_hashed_entries": 17905,
+      "baseline_mismatch_or_missing": 0
+    }
+  },
+  "s14_corrections": {
+    "V-47": "Correct the live v0.3.0rc1 changelog for the D-0013 bounded peak-reserved exception without changing either published tag or Release.",
+    "V-48": "Replace the superseded R1-R9 pre-R-0031 decision boundary with the D-0013 and D-0014 disposition while retaining deferred status.",
+    "V-49": "Correct successor 66 forward: G-01 through G-08 passed, with G-06 carrying the D-0013 bounded exception. Successor 66 remains immutable."
+  },
+  "superseded_record_corrections": {
+    "successor_65": {
+      "path": "notes/PSSolver_v0_3_0_s03_successor_65_r0040_import.json",
+      "sha256": "cb6b4a3ebf5dcafe8b2447138fd704869765e2e8f3265919c73db5ddd963fe05",
+      "rewritten": false,
+      "correction": "The named test_worktrees and transient build directories are now pruned under S-13; their retained logs/package/environment/results and the R-0041 attempt archive remain unchanged."
+    },
+    "successor_66": {
+      "path": "notes/PSSolver_v0_3_0_s03_successor_66_r0041_import.json",
+      "sha256": "6db6fbd7d90bdf364e0908bdd7ce26e312e6f7377e667e31f8ea1dba278c312d",
+      "rewritten": false,
+      "correction": "G-01 through G-08 are PASS, with G-06 qualified by the D-0013 bounded exception."
+    }
+  },
+  "source_hashes": {
+    "CHANGELOG.md": "27c4a929a9b55d2fafe117d9de34180f50f79fdb68753166e36ec467f3d32dd5",
+    "notes/pssolver_v0_2_x_open_issues.json": "0f8ea1528ce9b3cabf98ddc5d20b8d8f7040106b1d3908e5dab921d2ae77cdb6",
+    "notes/pssolver_v0_2_x_open_issues_zh.md": "61ef18e165f74f96666295aee1e8204c5e719a4130bcf9c20962aeb4af3624af"
+  },
+  "scope": {
+    "records_and_documentation_only": true,
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "version_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_commit": true,
+    "push": false,
+    "tag": false,
+    "github_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

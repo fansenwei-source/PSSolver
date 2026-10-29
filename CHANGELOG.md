@@ -17,10 +17,17 @@ contract promoted by this release.
 
 This release candidate freezes the independently reviewed S-03 through S-10
 work for final candidate acceptance.  It does not relax any numerical,
-scientific, performance, memory, restart, or packaging threshold.  The only
-remaining non-final registry item is the forward erratum for the sealed S-09
-diagnostic record (V-44), which is claimed fixed here and must be independently
-verified by the rc1 acceptance review before a final v0.3.0 release.
+scientific, performance, restart, or packaging threshold.  One bounded memory
+exception was accepted: in the H100 qualification matrix, the Channel
+R512x40x40 float32 cells of the legacy and compiled-v2 runtimes have a
+peak-reserved memory ratio of 1.0308 against the 1.03 bound, caused by one
+pressure field retained by the production warm-start cache; their timing and
+peak-allocated gates and every other cell passed unchanged.  (Corrected after
+release: the `v0.3.0rc1` and `v0.3.0` tags keep the original sentence, which
+omitted this exception.)  The only remaining non-final registry item is the
+forward erratum for the sealed S-09 diagnostic record (V-44), which is claimed
+fixed here and must be independently verified by the rc1 acceptance review
+before a final v0.3.0 release.
 
 ### Final architecture and compatibility cleanup
 

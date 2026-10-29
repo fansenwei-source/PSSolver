@@ -40,7 +40,10 @@ def test_s01_record_binds_the_registry_successor_and_roadmap() -> None:
         "notes/pssolver_v0_2_x_open_issues.json",
         record["registry"]["successor_sha256"],
     )
-    assert registry["primary_ref"] == "dev/0.3"
+    # S-01 freezes the historical migration target.  The live registry may
+    # advance to a later development line without rewriting this record.
+    assert record["registry"]["primary_ref"] == "dev/0.3"
+    assert registry["primary_ref"] in {"dev/0.3", "dev/0.4"}
     assert registry["roadmap"] == {
         "decision": "D-0010",
         "path": "PSSolver_sync/plan/roadmap.json",
