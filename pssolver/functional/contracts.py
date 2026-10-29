@@ -14,6 +14,7 @@ from typing import ContextManager, Protocol, TypeAlias, runtime_checkable
 
 import torch
 
+from pssolver.core._canonical import canonical_json
 from pssolver.configuration.device_tokens import validate_execution_device
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.core._identifiers import require_python_identifier
@@ -431,12 +432,7 @@ class FunctionalRuntimeIdentity:
             "state_layout": _thaw_json(self.state_layout),
         }
         try:
-            canonical = json.dumps(
-                payload,
-                allow_nan=False,
-                separators=(",", ":"),
-                sort_keys=True,
-            )
+            canonical = canonical_json(payload)
         except (TypeError, ValueError) as exc:
             raise FunctionalValueError("functional runtime identity must be JSON-safe") from exc
         frozen = json.loads(canonical)

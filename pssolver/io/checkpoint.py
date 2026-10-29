@@ -26,6 +26,7 @@ from typing import Iterator
 
 import numpy as np
 
+from pssolver.core._canonical import canonical_json
 from pssolver.core._canonical import canonical_sha256
 
 
@@ -1262,12 +1263,7 @@ def seal_checkpoint_metadata(
         raise ValueError("checkpoint metadata is already sealed")
     try:
         sealed = json.loads(
-            json.dumps(
-                dict(metadata),
-                allow_nan=False,
-                separators=(",", ":"),
-                sort_keys=True,
-            )
+            canonical_json(dict(metadata))
         )
     except (TypeError, ValueError) as exc:
         raise ValueError("checkpoint metadata must be JSON-compatible") from exc

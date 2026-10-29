@@ -6,6 +6,7 @@ from collections.abc import Mapping
 import json
 import math
 
+from pssolver.core._canonical import canonical_json
 from pssolver.io.checkpoint import (
     CheckpointCompatibilityError,
     CheckpointDurabilityError,
@@ -326,12 +327,7 @@ def _json_copy(value: Mapping[str, object]) -> Mapping[str, object]:
 
     try:
         return json.loads(
-            json.dumps(
-                safe(value),
-                allow_nan=False,
-                separators=(",", ":"),
-                sort_keys=True,
-            )
+            canonical_json(safe(value))
         )
     except (TypeError, ValueError) as exc:
         raise TypeError("functional error details must be JSON-compatible") from exc

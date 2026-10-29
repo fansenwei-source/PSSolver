@@ -20,6 +20,7 @@ import json
 import math
 from types import MappingProxyType
 
+from pssolver.core._canonical import canonical_json
 from pssolver.configuration.active_nematics_simulation_adapters import (
     compose_plane_beris_edwards_simulation,
 )
@@ -188,12 +189,7 @@ def _json_safe(value: object) -> object:
 
 
 def _json_mapping(value: Mapping[str, object]) -> Mapping[str, object]:
-    payload = json.dumps(
-        _json_safe(dict(value)),
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    )
+    payload = canonical_json(_json_safe(dict(value)))
     return MappingProxyType(json.loads(payload))
 
 

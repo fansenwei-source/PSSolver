@@ -14,6 +14,7 @@ from dataclasses import dataclass, field
 import json
 from typing import Protocol, runtime_checkable
 
+from pssolver.core._canonical import canonical_json
 from pssolver.configuration import (
     PlaneBerisEdwardsRunSpec,
     PlaneRuntimePath,
@@ -474,12 +475,7 @@ def plane_lifting_fresh_construction_provenance(
             "static lifting fresh-construction provenance is missing"
         )
     return json.loads(
-        json.dumps(
-            dict(value),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
+        canonical_json(dict(value))
     )
 
 

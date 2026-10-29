@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
-import json
 from pathlib import Path
 
+from pssolver.core._canonical import canonical_json
 from .simulation import SimulationSpec
 
 
@@ -57,12 +57,7 @@ class ChannelBerisEdwardsRunSpec:
             name: identities[name]
             for name in ("scientific", "discretization", "execution")
         }
-        encoded = json.dumps(
-            payload,
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        ).encode("utf-8")
+        encoded = canonical_json(payload).encode("utf-8")
         return hashlib.sha256(encoded).hexdigest()
 
 

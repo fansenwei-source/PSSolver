@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from fractions import Fraction
-import json
 
+from pssolver.core._canonical import canonical_json
 from pssolver.core.boundary import BoundaryKind
 from pssolver.core.fields import FieldRole
 from pssolver.core.numerics import (
@@ -203,12 +203,7 @@ def assemble_spectral_plan(problem: ProblemSpec) -> SpectralPlan:
     problem_metadata = problem.to_metadata()
     model_metadata = problem_metadata["model"]
     parameters = model_metadata["parameters"]
-    parameters_json = json.dumps(
-        parameters,
-        allow_nan=False,
-        sort_keys=True,
-        separators=(",", ":"),
-    )
+    parameters_json = canonical_json(parameters)
     return SpectralPlan(
         model_name=model_metadata["name"],
         geometry_name=problem.geometry.name,

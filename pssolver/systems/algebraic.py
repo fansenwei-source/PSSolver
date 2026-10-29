@@ -8,6 +8,8 @@ from enum import Enum
 import json
 from types import MappingProxyType
 
+from pssolver.core._canonical import canonical_json
+
 
 class AlgebraicUpdatePhase(str, Enum):
     """Point in a timestep at which an algebraic system is synchronized."""
@@ -85,12 +87,7 @@ class AlgebraicSystemSpec:
                 "algebraic parameter names must be Python identifiers"
             )
         try:
-            parameters_json = json.dumps(
-                dict(self.parameters),
-                allow_nan=False,
-                sort_keys=True,
-                separators=(",", ":"),
-            )
+            parameters_json = canonical_json(dict(self.parameters))
         except (TypeError, ValueError) as exc:
             raise ValueError(
                 "algebraic parameters must be finite and JSON-compatible"

@@ -10,9 +10,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 import hashlib
-import json
 import math
 from numbers import Real
+
+from pssolver.core._canonical import canonical_json
 
 
 class BoundaryKind(str, Enum):
@@ -112,12 +113,7 @@ class StaticConstantBoundaryValue:
     def canonical_sha256(self) -> str:
         """Return a stable identity for the prescribed scalar data."""
 
-        payload = json.dumps(
-            self.to_metadata(),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        ).encode("utf-8")
+        payload = canonical_json(self.to_metadata()).encode("utf-8")
         return hashlib.sha256(payload).hexdigest()
 
 
@@ -172,12 +168,7 @@ class StaticRobinCoefficients:
     def canonical_sha256(self) -> str:
         """Return the stable identity of the raw Robin coefficient triple."""
 
-        payload = json.dumps(
-            self.to_metadata(),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        ).encode("utf-8")
+        payload = canonical_json(self.to_metadata()).encode("utf-8")
         return hashlib.sha256(payload).hexdigest()
 
 

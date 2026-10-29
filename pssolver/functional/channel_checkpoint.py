@@ -11,13 +11,13 @@ fabricates production algebraic state on export.
 from __future__ import annotations
 
 from collections.abc import Mapping
-import hashlib
 import json
 from pathlib import Path
 
 import numpy as np
 import torch
 
+from pssolver.core._canonical import canonical_json
 from pssolver.core._canonical import canonical_sha256
 
 from pssolver.io.checkpoint import (
@@ -193,12 +193,7 @@ class ChannelActivityCheckpointBridge:
             self._production_forward_dynamics = layer
         try:
             self._production_backend_restart = json.loads(
-                json.dumps(
-                    dict(production_backend_restart),
-                    allow_nan=False,
-                    separators=(",", ":"),
-                    sort_keys=True,
-                )
+                canonical_json(dict(production_backend_restart))
             )
         except (TypeError, ValueError) as exc:
             raise ValueError(
@@ -347,12 +342,7 @@ class ChannelActivityCheckpointBridge:
                 }
                 if migration_provenance is not None:
                     metadata["migration_provenance"] = json.loads(
-                        json.dumps(
-                            dict(migration_provenance),
-                            allow_nan=False,
-                            separators=(",", ":"),
-                            sort_keys=True,
-                        )
+                        canonical_json(dict(migration_provenance))
                     )
                 metadata = seal_checkpoint_metadata(metadata)
                 write_functional_checkpoint_provenance(

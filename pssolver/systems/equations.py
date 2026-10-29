@@ -16,8 +16,8 @@ import hashlib
 import json
 from types import MappingProxyType
 
-from pssolver.core.fields import FieldRole
 from pssolver.core._canonical import canonical_json
+from pssolver.core.fields import FieldRole
 from pssolver.core._identifiers import require_python_identifier
 
 from .algebraic import AlgebraicSystemSpec
@@ -341,12 +341,7 @@ class EquationSystemSpec:
         }
 
     def canonical_sha256(self) -> str:
-        payload = json.dumps(
-            self.to_metadata(),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        ).encode("utf-8")
+        payload = canonical_json(self.to_metadata()).encode("utf-8")
         return hashlib.sha256(payload).hexdigest()
 
 

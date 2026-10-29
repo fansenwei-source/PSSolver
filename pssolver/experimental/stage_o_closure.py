@@ -15,6 +15,7 @@ import math
 from pathlib import Path
 from typing import Sequence
 
+from pssolver.core._canonical import canonical_json
 from ._shadow_support import file_sha256, require_sha256
 
 
@@ -374,12 +375,7 @@ def stage_o_closure_identity_sha256(
 
     if not isinstance(decision, StageOClosureDecision):
         raise TypeError("decision must be a StageOClosureDecision")
-    payload = json.dumps(
-        decision.to_metadata(),
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
+    payload = canonical_json(decision.to_metadata()).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
 
 

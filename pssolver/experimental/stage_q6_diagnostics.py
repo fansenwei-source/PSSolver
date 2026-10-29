@@ -12,11 +12,11 @@ import argparse
 from collections.abc import Mapping, Sequence
 from copy import deepcopy
 import hashlib
-import json
 import math
 from pathlib import Path
 from types import MappingProxyType
 
+from pssolver.core._canonical import canonical_json
 from ._shadow_support import file_sha256
 from .h100_shadow_qualification import _write_new_json
 from .stage_q2_diagnostics import _read_unchanged_json
@@ -276,12 +276,7 @@ def _load_frozen_report(
 
 
 def _contract_identity() -> str:
-    payload = json.dumps(
-        dict(_SOURCE_CONTRACTS),
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
+    payload = canonical_json(dict(_SOURCE_CONTRACTS)).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
 
 

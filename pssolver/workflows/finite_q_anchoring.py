@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from pssolver.core._canonical import canonical_json
 from pssolver.io.checkpoint import (
     CheckpointCompatibilityError,
     CheckpointIntegrityError,
@@ -226,12 +227,7 @@ def load_finite_q_anchoring_checkpoint(
     if metadata.get("component_order") != list(Q_COMPONENTS):
         raise ValueError("checkpoint component order differs")
     identity = metadata.get("identity")
-    identity_json = json.dumps(
-        identity,
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    )
+    identity_json = canonical_json(identity)
     if hashlib.sha256(identity_json.encode("utf-8")).hexdigest() != (
         metadata.get("identity_sha256")
     ):
@@ -300,26 +296,11 @@ def load_finite_q_anchoring_checkpoint(
             (
                 component,
                 PlaneRobinScalarCheckpoint(
-                    identity_json=json.dumps(
-                        scalar.get("identity"),
-                        allow_nan=False,
-                        separators=(",", ":"),
-                        sort_keys=True,
-                    ),
+                    identity_json=canonical_json(scalar.get("identity")),
                     remainder=remainder,
                     bounded_modal=modal,
-                    progress_json=json.dumps(
-                        scalar.get("progress"),
-                        allow_nan=False,
-                        separators=(",", ":"),
-                        sort_keys=True,
-                    ),
-                    representations_json=json.dumps(
-                        scalar.get("representations"),
-                        allow_nan=False,
-                        separators=(",", ":"),
-                        sort_keys=True,
-                    ),
+                    progress_json=canonical_json(scalar.get("progress")),
+                    representations_json=canonical_json(scalar.get("representations")),
                     remainder_sha256=remainder_metadata.get("sha256"),
                     bounded_modal_sha256=modal_metadata.get("sha256"),
                 ),

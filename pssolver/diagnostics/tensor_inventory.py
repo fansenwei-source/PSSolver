@@ -11,13 +11,13 @@ from __future__ import annotations
 from collections import Counter, defaultdict
 from collections.abc import Mapping
 from dataclasses import fields, is_dataclass
-import hashlib
 import json
 import types
 from typing import Any
 
 import torch
 
+from pssolver.core._canonical import canonical_json
 from pssolver.core._canonical import canonical_sha256
 
 _LEAF_TYPES = (
@@ -416,11 +416,11 @@ def _counter_diff(
     after: list[dict[str, object]],
 ) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
     before_by_json = Counter(
-        json.dumps(item, allow_nan=False, separators=(",", ":"), sort_keys=True)
+        canonical_json(item)
         for item in before
     )
     after_by_json = Counter(
-        json.dumps(item, allow_nan=False, separators=(",", ":"), sort_keys=True)
+        canonical_json(item)
         for item in after
     )
 

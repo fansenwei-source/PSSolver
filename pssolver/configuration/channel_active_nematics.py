@@ -8,9 +8,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import hashlib
-import json
 from pathlib import Path
 
+from pssolver.core._canonical import canonical_json
 from pssolver.core import (
     DealiasRule,
     DomainSpec,
@@ -168,12 +168,7 @@ class ChannelActiveNematicRunSpec:
     def canonical_sha256(self) -> str:
         """Hash the complete provisional declaration deterministically."""
 
-        payload = json.dumps(
-            self.to_metadata(),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        ).encode("utf-8")
+        payload = canonical_json(self.to_metadata()).encode("utf-8")
         return hashlib.sha256(payload).hexdigest()
 
     def _runtime_identity_metadata(
@@ -222,23 +217,13 @@ class ChannelActiveNematicRunSpec:
         checkpoints must use :meth:`runtime_identity_sha256`.
         """
 
-        payload = json.dumps(
-            self._runtime_identity_metadata(
+        payload = canonical_json(self._runtime_identity_metadata(
                 include_forward_dynamics_version=False,
-            ),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        ).encode("utf-8")
+            )).encode("utf-8")
         return hashlib.sha256(payload).hexdigest()
 
     def runtime_identity_sha256(self) -> str:
-        payload = json.dumps(
-            self.runtime_identity_metadata(),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        ).encode("utf-8")
+        payload = canonical_json(self.runtime_identity_metadata()).encode("utf-8")
         return hashlib.sha256(payload).hexdigest()
 
     def identity_metadata(self) -> dict[str, object]:

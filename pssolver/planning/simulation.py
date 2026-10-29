@@ -14,10 +14,10 @@ import hashlib
 import json
 import math
 
+from pssolver.core._canonical import canonical_json
 from pssolver.core.boundary import BoundaryKind
 from pssolver.core.fields import FieldRole
 from pssolver.core.geometry import AxisTopology
-from pssolver.core._canonical import canonical_json
 from pssolver.core._identifiers import (
     require_dotted_python_identifier,
     require_python_identifier,

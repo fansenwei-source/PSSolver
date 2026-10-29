@@ -13,6 +13,7 @@ from types import MappingProxyType
 
 import torch
 
+from pssolver.core._canonical import canonical_json
 from pssolver.operators.lifting import (
     FreshInitialConditioningPolicy,
     PlaneStaticLiftingOperator,
@@ -26,12 +27,7 @@ FRESH_CONSTRUCTION_PROVENANCE_SCHEMA_VERSION = 1
 
 
 def _frozen_json(value: Mapping[str, object] | None) -> Mapping[str, object]:
-    payload = json.dumps(
-        {} if value is None else dict(value),
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    )
+    payload = canonical_json({} if value is None else dict(value))
     return MappingProxyType(json.loads(payload))
 
 

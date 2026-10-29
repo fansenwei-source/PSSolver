@@ -15,6 +15,7 @@ import time
 import numpy as np
 import torch
 
+from pssolver.core._canonical import canonical_json
 from pssolver.io.checkpoint import (
     CheckpointCompatibilityError,
     CheckpointIntegrityError,
@@ -311,12 +312,7 @@ def _channel_backend_restart_identity(
     backend_restart: dict[str, object],
 ) -> CheckpointIdentityLayer:
     normalized = json.loads(
-        json.dumps(
-            dict(backend_restart),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
+        canonical_json(dict(backend_restart))
     )
     normalized.pop("runtime_identity_sha256", None)
     return CheckpointIdentityLayer(

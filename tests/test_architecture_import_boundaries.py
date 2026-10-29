@@ -28,35 +28,23 @@ class ImportEdge:
 # Allowed internal dependency layers for packages governed in Phase 0.
 # Applications are composition roots and are checked separately below.
 ALLOWED_INTERNAL_LAYERS = {
-    # Top-level modules are compatibility facades and composition roots.  S-16
-    # brings them under the same layer ratchet instead of silently skipping
-    # every dependency whose source did not have a package subdirectory.
-    "_root": frozenset(
-        {
-            "_root",
-            "adapters",
-            "api",
-            "applications",
-            "backends",
-            "boundaries",
-            "configuration",
-            "control",
-            "core",
-            "diagnostics",
-            "execution",
-            "experimental",
-            "functional",
-            "geometries",
-            "io",
-            "linear_solvers",
-            "models",
-            "operators",
-            "planning",
-            "presets",
-            "runtime",
-            "workflows",
-        }
-    ),
+    # Top-level modules are compatibility facades or small legacy roots.  They
+    # retain distinct names so an allowance for one facade cannot silently
+    # authorize imports from or to every other top-level module.
+    "Field": frozenset(),
+    "PDEmodel": frozenset({"Field", "linear_solvers"}),
+    "_version": frozenset(),
+    "channel": frozenset({"linear_solvers", "models", "solver"}),
+    "errors": frozenset({"core"}),
+    "integrator": frozenset(),
+    "loop_conventions": frozenset(),
+    "plane": frozenset({"geometries"}),
+    "run_metadata": frozenset(),
+    "snapshots": frozenset({"models"}),
+    "solver": frozenset({"Field", "PDEmodel", "backends", "integrator"}),
+    "transforms": frozenset({"backends", "linear_solvers", "operators"}),
+    "utils": frozenset(),
+    "visualizer": frozenset(),
     "core": frozenset({"core"}),
     "systems": frozenset({"core", "systems"}),
     "geometries": frozenset({"core", "geometries"}),
@@ -78,9 +66,7 @@ ALLOWED_INTERNAL_LAYERS = {
         {"backends", "core", "linear_solvers", "operators", "planning"}
     ),
     "integrators": frozenset({"core", "execution", "integrators", "planning"}),
-    "models": frozenset(
-        {"core", "execution", "linear_solvers", "models", "operators"}
-    ),
+    "models": frozenset({"core", "execution", "models"}),
     "adapters": frozenset({"adapters", "core", "planning"}),
     "presets": frozenset({"models", "presets"}),
     "configuration": frozenset(
@@ -110,45 +96,50 @@ ALLOWED_INTERNAL_LAYERS = {
     ),
     "workflows": frozenset(
         {
-            "_root",
             "configuration",
+            "errors",
             "io",
             "models",
+            "run_metadata",
             "runtime",
             "workflows",
         }
     ),
     "io": frozenset({"core", "io", "runtime"}),
-    "control": frozenset({"_root", "control", "models"}),
+    "control": frozenset({"control", "models", "snapshots"}),
     "applications": frozenset(
         {
-            "_root",
             "applications",
             "configuration",
+            "errors",
             "io",
             "models",
             "operators",
             "planning",
+            "run_metadata",
             "runtime",
             "workflows",
         }
     ),
     "experimental": frozenset(
         {
-            "_root",
             "adapters",
+            "channel",
             "configuration",
             "core",
             "diagnostics",
             "execution",
             "experimental",
             "geometries",
+            "integrator",
             "integrators",
             "io",
             "linear_solvers",
             "models",
             "operators",
             "planning",
+            "run_metadata",
+            "solver",
         }
     ),
     # S-10 brings the post-Phase-9 public and functional layers under the
@@ -156,11 +147,11 @@ ALLOWED_INTERNAL_LAYERS = {
     # the S-10 baseline; adding a new layer edge now requires explicit review.
     "api": frozenset(
         {
-            "_root",
             "api",
             "applications",
             "configuration",
             "core",
+            "errors",
             "planning",
             "systems",
         }
@@ -169,7 +160,7 @@ ALLOWED_INTERNAL_LAYERS = {
     "diagnostics": frozenset({"core", "diagnostics"}),
     "functional": frozenset(
         {
-            "_root",
+            "_version",
             "applications",
             "configuration",
             "core",
@@ -181,9 +172,17 @@ ALLOWED_INTERNAL_LAYERS = {
             "workflows",
         }
     ),
-    # The historical facade is allowed to re-export the canonical Phase 1
-    # implementations, but canonical modules never depend on the facade.
-    "transforms": frozenset({"backends", "linear_solvers", "operators"}),
+}
+
+
+# These four public layers existed in the v0.3.0 ratchet.  S-16 may govern
+# more source layers, but it must not widen any pre-existing layer-to-facade
+# relation while doing so.
+V030_TOP_LEVEL_TARGETS_BY_SOURCE_LAYER = {
+    "api": frozenset({"errors"}),
+    "control": frozenset({"snapshots"}),
+    "functional": frozenset({"_version"}),
+    "workflows": frozenset({"errors", "run_metadata"}),
 }
 
 
@@ -309,6 +308,42 @@ REVIEWED_MODEL_TO_BOUNDARY_POLICY_EDGES = {
 }
 
 
+REVIEWED_MODEL_TO_STOKES_IMPLEMENTATION_EDGES = {
+    ImportEdge(
+        "pssolver.models.active_nematics.stokes",
+        "pssolver.linear_solvers.stokes.plane_free_slip",
+    ),
+    ImportEdge(
+        "pssolver.models.active_nematics.stokes",
+        "pssolver.operators.tensor_divergence",
+    ),
+}
+
+
+REVIEWED_WORKFLOW_TO_CANONICAL_HELPER_EDGES = {
+    ImportEdge(
+        "pssolver.workflows.channel_beris_edwards",
+        "pssolver.core._canonical",
+    ),
+    ImportEdge(
+        "pssolver.workflows.channel_checkpoint",
+        "pssolver.core._canonical",
+    ),
+    ImportEdge(
+        "pssolver.workflows.finite_q_anchoring",
+        "pssolver.core._canonical",
+    ),
+    ImportEdge(
+        "pssolver.workflows.periodic_checkpoint",
+        "pssolver.core._canonical",
+    ),
+    ImportEdge(
+        "pssolver.workflows.plane_checkpoint",
+        "pssolver.core._canonical",
+    ),
+}
+
+
 REVIEWED_INTEGRATOR_TO_IO_EDGES = {
     ImportEdge(
         "pssolver.integrators.reference_checkpoint",
@@ -388,6 +423,11 @@ PACKAGE_LAYERS = frozenset(
     path.parent.name
     for path in PACKAGE_ROOT.glob("*/__init__.py")
 )
+ROOT_MODULE_NAMES = frozenset(
+    path.stem
+    for path in PACKAGE_ROOT.glob("*.py")
+    if path.name != "__init__.py"
+)
 
 
 def _from_import_targets(path: Path, node: ast.ImportFrom) -> set[str]:
@@ -445,8 +485,6 @@ def _layer(module: str) -> str:
     parts = module.split(".")
     if len(parts) < 2 or parts[0] != "pssolver":
         return ""
-    if parts[1] not in PACKAGE_LAYERS:
-        return "_root"
     return parts[1]
 
 
@@ -457,6 +495,19 @@ def test_every_internal_source_layer_is_governed_by_the_ratchet():
     }
     observed.discard("")
     assert observed <= set(ALLOWED_INTERNAL_LAYERS)
+
+
+def test_s16_does_not_widen_v030_top_level_target_allowances():
+    observed = {
+        layer: frozenset(
+            target
+            for target in allowed
+            if target in ROOT_MODULE_NAMES
+        )
+        for layer, allowed in ALLOWED_INTERNAL_LAYERS.items()
+        if layer in V030_TOP_LEVEL_TARGETS_BY_SOURCE_LAYER
+    }
+    assert observed == V030_TOP_LEVEL_TARGETS_BY_SOURCE_LAYER
 
 
 def _all_edges() -> set[ImportEdge]:
@@ -509,6 +560,26 @@ def test_models_have_only_reviewed_public_boundary_policy_edges():
     assert observed == REVIEWED_MODEL_TO_BOUNDARY_POLICY_EDGES
 
 
+def test_models_have_only_the_two_reviewed_stokes_implementation_edges():
+    observed = {
+        edge
+        for edge in _all_edges()
+        if _layer(edge.source) == "models"
+        and _layer(edge.destination) in {"linear_solvers", "operators"}
+    }
+    assert observed == REVIEWED_MODEL_TO_STOKES_IMPLEMENTATION_EDGES
+
+
+def test_only_reviewed_workflows_use_the_private_canonical_helper():
+    observed = {
+        edge
+        for edge in _all_edges()
+        if _layer(edge.source) == "workflows"
+        and edge.destination == "pssolver.core._canonical"
+    }
+    assert observed == REVIEWED_WORKFLOW_TO_CANONICAL_HELPER_EDGES
+
+
 def test_tensor_free_declaration_and_planning_layers_use_no_third_party_runtime():
     violations: list[str] = []
     for path in sorted(PACKAGE_ROOT.rglob("*.py")):
@@ -539,6 +610,10 @@ def test_internal_imports_follow_the_phase_zero_dependency_ratchet():
         if edge in REVIEWED_MODEL_DECLARATION_TO_SYSTEMS_EDGES:
             continue
         if edge in REVIEWED_MODEL_TO_BOUNDARY_POLICY_EDGES:
+            continue
+        if edge in REVIEWED_MODEL_TO_STOKES_IMPLEMENTATION_EDGES:
+            continue
+        if edge in REVIEWED_WORKFLOW_TO_CANONICAL_HELPER_EDGES:
             continue
         if edge in REVIEWED_CONFIGURATION_TO_PLANNING_EDGES:
             continue

@@ -20,6 +20,8 @@ import hashlib
 import json
 from typing import Literal
 
+from pssolver.core._canonical import canonical_json
+
 
 LegacyFunctionalFamily = Literal["periodic", "channel"]
 LegacyReleaseGeneration = Literal["rc1", "rc2", "rc3"]
@@ -32,12 +34,7 @@ _CURRENT_FUNCTIONAL_API_VERSION = "1.1"
 def _json_copy(value: object, description: str) -> object:
     try:
         return json.loads(
-            json.dumps(
-                value,
-                allow_nan=False,
-                separators=(",", ":"),
-                sort_keys=True,
-            )
+            canonical_json(value)
         )
     except (TypeError, ValueError) as exc:
         raise ValueError(f"{description} must be JSON-compatible") from exc
@@ -244,12 +241,7 @@ def legacy_runtime_identity_sha256(
         family=family,
         source_release_generation=source_release_generation,
     )
-    encoded = json.dumps(
-        payload,
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
+    encoded = canonical_json(payload).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
 

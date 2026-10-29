@@ -11,6 +11,7 @@ from types import MappingProxyType
 import numpy as np
 import torch
 
+from pssolver.core._canonical import canonical_json
 from pssolver.configuration import PlaneBerisEdwardsRunSpec, PlaneRuntimePath
 from pssolver.io.checkpoint import (
     CHECKPOINT_INTEGRITY_SEALED_SHA256,
@@ -209,12 +210,7 @@ class PlaneWorkflowCheckpoint:
             if not isinstance(lifting, Mapping):
                 raise TypeError("lifting_restart must be a mapping or None")
             try:
-                encoded = json.dumps(
-                    dict(lifting),
-                    allow_nan=False,
-                    separators=(",", ":"),
-                    sort_keys=True,
-                )
+                encoded = canonical_json(dict(lifting))
             except (TypeError, ValueError) as exc:
                 raise ValueError(
                     "lifting restart metadata is not JSON-compatible"
@@ -242,12 +238,7 @@ class PlaneWorkflowCheckpoint:
                     "fresh_construction_provenance must be a mapping or None"
                 )
             try:
-                encoded = json.dumps(
-                    dict(fresh),
-                    allow_nan=False,
-                    separators=(",", ":"),
-                    sort_keys=True,
-                )
+                encoded = canonical_json(dict(fresh))
             except (TypeError, ValueError) as exc:
                 raise ValueError(
                     "fresh construction provenance is not JSON-compatible"
@@ -262,12 +253,7 @@ class PlaneWorkflowCheckpoint:
             if not isinstance(migration, Mapping):
                 raise TypeError("migration_provenance must be a mapping or None")
             try:
-                encoded = json.dumps(
-                    dict(migration),
-                    allow_nan=False,
-                    separators=(",", ":"),
-                    sort_keys=True,
-                )
+                encoded = canonical_json(dict(migration))
             except (TypeError, ValueError) as exc:
                 raise ValueError(
                     "migration provenance is not JSON-compatible"
@@ -334,12 +320,7 @@ def _plane_run_spec_dynamics(
     if not isinstance(run_spec, PlaneBerisEdwardsRunSpec):
         raise TypeError("run_spec must be a PlaneBerisEdwardsRunSpec")
     metadata = json.loads(
-        json.dumps(
-            run_spec.runtime_identity_metadata(),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
+        canonical_json(run_spec.runtime_identity_metadata())
     )
     metadata.pop("runtime_path")
     controls = metadata["runtime_controls"]
@@ -416,12 +397,7 @@ def _plane_backend_restart_identity(
     backend_restart: Mapping[str, object],
 ) -> CheckpointIdentityLayer:
     normalized = json.loads(
-        json.dumps(
-            dict(backend_restart),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
+        canonical_json(dict(backend_restart))
     )
     for provenance_key in (
         "runtime_identity_sha256",
@@ -653,12 +629,7 @@ def _lifting_compatibility_identity(
     if not isinstance(metadata, Mapping):
         raise TypeError("lifting restart metadata must be a mapping or None")
     normalized = json.loads(
-        json.dumps(
-            dict(metadata),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
+        canonical_json(dict(metadata))
     )
     if normalized.get("schema_version") != (
         PLANE_STATIC_LIFTING_RESTART_SCHEMA_VERSION

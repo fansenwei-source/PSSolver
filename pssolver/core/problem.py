@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 import json
 
+from pssolver.core._canonical import canonical_json
 from .boundary import BoundaryKind
 from .fields import FieldSpec
 from .geometry import AxisTopology, GeometrySpec
@@ -47,12 +48,7 @@ class ProblemSpec:
         if not isinstance(parameter_metadata, Mapping):
             raise TypeError("model.parameter_metadata() must return a mapping")
         try:
-            parameter_metadata_json = json.dumps(
-                dict(parameter_metadata),
-                allow_nan=False,
-                sort_keys=True,
-                separators=(",", ":"),
-            )
+            parameter_metadata_json = canonical_json(dict(parameter_metadata))
         except (TypeError, ValueError) as exc:
             raise ValueError(
                 "model parameter metadata must be finite and JSON-compatible"

@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-import hashlib
 import json
 from pathlib import Path
 
 import torch
 
+from pssolver.core._canonical import canonical_json
 from pssolver.core._canonical import canonical_sha256
 
 from pssolver.configuration.periodic_beris_edwards import (
@@ -128,12 +128,7 @@ class PeriodicActivityCheckpointBridge:
         )
         try:
             self._backend_restart = json.loads(
-                json.dumps(
-                    dict(backend_restart),
-                    allow_nan=False,
-                    separators=(",", ":"),
-                    sort_keys=True,
-                )
+                canonical_json(dict(backend_restart))
             )
         except (TypeError, ValueError) as exc:
             raise ValueError("backend_restart must be JSON-compatible") from exc

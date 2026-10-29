@@ -16,6 +16,7 @@ from types import MappingProxyType
 
 import torch
 
+from pssolver.core._canonical import canonical_json
 from pssolver.adapters import (
     boundary_set_to_legacy,
     compare_spectral_plan_to_runtime,
@@ -1781,12 +1782,7 @@ class ExperimentalModelRuntime:
             ),
             "system": resolved.system.to_metadata(),
         }
-        canonical = json.dumps(
-            payload,
-            allow_nan=False,
-            sort_keys=True,
-            separators=(",", ":"),
-        ).encode("utf-8")
+        canonical = canonical_json(payload).encode("utf-8")
         return hashlib.sha256(canonical).hexdigest()
 
     def restore_algebraic_restart_state(

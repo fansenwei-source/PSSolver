@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import ContextManager, Mapping
 from typing import TypeVar
 
+from pssolver.core._canonical import canonical_json
 from . import channel_activity as _channel_declarations
 from . import channel_activity_runtime as _channel_runtime
 from . import periodic_activity as _periodic_runtime
@@ -212,12 +213,7 @@ class _StableFunctionalRuntime:
                 operation="runtime_diagnostics",
             )
         try:
-            encoded = json.dumps(
-                metadata,
-                allow_nan=False,
-                separators=(",", ":"),
-                sort_keys=True,
-            )
+            encoded = canonical_json(metadata)
             snapshot = json.loads(encoded)
         except (TypeError, ValueError) as exc:
             raise FunctionalValueError(

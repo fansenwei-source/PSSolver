@@ -12,6 +12,7 @@ from enum import Enum
 import json
 from typing import NoReturn
 
+from pssolver.core._canonical import canonical_json
 from pssolver.planning.construction import (
     BuilderProvision,
     RuntimeConstructionBinding,
@@ -98,12 +99,7 @@ class BindingRejection:
             context = json.loads(self.context_json)
         except (TypeError, json.JSONDecodeError) as exc:
             raise ValueError("context_json must be valid JSON") from exc
-        canonical = json.dumps(
-            context,
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
+        canonical = canonical_json(context)
         if canonical != self.context_json:
             raise ValueError("context_json must use canonical JSON")
 
@@ -134,12 +130,7 @@ def _reject(
         BindingRejection(
             code,
             message,
-            json.dumps(
-                context,
-                allow_nan=False,
-                separators=(",", ":"),
-                sort_keys=True,
-            ),
+            canonical_json(context),
         )
     )
 

@@ -11,6 +11,7 @@ from types import MappingProxyType
 import numpy as np
 import torch
 
+from pssolver.core._canonical import canonical_json
 from pssolver.configuration.periodic_beris_edwards import (
     PERIODIC_RUNTIME_PATH,
     PeriodicBerisEdwardsRunSpec,
@@ -87,12 +88,7 @@ def _json_mapping(value: object, description: str) -> Mapping[str, object]:
     if not isinstance(value, Mapping):
         raise TypeError(f"{description} must be a mapping")
     try:
-        encoded = json.dumps(
-            dict(value),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
+        encoded = canonical_json(dict(value))
     except (TypeError, ValueError) as exc:
         raise ValueError(f"{description} must be JSON-compatible") from exc
     return MappingProxyType(json.loads(encoded))
@@ -370,12 +366,7 @@ def _periodic_backend_restart_identity(
     backend_restart: Mapping[str, object],
 ) -> CheckpointIdentityLayer:
     normalized = json.loads(
-        json.dumps(
-            dict(backend_restart),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
+        canonical_json(dict(backend_restart))
     )
     normalized.pop("runtime_identity_sha256", None)
     return CheckpointIdentityLayer(

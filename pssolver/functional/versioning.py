@@ -7,6 +7,7 @@ import hashlib
 import json
 from typing import Literal
 
+from pssolver.core._canonical import canonical_json
 from pssolver._version import __version__ as PSSOLVER_PACKAGE_VERSION
 
 from .errors import FunctionalVersionError
@@ -125,12 +126,7 @@ def runtime_identity_sha256_for_api_version(
         purpose="checkpoint_read",
     )
     payload = json.loads(
-        json.dumps(
-            metadata,
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
+        canonical_json(metadata)
     )
     payload["api_version"] = selection.requested
     if selection.requested == "0.1-provisional":
@@ -147,12 +143,7 @@ def runtime_identity_sha256_for_api_version(
                 # schema, not by changing only the API literal in today's
                 # identity payload.
                 functional_runtime.pop("hermitian_state_projection", None)
-    encoded = json.dumps(
-        payload,
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
+    encoded = canonical_json(payload).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
 

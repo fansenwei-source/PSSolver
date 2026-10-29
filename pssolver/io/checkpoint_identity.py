@@ -18,7 +18,6 @@ import math
 import re
 from types import MappingProxyType
 
-
 IDENTITY_SCHEMA_VERSION = 1
 LEGACY_REGISTRY_SCHEMA_VERSION = 1
 _TOKEN = re.compile(r"^[a-z][a-z0-9_.-]*$")

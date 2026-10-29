@@ -11,6 +11,8 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Protocol, runtime_checkable
 
+from pssolver.core._canonical import canonical_json
+
 
 class SimulationRunStatus(str, Enum):
     """Terminal state returned by the synchronous public runner."""
@@ -37,12 +39,7 @@ class SimulationDiagnosticProtocol(Protocol):
 
 
 def _frozen_json(value: Mapping[str, object]) -> Mapping[str, object]:
-    payload = json.dumps(
-        dict(value),
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-    )
+    payload = canonical_json(dict(value))
     return MappingProxyType(json.loads(payload))
 
 

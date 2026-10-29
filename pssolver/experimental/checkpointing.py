@@ -11,6 +11,7 @@ from types import MappingProxyType
 import numpy as np
 import torch
 
+from pssolver.core._canonical import canonical_json
 from pssolver.io import (
     CHECKPOINT_INTEGRITY_SEALED_SHA256,
     CHECKPOINT_INTEGRITY_UNSEALED_LEGACY,
@@ -154,12 +155,7 @@ class ShadowRunCheckpoint:
             if not isinstance(migration, Mapping):
                 raise TypeError("migration_provenance must be a mapping or None")
             try:
-                encoded = json.dumps(
-                    dict(migration),
-                    allow_nan=False,
-                    separators=(",", ":"),
-                    sort_keys=True,
-                )
+                encoded = canonical_json(dict(migration))
             except (TypeError, ValueError) as exc:
                 raise ValueError(
                     "migration provenance is not JSON-compatible"

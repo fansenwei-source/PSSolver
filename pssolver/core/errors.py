@@ -7,6 +7,8 @@ import json
 import math
 from types import MappingProxyType
 
+from pssolver.core._canonical import canonical_json
+
 
 def _json_safe(value: object) -> object:
     """Preserve diagnostic meaning without emitting non-finite JSON tokens."""
@@ -24,12 +26,7 @@ def _json_safe(value: object) -> object:
 
 def _frozen_details(value: Mapping[str, object]) -> Mapping[str, object]:
     try:
-        payload = json.dumps(
-            _json_safe(value),
-            allow_nan=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        )
+        payload = canonical_json(_json_safe(value))
     except (TypeError, ValueError) as exc:
         raise TypeError("simulation error details must be JSON-compatible") from exc
     return MappingProxyType(json.loads(payload))
