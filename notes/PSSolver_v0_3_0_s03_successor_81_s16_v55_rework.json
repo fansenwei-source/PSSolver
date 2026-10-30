@@ -1,0 +1,87 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 81,
+  "date": "2026-10-30",
+  "classification": "V55_CLAIMED_FIXED_PENDING_R0047",
+  "plan_step": "S-16",
+  "git_identity": {
+    "implementation_parent": "da755a2b23d0e105f3735d12b20dbad669707eb1",
+    "implementation": "625c3ca6b2c64bb674d43430d39ec3409f78c736",
+    "record_commit_is_qualified_source": false
+  },
+  "implementation_sources": {
+    "notes/PSSolver_v0_4_0_s16_r8_binding_reference_corrections.json": "09054c5ea047424830003b5713fa883e1fac7da4313c933ae5920297f556d268",
+    "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py": "62d026dc02b908a70617044a15bc5fef67aac92f95d3393287e67f509d31d63f",
+    "tests/test_v0_4_s16_v55_rework.py": "e9d9c13ac74502ab4dc49d405430fd4173bc15b6a51893c117288792b95d5db1"
+  },
+  "v55_resolution": {
+    "pytest_external_path_reads": 0,
+    "frozen_pruning_fields": [
+      "path",
+      "size_bytes",
+      "file_count",
+      "tree_manifest_sha256"
+    ],
+    "ast_guard_forbidden_path_calls": [
+      "exists",
+      "is_dir",
+      "is_file",
+      "lstat",
+      "stat"
+    ]
+  },
+  "binding_reference_corrections": {
+    "benchmarks/shendruk_v1_dynamic_velocity/fig4_timestep_convergence.py": {
+      "historical_reference": "tests/test_shendruk_v1_dynamic_velocity_timestep_convergence.py",
+      "correction": "the cited test does not bind the script hash; retain the script as a byte-pinned documented exception"
+    },
+    "benchmarks/v0_2_0_checkpoint_fixtures.py": {
+      "historical_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_53_s10_final_cleanup.json",
+        "notes/PSSolver_v0_3_0_s03_successor_56_s10_r0033_candidate.json"
+      ],
+      "corrected_reference": "notes/PSSolver_v0_3_0_s03_successor_56_s10_r0033_candidate.json",
+      "correction": "successor 53 binds an older hash; successor 56 binds the current fixture-generator hash"
+    }
+  },
+  "historical_successor_sources": {
+    "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py": {
+      "historical_sha256": "6cafd7a87134ae0495646ab291e7c6562ad0bc78b63d7fbef199784143ac0607",
+      "current_sha256": "62d026dc02b908a70617044a15bc5fef67aac92f95d3393287e67f509d31d63f"
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "ea47cb5d369c3874fb4dedd2fb5fe75291da514aabf48688b4967ec0e3e4abd4",
+      "current_sha256": "9b22ddff716ac7141b20500b18728dcc49dbc99f2e54d38b760193703df8d61c"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "694775aa40bf24cd3f1a8fccb7f533b7fc10730ac3c3189ef0b138df0075a84f",
+      "current_sha256": "888e05a62eb682598df3948b111c72655ef2281f9e9e967b00d7b2d8cf4c0a7b"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "a9ecc8839eaf7a7041512f10c8d57e0f311daa625f46f31e4240e7d17a47423b",
+      "current_sha256": "f742cf67359015e7a8738de11ef50eceb99e111c05394f0245c84beaa1a9c27e"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_81_s16_v55_rework_zh.md": "40b58ec7f1357f73b1b4a80b2c90efe090954f72a67eea5bf6db4d4ab5f85d35",
+    "tests/test_v0_4_s16_v55_successor.py": "e9f7dbb9b7d46c01b79b2de9c5535573de5a477db869b1851fb5658369cdcf13"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_commits": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

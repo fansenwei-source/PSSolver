@@ -32,8 +32,8 @@
   "issue_count": 60,
   "status_counts": {
     "open": 0,
-    "registered": 1,
-    "claimed_fixed": 0,
+    "registered": 0,
+    "claimed_fixed": 1,
     "verified": 55,
     "deferred": 2,
     "accepted": 2,
@@ -990,9 +990,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "625c3ca6b2c64bb674d43430d39ec3409f78c736",
       "target_release": "0.4 S-16",
-      "notes": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_v2_records_mode_change_and_confirmed_temp_pruning asserts that three repository-external /home/fansenwei paths do not exist. That makes pytest depend on machine state and violates D-0015, which requires repository-self-contained tests and assigns live local-evidence checks to the read-only verifier. Both R-0046's and the request's blocked-path access logs recorded the three os.stat calls. The follow-up removes the live existence check while retaining fixed path strings, sizes, file counts and manifest hashes in pytest."
+      "notes": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_v2_records_mode_change_and_confirmed_temp_pruning asserted that three repository-external /home/fansenwei paths did not exist. That made pytest depend on machine state and violated D-0015, which requires repository-self-contained tests and assigns live local-evidence checks to the read-only verifier. Both R-0046's and the request's blocked-path access logs recorded the three os.stat calls. The fix at 625c3ca6b2c64bb674d43430d39ec3409f78c736 removes all live existence checks while retaining exact path strings, sizes, file counts and manifest hashes in pytest. An AST guard prevents the contract test from reintroducing external exists/stat calls. The same forward correction records that the Fig. 4 test never bound the script hash and that successor 56, not successor 53, binds the current v0.2.0 fixture-generator hash."
     }
   ],
   "authorization": {

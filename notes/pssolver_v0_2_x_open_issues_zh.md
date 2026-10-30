@@ -9,8 +9,8 @@
 当前共登记 60 条：
 
 - `open`：0；
-- `registered`：1；
-- `claimed_fixed`：0；
+- `registered`：0；
+- `claimed_fixed`：1；
 - `verified`：55；
 - `deferred`：2；
 - `accepted`：2；
@@ -225,7 +225,10 @@
     已由 `R-0046` 独立验证为 `verified`。同轮新发现 `V-55`（low）：V-54 的测试
     仍用 `Path.exists()` 读取三个仓库外临时目录，导致 pytest 结果依赖本机状态并违反
     `D-0015`。该项登记到 S-16，后续只保留仓库内冻结字段检查，实时删除状态继续由本机
-    只读核对工具负责。
+    只读核对工具负责。`625c3ca6b2c64bb674d43430d39ec3409f78c736` 已删除所有实时
+    `exists/stat` 检查，并保留路径、大小、文件数与清单哈希的精确断言；AST 守卫禁止该
+    测试重新引入外部状态读取。该提交还以前向勘误更正 Fig. 4 与 v0.2.0 fixture 的两处
+    不准确绑定引用。`V-55` 现为 `claimed_fixed`，等待 `R-0047` 独立复核。
 
 ## Control 路径
 
