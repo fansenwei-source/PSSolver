@@ -1,0 +1,45 @@
+{
+  "schema": "pssolver.v0_4.s16.r8.binding_reference_corrections.v1",
+  "date": "2026-10-30",
+  "plan_step": "S-16",
+  "source_inventory": {
+    "path": "notes/PSSolver_v0_4_0_s16_r8_benchmark_harness_sharing_v2.json",
+    "sha256": "ed1b9d6c6bc255b596ca130ab7537089a9ec9df0cbd711d338866ce0099b865a",
+    "rewritten": false
+  },
+  "corrections": [
+    {
+      "path": "benchmarks/shendruk_v1_dynamic_velocity/fig4_timestep_convergence.py",
+      "baseline_sha256": "25ec1e6d33ea23921c43809b8959016c0c4ac2fc9c768a4e2c7ae669a730e712",
+      "historical_disposition": "frozen_hash_bound",
+      "historical_binding_references": [
+        "tests/test_shendruk_v1_dynamic_velocity_timestep_convergence.py"
+      ],
+      "corrected_disposition": "retained_documented_exception",
+      "corrected_binding_references": [],
+      "reason": "The cited test does not bind this script hash. The script remains byte-pinned by the D-0016 inventory and ratchet as a documented standalone provenance exception."
+    },
+    {
+      "path": "benchmarks/v0_2_0_checkpoint_fixtures.py",
+      "baseline_sha256": "8ac1e229a07c82a606c5e5c9bae2f15f6de4dba778f38c2876b2316183681bce",
+      "historical_disposition": "frozen_hash_bound",
+      "historical_binding_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_53_s10_final_cleanup.json",
+        "notes/PSSolver_v0_3_0_s03_successor_56_s10_r0033_candidate.json"
+      ],
+      "corrected_disposition": "frozen_hash_bound",
+      "corrected_binding_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_56_s10_r0033_candidate.json"
+      ],
+      "reason": "Successor 53 binds an older fixture-generator hash. Successor 56 is the record that binds the current baseline hash."
+    }
+  ],
+  "scope": {
+    "runtime_changed": false,
+    "public_interface_changed": false,
+    "numerical_output_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "historical_record_rewritten": false
+  }
+}

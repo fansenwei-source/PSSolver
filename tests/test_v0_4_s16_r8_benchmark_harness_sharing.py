@@ -277,10 +277,32 @@ def test_v2_records_mode_change_and_confirmed_temp_pruning():
         "numerical_verifier_mode_change"
     ]
     pruned = record["observations"]["temporary_equivalence_directories_pruned"]
-    assert len(pruned) == 3
-    assert all(not Path(item["path"]).exists() for item in pruned)
-    assert all(item["size_bytes"] > 52_000_000 for item in pruned)
-    assert all(len(item["tree_manifest_sha256"]) == 64 for item in pruned)
+    assert pruned == [
+        {
+            "path": "/home/fansenwei/pssolver-v04-s16-equivalence-8yMlKW",
+            "size_bytes": 52_486_104,
+            "file_count": 4_526,
+            "tree_manifest_sha256": (
+                "dd25d19da130e5df0d6b01ce2194d71150d888ec809437ca2d3cb7f458072c4a"
+            ),
+        },
+        {
+            "path": "/home/fansenwei/pssolver-v04-s16-equivalence-final-IPPkKy",
+            "size_bytes": 52_399_085,
+            "file_count": 4_471,
+            "tree_manifest_sha256": (
+                "5f13a7832561eb3d7bb9d328ae1b13b325eefac8da57bc7a693026f0722d3390"
+            ),
+        },
+        {
+            "path": "/home/fansenwei/pssolver-v04-s16-equivalence-final-TgBITZ",
+            "size_bytes": 52_408_254,
+            "file_count": 4_474,
+            "tree_manifest_sha256": (
+                "91d48c0e61c7055f5ccc2850c61e4d5acc4ae1f715ac95cee856d33d402bd298"
+            ),
+        },
+    ]
 
 
 def test_d0016_scope_does_not_touch_runtime_or_relax_gates():
