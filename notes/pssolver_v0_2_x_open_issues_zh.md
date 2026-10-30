@@ -10,8 +10,8 @@
 
 - `open`：0；
 - `registered`：0；
-- `claimed_fixed`：1；
-- `verified`：55；
+- `claimed_fixed`：0；
+- `verified`：56；
 - `deferred`：2；
 - `accepted`：2；
 - `coverage_gap`：0。
@@ -228,7 +228,9 @@
     只读核对工具负责。`625c3ca6b2c64bb674d43430d39ec3409f78c736` 已删除所有实时
     `exists/stat` 检查，并保留路径、大小、文件数与清单哈希的精确断言；AST 守卫禁止该
     测试重新引入外部状态读取。该提交还以前向勘误更正 Fig. 4 与 v0.2.0 fixture 的两处
-    不准确绑定引用。`V-55` 现为 `claimed_fixed`，等待 `R-0047` 独立复核。
+    不准确绑定引用。`V-55` 已由 `R-0047` 独立验证为 `verified`，修复身份保持
+    `625c3ca6b2c64bb674d43430d39ec3409f78c736`。S-16 已完成，只剩按
+    `D-0009` 单独授权的 `dev/0.4` 非强制快进推送。
 
 ## Control 路径
 
