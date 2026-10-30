@@ -1,0 +1,1450 @@
+{
+  "baseline": {
+    "claude_r0044_audit": {
+      "hash_bound_files": 82,
+      "helper_variants": 67,
+      "local_helper_files": 106
+    },
+    "commit": "7f0374af7bdd772a7df1144d0185bb42222faba1",
+    "conservative_ast_audit": {
+      "hash_bound_files": 87,
+      "local_helper_files": 118,
+      "migrated_files": 2,
+      "note": "The conservative AST audit also counts provenance, multi-artifact, and binary atomic helpers, so it is intentionally broader than the R-0044 audit.",
+      "retained_exceptions": 29
+    }
+  },
+  "date": "2026-10-29",
+  "decision": {
+    "commit": "98d29d611ad048b3f5004e97e7ee0b8a4a76aa6c",
+    "id": "D-0016",
+    "selection": "option b: share only live harness support",
+    "sha256": "fe2ddb0ee5ba87bc159888f95e59ea45e7ded1b293f122ee5f6d44c651e45b24"
+  },
+  "migrated_current_sha256": {
+    "benchmarks/verify_v0_4_local_evidence.py": "2a41eebfffdb8a595536659a79d72de8beb64beb3782307632ff0264a1eb5a42",
+    "benchmarks/verify_v0_4_s16_numerical_equivalence.py": "89bfd620703e87025c822fff4a2039b75ab753165a0bf4e68d08e1bc6a41e4da"
+  },
+  "plan_step": "S-16",
+  "ratchet": {
+    "allowlist_can_only_shrink": true,
+    "baseline_commit": "7f0374af7bdd772a7df1144d0185bb42222faba1",
+    "new_local_helpers_forbidden": true,
+    "rule": "Every benchmark script with a local atomic-output or provenance helper must be present in this baseline inventory; current local-helper paths must be a subset of the retained baseline paths; the two migrated scripts must define no local helper; new scripts must import the shared module."
+  },
+  "schema": "pssolver.v0_4.s16.r8.benchmark_harness_sharing.v1",
+  "scope": {
+    "gpu_specific_path_changed": false,
+    "historical_script_rewritten": false,
+    "numerical_output_changed": false,
+    "public_interface_changed": false,
+    "runtime_changed": false,
+    "skip_or_xfail_added": false,
+    "threshold_changed": false
+  },
+  "scripts": [
+    {
+      "baseline_sha256": "840f001753e503880b348c04944d43e5ba1d7703cfa736d9bb740bb3b6071107",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_periodic_hermitian_profiles.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "cd68cdd36edef4c65ff83dbbef78012d061e72c9e19fc45a3e54a66be2b33ce8",
+      "binding_references": [
+        "notes/architecture_v0_2/phase_8_p861_local_cumulative_audit.json",
+        "notes/architecture_v0_2/phase_8_p861_local_cumulative_audit.md",
+        "notes/architecture_v0_2/phase_8_p862_source_binding.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_phase8_cumulative_closure.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "28e64e2b1f655b0a594bb01c2ec4678b96387ec9134fb9a5af0ce5872a30587a",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_phase9_p95_functional_qualification.py",
+      "reason": "historical qualification or profiling harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "591d06326373e299ba20096e577df95d185e837dc7d9c173a4a52d7f83aa0588",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_phase9_p95_gradient_diagnostic.py",
+      "reason": "historical qualification or profiling harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "37f52afa481b815704649dbe96b48633461660e50d090ffbf056e8073170a30c",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_phase9_p95_gradient_validator_v2.py",
+      "reason": "historical qualification or profiling harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "b488adc354fef87fc1df207dc26ec38d0892320078694c3f808276ec73fc6593",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc2_g5_installed_smokes.py",
+      "reason": "historical qualification or profiling harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "d6b9a46d8b90506b8a8190c3cb09ac83f10f27a3e85b1d17a975ba9ddf730ff8",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc426_execution_support.json",
+        "notes/PSSolver_v0_2_0rc4_rc426_tf32_bootstrap_recovery.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc426_cross_device_checkpoint.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "011c3f7cfeac2c10835b13eaaf5c3696cf6653081ca149ad8f953f6fb3546908",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc437_h100_qualification_plan.json",
+        "notes/PSSolver_v0_2_0rc4_rc437_h100_recovery_plan.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc437_lifting_h100.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "46cac8e9cf6c29d28681f940c9c740d48af2f3fb8c3b71960992b319b5f44d09",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc447_bounded_operator_qualification_v11.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc447_pressure_h100.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "8adb9e3fb5df81d5d2cfa5114ef4d8208a82debf44cc761d18746ce967bce951",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc458_qualification_support.json",
+        "notes/PSSolver_v0_2_0rc4_rc458_reserved_memory_recovery.json",
+        "notes/PSSolver_v0_2_0rc4_rc458_transform_counter_recovery.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc458_tf32_h100.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "5a0b0d1f4008ec0c3e4f42f09436d983bfed8d2afd588b75eb4c0df972afc44c",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc412_h100_qualification_plan.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "write_json_atomic"
+      ],
+      "path": "benchmarks/analyze_rc4_plane_nyquist_qualification.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "ab9c1a9bfc829bbe728330d4de07287cdfd8f03c6710d8f4ea1821ee3099b88e",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_balanced_crossover_adoption_v15.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc5_g1_balanced_crossover_qualification.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "fbc4671872f23bf352f213d6b280d4b60bf85c8d42c2b91a50660f9802d4e7d9",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_balanced_crossover_adoption_v15.json",
+        "notes/PSSolver_v0_2_0rc5_g1_balanced_crossover_contract_v14.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc5_g1_balanced_crossover_replay.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "1f222957b533d99967234f24d070f5228e823791e3ad3c15f2bc7adb487a2d88",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_measurement_window_implementation_v9.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc5_g1_focused_performance_h100.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "6e0453958165ed7239602fefdc7f4c0f23cbdd11efdd1419d14b6b3a8498e994",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_transform_window_recovery_v6.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc5_g1_h100.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "22d9c21bbc44782fbcf88b3cca1d9762299c7404e08c4b4bc847f3a1151510bc",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_measurement_window_implementation_v9.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc5_g1_measurement_window_h100.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "3311914dabaebef99464a063babfc104ef4cf3fca88f1eb50766d848540d9c1a",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_paired_block_contract_v13.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc5_g1_paired_block_replay.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "38717184e1c7fe91f46f921eaf5a11a2390f0dea2450d616d6f8e77f1e8c62fc",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_timing_instrumentation_v12.json",
+        "notes/PSSolver_v0_2_0rc5_g1_timing_instrumentation_v12_result.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc5_g1_timing_instrumentation.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "dff31fb7e0445568d743ec5d2bfbc9225303749007da95e915a133deba328763",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_measurement_window_implementation_v9.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc5_g1_timing_variability.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "ab70ad554366f433d1c53449e9b7eaec2b2f6c40e8e753108246ea9d59a69f66",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_v13_failure_analysis.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc5_g1_v13_failure.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "0dfdab6db8ffbcd58ab94766fc8f7dde92f797a05c03255a242f073df42a475c",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_control_installed_wheel_cpu.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc6_control_installed_cpu_review.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "ca1cf7f2f470d91b0e0e6ca38d20736903c3ee85101dc1d0063e38795f4c32e8",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_cumulative_h100_closure_v7.json",
+        "notes/PSSolver_v0_2_0rc6_h100_stage_producers.json",
+        "notes/PSSolver_v0_2_0rc6_qualification_support.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_rc6_single_h100.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "de94902c6df186963c696446b4b4a60e26152205bd9a0eb40a3859fc304798c3",
+      "binding_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_43_r0028_rework.json",
+        "notes/PSSolver_v0_3_0_s03_successor_45_r0030_import.json",
+        "notes/PSSolver_v0_3_0_s09_ap_revert_proxy_r0029_candidate.json",
+        "notes/PSSolver_v0_3_0_s09_ap_revert_proxy_r0030_candidate.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_v0_3_s09_ap_cache_diagnostic.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "fc0d1e767ffc96a9e3cba4d13031c737428952f9825d61cec1d6cc325378eaec",
+      "binding_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_30_s09_failure_analysis.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_v0_3_s09_cpu_6x60_stop.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "0cb2a751d7c1752cf5a3bc561226fa543da203155f430ae09bd2ce022145fcdd",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/analyze_v0_3_s09_h100.py",
+      "reason": "frozen S-09 qualification harness retained byte-for-byte for S-19 reuse under D-0016"
+    },
+    {
+      "baseline_sha256": "152d8d2883d49b90205bc3f6445daac942a9d7d25a8127927b1c1d4721fec670",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_hpcc_plan_freeze.json",
+        "notes/PSSolver_v0_2_0rc5_g1_qualification_support.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/assemble_rc5_g1_auxiliary.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "62b24f4d2870c001d3477f30026a5b293e4c495addc02e524cb586c82ddec973",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_qualification_support.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/assemble_rc6_h100_auxiliary.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "84a4128771c4d5a86d101dbf723cc1cf51bfe35d855ccc6a6e20c3ac3c259a26",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/assemble_v0_3_s09_h100.py",
+      "reason": "frozen S-09 qualification harness retained byte-for-byte for S-19 reuse under D-0016"
+    },
+    {
+      "baseline_sha256": "2b57e2321ed64132890ecf74856e71bde76d3992643009d4a4b1ecb8f30c4274",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_git_provenance",
+        "write_artifacts"
+      ],
+      "path": "benchmarks/benchmark_bounded_axis_applicability.py",
+      "reason": "specialized paired CSV/JSON transaction with rollback; outside the shared single-artifact JSON/text contract"
+    },
+    {
+      "baseline_sha256": "ee331bcedece7cc8ff4af46cd65b5a9b2b954a7ef3bf9a1bd57f1f8cac7dffc8",
+      "binding_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_28_s09_cpu_diagnosis.json",
+        "notes/PSSolver_v0_3_0_s09_cpu_preflight.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/benchmark_v0_3_s09_channel_cpu.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "66bfbb49959266dcc3f47bc57ca302bae2fbee9013cc28639c1fafbb98c45eeb",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc412_preflight_recovery_plan.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "write_json_atomic"
+      ],
+      "path": "benchmarks/capture_rc4_h100_preflight.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "19c762b277288005f184cd0ffb59a83a6d2aa03337cb0eb4fe8b6f15c6fbe8c5",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/capture_v0_3_s09_local_environment.py",
+      "reason": "frozen S-09 qualification harness retained byte-for-byte for S-19 reuse under D-0016"
+    },
+    {
+      "baseline_sha256": "a328aaced2cb6a23a049b64e94f6791c20fc1dfb875a8d1c310238b8af02df99",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/check_periodic_hermitian_stability.py",
+      "reason": "historical qualification or profiling harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "de2e050ea2ed07380763ff1d458c9de1c0afd6a2c55088e2a1bab3f200253635",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/diagnose_channel_pressure_contract.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "2c6a394b4ec019854bf7093b5907d691b6556dac1d60a7a39092bbb7375be696",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json",
+        "_git_provenance"
+      ],
+      "path": "benchmarks/diagnose_phase9_p95_gradient_epsilon.py",
+      "reason": "historical qualification or profiling harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "435a2a04a3ba1e3648d04c28bb9a7123fe49223fe9cc58e56167fc02d393d08c",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json",
+        "_git_provenance"
+      ],
+      "path": "benchmarks/diagnose_phase9_p95_gradient_validator_v2.py",
+      "reason": "historical qualification or profiling harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "b97586570210a057b5a793b38302489146273c2296871fc1c91ceb09be8b9b07",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc412_h100_qualification_plan.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "write_json_atomic"
+      ],
+      "path": "benchmarks/diagnose_plane_nyquist_storage.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "9715023f100333a6a0657c4383d85e27829989ac5828285ea414c6c7fcd5676f",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json",
+        "_atomic_npz"
+      ],
+      "path": "benchmarks/diagnose_plane_static_lifting_recovery.py",
+      "reason": "historical lifting diagnostic with a coupled binary NPZ transaction; lifting remains deferred"
+    },
+    {
+      "baseline_sha256": "c214e485f459d31296dc58fd9531cbb444636c7f4cf701d5e15405a3f0141d3c",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc451_cross_runtime_adjudication.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_write_json"
+      ],
+      "path": "benchmarks/diagnose_rc451_cross_runtime_residuals.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "4e50626e4009090d82cfb489cc21da0e876b162dffc19b84546d8c91cf352339",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc434_fresh_conditioning.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_write_json"
+      ],
+      "path": "benchmarks/diagnose_rc4_lifting_correctness.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "2c5f98d22302a3e03011552a98da2acb4cfec8aeb83191bb1af20963a687bfe1",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_timing_instrumentation_v12.json",
+        "notes/PSSolver_v0_2_0rc5_g1_timing_instrumentation_v12_result.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/diagnose_rc5_g1_timing_instrumentation.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "24405fba16ffcc4c85b9ae6d558fddc91b8dd94f890a0e28954001727cf0c6e6",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_pressure_component_diagnostic.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/diagnose_rc6_pressure_floor_h100.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "6599e14aac8c81059af3ca92bf412fe92e20b64a412e8defc0b313c4a31a21b2",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc447_pressure_performance_qualification_recovery_v10.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/plan_rc447_pressure_h100.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "21836fe21422b05cb8dbfa5e27809b814a0cadbed27c9810057b2e5c9291ef33",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/plan_rc458_tf32_h100.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "918223b728835a5a29223217bdacb0c108b18525cfd2d1a0400776d2c0ccd945",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_balanced_crossover_adoption_v15.json",
+        "notes/PSSolver_v0_2_0rc5_g1_balanced_crossover_contract_v14.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/plan_rc5_g1_balanced_crossover_contract.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "69dedee40b68b3d73cbc8a8b010645391f076c5ea6ca361144e4b1e3f8c7fad5",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_balanced_crossover_adoption_v15.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/plan_rc5_g1_balanced_crossover_qualification.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "969ddcaac0df8f8aecc6494a7984f18c15f3fc5bbc7e4133fed7d88bebe6671f",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/plan_rc5_g1_focused_performance_h100.py",
+      "reason": "historical qualification harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "b498bffcb7196a389c6b3f4c57d07096747a3fd7b3f3877e739931c7f217e9f8",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_transform_window_recovery_v6.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/plan_rc5_g1_h100.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "03db340027fcec89b3ae0dc86c98708eb45726d3f864c7348df04df423859bec",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_measurement_window_recovery_v9.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/plan_rc5_g1_measurement_window_recovery.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "39626b6b46a59bd9a55293b8de05ab41479a527a303e7e0a507d5b66bab03eb8",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_paired_block_contract_v13.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/plan_rc5_g1_paired_block_contract.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "3bb2aa4d97d7e1574787eb792bb05f61aca6ec65eb59945d8175df688b36069c",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_timing_instrumentation_v12.json",
+        "notes/PSSolver_v0_2_0rc5_g1_timing_instrumentation_v12_result.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/plan_rc5_g1_timing_instrumentation.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "9e4cfb0a620c6098ce967c26a90139f7ee81ee761db696e2c1fe22a17220414e",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_single_h100_qualification_plan.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/plan_rc6_single_h100_qualification.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "88bf509c2785e7efa08a6bfadbaf2fc2bba5c79ae0f172183df66c7978ce231e",
+      "binding_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_44_r0029_rework.json",
+        "notes/PSSolver_v0_3_0_s03_successor_45_r0030_import.json",
+        "notes/PSSolver_v0_3_0_s09_ap_revert_proxy_r0030_candidate.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/plan_v0_3_s09_ap_cache_diagnostic.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "a21b211b0c47ef0e83dd95de3f56bdb164fc109d1ccc58fd548afd919aac67d2",
+      "binding_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_51_s09_d0013_closure.json",
+        "tests/test_v0_3_s09_d0013_closure.py"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/plan_v0_3_s09_h100.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "f755b735055c2b1647009107f6d0b1c37da8aebcdfcfbfea39e4b395c020220b",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_recovery_bootstrap_root_separation.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/prepare_rc6_recovery_bootstrap.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "7b4b2eb287284832dc000edb0efdaf9c36876f49df6d8ed8a05afbcf60b17681",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_git_provenance"
+      ],
+      "path": "benchmarks/profile_beris_edwards_timestep.py",
+      "reason": "historical qualification or profiling harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "59d798bd41fc8efb99dda33b17786454203aea1c8273811d440147c9d09f6776",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_git_provenance",
+        "write_report"
+      ],
+      "path": "benchmarks/profile_finite_q_anchoring.py",
+      "reason": "historical qualification or profiling harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "d03c6abff91d7f20f08b7eda7d3b567b2ecc7e823a9a5bc4c3d1bc49024901a8",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json",
+        "_git_provenance"
+      ],
+      "path": "benchmarks/profile_periodic_functional.py",
+      "reason": "historical qualification or profiling harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "e3a7b70bc5afdbc74d488686c26ad3547b9e6f71e872ea4f7a9ba8d122fe028d",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_physical_q"
+      ],
+      "path": "benchmarks/profile_periodic_hermitian_qualification.py",
+      "reason": "historical Hermitian qualifier whose helper atomically publishes a binary tensor rather than JSON/text"
+    },
+    {
+      "baseline_sha256": "a5a0e0e50ab8c29822415b452f2c1bb868f1c8fd3ce4e64a3649ef9e39d93aa5",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc437_profile_serialization_recovery_plan.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/profile_rc437_plane_runtime.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "d8ad31c1b4fc206184d56761d94a7c5665f82ab86d548acda615649f394e1c9d",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc447_performance_recovery_v9.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/profile_rc447_channel_pressure.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "b0d4b3d3efab3248eee3328c7f1eaa31d3bfcf30d365a58ae9186404c6670e04",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_measurement_window_lifecycle_recovery_v10.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/profile_rc458_runtime_family.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "7c463932a7f4cc1f9eef4d1c337b3bf6c1b20e6743f7389d2fe07448b27d534a",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc422_plane_checkpoint_identity.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_write_json"
+      ],
+      "path": "benchmarks/qualify_plane_static_lifting.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "a291e301a34501115d7eb261720c68d88437638ae86f99c51b72dac9f47fd8e5",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc437_h100_qualification_plan.json",
+        "notes/PSSolver_v0_2_0rc4_rc437_h100_recovery_plan.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/qualify_rc437_lifting_cuda.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "64df606d69a874d03d3df60301149f76509a1fb7ea7aabb2dfd9f507a721f588",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc447_pressure_performance_qualification_recovery_v10.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/qualify_rc447_pressure_cuda.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "9771c3c1860435240d40dd992ad66e84f88f8bf4fc5ffa1ed1dc1319e3d02e9c",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_hpcc_plan_freeze.json",
+        "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/qualify_rc458_tf32_scope.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "558025c64939bbde3c9b3a0dec3d2c9fa84a72e3f980eacfe4444c98a273b439",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_cumulative_closure_plan_v17.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "atomic_json"
+      ],
+      "path": "benchmarks/rc5_g1_cumulative_evidence.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "45153acfed00c95a9b2f2a7e3bbfd33f017feadac0848043653f3f2c30c56056",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_periodic_hermitian_profile_matrix.py",
+      "reason": "historical qualification or profiling harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "a5568b99f175b17783d21e8fa76d4f9b3860d307f27f57d46d3040167fffc7fb",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_git_provenance"
+      ],
+      "path": "benchmarks/run_public_simulation_h100_case.py",
+      "reason": "historical qualification or profiling harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "1849854d908563de859f6d58c885d6e1bfe4b6dc503bcadb1775f9232314adc4",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc2_g5_installed_smoke.py",
+      "reason": "historical qualification or profiling harness retained for reproducibility; it is not an active S-16 output producer"
+    },
+    {
+      "baseline_sha256": "16090ed6e78d1f79ae4c278e2aefc2e98e03cc5a5c4dc05bfa4130cb7ec6e22d",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc425_installed_cpu_closure.json",
+        "notes/PSSolver_v0_2_0rc4_rc425_installed_cpu_qualification_plan.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc425_installed_checkpoint_closure.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "484e5e4192b79ef707d9b21307e14ef989695a8962f002ae95f95bc70d826e9c",
+      "binding_references": [
+        "benchmarks/run_rc6_checkpoint_cpu_qualification.py",
+        "notes/PSSolver_v0_2_0rc4_rc426_execution_support.json",
+        "notes/PSSolver_v0_2_0rc4_rc426_tf32_bootstrap_recovery.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc426_cross_device_checkpoint.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "5658a0f51076c068043ec0811be53d727f8310884bb9af36edde799f2d289fb1",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc426_tf32_bootstrap_recovery.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc426_cuda_tests.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "bfde190822e5431bc820b9682984813edaa31cdb6d92ae9c6368b7a5892d0351",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc436_installed_cpu_closure.json",
+        "notes/PSSolver_v0_2_0rc4_rc436_installed_cpu_qualification_plan.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc436_installed_lifting_closure.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "35bbe2a6d5da131413d3c810f818a2eaf7255cb397b672f994622f5e5643ff75",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc445_installed_cpu_closure.json",
+        "notes/PSSolver_v0_2_0rc4_rc445_installed_cpu_qualification_plan.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc445_installed_pressure_closure.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "ab3a42aedba9f5a0f6b2ad9945eb1ea7918129ba30162602299428f9cc90b281",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc447_h100_qualification_plan.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc447_cuda_tests.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "5e3f6f3e0b8327defd7d5ea90e0f677925badf4b1d6b43dd0e778011512a2bdc",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc4_rc458_qualification_support.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc458_profile_matrix.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "ec6b4d2c70f5b4454754120b0f87a8771878ec50787a5590e23759bcc23cf142",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_timing_instrumentation_v12.json",
+        "notes/PSSolver_v0_2_0rc5_g1_timing_instrumentation_v12.md",
+        "notes/PSSolver_v0_2_0rc5_g1_timing_instrumentation_v12_result.json",
+        "notes/PSSolver_v0_2_0rc5_g1_timing_support_recovery_v3.json",
+        "notes/PSSolver_v0_2_0rc5_g1_timing_support_recovery_v3.md",
+        "tests/test_rc5_g1_timing_instrumentation.py"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc5_g1_checkpoint_tmp_preflight.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "7e2d8bdbd30da0dc29725cd8be897ded79b3973e804c96027ef0fca36a8fab85",
+      "binding_references": [
+        "benchmarks/run_rc6_checkpoint_cpu_qualification.py",
+        "notes/PSSolver_v0_2_0rc5_g1_hpcc_plan_freeze.json",
+        "notes/PSSolver_v0_2_0rc5_g1_stage_producers.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc5_g1_checkpoints.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "8e21b78601e9e7a7cd83a4bcc2147f17f59128e293847bbaee0a38298d4952ba",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_consumer_recovery_v5.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc5_g1_consumer.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "73fe80509ddd3a4f85a7933fbeb79d93542ab981dfc30ee6dafe6cd7372cd5b3",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_hpcc_plan_freeze.json",
+        "notes/PSSolver_v0_2_0rc5_g1_stage_producers.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc5_g1_cuda_only.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "6c301733fd9033a53065886448ec57d3c11bd6c7d21f73301b56a66079f70155",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_hpcc_plan_freeze.json",
+        "notes/PSSolver_v0_2_0rc5_g1_stage_producers.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc5_g1_environment.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "90a62520e26bf0b77db9fda6196e6245031c0c81026bc3c2eb655eb62a00cbbe",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_measurement_window_implementation_v9.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc5_g1_focused_profile_matrix.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "f43e423209023484e00c76f01a3074c4faf070fdab82741860164ed172e3ba39",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_hpcc_plan_freeze.json",
+        "notes/PSSolver_v0_2_0rc5_g1_stage_producers.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json",
+        "_atomic_npy"
+      ],
+      "path": "benchmarks/run_rc5_g1_numerical.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "44f9c6b07f3b3f52fc4a51e4d1be0fe1ca91566f6fd531a3ad92426b5f167d43",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_hpcc_plan_freeze.json",
+        "notes/PSSolver_v0_2_0rc5_g1_qualification_support.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc5_g1_profile_matrix.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "97923baed48737246f68348be0b78fc4c869c6d1b53b726070f35a3f175563f7",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_transform_window_recovery_v6.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc5_g1_stage_plan.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "cd07e6efc7ef93d36fcf9676af4a19664e8774537ae308919eccae496f863661",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc5_g1_timing_instrumentation_v12.json",
+        "notes/PSSolver_v0_2_0rc5_g1_timing_instrumentation_v12_result.json",
+        "notes/PSSolver_v0_2_0rc5_g1_timing_support_recovery_v3.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc5_g1_timing_instrumentation.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "3fbd7759caf8c5335a4f3d4e39a6db3db4abd62be8213cf44ffc316ca692ca88",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_checkpoint_cpu.json",
+        "tests/test_rc6_checkpoint_cpu_record.py"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc6_checkpoint_cpu_qualification.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "30f3f1b9325c4937f983a5c40a79029ec7cbd6c07878191a4e6a46f642704f5a",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_consumer_execution_rebind_correction.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc6_consumer.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "e11fd8ad8ffdf74ae8062c1f1631fb958431de7ebf219ee6827891d0f830b2dd",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_pressure_smoke_contract_correction.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc6_contract_smokes.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "70331360e94feb576481459b7908b53d9c9248feda064007051c160d3422055f",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_h100_stage_producers.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc6_cuda_only.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "d6cd6a4838416d7b9b303e861de4e2a853a95efbdb7df70dfb309f1fb455c216",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_nvcc_bootstrap_recovery.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc6_cuda_toolkit_preflight.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "eee75e678fc770c53b87f8a4d3cf4d7dfddda7d8559e4f58f8d4f79f1bb5e71f",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_checkpoint_work_root_correction.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc6_current_checkpoints.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "3bd2ed41c648e55e71cb11cb250c14eac6f52ee3aaf13393d3db9cafbdb44a49",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_h100_stage_producers.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc6_environment.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "cc9d1eb2021ffa57d67b047f8b487f2358fba26a34d0ca510e8b1203076f56c8",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_h100_stage_producers.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc6_numerical.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "e7967f5e7e6055e40de5124199924580cd8e83baa68509b12b16f9810bf26951",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_cumulative_h100_closure_v7.json",
+        "notes/PSSolver_v0_2_0rc6_profile_child_tf32_recovery.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc6_profile_child.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "dd361415d8f51ed02c67cd828cdf7074173bb0616f948abed016d12eb5175a58",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_cumulative_h100_closure_v7.json",
+        "notes/PSSolver_v0_2_0rc6_profile_child_tf32_recovery.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc6_profile_matrix.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "f0d23d438c17b9db571ce37f5506dd6c103dcd82d6061ec9b0178bbc98f6f2b3",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_provider_identity_impact.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc6_provider_identity_review.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "47c43f1a8beb72ce6971398b6775a5f78ed7aba6edca593acac86f70d13d1e13",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_h100_stage_producers.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc6_released_checkpoints.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "28a4cb97fa5324d9f035596c63149e1352f348772eb18a717f6b23f55e4d6551",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_cumulative_h100_closure_v7.json",
+        "notes/PSSolver_v0_2_0rc6_qualification_support.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_rc6_single_h100_stage_plan.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "697267a42521e5599799399d1556ef1073b083fcc77a48335bd7f66e704cb793",
+      "binding_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_44_r0029_rework.json",
+        "notes/PSSolver_v0_3_0_s09_ap_revert_proxy_r0030_candidate.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_ap_cache_cpu_memory_probe.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "b856328eb320766372e97628ed641b9baf99e63badeaa305712b1585af1d1200",
+      "binding_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_43_r0028_rework.json",
+        "notes/PSSolver_v0_3_0_s03_successor_45_r0030_import.json",
+        "notes/PSSolver_v0_3_0_s09_ap_revert_proxy_r0029_candidate.json",
+        "notes/PSSolver_v0_3_0_s09_ap_revert_proxy_r0030_candidate.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_replace_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_ap_cache_diagnostic.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "3bc0cd6ef325ae481f59ab81fefed4292fb4f6174c3899fd50fcbb62a208c716",
+      "binding_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_45_r0030_import.json",
+        "notes/PSSolver_v0_3_0_s09_ap_cache_diagnostic_r0028_candidate.json",
+        "notes/PSSolver_v0_3_0_s09_ap_revert_proxy_r0029_candidate.json",
+        "notes/PSSolver_v0_3_0_s09_ap_revert_proxy_r0030_candidate.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_ap_cache_diagnostic_child.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "fdec5c617d3a00836d8bb8676ffe746aa3ffc679e7caf14c25e138d1b5c37676",
+      "binding_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_44_r0029_rework.json",
+        "notes/PSSolver_v0_3_0_s03_successor_45_r0030_import.json",
+        "notes/PSSolver_v0_3_0_s09_ap_revert_proxy_r0030_candidate.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_ap_cache_diagnostic_preflight.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "0b8a1244cf0d07262540ce9ff70e2d7fd5419677d4bf905ee596f33ef7e6a744",
+      "binding_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_43_r0028_rework.json",
+        "notes/PSSolver_v0_3_0_s03_successor_45_r0030_import.json",
+        "notes/PSSolver_v0_3_0_s09_ap_revert_proxy_r0029_candidate.json",
+        "notes/PSSolver_v0_3_0_s09_ap_revert_proxy_r0030_candidate.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "d98d7d174d5d06d035eefe772101fb37fd6101b6b1b8300f78fd2532013433e6",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_checkpoints.py",
+      "reason": "frozen S-09 qualification harness retained byte-for-byte for S-19 reuse under D-0016"
+    },
+    {
+      "baseline_sha256": "c0f215a2360b34243f1881c9247777ceccdabda7780439363ef5c066214e30ef",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_consumer_h100.py",
+      "reason": "frozen S-09 qualification harness retained byte-for-byte for S-19 reuse under D-0016"
+    },
+    {
+      "baseline_sha256": "793a930b0224f6424a5ad6216edbefa6178f51d81fd7cc92f0366d62bc44731d",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_cpu_rehearsal.py",
+      "reason": "frozen S-09 qualification harness retained byte-for-byte for S-19 reuse under D-0016"
+    },
+    {
+      "baseline_sha256": "3549cc56ec8f2883e5891f019e6a3e76138fdc2a6dee76612fd3438e9c9f46a4",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_cuda_only.py",
+      "reason": "frozen S-09 qualification harness retained byte-for-byte for S-19 reuse under D-0016"
+    },
+    {
+      "baseline_sha256": "97077ae1067b90de1ac29279e5351eff6af240a49ecd00ec16a4cc2b1ff3dab0",
+      "binding_references": [
+        "notes/PSSolver_v0_3_0_s03_successor_45_r0030_import.json",
+        "notes/PSSolver_v0_3_0_s09_ap_revert_proxy_r0030_candidate.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_environment.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "267dd5ab3a7d10ce730adf37dbe88507ea9c8c6c4c2ca6ca73360a1bb254f33e",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_installed_consumer_cpu.py",
+      "reason": "frozen S-09 qualification harness retained byte-for-byte for S-19 reuse under D-0016"
+    },
+    {
+      "baseline_sha256": "40210e9cc11ac523f068ff91ea4c209790443a950d69deecef44e0bf3cd00196",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_long_horizon.py",
+      "reason": "frozen S-09 qualification harness retained byte-for-byte for S-19 reuse under D-0016"
+    },
+    {
+      "baseline_sha256": "3e2f95312b271e686ac42ed0c8c3f54f521f3dd5bf17685d8caf9b334c539b9c",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_array",
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_numerical.py",
+      "reason": "frozen S-09 qualification harness retained byte-for-byte for S-19 reuse under D-0016"
+    },
+    {
+      "baseline_sha256": "0f50972513bac8c5f6fdbfba5a4133cf1a2ccb508061c263e73794adc534bce2",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_profile_matrix.py",
+      "reason": "frozen S-09 qualification harness retained byte-for-byte for S-19 reuse under D-0016"
+    },
+    {
+      "baseline_sha256": "e493f04aaca24da132ef8017aa9a4bb338bc1fccbe28682e7d6750b330b5a6b5",
+      "disposition": "retained_documented_exception",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/run_v0_3_s09_tf32_backward.py",
+      "reason": "frozen S-09 qualification harness retained byte-for-byte for S-19 reuse under D-0016"
+    },
+    {
+      "baseline_sha256": "b28675f1152b36d169701d59376f6d04368831da344458ab8d9797b4b3523dd4",
+      "binding_references": [
+        "notes/PSSolver_v0_2_0rc6_recovery_bootstrap_root_separation.json"
+      ],
+      "disposition": "frozen_hash_bound",
+      "helper_names": [
+        "_atomic_json"
+      ],
+      "path": "benchmarks/validate_rc6_recovery_bootstrap.py",
+      "reason": "current bytes are bound by repository qualification records or tests"
+    },
+    {
+      "baseline_sha256": "fd42afea53e6cb5513dccf8783e55a31a3b59add186006309027389fd6fd61ee",
+      "disposition": "migrated_to_shared_module",
+      "helper_names": [
+        "_atomic_write"
+      ],
+      "path": "benchmarks/verify_v0_4_local_evidence.py",
+      "reason": "active S-16 local-evidence verifier explicitly selected by D-0016"
+    },
+    {
+      "baseline_sha256": "d4d7b05e56fcf42d51514255a02182d3a6a381aeec657dc467c8a2a9e47faf27",
+      "disposition": "migrated_to_shared_module",
+      "helper_names": [
+        "_write_json"
+      ],
+      "path": "benchmarks/verify_v0_4_s16_numerical_equivalence.py",
+      "reason": "active S-16 numerical-equivalence verifier explicitly selected by D-0016"
+    }
+  ],
+  "shared_module": {
+    "capabilities": [
+      "atomic JSON output with explicit formatting",
+      "atomic text and byte output",
+      "file SHA-256",
+      "Git identity",
+      "runtime environment",
+      "combined provenance record"
+    ],
+    "inside_pssolver_runtime": false,
+    "path": "benchmarks/_artifact_io.py",
+    "public_api": false,
+    "standard_library_only": true
+  }
+}

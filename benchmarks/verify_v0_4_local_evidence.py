@@ -11,13 +11,10 @@ machine-readable report.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
-import os
 from pathlib import Path, PurePosixPath
 import sys
 import tarfile
-import tempfile
 from typing import Any
 
 
@@ -27,14 +24,7 @@ SCHEMA = "pssolver.v0_4.s16.r8.local_evidence_verification.v1"
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-
-def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
-
+from benchmarks._artifact_io import atomic_write_text, file_sha256
 
 def _load(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text(encoding="utf-8"))
@@ -98,7 +88,7 @@ def _check_manifest(
         if not target.is_file():
             failures.append({"path": str(target), "error": "missing_regular_file"})
             continue
-        observed = _sha256(target)
+        observed = file_sha256(target)
         if observed != expected:
             failures.append(
                 {
@@ -216,7 +206,7 @@ def verify(catalog_path: Path, home_root: Path) -> dict[str, Any]:
             if not path.is_file():
                 raise FileNotFoundError(f"missing regular file: {path}")
             observed_size = path.stat().st_size
-            observed_sha256 = _sha256(path)
+            observed_sha256 = file_sha256(path)
             if observed_size != check["size"]:
                 raise ValueError(
                     f"size mismatch for {path}: {observed_size} != {check['size']}"
@@ -287,7 +277,7 @@ def verify(catalog_path: Path, home_root: Path) -> dict[str, Any]:
     return {
         "schema": SCHEMA,
         "catalog": str(catalog_path.resolve()),
-        "catalog_sha256": _sha256(catalog_path),
+        "catalog_sha256": file_sha256(catalog_path),
         "home_root": str(home_root.resolve()),
         "check_count": len(results),
         "passed_check_count": sum(bool(row["passed"]) for row in results),
@@ -296,25 +286,6 @@ def verify(catalog_path: Path, home_root: Path) -> dict[str, Any]:
         "semantic_checks": semantic,
         "passed": passed,
     }
-
-
-def _atomic_write(path: Path, payload: str) -> None:
-    if path.exists() or path.is_symlink():
-        raise FileExistsError(f"refusing to overwrite {path}")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    descriptor, temporary_name = tempfile.mkstemp(
-        prefix=f".{path.name}.tmp-", dir=path.parent, text=True
-    )
-    temporary = Path(temporary_name)
-    try:
-        with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
-            stream.write(payload)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.replace(temporary, path)
-    finally:
-        temporary.unlink(missing_ok=True)
-
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -325,7 +296,7 @@ def main() -> int:
     report = verify(args.catalog.resolve(), args.home_root.resolve())
     payload = json.dumps(report, allow_nan=False, indent=2, sort_keys=True) + "\n"
     if args.output is not None:
-        _atomic_write(args.output.resolve(), payload)
+        atomic_write_text(args.output.resolve(), payload, overwrite=False)
     print(payload, end="")
     return 0 if report["passed"] else 1
 

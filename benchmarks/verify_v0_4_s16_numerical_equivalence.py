@@ -17,6 +17,11 @@ from pathlib import Path
 import subprocess
 import sys
 
+try:
+    from benchmarks._artifact_io import atomic_write_json, atomic_write_text
+except ModuleNotFoundError:  # direct execution sets sys.path[0] to benchmarks/
+    from _artifact_io import atomic_write_json, atomic_write_text
+
 
 SCHEMA = "pssolver.v0_4.s16.numerical_equivalence.v1"
 CHILD_SCHEMA = "pssolver.v0_4.s16.numerical_equivalence_child.v1"
@@ -50,15 +55,6 @@ def _tensor_record(value: object) -> dict[str, object]:
         "finite": bool(tensor.isfinite().all().item()),
     }
 
-
-def _write_json(path: Path, value: object) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(value, allow_nan=False, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-
-
 def _child(args: argparse.Namespace) -> None:
     import pssolver
     import torch
@@ -86,7 +82,7 @@ def _child(args: argparse.Namespace) -> None:
     source_root = args.source_root.resolve()
     if not imported.is_relative_to(source_root):
         raise RuntimeError(f"pssolver import {imported} is outside {source_root}")
-    _write_json(
+    atomic_write_json(
         args.output,
         {
             "schema": CHILD_SCHEMA,
@@ -150,12 +146,8 @@ def _run_child(
     )
     log_root = output_root / "logs"
     log_root.mkdir(parents=True, exist_ok=True)
-    (log_root / f"{role}_{family}.stdout").write_text(
-        completed.stdout, encoding="utf-8"
-    )
-    (log_root / f"{role}_{family}.stderr").write_text(
-        completed.stderr, encoding="utf-8"
-    )
+    atomic_write_text(log_root / f"{role}_{family}.stdout", completed.stdout)
+    atomic_write_text(log_root / f"{role}_{family}.stderr", completed.stderr)
     if completed.returncode != 0:
         raise RuntimeError(
             f"{role}/{family} child failed with {completed.returncode}"
@@ -201,7 +193,7 @@ def _parent(args: argparse.Namespace) -> None:
                 "completed_steps": 2,
             }
         )
-    _write_json(
+    atomic_write_json(
         output_root / "numerical_equivalence.json",
         {
             "schema": SCHEMA,
