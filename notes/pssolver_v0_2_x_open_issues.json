@@ -29,12 +29,12 @@
       "rewritten": false
     }
   },
-  "issue_count": 59,
+  "issue_count": 60,
   "status_counts": {
     "open": 0,
-    "registered": 0,
-    "claimed_fixed": 1,
-    "verified": 54,
+    "registered": 1,
+    "claimed_fixed": 0,
+    "verified": 55,
     "deferred": 2,
     "accepted": 2,
     "coverage_gap": 0
@@ -974,10 +974,25 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "9cf4b34c37d5fa266ad1900eae09f143c5c98b63",
+      "verified_by": "R-0046",
       "target_release": "0.4 S-16",
       "notes": "The first D-0016 ratchet recognized helpers mainly by function name and scanned only benchmarks/*.py. It therefore missed file-SHA, git-identity and atomic-publish helpers with other names, skipped recursive benchmark subdirectories, did not list 15 semantically detected scripts, and did not byte-pin retained S-09 harnesses. The S-16 rework at 9cf4b34c37d5fa266ad1900eae09f143c5c98b63 recursively scans benchmarks/**/*.py, classifies helpers by file-hash, git-identity, atomic-publication and running-environment behavior, adds the 15 R-0045 files plus five environment-provenance files to a forward inventory, and byte-pins all retained or frozen scripts. Top-level and nested probe scripts prove that hidden local helpers fail the ratchet."
+    },
+    {
+      "id": "V-55",
+      "title": "S-16 V-54 test checks repository-external paths in pytest",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0046.result.json",
+      "first_found": "S-16 final review R-0046",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.4 S-16",
+      "notes": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_v2_records_mode_change_and_confirmed_temp_pruning asserts that three repository-external /home/fansenwei paths do not exist. That makes pytest depend on machine state and violates D-0015, which requires repository-self-contained tests and assigns live local-evidence checks to the read-only verifier. Both R-0046's and the request's blocked-path access logs recorded the three os.stat calls. The follow-up removes the live existence check while retaining fixed path strings, sizes, file counts and manifest hashes in pytest."
     }
   ],
   "authorization": {

@@ -6,12 +6,12 @@
 `dev/0.4` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 59 条：
+当前共登记 60 条：
 
 - `open`：0；
-- `registered`：0；
-- `claimed_fixed`：1；
-- `verified`：54；
+- `registered`：1；
+- `claimed_fixed`：0；
+- `verified`：55；
 - `deferred`：2；
 - `accepted`：2；
 - `coverage_gap`：0。
@@ -222,7 +222,10 @@
     字节钉死。`9cf4b34c37d5fa266ad1900eae09f143c5c98b63` 已建立递归语义扫描，
     将 R-0045 的 15 个脚本及另外 5 个运行环境 provenance 脚本纳入前向清单，逐字节钉住
     所有保留/冻结脚本，并用顶层与子目录负向探针证明新本地 helper 会让棘轮失败；该项现为
-    `claimed_fixed`，等待 `R-0046` 独立复核。
+    已由 `R-0046` 独立验证为 `verified`。同轮新发现 `V-55`（low）：V-54 的测试
+    仍用 `Path.exists()` 读取三个仓库外临时目录，导致 pytest 结果依赖本机状态并违反
+    `D-0015`。该项登记到 S-16，后续只保留仓库内冻结字段检查，实时删除状态继续由本机
+    只读核对工具负责。
 
 ## Control 路径
 

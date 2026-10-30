@@ -1,0 +1,68 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 80,
+  "date": "2026-10-30",
+  "classification": "R0046_REWORK_REQUIRED_IMPORTED",
+  "plan_step": "S-16",
+  "git_identity": {
+    "reviewed_candidate": "5bdf1ac4aae142d721b084a6c8fe232ab8c31f84",
+    "v54_implementation": "9cf4b34c37d5fa266ad1900eae09f143c5c98b63",
+    "record_commit_is_qualified_source": false
+  },
+  "review": {
+    "request": "R-0046",
+    "classification": "REWORK_REQUIRED",
+    "result_sha256": "9391ffedde0913f769a9462c2bc1434ae6975b6a31104310c5507b4f2ad011ed",
+    "archive": "/home/fansenwei/pssolver_v0_4_claude_s16_r0046_review_20261030_v1",
+    "archive_checksums_entries": 62,
+    "archive_checksums_sha256": "c0a69dffeb0f60bd64e0d22005192b8efb13848077430d9b65965d11a06fbd1a"
+  },
+  "registry_updates": {
+    "V-54": {
+      "status": "verified",
+      "fixed_in": "9cf4b34c37d5fa266ad1900eae09f143c5c98b63",
+      "verified_by": "R-0046"
+    },
+    "V-55": {
+      "status": "registered",
+      "source_report": "PSSolver_sync/results/R-0046.result.json",
+      "target_release": "0.4 S-16"
+    }
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "ba7ecabf68f1a2ad9394f3aba71b363f4d6c0d7b0284fdbecccf65fd1b8ff6af",
+      "current_sha256": "ea47cb5d369c3874fb4dedd2fb5fe75291da514aabf48688b4967ec0e3e4abd4"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "7238370573775a1ef369c8187f5b135329e93ebd8017213eaf084a96e089da42",
+      "current_sha256": "694775aa40bf24cd3f1a8fccb7f533b7fc10730ac3c3189ef0b138df0075a84f"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "e2ac3fb65192c5d9877b0e6c318035ba12720acb5459614dd504ee45eee84e25",
+      "current_sha256": "a9ecc8839eaf7a7041512f10c8d57e0f311daa625f46f31e4240e7d17a47423b"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_80_r0046_import_zh.md": "13d3ec0a7be74a00a64d71a7d4db32bd8d0ab68d78407ab1f196ab40a1ecbfe0",
+    "tests/test_v0_4_s16_r0046_import.py": "c4a63f196b41d750161e02026cb7d36693f0958b47997b7b0b58a0cbff346bd0"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_commits": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
