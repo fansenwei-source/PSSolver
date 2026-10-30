@@ -1,0 +1,108 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 74,
+  "date": "2026-10-29",
+  "classification": "S16_R0044_REWORK_CLAIMED_FIXED_PENDING_R0045",
+  "plan_step": "S-16",
+  "git_identity": {
+    "reviewed_r0044_candidate": "e14d0a534047d43024d87458f34193489bd5d7e7",
+    "v53_fix": "05513a4132b1eb38e9bdff825f98a31b276c2932",
+    "record_commit_is_qualified_source": false
+  },
+  "r0044": {
+    "sync_commit": "989709c94e8d0551916aa41faf8f6f40169449e5",
+    "classification": "REWORK_REQUIRED",
+    "result_path": "PSSolver_sync/results/R-0044.result.json",
+    "result_sha256": "b97c27ac0a133cb85167a6e680623c613438a0da7c1ac287f8274b3778f50d26",
+    "archive": {
+      "path": "/home/fansenwei/pssolver_v0_4_claude_s16_final_review_20261029_v1",
+      "checksums_entries": 91,
+      "checksums_sha256": "dc52d303673ecb21a1209bbb0a9697dc4cb504fd4fe0b18b8f80900062b584ee",
+      "complete_present": true
+    }
+  },
+  "registry_updates": {
+    "V-50": {
+      "status": "verified",
+      "fixed_in": "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992",
+      "verified_by": "R-0044"
+    },
+    "V-51": {
+      "status": "verified",
+      "fixed_in": "d5c604a780f9e60c52f00135f163e207a0a0140a",
+      "verified_by": "R-0044"
+    },
+    "V-52": {
+      "status": "verified",
+      "fixed_in": "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992",
+      "verified_by": "R-0044"
+    },
+    "V-53": {
+      "status": "claimed_fixed",
+      "fixed_in": "05513a4132b1eb38e9bdff825f98a31b276c2932",
+      "target_release": "0.4 S-16"
+    }
+  },
+  "forward_corrections": {
+    "successor_72": {
+      "immutable": true,
+      "old_test_contract": "conditionally read the live R-0043 result when present",
+      "corrected_test_contract": "bind the frozen result hash unconditionally and leave the live evidence check to D-0015 catalog item C023"
+    },
+    "successor_73": {
+      "immutable": true,
+      "r0044_verified": [
+        "V-50",
+        "V-51",
+        "V-52"
+      ]
+    }
+  },
+  "external_evidence_branch_scan": {
+    "scope": "tests/**/*.py",
+    "external_root": "/home/fansenwei",
+    "remaining_external_evidence_existence_branches": 0,
+    "repository_fixture_and_temporary_path_branches_excluded": true
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "43388851a4d0c6375815180c5e713435f5e098c11df2d64db3698d74cf5c296b",
+      "current_sha256": "d6408fc7b756638ec4188acc93f8db0dc5811b23148c0fc027cbc4b8ffda6050"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "363c08f567c12e39c5cbd1046ace21b48e4b06c8219c26d577a2160015e89f0f",
+      "current_sha256": "2978a4da2cdb75e948b3ced71a823686f990f8489e8c34047806bd437d0a805e"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "25bef4e1c7899f861368efc967220da1b6c385acd1a242a35dc21a84b2aea2da",
+      "current_sha256": "4488297d21cc1df51ad1c7379e51cee4a37759caa07d0681445fdda51830b2dd"
+    },
+    "tests/test_v0_4_s16_r0043_rework.py": {
+      "historical_sha256": "8dc6cac2b789e7d37345328567b04f6b1353099b298e2146efd5dc49b2375152",
+      "current_sha256": "f6b4fa44d5cf753d53196f5a17cf8a90a7bfe30e298bdb79cd99bfa75db9d711"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_74_s16_r0044_rework_zh.md": "ceb7eb85d841df811ebf48592567caf372f762abfc72fd3620196cd80c7bb983",
+    "tests/test_v0_4_s16_r0044_rework.py": "b91136db12621a5141ab34158908a87862a12bc1d28d71f27b41d5d757697ff6"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_commits": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

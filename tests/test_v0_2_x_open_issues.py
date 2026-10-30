@@ -43,8 +43,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 57
-    assert len({entry["id"] for entry in entries}) == 57
+    assert len(entries) == record["issue_count"] == 58
+    assert len({entry["id"] for entry in entries}) == 58
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     counts.setdefault("open", 0)
@@ -54,8 +54,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
         "registered": 0,
-        "claimed_fixed": 3,
-        "verified": 50,
+        "claimed_fixed": 1,
+        "verified": 53,
         "deferred": 2,
         "accepted": 2,
         "coverage_gap": 0,
@@ -258,7 +258,7 @@ def test_live_registry_tracks_the_current_development_line():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == {"V-50", "V-51", "V-52"}
+    assert claimed == {"V-53"}
     assert issues["V-50"]["fixed_in"] == (
         "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992"
     )
@@ -268,7 +268,13 @@ def test_live_registry_tracks_the_current_development_line():
     assert issues["V-52"]["fixed_in"] == (
         "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992"
     )
-    assert all(issues[issue_id]["target_release"] == "0.4 S-16" for issue_id in claimed)
+    for issue_id in ("V-50", "V-51", "V-52"):
+        assert issues[issue_id]["status"] == "verified"
+        assert issues[issue_id]["verified_by"] == "R-0044"
+    assert issues["V-53"]["fixed_in"] == (
+        "05513a4132b1eb38e9bdff825f98a31b276c2932"
+    )
+    assert issues["V-53"]["target_release"] == "0.4 S-16"
     s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
@@ -550,7 +556,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == {"V-50", "V-51", "V-52"}
+    } == {"V-53"}
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (

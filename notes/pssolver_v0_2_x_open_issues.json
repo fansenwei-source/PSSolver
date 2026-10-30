@@ -29,12 +29,12 @@
       "rewritten": false
     }
   },
-  "issue_count": 57,
+  "issue_count": 58,
   "status_counts": {
     "open": 0,
     "registered": 0,
-    "claimed_fixed": 3,
-    "verified": 50,
+    "claimed_fixed": 1,
+    "verified": 53,
     "deferred": 2,
     "accepted": 2,
     "coverage_gap": 0
@@ -910,8 +910,9 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992",
+      "verified_by": "R-0044",
       "target_release": "0.4 S-16",
       "notes": "R-0043 found that the first S-16 ratchet mapped every top-level module to _root, widened the v0.3.0 api, functional, workflows and control facade allowances, made the transforms facade rule unreachable, and allowed whole linear_solvers/operators layers from models for two stokes edges. The rework preserves each top-level module name, freezes every top-level source separately, restores the four exact v0.3.0 target sets, restores the transforms rule, and permits only the two reviewed stokes implementation edges. A regression test proves that no v0.3.0 source-layer to top-level-target relation becomes wider."
     },
@@ -925,8 +926,9 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "d5c604a780f9e60c52f00135f163e207a0a0140a",
+      "verified_by": "R-0044",
       "target_release": "0.4 S-16",
       "notes": "The literal-path inventory listed 18 test files but missed dependencies loaded indirectly from record JSON fields. A reachable-only execution audit that made every external /home/fansenwei path absent found exactly 35 failing tests in 27 files, matching R-0043. The final D-0015 option-C implementation makes those pytest checks repository-self-contained and binds only fixed hashes, sizes, fields and structures. A standard-library, read-only local verifier preserves all displaced checks across 103 exact file, manifest and COMPLETE checks, fails closed on missing or inconsistent evidence, and emits a machine-readable report. The crosswalk maps every migrated pytest check to its verifier item. No archive or PSSolver_sync content was copied, moved, deleted or rewritten."
     },
@@ -940,10 +942,26 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992",
+      "verified_by": "R-0044",
       "target_release": "0.4 S-16",
       "notes": "The rework converts 55 of the 56 exact compact finite key-sorted json.dumps sites to core._canonical and removes imports made unused by the conversion. io/checkpoint_identity.py intentionally retains its one local encoder because its published primitive boundary is schema-independent and is guarded against importing any pssolver module. The two tensor-header digests use a distinct format and remain local. Executable guards freeze the one justified exact exclusion and both non-equivalent wire formats. Successor 70 remains immutable and its overbroad completion claim is corrected forward."
+    },
+    {
+      "id": "V-53",
+      "title": "S-16 test still branches on whether a PSSolver_sync file exists",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0044.result.json",
+      "first_found": "S-16 final review R-0044",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "claimed_fixed",
+      "fixed_in": "05513a4132b1eb38e9bdff825f98a31b276c2932",
+      "target_release": "0.4 S-16",
+      "notes": "tests/test_v0_4_s16_r0043_rework.py conditionally checked the live PSSolver_sync R-0043 result only when that external file existed, so the assertion was silently skipped on another machine in violation of D-0015. The live file check and its external Path constant are removed. The test continues to bind the frozen result hash in successor 72, and local verifier catalog item C023 retains the complete read-only external evidence check. A repository-wide scan found no other pytest branch whose outcome depends on whether an external /home/fansenwei evidence path exists."
     }
   ],
   "authorization": {
