@@ -1,0 +1,194 @@
+{
+  "schema": "pssolver.v0_4.s16.r8.benchmark_harness_sharing.v2",
+  "date": "2026-10-29",
+  "plan_step": "S-16",
+  "decision": "D-0016",
+  "base_inventory": {
+    "path": "notes/PSSolver_v0_4_0_s16_r8_benchmark_harness_sharing.json",
+    "sha256": "96a7c849a0a92d111bb239c121a5155b322dd6c56c509f649cd1dd98d8445234",
+    "scripts": 118,
+    "baseline_commit": "7f0374af7bdd772a7df1144d0185bb42222faba1"
+  },
+  "semantic_scan": {
+    "recursive_glob": "benchmarks/**/*.py",
+    "function_body_categories": [
+      "atomic publish through os.replace or temporary-path replace",
+      "git identity through git rev-parse or subprocess git invocation",
+      "file SHA-256 over opened or read_bytes content",
+      "running-environment provenance returned with Python or platform identity"
+    ],
+    "r0045_minimum_new_files": 15,
+    "additional_environment_provenance_files": 5,
+    "total_additional_files": 20
+  },
+  "combined_inventory": {
+    "scripts": 138,
+    "frozen_hash_bound": 90,
+    "retained_documented_exception": 46,
+    "migrated_to_shared_module": 2,
+    "all_retained_or_frozen_bytes_pinned": true,
+    "allowlist_can_only_shrink": true
+  },
+  "additional_scripts": [
+    {
+      "path": "benchmarks/adjudicate_modal_block_crossover.py",
+      "baseline_sha256": "b3dd4c9c5fb76d7c2875a11ace1a8eb40dd304794872c4c84bc9272f4c46c146",
+      "semantic_helpers": {"_sha256": ["file_sha256"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The standalone modal-block adjudicator is retained for exact historical replay; its local input seal is now byte-pinned and no new script may copy it."
+    },
+    {
+      "path": "benchmarks/benchmark_periodic_fast_path.py",
+      "baseline_sha256": "d30bae8e659266a1e08e67fbe3d827ed1127f7a70d947f1c0987d5e41a93ad5a",
+      "semantic_helpers": {"_git_head": ["git_identity"], "run_benchmark": ["running_environment"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The standalone Periodic profiler preserves its established report schema; the complete script is byte-pinned instead of rewriting that historical schema."
+    },
+    {
+      "path": "benchmarks/benchmark_stokes_pressure_diagnostics.py",
+      "baseline_sha256": "2c80dbde7e36fc809dba6cbdd304ceec0130357535c378e2cb83f9f0042b11d0",
+      "semantic_helpers": {"_git_head": ["git_identity"], "run_benchmark": ["running_environment"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The pressure diagnostic keeps its frozen standalone output contract; the whole script is pinned as an explicit exception."
+    },
+    {
+      "path": "benchmarks/benchmark_transform_backend.py",
+      "baseline_sha256": "3d74e51543c138470f6d8d0ad7c6ed1b3497063ccb44cedfff02d43987fe8f56",
+      "semantic_helpers": {"_git_head": ["git_identity"], "run_benchmark": ["running_environment"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The transform-backend benchmark remains a reproducibility harness with a stable report schema and is byte-pinned."
+    },
+    {
+      "path": "benchmarks/diagnose_v0_3_s09_functional_transient.py",
+      "baseline_sha256": "84c4ef8bd5630ac37a559938f4b02f77228776f1c093ed280464c65c7463574a",
+      "semantic_helpers": {"run_cell": ["running_environment"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The S-09 diagnostic is retained byte-for-byte for qualification replay and S-19 comparison."
+    },
+    {
+      "path": "benchmarks/prepare_phase9_p95_inputs.py",
+      "baseline_sha256": "d0b7cd992b1b87299fee988bd19dae85d81234d4e684088548ad46bb08aec5d3",
+      "semantic_helpers": {"_sha256": ["file_sha256"], "prepare_inputs": ["atomic_publish"]},
+      "disposition": "retained_documented_exception",
+      "reason": "This historical Phase-9 input builder is preserved for exact replay; its local seal and publication behavior are pinned."
+    },
+    {
+      "path": "benchmarks/profile_channel_runtime_timestep.py",
+      "baseline_sha256": "7b89c9a4bed3fd3c833eb25f8a836331449c7d8059baf968db20c84294fa8ba2",
+      "semantic_helpers": {"run_profile": ["running_environment"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The Channel timing profiler has a frozen profile schema used by qualification analyzers and is pinned unchanged."
+    },
+    {
+      "path": "benchmarks/profile_combined_sbdf2_modal_block.py",
+      "baseline_sha256": "a662423732bfabee1bd088f94b5724813b11936ab6e30dafa48b687db04c3709",
+      "semantic_helpers": {"_git_head": ["git_identity"], "run_profile": ["running_environment"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The combined modal-block profiler is a standalone reproducibility harness whose exact report remains pinned."
+    },
+    {
+      "path": "benchmarks/profile_modal_block_crossover.py",
+      "baseline_sha256": "33379a5377f73846e14bbe3fbd4a248a646a7e6b80d6bd1320e91abc8e0b8e49",
+      "semantic_helpers": {"_git_head": ["git_identity"], "run_crossover_profile": ["running_environment"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The crossover profiler remains pinned to preserve its historical profile and ordering contract."
+    },
+    {
+      "path": "benchmarks/profile_plane_runtime_timestep.py",
+      "baseline_sha256": "aa682428089be0c00903c3f863ae12b1f565bf3ccdec5a97866068214c39d658",
+      "semantic_helpers": {"run_profile": ["running_environment"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The Plane timing profiler has a frozen profile schema used by qualification analyzers and is pinned unchanged."
+    },
+    {
+      "path": "benchmarks/profile_v0_3_s09_ap_cache_diagnostic.py",
+      "baseline_sha256": "80028c5ef960d2cf612163d2a1dc0918bfc36422d19abf0fdbc497080aed98b9",
+      "semantic_helpers": {"_run_cpu_rehearsal": ["running_environment"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The D-0012 S-09 cache diagnostic is retained byte-for-byte as qualification evidence support."
+    },
+    {
+      "path": "benchmarks/qualify_v022_checkpoint_forward_compat.py",
+      "baseline_sha256": "f5b94905ea2a4db7f91e44e27ce0237e61e27ad8872d9af2637412d7a35910ef",
+      "semantic_helpers": {"_sha256": ["file_sha256"], "_write_json_new": ["atomic_publish"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The v0.2.2 forward-compatibility qualifier is historical release evidence support and remains byte-pinned."
+    },
+    {
+      "path": "benchmarks/rc458_venv_identity.py",
+      "baseline_sha256": "0e19b0a136de63f7c8683a93cd4e3e9e9d1cef852ea1900b60d40ce6b46d859a",
+      "semantic_helpers": {"validate_installed_venv_identity": ["running_environment"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The RC4.5.8 environment-identity helper is frozen qualification support and remains pinned unchanged."
+    },
+    {
+      "path": "benchmarks/recover_public_simulation_h100_qualification.py",
+      "baseline_sha256": "fdf11d6adf85708d87b581bb3853a6b7f972af43086bfccacc056807dd098333",
+      "semantic_helpers": {"_sha256": ["file_sha256"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The historical public-simulation H100 recovery helper is retained for exact evidence replay and pinned."
+    },
+    {
+      "path": "benchmarks/run_phase9_p95_h100_qualification.py",
+      "baseline_sha256": "04ef55fdccf87e65edca261a57f94c806d3c70a568848328c06a51673ea85226",
+      "semantic_helpers": {"_sha256": ["file_sha256"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The Phase-9 H100 runner is frozen qualification support and remains byte-pinned."
+    },
+    {
+      "path": "benchmarks/shendruk_v1_dynamic_velocity/Plane_v1_dynamic_velocity.py",
+      "baseline_sha256": "6812002e4a721eebaa5c96196377bf0fc3eb825c234d989f30e2a710d66d4948",
+      "semantic_helpers": {"file_sha256": ["file_sha256"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The nested Shendruk reproduction script keeps its standalone artifact contract and is explicitly pinned."
+    },
+    {
+      "path": "benchmarks/shendruk_v1_dynamic_velocity/fig4_timestep_convergence.py",
+      "baseline_sha256": "25ec1e6d33ea23921c43809b8959016c0c4ac2fc9c768a4e2c7ae669a730e712",
+      "semantic_helpers": {"main": ["git_identity"]},
+      "disposition": "frozen_hash_bound",
+      "binding_references": ["tests/test_shendruk_v1_dynamic_velocity_timestep_convergence.py"],
+      "reason": "The public Fig. 4 convergence workflow is covered by its repository contract and is now explicitly byte-pinned."
+    },
+    {
+      "path": "benchmarks/shendruk_v1_dynamic_velocity/fig4_workflow.py",
+      "baseline_sha256": "04c915f4125e739b73a0276d37f3a0a13d970f653548aa2faee9cec00bc72a48",
+      "semantic_helpers": {"sha256_file": ["file_sha256"], "git_text": ["git_identity"], "git_identity": ["git_identity"], "main": ["git_identity"]},
+      "disposition": "retained_documented_exception",
+      "reason": "The nested Fig. 4 workflow is a standalone reproduction driver; its local provenance implementation is explicitly pinned."
+    },
+    {
+      "path": "benchmarks/v0_2_0_checkpoint_fixtures.py",
+      "baseline_sha256": "8ac1e229a07c82a606c5e5c9bae2f15f6de4dba778f38c2876b2316183681bce",
+      "semantic_helpers": {"_sha256": ["file_sha256"], "numerical_build_fingerprint": ["running_environment"], "generate": ["running_environment"]},
+      "disposition": "frozen_hash_bound",
+      "binding_references": ["notes/PSSolver_v0_3_0_s03_successor_53_s10_final_cleanup.json", "notes/PSSolver_v0_3_0_s03_successor_56_s10_r0033_candidate.json"],
+      "reason": "The v0.2.0 fixture generator bytes are qualification-record bound and must remain exact."
+    },
+    {
+      "path": "benchmarks/verify_v0_3_s10_build_fingerprints.py",
+      "baseline_sha256": "670476ec175e894f93c7735a0b9325d792333a205fc30c6a2d9edcc7ef16591d",
+      "semantic_helpers": {"main": ["atomic_publish", "running_environment"]},
+      "disposition": "frozen_hash_bound",
+      "binding_references": ["notes/PSSolver_v0_3_0_s03_successor_56_s10_r0033_candidate.json"],
+      "reason": "The S-10 fingerprint verifier is qualification-record bound and must remain exact."
+    }
+  ],
+  "observations": {
+    "numerical_verifier_mode_change": "The shared atomic writer changed newly created output mode from 0664 to 0600; output bytes are unchanged.",
+    "temporary_equivalence_directories_pruned": [
+      {"path": "/home/fansenwei/pssolver-v04-s16-equivalence-8yMlKW", "size_bytes": 52486104, "file_count": 4526, "tree_manifest_sha256": "dd25d19da130e5df0d6b01ce2194d71150d888ec809437ca2d3cb7f458072c4a"},
+      {"path": "/home/fansenwei/pssolver-v04-s16-equivalence-final-IPPkKy", "size_bytes": 52399085, "file_count": 4471, "tree_manifest_sha256": "5f13a7832561eb3d7bb9d328ae1b13b325eefac8da57bc7a693026f0722d3390"},
+      {"path": "/home/fansenwei/pssolver-v04-s16-equivalence-final-TgBITZ", "size_bytes": 52408254, "file_count": 4474, "tree_manifest_sha256": "91d48c0e61c7055f5ccc2850c61e4d5acc4ae1f715ac95cee856d33d402bd298"}
+    ]
+  },
+  "scope": {
+    "runtime_changed": false,
+    "public_interface_changed": false,
+    "numerical_output_changed": false,
+    "gpu_specific_path_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "historical_record_rewritten": false
+  }
+}
