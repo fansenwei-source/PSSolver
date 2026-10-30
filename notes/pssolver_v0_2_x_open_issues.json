@@ -32,8 +32,8 @@
   "issue_count": 59,
   "status_counts": {
     "open": 0,
-    "registered": 1,
-    "claimed_fixed": 0,
+    "registered": 0,
+    "claimed_fixed": 1,
     "verified": 54,
     "deferred": 2,
     "accepted": 2,
@@ -974,9 +974,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "9cf4b34c37d5fa266ad1900eae09f143c5c98b63",
       "target_release": "0.4 S-16",
-      "notes": "The first D-0016 ratchet recognized helpers mainly by function name and scanned only benchmarks/*.py. It therefore missed file-SHA, git-identity and atomic-publish helpers with other names, skipped recursive benchmark subdirectories, did not list 15 semantically detected scripts, and did not byte-pin retained S-09 harnesses. S-16 must replace this with a recursive semantic scan, explicitly classify every retained helper script, pin every retained or frozen script to its reviewed baseline bytes, and prove that new top-level and nested probe scripts with hidden local helpers fail the ratchet."
+      "notes": "The first D-0016 ratchet recognized helpers mainly by function name and scanned only benchmarks/*.py. It therefore missed file-SHA, git-identity and atomic-publish helpers with other names, skipped recursive benchmark subdirectories, did not list 15 semantically detected scripts, and did not byte-pin retained S-09 harnesses. The S-16 rework at 9cf4b34c37d5fa266ad1900eae09f143c5c98b63 recursively scans benchmarks/**/*.py, classifies helpers by file-hash, git-identity, atomic-publication and running-environment behavior, adds the 15 R-0045 files plus five environment-provenance files to a forward inventory, and byte-pins all retained or frozen scripts. Top-level and nested probe scripts prove that hidden local helpers fail the ratchet."
     }
   ],
   "authorization": {

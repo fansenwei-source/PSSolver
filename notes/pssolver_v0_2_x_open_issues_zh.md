@@ -9,8 +9,8 @@
 当前共登记 59 条：
 
 - `open`：0；
-- `registered`：1；
-- `claimed_fixed`：0；
+- `registered`：0；
+- `claimed_fixed`：1；
 - `verified`：54；
 - `deferred`：2；
 - `accepted`：2；
@@ -219,8 +219,10 @@
 39. `R-0045` 新发现 `V-54`（medium-low）：第一版 `D-0016` 棘轮主要按函数名识别
     helper，且只扫描 `benchmarks/*.py`，遗漏文件 SHA、git 身份、任意命名的原子发布
     helper、递归子目录以及 15 个语义检出的脚本；保留的 S-09 harness 也没有全部按基线
-    字节钉死。该项先登记为 `registered`，由 S-16 返工建立递归语义扫描、逐文件分类和
-    新脚本负向探针。
+    字节钉死。`9cf4b34c37d5fa266ad1900eae09f143c5c98b63` 已建立递归语义扫描，
+    将 R-0045 的 15 个脚本及另外 5 个运行环境 provenance 脚本纳入前向清单，逐字节钉住
+    所有保留/冻结脚本，并用顶层与子目录负向探针证明新本地 helper 会让棘轮失败；该项现为
+    `claimed_fixed`，等待 `R-0046` 独立复核。
 
 ## Control 路径
 
