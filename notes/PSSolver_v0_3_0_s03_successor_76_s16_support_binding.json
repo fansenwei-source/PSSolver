@@ -1,0 +1,52 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 76,
+  "date": "2026-10-29",
+  "classification": "S16_D0016_SUPPORT_BINDING_CORRECTED_PENDING_R0045",
+  "plan_step": "S-16",
+  "git_identity": {
+    "harness_sharing_implementation": "152922b093326825eefc18d6300cb01a697a7c46",
+    "harness_sharing_record": "6cfff5eeac43f84ac28abd1d3c1e8618e109aa71",
+    "support_binding_correction": "6267333dfabe88ec479d559141631cf99b3b58ca",
+    "record_commit_is_qualified_source": false
+  },
+  "forward_corrections": {
+    "successor_71": {
+      "immutable": true,
+      "old_test_contract": "the active numerical verifier had to retain successor 71's original SHA-256 forever",
+      "corrected_test_contract": "the frozen successor 71 SHA-256 is resolved through forward successor records"
+    },
+    "successor_75": {
+      "immutable": true,
+      "resolution_source": "benchmarks/verify_v0_4_s16_numerical_equivalence.py"
+    }
+  },
+  "historical_successor_sources": {
+    "tests/test_v0_4_s16_candidate_record.py": {
+      "historical_sha256": "34541f04b7a6ed921d3bb8461e7e19919bb344dc14a0c50dcca9fdcaccf31410",
+      "current_sha256": "2aafb9a54df2349411396f9b13100254f4e9bfbb1986cb8dc92531543cfdaaee"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_76_s16_support_binding_zh.md": "27b16695acf0017d88b4fca345dfcb6d67674814d14d6b734f8d9f9b6fb021f7",
+    "tests/test_v0_4_s16_successor_76.py": "2c0768b9b7b16ffd1e3c451768a442a078d0cf8bdcd910b6baee3754f99f3045"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_commits": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
