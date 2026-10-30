@@ -6,12 +6,12 @@
 `dev/0.4` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 57 条：
+当前共登记 59 条：
 
 - `open`：0；
-- `registered`：0；
-- `claimed_fixed`：3；
-- `verified`：50；
+- `registered`：1；
+- `claimed_fixed`：0；
+- `verified`：54；
 - `deferred`：2；
 - `accepted`：2；
 - `coverage_gap`：0。
@@ -214,8 +214,13 @@
     核对，导致新机器静默跳过断言，违反 `D-0015`。`05513a4132b1eb38e9bdff825f98a31b276c2932`
     删除该外部路径常量和条件分支；测试继续冻结 successor 72 中的结果哈希，完整外部证据
     仍由只读核对工具的 `C023` 检查。全测试树复查未发现其他按外部
-    `/home/fansenwei` 证据路径是否存在而改变 pytest 结果的分支；`V-53` 现为
-    `claimed_fixed`，等待下一轮独立复核。
+    `/home/fansenwei` 证据路径是否存在而改变 pytest 结果的分支；`V-53` 已由
+    `R-0045` 独立验证为 `verified`。
+39. `R-0045` 新发现 `V-54`（medium-low）：第一版 `D-0016` 棘轮主要按函数名识别
+    helper，且只扫描 `benchmarks/*.py`，遗漏文件 SHA、git 身份、任意命名的原子发布
+    helper、递归子目录以及 15 个语义检出的脚本；保留的 S-09 harness 也没有全部按基线
+    字节钉死。该项先登记为 `registered`，由 S-16 返工建立递归语义扫描、逐文件分类和
+    新脚本负向探针。
 
 ## Control 路径
 

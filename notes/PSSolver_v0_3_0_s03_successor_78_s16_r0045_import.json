@@ -1,0 +1,74 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 78,
+  "date": "2026-10-29",
+  "classification": "R0045_IMPORTED_REWORK_PENDING_V54",
+  "plan_step": "S-16",
+  "git_identity": {
+    "reviewed_candidate": "46e29dd9b44b8ea329bd7b15d4e5a74fcbdb4758",
+    "v53_fix": "05513a4132b1eb38e9bdff825f98a31b276c2932",
+    "record_commit_is_qualified_source": false
+  },
+  "r0045": {
+    "classification": "REWORK_REQUIRED",
+    "result_commit": "19de9af37b4dcf433ff45e138027e78b0ac9be90",
+    "result_sha256": "7d4d93166372eb2fbd4b1b76b3a6f274479f42b559a364838a6dc8cb1faa1764",
+    "archive": {
+      "path": "/home/fansenwei/pssolver_v0_4_claude_s16_r0045_review_20261029_v1",
+      "checksums_entries": 228,
+      "checksums_sha256": "6bbf660bead2442dda1a214beaef689fefedde8171af225c4d2bb4a964f67f21",
+      "complete": true
+    }
+  },
+  "registry_updates": {
+    "V-53": {
+      "status": "verified",
+      "fixed_in": "05513a4132b1eb38e9bdff825f98a31b276c2932",
+      "verified_by": "R-0045"
+    },
+    "V-54": {
+      "status": "registered",
+      "target_release": "0.4 S-16"
+    }
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "d6408fc7b756638ec4188acc93f8db0dc5811b23148c0fc027cbc4b8ffda6050",
+      "current_sha256": "a5cb1cbe3cdcedb0928e30c1e7b7dc3612fa9b02e20ed418ccfeef3391f71160"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "2978a4da2cdb75e948b3ced71a823686f990f8489e8c34047806bd437d0a805e",
+      "current_sha256": "f804741cbb214183f023e00ac91b7b271143550272604cff6185c9174740ab5a"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "4488297d21cc1df51ad1c7379e51cee4a37759caa07d0681445fdda51830b2dd",
+      "current_sha256": "36eca2a1c956b21493947374f2ee92f6531114a86ad084e36185d323987084c5"
+    },
+    "tests/test_v0_4_s16_r0044_rework.py": {
+      "historical_sha256": "b91136db12621a5141ab34158908a87862a12bc1d28d71f27b41d5d757697ff6",
+      "current_sha256": "9576cd182a63f2d64da8a124322514c27ec2d68c36aea045f4fe7603230eb132"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_78_s16_r0045_import_zh.md": "13484db768c5c7a95e715441cd2012e63ac7baceedc6c4410b0bd61aa3f99156",
+    "tests/test_v0_4_s16_r0045_import.py": "fbb7aa2c49dc5fdb2497985a8b6e56377b776ee17c9b300e8d2f688cfe7354af"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_commits": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

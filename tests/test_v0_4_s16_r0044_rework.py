@@ -55,7 +55,7 @@ def test_r0044_registry_updates_and_v53_are_exact():
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == fixed_in
         assert issues[issue_id]["verified_by"] == "R-0044"
-    assert issues["V-53"] == {
+    expected = {
         "id": "V-53",
         "title": "S-16 test still branches on whether a PSSolver_sync file exists",
         "severity": "low",
@@ -70,6 +70,12 @@ def test_r0044_registry_updates_and_v53_are_exact():
         "target_release": "0.4 S-16",
         "notes": issues["V-53"]["notes"],
     }
+    for key, value in expected.items():
+        if key != "status":
+            assert issues["V-53"][key] == value
+    assert issues["V-53"]["status"] in {"claimed_fixed", "verified"}
+    if issues["V-53"]["status"] == "verified":
+        assert issues["V-53"]["verified_by"] == "R-0045"
 
 
 def test_v53_removes_the_external_file_existence_branch():

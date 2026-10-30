@@ -29,12 +29,12 @@
       "rewritten": false
     }
   },
-  "issue_count": 58,
+  "issue_count": 59,
   "status_counts": {
     "open": 0,
-    "registered": 0,
-    "claimed_fixed": 1,
-    "verified": 53,
+    "registered": 1,
+    "claimed_fixed": 0,
+    "verified": 54,
     "deferred": 2,
     "accepted": 2,
     "coverage_gap": 0
@@ -958,10 +958,25 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "05513a4132b1eb38e9bdff825f98a31b276c2932",
+      "verified_by": "R-0045",
       "target_release": "0.4 S-16",
       "notes": "tests/test_v0_4_s16_r0043_rework.py conditionally checked the live PSSolver_sync R-0043 result only when that external file existed, so the assertion was silently skipped on another machine in violation of D-0015. The live file check and its external Path constant are removed. The test continues to bind the frozen result hash in successor 72, and local verifier catalog item C023 retains the complete read-only external evidence check. A repository-wide scan found no other pytest branch whose outcome depends on whether an external /home/fansenwei evidence path exists."
+    },
+    {
+      "id": "V-54",
+      "title": "S-16 D-0016 benchmark helper ratchet misses provenance helpers, subdirectories and new scripts, and does not pin retained S-09 harness bytes",
+      "severity": "medium-low",
+      "source_report": "PSSolver_sync/results/R-0045.result.json",
+      "first_found": "S-16 final review R-0045",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.4 S-16",
+      "notes": "The first D-0016 ratchet recognized helpers mainly by function name and scanned only benchmarks/*.py. It therefore missed file-SHA, git-identity and atomic-publish helpers with other names, skipped recursive benchmark subdirectories, did not list 15 semantically detected scripts, and did not byte-pin retained S-09 harnesses. S-16 must replace this with a recursive semantic scan, explicitly classify every retained helper script, pin every retained or frozen script to its reviewed baseline bytes, and prove that new top-level and nested probe scripts with hidden local helpers fail the ratchet."
     }
   ],
   "authorization": {
