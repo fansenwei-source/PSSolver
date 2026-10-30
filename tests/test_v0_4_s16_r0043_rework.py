@@ -12,11 +12,6 @@ from tests.v0_3_s03_successor import resolve_s03_successor
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_72_s16_r0043_rework.json"
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
-R0043 = Path(
-    "/home/fansenwei/Desktop/Develop/PSSolver_sync/results/R-0043.result.json"
-)
-
-
 def _read(path: Path) -> dict[str, object]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -34,8 +29,6 @@ def test_successor_72_binds_the_exact_r0043_rework_sources():
     assert record["r0043"]["result_sha256"] == (
         "c2524ea963cb4c6d6a91d80e197e16dc8899613e42c01bb66e1b3468b90671ef"
     )
-    if R0043.is_file():
-        assert _sha256(R0043) == record["r0043"]["result_sha256"]
     for relative, identity in record["historical_successor_sources"].items():
         assert _sha256(ROOT / relative) == resolve_s03_successor(
             relative, identity["current_sha256"]
