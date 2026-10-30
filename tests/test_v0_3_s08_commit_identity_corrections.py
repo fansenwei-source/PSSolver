@@ -14,6 +14,9 @@ RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_26_s08_commit_identity_corr
 REPLAY_RECORD = (
     ROOT / "notes/PSSolver_v0_3_0_s03_successor_58_s09_s10_integration.json"
 )
+S16_CORRECTION_RECORD = (
+    ROOT / "notes/PSSolver_v0_3_0_s03_successor_77_s16_commit_identity_correction.json"
+)
 SUCCESSORS = ROOT / "notes"
 FULL_COMMIT = re.compile(r"[0-9a-f]{40}")
 
@@ -51,7 +54,10 @@ def test_current_registry_fixed_in_values_are_real_pssolver_commits() -> None:
 
 def test_successor_git_identities_resolve_or_have_an_explicit_forward_correction() -> None:
     correction = _read(RECORD)
-    mappings = correction["commit_identity_corrections"]
+    mappings = {
+        **correction["commit_identity_corrections"],
+        **_read(S16_CORRECTION_RECORD)["commit_identity_corrections"],
+    }
     replay_mappings = _read(REPLAY_RECORD)["replay"]["original_to_replayed"]
     exceptions = correction["external_git_identity_fields"]
     encountered_corrections: set[str] = set()
@@ -71,7 +77,10 @@ def test_successor_git_identities_resolve_or_have_an_explicit_forward_correction
                     assert _does_not_resolve(value)
                 else:
                     encountered_replay_corrections.add(value)
-    assert encountered_corrections == set(correction["forward_successor_corrections"])
+    assert encountered_corrections == {
+        *correction["forward_successor_corrections"],
+        *_read(S16_CORRECTION_RECORD)["forward_successor_corrections"],
+    }
     assert encountered_replay_corrections == {
         "e75ef77c2dc03237db1ddae8b275f9c8055fe06b",
         "dc955c5db5f0b67949115062577a46d22776083e",

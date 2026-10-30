@@ -1,0 +1,50 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 77,
+  "date": "2026-10-29",
+  "classification": "S16_SUCCESSOR_76_COMMIT_IDENTITY_CORRECTED_PENDING_R0045",
+  "plan_step": "S-16",
+  "git_identity": {
+    "successor_76_record": "5ecb702ce03d1be2bb3e0a39fe96303d86dba51f",
+    "record_commit_is_qualified_source": false
+  },
+  "commit_identity_corrections": {
+    "6267333dfabe88ec479d559141631cf99b3b58ca": "6267333a937477911f737de171c82f683d971612"
+  },
+  "forward_successor_corrections": [
+    "6267333dfabe88ec479d559141631cf99b3b58ca"
+  ],
+  "correction_method": {
+    "short_identity": "6267333",
+    "command": "git rev-parse 6267333",
+    "historical_record_rewritten": false
+  },
+  "historical_successor_sources": {
+    "tests/test_v0_3_s08_commit_identity_corrections.py": {
+      "historical_sha256": "6e54ccc2b4340885855741814d79db979479098e6706b0b298c71a6a09582056",
+      "current_sha256": "57bd2b98d272052bba0694519e1f9eb79bd494d635fa663937b1b8945104ca65"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_77_s16_commit_identity_correction_zh.md": "519d603bc86205372e62dbcf599a631aa31f0c629f98814ee5904663bfdde79b",
+    "tests/test_v0_4_s16_successor_77.py": "864fd1c869485bdfb60ffeb7fba25933a32887e112d0dcdc9e72f74a77442558"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_commits": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
