@@ -1,0 +1,81 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 75,
+  "date": "2026-10-29",
+  "classification": "S16_D0016_HARNESS_SHARING_IMPLEMENTED_PENDING_R0045",
+  "plan_step": "S-16",
+  "decision": {
+    "id": "D-0016",
+    "commit": "98d29d611ad048b3f5004e97e7ee0b8a4a76aa6c",
+    "sha256": "fe2ddb0ee5ba87bc159888f95e59ea45e7ded1b293f122ee5f6d44c651e45b24",
+    "selection": "option b: share only live harness support"
+  },
+  "git_identity": {
+    "r0044_import": "7f0374af7bdd772a7df1144d0185bb42222faba1",
+    "implementation": "152922b093326825eefc18d6300cb01a697a7c46",
+    "record_commit_is_qualified_source": false
+  },
+  "forward_corrections": {
+    "successor_71": {
+      "immutable": true,
+      "source": "benchmarks/verify_v0_4_s16_numerical_equivalence.py",
+      "old_contract": "local JSON and text output helpers",
+      "corrected_contract": "D-0016 shared atomic JSON and text support with byte-identical output"
+    },
+    "successor_73": {
+      "immutable": true,
+      "source": "benchmarks/verify_v0_4_local_evidence.py",
+      "old_contract": "local atomic text and SHA-256 helpers",
+      "corrected_contract": "D-0016 shared atomic text and SHA-256 support with byte-identical output"
+    }
+  },
+  "harness_sharing": {
+    "shared_module": "benchmarks/_artifact_io.py",
+    "standard_library_only": true,
+    "baseline_local_helper_files": 118,
+    "frozen_hash_bound_files": 87,
+    "documented_exceptions": 29,
+    "migrated_active_files": 2,
+    "allowlist_can_only_shrink": true,
+    "new_local_helpers_forbidden": true,
+    "historical_frozen_scripts_changed": 0
+  },
+  "historical_successor_sources": {
+    "benchmarks/verify_v0_4_local_evidence.py": {
+      "historical_sha256": "fd42afea53e6cb5513dccf8783e55a31a3b59add186006309027389fd6fd61ee",
+      "current_sha256": "2a41eebfffdb8a595536659a79d72de8beb64beb3782307632ff0264a1eb5a42"
+    },
+    "benchmarks/verify_v0_4_s16_numerical_equivalence.py": {
+      "historical_sha256": "d4d7b05e56fcf42d51514255a02182d3a6a381aeec657dc467c8a2a9e47faf27",
+      "current_sha256": "89bfd620703e87025c822fff4a2039b75ab753165a0bf4e68d08e1bc6a41e4da"
+    }
+  },
+  "introduced_sources": {
+    "benchmarks/_artifact_io.py": "a6c0b733a63c3218c53bea458da4a056b3a02eb62aade7b7f1e7c74d68968483",
+    "notes/PSSolver_v0_4_0_s16_r8_benchmark_harness_sharing.json": "96a7c849a0a92d111bb239c121a5155b322dd6c56c509f649cd1dd98d8445234",
+    "notes/PSSolver_v0_4_0_s16_r8_benchmark_harness_sharing_zh.md": "0aba487e96ca7b2ced74873db3f96e3b3970b05cb2e7a675d06ac0395a1ece70",
+    "notes/PSSolver_v0_3_0_s03_successor_75_s16_d0016_harness_sharing_zh.md": "6824d4ee2d8f48391fc3e69d933be96e0624af8f65dc9d6b8dfb78ebdc7258da",
+    "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py": "ffb2acf2112882f8edd34e16d221a3e98a0e09de1c4b24a6d147d9b61697f2d6",
+    "tests/test_v0_4_s16_d0016_successor_75.py": "bae2bae2ef4ed65f68a9c7af0e81031f6c4fafd980ba50c8f7f0dd499c13acdb"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_commits": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
