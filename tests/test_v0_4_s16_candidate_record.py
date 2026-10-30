@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 import subprocess
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_71_s16_candidate.json"
@@ -71,7 +73,11 @@ def test_successor_71_preserves_scope_and_requires_independent_review():
 
 def test_successor_71_numerical_support_is_content_addressed():
     record = _read()["numerical_equivalence"]
-    assert _sha256((ROOT / record["support"]).read_bytes()) == record["support_sha256"]
-    assert _sha256((ROOT / record["support_test"]).read_bytes()) == record[
-        "support_test_sha256"
-    ]
+    for path_key, sha_key in (
+        ("support", "support_sha256"),
+        ("support_test", "support_test_sha256"),
+    ):
+        relative = record[path_key]
+        assert _sha256((ROOT / relative).read_bytes()) == resolve_s03_successor(
+            relative, record[sha_key]
+        )
