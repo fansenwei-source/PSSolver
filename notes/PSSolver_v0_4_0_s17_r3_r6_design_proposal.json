@@ -1,0 +1,175 @@
+{
+  "schema": "pssolver.v0_4.s17.r3_r6_design_proposal.v1",
+  "created_at": "2026-10-30T21:17:47-04:00",
+  "plan_step": "S-17",
+  "classification": "DESIGN_ONLY_AWAITING_USER_DECISION",
+  "governing_decisions": [
+    "D-0007",
+    "D-0011",
+    "D-0014"
+  ],
+  "source_identity": {
+    "branch": "dev/0.4",
+    "parent_commit": "76b331754a0769421d69ffc202a8efb1a2c2159d",
+    "pssolver_tree": "0162ce08dc9b455173a4e36c67954a5a1ef2dbd9",
+    "functional_api_version": "1.1",
+    "runtime_changed": false,
+    "public_api_changed": false
+  },
+  "r3": {
+    "problem": "The stable functional API, broad compatibility facade, contracts, validation, versioning, and exception layers overlap more than necessary.",
+    "frozen_public_boundary": {
+      "module": "pssolver.functional.api",
+      "api_version": "1.1",
+      "must_remain_source_compatible_during_v0_4": true,
+      "broad_compatibility_facade": "pssolver.functional",
+      "internal_layers": [
+        "pssolver.functional.contracts",
+        "pssolver.functional.errors",
+        "pssolver.functional.validation",
+        "pssolver.functional.versioning"
+      ]
+    },
+    "options": {
+      "A": {
+        "title": "Staged compatibility-facade retirement",
+        "recommended": true,
+        "design": [
+          "Keep pssolver.functional.api and Functional API 1.1 source-compatible throughout v0.4.",
+          "Consolidate duplicate internal contracts and helpers behind the stable api facade without changing its exported names or behavior.",
+          "Mark direct imports from the broader pssolver.functional compatibility facade as deprecated during v0.4, but keep them operational for the full v0.4 line.",
+          "Do not remove the broad facade before a later release with an explicit API-version decision and a separately qualified Consumer migration."
+        ],
+        "deprecation_window": "all v0.4 releases; removal no earlier than a later explicitly authorized release",
+        "functional_api_version_effect": "none during v0.4"
+      },
+      "B": {
+        "title": "Internal consolidation without facade retirement",
+        "recommended": false,
+        "design": [
+          "Consolidate internals while retaining both pssolver.functional.api and the broad pssolver.functional facade indefinitely.",
+          "Avoids deprecation work but leaves the overlapping public surface in place."
+        ]
+      },
+      "C": {
+        "title": "Immediate facade removal and API-version change",
+        "recommended": false,
+        "design": [
+          "Remove the broad compatibility facade during v0.4 and change the Functional API version.",
+          "Requires an immediate Consumer migration and is not compatible with the frozen S-17 numerical and public-boundary constraints."
+        ]
+      }
+    },
+    "control_coordination": {
+      "qualified_control_main_source": "41d1668a7310cc022343ac5917c76234724eeae2",
+      "control_record_commit": "39e7bdcacbb7a33733c17da9fc2809cfc2feba2f",
+      "provider_release_source": "47473880534a66f6da940db82122c79cda48a86b",
+      "imports_only": "pssolver.functional.api",
+      "periodic_adapter_sha256": "03c5cbde68ddc34abe887dd9c576c1dca301c4b831c6914a5e14c57f3412847d",
+      "channel_adapter_sha256": "36f5d0cac25b10b1cf401add7fe40aa884746166303323bae397bea0992fb05b",
+      "coordination_rule": "Any later change to pssolver.functional.api names, semantics, or API version requires an isolated PSSolver-Control main migration and CPU qualification before the provider change can be released.",
+      "research_branch": {
+        "branch": "research/3d-warmup",
+        "uses_functional_api_through": "pssolver_control.adapters",
+        "provider_generation": "v0.2.0",
+        "included_in_current_migration": false,
+        "policy": "Keep the research branch and its v0.2.0 provider unchanged; migrate it only in a separate, explicitly scoped qualification."
+      }
+    }
+  },
+  "r6": {
+    "problem": "Robin and finite-Q pilot surfaces span configuration, planning, operators, runtime, and workflows without a publicly qualified application; lifting is adjacent and still has deferred correctness issues.",
+    "current_boundaries": {
+      "robin_public_application_qualified": false,
+      "finite_q_public_application_qualified": false,
+      "lifting_public_execution_open": false,
+      "lifting_deferred_issue": "B8/S2-07",
+      "released_checkpoint_read_compatibility_must_be_preserved": true
+    },
+    "options": {
+      "A": {
+        "title": "Reassess Robin, finite-Q, and lifting together",
+        "recommended": true,
+        "design": [
+          "Treat Robin, finite-Q, and lifting as one boundary-pilot family for inventory, ownership, and deprecation decisions.",
+          "Keep public execution fail-closed while the audit is performed.",
+          "Quarantine unqualified entry points behind an explicitly experimental namespace or remove only unreachable duplicates after a deprecation window.",
+          "Do not reopen lifting until B8/S2-07 wall physics and runtime dtype coercion are resolved and independently qualified.",
+          "Preserve read-only compatibility for every released checkpoint format even if a pilot writer or entry point is retired."
+        ]
+      },
+      "B": {
+        "title": "Isolate Robin and finite-Q only",
+        "recommended": false,
+        "design": [
+          "Audit and isolate Robin and finite-Q now while leaving lifting entirely deferred.",
+          "Reduces immediate scope but leaves shared boundary/planning ownership to a later, overlapping migration."
+        ]
+      },
+      "C": {
+        "title": "Immediately remove all pilot and lifting surfaces",
+        "recommended": false,
+        "design": [
+          "Delete unqualified Robin, finite-Q, and lifting surfaces in v0.4.",
+          "This has the highest compatibility risk and is not allowed without a separate deprecation and checkpoint-compatibility plan."
+        ]
+      }
+    },
+    "recommended_implementation_order_after_confirmation": [
+      "Inventory every public import, internal owner, production caller, fixture, and released checkpoint reader for Robin, finite-Q, and lifting.",
+      "Classify each surface as qualified public, required compatibility reader, experimental, duplicate, or unreachable.",
+      "Publish deprecations without changing numerical execution or enabling lifting.",
+      "Resolve and qualify B8/S2-07 before any lifting execution is reopened.",
+      "Only then isolate or remove approved surfaces, with CPU equivalence and checkpoint compatibility gates."
+    ],
+    "control_impact": "The qualified Control adapters import only pssolver.functional.api and do not import Robin, finite-Q, or lifting pilot modules; R6 should not require a Control migration unless it changes that stable functional boundary."
+  },
+  "questions_for_user": [
+    {
+      "id": "Q-S17-R3-01",
+      "question": "Which R3 facade strategy should govern implementation?",
+      "recommended_option": "A"
+    },
+    {
+      "id": "Q-S17-R3-02",
+      "question": "Should any future Functional API change require Control main migration first, while research/3d-warmup remains a separately authorized v0.2.0 migration?",
+      "recommended_option": "A",
+      "options": {
+        "A": "Yes; preserve the current independent Consumer boundary.",
+        "B": "Allow provider API changes before Control migration."
+      }
+    },
+    {
+      "id": "Q-S17-R6-01",
+      "question": "Should R6 reassess lifting together with Robin and finite-Q?",
+      "recommended_option": "A"
+    },
+    {
+      "id": "Q-S17-R6-02",
+      "question": "If the combined audit confirms unqualified entry points, which default disposition should apply?",
+      "recommended_option": "A",
+      "options": {
+        "A": "Quarantine behind an experimental namespace with deprecation before removal.",
+        "B": "Retain the current public locations indefinitely.",
+        "C": "Remove immediately after the audit."
+      }
+    }
+  ],
+  "implementation": {
+    "started": false,
+    "runtime_files_changed": [],
+    "public_interfaces_changed": [],
+    "numerical_output_changed": false,
+    "checkpoint_schema_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false
+  },
+  "authorization": {
+    "push": false,
+    "tag": false,
+    "github_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
