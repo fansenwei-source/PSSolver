@@ -38,6 +38,7 @@
           "Keep pssolver.functional.api and Functional API 1.1 source-compatible throughout v0.4.",
           "Consolidate duplicate internal contracts and helpers behind the stable api facade without changing its exported names or behavior.",
           "Mark direct imports from the broader pssolver.functional compatibility facade as deprecated during v0.4, but keep them operational for the full v0.4 line.",
+          "Do not emit a deprecation warning while importing pssolver.functional.api: importing that child loads the current eager pssolver.functional parent. Emit a warning only when a compatibility-facade name is accessed, for example through a module-level __getattr__.",
           "Do not remove the broad facade before a later release with an explicit API-version decision and a separately qualified Consumer migration."
         ],
         "deprecation_window": "all v0.4 releases; removal no earlier than a later explicitly authorized release",
@@ -61,16 +62,33 @@
       }
     },
     "control_coordination": {
-      "qualified_control_main_source": "41d1668a7310cc022343ac5917c76234724eeae2",
-      "control_record_commit": "39e7bdcacbb7a33733c17da9fc2809cfc2feba2f",
+      "qualified_control_main_source": "215e35c5504a305d20a28ad3987fd5ed2f94683a",
+      "control_record_commit": "140bd273693c341545ceb023bfd2de2e36458e07",
       "provider_release_source": "47473880534a66f6da940db82122c79cda48a86b",
-      "imports_only": "pssolver.functional.api",
+      "provider_dependencies": {
+        "functional_api": "pssolver.functional.api",
+        "planar_direct_imports": [
+          "pssolver.models.active_nematics.beris_edwards",
+          "pssolver.models.active_nematics.q_tensor"
+        ],
+        "planar_pinned_git_blobs": {
+          "beris_edwards": "07f1f03f7f2f35e28e8ce629c1d73c5d59e4f5f3",
+          "q_tensor": "5427df4402f31fc43ac409e1936cd31e58269966"
+        }
+      },
       "periodic_adapter_sha256": "03c5cbde68ddc34abe887dd9c576c1dca301c4b831c6914a5e14c57f3412847d",
       "channel_adapter_sha256": "36f5d0cac25b10b1cf401add7fe40aa884746166303323bae397bea0992fb05b",
-      "coordination_rule": "Any later change to pssolver.functional.api names, semantics, or API version requires an isolated PSSolver-Control main migration and CPU qualification before the provider change can be released.",
+      "coordination_rule": "Any later change to pssolver.functional.api names, semantics, or API version, or to either planar constitutive blob, requires an isolated PSSolver-Control main migration and CPU qualification before the provider change can be released.",
+      "deprecation_warning_rule": "Importing pssolver.functional.api must remain warning-free because Python first imports the eager pssolver.functional parent package. A compatibility-facade deprecation may warn only when the caller accesses a facade name, for example through module-level __getattr__.",
       "research_branch": {
         "branch": "research/3d-warmup",
         "uses_functional_api_through": "pssolver_control.adapters",
+        "direct_provider_imports": [
+          "pssolver",
+          "pssolver.boundaries",
+          "pssolver.geometries",
+          "pssolver.models.active_nematics"
+        ],
         "provider_generation": "v0.2.0",
         "included_in_current_migration": false,
         "policy": "Keep the research branch and its v0.2.0 provider unchanged; migrate it only in a separate, explicitly scoped qualification."
@@ -132,11 +150,11 @@
     },
     {
       "id": "Q-S17-R3-02",
-      "question": "Should any future Functional API change require Control main migration first, while research/3d-warmup remains a separately authorized v0.2.0 migration?",
+      "question": "Should any future Functional API change or change to either planar constitutive blob require Control main migration first, while research/3d-warmup remains a separately authorized v0.2.0 migration?",
       "recommended_option": "A",
       "options": {
-        "A": "Yes; preserve the current independent Consumer boundary.",
-        "B": "Allow provider API changes before Control migration."
+        "A": "Yes; preserve the current Functional API and blob-pinned Consumer boundary.",
+        "B": "Allow provider API or planar constitutive blob changes before Control migration."
       }
     },
     {

@@ -39,16 +39,52 @@ def test_s17_r3_keeps_the_v04_stable_control_boundary():
 def test_s17_r3_keeps_research_outside_the_control_main_migration():
     control = _read()["r3"]["control_coordination"]
     assert control["qualified_control_main_source"] == (
-        "41d1668a7310cc022343ac5917c76234724eeae2"
+        "215e35c5504a305d20a28ad3987fd5ed2f94683a"
+    )
+    assert control["control_record_commit"] == (
+        "140bd273693c341545ceb023bfd2de2e36458e07"
     )
     assert control["provider_release_source"] == (
         "47473880534a66f6da940db82122c79cda48a86b"
     )
-    assert control["imports_only"] == "pssolver.functional.api"
+    assert control["provider_dependencies"] == {
+        "functional_api": "pssolver.functional.api",
+        "planar_direct_imports": [
+            "pssolver.models.active_nematics.beris_edwards",
+            "pssolver.models.active_nematics.q_tensor",
+        ],
+        "planar_pinned_git_blobs": {
+            "beris_edwards": "07f1f03f7f2f35e28e8ce629c1d73c5d59e4f5f3",
+            "q_tensor": "5427df4402f31fc43ac409e1936cd31e58269966",
+        },
+    }
+    assert "either planar constitutive blob" in control["coordination_rule"]
+    assert "__getattr__" in control["deprecation_warning_rule"]
     research = control["research_branch"]
     assert research["branch"] == "research/3d-warmup"
+    assert research["uses_functional_api_through"] == "pssolver_control.adapters"
+    assert research["direct_provider_imports"] == [
+        "pssolver",
+        "pssolver.boundaries",
+        "pssolver.geometries",
+        "pssolver.models.active_nematics",
+    ]
     assert research["provider_generation"] == "v0.2.0"
     assert research["included_in_current_migration"] is False
+
+
+def test_s17_r3_deprecation_warning_is_access_only():
+    r3 = _read()["r3"]
+    design = " ".join(r3["options"]["A"]["design"])
+    assert "Do not emit a deprecation warning while importing" in design
+    assert "module-level __getattr__" in design
+    question = next(
+        item
+        for item in _read()["questions_for_user"]
+        if item["id"] == "Q-S17-R3-02"
+    )
+    assert "planar constitutive blob" in question["question"]
+    assert "blob-pinned Consumer boundary" in question["options"]["A"]
 
 
 def test_s17_r6_recommends_a_combined_audit_without_reopening_lifting():

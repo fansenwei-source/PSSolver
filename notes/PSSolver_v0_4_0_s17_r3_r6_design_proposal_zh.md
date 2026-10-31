@@ -9,16 +9,17 @@
 - v0.4 全程保留 `pssolver.functional.api` 的 Functional API 1.1、导出名称和语义。
 - 先把重复的 contracts、errors、validation、versioning 实现收敛到稳定 API 背后，不改变数值路径。
 - `pssolver.functional` 宽泛兼容 facade 在 v0.4 中只进入弃用窗口，仍保持可用；不得在没有新的 API 版本决定和 Consumer 资格化之前删除。
+- `import pssolver.functional.api` 不得触发弃用告警：Python 会先加载当前会立即导入全部内容的父包 `pssolver.functional.__init__`。弃用告警只能在访问兼容 facade 名称时触发，例如通过模块级 `__getattr__` 实现。
 - 方案 B 是只收敛内部实现、永久保留两层 facade；风险低，但无法完成 R3 的公共表面收敛。
 - 方案 C 是在 v0.4 立即删除兼容 facade 并改变 API 版本；它违反当前 S-17 边界，不推荐。
 
 ### 与 PSSolver-Control 的配合
 
-本轮 Control main 的合格来源 `41d1668a7310cc022343ac5917c76234724eeae2` 只从 `pssolver.functional.api` 导入，目标 Provider 是 v0.3.0 发布源 `47473880534a66f6da940db82122c79cda48a86b`。因此方案 A 的 v0.4 内部收敛不应要求 Control 再迁移。
+本轮 Control main 的合格来源 `215e35c5504a305d20a28ad3987fd5ed2f94683a` 通过 Periodic/Channel adapters 使用 `pssolver.functional.api`，但 planar adapter 还直接导入 `pssolver.models.active_nematics.beris_edwards` 和 `pssolver.models.active_nematics.q_tensor`，并分别固定 git blob `07f1f03f7f2f35e28e8ce629c1d73c5d59e4f5f3` 与 `5427df4402f31fc43ac409e1936cd31e58269966`。目标 Provider 是 v0.3.0 发布源 `47473880534a66f6da940db82122c79cda48a86b`。因此方案 A 的 v0.4 内部收敛只有在稳定 API 和这两个 blob 都不变时才不要求 Control 再迁移。
 
-若以后要改变 `pssolver.functional.api` 的名称、语义或版本，必须先在隔离 worktree 中迁移并 CPU 资格化 Control main，再允许 Provider 发布该改变。
+若以后要改变 `pssolver.functional.api` 的名称、语义或版本，或改变任一 planar constitutive blob，必须先在隔离 worktree 中迁移并 CPU 资格化 Control main，再允许 Provider 发布该改变。
 
-`research/3d-warmup` 通过 `pssolver_control.adapters` 使用 Functional API，但当前仍固定在 PSSolver v0.2.0；它不属于本轮 main 迁移，也不得被 R3 顺带迁移。研究分支以后只能通过单独授权、单独证据和单独资格化迁移。
+`research/3d-warmup` 通过 `pssolver_control.adapters` 使用 Functional API，也直接导入 `pssolver`、`pssolver.boundaries`、`pssolver.geometries` 和 `pssolver.models.active_nematics`；它当前仍固定在 PSSolver v0.2.0，不属于本轮 main 迁移，也不得被 R3 顺带迁移。研究分支以后只能通过单独授权、单独证据和单独资格化迁移。
 
 ## R6：Robin / finite-Q / lifting 试点表面
 
@@ -36,7 +37,7 @@ Control 的合格 adapters 不导入这些试点模块，因此 R6 原则上不�
 ## 需要用户确认
 
 1. `Q-S17-R3-01`：R3 是否选择 A（推荐：分阶段退役宽泛 facade）？
-2. `Q-S17-R3-02`：是否选择 A（推荐：任何未来 Functional API 改变都先迁移 Control main；研究分支另行授权）？
+2. `Q-S17-R3-02`：是否选择 A（推荐：任何未来 Functional API 或两个 planar blob 的改变都先迁移 Control main；研究分支另行授权）？
 3. `Q-S17-R6-01`：R6 是否选择 A（推荐：Robin、finite-Q、lifting 一起重新评估）？
 4. `Q-S17-R6-02`：审计确认入口未资格化时，是否选择 A（推荐：先隔离到 experimental namespace 并弃用，再决定删除）？
 
