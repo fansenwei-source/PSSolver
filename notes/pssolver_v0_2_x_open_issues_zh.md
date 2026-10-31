@@ -1,17 +1,17 @@
 # PSSolver v0.2.x 未解决问题统一登记表
 
-日期：2026-10-27
+日期：2026-10-31
 
 本登记表是可持续维护的 evidence-only successor，自 `D-0014` / `S-14` 起以
 `dev/0.4` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 63 条：
+当前共登记 64 条：
 
 - `open`：0；
-- `registered`：0；
-- `claimed_fixed`：3；
-- `verified`：56；
+- `registered`：1；
+- `claimed_fixed`：0；
+- `verified`：59；
 - `deferred`：2；
 - `accepted`：2；
 - `coverage_gap`：0。
@@ -249,6 +249,11 @@
     warning-free API 子模块导入和研究分支的直接 Provider 依赖。`R-0049` 已独立验证三项
     修复，状态均推进为 `verified`。`D-0017` 已确认保全方式 A 及 R3/R6 设计选择；R3/R6
     实现只在另行授权的 Control 与 PSSolver 记录推送完成后开始。
+42. `R-0050` 已独立确认 S-17 的 R3/R6 实现主体、Control 边界、精确架构棘轮、两套完整
+    CPU 门禁、installed-wheel 与 8×20 逐位等价均通过，但登记 `V-59`（low）：懒加载 facade
+    丢失了 v0.3.0 中普通包导入后可直接按属性访问的 19 个定义子模块，使结果依赖导入顺序。
+    修复必须在四个包的 `__getattr__` 中无告警地按需导入精确历史子模块集合，同时保持 85 个
+    Functional facade 导出、对象身份、数值结果、门限和 skip/xfail 不变。
 
 ## Control 路径
 

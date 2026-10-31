@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry": "PSSolver v0.2.x forward-maintained open-issue registry",
-  "date": "2026-10-29",
+  "date": "2026-10-31",
   "primary_ref": "dev/0.4",
   "roadmap": {
     "decision": "D-0010",
@@ -29,10 +29,10 @@
       "rewritten": false
     }
   },
-  "issue_count": 63,
+  "issue_count": 64,
   "status_counts": {
     "open": 0,
-    "registered": 0,
+    "registered": 1,
     "claimed_fixed": 0,
     "verified": 59,
     "deferred": 2,
@@ -1043,6 +1043,20 @@
       "verified_by": "R-0049",
       "target_release": "0.4 S-17",
       "notes": "The first R3 design said Control imports only pssolver.functional.api, but the planar adapter directly imports and blob-pins models.active_nematics.beris_edwards and q_tensor. Commit d98472a corrects the Consumer-first rule to cover those blobs, requires facade deprecation to remain silent when importing pssolver.functional.api, and records the research branch's direct pssolver, boundaries, geometries, and active-nematics imports. R-0049 independently verified that design boundary. D-0017 is confirmed; R3/R6 implementation begins only after the separately authorized Control and PSSolver record pushes."
+    },
+    {
+      "id": "V-59",
+      "title": "S-17 lazy package facades drop implicit submodule attributes and become import-order dependent",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0050.result.json",
+      "first_found": "S-17 R3/R6 implementation review R-0050",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.4 S-17",
+      "notes": "The S-17 candidate b3c5596 replaced eager package imports with lazy compatibility facades, but plain imports no longer expose 14 historical pssolver.functional submodule attributes, operators.lifting/robin, runtime.finite_q_anchoring/robin_scalar, or workflows.finite_q_anchoring. Access therefore raises AttributeError unless another import happened to load the submodule first. R-0050 requires each package __getattr__ to import exactly the v0.3.0 submodule set without a deprecation warning, while preserving all facade export identities, warnings, numerical behavior, skip/xfail and thresholds."
     }
   ],
   "authorization": {
