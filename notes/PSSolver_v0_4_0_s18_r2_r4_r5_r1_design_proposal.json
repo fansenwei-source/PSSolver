@@ -1,0 +1,410 @@
+{
+  "schema": "pssolver.v0_4.s18.r2_r4_r5_r1_design_proposal.v1",
+  "created_at": "2026-10-31T19:05:00-04:00",
+  "plan_step": "S-18",
+  "classification": "DESIGN_ONLY_AWAITING_CLAUDE_REVIEW_AND_USER_DECISION",
+  "governance": {
+    "confirmed_decisions": [
+      "D-0011",
+      "D-0014",
+      "D-0017"
+    ],
+    "proposed_decision": "D-0018",
+    "proposed_decision_status": "proposed",
+    "proposed_decision_sha256": "ade766d79a4f01a2a944cb23568c7a776d0c1e246ace73cdcc5bc067cc70468b",
+    "proposed_decision_sync_commit": "8a8a3690bde2e16388b4e3304c4f7e1d41949ce7",
+    "implementation_requires_confirmed_D_0018": true
+  },
+  "source_identity": {
+    "repository": "PSSolver",
+    "branch": "dev/0.4",
+    "parent_commit": "54efc9eb087adf701b6b83d4776b9202be646ed9",
+    "parent_tree": "ed23c4184b8ed1a4165ef53de2f579272af40112",
+    "version": "0.4.0.dev0",
+    "comparison_baseline_tag": "v0.3.0",
+    "comparison_baseline_tag_object": "f14c921b7114e792d0bc2af81a045e156eb89f4e",
+    "comparison_baseline_commit": "47473880534a66f6da940db82122c79cda48a86b",
+    "functional_api_version": "1.1",
+    "functional_api_blob": "30f4274f150cb6bdd2deb011e4e41b319d430071",
+    "beris_edwards_blob": "07f1f03f7f2f35e28e8ce629c1d73c5d59e4f5f3",
+    "q_tensor_blob": "5427df4402f31fc43ac409e1936cd31e58269966"
+  },
+  "recommended_batch_order": [
+    "R2",
+    "R4",
+    "R5",
+    "R1"
+  ],
+  "risk_rationale": {
+    "R2": "Lowest numerical risk: consolidate persistence and integrity mechanics while freezing every released format, byte representation, error, and restart result.",
+    "R4": "Medium numerical risk: share stepping and progress primitives only after checkpoint compatibility is stable; preserve arithmetic and transform order exactly.",
+    "R5": "High hot-path risk: unify four pressure-PCG control flows while preserving production, transpose, implicit-backward, and oracle arithmetic, diagnostics, gradients, timing, and memory.",
+    "R1": "Highest breadth risk: replace repeated model-geometry construction dispatch across eight application-stack layers only after all lower-level state and solver contracts are stable."
+  },
+  "batch_policy": {
+    "one_branch_per_batch": true,
+    "one_independent_review_per_batch": true,
+    "push_only_after_batch_pass_and_separate_authorization": true,
+    "batch_parent_is_previous_accepted_dev_0_4_tip": true,
+    "runtime_changes_in_this_design_commit": false
+  },
+  "global_invariants": {
+    "default_numerical_comparison": "bitwise equality",
+    "compare_against": [
+      "released v0.3.0",
+      "the accepted dev/0.4 parent of the batch"
+    ],
+    "no_existing_threshold_relaxation": true,
+    "no_new_skip_or_xfail": true,
+    "no_public_checkpoint_source_mutation": true,
+    "read_all_released_v0_2_x_checkpoints": true,
+    "read_released_v0_3_0_checkpoints": true,
+    "functional_api_1_1_names_semantics_and_version_unchanged": true,
+    "production_defaults_unchanged": true,
+    "d_0013_memory_exception_extends_to_v0_4": false
+  },
+  "tolerance_preregistration": {
+    "nonzero_tolerances_registered_now": [],
+    "reason": "No design evidence shows an unavoidable numerical difference. Refactoring is therefore gated on exact equality rather than on a speculative tolerance.",
+    "if_bitwise_equivalence_is_impossible": {
+      "action": "stop before completing or integrating the affected batch",
+      "required_baseline_measurements": [
+        "v0.3.0 versus itself in the same environment and process-order contract",
+        "the batch parent versus itself in the same environment and process-order contract",
+        "the unmodified batch parent repeated under the planned trial and ordering design"
+      ],
+      "required_registration_fields": [
+        "comparison objects and exact case matrix",
+        "metric and aggregation",
+        "all samples and measured baseline variation",
+        "proposed threshold and scientific or implementation basis",
+        "proof that the threshold does not relax an existing numerical, scientific, restart, performance, or memory gate"
+      ],
+      "authorization": "a new proposed D decision and explicit user confirmation are required before implementation continues"
+    }
+  },
+  "common_cpu_acceptance": {
+    "reachable_only_clones": true,
+    "suites": [
+      "complete conda Nematics3D CPU suite with the registered CUDA deselection",
+      "complete D-0008 a2 baseline-clone CPU suite with the registered CUDA deselection",
+      "complete conda suite while repository-external evidence paths are blocked"
+    ],
+    "equivalence": {
+      "matrix": "the eight standard Plane, Periodic, and Channel families",
+      "steps": 20,
+      "state_check": "torch.equal for every state tensor after every step and at completion",
+      "identity_check": "exact runtime_identity and configuration_identity under a common work path",
+      "metadata_check": "exact completed-step, transform, solver-diagnostic, and progress metadata where applicable"
+    },
+    "installed_wheel": [
+      "build from a clean git archive",
+      "pip check",
+      "all packaged modules import except the already registered optional visualizer",
+      "standard Plane, Periodic, legacy Channel, and complete-stress Channel dry runs"
+    ],
+    "hygiene": [
+      "git diff --check",
+      "no new skip or xfail",
+      "no threshold or production-default change",
+      "task-created clones and venv clones pruned under D-0008"
+    ]
+  },
+  "batches": {
+    "R2": {
+      "title": "Checkpoint and integrity helper consolidation",
+      "risk": "low_to_medium",
+      "objective": "Make production and functional checkpoint paths share internal integrity, manifest, payload, canonical-metadata, and atomic-publication primitives without changing a released carrier or reader.",
+      "existing_files_in_scope": [
+        "pssolver/io/checkpoint.py",
+        "pssolver/io/checkpoint_identity.py",
+        "pssolver/functional/checkpoint_identity.py",
+        "pssolver/functional/periodic_checkpoint.py",
+        "pssolver/functional/channel_checkpoint.py",
+        "pssolver/workflows/periodic_checkpoint.py",
+        "pssolver/workflows/channel_checkpoint.py",
+        "pssolver/workflows/channel_beris_edwards.py",
+        "pssolver/workflows/plane_checkpoint.py",
+        "pssolver/runtime/finite_q_anchoring.py",
+        "pssolver/runtime/robin_scalar.py"
+      ],
+      "planned_internal_owner": "pssolver.io; a new private helper module is allowed only if it remains outside the public API and preserves all call-site behavior",
+      "frozen_or_reader_only_surfaces": [
+        "all v0.2.x functional and production format readers and explicit migrations",
+        "the released v0.3.0 Plane format 3, legacy Channel format 3, finite-Q format 2, and experimental-shadow format 2 readers",
+        "legacy experimental checkpoint carriers that are still required for read compatibility"
+      ],
+      "bitwise_feasibility": "required_and_expected",
+      "exact_requirements": [
+        "current-format output directory trees and metadata bytes are identical",
+        "exception class, message, operation, and metadata are identical",
+        "fast and NFS-compatible atomic publication semantics are unchanged",
+        "imported state and one-step or twenty-step restart results are bitwise identical",
+        "source checkpoint directories remain read-only"
+      ],
+      "batch_specific_evidence": [
+        "all committed functional_checkpoint_releases_v1, legacy_channel_checkpoints_v1, v0_2_0_checkpoints_v1, historical_cpu_coverage_v1, and s09_legacy_compatibility_v1 fixtures",
+        "v0.3.0-tag-generated current-format fixtures for Plane, Periodic, legacy Channel, complete-stress Channel, finite-Q, and experimental shadow",
+        "byte-tree comparison of current writers against both v0.3.0 and the batch parent",
+        "tamper, missing-file, wrong-format, unsupported-version, existing-target, and fail-closed fault matrices",
+        "N-1 publication matrix as a CPU contract; a real-NFS rerun is required only if the publication implementation is touched"
+      ],
+      "s19_gpu_scope": [
+        "CUDA checkpoint and restart for every production and functional family",
+        "CPU-to-CUDA and CUDA-to-CPU compatibility cases already in the qualification contract",
+        "device-independent identity and installed-wheel import provenance"
+      ],
+      "control_boundary": "No Functional API name, semantic, version, beris_edwards blob, or q_tensor blob change is planned. Control main needs only its normal installed-wheel CPU compatibility gate."
+    },
+    "R4": {
+      "title": "Shared semi-implicit stepping, spectral refresh, and progress primitives",
+      "risk": "medium",
+      "objective": "Share exact-order step and progress primitives while leaving field updates, transform order, refresh cadence, callbacks, and restart clocks unchanged.",
+      "existing_files_in_scope": [
+        "pssolver/execution/state.py",
+        "pssolver/integrators/state_backed.py",
+        "pssolver/integrators/step_program.py",
+        "pssolver/integrators/scalar_reference.py",
+        "pssolver/runtime/plane_compiled_v2_step.py",
+        "pssolver/runtime/plane_beris_edwards.py",
+        "pssolver/runtime/periodic_beris_edwards.py",
+        "pssolver/runtime/channel_beris_edwards.py",
+        "pssolver/runtime/channel_active_nematics.py",
+        "pssolver/workflows/plane_checkpoint.py",
+        "pssolver/workflows/periodic_checkpoint.py",
+        "pssolver/workflows/channel_beris_edwards.py"
+      ],
+      "planned_internal_owner": "pssolver.integrators; shared primitives must be callbacks over the existing arithmetic rather than a reordered vectorized implementation",
+      "bitwise_feasibility": "required_and_expected",
+      "exact_requirements": [
+        "same Python and tensor operation order for every field",
+        "same in-place versus out-of-place behavior and alias ownership",
+        "same real-first transform execution order and transform counts",
+        "same refresh_due decision, completed_steps, step_count, refresh_count, and generation values",
+        "same callback timing and exception boundary",
+        "same restart state at every refresh boundary"
+      ],
+      "batch_specific_evidence": [
+        "8-family by 20-step state trace with a comparison after every step",
+        "refresh intervals None, 1, 2, and a non-divisor of the run length",
+        "restart immediately before, on, and after a scheduled refresh",
+        "exact callback order, transform count, progress metadata, and runtime/configuration identity comparisons",
+        "negative restoration cases for inconsistent progress counters"
+      ],
+      "s19_gpu_scope": [
+        "compiled-v2 torch.compile graph and graph-break closure",
+        "CUDA transform execution order and counters",
+        "CUDA restart and long-running finite-state checks",
+        "H100 timing and memory non-regression"
+      ],
+      "control_boundary": "No Functional API or constitutive blob change is planned. If sharing requires a public Functional API semantic change, R4 stops and the D-0017 Control-first gate runs before any Provider push."
+    },
+    "R5": {
+      "title": "Four-path Channel PCG control consolidation",
+      "risk": "high",
+      "objective": "Unify stopping, breakdown, fixed-work saturation, rollback, and postcondition control without merging away the distinct forward, transpose, implicit-autograd, and oracle operator callbacks.",
+      "existing_files_in_scope": [
+        "pssolver/linear_solvers/stokes/channel_no_slip.py",
+        "pssolver/functional/channel_pressure.py",
+        "pssolver/functional/channel_pressure_adjoint.py"
+      ],
+      "four_paths": [
+        "ChannelNoSlipModalStokesSolver._solve_pressure production loop",
+        "functional transpose pressure loop in channel_pressure.py",
+        "implicit backward pressure loop in channel_pressure_adjoint.py",
+        "unrolled_channel_pressure_solve_oracle in channel_pressure_adjoint.py"
+      ],
+      "planned_internal_owner": "a private Channel-PCG control module under pssolver.linear_solvers.stokes; arithmetic remains in path-specific callbacks",
+      "bitwise_feasibility": "required_but_must_be_proved_before_replacement",
+      "exact_requirements": [
+        "same operator and preconditioner call order and counts",
+        "same host synchronization points and finite checks",
+        "same tolerance and fixed-work termination reasons, iteration counts, rollback state, and true residual",
+        "same public exception class, message, and metadata",
+        "same forward state, transpose result, gradients, and oracle result",
+        "same warm-start cache semantics and D-0013-adjudicated production behavior"
+      ],
+      "batch_specific_evidence": [
+        "all tolerance and fixed-work modes for float32 and float64",
+        "zero RHS, exact-zero residual, nonfinite input/intermediate, operator breakdown, preconditioned-residual breakdown, roundoff-floor crossing, rollback, and iteration-limit cases",
+        "R-0014 through R-0016 silent-divergence and floor-crossing matrices",
+        "production versus transpose versus implicit versus oracle value and diagnostic parity",
+        "gradient, warm-start, operator-call-count, timing-synchronization-count, and peak-live-state probes"
+      ],
+      "s19_gpu_scope": [
+        "CUDA forward, transpose, backward, and oracle agreement",
+        "NEW-14-style execution-scope backward coverage remains part of cumulative qualification",
+        "H100 profile matrix with every frozen timing and memory threshold unchanged",
+        "D-0013 peak-reserved exception is not accepted for v0.4"
+      ],
+      "control_boundary": "The stable Functional API objects and version remain unchanged. Control main is CPU-qualified against every R5 candidate before Provider push; any API or constitutive-blob change triggers the full D-0017 migration-first rule."
+    },
+    "R1": {
+      "title": "Model-geometry application registry",
+      "risk": "highest",
+      "objective": "Replace repeated per-pair application construction stacks with one immutable registry while preserving every registered key, dispatch result, capability report, error, compiler adapter, runtime, workflow, and identity.",
+      "eight_stack_layers_and_files": [
+        {
+          "layer": "capability declaration",
+          "files": [
+            "pssolver/api/capabilities.py"
+          ]
+        },
+        {
+          "layer": "public simulation declaration",
+          "files": [
+            "pssolver/configuration/simulation.py",
+            "pssolver/configuration/plane_beris_edwards_declarations.py",
+            "pssolver/configuration/channel_active_nematics_declarations.py"
+          ]
+        },
+        {
+          "layer": "lowering",
+          "files": [
+            "pssolver/configuration/simulation_lowering.py"
+          ]
+        },
+        {
+          "layer": "runtime binding",
+          "files": [
+            "pssolver/configuration/simulation_binding.py"
+          ]
+        },
+        {
+          "layer": "public compiler dispatch",
+          "files": [
+            "pssolver/configuration/public_simulation_runner.py",
+            "pssolver/configuration/public_periodic_simulation_compiler.py",
+            "pssolver/configuration/public_channel_simulation_compiler.py",
+            "pssolver/configuration/public_channel_beris_edwards_compiler.py"
+          ]
+        },
+        {
+          "layer": "application adapter",
+          "files": [
+            "pssolver/applications/plane_beris_edwards.py",
+            "pssolver/applications/periodic_beris_edwards.py",
+            "pssolver/applications/channel_active_nematics.py",
+            "pssolver/applications/channel_beris_edwards.py"
+          ]
+        },
+        {
+          "layer": "runtime construction",
+          "files": [
+            "pssolver/runtime/simulation_construction.py",
+            "pssolver/runtime/package_construction.py",
+            "pssolver/runtime/plane_application_bridge.py",
+            "pssolver/runtime/channel_application_bridge.py"
+          ]
+        },
+        {
+          "layer": "workflow exposure",
+          "files": [
+            "pssolver/workflows/plane_beris_edwards.py",
+            "pssolver/workflows/periodic_beris_edwards.py",
+            "pssolver/workflows/channel_active_nematics.py",
+            "pssolver/workflows/channel_beris_edwards.py"
+          ]
+        }
+      ],
+      "planned_internal_owner": "a private immutable registry in pssolver.configuration; public capability APIs remain views over the same qualified entries",
+      "rollout": [
+        "construct a shadow registry without changing dispatch",
+        "compare exact keys, order, compiler identities, lowering, binding, capability output, and negative errors against the legacy path",
+        "switch one internal dispatch entry point only after shadow parity passes",
+        "retain a direct legacy negative control during the batch review"
+      ],
+      "bitwise_feasibility": "required_and_expected",
+      "exact_requirements": [
+        "same supported model-geometry-boundary key set and deterministic ordering",
+        "same pre-allocation validation and failure classes/messages",
+        "same lowering and binding records and their canonical identities",
+        "same selected compiler, application adapter, runtime, workflow, and public capability output",
+        "same state traces, runtime_identity, configuration_identity, and installed-wheel behavior"
+      ],
+      "batch_specific_evidence": [
+        "exhaustive registered-key and near-miss key matrix",
+        "shadow versus legacy lowering, binding, compiler, application, runtime, workflow, and identity comparison",
+        "all public Simulation construction and dry-run cases",
+        "clean-wheel module imports and capability enumeration",
+        "8-family by 20-step bitwise equivalence and all released checkpoint readers"
+      ],
+      "s19_gpu_scope": [
+        "all registered GPU-capable pairs through installed-wheel construction",
+        "compiled-v2 device binding, graphs, checkpoint/restart, gradients, timing, and memory",
+        "unregistered and wrong-device paths fail before allocation"
+      ],
+      "control_boundary": "R1 must not alter Functional API 1.1 or either constitutive blob. If the registry cannot be implemented behind those frozen surfaces, Provider work stops and Control main is migrated and CPU-qualified first under D-0017."
+    }
+  },
+  "control_first_contract": {
+    "control_main_record_commit": "140bd273693c341545ceb023bfd2de2e36458e07",
+    "functional_api_module": "pssolver.functional.api",
+    "functional_api_version": "1.1",
+    "pinned_constitutive_blobs": {
+      "pssolver/models/active_nematics/beris_edwards.py": "07f1f03f7f2f35e28e8ce629c1d73c5d59e4f5f3",
+      "pssolver/models/active_nematics/q_tensor.py": "5427df4402f31fc43ac409e1936cd31e58269966"
+    },
+    "pre_push_rule": "Any change to Functional API names, semantics, or version, or to either pinned blob, requires an isolated Control-main migration and CPU qualification before the Provider change may be pushed or released.",
+    "research_branch": {
+      "branch": "research/3d-warmup",
+      "provider": "v0.2.0",
+      "included": false
+    }
+  },
+  "s19_handoff": {
+    "cpu_batches_may_not_claim_gpu_qualification": true,
+    "single_cumulative_campaign": true,
+    "baseline": "v0.3.0",
+    "reuse_recent_accepted_thresholds": true,
+    "d_0013_exception_allowed": false,
+    "failure_budget": "at most one separately authorized diagnostic job after the qualification job",
+    "requires_separate_user_authorization": true
+  },
+  "questions_for_user": [
+    {
+      "id": "Q-S18-01",
+      "topic": "batch order",
+      "recommended_option": "A"
+    },
+    {
+      "id": "Q-S18-02",
+      "topic": "batch isolation",
+      "recommended_option": "A"
+    },
+    {
+      "id": "Q-S18-03",
+      "topic": "bitwise and tolerance policy",
+      "recommended_option": "A"
+    },
+    {
+      "id": "Q-S18-04",
+      "topic": "R1 shadow-registry rollout",
+      "recommended_option": "A"
+    },
+    {
+      "id": "Q-S18-05",
+      "topic": "Control-first boundary",
+      "recommended_option": "A"
+    }
+  ],
+  "implementation": {
+    "started": false,
+    "runtime_files_changed": [],
+    "packaging_files_changed": [],
+    "public_interfaces_changed": [],
+    "numerical_output_changed": false,
+    "checkpoint_schema_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false
+  },
+  "authorization": {
+    "push": false,
+    "tag": false,
+    "github_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm": false,
+    "gpu_or_h100": false
+  }
+}
