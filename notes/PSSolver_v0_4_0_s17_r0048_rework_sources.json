@@ -1,0 +1,52 @@
+{
+  "schema": "pssolver.v0_4.s17.r0048_rework_sources.v1",
+  "date": "2026-10-30",
+  "plan_step": "S-17",
+  "classification": "R0048_REWORK_SOURCES_COMPLETED_AWAITING_R0049",
+  "review": {
+    "request": "R-0048",
+    "classification": "REWORK_REQUIRED",
+    "result_sha256": "d576e47398965f3bfafc622fa0b6a0f49f6e659ca14f821ba4a9f7f1ff075b8a",
+    "archive_checksums_sha256": "bba03b15ba180cf5ec37148370c579671dd5697dd6451cc294ed2ceb4173bff5"
+  },
+  "fix_sources": {
+    "V-56": {
+      "repository": "PSSolver-Control",
+      "commit": "215e35c5504a305d20a28ad3987fd5ed2f94683a",
+      "files": {
+        "docs/pssolver_rc4_pressure_source_mapping.json": "b07d1a420a6048c7a363d2aa3a805980498bbe9a049d27528e0ab063f446e3ec",
+        "tests/test_pssolver_rc4_pressure_migration.py": "2b37b755eafff3e5a57107e98f7711dbb673e7d6e51246a614e23247c8978179"
+      },
+      "claim": "The reachable rebuilt ancestor supplies three live hashes; the fourth original-line hash is an explicit historical mapping and no test reads the unreachable object."
+    },
+    "V-57": {
+      "repository": "PSSolver-Control",
+      "commit": "140bd273693c341545ceb023bfd2de2e36458e07",
+      "files": {
+        "docs/pssolver_v0_3_0_main_migration.json": "fbd24c3d481d7ffd96f2036dd0cc4f9035f7702cb0611db41fedf6462f32104b",
+        "docs/pssolver_v0_3_0_main_migration.md": "cb5fafa54a673743afbd4756268f59d35ecd5f985278e2753744773daaf20101",
+        "tests/test_pssolver_v0_3_0_main_migration.py": "0056689a3e8ac076ffc4fccfece5e03193189b1eeaa16242e0402b4fb01a2cac"
+      },
+      "claim": "The record discloses all five original-to-rebuilt pairs, the range-diff conclusions, omitted historical evidence, and the separately authorized preservation choices for the local-only S-09 commits."
+    },
+    "V-58": {
+      "repository": "PSSolver",
+      "commit": "d98472aa975776fcd78f95b133d2abb747bce83b",
+      "files": {
+        "notes/PSSolver_v0_4_0_s17_r3_r6_design_proposal.json": "0fd77584a4b2fd2ebd72ceda96a4e666f5a21e5810bafc8098c405fe6e948cab",
+        "notes/PSSolver_v0_4_0_s17_r3_r6_design_proposal_zh.md": "936457f5bea469145a3e0c083daed7bf02ed3c2df8240964afafe478fd0c65ec",
+        "tests/test_v0_4_s17_r3_r6_design_proposal.py": "bec87fc6766678d438df1d4eabd52dda2716bcc0769bea5e6eb857377b3949f7"
+      },
+      "claim": "The design covers Functional API 1.1, both planar constitutive blob pins, warning-free child-module imports, and all direct Provider dependencies of the protected research branch."
+    }
+  },
+  "scope": {
+    "r3_or_r6_implemented": false,
+    "pssolver_runtime_changed": false,
+    "pssolver_control_execution_code_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "push_performed": false,
+    "gpu_or_h100_run": false
+  }
+}
