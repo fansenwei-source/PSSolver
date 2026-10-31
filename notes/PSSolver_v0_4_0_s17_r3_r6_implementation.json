@@ -1,0 +1,103 @@
+{
+  "schema": "pssolver.v0_4.s17.r3_r6_implementation.v1",
+  "created_at": "2026-10-31T16:40:20-04:00",
+  "plan_step": "S-17",
+  "classification": "S17_R3_R6_LOCAL_CPU_CANDIDATE_AWAITING_R0050_REVIEW",
+  "governance": {
+    "decision": "D-0017",
+    "decision_sha256": "28dee10ed51004722003c9af0ae7e031c6c07ed0e4e40e416d63f98d90bcce6a",
+    "design_record": "notes/PSSolver_v0_4_0_s17_r3_r6_design_proposal.json",
+    "design_record_sha256": "0fd77584a4b2fd2ebd72ceda96a4e666f5a21e5810bafc8098c405fe6e948cab"
+  },
+  "git_identity": {
+    "branch": "dev/0.4",
+    "parent": "37fcac5e42990405ea1f6a8b47ed28bb5321c3bc",
+    "implementation": "667735ed79154ecdaae25a5861eb2fd33391c90e",
+    "implementation_tree": "e9dc6424d3a305540b5462eb499eaea3fe0be965",
+    "pssolver_tree": "629be293db3146ad22f4a65f72bc6914dc36b224"
+  },
+  "r3": {
+    "functional_api_module": "pssolver.functional.api",
+    "functional_api_version": "1.1",
+    "stable_export_count": 46,
+    "stable_names_or_semantics_changed": false,
+    "broad_facade": "pssolver.functional",
+    "broad_facade_export_count": 85,
+    "broad_facade_available_through": "all v0.4 releases",
+    "deprecation_trigger": "first compatibility-facade name access",
+    "stable_child_import_emits_deprecation": false,
+    "resolved_values_cached_after_first_access": true,
+    "raw_builder_compatibility_preserved": true,
+    "safe_shared_contracts_resolve_through_stable_api": true,
+    "removal_requires_future_api_decision_and_control_qualification": true
+  },
+  "control_first_boundary": {
+    "qualified_control_main_record": "140bd273693c341545ceb023bfd2de2e36458e07",
+    "functional_api_changed": false,
+    "beris_edwards_blob": "07f1f03f7f2f35e28e8ce629c1d73c5d59e4f5f3",
+    "q_tensor_blob": "5427df4402f31fc43ac409e1936cd31e58269966",
+    "planar_constitutive_blobs_changed": false,
+    "control_migration_required_by_this_candidate": false,
+    "research_3d_warmup_in_scope": false
+  },
+  "r6": {
+    "explicit_namespace": "pssolver.experimental.boundary_pilots",
+    "explicit_namespace_export_count": 59,
+    "families": [
+      "robin",
+      "finite_q",
+      "lifting"
+    ],
+    "inventory": {
+      "qualified_public_declarations": [
+        "pssolver.boundaries.robin",
+        "pssolver.models.active_nematics quadratic finite-Q declarations"
+      ],
+      "experimental_execution_layers": [
+        "configuration",
+        "planning",
+        "operators",
+        "runtime",
+        "workflows"
+      ],
+      "deprecated_package_facades": {
+        "pssolver.planning": 11,
+        "pssolver.operators": 13,
+        "pssolver.runtime": 10,
+        "pssolver.workflows": 6
+      },
+      "defining_module_paths_preserved": true,
+      "released_checkpoint_readers_preserved": true
+    },
+    "public_simulation_execution_qualified": false,
+    "lifting_execution_open": false,
+    "lifting_blocked_by": [
+      "B8",
+      "S2-07"
+    ],
+    "checkpoint_schema_changed": false,
+    "checkpoint_writer_changed": false,
+    "checkpoint_reader_changed": false
+  },
+  "scope": {
+    "public_interface_deprecation_added": true,
+    "experimental_namespace_added": true,
+    "functional_api_changed": false,
+    "numerical_algorithm_changed": false,
+    "numerical_output_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "local_implementation": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
