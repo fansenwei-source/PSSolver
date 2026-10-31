@@ -9,9 +9,11 @@ silent.
 
 from __future__ import annotations
 
+from importlib import import_module as _import_module
+
 from pssolver.core._compatibility import (
-    facade_dir,
-    resolve_deprecated_facade_name,
+    facade_dir as _facade_dir,
+    resolve_deprecated_facade_name as _resolve_deprecated_facade_name,
 )
 
 
@@ -245,9 +247,32 @@ _COMPATIBILITY_EXPORTS.update(
     }
 )
 
+_IMPLICIT_SUBMODULE_NAMES = frozenset(
+    {
+        "channel_activity",
+        "channel_activity_runtime",
+        "channel_checkpoint",
+        "channel_pressure",
+        "channel_pressure_adjoint",
+        "checkpoint_identity",
+        "contracts",
+        "errors",
+        "legacy_identity",
+        "periodic_activity",
+        "periodic_checkpoint",
+        "pressure_metadata",
+        "validation",
+        "versioning",
+    }
+)
+
 
 def __getattr__(name: str) -> object:
-    return resolve_deprecated_facade_name(
+    if name in _IMPLICIT_SUBMODULE_NAMES:
+        module = _import_module(f"{__name__}.{name}")
+        globals()[name] = module
+        return module
+    return _resolve_deprecated_facade_name(
         name,
         facade=__name__,
         replacement=(
@@ -260,7 +285,10 @@ def __getattr__(name: str) -> object:
 
 
 def __dir__() -> list[str]:
-    return facade_dir(globals(), _COMPATIBILITY_EXPORTS)
+    return sorted(
+        set(_facade_dir(globals(), _COMPATIBILITY_EXPORTS))
+        | _IMPLICIT_SUBMODULE_NAMES
+    )
 
 
 __all__ = [

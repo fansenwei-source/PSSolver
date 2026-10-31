@@ -142,6 +142,92 @@ assert all("pssolver.experimental.boundary_pilots" in str(item.message) for item
     assert result.returncode == 0, result.stderr
 
 
+def test_plain_package_import_preserves_v030_submodule_attributes_without_warning():
+    result = _isolated_python(
+        """
+import importlib
+import json
+import types
+import warnings
+
+expected = {
+    "pssolver.functional": [
+        "channel_activity",
+        "channel_activity_runtime",
+        "channel_checkpoint",
+        "channel_pressure",
+        "channel_pressure_adjoint",
+        "checkpoint_identity",
+        "contracts",
+        "errors",
+        "legacy_identity",
+        "periodic_activity",
+        "periodic_checkpoint",
+        "pressure_metadata",
+        "validation",
+        "versioning",
+    ],
+    "pssolver.operators": [
+        "lifting",
+        "projection",
+        "robin",
+        "tensor_divergence",
+    ],
+    "pssolver.runtime": [
+        "channel_active_nematics",
+        "channel_application_bridge",
+        "channel_beris_edwards",
+        "finite_q_anchoring",
+        "package_construction",
+        "periodic_beris_edwards",
+        "plane_application_bridge",
+        "plane_beris_edwards",
+        "plane_legacy",
+        "robin_scalar",
+        "simulation_construction",
+        "static_lifting",
+    ],
+    "pssolver.workflows": [
+        "channel_active_nematics",
+        "channel_beris_edwards",
+        "channel_checkpoint",
+        "channel_checkpoint_observation",
+        "channel_observation",
+        "diagnostic_io",
+        "finite_q_anchoring",
+        "periodic_beris_edwards",
+        "periodic_checkpoint",
+        "plane_beris_edwards",
+        "plane_checkpoint",
+        "plane_observation",
+        "state_validation",
+    ],
+}
+observed = {}
+with warnings.catch_warnings(record=True) as caught:
+    warnings.simplefilter("always")
+    for package_name, names in expected.items():
+        package = importlib.import_module(package_name)
+        for name in names:
+            module = getattr(package, name)
+            assert isinstance(module, types.ModuleType)
+            assert module.__name__ == f"{package_name}.{name}"
+        observed[package_name] = sorted(
+            name
+            for name, value in vars(package).items()
+            if isinstance(value, types.ModuleType)
+            and value.__name__.startswith(f"{package_name}.")
+        )
+        assert "facade_dir" not in dir(package)
+        assert "resolve_deprecated_facade_name" not in dir(package)
+assert not caught, [str(item.message) for item in caught]
+assert observed == expected
+print(json.dumps(observed, sort_keys=True))
+"""
+    )
+    assert result.returncode == 0, result.stderr
+
+
 def test_released_finite_q_reader_keeps_its_defining_module_identity():
     from pssolver.workflows.finite_q_anchoring import (
         load_finite_q_anchoring_checkpoint,

@@ -1,8 +1,10 @@
 """Reusable numerical operators owned independently of physical models."""
 
+from importlib import import_module as _import_module
+
 from pssolver.core._compatibility import (
-    facade_dir,
-    resolve_deprecated_facade_name,
+    facade_dir as _facade_dir,
+    resolve_deprecated_facade_name as _resolve_deprecated_facade_name,
 )
 
 
@@ -25,9 +27,15 @@ _PILOT_EXPORTS = {
     )
 }
 
+_IMPLICIT_SUBMODULE_NAMES = frozenset({"lifting", "robin"})
+
 
 def __getattr__(name: str) -> object:
-    return resolve_deprecated_facade_name(
+    if name in _IMPLICIT_SUBMODULE_NAMES:
+        module = _import_module(f"{__name__}.{name}")
+        globals()[name] = module
+        return module
+    return _resolve_deprecated_facade_name(
         name,
         facade=__name__,
         replacement="pssolver.experimental.boundary_pilots",
@@ -37,7 +45,7 @@ def __getattr__(name: str) -> object:
 
 
 def __dir__() -> list[str]:
-    return facade_dir(globals(), _PILOT_EXPORTS)
+    return sorted(set(_facade_dir(globals(), _PILOT_EXPORTS)) | _IMPLICIT_SUBMODULE_NAMES)
 
 __all__ = [
     "FRESH_INITIAL_CONDITIONING_SCHEMA_VERSION",
