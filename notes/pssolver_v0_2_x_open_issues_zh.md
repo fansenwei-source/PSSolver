@@ -6,12 +6,12 @@
 `dev/0.4` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 64 条：
+当前共登记 65 条：
 
 - `open`：0；
-- `registered`：0；
-- `claimed_fixed`：1；
-- `verified`：59；
+- `registered`：1；
+- `claimed_fixed`：0；
+- `verified`：60；
 - `deferred`：2；
 - `accepted`：2；
 - `coverage_gap`：0。
@@ -261,6 +261,11 @@
     两套完整 CPU suite、Control main 门禁及 8×20 逐位比较全部通过。`V-59` 保持修复身份
     `223b86dde0eb22ff1816e5a91ee93195ff5718a7`，推进为 `verified`、
     `verified_by=R-0051`；S-17 已完成，只等待另行授权的 dev/0.4 非强制快进推送。
+44. `R-0052` 对 S-18 设计的批次顺序、逐位默认合同、共同 CPU 门禁、Control-first
+    边界、S-19 交接和 R5 四条 PCG 循环均已认可，但登记 `V-60`（low）：首版 R2
+    漏列七个 checkpoint/完整性 helper 相关模块，R4 漏列两个谱刷新模块且未说明两条
+    Control Functional 路径是否在范围内，R1 也未逐项处置组合专用模块。返工须把代码扫描
+    检出的每个模块明确归为“本批修改”“只读冻结”或“范围外”，并写明理由。
 
 ## Control 路径
 

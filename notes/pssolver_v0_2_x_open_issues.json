@@ -29,10 +29,10 @@
       "rewritten": false
     }
   },
-  "issue_count": 64,
+  "issue_count": 65,
   "status_counts": {
     "open": 0,
-    "registered": 0,
+    "registered": 1,
     "claimed_fixed": 0,
     "verified": 60,
     "deferred": 2,
@@ -1059,6 +1059,20 @@
       "verified_by": "R-0051",
       "target_release": "0.4 S-17",
       "notes": "The S-17 candidate b3c5596 replaced eager package imports with lazy compatibility facades, but plain imports no longer exposed 14 historical pssolver.functional submodule attributes, operators.lifting/robin, runtime.finite_q_anchoring/robin_scalar, or workflows.finite_q_anchoring. Access therefore raised AttributeError unless another import happened to load the submodule first. Commit 223b86d restores exactly the v0.3.0 submodule sets through warning-free package __getattr__ imports, keeps the facade helpers private, and preserves facade exports, object identities, numerical behavior, skip/xfail and thresholds. R-0051 independently verified the source and installed-wheel behavior under four import orders, both full CPU suites, the Control-main gate, and the 8x20 bitwise comparison."
+    },
+    {
+      "id": "V-60",
+      "title": "S-18 design batch scopes are incomplete",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0052.result.json",
+      "first_found": "S-18 design review R-0052",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.4 S-18",
+      "notes": "The first S-18 design omitted seven checkpoint-related modules from R2, two spectral-refresh modules from R4, the Control relation for two Functional runtimes, and the disposition of per-combination configuration/runtime/planning/workflow modules in R1. R-0052 requires every detected checkpoint, integrity-helper, or spectral-refresh module to be classified as changed, frozen reader-only, or out of scope with a reason, backed by a code-scanning design test."
     }
   ],
   "authorization": {
