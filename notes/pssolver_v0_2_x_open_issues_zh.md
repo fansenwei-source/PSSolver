@@ -6,11 +6,11 @@
 `dev/0.4` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 60 条：
+当前共登记 63 条：
 
 - `open`：0；
 - `registered`：0；
-- `claimed_fixed`：0；
+- `claimed_fixed`：3；
 - `verified`：56；
 - `deferred`：2；
 - `accepted`：2；
@@ -240,7 +240,14 @@
     资格记录，以及 `48dd4d3…` / `97d3c06…` 仅在本地可达。`V-58`（low）指出 R3
     设计漏写 planar adapter 对 `beris_edwards` 与 `q_tensor` 的直接导入和 blob pin，
     facade 弃用机制也必须保证导入 `pssolver.functional.api` 本身不触发告警；研究分支的
-    其他 PSSolver 直接导入同样需要如实登记。三项先登记为 `registered`，等待 R-0049。
+    其他 PSSolver 直接导入同样需要如实登记。
+41. `V-56` 已由 Control 提交 `215e35c…` 修正为仅从可达重建祖先复现三个源码哈希，
+    第四个仅作为原始提交的显式映射；`V-57` 已由 Control 记录提交 `140bd27…` 补全五个
+    重建对、range-diff、遗漏历史证据和本地 S-09 保全选项。PSSolver 证据提交
+    `7e719bbbcd961f54532756ca8929fac3d441b995` 绑定两个跨仓库修复源。`V-58` 已由
+    `d98472aa975776fcd78f95b133d2abb747bce83b` 更正设计边界，纳入两个 planar blob pin、
+    warning-free API 子模块导入和研究分支的直接 Provider 依赖。三项推进为
+    `claimed_fixed`，等待 R-0049；R3/R6 实现仍等待 D-0017。
 
 ## Control 路径
 

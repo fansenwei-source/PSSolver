@@ -1,0 +1,81 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 84,
+  "date": "2026-10-30",
+  "classification": "R0048_REWORK_CLAIMED_FIXED_AWAITING_R0049",
+  "plan_step": "S-17",
+  "git_identity": {
+    "parent_commit": "7e719bbbcd961f54532756ca8929fac3d441b995",
+    "pssolver_design_fix": "d98472aa975776fcd78f95b133d2abb747bce83b",
+    "control_v56_fix": "215e35c5504a305d20a28ad3987fd5ed2f94683a",
+    "control_v57_record_fix": "140bd273693c341545ceb023bfd2de2e36458e07",
+    "record_commit_is_fix_source": false
+  },
+  "fix_source_record": {
+    "path": "notes/PSSolver_v0_4_0_s17_r0048_rework_sources.json",
+    "sha256": "cfdc70833c765476f904902c721675acdae6b7fb64658d298ef67e06dd1d8931"
+  },
+  "registry_ids_claimed_fixed": [
+    "V-56",
+    "V-57",
+    "V-58"
+  ],
+  "fix_sources": {
+    "V-56": {
+      "evidence_commit": "7e719bbbcd961f54532756ca8929fac3d441b995",
+      "external_repository": "PSSolver-Control",
+      "external_fix_commit": "215e35c5504a305d20a28ad3987fd5ed2f94683a"
+    },
+    "V-57": {
+      "evidence_commit": "7e719bbbcd961f54532756ca8929fac3d441b995",
+      "external_repository": "PSSolver-Control",
+      "external_fix_commit": "140bd273693c341545ceb023bfd2de2e36458e07"
+    },
+    "V-58": {
+      "evidence_commit": "d98472aa975776fcd78f95b133d2abb747bce83b",
+      "external_repository": null,
+      "external_fix_commit": null
+    }
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "b1995efd9f96ac53758380fdab1d1e061429da367e754c288774d451f14d8c3b",
+      "current_sha256": "7b0f2295505907e52141b2e033faf51f5d9b275a7e2dcc41b4da3e59711539ff"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "ba1a13f1f93ac38561dccd434d0f069b46e9bf0fe7b106c0d9bf92bfa33564fe",
+      "current_sha256": "90aedb7a8b6f84f4d93d420bd93963218417b1b507d0995d54085f932a1ee93d"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "c42c46f3790528258badd5347d7b35781b48122a28c939f649d64c31c5ce55fa",
+      "current_sha256": "60079745fb7a8973befcfcb7817f03ef161e1105f11b4a6afa4ebec98ef84f49"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_84_s17_r0048_rework_zh.md": "dc740f961742b599d30514d07cf84128ca34664edc0820e3dcaa252103f3cc97",
+    "tests/test_v0_4_s17_r0048_rework_claims.py": "86fb5f2ed27d75ec3230dc18842bfc1dd1cee2c2beadb7d9a3b6614635e60fc4"
+  },
+  "scope": {
+    "pssolver_runtime_changed": false,
+    "control_execution_code_changed": false,
+    "r3_or_r6_implemented": false,
+    "packaging_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false,
+    "push_performed": false,
+    "gpu_or_h100_run": false
+  },
+  "authorization": {
+    "local_registration": true,
+    "control_or_pssolver_push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

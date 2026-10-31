@@ -53,8 +53,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
-        "registered": 3,
-        "claimed_fixed": 0,
+        "registered": 0,
+        "claimed_fixed": 3,
         "verified": 56,
         "deferred": 2,
         "accepted": 2,
@@ -258,12 +258,12 @@ def test_live_registry_tracks_the_current_development_line():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == set()
+    assert claimed == {"V-56", "V-57", "V-58"}
     assert {
         issue_id
         for issue_id, item in issues.items()
         if item["status"] == "registered"
-    } == {"V-56", "V-57", "V-58"}
+    } == set()
     assert issues["V-50"]["fixed_in"] == (
         "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992"
     )
@@ -298,7 +298,11 @@ def test_live_registry_tracks_the_current_development_line():
         assert issues[issue_id]["source_report"] == (
             "PSSolver_sync/results/R-0048.result.json"
         )
-        assert issues[issue_id]["status"] == "registered"
+        assert issues[issue_id]["status"] in {
+            "registered",
+            "claimed_fixed",
+            "verified",
+        }
         assert issues[issue_id]["affects_control_paths"] is True
         assert issues[issue_id]["exercised_by_current_control_research"] is False
     s07_verified = {
@@ -582,7 +586,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == set()
+    } == {"V-56", "V-57", "V-58"}
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (
@@ -628,6 +632,24 @@ def test_s14_corrections_are_verified_at_the_exact_source_commit():
     assert "D-0013" in issues["V-47"]["notes"]
     assert "D-0014" in issues["V-48"]["notes"]
     assert "successor 66" in issues["V-49"]["notes"]
+
+
+def test_r0048_rework_claims_bind_cross_repository_sources_explicitly():
+    issues = _issues()
+    for issue_id in ("V-56", "V-57", "V-58"):
+        assert issues[issue_id]["status"] in {"claimed_fixed", "verified"}
+    assert issues["V-56"]["fixed_in"] == (
+        "7e719bbbcd961f54532756ca8929fac3d441b995"
+    )
+    assert "Control commit 215e35c" in issues["V-56"]["notes"]
+    assert issues["V-57"]["fixed_in"] == (
+        "7e719bbbcd961f54532756ca8929fac3d441b995"
+    )
+    assert "Control record commit 140bd27" in issues["V-57"]["notes"]
+    assert issues["V-58"]["fixed_in"] == (
+        "d98472aa975776fcd78f95b133d2abb747bce83b"
+    )
+    assert "D-0017" in issues["V-58"]["notes"]
 
 
 def test_r0021_verifies_s08_claims_and_leaves_v33_for_s10():
