@@ -1,0 +1,54 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 85,
+  "date": "2026-10-30",
+  "classification": "S17_CROSS_REPOSITORY_GIT_IDENTITIES_FIELD_SCOPED",
+  "plan_step": "S-17",
+  "git_identity": {
+    "parent_commit": "05e4068e437da09395d484cf1be0dcac6d111d8f",
+    "record_commit_is_correction_source": false
+  },
+  "external_git_identity_fields": {
+    "PSSolver_v0_3_0_s03_successor_83_r0048_import.json:reviewed_control_candidate": {
+      "repository": "PSSolver-Control",
+      "commit": "39e7bdcacbb7a33733c17da9fc2809cfc2feba2f",
+      "reason": "R-0048 reviewed the Control migration candidate in the separate Consumer repository."
+    },
+    "PSSolver_v0_3_0_s03_successor_84_s17_r0048_rework.json:control_v56_fix": {
+      "repository": "PSSolver-Control",
+      "commit": "215e35c5504a305d20a28ad3987fd5ed2f94683a",
+      "reason": "V-56 is fixed by the reachable-history mapping in the Consumer repository."
+    },
+    "PSSolver_v0_3_0_s03_successor_84_s17_r0048_rework.json:control_v57_record_fix": {
+      "repository": "PSSolver-Control",
+      "commit": "140bd273693c341545ceb023bfd2de2e36458e07",
+      "reason": "V-57 is fixed by the rebuilt-history record in the Consumer repository."
+    }
+  },
+  "guard_policy": {
+    "match_record_path_field_and_commit": true,
+    "generic_missing_object_exception": false,
+    "other_pssolver_identities_must_resolve": true
+  },
+  "historical_successor_sources": {
+    "tests/test_v0_3_s08_commit_identity_corrections.py": {
+      "historical_sha256": "57bd2b98d272052bba0694519e1f9eb79bd494d635fa663937b1b8945104ca65",
+      "current_sha256": "31b20f785e027b4867e84686f8730b181b96c8923232070ae36a95da324e6616"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_85_s17_external_identity_correction_zh.md": "5f6ac82fe71c7f88c91c7d516c794dee9c35578b626a2b3f5faee46be56a1105",
+    "tests/test_v0_4_s17_external_identity_correction.py": "5363963d6ec79b14be568d7c22e0d8785ab86a0b69a77fa337affbd3ff4a3146"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "public_interface_changed": false,
+    "numerical_output_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "historical_record_rewritten": false,
+    "push_performed": false,
+    "gpu_or_h100_run": false
+  }
+}

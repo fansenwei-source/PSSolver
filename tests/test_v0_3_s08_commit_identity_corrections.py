@@ -17,6 +17,9 @@ REPLAY_RECORD = (
 S16_CORRECTION_RECORD = (
     ROOT / "notes/PSSolver_v0_3_0_s03_successor_77_s16_commit_identity_correction.json"
 )
+S17_EXTERNAL_RECORD = (
+    ROOT / "notes/PSSolver_v0_3_0_s03_successor_85_s17_external_identity_correction.json"
+)
 SUCCESSORS = ROOT / "notes"
 FULL_COMMIT = re.compile(r"[0-9a-f]{40}")
 
@@ -60,14 +63,24 @@ def test_successor_git_identities_resolve_or_have_an_explicit_forward_correction
     }
     replay_mappings = _read(REPLAY_RECORD)["replay"]["original_to_replayed"]
     exceptions = correction["external_git_identity_fields"]
+    s17_external = _read(S17_EXTERNAL_RECORD)["external_git_identity_fields"]
     encountered_corrections: set[str] = set()
     encountered_replay_corrections: set[str] = set()
+    encountered_s17_external: set[str] = set()
     for path in sorted(SUCCESSORS.glob("PSSolver_v0_3_0_s03_successor_*.json")):
         for field, value in _read(path).get("git_identity", {}).items():
             if not isinstance(value, str) or FULL_COMMIT.fullmatch(value) is None:
                 continue
             if field in exceptions:
                 assert exceptions[field]["repository"] == "PSSolver_sync"
+                continue
+            external_key = f"{path.name}:{field}"
+            if external_key in s17_external:
+                identity = s17_external[external_key]
+                assert identity["repository"] == "PSSolver-Control"
+                assert identity["commit"] == value
+                assert _does_not_resolve(value)
+                encountered_s17_external.add(external_key)
                 continue
             authoritative = mappings.get(value, replay_mappings.get(value, value))
             assert _resolve_commit(authoritative) == authoritative
@@ -92,6 +105,7 @@ def test_successor_git_identities_resolve_or_have_an_explicit_forward_correction
         "18588b1be7faaa09c1e1fdb0828c1861e4e69757",
         "b0a203430b1b5a6bc03bfcb377e6e459a28dbbc9",
     }
+    assert encountered_s17_external == set(s17_external)
 
 
 def test_all_historical_errata_bind_nonexistent_values_to_real_git_commits() -> None:
