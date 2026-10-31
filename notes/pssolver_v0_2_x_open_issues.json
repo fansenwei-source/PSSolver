@@ -32,8 +32,8 @@
   "issue_count": 64,
   "status_counts": {
     "open": 0,
-    "registered": 1,
-    "claimed_fixed": 0,
+    "registered": 0,
+    "claimed_fixed": 1,
     "verified": 59,
     "deferred": 2,
     "accepted": 2,
@@ -1054,9 +1054,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "223b86dde0eb22ff1816e5a91ee93195ff5718a7",
       "target_release": "0.4 S-17",
-      "notes": "The S-17 candidate b3c5596 replaced eager package imports with lazy compatibility facades, but plain imports no longer expose 14 historical pssolver.functional submodule attributes, operators.lifting/robin, runtime.finite_q_anchoring/robin_scalar, or workflows.finite_q_anchoring. Access therefore raises AttributeError unless another import happened to load the submodule first. R-0050 requires each package __getattr__ to import exactly the v0.3.0 submodule set without a deprecation warning, while preserving all facade export identities, warnings, numerical behavior, skip/xfail and thresholds."
+      "notes": "The S-17 candidate b3c5596 replaced eager package imports with lazy compatibility facades, but plain imports no longer exposed 14 historical pssolver.functional submodule attributes, operators.lifting/robin, runtime.finite_q_anchoring/robin_scalar, or workflows.finite_q_anchoring. Access therefore raised AttributeError unless another import happened to load the submodule first. Commit 223b86d restores exactly the v0.3.0 submodule sets through warning-free package __getattr__ imports, keeps the facade helpers private, and preserves facade exports, object identities, numerical behavior, skip/xfail and thresholds. The fix is claimed_fixed pending R-0051."
     }
   ],
   "authorization": {

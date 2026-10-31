@@ -1,0 +1,82 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 89,
+  "date": "2026-10-31",
+  "classification": "V59_CLAIMED_FIXED_AWAITING_R0051_REVIEW",
+  "plan_step": "S-17",
+  "git_identity": {
+    "implementation": "223b86dde0eb22ff1816e5a91ee93195ff5718a7",
+    "implementation_parent": "8bcc540a6834246b500d3df01551680c7154e2a7",
+    "record_commit_is_qualified_source": false
+  },
+  "review": {
+    "request": "R-0050",
+    "classification": "REWORK_REQUIRED",
+    "result_sha256": "d28ef1b45e259742a4f22f7f58c03c08d648ea346d634f8e5783ff7a519d07dc",
+    "finding": "V-59"
+  },
+  "rework_record_sha256": "ee37b6451b2994bec9aa89dd461847f2ef00214bc0eedbbe53967e954a55f985",
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "5b264a3b51664c0c57f8c03065cf41f23c427665fdc188504b0e85277b162dd2",
+      "current_sha256": "d4ead055f80d526b0645dc0aa12e2d235dfc9d4f6f7525daa63ac6a4bd5d08ae"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "184bbbee05b2fb2f05919f30241199b21010852e39aff2855b8ca98c5e0dc835",
+      "current_sha256": "5486ace3da81d3c2706c08e9b4a598f9bcbfdd709df94d225401910084846df6"
+    },
+    "pssolver/functional/__init__.py": {
+      "historical_sha256": "16b74c99439187a9b020847bdc548e1f7ef41bc74e86bae129f3c19879a04963",
+      "current_sha256": "07f045d3cecaecfb3fb68228f9f5460c4a8a3d6850d6647209bf86f0ecbfa229"
+    },
+    "pssolver/operators/__init__.py": {
+      "historical_sha256": "af6052e195e1c6a3bdff9d3e1b615dfd5e63b4617affa33f1c0557abf5f8e93a",
+      "current_sha256": "df434db48946ef87a2b24b90b23c0b99b0d14bc7d138d0800e0c1570d7b6c0e2"
+    },
+    "pssolver/runtime/__init__.py": {
+      "historical_sha256": "3a2af1fa0fc08b79efed95640c4126a929a4638ea8b5f935b45f238ae54e2efd",
+      "current_sha256": "d09332c709f109b874be104c47885d487aee1da10b82352d1af801d4858f8c09"
+    },
+    "pssolver/workflows/__init__.py": {
+      "historical_sha256": "2ef302deb0e74334711c04bed8a45665fc509784465869c3cd4887a20a3c75d1",
+      "current_sha256": "836d97b3001d1ba0ea2497a4ff3939b8cee0a74dcfb53a03c51a1a784f044837"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "12ee54d46e3dfc8ee2a24e7103589324bdea0c380b673ce7142c557077016959",
+      "current_sha256": "e4da784fc9caad7352e254036ab5502258414ebc5a7462de0c03b90c7513be1d"
+    },
+    "tests/test_v0_4_s17_r3_r6_implementation.py": {
+      "historical_sha256": "7b230ef2cfbf2cf9ada33cbd4f6d02516b30789b258ff54cd833325c82abbd80",
+      "current_sha256": "cd9939d40e0c90c4589d3fe540b57dacf56383dd5b2280a7a33c5ceb0b2a8e81"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_89_s17_v59_rework_zh.md": "78b7ec967780d880419cb918c26232cd4a4d3f7f7108e311c7c2247280916d81",
+    "notes/PSSolver_v0_4_0_s17_v59_rework.json": "ee37b6451b2994bec9aa89dd461847f2ef00214bc0eedbbe53967e954a55f985",
+    "notes/PSSolver_v0_4_0_s17_v59_rework_zh.md": "374049e5b91ff33683942e3989e4e838deadbf37a93aab56be3cc791812051e3",
+    "tests/test_v0_4_s17_v59_rework.py": "e7ede39f5755f99cdb8f031d00915c662f0aeb026e3f5b8444cef453f02120ec",
+    "tests/test_v0_4_s17_v59_successor_89.py": "f16d4608fadcbd7599b825dadca979124179ac37e89cb1da7f8e835526c1276b"
+  },
+  "scope": {
+    "functional_api_changed": false,
+    "functional_export_names_changed": false,
+    "functional_export_object_identity_changed": false,
+    "numerical_algorithm_changed": false,
+    "numerical_output_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_fix_and_records": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

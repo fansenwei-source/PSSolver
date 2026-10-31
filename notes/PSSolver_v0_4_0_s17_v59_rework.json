@@ -1,0 +1,96 @@
+{
+  "schema": "pssolver.v0_4.s17.v59_rework.v1",
+  "created_at": "2026-10-31T17:29:40-04:00",
+  "plan_step": "S-17",
+  "classification": "V59_CLAIMED_FIXED_AWAITING_R0051_REVIEW",
+  "source_review": {
+    "request": "R-0050",
+    "result_sha256": "d28ef1b45e259742a4f22f7f58c03c08d648ea346d634f8e5783ff7a519d07dc",
+    "finding": "V-59"
+  },
+  "git_identity": {
+    "parent": "8bcc540a6834246b500d3df01551680c7154e2a7",
+    "implementation": "223b86dde0eb22ff1816e5a91ee93195ff5718a7",
+    "record_commit_is_qualified_source": false
+  },
+  "implicit_submodule_contract": {
+    "pssolver.functional": [
+      "channel_activity",
+      "channel_activity_runtime",
+      "channel_checkpoint",
+      "channel_pressure",
+      "channel_pressure_adjoint",
+      "checkpoint_identity",
+      "contracts",
+      "errors",
+      "legacy_identity",
+      "periodic_activity",
+      "periodic_checkpoint",
+      "pressure_metadata",
+      "validation",
+      "versioning"
+    ],
+    "pssolver.operators": [
+      "lifting",
+      "projection",
+      "robin",
+      "tensor_divergence"
+    ],
+    "pssolver.runtime": [
+      "channel_active_nematics",
+      "channel_application_bridge",
+      "channel_beris_edwards",
+      "finite_q_anchoring",
+      "package_construction",
+      "periodic_beris_edwards",
+      "plane_application_bridge",
+      "plane_beris_edwards",
+      "plane_legacy",
+      "robin_scalar",
+      "simulation_construction",
+      "static_lifting"
+    ],
+    "pssolver.workflows": [
+      "channel_active_nematics",
+      "channel_beris_edwards",
+      "channel_checkpoint",
+      "channel_checkpoint_observation",
+      "channel_observation",
+      "diagnostic_io",
+      "finite_q_anchoring",
+      "periodic_beris_edwards",
+      "periodic_checkpoint",
+      "plane_beris_edwards",
+      "plane_checkpoint",
+      "plane_observation",
+      "state_validation"
+    ]
+  },
+  "behavior": {
+    "plain_package_import_supported": true,
+    "submodule_attribute_access_warning_count": 0,
+    "deprecated_facade_warning_semantics_changed": false,
+    "functional_export_names_changed": false,
+    "functional_export_object_identity_changed": false,
+    "defining_module_paths_changed": false,
+    "facade_helpers_use_private_aliases": true
+  },
+  "scope": {
+    "numerical_algorithm_changed": false,
+    "numerical_output_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "local_fix": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

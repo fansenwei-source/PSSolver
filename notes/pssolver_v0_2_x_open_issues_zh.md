@@ -9,8 +9,8 @@
 当前共登记 64 条：
 
 - `open`：0；
-- `registered`：1；
-- `claimed_fixed`：0；
+- `registered`：0；
+- `claimed_fixed`：1；
 - `verified`：59；
 - `deferred`：2；
 - `accepted`：2；
@@ -252,8 +252,10 @@
 42. `R-0050` 已独立确认 S-17 的 R3/R6 实现主体、Control 边界、精确架构棘轮、两套完整
     CPU 门禁、installed-wheel 与 8×20 逐位等价均通过，但登记 `V-59`（low）：懒加载 facade
     丢失了 v0.3.0 中普通包导入后可直接按属性访问的 19 个定义子模块，使结果依赖导入顺序。
-    修复必须在四个包的 `__getattr__` 中无告警地按需导入精确历史子模块集合，同时保持 85 个
-    Functional facade 导出、对象身份、数值结果、门限和 skip/xfail 不变。
+    `223b86dde0eb22ff1816e5a91ee93195ff5718a7` 已在四个包的 `__getattr__` 中无告警地
+    按需导入精确历史子模块集合，并把 facade helper 改成私有别名；85 个 Functional facade
+    导出、对象身份、数值结果、门限和 skip/xfail 保持不变。该项现为 `claimed_fixed`，等待
+    `R-0051` 独立复核。
 
 ## Control 路径
 

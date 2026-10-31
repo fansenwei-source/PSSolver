@@ -53,8 +53,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
-        "registered": 1,
-        "claimed_fixed": 0,
+        "registered": 0,
+        "claimed_fixed": 1,
         "verified": 59,
         "deferred": 2,
         "accepted": 2,
@@ -258,12 +258,12 @@ def test_live_registry_tracks_the_current_development_line():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == set()
+    assert claimed == {"V-59"}
     assert {
         issue_id
         for issue_id, item in issues.items()
         if item["status"] == "registered"
-    } == {"V-59"}
+    } == set()
     assert issues["V-50"]["fixed_in"] == (
         "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992"
     )
@@ -324,6 +324,9 @@ def test_live_registry_tracks_the_current_development_line():
         "claimed_fixed",
         "verified",
     }
+    assert issues["V-59"]["fixed_in"] == (
+        "223b86dde0eb22ff1816e5a91ee93195ff5718a7"
+    )
     assert issues["V-59"]["affects_control_paths"] is False
     assert issues["V-59"]["exercised_by_current_control_research"] is False
     assert issues["V-59"]["target_release"] == "0.4 S-17"
@@ -608,7 +611,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == set()
+    } == {"V-59"}
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (
