@@ -1,0 +1,75 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 90,
+  "date": "2026-10-31",
+  "classification": "R0051_PASS_IMPORTED_S17_COMPLETE_PENDING_PUSH",
+  "plan_step": "S-17",
+  "git_identity": {
+    "reviewed_candidate": "2a854bfaf575c19111426ddb033b5c57dd26d7da",
+    "v59_implementation": "223b86dde0eb22ff1816e5a91ee93195ff5718a7",
+    "record_commit_is_qualified_source": false
+  },
+  "review": {
+    "request": "R-0051",
+    "classification": "PASS",
+    "result_sha256": "3daf8ca14a6edda2d1dbb67313123dbb9768334e46ea86b3f971758833681a66",
+    "archive": "/home/fansenwei/pssolver_v0_4_claude_s17_r0051_review_20261031_v1",
+    "archive_checksums_entries": 75,
+    "archive_checksums_sha256": "28974aec2f24be686d85be14fd536a533b35ae4f7904477185fb45620995531b"
+  },
+  "registry_updates": {
+    "V-59": {
+      "status": "verified",
+      "fixed_in": "223b86dde0eb22ff1816e5a91ee93195ff5718a7",
+      "verified_by": "R-0051"
+    }
+  },
+  "s17_closure": {
+    "r3_complete": true,
+    "r6_complete": true,
+    "control_main_recheck": "298 passed, 6 skipped, 0 failed",
+    "source_and_installed_submodule_contract": "PASS under four import orders without warnings",
+    "numerical_equivalence": "8 families x 20 steps bitwise equal to v0.3.0",
+    "h100_requalification_required": false,
+    "remaining_step": "D-0009-authorized non-forced fast-forward push of dev/0.4"
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "d4ead055f80d526b0645dc0aa12e2d235dfc9d4f6f7525daa63ac6a4bd5d08ae",
+      "current_sha256": "9980c2c1a9de18b217ebc023dde973b665d81220c6562981f9ea8ffd1c5d216b"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "5486ace3da81d3c2706c08e9b4a598f9bcbfdd709df94d225401910084846df6",
+      "current_sha256": "dbfd6bba7f4267fed4e1e2ba280bf315885b1d578b7cea210ffa7162325b86ad"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "e4da784fc9caad7352e254036ab5502258414ebc5a7462de0c03b90c7513be1d",
+      "current_sha256": "e87885383a8941785108c1ed71a99aa1b02f2344da325a235b480cf38fc4a416"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_90_r0051_import_zh.md": "a824a9a01ef0b7b05290e7759c2b89cb115862a632e14758cb242fd9a7048dee",
+    "tests/test_v0_4_s17_r0051_import.py": "864bd30c1735a730ff9d008aeba259e05ca332b4d50ed27f588fc062d5e03dc2"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "gpu_specific_path_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_registration": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

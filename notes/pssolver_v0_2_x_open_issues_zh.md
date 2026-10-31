@@ -256,6 +256,11 @@
     按需导入精确历史子模块集合，并把 facade helper 改成私有别名；85 个 Functional facade
     导出、对象身份、数值结果、门限和 skip/xfail 保持不变。该项现为 `claimed_fixed`，等待
     `R-0051` 独立复核。
+43. `R-0051` 已在源码与 installed wheel 中独立核对四种导入顺序：四个 package facade
+    的历史子模块集合均与 v0.3.0 相同且不发告警；facade 导出、对象身份和告警时机保持不变。
+    两套完整 CPU suite、Control main 门禁及 8×20 逐位比较全部通过。`V-59` 保持修复身份
+    `223b86dde0eb22ff1816e5a91ee93195ff5718a7`，推进为 `verified`、
+    `verified_by=R-0051`；S-17 已完成，只等待另行授权的 dev/0.4 非强制快进推送。
 
 ## Control 路径
 

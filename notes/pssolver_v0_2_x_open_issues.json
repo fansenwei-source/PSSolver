@@ -33,8 +33,8 @@
   "status_counts": {
     "open": 0,
     "registered": 0,
-    "claimed_fixed": 1,
-    "verified": 59,
+    "claimed_fixed": 0,
+    "verified": 60,
     "deferred": 2,
     "accepted": 2,
     "coverage_gap": 0
@@ -1054,10 +1054,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "223b86dde0eb22ff1816e5a91ee93195ff5718a7",
+      "verified_by": "R-0051",
       "target_release": "0.4 S-17",
-      "notes": "The S-17 candidate b3c5596 replaced eager package imports with lazy compatibility facades, but plain imports no longer exposed 14 historical pssolver.functional submodule attributes, operators.lifting/robin, runtime.finite_q_anchoring/robin_scalar, or workflows.finite_q_anchoring. Access therefore raised AttributeError unless another import happened to load the submodule first. Commit 223b86d restores exactly the v0.3.0 submodule sets through warning-free package __getattr__ imports, keeps the facade helpers private, and preserves facade exports, object identities, numerical behavior, skip/xfail and thresholds. The fix is claimed_fixed pending R-0051."
+      "notes": "The S-17 candidate b3c5596 replaced eager package imports with lazy compatibility facades, but plain imports no longer exposed 14 historical pssolver.functional submodule attributes, operators.lifting/robin, runtime.finite_q_anchoring/robin_scalar, or workflows.finite_q_anchoring. Access therefore raised AttributeError unless another import happened to load the submodule first. Commit 223b86d restores exactly the v0.3.0 submodule sets through warning-free package __getattr__ imports, keeps the facade helpers private, and preserves facade exports, object identities, numerical behavior, skip/xfail and thresholds. R-0051 independently verified the source and installed-wheel behavior under four import orders, both full CPU suites, the Control-main gate, and the 8x20 bitwise comparison."
     }
   ],
   "authorization": {
