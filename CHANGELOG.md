@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.4.0.dev0 — Unreleased
+
+### Functional facade and boundary-pilot ownership
+
+- Keep `pssolver.functional.api` and Functional API 1.1 source-compatible.
+  The broader `pssolver.functional` compatibility facade remains operational
+  for all v0.4 releases, but accessing one of its exported names now emits a
+  deprecation warning.  Importing `pssolver.functional.api` does not emit that
+  warning.  Removing the facade requires a later, separately authorized API
+  decision and an independently qualified PSSolver-Control migration.
+- Collect the unqualified Robin, finite-Q, and static-lifting pilot surfaces
+  under the explicit `pssolver.experimental.boundary_pilots` namespace.  The
+  former package-facade exports remain available with deprecation warnings
+  throughout v0.4, and their defining module paths remain compatibility
+  owners.  Public `Simulation` execution stays fail-closed, lifting remains
+  closed until B8/S2-07 is resolved and independently qualified, and every
+  released checkpoint reader remains available without a schema change.
+- Preserve the Consumer-first boundary: any later change to Functional API
+  names, semantics, or version, or to the active-nematics `beris_edwards.py`
+  or `q_tensor.py` blobs, requires an isolated PSSolver-Control main migration
+  and CPU qualification before the Provider change can be pushed or released.
+
 ## 0.3.0 — 2026-10-28
 
 This final release promotes the independently accepted `v0.3.0rc1` source

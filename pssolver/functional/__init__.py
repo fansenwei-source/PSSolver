@@ -1,124 +1,267 @@
-"""Compatibility facade for functional execution declarations and runtimes.
+"""Deprecated compatibility facade for functional execution.
 
-New consumers should import the stable surface from ``pssolver.functional.api``.
-This broader namespace preserves the qualified pre-P9.8 import paths through
-the compatibility window required by ADR 0005.  P9.2--P9.5 implement and qualify
-only the batch-one periodic complete-stress activity-control runtime, bitwise
-CPU/H100 replay under a fixed execution identity, its periodic
-production-checkpoint bridge, and frozen gradient, performance, memory, and
-production-consistency gates.  P9.7.4 provides the qualified batch-one
-complete-stress Channel functional contract and runtime; unsupported
-model--geometry combinations continue to fail before execution.
+New consumers must import the stable Functional API 1.1 surface from
+``pssolver.functional.api``.  The broader facade remains source-compatible
+through every v0.4 release.  A deprecation warning is emitted only when a
+facade name is accessed; importing ``pssolver.functional.api`` itself stays
+silent.
 """
 
-from .channel_activity import (
-    CHANNEL_ACTIVITY_FUNCTIONAL_KIND,
-    CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT,
-    CHANNEL_FUNCTIONAL_PRESSURE_WARM_START,
-    channel_activity_functional_declaration,
-    channel_activity_functional_request,
-)
-from .channel_pressure import (
-    CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION,
-    ChannelPressureTransposeOperator,
-    ChannelPressureTransposeProtocol,
-)
-from .channel_pressure_adjoint import (
-    CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION,
-    CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES,
-    ChannelImplicitPressureAdjoint,
-    ChannelImplicitPressureAdjointProtocol,
-    ChannelPressureSolveDiagnostics,
-    unrolled_channel_pressure_solve_oracle,
-)
-from .channel_activity_runtime import (
-    CHANNEL_ACTIVITY_DETERMINISTIC_REPLAY,
-    CHANNEL_ACTIVITY_RUNTIME_STAGE,
-    ChannelActivityFunctionalRuntime,
-    ChannelActivityFunctionalRuntimeFactory,
-    build_channel_activity_functional_runtime,
-)
-from .channel_checkpoint import (
-    CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION,
-    ChannelActivityCheckpointBridge,
-    build_channel_functional_checkpoint_identity,
-    upgrade_channel_functional_checkpoint_directory,
+from __future__ import annotations
+
+from pssolver.core._compatibility import (
+    facade_dir,
+    resolve_deprecated_facade_name,
 )
 
-from .contracts import (
-    FUNCTIONAL_API_VERSION,
-    FUNCTIONAL_OBSERVATION_TIME,
-    FunctionalCapabilities,
-    FunctionalCapabilitySet,
-    FunctionalCheckpointBridgeProtocol,
-    FunctionalCheckpointCompatibility,
-    FunctionalCheckpointState,
-    FunctionalControlFieldSpec,
-    FunctionalControls,
-    FunctionalObservationSpec,
-    FunctionalObservations,
-    FunctionalRuntimeConstructionRequest,
-    FunctionalRuntimeDeclaration,
-    FunctionalRuntimeFactoryProtocol,
-    FunctionalRuntimeIdentity,
-    FunctionalRuntimeProtocol,
-    FunctionalState,
-    FunctionalStateSpec,
-    FunctionalTensorSpec,
+
+_STABLE_API_EXPORT_NAMES = (
+    "CHANNEL_ACTIVITY_RUNTIME_STAGE",
+    "CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION",
+    "FUNCTIONAL_API_VERSION",
+    "FUNCTIONAL_CHECKPOINT_READ_API_VERSIONS",
+    "FUNCTIONAL_COMPATIBILITY_POLICY_VERSION",
+    "FUNCTIONAL_CONSTRUCTION_API_VERSIONS",
+    "FUNCTIONAL_LEGACY_CHECKPOINT_API_VERSIONS",
+    "FUNCTIONAL_OBSERVATION_TIME",
+    "ChannelPressureSolveDiagnostics",
+    "FunctionalAPIVersionSelection",
+    "FunctionalCapabilitySet",
+    "FunctionalCheckpointBridgeProtocol",
+    "FunctionalCheckpointCompatibility",
+    "FunctionalCheckpointCompatibilityError",
+    "FunctionalCheckpointError",
+    "FunctionalCheckpointExistsError",
+    "FunctionalCheckpointIntegrityError",
+    "FunctionalCheckpointNotFoundError",
+    "FunctionalCheckpointState",
+    "FunctionalContractError",
+    "FunctionalControlFieldSpec",
+    "FunctionalControls",
+    "FunctionalConvergenceError",
+    "FunctionalError",
+    "FunctionalExecutionError",
+    "FunctionalIdentityError",
+    "FunctionalObservationSpec",
+    "FunctionalObservations",
+    "FunctionalRuntimeConstructionRequest",
+    "FunctionalRuntimeDeclaration",
+    "FunctionalRuntimeFactoryProtocol",
+    "FunctionalRuntimeIdentity",
+    "FunctionalRuntimeProtocol",
+    "FunctionalState",
+    "FunctionalStateSpec",
+    "FunctionalTensorSpec",
+    "FunctionalTypeError",
+    "FunctionalValueError",
+    "FunctionalVersionError",
+    "functional_protocol_provenance",
+    "negotiate_functional_api_version",
 )
-from .errors import (
-    FunctionalCheckpointCompatibilityError,
-    FunctionalCheckpointDurabilityError,
-    FunctionalCheckpointError,
-    FunctionalCheckpointExistsError,
-    FunctionalCheckpointIntegrityError,
-    FunctionalCheckpointIOError,
-    FunctionalCheckpointNotFoundError,
-    FunctionalContractError,
-    FunctionalConvergenceError,
-    FunctionalError,
-    FunctionalExecutionError,
-    FunctionalIdentityError,
-    FunctionalTypeError,
-    FunctionalValueError,
-    FunctionalVersionError,
+
+
+_COMPATIBILITY_EXPORTS = {
+    name: ("pssolver.functional.api", name)
+    for name in _STABLE_API_EXPORT_NAMES
+}
+_COMPATIBILITY_EXPORTS.update(
+    {
+        "CHANNEL_ACTIVITY_FUNCTIONAL_KIND": (
+            "pssolver.functional.channel_activity",
+            "CHANNEL_ACTIVITY_FUNCTIONAL_KIND",
+        ),
+        "CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT": (
+            "pssolver.functional.channel_activity",
+            "CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT",
+        ),
+        "CHANNEL_FUNCTIONAL_PRESSURE_WARM_START": (
+            "pssolver.functional.channel_activity",
+            "CHANNEL_FUNCTIONAL_PRESSURE_WARM_START",
+        ),
+        "channel_activity_functional_declaration": (
+            "pssolver.functional.channel_activity",
+            "channel_activity_functional_declaration",
+        ),
+        "channel_activity_functional_request": (
+            "pssolver.functional.channel_activity",
+            "channel_activity_functional_request",
+        ),
+        "CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION": (
+            "pssolver.functional.channel_pressure",
+            "CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION",
+        ),
+        "ChannelPressureTransposeOperator": (
+            "pssolver.functional.channel_pressure",
+            "ChannelPressureTransposeOperator",
+        ),
+        "ChannelPressureTransposeProtocol": (
+            "pssolver.functional.channel_pressure",
+            "ChannelPressureTransposeProtocol",
+        ),
+        "CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION": (
+            "pssolver.functional.channel_pressure_adjoint",
+            "CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION",
+        ),
+        "CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES": (
+            "pssolver.functional.channel_pressure_adjoint",
+            "CHANNEL_PRESSURE_UNROLLED_ORACLE_MAX_MODES",
+        ),
+        "ChannelImplicitPressureAdjoint": (
+            "pssolver.functional.channel_pressure_adjoint",
+            "ChannelImplicitPressureAdjoint",
+        ),
+        "ChannelImplicitPressureAdjointProtocol": (
+            "pssolver.functional.channel_pressure_adjoint",
+            "ChannelImplicitPressureAdjointProtocol",
+        ),
+        "unrolled_channel_pressure_solve_oracle": (
+            "pssolver.functional.channel_pressure_adjoint",
+            "unrolled_channel_pressure_solve_oracle",
+        ),
+        "CHANNEL_ACTIVITY_DETERMINISTIC_REPLAY": (
+            "pssolver.functional.channel_activity_runtime",
+            "CHANNEL_ACTIVITY_DETERMINISTIC_REPLAY",
+        ),
+        "ChannelActivityFunctionalRuntime": (
+            "pssolver.functional.channel_activity_runtime",
+            "ChannelActivityFunctionalRuntime",
+        ),
+        "ChannelActivityFunctionalRuntimeFactory": (
+            "pssolver.functional.channel_activity_runtime",
+            "ChannelActivityFunctionalRuntimeFactory",
+        ),
+        "build_channel_activity_functional_runtime": (
+            "pssolver.functional.channel_activity_runtime",
+            "build_channel_activity_functional_runtime",
+        ),
+        "CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION": (
+            "pssolver.functional.channel_checkpoint",
+            "CHANNEL_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
+        ),
+        "ChannelActivityCheckpointBridge": (
+            "pssolver.functional.channel_checkpoint",
+            "ChannelActivityCheckpointBridge",
+        ),
+        "build_channel_functional_checkpoint_identity": (
+            "pssolver.functional.channel_checkpoint",
+            "build_channel_functional_checkpoint_identity",
+        ),
+        "upgrade_channel_functional_checkpoint_directory": (
+            "pssolver.functional.channel_checkpoint",
+            "upgrade_channel_functional_checkpoint_directory",
+        ),
+        "FunctionalCapabilities": (
+            "pssolver.functional.contracts",
+            "FunctionalCapabilities",
+        ),
+        "FunctionalCheckpointDurabilityError": (
+            "pssolver.functional.errors",
+            "FunctionalCheckpointDurabilityError",
+        ),
+        "FunctionalCheckpointIOError": (
+            "pssolver.functional.errors",
+            "FunctionalCheckpointIOError",
+        ),
+        "PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION": (
+            "pssolver.functional.periodic_checkpoint",
+            "PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION",
+        ),
+        "PeriodicActivityCheckpointBridge": (
+            "pssolver.functional.periodic_checkpoint",
+            "PeriodicActivityCheckpointBridge",
+        ),
+        "build_periodic_functional_checkpoint_identity": (
+            "pssolver.functional.periodic_checkpoint",
+            "build_periodic_functional_checkpoint_identity",
+        ),
+        "upgrade_periodic_functional_checkpoint_directory": (
+            "pssolver.functional.periodic_checkpoint",
+            "upgrade_periodic_functional_checkpoint_directory",
+        ),
+        "PeriodicActivityFunctionalRuntime": (
+            "pssolver.functional.periodic_activity",
+            "PeriodicActivityFunctionalRuntime",
+        ),
+        "PeriodicActivityFunctionalRuntimeFactory": (
+            "pssolver.functional.periodic_activity",
+            "PeriodicActivityFunctionalRuntimeFactory",
+        ),
+        "build_functional_runtime": (
+            "pssolver.functional.periodic_activity",
+            "build_functional_runtime",
+        ),
+        "periodic_activity_functional_request": (
+            "pssolver.functional.periodic_activity",
+            "periodic_activity_functional_request",
+        ),
+        "DirectionalDerivativeCheck": (
+            "pssolver.functional.validation",
+            "DirectionalDerivativeCheck",
+        ),
+        "FunctionalValidationError": (
+            "pssolver.functional.validation",
+            "FunctionalValidationError",
+        ),
+        "GradientPathCheck": (
+            "pssolver.functional.validation",
+            "GradientPathCheck",
+        ),
+        "PERIODIC_CONSISTENCY_VALIDATION_VERSION": (
+            "pssolver.functional.validation",
+            "PERIODIC_CONSISTENCY_VALIDATION_VERSION",
+        ),
+        "PERIODIC_GRADIENT_VALIDATION_VERSION": (
+            "pssolver.functional.validation",
+            "PERIODIC_GRADIENT_VALIDATION_VERSION",
+        ),
+        "PeriodicGradientValidationReport": (
+            "pssolver.functional.validation",
+            "PeriodicGradientValidationReport",
+        ),
+        "PeriodicProductionConsistencyReport": (
+            "pssolver.functional.validation",
+            "PeriodicProductionConsistencyReport",
+        ),
+        "TensorConsistencyCheck": (
+            "pssolver.functional.validation",
+            "TensorConsistencyCheck",
+        ),
+        "evaluate_periodic_activity_gradients": (
+            "pssolver.functional.validation",
+            "evaluate_periodic_activity_gradients",
+        ),
+        "evaluate_periodic_production_consistency": (
+            "pssolver.functional.validation",
+            "evaluate_periodic_production_consistency",
+        ),
+        "validate_periodic_activity_gradients": (
+            "pssolver.functional.validation",
+            "validate_periodic_activity_gradients",
+        ),
+        "validate_periodic_production_consistency": (
+            "pssolver.functional.validation",
+            "validate_periodic_production_consistency",
+        ),
+    }
 )
-from .pressure_metadata import CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION
-from .versioning import (
-    FUNCTIONAL_CHECKPOINT_READ_API_VERSIONS,
-    FUNCTIONAL_COMPATIBILITY_POLICY_VERSION,
-    FUNCTIONAL_CONSTRUCTION_API_VERSIONS,
-    FUNCTIONAL_LEGACY_CHECKPOINT_API_VERSIONS,
-    FunctionalAPIVersionSelection,
-    functional_protocol_provenance,
-    negotiate_functional_api_version,
-)
-from .periodic_checkpoint import (
-    PERIODIC_FUNCTIONAL_BRIDGE_FORMAT_VERSION,
-    PeriodicActivityCheckpointBridge,
-    build_periodic_functional_checkpoint_identity,
-    upgrade_periodic_functional_checkpoint_directory,
-)
-from .periodic_activity import (
-    PeriodicActivityFunctionalRuntime,
-    PeriodicActivityFunctionalRuntimeFactory,
-    build_functional_runtime,
-    periodic_activity_functional_request,
-)
-from .validation import (
-    DirectionalDerivativeCheck,
-    FunctionalValidationError,
-    GradientPathCheck,
-    PERIODIC_CONSISTENCY_VALIDATION_VERSION,
-    PERIODIC_GRADIENT_VALIDATION_VERSION,
-    PeriodicGradientValidationReport,
-    PeriodicProductionConsistencyReport,
-    TensorConsistencyCheck,
-    evaluate_periodic_activity_gradients,
-    evaluate_periodic_production_consistency,
-    validate_periodic_activity_gradients,
-    validate_periodic_production_consistency,
-)
+
+
+def __getattr__(name: str) -> object:
+    return resolve_deprecated_facade_name(
+        name,
+        facade=__name__,
+        replacement=(
+            "pssolver.functional.api (stable names) or the defining "
+            "functional submodule"
+        ),
+        exports=_COMPATIBILITY_EXPORTS,
+        namespace=globals(),
+    )
+
+
+def __dir__() -> list[str]:
+    return facade_dir(globals(), _COMPATIBILITY_EXPORTS)
+
 
 __all__ = [
     "FUNCTIONAL_API_VERSION",

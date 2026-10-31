@@ -4,6 +4,11 @@ Runtime adapters are intentionally not re-exported from :mod:`pssolver`.
 Production drivers must select a geometry-specific factory explicitly.
 """
 
+from pssolver.core._compatibility import (
+    facade_dir,
+    resolve_deprecated_facade_name,
+)
+
 from .plane_beris_edwards import (
     LegacyPlaneRuntimeAdapter,
     PlaneRuntimeAdapterProtocol,
@@ -15,7 +20,6 @@ from .plane_beris_edwards import (
     plane_physical_component,
     verify_plane_lifting_identity,
 )
-from .static_lifting import PlaneStaticLiftingRuntime
 from .plane_legacy import (
     DealiasedSemiImplicitEulerIntegrator,
     build_legacy_plane_runtime,
@@ -38,19 +42,37 @@ from .channel_beris_edwards import (
     ChannelBerisEdwardsRuntimeBuildRequest,
     build_channel_beris_edwards_runtime,
 )
-from .robin_scalar import (
-    PlaneRobinOperatorCache,
-    PlaneRobinOperatorCacheKey,
-    PlaneRobinScalarCheckpoint,
-    PlaneRobinScalarRuntime,
-)
-from .finite_q_anchoring import (
-    FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION,
-    FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION,
-    FINITE_Q_ANCHORING_RUNTIME_SCHEMA_VERSION,
-    PlaneFiniteQAnchoringCheckpoint,
-    PlaneFiniteQAnchoringRuntime,
-)
+
+
+_PILOT_EXPORTS = {
+    name: ("pssolver.experimental.boundary_pilots", name)
+    for name in (
+        "FINITE_Q_ANCHORING_CHECKPOINT_FORMAT_VERSION",
+        "FINITE_Q_ANCHORING_LEGACY_CHECKPOINT_FORMAT_VERSION",
+        "FINITE_Q_ANCHORING_RUNTIME_SCHEMA_VERSION",
+        "PlaneFiniteQAnchoringCheckpoint",
+        "PlaneFiniteQAnchoringRuntime",
+        "PlaneRobinOperatorCache",
+        "PlaneRobinOperatorCacheKey",
+        "PlaneRobinScalarCheckpoint",
+        "PlaneRobinScalarRuntime",
+        "PlaneStaticLiftingRuntime",
+    )
+}
+
+
+def __getattr__(name: str) -> object:
+    return resolve_deprecated_facade_name(
+        name,
+        facade=__name__,
+        replacement="pssolver.experimental.boundary_pilots",
+        exports=_PILOT_EXPORTS,
+        namespace=globals(),
+    )
+
+
+def __dir__() -> list[str]:
+    return facade_dir(globals(), _PILOT_EXPORTS)
 
 __all__ = [
     "LegacyPlaneRuntimeAdapter",

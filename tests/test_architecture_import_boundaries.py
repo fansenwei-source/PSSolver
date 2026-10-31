@@ -344,6 +344,14 @@ REVIEWED_WORKFLOW_TO_CANONICAL_HELPER_EDGES = {
 }
 
 
+REVIEWED_WORKFLOW_TO_COMPATIBILITY_HELPER_EDGES = {
+    ImportEdge(
+        "pssolver.workflows",
+        "pssolver.core._compatibility",
+    ),
+}
+
+
 REVIEWED_INTEGRATOR_TO_IO_EDGES = {
     ImportEdge(
         "pssolver.integrators.reference_checkpoint",
@@ -371,6 +379,37 @@ REVIEWED_RUNTIME_TO_V0_1_COMPATIBILITY_EDGES = {
     ImportEdge(
         "pssolver.runtime.channel_beris_edwards",
         "pssolver.solver",
+    ),
+}
+
+
+# D-0017 gives the unqualified Robin, finite-Q, and lifting pilots one explicit
+# opt-in composition namespace.  The exact cross-layer edges are frozen here;
+# this is not a layer-wide experimental allowance.
+REVIEWED_EXPERIMENTAL_BOUNDARY_PILOT_EDGES = {
+    ImportEdge(
+        "pssolver.experimental.boundary_pilots",
+        "pssolver.boundaries",
+    ),
+    ImportEdge(
+        "pssolver.experimental.boundary_pilots",
+        "pssolver.boundaries.robin",
+    ),
+    ImportEdge(
+        "pssolver.experimental.boundary_pilots",
+        "pssolver.runtime.finite_q_anchoring",
+    ),
+    ImportEdge(
+        "pssolver.experimental.boundary_pilots",
+        "pssolver.runtime.robin_scalar",
+    ),
+    ImportEdge(
+        "pssolver.experimental.boundary_pilots",
+        "pssolver.runtime.static_lifting",
+    ),
+    ImportEdge(
+        "pssolver.experimental.boundary_pilots",
+        "pssolver.workflows.finite_q_anchoring",
     ),
 }
 
@@ -615,11 +654,15 @@ def test_internal_imports_follow_the_phase_zero_dependency_ratchet():
             continue
         if edge in REVIEWED_WORKFLOW_TO_CANONICAL_HELPER_EDGES:
             continue
+        if edge in REVIEWED_WORKFLOW_TO_COMPATIBILITY_HELPER_EDGES:
+            continue
         if edge in REVIEWED_CONFIGURATION_TO_PLANNING_EDGES:
             continue
         if edge in REVIEWED_INTEGRATOR_TO_IO_EDGES:
             continue
         if edge in REVIEWED_RUNTIME_TO_V0_1_COMPATIBILITY_EDGES:
+            continue
+        if edge in REVIEWED_EXPERIMENTAL_BOUNDARY_PILOT_EDGES:
             continue
         if edge in EXPECTED_LEGACY_EXCEPTIONS:
             observed_exceptions.add(edge)
@@ -635,6 +678,16 @@ def test_internal_imports_follow_the_phase_zero_dependency_ratchet():
         f"expected={sorted(EXPECTED_LEGACY_EXCEPTIONS)!r}\n"
         f"observed={sorted(observed_exceptions)!r}"
     )
+
+
+def test_experimental_boundary_pilots_have_only_the_reviewed_cross_layer_edges():
+    observed = {
+        edge
+        for edge in _all_edges()
+        if edge.source == "pssolver.experimental.boundary_pilots"
+        and _layer(edge.destination) not in ALLOWED_INTERNAL_LAYERS["experimental"]
+    }
+    assert observed == REVIEWED_EXPERIMENTAL_BOUNDARY_PILOT_EDGES
 
 
 def test_applications_do_not_reach_into_experimental_implementations():

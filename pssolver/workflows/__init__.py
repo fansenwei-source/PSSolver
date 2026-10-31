@@ -1,5 +1,10 @@
 """Simulation workflows above geometry-specific runtime adapters."""
 
+from pssolver.core._compatibility import (
+    facade_dir,
+    resolve_deprecated_facade_name,
+)
+
 from .plane_beris_edwards import (
     PLANE_WORKFLOW_SCHEMA_VERSION,
     PlaneBerisEdwardsWorkflow,
@@ -86,14 +91,33 @@ from .channel_observation import (
     write_channel_diagnostics,
     write_channel_observation,
 )
-from .finite_q_anchoring import (
-    FINITE_Q_ANCHORING_WORKFLOW_SCHEMA_VERSION,
-    PlaneFiniteQAnchoringWorkflow,
-    PlaneFiniteQAnchoringWorkflowResult,
-    load_finite_q_anchoring_checkpoint,
-    upgrade_finite_q_anchoring_checkpoint_directory,
-    write_finite_q_anchoring_checkpoint,
-)
+
+
+_PILOT_EXPORTS = {
+    name: ("pssolver.experimental.boundary_pilots", name)
+    for name in (
+        "FINITE_Q_ANCHORING_WORKFLOW_SCHEMA_VERSION",
+        "PlaneFiniteQAnchoringWorkflow",
+        "PlaneFiniteQAnchoringWorkflowResult",
+        "load_finite_q_anchoring_checkpoint",
+        "upgrade_finite_q_anchoring_checkpoint_directory",
+        "write_finite_q_anchoring_checkpoint",
+    )
+}
+
+
+def __getattr__(name: str) -> object:
+    return resolve_deprecated_facade_name(
+        name,
+        facade=__name__,
+        replacement="pssolver.experimental.boundary_pilots",
+        exports=_PILOT_EXPORTS,
+        namespace=globals(),
+    )
+
+
+def __dir__() -> list[str]:
+    return facade_dir(globals(), _PILOT_EXPORTS)
 
 __all__ = [
     "DIAGNOSTIC_DTYPE",
