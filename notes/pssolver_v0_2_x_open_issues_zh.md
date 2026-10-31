@@ -246,8 +246,9 @@
     重建对、range-diff、遗漏历史证据和本地 S-09 保全选项。PSSolver 证据提交
     `7e719bbbcd961f54532756ca8929fac3d441b995` 绑定两个跨仓库修复源。`V-58` 已由
     `d98472aa975776fcd78f95b133d2abb747bce83b` 更正设计边界，纳入两个 planar blob pin、
-    warning-free API 子模块导入和研究分支的直接 Provider 依赖。三项推进为
-    `claimed_fixed`，等待 R-0049；R3/R6 实现仍等待 D-0017。
+    warning-free API 子模块导入和研究分支的直接 Provider 依赖。`R-0049` 已独立验证三项
+    修复，状态均推进为 `verified`。`D-0017` 已确认保全方式 A 及 R3/R6 设计选择；R3/R6
+    实现只在另行授权的 Control 与 PSSolver 记录推送完成后开始。
 
 ## Control 路径
 

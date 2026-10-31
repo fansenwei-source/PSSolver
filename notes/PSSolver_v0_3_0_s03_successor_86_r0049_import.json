@@ -1,0 +1,89 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 86,
+  "date": "2026-10-30",
+  "classification": "R0049_PASS_IMPORTED_S17_REWORK_VERIFIED",
+  "plan_step": "S-17",
+  "git_identity": {
+    "reviewed_pssolver_candidate": "bab018c3d1bfb93e8712d9784cc69fad7d1d6843",
+    "v56_v57_evidence_source": "7e719bbbcd961f54532756ca8929fac3d441b995",
+    "v58_design_fix": "d98472aa975776fcd78f95b133d2abb747bce83b",
+    "record_commit_is_qualified_source": false
+  },
+  "review": {
+    "request": "R-0049",
+    "classification": "PASS",
+    "result_sha256": "26c0dbf16d3d2b1bad377fe77664f5eacc74b980e8a29e1ca05aac60a87c8d11",
+    "archive": "/home/fansenwei/pssolver_control_s17_claude_r0049_review_20261030_v1",
+    "archive_checksums_entries": 51,
+    "archive_checksums_sha256": "2875b14e20060c6c6244d030b4fcd4ae346003a6ac02c86eca74fbad6f183871"
+  },
+  "registry_updates": {
+    "V-56": {
+      "status": "verified",
+      "fixed_in": "7e719bbbcd961f54532756ca8929fac3d441b995",
+      "verified_by": "R-0049"
+    },
+    "V-57": {
+      "status": "verified",
+      "fixed_in": "7e719bbbcd961f54532756ca8929fac3d441b995",
+      "verified_by": "R-0049"
+    },
+    "V-58": {
+      "status": "verified",
+      "fixed_in": "d98472aa975776fcd78f95b133d2abb747bce83b",
+      "verified_by": "R-0049"
+    }
+  },
+  "next_actions": {
+    "preservation_choice": "D-0017 option A",
+    "control_main_fast_forward_requires_separate_authorization": true,
+    "preservation_branch": "migration/pssolver-v0.3-s09-execution-scope",
+    "control_migration_work_branch_pushed": false,
+    "research_refs_excluded_from_migration": true,
+    "pssolver_dev_record_push_requires_separate_authorization": true,
+    "r3_r6_implementation_started": false
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "7b0f2295505907e52141b2e033faf51f5d9b275a7e2dcc41b4da3e59711539ff",
+      "current_sha256": "e3875870f46a42030c5d2a49faae657d7cfc2064aef50c48bb541bcc0242ded1"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "90aedb7a8b6f84f4d93d420bd93963218417b1b507d0995d54085f932a1ee93d",
+      "current_sha256": "289d1ce7d37fb73d677fcd6ae29a3864288a4b7e199fefc2489e210b98d2627d"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "60079745fb7a8973befcfcb7817f03ef161e1105f11b4a6afa4ebec98ef84f49",
+      "current_sha256": "61d66da8198d3a4e98269552b843a805d8408ba0d47ff6bd249e3743453e1416"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_86_r0049_import_zh.md": "c8d525e32ba766cc869c50ace7c4f16017a86e72230fefb5119228dec4bdd85f",
+    "tests/test_v0_4_s17_r0049_import.py": "f46e395a8355e385e5d3d1942e1d372c902460170d28a07617d11cca8c6f79a5"
+  },
+  "scope": {
+    "pssolver_runtime_changed": false,
+    "control_execution_code_changed": false,
+    "r3_or_r6_implemented": false,
+    "packaging_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false,
+    "push_performed": false,
+    "gpu_or_h100_run": false
+  },
+  "authorization": {
+    "local_registration": true,
+    "control_or_pssolver_push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

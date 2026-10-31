@@ -54,8 +54,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
         "registered": 0,
-        "claimed_fixed": 3,
-        "verified": 56,
+        "claimed_fixed": 0,
+        "verified": 59,
         "deferred": 2,
         "accepted": 2,
         "coverage_gap": 0,
@@ -258,7 +258,7 @@ def test_live_registry_tracks_the_current_development_line():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == {"V-56", "V-57", "V-58"}
+    assert claimed == set()
     assert {
         issue_id
         for issue_id, item in issues.items()
@@ -305,6 +305,17 @@ def test_live_registry_tracks_the_current_development_line():
         }
         assert issues[issue_id]["affects_control_paths"] is True
         assert issues[issue_id]["exercised_by_current_control_research"] is False
+        assert issues[issue_id]["status"] == "verified"
+        assert issues[issue_id]["verified_by"] == "R-0049"
+    assert issues["V-56"]["fixed_in"] == (
+        "7e719bbbcd961f54532756ca8929fac3d441b995"
+    )
+    assert issues["V-57"]["fixed_in"] == (
+        "7e719bbbcd961f54532756ca8929fac3d441b995"
+    )
+    assert issues["V-58"]["fixed_in"] == (
+        "d98472aa975776fcd78f95b133d2abb747bce83b"
+    )
     s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }
@@ -586,7 +597,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == {"V-56", "V-57", "V-58"}
+    } == set()
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (

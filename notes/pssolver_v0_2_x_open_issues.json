@@ -33,8 +33,8 @@
   "status_counts": {
     "open": 0,
     "registered": 0,
-    "claimed_fixed": 3,
-    "verified": 56,
+    "claimed_fixed": 0,
+    "verified": 59,
     "deferred": 2,
     "accepted": 2,
     "coverage_gap": 0
@@ -1006,10 +1006,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "7e719bbbcd961f54532756ca8929fac3d441b995",
+      "verified_by": "R-0049",
       "target_release": "0.4 S-17 (Control main)",
-      "notes": "The S-17 Control candidate changed the rc4 pressure-migration binding test to git show f112833:path, but f112833 belongs to the research-merged line and is not an ancestor of the rebuilt main migration. A reachable-only single-branch clone therefore fails in both source and installed-wheel modes. Control commit 215e35c fixes the test: three historical hashes are reproduced at rebuilt ancestor 5f47f8b, while the stable-functional-API test hash remains an explicit mapping to original f112833 without skip, xfail, or object-missing branches. PSSolver evidence commit 7e719bb binds that external fix source for R-0049."
+      "notes": "The S-17 Control candidate changed the rc4 pressure-migration binding test to git show f112833:path, but f112833 belongs to the research-merged line and is not an ancestor of the rebuilt main migration. A reachable-only single-branch clone therefore fails in both source and installed-wheel modes. Control commit 215e35c fixes the test: three historical hashes are reproduced at rebuilt ancestor 5f47f8b, while the stable-functional-API test hash remains an explicit mapping to original f112833 without skip, xfail, or object-missing branches. PSSolver evidence commit 7e719bb binds that external fix source. R-0049 independently verified the reachable-only source and installed-wheel suites."
     },
     {
       "id": "V-57",
@@ -1021,10 +1022,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "7e719bbbcd961f54532756ca8929fac3d441b995",
+      "verified_by": "R-0049",
       "target_release": "0.4 S-17 (Control main)",
-      "notes": "The S-17 migration record did not disclose the five original-to-rebuilt cherry-pick pairs, their range-diff conclusions, or that the old line was based on research merge 12171af. Control record commit 140bd27 now adds that exact mapping, inventories the qualification records deliberately left outside main, identifies local-only H100 basis commits 48dd4d3 and 97d3c06, and presents separately authorized preservation options without performing a push. PSSolver evidence commit 7e719bb binds that external record source for R-0049."
+      "notes": "The S-17 migration record did not disclose the five original-to-rebuilt cherry-pick pairs, their range-diff conclusions, or that the old line was based on research merge 12171af. Control record commit 140bd27 now adds that exact mapping, inventories the qualification records deliberately left outside main, identifies local-only H100 basis commits 48dd4d3 and 97d3c06, and presents separately authorized preservation options without performing a push. PSSolver evidence commit 7e719bb binds that external record source. R-0049 independently verified the disclosure; D-0017 selects preservation option A for the later separately authorized Control push."
     },
     {
       "id": "V-58",
@@ -1036,10 +1038,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "fixed_in": "d98472aa975776fcd78f95b133d2abb747bce83b",
+      "verified_by": "R-0049",
       "target_release": "0.4 S-17",
-      "notes": "The first R3 design said Control imports only pssolver.functional.api, but the planar adapter directly imports and blob-pins models.active_nematics.beris_edwards and q_tensor. Commit d98472a corrects the Consumer-first rule to cover those blobs, requires facade deprecation to remain silent when importing pssolver.functional.api, and records the research branch's direct pssolver, boundaries, geometries, and active-nematics imports. R3/R6 implementation remains blocked on D-0017."
+      "notes": "The first R3 design said Control imports only pssolver.functional.api, but the planar adapter directly imports and blob-pins models.active_nematics.beris_edwards and q_tensor. Commit d98472a corrects the Consumer-first rule to cover those blobs, requires facade deprecation to remain silent when importing pssolver.functional.api, and records the research branch's direct pssolver, boundaries, geometries, and active-nematics imports. R-0049 independently verified that design boundary. D-0017 is confirmed; R3/R6 implementation begins only after the separately authorized Control and PSSolver record pushes."
     }
   ],
   "authorization": {
