@@ -29,10 +29,10 @@
       "rewritten": false
     }
   },
-  "issue_count": 60,
+  "issue_count": 63,
   "status_counts": {
     "open": 0,
-    "registered": 0,
+    "registered": 3,
     "claimed_fixed": 0,
     "verified": 56,
     "deferred": 2,
@@ -995,6 +995,48 @@
       "verified_by": "R-0047",
       "target_release": "0.4 S-16",
       "notes": "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py::test_v2_records_mode_change_and_confirmed_temp_pruning asserted that three repository-external /home/fansenwei paths did not exist. That made pytest depend on machine state and violated D-0015, which requires repository-self-contained tests and assigns live local-evidence checks to the read-only verifier. Both R-0046's and the request's blocked-path access logs recorded the three os.stat calls. The fix at 625c3ca6b2c64bb674d43430d39ec3409f78c736 removes all live existence checks while retaining exact path strings, sizes, file counts and manifest hashes in pytest. An AST guard prevents the contract test from reintroducing external exists/stat calls. The same forward correction records that the Fig. 4 test never bound the script hash and that successor 56, not successor 53, binds the current v0.2.0 fixture-generator hash."
+    },
+    {
+      "id": "V-56",
+      "title": "Control migration test reads a commit that is not in the migration branch history",
+      "severity": "medium",
+      "source_report": "PSSolver_sync/results/R-0048.result.json",
+      "first_found": "S-17 Control-main migration review R-0048",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": true,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.4 S-17 (Control main)",
+      "notes": "The S-17 Control candidate changed the rc4 pressure-migration binding test to git show f112833:path, but f112833 belongs to the research-merged line and is not an ancestor of the rebuilt main migration. A reachable-only single-branch clone therefore fails in both source and installed-wheel modes. Three historical hashes are reproducible at rebuilt ancestor 5f47f8b; the stable-functional-API test hash belongs only to original commit f112833 and must be represented as an explicit historical mapping, without skip, xfail, or object-missing branches."
+    },
+    {
+      "id": "V-57",
+      "title": "Control migration record omits rebuilt commits and historical evidence excluded from main",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0048.result.json",
+      "first_found": "S-17 Control-main migration review R-0048",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": true,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.4 S-17 (Control main)",
+      "notes": "The S-17 migration record does not disclose the five original-to-rebuilt cherry-pick pairs, their range-diff conclusions, or that the old line was based on research merge 12171af. It also omits the qualification records intentionally left outside main and the fact that the H100 basis commits 48dd4d3 and 97d3c06 are local-only. The follow-up must add an exact mapping, inventory the omitted records and locations, and present a separately authorized preservation option without performing any push."
+    },
+    {
+      "id": "V-58",
+      "title": "S-17 R3/R6 design understates Control dependencies on PSSolver",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0048.result.json",
+      "first_found": "S-17 R3/R6 design review R-0048",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": true,
+      "exercised_by_current_control_research": false,
+      "status": "registered",
+      "target_release": "0.4 S-17",
+      "notes": "The first R3 design said Control imports only pssolver.functional.api, but the planar adapter directly imports and blob-pins models.active_nematics.beris_edwards and q_tensor. The Consumer-first rule must cover those blobs, facade deprecation must not warn merely because importing pssolver.functional.api first loads the parent package, and the research dependency inventory must include its direct pssolver, boundaries, geometries, and active-nematics imports."
     }
   ],
   "authorization": {

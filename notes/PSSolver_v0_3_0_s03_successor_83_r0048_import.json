@@ -1,0 +1,81 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 83,
+  "date": "2026-10-30",
+  "classification": "R0048_REWORK_IMPORTED_S17_FINDINGS_REGISTERED",
+  "plan_step": "S-17",
+  "git_identity": {
+    "reviewed_control_candidate": "39e7bdcacbb7a33733c17da9fc2809cfc2feba2f",
+    "reviewed_pssolver_design": "847466c675c2f4b4d78bc4a29b189c95a7bef8aa",
+    "record_commit_is_fix_source": false
+  },
+  "review": {
+    "request": "R-0048",
+    "classification": "REWORK_REQUIRED",
+    "result_sha256": "d576e47398965f3bfafc622fa0b6a0f49f6e659ca14f821ba4a9f7f1ff075b8a",
+    "archive": "/home/fansenwei/pssolver_control_s17_claude_r0048_review_20261030_v1",
+    "archive_checksums_entries": 50,
+    "archive_checksums_sha256": "bba03b15ba180cf5ec37148370c579671dd5697dd6451cc294ed2ceb4173bff5"
+  },
+  "new_findings": {
+    "V-56": {
+      "title": "Control migration test reads a commit that is not in the migration branch history",
+      "severity": "medium",
+      "source_report": "PSSolver_sync/results/R-0048.result.json",
+      "status": "registered",
+      "target_release": "0.4 S-17 (Control main)"
+    },
+    "V-57": {
+      "title": "Control migration record omits rebuilt commits and historical evidence excluded from main",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0048.result.json",
+      "status": "registered",
+      "target_release": "0.4 S-17 (Control main)"
+    },
+    "V-58": {
+      "title": "S-17 R3/R6 design understates Control dependencies on PSSolver",
+      "severity": "low",
+      "source_report": "PSSolver_sync/results/R-0048.result.json",
+      "status": "registered",
+      "target_release": "0.4 S-17"
+    }
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "506e338ad64c2245077a13f5c8da025c9ed8aed2292677424940441df510f523",
+      "current_sha256": "b1995efd9f96ac53758380fdab1d1e061429da367e754c288774d451f14d8c3b"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "873d391adeda5361f9ad69dc70104112f1f86167c63f57b6c1300f971d6cb8d4",
+      "current_sha256": "ba1a13f1f93ac38561dccd434d0f069b46e9bf0fe7b106c0d9bf92bfa33564fe"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "00003c22ba4d112faeb44c5084cdddf7268c8f7c25e865d2ec13658c3cf569f4",
+      "current_sha256": "c42c46f3790528258badd5347d7b35781b48122a28c939f649d64c31c5ce55fa"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_83_r0048_import_zh.md": "49a9a514cb6fc8b68fcab67119e6a17cbe11ee37a819631a93102c6bfd0aa321",
+    "tests/test_v0_4_s17_r0048_import.py": "4c5ba2a448a2efba7b7d1869a52811672d680d1fbcc15d641d2a6eedc035d7e5"
+  },
+  "scope": {
+    "pssolver_runtime_changed": false,
+    "control_runtime_changed": false,
+    "packaging_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_registration": true,
+    "control_or_pssolver_push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

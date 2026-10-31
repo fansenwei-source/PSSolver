@@ -43,8 +43,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 60
-    assert len({entry["id"] for entry in entries}) == 60
+    assert len(entries) == record["issue_count"] == 63
+    assert len({entry["id"] for entry in entries}) == 63
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     counts.setdefault("open", 0)
@@ -53,7 +53,7 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
-        "registered": 0,
+        "registered": 3,
         "claimed_fixed": 0,
         "verified": 56,
         "deferred": 2,
@@ -259,6 +259,11 @@ def test_live_registry_tracks_the_current_development_line():
         if item["status"] == "claimed_fixed"
     }
     assert claimed == set()
+    assert {
+        issue_id
+        for issue_id, item in issues.items()
+        if item["status"] == "registered"
+    } == {"V-56", "V-57", "V-58"}
     assert issues["V-50"]["fixed_in"] == (
         "80e96ba6cdcd4a16c26c79ac4eea4aa1d35cb992"
     )
@@ -289,6 +294,13 @@ def test_live_registry_tracks_the_current_development_line():
     )
     assert issues["V-55"]["target_release"] == "0.4 S-16"
     assert issues["V-55"]["verified_by"] == "R-0047"
+    for issue_id in ("V-56", "V-57", "V-58"):
+        assert issues[issue_id]["source_report"] == (
+            "PSSolver_sync/results/R-0048.result.json"
+        )
+        assert issues[issue_id]["status"] == "registered"
+        assert issues[issue_id]["affects_control_paths"] is True
+        assert issues[issue_id]["exercised_by_current_control_research"] is False
     s07_verified = {
         "A1-07", "S1-15/NEW-13", "S1-04", "OBS-4", "B30", "V-26", "V-30"
     }

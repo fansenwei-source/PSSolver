@@ -232,6 +232,16 @@
     `625c3ca6b2c64bb674d43430d39ec3409f78c736`。S-16 已完成，只剩按
     `D-0009` 单独授权的 `dev/0.4` 非强制快进推送。
 
+40. `R-0048` 登记 S-17 的三项返工。`V-56`（medium）指出 Control main 候选的
+    rc4 pressure 历史绑定测试读取不在单分支历史中的 `f112833…`，使只含可达对象的新
+    克隆在源码和 installed-wheel 两种模式都失败；三个哈希可由重建祖先 `5f47f8b…`
+    复现，第四个必须作为原始提交的显式映射登记。`V-57`（low）指出迁移记录没有说明
+    五个 cherry-pick 重建对、旧线位于研究 merge `12171af…` 之上、未带入 main 的历史
+    资格记录，以及 `48dd4d3…` / `97d3c06…` 仅在本地可达。`V-58`（low）指出 R3
+    设计漏写 planar adapter 对 `beris_edwards` 与 `q_tensor` 的直接导入和 blob pin，
+    facade 弃用机制也必须保证导入 `pssolver.functional.api` 本身不触发告警；研究分支的
+    其他 PSSolver 直接导入同样需要如实登记。三项先登记为 `registered`，等待 R-0049。
+
 ## Control 路径
 
 `C1-05`、`C1-10`、`C1-11`、`C2-18`、`C1-08`、`NEW-14`、`A3-18`
