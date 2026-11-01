@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 
 try:
@@ -101,7 +102,7 @@ def _child(args: argparse.Namespace) -> None:
             profile_steps=STEPS,
             post_flush_rewarm_steps=0,
         )
-        work = args.output.parent / f"{args.role}_{args.family}_{label}_work"
+        work = args.output.parent / f"common_{args.family}_{label}_work"
         work.mkdir(parents=True, exist_ok=False)
         case = _build_case(work, config)
         case.solver.integrator.set_spectral_refresh_interval(interval)
@@ -119,6 +120,7 @@ def _child(args: argparse.Namespace) -> None:
                 "steps": steps,
             }
         )
+        shutil.rmtree(work)
 
     imported = Path(pssolver.__file__).resolve()
     source_root = args.source_root.resolve()
