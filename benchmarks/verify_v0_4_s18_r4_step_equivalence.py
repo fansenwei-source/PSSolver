@@ -185,7 +185,7 @@ def _run_child(
     ]
     completed = subprocess.run(
         command,
-        cwd=source_root,
+        cwd=output_root,
         env=environment,
         check=False,
         capture_output=True,

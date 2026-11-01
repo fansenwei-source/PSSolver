@@ -30,7 +30,9 @@ def test_successor_99_binds_neutral_profile_provenance_forward() -> None:
     assert binding["historical_sha256"] == (
         "3570adfea175a5485ef66dced5cc3f48565906b84cc55ea8cf37463f3cbc258f"
     )
-    assert _sha256(relative) == binding["current_sha256"]
+    assert binding["current_sha256"] == (
+        "01b934fa7042090f83f4f359ff74b8a84ae8a46f1d280949808bae1c746dd663"
+    )
     assert _sha256(relative) == resolve_s03_successor(
         relative,
         binding["historical_sha256"],
