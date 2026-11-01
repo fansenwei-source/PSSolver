@@ -1,0 +1,56 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 103,
+  "date": "2026-11-01",
+  "classification": "R0056_IMPORT_SOURCE_HASH_FORWARD_CORRECTION",
+  "plan_step": "S-18",
+  "git_identity": {
+    "reviewed_candidate": "990349056290936e497c449a6abf2592c47cf448",
+    "r0056_import": "3d406a1fef055e32162a3aa9b43814c85b76df3a",
+    "runtime_implementation": "9cf54553b9f1bb2b94c2807c2e47adedeb415846",
+    "record_commit_is_qualified_source": false
+  },
+  "superseded_import_attempt": {
+    "commit": "3d406a1fef055e32162a3aa9b43814c85b76df3a",
+    "failure": "tests/test_v0_4_s18_r0056_import.py::test_successor_102_binds_r0056_and_forward_sources",
+    "reason": "The successor-102 Chinese record lost one trailing blank line during git diff --check cleanup after its introduced-source hash had already been captured.",
+    "conda_result": "5098 passed, 1 failed, 7 deselected, 8 subtests passed",
+    "a2_result": "5097 passed, 1 skipped, 1 failed, 7 deselected, 8 subtests passed",
+    "runtime_failure": false
+  },
+  "correction": {
+    "method": "forward successor; successor 102 remains unchanged",
+    "final_verification": "recreate reachable-only clones from this correction's descendant and rerun both complete CPU suites"
+  },
+  "historical_successor_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_102_r0056_import_zh.md": {
+      "historical_sha256": "7995f659a396790745db6f422ebb170d8f01b30b982c02f07f67105d735beca2",
+      "current_sha256": "7d7cda7e5b92fbd9e7c6414da7f36f5f072678c293e81abd4e85e0df605622e3"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_103_r0056_import_hash_zh.md": "91c1ec94f7d799a2133075a0590f961a8ad131d22be1756df189546e391a84b0",
+    "tests/test_v0_4_s18_r0056_import_hash_correction.py": "1ab793e7fefad6764ea02111b9f79071bde36573c84630a7417ff7f090b0b2af"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "gpu_specific_path_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_record_correction": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
