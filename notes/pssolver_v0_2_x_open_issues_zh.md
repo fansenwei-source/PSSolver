@@ -274,6 +274,11 @@
     它保持不可变；新的 `R-0054` 向前更正设计的决定状态并取代其过时的 proposed 表述。
     `V-60` 仍为 `claimed_fixed`，等待 `R-0054` 对完整范围清单和确认版治理合同复核；PASS
     之前不开始 R2。
+47. `R-0053` 已按 `SUPERSEDED` 关闭，`R-0054` 独立复核通过：四批逐文件分类、代码扫描
+    棘轮、每批 Control main 门禁、真实 NFS 触发条件和 D-0018 绑定均正确。`V-60` 保持
+    `fixed_in=f5dbdbef43d1aa16e9c7638093df5c5c5ae58170`，推进为 `verified`、
+    `verified_by=R-0054`。时间线向前更正：D-0018 已先在 sync 中确认，但 Codex 在创建
+    R-0053 后才收到用户确认消息；旧记录不改写。
 
 ## Control 路径
 
