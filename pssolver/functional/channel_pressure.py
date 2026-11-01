@@ -13,6 +13,9 @@ from typing import Protocol, runtime_checkable
 
 import torch
 
+from pssolver.linear_solvers.stokes._channel_pcg_control import (
+    ChannelPCGControl,
+)
 from pssolver.linear_solvers.stokes.channel_no_slip import (
     CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION,
     ChannelNoSlipModalStokesSolver,
@@ -85,9 +88,7 @@ class ChannelPressureTransposeOperator:
 
     def __init__(self, solver: ChannelNoSlipModalStokesSolver) -> None:
         if not isinstance(solver, ChannelNoSlipModalStokesSolver):
-            raise TypeError(
-                "solver must be a ChannelNoSlipModalStokesSolver"
-            )
+            raise TypeError("solver must be a ChannelNoSlipModalStokesSolver")
         self._solver = solver
         self.last_transpose_iterations = 0
         self.last_transpose_residual = 0.0
@@ -180,9 +181,9 @@ class ChannelPressureTransposeOperator:
 
     def _velocity_divergence_component_adjoint(self, pressure_hat, axis):
         if axis == 0:
-            return torch.conj(
-                self._solver.ikx
-            ) * self._velocity_to_pressure_adjoint(pressure_hat)
+            return torch.conj(self._solver.ikx) * self._velocity_to_pressure_adjoint(
+                pressure_hat
+            )
         if axis == 1:
             out = self._apply_axis_matrix_adjoint(
                 pressure_hat,
@@ -205,9 +206,7 @@ class ChannelPressureTransposeOperator:
                 self._solver.d_to_n_y,
                 axis=1,
             )
-        raise IndexError(
-            f"Unsupported velocity-divergence adjoint axis {axis}."
-        )
+        raise IndexError(f"Unsupported velocity-divergence adjoint axis {axis}.")
 
     def apply_pressure_operator(self, pressure_hat):
         """Apply the unchanged production pressure Schur action."""
@@ -226,8 +225,7 @@ class ChannelPressureTransposeOperator:
             for axis in range(3)
         ]
         helmholtz_adjoint_hats = [
-            self._helmholtz_inverse_adjoint(value)
-            for value in divergence_adjoint_hats
+            self._helmholtz_inverse_adjoint(value) for value in divergence_adjoint_hats
         ]
         result = sum(
             self._pressure_gradient_adjoint(value, axis)
@@ -262,11 +260,9 @@ class ChannelPressureTransposeOperator:
                 operation="channel_pressure_transpose_solve",
                 details=diagnostics.to_metadata(),
             )
-        working_rhs, working_exponent, rhs_magnitude = (
-            channel_pressure_working_vector(
-                rhs_hat,
-                self._solver.pressure_inactive_mask,
-            )
+        working_rhs, working_exponent, rhs_magnitude = channel_pressure_working_vector(
+            rhs_hat,
+            self._solver.pressure_inactive_mask,
         )
         if rhs_magnitude.is_zero:
             diagnostics = channel_pressure_solve_diagnostics(
@@ -317,82 +313,75 @@ class ChannelPressureTransposeOperator:
         iteration_limit = self._solver.pressure_iteration_limit
         termination_reason = "iteration_limit_reached_without_postcondition"
         acceptable = False
-        fixed_work_floor_pressure = None
-        fixed_work_floor_iterations = None
-        fixed_work_floor_relative_residual = None
-        saturation_failure_reason = (
-            "iteration_limit_reached_without_postcondition"
-        )
-        if fixed_work and channel_pressure_fixed_work_roundoff_saturated(
-            relative_residual,
-            residual.dtype,
-        ):
-            fixed_work_floor_pressure = pressure_hat.clone()
-            fixed_work_floor_iterations = 0
-            fixed_work_floor_relative_residual = float(relative_residual)
-        while iterations < iteration_limit:
-            operator_direction = self.apply_pressure_operator_transpose(
-                direction
+        pcg_control = ChannelPCGControl(fixed_work=fixed_work)
+        initial_represented_at_floor = (
+            fixed_work
+            and channel_pressure_fixed_work_roundoff_saturated(
+                relative_residual,
+                residual.dtype,
             )
+        )
+        if pcg_control.should_capture_floor(
+            represented_at_floor=initial_represented_at_floor,
+            relative_residual=relative_residual,
+        ):
+            pcg_control.capture_floor(
+                pressure_hat.clone(),
+                iterations=0,
+                relative_residual=relative_residual,
+            )
+        while iterations < iteration_limit:
+            operator_direction = self.apply_pressure_operator_transpose(direction)
             if not bool(torch.isfinite(operator_direction).all().item()):
-                if fixed_work and fixed_work_floor_pressure is not None:
-                    pressure_hat = fixed_work_floor_pressure
-                    iterations = fixed_work_floor_iterations
-                    termination_reason = (
-                        CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
-                    )
-                    acceptable = True
-                    saturation_failure_reason = "nonfinite_intermediate"
-                else:
-                    termination_reason = "nonfinite_intermediate"
+                stop = pcg_control.stop_for_failure(
+                    pressure_hat,
+                    iterations=iterations,
+                    failure_reason="nonfinite_intermediate",
+                )
+                pressure_hat = stop.value
+                iterations = stop.iterations
+                termination_reason = stop.termination_reason
+                acceptable = stop.acceptable
                 break
             if channel_pressure_relative_breakdown(
                 direction,
                 operator_direction,
                 self._solver.pressure_inactive_mask,
             ):
-                if fixed_work and fixed_work_floor_pressure is not None:
-                    pressure_hat = fixed_work_floor_pressure
-                    iterations = fixed_work_floor_iterations
-                    termination_reason = (
-                        CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
-                    )
-                    acceptable = True
-                    saturation_failure_reason = "operator_breakdown"
-                else:
-                    termination_reason = "operator_breakdown"
+                stop = pcg_control.stop_for_failure(
+                    pressure_hat,
+                    iterations=iterations,
+                    failure_reason="operator_breakdown",
+                )
+                pressure_hat = stop.value
+                iterations = stop.iterations
+                termination_reason = stop.termination_reason
+                acceptable = stop.acceptable
                 break
-            denominator = torch.sum(
-                torch.conj(direction) * operator_direction
-            ).real
+            denominator = torch.sum(torch.conj(direction) * operator_direction).real
             step = rz_old / denominator
             pressure_hat = self._project_gauge(pressure_hat + step * direction)
-            residual = self._project_gauge(
-                residual - step * operator_direction
-            )
+            residual = self._project_gauge(residual - step * operator_direction)
             iterations += 1
             if not bool(
                 torch.isfinite(pressure_hat).all().item()
                 and torch.isfinite(residual).all().item()
             ):
-                if fixed_work and fixed_work_floor_pressure is not None:
-                    pressure_hat = fixed_work_floor_pressure
-                    iterations = fixed_work_floor_iterations
-                    termination_reason = (
-                        CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
-                    )
-                    acceptable = True
-                    saturation_failure_reason = "nonfinite_intermediate"
-                else:
-                    termination_reason = "nonfinite_intermediate"
+                stop = pcg_control.stop_for_failure(
+                    pressure_hat,
+                    iterations=iterations,
+                    failure_reason="nonfinite_intermediate",
+                )
+                pressure_hat = stop.value
+                iterations = stop.iterations
+                termination_reason = stop.termination_reason
+                acceptable = stop.acceptable
                 break
             residual_work_magnitude = channel_pressure_active_rms(
                 residual,
                 self._solver.pressure_inactive_mask,
             )
-            residual_magnitude = residual_work_magnitude.shifted(
-                int(working_exponent)
-            )
+            residual_magnitude = residual_work_magnitude.shifted(int(working_exponent))
             relative_residual = channel_pressure_magnitude_ratio(
                 residual_work_magnitude,
                 rhs_work_magnitude,
@@ -402,38 +391,34 @@ class ChannelPressureTransposeOperator:
                 acceptable = True
                 break
             if fixed_work:
-                if channel_pressure_fixed_work_roundoff_saturated(
+                represented_at_floor = channel_pressure_fixed_work_roundoff_saturated(
                     relative_residual,
                     residual.dtype,
+                )
+                if pcg_control.should_capture_floor(
+                    represented_at_floor=represented_at_floor,
+                    relative_residual=relative_residual,
                 ):
-                    candidate_relative_residual = float(relative_residual)
-                    if (
-                        fixed_work_floor_relative_residual is None
-                        or candidate_relative_residual
-                        < fixed_work_floor_relative_residual
-                    ):
-                        fixed_work_floor_pressure = pressure_hat.clone()
-                        fixed_work_floor_iterations = iterations
-                        fixed_work_floor_relative_residual = (
-                            candidate_relative_residual
-                        )
-                elif fixed_work_floor_pressure is not None:
-                    pressure_hat = fixed_work_floor_pressure
-                    iterations = fixed_work_floor_iterations
-                    termination_reason = (
-                        CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
+                    pcg_control.capture_floor(
+                        pressure_hat.clone(),
+                        iterations=iterations,
+                        relative_residual=relative_residual,
                     )
-                    acceptable = True
-                    saturation_failure_reason = (
-                        "iteration_limit_reached_without_postcondition"
+                elif pcg_control.should_rollback_after_floor_exit(
+                    represented_at_floor=represented_at_floor,
+                ):
+                    stop = pcg_control.stop_after_floor_exit(
+                        pressure_hat,
+                        iterations=iterations,
                     )
+                    pressure_hat = stop.value
+                    iterations = stop.iterations
+                    termination_reason = stop.termination_reason
+                    acceptable = stop.acceptable
                     break
-            if not fixed_work and (
-                relative_residual <= self._solver.pressure_rel_tol
-            ):
+            if not fixed_work and (relative_residual <= self._solver.pressure_rel_tol):
                 residual = self._project_gauge(
-                    working_rhs
-                    - self.apply_pressure_operator_transpose(pressure_hat)
+                    working_rhs - self.apply_pressure_operator_transpose(pressure_hat)
                 )
                 if not bool(torch.isfinite(residual).all().item()):
                     termination_reason = "nonfinite_intermediate"
@@ -468,58 +453,52 @@ class ChannelPressureTransposeOperator:
                 ):
                     termination_reason = "preconditioned_residual_breakdown"
                     break
-                rz_old = torch.sum(
-                    torch.conj(residual) * preconditioned
-                ).real
+                rz_old = torch.sum(torch.conj(residual) * preconditioned).real
                 direction = preconditioned.clone()
                 continue
             if iterations == iteration_limit:
-                if fixed_work:
-                    termination_reason = "fixed_work_completed"
-                    acceptable = True
+                stop = pcg_control.stop_at_iteration_limit(
+                    pressure_hat,
+                    iterations=iterations,
+                )
+                pressure_hat = stop.value
+                iterations = stop.iterations
+                termination_reason = stop.termination_reason
+                acceptable = stop.acceptable
                 break
             preconditioned = residual / self._solver.schur_diag_safe
             if not bool(torch.isfinite(preconditioned).all().item()):
-                if fixed_work and fixed_work_floor_pressure is not None:
-                    pressure_hat = fixed_work_floor_pressure
-                    iterations = fixed_work_floor_iterations
-                    termination_reason = (
-                        CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
-                    )
-                    acceptable = True
-                    saturation_failure_reason = "nonfinite_intermediate"
-                else:
-                    termination_reason = "nonfinite_intermediate"
+                stop = pcg_control.stop_for_failure(
+                    pressure_hat,
+                    iterations=iterations,
+                    failure_reason="nonfinite_intermediate",
+                )
+                pressure_hat = stop.value
+                iterations = stop.iterations
+                termination_reason = stop.termination_reason
+                acceptable = stop.acceptable
                 break
             if channel_pressure_relative_breakdown(
                 residual,
                 preconditioned,
                 self._solver.pressure_inactive_mask,
             ):
-                if fixed_work and fixed_work_floor_pressure is not None:
-                    pressure_hat = fixed_work_floor_pressure
-                    iterations = fixed_work_floor_iterations
-                    termination_reason = (
-                        CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
-                    )
-                    acceptable = True
-                    saturation_failure_reason = (
-                        "preconditioned_residual_breakdown"
-                    )
-                else:
-                    termination_reason = "preconditioned_residual_breakdown"
+                stop = pcg_control.stop_for_failure(
+                    pressure_hat,
+                    iterations=iterations,
+                    failure_reason="preconditioned_residual_breakdown",
+                )
+                pressure_hat = stop.value
+                iterations = stop.iterations
+                termination_reason = stop.termination_reason
+                acceptable = stop.acceptable
                 break
             rz_new = torch.sum(torch.conj(residual) * preconditioned).real
             direction = preconditioned + (rz_new / rz_old) * direction
             rz_old = rz_new
-        if (
-            acceptable
-            and fixed_work_floor_pressure is not None
-            and termination_reason
-            in {
-                "fixed_work_completed",
-                CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION,
-            }
+        if pcg_control.requires_fixed_work_postcondition(
+            acceptable=acceptable,
+            termination_reason=termination_reason,
         ):
             completed_pressure = (
                 pressure_hat.clone()
@@ -528,8 +507,7 @@ class ChannelPressureTransposeOperator:
             )
             try:
                 residual = self._project_gauge(
-                    working_rhs
-                    - self.apply_pressure_operator_transpose(pressure_hat)
+                    working_rhs - self.apply_pressure_operator_transpose(pressure_hat)
                 )
                 residual_work_magnitude = channel_pressure_active_rms(
                     residual,
@@ -546,44 +524,38 @@ class ChannelPressureTransposeOperator:
                 acceptable = False
                 termination_reason = "nonfinite_intermediate"
             else:
-                represented_at_floor = (
-                    channel_pressure_fixed_work_roundoff_saturated(
-                        relative_residual,
-                        residual.dtype,
-                    )
+                represented_at_floor = channel_pressure_fixed_work_roundoff_saturated(
+                    relative_residual,
+                    residual.dtype,
                 )
                 completed_residual_magnitude = (
-                    residual_magnitude
-                    if completed_pressure is not None
-                    else None
+                    residual_magnitude if completed_pressure is not None else None
                 )
                 completed_relative_residual = (
-                    relative_residual
-                    if completed_pressure is not None
-                    else None
+                    relative_residual if completed_pressure is not None else None
                 )
-                if (
-                    not represented_at_floor
-                    and completed_pressure is not None
-                    and not torch.equal(
-                        completed_pressure,
-                        fixed_work_floor_pressure,
-                    )
+                if pcg_control.should_retry_floor_postcondition(
+                    represented_at_floor=represented_at_floor,
+                    completed_value_available=completed_pressure is not None,
+                    completed_equals_floor=(
+                        torch.equal(
+                            completed_pressure,
+                            pcg_control.floor_value,
+                        )
+                        if not represented_at_floor and completed_pressure is not None
+                        else True
+                    ),
                 ):
-                    pressure_hat = fixed_work_floor_pressure
-                    iterations = fixed_work_floor_iterations
+                    pressure_hat = pcg_control.floor_value
+                    iterations = pcg_control.floor_iterations
                     try:
                         residual = self._project_gauge(
                             working_rhs
-                            - self.apply_pressure_operator_transpose(
-                                pressure_hat
-                            )
+                            - self.apply_pressure_operator_transpose(pressure_hat)
                         )
-                        residual_work_magnitude = (
-                            channel_pressure_active_rms(
-                                residual,
-                                self._solver.pressure_inactive_mask,
-                            )
+                        residual_work_magnitude = channel_pressure_active_rms(
+                            residual,
+                            self._solver.pressure_inactive_mask,
                         )
                         residual_magnitude = residual_work_magnitude.shifted(
                             int(working_exponent)
@@ -606,15 +578,21 @@ class ChannelPressureTransposeOperator:
                             termination_reason = (
                                 CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
                             )
-                if (
-                    not represented_at_floor
-                    and completed_pressure is not None
-                    and completed_relative_residual is not None
-                    and float(completed_relative_residual)
-                    <= 2.0
-                    * channel_pressure_minimum_relative_tolerance(
-                        residual.dtype
-                    )
+                if pcg_control.may_keep_completed_with_roundoff_margin(
+                    represented_at_floor=represented_at_floor,
+                    completed_value_available=completed_pressure is not None,
+                    completed_relative_residual_available=(
+                        completed_relative_residual is not None
+                    ),
+                    completed_within_margin=(
+                        float(completed_relative_residual)
+                        <= 2.0
+                        * channel_pressure_minimum_relative_tolerance(residual.dtype)
+                        if not represented_at_floor
+                        and completed_pressure is not None
+                        and completed_relative_residual is not None
+                        else False
+                    ),
                 ):
                     pressure_hat = completed_pressure
                     iterations = iteration_limit
@@ -622,19 +600,25 @@ class ChannelPressureTransposeOperator:
                     relative_residual = completed_relative_residual
                     termination_reason = "fixed_work_completed"
                     represented_at_floor = True
-                if not represented_at_floor:
-                    acceptable = False
-                    termination_reason = saturation_failure_reason
-                elif (
-                    termination_reason
-                    == CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
-                    and not channel_pressure_fixed_work_roundoff_saturated(
-                    relative_residual,
-                    residual.dtype,
+                saturation_reason_still_at_floor = (
+                    channel_pressure_fixed_work_roundoff_saturated(
+                        relative_residual,
+                        residual.dtype,
                     )
-                ):
-                    acceptable = False
-                    termination_reason = saturation_failure_reason
+                    if represented_at_floor
+                    and termination_reason
+                    == CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION
+                    else True
+                )
+                acceptable, termination_reason = (
+                    pcg_control.finish_fixed_work_postcondition(
+                        represented_at_floor=represented_at_floor,
+                        termination_reason=termination_reason,
+                        saturation_reason_still_at_floor=(
+                            saturation_reason_still_at_floor
+                        ),
+                    )
+                )
         if not acceptable:
             return self._fail_transpose_solve(
                 sequence=sequence,
