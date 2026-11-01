@@ -1,0 +1,87 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 93,
+  "date": "2026-10-31",
+  "classification": "D0018_CONFIRMED_PENDING_R0054",
+  "plan_step": "S-18",
+  "git_identity": {
+    "implementation": "ae1e6199cb81306a22288d6e540a788d822de611",
+    "implementation_parent": "58477e42903dfd4093c1e9074a039ea9f15c6533",
+    "record_commit_is_qualified_source": false
+  },
+  "decision": {
+    "id": "D-0018",
+    "status": "confirmed",
+    "sync_commit": "4cf34051cd5d4f47801eaabf0bdc7cd8490d6367",
+    "sha256": "38cfe71b63efcca6ef47a759d5955bd332266cf4a65cef6e61635c43bfd1a627",
+    "choices": {
+      "Q-S18-01": "A",
+      "Q-S18-02": "A",
+      "Q-S18-03": "A",
+      "Q-S18-04": "A",
+      "Q-S18-05": "A"
+    }
+  },
+  "request_forward_correction": {
+    "immutable_request": "R-0053",
+    "replacement_request": "R-0054",
+    "reason": "R-0053 was committed before D-0018 was confirmed and therefore records the now-stale proposed status.",
+    "r0053_rewritten": false,
+    "runtime_review_scope_changed": false,
+    "implementation_may_start_after": "R-0054 PASS"
+  },
+  "registry_status": {
+    "V-60": {
+      "status": "claimed_fixed",
+      "fixed_in": "f5dbdbef43d1aa16e9c7638093df5c5c5ae58170",
+      "target_release": "0.4 S-18"
+    }
+  },
+  "historical_successor_sources": {
+    "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json": {
+      "historical_sha256": "aacf76989f5083211fde0f3dc831bb40a3126d82d5f1ec9110c67dd824c4075a",
+      "current_sha256": "b5bdcdcfc0c2b1706032e3a9d16ebb417c5bbdb5833b35d3f38bff840db32ae5"
+    },
+    "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal_zh.md": {
+      "historical_sha256": "2e9293df4bbaf17068c760af43a2cd4ee0fd7f92d5d2d26293e74632394a6a48",
+      "current_sha256": "ad3c07adc1c14a31ba4a9254bc86a77fd63ae73196831aa2d16265be11853f46"
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "a79fd3795840fbc6cf6c105df7b9f854a6aa7abdf981d66ced8c2722dab1c33b",
+      "current_sha256": "1864cf528a1936b875386bd61c607c5b3911e981ebd6715e918e424888d86ec9"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "3a9a09a8cca181123ae04ce54e58f2cc4d5a60d896a8951c0b965ee252fb417d",
+      "current_sha256": "0bcfb2b8668d7396e4f1aaee062bf520ff1d558b49e8f969344e5cb10af42f4c"
+    },
+    "tests/test_v0_4_s18_r2_r4_r5_r1_design_proposal.py": {
+      "historical_sha256": "edf40c0181734b246d8440bb37bdd89c3052c89a082530cae233ca73dfd72052",
+      "current_sha256": "c9afabfaa179912425da4276e61a308ab027d1bba68e3b99556c58ee8f878af4"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_93_d0018_confirmation_zh.md": "76092f705682bea79566f3584532861029132d5d44de21cf7319c5ab2f2efb57",
+    "tests/test_v0_4_s18_d0018_confirmation.py": "29e190d60df13a326349e3c2c932cacf956640f08adde512274446ad4bfae719"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "gpu_specific_path_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_registration": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
