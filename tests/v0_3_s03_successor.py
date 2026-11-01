@@ -12,7 +12,13 @@ SUCCESSOR_PATTERN = "PSSolver_v0_3_0_s03_successor_*.json"
 
 
 def _records() -> list[Path]:
-    return [BASE_RECORD, *sorted((ROOT / "notes").glob(SUCCESSOR_PATTERN))]
+    successors = list((ROOT / "notes").glob(SUCCESSOR_PATTERN))
+    successors.sort(
+        key=lambda path: int(
+            json.loads(path.read_text(encoding="utf-8"))["successor"]
+        )
+    )
+    return [BASE_RECORD, *successors]
 
 
 def resolve_s03_successor(relative: str, historical: str) -> str:
