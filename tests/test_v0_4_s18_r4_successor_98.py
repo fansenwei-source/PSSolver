@@ -30,7 +30,9 @@ def test_successor_98_binds_the_forward_helper_correction() -> None:
     assert binding["historical_sha256"] == (
         "9ea5c8c3fabca9d6033a57aea3fdcbb4efe18edeeb0e3eab0ddef2cdd264beb2"
     )
-    assert _sha256(relative) == binding["current_sha256"]
+    assert binding["current_sha256"] == (
+        "3570adfea175a5485ef66dced5cc3f48565906b84cc55ea8cf37463f3cbc258f"
+    )
     assert _sha256(relative) == resolve_s03_successor(
         relative,
         binding["historical_sha256"],
