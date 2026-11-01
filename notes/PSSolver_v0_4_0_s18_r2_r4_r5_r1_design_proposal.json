@@ -108,7 +108,165 @@
       "no new skip or xfail",
       "no threshold or production-default change",
       "task-created clones and venv clones pruned under D-0008"
-    ]
+    ],
+    "control_main_full_cpu_gate": "Every batch, including R2 and R4 even when their classified Control-facing files are read-only frozen, must run the complete PSSolver-Control main CPU suite against the candidate installed wheel before any Provider push."
+  },
+  "scope_classification_v2": {
+    "authority": "This file-by-file table supersedes the first design's existing_files_in_scope summaries; every scanned checkpoint, integrity-helper, spectral-refresh, and per-combination module must appear in exactly one disposition for its batch.",
+    "labels": {
+      "batch_change": "本批修改",
+      "read_only_frozen": "只读冻结",
+      "out_of_scope": "范围外"
+    },
+    "R2": {
+      "batch_change": [
+        {"path": "pssolver/experimental/checkpointing.py", "reason": "Owns the current experimental-shadow format writer and integrity validation; migrate only its private mechanics."},
+        {"path": "pssolver/experimental/modal_block_checkpoint.py", "reason": "Duplicates canonical JSON, SHA-256, tensor-write, and manifest helpers."},
+        {"path": "pssolver/functional/channel_checkpoint.py", "reason": "Current Channel Functional checkpoint bridge and migration implementation."},
+        {"path": "pssolver/functional/checkpoint_identity.py", "reason": "Functional checkpoint identity helper to be backed by the shared private integrity owner."},
+        {"path": "pssolver/functional/periodic_checkpoint.py", "reason": "Current Periodic Functional checkpoint bridge and migration implementation."},
+        {"path": "pssolver/integrators/reference_checkpoint.py", "reason": "Own writer with duplicate SHA-256, canonical identity, and tensor-write helpers."},
+        {"path": "pssolver/io/checkpoint.py", "reason": "Existing atomic publication and common checkpoint I/O owner."},
+        {"path": "pssolver/io/checkpoint_identity.py", "reason": "Existing canonical checkpoint identity owner."},
+        {"path": "pssolver/workflows/channel_checkpoint.py", "reason": "Production Channel format writer/reader with duplicate integrity helpers."},
+        {"path": "pssolver/workflows/finite_q_anchoring.py", "reason": "Finite-Q format writer/reader, SHA-256 helper, and atomic publication call site."},
+        {"path": "pssolver/workflows/periodic_checkpoint.py", "reason": "Production Periodic format writer/reader with duplicate integrity helpers."},
+        {"path": "pssolver/workflows/plane_checkpoint.py", "reason": "Plane format writer/reader with duplicate integrity helpers."}
+      ],
+      "read_only_frozen": [
+        {"path": "pssolver/experimental/shadow_run.py", "reason": "Orchestration facade calls the shadow checkpoint owner; save/from-checkpoint behavior and bytes remain frozen."},
+        {"path": "pssolver/functional/api.py", "reason": "Public Functional API 1.1 export surface is frozen by D-0017."},
+        {"path": "pssolver/functional/channel_activity_runtime.py", "reason": "Control-facing Functional runtime and checkpoint bridge remain unchanged; covered by the per-batch Control main gate."},
+        {"path": "pssolver/functional/contracts.py", "reason": "Public checkpoint protocols and carrier contracts remain unchanged."},
+        {"path": "pssolver/functional/errors.py", "reason": "Public checkpoint exception types and messages remain unchanged."},
+        {"path": "pssolver/functional/periodic_activity.py", "reason": "Control-facing Functional runtime and checkpoint bridge remain unchanged; covered by the per-batch Control main gate."},
+        {"path": "pssolver/runtime/finite_q_anchoring.py", "reason": "In-memory checkpoint carrier/restore semantics are frozen; disk mechanics live in workflows/finite_q_anchoring.py."},
+        {"path": "pssolver/runtime/robin_scalar.py", "reason": "In-memory Robin checkpoint carrier/validation remains unchanged."},
+        {"path": "pssolver/workflows/channel_active_nematics.py", "reason": "Application orchestration remains byte-for-byte unchanged while its checkpoint owner changes internally."},
+        {"path": "pssolver/workflows/channel_beris_edwards.py", "reason": "Application orchestration wrappers remain byte-for-byte unchanged."},
+        {"path": "pssolver/workflows/periodic_beris_edwards.py", "reason": "Legacy _write_checkpoint/_load_checkpoint wrappers are compatibility surfaces and remain unchanged."},
+        {"path": "pssolver/workflows/plane_beris_edwards.py", "reason": "Application orchestration remains unchanged while plane checkpoint internals are consolidated."},
+        {"path": "pssolver/workflows/plane_compiled_v2.py", "reason": "PlaneCompiledCheckpointRestorePlan and all three released Plane format versions are reader-only compatibility surfaces."}
+      ],
+      "out_of_scope": [
+        {"path": "pssolver/control/dal.py", "reason": "Legacy control-layer persistence is not a production or Functional checkpoint format and is outside R2."}
+      ],
+      "real_nfs_trigger": {
+        "required_if": "A change reaches target creation, staging placement, placeholder ownership, directory/file fsync, rename/renameat2 selection, cleanup, symlink/device checks, or their call graph in pssolver/io/checkpoint.py or any workflow publication call site.",
+        "not_triggered_by": "A mechanically identical switch to shared canonical-JSON, digest, manifest, or tensor serialization helpers whose byte tree and failure behavior are proven identical and that does not alter the publication call graph.",
+        "gate": "When required, run the separately authorized real-NFS Periodic and Channel publication/restart/concurrency/existing-target/symlink matrix before batch acceptance."
+      }
+    },
+    "R4": {
+      "batch_change": [
+        {"path": "pssolver/execution/state.py", "reason": "Shared progress-state carrier and restoration invariants."},
+        {"path": "pssolver/integrator.py", "reason": "Legacy step, refresh_count, interval, and _refresh_dynamic_spectra control flow."},
+        {"path": "pssolver/integrators/scalar_reference.py", "reason": "Scalar reference step/progress implementation participates in exact-order sharing."},
+        {"path": "pssolver/integrators/state_backed.py", "reason": "State-backed step/progress implementation participates in exact-order sharing."},
+        {"path": "pssolver/integrators/step_program.py", "reason": "Private callback-based exact-order step program owner."},
+        {"path": "pssolver/runtime/channel_active_nematics.py", "reason": "Channel active-nematics runtime step/progress adapter."},
+        {"path": "pssolver/runtime/channel_beris_edwards.py", "reason": "Channel complete-stress runtime step/progress adapter."},
+        {"path": "pssolver/runtime/periodic_beris_edwards.py", "reason": "Periodic runtime step/progress adapter."},
+        {"path": "pssolver/runtime/plane_beris_edwards.py", "reason": "Plane legacy-production runtime step/progress adapter."},
+        {"path": "pssolver/runtime/plane_compiled_v2_step.py", "reason": "Plane compiled-v2 exact-order step implementation."},
+        {"path": "pssolver/runtime/plane_legacy.py", "reason": "Legacy _refresh_dynamic_spectra implementation omitted by the first design."},
+        {"path": "pssolver/workflows/channel_beris_edwards.py", "reason": "Channel progress/restart workflow integration."},
+        {"path": "pssolver/workflows/periodic_checkpoint.py", "reason": "Periodic progress serialization/restoration integration."},
+        {"path": "pssolver/workflows/plane_checkpoint.py", "reason": "Plane progress serialization/restoration integration."}
+      ],
+      "read_only_frozen": [
+        {"path": "pssolver/experimental/channel_compiled_v2.py", "reason": "Experimental runtime remains a negative/reference surface and is not migrated in R4."},
+        {"path": "pssolver/experimental/checkpointing.py", "reason": "Owned by R2; R4 only verifies unchanged progress compatibility."},
+        {"path": "pssolver/experimental/integrators.py", "reason": "Experimental integrator remains unchanged and serves as a comparison surface."},
+        {"path": "pssolver/experimental/modal_block_checkpoint.py", "reason": "Owned by R2; R4 verifies its refresh metadata compatibility."},
+        {"path": "pssolver/experimental/modal_block_reference.py", "reason": "Experimental reference runner remains unchanged."},
+        {"path": "pssolver/experimental/shadow_run.py", "reason": "Shadow orchestration remains unchanged while progress parity is checked."},
+        {"path": "pssolver/functional/channel_activity_runtime.py", "reason": "Control uses this Functional path; it is explicitly read-only frozen and Control main receives the full CPU gate before push."},
+        {"path": "pssolver/functional/channel_checkpoint.py", "reason": "Owned by R2 and frozen during R4."},
+        {"path": "pssolver/functional/periodic_activity.py", "reason": "Control uses this Functional path; it is explicitly read-only frozen and Control main receives the full CPU gate before push."},
+        {"path": "pssolver/functional/periodic_checkpoint.py", "reason": "Owned by R2 and frozen during R4."},
+        {"path": "pssolver/integrators/reference_checkpoint.py", "reason": "Owned by R2; serialized progress remains byte-identical in R4."},
+        {"path": "pssolver/runtime/plane_compiled_v2_binding.py", "reason": "Device/binding semantics are not part of step primitive consolidation."},
+        {"path": "pssolver/runtime/robin_scalar.py", "reason": "Finite-Q/Robin runtime remains a frozen progress consumer."},
+        {"path": "pssolver/workflows/channel_checkpoint.py", "reason": "Owned by R2; R4 preserves serialized progress bytes."},
+        {"path": "pssolver/workflows/plane_beris_edwards.py", "reason": "Workflow construction is unchanged; the runtime and checkpoint owners carry R4 changes."},
+        {"path": "pssolver/workflows/plane_compiled_v2.py", "reason": "Restore plan and three released format readers remain frozen."}
+      ],
+      "out_of_scope": [
+        {"path": "pssolver/configuration/plane_beris_edwards.py", "reason": "Configuration declaration is not step or refresh execution."},
+        {"path": "pssolver/experimental/_shadow_support.py", "reason": "Qualification support metadata is not a production stepping primitive."},
+        {"path": "pssolver/experimental/h100_shadow_qualification.py", "reason": "GPU qualification helper belongs to S-19."},
+        {"path": "pssolver/experimental/plane_shadow_driver.py", "reason": "Shadow driver is qualification orchestration, not the shared step owner."},
+        {"path": "pssolver/experimental/shadow_metadata.py", "reason": "Shadow metadata encoding is not step execution."},
+        {"path": "pssolver/planning/channel_compiled_v2.py", "reason": "Planning is outside execution-order consolidation."},
+        {"path": "pssolver/planning/plane_compiled_v2.py", "reason": "Planning is outside execution-order consolidation."}
+      ],
+      "control_relation": "periodic_activity.py and channel_activity_runtime.py are explicit read-only acceptance surfaces, not change targets. Because Control consumes them, the complete Control main CPU suite is mandatory before any R4 Provider push."
+    },
+    "R5": {
+      "batch_change": [
+        {"path": "pssolver/functional/channel_pressure.py", "reason": "Functional transpose pressure loop."},
+        {"path": "pssolver/functional/channel_pressure_adjoint.py", "reason": "Implicit-backward and unrolled-oracle pressure loops."},
+        {"path": "pssolver/linear_solvers/stokes/channel_no_slip.py", "reason": "Production pressure loop and private shared-control owner."}
+      ],
+      "read_only_frozen": [],
+      "out_of_scope": []
+    },
+    "R1": {
+      "planned_new_files": [
+        {"path": "pssolver/configuration/application_registry.py", "reason": "Private immutable registry; exact final path is frozen before implementation and is not public API."}
+      ],
+      "batch_change": [
+        {"path": "pssolver/api/capabilities.py", "reason": "Capability view over the private registry."},
+        {"path": "pssolver/configuration/simulation.py", "reason": "Generic public simulation declaration dispatch."},
+        {"path": "pssolver/configuration/simulation_binding.py", "reason": "Generic registry-backed binding dispatch."},
+        {"path": "pssolver/configuration/simulation_lowering.py", "reason": "Generic registry-backed lowering dispatch."},
+        {"path": "pssolver/configuration/public_simulation_runner.py", "reason": "Single internal dispatch switch after shadow parity."},
+        {"path": "pssolver/runtime/package_construction.py", "reason": "Generic package-construction lookup over the registry."},
+        {"path": "pssolver/runtime/simulation_construction.py", "reason": "Generic runtime-construction lookup over the registry."}
+      ],
+      "read_only_frozen": [
+        {"path": "pssolver/applications/channel_active_nematics.py", "reason": "Concrete application adapter remains unchanged."},
+        {"path": "pssolver/applications/channel_beris_edwards.py", "reason": "Concrete application adapter remains unchanged."},
+        {"path": "pssolver/applications/periodic_beris_edwards.py", "reason": "Concrete application adapter remains unchanged."},
+        {"path": "pssolver/applications/plane_beris_edwards.py", "reason": "Concrete application adapter remains unchanged."},
+        {"path": "pssolver/configuration/channel_active_nematics.py", "reason": "Per-combination configuration remains unchanged; registry points to it."},
+        {"path": "pssolver/configuration/channel_active_nematics_declarations.py", "reason": "Per-combination declaration remains unchanged."},
+        {"path": "pssolver/configuration/channel_beris_edwards.py", "reason": "Per-combination configuration remains unchanged; registry points to it."},
+        {"path": "pssolver/configuration/periodic_beris_edwards.py", "reason": "Per-combination configuration remains unchanged; registry points to it."},
+        {"path": "pssolver/configuration/plane_beris_edwards.py", "reason": "Per-combination configuration remains unchanged; registry points to it."},
+        {"path": "pssolver/configuration/plane_beris_edwards_builders.py", "reason": "Concrete Plane builder remains unchanged."},
+        {"path": "pssolver/configuration/plane_beris_edwards_component_graph.py", "reason": "Concrete Plane component graph remains unchanged."},
+        {"path": "pssolver/configuration/plane_beris_edwards_components.py", "reason": "Concrete Plane components remain unchanged."},
+        {"path": "pssolver/configuration/plane_beris_edwards_declarations.py", "reason": "Per-combination declaration remains unchanged."},
+        {"path": "pssolver/configuration/plane_beris_edwards_schema_v1.py", "reason": "Released Plane schema remains unchanged."},
+        {"path": "pssolver/configuration/public_channel_beris_edwards_compiler.py", "reason": "Concrete public compiler remains an unchanged registry target."},
+        {"path": "pssolver/configuration/public_channel_simulation_compiler.py", "reason": "Concrete public compiler remains an unchanged registry target."},
+        {"path": "pssolver/configuration/public_periodic_simulation_compiler.py", "reason": "Concrete public compiler remains an unchanged registry target."},
+        {"path": "pssolver/planning/channel_compiled_v2.py", "reason": "Per-combination plan remains unchanged."},
+        {"path": "pssolver/planning/plane_compiled_v2.py", "reason": "Per-combination plan remains unchanged."},
+        {"path": "pssolver/runtime/channel_active_nematics.py", "reason": "Per-combination runtime remains unchanged."},
+        {"path": "pssolver/runtime/channel_application_bridge.py", "reason": "Concrete application bridge remains unchanged."},
+        {"path": "pssolver/runtime/channel_beris_edwards.py", "reason": "Per-combination runtime remains unchanged."},
+        {"path": "pssolver/runtime/periodic_beris_edwards.py", "reason": "Per-combination runtime remains unchanged."},
+        {"path": "pssolver/runtime/plane_application_bridge.py", "reason": "Concrete application bridge remains unchanged."},
+        {"path": "pssolver/runtime/plane_beris_edwards.py", "reason": "Per-combination runtime remains unchanged."},
+        {"path": "pssolver/runtime/plane_compiled_v2_binding.py", "reason": "Per-combination binding remains unchanged."},
+        {"path": "pssolver/runtime/plane_compiled_v2_step.py", "reason": "Per-combination step runtime remains unchanged."},
+        {"path": "pssolver/workflows/channel_active_nematics.py", "reason": "Per-combination workflow remains unchanged."},
+        {"path": "pssolver/workflows/channel_beris_edwards.py", "reason": "Per-combination workflow remains unchanged."},
+        {"path": "pssolver/workflows/periodic_beris_edwards.py", "reason": "Per-combination workflow remains unchanged."},
+        {"path": "pssolver/workflows/plane_beris_edwards.py", "reason": "Per-combination workflow remains unchanged."},
+        {"path": "pssolver/workflows/plane_compiled_v2.py", "reason": "Per-combination workflow remains unchanged."}
+      ],
+      "out_of_scope": [
+        {"path": "pssolver/configuration/finite_q_anchoring.py", "reason": "Experimental finite-Q configuration is not a registered model-geometry application pair in R1."},
+        {"path": "pssolver/configuration/lifting.py", "reason": "Lifting remains deferred and publicly non-executable."},
+        {"path": "pssolver/configuration/robin.py", "reason": "Experimental Robin configuration is not a registered R1 pair."},
+        {"path": "pssolver/planning/lifting.py", "reason": "Lifting remains deferred under D-0007."},
+        {"path": "pssolver/planning/robin.py", "reason": "Experimental Robin planning is outside the production application registry."}
+      ]
+    }
   },
   "batches": {
     "R2": {

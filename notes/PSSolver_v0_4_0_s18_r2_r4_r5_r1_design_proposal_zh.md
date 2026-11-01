@@ -19,6 +19,8 @@
 - 每批都做 8 个标准 Plane/Periodic/Channel family × 20 步比较：每一步状态
   `torch.equal`，最终 runtime/configuration identity 精确相同；另做干净归档
   wheel 的导入、`pip check` 和标准 dry run。
+- 每一批都必须让 PSSolver-Control main 对候选 installed wheel 跑完整 CPU suite；
+  即使该批把 Control-facing 文件归为“只读冻结”，也不能省略这道门禁。
 - 全部已发布的 v0.2.x 与 v0.3.0 checkpoint 都保持只读兼容，源目录不得被
   修改。
 
@@ -35,6 +37,37 @@ legacy Channel、complete-stress Channel checkpoint；finite-Q 与 Robin scalar 
 字节比较、故障/篡改矩阵和 N-1 合同；只有确实触及发布实现时才在单独授权下
 复测真实 NFS。CUDA device/cross-device checkpoint/restart 进入 S-19。
 
+R2 的逐文件分类如下（同一行中的每个路径均单独受该分类约束）：
+
+- **本批修改**：`pssolver/experimental/checkpointing.py`、
+  `pssolver/experimental/modal_block_checkpoint.py`、
+  `pssolver/functional/channel_checkpoint.py`、
+  `pssolver/functional/checkpoint_identity.py`、
+  `pssolver/functional/periodic_checkpoint.py`、
+  `pssolver/integrators/reference_checkpoint.py`、`pssolver/io/checkpoint.py`、
+  `pssolver/io/checkpoint_identity.py`、`pssolver/workflows/channel_checkpoint.py`、
+  `pssolver/workflows/finite_q_anchoring.py`、
+  `pssolver/workflows/periodic_checkpoint.py`、`pssolver/workflows/plane_checkpoint.py`。
+  它们实际拥有当前 writer、digest/canonical JSON/tensor helper 或原子发布调用点。
+- **只读冻结**：`pssolver/experimental/shadow_run.py`、`pssolver/functional/api.py`、
+  `pssolver/functional/channel_activity_runtime.py`、`pssolver/functional/contracts.py`、
+  `pssolver/functional/errors.py`、`pssolver/functional/periodic_activity.py`、
+  `pssolver/runtime/finite_q_anchoring.py`、`pssolver/runtime/robin_scalar.py`、
+  `pssolver/workflows/channel_active_nematics.py`、
+  `pssolver/workflows/channel_beris_edwards.py`、
+  `pssolver/workflows/periodic_beris_edwards.py`、
+  `pssolver/workflows/plane_beris_edwards.py`、
+  `pssolver/workflows/plane_compiled_v2.py`。这些是公开协议、内存载体、调用 facade、
+  Control-facing bridge 或已发布 reader/restore plan；其源码、异常与行为均冻结。
+- **范围外**：`pssolver/control/dal.py`；它是遗留 control-layer persistence，不是
+  R2 的 production/Functional checkpoint 格式。
+
+“触及发布实现”严格指改变 target 创建、staging 位置、placeholder ownership、
+文件/目录 fsync、rename/renameat2 选择、清理、symlink/device 判定或这些调用图。
+一旦发生，必须另行授权复测真实 NFS 的 Periodic/Channel 发布、restart、并发、
+已有目标与 symlink 矩阵。只替换为逐字节和失败行为相同的 canonical JSON、digest、
+manifest 或 tensor helper，且发布调用图不变，不单独触发真实 NFS。
+
 ## 第二批：R4 stepping、谱刷新与进度恢复原语
 
 主要文件是 `execution/state.py`、`integrators/state_backed.py`、
@@ -46,6 +79,43 @@ Periodic、Channel 的恢复工作流。共享层只提取精确顺序的控制�
 callback 时机、刷新判断以及所有 progress/generation 计数。除 8×20 外，重点
 测试多种 refresh interval、刷新前/当步/后一步 restart 和不一致进度的失败
 关闭。torch.compile 图、CUDA transform 及 H100 性能/显存进入 S-19。
+
+R4 的逐文件分类如下：
+
+- **本批修改**：`pssolver/execution/state.py`、`pssolver/integrator.py`、
+  `pssolver/integrators/scalar_reference.py`、`pssolver/integrators/state_backed.py`、
+  `pssolver/integrators/step_program.py`、
+  `pssolver/runtime/channel_active_nematics.py`、
+  `pssolver/runtime/channel_beris_edwards.py`、
+  `pssolver/runtime/periodic_beris_edwards.py`、
+  `pssolver/runtime/plane_beris_edwards.py`、
+  `pssolver/runtime/plane_compiled_v2_step.py`、`pssolver/runtime/plane_legacy.py`、
+  `pssolver/workflows/channel_beris_edwards.py`、
+  `pssolver/workflows/periodic_checkpoint.py`、`pssolver/workflows/plane_checkpoint.py`。
+  这些文件拥有实际 step、progress、refresh clock、legacy 动态谱刷新或恢复集成。
+- **只读冻结**：`pssolver/experimental/channel_compiled_v2.py`、
+  `pssolver/experimental/checkpointing.py`、`pssolver/experimental/integrators.py`、
+  `pssolver/experimental/modal_block_checkpoint.py`、
+  `pssolver/experimental/modal_block_reference.py`、
+  `pssolver/experimental/shadow_run.py`、
+  `pssolver/functional/channel_activity_runtime.py`、
+  `pssolver/functional/channel_checkpoint.py`、
+  `pssolver/functional/periodic_activity.py`、
+  `pssolver/functional/periodic_checkpoint.py`、
+  `pssolver/integrators/reference_checkpoint.py`、
+  `pssolver/runtime/plane_compiled_v2_binding.py`、`pssolver/runtime/robin_scalar.py`、
+  `pssolver/workflows/channel_checkpoint.py`、
+  `pssolver/workflows/plane_beris_edwards.py`、
+  `pssolver/workflows/plane_compiled_v2.py`。其中 `periodic_activity.py` 与
+  `channel_activity_runtime.py` 是 Control 使用的 Functional 路径，明确不修改，但
+  R4 推送前仍须跑完整 Control main CPU suite。
+- **范围外**：`pssolver/configuration/plane_beris_edwards.py`、
+  `pssolver/experimental/_shadow_support.py`、
+  `pssolver/experimental/h100_shadow_qualification.py`、
+  `pssolver/experimental/plane_shadow_driver.py`、
+  `pssolver/experimental/shadow_metadata.py`、
+  `pssolver/planning/channel_compiled_v2.py`、`pssolver/planning/plane_compiled_v2.py`；
+  它们分别属于配置、资格 support/driver/metadata、S-19 或 planning，而非执行原语。
 
 ## 第三批：R5 四条 Channel PCG 路径
 
@@ -64,6 +134,8 @@ metadata、warm-start cache、值和梯度都必须精确相同。验收重放 S
 失败路径。CUDA backward、profile、显存和性能统一进入 S-19，D-0013 的例外
 不延伸到 v0.4。
 
+R5 的三个**本批修改**文件就是上述三项；没有额外的只读冻结或范围外文件。
+
 ## 第四批：R1 model-geometry application registry
 
 这是范围最广的一批。需要统一 capability、declaration、lowering、binding、
@@ -75,6 +147,36 @@ binding、compiler identity、capability output 和负例全部精确一致后�
 的内部 dispatch 入口。近邻错误键、预分配失败路径、installed-wheel 构建和
 全部 checkpoint reader 都是硬门禁。GPU-capable pair 的完整构建、图、梯度、
 checkpoint/restart、性能和显存进入 S-19。
+
+R1 只修改通用 dispatch/registry 层：`pssolver/api/capabilities.py`、
+`pssolver/configuration/simulation.py`、`simulation_binding.py`、
+`simulation_lowering.py`、`public_simulation_runner.py`、
+`pssolver/runtime/package_construction.py` 和 `simulation_construction.py`；允许新增私有
+`pssolver/configuration/application_registry.py`，最终路径在实现前冻结。
+
+以下组合专用文件全部归为**只读冻结**，registry 只能引用，不能改其源码：
+
+- configuration：`channel_active_nematics.py`、
+  `channel_active_nematics_declarations.py`、`channel_beris_edwards.py`、
+  `periodic_beris_edwards.py`、`plane_beris_edwards.py`、
+  `plane_beris_edwards_builders.py`、`plane_beris_edwards_component_graph.py`、
+  `plane_beris_edwards_components.py`、`plane_beris_edwards_declarations.py`、
+  `plane_beris_edwards_schema_v1.py`、`public_channel_beris_edwards_compiler.py`、
+  `public_channel_simulation_compiler.py`、`public_periodic_simulation_compiler.py`；
+- applications：`channel_active_nematics.py`、`channel_beris_edwards.py`、
+  `periodic_beris_edwards.py`、`plane_beris_edwards.py`；
+- planning：`channel_compiled_v2.py`、`plane_compiled_v2.py`；
+- runtime：`channel_active_nematics.py`、`channel_application_bridge.py`、
+  `channel_beris_edwards.py`、`periodic_beris_edwards.py`、
+  `plane_application_bridge.py`、`plane_beris_edwards.py`、
+  `plane_compiled_v2_binding.py`、`plane_compiled_v2_step.py`；
+- workflows：`channel_active_nematics.py`、`channel_beris_edwards.py`、
+  `periodic_beris_edwards.py`、`plane_beris_edwards.py`、`plane_compiled_v2.py`。
+
+R1 的**范围外**文件是 `pssolver/configuration/finite_q_anchoring.py`、
+`configuration/lifting.py`、`configuration/robin.py`、`pssolver/planning/lifting.py` 和
+`planning/robin.py`：finite-Q/Robin 不是生产 registry 组合，lifting 继续按 D-0007
+延期。所有路径的完整前缀与逐项理由以 JSON 的 `scope_classification_v2` 为准。
 
 ## Control-first 边界
 
