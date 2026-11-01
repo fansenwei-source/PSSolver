@@ -1,0 +1,102 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 106,
+  "date": "2026-11-01",
+  "classification": "S18_R5_LOCAL_CPU_QUALIFICATION_COMPLETE_AWAITING_INDEPENDENT_REVIEW",
+  "plan_step": "S-18",
+  "git_identity": {
+    "implementation": "318e634eb09de27cb683c31c4860ab34761e8e44",
+    "qualification_support": "0238deabc280193e79aeaeb5c0074886bb7b6e1b",
+    "candidate_record": "07605bd82fdd0ca91c9a840142d36a9321bd118a",
+    "qualified_source": "64d2f81b5c0775667672e764af4ae675d3219fdd",
+    "parent": "d84e883df58af92268dc55f0b02a78b3b5cffd57",
+    "released_baseline": "47473880534a66f6da940db82122c79cda48a86b",
+    "record_commit_is_qualified_source": false
+  },
+  "forward_resolution": {
+    "record": "notes/PSSolver_v0_4_0_s18_r5_channel_pcg_control.json",
+    "record_sha256": "22408b217abdc60b6cbb8ac00d0fe35ea1d68ae00c8571790531ba6b9356ca3a",
+    "field": "qualification_support.formal_clean_clone_qualification_pending",
+    "historical_value": true,
+    "resolved_value": false,
+    "historical_record_rewritten": false
+  },
+  "qualification": {
+    "evidence_root": "/home/fansenwei/pssolver_v0_4_s18_r5_local_qualification_20261101_v1",
+    "pcg_case_count": 4,
+    "pcg_path_count": 4,
+    "pcg_parent_bitwise_equal": true,
+    "pcg_v0_3_0_bitwise_equal": true,
+    "eight_family_twenty_step_parent_bitwise_equal": true,
+    "eight_family_twenty_step_v0_3_0_bitwise_equal": true,
+    "writer_case_count": 10,
+    "writer_parent_and_v0_3_0_bitwise_equal": true,
+    "published_checkpoint_reader_fault_matrix_passed": 242,
+    "channel_pressure_matrix_passed": 104,
+    "silent_divergence_runs": 2160,
+    "silent_divergence_fail_closed": 0,
+    "silent_acceptable_above_1e_3": 0,
+    "floor_crossing_runs": 360,
+    "floor_crossing_fail_closed": 0,
+    "conda_full_passed": 5114,
+    "a2_full_passed": 5113,
+    "a2_optional_skip": 1,
+    "cuda_deselected": 7,
+    "control_main_passed": 298,
+    "control_main_expected_skips": 6,
+    "wheel_python_modules_imported": 221,
+    "nonzero_comparison_tolerance": null
+  },
+  "evidence_bindings": {
+    "pcg_parent": "63d55821d84a29e430958d22a68091a671d8224117a4177cdded53db5a9aa758",
+    "pcg_v0_3_0": "19e8e477f162654083e46babe1fd9a7b1992323fcbf4cc0fded9aea605ed0078",
+    "steps_parent": "a9017071639fded92ee38e19aa9b3fce320b67c16e8c90d259e99f26973fc7e4",
+    "steps_v0_3_0": "ae2c8fed680f00aa7b8487cd2bd4c50e05c60b3234b37f2b4ca0e1fb20cf116d",
+    "writer_comparison": "063706c70c029935c256845f4247a3e0e60b2e7dca06956bf529a2f5b94718f7",
+    "silent_divergence": "605916b82fde1d61f9039593840a1a1395003e87e555d632afff2336adf870cc",
+    "floor_crossing": "d60f5a50b5a67937ce68d7648dfd0f7086e9f907e3cf8cc37128a32bec2d0985",
+    "provider_archive": "d0df1c38899d132678d24ef487dd5600425a9c04db57e2f48371806a0f97df79",
+    "provider_wheel": "32aec757ce6bcdab115b2340b0c1043419215d7c89a4afb62b6a1b586435b619",
+    "installed_wheel_record": "415e9851db2441d808fc350fbaa878d31c8db3d3cf87aa956803a708b0654608",
+    "a2_baseline_record": "2fef42fc02ec42a5e4f9a75917d66a82431c4126150bd2db272214feadc77d63"
+  },
+  "repository_bindings": {
+    "notes/PSSolver_v0_3_0_s03_successor_104_s18_r5_channel_pcg.json": "13c3f99e47cbaac80a5665f642220e8bba40a1a16da4575df0a01675780e2d52",
+    "notes/PSSolver_v0_3_0_s03_successor_105_s18_r5_frozen_proxy_test.json": "e5d108b52860c94c2f460907bffb11b4943be4cdb21fc566191072cc0209bc32",
+    "benchmarks/verify_v0_4_s18_r5_pcg_equivalence.py": "bfb38c6c49eed0bbdbdd281200cd791979ab18b0ffb934eff2495e07a130c30e",
+    "tests/test_v0_4_s18_r5_channel_pcg_control.py": "c3aea6cf0d4fa21de034b0f301728c80643521d4023bb522fcacf1f59f62c279",
+    "tests/test_v0_3_s09_ap_cache_diagnostic.py": "fa96b6e5dd85f9731cc93484dd956ae616af92ae4df98d6bbd7591fed45ebe6e"
+  },
+  "historical_successor_sources": {},
+  "triggers": {
+    "functional_api_changed": false,
+    "constitutive_blob_changed": false,
+    "control_main_cpu_qualification_required": true,
+    "control_first_migration_required": false,
+    "checkpoint_publication_changed": false,
+    "real_nfs_retest_required": false,
+    "gpu_specific_path_changed": false,
+    "gpu_and_h100_owner": "S-19"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "gpu_specific_path_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_qualification": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
