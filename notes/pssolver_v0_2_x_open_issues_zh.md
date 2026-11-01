@@ -9,8 +9,8 @@
 当前共登记 65 条：
 
 - `open`：0；
-- `registered`：1；
-- `claimed_fixed`：0；
+- `registered`：0；
+- `claimed_fixed`：1；
 - `verified`：60；
 - `deferred`：2；
 - `accepted`：2；
@@ -266,6 +266,10 @@
     漏列七个 checkpoint/完整性 helper 相关模块，R4 漏列两个谱刷新模块且未说明两条
     Control Functional 路径是否在范围内，R1 也未逐项处置组合专用模块。返工须把代码扫描
     检出的每个模块明确归为“本批修改”“只读冻结”或“范围外”，并写明理由。
+45. `f5dbdbef43d1aa16e9c7638093df5c5c5ae58170` 已补齐权威逐文件分类、checkpoint/
+    integrity/spectral-refresh 代码扫描棘轮、每批完整 Control main CPU 门禁和精确的真实 NFS
+    触发条件；`V-60` 推进为 `claimed_fixed`，等待 `R-0053` 独立复核。首版设计中“范围已完整”
+    的含义由本 successor 向前更正，不改写旧记录。
 
 ## Control 路径
 

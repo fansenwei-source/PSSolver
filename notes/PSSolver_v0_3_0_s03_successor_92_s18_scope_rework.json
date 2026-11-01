@@ -1,0 +1,81 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 92,
+  "date": "2026-10-31",
+  "classification": "V60_CLAIMED_FIXED_PENDING_R0053",
+  "plan_step": "S-18",
+  "git_identity": {
+    "implementation": "f5dbdbef43d1aa16e9c7638093df5c5c5ae58170",
+    "implementation_parent": "d68ab96696b95b18df6746b52e82136a1e95851e",
+    "record_commit_is_qualified_source": false
+  },
+  "registry_updates": {
+    "V-60": {
+      "status": "claimed_fixed",
+      "fixed_in": "f5dbdbef43d1aa16e9c7638093df5c5c5ae58170",
+      "target_release": "0.4 S-18"
+    }
+  },
+  "forward_correction": {
+    "supersedes_claim": "The first design's existing_files_in_scope summaries were complete.",
+    "replacement": "scope_classification_v2 is authoritative and classifies every scanned module as batch_change, read_only_frozen, or out_of_scope with a reason.",
+    "historical_records_rewritten": false
+  },
+  "gates_added": {
+    "checkpoint_integrity_scan": true,
+    "spectral_refresh_scan": true,
+    "per_combination_r1_inventory": true,
+    "control_main_full_cpu_each_batch": true,
+    "real_nfs_trigger_is_explicit": true
+  },
+  "historical_successor_sources": {
+    "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal.json": {
+      "historical_sha256": "a53dd380155f7d69b9c04ee1d5a9018f3030d1e568c7c8ed82fba829ee30de75",
+      "current_sha256": "aacf76989f5083211fde0f3dc831bb40a3126d82d5f1ec9110c67dd824c4075a"
+    },
+    "notes/PSSolver_v0_4_0_s18_r2_r4_r5_r1_design_proposal_zh.md": {
+      "historical_sha256": "598a53aa95cbaa991c5fc9347eeabe4fd5bee8f7b28fe4c4cec6f2da80b6ed80",
+      "current_sha256": "2e9293df4bbaf17068c760af43a2cd4ee0fd7f92d5d2d26293e74632394a6a48"
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "0122082c9ded7b853091bc15e48cd0601773594376b55ba4a67e738980a4c37c",
+      "current_sha256": "a79fd3795840fbc6cf6c105df7b9f854a6aa7abdf981d66ced8c2722dab1c33b"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "f94778ca068e095e5f93775b7423833db0b8c22d4b9e99c7eb83241f22616f5e",
+      "current_sha256": "3a9a09a8cca181123ae04ce54e58f2cc4d5a60d896a8951c0b965ee252fb417d"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "224fcceacb94e4a080700944b88cf180a9127a8f1fba9f28df1267082fa316e3",
+      "current_sha256": "2c415a2e906346b87a934c698c250fe3547c440628dbe14770454494431308a0"
+    }
+  },
+  "implementation_sources": {
+    "tests/test_v0_4_s18_r0052_scope_rework.py": "c2750382115eb93d1f1146469a64f21120c3f03cbacd1e3fd5c8e53551b4ca22"
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_92_s18_scope_rework_zh.md": "aeedd31269e699bf07e7854e265f649ced17d8c7e9a090a792da863d0e5ff123",
+    "tests/test_v0_4_s18_scope_successor_92.py": "524ed87f64dc014daebde8cfdea486e2b53282ebf01d069cd22c9156b10af0c3"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "gpu_specific_path_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_registration": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

@@ -32,8 +32,8 @@
   "issue_count": 65,
   "status_counts": {
     "open": 0,
-    "registered": 1,
-    "claimed_fixed": 0,
+    "registered": 0,
+    "claimed_fixed": 1,
     "verified": 60,
     "deferred": 2,
     "accepted": 2,
@@ -1070,9 +1070,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "registered",
+      "status": "claimed_fixed",
+      "fixed_in": "f5dbdbef43d1aa16e9c7638093df5c5c5ae58170",
       "target_release": "0.4 S-18",
-      "notes": "The first S-18 design omitted seven checkpoint-related modules from R2, two spectral-refresh modules from R4, the Control relation for two Functional runtimes, and the disposition of per-combination configuration/runtime/planning/workflow modules in R1. R-0052 requires every detected checkpoint, integrity-helper, or spectral-refresh module to be classified as changed, frozen reader-only, or out of scope with a reason, backed by a code-scanning design test."
+      "notes": "The first S-18 design omitted seven checkpoint-related modules from R2, two spectral-refresh modules from R4, the Control relation for two Functional runtimes, and the disposition of per-combination configuration/runtime/planning/workflow modules in R1. Commit f5dbdbe adds an authoritative file-by-file changed/read-only/out-of-scope table, a code-scanning ratchet for checkpoint/integrity/spectral-refresh candidates, the per-batch full Control-main CPU gate, and an exact real-NFS trigger for publication implementation changes. V-60 is claimed_fixed pending R-0053 review."
     }
   ],
   "authorization": {
