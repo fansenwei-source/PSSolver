@@ -1,0 +1,60 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 101,
+  "date": "2026-11-01",
+  "classification": "S18_R4_EQUIVALENCE_HELPER_COMMON_PROCESS_ROOT_CORRECTION",
+  "plan_step": "S-18",
+  "git_identity": {
+    "qualification_helper_fix": "1d77906a4a4b609ed51ab06a9379c06fef0de49c",
+    "successor_order_fix": "540654a784fa1a20b9b8cd353aae414909b0645d",
+    "superseded_successor_order_attempt": "d7510aacab374640e2e7876aa4ddd1b7c90fde3a",
+    "runtime_implementation": "9cf54553b9f1bb2b94c2807c2e47adedeb415846",
+    "record_commit_is_qualified_source": false
+  },
+  "correction": {
+    "superseded_attempt": "out/equivalence_parent_invalid_process_roots",
+    "reason": "Plane profile construction resolves its no-output directory from the child process cwd. Separate source-root cwd values therefore changed only Plane configuration identity.",
+    "resolution": "Both child roles now run from the same evidence output root while PYTHONPATH, source import checks, commit, and git identity continue to bind each actual source tree. The successor 99 test was also made forward-compatible."
+  },
+  "historical_successor_sources": {
+    "benchmarks/verify_v0_4_s18_r4_step_equivalence.py": {
+      "historical_sha256": "01b934fa7042090f83f4f359ff74b8a84ae8a46f1d280949808bae1c746dd663",
+      "current_sha256": "9c0a946cfbaa39c318df2e1ca15dcea4e22b7d3fac3c25bf1a1ddca4f9ce7ab5"
+    },
+    "tests/test_v0_4_s18_r4_successor_99.py": {
+      "historical_sha256": "03b7511863f6e6b25c05e9ef6f93f0c90888324680baef50ed53e34f00577d3f",
+      "current_sha256": "c68cbea14eafa2f89a5c3f0083d376c06092af05beb6f3a9d5b31f9cd1e0970c"
+    },
+    "tests/v0_3_s03_successor.py": {
+      "historical_sha256": "62f2f01975c1d1a4b7382f3a427a6c0a374ff9fdfc68e423015efe224576e86c",
+      "accepted_predecessor_sha256": [
+        "62f2f01975c1d1a4b7382f3a427a6c0a374ff9fdfc68e423015efe224576e86c",
+        "551b8c147a3ae38174953e0a43fd34df56296bd5c531c62416b52caaa023d8e0"
+      ],
+      "current_sha256": "0368f3030517b1971984608297afbdb05647d151a09ea154c6eafe59e0bcdfe0"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_101_s18_r4_equivalence_cwd_zh.md": "71cdf8de384724129d6b217db06ecd0317b735ee1a39f6dfb61f7a31f721238d",
+    "tests/test_v0_4_s18_r4_successor_101.py": "4c5bfc4ee0dd3909e51f020ed110a3f274ccbd4dbe29bbe5fcec3ae7e9b0ad97"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "public_api_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_qualification_helper_fix": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
