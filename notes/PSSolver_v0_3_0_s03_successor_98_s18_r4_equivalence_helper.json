@@ -1,0 +1,52 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 98,
+  "date": "2026-11-01",
+  "classification": "S18_R4_EQUIVALENCE_HELPER_COMMON_WORK_PATH_CORRECTION",
+  "plan_step": "S-18",
+  "git_identity": {
+    "qualification_helper_fix": "aebab348f8a570a5bbf1314efc1867e399047c4b",
+    "previous_candidate": "8f12ca31b0b9b587e7d8469b09997934d4b92ba7",
+    "runtime_implementation": "9cf54553b9f1bb2b94c2807c2e47adedeb415846",
+    "record_commit_is_qualified_source": false
+  },
+  "governance": {
+    "decision": "D-0018",
+    "design_review": "R-0054",
+    "batch": "R4"
+  },
+  "correction": {
+    "superseded_attempt": "out/equivalence_parent_invalid_role_work_paths",
+    "reason": "The first qualification attempt used role-specific work directories, so the output directory embedded in configuration identity differed even though state and progress traces did not.",
+    "resolution": "Both roles now use and remove the same deterministic work directory for each family and refresh interval before the next role runs. No runtime source changed."
+  },
+  "historical_successor_sources": {
+    "benchmarks/verify_v0_4_s18_r4_step_equivalence.py": {
+      "historical_sha256": "9ea5c8c3fabca9d6033a57aea3fdcbb4efe18edeeb0e3eab0ddef2cdd264beb2",
+      "current_sha256": "3570adfea175a5485ef66dced5cc3f48565906b84cc55ea8cf37463f3cbc258f"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_98_s18_r4_equivalence_helper_zh.md": "08c43d0feb1229e547143a135fc662f02e83e810b0b65237b4abb7ce8bc4aa81",
+    "tests/test_v0_4_s18_r4_successor_98.py": "a4ba86f65c7af3bd8301eb80e8d1782e292b9ee2bbbea6c5bb21e2db96318bc9"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "public_api_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_qualification_helper_fix": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
