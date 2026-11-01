@@ -19,7 +19,10 @@ from pssolver.configuration.channel_active_nematics import (
 from pssolver.configuration.channel_active_nematics_declarations import (
     ChannelRuntimePath,
 )
-from pssolver.execution.state import RuntimeState
+from pssolver.integrators.state_backed import (
+    _integrator_completed_steps,
+    _restore_integrator_progress,
+)
 from pssolver.models.active_nematics import Q_COMPONENTS
 
 
@@ -170,13 +173,7 @@ def _output_views(solver: object) -> ChannelOutputViews:
 
 
 def _completed_steps(integrator: object) -> int:
-    state = getattr(integrator, "runtime_state", None)
-    if isinstance(state, RuntimeState):
-        return int(state.progress.completed_steps)
-    interval = integrator.spectral_refresh_interval
-    if interval is None:
-        return int(integrator.step_count)
-    return int(integrator.refresh_count * interval + integrator.step_count)
+    return _integrator_completed_steps(integrator)
 
 
 def _validate_pressure_guess(
@@ -209,13 +206,16 @@ def _restore_progress(
     integrator_step_count: int,
     integrator_refresh_count: int,
 ) -> None:
-    integrator.set_spectral_refresh_interval(spectral_refresh_interval)
-    integrator.restore_progress(completed_steps, static_fields_are_current=True)
-    if (
-        int(integrator.step_count) != integrator_step_count
-        or int(integrator.refresh_count) != integrator_refresh_count
-    ):
-        raise RuntimeError("restored Channel refresh counters are inconsistent")
+    _restore_integrator_progress(
+        integrator,
+        completed_steps=completed_steps,
+        spectral_refresh_interval=spectral_refresh_interval,
+        integrator_step_count=integrator_step_count,
+        integrator_refresh_count=integrator_refresh_count,
+        mismatch_message=(
+            "restored Channel refresh counters are inconsistent"
+        ),
+    )
 
 
 @dataclass(frozen=True, slots=True)

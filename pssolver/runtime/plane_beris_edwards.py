@@ -29,6 +29,10 @@ from pssolver.execution.state import RuntimeState
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
 from pssolver.models.active_nematics import Q_COMPONENTS
+from pssolver.integrators.state_backed import (
+    _integrator_completed_steps,
+    _restore_integrator_progress as _restore_progress,
+)
 from pssolver.operators.lifting import (
     FreshInitialConditioningPolicy,
     strict_no_automatic_conditioning,
@@ -235,14 +239,10 @@ class LegacyPlaneRuntimeAdapter:
 
     @property
     def completed_steps(self) -> int:
-        integrator = self._solver.integrator
-        state = getattr(integrator, "runtime_state", None)
+        state = getattr(self._solver.integrator, "runtime_state", None)
         if isinstance(state, RuntimeState):
             return int(state.progress.completed_steps)
-        interval = integrator.spectral_refresh_interval
-        if interval is None:
-            return int(integrator.step_count)
-        return int(integrator.refresh_count * interval + integrator.step_count)
+        return _integrator_completed_steps(self._solver.integrator)
 
     def advance(
         self,
@@ -347,10 +347,9 @@ class SeparatedCanaryPlaneRuntimeAdapter:
         state = getattr(integrator, "runtime_state", None)
         if isinstance(state, RuntimeState):
             return int(state.progress.completed_steps)
-        interval = integrator.spectral_refresh_interval
-        if interval is None:
-            return int(integrator.step_count)
-        return int(integrator.refresh_count * interval + integrator.step_count)
+        return _integrator_completed_steps(
+            integrator
+        )
 
     def advance(
         self,
@@ -495,16 +494,16 @@ def _restore_integrator_progress(
     integrator_step_count: int,
     integrator_refresh_count: int,
 ) -> None:
-    integrator.set_spectral_refresh_interval(spectral_refresh_interval)
-    integrator.restore_progress(
-        completed_steps,
-        static_fields_are_current=True,
+    _restore_progress(
+        integrator,
+        completed_steps=completed_steps,
+        spectral_refresh_interval=spectral_refresh_interval,
+        integrator_step_count=integrator_step_count,
+        integrator_refresh_count=integrator_refresh_count,
+        mismatch_message=(
+            "restored spectral-refresh counters are inconsistent"
+        ),
     )
-    if (
-        int(integrator.step_count) != integrator_step_count
-        or int(integrator.refresh_count) != integrator_refresh_count
-    ):
-        raise RuntimeError("restored spectral-refresh counters are inconsistent")
 
 
 def build_plane_beris_edwards_runtime(

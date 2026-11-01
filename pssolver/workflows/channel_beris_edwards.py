@@ -16,6 +16,7 @@ import numpy as np
 import torch
 
 from pssolver.core._canonical import canonical_json
+from pssolver.execution.state import _refresh_counters_from_completed_steps
 from pssolver.io.checkpoint import (
     CheckpointCompatibilityError,
     CheckpointIntegrityError,
@@ -519,14 +520,12 @@ def _validated_progress(metadata):
                 f"checkpoint {name} is invalid",
                 operation="complete_stress_channel_checkpoint_import",
             )
-    if interval is None:
-        expected_refresh_count = 0
-        expected_step_count = completed_steps
-    else:
-        expected_refresh_count, expected_step_count = divmod(
+    expected_step_count, expected_refresh_count = (
+        _refresh_counters_from_completed_steps(
             completed_steps,
             interval,
         )
+    )
     if (
         integrator["step_count"] != expected_step_count
         or integrator["refresh_count"] != expected_refresh_count

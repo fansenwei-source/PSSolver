@@ -17,6 +17,89 @@ from types import MappingProxyType
 import torch
 
 
+def _refresh_counters_are_consistent(
+    *,
+    completed_steps: int,
+    refresh_interval: int | None,
+    refresh_step_count: int,
+    refresh_count: int,
+) -> bool:
+    """Return whether one persisted spectral-refresh clock is coherent."""
+
+    if refresh_interval is None:
+        return refresh_count == 0 and refresh_step_count == completed_steps
+    return (
+        refresh_step_count < refresh_interval
+        and refresh_count * refresh_interval + refresh_step_count
+        == completed_steps
+    )
+
+
+def _refresh_counters_from_completed_steps(
+    completed_steps: int,
+    refresh_interval: int | None,
+) -> tuple[int, int]:
+    """Return ``(step_count, refresh_count)`` for a restored clock."""
+
+    if refresh_interval is None:
+        return completed_steps, 0
+    refresh_count, refresh_step_count = divmod(
+        completed_steps,
+        refresh_interval,
+    )
+    return refresh_step_count, refresh_count
+
+
+def _completed_steps_from_refresh_counters(
+    *,
+    refresh_interval: int | None,
+    refresh_step_count: int,
+    refresh_count: int,
+) -> int:
+    """Reconstruct completed steps without changing legacy validation."""
+
+    if refresh_interval is None:
+        return refresh_step_count
+    return refresh_count * refresh_interval + refresh_step_count
+
+
+def _refresh_due_after_next_step(
+    *,
+    refresh_interval: int | None,
+    refresh_step_count: int,
+) -> bool:
+    """Return the existing refresh decision for the next successful step."""
+
+    return (
+        refresh_interval is not None
+        and refresh_step_count + 1 >= refresh_interval
+    )
+
+
+def _advance_refresh_counters(
+    *,
+    completed_steps: int,
+    refresh_interval: int | None,
+    refresh_step_count: int,
+    refresh_count: int,
+    refreshed: bool,
+) -> tuple[int, int, int]:
+    """Commit one already-validated refresh outcome to pure counters."""
+
+    refresh_due = _refresh_due_after_next_step(
+        refresh_interval=refresh_interval,
+        refresh_step_count=refresh_step_count,
+    )
+    if refreshed != refresh_due:
+        raise RuntimeError("refresh outcome does not match refresh clock")
+    completed_steps += 1
+    refresh_step_count += 1
+    if refreshed:
+        refresh_step_count = 0
+        refresh_count += 1
+    return completed_steps, refresh_step_count, refresh_count
+
+
 class CurrentRepresentation(str, Enum):
     """Which evolved representation is current at one logical generation."""
 
@@ -215,20 +298,12 @@ class IntegratorProgress:
         return value
 
     def _validate_counters(self) -> None:
-        interval = self._refresh_interval
-        if interval is None:
-            valid = (
-                self._refresh_count == 0
-                and self._refresh_step_count == self._completed_steps
-            )
-        else:
-            valid = (
-                self._refresh_step_count < interval
-                and self._refresh_count * interval
-                + self._refresh_step_count
-                == self._completed_steps
-            )
-        if not valid:
+        if not _refresh_counters_are_consistent(
+            completed_steps=self._completed_steps,
+            refresh_interval=self._refresh_interval,
+            refresh_step_count=self._refresh_step_count,
+            refresh_count=self._refresh_count,
+        ):
             raise ValueError("spectral-refresh counters are inconsistent")
 
     @property
@@ -257,10 +332,9 @@ class IntegratorProgress:
 
     @property
     def refresh_due_after_next_step(self) -> bool:
-        interval = self._refresh_interval
-        return (
-            interval is not None
-            and self._refresh_step_count + 1 >= interval
+        return _refresh_due_after_next_step(
+            refresh_interval=self._refresh_interval,
+            refresh_step_count=self._refresh_step_count,
         )
 
     def commit_step(self, *, refreshed: bool) -> None:
@@ -268,14 +342,17 @@ class IntegratorProgress:
 
         if not isinstance(refreshed, bool):
             raise TypeError("refreshed must be a bool")
-        refresh_due = self.refresh_due_after_next_step
-        if refreshed != refresh_due:
-            raise RuntimeError("refresh outcome does not match refresh clock")
-        self._completed_steps += 1
-        self._refresh_step_count += 1
-        if refresh_due:
-            self._refresh_step_count = 0
-            self._refresh_count += 1
+        (
+            self._completed_steps,
+            self._refresh_step_count,
+            self._refresh_count,
+        ) = _advance_refresh_counters(
+            completed_steps=self._completed_steps,
+            refresh_interval=self._refresh_interval,
+            refresh_step_count=self._refresh_step_count,
+            refresh_count=self._refresh_count,
+            refreshed=refreshed,
+        )
 
     def to_metadata(self) -> dict[str, object]:
         return {

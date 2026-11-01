@@ -18,6 +18,8 @@ from pssolver.core.spectral_identity import (
 )
 from pssolver.integrators.state_backed import (
     StateBackedProjectedIntegratorMixin,
+    _integrator_completed_steps,
+    _restore_integrator_progress,
 )
 from pssolver.integrator import SemiImplicitEulerIntegrator
 from pssolver.linear_solvers.stokes import PeriodicModalStokesSolver
@@ -128,23 +130,6 @@ class _PeriodicProjectedEuler(
         super().__init__(model, dt, qx, qy, q2)
         self.spectral_projector = model.spectral_projector
 
-    def _refresh_dynamic_spectra(self):
-        self.spectral_projector.refresh_dynamic_fields(
-            self.model.fields,
-            sync_spatial=True,
-        )
-
-    def _inverse_dynamic_spectra(self, state, workspace, generation):
-        for group in self.dynamic_transform_groups:
-            bcs = self.model.fields.get_boundary_conditions(group[0])
-            self.model.fields.store_spatial_group(
-                group,
-                self.spectral_projector.inverse_transform(
-                    self.model.fields.select_spectral_group(group),
-                    bcs,
-                ),
-            )
-
 
 @dataclass(frozen=True, slots=True)
 class PeriodicRuntimeBuildRequest:
@@ -215,11 +200,7 @@ class PeriodicRuntimeAdapter:
 
     @property
     def completed_steps(self) -> int:
-        integrator = self._solver.integrator
-        interval = integrator.spectral_refresh_interval
-        if interval is None:
-            return int(integrator.step_count)
-        return int(integrator.refresh_count * interval + integrator.step_count)
+        return _integrator_completed_steps(self._solver.integrator)
 
     def advance(self, steps, *, pre_update_callback=None):
         self._solver.run(steps, pre_update_callback=pre_update_callback)
@@ -235,17 +216,14 @@ class PeriodicRuntimeAdapter:
         integrator_step_count,
         integrator_refresh_count,
     ):
-        integrator = self._solver.integrator
-        integrator.set_spectral_refresh_interval(spectral_refresh_interval)
-        integrator.restore_progress(
-            completed_steps,
-            static_fields_are_current=True,
+        _restore_integrator_progress(
+            self._solver.integrator,
+            completed_steps=completed_steps,
+            spectral_refresh_interval=spectral_refresh_interval,
+            integrator_step_count=integrator_step_count,
+            integrator_refresh_count=integrator_refresh_count,
+            mismatch_message="restored refresh counters are inconsistent",
         )
-        if (
-            int(integrator.step_count) != integrator_step_count
-            or int(integrator.refresh_count) != integrator_refresh_count
-        ):
-            raise RuntimeError("restored refresh counters are inconsistent")
 
     def backend_restart_metadata(self):
         return {"kind": "periodic_stokes_stateless", "state_keys": []}

@@ -12,11 +12,51 @@ from pssolver.execution.state import (
     IntegratorProgress,
     RepresentationLedger,
     RuntimeState,
+    _completed_steps_from_refresh_counters,
+    _refresh_counters_from_completed_steps,
 )
 from pssolver.execution.workspace import WorkspacePlan
 from pssolver.integrators.step_program import (
     ProjectedSemiImplicitEulerStepProgram,
 )
+
+
+def _integrator_completed_steps(integrator) -> int:
+    """Read one legacy or state-backed integrator clock exactly."""
+
+    state = getattr(integrator, "runtime_state", None)
+    if isinstance(state, RuntimeState):
+        return int(state.progress.completed_steps)
+    return int(
+        _completed_steps_from_refresh_counters(
+            refresh_interval=integrator.spectral_refresh_interval,
+            refresh_step_count=integrator.step_count,
+            refresh_count=integrator.refresh_count,
+        )
+    )
+
+
+def _restore_integrator_progress(
+    integrator,
+    *,
+    completed_steps,
+    spectral_refresh_interval,
+    integrator_step_count,
+    integrator_refresh_count,
+    mismatch_message,
+) -> None:
+    """Restore one adapter clock while preserving its public error text."""
+
+    integrator.set_spectral_refresh_interval(spectral_refresh_interval)
+    integrator.restore_progress(
+        completed_steps,
+        static_fields_are_current=True,
+    )
+    if (
+        int(integrator.step_count) != integrator_step_count
+        or int(integrator.refresh_count) != integrator_refresh_count
+    ):
+        raise RuntimeError(mismatch_message)
 
 
 class StateBackedProjectedIntegratorMixin:
@@ -126,14 +166,12 @@ class StateBackedProjectedIntegratorMixin:
             self._spectral_refresh_interval = interval
             return
         completed_steps = state.progress.completed_steps
-        if interval is None:
-            refresh_count = 0
-            refresh_step_count = completed_steps
-        else:
-            refresh_count, refresh_step_count = divmod(
+        refresh_step_count, refresh_count = (
+            _refresh_counters_from_completed_steps(
                 completed_steps,
                 interval,
             )
+        )
         state.replace_progress(
             IntegratorProgress(
                 dt=self.dt,
@@ -192,10 +230,10 @@ class StateBackedProjectedIntegratorMixin:
             else refresh_count
         )
         interval = progress.refresh_interval
-        completed_steps = (
-            step_count
-            if interval is None
-            else refresh_count * interval + step_count
+        completed_steps = _completed_steps_from_refresh_counters(
+            refresh_interval=interval,
+            refresh_step_count=step_count,
+            refresh_count=refresh_count,
         )
         self._runtime_state.replace_progress(
             IntegratorProgress(
@@ -232,14 +270,12 @@ class StateBackedProjectedIntegratorMixin:
         if completed_steps < 0:
             raise ValueError("completed_steps must be non-negative")
         interval = self.spectral_refresh_interval
-        if interval is None:
-            refresh_count = 0
-            refresh_step_count = completed_steps
-        else:
-            refresh_count, refresh_step_count = divmod(
+        refresh_step_count, refresh_count = (
+            _refresh_counters_from_completed_steps(
                 completed_steps,
                 interval,
             )
+        )
         self._runtime_state.replace_progress(
             IntegratorProgress(
                 dt=self.dt,
@@ -271,6 +307,25 @@ class StateBackedProjectedIntegratorMixin:
         self.spectral_projector.project_dynamic_fields(
             self.model.fields,
             sync_spatial=False,
+        )
+
+    def _inverse_dynamic_spectra(self, state, workspace, generation):
+        for group in self.dynamic_transform_groups:
+            boundary_conditions = self.model.fields.get_boundary_conditions(
+                group[0]
+            )
+            self.model.fields.store_spatial_group(
+                group,
+                self.spectral_projector.inverse_transform(
+                    self.model.fields.select_spectral_group(group),
+                    boundary_conditions,
+                ),
+            )
+
+    def _refresh_dynamic_spectra(self):
+        self.spectral_projector.refresh_dynamic_fields(
+            self.model.fields,
+            sync_spatial=True,
         )
 
     def _refresh_dynamic_spectra_operation(self, state, workspace, generation):

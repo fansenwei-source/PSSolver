@@ -60,25 +60,6 @@ class DealiasedSemiImplicitEulerIntegrator(
         super().__init__(model, dt, qx, qy, q2)
         self.spectral_projector = model.spectral_projector
 
-    def _refresh_dynamic_spectra(self):
-        self.spectral_projector.refresh_dynamic_fields(
-            self.model.fields,
-            sync_spatial=True,
-        )
-
-    def _inverse_dynamic_spectra(self, state, workspace, generation):
-        for group in self.dynamic_transform_groups:
-            boundary_conditions = self.model.fields.get_boundary_conditions(
-                group[0]
-            )
-            self.model.fields.store_spatial_group(
-                group,
-                self.spectral_projector.inverse_transform(
-                    self.model.fields.select_spectral_group(group),
-                    boundary_conditions,
-                ),
-            )
-
 
 def _real_dtype(name: str) -> torch.dtype:
     try:

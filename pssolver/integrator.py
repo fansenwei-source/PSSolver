@@ -1,3 +1,9 @@
+from pssolver.execution.state import (
+    _refresh_counters_from_completed_steps,
+    _refresh_due_after_next_step,
+)
+
+
 class TimeIntegrator:
     def __init__(self, dt, qx, qy, q2):
         self.dt = dt
@@ -53,14 +59,12 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
             raise TypeError("completed_steps must be an integer")
         if completed_steps < 0:
             raise ValueError("completed_steps must be non-negative")
-        if self.spectral_refresh_interval is None:
-            self.step_count = completed_steps
-            self.refresh_count = 0
-        else:
-            self.refresh_count, self.step_count = divmod(
+        self.step_count, self.refresh_count = (
+            _refresh_counters_from_completed_steps(
                 completed_steps,
                 self.spectral_refresh_interval,
             )
+        )
         self._static_fields_are_current = bool(static_fields_are_current)
 
     def _refresh_dynamic_spectra(self):
@@ -77,9 +81,13 @@ class SemiImplicitEulerIntegrator(TimeIntegrator):
 
     def _advance_spectral_refresh_clock(self):
         """Advance the refresh phase and perform a scheduled refresh if needed."""
-        self.step_count += 1
         interval = self.spectral_refresh_interval
-        if interval is None or self.step_count < interval:
+        refresh_due = _refresh_due_after_next_step(
+            refresh_interval=interval,
+            refresh_step_count=self.step_count,
+        )
+        self.step_count += 1
+        if not refresh_due:
             return False
 
         self._refresh_dynamic_spectra()

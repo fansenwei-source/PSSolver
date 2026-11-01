@@ -15,6 +15,7 @@ import torch
 
 from pssolver.execution.state import RuntimeState
 from pssolver.execution.workspace import RuntimeWorkspace, WorkspacePlan
+from pssolver.integrators.step_program import _execute_projected_euler_step
 from pssolver.planning.plane_compiled_v2 import PlaneCompiledStage
 from pssolver.runtime.plane_compiled_v2_binding import (
     PlaneCompiledV2BindingPlan,
@@ -128,18 +129,6 @@ class PlaneCompiledEulerStepProgram:
     def failure_semantics(self) -> PlaneCompiledFailureSemantics:
         return self._failure_semantics
 
-    def _require_rhs(self, value: object) -> torch.Tensor:
-        if not isinstance(value, torch.Tensor):
-            raise TypeError("explicit RHS must be a tensor")
-        spectral = self._state.spectral
-        if (
-            value.shape != spectral.shape
-            or value.dtype != spectral.dtype
-            or value.device != spectral.device
-        ):
-            raise ValueError("explicit RHS does not match evolved spectrum")
-        return value
-
     def step(
         self,
         *,
@@ -152,40 +141,24 @@ class PlaneCompiledEulerStepProgram:
         ):
             raise TypeError("pre_update_callback must be callable or None")
 
-        state = self._state
-        workspace = self._workspace
-        operators = self._operators
-        state.representations.require_spectral_current()
-
-        generation = workspace.begin_generation()
-        try:
-            operators.prepare_algebraic(state, workspace, generation)
-            if pre_update_callback is not None:
-                pre_update_callback()
-
-            rhs = self._require_rhs(
-                operators.explicit_rhs(state, workspace, generation)
-            )
-            state.spectral.add_(self._dt * rhs)
-            state.spectral.div_(self._denominator)
-            state.representations.mark_spectral_updated()
-
-            operators.project_dynamic_spectra(state, workspace, generation)
-            operators.inverse_dynamic_spectra(state, workspace, generation)
-            state.representations.mark_physical_synchronized()
-
-            refresh_due = state.progress.refresh_due_after_next_step
-            if refresh_due:
-                operators.refresh_dynamic_spectra(
-                    state,
-                    workspace,
-                    generation,
-                )
-            state.progress.commit_step(refreshed=refresh_due)
-        except BaseException:
-            workspace.abort_generation(token=generation)
-            raise
-        workspace.end_generation(token=generation)
+        _execute_projected_euler_step(
+            state=self._state,
+            workspace=self._workspace,
+            denominator=self._denominator,
+            dt=self._dt,
+            prepare_algebraic=self._operators.prepare_algebraic,
+            explicit_rhs=self._operators.explicit_rhs,
+            project_dynamic_spectra=(
+                self._operators.project_dynamic_spectra
+            ),
+            inverse_dynamic_spectra=(
+                self._operators.inverse_dynamic_spectra
+            ),
+            refresh_dynamic_spectra=(
+                self._operators.refresh_dynamic_spectra
+            ),
+            pre_update_callback=pre_update_callback,
+        )
 
     def to_metadata(self) -> dict[str, object]:
         return {

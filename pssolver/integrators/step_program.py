@@ -39,6 +39,56 @@ class ExplicitRHSOperation(Protocol):
     ) -> torch.Tensor: ...
 
 
+def _execute_projected_euler_step(
+    *,
+    state: RuntimeState,
+    workspace: RuntimeWorkspace,
+    denominator: torch.Tensor,
+    dt: float,
+    prepare_algebraic: StepOperation,
+    explicit_rhs: ExplicitRHSOperation,
+    project_dynamic_spectra: StepOperation,
+    inverse_dynamic_spectra: StepOperation,
+    refresh_dynamic_spectra: StepOperation,
+    pre_update_callback: Callable[[], None] | None,
+) -> None:
+    """Execute the frozen projected-Euler order over pre-bound callbacks."""
+
+    state.representations.require_spectral_current()
+    generation = workspace.begin_generation()
+    try:
+        prepare_algebraic(state, workspace, generation)
+        if pre_update_callback is not None:
+            pre_update_callback()
+
+        rhs = explicit_rhs(state, workspace, generation)
+        if not isinstance(rhs, torch.Tensor):
+            raise TypeError("explicit RHS must be a tensor")
+        spectral = state.spectral
+        if (
+            rhs.shape != spectral.shape
+            or rhs.dtype != spectral.dtype
+            or rhs.device != spectral.device
+        ):
+            raise ValueError("explicit RHS does not match evolved spectrum")
+        state.spectral.add_(dt * rhs)
+        state.spectral.div_(denominator)
+        state.representations.mark_spectral_updated()
+
+        project_dynamic_spectra(state, workspace, generation)
+        inverse_dynamic_spectra(state, workspace, generation)
+        state.representations.mark_physical_synchronized()
+
+        refresh_due = state.progress.refresh_due_after_next_step
+        if refresh_due:
+            refresh_dynamic_spectra(state, workspace, generation)
+        state.progress.commit_step(refreshed=refresh_due)
+    except BaseException:
+        workspace.abort_generation(token=generation)
+        raise
+    workspace.end_generation(token=generation)
+
+
 @dataclass(frozen=True, slots=True)
 class ProjectedSemiImplicitEulerStepProgram:
     """Fixed projected-IMEX sequence with explicit mutable ownership.
@@ -84,19 +134,6 @@ class ProjectedSemiImplicitEulerStepProgram:
         if self.denominator.device != spectral.device:
             raise ValueError("denominator device does not match evolved spectrum")
 
-    @staticmethod
-    def _validate_rhs(rhs: object, state: RuntimeState) -> torch.Tensor:
-        if not isinstance(rhs, torch.Tensor):
-            raise TypeError("explicit RHS must be a tensor")
-        spectral = state.spectral
-        if (
-            rhs.shape != spectral.shape
-            or rhs.dtype != spectral.dtype
-            or rhs.device != spectral.device
-        ):
-            raise ValueError("explicit RHS does not match evolved spectrum")
-        return rhs
-
     def step(
         self,
         state: RuntimeState,
@@ -113,34 +150,18 @@ class ProjectedSemiImplicitEulerStepProgram:
         if pre_update_callback is not None and not callable(pre_update_callback):
             raise TypeError("pre_update_callback must be callable or None")
         self._validate_bound_state(state)
-        state.representations.require_spectral_current()
-
-        generation = workspace.begin_generation()
-        try:
-            self.prepare_algebraic(state, workspace, generation)
-            if pre_update_callback is not None:
-                pre_update_callback()
-
-            rhs = self._validate_rhs(
-                self.explicit_rhs(state, workspace, generation),
-                state,
-            )
-            state.spectral.add_(state.progress.dt * rhs)
-            state.spectral.div_(self.denominator)
-            state.representations.mark_spectral_updated()
-
-            self.project_dynamic_spectra(state, workspace, generation)
-            self.inverse_dynamic_spectra(state, workspace, generation)
-            state.representations.mark_physical_synchronized()
-
-            refresh_due = state.progress.refresh_due_after_next_step
-            if refresh_due:
-                self.refresh_dynamic_spectra(state, workspace, generation)
-            state.progress.commit_step(refreshed=refresh_due)
-        except BaseException:
-            workspace.abort_generation(token=generation)
-            raise
-        workspace.end_generation(token=generation)
+        _execute_projected_euler_step(
+            state=state,
+            workspace=workspace,
+            denominator=self.denominator,
+            dt=state.progress.dt,
+            prepare_algebraic=self.prepare_algebraic,
+            explicit_rhs=self.explicit_rhs,
+            project_dynamic_spectra=self.project_dynamic_spectra,
+            inverse_dynamic_spectra=self.inverse_dynamic_spectra,
+            refresh_dynamic_spectra=self.refresh_dynamic_spectra,
+            pre_update_callback=pre_update_callback,
+        )
 
     def to_metadata(self) -> dict[str, object]:
         return {
