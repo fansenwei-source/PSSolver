@@ -12,7 +12,6 @@ import numpy as np
 import torch
 
 from pssolver.core._canonical import canonical_json
-from pssolver.execution.state import _refresh_counters_are_consistent
 from pssolver.configuration import PlaneBerisEdwardsRunSpec, PlaneRuntimePath
 from pssolver.io.checkpoint import (
     CHECKPOINT_INTEGRITY_SEALED_SHA256,
@@ -181,12 +180,19 @@ class PlaneWorkflowCheckpoint:
             or interval <= 0
         ):
             raise ValueError("spectral refresh interval must be positive or None")
-        if not _refresh_counters_are_consistent(
-            completed_steps=self.completed_steps,
-            refresh_interval=interval,
-            refresh_step_count=self.integrator_step_count,
-            refresh_count=self.integrator_refresh_count,
-        ):
+        if interval is None:
+            counters_match = (
+                self.integrator_refresh_count == 0
+                and self.integrator_step_count == self.completed_steps
+            )
+        else:
+            counters_match = (
+                self.integrator_step_count < interval
+                and self.integrator_refresh_count * interval
+                + self.integrator_step_count
+                == self.completed_steps
+            )
+        if not counters_match:
             raise ValueError("checkpoint refresh counters are inconsistent")
         spatial = _clone_tensors(self.evolved_spatial, "evolved_spatial")
         spectral = _clone_tensors(self.evolved_spectral, "evolved_spectral")

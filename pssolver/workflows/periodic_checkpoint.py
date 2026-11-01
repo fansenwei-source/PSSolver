@@ -12,7 +12,6 @@ import numpy as np
 import torch
 
 from pssolver.core._canonical import canonical_json
-from pssolver.execution.state import _refresh_counters_are_consistent
 from pssolver.configuration.periodic_beris_edwards import (
     PERIODIC_RUNTIME_PATH,
     PeriodicBerisEdwardsRunSpec,
@@ -132,12 +131,15 @@ def _validate_progress(
         or interval <= 0
     ):
         raise ValueError("spectral refresh interval must be positive or None")
-    if not _refresh_counters_are_consistent(
-        completed_steps=completed_steps,
-        refresh_interval=interval,
-        refresh_step_count=integrator_step_count,
-        refresh_count=integrator_refresh_count,
-    ):
+    if interval is None:
+        valid = integrator_refresh_count == 0 and integrator_step_count == completed_steps
+    else:
+        valid = (
+            integrator_step_count < interval
+            and integrator_refresh_count * interval + integrator_step_count
+            == completed_steps
+        )
+    if not valid:
         raise ValueError("checkpoint refresh counters are inconsistent")
 
 
