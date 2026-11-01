@@ -96,7 +96,7 @@ def _child(args: argparse.Namespace) -> None:
     for interval in REFRESH_INTERVALS:
         label = "none" if interval is None else str(interval)
         config = replace(
-            _config(args.family, args.role, args.commit, "0" * 64),
+            _config(args.family, "candidate", "0" * 40, "0" * 64),
             device="cpu",
             warmup_steps=0,
             profile_steps=STEPS,
