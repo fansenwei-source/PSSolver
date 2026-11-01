@@ -1,0 +1,46 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 105,
+  "date": "2026-11-01",
+  "classification": "S18_R5_FROZEN_S09_PROXY_TEST_FORWARD_COMPATIBILITY",
+  "plan_step": "S-18",
+  "git_identity": {
+    "runtime_implementation": "318e634eb09de27cb683c31c4860ab34761e8e44",
+    "candidate_record": "07605bd82fdd0ca91c9a840142d36a9321bd118a",
+    "record_commit_is_qualified_source": false
+  },
+  "reason": {
+    "observed_failure": "The frozen S-09 revert-proxy test expected the live _solve_pressure method to retain the historical 85ba3ae source hash after R5 intentionally refactored that method.",
+    "resolution": "The test now loads the proxy's already-bound historical candidate method from its reachable Git commit before exercising the unchanged frozen proxy, then restores the live R5 method.",
+    "frozen_benchmark_changed": false,
+    "skip_or_xfail_added": false,
+    "runtime_changed": false
+  },
+  "historical_successor_sources": {
+    "tests/test_v0_3_s09_ap_cache_diagnostic.py": {
+      "historical_sha256": "839d0c2a71244fcecb432139a545fe21b8993e70d5d0f5033c4a7f434bcecc67",
+      "current_sha256": "fa96b6e5dd85f9731cc93484dd956ae616af92ae4df98d6bbd7591fed45ebe6e"
+    }
+  },
+  "scope": {
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "gpu_specific_path_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_test_compatibility": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
