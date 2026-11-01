@@ -1,0 +1,83 @@
+{
+  "schema": "pssolver.v0_4.s18.r4_step_progress.v1",
+  "date": "2026-10-31",
+  "plan_step": "S-18",
+  "batch": "R4",
+  "classification": "R4_LOCAL_CPU_CANDIDATE_AWAITING_INDEPENDENT_REVIEW",
+  "governance": {
+    "decision": "D-0018",
+    "design_review": "R-0054",
+    "implementation_commit": "9cf54553b9f1bb2b94c2807c2e47adedeb415846",
+    "implementation_parent": "9ffe2fe9d148e10bc5ec6c23cdac373e5ebdb280",
+    "comparison_baseline": "v0.3.0",
+    "nonzero_tolerance_authorized": false
+  },
+  "implementation": {
+    "shared_progress_owner": "pssolver.execution.state",
+    "shared_step_owner": "pssolver.integrators.step_program",
+    "shared_state_backed_owner": "pssolver.integrators.state_backed",
+    "shared_primitives": [
+      "spectral-refresh consistency, restoration, due, and commit arithmetic",
+      "callback-based projected-Euler exact operation order",
+      "state-backed projected inverse transforms and scheduled refresh",
+      "runtime-adapter completed-step reconstruction and progress restoration"
+    ],
+    "unchanged_boundaries": [
+      "top-level legacy integrator control flow",
+      "workflow checkpoint validation and publication call graphs",
+      "Functional API and Control-facing Functional paths",
+      "Beris-Edwards and Q-tensor constitutive blobs"
+    ],
+    "architecture_boundary_correction_commit": "9cf54553b9f1bb2b94c2807c2e47adedeb415846",
+    "architecture_boundary_result": "No new layer dependency is admitted; top-level integrator and workflow validation retain their existing local control flow."
+  },
+  "frozen_contract": {
+    "functional_api_version": "1.1",
+    "functional_api_changed": false,
+    "beris_edwards_blob_changed": false,
+    "q_tensor_blob_changed": false,
+    "python_and_tensor_operation_order_unchanged": true,
+    "in_place_and_alias_ownership_unchanged": true,
+    "transform_order_and_counts_unchanged": true,
+    "refresh_clock_and_generation_unchanged": true,
+    "callback_and_exception_boundaries_unchanged": true,
+    "published_checkpoint_compatibility_required": true
+  },
+  "required_evidence": {
+    "two_full_cpu_suites": true,
+    "external_path_blocked_suite": true,
+    "eight_family_twenty_step_per_step_bitwise": true,
+    "refresh_intervals_none_one_two_and_nondivisor": true,
+    "restart_before_on_and_after_refresh": true,
+    "published_checkpoint_read_compatibility": true,
+    "functional_channel_and_periodic_writer_byte_trees": true,
+    "negative_inconsistent_progress_cases": true,
+    "clean_tree_wheel": true,
+    "control_main_installed_wheel_cpu": true
+  },
+  "s19_handoff": [
+    "compiled-v2 torch.compile graph and graph-break closure",
+    "CUDA transform order and counters",
+    "CUDA restart and long-running finite-state checks",
+    "H100 timing and memory non-regression"
+  ],
+  "scope": {
+    "public_api_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "checkpoint_publication_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "local_implementation": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

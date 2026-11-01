@@ -1,0 +1,87 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 97,
+  "date": "2026-10-31",
+  "classification": "S18_R4_LOCAL_CPU_CANDIDATE_AWAITING_INDEPENDENT_REVIEW",
+  "plan_step": "S-18",
+  "git_identity": {
+    "implementation": "9cf54553b9f1bb2b94c2807c2e47adedeb415846",
+    "implementation_parent": "9ffe2fe9d148e10bc5ec6c23cdac373e5ebdb280",
+    "record_commit_is_qualified_source": false
+  },
+  "governance": {
+    "decision": "D-0018",
+    "design_review": "R-0054",
+    "batch": "R4"
+  },
+  "historical_successor_sources": {
+    "pssolver/execution/state.py": {
+      "historical_sha256": "da3340c54ab53bbed2dc3b5f32ad3f2324c43cb1869e08171b3ea650d6e08e44",
+      "current_sha256": "cc29fc08d80d0efca22522ba85cef14a62bbf807cf68b619f561ee0d762cb936"
+    },
+    "pssolver/integrators/state_backed.py": {
+      "historical_sha256": "74b3efa8da905b0c18e9b6fa9df70d6e6385fd445567e0859607b98edbf10595",
+      "current_sha256": "6162ff35b2a87e7b12bacb103e756688acee33779264122ecaa004e9e9f951e5"
+    },
+    "pssolver/integrators/step_program.py": {
+      "historical_sha256": "43a8f9a04fbb7ce6a41a6d3b782bff4c44aeaf9a0c66fd9e0417b569cf04dbc9",
+      "current_sha256": "fe7edb7a89c99529a25b37722e5d5c40f1e46ccefa5d1543719e5929a6842655"
+    },
+    "pssolver/runtime/channel_active_nematics.py": {
+      "historical_sha256": "50289b3e9854f4349c127bb7737dcc84ab880510506db70c6b01d3c5163ec416",
+      "current_sha256": "195bf196f384426517e4e3655f011c5cd818744bc0363e399033d733d9dd8775"
+    },
+    "pssolver/runtime/channel_beris_edwards.py": {
+      "historical_sha256": "2c4ee711657222b8d91a98d4ddcbd5ef462f7cad4d540bbd65a9ab5ed784dc31",
+      "current_sha256": "96ed7ad1d4a2d5019fe193cb5a6f5e800a2a1540610fa0de4aeedc04894cd171"
+    },
+    "pssolver/runtime/periodic_beris_edwards.py": {
+      "historical_sha256": "4241991ef9d10786ff6f596bfb0a1c6d0ac377393ca1a3387c623e5c02567784",
+      "current_sha256": "322af6f9fe3da1764287fee5a704761ffb8c5174cf0b200f016831f1a90ff5bc"
+    },
+    "pssolver/runtime/plane_beris_edwards.py": {
+      "historical_sha256": "21b257fc88e41205888135131a0356058ffd4b963e350c0752efd37df8aed625",
+      "current_sha256": "437f1bf5504a3e51377fc43f6d1c913e5f69c7e3a578745dc4626378fa9d062a"
+    },
+    "pssolver/runtime/plane_compiled_v2_step.py": {
+      "historical_sha256": "5454c864382d00c4dc34aa47569ef55ab25bf16fdb8e17e7c6996079cfbb1428",
+      "current_sha256": "c9b3e3aabeee8f7dd71380599d4e800f6f47bc4cbb0c3ebe02e9e8c9594d8a16"
+    },
+    "pssolver/runtime/plane_legacy.py": {
+      "historical_sha256": "cbabca39d2f270bb5dd284b3f1908003d11b489db3bed1d46659a39ad562fdb4",
+      "current_sha256": "dcbbb699ca1f0456a97f1573e671dd5ad6badf508bf03df2c54264f4ffa96d07"
+    },
+    "tests/test_phase7_channel_runtime_facade.py": {
+      "historical_sha256": "583c8e4b5a22b70d80d587d697b7ae12385a09a8c7f4b02d0d77467b8bf86c98",
+      "current_sha256": "63d073df195434bb81304b3dfafc59cd9c0843954848a7517b353625b7cc89c1"
+    }
+  },
+  "introduced_sources": {
+    "benchmarks/verify_v0_4_s18_r4_step_equivalence.py": "9ea5c8c3fabca9d6033a57aea3fdcbb4efe18edeeb0e3eab0ddef2cdd264beb2",
+    "notes/PSSolver_v0_3_0_s03_successor_97_s18_r4_step_progress_zh.md": "008b16ad0f049215f73dda0f01404f26057f818a61383b54b75d504b133ab751",
+    "notes/PSSolver_v0_4_0_s18_r4_step_progress.json": "6777ca603a1ccb50a640137f7427bc1891e49bbdaf78ab981cbad7286f79d494",
+    "notes/PSSolver_v0_4_0_s18_r4_step_progress_zh.md": "b59073939818f40a9847f0a5cd3c1608890b64d616128bef50cafe4875adcb48",
+    "tests/test_v0_4_s18_r4_shared_step_progress.py": "88257a5fd0ccf6f74e07f9cf84d58bbd1edd855b5b161f2a39ed47f4d22e0237",
+    "tests/test_v0_4_s18_r4_step_progress_record.py": "7e7f96cc8b5dcebd0ad4ee7aae7030688210411924212d3f248c351d026ad68a"
+  },
+  "scope": {
+    "public_api_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "checkpoint_publication_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_implementation": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

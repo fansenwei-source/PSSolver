@@ -530,9 +530,11 @@ def test_p74_record_binds_runtime_and_checkpoint_sources():
         return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
 
     assert record["classification"] == "PASS_P7_4_CHANNEL_RUNTIME_FACADE"
-    assert sha256("pssolver/runtime/channel_active_nematics.py") == record[
-        "implementation"
-    ]["runtime_facade_sha256"]
+    runtime_facade = "pssolver/runtime/channel_active_nematics.py"
+    assert sha256(runtime_facade) == resolve_s03_successor(
+        runtime_facade,
+        record["implementation"]["runtime_facade_sha256"],
+    )
     historical_checkpoint = subprocess.run(
         [
             "git",
