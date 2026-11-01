@@ -357,6 +357,10 @@ REVIEWED_INTEGRATOR_TO_IO_EDGES = {
         "pssolver.integrators.reference_checkpoint",
         "pssolver.io",
     ),
+    ImportEdge(
+        "pssolver.integrators.reference_checkpoint",
+        "pssolver.io._checkpoint_artifacts",
+    ),
 }
 
 

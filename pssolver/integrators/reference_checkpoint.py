@@ -7,15 +7,21 @@ restart identity before a generic production checkpoint is designed.
 
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import torch
 
 from pssolver.io import checkpoint_directory_transaction
+from pssolver.io._checkpoint_artifacts import (
+    canonical_indented_json_bytes as _canonical_json_bytes,
+    indented_identity_sha256 as _identity_sha256,
+    raw_file_sha256 as _sha256_file,
+    read_reference_tensor_record,
+    sha256_bytes as _sha256_bytes,
+    write_reference_tensor_record as _write_tensor,
+)
 
 from pssolver.core.integrators import IntegratorScheme
 from pssolver.integrators.history import SBDF2History
@@ -44,28 +50,6 @@ _HISTORY_TENSORS = {
 }
 
 
-def _canonical_json_bytes(value: object) -> bytes:
-    return (
-        json.dumps(value, sort_keys=True, indent=2, allow_nan=False) + "\n"
-    ).encode("utf-8")
-
-
-def _sha256_bytes(value: bytes) -> str:
-    return hashlib.sha256(value).hexdigest()
-
-
-def _sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
-def _identity_sha256(value: object) -> str:
-    return _sha256_bytes(_canonical_json_bytes(value))
-
-
 def _phase(stepper: ScalarPeriodicReferenceStepper, state: ScalarReferenceState) -> str:
     if stepper.spec.scheme is IntegratorScheme.PROJECTED_SEMI_IMPLICIT_EULER:
         return "one_step"
@@ -76,53 +60,18 @@ def _phase(stepper: ScalarPeriodicReferenceStepper, state: ScalarReferenceState)
     return "multistep"
 
 
-def _write_tensor(path: Path, value: torch.Tensor) -> dict[str, object]:
-    if value.device.type != "cpu":
-        raise ValueError("reference checkpoint tensors must be on CPU")
-    array = value.detach().contiguous().numpy()
-    np.save(path, array, allow_pickle=False)
-    return {
-        "filename": path.name,
-        "shape": list(value.shape),
-        "numpy_dtype": str(array.dtype),
-        "torch_dtype": str(value.dtype),
-        "finite": bool(torch.isfinite(value).all()),
-        "sha256": _sha256_file(path),
-        "size_bytes": path.stat().st_size,
-    }
-
-
 def _read_tensor(
     root: Path,
     name: str,
     record: object,
 ) -> torch.Tensor:
-    if not isinstance(record, dict):
-        raise ValueError(f"tensor record {name!r} is invalid")
     expected_filename = (_CURRENT_TENSORS | _HISTORY_TENSORS)[name]
-    if record.get("filename") != expected_filename:
-        raise ValueError(f"tensor filename for {name!r} is invalid")
-    path = root / expected_filename
-    if not path.is_file():
-        raise ValueError(f"checkpoint tensor {name!r} is missing")
-    if path.stat().st_size != record.get("size_bytes"):
-        raise ValueError(f"checkpoint tensor {name!r} size mismatch")
-    if _sha256_file(path) != record.get("sha256"):
-        raise ValueError(f"checkpoint tensor {name!r} SHA-256 mismatch")
-    try:
-        array = np.load(path, allow_pickle=False)
-    except (OSError, ValueError) as exc:
-        raise ValueError(f"checkpoint tensor {name!r} cannot be loaded") from exc
-    if list(array.shape) != record.get("shape"):
-        raise ValueError(f"checkpoint tensor {name!r} shape mismatch")
-    if str(array.dtype) != record.get("numpy_dtype"):
-        raise ValueError(f"checkpoint tensor {name!r} dtype mismatch")
-    if not bool(np.isfinite(array).all()) or record.get("finite") is not True:
-        raise ValueError(f"checkpoint tensor {name!r} is non-finite")
-    tensor = torch.from_numpy(np.array(array, copy=True))
-    if str(tensor.dtype) != record.get("torch_dtype"):
-        raise ValueError(f"checkpoint tensor {name!r} torch dtype mismatch")
-    return tensor
+    return read_reference_tensor_record(
+        root,
+        name,
+        record,
+        filename=expected_filename,
+    )
 
 
 def save_scalar_reference_checkpoint(

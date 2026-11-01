@@ -24,6 +24,7 @@ from pssolver.io import (
     seal_checkpoint_metadata,
     verify_checkpoint_metadata,
 )
+from pssolver.io._checkpoint_artifacts import write_standard_tensor_record
 
 from pssolver.execution import (
     AlgebraicRuntimeRestartState,
@@ -315,15 +316,11 @@ def restore_shadow_checkpoint(
 
 
 def _write_npy(path: Path, value: torch.Tensor) -> dict[str, object]:
-    array = value.detach().to(device="cpu").contiguous().numpy()
-    with path.open("xb") as handle:
-        np.save(handle, array, allow_pickle=False)
-    return {
-        "file": path.name,
-        "shape": list(array.shape),
-        "dtype": str(array.dtype),
-        "sha256": file_sha256(path),
-    }
+    return write_standard_tensor_record(
+        path,
+        value,
+        hash_file=file_sha256,
+    )
 
 
 def write_shadow_checkpoint(

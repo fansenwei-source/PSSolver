@@ -38,6 +38,7 @@ from pssolver.io.checkpoint_identity import (
     SourceReleaseGeneration,
     resolve_legacy_identity_schema,
 )
+from pssolver.io._checkpoint_artifacts import write_standard_tensor_record
 from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.runtime import (
     PlaneRuntimeAdapterProtocol,
@@ -669,15 +670,11 @@ def _validate_plane_forward_identity_schema(
 
 
 def _write_tensor(path: Path, value: torch.Tensor) -> dict[str, object]:
-    array = value.detach().to(device="cpu").contiguous().numpy()
-    with path.open("xb") as handle:
-        np.save(handle, array, allow_pickle=False)
-    return {
-        "file": path.name,
-        "shape": list(array.shape),
-        "dtype": str(array.dtype),
-        "sha256": _sha256(path),
-    }
+    return write_standard_tensor_record(
+        path,
+        value,
+        hash_file=_sha256,
+    )
 
 
 def _write_plane_checkpoint(

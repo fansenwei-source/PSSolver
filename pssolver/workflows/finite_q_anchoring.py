@@ -26,6 +26,7 @@ from pssolver.io.checkpoint import (
     seal_checkpoint_metadata,
     verify_checkpoint_metadata,
 )
+from pssolver.io._checkpoint_artifacts import write_sized_tensor_record
 
 from pssolver.models.active_nematics.fields import Q_COMPONENTS
 from pssolver.runtime.finite_q_anchoring import (
@@ -64,16 +65,11 @@ def _atomic_npy(path: Path, value: np.ndarray) -> None:
 
 
 def _tensor_record(path: Path, value: torch.Tensor) -> dict[str, object]:
-    materialized = value.detach().cpu().contiguous().numpy()
-    with path.open("wb") as handle:
-        np.save(handle, materialized, allow_pickle=False)
-    return {
-        "path": path.name,
-        "size_bytes": path.stat().st_size,
-        "sha256": _sha256_file(path),
-        "shape": list(materialized.shape),
-        "dtype": str(materialized.dtype),
-    }
+    return write_sized_tensor_record(
+        path,
+        value,
+        hash_file=_sha256_file,
+    )
 
 
 def write_finite_q_anchoring_checkpoint(
