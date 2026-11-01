@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import inspect
 
+from benchmarks import verify_v0_4_s18_r5_pcg_equivalence as equivalence
 import pssolver.functional.channel_pressure as channel_pressure
 import pssolver.functional.channel_pressure_adjoint as channel_pressure_adjoint
 import pssolver.linear_solvers.stokes as stokes_package
@@ -151,3 +152,23 @@ def test_fixed_work_postcondition_fails_closed_with_original_reason():
     )
     assert acceptable is True
     assert reason == CHANNEL_PCG_FIXED_WORK_ROUNDOFF_SATURATION
+
+
+def test_equivalence_harness_covers_every_path_mode_and_dtype():
+    assert equivalence.PATHS == (
+        "production",
+        "transpose",
+        "implicit",
+        "oracle",
+    )
+    cases = {row["name"]: row for row in equivalence.CASES}
+    assert set(cases) == {
+        "tolerance_float64",
+        "fixed_float64",
+        "fixed_float32_roundoff_floor",
+        "fixed_float32_floor_crossing",
+    }
+    assert cases["tolerance_float64"]["fixed_iterations"] is None
+    assert cases["fixed_float64"]["fixed_iterations"] == 5
+    assert cases["fixed_float32_roundoff_floor"]["fixed_iterations"] == 50
+    assert cases["fixed_float32_floor_crossing"]["fixed_iterations"] == 200
