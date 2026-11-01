@@ -2,18 +2,21 @@
   "schema": "pssolver.v0_4.s18.r2_r4_r5_r1_design_proposal.v1",
   "created_at": "2026-10-31T19:05:00-04:00",
   "plan_step": "S-18",
-  "classification": "DESIGN_ONLY_AWAITING_CLAUDE_REVIEW_AND_USER_DECISION",
+  "classification": "DESIGN_ONLY_D0018_CONFIRMED_AWAITING_R0054_REVIEW",
   "governance": {
     "confirmed_decisions": [
       "D-0011",
       "D-0014",
-      "D-0017"
+      "D-0017",
+      "D-0018"
     ],
-    "proposed_decision": "D-0018",
-    "proposed_decision_status": "proposed",
-    "proposed_decision_sha256": "ade766d79a4f01a2a944cb23568c7a776d0c1e246ace73cdcc5bc067cc70468b",
-    "proposed_decision_sync_commit": "8a8a3690bde2e16388b4e3304c4f7e1d41949ce7",
-    "implementation_requires_confirmed_D_0018": true
+    "confirmed_decision": "D-0018",
+    "confirmed_decision_status": "confirmed",
+    "confirmed_decision_sha256": "38cfe71b63efcca6ef47a759d5955bd332266cf4a65cef6e61635c43bfd1a627",
+    "confirmed_decision_sync_commit": "4cf34051cd5d4f47801eaabf0bdc7cd8490d6367",
+    "implementation_requires_design_review_pass": true,
+    "design_review_request": "R-0054",
+    "superseded_preconfirmation_request": "R-0053"
   },
   "source_identity": {
     "repository": "PSSolver",
@@ -519,31 +522,31 @@
     "failure_budget": "at most one separately authorized diagnostic job after the qualification job",
     "requires_separate_user_authorization": true
   },
-  "questions_for_user": [
+  "confirmed_choices": [
     {
       "id": "Q-S18-01",
       "topic": "batch order",
-      "recommended_option": "A"
+      "selected_option": "A"
     },
     {
       "id": "Q-S18-02",
       "topic": "batch isolation",
-      "recommended_option": "A"
+      "selected_option": "A"
     },
     {
       "id": "Q-S18-03",
       "topic": "bitwise and tolerance policy",
-      "recommended_option": "A"
+      "selected_option": "A"
     },
     {
       "id": "Q-S18-04",
       "topic": "R1 shadow-registry rollout",
-      "recommended_option": "A"
+      "selected_option": "A"
     },
     {
       "id": "Q-S18-05",
       "topic": "Control-first boundary",
-      "recommended_option": "A"
+      "selected_option": "A"
     }
   ],
   "implementation": {

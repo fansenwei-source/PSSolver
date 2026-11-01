@@ -149,12 +149,27 @@ def test_control_first_boundary_is_exact_and_research_stays_out_of_scope():
     }
 
 
-def test_s18_design_waits_for_five_user_choices_and_authorizes_no_remote_work():
+def test_s18_design_binds_five_confirmed_choices_and_authorizes_no_remote_work():
     record = _read()
     assert record["classification"] == (
-        "DESIGN_ONLY_AWAITING_CLAUDE_REVIEW_AND_USER_DECISION"
+        "DESIGN_ONLY_D0018_CONFIRMED_AWAITING_R0054_REVIEW"
     )
-    assert [item["id"] for item in record["questions_for_user"]] == [
+    governance = record["governance"]
+    assert governance == {
+        "confirmed_decisions": ["D-0011", "D-0014", "D-0017", "D-0018"],
+        "confirmed_decision": "D-0018",
+        "confirmed_decision_status": "confirmed",
+        "confirmed_decision_sha256": (
+            "38cfe71b63efcca6ef47a759d5955bd332266cf4a65cef6e61635c43bfd1a627"
+        ),
+        "confirmed_decision_sync_commit": (
+            "4cf34051cd5d4f47801eaabf0bdc7cd8490d6367"
+        ),
+        "implementation_requires_design_review_pass": True,
+        "design_review_request": "R-0054",
+        "superseded_preconfirmation_request": "R-0053",
+    }
+    assert [item["id"] for item in record["confirmed_choices"]] == [
         "Q-S18-01",
         "Q-S18-02",
         "Q-S18-03",
@@ -162,8 +177,8 @@ def test_s18_design_waits_for_five_user_choices_and_authorizes_no_remote_work():
         "Q-S18-05",
     ]
     assert all(
-        item["recommended_option"] == "A"
-        for item in record["questions_for_user"]
+        item["selected_option"] == "A"
+        for item in record["confirmed_choices"]
     )
     assert record["implementation"] == {
         "started": False,

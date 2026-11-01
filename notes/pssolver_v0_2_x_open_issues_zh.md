@@ -270,6 +270,10 @@
     integrity/spectral-refresh 代码扫描棘轮、每批完整 Control main CPU 门禁和精确的真实 NFS
     触发条件；`V-60` 推进为 `claimed_fixed`，等待 `R-0053` 独立复核。首版设计中“范围已完整”
     的含义由本 successor 向前更正，不改写旧记录。
+46. 用户随后通过 `D-0018` 确认五项均选择 A。由于 `R-0053` 在确认决定之前已经提交，
+    它保持不可变；新的 `R-0054` 向前更正设计的决定状态并取代其过时的 proposed 表述。
+    `V-60` 仍为 `claimed_fixed`，等待 `R-0054` 对完整范围清单和确认版治理合同复核；PASS
+    之前不开始 R2。
 
 ## Control 路径
 
