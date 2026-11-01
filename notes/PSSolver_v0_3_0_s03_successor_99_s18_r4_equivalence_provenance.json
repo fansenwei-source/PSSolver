@@ -1,0 +1,52 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 99,
+  "date": "2026-11-01",
+  "classification": "S18_R4_EQUIVALENCE_HELPER_NEUTRAL_PROFILE_PROVENANCE_CORRECTION",
+  "plan_step": "S-18",
+  "git_identity": {
+    "qualification_helper_fix": "5a474652b2cb577a2cf97dc3642b4d872bd6dabf",
+    "previous_helper_fix": "aebab348f8a570a5bbf1314efc1867e399047c4b",
+    "runtime_implementation": "9cf54553b9f1bb2b94c2807c2e47adedeb415846",
+    "record_commit_is_qualified_source": false
+  },
+  "governance": {
+    "decision": "D-0018",
+    "design_review": "R-0054",
+    "batch": "R4"
+  },
+  "correction": {
+    "superseded_attempt": "out/equivalence_parent_invalid_profile_provenance",
+    "reason": "After the common work-path correction, the profile configuration still embedded each role and commit. Plane configuration identity intentionally includes those profile provenance fields, so the two identities remained different while state and progress traces remained equal.",
+    "resolution": "The compared configurations now use identical neutral profile-role, commit, and wheel fields. Actual source role, commit, import path, environment, and git identity remain separately persisted in every child report. No runtime source changed."
+  },
+  "historical_successor_sources": {
+    "benchmarks/verify_v0_4_s18_r4_step_equivalence.py": {
+      "historical_sha256": "3570adfea175a5485ef66dced5cc3f48565906b84cc55ea8cf37463f3cbc258f",
+      "current_sha256": "01b934fa7042090f83f4f359ff74b8a84ae8a46f1d280949808bae1c746dd663"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_99_s18_r4_equivalence_provenance_zh.md": "2bf8321dbb91c1fa6cc7c3ccb9e9b39dd722f679ace42e4840ef428c7f285793",
+    "tests/test_v0_4_s18_r4_successor_99.py": "03b7511863f6e6b25c05e9ef6f93f0c90888324680baef50ed53e34f00577d3f"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "public_api_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_qualification_helper_fix": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
