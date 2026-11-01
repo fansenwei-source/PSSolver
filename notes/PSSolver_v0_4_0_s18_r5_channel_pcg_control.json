@@ -1,0 +1,91 @@
+{
+  "schema": "pssolver.v0_4.s18.r5_channel_pcg_control.v1",
+  "date": "2026-11-01",
+  "plan_step": "S-18",
+  "batch": "R5",
+  "classification": "R5_LOCAL_CPU_CANDIDATE_AWAITING_INDEPENDENT_REVIEW",
+  "governance": {
+    "decision": "D-0018",
+    "design_review": "R-0054",
+    "implementation_commit": "318e634eb09de27cb683c31c4860ab34761e8e44",
+    "implementation_parent": "d84e883df58af92268dc55f0b02a78b3b5cffd57",
+    "qualification_support_commit": "0238deabc280193e79aeaeb5c0074886bb7b6e1b",
+    "comparison_baseline": "v0.3.0",
+    "nonzero_tolerance_authorized": false
+  },
+  "implementation": {
+    "private_owner": "pssolver.linear_solvers.stokes._channel_pcg_control",
+    "shared_control": [
+      "minimum recurrence-floor state selection",
+      "breakdown and non-finite rollback decisions",
+      "tolerance versus fixed-work iteration-limit decisions",
+      "fixed-work represented-state postcondition decisions"
+    ],
+    "path_specific_tensor_arithmetic_retained": true,
+    "paths": [
+      "ChannelNoSlipModalStokesSolver._solve_pressure",
+      "ChannelPressureTransposeOperator.solve_pressure_transpose",
+      "ChannelImplicitPressureAdjoint._solve_no_grad",
+      "unrolled_channel_pressure_solve_oracle"
+    ],
+    "public_reexport_added": false,
+    "numerical_operation_order_changed": false,
+    "diagnostic_contract_changed": false,
+    "warm_start_contract_changed": false
+  },
+  "frozen_contract": {
+    "functional_api_version": "1.1",
+    "functional_api_changed": false,
+    "beris_edwards_blob_changed": false,
+    "q_tensor_blob_changed": false,
+    "state_must_match_v0_3_0": true,
+    "state_must_match_parent": true,
+    "diagnostics_and_gradients_must_match_parent": true,
+    "operator_calls_and_host_syncs_must_match_parent": true,
+    "nonzero_comparison_tolerance": null,
+    "d0013_memory_exception_extended_to_v0_4": false
+  },
+  "qualification_support": {
+    "script": "benchmarks/verify_v0_4_s18_r5_pcg_equivalence.py",
+    "case_count": 4,
+    "path_count": 4,
+    "records": [
+      "returned tensor bytes",
+      "implicit and oracle gradient bytes",
+      "public pressure diagnostics",
+      "production warm-start tensors",
+      "primal and transpose operator-call counts",
+      "ordered Torch-dispatch digest and host-scalar synchronization count"
+    ],
+    "preliminary_parent_comparison_passed": true,
+    "formal_clean_clone_qualification_pending": true
+  },
+  "required_evidence": {
+    "two_full_cpu_suites": true,
+    "external_path_blocked_suite": true,
+    "eight_family_twenty_step_bitwise": true,
+    "all_published_checkpoint_readers": true,
+    "current_writer_byte_trees_including_functional_channel_and_periodic": true,
+    "pressure_fault_and_floor_crossing_matrix": true,
+    "clean_tree_wheel": true,
+    "control_main_installed_wheel_cpu": true
+  },
+  "scope": {
+    "public_api_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "local_implementation": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

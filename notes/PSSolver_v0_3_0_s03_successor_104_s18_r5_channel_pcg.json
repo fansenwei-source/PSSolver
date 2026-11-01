@@ -1,0 +1,59 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 104,
+  "date": "2026-11-01",
+  "classification": "S18_R5_LOCAL_CPU_CANDIDATE_AWAITING_INDEPENDENT_REVIEW",
+  "plan_step": "S-18",
+  "git_identity": {
+    "implementation": "318e634eb09de27cb683c31c4860ab34761e8e44",
+    "implementation_parent": "d84e883df58af92268dc55f0b02a78b3b5cffd57",
+    "qualification_support": "0238deabc280193e79aeaeb5c0074886bb7b6e1b",
+    "record_commit_is_qualified_source": false
+  },
+  "governance": {
+    "decision": "D-0018",
+    "design_review": "R-0054",
+    "batch": "R5"
+  },
+  "historical_successor_sources": {
+    "pssolver/functional/channel_pressure.py": {
+      "historical_sha256": "7f8dd33023d62a9aa70514b23a3ddc1cdcbf69009b229c975d7f8496678c0a6c",
+      "current_sha256": "a292e78942ccd1d97f7994cb4640398e1717c336faa7a58c2007c274ade4c194"
+    },
+    "pssolver/functional/channel_pressure_adjoint.py": {
+      "historical_sha256": "884e8d48071271dae45ad01245f2dee45d5f7a0aad4d6c5114989490f7fe4ec8",
+      "current_sha256": "c5a7070e78c3618f2c7410bb1be60476bfdadb8e8f1d37c1d4983eefadd9e110"
+    },
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "historical_sha256": "c2c72b571e34b3232f413c969e6c618263a1b53026425d931c8e5ab633d2e1ae",
+      "current_sha256": "547d08207d7a59ef28cb43c3337974d288f50798d6ad090f5942bae5bfffb610"
+    }
+  },
+  "introduced_sources": {
+    "benchmarks/verify_v0_4_s18_r5_pcg_equivalence.py": "bfb38c6c49eed0bbdbdd281200cd791979ab18b0ffb934eff2495e07a130c30e",
+    "notes/PSSolver_v0_4_0_s18_r5_channel_pcg_control.json": "22408b217abdc60b6cbb8ac00d0fe35ea1d68ae00c8571790531ba6b9356ca3a",
+    "notes/PSSolver_v0_4_0_s18_r5_channel_pcg_control_zh.md": "ae81c01c7ad989f68b8e342c28aa7b60f7f316399b5294e0361650b5d96f6641",
+    "pssolver/linear_solvers/stokes/_channel_pcg_control.py": "c5b60bd144dd8c46355740c910865b49719f473688846e5f9bcd0f414da19a6c",
+    "tests/test_v0_4_s18_r5_channel_pcg_control.py": "c3aea6cf0d4fa21de034b0f301728c80643521d4023bb522fcacf1f59f62c279",
+    "tests/test_v0_4_s18_r5_channel_pcg_record.py": "f81498704287bfe23f10fe70927e5b21c14b4788d3464da1c0378abe2c21eb39"
+  },
+  "scope": {
+    "public_api_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_implementation": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
