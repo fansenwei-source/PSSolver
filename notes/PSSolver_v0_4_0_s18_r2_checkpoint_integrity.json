@@ -1,0 +1,82 @@
+{
+  "schema": "pssolver.v0_4.s18.r2_checkpoint_integrity.v1",
+  "date": "2026-10-31",
+  "plan_step": "S-18",
+  "batch": "R2",
+  "classification": "R2_LOCAL_CPU_CANDIDATE_AWAITING_INDEPENDENT_REVIEW",
+  "governance": {
+    "decision": "D-0018",
+    "design_review": "R-0054",
+    "implementation_commit": "f83539e76cf027c37010205f03b7b4e4f599002e",
+    "implementation_parent": "eb6a191f83ec7bc59ed41dde0b6d67dab57acc10",
+    "comparison_baseline": "v0.3.0",
+    "nonzero_tolerance_authorized": false
+  },
+  "implementation": {
+    "private_owner": "pssolver.io._checkpoint_artifacts",
+    "shared_primitives": [
+      "historical indented canonical JSON and identity SHA-256",
+      "raw file SHA-256 with native OSError behavior",
+      "standard exclusive NumPy tensor records",
+      "provisional reference tensor records and validation",
+      "finite-Q size-bearing tensor records"
+    ],
+    "migrated_writers": [
+      "experimental shadow",
+      "experimental modal-block reference",
+      "functional Channel",
+      "scalar reference",
+      "production Channel",
+      "finite-Q",
+      "production Periodic",
+      "production Plane"
+    ],
+    "existing_family_wrappers_retained": true,
+    "format_or_schema_changed": false,
+    "reader_or_migration_semantics_changed": false,
+    "exception_contract_changed": false
+  },
+  "publication_trigger": {
+    "triggered": false,
+    "reason": "No target creation, staging placement, placeholder ownership, fsync, rename/renameat2, cleanup, symlink/device check, checkpoint_directory_transaction implementation, or publication call graph changed.",
+    "real_nfs_required_for_this_batch": false
+  },
+  "frozen_contract": {
+    "functional_api_version": "1.1",
+    "functional_api_changed": false,
+    "beris_edwards_blob_changed": false,
+    "q_tensor_blob_changed": false,
+    "checkpoint_bytes_must_match_v0_3_0": true,
+    "checkpoint_bytes_must_match_parent": true,
+    "restart_state_must_be_bitwise_equal": true,
+    "source_checkpoints_read_only": true
+  },
+  "required_evidence": {
+    "two_full_cpu_suites": true,
+    "external_path_blocked_suite": true,
+    "eight_family_twenty_step_bitwise": true,
+    "all_published_checkpoint_readers": true,
+    "current_writer_byte_trees": true,
+    "fault_matrix": true,
+    "clean_tree_wheel": true,
+    "control_main_installed_wheel_cpu": true
+  },
+  "scope": {
+    "public_api_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false
+  },
+  "authorization": {
+    "local_implementation": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}

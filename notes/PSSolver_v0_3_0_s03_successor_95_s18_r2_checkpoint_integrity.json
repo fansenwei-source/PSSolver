@@ -1,0 +1,85 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 95,
+  "date": "2026-10-31",
+  "classification": "S18_R2_LOCAL_CPU_CANDIDATE_AWAITING_INDEPENDENT_REVIEW",
+  "plan_step": "S-18",
+  "git_identity": {
+    "implementation": "f83539e76cf027c37010205f03b7b4e4f599002e",
+    "implementation_parent": "eb6a191f83ec7bc59ed41dde0b6d67dab57acc10",
+    "record_commit_is_qualified_source": false
+  },
+  "governance": {
+    "decision": "D-0018",
+    "design_review": "R-0054",
+    "batch": "R2"
+  },
+  "historical_successor_sources": {
+    "pssolver/experimental/checkpointing.py": {
+      "historical_sha256": "b1f1a0dee3b17f26026d54f3bdfce21368ccbe8a6b5e7c18006b0563cb3244cd",
+      "current_sha256": "644ca80e9d711a3048531ca9f96129e364a76ebb4b71626cb54c3dcfd5e3deb4"
+    },
+    "pssolver/experimental/modal_block_checkpoint.py": {
+      "historical_sha256": "6a301f3b4c29ab6c8dbf4f47f7e4350287f3143716f9ed27d33d03b49cfe51a6",
+      "current_sha256": "0cf818429abe3ef8ae60e054061fb24baf85fb3002f60d53eb16c1870e50c820"
+    },
+    "pssolver/functional/channel_checkpoint.py": {
+      "historical_sha256": "4a6cdab67eb7b68538a47374b7bb37bf7fac0ff34a13f445e035709513cc627a",
+      "current_sha256": "cbff849176cddda9157cd961ee97cda4ba7c1dac47fac1c01a2df467f226d8c9"
+    },
+    "pssolver/integrators/reference_checkpoint.py": {
+      "historical_sha256": "53ac2ffd4e8bd2d820d286372ce443056f9b49ef87eaf7e731a0c4cb2c17c667",
+      "current_sha256": "f38d2deeb47fd94401a49f96a81fc1cca6a0011f11c96de76f8527ce3c089c19"
+    },
+    "pssolver/workflows/channel_checkpoint.py": {
+      "historical_sha256": "a24cabd5f28eae361b1555bd1dd985d5e8cb30650091a4305c44e00c2a7e800d",
+      "current_sha256": "b3d5165046907e1c8a6e392bc95f65da587fc10dcf1d9a3b722d3a4a8667892a"
+    },
+    "pssolver/workflows/finite_q_anchoring.py": {
+      "historical_sha256": "51f587db088e3c45600f222ad8329306af050adcfb819bfc514c5715c288fdc9",
+      "current_sha256": "150c666f8bf0f2f4871a0fff0014c7ab6a8215db053b664ad00a7f3274f7237a"
+    },
+    "pssolver/workflows/periodic_checkpoint.py": {
+      "historical_sha256": "ea4bc0d4b997efaae4e9e68e990b67577ffb348913a2f660c887dc2d5c245001",
+      "current_sha256": "a97a50e38a271fa07f6386fb6f11bd834e688c81a48b34d3a05c092f64c7250d"
+    },
+    "pssolver/workflows/plane_checkpoint.py": {
+      "historical_sha256": "7458f6bf5c937d2ed233604b898b13bfc3c0d139c0a5364266f8b1de41cad8ab",
+      "current_sha256": "e4e475076dd00bf7587c5d26b26866b9a1abd8669d400f78842e5c8b7a26925b"
+    },
+    "tests/test_architecture_import_boundaries.py": {
+      "historical_sha256": "5a250552e4d6bf38f909109908d01b85a16d9c991362b72c2d500222a4640973",
+      "current_sha256": "164559a430b918b1407466ae949b9da1998c8df2262df166ee7cab956dba389a"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_4_0_s18_r2_checkpoint_integrity.json": "663c891c5992e2ae9b02276bac9b6be264e6fc9e31ed22ca4fa93500e6db60f0",
+    "notes/PSSolver_v0_4_0_s18_r2_checkpoint_integrity_zh.md": "01d3dfbf618bf99eaa6b8a6f6303e0cfa6fcbc2b990a0e576e08873e2990d872",
+    "pssolver/io/_checkpoint_artifacts.py": "15c65d1d77321a7f78505f945319a2575ae4f396ab80df35e422de8ffbb94d21",
+    "tests/test_v0_4_s18_r2_checkpoint_artifacts.py": "b1fae410df5d58d263b5d30ebc472251c2240b5f06271ab3bf2fcd2a5765f846",
+    "tests/test_v0_4_s18_r2_checkpoint_integrity_record.py": "46060b7c07470cdb557bb4be823db6d6488931543ad4f00d3ab2068d7f837a55"
+  },
+  "publication_trigger": {
+    "real_nfs_required": false,
+    "publication_call_graph_changed": false
+  },
+  "scope": {
+    "public_api_changed": false,
+    "numerical_algorithm_changed": false,
+    "gpu_specific_path_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_implementation": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
