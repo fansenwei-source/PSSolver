@@ -1,0 +1,102 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 102,
+  "date": "2026-11-01",
+  "classification": "R0056_PASS_IMPORTED_S18_R4_COMPLETE_PENDING_PUSH",
+  "plan_step": "S-18",
+  "git_identity": {
+    "reviewed_candidate": "990349056290936e497c449a6abf2592c47cf448",
+    "r4_runtime_implementation": "9cf54553b9f1bb2b94c2807c2e47adedeb415846",
+    "batch_parent": "9ffe2fe9d148e10bc5ec6c23cdac373e5ebdb280",
+    "released_comparison": "47473880534a66f6da940db82122c79cda48a86b",
+    "record_commit_is_qualified_source": false
+  },
+  "review": {
+    "request": "R-0056",
+    "classification": "PASS",
+    "result_sha256": "19532dbb81fa1da63337995edce3c9621c04a9b381e49f25e418b93308b27a99",
+    "archive": "/home/fansenwei/pssolver_v0_4_claude_s18_r0056_review_20261101_v1",
+    "archive_checksums_entries": 64,
+    "archive_checksums_sha256": "711d8f8fec012acc9856657e6a728bb32f80630840724da56fe3365f1dc7ab3a"
+  },
+  "registry_updates": [],
+  "new_findings": [],
+  "s18_r4_closure": {
+    "complete": true,
+    "aggregate_r1_r9_closed": false,
+    "remaining_batches": [
+      "R5",
+      "R1"
+    ],
+    "private_step_progress_primitives_reviewed": true,
+    "bitwise_equivalence": true,
+    "writer_and_restart_compatibility": true,
+    "clean_wheel_passed": true,
+    "control_main_passed": true,
+    "control_first_migration_triggered": false,
+    "publication_mechanics_changed": false,
+    "real_nfs_retest_triggered": false,
+    "gpu_or_h100_requalification_required": false
+  },
+  "unchanged_r4_batch_change_dispositions": {
+    "pssolver/integrator.py": {
+      "disposition": "intentionally_unchanged",
+      "reason": "The legacy top-level integrator remains an independent compatibility and comparison boundary. Connecting its private counter loop to state-backed helpers would widen the architecture dependency without changing the qualified runtime paths.",
+      "retained_behavior": "independent legacy step_count/refresh_count advancement",
+      "deferred_to": null
+    },
+    "pssolver/integrators/scalar_reference.py": {
+      "disposition": "intentionally_unchanged",
+      "reason": "The scalar reference remains an independent oracle outside the shared implementation under test; merging it would remove that comparison boundary without a runtime benefit.",
+      "retained_behavior": "independent reference stepping and progress oracle",
+      "deferred_to": null
+    },
+    "pssolver/workflows/channel_beris_edwards.py": {
+      "disposition": "intentionally_unchanged",
+      "reason": "Progress and restart behavior already delegates through the R4-qualified runtime adapter, so changing the workflow wrapper would be redundant.",
+      "retained_behavior": "existing workflow construction and runtime delegation",
+      "deferred_to": null
+    },
+    "pssolver/workflows/periodic_checkpoint.py": {
+      "disposition": "intentionally_unchanged",
+      "reason": "R2 froze its checkpoint bytes and publication/read call graph; R4 changes neither its progress representation nor its owner boundary.",
+      "retained_behavior": "R2-qualified Periodic checkpoint format and publication boundary",
+      "deferred_to": null
+    },
+    "pssolver/workflows/plane_checkpoint.py": {
+      "disposition": "intentionally_unchanged",
+      "reason": "R2 froze its formats and publication/read boundary, while R4 progress restoration is fully owned by the changed runtime and state helpers.",
+      "retained_behavior": "R2-qualified Plane checkpoint formats and publication boundary",
+      "deferred_to": null
+    }
+  },
+  "informational_observations": {
+    "step_program_dt_read": "state.progress.dt is now read before begin_generation(); the value is read-only and R-0056 verified unchanged state, errors, counters, and identities"
+  },
+  "historical_successor_sources": {},
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_102_r0056_import_zh.md": "7995f659a396790745db6f422ebb170d8f01b30b982c02f07f67105d735beca2",
+    "tests/test_v0_4_s18_r0056_import.py": "15609040b532f29726527ca6b184c71f392e91955dfded189c678dd251e579c2"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "packaging_changed": false,
+    "public_interface_changed": false,
+    "numerical_algorithm_changed": false,
+    "checkpoint_schema_changed": false,
+    "provider_identity_changed": false,
+    "gpu_specific_path_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "production_default_changed": false,
+    "historical_record_rewritten": false
+  },
+  "authorization": {
+    "local_registration": true,
+    "push": false,
+    "tag_or_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm_or_h100": false
+  }
+}
