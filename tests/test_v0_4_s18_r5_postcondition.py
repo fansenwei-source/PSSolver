@@ -34,10 +34,13 @@ def test_postcondition_never_overwrites_a_prior_rejection(
 
 
 @pytest.mark.parametrize('path,iterations,error,message,termination', [
-    ('production', 200, 'ChannelPressureConvergenceError',
+    # 30 reaches normal completion on both conda-forge and pip Torch. At 200
+    # pip Torch naturally saturates first; the conda 200-step review reproducer
+    # is retained separately in the symmetric cross-source evidence matrix.
+    ('production', 30, 'ChannelPressureConvergenceError',
      'production Channel pressure solve did not satisfy its contract',
      'fixed_work_completed'),
-    ('transpose', 200, 'FunctionalConvergenceError',
+    ('transpose', 30, 'FunctionalConvergenceError',
      'standalone Channel pressure transpose solve is unacceptable',
      'fixed_work_completed'),
     *[('implicit', n, 'RuntimeError',

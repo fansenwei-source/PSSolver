@@ -1,0 +1,31 @@
+{
+  "classification": "V61_PORTABLE_TEST_BUDGET_FORWARD_CORRECTION",
+  "git_identity": {
+    "previous_candidate": "5395715f401f9db075bad1feb17621a3e025cdcd",
+    "implementation": "3c519ccb63d523549cce161b05b62803c727c978",
+    "record_commit_is_qualified_source": false
+  },
+  "failed_attempt": {
+    "archive": "/home/fansenwei/pssolver_v0_4_s18_r5_v61_qualification_20261102_v1",
+    "a2_failures": 2,
+    "reason": "200-step normal completion is not portable across Torch builds; tests use 30; original conda 200-step evidence retained"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false
+  },
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 109,
+  "date": "2026-11-02",
+  "plan_step": "S-18",
+  "historical_successor_sources": {
+    "tests/test_v0_4_s18_r5_postcondition.py": {
+      "historical_sha256": "0265d2fd8d3872afd7d24a3c2ba035d66aad74567c136144ea9ed8b08d42ebd8",
+      "current_sha256": "a6d28deae8a22f9b21e90923e58478ede32a32ce8fd2c0d89f7c720e56fe3e0b"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_109_r0058_portable_probe_zh.md": "55ea9acfbd97e2afba31136ecddcf3e427ce9699fdb603220422525bc50f7055"
+  }
+}
