@@ -1,0 +1,37 @@
+{
+  "classification": "R1_HISTORICAL_HASH_PIN_FORWARD_CORRECTION",
+  "git_identity": {
+    "failed_candidate": "ee9ec8b42c12f1681958ae29a6a88371784091ea",
+    "dispatch_source": "5bcf4e525598ba82630d734fe3a2553eb0b24fd7",
+    "record_commit_is_qualified_source": false
+  },
+  "failed_checks": [
+    "tests/test_phase8_p844_lifting_workflow_restart.py::test_p844_record_matches_qualified_sources_and_scope",
+    "tests/test_rc4_lifting_capability_contract.py::test_rc432_reviewed_sources_are_content_addressed"
+  ],
+  "failure_archive": "/home/fansenwei/pssolver_v0_4_s18_r1_dispatch_20261102_v1",
+  "final_archive": "/home/fansenwei/pssolver_v0_4_s18_r1_dispatch_20261102_v2",
+  "runtime_changed": false,
+  "benchmarks_changed": false,
+  "thresholds_changed": false,
+  "skip_xfail_added": false,
+  "historical_records_rewritten": false,
+  "hash_acceptance": "Exact predecessor resolution through the already frozen successor 72 and successor 112; no new exemption.",
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 113,
+  "date": "2026-11-02",
+  "plan_step": "S-18",
+  "historical_successor_sources": {
+    "tests/test_phase8_p844_lifting_workflow_restart.py": {
+      "historical_sha256": "a362f8e7bd17fcaf8ba1a1852e886e6f3c3a5e11b4aed31ff951bfbbda4fed6d",
+      "current_sha256": "8447cf565c44b7e8774beee261f2bce8bc86d3b757521268109ef6165a973726"
+    },
+    "tests/test_rc4_lifting_capability_contract.py": {
+      "historical_sha256": "772d9748f7950b000c0ad096bb660693e77d6da0a084ce180eb5bf8b615d2d78",
+      "current_sha256": "aa743a7a06abeffdf52f7484e8ca5604e2581d8adbc4190a7ff012823d100034"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_113_r1_record_pins_zh.md": "6040cd30ce21cb340eed98b3dad41e8b9e106396c791405e1c7756c3fa127ce6"
+  }
+}

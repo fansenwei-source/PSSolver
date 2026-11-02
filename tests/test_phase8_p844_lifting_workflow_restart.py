@@ -11,6 +11,8 @@ import numpy as np
 import pytest
 import torch
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 from pssolver.io import seal_checkpoint_metadata
 
 from pssolver import (
@@ -775,7 +777,7 @@ def test_p844_record_matches_qualified_sources_and_scope():
             assert identity["historical_sha256"] == expected, relative
             assert (
                 hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
-                == identity["current_sha256"]
+                == resolve_s03_successor(relative, identity["current_sha256"])
             ), relative
             continue
         actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()

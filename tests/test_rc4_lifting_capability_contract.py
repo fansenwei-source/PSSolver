@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc432_lifting_capability_contract.json"
@@ -242,7 +243,9 @@ def test_rc432_reviewed_sources_are_content_addressed():
         if relative in s16_successor:
             identity = s16_successor[relative]
             assert identity["historical_sha256"] == expected, relative
-            assert _sha256(ROOT / relative) == identity["current_sha256"], relative
+            assert _sha256(ROOT / relative) == resolve_s03_successor(
+                relative, identity["current_sha256"]
+            ), relative
             continue
         assert _sha256(ROOT / relative) == expected, relative
 
