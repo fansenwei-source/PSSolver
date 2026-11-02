@@ -1,0 +1,153 @@
+{
+  "classification": "LOCAL_R1_PRIVATE_REGISTRY_DISPATCH_CANDIDATE",
+  "git_identity": {
+    "batch_parent": "9e8b8809ca1154436993d921527a46e919b630a2",
+    "shadow_source": "8a1129b7e414e5e231eb32a4595270c15c52e09b",
+    "dispatch_source": "5bcf4e525598ba82630d734fe3a2553eb0b24fd7",
+    "released_baseline": "47473880534a66f6da940db82122c79cda48a86b",
+    "record_commit_is_qualified_source": false
+  },
+  "decision": {
+    "id": "D-0018",
+    "sha256": "38cfe71b63efcca6ef47a759d5955bd332266cf4a65cef6e61635c43bfd1a627"
+  },
+  "production_dispatch_switched": true,
+  "review_complete": false,
+  "nonzero_tolerance_authorized": false,
+  "runtime_delta_paths": [
+    "pssolver/api/capabilities.py",
+    "pssolver/configuration/application_registry.py",
+    "pssolver/configuration/public_simulation_runner.py",
+    "pssolver/configuration/simulation_binding.py",
+    "pssolver/configuration/simulation_lowering.py",
+    "pssolver/runtime/package_construction.py",
+    "pssolver/runtime/simulation_construction.py"
+  ],
+  "frozen_sources": [
+    "pssolver/applications/channel_active_nematics.py",
+    "pssolver/applications/channel_beris_edwards.py",
+    "pssolver/applications/periodic_beris_edwards.py",
+    "pssolver/applications/plane_beris_edwards.py",
+    "pssolver/configuration/channel_active_nematics.py",
+    "pssolver/configuration/channel_active_nematics_declarations.py",
+    "pssolver/configuration/channel_beris_edwards.py",
+    "pssolver/configuration/periodic_beris_edwards.py",
+    "pssolver/configuration/plane_beris_edwards.py",
+    "pssolver/configuration/plane_beris_edwards_builders.py",
+    "pssolver/configuration/plane_beris_edwards_component_graph.py",
+    "pssolver/configuration/plane_beris_edwards_components.py",
+    "pssolver/configuration/plane_beris_edwards_declarations.py",
+    "pssolver/configuration/plane_beris_edwards_schema_v1.py",
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py",
+    "pssolver/configuration/public_channel_simulation_compiler.py",
+    "pssolver/configuration/public_periodic_simulation_compiler.py",
+    "pssolver/planning/channel_compiled_v2.py",
+    "pssolver/planning/plane_compiled_v2.py",
+    "pssolver/runtime/channel_active_nematics.py",
+    "pssolver/runtime/channel_application_bridge.py",
+    "pssolver/runtime/channel_beris_edwards.py",
+    "pssolver/runtime/periodic_beris_edwards.py",
+    "pssolver/runtime/plane_application_bridge.py",
+    "pssolver/runtime/plane_beris_edwards.py",
+    "pssolver/runtime/plane_compiled_v2_binding.py",
+    "pssolver/runtime/plane_compiled_v2_step.py",
+    "pssolver/workflows/channel_active_nematics.py",
+    "pssolver/workflows/channel_beris_edwards.py",
+    "pssolver/workflows/periodic_beris_edwards.py",
+    "pssolver/workflows/plane_beris_edwards.py",
+    "pssolver/workflows/plane_compiled_v2.py",
+    "pssolver/configuration/finite_q_anchoring.py",
+    "pssolver/configuration/lifting.py",
+    "pssolver/configuration/robin.py",
+    "pssolver/planning/lifting.py",
+    "pssolver/planning/robin.py",
+    "pssolver/configuration/simulation.py",
+    "pssolver/configuration/package_construction.py",
+    "pssolver/functional/api.py",
+    "pssolver/models/active_nematics/beris_edwards.py",
+    "pssolver/models/active_nematics/q_tensor.py",
+    "pssolver/io/checkpoint.py",
+    "pyproject.toml",
+    "setup.py",
+    "MANIFEST.in"
+  ],
+  "intentional_no_change": {
+    "pssolver/configuration/simulation.py": "Generic declarations and composition validation contain no duplicated application runtime selection.",
+    "pssolver/configuration/package_construction.py": "Its implementation-name lookup describes normalized provenance, not runtime dispatch; preserve byte identity."
+  },
+  "legacy_negative_control": {
+    "source": "9e8b8809ca1154436993d921527a46e919b630a2",
+    "modules": 6,
+    "path": "tests/v0_4_r1_legacy_dispatch.py",
+    "production_fallback": false,
+    "reachable_history_only": true
+  },
+  "real_nfs_triggered": false,
+  "consumer_migration_triggered": false,
+  "gpu_specific_paths_changed": false,
+  "evidence_plan": {
+    "archive": "/home/fansenwei/pssolver_v0_4_s18_r1_dispatch_20261102_v1",
+    "full_suites": [
+      "conda",
+      "a2_hardlink_clone",
+      "conda_external_block"
+    ],
+    "writer_comparison": "Fixed basetemp checkpoint suite including functional exports, with parent-versus-parent nondeterminism reference; no differing deterministic file accepted.",
+    "equivalence": "8 families x 4 refresh intervals x 20 steps against parent and v0.3.0, exact states/progress/identities",
+    "consumer": "Control main 140bd27 installed candidate wheel CPU full suite"
+  },
+  "external_actions_authorized": {
+    "push": false,
+    "tag": false,
+    "release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm": false,
+    "gpu": false,
+    "h100": false
+  },
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 112,
+  "date": "2026-11-02",
+  "plan_step": "S-18",
+  "historical_successor_sources": {
+    "pssolver/api/capabilities.py": {
+      "historical_sha256": "88401f9e4e328c29863cf045f180f46131222b59414be12572a79733cbe430a5",
+      "current_sha256": "5efbeeff49ea528318b408985bd17922fc96ec1c73defaab269edb2f2016c65a"
+    },
+    "pssolver/configuration/application_registry.py": {
+      "historical_sha256": "07a8c34210231d33783ddbe34d634fe0e3501b0caee8d07b846d7883357c4234",
+      "current_sha256": "67abeb8f6f26c8e6bc85f3e8f687ba905acedcaa012ec3664989c31712331c3b"
+    },
+    "pssolver/configuration/public_simulation_runner.py": {
+      "historical_sha256": "9f8a3e21333708c44a9a0aff27ff7ec0d8b48fd042889264e8fd3046f0d98631",
+      "current_sha256": "6776a8ad51932170b27ec3dfd7c12957ae42062bc906f487aa39c5ea6d6d03f1"
+    },
+    "pssolver/configuration/simulation_binding.py": {
+      "historical_sha256": "378031e91dd0ff432dc75124099f7c6969faeafe3eacbfbaf18e0dec66e8b91a",
+      "current_sha256": "3f4fab36e3c83815c7d4b716034faabaae727ca5919cd92cc64e499046f44cda"
+    },
+    "pssolver/configuration/simulation_lowering.py": {
+      "historical_sha256": "a6ceeb52420b899b84c9d1a461f6492c1ed488c004c223ae2add766f4ab5facf",
+      "current_sha256": "91041ce072e5fd10d0b5a55379cc6d94a727fdf1ac1b42ed05d05cf293308a64"
+    },
+    "pssolver/runtime/package_construction.py": {
+      "historical_sha256": "df7026c0933831cfd439916927a6f572575846a174e4cf2bcf6963b991ab6a02",
+      "current_sha256": "eb2d3c46e92422f13794c05d40fe3b6a30fa87cc0b23d28ec847caf10cd6b642"
+    },
+    "pssolver/runtime/simulation_construction.py": {
+      "historical_sha256": "31478a24dab3124a0226e3c9de5b0c761057e20a0a8eaebe047167d14314e97a",
+      "current_sha256": "e190200db7c306b838fd67ce55589b943d88ff8e1f933bac3d12f328799a6f5b"
+    },
+    "tests/test_v0_4_s18_r1_shadow_registry.py": {
+      "historical_sha256": "6a0620c965f49cb16cf3ec1893f49a7c597b9421b72589aa0a48863b6e1849f7",
+      "current_sha256": "fb28eb3009ff6abc5ea571bee94d51c8916032b2b71cec5ab9c8ef9bf5914693"
+    }
+  },
+  "introduced_sources": {
+    "tests/test_v0_4_s18_r1_dispatch.py": "fc91232360dc647ed3ddd1598d0febc345396576d33fffaf8b48e6b20ada4010",
+    "tests/v0_4_r1_legacy_dispatch.py": "81f34775b4a6d59d300b1dea5ebbe7208e9a037d1112f3262d46b057da05481e",
+    "notes/PSSolver_v0_3_0_s03_successor_112_r1_dispatch_zh.md": "33e28a50ba52254a6bcc7bffa63bd3b490988778e8822a4452122b4ef5c644bd",
+    "tests/test_v0_4_s18_r1_dispatch_record.py": "766d421045acc0c1ca0a1a12ce1a1c979f3548c7d0297914cc344677a1f9fc65"
+  }
+}
