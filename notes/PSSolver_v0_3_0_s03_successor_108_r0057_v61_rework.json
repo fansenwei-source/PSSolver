@@ -1,0 +1,78 @@
+{
+  "classification": "V61_CLAIMED_FIXED_AWAITING_REVIEW",
+  "git_identity": {
+    "implementation": "3c519ccb63d523549cce161b05b62803c727c978",
+    "parent": "54ae67e04357070bb87cef907f0a68217b5841dd",
+    "batch_parent": "d84e883df58af92268dc55f0b02a78b3b5cffd57",
+    "record_commit_is_qualified_source": false
+  },
+  "registry_updates": {
+    "V-61": {
+      "status": "claimed_fixed",
+      "fixed_in": "3c519ccb63d523549cce161b05b62803c727c978"
+    }
+  },
+  "preserved_old_behavior": [
+    "fixed_work_completed error label",
+    "implicit RuntimeError"
+  ],
+  "scope": {
+    "public_api_changed": false,
+    "checkpoint_schema_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "historical_records_rewritten": false
+  },
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 108,
+  "date": "2026-11-02",
+  "plan_step": "S-18",
+  "historical_successor_sources": {
+    "pssolver/functional/channel_pressure.py": {
+      "historical_sha256": "a292e78942ccd1d97f7994cb4640398e1717c336faa7a58c2007c274ade4c194",
+      "current_sha256": "63a598533aaadbe1c329c66d1d0c5b652af8a0daa0e436d86a7dad94721dc497"
+    },
+    "pssolver/functional/channel_pressure_adjoint.py": {
+      "historical_sha256": "c5a7070e78c3618f2c7410bb1be60476bfdadb8e8f1d37c1d4983eefadd9e110",
+      "current_sha256": "3f8861918ef837fbd790c76a6166992bdf27c141e1e054406f324a05462b76b4"
+    },
+    "pssolver/linear_solvers/stokes/_channel_pcg_control.py": {
+      "historical_sha256": "c5b60bd144dd8c46355740c910865b49719f473688846e5f9bcd0f414da19a6c",
+      "current_sha256": "2bef56244ca0ee431028b3642db5e2a99f12bf71402e8152eb529e4622b48d63"
+    },
+    "pssolver/linear_solvers/stokes/channel_no_slip.py": {
+      "historical_sha256": "547d08207d7a59ef28cb43c3337974d288f50798d6ad090f5942bae5bfffb610",
+      "current_sha256": "e8d59b0ef72ada1aaf2f9aab6190639e477be5b5816f0ef01c5bcaddda82e5ee"
+    },
+    "tests/test_v0_4_s18_r5_channel_pcg_control.py": {
+      "historical_sha256": "c3aea6cf0d4fa21de034b0f301728c80643521d4023bb522fcacf1f59f62c279",
+      "current_sha256": "8b7eadf2565b5962cefb4fe53e5503e9695decc3292918f9d9a0a75d6328d9ca"
+    },
+    "tests/test_v0_4_s18_r5_successor_104.py": {
+      "historical_sha256": "67798e8a1c11c9b71e7b1ff3651b281bde092d64f8d043edaa91fc35dc06a74c",
+      "current_sha256": "3d30fe9fee0422864ccecd28f19d100e39314d575c7ac4010c0e180d7b5c137b"
+    },
+    "tests/test_v0_4_s18_r5_successor_106.py": {
+      "historical_sha256": "10c5fbb1439fece2d0da4515d48f4e169d64be8f26329e97da1a9138bd8f8f42",
+      "current_sha256": "c196beb6988f1b21e994f43a4194b06be81e4994b30e8229314263a86c68a989"
+    },
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "d18c04ee27e32f15734b700f87956d1984569e84e0befa8e8c8174899cd974d2",
+      "current_sha256": "67a98d2bd5eb6c21a1e6af29c6018104f7b956715564bffb2c753de14cda7f0e"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "4cb7201971866f344d1a7898bbe4f02e573aac812622f12b7d67d7b2d2228588",
+      "current_sha256": "2d4ba789593acc644fc2d12b4ecb8e7dd87e27e3282e4a8f6cb72426af72c795"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "e409655ea133d83f887ce4fd628f5b669a8abd0057b8666a839cb46d4061fae8",
+      "current_sha256": "823e168d446d5b7bdc271687ffcb01e89c36922fe015b249a3ec5a0eba3e7d47"
+    }
+  },
+  "introduced_sources": {
+    "benchmarks/probe_v0_4_s18_r5_postcondition.py": "339dccb4995f66029af78a19219a4f7ee5ab617b6ab7aea037bf284d6818431a",
+    "tests/test_v0_4_s18_r5_postcondition.py": "0265d2fd8d3872afd7d24a3c2ba035d66aad74567c136144ea9ed8b08d42ebd8",
+    "notes/PSSolver_v0_3_0_s03_successor_108_r0057_v61_rework_zh.md": "8b6591fdd195a347bb24a6ce79e68c83b0596349302974fdcf7f33cfc92a7125",
+    "tests/test_v0_4_s18_r5_r0057_rework.py": "b7835d7e9aeff5d4c7ca5f9f842f19dce88d26e5c8c0566cb733a88d0ec461d5"
+  }
+}

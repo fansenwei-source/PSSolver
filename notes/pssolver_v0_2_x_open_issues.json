@@ -31,9 +31,9 @@
   },
   "issue_count": 66,
   "status_counts": {
-    "open": 1,
+    "open": 0,
     "registered": 0,
-    "claimed_fixed": 0,
+    "claimed_fixed": 1,
     "verified": 61,
     "deferred": 2,
     "accepted": 2,
@@ -1086,9 +1086,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": true,
       "exercised_by_current_control_research": false,
-      "status": "open",
+      "status": "claimed_fixed",
       "target_release": "0.4 S-18",
-      "notes": "ChannelPCGControl.finish_fixed_work_postcondition(represented_at_floor, termination_reason, saturation_reason_still_at_floor) does not take the incoming acceptable flag and returns (True, termination_reason) whenever the state is represented and the saturation check holds. In ChannelNoSlipModalStokesSolver._solve_pressure, ChannelPressureTransposeOperator.solve_pressure_transpose and ChannelImplicitPressureAdjoint._solve_no_grad, the floor-retry recompute can fail with ValueError (inner except sets acceptable=False, termination 'nonfinite_intermediate'); if the completed state is then kept by the 2x roundoff margin (represented=True, termination 'fixed_work_completed'), d84e883 and v0.3.0 keep acceptable=False and raise, while c504091 overwrites it with True and returns the completed pressure. This changes the failure contract that R5 claims is unchanged (diagnostic_contract_changed false; errors unchanged). Fix: pass the current acceptable into finish_fixed_work_postcondition and return it unchanged when no override applies, at all three call sites; add per-path fault-injection regression tests asserting the parent's failure, preferably also as a case of verify_v0_4_s18_r5_pcg_equivalence.py. The old behaviour itself (failure labelled fixed_work_completed; implicit internal RuntimeError) is not to be changed in R5. Reproduction: scripts/postcondition_divergence_probe.py <repo> <production|transpose|implicit> <n>: float32 (12,8,32), friction 1e-3, viscosity 0.73, Lx8, seed 0; record run locates the post-loop represented check by call count; then in-process only: that check returns False, the next torch.equal(completed, floor) returns False, the next operator application returns NaN. production/transpose n=200, implicit n=30/40/44: v0.3.0 and d84e883 raise ChannelPressureConvergenceError / FunctionalConvergenceError / RuntimeError; c504091 returns acceptable fixed_work_completed (out/postcondition_divergence_probe.txt). A search over natural runs (scripts/postcondition_find.py) never executed the floor retry."
+      "notes": "ChannelPCGControl.finish_fixed_work_postcondition(represented_at_floor, termination_reason, saturation_reason_still_at_floor) does not take the incoming acceptable flag and returns (True, termination_reason) whenever the state is represented and the saturation check holds. In ChannelNoSlipModalStokesSolver._solve_pressure, ChannelPressureTransposeOperator.solve_pressure_transpose and ChannelImplicitPressureAdjoint._solve_no_grad, the floor-retry recompute can fail with ValueError (inner except sets acceptable=False, termination 'nonfinite_intermediate'); if the completed state is then kept by the 2x roundoff margin (represented=True, termination 'fixed_work_completed'), d84e883 and v0.3.0 keep acceptable=False and raise, while c504091 overwrites it with True and returns the completed pressure. This changes the failure contract that R5 claims is unchanged (diagnostic_contract_changed false; errors unchanged). Fix: pass the current acceptable into finish_fixed_work_postcondition and return it unchanged when no override applies, at all three call sites; add per-path fault-injection regression tests asserting the parent's failure, preferably also as a case of verify_v0_4_s18_r5_pcg_equivalence.py. The old behaviour itself (failure labelled fixed_work_completed; implicit internal RuntimeError) is not to be changed in R5. Reproduction: scripts/postcondition_divergence_probe.py <repo> <production|transpose|implicit> <n>: float32 (12,8,32), friction 1e-3, viscosity 0.73, Lx8, seed 0; record run locates the post-loop represented check by call count; then in-process only: that check returns False, the next torch.equal(completed, floor) returns False, the next operator application returns NaN. production/transpose n=200, implicit n=30/40/44: v0.3.0 and d84e883 raise ChannelPressureConvergenceError / FunctionalConvergenceError / RuntimeError; c504091 returns acceptable fixed_work_completed (out/postcondition_divergence_probe.txt). A search over natural runs (scripts/postcondition_find.py) never executed the floor retry.",
+      "fixed_in": "3c519ccb63d523549cce161b05b62803c727c978"
     }
   ],
   "authorization": {

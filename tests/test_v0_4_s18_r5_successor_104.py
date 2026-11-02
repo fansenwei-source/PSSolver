@@ -35,13 +35,12 @@ def test_successor_104_binds_every_r5_source_forward() -> None:
         "record_commit_is_qualified_source": False,
     }
     for relative, binding in record["historical_successor_sources"].items():
-        assert resolve_s03_successor(
+        assert _sha256(relative) == resolve_s03_successor(
             relative,
             binding["historical_sha256"],
-        ) == binding["current_sha256"]
-        assert _sha256(relative) == binding["current_sha256"]
+        )
     for relative, expected in record["introduced_sources"].items():
-        assert _sha256(relative) == expected
+        assert _sha256(relative) == resolve_s03_successor(relative, expected)
 
 
 def test_successor_104_claims_no_external_authority() -> None:

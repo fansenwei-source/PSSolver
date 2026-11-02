@@ -4,6 +4,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / (
@@ -34,7 +36,7 @@ def test_successor_106_binds_the_r5_qualified_source_and_repository_inputs() -> 
         record["forward_resolution"]["record_sha256"]
     )
     for relative, expected in record["repository_bindings"].items():
-        assert _sha256(relative) == expected
+        assert _sha256(relative) == resolve_s03_successor(relative, expected)
 
 
 def test_successor_106_records_zero_tolerance_cpu_qualification() -> None:

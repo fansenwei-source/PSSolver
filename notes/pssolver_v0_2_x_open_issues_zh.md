@@ -8,9 +8,9 @@
 
 当前共登记 66 条：
 
-- `open`：1；
+- `open`：0；
 - `registered`：0；
-- `claimed_fixed`：0；
+- `claimed_fixed`：1；
 - `verified`：61；
 - `deferred`：2；
 - `accepted`：2；
@@ -320,4 +320,6 @@ GPU、Slurm 或 H100 执行仍需用户单独授权。
 
 ## R-0057 / V-61
 
-V-61（low，open，S-18）：floor 重试失败后，共享 PCG helper 错误覆盖 acceptable=False。production、transpose、implicit 必须保留父提交的异常类型与 termination；oracle 不受影响。R5 等待返工复核，dev/0.4 保持 d84e883。
+V-61（low，claimed_fixed，S-18）：floor 重试失败后，共享 PCG helper 错误覆盖 acceptable=False。production、transpose、implicit 必须保留父提交的异常类型与 termination；oracle 不受影响。R5 等待返工复核，dev/0.4 保持 d84e883。
+
+修复源 `3c519ccb63d523549cce161b05b62803c727c978`：保留传入 acceptable，三条路径故障注入遵循原异常；等待 R-0058 独立复核。
