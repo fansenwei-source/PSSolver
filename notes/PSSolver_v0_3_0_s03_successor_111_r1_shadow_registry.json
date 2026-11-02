@@ -1,0 +1,80 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 111,
+  "date": "2026-11-02",
+  "plan_step": "S-18",
+  "stage": "R1-shadow-only",
+  "classification": "LOCAL_R1_SHADOW_REGISTRY_PRE_DISPATCH_CHECKPOINT",
+  "git_identity": {
+    "batch_parent": "9e8b8809ca1154436993d921527a46e919b630a2",
+    "shadow_prototype": "2475cefd314d82296fa98d04c232b7116cc06df2",
+    "released_baseline": "47473880534a66f6da940db82122c79cda48a86b",
+    "record_commit_is_qualified_source": false
+  },
+  "decision": {
+    "id": "D-0018",
+    "sha256": "38cfe71b63efcca6ef47a759d5955bd332266cf4a65cef6e61635c43bfd1a627"
+  },
+  "r1_complete": false,
+  "production_dispatch_switched": false,
+  "registry_updated": false,
+  "nonzero_tolerance_authorized": false,
+  "shadow": {
+    "module": "pssolver/configuration/application_registry.py",
+    "standard_library_only": true,
+    "applications": 4,
+    "runtime_paths": 6,
+    "compiler_order": ["plane", "channel_legacy", "periodic", "channel_complete"],
+    "lowering_rejection_order": ["plane", "periodic", "channel_complete", "channel_legacy"],
+    "binding_order": ["periodic_spectral", "channel_complete_stress", "legacy_production", "compiled_v2", "legacy_channel", "compiled_channel_v2"],
+    "existing_production_importers": [],
+    "numerical_callables_moved": false,
+    "new_public_api": false
+  },
+  "prototype_test_correction": {
+    "failed_tests": 4,
+    "cause": "Topology negative inputs were rejected by SimulationSpec boundary composition before reaching the lowering guard; explicitly inject geometry into a copied declaration to test the deeper guard.",
+    "runtime_changed": false,
+    "history_rewritten": false,
+    "failure_log": "logs/prototype_2475cef.log",
+    "failure_junit": "junit/prototype_2475cef.xml",
+    "uncommitted_test_prototypes": "An earlier six-failure draft used dataclasses.replace on a derived capability property and a convenience execution wrapper; corrected before the prototype commit. No production code changed."
+  },
+  "evidence_plan": {
+    "archive": "/home/fansenwei/pssolver_v0_4_s18_r1_shadow_20261102_v1",
+    "clean_single_branch_clones": true,
+    "remove_clone_origin": true,
+    "cuda_visible_devices": "",
+    "suites": ["conda_Nematics3D", "D0008_a2_hardlink_clone", "conda_external_paths_blocked"],
+    "equivalence": "Unchanged frozen R4 helper: eight families, four refresh intervals, twenty steps; exact states/progress/runtime/configuration identities against parent and v0.3.0. Final results are recorded separately, not presumed here.",
+    "cache_accounting": "Count tree-local pyc as well as redirected caches before temporary-clone pruning. Isolated -I children may ignore pycache environment settings."
+  },
+  "remaining_before_r1_review": [
+    "dispatch_switch_with_legacy_negative_control",
+    "two_cpu_suites",
+    "blocked_external_paths_suite",
+    "bitwise_states_and_identities",
+    "released_checkpoints_read_only",
+    "writer_byte_trees_including_functional",
+    "fault_matrix",
+    "clean_wheel",
+    "control_main_installed_cpu_suite"
+  ],
+  "external_actions_authorized": {
+    "push": false,
+    "tag": false,
+    "release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm": false,
+    "gpu": false,
+    "h100": false
+  },
+  "historical_successor_sources": {},
+  "introduced_sources": {
+    "pssolver/configuration/application_registry.py": "07a8c34210231d33783ddbe34d634fe0e3501b0caee8d07b846d7883357c4234",
+    "tests/test_v0_4_s18_r1_shadow_registry.py": "6a0620c965f49cb16cf3ec1893f49a7c597b9421b72589aa0a48863b6e1849f7",
+    "notes/PSSolver_v0_3_0_s03_successor_111_r1_shadow_registry_zh.md": "30b599a4970b8ec1cbbc0facb45850902621e85970f4f3a19267bac10fdc98b9",
+    "tests/test_v0_4_s18_r1_shadow_record.py": "896b051431b0d93025c970f0e30638c91251b7fa31fe65789ccbd87e8e715d2d"
+  }
+}

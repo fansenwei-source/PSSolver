@@ -1,6 +1,7 @@
 """Live, repository-only comparisons before any R1 dispatcher is switched."""
 
 import ast
+from copy import copy
 from dataclasses import FrozenInstanceError, replace
 from enum import Enum
 import importlib
@@ -237,8 +238,12 @@ def test_shadow_matches_topology_and_capability_order_rejection(tmp_path, entry)
     swapped = tuple(AxisTopology.BOUNDED if item == "periodic"
                     else AxisTopology.PERIODIC for item in entry.topology)
     invalid_geometry = GeometrySpec(source.geometry.name, source.geometry.domain, swapped)
+    # Fault-inject after construction to exercise lowering's own guard; normal
+    # SimulationSpec construction rejects inconsistent boundaries even earlier.
+    invalid = copy(source)
+    object.__setattr__(invalid, "geometry", invalid_geometry)
     with pytest.raises(lowering.SimulationLoweringError) as caught:
-        lowering._validate_global_contract(replace(source, geometry=invalid_geometry))
+        lowering._validate_global_contract(invalid)
     assert caught.value.rejection.to_metadata() == {
         "code": "unsupported_dimension_or_topology",
         "message": "the qualified solver requires its frozen three-dimensional topology",
