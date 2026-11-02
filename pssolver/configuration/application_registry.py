@@ -1,6 +1,6 @@
-"""Private, tensor-free shadow of the qualified application dispatch tables.
+"""Private, tensor-free registry of the qualified application dispatch tables.
 
-S-18/R1 first records existing selections without changing any dispatcher.
+S-18/R1 first proved these selections in the inactive shadow stage.
 Compiler discovery, lowering rejection metadata, and binding construction have
 different historical orders; preserve each explicitly instead of sorting them.
 Descriptors contain strings only: importing this module never resolves a
@@ -25,6 +25,8 @@ class ApplicationRegistration:
     request_type: str
     runtime_factory: str
     adapter_protocol: str
+    runtime_accepts_builders: bool
+    runtime_request_error: str
 
     @property
     def key(self) -> tuple[str, str]:
@@ -48,6 +50,7 @@ class RuntimeRegistration:
     builder_provision: str
     builder_parameter: str | None
     package_builder: str | None
+    package_request_error: str | None
 
     @property
     def key(self) -> tuple[str, str, str]:
@@ -91,6 +94,7 @@ _PLANE = ApplicationRegistration(
     "pssolver.runtime.plane_beris_edwards.PlaneRuntimeBuildRequest",
     "pssolver.runtime.plane_beris_edwards.build_plane_beris_edwards_runtime",
     "pssolver.runtime.plane_beris_edwards.PlaneRuntimeAdapterProtocol",
+    True, "Plane construction requires PlaneRuntimeBuildRequest",
 )
 _CHANNEL = ApplicationRegistration(
     "legacy_active_force_active_nematics", "rectangular_channel",
@@ -102,6 +106,7 @@ _CHANNEL = ApplicationRegistration(
     "pssolver.runtime.channel_active_nematics.ChannelRuntimeBuildRequest",
     "pssolver.runtime.channel_active_nematics.build_channel_active_nematic_runtime",
     "pssolver.runtime.channel_active_nematics.ChannelRuntimeAdapterProtocol",
+    True, "Channel construction requires ChannelRuntimeBuildRequest",
 )
 _PERIODIC = ApplicationRegistration(
     "complete_stress_beris_edwards", "periodic_box",
@@ -113,6 +118,7 @@ _PERIODIC = ApplicationRegistration(
     "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeBuildRequest",
     "pssolver.runtime.periodic_beris_edwards.build_periodic_beris_edwards_runtime",
     "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeAdapterProtocol",
+    False, "periodic construction requires PeriodicRuntimeBuildRequest",
 )
 _CHANNEL_COMPLETE = ApplicationRegistration(
     "complete_stress_beris_edwards", "rectangular_channel",
@@ -124,6 +130,7 @@ _CHANNEL_COMPLETE = ApplicationRegistration(
     "pssolver.runtime.channel_beris_edwards.ChannelBerisEdwardsRuntimeBuildRequest",
     "pssolver.runtime.channel_beris_edwards.build_channel_beris_edwards_runtime",
     "pssolver.runtime.channel_beris_edwards.ChannelBerisEdwardsRuntimeAdapterProtocol",
+    False, "complete-stress Channel construction requires ChannelBerisEdwardsRuntimeBuildRequest",
 )
 
 # Public compiler/capability order, not lowering error order.
@@ -138,31 +145,37 @@ RUNTIMES = (
     RuntimeRegistration(
         _PERIODIC, "periodic_spectral", "periodic_complete_stress",
         "package", None, None,
+        "periodic construction requires PeriodicRuntimeBuildRequest",
     ),
     RuntimeRegistration(
         _CHANNEL_COMPLETE, "channel_complete_stress", "channel_complete_stress",
         "package", None, None,
+        "complete-stress Channel construction requires Channel request",
     ),
     RuntimeRegistration(
         _PLANE, "legacy_production", "plane_legacy_production",
         "package", None, None,
+        None,
     ),
     RuntimeRegistration(
         _PLANE, "compiled_v2", "plane_compiled_v2", "caller", "compiled_builder",
         "pssolver.runtime.plane_application_bridge.build_package_compiled_plane_runtime",
+        "compiled Plane construction requires Plane request",
     ),
     RuntimeRegistration(
         _CHANNEL, "legacy_channel", "channel_legacy", "caller", "legacy_builder",
         "pssolver.runtime.channel_application_bridge.build_package_legacy_channel_runtime",
+        "legacy Channel construction requires Channel request",
     ),
     RuntimeRegistration(
         _CHANNEL, "compiled_channel_v2", "channel_compiled_v2",
         "caller", "compiled_builder",
         "pssolver.runtime.channel_application_bridge.build_package_compiled_channel_runtime",
+        "compiled Channel construction requires Channel request",
     ),
 )
 RUNTIME_BY_KEY = MappingProxyType({item.key: item for item in RUNTIMES})
 RUNTIME_BY_KIND = MappingProxyType({item.kind: item for item in RUNTIMES})
 
-# This is an internal shadow, not a new public registry/extension API.
+# This is not a new public registry/extension API.
 __all__ = []

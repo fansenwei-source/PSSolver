@@ -13,11 +13,11 @@ from collections.abc import Callable
 from pssolver.configuration.active_nematics_simulation_adapters import (
     compose_channel_active_nematics_simulation,
 )
+from pssolver.configuration.application_registry import RUNTIME_BY_KIND
 from pssolver.configuration.simulation_binding import bind_simulation_runtime
 from pssolver.planning.construction import (
     BuilderProvision,
     RuntimeConstructionBinding,
-    RuntimeConstructionKind,
 )
 
 from .channel_active_nematics import (
@@ -133,44 +133,18 @@ def build_bound_simulation_runtime(
         compiled_builder=compiled_builder,
     )
 
-    if binding.kind in {
-        RuntimeConstructionKind.PLANE_LEGACY_PRODUCTION,
-        RuntimeConstructionKind.PLANE_COMPILED_V2,
-    }:
-        if not isinstance(request, PlaneRuntimeBuildRequest):
-            raise TypeError("Plane construction requires PlaneRuntimeBuildRequest")
-        return build_plane_beris_edwards_runtime(
-            request,
-            legacy_builder=legacy_builder,
-            compiled_builder=compiled_builder,
-        )
-    if binding.kind in {
-        RuntimeConstructionKind.CHANNEL_LEGACY,
-        RuntimeConstructionKind.CHANNEL_COMPILED_V2,
-    }:
-        if not isinstance(request, ChannelRuntimeBuildRequest):
-            raise TypeError(
-                "Channel construction requires ChannelRuntimeBuildRequest"
-            )
-        return build_channel_active_nematic_runtime(
-            request,
-            legacy_builder=legacy_builder,
-            compiled_builder=compiled_builder,
-        )
-    if binding.kind is RuntimeConstructionKind.PERIODIC_COMPLETE_STRESS:
-        if not isinstance(request, PeriodicRuntimeBuildRequest):
-            raise TypeError(
-                "periodic construction requires PeriodicRuntimeBuildRequest"
-            )
-        return build_periodic_beris_edwards_runtime(request)
-    if binding.kind is RuntimeConstructionKind.CHANNEL_COMPLETE_STRESS:
-        if not isinstance(request, ChannelBerisEdwardsRuntimeBuildRequest):
-            raise TypeError(
-                "complete-stress Channel construction requires "
-                "ChannelBerisEdwardsRuntimeBuildRequest"
-            )
-        return build_channel_beris_edwards_runtime(request)
-    raise AssertionError("unreachable runtime construction kind")
+    registration = RUNTIME_BY_KIND.get(binding.kind)
+    if registration is None:
+        raise AssertionError("unreachable runtime construction kind")
+    application = registration.application
+    request_type = globals()[application.request_type.rsplit(".", 1)[1]]
+    if not isinstance(request, request_type):
+        raise TypeError(application.runtime_request_error)
+    factory = globals()[application.runtime_factory.rsplit(".", 1)[1]]
+    if application.runtime_accepts_builders:
+        return factory(request, legacy_builder=legacy_builder,
+                       compiled_builder=compiled_builder)
+    return factory(request)
 
 
 __all__ = ["build_bound_simulation_runtime"]

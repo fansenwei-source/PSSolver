@@ -20,58 +20,13 @@ from pssolver.planning.construction import (
 )
 from pssolver.planning.simulation import SimulationLoweringPlan
 
+from .application_registry import RUNTIME_BY_KEY
 from .simulation import SimulationSpec
 from .simulation_lowering import lower_simulation_spec
 
 
 _PLANE_VARIANT = "complete_stress_beris_edwards"
 _PLANE_GEOMETRY = "plane_slab"
-_CHANNEL_VARIANT = "legacy_active_force_active_nematics"
-_CHANNEL_GEOMETRY = "rectangular_channel"
-_PERIODIC_GEOMETRY = "periodic_box"
-
-_PLANE_REQUEST = (
-    "pssolver.runtime.plane_beris_edwards.PlaneRuntimeBuildRequest"
-)
-_PLANE_FACTORY = (
-    "pssolver.runtime.plane_beris_edwards."
-    "build_plane_beris_edwards_runtime"
-)
-_PLANE_PROTOCOL = (
-    "pssolver.runtime.plane_beris_edwards.PlaneRuntimeAdapterProtocol"
-)
-_CHANNEL_REQUEST = (
-    "pssolver.runtime.channel_active_nematics.ChannelRuntimeBuildRequest"
-)
-_CHANNEL_FACTORY = (
-    "pssolver.runtime.channel_active_nematics."
-    "build_channel_active_nematic_runtime"
-)
-_CHANNEL_PROTOCOL = (
-    "pssolver.runtime.channel_active_nematics.ChannelRuntimeAdapterProtocol"
-)
-_PERIODIC_REQUEST = (
-    "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeBuildRequest"
-)
-_PERIODIC_FACTORY = (
-    "pssolver.runtime.periodic_beris_edwards."
-    "build_periodic_beris_edwards_runtime"
-)
-_PERIODIC_PROTOCOL = (
-    "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeAdapterProtocol"
-)
-_CHANNEL_COMPLETE_REQUEST = (
-    "pssolver.runtime.channel_beris_edwards."
-    "ChannelBerisEdwardsRuntimeBuildRequest"
-)
-_CHANNEL_COMPLETE_FACTORY = (
-    "pssolver.runtime.channel_beris_edwards."
-    "build_channel_beris_edwards_runtime"
-)
-_CHANNEL_COMPLETE_PROTOCOL = (
-    "pssolver.runtime.channel_beris_edwards."
-    "ChannelBerisEdwardsRuntimeAdapterProtocol"
-)
 
 
 class BindingRejectionCode(str, Enum):
@@ -188,65 +143,8 @@ def bind_simulation_runtime(
         plan.geometry_name,
         simulation.execution.runtime_path,
     )
-    table = {
-        (_PLANE_VARIANT, _PERIODIC_GEOMETRY, "periodic_spectral"): (
-            RuntimeConstructionKind.PERIODIC_COMPLETE_STRESS,
-            _PERIODIC_REQUEST,
-            _PERIODIC_FACTORY,
-            _PERIODIC_PROTOCOL,
-            BuilderProvision.PACKAGE,
-            None,
-        ),
-        (_PLANE_VARIANT, _CHANNEL_GEOMETRY, "channel_complete_stress"): (
-            RuntimeConstructionKind.CHANNEL_COMPLETE_STRESS,
-            _CHANNEL_COMPLETE_REQUEST,
-            _CHANNEL_COMPLETE_FACTORY,
-            _CHANNEL_COMPLETE_PROTOCOL,
-            BuilderProvision.PACKAGE,
-            None,
-        ),
-        (_PLANE_VARIANT, _PLANE_GEOMETRY, "legacy_production"): (
-            RuntimeConstructionKind.PLANE_LEGACY_PRODUCTION,
-            _PLANE_REQUEST,
-            _PLANE_FACTORY,
-            _PLANE_PROTOCOL,
-            BuilderProvision.PACKAGE,
-            None,
-        ),
-        (_PLANE_VARIANT, _PLANE_GEOMETRY, "compiled_v2"): (
-            RuntimeConstructionKind.PLANE_COMPILED_V2,
-            _PLANE_REQUEST,
-            _PLANE_FACTORY,
-            _PLANE_PROTOCOL,
-            BuilderProvision.CALLER,
-            "compiled_builder",
-        ),
-        (_CHANNEL_VARIANT, _CHANNEL_GEOMETRY, "legacy_channel"): (
-            RuntimeConstructionKind.CHANNEL_LEGACY,
-            _CHANNEL_REQUEST,
-            _CHANNEL_FACTORY,
-            _CHANNEL_PROTOCOL,
-            BuilderProvision.CALLER,
-            "legacy_builder",
-        ),
-        (_CHANNEL_VARIANT, _CHANNEL_GEOMETRY, "compiled_channel_v2"): (
-            RuntimeConstructionKind.CHANNEL_COMPILED_V2,
-            _CHANNEL_REQUEST,
-            _CHANNEL_FACTORY,
-            _CHANNEL_PROTOCOL,
-            BuilderProvision.CALLER,
-            "compiled_builder",
-        ),
-    }
     try:
-        (
-            kind,
-            request_type,
-            factory,
-            protocol,
-            builder_provision,
-            builder_parameter,
-        ) = table[key]
+        registration = RUNTIME_BY_KEY[key]
     except KeyError:
         _reject(
             BindingRejectionCode.UNSUPPORTED_RUNTIME_PATH,
@@ -256,7 +154,7 @@ def bind_simulation_runtime(
             runtime_path=simulation.execution.runtime_path,
             supported_runtime_paths=sorted(
                 candidate[2]
-                for candidate in table
+                for candidate in RUNTIME_BY_KEY
                 if candidate[:2] == key[:2]
             ),
         )
@@ -266,13 +164,13 @@ def bind_simulation_runtime(
         equation_variant=plan.equation_variant,
         geometry_name=plan.geometry_name,
         runtime_path=simulation.execution.runtime_path,
-        kind=kind,
-        request_type=request_type,
-        runtime_factory=factory,
-        adapter_protocol=protocol,
+        kind=RuntimeConstructionKind(registration.kind),
+        request_type=registration.application.request_type,
+        runtime_factory=registration.application.runtime_factory,
+        adapter_protocol=registration.application.adapter_protocol,
         solver_implementation=plan.solver.implementation,
-        builder_provision=builder_provision,
-        builder_parameter=builder_parameter,
+        builder_provision=BuilderProvision(registration.builder_provision),
+        builder_parameter=registration.builder_parameter,
     )
 
 

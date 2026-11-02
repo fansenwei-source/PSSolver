@@ -1,4 +1,4 @@
-"""Live, repository-only comparisons before any R1 dispatcher is switched."""
+"""Registry parity, retaining the reachable pre-switch binding as control."""
 
 import ast
 from copy import copy
@@ -18,6 +18,7 @@ from pssolver.configuration import simulation_lowering as lowering
 from pssolver.configuration.simulation import ExecutionSpec
 from pssolver.core.geometry import AxisTopology, GeometrySpec
 from pssolver.runtime import package_construction, simulation_construction
+from tests.v0_4_r1_legacy_dispatch import legacy, source as legacy_source
 from tests.test_phase7_p774_runtime_construction_binding import (
     _channel_simulation, _channel_spec, _plane_simulation, _plane_spec,
 )
@@ -47,7 +48,7 @@ def _simulation(tmp_path, entry):
 def _binding_table():
     # Evaluate only the existing literal table (enum members and constants),
     # never execute a numerical kernel or a copy of the binding dispatcher.
-    tree = ast.parse(inspect.getsource(binding.bind_simulation_runtime))
+    tree = ast.parse(legacy_source(binding.__name__))
     expression, = [
         node.value for node in ast.walk(tree) if isinstance(node, ast.Assign)
         and any(isinstance(t, ast.Name) and t.id == "table" for t in node.targets)
@@ -55,7 +56,7 @@ def _binding_table():
     assert isinstance(expression, ast.Dict)
     assert not any(isinstance(node, ast.Call) for node in ast.walk(expression))
     return eval(compile(ast.Expression(expression), "<binding-table>", "eval"),
-                vars(binding))
+                vars(legacy(binding.__name__)))
 
 
 def test_shadow_matches_all_compiler_metadata_and_order():

@@ -17,9 +17,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from enum import Enum
 import json
+from importlib import import_module
 import math
 from types import MappingProxyType
 
+from pssolver.configuration.application_registry import APPLICATIONS, APPLICATION_BY_PAIR
 from pssolver.core._canonical import canonical_json
 from pssolver.configuration.active_nematics_simulation_adapters import (
     compose_plane_beris_edwards_simulation,
@@ -66,18 +68,6 @@ PUBLIC_PERIODIC_APPLICATION = "periodic_complete_stress_beris_edwards"
 PUBLIC_CHANNEL_COMPLETE_APPLICATION = "channel_complete_stress_beris_edwards"
 
 _PLANE_COMPILER_KEY = ("complete_stress_beris_edwards", "plane_slab")
-_CHANNEL_COMPILER_KEY = (
-    "legacy_active_force_active_nematics",
-    "rectangular_channel",
-)
-_PERIODIC_COMPILER_KEY = (
-    "complete_stress_beris_edwards",
-    "periodic_box",
-)
-_CHANNEL_COMPLETE_COMPILER_KEY = (
-    "complete_stress_beris_edwards",
-    "rectangular_channel",
-)
 
 _INITIAL_KEYS = frozenset(
     {
@@ -841,41 +831,9 @@ class PublicApplicationCompilerRegistration:
 
 
 _PUBLIC_COMPILER_REGISTRY = MappingProxyType(
-    {
-        _PLANE_COMPILER_KEY: PublicApplicationCompilerRegistration(
-            *_PLANE_COMPILER_KEY,
-            PUBLIC_PLANE_APPLICATION,
-            (
-                "pssolver.configuration.public_simulation_runner."
-                "_compile_plane_public_simulation"
-            ),
-        ),
-        _CHANNEL_COMPILER_KEY: PublicApplicationCompilerRegistration(
-            *_CHANNEL_COMPILER_KEY,
-            PUBLIC_CHANNEL_APPLICATION,
-            (
-                "pssolver.configuration.public_channel_simulation_compiler."
-                "compile_channel_public_simulation"
-            ),
-        ),
-        _PERIODIC_COMPILER_KEY: PublicApplicationCompilerRegistration(
-            *_PERIODIC_COMPILER_KEY,
-            PUBLIC_PERIODIC_APPLICATION,
-            (
-                "pssolver.configuration.public_periodic_simulation_compiler."
-                "compile_periodic_public_simulation"
-            ),
-        ),
-        _CHANNEL_COMPLETE_COMPILER_KEY: PublicApplicationCompilerRegistration(
-            *_CHANNEL_COMPLETE_COMPILER_KEY,
-            PUBLIC_CHANNEL_COMPLETE_APPLICATION,
-            (
-                "pssolver.configuration."
-                "public_channel_beris_edwards_compiler."
-                "compile_channel_beris_edwards_public_simulation"
-            ),
-        ),
-    }
+    {entry.key: PublicApplicationCompilerRegistration(
+        *entry.key, entry.application, entry.compiler,
+    ) for entry in APPLICATIONS}
 )
 
 
@@ -930,33 +888,14 @@ def compile_public_simulation(
             },
         )
     try:
-        if registration.application == PUBLIC_PLANE_APPLICATION:
-            return _compile_plane_public_simulation(source)
-        if registration.application == PUBLIC_CHANNEL_APPLICATION:
-            from .public_channel_simulation_compiler import (
-                compile_channel_public_simulation,
-            )
-
-            return compile_channel_public_simulation(source)
-        if registration.application == PUBLIC_PERIODIC_APPLICATION:
-            from .public_periodic_simulation_compiler import (
-                compile_periodic_public_simulation,
-            )
-
-            return compile_periodic_public_simulation(
-                source,
-                PublicSimulationCompilation,
-            )
-        if registration.application == PUBLIC_CHANNEL_COMPLETE_APPLICATION:
-            from .public_channel_beris_edwards_compiler import (
-                compile_channel_beris_edwards_public_simulation,
-            )
-
-            return compile_channel_beris_edwards_public_simulation(
-                source,
-                PublicSimulationCompilation,
-            )
-        raise AssertionError("registered public compiler was not dispatched")
+        # The sole public application selection; validation/catch order
+        # stays here, while the registry only supplies frozen identities.
+        entry = APPLICATION_BY_PAIR[key]
+        module, name = entry.compiler.rsplit(".", 1)
+        compile_adapter = getattr(import_module(module), name)
+        if entry.compiler_accepts_result_type:
+            return compile_adapter(source, PublicSimulationCompilation)
+        return compile_adapter(source)
     except PublicSimulationCompilationError:
         raise
     except SimulationBindingError as exc:

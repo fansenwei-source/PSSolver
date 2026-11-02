@@ -15,8 +15,8 @@ from pssolver.configuration.active_nematics_simulation_adapters import (
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
+from pssolver.configuration.application_registry import RUNTIME_BY_KIND
 from pssolver.configuration.simulation_binding import bind_simulation_runtime
-from pssolver.planning.construction import RuntimeConstructionKind
 from pssolver.planning.package_construction import (
     PackageRuntimeConstructionPlan,
 )
@@ -130,53 +130,22 @@ def build_package_simulation_runtime(
     binding = bind_simulation_runtime(simulation)
     kind = construction.plan.kind
 
-    if kind is RuntimeConstructionKind.PLANE_LEGACY_PRODUCTION:
+    registration = RUNTIME_BY_KIND.get(kind)
+    if registration is None:
+        raise AssertionError("unreachable package construction kind")
+    # Plane legacy historically delegates this check to the bound
+    # constructor; retain that ordering rather than adding a guard.
+    if registration.package_request_error is not None:
+        request_type = globals()[registration.application.request_type.rsplit(".", 1)[1]]
+        if not isinstance(request, request_type):
+            raise TypeError(registration.package_request_error)
+    if registration.package_builder is None:
         return build_bound_simulation_runtime(binding, request)
-    if kind is RuntimeConstructionKind.PLANE_COMPILED_V2:
-        if not isinstance(request, PlaneRuntimeBuildRequest):
-            raise TypeError("compiled Plane construction requires Plane request")
-        return build_bound_simulation_runtime(
-            binding,
-            request,
-            compiled_builder=lambda: build_package_compiled_plane_runtime(
-                request
-            ),
-        )
-    if kind is RuntimeConstructionKind.PERIODIC_COMPLETE_STRESS:
-        if not isinstance(request, PeriodicRuntimeBuildRequest):
-            raise TypeError(
-                "periodic construction requires PeriodicRuntimeBuildRequest"
-            )
-        return build_bound_simulation_runtime(binding, request)
-    if kind is RuntimeConstructionKind.CHANNEL_COMPLETE_STRESS:
-        if not isinstance(request, ChannelBerisEdwardsRuntimeBuildRequest):
-            raise TypeError(
-                "complete-stress Channel construction requires Channel request"
-            )
-        return build_bound_simulation_runtime(binding, request)
-    if kind is RuntimeConstructionKind.CHANNEL_LEGACY:
-        if not isinstance(request, ChannelRuntimeBuildRequest):
-            raise TypeError("legacy Channel construction requires Channel request")
-        return build_bound_simulation_runtime(
-            binding,
-            request,
-            legacy_builder=lambda: build_package_legacy_channel_runtime(
-                request
-            ),
-        )
-    if kind is RuntimeConstructionKind.CHANNEL_COMPILED_V2:
-        if not isinstance(request, ChannelRuntimeBuildRequest):
-            raise TypeError(
-                "compiled Channel construction requires Channel request"
-            )
-        return build_bound_simulation_runtime(
-            binding,
-            request,
-            compiled_builder=lambda: build_package_compiled_channel_runtime(
-                request
-            ),
-        )
-    raise AssertionError("unreachable package construction kind")
+    builder = globals()[registration.package_builder.rsplit(".", 1)[1]]
+    return build_bound_simulation_runtime(
+        binding, request,
+        **{registration.builder_parameter: lambda: builder(request)},
+    )
 
 
 __all__ = [

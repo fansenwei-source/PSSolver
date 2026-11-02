@@ -44,6 +44,7 @@ from pssolver.systems.stokes import (
     TangentialZeroModePolicy,
 )
 
+from .application_registry import APPLICATION_BY_PAIR, LOWERING_REJECTION_PAIRS
 from .simulation import SimulationSpec
 from .lifting import build_plane_static_lifting_plan
 
@@ -70,30 +71,6 @@ _DERIVATIVE_BY_BASIS = {
         DerivativeMultiplier.SINE_TO_POSITIVE_COSINE,
     ),
 }
-
-_PLANE_VARIANT = "complete_stress_beris_edwards"
-_CHANNEL_VARIANT = "legacy_active_force_active_nematics"
-_PLANE_GEOMETRY = "plane_slab"
-_PERIODIC_GEOMETRY = "periodic_box"
-_CHANNEL_GEOMETRY = "rectangular_channel"
-
-_PLANE_CAPABILITIES = (
-    "beris_edwards_q_evolution",
-    "beris_edwards_q_gradient",
-    "beris_edwards_velocity_gradient",
-    "beris_edwards_molecular_field",
-    "beris_edwards_stress",
-    "beris_edwards_force",
-    INCOMPRESSIBLE_STOKES_CAPABILITY,
-)
-_CHANNEL_CAPABILITIES = (
-    "legacy_active_force_q_evolution",
-    "beris_edwards_q_gradient",
-    "beris_edwards_velocity_gradient",
-    "legacy_active_force",
-    INCOMPRESSIBLE_STOKES_CAPABILITY,
-)
-
 
 class LoweringRejectionCode(str, Enum):
     """Machine-readable reason that a simulation cannot be lowered."""
@@ -217,51 +194,18 @@ def _validate_global_contract(
     variant = simulation.equation_system.variant
     geometry = simulation.geometry.name
     pair = (variant, geometry)
-    if pair == (_PLANE_VARIANT, _PLANE_GEOMETRY):
-        kind = "plane"
-        expected_topology = (
-            AxisTopology.PERIODIC,
-            AxisTopology.PERIODIC,
-            AxisTopology.BOUNDED,
-        )
-        expected_capabilities = _PLANE_CAPABILITIES
-    elif pair == (_PLANE_VARIANT, _PERIODIC_GEOMETRY):
-        kind = "periodic"
-        expected_topology = (
-            AxisTopology.PERIODIC,
-            AxisTopology.PERIODIC,
-            AxisTopology.PERIODIC,
-        )
-        expected_capabilities = _PLANE_CAPABILITIES
-    elif pair == (_CHANNEL_VARIANT, _CHANNEL_GEOMETRY):
-        kind = "channel_legacy"
-        expected_topology = (
-            AxisTopology.PERIODIC,
-            AxisTopology.BOUNDED,
-            AxisTopology.BOUNDED,
-        )
-        expected_capabilities = _CHANNEL_CAPABILITIES
-    elif pair == (_PLANE_VARIANT, _CHANNEL_GEOMETRY):
-        kind = "channel_complete"
-        expected_topology = (
-            AxisTopology.PERIODIC,
-            AxisTopology.BOUNDED,
-            AxisTopology.BOUNDED,
-        )
-        expected_capabilities = _PLANE_CAPABILITIES
-    else:
+    registration = APPLICATION_BY_PAIR.get(pair)
+    if registration is None:
         _reject(
             LoweringRejectionCode.UNSUPPORTED_MODEL_GEOMETRY,
             "the model/geometry pair has no qualified implementation",
             equation_variant=variant,
             geometry_name=geometry,
-            supported_pairs=[
-                [_PLANE_VARIANT, _PLANE_GEOMETRY],
-                [_PLANE_VARIANT, _PERIODIC_GEOMETRY],
-                [_PLANE_VARIANT, _CHANNEL_GEOMETRY],
-                [_CHANNEL_VARIANT, _CHANNEL_GEOMETRY],
-            ],
+            supported_pairs=[list(key) for key in LOWERING_REJECTION_PAIRS],
         )
+    kind = registration.lowering_kind
+    expected_topology = tuple(AxisTopology(value) for value in registration.topology)
+    expected_capabilities = registration.capabilities
     observed_topology = simulation.geometry.axis_topologies
     if observed_topology != expected_topology:
         _reject(

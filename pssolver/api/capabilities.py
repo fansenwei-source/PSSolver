@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from pssolver.configuration.application_registry import APPLICATIONS
 from pssolver.core._identifiers import require_python_identifier
 
 
@@ -255,12 +256,8 @@ _BOUNDARY_POLICIES = (
     ),
 )
 
-_RUNTIME_PATHS = {
-    _PLANE_APPLICATION: ("legacy_production", "compiled_v2"),
-    _CHANNEL_APPLICATION: ("legacy_channel", "compiled_channel_v2"),
-    _PERIODIC_APPLICATION: ("periodic_spectral",),
-    _CHANNEL_COMPLETE_APPLICATION: ("channel_complete_stress",),
-}
+_RUNTIME_PATHS = {entry.application: entry.runtime_paths for entry in APPLICATIONS}
+
 
 _QUALIFIED_POLICY_EQUIVALENCES = (
     (
