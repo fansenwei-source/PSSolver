@@ -1,0 +1,131 @@
+{
+  "classification": "R0058_PASS_IMPORTED_S18_R5_COMPLETE_PENDING_PUSH",
+  "git_identity": {
+    "reviewed_candidate": "77a6eb1d92b414579e3b67aaa565f2526bd7a3de",
+    "implementation": "3c519ccb63d523549cce161b05b62803c727c978",
+    "batch_parent": "d84e883df58af92268dc55f0b02a78b3b5cffd57",
+    "record_commit_is_qualified_source": false
+  },
+  "review": {
+    "request": "R-0058",
+    "classification": "PASS",
+    "sync_commit": "c718e70ea2dc4be7f488a0e280056539ba8b2a43",
+    "result_sha256": "2634066cf00a33485dde4c0193f201413cd5cd7663f6e954822e169a6194021c",
+    "archive": {
+      "path": "/home/fansenwei/pssolver_v0_4_claude_s18_r0058_review_20261102_v1",
+      "host": "local",
+      "checksums_file": "checksums.sha256",
+      "checksums_entries": 375,
+      "checksums_sha256": "cf3994d2246438dcae3708ec6c79c34b5d84e703b3fff1e7a1865ced6035a640",
+      "complete_present": true
+    },
+    "reports": [
+      {
+        "path": "/home/fansenwei/pssolver_v0_4_claude_s18_r0058_review_20261102_v1/final_report.md",
+        "sha256": "0986c913d521671d6ffcbdfc1d35ceb151c5510d23fece447bedcc33b13d55e1"
+      },
+      {
+        "path": "/home/fansenwei/pssolver_v0_4_claude_s18_r0058_review_20261102_v1/summary.json",
+        "sha256": "fd822bf6adbf86e838eef5a07dbcfda82fda0b5ac8c48b3208c6b442198dad9d"
+      }
+    ]
+  },
+  "registry_updates": [
+    {
+      "id": "V-61",
+      "field": "status",
+      "from": "claimed_fixed",
+      "to": "verified",
+      "reason": "R-0058: finish_fixed_work_postcondition preserves the incoming acceptable at all three call sites; production, transpose and implicit fault paths equal d84e883 and v0.3.0 in every field over 36 combinations (two injection mechanisms, conda/a2, float32/float64) while c504091 accepts in all 32 injected ones; normal-path numerics, matrix, replays, 8x20, suites, wheel and Control main unchanged."
+    },
+    {
+      "id": "V-61",
+      "field": "verified_by",
+      "to": "R-0058"
+    },
+    {
+      "id": "V-61",
+      "field": "fixed_in",
+      "from": "3c519ccb63d523549cce161b05b62803c727c978",
+      "to": "3c519ccb63d523549cce161b05b62803c727c978",
+      "reason": "unchanged; confirmed by R-0058"
+    }
+  ],
+  "registry_snapshot": {
+    "V-61": {
+      "status": "verified",
+      "verified_by": "R-0058",
+      "fixed_in": "3c519ccb63d523549cce161b05b62803c727c978"
+    }
+  },
+  "new_findings": [],
+  "remaining_batch": "R1 (shadow registry first)",
+  "aggregate_r1_r9_closed": false,
+  "reviewed_tests": {
+    "conda_passed": 5131,
+    "a2_passed": 5130,
+    "a2_optional_skips": 1,
+    "blocked_passed": 5131,
+    "cuda_deselected": 7,
+    "control_passed": 298,
+    "control_skipped": 6,
+    "fault_runs": 144,
+    "matching_fault_combinations": 36,
+    "negative_control_injected_combinations": 32
+  },
+  "pruning_erratum": {
+    "original_archive_modified": false,
+    "cause": "python -I ignores PYTHONDONTWRITEBYTECODE and PYTHONPYCACHEPREFIX",
+    "ignored_pyc_per_clone": {
+      "conda": 116,
+      "a2": 116,
+      "blocked": 116
+    },
+    "correction": "Original PRUNED.txt overstated outside-clone cache redirection; tree-local bytecode was counted in prune_inventory.json and removed with each clone. No sealed evidence rewritten.",
+    "sources": [
+      {
+        "path": "/home/fansenwei/pssolver_v0_4_s18_r5_v61_qualification_20261102_v2/PRUNED.txt",
+        "sha256": "4e88b4ff5cb3b1c4fb3a09578119272424d4640c8c9a033add03de40382611be"
+      },
+      {
+        "path": "/home/fansenwei/pssolver_v0_4_s18_r5_v61_qualification_20261102_v2/environment/prune_inventory.json",
+        "sha256": "e9318f0f98abc000d129e283a3e58116e0cabac4ffd19a499d3c9b7b3406d4c0"
+      }
+    ]
+  },
+  "scope": {
+    "runtime_changed": false,
+    "benchmarks_changed": false,
+    "packaging_changed": false,
+    "historical_records_rewritten": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "provider_identity_changed": false,
+    "public_api_changed": false,
+    "production_defaults_changed": false,
+    "push_authorized": false,
+    "hpcc_or_gpu_authorized": false
+  },
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 110,
+  "date": "2026-11-02",
+  "plan_step": "S-18",
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "67a98d2bd5eb6c21a1e6af29c6018104f7b956715564bffb2c753de14cda7f0e",
+      "current_sha256": "6b87334abea327c7864e5b96b30c77509d24db6446b3dd724d417a3d8c3fbccb"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "2d4ba789593acc644fc2d12b4ecb8e7dd87e27e3282e4a8f6cb72426af72c795",
+      "current_sha256": "db4eca76770ac1510a5f724702481397783bd014199d9069f80bb6d0dc2e555f"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "823e168d446d5b7bdc271687ffcb01e89c36922fe015b249a3ec5a0eba3e7d47",
+      "current_sha256": "9847e72d0c2655d250f74b09982ddea8d0e559156ae08386d698e2e0f149644f"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_110_r0058_import_zh.md": "f00c5ec8cf0cd4e78547e20490a97f211614af468c99e4aae4687ff14161a96e",
+    "tests/test_v0_4_s18_r0058_import.py": "7581834d2f47ad5d7128303c15f4289303bdd61cec75db7a6eec97f96423d58e"
+  }
+}

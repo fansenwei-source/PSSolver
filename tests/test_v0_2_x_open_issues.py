@@ -54,8 +54,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
         "registered": 0,
-        "claimed_fixed": 1,
-        "verified": 61,
+        "claimed_fixed": 0,
+        "verified": 62,
         "deferred": 2,
         "accepted": 2,
         "coverage_gap": 0,
@@ -258,7 +258,7 @@ def test_live_registry_tracks_the_current_development_line():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == {"V-61"}
+    assert claimed == set()
     assert {
         issue_id
         for issue_id, item in issues.items()
@@ -625,7 +625,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == {"V-61"}
+    } == set()
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (
@@ -742,3 +742,10 @@ def test_registry_does_not_authorize_implementation_or_external_actions():
             "h100_authorized",
         )
     )
+
+
+def test_current_registry_records_v61_independent_verification():
+    issue = _issues()["V-61"]
+    assert issue["status"] == "verified"
+    assert issue["verified_by"] == "R-0058"
+    assert issue["fixed_in"] == "3c519ccb63d523549cce161b05b62803c727c978"
