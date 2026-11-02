@@ -1,0 +1,50 @@
+{
+  "classification": "R0057_REWORK_REQUIRED_V61_OPEN",
+  "git_identity": {
+    "reviewed_candidate": "c50409174d8d02068bbad1da35698d45792ca538",
+    "record_commit_is_qualified_source": false
+  },
+  "review": {
+    "request": "R-0057",
+    "result_sha256": "948ba059a0b6cddfd659726db88c243b0e68df2c7faf71bbdad342d94a1029db",
+    "archive": {
+      "path": "/home/fansenwei/pssolver_v0_4_claude_s18_r0057_review_20261101_v1",
+      "host": "local",
+      "checksums_file": "checksums.sha256",
+      "checksums_entries": 91,
+      "checksums_sha256": "2b3bdd14b1b6c42b9b4b660be4b7fb4b43db74d8cf6e0c62e3d6cc45a4dc54f9",
+      "complete_present": true
+    }
+  },
+  "registry_updates": {
+    "V-61": {
+      "status": "open",
+      "target_release": "0.4 S-18"
+    }
+  },
+  "scope": {
+    "runtime_changed": false,
+    "historical_records_rewritten": false
+  },
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 107,
+  "date": "2026-11-02",
+  "plan_step": "S-18",
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "88c2b16735c6b6ab6cb2cedca87ee397ecc727ec574cc70dfb9b7217d564b029",
+      "current_sha256": "d18c04ee27e32f15734b700f87956d1984569e84e0befa8e8c8174899cd974d2"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "e05778fe1595fa51d9e1945823fae7438f561c208858feb8e567b013ae08105e",
+      "current_sha256": "4cb7201971866f344d1a7898bbe4f02e573aac812622f12b7d67d7b2d2228588"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "536b37680d16d73af3231e639ba79ed9198ac472df2b78f189a932c4a819ec2f",
+      "current_sha256": "e409655ea133d83f887ce4fd628f5b669a8abd0057b8666a839cb46d4061fae8"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_107_r0057_import_zh.md": "89d8fab550049384d9eff8a03056e712c49591c4e9e988b67fbec92d17307d68"
+  }
+}

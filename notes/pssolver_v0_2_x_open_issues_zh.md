@@ -6,12 +6,12 @@
 `dev/0.4` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 65 条：
+当前共登记 66 条：
 
-- `open`：0；
+- `open`：1；
 - `registered`：0；
-- `claimed_fixed`：1；
-- `verified`：60；
+- `claimed_fixed`：0；
+- `verified`：61；
 - `deferred`：2；
 - `accepted`：2；
 - `coverage_gap`：0。
@@ -317,3 +317,7 @@ S-09 已由 `R-0035` 完成结案复核：`V-41` 按 `D-0013` 接受窄范围例
 机器可读的逐项标题、严重度、来源、版本影响、Control 影响、状态、目标版本和说明均在
 `notes/pssolver_v0_2_x_open_issues.json` 中。v0.3.0 已发布并通过独立验收；0.4 的任何
 GPU、Slurm 或 H100 执行仍需用户单独授权。
+
+## R-0057 / V-61
+
+V-61（low，open，S-18）：floor 重试失败后，共享 PCG helper 错误覆盖 acceptable=False。production、transpose、implicit 必须保留父提交的异常类型与 termination；oracle 不受影响。R5 等待返工复核，dev/0.4 保持 d84e883。
