@@ -208,6 +208,7 @@ class ChannelPCGControl(Generic[_ValueT]):
     def finish_fixed_work_postcondition(
         self,
         *,
+        acceptable: bool,
         represented_at_floor: bool,
         termination_reason: str,
         saturation_reason_still_at_floor: bool,
@@ -221,7 +222,9 @@ class ChannelPCGControl(Generic[_ValueT]):
             and not saturation_reason_still_at_floor
         ):
             return False, self.saturation_failure_reason
-        return True, termination_reason
+        # A failed floor retry may already have rejected this completed state.
+        # The roundoff-margin check must not reverse that earlier decision.
+        return acceptable, termination_reason
 
 
 __all__ = [

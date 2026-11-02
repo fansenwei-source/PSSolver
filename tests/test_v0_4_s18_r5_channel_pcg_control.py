@@ -138,6 +138,7 @@ def test_fixed_work_postcondition_fails_closed_with_original_reason():
         failure_reason="preconditioned_residual_breakdown",
     )
     acceptable, reason = control.finish_fixed_work_postcondition(
+        acceptable=True,
         represented_at_floor=False,
         termination_reason=CHANNEL_PCG_FIXED_WORK_ROUNDOFF_SATURATION,
         saturation_reason_still_at_floor=False,
@@ -146,6 +147,7 @@ def test_fixed_work_postcondition_fails_closed_with_original_reason():
     assert reason == "preconditioned_residual_breakdown"
 
     acceptable, reason = control.finish_fixed_work_postcondition(
+        acceptable=True,
         represented_at_floor=True,
         termination_reason=CHANNEL_PCG_FIXED_WORK_ROUNDOFF_SATURATION,
         saturation_reason_still_at_floor=True,

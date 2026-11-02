@@ -519,6 +519,7 @@ class ChannelImplicitPressureAdjoint:
                 )
                 acceptable, termination_reason = (
                     pcg_control.finish_fixed_work_postcondition(
+                        acceptable=acceptable,
                         represented_at_floor=represented_at_floor,
                         termination_reason=termination_reason,
                         saturation_reason_still_at_floor=(
@@ -979,6 +980,7 @@ def unrolled_channel_pressure_solve_oracle(
             relative_residual = completed_relative_residual
             represented_at_floor = True
         postcondition_acceptable, _ = pcg_control.finish_fixed_work_postcondition(
+            acceptable=True,
             represented_at_floor=represented_at_floor,
             termination_reason=(
                 CHANNEL_PRESSURE_FIXED_WORK_ROUNDOFF_SATURATION

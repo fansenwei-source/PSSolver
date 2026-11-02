@@ -612,6 +612,7 @@ class ChannelPressureTransposeOperator:
                 )
                 acceptable, termination_reason = (
                     pcg_control.finish_fixed_work_postcondition(
+                        acceptable=acceptable,
                         represented_at_floor=represented_at_floor,
                         termination_reason=termination_reason,
                         saturation_reason_still_at_floor=(
