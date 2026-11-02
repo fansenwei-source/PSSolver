@@ -1,0 +1,168 @@
+"""Private, tensor-free shadow of the qualified application dispatch tables.
+
+S-18/R1 first records existing selections without changing any dispatcher.
+Compiler discovery, lowering rejection metadata, and binding construction have
+different historical orders; preserve each explicitly instead of sorting them.
+Descriptors contain strings only: importing this module never resolves a
+compiler, allocates a runtime, or changes the public capability surface.
+"""
+
+from dataclasses import dataclass
+from types import MappingProxyType
+
+
+@dataclass(frozen=True, slots=True)
+class ApplicationRegistration:
+    equation_variant: str
+    geometry_name: str
+    application: str
+    compiler: str
+    compiler_accepts_result_type: bool
+    lowering_kind: str
+    topology: tuple[str, ...]
+    capabilities: tuple[str, ...]
+    runtime_paths: tuple[str, ...]
+    request_type: str
+    runtime_factory: str
+    adapter_protocol: str
+
+    @property
+    def key(self) -> tuple[str, str]:
+        return self.equation_variant, self.geometry_name
+
+    def compiler_metadata(self) -> dict[str, str]:
+        # Field order is part of the existing public metadata representation.
+        return {
+            "equation_variant": self.equation_variant,
+            "geometry_name": self.geometry_name,
+            "application": self.application,
+            "adapter": self.compiler,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class RuntimeRegistration:
+    application: ApplicationRegistration
+    runtime_path: str
+    kind: str
+    builder_provision: str
+    builder_parameter: str | None
+    package_builder: str | None
+
+    @property
+    def key(self) -> tuple[str, str, str]:
+        return (*self.application.key, self.runtime_path)
+
+    def binding_fields(self) -> tuple[object, ...]:
+        return (
+            self.kind,
+            self.application.request_type,
+            self.application.runtime_factory,
+            self.application.adapter_protocol,
+            self.builder_provision,
+            self.builder_parameter,
+        )
+
+
+_COMPLETE_CAPABILITIES = (
+    "beris_edwards_q_evolution",
+    "beris_edwards_q_gradient",
+    "beris_edwards_velocity_gradient",
+    "beris_edwards_molecular_field",
+    "beris_edwards_stress",
+    "beris_edwards_force",
+    "incompressible_stokes",
+)
+_LEGACY_CAPABILITIES = (
+    "legacy_active_force_q_evolution",
+    "beris_edwards_q_gradient",
+    "beris_edwards_velocity_gradient",
+    "legacy_active_force",
+    "incompressible_stokes",
+)
+
+_PLANE = ApplicationRegistration(
+    "complete_stress_beris_edwards", "plane_slab",
+    "plane_complete_stress_beris_edwards",
+    "pssolver.configuration.public_simulation_runner."
+    "_compile_plane_public_simulation",
+    False, "plane", ("periodic", "periodic", "bounded"),
+    _COMPLETE_CAPABILITIES, ("legacy_production", "compiled_v2"),
+    "pssolver.runtime.plane_beris_edwards.PlaneRuntimeBuildRequest",
+    "pssolver.runtime.plane_beris_edwards.build_plane_beris_edwards_runtime",
+    "pssolver.runtime.plane_beris_edwards.PlaneRuntimeAdapterProtocol",
+)
+_CHANNEL = ApplicationRegistration(
+    "legacy_active_force_active_nematics", "rectangular_channel",
+    "channel_legacy_active_force_active_nematics",
+    "pssolver.configuration.public_channel_simulation_compiler."
+    "compile_channel_public_simulation",
+    False, "channel_legacy", ("periodic", "bounded", "bounded"),
+    _LEGACY_CAPABILITIES, ("legacy_channel", "compiled_channel_v2"),
+    "pssolver.runtime.channel_active_nematics.ChannelRuntimeBuildRequest",
+    "pssolver.runtime.channel_active_nematics.build_channel_active_nematic_runtime",
+    "pssolver.runtime.channel_active_nematics.ChannelRuntimeAdapterProtocol",
+)
+_PERIODIC = ApplicationRegistration(
+    "complete_stress_beris_edwards", "periodic_box",
+    "periodic_complete_stress_beris_edwards",
+    "pssolver.configuration.public_periodic_simulation_compiler."
+    "compile_periodic_public_simulation",
+    True, "periodic", ("periodic", "periodic", "periodic"),
+    _COMPLETE_CAPABILITIES, ("periodic_spectral",),
+    "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeBuildRequest",
+    "pssolver.runtime.periodic_beris_edwards.build_periodic_beris_edwards_runtime",
+    "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeAdapterProtocol",
+)
+_CHANNEL_COMPLETE = ApplicationRegistration(
+    "complete_stress_beris_edwards", "rectangular_channel",
+    "channel_complete_stress_beris_edwards",
+    "pssolver.configuration.public_channel_beris_edwards_compiler."
+    "compile_channel_beris_edwards_public_simulation",
+    True, "channel_complete", ("periodic", "bounded", "bounded"),
+    _COMPLETE_CAPABILITIES, ("channel_complete_stress",),
+    "pssolver.runtime.channel_beris_edwards.ChannelBerisEdwardsRuntimeBuildRequest",
+    "pssolver.runtime.channel_beris_edwards.build_channel_beris_edwards_runtime",
+    "pssolver.runtime.channel_beris_edwards.ChannelBerisEdwardsRuntimeAdapterProtocol",
+)
+
+# Public compiler/capability order, not lowering error order.
+APPLICATIONS = (_PLANE, _CHANNEL, _PERIODIC, _CHANNEL_COMPLETE)
+APPLICATION_BY_PAIR = MappingProxyType({item.key: item for item in APPLICATIONS})
+LOWERING_REJECTION_PAIRS = tuple(
+    item.key for item in (_PLANE, _PERIODIC, _CHANNEL_COMPLETE, _CHANNEL)
+)
+
+# Preserve the local binding table's historical insertion order.
+RUNTIMES = (
+    RuntimeRegistration(
+        _PERIODIC, "periodic_spectral", "periodic_complete_stress",
+        "package", None, None,
+    ),
+    RuntimeRegistration(
+        _CHANNEL_COMPLETE, "channel_complete_stress", "channel_complete_stress",
+        "package", None, None,
+    ),
+    RuntimeRegistration(
+        _PLANE, "legacy_production", "plane_legacy_production",
+        "package", None, None,
+    ),
+    RuntimeRegistration(
+        _PLANE, "compiled_v2", "plane_compiled_v2", "caller", "compiled_builder",
+        "pssolver.runtime.plane_application_bridge.build_package_compiled_plane_runtime",
+    ),
+    RuntimeRegistration(
+        _CHANNEL, "legacy_channel", "channel_legacy", "caller", "legacy_builder",
+        "pssolver.runtime.channel_application_bridge.build_package_legacy_channel_runtime",
+    ),
+    RuntimeRegistration(
+        _CHANNEL, "compiled_channel_v2", "channel_compiled_v2",
+        "caller", "compiled_builder",
+        "pssolver.runtime.channel_application_bridge.build_package_compiled_channel_runtime",
+    ),
+)
+RUNTIME_BY_KEY = MappingProxyType({item.key: item for item in RUNTIMES})
+RUNTIME_BY_KIND = MappingProxyType({item.kind: item for item in RUNTIMES})
+
+# This is an internal shadow, not a new public registry/extension API.
+__all__ = []
