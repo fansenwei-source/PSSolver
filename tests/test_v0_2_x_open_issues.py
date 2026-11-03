@@ -43,8 +43,8 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
         "notes",
     }
     optional = {"decision", "fixed_in", "verified_by"}
-    assert len(entries) == record["issue_count"] == 66
-    assert len({entry["id"] for entry in entries}) == 66
+    assert len(entries) == record["issue_count"] == 67
+    assert len({entry["id"] for entry in entries}) == 67
     assert all(required <= set(entry) <= required | optional for entry in entries)
     counts = Counter(entry["status"] for entry in entries)
     counts.setdefault("open", 0)
@@ -54,7 +54,7 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     assert dict(counts) == record["status_counts"] == {
         "open": 0,
         "registered": 0,
-        "claimed_fixed": 0,
+        "claimed_fixed": 1,
         "verified": 62,
         "deferred": 2,
         "accepted": 2,
@@ -625,7 +625,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == set()
+    } == {"V-62"}
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (
