@@ -1,0 +1,54 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 117,
+  "date": "2026-11-02",
+  "plan_step": "S-19",
+  "classification": "S19_D0022_CPU_REHEARSAL_AND_DEPLOYMENT_PREPARATION",
+  "git_identity": {
+    "implementation_parent": "c9d3ada066b1ca98aa3f8c33ff75c75675149f80",
+    "runtime_source": "c7c940e693719becccef80a918142a27aa050510",
+    "record_commit_is_qualified_source": false
+  },
+  "runtime_changed": false,
+  "thresholds_changed": false,
+  "skip_xfail_added": false,
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "tests/test_v0_4_s19_self_compare.py": {
+      "historical_sha256": "d9811f1365369b17b98261f2d2287f18b65add0b09d0769601ae463fbf9c99da",
+      "current_sha256": "0d8c0dc7eb0be0b46bd2cdd03dbb0f5300626ec940f3c4c2af09b5ae15fa96fd"
+    }
+  },
+  "introduced_sources": {
+    "benchmarks/_s19_compare.py": "083e8f289f9a13484f0199085256fd881210edbae32c3e1c76d82c2a762a0df7",
+    "benchmarks/analyze_v0_4_s19_h100.py": "df358e22becf1cc8db5e09d74a0db5d0d3b266c1c10266317b627000b588a9cc",
+    "benchmarks/plan_v0_4_s19_h100.py": "fdbb1c65a3c88582be5c31328648ff29b7fb4c1305a0b3ad0349787aa1075582",
+    "benchmarks/run_v0_4_s19_environment.py": "5d2e51358aadc4e5ceb7518e9cc6a24a3ff1a491e523d918e5a59d685290c744",
+    "benchmarks/run_v0_4_s19_job.py": "3408af3cd008429686f7f4af4ed69933d0251c06a0f5bb4d92b0e761efbcfd70",
+    "benchmarks/run_v0_4_s19_self_compare.py": "12bc8caf12f8b7d5d3e04d6c41402f57c5832a8155dd926c9e1062fa012f0c29",
+    "benchmarks/run_v0_4_s19_stage.py": "28493fd70bde9bfed7ed59b35deba4ba446dd0536dda2a3417ae3c42de2e626f",
+    "benchmarks/validate_v0_4_s19_deployment.py": "6136d66fd5ea9efa223127fd5ebe381a0c9f6ae27c6e0f52d989d27b74bd5ed0",
+    "jobs/v0_4_s19_single_h100.sbatch": "ed1ba044d7938f6511d76ff2d964b745e81a348ce0cef4d7dd05b5bc24fc061a",
+    "tests/test_analyze_v0_3_s09_h100.py": "4ca5cf73f1be4eaad9cafa314c729880d326f7f5e937c9f7467e5342f2b3b3f0",
+    "tests/test_analyze_v0_4_s19_h100.py": "8e0aeb452eb2facc3d5f02480314a57a0954a2e5682b4857ca3ac074d7a35668",
+    "tests/test_v0_2_x_open_issues.py": "830229a34c8617a72897fc29aab2fe9222a9d000bee9c0fd20fb3c3cbc985469",
+    "tests/test_v0_4_s19_d0022.py": "dfb832b0dd14f727afb556f17aba308895903fc0d53736cb81a483f68a70f0c3",
+    "tests/test_v0_4_s19_deployment.py": "543a4ddd601f99a83db3a87cd4c5b09b4e5a52c1e910fd627116462a483fec19",
+    "tests/test_v0_4_s19_failure_classification.py": "b86449094fa7fdaf76401915c65e9f8b3adf9815ed9e96f252bc22e4021011ff",
+    "tests/test_v0_4_s19_plan.py": "f845cbac83eadeb1c8680103cbc2760bf694a6348f980013f367bdbf32357ac3",
+    "tests/test_v0_4_s19_py310_mean.py": "684a800fc6804b202ef1f2fe72cb961ec5e786fde1533c97a269898b1643169c"
+  },
+  "decisions": {
+    "D-0022": "c5d40d78516f1b8efce5c969886cdbaa89427d02e75df6cb85dce08d6b129722",
+    "D-0021": "ecb3e525fc75e1d6c7355d183806dfbd0d1f9a6cffdfa6f369e69ee5eda5e320"
+  },
+  "evidence_status": "Preparation only; final R-0060 binds clean-clone tests, artifacts and archive. No H100 authorization.",
+  "notes": [
+    "D-0022 exact oracle gradients compared as whole raw arrays, all other fields finite; V-63 remains open for S-20.",
+    "All three roles sequentially reuse one absolute calculation path; every child has separate initially empty compiler caches.",
+    "Public dispatch/continuous/restart checks are separate from the eight direct runtime factories; structured diagnostics checked fieldwise and as raw bytes.",
+    "Gradient/Taylor scientific gates also remain in the unchanged Control main full suite.",
+    "C/D-0021 effective versions require actual payload RECORD verification; original metadata is preserved.",
+    "Prior CPU attempts are retained: bad PCG import, pre-D0022 nonfinite stop, structured diagnostics adapter failure. No retry of any remote operation."
+  ]
+}

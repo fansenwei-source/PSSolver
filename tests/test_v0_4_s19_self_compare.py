@@ -34,6 +34,17 @@ def test_payload_shape_and_dtype_and_finiteness_fail_closed(tmp_path):
     assert not (tmp_path / "bad.npy").exists()
 
 
+def test_structured_public_diagnostics_preserve_fields_and_raw_bytes(tmp_path):
+    value = np.array([(1, 0.0), (2, -0.0)], dtype=[('step', '<i8'), ('residual', '<f8')])
+    rows = harness._persist_output_array(tmp_path / 'diagnostics.npy', 'diagnostics.npy', value)
+    assert len(rows) == 3
+    raw = next(row for name, row in rows.items() if ':raw:' in name)
+    assert harness._read_array(raw).tobytes() == value.tobytes()
+    value['residual'][1] = np.nan
+    with pytest.raises(HardQualificationError, match='non-finite'):
+        harness._persist_output_array(tmp_path / 'bad.npy', 'bad.npy', value)
+
+
 def test_pcg_exact_arrays_and_diagnostics_both_required(tmp_path):
     record = harness._persist_tensor(tmp_path / "left.npy", torch.ones(2))
     data = {"kind": "pcg", "cases": [{"case": {"name": "fixed"}, "path": "production",

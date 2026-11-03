@@ -118,3 +118,18 @@ def test_missing_profile_and_false_mean_fail_closed_not_recorded_performance(tmp
     path.unlink()
     with pytest.raises(FileNotFoundError):
         current.analyze(profiles, _auxiliary())
+
+
+def test_auxiliary_accepts_only_exact_d0022_nonfinite_records_and_keeps_n():
+    value = _auxiliary()
+    row = value['stages'][5]
+    row.update(finite=False, classification='N', nonfinite_records=[
+        ['fixed_float32_roundoff_floor', 'oracle', 'gradient'],
+        ['fixed_float32_floor_crossing', 'oracle', 'gradient']])
+    current.validate_auxiliary(value, build_plan())
+    for bad in (['fixed_float32_roundoff_floor', 'oracle', 'result'],
+                ['fixed_float32_floor_crossing', 'implicit', 'gradient']):
+        changed = copy.deepcopy(value)
+        changed['stages'][5]['nonfinite_records'].append(bad)
+        with pytest.raises(HardQualificationError, match='outside D-0022'):
+            current.validate_auxiliary(changed, build_plan())

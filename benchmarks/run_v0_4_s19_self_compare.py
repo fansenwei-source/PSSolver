@@ -73,8 +73,8 @@ def _public_dispatch(args):
         for file in files:
             array = np.load(file, allow_pickle=False)
             relative = str(file.relative_to(args.work / name))
-            fields[relative] = _persist_tensor(args.output.parent / 'arrays' / name / relative,
-                                                torch.from_numpy(array.copy()))
+            destination = args.output.parent / 'arrays' / name / relative
+            fields.update(_persist_output_array(destination, relative, array))
         traces.append(dict(step=index, fields=fields, runtime_identity=identity,
                            configuration_identity=simulation.canonical_sha256(), progress={'run': name, 'steps': steps}))
         terminals[name] = {}
@@ -88,6 +88,23 @@ def _public_dispatch(args):
     return dict(kind='public_dispatch', family=args.family, interval='default', traces=traces,
                 restart_comparison=restart_metrics,
                 classification='N' if any(x['classification'] == 'N' for x in restart_metrics) else 'PASS')
+
+
+def _persist_output_array(destination, label, array):
+    """Check structured diagnostics per numeric field AND preserve raw bytes."""
+    import numpy as np
+    import torch
+    if array.dtype.names is None:
+        return {label: _persist_tensor(destination, torch.from_numpy(array.copy()))}
+    fields = {}
+    for name in array.dtype.names:
+        item = array[name].copy()
+        # These are scientific diagnostics, never a free pass for nonfinite data.
+        fields[f'{label}:{name}'] = _persist_tensor(destination.with_name(destination.name + '.' + name),
+                                                   torch.from_numpy(item))
+    raw = np.ascontiguousarray(array).reshape(-1).view(np.uint8)
+    fields[f'{label}:raw:{array.dtype.descr!r}'] = _persist_tensor(destination, torch.from_numpy(raw.copy()))
+    return fields
 
 
 def _persist_tensor(path: Path, tensor, *, pcg_record=None) -> dict[str, object]:

@@ -22,6 +22,52 @@ from benchmarks.plan_v0_4_s19_h100 import build_plan
 from benchmarks.run_v0_4_s19_self_compare import _installed_identity
 
 
+def effective_versions():
+    """D-0021's two exact stale-metadata exceptions, backed by file RECORDs."""
+    distributions = list(metadata.distributions())
+    names = {d.metadata['Name'] for d in distributions}
+    reported = {name: metadata.version(name) for name in names}
+    resolved = dict(reported)
+    proofs = {}
+    for name, expected in (('packaging', '26.3'), ('typing_extensions', '4.16.0')):
+        canonical = '-'.join(name.lower().split('_'))
+        matches = [d for d in distributions
+                   if '-'.join(d.metadata['Name'].lower().split('_')) == canonical and d.version == expected]
+        if len(matches) != 1:
+            raise HardQualificationError(f'D-0021 current distribution missing/ambiguous: {name}')
+        dist = matches[0]
+        record = Path(dist._path) / 'RECORD'
+        checked = []
+        for relative, digest, size in csv.reader(record.open()):
+            if not digest or '.dist-info/' in relative or '__pycache__/' in relative:
+                continue
+            file = Path(dist.locate_file(relative))
+            algorithm, value = digest.split('=', 1)
+            actual = base64.urlsafe_b64encode(bytes.fromhex(digest_file(file))).decode().rstrip('=')
+            if algorithm != 'sha256' or actual != value or file.stat().st_size != int(size):
+                raise HardQualificationError(f'D-0021 actual file mismatch: {name}/{relative}')
+            checked.append(relative)
+        if not checked:
+            raise HardQualificationError(f'D-0021 empty payload RECORD: {name}')
+        for key in list(resolved):
+            if '-'.join(key.lower().split('_')) == canonical:
+                resolved[key] = expected
+        proofs[name] = dict(effective_version=expected, record=str(record),
+                           record_sha256=digest_file(record), checked_payloads=checked)
+    return resolved, dict(reported_versions=reported, d0021_file_proofs=proofs)
+
+
+def validate_mirror(report, expected):
+    if 'versions' in expected:
+        expected = expected['versions']
+    normalized = {'-'.join(k.lower().split('_')): v for k, v in report['versions'].items()}
+    for name, version in expected.items():
+        if normalized.get('-'.join(name.lower().split('_'))) != version:
+            raise HardQualificationError(f'C package version differs: {name}')
+    if report['python'] != '3.10.18':
+        raise HardQualificationError('C Python version differs')
+
+
 def inspect_role(role, provider_wheel, consumer_wheel):
     identity = _installed_identity('baseline_a' if role == 'baseline' else 'candidate', provider_wheel)
     purelib = Path(sysconfig.get_path('purelib')).resolve()
@@ -53,8 +99,9 @@ def inspect_role(role, provider_wheel, consumer_wheel):
                 raise HardQualificationError(f'RECORD mismatch: {name}/{relative}')
             checked += 1
         records[name] = dict(path=str(record), sha256=digest_file(record), entries=len(rows), checked=checked)
+    versions, resolution = effective_versions()
     return dict(role=role, identity=identity, records=records, environment=runtime_environment(),
-                versions={d.metadata['Name']: d.version for d in metadata.distributions()},
+                versions=versions, version_resolution=resolution,
                 python=runtime_environment()['python_version'], prefix=sys.prefix, purelib=str(purelib))
 
 
@@ -77,14 +124,7 @@ def run(args):
         report = json.loads(proc.stdout)
         # Exact C/D-0021 package versions; no +cpu substitution, no matplotlib import.
         expected = json.loads(args.mirror_versions.read_text())
-        if 'versions' in expected:
-            expected = expected['versions']
-        normalized = {'-'.join(k.lower().split('_')): v for k, v in report['versions'].items()}
-        for name, version in expected.items():
-            if normalized.get('-'.join(name.lower().split('_'))) != version:
-                raise HardQualificationError(f'C package version differs: {role}/{name}')
-        if report['python'] != '3.10.18':
-            raise HardQualificationError('C Python version differs')
+        validate_mirror(report, expected)
         check = subprocess.run([str(python), '-I', '-B', '-m', 'pip', '--disable-pip-version-check',
                                 '--no-cache-dir', 'check'], capture_output=True, text=True, env=env)
         report['pip_check'] = dict(returncode=check.returncode, stdout=check.stdout, stderr=check.stderr)
