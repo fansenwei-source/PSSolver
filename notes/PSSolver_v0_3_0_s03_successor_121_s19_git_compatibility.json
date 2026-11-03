@@ -1,0 +1,46 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 121,
+  "date": "2026-11-03",
+  "plan_step": "S-19",
+  "classification": "S19_GIT_COMPATIBILITY_LOCAL_PREPARATION_NOT_GPU_QUALIFICATION",
+  "git_identity": {
+    "implementation_parent": "34d20633faead9d293b93ea53933b742c7c49c99",
+    "runtime": "c7c940e693719becccef80a918142a27aa050510",
+    "previous_support": "141ad2ace8d1604475917489a08a39f93f5a28a0",
+    "record_commit_is_qualified_source": false
+  },
+  "scope": {
+    "runtime_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "historical_record_rewritten": false,
+    "slurm_submitted": false,
+    "hpcc_write": false
+  },
+  "historical_successor_sources": {
+    "benchmarks/_artifact_io.py": {
+      "historical_sha256": "a6c0b733a63c3218c53bea458da4a056b3a02eb62aade7b7f1e7c74d68968483",
+      "current_sha256": "57ecc98eba79b7ca28ba0cd52273392e56f925314fbe19c229bb1bf08c3e4fa6"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_121_s19_git_compatibility_zh.md": "584ed73dfca97b682c99f89b6859095b4276b509593e2837d14d7bc7e51c9974",
+    "tests/test_v0_4_s19_git_compatibility.py": "b413a40ae5c342331d2923c9c4f016d231dba77f5718f1d326968de722e30886",
+    "tests/test_v0_4_s19_git_successor.py": "f432314c7f26168727f8768d7b32b1d4da67ec5e1bee0274e5da81cc0da58b37"
+  },
+  "unchanged_bindings": {
+    "notes/PSSolver_v0_3_0_s03_successor_75_s16_d0016_harness_sharing.json": "1f511349f6ce8b54701bcb2857e0b7f4352ae7aa95d350919af9790933078a01",
+    "tests/test_v0_4_s16_d0016_successor_75.py": "bae2bae2ef4ed65f68a9c7af0e81031f6c4fafd980ba50c8f7f0dd499c13acdb",
+    "tests/test_v0_4_s16_r8_benchmark_harness_sharing.py": "62d026dc02b908a70617044a15bc5fef67aac92f95d3393287e67f509d31d63f",
+    "jobs/v0_4_s19_single_h100.sbatch": "ed1ba044d7938f6511d76ff2d964b745e81a348ce0cef4d7dd05b5bc24fc061a",
+    "benchmarks/plan_v0_4_s19_h100.py": "e6907b83a04558409e5da6b00f25bd27d98fe6df66797f87d810c4ed6ae36625"
+  },
+  "failure_semantics": {
+    "missing_directory": "FileNotFoundError",
+    "non_directory": "NotADirectoryError",
+    "invalid_repository": "CalledProcessError",
+    "validator_continues": false,
+    "success_report_written": false
+  }
+}

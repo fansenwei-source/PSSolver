@@ -97,7 +97,8 @@ def atomic_write_json(
 
 def _git_output(repository: Path, *arguments: str) -> str:
     completed = subprocess.run(
-        ["git", "-C", str(repository), *arguments],
+        ["git", *arguments],
+        cwd=repository,
         check=True,
         capture_output=True,
         text=True,
