@@ -1,0 +1,30 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 119,
+  "date": "2026-11-02",
+  "plan_step": "S-19",
+  "classification": "S19_IMMEDIATE_PROFILE_H_VALIDATION",
+  "git_identity": {
+    "implementation_parent": "b6c81bae94ea7b9df0274ca52a8fc9ea9d89dfea",
+    "record_commit_is_qualified_source": false
+  },
+  "runtime_changed": false,
+  "thresholds_changed": false,
+  "skip_xfail_added": false,
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "benchmarks/run_v0_4_s19_job.py": {
+      "historical_sha256": "32be26dbb784d5c124c741d5eefdb7664cebe7443785a56d5962ae541276f8b7",
+      "current_sha256": "7cfa318c84aede755d6417e69381b2f3114ab44fe770384f33bddccb2da86c4f"
+    },
+    "tests/test_analyze_v0_4_s19_h100.py": {
+      "historical_sha256": "8e0aeb452eb2facc3d5f02480314a57a0954a2e5682b4857ca3ac074d7a35668",
+      "current_sha256": "269af9a8702ce5047588a1f1810ce107082a34e0a6fc1ffbd3928fef15c8aa7f"
+    }
+  },
+  "notes": [
+    "Before freezing preparation, move all existing frozen per-profile validity checks to the end of each profile child, so H stops immediately rather than waiting for all 192 profiles. No performance formula, thresholds or frozen script changes.",
+    "All 192 synthetic profiles satisfy both validators. Fourteen independently mutated profiles stop immediately and are also rejected by the unchanged frozen analyzer; native ValueError/TypeError are H failures in the driver.",
+    "V-62 remains claimed_fixed and V-63 open. No GPU/HPCC write/Slurm submission."
+  ]
+}

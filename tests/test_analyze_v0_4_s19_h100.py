@@ -9,6 +9,7 @@ import pytest
 
 from benchmarks import analyze_v0_3_s09_h100 as frozen
 from benchmarks import analyze_v0_4_s19_h100 as current
+from benchmarks.run_v0_4_s19_job import validate_profile_h
 from benchmarks._s19_compare import HardQualificationError
 from benchmarks.plan_v0_4_s19_h100 import build_plan
 from tests import test_analyze_v0_3_s09_h100 as fixture
@@ -56,6 +57,41 @@ def test_same_frozen_performance_function_same_groups_on_identical_input(tmp_pat
     assert actual["profile_count"] == 192
     assert actual["recorded_performance_failures"] == []
     assert "statistics.fmean" in inspect.getsource(fixture._write_profiles)
+    for entry in build_plan()['profile_matrix']:
+        validate_profile_h(json.loads((profiles / (entry['key'] + '.json')).read_text()),
+                           entry, build_plan())
+
+
+@pytest.mark.parametrize('field,value', [
+    ('environment.tf32_caller_before', {}), ('environment.tf32_caller_after', {}),
+    ('compiler.graph_breaks', 1), ('timing.samples_seconds', []),
+    ('timing.samples_seconds', [float('nan')] * 60),
+    ('timing.mean_timestep_seconds', float('inf')),
+    ('timing.median_timestep_seconds', float('nan')),
+    ('memory.peak_allocated_bytes', float('nan')),
+    ('memory.peak_reserved_bytes', 0), ('runtime_completed_steps', 0),
+    ('transform_calls.forward', 0), ('initial_state_sha256', 'bad'),
+    ('finite', False), ('runtime_identity.fallback_used', True),
+])
+def test_profile_h_stops_immediately_and_frozen_analyzer_also_rejects(tmp_path, field, value):
+    profiles = tmp_path / 'profiles'
+    _profiles(profiles)
+    plan = build_plan()
+    entry = plan['profile_matrix'][0]
+    path = profiles / (entry['key'] + '.json')
+    profile = json.loads(path.read_text())
+    target = profile
+    parts = field.split('.')
+    for part in parts[:-1]:
+        target = target[part]
+    target[parts[-1]] = value
+    path.write_text(json.dumps(profile))
+    with pytest.raises(HardQualificationError):
+        validate_profile_h(profile, entry, plan)
+    # Frozen numeric validators raise ValueError/TypeError directly; the driver
+    # treats any such exception as H. Neither path may return a qualification.
+    with pytest.raises((HardQualificationError, ValueError, TypeError)):
+        current.analyze(profiles, _auxiliary())
 
 
 def test_n_stays_failed_after_passing_performance_and_control(tmp_path):

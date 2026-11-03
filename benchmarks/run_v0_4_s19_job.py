@@ -7,11 +7,11 @@ separately confirmed job. Every child log is retained, H stops, N is latched.
 from __future__ import annotations
 import argparse
 import json
-import math
 import os
 from pathlib import Path
 import subprocess
 import sys
+import statistics
 import traceback
 import types
 
@@ -34,6 +34,18 @@ def launch(command, output, label, *, env=None):
 
 
 def validate_profile_h(profile, entry, plan):
+    # These are the frozen analyzer's per-profile validity checks, performed
+    # immediately after each child. Ratio gates remain in the final analyzer.
+    from benchmarks import analyze_v0_3_s09_h100 as frozen
+
+    def require(condition, message):
+        if not condition:
+            raise HardQualificationError('profile ' + message)
+
+    require(profile.get('schema') == frozen.PROFILE_SCHEMA, 'schema')
+    for name in ('config', 'provider_identity', 'runtime_identity', 'environment',
+                 'timing', 'memory', 'transform_calls', 'compiler'):
+        require(isinstance(profile.get(name), dict), name + ' missing')
     expected = dict(family=entry['family'], trial=entry['trial'], device='cuda', dtype=entry['dtype'],
                     **plan['grid_contracts'][entry['grid']])
     for key in ('family', 'trial', 'device', 'dtype', 'shape', 'lengths'):
@@ -49,9 +61,39 @@ def validate_profile_h(profile, entry, plan):
             or environment.get('allocated_device') != 'cuda:0' or 'H100' not in environment.get('device_name', '')
             or profile.get('compiler', {}).get('compile_fallback') is not False):
         raise HardQualificationError('profile device/finite/fallback')
-    if any(not isinstance(x, (float, int)) or not math.isfinite(x) or x <= 0
-           for x in profile.get('timing', {}).get('samples_seconds', [])):
-        raise HardQualificationError('profile nonfinite timing')
+    off = dict(float32_matmul_precision='highest', cuda_matmul_allow_tf32=False,
+               cudnn_allow_tf32=False)
+    require(environment.get('tf32_caller_before') == off, 'TF32 before differs')
+    require(environment.get('tf32_caller_after') == off, 'TF32 after differs')
+    require(profile['compiler'].get('graph_breaks') == 0, 'graph break')
+    try:
+        steps = frozen._integer(profile.get('completed_profile_steps'), 'steps')
+        require(steps == entry['timed_steps'], 'step count')
+        require(profile.get('runtime_completed_steps') == entry['warmup_steps'] + steps,
+                'runtime count')
+        transforms = profile['transform_calls']
+        forward = frozen._integer(transforms.get('forward'), 'forward')
+        inverse = frozen._integer(transforms.get('inverse'), 'inverse')
+        require(forward == entry['expected_forward_raw_calls'], 'raw forward')
+        require(inverse == entry['expected_inverse_raw_calls'], 'raw inverse')
+        require(transforms.get('forward_per_step') == forward / steps, 'forward rate')
+        require(transforms.get('inverse_per_step') == inverse / steps, 'inverse rate')
+        require(forward - entry['scheduled_refreshes_in_timed_window'] ==
+                entry['steady_forward_transforms_per_step'] * steps, 'steady forward')
+        require(inverse == entry['steady_inverse_transforms_per_step'] * steps, 'steady inverse')
+        timing = profile['timing']
+        samples = timing.get('samples_seconds')
+        require(isinstance(samples, list) and len(samples) == 60, 'timing samples')
+        clean = [frozen._positive(value, f'sample {i}') for i, value in enumerate(samples)]
+        require(frozen._positive(timing.get('mean_timestep_seconds'), 'mean') ==
+                statistics.fmean(clean), 'mean is not raw-sample mean')
+        frozen._positive(timing.get('median_timestep_seconds'), 'median')
+        for key in ('peak_allocated_bytes', 'peak_reserved_bytes'):
+            require(frozen._integer(profile['memory'].get(key), key) > 0, key)
+    except (ValueError, TypeError, ZeroDivisionError) as error:
+        raise HardQualificationError(f'profile validity: {error}') from error
+    for key in ('initial_state_sha256', 'final_state_sha256'):
+        require(isinstance(profile.get(key), str) and len(profile[key]) == 64, key)
 
 
 def profiles(args, output):
