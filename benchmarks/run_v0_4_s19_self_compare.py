@@ -35,12 +35,24 @@ PUBLIC_PATHS = ('legacy_production', 'compiled_v2', 'legacy_channel',
                 'compiled_channel_v2', 'periodic_spectral', 'channel_complete_stress')
 
 
+def _public_execution_on_device(execution, device):
+    from pssolver import TorchSpectralExecution
+    from pssolver.configuration.simulation import ExecutionSpec
+    from benchmarks.run_rc6_consumer import _execution_on_device
+    if isinstance(execution, TorchSpectralExecution):
+        return _execution_on_device(execution, device)
+    if type(execution) is not ExecutionSpec or execution.backend != 'torch_spectral':
+        raise HardQualificationError('unknown public execution declaration')
+    if not isinstance(execution.options.get('device'), str):
+        raise HardQualificationError('public execution device is missing')
+    return replace(execution, options=dict(execution.options, device=device))
+
+
 def _public_dispatch(args):
     """Exercise compile_simulation/run_simulation, not the runtime factories."""
     import numpy as np
     import torch
     from pssolver import compile_simulation, run_simulation
-    from benchmarks.run_rc6_consumer import _execution_on_device
     from tests import test_phase7_p7711_public_entry_equivalence as legacy
     from tests import test_phase8_p82_periodic_application as periodic
     from tests import test_phase8_p83_channel_complete_stress_application as channel
@@ -57,7 +69,7 @@ def _public_dispatch(args):
             module = periodic if args.family == 'periodic_spectral' else channel
             simulation = module._simulation(args.work, output_name=name, steps=steps,
                                              checkpoint_interval=checkpoint, restart_from=restart)
-        simulation = replace(simulation, execution=_execution_on_device(simulation.execution, args.device))
+        simulation = replace(simulation, execution=_public_execution_on_device(simulation.execution, args.device))
         compiled = compile_simulation(simulation)
         identity = compiled.to_metadata()
         if identity['fallback_allowed'] is not False:

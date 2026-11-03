@@ -86,8 +86,9 @@ def run(args):
     if (support / 'pssolver').exists() or (support / 'pssolver_control').exists():
         raise HardQualificationError('support contains an importable runtime package')
     # Consumer main needs reachable historical objects and src files for its
-    # immutable provenance tests. They are a separate read-only reference,
-    # never put on sys.path; the installed packages are loaded before pytest.
+    # immutable provenance tests. The unchanged Consumer conftest prepends the
+    # Provider reference, but packages are preloaded from the installed wheels
+    # and every loaded package module is checked against its own venv afterward.
     if args.device == 'cpu' and os.environ.get('CUDA_VISIBLE_DEVICES') != '':
         raise HardQualificationError('CPU rehearsal must hide CUDA')
     stages = []

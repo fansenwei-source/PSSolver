@@ -112,6 +112,8 @@ def build_plan() -> dict[str, object]:
             "all_roots_must_be_absent_before_creation": True,
             "venv_roles": ["baseline", "candidate", "consumer"],
             "creation": "base/bin/python -I -B -m venv --system-site-packages NEW_PREFIX",
+            "bootstrap_wheels": {"pip": "25.2", "setuptools": "78.1.1"},
+            "bootstrap_reason": "Install exact C versions into each new venv; ensurepip's bundled versions otherwise shadow the base. Original shared environment untouched.",
             "install": "venv/bin/python -I -B -m pip --disable-pip-version-check --no-cache-dir install --no-deps --no-index --no-compile EXACT_WHEEL",
             "verify_uploaded_hashes_before_venv_creation": True,
             "sources_only_from_verified_archives": True,

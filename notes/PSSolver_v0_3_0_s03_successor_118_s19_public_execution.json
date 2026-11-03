@@ -1,0 +1,38 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 118,
+  "date": "2026-11-02",
+  "plan_step": "S-19",
+  "classification": "S19_PUBLIC_EXECUTION_DECLARATION_AND_BOOTSTRAP_CORRECTION",
+  "git_identity": {
+    "implementation_parent": "6e9ff1856d193bc09a778118a6109086b4340802",
+    "record_commit_is_qualified_source": false
+  },
+  "runtime_changed": false,
+  "thresholds_changed": false,
+  "skip_xfail_added": false,
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "benchmarks/plan_v0_4_s19_h100.py": {
+      "historical_sha256": "fdbb1c65a3c88582be5c31328648ff29b7fb4c1305a0b3ad0349787aa1075582",
+      "current_sha256": "e6907b83a04558409e5da6b00f25bd27d98fe6df66797f87d810c4ed6ae36625"
+    },
+    "benchmarks/run_v0_4_s19_job.py": {
+      "historical_sha256": "3408af3cd008429686f7f4af4ed69933d0251c06a0f5bb4d92b0e761efbcfd70",
+      "current_sha256": "32be26dbb784d5c124c741d5eefdb7664cebe7443785a56d5962ae541276f8b7"
+    },
+    "benchmarks/run_v0_4_s19_self_compare.py": {
+      "historical_sha256": "12bc8caf12f8b7d5d3e04d6c41402f57c5832a8155dd926c9e1062fa012f0c29",
+      "current_sha256": "243333fe205923ba7a6460186cc67d4d79e1b1bae732e6005e6b3f0c87292633"
+    },
+    "tests/test_v0_4_s19_self_compare.py": {
+      "historical_sha256": "0d8c0dc7eb0be0b46bd2cdd03dbb0f5300626ec940f3c4c2af09b5ae15fa96fd",
+      "current_sha256": "7f86da700a95659aa5ce874b5b143a5e4e1bbe014342f0c7f082017e499f91ea"
+    }
+  },
+  "notes": [
+    "CPU installed public-entry rehearsal found that the legacy Channel fixture uses ExecutionSpec rather than TorchSpectralExecution. Only the support device adapter changes; all six declarations preserve every metadata field except the explicit device.",
+    "Exact C pip 25.2/setuptools 78.1.1 are installed only into the new venvs so bundled ensurepip metadata cannot shadow C. Previous environment failures retained.",
+    "Unchanged Consumer conftest prepends the Provider reference to sys.path; packages are preloaded from own site-packages, every loaded module checked after the full gate. No claim that conftest never changes sys.path."
+  ]
+}
