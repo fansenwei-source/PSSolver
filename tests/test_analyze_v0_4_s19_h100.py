@@ -34,7 +34,7 @@ def _auxiliary():
     result["stages"][2]["formal_h100_contract"] = True
     result["stages"][4]["cross_device_cell_count"] = 8
     result["stages"][5].update(same_absolute_work_path=True, independent_empty_caches=True,
-                               baseline_self_comparison=True, public_dispatch_passed=True,
+                               baseline_self_comparison=True, public_dispatch_completed=True,
                                four_pcg_paths=True, all_fields_and_steps_recorded=True,
                                trajectory_cases=40, trajectory_steps=20)
     result["stages"][6].update(consumer_source_commit=current.CONSUMER_RUNTIME_COMMIT,

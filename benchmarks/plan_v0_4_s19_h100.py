@@ -113,6 +113,7 @@ def build_plan() -> dict[str, object]:
             "verify_uploaded_hashes_before_venv_creation": True,
             "sources_only_from_verified_archives": True,
             "support_contains_provider_or_consumer_package": False,
+            "consumer_provenance_reference": "Separate local clone of a verified git bundle containing only Control main 140bd27 and reachable history; src and .git serve immutable provenance tests only, never added to sys.path; installed packages preloaded and every loaded module checked against own venv",
             "verify_each_venv_isolated_import_versions_pip_check_and_RECORD": True,
             "replay_all_job_preconditions_on_login_before_sbatch": True,
             "create_control_logs_before_submission": True,

@@ -31,6 +31,64 @@ from benchmarks._artifact_io import atomic_write_bytes, atomic_write_json, atomi
 from benchmarks._s19_compare import HardQualificationError, compare_field, compare_trace, require_execution, require_finite_payload
 from benchmarks.plan_v0_4_s19_h100 import REFRESH_INTERVALS, ROLES, build_plan
 
+PUBLIC_PATHS = ('legacy_production', 'compiled_v2', 'legacy_channel',
+                'compiled_channel_v2', 'periodic_spectral', 'channel_complete_stress')
+
+
+def _public_dispatch(args):
+    """Exercise compile_simulation/run_simulation, not the runtime factories."""
+    import numpy as np
+    import torch
+    from pssolver import compile_simulation, run_simulation
+    from benchmarks.run_rc6_consumer import _execution_on_device
+    from tests import test_phase7_p7711_public_entry_equivalence as legacy
+    from tests import test_phase8_p82_periodic_application as periodic
+    from tests import test_phase8_p83_channel_complete_stress_application as channel
+    traces, terminals = [], {}
+    for index, (name, steps, checkpoint, restart) in enumerate((
+        ('continuous', 4, None, None), ('segment', 2, 1, None),
+        ('resume', 2, None, args.work / 'segment/checkpoint_2'),
+    )):
+        if args.family in PUBLIC_PATHS[:4]:
+            application = 'plane' if args.family in PUBLIC_PATHS[:2] else 'channel'
+            simulation = legacy._simulation(application, args.work / name, args.family,
+                                             steps=steps, checkpoint_interval=checkpoint, restart_from=restart)
+        else:
+            module = periodic if args.family == 'periodic_spectral' else channel
+            simulation = module._simulation(args.work, output_name=name, steps=steps,
+                                             checkpoint_interval=checkpoint, restart_from=restart)
+        simulation = replace(simulation, execution=_execution_on_device(simulation.execution, args.device))
+        compiled = compile_simulation(simulation)
+        identity = compiled.to_metadata()
+        if identity['fallback_allowed'] is not False:
+            raise HardQualificationError('public compilation permits fallback')
+        torch.manual_seed(1234)
+        result = run_simulation(compiled)
+        metadata = result.to_metadata()
+        atomic_write_json(args.output.parent / f'{name}_run.json', metadata, overwrite=False)
+        files = sorted((args.work / name).rglob('*.npy'))
+        if not files:
+            raise HardQualificationError('public entry produced no arrays')
+        fields = {}
+        for file in files:
+            array = np.load(file, allow_pickle=False)
+            relative = str(file.relative_to(args.work / name))
+            fields[relative] = _persist_tensor(args.output.parent / 'arrays' / name / relative,
+                                                torch.from_numpy(array.copy()))
+        traces.append(dict(step=index, fields=fields, runtime_identity=identity,
+                           configuration_identity=simulation.canonical_sha256(), progress={'run': name, 'steps': steps}))
+        terminals[name] = {}
+        for prefix in ('Q_', 'u_', 'p_'):
+            values = sorted((args.work / name).glob(prefix + '*.npy'))
+            if not values:
+                raise HardQualificationError('missing public Q/u/p output')
+            terminals[name][prefix] = np.load(values[-1], allow_pickle=False)
+    restart_metrics = [compare_field(terminals['continuous'][field], terminals['resume'][field],
+                                     field=field, step=4) for field in ('Q_', 'u_', 'p_')]
+    return dict(kind='public_dispatch', family=args.family, interval='default', traces=traces,
+                restart_comparison=restart_metrics,
+                classification='N' if any(x['classification'] == 'N' for x in restart_metrics) else 'PASS')
+
 
 def _persist_tensor(path: Path, tensor, *, pcg_record=None) -> dict[str, object]:
     import numpy as np
@@ -175,7 +233,7 @@ def _pcg(args) -> dict[str, object]:
 def child(args) -> None:
     identity = _prepare_child(args)
     args.output.parent.mkdir(parents=True, exist_ok=False)
-    data = _trajectory(args) if args.kind == "trajectory" else _pcg(args)
+    data = {'trajectory': _trajectory, 'pcg': _pcg, 'public_dispatch': _public_dispatch}[args.kind](args)
     nonfinite = [[row["case"]["name"], row["path"], name]
                  for row in data.get("cases", []) for name, value in row["fields"].items() if not value["finite"]]
     atomic_write_json(args.output, dict(data, identity=identity, role=args.role,
@@ -199,14 +257,17 @@ def _read_array(record):
 def _compare(left, right):
     if left["kind"] != right["kind"]:
         raise HardQualificationError("comparison kind differs")
-    if left["kind"] == "trajectory":
+    if left["kind"] in ("trajectory", "public_dispatch"):
         if (left["family"], left["interval"]) != (right["family"], right["interval"]):
             raise HardQualificationError("trajectory case differs")
         traces = []
         for report in (left, right):
             traces.append([dict(step, fields={name: _read_array(row) for name, row in step["fields"].items()})
                            for step in report["traces"]])
-        return compare_trace(*traces)
+        report = compare_trace(*traces)
+        if left['kind'] == 'public_dispatch' and any(row['classification'] == 'N' for row in (left, right)):
+            report.update(classification='N', qualification_passed=False)
+        return report
     if len(left["cases"]) != len(right["cases"]):
         raise HardQualificationError("PCG case coverage differs")
     fields, records = [], []
@@ -241,6 +302,7 @@ def execute(args) -> dict[str, object]:
     wheels = {"baseline_a": args.baseline_wheel, "baseline_b": args.baseline_wheel, "candidate": args.candidate_wheel}
     cases = [("trajectory", family, interval) for family in plan["numerical"]["families"] for interval in REFRESH_INTERVALS]
     cases.append(("pcg", "four_paths", "default"))
+    cases.extend(("public_dispatch", path, "default") for path in PUBLIC_PATHS)
     summary, launches = [], []
     for number, (kind, family, interval) in enumerate(cases):
         reports = {}
@@ -305,7 +367,7 @@ def main() -> int:
     for name in ("work", "output", "wheel", "support-root", "output-root", "baseline-python", "candidate-python", "baseline-wheel", "candidate-wheel"):
         parser.add_argument("--" + name, type=Path)
     parser.add_argument("--role", choices=ROLES)
-    parser.add_argument("--kind", choices=("trajectory", "pcg"))
+    parser.add_argument("--kind", choices=("trajectory", "pcg", "public_dispatch"))
     parser.add_argument("--family")
     parser.add_argument("--interval")
     args = parser.parse_args()

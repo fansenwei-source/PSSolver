@@ -54,7 +54,7 @@ def common(args):
     return identity
 
 
-def run_pytest(root, tests, junit, basetemp):
+def run_pytest(root, tests, junit, basetemp, *, import_mode='importlib'):
     import pytest
     from benchmarks.run_rc426_cuda_tests import Results
     collector = Results()
@@ -62,7 +62,7 @@ def run_pytest(root, tests, junit, basetemp):
     try:
         os.chdir(root)
         code = int(pytest.main(["-q", "-c", "/dev/null", "--rootdir", str(root),
-                               "-p", "no:cacheprovider", "--import-mode=importlib",
+                               "-p", "no:cacheprovider", f"--import-mode={import_mode}",
                                f"--junitxml={junit}", f"--basetemp={basetemp}", *tests], plugins=[collector]))
     finally:
         os.chdir(previous)
@@ -122,7 +122,7 @@ def checkpoints(args):
     before = {str(p.relative_to(fixture_root)): file_sha256(p)
               for p in sorted(fixture_root.rglob("*")) if p.is_file()}
     report = run_pytest(args.support, CHECKPOINT_TESTS, args.output.with_suffix(".junit.xml"), args.work / "pytest")
-    if report["skipped"]:
+    if report["skipped"] or len(report['passed']) != 97:
         raise HardQualificationError("checkpoint suite has unexpected skips")
     after = {str(p.relative_to(fixture_root)): file_sha256(p)
              for p in sorted(fixture_root.rglob("*")) if p.is_file()}
@@ -156,7 +156,7 @@ def consumer(args):
     # packages are already loaded from their own venv and verified again below.
     sys.path.insert(0, str(args.consumer_support / "tests"))
     report = run_pytest(args.consumer_support, [str(args.consumer_support / "tests")],
-                        args.output.with_suffix(".junit.xml"), args.work / "pytest")
+                        args.output.with_suffix(".junit.xml"), args.work / "pytest", import_mode='prepend')
     contract = build_plan()["consumer_h100_gate"]
     expected = contract["expected_passed"] if args.device == "cuda" else contract["cpu_expected_passed"]
     skips = sorted(row["nodeid"] for row in report["skipped"])

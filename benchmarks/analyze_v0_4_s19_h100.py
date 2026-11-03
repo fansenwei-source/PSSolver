@@ -19,7 +19,7 @@ if not __package__:
 
 from benchmarks import analyze_v0_3_s09_h100 as frozen
 from benchmarks._artifact_io import atomic_write_json
-from benchmarks._s19_compare import HardQualificationError
+from benchmarks._s19_compare import HardQualificationError, KNOWN_NONFINITE_PCG_RECORDS
 from benchmarks.plan_v0_4_s19_h100 import (
     BASELINE_COMMIT, BASELINE_WHEEL_SHA256, CANDIDATE_COMMIT,
     CANDIDATE_WHEEL_SHA256, CONSUMER_RUNTIME_COMMIT, CONSUMER_WHEEL_SHA256,
@@ -40,9 +40,15 @@ def validate_auxiliary(value, plan):
         if (row.get("provider_candidate_commit") != CANDIDATE_COMMIT
                 or row.get("candidate_wheel_sha256") != CANDIDATE_WHEEL_SHA256
                 or row.get("execution_device") != "cuda"
-                or row.get("finite") is not True
                 or row.get("fallback_used") is not False):
             raise HardQualificationError("stage identity/device/finite/fallback mismatch")
+        if row.get('finite') is not True:
+            actual = [tuple(x) for x in row.get('nonfinite_records', [])]
+            if (row['name'] != 'numerical_gradient_taylor_and_replay'
+                    or row.get('finite') is not False or not actual
+                    or len(set(actual)) != len(actual)
+                    or not set(actual) <= KNOWN_NONFINITE_PCG_RECORDS):
+                raise HardQualificationError('nonfinite stage outside D-0022 exact records')
         allowed = ("PASS", "N") if row["name"] == "numerical_gradient_taylor_and_replay" else ("PASS",)
         if row.get("classification") not in allowed:
             raise HardQualificationError("stage failed or unclassified")
@@ -81,7 +87,7 @@ def validate_auxiliary(value, plan):
             raise HardQualificationError(f"checkpoint gate: {key}")
     numerical = indexed["numerical_gradient_taylor_and_replay"]
     for key in ("same_absolute_work_path", "independent_empty_caches", "baseline_self_comparison",
-                "public_dispatch_passed", "four_pcg_paths", "all_fields_and_steps_recorded"):
+                "public_dispatch_completed", "four_pcg_paths", "all_fields_and_steps_recorded"):
         if numerical.get(key) is not True:
             raise HardQualificationError(f"numerical coverage: {key}")
     if numerical.get("trajectory_cases") != 40 or numerical.get("trajectory_steps") != 20:
