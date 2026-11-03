@@ -29,9 +29,9 @@
       "rewritten": false
     }
   },
-  "issue_count": 67,
+  "issue_count": 68,
   "status_counts": {
-    "open": 0,
+    "open": 1,
     "registered": 0,
     "claimed_fixed": 1,
     "verified": 62,
@@ -1106,6 +1106,20 @@
       "target_release": "0.4 S-19",
       "notes": "Three tests in tests/test_analyze_v0_3_s09_h100.py fail on Python 3.10 because synthetic mean_timestep_seconds uses sum(samples)/len(samples), while the frozen analyzer requires exact statistics.fmean(samples). Python 3.12 compensated sum masks the discrepancy. Commit 949970e changes only test synthesis to statistics.fmean; no analyzer, runtime, thresholds or skip/xfail changes. The pristine v0.3.0 mirror run must reproduce exactly the three preregistered failures and error signatures; the separately applied test-only overlay and candidate must pass. Await independent S-19 preparation review.",
       "fixed_in": "949970e5f32126ff50f17ef812cfe288f8eb9729"
+    },
+    {
+      "id": "V-63",
+      "title": "CPU unrolled pressure oracle silently returns nonfinite gradients beyond the float32 roundoff floor",
+      "severity": "low",
+      "source_report": "PSSolver_sync/decisions/D-0022.json",
+      "first_found": "S-19 CPU rehearsal; historical v0.3.0 and R-0058 records already contain the output",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "open",
+      "target_release": "0.4 S-20",
+      "notes": "Present since v0.3.0: unrolled_channel_pressure_solve_oracle is a CPU-only test reference exported through the deprecated functional facade. Beyond the float32 roundoff floor its forward solve restores a valid state, but backward silently produces nonfinite gradients. Claude confirmed finite gradients at 5/10/20 iterations, versus 167/192 and 2815/3072 nonfinite elements at 50/200 iterations for fixed_float32_roundoff_floor and fixed_float32_floor_crossing. Production, transpose and implicit remain finite. D-0022 permits only these exact oracle/gradient records in S-19; their entire raw tensor bytes must match across baseline A/B and candidate, otherwise N/FAIL. Every other nonfinite result remains H/STOP. No runtime change or closure in S-19. Before S-20 freeze the user decides a separate reviewed fix or acceptance as a documented limitation. Older-version effects have not been established."
     }
   ],
   "authorization": {

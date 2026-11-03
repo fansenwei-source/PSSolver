@@ -9,6 +9,7 @@ from pathlib import Path
 
 from benchmarks._artifact_io import atomic_write_json
 from benchmarks.plan_v0_3_s09_h100 import build_plan as frozen_s09_plan
+from benchmarks._s19_compare import KNOWN_NONFINITE_PCG_RECORDS
 
 BASELINE_COMMIT = "47473880534a66f6da940db82122c79cda48a86b"
 CANDIDATE_COMMIT = "c7c940e693719becccef80a918142a27aa050510"
@@ -43,7 +44,7 @@ def build_plan() -> dict[str, object]:
         "schema": "pssolver.v0_4.s19.single_h100_plan.v1",
         "classification": "S19_PREPARATION_DRAFT_NOT_SUBMISSION_AUTHORITY",
         "plan_step": "S-19",
-        "decisions": ["D-0011", "D-0014", "D-0016", "D-0018", "D-0019", "D-0020", "D-0021"],
+        "decisions": ["D-0011", "D-0014", "D-0016", "D-0018", "D-0019", "D-0020", "D-0021", "D-0022"],
         "provider": {
             "baseline": {"commit": BASELINE_COMMIT, "version": "0.3.0", "wheel_sha256": BASELINE_WHEEL_SHA256},
             "candidate": {"commit": CANDIDATE_COMMIT, "version": "0.4.0.dev0", "wheel_sha256": CANDIDATE_WHEEL_SHA256},
@@ -79,6 +80,9 @@ def build_plan() -> dict[str, object]:
             "families": deepcopy(frozen["profile_contract"]["runtime_families"]),
             "refresh_intervals": list(REFRESH_INTERVALS), "steps": 20,
             "pcg_paths": ["production", "transpose", "implicit", "oracle"],
+            "pcg_devices": {"production": "cuda:0", "transpose": "cuda:0", "implicit": "cuda:0", "oracle": "cpu (unchanged public oracle guard)"},
+            "known_nonfinite_records": [list(row) for row in sorted(KNOWN_NONFINITE_PCG_RECORDS)],
+            "known_nonfinite_comparison": "D-0022: all raw bytes A/A/B, including positions and bit patterns; differences are N, not tolerated",
             "baseline_self_comparison": ["baseline_a", "baseline_b"],
             "candidate_comparisons": [["baseline_a", "candidate"], ["baseline_b", "candidate"]],
             "compare_runtime_and_configuration_identities": True,

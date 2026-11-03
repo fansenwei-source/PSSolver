@@ -335,3 +335,15 @@ V-62（low，claimed_fixed）：S-09 分析器的合成测试用 `sum/len` 生�
 失败。该问题也存在于 v0.3.0。修复源为 `949970e5f32126ff50f17ef812cfe288f8eb9729`，
 只改测试；分析器、运行时、门限和 skip/xfail 不变。按 D-0019 在仿 HPCC 环境中分别
 保留原版恰好三个指定失败、覆盖层零失败和候选零失败的日志，等待准备关独立验收。
+
+## D-0022 / V-63：CPU unrolled oracle 的历史非有限梯度
+
+V-63（low，open，目标 0.4 S-20）：自 v0.3.0 起，两个 float32 固定迭代
+算例越过舍入下限后，oracle 前向有保护而反向静默产生非有限梯度。5/10/20 次
+梯度有限；50/200 次分别有 167/192、2815/3072 个非有限元素。正式 production、
+transpose、implicit 路径不受影响。S-19 不修运行时，也不关闭问题。
+
+D-0022 只例外登记 `(fixed_float32_roundoff_floor, oracle, gradient)` 和
+`(fixed_float32_floor_crossing, oracle, gradient)`；三次运行的完整原始张量字节
+（含非有限位置及位模式）仍必须相同，不同为 N/FAIL 并继续。其他非有限值仍为
+H/STOP。这不是容差或门限放宽；S-20 冻结前由用户决定另批修复或接受已知限制。

@@ -69,7 +69,8 @@ def test_pcg_device_adapter_does_not_modify_frozen_module_or_runtime():
     assert "types.FunctionType" in source
     assert "namespace = dict(frozen._run_path.__globals__)" in source
     assert "for path in frozen.PATHS" in source
-    assert ".to(args.device)" in source
+    assert ".to(case_device)" in source
+    assert 'case_device = "cpu" if path == "oracle" else args.device' in source
 
 
 def test_pcg_transpose_import_uses_the_unchanged_definition_not_stable_api():

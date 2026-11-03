@@ -15,14 +15,38 @@ class HardQualificationError(RuntimeError):
     """Identity, environment, device, fallback, non-finite or crash failure."""
 
 
+# D-0022: exact records, not a dtype/path/name pattern or numerical tolerance.
+KNOWN_NONFINITE_PCG_RECORDS = frozenset({
+    ("fixed_float32_roundoff_floor", "oracle", "gradient"),
+    ("fixed_float32_floor_crossing", "oracle", "gradient"),
+})
+
+
+def require_finite_payload(array, *, pcg_record=None) -> bool:
+    import numpy as np
+    finite = bool(np.isfinite(array).all())
+    if not finite and pcg_record not in KNOWN_NONFINITE_PCG_RECORDS:
+        raise HardQualificationError(f"non-finite output tensor: {pcg_record}")
+    return finite
+
+
 def require_execution(observed: dict[str, Any], expected: dict[str, Any]) -> None:
     """Reject missing or different identity facts; never infer success."""
     for key, value in expected.items():
         if key not in observed or observed[key] != value:
             raise HardQualificationError(f"execution identity mismatch: {key}")
-    for key in ("finite", "installed_wheel_only", "cache_initially_empty"):
+    for key in ("installed_wheel_only", "cache_initially_empty"):
         if observed.get(key) is not True:
             raise HardQualificationError(f"execution gate failed: {key}")
+    exceptions = observed.get("nonfinite_records", [])
+    exact = [tuple(row) for row in exceptions]
+    if observed.get("finite") is not True:
+        if (observed.get("finite") is not False or observed.get("kind") != "pcg"
+                or not exact or len(set(exact)) != len(exact)
+                or not set(exact) <= KNOWN_NONFINITE_PCG_RECORDS):
+            raise HardQualificationError("execution gate failed: finite")
+    elif exact:
+        raise HardQualificationError("inconsistent finite/exceptions report")
     if observed.get("fallback_used") is not False:
         raise HardQualificationError("execution gate failed: fallback_used")
     if observed.get("returncode") != 0:
@@ -35,7 +59,7 @@ def _json_number(value: float) -> float | str:
     return value if math.isfinite(value) else "Infinity"
 
 
-def compare_field(left: Any, right: Any, *, field: str, step: int) -> dict[str, Any]:
+def compare_field(left: Any, right: Any, *, field: str, step: int, pcg_record=None) -> dict[str, Any]:
     """Compare every stored field, including signed-zero and payload bytes."""
     import numpy as np
 
@@ -44,9 +68,22 @@ def compare_field(left: Any, right: Any, *, field: str, step: int) -> dict[str, 
         raise HardQualificationError(f"array schema mismatch: {field}/{step}")
     if left.dtype.kind not in "fciub" or left.size == 0:
         raise HardQualificationError(f"unsupported array: {field}/{step}")
-    if not np.isfinite(left).all() or not np.isfinite(right).all():
-        raise HardQualificationError(f"non-finite array: {field}/{step}")
+    left_finite = require_finite_payload(left, pcg_record=pcg_record)
+    right_finite = require_finite_payload(right, pcg_record=pcg_record)
     identical = left.tobytes(order="C") == right.tobytes(order="C")
+    if not (left_finite and right_finite):
+        # Raw bytes include NaN payload/sign, signed infinity and positions.
+        # Arithmetic maxima over nonfinite entries are undefined, not zero.
+        return {
+            "field": field, "step": step, "shape": list(left.shape), "dtype": str(left.dtype),
+            "bitwise_equal": identical, "classification": "PASS" if identical else "N",
+            "decision": "D-0022", "pcg_record": list(pcg_record), "tolerance": 0,
+            "nonfinite_elements": [int((~np.isfinite(x)).sum()) for x in (left, right)],
+            "nonfinite_positions_equal": bool(np.array_equal(np.isfinite(left), np.isfinite(right))),
+            "max_absolute_difference": "undefined_for_nonfinite_record",
+            "max_relative_difference": "undefined_for_nonfinite_record",
+            "comparison": "entire raw tensor bytes, including nonfinite locations and bit patterns",
+        }
     wide = np.complex128 if left.dtype.kind == "c" else np.float64
     with np.errstate(over="ignore", invalid="raise", divide="ignore"):
         delta = np.abs(right.astype(wide) - left.astype(wide))

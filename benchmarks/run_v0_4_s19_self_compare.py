@@ -28,19 +28,18 @@ if not __package__:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from benchmarks._artifact_io import atomic_write_bytes, atomic_write_json, atomic_write_text, file_sha256, runtime_environment
-from benchmarks._s19_compare import HardQualificationError, compare_field, compare_trace, require_execution
+from benchmarks._s19_compare import HardQualificationError, compare_field, compare_trace, require_execution, require_finite_payload
 from benchmarks.plan_v0_4_s19_h100 import REFRESH_INTERVALS, ROLES, build_plan
 
 
-def _persist_tensor(path: Path, tensor) -> dict[str, object]:
+def _persist_tensor(path: Path, tensor, *, pcg_record=None) -> dict[str, object]:
     import numpy as np
     array = tensor.detach().contiguous().cpu().numpy()
-    if not np.isfinite(array).all():
-        raise HardQualificationError("non-finite output tensor")
+    finite = require_finite_payload(array, pcg_record=pcg_record)
     stream = io.BytesIO()
     np.save(stream, array, allow_pickle=False)
     atomic_write_bytes(path, stream.getvalue(), overwrite=False)
-    return {"path": str(path), "sha256": file_sha256(path), "shape": list(array.shape), "dtype": str(array.dtype)}
+    return {"path": str(path), "sha256": file_sha256(path), "shape": list(array.shape), "dtype": str(array.dtype), "finite": finite}
 
 
 def _installed_identity(role: str, wheel: Path) -> dict[str, object]:
@@ -129,11 +128,12 @@ def _pcg(args) -> dict[str, object]:
     from pssolver.linear_solvers.stokes import ChannelNoSlipModalStokesSolver
     from pssolver.functional.channel_pressure import ChannelPressureTransposeOperator
     records = []
+    case_device = args.device
 
     def build_solver(case):
         shape = tuple(case["shape"])
         spectral = SpectralSolver(shape, L=tuple(float(case["length_scale"]) * (1 + .37 * x) for x in shape),
-                                  device=args.device, dtype=getattr(torch, case["dtype"]))
+                                  device=case_device, dtype=getattr(torch, case["dtype"]))
         solver = ChannelNoSlipModalStokesSolver(
             spectral.transform_backend, friction=case["friction"], viscosity=case["viscosity"],
             pressure_relative_tolerance=case["relative_tolerance"], pressure_max_iterations=case["max_iterations"],
@@ -144,22 +144,31 @@ def _pcg(args) -> dict[str, object]:
         generator = torch.Generator().manual_seed(case["seed"] + seed_offset)
         real = torch.randn((1, *case["shape"]), generator=generator, dtype=getattr(torch, case["dtype"]))
         imag = torch.randn((1, *case["shape"]), generator=generator, dtype=getattr(torch, case["dtype"]))
-        return ChannelPressureTransposeOperator(solver)._project_gauge(torch.complex(real, imag).to(args.device))
+        return ChannelPressureTransposeOperator(solver)._project_gauge(torch.complex(real, imag).to(case_device))
 
     for case in frozen.CASES:
         for path in frozen.PATHS:
+            # The oracle public contract is CPU-only; never bypass its guard.
+            case_device = "cpu" if path == "oracle" else args.device
             fields = {}
+            names = iter(("result", "gradient", "warm_pressure", "warm_operator_action")
+                         if path in ("implicit", "oracle") else
+                         ("result", "warm_pressure", "warm_operator_action"))
 
             def tensor_record(tensor):
-                key = f"tensor_{len(fields)}"
-                fields[key] = _persist_tensor(args.output.parent / "arrays" / f"{case['name']}_{path}_{key}.npy", tensor)
+                key = next(names)
+                expected_device = "cuda:0" if case_device == "cuda" else "cpu"
+                if str(tensor.device) != expected_device:
+                    raise HardQualificationError("PCG tensor device mismatch")
+                fields[key] = _persist_tensor(args.output.parent / "arrays" / f"{case['name']}_{path}_{key}.npy", tensor,
+                                              pcg_record=(case["name"], path, key))
                 return frozen._tensor_record(tensor)
 
             namespace = dict(frozen._run_path.__globals__)
             namespace.update(_build_solver=build_solver, _rhs=rhs, _tensor_record=tensor_record)
             run = types.FunctionType(frozen._run_path.__code__, namespace, frozen._run_path.__name__)
             result = run(case, path)
-            records.append({"case": case, "path": path, "record": result, "fields": fields})
+            records.append({"case": case, "path": path, "record": result, "fields": fields, "execution_device": case_device})
     return {"kind": "pcg", "cases": records, "fixture_binding": "unchanged S-18 CASES/PATHS/_run_path; only explicit device and tensor persistence adapters"}
 
 
@@ -167,9 +176,12 @@ def child(args) -> None:
     identity = _prepare_child(args)
     args.output.parent.mkdir(parents=True, exist_ok=False)
     data = _trajectory(args) if args.kind == "trajectory" else _pcg(args)
+    nonfinite = [[row["case"]["name"], row["path"], name]
+                 for row in data.get("cases", []) for name, value in row["fields"].items() if not value["finite"]]
     atomic_write_json(args.output, dict(data, identity=identity, role=args.role,
                                        execution_device="cuda:0" if args.device == "cuda" else "cpu",
-                                       finite=True, fallback_used=False, installed_wheel_only=True,
+                                       finite=not nonfinite, nonfinite_records=nonfinite,
+                                       fallback_used=False, installed_wheel_only=True,
                                        cache_initially_empty=True, returncode=0), overwrite=False)
 
 
@@ -199,11 +211,13 @@ def _compare(left, right):
         raise HardQualificationError("PCG case coverage differs")
     fields, records = [], []
     for index, (a, b) in enumerate(zip(left["cases"], right["cases"])):
-        if a["case"] != b["case"] or a["path"] != b["path"] or list(a["fields"]) != list(b["fields"]):
+        if (a["case"] != b["case"] or a["path"] != b["path"] or list(a["fields"]) != list(b["fields"])
+                or a.get("execution_device") != b.get("execution_device")):
             raise HardQualificationError("PCG fixture identity differs")
         for key in a["fields"]:
             fields.append(compare_field(_read_array(a["fields"][key]), _read_array(b["fields"][key]),
-                                        field=f"{a['case']['name']}/{a['path']}/{key}", step=index))
+                                        field=f"{a['case']['name']}/{a['path']}/{key}", step=index,
+                                        pcg_record=(a['case']['name'], a['path'], key)))
         records.append({"case": a["case"]["name"], "path": a["path"], "exact": a["record"] == b["record"],
                         "reference": a["record"], "observed": b["record"]})
     passed = all(row["bitwise_equal"] for row in fields) and all(row["exact"] for row in records)

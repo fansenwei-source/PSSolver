@@ -1,0 +1,66 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 116,
+  "date": "2026-11-02",
+  "plan_step": "S-19",
+  "classification": "D0022_PRECISE_ORACLE_GRADIENT_EXCEPTION_AND_V63_REGISTRATION",
+  "git_identity": {
+    "implementation_parent": "59ea7bb37ce631fe3565a6f626591deb67694fcd",
+    "record_commit_is_qualified_source": false
+  },
+  "decision": {
+    "id": "D-0022",
+    "sha256": "c5d40d78516f1b8efce5c969886cdbaa89427d02e75df6cb85dce08d6b129722"
+  },
+  "runtime_changed": false,
+  "thresholds_changed": false,
+  "skip_xfail_added": false,
+  "historical_records_rewritten": false,
+  "exact_nonfinite_records": [
+    [
+      "fixed_float32_roundoff_floor",
+      "oracle",
+      "gradient"
+    ],
+    [
+      "fixed_float32_floor_crossing",
+      "oracle",
+      "gradient"
+    ]
+  ],
+  "comparison": "Whole raw tensor bytes A/A/B, including nonfinite locations and payload bits. Difference is N/FAIL and continues; every other nonfinite payload is H/STOP. CPU-only oracle guard is retained even in the H100 job.",
+  "issue_snapshot": {
+    "id": "V-63",
+    "title": "CPU unrolled pressure oracle silently returns nonfinite gradients beyond the float32 roundoff floor",
+    "severity": "low",
+    "source_report": "PSSolver_sync/decisions/D-0022.json",
+    "first_found": "S-19 CPU rehearsal; historical v0.3.0 and R-0058 records already contain the output",
+    "affects_v0_2_0": false,
+    "affects_v0_2_1": false,
+    "affects_control_paths": false,
+    "exercised_by_current_control_research": false,
+    "status": "open",
+    "target_release": "0.4 S-20",
+    "notes": "Present since v0.3.0: unrolled_channel_pressure_solve_oracle is a CPU-only test reference exported through the deprecated functional facade. Beyond the float32 roundoff floor its forward solve restores a valid state, but backward silently produces nonfinite gradients. Claude confirmed finite gradients at 5/10/20 iterations, versus 167/192 and 2815/3072 nonfinite elements at 50/200 iterations for fixed_float32_roundoff_floor and fixed_float32_floor_crossing. Production, transpose and implicit remain finite. D-0022 permits only these exact oracle/gradient records in S-19; their entire raw tensor bytes must match across baseline A/B and candidate, otherwise N/FAIL. Every other nonfinite result remains H/STOP. No runtime change or closure in S-19. Before S-20 freeze the user decides a separate reviewed fix or acceptance as a documented limitation. Older-version effects have not been established."
+  },
+  "stopped_attempt": "/home/fansenwei/pssolver_v0_4_s19_local_preparation_20261102_v1/pcg_nonfinite_stop/report.json",
+  "stopped_report_sha256": "f4746b78d2a771fa066224250f5ccf879773c6eb776b066e7b52b5fd26678623",
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "c42fd118a1543bbde9876441dee7c1db858f3dda89520e4c8be3572f094fd158",
+      "current_sha256": "8f7c8c04c951812d1c8c8582e115e3d9c9907ff267e303720c4dedd22d6aa8b1"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "08d0ea0fe20648337e119afada8e9211accf5b01b78ea0918b3dad4793ef057f",
+      "current_sha256": "08c909617a081982af152005eeca7a93e3cbd0aff503e0168f21fb29c17de3eb"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "4e9357a09d98000170289d0eef4a602472b0b243d04db78367764b1a365b3153",
+      "current_sha256": "830229a34c8617a72897fc29aab2fe9222a9d000bee9c0fd20fb3c3cbc985469"
+    },
+    "tests/test_v0_4_s19_self_compare.py": {
+      "historical_sha256": "c0ef2d3374061d32a47b288a55ce0dc4c51cd169e98f55c3649c44cca0c07f27",
+      "current_sha256": "d9811f1365369b17b98261f2d2287f18b65add0b09d0769601ae463fbf9c99da"
+    }
+  }
+}
