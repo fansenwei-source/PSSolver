@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import json
 from pathlib import Path
+import statistics
 
 import pytest
 
@@ -153,7 +154,7 @@ def _write_profiles(root: Path, candidate_scale: float = 1.01) -> None:
             },
             "timing": {
                 "samples_seconds": samples,
-                "mean_timestep_seconds": sum(samples) / len(samples),
+            "mean_timestep_seconds": statistics.fmean(samples),
                 "median_timestep_seconds": samples[0],
             },
             "memory": {
