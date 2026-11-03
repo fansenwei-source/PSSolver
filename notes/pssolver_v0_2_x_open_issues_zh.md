@@ -347,3 +347,14 @@ D-0022 只例外登记 `(fixed_float32_roundoff_floor, oracle, gradient)` 和
 `(fixed_float32_floor_crossing, oracle, gradient)`；三次运行的完整原始张量字节
 （含非有限位置及位模式）仍必须相同，不同为 N/FAIL 并继续。其他非有限值仍为
 H/STOP。这不是容差或门限放宽；S-20 冻结前由用户决定另批修复或接受已知限制。
+
+## R-0060 / V-62 准备关独立验收完成
+
+V-62 已 verified，verified_by=R-0060，fixed_in 保持
+`949970e5f32126ff50f17ef812cfe288f8eb9729`。上面的 claimed_fixed 和等待验收
+文字为历史状态，由本节向前取代。R-0060 的分类为
+`INTERIM_PASS_S19_LOCAL_PREPARATION`，不是 S-19 最终 PASS 或 GPU 资格。
+V-63 仍为 open，目标 0.4 S-20；D-0022 的两个精确例外和全部门限不变。
+部署仍只使用已验收的 support `141ad2a` 与 runtime `c7c940e` 冻结输入。
+按 D-0020 第二类可以执行专用目录部署及登录节点预检；每次 Slurm/H100 提交
+仍须用户另行确认。本次记录导入不提交作业、不推送、不改变冻结输入。

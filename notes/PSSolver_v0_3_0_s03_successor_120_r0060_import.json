@@ -1,0 +1,92 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 120,
+  "date": "2026-11-02",
+  "plan_step": "S-19",
+  "classification": "R0060_INTERIM_PASS_IMPORTED_NOT_GPU_QUALIFICATION",
+  "git_identity": {
+    "reviewed_support": "141ad2ace8d1604475917489a08a39f93f5a28a0",
+    "runtime": "c7c940e693719becccef80a918142a27aa050510",
+    "implementation": "949970e5f32126ff50f17ef812cfe288f8eb9729",
+    "record_commit_is_qualified_source": false
+  },
+  "review": {
+    "request": "R-0060",
+    "classification": "INTERIM_PASS_S19_LOCAL_PREPARATION",
+    "sync_commit": "e090f918800e84e8e20bd096679cc092236a6242",
+    "result_sha256": "cb6412b10ad588daf215bdbcc6dcfb8e424c8524ba017f5cf94ae9364225caeb",
+    "archive": {
+      "path": "/home/fansenwei/pssolver_v0_4_claude_s19_r0060_review_20261102_v1",
+      "host": "local",
+      "checksums_file": "checksums.sha256",
+      "checksums_entries": 130,
+      "checksums_sha256": "8db9ff91b791b210c6700f9f0987ab2caf2ff308f6208bf0bb246070b1fa3b73",
+      "complete_present": true
+    }
+  },
+  "registry_updates": [
+    {
+      "id": "V-62",
+      "field": "status",
+      "from": "claimed_fixed",
+      "to": "verified",
+      "reason": "R-0060: in Claude's own D-0021 mirror (conda-forge Python 3.10.18 + the 47 exact wheels, each checked against the official PyPI / download.pytorch.org sha256), pristine v0.3.0 4747388 fails exactly the three preregistered tests with the preregistered message (4848 passed, 3 failed, 1 optional skip); replacing only tests/test_analyze_v0_3_s09_h100.py with the 949970e blob (664b527 -> b86bd3e) gives 4851 passed + 1 skip; candidate 141ad2a passes in all four suites. The fix changes only test synthesis (sum/len -> statistics.fmean); analyzer, runtime and thresholds unchanged."
+    },
+    {
+      "id": "V-62",
+      "field": "verified_by",
+      "to": "R-0060"
+    },
+    {
+      "id": "V-62",
+      "field": "fixed_in",
+      "from": "949970e5f32126ff50f17ef812cfe288f8eb9729",
+      "to": "949970e5f32126ff50f17ef812cfe288f8eb9729",
+      "reason": "unchanged; confirmed by R-0060 (the indentation slip inside the dict literal in 949970e is cosmetic and was corrected in 4d7ec08)"
+    }
+  ],
+  "registry_snapshot": {
+    "V-62": {
+      "status": "verified",
+      "verified_by": "R-0060",
+      "fixed_in": "949970e5f32126ff50f17ef812cfe288f8eb9729"
+    },
+    "V-63": {
+      "status": "open",
+      "target_release": "0.4 S-20"
+    }
+  },
+  "new_findings": [],
+  "next_gate": "D-0020 class 2 deployment through preflight-only; class 3 user confirmation before sbatch",
+  "scope": {
+    "runtime_changed": false,
+    "benchmarks_changed": false,
+    "packaging_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "historical_records_rewritten": false,
+    "frozen_inputs_changed": false,
+    "s19_completed": false,
+    "gpu_qualified": false,
+    "slurm_submission_authorized": false,
+    "push_performed": false
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "8f7c8c04c951812d1c8c8582e115e3d9c9907ff267e303720c4dedd22d6aa8b1",
+      "current_sha256": "da8e5693f7705fb078e85ff67aa67a3356efd52fa68f7472a7f9900ad4e3cee4"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "08c909617a081982af152005eeca7a93e3cbd0aff503e0168f21fb29c17de3eb",
+      "current_sha256": "5050d63b2ccf630a52184280525f03d4e4850c1700466d92ae9807a7bad50090"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "830229a34c8617a72897fc29aab2fe9222a9d000bee9c0fd20fb3c3cbc985469",
+      "current_sha256": "ba3de9f848e06d1e5341ac3cb57b662dd9eccea9e14caf62c574a2a3490cab28"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_120_r0060_import_zh.md": "5db189bbd4899f266801d80db5965ee9fbbd94cfdede46fbefcd9f834986e463",
+    "tests/test_v0_4_s19_r0060_import.py": "c32bce61256198e8091e54a0cdc76368f0db436c2e4c110880daffa08e6f53c9"
+  }
+}

@@ -33,8 +33,8 @@
   "status_counts": {
     "open": 1,
     "registered": 0,
-    "claimed_fixed": 1,
-    "verified": 62,
+    "claimed_fixed": 0,
+    "verified": 63,
     "deferred": 2,
     "accepted": 2,
     "coverage_gap": 0
@@ -1102,10 +1102,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "target_release": "0.4 S-19",
-      "notes": "Three tests in tests/test_analyze_v0_3_s09_h100.py fail on Python 3.10 because synthetic mean_timestep_seconds uses sum(samples)/len(samples), while the frozen analyzer requires exact statistics.fmean(samples). Python 3.12 compensated sum masks the discrepancy. Commit 949970e changes only test synthesis to statistics.fmean; no analyzer, runtime, thresholds or skip/xfail changes. The pristine v0.3.0 mirror run must reproduce exactly the three preregistered failures and error signatures; the separately applied test-only overlay and candidate must pass. Await independent S-19 preparation review.",
-      "fixed_in": "949970e5f32126ff50f17ef812cfe288f8eb9729"
+      "notes": "Three tests in tests/test_analyze_v0_3_s09_h100.py fail on Python 3.10 because synthetic mean_timestep_seconds uses sum(samples)/len(samples), while the frozen analyzer requires exact statistics.fmean(samples). Python 3.12 compensated sum masks the discrepancy. Commit 949970e changes only test synthesis to statistics.fmean; no analyzer, runtime, thresholds or skip/xfail changes. The pristine v0.3.0 mirror run must reproduce exactly the three preregistered failures and error signatures; the separately applied test-only overlay and candidate must pass. R-0060 independently verified the exact three pristine failures and passing test-only overlay/candidate. The review is INTERIM_PASS_S19_LOCAL_PREPARATION, not GPU qualification or S-19 final acceptance.",
+      "fixed_in": "949970e5f32126ff50f17ef812cfe288f8eb9729",
+      "verified_by": "R-0060"
     },
     {
       "id": "V-63",
