@@ -70,3 +70,10 @@ def test_pcg_device_adapter_does_not_modify_frozen_module_or_runtime():
     assert "namespace = dict(frozen._run_path.__globals__)" in source
     assert "for path in frozen.PATHS" in source
     assert ".to(args.device)" in source
+
+
+def test_pcg_transpose_import_uses_the_unchanged_definition_not_stable_api():
+    from pssolver.functional.channel_pressure import ChannelPressureTransposeOperator
+    source = inspect.getsource(harness._pcg)
+    assert "from pssolver.functional.channel_pressure import ChannelPressureTransposeOperator" in source
+    assert ChannelPressureTransposeOperator.__module__ == "pssolver.functional.channel_pressure"

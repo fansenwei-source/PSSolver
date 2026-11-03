@@ -127,7 +127,7 @@ def _pcg(args) -> dict[str, object]:
     from benchmarks import verify_v0_4_s18_r5_pcg_equivalence as frozen
     from pssolver import SpectralSolver
     from pssolver.linear_solvers.stokes import ChannelNoSlipModalStokesSolver
-    from pssolver.functional.api import ChannelPressureTransposeOperator
+    from pssolver.functional.channel_pressure import ChannelPressureTransposeOperator
     records = []
 
     def build_solver(case):
