@@ -60,7 +60,7 @@ if ! type module >/dev/null 2>&1; then
 fi
 command -v module || { printf 'MISSING_REQUIRED_COMMAND: module\n' >&2; exit 2; }
 module load cuda/12.1
-for executable in nvcc nvidia-smi "$CC" "$CXX" "$S19_BASELINE_PYTHON" "$S19_CANDIDATE_PYTHON" "$S19_CONSUMER_PYTHON" /sbin/ldconfig; do
+for executable in nvcc "$CC" "$CXX" "$S19_BASELINE_PYTHON" "$S19_CANDIDATE_PYTHON" "$S19_CONSUMER_PYTHON" /sbin/ldconfig; do
   command -v "$executable" || { printf 'MISSING_REQUIRED_COMMAND: %s\n' "$executable" >&2; exit 2; }
 done
 # The compiler drivers invoke their own assembler/linker helpers. Query the
@@ -89,6 +89,9 @@ fi
   --root "$S19_CONTROL_ROOT" --manifest "$S19_CONTROL_ROOT/plans/deployment.json" \
   --sha256 "$S19_MANIFEST_SHA256" --ready-output "$S19_CONTROL_ROOT/logs/preflight_${preflight_label}.json" "${preflight_arguments[@]}"
 if [[ "${1:-}" == --preflight-only ]]; then exit 0; fi
+# Login nodes have no GPU driver. Require this only on the compute-node path,
+# before creating any node-local directory or starting qualification.
+command -v nvidia-smi || { printf 'MISSING_REQUIRED_COMMAND: nvidia-smi\n' >&2; exit 2; }
 : "${SLURM_JOB_ID:?must run only in the separately confirmed job}"
 case "$SLURM_JOB_ID" in (*[!0-9]*|'') exit 2;; esac
 

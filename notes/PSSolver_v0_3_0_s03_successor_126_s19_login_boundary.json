@@ -1,0 +1,53 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 126,
+  "date": "2026-11-03",
+  "plan_step": "S-19",
+  "git_identity": {
+    "implementation_parent": "b61d975593d76429fc6b8f38c897faed6c556b0f",
+    "record_commit_is_qualified_source": false
+  },
+  "classification": "V65_LOGIN_BOUNDARY_LOCAL_PREPARATION",
+  "decision": "D-0027",
+  "review": "R-0063",
+  "login_probe": {
+    "path": "/home/fansenwei/pssolver_v0_4_s19_r0063_rework_20261103_v1/logs/hpcc_login_command_probe/stdout.txt",
+    "sha256": "92b14cd581712e445665fda6e3701432ed2a5cdfddfd2576c12d86b51d78b143",
+    "command_sha256": "b062c9229381214271437f6a97ea0ee5b14e9dd4a18adca30365f0759234f43a",
+    "hostname": "hpcc.brandeis.edu",
+    "date": "2026-11-03T22:01:06-0500",
+    "module_loaded": false,
+    "remote_writes": false
+  },
+  "runtime_changed": false,
+  "benchmarks_changed": false,
+  "control_changed": false,
+  "threshold_changed": false,
+  "shared_block_other_checks_unchanged": true,
+  "remote_write_authorized": false,
+  "supersedes_freeze": {
+    "path": "/home/fansenwei/pssolver_v0_4_s19_retry_preparation_20261103_v1/frozen_0620103_v2",
+    "retained_unchanged": true,
+    "archive_checksums_sha256": "a55d9c516fa1fa1674bcaea32458a72f4885d2eba0552ebce11f098fb702699e"
+  },
+  "numerical_reuse": {
+    "review": "R-0063",
+    "arrays": 6675,
+    "precondition": "zero diff in benchmarks/ pssolver/ and packaging"
+  },
+  "queue_gate": "queue=\"$(squeue -h -u \"$USER\")\"; test -z \"$queue\"",
+  "historical_successor_sources": {
+    "jobs/v0_4_s19_single_h100.sbatch": {
+      "historical_sha256": "dc5ef64bfe85d11bd762ea12b72c4c56fd0366a063f7435db1d28099189a1146",
+      "current_sha256": "560ef68fb86836dc914fb46a8045c42c9726cf27ebe8d0011384bc6b4b5ebc63"
+    },
+    "notes/PSSolver_v0_4_s19_retry_node_commands.json": {
+      "historical_sha256": "34c746a384457c3d0370f2c8bbb6a940a137deba167d682fe4899764f75a0ab8",
+      "current_sha256": "978f450b2f78c48c7f2c87b59dc765808e8636cfedc40efdd1b0411815f2b513"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_126_s19_login_boundary_zh.md": "7cf7d45d633e84c5016febdd2d74a340354b72fc34a89282f3ea504f6e4c1c5a",
+    "tests/test_v0_4_s19_login_command_boundary.py": "31e384391546b39be4df632ee40cc3344e1a8744f2aedbf18bd0c2fd6f67445c"
+  }
+}
