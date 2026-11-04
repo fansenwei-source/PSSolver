@@ -8,9 +8,9 @@
 
 当前共登记 69 条：
 
-- `open`：2；
+- `open`：1；
 - `registered`：0；
-- `claimed_fixed`：0；
+- `claimed_fixed`：1；
 - `verified`：63；
 - `deferred`：2；
 - `accepted`：2；
@@ -375,3 +375,11 @@ cd9162f 的验证器，以及节点 Consumer 140bd27 的两个 `git show` 记录
 此处不改变冻结输入、门限或测试策略。V-62 继续 verified（R-0060），V-63 继续 open
 （0.4 S-20），两条机器可读条目逐字段不变。上方准备关部署说明是历史交接，
 不得据此把本次最终验收解释为 PASS 或启动新的部署。
+
+## D-0027 / V-64 本地重提支持修复
+
+V-64 现为 claimed_fixed，修复提交 fed03fc969ef6926065d43b1d5c14872dca875f6。
+采用改法 A：登录预检执行 Git 身份及两个历史测试并固定含 `.git` 的全目录清单；
+节点只核对清单，Consumer 用例与登录用例精确合并为原完整集合。节点工具先检查。
+本条仅声明 support 修复等待准备关复核，不声明 GPU 资格、上传或作业提交。
+V-62 verified / R-0060、V-63 open / S-20 不变。

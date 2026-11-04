@@ -31,9 +31,9 @@
   },
   "issue_count": 69,
   "status_counts": {
-    "open": 2,
+    "open": 1,
     "registered": 0,
-    "claimed_fixed": 0,
+    "claimed_fixed": 1,
     "verified": 63,
     "deferred": 2,
     "accepted": 2,
@@ -1132,9 +1132,10 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "open",
+      "status": "claimed_fixed",
       "target_release": "0.4.0 (S-19 retry)",
-      "notes": "The job-mode validator (validate_v0_4_s19_deployment.ready -> _artifact_io.git_identity) and two Control 140bd27 consumer tests (git show at test_p9_8...:69, test_pssolver_rc4...:87) require a git executable on the node. Job 10944635 failed with FileNotFoundError 'git' 4 s after start. The --preflight-only replay runs the same block on the login node, where /usr/bin/git exists, so it proved nothing about node tools; neither Codex's preparation nor Claude's R-0060/R-0061 reviews required node evidence for external commands, and Claude relied on a wrong note (C5). Not a pssolver/ runtime defect. Affected scope: S-19 support cd9162f (benchmarks/, jobs/); Control 140bd27 tests as run on the node. Reproduction: Job 10944635 slurm_10944635.err; any node-path call of ['git', ...] under the inherited PATH on gpu-h100-4-0. Proposed fix: See PSSolver_sync plan/S-19_retry_design_zh.md (user decision required): remove every hard git dependency from the node path, prove it with a local rehearsal in which git is a recording failing stub, and fail fast at job start on any missing external command. This import records the finding only; no support/runtime change or retry implementation."
+      "notes": "The job-mode validator (validate_v0_4_s19_deployment.ready -> _artifact_io.git_identity) and two Control 140bd27 consumer tests (git show at test_p9_8...:69, test_pssolver_rc4...:87) require a git executable on the node. Job 10944635 failed with FileNotFoundError 'git' 4 s after start. The --preflight-only replay runs the same block on the login node, where /usr/bin/git exists, so it proved nothing about node tools; neither Codex's preparation nor Claude's R-0060/R-0061 reviews required node evidence for external commands, and Claude relied on a wrong note (C5). Not a pssolver/ runtime defect. Affected scope: S-19 support cd9162f (benchmarks/, jobs/); Control 140bd27 tests as run on the node. Reproduction: Job 10944635 slurm_10944635.err; any node-path call of ['git', ...] under the inherited PATH on gpu-h100-4-0. Proposed fix: See PSSolver_sync plan/S-19_retry_design_zh.md (user decision required): remove every hard git dependency from the node path, prove it with a local rehearsal in which git is a recording failing stub, and fail fast at job start on any missing external command. This import records the finding only; no support/runtime change or retry implementation. D-0027 subsequently confirmed design A. Support commit fed03fc969ef6926065d43b1d5c14872dca875f6 moves Git identity and exactly two history tests to login preflight, binds the whole Consumer reference (including .git), and verifies the exact login/node test union. The compute-node job uses no hard Git dependency and checks required tools before qualification. Local preparation still requires independent review; no GPU qualification, upload or job submission is claimed.",
+      "fixed_in": "fed03fc969ef6926065d43b1d5c14872dca875f6"
     }
   ],
   "authorization": {
