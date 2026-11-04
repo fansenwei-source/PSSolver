@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry": "PSSolver v0.2.x forward-maintained open-issue registry",
-  "date": "2026-11-02",
+  "date": "2026-11-03",
   "primary_ref": "dev/0.4",
   "roadmap": {
     "decision": "D-0010",
@@ -29,9 +29,9 @@
       "rewritten": false
     }
   },
-  "issue_count": 68,
+  "issue_count": 69,
   "status_counts": {
-    "open": 1,
+    "open": 2,
     "registered": 0,
     "claimed_fixed": 0,
     "verified": 63,
@@ -1121,6 +1121,20 @@
       "status": "open",
       "target_release": "0.4 S-20",
       "notes": "Present since v0.3.0: unrolled_channel_pressure_solve_oracle is a CPU-only test reference exported through the deprecated functional facade. Beyond the float32 roundoff floor its forward solve restores a valid state, but backward silently produces nonfinite gradients. Claude confirmed finite gradients at 5/10/20 iterations, versus 167/192 and 2815/3072 nonfinite elements at 50/200 iterations for fixed_float32_roundoff_floor and fixed_float32_floor_crossing. Production, transpose and implicit remain finite. D-0022 permits only these exact oracle/gradient records in S-19; their entire raw tensor bytes must match across baseline A/B and candidate, otherwise N/FAIL. Every other nonfinite result remains H/STOP. No runtime change or closure in S-19. Before S-20 freeze the user decides a separate reviewed fix or acceptance as a documented limitation. Older-version effects have not been established."
+    },
+    {
+      "id": "V-64",
+      "title": "S-19 job path needs git on the compute node, which the job environment on gpu-h100-4-0 cannot exec; the login-node preflight replay cannot detect it",
+      "severity": "high",
+      "source_report": "PSSolver_sync/results/R-0062.result.json",
+      "first_found": "R-0062 S-19 job 10944635 final review (2026-11-03)",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "open",
+      "target_release": "0.4.0 (S-19 retry)",
+      "notes": "The job-mode validator (validate_v0_4_s19_deployment.ready -> _artifact_io.git_identity) and two Control 140bd27 consumer tests (git show at test_p9_8...:69, test_pssolver_rc4...:87) require a git executable on the node. Job 10944635 failed with FileNotFoundError 'git' 4 s after start. The --preflight-only replay runs the same block on the login node, where /usr/bin/git exists, so it proved nothing about node tools; neither Codex's preparation nor Claude's R-0060/R-0061 reviews required node evidence for external commands, and Claude relied on a wrong note (C5). Not a pssolver/ runtime defect. Affected scope: S-19 support cd9162f (benchmarks/, jobs/); Control 140bd27 tests as run on the node. Reproduction: Job 10944635 slurm_10944635.err; any node-path call of ['git', ...] under the inherited PATH on gpu-h100-4-0. Proposed fix: See PSSolver_sync plan/S-19_retry_design_zh.md (user decision required): remove every hard git dependency from the node path, prove it with a local rehearsal in which git is a recording failing stub, and fail fast at job start on any missing external command. This import records the finding only; no support/runtime change or retry implementation."
     }
   ],
   "authorization": {

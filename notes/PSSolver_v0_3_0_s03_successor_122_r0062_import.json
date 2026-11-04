@@ -1,0 +1,189 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 122,
+  "date": "2026-11-03",
+  "plan_step": "S-19",
+  "classification": "R0062_REWORK_REQUIRED_IMPORTED_RECORDS_ONLY",
+  "git_identity": {
+    "implementation_parent": "cd9162fe220b8a97023623a2999748fcdac21db6",
+    "reviewed_support": "cd9162fe220b8a97023623a2999748fcdac21db6",
+    "runtime": "c7c940e693719becccef80a918142a27aa050510",
+    "record_commit_is_qualified_source": false
+  },
+  "review": {
+    "request": "R-0062",
+    "classification": "REWORK_REQUIRED",
+    "sync_commit": "866546277d36930cbe22e551f6df98820f855403",
+    "result_sha256": "20bd9621615db012b1ed8b252a0340f6759a1ff9399c2aba28e2011384e59041",
+    "archive": {
+      "path": "/home/fansenwei/pssolver_r0062_review_20261103_v1",
+      "host": "local",
+      "checksums_file": "checksums.sha256",
+      "checksums_entries": 9,
+      "checksums_sha256": "4e2c5924073e21c092ad496546e0ec140f575dd40615e0a34eeaafff48923370",
+      "complete_present": true
+    },
+    "reports": [
+      {
+        "path": "/home/fansenwei/pssolver_r0062_review_20261103_v1/final_report.md",
+        "sha256": "9890fc496e7e4cc744e8fc7a35cbed0a1815aaeec94e9f17ad91c451ecbe6167"
+      },
+      {
+        "path": "/home/fansenwei/pssolver_r0062_review_20261103_v1/summary.json",
+        "sha256": "da591554911fb0520bef1c59748580b7fd086fc3345dd224c712fecf43a4bd4c"
+      }
+    ]
+  },
+  "registry_updates": [],
+  "new_findings": [
+    {
+      "proposed_id": "V-64",
+      "severity": "high",
+      "title": "S-19 job path needs git on the compute node, which the job environment on gpu-h100-4-0 cannot exec; the login-node preflight replay cannot detect it",
+      "detail": "The job-mode validator (validate_v0_4_s19_deployment.ready -> _artifact_io.git_identity) and two Control 140bd27 consumer tests (git show at test_p9_8...:69, test_pssolver_rc4...:87) require a git executable on the node. Job 10944635 failed with FileNotFoundError 'git' 4 s after start. The --preflight-only replay runs the same block on the login node, where /usr/bin/git exists, so it proved nothing about node tools; neither Codex's preparation nor Claude's R-0060/R-0061 reviews required node evidence for external commands, and Claude relied on a wrong note (C5). Not a pssolver/ runtime defect.",
+      "affects_versions": [
+        "S-19 support cd9162f (benchmarks/, jobs/)",
+        "Control 140bd27 tests as run on the node"
+      ],
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "suggested_status": "open",
+      "suggested_target_release": "0.4.0 (S-19 retry)",
+      "repro": "Job 10944635 slurm_10944635.err; any node-path call of ['git', ...] under the inherited PATH on gpu-h100-4-0.",
+      "fix": "See PSSolver_sync plan/S-19_retry_design_zh.md (user decision required): remove every hard git dependency from the node path, prove it with a local rehearsal in which git is a recording failing stub, and fail fast at job start on any missing external command."
+    }
+  ],
+  "preserved_registry_entries": {
+    "V-62": {
+      "id": "V-62",
+      "title": "Frozen S-09 analyzer synthetic means differ from fmean under Python 3.10",
+      "severity": "low",
+      "source_report": "PSSolver_sync/decisions/D-0019.json",
+      "first_found": "Claude S-19 plan check 2026-11-02; present since 30891c1 and in v0.3.0",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "verified",
+      "target_release": "0.4 S-19",
+      "notes": "Three tests in tests/test_analyze_v0_3_s09_h100.py fail on Python 3.10 because synthetic mean_timestep_seconds uses sum(samples)/len(samples), while the frozen analyzer requires exact statistics.fmean(samples). Python 3.12 compensated sum masks the discrepancy. Commit 949970e changes only test synthesis to statistics.fmean; no analyzer, runtime, thresholds or skip/xfail changes. The pristine v0.3.0 mirror run must reproduce exactly the three preregistered failures and error signatures; the separately applied test-only overlay and candidate must pass. R-0060 independently verified the exact three pristine failures and passing test-only overlay/candidate. The review is INTERIM_PASS_S19_LOCAL_PREPARATION, not GPU qualification or S-19 final acceptance.",
+      "fixed_in": "949970e5f32126ff50f17ef812cfe288f8eb9729",
+      "verified_by": "R-0060"
+    },
+    "V-63": {
+      "id": "V-63",
+      "title": "CPU unrolled pressure oracle silently returns nonfinite gradients beyond the float32 roundoff floor",
+      "severity": "low",
+      "source_report": "PSSolver_sync/decisions/D-0022.json",
+      "first_found": "S-19 CPU rehearsal; historical v0.3.0 and R-0058 records already contain the output",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "open",
+      "target_release": "0.4 S-20",
+      "notes": "Present since v0.3.0: unrolled_channel_pressure_solve_oracle is a CPU-only test reference exported through the deprecated functional facade. Beyond the float32 roundoff floor its forward solve restores a valid state, but backward silently produces nonfinite gradients. Claude confirmed finite gradients at 5/10/20 iterations, versus 167/192 and 2815/3072 nonfinite elements at 50/200 iterations for fixed_float32_roundoff_floor and fixed_float32_floor_crossing. Production, transpose and implicit remain finite. D-0022 permits only these exact oracle/gradient records in S-19; their entire raw tensor bytes must match across baseline A/B and candidate, otherwise N/FAIL. Every other nonfinite result remains H/STOP. No runtime change or closure in S-19. Before S-20 freeze the user decides a separate reviewed fix or acceptance as a documented limitation. Older-version effects have not been established."
+    }
+  },
+  "registry_snapshot": {
+    "V-62": {
+      "id": "V-62",
+      "title": "Frozen S-09 analyzer synthetic means differ from fmean under Python 3.10",
+      "severity": "low",
+      "source_report": "PSSolver_sync/decisions/D-0019.json",
+      "first_found": "Claude S-19 plan check 2026-11-02; present since 30891c1 and in v0.3.0",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "verified",
+      "target_release": "0.4 S-19",
+      "notes": "Three tests in tests/test_analyze_v0_3_s09_h100.py fail on Python 3.10 because synthetic mean_timestep_seconds uses sum(samples)/len(samples), while the frozen analyzer requires exact statistics.fmean(samples). Python 3.12 compensated sum masks the discrepancy. Commit 949970e changes only test synthesis to statistics.fmean; no analyzer, runtime, thresholds or skip/xfail changes. The pristine v0.3.0 mirror run must reproduce exactly the three preregistered failures and error signatures; the separately applied test-only overlay and candidate must pass. R-0060 independently verified the exact three pristine failures and passing test-only overlay/candidate. The review is INTERIM_PASS_S19_LOCAL_PREPARATION, not GPU qualification or S-19 final acceptance.",
+      "fixed_in": "949970e5f32126ff50f17ef812cfe288f8eb9729",
+      "verified_by": "R-0060"
+    },
+    "V-63": {
+      "id": "V-63",
+      "title": "CPU unrolled pressure oracle silently returns nonfinite gradients beyond the float32 roundoff floor",
+      "severity": "low",
+      "source_report": "PSSolver_sync/decisions/D-0022.json",
+      "first_found": "S-19 CPU rehearsal; historical v0.3.0 and R-0058 records already contain the output",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "open",
+      "target_release": "0.4 S-20",
+      "notes": "Present since v0.3.0: unrolled_channel_pressure_solve_oracle is a CPU-only test reference exported through the deprecated functional facade. Beyond the float32 roundoff floor its forward solve restores a valid state, but backward silently produces nonfinite gradients. Claude confirmed finite gradients at 5/10/20 iterations, versus 167/192 and 2815/3072 nonfinite elements at 50/200 iterations for fixed_float32_roundoff_floor and fixed_float32_floor_crossing. Production, transpose and implicit remain finite. D-0022 permits only these exact oracle/gradient records in S-19; their entire raw tensor bytes must match across baseline A/B and candidate, otherwise N/FAIL. Every other nonfinite result remains H/STOP. No runtime change or closure in S-19. Before S-20 freeze the user decides a separate reviewed fix or acceptance as a documented limitation. Older-version effects have not been established."
+    },
+    "V-64": {
+      "id": "V-64",
+      "title": "S-19 job path needs git on the compute node, which the job environment on gpu-h100-4-0 cannot exec; the login-node preflight replay cannot detect it",
+      "severity": "high",
+      "source_report": "PSSolver_sync/results/R-0062.result.json",
+      "first_found": "R-0062 S-19 job 10944635 final review (2026-11-03)",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "open",
+      "target_release": "0.4.0 (S-19 retry)",
+      "notes": "The job-mode validator (validate_v0_4_s19_deployment.ready -> _artifact_io.git_identity) and two Control 140bd27 consumer tests (git show at test_p9_8...:69, test_pssolver_rc4...:87) require a git executable on the node. Job 10944635 failed with FileNotFoundError 'git' 4 s after start. The --preflight-only replay runs the same block on the login node, where /usr/bin/git exists, so it proved nothing about node tools; neither Codex's preparation nor Claude's R-0060/R-0061 reviews required node evidence for external commands, and Claude relied on a wrong note (C5). Not a pssolver/ runtime defect. Affected scope: S-19 support cd9162f (benchmarks/, jobs/); Control 140bd27 tests as run on the node. Reproduction: Job 10944635 slurm_10944635.err; any node-path call of ['git', ...] under the inherited PATH on gpu-h100-4-0. Proposed fix: See PSSolver_sync plan/S-19_retry_design_zh.md (user decision required): remove every hard git dependency from the node path, prove it with a local rehearsal in which git is a recording failing stub, and fail fast at job start on any missing external command. This import records the finding only; no support/runtime change or retry implementation."
+    }
+  },
+  "registry_counts": {
+    "issue_count": 69,
+    "status_counts": {
+      "open": 2,
+      "registered": 0,
+      "claimed_fixed": 0,
+      "verified": 63,
+      "deferred": 2,
+      "accepted": 2,
+      "coverage_gap": 0
+    }
+  },
+  "job_snapshot": {
+    "id": 10944635,
+    "scheduler_state": "FAILED",
+    "exit_code": "1:0",
+    "elapsed_seconds": 4,
+    "qualification_evidence_produced": false
+  },
+  "scope": {
+    "runtime_changed": false,
+    "benchmarks_changed": false,
+    "jobs_changed": false,
+    "packaging_changed": false,
+    "threshold_changed": false,
+    "skip_or_xfail_added": false,
+    "historical_records_rewritten": false,
+    "frozen_inputs_changed": false,
+    "s19_completed": false,
+    "gpu_qualified": false,
+    "retry_implementation_started": false,
+    "hpcc_accessed": false,
+    "slurm_submitted": false,
+    "dev_fast_forwarded": false,
+    "push_performed": false
+  },
+  "notes": "Import only. V-64 records the support harness and Consumer-test node git dependency, not a pssolver runtime defect. V-62 and V-63 are preserved byte-for-byte as registry objects. No retry implementation or HPCC access in this task. D-0027 exists in sync, but its execution is outside this user's records-only import instruction. No old successor rewritten; current Chinese summary counts refreshed to match the registry.",
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "da8e5693f7705fb078e85ff67aa67a3356efd52fa68f7472a7f9900ad4e3cee4",
+      "current_sha256": "b6e9a57fa5f1081d9e123f51cb27e9fab22aa78bc00069f297ae6c95cce68755"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "5050d63b2ccf630a52184280525f03d4e4850c1700466d92ae9807a7bad50090",
+      "current_sha256": "781d483b4fc05031d31521e21f5939cccac9e1b4af5f615c6b541bec93dcfdcb"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "ba3de9f848e06d1e5341ac3cb57b662dd9eccea9e14caf62c574a2a3490cab28",
+      "current_sha256": "c20d160f53ac2b4481c214e43eda0269c4030e32b3cbaf65e5b3704fd06910d9"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_122_r0062_import_zh.md": "1934440812bde433c79a04fdef9276c34027a0430f069056d79ffc9011c25f9e",
+    "tests/test_v0_4_s19_r0062_import.py": "1abbab5858a506a33210ffee1927826aa0d3c94e88d4fa17934936dd9be16778"
+  }
+}
