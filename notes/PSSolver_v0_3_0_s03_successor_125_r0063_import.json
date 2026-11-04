@@ -1,0 +1,130 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 125,
+  "date": "2026-11-03",
+  "plan_step": "S-19",
+  "git_identity": {
+    "implementation_parent": "0620103dd971da290bc188414a9b72d649b451b6",
+    "record_commit_is_qualified_source": false
+  },
+  "classification": "R0063_REWORK_REQUIRED_IMPORTED_RECORDS_ONLY",
+  "review": {
+    "request": "R-0063",
+    "classification": "REWORK_REQUIRED",
+    "result_sha256": "58460a4ad34c1167c44c6cb1981ce1b8b19eed21a7a6adb657874d4d9e4d2eb3",
+    "sync_commit": "09f275cc31528c85ff078b3bc4aaa419bdc60645",
+    "archive": {
+      "path": "/home/fansenwei/pssolver_r0063_review_20261103_v1",
+      "host": "local",
+      "checksums_file": "checksums.sha256",
+      "checksums_entries": 131,
+      "checksums_sha256": "2945aa56510fb1b67b43dbfb19d5a6954563e6a3442fbbbeadfd751133b7fc66",
+      "complete_present": true
+    },
+    "reports": [
+      {
+        "path": "/home/fansenwei/pssolver_r0063_review_20261103_v1/final_report.md",
+        "sha256": "696ea5291ea9cb17d6bfa60474c0d479fcead2db065de0605c1108c63339d5e2"
+      },
+      {
+        "path": "/home/fansenwei/pssolver_r0063_review_20261103_v1/summary.json",
+        "sha256": "e84f893b759396efe4ec49f985ac5796786ea1c23cc9df0db090e0701b9125e5"
+      }
+    ]
+  },
+  "new_findings": [
+    {
+      "proposed_id": "V-65",
+      "severity": "medium",
+      "title": "S-19 retry job script checks nvidia-smi in the block replayed on the HPCC login node, which has no nvidia-smi; the frozen login preflight cannot pass",
+      "detail": "jobs/v0_4_s19_single_h100.sbatch lines 63-65 (0620103) run command -v nvidia-smi before the --preflight-only branch; DEPLOY_REMOTE line 78 runs that block on the login node. Claude's read-only ssh (2026-11-03): command -v / type -a nvidia-smi not found, /usr/bin/nvidia-smi and cuda/12.1/bin/nvidia-smi absent, no /usr/lib64/libcuda.so* (no GPU driver on login). Deployment would stop with MISSING_REQUIRED_COMMAND: nvidia-smi (exit 2) before preflight_login.json, leaving a failed deployment and another rework. No H100 cost. Codex's old-tool replay and CPU rehearsal substituted final_ready_adapter.py for the real --preflight-only call, so the login side was never exercised (same class as V-64).",
+      "affects_versions": [
+        "S-19 support 0620103 (jobs/) and frozen_0620103_v2"
+      ],
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "suggested_status": "open",
+      "suggested_target_release": "0.4.0 (S-19 retry)",
+      "repro": "ssh -n -o BatchMode=yes hpcc 'command -v nvidia-smi' -> not found; then sbatch line 63-65 under --preflight-only exits 2.",
+      "fix": "Check nvidia-smi only in job mode (after the --preflight-only exit, before node_root); run the real job script --preflight-only (no adapter) in the rehearsal and wrapper tests with nvidia-smi absent; read-only login-node command -v probe of every shared-block command before freezing; evidence table with separate login and node columns."
+    }
+  ],
+  "registry_snapshot": {
+    "V-62": {
+      "id": "V-62",
+      "title": "Frozen S-09 analyzer synthetic means differ from fmean under Python 3.10",
+      "severity": "low",
+      "source_report": "PSSolver_sync/decisions/D-0019.json",
+      "first_found": "Claude S-19 plan check 2026-11-02; present since 30891c1 and in v0.3.0",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "verified",
+      "target_release": "0.4 S-19",
+      "notes": "Three tests in tests/test_analyze_v0_3_s09_h100.py fail on Python 3.10 because synthetic mean_timestep_seconds uses sum(samples)/len(samples), while the frozen analyzer requires exact statistics.fmean(samples). Python 3.12 compensated sum masks the discrepancy. Commit 949970e changes only test synthesis to statistics.fmean; no analyzer, runtime, thresholds or skip/xfail changes. The pristine v0.3.0 mirror run must reproduce exactly the three preregistered failures and error signatures; the separately applied test-only overlay and candidate must pass. R-0060 independently verified the exact three pristine failures and passing test-only overlay/candidate. The review is INTERIM_PASS_S19_LOCAL_PREPARATION, not GPU qualification or S-19 final acceptance.",
+      "fixed_in": "949970e5f32126ff50f17ef812cfe288f8eb9729",
+      "verified_by": "R-0060"
+    },
+    "V-63": {
+      "id": "V-63",
+      "title": "CPU unrolled pressure oracle silently returns nonfinite gradients beyond the float32 roundoff floor",
+      "severity": "low",
+      "source_report": "PSSolver_sync/decisions/D-0022.json",
+      "first_found": "S-19 CPU rehearsal; historical v0.3.0 and R-0058 records already contain the output",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "open",
+      "target_release": "0.4 S-20",
+      "notes": "Present since v0.3.0: unrolled_channel_pressure_solve_oracle is a CPU-only test reference exported through the deprecated functional facade. Beyond the float32 roundoff floor its forward solve restores a valid state, but backward silently produces nonfinite gradients. Claude confirmed finite gradients at 5/10/20 iterations, versus 167/192 and 2815/3072 nonfinite elements at 50/200 iterations for fixed_float32_roundoff_floor and fixed_float32_floor_crossing. Production, transpose and implicit remain finite. D-0022 permits only these exact oracle/gradient records in S-19; their entire raw tensor bytes must match across baseline A/B and candidate, otherwise N/FAIL. Every other nonfinite result remains H/STOP. No runtime change or closure in S-19. Before S-20 freeze the user decides a separate reviewed fix or acceptance as a documented limitation. Older-version effects have not been established."
+    },
+    "V-64": {
+      "id": "V-64",
+      "title": "S-19 job path needs git on the compute node, which the job environment on gpu-h100-4-0 cannot exec; the login-node preflight replay cannot detect it",
+      "severity": "high",
+      "source_report": "PSSolver_sync/results/R-0062.result.json",
+      "first_found": "R-0062 S-19 job 10944635 final review (2026-11-03)",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "claimed_fixed",
+      "target_release": "0.4.0 (S-19 retry)",
+      "notes": "The job-mode validator (validate_v0_4_s19_deployment.ready -> _artifact_io.git_identity) and two Control 140bd27 consumer tests (git show at test_p9_8...:69, test_pssolver_rc4...:87) require a git executable on the node. Job 10944635 failed with FileNotFoundError 'git' 4 s after start. The --preflight-only replay runs the same block on the login node, where /usr/bin/git exists, so it proved nothing about node tools; neither Codex's preparation nor Claude's R-0060/R-0061 reviews required node evidence for external commands, and Claude relied on a wrong note (C5). Not a pssolver/ runtime defect. Affected scope: S-19 support cd9162f (benchmarks/, jobs/); Control 140bd27 tests as run on the node. Reproduction: Job 10944635 slurm_10944635.err; any node-path call of ['git', ...] under the inherited PATH on gpu-h100-4-0. Proposed fix: See PSSolver_sync plan/S-19_retry_design_zh.md (user decision required): remove every hard git dependency from the node path, prove it with a local rehearsal in which git is a recording failing stub, and fail fast at job start on any missing external command. This import records the finding only; no support/runtime change or retry implementation. D-0027 subsequently confirmed design A. Support commit fed03fc969ef6926065d43b1d5c14872dca875f6 moves Git identity and exactly two history tests to login preflight, binds the whole Consumer reference (including .git), and verifies the exact login/node test union. The compute-node job uses no hard Git dependency and checks required tools before qualification. Local preparation still requires independent review; no GPU qualification, upload or job submission is claimed.",
+      "fixed_in": "fed03fc969ef6926065d43b1d5c14872dca875f6"
+    },
+    "V-65": {
+      "id": "V-65",
+      "title": "S-19 retry job script checks nvidia-smi in the block replayed on the HPCC login node, which has no nvidia-smi; the frozen login preflight cannot pass",
+      "severity": "medium",
+      "source_report": "PSSolver_sync/results/R-0063.result.json",
+      "first_found": "R-0063 preparation review 2026-11-03",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "open",
+      "target_release": "0.4.0 (S-19 retry)",
+      "notes": "jobs/v0_4_s19_single_h100.sbatch lines 63-65 (0620103) run command -v nvidia-smi before the --preflight-only branch; DEPLOY_REMOTE line 78 runs that block on the login node. Claude's read-only ssh (2026-11-03): command -v / type -a nvidia-smi not found, /usr/bin/nvidia-smi and cuda/12.1/bin/nvidia-smi absent, no /usr/lib64/libcuda.so* (no GPU driver on login). Deployment would stop with MISSING_REQUIRED_COMMAND: nvidia-smi (exit 2) before preflight_login.json, leaving a failed deployment and another rework. No H100 cost. Codex's old-tool replay and CPU rehearsal substituted final_ready_adapter.py for the real --preflight-only call, so the login side was never exercised (same class as V-64). Reproduction: ssh -n -o BatchMode=yes hpcc 'command -v nvidia-smi' -> not found; then sbatch line 63-65 under --preflight-only exits 2. Required fix: Check nvidia-smi only in job mode (after the --preflight-only exit, before node_root); run the real job script --preflight-only (no adapter) in the rehearsal and wrapper tests with nvidia-smi absent; read-only login-node command -v probe of every shared-block command before freezing; evidence table with separate login and node columns."
+    }
+  },
+  "historical_records_rewritten": false,
+  "runtime_changed": false,
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "8e67ff25d9f4ccd56e3da8ba96ccb80c984eda3cc1ebb7b267ab71afb657aaa8",
+      "current_sha256": "f7f50c90d6826771f8f2cf287c0ad0863d455aeabfa47d6ace969e1414de7c5d"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "df22e6f4daa9c412ccaa7a03f4bbaef8b5389b9f46cd08c4b1a5634fbef967a3",
+      "current_sha256": "1a6b8c1570669d9c0704ba4c7028bb3fe4db772ac21633ad1ede815c81da276c"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "6ba167e27ce1cd3f79344e77910c73975691158e8de0c32db901e9d5a100317f",
+      "current_sha256": "16944bdbed95566fcca7605789369bbe1ac5908cf89f8c05d8b37f0d1225df12"
+    }
+  },
+  "introduced_sources": {}
+}

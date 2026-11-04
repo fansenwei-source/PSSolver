@@ -383,3 +383,7 @@ V-64 现为 claimed_fixed，修复提交 fed03fc969ef6926065d43b1d5c14872dca875f
 节点只核对清单，Consumer 用例与登录用例精确合并为原完整集合。节点工具先检查。
 本条仅声明 support 修复等待准备关复核，不声明 GPU 资格、上传或作业提交。
 V-62 verified / R-0060、V-63 open / S-20 不变。
+
+## R-0063 导入（successor 125）
+
+V-65 登记为 open / medium：登录预检错误地要求 nvidia-smi。V-64 保持 claimed_fixed，V-62 verified、V-63 open 均不变。当前共 70 项，open 2、claimed_fixed 1、verified 63、deferred 2、accepted 2。只读审核结论不是 GPU 资格。
