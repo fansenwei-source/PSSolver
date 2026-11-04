@@ -1,0 +1,307 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 129,
+  "date": "2026-11-04",
+  "plan_step": "S-20",
+  "classification": "R0065_IMPORTED_S20_CLOSEOUT_AWAITING_INTERIM_REVIEW",
+  "git_identity": {
+    "implementation_parent": "7513787811f6bb82791972e5ea2ddaece67f2bea",
+    "runtime": "c7c940e693719becccef80a918142a27aa050510",
+    "record_commit_is_qualified_source": false
+  },
+  "review": {
+    "request": "R-0065",
+    "classification": "PASS",
+    "result_sha256": "4eb35951d0c7f905d6c6c8c2d6f85d14685e148a4abf9b5b443e085b8ac7a3d6",
+    "sync_commit": "765e1ccc30b18f51c29d2b9e0bb9492d34ae4520",
+    "archive": {
+      "path": "/home/fansenwei/pssolver_r0065_review_20261104_v1",
+      "host": "local",
+      "checksums_file": "checksums.sha256",
+      "checksums_entries": 244,
+      "checksums_sha256": "6a82edf031fb915a0cd9278b3d855e7d16667c6cd0bde7a5080d7ec61f5b4c9c",
+      "complete_present": true
+    },
+    "reports": [
+      {
+        "path": "/home/fansenwei/pssolver_r0065_review_20261104_v1/final_report.md",
+        "sha256": "e3a4340c34f96a711efbd7f46bbb3ccdf5501a65b9b7fb710ce26f307a680177"
+      },
+      {
+        "path": "/home/fansenwei/pssolver_r0065_review_20261104_v1/summary.json",
+        "sha256": "211c78da3ccc1441a8712d12a3d01738e2ab0c3af8925a4bbe42b19a741f9819"
+      }
+    ]
+  },
+  "decisions": {
+    "D-0024": "dfb6ce32cc93f039b5f3f4a12dcb852adb81b7f49d196fe9500547884590d622",
+    "D-0025": "e3ff2538e4b37d1f68d34cf37edfc5e0ba73cd9e5d28b45bb00401e5c415e487"
+  },
+  "design": {
+    "path": "plan/S-20_batch1_design_zh.md",
+    "sha256": "118d5a5881969f4c0d6d893eadc3447e833ce27d68d41741be6be4ef6159fcf1",
+    "confirmed_by": "User in Codex conversation, Q1=A; committed draft status remains unchanged."
+  },
+  "action_review": {
+    "action": "A-0079",
+    "archive": "/home/fansenwei/pssolver_a0079_check_20261104_v1",
+    "checksums_sha256": "70b032a1509d04f6f8ffade2c2ab782aef8ef8cf76e38c6af5045f25f1a9f653",
+    "report_sha256": "e58cddfaef643ee94403a0f9e34c5993ca61e40f6d6d2b49bcd9bbb80600c405"
+  },
+  "corrections": {
+    "system_deleted": 1274,
+    "cache": 1232,
+    "restart": 28,
+    "trajectories": 14,
+    "data_files": 42,
+    "all_npy_format_groups": 2134,
+    "all_npy_format_files": 6402,
+    "npy_suffix_groups": 1993,
+    "npy_suffix_files": 5979,
+    "a0075_full_inventory": 769273,
+    "a0075_outside_tools": 757942,
+    "old_archives_modified": false
+  },
+  "registry_before": {
+    "R1-R9": {
+      "id": "R1-R9",
+      "title": "Architectural redundancy backlog",
+      "severity": "structural",
+      "source_report": "PSSolver_v0_2_issue_tracking_zh.pdf revision 3 sections 10-11",
+      "first_found": "rc1 architecture audit",
+      "affects_v0_2_0": true,
+      "affects_v0_2_1": true,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "deferred",
+      "decision": "D-0011",
+      "target_release": "S-10 partial; remaining work after 0.3",
+      "notes": "D-0011 brings only independently testable cleanup into S-10. S-10 centralizes the exact-key validation mechanic used by the three public compilers (R7 partial) and adds api, boundaries, diagnostics, and functional to the executable import-boundary ratchet while correcting its charter inventory (R9 partial). R1 registry unification would change construction dispatch across applications; R2 remaining checkpoint consolidation crosses released schemas and compatibility readers; R3 facade/contract reduction changes the stable functional surface and independent Consumer boundary; R4 integrator and R5 PCG consolidation touch numerical and qualified hot paths; R6 removal of shipped pilot/lifting surfaces requires deprecation and lifting decisions; R8 qualification-history pruning changes the evidence-retention policy; the remaining R7 helpers and R9 exact legacy edges require broader migrations. Those portions remain deferred after 0.3. Under D-0013, S-10 does not join any S-09 rerun and receives no additional H100 run (R-0032 and R-0033). R-0037 accepted S-10, A-0044 integrated it into dev/0.3, and it shipped in v0.3.0rc1 and v0.3.0. D-0014 schedules the remaining work on the 0.4 development line in S-16 through S-18."
+    },
+    "V-63": {
+      "id": "V-63",
+      "title": "CPU unrolled pressure oracle silently returns nonfinite gradients beyond the float32 roundoff floor",
+      "severity": "low",
+      "source_report": "PSSolver_sync/decisions/D-0022.json",
+      "first_found": "S-19 CPU rehearsal; historical v0.3.0 and R-0058 records already contain the output",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "open",
+      "target_release": "0.4 S-20",
+      "notes": "Present since v0.3.0: unrolled_channel_pressure_solve_oracle is a CPU-only test reference exported through the deprecated functional facade. Beyond the float32 roundoff floor its forward solve restores a valid state, but backward silently produces nonfinite gradients. Claude confirmed finite gradients at 5/10/20 iterations, versus 167/192 and 2815/3072 nonfinite elements at 50/200 iterations for fixed_float32_roundoff_floor and fixed_float32_floor_crossing. Production, transpose and implicit remain finite. D-0022 permits only these exact oracle/gradient records in S-19; their entire raw tensor bytes must match across baseline A/B and candidate, otherwise N/FAIL. Every other nonfinite result remains H/STOP. No runtime change or closure in S-19. Before S-20 freeze the user decides a separate reviewed fix or acceptance as a documented limitation. Older-version effects have not been established."
+    },
+    "V-64": {
+      "id": "V-64",
+      "title": "S-19 job path needs git on the compute node, which the job environment on gpu-h100-4-0 cannot exec; the login-node preflight replay cannot detect it",
+      "severity": "high",
+      "source_report": "PSSolver_sync/results/R-0062.result.json",
+      "first_found": "R-0062 S-19 job 10944635 final review (2026-11-03)",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "verified",
+      "target_release": "0.4.0 (S-19 retry)",
+      "notes": "The job-mode validator (validate_v0_4_s19_deployment.ready -> _artifact_io.git_identity) and two Control 140bd27 consumer tests (git show at test_p9_8...:69, test_pssolver_rc4...:87) require a git executable on the node. Job 10944635 failed with FileNotFoundError 'git' 4 s after start. The --preflight-only replay runs the same block on the login node, where /usr/bin/git exists, so it proved nothing about node tools; neither Codex's preparation nor Claude's R-0060/R-0061 reviews required node evidence for external commands, and Claude relied on a wrong note (C5). Not a pssolver/ runtime defect. Affected scope: S-19 support cd9162f (benchmarks/, jobs/); Control 140bd27 tests as run on the node. Reproduction: Job 10944635 slurm_10944635.err; any node-path call of ['git', ...] under the inherited PATH on gpu-h100-4-0. Proposed fix: See PSSolver_sync plan/S-19_retry_design_zh.md (user decision required): remove every hard git dependency from the node path, prove it with a local rehearsal in which git is a recording failing stub, and fail fast at job start on any missing external command. This import records the finding only; no support/runtime change or retry implementation. D-0027 subsequently confirmed design A. Support commit fed03fc969ef6926065d43b1d5c14872dca875f6 moves Git identity and exactly two history tests to login preflight, binds the whole Consumer reference (including .git), and verifies the exact login/node test union. The compute-node job uses no hard Git dependency and checks required tools before qualification. Local preparation still requires independent review; no GPU qualification, upload or job submission is claimed. R-0064 preparation review: R-0063: Claude's independent rehearsal of the frozen fed03fc/0620103 node path under strace -f with a recording failing git stub first on PATH: 0 git/git-* execve (absolute or PATH), job-mode validator and Consumer node stage pass with exact login/node union; R-0064: benchmarks unchanged since, real job-mode validator passes again in the PRoot replay. Reopen if the formal HPCC run hits a node git call. This is not S-19 final GPU acceptance.",
+      "fixed_in": "fed03fc969ef6926065d43b1d5c14872dca875f6",
+      "verified_by": "R-0064"
+    },
+    "V-65": {
+      "id": "V-65",
+      "title": "S-19 retry job script checks nvidia-smi in the block replayed on the HPCC login node, which has no nvidia-smi; the frozen login preflight cannot pass",
+      "severity": "medium",
+      "source_report": "PSSolver_sync/results/R-0063.result.json",
+      "first_found": "R-0063 preparation review 2026-11-03",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "verified",
+      "target_release": "0.4.0 (S-19 retry)",
+      "notes": "jobs/v0_4_s19_single_h100.sbatch lines 63-65 (0620103) run command -v nvidia-smi before the --preflight-only branch; DEPLOY_REMOTE line 78 runs that block on the login node. Claude's read-only ssh (2026-11-03): command -v / type -a nvidia-smi not found, /usr/bin/nvidia-smi and cuda/12.1/bin/nvidia-smi absent, no /usr/lib64/libcuda.so* (no GPU driver on login). Deployment would stop with MISSING_REQUIRED_COMMAND: nvidia-smi (exit 2) before preflight_login.json, leaving a failed deployment and another rework. No H100 cost. Codex's old-tool replay and CPU rehearsal substituted final_ready_adapter.py for the real --preflight-only call, so the login side was never exercised (same class as V-64). Reproduction: ssh -n -o BatchMode=yes hpcc 'command -v nvidia-smi' -> not found; then sbatch line 63-65 under --preflight-only exits 2. Required fix: Check nvidia-smi only in job mode (after the --preflight-only exit, before node_root); run the real job script --preflight-only (no adapter) in the rehearsal and wrapper tests with nvidia-smi absent; read-only login-node command -v probe of every shared-block command before freezing; evidence table with separate login and node columns. R-0064 preparation review: Fixed in 7c6aca1 (nvidia-smi checked only after the --preflight-only exit, before node_root). R-0064: Claude's real, adapter-free replay of the frozen DEPLOY_REMOTE runs bash <job> --preflight-only with no nvidia-smi on PATH and passes; job mode without nvidia-smi stops with MISSING_REQUIRED_COMMAND exit 2 before node_root; HPCC login read-only probe shows every remaining shared-block command present. Reopen if the real HPCC login preflight fails on a missing command. This is not S-19 final GPU acceptance.",
+      "fixed_in": "7c6aca1ff11fa1a87cc4506ad9f05b91b01a0726",
+      "verified_by": "R-0064"
+    }
+  },
+  "registry_snapshot": {
+    "V-63": {
+      "id": "V-63",
+      "title": "CPU unrolled pressure oracle silently returns nonfinite gradients beyond the float32 roundoff floor",
+      "severity": "low",
+      "source_report": "PSSolver_sync/decisions/D-0022.json",
+      "first_found": "S-19 CPU rehearsal; historical v0.3.0 and R-0058 records already contain the output",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "accepted",
+      "target_release": "0.4 之后，随删除 functional 兼容层一并处理",
+      "notes": "Present since v0.3.0: unrolled_channel_pressure_solve_oracle is a CPU-only test reference exported through the deprecated functional facade. Beyond the float32 roundoff floor its forward solve restores a valid state, but backward silently produces nonfinite gradients. Claude confirmed finite gradients at 5/10/20 iterations, versus 167/192 and 2815/3072 nonfinite elements at 50/200 iterations for fixed_float32_roundoff_floor and fixed_float32_floor_crossing. Production, transpose and implicit remain finite. D-0022 permits only these exact oracle/gradient records in S-19; their entire raw tensor bytes must match across baseline A/B and candidate, otherwise N/FAIL. Every other nonfinite result remains H/STOP. No runtime change or closure in S-19. Before S-20 freeze the user decides a separate reviewed fix or acceptance as a documented limitation. Older-version effects have not been established. S-20 decision D-0024 accepts this as a documented known limitation: it is a CPU-only deprecated test oracle, production/transpose/implicit remain finite, and changing runtime would break the S-19 qualified-code invariant. No code fix or general nonfinite tolerance is claimed; handle with removal of the functional compatibility facade after 0.4.",
+      "decision": "D-0024"
+    },
+    "V-64": {
+      "id": "V-64",
+      "title": "S-19 job path needs git on the compute node, which the job environment on gpu-h100-4-0 cannot exec; the login-node preflight replay cannot detect it",
+      "severity": "high",
+      "source_report": "PSSolver_sync/results/R-0062.result.json",
+      "first_found": "R-0062 S-19 job 10944635 final review (2026-11-03)",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "verified",
+      "target_release": "0.4.0 (S-19 retry)",
+      "notes": "The job-mode validator (validate_v0_4_s19_deployment.ready -> _artifact_io.git_identity) and two Control 140bd27 consumer tests (git show at test_p9_8...:69, test_pssolver_rc4...:87) require a git executable on the node. Job 10944635 failed with FileNotFoundError 'git' 4 s after start. The --preflight-only replay runs the same block on the login node, where /usr/bin/git exists, so it proved nothing about node tools; neither Codex's preparation nor Claude's R-0060/R-0061 reviews required node evidence for external commands, and Claude relied on a wrong note (C5). Not a pssolver/ runtime defect. Affected scope: S-19 support cd9162f (benchmarks/, jobs/); Control 140bd27 tests as run on the node. Reproduction: Job 10944635 slurm_10944635.err; any node-path call of ['git', ...] under the inherited PATH on gpu-h100-4-0. Proposed fix: See PSSolver_sync plan/S-19_retry_design_zh.md (user decision required): remove every hard git dependency from the node path, prove it with a local rehearsal in which git is a recording failing stub, and fail fast at job start on any missing external command. This import records the finding only; no support/runtime change or retry implementation. D-0027 subsequently confirmed design A. Support commit fed03fc969ef6926065d43b1d5c14872dca875f6 moves Git identity and exactly two history tests to login preflight, binds the whole Consumer reference (including .git), and verifies the exact login/node test union. The compute-node job uses no hard Git dependency and checks required tools before qualification. Local preparation still requires independent review; no GPU qualification, upload or job submission is claimed. R-0064 preparation review: R-0063: Claude's independent rehearsal of the frozen fed03fc/0620103 node path under strace -f with a recording failing git stub first on PATH: 0 git/git-* execve (absolute or PATH), job-mode validator and Consumer node stage pass with exact login/node union; R-0064: benchmarks unchanged since, real job-mode validator passes again in the PRoot replay. Reopen if the formal HPCC run hits a node git call. This is not S-19 final GPU acceptance. 已在真实节点上证实（R-0065）：job 10945436 completed 0:0; login/node command boundary and full GPU qualification passed. Existing fixed_in and verified_by=R-0064 remain unchanged; this is forward evidence, not a new fix.",
+      "fixed_in": "fed03fc969ef6926065d43b1d5c14872dca875f6",
+      "verified_by": "R-0064"
+    },
+    "V-65": {
+      "id": "V-65",
+      "title": "S-19 retry job script checks nvidia-smi in the block replayed on the HPCC login node, which has no nvidia-smi; the frozen login preflight cannot pass",
+      "severity": "medium",
+      "source_report": "PSSolver_sync/results/R-0063.result.json",
+      "first_found": "R-0063 preparation review 2026-11-03",
+      "affects_v0_2_0": false,
+      "affects_v0_2_1": false,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "verified",
+      "target_release": "0.4.0 (S-19 retry)",
+      "notes": "jobs/v0_4_s19_single_h100.sbatch lines 63-65 (0620103) run command -v nvidia-smi before the --preflight-only branch; DEPLOY_REMOTE line 78 runs that block on the login node. Claude's read-only ssh (2026-11-03): command -v / type -a nvidia-smi not found, /usr/bin/nvidia-smi and cuda/12.1/bin/nvidia-smi absent, no /usr/lib64/libcuda.so* (no GPU driver on login). Deployment would stop with MISSING_REQUIRED_COMMAND: nvidia-smi (exit 2) before preflight_login.json, leaving a failed deployment and another rework. No H100 cost. Codex's old-tool replay and CPU rehearsal substituted final_ready_adapter.py for the real --preflight-only call, so the login side was never exercised (same class as V-64). Reproduction: ssh -n -o BatchMode=yes hpcc 'command -v nvidia-smi' -> not found; then sbatch line 63-65 under --preflight-only exits 2. Required fix: Check nvidia-smi only in job mode (after the --preflight-only exit, before node_root); run the real job script --preflight-only (no adapter) in the rehearsal and wrapper tests with nvidia-smi absent; read-only login-node command -v probe of every shared-block command before freezing; evidence table with separate login and node columns. R-0064 preparation review: Fixed in 7c6aca1 (nvidia-smi checked only after the --preflight-only exit, before node_root). R-0064: Claude's real, adapter-free replay of the frozen DEPLOY_REMOTE runs bash <job> --preflight-only with no nvidia-smi on PATH and passes; job mode without nvidia-smi stops with MISSING_REQUIRED_COMMAND exit 2 before node_root; HPCC login read-only probe shows every remaining shared-block command present. Reopen if the real HPCC login preflight fails on a missing command. This is not S-19 final GPU acceptance. 已在真实节点上证实（R-0065）：job 10945436 completed 0:0; login/node command boundary and full GPU qualification passed. Existing fixed_in and verified_by=R-0064 remain unchanged; this is forward evidence, not a new fix.",
+      "fixed_in": "7c6aca1ff11fa1a87cc4506ad9f05b91b01a0726",
+      "verified_by": "R-0064"
+    },
+    "R1-R9": {
+      "id": "R1-R9",
+      "title": "Architectural redundancy backlog",
+      "severity": "structural",
+      "source_report": "PSSolver_v0_2_issue_tracking_zh.pdf revision 3 sections 10-11",
+      "first_found": "rc1 architecture audit",
+      "affects_v0_2_0": true,
+      "affects_v0_2_1": true,
+      "affects_control_paths": false,
+      "exercised_by_current_control_research": false,
+      "status": "deferred",
+      "decision": "D-0024",
+      "target_release": "0.4 之后的开发线",
+      "notes": "S-16 completed its confirmed R7/R9/R8 scope (R-0047); S-17 completed the stable R3 boundary and R6 isolation (R-0051); S-18 completed R2/R4/R5/R1 scoped batches (R-0059). R3 stable-boundary consolidation, R5 and R7 are complete, not the entire architectural backlog. (a) 已弃用 functional 兼容层仍在包中，以后单独决定删除 (D-0017 Q-S17-R3-01). (b) Robin、finite-Q、lifting 已隔离未删除；lifting 仍绑定 B8/S2-07 (D-0017 / D-0007). (c) 90 个冻结脚本和46个具名例外保留本地 helper；2个使用共享模块 (D-0016). (d) R1 各组合的 configuration/applications/planning/runtime 栈仍分别存在，仅统一分派 (D-0024). (e) R2 wrapper/reader/schema/migration/发布事务仍分家族，仅纯artifact机制合并 (D-0024). (f) R4 旧 integrator.py 步进刷新计数及五个未改文件保留 (D-0024). (g) R9 六条旧依赖边及四条 runtime→v0.1 谱引擎兼容边仍冻结 (D-0024). D-0024 explicitly defers (d)-(g) to the post-0.4 development line: further changes touch frozen files or the v0.1 engine, break the S-20 runtime invariant, and require new GPU qualification. Status remains deferred; this is not a claim that all structural debt is fixed."
+    }
+  },
+  "status_counts": {
+    "open": 0,
+    "registered": 0,
+    "claimed_fixed": 0,
+    "verified": 65,
+    "deferred": 2,
+    "accepted": 3,
+    "coverage_gap": 0
+  },
+  "unchanged_issue_hashes": {
+    "C1-05": "e5bb8172e0cfd4a85aa2dc16729ea7d85ac2d9982296a0c017d97fcd44c9ab27",
+    "C1-10": "b47d9712acbe1f113f56943b1c0adf25f363d989830064103f6d1ff0fc6ae3b2",
+    "C1-11": "4acfb096927aa3df089ce74fdaf971dc24c5bd6f65a9945c42e3bb1dbaf816c0",
+    "C2-17": "2678baa3baa1e002a73c7ad5e728ebd654824cc1d6aaa69d8be670994a56c4bf",
+    "C2-18": "f2367ff31306c6f62648e16e688bbf02b2da1fe3331775e5bfaa711cead10b02",
+    "V-17": "154d58d27df077cfe8c9f3de86903b7dfe3e20202e54ac86dd3ac508e38c8b2f",
+    "V-22": "a3629fff1b4543a9489d30383fbe63d732207fb0f9ec00102db86e68348b6a84",
+    "V-23": "29f9c239f86f82c757e80c64548b35906d6f7aa6cba7d0ec1bc9301a2749f020",
+    "V-16": "21b9fb8239ade367df12ca3fa4b6dc1b870985a0625cf1d443af581f144b4ec2",
+    "V-13": "69795d48a7cd5edc4cfd7758a63b4090a1c22bcde7c0d3e605ee250646126be0",
+    "V-14": "006cd24145d1814aaf2a86fceb4b5a099cf8ed802265e98942d564022ededaad",
+    "V-25": "4fc1cbad34d304bdefda4d6d89d566c08ab93223515cfe9237e5858fe47d746a",
+    "V-21": "cf872b7ec2b6a001256c21f33639d96c4159e5e5f84be6d418473c7d7d439b4e",
+    "V-24": "ba733d12f8d272f4e228ad4ef031fc940972272e4d673125436e313538e09913",
+    "OBS-4": "4df9d36673d71da24eb76b0493341bf72dbad161313b0796447f9a609073f953",
+    "A2-21/S2-12": "547f5fd7bddd3ef6378460f9fbfe355b74ccab7daaaa931e5393acf87018adc7",
+    "V-26": "e91b5189ffced9a30c18b0f318ecc8f9cb3ac9f9fe8a04b3cb2c9386a575c6d1",
+    "V-30": "c5b3e37b54cc59e55f8938c836c100318b8d037ec38ed537382e606e6833b364",
+    "V-27": "47077f095ab268ff23fdda471e01b9993aad790710eec337a56d13edac447982",
+    "V-28": "49d52bd6f7dcc097da899577820476ed38d5862178741dc9a758d1f0e619e90a",
+    "V-29": "e9d5862b5dece6e938b94cf5931fb92c2a8fdc80bf8a3fdebef11287693dd3e8",
+    "A2-24/C1-15": "30f903186948eb435b9e6ff80568d1deae4ded03895457cd04bedfccb3e16254",
+    "C1-08": "dd4b96978439a69233baf0cabd4c86149879e680164dd4d23aad02cb6842c141",
+    "S1-15/NEW-13": "6519f0e8bd5535d44c23e79297b1a74d30ee747ba83e46aeb0f0329072dbda8b",
+    "S2-17": "e2029577710dd07123eccc15a0a5195f183d7e1d24dab0f249e56e6d3588f177",
+    "A1-07": "57d165a369ac42c0fcc01f85a45a74e22a9433d3717c7314836c28e5103370cc",
+    "B30": "c2747e48d708199c46a4eaac7221e0395a0eea66797f8162d385bd8852b95f3d",
+    "S1-04": "a8d40249be21508e63ebf006c2f19def65c58ef155ca97cd3a4b500ac53e73cc",
+    "A2-11": "305ddb50ac329267299718ee75a15c1e1a714fc26181bb742c66798c1b43a405",
+    "NEW-14": "d685e16cda2a04957ecb5fabb692472655bfa6e388844c582b756b36ecfebf4b",
+    "B8/S2-07": "6c0c0145736ce5bd4dd595869928f9ffe43e00f973a151d6153f9020260f9630",
+    "A2-25": "3fc97d9bc36330bf352283406ae4800113200097ac47b1d81ff3c50fe31cfa66",
+    "A3-18": "6b18ed0fb6213e8d3e0c75eee97c64fa3b862ed152354e69bcd37762f1189814",
+    "N5": "e459ba39f51197ef6f4e351b52503f07cacee3fbf56d2f3cb13a65aeef78bc13",
+    "V-31": "3057f398cd19a62b60efbaafe1ea60bbca103a93f23fe3f5f59fcf917e9c805d",
+    "V-32": "0906ff1d2ea425df59ea5d267248685a77cde6ed435e1f8d9670b0c43d72f14a",
+    "V-33": "700410d0030d296e0eb15a4e386bc35c7e1bf07a5a7c5dd10e1496ca0d7cc553",
+    "V-34": "d74dc9297ffcc65bb3b25f6de7c479dfda1f6657b90edc5c63deff249bf46e3b",
+    "V-35": "7b19af4240fa22b5e51eb647120e9fedc011c5637d55dd519c9d868b524ee9ee",
+    "V-36": "01bcb5694955b35c37dc583b5a921be64446fca2f6df7058162fcf892219f893",
+    "V-37": "8f31f09ffc20f76f376430ea702376d548493649b3816498128651e887d2c849",
+    "V-38": "d0cdb8a66d294427a9a31baaf3d07f77f7137ba34eaadca22e6d684d17046f86",
+    "V-39": "0c85d8070a733fc923a0bb58c158e1781b23b259b2a193055a0da5f76a4a38b2",
+    "V-40": "cfe0b0aae0e022688fb82aea8dc53dac39638a46a639a4b7db53ac8dc9979b07",
+    "V-41": "e80afc9e79c8baac56657d30beb609d889db6aa3631fb0eeb79f24ea76cd7995",
+    "V-42": "17b86420b5ff7b8f75b98eaf87c9d4cdd71c5d99a7cf448407d3e176dc7c59f7",
+    "V-43": "bd4c8b10c6452898038b73de1986af89b01ff80f2d5063ebc32e963df65be6d5",
+    "V-44": "d4558f17b80d256642f4fc3ce3ce2514eb4b8812fe00c7bdb8038456145df249",
+    "V-45": "4cd0d4126a3c7ce747aa58a75e775fd6824228025104a1bf5fab6c7394fbb307",
+    "V-46": "fd6fab21f0f0ae2c160c39b31a0cb53eb69f397b06ef6c70b9ec50765d728771",
+    "V-47": "bcb6a5977c082c5a87ce7c8e6eb2b8beafeee7af45627a4dfc186310f7e5e82e",
+    "V-48": "53b5aeae42d5ac996f07107ad24cceda783a850e6541cd2a7bfde7cd99560aa6",
+    "V-49": "c4fe067f9a0a1a2b1cde18b4b2943243e6aa1d321ae51e27ea4d08321d8ebf42",
+    "V-50": "3d7c483dee45fd573057667ee66ae614f1d0db5ad1eb91363b83b6bb5b148b64",
+    "V-51": "bd9232636017052104420aafd9c95b6f39e529bbb4c6f77005f019891fd9a3a4",
+    "V-52": "61c90f27b331349fd70d8779a464e509f81345eb6d200718cfd7d0f86e34a628",
+    "V-53": "7a144032e2636c97932869dcd495fa0d4e9aa646266355c05ecd491e1482967f",
+    "V-54": "68c84074a7c2d3be174d6cb46b33877fcec9b6fb450d0d8a94f44176b4abc6c3",
+    "V-55": "627c217d195e9250a9b2f90c076c1cf16acfa7d0aa65d160262843d2d6f2048b",
+    "V-56": "daffb1beaebe552b314a54c9fb37f64c5361b8dda6f0726eae26addbb1684ead",
+    "V-57": "0edac7e44aa7a0108f50b9953b0e5d3464485956a7f3ea1671d44e267bc0f46a",
+    "V-58": "943c2a502f07aa6e447e5e12e48cf8d899a130b8f4898e70fe1acc3c6a25d205",
+    "V-59": "14b0782d18d5bdc3a78ca1b3e4f28ca6436ac5b76f89fcc12d19f7a914fb3bdf",
+    "V-60": "843f015cacd16089629bbc86271066b50edaba57d3561ee80cf862c7eed216fe",
+    "V-61": "19e18bd29bdc3313febd864155a4797b483fb8593a5f795c7cfd35f57c270e2b",
+    "V-62": "ea896d454c78542b8dfee9684672b8276b4fab878a8dc111fff5f3d52adf0e03"
+  },
+  "scope": {
+    "runtime_changed": false,
+    "benchmarks_changed": false,
+    "jobs_changed": false,
+    "packaging_changed": false,
+    "changelog_changed": false,
+    "historical_records_rewritten": false,
+    "remote_operations": false,
+    "hpcc_access": false,
+    "slurm_operations": false
+  },
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues.json": {
+      "historical_sha256": "76ceea96af59c1130c09eafb290dbb89e5e5ca29019f0b7e2975621050276839",
+      "current_sha256": "c061ff0b8859fdb25a1c5e9fd08f3585abc0075eb6aa1679dcaac45e40407403"
+    },
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "58849d482a8cb8fc955a135aaf7c1cac0459dee12e7289b8a19fa8b02625001f",
+      "current_sha256": "2d64489708504f333ef130085024c4ebb6f44d185c4f5dd2a806a044cf22439c"
+    },
+    "tests/test_v0_2_x_open_issues.py": {
+      "historical_sha256": "186484016df3ad167e8f5feba17f74007af4cf318b23e1880334355f4c0ea716",
+      "current_sha256": "84af6be7f0da7b3768d3a0c7a26e939c79710c5be19a691be72942cbb6347211"
+    },
+    "tests/test_v0_3_s10_final_cleanup.py": {
+      "historical_sha256": "f3d48bfcf592f02c833749c3f0bdbb87206e1e4ea7b1add4f479985a5cf30931",
+      "current_sha256": "9f178be98b9dc063d122db0bae8d1db6a7bc6ffd7e4b9068be48d75a18130645"
+    },
+    "tests/test_v0_4_s19_d0022.py": {
+      "historical_sha256": "dfb832b0dd14f727afb556f17aba308895903fc0d53736cb81a483f68a70f0c3",
+      "current_sha256": "7f1f106e2288cc1f606679b0b7531f5bf7900edcf5148356a72b28e9f222f7f7"
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_4_0_s20_closeout_triage.json": "9ad39f4b45244975a0d93898e722e915896b09105bb32f5b190df119cefbaccf",
+    "notes/PSSolver_v0_3_0_s03_successor_129_s20_closeout_zh.md": "dc383f564a44d5cb2aa04ef989e03fad52064c7f3d298a57d5f9056c103d5980",
+    "tests/test_v0_4_s20_closeout.py": "f434dd6c365c02ff38fbffda1d65b91f621a9bd344323a11885b73d73220c767"
+  }
+}

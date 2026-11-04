@@ -1,6 +1,6 @@
 # PSSolver v0.2.x 未解决问题统一登记表
 
-日期：2026-11-03
+日期：2026-11-04
 
 本登记表是可持续维护的 evidence-only successor，自 `D-0014` / `S-14` 起以
 `dev/0.4` 为主副本。历史发布记录保持逐字节不变；
@@ -8,12 +8,12 @@
 
 当前共登记 70 条：
 
-- `open`：1；
+- `open`：0；
 - `registered`：0；
 - `claimed_fixed`：0；
 - `verified`：65；
 - `deferred`：2；
-- `accepted`：2；
+- `accepted`：3；
 - `coverage_gap`：0。
 
 ## 当前优先项
@@ -393,3 +393,23 @@ V-65 登记为 open / medium：登录预检错误地要求 nvidia-smi。V-64 保
 V-64、V-65 已由 R-0064 独立复核为 verified，verified_by 均为 R-0064；fixed_in 分别为 fed03fc969ef6926065d43b1d5c14872dca875f6、7c6aca1ff11fa1a87cc4506ad9f05b91b01a0726。V-62 verified、V-63 open 不变。当前 70 项：open 1、verified 65、deferred 2、accepted 2，其余为 0。
 
 这是登录/计算节点命令边界准备关，不是 S-19 最终 PASS。真实预检或正式作业若出现同类缺失命令，应重新打开相应项。部署仍严格使用已验收的 frozen_ef71e54_v2，不重新构建；本提交不授权 sbatch 或推送。
+
+## S-20 第一批 / R-0065 最终资格导入（前向收尾）
+
+以下取代上文历史时点的当前状态说明，历史段落原样保留。
+当前70项：open 0、verified 65、deferred 2、accepted 3，其余0。
+
+- V-63：accepted，decision=D-0024，目标“0.4 之后，随删除 functional 兼容层一并处理”。接受理由：仅CPU弃用测试oracle的历史限制，生产/转置/implicit有限；不破坏S-19运行时冻结，不宣称代码修复。
+- V-64/V-65：已在真实节点上证实（R-0065）；fixed_in与verified_by=R-0064不变。
+- R1-R9：deferred，decision=D-0024，目标“0.4 之后的开发线”。S-16 R7/R9/R8由R-0047验收，S-17 R3/R6由R-0051验收，S-18 R2/R4/R5/R1由R-0059验收。
+  - (a) 已弃用 functional 兼容层仍在包中，以后单独决定删除；依据 D-0017 Q-S17-R3-01。
+  - (b) Robin、finite-Q、lifting 已隔离未删除；lifting 仍绑定 B8/S2-07；依据 D-0017 / D-0007。
+  - (c) 90 个冻结脚本和46个具名例外保留本地 helper；2个使用共享模块；依据 D-0016。
+  - (d) R1 各组合的 configuration/applications/planning/runtime 栈仍分别存在，仅统一分派；依据 D-0024。
+  - (e) R2 wrapper/reader/schema/migration/发布事务仍分家族，仅纯artifact机制合并；依据 D-0024。
+  - (f) R4 旧 integrator.py 步进刷新计数及五个未改文件保留；依据 D-0024。
+  - (g) R9 六条旧依赖边及四条 runtime→v0.1 谱引擎兼容边仍冻结；依据 D-0024。
+  - (d)到(g)需改冻结文件或v0.1引擎，打破S-20不变量且需新GPU资格，故延期。
+
+零散提示、R4五文件保留理由、0.4已知限制见 `PSSolver_v0_4_0_s20_closeout_triage.json`。
+R-0065和A-0079前向勘误：1274项系统删除中1232项cache、28项restart、14项trajectories；42项为数据，非全为缓存。只记录，不访问或清理HPCC。

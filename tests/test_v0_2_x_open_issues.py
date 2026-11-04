@@ -52,12 +52,12 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("claimed_fixed", 0)
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
-        "open": 1,
+        "open": 0,
         "registered": 0,
         "claimed_fixed": 0,
         "verified": 65,
         "deferred": 2,
-        "accepted": 2,
+        "accepted": 3,
         "coverage_gap": 0,
     }
 
@@ -634,14 +634,15 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
         assert issues[issue_id]["verified_by"] == "R-0021"
     assert issues["B8/S2-07"]["target_release"] == "before lifting is reopened"
     assert issues["R1-R9"]["target_release"] == (
-        "S-10 partial; remaining work after 0.3"
+        "0.4 之后的开发线"
     )
     assert issues["B8/S2-07"]["decision"] == "D-0007"
-    assert issues["R1-R9"]["decision"] == "D-0011"
-    assert "R7 partial" in issues["R1-R9"]["notes"]
-    assert "R9 partial" in issues["R1-R9"]["notes"]
-    assert "D-0014" in issues["R1-R9"]["notes"]
-    assert "S-16 through S-18" in issues["R1-R9"]["notes"]
+    assert issues["R1-R9"]["decision"] == "D-0024"
+    assert all(review in issues["R1-R9"]["notes"] for review in ("R-0047", "R-0051", "R-0059"))
+    assert all(f"({letter})" in issues["R1-R9"]["notes"] for letter in "abcdefg")
+    assert issues["V-63"]["status"] == "accepted"
+    assert issues["V-63"]["decision"] == "D-0024"
+    assert issues["V-63"]["target_release"] == "0.4 之后，随删除 functional 兼容层一并处理"
     assert issues["A2-11"]["decision"] == "D-0007"
     assert issues["A3-18"]["affects_control_paths"] is True
     assert issues["A3-18"]["status"] == "verified"

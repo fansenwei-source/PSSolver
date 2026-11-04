@@ -73,8 +73,9 @@ def test_execution_does_not_lie_about_finiteness_or_accept_expanded_exceptions()
 
 
 def test_v63_is_recorded_separately_from_the_s19_support_exception():
-    record = json.loads((Path(__file__).parents[1] / 'notes/pssolver_v0_2_x_open_issues.json').read_text())
-    issue = next(x for x in record['issues'] if x['id'] == 'V-63')
+    # Freeze the S-19 snapshot; the S-20 decision may advance the living entry.
+    record = json.loads((Path(__file__).parents[1] / 'notes/PSSolver_v0_3_0_s03_successor_128_r0064_import.json').read_text())
+    issue = record['registry_snapshot']['V-63']
     assert issue['severity'] == 'low' and issue['target_release'] == '0.4 S-20'
     assert issue['status'] in {'open', 'claimed_fixed', 'verified', 'accepted'}
     assert issue['affects_control_paths'] is False
