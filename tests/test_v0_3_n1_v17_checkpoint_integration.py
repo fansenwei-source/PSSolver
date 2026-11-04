@@ -9,8 +9,6 @@ import subprocess
 
 from tests.v0_3_s03_successor import resolve_s03_successor
 
-import pssolver
-
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_n1_v17_checkpoint_integration.json"
@@ -37,7 +35,6 @@ def _git_bytes(commit: str, relative: str) -> bytes:
 def test_integration_keeps_the_v03_version_and_exact_runtime_scope() -> None:
     record = _read()
     assert record["version"] == "0.3.0.dev0"
-    assert pssolver.__version__ == "0.4.0.dev0"
     assert record["classification"] == (
         "PASS_LOCAL_V0_3_N1_V17_CHECKPOINT_INTEGRATION_CANDIDATE"
     )

@@ -1,0 +1,31 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 134,
+  "date": "2026-11-04",
+  "plan_step": "S-20",
+  "classification": "V040_P861_HISTORICAL_READER_FORWARD_BINDING",
+  "git_identity": {
+    "implementation_parent": "724457c4d0a1de5f387279e11bacd56da7ffbe12",
+    "record_commit_is_qualified_source": false
+  },
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "tests/test_phase8_p861_records_and_p862_plan.py": {
+      "historical_sha256": "a6c1011d1418243aa56db4760c58a1ab791b14a5c9881c5c4918fc053a839ec3",
+      "current_sha256": "c255d5a92469a322497f4c629e5b6b89e330d5fc02326deccae913f2f2328518",
+      "reason": "Resolve the frozen P861 test hash through successor 133; preserve the historical record and strict current-file hash check."
+    }
+  },
+  "superseded_attempt": {
+    "commit": "724457c4d0a1de5f387279e11bacd56da7ffbe12",
+    "archive": "/home/fansenwei/pssolver_v0_4_0_candidate_20261104_v2",
+    "failure": "tests/test_phase8_p861_records_and_p862_plan.py::test_p861_record_binds_the_audited_implementation_and_verification",
+    "explanation": "Successor 133 bound the source-side audit test, but this historical reader still compared directly against its old hash.",
+    "logs_retained": true
+  },
+  "runtime_changed": false,
+  "benchmarks_changed": false,
+  "packaging_changed": false,
+  "history_amended": false,
+  "new_full_suites_required": true
+}

@@ -1,0 +1,56 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 131,
+  "date": "2026-11-04",
+  "plan_step": "S-20",
+  "classification": "INTERIM_PASS_S20_CLOSEOUT_IMPORTED",
+  "git_identity": {
+    "implementation_parent": "1ec1a8bac210d90be1b4c3b41020401a46f0a903",
+    "reviewed_target": "1ec1a8bac210d90be1b4c3b41020401a46f0a903",
+    "runtime": "c7c940e693719becccef80a918142a27aa050510",
+    "record_commit_is_qualified_source": false
+  },
+  "review": {
+    "id": "R-0066",
+    "classification": "INTERIM_PASS_S20_CLOSEOUT",
+    "result_sha256": "9bae05f2d33ada578aa3649b3e9df168cff70982b6c2b7f3349ea7b86c66eccf",
+    "sync_commit": "1bac5f3d0e69145d2f05d6448d8cdedbc51e712a",
+    "registry_updates": [],
+    "new_findings": []
+  },
+  "archive": {
+    "path": "/home/fansenwei/pssolver_r0066_review_20261104_v1",
+    "host": "local",
+    "checksums_file": "checksums.sha256",
+    "checksums_entries": 40,
+    "checksums_sha256": "5bc7c5bf2b57c39578c1a6629981677ad6a591247ca509320a33332d5a044a3d",
+    "complete_present": true
+  },
+  "reports": [
+    {
+      "path": "/home/fansenwei/pssolver_r0066_review_20261104_v1/final_report.md",
+      "sha256": "11bf292c8654893c467114ee05f74b06476038d91d93af9ec0417b3f4145b66a"
+    }
+  ],
+  "qualified_runtime_tree": "ae7996aa74f345a505bed504a56366deea6b69f5",
+  "action": {
+    "id": "A-0080",
+    "sha256": "1fce9e0c1f61c5ebc180a3367a130c6a376d0c229f9a10df4afb938c9441d948",
+    "import_included_in_push": false
+  },
+  "final_s20_pass": false,
+  "registry_changed": false,
+  "runtime_changed": false,
+  "record_only_triage_is_not_a_code_fix": true,
+  "forward_typo_correction": {
+    "source": "R-0059/I-1 triage reason",
+    "original": "psssolver",
+    "correct": "pssolver",
+    "historical_record_rewritten": false
+  },
+  "historical_successor_sources": {},
+  "introduced_sources": {
+    "tests/test_v0_4_s20_r0066_import.py": "d314ca236e08c95b4b83e61926c5f90b6b8c6915892d7c1b29a2d8b1389d9227",
+    "notes/PSSolver_v0_3_0_s03_successor_131_r0066_import_zh.md": "d383f404a1e116dd9a2deded308df61fe6f736e242b55fd6ff29f3647f9455e9"
+  }
+}

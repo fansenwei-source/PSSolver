@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-04",
+  "classification": "V0_4_0_LOCAL_RELEASE_CANDIDATE_FREEZE",
+  "plan_step": "S-20",
+  "source": {
+    "branch": "release/pssolver-v0.4.0",
+    "parent": "8dd58d74cd474877378e03c3d42a212aea5de833",
+    "version": "0.4.0",
+    "qualified_runtime": "c7c940e693719becccef80a918142a27aa050510",
+    "qualified_runtime_tree": "ae7996aa74f345a505bed504a56366deea6b69f5",
+    "runtime_delta_allowlist": [
+      "pssolver/_version.py"
+    ],
+    "candidate_commit_recorded_in_request": true,
+    "tag_target_policy": "exact independently accepted candidate commit"
+  },
+  "basis": {
+    "R-0047": "43918f38012fdc8d402a3f9d8e125e42c8ffc6bb83632b10b30971ad24ccf2e3",
+    "R-0051": "3daf8ca14a6edda2d1dbb67313123dbb9768334e46ea86b3f971758833681a66",
+    "R-0059": "7df143664bec3465f7ba763e51a995f964104dc1782bb41abc61ea977f434e42",
+    "R-0065": "4eb35951d0c7f905d6c6c8c2d6f85d14685e148a4abf9b5b443e085b8ac7a3d6",
+    "R-0066": "9bae05f2d33ada578aa3649b3e9df168cff70982b6c2b7f3349ea7b86c66eccf"
+  },
+  "decisions": {
+    "D-0011": "cc9e71723afb00eda4df2602e0c38e30b96f2a2fdc445dd46402decba38abff1",
+    "D-0014": "b01e70f81a0e8dcfff851203aa2a56cf459f42f2ef4431d606c2a7358480bcd2",
+    "D-0015": "69eaded6bff3a9ddcea173f1924f3d272199e00893b8fa483936bd3be3af56b6",
+    "D-0020": "81a4e3522794efe287edc97d05b9457a46d6b716c46f596991a27f651b833df7",
+    "D-0024": "dfb6ce32cc93f039b5f3f4a12dcb852adb81b7f49d196fe9500547884590d622"
+  },
+  "registry_snapshot": {
+    "issue_count": 70,
+    "status_counts": {
+      "verified": 65,
+      "accepted": 3,
+      "deferred": 2
+    },
+    "sha256": "c061ff0b8859fdb25a1c5e9fd08f3585abc0075eb6aa1679dcaac45e40407403"
+  },
+  "known_limits": {
+    "V-63": "accepted, not fixed (D-0024)",
+    "R1-R9": "remaining scope deferred after 0.4 (D-0024)",
+    "D-0013": "historical 0.3 exception does not extend to 0.4",
+    "A2-11": "caller-provided checkpoint generation labels",
+    "B8/S2-07": "lifting wall-physics/dtype boundary remains closed"
+  },
+  "record_only_closeout_claimed_as_code_fixes": false,
+  "completion_gates": {
+    "G-01": "R-0066 registry/triage interim accepted; no untriaged finding",
+    "G-02": "R-0047 accepted scoped R7/R9 sharing; runtime invariant rechecked for candidate",
+    "G-03": "R-0047 evidence-retention contract; D-0015 local verifier rerun for candidate",
+    "G-04": "R-0051 stable boundary; unchanged Control main full CPU gate on installed candidate",
+    "G-05": "released checkpoint read/restart gates rerun without changing source fixtures",
+    "G-06": "R-0059 and R-0065 numerical acceptance; release runtime differs only in version",
+    "G-07": "fresh reachable clones, conda and HPCC mirror, source and installed-wheel full CPU suites pending evidence",
+    "G-08": "R-0065 PASS, job 10945436; no D-0013 memory exemption; no new GPU run",
+    "G-09": "candidate review, publication, and post-release acceptance pending"
+  },
+  "release": {
+    "asset_names": [
+      "pssolver-0.4.0-py3-none-any.whl",
+      "pssolver-0.4.0.tar.gz"
+    ],
+    "source_archive_uploaded": false,
+    "verify_tag": true,
+    "prerelease": false,
+    "latest": true,
+    "body": "notes/pssolver_v0_4_0_release_notes.txt",
+    "asset_hashes_recorded_in_candidate_request": true
+  },
+  "external_actions_authorized": {
+    "push": false,
+    "tag": false,
+    "github_release": false,
+    "pypi": false,
+    "hpcc": false,
+    "slurm": false,
+    "gpu": false
+  }
+}

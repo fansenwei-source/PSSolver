@@ -19,18 +19,18 @@ def _read(path: Path) -> dict[str, object]:
 
 
 def test_rc1_record_is_frozen_while_the_live_package_can_advance() -> None:
-    assert pssolver.__version__ == "0.4.0.dev0"
+    assert isinstance(pssolver.__version__, str) and pssolver.__version__
     assert FUNCTIONAL_API_VERSION == "1.1"
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.4.0.dev0",
+        "version": pssolver.__version__,
     }
     assert "## 0.3.0rc1 — 2026-10-28" in (ROOT / "CHANGELOG.md").read_text(
         encoding="utf-8"
     )
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    assert "PSSolver 0.3.0 is" in readme
-    assert "qualified executable combinations in 0.3.0 are" in readme
+    assert "research-grade, GPU-first tensor-product spectral solver." in readme
+    assert "qualified executable combinations in " in readme
     assert _read(RECORD)["release"] == "0.3.0rc1"
 
 

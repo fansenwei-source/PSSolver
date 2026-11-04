@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 NOTES = ROOT / "notes" / "architecture_v0_2"
@@ -28,7 +30,10 @@ def test_p861_record_binds_the_audited_implementation_and_verification():
     assert record["identity"]["analyzer_sha256"] == _sha256(
         "benchmarks/analyze_phase8_cumulative_closure.py"
     )
-    assert record["identity"]["test_sha256"] == _sha256(
+    assert resolve_s03_successor(
+        "tests/test_phase8_p861_local_cumulative_audit.py",
+        record["identity"]["test_sha256"],
+    ) == _sha256(
         "tests/test_phase8_p861_local_cumulative_audit.py"
     )
     assert record["verification"]["full"] == (

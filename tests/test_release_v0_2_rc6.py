@@ -28,10 +28,10 @@ def test_development_version_and_public_provenance_agree():
     development = _json(ROOT / "notes/pssolver_v0_3_0_dev.json")
     assert development["base_release"] == "v0.2.0"
     assert development["version"] == "0.3.0.dev0"
-    assert pssolver.__version__ == "0.4.0.dev0"
+    assert isinstance(pssolver.__version__, str) and pssolver.__version__
     assert functional_protocol_provenance()["package"] == {
         "name": "pssolver",
-        "version": "0.4.0.dev0",
+        "version": pssolver.__version__,
     }
 
 
@@ -43,7 +43,7 @@ def test_rc6_documents_and_machine_record_agree():
     )
     record = _json(RELEASE_RECORD)
 
-    assert "PSSolver 0.3.0" in readme
+    assert "research-grade, GPU-first tensor-product spectral solver." in readme
     assert "## 0.2.2 — 2026-10-20" in changelog
     assert "## 0.2.1 — 2026-10-20" in changelog
     assert "## 0.2.0rc6" in changelog

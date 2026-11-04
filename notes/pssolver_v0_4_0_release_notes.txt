@@ -1,0 +1,24 @@
+PSSolver v0.4.0 freezes the independently reviewed 0.4 development line.
+
+This release consolidates internal checkpoint artifact mechanics, stepping
+and refresh primitives, Channel PCG control, and runtime dispatch. It retains
+Functional API 1.1 and released checkpoint readers. Compatibility facades stay
+available with the documented deprecation behavior; importing the stable
+functional API does not itself emit a deprecation warning.
+
+The release freeze changes only the package version in the S-19-qualified
+runtime. CPU and H100 qualification use v0.3.0 as the comparison baseline.
+No numerical, scientific, performance, memory, restart, or packaging threshold
+was relaxed; the bounded v0.3.0 memory exception does not extend to v0.4.0.
+Record-only closeout explanations are not presented as runtime bug fixes.
+
+Known limitation: the CPU-only deprecated unrolled pressure test oracle can
+produce nonfinite backward gradients after fixed float32 iterations exceed
+the roundoff floor. Production, transpose, and implicit paths remain finite.
+This limitation is documented and accepted, not fixed or a general tolerance.
+Remaining architectural consolidation and removal of compatibility facades
+are deferred. See the 0.4.0 section of CHANGELOG.md for details.
+
+Release assets are PSSolver's wheel and source distribution only:
+pssolver-0.4.0-py3-none-any.whl and pssolver-0.4.0.tar.gz.
+This release is not published to PyPI.
