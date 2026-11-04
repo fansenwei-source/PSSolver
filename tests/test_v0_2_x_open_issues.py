@@ -52,10 +52,10 @@ def test_registry_has_unique_complete_entries_and_exact_status_counts():
     counts.setdefault("claimed_fixed", 0)
     counts.setdefault("coverage_gap", 0)
     assert dict(counts) == record["status_counts"] == {
-        "open": 2,
+        "open": 1,
         "registered": 0,
-        "claimed_fixed": 1,
-        "verified": 63,
+        "claimed_fixed": 0,
+        "verified": 65,
         "deferred": 2,
         "accepted": 2,
         "coverage_gap": 0,
@@ -258,7 +258,7 @@ def test_live_registry_tracks_the_current_development_line():
         for issue_id, item in issues.items()
         if item["status"] == "claimed_fixed"
     }
-    assert claimed == {"V-64"}
+    assert claimed == set()
     assert {
         issue_id
         for issue_id, item in issues.items()
@@ -625,7 +625,7 @@ def test_deferred_and_coverage_items_match_the_frozen_boundary():
     } == set()
     assert {
         key for key, item in issues.items() if item["status"] == "claimed_fixed"
-    } == {"V-64"}
+    } == set()
     for issue_id in ("A2-25", "N5"):
         assert issues[issue_id]["status"] == "verified"
         assert issues[issue_id]["fixed_in"] == (

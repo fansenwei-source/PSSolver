@@ -31,10 +31,10 @@
   },
   "issue_count": 70,
   "status_counts": {
-    "open": 2,
+    "open": 1,
     "registered": 0,
-    "claimed_fixed": 1,
-    "verified": 63,
+    "claimed_fixed": 0,
+    "verified": 65,
     "deferred": 2,
     "accepted": 2,
     "coverage_gap": 0
@@ -1132,10 +1132,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "claimed_fixed",
+      "status": "verified",
       "target_release": "0.4.0 (S-19 retry)",
-      "notes": "The job-mode validator (validate_v0_4_s19_deployment.ready -> _artifact_io.git_identity) and two Control 140bd27 consumer tests (git show at test_p9_8...:69, test_pssolver_rc4...:87) require a git executable on the node. Job 10944635 failed with FileNotFoundError 'git' 4 s after start. The --preflight-only replay runs the same block on the login node, where /usr/bin/git exists, so it proved nothing about node tools; neither Codex's preparation nor Claude's R-0060/R-0061 reviews required node evidence for external commands, and Claude relied on a wrong note (C5). Not a pssolver/ runtime defect. Affected scope: S-19 support cd9162f (benchmarks/, jobs/); Control 140bd27 tests as run on the node. Reproduction: Job 10944635 slurm_10944635.err; any node-path call of ['git', ...] under the inherited PATH on gpu-h100-4-0. Proposed fix: See PSSolver_sync plan/S-19_retry_design_zh.md (user decision required): remove every hard git dependency from the node path, prove it with a local rehearsal in which git is a recording failing stub, and fail fast at job start on any missing external command. This import records the finding only; no support/runtime change or retry implementation. D-0027 subsequently confirmed design A. Support commit fed03fc969ef6926065d43b1d5c14872dca875f6 moves Git identity and exactly two history tests to login preflight, binds the whole Consumer reference (including .git), and verifies the exact login/node test union. The compute-node job uses no hard Git dependency and checks required tools before qualification. Local preparation still requires independent review; no GPU qualification, upload or job submission is claimed.",
-      "fixed_in": "fed03fc969ef6926065d43b1d5c14872dca875f6"
+      "notes": "The job-mode validator (validate_v0_4_s19_deployment.ready -> _artifact_io.git_identity) and two Control 140bd27 consumer tests (git show at test_p9_8...:69, test_pssolver_rc4...:87) require a git executable on the node. Job 10944635 failed with FileNotFoundError 'git' 4 s after start. The --preflight-only replay runs the same block on the login node, where /usr/bin/git exists, so it proved nothing about node tools; neither Codex's preparation nor Claude's R-0060/R-0061 reviews required node evidence for external commands, and Claude relied on a wrong note (C5). Not a pssolver/ runtime defect. Affected scope: S-19 support cd9162f (benchmarks/, jobs/); Control 140bd27 tests as run on the node. Reproduction: Job 10944635 slurm_10944635.err; any node-path call of ['git', ...] under the inherited PATH on gpu-h100-4-0. Proposed fix: See PSSolver_sync plan/S-19_retry_design_zh.md (user decision required): remove every hard git dependency from the node path, prove it with a local rehearsal in which git is a recording failing stub, and fail fast at job start on any missing external command. This import records the finding only; no support/runtime change or retry implementation. D-0027 subsequently confirmed design A. Support commit fed03fc969ef6926065d43b1d5c14872dca875f6 moves Git identity and exactly two history tests to login preflight, binds the whole Consumer reference (including .git), and verifies the exact login/node test union. The compute-node job uses no hard Git dependency and checks required tools before qualification. Local preparation still requires independent review; no GPU qualification, upload or job submission is claimed. R-0064 preparation review: R-0063: Claude's independent rehearsal of the frozen fed03fc/0620103 node path under strace -f with a recording failing git stub first on PATH: 0 git/git-* execve (absolute or PATH), job-mode validator and Consumer node stage pass with exact login/node union; R-0064: benchmarks unchanged since, real job-mode validator passes again in the PRoot replay. Reopen if the formal HPCC run hits a node git call. This is not S-19 final GPU acceptance.",
+      "fixed_in": "fed03fc969ef6926065d43b1d5c14872dca875f6",
+      "verified_by": "R-0064"
     },
     {
       "id": "V-65",
@@ -1147,9 +1148,11 @@
       "affects_v0_2_1": false,
       "affects_control_paths": false,
       "exercised_by_current_control_research": false,
-      "status": "open",
+      "status": "verified",
       "target_release": "0.4.0 (S-19 retry)",
-      "notes": "jobs/v0_4_s19_single_h100.sbatch lines 63-65 (0620103) run command -v nvidia-smi before the --preflight-only branch; DEPLOY_REMOTE line 78 runs that block on the login node. Claude's read-only ssh (2026-11-03): command -v / type -a nvidia-smi not found, /usr/bin/nvidia-smi and cuda/12.1/bin/nvidia-smi absent, no /usr/lib64/libcuda.so* (no GPU driver on login). Deployment would stop with MISSING_REQUIRED_COMMAND: nvidia-smi (exit 2) before preflight_login.json, leaving a failed deployment and another rework. No H100 cost. Codex's old-tool replay and CPU rehearsal substituted final_ready_adapter.py for the real --preflight-only call, so the login side was never exercised (same class as V-64). Reproduction: ssh -n -o BatchMode=yes hpcc 'command -v nvidia-smi' -> not found; then sbatch line 63-65 under --preflight-only exits 2. Required fix: Check nvidia-smi only in job mode (after the --preflight-only exit, before node_root); run the real job script --preflight-only (no adapter) in the rehearsal and wrapper tests with nvidia-smi absent; read-only login-node command -v probe of every shared-block command before freezing; evidence table with separate login and node columns."
+      "notes": "jobs/v0_4_s19_single_h100.sbatch lines 63-65 (0620103) run command -v nvidia-smi before the --preflight-only branch; DEPLOY_REMOTE line 78 runs that block on the login node. Claude's read-only ssh (2026-11-03): command -v / type -a nvidia-smi not found, /usr/bin/nvidia-smi and cuda/12.1/bin/nvidia-smi absent, no /usr/lib64/libcuda.so* (no GPU driver on login). Deployment would stop with MISSING_REQUIRED_COMMAND: nvidia-smi (exit 2) before preflight_login.json, leaving a failed deployment and another rework. No H100 cost. Codex's old-tool replay and CPU rehearsal substituted final_ready_adapter.py for the real --preflight-only call, so the login side was never exercised (same class as V-64). Reproduction: ssh -n -o BatchMode=yes hpcc 'command -v nvidia-smi' -> not found; then sbatch line 63-65 under --preflight-only exits 2. Required fix: Check nvidia-smi only in job mode (after the --preflight-only exit, before node_root); run the real job script --preflight-only (no adapter) in the rehearsal and wrapper tests with nvidia-smi absent; read-only login-node command -v probe of every shared-block command before freezing; evidence table with separate login and node columns. R-0064 preparation review: Fixed in 7c6aca1 (nvidia-smi checked only after the --preflight-only exit, before node_root). R-0064: Claude's real, adapter-free replay of the frozen DEPLOY_REMOTE runs bash <job> --preflight-only with no nvidia-smi on PATH and passes; job mode without nvidia-smi stops with MISSING_REQUIRED_COMMAND exit 2 before node_root; HPCC login read-only probe shows every remaining shared-block command present. Reopen if the real HPCC login preflight fails on a missing command. This is not S-19 final GPU acceptance.",
+      "fixed_in": "7c6aca1ff11fa1a87cc4506ad9f05b91b01a0726",
+      "verified_by": "R-0064"
     }
   ],
   "authorization": {

@@ -8,10 +8,10 @@
 
 当前共登记 70 条：
 
-- `open`：2；
+- `open`：1；
 - `registered`：0；
-- `claimed_fixed`：1；
-- `verified`：63；
+- `claimed_fixed`：0；
+- `verified`：65；
 - `deferred`：2；
 - `accepted`：2；
 - `coverage_gap`：0。
@@ -387,3 +387,9 @@ V-62 verified / R-0060、V-63 open / S-20 不变。
 ## R-0063 导入（successor 125）
 
 V-65 登记为 open / medium：登录预检错误地要求 nvidia-smi。V-64 保持 claimed_fixed，V-62 verified、V-63 open 均不变。当前共 70 项，open 2、claimed_fixed 1、verified 63、deferred 2、accepted 2。只读审核结论不是 GPU 资格。
+
+## R-0064 准备关导入（successor 128）
+
+V-64、V-65 已由 R-0064 独立复核为 verified，verified_by 均为 R-0064；fixed_in 分别为 fed03fc969ef6926065d43b1d5c14872dca875f6、7c6aca1ff11fa1a87cc4506ad9f05b91b01a0726。V-62 verified、V-63 open 不变。当前 70 项：open 1、verified 65、deferred 2、accepted 2，其余为 0。
+
+这是登录/计算节点命令边界准备关，不是 S-19 最终 PASS。真实预检或正式作业若出现同类缺失命令，应重新打开相应项。部署仍严格使用已验收的 frozen_ef71e54_v2，不重新构建；本提交不授权 sbatch 或推送。
