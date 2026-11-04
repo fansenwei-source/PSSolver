@@ -6,9 +6,9 @@
 `dev/0.4` 为主副本。历史发布记录保持逐字节不变；
 `PSSolver_v0_2_issue_tracking_zh.pdf` 仍是持续更新的说明材料，但不作为固定哈希输入。
 
-当前共登记 69 条：
+当前共登记 70 条：
 
-- `open`：1；
+- `open`：2；
 - `registered`：0；
 - `claimed_fixed`：1；
 - `verified`：63；

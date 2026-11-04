@@ -1,0 +1,23 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 127,
+  "date": "2026-11-03",
+  "plan_step": "S-19",
+  "git_identity": {
+    "implementation_parent": "7c6aca1ff11fa1a87cc4506ad9f05b91b01a0726",
+    "record_commit_is_qualified_source": false
+  },
+  "classification": "RECORDS_ONLY_CHINESE_SUMMARY_CORRECTION",
+  "reason": "Refresh the leading living summary as well as the appended R-0063 section; no prior successor rewritten.",
+  "runtime_changed": false,
+  "benchmarks_changed": false,
+  "jobs_changed": false,
+  "registry_semantics_changed": false,
+  "historical_successor_sources": {
+    "notes/pssolver_v0_2_x_open_issues_zh.md": {
+      "historical_sha256": "1a6b8c1570669d9c0704ba4c7028bb3fe4db772ac21633ad1ede815c81da276c",
+      "current_sha256": "40cc319fcc9dce492d9c6c130c604b1453c407951525c6f3662c05084c258ad1"
+    }
+  },
+  "introduced_sources": {}
+}
