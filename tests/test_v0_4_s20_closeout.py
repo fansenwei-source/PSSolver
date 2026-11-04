@@ -99,3 +99,14 @@ def test_successor_129_binds_every_change_without_pinning_future_registry_state(
     bindings.update(r['introduced_sources'])
     for path, digest in bindings.items():
         assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == resolve_s03_successor(path, digest)
+
+
+def test_historical_r0002_decisions_are_bound_without_pinning_current_registry():
+    record = read(ROOT / 'notes/PSSolver_v0_3_0_s03_successor_130_s20_historical_test.json')
+    assert record['historical_decision_snapshot'] == {
+        'A2-11': 'D-0007', 'B8/S2-07': 'D-0007', 'R1-R9': 'D-0007'}
+    assert record['superseded_full_run']['failures'] == 1
+    assert record['historical_records_rewritten'] is False
+    for path, binding in record['historical_successor_sources'].items():
+        assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == resolve_s03_successor(
+            path, binding['current_sha256'])

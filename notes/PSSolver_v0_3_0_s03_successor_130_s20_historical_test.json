@@ -1,0 +1,42 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 130,
+  "date": "2026-11-04",
+  "plan_step": "S-20",
+  "classification": "S20_HISTORICAL_TEST_FORWARD_CORRECTION",
+  "git_identity": {
+    "implementation_parent": "c4e6549ec2be65cc84d28a1f0f02790cd4c76a03",
+    "record_commit_is_qualified_source": false
+  },
+  "historical_decision_snapshot": {
+    "A2-11": "D-0007",
+    "B8/S2-07": "D-0007",
+    "R1-R9": "D-0007"
+  },
+  "superseded_full_run": {
+    "head": "c4e6549ec2be65cc84d28a1f0f02790cd4c76a03",
+    "passed": 5441,
+    "failures": 1,
+    "nodeid": "tests.test_v0_2_2_v17_r0002_import::test_r0002_registry_updates_are_exact",
+    "archive": "/home/fansenwei/pssolver_v0_4_s20_closeout_20261104_v1",
+    "log": "suite_conda/pytest.log",
+    "junit": "suite_conda/junit.xml",
+    "reason": "Historical test required today's R1-R9 decision to equal D-0011; D-0024 legitimately supersedes that decision."
+  },
+  "historical_records_rewritten": false,
+  "runtime_changed": false,
+  "registry_changed": false,
+  "historical_successor_sources": {
+    "tests/test_v0_2_2_v17_r0002_import.py": {
+      "historical_sha256": "55024f01495fa390072653d5f044aea3d97a0e0e2974a33f0914ad3907e9254c",
+      "current_sha256": "723910d6d6dbd317a1134e05d604d504b30150fa311c11bebf105f943ebb1f58",
+      "reason": "Bind historical R-0002 decisions to their own snapshot; do not pin the living backlog to D-0011. Add the forward-record regression."
+    },
+    "tests/test_v0_4_s20_closeout.py": {
+      "historical_sha256": "f434dd6c365c02ff38fbffda1d65b91f621a9bd344323a11885b73d73220c767",
+      "current_sha256": "289729e031086c6cb0523d0f515d3213f8fa570a7f49ed2f050c749796d31874",
+      "reason": "Bind historical R-0002 decisions to their own snapshot; do not pin the living backlog to D-0011. Add the forward-record regression."
+    }
+  },
+  "introduced_sources": {}
+}

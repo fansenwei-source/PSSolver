@@ -134,12 +134,11 @@ def test_r0002_registry_updates_are_exact() -> None:
                 assert actual["verified_by"] == "R-0012"
             else:
                 assert actual[key] == value
-    for issue_id, decision in record["decision_bindings"].items():
-        assert decision == "D-0007"
-        if issue_id == "R1-R9":
-            assert issues[issue_id]["decision"] == "D-0011"
-        else:
-            assert issues[issue_id]["decision"] == decision
+    # This import binds the decisions at R-0002, not later backlog decisions.
+    # The living registry is validated by test_v0_2_x_open_issues.py.
+    assert record["decision_bindings"] == {
+        "A2-11": "D-0007", "B8/S2-07": "D-0007", "R1-R9": "D-0007"
+    }
 
 
 def test_r0002_import_does_not_expand_authority_or_runtime_scope() -> None:
