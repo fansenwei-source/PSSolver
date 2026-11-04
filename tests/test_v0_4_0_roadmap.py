@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pssolver
 from pssolver.functional.api import FUNCTIONAL_API_VERSION
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,7 +28,7 @@ def _sha256(path: Path) -> str:
 
 def test_v04_development_identity_and_governance_are_exact() -> None:
     record = _read()
-    assert pssolver.__version__ == "0.4.0.dev0"
+    assert record["source"]["version"] == "0.4.0.dev0"
     assert FUNCTIONAL_API_VERSION == "1.1"
     assert record["classification"] == (
         "V0_4_0_DEVELOPMENT_TARGET_AND_COMPLETION_CONTRACT"
@@ -109,11 +110,13 @@ def test_v04_contract_successor_binds_new_sources_and_forward_changes() -> None:
         "V0_4_0_DEVELOPMENT_VERSION_AND_COMPLETION_CONTRACT"
     )
     for relative, expected in successor["new_sources"].items():
-        assert _sha256(ROOT / relative) == expected
+        assert _sha256(ROOT / relative) == resolve_s03_successor(relative, expected)
     for relative, registration in successor[
         "historical_successor_sources"
     ].items():
-        assert _sha256(ROOT / relative) == registration["current_sha256"]
+        assert _sha256(ROOT / relative) == resolve_s03_successor(
+            relative, registration["current_sha256"]
+        )
         assert registration["historical_sha256"] in registration[
             "accepted_predecessor_sha256"
         ]

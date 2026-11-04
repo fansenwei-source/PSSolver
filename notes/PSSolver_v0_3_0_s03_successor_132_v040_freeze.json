@@ -1,0 +1,71 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 132,
+  "date": "2026-11-04",
+  "plan_step": "S-20",
+  "classification": "V0_4_0_VERSION_ONLY_RUNTIME_FREEZE",
+  "git_identity": {
+    "implementation_parent": "8dd58d74cd474877378e03c3d42a212aea5de833",
+    "runtime": "c7c940e693719becccef80a918142a27aa050510",
+    "record_commit_is_qualified_source": false
+  },
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "pssolver/_version.py": {
+      "historical_sha256": "404a7d506a81eef9c8cce55334f74efa686627a3005f3bdae19f7fd1bf14a98a",
+      "current_sha256": "6222f5ce35c69887b2042ea3455e7317f8aec7577666d0e661929a3e8e40ceb6",
+      "reason": "S-20 version-only runtime freeze and release documentation; historical live-version tests permit forward advancement without rewriting historical records."
+    },
+    "README.md": {
+      "historical_sha256": "84d980b7e60f1d5bc02f984b52a251550b6763ae54cdfb4f431fb5927eab8d20",
+      "current_sha256": "49597ab3ea9b02b9f45ce52edf7eebbd28dc17a26ea2fd1543879576b9258dc9",
+      "reason": "S-20 version-only runtime freeze and release documentation; historical live-version tests permit forward advancement without rewriting historical records."
+    },
+    "CHANGELOG.md": {
+      "historical_sha256": "5646f39ce2a6cf9a4f29a8b756cc368f64329729837bddf313adfd02c51e63ed",
+      "current_sha256": "f840675d53df22380a1804464a9c301b34d682fa2b85464ae7a80cd2c3101130",
+      "reason": "S-20 version-only runtime freeze and release documentation; historical live-version tests permit forward advancement without rewriting historical records."
+    },
+    "tests/test_release_v0_2_0_final.py": {
+      "historical_sha256": "1b984d98a87b4f2f12d093f1abc9831885563fabe67166db8cc468b657b15c90",
+      "current_sha256": "08858c2110114c0267adec838e9204747a7f3f925b7366f9079ac3cfebe450e2",
+      "reason": "S-20 version-only runtime freeze and release documentation; historical live-version tests permit forward advancement without rewriting historical records."
+    },
+    "tests/test_release_v0_2_1.py": {
+      "historical_sha256": "a6b0793dce86be216d5db059577457f61c108037f83e5093397262a2ac90a436",
+      "current_sha256": "49385314cc805198036ad00151e95cbc4ec724a5ce9ad2a31f97a3ca2e2e273b",
+      "reason": "S-20 version-only runtime freeze and release documentation; historical live-version tests permit forward advancement without rewriting historical records."
+    },
+    "tests/test_release_v0_2_2.py": {
+      "historical_sha256": "3500a521ba6784ee7cc85c3be1988dc364d591304b51765a0b35c0e3e6413cc5",
+      "current_sha256": "bd26c54d9e8e1d9547b47fe4fa6a777eb2b48f5d099888ee87a4848edc128c26",
+      "reason": "S-20 version-only runtime freeze and release documentation; historical live-version tests permit forward advancement without rewriting historical records."
+    },
+    "tests/test_release_v0_2_rc6.py": {
+      "historical_sha256": "55782004c8fc79f231a269743d61fd70b08da698476a663e3b538a5556bd3c13",
+      "current_sha256": "96f8282650468ef0ffbfd9facc93bc8504825b3294b1894704ee16aeb401b73b",
+      "reason": "S-20 version-only runtime freeze and release documentation; historical live-version tests permit forward advancement without rewriting historical records."
+    },
+    "tests/test_release_v0_3_0.py": {
+      "historical_sha256": "f0cb9d043fb22be7beb97c93cbd1473b0a3109e9b13584d187fc1c4d6aa76351",
+      "current_sha256": "6b3fe8d6447d62e73d8059a5af9f5c1e37fe722a6b614edc9763d3c62d871bff",
+      "reason": "S-20 version-only runtime freeze and release documentation; historical live-version tests permit forward advancement without rewriting historical records."
+    },
+    "tests/test_release_v0_3_0rc1.py": {
+      "historical_sha256": "7273f2a8852bc488d1a212a782f74b271468d50291335416708c0a7e98c18d54",
+      "current_sha256": "24fd1860b008ca75e85817c383824419fa59e56670a0794a63c888d3778a67ad",
+      "reason": "S-20 version-only runtime freeze and release documentation; historical live-version tests permit forward advancement without rewriting historical records."
+    },
+    "tests/test_v0_4_0_roadmap.py": {
+      "historical_sha256": "502b382b777bcef18c0a98e947d2aba8c6d1a7864f1e23eb3d56da1c84200787",
+      "current_sha256": "0c4d5392c59c76dfdd6dcc1cf8199000df9b8de500ee189ac5cf8f040c17906c",
+      "reason": "S-20 version-only runtime freeze and release documentation; historical live-version tests permit forward advancement without rewriting historical records."
+    }
+  },
+  "introduced_sources": {
+    "notes/pssolver_v0_4_0_release_notes.txt": "44d8053d90f21414df3c2f1b630b71057d08694d69b8fc9bebe0857e4a3c98fa",
+    "tests/test_release_v0_4_0.py": "a5f12f90b4150bc3d38ffcf246d7f6e395cfb3696d67e9a9381ba55a4652752d",
+    "notes/pssolver_v0_4_0.json": "b0e095dafd3c5a0abfc0aa43720e5d4b7439f2342030c38fbfc42da33ffe41dd",
+    "notes/PSSolver_v0_3_0_s03_successor_132_v040_freeze_zh.md": "d69d5224d30fd3a8c41f2caf2a60286ff42200e01346a33c7e39c207c7afd492"
+  }
+}

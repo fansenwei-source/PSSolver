@@ -1,6 +1,31 @@
 # Changelog
 
-## 0.4.0.dev0 — Unreleased
+## 0.4.0 — 2026-11-04
+
+This release freezes the independently reviewed 0.4 development line. The
+release freeze changes only the package version in the qualified runtime;
+solver equations, checkpoint schemas, public Functional API 1.1, production
+defaults, and qualification thresholds are unchanged by the freeze.
+
+### Reviewed internal changes since 0.3.0
+
+- Share canonical JSON and exact-key validation mechanics, tighten executable
+  import boundaries, and separate repository evidence checks from mandatory
+  local archive verification. Frozen qualification history remains intact.
+- Consolidate pure checkpoint artifact mechanics, timestep/refresh primitives,
+  and the four Channel PCG control loops without changing their qualified
+  numerical outputs, error behavior, or checkpoint publication transactions.
+- Use one private runtime-dispatch registry after shadow comparison with the
+  previous dispatchers. This does not merge the per-combination application,
+  configuration, planning, and runtime stacks or add executable combinations.
+- Retain byte-identical numerical comparisons against 0.3.0 and the existing
+  read-only released-checkpoint/restart compatibility contracts. The final
+  S-19 H100 campaign passed its numerical, timing, and memory gates without
+  extending the bounded 0.3.0 memory exception to 0.4.0.
+
+The S-20 closeout triage also completes historical explanations and evidence
+corrections. Those record-only items are not runtime bug fixes; remaining
+architectural work is explicitly deferred rather than claimed complete.
 
 ### Functional facade and boundary-pilot ownership
 
@@ -21,6 +46,22 @@
   names, semantics, or version, or to the active-nematics `beris_edwards.py`
   or `q_tensor.py` blobs, requires an isolated PSSolver-Control main migration
   and CPU qualification before the Provider change can be pushed or released.
+
+### Known limits and deferred scope
+
+- The CPU-only deprecated `unrolled_channel_pressure_solve_oracle` test
+  reference can produce nonfinite backward gradients after fixed float32
+  iterations cross the roundoff floor (V-63). Its forward result is protected;
+  production, transpose, and implicit paths remain finite. This is an accepted
+  limitation, not a code fix or a general nonfinite tolerance. The two named
+  historical oracle-gradient cases still require identical raw tensor bytes.
+- Compatibility facades and the isolated Robin/finite-Q/lifting pilots remain
+  shipped; their future removal needs a separate compatibility decision.
+  The lifting wall-physics/dtype boundary remains closed (B8/S2-07).
+- Caller-provided checkpoint generation labels remain the caller's
+  responsibility (A2-11). Per-family checkpoint readers, schemas, migration
+  and publication transactions, legacy integrator bookkeeping, frozen
+  benchmark exceptions, and named legacy dependency edges remain separate.
 
 ## 0.3.0 — 2026-10-28
 
