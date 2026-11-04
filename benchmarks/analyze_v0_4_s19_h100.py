@@ -93,6 +93,15 @@ def validate_auxiliary(value, plan):
     if numerical.get("trajectory_cases") != 40 or numerical.get("trajectory_steps") != 20:
         raise HardQualificationError("trajectory coverage")
     consumer = indexed["independent_control_consumer"]
+    from benchmarks._s19_consumer_attestation import LOGIN_TESTS, coverage_union
+    coverage = consumer.get('coverage', {})
+    outcomes = consumer.get('outcomes', {})
+    actual_coverage = coverage_union({'collected': coverage.get('collected', []),
+                                     'passed': list(LOGIN_TESTS)}, outcomes)
+    if (coverage != actual_coverage or consumer.get('node_passed_count') != 301
+            or not isinstance(consumer.get('login_preflight_sha256'), str)
+            or len(consumer['login_preflight_sha256']) != 64):
+        raise HardQualificationError('Control login/node evidence binding')
     if (consumer.get("consumer_source_commit") != CONSUMER_RUNTIME_COMMIT
             or consumer.get("consumer_wheel_sha256") != CONSUMER_WHEEL_SHA256
             or consumer.get("passed_count") != plan["consumer_h100_gate"]["expected_passed"]

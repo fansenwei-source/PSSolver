@@ -41,6 +41,17 @@ def _auxiliary():
     result["stages"][6].update(consumer_source_commit=current.CONSUMER_RUNTIME_COMMIT,
                                consumer_wheel_sha256=current.CONSUMER_WHEEL_SHA256,
                                passed_count=303, skip_node_ids=[plan["consumer_h100_gate"]["allowed_skip"]])
+    from benchmarks._s19_consumer_attestation import LOGIN_TESTS, coverage_union
+    skip = plan['consumer_h100_gate']['allowed_skip']
+    passed = [f'tests/test_synthetic.py::test_{i:03d}' for i in range(301)]
+    collected = sorted([*LOGIN_TESTS, *passed, skip])
+    outcomes = dict(collected=collected, selected=sorted([*passed, skip]),
+                    deselected=list(LOGIN_TESTS), passed=passed,
+                    skipped=[{'nodeid': skip}], returncode=0,
+                    failed=[], xfailed=[], xpassed=[], collection_errors=[])
+    result['stages'][6].update(outcomes=outcomes, node_passed_count=301,
+        login_preflight_sha256='a' * 64,
+        coverage=coverage_union({'collected': collected, 'passed': list(LOGIN_TESTS)}, outcomes))
     return result
 
 

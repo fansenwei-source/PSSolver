@@ -17,9 +17,9 @@ CONSUMER_RUNTIME_COMMIT = "140bd273693c341545ceb023bfd2de2e36458e07"
 BASELINE_WHEEL_SHA256 = "8e2bd0c7941220f6c7c9b4cba80d9802e1495db626ad1b330a2e1681645187d5"
 CANDIDATE_WHEEL_SHA256 = "33521a8309a7da1e8a3157d54e020264f123c25b3f6f4b149bb150e779b0f82e"
 CONSUMER_WHEEL_SHA256 = "c40fc48dcd3c14eaf784abdb564ac2df89c15de3b0c49ab62301267887102a14"
-CONTROL_ROOT = "/scratch1/vincent/PSSolver/pssolver_v0_4_s19_h100_c7c940e_20261102_v1_control"
-OUTPUT_ROOT = "/scratch1/vincent/PSSolver/pssolver_v0_4_s19_h100_c7c940e_20261102_v1_output"
-VENV_ROOT = "/scratch1/vincent/PSSolver/pssolver_v0_4_s19_h100_c7c940e_20261102_v1_venvs"
+CONTROL_ROOT = "/scratch1/vincent/PSSolver/pssolver_v0_4_s19_retry_c7c940e_20261103_v2_control"
+OUTPUT_ROOT = "/scratch1/vincent/PSSolver/pssolver_v0_4_s19_retry_c7c940e_20261103_v2_output"
+VENV_ROOT = "/scratch1/vincent/PSSolver/pssolver_v0_4_s19_retry_c7c940e_20261103_v2_venvs"
 BASE_INTERPRETER = "/home/fansenwei/miniconda3/envs/Nematics3D/bin/python"
 ROLES = ("baseline_a", "baseline_b", "candidate")
 REFRESH_INTERVALS = ("default", None, 1, 2, 7)
@@ -40,6 +40,11 @@ def build_plan() -> dict[str, object]:
     # main 140bd27 has 304 tests. Five CUDA-only cases are in addition to the
     # 298 CPU passes; the intentionally opt-in research benchmark stays skipped.
     consumer.update(expected_passed=303, cpu_expected_passed=298, expected_skipped=1)
+    from benchmarks._s19_consumer_attestation import LOGIN_TESTS
+    consumer.update(login_tests=list(LOGIN_TESTS), node_expected_passed=301,
+                    cpu_node_expected_passed=296, full_collection_count=304,
+                    coverage='exact disjoint union of login and node test IDs',
+                    reference_attestation='full tree including .git, bound to login report SHA-256')
     return {
         "schema": "pssolver.v0_4.s19.single_h100_plan.v1",
         "classification": "S19_PREPARATION_DRAFT_NOT_SUBMISSION_AUTHORITY",

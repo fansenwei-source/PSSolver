@@ -1,0 +1,338 @@
+{
+  "schema": "pssolver.v0_4.s19.node_commands.v1",
+  "required_commands": [
+    {
+      "command": "bash",
+      "historical_job": 10912583,
+      "node": "gpu-h100-4-0",
+      "evidence": [
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/control/logs/slurm_10912583.err",
+          "sha256": "8ce956aa15d4bcf4f1c0359d230437de8e5a33067bb5c11ba709d4ed4c4cd3e9",
+          "lines": [
+            1,
+            2
+          ]
+        },
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/scratch/environment/compiler_preflight.json",
+          "sha256": "b4b976eaa0595e5c65971bdc013066cdf456a8fe488dc677c5ddc9a402ab507a",
+          "lines": [
+            1,
+            30
+          ]
+        }
+      ],
+      "interpretation": "Actual interpreter warning and successful compiler stage on the named node.",
+      "entry_gate": "command -v bash",
+      "current_sites": [
+        "job shebang"
+      ]
+    },
+    {
+      "command": "/usr/bin/env",
+      "historical_job": 10912583,
+      "node": "gpu-h100-4-0",
+      "evidence": [
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/control/provider_support/jobs/v0_3_s09_ap_cache_diagnostic_h100.sbatch",
+          "sha256": "2483755f7a783e8c97eb6da533e0817d8ee63e5a299c0bdecb771426e675a964",
+          "lines": [
+            61,
+            105
+          ]
+        },
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/scratch/environment/compiler_preflight.json",
+          "sha256": "b4b976eaa0595e5c65971bdc013066cdf456a8fe488dc677c5ddc9a402ab507a",
+          "lines": [
+            1,
+            30
+          ]
+        }
+      ],
+      "interpretation": "Successful execution of the archived job whose shebang is /usr/bin/env bash (control-flow evidence).",
+      "entry_gate": "command -v env",
+      "current_sites": [
+        "job shebang"
+      ]
+    },
+    {
+      "command": "/bin/sh",
+      "historical_job": 10912583,
+      "node": "gpu-h100-4-0",
+      "evidence": [
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/control/logs/slurm_10912583.err",
+          "sha256": "8ce956aa15d4bcf4f1c0359d230437de8e5a33067bb5c11ba709d4ed4c4cd3e9",
+          "lines": [
+            1,
+            2
+          ]
+        },
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/scratch/environment/compiler_preflight.json",
+          "sha256": "b4b976eaa0595e5c65971bdc013066cdf456a8fe488dc677c5ddc9a402ab507a",
+          "lines": [
+            1,
+            30
+          ]
+        }
+      ],
+      "interpretation": "Actual /bin/sh warning; Triton shell=True assembler launches use this interpreter.",
+      "entry_gate": "command -v sh",
+      "current_sites": [
+        "triton/backends/nvidia/compiler.py:292"
+      ]
+    },
+    {
+      "command": "Lmod module (shell function)",
+      "historical_job": 10912583,
+      "node": "gpu-h100-4-0",
+      "evidence": [
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/control/provider_support/jobs/v0_3_s09_ap_cache_diagnostic_h100.sbatch",
+          "sha256": "2483755f7a783e8c97eb6da533e0817d8ee63e5a299c0bdecb771426e675a964",
+          "lines": [
+            61,
+            105
+          ]
+        },
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/scratch/environment/module-list.txt",
+          "sha256": "ff41ce576fcf72cb3bb100295b866757a1674b158c2f9a9b58d37aa7ca917304",
+          "lines": [
+            1,
+            30
+          ]
+        }
+      ],
+      "interpretation": "Successful module list output after module load cuda/12.1.",
+      "entry_gate": "command -v module after sourced Lmod",
+      "current_sites": [
+        "job module load/list"
+      ]
+    },
+    {
+      "command": "nvcc",
+      "historical_job": 10912583,
+      "node": "gpu-h100-4-0",
+      "evidence": [
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/scratch/environment/nvcc-version.txt",
+          "sha256": "c230b75200cd8ebc1b52cbaaa31613fdf03d1f0ae37ff3430910e3720cc26866",
+          "lines": [
+            1,
+            10
+          ]
+        },
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/scratch/environment/compiler_preflight.json",
+          "sha256": "b4b976eaa0595e5c65971bdc013066cdf456a8fe488dc677c5ddc9a402ab507a",
+          "lines": [
+            1,
+            30
+          ]
+        }
+      ],
+      "interpretation": "Actual nvcc --version output; tool also supplies the CUDA header location.",
+      "entry_gate": "command -v nvcc",
+      "current_sites": [
+        "job nvcc --version",
+        "run_v0_3_s09_environment.py:_host_compiler_and_compile_smokes"
+      ]
+    },
+    {
+      "command": "gcc",
+      "historical_job": 10912583,
+      "node": "gpu-h100-4-0",
+      "evidence": [
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/scratch/environment/cc-version.txt",
+          "sha256": "a77709ed054eda6519dc3167cfa863b68baeab9cd804170e0a2f45597b24d436",
+          "lines": [
+            1,
+            8
+          ]
+        },
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/scratch/environment/compiler_preflight.json",
+          "sha256": "b4b976eaa0595e5c65971bdc013066cdf456a8fe488dc677c5ddc9a402ab507a",
+          "lines": [
+            1,
+            30
+          ]
+        }
+      ],
+      "interpretation": "Actual GCC 7.3 version and successful C/shared CUDA-driver compilation.",
+      "entry_gate": "command -v \"$CC\"",
+      "current_sites": [
+        "job",
+        "run_v0_3_s09_environment.py:164,177,197",
+        "triton/runtime/build.py:48"
+      ]
+    },
+    {
+      "command": "g++ and GCC internal as/ld/cc1/cc1plus/collect2",
+      "historical_job": 10911538,
+      "node": "gpu-h100-4-0",
+      "evidence": [
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_recovery_v2_evidence_20261026_v1/scratch/results/environment.json",
+          "sha256": "b1683570ec1f630afa0edcc71a710685540382c2529f61ea8b34954f07dcbb9f",
+          "lines": [
+            1,
+            22
+          ]
+        },
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_recovery_v2_evidence_20261026_v1/scratch/profile_matrix/profiles/candidate_channel_compiled_v2_channel_R128x20x20_trial1.json",
+          "sha256": "d5b8551ea5e062e4ded1fa067275737dc816e871c969054ef5450588773b7da3",
+          "lines": [
+            1,
+            85
+          ]
+        }
+      ],
+      "interpretation": "Successful empty-cache compiled_v2 profiles under the fixed GCC/G++ distribution. Internal-tool execution is inferred from successful compiled artifacts, not claimed as a captured exec trace; these are compiler components, not additional harness commands.",
+      "entry_gate": "command -v \"$CXX\"; query both drivers with -print-prog-name and command -v returned path",
+      "current_sites": [
+        "torch/_inductor/cpp_builder.py",
+        "compiler internal subprocesses"
+      ]
+    },
+    {
+      "command": "Python and python -m pip",
+      "historical_job": 10911538,
+      "node": "gpu-h100-4-0",
+      "evidence": [
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_recovery_v2_evidence_20261026_v1/scratch/results/tmp_preflight.json",
+          "sha256": "64ad0429ab203f21832119c0ad45b7fb50da451dc63db34c1ce61707c298ae29",
+          "lines": [
+            1,
+            100
+          ]
+        },
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_recovery_v2_evidence_20261026_v1/scratch/results/environment.json",
+          "sha256": "b1683570ec1f630afa0edcc71a710685540382c2529f61ea8b34954f07dcbb9f",
+          "lines": [
+            23,
+            154
+          ]
+        }
+      ],
+      "interpretation": "Three installed-role inspections and pip_check true in the node environment report. pip is invoked as a module of each verified interpreter, never a PATH pip executable.",
+      "entry_gate": "command -v for all three frozen Python paths; isolated pip check in ready()",
+      "current_sites": [
+        "validate_v0_4_s19_deployment.py:ready",
+        "run_v0_4_s19_environment.py",
+        "all stage/pytest/self-compare children"
+      ]
+    },
+    {
+      "command": "nvidia-smi",
+      "historical_job": 10911538,
+      "node": "gpu-h100-4-0",
+      "evidence": [
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_recovery_v2_evidence_20261026_v1/scratch/profile_matrix/profiles/candidate_channel_compiled_v2_channel_R128x20x20_trial1.json",
+          "sha256": "d5b8551ea5e062e4ded1fa067275737dc816e871c969054ef5450588773b7da3",
+          "lines": [
+            92,
+            135
+          ]
+        }
+      ],
+      "interpretation": "Actual command and successful numeric GPU telemetry rows.",
+      "entry_gate": "command -v nvidia-smi",
+      "current_sites": [
+        "profile_rc458_runtime_family.py:_nvidia_smi_telemetry"
+      ]
+    },
+    {
+      "command": "Triton packaged ptxas",
+      "historical_job": 10912583,
+      "node": "gpu-h100-4-0",
+      "evidence": [
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/scratch/environment/compiler_preflight.json",
+          "sha256": "b4b976eaa0595e5c65971bdc013066cdf456a8fe488dc677c5ddc9a402ab507a",
+          "lines": [
+            1,
+            30
+          ]
+        },
+        {
+          "path": "/home/fansenwei/pssolver_v0_4_s19_closeout_resume_d0026_20261103_v1/source_copies/dependencies/triton/backends/nvidia/compiler.py",
+          "sha256": "a979896b9c0acfd41dd953b90bdc4b10968f7c0b45a286eae3f829aaddb2bb55",
+          "lines": [
+            276,
+            302
+          ]
+        }
+      ],
+      "interpretation": "Successful empty-cache Triton compilation necessarily passes check=True ptxas; precise compiler call chain and retained cubin establish this. Not an independent captured exec trace.",
+      "entry_gate": "command -v each verified venv triton/backends/nvidia/bin/ptxas",
+      "current_sites": [
+        "triton/backends/nvidia/compiler.py:25,35,292"
+      ]
+    },
+    {
+      "command": "/sbin/ldconfig",
+      "historical_job": 10912583,
+      "node": "gpu-h100-4-0",
+      "evidence": [
+        {
+          "path": "/home/fansenwei/pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261027_evidence_v1/scratch/environment/compiler_preflight.json",
+          "sha256": "b4b976eaa0595e5c65971bdc013066cdf456a8fe488dc677c5ddc9a402ab507a",
+          "lines": [
+            1,
+            30
+          ]
+        },
+        {
+          "path": "/home/fansenwei/pssolver_v0_4_s19_closeout_resume_d0026_20261103_v1/source_copies/dependencies/triton/backends/nvidia/driver.py",
+          "sha256": "da771298f7bc45d24a61f35ef51742304421df1ab49d50bf1fc510dd5a46ea4b",
+          "lines": [
+            18,
+            35
+          ]
+        }
+      ],
+      "interpretation": "Successful fresh cuda_utils build uses libcuda_dirs check_output under the inherited no-override driver environment; the call-chain proof is recorded separately from direct stdout evidence.",
+      "entry_gate": "command -v /sbin/ldconfig",
+      "current_sites": [
+        "triton/backends/nvidia/driver.py:24"
+      ]
+    }
+  ],
+  "excluded": [
+    {
+      "command": "mkdir/rm",
+      "reason": "Replaced node directory creation/EXIT cleanup by verified interpreter os.mkdir/shutil.rmtree; no standalone command needed"
+    },
+    {
+      "command": "git hard dependency",
+      "reason": "Login-only identity and exact two history tests; no job-mode hard call"
+    },
+    {
+      "command": "git soft provenance",
+      "reason": "Frozen applicability helper tolerates unavailable Git and emits null fields; explicitly allowed by D-0027, recorded failing stub exercise"
+    },
+    {
+      "command": "tar/sha256sum/cp/mv/clone/remote-remove",
+      "reason": "Deployment/login and submission wrapper only; not node harness"
+    },
+    {
+      "command": "ninja/ldd/clang/cl.exe/nvdisasm",
+      "reason": "Conservative dependency inventory includes unselected alternate/debug/build branches; the frozen selected Linux/GCC/Triton path does not invoke them. No new use introduced"
+    },
+    {
+      "command": "sbatch/squeue/sacct/ssh/scp",
+      "reason": "Login/orchestration only; not invoked by node qualification harness"
+    }
+  ],
+  "boundary": "Direct harness subprocesses plus selected compiler subprocess chain; shell builtins are not external commands. Historical indirect evidence is explicitly labelled; no claim that every exec had an independent trace."
+}

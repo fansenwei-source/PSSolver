@@ -54,7 +54,7 @@ def common(args):
     return identity
 
 
-def run_pytest(root, tests, junit, basetemp, *, import_mode='importlib'):
+def run_pytest(root, tests, junit, basetemp, *, import_mode='importlib', partition=None):
     import pytest
     from benchmarks.run_rc426_cuda_tests import Results
     collector = Results()
@@ -63,11 +63,14 @@ def run_pytest(root, tests, junit, basetemp, *, import_mode='importlib'):
         os.chdir(root)
         code = int(pytest.main(["-q", "-c", "/dev/null", "--rootdir", str(root),
                                "-p", "no:cacheprovider", f"--import-mode={import_mode}",
-                               f"--junitxml={junit}", f"--basetemp={basetemp}", *tests], plugins=[collector]))
+                               f"--junitxml={junit}", f"--basetemp={basetemp}", *tests],
+                              plugins=[collector] + ([partition] if partition is not None else [])))
     finally:
         os.chdir(previous)
     report = collector.metadata()
     report.update(returncode=code, junit_sha256=file_sha256(junit), junit_written=True)
+    if partition is not None:
+        report.update(partition.report)
     for key in ("failed", "xfailed", "xpassed", "collection_errors"):
         if report[key]:
             raise HardQualificationError(f"pytest {key}: {report[key]}")
@@ -141,10 +144,9 @@ def checkpoints(args):
             "pytest_outcomes": report, "cpu_cross_device_excluded": args.device == "cpu"}
 
 
-def consumer(args):
+def consumer_tests(args, phase):
     import pssolver_control
-    from benchmarks.run_v0_3_s09_consumer_h100 import _pinned_identities, _finite_smokes
-    from benchmarks.run_v0_3_s09_installed_consumer_cpu import ALLOWED_SKIPS
+    from benchmarks._s19_consumer_attestation import ConsumerPartition
     purelib = Path(sysconfig.get_path("purelib")).resolve()
     if (not Path(pssolver_control.__file__).resolve().is_relative_to(purelib)
             or importlib.metadata.version("pssolver-control") != build_plan()["consumer"]["version"]
@@ -156,12 +158,31 @@ def consumer(args):
     # packages are already loaded from their own venv and verified again below.
     sys.path.insert(0, str(args.consumer_support / "tests"))
     report = run_pytest(args.consumer_support, [str(args.consumer_support / "tests")],
-                        args.output.with_suffix(".junit.xml"), args.work / "pytest", import_mode='prepend')
+                        args.output.with_suffix(".junit.xml"), args.work / "pytest", import_mode='prepend',
+                        partition=ConsumerPartition(phase))
+    return report
+
+
+def consumer_login(args):
+    from benchmarks._s19_consumer_attestation import LOGIN_TESTS
+    report = consumer_tests(args, 'login')
+    if report['passed'] != list(LOGIN_TESTS) or report['skipped']:
+        raise HardQualificationError('login history tests must both pass')
+    return {'name': 'consumer_login_history_tests', 'outcomes': report}
+
+
+def consumer(args):
+    from benchmarks._s19_consumer_attestation import check_login_report, coverage_union
+    from benchmarks.run_v0_3_s09_consumer_h100 import _pinned_identities, _finite_smokes
+    from benchmarks.run_v0_3_s09_installed_consumer_cpu import ALLOWED_SKIPS
+    login = check_login_report(args.login_preflight, args.login_preflight_sha256, args.consumer_support)
+    report = consumer_tests(args, 'node')
+    coverage = coverage_union(login['consumer_login_tests'], report)
     contract = build_plan()["consumer_h100_gate"]
     expected = contract["expected_passed"] if args.device == "cuda" else contract["cpu_expected_passed"]
     skips = sorted(row["nodeid"] for row in report["skipped"])
     allowed = [contract["allowed_skip"]] if args.device == "cuda" else sorted(ALLOWED_SKIPS)
-    if len(report["passed"]) != expected or skips != allowed:
+    if len(report["passed"]) + len(coverage['login_passed']) != expected or skips != allowed:
         raise HardQualificationError("Consumer exact test coverage differs")
     identities = _pinned_identities(args.consumer_support, args.work / "identities")
     finite, execution_identities = _finite_smokes(args.consumer_support, args.work / "execution", device=args.device)
@@ -169,6 +190,8 @@ def consumer(args):
                     for name in ("periodic", "channel_fixed", "channel_tolerance")}
     if identities != expected_ids or finite != {name: True for name in expected_ids}:
         raise HardQualificationError("Consumer fixed identity/finite/gradient smoke")
+    check_login_report(args.login_preflight, args.login_preflight_sha256, args.consumer_support)
+    purelib = Path(sysconfig.get_path("purelib")).resolve()
     origins = {}
     for name, module in tuple(sys.modules.items()):
         if name == "pssolver" or name.startswith("pssolver.") or name == "pssolver_control" or name.startswith("pssolver_control."):
@@ -179,7 +202,10 @@ def consumer(args):
                     raise HardQualificationError(f"Consumer source-shadow module: {name}")
                 origins[name] = str(path)
     return {"name": "independent_control_consumer", "consumer_source_commit": CONSUMER_RUNTIME_COMMIT,
-            "consumer_wheel_sha256": CONSUMER_WHEEL_SHA256, "passed_count": len(report["passed"]),
+            "consumer_wheel_sha256": CONSUMER_WHEEL_SHA256,
+            "passed_count": len(report["passed"]) + len(coverage['login_passed']),
+            "node_passed_count": len(report['passed']), "coverage": coverage,
+            "login_preflight_sha256": args.login_preflight_sha256,
             "skip_node_ids": skips, "outcomes": report, "identities": identities,
             "execution_identities": execution_identities, "finite_smokes": finite,
             "module_origins": origins, "installed_wheels_only": True, "functional_api_1_1": True,
@@ -189,12 +215,14 @@ def consumer(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("stage", choices=("cuda_tests", "long_horizon", "tf32", "checkpoints", "consumer"))
+    parser.add_argument("stage", choices=("cuda_tests", "long_horizon", "tf32", "checkpoints", "consumer", "consumer_login"))
     parser.add_argument("--device", choices=("cpu", "cuda"), required=True)
     for name in ("support", "provider-wheel", "output", "work"):
         parser.add_argument("--" + name, type=Path, required=True)
     for name in ("consumer-support", "provider-reference", "consumer-wheel"):
         parser.add_argument("--" + name, type=Path)
+    parser.add_argument('--login-preflight', type=Path)
+    parser.add_argument('--login-preflight-sha256')
     args = parser.parse_args()
     args.work.mkdir(parents=True, exist_ok=False)
     identity = common(args)

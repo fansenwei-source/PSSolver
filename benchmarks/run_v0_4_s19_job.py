@@ -183,7 +183,8 @@ def run(args):
                 '--device', args.device, '--support', support, '--consumer-support', args.consumer_reference,
                 '--provider-reference', args.provider_reference, '--consumer-wheel', args.consumer_wheel,
                 '--provider-wheel', args.candidate_wheel, '--output', consumer_output,
-                '--work', output / 'work/consumer'], output, 'consumer')
+                '--work', output / 'work/consumer', '--login-preflight', args.login_preflight,
+                '--login-preflight-sha256', args.login_preflight_sha256], output, 'consumer')
         stages.append(json.loads(consumer_output.read_text()))
         auxiliary = dict(stages=stages, formal_h100_submission_count=1 if args.device == 'cuda' else 0,
                          automatic_retry=False, second_job_submitted=False)
@@ -214,6 +215,8 @@ def run(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--login-preflight', type=Path, required=True)
+    parser.add_argument('--login-preflight-sha256', required=True)
     parser.add_argument('--device', required=True, choices=('cpu', 'cuda'))
     for name in ('baseline-python', 'candidate-python', 'consumer-python', 'baseline-wheel', 'candidate-wheel',
                  'consumer-wheel', 'support', 'provider-reference', 'consumer-reference', 'mirror-versions', 'output'):
