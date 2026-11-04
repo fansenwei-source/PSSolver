@@ -6,6 +6,8 @@ import copy
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
@@ -25,6 +27,42 @@ def _load_analyzer():
     return module
 
 
+def _analyze_source(installed_probe):
+    """Keep the frozen source-side audit in a genuine source interpreter.
+
+    The parent suite may intentionally import the installed wheel.  The
+    analyzer requires the other side of this comparison to be the checkout;
+    do not weaken that guard or relabel an installed import as a source one.
+    """
+    script = """
+import json
+from pathlib import Path
+import sys
+root = Path(sys.argv[1]).resolve()
+sys.path.insert(0, str(root))
+from benchmarks.analyze_phase8_cumulative_closure import analyze
+probe = json.load(sys.stdin)
+try:
+    result = analyze(root, installed_wheel_probe=probe)
+except RuntimeError as exc:
+    print(json.dumps({'ok': False, 'error': str(exc)}))
+else:
+    print(json.dumps({'ok': True, 'report': result}, allow_nan=False))
+"""
+    completed = subprocess.run(
+        [sys.executable, "-I", "-B", "-c", script, str(ROOT)],
+        input=json.dumps(installed_probe, allow_nan=False),
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    payload = json.loads(completed.stdout)
+    if not payload["ok"]:
+        raise RuntimeError(payload["error"])
+    return payload["report"]
+
+
 @pytest.fixture(scope="module")
 def analyzer():
     return _load_analyzer()
@@ -37,7 +75,7 @@ def installed_probe(analyzer):
 
 @pytest.fixture(scope="module")
 def report(analyzer, installed_probe):
-    return analyzer.analyze(ROOT, installed_wheel_probe=installed_probe)
+    return _analyze_source(installed_probe)
 
 
 def test_p861_fail_closed_analyzer_binds_all_authoritative_prerequisites(report):
@@ -121,7 +159,7 @@ def test_p861_analyzer_rejects_installed_catalog_drift(analyzer, installed_probe
     changed = copy.deepcopy(installed_probe)
     changed["catalog"]["models"][0]["key"] = "silently_changed"
     with pytest.raises(RuntimeError, match="public model catalog changed"):
-        analyzer.analyze(ROOT, installed_wheel_probe=changed)
+        _analyze_source(changed)
 
 
 def test_p861_report_is_strict_json(report):

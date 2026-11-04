@@ -1,0 +1,70 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 133,
+  "date": "2026-11-04",
+  "plan_step": "S-20",
+  "classification": "V0_4_0_HISTORICAL_VERSION_ASSERTION_FORWARD_CORRECTION",
+  "git_identity": {
+    "implementation_parent": "953f9822731440213c9d0ae4da81b986e10c4b81",
+    "record_commit_is_qualified_source": false
+  },
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "tests/test_release_v0_1.py": {
+      "historical_sha256": "0ea7e0869a2b9a15baa308f78a2d11d4b37ddf2e568ac2e2bea42412b24edcb8",
+      "current_sha256": "f576f6642f4703ac5f868103a207e40cad521ab8fa2dd4bed35ca1d5c314ae56",
+      "reason": "Historical records retain their original version assertions; do not pin a future live package or README to a historical/development version."
+    },
+    "tests/test_v0_3_n1_v17_checkpoint_integration.py": {
+      "historical_sha256": "392411317cc70bf8cb2ee2b257eb7f46a61bd89b218997ff4352584d7d04b5ab",
+      "current_sha256": "10f0e8fb35aec4553f682b7b7b5dd573559377d7055d17eba52820ccf60e2705",
+      "reason": "Historical records retain their original version assertions; do not pin a future live package or README to a historical/development version."
+    },
+    "tests/test_v0_3_n1_v17_r0005_import.py": {
+      "historical_sha256": "1c8f1a6e47d1f0a3f6518f3c7622e2d7dcacfae5311efdd046c7711abfe236ca",
+      "current_sha256": "34f9486a68585332d1880377c7db29cbc02a1ec13a266d53a81f3fe4b9cfc2ed",
+      "reason": "Historical records retain their original version assertions; do not pin a future live package or README to a historical/development version."
+    },
+    "tests/test_phase8_p861_local_cumulative_audit.py": {
+      "historical_sha256": "2a01d48977366710c49b27dce84cfb4b7eb9d0910ae10f9bc9f93d9ae762c20e",
+      "current_sha256": "6e0da21902c215e9f03346df54aa037456bd3e508764230498245abd81b28404",
+      "reason": "The immutable P8.6.1 analyzer requires a genuine source-side import; run that half in an isolated source subprocess while retaining its separately installed-wheel probe and fail-closed catalog comparison."
+    }
+  },
+  "initial_attempt": {
+    "commit": "953f9822731440213c9d0ae4da81b986e10c4b81",
+    "archive": "/home/fansenwei/pssolver_v0_4_0_candidate_20261104_v1",
+    "suite": "conda_source",
+    "passed": 5447,
+    "failed": 3,
+    "failure_nodeids": [
+      "tests/test_release_v0_1.py::test_standard_build_metadata_and_release_documents_exist",
+      "tests/test_v0_3_n1_v17_checkpoint_integration.py::test_integration_keeps_the_v03_version_and_exact_runtime_scope",
+      "tests/test_v0_3_n1_v17_r0005_import.py::test_r0005_import_binds_the_qualified_runtime_without_changing_it"
+    ],
+    "runtime_failure_observed": false,
+    "logs_retained": true
+  },
+  "unchanged": [
+    "pssolver/",
+    "benchmarks/",
+    "jobs/",
+    "pyproject.toml",
+    "setup.py",
+    "setup.cfg",
+    "MANIFEST.in",
+    "CHANGELOG.md",
+    "README.md",
+    "notes/pssolver_v0_4_0.json",
+    "successor 132"
+  ],
+  "installed_attempt": {
+    "suite": "conda_installed",
+    "passed": 5440,
+    "failed": 4,
+    "errors": 6,
+    "source_audit_boundary": "The frozen analyzer correctly rejected an installed parent import; it is unchanged. The source side is now always run in a genuine source subprocess, with -I -B and explicit clone path. The drift negative test still raises."
+  },
+  "candidate_requires_new_full_suites": true,
+  "history_amended": false
+}
