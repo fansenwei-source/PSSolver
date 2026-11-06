@@ -27,6 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from benchmarks._artifact_io import atomic_write_json  # noqa: E402
 from qualification.identity.records import fingerprint  # noqa: E402
 from qualification.identity.runtime_case import RuntimeCase  # noqa: E402
+from qualification.identity.sampling import trace  # noqa: E402
 from qualification.identity.scenarios import scenarios  # noqa: E402
 
 
@@ -40,43 +41,6 @@ def assert_origins() -> dict[str, str]:
     if any(not Path(path).is_relative_to(PACKAGE_ROOT) for path in origins.values()):
         raise RuntimeError("Source shadow import detected")
     return origins
-
-
-def trace(scene: dict, root: Path) -> dict:
-    """Record one continuous run and independent checkpoint resumptions."""
-    case = RuntimeCase(scene, root)
-    identity = case.identity()
-    checkpoints = {}
-    rows = []
-    for step in range(scene["steps"] + 1):
-        row = {"before_observation": case.record()}
-        if scene["observe"]:
-            row["observations"] = case.observe()
-        if step in scene["restart_steps"]:
-            path = root / f"restart_{step}"
-            case.export(path)
-            checkpoints[step] = path
-        row["after_observation"] = case.record()
-        rows.append(row)
-        if step < scene["steps"]:
-            case.step()
-    del case
-    gc.collect()
-    resumptions = {}
-    for start, path in checkpoints.items():
-        restored = RuntimeCase(scene, root)
-        restored.restore(path, start)
-        continued = []
-        for step in range(start, scene["steps"] + 1):
-            if scene["observe"]:
-                restored.observe()
-            continued.append(restored.record())
-            if step < scene["steps"]:
-                restored.step()
-        resumptions[str(start)] = continued
-        del restored
-        gc.collect()
-    return {"identity": identity, "steps": rows, "restarts": resumptions}
 
 
 def main() -> None:
@@ -131,6 +95,10 @@ def main() -> None:
                 gc.collect()
                 if not args.discover:
                     result["trace"] = trace(scene, work)
+                    if scene["family"].startswith("functional_"):
+                        from qualification.identity.vjp import vjp_record
+
+                        result["vjp"] = vjp_record(scene, work)
             assert_origins()
             atomic_write_json(args.output / (scene["id"] + ".json"), result)
             print(scene["id"], result["disposition"], flush=True)

@@ -89,7 +89,14 @@ def test_structure_baseline_is_bound_to_the_unmodified_parent():
 
 def test_classification_is_total_unique_and_keeps_the_original_gpu_boundary():
     mapping, gpu = load_categories(ROOT)
-    assert set(mapping.values()) == {"functional", "numerical", "historical", "installed", "gpu"}
+    assert set(mapping.values()) == {
+        "functional",
+        "numerical",
+        "historical",
+        "installed",
+        "gpu",
+        "baseline_fingerprint",
+    }
     assert len(gpu) == 7
     assert all(node.split("::")[0] in mapping for node in gpu)
     for name in (
@@ -117,6 +124,7 @@ numerical = []
 historical = []
 installed = []
 gpu = []
+baseline_fingerprint = []
 [gpu_prerequisites]
 nodeids = []
 """

@@ -1,0 +1,544 @@
+{
+  "continuation_steps": 16,
+  "files": {
+    "channel_default_float64_default/backend__pressure_guess.npy": {
+      "sha256": "feda3cf88d09583d0db6edaf9d105f16ec0a4fe1179e22094b0b4c6bb8749bbe",
+      "size": 2432
+    },
+    "channel_default_float64_default/checkpoint.json": {
+      "sha256": "7e19c9279745b1a22da556ecdc5e84c8b3b8063b532ecd8ae9a9fc6d89a84e4e",
+      "size": 43752
+    },
+    "channel_default_float64_default/spatial__Qxx.npy": {
+      "sha256": "105a1fd37f26cf86c47ae30966068c53908717b39d08459499bc3cb0864e67ba",
+      "size": 1280
+    },
+    "channel_default_float64_default/spatial__Qxy.npy": {
+      "sha256": "00b0fd14c38a7f655d07010b066066ab9feae9830787c048a22eb2a763b1654a",
+      "size": 1280
+    },
+    "channel_default_float64_default/spatial__Qxz.npy": {
+      "sha256": "8e0e231612adf060c58916a96a9aca854e5a7a72be421f8a281cfa292ca0299a",
+      "size": 1280
+    },
+    "channel_default_float64_default/spatial__Qyy.npy": {
+      "sha256": "1d5b7c5f5fa0af1b3aa7317373f3b53e824cdb5673d049ded46c7920510013bb",
+      "size": 1280
+    },
+    "channel_default_float64_default/spatial__Qyz.npy": {
+      "sha256": "46ab64c55f61ba1781d558b536cbe7271c4a9a8a5dfe62256a50d3e29f15853e",
+      "size": 1280
+    },
+    "channel_default_float64_default/spatial__p.npy": {
+      "sha256": "4b3fbd23bc8698ce38c961f7fb7f6590cee978368bca6e382561b2326f8258a8",
+      "size": 1280
+    },
+    "channel_default_float64_default/spatial__ux.npy": {
+      "sha256": "7a5fa2ad8b06e698a6950af5907fa8d0abad63dd930e0b075b29c33e9885cb2e",
+      "size": 1280
+    },
+    "channel_default_float64_default/spatial__uy.npy": {
+      "sha256": "6e6863daa7e5fe1cb0dda484d199c74c5264bcf8283b0cf5553130db030c04e7",
+      "size": 1280
+    },
+    "channel_default_float64_default/spatial__uz.npy": {
+      "sha256": "fbd0ec08b6423dfce099ad9b64b4bac0bbe51102dd75eb13857bca69d3bb38a7",
+      "size": 1280
+    },
+    "channel_default_float64_default/spectral__Qxx.npy": {
+      "sha256": "993e4dd9ebe46bee25babb0d437c7bd86260b4d22adf3a8c67a8ca34da90072c",
+      "size": 2432
+    },
+    "channel_default_float64_default/spectral__Qxy.npy": {
+      "sha256": "5ecccd4fd19bc458f4d65fc7bca0ce2296657c5c01ff5643461f6c1ee24eb6d4",
+      "size": 2432
+    },
+    "channel_default_float64_default/spectral__Qxz.npy": {
+      "sha256": "096cbe5edf08c10ba5055ddcd09876bf30233137508e4f09290ef42258b4fb87",
+      "size": 2432
+    },
+    "channel_default_float64_default/spectral__Qyy.npy": {
+      "sha256": "a392c8a1d6bc54f8db567c71922d3059853ab0ad73729f3f8ed48bcb44b18121",
+      "size": 2432
+    },
+    "channel_default_float64_default/spectral__Qyz.npy": {
+      "sha256": "9816dbf5107dec452304088df8a53f657dc7a1514d4406287ce1360e3d6af20f",
+      "size": 2432
+    },
+    "channel_default_float64_default/spectral__p.npy": {
+      "sha256": "feda3cf88d09583d0db6edaf9d105f16ec0a4fe1179e22094b0b4c6bb8749bbe",
+      "size": 2432
+    },
+    "channel_default_float64_default/spectral__ux.npy": {
+      "sha256": "c798fc3ed99378ef0ca40e6ded5fb56e3881ba1123751e072f32d406c845e877",
+      "size": 2432
+    },
+    "channel_default_float64_default/spectral__uy.npy": {
+      "sha256": "41d1cba140eae25d254c4f6907516f892cb62611478c56f269ae8975266b9204",
+      "size": 2432
+    },
+    "channel_default_float64_default/spectral__uz.npy": {
+      "sha256": "b110b1e0083b9e60ced26ef12302308f3c7fd8bbbffa6b7dd00d0bc0fc84b675",
+      "size": 2432
+    },
+    "functional_channel_default_float64_default/checkpoint.json": {
+      "sha256": "bbfafd88625a3f03b299ecb0ff8695d29771299645eaa5a04812dd84439de5bd",
+      "size": 42004
+    },
+    "functional_channel_default_float64_default/functional_checkpoint.json": {
+      "sha256": "b7db8e3ed7baf5b11a4ddef431cc5b1d3794f7651d8dee83e19c7e739ff31886",
+      "size": 275
+    },
+    "functional_channel_default_float64_default/state__q_physical.npy": {
+      "sha256": "7354a0d5935afc945166d4d1f106f8e93fbf74e049452306264e10d6d6a8d5c5",
+      "size": 5888
+    },
+    "functional_channel_default_float64_default/state__q_spectral.npy": {
+      "sha256": "6b1c35bb20bac1198d37115d2899071b9c20a437971467a638e9f9d00ffc07f0",
+      "size": 11648
+    },
+    "functional_periodic_default_float64_default/checkpoint.json": {
+      "sha256": "566067760935776f3bfa30970e72cf30054e4c0c2aefe3001d808b3a18965be9",
+      "size": 41643
+    },
+    "functional_periodic_default_float64_default/functional_checkpoint.json": {
+      "sha256": "89fb8d8c42d974c05cdd4f93357e76c9d4fc737b6ad0185d2d5ae78a06ba1052",
+      "size": 275
+    },
+    "functional_periodic_default_float64_default/spatial__Qxx.npy": {
+      "sha256": "08ddff2b68db5f6d469045b7412a1504a43dcc889329188abc9ae4d04f414ced",
+      "size": 1280
+    },
+    "functional_periodic_default_float64_default/spatial__Qxy.npy": {
+      "sha256": "06c3de697a8705eee31d7fc599b4c494f315a681c6572b9c8db972ba87503a3e",
+      "size": 1280
+    },
+    "functional_periodic_default_float64_default/spatial__Qxz.npy": {
+      "sha256": "1c7c18063adbb77fa1d08a2960c45c125382fbf6dc10f81803d05cd769adc8c9",
+      "size": 1280
+    },
+    "functional_periodic_default_float64_default/spatial__Qyy.npy": {
+      "sha256": "0f8ff53059df82136d1edb1e71a57a7549a3cc66102d4fce935e776068b6624d",
+      "size": 1280
+    },
+    "functional_periodic_default_float64_default/spatial__Qyz.npy": {
+      "sha256": "744d9423c5679a543af03fc55e342919f7ab6c8ab8f8184cd944fa128a4eb331",
+      "size": 1280
+    },
+    "functional_periodic_default_float64_default/spectral__Qxx.npy": {
+      "sha256": "bb1bf814dd217e09537c7b29a4f31bb07660c0523e9bcbf4a1dc8a1ed3730112",
+      "size": 1664
+    },
+    "functional_periodic_default_float64_default/spectral__Qxy.npy": {
+      "sha256": "2b4307b7ed6770e343a95f113ba8a6c205b46d467189b1724cfbd0f786d8624f",
+      "size": 1664
+    },
+    "functional_periodic_default_float64_default/spectral__Qxz.npy": {
+      "sha256": "5268c1d714bf9514998a404fc8c4d592988d862140354f0d4256b9b6b3d85fa2",
+      "size": 1664
+    },
+    "functional_periodic_default_float64_default/spectral__Qyy.npy": {
+      "sha256": "0833cf44ea890099d093c20c7bf9b937119302ac8ad026e36c1ae520b1a2aa28",
+      "size": 1664
+    },
+    "functional_periodic_default_float64_default/spectral__Qyz.npy": {
+      "sha256": "2913eee08d538e383e1372cf76a85c6ea722598d0666d594178b658c5e30d87a",
+      "size": 1664
+    },
+    "periodic_default_float64_default/checkpoint.json": {
+      "sha256": "12d4e883db34f5f52b14bee2bb74982a7f93d54df064bc7fe3550fe018c720b1",
+      "size": 38413
+    },
+    "periodic_default_float64_default/spatial__Qxx.npy": {
+      "sha256": "08ddff2b68db5f6d469045b7412a1504a43dcc889329188abc9ae4d04f414ced",
+      "size": 1280
+    },
+    "periodic_default_float64_default/spatial__Qxy.npy": {
+      "sha256": "06c3de697a8705eee31d7fc599b4c494f315a681c6572b9c8db972ba87503a3e",
+      "size": 1280
+    },
+    "periodic_default_float64_default/spatial__Qxz.npy": {
+      "sha256": "1c7c18063adbb77fa1d08a2960c45c125382fbf6dc10f81803d05cd769adc8c9",
+      "size": 1280
+    },
+    "periodic_default_float64_default/spatial__Qyy.npy": {
+      "sha256": "0f8ff53059df82136d1edb1e71a57a7549a3cc66102d4fce935e776068b6624d",
+      "size": 1280
+    },
+    "periodic_default_float64_default/spatial__Qyz.npy": {
+      "sha256": "744d9423c5679a543af03fc55e342919f7ab6c8ab8f8184cd944fa128a4eb331",
+      "size": 1280
+    },
+    "periodic_default_float64_default/spectral__Qxx.npy": {
+      "sha256": "bb1bf814dd217e09537c7b29a4f31bb07660c0523e9bcbf4a1dc8a1ed3730112",
+      "size": 1664
+    },
+    "periodic_default_float64_default/spectral__Qxy.npy": {
+      "sha256": "2b4307b7ed6770e343a95f113ba8a6c205b46d467189b1724cfbd0f786d8624f",
+      "size": 1664
+    },
+    "periodic_default_float64_default/spectral__Qxz.npy": {
+      "sha256": "5268c1d714bf9514998a404fc8c4d592988d862140354f0d4256b9b6b3d85fa2",
+      "size": 1664
+    },
+    "periodic_default_float64_default/spectral__Qyy.npy": {
+      "sha256": "0833cf44ea890099d093c20c7bf9b937119302ac8ad026e36c1ae520b1a2aa28",
+      "size": 1664
+    },
+    "periodic_default_float64_default/spectral__Qyz.npy": {
+      "sha256": "2913eee08d538e383e1372cf76a85c6ea722598d0666d594178b658c5e30d87a",
+      "size": 1664
+    },
+    "plane_compiled_v2_float64_default/checkpoint.json": {
+      "sha256": "04a0665158c7cd1e96a7551ca1fed0a04d97cb32855df4ceb0e0a4de997ba045",
+      "size": 12105
+    },
+    "plane_compiled_v2_float64_default/evolved_spatial__Qxx.npy": {
+      "sha256": "26e6fb55bbf9bc8e80988755f9c1f1a41318fb85be4367a9ef5a698f664d7216",
+      "size": 1280
+    },
+    "plane_compiled_v2_float64_default/evolved_spatial__Qxy.npy": {
+      "sha256": "1ffa09a501a7fec148dd92e58bfd8fa087f80e7a3037f54619a7d3cfa46d33ed",
+      "size": 1280
+    },
+    "plane_compiled_v2_float64_default/evolved_spatial__Qxz.npy": {
+      "sha256": "c53f0f124fdd5b44961362ea2e64ffea2d9bde95cbbd9a46eb41ad680a1de354",
+      "size": 1280
+    },
+    "plane_compiled_v2_float64_default/evolved_spatial__Qyy.npy": {
+      "sha256": "3be6613e0838c851367cd1eb0020b1b5992ea4153be5af32ff042a56893929c5",
+      "size": 1280
+    },
+    "plane_compiled_v2_float64_default/evolved_spatial__Qyz.npy": {
+      "sha256": "b13669fef06d1688ab2e97d6f1309cdaa04b7f3a8b09f8065dfe60a898a72f60",
+      "size": 1280
+    },
+    "plane_compiled_v2_float64_default/evolved_spectral__Qxx.npy": {
+      "sha256": "3fd2f9c0785078951f52e6e8c8fc19e7a164dce43e2e7e47e6413843d6e55a88",
+      "size": 1664
+    },
+    "plane_compiled_v2_float64_default/evolved_spectral__Qxy.npy": {
+      "sha256": "38ec468b0d56083239444cba558e38363cbae0f02140c7d9e04a1ab7bd4c8268",
+      "size": 1664
+    },
+    "plane_compiled_v2_float64_default/evolved_spectral__Qxz.npy": {
+      "sha256": "9f0188bdd84c824282baf57051c3e31b7b0db60588a155de695e4c91778f58e0",
+      "size": 1664
+    },
+    "plane_compiled_v2_float64_default/evolved_spectral__Qyy.npy": {
+      "sha256": "9e067be3fd1c1f3e6ee5346a4b97e219e4ae2fe815352e11726b3bd06eb192d3",
+      "size": 1664
+    },
+    "plane_compiled_v2_float64_default/evolved_spectral__Qyz.npy": {
+      "sha256": "ac169341531f90cfe45a2f08121b774c0d3d1330a84388b7dd3ef5af507e38cb",
+      "size": 1664
+    },
+    "plane_legacy_production_float64_default/checkpoint.json": {
+      "sha256": "36ea98d9e3ca1d25922b58a16227138b90269b27130129a0b18113aa303db0c0",
+      "size": 11907
+    },
+    "plane_legacy_production_float64_default/evolved_spatial__Qxx.npy": {
+      "sha256": "26e6fb55bbf9bc8e80988755f9c1f1a41318fb85be4367a9ef5a698f664d7216",
+      "size": 1280
+    },
+    "plane_legacy_production_float64_default/evolved_spatial__Qxy.npy": {
+      "sha256": "1ffa09a501a7fec148dd92e58bfd8fa087f80e7a3037f54619a7d3cfa46d33ed",
+      "size": 1280
+    },
+    "plane_legacy_production_float64_default/evolved_spatial__Qxz.npy": {
+      "sha256": "c53f0f124fdd5b44961362ea2e64ffea2d9bde95cbbd9a46eb41ad680a1de354",
+      "size": 1280
+    },
+    "plane_legacy_production_float64_default/evolved_spatial__Qyy.npy": {
+      "sha256": "3be6613e0838c851367cd1eb0020b1b5992ea4153be5af32ff042a56893929c5",
+      "size": 1280
+    },
+    "plane_legacy_production_float64_default/evolved_spatial__Qyz.npy": {
+      "sha256": "b13669fef06d1688ab2e97d6f1309cdaa04b7f3a8b09f8065dfe60a898a72f60",
+      "size": 1280
+    },
+    "plane_legacy_production_float64_default/evolved_spectral__Qxx.npy": {
+      "sha256": "3fd2f9c0785078951f52e6e8c8fc19e7a164dce43e2e7e47e6413843d6e55a88",
+      "size": 1664
+    },
+    "plane_legacy_production_float64_default/evolved_spectral__Qxy.npy": {
+      "sha256": "38ec468b0d56083239444cba558e38363cbae0f02140c7d9e04a1ab7bd4c8268",
+      "size": 1664
+    },
+    "plane_legacy_production_float64_default/evolved_spectral__Qxz.npy": {
+      "sha256": "9f0188bdd84c824282baf57051c3e31b7b0db60588a155de695e4c91778f58e0",
+      "size": 1664
+    },
+    "plane_legacy_production_float64_default/evolved_spectral__Qyy.npy": {
+      "sha256": "9e067be3fd1c1f3e6ee5346a4b97e219e4ae2fe815352e11726b3bd06eb192d3",
+      "size": 1664
+    },
+    "plane_legacy_production_float64_default/evolved_spectral__Qyz.npy": {
+      "sha256": "ac169341531f90cfe45a2f08121b774c0d3d1330a84388b7dd3ef5af507e38cb",
+      "size": 1664
+    }
+  },
+  "fingerprint": {
+    "cpu_flags": [
+      "3dnowprefetch",
+      "abm",
+      "acpi",
+      "adx",
+      "aes",
+      "aperfmperf",
+      "apic",
+      "arat",
+      "arch_capabilities",
+      "arch_lbr",
+      "arch_perfmon",
+      "art",
+      "avx",
+      "avx2",
+      "avx_vnni",
+      "bmi1",
+      "bmi2",
+      "bts",
+      "clflush",
+      "clflushopt",
+      "clwb",
+      "cmov",
+      "constant_tsc",
+      "cpuid",
+      "cpuid_fault",
+      "cx16",
+      "cx8",
+      "de",
+      "ds_cpl",
+      "dtes64",
+      "dtherm",
+      "dts",
+      "epb",
+      "ept",
+      "ept_ad",
+      "erms",
+      "est",
+      "f16c",
+      "flexpriority",
+      "flush_l1d",
+      "fma",
+      "fpu",
+      "fsgsbase",
+      "fsrm",
+      "fxsr",
+      "gfni",
+      "hfi",
+      "ht",
+      "hwp",
+      "hwp_act_window",
+      "hwp_epp",
+      "hwp_notify",
+      "hwp_pkg_req",
+      "ibpb",
+      "ibrs",
+      "ibrs_enhanced",
+      "ibt",
+      "ida",
+      "intel_pt",
+      "invpcid",
+      "lahf_lm",
+      "lm",
+      "mca",
+      "mce",
+      "md_clear",
+      "mmx",
+      "monitor",
+      "movbe",
+      "movdir64b",
+      "movdiri",
+      "msr",
+      "mtrr",
+      "nonstop_tsc",
+      "nopl",
+      "nx",
+      "ospke",
+      "pae",
+      "pat",
+      "pbe",
+      "pcid",
+      "pclmulqdq",
+      "pconfig",
+      "pdcm",
+      "pdpe1gb",
+      "pebs",
+      "pge",
+      "pku",
+      "pln",
+      "pni",
+      "popcnt",
+      "pse",
+      "pse36",
+      "pts",
+      "rdpid",
+      "rdrand",
+      "rdseed",
+      "rdtscp",
+      "rep_good",
+      "sdbg",
+      "sep",
+      "serialize",
+      "sha_ni",
+      "smap",
+      "smep",
+      "smx",
+      "split_lock_detect",
+      "ss",
+      "ssbd",
+      "sse",
+      "sse2",
+      "sse4_1",
+      "sse4_2",
+      "ssse3",
+      "stibp",
+      "syscall",
+      "tm",
+      "tm2",
+      "tpr_shadow",
+      "tsc",
+      "tsc_adjust",
+      "tsc_deadline_timer",
+      "tsc_known_freq",
+      "umip",
+      "user_shstk",
+      "vaes",
+      "vme",
+      "vmx",
+      "vnmi",
+      "vpclmulqdq",
+      "vpid",
+      "waitpkg",
+      "x2apic",
+      "xgetbv1",
+      "xsave",
+      "xsavec",
+      "xsaveopt",
+      "xsaves",
+      "xtopology",
+      "xtpr"
+    ],
+    "interop_threads": 1,
+    "machine": "x86_64",
+    "numpy": "2.3.2",
+    "numpy_build": "{\n  \"Compilers\": {\n    \"c\": {\n      \"name\": \"gcc\",\n      \"linker\": \"ld.bfd\",\n      \"version\": \"14.2.1\",\n      \"commands\": \"cc\"\n    },\n    \"cython\": {\n      \"name\": \"cython\",\n      \"linker\": \"cython\",\n      \"version\": \"3.1.2\",\n      \"commands\": \"cython\"\n    },\n    \"c++\": {\n      \"name\": \"gcc\",\n      \"linker\": \"ld.bfd\",\n      \"version\": \"14.2.1\",\n      \"commands\": \"c++\"\n    }\n  },\n  \"Machine Information\": {\n    \"host\": {\n      \"cpu\": \"x86_64\",\n      \"family\": \"x86_64\",\n      \"endian\": \"little\",\n      \"system\": \"linux\"\n    },\n    \"build\": {\n      \"cpu\": \"x86_64\",\n      \"family\": \"x86_64\",\n      \"endian\": \"little\",\n      \"system\": \"linux\"\n    }\n  },\n  \"Build Dependencies\": {\n    \"blas\": {\n      \"name\": \"scipy-openblas\",\n      \"found\": true,\n      \"version\": \"0.3.30\",\n      \"detection method\": \"pkgconfig\",\n      \"include directory\": \"/opt/_internal/cpython-3.12.11/lib/python3.12/site-packages/scipy_openblas64/include\",\n      \"lib directory\": \"/opt/_internal/cpython-3.12.11/lib/python3.12/site-packages/scipy_openblas64/lib\",\n      \"openblas configuration\": \"OpenBLAS 0.3.30  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=64\",\n      \"pc file directory\": \"/project/.openblas\"\n    },\n    \"lapack\": {\n      \"name\": \"scipy-openblas\",\n      \"found\": true,\n      \"version\": \"0.3.30\",\n      \"detection method\": \"pkgconfig\",\n      \"include directory\": \"/opt/_internal/cpython-3.12.11/lib/python3.12/site-packages/scipy_openblas64/include\",\n      \"lib directory\": \"/opt/_internal/cpython-3.12.11/lib/python3.12/site-packages/scipy_openblas64/lib\",\n      \"openblas configuration\": \"OpenBLAS 0.3.30  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=64\",\n      \"pc file directory\": \"/project/.openblas\"\n    }\n  },\n  \"Python Information\": {\n    \"path\": \"/tmp/build-env-cy0nuk24/bin/python\",\n    \"version\": \"3.12\"\n  },\n  \"SIMD Extensions\": {\n    \"baseline\": [\n      \"SSE\",\n      \"SSE2\",\n      \"SSE3\"\n    ],\n    \"found\": [\n      \"SSSE3\",\n      \"SSE41\",\n      \"POPCNT\",\n      \"SSE42\",\n      \"AVX\",\n      \"F16C\",\n      \"FMA3\",\n      \"AVX2\"\n    ],\n    \"not found\": [\n      \"AVX512F\",\n      \"AVX512CD\",\n      \"AVX512_KNL\",\n      \"AVX512_KNM\",\n      \"AVX512_SKX\",\n      \"AVX512_CLX\",\n      \"AVX512_CNL\",\n      \"AVX512_ICL\",\n      \"AVX512_SPR\"\n    ]\n  }\n}\n",
+    "python": "3.12.16",
+    "schema": 1,
+    "thread_environment": {
+      "MKL_NUM_THREADS": "4",
+      "OMP_NUM_THREADS": "4",
+      "OPENBLAS_NUM_THREADS": "4"
+    },
+    "torch": "2.6.0+cu126",
+    "torch_build_settings": [
+      "- Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, COMMIT_SHA=2236df1770800ffea5697b11b0bb0d910b2e59e1, CUDA_VERSION=12.6, CUDNN_VERSION=9.5.1, CXX_COMPILER=/opt/rh/gcc-toolset-11/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=1 -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOROCTRACER -DLIBKINETO_NOXPUPTI=ON -DUSE_FBGEMM -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=range-loop-construct -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-unused-parameter -Wno-strict-overflow -Wno-strict-aliasing -Wno-stringop-overflow -Wsuggest-override -Wno-psabi -Wno-error=old-style-cast -Wno-missing-braces -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, TORCH_VERSION=2.6.0, USE_CUDA=ON, USE_CUDNN=ON, USE_CUSPARSELT=1, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_GLOO=ON, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=1, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF,"
+    ],
+    "torch_cuda_build": "12.6",
+    "torch_git": "2236df1770800ffea5697b11b0bb0d910b2e59e1",
+    "torch_threads": 4
+  },
+  "release_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+  "scenes": [
+    {
+      "dtype": "float64",
+      "family": "periodic",
+      "id": "periodic_default_float64_default",
+      "observe": true,
+      "options": {},
+      "restart_steps": [],
+      "runtime_path": null,
+      "seed": 20261106,
+      "shape": [
+        6,
+        6,
+        4
+      ],
+      "steps": 18
+    },
+    {
+      "dtype": "float64",
+      "family": "plane",
+      "id": "plane_legacy_production_float64_default",
+      "observe": true,
+      "options": {},
+      "restart_steps": [],
+      "runtime_path": "legacy_production",
+      "seed": 20261106,
+      "shape": [
+        6,
+        6,
+        4
+      ],
+      "steps": 18
+    },
+    {
+      "dtype": "float64",
+      "family": "plane",
+      "id": "plane_compiled_v2_float64_default",
+      "observe": true,
+      "options": {},
+      "restart_steps": [],
+      "runtime_path": "compiled_v2",
+      "seed": 20261106,
+      "shape": [
+        6,
+        6,
+        4
+      ],
+      "steps": 18
+    },
+    {
+      "dtype": "float64",
+      "family": "channel",
+      "id": "channel_default_float64_default",
+      "observe": true,
+      "options": {},
+      "restart_steps": [],
+      "runtime_path": null,
+      "seed": 20261106,
+      "shape": [
+        6,
+        6,
+        4
+      ],
+      "steps": 18
+    },
+    {
+      "dtype": "float64",
+      "family": "functional_periodic",
+      "id": "functional_periodic_default_float64_default",
+      "observe": true,
+      "options": {},
+      "restart_steps": [],
+      "runtime_path": null,
+      "seed": 20261106,
+      "shape": [
+        6,
+        6,
+        4
+      ],
+      "steps": 18
+    },
+    {
+      "dtype": "float64",
+      "family": "functional_channel",
+      "id": "functional_channel_default_float64_default",
+      "observe": true,
+      "options": {},
+      "restart_steps": [],
+      "runtime_path": null,
+      "seed": 20261106,
+      "shape": [
+        6,
+        6,
+        4
+      ],
+      "steps": 18
+    }
+  ],
+  "schema": 1,
+  "wheel_sha256": "c5cf3e26af8bdde27287f6129fe5939d6f202fb627dcdc9a66c19d62871dd873",
+  "writer_version": "0.4.0"
+}

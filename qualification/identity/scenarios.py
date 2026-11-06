@@ -11,7 +11,7 @@ def scenarios() -> list[dict]:
     for family in ("periodic", "plane", "channel", "functional_periodic", "functional_channel"):
         shape = {"periodic": [16, 16, 16], "plane": [16, 16, 12], "channel": [16, 12, 12]}
         geometry = family.removeprefix("functional_")
-        variants = [("default", {})]
+        variants = [("default", {}), ("cpu_compile", {"pointwise_execution": "compile"})]
         if family == "plane":
             variants += [
                 (
@@ -40,6 +40,10 @@ def scenarios() -> list[dict]:
             variants += [
                 ("fixed_work", {"fixed_iterations": 12}),
                 ("relative_tolerance", {"fixed_iterations": None}),
+                (
+                    "relative_tolerance_float32_floor",
+                    {"fixed_iterations": None, "relative_tolerance": 1e-6},
+                ),
             ]
             if family.startswith("functional_"):
                 variants += [("warm_start_false", {"warm_start": False})]
@@ -49,6 +53,12 @@ def scenarios() -> list[dict]:
             variants += [
                 (f"dealias_{rule}", {"dealias_rule": rule})
                 for rule in ("none", "two_thirds", "cubic_half")
+            ]
+            variants += [
+                (
+                    "dealias_none_full",
+                    {"dealias_rule": "none", "projected_transform_execution": "full"},
+                )
             ]
         paths = ("legacy_production", "compiled_v2") if family == "plane" else (None,)
         for dtype, runtime_path, (label, options) in product(

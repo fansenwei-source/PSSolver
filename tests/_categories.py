@@ -10,7 +10,7 @@ import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-NAMES = ("functional", "numerical", "historical", "installed", "gpu")
+NAMES = ("functional", "numerical", "historical", "installed", "gpu", "baseline_fingerprint")
 
 
 def load_categories(root: Path = ROOT) -> tuple[dict[str, str], set[str]]:
@@ -21,7 +21,7 @@ def load_categories(root: Path = ROOT) -> tuple[dict[str, str], set[str]]:
     manifest = tomllib.loads((root / "tests/categories.toml").read_text(encoding="utf-8"))
     categories = manifest["categories"]
     if set(categories) != set(NAMES):
-        raise ValueError("Exactly the five documented categories are required")
+        raise ValueError("Exactly the documented categories are required")
     mapping = {}
     for category, paths in categories.items():
         for path in paths:

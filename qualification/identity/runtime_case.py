@@ -63,7 +63,7 @@ def complete_simulation(scene: dict, root: Path) -> Simulation:
         {
             "pressure_solver": {
                 "algorithm": "preconditioned_conjugate_gradient",
-                "relative_tolerance": 1e-10,
+                "relative_tolerance": options.get("relative_tolerance", 1e-10),
                 "max_iterations": 40,
                 "fixed_iterations": options.get("fixed_iterations", 12),
                 "warm_start": options.get("warm_start", True),
@@ -87,6 +87,7 @@ def complete_simulation(scene: dict, root: Path) -> Simulation:
         numerics=SpectralNumerics(
             dtype=scene["dtype"],
             dealias_rule=options.get("dealias_rule", "cubic_half"),
+            projected_transform_execution=options.get("projected_transform_execution", "truncated"),
             spectral_storage="full_complex" if channel else "hermitian_half",
             hermitian_axis=None if channel else 1,
         ),
@@ -160,7 +161,7 @@ class RuntimeCase:
             diagnostic_interval=64,
             device="cpu",
             dtype=self.scene["dtype"],
-            pointwise_execution="eager",
+            pointwise_execution=options.pop("pointwise_execution", "eager"),
             tf32="off",
             runtime_path=self.scene["runtime_path"],
             **options,
@@ -229,12 +230,19 @@ class RuntimeCase:
                 PeriodicRuntimeBuildRequest(self.spec, values, "cpu")
             )
 
-    def step(self) -> None:
+    def step(self) -> dict | None:
+        pre_update = None
         if self.functional:
             self.state = self.runtime.step(self.state, self.controls, self.index)
         else:
-            self.runtime.advance(1)
+
+            def capture(_solver, _step):
+                nonlocal pre_update
+                pre_update = self.record()
+
+            self.runtime.advance(1, pre_update_callback=capture)
         self.index += 1
+        return pre_update
 
     def observe(self) -> dict:
         if self.functional:
@@ -275,6 +283,23 @@ class RuntimeCase:
                 "refresh_count": int(integrator.refresh_count),
                 "refresh_interval": integrator.spectral_refresh_interval,
                 "constraints_current": bool(integrator._static_fields_are_current),
+            },
+            "solver": {
+                "operator_action": (
+                    tensor_record(flow._pressure_guess_operator_action)
+                    if isinstance(
+                        getattr(flow, "_pressure_guess_operator_action", None), torch.Tensor
+                    )
+                    else None
+                ),
+                "operator_action_working_exponent": getattr(
+                    flow, "_pressure_guess_operator_action_working_exponent", None
+                ),
+                "operator_action_matches_guess": (
+                    getattr(flow, "_pressure_guess_operator_action_guess", None) is guess
+                    and guess is not None
+                ),
+                "pressure_iterations": getattr(flow, "last_pressure_iterations", None),
             },
         }
 

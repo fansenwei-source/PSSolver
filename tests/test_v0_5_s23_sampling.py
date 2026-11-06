@@ -1,0 +1,80 @@
+"""Sampling is explicit; changing events must not silently alter the reference."""
+
+from copy import deepcopy
+
+import pytest
+
+from qualification.identity.analyze import validate_sampling
+from qualification.identity.runtime_case import RuntimeCase
+from qualification.identity.sampling import restart_contract, sample, trace
+from qualification.identity.scenarios import scenarios
+
+
+def scene(family):
+    item = next(
+        row
+        for row in scenarios()
+        if row["family"] == family and row["dtype"] == "float64" and not row["options"]
+    )
+    return {**item, "shape": [6, 6, 4], "steps": 5, "restart_steps": [2, 4]}
+
+
+@pytest.mark.parametrize(
+    "family", ["periodic", "plane", "channel", "functional_periodic", "functional_channel"]
+)
+def test_identical_event_schedule_restores_exact_fields_and_clocks(tmp_path, family):
+    row = scene(family)
+    recorded = trace(row, tmp_path)
+    validate_sampling({"disposition": "accepted", "scene": row, "trace": recorded})
+    for start, replay in recorded["restarts"].items():
+        changed = deepcopy(replay)
+        changed[0]["after_checkpoint"]["step"] += 1
+        assert not restart_contract(recorded["steps"], changed, int(start))[
+            "field_bytes_and_clocks_equal"
+        ]
+
+
+def test_resumed_schedule_replays_later_checkpoint_events(tmp_path):
+    class EventCase:
+        scene = {"observe": True, "restart_steps": [2, 4], "steps": 5}
+        events = []
+
+        def record(self):
+            return list(self.events)
+
+        def observe(self):
+            self.events.append("observe")
+
+        def export(self, path):
+            self.events.append(path.name)
+
+        def step(self):
+            self.events.append("step")
+
+    case = EventCase()
+    result = sample(case, tmp_path, 4, restart_from=2)
+    assert result["after_checkpoint"] == ["observe", "replay_2_4"]
+    assert result["after_step"][-1] == "step"
+
+
+def test_pre_update_callback_records_the_rhs_input_after_synchronization(tmp_path, monkeypatch):
+    case = RuntimeCase(scene("periodic"), tmp_path)
+    calls = []
+    update = case.solver.model.update_static_fields
+    record = case.record
+
+    def update_then_mark():
+        update()
+        calls.append("algebraic")
+
+    def record_then_mark():
+        calls.append("callback")
+        return record()
+
+    monkeypatch.setattr(case.solver.model, "update_static_fields", update_then_mark)
+    monkeypatch.setattr(case, "record", record_then_mark)
+    before = case.step()
+    assert calls == ["algebraic", "callback"]
+    # This flag is a one-use restore/reuse token, not an observation timestamp.
+    assert before["step"] == 0 and not before["progress"]["constraints_current"]
+    assert case.record()["step"] == 1
