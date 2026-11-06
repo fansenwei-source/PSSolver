@@ -68,3 +68,18 @@ def test_tf32_teardown_repair_retains_each_original_assertion_and_forward_bindin
             resolve_s03_successor(path, binding["historical_sha256"])
             == hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
         )
+
+
+def test_rc445_qualification_binding_resolves_only_registered_forward_hashes():
+    record = json.loads(
+        (ROOT / "notes/PSSolver_v0_3_0_s03_successor_139_s23_historical_binding.json").read_text()
+    )
+    for path, binding in record["historical_successor_sources"].items():
+        assert resolve_s03_successor(path, binding["historical_sha256"]) == hashlib.sha256(
+            (ROOT / path).read_bytes()
+        ).hexdigest()
+        assert resolve_s03_successor(path, "0" * 64) == "0" * 64
+    for path, expected in record["sources"].items():
+        assert resolve_s03_successor(path, expected) == hashlib.sha256(
+            (ROOT / path).read_bytes()
+        ).hexdigest()

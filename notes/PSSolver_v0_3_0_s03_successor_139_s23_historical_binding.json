@@ -1,0 +1,49 @@
+{
+  "classification": "HISTORICAL_TEST_FORWARD_RESOLUTION_NOT_RUNTIME_CHANGE",
+  "date": "2026-11-06",
+  "failure_evidence": {
+    "archive": "/home/fansenwei/pssolver_v0_5_s23_completion_20261106_v1",
+    "failed_each": 1,
+    "failure": "test_rc445_binds_qualification_sources_and_archive_integrity",
+    "passed_each": 5650,
+    "suites": [
+      "final_cpu",
+      "final_blocked_cpu"
+    ]
+  },
+  "git_identity": {
+    "implementation_parent": "da33e4fcbade3a5b9584cdf7cb827003b5a58080"
+  },
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "tests/test_rc4_pressure_installed_cpu_closure_record.py": {
+      "current_sha256": "9205305e0a81953e4a65ebbf14820dceefd4489286a2ecc42c886798a832af58",
+      "historical_sha256": "86a2c1ac49b529a4d85692791d9ce31a76430d774cd43b90211c7b0117fe82a9",
+      "reason": "Recognize explicit S-03 forward registrations after the unchanged legacy RC4.4.5 chain; unregistered hashes still fail."
+    },
+    "tests/test_v0_5_s23_record.py": {
+      "current_sha256": "2d5a97a13fe5aa3e564fbf2d01e860102266215680d0f465378330853bc61314",
+      "historical_sha256": "389f9ce69c4120fef9bdaec396937a5dc30d9ebcbecd604287c5e1e05cebb624",
+      "reason": "Recognize explicit S-03 forward registrations after the unchanged legacy RC4.4.5 chain; unregistered hashes still fail."
+    }
+  },
+  "no_new_skip_xfail": true,
+  "plan_step": "S-23",
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_139_s23_historical_binding_zh.md": "2d96758d5c3b949a74143371fabdf1fc81371f35c402523067b19ce6b2282600",
+    "tests/test_rc4_pressure_installed_cpu_closure_record.py": "9205305e0a81953e4a65ebbf14820dceefd4489286a2ecc42c886798a832af58",
+    "tests/test_v0_5_s23_record.py": "2d5a97a13fe5aa3e564fbf2d01e860102266215680d0f465378330853bc61314"
+  },
+  "successor": 139,
+  "unchanged": [
+    "pssolver/",
+    "benchmarks/",
+    "jobs/",
+    "packaging",
+    "qualification/",
+    "reference hashes",
+    "frozen dependencies",
+    "S-22 ref"
+  ]
+}

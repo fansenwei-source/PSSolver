@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.v0_3_s03_successor import resolve_s03_successor
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc445_installed_cpu_closure.json"
@@ -127,7 +129,7 @@ def test_rc445_binds_qualification_sources_and_archive_integrity():
                 and registration["historical_sha256"] == resolved
             ):
                 resolved = registration["current_sha256"]
-        assert resolved == actual
+        assert resolve_s03_successor(relative, resolved) == actual
     artifacts = record["artifact_identity"]
     assert artifacts["manifest_verification"] == "23/23 PASS"
     assert artifacts["complete_present"] is True
