@@ -1,0 +1,6 @@
+{
+  "record": "notes/pssolver_v0_5_0_dev.json",
+  "version_field": "version",
+  "phase": "development",
+  "freeze_policy": "At release freeze, explicitly advance this pointer to the release record; retain the historical development record."
+}

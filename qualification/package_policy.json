@@ -1,0 +1,23 @@
+{
+  "private_line_exceptions": [
+    {
+      "path": "CHANGELOG.md",
+      "file_sha256": "b4c0313130cf2aa5f7e11111378eb8f04af064090db845d245ccdf2fd0e0d35a",
+      "original_commit": "e32ac213be3ad994a95ec71c53212123530be05c",
+      "original_line": 349,
+      "line": "- Local CPU fault-injection, installed-wheel, real `$HOME` and `/scratch1` NFS,",
+      "line_sha256": "d34d08a991bbd8badb261193a8a4cb18b55aefc557a20219c1cb061dd1ffa346",
+      "decision": "D-0043"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "file_sha256": "b4c0313130cf2aa5f7e11111378eb8f04af064090db845d245ccdf2fd0e0d35a",
+      "original_commit": "e32ac213be3ad994a95ec71c53212123530be05c",
+      "original_line": 376,
+      "line": "  `/scratch1` paths reject that operation, so PSSolver 0.2.0 cannot publish a",
+      "line_sha256": "190b1726561b4fc708c355a1bebc449819d0d3216551aa58f14ec5f0fc2a2856",
+      "decision": "D-0043"
+    }
+  ],
+  "generated_metadata": "PKG-INFO is the sdist analogue of README-generated wheel METADATA; every allowed consumer-name hit is listed in the artifact report."
+}

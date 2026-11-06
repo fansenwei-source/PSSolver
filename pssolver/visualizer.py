@@ -1,7 +1,18 @@
-import pygame
-import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def _require_pygame():
+    """Load the optional display backend only when a display is requested."""
+    try:
+        import pygame
+    except ImportError as error:
+        raise ImportError(
+            "Pygame visualization requires the optional dependency; "
+            "install pssolver[visualization]."
+        ) from error
+    return pygame
 
 class Visualizer:
     def __init__(self, width=800, height=600, title="PSS Visualizer"):
@@ -11,6 +22,7 @@ class Visualizer:
         self.running = False
 
     def run_pygame(self, draw_callback=None, fps=60):
+        pygame = _require_pygame()
         pygame.init()
         screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption(self.title)
@@ -57,6 +69,7 @@ class Visualizer:
         plt.close(fig)
 
     def animate_pygame(self, data, scale=2, cmap="viridis"):
+        pygame = _require_pygame()
         arr = data.cpu().numpy() if hasattr(data, "cpu") else data
         n_frames, N, _ = arr.shape
         width, height = N * scale, N * scale

@@ -6,9 +6,9 @@ import hashlib
 import json
 from pathlib import Path
 
-from tests.v0_3_s03_successor import resolve_s03_successor
-
 from pssolver import capability_catalog
+from tests.v0_3_s03_successor import resolve_s03_successor
+from tests.v0_5_release_manifest import released_manifest
 
 
 PROJECT_ROOT = Path(__file__).parents[1]
@@ -317,7 +317,7 @@ def test_release_candidate_registers_exact_portability_successors():
 
 
 def test_release_candidate_documents_are_in_source_manifest():
-    manifest = (PROJECT_ROOT / "MANIFEST.in").read_text(encoding="utf-8")
+    manifest = released_manifest(PROJECT_ROOT)
     required = (
         "notes/pssolver_v0_2_scope.md",
         "notes/pssolver_v0_2_0_rc1.md",

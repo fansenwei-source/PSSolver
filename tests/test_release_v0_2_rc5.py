@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from pssolver import capability_catalog
+from tests.v0_5_release_manifest import released_manifest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -122,7 +123,7 @@ def test_rc5_g1_plan_is_fail_closed_and_requires_one_authorized_h100_run():
 
 
 def test_rc5_release_documents_are_in_source_manifest():
-    manifest = (ROOT / "MANIFEST.in").read_text(encoding="utf-8")
+    manifest = released_manifest(ROOT)
     for relative in (
         "notes/pssolver_v0_2_0_rc5.md",
         "notes/pssolver_v0_2_0_rc5.json",

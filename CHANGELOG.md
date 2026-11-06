@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0.dev0 — Unreleased
+
+This development line starts from v0.4.0. The initial engineering foundation
+adds local lint, import-contract and structural reporting tools, explicit test
+categories and a source-distribution allowlist. Historical audit documents and
+qualification scripts remain in Git but are not shipped in distributions.
+Pygame is loaded only when visualization uses it and is available through
+`pssolver[visualization]`. Numerical implementations and thresholds are unchanged.
+
 ## 0.4.0 — 2026-11-04
 
 This release freezes the independently reviewed 0.4 development line. The

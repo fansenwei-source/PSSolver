@@ -6,6 +6,7 @@ import ast
 from pathlib import Path
 
 import pssolver
+from tests.v0_5_release_manifest import released_manifest
 
 
 PROJECT_ROOT = Path(__file__).parents[1]
@@ -62,7 +63,7 @@ def test_generated_packaging_artifacts_are_ignored():
 
 
 def test_source_distribution_includes_release_and_scope_documents():
-    manifest = (PROJECT_ROOT / "MANIFEST.in").read_text(encoding="utf-8")
+    manifest = released_manifest(PROJECT_ROOT)
 
     for path in (
         "CHANGELOG.md",

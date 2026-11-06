@@ -51,6 +51,7 @@ setup(
         "torch>=2.5",
         "tqdm>=4.64",
     ],
+    extras_require={"visualization": ["pygame"]},
     entry_points={
         "console_scripts": [
             "pssolver-plane-beris-edwards="

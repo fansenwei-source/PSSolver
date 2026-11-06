@@ -9,6 +9,7 @@ from pathlib import Path
 import pssolver
 from pssolver import capability_catalog
 from pssolver.functional.api import functional_protocol_provenance
+from tests.v0_5_release_manifest import released_manifest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -165,6 +166,7 @@ def test_rc6_frozen_hashes_only_change_at_the_final_release_boundary():
             assert _sha256(ROOT / relative) == expected
     allowed_final_release_successors = {
         "CHANGELOG.md",
+        "MANIFEST.in",
         "README.md",
         "pssolver/_version.py",
         "tests/test_rc5_g1_checkpoint_glibc_compatibility_record.py",
@@ -189,6 +191,8 @@ def test_rc6_frozen_hashes_only_change_at_the_final_release_boundary():
         "tests/test_rc6_5_checkpoint_control_flow_record.py",
         "tests/test_rc6_6_restart_output_atomicity_record.py",
         "tests/test_release_v0_1.py",
+        "tests/test_release_v0_2.py",
+        "tests/test_release_v0_2_rc5.py",
         "tests/test_release_v0_2_0rc5_integration_review.py",
         "tests/test_release_v0_2_0rc6_integration_review.py",
     }
@@ -202,7 +206,7 @@ def test_rc6_frozen_hashes_only_change_at_the_final_release_boundary():
 
 
 def test_rc6_release_documents_are_in_source_manifest():
-    manifest = (ROOT / "MANIFEST.in").read_text(encoding="utf-8")
+    manifest = released_manifest(ROOT)
     for relative in (
         "notes/pssolver_v0_2_0_rc6.md",
         "notes/pssolver_v0_2_0_rc6.json",

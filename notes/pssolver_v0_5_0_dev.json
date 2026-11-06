@@ -1,0 +1,13 @@
+{
+  "schema": "pssolver.development_line.v1",
+  "version": "0.5.0.dev0",
+  "base_release": "v0.4.0",
+  "base_release_commit": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+  "development_parent": "e32ac213be3ad994a95ec71c53212123530be05c",
+  "plan_step": "S-22",
+  "architecture_sections": ["2", "3", "7", "9"],
+  "decisions": ["D-0042", "D-0043"],
+  "numerical_changes": false,
+  "release_qualification": false,
+  "version_record_policy": "Use this development record until a new release record explicitly supersedes it. Runtime and installed metadata must match the active record."
+}

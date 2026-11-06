@@ -1,0 +1,907 @@
+{
+  "commit": "e32ac213be3ad994a95ec71c53212123530be05c",
+  "scope": "pssolver/",
+  "command": "ruff check --isolated --select E4,E7,E9,F pssolver",
+  "tool_version": "0.17.3",
+  "counts": {
+    "F401": 65,
+    "F841": 3,
+    "E741": 1
+  },
+  "diagnostics": [
+    {
+      "path": "pssolver/applications/channel_active_nematics.py",
+      "line": 12,
+      "code": "F401",
+      "message": "`pathlib.Path` imported but unused",
+      "source_sha256": "77e2d74a21da73cc2e37ddbdc93ef084b8cc21159828a18ed92c97fd1fb33171",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "benchmarks/run_channel_runtime_trajectory.py",
+        "benchmarks/run_public_simulation_h100_case.py",
+        "pssolver/api/runner.py",
+        "tests/test_phase7_channel_local_closure.py",
+        "tests/test_phase7_p7711_public_entry_equivalence.py",
+        "tests/test_rc5_r510_channel_checkpoint_observation.py",
+        "tests/test_rc5_r57_device_normalization.py"
+      ]
+    },
+    {
+      "path": "pssolver/applications/channel_active_nematics.py",
+      "line": 33,
+      "code": "F401",
+      "message": "`pssolver.models.active_nematics.Q_COMPONENTS` imported but unused",
+      "source_sha256": "77e2d74a21da73cc2e37ddbdc93ef084b8cc21159828a18ed92c97fd1fb33171",
+      "category": "possible_module_export",
+      "reason": "Unused internally, but module-level compatibility/provenance needs review before removal.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/boundaries/robin.py",
+      "line": 14,
+      "code": "F401",
+      "message": "`pssolver.core.boundary.StaticConstantBoundaryValue` imported but unused",
+      "source_sha256": "1b9c1d6c8ae21cdff2a546f8d8ea6f77b7c7a13f2a9b82192994a0aa11cd66df",
+      "category": "possible_module_export",
+      "reason": "Unused internally, but module-level compatibility/provenance needs review before removal.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/channel.py",
+      "line": 50,
+      "code": "F841",
+      "message": "Local variable `gzuz` is assigned to but never used",
+      "source_sha256": "dbb466c529bddfa5df125b9fb3c94a3ea6bf30c8df2d09cfcc0265632b6c951c",
+      "category": "unused_local_review",
+      "reason": "Potential redundant binding; preserve RHS/evaluation and numerical behaviour pending focused review.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/configuration/finite_q_anchoring.py",
+      "line": 6,
+      "code": "F401",
+      "message": "`hashlib` imported but unused",
+      "source_sha256": "a930207c069d3a490eb6433aeb72fcc39051ba904dce440f10e33faa8f175fa3",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "benchmarks/profile_finite_q_anchoring.py",
+        "pssolver/runtime/finite_q_anchoring.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/lifting.py",
+      "line": 5,
+      "code": "F401",
+      "message": "`hashlib` imported but unused",
+      "source_sha256": "bbe843ec58d2e1b4ed5bf3861ca119b2cb36623a816654284e0817c0b18248d1",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase8_p842_plane_static_lifting.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/lifting.py",
+      "line": 6,
+      "code": "F401",
+      "message": "`json` imported but unused",
+      "source_sha256": "bbe843ec58d2e1b4ed5bf3861ca119b2cb36623a816654284e0817c0b18248d1",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase8_p842_plane_static_lifting.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards.py",
+      "line": 19,
+      "code": "F401",
+      "message": "`pssolver.core.BoundarySet` imported but unused",
+      "source_sha256": "8fe3774ffbafd729ac5afb280e23dd294b77f588cc1f02a5ded6c7c7d15800b9",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase7_p771_equation_system_declarations.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_components.py",
+      "line": 15,
+      "code": "F401",
+      "message": "`.plane_beris_edwards_component_graph.BerisEdwardsMaterialRequest` imported but unused",
+      "source_sha256": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase2_run_spec_components.py",
+        "tests/test_phase7_p771_equation_system_declarations.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_components.py",
+      "line": 16,
+      "code": "F401",
+      "message": "`.plane_beris_edwards_component_graph.ExtrudedDefectGasInitialConditionSpec` imported but unused",
+      "source_sha256": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase2_run_spec_components.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_components.py",
+      "line": 17,
+      "code": "F401",
+      "message": "`.plane_beris_edwards_component_graph.IncompressibleStokesSystemSpec` imported but unused",
+      "source_sha256": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase2_run_spec_components.py",
+        "tests/test_phase7_p771_equation_system_declarations.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_components.py",
+      "line": 18,
+      "code": "F401",
+      "message": "`.plane_beris_edwards_component_graph.NumericsConfig` imported but unused",
+      "source_sha256": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase2_run_spec_components.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_components.py",
+      "line": 19,
+      "code": "F401",
+      "message": "`.plane_beris_edwards_component_graph.Path` imported but unused",
+      "source_sha256": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "benchmarks/diagnose_rc4_lifting_correctness.py",
+        "benchmarks/profile_finite_q_anchoring.py",
+        "benchmarks/qualify_plane_static_lifting.py",
+        "benchmarks/qualify_rc437_lifting_cuda.py",
+        "benchmarks/run_rc426_cross_device_checkpoint.py",
+        "pssolver/applications/plane_beris_edwards.py",
+        "pssolver/runtime/plane_beris_edwards.py",
+        "pssolver/runtime/plane_compiled_v2_binding.py",
+        "pssolver/workflows/plane_beris_edwards.py",
+        "tests/fixtures/historical_cpu_coverage_v1/generate_fixtures.py",
+        "tests/test_phase2_run_spec_components.py",
+        "tests/test_phase2_run_spec_decomposition.py",
+        "tests/test_phase7_p771_equation_system_declarations.py",
+        "tests/test_phase7_p772_simulation_composition.py",
+        "tests/test_phase7_p773_simulation_lowering.py",
+        "tests/test_phase7_p774_runtime_construction_binding.py",
+        "tests/test_phase7_p775_package_construction.py",
+        "tests/test_phase7_p777_public_simulation_api.py",
+        "tests/test_phase8_p841_prescribed_dirichlet_declarations.py",
+        "tests/test_phase8_p843_q_lifting_lowering.py",
+        "tests/test_phase8_p844_lifting_workflow_restart.py",
+        "tests/test_phase8_p851_robin_declarations.py",
+        "tests/test_phase8_p854_finite_q_anchoring.py",
+        "tests/test_phase8_p855_finite_q_workflow_restart.py",
+        "tests/test_rc454_boundary_semantics.py",
+        "tests/test_rc4_lifting_capability_restriction.py",
+        "tests/test_rc4_lifting_installed_wheel.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_components.py",
+      "line": 24,
+      "code": "F401",
+      "message": "`.plane_beris_edwards_component_graph.PlaneSlab` imported but unused",
+      "source_sha256": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase2_run_spec_components.py",
+        "tests/test_phase7_p772_simulation_composition.py",
+        "tests/test_phase7_p777_public_simulation_api.py",
+        "tests/test_phase8_p841_prescribed_dirichlet_declarations.py",
+        "tests/test_phase8_p844_lifting_workflow_restart.py",
+        "tests/test_phase8_p851_robin_declarations.py",
+        "tests/test_rc4_lifting_capability_restriction.py",
+        "tests/test_rc4_lifting_installed_wheel.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_components.py",
+      "line": 27,
+      "code": "F401",
+      "message": "`.plane_beris_edwards_component_graph.ShendrukPlaneParameterRequest` imported but unused",
+      "source_sha256": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase2_run_spec_components.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_components.py",
+      "line": 28,
+      "code": "F401",
+      "message": "`.plane_beris_edwards_component_graph.ShendrukPlanePreset` imported but unused",
+      "source_sha256": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase2_run_spec_components.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_components.py",
+      "line": 32,
+      "code": "F401",
+      "message": "`.plane_beris_edwards_declarations.PLANE_FREE_SLIP_BOUNDARIES` imported but unused",
+      "source_sha256": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "pssolver/applications/plane_beris_edwards.py",
+        "pssolver/runtime/plane_legacy.py",
+        "tests/test_phase2_run_spec_components.py",
+        "tests/test_phase2_run_spec_decomposition.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_components.py",
+      "line": 33,
+      "code": "F401",
+      "message": "`.plane_beris_edwards_declarations.PlaneFreeSlipBoundaryConditions` imported but unused",
+      "source_sha256": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase2_run_spec_components.py",
+        "tests/test_phase2_run_spec_decomposition.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_components.py",
+      "line": 34,
+      "code": "F401",
+      "message": "`.plane_beris_edwards_declarations.PlaneRuntimePath` imported but unused",
+      "source_sha256": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "pssolver/applications/plane_beris_edwards.py",
+        "pssolver/runtime/plane_beris_edwards.py",
+        "pssolver/runtime/plane_compiled_v2_binding.py",
+        "tests/test_phase2_run_spec_components.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_components.py",
+      "line": 35,
+      "code": "F401",
+      "message": "`.plane_beris_edwards_declarations.SpectralRefreshSpec` imported but unused",
+      "source_sha256": "012e94256710152510a11f27a4e0dc5647e5a6de20018c7eeaa44859eb469d0b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase2_run_spec_components.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_schema_v1.py",
+      "line": 17,
+      "code": "F401",
+      "message": "`hashlib` imported but unused",
+      "source_sha256": "36de74a3b2c44bb4e6fa35074f412e82fe528cfffbd8a65245e0f3bb6a24e731",
+      "category": "unused_import_candidate",
+      "reason": "Locally unused ordinary dependency; cleanup deferred, not a blanket ignore.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/configuration/plane_beris_edwards_schema_v1.py",
+      "line": 18,
+      "code": "F401",
+      "message": "`json` imported but unused",
+      "source_sha256": "36de74a3b2c44bb4e6fa35074f412e82fe528cfffbd8a65245e0f3bb6a24e731",
+      "category": "unused_import_candidate",
+      "reason": "Locally unused ordinary dependency; cleanup deferred, not a blanket ignore.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/configuration/robin.py",
+      "line": 5,
+      "code": "F401",
+      "message": "`hashlib` imported but unused",
+      "source_sha256": "7f1ccb7154b01d353088ebc7449c0d1b8d8d69319382962db9158c31115c8630",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "pssolver/configuration/finite_q_anchoring.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/robin.py",
+      "line": 6,
+      "code": "F401",
+      "message": "`json` imported but unused",
+      "source_sha256": "7f1ccb7154b01d353088ebc7449c0d1b8d8d69319382962db9158c31115c8630",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "pssolver/configuration/finite_q_anchoring.py",
+        "pssolver/configuration/public_simulation_runner.py",
+        "tests/test_phase8_p853_robin_scalar_runtime.py",
+        "tests/test_rc454_boundary_semantics.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/simulation.py",
+      "line": 14,
+      "code": "F401",
+      "message": "`hashlib` imported but unused",
+      "source_sha256": "c0f695d0e0a5f66eb11a8d20c82a2da073f217e8d94768316d2744e7ab622e81",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "benchmarks/run_public_simulation_h100_case.py",
+        "benchmarks/run_rc2_g5_installed_smoke.py",
+        "benchmarks/run_v0_4_s19_self_compare.py",
+        "benchmarks/v0_2_0_checkpoint_fixtures.py",
+        "pssolver/applications/plane_beris_edwards.py",
+        "pssolver/configuration/finite_q_anchoring.py",
+        "pssolver/configuration/robin.py",
+        "pssolver/functional/contracts.py",
+        "tests/test_phase7_p7711_public_entry_equivalence.py",
+        "tests/test_phase7_p772_simulation_composition.py",
+        "tests/test_phase7_p777_public_simulation_api.py",
+        "tests/test_rc4_periodic_channel_checkpoint_identity.py",
+        "tests/test_rc5_legacy_functional_checkpoints.py"
+      ]
+    },
+    {
+      "path": "pssolver/configuration/simulation_lowering.py",
+      "line": 708,
+      "code": "F841",
+      "message": "Local variable `exc` is assigned to but never used",
+      "source_sha256": "91041ce072e5fd10d0b5a55379cc6d94a727fdf1ac1b42ed05d05cf293308a64",
+      "category": "unused_local_review",
+      "reason": "Potential redundant binding; preserve RHS/evaluation and numerical behaviour pending focused review.",
+      "observed_importers": [
+        "pssolver/applications/plane_beris_edwards.py",
+        "pssolver/configuration/public_channel_beris_edwards_compiler.py",
+        "pssolver/configuration/public_channel_simulation_compiler.py",
+        "pssolver/configuration/public_periodic_simulation_compiler.py",
+        "pssolver/configuration/public_simulation_runner.py",
+        "pssolver/runtime/plane_beris_edwards.py"
+      ]
+    },
+    {
+      "path": "pssolver/control/objectives.py",
+      "line": 3,
+      "code": "F401",
+      "message": "`numpy` imported but unused",
+      "source_sha256": "d6f827ed0e007b0c80abab835e11e153376c24626b2e96d632e10f7227f2869f",
+      "category": "unused_import_candidate",
+      "reason": "Locally unused ordinary dependency; cleanup deferred, not a blanket ignore.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/execution/algebraic.py",
+      "line": 21,
+      "code": "F401",
+      "message": "`pssolver.systems.algebraic.AlgebraicUpdatePhase` imported but unused",
+      "source_sha256": "b4276b89ffca07d810c61f31887925e34fe6e47b3f58e2598587ddb48757dccb",
+      "category": "possible_module_export",
+      "reason": "Unused internally, but module-level compatibility/provenance needs review before removal.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/execution/stokes.py",
+      "line": 4,
+      "code": "F401",
+      "message": "`pssolver.systems.stokes.INCOMPRESSIBLE_STOKES_CAPABILITY` imported but unused",
+      "source_sha256": "312c491c4c5b567ad69ab7c0ecdc47b80ce5a6260fbf192cdca487dbc0f755d0",
+      "category": "possible_module_export",
+      "reason": "Unused internally, but module-level compatibility/provenance needs review before removal.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/execution/stokes.py",
+      "line": 5,
+      "code": "F401",
+      "message": "`pssolver.systems.stokes.IncompressibleStokesSystemSpec` imported but unused",
+      "source_sha256": "312c491c4c5b567ad69ab7c0ecdc47b80ce5a6260fbf192cdca487dbc0f755d0",
+      "category": "possible_module_export",
+      "reason": "Unused internally, but module-level compatibility/provenance needs review before removal.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/execution/stokes.py",
+      "line": 6,
+      "code": "F401",
+      "message": "`pssolver.systems.stokes.PressureGauge` imported but unused",
+      "source_sha256": "312c491c4c5b567ad69ab7c0ecdc47b80ce5a6260fbf192cdca487dbc0f755d0",
+      "category": "possible_module_export",
+      "reason": "Unused internally, but module-level compatibility/provenance needs review before removal.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/execution/stokes.py",
+      "line": 7,
+      "code": "F401",
+      "message": "`pssolver.systems.stokes.TangentialZeroModePolicy` imported but unused",
+      "source_sha256": "312c491c4c5b567ad69ab7c0ecdc47b80ce5a6260fbf192cdca487dbc0f755d0",
+      "category": "possible_module_export",
+      "reason": "Unused internally, but module-level compatibility/provenance needs review before removal.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/execution/workspace.py",
+      "line": 14,
+      "code": "F401",
+      "message": "`collections.abc.Mapping` imported but unused",
+      "source_sha256": "fff2390261bb0e2911d784d3d4bbc286cd1762fbc8a64686c58754c431fa5b3f",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "pssolver/experimental/channel_compiled_v2.py"
+      ]
+    },
+    {
+      "path": "pssolver/experimental/_shadow_support.py",
+      "line": 7,
+      "code": "F401",
+      "message": "`json` imported but unused",
+      "source_sha256": "be6ddb9ae402c4d624d0543e229745990a81f9fc7cf1fab20e1ce3a2eae1e527",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "benchmarks/profile_plane_stage_p.py",
+        "tests/test_architecture_stage_l.py",
+        "tests/test_architecture_stage_q3.py",
+        "tests/test_architecture_stage_q5.py",
+        "tests/test_architecture_stage_q6.py",
+        "tests/test_architecture_stage_q61.py",
+        "tests/test_stage_q4_qualification.py"
+      ]
+    },
+    {
+      "path": "pssolver/experimental/model_execution.py",
+      "line": 32,
+      "code": "F401",
+      "message": "`pssolver.execution.AlgebraicSolverContext` imported but unused",
+      "source_sha256": "e5967486ac744b89f4dfad6d67b311b572d353785cfc9bbe8e2e75fb428a3d8f",
+      "category": "possible_module_export",
+      "reason": "Unused internally, but module-level compatibility/provenance needs review before removal.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/experimental/shadow_metadata.py",
+      "line": 377,
+      "code": "F841",
+      "message": "Local variable `model` is assigned to but never used",
+      "source_sha256": "493729eda28e2fb48bfa1bc75baa9d8bfefaea2a0860f49ec69a4265b1db033c",
+      "category": "unused_local_review",
+      "reason": "Potential redundant binding; preserve RHS/evaluation and numerical behaviour pending focused review.",
+      "observed_importers": [
+        "benchmarks/profile_plane_stage_p.py",
+        "benchmarks/stage_o42_runtime.py"
+      ]
+    },
+    {
+      "path": "pssolver/experimental/stage_o42_diagnostics.py",
+      "line": 381,
+      "code": "E741",
+      "message": "Ambiguous variable name: `l`",
+      "source_sha256": "9e83078898ec8932d3cf48c51917979d0932301029d667368c1dfe3e36dc5b17",
+      "category": "ambiguous_name",
+      "reason": "Qualification diagnostic index, rename only in an approved future batch.",
+      "observed_importers": [
+        "benchmarks/stage_o42_runtime.py",
+        "scripts_plane/analyze_plane_stage_o42_diagnostics.py",
+        "tests/test_architecture_stage_o42.py"
+      ]
+    },
+    {
+      "path": "pssolver/experimental/stage_o43_qualification.py",
+      "line": 12,
+      "code": "F401",
+      "message": "`statistics` imported but unused",
+      "source_sha256": "13164b634b8f8e8f8367026f531b7d1ac862fbf8c10c71690ffe587363fb8ddc",
+      "category": "unused_import_candidate",
+      "reason": "Locally unused ordinary dependency; cleanup deferred, not a blanket ignore.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/experimental/stage_q3_diagnostics.py",
+      "line": 16,
+      "code": "F401",
+      "message": "`._shadow_support.file_sha256` imported but unused",
+      "source_sha256": "f350d735b1695d0206ed6ba086506c1d08fb6b7901cbb9ed51e90e5c15c168e0",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_architecture_stage_q3.py"
+      ]
+    },
+    {
+      "path": "pssolver/experimental/stage_q4_qualification.py",
+      "line": 8,
+      "code": "F401",
+      "message": "`math` imported but unused",
+      "source_sha256": "4f60d37ced81bf91d1786dedb9a1880fa80716a32e24dc24db7f651107aa3ef2",
+      "category": "unused_import_candidate",
+      "reason": "Locally unused ordinary dependency; cleanup deferred, not a blanket ignore.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/functional/channel_activity.py",
+      "line": 10,
+      "code": "F401",
+      "message": "`torch` imported but unused",
+      "source_sha256": "29fc6bab8848b932be55f6f115fa27563ef21bad4637fd38c174253f8150f73f",
+      "category": "unused_import_candidate",
+      "reason": "Locally unused ordinary dependency; cleanup deferred, not a blanket ignore.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/functional/channel_checkpoint.py",
+      "line": 71,
+      "code": "F401",
+      "message": "`.errors.FunctionalCheckpointNotFoundError` imported but unused",
+      "source_sha256": "cbff849176cddda9157cd961ee97cda4ba7c1dac47fac1c01a2df467f226d8c9",
+      "category": "possible_module_export",
+      "reason": "Unused internally, but module-level compatibility/provenance needs review before removal.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/functional/checkpoint_identity.py",
+      "line": 6,
+      "code": "F401",
+      "message": "`hashlib` imported but unused",
+      "source_sha256": "500e3a1a716be803345a897c5ec564c06a78572052ff1f1331be58d7dfca94ad",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_rc5_r511_metadata_and_strict_contract.py"
+      ]
+    },
+    {
+      "path": "pssolver/functional/checkpoint_identity.py",
+      "line": 7,
+      "code": "F401",
+      "message": "`json` imported but unused",
+      "source_sha256": "500e3a1a716be803345a897c5ec564c06a78572052ff1f1331be58d7dfca94ad",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_rc5_r511_metadata_and_strict_contract.py"
+      ]
+    },
+    {
+      "path": "pssolver/models/active_nematics/boundaries.py",
+      "line": 12,
+      "code": "F401",
+      "message": "`hashlib` imported but unused",
+      "source_sha256": "a4f48a76bcc603dd2d3b928c500603776964117840b19a3398973f8dd056ec9d",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "benchmarks/diagnose_rc451_cross_runtime_residuals.py",
+        "pssolver/configuration/finite_q_anchoring.py"
+      ]
+    },
+    {
+      "path": "pssolver/models/active_nematics/boundaries.py",
+      "line": 13,
+      "code": "F401",
+      "message": "`json` imported but unused",
+      "source_sha256": "a4f48a76bcc603dd2d3b928c500603776964117840b19a3398973f8dd056ec9d",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "benchmarks/diagnose_rc451_cross_runtime_residuals.py",
+        "pssolver/configuration/finite_q_anchoring.py",
+        "tests/test_rc454_boundary_semantics.py"
+      ]
+    },
+    {
+      "path": "pssolver/models/active_nematics/equation_systems.py",
+      "line": 23,
+      "code": "F401",
+      "message": "`pssolver.systems.stokes.PressureGauge` imported but unused",
+      "source_sha256": "d785f2d42c29a3647777470d33a00c62aae323e33ed6ff6d71abe0e305a2e12d",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase7_p771_equation_system_declarations.py"
+      ]
+    },
+    {
+      "path": "pssolver/models/active_nematics/equation_systems.py",
+      "line": 24,
+      "code": "F401",
+      "message": "`pssolver.systems.stokes.TangentialZeroModePolicy` imported but unused",
+      "source_sha256": "d785f2d42c29a3647777470d33a00c62aae323e33ed6ff6d71abe0e305a2e12d",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase7_p771_equation_system_declarations.py"
+      ]
+    },
+    {
+      "path": "pssolver/planning/construction.py",
+      "line": 13,
+      "code": "F401",
+      "message": "`hashlib` imported but unused",
+      "source_sha256": "510128d1f80c67a621331d45f756874424502d6b70f130de2feeb519450519e5",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase7_p774_runtime_construction_binding.py",
+        "tests/test_phase7_p775_package_construction.py"
+      ]
+    },
+    {
+      "path": "pssolver/planning/construction.py",
+      "line": 14,
+      "code": "F401",
+      "message": "`json` imported but unused",
+      "source_sha256": "510128d1f80c67a621331d45f756874424502d6b70f130de2feeb519450519e5",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "pssolver/configuration/simulation_binding.py",
+        "tests/test_phase7_p774_runtime_construction_binding.py",
+        "tests/test_phase7_p775_package_construction.py",
+        "tests/test_phase7_p779_public_runner_connection.py",
+        "tests/test_phase7_p779_two_combination_compiler.py",
+        "tests/test_phase8_p82_periodic_application.py",
+        "tests/test_phase8_p83_channel_complete_stress_application.py"
+      ]
+    },
+    {
+      "path": "pssolver/planning/lifting.py",
+      "line": 7,
+      "code": "F401",
+      "message": "`hashlib` imported but unused",
+      "source_sha256": "d1c64d649734d4a59d1a8a2fbafc41c971cc0043cf984ae80380f5aa7ca5d01b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "pssolver/configuration/lifting.py",
+        "pssolver/operators/lifting.py"
+      ]
+    },
+    {
+      "path": "pssolver/planning/lifting.py",
+      "line": 8,
+      "code": "F401",
+      "message": "`json` imported but unused",
+      "source_sha256": "d1c64d649734d4a59d1a8a2fbafc41c971cc0043cf984ae80380f5aa7ca5d01b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "pssolver/configuration/lifting.py",
+        "pssolver/configuration/simulation_lowering.py",
+        "pssolver/operators/lifting.py",
+        "pssolver/runtime/static_lifting.py"
+      ]
+    },
+    {
+      "path": "pssolver/planning/package_construction.py",
+      "line": 11,
+      "code": "F401",
+      "message": "`hashlib` imported but unused",
+      "source_sha256": "74a2560559cac05388609bffbc4ef555cb38fde796f4b6a9e812c67a0e6a4490",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase7_p775_package_construction.py"
+      ]
+    },
+    {
+      "path": "pssolver/planning/package_construction.py",
+      "line": 12,
+      "code": "F401",
+      "message": "`json` imported but unused",
+      "source_sha256": "74a2560559cac05388609bffbc4ef555cb38fde796f4b6a9e812c67a0e6a4490",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "pssolver/api/runner.py",
+        "tests/test_phase7_p775_package_construction.py"
+      ]
+    },
+    {
+      "path": "pssolver/planning/robin.py",
+      "line": 12,
+      "code": "F401",
+      "message": "`hashlib` imported but unused",
+      "source_sha256": "8b624203e498bca32831a7d5a4c7b72416180e9414e94af9d4105f4a611c1db1",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "benchmarks/diagnose_rc451_cross_runtime_residuals.py",
+        "pssolver/configuration/finite_q_anchoring.py",
+        "pssolver/configuration/robin.py",
+        "pssolver/operators/robin.py",
+        "pssolver/runtime/robin_scalar.py"
+      ]
+    },
+    {
+      "path": "pssolver/planning/robin.py",
+      "line": 13,
+      "code": "F401",
+      "message": "`json` imported but unused",
+      "source_sha256": "8b624203e498bca32831a7d5a4c7b72416180e9414e94af9d4105f4a611c1db1",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "benchmarks/diagnose_rc451_cross_runtime_residuals.py",
+        "pssolver/configuration/finite_q_anchoring.py",
+        "pssolver/configuration/robin.py",
+        "pssolver/operators/robin.py",
+        "pssolver/runtime/robin_scalar.py",
+        "tests/test_rc454_boundary_semantics.py"
+      ]
+    },
+    {
+      "path": "pssolver/runtime/package_construction.py",
+      "line": 27,
+      "code": "F401",
+      "message": "`.channel_application_bridge.build_package_compiled_channel_runtime` imported but unused",
+      "source_sha256": "eb2d3c46e92422f13794c05d40fe3b6a30fa87cc0b23d28ec847caf10cd6b642",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase7_p775_package_construction.py",
+        "tests/test_phase7_p776_production_connection.py"
+      ]
+    },
+    {
+      "path": "pssolver/runtime/package_construction.py",
+      "line": 28,
+      "code": "F401",
+      "message": "`.channel_application_bridge.build_package_legacy_channel_runtime` imported but unused",
+      "source_sha256": "eb2d3c46e92422f13794c05d40fe3b6a30fa87cc0b23d28ec847caf10cd6b642",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase7_p775_package_construction.py"
+      ]
+    },
+    {
+      "path": "pssolver/runtime/package_construction.py",
+      "line": 30,
+      "code": "F401",
+      "message": "`.plane_application_bridge.build_package_compiled_plane_runtime` imported but unused",
+      "source_sha256": "eb2d3c46e92422f13794c05d40fe3b6a30fa87cc0b23d28ec847caf10cd6b642",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase7_p775_package_construction.py"
+      ]
+    },
+    {
+      "path": "pssolver/runtime/periodic_beris_edwards.py",
+      "line": 17,
+      "code": "F401",
+      "message": "`pssolver.core.spectral_identity.periodic_hermitian_state_projection` imported but unused",
+      "source_sha256": "322af6f9fe3da1764287fee5a704761ffb8c5174cf0b200f016831f1a90ff5bc",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "pssolver/workflows/periodic_checkpoint.py"
+      ]
+    },
+    {
+      "path": "pssolver/runtime/plane_compiled_v2_binding.py",
+      "line": 30,
+      "code": "F401",
+      "message": "`pssolver.planning.plane_compiled_v2.PlaneCompiledStage` imported but unused",
+      "source_sha256": "3f5e9b211e0b03b4de0e220d158ccdff486c954c609cbb2fe2ea523952f59737",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "pssolver/runtime/plane_compiled_v2_step.py"
+      ]
+    },
+    {
+      "path": "pssolver/runtime/plane_compiled_v2_binding.py",
+      "line": 31,
+      "code": "F401",
+      "message": "`pssolver.planning.plane_compiled_v2.PlaneFieldRole` imported but unused",
+      "source_sha256": "3f5e9b211e0b03b4de0e220d158ccdff486c954c609cbb2fe2ea523952f59737",
+      "category": "possible_module_export",
+      "reason": "Unused internally, but module-level compatibility/provenance needs review before removal.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/runtime/simulation_construction.py",
+      "line": 26,
+      "code": "F401",
+      "message": "`.channel_active_nematics.build_channel_active_nematic_runtime` imported but unused",
+      "source_sha256": "e190200db7c306b838fd67ce55589b943d88ff8e1f933bac3d12f328799a6f5b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase7_p774_runtime_construction_binding.py"
+      ]
+    },
+    {
+      "path": "pssolver/runtime/simulation_construction.py",
+      "line": 31,
+      "code": "F401",
+      "message": "`.channel_beris_edwards.build_channel_beris_edwards_runtime` imported but unused",
+      "source_sha256": "e190200db7c306b838fd67ce55589b943d88ff8e1f933bac3d12f328799a6f5b",
+      "category": "possible_module_export",
+      "reason": "Unused internally, but module-level compatibility/provenance needs review before removal.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/runtime/simulation_construction.py",
+      "line": 36,
+      "code": "F401",
+      "message": "`.plane_beris_edwards.build_plane_beris_edwards_runtime` imported but unused",
+      "source_sha256": "e190200db7c306b838fd67ce55589b943d88ff8e1f933bac3d12f328799a6f5b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "tests/test_phase7_p774_runtime_construction_binding.py"
+      ]
+    },
+    {
+      "path": "pssolver/runtime/simulation_construction.py",
+      "line": 41,
+      "code": "F401",
+      "message": "`.periodic_beris_edwards.build_periodic_beris_edwards_runtime` imported but unused",
+      "source_sha256": "e190200db7c306b838fd67ce55589b943d88ff8e1f933bac3d12f328799a6f5b",
+      "category": "possible_module_export",
+      "reason": "Unused internally, but module-level compatibility/provenance needs review before removal.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/runtime/static_lifting.py",
+      "line": 19,
+      "code": "F401",
+      "message": "`pssolver.operators.lifting.PlaneStaticLiftingOperator` imported but unused",
+      "source_sha256": "285b67d049219e52da3c35994389ec9293c1e4249043bcc1df3ff0be4f0166e4",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "pssolver/experimental/boundary_pilots.py"
+      ]
+    },
+    {
+      "path": "pssolver/workflows/channel_observation.py",
+      "line": 12,
+      "code": "F401",
+      "message": "`pssolver.models.active_nematics.Q_COMPONENTS` imported but unused",
+      "source_sha256": "21c5fff6b7bd4ec26b278d9e68381bef322c064e4bb5003def9b31781de27547",
+      "category": "possible_module_export",
+      "reason": "Unused internally, but module-level compatibility/provenance needs review before removal.",
+      "observed_importers": []
+    },
+    {
+      "path": "pssolver/workflows/plane_compiled_v2.py",
+      "line": 15,
+      "code": "F401",
+      "message": "`numpy` imported but unused",
+      "source_sha256": "abc35e0146b02f31982428cb8c4ddcc9cc527f7c5254cef16573ba4535bb737b",
+      "category": "compatibility_export",
+      "reason": "An import surface is consumed elsewhere; do not auto-remove.",
+      "observed_importers": [
+        "benchmarks/profile_plane_runtime_timestep.py",
+        "tests/test_phase5_compiled_workflow_adapter.py",
+        "tests/test_phase7_p775_package_construction.py"
+      ]
+    }
+  ],
+  "policy": "Record only; changed files must pass E4,E7,E9,F,I,B,UP without baseline exemptions."
+}
