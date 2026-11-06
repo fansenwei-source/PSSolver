@@ -1,0 +1,22 @@
+{
+  "classification": "TEST_FORMAT_ONLY_AST_UNCHANGED",
+  "date": "2026-11-06",
+  "git_identity": {
+    "implementation_parent": "15421e2649bcc91cf58a13024720739d30294d39"
+  },
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "tests/test_v0_5_s23_record.py": {
+      "current_sha256": "4f5a5f45045d779372439e746a743e452b9b2837c6cb459bff29333f87e8ee5b",
+      "historical_sha256": "2d5a97a13fe5aa3e564fbf2d01e860102266215680d0f465378330853bc61314",
+      "reason": "Ruff formatting only; full AST identical; forward binding instead of amend."
+    }
+  },
+  "plan_step": "S-23",
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_140_s23_record_format_zh.md": "488c80b0cd98bf051dff1b9fd8e6f1437b13f2df92d1bc50730430170f751519",
+    "tests/test_v0_5_s23_record.py": "4f5a5f45045d779372439e746a743e452b9b2837c6cb459bff29333f87e8ee5b"
+  },
+  "successor": 140
+}
