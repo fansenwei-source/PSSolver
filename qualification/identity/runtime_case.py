@@ -35,7 +35,7 @@ def initial_values(scene: dict) -> np.ndarray:
     values = np.stack([(i + 1) * 1e-4 * wave for i in range(5)], axis=-1)
     values[..., 0] += 0.2
     values[..., 3] -= 0.1
-    return values
+    return values.astype(np.dtype(scene["dtype"]), copy=False)
 
 
 def complete_simulation(scene: dict, root: Path) -> Simulation:
