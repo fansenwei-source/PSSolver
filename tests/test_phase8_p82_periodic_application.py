@@ -32,6 +32,7 @@ from pssolver.core import GridPlacement
 from pssolver.geometries import PeriodicBox
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
 from pssolver.planning.construction import RuntimeConstructionKind
+from tests._dynamic_flags import set_dynamic_flag
 
 
 def _simulation(
@@ -248,11 +249,11 @@ def test_periodic_auto_device_resolves_before_runtime(monkeypatch, tmp_path):
 
 
 def test_periodic_application_applies_and_records_tf32_policy(
-    monkeypatch,
+    request,
     tmp_path,
 ):
-    monkeypatch.setattr(torch.backends.cuda.matmul, "allow_tf32", True)
-    monkeypatch.setattr(torch.backends.cudnn, "allow_tf32", True)
+    set_dynamic_flag(request, torch.backends.cuda.matmul, "allow_tf32", True)
+    set_dynamic_flag(request, torch.backends.cudnn, "allow_tf32", True)
 
     result = run_simulation(_simulation(tmp_path, steps=1))
     metadata = json.loads(

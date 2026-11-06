@@ -1,0 +1,77 @@
+{
+  "classification": "TEST_TEARDOWN_COMPATIBILITY_NOT_RUNTIME_CHANGE",
+  "date": "2026-11-06",
+  "failure_evidence": {
+    "archive": "/home/fansenwei/pssolver_v0_5_s23_completion_20261106_v1",
+    "passed": 5648,
+    "reason": "pytest 9.2 MonkeyPatch.undo attempts delattr of virtual cuBLASModule.allow_tf32",
+    "suite": "suites/full_cpu/junit.xml",
+    "teardown_errors": 4
+  },
+  "git_identity": {
+    "implementation_parent": "26f88bc7b1f81f3c4146e76380b78d851dd6816d"
+  },
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "tests/test_phase8_p82_periodic_application.py": {
+      "current_sha256": "c3e5faa5cbccd2f1a0189ac132b45def80b6766e0c6f99794e915c39654e8692",
+      "historical_sha256": "a178c0f756fbd2f883e20ed21fa0709cb0300398fdb72d823ea60f47c26842d2",
+      "reason": "S-23 CPU suite compatibility: restore virtual Torch flag values via setter finalizers; assertions and inputs unchanged; no runtime or dependency mutation."
+    },
+    "tests/test_phase8_p83_channel_complete_stress_application.py": {
+      "current_sha256": "d2af6eda245f7da1b5f1b49a4a9294f50eec303aa9a787c2e3ea7a20d8a7b040",
+      "historical_sha256": "60ad61bcf6b3dcdfd799cccb3967111517fac7987b2b4d039220e5c089807413",
+      "reason": "S-23 CPU suite compatibility: restore virtual Torch flag values via setter finalizers; assertions and inputs unchanged; no runtime or dependency mutation."
+    },
+    "tests/test_phase9_p92_periodic_functional_runtime.py": {
+      "current_sha256": "352441a3b9469f55849be8f684a32c0a1a00f2a8784c576ae210693bb05b1c59",
+      "historical_sha256": "2d1cf7ec8368c315d55771c038edeffb261d8d5a2a73da47655d00c6189eee3c",
+      "reason": "S-23 CPU suite compatibility: restore virtual Torch flag values via setter finalizers; assertions and inputs unchanged; no runtime or dependency mutation."
+    },
+    "tests/test_phase9_p974_channel_functional_runtime.py": {
+      "current_sha256": "e474a9ccc2292c9ad7945344cd4700dc88f85acb0174cbc3a41213cb6d7289cd",
+      "historical_sha256": "534a93070fe567d745b7406db127844f6a82e397c619cc21b00177948b8cdd8e",
+      "reason": "S-23 CPU suite compatibility: restore virtual Torch flag values via setter finalizers; assertions and inputs unchanged; no runtime or dependency mutation."
+    },
+    "tests/test_v0_5_s23_record.py": {
+      "current_sha256": "389f9ce69c4120fef9bdaec396937a5dc30d9ebcbecd604287c5e1e05cebb624",
+      "historical_sha256": "1eb1efb87446325d4a4b32a05238b653dae027ea383b9dec1bfd067387d521ac",
+      "reason": "S-23 CPU suite compatibility: restore virtual Torch flag values via setter finalizers; assertions and inputs unchanged; no runtime or dependency mutation."
+    },
+    "tests/test_v0_5_s23_sampling.py": {
+      "current_sha256": "916e9151a58ec3d86379018878f03954b089b8f7c025a8525580b6a847b9e1ee",
+      "historical_sha256": "c29273f1b970f150a4a0e8fae48ca5f7676e819c5306482af8b56d2bff5a1932",
+      "reason": "S-23 CPU suite compatibility: restore virtual Torch flag values via setter finalizers; assertions and inputs unchanged; no runtime or dependency mutation."
+    }
+  },
+  "no_new_skip_xfail": true,
+  "plan_step": "S-23",
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_138_s23_test_teardown_zh.md": "21a8573c07779ff7822f67faa4cd81d4686468267a6484ba8b4161d1943e9f20",
+    "tests/_dynamic_flags.py": "73931fa44676aad4f633683fd3f9014de8e91b03638a976678842e41d3d93a53",
+    "tests/test_phase8_p82_periodic_application.py": "c3e5faa5cbccd2f1a0189ac132b45def80b6766e0c6f99794e915c39654e8692",
+    "tests/test_phase8_p83_channel_complete_stress_application.py": "d2af6eda245f7da1b5f1b49a4a9294f50eec303aa9a787c2e3ea7a20d8a7b040",
+    "tests/test_phase9_p92_periodic_functional_runtime.py": "352441a3b9469f55849be8f684a32c0a1a00f2a8784c576ae210693bb05b1c59",
+    "tests/test_phase9_p974_channel_functional_runtime.py": "e474a9ccc2292c9ad7945344cd4700dc88f85acb0174cbc3a41213cb6d7289cd",
+    "tests/test_v0_5_s23_record.py": "389f9ce69c4120fef9bdaec396937a5dc30d9ebcbecd604287c5e1e05cebb624",
+    "tests/test_v0_5_s23_sampling.py": "916e9151a58ec3d86379018878f03954b089b8f7c025a8525580b6a847b9e1ee"
+  },
+  "successor": 138,
+  "test_functions": {
+    "tests/test_phase8_p82_periodic_application.py": "test_periodic_application_applies_and_records_tf32_policy",
+    "tests/test_phase8_p83_channel_complete_stress_application.py": "test_channel_application_applies_and_records_tf32_policy",
+    "tests/test_phase9_p92_periodic_functional_runtime.py": "test_p92_functional_execution_restores_caller_tf32_state",
+    "tests/test_phase9_p974_channel_functional_runtime.py": "test_p974_functional_execution_restores_caller_tf32_state"
+  },
+  "unchanged": [
+    "pssolver/",
+    "benchmarks/",
+    "jobs/",
+    "packaging",
+    "qualification/identity/",
+    "reference tensors and hashes",
+    "S-22 ref",
+    "frozen dependencies"
+  ]
+}

@@ -42,6 +42,7 @@ from pssolver.runtime.periodic_beris_edwards import (
     PeriodicRuntimeBuildRequest,
     build_periodic_beris_edwards_runtime,
 )
+from tests._dynamic_flags import set_dynamic_flag
 
 
 def _model():
@@ -201,7 +202,7 @@ def test_p92_step_is_input_pure_and_combined_observation_uses_input_state(
     next_state, combined = runtime.step_and_observe(state, controls, 0)
     direct_next = runtime.step(state, controls, 0)
 
-    assert all(torch.equal(old, new) for old, new in zip(before, state))
+    assert all(torch.equal(old, new) for old, new in zip(before, state, strict=True))
     assert runtime._solver.model.parameters["alpha"] is production_alpha
     assert all(
         torch.equal(separate[name], combined[name])
@@ -210,7 +211,7 @@ def test_p92_step_is_input_pure_and_combined_observation_uses_input_state(
     assert combined["Q"] is state[0]
     assert all(
         torch.equal(left, right)
-        for left, right in zip(next_state, direct_next)
+        for left, right in zip(next_state, direct_next, strict=True)
     )
     assert not torch.equal(next_state[0], state[0])
     runtime.state_spec.validate(next_state)
@@ -222,7 +223,7 @@ def test_p92_step_is_input_pure_and_combined_observation_uses_input_state(
 
 def test_p92_functional_execution_restores_caller_tf32_state(
     tmp_path,
-    monkeypatch,
+    request,
 ):
     _, _, runtime = _runtime(tmp_path)
     state = runtime.initial_state()
@@ -230,8 +231,8 @@ def test_p92_functional_execution_restores_caller_tf32_state(
     original_precision = torch.get_float32_matmul_precision()
     try:
         torch.set_float32_matmul_precision("medium")
-        monkeypatch.setattr(torch.backends.cuda.matmul, "allow_tf32", True)
-        monkeypatch.setattr(torch.backends.cudnn, "allow_tf32", False)
+        set_dynamic_flag(request, torch.backends.cuda.matmul, "allow_tf32", True)
+        set_dynamic_flag(request, torch.backends.cudnn, "allow_tf32", False)
         caller = (
             torch.get_float32_matmul_precision(),
             bool(torch.backends.cuda.matmul.allow_tf32),

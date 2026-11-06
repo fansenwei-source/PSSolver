@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -39,7 +39,7 @@ from pssolver.functional import (
 )
 from pssolver.geometries import RectangularChannel
 from pssolver.io.checkpoint import seal_checkpoint_metadata
-from pssolver.models.active_nematics import CompleteStressBerisEdwards, Q_COMPONENTS
+from pssolver.models.active_nematics import Q_COMPONENTS, CompleteStressBerisEdwards
 from pssolver.runtime.channel_beris_edwards import (
     ChannelBerisEdwardsRuntimeBuildRequest,
     build_channel_beris_edwards_runtime,
@@ -47,6 +47,7 @@ from pssolver.runtime.channel_beris_edwards import (
 from pssolver.workflows.channel_beris_edwards import (
     write_channel_beris_edwards_checkpoint,
 )
+from tests._dynamic_flags import set_dynamic_flag
 
 
 def _simulation(
@@ -257,7 +258,7 @@ def test_p974_step_is_input_pure_and_replay_is_bitwise(tmp_path):
 
 def test_p974_functional_execution_restores_caller_tf32_state(
     tmp_path,
-    monkeypatch,
+    request,
 ):
     _, _, runtime = _runtime(tmp_path)
     state = runtime.initial_state()
@@ -265,8 +266,8 @@ def test_p974_functional_execution_restores_caller_tf32_state(
     original_precision = torch.get_float32_matmul_precision()
     try:
         torch.set_float32_matmul_precision("medium")
-        monkeypatch.setattr(torch.backends.cuda.matmul, "allow_tf32", True)
-        monkeypatch.setattr(torch.backends.cudnn, "allow_tf32", False)
+        set_dynamic_flag(request, torch.backends.cuda.matmul, "allow_tf32", True)
+        set_dynamic_flag(request, torch.backends.cudnn, "allow_tf32", False)
         caller = (
             torch.get_float32_matmul_precision(),
             bool(torch.backends.cuda.matmul.allow_tf32),

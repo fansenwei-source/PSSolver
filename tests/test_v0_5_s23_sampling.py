@@ -8,6 +8,7 @@ from qualification.identity.analyze import validate_sampling
 from qualification.identity.runtime_case import RuntimeCase
 from qualification.identity.sampling import restart_contract, sample, trace
 from qualification.identity.scenarios import scenarios
+from tests._dynamic_flags import set_dynamic_flag
 
 
 def scene(family):
@@ -78,3 +79,35 @@ def test_pre_update_callback_records_the_rhs_input_after_synchronization(tmp_pat
     # This flag is a one-use restore/reuse token, not an observation timestamp.
     assert before["step"] == 0 and not before["progress"]["constraints_current"]
     assert case.record()["step"] == 1
+
+
+@pytest.mark.parametrize("original", [False, True])
+def test_virtual_backend_flag_restores_getter_value_without_deletion(original):
+    class VirtualFlag:
+        def __init__(self):
+            self.values = {"flag": original}
+
+        def __getattr__(self, name):
+            return self.values[name]
+
+        def __setattr__(self, name, value):
+            if name == "flag":
+                self.values[name] = value
+            else:
+                object.__setattr__(self, name, value)
+
+    class Finalizers:
+        def __init__(self):
+            self.callbacks = []
+
+        def addfinalizer(self, callback):
+            self.callbacks.append(callback)
+
+    target, request = VirtualFlag(), Finalizers()
+    set_dynamic_flag(request, target, "flag", not original)
+    assert target.flag is not original
+    assert "flag" not in target.__dict__
+    for callback in reversed(request.callbacks):
+        callback()
+    assert target.flag is original
+    assert "flag" not in target.__dict__
