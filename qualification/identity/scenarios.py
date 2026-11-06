@@ -14,43 +14,60 @@ def scenarios() -> list[dict]:
         variants = [("default", {})]
         if family == "plane":
             variants += [
-                (f"spaces_{linear}_{stress}", {
-                    "molecular_field_linear_space": linear,
-                    "stress_divergence_sum_space": stress,
-                }) for linear, stress in product(("spectral", "physical"), repeat=2)
+                (
+                    f"spaces_{linear}_{stress}",
+                    {
+                        "molecular_field_linear_space": linear,
+                        "stress_divergence_sum_space": stress,
+                    },
+                )
+                for linear, stress in product(("spectral", "physical"), repeat=2)
             ]
             variants += [("reuse_off", {"disable_q_gradient_reuse": True})]
-            variants += [(f"projection_{value}", {"projected_transform_execution": value})
-                         for value in ("truncated", "full")]
+            variants += [
+                (f"projection_{value}", {"projected_transform_execution": value})
+                for value in ("truncated", "full")
+            ]
             variants += [("zero_mean", {"zero_mode_policy": "zero_mean"})]
-            variants += [(f"friction_{value}", {"zero_mode_policy": "friction",
-                          "friction_mode_fric": value}) for value in (0.1, 0.3)]
+            variants += [
+                (f"friction_{value}", {"zero_mode_policy": "friction", "friction_mode_fric": value})
+                for value in (0.1, 0.3)
+            ]
             variants += [("refresh20", {"spectral_refresh_steps": 20})]
         elif not family.startswith("functional_"):
             variants += [("reuse_off", {"disable_q_gradient_reuse": True})]
         if geometry == "channel":
-            variants += [("fixed_work", {"fixed_iterations": 12}),
-                         ("relative_tolerance", {"fixed_iterations": None})]
+            variants += [
+                ("fixed_work", {"fixed_iterations": 12}),
+                ("relative_tolerance", {"fixed_iterations": None}),
+            ]
             if family.startswith("functional_"):
                 variants += [("warm_start_false", {"warm_start": False})]
             else:
                 variants += [("odd_grid", {"shape": [17, 13, 11]})]
         if not family.startswith("functional_"):
-            variants += [(f"dealias_{rule}", {"dealias_rule": rule})
-                         for rule in ("none", "two_thirds", "cubic_half")]
+            variants += [
+                (f"dealias_{rule}", {"dealias_rule": rule})
+                for rule in ("none", "two_thirds", "cubic_half")
+            ]
         paths = ("legacy_production", "compiled_v2") if family == "plane" else (None,)
         for dtype, runtime_path, (label, options) in product(
             ("float64", "float32"), paths, variants
         ):
-            rows.append({
-                "id": f"{family}_{runtime_path or 'default'}_{dtype}_{label}",
-                "family": family, "dtype": dtype,
-                "shape": options.get("shape", shape[geometry]),
-                "steps": 32 if family.startswith("functional_") else 64,
-                "restart_steps": [23] if family.startswith("functional_") else [23, 40],
-                "runtime_path": runtime_path, "options": options,
-                "seed": 20261106, "observe": True,
-            })
+            rows.append(
+                {
+                    "id": f"{family}_{runtime_path or 'default'}_{dtype}_{label}",
+                    "family": family,
+                    "dtype": dtype,
+                    "shape": options.get("shape", shape[geometry]),
+                    "steps": 32 if family.startswith("functional_") else 64,
+                    "restart_steps": [23] if family.startswith("functional_") else [23, 40],
+                    "runtime_path": runtime_path,
+                    "options": options,
+                    "seed": 20261106,
+                    "observe": True,
+                }
+            )
         if not family.startswith("functional_"):
             default = next(row for row in rows if row["family"] == family)
             rows.append({**default, "id": default["id"] + "_unobserved", "observe": False})
