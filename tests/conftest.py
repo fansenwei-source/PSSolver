@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.util
 import os
 import subprocess
 import sys
@@ -10,7 +11,14 @@ from pathlib import Path
 import pytest
 
 
-pytest_plugins = ["tests._categories"]
+def pytest_configure(config):
+    """Load test policy by path without adding Provider source to sys.path."""
+    spec = importlib.util.spec_from_file_location(
+        "_pssolver_category_policy", Path(__file__).with_name("_categories.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    config.pluginmanager.register(module, name="pssolver-category-policy")
 
 
 @pytest.fixture(scope="session")

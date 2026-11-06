@@ -1,0 +1,48 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 136,
+  "date": "2026-11-05",
+  "plan_step": "S-22",
+  "classification": "S22_ISOLATED_TEST_IMPORT_FORWARD_CORRECTION",
+  "git_identity": {
+    "implementation_parent": "f052a4e017ed9db663e40931432710c337933d05"
+  },
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "tests/conftest.py": {
+      "historical_sha256": "de273eca87feb0e6093353a917bc5817f3ae612241db62e9b884b5c055dbdef0",
+      "current_sha256": "2457c2187230f9fedf5b9ed0e9151c5e2944c1cc3ccd1e53bb5f48bc9fb69f0c",
+      "reason": "Load the classification plugin by its own path without adding Provider source to sys.path; canonicalize GPU node IDs independently of pytest rootdir."
+    },
+    "tests/_categories.py": {
+      "historical_sha256": "8e24388cd09a5c7eb93575d3a9895e572de8f090c79f8e76665f6f0b956e45d0",
+      "current_sha256": "6f5ec117c681340a7eb1d7678c88c6ec4bc079aa4ed0de0498ac86c8e68d2a91",
+      "reason": "Load the classification plugin by its own path without adding Provider source to sys.path; canonicalize GPU node IDs independently of pytest rootdir."
+    },
+    "tests/test_v0_5_engineering.py": {
+      "historical_sha256": "9bf02a7ab86095856f1d11bccaa0ca341166fdce9b8c5bc4187bf3bb5c18202d",
+      "current_sha256": "bc8961e7886d7344cb505d1cc31b78f16de64fbfe56dd53683f9369f5dd7af83",
+      "reason": "Load the classification plugin by its own path without adding Provider source to sys.path; canonicalize GPU node IDs independently of pytest rootdir."
+    }
+  },
+  "qualification_attempt": {
+    "head": "f052a4e017ed9db663e40931432710c337933d05",
+    "passed": 5478,
+    "failed": 2,
+    "skipped": 0,
+    "deselected": 7,
+    "failures": [
+      {
+        "test": "test_cuda_test_support_collects_all_seven_nodes_without_source_shadow",
+        "cause": "Plugin name tests._categories is not importable in the existing importlib/no-source-shadow collection mode. Corrected by explicit local-file loading; original test unchanged."
+      },
+      {
+        "test": "test_explicit_analysis_window_selects_inclusive_saved_frames",
+        "cause": "Git provenance changed during analysis while setup.py sdist was running concurrently in the same clone and creating its temporary untracked release tree. Attribution is supported by overlapping logs; no intermediate git status was captured. Focused original file passed 45/45; final qualification uses an exclusively owned clone."
+      }
+    ]
+  },
+  "runtime_changed": false,
+  "threshold_changed": false,
+  "new_skip_or_xfail": false
+}

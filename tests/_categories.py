@@ -8,15 +8,17 @@ from pathlib import Path
 
 import pytest
 
-from tools._source import read_toml
-
 
 ROOT = Path(__file__).resolve().parents[1]
 NAMES = ("functional", "numerical", "historical", "installed", "gpu")
 
 
 def load_categories(root: Path = ROOT) -> tuple[dict[str, str], set[str]]:
-    manifest = read_toml(root / "tests/categories.toml")
+    try:
+        import tomllib
+    except ModuleNotFoundError:
+        import tomli as tomllib
+    manifest = tomllib.loads((root / "tests/categories.toml").read_text(encoding="utf-8"))
     categories = manifest["categories"]
     if set(categories) != set(NAMES):
         raise ValueError("Exactly the five documented categories are required")
@@ -43,7 +45,9 @@ def pytest_collection_modifyitems(config, items):
     mapping, gpu_nodeids = config._pssolver_categories
     for item in items:
         relative = Path(item.path).resolve().relative_to(ROOT).as_posix()
-        category = "gpu" if item.nodeid in gpu_nodeids else mapping[relative]
+        nodeid = relative + "::" + item.nodeid.partition("::")[2]
+        item._pssolver_gpu_prerequisite = nodeid in gpu_nodeids
+        category = "gpu" if item._pssolver_gpu_prerequisite else mapping[relative]
         item.add_marker(getattr(pytest.mark, f"category_{category}"))
 
 
@@ -88,7 +92,7 @@ def pytest_runtest_setup(item):
             pytest.fail(
                 "PSSOLVER_TEST_PREREQUISITE: PSSOLVER_INSTALLED_PYTHON required", pytrace=False
             )
-    if item.nodeid in item.config._pssolver_categories[1]:
+    if item._pssolver_gpu_prerequisite:
         import torch
 
         if not torch.cuda.is_available():

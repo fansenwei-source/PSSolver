@@ -126,7 +126,16 @@ nodeids = []
         load_categories(tmp_path)
 
 
-def test_explicit_gpu_selection_fails_before_the_historical_skip_marker():
+@pytest.mark.parametrize("isolated_root", [False, True])
+def test_explicit_gpu_selection_fails_before_the_historical_skip_marker(tmp_path, isolated_root):
+    node = (
+        "tests/test_rc4_plane_nyquist_cuda.py::"
+        "test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence"
+    )
+    isolation = []
+    if isolated_root:
+        isolation = ["--import-mode=importlib", f"--rootdir={tmp_path}"]
+        node = str(ROOT / node)
     result = subprocess.run(
         [
             sys.executable,
@@ -136,8 +145,8 @@ def test_explicit_gpu_selection_fails_before_the_historical_skip_marker():
             "-p",
             "no:cacheprovider",
             "-q",
-            "tests/test_rc4_plane_nyquist_cuda.py::"
-            "test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence",
+            *isolation,
+            node,
         ],
         cwd=ROOT,
         env=dict(os.environ, CUDA_VISIBLE_DEVICES=""),
