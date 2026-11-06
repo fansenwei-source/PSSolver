@@ -1,0 +1,34 @@
+{
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 135,
+  "date": "2026-11-05",
+  "plan_step": "S-22",
+  "classification": "S22_PREREQUISITE_ORDER_FORWARD_CORRECTION",
+  "git_identity": {
+    "implementation_parent": "362383937e1237b1847c869317149269916bba28"
+  },
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "tests/_categories.py": {
+      "historical_sha256": "7485b196ad00520e04dffd9693de2cfdddaf6786ab8033a85259e8b0ef77bcfa",
+      "current_sha256": "8e24388cd09a5c7eb93575d3a9895e572de8f090c79f8e76665f6f0b956e45d0",
+      "reason": "Run the explicit prerequisite hook before historical skipif; add a CPU-only regression without changing original CUDA tests or deselection."
+    },
+    "tests/test_v0_5_engineering.py": {
+      "historical_sha256": "a9c8639f068fa4087c2e256c4ef926819b1f68c19a2758215b73bc3b861db821",
+      "current_sha256": "9bf02a7ab86095856f1d11bccaa0ca341166fdce9b8c5bc4187bf3bb5c18202d",
+      "reason": "Run the explicit prerequisite hook before historical skipif; add a CPU-only regression without changing original CUDA tests or deselection."
+    }
+  },
+  "qualification_attempt": {
+    "head": "362383937e1237b1847c869317149269916bba28",
+    "status": "interrupted_superseded_not_a_full_pass",
+    "passed_before_interrupt": 2350,
+    "failures": 0,
+    "original_gpu_deselected": 7,
+    "reason": "Additional negative probe found old skipif executed before classification prerequisite. Full suite is rerun on the corrected new commit; initial logs retained."
+  },
+  "runtime_changed": false,
+  "threshold_changed": false,
+  "new_skip_or_xfail": false
+}

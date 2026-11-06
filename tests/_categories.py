@@ -76,6 +76,7 @@ def history_available(root: Path) -> bool:
     return True
 
 
+@pytest.hookimpl(tryfirst=True)
 def pytest_runtest_setup(item):
     if item.get_closest_marker("category_historical"):
         if not item.config._pssolver_history_checked:

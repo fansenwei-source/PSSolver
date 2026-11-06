@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -123,6 +124,30 @@ nodeids = []
     (tmp_path / "tests/test_new.py").write_text("def test_new(): pass\n")
     with pytest.raises(ValueError, match="Unclassified"):
         load_categories(tmp_path)
+
+
+def test_explicit_gpu_selection_fails_before_the_historical_skip_marker():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            "-m",
+            "pytest",
+            "-p",
+            "no:cacheprovider",
+            "-q",
+            "tests/test_rc4_plane_nyquist_cuda.py::"
+            "test_plane_nyquist_repair_binds_allocated_cuda_device_and_storage_equivalence",
+        ],
+        cwd=ROOT,
+        env=dict(os.environ, CUDA_VISIBLE_DEVICES=""),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 1
+    assert "PSSOLVER_TEST_PREREQUISITE: CUDA device required" in result.stdout
+    assert "skipped" not in result.stdout
 
 
 def test_lint_baseline_is_record_only_and_classified():
