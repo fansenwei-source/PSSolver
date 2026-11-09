@@ -17,17 +17,11 @@ from pssolver import (
     TorchSpectralExecution,
     run_simulation,
 )
-from pssolver.applications.channel_active_nematics import (
-    run_channel_active_nematics,
-)
 from pssolver.boundaries import (
     assign_boundaries,
     neumann_pressure_compatibility,
     neumann_q,
     no_slip_velocity,
-)
-from pssolver.configuration.channel_active_nematics import (
-    ChannelActiveNematicRunSpec,
 )
 from pssolver.geometries import RectangularChannel
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
@@ -81,60 +75,6 @@ def _assert_saved_state_is_byte_identical(
         left_path = left / f"{name}_{step}.npy"
         right_path = right / f"{name}_{step}.npy"
         assert left_path.read_bytes() == right_path.read_bytes()
-
-
-def _legacy_spec(
-    directory: Path,
-    *,
-    runtime_path: str,
-    checkpoint_interval: int | None,
-) -> ChannelActiveNematicRunSpec:
-    return ChannelActiveNematicRunSpec(
-        shape=(7, 6, 5),
-        lengths=(7.0, 6.0, 5.0),
-        dt=1.0e-3,
-        steps=4,
-        save_interval=4,
-        diagnostic_interval=4,
-        checkpoint_interval=checkpoint_interval,
-        generated_output_directory=directory,
-        snapshot_output_directory=directory.parent / f"{directory.name}_snapshots",
-        device="cpu",
-        dtype="float32",
-        activity=0.2,
-        pressure_relative_tolerance=1.0e-8,
-        pressure_max_iterations=100,
-        pressure_fixed_iterations=12,
-        runtime_path=runtime_path,
-        seed=24,
-    )
-
-
-def test_p7_checkpoint_schedule_does_not_change_live_trajectory(tmp_path):
-    for runtime_path in ("legacy_channel", "compiled_channel_v2"):
-        uninterrupted = tmp_path / f"{runtime_path}_uninterrupted"
-        checkpointed = tmp_path / f"{runtime_path}_checkpointed"
-        run_channel_active_nematics(
-            _legacy_spec(
-                uninterrupted,
-                runtime_path=runtime_path,
-                checkpoint_interval=None,
-            )
-        )
-        result = run_channel_active_nematics(
-            _legacy_spec(
-                checkpointed,
-                runtime_path=runtime_path,
-                checkpoint_interval=2,
-            )
-        )
-
-        assert result.checkpoint_steps == (2, 4)
-        _assert_saved_state_is_byte_identical(
-            uninterrupted,
-            checkpointed,
-            step=4,
-        )
 
 
 def _complete_stress_simulation(

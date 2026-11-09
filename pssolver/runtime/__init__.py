@@ -8,14 +8,26 @@ from importlib import import_module as _import_module
 
 from pssolver.core._compatibility import (
     facade_dir as _facade_dir,
+)
+from pssolver.core._compatibility import (
     resolve_deprecated_facade_name as _resolve_deprecated_facade_name,
 )
 
+from .channel_beris_edwards import (
+    ChannelBerisEdwardsRuntimeAdapter,
+    ChannelBerisEdwardsRuntimeBuildRequest,
+    build_channel_beris_edwards_runtime,
+)
+from .periodic_beris_edwards import (
+    PeriodicRuntimeAdapter,
+    PeriodicRuntimeAdapterProtocol,
+    PeriodicRuntimeBuildRequest,
+    build_periodic_beris_edwards_runtime,
+)
 from .plane_beris_edwards import (
     LegacyPlaneRuntimeAdapter,
     PlaneRuntimeAdapterProtocol,
     PlaneRuntimeBuildRequest,
-    SeparatedCanaryPlaneRuntimeAdapter,
     build_plane_beris_edwards_runtime,
     plane_lifting_fresh_construction_provenance,
     plane_lifting_restart_metadata,
@@ -25,24 +37,6 @@ from .plane_beris_edwards import (
 from .plane_legacy import (
     DealiasedSemiImplicitEulerIntegrator,
     build_legacy_plane_runtime,
-)
-from .channel_active_nematics import (
-    ChannelOutputViews,
-    ChannelRuntimeAdapterProtocol,
-    ChannelRuntimeBuildRequest,
-    LegacyChannelRuntimeAdapter,
-    build_channel_active_nematic_runtime,
-)
-from .periodic_beris_edwards import (
-    PeriodicRuntimeAdapter,
-    PeriodicRuntimeAdapterProtocol,
-    PeriodicRuntimeBuildRequest,
-    build_periodic_beris_edwards_runtime,
-)
-from .channel_beris_edwards import (
-    ChannelBerisEdwardsRuntimeAdapter,
-    ChannelBerisEdwardsRuntimeBuildRequest,
-    build_channel_beris_edwards_runtime,
 )
 
 
@@ -82,11 +76,11 @@ def __getattr__(name: str) -> object:
 def __dir__() -> list[str]:
     return sorted(set(_facade_dir(globals(), _PILOT_EXPORTS)) | _IMPLICIT_SUBMODULE_NAMES)
 
+
 __all__ = [
     "LegacyPlaneRuntimeAdapter",
     "PlaneRuntimeAdapterProtocol",
     "PlaneRuntimeBuildRequest",
-    "SeparatedCanaryPlaneRuntimeAdapter",
     "DealiasedSemiImplicitEulerIntegrator",
     "build_legacy_plane_runtime",
     "build_plane_beris_edwards_runtime",
@@ -95,11 +89,6 @@ __all__ = [
     "plane_physical_component",
     "verify_plane_lifting_identity",
     "PlaneStaticLiftingRuntime",
-    "ChannelOutputViews",
-    "ChannelRuntimeAdapterProtocol",
-    "ChannelRuntimeBuildRequest",
-    "LegacyChannelRuntimeAdapter",
-    "build_channel_active_nematic_runtime",
     "PeriodicRuntimeAdapter",
     "PeriodicRuntimeAdapterProtocol",
     "PeriodicRuntimeBuildRequest",

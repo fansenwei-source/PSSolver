@@ -2,30 +2,34 @@
 
 from __future__ import annotations
 
-import hashlib
-import inspect
-import json
 from pathlib import Path
 
 import pytest
 import torch
 
 from pssolver import SpectralSolver
-from pssolver.channel import ModalSaddleStokesCompute
-from pssolver.experimental import stokes as experimental_stokes
 from pssolver.linear_solvers.stokes.channel_no_slip import (
     CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     CHANNEL_VELOCITY_BOUNDARY_CONDITIONS,
     ChannelNoSlipModalStokesSolver,
 )
-from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 SHAPE = (7, 6, 5)
+
+
 LENGTHS = (4.0, 3.0, 2.5)
+
+
 FRICTION = 0.2
+
+
 VISCOSITY = 0.73
+
+
 ROOT = Path(__file__).resolve().parents[1]
+
+
 NOTES = ROOT / "notes" / "architecture_v0_2"
 
 
@@ -82,12 +86,8 @@ def _relative_norm(value, reference):
 def test_channel_boundary_spaces_and_registered_operator_state_are_frozen():
     solver = _spectral_solver()
     stokes = _canonical(solver)
-    velocity_metadata = solver.transform_backend.get_metadata(
-        CHANNEL_VELOCITY_BOUNDARY_CONDITIONS
-    )
-    pressure_metadata = solver.transform_backend.get_metadata(
-        CHANNEL_PRESSURE_BOUNDARY_CONDITIONS
-    )
+    velocity_metadata = solver.transform_backend.get_metadata(CHANNEL_VELOCITY_BOUNDARY_CONDITIONS)
+    pressure_metadata = solver.transform_backend.get_metadata(CHANNEL_PRESSURE_BOUNDARY_CONDITIONS)
 
     assert CHANNEL_VELOCITY_BOUNDARY_CONDITIONS == (
         "periodic",
@@ -117,49 +117,12 @@ def test_channel_boundary_spaces_and_registered_operator_state_are_frozen():
     )
 
 
-def test_legacy_active_force_facade_preserves_canonical_linear_solve_exactly():
-    solver = _spectral_solver()
-    canonical = _canonical(solver)
-    legacy = ModalSaddleStokesCompute(
-        solver,
-        beta=-1.0,
-        friction=FRICTION,
-        viscosity=VISCOSITY,
-        pressure_rel_tol=1.0e-12,
-        pressure_max_iter=300,
-    )
-
-    assert tuple(legacy.state_dict()) == tuple(canonical.state_dict())
-    for name, value in canonical.state_dict().items():
-        torch.testing.assert_close(
-            legacy.state_dict()[name],
-            value,
-            rtol=0.0,
-            atol=0.0,
-        )
-
-    force_hats = _force_hats(solver)
-    expected = canonical.solve_force_hats(*force_hats)
-    actual = legacy.solve_force_hats(*force_hats)
-    for actual_hat, expected_hat in zip(actual, expected, strict=True):
-        torch.testing.assert_close(
-            actual_hat,
-            expected_hat,
-            rtol=0.0,
-            atol=0.0,
-        )
-    assert legacy.last_pressure_iterations == canonical.last_pressure_iterations
-    assert legacy.last_pressure_residual == canonical.last_pressure_residual
-
-
 def test_force_solve_satisfies_momentum_incompressibility_and_pressure_gauge():
     solver = _spectral_solver()
     stokes = _canonical(solver)
     force_hats = _force_hats(solver)
 
-    ux_hat, uy_hat, uz_hat, pressure_hat = stokes.solve_force_hats(
-        *force_hats
-    )
+    ux_hat, uy_hat, uz_hat, pressure_hat = stokes.solve_force_hats(*force_hats)
     velocity_hats = (ux_hat, uy_hat, uz_hat)
     pressure_gradient_hats = stokes.pressure_gradient_hats(pressure_hat)
 
@@ -169,19 +132,12 @@ def test_force_solve_satisfies_momentum_incompressibility_and_pressure_gauge():
         pressure_gradient_hats,
         strict=True,
     ):
-        momentum_residual = (
-            force_hat - gradient_hat - velocity_hat / stokes.a_inv
-        )
+        momentum_residual = force_hat - gradient_hat - velocity_hat / stokes.a_inv
         assert _relative_norm(momentum_residual, force_hat) < 2.0e-15
 
     divergence_hat = stokes.divergence_hat(*velocity_hats)
-    velocity_norm = sum(
-        torch.linalg.vector_norm(value.reshape(-1))
-        for value in velocity_hats
-    )
-    assert float(
-        torch.linalg.vector_norm(divergence_hat.reshape(-1)) / velocity_norm
-    ) < 2.0e-11
+    velocity_norm = sum(torch.linalg.vector_norm(value.reshape(-1)) for value in velocity_hats)
+    assert float(torch.linalg.vector_norm(divergence_hat.reshape(-1)) / velocity_norm) < 2.0e-11
     assert bool((pressure_hat[:, 0, 0, 0] == 0).all().item())
     assert stokes.last_pressure_relative_residual < 2.0e-12
 
@@ -204,14 +160,20 @@ def test_manufactured_schur_problem_recovers_the_zero_gauge_pressure():
 
     actual_pressure_hat = stokes._solve_pressure(rhs_hat)
 
-    assert _relative_norm(
-        stokes._pressure_operator(actual_pressure_hat) - rhs_hat,
-        rhs_hat,
-    ) < 2.0e-12
-    assert _relative_norm(
-        actual_pressure_hat - exact_pressure_hat,
-        exact_pressure_hat,
-    ) < 3.0e-12
+    assert (
+        _relative_norm(
+            stokes._pressure_operator(actual_pressure_hat) - rhs_hat,
+            rhs_hat,
+        )
+        < 2.0e-12
+    )
+    assert (
+        _relative_norm(
+            actual_pressure_hat - exact_pressure_hat,
+            exact_pressure_hat,
+        )
+        < 3.0e-12
+    )
     assert bool((actual_pressure_hat[:, 0, 0, 0] == 0).all().item())
 
 
@@ -270,12 +232,9 @@ def test_fixed_iteration_pressure_mode_preserves_the_requested_work_count():
         "relative_tolerance_role": "diagnostic_only_not_early_exit",
         "initial_guess_policy": "persistent_production_warm_start",
         "rhs_norm_definition": "active_mode_root_mean_square.v1",
-        "working_vector_scaling": (
-            "largest_power_of_two_not_greater_than_active_component_amax"
-        ),
+        "working_vector_scaling": ("largest_power_of_two_not_greater_than_active_component_amax"),
         "breakdown_definition": (
-            "abs(mean_active(conj(left)*right))"
-            "<=eps*active_rms(left)*active_rms(right)"
+            "abs(mean_active(conj(left)*right))<=eps*active_rms(left)*active_rms(right)"
         ),
     }
 
@@ -296,12 +255,9 @@ def test_tolerance_pressure_mode_reports_maximum_iteration_precedence():
         "relative_tolerance_role": "required_postcondition",
         "initial_guess_policy": "persistent_production_warm_start",
         "rhs_norm_definition": "active_mode_root_mean_square.v1",
-        "working_vector_scaling": (
-            "largest_power_of_two_not_greater_than_active_component_amax"
-        ),
+        "working_vector_scaling": ("largest_power_of_two_not_greater_than_active_component_amax"),
         "breakdown_definition": (
-            "abs(mean_active(conj(left)*right))"
-            "<=eps*active_rms(left)*active_rms(right)"
+            "abs(mean_active(conj(left)*right))<=eps*active_rms(left)*active_rms(right)"
         ),
     }
 
@@ -326,54 +282,3 @@ def test_constructor_rejects_non_three_dimensional_transform_backend():
 
     with pytest.raises(ValueError, match="three dimensions"):
         _canonical(solver)
-
-
-def test_canonical_solver_is_model_independent_and_adapter_uses_it_directly():
-    canonical_source = inspect.getsource(ChannelNoSlipModalStokesSolver)
-    adapter_source = inspect.getsource(experimental_stokes)
-
-    assert "active_force" not in canonical_source
-    assert "Q_COMPONENTS" not in canonical_source
-    assert "from pssolver.channel import" not in adapter_source
-    assert "ChannelNoSlipModalStokesSolver(" in adapter_source
-
-
-def test_p72_record_preserves_extracted_solver_history_and_limits_authorization():
-    value = json.loads(
-        (NOTES / "phase_7_p72_channel_stokes_extraction.json").read_text(
-            encoding="utf-8"
-        )
-    )
-
-    def sha256(relative):
-        return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
-
-    assert value["classification"] == (
-        "PASS_P7_2_CHANNEL_STOKES_SCHUR_EXTRACTION"
-    )
-    assert sha256("Channel.py") == value["compatibility"][
-        "channel_entry_point_sha256"
-    ]
-    historical = value["compatibility"]["legacy_facade_module_sha256"]
-    assert sha256("pssolver/channel.py") == resolve_s03_successor(
-        "pssolver/channel.py", historical
-    )
-    assert sha256("pssolver/experimental/stokes.py") == value[
-        "compatibility"
-    ]["experimental_adapter_module_sha256"]
-    # P7.2 is an immutable historical qualification record.  The canonical
-    # solver subsequently acquired the even-grid Nyquist repair, so preserve
-    # the reviewed P7.2 digest instead of rewriting the old evidence to match
-    # the current source.
-    assert value["canonical_solver"]["module_sha256"] == (
-        "4503f62df5204f7f48da7ca58674ebda45a3f775b7742dcc7bc7ab535c511b16"
-    )
-    assert value["authorization"] == {
-        "p7_2_complete": True,
-        "p7_3_planning_eligible": True,
-        "p7_3_implementation_authorized": False,
-        "phase_7_h100_authorized": False,
-        "new_boundary_law_authorized": False,
-        "production_default_changed": False,
-        "plane_evidence_modified": False,
-    }

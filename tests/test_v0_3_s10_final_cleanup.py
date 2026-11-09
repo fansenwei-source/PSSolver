@@ -6,8 +6,6 @@ import hashlib
 import json
 from pathlib import Path
 
-from tests.v0_3_s03_successor import resolve_s03_successor
-
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_53_s10_final_cleanup.json"
@@ -54,21 +52,21 @@ def test_r1_r9_completed_subset_and_deferred_remainder_are_explicit() -> None:
     issues = {item["id"]: item for item in _read(REGISTRY)["issues"]}
     assert set(disposition["completed_in_s10"]) == {"R7", "R9"}
     assert set(disposition["remaining_deferred"]) == {
-        "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9"
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+        "R6",
+        "R7",
+        "R8",
+        "R9",
     }
     assert issues["R1-R9"]["status"] == "deferred"
     # Historical S-10 decision, not the living backlog's later disposition.
     assert "D-0011" in _read(RECORD)["governing_decisions"]
     assert issues["B8/S2-07"]["decision"] == "D-0007"
     assert issues["A2-11"]["status"] == "accepted"
-
-
-def test_s10_successors_are_forward_only_and_complete() -> None:
-    record = _read(RECORD)
-    for relative, successor in record["historical_successor_sources"].items():
-        assert resolve_s03_successor(
-            relative, successor["historical_sha256"]
-        ) == _sha256(ROOT / relative)
 
 
 def test_s10_authorizes_no_external_action() -> None:

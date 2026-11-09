@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
 import math
+from dataclasses import replace
 from pathlib import Path
 
-import numpy as np
 import pytest
 import torch
 
@@ -49,8 +48,8 @@ from pssolver.core.domain import DomainSpec
 from pssolver.core.fields import FieldRole
 from pssolver.geometries import PlaneSlab
 from pssolver.models.active_nematics import (
-    CompleteStressBerisEdwards,
     Q_COMPONENTS,
+    CompleteStressBerisEdwards,
     strong_homeotropic_q,
     strong_planar_q,
 )
@@ -66,12 +65,6 @@ from pssolver.systems.equations import (
     EquationFieldSpec,
     EquationSystemSpec,
     EquationTermSpec,
-)
-from pssolver.workflows.plane_checkpoint import (
-    capture_plane_checkpoint,
-    load_plane_checkpoint,
-    restore_plane_checkpoint,
-    write_plane_checkpoint,
 )
 
 
@@ -203,12 +196,8 @@ def test_public_homogeneous_plane_preserves_requested_effective_space(
         )
     )
     assert compiled.lowering_plan.lifting_plan is None
-    assert compiled.normalization["requested_molecular_field_linear_space"] == (
-        linear_space
-    )
-    assert compiled.normalization["effective_molecular_field_linear_space"] == (
-        linear_space
-    )
+    assert compiled.normalization["requested_molecular_field_linear_space"] == (linear_space)
+    assert compiled.normalization["effective_molecular_field_linear_space"] == (linear_space)
     assert compiled.normalization["molecular_field_space_fallback_used"] is False
 
 
@@ -222,13 +211,9 @@ def _generic_system() -> EquationSystemSpec:
             EquationFieldSpec("multiplier", FieldRole.ALGEBRAIC, ("lambda_value",)),
         ),
         evolution_laws=(
-            EquationTermSpec(
-                "evolve_concentration", "generic_transport_rhs", ("c",), ("c", "j")
-            ),
+            EquationTermSpec("evolve_concentration", "generic_transport_rhs", ("c",), ("c", "j")),
         ),
-        constitutive_laws=(
-            EquationTermSpec("construct_flux", "generic_flux", ("j",), ("c",)),
-        ),
+        constitutive_laws=(EquationTermSpec("construct_flux", "generic_flux", ("j",), ("c",)),),
         algebraic_systems=(
             AlgebraicSystemSpec(
                 "solve_multiplier", "generic_constraint", ("lambda_value",), ("c", "j")
@@ -267,18 +252,14 @@ def _lifting_runtime(wall_points: int, *, localized: bool) -> PlaneStaticLifting
         dtype=torch.float64,
         device="cpu",
         batch_size=1,
-        fresh_initial_conditioning=(
-            localized_quintic_wall_transition(0.5) if localized else None
-        ),
+        fresh_initial_conditioning=(localized_quintic_wall_transition(0.5) if localized else None),
         affected_field="concentration",
     )
 
 
 def _homogeneous_second_derivative(value: torch.Tensor, spacing: float) -> torch.Tensor:
     result = torch.empty_like(value)
-    result[..., 1:-1] = (
-        value[..., 2:] - 2.0 * value[..., 1:-1] + value[..., :-2]
-    ) / spacing**2
+    result[..., 1:-1] = (value[..., 2:] - 2.0 * value[..., 1:-1] + value[..., :-2]) / spacing**2
     result[..., 0] = (value[..., 1] - 3.0 * value[..., 0]) / spacing**2
     result[..., -1] = (value[..., -2] - 3.0 * value[..., -1]) / spacing**2
     return result
@@ -291,9 +272,9 @@ def _pipeline_error(wall_points: int) -> float:
     z = (torch.arange(wall_points, dtype=torch.float64) + 0.5) * spacing
     remainder = torch.sin(math.pi * z / length).expand(runtime.plan.domain_shape).clone()
     physical = runtime.operator.reconstruct_physical("c", remainder)
-    recovered = runtime.extract_initial_remainders(
-        {"c": physical}, apply_fresh_conditioning=False
-    )["c"]
+    recovered = runtime.extract_initial_remainders({"c": physical}, apply_fresh_conditioning=False)[
+        "c"
+    ]
     numerical = _homogeneous_second_derivative(recovered, spacing)
     exact = -((math.pi / length) ** 2) * remainder
     return float(torch.sqrt(torch.mean((numerical - exact).square())).item())
@@ -310,19 +291,11 @@ def test_localized_policy_is_fresh_only_deterministic_and_interior_exact():
     runtime = _lifting_runtime(16, localized=True)
     generator = torch.Generator(device="cpu").manual_seed(436)
     physical = {
-        "c": torch.randn(
-            runtime.plan.domain_shape, generator=generator, dtype=torch.float64
-        )
+        "c": torch.randn(runtime.plan.domain_shape, generator=generator, dtype=torch.float64)
     }
-    raw = runtime.extract_initial_remainders(
-        physical, apply_fresh_conditioning=False
-    )["c"]
-    fresh = runtime.extract_initial_remainders(
-        physical, apply_fresh_conditioning=True
-    )["c"]
-    repeated = runtime.extract_initial_remainders(
-        physical, apply_fresh_conditioning=True
-    )["c"]
+    raw = runtime.extract_initial_remainders(physical, apply_fresh_conditioning=False)["c"]
+    fresh = runtime.extract_initial_remainders(physical, apply_fresh_conditioning=True)["c"]
+    repeated = runtime.extract_initial_remainders(physical, apply_fresh_conditioning=True)["c"]
     count = runtime.plan.domain_shape[runtime.plan.wall_normal_axis]
     length = runtime.plan.domain_lengths[runtime.plan.wall_normal_axis]
     centers = (torch.arange(count, dtype=torch.float64) + 0.5) * length / count
@@ -330,13 +303,9 @@ def test_localized_policy_is_fresh_only_deterministic_and_interior_exact():
     assert torch.equal(fresh[..., interior], raw[..., interior])
     assert torch.any(fresh[..., ~interior] != raw[..., ~interior])
     assert torch.equal(fresh, repeated)
-    assert runtime.restart_metadata()["lifting"].get(
-        "fresh_initial_remainder_conditioning"
-    ) is None
+    assert runtime.restart_metadata()["lifting"].get("fresh_initial_remainder_conditioning") is None
     metadata = runtime.fresh_construction_provenance(conditioning_applied=True)
-    assert metadata["conditioning"]["effective_policy"] == (
-        "localized_quintic_wall_transition_v1"
-    )
+    assert metadata["conditioning"]["effective_policy"] == ("localized_quintic_wall_transition_v1")
     assert metadata["checkpoint_compatibility_identity"] is False
 
 
@@ -362,9 +331,7 @@ def _internal_runtime(tmp_path: Path, *, apply_fresh: bool):
         defect_core_radius=1.5,
         twist_modes=(1, 2, 3),
     )
-    base = compose_plane_beris_edwards_simulation(
-        decompose_plane_beris_edwards_run_spec(run_spec)
-    )
+    base = compose_plane_beris_edwards_simulation(decompose_plane_beris_edwards_run_spec(run_spec))
     normals = {
         (2, "lower"): (0.0, 0.0, -1.0),
         (2, "upper"): (0.0, 0.0, 1.0),
@@ -390,8 +357,7 @@ def _internal_runtime(tmp_path: Path, *, apply_fresh: bool):
     )
     generator = torch.Generator(device="cpu").manual_seed(436)
     initial = {
-        name: 0.01
-        * torch.randn((4, 4, 6), generator=generator, dtype=torch.float64)
+        name: 0.01 * torch.randn((4, 4, 6), generator=generator, dtype=torch.float64)
         for name in Q_COMPONENTS
     }
     request = PlaneRuntimeBuildRequest(
@@ -407,29 +373,6 @@ def _internal_runtime(tmp_path: Path, *, apply_fresh: bool):
         apply_fresh_initial_conditioning=apply_fresh,
     )
     adapter = build_package_simulation_runtime(
-        PackageRuntimeConstructionInput(
-            plan_package_runtime_construction(simulation), request
-        )
+        PackageRuntimeConstructionInput(plan_package_runtime_construction(simulation), request)
     )
     return run_spec, adapter
-
-
-def test_internal_same_version_file_restart_is_byte_identical(tmp_path):
-    identity, continuous = _internal_runtime(tmp_path / "continuous", apply_fresh=True)
-    _, segment = _internal_runtime(tmp_path / "segment", apply_fresh=True)
-    _, resumed = _internal_runtime(tmp_path / "resumed", apply_fresh=False)
-    continuous.advance(4)
-    segment.advance(2)
-    persisted = load_plane_checkpoint(
-        write_plane_checkpoint(
-            tmp_path / "checkpoint",
-            capture_plane_checkpoint(segment, run_spec=identity),
-        )
-    )
-    assert persisted.fresh_construction_provenance["conditioning"][
-        "effective_policy"
-    ] == "localized_quintic_wall_transition_v1"
-    assert restore_plane_checkpoint(resumed, persisted, run_spec=identity) == 2
-    resumed.advance(2)
-    for name in (*Q_COMPONENTS, "ux", "uy", "uz", "p"):
-        assert torch.equal(continuous.fields[name], resumed.fields[name])

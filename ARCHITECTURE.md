@@ -44,6 +44,16 @@ v0.4.0 runs four hand-wired combinations on one old engine:
 
 ## 3. Target layers and dependency direction (end of 0.5)
 
+S-24 status: the legacy active-force Channel application and the separated
+canary connection are retired. The three complete-stress combinations remain
+on their existing engine. Thirty-five frozen stage artifacts now live outside
+the package in `qualification/stages/`; only the seven independent A-group
+plans have test-only old-name loading. Historical wiring audits run against a
+separate v0.4.0 Git checkout. Neither loader nor historical implementation is
+distributed. The shared pressure-policy declaration lives privately alongside
+the canonical Stokes solver. State/workspace, the old assembler and private
+lifting wiring remain for their explicitly scheduled later steps.
+
 ```
 public       pssolver (top-level exports), api/     Simulation, run_simulation, results
 components   models/ presets/ geometries/ boundaries/ integrators/

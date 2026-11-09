@@ -7,7 +7,6 @@ import json
 from pathlib import Path
 
 import pssolver.control as legacy_control
-
 from tests.v0_3_s03_successor import resolve_s03_successor
 
 
@@ -38,10 +37,7 @@ def _latest_git_blob(relative: str, historical_sha256: str, historical: str) -> 
     successor = json.loads(R5_9_RECORD.read_text(encoding="utf-8"))[
         "historical_successor_sources"
     ].get(relative)
-    if (
-        successor is not None
-        and successor["historical_sha256"] == historical_sha256
-    ):
+    if successor is not None and successor["historical_sha256"] == historical_sha256:
         return successor["current_git_blob"]
     if (
         relative == "pssolver/control/active_force.py"
@@ -65,15 +61,9 @@ def test_p90_binds_phase8_and_authorizes_only_the_contract_freeze() -> None:
     assert record["schema_version"] == 1
     assert record["phase"] == "P9.0"
     assert record["status"] == "complete"
-    assert record["classification"] == (
-        "PASS_P9_0_CONTROL_CONTRACT_AND_ORACLE_FREEZE"
-    )
-    assert baseline["commit"] == (
-        "4688021624b017fd55e476466310e4908cd19b99"
-    )
-    assert _sha256(ROOT / baseline["phase_8_record"]) == baseline[
-        "phase_8_record_sha256"
-    ]
+    assert record["classification"] == ("PASS_P9_0_CONTROL_CONTRACT_AND_ORACLE_FREEZE")
+    assert baseline["commit"] == ("4688021624b017fd55e476466310e4908cd19b99")
+    assert _sha256(ROOT / baseline["phase_8_record"]) == baseline["phase_8_record_sha256"]
     assert baseline["phase_8_complete"] is True
     assert baseline["eligible_for_phase_9_planning"] is True
     assert authorization == {
@@ -107,9 +97,7 @@ def test_p90_freezes_r1_through_r12_and_their_first_owners() -> None:
 
     assert list(by_id) == [f"R{index}" for index in range(1, 13)]
     assert {
-        identifier
-        for identifier, item in by_id.items()
-        if item["first_periodic_slice_blocking"]
+        identifier for identifier, item in by_id.items() if item["first_periodic_slice_blocking"]
     } == {"R1", "R2", "R3", "R4", "R5", "R6", "R7", "R10", "R12"}
     assert by_id["R1"]["first_owner"] == "P9.1"
     assert by_id["R3"]["first_owner"] == "P9.2"
@@ -125,51 +113,25 @@ def test_p90_freezes_ownership_and_one_way_dependency() -> None:
     ownership = record["ownership"]
 
     assert dependency == {
-        "allowed": (
-            "independent_control_consumer_to_pssolver_public_provisional_api"
-        ),
+        "allowed": ("independent_control_consumer_to_pssolver_public_provisional_api"),
         "reverse_dependency_allowed": False,
         "consumer_repository_identity_in_pssolver_docs": False,
         "consumer_objectives_or_experiments_in_pssolver": False,
     }
-    assert "functional_execution_and_differentiability_capabilities" in (
-        ownership["pssolver"]
-    )
+    assert "functional_execution_and_differentiability_capabilities" in (ownership["pssolver"])
     assert "durable_checkpoint_conversion" in ownership["pssolver"]
-    assert "adjoint_checkpoint_schedule" in ownership[
-        "independent_control_consumer"
-    ]
-    assert "optimizers_line_searches_and_campaigns" in ownership[
-        "independent_control_consumer"
-    ]
-
-
-def test_p90_binds_every_frozen_legacy_oracle_file_by_content() -> None:
-    files = _record()["oracle_files"]
-
-    assert len(files) == 13
-    assert len({item["path"] for item in files}) == len(files)
-    for item in files:
-        path = ROOT / item["path"]
-        assert path.is_file()
-        assert _sha256(path) == _latest_sha256(item["path"], item["sha256"])
-        assert _git_blob(path) == _latest_git_blob(
-            item["path"], item["sha256"], item["git_blob"]
-        )
+    assert "adjoint_checkpoint_schedule" in ownership["independent_control_consumer"]
+    assert "optimizers_line_searches_and_campaigns" in ownership["independent_control_consumer"]
 
 
 def test_p90_preserves_the_exact_legacy_public_surface() -> None:
     frozen = _record()["legacy_control"]
 
-    assert frozen["status"] == (
-        "frozen_compatibility_public_numerical_oracle"
-    )
+    assert frozen["status"] == ("frozen_compatibility_public_numerical_oracle")
     assert frozen["new_features_allowed"] is False
     assert frozen["new_public_names_allowed"] is False
     assert list(legacy_control.__all__) == frozen["public_names"]
-    readme = (ROOT / "pssolver" / "control" / "README.md").read_text(
-        encoding="utf-8"
-    )
+    readme = (ROOT / "pssolver" / "control" / "README.md").read_text(encoding="utf-8")
     package_doc = legacy_control.__doc__ or ""
     assert "Status: frozen (2026-09-27)" in readme
     assert "independent consumer" in readme
@@ -187,10 +149,9 @@ def test_p90_records_the_only_package_level_legacy_control_import() -> None:
             observed.append(path.relative_to(ROOT).as_posix())
 
     s07 = json.loads(
-        (
-            ROOT
-            / "notes/PSSolver_v0_3_0_s03_successor_19_s07_rework_candidate.json"
-        ).read_text(encoding="utf-8")
+        (ROOT / "notes/PSSolver_v0_3_0_s03_successor_19_s07_rework_candidate.json").read_text(
+            encoding="utf-8"
+        )
     )
     assert s07["v30_contract"]["retained_modules_depend_on_excluded_control"] is False
     assert observed == []
@@ -204,17 +165,12 @@ def test_p90_freezes_observation_replay_control_and_batch_semantics() -> None:
 
     assert contract["observation_time"] == "input_state_under_current_control"
     assert contract["combined_and_separate_observation_bitwise_equal"] is True
-    assert (
-        contract["terminal_observation_includes_control_dependent_algebraic_fields"]
-        is False
-    )
+    assert contract["terminal_observation_includes_control_dependent_algebraic_fields"] is False
     assert contract["functional_state_has_explicit_batch_axis"] is True
     assert contract["first_periodic_required_batch_size"] == 1
     assert contract["larger_batch_is_optional_declared_capability"] is True
     assert contract["functional_replay_same_execution_identity"] == "bitwise"
-    assert contract["production_functional_comparison"] == (
-        "strict_predeclared_tolerance"
-    )
+    assert contract["production_functional_comparison"] == ("strict_predeclared_tolerance")
     assert contract["active_force_equation_term"] == "div(beta * alpha * Q)"
     assert contract["form_control_q_product_before_divergence"] is True
     assert contract["hidden_warm_state_allowed"] is False
@@ -240,9 +196,7 @@ def test_p90_freezes_periodic_first_slice_order_without_authorizing_p91() -> Non
     assert sequence[0]["authorized"] is True
     assert sequence[0]["requires_h100"] is False
     assert all(item["authorized"] is False for item in sequence[1:])
-    assert decision["first_application"] == (
-        "periodic_complete_stress_beris_edwards"
-    )
+    assert decision["first_application"] == ("periodic_complete_stress_beris_edwards")
     assert decision["first_control_field"] == "activity"
     assert set(decision["p9_1_prerequisites"]) == {
         "public_positive_friction_periodic_application",
@@ -253,9 +207,7 @@ def test_p90_freezes_periodic_first_slice_order_without_authorizing_p91() -> Non
 
 
 def test_future_verbatim_archive_lists_p90_without_rebuilding_the_pdf() -> None:
-    source = (NOTES / "build_verbatim_archive_pdf.py").read_text(
-        encoding="utf-8"
-    )
+    source = (NOTES / "build_verbatim_archive_pdf.py").read_text(encoding="utf-8")
     names = (
         "adr/0013-functional-runtime-and-external-control-ownership.md",
         "phase_8_final_closure.json",

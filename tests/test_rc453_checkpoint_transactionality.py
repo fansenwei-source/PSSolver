@@ -2,18 +2,15 @@
 
 from __future__ import annotations
 
-from contextlib import contextmanager
 import errno
 import hashlib
 import json
 import os
-from pathlib import Path
 import stat
-import subprocess
+from contextlib import contextmanager
+from pathlib import Path
 
 import pytest
-
-from tests.v0_3_s03_successor import resolve_s03_successor
 
 import pssolver.io.checkpoint as checkpoint_io
 from pssolver.functional.errors import (
@@ -26,8 +23,8 @@ from pssolver.io.checkpoint import (
     CheckpointCompatibilityError,
     CheckpointError,
     CheckpointExistsError,
-    CheckpointIOError,
     CheckpointIntegrityError,
+    CheckpointIOError,
     CheckpointNotFoundError,
     checkpoint_directory_transaction,
     read_checkpoint_json,
@@ -48,16 +45,10 @@ RC5_R52 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_2_finite_workflow_state.json"
 RC5_R53 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
 RC5_R58 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 RC5_R59 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
-RC5_R510 = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
-)
-RC5_R511 = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
-)
+RC5_R510 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json")
+RC5_R511 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json")
 RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
-RC5_G1_GLIBC = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
-)
+RC5_G1_GLIBC = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json")
 RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 V021_N1 = ROOT / "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
 V022_V17 = ROOT / "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
@@ -205,13 +196,16 @@ def test_payload_resolution_rejects_non_basename_paths(tmp_path, filename):
 def test_payload_resolution_requires_canonical_regular_non_symlink(tmp_path):
     payload = tmp_path / "state.npy"
     payload.write_bytes(b"payload")
-    assert resolve_checkpoint_payload(
-        tmp_path,
-        "state.npy",
-        operation="checkpoint_import",
-        description="tensor payload",
-        expected_filename="state.npy",
-    ) == payload.resolve()
+    assert (
+        resolve_checkpoint_payload(
+            tmp_path,
+            "state.npy",
+            operation="checkpoint_import",
+            description="tensor payload",
+            expected_filename="state.npy",
+        )
+        == payload.resolve()
+    )
 
     with pytest.raises(CheckpointIntegrityError):
         resolve_checkpoint_payload(
@@ -391,101 +385,6 @@ def test_writer_transaction_syncs_payload_directory_and_parent(
     assert target.is_dir()
     assert (target / "payload.bin").read_bytes() == b"complete"
     assert len(calls) >= 3
-
-
-def test_rc453_record_binds_contract_sources_and_scope():
-    record = json.loads(RECORD.read_text(encoding="utf-8"))
-    contract = ROOT / record["baseline"]["contract_record"]
-    assert hashlib.sha256(contract.read_bytes()).hexdigest() == record[
-        "baseline"
-    ]["contract_record_sha256"]
-    assert record["classification"] == (
-        "PASS_RC4_5_3_CHECKPOINT_TRANSACTIONALITY_CPU_CANDIDATE"
-    )
-    assert record["issues"] == {
-        "B7": "closed_verified",
-        "B24": "closed_verified",
-        "B27": "closed_verified",
-    }
-    for relative, expected in record["source_sha256"].items():
-        actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
-        if actual == expected:
-            continue
-        resolved = expected
-        for successor_path in (
-            RC454,
-            RC455,
-            RC5_R51,
-            RC5_R52,
-            RC5_R53,
-            RC5_R58,
-            RC5_R59,
-            RC5_R510,
-            RC5_R511,
-            RC5_R513,
-            RC5_G1_GLIBC,
-            RC6_R6,
-            V021_N1,
-            V022_V17,
-        ):
-            registration = json.loads(
-                successor_path.read_text(encoding="utf-8")
-            )["historical_successor_sources"].get(relative)
-            if registration is None:
-                continue
-            if registration["historical_sha256"] == resolved:
-                resolved = registration["current_sha256"]
-        assert resolve_s03_successor(relative, resolved) == actual
-    parent = record["baseline"]["implementation_parent_commit"]
-    for relative, registration in record[
-        "historical_successor_sources"
-    ].items():
-        historical = subprocess.run(
-            ["git", "show", f"{parent}:{relative}"],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-        ).stdout
-        assert hashlib.sha256(historical).hexdigest() == registration[
-            "historical_sha256"
-        ]
-        resolved = registration["current_sha256"]
-        for successor_path in (
-            RC455,
-            RC5_R51,
-            RC5_R52,
-            RC5_R53,
-            RC5_R58,
-            RC5_R59,
-                RC5_R510,
-                RC5_R511,
-                RC5_R513,
-                RC5_G1_GLIBC,
-                RC6_R6,
-                V021_N1,
-                V022_V17,
-            ):
-            successor = json.loads(successor_path.read_text(encoding="utf-8"))[
-                "historical_successor_sources"
-            ].get(relative)
-            if (
-                successor is not None
-                and successor["historical_sha256"] == resolved
-            ):
-                resolved = successor["current_sha256"]
-        assert hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() == (
-            resolve_s03_successor(relative, resolved)
-        )
-    assert record["scope"] == {
-        "checkpoint_schema_or_tensor_layout_version_changed": False,
-        "scientific_model_changed": False,
-        "numerical_hot_path_changed": False,
-        "PSSolver_Control_modified": False,
-        "nematics3d_modified": False,
-        "production_default_changed": False,
-        "h100_executed": False,
-        "push_executed": False,
-    }
 
 
 def test_rc453_record_freezes_transaction_and_next_stage_boundary():

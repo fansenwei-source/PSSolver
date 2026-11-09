@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 from tests.v0_3_s03_successor import resolve_s03_successor
 
@@ -17,9 +17,7 @@ CONTRACT = ROOT / "notes/PSSolver_v0_2_0rc4_rc452_public_robustness_contract.jso
 MATRIX = ROOT / "notes/PSSolver_v0_2_0rc3_known_issues_matrix.json"
 RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
 RC454 = ROOT / "notes/PSSolver_v0_2_0rc4_rc454_boundary_semantics.json"
-RC455 = ROOT / (
-    "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
-)
+RC455 = ROOT / ("notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json")
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 POST_RELEASE = ROOT / "notes/PSSolver_v0_2_0rc4_post_release_findings.json"
 RC5_W1 = ROOT / "notes/PSSolver_v0_2_0rc5_w1_documentation.json"
@@ -30,12 +28,8 @@ RC5_R55 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 RC5_R56 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 RC5_R58 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
-RC5_R510 = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
-)
-RC5_R511 = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
-)
+RC5_R510 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json")
+RC5_R511 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json")
 RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 
 
@@ -77,9 +71,7 @@ def _resolve_successor_sha256(relative: str, historical: str) -> str:
         RC5_R511,
         RC6_R6,
     ):
-        registration = _read(record_path).get(
-            "historical_successor_sources", {}
-        ).get(relative)
+        registration = _read(record_path).get("historical_successor_sources", {}).get(relative)
         if registration is None:
             continue
         if registration["historical_sha256"] == resolved:
@@ -128,10 +120,7 @@ def test_rc447_closure_marks_only_the_three_pressure_items_closed():
         "B28",
         "B29",
     ]
-    assert all(
-        item["state_after"] == "closed_verified"
-        for item in closure["known_issues"]
-    )
+    assert all(item["state_after"] == "closed_verified" for item in closure["known_issues"])
     qualification = closure["qualification"]
     assert qualification["cuda_only_tests_passed"] == 7
     assert qualification["correctness_gates_passed"] == 9
@@ -145,32 +134,31 @@ def test_rc447_closure_retains_the_preregistered_performance_contract():
     thresholds = performance["thresholds"]
     for grid in ("R128x20x20", "R512x40x40"):
         result = performance[grid]
-        assert result["mean_candidate_over_baseline"] <= thresholds[
-            "mean_timestep_ratio_max"
-        ]
-        assert result["median_candidate_over_baseline"] <= thresholds[
-            "median_timestep_ratio_max"
-        ]
-        assert result["maximum_paired_candidate_over_baseline"] <= thresholds[
-            "every_paired_timestep_ratio_max"
-        ]
-        assert result["peak_allocated_candidate_over_baseline"] <= thresholds[
-            "peak_allocated_ratio_max"
-        ]
+        assert result["mean_candidate_over_baseline"] <= thresholds["mean_timestep_ratio_max"]
+        assert result["median_candidate_over_baseline"] <= thresholds["median_timestep_ratio_max"]
+        assert (
+            result["maximum_paired_candidate_over_baseline"]
+            <= thresholds["every_paired_timestep_ratio_max"]
+        )
+        assert (
+            result["peak_allocated_candidate_over_baseline"]
+            <= thresholds["peak_allocated_ratio_max"]
+        )
 
 
 def test_rc450_binds_the_rc44_closure_and_preplanning_matrix():
     baseline = _read(PLAN)["baseline"]
-    assert baseline["planning_parent_commit"] == (
-        "51f47e9f06bd3e019d785305bff47c80f5519b10"
+    assert baseline["planning_parent_commit"] == ("51f47e9f06bd3e019d785305bff47c80f5519b10")
+    assert (
+        _sha256(ROOT / baseline["rc4_4_closure_record"]) == baseline["rc4_4_closure_record_sha256"]
     )
-    assert _sha256(ROOT / baseline["rc4_4_closure_record"]) == baseline[
-        "rc4_4_closure_record_sha256"
-    ]
-    assert _git_blob_sha256(
-        baseline["planning_parent_commit"],
-        baseline["known_issues_record"],
-    ) == baseline["known_issues_record_at_planning_parent_sha256"]
+    assert (
+        _git_blob_sha256(
+            baseline["planning_parent_commit"],
+            baseline["known_issues_record"],
+        )
+        == baseline["known_issues_record_at_planning_parent_sha256"]
+    )
 
 
 def test_rc450_handles_exactly_the_nine_cross_runtime_residuals():
@@ -218,14 +206,18 @@ def test_rc450_analysis_is_evidence_first_and_fail_closed():
 def test_rc450_checkpoint_contract_covers_downgrade_paths_atomicity_and_umask():
     contract = _read(PLAN)["checkpoint_contract_to_freeze_in_rc4_5_2"]
     assert contract["integrity_downgrade_requires_explicit_versioned_reader"] is True
-    assert contract[
-        "stored_payload_paths_must_be_relative_normalized_and_confined_to_checkpoint_root"
-    ] is True
+    assert (
+        contract["stored_payload_paths_must_be_relative_normalized_and_confined_to_checkpoint_root"]
+        is True
+    )
     assert contract["all_validation_before_target_mutation"] is True
     assert contract["all_writers_stage_then_atomically_publish"] is True
-    assert contract[
-        "published_modes_follow_creation_mode_and_caller_umask_not_hard_coded_world_readability"
-    ] is True
+    assert (
+        contract[
+            "published_modes_follow_creation_mode_and_caller_umask_not_hard_coded_world_readability"
+        ]
+        is True
+    )
     assert contract["failed_publication_leaves_no_target_or_staging_residue"] is True
 
 
@@ -240,9 +232,7 @@ def test_rc450_boundary_contract_requires_equivalence_or_an_explicit_bound():
 
 
 def test_rc450_validation_retains_payloads_but_adds_one_envelope():
-    contract = _read(PLAN)[
-        "validation_and_diagnostics_contract_to_freeze_in_rc4_5_2"
-    ]
+    contract = _read(PLAN)["validation_and_diagnostics_contract_to_freeze_in_rc4_5_2"]
     assert contract["canonical_device_parser_shared_semantics_required"] is True
     assert contract["invalid_configuration_rejects_before_output_creation"] is True
     assert contract["capability_catalog_and_compiler_truth_table_equal"] is True
@@ -310,12 +300,6 @@ def test_rc450_consumer_and_h100_work_remain_separately_authorized():
     assert authorization["h100_submission_authorized"] is False
 
 
-def test_rc450_reviewed_sources_are_content_addressed():
-    for relative, expected in _read(PLAN)["reviewed_source_sha256"].items():
-        actual = _sha256(ROOT / relative)
-        assert _resolve_successor_sha256(relative, expected) == actual
-
-
 def test_known_issue_matrix_preserves_rc44_and_tracks_rc45_closure():
     matrix = _read(MATRIX)
     assert matrix["summary"]["closed_verified"] == 28
@@ -324,19 +308,10 @@ def test_known_issue_matrix_preserves_rc44_and_tracks_rc45_closure():
     assert matrix["summary"]["next_implementation_batch"] == "rc5_must"
     issues = {item["id"]: item for item in matrix["items"]}
     assert all(issues[item]["state"] == "closed_verified" for item in ("B25", "B28", "B29"))
-    assert all(
-        issues[item]["state"] == "partial_residual"
-        for item in ("B7", "B24")
-    )
+    assert all(issues[item]["state"] == "partial_residual" for item in ("B7", "B24"))
     assert issues["B27"]["state"] == "closed_verified"
-    assert all(
-        issues[item]["state"] == "closed_verified"
-        for item in ("B9", "B21")
-    )
-    assert all(
-        issues[item]["state"] == "partial_residual"
-        for item in ("B13", "B17")
-    )
+    assert all(issues[item]["state"] == "closed_verified" for item in ("B9", "B21"))
+    assert all(issues[item]["state"] == "partial_residual" for item in ("B13", "B17"))
     assert issues["B15"]["state"] == "closed_verified"
     assert issues["B11"]["state"] == "partial_residual"
     assert matrix["post_release"]["classification"] == "FAIL"

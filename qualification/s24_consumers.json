@@ -1,0 +1,1611 @@
+{
+  "graph": "AST imports (including function-local imports and literal import_module calls); no text references",
+  "group_b_consumers": [
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification"
+      ],
+      "parent_sha256": "a4243797cff07291d3ac40e283faa501662a1e6e9577d4cc6b3e3f66d4899bae",
+      "path": "Plane_beris_edwards_shadow_h100.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification"
+      ],
+      "parent_sha256": "9d50759fe305e7b0347c9227cbe05dac92b714454c1fd888c95a0dcfcdde50ef",
+      "path": "Plane_beris_edwards_shadow_stage_n1.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n2_qualification"
+      ],
+      "parent_sha256": "f4506a5c64d3ebaa4d45e309b44381cc612422b8c6d39bdac11f82695c08bfd3",
+      "path": "Plane_beris_edwards_shadow_stage_n2.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n3_qualification"
+      ],
+      "parent_sha256": "6aaea1156def392d5fc3ac8858b1f8c0df5b13862c0379deac63cd51985392f5",
+      "path": "Plane_beris_edwards_shadow_stage_n3.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification"
+      ],
+      "parent_sha256": "38abfdd2ef04074cc11e3ad50029bf5d70840fef23caea4a353784cdae0100a5",
+      "path": "Plane_beris_edwards_shadow_stage_n4.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n_diagnostics"
+      ],
+      "parent_sha256": "2eb0dc79fd634b556ca3d8384580cbbf88e92005a051163aaadb347712919f38",
+      "path": "benchmarks/profile_plane_shadow_stage_n.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification"
+      ],
+      "parent_sha256": "dfe894985d63b7027cb5cc1befb16f6030845561a825c80ea891f8f79a3006c5",
+      "path": "benchmarks/profile_plane_shadow_stage_n1.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n2_qualification"
+      ],
+      "parent_sha256": "23b20685046c14371ad9510aec21993a90e33c06353d9e5d1501abe8a4c031f6",
+      "path": "benchmarks/profile_plane_shadow_stage_n2.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n3_qualification"
+      ],
+      "parent_sha256": "dfcccd6354216c48193a59f217e5771661bcd3908bd62ae441d7627240ef9817",
+      "path": "benchmarks/profile_plane_shadow_stage_n3.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification"
+      ],
+      "parent_sha256": "cffeac036e41d20e77b90ec11d8d517a34f0cfa4664c914632b39a867e4071d4",
+      "path": "benchmarks/profile_plane_shadow_stage_n4.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification"
+      ],
+      "parent_sha256": "2486d945983e1dce2021a1fea75c614c4c79867c285e5c48defe36b5c005ddb0",
+      "path": "benchmarks/profile_plane_shadow_timestep.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "3e1f9f8b7a81a1c6e3631ce61ff332a13d1e6c4cc80974ec05cb72f6faf36917",
+      "path": "benchmarks/profile_plane_stage_o43.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "7052c85c72f7971d06168fa0894b0c13db285de62242400c8f3f6e9dcacd0fc2",
+      "path": "benchmarks/profile_plane_stage_o431.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "1d3636d28e0a7ad6232b369bafdf2edc462870c1652974e850c7e090b2eaf101",
+      "path": "benchmarks/profile_plane_stage_o433.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o434_diagnostics",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "a45e107414bca083b49bd9d77c9ef43f8a9107065497698903d46b6a4385227e",
+      "path": "benchmarks/profile_plane_stage_o434.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_o_closure",
+        "pssolver.experimental.stage_p_diagnostics"
+      ],
+      "parent_sha256": "ab3b6f9b94ef5bae6b9a895da1b48654f24bbee7fb8cf79f2232a70152e619f5",
+      "path": "benchmarks/profile_plane_stage_p.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_q4_qualification"
+      ],
+      "parent_sha256": "d91bdd33cd94207b761acf38bc7ae706c26e78c61646c83ba3eeab9c3392bc74",
+      "path": "benchmarks/profile_plane_stage_q4.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "632ebb250237dfe26fd8c74f27309e2bf85dd48a6049264f48a881920c7861c5",
+      "path": "benchmarks/run_plane_stage_o431_trajectory.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "69757ed03781a039530b83da2a62393e59c7d73e58ef38aedd9c8ebf09cc347a",
+      "path": "benchmarks/run_plane_stage_o433_trajectory.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "a0d4755ab021c65b2de462a4fb5e4e299da2f571c87b06aca95ca8482cdeefc2",
+      "path": "benchmarks/run_plane_stage_o43_trajectory.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_n_diagnostics",
+        "pssolver.experimental.stage_o42_diagnostics",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "8cdfe91cca52921640c190509faf94ed848648f2284e4698a479d4ead00199a4",
+      "path": "benchmarks/stage_o42_runtime.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification"
+      ],
+      "parent_sha256": "08d2258f8ede0903efdcc0e9c871e46b86ca5376a6d92e03092bc6f0a80f94da",
+      "path": "pssolver/experimental/stage_n1_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification"
+      ],
+      "parent_sha256": "b1864fb88a27604818eccc5b8eb7daff890de2fb25650de9c6e9fad9bc07eaea",
+      "path": "pssolver/experimental/stage_n2_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification"
+      ],
+      "parent_sha256": "42eaf8fdb110bc713bbeaece9d5429dd88ec6f378ff744dfd74fd7c0b55621ce",
+      "path": "pssolver/experimental/stage_n3_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification"
+      ],
+      "parent_sha256": "56b262ea215967e1b412d50b1aaf959bb22260fea56b2ee9105946581b483a7c",
+      "path": "pssolver/experimental/stage_n4_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification"
+      ],
+      "parent_sha256": "d9d475c44f9d1ffea3e09d5040ba77542bf6f612a8c8710a48a0908a2dfc44c2",
+      "path": "pssolver/experimental/stage_n_diagnostics.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "45fff2dd15d4597a7faa1e99844162bb7288607d8cb09164841cde1a13bb4f77",
+      "path": "pssolver/experimental/stage_o41_plan.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "58989b0570e981ba7fbaf12089307450c9ea52e689fe1ad6a479f48257de41c8",
+      "path": "pssolver/experimental/stage_o41_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "9e83078898ec8932d3cf48c51917979d0932301029d667368c1dfe3e36dc5b17",
+      "path": "pssolver/experimental/stage_o42_diagnostics.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "39438af7926914f77f1656e03e894b60f8f508355e0ae2bae609b20a74428d28",
+      "path": "pssolver/experimental/stage_o42_plan.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "3c64afab9f4a2b2a91a2690703acfdc2ccb3ab7b1c135630c08f36aeaf1bbf6f",
+      "path": "pssolver/experimental/stage_o431_plan.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o431_plan",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "ceda0da3ec338ae166aaa4949f2e9e2cee5bf58e422bb94c31e04af17082f6ba",
+      "path": "pssolver/experimental/stage_o433_plan.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "11c1926eb7b1b2ccfe7d78317fca349fdb13113a9892b5dd9a9b1aebe60e058c",
+      "path": "pssolver/experimental/stage_o434_diagnostics.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o434_diagnostics",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "b156af0b4cf1dbb9bab3e18df19455e346c93fff85dd84fa95a326826dfab56c",
+      "path": "pssolver/experimental/stage_o434_plan.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "ada1b22ae907e5a0d1aff71ed79df2f61e00db22fc164a296c579e5ca3d9acc1",
+      "path": "pssolver/experimental/stage_o43_plan.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "13164b634b8f8e8f8367026f531b7d1ac862fbf8c10c71690ffe587363fb8ddc",
+      "path": "pssolver/experimental/stage_o43_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "f910cde1d0a732681ba33260cd22dfc94ea411bac1ef849fe14fbaf40893b30f",
+      "path": "pssolver/experimental/stage_p_diagnostics.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_o_closure",
+        "pssolver.experimental.stage_p_diagnostics"
+      ],
+      "parent_sha256": "0485c1c8a325e4505256401d8fe634411a38ff8c1ba27fe519f34739cccdb313",
+      "path": "pssolver/experimental/stage_p_plan.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics"
+      ],
+      "parent_sha256": "ee4300be02f5b9704f08ac4e9baeb8bc78313597d1e3df0c0f4b03014bb9fd2d",
+      "path": "pssolver/experimental/stage_q2_diagnostics.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics"
+      ],
+      "parent_sha256": "f350d735b1695d0206ed6ba086506c1d08fb6b7901cbb9ed51e90e5c15c168e0",
+      "path": "pssolver/experimental/stage_q3_diagnostics.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_q4_qualification"
+      ],
+      "parent_sha256": "2dec2c59778a4727a3d7d188f674ad9fb8794c2252760f4a7a113d2c3450b73a",
+      "path": "pssolver/experimental/stage_q4_plan.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "4f60d37ced81bf91d1786dedb9a1880fa80716a32e24dc24db7f651107aa3ef2",
+      "path": "pssolver/experimental/stage_q4_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics"
+      ],
+      "parent_sha256": "fc58d210efc58be95b0a3d804de3a135ac16abd78dab6f5812b40bc801fef46d",
+      "path": "pssolver/experimental/stage_q5_diagnostics.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics",
+        "pssolver.experimental.stage_q5_diagnostics",
+        "pssolver.experimental.stage_q6_diagnostics"
+      ],
+      "parent_sha256": "70aa7ec7efdabef7f5ab038f688fc068c41eed21c69b1db59e04dd6b04d57220",
+      "path": "pssolver/experimental/stage_q61_design.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_stage_in_qualification",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics",
+        "pssolver.experimental.stage_q5_diagnostics"
+      ],
+      "parent_sha256": "1db11842914e260eb1d0a34c2ae88e998ac6d58bfde7b3ab2e35916168a0994a",
+      "path": "pssolver/experimental/stage_q6_diagnostics.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification"
+      ],
+      "parent_sha256": "7c135630c82a715f7d979600ddef0fbda1743a5c4dc6b13340a4120f4b22f8f3",
+      "path": "scripts_plane/analyze_plane_shadow_h100_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n_diagnostics"
+      ],
+      "parent_sha256": "261d78b7718752200fd775d8ce0ce04a4c76dd68a23dbbb25914f84f69ad6a20",
+      "path": "scripts_plane/analyze_plane_shadow_stage_n.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification"
+      ],
+      "parent_sha256": "3ea175410522e34fc076f976025db330723ad4c1b7d002c4f1aca464b4a29570",
+      "path": "scripts_plane/analyze_plane_shadow_stage_n1.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n2_qualification"
+      ],
+      "parent_sha256": "e5c73d71483109e4095aad9f5ff8f1aba38c09ffe982d566a2665e9ea1c5fc1e",
+      "path": "scripts_plane/analyze_plane_shadow_stage_n2.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n3_qualification"
+      ],
+      "parent_sha256": "928e4e8fbc95ebae6ba58ae8f3852bdd5fa6916e66bafed5c786f3a74211aa2b",
+      "path": "scripts_plane/analyze_plane_shadow_stage_n3.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification"
+      ],
+      "parent_sha256": "5802cf5575bf493e4456f6605165f3bce2a1cd271249a8aec94e21a49ac8ba9b",
+      "path": "scripts_plane/analyze_plane_shadow_stage_n4.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "fad6b68787b3d307af49d01cfa451a13ccef885a36674016ab9d8bb2c52f8079",
+      "path": "scripts_plane/analyze_plane_stage_o41_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o42_diagnostics",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "059bd58008956c9b2b8335f306942a33a01aec67dd75ba7c8ac5c11d82a266c3",
+      "path": "scripts_plane/analyze_plane_stage_o42_diagnostics.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "53045bf8bc303fa781585cf02d9d4502dc552c39f10dc832a6257ca27d5ea9b6",
+      "path": "scripts_plane/analyze_plane_stage_o431_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "4096c60ddde91123fa543bdc924087096a2ba126d17b4e18cec20a1587f5ed4a",
+      "path": "scripts_plane/analyze_plane_stage_o433_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o434_diagnostics",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "3b52125b4d62951c03c76cd3c8a380834fe3780155ab13bc20f132c77e4435ec",
+      "path": "scripts_plane/analyze_plane_stage_o434_diagnostic.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "7d16e8f05383b7cd551827f7c6a49f589d10b6697f77ee15046173aa3271874a",
+      "path": "scripts_plane/analyze_plane_stage_o43_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "790b0d3125f60322e2b3a9ebd31ecfe1b224f7ea3ad3513feebaee9cd417f1a2",
+      "path": "scripts_plane/analyze_plane_stage_o4_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics"
+      ],
+      "parent_sha256": "0314ca334f8502af51d34907a33156bb5196a220857b768993a89a86d119c2bd",
+      "path": "scripts_plane/analyze_plane_stage_p.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics"
+      ],
+      "parent_sha256": "98b325fd4de2cd128c3d86b0ac9c3efce65b777086e5a0dec30e3cdd9feee658",
+      "path": "scripts_plane/analyze_plane_stage_q2.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics",
+        "pssolver.experimental.stage_q3_diagnostics"
+      ],
+      "parent_sha256": "e43a9ed51cb36d9f5a2d89aac406c3f425dac1a81eb96d10c935da4397dc36d7",
+      "path": "scripts_plane/analyze_plane_stage_q3.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_q4_qualification"
+      ],
+      "parent_sha256": "5e6941587ca0d549eb2ec193a4c7707d44030f905a3fc184c81ec991167dc4d4",
+      "path": "scripts_plane/analyze_plane_stage_q4.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics",
+        "pssolver.experimental.stage_q5_diagnostics"
+      ],
+      "parent_sha256": "e15cef4bc8a8b85fde90e7e024a245542069684e799081362f2ff76a07849174",
+      "path": "scripts_plane/analyze_plane_stage_q5.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics",
+        "pssolver.experimental.stage_q5_diagnostics",
+        "pssolver.experimental.stage_q6_diagnostics"
+      ],
+      "parent_sha256": "221cde5d4fa13a9a43f8423cacbcc792a9ded87f507cd69b116a001e11f14ed8",
+      "path": "scripts_plane/analyze_plane_stage_q6.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics",
+        "pssolver.experimental.stage_q5_diagnostics",
+        "pssolver.experimental.stage_q61_design",
+        "pssolver.experimental.stage_q6_diagnostics"
+      ],
+      "parent_sha256": "9102cf13c81d7b0685b89865f0835c71238ce27ada948bd8879a073cc5f1ca26",
+      "path": "scripts_plane/analyze_plane_stage_q61.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o_closure"
+      ],
+      "parent_sha256": "f4772a3fc7637d57666528fa1f7e0322260be7dfe4026478d99477d43d1fc85a",
+      "path": "scripts_plane/close_plane_stage_o.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "4d88273eb80094494c17c6279980de1c3badf5b8656bf6a7f46c01cde6f71060",
+      "path": "scripts_plane/compare_plane_stage_o4_workflows.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "c4f48ca3dc0f16629d9d75d8e1beb0344ceedcbd700daebb1b2f5ca0e28c34e1",
+      "path": "scripts_plane/plan_plane_stage_o41_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o42_plan",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "2d4f6c8dfa55cd73a2a33e41a86b282484517b5b0b0cb72b2c1a241fee4ae66b",
+      "path": "scripts_plane/plan_plane_stage_o42_diagnostics.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o431_plan",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "8c1207320ad6f16c7be1eb1a1aa432be6b4ee7c5e67ce1479e1be49b503ac820",
+      "path": "scripts_plane/plan_plane_stage_o431_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o431_plan",
+        "pssolver.experimental.stage_o433_plan",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "014596ed9ca74c6fff0f53c09fa56ef1072333b260937181a509571bdf6fb40b",
+      "path": "scripts_plane/plan_plane_stage_o433_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o434_diagnostics",
+        "pssolver.experimental.stage_o434_plan",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "940f61ec96535db0892e18a780955d87d803bbf850eea0670fefe877d003b611",
+      "path": "scripts_plane/plan_plane_stage_o434_diagnostic.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o43_plan",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "33819cf15a37bb65b67cc5ef9846e9e8916871bb689543fb43241ea38f97f309",
+      "path": "scripts_plane/plan_plane_stage_o43_qualification.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o_migration"
+      ],
+      "parent_sha256": "83505a44000c7ed9b2c971d522dfe640632999438dfbdd739b89e7615880582f",
+      "path": "scripts_plane/plan_plane_stage_o_migration.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_o_closure",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_p_plan"
+      ],
+      "parent_sha256": "bf5cb93b6ef8b2363cf58fb195ca674c58bafc477ea844bb434a335a58ce0fc4",
+      "path": "scripts_plane/plan_plane_stage_p.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_q4_plan",
+        "pssolver.experimental.stage_q4_qualification"
+      ],
+      "parent_sha256": "7a4fd4ad112167f4cdfc1f8a2ee6acc293540eb1e5b434449e6be0338d869dfe",
+      "path": "scripts_plane/plan_plane_stage_q4.py"
+    },
+    {
+      "coverage": {},
+      "disposition": "byte_frozen_historical_only_in_0_5_pending_S30",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_q4_qualification"
+      ],
+      "parent_sha256": "685d105ba203dab1418d1f381d96a69c3a8dfa68ece8ca97b8ca4dcf22dddd44",
+      "path": "scripts_plane/run_plane_stage_q4_trajectory.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "494f7b1159b7862f39c147eac849869e37818c33",
+        "historical_only_test_functions": [
+          "test_stage_m_analysis_rejects_failed_science_or_mismatched_profiles",
+          "test_stage_m_analysis_separates_science_time_and_memory",
+          "test_stage_m_builder_cannot_fall_back_to_cpu",
+          "test_stage_m_h100_metadata_contract_is_explicit",
+          "test_unindexed_cuda_request_is_canonicalized_before_runtime_assembly"
+        ],
+        "path": "tests/test_architecture_stage_m.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification"
+      ],
+      "parent_sha256": "76f48db6bec2bc483b4a928761ad711b287aedc1c0beca27c1f6478c1be46103",
+      "path": "tests/test_architecture_stage_m.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "3b986c91f0311ac2623a3690d7190db26efbbfe4",
+        "historical_only_test_functions": [
+          "test_operator_audit_executes_independently_on_cpu_canary",
+          "test_operator_audit_keeps_only_frozen_allocation_and_movement_set",
+          "test_runtime_instrumentation_is_opt_in_and_numerically_transparent",
+          "test_runtime_performance_recorder_requires_concrete_cuda_identity",
+          "test_stage_n_analysis_ranks_regions_without_authorizing_promotion"
+        ],
+        "path": "tests/test_architecture_stage_n.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n_diagnostics"
+      ],
+      "parent_sha256": "43d13ead071ef689239425b1e78c826a83640b04ce525a4a54fe2494e8ceda07",
+      "path": "tests/test_architecture_stage_n.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "7fd8b31d4223bbb8b6ddb81fa04e85eea7cfed39",
+        "historical_only_test_functions": [
+          "test_stage_o_cli_prints_the_same_read_only_design",
+          "test_stage_o_design_is_bounded_dual_path_and_non_promoting",
+          "test_stage_o_design_is_immutable_json_and_records_input_hashes",
+          "test_stage_o_phases_are_incremental_and_never_authorize_a_default",
+          "test_stage_o_rejects_unqualified_n41_evidence",
+          "test_stage_o_remains_outside_all_current_production_paths",
+          "test_stage_o_responsibilities_follow_the_spectral_first_dependency_order"
+        ],
+        "path": "tests/test_architecture_stage_o.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o_migration"
+      ],
+      "parent_sha256": "6212c8819ce92b3f6624556c089a18d2962f9ba38629295ddf4564ecbf3d958a",
+      "path": "tests/test_architecture_stage_o.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "7f5c67fafcbf72a1030fec37ea1157117c1ec130",
+        "historical_only_test_functions": [
+          "test_o4_analysis_accepts_complete_non_regressing_evidence",
+          "test_o4_analysis_reports_performance_failure_without_promotion",
+          "test_o4_cli_wrappers_are_import_safe",
+          "test_o4_comparison_rejects_wrong_frame_set",
+          "test_o4_plan_is_read_only_bounded_balanced_and_non_promoting",
+          "test_o4_real_cpu_dual_runtime_six_step_gate"
+        ],
+        "path": "tests/test_architecture_stage_o4.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "25e5debc884485fe8c8bd63c7aabc2ae0cdff70353483e5b16d15954c0b17959",
+      "path": "tests/test_architecture_stage_o4.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "57c3ced17c154c0c37d13d4cef7db751ae088326",
+        "historical_only_test_functions": [
+          "test_cuda_memory_helpers_have_a_complete_cpu_schema",
+          "test_cuda_memory_window_rejects_an_impossible_peak",
+          "test_o41_accepts_architecture_aware_counts_and_r320_memory",
+          "test_o41_does_not_reinterpret_unexpected_o4_failures",
+          "test_o41_planner_is_read_only_and_balances_two_scales",
+          "test_o41_rejects_canary_transform_increase",
+          "test_o41_rejects_r320_memory_regression"
+        ],
+        "path": "tests/test_architecture_stage_o41.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "08597a853f70cf7ed7b52d3b4ff8a1313a299e8b853aba1021433c5b8efabfd2",
+      "path": "tests/test_architecture_stage_o41.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "c8f8086b9cabc24273681737b87f90466116c6fb",
+        "historical_only_test_functions": [
+          "test_stage_o42_analysis_keeps_unexplained_reference_change_non_eligible",
+          "test_stage_o42_analysis_persists_accounting_ambiguity_without_promotion",
+          "test_stage_o42_analysis_ranks_measured_owner_and_operator_deltas",
+          "test_stage_o42_analysis_rejects_truncated_inventory",
+          "test_stage_o42_analysis_rejects_unstable_repeated_inventory",
+          "test_stage_o42_analysis_reports_reference_expansion_without_eligibility",
+          "test_stage_o42_plan_is_bounded_read_only_and_non_promoting",
+          "test_stage_o42_read_only_runtime_snapshots_cross_json_boundary"
+        ],
+        "path": "tests/test_architecture_stage_o42.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_n_diagnostics",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o42_diagnostics",
+        "pssolver.experimental.stage_o42_plan",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "fd40c0a96c5ff8b9c97800461fdb278b72cadb79ba87d2b499ced193ddc24e73",
+      "path": "tests/test_architecture_stage_o42.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "cf16087fa93183114c17d7ec037bd9c7704d4d9c",
+        "historical_only_test_functions": [
+          "test_closure_cli_prints_the_same_read_only_decision",
+          "test_closure_is_immutable_json_and_hashes_its_architecture_boundary",
+          "test_materialization_line_is_closed_below_the_frozen_screening_signal",
+          "test_stage_o_closure_does_not_turn_science_into_a_promotion_claim",
+          "test_stage_o_closure_preserves_complete_authoritative_evidence_lineage",
+          "test_stage_o_closure_remains_outside_production_imports",
+          "test_stage_o_closure_retains_production_and_the_experimental_oracle",
+          "test_stage_p_boundary_is_diagnostic_only_and_excludes_more_layout_work"
+        ],
+        "path": "tests/test_architecture_stage_o_closure.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.stage_o_closure"
+      ],
+      "parent_sha256": "c0ba9a0420222c1178da0d39f2ec9eb66a438e8091e4ffac67203014e6778e8d",
+      "path": "tests/test_architecture_stage_o_closure.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "c1ae6a6d2c42ad529da391d6c35b4a315d3df627",
+        "historical_only_test_functions": [
+          "test_stage_o_closure_identity_is_stable_and_portable",
+          "test_stage_p_plan_is_balanced_bounded_and_diagnostic_only",
+          "test_stage_p_plan_rejects_existing_output_and_bad_commit",
+          "test_stage_p_remains_outside_production_imports_and_retains_no_trace_api"
+        ],
+        "path": "tests/test_architecture_stage_p.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_o_closure",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_p_plan"
+      ],
+      "parent_sha256": "24d4244ad2c2dcfcbafa82b89ab3c67071c6f91c8491e963f3d13bcc0eb8cb32",
+      "path": "tests/test_architecture_stage_p.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "08220dd581749acebaa738a21d946866d6db3ef1",
+        "historical_only_test_functions": [
+          "test_stage_q2_attributes_only_disjoint_regions_and_ranks_target",
+          "test_stage_q2_cli_writes_once_and_remains_analysis_only",
+          "test_stage_q2_rejects_bad_counts_nonfinite_and_graph_breaks",
+          "test_stage_q2_rejects_identity_and_schema_mismatches"
+        ],
+        "path": "tests/test_architecture_stage_q2.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics"
+      ],
+      "parent_sha256": "b54ab460d1b38d449630f42c7adf89a3498bb1b998141e1bd02e041fc7f57404",
+      "path": "tests/test_architecture_stage_q2.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "ad82a1d91e9726f999bf4b35f1e20b08f3b63cbb",
+        "historical_only_test_functions": [
+          "test_stage_q3_cli_writes_once_and_stays_outside_production",
+          "test_stage_q3_rejects_unfrozen_profile_and_bad_q2_gate",
+          "test_stage_q3_selects_one_preplanned_workspace_candidate",
+          "test_stage_q3_uses_inverse_fallback_only_without_copy_signal"
+        ],
+        "path": "tests/test_architecture_stage_q3.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics",
+        "pssolver.experimental.stage_q3_diagnostics"
+      ],
+      "parent_sha256": "9281d7956e04622ad6c8d2afdb5cce6a782b9d784fc3e74f30f530048b2775cd",
+      "path": "tests/test_architecture_stage_q3.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "b8769d181a5b6e751d1fa3e718928455e59c6cef",
+        "historical_only_test_functions": [
+          "test_stage_q5_cli_writes_once",
+          "test_stage_q5_closes_workspace_and_selects_diagnostic_only",
+          "test_stage_q5_rejects_changed_input_identity",
+          "test_stage_q5_rejects_missing_demangled_kernel_evidence",
+          "test_stage_q5_rejects_q4_without_memory_regression"
+        ],
+        "path": "tests/test_architecture_stage_q5.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics",
+        "pssolver.experimental.stage_q5_diagnostics"
+      ],
+      "parent_sha256": "3da77fee1660b0e9580813c150ced2d5de8edd8417e417a0550dafd5cd202d2f",
+      "path": "tests/test_architecture_stage_q5.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "124e7b05e293784b499172135b992047a9272fd2",
+        "historical_only_test_functions": [
+          "test_stage_q6_cli_writes_once",
+          "test_stage_q6_distinguishes_every_required_mechanism",
+          "test_stage_q6_maps_every_frozen_source_and_authorizes_design_only",
+          "test_stage_q6_rejects_candidate_or_solver_authorization",
+          "test_stage_q6_rejects_changed_input_identity",
+          "test_stage_q6_rejects_unmapped_or_missing_source"
+        ],
+        "path": "tests/test_architecture_stage_q6.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics",
+        "pssolver.experimental.stage_q5_diagnostics",
+        "pssolver.experimental.stage_q6_diagnostics"
+      ],
+      "parent_sha256": "a00c3b6d89b6925500860105d9d75e0b284d1886353361c2448c6dc74fda3710",
+      "path": "tests/test_architecture_stage_q6.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "709780ff44204caa6eece6452f3378305298f321",
+        "historical_only_test_functions": [
+          "test_stage_q61_cli_writes_once",
+          "test_stage_q61_contract_forbids_copy_workspace_and_silent_fallback",
+          "test_stage_q61_exposes_transform_fragmentation_as_primary_risk",
+          "test_stage_q61_freezes_one_shared_design_and_bounded_candidate",
+          "test_stage_q61_rejects_changed_q6_identity",
+          "test_stage_q61_rejects_existing_zero_copy_or_missing_copy",
+          "test_stage_q61_rejects_incomplete_source_map"
+        ],
+        "path": "tests/test_architecture_stage_q61.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_p_diagnostics",
+        "pssolver.experimental.stage_q2_diagnostics",
+        "pssolver.experimental.stage_q5_diagnostics",
+        "pssolver.experimental.stage_q61_design",
+        "pssolver.experimental.stage_q6_diagnostics"
+      ],
+      "parent_sha256": "b33cbc6a7d3c39c302b6a91ca8d9124e59e7989cf98a994ed2e195cd37e05885",
+      "path": "tests/test_architecture_stage_q61.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "17e935409f144cbb074555149611a4f2b58e9f1c",
+        "historical_only_test_functions": [
+          "test_stage_n1_analysis_accepts_numerical_and_measured_reuse",
+          "test_stage_n1_analysis_keeps_a_slow_candidate_opt_in",
+          "test_stage_n1_analysis_rejects_failed_trajectory_before_profiles",
+          "test_stage_n1_plan_is_bounded_balanced_and_non_promoting"
+        ],
+        "path": "tests/test_stage_n1_qualification.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification"
+      ],
+      "parent_sha256": "cd8ba34054c33c0e51ad1bef9e21e23d78a8d6ecb66296bd3c945acff751916d",
+      "path": "tests/test_stage_n1_qualification.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "3ac476b2bbb2dd3f4ed7784dc4fb984c466d73a3",
+        "historical_only_test_functions": [
+          "test_stage_n2_analysis_accepts_lazy_inverse_reduction",
+          "test_stage_n2_analysis_keeps_slow_candidate_experimental",
+          "test_stage_n2_analysis_rejects_failed_trajectory_before_profiles",
+          "test_stage_n2_plan_is_bounded_balanced_and_non_promoting"
+        ],
+        "path": "tests/test_stage_n2_qualification.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n2_qualification"
+      ],
+      "parent_sha256": "7ca3759a38c79723b162abeb967d2b4a5561f383f65d4d133aea58c430e1903e",
+      "path": "tests/test_stage_n2_qualification.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "aa2dbd679a53ed81df30fa991266f3602435f43e",
+        "historical_only_test_functions": [
+          "test_stage_n3_analysis_accepts_batched_transform_reduction",
+          "test_stage_n3_analysis_keeps_a_slow_candidate_experimental",
+          "test_stage_n3_analysis_rejects_an_undeclared_materialization",
+          "test_stage_n3_analysis_rejects_failed_trajectory_before_profiles",
+          "test_stage_n3_plan_is_bounded_balanced_and_non_promoting"
+        ],
+        "path": "tests/test_stage_n3_qualification.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n3_qualification"
+      ],
+      "parent_sha256": "62c5e0e165fad1438fa766fa0f4ae69c49a921f499fb3d13ad00bdd1d5a32ed8",
+      "path": "tests/test_stage_n3_qualification.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "d3a69efadcfec4a06460afcc322481d85a8a8b85",
+        "historical_only_test_functions": [
+          "test_stage_n4_analysis_accepts_equivalent_non_regressing_consolidation",
+          "test_stage_n4_analysis_rejects_a_performance_regression",
+          "test_stage_n4_analysis_rejects_a_structural_count_change",
+          "test_stage_n4_analysis_rejects_mixed_configuration_authority",
+          "test_stage_n4_plan_is_bounded_balanced_and_non_promoting"
+        ],
+        "path": "tests/test_stage_n4_qualification.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification"
+      ],
+      "parent_sha256": "76a664616ab5d778da4e6ef7dd50b6dfa99d202746645c4d369429ed064d1ce6",
+      "path": "tests/test_stage_n4_qualification.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "3a55f0defe0ce90d6aedb3134dbf0f0d10fc03fd",
+        "historical_only_test_functions": [
+          "test_analysis_ranks_remaining_copy_sources_without_authorizing_candidate",
+          "test_analysis_rejects_unattributed_or_unstable_profiles",
+          "test_planner_is_r320_diagnostic_only",
+          "test_raw_profile_source_counters_are_normalized_per_step"
+        ],
+        "path": "tests/test_stage_o434_diagnostics.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o434_diagnostics",
+        "pssolver.experimental.stage_o434_plan",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "f7ef5af16a114d63e1eefd1d0d9df3d98e764b89a4bb8804487c2db708f097aa",
+      "path": "tests/test_stage_o434_diagnostics.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "b454c1c3cf2bc4d96039d908c67d141085beafcf",
+        "historical_only_test_functions": [
+          "test_stage_o431_analysis_uses_natural_storage_without_republication",
+          "test_stage_o431_plan_changes_only_batch_assembly",
+          "test_stage_o433_analysis_requires_producer_owned_packing",
+          "test_stage_o433_plan_is_single_variable_bounded_and_non_promoting",
+          "test_stage_o43_analysis_recommends_only_a_safe_measured_improvement",
+          "test_stage_o43_analysis_rejects_a_scientifically_different_candidate",
+          "test_stage_o43_plan_is_bounded_balanced_and_non_promoting"
+        ],
+        "path": "tests/test_stage_o43_qualification.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o431_plan",
+        "pssolver.experimental.stage_o433_plan",
+        "pssolver.experimental.stage_o43_plan",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification"
+      ],
+      "parent_sha256": "c21b2492951df7e5ed081a35dbcc601e72d3e35cae1280ee92bab3fd34bcb22b",
+      "path": "tests/test_stage_o43_qualification.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "8456473cb36e2b05c8c32ed83e35215bf45064d9",
+        "historical_only_test_functions": [
+          "test_analysis_attributes_gap_without_selecting_an_optimization",
+          "test_analysis_rejects_duplicate_paths_or_identity_drift",
+          "test_analysis_rejects_graph_breaks_and_nonfinite_metrics",
+          "test_operator_kernel_summary_is_bounded_complete_and_per_step",
+          "test_operator_kernel_summary_rejects_unbounded_or_invalid_inputs",
+          "test_profiler_semantic_schema_matches_analyzer_contract"
+        ],
+        "path": "tests/test_stage_p_diagnostics.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_o_closure",
+        "pssolver.experimental.stage_p_diagnostics"
+      ],
+      "parent_sha256": "f49c6b5e87fc2cab61ab3dd51b4fdc1811689a4057bd11b6b864773b799f1ad1",
+      "path": "tests/test_stage_p_diagnostics.py"
+    },
+    {
+      "coverage": {
+        "adapted_current_contract_functions": [],
+        "coverage": "Exact original tests run in the isolated release checkout; current tests cover remaining combinations and current contracts.",
+        "current_test_functions": [],
+        "historical_checkout": "4c12228aba01e8483e80d28a1471ab72384d5fda",
+        "historical_file_blob": "b96ad67e1b86ab65113e87b516d1bab41809f5e2",
+        "historical_only_test_functions": [
+          "test_compiled_rhs_gate_uses_the_runtime_metadata_schema",
+          "test_stage_q4_accepts_fast_equivalent_workspace_candidate",
+          "test_stage_q4_plan_is_balanced_and_does_not_change_defaults",
+          "test_stage_q4_rejects_a_numerically_different_candidate"
+        ],
+        "path": "tests/test_stage_q4_qualification.py",
+        "unchanged_current_assertion_functions": []
+      },
+      "disposition": "historical_release_runner_and_retained_current_contracts",
+      "group_b_reachable": [
+        "pssolver.experimental.h100_shadow_qualification",
+        "pssolver.experimental.stage_n1_qualification",
+        "pssolver.experimental.stage_n4_qualification",
+        "pssolver.experimental.stage_o41_plan",
+        "pssolver.experimental.stage_o41_qualification",
+        "pssolver.experimental.stage_o43_qualification",
+        "pssolver.experimental.stage_o4_qualification",
+        "pssolver.experimental.stage_q4_plan",
+        "pssolver.experimental.stage_q4_qualification"
+      ],
+      "parent_sha256": "47e0541d9a7bd35e3da82336993c13429877a0316800227f96e17e5f8fad56a4",
+      "path": "tests/test_stage_q4_qualification.py"
+    }
+  ],
+  "o6_current_consumer_evidence": [
+    {
+      "current_direct_consumers": [
+        "pssolver/adapters/__init__.py"
+      ],
+      "module": "pssolver.adapters.runtime_shadow",
+      "retained": true
+    },
+    {
+      "current_direct_consumers": [],
+      "module": "pssolver.experimental._shadow_support",
+      "retained": false
+    },
+    {
+      "current_direct_consumers": [],
+      "module": "pssolver.experimental.beris_edwards",
+      "retained": false
+    },
+    {
+      "current_direct_consumers": [],
+      "module": "pssolver.experimental.checkpointing",
+      "retained": false
+    },
+    {
+      "current_direct_consumers": [],
+      "module": "pssolver.experimental.integrators",
+      "retained": false
+    },
+    {
+      "current_direct_consumers": [],
+      "module": "pssolver.experimental.performance",
+      "retained": false
+    },
+    {
+      "current_direct_consumers": [],
+      "module": "pssolver.experimental.producer_packing",
+      "retained": false
+    },
+    {
+      "current_direct_consumers": [],
+      "module": "pssolver.experimental.projected_scheduler",
+      "retained": false
+    },
+    {
+      "current_direct_consumers": [
+        "tests/test_architecture_stage_n2.py",
+        "tests/test_architecture_stage_n3.py",
+        "tests/test_tensor_inventory.py"
+      ],
+      "module": "pssolver.experimental.representations",
+      "retained": true
+    },
+    {
+      "current_direct_consumers": [],
+      "module": "pssolver.experimental.stokes",
+      "retained": false
+    },
+    {
+      "current_direct_consumers": [
+        "tests/test_architecture_stage_e.py",
+        "tests/test_architecture_stage_f.py",
+        "tests/test_architecture_stage_g.py",
+        "tests/test_architecture_stage_h.py"
+      ],
+      "module": "pssolver.models.canary",
+      "retained": true
+    },
+    {
+      "current_direct_consumers": [
+        "pssolver/models/canary/__init__.py"
+      ],
+      "module": "pssolver.models.canary.scalar",
+      "retained": true
+    },
+    {
+      "current_direct_consumers": [
+        "pssolver/models/canary/__init__.py"
+      ],
+      "module": "pssolver.models.canary.stokes",
+      "retained": true
+    }
+  ],
+  "parent": "79558be0d1d65fb75a9b5fd41940314572310bf6"
+}

@@ -1,20 +1,19 @@
 """Explicit dual-path runtime edge for the Plane Beris--Edwards model.
 
 The legacy adapter remains the default and receives an already-authorized
-builder from the production driver.  The separated implementation is imported
-only after the immutable run specification explicitly selects its canary path.
+builder from the production driver. The retired separated-canary selector
+is rejected before runtime allocation; no fallback is permitted.
 This module owns selection; equations, geometry objects, and the generic
 spectral solver do not reinterpret the choice.
 """
 
 from __future__ import annotations
 
+import json
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
-import json
 from typing import Protocol, runtime_checkable
 
-from pssolver.core._canonical import canonical_json
 from pssolver.configuration import (
     PlaneBerisEdwardsRunSpec,
     PlaneRuntimePath,
@@ -25,14 +24,17 @@ from pssolver.configuration.active_nematics_simulation_adapters import (
 from pssolver.configuration.plane_beris_edwards_components import (
     decompose_plane_beris_edwards_run_spec,
 )
-from pssolver.execution.state import RuntimeState
 from pssolver.configuration.simulation import SimulationSpec
 from pssolver.configuration.simulation_lowering import lower_simulation_spec
-from pssolver.models.active_nematics import Q_COMPONENTS
+from pssolver.core._canonical import canonical_json
+from pssolver.execution.state import RuntimeState
 from pssolver.integrators.state_backed import (
     _integrator_completed_steps,
+)
+from pssolver.integrators.state_backed import (
     _restore_integrator_progress as _restore_progress,
 )
+from pssolver.models.active_nematics import Q_COMPONENTS
 from pssolver.operators.lifting import (
     FreshInitialConditioningPolicy,
     strict_no_automatic_conditioning,
@@ -46,9 +48,7 @@ def _decompose_run_spec(run_spec: PlaneBerisEdwardsRunSpec):
 def _compose_run_spec_simulation(
     run_spec: PlaneBerisEdwardsRunSpec,
 ) -> SimulationSpec:
-    return compose_plane_beris_edwards_simulation(
-        _decompose_run_spec(run_spec)
-    )
+    return compose_plane_beris_edwards_simulation(_decompose_run_spec(run_spec))
 
 
 def _require_runtime_surface(solver: object, projector: object) -> None:
@@ -85,17 +85,12 @@ class PlaneRuntimeBuildRequest:
             self.fresh_initial_conditioning,
             FreshInitialConditioningPolicy,
         ):
-            raise TypeError(
-                "fresh_initial_conditioning must be "
-                "FreshInitialConditioningPolicy"
-            )
+            raise TypeError("fresh_initial_conditioning must be FreshInitialConditioningPolicy")
         if not isinstance(self.apply_fresh_initial_conditioning, bool):
             raise TypeError("apply_fresh_initial_conditioning must be a bool")
         if self.application_simulation is not None:
             if not isinstance(self.application_simulation, SimulationSpec):
-                raise TypeError(
-                    "application_simulation must be SimulationSpec or None"
-                )
+                raise TypeError("application_simulation must be SimulationSpec or None")
             baseline = _compose_run_spec_simulation(self.run_spec)
             candidate = self.application_simulation
             if (
@@ -128,18 +123,14 @@ class PlaneRuntimeBuildRequest:
             "canonical_sha256",
         )
         if any(actual.get(key) != expected[key] for key in identity_keys):
-            raise ValueError(
-                "mixed Plane runtime configuration authorities are forbidden"
-            )
+            raise ValueError("mixed Plane runtime configuration authorities are forbidden")
         runtime_selection = metadata.get("runtime_selection")
         expected_selection = self.run_spec.runtime_selection_metadata()
         if (
             not isinstance(runtime_selection, Mapping)
             or dict(runtime_selection) != expected_selection
         ):
-            raise ValueError(
-                "runtime selection metadata must come from the resolved run spec"
-            )
+            raise ValueError("runtime selection metadata must come from the resolved run spec")
 
     @property
     def simulation(self) -> SimulationSpec:
@@ -269,9 +260,7 @@ class LegacyPlaneRuntimeAdapter:
         return {
             "last_pressure_iterations": int(model.last_pressure_iterations),
             "last_pressure_residual": float(model.last_pressure_residual),
-            "last_pressure_relative_residual": float(
-                model.last_pressure_relative_residual
-            ),
+            "last_pressure_relative_residual": float(model.last_pressure_relative_residual),
         }
 
     def backend_restart_metadata(self) -> dict[str, object]:
@@ -304,122 +293,8 @@ class LegacyPlaneRuntimeAdapter:
         lifting = plane_lifting_restart_metadata(self)
         if lifting is not None:
             metadata["static_lifting"] = lifting
-            metadata["fresh_construction"] = (
-                plane_lifting_fresh_construction_provenance(self)
-            )
+            metadata["fresh_construction"] = plane_lifting_fresh_construction_provenance(self)
         return metadata
-
-
-@dataclass(frozen=True, slots=True)
-class SeparatedCanaryPlaneRuntimeAdapter:
-    """Adapter around the opt-in N.4.1 separated Plane runtime."""
-
-    _runtime: object
-
-    def __post_init__(self) -> None:
-        solver = getattr(self._runtime, "solver", None)
-        projector = getattr(self._runtime, "projector", None)
-        _require_runtime_surface(solver, projector)
-        if not hasattr(self._runtime, "synchronize_algebraic_for_observation"):
-            raise TypeError("separated Plane runtime lacks synchronization")
-        if not hasattr(self._runtime, "to_metadata"):
-            raise TypeError("separated Plane runtime lacks metadata")
-
-    @property
-    def runtime_path(self) -> PlaneRuntimePath:
-        return PlaneRuntimePath.SEPARATED_CANARY
-
-    @property
-    def solver(self) -> object:
-        return self._runtime.solver
-
-    @property
-    def projector(self) -> object:
-        return self._runtime.projector
-
-    @property
-    def fields(self) -> object:
-        return self._runtime.solver.fields
-
-    @property
-    def completed_steps(self) -> int:
-        integrator = self._runtime.solver.integrator
-        state = getattr(integrator, "runtime_state", None)
-        if isinstance(state, RuntimeState):
-            return int(state.progress.completed_steps)
-        return _integrator_completed_steps(
-            integrator
-        )
-
-    def advance(
-        self,
-        steps: int,
-        *,
-        pre_update_callback: Callable[[object, int], None] | None = None,
-    ) -> None:
-        self._runtime.solver.run(
-            steps,
-            pre_update_callback=pre_update_callback,
-        )
-
-    def synchronize_for_observation(self) -> None:
-        self._runtime.synchronize_algebraic_for_observation()
-
-    def projected_normal_force(self) -> object:
-        transient = self._runtime.transient_algebraic_state()
-        try:
-            return transient["force_z"]
-        except KeyError as exc:
-            raise RuntimeError(
-                "separated normal-force diagnostics are unavailable"
-            ) from exc
-
-    def flow_diagnostics(self) -> Mapping[str, object]:
-        diagnostics = self._runtime.algebraic_diagnostics()
-        try:
-            return diagnostics["flow"]
-        except KeyError as exc:
-            raise RuntimeError(
-                "separated flow diagnostics are unavailable"
-            ) from exc
-
-    def backend_restart_metadata(self) -> dict[str, object]:
-        restart = self._runtime.capture_algebraic_restart_state()
-        if any(system.tensors for system in restart.systems):
-            raise RuntimeError(
-                "Plane separated runtime unexpectedly has persistent "
-                "algebraic restart tensors"
-            )
-        return {
-            "kind": "separated_plane_stateless_algebraic",
-            "state_keys": [],
-            "algebraic_restart": restart.to_metadata(),
-        }
-
-    def restore_progress(
-        self,
-        *,
-        completed_steps: int,
-        spectral_refresh_interval: int | None,
-        integrator_step_count: int,
-        integrator_refresh_count: int,
-    ) -> None:
-        _restore_integrator_progress(
-            self._runtime.solver.integrator,
-            completed_steps=completed_steps,
-            spectral_refresh_interval=spectral_refresh_interval,
-            integrator_step_count=integrator_step_count,
-            integrator_refresh_count=integrator_refresh_count,
-        )
-
-    def to_metadata(self) -> dict[str, object]:
-        return {
-            "requested": self.runtime_path.value,
-            "effective": self.runtime_path.value,
-            "adapter": type(self).__name__,
-            "fallback_used": False,
-            "separated_architecture": self._runtime.to_metadata(),
-        }
 
 
 LegacyRuntimeBuilder = Callable[[], tuple[object, object]]
@@ -470,12 +345,8 @@ def plane_lifting_fresh_construction_provenance(
         None,
     )
     if not isinstance(value, Mapping):
-        raise RuntimeError(
-            "static lifting fresh-construction provenance is missing"
-        )
-    return json.loads(
-        canonical_json(dict(value))
-    )
+        raise RuntimeError("static lifting fresh-construction provenance is missing")
+    return json.loads(canonical_json(dict(value)))
 
 
 def verify_plane_lifting_identity(
@@ -500,9 +371,7 @@ def _restore_integrator_progress(
         spectral_refresh_interval=spectral_refresh_interval,
         integrator_step_count=integrator_step_count,
         integrator_refresh_count=integrator_refresh_count,
-        mismatch_message=(
-            "restored spectral-refresh counters are inconsistent"
-        ),
+        mismatch_message=("restored spectral-refresh counters are inconsistent"),
     )
 
 
@@ -534,14 +403,10 @@ def build_plane_beris_edwards_runtime(
         lifting_plan is not None
         and execution.runtime_path is not PlaneRuntimePath.LEGACY_PRODUCTION
     ):
-        raise ValueError(
-            "static Plane lifting is qualified only for legacy_production"
-        )
+        raise ValueError("static Plane lifting is qualified only for legacy_production")
     if execution.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION:
         if lifting_plan is not None and legacy_builder is not None:
-            raise ValueError(
-                "static Plane lifting requires the package-owned legacy builder"
-            )
+            raise ValueError("static Plane lifting requires the package-owned legacy builder")
         if legacy_builder is None:
             from .plane_legacy import build_legacy_plane_runtime
 
@@ -550,12 +415,8 @@ def build_plane_beris_edwards_runtime(
                 device=request.device,
                 initial_values=request.initial_values,
                 lifting_plan=lifting_plan,
-                fresh_initial_conditioning=(
-                    request.fresh_initial_conditioning
-                ),
-                apply_fresh_initial_conditioning=(
-                    request.apply_fresh_initial_conditioning
-                ),
+                fresh_initial_conditioning=(request.fresh_initial_conditioning),
+                apply_fresh_initial_conditioning=(request.apply_fresh_initial_conditioning),
             )
         else:
             solver, projector = legacy_builder()
@@ -569,40 +430,18 @@ def build_plane_beris_edwards_runtime(
             )
         adapter = compiled_builder()
         if not isinstance(adapter, PlaneRuntimeAdapterProtocol):
-            raise TypeError(
-                "compiled_builder must return PlaneRuntimeAdapterProtocol"
-            )
+            raise TypeError("compiled_builder must return PlaneRuntimeAdapterProtocol")
         if adapter.runtime_path is not PlaneRuntimePath.COMPILED_V2:
             raise ValueError("compiled_builder returned the wrong runtime path")
         return adapter
 
-    if execution.disable_q_gradient_reuse:
-        raise ValueError(
-            "separated_canary does not accept legacy Q-gradient cache flags"
-        )
-
-    # Deliberately lazy: omitted/default selection never imports experimental
-    # architecture modules into the production process.
-    from pssolver.experimental.plane_shadow_driver import (
-        build_plane_separated_canary_runtime_from_production_metadata,
-    )
-
-    runtime, comparison = (
-        build_plane_separated_canary_runtime_from_production_metadata(
-            request.production_metadata,
-            device=request.device,
-        )
-    )
-    comparison.require_compatible()
-    runtime.reset(request.initial_values)
-    return SeparatedCanaryPlaneRuntimeAdapter(runtime)
+    raise ValueError("separated_canary is retired; use v0.4.x (maint/v0.4)")
 
 
 __all__ = [
     "LegacyPlaneRuntimeAdapter",
     "PlaneRuntimeAdapterProtocol",
     "PlaneRuntimeBuildRequest",
-    "SeparatedCanaryPlaneRuntimeAdapter",
     "build_plane_beris_edwards_runtime",
     "plane_lifting_restart_metadata",
     "plane_lifting_fresh_construction_provenance",

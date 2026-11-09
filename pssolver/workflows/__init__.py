@@ -4,9 +4,43 @@ from importlib import import_module as _import_module
 
 from pssolver.core._compatibility import (
     facade_dir as _facade_dir,
+)
+from pssolver.core._compatibility import (
     resolve_deprecated_facade_name as _resolve_deprecated_facade_name,
 )
 
+from .channel_beris_edwards import (
+    CHECKPOINT_VERSION as CHANNEL_BERIS_EDWARDS_CHECKPOINT_VERSION,
+)
+from .channel_beris_edwards import (
+    LEGACY_CHECKPOINT_VERSION as CHANNEL_BERIS_EDWARDS_LEGACY_CHECKPOINT_VERSION,
+)
+from .channel_beris_edwards import (
+    LEGACY_CHECKPOINT_VERSION_V1 as CHANNEL_BERIS_EDWARDS_LEGACY_CHECKPOINT_VERSION_V1,
+)
+from .channel_beris_edwards import (
+    ChannelBerisEdwardsCheckpointHeader,
+    build_channel_checkpoint_compatibility_identity,
+    channel_forward_dynamics_identity,
+    read_channel_beris_edwards_checkpoint_header,
+    upgrade_channel_beris_edwards_checkpoint_directory,
+)
+from .periodic_checkpoint import (
+    PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_V1,
+    PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    PeriodicCheckpointHeader,
+    PeriodicWorkflowCheckpoint,
+    build_periodic_checkpoint_compatibility_identity,
+    capture_periodic_checkpoint,
+    load_periodic_checkpoint,
+    periodic_forward_dynamics_identity,
+    read_periodic_checkpoint_header,
+    restore_periodic_checkpoint,
+    upgrade_periodic_checkpoint,
+    upgrade_periodic_checkpoint_directory,
+    write_periodic_checkpoint,
+)
 from .plane_beris_edwards import (
     PLANE_WORKFLOW_SCHEMA_VERSION,
     PlaneBerisEdwardsWorkflow,
@@ -14,8 +48,8 @@ from .plane_beris_edwards import (
 )
 from .plane_checkpoint import (
     PLANE_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
-    PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PLANE_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
+    PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PlaneCheckpointHeader,
     PlaneWorkflowCheckpoint,
     build_plane_checkpoint_compatibility_identity,
@@ -41,58 +75,6 @@ from .plane_observation import (
     write_plane_diagnostics,
     write_plane_observation,
 )
-from .periodic_checkpoint import (
-    PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_V1,
-    PERIODIC_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
-    PERIODIC_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
-    PeriodicCheckpointHeader,
-    PeriodicWorkflowCheckpoint,
-    build_periodic_checkpoint_compatibility_identity,
-    capture_periodic_checkpoint,
-    load_periodic_checkpoint,
-    periodic_forward_dynamics_identity,
-    read_periodic_checkpoint_header,
-    restore_periodic_checkpoint,
-    upgrade_periodic_checkpoint,
-    upgrade_periodic_checkpoint_directory,
-    write_periodic_checkpoint,
-)
-from .channel_beris_edwards import (
-    CHECKPOINT_VERSION as CHANNEL_BERIS_EDWARDS_CHECKPOINT_VERSION,
-    LEGACY_CHECKPOINT_VERSION as CHANNEL_BERIS_EDWARDS_LEGACY_CHECKPOINT_VERSION,
-    LEGACY_CHECKPOINT_VERSION_V1 as CHANNEL_BERIS_EDWARDS_LEGACY_CHECKPOINT_VERSION_V1,
-    ChannelBerisEdwardsCheckpointHeader,
-    build_channel_checkpoint_compatibility_identity,
-    channel_forward_dynamics_identity,
-    read_channel_beris_edwards_checkpoint_header,
-    upgrade_channel_beris_edwards_checkpoint_directory,
-)
-from .channel_checkpoint import (
-    CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
-    CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
-    CHANNEL_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
-    ChannelCheckpointHeader,
-    ChannelWorkflowCheckpoint,
-    capture_channel_checkpoint,
-    load_channel_checkpoint,
-    read_channel_checkpoint_header,
-    restore_channel_checkpoint,
-    upgrade_channel_checkpoint_directory,
-    write_channel_checkpoint,
-)
-from .channel_active_nematics import (
-    CHANNEL_WORKFLOW_SCHEMA_VERSION,
-    ChannelActiveNematicsWorkflow,
-    ChannelWorkflowResult,
-)
-from .channel_observation import (
-    ChannelDiagnostic,
-    ChannelObservation,
-    capture_channel_diagnostic,
-    capture_channel_observation,
-    write_channel_diagnostics,
-    write_channel_observation,
-)
 
 
 _PILOT_EXPORTS = {
@@ -107,7 +89,7 @@ _PILOT_EXPORTS = {
     )
 }
 
-_IMPLICIT_SUBMODULE_NAMES = frozenset({"finite_q_anchoring"})
+_IMPLICIT_SUBMODULE_NAMES = frozenset({"finite_q_anchoring", "channel_checkpoint_observation"})
 
 
 def __getattr__(name: str) -> object:
@@ -126,6 +108,7 @@ def __getattr__(name: str) -> object:
 
 def __dir__() -> list[str]:
     return sorted(set(_facade_dir(globals(), _PILOT_EXPORTS)) | _IMPLICIT_SUBMODULE_NAMES)
+
 
 __all__ = [
     "DIAGNOSTIC_DTYPE",
@@ -178,26 +161,6 @@ __all__ = [
     "channel_forward_dynamics_identity",
     "read_channel_beris_edwards_checkpoint_header",
     "upgrade_channel_beris_edwards_checkpoint_directory",
-    "CHANNEL_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
-    "CHANNEL_UNSEALED_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
-    "CHANNEL_LEGACY_WORKFLOW_CHECKPOINT_FORMAT_VERSION",
-    "ChannelCheckpointHeader",
-    "ChannelWorkflowCheckpoint",
-    "capture_channel_checkpoint",
-    "load_channel_checkpoint",
-    "read_channel_checkpoint_header",
-    "restore_channel_checkpoint",
-    "upgrade_channel_checkpoint_directory",
-    "write_channel_checkpoint",
-    "CHANNEL_WORKFLOW_SCHEMA_VERSION",
-    "ChannelActiveNematicsWorkflow",
-    "ChannelWorkflowResult",
-    "ChannelDiagnostic",
-    "ChannelObservation",
-    "capture_channel_diagnostic",
-    "capture_channel_observation",
-    "write_channel_diagnostics",
-    "write_channel_observation",
     "FINITE_Q_ANCHORING_WORKFLOW_SCHEMA_VERSION",
     "PlaneFiniteQAnchoringWorkflow",
     "PlaneFiniteQAnchoringWorkflowResult",

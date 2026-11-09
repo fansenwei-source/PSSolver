@@ -1,17 +1,13 @@
 from __future__ import annotations
 
-import argparse
 import ast
-from contextlib import contextmanager
-import json
 import hashlib
 import itertools
-from pathlib import Path
+import json
 import subprocess
-import sys
 import textwrap
-
-import torch
+from contextlib import contextmanager
+from pathlib import Path
 
 from benchmarks.analyze_v0_3_s09_ap_cache_diagnostic import _ratio_summary, analyze
 from benchmarks.analyze_v0_3_s09_h100 import _profile_center
@@ -22,14 +18,6 @@ from benchmarks.plan_v0_3_s09_ap_cache_diagnostic import (
     CANDIDATE_WHEEL_SHA256,
     build_plan,
     build_profile_matrix,
-)
-from benchmarks.profile_v0_3_s09_ap_cache_diagnostic import (
-    _config,
-    disable_operator_action_cache,
-)
-from benchmarks.run_v0_3_s09_ap_cache_memory_snapshot import run_snapshot
-from benchmarks.run_v0_3_s09_ap_cache_cpu_memory_probe import (
-    MEMORY_INTERPRETATION,
 )
 from benchmarks.v0_3_s09_revert_pressure_proxy import (
     CANDIDATE_METHOD_SHA256,
@@ -65,8 +53,7 @@ def _historical_candidate_pressure_source() -> str:
     class_node = next(
         node
         for node in tree.body
-        if isinstance(node, ast.ClassDef)
-        and node.name == "ChannelNoSlipModalStokesSolver"
+        if isinstance(node, ast.ClassDef) and node.name == "ChannelNoSlipModalStokesSolver"
     )
     method = next(
         node
@@ -74,12 +61,8 @@ def _historical_candidate_pressure_source() -> str:
         if isinstance(node, ast.FunctionDef) and node.name == "_solve_pressure"
     )
     lines = source.splitlines(keepends=True)
-    method_source = textwrap.dedent(
-        "".join(lines[method.lineno - 1 : method.end_lineno])
-    )
-    assert hashlib.sha256(method_source.encode("utf-8")).hexdigest() == (
-        CANDIDATE_METHOD_SHA256
-    )
+    method_source = textwrap.dedent("".join(lines[method.lineno - 1 : method.end_lineno]))
+    assert hashlib.sha256(method_source.encode("utf-8")).hexdigest() == (CANDIDATE_METHOD_SHA256)
     return method_source
 
 
@@ -163,9 +146,9 @@ def test_roles_use_all_six_permutations_and_bind_exact_provider_identities() -> 
                 )
                 for trial in range(1, 7)
             ]
-            assert set(orders) == set(itertools.permutations((
-                "baseline", "candidate_cache_on", "candidate_revert_proxy"
-            )))
+            assert set(orders) == set(
+                itertools.permutations(("baseline", "candidate_cache_on", "candidate_revert_proxy"))
+            )
             for role in ("baseline", "candidate_cache_on", "candidate_revert_proxy"):
                 assert [order.index(role) for order in orders].count(0) == 2
                 assert [order.index(role) for order in orders].count(1) == 2
@@ -192,47 +175,6 @@ def test_cpu_rehearsal_preserves_full_role_matrix_but_is_not_measurement() -> No
     assert environment["cuda_module"] == "cuda/12.1"
     assert environment["node_local_tmpdir"] is True
     assert environment["torch_compile_cuda_smoke_before_matrix"] is True
-
-
-def test_cpu_memory_probe_is_reference_only_not_a_proxy_fidelity_proof() -> None:
-    assert MEMORY_INTERPRETATION == {
-        "reference_only": True,
-        "reproducible_at_one_pressure_field_resolution": False,
-        "used_as_revert_proxy_fidelity_proof": False,
-        "used_for_qualification_or_v41_attribution": False,
-        "decisive_evidence": "untimed H100 CUDA allocator snapshots",
-    }
-
-
-def test_cache_off_harness_retains_warm_start_and_suppresses_operator_cache() -> None:
-    solver = object.__new__(ChannelNoSlipModalStokesSolver)
-    torch.nn.Module.__init__(solver)
-    solver.pressure_guess = None
-    solver._pressure_guess_operator_action = None
-    solver._pressure_guess_operator_action_guess = None
-    solver._pressure_guess_operator_action_guess_version = None
-    solver._pressure_guess_operator_action_working_exponent = None
-    pressure = torch.ones((1, 2, 2, 2), dtype=torch.complex64)
-    action = torch.full_like(pressure, 2.0)
-    with disable_operator_action_cache("candidate_cache_off") as proof:
-        solver._store_pressure_guess(
-            pressure,
-            operator_action=action,
-            working_exponent=3,
-        )
-        assert solver.pressure_guess is not None
-        assert torch.equal(solver.pressure_guess, pressure)
-        assert solver._pressure_guess_operator_action is None
-        assert solver._cached_pressure_operator_action(
-            solver.pressure_guess,
-            pressure,
-            3,
-        ) is None
-    assert proof["patch_applied"] is True
-    assert proof["lookup_calls"] == 1
-    assert proof["suppressed_operator_action_stores"] == 1
-    assert proof["cache_fields_nonempty_after_store"] == 0
-    assert proof["proved_disabled"] is True
 
 
 def test_revert_proxy_reconstructs_exact_f94b9be_method_and_restores_class() -> None:
@@ -273,50 +215,7 @@ def test_trial_ratio_uses_exact_frozen_profile_center() -> None:
     summary = _ratio_summary(reference, observed)
     assert summary["six_trial_ratios"] == expected
     assert summary["six_trial_ratios"] == [2.0] * 6
-    assert summary["six_trial_ratios"][0] != (
-        observed[0]["mean"] / reference[0]["mean"]
-    )
-
-
-def test_memory_snapshot_flow_is_rehearsed_on_cpu_without_snapshot_file(
-    tmp_path: Path,
-) -> None:
-    reports = {}
-    for role in ("candidate_cache_on", "candidate_revert_proxy"):
-        args = argparse.Namespace(
-            family="channel_legacy",
-            provider_role="candidate",
-            provider_commit=CANDIDATE_COMMIT,
-            provider_wheel_sha256=CANDIDATE_WHEEL_SHA256,
-            trial=1,
-            shape=(8, 6, 4),
-            lengths=(40.0, 6.0, 6.0),
-            execution_device="cpu",
-            dtype="float32",
-            warmup_steps=1,
-            profile_steps=1,
-            seed=20261013,
-        )
-        snapshot = tmp_path / f"{role}.pickle"
-        with _historical_candidate_source_for_frozen_proxy():
-            reports[role] = run_snapshot(
-                _config(args), diagnostic_role=role, snapshot_path=snapshot
-            )
-        assert reports[role]["snapshot"] == {
-            "requested": False,
-            "taken": False,
-            "cpu_rehearsal_skip": True,
-            "path": None,
-            "sha256": None,
-        }
-        assert not snapshot.exists()
-        assert reports[role]["finite"] is True
-    assert reports["candidate_cache_on"]["final_state_sha256"] == (
-        reports["candidate_revert_proxy"]["final_state_sha256"]
-    )
-    assert reports["candidate_revert_proxy"]["revert_proxy"][
-        "proved_revert_proxy"
-    ] is True
+    assert summary["six_trial_ratios"][0] != (observed[0]["mean"] / reference[0]["mean"])
 
 
 def test_analyzer_is_descriptive_and_requires_all_cache_proofs(tmp_path: Path) -> None:
@@ -370,16 +269,12 @@ def test_analyzer_is_descriptive_and_requires_all_cache_proofs(tmp_path: Path) -
     assert result["profile_count"] == 72
     assert result["all_revert_proxy_proofs_passed"] is True
     assert result["candidate_cache_on_revert_proxy_state_byte_identity"] is True
-    assert result["trial_ratio_estimator"] == (
-        "frozen_profile_center_six_fixed_block_means_median"
-    )
+    assert result["trial_ratio_estimator"] == ("frozen_profile_center_six_fixed_block_means_median")
     assert len(result["groups"]) == 4
 
 
 def test_job_is_single_gpu_diagnostic_without_qualification_claims() -> None:
-    job = (ROOT / "jobs/v0_3_s09_ap_cache_diagnostic_h100.sbatch").read_text(
-        encoding="utf-8"
-    )
+    job = (ROOT / "jobs/v0_3_s09_ap_cache_diagnostic_h100.sbatch").read_text(encoding="utf-8")
     assert "#SBATCH --gres=gpu:H100:1" in job
     assert "#SBATCH --job-name=pssolver-v03-s09-apdiag" in job
     assert "pssolver_v0_3_s09_ap_cache_diagnostic_h100_85ba3ae_20261026_v1/logs" in job
@@ -397,7 +292,7 @@ def test_job_is_single_gpu_diagnostic_without_qualification_claims() -> None:
     assert "export CXX=/opt/ohpc/pub/compiler/gcc/7.3.0/bin/g++" in job
     assert "source /opt/ohpc/admin/lmod/lmod/init/bash" in job
     assert "module load cuda/12.1" in job
-    assert 'trap \'rm -rf "${node_root}"\' EXIT' in job
+    assert "trap 'rm -rf \"${node_root}\"' EXIT" in job
     assert 'export TMPDIR="${pytest_tmp}"' in job
     assert "cc-version.txt" in job
     assert "module-list.txt" in job
@@ -411,38 +306,6 @@ def test_job_is_single_gpu_diagnostic_without_qualification_claims() -> None:
 
 
 def test_runner_accepts_normal_venv_python_symlinks_but_support_is_regular() -> None:
-    runner = (ROOT / "benchmarks/run_v0_3_s09_ap_cache_diagnostic.py").read_text(
-        encoding="utf-8"
-    )
+    runner = (ROOT / "benchmarks/run_v0_3_s09_ap_cache_diagnostic.py").read_text(encoding="utf-8")
     assert "if not python.is_file():" in runner
     assert "if not path.is_file() or path.is_symlink():" in runner
-
-
-def test_diagnostic_support_compiles() -> None:
-    paths = [
-        ROOT / "benchmarks/plan_v0_3_s09_ap_cache_diagnostic.py",
-        ROOT / "benchmarks/profile_v0_3_s09_ap_cache_diagnostic.py",
-        ROOT / "benchmarks/run_v0_3_s09_ap_cache_diagnostic_child.py",
-        ROOT / "benchmarks/run_v0_3_s09_ap_cache_diagnostic.py",
-        ROOT / "benchmarks/analyze_v0_3_s09_ap_cache_diagnostic.py",
-        ROOT / "benchmarks/v0_3_s09_revert_pressure_proxy.py",
-        ROOT / "benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py",
-        ROOT / "benchmarks/run_v0_3_s09_ap_cache_diagnostic_preflight.py",
-    ]
-    subprocess.run(
-        ["python3", "-m", "py_compile", *(str(path) for path in paths)],
-        check=True,
-        cwd=ROOT,
-    )
-    for script in (
-        ROOT / "benchmarks/analyze_v0_3_s09_ap_cache_diagnostic.py",
-        ROOT / "benchmarks/run_v0_3_s09_ap_cache_memory_snapshot.py",
-        ROOT / "benchmarks/run_v0_3_s09_ap_cache_cpu_memory_probe.py",
-    ):
-        subprocess.run(
-            [sys.executable, str(script), "--help"],
-            check=True,
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-        )

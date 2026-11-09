@@ -29,8 +29,25 @@ def changed_files(base: str) -> tuple[list[str], list[str]]:
     untracked = git("ls-files", "--others", "--exclude-standard")
     changed |= untracked
     new |= untracked
+    # S-24 moves these historical artifacts without changing a byte. Formatting
+    # them would invalidate qualification hashes; only verified moves are exempt.
+    manifest_path = ROOT / "qualification/stages/manifest.json"
+    frozen = set()
+    if manifest_path.is_file():
+        for item in json.loads(manifest_path.read_text()):
+            destination = item["destination"]
+            source = item["source"]
+            assert destination == "qualification/stages/" + Path(source).name
+            assert source.startswith("pssolver/experimental/")
+            original = subprocess.check_output(
+                ["git", "show", "4c12228aba01e8483e80d28a1471ab72384d5fda:" + source],
+                cwd=ROOT,
+            )
+            assert (ROOT / destination).read_bytes() == original
+            assert hashlib.sha256(original).hexdigest() == item["sha256"]
+            frozen.add(destination)
     return tuple(
-        sorted(p for p in paths if p.endswith(".py") and (ROOT / p).is_file())
+        sorted(p for p in paths if p.endswith(".py") and (ROOT / p).is_file() and p not in frozen)
         for paths in (changed, new)
     )
 

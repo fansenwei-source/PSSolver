@@ -30,9 +30,7 @@ def _direct_sha256(path: Path) -> str:
 
 def test_canonical_reference_identity_bytes_remain_exact() -> None:
     value = {"z": [1, 2.5], "a": {"finite": True}}
-    expected = (
-        json.dumps(value, sort_keys=True, indent=2, allow_nan=False) + "\n"
-    ).encode("utf-8")
+    expected = (json.dumps(value, sort_keys=True, indent=2, allow_nan=False) + "\n").encode("utf-8")
     assert canonical_indented_json_bytes(value) == expected
     assert sha256_bytes(expected) == hashlib.sha256(expected).hexdigest()
     assert indented_identity_sha256(value) == hashlib.sha256(expected).hexdigest()
@@ -123,28 +121,12 @@ def test_sized_tensor_record_preserves_finite_q_layout(tmp_path: Path) -> None:
 
 def test_r2_writers_delegate_to_one_private_owner() -> None:
     expected = {
-        "pssolver/experimental/checkpointing.py": "write_standard_tensor_record",
-        "pssolver/experimental/modal_block_checkpoint.py": (
-            "write_reference_tensor_record"
-        ),
-        "pssolver/functional/channel_checkpoint.py": (
-            "write_standard_tensor_record"
-        ),
-        "pssolver/integrators/reference_checkpoint.py": (
-            "write_reference_tensor_record"
-        ),
-        "pssolver/workflows/channel_checkpoint.py": (
-            "write_standard_tensor_record"
-        ),
-        "pssolver/workflows/finite_q_anchoring.py": (
-            "write_sized_tensor_record"
-        ),
-        "pssolver/workflows/periodic_checkpoint.py": (
-            "write_standard_tensor_record"
-        ),
-        "pssolver/workflows/plane_checkpoint.py": (
-            "write_standard_tensor_record"
-        ),
+        "pssolver/experimental/modal_block_checkpoint.py": ("write_reference_tensor_record"),
+        "pssolver/functional/channel_checkpoint.py": ("write_standard_tensor_record"),
+        "pssolver/integrators/reference_checkpoint.py": ("write_reference_tensor_record"),
+        "pssolver/workflows/finite_q_anchoring.py": ("write_sized_tensor_record"),
+        "pssolver/workflows/periodic_checkpoint.py": ("write_standard_tensor_record"),
+        "pssolver/workflows/plane_checkpoint.py": ("write_standard_tensor_record"),
     }
     for relative, helper in expected.items():
         source = (ROOT / relative).read_text(encoding="utf-8")
@@ -166,9 +148,7 @@ def test_r2_writers_delegate_to_one_private_owner() -> None:
 
 
 def test_r2_does_not_move_directory_publication_into_shared_artifacts() -> None:
-    source = (
-        ROOT / "pssolver/io/_checkpoint_artifacts.py"
-    ).read_text(encoding="utf-8")
+    source = (ROOT / "pssolver/io/_checkpoint_artifacts.py").read_text(encoding="utf-8")
     forbidden = (
         "checkpoint_directory_transaction",
         "renameat2",

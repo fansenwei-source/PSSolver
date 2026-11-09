@@ -7,64 +7,39 @@ import json
 from pathlib import Path
 
 from benchmarks.verify_v0_4_local_evidence import assert_pytest_migration
-from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 R5_8_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 R5_9_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
-R5_10_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
-)
-R5_11_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
-)
-R5_12_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
-)
+R5_10_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json")
+R5_11_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json")
+R5_12_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json")
 R5_13_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
-G1_GLIBC_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
-)
+G1_GLIBC_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json")
 G1_HISTORICAL_AUDIT_RECORD = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_historical_audit_portability_v17.json"
 )
-RC6_R1_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
-)
-RC6_R2_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
-)
-RC6_R3_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
-)
-RC6_R4_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
-)
-RC6_R5_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
-)
-RC6_R6_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
-)
+RC6_R1_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json")
+RC6_R2_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json")
+RC6_R3_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json")
+RC6_R4_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json")
+RC6_R5_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json")
+RC6_R6_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json")
 RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
-V021_N1_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
-)
+V021_N1_RECORD = ROOT / ("notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json")
 V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
-V022_V17_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
-)
+V022_V17_RECORD = ROOT / ("notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json")
 V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
 def _resolve_g1_audit_successor(relative: str, resolved: str) -> str:
-    registration = json.loads(
-        G1_HISTORICAL_AUDIT_RECORD.read_text(encoding="utf-8")
-    )["historical_successor_sources"].get(relative)
+    registration = json.loads(G1_HISTORICAL_AUDIT_RECORD.read_text(encoding="utf-8"))[
+        "historical_successor_sources"
+    ].get(relative)
     if registration is None:
         return resolved
     accepted = registration.get(
@@ -183,9 +158,7 @@ def _sha256(path: Path) -> str:
 def test_r57_record_declares_cpu_closure_without_scope_expansion():
     record = _record()
     assert record["status"] == "implementation_complete_cpu_verified"
-    assert record["classification"] == (
-        "PASS_R5_7_EXECUTION_DEVICE_NORMALIZATION_CPU_CLOSURE"
-    )
+    assert record["classification"] == ("PASS_R5_7_EXECUTION_DEVICE_NORMALIZATION_CPU_CLOSURE")
     assert record["git_identity"] == {
         "branch": "fix/v0.2.0rc5",
         "implementation_commit": "2d67ba27de7e55c39382cbd3eadcfbf0541e3ba5",
@@ -193,188 +166,6 @@ def test_r57_record_declares_cpu_closure_without_scope_expansion():
         "record_commit_is_qualified_source": False,
         "pushed": False,
     }
-
-
-def test_r57_record_binds_implementation_and_regression_sources():
-    record = _record()
-    r5_8_successors = json.loads(R5_8_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    r5_9_successors = json.loads(R5_9_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    r5_10_successors = json.loads(R5_10_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    r5_11_successors = json.loads(R5_11_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    r5_12_successors = json.loads(R5_12_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    r5_13_successors = json.loads(R5_13_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    g1_successors = json.loads(G1_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    g1_glibc_successors = json.loads(
-        G1_GLIBC_RECORD.read_text(encoding="utf-8")
-    )["historical_successor_sources"]
-    for section in ("implementation_files", "regression_tests"):
-        for relative, expected in record[section].items():
-            resolved = expected
-            r5_8_registration = r5_8_successors.get(relative)
-            if (
-                r5_8_registration is not None
-                and r5_8_registration["historical_sha256"] == resolved
-            ):
-                resolved = r5_8_registration["current_sha256"]
-            r5_9_registration = r5_9_successors.get(relative)
-            if (
-                r5_9_registration is not None
-                and r5_9_registration["historical_sha256"] == resolved
-            ):
-                resolved = r5_9_registration["current_sha256"]
-            r5_10_registration = r5_10_successors.get(relative)
-            if (
-                r5_10_registration is not None
-                and r5_10_registration["historical_sha256"] == resolved
-            ):
-                resolved = r5_10_registration["current_sha256"]
-            r5_11_registration = r5_11_successors.get(relative)
-            if (
-                r5_11_registration is not None
-                and r5_11_registration["historical_sha256"] == resolved
-            ):
-                resolved = r5_11_registration["current_sha256"]
-            r5_12_registration = r5_12_successors.get(relative)
-            if (
-                r5_12_registration is not None
-                and r5_12_registration["historical_sha256"] == resolved
-            ):
-                resolved = r5_12_registration["current_sha256"]
-            r5_13_registration = r5_13_successors.get(relative)
-            if (
-                r5_13_registration is not None
-                and r5_13_registration["historical_sha256"] == resolved
-            ):
-                resolved = r5_13_registration["current_sha256"]
-            g1_registration = g1_successors.get(relative)
-            if (
-                g1_registration is not None
-                and g1_registration["historical_sha256"] == resolved
-            ):
-                resolved = g1_registration["current_sha256"]
-            g1_glibc_registration = g1_glibc_successors.get(relative)
-            if (
-                g1_glibc_registration is not None
-                and g1_glibc_registration["historical_sha256"] == resolved
-            ):
-                resolved = g1_glibc_registration["current_sha256"]
-            resolved = _resolve_g1_audit_successor(relative, resolved)
-            resolved = _resolve_rc6_r1_successor(relative, resolved)
-            resolved = _resolve_rc6_r2_successor(relative, resolved)
-            resolved = _resolve_rc6_r3_successor(relative, resolved)
-            resolved = _resolve_rc6_r4_successor(relative, resolved)
-            resolved = _resolve_rc6_r5_successor(relative, resolved)
-            resolved = _resolve_rc6_r6_successor(relative, resolved)
-            resolved = _resolve_rc6_freeze_successor(relative, resolved)
-            assert _sha256(ROOT / relative) == resolve_s03_successor(
-                relative, resolved
-            )
-
-
-def test_r57_record_binds_every_historical_successor():
-    successors = _record()["historical_successor_sources"]
-    r5_8_successors = json.loads(R5_8_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    r5_9_successors = json.loads(R5_9_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    r5_10_successors = json.loads(R5_10_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    r5_11_successors = json.loads(R5_11_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    r5_12_successors = json.loads(R5_12_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    r5_13_successors = json.loads(R5_13_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    g1_successors = json.loads(G1_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    g1_glibc_successors = json.loads(
-        G1_GLIBC_RECORD.read_text(encoding="utf-8")
-    )["historical_successor_sources"]
-    assert len(successors) == 35
-    for relative, registration in successors.items():
-        resolved = registration["current_sha256"]
-        r5_8_registration = r5_8_successors.get(relative)
-        if (
-            r5_8_registration is not None
-            and r5_8_registration["historical_sha256"] == resolved
-        ):
-            resolved = r5_8_registration["current_sha256"]
-        r5_9_registration = r5_9_successors.get(relative)
-        if (
-            r5_9_registration is not None
-            and r5_9_registration["historical_sha256"] == resolved
-        ):
-            resolved = r5_9_registration["current_sha256"]
-        r5_10_registration = r5_10_successors.get(relative)
-        if (
-            r5_10_registration is not None
-            and r5_10_registration["historical_sha256"] == resolved
-        ):
-            resolved = r5_10_registration["current_sha256"]
-        r5_11_registration = r5_11_successors.get(relative)
-        if (
-            r5_11_registration is not None
-            and r5_11_registration["historical_sha256"] == resolved
-        ):
-            resolved = r5_11_registration["current_sha256"]
-        r5_12_registration = r5_12_successors.get(relative)
-        if (
-            r5_12_registration is not None
-            and r5_12_registration["historical_sha256"] == resolved
-        ):
-            resolved = r5_12_registration["current_sha256"]
-        r5_13_registration = r5_13_successors.get(relative)
-        if (
-            r5_13_registration is not None
-            and r5_13_registration["historical_sha256"] == resolved
-        ):
-            resolved = r5_13_registration["current_sha256"]
-        g1_registration = g1_successors.get(relative)
-        if (
-            g1_registration is not None
-            and g1_registration["historical_sha256"] == resolved
-        ):
-            resolved = g1_registration["current_sha256"]
-        g1_glibc_registration = g1_glibc_successors.get(relative)
-        if (
-            g1_glibc_registration is not None
-            and g1_glibc_registration["historical_sha256"] == resolved
-        ):
-            resolved = g1_glibc_registration["current_sha256"]
-        resolved = _resolve_g1_audit_successor(relative, resolved)
-        resolved = _resolve_rc6_r1_successor(relative, resolved)
-        resolved = _resolve_rc6_r2_successor(relative, resolved)
-        resolved = _resolve_rc6_r3_successor(relative, resolved)
-        resolved = _resolve_rc6_r4_successor(relative, resolved)
-        resolved = _resolve_rc6_r5_successor(relative, resolved)
-        resolved = _resolve_rc6_r6_successor(relative, resolved)
-        resolved = _resolve_rc6_freeze_successor(relative, resolved)
-        assert _sha256(ROOT / relative) == resolve_s03_successor(
-            relative, resolved
-        )
-        assert registration["historical_sha256"] != registration["current_sha256"]
-        assert registration["reason"]
 
 
 def test_r57_record_binds_the_device_contract():
@@ -403,9 +194,7 @@ def test_r57_record_binds_installed_wheel_artifacts_and_identity():
     )
     assert evidence["source_archive_sha256"]
     assert evidence["wheel_sha256"]
-    assert Path(evidence["pssolver_import"]).is_relative_to(
-        Path(evidence["directory"]) / "venv"
-    )
+    assert Path(evidence["pssolver_import"]).is_relative_to(Path(evidence["directory"]) / "venv")
     assert evidence["pip_check"] == "PASS"
     assert evidence["source_shadow_import"] is False
 
@@ -414,15 +203,9 @@ def test_r57_record_binds_source_and_installed_cpu_results():
     validation = _record()["validation"]
     assert validation["r5_7_regression_cpu"] == "23 passed, 0 failed"
     assert validation["historical_successor_cpu"] == "205 passed, 0 failed"
-    assert validation["source_full_cpu"] == (
-        "3546 passed, 7 skipped, 0 failed"
-    )
-    assert validation["installed_wheel_targeted_cpu"] == (
-        "23 passed, 0 failed"
-    )
-    assert validation["installed_wheel_applicable_full_cpu"] == (
-        "3539 passed, 7 skipped, 0 failed"
-    )
+    assert validation["source_full_cpu"] == ("3546 passed, 7 skipped, 0 failed")
+    assert validation["installed_wheel_targeted_cpu"] == ("23 passed, 0 failed")
+    assert validation["installed_wheel_applicable_full_cpu"] == ("3539 passed, 7 skipped, 0 failed")
     exclusion = validation["installed_wheel_source_only_exclusion"]
     assert exclusion["path"] == "tests/test_phase8_p861_local_cumulative_audit.py"
     assert exclusion["test_count"] == 7

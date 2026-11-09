@@ -76,102 +76,99 @@ _COMPLETE_CAPABILITIES = (
     "beris_edwards_force",
     "incompressible_stokes",
 )
-_LEGACY_CAPABILITIES = (
-    "legacy_active_force_q_evolution",
-    "beris_edwards_q_gradient",
-    "beris_edwards_velocity_gradient",
-    "legacy_active_force",
-    "incompressible_stokes",
-)
 
 _PLANE = ApplicationRegistration(
-    "complete_stress_beris_edwards", "plane_slab",
+    "complete_stress_beris_edwards",
+    "plane_slab",
     "plane_complete_stress_beris_edwards",
-    "pssolver.configuration.public_simulation_runner."
-    "_compile_plane_public_simulation",
-    False, "plane", ("periodic", "periodic", "bounded"),
-    _COMPLETE_CAPABILITIES, ("legacy_production", "compiled_v2"),
+    "pssolver.configuration.public_simulation_runner._compile_plane_public_simulation",
+    False,
+    "plane",
+    ("periodic", "periodic", "bounded"),
+    _COMPLETE_CAPABILITIES,
+    ("legacy_production", "compiled_v2"),
     "pssolver.runtime.plane_beris_edwards.PlaneRuntimeBuildRequest",
     "pssolver.runtime.plane_beris_edwards.build_plane_beris_edwards_runtime",
     "pssolver.runtime.plane_beris_edwards.PlaneRuntimeAdapterProtocol",
-    True, "Plane construction requires PlaneRuntimeBuildRequest",
-)
-_CHANNEL = ApplicationRegistration(
-    "legacy_active_force_active_nematics", "rectangular_channel",
-    "channel_legacy_active_force_active_nematics",
-    "pssolver.configuration.public_channel_simulation_compiler."
-    "compile_channel_public_simulation",
-    False, "channel_legacy", ("periodic", "bounded", "bounded"),
-    _LEGACY_CAPABILITIES, ("legacy_channel", "compiled_channel_v2"),
-    "pssolver.runtime.channel_active_nematics.ChannelRuntimeBuildRequest",
-    "pssolver.runtime.channel_active_nematics.build_channel_active_nematic_runtime",
-    "pssolver.runtime.channel_active_nematics.ChannelRuntimeAdapterProtocol",
-    True, "Channel construction requires ChannelRuntimeBuildRequest",
+    True,
+    "Plane construction requires PlaneRuntimeBuildRequest",
 )
 _PERIODIC = ApplicationRegistration(
-    "complete_stress_beris_edwards", "periodic_box",
+    "complete_stress_beris_edwards",
+    "periodic_box",
     "periodic_complete_stress_beris_edwards",
-    "pssolver.configuration.public_periodic_simulation_compiler."
-    "compile_periodic_public_simulation",
-    True, "periodic", ("periodic", "periodic", "periodic"),
-    _COMPLETE_CAPABILITIES, ("periodic_spectral",),
+    "pssolver.configuration.public_periodic_simulation_compiler.compile_periodic_public_simulation",
+    True,
+    "periodic",
+    ("periodic", "periodic", "periodic"),
+    _COMPLETE_CAPABILITIES,
+    ("periodic_spectral",),
     "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeBuildRequest",
     "pssolver.runtime.periodic_beris_edwards.build_periodic_beris_edwards_runtime",
     "pssolver.runtime.periodic_beris_edwards.PeriodicRuntimeAdapterProtocol",
-    False, "periodic construction requires PeriodicRuntimeBuildRequest",
+    False,
+    "periodic construction requires PeriodicRuntimeBuildRequest",
 )
 _CHANNEL_COMPLETE = ApplicationRegistration(
-    "complete_stress_beris_edwards", "rectangular_channel",
+    "complete_stress_beris_edwards",
+    "rectangular_channel",
     "channel_complete_stress_beris_edwards",
     "pssolver.configuration.public_channel_beris_edwards_compiler."
     "compile_channel_beris_edwards_public_simulation",
-    True, "channel_complete", ("periodic", "bounded", "bounded"),
-    _COMPLETE_CAPABILITIES, ("channel_complete_stress",),
+    True,
+    "channel_complete",
+    ("periodic", "bounded", "bounded"),
+    _COMPLETE_CAPABILITIES,
+    ("channel_complete_stress",),
     "pssolver.runtime.channel_beris_edwards.ChannelBerisEdwardsRuntimeBuildRequest",
     "pssolver.runtime.channel_beris_edwards.build_channel_beris_edwards_runtime",
     "pssolver.runtime.channel_beris_edwards.ChannelBerisEdwardsRuntimeAdapterProtocol",
-    False, "complete-stress Channel construction requires ChannelBerisEdwardsRuntimeBuildRequest",
+    False,
+    "complete-stress Channel construction requires ChannelBerisEdwardsRuntimeBuildRequest",
 )
 
 # Public compiler/capability order, not lowering error order.
-APPLICATIONS = (_PLANE, _CHANNEL, _PERIODIC, _CHANNEL_COMPLETE)
+APPLICATIONS = (_PLANE, _PERIODIC, _CHANNEL_COMPLETE)
 APPLICATION_BY_PAIR = MappingProxyType({item.key: item for item in APPLICATIONS})
-LOWERING_REJECTION_PAIRS = tuple(
-    item.key for item in (_PLANE, _PERIODIC, _CHANNEL_COMPLETE, _CHANNEL)
-)
+LOWERING_REJECTION_PAIRS = tuple(item.key for item in (_PLANE, _PERIODIC, _CHANNEL_COMPLETE))
 
 # Preserve the local binding table's historical insertion order.
 RUNTIMES = (
     RuntimeRegistration(
-        _PERIODIC, "periodic_spectral", "periodic_complete_stress",
-        "package", None, None,
+        _PERIODIC,
+        "periodic_spectral",
+        "periodic_complete_stress",
+        "package",
+        None,
+        None,
         "periodic construction requires PeriodicRuntimeBuildRequest",
     ),
     RuntimeRegistration(
-        _CHANNEL_COMPLETE, "channel_complete_stress", "channel_complete_stress",
-        "package", None, None,
+        _CHANNEL_COMPLETE,
+        "channel_complete_stress",
+        "channel_complete_stress",
+        "package",
+        None,
+        None,
         "complete-stress Channel construction requires Channel request",
     ),
     RuntimeRegistration(
-        _PLANE, "legacy_production", "plane_legacy_production",
-        "package", None, None,
+        _PLANE,
+        "legacy_production",
+        "plane_legacy_production",
+        "package",
+        None,
+        None,
         None,
     ),
     RuntimeRegistration(
-        _PLANE, "compiled_v2", "plane_compiled_v2", "caller", "compiled_builder",
+        _PLANE,
+        "compiled_v2",
+        "plane_compiled_v2",
+        "caller",
+        "compiled_builder",
         "pssolver.runtime.plane_application_bridge.build_package_compiled_plane_runtime",
         "compiled Plane construction requires Plane request",
-    ),
-    RuntimeRegistration(
-        _CHANNEL, "legacy_channel", "channel_legacy", "caller", "legacy_builder",
-        "pssolver.runtime.channel_application_bridge.build_package_legacy_channel_runtime",
-        "legacy Channel construction requires Channel request",
-    ),
-    RuntimeRegistration(
-        _CHANNEL, "compiled_channel_v2", "channel_compiled_v2",
-        "caller", "compiled_builder",
-        "pssolver.runtime.channel_application_bridge.build_package_compiled_channel_runtime",
-        "compiled Channel construction requires Channel request",
     ),
 )
 RUNTIME_BY_KEY = MappingProxyType({item.key: item for item in RUNTIMES})

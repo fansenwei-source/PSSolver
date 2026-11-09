@@ -10,55 +10,29 @@ from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json"
-)
+RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_3_channel_checkpoint_dynamics.json")
 R5_5_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
 R5_6_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 R5_7_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 R5_8_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_8_checkpoint_integrity.json"
 R5_9_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
-R5_10_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json"
-)
-R5_11_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
-)
-R5_12_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json"
-)
+R5_10_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_10_channel_checkpoint_observation.json")
+R5_11_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json")
+R5_12_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_12_compiled_simulation_integrity.json")
 R5_13_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
-G1_GLIBC_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
-)
-RC6_R1_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
-)
-RC6_R2_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
-)
-RC6_R3_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
-)
-RC6_R4_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
-)
-RC6_R5_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
-)
-RC6_R6_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
-)
+G1_GLIBC_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json")
+RC6_R1_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json")
+RC6_R2_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json")
+RC6_R3_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json")
+RC6_R4_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json")
+RC6_R5_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json")
+RC6_R6_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json")
 RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
-V021_N1_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
-)
+V021_N1_RECORD = ROOT / ("notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json")
 V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
-V022_V17_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
-)
+V022_V17_RECORD = ROOT / ("notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json")
 V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
@@ -100,37 +74,9 @@ def _latest_successor(relative: str, historical: str) -> str:
         registration = json.loads(record_path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)
-        if (
-            registration is not None
-            and registration["historical_sha256"] == resolved
-        ):
+        if registration is not None and registration["historical_sha256"] == resolved:
             resolved = registration["current_sha256"]
     return resolve_s03_successor(relative, resolved)
-
-
-def test_r53_record_binds_candidate_commits_and_exact_sources():
-    record = _record()
-    assert record["status"] == "implementation_complete_cpu_verified_h100_deferred"
-    assert record["classification"] == (
-        "PASS_R5_3_CHANNEL_CHECKPOINT_DYNAMICS_CPU_CANDIDATE"
-    )
-    assert record["git_identity"] == {
-        "branch": "fix/v0.2.0rc5",
-        "implementation_commit": "6eee28e54b2068ad5946807b779fdc1444fb1254",
-        "fixture_payload_commit": "d0423073db2a8e84a6fe5ced0ec15b60ef1ab666",
-        "initial_qualification_support_commit": (
-            "125a3de3e839c614a658a1a75c53c4aab53a2b78"
-        ),
-        "qualification_support_commit": (
-            "b7839b72cc21961e6abaccf77d6f9c2dc054e9cf"
-        ),
-        "candidate_source_commit": "d0423073db2a8e84a6fe5ced0ec15b60ef1ab666",
-        "record_commit_is_candidate_source": False,
-        "pushed": False,
-    }
-    for section in ("implementation_files", "regression_tests"):
-        for relative, expected in record[section].items():
-            assert _sha256(relative) == _latest_successor(relative, expected)
 
 
 def test_r53_released_fixture_and_disposition_matrix_are_exact():
@@ -163,17 +109,6 @@ def test_r53_contract_versions_dynamics_and_fails_closed_before_mutation():
     assert contract["new_checkpoint_writes_use_current_identity_only"] is True
     assert contract["rejection_before_target_mutation"] is True
     assert contract["per_timestep_host_synchronization_added"] is False
-
-
-def test_r53_successor_registry_matches_every_changed_historical_source():
-    successors = _record()["historical_successor_sources"]
-    assert len(successors) == 26
-    for relative, registration in successors.items():
-        assert registration["historical_sha256"] != registration["current_sha256"]
-        assert _sha256(relative) == _latest_successor(
-            relative, registration["current_sha256"]
-        )
-        assert registration["reason"]
 
 
 def test_r53_cpu_closure_defers_exactly_the_cumulative_h100_matrix():

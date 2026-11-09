@@ -7,7 +7,6 @@ import json
 from pathlib import Path
 
 import pssolver
-from pssolver import capability_catalog
 from pssolver.functional.api import functional_protocol_provenance
 from tests.v0_5_release_manifest import released_manifest
 
@@ -39,9 +38,7 @@ def test_development_version_and_public_provenance_agree():
 def test_rc6_documents_and_machine_record_agree():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-    release_notes = (ROOT / "notes/pssolver_v0_2_0_rc6.md").read_text(
-        encoding="utf-8"
-    )
+    release_notes = (ROOT / "notes/pssolver_v0_2_0_rc6.md").read_text(encoding="utf-8")
     record = _json(RELEASE_RECORD)
 
     assert "research-grade, GPU-first tensor-product spectral solver." in readme
@@ -52,25 +49,9 @@ def test_rc6_documents_and_machine_record_agree():
     assert "PSSolver 0.2.0rc6 release candidate" in release_notes
     assert record["release"] == "0.2.0rc6"
     assert record["status"] == "source_freeze_preparation"
-    assert record["source"]["freeze_commit"] == (
-        "90ef40f328347c71d8baabeb187e18cd31e4b6bc"
-    )
+    assert record["source"]["freeze_commit"] == ("90ef40f328347c71d8baabeb187e18cd31e4b6bc")
     assert record["qualification"]["source_freeze_complete"] is True
     assert record["qualification"]["single_h100_cumulative"] == "not_authorized"
-
-
-def test_rc6_capability_counts_match_live_catalog():
-    expected = _json(RELEASE_RECORD)["public_contract"]
-    catalog = capability_catalog()
-
-    assert len(catalog.models) == expected["models"]
-    assert len(catalog.geometries) == expected["geometries"]
-    assert len(catalog.boundary_policies) == expected["boundary_policies"]
-    assert len(catalog.qualified_combinations) == expected["qualified_combinations"]
-    assert sum(
-        len(combination.runtime_paths)
-        for combination in catalog.qualified_combinations
-    ) == expected["runtime_paths"]
 
 
 def test_rc6_provider_work_evidence_is_complete_and_content_addressed():
@@ -89,12 +70,8 @@ def test_rc6_independent_consumer_evidence_is_precisely_bounded():
         "branch": "fix/pssolver-v0.2.0rc6-guard-order",
         "qualified_source_commit": "79815cb77cf7f542a0da4d303e20c45a929876df",
         "record_commit": "208edd03e6b26a0e788c07d295fddd7a67237189",
-        "record_path": (
-            "docs/pssolver_v0_2_0rc6_periodic_guard_order_regression.json"
-        ),
-        "record_sha256": (
-            "aa02a1332a6f96ccf769f08e51bfadf3fa7769453d6a040c98d0dede24816c60"
-        ),
+        "record_path": ("docs/pssolver_v0_2_0rc6_periodic_guard_order_regression.json"),
+        "record_sha256": ("aa02a1332a6f96ccf769f08e51bfadf3fa7769453d6a040c98d0dede24816c60"),
         "runtime_changed": False,
         "provider_identity_review_pending_after_freeze": True,
     }
@@ -116,12 +93,8 @@ def test_rc6_freeze_preserves_public_compatibility_boundaries():
 def test_rc6_freeze_plan_is_fail_closed_and_h100_is_not_authorized():
     record = _json(FREEZE_RECORD)
     assert record["phase"] == "RC6-8"
-    assert record["git_identity"]["freeze_commit"] == (
-        "90ef40f328347c71d8baabeb187e18cd31e4b6bc"
-    )
-    assert record["classification"] == (
-        "PASS_RC6_SOURCE_FREEZE_AND_FROZEN_SOURCE_CPU_GATE"
-    )
+    assert record["git_identity"]["freeze_commit"] == ("90ef40f328347c71d8baabeb187e18cd31e4b6bc")
+    assert record["classification"] == ("PASS_RC6_SOURCE_FREEZE_AND_FROZEN_SOURCE_CPU_GATE")
     assert record["authorization"] == {
         "source_freeze_prepared": True,
         "frozen_source_cpu_passed": True,

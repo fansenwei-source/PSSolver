@@ -19,19 +19,13 @@ from pssolver import (
     compile_simulation,
     run_simulation,
 )
+from pssolver.applications.plane_beris_edwards import run_plane_beris_edwards
 from pssolver.boundaries import (
     assign_boundaries,
     free_slip_velocity,
     neumann_pressure_compatibility,
     neumann_q,
     no_slip_velocity,
-)
-from pssolver.applications.channel_active_nematics import (
-    run_channel_active_nematics,
-)
-from pssolver.applications.plane_beris_edwards import run_plane_beris_edwards
-from pssolver.configuration.channel_active_nematics import (
-    ChannelActiveNematicRunSpec,
 )
 from pssolver.configuration.execution_device import (
     execution_device_normalization,
@@ -50,6 +44,8 @@ from pssolver.models.active_nematics import CompleteStressBerisEdwards
 
 
 CANONICAL_DEVICES = ("auto", "cpu", "cuda", "cuda:0", "cuda:2")
+
+
 INVALID_DEVICES = ("", " cpu", "cpu ", "cpu:0", "cuda:01", "CUDA", "mps")
 
 
@@ -122,9 +118,7 @@ def _simulation(
         time=TimeStepping(dt=0.001),
         initial_condition=SnapshotInitialCondition(snapshot, step=0),
         execution=TorchSpectralExecution(
-            runtime_path=(
-                "periodic_spectral" if periodic else "channel_complete_stress"
-            ),
+            runtime_path=("periodic_spectral" if periodic else "channel_complete_stress"),
             device=device,
             options=options,
         ),
@@ -139,36 +133,6 @@ def _simulation(
         ),
         discretization=discretization,
     )
-
-
-@pytest.mark.parametrize("device", CANONICAL_DEVICES)
-def test_legacy_declarations_accept_the_shared_canonical_device_grammar(
-    tmp_path,
-    device,
-):
-    plane = create_plane_beris_edwards_run_spec(
-        activity_number=18.0,
-        output_dir=tmp_path / "plane",
-        device=device,
-    )
-    channel = ChannelActiveNematicRunSpec(device=device)
-    assert plane.device == device
-    assert channel.device == device
-
-
-@pytest.mark.parametrize("device", INVALID_DEVICES)
-def test_legacy_declarations_reject_every_noncanonical_device_token(
-    tmp_path,
-    device,
-):
-    with pytest.raises(ValueError, match="invalid execution device"):
-        create_plane_beris_edwards_run_spec(
-            activity_number=18.0,
-            output_dir=tmp_path / "plane",
-            device=device,
-        )
-    with pytest.raises(ValueError, match="invalid execution device"):
-        ChannelActiveNematicRunSpec(device=device)
 
 
 def test_auto_normalization_and_functional_allocation_agree_on_cpu(monkeypatch):
@@ -256,9 +220,7 @@ def test_output_metadata_persists_requested_and_resolved_device(
             output_name=output_name,
         )
     )
-    metadata = json.loads(
-        (result.output_directory / "metadata.json").read_text(encoding="utf-8")
-    )
+    metadata = json.loads((result.output_directory / "metadata.json").read_text(encoding="utf-8"))
     assert metadata["normalization"] == {
         "requested_execution_device": "auto",
         "resolved_execution_device": "cpu",
@@ -294,29 +256,27 @@ def test_legacy_plane_output_metadata_persists_device_normalization(
     }
 
 
-def test_legacy_channel_output_metadata_persists_device_normalization(
-    monkeypatch,
+@pytest.mark.parametrize("device", CANONICAL_DEVICES)
+def test_legacy_declarations_accept_the_shared_canonical_device_grammar(
     tmp_path,
+    device,
 ):
-    monkeypatch.setattr(torch.cuda, "is_available", lambda: False)
-    output = tmp_path / "legacy_channel_auto"
-    request = ChannelActiveNematicRunSpec(
-        shape=(8, 6, 5),
-        lengths=(8.0, 6.0, 5.0),
-        dt=1.0e-3,
-        steps=1,
-        save_interval=1,
-        diagnostic_interval=1,
-        generated_output_directory=output,
-        device="auto",
-        activity=0.2,
-        pressure_relative_tolerance=1.0e-8,
-        pressure_max_iterations=100,
-        pressure_fixed_iterations=8,
+    plane = create_plane_beris_edwards_run_spec(
+        activity_number=18.0,
+        output_dir=tmp_path / "plane",
+        device=device,
     )
-    run_channel_active_nematics(request)
-    metadata = json.loads((output / "metadata.json").read_text(encoding="utf-8"))
-    assert metadata["normalization"] == {
-        "requested_execution_device": "auto",
-        "resolved_execution_device": "cpu",
-    }
+    assert plane.device == device
+
+
+@pytest.mark.parametrize("device", INVALID_DEVICES)
+def test_legacy_declarations_reject_every_noncanonical_device_token(
+    tmp_path,
+    device,
+):
+    with pytest.raises(ValueError, match="invalid execution device"):
+        create_plane_beris_edwards_run_spec(
+            activity_number=18.0,
+            output_dir=tmp_path / "plane",
+            device=device,
+        )

@@ -2,30 +2,27 @@
 
 from __future__ import annotations
 
-import copy
 import json
 from pathlib import Path
 
-import pytest
-
-from benchmarks.analyze_rc458_tf32_h100 import (
-    PASS_CLASSIFICATION,
-    analyze,
-)
 from benchmarks.plan_rc458_tf32_h100 import FAMILIES, build_plan
-from benchmarks.profile_rc458_runtime_family import (
-    RC458ProfileConfig,
-    _validate,
-)
 from benchmarks.run_rc458_profile_matrix import build_command_plan
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
 SUPPORT_RECORD = ROOT / "notes/PSSolver_v0_2_0rc4_rc458_qualification_support.json"
+
+
 RC5_R55 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_5_tf32_state_restore.json"
+
+
 RC5_G1_WINDOW_IMPLEMENTATION = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_measurement_window_implementation_v9.json"
 )
+
+
 RC5_G1_WINDOW_LIFECYCLE_RECOVERY = ROOT / (
     "notes/PSSolver_v0_2_0rc5_g1_measurement_window_lifecycle_recovery_v10.json"
 )
@@ -81,36 +78,6 @@ def test_rc458_per_family_dtype_and_transform_contract_is_explicit():
         ) == expected[entry["family"]]
 
 
-def test_rc458_profile_config_rejects_cross_family_dtype_substitution():
-    common = dict(
-        provider_role="candidate",
-        provider_commit="1" * 40,
-        provider_wheel_sha256="a" * 64,
-        trial=1,
-        shape=(8, 6, 4),
-        lengths=(8.0, 6.0, 4.0),
-        device="cuda",
-    )
-    _validate(RC458ProfileConfig(family="channel_legacy", dtype="float32", **common))
-    _validate(
-        RC458ProfileConfig(
-            family="channel_complete_stress", dtype="float64", **common
-        )
-    )
-    with pytest.raises(ValueError, match="qualified float32"):
-        _validate(
-            RC458ProfileConfig(
-                family="channel_legacy", dtype="float64", **common
-            )
-        )
-    with pytest.raises(ValueError, match="qualified float64"):
-        _validate(
-            RC458ProfileConfig(
-                family="channel_complete_stress", dtype="float32", **common
-            )
-        )
-
-
 def test_rc458_command_plan_is_exact_and_shell_free(tmp_path):
     command = build_command_plan(
         baseline_python=tmp_path / "a" / "bin" / "python",
@@ -153,9 +120,7 @@ def _auxiliary() -> dict[str, object]:
         "consumer_failed": 0,
         "consumer_xfailed": 0,
         "consumer_skipped": 1,
-        "consumer_skip_node_id": (
-            "tests/test_warmup_experiments.py::test_r5_benchmark"
-        ),
+        "consumer_skip_node_id": ("tests/test_warmup_experiments.py::test_r5_benchmark"),
     }
 
 
@@ -214,53 +179,3 @@ def _write_profiles(root: Path) -> None:
         (root / f"{entry['key']}.json").write_text(
             json.dumps(profile, allow_nan=False), encoding="utf-8"
         )
-
-
-def test_rc458_analyzer_accepts_only_the_complete_frozen_matrix(tmp_path):
-    root = tmp_path / "profiles"
-    _write_profiles(root)
-    result = analyze(root, _auxiliary())
-    assert result["classification"] == PASS_CLASSIFICATION
-    assert result["qualification_complete"] is True
-    assert result["profile_count"] == 96
-    assert result["group_count"] == 16
-
-
-def test_rc458_analyzer_rejects_state_mismatch_and_auxiliary_failure(tmp_path):
-    root = tmp_path / "profiles"
-    _write_profiles(root)
-    candidate = root / "candidate_plane_legacy_production_plane_R128_trial1.json"
-    payload = json.loads(candidate.read_text(encoding="utf-8"))
-    payload["final_state_sha256"] = "f" * 64
-    candidate.write_text(json.dumps(payload), encoding="utf-8")
-    with pytest.raises(ValueError, match="final state differs"):
-        analyze(root, _auxiliary())
-
-    payload = _auxiliary()
-    payload["tf32_scope_gate_passed"] = False
-    with pytest.raises(ValueError, match="tf32_scope_gate_passed failed"):
-        analyze(root, payload)
-
-
-def test_rc458_support_record_binds_sources_and_preserves_authorization_boundary():
-    import hashlib
-
-    record = json.loads(SUPPORT_RECORD.read_text(encoding="utf-8"))
-    assert record["classification"] == "READY_RC4_5_8_H100_QUALIFICATION_SUPPORT"
-    assert record["qualification_complete"] is False
-    assert record["consumer"]["qualified_source_commit"] == (
-        "b8539e0ec4c137a6c13746f6832e26e74be24515"
-    )
-    assert record["consumer"]["evidence_only_tip"] == (
-        "0e3895d664d1b81925127848b2dfde638f39763d"
-    )
-    for relative, expected in record["source_sha256"].items():
-        resolved = _resolve_r55(relative, expected)
-        actual = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
-        assert actual == resolved
-    assert record["authorization"] == {
-        "push_authorized": False,
-        "h100_submission_authorized": False,
-        "automatic_retry": False,
-        "production_default_changed": False,
-    }

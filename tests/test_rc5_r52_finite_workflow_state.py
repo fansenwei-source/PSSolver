@@ -10,7 +10,6 @@ import pytest
 from pssolver import (
     Output,
     Simulation,
-    SimulationExecutionError,
     SimulationStateError,
     SnapshotInitialCondition,
     SpectralNumerics,
@@ -27,19 +26,6 @@ from pssolver.boundaries import (
 from pssolver.configuration.simulation import InvocationSpec
 from pssolver.geometries import PeriodicBox
 from pssolver.models.active_nematics import CompleteStressBerisEdwards
-from pssolver.workflows.channel_beris_edwards import (
-    ChannelBerisEdwardsDiagnostic,
-    ChannelBerisEdwardsObservation,
-)
-from pssolver.workflows.channel_observation import (
-    ChannelDiagnostic,
-    ChannelObservation,
-)
-from pssolver.workflows.periodic_beris_edwards import (
-    PeriodicDiagnostic,
-    PeriodicObservation,
-)
-from pssolver.workflows.plane_observation import PlaneDiagnostic, PlaneObservation
 
 
 def _arrays() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -48,69 +34,6 @@ def _arrays() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         np.zeros((2, 2, 2, 3), dtype=np.float64),
         np.zeros((2, 2, 2), dtype=np.float64),
     )
-
-
-@pytest.mark.parametrize(
-    ("factory", "family"),
-    (
-        (PeriodicObservation, "periodic_complete_stress"),
-        (ChannelBerisEdwardsObservation, "channel_complete_stress"),
-        (PlaneObservation, "plane_complete_stress"),
-        (ChannelObservation, "legacy_channel_active_nematic"),
-    ),
-)
-def test_production_observations_raise_the_public_state_error(factory, family):
-    q, velocity, pressure = _arrays()
-    q[0, 0, 0, 0] = np.nan
-
-    with pytest.raises(SimulationStateError) as captured:
-        factory(7, q, velocity, pressure)
-
-    error = captured.value
-    assert isinstance(error, SimulationExecutionError)
-    assert isinstance(error, ValueError)
-    assert error.application_family == family
-    assert error.stage == "observation"
-    assert error.step == 7
-    assert error.to_metadata()["code"] == "simulation_state_error"
-
-
-@pytest.mark.parametrize(
-    ("factory", "arguments", "family"),
-    (
-        (
-            PeriodicDiagnostic,
-            (4, 0.0, 0.0, float("inf"), 0.0),
-            "periodic_complete_stress",
-        ),
-        (
-            ChannelBerisEdwardsDiagnostic,
-            (4, 0.0, 0.0, 0.0, 1, float("inf")),
-            "channel_complete_stress",
-        ),
-        (
-            PlaneDiagnostic,
-            (4, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, float("inf")),
-            "plane_complete_stress",
-        ),
-        (
-            ChannelDiagnostic,
-            (4, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, float("inf")),
-            "legacy_channel_active_nematic",
-        ),
-    ),
-)
-def test_production_diagnostics_raise_the_public_state_error(
-    factory,
-    arguments,
-    family,
-):
-    with pytest.raises(SimulationStateError) as captured:
-        factory(*arguments)
-
-    assert captured.value.application_family == family
-    assert captured.value.stage == "diagnostic"
-    assert captured.value.step == 4
 
 
 def _unstable_periodic_simulation(

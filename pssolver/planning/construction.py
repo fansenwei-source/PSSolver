@@ -10,11 +10,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-import hashlib
-import json
 
-from pssolver.core._identifiers import require_dotted_python_identifier
 from pssolver.core._canonical import canonical_sha256
+from pssolver.core._identifiers import require_dotted_python_identifier
 
 
 RUNTIME_CONSTRUCTION_BINDING_SCHEMA_VERSION = 1
@@ -24,9 +22,7 @@ def _qualified_name(value: object, description: str) -> str:
     return require_dotted_python_identifier(
         value,
         empty_error=ValueError(f"{description} must be a non-empty string"),
-        component_error=ValueError(
-            f"{description} must be a dotted Python identifier"
-        ),
+        component_error=ValueError(f"{description} must be a dotted Python identifier"),
     )
 
 
@@ -45,8 +41,6 @@ class RuntimeConstructionKind(str, Enum):
 
     PLANE_LEGACY_PRODUCTION = "plane_legacy_production"
     PLANE_COMPILED_V2 = "plane_compiled_v2"
-    CHANNEL_LEGACY = "channel_legacy"
-    CHANNEL_COMPILED_V2 = "channel_compiled_v2"
     PERIODIC_COMPLETE_STRESS = "periodic_complete_stress"
     CHANNEL_COMPLETE_STRESS = "channel_complete_stress"
 
@@ -101,15 +95,11 @@ class RuntimeConstructionBinding:
         if parameter is not None and (
             not isinstance(parameter, str) or not parameter.isidentifier()
         ):
-            raise ValueError(
-                "builder_parameter must be None or a Python identifier"
-            )
+            raise ValueError("builder_parameter must be None or a Python identifier")
         if self.builder_provision is BuilderProvision.CALLER and parameter is None:
             raise ValueError("caller-provided bindings require a builder parameter")
         if self.builder_provision is BuilderProvision.PACKAGE and parameter is not None:
-            raise ValueError(
-                "package-provided bindings cannot name a builder parameter"
-            )
+            raise ValueError("package-provided bindings cannot name a builder parameter")
         if self.fallback_allowed is not False:
             raise ValueError("qualified runtime construction forbids fallback")
 

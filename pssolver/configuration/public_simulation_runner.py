@@ -13,24 +13,20 @@ application or discovered by failure in the timestep.
 
 from __future__ import annotations
 
+import json
+import math
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
 from enum import Enum
-import json
 from importlib import import_module
-import math
 from types import MappingProxyType
 
-from pssolver.configuration.application_registry import APPLICATIONS, APPLICATION_BY_PAIR
-from pssolver.core._canonical import canonical_json
 from pssolver.configuration.active_nematics_simulation_adapters import (
     compose_plane_beris_edwards_simulation,
 )
+from pssolver.configuration.application_registry import APPLICATION_BY_PAIR, APPLICATIONS
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
-)
-from pssolver.configuration.public_option_validation import (
-    validate_public_execution_device,
 )
 from pssolver.configuration.plane_beris_edwards import (
     PlaneBerisEdwardsRunSpec,
@@ -38,6 +34,9 @@ from pssolver.configuration.plane_beris_edwards import (
 )
 from pssolver.configuration.plane_beris_edwards_component_graph import (
     build_plane_beris_edwards_run_components,
+)
+from pssolver.configuration.public_option_validation import (
+    validate_public_execution_device,
 )
 from pssolver.configuration.robin import (
     RobinImpedanceSupportError,
@@ -47,11 +46,12 @@ from pssolver.configuration.simulation import (
     InitialConditionSource,
     SimulationSpec,
 )
+from pssolver.configuration.simulation_binding import SimulationBindingError
 from pssolver.configuration.simulation_lowering import (
     SimulationLoweringError,
     lower_simulation_spec,
 )
-from pssolver.configuration.simulation_binding import SimulationBindingError
+from pssolver.core._canonical import canonical_json
 from pssolver.core.boundary import (
     BoundarySemantic,
     BoundarySide,
@@ -63,7 +63,6 @@ from pssolver.models.active_nematics.q_tensor import positive_equilibrium_S
 
 
 PUBLIC_PLANE_APPLICATION = "plane_complete_stress_beris_edwards"
-PUBLIC_CHANNEL_APPLICATION = "channel_legacy_active_force_active_nematics"
 PUBLIC_PERIODIC_APPLICATION = "periodic_complete_stress_beris_edwards"
 PUBLIC_CHANNEL_COMPLETE_APPLICATION = "channel_complete_stress_beris_edwards"
 
@@ -127,9 +126,7 @@ class PublicCompilationRejectionCode(str, Enum):
     # rejection sites use the narrower codes above.
     APPLICATION_CONTRACT = "application_contract"
     RUNTIME_BINDING = "runtime_binding"
-    UNSUPPORTED_LIFTED_WALL_MOLECULAR_FIELD = (
-        "unsupported_lifted_wall_molecular_field"
-    )
+    UNSUPPORTED_LIFTED_WALL_MOLECULAR_FIELD = "unsupported_lifted_wall_molecular_field"
 
 
 class PublicSimulationCompilationError(ValueError):
@@ -210,8 +207,7 @@ def _validate_invocation_options(
     invocation = dict(value)
     if not set(invocation) <= _INVOCATION_KEYS:
         _reject(
-            f"{description} may contain only dry_run and "
-            "validation_config_sha256",
+            f"{description} may contain only dry_run and validation_config_sha256",
             code=PublicCompilationRejectionCode.INVOCATION_CONTRACT,
         )
     dry_run = invocation.get("dry_run", False)
@@ -293,42 +289,24 @@ def _has_complete_static_prescribed_q_lifting_signature(
 
     if tuple(source.geometry.bounded_axes) != (2,):
         return False
-    assignments = {
-        assignment.component: assignment
-        for assignment in source.boundaries.components
-    }
+    assignments = {assignment.component: assignment for assignment in source.boundaries.components}
     prescribed_components = {
         assignment.component
         for assignment in source.boundaries.components
-        if any(
-            not face.condition.is_homogeneous
-            for face in assignment.faces
-        )
+        if any(not face.condition.is_homogeneous for face in assignment.faces)
     }
     if prescribed_components != set(Q_COMPONENTS):
         return False
     for component in Q_COMPONENTS:
         assignment = assignments.get(component)
-        if (
-            assignment is None
-            or assignment.semantic is not BoundarySemantic.PHYSICAL
-        ):
+        if assignment is None or assignment.semantic is not BoundarySemantic.PHYSICAL:
             return False
-        wall_faces = {
-            face.side: face.condition
-            for face in assignment.faces
-            if face.axis == 2
-        }
+        wall_faces = {face.side: face.condition for face in assignment.faces if face.axis == 2}
         if set(wall_faces) != set(BoundarySide) or not all(
-            isinstance(wall_faces[side], PrescribedDirichletBC)
-            for side in BoundarySide
+            isinstance(wall_faces[side], PrescribedDirichletBC) for side in BoundarySide
         ):
             return False
-        if any(
-            not face.condition.is_homogeneous
-            for face in assignment.faces
-            if face.axis != 2
-        ):
+        if any(not face.condition.is_homogeneous for face in assignment.faces if face.axis != 2):
             return False
     return True
 
@@ -343,21 +321,14 @@ def _reject_unqualified_static_q_lifting(
         "nonzero wall molecular-field semantics are not qualified for "
         "Plane static prescribed-Q lifting; the supported Plane Q boundary "
         "is homogeneous_neumann",
-        code=(
-            PublicCompilationRejectionCode
-            .UNSUPPORTED_LIFTED_WALL_MOLECULAR_FIELD
-        ),
+        code=(PublicCompilationRejectionCode.UNSUPPORTED_LIFTED_WALL_MOLECULAR_FIELD),
         context={
             "equation_variant": source.equation_system.variant,
             "geometry_name": source.geometry.name,
             "field_name": "Q",
-            "boundary_semantics": (
-                "static_constant_two_sided_prescribed_dirichlet"
-            ),
+            "boundary_semantics": ("static_constant_two_sided_prescribed_dirichlet"),
             "requested_runtime_path": source.execution.runtime_path,
-            "requested_molecular_field_linear_space": execution[
-                "molecular_field_linear_space"
-            ],
+            "requested_molecular_field_linear_space": execution["molecular_field_linear_space"],
             "supported_Q_boundary": "homogeneous_neumann",
             "analysis_record_sha256": (
                 "1157b08b5328996876307fb0333aa28e85932d9d09e9ed0f16f08cc7a3a62ef1"
@@ -391,10 +362,7 @@ def _validate_translation(
             "public integrator changed during Plane translation",
             code=PublicCompilationRejectionCode.TIME_INTEGRATION_CONTRACT,
         )
-    if (
-        source.initial_condition.to_metadata()
-        != application.initial_condition.to_metadata()
-    ):
+    if source.initial_condition.to_metadata() != application.initial_condition.to_metadata():
         _reject(
             "public initial-condition identity changed during Plane translation",
             code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
@@ -451,7 +419,6 @@ class PublicSimulationCompilation:
     def __post_init__(self) -> None:
         if self.application not in {
             PUBLIC_PLANE_APPLICATION,
-            PUBLIC_CHANNEL_APPLICATION,
             PUBLIC_PERIODIC_APPLICATION,
             PUBLIC_CHANNEL_COMPLETE_APPLICATION,
         }:
@@ -557,8 +524,7 @@ def _compile_plane_public_simulation(
         )
     if source.initial_condition.source is not InitialConditionSource.GENERATED:
         _reject(
-            "the connected Plane application currently requires a generated "
-            "initial condition",
+            "the connected Plane application currently requires a generated initial condition",
             code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
         )
     if source.initial_condition.family != "extruded_defect_gas":
@@ -568,8 +534,7 @@ def _compile_plane_public_simulation(
         )
     if source.discretization_parameters:
         _reject(
-            "the connected Plane application accepts no public "
-            "discretization overrides",
+            "the connected Plane application accepts no public discretization overrides",
             code=PublicCompilationRejectionCode.DISCRETIZATION_CONTRACT,
         )
 
@@ -625,25 +590,16 @@ def _compile_plane_public_simulation(
     if (
         isinstance(twist_modes, (str, bytes))
         or not isinstance(twist_modes, (list, tuple))
-        or any(
-            not isinstance(mode, int) or isinstance(mode, bool)
-            for mode in twist_modes
-        )
+        or any(not isinstance(mode, int) or isinstance(mode, bool) for mode in twist_modes)
         or len(set(twist_modes)) != len(twist_modes)
-        or any(
-            mode <= 0 or mode >= source.geometry.domain.shape[2]
-            for mode in twist_modes
-        )
+        or any(mode <= 0 or mode >= source.geometry.domain.shape[2] for mode in twist_modes)
     ):
         _reject(
-            "Plane twist_modes must be unique integers satisfying "
-            "1 <= mode < nz",
+            "Plane twist_modes must be unique integers satisfying 1 <= mode < nz",
             code=PublicCompilationRejectionCode.INITIAL_CONDITION_CONTRACT,
         )
     try:
-        device_normalization = validate_public_execution_device(
-            execution["device"]
-        )
+        device_normalization = validate_public_execution_device(execution["device"])
     except ValueError as exc:
         _reject(
             str(exc),
@@ -774,9 +730,7 @@ def _compile_plane_public_simulation(
         )
     _validate_translation(source, application_simulation, run_spec)
     effective_molecular_field_space = run_spec.molecular_field_linear_space
-    if effective_molecular_field_space != execution[
-        "molecular_field_linear_space"
-    ]:
+    if effective_molecular_field_space != execution["molecular_field_linear_space"]:
         _reject(
             "molecular-field linear space changed during Plane translation",
             code=PublicCompilationRejectionCode.EXECUTION_CONTRACT,
@@ -799,12 +753,8 @@ def _compile_plane_public_simulation(
             "effective_ldg_l1": run_spec.shendruk_preset.ldg_l1,
             "derived_activity_number": activity_number,
             "derived_frank_k": frank_k,
-            "requested_molecular_field_linear_space": execution[
-                "molecular_field_linear_space"
-            ],
-            "effective_molecular_field_linear_space": (
-                effective_molecular_field_space
-            ),
+            "requested_molecular_field_linear_space": execution["molecular_field_linear_space"],
+            "effective_molecular_field_linear_space": (effective_molecular_field_space),
             "molecular_field_space_fallback_used": False,
             "runtime_fallback_allowed": False,
             **device_normalization,
@@ -831,19 +781,21 @@ class PublicApplicationCompilerRegistration:
 
 
 _PUBLIC_COMPILER_REGISTRY = MappingProxyType(
-    {entry.key: PublicApplicationCompilerRegistration(
-        *entry.key, entry.application, entry.compiler,
-    ) for entry in APPLICATIONS}
+    {
+        entry.key: PublicApplicationCompilerRegistration(
+            *entry.key,
+            entry.application,
+            entry.compiler,
+        )
+        for entry in APPLICATIONS
+    }
 )
 
 
 def public_compiler_capabilities() -> tuple[dict[str, str], ...]:
     """Return the immutable set of currently qualified compiler adapters."""
 
-    return tuple(
-        registration.to_metadata()
-        for registration in _PUBLIC_COMPILER_REGISTRY.values()
-    )
+    return tuple(registration.to_metadata() for registration in _PUBLIC_COMPILER_REGISTRY.values())
 
 
 def compile_public_simulation(
@@ -872,18 +824,13 @@ def compile_public_simulation(
     if registration is None:
         raise PublicSimulationCompilationError(
             "the model/geometry pair has no qualified public compiler adapter",
-            code=(
-                PublicCompilationRejectionCode.UNREGISTERED_MODEL_GEOMETRY
-            ),
+            code=(PublicCompilationRejectionCode.UNREGISTERED_MODEL_GEOMETRY),
             context={
                 "equation_variant": key[0],
                 "geometry_name": key[1],
-                "required_capabilities": list(
-                    source.equation_system.required_capabilities
-                ),
+                "required_capabilities": list(source.equation_system.required_capabilities),
                 "registered_pairs": [
-                    [candidate[0], candidate[1]]
-                    for candidate in _PUBLIC_COMPILER_REGISTRY
+                    [candidate[0], candidate[1]] for candidate in _PUBLIC_COMPILER_REGISTRY
                 ],
             },
         )
@@ -901,16 +848,14 @@ def compile_public_simulation(
     except SimulationBindingError as exc:
         rejection = exc.rejection.to_metadata()
         raise PublicSimulationCompilationError(
-            "the public declaration has no qualified runtime binding: "
-            f"{rejection['message']}",
+            f"the public declaration has no qualified runtime binding: {rejection['message']}",
             code=PublicCompilationRejectionCode.RUNTIME_BINDING,
             context={"binding_rejection": rejection},
         ) from exc
     except SimulationLoweringError as exc:
         rejection = exc.rejection.to_metadata()
         raise PublicSimulationCompilationError(
-            "the public declaration has no qualified lowering: "
-            f"{rejection['message']}",
+            f"the public declaration has no qualified lowering: {rejection['message']}",
             code=PublicCompilationRejectionCode.LOWERING_CONTRACT,
             context={"lowering_rejection": rejection},
         ) from exc
@@ -920,9 +865,7 @@ def compile_public_simulation(
             "exception_type": type(exc).__name__,
         }
         if isinstance(exc, KeyError):
-            context["missing_key"] = (
-                exc.args[0] if len(exc.args) == 1 else list(exc.args)
-            )
+            context["missing_key"] = exc.args[0] if len(exc.args) == 1 else list(exc.args)
         raise PublicSimulationCompilationError(
             (
                 "the public application declaration is malformed"
@@ -935,7 +878,6 @@ def compile_public_simulation(
 
 
 __all__ = [
-    "PUBLIC_CHANNEL_APPLICATION",
     "PUBLIC_PLANE_APPLICATION",
     "PUBLIC_PERIODIC_APPLICATION",
     "PUBLIC_CHANNEL_COMPLETE_APPLICATION",

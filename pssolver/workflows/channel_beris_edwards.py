@@ -2,25 +2,30 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-from dataclasses import dataclass
 import json
 import math
 import os
-from pathlib import Path
 import shutil
 import stat
 import time
+from collections.abc import Mapping
+from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 import torch
 
+from pssolver.configuration.channel_beris_edwards import (
+    ChannelBerisEdwardsRunSpec,
+)
 from pssolver.core._canonical import canonical_json
+from pssolver.errors import SimulationRestartError, SimulationStateError
 from pssolver.io.checkpoint import (
     CheckpointCompatibilityError,
+    CheckpointError,
     CheckpointIntegrityError,
-    checkpoint_file_sha256,
     checkpoint_directory_transaction,
+    checkpoint_file_sha256,
     load_checkpoint_numpy,
     read_checkpoint_json,
     require_exact_checkpoint_keys,
@@ -37,10 +42,7 @@ from pssolver.io.checkpoint_identity import (
     SourceReleaseGeneration,
     resolve_legacy_identity_schema,
 )
-from pssolver.configuration.channel_beris_edwards import (
-    ChannelBerisEdwardsRunSpec,
-)
-from pssolver.configuration.channel_active_nematics_declarations import (
+from pssolver.linear_solvers.stokes._pressure_policy import (
     channel_pressure_policy_metadata,
 )
 from pssolver.models.active_nematics import Q_COMPONENTS, VELOCITY_COMPONENTS
@@ -48,13 +50,12 @@ from pssolver.runtime.channel_beris_edwards import (
     CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
     ChannelBerisEdwardsRuntimeAdapterProtocol,
 )
+
 from .diagnostic_io import (
     diagnostics_metadata_envelope,
     write_structured_diagnostics,
 )
 from .state_validation import require_finite_tensors
-from pssolver.errors import SimulationRestartError, SimulationStateError
-from pssolver.io.checkpoint import CheckpointError
 
 
 CHECKPOINT_VERSION = 3
@@ -182,9 +183,7 @@ class ChannelBerisEdwardsCheckpointHeader:
 
 def capture_channel_beris_edwards_observation(adapter, *, step=None):
     if not isinstance(adapter, ChannelBerisEdwardsRuntimeAdapterProtocol):
-        raise TypeError(
-            "adapter must implement ChannelBerisEdwardsRuntimeAdapterProtocol"
-        )
+        raise TypeError("adapter must implement ChannelBerisEdwardsRuntimeAdapterProtocol")
     views = adapter.output_views
     return ChannelBerisEdwardsObservation(
         adapter.completed_steps if step is None else step,
@@ -197,9 +196,7 @@ def capture_channel_beris_edwards_observation(adapter, *, step=None):
 def capture_channel_beris_edwards_diagnostic(adapter, *, step):
     fields = adapter.fields
     divergence = sum(
-        adapter.projector.inverse_transform_full(
-            *fields.gradient_hat(name, axis=axis)
-        )
+        adapter.projector.inverse_transform_full(*fields.gradient_hat(name, axis=axis))
         for axis, name in enumerate(VELOCITY_COMPONENTS)
     )
     flow = adapter.flow_diagnostics()
@@ -254,9 +251,7 @@ def _channel_run_spec_dynamics(
 def channel_forward_dynamics_identity(
     run_spec: ChannelBerisEdwardsRunSpec,
 ) -> CheckpointIdentityLayer:
-    pressure = dict(
-        run_spec.simulation.discretization_parameters["pressure_solver"]
-    )
+    pressure = dict(run_spec.simulation.discretization_parameters["pressure_solver"])
     return CheckpointIdentityLayer(
         kind=IdentityLayerKind.FORWARD_DYNAMICS,
         version="channel.production.forward.v4",
@@ -266,16 +261,12 @@ def channel_forward_dynamics_identity(
                 relative_tolerance=pressure["relative_tolerance"],
                 max_iterations=pressure["max_iterations"],
                 fixed_iterations=pressure["fixed_iterations"],
-                initial_guess_policy=(
-                    "persistent_production_warm_start"
-                ),
+                initial_guess_policy=("persistent_production_warm_start"),
             ),
             "pressure_convergence_schema_version": 2,
             "dynamics_versions": {
                 "q_evolution": "complete_stress_beris_edwards.v1",
-                "forward_stokes_nyquist": (
-                    "channel_no_slip.periodic_nyquist_zero.v2"
-                ),
+                "forward_stokes_nyquist": ("channel_no_slip.periodic_nyquist_zero.v2"),
                 "pressure_warm_start": "pcg_persistent_guess.v2",
                 "pressure_policy": "channel_pressure_policy.v1",
                 "spectral_refresh": "projected_euler_refresh.v1",
@@ -296,13 +287,8 @@ def _channel_state_layout_identity(
         version="channel.production.state.v3",
         payload={
             "component_order": list(_STATE_COMPONENTS),
-            "spatial": {
-                name: record(fields[name]) for name in _STATE_COMPONENTS
-            },
-            "spectral": {
-                name: record(fields[f"{name}.hat"])
-                for name in _STATE_COMPONENTS
-            },
+            "spatial": {name: record(fields[name]) for name in _STATE_COMPONENTS},
+            "spectral": {name: record(fields[f"{name}.hat"]) for name in _STATE_COMPONENTS},
             "persistent": {"pressure_guess": record(pressure_guess)},
         },
     )
@@ -311,9 +297,7 @@ def _channel_state_layout_identity(
 def _channel_backend_restart_identity(
     backend_restart: dict[str, object],
 ) -> CheckpointIdentityLayer:
-    normalized = json.loads(
-        canonical_json(dict(backend_restart))
-    )
+    normalized = json.loads(canonical_json(dict(backend_restart)))
     normalized.pop("runtime_identity_sha256", None)
     return CheckpointIdentityLayer(
         kind=IdentityLayerKind.BACKEND_RESTART,
@@ -393,14 +377,10 @@ def write_channel_beris_edwards_checkpoint(
             "format_version": CHECKPOINT_VERSION,
             "runtime_path": CHANNEL_COMPLETE_STRESS_RUNTIME_PATH,
             "run_provenance": {
-                "legacy_runtime_identity_sha256": (
-                    run_spec.runtime_identity_sha256()
-                ),
+                "legacy_runtime_identity_sha256": (run_spec.runtime_identity_sha256()),
             },
             "compatibility_identity": compatibility_identity.to_metadata(),
-            "compatibility_identity_sha256": (
-                compatibility_identity.canonical_sha256()
-            ),
+            "compatibility_identity_sha256": (compatibility_identity.canonical_sha256()),
             "completed_steps": adapter.completed_steps,
             "integrator": {
                 "spectral_refresh_interval": integrator.spectral_refresh_interval,
@@ -500,9 +480,7 @@ def _validated_progress(metadata):
         )
     interval = integrator["spectral_refresh_interval"]
     if interval is not None and (
-        not isinstance(interval, int)
-        or isinstance(interval, bool)
-        or interval <= 0
+        not isinstance(interval, int) or isinstance(interval, bool) or interval <= 0
     ):
         raise CheckpointIntegrityError(
             "checkpoint spectral refresh interval is invalid",
@@ -510,11 +488,7 @@ def _validated_progress(metadata):
         )
     for name in ("step_count", "refresh_count"):
         value = integrator[name]
-        if (
-            not isinstance(value, int)
-            or isinstance(value, bool)
-            or value < 0
-        ):
+        if not isinstance(value, int) or isinstance(value, bool) or value < 0:
             raise CheckpointIntegrityError(
                 f"checkpoint {name} is invalid",
                 operation="complete_stress_channel_checkpoint_import",
@@ -629,10 +603,8 @@ def read_channel_beris_edwards_checkpoint_header(
             )
         runtime_identity = run_provenance.get("legacy_runtime_identity_sha256")
         try:
-            compatibility_identity = (
-                CheckpointCompatibilityIdentity.from_metadata(
-                    metadata.get("compatibility_identity")
-                )
+            compatibility_identity = CheckpointCompatibilityIdentity.from_metadata(
+                metadata.get("compatibility_identity")
             )
         except (TypeError, ValueError) as exc:
             raise CheckpointIntegrityError(
@@ -651,10 +623,7 @@ def read_channel_beris_edwards_checkpoint_header(
                 "Channel compatibility identity family differs",
                 operation="complete_stress_channel_checkpoint_import",
             )
-        if (
-            compatibility_identity.runtime_path
-            != CHANNEL_COMPLETE_STRESS_RUNTIME_PATH
-        ):
+        if compatibility_identity.runtime_path != CHANNEL_COMPLETE_STRESS_RUNTIME_PATH:
             raise CheckpointIntegrityError(
                 "Channel compatibility runtime path differs",
                 operation="complete_stress_channel_checkpoint_import",
@@ -700,9 +669,7 @@ def _load_checkpoint(directory, adapter, *, run_spec):
             operation="complete_stress_channel_checkpoint_import",
         )
     completed_steps, integrator = _validated_progress(metadata)
-    target_refresh_interval = (
-        adapter.solver.integrator.spectral_refresh_interval
-    )
+    target_refresh_interval = adapter.solver.integrator.spectral_refresh_interval
     if integrator["spectral_refresh_interval"] != target_refresh_interval:
         raise CheckpointCompatibilityError(
             "Channel checkpoint spectral refresh policy does not match target",
@@ -772,12 +739,9 @@ def _load_checkpoint(directory, adapter, *, run_spec):
     )
 
     materialized = tuple(
-        (target, torch.from_numpy(values).to(device=target.device))
-        for target, values in pending
+        (target, torch.from_numpy(values).to(device=target.device)) for target, values in pending
     )
-    materialized_pressure = torch.from_numpy(pressure_values).to(
-        device=pressure_target.device
-    )
+    materialized_pressure = torch.from_numpy(pressure_values).to(device=pressure_target.device)
 
     # Mutation starts only after every identity, file, shape, dtype, checksum,
     # finite-value, and device-materialization gate has passed.
@@ -799,9 +763,7 @@ def _channel_state_layout_identity_from_metadata(
 ) -> CheckpointIdentityLayer:
     manifest = metadata.get("tensor_files")
     backend_files = metadata.get("backend_files")
-    if not isinstance(manifest, Mapping) or not isinstance(
-        backend_files, Mapping
-    ):
+    if not isinstance(manifest, Mapping) or not isinstance(backend_files, Mapping):
         raise CheckpointIntegrityError(
             "Channel checkpoint tensor manifest is missing",
             operation="complete_stress_channel_checkpoint_import",
@@ -837,17 +799,12 @@ def _channel_state_layout_identity_from_metadata(
     }
     for kind in ("spatial", "spectral"):
         records = manifest.get(kind)
-        if not isinstance(records, Mapping) or set(records) != set(
-            _STATE_COMPONENTS
-        ):
+        if not isinstance(records, Mapping) or set(records) != set(_STATE_COMPONENTS):
             raise CheckpointIntegrityError(
                 "Channel checkpoint tensor manifest is incomplete",
                 operation="complete_stress_channel_checkpoint_import",
             )
-        result[kind] = {
-            name: layout(records[name], f"{kind} {name}")
-            for name in _STATE_COMPONENTS
-        }
+        result[kind] = {name: layout(records[name], f"{kind} {name}") for name in _STATE_COMPONENTS}
     if set(backend_files) != {"pressure_guess"}:
         raise CheckpointIntegrityError(
             "Channel checkpoint backend manifest is incomplete",
@@ -886,18 +843,11 @@ def _validate_legacy_channel_upgrade_contract(
 ):
     if not isinstance(source_run_spec, ChannelBerisEdwardsRunSpec):
         raise TypeError("source_run_spec must be a ChannelBerisEdwardsRunSpec")
-    expected_format = _legacy_channel_format_for_generation(
-        source_release_generation
-    )
+    expected_format = _legacy_channel_format_for_generation(source_release_generation)
     if metadata.get("format_version") != expected_format:
         raise ValueError("legacy Channel format does not match source release")
-    if (
-        metadata.get("runtime_identity_sha256")
-        != source_run_spec.runtime_identity_sha256()
-    ):
-        raise ValueError(
-            "legacy Channel checkpoint opaque identity is not authenticated"
-        )
+    if metadata.get("runtime_identity_sha256") != source_run_spec.runtime_identity_sha256():
+        raise ValueError("legacy Channel checkpoint opaque identity is not authenticated")
     # RC4.2.1 froze the Channel identity schema as v1 for every release;
     # the transport container independently became sealed format v2 in rc2.
     schema = resolve_legacy_identity_schema(
@@ -912,9 +862,7 @@ def _validate_legacy_channel_upgrade_contract(
     periodic_length = source_run_spec.simulation.geometry.domain.shape[0]
     if source_release_generation is SourceReleaseGeneration.RC1:
         if periodic_length % 2 == 0:
-            raise ValueError(
-                "rc1 Channel checkpoint has pre-RC4.1 forward Nyquist dynamics"
-            )
+            raise ValueError("rc1 Channel checkpoint has pre-RC4.1 forward Nyquist dynamics")
         raise ValueError(
             "rc1 Channel checkpoint predates the B2 incompressibility "
             "dynamics and cannot be upgraded for exact restart"
@@ -965,20 +913,10 @@ def upgrade_channel_beris_edwards_checkpoint_directory(
         # metadata can be upgraded and any failed transaction can be removed.
         for root, directories, files in os.walk(staging):
             root_path = Path(root)
-            root_path.chmod(
-                root_path.lstat().st_mode
-                | stat.S_IRUSR
-                | stat.S_IWUSR
-                | stat.S_IXUSR
-            )
+            root_path.chmod(root_path.lstat().st_mode | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
             for name in directories:
                 path = root_path / name
-                path.chmod(
-                    path.lstat().st_mode
-                    | stat.S_IRUSR
-                    | stat.S_IWUSR
-                    | stat.S_IXUSR
-                )
+                path.chmod(path.lstat().st_mode | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
             for name in files:
                 path = root_path / name
                 path.chmod(path.lstat().st_mode | stat.S_IRUSR | stat.S_IWUSR)
@@ -990,9 +928,7 @@ def upgrade_channel_beris_edwards_checkpoint_directory(
             "legacy_runtime_identity_sha256": source_run_spec.runtime_identity_sha256()
         }
         upgraded["compatibility_identity"] = compatibility_identity.to_metadata()
-        upgraded["compatibility_identity_sha256"] = (
-            compatibility_identity.canonical_sha256()
-        )
+        upgraded["compatibility_identity_sha256"] = compatibility_identity.canonical_sha256()
         upgraded["migration_provenance"] = {
             "kind": "channel_checkpoint_identity_upgrade_to_v3",
             "source_release_generation": source_release_generation.value,
@@ -1020,10 +956,7 @@ def upgrade_channel_beris_edwards_checkpoint_directory(
 class ChannelBerisEdwardsWorkflow:
     def __init__(self, adapter, run_spec, output_directory, metadata):
         if not isinstance(adapter, ChannelBerisEdwardsRuntimeAdapterProtocol):
-            raise TypeError(
-                "adapter must implement "
-                "ChannelBerisEdwardsRuntimeAdapterProtocol"
-            )
+            raise TypeError("adapter must implement ChannelBerisEdwardsRuntimeAdapterProtocol")
         self.adapter = adapter
         self.run_spec = run_spec
         self.output_directory = Path(output_directory).expanduser().resolve()
@@ -1051,9 +984,7 @@ class ChannelBerisEdwardsWorkflow:
             except Exception as exc:
                 raise SimulationRestartError(
                     str(exc) or "Channel checkpoint restore failed",
-                    application_family=(
-                        "channel_complete_stress_beris_edwards"
-                    ),
+                    application_family=("channel_complete_stress_beris_edwards"),
                     stage="restart_restore",
                     step=int(self.adapter.completed_steps),
                     details={
@@ -1063,9 +994,7 @@ class ChannelBerisEdwardsWorkflow:
                 ) from exc
         steps = self.run_spec.simulation.workflow.steps
         if self.options["save_start_step"] > start + steps:
-            raise ValueError(
-                "save_start_step must not exceed the absolute final step"
-            )
+            raise ValueError("save_start_step must not exceed the absolute final step")
         # Keep restart rejection free of output-directory side effects.  The
         # checkpoint has passed every load/identity/restore guard at this point.
         self.output_directory.mkdir(parents=True, exist_ok=True)
@@ -1074,13 +1003,10 @@ class ChannelBerisEdwardsWorkflow:
         executed = 0
         for local_step in iterator:
             if local_step != executed:
-                raise ValueError(
-                    "progress must yield consecutive local steps from zero"
-                )
+                raise ValueError("progress must yield consecutive local steps from zero")
             absolute = start + local_step
             diagnostic_due = (
-                self.options["diagnostics"]
-                and absolute % self.options["diagnostic_interval"] == 0
+                self.options["diagnostics"] and absolute % self.options["diagnostic_interval"] == 0
             )
             save_due = (
                 absolute >= self.options["save_start_step"]
@@ -1111,16 +1037,13 @@ class ChannelBerisEdwardsWorkflow:
             interval = self.options["checkpoint_interval"]
             if interval is not None and self.adapter.completed_steps % interval == 0:
                 write_channel_beris_edwards_checkpoint(
-                    self.output_directory
-                    / f"checkpoint_{self.adapter.completed_steps}",
+                    self.output_directory / f"checkpoint_{self.adapter.completed_steps}",
                     self.adapter,
                     run_spec=self.run_spec,
                 )
                 self.checkpoints.append(self.adapter.completed_steps)
         if executed != steps:
-            raise ValueError(
-                f"progress yielded {executed} steps; expected {steps}"
-            )
+            raise ValueError(f"progress yielded {executed} steps; expected {steps}")
         final_step = start + steps
         self.adapter.synchronize_for_observation()
         final = capture_channel_beris_edwards_observation(

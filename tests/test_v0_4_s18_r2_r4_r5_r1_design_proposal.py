@@ -31,9 +31,7 @@ def test_s18_has_no_speculative_nonzero_tolerance():
     tolerance = _read()["tolerance_preregistration"]
     assert tolerance["nonzero_tolerances_registered_now"] == []
     fallback = tolerance["if_bitwise_equivalence_is_impossible"]
-    assert fallback["action"] == (
-        "stop before completing or integrating the affected batch"
-    )
+    assert fallback["action"] == ("stop before completing or integrating the affected batch")
     assert len(fallback["required_baseline_measurements"]) == 3
     assert len(fallback["required_registration_fields"]) == 5
     assert "explicit user confirmation" in fallback["authorization"]
@@ -137,9 +135,7 @@ def test_control_first_boundary_is_exact_and_research_stays_out_of_scope():
         "pssolver/models/active_nematics/beris_edwards.py": (
             "07f1f03f7f2f35e28e8ce629c1d73c5d59e4f5f3"
         ),
-        "pssolver/models/active_nematics/q_tensor.py": (
-            "5427df4402f31fc43ac409e1936cd31e58269966"
-        ),
+        "pssolver/models/active_nematics/q_tensor.py": ("5427df4402f31fc43ac409e1936cd31e58269966"),
     }
     assert "before the Provider change may be pushed" in control["pre_push_rule"]
     assert control["research_branch"] == {
@@ -151,9 +147,7 @@ def test_control_first_boundary_is_exact_and_research_stays_out_of_scope():
 
 def test_s18_design_binds_five_confirmed_choices_and_authorizes_no_remote_work():
     record = _read()
-    assert record["classification"] == (
-        "DESIGN_ONLY_D0018_CONFIRMED_AWAITING_R0054_REVIEW"
-    )
+    assert record["classification"] == ("DESIGN_ONLY_D0018_CONFIRMED_AWAITING_R0054_REVIEW")
     governance = record["governance"]
     assert governance == {
         "confirmed_decisions": ["D-0011", "D-0014", "D-0017", "D-0018"],
@@ -162,9 +156,7 @@ def test_s18_design_binds_five_confirmed_choices_and_authorizes_no_remote_work()
         "confirmed_decision_sha256": (
             "38cfe71b63efcca6ef47a759d5955bd332266cf4a65cef6e61635c43bfd1a627"
         ),
-        "confirmed_decision_sync_commit": (
-            "4cf34051cd5d4f47801eaabf0bdc7cd8490d6367"
-        ),
+        "confirmed_decision_sync_commit": ("4cf34051cd5d4f47801eaabf0bdc7cd8490d6367"),
         "implementation_requires_design_review_pass": True,
         "design_review_request": "R-0054",
         "superseded_preconfirmation_request": "R-0053",
@@ -176,10 +168,7 @@ def test_s18_design_binds_five_confirmed_choices_and_authorizes_no_remote_work()
         "Q-S18-04",
         "Q-S18-05",
     ]
-    assert all(
-        item["selected_option"] == "A"
-        for item in record["confirmed_choices"]
-    )
+    assert all(item["selected_option"] == "A" for item in record["confirmed_choices"])
     assert record["implementation"] == {
         "started": False,
         "runtime_files_changed": [],
@@ -191,14 +180,3 @@ def test_s18_design_binds_five_confirmed_choices_and_authorizes_no_remote_work()
         "skip_or_xfail_added": False,
     }
     assert all(value is False for value in record["authorization"].values())
-
-
-def test_all_named_existing_files_are_present():
-    record = _read()
-    paths: set[str] = set()
-    for batch in record["batches"].values():
-        paths.update(batch.get("existing_files_in_scope", []))
-        for layer in batch.get("eight_stack_layers_and_files", []):
-            paths.update(layer["files"])
-    missing = sorted(path for path in paths if not (ROOT / path).is_file())
-    assert missing == []

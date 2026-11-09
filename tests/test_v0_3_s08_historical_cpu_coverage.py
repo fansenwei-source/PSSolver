@@ -6,12 +6,9 @@ import hashlib
 import json
 from pathlib import Path
 
-import numpy as np
 import pytest
-import torch
 
-from benchmarks.v0_2_0_checkpoint_fixtures import numerical_build_fingerprint
-
+import pssolver.functional.channel_checkpoint as channel_checkpoint_module
 from pssolver import (
     Output,
     Simulation,
@@ -39,10 +36,11 @@ from pssolver.workflows import plane_checkpoint as plane_checkpoint_module
 from pssolver.workflows.plane_checkpoint import (
     upgrade_plane_checkpoint_directory_v1,
 )
-import pssolver.functional.channel_checkpoint as channel_checkpoint_module
 
 
 FIXTURES = Path(__file__).parent / "fixtures" / "historical_cpu_coverage_v1"
+
+
 MANIFEST = json.loads((FIXTURES / "manifest.json").read_text(encoding="utf-8"))
 
 
@@ -59,9 +57,7 @@ def _tree(directory: Path) -> dict[str, str]:
 
 
 def _tree_sha256(directory: Path) -> str:
-    encoded = json.dumps(
-        _tree(directory), separators=(",", ":"), sort_keys=True
-    ).encode("utf-8")
+    encoded = json.dumps(_tree(directory), separators=(",", ":"), sort_keys=True).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
 
@@ -165,106 +161,24 @@ def test_s08_fixture_manifest_binds_exact_release_outputs():
         "rc2_channel_functional_odd",
         "rc1_plane_lifted",
     }
-    assert _sha256(FIXTURES / "generate_fixtures.py") == MANIFEST[
-        "generator"
-    ]["sha256"]
-    assert MANIFEST["generation_environment"][
-        "numerical_build_fingerprint"
-    ]["fingerprint_schema_version"] == 2
+    assert _sha256(FIXTURES / "generate_fixtures.py") == MANIFEST["generator"]["sha256"]
+    assert (
+        MANIFEST["generation_environment"]["numerical_build_fingerprint"][
+            "fingerprint_schema_version"
+        ]
+        == 2
+    )
     for name, record in MANIFEST["cases"].items():
         directory = FIXTURES / name
         assert len(_tree(directory)) == record["file_count"]
         assert _tree_sha256(directory) == record["tree_sha256"]
-        generation = json.loads(
-            (directory / "generation.json").read_text(encoding="utf-8")
-        )
+        generation = json.loads((directory / "generation.json").read_text(encoding="utf-8"))
         release = MANIFEST["released_sources"][record["source_release"]]
         assert generation["source"]["commit"] == release["commit"]
         assert generation["source"]["pssolver_version"] == release["version"]
-        assert generation["source"]["numerical_build_fingerprint"] == MANIFEST[
-            "generation_environment"
-        ]["numerical_build_fingerprint"]
-
-
-@pytest.mark.parametrize(
-    ("generation", "migration_kind", "trajectory_equivalent"),
-    (
-        ("rc1", "state_only_migration", False),
-        ("rc2", "exact_legacy_upgrade", True),
-    ),
-)
-def test_authentic_odd_channel_functional_checkpoint_has_honest_disposition(
-    tmp_path,
-    generation,
-    migration_kind,
-    trajectory_equivalent,
-):
-    fixture = FIXTURES / f"{generation}_channel_functional_odd"
-    runtime = _channel_runtime(tmp_path / generation, fixture)
-    source = fixture / "checkpoint"
-    before = _tree(source)
-    with pytest.raises(
-        FunctionalCheckpointCompatibilityError,
-        match="requires explicit migration",
-    ):
-        runtime.checkpoint_bridge.import_checkpoint(source)
-
-    target = runtime.checkpoint_bridge.migrate_legacy_checkpoint(
-        source,
-        tmp_path / f"{generation}_upgraded",
-        source_release_generation=generation,
-    )
-    imported = runtime.checkpoint_bridge.import_checkpoint(target)
-    metadata = json.loads((target / "checkpoint.json").read_text())
-    provenance = metadata["migration_provenance"]
-    assert provenance["migration_kind"] == migration_kind
-    assert provenance["trajectory_equivalent"] is trajectory_equivalent
-    assert provenance["periodic_axis_size"] == 7
-    assert _tree(source) == before
-
-    controls = {
-        "activity": torch.full(
-            runtime.control_specs[0].tensor.shape,
-            0.01,
-            dtype=torch.float64,
-        )
-    }
-    continued = runtime.step(imported.state, controls, 1)
-    oracle = fixture / "continuation_oracle"
-    expected = (
-        torch.from_numpy(np.load(oracle / "q_physical_step_2.npy")),
-        torch.from_numpy(np.load(oracle / "q_spectral_step_2.npy")),
-    )
-    policy = MANIFEST["continuation_tolerance_policy"]
-    matching_build = numerical_build_fingerprint() == MANIFEST[
-        "generation_environment"
-    ]["numerical_build_fingerprint"]
-    roundoff_multiples = []
-    for observed, reference in zip(continued, expected, strict=True):
-        epsilon = float(torch.finfo(observed.real.dtype).eps)
-        tolerance = float(policy["epsilon_multiplier"]) * epsilon
-        maximum_difference = float((observed - reference).abs().max())
-        effective_tolerance = tolerance * (
-            1.0 + float(reference.abs().max())
-        )
-        if generation == "rc2":
-            if matching_build:
-                assert torch.equal(observed, reference)
-            else:
-                assert torch.allclose(
-                    observed,
-                    reference,
-                    rtol=tolerance,
-                    atol=tolerance,
-                )
-        else:
-            assert not torch.equal(observed, reference)
-            roundoff_multiples.append(
-                maximum_difference / effective_tolerance
-            )
-    if generation == "rc1":
-        assert min(roundoff_multiples) > float(
-            policy["rc1_minimum_roundoff_multiple"]
+        assert (
+            generation["source"]["numerical_build_fingerprint"]
+            == MANIFEST["generation_environment"]["numerical_build_fingerprint"]
         )
 
 
@@ -277,16 +191,16 @@ def test_authentic_rc1_lifted_plane_rejects_before_tensor_load(
     before = _tree(source)
     generation = json.loads((fixture / "generation.json").read_text())
     spec = _plane_source_spec(tmp_path)
-    assert spec.runtime_identity_sha256() == generation[
-        "runtime_identity_sha256"
-    ]
+    assert spec.runtime_identity_sha256() == generation["runtime_identity_sha256"]
     monkeypatch.setattr(
         plane_checkpoint_module,
         "_load_tensor",
         lambda *_args, **_kwargs: pytest.fail("tensor payload load started"),
     )
     target = tmp_path / "forbidden_upgrade"
-    with pytest.raises(ValueError, match="rc1 lifted Plane checkpoint"):
+    with pytest.raises(
+        ValueError, match=r"private Plane lifting checkpoint.*v0\.4\.x.*maint/v0\.4"
+    ):
         upgrade_plane_checkpoint_directory_v1(
             source,
             target,
@@ -321,9 +235,7 @@ def test_earlier_rc1_odd_exact_migration_has_actionable_rejection(
         )
 
     metadata = json.loads((target / "checkpoint.json").read_text())
-    assert metadata["migration_provenance"]["migration_kind"] == (
-        "exact_legacy_upgrade"
-    )
+    assert metadata["migration_provenance"]["migration_kind"] == ("exact_legacy_upgrade")
     assert metadata["migration_provenance"]["trajectory_equivalent"] is True
     with pytest.raises(
         FunctionalCheckpointCompatibilityError,

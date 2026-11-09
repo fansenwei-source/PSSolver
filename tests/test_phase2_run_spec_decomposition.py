@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import ast
-from dataclasses import fields, replace
 import json
 import os
-from pathlib import Path
 import subprocess
 import sys
+from dataclasses import fields, replace
+from pathlib import Path
 
 import pytest
 
@@ -41,26 +41,14 @@ from pssolver.workflows import read_plane_checkpoint_header
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_ROOT = PROJECT_ROOT / "tests" / "fixtures" / "configuration"
 CASES_ORACLE = json.loads(
-    (FIXTURE_ROOT / "plane_run_spec_v1_cases.json").read_text(
-        encoding="utf-8"
-    )
+    (FIXTURE_ROOT / "plane_run_spec_v1_cases.json").read_text(encoding="utf-8")
 )
 CHECKPOINT_FIXTURE = FIXTURE_ROOT / "plane_checkpoint_v1_header"
-COMPONENT_MODULE = (
-    PROJECT_ROOT
-    / "pssolver"
-    / "configuration"
-    / "plane_beris_edwards_components.py"
-)
+COMPONENT_MODULE = PROJECT_ROOT / "pssolver" / "configuration" / "plane_beris_edwards_components.py"
 COMPONENT_GRAPH_MODULE = (
-    PROJECT_ROOT
-    / "pssolver"
-    / "configuration"
-    / "plane_beris_edwards_component_graph.py"
+    PROJECT_ROOT / "pssolver" / "configuration" / "plane_beris_edwards_component_graph.py"
 )
-FACADE_MODULE = (
-    PROJECT_ROOT / "pssolver" / "configuration" / "plane_beris_edwards.py"
-)
+FACADE_MODULE = PROJECT_ROOT / "pssolver" / "configuration" / "plane_beris_edwards.py"
 
 
 def _base_kwargs(**overrides: object) -> dict[str, object]:
@@ -74,9 +62,7 @@ def _spec(**overrides: object) -> PlaneBerisEdwardsRunSpec:
 
 
 def _alternate_boundaries() -> PlaneFreeSlipBoundaryConditions:
-    alternate_q = BoundarySet(
-        (PeriodicBC(), PeriodicBC(), HomogeneousDirichletBC())
-    )
+    alternate_q = BoundarySet((PeriodicBC(), PeriodicBC(), HomogeneousDirichletBC()))
     return replace(PLANE_FREE_SLIP_BOUNDARIES, q=alternate_q)
 
 
@@ -130,23 +116,15 @@ def _recover_flat_fields(
         "zero_mode_policy": stokes.tangential_zero_mode_policy.value,
         "friction_mode_fric": physics.requested_friction_mode_fric,
         "dealias_rule": numerics.dealias_rule.value,
-        "projected_transform_execution": (
-            numerics.projected_transform_execution.value
-        ),
+        "projected_transform_execution": (numerics.projected_transform_execution.value),
         "beta": material.beta,
         "initial_s": initial.initial_s,
         "device": execution.device,
         "dtype": numerics.precision.value,
-        "molecular_field_linear_space": (
-            execution.molecular_field_linear_space
-        ),
-        "stress_divergence_sum_space": (
-            execution.stress_divergence_sum_space
-        ),
+        "molecular_field_linear_space": (execution.molecular_field_linear_space),
+        "stress_divergence_sum_space": (execution.stress_divergence_sum_space),
         "pointwise_execution": execution.pointwise_execution,
-        "transform_execution_order": (
-            numerics.transform_execution_order.value
-        ),
+        "transform_execution_order": (numerics.transform_execution_order.value),
         "spectral_storage": numerics.spectral_storage.value,
         "tf32": execution.tf32,
         "spectral_refresh": time.spectral_refresh,
@@ -181,10 +159,7 @@ def _round_trip(
 
     assert len(expected_names) == len(set(expected_names)) == 54
     assert tuple(recovered) == expected_names
-    assert recovered == {
-        name: getattr(spec, name)
-        for name in expected_names
-    }
+    assert recovered == {name: getattr(spec, name) for name in expected_names}
     for name in expected_names:
         assert type(recovered[name]) is type(getattr(spec, name))
     assert recovered["spectral_refresh"] is spec.spectral_refresh
@@ -193,23 +168,12 @@ def _round_trip(
     reconstructed = PlaneBerisEdwardsRunSpec(**recovered)
     assert reconstructed == spec
     assert reconstructed.to_metadata() == spec.to_metadata()
-    assert _canonical_json(reconstructed.to_metadata()) == _canonical_json(
-        spec.to_metadata()
-    )
+    assert _canonical_json(reconstructed.to_metadata()) == _canonical_json(spec.to_metadata())
     assert reconstructed.canonical_sha256() == spec.canonical_sha256()
-    assert (
-        reconstructed.runtime_identity_metadata()
-        == spec.runtime_identity_metadata()
-    )
-    assert (
-        reconstructed.runtime_identity_sha256()
-        == spec.runtime_identity_sha256()
-    )
+    assert reconstructed.runtime_identity_metadata() == spec.runtime_identity_metadata()
+    assert reconstructed.runtime_identity_sha256() == spec.runtime_identity_sha256()
     assert reconstructed.identity_metadata() == spec.identity_metadata()
-    assert (
-        reconstructed.runtime_selection_metadata()
-        == spec.runtime_selection_metadata()
-    )
+    assert reconstructed.runtime_selection_metadata() == spec.runtime_selection_metadata()
     return components, reconstructed
 
 
@@ -247,19 +211,13 @@ IDENTITY_MUTATIONS = {
     "zero_mode_policy": {"zero_mode_policy": "friction"},
     "friction_mode_fric": {"friction_mode_fric": 0.2},
     "dealias_rule": {"dealias_rule": "two_thirds"},
-    "projected_transform_execution": {
-        "projected_transform_execution": "full"
-    },
+    "projected_transform_execution": {"projected_transform_execution": "full"},
     "beta": {"beta": -0.9},
     "initial_s": {"initial_s": 0.25},
     "device": {"device": "cpu"},
     "dtype": {"dtype": "float64"},
-    "molecular_field_linear_space": {
-        "molecular_field_linear_space": "physical"
-    },
-    "stress_divergence_sum_space": {
-        "stress_divergence_sum_space": "physical"
-    },
+    "molecular_field_linear_space": {"molecular_field_linear_space": "physical"},
+    "stress_divergence_sum_space": {"stress_divergence_sum_space": "physical"},
     "pointwise_execution": {"pointwise_execution": "eager"},
     "transform_execution_order": {"transform_execution_order": "legacy"},
     "spectral_storage": {"spectral_storage": "full_complex"},
@@ -272,7 +230,7 @@ IDENTITY_MUTATIONS = {
     "dry_run": {"dry_run": True},
     "checkpoint_interval": {"checkpoint_interval": 250},
     "restart_from": {"restart_from": "oracle/checkpoint"},
-    "runtime_path": {"runtime_path": "separated_canary"},
+    "runtime_path": {"runtime_path": "compiled_v2"},
 }
 
 
@@ -293,7 +251,7 @@ def _identity_variant(field_name: str) -> PlaneBerisEdwardsRunSpec:
 
 @pytest.mark.parametrize(
     "case",
-    CASES_ORACLE["cases"],
+    [case for case in CASES_ORACLE["cases"] if case["name"] != "separated_canary"],
     ids=lambda case: case["name"],
 )
 def test_all_schema_v1_golden_cases_round_trip_through_components(case):
@@ -302,23 +260,16 @@ def test_all_schema_v1_golden_cases_round_trip_through_components(case):
 
     for value in (spec, reconstructed):
         assert value.to_metadata() == case["expected_metadata"]
-        assert _canonical_json(value.to_metadata()) == (
-            case["expected_canonical_json"]
-        )
+        assert _canonical_json(value.to_metadata()) == (case["expected_canonical_json"])
         assert value.canonical_sha256() == case["canonical_sha256"]
-        assert value.runtime_identity_metadata() == (
-            case["expected_runtime_identity_metadata"]
+        assert value.runtime_identity_metadata() == (case["expected_runtime_identity_metadata"])
+        assert (
+            _canonical_json(value.runtime_identity_metadata())
+            == (case["expected_runtime_identity_json"])
         )
-        assert _canonical_json(value.runtime_identity_metadata()) == (
-            case["expected_runtime_identity_json"]
-        )
-        assert value.runtime_identity_sha256() == (
-            case["runtime_identity_sha256"]
-        )
+        assert value.runtime_identity_sha256() == (case["runtime_identity_sha256"])
         assert value.identity_metadata() == case["expected_identity_metadata"]
-        assert value.runtime_selection_metadata() == (
-            case["expected_runtime_selection_metadata"]
-        )
+        assert value.runtime_selection_metadata() == (case["expected_runtime_selection_metadata"])
 
 
 IDENTITY_FIELDS = tuple(item.name for item in fields(PlaneBerisEdwardsRunSpec))
@@ -483,10 +434,7 @@ def test_raw_shendruk_inputs_survive_resolution_and_round_trip():
         assert raw.coefficient_max == spec.coefficient_max
 
     paper_components = decompose_plane_beris_edwards_run_spec(cases[0])
-    assert (
-        paper_components.physics.shendruk_request.frank_k
-        != paper_components.preset.frank_k
-    )
+    assert paper_components.physics.shendruk_request.frank_k != paper_components.preset.frank_k
 
 
 @pytest.mark.parametrize(
@@ -549,18 +497,12 @@ def test_requested_boundaries_and_paths_are_recovered_without_substitution():
 
 
 def test_default_round_trip_preserves_format_v1_checkpoint_identity():
-    expected = json.loads(
-        (CHECKPOINT_FIXTURE / "checkpoint.json").read_text(encoding="utf-8")
-    )
+    expected = json.loads((CHECKPOINT_FIXTURE / "checkpoint.json").read_text(encoding="utf-8"))
     _, reconstructed = _round_trip(_spec())
     header = read_plane_checkpoint_header(CHECKPOINT_FIXTURE)
 
-    assert reconstructed.runtime_identity_sha256() == (
-        expected["runtime_identity_sha256"]
-    )
-    assert reconstructed.runtime_identity_sha256() == (
-        header.runtime_identity_sha256
-    )
+    assert reconstructed.runtime_identity_sha256() == (expected["runtime_identity_sha256"])
+    assert reconstructed.runtime_identity_sha256() == (header.runtime_identity_sha256)
 
 
 @pytest.mark.parametrize(
@@ -687,14 +629,9 @@ def test_adapter_stays_private_and_all_phase2_consumers_are_migrated():
         filename=str(COMPONENT_MODULE),
     )
     function = next(
-        node
-        for node in tree.body
-        if isinstance(node, ast.FunctionDef) and node.name == name
+        node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == name
     )
-    assert not any(
-        isinstance(node, (ast.Import, ast.ImportFrom))
-        for node in ast.walk(function)
-    )
+    assert not any(isinstance(node, (ast.Import, ast.ImportFrom)) for node in ast.walk(function))
     function_source = ast.get_source_segment(
         COMPONENT_MODULE.read_text(encoding="utf-8"),
         function,
@@ -707,7 +644,8 @@ def test_adapter_stays_private_and_all_phase2_consumers_are_migrated():
         if isinstance(node, ast.Attribute)
         and isinstance(node.value, ast.Name)
         and node.value.id == "legacy_spec"
-        and node.attr in {
+        and node.attr
+        in {
             "domain",
             "geometry",
             "numerics",
@@ -760,7 +698,9 @@ assert not hasattr(configuration, 'decompose_plane_beris_edwards_run_spec')
     ),
 )
 def test_facade_and_adapter_import_orders_are_cycle_free(imports):
-    script = imports + """
+    script = (
+        imports
+        + """
 spec = create_plane_beris_edwards_run_spec(
     activity_number=18.0,
     output_dir='oracle/import-order',
@@ -768,6 +708,7 @@ spec = create_plane_beris_edwards_run_spec(
 components = decompose_plane_beris_edwards_run_spec(spec)
 assert components.physics.shendruk_request.activity_number == 18.0
 """
+    )
     environment = os.environ.copy()
     environment["PYTHONDONTWRITEBYTECODE"] = "1"
     completed = subprocess.run(

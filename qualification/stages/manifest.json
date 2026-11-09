@@ -1,0 +1,212 @@
+[
+  {
+    "destination": "qualification/stages/stage_m_plan.py",
+    "group": "A",
+    "sha256": "44e126a9b2579028b65be5b703bf97f893ffe6b4ea31ff49c69b2e60478546a6",
+    "source": "pssolver/experimental/stage_m_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_n1_plan.py",
+    "group": "A",
+    "sha256": "a6f213b55b61896d7911c247e77491eca4afd79acfcfb1de5d4a5c19ccebdc9d",
+    "source": "pssolver/experimental/stage_n1_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_n1_qualification.py",
+    "group": "B",
+    "sha256": "08d2258f8ede0903efdcc0e9c871e46b86ca5376a6d92e03092bc6f0a80f94da",
+    "source": "pssolver/experimental/stage_n1_qualification.py"
+  },
+  {
+    "destination": "qualification/stages/stage_n2_plan.py",
+    "group": "A",
+    "sha256": "bb866a665c0498377a2f84b10a71bead863cc31d4985168047299899953ef2d2",
+    "source": "pssolver/experimental/stage_n2_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_n2_qualification.py",
+    "group": "B",
+    "sha256": "b1864fb88a27604818eccc5b8eb7daff890de2fb25650de9c6e9fad9bc07eaea",
+    "source": "pssolver/experimental/stage_n2_qualification.py"
+  },
+  {
+    "destination": "qualification/stages/stage_n3_plan.py",
+    "group": "A",
+    "sha256": "f28a79dbe899113dee094fb9a803a0a75332bcc78329f56d7de84003e020eb8a",
+    "source": "pssolver/experimental/stage_n3_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_n3_qualification.py",
+    "group": "B",
+    "sha256": "42eaf8fdb110bc713bbeaece9d5429dd88ec6f378ff744dfd74fd7c0b55621ce",
+    "source": "pssolver/experimental/stage_n3_qualification.py"
+  },
+  {
+    "destination": "qualification/stages/stage_n4_plan.py",
+    "group": "A",
+    "sha256": "ece31db98cdb2bde2444bf0080c718b76f4955cc5761d8079689b96fb9848630",
+    "source": "pssolver/experimental/stage_n4_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_n4_qualification.py",
+    "group": "B",
+    "sha256": "56b262ea215967e1b412d50b1aaf959bb22260fea56b2ee9105946581b483a7c",
+    "source": "pssolver/experimental/stage_n4_qualification.py"
+  },
+  {
+    "destination": "qualification/stages/stage_n_diagnostics.py",
+    "group": "B",
+    "sha256": "d9d475c44f9d1ffea3e09d5040ba77542bf6f612a8c8710a48a0908a2dfc44c2",
+    "source": "pssolver/experimental/stage_n_diagnostics.py"
+  },
+  {
+    "destination": "qualification/stages/stage_n_plan.py",
+    "group": "A",
+    "sha256": "d171421495f1ac2e987face0d7d3639765e5b44ebcf32f9df4a4d73c53a10749",
+    "source": "pssolver/experimental/stage_n_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o41_plan.py",
+    "group": "B",
+    "sha256": "45fff2dd15d4597a7faa1e99844162bb7288607d8cb09164841cde1a13bb4f77",
+    "source": "pssolver/experimental/stage_o41_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o41_qualification.py",
+    "group": "B",
+    "sha256": "58989b0570e981ba7fbaf12089307450c9ea52e689fe1ad6a479f48257de41c8",
+    "source": "pssolver/experimental/stage_o41_qualification.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o42_diagnostics.py",
+    "group": "B",
+    "sha256": "9e83078898ec8932d3cf48c51917979d0932301029d667368c1dfe3e36dc5b17",
+    "source": "pssolver/experimental/stage_o42_diagnostics.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o42_plan.py",
+    "group": "B",
+    "sha256": "39438af7926914f77f1656e03e894b60f8f508355e0ae2bae609b20a74428d28",
+    "source": "pssolver/experimental/stage_o42_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o431_plan.py",
+    "group": "B",
+    "sha256": "3c64afab9f4a2b2a91a2690703acfdc2ccb3ab7b1c135630c08f36aeaf1bbf6f",
+    "source": "pssolver/experimental/stage_o431_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o433_plan.py",
+    "group": "B",
+    "sha256": "ceda0da3ec338ae166aaa4949f2e9e2cee5bf58e422bb94c31e04af17082f6ba",
+    "source": "pssolver/experimental/stage_o433_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o434_diagnostics.py",
+    "group": "B",
+    "sha256": "11c1926eb7b1b2ccfe7d78317fca349fdb13113a9892b5dd9a9b1aebe60e058c",
+    "source": "pssolver/experimental/stage_o434_diagnostics.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o434_plan.py",
+    "group": "B",
+    "sha256": "b156af0b4cf1dbb9bab3e18df19455e346c93fff85dd84fa95a326826dfab56c",
+    "source": "pssolver/experimental/stage_o434_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o43_plan.py",
+    "group": "B",
+    "sha256": "ada1b22ae907e5a0d1aff71ed79df2f61e00db22fc164a296c579e5ca3d9acc1",
+    "source": "pssolver/experimental/stage_o43_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o43_qualification.py",
+    "group": "B",
+    "sha256": "13164b634b8f8e8f8367026f531b7d1ac862fbf8c10c71690ffe587363fb8ddc",
+    "source": "pssolver/experimental/stage_o43_qualification.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o4_plan.py",
+    "group": "A",
+    "sha256": "aadd3233a297e6c13e92dcf580352c1a0442dd8394bb47dae071cdbce3414e37",
+    "source": "pssolver/experimental/stage_o4_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o4_qualification.py",
+    "group": "B",
+    "sha256": "110797a489860def0674ca2711df2f4e224c34e77428579f9318cddde0c91549",
+    "source": "pssolver/experimental/stage_o4_qualification.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o_closure.py",
+    "group": "B",
+    "sha256": "c6bc940213c8a38a26144434dd3c8cce54319f4abe96ae3966066352bfb47746",
+    "source": "pssolver/experimental/stage_o_closure.py"
+  },
+  {
+    "destination": "qualification/stages/stage_o_migration.py",
+    "group": "B",
+    "sha256": "d971bc59f0aec244abbf55c12f55ad601e74fe3f355a924c25b728db0d2cdbe2",
+    "source": "pssolver/experimental/stage_o_migration.py"
+  },
+  {
+    "destination": "qualification/stages/stage_p_diagnostics.py",
+    "group": "B",
+    "sha256": "f910cde1d0a732681ba33260cd22dfc94ea411bac1ef849fe14fbaf40893b30f",
+    "source": "pssolver/experimental/stage_p_diagnostics.py"
+  },
+  {
+    "destination": "qualification/stages/stage_p_plan.py",
+    "group": "B",
+    "sha256": "0485c1c8a325e4505256401d8fe634411a38ff8c1ba27fe519f34739cccdb313",
+    "source": "pssolver/experimental/stage_p_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_q2_diagnostics.py",
+    "group": "B",
+    "sha256": "ee4300be02f5b9704f08ac4e9baeb8bc78313597d1e3df0c0f4b03014bb9fd2d",
+    "source": "pssolver/experimental/stage_q2_diagnostics.py"
+  },
+  {
+    "destination": "qualification/stages/stage_q3_diagnostics.py",
+    "group": "B",
+    "sha256": "f350d735b1695d0206ed6ba086506c1d08fb6b7901cbb9ed51e90e5c15c168e0",
+    "source": "pssolver/experimental/stage_q3_diagnostics.py"
+  },
+  {
+    "destination": "qualification/stages/stage_q4_plan.py",
+    "group": "B",
+    "sha256": "2dec2c59778a4727a3d7d188f674ad9fb8794c2252760f4a7a113d2c3450b73a",
+    "source": "pssolver/experimental/stage_q4_plan.py"
+  },
+  {
+    "destination": "qualification/stages/stage_q4_qualification.py",
+    "group": "B",
+    "sha256": "4f60d37ced81bf91d1786dedb9a1880fa80716a32e24dc24db7f651107aa3ef2",
+    "source": "pssolver/experimental/stage_q4_qualification.py"
+  },
+  {
+    "destination": "qualification/stages/stage_q5_diagnostics.py",
+    "group": "B",
+    "sha256": "fc58d210efc58be95b0a3d804de3a135ac16abd78dab6f5812b40bc801fef46d",
+    "source": "pssolver/experimental/stage_q5_diagnostics.py"
+  },
+  {
+    "destination": "qualification/stages/stage_q61_design.py",
+    "group": "B",
+    "sha256": "70aa7ec7efdabef7f5ab038f688fc068c41eed21c69b1db59e04dd6b04d57220",
+    "source": "pssolver/experimental/stage_q61_design.py"
+  },
+  {
+    "destination": "qualification/stages/stage_q6_diagnostics.py",
+    "group": "B",
+    "sha256": "1db11842914e260eb1d0a34c2ae88e998ac6d58bfde7b3ab2e35916168a0994a",
+    "source": "pssolver/experimental/stage_q6_diagnostics.py"
+  },
+  {
+    "destination": "qualification/stages/h100_shadow_qualification.py",
+    "group": "B",
+    "sha256": "45ab5edd94f0fd2941f0f7586058e739b13d4555f84de298b0d84bf5ef12a78e",
+    "source": "pssolver/experimental/h100_shadow_qualification.py"
+  }
+]

@@ -8,15 +8,16 @@ tensor, write output, or choose a non-legacy production runtime.
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
 import math
+from collections.abc import Sequence
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Sequence
 
 from pssolver.configuration.device_tokens import validate_execution_device
-
 from pssolver.core import (
-    BoundarySet,
+    BoundarySet as BoundarySet,
+)
+from pssolver.core import (
     DomainSpec,
     NumericsConfig,
 )
@@ -63,6 +64,7 @@ from .plane_beris_edwards_schema_v1 import (
     PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER,
     PLANE_RUN_SPEC_SCHEMA_VERSION,
 )
+
 
 # Preserve not only the legacy nominal path but also the exact module-string
 # identity used by protocol-4 pickles containing a RunSpec and nested shared
@@ -205,9 +207,7 @@ class PlaneBerisEdwardsRunSpec:
         if not isinstance(self.spectral_refresh, SpectralRefreshSpec):
             raise TypeError("spectral_refresh must be a SpectralRefreshSpec")
         if not isinstance(self.boundaries, PlaneFreeSlipBoundaryConditions):
-            raise TypeError(
-                "boundaries must be PlaneFreeSlipBoundaryConditions"
-            )
+            raise TypeError("boundaries must be PlaneFreeSlipBoundaryConditions")
         if not isinstance(self.runtime_path, PlaneRuntimePath):
             raise TypeError("runtime_path must be a PlaneRuntimePath")
 
@@ -273,9 +273,7 @@ class PlaneBerisEdwardsRunSpec:
             dtype=self.dtype,
             dealias_rule=self.dealias_rule,
             transform_execution_order=self.transform_execution_order,
-            projected_transform_execution=(
-                self.projected_transform_execution
-            ),
+            projected_transform_execution=(self.projected_transform_execution),
             spectral_storage=self.spectral_storage,
             hermitian_axis=PLANE_HERMITIAN_AXIS,
         )
@@ -286,36 +284,23 @@ class PlaneBerisEdwardsRunSpec:
         return PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER.to_metadata(self)
 
     def canonical_sha256(self) -> str:
-        return PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER.canonical_sha256(
-            self
-        )
+        return PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER.canonical_sha256(self)
 
     def runtime_identity_metadata(self) -> dict[str, object]:
         """Return the numerical identity required for same-backend restart."""
 
-        return (
-            PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER
-            .runtime_identity_metadata(self)
-        )
+        return PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER.runtime_identity_metadata(self)
 
     def runtime_identity_sha256(self) -> str:
-        return (
-            PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER
-            .runtime_identity_sha256(self)
-        )
+        return PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER.runtime_identity_sha256(self)
 
     def identity_metadata(self) -> dict[str, object]:
-        return PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER.identity_metadata(
-            self
-        )
+        return PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER.identity_metadata(self)
 
     def runtime_selection_metadata(self) -> dict[str, object]:
         """Return additive requested/effective runtime-path metadata."""
 
-        return (
-            PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER
-            .runtime_selection_metadata(self)
-        )
+        return PLANE_BERIS_EDWARDS_SCHEMA_V1_SERIALIZER.runtime_selection_metadata(self)
 
 
 def _resolve_spectral_refresh(
@@ -344,9 +329,7 @@ def _resolve_spectral_refresh(
             effective_interval_time=None,
         )
     requested_time = (
-        DEFAULT_SPECTRAL_REFRESH_TIME
-        if spectral_refresh_time is None
-        else spectral_refresh_time
+        DEFAULT_SPECTRAL_REFRESH_TIME if spectral_refresh_time is None else spectral_refresh_time
     )
     if not math.isfinite(requested_time) or requested_time <= 0:
         raise ValueError("--spectral-refresh-time must be positive and finite")
@@ -406,19 +389,13 @@ def create_plane_beris_edwards_run_spec(
     zero_mode_policy: str = DEFAULT_ZERO_MODE_POLICY,
     friction_mode_fric: float = DEFAULT_FRICTION_MODE_FRIC,
     dealias_rule: str = DEFAULT_DEALIAS_RULE,
-    projected_transform_execution: str = (
-        DEFAULT_PROJECTED_TRANSFORM_EXECUTION
-    ),
+    projected_transform_execution: str = (DEFAULT_PROJECTED_TRANSFORM_EXECUTION),
     beta: float = -1.0,
     initial_s: float = 1.0 / 3.0,
     device: str = "auto",
     dtype: str = "float32",
-    molecular_field_linear_space: str = (
-        DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE
-    ),
-    stress_divergence_sum_space: str = (
-        DEFAULT_STRESS_DIVERGENCE_SUM_SPACE
-    ),
+    molecular_field_linear_space: str = (DEFAULT_MOLECULAR_FIELD_LINEAR_SPACE),
+    stress_divergence_sum_space: str = (DEFAULT_STRESS_DIVERGENCE_SUM_SPACE),
     pointwise_execution: str = DEFAULT_POINTWISE_EXECUTION,
     transform_execution_order: str = DEFAULT_TRANSFORM_EXECUTION_ORDER,
     spectral_storage: str = DEFAULT_PLANE_SPECTRAL_STORAGE,
@@ -455,9 +432,7 @@ def create_plane_beris_edwards_run_spec(
         "diagnostic_interval": diagnostic_interval,
         "gamma": gamma,
     }
-    invalid = {
-        name: value for name, value in positive_values.items() if value <= 0
-    }
+    invalid = {name: value for name, value in positive_values.items() if value <= 0}
     if invalid:
         raise ValueError(f"these values must be positive: {invalid}")
     if initial_s <= 0:
@@ -477,24 +452,15 @@ def create_plane_beris_edwards_run_spec(
     if zero_mode_policy not in {"zero_mean", "friction"}:
         raise ValueError("invalid zero-mode policy")
     if zero_mode_policy == "friction" and friction_mode_fric <= 0:
-        raise ValueError(
-            "--friction-mode-fric must be positive in friction mode"
-        )
+        raise ValueError("--friction-mode-fric must be positive in friction mode")
     if coefficient_min >= coefficient_max:
-        raise ValueError(
-            "--coefficient-min must be smaller than --coefficient-max"
-        )
+        raise ValueError("--coefficient-min must be smaller than --coefficient-max")
     try:
         resolved_runtime_path = PlaneRuntimePath(runtime_path)
     except (TypeError, ValueError) as exc:
         raise ValueError(f"invalid runtime path: {runtime_path!r}") from exc
-    if (
-        resolved_runtime_path is PlaneRuntimePath.SEPARATED_CANARY
-        and disable_q_gradient_reuse
-    ):
-        raise ValueError(
-            "separated_canary does not accept legacy Q-gradient cache flags"
-        )
+    if resolved_runtime_path is PlaneRuntimePath.SEPARATED_CANARY:
+        raise ValueError("separated_canary is retired; use v0.4.x (maint/v0.4)")
     if checkpoint_interval is not None and (
         not isinstance(checkpoint_interval, int)
         or isinstance(checkpoint_interval, bool)
@@ -536,38 +502,20 @@ def create_plane_beris_edwards_run_spec(
     for value, choices, description in supported_choices:
         if value not in choices:
             raise ValueError(f"invalid {description}: {value!r}")
-    if (
-        projected_transform_execution == "truncated"
-        and dealias_rule == "none"
-    ):
-        raise ValueError(
-            "--projected-transform-execution truncated requires enabled "
-            "dealiasing"
-        )
-    if save_start_step < 0 or (
-        restart_from is None and save_start_step > steps
-    ):
-        raise ValueError(
-            "--save-start-step must lie between 0 and --steps for a fresh run"
-        )
+    if projected_transform_execution == "truncated" and dealias_rule == "none":
+        raise ValueError("--projected-transform-execution truncated requires enabled dealiasing")
+    if save_start_step < 0 or (restart_from is None and save_start_step > steps):
+        raise ValueError("--save-start-step must lie between 0 and --steps for a fresh run")
     if validation_config_sha256 is not None and (
         len(validation_config_sha256) != 64
-        or any(
-            character not in "0123456789abcdef"
-            for character in validation_config_sha256
-        )
+        or any(character not in "0123456789abcdef" for character in validation_config_sha256)
     ):
         raise ValueError(
-            "--validation-config-sha256 must be exactly 64 lowercase "
-            "hexadecimal characters"
+            "--validation-config-sha256 must be exactly 64 lowercase hexadecimal characters"
         )
-    if (
-        spectral_storage == "hermitian_half"
-        and transform_execution_order != "real_first"
-    ):
+    if spectral_storage == "hermitian_half" and transform_execution_order != "real_first":
         raise ValueError(
-            "--spectral-storage hermitian_half requires "
-            "--transform-execution-order real_first"
+            "--spectral-storage hermitian_half requires --transform-execution-order real_first"
         )
     refresh = _resolve_spectral_refresh(
         dt=dt,
@@ -631,7 +579,7 @@ def create_plane_beris_edwards_run_spec(
         runtime_path=resolved_runtime_path,
     )
     # Force all declarative contracts to validate before runtime construction.
-    spec.numerics
+    _ = spec.numerics
     return spec
 
 
@@ -736,8 +684,7 @@ def _parser() -> argparse.ArgumentParser:
         type=float,
         default=1.0 / 3.0,
         help=(
-            "Initial S in Q=(3S/2)(nn-I/3); default 1/3, equal to the "
-            "Shendruk bulk equilibrium."
+            "Initial S in Q=(3S/2)(nn-I/3); default 1/3, equal to the Shendruk bulk equilibrium."
         ),
     )
     parser.add_argument("--device", default="auto")
@@ -871,13 +818,12 @@ def _parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--runtime-path",
-        choices=tuple(path.value for path in PlaneRuntimePath),
+        choices=("legacy_production", "compiled_v2"),
         default=DEFAULT_PLANE_RUNTIME_PATH,
         help=(
             "Plane runtime implementation. legacy_production remains the "
-            "default and rollback oracle; separated_canary is an explicit "
-            "Stage O opt-in; compiled_v2 is the explicit Phase 5 static-"
-            "control path. Neither opt-in path permits fallback."
+            "default and rollback oracle; compiled_v2 is the explicit static-"
+            "control path. Runtime fallback is forbidden."
         ),
     )
     parser.add_argument(

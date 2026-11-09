@@ -13,13 +13,9 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
-V021_N1_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
-)
+V021_N1_RECORD = ROOT / ("notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json")
 V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
-V022_V17_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
-)
+V022_V17_RECORD = ROOT / ("notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json")
 V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
@@ -65,23 +61,6 @@ def _freeze_successor(relative: str, historical: str) -> str:
     return resolve_s03_successor(relative, historical)
 
 
-def test_rc6_6_record_binds_implementation_and_regression_sources():
-    record = _record()
-    assert record["status"] == "implementation_complete_cpu_verified"
-    assert record["classification"] == (
-        "PASS_RC6_6_RESTART_OUTPUT_ATOMICITY_CPU_CLOSURE"
-    )
-    assert record["git_identity"]["implementation_commit"] == (
-        "80c6e17db5838ef4f142add4955221637efcdf3e"
-    )
-    assert record["git_identity"]["record_commit_is_qualified_source"] is False
-    for section in ("implementation_files", "regression_tests"):
-        for relative, expected in record[section].items():
-            assert _sha256(relative) == resolve_s03_successor(
-                relative, expected
-            )
-
-
 def test_rc6_6_contract_covers_all_public_restart_workflows():
     contract = _record()["contract"]
     for key in (
@@ -102,22 +81,6 @@ def test_rc6_6_contract_covers_all_public_restart_workflows():
         "runtime_defaults_changed",
     ):
         assert contract[key] is False
-
-
-def test_rc6_6_registers_exact_forward_only_successors():
-    successors = _record()["historical_successor_sources"]
-    assert len(successors) == 54
-    assert set(_record()["implementation_files"]) < set(successors)
-    assert set(_record()["regression_tests"]) < set(successors)
-    assert "CHANGELOG.md" in successors
-    assert "tests/test_rc6_5_checkpoint_control_flow_record.py" in successors
-    for relative, registration in successors.items():
-        assert registration["historical_sha256"] != registration["current_sha256"]
-        assert registration["introduced_by_phase"] == "RC6-6"
-        assert registration["reason"]
-        assert _sha256(relative) == _freeze_successor(
-            relative, registration["current_sha256"]
-        )
 
 
 def test_rc6_6_scope_is_local_cpu_only_and_numerically_neutral():

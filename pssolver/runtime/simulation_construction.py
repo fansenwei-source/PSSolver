@@ -2,7 +2,7 @@
 
 The connector validates the complete declaration and binding before invoking
 an existing Plane or Channel runtime factory.  It returns that factory's
-adapter directly: no numerical wrapper, tensor copy, registry lookup, or
+adapter directly: a registry selects construction once; no numerical wrapper, tensor copy, or
 timestep dispatch is introduced.
 """
 
@@ -10,9 +10,6 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_channel_active_nematics_simulation,
-)
 from pssolver.configuration.application_registry import RUNTIME_BY_KIND
 from pssolver.configuration.simulation_binding import bind_simulation_runtime
 from pssolver.planning.construction import (
@@ -20,31 +17,31 @@ from pssolver.planning.construction import (
     RuntimeConstructionBinding,
 )
 
-from .channel_active_nematics import (
-    ChannelRuntimeAdapterProtocol,
-    ChannelRuntimeBuildRequest,
-    build_channel_active_nematic_runtime,
-)
 from .channel_beris_edwards import (
     ChannelBerisEdwardsRuntimeAdapterProtocol,
     ChannelBerisEdwardsRuntimeBuildRequest,
-    build_channel_beris_edwards_runtime,
 )
-from .plane_beris_edwards import (
-    PlaneRuntimeAdapterProtocol,
-    PlaneRuntimeBuildRequest,
-    build_plane_beris_edwards_runtime,
+from .channel_beris_edwards import (
+    build_channel_beris_edwards_runtime as build_channel_beris_edwards_runtime,
 )
 from .periodic_beris_edwards import (
     PeriodicRuntimeAdapterProtocol,
     PeriodicRuntimeBuildRequest,
-    build_periodic_beris_edwards_runtime,
+)
+from .periodic_beris_edwards import (
+    build_periodic_beris_edwards_runtime as build_periodic_beris_edwards_runtime,
+)
+from .plane_beris_edwards import (
+    PlaneRuntimeAdapterProtocol,
+    PlaneRuntimeBuildRequest,
+)
+from .plane_beris_edwards import (
+    build_plane_beris_edwards_runtime as build_plane_beris_edwards_runtime,
 )
 
 
 RuntimeAdapter = (
     PlaneRuntimeAdapterProtocol
-    | ChannelRuntimeAdapterProtocol
     | PeriodicRuntimeAdapterProtocol
     | ChannelBerisEdwardsRuntimeAdapterProtocol
 )
@@ -54,17 +51,13 @@ RuntimeBuilder = Callable[[], object]
 def _request_simulation(request: object):
     if isinstance(request, PlaneRuntimeBuildRequest):
         return request.simulation
-    if isinstance(request, ChannelRuntimeBuildRequest):
-        return compose_channel_active_nematics_simulation(
-            request.run_spec.components
-        )
     if isinstance(request, PeriodicRuntimeBuildRequest):
         return request.run_spec.simulation
     if isinstance(request, ChannelBerisEdwardsRuntimeBuildRequest):
         return request.run_spec.simulation
     raise TypeError(
         "request must be a PlaneRuntimeBuildRequest or "
-        "ChannelRuntimeBuildRequest, PeriodicRuntimeBuildRequest, or "
+        "PeriodicRuntimeBuildRequest, or "
         "ChannelBerisEdwardsRuntimeBuildRequest"
     )
 
@@ -87,18 +80,11 @@ def _require_builder_contract(
         "compiled_builder": compiled_builder,
     }
     unexpected = tuple(
-        name
-        for name, value in provided.items()
-        if value is not None and name != selected
+        name for name, value in provided.items() if value is not None and name != selected
     )
     if unexpected:
-        raise ValueError(
-            f"unselected runtime builders are forbidden: {unexpected!r}"
-        )
-    if (
-        binding.builder_provision is BuilderProvision.CALLER
-        and provided[selected] is None
-    ):
+        raise ValueError(f"unselected runtime builders are forbidden: {unexpected!r}")
+    if binding.builder_provision is BuilderProvision.CALLER and provided[selected] is None:
         raise RuntimeError(
             f"{binding.kind.value} requires caller-provided {selected}; "
             "runtime fallback is forbidden"
@@ -109,7 +95,6 @@ def build_bound_simulation_runtime(
     binding: RuntimeConstructionBinding,
     request: (
         PlaneRuntimeBuildRequest
-        | ChannelRuntimeBuildRequest
         | PeriodicRuntimeBuildRequest
         | ChannelBerisEdwardsRuntimeBuildRequest
     ),
@@ -124,9 +109,7 @@ def build_bound_simulation_runtime(
     simulation = _request_simulation(request)
     expected = bind_simulation_runtime(simulation)
     if binding != expected:
-        raise ValueError(
-            "runtime construction binding does not match the build request"
-        )
+        raise ValueError("runtime construction binding does not match the build request")
     _require_builder_contract(
         binding,
         legacy_builder=legacy_builder,
@@ -142,8 +125,7 @@ def build_bound_simulation_runtime(
         raise TypeError(application.runtime_request_error)
     factory = globals()[application.runtime_factory.rsplit(".", 1)[1]]
     if application.runtime_accepts_builders:
-        return factory(request, legacy_builder=legacy_builder,
-                       compiled_builder=compiled_builder)
+        return factory(request, legacy_builder=legacy_builder, compiled_builder=compiled_builder)
     return factory(request)
 
 

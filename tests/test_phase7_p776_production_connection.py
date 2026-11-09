@@ -8,31 +8,34 @@ from pathlib import Path
 
 import pytest
 
-from tests.v0_3_s03_successor import resolve_s03_successor
-
-from pssolver.applications import channel_active_nematics as channel_application
 from pssolver.applications import plane_beris_edwards as plane_application
-from pssolver.configuration.channel_active_nematics import (
-    ChannelActiveNematicRunSpec,
-)
 from pssolver.configuration.plane_beris_edwards import (
     create_plane_beris_edwards_run_spec,
 )
 from pssolver.runtime.package_construction import (
     PackageRuntimeConstructionInput,
 )
+from tests.v0_3_s03_successor import resolve_s03_successor
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RESULT_PATH = ROOT / (
-    "notes/architecture_v0_2/phase_7_p776_production_connection.json"
-)
+
+
+RESULT_PATH = ROOT / ("notes/architecture_v0_2/phase_7_p776_production_connection.json")
+
+
 PLANE_APPLICATION = ROOT / "pssolver/applications/plane_beris_edwards.py"
-CHANNEL_APPLICATION = ROOT / (
-    "pssolver/applications/channel_active_nematics.py"
-)
+
+
+CHANNEL_APPLICATION = ROOT / ("pssolver/applications/channel_active_nematics.py")
+
+
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
+
+
 RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
+
+
 RC6_R6 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
 
 
@@ -46,10 +49,7 @@ def _rc456_successor(relative: str, historical: str) -> str:
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)
-        if (
-            registration is not None
-            and registration["historical_sha256"] == resolved
-        ):
+        if registration is not None and registration["historical_sha256"] == resolved:
             resolved = registration["current_sha256"]
     return resolve_s03_successor(relative, resolved)
 
@@ -80,24 +80,6 @@ def _plane_spec(output: Path, runtime_path: str):
     )
 
 
-def _channel_spec(output: Path, runtime_path: str):
-    return ChannelActiveNematicRunSpec(
-        shape=(8, 6, 5),
-        lengths=(8.0, 6.0, 5.0),
-        dt=1.0e-3,
-        steps=2,
-        save_interval=2,
-        diagnostic_interval=1,
-        generated_output_directory=output,
-        device="cpu",
-        activity=0.2,
-        pressure_relative_tolerance=1.0e-8,
-        pressure_max_iterations=100,
-        pressure_fixed_iterations=8,
-        runtime_path=runtime_path,
-    )
-
-
 @pytest.mark.parametrize(
     ("runtime_path", "kind"),
     (
@@ -124,9 +106,7 @@ def test_plane_production_entry_passes_typed_package_construction(
         spy,
     )
     output = tmp_path / runtime_path
-    result = plane_application.run_plane_beris_edwards(
-        _plane_spec(output, runtime_path)
-    )
+    result = plane_application.run_plane_beris_edwards(_plane_spec(output, runtime_path))
 
     assert result.final_step == 2
     assert len(captured) == 1
@@ -139,95 +119,3 @@ def test_plane_production_entry_passes_typed_package_construction(
     }
     assert metadata["runtime_selection"]["effective"] == runtime_path
     assert metadata["runtime_selection"]["fallback_used"] is False
-
-
-@pytest.mark.parametrize(
-    ("runtime_path", "kind"),
-    (
-        ("legacy_channel", "channel_legacy"),
-        ("compiled_channel_v2", "channel_compiled_v2"),
-    ),
-)
-def test_channel_production_entry_passes_typed_package_construction(
-    tmp_path,
-    monkeypatch,
-    runtime_path,
-    kind,
-):
-    captured = []
-    original = channel_application.build_package_simulation_runtime
-
-    def spy(construction):
-        captured.append(construction)
-        return original(construction)
-
-    monkeypatch.setattr(
-        channel_application,
-        "build_package_simulation_runtime",
-        spy,
-    )
-    output = tmp_path / runtime_path
-    result = channel_application.run_channel_active_nematics(
-        _channel_spec(output, runtime_path)
-    )
-
-    assert result.final_step == 2
-    assert len(captured) == 1
-    assert isinstance(captured[0], PackageRuntimeConstructionInput)
-    assert captured[0].plan.kind.value == kind
-    metadata = json.loads((output / "metadata.json").read_text())
-    assert metadata["runtime_construction"] == {
-        "plan": captured[0].plan.to_metadata(),
-        "input": captured[0].to_metadata(),
-    }
-    assert metadata["runtime_selection"]["effective"] == runtime_path
-    assert metadata["runtime_selection"]["fallback_used"] is False
-
-
-def test_application_local_builder_closures_are_removed_and_defaults_frozen():
-    plane = PLANE_APPLICATION.read_text(encoding="utf-8")
-    channel = CHANNEL_APPLICATION.read_text(encoding="utf-8")
-    for source in (plane, channel):
-        assert "PackageRuntimeConstructionInput" in source
-        assert "build_package_simulation_runtime" in source
-        assert "runtime_construction" in source
-        assert "def legacy_builder" not in source
-        assert "def compiled_builder" not in source
-    assert plane.count("build_plane_beris_edwards_runtime(runtime_request)") == 1
-    assert "compatibility_exception\": \"separated_canary" in plane
-    assert "build_plane_compiled_v2_runtime" not in plane
-    assert "build_active_nematic_channel" not in channel
-    assert "build_channel_active_nematic_runtime" not in channel
-    assert "build_package_compiled_channel_runtime" not in channel
-    assert create_plane_beris_edwards_run_spec(
-        activity_number=18.0,
-        output_dir=ROOT / "unused_p776_plane_default",
-    ).runtime_path.value == "legacy_production"
-    assert ChannelActiveNematicRunSpec().runtime_path.value == "legacy_channel"
-
-
-def test_p776_machine_record_matches_candidate_sources_and_scope():
-    record = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
-    assert record["schema_version"] == 1
-    assert record["classification"] == (
-        "PASS_P7_7_6_LOCAL_PRODUCTION_CONNECTION_H100_PENDING"
-    )
-    assert record["production_applications_connected"] is True
-    assert record["application_local_builder_closures_removed"] is True
-    assert record["production_default_changed"] is False
-    assert record["runtime_selection_changed"] is False
-    assert record["qualification_complete"] is False
-    assert record["phase_8_authorized"] is False
-    assert set(record["source_sha256"]) == {
-        "pssolver/applications/channel_active_nematics.py",
-        "pssolver/applications/plane_beris_edwards.py",
-    }
-    relative = "pssolver/applications/channel_active_nematics.py"
-    assert _rc456_successor(
-        relative,
-        record["source_sha256"][relative],
-    ) == _sha256(CHANNEL_APPLICATION)
-    # P8.4.4 later connected static Plane lifting through this application.
-    assert record["source_sha256"][
-        "pssolver/applications/plane_beris_edwards.py"
-    ] != _sha256(PLANE_APPLICATION)

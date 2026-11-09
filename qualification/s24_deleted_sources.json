@@ -1,0 +1,509 @@
+{
+  "files": [
+    {
+      "disposition": "retired",
+      "lines": 233,
+      "parent_sha256": "77e2d74a21da73cc2e37ddbdc93ef084b8cc21159828a18ed92c97fd1fb33171",
+      "path": "pssolver/applications/channel_active_nematics.py",
+      "reason": "E4: legacy active-force Channel wiring"
+    },
+    {
+      "disposition": "retired",
+      "lines": 210,
+      "parent_sha256": "dbb466c529bddfa5df125b9fb3c94a3ea6bf30c8df2d09cfcc0265632b6c951c",
+      "path": "pssolver/channel.py",
+      "reason": "E4: legacy active-force Channel wiring"
+    },
+    {
+      "disposition": "retired",
+      "lines": 361,
+      "parent_sha256": "c0e7064de9db68006a525cd69be429c47af48991ce56ec9e55e631ce54456204",
+      "path": "pssolver/configuration/channel_active_nematics.py",
+      "reason": "E4: legacy active-force Channel wiring"
+    },
+    {
+      "disposition": "retired",
+      "lines": 574,
+      "parent_sha256": "dca15380610bfa084c8a2c150315d93d40b082e033d5bb8bb8b5750ae3da5336",
+      "path": "pssolver/configuration/channel_active_nematics_declarations.py",
+      "reason": "E4: legacy active-force Channel wiring"
+    },
+    {
+      "disposition": "retired",
+      "lines": 522,
+      "parent_sha256": "017b453bff3f0c79a151f8cb0cc03bde5f0047ec121efbe61a6d7912fa7622b4",
+      "path": "pssolver/configuration/public_channel_simulation_compiler.py",
+      "reason": "E4: legacy active-force Channel wiring"
+    },
+    {
+      "disposition": "retired",
+      "lines": 133,
+      "parent_sha256": "be6ddb9ae402c4d624d0543e229745990a81f9fc7cf1fab20e1ce3a2eae1e527",
+      "path": "pssolver/experimental/_shadow_support.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 1144,
+      "parent_sha256": "c0d7dc42d2a9ac91ad5c2dad471ff0d3a0d27d971bee168e1fdfb6ecfe234f9b",
+      "path": "pssolver/experimental/beris_edwards.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 275,
+      "parent_sha256": "b63e42c4527ee9ed375e4ab4842d397fd660a40a569b203fe08d35cbfce873dd",
+      "path": "pssolver/experimental/canary_algebraic.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 290,
+      "parent_sha256": "7a265f20aa9b531c86b099bb5fc1b17c856f0cbfb04ec7212296a330cc822655",
+      "path": "pssolver/experimental/channel_compiled_v2.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 591,
+      "parent_sha256": "644ca80e9d711a3048531ca9f96129e364a76ebb4b71626cb54c3dcfd5e3deb4",
+      "path": "pssolver/experimental/checkpointing.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "destination": "qualification/stages/h100_shadow_qualification.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 644,
+      "parent_sha256": "45ab5edd94f0fd2941f0f7586058e739b13d4555f84de298b0d84bf5ef12a78e",
+      "path": "pssolver/experimental/h100_shadow_qualification.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "disposition": "retired",
+      "lines": 168,
+      "parent_sha256": "8b68cb89a4242c30d178bf6e9e83d96b261b3e112bd931864c0c7d380da3c024",
+      "path": "pssolver/experimental/integrators.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 597,
+      "parent_sha256": "d4c8a378408755e6b8d1bc9c6bc82fdc2534ddabd6442160c8981bc42fa3307a",
+      "path": "pssolver/experimental/legacy_assembly.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 2331,
+      "parent_sha256": "e5967486ac744b89f4dfad6d67b311b572d353785cfc9bbe8e2e75fb428a3d8f",
+      "path": "pssolver/experimental/model_execution.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 204,
+      "parent_sha256": "df9060fee654505b0dd2ebadd820c9482b03e999c09b4f9a5ab720e875a75407",
+      "path": "pssolver/experimental/performance.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 660,
+      "parent_sha256": "1097163a274de2b85199e78a90db6ec9d9084ebd1e613868428a3c70e0c00c69",
+      "path": "pssolver/experimental/plane_shadow_driver.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 143,
+      "parent_sha256": "20230bcab8a117896336030abb68eaa8b4d4ca15616b813abd1ab8af9b1f22b0",
+      "path": "pssolver/experimental/producer_packing.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 1099,
+      "parent_sha256": "0c74da34d4eeac230fb7775799119161744cf30d05f3ea9ac238068c73424dba",
+      "path": "pssolver/experimental/projected_scheduler.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 386,
+      "parent_sha256": "0a8ca5cf9afe2b0fb776a3e8542a7ba023d1e4ec8a93c3ad681accaf0c1d0c9d",
+      "path": "pssolver/experimental/shadow_comparison.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 432,
+      "parent_sha256": "493729eda28e2fb48bfa1bc75baa9d8bfefaea2a0860f49ec69a4265b1db033c",
+      "path": "pssolver/experimental/shadow_metadata.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 373,
+      "parent_sha256": "1b3b4563084ad20774de09d30157133aa697a300256852e23cc2abea02afa5f0",
+      "path": "pssolver/experimental/shadow_run.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "destination": "qualification/stages/stage_m_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "A",
+      "lines": 257,
+      "parent_sha256": "44e126a9b2579028b65be5b703bf97f893ffe6b4ea31ff49c69b2e60478546a6",
+      "path": "pssolver/experimental/stage_m_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_n1_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "A",
+      "lines": 234,
+      "parent_sha256": "a6f213b55b61896d7911c247e77491eca4afd79acfcfb1de5d4a5c19ccebdc9d",
+      "path": "pssolver/experimental/stage_n1_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_n1_qualification.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 642,
+      "parent_sha256": "08d2258f8ede0903efdcc0e9c871e46b86ca5376a6d92e03092bc6f0a80f94da",
+      "path": "pssolver/experimental/stage_n1_qualification.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_n2_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "A",
+      "lines": 218,
+      "parent_sha256": "bb866a665c0498377a2f84b10a71bead863cc31d4985168047299899953ef2d2",
+      "path": "pssolver/experimental/stage_n2_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_n2_qualification.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 656,
+      "parent_sha256": "b1864fb88a27604818eccc5b8eb7daff890de2fb25650de9c6e9fad9bc07eaea",
+      "path": "pssolver/experimental/stage_n2_qualification.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_n3_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "A",
+      "lines": 219,
+      "parent_sha256": "f28a79dbe899113dee094fb9a803a0a75332bcc78329f56d7de84003e020eb8a",
+      "path": "pssolver/experimental/stage_n3_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_n3_qualification.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 668,
+      "parent_sha256": "42eaf8fdb110bc713bbeaece9d5429dd88ec6f378ff744dfd74fd7c0b55621ce",
+      "path": "pssolver/experimental/stage_n3_qualification.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_n4_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "A",
+      "lines": 253,
+      "parent_sha256": "ece31db98cdb2bde2444bf0080c718b76f4955cc5761d8079689b96fb9848630",
+      "path": "pssolver/experimental/stage_n4_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_n4_qualification.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 724,
+      "parent_sha256": "56b262ea215967e1b412d50b1aaf959bb22260fea56b2ee9105946581b483a7c",
+      "path": "pssolver/experimental/stage_n4_qualification.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_n_diagnostics.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 453,
+      "parent_sha256": "d9d475c44f9d1ffea3e09d5040ba77542bf6f612a8c8710a48a0908a2dfc44c2",
+      "path": "pssolver/experimental/stage_n_diagnostics.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_n_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "A",
+      "lines": 160,
+      "parent_sha256": "d171421495f1ac2e987face0d7d3639765e5b44ebcf32f9df4a4d73c53a10749",
+      "path": "pssolver/experimental/stage_n_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o41_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 340,
+      "parent_sha256": "45fff2dd15d4597a7faa1e99844162bb7288607d8cb09164841cde1a13bb4f77",
+      "path": "pssolver/experimental/stage_o41_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o41_qualification.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 641,
+      "parent_sha256": "58989b0570e981ba7fbaf12089307450c9ea52e689fe1ad6a479f48257de41c8",
+      "path": "pssolver/experimental/stage_o41_qualification.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o42_diagnostics.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 637,
+      "parent_sha256": "9e83078898ec8932d3cf48c51917979d0932301029d667368c1dfe3e36dc5b17",
+      "path": "pssolver/experimental/stage_o42_diagnostics.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o42_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 171,
+      "parent_sha256": "39438af7926914f77f1656e03e894b60f8f508355e0ae2bae609b20a74428d28",
+      "path": "pssolver/experimental/stage_o42_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o431_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 286,
+      "parent_sha256": "3c64afab9f4a2b2a91a2690703acfdc2ccb3ab7b1c135630c08f36aeaf1bbf6f",
+      "path": "pssolver/experimental/stage_o431_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o433_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 159,
+      "parent_sha256": "ceda0da3ec338ae166aaa4949f2e9e2cee5bf58e422bb94c31e04af17082f6ba",
+      "path": "pssolver/experimental/stage_o433_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o434_diagnostics.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 455,
+      "parent_sha256": "11c1926eb7b1b2ccfe7d78317fca349fdb13113a9892b5dd9a9b1aebe60e058c",
+      "path": "pssolver/experimental/stage_o434_diagnostics.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o434_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 170,
+      "parent_sha256": "b156af0b4cf1dbb9bab3e18df19455e346c93fff85dd84fa95a326826dfab56c",
+      "path": "pssolver/experimental/stage_o434_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o43_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 272,
+      "parent_sha256": "ada1b22ae907e5a0d1aff71ed79df2f61e00db22fc164a296c579e5ca3d9acc1",
+      "path": "pssolver/experimental/stage_o43_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o43_qualification.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 1332,
+      "parent_sha256": "13164b634b8f8e8f8367026f531b7d1ac862fbf8c10c71690ffe587363fb8ddc",
+      "path": "pssolver/experimental/stage_o43_qualification.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o4_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "A",
+      "lines": 428,
+      "parent_sha256": "aadd3233a297e6c13e92dcf580352c1a0442dd8394bb47dae071cdbce3414e37",
+      "path": "pssolver/experimental/stage_o4_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o4_qualification.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 755,
+      "parent_sha256": "110797a489860def0674ca2711df2f4e224c34e77428579f9318cddde0c91549",
+      "path": "pssolver/experimental/stage_o4_qualification.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o_closure.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 401,
+      "parent_sha256": "c6bc940213c8a38a26144434dd3c8cce54319f4abe96ae3966066352bfb47746",
+      "path": "pssolver/experimental/stage_o_closure.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_o_migration.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 694,
+      "parent_sha256": "d971bc59f0aec244abbf55c12f55ad601e74fe3f355a924c25b728db0d2cdbe2",
+      "path": "pssolver/experimental/stage_o_migration.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_p_diagnostics.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 669,
+      "parent_sha256": "f910cde1d0a732681ba33260cd22dfc94ea411bac1ef849fe14fbaf40893b30f",
+      "path": "pssolver/experimental/stage_p_diagnostics.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_p_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 194,
+      "parent_sha256": "0485c1c8a325e4505256401d8fe634411a38ff8c1ba27fe519f34739cccdb313",
+      "path": "pssolver/experimental/stage_p_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_q2_diagnostics.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 656,
+      "parent_sha256": "ee4300be02f5b9704f08ac4e9baeb8bc78313597d1e3df0c0f4b03014bb9fd2d",
+      "path": "pssolver/experimental/stage_q2_diagnostics.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_q3_diagnostics.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 484,
+      "parent_sha256": "f350d735b1695d0206ed6ba086506c1d08fb6b7901cbb9ed51e90e5c15c168e0",
+      "path": "pssolver/experimental/stage_q3_diagnostics.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_q4_plan.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 227,
+      "parent_sha256": "2dec2c59778a4727a3d7d188f674ad9fb8794c2252760f4a7a113d2c3450b73a",
+      "path": "pssolver/experimental/stage_q4_plan.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_q4_qualification.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 613,
+      "parent_sha256": "4f60d37ced81bf91d1786dedb9a1880fa80716a32e24dc24db7f651107aa3ef2",
+      "path": "pssolver/experimental/stage_q4_qualification.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_q5_diagnostics.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 614,
+      "parent_sha256": "fc58d210efc58be95b0a3d804de3a135ac16abd78dab6f5812b40bc801fef46d",
+      "path": "pssolver/experimental/stage_q5_diagnostics.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_q61_design.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 452,
+      "parent_sha256": "70aa7ec7efdabef7f5ab038f688fc068c41eed21c69b1db59e04dd6b04d57220",
+      "path": "pssolver/experimental/stage_q61_design.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "destination": "qualification/stages/stage_q6_diagnostics.py",
+      "disposition": "byte_identical_move_outside_package",
+      "group": "B",
+      "lines": 570,
+      "parent_sha256": "1db11842914e260eb1d0a34c2ae88e998ac6d58bfde7b3ab2e35916168a0994a",
+      "path": "pssolver/experimental/stage_q6_diagnostics.py",
+      "reason": "S-24 O2: frozen process artifact, not a runtime module"
+    },
+    {
+      "disposition": "retired",
+      "lines": 418,
+      "parent_sha256": "d9d3b0c7b2b97074cf8ba866d9c5b96e5a48771a8d765db60bc941dcb991b20a",
+      "path": "pssolver/experimental/stokes.py",
+      "reason": "E8: separated-canary wiring and O6 closure without current consumers"
+    },
+    {
+      "disposition": "retired",
+      "lines": 388,
+      "parent_sha256": "475ffed9716962e2fbc4db90e6ed745115221e21ad9b0f6a4e2d200701daa15f",
+      "path": "pssolver/planning/channel_compiled_v2.py",
+      "reason": "E4: legacy active-force Channel wiring"
+    },
+    {
+      "disposition": "retired",
+      "lines": 422,
+      "parent_sha256": "195bf196f384426517e4e3655f011c5cd818744bc0363e399033d733d9dd8775",
+      "path": "pssolver/runtime/channel_active_nematics.py",
+      "reason": "E4: legacy active-force Channel wiring"
+    },
+    {
+      "disposition": "retired",
+      "lines": 81,
+      "parent_sha256": "6e49ea2acf575a89846a1bbf6cdbfe67411409becf3066b2510bc42784d85d3a",
+      "path": "pssolver/runtime/channel_application_bridge.py",
+      "reason": "E4: legacy active-force Channel wiring"
+    },
+    {
+      "disposition": "retired",
+      "lines": 259,
+      "parent_sha256": "c14d88325c8978464040e65055989d8b6bad70b486899d6d21e44437986c0743",
+      "path": "pssolver/workflows/channel_active_nematics.py",
+      "reason": "E4: legacy active-force Channel wiring"
+    },
+    {
+      "disposition": "retired",
+      "lines": 836,
+      "parent_sha256": "b3d5165046907e1c8a6e392bc95f65da587fc10dcf1d9a3b722d3a4a8667892a",
+      "path": "pssolver/workflows/channel_checkpoint.py",
+      "reason": "E4: legacy active-force Channel wiring"
+    },
+    {
+      "disposition": "retired",
+      "lines": 225,
+      "parent_sha256": "21c5fff6b7bd4ec26b278d9e68381bef322c064e4bb5003def9b31781de27547",
+      "path": "pssolver/workflows/channel_observation.py",
+      "reason": "E4: legacy active-force Channel wiring"
+    }
+  ],
+  "parent": "79558be0d1d65fb75a9b5fd41940314572310bf6"
+}

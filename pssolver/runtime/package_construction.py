@@ -9,27 +9,21 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_channel_active_nematics_simulation,
-)
+from pssolver.configuration.application_registry import RUNTIME_BY_KIND
 from pssolver.configuration.package_construction import (
     plan_package_runtime_construction,
 )
-from pssolver.configuration.application_registry import RUNTIME_BY_KIND
 from pssolver.configuration.simulation_binding import bind_simulation_runtime
 from pssolver.planning.package_construction import (
     PackageRuntimeConstructionPlan,
 )
 
-from .channel_active_nematics import ChannelRuntimeBuildRequest
 from .channel_beris_edwards import ChannelBerisEdwardsRuntimeBuildRequest
-from .channel_application_bridge import (
-    build_package_compiled_channel_runtime,
-    build_package_legacy_channel_runtime,
-)
-from .plane_application_bridge import build_package_compiled_plane_runtime
-from .plane_beris_edwards import PlaneRuntimeBuildRequest
 from .periodic_beris_edwards import PeriodicRuntimeBuildRequest
+from .plane_application_bridge import (
+    build_package_compiled_plane_runtime as build_package_compiled_plane_runtime,
+)
+from .plane_beris_edwards import PlaneRuntimeBuildRequest
 from .simulation_construction import (
     RuntimeAdapter,
     build_bound_simulation_runtime,
@@ -37,10 +31,7 @@ from .simulation_construction import (
 
 
 PackageBuildRequest = (
-    PlaneRuntimeBuildRequest
-    | ChannelRuntimeBuildRequest
-    | PeriodicRuntimeBuildRequest
-    | ChannelBerisEdwardsRuntimeBuildRequest
+    PlaneRuntimeBuildRequest | PeriodicRuntimeBuildRequest | ChannelBerisEdwardsRuntimeBuildRequest
 )
 
 
@@ -58,14 +49,13 @@ class PackageRuntimeConstructionInput:
             self.request,
             (
                 PlaneRuntimeBuildRequest,
-                ChannelRuntimeBuildRequest,
                 PeriodicRuntimeBuildRequest,
                 ChannelBerisEdwardsRuntimeBuildRequest,
             ),
         ):
             raise TypeError(
                 "request must be a PlaneRuntimeBuildRequest or "
-                "ChannelRuntimeBuildRequest, PeriodicRuntimeBuildRequest, "
+                "PeriodicRuntimeBuildRequest, "
                 "or ChannelBerisEdwardsRuntimeBuildRequest"
             )
 
@@ -74,10 +64,7 @@ class PackageRuntimeConstructionInput:
         metadata = {
             "schema_version": 1,
             "plan_sha256": self.plan.canonical_sha256(),
-            "request_type": (
-                f"{type(self.request).__module__}."
-                f"{type(self.request).__qualname__}"
-            ),
+            "request_type": (f"{type(self.request).__module__}.{type(self.request).__qualname__}"),
             "runtime_path": (
                 run_spec.runtime_path.value
                 if hasattr(run_spec.runtime_path, "value")
@@ -88,9 +75,7 @@ class PackageRuntimeConstructionInput:
             "application_builder_supplied": False,
         }
         if isinstance(self.request, PlaneRuntimeBuildRequest):
-            conditioning = (
-                self.request.fresh_initial_conditioning_metadata()
-            )
+            conditioning = self.request.fresh_initial_conditioning_metadata()
             if conditioning is not None:
                 metadata["fresh_initial_conditioning"] = conditioning
                 metadata["fresh_initial_conditioning_applied"] = (
@@ -102,10 +87,6 @@ class PackageRuntimeConstructionInput:
 def _request_simulation(request: PackageBuildRequest):
     if isinstance(request, PlaneRuntimeBuildRequest):
         return request.simulation
-    if isinstance(request, ChannelRuntimeBuildRequest):
-        return compose_channel_active_nematics_simulation(
-            request.run_spec.components
-        )
     if isinstance(request, ChannelBerisEdwardsRuntimeBuildRequest):
         return request.run_spec.simulation
     return request.run_spec.simulation
@@ -117,16 +98,12 @@ def build_package_simulation_runtime(
     """Build exactly one normalized package-owned runtime without fallback."""
 
     if not isinstance(construction, PackageRuntimeConstructionInput):
-        raise TypeError(
-            "construction must be a PackageRuntimeConstructionInput"
-        )
+        raise TypeError("construction must be a PackageRuntimeConstructionInput")
     request = construction.request
     simulation = _request_simulation(request)
     expected_plan = plan_package_runtime_construction(simulation)
     if construction.plan != expected_plan:
-        raise ValueError(
-            "package construction plan does not match the build request"
-        )
+        raise ValueError("package construction plan does not match the build request")
     binding = bind_simulation_runtime(simulation)
     kind = construction.plan.kind
 
@@ -143,7 +120,8 @@ def build_package_simulation_runtime(
         return build_bound_simulation_runtime(binding, request)
     builder = globals()[registration.package_builder.rsplit(".", 1)[1]]
     return build_bound_simulation_runtime(
-        binding, request,
+        binding,
+        request,
         **{registration.builder_parameter: lambda: builder(request)},
     )
 

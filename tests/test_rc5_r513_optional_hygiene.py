@@ -39,9 +39,7 @@ def _plane_spec(tmp_path: Path, **overrides: object):
 
 
 def _matching_checkpoint_header(spec, *, completed_steps: int):
-    run_spec_identity = plane_application.plane_run_spec_dynamics_identity(
-        spec
-    ).to_metadata()
+    run_spec_identity = plane_application.plane_run_spec_dynamics_identity(spec).to_metadata()
     forward = SimpleNamespace(
         to_metadata=lambda: {
             "kind": "forward_dynamics",
@@ -129,7 +127,6 @@ def test_plane_checkpoint_preflight_value_error_is_public_restart_error(
 
 def test_provisional_writers_use_the_shared_checkpoint_transaction():
     for relative in (
-        "pssolver/experimental/checkpointing.py",
         "pssolver/experimental/modal_block_checkpoint.py",
         "pssolver/integrators/reference_checkpoint.py",
     ):

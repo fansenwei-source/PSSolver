@@ -48,30 +48,6 @@ def test_phase6_closure_records_the_long_run_without_promoting_a_default():
     assert value["claims"]["channel_geometry_qualified"] is False
 
 
-def test_phase7_inventory_preserves_the_historical_channel_oracle_identities():
-    value = _json("phase_7_channel_inventory.json")
-    oracle = value["legacy_oracle"]
-    assets = value["existing_architecture_assets"]
-
-    assert _sha256(oracle["entry_point"]) == oracle["entry_point_sha256"]
-    assert oracle["reusable_module_sha256"] == (
-        "9be8c7fd97e6167c44df4f38f2481683d108ac4e191ef1e0562d616fb4406223"
-    )
-    assert _sha256(assets["geometry_declaration"].split("::", 1)[0]) == assets[
-        "geometry_sha256"
-    ]
-    assert assets["experimental_stokes_adapter_sha256"] == (
-        "82ff317515916bad2b508404a7da893bd6f40f253835187e77addd1b01a1fdd3"
-    )
-    assert _sha256(assets["experimental_beris_edwards"]) == assets[
-        "experimental_beris_edwards_sha256"
-    ]
-    assert _sha256(assets["stage_g_tests"]) == assets["stage_g_tests_sha256"]
-    assert _sha256(assets["legacy_channel_tests"]) == _latest_sha256(
-        assets["legacy_channel_tests"], assets["legacy_channel_tests_sha256"]
-    )
-
-
 def test_phase7_boundary_and_pressure_contract_is_geometry_specific():
     value = _json("phase_7_channel_inventory.json")
     oracle = value["legacy_oracle"]
@@ -98,9 +74,7 @@ def test_phase7_plan_is_planning_only_and_excludes_boundary_and_control_work():
     assert value["status"] == "P7_0_PLANNING_FROZEN_IMPLEMENTATION_NOT_AUTHORIZED"
     assert value["phase_6_prerequisite"]["phase_6_complete"] is True
     assert value["slices"][0] == "P7.0_inventory_and_oracle_freeze"
-    assert value["slices"][-1] == (
-        "P7.6_h100_performance_memory_long_run_closure"
-    )
+    assert value["slices"][-1] == ("P7.6_h100_performance_memory_long_run_closure")
     assert "strong_anchoring" in value["out_of_scope"]
     assert "optimal_control" in value["out_of_scope"]
     assert value["authorization"] == {

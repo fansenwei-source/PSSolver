@@ -2,18 +2,18 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
 import json
+from collections.abc import Callable, Iterable, Mapping
+from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Any, cast
 
-from pssolver.core._canonical import canonical_json
-from pssolver.core._canonical import canonical_sha256
+from pssolver.core._canonical import canonical_json, canonical_sha256
 
 from .results import SimulationResult, SimulationRunStatus
 from .simulation import Simulation
+
 
 if TYPE_CHECKING:
     from pssolver.configuration.simulation import SimulationSpec
@@ -45,8 +45,7 @@ def _compiled_simulation_identity(
     """Bind every executable part of one public compilation product."""
 
     request_type = (
-        f"{type(application_request).__module__}."
-        f"{type(application_request).__qualname__}"
+        f"{type(application_request).__module__}.{type(application_request).__qualname__}"
     )
     return _canonical_sha256(
         {
@@ -54,14 +53,12 @@ def _compiled_simulation_identity(
             "source_simulation_sha256": source.canonical_sha256(),
             "application": application,
             "application_simulation_sha256": (
-                application_specification.canonical_sha256()
+                cast(Any, application_specification).canonical_sha256()
             ),
-            "lowering_plan_sha256": lowering_plan.canonical_sha256(),
-            "construction_plan_sha256": construction_plan.canonical_sha256(),
+            "lowering_plan_sha256": cast(Any, lowering_plan).canonical_sha256(),
+            "construction_plan_sha256": cast(Any, construction_plan).canonical_sha256(),
             "application_request_type": request_type,
-            "application_request_sha256": (
-                application_request.canonical_sha256()
-            ),
+            "application_request_sha256": (cast(Any, application_request).canonical_sha256()),
             "normalization": dict(normalization),
         }
     )
@@ -85,14 +82,9 @@ class CompiledSimulation:
         if (
             not isinstance(self.compilation_identity_sha256, str)
             or len(self.compilation_identity_sha256) != 64
-            or any(
-                value not in "0123456789abcdef"
-                for value in self.compilation_identity_sha256
-            )
+            or any(value not in "0123456789abcdef" for value in self.compilation_identity_sha256)
         ):
-            raise ValueError(
-                "compilation identity must be a lowercase SHA-256"
-            )
+            raise ValueError("compilation identity must be a lowercase SHA-256")
 
     def validate_integrity(self) -> None:
         """Reject a compilation product whose bound fields were replaced."""
@@ -120,18 +112,14 @@ class CompiledSimulation:
             "compilation_identity_sha256": self.compilation_identity_sha256,
             "source_simulation_sha256": self.source.canonical_sha256(),
             "application": self.application,
-            "application_simulation_sha256": (
-                self.application_specification.canonical_sha256()
-            ),
+            "application_simulation_sha256": (self.application_specification.canonical_sha256()),
             "lowering_plan": self.lowering_plan.to_metadata(),
             "construction_plan": self.construction_plan.to_metadata(),
             "application_request_type": (
                 f"{type(self.application_request).__module__}."
                 f"{type(self.application_request).__qualname__}"
             ),
-            "application_request_sha256": (
-                self.application_request.canonical_sha256()
-            ),
+            "application_request_sha256": (cast(Any, self.application_request).canonical_sha256()),
             "normalization": dict(self.normalization),
             "fallback_allowed": False,
         }
@@ -160,9 +148,7 @@ def _run_plane_application(
 
     kwargs = {}
     if compiled.lowering_plan.lifting_plan is not None:
-        kwargs["application_simulation"] = (
-            compiled.application_specification
-        )
+        kwargs["application_simulation"] = compiled.application_specification
     result = run_plane_beris_edwards(
         compiled.application_request,
         progress=progress,
@@ -170,39 +156,7 @@ def _run_plane_application(
         public_compilation_metadata=_public_compilation_run_metadata(compiled),
         **kwargs,
     )
-    return result, compiled.application_request.output_dir
-
-
-def _run_channel_application(
-    compiled: CompiledSimulation,
-    progress: Iterable[int] | None,
-    emit_metadata: bool,
-) -> tuple[object, str | Path]:
-    from pssolver.applications.channel_active_nematics import (
-        run_channel_active_nematics,
-    )
-
-    invocation = compiled.application_specification.invocation.options
-    dry_run = invocation.get("dry_run", False)
-    invocation_options = {}
-    if emit_metadata or dry_run:
-        invocation_options = {
-            "emit_metadata": emit_metadata,
-            "dry_run": dry_run,
-        }
-    result = run_channel_active_nematics(
-        compiled.application_request,
-        progress=progress,
-        public_compilation_metadata=_public_compilation_run_metadata(compiled),
-        **invocation_options,
-    )
-    request = compiled.application_request
-    output = (
-        request.generated_output_directory
-        if request.initialization_mode == "generated"
-        else request.snapshot_output_directory
-    )
-    return result, None if dry_run else output
+    return result, cast(Any, compiled.application_request).output_dir
 
 
 def _run_periodic_application(
@@ -220,7 +174,7 @@ def _run_periodic_application(
         emit_metadata=emit_metadata,
         public_compilation_metadata=_public_compilation_run_metadata(compiled),
     )
-    output = None if result is None else compiled.application_request.output_dir
+    output = None if result is None else cast(Any, compiled.application_request).output_dir
     return result, output
 
 
@@ -239,7 +193,7 @@ def _run_channel_beris_edwards_application(
         emit_metadata=emit_metadata,
         public_compilation_metadata=_public_compilation_run_metadata(compiled),
     )
-    output = None if result is None else compiled.application_request.output_dir
+    output = None if result is None else cast(Any, compiled.application_request).output_dir
     return result, output
 
 
@@ -248,40 +202,21 @@ _PUBLIC_APPLICATION_RUNNERS = MappingProxyType(
         "plane_complete_stress_beris_edwards": (
             _PublicApplicationRunnerRegistration(
                 "plane_complete_stress_beris_edwards",
-                (
-                    "pssolver.applications.plane_beris_edwards."
-                    "run_plane_beris_edwards"
-                ),
+                ("pssolver.applications.plane_beris_edwards.run_plane_beris_edwards"),
                 _run_plane_application,
-            )
-        ),
-        "channel_legacy_active_force_active_nematics": (
-            _PublicApplicationRunnerRegistration(
-                "channel_legacy_active_force_active_nematics",
-                (
-                    "pssolver.applications.channel_active_nematics."
-                    "run_channel_active_nematics"
-                ),
-                _run_channel_application,
             )
         ),
         "periodic_complete_stress_beris_edwards": (
             _PublicApplicationRunnerRegistration(
                 "periodic_complete_stress_beris_edwards",
-                (
-                    "pssolver.applications.periodic_beris_edwards."
-                    "run_periodic_beris_edwards"
-                ),
+                ("pssolver.applications.periodic_beris_edwards.run_periodic_beris_edwards"),
                 _run_periodic_application,
             )
         ),
         "channel_complete_stress_beris_edwards": (
             _PublicApplicationRunnerRegistration(
                 "channel_complete_stress_beris_edwards",
-                (
-                    "pssolver.applications.channel_beris_edwards."
-                    "run_channel_beris_edwards"
-                ),
+                ("pssolver.applications.channel_beris_edwards.run_channel_beris_edwards"),
                 _run_channel_beris_edwards_application,
             )
         ),
@@ -290,7 +225,7 @@ _PUBLIC_APPLICATION_RUNNERS = MappingProxyType(
 
 
 def _runtime_path(compiled: CompiledSimulation) -> str:
-    value = compiled.application_request.runtime_path
+    value = cast(Any, compiled.application_request).runtime_path
     return value.value if hasattr(value, "value") else str(value)
 
 
@@ -302,17 +237,11 @@ def _public_compilation_run_metadata(
     compiled.validate_integrity()
     return {
         "schema_version": 1,
-        "compilation_identity_sha256": (
-            compiled.compilation_identity_sha256
-        ),
+        "compilation_identity_sha256": (compiled.compilation_identity_sha256),
         "source_simulation_sha256": compiled.source.canonical_sha256(),
         "application": compiled.application,
-        "application_simulation_sha256": (
-            compiled.application_specification.canonical_sha256()
-        ),
-        "application_request_sha256": (
-            compiled.application_request.canonical_sha256()
-        ),
+        "application_simulation_sha256": (compiled.application_specification.canonical_sha256()),
+        "application_request_sha256": (cast(Any, compiled.application_request).canonical_sha256()),
         "normalization": dict(compiled.normalization),
         "fallback_allowed": False,
     }
@@ -320,13 +249,9 @@ def _public_compilation_run_metadata(
 
 def _result_provenance(compiled: CompiledSimulation) -> dict[str, object]:
     return {
-        "application_simulation_sha256": (
-            compiled.application_specification.canonical_sha256()
-        ),
+        "application_simulation_sha256": (compiled.application_specification.canonical_sha256()),
         "lowering_plan_sha256": compiled.lowering_plan.canonical_sha256(),
-        "construction_plan_sha256": (
-            compiled.construction_plan.canonical_sha256()
-        ),
+        "construction_plan_sha256": (compiled.construction_plan.canonical_sha256()),
         "fallback_allowed": False,
     }
 
@@ -341,9 +266,7 @@ def _public_result(
         "application": compiled.application,
         "runtime_path": _runtime_path(compiled),
         "source_simulation_sha256": compiled.source.canonical_sha256(),
-        "application_request_sha256": (
-            compiled.application_request.canonical_sha256()
-        ),
+        "application_request_sha256": (cast(Any, compiled.application_request).canonical_sha256()),
         "provenance": _result_provenance(compiled),
     }
     if application_result is None:
@@ -359,15 +282,13 @@ def _public_result(
             compiled.application
             not in {
                 "plane_complete_stress_beris_edwards",
-                "channel_legacy_active_force_active_nematics",
                 "periodic_complete_stress_beris_edwards",
                 "channel_complete_stress_beris_edwards",
             }
             or requested_dry_run is not True
         ):
             raise RuntimeError(
-                "application returned no workflow result outside a qualified "
-                "public dry-run"
+                "application returned no workflow result outside a qualified public dry-run"
             )
         return SimulationResult(
             status=SimulationRunStatus.DRY_RUN,
@@ -386,24 +307,23 @@ def _public_result(
         "final_observation",
         "diagnostics",
     )
-    missing = tuple(
-        name for name in required if not hasattr(application_result, name)
-    )
+    missing = tuple(name for name in required if not hasattr(application_result, name))
     if missing:
         raise TypeError(
-            "application result does not satisfy the public workflow "
-            f"contract; missing={missing!r}"
+            f"application result does not satisfy the public workflow contract; missing={missing!r}"
         )
+    # The dynamic application boundary was checked above. Casts do not alter
+    # the public annotations, returned objects, or exception behaviour.
     return SimulationResult(
         status=SimulationRunStatus.COMPLETE,
-        output_directory=output_directory,
-        start_step=application_result.start_step,
-        final_step=application_result.final_step,
-        elapsed_seconds=application_result.elapsed_seconds,
-        saved_steps=tuple(application_result.saved_steps),
-        checkpoint_steps=tuple(application_result.checkpoint_steps),
-        final_observation=application_result.final_observation,
-        diagnostics=tuple(application_result.diagnostics),
+        output_directory=cast(Path | None, output_directory),
+        start_step=cast(Any, application_result).start_step,
+        final_step=cast(Any, application_result).final_step,
+        elapsed_seconds=cast(Any, application_result).elapsed_seconds,
+        saved_steps=tuple(cast(Any, application_result).saved_steps),
+        checkpoint_steps=tuple(cast(Any, application_result).checkpoint_steps),
+        final_observation=cast(Any, application_result).final_observation,
+        diagnostics=tuple(cast(Any, application_result).diagnostics),
         **common,
     )
 
@@ -453,16 +373,12 @@ def run_simulation(
     """
 
     compiled = (
-        simulation
-        if isinstance(simulation, CompiledSimulation)
-        else compile_simulation(simulation)
+        simulation if isinstance(simulation, CompiledSimulation) else compile_simulation(simulation)
     )
     compiled.validate_integrity()
     registration = _PUBLIC_APPLICATION_RUNNERS.get(compiled.application)
     if registration is None:
-        raise RuntimeError(
-            "compiled simulation has no qualified public application runner"
-        )
+        raise RuntimeError("compiled simulation has no qualified public application runner")
     application_result, output_directory = registration.invoke(
         compiled,
         progress,

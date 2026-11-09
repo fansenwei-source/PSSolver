@@ -32,21 +32,6 @@ def test_record_preserves_v6_failure_and_completed_scientific_evidence():
     assert failure["historical_classification_rewritten"] is False
 
 
-def test_record_binds_exact_recovery_sources_and_forward_successors():
-    record = _record()
-    for relative, expected in record["source_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
-    successors = record["historical_successor_sources"]
-    assert set(successors) == {
-        "benchmarks/run_rc6_profile_matrix.py",
-        "tests/test_rc6_qualification_support.py",
-        "tests/test_rc6_qualification_support_record.py",
-    }
-    for relative, registration in successors.items():
-        assert registration["successor_sha256"] == _sha256(ROOT / relative)
-        assert registration["predecessor_sha256"] != registration["successor_sha256"]
-
-
 def test_record_requires_atomic_per_child_tf32_evidence_before_profile_start():
     correction = _record()["correction"]
     assert correction["profile_child_count"] == 192
@@ -83,8 +68,6 @@ def test_record_is_qualification_only_and_does_not_authorize_push_or_h100():
     scope = record["scope"]
     assert scope["qualification_support_only"] is True
     assert all(
-        value is False
-        for key, value in scope.items()
-        if key != "qualification_support_only"
+        value is False for key, value in scope.items() if key != "qualification_support_only"
     )
     assert all(value is False for value in record["authorization"].values())

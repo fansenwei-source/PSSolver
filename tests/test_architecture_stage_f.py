@@ -2,21 +2,18 @@
 
 from __future__ import annotations
 
-from dataclasses import FrozenInstanceError, dataclass
 import json
 import math
+from dataclasses import FrozenInstanceError, dataclass
 
 import pytest
 import torch
 
 import pssolver
-from pssolver import SpectralSolver
 from pssolver.core import (
-    AxisTopology,
     BoundarySet,
     DealiasRule,
     DomainSpec,
-    GeometrySpec,
     HomogeneousNeumannBC,
     NumericsConfig,
     PeriodicBC,
@@ -26,23 +23,13 @@ from pssolver.core import (
     TransformExecutionOrder,
 )
 from pssolver.execution import (
-    AlgebraicExecutableModelProtocol,
-    AlgebraicSolverContext,
     AlgebraicSystemSpec,
-    AlgebraicUpdatePhase,
     GeometrySolverRegistry,
 )
-from pssolver.experimental import (
-    ProjectedSemiImplicitEulerIntegrator,
-    build_experimental_model_runtime,
-    create_canary_geometry_solver_registry,
-)
-from pssolver.geometries import PeriodicBox, PlaneSlab, RectangularChannel
+from pssolver.geometries import PeriodicBox, PlaneSlab
 from pssolver.models.canary import (
     DiffusionHelmholtzCouplingModel,
-    ScalarDiffusionModel,
 )
-from pssolver.transforms import BasisAwareSpectralProjector
 
 
 def _numerics(
@@ -81,9 +68,7 @@ def _coupled_cases():
         ),
     )
 
-    plane_boundaries = BoundarySet(
-        (PeriodicBC(), HomogeneousNeumannBC())
-    )
+    plane_boundaries = BoundarySet((PeriodicBC(), HomogeneousNeumannBC()))
     yield (
         DiffusionHelmholtzCouplingModel(
             plane_boundaries,
@@ -119,6 +104,7 @@ def _manual_initial(solver, model):
             solver.L,
             model.initial_modes,
             model.boundaries.axes,
+            strict=False,
         )
     ):
         if condition.kind.value == "periodic":
@@ -139,10 +125,7 @@ class _ManualHelmholtzStatic(torch.nn.Module):
         self.projector = projector
         self.boundaries = boundaries
         laplacian = solver.get_laplacian_eigs(boundaries)
-        self.denominator = (
-            model.helmholtz_shift
-            - model.helmholtz_length_sq * laplacian
-        )
+        self.denominator = model.helmholtz_shift - model.helmholtz_length_sq * laplacian
 
     def forward(self, fields, parameters):
         del parameters
@@ -167,236 +150,6 @@ class _ManualCoupledRHS(torch.nn.Module):
             rhs,
             self.boundaries,
         ).unsqueeze(0)
-
-
-def _manual_runtime(model, geometry, numerics, *, dt, batch_size):
-    boundaries = _legacy_boundaries(model)
-    solver = SpectralSolver(
-        geometry.domain.shape,
-        L=geometry.domain.lengths,
-        dt=dt,
-        batchsize=batch_size,
-        device="cpu",
-        dtype=torch.float64,
-        transform_execution_order=numerics.transform_execution_order.value,
-        spectral_storage=numerics.spectral_storage.value,
-        hermitian_axis=numerics.hermitian_axis,
-    )
-    projector = BasisAwareSpectralProjector(
-        solver,
-        rule=numerics.dealias_rule.value,
-        transform_execution=numerics.projected_transform_execution.value,
-    )
-    solver.model.spectral_projector = projector
-    if projector.enabled:
-        solver.integrator_cl = ProjectedSemiImplicitEulerIntegrator
-    solver.model.add_dynamic_field(
-        "phi",
-        _manual_initial(solver, model),
-        model.diffusivity * solver.get_laplacian_eigs(boundaries),
-        boundary_conditions=boundaries,
-    )
-    solver.model.add_static_field(
-        "response",
-        boundary_conditions=boundaries,
-    )
-    solver.build()
-    if projector.enabled:
-        projector.project_dynamic_fields(solver.fields, sync_spatial=True)
-    solver.model.set_static_compute_model(
-        _ManualHelmholtzStatic(model, solver, projector, boundaries)
-    )
-    solver.model.set_static_inverse_transform(projector.inverse_transform)
-    solver.refresh_static_fields()
-    solver.model.set_nonlinear_model(
-        _ManualCoupledRHS(model, projector, boundaries)
-    )
-    solver.integrator.restore_progress(0, static_fields_are_current=True)
-    return solver, projector
-
-
-@pytest.mark.parametrize(
-    "model,geometry,numerics",
-    tuple(_coupled_cases()),
-    ids=("periodic", "plane_mixed_basis"),
-)
-def test_coupled_canary_matches_independent_manual_legacy_trajectory(
-    model,
-    geometry,
-    numerics,
-):
-    manual, _ = _manual_runtime(
-        model,
-        geometry,
-        numerics,
-        dt=0.01,
-        batch_size=2,
-    )
-    runtime = build_experimental_model_runtime(
-        model,
-        geometry,
-        numerics,
-        dt=0.01,
-        batch_size=2,
-        geometry_solver_registry=create_canary_geometry_solver_registry(),
-    )
-
-    assert torch.equal(manual.fields.spatial, runtime.solver.fields.spatial)
-    assert torch.equal(manual.fields.spectral, runtime.solver.fields.spectral)
-    assert torch.equal(manual.fields.L_hat, runtime.solver.fields.L_hat)
-
-    for _ in range(8):
-        manual.integrator.step()
-        runtime.solver.integrator.step()
-        assert torch.equal(manual.fields.spatial, runtime.solver.fields.spatial)
-        assert torch.equal(manual.fields.spectral, runtime.solver.fields.spectral)
-
-
-@pytest.mark.parametrize(
-    "model,geometry,numerics",
-    tuple(_coupled_cases()),
-    ids=("periodic", "plane_mixed_basis"),
-)
-def test_algebraic_initialization_staleness_and_observation_sync(
-    model,
-    geometry,
-    numerics,
-):
-    runtime = build_experimental_model_runtime(
-        model,
-        geometry,
-        numerics,
-        dt=0.01,
-        geometry_solver_registry=create_canary_geometry_solver_registry(),
-    )
-    boundaries = _legacy_boundaries(model)
-    initial_response = runtime.solver.fields["response"].clone()
-    runtime.solver.run(1)
-
-    assert torch.equal(runtime.solver.fields["response"], initial_response)
-    current_source_hat = runtime.projector.forward_transform(
-        runtime.solver.fields["phi"],
-        boundaries,
-    )
-    denominator = (
-        model.helmholtz_shift
-        - model.helmholtz_length_sq
-        * runtime.solver.get_laplacian_eigs(boundaries)
-    )
-    expected_current = runtime.projector.inverse_transform(
-        current_source_hat / denominator,
-        boundaries,
-    )
-    assert not torch.equal(runtime.solver.fields["response"], expected_current)
-
-    before_step_count = runtime.solver.integrator.step_count
-    runtime.synchronize_algebraic_for_observation()
-    assert torch.equal(runtime.solver.fields["response"], expected_current)
-    assert runtime.solver.integrator.step_count == before_step_count
-
-
-def test_algebraic_contract_and_dispatch_metadata_are_auditable():
-    model, geometry, numerics = next(_coupled_cases())
-    registry = create_canary_geometry_solver_registry()
-    runtime = build_experimental_model_runtime(
-        model,
-        geometry,
-        numerics,
-        dt=0.01,
-        geometry_solver_registry=registry,
-    )
-
-    assert isinstance(model, AlgebraicExecutableModelProtocol)
-    system = model.algebraic_system_specs()[0]
-    assert system.update_phase is AlgebraicUpdatePhase.PRE_EXPLICIT_RHS
-    assert system.output_components == ("response",)
-    assert system.dependencies == ("phi",)
-    assert isinstance(
-        runtime.resolved_algebraic_systems[0].solver.context,
-        AlgebraicSolverContext,
-    )
-    metadata = runtime.to_metadata()["algebraic_lifecycle"]
-    assert metadata["post_step_state"] == "stale_until_next_pre_rhs_or_sync"
-    assert metadata["systems"][0]["dispatch"] == {
-        "geometry_type": "pssolver.geometries.tensor_product.PeriodicBox",
-        "geometry_name": "periodic_box",
-        "capability": "scalar_helmholtz",
-        "implementation_name": "periodic_diagonal_helmholtz",
-    }
-    json.dumps(runtime.to_metadata(), allow_nan=False)
-
-
-def test_runtime_reset_restores_initial_algebraic_freshness():
-    model, geometry, numerics = next(_coupled_cases())
-    runtime = build_experimental_model_runtime(
-        model,
-        geometry,
-        numerics,
-        dt=0.01,
-        geometry_solver_registry=create_canary_geometry_solver_registry(),
-    )
-    initial = runtime.solver.fields.spatial.clone()
-    runtime.solver.run(3)
-    assert not torch.equal(runtime.solver.fields.spatial, initial)
-
-    runtime.reset()
-    assert torch.equal(runtime.solver.fields.spatial, initial)
-    assert runtime.solver.integrator.step_count == 0
-    assert runtime.solver.integrator._static_fields_are_current is True
-
-    with pytest.raises(ValueError, match="evolved components only"):
-        runtime.reset({"response": torch.zeros(9, dtype=torch.float64)})
-
-
-def test_runtime_reset_also_preserves_stage_e_models():
-    boundaries = BoundarySet((PeriodicBC(),))
-    runtime = build_experimental_model_runtime(
-        ScalarDiffusionModel(
-            boundaries,
-            diffusivity=0.2,
-            initial_amplitude=0.4,
-            initial_modes=(1,),
-        ),
-        PeriodicBox(DomainSpec((8,), (4.0,))),
-        _numerics(
-            dealias_rule=DealiasRule.NONE,
-            projected_execution=ProjectedTransformExecution.FULL,
-        ),
-        dt=0.01,
-    )
-    initial = runtime.solver.fields.spatial.clone()
-    runtime.solver.run(2)
-    runtime.reset()
-
-    assert torch.equal(runtime.solver.fields.spatial, initial)
-    runtime.solver.run(1)
-
-
-def test_plane_and_periodic_dispatch_are_distinct_and_channel_has_no_fallback():
-    registry = create_canary_geometry_solver_registry()
-    periodic_model, periodic_geometry, _ = next(_coupled_cases())
-    system = periodic_model.algebraic_system_specs()[0]
-    periodic = registry.resolve(periodic_geometry, system)
-    plane = registry.resolve(
-        PlaneSlab(DomainSpec((8, 6), (4.0, 3.0))),
-        system,
-    )
-    channel = RectangularChannel(
-        DomainSpec((8, 6), (4.0, 3.0)),
-        streamwise_axis=0,
-    )
-
-    assert periodic.implementation_name == "periodic_diagonal_helmholtz"
-    assert plane.implementation_name == "plane_mixed_basis_diagonal_helmholtz"
-    with pytest.raises(LookupError, match="implicit geometry fallback is disabled"):
-        registry.resolve(channel, system)
-    spoofed_name = GeometrySpec(
-        name="periodic_box",
-        domain=DomainSpec((8,), (4.0,)),
-        axis_topologies=(AxisTopology.PERIODIC,),
-    )
-    with pytest.raises(LookupError, match="GeometrySpec"):
-        registry.resolve(spoofed_name, system)
 
 
 def test_registry_rejects_duplicate_geometry_capability_registration():
@@ -462,39 +215,6 @@ class _BadDependencyModel(DiffusionHelmholtzCouplingModel):
         )
 
 
-def test_builder_rejects_non_evolved_algebraic_dependencies():
-    boundaries = BoundarySet((PeriodicBC(),))
-    model = _BadDependencyModel(
-        boundaries,
-        diffusivity=0.1,
-        coupling=0.2,
-        helmholtz_shift=1.0,
-        helmholtz_length_sq=0.3,
-    )
-    with pytest.raises(ValueError, match="dependencies must be evolved"):
-        build_experimental_model_runtime(
-            model,
-            PeriodicBox(DomainSpec((8,), (4.0,))),
-            _numerics(
-                dealias_rule=DealiasRule.NONE,
-                projected_execution=ProjectedTransformExecution.FULL,
-            ),
-            dt=0.01,
-            geometry_solver_registry=create_canary_geometry_solver_registry(),
-        )
-
-
-def test_builder_requires_an_explicit_registry_for_algebraic_models():
-    model, geometry, numerics = next(_coupled_cases())
-    with pytest.raises(TypeError, match="explicit GeometrySolverRegistry"):
-        build_experimental_model_runtime(
-            model,
-            geometry,
-            numerics,
-            dt=0.01,
-        )
-
-
 def test_stage_f_remains_outside_production_paths():
     assert not hasattr(pssolver, "GeometrySolverRegistry")
     assert not hasattr(pssolver, "AlgebraicSystemSpec")
@@ -503,7 +223,6 @@ def test_stage_f_remains_outside_production_paths():
     for path in (
         "Plane_beris_edwards_stokes.py",
         "pssolver/plane.py",
-        "pssolver/channel.py",
         "pssolver/models/active_nematics/stokes.py",
     ):
         with open(path, encoding="utf-8") as source:

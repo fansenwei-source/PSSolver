@@ -9,15 +9,18 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-import benchmarks.v0_2_0_checkpoint_fixtures as compatibility
-from benchmarks.v0_2_0_checkpoint_fixtures import replay_case
+from qualification.identity import retained_v020_fixtures as compatibility
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
 FIXTURES = ROOT / "tests" / "fixtures" / "v0_2_0_checkpoints_v1"
-ORACLE = (
-    ROOT / "tests" / "oracles" / "v0_2_0_checkpoint_continuations_v1"
-)
+
+
+ORACLE = ROOT / "tests" / "oracles" / "v0_2_0_checkpoint_continuations_v1"
+
+
 CASES = (
     "functional_periodic",
     "functional_channel",
@@ -41,9 +44,7 @@ def _tree(directory: Path) -> dict[str, str]:
 
 
 def _tree_sha256(directory: Path) -> str:
-    encoded = json.dumps(
-        _tree(directory), separators=(",", ":"), sort_keys=True
-    ).encode("utf-8")
+    encoded = json.dumps(_tree(directory), separators=(",", ":"), sort_keys=True).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
 
@@ -64,9 +65,7 @@ def test_v020_fixture_manifest_binds_the_published_wheel_and_release():
         "tag": "v0.2.0",
         "version": "0.2.0",
     }
-    assert "/site-packages/pssolver/__init__.py" in (
-        manifest["release"]["pssolver_import"]
-    )
+    assert "/site-packages/pssolver/__init__.py" in (manifest["release"]["pssolver_import"])
     assert manifest["policy"] == {
         "read_only_fixture": True,
         "direct_import_required": True,
@@ -88,29 +87,8 @@ def test_v020_checkpoint_tree_is_provenance_bound(case):
     assert record["continuation_steps"] == 1
 
 
-@pytest.mark.parametrize("case", CASES)
-def test_v020_checkpoint_direct_import_and_build_aware_continuation(
-    case, tmp_path
-):
-    before = _tree(FIXTURES / case)
-    report = replay_case(case, FIXTURES, tmp_path / case, ORACLE)
-    assert report["payload"]["equivalence"] == "bitwise"
-    assert report["payload"]["payload_count"] > 0
-    assert report["continuation"]["mode"] in {
-        "bitwise",
-        "dtype_epsilon",
-    }
-    assert all(
-        item["passed"]
-        for item in report["continuation"]["arrays"].values()
-    )
-    assert _tree(FIXTURES / case) == before
-
-
 def test_v020_continuation_oracle_is_separate_and_provenance_bound():
-    manifest = json.loads(
-        (ORACLE / "manifest.json").read_text(encoding="utf-8")
-    )
+    manifest = json.loads((ORACLE / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["oracle_schema_version"] == 1
     assert manifest["checkpoint_fixture_tree_sha256"] == _tree_sha256(FIXTURES)
     assert manifest["tolerance_policy"] == {
@@ -118,9 +96,7 @@ def test_v020_continuation_oracle_is_separate_and_provenance_bound():
         "other_builds": "dtype_epsilon",
         "epsilon_multiplier": 8.0,
     }
-    assert manifest["numerical_build_fingerprint"][
-        "fingerprint_schema_version"
-    ] == 2
+    assert manifest["numerical_build_fingerprint"]["fingerprint_schema_version"] == 2
     assert set(manifest["cases"]) == set(CASES)
     for case in CASES:
         for record in manifest["cases"][case]["arrays"].values():
@@ -150,17 +126,35 @@ def _synthetic_oracle(tmp_path, reference, fingerprint):
     return directory.parent
 
 
-def test_build_aware_continuation_requires_bits_for_matching_build(
-    tmp_path, monkeypatch
-):
+def _synthetic_oracle(tmp_path, reference, fingerprint):
+    directory = tmp_path / "oracle" / "case"
+    directory.mkdir(parents=True)
+    path = directory / "value.npy"
+    np.save(path, reference, allow_pickle=False)
+    manifest = {
+        "numerical_build_fingerprint": fingerprint,
+        "cases": {
+            "case": {
+                "arrays": {
+                    "value": {
+                        "file": "case/value.npy",
+                        "file_sha256": _sha256(path),
+                    }
+                }
+            }
+        },
+    }
+    (directory.parent / "manifest.json").write_text(json.dumps(manifest))
+    return directory.parent
+
+
+def test_build_aware_continuation_requires_bits_for_matching_build(tmp_path, monkeypatch):
     fingerprint = {"build": "reference"}
     reference = np.array([1.0], dtype=np.float64)
     oracle = _synthetic_oracle(tmp_path, reference, fingerprint)
     actual = np.nextafter(reference, np.inf)
     record = compatibility._array_record(actual)
-    monkeypatch.setattr(
-        compatibility, "numerical_build_fingerprint", lambda: fingerprint
-    )
+    monkeypatch.setattr(compatibility, "numerical_build_fingerprint", lambda: fingerprint)
     with pytest.raises(AssertionError, match="continued checkpoint state"):
         compatibility._compare_continuation(
             {"value": record},
@@ -171,9 +165,7 @@ def test_build_aware_continuation_requires_bits_for_matching_build(
         )
 
 
-def test_build_aware_continuation_uses_dtype_epsilon_for_other_build(
-    tmp_path, monkeypatch
-):
+def test_build_aware_continuation_uses_dtype_epsilon_for_other_build(tmp_path, monkeypatch):
     reference_fingerprint = {"build": "reference"}
     observed_fingerprint = {"build": "other"}
     reference = np.array([1.0], dtype=np.float32)
@@ -220,9 +212,9 @@ def test_torch_build_fingerprint_uses_only_the_build_settings_payload():
     hidden = """PyTorch built with:\n  - GCC 13\n""" + (
         "  - Build settings: CUDA_VERSION=12.4, USE_CUDA=ON, USE_MKL=ON\n"
     )
-    assert compatibility._torch_build_settings(
-        visible
-    ) == compatibility._torch_build_settings(hidden)
+    assert compatibility._torch_build_settings(visible) == compatibility._torch_build_settings(
+        hidden
+    )
     assert compatibility._torch_build_settings(visible) == (
         "CUDA_VERSION=12.4, USE_CUDA=ON, USE_MKL=ON"
     )

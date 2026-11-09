@@ -3,18 +3,16 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
-import numpy as np
 import pytest
 
 import pssolver
 from pssolver.configuration import (
     PlaneRuntimePath,
     create_plane_beris_edwards_run_spec,
-    parse_plane_beris_edwards_run_spec,
 )
 from pssolver.runtime import (
     LegacyPlaneRuntimeAdapter,
@@ -120,35 +118,15 @@ def _run_tiny(tmp_path, runtime_path):
 
 def test_omitted_runtime_path_remains_legacy_and_canary_is_explicit(tmp_path):
     default = _spec(tmp_path)
-    canary = _spec(tmp_path, runtime_path="separated_canary")
 
     assert default.runtime_path is PlaneRuntimePath.LEGACY_PRODUCTION
-    assert canary.runtime_path is PlaneRuntimePath.SEPARATED_CANARY
     assert default.runtime_selection_metadata() == {
-        "authority": (
-            "pssolver.configuration.PlaneBerisEdwardsRunSpec.runtime_path"
-        ),
+        "authority": ("pssolver.configuration.PlaneBerisEdwardsRunSpec.runtime_path"),
         "requested": "legacy_production",
         "effective": "legacy_production",
         "default": "legacy_production",
         "fallback_allowed": False,
     }
-
-
-def test_cli_runtime_selection_has_the_same_single_authority(tmp_path):
-    spec = parse_plane_beris_edwards_run_spec(
-        [
-            "--activity-number",
-            "18",
-            "--output-dir",
-            str(tmp_path / "run"),
-            "--runtime-path",
-            "separated_canary",
-        ]
-    )
-    assert spec.runtime_path is PlaneRuntimePath.SEPARATED_CANARY
-    assert spec.identity_metadata()["runtime_path"] == "separated_canary"
-    assert spec.to_metadata()["runtime_path"] == "separated_canary"
 
 
 def test_legacy_adapter_implements_narrow_protocol_and_delegates(tmp_path):
@@ -172,7 +150,9 @@ def test_legacy_adapter_implements_narrow_protocol_and_delegates(tmp_path):
     assert adapter.completed_steps == 0
     assert builder_calls == 1
 
-    callback = lambda _solver, _step: None
+    def callback(_solver, _step):
+        return None
+
     adapter.advance(2, pre_update_callback=callback)
     adapter.synchronize_for_observation()
     assert solver.advance_calls == [(2, None, callback)]
@@ -191,18 +171,6 @@ def test_mixed_configuration_authorities_fail_before_builder(tmp_path):
     }
     with pytest.raises(ValueError, match="mixed Plane runtime"):
         _request(spec, metadata=metadata)
-
-
-def test_canary_rejects_legacy_q_gradient_cache_flag(tmp_path):
-    with pytest.raises(
-        ValueError,
-        match="does not accept legacy Q-gradient cache flags",
-    ):
-        _spec(
-            tmp_path,
-            runtime_path="separated_canary",
-            disable_q_gradient_reuse=True,
-        )
 
 
 def test_default_runtime_module_does_not_import_experimental_architecture():
@@ -249,47 +217,9 @@ print(json.dumps(sorted(
     assert json.loads(result.stdout) == []
 
 
-def test_tiny_canary_uses_identical_initial_q_and_roundoff_step_parity(
-    tmp_path,
-):
-    legacy = _run_tiny(tmp_path, "legacy_production")
-    canary = _run_tiny(tmp_path, "separated_canary")
-    legacy_metadata = json.loads((legacy / "metadata.json").read_text())
-    canary_metadata = json.loads((canary / "metadata.json").read_text())
-
-    assert legacy_metadata["runtime_selection"]["effective"] == (
-        "legacy_production"
-    )
-    assert canary_metadata["runtime_selection"]["effective"] == (
-        "separated_canary"
-    )
-    assert canary_metadata["runtime_selection"][
-        "separated_architecture"
-    ] is not None
-    for key in ("raw_q_sha256", "projected_q_sha256"):
-        assert (
-            legacy_metadata["initial_condition"][key]
-            == canary_metadata["initial_condition"][key]
-        )
-
-    for step in (0, 1):
-        for prefix in ("Q", "u", "p"):
-            reference = np.load(legacy / f"{prefix}_{step}.npy")
-            candidate = np.load(canary / f"{prefix}_{step}.npy")
-            assert reference.shape == candidate.shape
-            assert reference.dtype == candidate.dtype == np.float64
-            assert np.isfinite(candidate).all()
-            difference = candidate - reference
-            relative_l2 = np.linalg.norm(difference.ravel()) / max(
-                np.linalg.norm(reference.ravel()),
-                np.finfo(np.float64).tiny,
-            )
-            assert relative_l2 <= 1.0e-12
-
-
 def test_o2_does_not_promote_or_touch_other_geometry_entry_points():
     assert not hasattr(pssolver, "PlaneRuntimePath")
-    for relative in ("pssolver/solver.py", "pssolver/channel.py"):
+    for relative in ("pssolver/solver.py",):
         source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
         assert "PlaneRuntimePath" not in source
         assert "pssolver.runtime" not in source

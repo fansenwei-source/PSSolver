@@ -13,15 +13,9 @@ from benchmarks.plan_rc5_g1_balanced_crossover_qualification import (
     CLASSIFICATION,
     SCHEMA,
     build_plan,
-    main as plan_main,
 )
-from benchmarks.run_rc5_g1_balanced_crossover_profile_matrix import (
-    AUTHORIZATION_SCHEMA,
-    BOUND_SOURCE_FILES,
-    PROGRESS_SCHEMA,
-    SUPPORT_FILES,
-    build_command_plan,
-    preflight,
+from benchmarks.plan_rc5_g1_balanced_crossover_qualification import (
+    main as plan_main,
 )
 
 
@@ -72,8 +66,7 @@ def test_formal_analyzer_uses_adopted_estimator_not_superseded_maximum(monkeypat
         formal_analyzer,
         "_balanced_groups",
         lambda *args, **kwargs: [
-            {"family": f"family-{index}", "grid": "grid", "passed": True}
-            for index in range(4)
+            {"family": f"family-{index}", "grid": "grid", "passed": True} for index in range(4)
         ],
     )
     result = formal_analyzer.analyze(Path("profiles"), Path("progress"))
@@ -114,106 +107,27 @@ def test_formal_analyzer_rejects_a_failed_balanced_cell(monkeypatch):
     assert result["proposed_contract_passed"] is False
 
 
-def _runner_inputs(tmp_path: Path) -> dict[str, Path]:
-    baseline = tmp_path / "baseline" / "bin" / "python"
-    candidate = tmp_path / "candidate" / "bin" / "python"
-    baseline.parent.mkdir(parents=True)
-    candidate.parent.mkdir(parents=True)
-    baseline.write_bytes(b"python\n")
-    candidate.write_bytes(b"python\n")
-    support = tmp_path / "support"
-    for relative in SUPPORT_FILES:
-        path = support / relative
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(f"# {relative}\n", encoding="utf-8")
-    return {"baseline": baseline, "candidate": candidate, "support": support}
-
-
-def _authorization(support: Path, **overrides) -> dict[str, object]:
-    result = {
-        "schema": AUTHORIZATION_SCHEMA,
-        "formal_contract_adoption_authorized": True,
-        "single_h100_submission_authorized": True,
-        "automatic_retry_authorized": False,
-        "maximum_formal_h100_submissions": 1,
-        "source_sha256": {
-            relative: _sha256(support / relative) for relative in BOUND_SOURCE_FILES
-        },
-    }
-    result.update(overrides)
-    return result
-
-
-def test_runner_plans_48_profiles_but_execution_requires_bound_authority(tmp_path):
-    inputs = _runner_inputs(tmp_path)
-    arguments = {
-        "baseline_python": inputs["baseline"],
-        "candidate_python": inputs["candidate"],
-        "support_root": inputs["support"],
-        "output_root": tmp_path / "output",
-    }
-    command_plan = build_command_plan(**arguments)
-    preflight(command_plan, for_execution=False)
-    assert command_plan["profile_count"] == 48
-    assert command_plan["progress_schema"] == PROGRESS_SCHEMA
-    assert command_plan["execution_authorization"] is None
-    assert command_plan["bound_source_files"] == list(BOUND_SOURCE_FILES)
-    assert not Path(command_plan["output_root"]).exists()
-    with pytest.raises(PermissionError, match="requires an authorization record"):
-        preflight(command_plan, for_execution=True)
-
-    authorization = tmp_path / "authorization.json"
-    authorization.write_text(
-        json.dumps(
-            _authorization(inputs["support"], single_h100_submission_authorized=False)
-        ),
-        encoding="utf-8",
-    )
-    unauthorized = build_command_plan(**arguments, authorization_record=authorization)
-    with pytest.raises(PermissionError, match="single H100 submission"):
-        preflight(unauthorized, for_execution=True)
-
-    authorization.unlink()
-    authorization.write_text(
-        json.dumps(_authorization(inputs["support"])), encoding="utf-8"
-    )
-    authorized = build_command_plan(**arguments, authorization_record=authorization)
-    preflight(authorized, for_execution=True)
-    assert authorized["execution_authorization"]["sha256"] == _sha256(authorization)
-
-    target = inputs["support"] / BOUND_SOURCE_FILES[-1]
-    target.write_text("# tampered\n", encoding="utf-8")
-    with pytest.raises(ValueError, match="source identity differs"):
-        preflight(authorized, for_execution=True)
-
-
 def test_h100_wrapper_is_prepared_but_cannot_mark_global_complete():
-    job = (ROOT / "jobs/rc5_g1_balanced_crossover_h100.sbatch").read_text(
-        encoding="utf-8"
-    )
+    job = (ROOT / "jobs/rc5_g1_balanced_crossover_h100.sbatch").read_text(encoding="utf-8")
     assert "#SBATCH --gres=gpu:H100:1" in job
     assert "#SBATCH --no-requeue" in job
     assert "run_rc5_g1_checkpoint_tmp_preflight.py" in job
     assert "run_rc5_g1_environment.py" in job
     assert "run_rc5_g1_balanced_crossover_profile_matrix.py" in job
     assert "--authorization-record" in job
-    assert "test ! -e \"${RC5_G1_OUTPUT_ROOT}\"" in job
+    assert 'test ! -e "${RC5_G1_OUTPUT_ROOT}"' in job
     assert "BALANCED_CROSSOVER_COMPLETE" in job
-    assert "touch \"${RC5_G1_OUTPUT_ROOT}/COMPLETE\"" not in job
+    assert 'touch "${RC5_G1_OUTPUT_ROOT}/COMPLETE"' not in job
 
 
 def test_adoption_record_binds_sources_and_requires_new_execution_authority():
     record = json.loads(
-        (
-            ROOT
-            / "notes"
-            / "PSSolver_v0_2_0rc5_g1_balanced_crossover_adoption_v15.json"
-        ).read_text(encoding="utf-8")
+        (ROOT / "notes" / "PSSolver_v0_2_0rc5_g1_balanced_crossover_adoption_v15.json").read_text(
+            encoding="utf-8"
+        )
     )
     assert record["classification"] == CLASSIFICATION
-    assert record["parent_commit"] == (
-        "bd129703e6bbc585d0b47a6dddc320a7894551ff"
-    )
+    assert record["parent_commit"] == ("bd129703e6bbc585d0b47a6dddc320a7894551ff")
     assert record["adoption"]["formal_v13_classification_preserved"] == (
         "FAIL_RC5_G1_PAIRED_BLOCK_PERFORMANCE_MEMORY_GATE"
     )

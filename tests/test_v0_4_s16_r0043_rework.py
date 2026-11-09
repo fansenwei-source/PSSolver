@@ -6,36 +6,18 @@ import hashlib
 import json
 from pathlib import Path
 
-from tests.v0_3_s03_successor import resolve_s03_successor
-
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_72_s16_r0043_rework.json"
 REGISTRY = ROOT / "notes/pssolver_v0_2_x_open_issues.json"
+
+
 def _read(path: Path) -> dict[str, object]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def test_successor_72_binds_the_exact_r0043_rework_sources():
-    record = _read(RECORD)
-    assert record["successor"] == 72
-    assert record["classification"] == (
-        "S16_R0043_REWORK_CLAIMED_FIXED_R8_IMPLEMENTATION_PENDING"
-    )
-    assert record["r0043"]["result_sha256"] == (
-        "c2524ea963cb4c6d6a91d80e197e16dc8899613e42c01bb66e1b3468b90671ef"
-    )
-    for relative, identity in record["historical_successor_sources"].items():
-        assert _sha256(ROOT / relative) == resolve_s03_successor(
-            relative, identity["current_sha256"]
-        )
-        assert identity["historical_sha256"] != identity["current_sha256"]
-    for relative, expected in record["introduced_sources"].items():
-        assert _sha256(ROOT / relative) == resolve_s03_successor(relative, expected)
 
 
 def test_r0043_findings_are_claimed_at_the_exact_fix_sources():
@@ -53,9 +35,7 @@ def test_r0043_findings_are_claimed_at_the_exact_fix_sources():
 
 def test_successor_72_corrects_completion_forward_without_overclaiming_r8():
     record = _read(RECORD)
-    assert record["forward_corrections"]["successor_70_overclaim"][
-        "immutable"
-    ] is True
+    assert record["forward_corrections"]["successor_70_overclaim"]["immutable"] is True
     assert record["r7"]["converted_to_shared_helper"] == 55
     assert set(record["r7"]["justified_exact_local_encoders"]) == {
         "pssolver/io/checkpoint_identity.py"

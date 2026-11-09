@@ -11,7 +11,11 @@ import pssolver
 from pssolver import compile_simulation, run_simulation
 from pssolver.applications import (
     channel_beris_edwards as channel_application,
+)
+from pssolver.applications import (
     periodic_beris_edwards as periodic_application,
+)
+from pssolver.applications import (
     plane_beris_edwards as plane_application,
 )
 from pssolver.functional import (
@@ -21,16 +25,12 @@ from pssolver.functional import (
 )
 from pssolver.io.checkpoint import (
     CheckpointError,
-    CheckpointIOError,
     CheckpointIntegrityError,
+    CheckpointIOError,
     CheckpointNotFoundError,
 )
-from pssolver.workflows import (
-    channel_active_nematics as legacy_channel_workflow,
-    channel_beris_edwards as channel_workflow,
-    periodic_beris_edwards as periodic_workflow,
-    plane_beris_edwards as plane_workflow,
-)
+from pssolver.workflows import channel_beris_edwards as channel_workflow
+from pssolver.workflows import periodic_beris_edwards as periodic_workflow
 from tests.test_phase8_p82_periodic_application import (
     _simulation as periodic_simulation,
 )
@@ -63,9 +63,7 @@ def test_missing_snapshot_is_both_public_input_and_file_not_found(
 ):
     simulation = simulation_factory(tmp_path, output_name=f"missing_{module.__name__}")
     compiled = compile_simulation(simulation)
-    snapshot = Path(
-        compiled.source.initial_condition.parameters["directory"]
-    ) / "Q_0.npy"
+    snapshot = Path(compiled.source.initial_condition.parameters["directory"]) / "Q_0.npy"
     snapshot.unlink()
 
     with pytest.raises(pssolver.SimulationInputFileNotFoundError) as caught:
@@ -199,71 +197,6 @@ def test_plane_application_preflight_preserves_checkpoint_integrity_error(
     monkeypatch.setattr(plane_application, "read_plane_checkpoint_header", reject)
     with pytest.raises(CheckpointIntegrityError) as caught:
         plane_application.run_plane_beris_edwards(spec)
-
-    assert caught.value is sentinel
-    assert isinstance(caught.value, CheckpointError)
-    assert isinstance(caught.value, ValueError)
-
-
-@pytest.mark.parametrize(
-    ("module", "workflow_type", "loader_name", "configure"),
-    (
-        (
-            plane_workflow,
-            plane_workflow.PlaneBerisEdwardsWorkflow,
-            "load_plane_checkpoint",
-            lambda workflow, source: (
-                setattr(
-                    workflow,
-                    "_components",
-                    SimpleNamespace(workflow=SimpleNamespace(restart_from=source)),
-                ),
-                setattr(workflow, "adapter", SimpleNamespace(completed_steps=0)),
-                setattr(workflow, "run_spec", object()),
-            ),
-        ),
-        (
-            legacy_channel_workflow,
-            legacy_channel_workflow.ChannelActiveNematicsWorkflow,
-            "load_channel_checkpoint",
-            lambda workflow, source: (
-                setattr(workflow, "adapter", SimpleNamespace(completed_steps=0)),
-                setattr(
-                    workflow,
-                    "run_spec",
-                    SimpleNamespace(
-                        components=SimpleNamespace(
-                            workflow=SimpleNamespace(restart_from=source)
-                        )
-                    ),
-                ),
-            ),
-        ),
-    ),
-)
-def test_legacy_workflow_restore_preserves_checkpoint_error(
-    tmp_path,
-    monkeypatch,
-    module,
-    workflow_type,
-    loader_name,
-    configure,
-):
-    sentinel = CheckpointIntegrityError("corrupt workflow checkpoint")
-    workflow = object.__new__(workflow_type)
-    configure(workflow, tmp_path / "checkpoint")
-
-    def reject(_path):
-        raise sentinel
-
-    monkeypatch.setattr(module, loader_name, reject)
-    method = (
-        workflow._restore_if_requested
-        if workflow_type is plane_workflow.PlaneBerisEdwardsWorkflow
-        else workflow._restore
-    )
-    with pytest.raises(CheckpointIntegrityError) as caught:
-        method()
 
     assert caught.value is sentinel
     assert isinstance(caught.value, CheckpointError)

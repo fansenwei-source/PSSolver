@@ -1,0 +1,1360 @@
+{
+  "classification": "S24_LOCAL_CANDIDATE_NOT_YET_QUALIFIED",
+  "date": "2026-11-09",
+  "decisions": [
+    "D-0042",
+    "D-0045",
+    "D-0047"
+  ],
+  "git_identity": {
+    "implementation_parent": "683cc0018f4636735ff1f489e5a66623965bc1ba"
+  },
+  "historical_records_rewritten": false,
+  "historical_successor_sources": {
+    "ARCHITECTURE.md": {
+      "current_sha256": "609e886f31dafaccb26a8c824adb1dfa54ace9d86775fd610ed25d0d27b10b43",
+      "historical_sha256": "e68a7dbe20b6a642bf1527e9f7e49e67448bf44c38d028c53189a0434ecc8d17",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "MANIFEST.in": {
+      "current_sha256": "79c786253362b5582132352efd9127f0be89c7380846bf2401ff6925ada6a3d5",
+      "historical_sha256": "66fedfd2477eb9ca9abda04fca3339553786d64f143737eac2a9d689c7082e7b",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/api/capabilities.py": {
+      "current_sha256": "2a7a2c878f0f9dfc585b508856812614ae2494566bb30188a791b286ced5d7a5",
+      "historical_sha256": "5efbeeff49ea528318b408985bd17922fc96ec1c73defaab269edb2f2016c65a",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/api/runner.py": {
+      "current_sha256": "b3a4dee597c5584ac948fce83ab5ffc4f9fb1cb4068ef5cc029ae3b0973457ce",
+      "historical_sha256": "a0ab33ce509862ebdcc018890274992b2087d83eb4d0622152610597a420067b",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/applications/__init__.py": {
+      "current_sha256": "ddc7e3abb3a05469f5f254d26b2d496310385865aac9348bf0eb4f8a0fcf160c",
+      "historical_sha256": "eb63e0f7761d6466c420ac356701c4b25ea2bcc17da53d9a8ae263bbcdfea0da",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/applications/plane_beris_edwards.py": {
+      "current_sha256": "e19d54788ccb8bad1ed05364cc554a8c1f20d563e870fee51a0aa51ae1f36694",
+      "historical_sha256": "037720ce20179e2decaf62d085372bd4fe6196473a0a246d3a1be425a878b556",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/configuration/active_nematics_equation_adapters.py": {
+      "current_sha256": "6b0779318f515a2f335ff6a343ef503e1c9ea73134db860f3e0421ad91aa4fde",
+      "historical_sha256": "fd1949d6d1d854875fb1ca7f7a01b0b9c07f3bbd5c1e71b7f917ae56bd4d6c43",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/configuration/active_nematics_simulation_adapters.py": {
+      "current_sha256": "9c3fe191c3986b66c1ed4448a51b298843cfe43537df38cfe6aaeb6ec306be21",
+      "historical_sha256": "2502121539cfd615c9d6fefbbd7bedf31e9721cdb83beb036ce650edcef83d40",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/configuration/application_registry.py": {
+      "current_sha256": "ffb37f485bbf6e23561180b30f1230e3cbc186bf67691bc182427b61d099bd04",
+      "historical_sha256": "67abeb8f6f26c8e6bc85f3e8f687ba905acedcaa012ec3664989c31712331c3b",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/configuration/package_construction.py": {
+      "current_sha256": "5778f9ee00ffb2987bb59b2c53f6e9f03145b7b1c062ad72da4614e297c9511b",
+      "historical_sha256": "6c8e2d8d7100b0f538b047d78161de71f3ca6c99d0db67e69bfcf3e7f9dc6f14",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/configuration/plane_beris_edwards.py": {
+      "current_sha256": "6ddf89ec3a2e5a0acf53601fae09763c409c4fb5ac6c4e4ce87e3b992af2ceca",
+      "historical_sha256": "8fe3774ffbafd729ac5afb280e23dd294b77f588cc1f02a5ded6c7c7d15800b9",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/configuration/plane_beris_edwards_component_graph.py": {
+      "current_sha256": "5b63f84b0a091bb1318f26425e6b1343b693d22512b5cd5b70914cf89ceedcad",
+      "historical_sha256": "176a4256d5bef327fe79c943a9ccf4ccad789b884895469274c7b9b8376636d4",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/configuration/public_channel_beris_edwards_compiler.py": {
+      "current_sha256": "0505c963eeb96142ca118733e72c5350a02654c518a78af71100e286fde9e426",
+      "historical_sha256": "4e52c540858787a4c313cb71db1aac0abbe024748d72acb2aa55f0bf938ec2ac",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/configuration/public_simulation_runner.py": {
+      "current_sha256": "bae55b5eba006f49d5e25f8a2bf688ef071158da25768aac3b103c6f55bf591a",
+      "historical_sha256": "6776a8ad51932170b27ec3dfd7c12957ae42062bc906f487aa39c5ea6d6d03f1",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/configuration/simulation_lowering.py": {
+      "current_sha256": "16df142b8a994450e6b852f22c601299ab87b4c9a628c8dada4332f671855482",
+      "historical_sha256": "91041ce072e5fd10d0b5a55379cc6d94a727fdf1ac1b42ed05d05cf293308a64",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/experimental/__init__.py": {
+      "current_sha256": "5e96bc4c44c714a50f548f20c89104f324f194bd07bb1d834804efa2dbe7c758",
+      "historical_sha256": "3bdbaba97849096762252612d4979477a1bcf3dfe73d2a1c78a4e7e17437e6f8",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/functional/channel_activity.py": {
+      "current_sha256": "6e1d9c74d3bcb6a809765ab46bcff82d0d499e63d73959fa96bfb86f8d8e0cb2",
+      "historical_sha256": "29fc6bab8848b932be55f6f115fa27563ef21bad4637fd38c174253f8150f73f",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/io/checkpoint.py": {
+      "current_sha256": "9db6b0acf5652c52c27190064e02937137562ab46a243cb50f067e463daaba32",
+      "historical_sha256": "7f686380c65c0e2975f3965c764c12f0c1e231c3f9f872872a854ce6b7c04dfd",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/models/active_nematics/__init__.py": {
+      "current_sha256": "ceb174e2c59436b73ae59dc1343ffc66c6887230810401e5db2eae862174b995",
+      "historical_sha256": "b28375c93a5449de4a4f7aa4350d0d03448f7d19191dfe8a3fa76596883ad1f1",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/models/active_nematics/equation_systems.py": {
+      "current_sha256": "37b5ab49bf03a60daf003269548a4f044944b812b38c0e662f2542b5bd3f1558",
+      "historical_sha256": "d785f2d42c29a3647777470d33a00c62aae323e33ed6ff6d71abe0e305a2e12d",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/models/active_nematics/public.py": {
+      "current_sha256": "7195684d343d93ad3d91774b5326beddead552e4a336fcd98adfb4ac28965e2f",
+      "historical_sha256": "8201231ad12ed0e2a428303d5aff90b658e15d65e30af2f0640d0965dba99020",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/planning/construction.py": {
+      "current_sha256": "385ac257503e5059f08463361c2a00f4553e9e51ebcb0a3c3ec453e675094ec3",
+      "historical_sha256": "510128d1f80c67a621331d45f756874424502d6b70f130de2feeb519450519e5",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/runtime/__init__.py": {
+      "current_sha256": "53dd5a3ac1f8e2ec78b677bd1fc42fb757d36a730e7f26a7562af3725bf5acb2",
+      "historical_sha256": "d09332c709f109b874be104c47885d487aee1da10b82352d1af801d4858f8c09",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/runtime/package_construction.py": {
+      "current_sha256": "486143ccafa5466f12c42df75ac56ac716e1e3db92f391417e8a51f598b44dc1",
+      "historical_sha256": "eb2d3c46e92422f13794c05d40fe3b6a30fa87cc0b23d28ec847caf10cd6b642",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/runtime/plane_beris_edwards.py": {
+      "current_sha256": "37195d5af22724fdcc3e54cf9496f0b86bd22510e953eb4d0196c16d1d341b98",
+      "historical_sha256": "437f1bf5504a3e51377fc43f6d1c913e5f69c7e3a578745dc4626378fa9d062a",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/runtime/simulation_construction.py": {
+      "current_sha256": "91d773b7e5d26aa75755c0be09ff073b15d1da9a6f1f89d62434a5ecae06da93",
+      "historical_sha256": "e190200db7c306b838fd67ce55589b943d88ff8e1f933bac3d12f328799a6f5b",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/workflows/__init__.py": {
+      "current_sha256": "a3326e03ca6ed56289f314626c16301a57ce9d2302f672cb27f7b07e71f502f6",
+      "historical_sha256": "836d97b3001d1ba0ea2497a4ff3939b8cee0a74dcfb53a03c51a1a784f044837",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "pssolver/workflows/channel_beris_edwards.py": {
+      "current_sha256": "36e5da8669838eaf0463265d5f79ec28119dad6cbd2da9094821546991941ce8",
+      "historical_sha256": "38d94f94cf4cdadea06e97a0bd6608a7310a99da8e9e865c47cac2868b1dfc74",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "qualification/identity/historical_continuations.py": {
+      "current_sha256": "03946324b5524c73fc6852d1c49744b48d7b8ad2e30e7d8ca3826a72de94f351",
+      "historical_sha256": "f5da6c019a236e05ed8df8910090bf4d3cc6f7e2f74d66efc45ccf5682d2e055",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/categories.toml": {
+      "current_sha256": "067f7ac7ff2f5e59843f718d183ca94a776fee15a7e874c9c39cfcf67d221be5",
+      "historical_sha256": "7311210eb56e23f84eaf9b4618bad11b489ec50917b2f791051c330b305b475a",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/conftest.py": {
+      "current_sha256": "3e2133749b2181427d89dd801d2e020c71f49c1a02232412f77e6279d4829658",
+      "historical_sha256": "2457c2187230f9fedf5b9ed0e9151c5e2944c1cc3ccd1e53bb5f48bc9fb69f0c",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_analyze_rc5_g1_h100.py": {
+      "current_sha256": "851b986d02611ccd76d41cd801fd38970c9eeb3c8a1384d0d1a8bee395ab32e2",
+      "historical_sha256": "0a079ab9b432bedb20255ececea55a87ec95feeaf64a1944754fcdf5e7944641",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_import_boundaries.py": {
+      "current_sha256": "a8e5355c9d4aa12380c1551ef2f47fc330a49d69fecf1f53af2c4ca22e6d3a71",
+      "historical_sha256": "164559a430b918b1407466ae949b9da1998c8df2262df166ee7cab956dba389a",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_c.py": {
+      "current_sha256": "45130852839b95177b2729a0dc589cf3ab0160bb6f10dd7b0f9ed2aae9fc877c",
+      "historical_sha256": "bd66651725e5629e6f681fe48d2b954b47c6f236b49cda5188f231b32297e087",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_d.py": {
+      "current_sha256": "cfea31fd172ff9bdab8ba23e43a273fc4ab9ded3d1d6e825da04e976c4d5ff93",
+      "historical_sha256": "f1a22b49929053c1bb938c086358db86247e98998335d5f300886e6835c7a335",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_e.py": {
+      "current_sha256": "29fbe66849dc694a718dd448c490c8da9aef9239f77622d504a712652ef1267a",
+      "historical_sha256": "6337100c0716258d0dae2683f328278317b27a8ceb2db5847dbd64fd3514baa0",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_f.py": {
+      "current_sha256": "1caff966d4d5c234edecc80278de65baa572d14c650e158e5204280719ec1c4f",
+      "historical_sha256": "231ebb2ef30681a9ebfb3bc9df923ec399e1850f78fe82d2694a9bb1a001d0f5",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_g.py": {
+      "current_sha256": "bc1f6dd0981b6e6238bddaea886925b1d84d6fe080fa1f7ca6db9a62e82f8ebd",
+      "historical_sha256": "86ae71b1f65461499ed9a193fe74e0e536550b5719fb738a9a7706229de5d0c5",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_h.py": {
+      "current_sha256": "bed6864cd39e79dce8ec9c573950a339eedcb219865cd5d8f542a7d9cd611b48",
+      "historical_sha256": "9c25bbce1a604e6f4eb27ab54bd7cafb9aad1a44be60ca25e15166087e0ff01e",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_i.py": {
+      "current_sha256": "7117862581399ea79e3ecce4d6ad65221fc570406f871cd0b2cee57a3f8fab49",
+      "historical_sha256": "d7f1be525c29f0bbe10deded3ab28445abb484ab950ec89a0d89cfe0e326ba63",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_j.py": {
+      "current_sha256": "4a8af320a743576c5d4d7db6728ad1f2d72148b33edaeda1ba2a3acce56cb53a",
+      "historical_sha256": "1d0cd60dede6ed5227d8675a06177fa54be96f4c9a82a5060b5ec7dea98b758b",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_k.py": {
+      "current_sha256": "6fe18fe85cd4af22178441ea896a1a22158ac3e4648a93354781ba8c70e9a95d",
+      "historical_sha256": "f266ab8c3d25ecd23e6b8865dccd575b05392a4dec661fbb66018ea16cb1c154",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_l.py": {
+      "current_sha256": "373bd00dbe7e99ec8c6a1b42187fcf3f2480b241970661adb1698b6f7d5c9898",
+      "historical_sha256": "8aad977f070ce3a7a2426e6545955716ae04556d9622d838314dd3f2a6f8986e",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_n1.py": {
+      "current_sha256": "800e0f6ab78a77899aa191caf0ad9b1c3c21a9c46850307010f7f47606781427",
+      "historical_sha256": "7186dd1957ee8520b8ec6bef42eba446088a245d46f8bd218cc8c469f60e689b",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_n2.py": {
+      "current_sha256": "b69564be266d5c316f6645fead0329ce41558c7b84ea495bbe7366a542824014",
+      "historical_sha256": "f07e309016bbfc23f9365117d57e232ea5dd81210fba45b92d36375d34b0e23a",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_n3.py": {
+      "current_sha256": "abbcc201553340467afd2a4adf78b5da05a635d3c561f85dea8523ed96c12781",
+      "historical_sha256": "3bc9d8f87a9e903c4d5e201493fe12ab1ba4efa405a494b6462ede9fcd60d327",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_n4.py": {
+      "current_sha256": "7f9a59fb68b74e265db72591a8e5d583bdf314c7be8e2bb5fc3d806a40412791",
+      "historical_sha256": "c63e6aac538259cb10a7cd831d8aae27b0ab1bfe4f32ccefa2265d561c937aec",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_o2.py": {
+      "current_sha256": "96605afdfaebdb6a43ec701600e27f0f0b72f065167410b82dc540e1cceac772",
+      "historical_sha256": "552f8996d624e8493bc2bb6109ded0552407799bb8e1957d0d7a18290de025f8",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_o3.py": {
+      "current_sha256": "fc8b483dfa9b495c6bc79586da710307f5dc44cf6e012881a5b8daa450d7994e",
+      "historical_sha256": "42e67688ad125e927967d3b910357e4405e32ae57aca412bf990be129d0f5b48",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_o43.py": {
+      "current_sha256": "7e74c6f3cd6ac577fe50cd5773c07325446c2c8c0e055f877b2b371cd6402b0c",
+      "historical_sha256": "44ac7b611ee4adc2827f5f6840b522c7e1163561bee4cd07615615a9cb22625c",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_o432.py": {
+      "current_sha256": "4caf6ecd9a98c577786bda5b28abd9fadf44a780cf0b06f67cf347b6084cd906",
+      "historical_sha256": "39f4b249489e3748e45350e2402450dfcdda07cd2a52dfb520f391a8826dd35a",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_o433.py": {
+      "current_sha256": "77d6a666cccb313d5e39cf66a173eb0863f708d527c53344dca7a17b81b118fd",
+      "historical_sha256": "18734548f4c88ba875f00973f1b5976fac7bbdf4a9467e7c7dd0449c5d35e716",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_o434.py": {
+      "current_sha256": "10b796e28887b2ab8566cf3996ba16d514af4d86e1b5f0f4045da5d3750d3cb2",
+      "historical_sha256": "7851c6b0741fccd90e97d795577ad8379c2dceb206e7d015c1363320f2b5085c",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_q1.py": {
+      "current_sha256": "bd37a6608e59889595e97835c0078af9d66a30c7e5f0f99b72dec5c713ac764e",
+      "historical_sha256": "645491477d844d4bb6d279059a072699c8b06dd08c13764e4a8fef577e1d8999",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_q4.py": {
+      "current_sha256": "3ca376146b78cc3ced55b763af3db271296f650febf8743760c63af6d94c8860",
+      "historical_sha256": "2399fc86eabd9f286bc1d780c3defd9ef9d304c589227d9c209a5c7a9d0c2e4b",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_architecture_stage_r.py": {
+      "current_sha256": "4f1f5457eb3050051d46bb97e1bf0da1d7a28c080d4ec1b46b09151c24db07ef",
+      "historical_sha256": "4219041f3a0f30c4034f0c93f13824be6d05c763830b54fd436fb8859db04f16",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_auxiliary_canonical_metadata.py": {
+      "current_sha256": "d194f3fcd88d31a79cbe4b40b1743c368036c2529bd0139f0c224c2475a7da9b",
+      "historical_sha256": "c7fb02733f6c706f02f7a7088e2c6a08ddd2e570b5756fb9a92339275edd41dc",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_channel_dal.py": {
+      "current_sha256": "c1f6a315bdb17be38fe6bb04a6156d4084066d52a47623c3d276aa450f1a1171",
+      "historical_sha256": "b65f084c8338326b478320e1b61ea61c93d55751a6e185ab4ca0087c6d0ac009",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_channel_no_slip_modal_stokes.py": {
+      "current_sha256": "3952e5628dcb6f41a3e61ef23492c326cb4bcf6769bfc09bb4cf2c73f091c01c",
+      "historical_sha256": "fc227822b812f084998a73c01af9ff1d0a5cef4ee3a5d6c17e3a3ce7e3f57b99",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase2_plane_runtime_selector_migration.py": {
+      "current_sha256": "579b56f6be4bf0bb3cb93f8d8919c9c5d3b0f771614dc38e668e07f13eea5e6f",
+      "historical_sha256": "294ca5bf4972708e752e2ec86529cbd94fa89ef3ba7994b135dad2977f434740",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase2_plane_shared_declaration_compatibility.py": {
+      "current_sha256": "fbabf1e049e9e237e25a0e58dca8aa6bf4be20392d2fa11af3ab20a7e58dad20",
+      "historical_sha256": "0870bba187f7b431017c50144795136824e9098be25faba85695f50a1fa15e00",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase2_run_spec_compatibility.py": {
+      "current_sha256": "f44e26153087403a568f8c522dbaec37e65705ce1c653e49eee992f3b894ec1d",
+      "historical_sha256": "dc9f39933d9e5aba7d790bf6c3037d5820c31962e28db9c954dfe4bb014d3d25",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase2_run_spec_components.py": {
+      "current_sha256": "7d1dcb02903db01d18586b91c5ac9e7dbd604cb9fa32d879b1dda668cb68c24f",
+      "historical_sha256": "b07d4adf11b1ecbc77c334d0719418110cf9890bdf584c6843ab083f0e9fef5a",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase2_run_spec_decomposition.py": {
+      "current_sha256": "71ed22e2244c077bee51cb453e1a244dcc02e69234c62dd5d42e5c5761cb5a14",
+      "historical_sha256": "81685a62459e3b27d067fd75d6f77dc78bf189c9f40640bb8a841c1752cfee8b",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase2_schema_v1_serializer_compatibility.py": {
+      "current_sha256": "aa37e859602359997f0dbe48c827547af58efb72d823230e27d82ce2c50d745f",
+      "historical_sha256": "f5674fc7c8853b52f0316c9f4d5d18d64c7dc70c5aa7bc778884d85ef8c78955",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase2_system_declaration_restart_provenance.py": {
+      "current_sha256": "70b734298ae208b8d87867747df1409d7bde44667611b4401bc57cb04b242ed7",
+      "historical_sha256": "5b9e14406fb2634a029d6ae0869203336c102739cfdac6af07f08827749127d7",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase3_canary_connection.py": {
+      "current_sha256": "4ac0245d181b310c9ab2571d94ff407cc1b4cdcedba9ba99e3ac392bce0e3fa5",
+      "historical_sha256": "b4c0b835455ba47c6f368f51fea253fc7197b98301733bb9dbe719b79e97d0cc",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_channel_compiled_v2.py": {
+      "current_sha256": "f89bfd44ce5446ff11cd083a4e5e9541c0a95d49faf9d4878148d60171b9aaa1",
+      "historical_sha256": "6736e8348b0cfb060df6557e6595f443afa8a2e6977c2bf89456b643f3180c4e",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_channel_h100_support.py": {
+      "current_sha256": "4c6565cf070f2d8fb3e26dc8f7a84d841d79966981d45799ebd32024bdcf687f",
+      "historical_sha256": "724bd646037611ed46cb208ab787256b7c03d7c26396086707174869541fc5b0",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_channel_local_closure.py": {
+      "current_sha256": "2f3c1d8f95387b067b947c89fb30ee8be6b48f8bcedeb281678f55682097d3c5",
+      "historical_sha256": "22fbda3761dcdf221ee68be335adca830af5a78bbe421ffc64a09c057fafa868",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_channel_planning.py": {
+      "current_sha256": "de6710198185b34e5f5d69a2e74db5e095ddc0ad88688b471a00e56ce6b1b7f0",
+      "historical_sha256": "05fa4601f9bb16e3474e5e64896e24f0ac8adededbec1a817b44ea145ea50d05",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_channel_run_spec.py": {
+      "current_sha256": "3b5743a7137ed141e0ba2ac749a33d17377c0a4109db519d4ebb7c061139a2a1",
+      "historical_sha256": "60b4532fb9c7834997fbd187ed9554ce8878f966e2aa3604e2168ae36e0b070f",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_channel_runtime_facade.py": {
+      "current_sha256": "c396d11ed794538786fc4aba738cb5fcc6f1cbcaba3ab5a4f872444b835ddf73",
+      "historical_sha256": "63d073df195434bb81304b3dfafc59cd9c0843954848a7517b353625b7cc89c1",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p770_model_geometry_coupling_inventory.py": {
+      "current_sha256": "952d2e221fcd6dc34520e6bbb05f26e0b45d4c14c0ec587678e848727e33dce1",
+      "historical_sha256": "81eb8cf845a223337e91b4131e71570766f9bf21574bc270b1f78cfcabe2bf70",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p7710_public_runner_result.py": {
+      "current_sha256": "324efe7c3838e5cd7913862ca7c091142b45dd3c64e71b44c4c62e7edce0a5d3",
+      "historical_sha256": "c59395f6816a4025b7e1d7e4870d0b157ce643be0a88f820c8cac0a289f2b041",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p7711_public_entry_equivalence.py": {
+      "current_sha256": "da448628f059876253a097bf93978de434730f2f88a8c07fdf2c2b564539a909",
+      "historical_sha256": "f42042210556ddcbf8faad08468f5005baf308784398a75450535ee9fe3b1508",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p7712_h100_qualification.py": {
+      "current_sha256": "fa9c297eb757be0be3b4e0c113fd328466417d08f492a29878c47a0a45c0aa08",
+      "historical_sha256": "cfe40e69bdd4526953b8ad63933df58f303932b22e9f7e465db706d80399b798",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p7712_h100_recovery.py": {
+      "current_sha256": "ebc5e033b0b67972a6a2031be4792b8d2f2be3f584c1efb909f0e4b346fc1ea8",
+      "historical_sha256": "8ada4690160b3a73d2852441498967ac739da7447cfaf3ab5261d513d2701775",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p771_equation_system_declarations.py": {
+      "current_sha256": "f40a0837334ec41d8751598e31d2dffca80da670888c345355e97889f2b998a9",
+      "historical_sha256": "d17f48283545753cfd38d2642cfe1ed2b87abf6940fc79b1939d5d2d503b27f0",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p772_simulation_composition.py": {
+      "current_sha256": "c26e7e6bd0573c5f3f548a3b235ee0df30799bf1f875a09316bef3719709dadc",
+      "historical_sha256": "d786b43f08ef3e845c0236b11e15873622a02c1bb7239a6e0e96494ba367f5a5",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p773_simulation_lowering.py": {
+      "current_sha256": "4a78940bf4a9c575401d6f4936d34607ca6cfe02ef80260109b8aa2ed8c60855",
+      "historical_sha256": "c12b911e71b65e86a19eb7b997ec2dffaf7b53ec3e7503fc504b1563dd8b8fa2",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p774_runtime_construction_binding.py": {
+      "current_sha256": "ad774d44cf340c495f2bd04bb1801dbfdaf191a2e508597d0a2513491f9093e4",
+      "historical_sha256": "21a0bad67a07e2f7d3252e4942368ca7a05b2ca5ba99634813b662a581a6db28",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p775_package_construction.py": {
+      "current_sha256": "89c063ea24c31f28f9290ad16a8afc95ef12e95a96025b234240822bc902d3c2",
+      "historical_sha256": "671d7aede3a87b6a9cce80ad128f13860281090d467a4fff7e88ff4ace2395fb",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p776_h100_closure.py": {
+      "current_sha256": "de06ec7a4057a8586ada62f0ad40a3c56ff6395de1c6be679341f2eb447ae049",
+      "historical_sha256": "c2d9d94861ce1c959a78ad826ca3c7b8c01fb9e4ae5d54f8bc299c4e0ec458b0",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p776_production_connection.py": {
+      "current_sha256": "fedde8d13b9329c4366c58310bd63518cd2915a18cd7fb82a045f047b0b3d3a0",
+      "historical_sha256": "6b5afd7c43119e56c1d333ac919dc9f6615a8f59097c774dff046042a6e3b141",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p779_public_runner_connection.py": {
+      "current_sha256": "e362ef12e67b21259450ac9f4fc603c35dd9fbcea326c3fc466fe9e5ce6cfd8f",
+      "historical_sha256": "70e103d4885949613697bdd971ba287fb27bdc2a61462fe3a64097158297f954",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase7_p779_two_combination_compiler.py": {
+      "current_sha256": "a232b3bfc29de1ee1b0ea5026bee4ac7262c2c8942357ddf876ac62d9cf7ea29",
+      "historical_sha256": "ae07899cfd8b800762d1e909304f54940207359ef01be46980f14aaac0970f69",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase8_p80_capability_expansion_plan.py": {
+      "current_sha256": "4971ff20b7a9367bea9e3ea85639754ea7e61b33a25b825573ebc62c9127929f",
+      "historical_sha256": "954d696a030dddb5b9d20125176a585376051182b2a017c880f9195cc5d531e5",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase8_p81_public_surface_catalog.py": {
+      "current_sha256": "0ed15c8e2f7db989c873f18d6ae23bb09a274ef3e8e64f9b723e8a533659a5eb",
+      "historical_sha256": "0c78059ecb4fbda5b8e52b8aa7cd5592934345ff775e7bf1e40197e2847b8e28",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase8_p82_local_candidate_record.py": {
+      "current_sha256": "4f23fab0cd2be760f6f0ecfde0ed7d847f075ce3ef8ca082329e8096f4c2c668",
+      "historical_sha256": "06ef0f08dd86b6509135f42dc34771e7c7409b0903b11288ac92d2e462eeb71a",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase8_p844_lifting_workflow_restart.py": {
+      "current_sha256": "0e9f9da44f15602387ec2e84f9f37e8dbb3264f800fa7d92b741ccbe8f4aec17",
+      "historical_sha256": "8447cf565c44b7e8774beee261f2bce8bc86d3b757521268109ef6165a973726",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase8_p860_closure_plan.py": {
+      "current_sha256": "ff2eea57c3d57e38e4c36a412755a4c3df9bf0c36ebaaab613b5860e9935f251",
+      "historical_sha256": "2ea7bc11875592f25146f1af5d82dfc6f33ac0c431d29b8d6d4a414c34c264cc",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase8_p861_local_cumulative_audit.py": {
+      "current_sha256": "090685606e30f16a509cd7331b282cc9e34d4ceef5d0790e6aedeb134ee7e7b3",
+      "historical_sha256": "6e0da21902c215e9f03346df54aa037456bd3e508764230498245abd81b28404",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase9_p90_control_contract_freeze.py": {
+      "current_sha256": "bcbf7022ab740a851f51774e4321d10e999416e7fa9144af85edf281520226e6",
+      "historical_sha256": "a666da2764746e6e6186dc4b6e0d75d5f34dcb699d59e70d6d8546135cd3f1ac",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_phase9_p96_closure_and_p970_plan.py": {
+      "current_sha256": "3e68c6b8a1906855e68adde8b6211260e22fce1aa2d21561803795e8a73bd6ab",
+      "historical_sha256": "5f5e8ab1a7fadbb17e7a254c7e7ff20b73c230aabe43bedefdee9d625960aafa",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_plan_rc5_g1_h100.py": {
+      "current_sha256": "6da1810b1b0bf7e836e65995622dd1524c723ccff294af730060cb35e921b082",
+      "historical_sha256": "038617a0ee8c112c8e354fc51431de37a8773a04dbd5b2c7ac30ddb43412576d",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc426_cross_device_checkpoint_harness.py": {
+      "current_sha256": "2574b40624d736d360caa0f22fee24ddd04d64deed3145c9b599c8e9a04237aa",
+      "historical_sha256": "e141b58791bba890f744e1cded8d8a8f300a5aaf862fac2db33d41e4c38bbfd5",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc447_pressure_h100_support.py": {
+      "current_sha256": "56b4975f833af63b6e7dd5591dd6546e41cf941f5a1b7ec43707b27f85a2598c",
+      "historical_sha256": "8dc1661f8259cbde4593298f20b656eaf3e0028733069c769160b62c08ed7b23",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc451_cross_runtime_adjudication.py": {
+      "current_sha256": "166b8ce5453b6d1e5ce3bd78060e2e6c10c92e0c4c1a0feca47ef07bd58cae2e",
+      "historical_sha256": "54b446e8798aacd77bb40edcd8be157cbb24427c5d01f33222fe98305c5082a8",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc453_checkpoint_transactionality.py": {
+      "current_sha256": "8f4c93fb0e29daebf560fd301eeaa394cb53b31add227351d7b429c0baa1d16e",
+      "historical_sha256": "9b2bc0806ebd3d8db4a0bb1d4b97ae61aa4e79617f195a26be27eeaa3132e77b",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc455_public_robustness.py": {
+      "current_sha256": "5ad62ede110e81d2c39135f8ef8e76033ced94db117b12e50d8c9908a288fd4b",
+      "historical_sha256": "4e9b5009953a1b2a494a242b6de50484645dab2c6b91e200c8dd98b3e3af6c32",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc456_tf32_execution_scope.py": {
+      "current_sha256": "d5025ac0cea8506548b0a242c09c0f1516abc89d97c0c8a7955f4ebef9999619",
+      "historical_sha256": "ac86aea306f12a95d879e07fdd10db19a4520366ba00d976472cb04e8458b8ba",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc458_qualification_support.py": {
+      "current_sha256": "206ebe5a5006102979e3bdcd84bfe82375c0ff614d7c2152684cf0f48556a6fc",
+      "historical_sha256": "6093f725b4f3865c0c29a6e3a35bab4e9621b44f42c9c1942e91091a00813615",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc458_reserved_memory_recovery.py": {
+      "current_sha256": "b0af537fe4a929d636dab112f5558d387f102b72c9b0af42f847209b165106f5",
+      "historical_sha256": "16a66c1d77f609c560331aa6f4471dd132b7b17af86b488d3074f20ace65d2b5",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc458_transform_counter_recovery.py": {
+      "current_sha256": "76f1c2d4bbff441717a6371b21f07317d7454c539c4188d2ad087272a626d64b",
+      "historical_sha256": "4918eec2f23dff0c48b18f81ae990db86fcbe4ee37bce817c58f7f925f4d7b90",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc4_checkpoint_identity_primitives.py": {
+      "current_sha256": "f68c3130da1852174edc5a363b2a33e272cce247982da5fbcb2caa92b7a04d6f",
+      "historical_sha256": "f72bc50a3bff3c8113b888b25eebf390f51fdf51be7a4691c47d9be3287d4319",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc4_cross_runtime_robustness_plan.py": {
+      "current_sha256": "cd2361d477c528facfcd9535f98af1abbfe15fcd2cfecda2595b325bab8a8df8",
+      "historical_sha256": "5b7df4fb42e32202556ed119c9294ddc7351833d5d8db52f3d452b2a04469af4",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc4_lifting_installed_cpu_closure_record.py": {
+      "current_sha256": "742e5fb1d74141a98948bf9fa588bb40d19cd62e6b9a4364a840d9ffa0ae2711",
+      "historical_sha256": "c647b509765d39c1ddbb8e7cd5498145c15680c04c8d74d5441d4398694fd54b",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc4_lifting_installed_wheel.py": {
+      "current_sha256": "053d004aa01b2667cc6c4146c929e6701d00f05e40b70162c6bc31318faa2228",
+      "historical_sha256": "3045a7df9162b103736906daf1963e021ab273aca1743ee4646657890de06631",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc4_pressure_contract_plan.py": {
+      "current_sha256": "a350cf6b6aa61b108fb12c9cceb2fee04b05b2d6518efe12efcc0427f9883734",
+      "historical_sha256": "04b25edafcd77a85e48db4474a9f7faadb48dc2b4682b3f1b4d01a14d856487a",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc4_pressure_h100_qualification_plan.py": {
+      "current_sha256": "fc6e6d77becee75133da50fa14f5751ebae544e8395fb4b23af2ec64dc04e4d1",
+      "historical_sha256": "5e19beb3f1060073184182aa367d469d799be2909d1691220be2bd5aac116ff1",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc4_pressure_metadata_identity_connection.py": {
+      "current_sha256": "5a5e326054762ccbed69929f87268c1e86d2819531832388aa54e079657f98ea",
+      "historical_sha256": "aa3567082fda3a669ebca484555894150ad1dc650745d198c9e463089011d6bc",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc4_pressure_metadata_identity_connection_record.py": {
+      "current_sha256": "c9650c7e289bde39bcda906e9784b36cd9d9fa399e2731a487ae7bbaff8c16b6",
+      "historical_sha256": "fd6181ca6d124d772b1b60888e68f44b0eee78aa46fc3bdde6d6e80314337d7b",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc4_pressure_public_contract.py": {
+      "current_sha256": "fb2d69dc24aa2ca9862165144ddb8a55cb07f61076a1b189d8032d89f26cca48",
+      "historical_sha256": "98ebbb4b2a2f0703c5935aeb5a4e5ce8390250295ab44bea7f6036d8f5308cda",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_g1_balanced_crossover_qualification.py": {
+      "current_sha256": "2185d205e433cd13c20b8327d8e5be49feb12466ed56975bcea71a5d9d36b92a",
+      "historical_sha256": "611aa8e6dff2c45b35ed2c506266da584069d02855d156ec1c055b4c12bbc167",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_g1_consumer_recovery_record.py": {
+      "current_sha256": "69b9580f86178e3449da59e8e7ef35c37c9d77c478216e13f209c60f07b23b19",
+      "historical_sha256": "e2db01c7ca6402b28966476381db4dbb5b0a13be97afd8ea0151c5666af3356b",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_g1_cumulative_closure.py": {
+      "current_sha256": "abee3bc8f56481660110d565f25adb063d9f121ece499c952fbafd1adbfcfda1",
+      "historical_sha256": "d2a21defc201a6d5c0b81dbf301a53169fc4cada1eb0286ec9088c97651badfd",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_g1_cumulative_closure_record.py": {
+      "current_sha256": "77295554d28d0a03c2f8471c9fe9995680e8166ba629bdadf0a78c959ee907bd",
+      "historical_sha256": "2b6b67b8a12638ab0bd6092e19c23178f520b2ce144a765e03c96ca519e73034",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_g1_focused_performance_h100.py": {
+      "current_sha256": "56c8704844de19d15588cc2ecbb0ca1acea97306ae9fcb02ea6881f6c0edf271",
+      "historical_sha256": "7ba015c0e2927bb06c35f16d97755e3ef8f1cc027732cb6d59c644eead68d730",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_g1_focused_performance_recovery_record.py": {
+      "current_sha256": "d86b6a106b59855bfc952b1ded52ae987721083b6af21bb919bafa371af73ae8",
+      "historical_sha256": "581d85392ccc2c747feb944809e67222a11359970d10cdb873d26d35e1181cfa",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_g1_measurement_window_implementation.py": {
+      "current_sha256": "2894f2cb0735165df2bc88685553221250a39803a5dc38452503e595b20b90e7",
+      "historical_sha256": "ccd8194f7ff0bd3a0e96466f7e7eb655efc73cac9841c010a25d64f46abf3ad8",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_g1_measurement_window_implementation_record.py": {
+      "current_sha256": "1e7ee05979c24ad094ed5db5b10052180b3ee23e33b57993863b44ceebaa3719",
+      "historical_sha256": "1c01244e49b0f316fac6fd61009eec8639c152c884854814be2e35bab4bc00dc",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_g1_measurement_window_lifecycle_recovery_record.py": {
+      "current_sha256": "e04ecb02cfe1b3861f59573130671d5547b1f01c0f74272e81cf12e38f1b4147",
+      "historical_sha256": "2bd8849d9f58797badbd991bd3e6fff3cd41fc3627dc5fb3d9b202f84b2108ff",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_g1_paired_block_contract.py": {
+      "current_sha256": "958c44a37ce2137cb280411d542bed859bb323e4fb0dff56ef53492e4fbe7f7a",
+      "historical_sha256": "174fc2cd838f0432f41dd6de982777dc32220b4e035bd37027a08c6ec0997a82",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_g1_qualification_support_record.py": {
+      "current_sha256": "bed12b682102bf83ce1a04dac302c45a1df258a346da8af363dd9e3a5fb404cd",
+      "historical_sha256": "72760ad1b038ff6de7b175ea9e2fb88beccf74dcc6e405dd4724855775282015",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_g1_timing_instrumentation.py": {
+      "current_sha256": "05b993493ccc33c9c23979acdfef7804a57f2ee3722b7bb36ba6901150b716ef",
+      "historical_sha256": "9f6777c6bf7582e273d441e993cce3829d78451f934cc01fcb6705da9c443b74",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_g1_transform_window_recovery_record.py": {
+      "current_sha256": "99200b634f4d028d70c38b450797108f5744b55d40263201db7b205f5dda2838",
+      "historical_sha256": "248192e8cab466365309da6432bb40133d63b52447368c982c09f7ca25372e64",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation.py": {
+      "current_sha256": "9c1757a745e28f241c30bad8698fcca87c6c954f703afe9d86daf8e4320e6720",
+      "historical_sha256": "5536cc0fda3dcd3791cd345b63e11df834e7473bc3aeaa588b3750c0dbf3a4ff",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_r510_channel_checkpoint_observation_record.py": {
+      "current_sha256": "3eeb0687511012222e5a99ee824dff3a9288e64b37ba54c4eb18a60049bc8d00",
+      "historical_sha256": "e3b6cebc475de679db0074a42aed91db09908df9b43cc474bf0171e9023c5c22",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_r513_optional_hygiene.py": {
+      "current_sha256": "51a4ca48352c34f1d1ea4d73289dda509190c5e072e619ee9ad4334744a1eaf4",
+      "historical_sha256": "3b0552929812c501d2ebd4b9314eabed257b5abb888f3f5e5ffc22d31f1614ca",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_r513_optional_hygiene_record.py": {
+      "current_sha256": "e9e0e5c8f4381e5784146e845d8ee42c11a5a8da481ed7bf153b6de97baf32b1",
+      "historical_sha256": "fcabf84a693f473ca37b96a739bf38c77ef8cdcf16760e68e8bfac3bbde3e32a",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_r52_finite_workflow_record.py": {
+      "current_sha256": "41124a70dfcce23cd2a09691c9e2c56809e9f064060aa14f55c660504a678d2d",
+      "historical_sha256": "85d0a3c6915276005a20a466e0e56389f47e94b8674f4d23306002856ed93b5d",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_r52_finite_workflow_state.py": {
+      "current_sha256": "4371764eb0356f3389a7c170bd83421de644478677423c5dc0ebdca46ef530f1",
+      "historical_sha256": "92317c0265a2b6cb319e2733373c3d8b34d52659b21de3b8107b8bdba14fea2f",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_r53_channel_checkpoint_record.py": {
+      "current_sha256": "5fa2aeb902dd4ba17e71ba3d2f8fbafc8871c5c3d3dde056eea04dac13d73ca7",
+      "historical_sha256": "5a571ba049bbd4e17204d88b2928aecccd60ba0327c336a3f90aaa020da40d58",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_r53_legacy_channel_checkpoint.py": {
+      "current_sha256": "806338a280061cc7490d0b084e12de38d7ac9592863bfbc43049963699096a53",
+      "historical_sha256": "9240e35734ac5db9b786f962f04c4fe09fa4b1722da3818e37c8044a6dfc4b12",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_r56_public_error_boundary_record.py": {
+      "current_sha256": "aa2cbccd38b075dd348968903e99b820b96b7aa8bdcaabbb82690dab316ce5e6",
+      "historical_sha256": "5a21139289b2b625724546d8789ef081269c40e50282f96ad22eb65a73bd59d4",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_r57_device_normalization.py": {
+      "current_sha256": "3d1e640629a989c3934ca05538e5934b3ba9be916e3b049168f4a1746b55e06a",
+      "historical_sha256": "fc89099fdb0b131e7beac68f06fe56f0ad6479ed593b6af97e4afb5cfa97a06c",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc5_r57_device_normalization_record.py": {
+      "current_sha256": "3c92482a955f3bc8c021b43dabd7ffb3c09ca07c1451cbe6831365858d36178d",
+      "historical_sha256": "1c4b73cbf76cfe605caf541525b0da3d3710d266af5732f577ad67af67715916",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_2_pressure_floor_contract.py": {
+      "current_sha256": "4208ff2700dd7d84f7ee743e1232378b722a37fd1e41b580eb0323c686e55d61",
+      "historical_sha256": "1b862e98c66edcfc62d7e15418dfeca880073c0f328a370468cba767dd1131a8",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_2_pressure_floor_record.py": {
+      "current_sha256": "98d0e2c03f29354b00c8f6defd6aa92e0c020111ff83270fcfbddf99398768d7",
+      "historical_sha256": "be7ca62131f595afecd24fecc29b4820ec0c509d581b420bb6762a0851e981c5",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_4_channel_failure_record.py": {
+      "current_sha256": "e81fc16554f78c3a7169cffd06882ea5c801abe3b5fd4c00734d1ad356dfdcf5",
+      "historical_sha256": "724836c0d191f100282bc4e2e3a1f46749d00c159b5fb41b77456e0bb133f5e2",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_6_restart_output_atomicity_record.py": {
+      "current_sha256": "0f32314a9fc00278c9dfb35d66d59c1a09d6324a21c74027fbcc46af744a919b",
+      "historical_sha256": "c39f471f3091a67d4e812c042f59381260d387b5867d66d46c819cb7f62ffd87",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_checkpoint_work_root_correction_record.py": {
+      "current_sha256": "75c5635de7cfe797257a28cd61d627a39896ea2a67b47ae31be6bf151a578e93",
+      "historical_sha256": "c83a1ff3cd7644942b8c6af42149aebfcab7cb5173119af1c7032b8ab272f634",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_consumer_execution_rebind_correction_record.py": {
+      "current_sha256": "179f5ff1c3ec886d8ca45d5d6737f3e88913eeec163c77bfaed786055b2d7382",
+      "historical_sha256": "483287867230bdd2aebd97374113aa3517dc22054e6af92c7087693ce9999fa0",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_h100_stage_producer_record.py": {
+      "current_sha256": "911b1850ca9a0b56fa4199c60f1e15e552b1b390cd38809ad7ea396ad4997d73",
+      "historical_sha256": "1cd46cd0a86b1a8522e9b00303bd5243539cf954e5926fccbc3a55f43da148a2",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_h100_stage_producers.py": {
+      "current_sha256": "459be125d091dcd98fcefcd2be5df25a0ba0b4f2762a71fef275f167a22d85e5",
+      "historical_sha256": "2981d89c32ac54f159fb0f10de9f546959f61958a497146ee10a5c67a8dde640",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_nvcc_bootstrap_recovery_record.py": {
+      "current_sha256": "ef4173add68a9cc31f2493f403e52879a0df8df57c27cc51d1e31de2f192021f",
+      "historical_sha256": "4d47f3270306109e2d021f41aab7f40dea0d36ff91fbb7740c2758761db63260",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_pressure_smoke_contract_correction_record.py": {
+      "current_sha256": "c29d019a343c17709ca5bd7759303ecd696d35a4551243d6e6c57d7f7bb19cad",
+      "historical_sha256": "1ea80214985b3dd0079716f51880505780a0cf36641a6ab0fd087f22ff88aa70",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_profile_child_tf32_recovery_record.py": {
+      "current_sha256": "71e6add651be144e99d7d9296a4d5bb087e6ddb27d7fa2f9e75a6728dd81c5fd",
+      "historical_sha256": "1c80fe3061c3da1102658f16af67c99173f4d6d29cd21161e07a7e8c8a73087e",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_qualification_support.py": {
+      "current_sha256": "c76011552e6369a3f47a72ec32ec22e6dfd93e8879a864f45e4fa9c91dcba076",
+      "historical_sha256": "7f8bec4b1da42b3937e89cfe52de377b155f2ecf6df186766dfad3ab6db81829",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_qualification_support_record.py": {
+      "current_sha256": "9c72737e9a30ff340c559a9167c7513fd1e6cf36004d4dcdc38fb2f106fa242f",
+      "historical_sha256": "3d771ac2f470d706151e0b89388d719bc1b117ecbd658bbf959a10d945629222",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_rc6_rc64_channel_failure_contract.py": {
+      "current_sha256": "3658fff76d273b412cd2f5f1b3a08f10b6de9d7107defe5b5dd8e302066a693b",
+      "historical_sha256": "d008929b56693c01d8b7d29b4f84121dae133c889c6baeef43148788f3f0fc39",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_release_v0_2.py": {
+      "current_sha256": "6bd96a4e430805a89d281309f7012902939ad861056749f91ec7a85d424f241d",
+      "historical_sha256": "451cc0e7876e406632c8b2a45083f43ccfe39bb9ae25fc659189dc5a2234044b",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_release_v0_2_rc5.py": {
+      "current_sha256": "fc2d3d4f0448ec101334992ab54fdea3f7091bc7e6f13b9b8fc2a9b29d19b4ab",
+      "historical_sha256": "4d03e23dd42d872e6cbde8c2ab0ef722b41db1a687a7b2d1b721d01b9055eb73",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_release_v0_2_rc6.py": {
+      "current_sha256": "ea07cf88b27541dc7c503669d67f2d66e4891d79f3241bbae8b1e85dd3baf4b1",
+      "historical_sha256": "6064b81a217446c792e1f0159999df904e5b4dab9299fd94e1ce0baabf5bb634",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_2_0_checkpoint_fixtures.py": {
+      "current_sha256": "99411f04f400306bc71fdc3b3343556a27f26f22037022fa1466bf1c0749d354",
+      "historical_sha256": "d72aae7a703da93f2894bf18cdd00f1101c3b1ffa00ed0ce385c68d29ebaab01",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_3_s03_exception_compatibility.py": {
+      "current_sha256": "04665df6fb13dc913d4925ec6abbfe87400f2fd10557b2d7784a81cb0461657b",
+      "historical_sha256": "579a518f25274d61a7e3a9b3204b8974dd2e14ee10045f526cd3cc7e5f5245e2",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_3_s03_public_errors_metadata_record.py": {
+      "current_sha256": "9b61f21a4e40e7b680af66091b79b60aa04063cad94fdb9a24ac7dd8137e92bb",
+      "historical_sha256": "2c83f6ba06c94479de339d0f4c787971ffd3a245263a8449d6727d21fa8a88af",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_3_s03_rework_record.py": {
+      "current_sha256": "fe63334a016f7df404b61feb1718bdd9ecbeea6d996fe7c0c57b809328331196",
+      "historical_sha256": "dc1bd055e59dab849062fd0fd5064fef56d4148d640e76abea435447cfaffe65",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_3_s05_checkpoint_metadata_integrity.py": {
+      "current_sha256": "b724db921bcb7659491106f05d33b20fb31153dd5368926741b2cea65305f85e",
+      "historical_sha256": "c4791985655e59f8b9681aebe0b941231b0a26041cf72bfd40af195a6ac3e94d",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_3_s05_checkpoint_metadata_integrity_record.py": {
+      "current_sha256": "dcb097ca300996b1615c0b44529403d32f94dbd2dd016666fb1e79c79db22c24",
+      "historical_sha256": "eddcc240457a65edaf182b9400cd4d5da23c52b580bf4b2408c8c68342774b36",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_3_s07_packaging_metadata_docs_record.py": {
+      "current_sha256": "8337954f3cf3c707a471145b6cf440debc287d780ad8b596eb60a33ebb4dd0da",
+      "historical_sha256": "8470b89dfb1dbdd9eb66a2011d5d862f8415860c7e1640e3c7d166bfbf8628de",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_3_s07_public_compilation_real_paths.py": {
+      "current_sha256": "610394f2d73ceaa5e4dfee7e70249d2ca9537baed03233d4e25a8c24fdfad4e1",
+      "historical_sha256": "518738c69adbc131720845fa27a4b50d4575d5d27e54eb51a7b27ae04c6b4ca3",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_3_s07_rework_candidate_record.py": {
+      "current_sha256": "c7f6ed54a8a3111871bc98b068aa2a8ee0e01aaef4d63c0620afe1ea6b092dcb",
+      "historical_sha256": "466dac31f7a40cb05f56da77233fde62edd6b2e66515d5b4196c8a38b6ec8a76",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_3_s08_historical_cpu_coverage.py": {
+      "current_sha256": "352b30f596aa5c59d4d157acc1005769d9eef44191223f500fa1d73489516e71",
+      "historical_sha256": "e3955e6d54407b3e32745549fd595305b278af41e1fd87f1e8b27389c7d3713c",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_3_s09_ap_cache_diagnostic.py": {
+      "current_sha256": "69911c2247ab46e32523cb2b0bdc9d8bfdc7e40c54ff971e8a89d02a3938d619",
+      "historical_sha256": "fa96b6e5dd85f9731cc93484dd956ae616af92ae4df98d6bbd7591fed45ebe6e",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_3_s09_h100_support.py": {
+      "current_sha256": "006cd0847fdae54a7658fd82170115d89ce9460cf7c8cda739730ab1cd0f9490",
+      "historical_sha256": "79bbfbe54615af5f6a118e6109abdf150f1c1ebaa4b7c150cb52e00bcba775c4",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_3_s09_r0029_rework.py": {
+      "current_sha256": "5a567456e05eea3435a26a71a8360c0e2af04108348191e6b13029e014d30407",
+      "historical_sha256": "30b1f116109c36283046976cae4e863b47d040e76c33264c0cd83f62ee902bd3",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_3_s10_final_cleanup.py": {
+      "current_sha256": "c7164ed9b7456c86e26f343120dc9aa9046a57fe3a616ed29be3625abb62deee",
+      "historical_sha256": "9f178be98b9dc063d122db0bae8d1db6a7bc6ffd7e4b9068be48d75a18130645",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_4_s16_r0043_rework.py": {
+      "current_sha256": "19bae015a95e420b0644d827e78aac33a584a5c96a0082ec6ee1bbd91992ce5b",
+      "historical_sha256": "f6b4fa44d5cf753d53196f5a17cf8a90a7bfe30e298bdb79cd99bfa75db9d711",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_4_s17_r3_r6_implementation.py": {
+      "current_sha256": "e9ad9222e537da0a866d0dc2c76dba6847f1fd52a105342157cc17bf738563ba",
+      "historical_sha256": "cd9939d40e0c90c4589d3fe540b57dacf56383dd5b2280a7a33c5ceb0b2a8e81",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_4_s18_r0052_scope_rework.py": {
+      "current_sha256": "94d64a0addac91cd34d48343dda9e58ec951254165903bc95202c5dfd2a4d1a5",
+      "historical_sha256": "c2750382115eb93d1f1146469a64f21120c3f03cbacd1e3fd5c8e53551b4ca22",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_4_s18_r1_dispatch.py": {
+      "current_sha256": "0d90555b7bf462581caf117c00352fe4043f7fe659318541ff8fd3590c9c0aa2",
+      "historical_sha256": "fc91232360dc647ed3ddd1598d0febc345396576d33fffaf8b48e6b20ada4010",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_4_s18_r1_shadow_registry.py": {
+      "current_sha256": "94a46a65f1200ba0e37b0bdc1db5b4e8143434116bc42783542b215080f0864c",
+      "historical_sha256": "fb28eb3009ff6abc5ea571bee94d51c8916032b2b71cec5ab9c8ef9bf5914693",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_4_s18_r2_checkpoint_artifacts.py": {
+      "current_sha256": "1a94d5969eb4a69ec35cf05db968fdd2ff4214fd308a179aa0c751ad4bd34899",
+      "historical_sha256": "b1fae410df5d58d263b5d30ebc472251c2240b5f06271ab3bf2fcd2a5765f846",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_4_s18_r2_r4_r5_r1_design_proposal.py": {
+      "current_sha256": "52219c78e254d1ebbe321e40bf455eed1608c35fbd036acfcff14f844196c6ac",
+      "historical_sha256": "c9afabfaa179912425da4276e61a308ab027d1bba68e3b99556c58ee8f878af4",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_4_s18_r2_successor_95.py": {
+      "current_sha256": "1364198aa4314b2219b503d39a56d374189ad1b29b14d231cbddeb4cb88dd9af",
+      "historical_sha256": "7f15ea363005950851f67d24903f7fd48b78b2957c4021d847a01c3600ea033e",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_4_s18_r4_successor_97.py": {
+      "current_sha256": "cf241176d5d97540c69a3c93e3a30222d892cbc70c774e411a0f12ed148705da",
+      "historical_sha256": "c0a84ba4bb07cf8d7d69a97b70e3b89007b60f4a7e89824d00bba0872b464323",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_4_s18_r5_successor_105.py": {
+      "current_sha256": "a57e71d6180e21872381931b6138925c97a68ed5f092f72b05d3cda7e586b187",
+      "historical_sha256": "10180374e509b0744bfdeb15ff511920cb37e9aaeb75e803b1ea57ebf0aeba3c",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tests/test_v0_4_s19_self_compare.py": {
+      "current_sha256": "df09c671144ed13e2673198cacf0ce0e1dd121bdcdf70cb448d535d7c655aee0",
+      "historical_sha256": "7f86da700a95659aa5ce874b5b143a5e4e1bbe014342f0c7f082017e499f91ea",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    },
+    "tools/check.py": {
+      "current_sha256": "5462e7e4df1a6dbc81228e8af3636034a959d3b26c6ec7b6a2ed0532dc11ee18",
+      "historical_sha256": "ae39e0bb327abd6869cf75ec4b773bb9fc6073ae58587150a51352ee9d46f1ab",
+      "reason": "S-24 reviewed retirement, retained-contract split, or forward evidence binding."
+    }
+  },
+  "introduced_sources": {
+    "notes/PSSolver_v0_3_0_s03_successor_141_s24_retirement_zh.md": "4cc067e30e3848ce4727defc846dbb53409153bf373d5e26581d15611894c224",
+    "pssolver/io/_retired_checkpoint.py": "e92d197eac04df7058b13b2e3215d4335babbac22a6fd539d95981cc2a03ca41",
+    "pssolver/linear_solvers/stokes/_pressure_policy.py": "df531728bbbb66f0388464356e477094e528a9d040a171bc2ecc4e168a001e7b",
+    "qualification/_legacy_imports.py": "504a88ab2c0a35ff4369131a25decf2bdffa843c97dbbc174448dc2585f591f0",
+    "qualification/generate_s24_retired_fixtures.py": "49060a6dbd3be140d7d90a366d26cb43e54bd00804517f47e045e0e9e369c7c7",
+    "qualification/historical_stage_audit.py": "07c076142c3137d7e1d604e792133e9c8df5ebd409bb74ceb36d5ebdf93d6dcc",
+    "qualification/historical_stage_tests.json": "6776d8d64072fb5282a436890bf757f096cf89d0c896d40cd7a3a642ebff3530",
+    "qualification/identity/retained_v020_fixtures.py": "1c184753764da04e239c34922fcd71318f6fc0322ad15f08079fde4c75366381",
+    "qualification/run.py": "01b23ede6910efdb3ece6dc00340c014662a7176f8def94098195ba77d003fba",
+    "qualification/s24_consumers.json": "170eba4f25044263ab7805fa409f54362d678c14859296149a9cb954d126a665",
+    "qualification/s24_deleted_sources.json": "30b3ff47494bba23a2bce86da895f52885d946bbf8ef65bc81a4443abe2de9b6",
+    "qualification/s24_frozen_sources.json": "843ea5416324f7df638e8c5bfcdad8d665465d5b6a0e046e051b8c4b948b1d41",
+    "qualification/s24_retired_modules.json": "c62aaf1587615dbd365b0867f37fe9c562bb03a877b9eaece4a10e500efcc788",
+    "qualification/s24_test_disposition.json": "7876514a8336c652c42bade47a8b8c9ec0c19a56a9c20c393ece40ac9c48b850",
+    "qualification/stages/README.md": "0e5d72058647595915fb04eb4e2b4ba48a9c9c100663b26bddd060e76a4892c5",
+    "qualification/stages/h100_shadow_qualification.py": "45ab5edd94f0fd2941f0f7586058e739b13d4555f84de298b0d84bf5ef12a78e",
+    "qualification/stages/manifest.json": "a40cad281deb1b0bf736cfd2287baba59f619c6c2165473c1780c63f7b28ed62",
+    "qualification/stages/stage_m_plan.py": "44e126a9b2579028b65be5b703bf97f893ffe6b4ea31ff49c69b2e60478546a6",
+    "qualification/stages/stage_n1_plan.py": "a6f213b55b61896d7911c247e77491eca4afd79acfcfb1de5d4a5c19ccebdc9d",
+    "qualification/stages/stage_n1_qualification.py": "08d2258f8ede0903efdcc0e9c871e46b86ca5376a6d92e03092bc6f0a80f94da",
+    "qualification/stages/stage_n2_plan.py": "bb866a665c0498377a2f84b10a71bead863cc31d4985168047299899953ef2d2",
+    "qualification/stages/stage_n2_qualification.py": "b1864fb88a27604818eccc5b8eb7daff890de2fb25650de9c6e9fad9bc07eaea",
+    "qualification/stages/stage_n3_plan.py": "f28a79dbe899113dee094fb9a803a0a75332bcc78329f56d7de84003e020eb8a",
+    "qualification/stages/stage_n3_qualification.py": "42eaf8fdb110bc713bbeaece9d5429dd88ec6f378ff744dfd74fd7c0b55621ce",
+    "qualification/stages/stage_n4_plan.py": "ece31db98cdb2bde2444bf0080c718b76f4955cc5761d8079689b96fb9848630",
+    "qualification/stages/stage_n4_qualification.py": "56b262ea215967e1b412d50b1aaf959bb22260fea56b2ee9105946581b483a7c",
+    "qualification/stages/stage_n_diagnostics.py": "d9d475c44f9d1ffea3e09d5040ba77542bf6f612a8c8710a48a0908a2dfc44c2",
+    "qualification/stages/stage_n_plan.py": "d171421495f1ac2e987face0d7d3639765e5b44ebcf32f9df4a4d73c53a10749",
+    "qualification/stages/stage_o41_plan.py": "45fff2dd15d4597a7faa1e99844162bb7288607d8cb09164841cde1a13bb4f77",
+    "qualification/stages/stage_o41_qualification.py": "58989b0570e981ba7fbaf12089307450c9ea52e689fe1ad6a479f48257de41c8",
+    "qualification/stages/stage_o42_diagnostics.py": "9e83078898ec8932d3cf48c51917979d0932301029d667368c1dfe3e36dc5b17",
+    "qualification/stages/stage_o42_plan.py": "39438af7926914f77f1656e03e894b60f8f508355e0ae2bae609b20a74428d28",
+    "qualification/stages/stage_o431_plan.py": "3c64afab9f4a2b2a91a2690703acfdc2ccb3ab7b1c135630c08f36aeaf1bbf6f",
+    "qualification/stages/stage_o433_plan.py": "ceda0da3ec338ae166aaa4949f2e9e2cee5bf58e422bb94c31e04af17082f6ba",
+    "qualification/stages/stage_o434_diagnostics.py": "11c1926eb7b1b2ccfe7d78317fca349fdb13113a9892b5dd9a9b1aebe60e058c",
+    "qualification/stages/stage_o434_plan.py": "b156af0b4cf1dbb9bab3e18df19455e346c93fff85dd84fa95a326826dfab56c",
+    "qualification/stages/stage_o43_plan.py": "ada1b22ae907e5a0d1aff71ed79df2f61e00db22fc164a296c579e5ca3d9acc1",
+    "qualification/stages/stage_o43_qualification.py": "13164b634b8f8e8f8367026f531b7d1ac862fbf8c10c71690ffe587363fb8ddc",
+    "qualification/stages/stage_o4_plan.py": "aadd3233a297e6c13e92dcf580352c1a0442dd8394bb47dae071cdbce3414e37",
+    "qualification/stages/stage_o4_qualification.py": "110797a489860def0674ca2711df2f4e224c34e77428579f9318cddde0c91549",
+    "qualification/stages/stage_o_closure.py": "c6bc940213c8a38a26144434dd3c8cce54319f4abe96ae3966066352bfb47746",
+    "qualification/stages/stage_o_migration.py": "d971bc59f0aec244abbf55c12f55ad601e74fe3f355a924c25b728db0d2cdbe2",
+    "qualification/stages/stage_p_diagnostics.py": "f910cde1d0a732681ba33260cd22dfc94ea411bac1ef849fe14fbaf40893b30f",
+    "qualification/stages/stage_p_plan.py": "0485c1c8a325e4505256401d8fe634411a38ff8c1ba27fe519f34739cccdb313",
+    "qualification/stages/stage_q2_diagnostics.py": "ee4300be02f5b9704f08ac4e9baeb8bc78313597d1e3df0c0f4b03014bb9fd2d",
+    "qualification/stages/stage_q3_diagnostics.py": "f350d735b1695d0206ed6ba086506c1d08fb6b7901cbb9ed51e90e5c15c168e0",
+    "qualification/stages/stage_q4_plan.py": "2dec2c59778a4727a3d7d188f674ad9fb8794c2252760f4a7a113d2c3450b73a",
+    "qualification/stages/stage_q4_qualification.py": "4f60d37ced81bf91d1786dedb9a1880fa80716a32e24dc24db7f651107aa3ef2",
+    "qualification/stages/stage_q5_diagnostics.py": "fc58d210efc58be95b0a3d804de3a135ac16abd78dab6f5812b40bc801fef46d",
+    "qualification/stages/stage_q61_design.py": "70aa7ec7efdabef7f5ab038f688fc068c41eed21c69b1db59e04dd6b04d57220",
+    "qualification/stages/stage_q6_diagnostics.py": "1db11842914e260eb1d0a34c2ae88e998ac6d58bfde7b3ab2e35916168a0994a",
+    "tests/fixtures/v0_4_0_s24_retired/README.md": "738fc8bbcb7e5db452397a8495d464e31bf372834509d143be3ebf2db5f7a0ed",
+    "tests/fixtures/v0_4_0_s24_retired/private_lifting/checkpoint.json": "1263094dab60e6d5b39bd06eeef7050481ca689d7616b0b5deb0cd25b29f6ce3",
+    "tests/fixtures/v0_4_0_s24_retired/private_lifting/evolved_spatial__Qxx.npy": "1ef686c21f04f0fca3c2c8e8c3df075e7a84a0e5edfbef552a67f9ace38f8643",
+    "tests/fixtures/v0_4_0_s24_retired/private_lifting/evolved_spatial__Qxy.npy": "5eb28f33d9b77412e3df3a5c887eb3ee49cf80628eaaeb2dc7b106396f8c7a87",
+    "tests/fixtures/v0_4_0_s24_retired/private_lifting/evolved_spatial__Qxz.npy": "6743182ca49d042ac631b71a2a8f041d09ea3f701236eb93287b441c08fcf72e",
+    "tests/fixtures/v0_4_0_s24_retired/private_lifting/evolved_spatial__Qyy.npy": "f18c3ed8cbd57ac23aae94a7bde0a674adac43122117f19736167cc772038091",
+    "tests/fixtures/v0_4_0_s24_retired/private_lifting/evolved_spatial__Qyz.npy": "beb050b721111cc2667925e586cc90c07f1c5dec75720a263dc43ff13eaa546e",
+    "tests/fixtures/v0_4_0_s24_retired/private_lifting/evolved_spectral__Qxx.npy": "3e70fdacc409a8ffd30afaeee33d1004507dd4b2018fdddb79015e365136fc5a",
+    "tests/fixtures/v0_4_0_s24_retired/private_lifting/evolved_spectral__Qxy.npy": "0d6c42c965d89159e70099469da337a57c6c25d30f06a39cc66507fb9bd88439",
+    "tests/fixtures/v0_4_0_s24_retired/private_lifting/evolved_spectral__Qxz.npy": "eb54d0c36b700deb2e8e238081db4a3d44e8616b1759c166be60d80d2203e743",
+    "tests/fixtures/v0_4_0_s24_retired/private_lifting/evolved_spectral__Qyy.npy": "eded9890959a2f33e400ee4693083a5913090ceee51d783d444044b344dd7e8e",
+    "tests/fixtures/v0_4_0_s24_retired/private_lifting/evolved_spectral__Qyz.npy": "ba3e3a7f0b429dc80dea57eb13c0155b39d369892b03d0ba8647532b8d5e8f49",
+    "tests/fixtures/v0_4_0_s24_retired/separated_canary/checkpoint.json": "8cb2d22c6ce0bc38ee5730a843ac5df8dd64b65965ebe74feec199308d5add52",
+    "tests/fixtures/v0_4_0_s24_retired/separated_canary/evolved_spatial__Qxx.npy": "c540226d6da0e54958d3b30f03b2d8ec6cba7e256968336a28d579b04de0ed0e",
+    "tests/fixtures/v0_4_0_s24_retired/separated_canary/evolved_spatial__Qxy.npy": "c04451456092f2bf4622d2398eb691b9bd298b0911f54a3f06b7b11957547219",
+    "tests/fixtures/v0_4_0_s24_retired/separated_canary/evolved_spatial__Qxz.npy": "925ecc9690278955e7ac98ad7afcb40c5711c44a7cbd10fdd6c03deee33f8221",
+    "tests/fixtures/v0_4_0_s24_retired/separated_canary/evolved_spatial__Qyy.npy": "0cf092f2b0e16bdf5fe6fcc45a22a181c29395b6a6638fb5d47e024e6c97aac3",
+    "tests/fixtures/v0_4_0_s24_retired/separated_canary/evolved_spatial__Qyz.npy": "e38584ad6ac4a0a70e59c7dd68584ecbe054f9e115965625ebdf13faed4f0d8e",
+    "tests/fixtures/v0_4_0_s24_retired/separated_canary/evolved_spectral__Qxx.npy": "be774b97e3edc075f09e8444150c86bf712ecf193da3756c276fb468033fe64a",
+    "tests/fixtures/v0_4_0_s24_retired/separated_canary/evolved_spectral__Qxy.npy": "b17178882ae8ecb8f15b38340184950430a62fccf4ffb7a3477da3b78f569e66",
+    "tests/fixtures/v0_4_0_s24_retired/separated_canary/evolved_spectral__Qxz.npy": "666f82d14e1bd4f27a7b5d2c2de8cde2e3d8ca8359bc034c960931d49cc309d3",
+    "tests/fixtures/v0_4_0_s24_retired/separated_canary/evolved_spectral__Qyy.npy": "806705713bcc0b2e0317bcaf32fd2efcbaf5dfc592c5396ce0d21362c8414c31",
+    "tests/fixtures/v0_4_0_s24_retired/separated_canary/evolved_spectral__Qyz.npy": "a44481bd14f79a1243e4947dd3eaec46a5c280b724cfc79184a0c3007671800d",
+    "tests/test_cuda_memory_contract.py": "7a63fed7aeaa46e523475dce30c4939d626700f0ea95a5340ae23293ce2adfd6",
+    "tests/test_v0_5_s24_historical_stages.py": "3012f26e607331ba4e24a672f57cd47eeeaf00a5935b977d43faa07178b55037",
+    "tests/test_v0_5_s24_retirement.py": "3726476e748acc06d8d6e88b0441516ecd76e1ce2afcf6e8df7c74fa6fa6ea4b",
+    "tests/test_v0_5_s24_successor.py": "85469c279b7f9b33e2e85731bc1ed02b6deb8d4299da3758ddccc1b2a1a13e8b",
+    "tests/v0_5_s24_registry_reference.py": "8e3b7321b232a85f1a9ede40d3e030eeabebd510b60b5a8b52f40868c6310348"
+  },
+  "plan_step": "S-24",
+  "retired_sources": {
+    "pssolver/applications/channel_active_nematics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "77e2d74a21da73cc2e37ddbdc93ef084b8cc21159828a18ed92c97fd1fb33171"
+    },
+    "pssolver/channel.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "dbb466c529bddfa5df125b9fb3c94a3ea6bf30c8df2d09cfcc0265632b6c951c"
+    },
+    "pssolver/configuration/channel_active_nematics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "c0e7064de9db68006a525cd69be429c47af48991ce56ec9e55e631ce54456204"
+    },
+    "pssolver/configuration/channel_active_nematics_declarations.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "dca15380610bfa084c8a2c150315d93d40b082e033d5bb8bb8b5750ae3da5336"
+    },
+    "pssolver/configuration/public_channel_simulation_compiler.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "017b453bff3f0c79a151f8cb0cc03bde5f0047ec121efbe61a6d7912fa7622b4"
+    },
+    "pssolver/experimental/_shadow_support.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "be6ddb9ae402c4d624d0543e229745990a81f9fc7cf1fab20e1ce3a2eae1e527"
+    },
+    "pssolver/experimental/beris_edwards.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "c0d7dc42d2a9ac91ad5c2dad471ff0d3a0d27d971bee168e1fdfb6ecfe234f9b"
+    },
+    "pssolver/experimental/canary_algebraic.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "b63e42c4527ee9ed375e4ab4842d397fd660a40a569b203fe08d35cbfce873dd"
+    },
+    "pssolver/experimental/channel_compiled_v2.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "7a265f20aa9b531c86b099bb5fc1b17c856f0cbfb04ec7212296a330cc822655"
+    },
+    "pssolver/experimental/checkpointing.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "644ca80e9d711a3048531ca9f96129e364a76ebb4b71626cb54c3dcfd5e3deb4"
+    },
+    "pssolver/experimental/h100_shadow_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "45ab5edd94f0fd2941f0f7586058e739b13d4555f84de298b0d84bf5ef12a78e"
+    },
+    "pssolver/experimental/integrators.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "8b68cb89a4242c30d178bf6e9e83d96b261b3e112bd931864c0c7d380da3c024"
+    },
+    "pssolver/experimental/legacy_assembly.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "d4c8a378408755e6b8d1bc9c6bc82fdc2534ddabd6442160c8981bc42fa3307a"
+    },
+    "pssolver/experimental/model_execution.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "e5967486ac744b89f4dfad6d67b311b572d353785cfc9bbe8e2e75fb428a3d8f"
+    },
+    "pssolver/experimental/performance.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "df9060fee654505b0dd2ebadd820c9482b03e999c09b4f9a5ab720e875a75407"
+    },
+    "pssolver/experimental/plane_shadow_driver.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "1097163a274de2b85199e78a90db6ec9d9084ebd1e613868428a3c70e0c00c69"
+    },
+    "pssolver/experimental/producer_packing.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "20230bcab8a117896336030abb68eaa8b4d4ca15616b813abd1ab8af9b1f22b0"
+    },
+    "pssolver/experimental/projected_scheduler.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "0c74da34d4eeac230fb7775799119161744cf30d05f3ea9ac238068c73424dba"
+    },
+    "pssolver/experimental/shadow_comparison.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "0a8ca5cf9afe2b0fb776a3e8542a7ba023d1e4ec8a93c3ad681accaf0c1d0c9d"
+    },
+    "pssolver/experimental/shadow_metadata.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "493729eda28e2fb48bfa1bc75baa9d8bfefaea2a0860f49ec69a4265b1db033c"
+    },
+    "pssolver/experimental/shadow_run.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "1b3b4563084ad20774de09d30157133aa697a300256852e23cc2abea02afa5f0"
+    },
+    "pssolver/experimental/stage_m_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "44e126a9b2579028b65be5b703bf97f893ffe6b4ea31ff49c69b2e60478546a6"
+    },
+    "pssolver/experimental/stage_n1_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "a6f213b55b61896d7911c247e77491eca4afd79acfcfb1de5d4a5c19ccebdc9d"
+    },
+    "pssolver/experimental/stage_n1_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "08d2258f8ede0903efdcc0e9c871e46b86ca5376a6d92e03092bc6f0a80f94da"
+    },
+    "pssolver/experimental/stage_n2_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "bb866a665c0498377a2f84b10a71bead863cc31d4985168047299899953ef2d2"
+    },
+    "pssolver/experimental/stage_n2_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "b1864fb88a27604818eccc5b8eb7daff890de2fb25650de9c6e9fad9bc07eaea"
+    },
+    "pssolver/experimental/stage_n3_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "f28a79dbe899113dee094fb9a803a0a75332bcc78329f56d7de84003e020eb8a"
+    },
+    "pssolver/experimental/stage_n3_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "42eaf8fdb110bc713bbeaece9d5429dd88ec6f378ff744dfd74fd7c0b55621ce"
+    },
+    "pssolver/experimental/stage_n4_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "ece31db98cdb2bde2444bf0080c718b76f4955cc5761d8079689b96fb9848630"
+    },
+    "pssolver/experimental/stage_n4_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "56b262ea215967e1b412d50b1aaf959bb22260fea56b2ee9105946581b483a7c"
+    },
+    "pssolver/experimental/stage_n_diagnostics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "d9d475c44f9d1ffea3e09d5040ba77542bf6f612a8c8710a48a0908a2dfc44c2"
+    },
+    "pssolver/experimental/stage_n_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "d171421495f1ac2e987face0d7d3639765e5b44ebcf32f9df4a4d73c53a10749"
+    },
+    "pssolver/experimental/stage_o41_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "45fff2dd15d4597a7faa1e99844162bb7288607d8cb09164841cde1a13bb4f77"
+    },
+    "pssolver/experimental/stage_o41_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "58989b0570e981ba7fbaf12089307450c9ea52e689fe1ad6a479f48257de41c8"
+    },
+    "pssolver/experimental/stage_o42_diagnostics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "9e83078898ec8932d3cf48c51917979d0932301029d667368c1dfe3e36dc5b17"
+    },
+    "pssolver/experimental/stage_o42_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "39438af7926914f77f1656e03e894b60f8f508355e0ae2bae609b20a74428d28"
+    },
+    "pssolver/experimental/stage_o431_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "3c64afab9f4a2b2a91a2690703acfdc2ccb3ab7b1c135630c08f36aeaf1bbf6f"
+    },
+    "pssolver/experimental/stage_o433_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "ceda0da3ec338ae166aaa4949f2e9e2cee5bf58e422bb94c31e04af17082f6ba"
+    },
+    "pssolver/experimental/stage_o434_diagnostics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "11c1926eb7b1b2ccfe7d78317fca349fdb13113a9892b5dd9a9b1aebe60e058c"
+    },
+    "pssolver/experimental/stage_o434_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "b156af0b4cf1dbb9bab3e18df19455e346c93fff85dd84fa95a326826dfab56c"
+    },
+    "pssolver/experimental/stage_o43_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "ada1b22ae907e5a0d1aff71ed79df2f61e00db22fc164a296c579e5ca3d9acc1"
+    },
+    "pssolver/experimental/stage_o43_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "13164b634b8f8e8f8367026f531b7d1ac862fbf8c10c71690ffe587363fb8ddc"
+    },
+    "pssolver/experimental/stage_o4_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "aadd3233a297e6c13e92dcf580352c1a0442dd8394bb47dae071cdbce3414e37"
+    },
+    "pssolver/experimental/stage_o4_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "110797a489860def0674ca2711df2f4e224c34e77428579f9318cddde0c91549"
+    },
+    "pssolver/experimental/stage_o_closure.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "c6bc940213c8a38a26144434dd3c8cce54319f4abe96ae3966066352bfb47746"
+    },
+    "pssolver/experimental/stage_o_migration.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "d971bc59f0aec244abbf55c12f55ad601e74fe3f355a924c25b728db0d2cdbe2"
+    },
+    "pssolver/experimental/stage_p_diagnostics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "f910cde1d0a732681ba33260cd22dfc94ea411bac1ef849fe14fbaf40893b30f"
+    },
+    "pssolver/experimental/stage_p_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "0485c1c8a325e4505256401d8fe634411a38ff8c1ba27fe519f34739cccdb313"
+    },
+    "pssolver/experimental/stage_q2_diagnostics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "ee4300be02f5b9704f08ac4e9baeb8bc78313597d1e3df0c0f4b03014bb9fd2d"
+    },
+    "pssolver/experimental/stage_q3_diagnostics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "f350d735b1695d0206ed6ba086506c1d08fb6b7901cbb9ed51e90e5c15c168e0"
+    },
+    "pssolver/experimental/stage_q4_plan.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "2dec2c59778a4727a3d7d188f674ad9fb8794c2252760f4a7a113d2c3450b73a"
+    },
+    "pssolver/experimental/stage_q4_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "4f60d37ced81bf91d1786dedb9a1880fa80716a32e24dc24db7f651107aa3ef2"
+    },
+    "pssolver/experimental/stage_q5_diagnostics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "fc58d210efc58be95b0a3d804de3a135ac16abd78dab6f5812b40bc801fef46d"
+    },
+    "pssolver/experimental/stage_q61_design.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "70aa7ec7efdabef7f5ab038f688fc068c41eed21c69b1db59e04dd6b04d57220"
+    },
+    "pssolver/experimental/stage_q6_diagnostics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "1db11842914e260eb1d0a34c2ae88e998ac6d58bfde7b3ab2e35916168a0994a"
+    },
+    "pssolver/experimental/stokes.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "d9d3b0c7b2b97074cf8ba866d9c5b96e5a48771a8d765db60bc941dcb991b20a"
+    },
+    "pssolver/planning/channel_compiled_v2.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "475ffed9716962e2fbc4db90e6ed745115221e21ad9b0f6a4e2d200701daa15f"
+    },
+    "pssolver/runtime/channel_active_nematics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "195bf196f384426517e4e3655f011c5cd818744bc0363e399033d733d9dd8775"
+    },
+    "pssolver/runtime/channel_application_bridge.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "6e49ea2acf575a89846a1bbf6cdbfe67411409becf3066b2510bc42784d85d3a"
+    },
+    "pssolver/workflows/channel_active_nematics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "c14d88325c8978464040e65055989d8b6bad70b486899d6d21e44437986c0743"
+    },
+    "pssolver/workflows/channel_checkpoint.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "b3d5165046907e1c8a6e392bc95f65da587fc10dcf1d9a3b722d3a4a8667892a"
+    },
+    "pssolver/workflows/channel_observation.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "21c5fff6b7bd4ec26b278d9e68381bef322c064e4bb5003def9b31781de27547"
+    },
+    "tests/test_architecture_stage_m.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "76f48db6bec2bc483b4a928761ad711b287aedc1c0beca27c1f6478c1be46103"
+    },
+    "tests/test_architecture_stage_n.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "43d13ead071ef689239425b1e78c826a83640b04ce525a4a54fe2494e8ceda07"
+    },
+    "tests/test_architecture_stage_o.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "6212c8819ce92b3f6624556c089a18d2962f9ba38629295ddf4564ecbf3d958a"
+    },
+    "tests/test_architecture_stage_o4.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "25e5debc884485fe8c8bd63c7aabc2ae0cdff70353483e5b16d15954c0b17959"
+    },
+    "tests/test_architecture_stage_o41.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "08597a853f70cf7ed7b52d3b4ff8a1313a299e8b853aba1021433c5b8efabfd2"
+    },
+    "tests/test_architecture_stage_o42.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "fd40c0a96c5ff8b9c97800461fdb278b72cadb79ba87d2b499ced193ddc24e73"
+    },
+    "tests/test_architecture_stage_o_closure.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "c0ba9a0420222c1178da0d39f2ec9eb66a438e8091e4ffac67203014e6778e8d"
+    },
+    "tests/test_architecture_stage_p.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "24d4244ad2c2dcfcbafa82b89ab3c67071c6f91c8491e963f3d13bcc0eb8cb32"
+    },
+    "tests/test_architecture_stage_q2.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "b54ab460d1b38d449630f42c7adf89a3498bb1b998141e1bd02e041fc7f57404"
+    },
+    "tests/test_architecture_stage_q3.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "9281d7956e04622ad6c8d2afdb5cce6a782b9d784fc3e74f30f530048b2775cd"
+    },
+    "tests/test_architecture_stage_q5.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "3da77fee1660b0e9580813c150ced2d5de8edd8417e417a0550dafd5cd202d2f"
+    },
+    "tests/test_architecture_stage_q6.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "a00c3b6d89b6925500860105d9d75e0b284d1886353361c2448c6dc74fda3710"
+    },
+    "tests/test_architecture_stage_q61.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "b33cbc6a7d3c39c302b6a91ca8d9124e59e7989cf98a994ed2e195cd37e05885"
+    },
+    "tests/test_stage_n1_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "cd8ba34054c33c0e51ad1bef9e21e23d78a8d6ecb66296bd3c945acff751916d"
+    },
+    "tests/test_stage_n2_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "7ca3759a38c79723b162abeb967d2b4a5561f383f65d4d133aea58c430e1903e"
+    },
+    "tests/test_stage_n3_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "62c5e0e165fad1438fa766fa0f4ae69c49a921f499fb3d13ad00bdd1d5a32ed8"
+    },
+    "tests/test_stage_n4_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "76a664616ab5d778da4e6ef7dd50b6dfa99d202746645c4d369429ed064d1ce6"
+    },
+    "tests/test_stage_o434_diagnostics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "f7ef5af16a114d63e1eefd1d0d9df3d98e764b89a4bb8804487c2db708f097aa"
+    },
+    "tests/test_stage_o43_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "c21b2492951df7e5ed081a35dbcc601e72d3e35cae1280ee92bab3fd34bcb22b"
+    },
+    "tests/test_stage_p_diagnostics.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "f49c6b5e87fc2cab61ab3dd51b4fdc1811689a4057bd11b6b864773b799f1ad1"
+    },
+    "tests/test_stage_q4_qualification.py": {
+      "disposition": "Moved stage or retired wiring; exact historical source remains reachable.",
+      "parent_sha256": "47e0541d9a7bd35e3da82336993c13429877a0316800227f96e17e5f8fad56a4"
+    }
+  },
+  "review_imports": {
+    "R-0071": {
+      "classification": "PASS",
+      "registry_updates": [],
+      "result_sha256": "9e1184cf46f16f7a5f2e10380c738af720abde3ec20a48089962d2f94db90dc4"
+    },
+    "R-0072": {
+      "classification": "PASS",
+      "registry_updates": [],
+      "result_sha256": "2836c317ea4028f53afac0af2f4731d4eed918bbab5bd19addb6b9bc0da90c95"
+    },
+    "R-0073": {
+      "classification": "REWORK_REQUIRED",
+      "registry_updates": [],
+      "result_sha256": "f4dd00428f2e4eefb79421b2f62bd43240b42c70fac18058eca3afd1d06bc0d7"
+    }
+  },
+  "reviews": [
+    "R-0071",
+    "R-0072",
+    "R-0073"
+  ],
+  "schema": "pssolver.v0_3.s03_successor.v1",
+  "successor": 141
+}

@@ -68,30 +68,6 @@ def _spectral_refresh_inventory() -> set[str]:
     return found
 
 
-def test_every_classified_existing_file_exists_and_has_one_disposition() -> None:
-    for batch in ("R2", "R4", "R5", "R1"):
-        for relative in _classified(batch):
-            assert (ROOT / relative).is_file(), relative
-
-
-def test_r2_code_scan_has_no_unclassified_checkpoint_or_integrity_module() -> None:
-    classified = _classified("R2")
-    scanned = _checkpoint_inventory()
-    assert scanned <= set(classified), sorted(scanned - set(classified))
-    required = {
-        "pssolver/experimental/checkpointing.py",
-        "pssolver/experimental/modal_block_checkpoint.py",
-        "pssolver/experimental/shadow_run.py",
-        "pssolver/functional/contracts.py",
-        "pssolver/integrators/reference_checkpoint.py",
-        "pssolver/workflows/finite_q_anchoring.py",
-        "pssolver/workflows/periodic_beris_edwards.py",
-        "pssolver/workflows/plane_compiled_v2.py",
-    }
-    assert required <= set(classified)
-    assert classified["pssolver/workflows/plane_compiled_v2.py"] == "read_only_frozen"
-
-
 def test_r4_code_scan_and_claude_inventory_have_no_unclassified_module() -> None:
     classified = _classified("R4")
     assert _spectral_refresh_inventory() <= set(classified)
@@ -143,11 +119,13 @@ def test_control_functional_runtimes_are_frozen_but_still_gate_control_main() ->
     ):
         assert classified[relative] == "read_only_frozen"
     record = _read()
-    assert "complete PSSolver-Control main CPU suite" in (
-        record["common_cpu_acceptance"]["control_main_full_cpu_gate"]
+    assert (
+        "complete PSSolver-Control main CPU suite"
+        in (record["common_cpu_acceptance"]["control_main_full_cpu_gate"])
     )
-    assert "complete Control main CPU suite" in (
-        record["scope_classification_v2"]["R4"]["control_relation"]
+    assert (
+        "complete Control main CPU suite"
+        in (record["scope_classification_v2"]["R4"]["control_relation"])
     )
 
 

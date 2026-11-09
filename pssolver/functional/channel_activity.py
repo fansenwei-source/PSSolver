@@ -7,19 +7,17 @@ functional factory.
 
 from __future__ import annotations
 
-import torch
-
 from pssolver.configuration.execution_device import (
     resolve_allocated_execution_device,
-)
-from pssolver.configuration.channel_active_nematics_declarations import (
-    channel_pressure_policy_metadata,
 )
 from pssolver.configuration.public_simulation_runner import (
     PUBLIC_CHANNEL_COMPLETE_APPLICATION,
     compile_public_simulation,
 )
 from pssolver.configuration.simulation import SimulationSpec
+from pssolver.linear_solvers.stokes._pressure_policy import (
+    channel_pressure_policy_metadata,
+)
 from pssolver.linear_solvers.stokes.channel_no_slip import (
     CHANNEL_PRESSURE_BOUNDARY_CONDITIONS,
     CHANNEL_VELOCITY_BOUNDARY_CONDITIONS,
@@ -29,6 +27,10 @@ from pssolver.models.active_nematics import (
     Q_COMPONENTS,
 )
 
+from .channel_pressure import CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION
+from .channel_pressure_adjoint import (
+    CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION,
+)
 from .contracts import (
     FunctionalCapabilitySet,
     FunctionalControlFieldSpec,
@@ -39,17 +41,11 @@ from .contracts import (
     FunctionalStateSpec,
     FunctionalTensorSpec,
 )
-from .channel_pressure import CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION
-from .channel_pressure_adjoint import (
-    CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION,
-)
 from .pressure_metadata import CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION
 
 
 CHANNEL_ACTIVITY_FUNCTIONAL_KIND = "channel_activity_batch_one"
-CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT = (
-    "custom_implicit_pressure_adjoint_v2"
-)
+CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT = "custom_implicit_pressure_adjoint_v2"
 CHANNEL_FUNCTIONAL_PRESSURE_WARM_START = "disabled_in_functional_path"
 _ACTIVITY_NAME = "activity"
 
@@ -89,9 +85,7 @@ def channel_functional_pressure_identity(
             fixed_iterations=pressure["fixed_iterations"],
             initial_guess_policy="zero_every_call",
         ),
-        "diagnostics_schema_version": (
-            CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION
-        ),
+        "diagnostics_schema_version": (CHANNEL_PRESSURE_CONVERGENCE_SCHEMA_VERSION),
         "gauge": "zero_mean",
         "production_warm_start": pressure["warm_start"],
         "functional_warm_start": False,
@@ -101,9 +95,7 @@ def channel_functional_pressure_identity(
         "production_warm_start_read": False,
         "production_warm_start_written": False,
         "transpose_action": "explicit_reverse_dataflow_conjugate_transpose",
-        "pressure_transpose_protocol": (
-            CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION
-        ),
+        "pressure_transpose_protocol": (CHANNEL_PRESSURE_TRANSPOSE_PROTOCOL_VERSION),
         "implicit_adjoint": CHANNEL_PRESSURE_IMPLICIT_ADJOINT_VERSION,
         "gradient": CHANNEL_FUNCTIONAL_PRESSURE_GRADIENT,
     }
@@ -145,8 +137,7 @@ def _state_control_observation_specs(
         batch_axis=1,
         layout="component_batch_xyz",
         meaning=(
-            "physical five-component symmetric-traceless Channel Q state at "
-            "the current timestep"
+            "physical five-component symmetric-traceless Channel Q state at the current timestep"
         ),
         component_names=Q_COMPONENTS,
     )
@@ -158,8 +149,7 @@ def _state_control_observation_specs(
         batch_axis=1,
         layout="component_batch_periodic_x_neumann_y_neumann_z",
         meaning=(
-            "full-complex native Channel Q spectrum retained as persistent "
-            "projected-Euler state"
+            "full-complex native Channel Q spectrum retained as persistent projected-Euler state"
         ),
         component_names=Q_COMPONENTS,
     )
@@ -249,9 +239,7 @@ def channel_activity_functional_declaration(
         raise TypeError("simulation must be a SimulationSpec")
     compiled = compile_public_simulation(simulation)
     if compiled.application != PUBLIC_CHANNEL_COMPLETE_APPLICATION:
-        raise ValueError(
-            "P9.7.1 requires the qualified complete-stress Channel application"
-        )
+        raise ValueError("P9.7.1 requires the qualified complete-stress Channel application")
     execution = simulation.execution.options
     if execution["pointwise_execution"] != "eager":
         raise ValueError("P9.7.1 Channel declarations require eager pointwise kernels")

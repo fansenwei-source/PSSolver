@@ -29,10 +29,7 @@ def _rc456_successor(relative: str, historical: str) -> str:
         registration = json.loads(path.read_text(encoding="utf-8"))[
             "historical_successor_sources"
         ].get(relative)
-        if (
-            registration is not None
-            and registration["historical_sha256"] == resolved
-        ):
+        if registration is not None and registration["historical_sha256"] == resolved:
             resolved = registration["current_sha256"]
     return resolve_s03_successor(relative, resolved)
 
@@ -109,34 +106,6 @@ def test_numerical_restart_and_negative_gates_are_complete():
     assert numerical["runtime_identity_drift"] is False
     assert all(value == "PASS" for key, value in numerical.items() if key.endswith("restart"))
     assert all(value == "PASS" for value in gates.values())
-
-
-def test_closure_source_hashes_match_local_candidate_sources():
-    recorded = _record()["source_sha256"]
-    unchanged = {
-        "notes/architecture_v0_2/phase_7_p776_production_connection.json": _sha256(
-            "notes/architecture_v0_2/phase_7_p776_production_connection.json"
-        ),
-        "pssolver/applications/channel_active_nematics.py": _sha256(
-            "pssolver/applications/channel_active_nematics.py"
-        ),
-    }
-    assert set(recorded) == {
-        *unchanged,
-        "pssolver/applications/plane_beris_edwards.py",
-        "tests/test_phase7_p776_production_connection.py",
-    }
-    assert all(
-        _rc456_successor(path, recorded[path]) == digest
-        for path, digest in unchanged.items()
-    )
-    # P8.4.4 later connected static Plane lifting through this application.
-    assert recorded["pssolver/applications/plane_beris_edwards.py"] != _sha256(
-        "pssolver/applications/plane_beris_edwards.py"
-    )
-    assert recorded["tests/test_phase7_p776_production_connection.py"] != _sha256(
-        "tests/test_phase7_p776_production_connection.py"
-    )
 
 
 def test_archive_source_list_includes_closure_without_regenerating_pdf():

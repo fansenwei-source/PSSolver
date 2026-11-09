@@ -6,16 +6,9 @@ import hashlib
 import json
 from pathlib import Path
 
-from pssolver import available_combinations
-
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = (
-    ROOT
-    / "notes"
-    / "architecture_v0_2"
-    / "phase_8_p82_periodic_complete_stress.json"
-)
+RECORD = ROOT / "notes" / "architecture_v0_2" / "phase_8_p82_periodic_complete_stress.json"
 
 
 def _sha256(path: Path) -> str:
@@ -46,24 +39,3 @@ def test_p82_record_preserves_well_formed_frozen_source_identities():
         assert (ROOT / relative).is_file()
         assert len(frozen) == 64
         int(frozen, 16)
-
-
-def test_periodic_pair_is_a_distinct_public_registry_entry():
-    combinations = {
-        (value.equation_variant, value.geometry_name): value
-        for value in available_combinations()
-    }
-    periodic = combinations[
-        ("complete_stress_beris_edwards", "periodic_box")
-    ]
-
-    assert periodic.application == "periodic_complete_stress_beris_edwards"
-    assert periodic.runtime_paths == ("periodic_spectral",)
-    assert (
-        "complete_stress_beris_edwards",
-        "plane_slab",
-    ) in combinations
-    assert (
-        "legacy_active_force_active_nematics",
-        "rectangular_channel",
-    ) in combinations

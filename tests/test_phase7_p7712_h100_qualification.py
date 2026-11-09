@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from argparse import Namespace
 import hashlib
 import json
+from argparse import Namespace
 from pathlib import Path
 
 import pytest
@@ -13,14 +13,14 @@ from benchmarks.analyze_public_simulation_h100_qualification import (
     QualificationEvidenceError,
     analyze,
 )
-from benchmarks.run_public_simulation_h100_case import build_simulation
-from pssolver import compile_simulation
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PLAN_PATH = ROOT / (
-    "notes/architecture_v0_2/phase_7_p7712_h100_qualification_plan.json"
-)
+
+
+PLAN_PATH = ROOT / ("notes/architecture_v0_2/phase_7_p7712_h100_qualification_plan.json")
+
+
 EXPECTED_COMMIT = "a" * 40
 
 
@@ -176,27 +176,10 @@ def test_plan_freezes_exact_scope_and_reused_evidence():
         assert _sha256(ROOT / evidence["path"]) == evidence["sha256"]
 
 
-@pytest.mark.parametrize("case_index", range(4))
-def test_frozen_cases_compile_to_the_requested_existing_application(
-    tmp_path,
-    case_index,
-):
-    case = _plan()["cases"][case_index]
-    compiled = compile_simulation(build_simulation(_args(tmp_path, case)))
-    assert compiled.application_request.runtime_path.value == case["runtime_path"]
-    assert compiled.application_request.device == "cpu"
-    assert compiled.application_specification.geometry.domain.shape == tuple(
-        case["shape"]
-    )
-    assert compiled.normalization["runtime_fallback_allowed"] is False
-
-
 def test_analyzer_accepts_the_exact_frozen_matrix():
     plan = _plan()
     result = analyze(plan, _reports(plan), expected_commit=EXPECTED_COMMIT)
-    assert result["classification"] == (
-        "PASS_P7_7_12_SINGLE_H100_NON_REGRESSION"
-    )
+    assert result["classification"] == ("PASS_P7_7_12_SINGLE_H100_NON_REGRESSION")
     assert result["qualification_complete"] is True
     assert result["report_count"] == 36
     assert result["eligible_for_phase_8_planning"] is True

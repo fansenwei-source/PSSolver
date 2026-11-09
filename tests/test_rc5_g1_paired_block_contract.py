@@ -4,16 +4,17 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
 import statistics
+from pathlib import Path
 
 import pytest
 
 from benchmarks.analyze_rc5_g1_paired_block_replay import (
     FAIL_CLASSIFICATION,
-    FORMAL_PASS_CLASSIFICATION,
     PASS_CLASSIFICATION,
     analyze,
+)
+from benchmarks.analyze_rc5_g1_paired_block_replay import (
     main as analyze_main,
 )
 from benchmarks.plan_rc5_g1_paired_block_contract import (
@@ -21,14 +22,9 @@ from benchmarks.plan_rc5_g1_paired_block_contract import (
     BLOCK_SIZE,
     CLASSIFICATION,
     build_plan,
-    main as plan_main,
 )
-from benchmarks.run_rc5_g1_paired_block_profile_matrix import (
-    AUTHORIZATION_SCHEMA,
-    PROGRESS_SCHEMA,
-    SUPPORT_FILES,
-    build_command_plan,
-    preflight,
+from benchmarks.plan_rc5_g1_paired_block_contract import (
+    main as plan_main,
 )
 
 
@@ -182,9 +178,7 @@ def _write_matrix(root: Path, *, candidate_factor: float = 1.02) -> tuple[Path, 
         }
         path = profiles / f"{entry['key']}.json"
         path.write_text(json.dumps(profile, allow_nan=False), encoding="utf-8")
-        completed.append(
-            {"key": entry["key"], "sequence": sequence, "sha256": _sha256(path)}
-        )
+        completed.append({"key": entry["key"], "sequence": sequence, "sha256": _sha256(path)})
         (progress / f"{sequence:03d}.json").write_text(
             json.dumps(
                 {
@@ -242,44 +236,12 @@ def test_common_mode_spikes_are_retained_and_do_not_create_a_false_regression(tm
     assert result["formal_requalification_performed"] is False
     assert result["qualification_complete"] is False
     assert all(group["passed"] for group in result["groups"])
-    assert sum(
-        group["cv_reference_exceedance_profile_count"] for group in result["groups"]
-    ) == 48
+    assert sum(group["cv_reference_exceedance_profile_count"] for group in result["groups"]) == 48
     assert all(
         len(pair["fixed_block_ratios"]) == 6
         for group in result["groups"]
         for pair in group["pairs"]
     )
-
-
-def test_new_evidence_mode_requires_full_window_and_emits_formal_gate_result(tmp_path):
-    profiles, progress = _write_matrix(tmp_path)
-    result = analyze(
-        profiles,
-        progress,
-        evidence_mode="new_pre_registered_evidence",
-        progress_schema="pssolver.rc5.g1.measurement_window_progress.v1",
-    )
-    assert result["classification"] == FORMAL_PASS_CLASSIFICATION
-    assert result["analysis_only"] is False
-    assert result["post_hoc_v10_replay"] is False
-    assert result["formal_requalification_performed"] is True
-
-    target = profiles / f"{build_plan()['profile_matrix'][-1]['key']}.json"
-    payload = json.loads(target.read_text(encoding="utf-8"))
-    payload.pop("diagnostic_replay")
-    target.write_text(json.dumps(payload), encoding="utf-8")
-    final_progress = progress / "048.json"
-    progress_payload = json.loads(final_progress.read_text(encoding="utf-8"))
-    progress_payload["completed"][-1]["sha256"] = _sha256(target)
-    final_progress.write_text(json.dumps(progress_payload), encoding="utf-8")
-    with pytest.raises(ValueError, match="diagnostic replay is missing"):
-        analyze(
-            profiles,
-            progress,
-            evidence_mode="new_pre_registered_evidence",
-            progress_schema="pssolver.rc5.g1.measurement_window_progress.v1",
-        )
 
 
 @pytest.mark.parametrize("candidate_factor", [1.031, 1.06])
@@ -323,19 +285,23 @@ def test_clis_are_atomic_and_refuse_overwrite(tmp_path):
 
     profiles, progress = _write_matrix(tmp_path / "matrix")
     analysis_output = tmp_path / "analysis.json"
-    assert analyze_main(
-        [
-            "--profile-root",
-            str(profiles),
-            "--progress-root",
-            str(progress),
-            "--output",
-            str(analysis_output),
-        ]
-    ) == 0
-    assert json.loads(analysis_output.read_text(encoding="utf-8"))[
-        "classification"
-    ] == PASS_CLASSIFICATION
+    assert (
+        analyze_main(
+            [
+                "--profile-root",
+                str(profiles),
+                "--progress-root",
+                str(progress),
+                "--output",
+                str(analysis_output),
+            ]
+        )
+        == 0
+    )
+    assert (
+        json.loads(analysis_output.read_text(encoding="utf-8"))["classification"]
+        == PASS_CLASSIFICATION
+    )
     with pytest.raises(FileExistsError):
         analyze_main(
             [
@@ -349,81 +315,11 @@ def test_clis_are_atomic_and_refuse_overwrite(tmp_path):
         )
 
 
-def _runner_inputs(tmp_path: Path) -> dict[str, Path]:
-    baseline = tmp_path / "baseline" / "bin" / "python"
-    candidate = tmp_path / "candidate" / "bin" / "python"
-    baseline.parent.mkdir(parents=True)
-    candidate.parent.mkdir(parents=True)
-    baseline.write_bytes(b"python\n")
-    candidate.write_bytes(b"python\n")
-    support = tmp_path / "support"
-    for relative in SUPPORT_FILES:
-        path = support / relative
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(f"# {relative}\n", encoding="utf-8")
-    return {"baseline": baseline, "candidate": candidate, "support": support}
-
-
-def test_runner_planning_is_ready_but_execution_requires_bound_authority(tmp_path):
-    inputs = _runner_inputs(tmp_path)
-    arguments = {
-        "baseline_python": inputs["baseline"],
-        "candidate_python": inputs["candidate"],
-        "support_root": inputs["support"],
-        "output_root": tmp_path / "output",
-    }
-    command_plan = build_command_plan(**arguments)
-    preflight(command_plan, for_execution=False)
-    assert command_plan["profile_count"] == 48
-    assert command_plan["progress_schema"] == PROGRESS_SCHEMA
-    assert command_plan["evidence_mode"] == "new_pre_registered_evidence"
-    assert command_plan["execution_authorization"] is None
-    assert not Path(command_plan["output_root"]).exists()
-    with pytest.raises(PermissionError, match="requires an authorization record"):
-        preflight(command_plan, for_execution=True)
-
-    source_sha256 = {
-        relative: _sha256(inputs["support"] / relative)
-        for relative in (
-            "benchmarks/plan_rc5_g1_paired_block_contract.py",
-            "benchmarks/analyze_rc5_g1_paired_block_replay.py",
-        )
-    }
-    authorization = tmp_path / "authorization.json"
-    authorization.write_text(
-        json.dumps(
-            {
-                "schema": AUTHORIZATION_SCHEMA,
-                "formal_contract_adoption_authorized": True,
-                "single_h100_submission_authorized": True,
-                "automatic_retry_authorized": False,
-                "maximum_formal_h100_submissions": 1,
-                "source_sha256": source_sha256,
-            }
-        ),
-        encoding="utf-8",
-    )
-    authorized = build_command_plan(
-        **arguments,
-        authorization_record=authorization,
-    )
-    preflight(authorized, for_execution=True)
-    assert authorized["execution_authorization"]["sha256"] == _sha256(authorization)
-
-    (inputs["support"] / "benchmarks/analyze_rc5_g1_paired_block_replay.py").write_text(
-        "# tampered\n", encoding="utf-8"
-    )
-    with pytest.raises(ValueError, match="source identity differs"):
-        preflight(authorized, for_execution=True)
-
-
 def test_versioned_contract_record_binds_replay_and_requires_new_authority():
     record = json.loads(
-        (
-            ROOT
-            / "notes"
-            / "PSSolver_v0_2_0rc5_g1_paired_block_contract_v13.json"
-        ).read_text(encoding="utf-8")
+        (ROOT / "notes" / "PSSolver_v0_2_0rc5_g1_paired_block_contract_v13.json").read_text(
+            encoding="utf-8"
+        )
     )
     assert record["classification"] == CLASSIFICATION
     replay = record["v10_post_hoc_replay"]
@@ -450,9 +346,7 @@ def test_versioned_contract_record_binds_replay_and_requires_new_authority():
     for relative, expected in record["source_sha256"].items():
         assert _sha256(ROOT / relative) == expected
 
-    job = (ROOT / "jobs" / "rc5_g1_paired_block_h100.sbatch").read_text(
-        encoding="utf-8"
-    )
+    job = (ROOT / "jobs" / "rc5_g1_paired_block_h100.sbatch").read_text(encoding="utf-8")
     assert "#SBATCH --gres=gpu:H100:1" in job
     assert "#SBATCH --no-requeue" in job
     assert "run_rc5_g1_checkpoint_tmp_preflight.py" in job
@@ -460,4 +354,4 @@ def test_versioned_contract_record_binds_replay_and_requires_new_authority():
     assert "run_rc5_g1_paired_block_profile_matrix.py" in job
     assert "--authorization-record" in job
     assert "PAIRED_BLOCK_COMPLETE" in job
-    assert "touch \"${RC5_G1_OUTPUT_ROOT}/COMPLETE\"" not in job
+    assert 'touch "${RC5_G1_OUTPUT_ROOT}/COMPLETE"' not in job

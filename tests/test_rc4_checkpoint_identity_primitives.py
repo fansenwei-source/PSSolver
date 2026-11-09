@@ -3,21 +3,21 @@
 from __future__ import annotations
 
 import ast
-from collections import Counter
 import hashlib
 import json
-from pathlib import Path
 import subprocess
+from collections import Counter
+from pathlib import Path
 
 import pytest
 
 import pssolver.io as public_io
 from pssolver.io.checkpoint_identity import (
+    LEGACY_IDENTITY_SCHEMAS,
     CheckpointCompatibilityIdentity,
     CheckpointFamily,
     CheckpointIdentityLayer,
     IdentityLayerKind,
-    LEGACY_IDENTITY_SCHEMAS,
     LegacyIdentityKey,
     SourceReleaseGeneration,
     legacy_identity_registry,
@@ -29,13 +29,7 @@ from pssolver.io.checkpoint_identity import (
 
 ROOT = Path(__file__).resolve().parents[1]
 MODULE = ROOT / "pssolver" / "io" / "checkpoint_identity.py"
-ORACLE = (
-    ROOT
-    / "tests"
-    / "fixtures"
-    / "checkpoint_identity"
-    / "legacy_registry_v1.json"
-)
+ORACLE = ROOT / "tests" / "fixtures" / "checkpoint_identity" / "legacy_registry_v1.json"
 
 
 def _oracle() -> dict[str, object]:
@@ -86,19 +80,13 @@ def _channel_functional_identity():
         forward_dynamics=_layer(
             IdentityLayerKind.FORWARD_DYNAMICS,
             "channel.forward.v2",
-            {
-                "forward_stokes_nyquist": (
-                    "project_even_periodic_plane"
-                )
-            },
+            {"forward_stokes_nyquist": ("project_even_periodic_plane")},
         ),
         derivative_dynamics=_layer(
             IdentityLayerKind.DERIVATIVE_DYNAMICS,
             "channel.derivative.v2",
             {
-                "pressure_transpose_nyquist": (
-                    "project_even_periodic_plane"
-                ),
+                "pressure_transpose_nyquist": ("project_even_periodic_plane"),
                 "gradient": "custom_implicit_pressure_adjoint_v1",
             },
         ),
@@ -185,9 +173,7 @@ def test_identity_metadata_round_trips_through_strict_readers():
     identity = _plane_identity()
 
     assert CheckpointIdentityLayer.from_metadata(layer.to_metadata()) == layer
-    assert CheckpointCompatibilityIdentity.from_metadata(
-        identity.to_metadata()
-    ) == identity
+    assert CheckpointCompatibilityIdentity.from_metadata(identity.to_metadata()) == identity
 
 
 @pytest.mark.parametrize("kind", ("layer", "aggregate"))
@@ -296,18 +282,10 @@ def test_registry_source_hashes_are_the_released_files_not_live_derivations():
         CheckpointFamily.PLANE_WORKFLOW: (
             "pssolver/configuration/plane_beris_edwards_schema_v1.py"
         ),
-        CheckpointFamily.PERIODIC_WORKFLOW: (
-            "pssolver/configuration/periodic_beris_edwards.py"
-        ),
-        CheckpointFamily.CHANNEL_WORKFLOW: (
-            "pssolver/configuration/channel_beris_edwards.py"
-        ),
-        CheckpointFamily.PERIODIC_FUNCTIONAL: (
-            "pssolver/functional/versioning.py"
-        ),
-        CheckpointFamily.CHANNEL_FUNCTIONAL: (
-            "pssolver/functional/versioning.py"
-        ),
+        CheckpointFamily.PERIODIC_WORKFLOW: ("pssolver/configuration/periodic_beris_edwards.py"),
+        CheckpointFamily.CHANNEL_WORKFLOW: ("pssolver/configuration/channel_beris_edwards.py"),
+        CheckpointFamily.PERIODIC_FUNCTIONAL: ("pssolver/functional/versioning.py"),
+        CheckpointFamily.CHANNEL_FUNCTIONAL: ("pssolver/functional/versioning.py"),
     }
     observed: dict[tuple[str, str], str] = {}
     for entry in LEGACY_IDENTITY_SCHEMAS:
@@ -359,9 +337,9 @@ def test_identity_primitives_are_schema_independent_and_all_rc42_families_are_wi
         source = (ROOT / relative).read_text(encoding="utf-8")
         assert "pssolver.io.checkpoint_identity" in source
 
-    functional_identity = (
-        ROOT / "pssolver/functional/checkpoint_identity.py"
-    ).read_text(encoding="utf-8")
+    functional_identity = (ROOT / "pssolver/functional/checkpoint_identity.py").read_text(
+        encoding="utf-8"
+    )
     assert "pssolver.io.checkpoint_identity" in functional_identity
     for relative in (
         "pssolver/functional/periodic_checkpoint.py",
@@ -369,8 +347,5 @@ def test_identity_primitives_are_schema_independent_and_all_rc42_families_are_wi
     ):
         source = (ROOT / relative).read_text(encoding="utf-8")
         assert ".checkpoint_identity" in source
-    assert "checkpoint_identity" not in (
-        ROOT / "pssolver/workflows/channel_checkpoint.py"
-    ).read_text(encoding="utf-8")
     assert "CheckpointCompatibilityIdentity" not in public_io.__all__
     assert "legacy_identity_registry" not in public_io.__all__

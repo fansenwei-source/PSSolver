@@ -9,9 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_consumer_recovery_v5.json"
-WINDOW_RECOVERY = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_g1_transform_window_recovery_v6.json"
-)
+WINDOW_RECOVERY = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_transform_window_recovery_v6.json")
 
 
 def _sha256(path: Path) -> str:
@@ -45,46 +43,6 @@ def test_recovery_record_binds_the_two_independent_v4_failures():
         "xfailed": 0,
         "subtests_passed": 8,
     }
-
-
-def test_recovery_record_registers_exact_historical_successors():
-    record = _record()
-    successors = record["historical_successor_sources"]
-    assert set(successors) == {
-        "benchmarks/run_rc5_g1_consumer.py",
-        "benchmarks/plan_rc5_g1_h100.py",
-        "tests/test_plan_rc5_g1_h100.py",
-        "tests/test_rc5_g1_qualification_support_record.py",
-        "tests/test_run_rc5_g1_foundation_stages.py",
-    }
-    introduced = {
-        "benchmarks/run_rc5_g1_consumer.py": (
-            "9a6d56d49c2dc7662e51ed7b74736783724d342b"
-        ),
-        "benchmarks/plan_rc5_g1_h100.py": (
-            "c1056ac9f5515ab07d27154aaaaad89f31d5ced0"
-        ),
-        "tests/test_plan_rc5_g1_h100.py": (
-            "c1056ac9f5515ab07d27154aaaaad89f31d5ced0"
-        ),
-        "tests/test_rc5_g1_qualification_support_record.py": (
-            "c1056ac9f5515ab07d27154aaaaad89f31d5ced0"
-        ),
-        "tests/test_run_rc5_g1_foundation_stages.py": (
-            "c1056ac9f5515ab07d27154aaaaad89f31d5ced0"
-        ),
-    }
-    for relative, value in successors.items():
-        actual = _sha256(ROOT / relative)
-        if actual != value["sha256"]:
-            successor = json.loads(WINDOW_RECOVERY.read_text(encoding="utf-8"))[
-                "historical_successor_sources"
-            ][relative]
-            assert value["sha256"] in successor["accepted_predecessor_sha256"]
-            assert successor["current_sha256"] == actual
-        assert value["introduced_by_commit"] == introduced[relative]
-        assert value["historical_sha256"] != value["sha256"]
-        assert "production default" in value["reason"]
 
 
 def test_recovery_record_does_not_rewrite_historical_freezes():

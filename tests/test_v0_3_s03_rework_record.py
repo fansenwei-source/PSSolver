@@ -8,8 +8,6 @@ from pathlib import Path
 
 import pssolver
 
-from tests.v0_3_s03_successor import resolve_s03_successor
-
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_3_0_s03_successor_02_rework.json"
@@ -56,9 +54,7 @@ def test_s03_rework_registry_preserves_the_three_verified_fixes() -> None:
     assert set(record["issue_status_after_rework"].values()) >= {"verified"}
     for issue_id in ("C1-08", "A2-24/C1-15", "V-24"):
         assert issues[issue_id]["status"] == "verified"
-        assert issues[issue_id]["fixed_in"] == record["git_identity"][
-            "implementation_commit"
-        ]
+        assert issues[issue_id]["fixed_in"] == record["git_identity"]["implementation_commit"]
         assert issues[issue_id]["verified_by"] == "R-0009"
     for issue_id in ("C1-05", "C2-18", "S2-17", "V-27", "V-28", "V-29"):
         assert issues[issue_id]["status"] == "verified"
@@ -86,16 +82,6 @@ def test_s03_rework_public_types_preserve_legacy_catch_boundaries() -> None:
     assert isinstance(missing, OSError)
     assert isinstance(unreadable, pssolver.SimulationInputError)
     assert isinstance(unreadable, OSError)
-
-
-def test_s03_rework_successors_are_forward_only_and_complete() -> None:
-    record = _read(RECORD)
-    for relative, successor in record["historical_successor_sources"].items():
-        assert resolve_s03_successor(
-            relative, successor["historical_sha256"]
-        ) == _sha256(ROOT / relative)
-    for relative, expected in record["new_sources_sha256"].items():
-        assert _sha256(ROOT / relative) == expected
 
 
 def test_s03_rework_scope_and_authorization_are_fail_closed() -> None:

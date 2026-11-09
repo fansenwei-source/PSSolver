@@ -4,55 +4,31 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
 import subprocess
-
-from tests.v0_3_s03_successor import resolve_s03_successor
+from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "notes/PSSolver_v0_2_0rc4_rc440_pressure_contract_plan.json"
-RC443 = (
-    ROOT
-    / "notes"
-    / "PSSolver_v0_2_0rc4_rc443_pressure_policy_implementation.json"
-)
-RC444 = (
-    ROOT
-    / "notes"
-    / "PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
-)
-RC447_RECOVERY = (
-    ROOT
-    / "notes"
-    / "PSSolver_v0_2_0rc4_rc447_python310_compatibility_recovery.json"
-)
+RC443 = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc443_pressure_policy_implementation.json"
+RC444 = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc444_pressure_metadata_identity_connection.json"
+RC447_RECOVERY = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_python310_compatibility_recovery.json"
 RC447_PERFORMANCE_REPAIR = (
-    ROOT
-    / "notes"
-    / "PSSolver_v0_2_0rc4_rc447_pressure_performance_repair.json"
+    ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_pressure_performance_repair.json"
 )
 RC447_PERFORMANCE_RECOVERY_V10 = (
-    ROOT
-    / "notes"
-    / "PSSolver_v0_2_0rc4_rc447_pressure_performance_recovery_v10.json"
+    ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_pressure_performance_recovery_v10.json"
 )
 RC447_BOUNDED_OPERATOR_RECOVERY_V11 = (
-    ROOT
-    / "notes"
-    / "PSSolver_v0_2_0rc4_rc447_pressure_bounded_operator_recovery_v11.json"
+    ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_pressure_bounded_operator_recovery_v11.json"
 )
 RC453 = ROOT / "notes/PSSolver_v0_2_0rc4_rc453_checkpoint_transactionality.json"
-RC455 = ROOT / (
-    "notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json"
-)
+RC455 = ROOT / ("notes/PSSolver_v0_2_0rc4_rc455_public_validation_observability.json")
 RC456 = ROOT / "notes/PSSolver_v0_2_0rc4_rc456_tf32_execution_scope.json"
 RC5_R56 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_6_public_error_boundary.json"
 RC5_R57 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_7_device_normalization.json"
 RC5_R59 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_9_pressure_postcondition_errors.json"
-RC5_R511 = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json"
-)
+RC5_R511 = ROOT / ("notes/PSSolver_v0_2_0rc5_r5_11_periodic_metadata_strict_contract.json")
 RC5_R513 = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 RC6_R2 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
 RC6_R3 = ROOT / "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
@@ -79,25 +55,24 @@ def _git_blob_sha256(commit: str, relative: str) -> str:
 
 def test_rc440_binds_the_rc43_closure_and_preplanning_matrix():
     baseline = _plan()["baseline"]
-    assert baseline["planning_parent_commit"] == (
-        "b469d908c25fe66a45915f5654f50696f5648a10"
+    assert baseline["planning_parent_commit"] == ("b469d908c25fe66a45915f5654f50696f5648a10")
+    assert (
+        _sha256(ROOT / baseline["rc4_3_closure_record"]) == baseline["rc4_3_closure_record_sha256"]
     )
-    assert _sha256(ROOT / baseline["rc4_3_closure_record"]) == baseline[
-        "rc4_3_closure_record_sha256"
-    ]
-    assert _git_blob_sha256(
-        baseline["planning_parent_commit"],
-        baseline["known_issues_record"],
-    ) == baseline["known_issues_record_at_planning_parent_sha256"]
+    assert (
+        _git_blob_sha256(
+            baseline["planning_parent_commit"],
+            baseline["known_issues_record"],
+        )
+        == baseline["known_issues_record_at_planning_parent_sha256"]
+    )
 
 
 def test_rc440_handles_only_the_three_pressure_residuals():
     plan = _plan()
     assert plan["schema_version"] == 1
     assert plan["phase"] == "RC4.4.0"
-    assert plan["classification"] == (
-        "READY_RC4_4_1_PRESSURE_CONTRACT_ADJUDICATION_NOT_EXECUTED"
-    )
+    assert plan["classification"] == ("READY_RC4_4_1_PRESSURE_CONTRACT_ADJUDICATION_NOT_EXECUTED")
     assert [item["id"] for item in plan["issues"]] == [
         "B25",
         "B28",
@@ -126,9 +101,9 @@ def test_rc440_inventory_names_all_four_existing_pressure_loops_and_b28_drift():
     finding = inventory["b28_source_finding"]
     assert finding["declaration_executable"] is True
     assert finding["runtime_executable"] is True
-    assert finding[
-        "implicit_adjoint_component_metadata_claims_functional_runtime_executable"
-    ] is False
+    assert (
+        finding["implicit_adjoint_component_metadata_claims_functional_runtime_executable"] is False
+    )
     assert finding["standalone_transpose_operator_is_not_itself_a_runtime"] is True
 
 
@@ -142,9 +117,7 @@ def test_rc440_fixed_and_tolerance_modes_have_unambiguous_roles():
     fixed = contract["modes"]["fixed_work"]
     assert fixed["authoritative_iteration_limit"] == "fixed_iterations"
     assert fixed["max_iterations_role"] == "inactive_compatibility_field"
-    assert fixed["relative_tolerance_role"] == (
-        "diagnostic_only_not_an_early_exit"
-    )
+    assert fixed["relative_tolerance_role"] == ("diagnostic_only_not_an_early_exit")
     assert fixed["ordinary_tolerance_early_exit_allowed"] is False
     tolerance = contract["modes"]["relative_tolerance"]
     assert tolerance["authoritative_iteration_limit"] == "max_iterations"
@@ -163,13 +136,8 @@ def test_rc440_does_not_guess_the_scale_formula_before_analysis():
         "normwise_backward_error",
         "a_preregistered_hybrid_if_no_single_candidate_passes",
     ]
-    assert list(adjudication["required_cases"]) == [
-        f"P{index:02d}" for index in range(1, 9)
-    ]
-    assert any(
-        "1e-30" in requirement
-        for requirement in adjudication["selection_requirements"]
-    )
+    assert list(adjudication["required_cases"]) == [f"P{index:02d}" for index in range(1, 9)]
+    assert any("1e-30" in requirement for requirement in adjudication["selection_requirements"])
 
 
 def test_rc440_diagnostics_are_phase_complete_and_not_stale():
@@ -189,9 +157,7 @@ def test_rc440_diagnostics_are_phase_complete_and_not_stale():
     } <= required
     assert diagnostics["atomic_snapshot_per_solve_phase"] is True
     assert diagnostics["no_stale_transpose_result_after_a_new_primal_phase"] is True
-    assert diagnostics[
-        "production_exposes_warm_start_without_mislabeling_it_zero_start"
-    ] is True
+    assert diagnostics["production_exposes_warm_start_without_mislabeling_it_zero_start"] is True
 
 
 def test_rc440_versions_forward_and_derivative_changes_without_layout_churn():
@@ -199,15 +165,9 @@ def test_rc440_versions_forward_and_derivative_changes_without_layout_churn():
     assert identity["pressure_convergence_schema_target"] == 2
     assert identity["pressure_transpose_protocol_target"] == "2"
     assert identity["implicit_pressure_adjoint_target"] == "2"
-    assert identity["production_forward_dynamics_target"] == (
-        "channel.production.forward.v4"
-    )
-    assert identity["functional_forward_dynamics_target"] == (
-        "channel.functional.forward.v4"
-    )
-    assert identity["functional_derivative_dynamics_target"] == (
-        "channel.functional.derivative.v4"
-    )
+    assert identity["production_forward_dynamics_target"] == ("channel.production.forward.v4")
+    assert identity["functional_forward_dynamics_target"] == ("channel.functional.forward.v4")
+    assert identity["functional_derivative_dynamics_target"] == ("channel.functional.derivative.v4")
     assert identity["production_state_layout_version_changes"] is False
     assert identity["functional_state_layout_version_changes"] is False
     assert identity["backend_restart_layout_version_changes"] is False
@@ -223,17 +183,13 @@ def test_rc440_orders_provider_consumer_and_h100_closure():
     ]
     assert plan["stages"][0]["kind"] == "analysis_only"
     assert plan["stages"][-2]["kind"] == "consumer_qualification"
-    assert plan["stages"][-1]["name"] == (
-        "single-H100 cumulative pressure closure"
-    )
+    assert plan["stages"][-1]["name"] == ("single-H100 cumulative pressure closure")
     consumer = plan["consumer_contract"]
     assert consumer["requalification_required"] is True
-    assert consumer["qualified_source_commit"] == (
-        "03dbc39975978d9d0b7f84965015da24f9d3c206"
+    assert consumer["qualified_source_commit"] == ("03dbc39975978d9d0b7f84965015da24f9d3c206")
+    assert (
+        consumer["provider_must_publish_policy_and_identity_record_before_consumer_edits"] is True
     )
-    assert consumer[
-        "provider_must_publish_policy_and_identity_record_before_consumer_edits"
-    ] is True
     assert consumer["consumer_changes_authorized_by_rc4_4_0"] is False
 
 
@@ -247,44 +203,6 @@ def test_rc440_h100_contract_requires_separate_single_submission():
     assert contract["custom_adjoint_FD_and_Taylor_required"] is True
     assert contract["profile_shapes"] == [[128, 20, 20], [512, 40, 40]]
     assert contract["threshold_changes_after_observing_formal_results_forbidden"]
-
-
-def test_rc440_reviewed_provider_sources_are_content_addressed():
-    successor_records = []
-    for path in (
-        RC443,
-        RC444,
-        RC447_RECOVERY,
-        RC447_PERFORMANCE_REPAIR,
-        RC447_PERFORMANCE_RECOVERY_V10,
-        RC447_BOUNDED_OPERATOR_RECOVERY_V11,
-            RC453,
-            RC455,
-            RC456,
-            RC5_R56,
-            RC5_R57,
-            RC5_R59,
-            RC5_R511,
-            RC5_R513,
-            RC6_R2,
-            RC6_R3,
-            RC6_R4,
-        ):
-        record = json.loads(path.read_text(encoding="utf-8"))
-        successor_records.append(
-            record.get("historical_successor_sources", record.get("successor_sources", {}))
-        )
-    for relative, expected in _plan()["reviewed_source_sha256"].items():
-        actual = _sha256(ROOT / relative)
-        resolved = expected
-        for successors in successor_records:
-            registration = successors.get(relative)
-            if (
-                registration is not None
-                and registration["historical_sha256"] == resolved
-            ):
-                resolved = registration["current_sha256"]
-        assert resolve_s03_successor(relative, resolved) == actual
 
 
 def test_rc440_only_authorizes_planning():

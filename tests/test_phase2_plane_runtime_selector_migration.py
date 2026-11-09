@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import ast
 from pathlib import Path
-import sys
-from types import ModuleType
 
 import pytest
 
@@ -19,9 +17,7 @@ from pssolver.runtime import plane_beris_edwards as runtime_selector
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-RUNTIME_SELECTOR_PATH = (
-    PROJECT_ROOT / "pssolver" / "runtime" / "plane_beris_edwards.py"
-)
+RUNTIME_SELECTOR_PATH = PROJECT_ROOT / "pssolver" / "runtime" / "plane_beris_edwards.py"
 FLAT_SELECTOR_READS = {"disable_q_gradient_reuse", "runtime_path"}
 CANARY_MODULE = "pssolver.experimental.plane_shadow_driver"
 
@@ -93,8 +89,7 @@ def _run_spec_reads() -> set[str]:
     function = next(
         node
         for node in tree.body
-        if isinstance(node, ast.FunctionDef)
-        and node.name == "build_plane_beris_edwards_runtime"
+        if isinstance(node, ast.FunctionDef) and node.name == "build_plane_beris_edwards_runtime"
     )
     return {
         node.attr
@@ -183,26 +178,3 @@ def test_legacy_selection_uses_only_injected_builder_and_adapter(tmp_path):
     assert isinstance(adapter, LegacyPlaneRuntimeAdapter)
     assert adapter.solver is solver
     assert adapter.projector is projector
-
-
-def test_canary_import_and_builder_remain_lazy_after_explicit_selection(
-    tmp_path,
-    monkeypatch,
-):
-    calls = []
-    fake_module = ModuleType(CANARY_MODULE)
-
-    def build(metadata, *, device):
-        calls.append((metadata, device))
-        raise _CanaryBuilderReached
-
-    fake_module.build_plane_separated_canary_runtime_from_production_metadata = (
-        build
-    )
-    monkeypatch.setitem(sys.modules, CANARY_MODULE, fake_module)
-
-    spec = _spec(tmp_path, runtime_path="separated_canary")
-    request = _request(spec)
-    with pytest.raises(_CanaryBuilderReached):
-        build_plane_beris_edwards_runtime(request)
-    assert calls == [(request.production_metadata, "cpu")]

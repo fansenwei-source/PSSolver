@@ -13,8 +13,8 @@ import pssolver
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from benchmarks import v0_2_0_checkpoint_fixtures as old  # noqa: E402
 from benchmarks._artifact_io import atomic_write_json  # noqa: E402
+from qualification.identity import retained_v020_fixtures as old  # noqa: E402
 from qualification.identity.checkpoint_fixtures import file_manifest  # noqa: E402
 from qualification.identity.records import fingerprint  # noqa: E402
 

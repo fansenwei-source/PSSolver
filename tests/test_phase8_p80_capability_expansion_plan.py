@@ -6,9 +6,6 @@ import hashlib
 import json
 from pathlib import Path
 
-from pssolver.configuration.public_simulation_runner import (
-    public_compiler_capabilities,
-)
 from pssolver.core.boundary import BoundaryKind
 
 
@@ -33,12 +30,8 @@ def test_p80_is_planning_only_and_binds_the_phase7_closure() -> None:
 
     assert plan["schema_version"] == 1
     assert plan["phase"] == "P8.0"
-    assert plan["status"] == (
-        "P8_0_PLANNING_FROZEN_IMPLEMENTATION_NOT_AUTHORIZED"
-    )
-    assert plan["classification"] == (
-        "PASS_P8_0_CAPABILITY_EXPANSION_PLAN"
-    )
+    assert plan["status"] == ("P8_0_PLANNING_FROZEN_IMPLEMENTATION_NOT_AUTHORIZED")
+    assert plan["classification"] == ("PASS_P8_0_CAPABILITY_EXPANSION_PLAN")
     assert baseline["commit"] == "f8789461ee71391885d5e04c6906a13bc83a26b0"
     assert _sha256(closure) == baseline["phase_7_record_sha256"]
     assert baseline["phase_7_complete"] is True
@@ -79,62 +72,18 @@ def test_p80_preserves_the_pre_p81_public_declaration_surface() -> None:
     }
 
 
-def test_p80_qualified_matrix_matches_the_live_compiler_registry() -> None:
-    plan = _plan()
-    expected = {
-        (entry["equation_variant"], entry["geometry"]): (
-            entry["application"],
-            tuple(entry["runtime_paths"]),
-        )
-        for entry in plan["qualified_applications"]
-    }
-    observed = {
-        (entry["equation_variant"], entry["geometry_name"]): entry[
-            "application"
-        ]
-        for entry in public_compiler_capabilities()
-    }
-
-    assert set(expected) <= set(observed)
-    assert observed[("complete_stress_beris_edwards", "periodic_box")] == (
-        "periodic_complete_stress_beris_edwards"
-    )
-    for key, (application, _runtime_paths) in expected.items():
-        assert observed[key] == application
-
-    matrix = {
-        entry["equation_variant"]: entry
-        for entry in plan["model_geometry_matrix"]
-    }
-    assert matrix["complete_stress_beris_edwards"] == {
-        "equation_variant": "complete_stress_beris_edwards",
-        "periodic_box": "planned_p8_2",
-        "plane_slab": "qualified",
-        "rectangular_channel": "planned_p8_3",
-    }
-    assert matrix["legacy_active_force_active_nematics"] == {
-        "equation_variant": "legacy_active_force_active_nematics",
-        "periodic_box": "deferred_not_qualified",
-        "plane_slab": "deferred_not_qualified",
-        "rectangular_channel": "qualified",
-    }
-
-
 def test_p80_separates_public_gaps_from_new_boundary_physics() -> None:
     plan = _plan()
     gaps = {entry["id"]: entry for entry in plan["capability_gaps"]}
     policies = {
-        entry["name"]: entry
-        for entry in plan["current_public_surface"]["boundary_policies"]
+        entry["name"]: entry for entry in plan["current_public_surface"]["boundary_policies"]
     }
 
     assert len(gaps) == 8
     assert policies["no_slip_velocity"]["status"] == (
         "qualified_inside_channel_application_but_not_public_policy"
     )
-    assert policies["periodic"]["status"] == (
-        "implicit_from_axis_topology"
-    )
+    assert policies["periodic"]["status"] == ("implicit_from_axis_topology")
     assert gaps["P8-GAP-003"]["first_owner"] == "P8.1"
     assert gaps["P8-GAP-007"]["first_owner"] == "P8.4"
     assert gaps["P8-GAP-008"]["first_owner"] == "P8.5"
@@ -168,16 +117,11 @@ def test_p80_freezes_slice_order_and_non_regression_contract() -> None:
     assert non_regression["existing_boundary_laws_may_change"] is False
     assert non_regression["existing_checkpoint_schema_may_change"] is False
     assert non_regression["hot_loop_registry_dispatch_allowed"] is False
-    assert (
-        non_regression["silent_runtime_or_capability_fallback_allowed"]
-        is False
-    )
+    assert non_regression["silent_runtime_or_capability_fallback_allowed"] is False
 
 
 def test_future_verbatim_archive_lists_p80_without_regenerating_the_pdf() -> None:
-    source = (NOTES / "build_verbatim_archive_pdf.py").read_text(
-        encoding="utf-8"
-    )
+    source = (NOTES / "build_verbatim_archive_pdf.py").read_text(encoding="utf-8")
     names = (
         "phase_7_final_closure.json",
         "phase_8_p80_capability_expansion_plan.md",

@@ -1,18 +1,14 @@
 from __future__ import annotations
 
 import ast
-from dataclasses import FrozenInstanceError, replace
 import json
+from dataclasses import FrozenInstanceError, replace
 from pathlib import Path
 
 import pytest
 
 from pssolver.configuration.active_nematics_equation_adapters import (
-    declare_channel_active_force_equation_system,
     declare_plane_complete_stress_equation_system,
-)
-from pssolver.configuration.channel_active_nematics import (
-    ChannelActiveNematicRunSpec,
 )
 from pssolver.configuration.plane_beris_edwards import (
     create_plane_beris_edwards_run_spec,
@@ -25,7 +21,6 @@ from pssolver.models.active_nematics.equation_systems import (
     ACTIVE_FORCE_COMPONENTS,
     COMPLETE_STRESS_FORCE_COMPONENTS,
     CompleteStressBerisEdwardsEquationRequest,
-    LegacyActiveForceEquationRequest,
 )
 from pssolver.models.active_nematics.specifications import (
     BerisEdwardsMaterialRequest,
@@ -43,27 +38,21 @@ from pssolver.systems.stokes import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EQUATION_DECLARATIONS = (
-    ROOT / "pssolver" / "systems" / "equations.py"
-)
+
+
+EQUATION_DECLARATIONS = ROOT / "pssolver" / "systems" / "equations.py"
+
+
 ACTIVE_NEMATIC_DECLARATIONS = (
-    ROOT
-    / "pssolver"
-    / "models"
-    / "active_nematics"
-    / "equation_systems.py"
+    ROOT / "pssolver" / "models" / "active_nematics" / "equation_systems.py"
 )
-ADAPTERS = (
-    ROOT
-    / "pssolver"
-    / "configuration"
-    / "active_nematics_equation_adapters.py"
-)
+
+
+ADAPTERS = ROOT / "pssolver" / "configuration" / "active_nematics_equation_adapters.py"
+
+
 RESULT_PATH = (
-    ROOT
-    / "notes"
-    / "architecture_v0_2"
-    / "phase_7_p771_equation_system_declarations.json"
+    ROOT / "notes" / "architecture_v0_2" / "phase_7_p771_equation_system_declarations.json"
 )
 
 
@@ -106,9 +95,7 @@ def _channel_stokes() -> IncompressibleStokesSystemSpec:
         pressure_component="p",
         viscosity=1.0,
         pressure_gauge=PressureGauge.ZERO_MEAN,
-        tangential_zero_mode_policy=(
-            TangentialZeroModePolicy.NOT_APPLICABLE
-        ),
+        tangential_zero_mode_policy=(TangentialZeroModePolicy.NOT_APPLICABLE),
     )
 
 
@@ -206,43 +193,8 @@ def test_complete_stress_declaration_records_the_full_constitutive_chain():
         "nematic_force",
     }
     assert laws["nematic_stress"].parameters["active_prefactor"] == -0.02
-    assert value.parameters["force_law"] == (
-        "complete_one_constant_nematic_stress"
-    )
+    assert value.parameters["force_law"] == ("complete_one_constant_nematic_stress")
     assert value.initial_condition_families == ("extruded_defect_gas",)
-
-
-def test_legacy_active_force_declaration_remains_a_distinct_model():
-    value = LegacyActiveForceEquationRequest(
-        rho=6.0,
-        elastic_constant=1.0,
-        activity=5.0,
-        beta=-1.0,
-        flow_alignment=1.0,
-        stokes_system=_channel_stokes(),
-    ).to_equation_system_spec()
-    fields = {field.name: field for field in value.fields}
-    laws = {law.name: law for law in value.constitutive_laws}
-
-    assert value.variant == "legacy_active_force_active_nematics"
-    assert len(value.component_names) == 36
-    assert "molecular_field" not in fields
-    assert "algebraic_stress" not in fields
-    assert "distortion_stress" not in fields
-    assert fields["active_force"].components == ("fx", "fy", "fz")
-    assert set(laws) == {
-        "q_gradient",
-        "velocity_gradient",
-        "active_force",
-    }
-    assert value.parameters["force_law"] == "active_force_divergence_only"
-    assert value.parameters["ldg_a"] == -1.0
-    assert value.parameters["ldg_b"] == -6.0
-    assert value.parameters["ldg_c"] == 6.0
-    assert value.initial_condition_families == ("aligned_x_smooth_noise",)
-    assert value.canonical_sha256() != (
-        _complete_request().to_equation_system_spec().canonical_sha256()
-    )
 
 
 def test_plane_adapter_is_lossless_for_model_and_stokes_parameters():
@@ -257,36 +209,6 @@ def test_plane_adapter_is_lossless_for_model_and_stokes_parameters():
     assert parameters["stokes"] == components.physics.stokes.to_metadata()
     assert "geometry" not in value.to_metadata()
     assert "boundaries" not in value.to_metadata()
-
-
-def test_channel_adapter_is_lossless_for_model_and_stokes_parameters():
-    components = ChannelActiveNematicRunSpec().components
-    value = declare_channel_active_force_equation_system(components)
-    parameters = value.parameters
-    material = components.material
-
-    assert value.variant == "legacy_active_force_active_nematics"
-    assert parameters["rho"] == material.rho
-    assert parameters["ldg_a"] == material.ldg_a
-    assert parameters["ldg_b"] == material.ldg_b
-    assert parameters["ldg_c"] == material.ldg_c
-    assert parameters["elastic_constant"] == material.elastic_constant
-    assert parameters["activity"] == material.activity
-    assert parameters["beta"] == material.beta
-    assert parameters["flow_alignment"] == material.flow_alignment
-    assert parameters["stokes"] == components.stokes.to_metadata()
-    assert "geometry" not in value.to_metadata()
-    assert "boundaries" not in value.to_metadata()
-
-
-def test_adapters_reject_the_wrong_component_graph_before_conversion():
-    plane = decompose_plane_beris_edwards_run_spec(_plane_spec())
-    channel = ChannelActiveNematicRunSpec().components
-
-    with pytest.raises(TypeError, match="PlaneBerisEdwardsRunComponents"):
-        declare_plane_complete_stress_equation_system(channel)
-    with pytest.raises(TypeError, match="ChannelRunComponents"):
-        declare_channel_active_force_equation_system(plane)
 
 
 @pytest.mark.parametrize(
@@ -351,29 +273,12 @@ def test_equation_system_rejects_unknown_or_unproduced_components():
         )
 
 
-def test_p771_does_not_connect_existing_applications_or_runtimes():
-    adapter_source = ADAPTERS.read_text(encoding="utf-8")
-    plane_application = (
-        ROOT / "pssolver" / "applications" / "plane_beris_edwards.py"
-    ).read_text(encoding="utf-8")
-    channel_application = (
-        ROOT / "pssolver" / "applications" / "channel_active_nematics.py"
-    ).read_text(encoding="utf-8")
-
-    assert "build_plane_beris_edwards_runtime" not in adapter_source
-    assert "build_channel_active_nematic_runtime" not in adapter_source
-    assert "active_nematics_equation_adapters" not in plane_application
-    assert "active_nematics_equation_adapters" not in channel_application
-
-
 def test_p771_result_records_scope_identity_and_next_authorization():
     result = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
 
     assert result["phase"] == "P7.7.1"
     assert result["status"] == "P7_7_1_COMPLETE_P7_7_2_NOT_AUTHORIZED"
-    assert result["classification"] == (
-        "PASS_P7_7_1_GEOMETRY_NEUTRAL_EQUATION_DECLARATIONS"
-    )
+    assert result["classification"] == ("PASS_P7_7_1_GEOMETRY_NEUTRAL_EQUATION_DECLARATIONS")
     assert result["scope"] == {
         "tensor_free": True,
         "geometry_free": True,
@@ -390,9 +295,7 @@ def test_p771_result_records_scope_identity_and_next_authorization():
 
 
 def test_p771_result_preserves_historical_reviewed_source_identities():
-    identities = json.loads(
-        RESULT_PATH.read_text(encoding="utf-8")
-    )["source_identities"]
+    identities = json.loads(RESULT_PATH.read_text(encoding="utf-8"))["source_identities"]
 
     assert len(identities) == 5
     for relative_path, expected in identities.items():

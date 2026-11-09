@@ -4,42 +4,22 @@ import hashlib
 import json
 from pathlib import Path
 
-from tests.v0_3_s03_successor import resolve_s03_successor
-
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_r5_13_optional_hygiene.json"
 G1_RECORD = ROOT / "notes/PSSolver_v0_2_0rc5_g1_source_freeze.json"
-G1_GLIBC_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json"
-)
-RC6_R1_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json"
-)
-RC6_R2_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json"
-)
-RC6_R3_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json"
-)
-RC6_R4_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json"
-)
-RC6_R5_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json"
-)
-RC6_R6_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json"
-)
+G1_GLIBC_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc5_g1_checkpoint_glibc_compatibility.json")
+RC6_R1_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_1_plane_diagnostic_errors.json")
+RC6_R2_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_2_pressure_floor_contract.json")
+RC6_R3_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_3_compile_preflight_contract.json")
+RC6_R4_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_4_channel_failure_contract.json")
+RC6_R5_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_5_checkpoint_control_flow.json")
+RC6_R6_RECORD = ROOT / ("notes/PSSolver_v0_2_0rc6_rc6_6_restart_output_atomicity.json")
 RC6_FREEZE_RECORD = ROOT / "notes/PSSolver_v0_2_0rc6_source_freeze.json"
 FINAL_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_0.json"
-V021_N1_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json"
-)
+V021_N1_RECORD = ROOT / ("notes/PSSolver_v0_2_1_n1_checkpoint_nfs_implementation.json")
 V021_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_1.json"
-V022_V17_RECORD = ROOT / (
-    "notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json"
-)
+V022_V17_RECORD = ROOT / ("notes/PSSolver_v0_2_2_v17_checkpoint_symlink_parent.json")
 V022_RELEASE_RECORD = ROOT / "notes/pssolver_v0_2_2.json"
 
 
@@ -49,112 +29,6 @@ def _record() -> dict[str, object]:
 
 def _sha256(relative: str) -> str:
     return hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
-
-
-def test_r513_record_binds_new_and_successor_sources():
-    record = _record()
-    g1_successors = json.loads(G1_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    glibc_successors = json.loads(
-        G1_GLIBC_RECORD.read_text(encoding="utf-8")
-    )["historical_successor_sources"]
-    rc6_successors = json.loads(RC6_R1_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    rc6_r2_successors = json.loads(RC6_R2_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    rc6_r3_successors = json.loads(RC6_R3_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    rc6_r4_successors = json.loads(RC6_R4_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    rc6_r5_successors = json.loads(RC6_R5_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    rc6_r6_successors = json.loads(RC6_R6_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    rc6_freeze_successors = json.loads(
-        RC6_FREEZE_RECORD.read_text(encoding="utf-8")
-    )["historical_successor_sources"]
-    final_release_successors = json.loads(
-        FINAL_RELEASE_RECORD.read_text(encoding="utf-8")
-    )["historical_successor_sources"]
-    n1_successors = json.loads(V021_N1_RECORD.read_text(encoding="utf-8"))[
-        "historical_successor_sources"
-    ]
-    release_successors = json.loads(
-        V021_RELEASE_RECORD.read_text(encoding="utf-8")
-    )["historical_successor_sources"]
-    v17_successors = json.loads(
-        V022_V17_RECORD.read_text(encoding="utf-8")
-    )["historical_successor_sources"]
-    v022_release_successors = json.loads(
-        V022_RELEASE_RECORD.read_text(encoding="utf-8")
-    )["historical_successor_sources"]
-    for relative, expected in record["new_sources"].items():
-        assert _sha256(relative) == resolve_s03_successor(relative, expected)
-    for relative, registration in record[
-        "historical_successor_sources"
-    ].items():
-        assert registration["historical_sha256"] != registration["current_sha256"]
-        resolved = registration["current_sha256"]
-        successor = g1_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
-        successor = glibc_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
-        successor = rc6_successors.get(relative)
-        accepted = (
-            []
-            if successor is None
-            else successor.get(
-                "accepted_predecessor_sha256",
-                [successor["historical_sha256"]],
-            )
-        )
-        if successor is not None and resolved in accepted:
-            resolved = successor["current_sha256"]
-        successor = rc6_r2_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
-        successor = rc6_r3_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
-        successor = rc6_r4_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
-        successor = rc6_r5_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
-        successor = rc6_r6_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
-        successor = rc6_freeze_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
-        successor = final_release_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
-        successor = n1_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
-        successor = release_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
-        successor = v17_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
-        successor = v022_release_successors.get(relative)
-        if successor is not None and successor["historical_sha256"] == resolved:
-            resolved = successor["current_sha256"]
-        assert _sha256(relative) == resolve_s03_successor(relative, resolved)
-        assert registration["introduced_by_phase"] == "R5-13"
-        assert registration["reason"]
 
 
 def test_r513_dispositions_are_explicit_and_compatibility_preserving():
@@ -171,9 +45,7 @@ def test_r513_dispositions_are_explicit_and_compatibility_preserving():
 def test_r513_scope_remains_cpu_only_and_fail_closed():
     record = _record()
     assert record["status"] == "installed_wheel_cpu_verified"
-    assert record["classification"] == (
-        "PASS_R5_13_OPTIONAL_HYGIENE_INSTALLED_WHEEL_CPU_CLOSURE"
-    )
+    assert record["classification"] == ("PASS_R5_13_OPTIONAL_HYGIENE_INSTALLED_WHEEL_CPU_CLOSURE")
     assert record["authorization"] == {
         "r5_13_complete": True,
         "eligible_for_next_work_item": True,

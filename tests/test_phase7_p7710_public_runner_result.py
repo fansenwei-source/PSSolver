@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import ast
-from dataclasses import FrozenInstanceError
 import hashlib
 import json
-from pathlib import Path
 import sys
+from dataclasses import FrozenInstanceError, replace
+from pathlib import Path
 from types import ModuleType, SimpleNamespace
 
 import numpy as np
@@ -24,17 +24,20 @@ from pssolver import (
     run_simulation,
 )
 from pssolver.configuration.active_nematics_simulation_adapters import (
-    compose_channel_active_nematics_simulation,
+    compose_plane_beris_edwards_simulation,
 )
-from pssolver.configuration.channel_active_nematics import (
-    ChannelActiveNematicRunSpec,
+from pssolver.configuration.plane_beris_edwards import create_plane_beris_edwards_run_spec
+from pssolver.configuration.plane_beris_edwards_components import (
+    decompose_plane_beris_edwards_run_spec,
 )
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RESULT_PATH = ROOT / (
-    "notes/architecture_v0_2/phase_7_p7710_public_runner_result.json"
-)
+
+
+RESULT_PATH = ROOT / ("notes/architecture_v0_2/phase_7_p7710_public_runner_result.json")
+
+
 REVIEWED_SOURCES = (
     "pssolver/api/results.py",
     "pssolver/api/runner.py",
@@ -43,38 +46,6 @@ REVIEWED_SOURCES = (
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def _channel_simulation(
-    tmp_path: Path,
-    *,
-    runtime_path: str = "compiled_channel_v2",
-) -> Simulation:
-    request = ChannelActiveNematicRunSpec(
-        shape=(16, 8, 8),
-        lengths=(16.0, 8.0, 8.0),
-        steps=2,
-        save_interval=1,
-        diagnostic_interval=1,
-        generated_output_directory=tmp_path / "generated",
-        snapshot_output_directory=tmp_path / "snapshot",
-        device="cpu",
-        dtype="float32",
-        runtime_path=runtime_path,
-    )
-    source = compose_channel_active_nematics_simulation(request.components)
-    return Simulation(
-        model=source.equation_system,
-        geometry=source.geometry,
-        boundaries=source.boundaries,
-        numerics=source.numerics,
-        time=source.time_integration,
-        discretization=source.discretization_parameters,
-        initial_condition=source.initial_condition,
-        execution=source.execution,
-        output=source.workflow,
-        invocation=source.invocation,
-    )
 
 
 def _application_result(final_step: int = 2):
@@ -94,133 +65,6 @@ def _application_result(final_step: int = 2):
         final_observation=observation,
         diagnostics=(diagnostic,),
     )
-
-
-@pytest.mark.parametrize("runtime_path", ("legacy_channel", "compiled_channel_v2"))
-def test_run_simulation_dispatches_channel_once_and_returns_public_result(
-    monkeypatch,
-    tmp_path,
-    runtime_path,
-):
-    simulation = _channel_simulation(tmp_path, runtime_path=runtime_path)
-    compiled = compile_simulation(simulation)
-    observed = {}
-    fake = ModuleType("pssolver.applications.channel_active_nematics")
-
-    def run_channel_active_nematics(
-        run_spec,
-        *,
-        progress,
-        public_compilation_metadata,
-    ):
-        observed.update(
-            run_spec=run_spec,
-            progress=progress,
-            public_compilation_metadata=public_compilation_metadata,
-        )
-        return _application_result()
-
-    fake.run_channel_active_nematics = run_channel_active_nematics
-    monkeypatch.setitem(
-        sys.modules,
-        "pssolver.applications.channel_active_nematics",
-        fake,
-    )
-    progress = (0, 1)
-
-    result = run_simulation(compiled, progress=progress)
-
-    assert isinstance(result, SimulationResult)
-    assert result.status is SimulationRunStatus.COMPLETE
-    assert result.completed is True
-    assert result.application == (
-        "channel_legacy_active_force_active_nematics"
-    )
-    assert result.runtime_path == runtime_path
-    assert result.output_directory == (tmp_path / "generated").resolve()
-    assert result.start_step == 0
-    assert result.final_step == 2
-    assert result.saved_steps == (0, 2)
-    assert isinstance(
-        result.final_observation,
-        SimulationObservationProtocol,
-    )
-    assert isinstance(result.diagnostics[0], SimulationDiagnosticProtocol)
-    assert observed == {
-        "run_spec": compiled.application_request,
-        "progress": progress,
-        "public_compilation_metadata": {
-            "schema_version": 1,
-            "compilation_identity_sha256": (
-                compiled.compilation_identity_sha256
-            ),
-            "source_simulation_sha256": compiled.source.canonical_sha256(),
-            "application": compiled.application,
-            "application_simulation_sha256": (
-                compiled.application_specification.canonical_sha256()
-            ),
-            "application_request_sha256": (
-                compiled.application_request.canonical_sha256()
-            ),
-            "normalization": dict(compiled.normalization),
-            "fallback_allowed": False,
-        },
-    }
-    metadata = result.to_metadata()
-    assert metadata["final_observation"]["q_shape"] == [16, 8, 8, 5]
-    assert metadata["diagnostic_steps"] == [2]
-    assert metadata["provenance"]["fallback_allowed"] is False
-    json.dumps(metadata, allow_nan=False, sort_keys=True)
-
-
-def test_run_simulation_compiles_public_declaration_before_dispatch(
-    monkeypatch,
-    tmp_path,
-):
-    simulation = _channel_simulation(tmp_path)
-    fake = ModuleType("pssolver.applications.channel_active_nematics")
-    calls = []
-
-    def run_channel_active_nematics(
-        run_spec,
-        *,
-        progress,
-        public_compilation_metadata,
-    ):
-        calls.append((run_spec, progress, public_compilation_metadata))
-        return _application_result()
-
-    fake.run_channel_active_nematics = run_channel_active_nematics
-    monkeypatch.setitem(
-        sys.modules,
-        "pssolver.applications.channel_active_nematics",
-        fake,
-    )
-
-    result = run_simulation(simulation)
-
-    assert result.source_simulation_sha256 == simulation.canonical_sha256()
-    assert len(calls) == 1
-    assert calls[0][0].runtime_path.value == "compiled_channel_v2"
-    assert calls[0][1] is None
-    assert calls[0][2]["normalization"]
-
-
-def test_public_runner_rejects_incomplete_application_result(
-    monkeypatch,
-    tmp_path,
-):
-    compiled = compile_simulation(_channel_simulation(tmp_path))
-    fake = ModuleType("pssolver.applications.channel_active_nematics")
-    fake.run_channel_active_nematics = lambda run_spec, **_kwargs: object()
-    monkeypatch.setitem(
-        sys.modules,
-        "pssolver.applications.channel_active_nematics",
-        fake,
-    )
-
-    with pytest.raises(TypeError, match="missing=.*start_step"):
-        run_simulation(compiled)
 
 
 def test_public_result_is_immutable_and_does_not_copy_observation_arrays():
@@ -270,9 +114,7 @@ def test_public_runner_keeps_application_imports_lazy():
     path = ROOT / "pssolver/api/runner.py"
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     top_level = {
-        node.module
-        for node in tree.body
-        if isinstance(node, ast.ImportFrom) and node.module
+        node.module for node in tree.body if isinstance(node, ast.ImportFrom) and node.module
     }
     assert not {
         name
@@ -295,9 +137,7 @@ def test_root_exports_public_result_contract():
 
 def test_machine_record_binds_p7710_scope_and_source_identity():
     record = json.loads(RESULT_PATH.read_text(encoding="utf-8"))
-    assert record["classification"] == (
-        "PASS_P7_7_10_COMMON_RUNNER_AND_RESULT_PROTOCOL"
-    )
+    assert record["classification"] == ("PASS_P7_7_10_COMMON_RUNNER_AND_RESULT_PROTOCOL")
     assert record["qualified_applications"] == [
         "plane_complete_stress_beris_edwards",
         "channel_legacy_active_force_active_nematics",
@@ -306,3 +146,158 @@ def test_machine_record_binds_p7710_scope_and_source_identity():
     assert record["phase_8_authorized"] is False
     assert set(record["source_sha256"]) == set(REVIEWED_SOURCES)
     assert all(len(value) == 64 for value in record["source_sha256"].values())
+
+
+def _plane_simulation(tmp_path, *, runtime_path="compiled_v2"):
+    request = create_plane_beris_edwards_run_spec(
+        activity_number=18.0,
+        output_dir=tmp_path / "generated",
+        runtime_path=runtime_path,
+        device="cpu",
+        dtype="float32",
+        nx=16,
+        ny=8,
+        nz=8,
+        steps=2,
+        save_start_step=0,
+        pointwise_execution="eager",
+    )
+    source = compose_plane_beris_edwards_simulation(decompose_plane_beris_edwards_run_spec(request))
+    return Simulation(
+        model=source.equation_system,
+        geometry=source.geometry,
+        boundaries=source.boundaries,
+        numerics=source.numerics,
+        time=replace(source.time_integration, refresh={"mode": "disabled"}),
+        initial_condition=source.initial_condition,
+        execution=replace(
+            source.execution, options={**source.execution.options, "fallback_allowed": False}
+        ),
+        output=source.workflow,
+        invocation=source.invocation,
+    )
+
+
+@pytest.mark.parametrize("runtime_path", ("legacy_production", "compiled_v2"))
+def test_run_simulation_dispatches_plane_once_and_returns_public_result(
+    monkeypatch,
+    tmp_path,
+    runtime_path,
+):
+    simulation = _plane_simulation(tmp_path, runtime_path=runtime_path)
+    compiled = compile_simulation(simulation)
+    observed = {}
+    fake = ModuleType("pssolver.applications.plane_beris_edwards")
+
+    def run_plane_beris_edwards(
+        run_spec,
+        *,
+        progress,
+        public_compilation_metadata,
+        emit_metadata,
+    ):
+        assert emit_metadata is False
+        observed.update(
+            run_spec=run_spec,
+            progress=progress,
+            public_compilation_metadata=public_compilation_metadata,
+        )
+        return _application_result()
+
+    fake.run_plane_beris_edwards = run_plane_beris_edwards
+    monkeypatch.setitem(
+        sys.modules,
+        "pssolver.applications.plane_beris_edwards",
+        fake,
+    )
+    progress = (0, 1)
+
+    result = run_simulation(compiled, progress=progress)
+
+    assert isinstance(result, SimulationResult)
+    assert result.status is SimulationRunStatus.COMPLETE
+    assert result.completed is True
+    assert result.application == ("plane_complete_stress_beris_edwards")
+    assert result.runtime_path == runtime_path
+    assert result.output_directory == (tmp_path / "generated").resolve()
+    assert result.start_step == 0
+    assert result.final_step == 2
+    assert result.saved_steps == (0, 2)
+    assert isinstance(
+        result.final_observation,
+        SimulationObservationProtocol,
+    )
+    assert isinstance(result.diagnostics[0], SimulationDiagnosticProtocol)
+    assert observed == {
+        "run_spec": compiled.application_request,
+        "progress": progress,
+        "public_compilation_metadata": {
+            "schema_version": 1,
+            "compilation_identity_sha256": (compiled.compilation_identity_sha256),
+            "source_simulation_sha256": compiled.source.canonical_sha256(),
+            "application": compiled.application,
+            "application_simulation_sha256": (
+                compiled.application_specification.canonical_sha256()
+            ),
+            "application_request_sha256": (compiled.application_request.canonical_sha256()),
+            "normalization": dict(compiled.normalization),
+            "fallback_allowed": False,
+        },
+    }
+    metadata = result.to_metadata()
+    assert metadata["final_observation"]["q_shape"] == [16, 8, 8, 5]
+    assert metadata["diagnostic_steps"] == [2]
+    assert metadata["provenance"]["fallback_allowed"] is False
+    json.dumps(metadata, allow_nan=False, sort_keys=True)
+
+
+def test_run_simulation_compiles_public_declaration_before_dispatch(
+    monkeypatch,
+    tmp_path,
+):
+    simulation = _plane_simulation(tmp_path)
+    fake = ModuleType("pssolver.applications.plane_beris_edwards")
+    calls = []
+
+    def run_plane_beris_edwards(
+        run_spec,
+        *,
+        progress,
+        public_compilation_metadata,
+        emit_metadata,
+    ):
+        assert emit_metadata is False
+        calls.append((run_spec, progress, public_compilation_metadata))
+        return _application_result()
+
+    fake.run_plane_beris_edwards = run_plane_beris_edwards
+    monkeypatch.setitem(
+        sys.modules,
+        "pssolver.applications.plane_beris_edwards",
+        fake,
+    )
+
+    result = run_simulation(simulation)
+
+    assert result.source_simulation_sha256 == simulation.canonical_sha256()
+    assert len(calls) == 1
+    assert calls[0][0].runtime_path.value == "compiled_v2"
+    assert calls[0][1] is None
+    assert calls[0][2]["normalization"]
+
+
+def test_public_runner_rejects_incomplete_application_result(
+    monkeypatch,
+    tmp_path,
+):
+    compiled = compile_simulation(_plane_simulation(tmp_path))
+    fake = ModuleType("pssolver.applications.plane_beris_edwards")
+    fake.run_plane_beris_edwards = lambda run_spec, **_kwargs: object()
+    monkeypatch.setitem(
+        sys.modules,
+        "pssolver.applications.plane_beris_edwards",
+        fake,
+    )
+
+    with pytest.raises(TypeError, match="missing=.*start_step"):
+        run_simulation(compiled)

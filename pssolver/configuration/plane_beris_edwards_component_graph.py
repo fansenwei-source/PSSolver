@@ -8,8 +8,8 @@ type check and forwards values here.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
+from dataclasses import dataclass
 from numbers import Real
 from pathlib import Path
 
@@ -59,21 +59,13 @@ def _positive_finite(value: object, description: str) -> float:
 
 
 def _positive_integer(value: object, description: str) -> int:
-    if (
-        not isinstance(value, int)
-        or isinstance(value, bool)
-        or value <= 0
-    ):
+    if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
         raise ValueError(f"{description} must be a positive integer")
     return value
 
 
 def _non_negative_integer(value: object, description: str) -> int:
-    if (
-        not isinstance(value, int)
-        or isinstance(value, bool)
-        or value < 0
-    ):
+    if not isinstance(value, int) or isinstance(value, bool) or value < 0:
         raise ValueError(f"{description} must be a non-negative integer")
     return value
 
@@ -103,9 +95,7 @@ def _require_choice(
     description: str,
 ) -> str:
     if not isinstance(value, str) or value not in choices:
-        raise ValueError(
-            f"{description} must be one of {tuple(sorted(choices))!r}"
-        )
+        raise ValueError(f"{description} must be one of {tuple(sorted(choices))!r}")
     return value
 
 
@@ -138,28 +128,20 @@ class PlaneBerisEdwardsPhysicsSpec:
             or isinstance(requested_friction, bool)
             or not math.isfinite(float(requested_friction))
         ):
-            raise ValueError(
-                "requested_friction_mode_fric must be a finite int or float"
-            )
+            raise ValueError("requested_friction_mode_fric must be a finite int or float")
 
         policy = self.stokes.tangential_zero_mode_policy
         if policy not in (
             TangentialZeroModePolicy.ZERO_MEAN,
             TangentialZeroModePolicy.FRICTION,
         ):
-            raise ValueError(
-                "Plane Stokes zero-mode policy must be zero_mean or friction"
-            )
+            raise ValueError("Plane Stokes zero-mode policy must be zero_mean or friction")
         if policy is TangentialZeroModePolicy.FRICTION:
             if requested_friction <= 0.0:
-                raise ValueError(
-                    "requested_friction_mode_fric must be positive in "
-                    "friction mode"
-                )
+                raise ValueError("requested_friction_mode_fric must be positive in friction mode")
             if self.stokes.friction != requested_friction:
                 raise ValueError(
-                    "effective Stokes friction must equal the requested "
-                    "friction-mode value"
+                    "effective Stokes friction must equal the requested friction-mode value"
                 )
 
     def to_metadata(self) -> dict[str, object]:
@@ -169,9 +151,7 @@ class PlaneBerisEdwardsPhysicsSpec:
             "material": self.material.to_metadata(),
             "shendruk_request": self.shendruk_request.to_metadata(),
             "stokes": self.stokes.to_metadata(),
-            "requested_friction_mode_fric": (
-                self.requested_friction_mode_fric
-            ),
+            "requested_friction_mode_fric": (self.requested_friction_mode_fric),
         }
 
 
@@ -185,9 +165,7 @@ class PlaneTimeSteppingSpec:
     def __post_init__(self) -> None:
         dt = _positive_finite(self.dt, "dt")
         if not isinstance(self.spectral_refresh, SpectralRefreshSpec):
-            raise TypeError(
-                "spectral_refresh must be a SpectralRefreshSpec"
-            )
+            raise TypeError("spectral_refresh must be a SpectralRefreshSpec")
         # Consistency between dt and the resolved refresh interval is a
         # composition-root invariant.  Keeping it out of this disconnected
         # leaf avoids moving legacy direct-constructor validation in P2.1.
@@ -244,12 +222,8 @@ class PlaneBerisEdwardsExecutionSpec:
         return {
             "device": self.device,
             "tf32": self.tf32,
-            "molecular_field_linear_space": (
-                self.molecular_field_linear_space
-            ),
-            "stress_divergence_sum_space": (
-                self.stress_divergence_sum_space
-            ),
+            "molecular_field_linear_space": (self.molecular_field_linear_space),
+            "stress_divergence_sum_space": (self.stress_divergence_sum_space),
             "pointwise_execution": self.pointwise_execution,
             "disable_q_gradient_reuse": self.disable_q_gradient_reuse,
             "runtime_path": self.runtime_path.value,
@@ -305,11 +279,7 @@ class PlaneWorkflowSpec:
             "diagnostics": self.diagnostics,
             "save_hydrodynamics": self.save_hydrodynamics,
             "checkpoint_interval": self.checkpoint_interval,
-            "restart_from": (
-                str(self.restart_from)
-                if self.restart_from is not None
-                else None
-            ),
+            "restart_from": (str(self.restart_from) if self.restart_from is not None else None),
         }
 
 
@@ -328,8 +298,7 @@ class PlaneInvocationSpec:
             or any(character not in "0123456789abcdef" for character in digest)
         ):
             raise ValueError(
-                "validation_config_sha256 must be 64 lowercase hexadecimal "
-                "characters or None"
+                "validation_config_sha256 must be 64 lowercase hexadecimal characters or None"
             )
         _require_bool(self.dry_run, "dry_run")
 
@@ -350,9 +319,7 @@ def _validate_refresh_consistency(value: PlaneTimeSteppingSpec) -> None:
     )
     if refresh.mode == "disabled":
         if any(item is not None for item in interval_fields):
-            raise ValueError(
-                "disabled spectral refresh must not define intervals"
-            )
+            raise ValueError("disabled spectral refresh must not define intervals")
         return
 
     effective_steps = refresh.effective_interval_steps
@@ -361,9 +328,7 @@ def _validate_refresh_consistency(value: PlaneTimeSteppingSpec) -> None:
         or isinstance(effective_steps, bool)
         or effective_steps <= 0
     ):
-        raise ValueError(
-            "enabled spectral refresh requires positive effective steps"
-        )
+        raise ValueError("enabled spectral refresh requires positive effective steps")
     expected_time = effective_steps * value.dt
     effective_time = refresh.effective_interval_time
     if (
@@ -377,15 +342,11 @@ def _validate_refresh_consistency(value: PlaneTimeSteppingSpec) -> None:
             abs_tol=1e-12,
         )
     ):
-        raise ValueError(
-            "effective spectral refresh time must equal steps * dt"
-        )
+        raise ValueError("effective spectral refresh time must equal steps * dt")
 
     if refresh.mode == "steps":
         if refresh.requested_interval_time is not None:
-            raise ValueError(
-                "step-based spectral refresh must not request physical time"
-            )
+            raise ValueError("step-based spectral refresh must not request physical time")
         requested_steps = refresh.requested_interval_steps
         if (
             not isinstance(requested_steps, int)
@@ -393,16 +354,12 @@ def _validate_refresh_consistency(value: PlaneTimeSteppingSpec) -> None:
             or requested_steps <= 0
             or requested_steps != effective_steps
         ):
-            raise ValueError(
-                "step-based spectral refresh must preserve requested steps"
-            )
+            raise ValueError("step-based spectral refresh must preserve requested steps")
         return
 
     requested_time = refresh.requested_interval_time
     if refresh.requested_interval_steps is not None:
-        raise ValueError(
-            "physical-time spectral refresh must not request step count"
-        )
+        raise ValueError("physical-time spectral refresh must not request step count")
     if (
         not isinstance(requested_time, Real)
         or isinstance(requested_time, bool)
@@ -415,9 +372,7 @@ def _validate_refresh_consistency(value: PlaneTimeSteppingSpec) -> None:
             abs_tol=1e-12,
         )
     ):
-        raise ValueError(
-            "physical-time spectral refresh must be an integer multiple of dt"
-        )
+        raise ValueError("physical-time spectral refresh must be an integer multiple of dt")
 
 
 @dataclass(frozen=True, slots=True)
@@ -485,8 +440,7 @@ class PlaneBerisEdwardsRunComponents:
             )
         if self.effective_boundaries != PLANE_FREE_SLIP_BOUNDARIES:
             raise ValueError(
-                "effective_boundaries must be the qualified Plane free-slip "
-                "boundary declaration"
+                "effective_boundaries must be the qualified Plane free-slip boundary declaration"
             )
 
         request = self.physics.shendruk_request
@@ -504,37 +458,24 @@ class PlaneBerisEdwardsRunComponents:
             gamma=material.gamma,
         )
         if self.preset != expected_preset:
-            raise ValueError(
-                "preset must match the geometry, material, and raw Shendruk "
-                "request"
-            )
+            raise ValueError("preset must match the geometry, material, and raw Shendruk request")
 
         nz = self.geometry.domain.shape[2]
         if any(mode >= nz for mode in self.initial_condition.twist_modes):
-            raise ValueError(
-                "initial-condition twist modes must satisfy 1 <= mode < nz"
-            )
+            raise ValueError("initial-condition twist modes must satisfy 1 <= mode < nz")
         _validate_refresh_consistency(self.time_stepping)
 
         if self.numerics.spectral_storage is SpectralStorage.HERMITIAN_HALF:
             qualified_hermitian_axis = self.geometry.periodic_axes[-1]
             if (
                 self.numerics.hermitian_axis != qualified_hermitian_axis
-                or self.numerics.hermitian_axis
-                not in self.geometry.periodic_axes
+                or self.numerics.hermitian_axis not in self.geometry.periodic_axes
             ):
                 raise ValueError(
-                    "Hermitian-half storage must use the qualified periodic "
-                    "Plane axis"
+                    "Hermitian-half storage must use the qualified periodic Plane axis"
                 )
-        if (
-            self.execution.runtime_path is PlaneRuntimePath.SEPARATED_CANARY
-            and self.execution.disable_q_gradient_reuse
-        ):
-            raise ValueError(
-                "separated_canary does not accept legacy Q-gradient cache "
-                "flags"
-            )
+        if self.execution.runtime_path is PlaneRuntimePath.SEPARATED_CANARY:
+            raise ValueError("separated_canary is retired; use v0.4.x (maint/v0.4)")
 
     def to_metadata(self) -> dict[str, object]:
         """Return provisional nested metadata, never schema-v1 authority."""
@@ -627,9 +568,7 @@ def build_plane_beris_edwards_run_components(
         dtype=dtype,
         dealias_rule=dealias_rule,
         transform_execution_order=transform_execution_order,
-        projected_transform_execution=(
-            projected_transform_execution
-        ),
+        projected_transform_execution=(projected_transform_execution),
         spectral_storage=spectral_storage,
         hermitian_axis=hermitian_axis,
     )
@@ -660,13 +599,9 @@ def build_plane_beris_edwards_run_components(
         ldg_c=ldg_c,
         gamma=gamma,
     )
-    zero_mode_policy = TangentialZeroModePolicy(
-        zero_mode_policy
-    )
+    zero_mode_policy = TangentialZeroModePolicy(zero_mode_policy)
     effective_friction = (
-        friction_mode_fric
-        if zero_mode_policy is TangentialZeroModePolicy.FRICTION
-        else 0.0
+        friction_mode_fric if zero_mode_policy is TangentialZeroModePolicy.FRICTION else 0.0
     )
     stokes = IncompressibleStokesSystemSpec(
         name="flow",
@@ -688,9 +623,7 @@ def build_plane_beris_edwards_run_components(
             material=material,
             shendruk_request=shendruk_request,
             stokes=stokes,
-            requested_friction_mode_fric=(
-                friction_mode_fric
-            ),
+            requested_friction_mode_fric=(friction_mode_fric),
         ),
         preset=preset,
         time_stepping=PlaneTimeSteppingSpec(
@@ -710,16 +643,10 @@ def build_plane_beris_edwards_run_components(
         execution=PlaneBerisEdwardsExecutionSpec(
             device=device,
             tf32=tf32,
-            molecular_field_linear_space=(
-                molecular_field_linear_space
-            ),
-            stress_divergence_sum_space=(
-                stress_divergence_sum_space
-            ),
+            molecular_field_linear_space=(molecular_field_linear_space),
+            stress_divergence_sum_space=(stress_divergence_sum_space),
             pointwise_execution=pointwise_execution,
-            disable_q_gradient_reuse=(
-                disable_q_gradient_reuse
-            ),
+            disable_q_gradient_reuse=(disable_q_gradient_reuse),
             runtime_path=runtime_path,
         ),
         workflow=PlaneWorkflowSpec(
@@ -734,17 +661,13 @@ def build_plane_beris_edwards_run_components(
             restart_from=restart_from,
         ),
         invocation=PlaneInvocationSpec(
-            validation_config_sha256=(
-                validation_config_sha256
-            ),
+            validation_config_sha256=(validation_config_sha256),
             dry_run=dry_run,
         ),
     )
 
 
-_LEGACY_COMPONENT_MODULE = (
-    "pssolver.configuration.plane_beris_edwards_components"
-)
+_LEGACY_COMPONENT_MODULE = "pssolver.configuration.plane_beris_edwards_components"
 for _component_type in (
     PlaneBerisEdwardsPhysicsSpec,
     PlaneTimeSteppingSpec,

@@ -12,9 +12,7 @@ from pssolver.configuration.application_registry import APPLICATIONS
 from pssolver.core._identifiers import require_python_identifier
 
 
-_VALID_DECLARATION_KINDS = frozenset(
-    {"model", "geometry", "boundary_policy"}
-)
+_VALID_DECLARATION_KINDS = frozenset({"model", "geometry", "boundary_policy"})
 
 
 def _identifier(value: object, description: str) -> str:
@@ -113,12 +111,8 @@ class PublicCapabilityCatalog:
             "schema_version": 1,
             "models": [item.to_metadata() for item in self.models],
             "geometries": [item.to_metadata() for item in self.geometries],
-            "boundary_policies": [
-                item.to_metadata() for item in self.boundary_policies
-            ],
-            "qualified_combinations": [
-                item.to_metadata() for item in self.qualified_combinations
-            ],
+            "boundary_policies": [item.to_metadata() for item in self.boundary_policies],
+            "qualified_combinations": [item.to_metadata() for item in self.qualified_combinations],
             "qualified_policy_equivalences": [
                 {
                     "requested_policy": requested,
@@ -139,7 +133,6 @@ class PublicCapabilityCatalog:
 
 
 _PLANE_APPLICATION = "plane_complete_stress_beris_edwards"
-_CHANNEL_APPLICATION = "channel_legacy_active_force_active_nematics"
 _PERIODIC_APPLICATION = "periodic_complete_stress_beris_edwards"
 _CHANNEL_COMPLETE_APPLICATION = "channel_complete_stress_beris_edwards"
 
@@ -147,23 +140,12 @@ _MODELS = (
     DeclarationCapability(
         kind="model",
         key="complete_stress_beris_edwards",
-        constructor=(
-            "pssolver.models.active_nematics.CompleteStressBerisEdwards"
-        ),
+        constructor=("pssolver.models.active_nematics.CompleteStressBerisEdwards"),
         qualified_applications=(
             _PLANE_APPLICATION,
             _PERIODIC_APPLICATION,
             _CHANNEL_COMPLETE_APPLICATION,
         ),
-    ),
-    DeclarationCapability(
-        kind="model",
-        key="legacy_active_force_active_nematics",
-        constructor=(
-            "pssolver.models.active_nematics."
-            "LegacyActiveForceActiveNematics"
-        ),
-        qualified_applications=(_CHANNEL_APPLICATION,),
     ),
 )
 
@@ -184,10 +166,7 @@ _GEOMETRIES = (
         kind="geometry",
         key="rectangular_channel",
         constructor="pssolver.geometries.RectangularChannel",
-        qualified_applications=(
-            _CHANNEL_APPLICATION,
-            _CHANNEL_COMPLETE_APPLICATION,
-        ),
+        qualified_applications=(_CHANNEL_COMPLETE_APPLICATION,),
     ),
 )
 
@@ -204,7 +183,6 @@ _BOUNDARY_POLICIES = (
         constructor="pssolver.boundaries.neumann_q",
         qualified_applications=(
             _PLANE_APPLICATION,
-            _CHANNEL_APPLICATION,
             _PERIODIC_APPLICATION,
             _CHANNEL_COMPLETE_APPLICATION,
         ),
@@ -220,7 +198,6 @@ _BOUNDARY_POLICIES = (
         key="no_slip_velocity",
         constructor="pssolver.boundaries.no_slip_velocity",
         qualified_applications=(
-            _CHANNEL_APPLICATION,
             _PERIODIC_APPLICATION,
             _CHANNEL_COMPLETE_APPLICATION,
         ),
@@ -231,7 +208,6 @@ _BOUNDARY_POLICIES = (
         constructor="pssolver.boundaries.neumann_pressure_compatibility",
         qualified_applications=(
             _PLANE_APPLICATION,
-            _CHANNEL_APPLICATION,
             _PERIODIC_APPLICATION,
             _CHANNEL_COMPLETE_APPLICATION,
         ),

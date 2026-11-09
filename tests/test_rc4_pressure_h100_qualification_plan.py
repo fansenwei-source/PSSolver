@@ -9,40 +9,20 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = ROOT / "notes/PSSolver_v0_2_0rc4_rc447_h100_qualification_plan.json"
-RECOVERY = (
-    ROOT
-    / "notes"
-    / "PSSolver_v0_2_0rc4_rc447_python310_h100_recovery_v5.json"
-)
+RECOVERY = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_python310_h100_recovery_v5.json"
 FIELDS_RECOVERY = (
-    ROOT
-    / "notes"
-    / "PSSolver_v0_2_0rc4_rc447_fields_iteration_harness_recovery_v6.json"
+    ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_fields_iteration_harness_recovery_v6.json"
 )
 IMPORT_RECOVERY = (
-    ROOT
-    / "notes"
-    / "PSSolver_v0_2_0rc4_rc447_support_import_bootstrap_recovery_v7.json"
+    ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_support_import_bootstrap_recovery_v7.json"
 )
-PROFILE_RECOVERY = (
-    ROOT
-    / "notes"
-    / "PSSolver_v0_2_0rc4_rc447_profile_diagnostics_recovery_v8.json"
-)
-PERFORMANCE_RECOVERY = (
-    ROOT
-    / "notes"
-    / "PSSolver_v0_2_0rc4_rc447_performance_recovery_v9.json"
-)
+PROFILE_RECOVERY = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_profile_diagnostics_recovery_v8.json"
+PERFORMANCE_RECOVERY = ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_performance_recovery_v9.json"
 PERFORMANCE_QUALIFICATION_RECOVERY = (
-    ROOT
-    / "notes"
-    / "PSSolver_v0_2_0rc4_rc447_pressure_performance_qualification_recovery_v10.json"
+    ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_pressure_performance_qualification_recovery_v10.json"
 )
 BOUNDED_OPERATOR_QUALIFICATION_V11 = (
-    ROOT
-    / "notes"
-    / "PSSolver_v0_2_0rc4_rc447_bounded_operator_qualification_v11.json"
+    ROOT / "notes" / "PSSolver_v0_2_0rc4_rc447_bounded_operator_qualification_v11.json"
 )
 
 
@@ -57,13 +37,9 @@ def _sha256(relative: str) -> str:
 def test_rc447_plan_binds_exact_provider_consumer_sources_and_records():
     record = _record()
     assert record["phase"] == "RC4.4.7"
-    assert record["status"] == (
-        "LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED"
-    )
+    assert record["status"] == ("LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED")
     identity = record["source_identity"]
-    assert identity["provider_baseline_commit"] == (
-        "5071d73a00e0d19be62ebd39edf9918818d1267a"
-    )
+    assert identity["provider_baseline_commit"] == ("5071d73a00e0d19be62ebd39edf9918818d1267a")
     assert identity["provider_candidate_runtime_commit"] == (
         "dc8c87abc7b216231d09ca12fcc7e76b2249a7ab"
     )
@@ -124,9 +100,7 @@ def test_rc447_plan_freezes_pressure_identity_and_correctness_matrix():
     assert pressure["diagnostics_schema_version"] == 2
     assert pressure["pressure_transpose_protocol"] == "2"
     assert pressure["implicit_pressure_adjoint"] == "2"
-    assert pressure["inner_solve_gradient"] == (
-        "custom_implicit_pressure_adjoint_v2"
-    )
+    assert pressure["inner_solve_gradient"] == ("custom_implicit_pressure_adjoint_v2")
     assert pressure["functional_warm_start"] is False
     assert pressure["production_warm_start_preserved"] is True
 
@@ -198,88 +172,15 @@ def test_rc447_plan_freezes_single_job_and_requires_later_authorization():
             assert value is False, key
 
 
-def test_rc447_plan_binds_the_local_qualification_support_by_hash():
-    support = _record()["qualification_support"]
-    successor_chain = [
-        (
-            json.loads(RECOVERY.read_text(encoding="utf-8"))[
-                "qualification_support_successors"
-            ],
-            "candidate_identity_only",
-        ),
-        (
-            json.loads(FIELDS_RECOVERY.read_text(encoding="utf-8"))[
-                "qualification_support_successors"
-            ],
-            "external_qualification_harness_fields_iteration_only",
-        ),
-        (
-            json.loads(IMPORT_RECOVERY.read_text(encoding="utf-8"))[
-                "qualification_support_successors"
-            ],
-            "external_qualification_support_import_bootstrap_only",
-        ),
-        (
-            json.loads(PROFILE_RECOVERY.read_text(encoding="utf-8"))[
-                "qualification_support_successors"
-            ],
-            "external_profile_helper_diagnostics_compatibility_only",
-        ),
-        (
-            json.loads(PERFORMANCE_RECOVERY.read_text(encoding="utf-8"))[
-                "qualification_support_successors"
-            ],
-            "external_profile_counter_and_nonapplicability_contract",
-        ),
-        (
-            json.loads(
-                PERFORMANCE_QUALIFICATION_RECOVERY.read_text(encoding="utf-8")
-            )["qualification_support_successors"],
-            "qualification_identity_propagation_only",
-        ),
-        (
-            json.loads(
-                BOUNDED_OPERATOR_QUALIFICATION_V11.read_text(encoding="utf-8")
-            )["qualification_support_successors"],
-            "qualification_candidate_identity_binding_only",
-        ),
-    ]
-    assert support["implementation_scope"] == (
-        "qualification_only_no_solver_or_runtime_change"
-    )
-    assert support["profile_count"] == 12
-    assert support["balanced_profile_order"] == ["A/B", "B/A", "A/B"]
-    assert support["isolated_compiler_cache_per_profile"] is True
-    assert support["atomic_json_no_overwrite"] is True
-    assert support["fail_closed_analyzer"] is True
-    assert support["execution_started"] is False
-    assert support["h100_job_submitted"] is False
-    for relative, expected in support["files"].items():
-        actual = _sha256(relative)
-        observed = expected
-        for successors, change_scope in successor_chain:
-            successor = successors.get(relative)
-            if successor is None:
-                continue
-            assert successor["historical_sha256"] == observed
-            assert successor["change_scope"] == change_scope
-            observed = successor["current_sha256"]
-        assert actual == observed
-
-
 def test_rc447_python310_recovery_binds_candidate_without_changing_thresholds():
     recovery = json.loads(RECOVERY.read_text(encoding="utf-8"))
 
     assert recovery["phase"] == "RC4.4.7-recovery-v5"
-    assert recovery["candidate_provider_commit"] == (
-        "5b4ee16c81a3ae452ffcf8992a84a738a76ff629"
-    )
+    assert recovery["candidate_provider_commit"] == ("5b4ee16c81a3ae452ffcf8992a84a738a76ff629")
     assert recovery["candidate_provider_wheel_sha256"] == (
         "6f38996c31586ff7b2a0637de5ff479410bbd01bb53926828071affaf5d4cf26"
     )
-    assert recovery["consumer_source_commit"] == (
-        "0cf55b4fb699ff40433000f5b4efe52b1d33546b"
-    )
+    assert recovery["consumer_source_commit"] == ("0cf55b4fb699ff40433000f5b4efe52b1d33546b")
     assert recovery["thresholds_changed"] is False
     assert recovery["scientific_contract_changed"] is False
     assert recovery["formal_h100_submission_limit"] == 1
@@ -316,15 +217,13 @@ def test_rc447_performance_recovery_binds_runtime_artifact_and_counter_layers():
     recovery = json.loads(PERFORMANCE_RECOVERY.read_text(encoding="utf-8"))
 
     assert recovery["phase"] == "RC4.4.7-recovery-v9"
-    assert recovery["candidate_provider_commit"] == (
-        "490274343081c4305d406f5515891dc6bd272aec"
-    )
+    assert recovery["candidate_provider_commit"] == ("490274343081c4305d406f5515891dc6bd272aec")
     assert recovery["candidate_provider_wheel"]["sha256"] == (
         "92cbf470157473e4bce16810a5ff8cf1437e22e30fc6d45a3c835a9276e11df6"
     )
-    assert recovery["candidate_provider_wheel"][
-        "two_independent_local_builds_byte_identical"
-    ] is True
+    assert (
+        recovery["candidate_provider_wheel"]["two_independent_local_builds_byte_identical"] is True
+    )
     assert recovery["failed_v8_evidence"]["job_id"] == "10878190"
     assert recovery["failed_v8_evidence"]["profiles_complete"] == 12
     assert recovery["counter_layer_contract"] == {
@@ -358,29 +257,27 @@ def test_rc447_performance_recovery_binds_runtime_artifact_and_counter_layers():
 
 
 def test_rc447_v10_qualification_recovery_binds_exact_four_way_identity():
-    recovery = json.loads(
-        PERFORMANCE_QUALIFICATION_RECOVERY.read_text(encoding="utf-8")
-    )
+    recovery = json.loads(PERFORMANCE_QUALIFICATION_RECOVERY.read_text(encoding="utf-8"))
 
     assert recovery["phase"] == "RC4.4.7-performance-recovery-v10-qualification"
-    assert recovery["runtime_candidate_commit"] == (
-        "5b7d839c4034eb46a48a61c7be349df01473a2cd"
-    )
+    assert recovery["runtime_candidate_commit"] == ("5b7d839c4034eb46a48a61c7be349df01473a2cd")
     assert recovery["candidate_provider_wheel"]["sha256"] == (
         "76200d6fdfa5bd9a7dfb6eb518913f81715156a507b3ef0310172c3a86484172"
     )
-    assert recovery["candidate_provider_wheel"][
-        "two_independent_local_builds_byte_identical"
-    ] is True
+    assert (
+        recovery["candidate_provider_wheel"]["two_independent_local_builds_byte_identical"] is True
+    )
     identity = recovery["identity_repair"]
     assert identity["identity_inference_allowed"] is False
     assert identity["identity_default_allowed"] is False
-    assert identity["incorrect_persisted_provider_commit"] != recovery[
-        "failed_v9_evidence"
-    ]["runtime_provider_commit"]
-    assert identity["incorrect_persisted_provider_wheel_sha256"] != recovery[
-        "failed_v9_evidence"
-    ]["runtime_provider_wheel_sha256"]
+    assert (
+        identity["incorrect_persisted_provider_commit"]
+        != recovery["failed_v9_evidence"]["runtime_provider_commit"]
+    )
+    assert (
+        identity["incorrect_persisted_provider_wheel_sha256"]
+        != recovery["failed_v9_evidence"]["runtime_provider_wheel_sha256"]
+    )
     assert recovery["thresholds_changed"] is False
     assert recovery["profile_matrix_changed"] is False
     assert recovery["correctness_matrix_changed"] is False
@@ -397,34 +294,22 @@ def test_rc447_v10_qualification_recovery_binds_exact_four_way_identity():
 
 
 def test_rc447_v11_qualification_binds_reproducible_candidate_artifacts():
-    recovery = json.loads(
-        BOUNDED_OPERATOR_QUALIFICATION_V11.read_text(encoding="utf-8")
-    )
+    recovery = json.loads(BOUNDED_OPERATOR_QUALIFICATION_V11.read_text(encoding="utf-8"))
 
-    assert recovery["phase"] == (
-        "RC4.4.7-bounded-operator-recovery-v11-qualification"
-    )
-    assert recovery["status"] == (
-        "LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED"
-    )
-    assert recovery["runtime_candidate_commit"] == (
-        "95208795a73197c7a822303a911ea1a29a1f2c96"
-    )
+    assert recovery["phase"] == ("RC4.4.7-bounded-operator-recovery-v11-qualification")
+    assert recovery["status"] == ("LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED")
+    assert recovery["runtime_candidate_commit"] == ("95208795a73197c7a822303a911ea1a29a1f2c96")
     assert recovery["candidate_source_archive"] == {
         "path": (
             "/home/fansenwei/Desktop/Develop/"
             "PSSolver_rc447_v11_candidate_artifacts_9520879/"
             "PSSolver-9520879.tar"
         ),
-        "sha256": (
-            "4c313d0af2455a78fd1832ce073a6d3f1e20dbf5c1ca30d3cdb1c2c3a3a33c42"
-        ),
+        "sha256": ("4c313d0af2455a78fd1832ce073a6d3f1e20dbf5c1ca30d3cdb1c2c3a3a33c42"),
         "bytes": 20459520,
     }
     wheel = recovery["candidate_provider_wheel"]
-    assert wheel["sha256"] == (
-        "e47bacd10640e20c8f616e170ec91beb12f5a0cf4f75e2a511c91dcebfdb5356"
-    )
+    assert wheel["sha256"] == ("e47bacd10640e20c8f616e170ec91beb12f5a0cf4f75e2a511c91dcebfdb5356")
     assert wheel["bytes"] == 1049314
     assert wheel["two_independent_local_builds_byte_identical"] is True
     assert recovery["artifact_manifest"]["verification"] == "3/3 PASS"
@@ -432,9 +317,7 @@ def test_rc447_v11_qualification_binds_reproducible_candidate_artifacts():
         "372edb8be9b30e1127b6742e454fb68a545c30b530c1297f4ee994e62f2d10d9"
     )
     identity = recovery["qualification_identity_update"]
-    assert identity["new_candidate_commit"] == recovery[
-        "runtime_candidate_commit"
-    ]
+    assert identity["new_candidate_commit"] == recovery["runtime_candidate_commit"]
     assert identity["new_candidate_wheel_sha256"] == wheel["sha256"]
     assert identity["identity_inference_allowed"] is False
     assert identity["identity_default_allowed"] is False
@@ -452,9 +335,12 @@ def test_rc447_v11_qualification_binds_reproducible_candidate_artifacts():
         "seconds": 208.03,
     }
     assert validation["installed_wheel_import_smoke"]["passed"] is True
-    assert validation["installed_wheel_import_smoke"][
-        "pip_check_failure_is_preexisting_nematics3d_numpy_metadata_conflict"
-    ] is True
+    assert (
+        validation["installed_wheel_import_smoke"][
+            "pip_check_failure_is_preexisting_nematics3d_numpy_metadata_conflict"
+        ]
+        is True
+    )
     assert validation["command_plan"]["profile_count"] == 12
     assert validation["command_plan"]["execution_started"] is False
     assert validation["H100_requalified"] is False
@@ -478,9 +364,7 @@ def test_rc447_fields_iteration_recovery_is_local_and_preserves_science_contract
     recovery = json.loads(FIELDS_RECOVERY.read_text(encoding="utf-8"))
 
     assert recovery["phase"] == "RC4.4.7-recovery-v6"
-    assert recovery["status"] == (
-        "LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED"
-    )
+    assert recovery["status"] == ("LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED")
     assert recovery["failed_v5_evidence"]["job_id"] == "10875768"
     assert recovery["failure_classification"] == (
         "external_qualification_harness_fields_iteration_contract"
@@ -508,9 +392,7 @@ def test_rc447_support_import_recovery_freezes_complete_cuda_import_closure():
     recovery = json.loads(IMPORT_RECOVERY.read_text(encoding="utf-8"))
 
     assert recovery["phase"] == "RC4.4.7-recovery-v7"
-    assert recovery["status"] == (
-        "LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED"
-    )
+    assert recovery["status"] == ("LOCAL_QUALIFICATION_SUPPORT_READY_H100_NOT_AUTHORIZED")
     assert recovery["failed_v6_evidence"]["job_id"] == "10878065"
     assert recovery["failure_classification"] == (
         "external_qualification_support_incomplete_benchmarks_import_bootstrap"

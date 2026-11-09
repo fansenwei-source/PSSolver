@@ -13,6 +13,13 @@ import pytest
 
 def pytest_configure(config):
     """Load test policy by path without adding Provider source to sys.path."""
+    loader_spec = importlib.util.spec_from_file_location(
+        "_pssolver_legacy_stage_imports",
+        Path(__file__).resolve().parents[1] / "qualification/_legacy_imports.py",
+    )
+    loader = importlib.util.module_from_spec(loader_spec)
+    loader_spec.loader.exec_module(loader)
+    loader.install()
     spec = importlib.util.spec_from_file_location(
         "_pssolver_category_policy", Path(__file__).with_name("_categories.py")
     )
@@ -60,10 +67,7 @@ assert torch.equal(actual, expected)
         timeout=120,
     )
     if result.returncode != 0:
-        pytest.skip(
-            "CPU torch.compile/Inductor toolchain is unavailable in this "
-            "environment"
-        )
+        pytest.skip("CPU torch.compile/Inductor toolchain is unavailable in this environment")
     return {
         "python": sys.executable,
         "torchinductor_cache": str(cache),

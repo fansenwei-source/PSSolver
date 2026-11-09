@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 import pssolver
 from tests.v0_3_s03_successor import resolve_s03_successor
@@ -40,16 +40,10 @@ def _git_sha256(commit: str, relative: str) -> str:
 def test_s03_record_binds_the_implementation_commit_and_issue_set() -> None:
     record = _read(RECORD)
     assert record["stage"] == "S-03"
-    assert record["classification"] == (
-        "PASS_LOCAL_V0_3_S03_PUBLIC_ERROR_AND_METADATA_CANDIDATE"
-    )
+    assert record["classification"] == ("PASS_LOCAL_V0_3_S03_PUBLIC_ERROR_AND_METADATA_CANDIDATE")
     identity = record["git_identity"]
-    assert identity["development_parent"] == (
-        "19dcd0be83c86e8cace6abff714d3a9f55234c0b"
-    )
-    assert identity["implementation_commit"] == (
-        "a654e1c1d97fa364ac32b6ccbf93070056066d21"
-    )
+    assert identity["development_parent"] == ("19dcd0be83c86e8cace6abff714d3a9f55234c0b")
+    assert identity["implementation_commit"] == ("a654e1c1d97fa364ac32b6ccbf93070056066d21")
     assert identity["record_commit_is_qualified_source"] is False
     assert set(record["issue_ids"]) == {
         "C1-10",
@@ -71,30 +65,12 @@ def test_s03_registry_reflects_the_r0008_independent_verdicts() -> None:
         assert issues[issue_id]["verified_by"] == "R-0008"
     for issue_id in review["reopened_issue_ids"]:
         assert issues[issue_id]["status"] == "verified"
-        assert issues[issue_id]["fixed_in"] == _read(REWORK)["git_identity"][
-            "implementation_commit"
-        ]
+        assert (
+            issues[issue_id]["fixed_in"] == _read(REWORK)["git_identity"]["implementation_commit"]
+        )
         assert issues[issue_id]["verified_by"] == "R-0009"
     assert issues["V-24"]["status"] == "verified"
     assert issues["V-24"]["verified_by"] == "R-0009"
-
-
-def test_s03_successors_bind_exact_parent_and_current_bytes() -> None:
-    record = _read(RECORD)
-    parent = record["git_identity"]["development_parent"]
-    successors = record["historical_successor_sources"]
-    assert len(successors) == 79
-    for relative, registration in successors.items():
-        assert _git_sha256(parent, relative) == registration[
-            "historical_sha256"
-        ]
-        assert _sha256(relative) == resolve_s03_successor(
-            relative, registration["current_sha256"]
-        )
-        assert registration["historical_sha256"] != registration[
-            "current_sha256"
-        ]
-        assert registration["reason"]
 
 
 def test_s03_contract_is_structured_and_fail_closed() -> None:
@@ -135,9 +111,7 @@ def test_s03_scope_does_not_expand_numerics_or_authority() -> None:
 
 def test_s03_registers_the_g04_v022_non_regression_gate() -> None:
     criterion = next(
-        gate["criterion"]
-        for gate in _read(ROADMAP)["completion_gates"]
-        if gate["id"] == "G-04"
+        gate["criterion"] for gate in _read(ROADMAP)["completion_gates"] if gate["id"] == "G-04"
     )
     assert "Plane, Periodic, and Channel" in criterion
     assert "v0.2.2" in criterion

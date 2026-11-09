@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -17,7 +17,6 @@ from pssolver.workflows import (
     PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION,
     PLANE_WORKFLOW_SCHEMA_VERSION,
     load_plane_checkpoint,
-    read_plane_checkpoint_header,
 )
 
 
@@ -109,12 +108,6 @@ def test_runtime_identity_excludes_workflow_but_binds_numerics(tmp_path):
         dt=0.005,
         **common,
     )
-    canary = create_plane_beris_edwards_run_spec(
-        output_dir=tmp_path / "canary",
-        steps=8,
-        runtime_path="separated_canary",
-        **common,
-    )
     changed_workflow = create_plane_beris_edwards_run_spec(
         output_dir=tmp_path / "changed_workflow",
         steps=3,
@@ -126,12 +119,8 @@ def test_runtime_identity_excludes_workflow_but_binds_numerics(tmp_path):
     )
 
     assert left.runtime_identity_sha256() == right.runtime_identity_sha256()
-    assert (
-        left.runtime_identity_sha256()
-        == changed_workflow.runtime_identity_sha256()
-    )
+    assert left.runtime_identity_sha256() == changed_workflow.runtime_identity_sha256()
     assert left.runtime_identity_sha256() != changed.runtime_identity_sha256()
-    assert left.runtime_identity_sha256() != canary.runtime_identity_sha256()
 
 
 def test_shared_workflow_preserves_output_contract_and_complete_is_last(tmp_path):
@@ -152,9 +141,7 @@ def test_shared_workflow_preserves_output_contract_and_complete_is_last(tmp_path
     assert metadata["workflow"] == {
         "schema_version": PLANE_WORKFLOW_SCHEMA_VERSION,
         "runtime_path": "legacy_production",
-        "checkpoint_format_version": (
-            PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION
-        ),
+        "checkpoint_format_version": (PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION),
         "cross_backend_restart_supported": False,
         "start_step": 0,
         "requested_additional_steps": 3,
@@ -163,9 +150,7 @@ def test_shared_workflow_preserves_output_contract_and_complete_is_last(tmp_path
         "checkpoint_steps": [],
         "final_step": 3,
     }
-    assert (output / "COMPLETE").stat().st_mtime_ns >= (
-        output / "metadata.json"
-    ).stat().st_mtime_ns
+    assert (output / "COMPLETE").stat().st_mtime_ns >= (output / "metadata.json").stat().st_mtime_ns
     assert not tuple(output.glob(".*.tmp"))
     assert np.load(output / "Q_3.npy").shape == (8, 8, 8, 5)
     assert np.load(output / "u_3.npy").shape == (8, 8, 8, 3)
@@ -174,7 +159,7 @@ def test_shared_workflow_preserves_output_contract_and_complete_is_last(tmp_path
 
 @pytest.mark.parametrize(
     "runtime_path",
-    ("legacy_production", "separated_canary"),
+    ("legacy_production",),
 )
 def test_same_backend_split_restart_is_byte_exact(tmp_path, runtime_path):
     continuous = tmp_path / f"{runtime_path}_continuous"
@@ -196,31 +181,12 @@ def test_same_backend_split_restart_is_byte_exact(tmp_path, runtime_path):
     )
 
     for prefix in ("Q", "u", "p"):
-        assert _sha256(continuous / f"{prefix}_6.npy") == _sha256(
-            resumed / f"{prefix}_6.npy"
-        )
+        assert _sha256(continuous / f"{prefix}_6.npy") == _sha256(resumed / f"{prefix}_6.npy")
     metadata = json.loads((resumed / "metadata.json").read_text())
     assert metadata["restart"]["source_completed_steps"] == 3
     assert metadata["restart"]["source_runtime_path"] == runtime_path
     assert metadata["workflow"]["start_step"] == 3
     assert metadata["workflow"]["final_step"] == 6
-
-
-def test_cross_backend_restart_fails_before_output_or_solver(tmp_path):
-    source = tmp_path / "legacy_source"
-    target = tmp_path / "canary_target"
-    _run(source, "legacy_production", 2, "--checkpoint-interval", "2")
-    result = _run(
-        target,
-        "separated_canary",
-        1,
-        "--restart-from",
-        str(source / "checkpoint_2"),
-        check=False,
-    )
-    assert result.returncode != 0
-    assert "cross-runtime Plane checkpoint restart is unsupported" in result.stderr
-    assert not target.exists()
 
 
 def test_checkpoint_checksum_tamper_is_fatal(tmp_path):
@@ -238,7 +204,7 @@ def test_checkpoint_checksum_tamper_is_fatal(tmp_path):
 
 @pytest.mark.parametrize(
     "runtime_path",
-    ("legacy_production", "separated_canary"),
+    ("legacy_production",),
 )
 def test_shared_diagnostics_schema_is_finite_for_both_paths(
     tmp_path,
@@ -265,20 +231,9 @@ def test_shared_diagnostics_schema_is_finite_for_both_paths(
     assert header.startswith("step,div_max,div_rms,div_rel")
 
 
-def test_checkpoint_header_is_small_and_backend_explicit(tmp_path):
-    output = tmp_path / "canary"
-    _run(output, "separated_canary", 2, "--checkpoint-interval", "2")
-    header = read_plane_checkpoint_header(output / "checkpoint_2")
-    assert header.format_version == PLANE_WORKFLOW_CHECKPOINT_FORMAT_VERSION
-    assert header.runtime_path.value == "separated_canary"
-    assert header.completed_steps == 2
-    assert len(header.runtime_identity_sha256) == 64
-    assert len(header.compatibility_identity_sha256) == 64
-
-
 def test_o3_workflow_is_not_promoted_through_generic_or_channel_api():
     assert not hasattr(pssolver, "PlaneBerisEdwardsWorkflow")
-    for relative in ("pssolver/solver.py", "pssolver/channel.py"):
+    for relative in ("pssolver/solver.py",):
         source = (PROJECT_ROOT / relative).read_text(encoding="utf-8")
         assert "pssolver.workflows" not in source
         assert "PlaneBerisEdwardsWorkflow" not in source
